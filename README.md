@@ -194,7 +194,7 @@ The old mailing list on librelist.com is no longer used.  Its archives are onlin
 IRC Channel
 -----------
 
-\#browserquest on irc.synirc.net
+\#browserquest on irc.mozilla.org
 
 License
 -------
