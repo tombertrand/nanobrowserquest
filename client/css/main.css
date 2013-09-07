@@ -266,15 +266,7 @@ footer, header, hgroup, menu, nav, section {
     
 	#bubbles a {pointer-events:auto;text-decoration:none;color:#fcda5c;}
 
-    #create-new span:hover, #cancel span:hover {cursor:pointer;color:#d83939;}
-    #create-new span span {color:#b2af9b;}
-    #create-new span span:hover {color:#b2af9b;}
-    #playbutton span:hover, #cancel span:hover {cursor:pointer;color:#d83939;}
-    #playbutton span span {color:#b2af9b;}
-    #playbutton span span:hover {color:#b2af9b;}
-    #continue span:hover, #cancel span:hover {cursor:pointer;color:#d83939;}
-    #continue span span {color:#b2af9b;}
-    #continue span span:hover {color:#b2af9b;}
+    .link:hover {cursor:pointer;color:#d83939;}
     #playername {color:#fff;}
 
     #credits, #loadcharacter, #confirmation, #death, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
