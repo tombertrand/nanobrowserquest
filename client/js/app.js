@@ -28,9 +28,12 @@ define(['jquery', 'storage'], function($, Storage) {
         },
 
         initFormFields: function() {
+            var self = this;
+
             // Play button
             this.$play = $('.play');
-            this.$playButton = $('.play span');
+            this.getPlayButton = function() { return this.getActiveForm().find('.play span') };
+            this.setPlayButtonState(true);
 
             // Login form fields
             this.$loginnameinput = $('#loginnameinput');
@@ -75,10 +78,8 @@ define(['jquery', 'storage'], function($, Storage) {
             }
 
             if(!this.validateFormFields(username, userpw, userpw2, email)) return;
-
-            this.$play.addClass('loading');
-            this.$playButton.unbind('click');
-            this.$playButton.text('Loading...');
+            
+            this.setPlayButtonState(false);
 
             if(!this.ready || !this.canStartGame()) {
                 var watchCanStart = setInterval(function() {
@@ -140,6 +141,31 @@ define(['jquery', 'storage'], function($, Storage) {
                     }
                 });
             }
+        },
+        
+        setPlayButtonState: function(enabled) {
+            var self = this;
+            var $playButton = this.getPlayButton();
+
+            if(enabled) {
+                this.$play.removeClass('loading');
+                $playButton.click(function () { self.tryStartingGame(); });
+                if(this.playButtonRestoreText) {
+                    $playButton.text(this.playButtonRestoreText);
+                }
+            } else {
+                // Loading state
+                this.$play.addClass('loading');
+                $playButton.unbind('click');
+                this.playButtonRestoreText = $playButton.text();
+                $playButton.text('Loading...');
+            }
+        },
+
+        getActiveForm: function() { 
+            if(this.loginFormActive()) return $('#loadcharacter');
+            else if(this.createNewCharacterFormActive()) return $('#createcharacter');
+            else return null;
         },
 
         loginFormActive: function() {
