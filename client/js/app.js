@@ -29,8 +29,8 @@ define(['jquery', 'storage'], function($, Storage) {
 
         initFormFields: function() {
             // Play button
-            this.$playButton = $('.play'),
-            this.$playDiv = $('.play div');
+            this.$play = $('.play');
+            this.$playButton = $('.play span');
 
             // Login form fields
             this.$loginnameinput = $('#loginnameinput');
@@ -64,12 +64,11 @@ define(['jquery', 'storage'], function($, Storage) {
 
         tryStartingGame: function() {
             var self = this;
-            var $play = this.$playButton;
-
             var username = this.getUsernameField().attr('value');
             var userpw = this.getPasswordField().attr('value');
             var email = '';
             var userpw2;
+
             if(this.createNewCharacterFormActive()) {
                 email = this.$email.attr('value');
                 userpw2 = this.$pwinput2.attr('value');
@@ -77,26 +76,19 @@ define(['jquery', 'storage'], function($, Storage) {
 
             if(!this.validateFormFields(username, userpw, userpw2, email)) return;
 
+            this.$play.addClass('loading');
+            this.$playButton.unbind('click');
+            this.$playButton.text('Loading...');
+
             if(!this.ready || !this.canStartGame()) {
-                if(!this.isMobile) {
-                    // on desktop and tablets, add a spinner to the play button
-                    $play.addClass('loading');
-                }
-                this.$playDiv.unbind('click');
                 var watchCanStart = setInterval(function() {
                     log.debug("waiting...");
                     if(self.canStartGame()) {
-                        setTimeout(function() {
-                            if(!self.isMobile) {
-                                $play.removeClass('loading');
-                            }
-                        }, 1500);
                         clearInterval(watchCanStart);
                         self.startGame(username, userpw, email);
                     }
                 }, 100);
             } else {
-                this.$playDiv.unbind('click');
                 this.startGame(username, userpw, email);
             }
         },

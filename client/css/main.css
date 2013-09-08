@@ -262,6 +262,9 @@ footer, header, hgroup, menu, nav, section {
 	#bubbles a {pointer-events:auto;text-decoration:none;color:#fcda5c;}
 
     .link:hover {cursor:pointer;color:#d83939;}
+    .play img {display:none;}
+    .play.loading span:hover {color:inherit;cursor:default;}
+    .play.loading img {display:inline;}
     #playername {color:#fff;}
 
     #credits, #loadcharacter, #confirmation, #death, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
@@ -521,7 +524,7 @@ footer, header, hgroup, menu, nav, section {
         .play div {height:153px;width:375px;background-position:-687px 0px;}
         .play div:active {background-position:-687px -459px;}
         .play.loading div {background-position:-681px -2178px;}
-        .play.loading img {margin-top:-16px;margin-left:-16px;height:32px;width:32px;}
+        .play.loading img {width:24px;height:24px;}
         .stroke, .achievement-name {text-shadow:3px 3px 0 #373737, 3px -3px 0 #373737, 0 3px 0 #373737, 3px 0 0 #373737, -3px 3px 0 #373737, -3px -3px 0 #373737, 0 -3px 0 #373737, 0 3px 0 #373737, -3px 0 0 #373737;}
 
         #loadcharacter h1, #confirmation h1, #error h1, #legal h1 {margin-top:30px;}
@@ -695,7 +698,7 @@ footer, header, hgroup, menu, nav, section {
         .play div {height:102px;width:250px;background-position:-458px 0px;}
         .play div:active {background-position:-458px -306px;}
         .play.loading div {background-position:-454px -1452px;}
-        .play.loading img {margin-top:-12px;margin-left:-12px;height:24px;width:24px;}
+        .play.loading img {height:16px;width:16px;}
         .stroke, .achievement-name {text-shadow:2px 2px 0 #373737, 2px -2px 0 #373737, 0 2px 0 #373737, 2px 0 0 #373737, -2px 2px 0 #373737, -2px -2px 0 #373737, 0 -2px 0 #373737, 0 2px 0 #373737, -2px 0 0 #373737;}
         
         #loadcharacter h1, #confirmation h1, #error h1, #legal h1 {margin-top:20px;}
@@ -888,7 +891,7 @@ footer, header, hgroup, menu, nav, section {
         .play div {height:51px;width:125px;background-position:-229px 0px;}
         .play div:active {background-position:-229px -153px;}
         .play.loading div {background-position:-227px -726px;}
-        .play.loading img {margin-top:-8px;margin-left:-8px;height:16px;width:16px;}
+        .play.loading img {height:11px;width:11px;}
         .stroke, .achievement-name {text-shadow:1px 1px 0 #373737, 1px -1px 0 #373737, 0 1px 0 #373737, 1px 0 0 #373737, -1px 1px 0 #373737, -1px -1px 0 #373737, 0 -1px 0 #373737, 0 1px 0 #373737, -1px 0 0 #373737;}
         
         #loadcharacter h1, #confirmation h1, #error h1, #legal h1 {margin-top:20px;}
