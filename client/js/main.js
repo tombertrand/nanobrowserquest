@@ -534,7 +534,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
                     $chat = $('#chatinput');
 
                 if(key === 13) { // Enter
-                    if(game.ready) {
+                    if(game.started) {
                         $chat.focus();
                         return false;
                     } else {
@@ -557,11 +557,11 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
 
                     // The following may be uncommented for debugging purposes.
                     //
-                    // if(key === 32 && game.ready) { // Space
+                    // if(key === 32 && game.started) { // Space
                     //     game.togglePathingGrid();
                     //     return false;
                     // }
-                    // if(key === 70 && game.ready) { // F
+                    // if(key === 70 && game.started) { // F
                     //     game.toggleDebugInfo();
                     //     return false;
                     // }

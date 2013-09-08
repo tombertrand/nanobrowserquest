@@ -95,19 +95,6 @@ define(['jquery', 'storage'], function($, Storage) {
         },
 
         startGame: function(username, userpw, email) {
-            var self = this;
-
-            this.hideIntro(function() {
-                if(!self.isDesktop) {
-                    // On mobile and tablet we load the map after the player has clicked
-                    // on the PLAY button instead of loading it in a web worker.
-                    self.game.loadMap();
-                }
-                self.start(username, userpw, email);
-            });
-        },
-
-        start: function(username, userpw, email) {
             var self = this,
                 firstTimePlaying = !self.storage.hasAlreadyPlayed();
 
@@ -134,12 +121,32 @@ define(['jquery', 'storage'], function($, Storage) {
                 //>>includeEnd("prodHost");
 
                 this.center();
-                this.game.run(function() {
-                    $('body').addClass('started');
-                    if(firstTimePlaying) {
-                        self.toggleInstructions();
+                this.game.run(function(result) {
+                    if(result.success === true) {
+                        self.start();
+                    } else {
+                        if(result.reason === 'wrongpw') {
+                            self.addValidationError(self.getPasswordField(), 'The password you entered is incorrect.');
+                        } else {
+                            self.addValidationError(null, 'Failed to launch the game: ' + (result.reason ? result.reason : '(reason unknown)'));
+                        }
+                        self.setPlayButtonState(true);
                     }
                 });
+            }
+        },
+
+        start: function() {
+            this.hideIntro(function() {
+                if(!self.isDesktop) {
+                    // On mobile and tablet we load the map after the player has clicked
+                    // on the PLAY button instead of loading it in a web worker.
+                    self.game.loadMap();
+                }
+            });
+            $('body').addClass('started');
+            if(firstTimePlaying) {
+                this.toggleInstructions();
             }
         },
         
@@ -357,7 +364,7 @@ define(['jquery', 'storage'], function($, Storage) {
             setTimeout(function() {
                 $('body').addClass('game');
                 hidden_callback();
-            }, 1000);
+            }, 500);
         },
 
         showChat: function() {
