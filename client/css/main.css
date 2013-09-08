@@ -140,11 +140,6 @@ footer, header, hgroup, menu, nav, section {
 
     #character div {-moz-transition:0.4s opacity linear;-webkit-transition:0.4s opacity linear;-o-transition:0.4s opacity linear;-ms-transition:0.4s opacity linear;transition:0.4s opacity linear;}
 
-    .play div {position:absolute;top:0;left:0;opacity:1;-moz-transition:0.4s linear opacity;-webkit-transition:0.4s linear opacity;-o-transition:0.4s linear opacity;-ms-transition:0.4s linear opacity;transition:0.4s linear opacity}
-    .play.disabled div {opacity:0;pointer-events:none;}
-    .play img {display:none;}
-    .play.loading img {display:block;position:absolute;top:54%;left:50%;}
-
     #mask {height:100%;width:100%;position:fixed;top:0;left:0;background:rgba(20,20,20,1);opacity:1;z-index:20;-moz-transition:0.5s opacity linear;-webkit-transition:0.5s opacity linear;-o-transition:0.5s opacity linear;-ms-transition:0.5s opacity linear;transition:0.5s opacity linear;pointer-events:none;}
 
     #bar-container {background:url('../img/1/barsheet.png');image-rendering:-moz-crisp-edges;position:relative;width:100%;z-index:10;}

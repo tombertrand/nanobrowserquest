@@ -179,7 +179,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
                 }
             }
 
-            $('#playbutton span').click(function(event) {
+            $('.play span').click(function(event) {
                 app.tryStartingGame();
             });
 
