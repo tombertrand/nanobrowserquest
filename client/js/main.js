@@ -104,6 +104,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
                 app.storage.clear();
                 app.animateParchment('confirmation', 'createcharacter');
                 $('body').removeClass('returning');
+                app.clearValidationErrors();
             });
 
             $('#cancel span').click(function() {
@@ -539,7 +540,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
                     } else {
                         if(app.loginFormActive() || app.createNewCharacterFormActive()) {
                             $('input').blur();      // exit keyboard on mobile
-                            app.handleEnter();
+                            app.tryStartingGame();
                             return false;           // prevent form submit
                         }
                     }

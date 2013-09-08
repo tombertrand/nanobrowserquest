@@ -151,51 +151,37 @@ define(['jquery', 'storage'], function($, Storage) {
         },
 
         /**
-         * Handles the Enter key in the Login / Create New Character forms. (Assumes one of these forms is
-         * currently active.)
-         */
-        handleEnter: function() {
-            var fields = this.loginFormActive() ? this.loginFormFields : this.createNewCharacterFormFields;
-            
-            var isFieldEmpty = function (field) { return $.trim(field.val()) == 0; };
-            var isEmpty = function () { return isFieldEmpty($(this)); };
-            var allFieldsFilledOut = function (fields) {
-                return $.map(fields, isFieldEmpty).every(function (v) { return !v; });
-            };
-
-            if (allFieldsFilledOut(fields)) {
-                // If all fields have been filled out, then the Enter key should start the game.
-                this.tryStartingGame();
-            } else {
-                // Otherwise, pressing Enter should switch focus to the first missing field
-                var firstMissingField = $.grep(fields, isFieldEmpty)[0];
-                if (firstMissingField !== undefined) {
-                    firstMissingField.focus();
-                }
-            }
-        },
-
-        /**
          * Performs some basic validation on the login / create new character forms (required fields are filled
          * out, passwords match, email looks valid). Assumes either the login or the create new character form
          * is currently active.
          */
         validateFormFields: function(username, userpw, userpw2, email) {
-            if(!username || !userpw) {
+            this.clearValidationErrors();
+
+            if(!username) {
+                this.addValidationError(this.getUsernameField(), 'Please enter a username.');
+                return false;
+            }
+
+            if(!userpw) {
+                this.addValidationError(this.getPasswordField(), 'Please enter a password.');
                 return false;
             }
 
             if(this.createNewCharacterFormActive()) {     // In Create New Character form (rather than login form)
+                if(!userpw2) {
+                    this.addValidationError(this.$pwinput2, 'Please confirm your password by typing it again.');
+                    return false;
+                }
+
                 if(userpw !== userpw2) {
-                    alert('The passwords you entered do not match. Please make sure you typed the password correctly.');
-                    this.$pwinput.select();
+                    this.addValidationError(this.$pwinput2, 'The passwords you entered do not match. Please make sure you typed the password correctly.');
                     return false;
                 }
 
                 // Email field is not required, but if it's filled out, then it should look like a valid email.
                 if(email && !this.validateEmail(email)) {
-                    alert('The email you entered appears to be invalid. Please enter a valid email (or leave the email blank).');
-                    this.$email.select();
+                    this.addValidationError(this.$email, 'The email you entered appears to be invalid. Please enter a valid email (or leave the email blank).');
                     return false;
                 }
             }
@@ -207,6 +193,30 @@ define(['jquery', 'storage'], function($, Storage) {
             // Regex borrowed from http://stackoverflow.com/a/46181/393005
             var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(email);
+        },
+
+        addValidationError: function(field, errorText) {
+            $('<span/>', {
+                'class': 'validation-error blink',
+                text: errorText
+            }).appendTo('.validation-summary');
+
+            if(field) {
+                field.addClass('field-error').select();
+                field.bind('keypress', function (event) {
+                    field.removeClass('field-error');
+                    $('.validation-error').remove();
+                    $(this).unbind(event);
+                });
+            }
+        },
+
+        clearValidationErrors: function() {
+            var fields = this.loginFormActive() ? this.loginFormFields : this.createNewCharacterFormFields;
+            $.each(fields, function(i, field) {
+                field.removeClass('field-error');
+            });
+            $('.validation-error').remove();
         },
 
         setMouseCoordinates: function(event) {

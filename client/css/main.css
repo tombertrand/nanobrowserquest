@@ -137,6 +137,7 @@ footer, header, hgroup, menu, nav, section {
     #parchment, #parchment input {font-family:'GraphicPixel';}
     #parchment input {width:50%;background:rgba(0,0,0,0.05);text-align:center;-moz-animation:glow 0.5s linear infinite alternate;-webkit-animation:glow 0.5s linear infinite alternate;-o-animation:glow 0.5s linear infinite alternate;-ms-animation:glow 0.5s linear infinite alternate;color:#eee;}
     #parchment input:focus {-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;animation:none;color:#fff;background:rgba(0,0,0,0.1);border-color:rgba(0,0,0,0.3);}
+    #parchment input.field-error {background:rgba(255,0,0,0.1);border-color:#f84444;}
 
     #character div {-moz-transition:0.4s opacity linear;-webkit-transition:0.4s opacity linear;-o-transition:0.4s opacity linear;-ms-transition:0.4s opacity linear;transition:0.4s opacity linear;}
 
@@ -265,7 +266,14 @@ footer, header, hgroup, menu, nav, section {
     .play img {display:none;}
     .play.loading span:hover {color:inherit;cursor:default;}
     .play.loading img {display:inline;}
+    #create-new {margin-top:2em;}
     #playername {color:#fff;}
+
+    .validation-summary {margin:.5em;min-height:1em;}
+    .validation-error {color:#880000;text-shadow:2px 2px 2px #ff6666;}
+    @keyframes blink { 0% {color:red;} 100% {color:#880000;}}
+    @-webkit-keyframes blink { 0% {color:red;} 100% {color:#880000;}}
+    .blink {-webkit-animation:blink 0.3s linear 5 alternate;-moz-animation:blink 0.3s linear 5 alternate;animation:blink 0.3s linear 5 alternate;}
 
     #credits, #loadcharacter, #confirmation, #death, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
     
@@ -520,6 +528,8 @@ footer, header, hgroup, menu, nav, section {
         #character div {height:63px;width:36px;position:absolute;top:0;left:0;background-position:-1098px -36px;opacity:1;}
         #character.disabled div {opacity:0;pointer-events:none;}
         #parchment input {margin-top:30px; padding:0 15px; border:3px dashed #b2af9b; font-size:30px;border-radius:9px;height:61px;}
+        #parchment.createcharacter input {margin-top:20px;height:50px;}
+        #createcharacter .play {margin: 10px auto 10px auto;}
         .button {height:153px;width:375px;background-position:-687px -306px;margin:30px auto 0 auto;position:relative;}
         .play div {height:153px;width:375px;background-position:-687px 0px;}
         .play div:active {background-position:-687px -459px;}
@@ -535,6 +545,7 @@ footer, header, hgroup, menu, nav, section {
         #error p {width:70%;margin:60px auto 0;}
         .button.delete {background-position:-687px -153px;}
         .button.delete:active {background-position:0 -2178px;}
+        .validation-error {font-size:22px;}
         
 		#container {width:1470px;margin:0 auto;position:absolute;top:50%;margin-top:-378px;left:50%;margin-left:-735px;}
     #expbar{
@@ -694,6 +705,8 @@ footer, header, hgroup, menu, nav, section {
         #character div {height:42px;width:24px;position:absolute;top:0;left:0;background-position:-732px -24px;opacity:1;}
         #character.disabled div {opacity:0;pointer-events:none;}
         #parchment input {margin-top:20px; padding:0 10px; border:2px dashed #b2af9b; font-size:20px;border-radius:6px;height:41px;}
+        #parchment.createcharacter input {margin-top:15px;height:30px;}
+        #createcharacter .play {margin: 8px auto 8px auto;}
         .button {height:102px;width:250px;background-position:-458px -204px;margin:20px auto 0 auto;position:relative;}
         .play div {height:102px;width:250px;background-position:-458px 0px;}
         .play div:active {background-position:-458px -306px;}
@@ -709,6 +722,8 @@ footer, header, hgroup, menu, nav, section {
         #error p {width:70%;margin:40px auto 0;}
         .button.delete {background-position:-458px -102px;}
         .button.delete:active {background-position:0 -1452px;}
+        .validation-summary {margin:0 auto .5em auto;}
+        .validation-error {font-size:16px;}
         
 		#container {width:980px;margin:0 auto;position:absolute;top:50%;margin-top:-252px;left:50%;margin-left:-490px;}
     #expbar{
@@ -887,6 +902,7 @@ footer, header, hgroup, menu, nav, section {
         #character div {height:21px;width:12px;position:absolute;top:0;left:0;background-position:-366px -12px;opacity:1;}
         #character.disabled div {opacity:0;pointer-events:none;}
         #parchment input {margin-top:10px; padding:0 5px; border:1px dashed #b2af9b; font-size:10px;border-radius:3px;height:21px;}
+        #parchment.createcharacter input {margin-top:4px;height:15px;}
         .button {height:51px;width:125px;background-position:-229px -102px;margin:10px auto 0 auto;position:relative;}
         .play div {height:51px;width:125px;background-position:-229px 0px;}
         .play div:active {background-position:-229px -153px;}
@@ -902,6 +918,7 @@ footer, header, hgroup, menu, nav, section {
         #error p {width:70%;margin:40px auto 0;}
         .button.delete {background-position:-229px -51px;}
         .button.delete:active {background-position:0 -726px;}
+        .validation-error {font-size:11px;}
         
 		#container {width:490px;margin:0 auto;position:absolute;top:50%;margin-top:-126px;left:50%;margin-left:-245px;}
 		#canvasborder {padding:5px;background:url('../img/1/border.png') no-repeat;}
@@ -1073,10 +1090,14 @@ footer, header, hgroup, menu, nav, section {
         #character div {height:21px;width:12px;position:absolute;top:0;left:0;background-position:-366px -12px;opacity:1;}
         #character.disabled div {opacity:0;pointer-events:none;}
         #parchment input {margin-top:10px; padding-bottom:5px; border-bottom:1px dashed #b2af9b; font-size:20px;-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;color:#eee;}
+        #parchment.createcharacter input {margin-top:4px;height:15px;}
         .button {height:54px;width:204px;background-position:-500px -952px;margin:20px auto 0 auto;position:relative;background-size:844px;}
+        .play, #create-new {font-size:16px;}
         .play div {height:54px;width:204px;background-position:-458px -512px; background-size:844px;}
         .play div:active {background-position:0px -1398px;}
+        #create-new {margin-top:0;}
         .stroke {text-shadow:1px 1px 0 #373737, 1px -1px 0 #373737, 0 1px 0 #373737, 1px 0 0 #373737, -1px 1px 0 #373737, -1px -1px 0 #373737, 0 -1px 0 #373737, 0 1px 0 #373737, -1px 0 0 #373737;}
+        .validation-error {color:#ffc2c2;}
 		
 		#instructions {height:172px;width:417px;background-position:0 -527px;margin-left:-208px;margin-top:-93px;color:#373737;}
 		#instructions h1 {font-size:20px;text-align:center;margin-bottom:0;}
@@ -1101,14 +1122,12 @@ footer, header, hgroup, menu, nav, section {
 	    #loadcharacter h1, #confirmation h1, #createcharacter h1, #error h1, #legal h1 {font-size:12px;}
 	    #createcharacter{padding-bottom:20px;}
 		#playername {font-size:20px;margin:10px 0px;}
-		#create-new {margin:20px 0px;font-size:16px;}
-		#playbutton {margin:20px 0px;font-size:16px;}
 		#continue {margin:20px 0px;font-size:16px;}
+		#cancel {margin:20px 0;font-size:16px;}
 		.button.delete {background-position:-612px -1398px;}
 		.button.delete:active {background-position:-250px -1452px;}
 		#confirmation, #error {top:70%;}
 		#confirmation p, #error p {margin:10px 0;line-height:12px;font-size:12px;}
-		#cancel {font-size:20px;margin:20px 0;}
 		
 		#playerimage {display:none;}
 		
