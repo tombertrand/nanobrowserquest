@@ -590,7 +590,7 @@ footer, header, hgroup, menu, nav, section {
 
 		#healthbar {height:39px;background-position:0 -51px;width:306px;top:9px;background-size:1440px;z-index:20;}
 		#hitpoints {width:0px;height:33px;top:12px;left:33px;z-index:10;position:absolute;}
-		#hpguide {left: 33x; top: 12px; width: 2px; height: 33px; z-index: 30; }
+		#hpguide {left: 33px; top: 12px; width: 2px; height: 33px; z-index: 30; }
 
         #armor, #weapon {width:48px;height:48px;position:absolute;background-size:288px;background-position:-96px;}
         #weapon {left:312px;top:3px;background-size:288px;}
@@ -766,7 +766,7 @@ footer, header, hgroup, menu, nav, section {
 
 		#healthbar {height:26px;background-position:0 -34px;width:204px;top:6px;background-size:960px;z-index:20;}
 		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
-		#hpguide {left: 22x; top: 8px; width: 2px; height: 22px; z-index: 30; }
+		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
         #weapon {left:208px;top:2px;}
@@ -948,7 +948,7 @@ footer, header, hgroup, menu, nav, section {
 
 		#healthbar {height:13px;background-position:0 -17px;width:102px;top:3px;background-size:480px;z-index:20;}
 		#hitpoints {width:0px;height:11px;top:4px;left:11px;z-index:10;position:absolute;}
-		#hpguide {left: 11x; top: 4px; width: 1px; height: 11px; z-index: 30; }
+		#hpguide {left: 11px; top: 4px; width: 1px; height: 11px; z-index: 30; }
         #armor, #weapon {width:16px;height:16px;position:absolute;background-size:96px;background-position:-32px;}
         #weapon {left:104px;top:1px;}
         #armor {left:121px;top:1px;}
@@ -1114,7 +1114,7 @@ footer, header, hgroup, menu, nav, section {
 
 		#healthbar {height:26px;background-position:0 -34px;width:204px;top:6px;background-size:960px;z-index:20;}
 		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
-		#hpguide {left: 22x; top: 8px; width: 2px; height: 22px; z-index: 30; }
+		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
         #weapon {left:208px;top:2px;}
