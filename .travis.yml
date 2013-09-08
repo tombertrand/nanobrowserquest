@@ -4,6 +4,10 @@ node_js:
   - "0.8"
   - "0.10"
 
+branches:
+  except:
+    - coffeescript
+
 deploy:
   provider: openshift
   user: "aa1ronham@gmail.com"
