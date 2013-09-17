@@ -18,7 +18,7 @@ deploy:
 
   on:
     repo: browserquest/BrowserQuest
-    node_js: "0.10"
+    node: "0.10"
 
 notifications:
   irc: "irc.synirc.net#browserquest"
