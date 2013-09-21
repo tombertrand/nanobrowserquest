@@ -2529,7 +2529,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
 
             this.started = true;
             this.client.enable();
-            this.sendLogin(this.player);
+            this.client.sendLogin(this.player);
 
             this.storage.incrementRevives();
 
