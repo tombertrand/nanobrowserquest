@@ -90,7 +90,7 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                         self.isTimeout = true;
                         return;
                     }
-                    if(e.data === 'wrongpw' || e.data === 'invaliduser' || e.data === 'userexists' || e.data === 'loggedin'){
+                    if(e.data === 'invalidlogin' || e.data === 'userexists' || e.data === 'loggedin'){
                         if(self.fail_callback){
                             self.fail_callback(e.data);
                         }

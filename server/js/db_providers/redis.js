@@ -100,7 +100,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
                             // Check Password
                             if(pw !== player.pw){
-                                player.connection.sendUTF8("wrongpw");
+                                player.connection.sendUTF8("invalidlogin");
                                 player.connection.close("Wrong Password: " + player.name);
                                 return;
                             }
@@ -178,7 +178,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             }
 
             // Could not find the user
-            player.connection.sendUTF8("invaliduser");
+            player.connection.sendUTF8("invalidlogin");
             player.connection.close("User does not exist: " + player.name);
             return;
         });

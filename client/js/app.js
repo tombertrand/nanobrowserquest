@@ -129,13 +129,10 @@ define(['jquery', 'storage'], function($, Storage) {
                         self.setPlayButtonState(true);
 
                         switch(result.reason) {
-                            case 'wrongpw':
-                                // Attempted to log in with a valid user but an incorrect password
-                                self.addValidationError(self.getPasswordField(), 'The password you entered is incorrect.');
-                                break;
-                            case 'invaliduser':
-                                // Attempted to log in with a non-existent user
-                                self.addValidationError(self.getUsernameField(), 'The username you entered is invalid.');
+                            case 'invalidlogin':
+                                // Login information was not correct (either username or password)
+                                self.addValidationError(null, 'The username or password you entered is incorrect.');
+                                self.getUsernameField().focus();
                                 break;
                             case 'userexists':
                                 // Attempted to create a new user, but the username was taken
