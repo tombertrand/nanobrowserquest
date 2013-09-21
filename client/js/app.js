@@ -66,6 +66,8 @@ define(['jquery', 'storage'], function($, Storage) {
         },
 
         tryStartingGame: function() {
+            if(this.starting) return;        // Already loading
+
             var self = this;
             var action = this.createNewCharacterFormActive() ? 'create' : 'login';
             var username = this.getUsernameField().attr('value');
@@ -170,6 +172,7 @@ define(['jquery', 'storage'], function($, Storage) {
             var $playButton = this.getPlayButton();
 
             if(enabled) {
+                this.starting = false;
                 this.$play.removeClass('loading');
                 $playButton.click(function () { self.tryStartingGame(); });
                 if(this.playButtonRestoreText) {
@@ -177,6 +180,7 @@ define(['jquery', 'storage'], function($, Storage) {
                 }
             } else {
                 // Loading state
+                this.starting = true;
                 this.$play.addClass('loading');
                 $playButton.unbind('click');
                 this.playButtonRestoreText = $playButton.text();
