@@ -636,9 +636,9 @@ module.exports = Player = Character.extend({
         for(var i=0; i < name.length; i++) {
             var c = name.charCodeAt(i);
 
-            if(!((0xAC00 <= c && c <= 0xD7A3) || (0x3131 <= c && c <= 0x318E)
-                || (0x61 <= c && c <= 0x7A) || (0x41 <= c && c <= 0x5A)
-                || (0x30 <= c && c <= 0x39))) {
+            if(!((0xAC00 <= c && c <= 0xD7A3) || (0x3131 <= c && c <= 0x318E)       // Korean (Unicode blocks "Hangul Syllables" and "Hangul Compatibility Jamo")
+                || (0x61 <= c && c <= 0x7A) || (0x41 <= c && c <= 0x5A)             // English (lowercase and uppercase)
+                || (0x30 <= c && c <= 0x39))) {                                     // Numbers
                 return false;
             }
         }
