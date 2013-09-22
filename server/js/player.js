@@ -87,25 +87,25 @@ module.exports = Player = Character.extend({
                     databaseHandler.checkBan(self);
                     databaseHandler.loadPlayer(self);
                 }
-//              self.kind = Types.Entities.WARRIOR;
-//              self.equipArmor(message[2]);
-//              self.equipWeapon(message[3]);
-//              if(typeof message[4] !== 'undefined'){	
-//                  var aGuildId = self.server.reloadGuild(message[4],message[5]);				
-//                  if( aGuildId !== message[4]){
-//                      self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.IDWARNING,message[5]));
-//                  }
-//              }
-//              self.orientation = Utils.randomOrientation();
-//              self.updateHitPoints();
-//              self.updatePosition();
-
-//              self.server.addPlayer(self, aGuildId);
-//              self.server.enter_callback(self);
-
-//              self.send([Types.Messages.WELCOME, self.id, self.name, self.x, self.y, self.hitPoints]);
-//              self.hasEnteredGame = true;
-//              self.isDead = false;
+                // self.kind = Types.Entities.WARRIOR;
+                // self.equipArmor(message[2]);
+                // self.equipWeapon(message[3]);
+                // if(typeof message[4] !== 'undefined') {
+                //     var aGuildId = self.server.reloadGuild(message[4],message[5]);
+                //     if( aGuildId !== message[4]) {
+                //         self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.IDWARNING,message[5]));
+                //     }
+                // }
+                // self.orientation = Utils.randomOrientation();
+                // self.updateHitPoints();
+                // self.updatePosition();
+                // 
+                // self.server.addPlayer(self, aGuildId);
+                // self.server.enter_callback(self);
+                // 
+                // self.send([Types.Messages.WELCOME, self.id, self.name, self.x, self.y, self.hitPoints]);
+                // self.hasEnteredGame = true;
+                // self.isDead = false;
             }
             else if(action === Types.Messages.WHO) {
                 log.info("WHO: " + self.name);
@@ -194,7 +194,6 @@ module.exports = Player = Character.extend({
                     }
                 }
             }
-
             else if(action === Types.Messages.HURT) {
                 log.info("HURT: " + self.name + " " + message[1]);
                 var mob = self.server.getEntityById(message[1]);
@@ -356,49 +355,48 @@ module.exports = Player = Character.extend({
                 }
             }
             else if(action === Types.Messages.ACHIEVEMENT) {
-              log.info("ACHIEVEMENT: " + self.name + " " + message[1] + " " + message[2]);
-              if(message[2] === "found"){
-                  self.achievement[message[1]].found = true;
-                  databaseHandler.foundAchievement(self.name, message[1]);
-              }
+                log.info("ACHIEVEMENT: " + self.name + " " + message[1] + " " + message[2]);
+                if(message[2] === "found") {
+                    self.achievement[message[1]].found = true;
+                    databaseHandler.foundAchievement(self.name, message[1]);
+                }
             }
             else if(action === Types.Messages.GUILD) {
-				        if(message[1] === Types.Messages.GUILDACTION.CREATE) {
-					          var guildname = Utils.sanitize(message[2]);
-					          if(guildname === ""){//inaccurate name
-						            self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.BADNAME,message[2]));
-					          } else {
-						            var guildId = self.server.addGuild(guildname);
-						            if(guildId === false) {
-							              self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.ALREADYEXISTS, guildname));
-						            } else {
-							              self.server.joinGuild(self, guildId);
-					              		self.server.pushToPlayer(self, new Messages.Guild(Types.Messages.GUILDACTION.CREATE, [guildId, guildname]));
-				            		}
-				          	}
+                if(message[1] === Types.Messages.GUILDACTION.CREATE) {
+                    var guildname = Utils.sanitize(message[2]);
+                    if(guildname === "") { //inaccurate name
+                        self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.BADNAME,message[2]));
+                    } else {
+                        var guildId = self.server.addGuild(guildname);
+                        if(guildId === false) {
+                            self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.ALREADYEXISTS, guildname));
+                        } else {
+                            self.server.joinGuild(self, guildId);
+                            self.server.pushToPlayer(self, new Messages.Guild(Types.Messages.GUILDACTION.CREATE, [guildId, guildname]));
+                        }
+                    }
                 }
                 else if(message[1] === Types.Messages.GUILDACTION.INVITE) {
-				          	var userName = message[2];
-					          var invitee;
-				          	if(self.group in self.server.groups) {
-			            			invitee = _.find(self.server.groups[self.group].entities,
-							      		function(entity, key){
-									    	return (entity instanceof Player && entity.name == userName) ? entity : false;});
-            						if(invitee) {
-					            		self.getGuild().invite(invitee,self);
-					            	}
-			          		}
-				        }
-    				    else if(message[1] === Types.Messages.GUILDACTION.JOIN) {
-					          self.server.joinGuild(self, message[2], message[3]);
-				        }
-        				else if(message[1] === Types.Messages.GUILDACTION.LEAVE) {
-				          	self.leaveGuild();
-			         	}
-        				else if(message[1] === Types.Messages.GUILDACTION.TALK){
-			          		self.server.pushToGuild(self.getGuild(), new Messages.Guild(Types.Messages.GUILDACTION.TALK, [self.name, self.id, message[2]]));
-				        }
-			      } else {
+                    var userName = message[2];
+                    var invitee;
+                    if(self.group in self.server.groups) {
+                        invitee = _.find(self.server.groups[self.group].entities,
+                                         function(entity, key) { return (entity instanceof Player && entity.name == userName) ? entity : false; });
+                        if(invitee) {
+                            self.getGuild().invite(invitee,self);
+                        }
+                    }
+                }
+                else if(message[1] === Types.Messages.GUILDACTION.JOIN) {
+                    self.server.joinGuild(self, message[2], message[3]);
+                }
+                else if(message[1] === Types.Messages.GUILDACTION.LEAVE) {
+                    self.leaveGuild();
+                }
+                else if(message[1] === Types.Messages.GUILDACTION.TALK) {
+                    self.server.pushToGuild(self.getGuild(), new Messages.Guild(Types.Messages.GUILDACTION.TALK, [self.name, self.id, message[2]]));
+                }
+            } else {
                 if(self.message_callback) {
                     self.message_callback(message);
                 }
@@ -446,7 +444,8 @@ module.exports = Player = Character.extend({
     send: function(message) {
         this.connection.send(message);
     },
-    flagPVP: function(pvpFlag){
+
+    flagPVP: function(pvpFlag) {
         if(this.pvpFlag != pvpFlag){
             this.pvpFlag = pvpFlag;
             this.send(new Messages.PVP(this.pvpFlag).serialize());
@@ -526,12 +525,12 @@ module.exports = Player = Character.extend({
         this.armorLevel = Properties.getArmorLevel(kind);
     },
 
-     equipAvatar: function(kind) {
-       if(kind){
-         this.avatar = kind;
-       } else {
+    equipAvatar: function(kind) {
+        if(kind) {
+            this.avatar = kind;
+        } else {
             this.avatar = Types.Entities.CLOTHARMOR;
-       }
+        }
      },
 
     equipWeapon: function(kind) {
@@ -544,7 +543,7 @@ module.exports = Player = Character.extend({
             log.debug(this.name + " equips " + Types.getKindAsString(itemKind));
 
             if(Types.isArmor(itemKind)) {
-                if(isAvatar){
+                if(isAvatar) {
                     databaseHandler.equipAvatar(this.name, Types.getKindAsString(itemKind));
                     this.equipAvatar(itemKind);
                 } else {
@@ -587,133 +586,139 @@ module.exports = Player = Character.extend({
         this.connection.sendUTF8("timeout");
         this.connection.close("Player was idle for too long");
     },
-     incExp: function(gotexp){
+
+    incExp: function(gotexp){
         this.experience = parseInt(this.experience) + (parseInt(gotexp));
         databaseHandler.setExp(this.name, this.experience);
         var origLevel = this.level;
         this.level = Types.getLevel(this.experience);
-        if(origLevel !== this.level){
+        if(origLevel !== this.level) {
             this.updateHitPoints();
             this.send(new Messages.HitPoints(this.maxHitPoints).serialize());
         }
     },
    
     setGuildId: function(id) {
-		if(typeof this.server.guilds[id] !== "undefined"){
-			this.guildId = id;
-		}
-		else{
-			log.error(this.id + " cannot add guild " + id + ", it does not exist");
-		}
-	},
-	
-	getGuild: function() {
-		return this.hasGuild ? this.server.guilds[this.guildId] : undefined;
-	},
-	
-	hasGuild: function() {
-		return (typeof this.guildId !== "undefined");
-	},
-	
-	leaveGuild: function(){
-		if(this.hasGuild()){
-			var leftGuild = this.getGuild();
-			leftGuild.removeMember(this);
-			this.server.pushToGuild(leftGuild, new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]));
-			delete this.guildId;
-			this.server.pushToPlayer(this, new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]));
-		}
-		else{
-			this.server.pushToPlayer(this, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.NOLEAVE,""));
-		}
-	},
-  checkName: function(name){
-      if(name === null) return false;
-      else if(name === '') return false;
-      else if(name === ' ') return false;
-
-      for(var i=0; i < name.length; i++){
-          var c = name.charCodeAt(i);
-
-          if(!((0xAC00 <= c && c <= 0xD7A3) || (0x3131 <= c && c <= 0x318E)
-            || (0x61 <= c && c <= 0x7A) ||Â (0x41 <= c && c <= 0x5A)
-            || (0x30 <= c && c <= 0x39))){
-              return false;
-          }
-      }
-      return true;
-  },
-  sendWelcome: function(armor, weapon, avatar, weaponAvatar, exp, admin,
-      bannedTime, banUseTime,
-      inventory, inventoryNumber, achievementFound, achievementProgress,
-      x, y,
-      chatBanEndTime){
-      var self = this;
-      self.kind = Types.Entities.WARRIOR;
-      self.admin = admin;
-      self.equipArmor(Types.getKindFromString(armor));
-      self.equipAvatar(Types.getKindFromString(avatar));
-      self.equipWeapon(Types.getKindFromString(weapon));
-      self.inventory[0] = Types.getKindFromString(inventory[0]);
-      self.inventory[1] = Types.getKindFromString(inventory[1]);
-      self.inventoryCount[0] = inventoryNumber[0];
-      self.inventoryCount[1] = inventoryNumber[1];
-      self.achievement[1] = {found: achievementFound[0], progress: achievementProgress[0]};
-      self.achievement[2] = {found: achievementFound[1], progress: achievementProgress[1]};
-      self.achievement[3] = {found: achievementFound[2], progress: achievementProgress[2]};
-      self.achievement[4] = {found: achievementFound[3], progress: achievementProgress[3]};
-      self.achievement[5] = {found: achievementFound[4], progress: achievementProgress[4]};
-      self.achievement[6] = {found: achievementFound[5], progress: achievementProgress[5]};
-      self.achievement[7] = {found: achievementFound[6], progress: achievementProgress[6]};
-      self.achievement[8] = {found: achievementFound[7], progress: achievementProgress[7]};
-      self.bannedTime = bannedTime;
-      self.banUseTime = banUseTime;
-      self.experience = exp;
-      self.level = Types.getLevel(self.experience);
-      self.orientation = Utils.randomOrientation;
-      self.updateHitPoints();
-      if(x === 0 && y === 0){
-        self.updatePosition();
-      } else {
-        self.setPosition(x, y);
-      }
-      self.chatBanEndTime = chatBanEndTime;
-
-      self.server.addPlayer(self);
-      self.server.enter_callback(self);
-
-      self.send([
-        Types.Messages.WELCOME, self.id, self.name, self.x, self.y,
-        self.hitPoints, armor, weapon, avatar, weaponAvatar,
-        self.experience, self.admin,
-        inventory[0], inventoryNumber[0], inventory[1], inventoryNumber[1],
-        achievementFound[0], achievementProgress[0], achievementFound[1],
-        achievementProgress[1], achievementFound[2], achievementProgress[2],
-        achievementFound[3], achievementProgress[3], achievementFound[4],
-        achievementProgress[4], achievementFound[5], achievementProgress[5],
-        achievementFound[6], achievementProgress[6], achievementFound[7],
-        achievementProgress[7]]);
-      self.hasEnteredGame = true;
-      self.isDead = false;
-
-//    self.server.addPlayer(self, aGuildId);
-
+        if(typeof this.server.guilds[id] !== "undefined") {
+            this.guildId = id;
+        }
+        else {
+            log.error(this.id + " cannot add guild " + id + ", it does not exist");
+        }
     },
-	    checkName: function(name){
+    
+    getGuild: function() {
+        return this.hasGuild ? this.server.guilds[this.guildId] : undefined;
+    },
+    
+    hasGuild: function() {
+        return (typeof this.guildId !== "undefined");
+    },
+    
+    leaveGuild: function() {
+        if(this.hasGuild()){
+            var leftGuild = this.getGuild();
+            leftGuild.removeMember(this);
+            this.server.pushToGuild(leftGuild, new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]));
+            delete this.guildId;
+            this.server.pushToPlayer(this, new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]));
+        }
+        else {
+            this.server.pushToPlayer(this, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.NOLEAVE,""));
+        }
+    },
+
+    checkName: function(name) {
         if(name === null) return false;
         else if(name === '') return false;
         else if(name === ' ') return false;
 
-        for(var i=0; i < name.length; i++){
+        for(var i=0; i < name.length; i++) {
             var c = name.charCodeAt(i);
 
-           if(!((0xAC00 <= c && c <= 0xD7A3) || (0x3131 <= c && c <= 0x318E)
-             || (0x61 <= c && c <= 0x7A) || (0x41 <= c && c <= 0x5A)
-             || (0x30 <= c && c <= 0x39))){
-               return false;
-           }
+            if(!((0xAC00 <= c && c <= 0xD7A3) || (0x3131 <= c && c <= 0x318E)
+                || (0x61 <= c && c <= 0x7A) || (0x41 <= c && c <= 0x5A)
+                || (0x30 <= c && c <= 0x39))) {
+                return false;
+            }
         }
         return true;
     },
 
+    sendWelcome: function(armor, weapon, avatar, weaponAvatar, exp, admin,
+                          bannedTime, banUseTime,
+                          inventory, inventoryNumber, achievementFound, achievementProgress,
+                          x, y,
+                          chatBanEndTime) {
+        var self = this;
+        self.kind = Types.Entities.WARRIOR;
+        self.admin = admin;
+        self.equipArmor(Types.getKindFromString(armor));
+        self.equipAvatar(Types.getKindFromString(avatar));
+        self.equipWeapon(Types.getKindFromString(weapon));
+        self.inventory[0] = Types.getKindFromString(inventory[0]);
+        self.inventory[1] = Types.getKindFromString(inventory[1]);
+        self.inventoryCount[0] = inventoryNumber[0];
+        self.inventoryCount[1] = inventoryNumber[1];
+        self.achievement[1] = {found: achievementFound[0], progress: achievementProgress[0]};
+        self.achievement[2] = {found: achievementFound[1], progress: achievementProgress[1]};
+        self.achievement[3] = {found: achievementFound[2], progress: achievementProgress[2]};
+        self.achievement[4] = {found: achievementFound[3], progress: achievementProgress[3]};
+        self.achievement[5] = {found: achievementFound[4], progress: achievementProgress[4]};
+        self.achievement[6] = {found: achievementFound[5], progress: achievementProgress[5]};
+        self.achievement[7] = {found: achievementFound[6], progress: achievementProgress[6]};
+        self.achievement[8] = {found: achievementFound[7], progress: achievementProgress[7]};
+        self.bannedTime = bannedTime;
+        self.banUseTime = banUseTime;
+        self.experience = exp;
+        self.level = Types.getLevel(self.experience);
+        self.orientation = Utils.randomOrientation;
+        self.updateHitPoints();
+        if(x === 0 && y === 0) {
+            self.updatePosition();
+        } else {
+            self.setPosition(x, y);
+        }
+        self.chatBanEndTime = chatBanEndTime;
+
+        self.server.addPlayer(self);
+        self.server.enter_callback(self);
+
+        self.send([
+            Types.Messages.WELCOME, self.id, self.name, self.x, self.y,
+            self.hitPoints, armor, weapon, avatar, weaponAvatar,
+            self.experience, self.admin,
+            inventory[0], inventoryNumber[0], inventory[1], inventoryNumber[1],
+            achievementFound[0], achievementProgress[0], achievementFound[1],
+            achievementProgress[1], achievementFound[2], achievementProgress[2],
+            achievementFound[3], achievementProgress[3], achievementFound[4],
+            achievementProgress[4], achievementFound[5], achievementProgress[5],
+            achievementFound[6], achievementProgress[6], achievementFound[7],
+            achievementProgress[7]
+        ]);
+
+        self.hasEnteredGame = true;
+        self.isDead = false;
+
+        // self.server.addPlayer(self, aGuildId);
+
+    },
+
+    checkName: function(name) {
+        if(name === null) return false;
+        else if(name === '') return false;
+        else if(name === ' ') return false;
+
+        for(var i=0; i < name.length; i++) {
+            var c = name.charCodeAt(i);
+
+            if(!((0xAC00 <= c && c <= 0xD7A3) || (0x3131 <= c && c <= 0x318E)
+                || (0x61 <= c && c <= 0x7A) || (0x41 <= c && c <= 0x5A)
+                || (0x30 <= c && c <= 0x39))) {
+                return false;
+            }
+        }
+        return true;
+    },
+    
 });
