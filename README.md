@@ -42,6 +42,8 @@ Clone the git repo:
 Then install the Node.js dependencies by running:
 
     $ npm install -d
+    
+Before starting the BrowserQuest server, you must start Redis. In Windows, you can simply run `redis-server.exe` in your `redis\bin\release` directory.
 
 Then start the server by running:
 
