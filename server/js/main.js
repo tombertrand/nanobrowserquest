@@ -62,7 +62,7 @@ function main(config) {
         }
         else {
             // simply fill each world sequentially until they are full
-            world = _.detect(worlds, function(world) {
+            world = _.find(worlds, function(world) {
                 return world.playerCount < config.nb_players_per_world;
             });
             world.updatePopulation();
