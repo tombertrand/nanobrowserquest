@@ -638,7 +638,10 @@ module.exports = Player = Character.extend({
 
             if(!((0xAC00 <= c && c <= 0xD7A3) || (0x3131 <= c && c <= 0x318E)       // Korean (Unicode blocks "Hangul Syllables" and "Hangul Compatibility Jamo")
                 || (0x61 <= c && c <= 0x7A) || (0x41 <= c && c <= 0x5A)             // English (lowercase and uppercase)
-                || (0x30 <= c && c <= 0x39))) {                                     // Numbers
+                || (0x30 <= c && c <= 0x39)                                         // Numbers
+                || (c == 0x20) || (c == 0x5f)                                       // Space and underscore
+                || (c == 0x28) || (c == 0x29)                                       // Parentheses
+                || (c == 0x5e))) {                                                  // Caret
                 return false;
             }
         }
