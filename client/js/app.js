@@ -142,7 +142,7 @@ define(['jquery', 'storage'], function($, Storage) {
                                 break;
                             case 'invalidusername':
                                 // The username contains characters that are not allowed (rejected by the sanitizer)
-                                self.addValidationError(self.getUsernameField(), 'The username you entered is invalid.');
+                                self.addValidationError(self.getUsernameField(), 'The username you entered contains invalid characters.');
                                 break;
                             case 'loggedin':
                                 // Attempted to log in with the same user multiple times simultaneously
