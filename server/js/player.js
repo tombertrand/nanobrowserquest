@@ -63,11 +63,13 @@ module.exports = Player = Character.extend({
                 var name = Utils.sanitize(message[1]);
                 var pw = Utils.sanitize(message[2]);
 
-                // If name was cleared by the sanitizer, give a default name.
                 // Always ensure that the name is not longer than a maximum length.
                 // (also enforced by the maxlength attribute of the name input element).
                 self.name = name.substr(0, 12).trim()
+
+                // Validate the username
                 if(!self.checkName(self.name)){
+                    self.connection.sendUTF8("invalidusername");
                     self.connection.close("Invalid name " + self.name);
                     return;
                 }

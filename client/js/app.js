@@ -140,6 +140,10 @@ define(['jquery', 'storage'], function($, Storage) {
                                 // Attempted to create a new user, but the username was taken
                                 self.addValidationError(self.getUsernameField(), 'The username you entered is not available.');
                                 break;
+                            case 'invalidusername':
+                                // The username contains characters that are not allowed (rejected by the sanitizer)
+                                self.addValidationError(self.getUsernameField(), 'The username you entered is invalid.');
+                                break;
                             case 'loggedin':
                                 // Attempted to log in with the same user multiple times simultaneously
                                 self.addValidationError(self.getUsernameField(), 'A player with the specified username is already logged in.');
