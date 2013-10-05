@@ -1,7 +1,7 @@
-var fs = require('fs'),
-    Metrics = require('./metrics'),
-    ProductionConfig = require('./productionconfig'),
-    _ = require('underscore');
+var fs = require('fs');
+var Metrics = require('./metrics');
+var ProductionConfig = require('./productionconfig');
+var _ = require('underscore');
 
 
 function main(config) {
@@ -20,34 +20,34 @@ function main(config) {
         _.extend(config, production_config.getProductionSettings());
     }
 
-    var ws = require("./ws"),
-        WorldServer = require("./worldserver"),
-        server = new ws.MultiVersionWebsocketServer(process.env.OPENSHIFT_NODEJS_PORT || config.port, config.use_one_port),
-        metrics = config.metrics_enabled ? new Metrics(config) : null,
-        worlds = [],
-        lastTotalPlayers = 0,
-        DatabaseSelector = require("./databaseselector");
-        checkPopulationInterval = setInterval(function() {
-            if(metrics && metrics.isReady) {
-                metrics.updateWorldCount();
-                metrics.getTotalPlayers(function(totalPlayers) {
-                    if(totalPlayers !== lastTotalPlayers) {
-                        lastTotalPlayers = totalPlayers;
-                        _.each(worlds, function(world) {
-                            world.updatePopulation(totalPlayers);
-                        });
-                    }
-                });
-            }
-        }, 1000);
+    var ws = require("./ws");
+    var WorldServer = require("./worldserver");
+    var server = new ws.MultiVersionWebsocketServer(process.env.OPENSHIFT_NODEJS_PORT || config.port, config.use_one_port);
+    var metrics = config.metrics_enabled ? new Metrics(config) : null;
+    var worlds = [];
+    var lastTotalPlayers = 0;
+    var DatabaseSelector = require("./databaseselector");
+    var checkPopulationInterval = setInterval(function() {
+        if(metrics && metrics.isReady) {
+            metrics.updateWorldCount();
+            metrics.getTotalPlayers(function(totalPlayers) {
+                if(totalPlayers !== lastTotalPlayers) {
+                    lastTotalPlayers = totalPlayers;
+                    _.each(worlds, function(world) {
+                        world.updatePopulation(totalPlayers);
+                    });
+                }
+            });
+        }
+    }, 1000);
 
     log.info("Starting BrowserQuest game server...");
-    selector = DatabaseSelector(config);
+    var selector = DatabaseSelector(config);
     databaseHandler = new selector(config);
 
     server.onConnect(function(connection) {
-        var world, // the one in which the player will be spawned
-            connect = function() {
+        var world; // the one in which the player will be spawned
+        var connect = function() {
                 if(world) {
                     world.connect_callback(new Player(connection, world, databaseHandler));
                 }
@@ -129,8 +129,8 @@ function getConfigFile(path, callback) {
     });
 }
 
-var defaultConfigPath = './server/config.json',
-    customConfigPath = './server/config_local.json';
+var defaultConfigPath = './server/config.json';
+var customConfigPath = './server/config_local.json';
 
 process.argv.forEach(function (val, index, array) {
     if(index === 2) {
