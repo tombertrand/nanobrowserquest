@@ -66,7 +66,7 @@ module.exports = Player = Character.extend({
                 // If name was cleared by the sanitizer, give a default name.
                 // Always ensure that the name is not longer than a maximum length.
                 // (also enforced by the maxlength attribute of the name input element).
-                self.name = name.substr(0, 8).split(' ')[0];
+                self.name = name.substr(0, 12).trim()
                 if(!self.checkName(self.name)){
                     self.connection.close("Invalid name " + self.name);
                     return;
