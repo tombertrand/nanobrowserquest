@@ -98,8 +98,8 @@ define(['jquery', 'storage'], function($, Storage) {
         },
 
         startGame: function(action, username, userpw, email) {
-            var self = this,
-                firstTimePlaying = !self.storage.hasAlreadyPlayed();
+            var self = this;
+            var firstTimePlaying = !self.storage.hasAlreadyPlayed();
 
             if(username && !this.game.started) {
                 var optionsSet = false,
@@ -122,6 +122,13 @@ define(['jquery', 'storage'], function($, Storage) {
                     this.game.setServerOptions(config.build.host, config.build.port, username, userpw, email);
                 }
                 //>>includeEnd("prodHost");
+
+                if(!self.isDesktop) {
+                    // On mobile and tablet we load the map after the player has clicked
+                    // on the login/create button instead of loading it in a web worker.
+                    // See initGame in main.js.
+                    self.game.loadMap();
+                }
 
                 this.center();
                 this.game.run(action, function(result) {
@@ -158,13 +165,7 @@ define(['jquery', 'storage'], function($, Storage) {
         },
 
         start: function() {
-            this.hideIntro(function() {
-                if(!self.isDesktop) {
-                    // On mobile and tablet we load the map after the player has clicked
-                    // on the PLAY button instead of loading it in a web worker.
-                    self.game.loadMap();
-                }
-            });
+            this.hideIntro();
             $('body').addClass('started');
             if(firstTimePlaying) {
                 this.toggleInstructions();
@@ -381,12 +382,11 @@ define(['jquery', 'storage'], function($, Storage) {
             }
         },
 
-        hideIntro: function(hidden_callback) {
+        hideIntro: function() {
             clearInterval(this.watchNameInputInterval);
             $('body').removeClass('intro');
             setTimeout(function() {
                 $('body').addClass('game');
-                hidden_callback();
             }, 500);
         },
 
