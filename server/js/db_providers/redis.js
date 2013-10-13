@@ -10,7 +10,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         client = redis.createClient(process.env.OPENSHIFT_REDIS_PORT || process.env.OPENSHIFT_REDIS_DB_PORT || config.redis_port,
             process.env.OPENSHIFT_REDIS_HOST || process.env.OPENSHIFT_REDIS_DB_HOST || config.redis_host,
           {socket_nodelay: true});
-        client.auth(process.env.REDIS_PASSWORD || "");
+        client.auth(process.env.REDIS_PASSWORD || config.redis_password ||  "");
     },
     loadPlayer: function(player){
         var self = this;
