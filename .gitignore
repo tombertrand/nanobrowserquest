@@ -8,3 +8,5 @@ config_local*
 .project
 .idea
 browserquest.conf
+*.sublime-project
+*.sublime-workspace
