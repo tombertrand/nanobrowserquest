@@ -257,7 +257,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
                     setWorldPlayersString("players");
                 }
 
-                $("#world-population").find("string").text(Types.getLevel);
+                $("#world-population").find("span:nth-child(1)").text(totalPlayers);
                 if(totalPlayers == 1) {
                     setTotalPlayersString("player");
                 } else {
