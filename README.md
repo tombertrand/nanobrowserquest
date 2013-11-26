@@ -166,9 +166,20 @@ Currently, BrowserQuest can run on the following PAAS (Platform as a Service) pr
         $ git remote add github https://github.com/browserquest/BrowserQuest.git
         $ git fetch github
         $ git reset --hard github/master
+        
+5. Copy the BrowserQuest config file with the following command:
 
+        $ cp server/config.json server/config_local.json
+    
+6. Open `server/config_local.json` in a text editor such as Gedit (Linux), TextEdit (OS X), or Vim.
+On the line that reads `"production": "heroku",`, change `"heroku"` to `"openshift"`.
 
-5. Now, deploy to OpenShift with one final command (this will take several minutes):
+7. Add this file to your repository by running the following commands:
+
+        $ git add server/config_local.json
+        $ git commit -m "Added config_local.json"
+
+8. Now, deploy to OpenShift with one final command (this will take several minutes):
 
         $ git push -f
 
