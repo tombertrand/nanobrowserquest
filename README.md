@@ -143,6 +143,7 @@ Deploying BrowserQuest
 
 Currently, BrowserQuest can run on the following PAAS (Platform as a Service) providers:
 * [OpenShift](https://www.openshift.com)
+* [Heroku](https://www.heroku.com)
 
 ### Instructions for OpenShift ###
 1. Follow the instructions to get started with the OpenShift client tools [here](https://www.openshift.com/get-started).
@@ -179,6 +180,45 @@ Congratulations! You have now deployed BrowserQuest to Openshift! You can see th
 Visit the url shown by the above command to see BrowserQuest running. You will need to add ":8000" to the end. Use the url below as a guide:
 
     http://your_openshift_browserquest_url.rhcloud.com:8000/
+    
+### Instructions for Heroku ###
+
+1. Install the Heroku toolbelt from [here](https://toolbelt.herokuapp.com/).
+
+2. Create a new application by running the following command:
+
+        $ heroku create [NAME]
+    
+Where [NAME] is an optional name for your application (Heroku will automatically create one otherwise).
+
+3. Sign up for a Redis provider, such as [Redis To Go](https://redistogo.com), or host a Redis instance yourself.
+
+4. Run the following commands to allow BrowserQuest to run on Heroku:
+
+        $ heroku config:add HEROKU=true
+        $ heroku config:add HEROKU_REDIS_HOST=[REDIS_HOST]
+        $ heroku config:add HEROKU_REDIS_PORT=[REDIS_PORT]
+        $ heroku config:add HEROKU_REDIS_PASSWORD=[REDIS_PASSWORD]
+    
+Where [REDIS_HOST], [REDIS_PORT], and [REDIS_PASSOWRD] are your Redis hostname, port, and password, respectively.
+If you Redis instance is configued without a password, omit the last command.
+
+Note: If you use RedisToGo, you will be provided with a URL that looks something like this:
+
+    redis://redistogo:12345678901234567890@something.redistogo.com:9023/
+    
+In this case, your REDIS_HOST is `something.redistogo.com`, your REDIS_PORT is `9023`, and your REDIS_PASSWORD is `12345678901234567890`.
+
+5. Deploy to Heroku by running the following command:
+
+        $ git push heroku master
+    
+6. Enable the Heroku WebSockets lab (needed for communication between the browser and the BrowserQuest server) with the following command:
+
+        $ heroku labs:enable websockets
+    
+
+Congratulations! You have now deployed BrowserQuest to Heroku! To open BrowserQuest in your browser, run `heroku open`.
 
 
 Documentation
