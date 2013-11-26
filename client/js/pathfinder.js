@@ -1,4 +1,3 @@
-
 define(['lib/astar'], function(AStar) {
 
     var Pathfinder = Class.extend({
@@ -78,7 +77,7 @@ define(['lib/astar'], function(AStar) {
 
         applyIgnoreList_: function(ignored) {
             var self = this,
-                x, y, g;
+                x, y;
 
             _.each(this.ignored, function(entity) {
                 x = entity.isMoving() ? entity.nextGridX : entity.gridX;
