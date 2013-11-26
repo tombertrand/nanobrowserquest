@@ -10,7 +10,7 @@
     "redis_host": "127.0.0.1",
     "memcached_host": "127.0.0.1",
     "memcached_port": 11211,
-    "game_servers": ["localhost"],
+    "game_servers": [{server: "localhost", name: "Local Server"}],
     "server_name" : "localhost",
     "production": "openshift",
     "database": "redis"
