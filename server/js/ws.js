@@ -111,10 +111,11 @@ WS.MultiVersionWebsocketServer = Server.extend({
     _connections: {},
     _counter: 0,
 
-    init: function (port, useOnePort) {
+    init: function (port, useOnePort, ip) {
         var self = this;
 
         this._super(port);
+        this.ip = ip;
 
         // Are we doing both client and server on one port?
         if (useOnePort === true) {
@@ -208,7 +209,7 @@ WS.MultiVersionWebsocketServer = Server.extend({
                 response.end();
             });
 
-            this._httpServer = http.createServer(app).listen(port, config.ip || undefined, function serverEverythingListening() {
+            this._httpServer = http.createServer(app).listen(port, this.ip || undefined, function serverEverythingListening() {
                 log.info('Server (everything) is listening on port ' + port);
             });
         } else {
@@ -223,7 +224,7 @@ WS.MultiVersionWebsocketServer = Server.extend({
                 }
                 response.end();
             });
-            this._httpServer.listen(port, config.ip || undefined, function serverOnlyListening() {
+            this._httpServer.listen(port, this.ip || undefined, function serverOnlyListening() {
                 log.info('Server (only) is listening on port ' + port);
             });
         }
