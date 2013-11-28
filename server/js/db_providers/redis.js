@@ -3,7 +3,8 @@ var Utils = require('../utils');
 var cls = require("../lib/class"),
     Player = require('../player'),
     Messages = require("../message"),
-    redis = require("redis");
+    redis = require("redis"),
+    bcrypt = require("bcrypt");
 
 module.exports = DatabaseHandler = cls.Class.extend({
     init: function(config){
@@ -97,79 +98,82 @@ module.exports = DatabaseHandler = cls.Class.extend({
                             var chatBanEndTime = Utils.NaN2Zero(replies[35]);
 
                             // Check Password
-                            if(pw !== player.pw){
-                                player.connection.sendUTF8("invalidlogin");
-                                player.connection.close("Wrong Password: " + player.name);
-                                return;
-                            }
 
-                            var d = new Date();
-                            var lastLoginTimeDate = new Date(lastLoginTime);
-                            if(lastLoginTimeDate.getDate() !== d.getDate()
-                            && pubPoint > 0){
-                              var targetInventoryNumber = -1;
-                              if(inventory[0] === "burger"){
-                                targetInventoryNumber = 0;
-                              } else if(inventory[1] === "burger"){
-                                targetInventoryNumber = 1;
-                              } else if(inventory[0] === null){
-                                targetInventoryNumber = 0;
-                              } else if(inventory[1] === null){
-                                targetInventoryNumber = 1;
-                              }
-
-                              if(targetInventoryNumber >= 0){
-                                if(pubPoint > 100){
-                                  pubPoint = 100;
+                            bcrypt.compare(player.pw, pw, function(err, res) {
+                                if(!res) {
+                                    player.connection.sendUTF8("invalidlogin");
+                                    player.connection.close("Wrong Password: " + player.name);
+                                    return;
                                 }
-                                inventory[targetInventoryNumber] = "burger";
-                                inventoryNumber[targetInventoryNumber] += pubPoint*10;
-                                self.setInventory(player.name,
-                                         Types.getKindFromString("burger"),
-                                         targetInventoryNumber,
-                                         inventoryNumber[targetInventoryNumber]);
-                                client.zrem("adrank", player.name);
-                              }
-                            }
 
-                            // Check Ban
-                            d.setDate(d.getDate() - d.getDay());
-                            d.setHours(0, 0, 0);
-                            if(lastLoginTime < d.getTime()){
-                                log.info(player.name + "ban is initialized.");
-                                bannedTime = 0;
-                                client.hset("b:" + player.connection._connection.remoteAddress, "time", bannedTime);
-                            }
-                            client.hset("b:" + player.connection._connection.remoteAddress, "loginTime", curTime);
+                                var d = new Date();
+                                var lastLoginTimeDate = new Date(lastLoginTime);
+                                if(lastLoginTimeDate.getDate() !== d.getDate()
+                                && pubPoint > 0){
+                                  var targetInventoryNumber = -1;
+                                  if(inventory[0] === "burger"){
+                                    targetInventoryNumber = 0;
+                                  } else if(inventory[1] === "burger"){
+                                    targetInventoryNumber = 1;
+                                  } else if(inventory[0] === null){
+                                    targetInventoryNumber = 0;
+                                  } else if(inventory[1] === null){
+                                    targetInventoryNumber = 1;
+                                  }
 
-                            if(player.name === pubTopName.toString()){
-                                avatar = nextNewArmor;
-                            }
-
-                            var admin = null;
-                            var i = 0;
-                            for(i = 0; i < adminnames.length; i++){
-                                if(adminnames[i] === player.name){
-                                    admin = 1;
-                                    log.info("Admin " + player.name + "login");
+                                  if(targetInventoryNumber >= 0){
+                                    if(pubPoint > 100){
+                                      pubPoint = 100;
+                                    }
+                                    inventory[targetInventoryNumber] = "burger";
+                                    inventoryNumber[targetInventoryNumber] += pubPoint*10;
+                                    self.setInventory(player.name,
+                                             Types.getKindFromString("burger"),
+                                             targetInventoryNumber,
+                                             inventoryNumber[targetInventoryNumber]);
+                                    client.zrem("adrank", player.name);
+                                  }
                                 }
-                            }
-                            log.info("Player name: " + player.name);
-                            log.info("Armor: " + armor);
-                            log.info("Weapon: " + weapon);
-                            log.info("Experience: " + exp);
-                            log.info("Banned Time: " + (new Date(bannedTime)).toString());
-                            log.info("Ban Use Time: " + (new Date(banUseTime)).toString());
-                            log.info("Last Login Time: " + lastLoginTimeDate.toString());
-                            log.info("Chatting Ban End Time: " + (new Date(chatBanEndTime)).toString());
 
-                            player.sendWelcome(armor, weapon,
-                                avatar, weaponAvatar, exp, admin,
-                                bannedTime, banUseTime,
-                                inventory, inventoryNumber,
-                                achievementFound, achievementProgress,
-                                x, y,
-                                chatBanEndTime);
+                                // Check Ban
+                                d.setDate(d.getDate() - d.getDay());
+                                d.setHours(0, 0, 0);
+                                if(lastLoginTime < d.getTime()){
+                                    log.info(player.name + "ban is initialized.");
+                                    bannedTime = 0;
+                                    client.hset("b:" + player.connection._connection.remoteAddress, "time", bannedTime);
+                                }
+                                client.hset("b:" + player.connection._connection.remoteAddress, "loginTime", curTime);
+
+                                if(player.name === pubTopName.toString()){
+                                    avatar = nextNewArmor;
+                                }
+
+                                var admin = null;
+                                var i = 0;
+                                for(i = 0; i < adminnames.length; i++){
+                                    if(adminnames[i] === player.name){
+                                        admin = 1;
+                                        log.info("Admin " + player.name + "login");
+                                    }
+                                }
+                                log.info("Player name: " + player.name);
+                                log.info("Armor: " + armor);
+                                log.info("Weapon: " + weapon);
+                                log.info("Experience: " + exp);
+                                log.info("Banned Time: " + (new Date(bannedTime)).toString());
+                                log.info("Ban Use Time: " + (new Date(banUseTime)).toString());
+                                log.info("Last Login Time: " + lastLoginTimeDate.toString());
+                                log.info("Chatting Ban End Time: " + (new Date(chatBanEndTime)).toString());
+
+                                player.sendWelcome(armor, weapon,
+                                    avatar, weaponAvatar, exp, admin,
+                                    bannedTime, banUseTime,
+                                    inventory, inventoryNumber,
+                                    achievementFound, achievementProgress,
+                                    x, y,
+                                    chatBanEndTime);
+                            });
                     });
                     return;
                 }

@@ -8,7 +8,8 @@ var cls = require("./lib/class"),
     Properties = require("./properties"),
     Formulas = require("./formulas"),
     check = require("./format").check,
-    Types = require("../../shared/js/gametypes");
+    Types = require("../../shared/js/gametypes")
+    bcrypt = require('bcrypt');
 
 module.exports = Player = Character.extend({
     init: function(connection, worldServer, databaseHandler) {
@@ -76,9 +77,14 @@ module.exports = Player = Character.extend({
                 self.pw = pw.substr(0, 15);
 
                 if(action === Types.Messages.CREATE) {
-                    log.info("CREATE: " + self.name);
-                    self.email = Utils.sanitize(message[3]);
-                    databaseHandler.createPlayer(self);
+                    bcrypt.genSalt(10, function(err, salt) {
+                        bcrypt.hash(self.pw, salt, function(err, hash) {
+                            log.info("CREATE: " + self.name);
+                            self.email = Utils.sanitize(message[3]);
+                            self.pw = hash;
+                            databaseHandler.createPlayer(self);
+                        })
+                    });
                 } else {
                     log.info("LOGIN: " + self.name);
                     if(self.server.loggedInPlayer(self.name)) {
@@ -89,6 +95,7 @@ module.exports = Player = Character.extend({
                     databaseHandler.checkBan(self);
                     databaseHandler.loadPlayer(self);
                 }
+
                 // self.kind = Types.Entities.WARRIOR;
                 // self.equipArmor(message[2]);
                 // self.equipWeapon(message[3]);
@@ -101,10 +108,10 @@ module.exports = Player = Character.extend({
                 // self.orientation = Utils.randomOrientation();
                 // self.updateHitPoints();
                 // self.updatePosition();
-                // 
+                //
                 // self.server.addPlayer(self, aGuildId);
                 // self.server.enter_callback(self);
-                // 
+                //
                 // self.send([Types.Messages.WELCOME, self.id, self.name, self.x, self.y, self.hitPoints]);
                 // self.hasEnteredGame = true;
                 // self.isDead = false;
@@ -318,7 +325,7 @@ module.exports = Player = Character.extend({
 
                         if(item.count > 0) {
                             self.server.handleItemDespawn(item);
-                            
+
                             if(Types.isHealingItem(item.kind)) {
                                 if(item.count === self.inventoryCount[inventoryNumber]) {
                                     self.inventory[inventoryNumber] = null;
@@ -334,16 +341,16 @@ module.exports = Player = Character.extend({
                         }
                     } else if(message[1] === "eat"){
                         var amount;
-                            
+
                         switch(itemKind) {
-                            case Types.Entities.FLASK: 
+                            case Types.Entities.FLASK:
                                 amount = 80;
                                 break;
-                            case Types.Entities.BURGER: 
+                            case Types.Entities.BURGER:
                                 amount = 200;
                                 break;
                         }
-                            
+
                         if(!self.hasFullHealth()) {
                             self.regenHealthBy(amount);
                             self.server.pushToPlayer(self, self.health());
@@ -599,7 +606,7 @@ module.exports = Player = Character.extend({
             this.send(new Messages.HitPoints(this.maxHitPoints).serialize());
         }
     },
-   
+
     setGuildId: function(id) {
         if(typeof this.server.guilds[id] !== "undefined") {
             this.guildId = id;
@@ -608,15 +615,15 @@ module.exports = Player = Character.extend({
             log.error(this.id + " cannot add guild " + id + ", it does not exist");
         }
     },
-    
+
     getGuild: function() {
         return this.hasGuild ? this.server.guilds[this.guildId] : undefined;
     },
-    
+
     hasGuild: function() {
         return (typeof this.guildId !== "undefined");
     },
-    
+
     leaveGuild: function() {
         if(this.hasGuild()){
             var leftGuild = this.getGuild();
@@ -708,5 +715,5 @@ module.exports = Player = Character.extend({
         // self.server.addPlayer(self, aGuildId);
 
     },
-    
+
 });
