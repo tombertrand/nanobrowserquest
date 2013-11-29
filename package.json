@@ -18,6 +18,7 @@
     , "redis": ">=0"
     , "connect": ">=2"
     , "requirejs": ">=2"
+    , "bcrypt": ">=0"
   }
   , "devDependencies": {
       "mocha": ">=1"
