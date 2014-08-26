@@ -34,6 +34,17 @@ Getting the server up and running is pretty easy. You need to have the following
 * zlib-devel ← this is the Fedora/RHEL package name, others may be sightly different.  Not needed on windows.
 * Redis server ← this is needed for the game to connect to the backend database.
 
+    # Ubuntu Install
+    $ sudo apt-get update
+    $ sudo apt-get install nodejs
+    $ sudo apt-get install g++
+    $ sudo apt-get install make
+    $ sudo apt-get install memcached
+    $ sudo apt-get install libncurses5
+    $ sudo apt-get install redis-server
+    $ sudo apt-get install git
+    $ sudo apt-get install npm
+
 Clone the git repo:
 
     $ git clone git://github.com/browserquest/BrowserQuest.git
