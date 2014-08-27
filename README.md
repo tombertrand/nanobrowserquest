@@ -34,6 +34,15 @@ Getting the server up and running is pretty easy. You need to have the following
 * zlib-devel ← this is the Fedora/RHEL package name, others may be sightly different.  Not needed on windows.
 * Redis server ← this is needed for the game to connect to the backend database.
 
+Ubuntu
+------
+
+    $ sudo apt-get update
+    $ sudo apt-get upgrade
+    $ sudo apt-get install g++ make memcached libncurses5 redis-server git -y
+    $ curl -sL https://deb.nodesource.com/setup | sudo bash -
+    $ sudo apt-get install nodejs
+
 Clone the git repo:
 
     $ git clone git://github.com/browserquest/BrowserQuest.git
@@ -41,6 +50,7 @@ Clone the git repo:
 
 Then install the Node.js dependencies by running:
 
+    $ npm config set registry http://registry.npmjs.org/
     $ npm install -d
     
 Before starting the BrowserQuest server, you must start Redis. In Windows, you can simply run `redis-server.exe` in your `redis\bin\release` directory.
