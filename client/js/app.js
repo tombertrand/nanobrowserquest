@@ -99,7 +99,7 @@ define(['jquery', 'storage'], function($, Storage) {
 
         startGame: function(action, username, userpw, email) {
             var self = this;
-            var firstTimePlaying = !self.storage.hasAlreadyPlayed();
+            self.firstTimePlaying = !self.storage.hasAlreadyPlayed();
 
             if(username && !this.game.started) {
                 var optionsSet = false,
@@ -167,7 +167,7 @@ define(['jquery', 'storage'], function($, Storage) {
         start: function() {
             this.hideIntro();
             $('body').addClass('started');
-            if(firstTimePlaying) {
+            if(self.firstTimePlaying) {
                 this.toggleInstructions();
             }
         },
