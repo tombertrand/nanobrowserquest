@@ -212,6 +212,7 @@ WS.WebsocketServer = Server.extend({
 
         this._ioServer = new socketio(this._httpServer);
         this._ioServer.on('connection', function webSocketListener(socket) {
+            log.info('Client socket connected from ' + socket.conn.remoteAddress);
             // Add remoteAddress property
             socket.remoteAddress = socket.conn.remoteAddress;
 
@@ -262,6 +263,7 @@ WS.socketioConnection = Connection.extend({
         });
 
         this._connection.on('disconnect', function () {
+            log.info('Client closed socket ' + self._connection.conn.remoteAddress);
             if (self.closeCallback) {
                 self.closeCallback();
             }
