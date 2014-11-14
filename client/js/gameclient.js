@@ -56,14 +56,10 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
 
             log.info("Trying to connect to server : "+url);
 
-            if(window.MozWebSocket) {
-                this.connection = new MozWebSocket(url);
-            } else {
-                this.connection = new WebSocket(url);
-            }
+            this.connection = io(url); // This sets the connection as a socket.io Socket.
 
             if(dispatcherMode) {
-                this.connection.onmessage = function(e) {
+                this.connection.on('message', function(e) {
                     var reply = JSON.parse(e.data);
 
                     if(reply.status === 'OK') {
@@ -73,38 +69,38 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                     } else {
                         alert("Unknown error while connecting to BrowserQuest.");
                     }
-                };
+                });
             } else {
-                this.connection.onopen = function(e) {
+                this.connection.on('connection', function() {
                     log.info("Connected to server "+self.host+":"+self.port);
-                };
+                });
 
-                this.connection.onmessage = function(e) {
-                    if(e.data === "go") {
+                this.connection.on('message', function(e) {
+                    if(e === 'go') {
                         if(self.connected_callback) {
                             self.connected_callback();
                         }
                         return;
                     }
-                    if(e.data === 'timeout') {
+                    if(e === 'timeout') {
                         self.isTimeout = true;
                         return;
                     }
-                    if(e.data === 'invalidlogin' || e.data === 'userexists' || e.data === 'loggedin' || e.data === 'invalidusername'){
+                    if(e === 'invalidlogin' || e === 'userexists' || e === 'loggedin' || e === 'invalidusername'){
                         if(self.fail_callback){
-                            self.fail_callback(e.data);
+                            self.fail_callback(e);
                         }
                         return;
                     }
 
-                   self.receiveMessage(e.data);
-                };
+                   self.receiveMessage(e);
+                });
 
-                this.connection.onerror = function(e) {
+                this.connection.on('error', function(e) {
                     log.error(e, true);
-                };
+                });
 
-                this.connection.onclose = function() {
+                this.connection.on('disconnect', function() {
                     log.debug("Connection closed");
                     $('#container').addClass('error');
 
@@ -115,13 +111,13 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                             self.disconnected_callback("The connection to BrowserQuest has been lost");
                         }
                     }
-                };
+                });
             }
         },
 
         sendMessage: function(json) {
             var data;
-            if(this.connection.readyState === 1) {
+            if(this.connection.connected === true) {
                 if(this.useBison) {
                     data = BISON.encode(json);
                 } else {
