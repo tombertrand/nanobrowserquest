@@ -22,7 +22,7 @@ function main(config) {
 
     var ws = require("./ws");
     var WorldServer = require("./worldserver");
-    var server = new ws.MultiVersionWebsocketServer(config.port, config.use_one_port, config.ip);
+    var server = new ws.WebsocketServer(config.port, config.use_one_port, config.ip);
     var metrics = config.metrics_enabled ? new Metrics(config) : null;
     var worlds = [];
     var lastTotalPlayers = 0;

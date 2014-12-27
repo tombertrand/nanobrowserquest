@@ -10,7 +10,7 @@
 Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworkshop.fr
 
 * Client libraries used: RequireJS, Underscore.js, jQuery, Modernizr
-* Server-side: Node.js, Worlize/WebSocket-Node, miksago/node-websocket-server
+* Server-side: Node.js, Socket.io
 * Should work in latest versions of Firefox, Chrome, Safari, Opera, Safari Mobile and Firefox for Android
 
  -->
@@ -374,6 +374,8 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <img src="img/common/thingy.png" alt="" class="preload">
 
         <div id="resize-check"></div>
+
+        <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 
         <script type="text/javascript">
             var ctx = document.querySelector('canvas').getContext('2d'),

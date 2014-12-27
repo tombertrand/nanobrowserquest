@@ -1,35 +1,36 @@
 {
-    "name": "BrowserQuest"
-  , "repository": {
-      "type": "git"
-    , "url": "https://github.com/browserquest/BrowserQuest.git"
-  }
-  , "version": "0.0.1"
-  , "private": false
-  , "dependencies": {
-    "underscore": ">=1.4"
-    , "log": ">=0"
-    , "bison": ">=0"
-    , "websocket": ">=0"
-    , "websocket-server": ">=0"
-    , "sanitizer": ">=0"
-    , "semver": ">=0"
-    , "memcache": ">=0"
-    , "redis": ">=0"
-    , "connect": ">=2"
-    , "requirejs": ">=2"
-    , "bcrypt": ">=0"
-  }
-  , "devDependencies": {
-      "mocha": ">=1"
-    , "should": ">=1"
-    , "sinon": ">=1"
-  }
-  , "scripts": {
-      "test": "make test"
-  }
-  , "engines": {
-      "node": "0.10.x"
-    , "npm": "1.2.x"
+  "name": "BrowserQuest",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/browserquest/BrowserQuest.git"
+  },
+  "version": "0.0.1",
+  "private": false,
+  "dependencies": {
+    "bcrypt": ">=0",
+    "bison": "~1.1.1",
+    "connect": "~3.3.3",
+    "log": "~1.4.0",
+    "memcache": "~0.3.0",
+    "morgan": "^1.5.0",
+    "redis": ">=0",
+    "requirejs": ">=2",
+    "sanitizer": "~0.1.2",
+    "semver": ">=0",
+    "serve-static": "^1.7.1",
+    "socket.io": "~1.2.0",
+    "underscore": "~1.7.0"
+  },
+  "devDependencies": {
+    "mocha": ">=1",
+    "should": ">=1",
+    "sinon": ">=1"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
   }
 }
