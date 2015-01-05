@@ -1135,7 +1135,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                                         if(!entity.isDying) {
                                             self.registerEntityDualPosition(entity);
 
-                                            if(self.player.target === entity) {
+                                            if(self.player && self.player.target === entity) {
                                                 self.makeAttackerFollow(self.player)
                                             }
 
