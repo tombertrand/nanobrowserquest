@@ -32,6 +32,8 @@ Types = {
         PVP: 28,
         GUILD: 29,
         GUILDERROR: 30,
+        ACHIEVEMENT: 31,
+        BOSS_CHECK: 32,
         GUILDERRORTYPE: {
         	DOESNOTEXIST: 1,
         	BADNAME: 2,
@@ -210,7 +212,6 @@ var kinds = {
     getMobLevel: function(kind){
         return kinds[Types.getKindAsString(kind)][3];
     }
-
 };
 
 Types.rankedWeapons = [

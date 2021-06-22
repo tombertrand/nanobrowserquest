@@ -116,6 +116,13 @@ define(function() {
             return _.size(this.data.achievements.unlocked);
         },
 
+        getAchievementNanoCount: function() {
+            console.log('~~~this', this)
+            console.log('~~~~this.data.achievements.unlocked', this.data.achievements.unlocked)
+            console.log('~~~~this.achievements', this.data.achievements)
+            return this.data.achievements.unlocked;
+        },
+
         // Angry rats
         getRatCount: function() {
             return this.data.achievements.ratCount;

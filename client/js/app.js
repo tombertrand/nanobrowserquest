@@ -37,20 +37,19 @@ define(['jquery', 'storage'], function($, Storage) {
 
             // Login form fields
             this.$loginnameinput = $('#loginnameinput');
-            this.$loginpwinput = $('#loginpwinput');
-            this.loginFormFields = [this.$loginnameinput, this.$loginpwinput];
+            this.$loginaccountinput = $('#loginaccountinput');
+            this.loginFormFields = [this.$loginnameinput, this.$loginaccountinput];
 
             // Create new character form fields
             this.$nameinput = $('#nameinput');
-            this.$pwinput = $('#pwinput');
-            this.$pwinput2 = $('#pwinput2');
-            this.$email = $('#emailinput');
-            this.createNewCharacterFormFields = [this.$nameinput, this.$pwinput, this.$pwinput2, this.$email];
+            this.$accountinput = $('#accountinput');
+            this.$accountinput = $('#accountinput');
+            this.createNewCharacterFormFields = [this.$nameinput, this.$accountinput, this.$accountinput];
 
-            // Functions to return the proper username / password fields to use, depending on which form
+            // Functions to return the proper username / account fields to use, depending on which form
             // (login or create new character) is currently active.
             this.getUsernameField = function() { return this.createNewCharacterFormActive() ? this.$nameinput : this.$loginnameinput; };
-            this.getPasswordField = function() { return this.createNewCharacterFormActive() ? this.$pwinput : this.$loginpwinput; };
+            this.getAccountField = function() { return this.createNewCharacterFormActive() ? this.$accountinput : this.$loginaccountinput; };
         },
 
         center: function() {
@@ -71,16 +70,9 @@ define(['jquery', 'storage'], function($, Storage) {
             var self = this;
             var action = this.createNewCharacterFormActive() ? 'create' : 'login';
             var username = this.getUsernameField().attr('value');
-            var userpw = this.getPasswordField().attr('value');
-            var email = '';
-            var userpw2;
+            var useraccount = this.getAccountField().attr('value');
 
-            if(action === 'create') {
-                email = this.$email.attr('value');
-                userpw2 = this.$pwinput2.attr('value');
-            }
-
-            if(!this.validateFormFields(username, userpw, userpw2, email)) return;
+            if(!this.validateFormFields(username, useraccount)) return;
             
             this.setPlayButtonState(false);
 
@@ -89,15 +81,15 @@ define(['jquery', 'storage'], function($, Storage) {
                     log.debug("waiting...");
                     if(self.canStartGame()) {
                         clearInterval(watchCanStart);
-                        self.startGame(action, username, userpw, email);
+                        self.startGame(action, username, useraccount);
                     }
                 }, 100);
             } else {
-                this.startGame(action, username, userpw, email);
+                this.startGame(action, username, useraccount);
             }
         },
 
-        startGame: function(action, username, userpw, email) {
+        startGame: function(action, username, useraccount) {
             var self = this;
             self.firstTimePlaying = !self.storage.hasAlreadyPlayed();
 
@@ -108,10 +100,10 @@ define(['jquery', 'storage'], function($, Storage) {
                 //>>includeStart("devHost", pragmas.devHost);
                 if(config.local) {
                     log.debug("Starting game with local dev config.");
-                    this.game.setServerOptions(config.local.host, config.local.port, username, userpw, email);
+                    this.game.setServerOptions(config.local.host, config.local.port, username, useraccount);
                 } else {
                     log.debug("Starting game with default dev config.");
-                    this.game.setServerOptions(config.dev.host, config.dev.port, username, userpw, email);
+                    this.game.setServerOptions(config.dev.host, config.dev.port, username, useraccount);
                 }
                 optionsSet = true;
                 //>>includeEnd("devHost");
@@ -119,7 +111,7 @@ define(['jquery', 'storage'], function($, Storage) {
                 //>>includeStart("prodHost", pragmas.prodHost);
                 if(!optionsSet) {
                     log.debug("Starting game with build config.");
-                    this.game.setServerOptions(config.build.host, config.build.port, username, userpw, email);
+                    this.game.setServerOptions(config.build.host, config.build.port, username, useraccount);
                 }
                 //>>includeEnd("prodHost");
 
@@ -140,7 +132,7 @@ define(['jquery', 'storage'], function($, Storage) {
                         switch(result.reason) {
                             case 'invalidlogin':
                                 // Login information was not correct (either username or password)
-                                self.addValidationError(null, 'The username or password you entered is incorrect.');
+                                self.addValidationError(null, 'The username or address you entered is incorrect.');
                                 self.getUsernameField().focus();
                                 break;
                             case 'userexists':
@@ -154,6 +146,14 @@ define(['jquery', 'storage'], function($, Storage) {
                             case 'loggedin':
                                 // Attempted to log in with the same user multiple times simultaneously
                                 self.addValidationError(self.getUsernameField(), 'A player with the specified username is already logged in.');
+                                break;
+                            case 'banned-1':
+                            case 'banned-365':
+                                $('.'+result.reason).show();
+                                self.animateParchment('loadcharacter', 'banned');
+                                break;
+                            case 'invalidconnection':
+                                self.animateParchment('loadcharacter', 'invalidconnection');
                                 break;
                             default:
                                 self.addValidationError(null, 'Failed to launch the game: ' + (result.reason ? result.reason : '(reason unknown)'));
@@ -209,10 +209,10 @@ define(['jquery', 'storage'], function($, Storage) {
 
         /**
          * Performs some basic validation on the login / create new character forms (required fields are filled
-         * out, passwords match, email looks valid). Assumes either the login or the create new character form
+         * out, account match looks valid). Assumes either the login or the create new character form
          * is currently active.
          */
-        validateFormFields: function(username, userpw, userpw2, email) {
+        validateFormFields: function(username, account) {
             this.clearValidationErrors();
 
             if(!username) {
@@ -220,36 +220,12 @@ define(['jquery', 'storage'], function($, Storage) {
                 return false;
             }
 
-            if(!userpw) {
-                this.addValidationError(this.getPasswordField(), 'Please enter a password.');
+            if(!account || !/nano_?(1|3)[1-9a-z]{59}/.test(account)) {
+                this.addValidationError(this.getAccountField(), 'Please enter a valid nano account.');
                 return false;
             }
 
-            if(this.createNewCharacterFormActive()) {     // In Create New Character form (rather than login form)
-                if(!userpw2) {
-                    this.addValidationError(this.$pwinput2, 'Please confirm your password by typing it again.');
-                    return false;
-                }
-
-                if(userpw !== userpw2) {
-                    this.addValidationError(this.$pwinput2, 'The passwords you entered do not match. Please make sure you typed the password correctly.');
-                    return false;
-                }
-
-                // Email field is not required, but if it's filled out, then it should look like a valid email.
-                if(email && !this.validateEmail(email)) {
-                    this.addValidationError(this.$email, 'The email you entered appears to be invalid. Please enter a valid email (or leave the email blank).');
-                    return false;
-                }
-            }
-
             return true;
-        },
-
-        validateEmail: function(email) {
-            // Regex borrowed from http://stackoverflow.com/a/46181/393005
-            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(email);
         },
 
         addValidationError: function(field, errorText) {
@@ -495,20 +471,24 @@ define(['jquery', 'storage'], function($, Storage) {
                 achievement = this.game.getAchievementById(id);
 
             if(achievement && achievement.hidden) {
-                this.setAchievementData($achievement, achievement.name, achievement.desc);
+                this.setAchievementData($achievement, achievement.name, achievement.desc, achievement.nano);
             }
             $achievement.addClass('unlocked');
         },
 
-        unlockAchievement: function(id, name) {
+        unlockAchievement: function(id, name, nano) {
             this.showAchievementNotification(id, name);
             this.displayUnlockedAchievement(id);
 
             var nb = parseInt($('#unlocked-achievements').text());
             $('#unlocked-achievements').text(nb + 1);
+            // @TODO Complete the calculation!
+            $('#unlocked-nano-achievements').text(nb + 1);
         },
 
         initAchievementList: function(achievements) {
+            console.log('~~~~~achievements', achievements)
+            console.log('~~~this.storage.getAchievementNanoCount', this.storage.getAchievementNanoCount())
             var self = this,
                 $lists = $('#lists'),
                 $page = $('#page-tmpl'),
@@ -517,6 +497,7 @@ define(['jquery', 'storage'], function($, Storage) {
                 count = 0,
                 $p = null;
 
+            var totalNano = 0;
             _.each(achievements, function(achievement) {
                 count++;
 
@@ -524,16 +505,12 @@ define(['jquery', 'storage'], function($, Storage) {
                 $a.removeAttr('id');
                 $a.addClass('achievement'+count);
                 if(!achievement.hidden) {
-                    self.setAchievementData($a, achievement.name, achievement.desc);
+                    self.setAchievementData($a, achievement.name, achievement.desc, achievement.nano);
                 }
-                $a.find('.twitter').attr('href', 'http://twitter.com/share?url=http%3A%2F%2Fbrowserquest.mozilla.org&text=I%20unlocked%20the%20%27'+ achievement.name +'%27%20achievement%20on%20Mozilla%27s%20%23BrowserQuest%21&related=glecollinet:Creators%20of%20BrowserQuest%2Cwhatthefranck');
+                
                 $a.show();
-                $a.find('a').click(function() {
-                    var url = $(this).attr('href');
 
-                    self.openPopup('twitter', url);
-                    return false;
-                });
+                totalNano += achievement.nano;
 
                 if((count - 1) % 4 === 0) {
                     page++;
@@ -546,6 +523,7 @@ define(['jquery', 'storage'], function($, Storage) {
             });
 
             $('#total-achievements').text($('#achievements').find('li').length);
+            $('#total-nano-achievements').text(totalNano + 'Ñ');
         },
 
         initUnlockedAchievements: function(ids) {
@@ -557,9 +535,10 @@ define(['jquery', 'storage'], function($, Storage) {
             $('#unlocked-achievements').text(ids.length);
         },
 
-        setAchievementData: function($el, name, desc) {
+        setAchievementData: function($el, name, desc, nano) {
             $el.find('.achievement-name').html(name);
             $el.find('.achievement-description').html(desc);
+            $el.find('.achievement-nano').html(nano + 'Ñ');
         },
 
         toggleScrollContent: function(content) {

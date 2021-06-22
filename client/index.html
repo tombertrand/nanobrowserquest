@@ -23,10 +23,10 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <link rel="icon" type="image/png" href="img/common/favicon.png">
         <meta property="og:title" content="BrowserQuest">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="http://browserquest.mozilla.org/">
-        <meta property="og:image" content="http://browserquest.mozilla.org/img/common/promo-title.jpg">
-        <meta property="og:site_name" content="BrowserQuest">
-        <meta property="og:description" content="Play Mozilla's BrowserQuest, an HTML5 massively multiplayer game demo powered by WebSockets!">
+        <meta property="og:url" content="https://nanobrowserquest.com/">
+        <meta property="og:image" content="http://nanobrowserquest.com/img/common/promo.jpg">
+        <meta property="og:site_name" content="NanoBrowserQuest">
+        <meta property="og:description" content="Play Nano BrowserQuest, a remake of the popular BrowserQuest HTML5 massively multiplayer game demo powered by WebSockets!">
         <link rel="stylesheet" href="css/main.css" type="text/css">
         <link rel="stylesheet" href="css/achievements.css" type="text/css">
 
@@ -51,25 +51,24 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                 </script>
         <![endif]-->
         <script src="js/detect.js" type="text/javascript"></script>
-        <title>BrowserQuest</title>
+        <title>Nano BrowserQuest</title>
 	</head>
     <!--[if lt IE 9]>
 	<body class="intro upscaled">
     <![endif]-->
-    <a href="https://github.com/browserquest/BrowserQuest"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
-	<body class="intro">
+    <body class="intro">
 	    <noscript>
 	       <div class="alert">
-	           You need to enable JavaScript to play BrowserQuest.
+	           You need to enable JavaScript to play Nano BrowserQuest.
 	       </div>
 	    </noscript>
-	    <a id="moztab" class="clickable" target="_blank" href="http://www.mozilla.org/"></a>
 	    <div id="intro">
-	        <h1 id="logo">
-	           <span id="logosparks">
-
-	           </span>
-	        </h1>
+            <span id="logo">	          
+                <span id="logosparks"></span>
+                <span id="nano">	  
+                    <span id="nanosparks"></span>
+                </span>
+            </span>
 	        <article id="portrait">
 	            <p>
 	               Please rotate your device to landscape mode
@@ -85,12 +84,12 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
           	               Create New Character
           	               <span class="right-ornament"></span>
                          </h1>
+                         <br />
                          <form action="none" method="get" accept-charset="utf-8">
-                             <input type="text" id="nameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="12">
-                             <input type="password" id="pwinput" class="stroke" name="player-pw" placeholder="Password" maxlength="15">
-                             <input type="password" id="pwinput2" class="stroke" name="player-pw2" placeholder="Confirm Password" maxlength="15">
-                             <input type="email" id="emailinput" class="stroke" name="player-email" placeholder="Email address" maxlength="48">
+                             <input type="text" id="nameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16">
+                             <textarea id="accountinput" class="stroke" name="player-account" placeholder="nano_ Account" maxlength="65" rows="3" style="height: auto;" spellcheck="false"></textarea>
                          </form>
+                         <br />
                          <div class="play">
                            <span class="link">Create</span>
                          </div>
@@ -99,12 +98,13 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                     <article id="loadcharacter">
           	           <h1>
           	               <span class="left-ornament"></span>
-          	               BrowserQuest
+          	               Nano BrowserQuest
           	               <span class="right-ornament"></span>
                          </h1>
                          <form action="none" method="get" accept-charset="utf-8">
-                             <input type="text" id="loginnameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="12" autofocus>
-                             <input type="password" id="loginpwinput" class="stroke" name="player-loginpw" placeholder="Password" maxlength="15">
+                             <input value="a" type="text" id="loginnameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16" autofocus>
+                             <textarea id="loginaccountinput" class="stroke" name="player-loginaccount" placeholder="nano_ Account" maxlength="65" rows="2" style="height: auto; padding-top: 10px; padding-bottom: 15px;" spellcheck="false"
+                             >nano_1gxx3dbrprrh9ycf1p5wo9qgmftppg6z7688njum14aybjkaiweqmwpuu9py</textarea>
                          </form>
                          <div class="play">
                            <span class="link">Login</span>
@@ -115,12 +115,59 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                             <span class="link">New Character</span>
                          </div>
                     </article>
+                    <article id="banned">
+                        <h1>
+                            <span class="left-ornament"></span>
+                            Nano BrowserQuest
+                            <span class="right-ornament"></span>
+                        </h1>
+                        <br />
+                        <br />
+                        <div class="banned-1">
+                            You are banned for 24h, no cheating.
+                            <br/>
+                            <br/>
+                            You were detected exploiting the game which is not permitted.
+                            <br/>
+                            <br/>
+                            This is going to be your <strong>last warning</strong> before a permanent ban.
+                            <br/>
+                            <br/>
+                            NanoBrowserQuest is a place for everyone to have fun,<br/>keep it this way.
+                        </div>
+                        <div class="banned-365">
+                            You are banned forever, no cheating.
+                            <br/>
+                            <br/>
+                            You were detected exploiting the game a second time.
+                            <br/>
+                            <br/>
+                            NanoBrowserQuest is a place for everyone to have fun,<br/>bye bye.
+                        </div>
+                    </article>
+                    <article id="invalidconnection">
+                        <h1>
+                            <span class="left-ornament"></span>
+                            Nano BrowserQuest
+                            <span class="right-ornament"></span>
+                        </h1>
+                        <br />
+                        <br />
+                        <div>
+                            Unable to connect.
+                        </div>
+                    </article>
                     <article id="confirmation">
           	           <h1>
           	               <span class="left-ornament"></span>
-                           You need to accept the following terms of usage before creating a new character.<br>
-                           None right now - just Continue!<br><br>
-          	               <span class="right-ornament"></span>
+                           You need to accept the following terms of usage<span class="right-ornament"></span><br />
+                           before creating a new character.
+                           <br /><br />
+                           You'll be collecting <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a> by completing the game achievements.<br />
+                           Your cumulated Nano payout will be sent once you kill the final BOSS!<br />
+                           You can complete the game as many time as you like.<br /><br />
+                           <strong>No farming, no cheating. You will get banned.</strong><br /><br />
+                           Play with your friends and introduce them to Nano!<br /><br />
                          </h1>
                          <div id="continue">
                          <span class="link">Continue</span>
@@ -163,7 +210,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         	            <h1>
          	               <span class="left-ornament"></span>
          	               <span class="title">
-         	                   What is BrowserQuest?
+         	                   What is Nano BrowserQuest?
          	               </span>
          	               <span class="right-ornament"></span>
                         </h1>
@@ -257,7 +304,14 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
     		                /
     		                <span id="total-achievements"></span>
     		            </div>
-                    Close
+    		        </div>
+                    <div id="achievements-nano-count" class="stroke">
+    		            Collected
+    		            <div>
+    		                <span id="unlocked-nano-achievements">0</span>
+    		                /
+    		                <span id="total-nano-achievements"></span>
+    		            </div>
     		        </div>
 		            <nav class="clickable">
 		                <div id="previous"></div>
@@ -344,8 +398,8 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 		<footer>
 		    <div id="sharing" class="clickable">
 		      Share this on
-              <a href="http://twitter.com/share?url=http%3A%2F%2Fbrowserquest.mozilla.org&amp;text=Mozilla%27s%20BrowserQuest%3A%20HTML5%20massively%20multiplayer%20adventure%20game%20%23demo%20%23websockets&amp;related=glecollinet:Creators%20of%20BrowserQuest%2Cwhatthefranck" class="twitter"></a>
-              <a href="http://www.facebook.com/share.php?u=http://browserquest.mozilla.org/" class="facebook"></a>
+              <a href="http://twitter.com/share?url=https%3A%2F%2Fnanobrowserquest.com&amp;text=NanoBrowserQuest%3A%20HTML5%20massively%20multiplayer%20adventure%20game%20%23demo%20%23websockets&amp;related=glecollinet:Creators%20of%20BrowserQuest%2Cwhatthefranck" class="twitter"></a>
+              <a href="http://www.facebook.com/share.php?u=https://nanobrowserquest.com/" class="facebook"></a>
 		    </div>
 		    <div id="privacy-link" class="clickable">
 		      <span class="dash">&ndash;</span> <span id="toggle-legal">Privacy</span>
@@ -365,9 +419,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                 <div class="coin"></div>
                 <span class="achievement-name">???</span>
                 <span class="achievement-description">???</span>
-                <div class="achievement-sharing">
-                  <a href="" class="twitter"></a>
-                </div>
+                <div class="achievement-nano"></div>
             </li>
         </ul>
 

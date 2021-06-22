@@ -5,7 +5,7 @@ var Types = require('../../shared/js/gametypes');
     FormatChecker = Class.extend({
         init: function () {
             this.formats = [];
-            this.formats[Types.Messages.CREATE] = ['s', 's', 's'],
+            this.formats[Types.Messages.CREATE] = ['s', 's'],
             this.formats[Types.Messages.LOGIN] = ['s', 's'],
             this.formats[Types.Messages.MOVE] = ['n', 'n'],
             this.formats[Types.Messages.LOOTMOVE] = ['n', 'n', 'n'],
@@ -19,7 +19,8 @@ var Types = require('../../shared/js/gametypes');
             this.formats[Types.Messages.ZONE] = [],
             this.formats[Types.Messages.OPEN] = ['n'],
             this.formats[Types.Messages.CHECK] = ['n'],
-            this.formats[Types.Messages.ACHIEVEMENT] = ['n', 's']
+            this.formats[Types.Messages.ACHIEVEMENT] = ['n', 's'],
+            this.formats[Types.Messages.BOSS_CHECK] = []
         },
 
         check: function (msg) {
@@ -28,6 +29,10 @@ var Types = require('../../shared/js/gametypes');
                 format = this.formats[type];
 
             message.shift();
+
+            // console.log('~~~~~type', type);
+            // console.log('~~~~~message', message);
+            // console.log('~~~~~format', format);
 
             if (format) {
                 if (message.length !== format.length) {
@@ -72,6 +77,12 @@ var Types = require('../../shared/js/gametypes');
 					return false;
 				}
 			}
+            else if (type === Types.Messages.ACHIEVEMENT) {
+                return (message.length === 2 && _.isNumber(message[0]) && _.isString(message[1]));
+            } 
+            else if (type === Types.Messages.BOSS_CHECK) {
+                return (message.length === 0);
+            }
             else {
                 log.error('Unknown message type: ' + type);
                 return false;

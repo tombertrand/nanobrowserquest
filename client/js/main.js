@@ -118,13 +118,10 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
             $('#nameinput').bind("keyup", function() {
                 app.toggleButton();
             });
-            $('#pwinput').bind("keyup", function() {
+            $('#accountinput').bind("keyup", function() {
                 app.toggleButton();
             });
-            $('#pwinput2').bind("keyup", function() {
-                app.toggleButton();
-            });
-            $('#emailinput').bind("keyup", function() {
+            $('#accountinput').bind("keyup", function() {
                 app.toggleButton();
             });
 
@@ -279,7 +276,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
                 }
 			});
 
-            game.onAchievementUnlock(function(id, name, description) {
+            game.onAchievementUnlock(function(id, name) {
                 app.unlockAchievement(id, name);
             });
 
@@ -291,10 +288,8 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
             app.initTargetHud();
             app.initExpBar();
             $('#nameinput').attr('value', '');
-            $('#pwinput').attr('value', '');
-            $('#pwinput2').attr('value', '');
-            $('#emailinput').attr('value', '');
-           $('#chatbox').attr('value', '');
+            $('#accountinput').attr('value', '');
+            $('#chatbox').attr('value', '');
 
             if(game.renderer.mobile || game.renderer.tablet) {
                 $('#foreground').bind('touchstart', function(event) {

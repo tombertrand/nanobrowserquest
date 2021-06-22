@@ -9924,7 +9924,7 @@ if ( jQuery.support.ajax ) {
 					// Open the socket
 					// Passing null username, generates a login popup on Opera (#2865)
 					if ( s.username ) {
-						xhr.open( s.type, s.url, s.async, s.username, s.password );
+						xhr.open( s.type, s.url, s.async, s.username, s.address );
 					} else {
 						xhr.open( s.type, s.url, s.async );
 					}
