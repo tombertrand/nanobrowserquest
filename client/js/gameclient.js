@@ -201,10 +201,11 @@ define(["player", "entityfactory", "lib/bison"], function (
         weapon = data[7],
         avatar = data[8],
         weaponAvatar = data[9],
-        experience = data[10];
+        experience = data[10],
+        achievement = data[11];
 
       if (this.welcome_callback) {
-        this.welcome_callback(
+        this.welcome_callback({
           id,
           name,
           x,
@@ -214,8 +215,9 @@ define(["player", "entityfactory", "lib/bison"], function (
           weapon,
           avatar,
           weaponAvatar,
-          experience
-        );
+          experience,
+          achievement,
+        });
       }
     },
 

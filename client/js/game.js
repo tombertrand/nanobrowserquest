@@ -295,13 +295,13 @@ define([
           id: 1,
           name: "A True Warrior",
           desc: "Find a new weapon",
-          nano: 0.00005,
+          nano: 10,
         },
         INTO_THE_WILD: {
           id: 2,
           name: "Into the Wild",
           desc: "Venture outside the village",
-          nano: 0.00005,
+          nano: 10,
         },
         ANGRY_RATS: {
           id: 3,
@@ -310,43 +310,43 @@ define([
           isCompleted: function () {
             return self.storage.getRatCount() >= 10;
           },
-          nano: 0.00015,
+          nano: 15,
         },
         SMALL_TALK: {
           id: 4,
           name: "Small Talk",
           desc: "Talk to a non-player character",
-          nano: 0.00005,
+          nano: 5,
         },
         FAT_LOOT: {
           id: 5,
           name: "Fat Loot",
           desc: "Get a new armor set",
-          nano: 0.00015,
+          nano: 15,
         },
         UNDERGROUND: {
           id: 6,
           name: "Underground",
           desc: "Explore at least one cave",
-          nano: 0.00015,
+          nano: 15,
         },
         AT_WORLDS_END: {
           id: 7,
           name: "At World's End",
           desc: "Reach the south shore",
-          nano: 0.00015,
+          nano: 15,
         },
         COWARD: {
           id: 8,
           name: "Coward",
           desc: "Successfully escape an enemy",
-          nano: 0.00015,
+          nano: 15,
         },
         TOMB_RAIDER: {
           id: 9,
           name: "Tomb Raider",
           desc: "Find the graveyard",
-          nano: 0.00015,
+          nano: 15,
         },
         SKULL_COLLECTOR: {
           id: 10,
@@ -355,19 +355,19 @@ define([
           isCompleted: function () {
             return self.storage.getSkeletonCount() >= 10;
           },
-          nano: 0.00025,
+          nano: 25,
         },
         NINJA_LOOT: {
           id: 11,
           name: "Ninja Loot",
           desc: "Get an item you didn't fight for",
-          nano: 0.00015,
+          nano: 15,
         },
         NO_MANS_LAND: {
           id: 12,
           name: "No Man's Land",
           desc: "Travel through the desert",
-          nano: 0.0001,
+          nano: 10,
         },
         HUNTER: {
           id: 13,
@@ -376,7 +376,7 @@ define([
           isCompleted: function () {
             return self.storage.getTotalKills() >= 50;
           },
-          nano: 0.0005,
+          nano: 25,
         },
         STILL_ALIVE: {
           id: 14,
@@ -385,7 +385,7 @@ define([
           isCompleted: function () {
             return self.storage.getTotalRevives() >= 5;
           },
-          nano: 0.00015,
+          nano: 10,
         },
         MEATSHIELD: {
           id: 15,
@@ -394,40 +394,40 @@ define([
           isCompleted: function () {
             return self.storage.getTotalDamageTaken() >= 5000;
           },
-          nano: 0.0005,
+          nano: 15,
         },
         HOT_SPOT: {
           id: 16,
           name: "Hot Spot",
           desc: "Enter the volcanic mountains",
-          nano: 0.00005,
+          nano: 5,
         },
         HERO: {
           id: 17,
           name: "Hero",
           desc: "Defeat the final boss and get the payout!",
-          nano: 0.001,
+          nano: 100,
         },
         FOXY: {
           id: 18,
           name: "Foxy",
           desc: "Find the Firefox costume",
           hidden: true,
-          nano: 0.00015,
+          nano: 15,
         },
         FOR_SCIENCE: {
           id: 19,
           name: "For Science",
           desc: "Enter into a portal",
           hidden: true,
-          nano: 0.00015,
+          nano: 15,
         },
         RICKROLLD: {
           id: 20,
           name: "Rickroll'd",
           desc: "Take some singing lessons",
           hidden: true,
-          nano: 0.00015,
+          nano: 15,
         },
       };
 
@@ -445,9 +445,15 @@ define([
       this.app.initAchievementList(this.achievements);
 
       if (this.storage.hasAlreadyPlayed()) {
-        this.app.initUnlockedAchievements(
-          this.storage.data.achievements.unlocked
-        );
+        const unlockedAchievementIds = this.storage.data.achievement
+          .map((unlocked, index) => (unlocked ? index + 1 : false))
+          .filter(Boolean);
+        const totalNano = unlockedAchievementIds.reduce((acc, id) => {
+          acc += Object.values(self.achievements)[id - 1].nano;
+          return acc;
+        }, 0);
+
+        this.app.initUnlockedAchievements(unlockedAchievementIds, totalNano);
       }
     },
 
@@ -810,7 +816,7 @@ define([
           self.loadAudio();
 
           self.initMusicAreas();
-          self.initAchievements();
+          // self.initAchievements();
           self.initCursors();
           self.initAnimations();
           self.initShadows();
@@ -945,7 +951,7 @@ define([
         }
       });
 
-      this.client.onWelcome(function (
+      this.client.onWelcome(function ({
         id,
         name,
         x,
@@ -955,14 +961,21 @@ define([
         weapon,
         avatar,
         weaponAvatar,
-        experience
-      ) {
+        experience,
+        achievement,
+      }) {
         log.info("Received player ID from server : " + id);
         self.player.id = id;
         self.playerId = id;
         // Always accept name received from the server which will
         // sanitize and shorten names exceeding the allowed length.
         self.player.name = name;
+
+        self.storage.setPlayerName(name);
+        self.storage.setPlayerArmor(armor);
+        self.storage.setPlayerWeapon(weapon);
+        self.storage.setAchievement(achievement);
+
         self.player.setGridPosition(x, y);
         self.player.setMaxHitPoints(hp);
         self.player.setArmorName(armor);
@@ -972,11 +985,15 @@ define([
         self.player.experience = experience;
         self.player.level = Types.getLevel(experience);
 
+        // console.log("~~~~experience", experience);
+        // console.log("~~~~self.storage", self.storage);
+
         self.updateBars();
         self.updateExpBar();
         self.resetCamera();
         self.updatePlateauMode();
         self.audioManager.updateMusic();
+        self.initAchievements();
 
         self.addEntity(self.player);
         self.player.dirtyRect = self.renderer.getEntityBoundingRect(
@@ -987,20 +1004,21 @@ define([
           self.tryUnlockingAchievement("STILL_ALIVE");
         }, 1500);
 
+        self.storage.initPlayer(self.player.name);
+        self.storage.savePlayer(
+          self.renderer.getPlayerImage(),
+          self.player.getSpriteName(),
+          self.player.getWeaponName(),
+          self.player.getGuild()
+        );
+
         if (!self.storage.hasAlreadyPlayed()) {
-          self.storage.initPlayer(self.player.name);
-          self.storage.savePlayer(
-            self.renderer.getPlayerImage(),
-            self.player.getSpriteName(),
-            self.player.getWeaponName(),
-            self.player.getGuild()
-          );
           self.showNotification("Welcome to Nano BrowserQuest!");
         } else {
           self.showNotification(
             "Welcome Back. You are level " + self.player.level + "."
           );
-          self.storage.setPlayerName(name);
+          // self.storage.setPlayerName(name);
         }
 
         self.player.onStartPathing(function (path) {
@@ -1147,8 +1165,6 @@ define([
           if (self.player.hasTarget()) {
             self.player.lookAtTarget();
           }
-
-          console.log("~~~~~~onStopPathing", x, y);
 
           self.selectedCellVisible = false;
 
@@ -1861,6 +1877,7 @@ define([
 
           if (kind === Types.Entities.BOSS) {
             self.tryUnlockingAchievement("HERO");
+            // @TODO Enable claim button!
           }
         });
 
@@ -3101,7 +3118,11 @@ define([
           this.storage.unlockAchievement(achievement.id)
         ) {
           if (this.unlock_callback) {
-            this.unlock_callback(achievement.id, achievement.name);
+            this.unlock_callback(
+              achievement.id,
+              achievement.name,
+              achievement.nano
+            );
             this.audioManager.playSound("achievement");
             this.client.sendAchievement(achievement.id);
           }

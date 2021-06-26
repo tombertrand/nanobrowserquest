@@ -26,84 +26,67 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "armor") // 1
             .hget(userKey, "weapon") // 2
             .hget(userKey, "exp") // 3
-            .hget(userKey, "createdAt") // 4 - Empty reply, easier than changing all the indexes
-            .hget(userKey, "exp") // 5 - Empty reply, easier than changing all the indexes
-            .hget(userKey, "exp") // 6 - Empty reply, easier than changing all the indexes
-            // .hget("b:" + player.connection._connection.remoteAddress, "time") // 4
-            // .hget("b:" + player.connection._connection.remoteAddress, "banUseTime") // 5
-            // .hget("b:" + player.connection._connection.remoteAddress, "loginTime") // 6
-            .hget(userKey, "avatar") // 7
-            .zrange("adrank", "-1", "-1") // 8
-            .get("nextNewArmor") // 9
-            .hget(userKey, "inventory0") // 10
-            .hget(userKey, "inventory0:number") // 11
-            .hget(userKey, "inventory1") // 12
-            .hget(userKey, "inventory1:number") // 13
-            .hget(userKey, "achievement1:found") // 14
-            .hget(userKey, "achievement1:progress") // 15
-            .hget(userKey, "achievement2:found") // 16
-            .hget(userKey, "achievement2:progress") // 17
-            .hget(userKey, "achievement3:found") // 18
-            .hget(userKey, "achievement3:progress") // 19
-            .hget(userKey, "achievement4:found") // 20
-            .hget(userKey, "achievement4:progress") // 21
-            .hget(userKey, "achievement5:found") // 22
-            .hget(userKey, "achievement5:progress") // 23
-            .hget(userKey, "achievement6:found") // 24
-            .hget(userKey, "achievement6:progress") // 25
-            .smembers("adminname") // 26
-            .zscore("adrank", player.name) // 27
-            .hget(userKey, "weaponAvatar") // 28
-            .hget(userKey, "x") // 29
-            .hget(userKey, "y") // 30
-            .hget(userKey, "achievement7:found") // 31
-            .hget(userKey, "achievement7:progress") // 32
-            .hget(userKey, "achievement8:found") // 33
-            .hget(userKey, "achievement8:progress") // 34
-            .hget("cb:" + player.connection._connection.remoteAddress, "etime") // 35
+            .hget(userKey, "createdAt") // 4
+            .hget(userKey, "avatar") // 5
+            .zrange("adrank", "-1", "-1") // 6
+            .get("nextNewArmor") // 7
+            .hget(userKey, "inventory0") // 8
+            .hget(userKey, "inventory0:number") // 9
+            .hget(userKey, "inventory1") // 10
+            .hget(userKey, "inventory1:number") // 11
+            .hget(userKey, "achievement") // 12
+            .smembers("adminname") // 13
+            .zscore("adrank", player.name) // 14
+            .hget(userKey, "weaponAvatar") // 15
+            .hget(userKey, "x") // 16
+            .hget(userKey, "y") // 17
             .exec(function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
               var weapon = replies[2];
               var exp = Utils.NaN2Zero(replies[3]);
               var createdAt = Utils.NaN2Zero(replies[4]);
-              // var bannedTime = Utils.NaN2Zero(replies[4]);
-              // var banUseTime = Utils.NaN2Zero(replies[5]);
-              // var lastLoginTime = Utils.NaN2Zero(replies[6]);
-              var avatar = replies[7];
-              var pubTopName = replies[8];
-              var nextNewArmor = replies[9];
-              var inventory = [replies[10], replies[12]];
+              var avatar = replies[5];
+              var pubTopName = replies[6];
+              var nextNewArmor = replies[7];
+              var inventory = [replies[8], replies[10]];
               var inventoryNumber = [
+                Utils.NaN2Zero(replies[9]),
                 Utils.NaN2Zero(replies[11]),
-                Utils.NaN2Zero(replies[13]),
               ];
-              var achievementFound = [
-                Utils.trueFalse(replies[14]),
-                Utils.trueFalse(replies[16]),
-                Utils.trueFalse(replies[18]),
-                Utils.trueFalse(replies[20]),
-                Utils.trueFalse(replies[22]),
-                Utils.trueFalse(replies[24]),
-                Utils.trueFalse(replies[31]),
-                Utils.trueFalse(replies[33]),
-              ];
-              var achievementProgress = [
-                Utils.NaN2Zero(replies[15]),
-                Utils.NaN2Zero(replies[17]),
-                Utils.NaN2Zero(replies[19]),
-                Utils.NaN2Zero(replies[21]),
-                Utils.NaN2Zero(replies[23]),
-                Utils.NaN2Zero(replies[25]),
-                Utils.NaN2Zero(replies[32]),
-                Utils.NaN2Zero(replies[34]),
-              ];
-              var adminnames = replies[26];
-              var pubPoint = Utils.NaN2Zero(replies[27]);
-              var weaponAvatar = replies[28] ? replies[28] : weapon;
-              var x = Utils.NaN2Zero(replies[29]);
-              var y = Utils.NaN2Zero(replies[30]);
-              var chatBanEndTime = Utils.NaN2Zero(replies[35]);
+
+              var achievement = new Array(20).fill(0);
+              try {
+                achievement = JSON.parse(replies[12]);
+              } catch {
+                // invalid json
+              }
+
+              // var achievementFound = [
+              //   Utils.trueFalse(replies[14]),
+              //   Utils.trueFalse(replies[16]),
+              //   Utils.trueFalse(replies[18]),
+              //   Utils.trueFalse(replies[20]),
+              //   Utils.trueFalse(replies[22]),
+              //   Utils.trueFalse(replies[24]),
+              //   Utils.trueFalse(replies[31]),
+              //   Utils.trueFalse(replies[33]),
+              // ];
+              // var achievementProgress = [
+              //   Utils.NaN2Zero(replies[15]),
+              //   Utils.NaN2Zero(replies[17]),
+              //   Utils.NaN2Zero(replies[19]),
+              //   Utils.NaN2Zero(replies[21]),
+              //   Utils.NaN2Zero(replies[23]),
+              //   Utils.NaN2Zero(replies[25]),
+              //   Utils.NaN2Zero(replies[32]),
+              //   Utils.NaN2Zero(replies[34]),
+              // ];
+              var adminnames = replies[13];
+              var pubPoint = Utils.NaN2Zero(replies[14]);
+              var weaponAvatar = replies[15] ? replies[15] : weapon;
+              var x = Utils.NaN2Zero(replies[16]);
+              var y = Utils.NaN2Zero(replies[17]);
 
               // Check Account
 
@@ -173,28 +156,21 @@ module.exports = DatabaseHandler = cls.Class.extend({
               // log.info("Banned Time: " + new Date(bannedTime).toString());
               // log.info("Ban Use Time: " + new Date(banUseTime).toString());
               // log.info("Last Login Time: " + lastLoginTimeDate.toString());
-              log.info(
-                "Chatting Ban End Time: " + new Date(chatBanEndTime).toString()
-              );
 
-              player.sendWelcome(
+              player.sendWelcome({
                 armor,
                 weapon,
                 avatar,
                 weaponAvatar,
                 exp,
                 admin,
-                createdAt,// null, // bannedTime,
-                null, // banUseTime,
+                createdAt,
                 inventory,
                 inventoryNumber,
-                achievementFound,
-                achievementProgress,
                 x,
                 y,
-                chatBanEndTime
-              );
-              // });
+                achievement,
+              });
             });
           return;
         }
@@ -228,26 +204,24 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "weapon", "sword1")
           .hset(userKey, "exp", 0)
           .hset(userKey, "createdAt", curTime)
+          .hset(userKey, "achievement", JSON.stringify(new Array(20).fill(0)))
           // .hset("b:" + player.connection._connection.remoteAddress, "loginTime", curTime)
           .exec(function (err, replies) {
             log.info("New User: " + player.name);
-            player.sendWelcome(
-              "clotharmor",
-              "sword1",
-              "clotharmor",
-              "sword1",
-              0,
-              null,
-              0,
-              0,
-              [null, null],
-              [0, 0],
-              [false, false, false, false, false, false],
-              [0, 0, 0, 0, 0, 0],
-              player.x,
-              player.y,
-              0
-            );
+            player.sendWelcome({
+              armor: "clotharmor",
+              weapon: "sword1",
+              avatar: "clotharmor",
+              weaponAvatar: "sword1",
+              exp: 0,
+              admin: null,
+              createdAt: curTime,
+              inventory: [null, null],
+              inventoryNumber: [0, 0],
+              x: player.x,
+              y: player.y,
+              achievement: new Array(20).fill(0),
+            });
           });
       }
     });
@@ -394,14 +368,21 @@ module.exports = DatabaseHandler = cls.Class.extend({
     client.hdel("u:" + name, "inventory" + number);
     client.hdel("u:" + name, "inventory" + number + ":number");
   },
-  foundAchievement: function (name, number) {
-    log.info("Found Achievement: " + name + " " + number);
-    client.hset("u:" + name, "achievement" + number + ":found", "true");
+  foundAchievement: function (name, index) {
+    log.info("Found Achievement: " + name + " " + index + 1);
+    client.hget("u:" + name, "achievement", function (err, reply) {
+      try {
+        achievement = JSON.parse(reply);
+        achievement[index] = 1;
+        achievement = JSON.stringify(achievement);
+        client.hset("u:" + name, "achievement", achievement);
+      } catch (err) {}
+    });
   },
-  progressAchievement: function (name, number, progress) {
-    log.info("Progress Achievement: " + name + " " + number + " " + progress);
-    client.hset("u:" + name, "achievement" + number + ":progress", progress);
-  },
+  // progressAchievement: function (name, number, progress) {
+  //   log.info("Progress Achievement: " + name + " " + number + " " + progress);
+  //   client.hset("u:" + name, "achievement" + number + ":progress", progress);
+  // },
   setUsedPubPts: function (name, usedPubPts) {
     log.info("Set Used Pub Points: " + name + " " + usedPubPts);
     client.hset("u:" + name, "usedPubPts", usedPubPts);

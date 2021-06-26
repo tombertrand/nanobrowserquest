@@ -276,8 +276,8 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
                 }
 			});
 
-            game.onAchievementUnlock(function(id, name) {
-                app.unlockAchievement(id, name);
+            game.onAchievementUnlock(function(id, name, nano) {
+                app.unlockAchievement(id, name, nano);
             });
 
             game.onNotification(function(message) {

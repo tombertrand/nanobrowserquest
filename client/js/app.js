@@ -481,14 +481,12 @@ define(['jquery', 'storage'], function($, Storage) {
             this.displayUnlockedAchievement(id);
 
             var nb = parseInt($('#unlocked-achievements').text());
+            const totalNano = parseInt($('#unlocked-nano-achievements').text()) * 100000;
             $('#unlocked-achievements').text(nb + 1);
-            // @TODO Complete the calculation!
-            $('#unlocked-nano-achievements').text(nb + 1);
+            $('#unlocked-nano-achievements').text((totalNano + nano) / 100000);
         },
 
         initAchievementList: function(achievements) {
-            console.log('~~~~~achievements', achievements)
-            console.log('~~~this.storage.getAchievementNanoCount', this.storage.getAchievementNanoCount())
             var self = this,
                 $lists = $('#lists'),
                 $page = $('#page-tmpl'),
@@ -523,22 +521,23 @@ define(['jquery', 'storage'], function($, Storage) {
             });
 
             $('#total-achievements').text($('#achievements').find('li').length);
-            $('#total-nano-achievements').text(totalNano + 'Ñ');
+            $('#total-nano-achievements').text(totalNano / 100000 + 'Ñ');
         },
 
-        initUnlockedAchievements: function(ids) {
+        initUnlockedAchievements: function(ids, totalNano) {
             var self = this;
 
             _.each(ids, function(id) {
                 self.displayUnlockedAchievement(id);
             });
             $('#unlocked-achievements').text(ids.length);
+            $('#unlocked-nano-achievements').text(totalNano / 100000);
         },
 
         setAchievementData: function($el, name, desc, nano) {
             $el.find('.achievement-name').html(name);
             $el.find('.achievement-description').html(desc);
-            $el.find('.achievement-nano').html(nano + 'Ñ');
+            $el.find('.achievement-nano').html(nano / 100000 + 'Ñ');
         },
 
         toggleScrollContent: function(content) {

@@ -1,188 +1,192 @@
+define(function () {
+  var Storage = Class.extend({
+    init: function () {
+      if (this.hasLocalStorage() && localStorage.data) {
+        this.data = JSON.parse(localStorage.data);
+      } else {
+        this.resetData();
+      }
+    },
 
-define(function() {
-
-    var Storage = Class.extend({
-        init: function() {
-            if(this.hasLocalStorage() && localStorage.data) {
-                this.data = JSON.parse(localStorage.data);
-            } else {
-                this.resetData();
-            }
+    resetData: function () {
+      this.data = {
+        hasAlreadyPlayed: false,
+        player: {
+          name: "",
+          weapon: "",
+          armor: "",
+          guild: "",
+          image: "",
         },
-
-        resetData: function() {
-            this.data = {
-                hasAlreadyPlayed: false,
-                player: {
-                    name: "",
-                    weapon: "",
-                    armor: "",
-                    guild: "",
-                    image: ""
-                },
-                achievements: {
-                    unlocked: [],
-                    ratCount: 0,
-                    skeletonCount: 0,
-                    totalKills: 0,
-                    totalDmg: 0,
-                    totalRevives: 0
-                }
-            };
+        // old format
+        achievements: {
+          unlocked: [],
+          ratCount: 0,
+          skeletonCount: 0,
+          totalKills: 0,
+          totalDmg: 0,
+          totalRevives: 0,
         },
+        achievement: new Array(20).fill(0)
+      };
+    },
 
-        hasLocalStorage: function() {
-            return Modernizr.localstorage;
-        },
+    hasLocalStorage: function () {
+      return Modernizr.localstorage;
+    },
 
-        save: function() {
-            if(this.hasLocalStorage()) {
-                localStorage.data = JSON.stringify(this.data);
-            }
-        },
+    save: function () {
+      if (this.hasLocalStorage()) {
+        localStorage.data = JSON.stringify(this.data);
+      }
+    },
 
-        clear: function() {
-            if(this.hasLocalStorage()) {
-                localStorage.data = "";
-                this.resetData();
-            }
-        },
+    clear: function () {
+      if (this.hasLocalStorage()) {
+        localStorage.data = "";
+        this.resetData();
+      }
+    },
 
-        // Player
+    // Player
 
-        hasAlreadyPlayed: function() {
-            return this.data.hasAlreadyPlayed;
-        },
+    hasAlreadyPlayed: function () {
+      return this.data.hasAlreadyPlayed;
+    },
 
-        initPlayer: function(name) {
-            this.data.hasAlreadyPlayed = true;
-            this.setPlayerName(name);
-        },
+    initPlayer: function (name) {
+      this.data.hasAlreadyPlayed = true;
+      this.setPlayerName(name);
+    },
 
-        setPlayerName: function(name) {
-            this.data.player.name = name;
-            this.save();
-        },
+    setPlayerName: function (name) {
+      this.data.player.name = name;
+      this.save();
+    },
 
-        setPlayerImage: function(img) {
-            this.data.player.image = img;
-            this.save();
-        },
+    setPlayerImage: function (img) {
+      this.data.player.image = img;
+      this.save();
+    },
 
-        setPlayerArmor: function(armor) {
-            this.data.player.armor = armor;
-            this.save();
-        },
+    setPlayerArmor: function (armor) {
+      this.data.player.armor = armor;
+      this.save();
+    },
 
-        setPlayerWeapon: function(weapon) {
-            this.data.player.weapon = weapon;
-            this.save();
-        },
-        
-        setPlayerGuild: function(guild) {
-			if(typeof guild !== "undefined") {
-				this.data.player.guild={id:guild.id, name:guild.name,members:JSON.stringify(guild.members)};
-				this.save();
-			}
-			else{
-				delete this.data.player.guild;
-				this.save();
-			}
-		},
+    setPlayerWeapon: function (weapon) {
+      this.data.player.weapon = weapon;
+      this.save();
+    },
 
-        savePlayer: function(img, armor, weapon, guild) {
-            this.setPlayerImage(img);
-            this.setPlayerArmor(armor);
-            this.setPlayerWeapon(weapon);
-            this.setPlayerGuild(guild);
-        },
+    setAchievement: function (achievement) {
+      this.data.achievement = achievement;
+      this.save();
+    },
 
-        // Achievements
+    setPlayerGuild: function (guild) {
+      if (typeof guild !== "undefined") {
+        this.data.player.guild = {
+          id: guild.id,
+          name: guild.name,
+          members: JSON.stringify(guild.members),
+        };
+        this.save();
+      } else {
+        delete this.data.player.guild;
+        this.save();
+      }
+    },
 
-        hasUnlockedAchievement: function(id) {
-            return _.include(this.data.achievements.unlocked, id);
-        },
+    savePlayer: function (img, armor, weapon, guild) {
+      this.setPlayerImage(img);
+      this.setPlayerArmor(armor);
+      this.setPlayerWeapon(weapon);
+      this.setPlayerGuild(guild);
+    },
 
-        unlockAchievement: function(id) {
-            if(!this.hasUnlockedAchievement(id)) {
-                this.data.achievements.unlocked.push(id);
-                this.save();
-                return true;
-            }
-            return false;
-        },
+    // Achievements
 
-        getAchievementCount: function() {
-            return _.size(this.data.achievements.unlocked);
-        },
+    hasUnlockedAchievement: function (id) {
+      //   return _.include(this.data.achievements.unlocked, id);
+      return this.data.achievement[id - 1];
+    },
 
-        getAchievementNanoCount: function() {
-            console.log('~~~this', this)
-            console.log('~~~~this.data.achievements.unlocked', this.data.achievements.unlocked)
-            console.log('~~~~this.achievements', this.data.achievements)
-            return this.data.achievements.unlocked;
-        },
+    unlockAchievement: function (id) {
+      if (!this.hasUnlockedAchievement(id)) {
+        this.data.achievement[id - 1] = 1;
+        // this.data.achievements.unlocked.push(id);
+        this.save();
+        return true;
+      }
+      return false;
+    },
 
-        // Angry rats
-        getRatCount: function() {
-            return this.data.achievements.ratCount;
-        },
+    getAchievementCount: function () {
+      //   return _.size(this.data.achievements.unlocked);
+      return this.data.achievement.filter(Boolean).length;
+    },
 
-        incrementRatCount: function() {
-            if(this.data.achievements.ratCount < 10) {
-                this.data.achievements.ratCount++;
-                this.save();
-            }
-        },
+    // Angry rats
+    getRatCount: function () {
+      return this.data.achievements.ratCount;
+    },
 
-        // Skull Collector
-        getSkeletonCount: function() {
-            return this.data.achievements.skeletonCount;
-        },
+    incrementRatCount: function () {
+      if (this.data.achievements.ratCount < 10) {
+        this.data.achievements.ratCount++;
+        this.save();
+      }
+    },
 
-        incrementSkeletonCount: function() {
-            if(this.data.achievements.skeletonCount < 10) {
-                this.data.achievements.skeletonCount++;
-                this.save();
-            }
-        },
+    // Skull Collector
+    getSkeletonCount: function () {
+      return this.data.achievements.skeletonCount;
+    },
 
-        // Meatshield
-        getTotalDamageTaken: function() {
-            return this.data.achievements.totalDmg;
-        },
+    incrementSkeletonCount: function () {
+      if (this.data.achievements.skeletonCount < 10) {
+        this.data.achievements.skeletonCount++;
+        this.save();
+      }
+    },
 
-        addDamage: function(damage) {
-            if(this.data.achievements.totalDmg < 5000) {
-                this.data.achievements.totalDmg += damage;
-                this.save();
-            }
-        },
+    // Meatshield
+    getTotalDamageTaken: function () {
+      return this.data.achievements.totalDmg;
+    },
 
-        // Hunter
-        getTotalKills: function() {
-            return this.data.achievements.totalKills;
-        },
+    addDamage: function (damage) {
+      if (this.data.achievements.totalDmg < 5000) {
+        this.data.achievements.totalDmg += damage;
+        this.save();
+      }
+    },
 
-        incrementTotalKills: function() {
-            if(this.data.achievements.totalKills < 50) {
-                this.data.achievements.totalKills++;
-                this.save();
-            }
-        },
+    // Hunter
+    getTotalKills: function () {
+      return this.data.achievements.totalKills;
+    },
 
-        // Still Alive
-        getTotalRevives: function() {
-            return this.data.achievements.totalRevives;
-        },
+    incrementTotalKills: function () {
+      if (this.data.achievements.totalKills < 50) {
+        this.data.achievements.totalKills++;
+        this.save();
+      }
+    },
 
-        incrementRevives: function() {
-            if(this.data.achievements.totalRevives < 5) {
-                this.data.achievements.totalRevives++;
-                this.save();
-            }
-        },
-    });
+    // Still Alive
+    getTotalRevives: function () {
+      return this.data.achievements.totalRevives;
+    },
 
-    return Storage;
+    incrementRevives: function () {
+      if (this.data.achievements.totalRevives < 5) {
+        this.data.achievements.totalRevives++;
+        this.save();
+      }
+    },
+  });
+
+  return Storage;
 });
