@@ -34,6 +34,9 @@ Types = {
         GUILDERROR: 30,
         ACHIEVEMENT: 31,
         BOSS_CHECK: 32,
+        BAN_PLAYER: 33,
+        REQUEST_PAYOUT: 34,
+        NOTIFICATION: 35,
         GUILDERRORTYPE: {
         	DOESNOTEXIST: 1,
         	BADNAME: 2,

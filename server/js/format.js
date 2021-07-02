@@ -20,7 +20,9 @@ var Types = require('../../shared/js/gametypes');
             this.formats[Types.Messages.OPEN] = ['n'],
             this.formats[Types.Messages.CHECK] = ['n'],
             this.formats[Types.Messages.ACHIEVEMENT] = ['n', 's'],
-            this.formats[Types.Messages.BOSS_CHECK] = []
+            this.formats[Types.Messages.BOSS_CHECK] = [],
+            this.formats[Types.Messages.BAN_PLAYER] = []
+            this.formats[Types.Messages.REQUEST_PAYOUT] = []
         },
 
         check: function (msg) {
@@ -29,10 +31,6 @@ var Types = require('../../shared/js/gametypes');
                 format = this.formats[type];
 
             message.shift();
-
-            // console.log('~~~~~type', type);
-            // console.log('~~~~~message', message);
-            // console.log('~~~~~format', format);
 
             if (format) {
                 if (message.length !== format.length) {
@@ -80,7 +78,11 @@ var Types = require('../../shared/js/gametypes');
             else if (type === Types.Messages.ACHIEVEMENT) {
                 return (message.length === 2 && _.isNumber(message[0]) && _.isString(message[1]));
             } 
-            else if (type === Types.Messages.BOSS_CHECK) {
+            else if ([
+                Types.Messages.BOSS_CHECK, 
+                Types.Messages.BAN_PLAYER, 
+                Types.Messages.REQUEST_PAYOUT
+            ].includes(type) === Types.Messages.BOSS_CHECK) {
                 return (message.length === 0);
             }
             else {

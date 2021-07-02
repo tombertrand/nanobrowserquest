@@ -46,7 +46,7 @@ define([
   Mobs,
   Exceptions,
   config,
-  Guild
+  Guild,
 ) {
   var Game = Class.extend({
     init: function (app) {
@@ -223,9 +223,7 @@ define([
 
       this.map.ready(function () {
         log.info("Map loaded.");
-        var tilesetIndex = self.renderer.upscaledRendering
-          ? 0
-          : self.renderer.scale - 1;
+        var tilesetIndex = self.renderer.upscaledRendering ? 0 : self.renderer.scale - 1;
         self.renderer.setTileset(self.map.tilesets[tilesetIndex]);
       });
     },
@@ -570,10 +568,7 @@ define([
         this.entities[entity.id] = entity;
         this.registerEntityPosition(entity);
 
-        if (
-          !(entity instanceof Item && entity.wasDropped) &&
-          !(this.renderer.mobile || this.renderer.tablet)
-        ) {
+        if (!(entity instanceof Item && entity.wasDropped) && !(this.renderer.mobile || this.renderer.tablet)) {
           entity.fadeIn(this.currentTime);
         }
 
@@ -586,9 +581,7 @@ define([
           });
         }
       } else {
-        log.error(
-          "This entity already exists : " + entity.id + " (" + entity.kind + ")"
-        );
+        log.error("This entity already exists : " + entity.id + " (" + entity.kind + ")");
       }
     },
 
@@ -672,12 +665,7 @@ define([
       this.animatedTiles = [];
       this.forEachVisibleTile(function (id, index) {
         if (m.isAnimatedTile(id)) {
-          var tile = new AnimatedTile(
-              id,
-              m.getTileAnimationLength(id),
-              m.getTileAnimationDelay(id),
-              index
-            ),
+          var tile = new AnimatedTile(id, m.getTileAnimationLength(id), m.getTileAnimationDelay(id), index),
             pos = self.map.tileIndexToGridPosition(tile.index);
 
           tile.x = pos.x;
@@ -695,11 +683,7 @@ define([
     },
 
     removeFromRenderingGrid: function (entity, x, y) {
-      if (
-        entity &&
-        this.renderingGrid[y][x] &&
-        entity.id in this.renderingGrid[y][x]
-      ) {
+      if (entity && this.renderingGrid[y][x] && entity.id in this.renderingGrid[y][x]) {
         delete this.renderingGrid[y][x][entity.id];
       }
     },
@@ -734,8 +718,7 @@ define([
         this.addToRenderingGrid(entity, entity.gridX, entity.gridY);
 
         if (entity.nextGridX >= 0 && entity.nextGridY >= 0) {
-          this.entityGrid[entity.nextGridY][entity.nextGridX][entity.id] =
-            entity;
+          this.entityGrid[entity.nextGridY][entity.nextGridX][entity.id] = entity;
           if (!(entity instanceof Player)) {
             this.pathingGrid[entity.nextGridY][entity.nextGridX] = 1;
           }
@@ -822,11 +805,7 @@ define([
           self.initShadows();
           self.initHurtSprites();
 
-          if (
-            !self.renderer.mobile &&
-            !self.renderer.tablet &&
-            self.renderer.upscaledRendering
-          ) {
+          if (!self.renderer.mobile && !self.renderer.tablet && self.renderer.upscaledRendering) {
             self.initSilhouettes();
           }
 
@@ -963,6 +942,7 @@ define([
         weaponAvatar,
         experience,
         achievement,
+        hash,
       }) {
         log.info("Received player ID from server : " + id);
         self.player.id = id;
@@ -985,9 +965,6 @@ define([
         self.player.experience = experience;
         self.player.level = Types.getLevel(experience);
 
-        // console.log("~~~~experience", experience);
-        // console.log("~~~~self.storage", self.storage);
-
         self.updateBars();
         self.updateExpBar();
         self.resetCamera();
@@ -996,9 +973,7 @@ define([
         self.initAchievements();
 
         self.addEntity(self.player);
-        self.player.dirtyRect = self.renderer.getEntityBoundingRect(
-          self.player
-        );
+        self.player.dirtyRect = self.renderer.getEntityBoundingRect(self.player);
 
         setTimeout(function () {
           self.tryUnlockingAchievement("STILL_ALIVE");
@@ -1009,16 +984,18 @@ define([
           self.renderer.getPlayerImage(),
           self.player.getSpriteName(),
           self.player.getWeaponName(),
-          self.player.getGuild()
+          self.player.getGuild(),
         );
 
         if (!self.storage.hasAlreadyPlayed()) {
           self.showNotification("Welcome to Nano BrowserQuest!");
         } else {
-          self.showNotification(
-            "Welcome Back. You are level " + self.player.level + "."
-          );
+          self.showNotification("Welcome Back. You are level " + self.player.level + ".");
           // self.storage.setPlayerName(name);
+        }
+
+        if (hash) {
+          self.gamecompleted_callback(hash);
         }
 
         self.player.onStartPathing(function (path) {
@@ -1042,51 +1019,28 @@ define([
             self.drawTarget = true;
             self.clearTarget = true;
             self.renderer.targetRect = self.renderer.getTargetBoundingRect();
-            self.checkOtherDirtyRects(
-              self.renderer.targetRect,
-              null,
-              self.selectedX,
-              self.selectedY
-            );
+            self.checkOtherDirtyRects(self.renderer.targetRect, null, self.selectedX, self.selectedY);
           }
         });
 
         self.player.onCheckAggro(function () {
           self.forEachMob(function (mob) {
-            if (
-              mob.isAggressive &&
-              !mob.isAttacking() &&
-              self.player.isNear(mob, mob.aggroRange)
-            ) {
+            if (mob.isAggressive && !mob.isAttacking() && self.player.isNear(mob, mob.aggroRange)) {
               self.player.aggro(mob);
             }
           });
         });
 
         self.player.onAggro(function (mob) {
-          if (
-            !mob.isWaitingToAttack(self.player) &&
-            !self.player.isAttackedBy(mob)
-          ) {
-            self.player.log_info(
-              "Aggroed by " +
-                mob.id +
-                " at (" +
-                self.player.gridX +
-                ", " +
-                self.player.gridY +
-                ")"
-            );
+          if (!mob.isWaitingToAttack(self.player) && !self.player.isAttackedBy(mob)) {
+            self.player.log_info("Aggroed by " + mob.id + " at (" + self.player.gridX + ", " + self.player.gridY + ")");
             self.client.sendAggro(mob);
             mob.waitToAttack(self.player);
           }
         });
 
         self.player.onBeforeStep(function () {
-          var blockingEntity = self.getEntityAt(
-            self.player.nextGridX,
-            self.player.nextGridY
-          );
+          var blockingEntity = self.getEntityAt(self.player.nextGridX, self.player.nextGridY);
           if (blockingEntity && blockingEntity.id !== self.playerId) {
             log.debug("Blocked by " + blockingEntity.id);
           }
@@ -1110,45 +1064,25 @@ define([
           }
 
           if (
-            (self.player.gridX <= 85 &&
-              self.player.gridY <= 179 &&
-              self.player.gridY > 178) ||
-            (self.player.gridX <= 85 &&
-              self.player.gridY <= 266 &&
-              self.player.gridY > 265)
+            (self.player.gridX <= 85 && self.player.gridY <= 179 && self.player.gridY > 178) ||
+            (self.player.gridX <= 85 && self.player.gridY <= 266 && self.player.gridY > 265)
           ) {
             self.tryUnlockingAchievement("INTO_THE_WILD");
           }
 
-          if (
-            self.player.gridX <= 85 &&
-            self.player.gridY <= 293 &&
-            self.player.gridY > 292
-          ) {
+          if (self.player.gridX <= 85 && self.player.gridY <= 293 && self.player.gridY > 292) {
             self.tryUnlockingAchievement("AT_WORLDS_END");
           }
 
-          if (
-            self.player.gridX <= 85 &&
-            self.player.gridY <= 100 &&
-            self.player.gridY > 99
-          ) {
+          if (self.player.gridX <= 85 && self.player.gridY <= 100 && self.player.gridY > 99) {
             self.tryUnlockingAchievement("NO_MANS_LAND");
           }
 
-          if (
-            self.player.gridX <= 85 &&
-            self.player.gridY <= 51 &&
-            self.player.gridY > 50
-          ) {
+          if (self.player.gridX <= 85 && self.player.gridY <= 51 && self.player.gridY > 50) {
             self.tryUnlockingAchievement("HOT_SPOT");
           }
 
-          if (
-            self.player.gridX <= 27 &&
-            self.player.gridY <= 123 &&
-            self.player.gridY > 112
-          ) {
+          if (self.player.gridX <= 27 && self.player.gridY <= 123 && self.player.gridY > 112) {
             self.tryUnlockingAchievement("TOMB_RAIDER");
           }
 
@@ -1159,9 +1093,7 @@ define([
           }
         });
 
-        // self.player.enterBossRoom
-
-        self.player.onStopPathing(function (x, y) {
+        self.player.onStopPathing(function (x, y, confirmed) {
           if (self.player.hasTarget()) {
             self.player.lookAtTarget();
           }
@@ -1175,26 +1107,55 @@ define([
 
           if (!self.player.hasTarget() && self.map.isDoor(x, y)) {
             var dest = self.map.getDoorDestination(x, y);
-
-            console.log("~~~~x", x);
-            console.log("~~~~y", y);
-            console.log("~~~~dest.x", dest.x);
-            console.log("~~~~dest.y", dest.y);
-
-            // @TODO Validate BOSS room enabled
-            if (x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
+            if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
               self.client.sendBossCheck();
-
-              // cameraX: undefined
-              // cameraY: undefined
-              // orientation: 1
-              // portal: false
-              // x: 155
-              // y: 96
-
               return;
             }
-            self.player.goToLocation(dest);
+
+            self.player.setGridPosition(dest.x, dest.y);
+            self.player.nextGridX = dest.x;
+            self.player.nextGridY = dest.y;
+            self.player.turnTo(dest.orientation);
+            self.client.sendTeleport(dest.x, dest.y);
+
+            if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
+              self.camera.setGridPosition(dest.cameraX, dest.cameraY);
+              self.resetZone();
+            } else {
+              if (dest.portal) {
+                self.assignBubbleTo(self.player);
+              } else {
+                self.camera.focusEntity(self.player);
+                self.resetZone();
+              }
+            }
+
+            if (_.size(self.player.attackers) > 0) {
+              setTimeout(function () {
+                self.tryUnlockingAchievement("COWARD");
+              }, 500);
+            }
+            self.player.forEachAttacker(function (attacker) {
+              attacker.disengage();
+              attacker.idle();
+            });
+
+            self.updatePlateauMode();
+
+            self.checkUndergroundAchievement();
+
+            if (self.renderer.mobile || self.renderer.tablet) {
+              // When rendering with dirty rects, clear the whole screen when entering a door.
+              self.renderer.clearScreen(self.renderer.context);
+            }
+
+            if (dest.portal) {
+              self.audioManager.playSound("teleport");
+            }
+
+            if (!self.player.isDead) {
+              self.audioManager.updateMusic();
+            }
           }
 
           if (self.player.target instanceof Npc) {
@@ -1214,53 +1175,6 @@ define([
           self.registerEntityPosition(self.player);
         });
 
-        self.player.goToLocation = (dest) => {
-          self.player.setGridPosition(dest.x, dest.y);
-          self.player.nextGridX = dest.x;
-          self.player.nextGridY = dest.y;
-          self.player.turnTo(dest.orientation);
-          self.client.sendTeleport(dest.x, dest.y);
-
-          if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
-            self.camera.setGridPosition(dest.cameraX, dest.cameraY);
-            self.resetZone();
-          } else {
-            if (dest.portal) {
-              self.assignBubbleTo(self.player);
-            } else {
-              self.camera.focusEntity(self.player);
-              self.resetZone();
-            }
-          }
-
-          if (_.size(self.player.attackers) > 0) {
-            setTimeout(function () {
-              self.tryUnlockingAchievement("COWARD");
-            }, 500);
-          }
-          self.player.forEachAttacker(function (attacker) {
-            attacker.disengage();
-            attacker.idle();
-          });
-
-          self.updatePlateauMode();
-
-          self.checkUndergroundAchievement();
-
-          if (self.renderer.mobile || self.renderer.tablet) {
-            // When rendering with dirty rects, clear the whole screen when entering a door.
-            self.renderer.clearScreen(self.renderer.context);
-          }
-
-          if (dest.portal) {
-            self.audioManager.playSound("teleport");
-          }
-
-          if (!self.player.isDead) {
-            self.audioManager.updateMusic();
-          }
-        };
-
         self.player.onRequestPath(function (x, y) {
           var ignored = [self.player]; // Always ignore self
 
@@ -1279,11 +1193,7 @@ define([
             log.info(self.playerId + " was removed");
 
             self.removeEntity(self.player);
-            self.removeFromRenderingGrid(
-              self.player,
-              self.player.gridX,
-              self.player.gridY
-            );
+            self.removeFromRenderingGrid(self.player, self.player.gridX, self.player.gridY);
 
             self.player = null;
             self.client.disable();
@@ -1323,7 +1233,7 @@ define([
             self.renderer.getPlayerImage(),
             self.player.getArmorName(),
             self.player.getWeaponName(),
-            self.player.getGuild()
+            self.player.getGuild(),
           );
           if (self.equipment_callback) {
             self.equipment_callback();
@@ -1336,16 +1246,7 @@ define([
         });
 
         self.client.onSpawnItem(function (item, x, y) {
-          log.info(
-            "Spawned " +
-              Types.getKindAsString(item.kind) +
-              " (" +
-              item.id +
-              ") at " +
-              x +
-              ", " +
-              y
-          );
+          log.info("Spawned " + Types.getKindAsString(item.kind) + " (" + item.id + ") at " + x + ", " + y);
           self.addItem(item, x, y);
         });
 
@@ -1368,13 +1269,7 @@ define([
           });
         });
 
-        self.client.onSpawnCharacter(function (
-          entity,
-          x,
-          y,
-          orientation,
-          targetId
-        ) {
+        self.client.onSpawnCharacter(function (entity, x, y, orientation, targetId) {
           if (!self.entityIdExists(entity.id)) {
             try {
               if (entity.id !== self.playerId) {
@@ -1393,7 +1288,7 @@ define([
                     ") at " +
                     entity.gridX +
                     ", " +
-                    entity.gridY
+                    entity.gridY,
                 );
 
                 if (entity instanceof Character) {
@@ -1421,10 +1316,7 @@ define([
 
                   entity.onStopPathing(function (x, y) {
                     if (!entity.isDying) {
-                      if (
-                        entity.hasTarget() &&
-                        entity.isAdjacent(entity.target)
-                      ) {
+                      if (entity.hasTarget() && entity.isAdjacent(entity.target)) {
                         entity.lookAtTarget();
                       }
 
@@ -1439,10 +1331,7 @@ define([
                       }
 
                       entity.forEachAttacker(function (attacker) {
-                        if (
-                          !attacker.isAdjacentNonDiagonal(entity) &&
-                          attacker.id !== self.playerId
-                        ) {
+                        if (!attacker.isAdjacentNonDiagonal(entity) && attacker.id !== self.playerId) {
                           attacker.follow(entity);
                         }
                       });
@@ -1487,45 +1376,30 @@ define([
                     }
 
                     entity.isDying = true;
-                    entity.setSprite(
-                      self.sprites[entity instanceof Mobs.Rat ? "rat" : "death"]
-                    );
+                    entity.setSprite(self.sprites[entity instanceof Mobs.Rat ? "rat" : "death"]);
                     entity.animate("death", 120, 1, function () {
                       log.info(entity.id + " was removed");
 
                       self.removeEntity(entity);
-                      self.removeFromRenderingGrid(
-                        entity,
-                        entity.gridX,
-                        entity.gridY
-                      );
+                      self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
                     });
 
                     entity.forEachAttacker(function (attacker) {
                       attacker.disengage();
                     });
 
-                    if (
-                      self.player.target &&
-                      self.player.target.id === entity.id
-                    ) {
+                    if (self.player.target && self.player.target.id === entity.id) {
                       self.player.disengage();
                     }
 
                     // Upon death, this entity is removed from both grids, allowing the player
                     // to click very fast in order to loot the dropped item and not be blocked.
                     // The entity is completely removed only after the death animation has ended.
-                    self.removeFromEntityGrid(
-                      entity,
-                      entity.gridX,
-                      entity.gridY
-                    );
+                    self.removeFromEntityGrid(entity, entity.gridX, entity.gridY);
                     self.removeFromPathingGrid(entity.gridX, entity.gridY);
 
                     if (self.camera.isVisible(entity)) {
-                      self.audioManager.playSound(
-                        "kill" + Math.floor(Math.random() * 2 + 1)
-                      );
+                      self.audioManager.playSound("kill" + Math.floor(Math.random() * 2 + 1));
                     }
 
                     self.updateCursor();
@@ -1549,9 +1423,7 @@ define([
               log.error(e);
             }
           } else {
-            log.debug(
-              "Character " + entity.id + " already exists. Don't respawn."
-            );
+            log.debug("Character " + entity.id + " already exists. Don't respawn.");
           }
         });
 
@@ -1559,18 +1431,9 @@ define([
           var entity = self.getEntityById(entityId);
 
           if (entity) {
-            log.info(
-              "Despawning " +
-                Types.getKindAsString(entity.kind) +
-                " (" +
-                entity.id +
-                ")"
-            );
+            log.info("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id + ")");
 
-            if (
-              entity.gridX === self.previousClickPosition.x &&
-              entity.gridY === self.previousClickPosition.y
-            ) {
+            if (entity.gridX === self.previousClickPosition.x && entity.gridY === self.previousClickPosition.y) {
               self.previousClickPosition = {};
             }
 
@@ -1601,20 +1464,14 @@ define([
 
         self.client.onGuildError(function (errorType, info) {
           if (errorType === Types.Messages.GUILDERRORTYPE.BADNAME) {
-            self.showNotification(
-              info + " seems to be an inappropriate guild name…"
-            );
-          } else if (
-            errorType === Types.Messages.GUILDERRORTYPE.ALREADYEXISTS
-          ) {
+            self.showNotification(info + " seems to be an inappropriate guild name…");
+          } else if (errorType === Types.Messages.GUILDERRORTYPE.ALREADYEXISTS) {
             self.showNotification(info + " already exists…");
             setTimeout(function () {
               self.showNotification("Either change the name of YOUR guild");
             }, 2500);
             setTimeout(function () {
-              self.showNotification(
-                "Or ask a member of " + info + " if you can join them."
-              );
+              self.showNotification("Or ask a member of " + info + " if you can join them.");
             }, 5000);
           } else if (errorType === Types.Messages.GUILDERRORTYPE.IDWARNING) {
             self.showNotification("WARNING: the server was rebooted.");
@@ -1622,12 +1479,7 @@ define([
               self.showNotification(info + " has changed ID.");
             }, 2500);
           } else if (errorType === Types.Messages.GUILDERRORTYPE.BADINVITE) {
-            self.showNotification(
-              info +
-                " is ALREADY a member of “" +
-                self.player.getGuild().name +
-                "”"
-            );
+            self.showNotification(info + " is ALREADY a member of “" + self.player.getGuild().name + "”");
           }
         });
 
@@ -1641,16 +1493,12 @@ define([
         });
 
         self.client.onGuildInvite(function (guildId, guildName, invitorName) {
-          self.showNotification(
-            invitorName + " invited you to join “" + guildName + "”."
-          );
+          self.showNotification(invitorName + " invited you to join “" + guildName + "”.");
           self.player.addInvite(guildId);
           setTimeout(function () {
             $("#chatinput").attr(
               "placeholder",
-              "Do you want to join " +
-                guildName +
-                " ? Type /guild accept yes or /guild accept no"
+              "Do you want to join " + guildName + " ? Type /guild accept yes or /guild accept no",
             );
             self.app.showChat();
           }, 2500);
@@ -1658,29 +1506,21 @@ define([
 
         self.client.onGuildJoin(function (playerName, id, guildId, guildName) {
           if (typeof id === "undefined") {
-            self.showNotification(
-              playerName + " failed to answer to your invitation in time."
-            );
+            self.showNotification(playerName + " failed to answer to your invitation in time.");
             setTimeout(function () {
               self.showNotification("Might have to send another invite…");
             }, 2500);
           } else if (id === false) {
-            self.showNotification(
-              playerName + " respectfully declined your offer…"
-            );
+            self.showNotification(playerName + " respectfully declined your offer…");
             setTimeout(function () {
-              self.showNotification(
-                "…to join “" + self.player.getGuild().name + "”."
-              );
+              self.showNotification("…to join “" + self.player.getGuild().name + "”.");
             }, 2500);
           } else if (id === self.player.id) {
             self.player.setGuild(new Guild(guildId, guildName));
             self.storage.setPlayerGuild(self.player.getGuild());
             self.showNotification("You just joined “" + guildName + "”.");
           } else {
-            self.showNotification(
-              playerName + " is now a jolly member of “" + guildName + "”."
-            ); //#updateguild
+            self.showNotification(playerName + " is now a jolly member of “" + guildName + "”."); //#updateguild
           }
         });
 
@@ -1691,9 +1531,7 @@ define([
                 //do not erase new guild on create
                 self.player.unsetGuild();
                 self.storage.setPlayerGuild();
-                self.showNotification(
-                  "You successfully left “" + guildName + "”."
-                );
+                self.showNotification("You successfully left “" + guildName + "”.");
               }
             }
             //missing elses above should not happen (errors)
@@ -1720,9 +1558,7 @@ define([
 
         self.client.onReceiveGuildMembers(function (memberNames) {
           self.showNotification(
-            memberNames.join(", ") +
-              (memberNames.length === 1 ? " is " : " are ") +
-              "currently online."
+            memberNames.join(", ") + (memberNames.length === 1 ? " is " : " are ") + "currently online.",
           ); //#updateguild
         });
 
@@ -1792,20 +1628,10 @@ define([
           }
         });
 
-        self.client.onPlayerDamageMob(function (
-          mobId,
-          points,
-          healthPoints,
-          maxHp
-        ) {
+        self.client.onPlayerDamageMob(function (mobId, points, healthPoints, maxHp) {
           var mob = self.getEntityById(mobId);
           if (mob && points) {
-            self.infoManager.addDamageInfo(
-              points,
-              mob.x,
-              mob.y - 15,
-              "inflicted"
-            );
+            self.infoManager.addDamageInfo(points, mob.x, mob.y - 15, "inflicted");
           }
           if (self.player.hasTarget()) {
             self.updateTarget(mobId, points, healthPoints, maxHp);
@@ -1818,27 +1644,14 @@ define([
           self.player.experience = exp;
           self.updateExpBar();
 
-          self.infoManager.addDamageInfo(
-            "+" + mobExp + " exp",
-            self.player.x,
-            self.player.y - 15,
-            "exp",
-            3000
-          );
+          self.infoManager.addDamageInfo("+" + mobExp + " exp", self.player.x, self.player.y - 15, "exp", 3000);
 
-          var expInThisLevel =
-            self.player.experience - Types.expForLevel[self.player.level - 1];
-          var expForLevelUp =
-            Types.expForLevel[self.player.level] -
-            Types.expForLevel[self.player.level - 1];
+          var expInThisLevel = self.player.experience - Types.expForLevel[self.player.level - 1];
+          var expForLevelUp = Types.expForLevel[self.player.level] - Types.expForLevel[self.player.level - 1];
           var expPercentThisLevel = (100 * expInThisLevel) / expForLevelUp;
 
           self.showNotification(
-            "Total xp: " +
-              self.player.experience +
-              ". " +
-              expPercentThisLevel.toFixed(0) +
-              "% of this level done."
+            "Total xp: " + self.player.experience + ". " + expPercentThisLevel.toFixed(0) + "% of this level done.",
           );
 
           var mobName = Types.getKindAsString(kind);
@@ -1867,17 +1680,15 @@ define([
             self.tryUnlockingAchievement("ANGRY_RATS");
           }
 
-          if (
-            kind === Types.Entities.SKELETON ||
-            kind === Types.Entities.SKELETON2
-          ) {
+          if (kind === Types.Entities.SKELETON || kind === Types.Entities.SKELETON2) {
             self.storage.incrementSkeletonCount();
             self.tryUnlockingAchievement("SKULL_COLLECTOR");
           }
 
           if (kind === Types.Entities.BOSS) {
-            self.tryUnlockingAchievement("HERO");
-            // @TODO Enable claim button!
+            self.tryUnlockingAchievement("HERO").then(() => {
+              self.client.sendRequestPayout();
+            });
           }
         });
 
@@ -1896,12 +1707,7 @@ define([
             }
             if (isHurt) {
               player.hurt();
-              self.infoManager.addDamageInfo(
-                diff,
-                player.x,
-                player.y - 15,
-                "received"
-              );
+              self.infoManager.addDamageInfo(diff, player.x, player.y - 15, "received");
               self.audioManager.playSound("hurt");
               self.storage.addDamage(-diff);
               self.tryUnlockingAchievement("MEATSHIELD");
@@ -1909,12 +1715,7 @@ define([
                 self.playerhurt_callback();
               }
             } else if (!isRegen) {
-              self.infoManager.addDamageInfo(
-                "+" + diff,
-                player.x,
-                player.y - 15,
-                "healed"
-              );
+              self.infoManager.addDamageInfo("+" + diff, player.x, player.y - 15, "healed");
             }
             self.updateBars();
           }
@@ -1987,6 +1788,44 @@ define([
           if (self.nbguildplayers_callback) {
             self.nbguildplayers_callback(guildName, guildPopulation);
           }
+        });
+
+        self.client.onBossCheck(function (data) {
+          const { status, message, hash, check } = data;
+
+          if (status === "ok") {
+            const position = parseInt(check[check.length - 1]);
+            if (check[position] != position) {
+              self.client.sendBanPlayer();
+            } else {
+              let s = check;
+              s = s.slice(0, position) + s.slice(position + 1, s.length - 1);
+              s = parseInt(s);
+
+              const now = Date.now();
+              // 10s range
+              if (s < now && now - s < 1000 * 10) {
+                self.player.stop_pathing_callback(71, 21, true);
+              } else {
+                self.client.sendBanPlayer();
+              }
+            }
+          } else if (status === "failed") {
+            self.bosscheckfailed_callback(message);
+          } else if (status === "completed") {
+            self.gamecompleted_callback(hash);
+          }
+          // else if (status === "ban") {
+          //   self.client.sendBanPlayer();
+          // }
+        });
+
+        self.client.onReceiveNotification(function (data) {
+          const { message, hash } = data;
+
+          setTimeout(() => {
+            self.showNotification(message, 30000);
+          }, 250);
         });
 
         self.client.onDisconnected(function (message) {
@@ -2223,7 +2062,7 @@ define([
             }
           }
         },
-        this.renderer.mobile ? 0 : 2
+        this.renderer.mobile ? 0 : 2,
       );
     },
 
@@ -2304,12 +2143,7 @@ define([
 
     getPlayerAt: function (x, y) {
       var entity = this.getEntityAt(x, y);
-      if (
-        entity &&
-        entity instanceof Player &&
-        entity !== this.player &&
-        this.player.pvpFlag
-      ) {
+      if (entity && entity instanceof Player && entity !== this.player && this.player.pvpFlag) {
         return entity;
       }
       return null;
@@ -2408,14 +2242,7 @@ define([
           this.pathfinder.clearIgnoreList();
         }
       } else {
-        log.error(
-          "Error while finding the path to " +
-            x +
-            ", " +
-            y +
-            " for " +
-            character.id
-        );
+        log.error("Error while finding the path to " + x + ", " + y + " for " + character.id);
       }
       return path;
     },
@@ -2454,9 +2281,7 @@ define([
 
       if (this.player && !this.renderer.mobile && !this.renderer.tablet) {
         this.hoveringCollidingTile = this.map.isColliding(x, y);
-        this.hoveringPlateauTile = this.player.isOnPlateau
-          ? !this.map.isPlateau(x, y)
-          : this.map.isPlateau(x, y);
+        this.hoveringPlateauTile = this.player.isOnPlateau ? !this.map.isPlateau(x, y) : this.map.isPlateau(x, y);
         this.hoveringMob = this.isMobAt(x, y);
         this.hoveringPlayer = this.isPlayerAt(x, y);
         this.hoveringItem = this.isItemAt(x, y);
@@ -2504,15 +2329,10 @@ define([
       this.hoveringCollidingTile = false;
       this.hoveringPlateauTile = false;
 
-      if (
-        (pos.x === this.previousClickPosition.x &&
-          pos.y === this.previousClickPosition.y) ||
-        this.isZoning()
-      ) {
+      if ((pos.x === this.previousClickPosition.x && pos.y === this.previousClickPosition.y) || this.isZoning()) {
         return;
       } else {
-        if (!this.player.disableKeyboardNpcTalk)
-          this.previousClickPosition = pos;
+        if (!this.player.disableKeyboardNpcTalk) this.previousClickPosition = pos;
       }
 
       if (!this.player.isMoving()) {
@@ -2524,10 +2344,7 @@ define([
     click: function () {
       var pos = this.getMouseGridPosition();
 
-      if (
-        pos.x === this.previousClickPosition.x &&
-        pos.y === this.previousClickPosition.y
-      ) {
+      if (pos.x === this.previousClickPosition.x && pos.y === this.previousClickPosition.y) {
         return;
       } else {
         this.previousClickPosition = pos;
@@ -2555,10 +2372,7 @@ define([
 
         if (
           entity instanceof Mob ||
-          (entity instanceof Player &&
-            entity !== this.player &&
-            this.player.pvpFlag &&
-            this.pvpFlag)
+          (entity instanceof Player && entity !== this.player && this.player.pvpFlag && this.pvpFlag)
         ) {
           this.makePlayerAttack(entity);
         } else if (entity instanceof Item) {
@@ -2570,12 +2384,7 @@ define([
             if (!this.player.disableKeyboardNpcTalk) {
               this.makeNpcTalk(entity);
 
-              if (
-                this.player.moveUp ||
-                this.player.moveDown ||
-                this.player.moveLeft ||
-                this.player.moveRight
-              )
+              if (this.player.moveUp || this.player.moveDown || this.player.moveLeft || this.player.moveRight)
                 this.player.disableKeyboardNpcTalk = true;
             }
           }
@@ -2663,11 +2472,7 @@ define([
           }
         }
 
-        if (
-          !target.isMoving() &&
-          attacker.isAdjacentNonDiagonal(target) &&
-          this.isMobOnSameTile(attacker)
-        ) {
+        if (!target.isMoving() && attacker.isAdjacentNonDiagonal(target) && this.isMobOnSameTile(attacker)) {
           var pos = this.getFreeAdjacentNonDiagonalPosition(target);
 
           // avoid stacking mobs on the same tile next to a player
@@ -2698,11 +2503,7 @@ define([
         self = this;
 
       // If mob has finished moving to a different tile in order to avoid stacking, attack again from the new position.
-      if (
-        character.previousTarget &&
-        !character.isMoving() &&
-        character instanceof Mob
-      ) {
+      if (character.previousTarget && !character.isMoving() && character instanceof Mob) {
         var t = character.previousTarget;
 
         if (this.getEntityById(t.id)) {
@@ -2713,20 +2514,13 @@ define([
         }
       }
 
-      if (
-        character.isAttacking() &&
-        (!character.previousTarget || character.id === this.playerId)
-      ) {
+      if (character.isAttacking() && (!character.previousTarget || character.id === this.playerId)) {
         var isMoving = this.tryMovingToADifferentTile(character); // Don't let multiple mobs stack on the same tile when attacking a player.
 
         if (character.canAttack(time)) {
           if (!isMoving) {
             // don't hit target if moving to a different tile.
-            if (
-              character.hasTarget() &&
-              character.getOrientationTo(character.target) !==
-                character.orientation
-            ) {
+            if (character.hasTarget() && character.getOrientationTo(character.target) !== character.orientation) {
               character.lookAtTarget();
             }
 
@@ -2736,13 +2530,8 @@ define([
               this.client.sendHit(character.target);
             }
 
-            if (
-              character instanceof Player &&
-              this.camera.isVisible(character)
-            ) {
-              this.audioManager.playSound(
-                "hit" + Math.floor(Math.random() * 2 + 1)
-              );
+            if (character instanceof Player && this.camera.isVisible(character)) {
+              this.audioManager.playSound("hit" + Math.floor(Math.random() * 2 + 1));
             }
 
             if (
@@ -2819,10 +2608,7 @@ define([
 
         if (z === Types.Orientations.LEFT || z === Types.Orientations.RIGHT) {
           x = z === Types.Orientations.LEFT ? c.x - xoffset : c.x + xoffset;
-        } else if (
-          z === Types.Orientations.UP ||
-          z === Types.Orientations.DOWN
-        ) {
+        } else if (z === Types.Orientations.UP || z === Types.Orientations.DOWN) {
           y = z === Types.Orientations.UP ? c.y - yoffset : c.y + yoffset;
         }
         c.setPosition(x, y);
@@ -2877,8 +2663,7 @@ define([
 
     say: function (message) {
       //#cli guilds
-      var regexp =
-        /^\/guild\ (invite|create|accept)\s+([^\s]*)|(guild:)\s*(.*)$|^\/guild\ (leave)$/i;
+      var regexp = /^\/guild\ (invite|create|accept)\s+([^\s]*)|(guild:)\s*(.*)$|^\/guild\ (leave)$/i;
       var args = message.match(regexp);
       if (args != undefined) {
         switch (args[1]) {
@@ -2910,23 +2695,15 @@ define([
               } else if (status < 0) {
                 this.showNotification("Sorry to say it's too late…");
                 setTimeout(function () {
-                  self.showNotification(
-                    "Find someone and ask for another invite."
-                  );
+                  self.showNotification("Find someone and ask for another invite.");
                 }, 2500);
               } else {
-                this.client.sendGuildInviteReply(
-                  this.player.invite.guildId,
-                  true
-                );
+                this.client.sendGuildInviteReply(this.player.invite.guildId, true);
               }
             } else if (args[2] === "no") {
               status = this.player.checkInvite();
               if (status !== false) {
-                this.client.sendGuildInviteReply(
-                  this.player.invite.guildId,
-                  false
-                );
+                this.client.sendGuildInviteReply(this.player.invite.guildId, false);
                 this.player.deleteInvite();
               } else {
                 this.showNotification("Whatever…");
@@ -3019,6 +2796,14 @@ define([
       this.playerdeath_callback = callback;
     },
 
+    onGameCompleted: function (callback) {
+      this.gamecompleted_callback = callback;
+    },
+
+    onBossCheckFailed: function (callback) {
+      this.bosscheckfailed_callback = callback;
+    },
+
     onUpdateTarget: function (callback) {
       this.updatetarget_callback = callback;
     },
@@ -3074,11 +2859,8 @@ define([
     },
     updateExpBar: function () {
       if (this.player && this.playerexp_callback) {
-        var expInThisLevel =
-          this.player.experience - Types.expForLevel[this.player.level - 1];
-        var expForLevelUp =
-          Types.expForLevel[this.player.level] -
-          Types.expForLevel[this.player.level - 1];
+        var expInThisLevel = this.player.experience - Types.expForLevel[this.player.level - 1];
+        var expForLevelUp = Types.expForLevel[this.player.level] - Types.expForLevel[this.player.level - 1];
         this.playerexp_callback(expInThisLevel, expForLevelUp);
       }
     },
@@ -3110,29 +2892,26 @@ define([
 
     tryUnlockingAchievement: function (name) {
       var achievement = null;
-      if (name in this.achievements) {
-        achievement = this.achievements[name];
 
-        if (
-          achievement.isCompleted() &&
-          this.storage.unlockAchievement(achievement.id)
-        ) {
-          if (this.unlock_callback) {
-            this.unlock_callback(
-              achievement.id,
-              achievement.name,
-              achievement.nano
-            );
-            this.audioManager.playSound("achievement");
-            this.client.sendAchievement(achievement.id);
+      return new Promise(resolve => {
+        if (name in this.achievements) {
+          achievement = this.achievements[name];
+
+          if (achievement.isCompleted() && this.storage.unlockAchievement(achievement.id)) {
+            if (this.unlock_callback) {
+              this.client.sendAchievement(achievement.id);
+              this.unlock_callback(achievement.id, achievement.name, achievement.nano);
+              this.audioManager.playSound("achievement");
+              resolve();
+            }
           }
         }
-      }
+      });
     },
 
-    showNotification: function (message) {
+    showNotification: function (message, timeout) {
       if (this.notification_callback) {
-        this.notification_callback(message);
+        this.notification_callback(message, timeout);
       }
     },
 
@@ -3155,8 +2934,8 @@ define([
               _.reject(this.obsoleteEntities, function (id) {
                 return id === self.player.id;
               }),
-              "id"
-            )
+              "id",
+            ),
         );
         this.obsoleteEntities = null;
       }
@@ -3193,10 +2972,7 @@ define([
 
       if (checkpoint) {
         var lastCheckpoint = this.player.lastCheckpoint;
-        if (
-          !lastCheckpoint ||
-          (lastCheckpoint && lastCheckpoint.id !== checkpoint.id)
-        ) {
+        if (!lastCheckpoint || (lastCheckpoint && lastCheckpoint.id !== checkpoint.id)) {
           this.player.lastCheckpoint = checkpoint;
           this.client.sendCheck(checkpoint.id);
         }
@@ -3300,10 +3076,7 @@ define([
           this.audioManager.playSound("loot");
         }
 
-        if (
-          item.wasDropped &&
-          !_(item.playersInvolved).include(this.playerId)
-        ) {
+        if (item.wasDropped && !_(item.playersInvolved).include(this.playerId)) {
           this.tryUnlockingAchievement("NINJA_LOOT");
         }
       } catch (e) {

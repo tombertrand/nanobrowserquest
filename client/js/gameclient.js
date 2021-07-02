@@ -1,8 +1,4 @@
-define(["player", "entityfactory", "lib/bison"], function (
-  Player,
-  EntityFactory,
-  BISON
-) {
+define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory, BISON) {
   var GameClient = Class.extend({
     init: function (host, port) {
       this.connection = null;
@@ -40,6 +36,8 @@ define(["player", "entityfactory", "lib/bison"], function (
       this.handlers[Types.Messages.GUILDERROR] = this.receiveGuildError;
       this.handlers[Types.Messages.GUILD] = this.receiveGuild;
       this.handlers[Types.Messages.PVP] = this.receivePVP;
+      this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
+      this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
       this.useBison = false;
       this.enable();
     },
@@ -67,9 +65,7 @@ define(["player", "entityfactory", "lib/bison"], function (
           if (reply.status === "OK") {
             self.dispatched_callback(reply.host, reply.port);
           } else if (reply.status === "FULL") {
-            alert(
-              "BrowserQuest is currently at maximum player population. Please retry later."
-            );
+            alert("BrowserQuest is currently at maximum player population. Please retry later.");
           } else {
             alert("Unknown error while connecting to Nano BrowserQuest.");
           }
@@ -79,7 +75,7 @@ define(["player", "entityfactory", "lib/bison"], function (
           log.info("Connected to server " + self.host + ":" + self.port);
         });
 
-        this.connection.on("message", function (e, a, b) {
+        this.connection.on("message", function (e) {
           if (e === "go") {
             if (self.connected_callback) {
               self.connected_callback();
@@ -125,13 +121,9 @@ define(["player", "entityfactory", "lib/bison"], function (
 
           if (self.disconnected_callback) {
             if (self.isTimeout) {
-              self.disconnected_callback(
-                "You have been disconnected for being inactive for too long"
-              );
+              self.disconnected_callback("You have been disconnected for being inactive for too long");
             } else {
-              self.disconnected_callback(
-                "The connection to NanoBrowserQuest has been lost"
-              );
+              self.disconnected_callback("The connection to NanoBrowserQuest has been lost");
             }
           }
         });
@@ -159,7 +151,6 @@ define(["player", "entityfactory", "lib/bison"], function (
         } else {
           data = JSON.parse(message);
         }
-
         log.debug("data: " + message);
 
         if (data instanceof Array) {
@@ -170,12 +161,14 @@ define(["player", "entityfactory", "lib/bison"], function (
             // Only one action received
             this.receiveAction(data);
           }
+        } else if (data && data.type) {
+          this.receiveAction(data);
         }
       }
     },
 
     receiveAction: function (data) {
-      var action = data[0];
+      var action = data instanceof Array ? data[0] : data.type;
       if (this.handlers[action] && _.isFunction(this.handlers[action])) {
         this.handlers[action].call(this, data);
       } else {
@@ -202,7 +195,8 @@ define(["player", "entityfactory", "lib/bison"], function (
         avatar = data[8],
         weaponAvatar = data[9],
         experience = data[10],
-        achievement = data[11];
+        achievement = data[11],
+        hash = data[12];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -217,6 +211,7 @@ define(["player", "entityfactory", "lib/bison"], function (
           weaponAvatar,
           experience,
           achievement,
+          hash,
         });
       }
     },
@@ -437,52 +432,37 @@ define(["player", "entityfactory", "lib/bison"], function (
     },
 
     receiveGuild: function (data) {
-      if (
-        data[1] === Types.Messages.GUILDACTION.CONNECT &&
-        this.guildmemberconnect_callback
-      ) {
+      if (data[1] === Types.Messages.GUILDACTION.CONNECT && this.guildmemberconnect_callback) {
         this.guildmemberconnect_callback(data[2]); //member name
-      } else if (
-        data[1] === Types.Messages.GUILDACTION.DISCONNECT &&
-        this.guildmemberdisconnect_callback
-      ) {
+      } else if (data[1] === Types.Messages.GUILDACTION.DISCONNECT && this.guildmemberdisconnect_callback) {
         this.guildmemberdisconnect_callback(data[2]); //member name
-      } else if (
-        data[1] === Types.Messages.GUILDACTION.ONLINE &&
-        this.guildonlinemembers_callback
-      ) {
+      } else if (data[1] === Types.Messages.GUILDACTION.ONLINE && this.guildonlinemembers_callback) {
         data.splice(0, 2);
         this.guildonlinemembers_callback(data); //member names
-      } else if (
-        data[1] === Types.Messages.GUILDACTION.CREATE &&
-        this.guildcreate_callback
-      ) {
+      } else if (data[1] === Types.Messages.GUILDACTION.CREATE && this.guildcreate_callback) {
         this.guildcreate_callback(data[2], data[3]); //id, name
-      } else if (
-        data[1] === Types.Messages.GUILDACTION.INVITE &&
-        this.guildinvite_callback
-      ) {
+      } else if (data[1] === Types.Messages.GUILDACTION.INVITE && this.guildinvite_callback) {
         this.guildinvite_callback(data[2], data[3], data[4]); //id, name, invitor name
-      } else if (
-        data[1] === Types.Messages.GUILDACTION.POPULATION &&
-        this.guildpopulation_callback
-      ) {
+      } else if (data[1] === Types.Messages.GUILDACTION.POPULATION && this.guildpopulation_callback) {
         this.guildpopulation_callback(data[2], data[3]); //name, count
-      } else if (
-        data[1] === Types.Messages.GUILDACTION.JOIN &&
-        this.guildjoin_callback
-      ) {
+      } else if (data[1] === Types.Messages.GUILDACTION.JOIN && this.guildjoin_callback) {
         this.guildjoin_callback(data[2], data[3], data[4], data[5]); //name, (id, (guildId, guildName))
-      } else if (
-        data[1] === Types.Messages.GUILDACTION.LEAVE &&
-        this.guildleave_callback
-      ) {
+      } else if (data[1] === Types.Messages.GUILDACTION.LEAVE && this.guildleave_callback) {
         this.guildleave_callback(data[2], data[3], data[4]); //name, id, guildname
-      } else if (
-        data[1] === Types.Messages.GUILDACTION.TALK &&
-        this.guildtalk_callback
-      ) {
+      } else if (data[1] === Types.Messages.GUILDACTION.TALK && this.guildtalk_callback) {
         this.guildtalk_callback(data[2], data[3], data[4]); //name, id, message
+      }
+    },
+
+    receiveBossCheck: function (data) {
+      if (this.bosscheck_callback) {
+        this.bosscheck_callback(data);
+      }
+    },
+
+    receiveNotification: function (data) {
+      if (this.receivenotification_callback) {
+        this.receivenotification_callback(data);
       }
     },
 
@@ -620,6 +600,14 @@ define(["player", "entityfactory", "lib/bison"], function (
       this.guildpopulation_callback = callback;
     },
 
+    onBossCheck: function (callback) {
+      this.bosscheck_callback = callback;
+    },
+
+    onReceiveNotification: function (callback) {
+      this.receivenotification_callback = callback;
+    },
+
     sendCreate: function (player) {
       this.sendMessage([Types.Messages.CREATE, player.name, player.account]);
     },
@@ -718,43 +706,31 @@ define(["player", "entityfactory", "lib/bison"], function (
     },
 
     sendNewGuild: function (name) {
-      this.sendMessage([
-        Types.Messages.GUILD,
-        Types.Messages.GUILDACTION.CREATE,
-        name,
-      ]);
+      this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.CREATE, name]);
     },
 
     sendGuildInvite: function (invitee) {
-      this.sendMessage([
-        Types.Messages.GUILD,
-        Types.Messages.GUILDACTION.INVITE,
-        invitee,
-      ]);
+      this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.INVITE, invitee]);
     },
 
     sendGuildInviteReply: function (guild, answer) {
-      this.sendMessage([
-        Types.Messages.GUILD,
-        Types.Messages.GUILDACTION.JOIN,
-        guild,
-        answer,
-      ]);
+      this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.JOIN, guild, answer]);
     },
 
     talkToGuild: function (message) {
-      this.sendMessage([
-        Types.Messages.GUILD,
-        Types.Messages.GUILDACTION.TALK,
-        message,
-      ]);
+      this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.TALK, message]);
     },
 
     sendLeaveGuild: function () {
-      this.sendMessage([
-        Types.Messages.GUILD,
-        Types.Messages.GUILDACTION.LEAVE,
-      ]);
+      this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.LEAVE]);
+    },
+
+    sendBanPlayer: function () {
+      this.sendMessage([Types.Messages.BAN_PLAYER]);
+    },
+
+    sendRequestPayout: function () {
+      this.sendMessage([Types.Messages.REQUEST_PAYOUT]);
     },
   });
 

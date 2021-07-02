@@ -83,18 +83,49 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
           	               <span class="left-ornament"></span>
           	               Create New Character
           	               <span class="right-ornament"></span>
-                         </h1>
-                         <br />
-                         <form action="none" method="get" accept-charset="utf-8">
-                             <input type="text" id="nameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16">
-                             <textarea id="accountinput" class="stroke" name="player-account" placeholder="nano_ Account" maxlength="65" rows="3" style="height: auto;" spellcheck="false"></textarea>
-                         </form>
-                         <br />
-                         <div class="play">
-                           <span class="link">Create</span>
-                         </div>
-                         <div class="validation-summary"></div>
+                        </h1>
+                        <br />
+                        <form action="none" method="get" accept-charset="utf-8">
+                            <input type="text" id="nameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16">
+                            <textarea id="accountinput" class="stroke" name="player-account" placeholder="nano_ Account" maxlength="65" rows="3" style="height: auto;" spellcheck="false"></textarea>
+                        </form>
+                        <div class="play">
+                            <span class="link">Create Character</span>
+                        </div>
+                        <div class="validation-summary"></div>
+
+                        <div id="create-new-account">
+                            <span class="link">What is a Nano account?</span>
+                        </div>
                     </article>
+                    <article id="createaccount">
+                        <div style="width: 75%; margin: 0 auto;">
+                            <h1>
+                                <span class="left-ornament"></span>
+                                Create a Nano Account
+                                <span class="right-ornament"></span>
+                            </h1>
+                            <br />
+                            Nano is a feeless, instant, secure and green cryptocurrency,
+                            <a href="https://nanolooker.com/what-is-nano" target="_blank">learn more</a>.
+                            You will be earning a small payout for completing the game!
+                            You can create a free wallet by downloading a mobile wallet such as Natrium 
+                            (<a href="https://itunes.apple.com/us/app/natrium/id1451425707?ls=1&mt=8" target="_blank">iOS</a> and 
+                            <a href="https://play.google.com/store/apps/details?id=co.banano.natriumwallet" target="_blank">Android</a>) or
+                            Nalli (<a href="https://apps.apple.com/app/id1515601975" target="_blank">iOS</a> and 
+                            <a href="https://play.google.com/store/apps/details?id=fi.heimo.nalli" target="_blank">Android</a>)
+                            or by using <a href="https://nault.cc" target="_blank">Nault</a> (web-based).
+
+                            <br />
+                            <br />
+                            Once your wallet is created, paste your public address in the "nano_ Account" field and make sure to backup your seed!
+                            <br />
+                            <br />
+                            <div id="create-new-account-ok">
+                                <span class="link">Ok</span>
+                            </div>
+                        </div>
+                   </article>
                     <article id="loadcharacter">
           	           <h1>
           	               <span class="left-ornament"></span>
@@ -104,7 +135,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                          <form action="none" method="get" accept-charset="utf-8">
                              <input value="a" type="text" id="loginnameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16" autofocus>
                              <textarea id="loginaccountinput" class="stroke" name="player-loginaccount" placeholder="nano_ Account" maxlength="65" rows="2" style="height: auto; padding-top: 10px; padding-bottom: 15px;" spellcheck="false"
-                             >nano_1gxx3dbrprrh9ycf1p5wo9qgmftppg6z7688njum14aybjkaiweqmwpuu9py</textarea>
+                             >nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3</textarea>
                          </form>
                          <div class="play">
                            <span class="link">Login</span>
@@ -158,23 +189,25 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                         </div>
                     </article>
                     <article id="confirmation">
-          	           <h1>
+          	            <h1>
           	               <span class="left-ornament"></span>
                            You need to accept the following terms of usage<span class="right-ornament"></span><br />
                            before creating a new character.
-                           <br /><br />
-                           You'll be collecting <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a> by completing the game achievements.<br />
-                           Your cumulated Nano payout will be sent once you kill the final BOSS!<br />
-                           You can complete the game as many time as you like.<br /><br />
-                           <strong>No farming, no cheating. You will get banned.</strong><br /><br />
-                           Play with your friends and introduce them to Nano!<br /><br />
-                         </h1>
-                         <div id="continue">
-                         <span class="link">Continue</span>
-                         </div>
-                         <div id="cancel">
+                        </h1>
+                        <br />
+                        You'll be collecting <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a> by completing the game achievements.<br />
+                        Your cumulated Nano payout will be sent once you kill the final BOSS!<br />
+                        You can complete the game as many time as you like.<br /><br />
+                        <strong>No farming, no cheating. You will get banned.</strong><br /><br />
+                        Play with your friends and introduce them to Nano!<br /><br />
+                        
+                        <div id="continue">
+                            <span class="link">Continue</span>
+                        </div>
+                        <br />
+                        <div id="cancel">
                             <span class="link">Cancel</span>
-                         </div>
+                        </div>
                     </article>
     	            <article id="credits">
         	            <h1>
@@ -317,6 +350,29 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 		                <div id="next"></div>
 		            </nav>
 		        </article>
+                <article id="completed" class="clickable">
+		            <div class="close"></div>
+                    <h1>
+     	               <span class="left-ornament"></span>
+     	               Game Completed
+     	               <span class="right-ornament"></span>
+	                </h1>
+                    <p>You previously killed the end boss and received a Nano payout.</p>
+                    <p>
+                        Transaction<br/>
+                        <a href="https://nanolooker.com/block" target="_blank" id="transaction-hash">abc123</a>
+                    </p>
+                    <p>You can play again with your friends and receive another payout<br/>by creating a new character!</p>
+		        </article>
+                <article id="failed" class="clickable">
+		            <div class="close"></div>
+                    <h1>
+     	               <span class="left-ornament"></span>
+     	               Not yet!
+     	               <span class="right-ornament"></span>
+	                </h1>
+                    <p></p>
+		        </article>
     			<div id="canvas">
     				<canvas id="background"></canvas>
     				<canvas id="entities"></canvas>
@@ -409,6 +465,10 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 		    <div id="credits-link" class="clickable">
 		      <span class="dash">&ndash;</span> <span id="toggle-credits">Credits</span>
 		    </div>
+            <div id="nano-link" class="clickable">
+                <span class="dash">&ndash;</span> <a href="https://nanolooker.com/what-is-nano" target="_blank">What is Nano?</a>
+                </span>
+            </div>
 		</footer>
 
 		<ul id="page-tmpl" class="clickable" style="display:none">
@@ -427,6 +487,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <div id="resize-check"></div>
 
         <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/8.0.2/bignumber.min.js" integrity="sha512-7UzDjRNKHpQnkh1Wf1l6i/OPINS9P2DDzTwQNX79JxfbInCXGpgI1RPb3ZD+uTP3O5X7Ke4e0+cxt2TxV7n0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
         <script type="text/javascript">
             var ctx = document.querySelector('canvas').getContext('2d'),

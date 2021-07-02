@@ -128,7 +128,7 @@ footer, header, hgroup, menu, nav, section {
     body.upscaled.game {background:#000;}
     .game #logo {display:none;-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;animation:none;}
         
-    #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon, #tilt, .parchment-left, .parchment-middle, .parchment-right, .avatar, .facebook, .twitter, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background:url('../img/1/spritesheet.png');image-rendering:-moz-crisp-edges; image-rendering:-webkit-optimize-contrast;}
+    #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #completed, #failed, .icon, #tilt, .parchment-left, .parchment-middle, .parchment-right, .avatar, .facebook, .twitter, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background:url('../img/1/spritesheet.png');image-rendering:-moz-crisp-edges; image-rendering:-webkit-optimize-contrast;}
     
     #moztab {height:49px;width:118px;position:fixed;top:0;right:15%;background:url('../img/1/spritesheet.png') no-repeat -229px -204px;display:block;}
 
@@ -238,8 +238,8 @@ footer, header, hgroup, menu, nav, section {
 
     .bubble p {-moz-user-select:none;-webkit-user-select:none;}
     
-    #instructions {position:absolute;top:50%;left:50%;z-index:1000;font-family:'GraphicPixel';pointer-events:none;opacity:0;-moz-transition:0.25s opacity linear;-webkit-transition:0.4s top ease, 0.4s opacity linear;-o-transition:0.4s top ease, 0.4s opacity linear;-ms-transition:0.4s top ease, 0.4s opacity linear;transition:0.4s top ease, 0.4s opacity linear;}
-    #instructions.active, #achievements.active {opacity:1;pointer-events:auto;}
+    #instructions, #completed, #failed {position:absolute;top:50%;left:50%;z-index:1000;font-family:'GraphicPixel';pointer-events:none;opacity:0;-moz-transition:0.25s opacity linear;-webkit-transition:0.4s top ease, 0.4s opacity linear;-o-transition:0.4s top ease, 0.4s opacity linear;-ms-transition:0.4s top ease, 0.4s opacity linear;transition:0.4s top ease, 0.4s opacity linear;}
+    #instructions.active, #achievements.active, #completed.active, #failed.active {opacity:1;pointer-events:auto;}
     
     #weapon, #armor {image-rendering:-moz-crisp-edges;}
 
@@ -281,7 +281,7 @@ footer, header, hgroup, menu, nav, section {
     @-webkit-keyframes blink { 0% {color:red;} 100% {color:#880000;}}
     .blink {-webkit-animation:blink 0.3s linear 5 alternate;-moz-animation:blink 0.3s linear 5 alternate;animation:blink 0.3s linear 5 alternate;}
 
-    #credits, #loadcharacter, #banned, #invalidconnection, #confirmation, #death, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
+    #credits, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #death, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
     
     #playerimage {image-rendering: -moz-crisp-edges; image-rendering: -webkit-optimize-contrast;}
     
@@ -311,8 +311,12 @@ footer, header, hgroup, menu, nav, section {
     #sharing .twitter:hover {background-position:-770px -224px;}
     #sharing .gplus {height:22px;width:22px;background:url('../img/common/gplus.png');margin:0 12px 0 0px;}
     #toggle-credits {display:inline-block;margin-left:12px;}
-    #legal-link a {text-decoration:none;color:inherit;}
-    #credits-link span:hover, #privacy-link span:hover, #legal-link a:hover {color:#fcda5c;cursor:pointer;}
+    #legal-link a, #nano-link a {text-decoration:none;color:inherit;}
+    #nano-link a {
+        color: inherit;
+        text-decoration: none;
+    }
+    #credits-link span:hover, #privacy-link span:hover, #legal-link a:hover, #nano-link a:hover {color:#fcda5c;cursor:pointer;}
     
     #sharing a:hover {-moz-transform:scale(1.2);-webkit-transform:scale(1.2);-o-transform:scale(1.2);transform:scale(1.2);}
     #sharing a:active {-moz-transform:scale(1);-webkit-transform:scale(1);-o-transform:scale(1);transform:scale(1);}
@@ -329,7 +333,7 @@ footer, header, hgroup, menu, nav, section {
     
     .alert {height:50px;background:#d83939;width:100%;color:#eee;font-size:20px;font-family:'GraphicPixel', arial, sans-serif;text-align:center;line-height:50px;border-bottom:1px solid #000;}
 
-    #instructions, #achievements, #lists, #about, #credits, .ribbon, .play, .play div, .barbutton {-webkit-tap-highlight-color:transparent;}
+    #instructions, #achievements, #completed, #failed, #lists, #about, #credits, .ribbon, .play, .play div, .barbutton {-webkit-tap-highlight-color:transparent;}
     #nameinput::-webkit-input-placeholder  {color:#fff;}
 
     #resize-check {position:absolute;height:0;top:0;left:0;-moz-transition:0.001s height ease;-webkit-transition:0.001s height ease;-o-transition:0.001s height ease;-ms-transition:0.001s height ease;transition:0.001s height ease;}
@@ -339,7 +343,7 @@ footer, header, hgroup, menu, nav, section {
     #legal p {width:75%;font-size:25px;line-height:35px;}
     #legal p a {color:#2e7fdd;text-decoration:none;}
     #close-legal {font-size:20px;margin-top:30px;}
-    #toggle-legal, #legal-link a {padding:0 10px;}
+    #toggle-legal, #legal-link a, #nano-link a {padding:0 10px;}
     
     #createcharacter form {position:relative;}
     
@@ -358,8 +362,8 @@ footer, header, hgroup, menu, nav, section {
     .animate .parchment-left {-moz-animation:parchleft 1s ease 1;-webkit-animation:parchleft 1s ease 1;-o-animation:parchleft 1s ease 1;-ms-animation:parchleft 1s ease 1;animation:parchleft 1s ease 1;}
     .animate .parchment-right {-moz-animation:parchright 1s ease 1;-webkit-animation:parchright 1s ease 1;-o-animation:parchright 1s ease 1;-ms-animation:parchright 1s ease 1;animation:parchright 1s ease 1;}
 
-    #credits, #createcharacter, #loadcharacter, #banned, #invalidconnection, #confirmation, #death, #error, #about, #legal {opacity:0;pointer-events:none;-moz-transition:none;-webkit-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
-    .credits #credits, .createcharacter #createcharacter, .loadcharacter #loadcharacter, .banned #banned, .invalidconnection #invalidconnection, .confirmation #confirmation, .death #death, .error #error, .about #about, .legal #legal {opacity:1;pointer-events:auto;-moz-transition:0.5s opacity linear;-webkit-transition:0.5s opacity linear;-o-transition:0.5s opacity linear;-ms-transition:0.5s opacity linear;transition:0.5s opacity linear;}
+    #credits, #createcharacter, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #death, #error, #about, #legal {opacity:0;pointer-events:none;-moz-transition:none;-webkit-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
+    .credits #credits, .createcharacter #createcharacter, .loadcharacter #loadcharacter, .banned #banned, .createaccount #createaccount, .invalidconnection #invalidconnection, .confirmation #confirmation, .death #death, .error #error, .about #about, .legal #legal {opacity:1;pointer-events:auto;-moz-transition:0.5s opacity linear;-webkit-transition:0.5s opacity linear;-o-transition:0.5s opacity linear;-ms-transition:0.5s opacity linear;transition:0.5s opacity linear;}
 
 /* States & Transitions */
 
@@ -367,7 +371,7 @@ footer, header, hgroup, menu, nav, section {
     #mask, #logo, #parchment {opacity:0;}
     .intro #logo, .intro #parchment {opacity:1;}
 
-    .game #confirmation, .game #loadcharacter, .game #banned, .game #invalidconnection, .game #createcharacter, .game #error {display:none;}
+    .game #confirmation, .game #loadcharacter, .game #banned, .game #createaccount, .game #invalidconnection, .game #createcharacter, .game #error {display:none;}
 
     .game #parchment {z-index:0;-moz-transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;-webkit-transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;-o-transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;-ms-transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;top:50%;}
     .game #credits, .game #death, .game #about {opacity:0;-moz-transition:0s opacity linear 0s;-webkit-transition:0s opacity linear 0s;-o-transition:0s opacity linear 0s;-ms-transition:0s opacity linear 0s;transition:0s opacity linear 0s;}
@@ -517,11 +521,12 @@ footer, header, hgroup, menu, nav, section {
     #nanosparks {width:246px;height:126px;z-index:4;-moz-animation:logo3 .8s steps(6, end) infinite;-webkit-animation:logo3 .8s steps(6, end) infinite;-o-animation:logo3 .8s steps(6, end) infinite;-ms-animation:logo3 .8s steps(6, end) infinite;}
     #parchment textarea { resize: none; }
     .banned-1, .banned-365 { display: none; }
+    article a { color: #4A90E2 }
 
     /* #nano {margin-left:200px;scale:0.7;} */
 	@media screen and (min-width: 1501px) {
         #nano {margin-left:-240px;}
-	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
+	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #population div{background-image:url('../img/3/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/3/achievements.png');}
@@ -529,10 +534,10 @@ footer, header, hgroup, menu, nav, section {
 	    
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood2.png') no-repeat 1587px 138px, url('../img/1/wood2.png') no-repeat 51px 519px, url('../img/1/wood3.png') no-repeat 228px 219px, url('../img/1/wood.png') repeat, #000; background-size:auto, 15px auto, 15px auto, 60px auto, 384px;}
         body {background:-webkit-gradient(radial, center center, 360, center center, 1200, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/3/wood2.png') no-repeat 1587px 138px, url('../img/3/wood2.png') no-repeat 51px 519px, url('../img/3/wood3.png') no-repeat 228px 219px, url('../img/3/wood.png') repeat, #000; background-size:auto, 15px auto, 15px auto, 60px auto, 384px;}
-        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:1266px auto;}
+        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:1266px auto;}
         #logo {height:126px;width:687px;position:absolute;top:10%;left:50%;margin-left:-244px;z-index:3;}
         #logosparks {width:687px;height:126px;z-index:4;-moz-animation:logo3 .8s steps(6, end) infinite;-webkit-animation:logo3 .8s steps(6, end) infinite;-o-animation:logo3 .8s steps(6, end) infinite;-ms-animation:logo3 .8s steps(6, end) infinite;}
-        #parchment, #loadcharacter, #banned, #invalidconnection, #confirmation, #error, #legal {width:1266px;height:546px;position:absolute;top:55%;left:50%;margin-left:-633px;margin-top:-273px;font-size:30px;text-align:center;z-index:2;}
+        #parchment, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #error, #legal {width:1266px;height:546px;position:absolute;top:55%;left:50%;margin-left:-633px;margin-top:-273px;font-size:30px;text-align:center;z-index:2;}
         #parchment h1 {margin-top:60px;font-weight:normal;}
         .left-ornament, .right-ornament {height:36px;width:93px;display:inline-block;margin:0 20px;position:relative;top:12px;}
         .left-ornament {background-position:-1062px 0;}
@@ -550,7 +555,7 @@ footer, header, hgroup, menu, nav, section {
         .play.loading img {width:24px;height:24px;}
         .stroke, .achievement-name {text-shadow:3px 3px 0 #373737, 3px -3px 0 #373737, 0 3px 0 #373737, 3px 0 0 #373737, -3px 3px 0 #373737, -3px -3px 0 #373737, 0 -3px 0 #373737, 0 3px 0 #373737, -3px 0 0 #373737;}
 
-        #loadcharacter h1, #banned h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:30px;}
+        #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:30px;}
         #playername {margin-top:15px;}
         .loadcharacter .play, .confirmation .delete {margin:15px auto 15px auto;}
         #confirmation p, #error p {font-size:30px;margin-top:60px;line-height:40px;}
@@ -577,14 +582,14 @@ footer, header, hgroup, menu, nav, section {
 		#canvas {width:100%;height:672px;}
 		#fade {width:1440px;height:672px;top:15px;left:15px;}
 		
-		#instructions {height:516px;width:1251px;background-position:0 -1581px;margin-left:-624px;margin-top:-279px;color:#373737;}
-		#instructions h1 {font-size:40px;text-align:center;margin:50px 0;}
+		#instructions, #completed, #failed {height:516px;width:1251px;background-position:0 -1581px;margin-left:-624px;margin-top:-279px;color:#373737;}
+		#instructions h1, #completed h1, #failed h1 {font-size:40px;text-align:center;margin:50px 0;}
         #instructions ul {font-size:30px;margin-top:30px;}
         #instructions ul li {margin:20px 0; clear:left;}
         #instructions li:nth-child(1) span {height:87px;width:45px;background-position:-1134px -36px; display:block;float:left;margin: 0 30px 9px 60px;position: relative;top: -39px;}
         #instructions li:nth-child(2) span {height:48px;width:39px;background-position:-1179px -36px; display:block;float:left;margin: 0 36px 42px 60px;position: relative;top: -9px;}
         #instructions li:nth-child(3) span {height:63px;width:48px;background-position:-1218px -36px; display:block;float:left;margin: 0 27px 0 60px;position: relative;top: -18px;}
-        #instructions p {text-align:center;font-family:'GraphicPixel';font-size:20px;clear:left;margin-top:50px;}
+        #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:20px;clear:left;margin-top:50px;}
         
         #playerimage {height: 96px; width: 96px;}
         
@@ -700,16 +705,16 @@ footer, header, hgroup, menu, nav, section {
 
 	@media screen and (max-width: 1500px), screen and (max-height: 870px) {
         #nano {margin-left:-200px;margin-top:-20px;scale:0.7;}
-	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
+	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #population div{background-image:url('../img/2/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/2/achievements.png');}
 
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 256px;}        
         body {background:-webkit-gradient(radial, center center, 240, center center, 800, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}
-        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:844px auto;}
+        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:844px auto;}
         #logo {height:84px;width:458px;position:absolute;top:10%;left:50%;margin-left:-179px;z-index:3;}
         #logosparks {width:458px;height:84px;z-index:4;-moz-animation:logo2 .8s steps(6, end) infinite;-webkit-animation:logo2 .8s steps(6, end) infinite;-o-animation:logo2 .8s steps(6, end) infinite;-ms-animation:logo2 .8s steps(6, end) infinite;}
-        #parchment, #loadcharacter, #banned, #invalidconnection, #confirmation, #error, #legal {width:844px;height:364px;position:absolute;top:55%;left:50%;margin-left:-422px;margin-top:-182px;font-size:20px;text-align:center; z-index:2;}
+        #parchment, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #error, #legal {width:844px;height:364px;position:absolute;top:55%;left:50%;margin-left:-422px;margin-top:-182px;font-size:20px;text-align:center; z-index:2;}
         #parchment h1 {margin-top:40px;font-weight:normal;}
         .left-ornament, .right-ornament {height:24px;width:62px;display:inline-block;margin:0 15px;position:relative;top:7px;}
         .left-ornament {background-position:-708px 0;}
@@ -727,7 +732,7 @@ footer, header, hgroup, menu, nav, section {
         .play.loading img {height:16px;width:16px;}
         .stroke, .achievement-name {text-shadow:2px 2px 0 #373737, 2px -2px 0 #373737, 0 2px 0 #373737, 2px 0 0 #373737, -2px 2px 0 #373737, -2px -2px 0 #373737, 0 -2px 0 #373737, 0 2px 0 #373737, -2px 0 0 #373737;}
         
-        #loadcharacter h1, #banned h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:20px;}
+        #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:20px;}
         #playername {margin-top:10px;}
         .loadcharacter .play, .confirmation .delete {margin:10px auto 10px auto;}
         #confirmation p, #error p {font-size:20px;margin-top:40px;line-height:30px;}
@@ -756,14 +761,14 @@ footer, header, hgroup, menu, nav, section {
 		#canvas {width:100%;height:448px;}
 		#fade {width:960px;height:448px;top:10px;left:10px;}
 
-		#instructions {height:344px;width:834px;background-position:0 -1054px;margin-left:-416px;margin-top:-186px;color:#373737;}
-		#instructions h1 {font-size:30px;text-align:center;margin:40px 0;}
+		#instructions, #completed, #failed {height:344px;width:834px;background-position:0 -1054px;margin-left:-416px;margin-top:-186px;color:#373737;}
+		#instructions h1, #completed h1, #failed h1 {font-size:30px;text-align:center;margin:40px 0;}
         #instructions ul {font-size:20px;margin-top:40px;}
         #instructions ul li {margin:20px 0; clear:left;}
         #instructions li:nth-child(1) span {height:58px;width:30px;background-position:-756px -24px; display:block;float:left;margin: 0 20px 6px 40px;position: relative;top: -26px;}
         #instructions li:nth-child(2) span {height:32px;width:26px;background-position:-786px -24px; display:block;float:left;margin: 0 24px 28px 40px;position: relative;top: -6px;}
         #instructions li:nth-child(3) span {height:42px;width:32px;background-position:-812px -24px; display:block;float:left;margin: 0 18px 0 40px;position: relative;top: -12px;}
-        #instructions p {text-align:center;font-family:'GraphicPixel';font-size:20px;clear:left;margin-top:20px;}
+        #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:20px;clear:left;margin-top:20px;}
 
         #playerimage {height: 64px; width: 64px;}
         
@@ -879,7 +884,7 @@ footer, header, hgroup, menu, nav, section {
 	    footer {font-size:16px;}
         #resize-check {height:2px;}
         
-        #toggle-legal, #legal-link a {padding:0 8px;}
+        #toggle-legal, #legal-link a, #nano-link a {padding:0 8px;}
         
         #name-tooltip {font-size:14px;width:280px;margin-left:-140px;height:20px;line-height:18px;top:-30px;}
         #name-tooltip:after {bottom:-8px;}
@@ -903,11 +908,11 @@ footer, header, hgroup, menu, nav, section {
         canvas {image-rendering:optimizeSpeed;}
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
         body {background:-webkit-gradient(radial, center center, 200, center center, 600, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
-        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:422px auto;}
+        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:422px auto;}
         #logo {height:42px;width:229px;position:absolute;top:10%;left:50%;margin-left:-64px;z-index:3;}
         #logosparks {width:229px;height:42px;z-index:4;-moz-animation:logo1 .8s steps(6, end) infinite;-webkit-animation:logo1 .8s steps(6, end) infinite;-o-animation:logo1 .8s steps(6, end) infinite;-ms-animation:logo1 .8s steps(6, end) infinite;}
-        #parchment, #loadcharacter, #banned, #invalidconnection, #confirmation, #error, #legal {width:422px;height:182px;position:absolute;top:50%;left:50%;margin-left:-211px;margin-top:-91px;font-size:10px;text-align:center;z-index:2;}
-        #parchment h1, #instructions h1 {margin-top:20px;font-weight:normal;}
+        #parchment, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #error, #legal {width:422px;height:182px;position:absolute;top:50%;left:50%;margin-left:-211px;margin-top:-91px;font-size:10px;text-align:center;z-index:2;}
+        #parchment h1, #instructions h1, #completed h1, #failed h1 {margin-top:20px;font-weight:normal;}
         .left-ornament, .right-ornament {height:12px;width:31px;display:inline-block;margin:0 10px;position:relative;top:3px;}
         .left-ornament {background-position:-354px 0;}
         .right-ornament {background-position:-385px 0;}
@@ -923,7 +928,7 @@ footer, header, hgroup, menu, nav, section {
         .play.loading img {height:11px;width:11px;}
         .stroke, .achievement-name {text-shadow:1px 1px 0 #373737, 1px -1px 0 #373737, 0 1px 0 #373737, 1px 0 0 #373737, -1px 1px 0 #373737, -1px -1px 0 #373737, 0 -1px 0 #373737, 0 1px 0 #373737, -1px 0 0 #373737;}
         
-        #loadcharacter h1, #banned h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:20px;}
+        #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:20px;}
         #playername {margin-top:5px;}
         .loadcharacter .play, .confirmation .delete {margin:5px auto 5px auto;}
         #confirmation p, #error p, #legal p {font-size:10px;margin-top:20px;line-height:20px;}
@@ -938,16 +943,16 @@ footer, header, hgroup, menu, nav, section {
 		#canvas {width:100%;height:224px;}
 		#fade {width:480px;height:224px;top:5px;left:5px;}
 		
-		#instructions {height:172px;width:417px;background-position:0 -527px;margin-left:-208px;margin-top:-93px;color:#373737;}
-		#instructions h1 {font-size:20px;text-align:center;margin-bottom:0;}
+		#instructions, #completed, #failed {height:172px;width:417px;background-position:0 -527px;margin-left:-208px;margin-top:-93px;color:#373737;}
+		#instructions h1, #completed h1, #failed h1 {font-size:20px;text-align:center;margin-bottom:0;}
         #instructions ul {font-size:10px;margin-top:10px;}
         #instructions ul li {margin:10px 0; clear:left;}
         #instructions li:nth-child(1) span {height:29px;width:15px;background-position:-378px -12px; display:block;float:left;margin: 0 10px 3px 20px;position: relative;top: -13px;}
         #instructions li:nth-child(2) span {height:16px;width:13px;background-position:-393px -12px; display:block;float:left;margin: 0 12px 14px 20px;position: relative;top: -3px;}
         #instructions li:nth-child(3) span {height:21px;width:16px;background-position:-406px -12px; display:block;float:left;margin: 0 9px 0 20px;position: relative;top: -6px;}
-        #instructions p {text-align:center;font-family:'GraphicPixel';font-size:10px;clear:left;margin:0;}
+        #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:10px;clear:left;margin:0;}
 
-        #foreground { cursor: default; }
+        #foreground { cursor: default;}
         
         #playerimage {height: 32px; width: 32px;}
         
@@ -1077,7 +1082,7 @@ footer, header, hgroup, menu, nav, section {
         .game #container {display:block;padding:0;}
         #mask, #fade {display:none;}
         .game.death #parchment {display:block;}
-        .game .createcharacter #createcharacter, .game .loadcharacter #loadcharacter, .game .banned #banned, .game .invalidconnection #invalidconnection, .game .confirmation #confirmation, .game .error #error, .game .legal #legal {display:none;}
+        .game .createcharacter #createcharacter, .game .loadcharacter #loadcharacter, .game .banned #banned, .game .createaccount #createaccount, .game .invalidconnection #invalidconnection, .game .confirmation #confirmation, .game .error #error, .game .legal #legal {display:none;}
         
 		.ribbon {display:none;}
         
@@ -1090,12 +1095,12 @@ footer, header, hgroup, menu, nav, section {
 		#container {height:258px;width:480px;position:relative;left:50%;top:50%;margin:-128px auto 0 -240px;}
 		#canvasborder {background:none;padding:0;}
 		
-		#parchment, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, .icon {background-size:422px auto;}
+		#parchment, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #completed, #failed, .icon {background-size:422px auto;}
         #parchment {background:none;}
         #logo {height:84px;width:458px;position:absolute;top:10%;left:50%;margin-left:-229px;z-index:3;background-size:844px;}
         #parchment {width:100%;height:auto;position:absolute;left:0;top:125px;margin-left:0;margin-top:0;font-size:10px;text-align:center;z-index:2;color:#eee;}
         #parchment h1 {margin-top:0px;font-weight:normal;}
-        #instructions h1 {margin-top:15px;font-size:14px;}
+        #instructions h1, #completed h1, #failed h1 {margin-top:15px;font-size:14px;}
         .left-ornament, .right-ornament {height:12px;width:31px;display:inline-block;margin:0 10px;position:relative;top:3px;}
         .left-ornament {background-position:-354px 0;}
         .right-ornament {background-position:-385px 0;}
@@ -1112,27 +1117,27 @@ footer, header, hgroup, menu, nav, section {
         .stroke {text-shadow:1px 1px 0 #373737, 1px -1px 0 #373737, 0 1px 0 #373737, 1px 0 0 #373737, -1px 1px 0 #373737, -1px -1px 0 #373737, 0 -1px 0 #373737, 0 1px 0 #373737, -1px 0 0 #373737;}
         .validation-error {color:#ffc2c2;}
 		
-		#instructions {height:172px;width:417px;background-position:0 -527px;margin-left:-208px;margin-top:-93px;color:#373737;}
-		#instructions h1 {font-size:20px;text-align:center;margin-bottom:0;}
+		#instructions, #completed, #failed {height:172px;width:417px;background-position:0 -527px;margin-left:-208px;margin-top:-93px;color:#373737;}
+		#instructions h1, #completed h1, #failed h1 {font-size:20px;text-align:center;margin-bottom:0;}
         #instructions ul {font-size:13px;margin-top:15px;}
         #instructions ul li {margin:10px 0; clear:left;}
         #instructions li:nth-child(1) span {height:29px;width:15px;background-position:-378px -12px; display:block;float:left;margin: 0 10px 3px 20px;position: relative;top: -13px;}
         #instructions li:nth-child(2) span {height:16px;width:13px;background-position:-393px -12px; display:block;float:left;margin: 0 12px 14px 20px;position: relative;top: -3px;}
         #instructions li:nth-child(3) span {height:21px;width:16px;background-position:-406px -12px; display:block;float:left;margin: 0 9px 0 20px;position: relative;top: -6px;}
-        #instructions p {text-align:center;font-family:'GraphicPixel';font-size:10px;clear:left;margin:0;}
+        #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:10px;clear:left;margin:0;}
 		
 		#foreground { cursor: default; }
 		
 		#parchment.animate {-moz-animation:none;-webkit-animation:none;-o-animation:none;-webkit-animation:none;}
 		
-		#loadcharacter, #banned, #invalidconnection, #confirmation, #createcharacter, #error, #legal {display:none;margin-top:0;margin-left:0;left:0;width:auto;}
-		.loadcharacter #loadcharacter, .banned #banned, .invalidconnection #invalidconnection, .confirmation #confirmation, .createcharacter #createcharacter, .error #error, .legal #legal {display:block;width:100%;}
+		#loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #createcharacter, #error, #legal {display:none;margin-top:0;margin-left:0;left:0;width:auto;}
+		.loadcharacter #loadcharacter, .banned #banned, .createaccount #createaccount, .invalidconnection #invalidconnection, .confirmation #confirmation, .createcharacter #createcharacter, .error #error, .legal #legal {display:block;width:100%;}
 		
-		#loadcharacter h1, #banned h1, #confirmation h1, #error h1, #legal h1 {font-size:12px;font-weight:normal;}
+		#loadcharacter h1, #banned h1, #createaccount h1, #confirmation h1, #error h1, #legal h1 {font-size:12px;font-weight:normal;}
 		
-		#loadcharacter, #banned, #invalidconnection, #confirmation, #error, #legal {height:auto;}
+		#loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #error, #legal {height:auto;}
 	
-	    #loadcharacter h1, #banned h1, #invalidconnection h1, #confirmation h1, #createcharacter h1, #error h1, #legal h1 {font-size:12px;}
+	    #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #createcharacter h1, #error h1, #legal h1 {font-size:12px;}
 	    #createcharacter{padding-bottom:20px;}
 		#playername {font-size:20px;margin:10px 0px;}
 		#continue {margin:20px 0px;font-size:16px;}
@@ -1191,14 +1196,14 @@ footer, header, hgroup, menu, nav, section {
         .game.death #death p {padding-top:30px;color:#373737;font-size:20px;margin-top:0;width:80%;margin:0 auto;}
         .game.death #death p em {display:block;margin-top:15px;font-style:normal;}
 
-        #instructions, #achievements, #lists, #about {-webkit-transition:none;-moz-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
+        #instructions, #completed, #failed, #achievements, #lists, #about {-webkit-transition:none;-moz-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
 
 		.game.death #death {height:172px;width:417px;margin-left:-208px;margin-top:-93px;color:#373737;background:url('../img/1/spritesheet.png') 0 -527px;margin:-10px 0 0 0;}
         #respawn { background-position: -204px -1398px; background-size: 844px auto; width: 204px; height: 54px;}
 		#respawn:active {background-position:-408px -1398px;}
 
         #sharing, #credits-link, .dash {display:none;}
-        #legal-link .dash {display:inline;}
+        #legal-link .dash, #nano-link .dash {display:inline;}
         #bubbles {overflow:hidden;}
         
         .intro footer, .intro footer {display:block;}
@@ -1206,7 +1211,7 @@ footer, header, hgroup, menu, nav, section {
         .returning footer, .returning footer {top:300px;}
         #close-legal {display:none;}
         
-        #privacy-link span:hover, #legal-link span:hover {color:#C6C0A3;}
+        #privacy-link span:hover, #legal-link span:hover, #nano-link span:hover {color:#C6C0A3;}
         #legal p {font-size:12px;width:80%;line-height:14px;}
         
         #name-tooltip {display:none;}
@@ -1234,7 +1239,7 @@ footer, header, hgroup, menu, nav, section {
 /* Tablet mode */
 
     .tablet .animate .parchment-left, .tablet .animate .parchment-right, .tablet .animate .parchment-middle {-webkit-animation:none;-moz-animation:none;-o-animation:none;-ms-animation:none;}
-    .tablet #instructions, .tablet #achievements, .tablet #lists {-webkit-transition:none;-moz-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
+    .tablet #instructions, .tablet #completed, .tablet #failed, .tablet #achievements, .tablet #lists {-webkit-transition:none;-moz-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
     .tablet #achievements li.unlocked .achievement-sharing {display:block;}
     .tablet #coinsparks {display:none; -moz-animation:none;}
     
@@ -1243,16 +1248,16 @@ footer, header, hgroup, menu, nav, section {
     
 /* Workarounds for chrome windows bugs */
 
-    .windows #parchment, .windows #parchment input, .windows #parchment textarea, .windows #notifications, .windows #instructions, .windows #achievements, .windows #achievement-notification, 
+    .windows #parchment, .windows #parchment input, .windows #parchment textarea, .windows #notifications, .windows #instructions, .windows #completed, .windows #failed, .windows #achievements, .windows #achievement-notification, 
     .windows #playercount, .windows #credits, .windows #loadcharacter, .windows #banned, .windows #invalidconnection, .windows #confirmation, .windows #death, .windows #error, .windows #about, .windows #legal, 
     .windows #parchment p, .windows #portrait p, .windows .alert, .windows footer, .windows .bubble p, .windows #population, .windows #chatinput {font-family:'AdvoCut';}
 
 /* Workarounds for opera's lack of pointer-events support */
 
     .opera.intro #bubbles, .opera.intro #canvas, .opera.intro #container { z-index: -30000;}
-    .opera .credits #credits, .opera .createcharacter #createcharacter, .opera .loadcharacter #loadcharacter, .opera .banned #banned, .opera .invalidconnection #invalidconnection, .opera .confirmation #confirmation, .opera .death #death, 
+    .opera .credits #credits, .opera .createcharacter #createcharacter, .opera .loadcharacter #loadcharacter, .opera .banned #banned, .opera .createaccount #createaccount, .opera .invalidconnection #invalidconnection, .opera .confirmation #confirmation, .opera .death #death, 
     .opera .error #error, .opera .about #about, .opera .legal #legal { z-index: 30000; }
-    .opera #instructions, .opera #achievements { z-index: -30000;}
-    .opera #achievements.active, .opera #instructions.active { z-index: 30000;}
+    .opera #instructions, .opera #completed, .opera #failed, .opera #achievements { z-index: -30000;}
+    .opera #achievements.active, .opera #instructions.active, .opera #completed.active, .opera #failed.active { z-index: 30000;}
     .opera #coinsparks {display:none;}
     .opera #death, .opera #about, .opera #credits, .opera #error, .opera #confirmation, .opera #loadcharacter, .opera #legal { z-index: -30000; }
