@@ -1,5 +1,29 @@
 const fetch = require("node-fetch");
 const BigNumber = require("bignumber.js");
+const { PromiseQueue } = require("./promise-queue");
+
+const queue = new PromiseQueue();
+
+const sender = "nano_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay";
+const key = process.env.PRIVATE_KEY;
+
+const getWorkFromService = async hash => {
+  const params = {
+    user: process.env.BPOW_USERNAME,
+    api_key: process.env.BPOW_API_KEY,
+    hash,
+    timeout: 15,
+    difficulty: "fffffff800000000",
+  };
+
+  const res = await fetch(process.env.BPOW_DOMAIN, {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+  const json = await res.json();
+
+  return json;
+};
 
 const rpc = async (action, params) => {
   let res;
@@ -13,7 +37,7 @@ const rpc = async (action, params) => {
     });
 
     // @TODO Figure out what to do with rpc enabled...
-    res = await fetch("http://68.183.110.185:7076", {
+    res = await fetch(process.env.RPC_DOMAIN, {
       method: "POST",
       body,
     });
@@ -27,20 +51,27 @@ const rpc = async (action, params) => {
   return json;
 };
 
-const sender = "nano_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay";
-const key = process.env.PRIVATE_KEY;
+const enqueueSendPayout = async params => {
+  await queue.enqueue(() => sendPayout(params));
+};
 
 const sendPayout = async ({ account: receiver, amount }) => {
   let hash;
+  let work;
   try {
     const accountInfo = await rpc("account_info", { account: sender, representative: "true" });
-    console.log("account_info", accountInfo);
 
     if (accountInfo.error) {
       throw new Error("Unable to get account_info");
     }
 
-    const { frontier, representative, balance } = accountInfo;
+    let { frontier, representative, balance } = accountInfo;
+
+    try {
+      ({ work } = await getWorkFromService(frontier));
+    } catch (err) {
+      console.log("Bpow error", err);
+    }
 
     const blockCreate = await rpc("block_create", {
       json_block: true,
@@ -51,8 +82,8 @@ const sendPayout = async ({ account: receiver, amount }) => {
       balance: new BigNumber(balance).minus(amount).toFixed(),
       link: receiver,
       key,
+      ...(work ? { work } : null),
     });
-    console.log("block_create", blockCreate);
 
     if (blockCreate.error) {
       throw new Error("Unable to block_create");
@@ -62,7 +93,6 @@ const sendPayout = async ({ account: receiver, amount }) => {
       subtype: "send",
       block: blockCreate.block,
     });
-    console.log("process", process);
 
     if (process.error) {
       throw new Error("Unable to process");
@@ -82,7 +112,7 @@ const sendPayout = async ({ account: receiver, amount }) => {
 };
 
 module.exports = {
-  sendPayout,
+  enqueueSendPayout,
 };
 
 // Run block_create

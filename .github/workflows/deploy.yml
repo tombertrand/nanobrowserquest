@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Build static assets
+        run: |
+          npm install
+
+      - name: Rsync deployment
+        uses: burnett01/rsync-deployments@4.0
+        with:
+          switches: -avzr --delete --exclude=".env" --exclude="server/data/"
+          path: "."
+          remote_path: /var/www/www.nanobrowserquest.com
+          remote_host: ${{ secrets.DO_HOST }}
+          remote_user: ${{ secrets.DO_USERNAME }}
+          remote_key: ${{ secrets.DO_SSHKEY }}

@@ -96,7 +96,7 @@ Utils.raiToRaw = rai => {
 
 const achievementToNanoMap = {
   A_TRUE_WARRIOR: 10,
-  INTO_THE_WILD: 10,
+  INTO_THE_WILD: 10, // -> Required
   ANGRY_RATS: 15,
   SMALL_TALK: 5,
   FAT_LOOT: 15,
@@ -106,12 +106,12 @@ const achievementToNanoMap = {
   TOMB_RAIDER: 15,
   SKULL_COLLECTOR: 25,
   NINJA_LOOT: 15,
-  NO_MANS_LAND: 10,
+  NO_MANS_LAND: 10, // -> Required
   HUNTER: 25,
   STILL_ALIVE: 10,
   MEATSHIELD: 15,
-  HOT_SPOT: 5,
-  HERO: 100,
+  HOT_SPOT: 5, // -> Required
+  HERO: 100,  // -> Required
   FOXY: 15,
   FOR_SCIENCE: 15,
   RICKROLLD: 15,

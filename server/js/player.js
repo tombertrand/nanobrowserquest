@@ -9,7 +9,7 @@ const Formulas = require("./formulas");
 const check = require("./format").check;
 const Types = require("../../shared/js/gametypes");
 const bcrypt = require("bcrypt");
-const { sendPayout } = require("./payout");
+const { enqueueSendPayout } = require("./payout");
 
 const MIN_TIME = 1000 * 60 * 8;
 const MAX_AMOUNT = 0.00365;
@@ -71,6 +71,7 @@ module.exports = Player = Character.extend({
       self.resetTimeout();
 
       if (action === Types.Messages.CREATE || action === Types.Messages.LOGIN) {
+        console.log("~~~_connection", self.connection._connection);
         console.log("~~~remoteAddress", self.connection._connection.remoteAddress);
         // @TODO Validate that an IP is available and of a valid format
         if (!self.connection._connection.remoteAddress) {
@@ -328,10 +329,13 @@ module.exports = Player = Character.extend({
           self.hash ||
           self.createdAt + MIN_TIME > Date.now() ||
           self.level < 10 ||
-          ![Types.Entities.PLATEARMOR, Types.Entities.REDARMOR].includes(self.armor) ||
-          ![Types.Entities.BLUESWORD, Types.Entities.REDSWORD].includes(self.weapon) ||
-          // Check for Boss achievement
-          !self.achievement[16]
+          ![Types.Entities.PLATEARMOR, Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
+          ![Types.Entities.BLUESWORD, Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon) ||
+          // Check for required achievements
+          !self.achievement[1] || //  -> INTO_THE_WILD
+          !self.achievement[11] || // -> NO_MANS_LAND
+          !self.achievement[15] || // -> HOT_SPOT
+          !self.achievement[16] //    -> HERO
         ) {
           databaseHandler.banPlayer(self);
         } else {
@@ -348,10 +352,11 @@ module.exports = Player = Character.extend({
           }
 
           log.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + Utils.rawToRai(amount));
-          const { err, message, hash } = await sendPayout({
-            account: self.account,
-            amount,
-          });
+          const { err, message, hash } =
+            (await enqueueSendPayout({
+              account: self.account,
+              amount,
+            })) || {};
 
           if (hash) {
             log.info("PAYOUT COMPLETED: " + self.name + " " + self.account);

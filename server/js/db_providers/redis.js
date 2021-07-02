@@ -7,12 +7,12 @@ var cls = require("../lib/class"),
   bcrypt = require("bcrypt");
 
 module.exports = DatabaseHandler = cls.Class.extend({
-  init: function (config) {
-    // @TODO add password on Redis instance
-    client = redis.createClient(config.redis_port, config.redis_host, {
+  init: function () {
+    client = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST, {
       socket_nodelay: true,
+      password: process.env.REDIS_PASSWORD,
     });
-    client.auth(config.redis_password || "");
+    // client.auth(process.env.REDIS_PASSWORD || "");
   },
   loadPlayer: function (player) {
     var self = this;
