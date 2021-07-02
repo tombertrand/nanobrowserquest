@@ -63,7 +63,7 @@ module.exports = World = cls.Class.extend({
         });
 
         this.onPlayerEnter(function(player) {
-            log.info(player.name + "(" + player.connection._connection.remoteAddress + ") has joined " + self.id + " in guild " + player.guildId);
+            log.info(player.name + "(" + player.connection._connection.handshake.headers["cf-connecting-ip"] + ") has joined " + self.id + " in guild " + player.guildId);
 
             if(!player.hasEnteredGame) {
                 self.incrementPlayerCount();

@@ -14,6 +14,8 @@ const { enqueueSendPayout } = require("./payout");
 const MIN_TIME = 1000 * 60 * 8;
 const MAX_AMOUNT = 0.00365;
 
+let index = 0;
+
 module.exports = Player = Character.extend({
   init: function (connection, worldServer, databaseHandler) {
     var self = this;
@@ -73,9 +75,6 @@ module.exports = Player = Character.extend({
       if (action === Types.Messages.CREATE || action === Types.Messages.LOGIN) {
         // Get IP from CloudFlare
         const clientIP = self.connection._connection.handshake.headers["cf-connecting-ip"];
-
-        console.log("~~~clientIP", clientIP);
-        console.log("~~~process.env.NODE_ENV", process.env.NODE_ENV);
 
         if (process.env.NODE_ENV === "production" && !clientIP) {
           self.connection.sendUTF8("invalidconnection");
@@ -357,17 +356,21 @@ module.exports = Player = Character.extend({
           }
 
           log.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + Utils.rawToRai(amount));
-          const { err, message, hash } =
+          index += 1;
+          const response =
             (await enqueueSendPayout({
               account: self.account,
               amount,
+              index,
             })) || {};
+          const { err, message, hash } = response;
 
           if (hash) {
             log.info("PAYOUT COMPLETED: " + self.name + " " + self.account);
             self.hash = hash;
             databaseHandler.setHash(self.name, hash);
           } else {
+            console.log("Err:", err);
             log.info("PAYOUT FAILED: " + self.name + " " + self.account);
           }
 

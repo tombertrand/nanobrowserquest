@@ -145,6 +145,7 @@ var Properties = {
     drops: {
       goldensword: 100,
     },
+    // @TODO hp: 850
     hp: 100,
     armor: 6,
     weapon: 7,

@@ -7,6 +7,10 @@ const queue = new PromiseQueue();
 const sender = "nano_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay";
 const key = process.env.PRIVATE_KEY;
 
+// function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
+
 const getWorkFromService = async hash => {
   const params = {
     user: process.env.BPOW_USERNAME,
@@ -52,13 +56,15 @@ const rpc = async (action, params) => {
 };
 
 const enqueueSendPayout = async params => {
-  await queue.enqueue(() => sendPayout(params));
+  return await queue.enqueue(() => sendPayout(params));
 };
 
 const sendPayout = async ({ account: receiver, amount }) => {
   let hash;
   let work;
   try {
+    // await sleep(Math.floor(Math.random() * 250) + 1);
+
     const accountInfo = await rpc("account_info", { account: sender, representative: "true" });
 
     if (accountInfo.error) {

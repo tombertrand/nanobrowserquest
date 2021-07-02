@@ -503,6 +503,7 @@ define(["jquery", "storage"], function ($, Storage) {
       var nb = parseInt($("#unlocked-achievements").text());
       const totalNano = parseInt($("#unlocked-nano-achievements").text()) * 100000;
       $("#unlocked-achievements").text(nb + 1);
+      // @TODO fix bug in calculation
       $("#unlocked-nano-achievements").text((totalNano + nano) / 100000);
     },
 

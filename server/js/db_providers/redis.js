@@ -144,7 +144,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "ip", player.ip)
           .hset(userKey, "createdAt", curTime)
           .hset(userKey, "achievement", JSON.stringify(new Array(20).fill(0)))
-          // .hset("b:" + player.connection._connection.remoteAddress, "loginTime", curTime)
           .exec(function (err, replies) {
             log.info("New User: " + player.name);
             player.sendWelcome({
@@ -166,32 +165,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-  // checkBan: function(player){
-  //     client.smembers("ipban", function(err, replies){
-  //         for(var index = 0; index < replies.length; index++){
-  //             if(replies[index].toString() === player.connection._connection.remoteAddress){
-  //                 client.multi()
-  //                     .hget("b:" + player.connection._connection.remoteAddress, "rtime")
-  //                     .hget("b:" + player.connection._connection.remoteAddress, "time")
-  //                     .exec(function(err, replies){
-  //                          var curTime = new Date();
-  //                          var banEndTime = new Date(replies[0]*1);
-  //                          log.info("curTime: " + curTime.toString());
-  //                          log.info("banEndTime: " + banEndTime.toString());
-  //                          if(banEndTime.getTime() > curTime.getTime()){
-  //                              player.connection.sendUTF8("ban");
-  //                              player.connection.close("IP Banned player: " + player.name + " " + player.connection._connection.remoteAddress);
-  //                          }
-  //                     });
-  //                 return;
-  //             }
-  //         }
-  //     });
-  // },
-
   checkIsBanned: async player => {
     return new Promise((resolve, reject) => {
-      const ipKey = "ipban:" + player.connection._connection.remoteAddress;
+      const ipKey = "ipban:" + player.connection._connection.handshake.headers["cf-connecting-ip"];
       client.hget(ipKey, "timestamp", (err, reply) => {
         const timestamp = parseInt(reply);
         // isBanned is true if DB time is greater than now
@@ -203,12 +179,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
   banPlayer: function (banPlayer) {
     // 24h
     let days = 1;
-    client.hget("ipban:" + banPlayer.connection._connection.remoteAddress, "timestamp", (err, reply) => {
+    client.hget("ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"], "timestamp", (err, reply) => {
       if (reply) {
         days = 365;
       }
       const until = days * 24 * 60 * 60 * 1000 + Date.now();
-      client.hset("ipban:" + banPlayer.connection._connection.remoteAddress, "timestamp", until);
+      client.hset("ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"], "timestamp", until);
 
       banPlayer.connection.sendUTF8("banned-" + days);
       banPlayer.connection.close("You are banned, no cheating.");
@@ -226,7 +202,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           );
           targetPlayer.chatBanEndTime = curTime + 10 * 60 * 1000;
           client.hset(
-            "cb:" + targetPlayer.connection._connection.remoteAddress,
+            "cb:" + targetPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
             "etime",
             targetPlayer.chatBanEndTime.toString(),
           );
