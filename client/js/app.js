@@ -11,6 +11,17 @@ define(["jquery", "storage"], function ($, Storage) {
 
       if (localStorage && localStorage.data) {
         this.frontPage = "loadcharacter";
+
+        if (
+          this.storage &&
+          this.storage.data &&
+          this.storage.data.player &&
+          this.storage.data.player.name &&
+          this.storage.data.player.account
+        ) {
+          $("#loginnameinput").attr("value", this.storage.data.player.name);
+          $("#loginaccountinput").attr("value", this.storage.data.player.account);
+        }
       } else {
         this.frontPage = "createcharacter";
       }

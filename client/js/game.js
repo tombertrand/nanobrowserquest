@@ -979,7 +979,7 @@ define([
           self.tryUnlockingAchievement("STILL_ALIVE");
         }, 1500);
 
-        self.storage.initPlayer(self.player.name);
+        self.storage.initPlayer(self.player.name, self.player.account);
         self.storage.savePlayer(
           self.renderer.getPlayerImage(),
           self.player.getSpriteName(),

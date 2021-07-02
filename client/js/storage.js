@@ -27,7 +27,7 @@ define(function () {
           totalDmg: 0,
           totalRevives: 0,
         },
-        achievement: new Array(20).fill(0)
+        achievement: new Array(20).fill(0),
       };
     },
 
@@ -54,13 +54,19 @@ define(function () {
       return this.data.hasAlreadyPlayed;
     },
 
-    initPlayer: function (name) {
+    initPlayer: function (name, account) {
       this.data.hasAlreadyPlayed = true;
       this.setPlayerName(name);
+      this.setPlayerAccount(account);
     },
 
     setPlayerName: function (name) {
       this.data.player.name = name;
+      this.save();
+    },
+
+    setPlayerAccount: function (account) {
+      this.data.player.account = account;
       this.save();
     },
 
