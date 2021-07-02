@@ -71,10 +71,13 @@ module.exports = Player = Character.extend({
       self.resetTimeout();
 
       if (action === Types.Messages.CREATE || action === Types.Messages.LOGIN) {
-        console.log("~~~_connection", self.connection._connection);
-        console.log("~~~remoteAddress", self.connection._connection.remoteAddress);
-        // @TODO Validate that an IP is available and of a valid format
-        if (!self.connection._connection.remoteAddress) {
+        // Get IP from CloudFlare
+        const clientIP = self.connection._connection.handshake.headers["cf-connecting-ip"];
+
+        console.log("~~~clientIP", clientIP);
+        console.log("~~~process.env.NODE_ENV", process.env.NODE_ENV);
+
+        if (process.env.NODE_ENV === "production" && !clientIP) {
           self.connection.sendUTF8("invalidconnection");
           self.connection.close("Unable to get IP.");
           return;
@@ -95,6 +98,8 @@ module.exports = Player = Character.extend({
         // Always ensure that the name is not longer than a maximum length.
         // (also enforced by the maxlength attribute of the name input element).
         self.name = name.substr(0, 16).trim();
+        // @TODO Max payout per IP per day?
+        self.ip = clientIP;
 
         // Validate the username
         if (!self.checkName(self.name)) {

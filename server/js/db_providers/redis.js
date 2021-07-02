@@ -141,6 +141,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "avatar", "clotharmor")
           .hset(userKey, "weapon", "sword1")
           .hset(userKey, "exp", 0)
+          .hset(userKey, "ip", player.ip)
           .hset(userKey, "createdAt", curTime)
           .hset(userKey, "achievement", JSON.stringify(new Array(20).fill(0)))
           // .hset("b:" + player.connection._connection.remoteAddress, "loginTime", curTime)
