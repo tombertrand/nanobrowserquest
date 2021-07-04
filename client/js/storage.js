@@ -8,6 +8,8 @@ define(function () {
       }
     },
 
+    // @TODO Add periodic checks if the storage is manipulated, if so BAN
+
     resetData: function () {
       this.data = {
         hasAlreadyPlayed: false,

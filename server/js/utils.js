@@ -95,26 +95,36 @@ Utils.raiToRaw = rai => {
 };
 
 const achievementToNanoMap = {
-  A_TRUE_WARRIOR: 10,
-  INTO_THE_WILD: 10, // -> Required
-  ANGRY_RATS: 15,
-  SMALL_TALK: 5,
-  FAT_LOOT: 15,
-  UNDERGROUND: 15,
-  AT_WORLDS_END: 15,
-  COWARD: 15,
-  TOMB_RAIDER: 15,
-  SKULL_COLLECTOR: 25,
-  NINJA_LOOT: 15,
-  NO_MANS_LAND: 10, // -> Required
-  HUNTER: 25,
-  STILL_ALIVE: 10,
-  MEATSHIELD: 15,
-  HOT_SPOT: 5, // -> Required
-  HERO: 100,  // -> Required
-  FOXY: 15,
-  FOR_SCIENCE: 15,
-  RICKROLLD: 15,
+  A_TRUE_WARRIOR: 3,
+  INTO_THE_WILD: 2, // -> Required
+  ANGRY_RATS: 5,
+  SMALL_TALK: 3,
+  FAT_LOOT: 5,
+  UNDERGROUND: 3,
+  AT_WORLDS_END: 5,
+  COWARD: 4,
+  TOMB_RAIDER: 5,
+  SKULL_COLLECTOR: 8,
+  NINJA_LOOT: 4,
+  NO_MANS_LAND: 3, // -> Required
+  HUNTER: 4,
+  STILL_ALIVE: 7,
+  MEATSHIELD: 7,
+  HOT_SPOT: 3, // -> Required
+  HERO: 50, // -> Required
+  FOXY: 2,
+  FOR_SCIENCE: 4,
+  RICKROLLD: 6,
+};
+
+Utils.getMaxPayoutAmount = () => {
+  let amount = 0;
+  let payouts = Object.values(achievementToNanoMap);
+  payouts.map(payout => {
+    amount += payout;
+  });
+
+  return new BigNumber(amount).dividedBy(100000).toFixed();
 };
 
 Utils.getPayoutAmount = achievements => {

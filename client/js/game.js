@@ -293,13 +293,13 @@ define([
           id: 1,
           name: "A True Warrior",
           desc: "Find a new weapon",
-          nano: 10,
+          nano: 3,
         },
         INTO_THE_WILD: {
           id: 2,
           name: "Into the Wild",
           desc: "Venture outside the village",
-          nano: 10,
+          nano: 2,
         },
         ANGRY_RATS: {
           id: 3,
@@ -308,64 +308,64 @@ define([
           isCompleted: function () {
             return self.storage.getRatCount() >= 10;
           },
-          nano: 15,
+          nano: 5,
         },
         SMALL_TALK: {
           id: 4,
           name: "Small Talk",
           desc: "Talk to a non-player character",
-          nano: 5,
+          nano: 3,
         },
         FAT_LOOT: {
           id: 5,
           name: "Fat Loot",
           desc: "Get a new armor set",
-          nano: 15,
+          nano: 5,
         },
         UNDERGROUND: {
           id: 6,
           name: "Underground",
           desc: "Explore at least one cave",
-          nano: 15,
+          nano: 3,
         },
         AT_WORLDS_END: {
           id: 7,
           name: "At World's End",
           desc: "Reach the south shore",
-          nano: 15,
+          nano: 5,
         },
         COWARD: {
           id: 8,
           name: "Coward",
           desc: "Successfully escape an enemy",
-          nano: 15,
+          nano: 4,
         },
         TOMB_RAIDER: {
           id: 9,
           name: "Tomb Raider",
           desc: "Find the graveyard",
-          nano: 15,
+          nano: 5,
         },
         SKULL_COLLECTOR: {
-          id: 10,
+          id: 8,
           name: "Skull Collector",
           desc: "Kill 10 skeletons",
           isCompleted: function () {
             return self.storage.getSkeletonCount() >= 10;
           },
-          nano: 25,
+          nano: 8,
         },
         NINJA_LOOT: {
           id: 11,
           name: "Ninja Loot",
           desc: "Get an item you didn't fight for",
-          nano: 15,
+          nano: 4,
         },
         NO_MANS_LAND: {
           id: 12,
           name: "No Man's Land",
           desc: "Travel through the desert",
-          nano: 10,
+          nano: 3,
         },
         HUNTER: {
           id: 13,
@@ -374,7 +374,7 @@ define([
           isCompleted: function () {
             return self.storage.getTotalKills() >= 50;
           },
-          nano: 25,
+          nano: 4,
         },
         STILL_ALIVE: {
           id: 14,
@@ -383,7 +383,7 @@ define([
           isCompleted: function () {
             return self.storage.getTotalRevives() >= 5;
           },
-          nano: 10,
+          nano: 7,
         },
         MEATSHIELD: {
           id: 15,
@@ -392,40 +392,40 @@ define([
           isCompleted: function () {
             return self.storage.getTotalDamageTaken() >= 5000;
           },
-          nano: 15,
+          nano: 7,
         },
         HOT_SPOT: {
           id: 16,
           name: "Hot Spot",
           desc: "Enter the volcanic mountains",
-          nano: 5,
+          nano: 3,
         },
         HERO: {
           id: 17,
           name: "Hero",
-          desc: "Defeat the final boss and get the payout!",
-          nano: 100,
+          desc: "Defeat the final boss to get the payout",
+          nano: 50,
         },
         FOXY: {
           id: 18,
           name: "Foxy",
           desc: "Find the Firefox costume",
           hidden: true,
-          nano: 15,
+          nano: 2,
         },
         FOR_SCIENCE: {
           id: 19,
           name: "For Science",
           desc: "Enter into a portal",
           hidden: true,
-          nano: 15,
+          nano: 4,
         },
         RICKROLLD: {
           id: 20,
           name: "Rickroll'd",
           desc: "Take some singing lessons",
           hidden: true,
-          nano: 15,
+          nano: 6,
         },
       };
 

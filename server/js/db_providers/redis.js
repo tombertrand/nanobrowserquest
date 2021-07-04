@@ -141,7 +141,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "avatar", "clotharmor")
           .hset(userKey, "weapon", "sword1")
           .hset(userKey, "exp", 0)
-          .hset(userKey, "ip", player.ip)
+          .hset(userKey, "ip", player.ip || '')
           .hset(userKey, "createdAt", curTime)
           .hset(userKey, "achievement", JSON.stringify(new Array(20).fill(0)))
           .exec(function (err, replies) {
@@ -179,16 +179,24 @@ module.exports = DatabaseHandler = cls.Class.extend({
   banPlayer: function (banPlayer) {
     // 24h
     let days = 1;
-    client.hget("ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"], "timestamp", (err, reply) => {
-      if (reply) {
-        days = 365;
-      }
-      const until = days * 24 * 60 * 60 * 1000 + Date.now();
-      client.hset("ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"], "timestamp", until);
+    client.hget(
+      "ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
+      "timestamp",
+      (err, reply) => {
+        if (reply) {
+          days = 365;
+        }
+        const until = days * 24 * 60 * 60 * 1000 + Date.now();
+        client.hset(
+          "ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
+          "timestamp",
+          until,
+        );
 
-      banPlayer.connection.sendUTF8("banned-" + days);
-      banPlayer.connection.close("You are banned, no cheating.");
-    });
+        banPlayer.connection.sendUTF8("banned-" + days);
+        banPlayer.connection.close("You are banned, no cheating.");
+      },
+    );
 
     return;
   },

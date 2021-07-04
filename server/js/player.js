@@ -12,7 +12,7 @@ const bcrypt = require("bcrypt");
 const { enqueueSendPayout } = require("./payout");
 
 const MIN_TIME = 1000 * 60 * 8;
-const MAX_AMOUNT = 0.00365;
+const MAX_AMOUNT = Utils.getMaxPayoutAmount();
 
 let index = 0;
 
