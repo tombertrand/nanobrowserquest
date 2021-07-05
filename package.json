@@ -6,6 +6,7 @@
   },
   "version": "0.0.1",
   "dependencies": {
+    "@sentry/node": "^6.8.0",
     "bcrypt": ">=0",
     "bignumber.js": "^9.0.1",
     "bison": "~1.1.1",

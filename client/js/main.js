@@ -259,6 +259,7 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
       });
 
       game.onNbPlayersChange(function (worldPlayers, totalPlayers) {
+        // @TODO Fix amount of player for people already connected
         console.log("~~~~worldPlayers", worldPlayers);
         console.log("~~~~totalPlayers", totalPlayers);
         var setWorldPlayersString = function (string) {

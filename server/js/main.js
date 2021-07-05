@@ -1,4 +1,5 @@
 require("dotenv").config();
+require("./sentry");
 
 var fs = require("fs");
 var Metrics = require("./metrics");

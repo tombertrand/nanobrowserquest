@@ -141,7 +141,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "avatar", "clotharmor")
           .hset(userKey, "weapon", "sword1")
           .hset(userKey, "exp", 0)
-          .hset(userKey, "ip", player.ip || '')
+          .hset(userKey, "ip", player.ip || "")
           .hset(userKey, "createdAt", curTime)
           .hset(userKey, "achievement", JSON.stringify(new Array(20).fill(0)))
           .exec(function (err, replies) {
@@ -176,7 +176,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-  banPlayer: function (banPlayer) {
+  banPlayer: function (banPlayer, reason) {
     // 24h
     let days = 1;
     client.hget(
@@ -191,6 +191,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
           "ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
           "timestamp",
           until,
+          "reason",
+          reason,
         );
 
         banPlayer.connection.sendUTF8("banned-" + days);

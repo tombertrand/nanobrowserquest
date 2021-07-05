@@ -341,7 +341,26 @@ module.exports = Player = Character.extend({
           !self.achievement[15] || // -> HOT_SPOT
           !self.achievement[16] //    -> HERO
         ) {
-          databaseHandler.banPlayer(self);
+          let reason;
+          if (self.hash) {
+            reason = `Already have hash ${self.hash}`;
+          } else if (self.createdAt + MIN_TIME > Date.now()) {
+            reason = `Less then 8 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
+          } else if (self.level < 10) {
+            reason = `Min level not obtained, player is level ${self.level}`;
+          } else if (
+            ![Types.Entities.PLATEARMOR, Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor)
+          ) {
+            reason = `Armor doesn't match requirement, player armor is ${self.armor}`;
+          } else if (
+            ![Types.Entities.BLUESWORD, Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
+          ) {
+            reason = `Weapon doesn't match requirement, player armor is ${self.weapon}`;
+          } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[15] || !self.achievement[16]) {
+            reason = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[15]}, ${self.achievement[16]}`;
+          }
+
+          databaseHandler.banPlayer(self, reason);
         } else {
           self.connection.send({
             type: Types.Messages.NOTIFICATION,
@@ -351,7 +370,7 @@ module.exports = Player = Character.extend({
           const amount = Utils.getPayoutAmount(self.achievement);
 
           if (Utils.rawToRai(amount) > MAX_AMOUNT) {
-            databaseHandler.banPlayer(self);
+            databaseHandler.banPlayer(self, `Tried to withdraw ${Utils.rawToRai(amount)}`);
             return;
           }
 
@@ -382,7 +401,7 @@ module.exports = Player = Character.extend({
         }
       } else if (action === Types.Messages.BAN_PLAYER) {
         // Just don't...
-        databaseHandler.banPlayer(self);
+        databaseHandler.banPlayer(self, 'Banned from FE check');
       } else if (action === Types.Messages.OPEN) {
         log.info("OPEN: " + self.name + " " + message[1]);
         var chest = self.server.getEntityById(message[1]);
