@@ -1646,13 +1646,13 @@ define([
 
           self.infoManager.addDamageInfo("+" + mobExp + " exp", self.player.x, self.player.y - 15, "exp", 3000);
 
-          var expInThisLevel = self.player.experience - Types.expForLevel[self.player.level - 1];
-          var expForLevelUp = Types.expForLevel[self.player.level] - Types.expForLevel[self.player.level - 1];
-          var expPercentThisLevel = (100 * expInThisLevel) / expForLevelUp;
+          // var expInThisLevel = self.player.experience - Types.expForLevel[self.player.level - 1];
+          // var expForLevelUp = Types.expForLevel[self.player.level] - Types.expForLevel[self.player.level - 1];
+          // var expPercentThisLevel = (100 * expInThisLevel) / expForLevelUp;
 
-          self.showNotification(
-            "Total xp: " + self.player.experience + ". " + expPercentThisLevel.toFixed(0) + "% of this level done.",
-          );
+          // self.showNotification(
+          //   "Total xp: " + self.player.experience + ". " + expPercentThisLevel.toFixed(0) + "% of this level done.",
+          // );
 
           var mobName = Types.getKindAsString(kind);
 

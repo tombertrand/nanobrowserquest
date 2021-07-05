@@ -523,6 +523,24 @@ footer, header, hgroup, menu, nav, section {
     .banned-1, .banned-365 { display: none; }
     article a { color: #4A90E2 }
 
+    #expbar{
+        border-top-left-radius: 2px;
+        position: absolute;
+        background-color: rgba(0,0,255,0.35);
+        height: 90%;
+        margin-left: 0px;
+        padding: 0px;
+        border: 0px;
+        bottom: 8.5%;
+        width: 16px;
+        -webkit-box-shadow: inset 1px 1px 3px 1px #373737;
+        box-shadow: inset 1px 1px 3px 1px #373737;
+      }
+
+      #expbar:hover {
+        background-color: rgba(0,0,255,0.5);
+      }
+
     /* #nano {margin-left:200px;scale:0.7;} */
 	@media screen and (min-width: 1501px) {
         #nano {margin-left:-240px;}
@@ -567,19 +585,9 @@ footer, header, hgroup, menu, nav, section {
         .validation-error {font-size:22px;}
         
 		#container {width:1470px;margin:0 auto;position:absolute;top:50%;margin-top:-378px;left:50%;margin-left:-735px;}
-    #expbar{
-      position: absolute;
-      bottom: 8.5%;
-      left: 98%;
-      width: 1%;
-      background: rgba(0,0,255,0.3);
-      height: 90%;
-      margin-left: 0px;
-      padding: 0px;
-      border: 0px;
-    }
 
     #canvasborder {padding:15px;background:url('../img/3/border.png') no-repeat;}
+    #expbar{right:15px}
 		#canvas {width:100%;height:672px;}
 		#fade {width:1440px;height:672px;top:15px;left:15px;}
 		
@@ -746,20 +754,9 @@ footer, header, hgroup, menu, nav, section {
         .validation-error {font-size:16px;}
         
 		#container {width:980px;margin:0 auto;position:absolute;top:50%;margin-top:-252px;left:50%;margin-left:-490px;}
-    #expbar{
-      position: absolute;
-      bottom: 8.5%;
-      left: 98.6%;
-      width: 0.5%;
-      background: rgba(0,0,255,0.3);
-      height: 90%;
-      margin-left: 0px;
-      padding: 0px;
-      border: 0px;
-    }
-
 
     #canvasborder {padding:10px;background:url('../img/2/border.png') no-repeat;}
+    #expbar{right:10px}
 		#canvas {width:100%;height:448px;}
 		#fade {width:960px;height:448px;top:10px;left:10px;}
 
@@ -890,19 +887,6 @@ footer, header, hgroup, menu, nav, section {
         
         #name-tooltip {font-size:14px;width:280px;margin-left:-140px;height:20px;line-height:18px;top:-30px;}
         #name-tooltip:after {bottom:-8px;}
-
-	  #expbar{
-      position: absolute;
-      bottom: 8.5%;
-      left: 98.6%;
-      width: 0.5%;
-      background: rgba(0,0,255,0.3);
-      height: 90%;
-      margin-left: 0px;
-      padding: 0px;
-      border: 0px;
-    }
-
 }
 	
 	@media screen and (max-width: 1000px) {
@@ -943,6 +927,7 @@ footer, header, hgroup, menu, nav, section {
         
 		#container {width:490px;margin:0 auto;position:absolute;top:50%;margin-top:-126px;left:50%;margin-left:-245px;}
 		#canvasborder {padding:5px;background:url('../img/1/border.png') no-repeat;}
+        #expbar{right:5px;width: 10px;}
 		#canvas {width:100%;height:224px;}
 		#fade {width:480px;height:224px;top:5px;left:5px;}
 		
@@ -1097,6 +1082,7 @@ footer, header, hgroup, menu, nav, section {
         #logosparks {-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;display:none;}
 		#container {height:258px;width:480px;position:relative;left:50%;top:50%;margin:-128px auto 0 -240px;}
 		#canvasborder {background:none;padding:0;}
+        #expbar{right:0;width: 10px;}
 		
 		#parchment, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #completed, #failed, .icon {background-size:422px auto;}
         #parchment {background:none;}

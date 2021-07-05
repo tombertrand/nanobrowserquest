@@ -345,11 +345,22 @@ define(["jquery", "storage"], function ($, Storage) {
       });
     },
     initExpBar: function () {
+      var self = this;
       var maxHeight = $("#expbar").height();
 
       this.game.onPlayerExpChange(function (expInThisLevel, expForLevelUp) {
         var barHeight = Math.round((maxHeight / expForLevelUp) * (expInThisLevel > 0 ? expInThisLevel : 0));
         $("#expbar").css("height", barHeight + "px");
+      });
+
+      $("#expbar").mouseover(function () {
+        var expInThisLevel = self.game.player.experience - Types.expForLevel[self.game.player.level - 1];
+        var expForLevelUp = Types.expForLevel[self.game.player.level] - Types.expForLevel[self.game.player.level - 1];
+        var expPercentThisLevel = (100 * expInThisLevel) / expForLevelUp;
+
+        self.game.showNotification(
+          "You are level " + self.game.player.level + ". " + expPercentThisLevel.toFixed(0) + "% of this level done.",
+        );
       });
     },
 
