@@ -106,7 +106,6 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
             // self.disconnected_callback(
             //   "The connection to NanoBrowserQuest has been lost"
             // );
-          } else if (e === "allowbossroom") {
           }
 
           self.receiveMessage(e);

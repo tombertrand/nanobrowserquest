@@ -347,7 +347,7 @@ define([
           nano: 5,
         },
         SKULL_COLLECTOR: {
-          id: 8,
+          id: 10,
           name: "Skull Collector",
           desc: "Kill 10 skeletons",
           isCompleted: function () {
@@ -1136,7 +1136,7 @@ define([
               }, 500);
             }
             self.player.forEachAttacker(function (attacker) {
-              attacker.disengage();
+              // attacker.disengage();
               attacker.idle();
             });
 
@@ -1657,7 +1657,7 @@ define([
           var mobName = Types.getKindAsString(kind);
 
           if (mobName === "skeleton2") {
-            mobName = "greater skeleton";
+            mobName = "skeleton warrior";
           }
 
           if (mobName === "eye") {
@@ -2299,7 +2299,8 @@ define([
           var entity = this.getEntityAt(x, y);
 
           this.player.showTarget(entity);
-          if (!entity.isHighlighted && this.renderer.supportsSilhouettes) {
+          // supportsSilhouettes hides the players (render bug I'd guess)
+          if (!entity.isHighlighted && this.renderer.supportsSilhouettes && !this.hoveringPlayer) {
             if (this.lastHovered) {
               this.lastHovered.setHighlight(false);
             }
@@ -2892,16 +2893,17 @@ define([
 
     tryUnlockingAchievement: function (name) {
       var achievement = null;
+      var self = this;
 
       return new Promise(resolve => {
         if (name in this.achievements) {
           achievement = this.achievements[name];
 
-          if (achievement.isCompleted() && this.storage.unlockAchievement(achievement.id)) {
-            if (this.unlock_callback) {
-              this.client.sendAchievement(achievement.id);
-              this.unlock_callback(achievement.id, achievement.name, achievement.nano);
-              this.audioManager.playSound("achievement");
+          if (achievement.isCompleted() && self.storage.unlockAchievement(achievement.id)) {
+            if (self.unlock_callback) {
+              self.client.sendAchievement(achievement.id);
+              self.unlock_callback(achievement.id, achievement.name, achievement.nano);
+              self.audioManager.playSound("achievement");
               resolve();
             }
           }

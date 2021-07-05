@@ -48,6 +48,7 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
       });
 
       $("#helpbutton").click(function () {
+        app.hideWindows();
         if ($("body").hasClass("about")) {
           app.closeInGameScroll("about");
           $("#helpbutton").removeClass("active");
@@ -57,6 +58,7 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
       });
 
       $("#achievementsbutton").click(function () {
+        app.hideWindows();
         app.toggleAchievements();
         if (app.blinkInterval) {
           clearInterval(app.blinkInterval);
@@ -257,6 +259,8 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
       });
 
       game.onNbPlayersChange(function (worldPlayers, totalPlayers) {
+        console.log("~~~~worldPlayers", worldPlayers);
+        console.log("~~~~totalPlayers", totalPlayers);
         var setWorldPlayersString = function (string) {
             $("#instance-population").find("span:nth-child(2)").text(string);
             $("#playercount").find("span:nth-child(2)").text(string);

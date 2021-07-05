@@ -63,8 +63,7 @@ var Properties = {
 
   deathknight: {
     drops: {
-      burger: 95,
-      firepotion: 5,
+      burger: 100,
     },
     hp: 250,
     armor: 3,

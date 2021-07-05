@@ -116,14 +116,12 @@ define(function () {
     // Achievements
 
     hasUnlockedAchievement: function (id) {
-      //   return _.include(this.data.achievements.unlocked, id);
       return this.data.achievement[id - 1];
     },
 
     unlockAchievement: function (id) {
       if (!this.hasUnlockedAchievement(id)) {
         this.data.achievement[id - 1] = 1;
-        // this.data.achievements.unlocked.push(id);
         this.save();
         return true;
       }

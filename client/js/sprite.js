@@ -165,7 +165,8 @@ define(['jquery', 'animation', 'sprites'], function($, Animation, sprites) {
                     width: this.width,
                     height: this.height
                 };
-            } catch(e) {
+            } catch(err) {
+                console.log('~~~~err', err)
                 this.silhouetteSprite = this;
             }
         }
