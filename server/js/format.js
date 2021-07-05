@@ -21,7 +21,7 @@ var Types = require('../../shared/js/gametypes');
             this.formats[Types.Messages.CHECK] = ['n'],
             this.formats[Types.Messages.ACHIEVEMENT] = ['n', 's'],
             this.formats[Types.Messages.BOSS_CHECK] = [],
-            this.formats[Types.Messages.BAN_PLAYER] = []
+            this.formats[Types.Messages.BAN_PLAYER] = ['s'],
             this.formats[Types.Messages.REQUEST_PAYOUT] = []
         },
 
@@ -77,12 +77,14 @@ var Types = require('../../shared/js/gametypes');
 			}
             else if (type === Types.Messages.ACHIEVEMENT) {
                 return (message.length === 2 && _.isNumber(message[0]) && _.isString(message[1]));
+            }
+            else if (type === Types.Messages.BAN_PLAYER) {
+                return (message.length === 1 && _.isString(message[0]));
             } 
             else if ([
-                Types.Messages.BOSS_CHECK, 
-                Types.Messages.BAN_PLAYER, 
+                Types.Messages.BOSS_CHECK,
                 Types.Messages.REQUEST_PAYOUT
-            ].includes(type) === Types.Messages.BOSS_CHECK) {
+            ].includes(type)) {
                 return (message.length === 0);
             }
             else {

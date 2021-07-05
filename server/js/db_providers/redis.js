@@ -192,7 +192,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           "timestamp",
           until,
           "reason",
-          reason,
+          reason || "",
         );
 
         banPlayer.connection.sendUTF8("banned-" + days);

@@ -725,8 +725,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.LEAVE]);
     },
 
-    sendBanPlayer: function () {
-      this.sendMessage([Types.Messages.BAN_PLAYER]);
+    sendBanPlayer: function (message) {
+      this.sendMessage([Types.Messages.BAN_PLAYER, message]);
     },
 
     sendRequestPayout: function () {

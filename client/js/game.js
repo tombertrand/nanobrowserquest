@@ -1796,7 +1796,7 @@ define([
           if (status === "ok") {
             const position = parseInt(check[check.length - 1]);
             if (check[position] != position) {
-              self.client.sendBanPlayer();
+              self.client.sendBanPlayer("Invalid check position");
             } else {
               let s = check;
               s = s.slice(0, position) + s.slice(position + 1, s.length - 1);
@@ -1807,7 +1807,7 @@ define([
               if (s < now && now - s < 1000 * 10) {
                 self.player.stop_pathing_callback(71, 21, true);
               } else {
-                self.client.sendBanPlayer();
+                self.client.sendBanPlayer(`Invalid check time ${check} vs ${now}`);
               }
             }
           } else if (status === "failed") {

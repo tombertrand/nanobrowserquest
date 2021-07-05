@@ -401,7 +401,7 @@ module.exports = Player = Character.extend({
         }
       } else if (action === Types.Messages.BAN_PLAYER) {
         // Just don't...
-        databaseHandler.banPlayer(self, 'Banned from FE check');
+        databaseHandler.banPlayer(self, message[1]);
       } else if (action === Types.Messages.OPEN) {
         log.info("OPEN: " + self.name + " " + message[1]);
         var chest = self.server.getEntityById(message[1]);
