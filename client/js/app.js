@@ -332,6 +332,8 @@ define(["jquery", "storage"], function ($, Storage) {
         }
 
         $(el).fadeIn("fast");
+
+        // @TODO setTimeout if npc on mobile
       });
 
       self.game.onUpdateTarget(function (target) {
