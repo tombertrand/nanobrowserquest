@@ -1803,11 +1803,12 @@ define([
               s = parseInt(s);
 
               const now = Date.now();
+              const absS = Math.abs(s - now);
               // 10s range
-              if (s < now && now - s < 1000 * 10) {
+              if (absS < 1000 * 10) {
                 self.player.stop_pathing_callback(71, 21, true);
               } else {
-                self.client.sendBanPlayer(`Invalid check time ${check} vs ${now}`);
+                self.client.sendBanPlayer(`Invalid check time ${check}, ${s}, ${now}`);
               }
             }
           } else if (status === "failed") {
