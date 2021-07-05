@@ -76,7 +76,7 @@ var Connection = cls.Class.extend({
     },
 
     close: function (logError) {
-        log.info('Closing connection to ' + this._connection.remoteAddress + '. Error: ' + logError);
+        log.info('Closing connection to ' + this._connection.handshake.headers["cf-connecting-ip"] + '. Error: ' + logError);
         this._connection.conn.close();
     }
 });
@@ -213,6 +213,7 @@ WS.WebsocketServer = Server.extend({
         this._ioServer = new socketio(this._httpServer);
         this._ioServer.on('connection', function webSocketListener(socket) {
             log.info('Client socket connected from ' + socket.conn.remoteAddress);
+            console.log(socket)
             // Add remoteAddress property
             socket.remoteAddress = socket.conn.remoteAddress;
 
