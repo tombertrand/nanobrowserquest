@@ -1136,6 +1136,7 @@ define([
               }, 500);
             }
             self.player.forEachAttacker(function (attacker) {
+              // @TODO Return to pos x,y
               // attacker.disengage();
               attacker.idle();
             });

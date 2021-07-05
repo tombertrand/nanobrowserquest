@@ -259,9 +259,6 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
       });
 
       game.onNbPlayersChange(function (worldPlayers, totalPlayers) {
-        // @TODO Fix amount of player for people already connected
-        console.log("~~~~worldPlayers", worldPlayers);
-        console.log("~~~~totalPlayers", totalPlayers);
         var setWorldPlayersString = function (string) {
             $("#instance-population").find("span:nth-child(2)").text(string);
             $("#playercount").find("span:nth-child(2)").text(string);
