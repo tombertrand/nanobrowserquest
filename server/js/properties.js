@@ -109,9 +109,8 @@ var Properties = {
 
   eye: {
     drops: {
-      flask: 65,
+      flask: 75,
       redarmor: 20,
-      redsword: 10,
       firepotion: 5,
     },
     hp: 200,
@@ -121,12 +120,11 @@ var Properties = {
 
   spectre: {
     drops: {
-      flask: 65,
-      redarmor: 10,
+      flask: 75,
       redsword: 20,
       firepotion: 5,
     },
-    hp: 250,
+    hp: 220,
     armor: 2,
     weapon: 4,
   },
