@@ -10,6 +10,7 @@ const check = require("./format").check;
 const Types = require("../../shared/js/gametypes");
 const bcrypt = require("bcrypt");
 const { enqueueSendPayout } = require("./payout");
+const { Sentry } = require("./sentry");
 
 const MIN_TIME = 1000 * 60 * 8;
 const MAX_AMOUNT = Utils.getMaxPayoutAmount();
@@ -278,8 +279,9 @@ module.exports = Player = Character.extend({
         }
       } else if (action === Types.Messages.TELEPORT) {
         log.info("TELEPORT: " + self.name + "(" + message[1] + ", " + message[2] + ")");
-        var x = message[1],
-          y = message[2];
+
+        var x = message[1];
+        var y = message[2];
 
         if (self.server.isValidPosition(x, y)) {
           self.setPosition(x, y);
@@ -389,8 +391,8 @@ module.exports = Player = Character.extend({
             self.hash = hash;
             databaseHandler.setHash(self.name, hash);
           } else {
-            console.log("Err:", err);
             log.info("PAYOUT FAILED: " + self.name + " " + self.account);
+            Sentry.captureException(new Error("PAYOUT FAILED: " + self.name + " " + self.account));
           }
 
           self.connection.send({

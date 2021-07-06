@@ -12,6 +12,28 @@ var Properties = {
     weapon: 1,
   },
 
+  bat: {
+    drops: {
+      flask: 50,
+      axe: 10,
+      firepotion: 5,
+    },
+    hp: 80,
+    armor: 2,
+    weapon: 1,
+  },
+
+  wizard: {
+    drops: {
+      flask: 50,
+      platearmor: 20,
+      firepotion: 5,
+    },
+    hp: 100,
+    armor: 2,
+    weapon: 6,
+  },
+
   skeleton: {
     drops: {
       flask: 40,
@@ -47,27 +69,6 @@ var Properties = {
     hp: 200,
     armor: 3,
     weapon: 2,
-  },
-
-  spectre: {
-    drops: {
-      flask: 30,
-      redarmor: 40,
-      redsword: 30,
-      firepotion: 5,
-    },
-    hp: 250,
-    armor: 2,
-    weapon: 4,
-  },
-
-  deathknight: {
-    drops: {
-      burger: 100,
-    },
-    hp: 250,
-    armor: 3,
-    weapon: 3,
   },
 
   crab: {
@@ -108,7 +109,7 @@ var Properties = {
 
   eye: {
     drops: {
-      flask: 50,
+      flask: 65,
       redarmor: 20,
       redsword: 10,
       firepotion: 5,
@@ -118,26 +119,25 @@ var Properties = {
     weapon: 3,
   },
 
-  bat: {
+  spectre: {
     drops: {
-      flask: 50,
-      axe: 10,
+      flask: 65,
+      redarmor: 10,
+      redsword: 20,
       firepotion: 5,
     },
-    hp: 80,
+    hp: 250,
     armor: 2,
-    weapon: 1,
+    weapon: 4,
   },
 
-  wizard: {
+  deathknight: {
     drops: {
-      flask: 50,
-      platearmor: 20,
-      firepotion: 5,
+      burger: 100,
     },
-    hp: 100,
-    armor: 2,
-    weapon: 6,
+    hp: 250,
+    armor: 3,
+    weapon: 3,
   },
 
   boss: {

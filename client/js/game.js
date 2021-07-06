@@ -1137,7 +1137,7 @@ define([
             }
             self.player.forEachAttacker(function (attacker) {
               // @TODO Return to pos x,y
-              // attacker.disengage();
+              attacker.disengage();
               attacker.idle();
             });
 
@@ -1606,8 +1606,8 @@ define([
         });
 
         self.client.onEntityAttack(function (attackerId, targetId) {
-          var attacker = self.getEntityById(attackerId),
-            target = self.getEntityById(targetId);
+          var attacker = self.getEntityById(attackerId);
+          var target = self.getEntityById(targetId);
 
           if (attacker && target && attacker.id !== self.playerId) {
             log.debug(attacker.id + " attacks " + target.id);
@@ -1859,6 +1859,7 @@ define([
       if (attacker.hasTarget()) {
         attacker.removeTarget();
       }
+
       attacker.engage(target);
 
       if (attacker.id !== this.playerId) {

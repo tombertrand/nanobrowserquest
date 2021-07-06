@@ -236,8 +236,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     },
 
     receiveAttack: function (data) {
-      var attacker = data[1],
-        target = data[2];
+      var attacker = data[1];
+      var target = data[2];
 
       if (this.attack_callback) {
         this.attack_callback(attacker, target);
