@@ -969,7 +969,7 @@ footer, header, hgroup, menu, nav, section {
 		
 		/*Bubbles*/
 		#bubbles {width:480px;height:224px;margin-bottom:-224px;position:relative;top:-224px;pointer-events:none;}
-		p {font-family:arial, sans-serif;font-size:12px;margin:0;padding:0;line-height:35px;}
+		p {font-family:arial, sans-serif;font-size:12px;margin:0;padding:0;line-height:2em;}
 	    .bubble p {font-family:"GraphicPixel"; font-size:10px;}
 	    
 	    /*GUI Bar*/
