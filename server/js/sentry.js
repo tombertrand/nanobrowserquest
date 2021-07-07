@@ -6,6 +6,10 @@ Sentry.init({
 
 process.on("uncaughtException", err => {
   console.log("Error", err);
+  fs.writeFileSync(
+    './error.log',
+    JSON.stringify(err, null, 2),
+  );
   Sentry.captureException(err);
 });
 

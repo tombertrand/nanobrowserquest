@@ -87,6 +87,9 @@ function main(config) {
       });
     });
     metrics.updateWorldDistribution(getWorldDistribution(worlds));
+
+    // @TODO: list players in worlds?
+    // console.log("~~~~worlds", worlds[0].players);
   };
 
   _.each(_.range(config.nb_worlds), function (i) {
