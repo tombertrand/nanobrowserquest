@@ -701,8 +701,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.sendMessage([Types.Messages.ACHIEVEMENT, id, "found"]);
     },
 
-    sendBossCheck: function () {
-      this.sendMessage([Types.Messages.BOSS_CHECK]);
+    sendBossCheck: function (again) {
+      this.sendMessage([Types.Messages.BOSS_CHECK, again]);
     },
 
     sendNewGuild: function (name) {

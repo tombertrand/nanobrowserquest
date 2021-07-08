@@ -523,6 +523,24 @@ footer, header, hgroup, menu, nav, section {
     .banned-1, .banned-365 { display: none; }
     article a { color: #4A90E2 }
 
+    #completed.boss-check .fight-again { display: inherit; }
+    #completed .fight-again { display: none; }
+
+    @media screen and (min-width: 1501px) {
+        #completed p { font-size: 24px !important; }
+    }
+
+    #completed.boss-check h1 { margin-bottom: 0 !important; }
+    #completed.boss-check p { margin-top: 0 !important; }
+    #completed.boss-check .link { font-size: 24px; }
+
+    @media screen and (max-width: 1000px) {
+        #completed.boss-check p {
+            line-height: 1.5em;
+        }
+        #completed.boss-check .link { font-size: 18px; }
+    }
+
     #expbar{
         border-top-left-radius: 2px;
         position: absolute;

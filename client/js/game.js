@@ -995,7 +995,7 @@ define([
         }
 
         if (hash) {
-          self.gamecompleted_callback(hash);
+          self.gamecompleted_callback({ hash, fightAgain: false });
         }
 
         self.player.onStartPathing(function (path) {
@@ -1108,7 +1108,7 @@ define([
           if (!self.player.hasTarget() && self.map.isDoor(x, y)) {
             var dest = self.map.getDoorDestination(x, y);
             if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
-              self.client.sendBossCheck();
+              self.client.sendBossCheck(false);
               return;
             }
 
@@ -1815,7 +1815,7 @@ define([
           } else if (status === "failed") {
             self.bosscheckfailed_callback(message);
           } else if (status === "completed") {
-            self.gamecompleted_callback(hash);
+            self.gamecompleted_callback({ hash, fightAgain: true });
           }
           // else if (status === "ban") {
           //   self.client.sendBanPlayer();

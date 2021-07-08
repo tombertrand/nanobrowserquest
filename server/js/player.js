@@ -162,7 +162,7 @@ module.exports = Player = Character.extend({
           self.broadcastToZone(new Messages.Chat(self, msg), false);
         }
       } else if (action === Types.Messages.MOVE) {
-        log.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        // log.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
         if (self.move_callback) {
           var x = message[1],
             y = message[2];
@@ -176,7 +176,7 @@ module.exports = Player = Character.extend({
           }
         }
       } else if (action === Types.Messages.LOOTMOVE) {
-        log.info("LOOTMOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        // log.info("LOOTMOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
         if (self.lootmove_callback) {
           self.setPosition(message[1], message[2]);
 
@@ -293,7 +293,7 @@ module.exports = Player = Character.extend({
           self.server.pushRelevantEntityListTo(self);
         }
       } else if (action === Types.Messages.BOSS_CHECK) {
-        if (self.hash) {
+        if (self.hash && !message[1]) {
           self.connection.send({
             type: Types.Messages.BOSS_CHECK,
             status: "completed",
@@ -302,22 +302,32 @@ module.exports = Player = Character.extend({
           return;
         }
 
-        // BOSS room validation
-        // Has played for more than 5 minutes, has at least X amount of exp
-        // Has at least  "platearmor" or "redarmor" or "redsword" or "bluesword",
-        if (
-          self.createdAt + MIN_TIME > Date.now() ||
-          self.level < 10 ||
-          ![Types.Entities.PLATEARMOR, Types.Entities.REDARMOR].includes(self.armor) ||
-          ![Types.Entities.REDSWORD, Types.Entities.BLUESWORD].includes(self.weapon)
-        ) {
-          self.connection.send({
-            type: Types.Messages.BOSS_CHECK,
-            status: "failed",
-            message:
-              "You may not fight the end boss at the moment, you are too low level. Keep killing monsters and gaining experience!",
-          });
-          return;
+        if (!self.hash) {
+          // BOSS room validation
+          // Has played for more than 8 minutes, has at least X amount of exp (level10)
+          // Has at least "REDARMOR" or "REDSWORD"
+          if (
+            self.createdAt + MIN_TIME > Date.now() ||
+            self.level < 10 ||
+            !(Types.Entities.REDARMOR === self.armor || Types.Entities.REDSWORD === self.weapon)
+          ) {
+            self.connection.send({
+              type: Types.Messages.BOSS_CHECK,
+              status: "failed",
+              message:
+                "You may not fight the end boss at the moment, you are too low level. Keep killing monsters and gaining experience!",
+            });
+            return;
+          }
+        }
+
+        // Reset player to "REDARMOR" / "REDSWORD"
+        if (message[1]) {
+          self.equipItem(Types.Entities.REDARMOR, false);
+          self.equipItem(Types.Entities.REDSWORD, false);
+
+          self.broadcast(self.equip(Types.Entities.REDARMOR), false);
+          self.broadcast(self.equip(Types.Entities.REDSWORD), false);
         }
 
         const position = Math.floor(Math.random() * 6) + 1;
@@ -331,12 +341,15 @@ module.exports = Player = Character.extend({
         });
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
+        // @TODO Verify that killing the boss a second time doesn't ban the player because it wouldn't request a payout! (fix .then())
         if (
           self.hash ||
           self.createdAt + MIN_TIME > Date.now() ||
           self.level < 10 ||
-          ![Types.Entities.PLATEARMOR, Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
-          ![Types.Entities.BLUESWORD, Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon) ||
+          !(
+            [Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
+            [Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
+          ) ||
           // Check for required achievements
           !self.achievement[1] || //  -> INTO_THE_WILD
           !self.achievement[11] || // -> NO_MANS_LAND
@@ -351,13 +364,12 @@ module.exports = Player = Character.extend({
           } else if (self.level < 10) {
             reason = `Min level not obtained, player is level ${self.level}`;
           } else if (
-            ![Types.Entities.PLATEARMOR, Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor)
+            !(
+              [Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
+              [Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
+            )
           ) {
-            reason = `Armor doesn't match requirement, player armor is ${self.armor}`;
-          } else if (
-            ![Types.Entities.BLUESWORD, Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
-          ) {
-            reason = `Weapon doesn't match requirement, player armor is ${self.weapon}`;
+            reason = `Player item doesn't match requirement, armor is ${self.armor}, weapon is ${self.weapon}`;
           } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[15] || !self.achievement[16]) {
             reason = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[15]}, ${self.achievement[16]}`;
           }
@@ -392,7 +404,11 @@ module.exports = Player = Character.extend({
             databaseHandler.setHash(self.name, hash);
           } else {
             log.info("PAYOUT FAILED: " + self.name + " " + self.account);
-            Sentry.captureException(new Error("PAYOUT FAILED: " + self.name + " " + self.account));
+            Sentry.captureException(err, {
+              status: "PAYOUT FAILED",
+              player: self.name,
+              account: self.account,
+            });
           }
 
           self.connection.send({

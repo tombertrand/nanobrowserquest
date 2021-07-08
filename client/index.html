@@ -26,7 +26,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <meta property="og:url" content="https://nanobrowserquest.com/">
         <meta property="og:image" content="https://nanobrowserquest.com/img/common/promo.jpg">
         <meta property="og:site_name" content="NanoBrowserQuest">
-        <meta property="og:description" content="Play Nano BrowserQuest, a remake of the popular BrowserQuest HTML5 massively multiplayer game demo powered by WebSockets!">
+        <meta property="og:description" content="Play Nano BrowserQuest, a remake of the popular BrowserQuest HTML5 massively multiplayer game with Nano payout for killing the end BOSS!">
         <link rel="stylesheet" href="css/main.css" type="text/css">
         <link rel="stylesheet" href="css/achievements.css" type="text/css">
 
@@ -346,12 +346,17 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
      	               Game Completed
      	               <span class="right-ornament"></span>
 	                </h1>
-                    <p>You previously killed the end boss and received a Nano payout.</p>
                     <p>
-                        Transaction<br/>
-                        <a href="https://nanolooker.com/block" target="_blank" id="transaction-hash">abc123</a>
+                        You previously killed the end boss and received a Nano payout.
+                    </p>
+                    <p>
+                        <a href="https://nanolooker.com/block" target="_blank" id="transaction-hash"></a>
                     </p>
                     <p>You can play again with your friends and receive another payout<br/>by creating a new character!</p>
+                    <p class="fight-again">You can fight the Boss again with a Ruby armor and a Blazing sword but<br /> you won't receive another payout for this character.</p>
+                    <div class="fight-again" style="text-align: center; margin-top: 10px;">
+                        <span id="fight-again" class="link">Fight Again!</Button>
+                    </div>
 		        </article>
                 <article id="failed" class="clickable">
 		            <div class="close"></div>

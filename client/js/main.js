@@ -238,12 +238,21 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
         $("body").addClass("death");
       });
 
-      game.onGameCompleted(function (hash) {
+      game.onGameCompleted(function ({ hash, fightAgain }) {
         $("#completed")
           .addClass("active")
           .find("#transaction-hash")
           .attr("href", "https://nanolooker.com/block/" + hash)
           .text(hash);
+
+        if (fightAgain) {
+          $("#completed").addClass("boss-check");
+
+          $("#fight-again").click(function () {
+            game.client.sendBossCheck(true);
+            app.hideWindows();
+          });
+        }
       });
 
       game.onBossCheckFailed(function (message) {
