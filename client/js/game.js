@@ -1806,11 +1806,12 @@ define([
               const now = Date.now();
               const absS = Math.abs(s - now);
               // 10s range
-              if (absS < 1000 * 10) {
+              // @TODO people getting banned here?
+              // if (absS < 1000 * 10) {
                 self.player.stop_pathing_callback(71, 21, true);
-              } else {
-                self.client.sendBanPlayer(`Invalid check time ${check}, ${s}, ${now}`);
-              }
+              // } else {
+              //   self.client.sendBanPlayer(`Invalid check time ${check}, ${s}, ${now}`);
+              // }
             }
           } else if (status === "failed") {
             self.bosscheckfailed_callback(message);
