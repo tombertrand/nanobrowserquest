@@ -52,7 +52,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     connect: function (dispatcherMode) {
       var protocol = window.location.hostname === "localhost" ? "ws" : "wss";
-      var url = protocol + "://" + this.host + "/";
+      var port = window.location.hostname === "localhost" ? ":8000" : "";
+      var url = protocol + "://" + this.host + port + "/";
       var self = this;
 
       log.info("Trying to connect to server : " + url);

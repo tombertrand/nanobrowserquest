@@ -210,7 +210,7 @@ WS.WebsocketServer = Server.extend({
             });
         }
 
-        this._ioServer = new socketio(this._httpServer);
+        this._ioServer = socketio(this._httpServer);
         this._ioServer.on('connection', function webSocketListener(socket) {
             log.info('Client socket connected from ' + socket.handshake.headers["cf-connecting-ip"]);
             // Add remoteAddress property
