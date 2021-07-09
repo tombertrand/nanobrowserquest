@@ -1779,9 +1779,9 @@ define([
           self.audioManager.playSound("chat");
         });
 
-        self.client.onPopulationChange(function (worldPlayers, totalPlayers) {
+        self.client.onPopulationChange(function (worldPlayers, totalPlayers, players) {
           if (self.nbplayers_callback) {
-            self.nbplayers_callback(worldPlayers, totalPlayers);
+            self.nbplayers_callback(worldPlayers, totalPlayers, players);
           }
         });
 

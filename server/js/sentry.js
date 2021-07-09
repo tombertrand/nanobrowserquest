@@ -1,3 +1,4 @@
+const fs = require("fs");
 const Sentry = require("@sentry/node");
 
 Sentry.init({
@@ -6,10 +7,7 @@ Sentry.init({
 
 process.on("uncaughtException", err => {
   console.log("Error", err);
-  fs.writeFileSync(
-    './error.log',
-    JSON.stringify(err, null, 2),
-  );
+  fs.writeFileSync("./error.log", JSON.stringify(err, null, 2));
   Sentry.captureException(err);
 });
 

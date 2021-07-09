@@ -267,14 +267,14 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
         $("#hitpoints").toggleClass("invincible");
       });
 
-      game.onNbPlayersChange(function (worldPlayers, totalPlayers) {
+      game.onNbPlayersChange(function (worldPlayers, totalPlayers, players) {
         var setWorldPlayersString = function (string) {
-            $("#instance-population").find("span:nth-child(2)").text(string);
-            $("#playercount").find("span:nth-child(2)").text(string);
-          },
-          setTotalPlayersString = function (string) {
-            $("#world-population").find("span:nth-child(2)").text(string);
-          };
+          $("#instance-population").find("span:nth-child(2)").text(string);
+          $("#playercount").find("span:nth-child(2)").text(string);
+        };
+        // var setTotalPlayersString = function (string) {
+        //   $("#world-population").find("span:nth-child(2)").text(string);
+        // };
 
         $("#playercount").find("span.count").text(worldPlayers);
 
@@ -285,26 +285,37 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
           setWorldPlayersString("players");
         }
 
-        $("#world-population").find("span:nth-child(1)").text(totalPlayers);
-        if (totalPlayers == 1) {
-          setTotalPlayersString("player");
-        } else {
-          setTotalPlayersString("players");
+        // @TODO Update on level change as well
+        $("#player-list").empty();
+        if (Array.isArray(players)) {
+          players.forEach(({ name, level }) => {
+            $("<div/>", {
+              class: name === game.storage.data.player.name ? "active" : "",
+              html: `<span>${name}</span><span>lv.${level}</span>`,
+            }).appendTo("#player-list");
+          });
         }
+
+        // $("#world-population").find("span:nth-child(1)").text(totalPlayers);
+        // if (totalPlayers == 1) {
+        //   setTotalPlayersString("player");
+        // } else {
+        //   setTotalPlayersString("players");
+        // }
       });
 
       game.onGuildPopulationChange(function (guildName, guildPopulation) {
-        var setGuildPlayersString = function (string) {
-          $("#guild-population").find("span:nth-child(2)").text(string);
-        };
-        $("#guild-population").addClass("visible");
-        $("#guild-population").find("span").text(guildPopulation);
-        $("#guild-name").text(guildName);
-        if (guildPopulation == 1) {
-          setGuildPlayersString("player");
-        } else {
-          setGuildPlayersString("players");
-        }
+        // var setGuildPlayersString = function (string) {
+        //   $("#guild-population").find("span:nth-child(2)").text(string);
+        // };
+        // $("#guild-population").addClass("visible");
+        // $("#guild-population").find("span").text(guildPopulation);
+        // $("#guild-name").text(guildName);
+        // if (guildPopulation == 1) {
+        //   setGuildPlayersString("player");
+        // } else {
+        //   setGuildPlayersString("players");
+        // }
       });
 
       game.onAchievementUnlock(function (id, name, nano) {

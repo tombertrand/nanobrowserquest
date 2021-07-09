@@ -90,6 +90,12 @@ Metrics = cls.Class.extend({
       callback(result);
     });
   },
+
+  getWorldPlayers: function (callback) {
+    this.client.get("world_players_" + this.config.server_name, function (error, result) {
+      callback(result);
+    });
+  },
 });
 
 module.exports = Metrics;

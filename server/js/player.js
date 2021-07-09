@@ -761,6 +761,8 @@ module.exports = Player = Character.extend({
     if (origLevel !== this.level) {
       this.updateHitPoints();
       this.send(new Messages.HitPoints(this.maxHitPoints).serialize());
+      // @NOTE Update the player levels
+      this.server.updatePopulation();
     }
   },
 

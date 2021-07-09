@@ -652,6 +652,22 @@ module.exports = World = cls.Class.extend({
     return count;
   },
 
+  getPlayerPopulation: function () {
+    let players = _.sortBy(
+      Object.values(this.players).reduce((acc, { name, level }) => {
+        acc.push({
+          name,
+          level,
+        });
+
+        return acc;
+      }, []),
+      ["name"],
+    );
+
+    return players;
+  },
+
   broadcastAttacker: function (character) {
     if (character) {
       this.pushToAdjacentGroups(character.group, character.attack(), character.id);
@@ -1025,7 +1041,13 @@ module.exports = World = cls.Class.extend({
     });
   },
 
-  updatePopulation: function (totalPlayers) {
-    this.pushBroadcast(new Messages.Population(this.playerCount, totalPlayers ? totalPlayers : this.playerCount));
+  updatePopulation: function (totalPlayers, playerPopulation) {
+    this.pushBroadcast(
+      new Messages.Population(
+        this.playerCount,
+        totalPlayers || this.playerCount,
+        this.getPlayerPopulation(),
+      ),
+    );
   },
 });
