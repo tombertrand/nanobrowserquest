@@ -546,6 +546,14 @@ footer, header, hgroup, menu, nav, section {
     #player-list > div:last-child { padding-bottom: 6px; }
     #population .active { color: #FCE045 }
 
+    #payout {
+        margin-left: 50px;
+        margin-right: 50px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     #expbar{
         border-top-left-radius: 2px;
         position: absolute;
