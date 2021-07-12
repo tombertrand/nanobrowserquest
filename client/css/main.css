@@ -1093,7 +1093,6 @@ footer, header, hgroup, menu, nav, section {
 	}
 
 	@media screen and (max-width: 800px) {
-
         body {border-top:0px;}
         .intro #container, .game #logo, .game #parchment {display:none;}
         .game.about #parchment {display:block;left:50%;background:url('../img/1/spritesheet.png') no-repeat 0 -527px;height:172px;width:417px;top:50%;margin-left:-208px;margin-top:-98px;position:absolute;}

@@ -327,9 +327,9 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
       app.initHealthBar();
       app.initTargetHud();
       app.initExpBar();
-      $("#nameinput").attr("value", "");
-      $("#accountinput").attr("value", "");
-      $("#chatbox").attr("value", "");
+      $("#nameinput").val("");
+      $("#accountinput").val("");
+      $("#chatbox").val("");
 
       if (game.renderer.mobile || game.renderer.tablet) {
         $("#foreground").bind("touchstart", function (event) {
@@ -512,11 +512,11 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
         //    }
 
         if (key === 13) {
-          if ($chat.attr("value") !== "") {
+          if ($chat.val() !== "") {
             if (game.player) {
-              game.say($chat.attr("value"));
+              game.say($chat.val());
             }
-            $chat.attr("value", "");
+            $chat.val("");
             app.hideChat();
             $("#foreground").focus();
             return false;
@@ -578,7 +578,7 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
           }
         }
 
-        if ($("#chatinput:focus").size() == 0 && $("#nameinput:focus").size() == 0) {
+        if ($("#chatinput:focus").length == 0 && $("#nameinput:focus").length == 0) {
           if (key === 27) {
             // ESC
             app.hideWindows();

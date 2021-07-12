@@ -69,17 +69,10 @@ define(function () {
     },
 
     focusEntity: function (entity) {
-      console.log("~~~~FOCUS!?");
-      console.log("~~~~this.gridW", this.gridW);
-      console.log("~~~~this.gridH", this.gridH);
-
       var w = this.gridW - 2,
         h = this.gridH - 2,
         x = Math.floor((entity.gridX - 1) / w) * w,
         y = Math.floor((entity.gridY - 1) / h) * h;
-
-      console.log("~~~~x", x);
-      console.log("~~~~y", y);
 
       this.setGridPosition(x, y);
     },

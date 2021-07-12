@@ -19,8 +19,8 @@ define(["jquery", "storage"], function ($, Storage) {
           this.storage.data.player.name &&
           this.storage.data.player.account
         ) {
-          $("#loginnameinput").attr("value", this.storage.data.player.name);
-          $("#loginaccountinput").attr("value", this.storage.data.player.account);
+          $("#loginnameinput").val(this.storage.data.player.name);
+          $("#loginaccountinput").val(this.storage.data.player.account);
         }
       } else {
         this.frontPage = "createcharacter";
@@ -84,8 +84,8 @@ define(["jquery", "storage"], function ($, Storage) {
 
       var self = this;
       var action = this.createNewCharacterFormActive() ? "create" : "login";
-      var username = this.getUsernameField().attr("value");
-      var useraccount = this.getAccountField().attr("value");
+      var username = this.getUsernameField().val();
+      var useraccount = this.getAccountField().val();
 
       if (!this.validateFormFields(username, useraccount)) return;
 

@@ -1112,19 +1112,26 @@ define([
               return;
             }
 
-            self.player.setGridPosition(dest.x, dest.y);
-            self.player.nextGridX = dest.x;
-            self.player.nextGridY = dest.y;
-            self.player.turnTo(dest.orientation);
-            self.client.sendTeleport(dest.x, dest.y);
+            var desty = dest.y;
 
-            console.log("~~~self.renderer.mobile", self.renderer.mobile);
-            console.log("~~~dest", dest);
+            // @TODO Fix this...
+            if (self.renderer.mobile) {
+              //push them off the door spot so they can use the
+              //arrow keys and mouse to walk back in or out
+              if (dest.orientation === Types.Orientations.UP) {
+                desty--;
+              } else if (dest.orientation === Types.Orientations.DOWN) {
+                desty++;
+              }
+            }
+
+            self.player.setGridPosition(dest.x, desty);
+            self.player.nextGridX = dest.x;
+            self.player.nextGridY = desty;
+            self.player.turnTo(dest.orientation);
+            self.client.sendTeleport(dest.x, desty);
+
             if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
-              
-             
-              console.log("~~~dest.cameraX", dest.cameraX);
-              console.log("~~~dest.cameraY", dest.cameraY);
               self.camera.setGridPosition(dest.cameraX, dest.cameraY);
               self.resetZone();
             } else {

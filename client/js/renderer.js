@@ -46,9 +46,9 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
     },
 
     getScaleFactor: function () {
-      var w = window.innerWidth,
-        h = window.innerHeight,
-        scale;
+      var w = window.innerWidth; //* window.devicePixelRatio >= 2 ? 2 : 1,
+      var h = window.innerHeight; // * window.devicePixelRatio >= 2 ? 2 : 1,
+      var scale;
 
       this.mobile = false;
 
@@ -100,6 +100,12 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
       this.forecanvas.width = this.canvas.width;
       this.forecanvas.height = this.canvas.height;
       log.debug("#foreground set to " + this.forecanvas.width + " x " + this.forecanvas.height);
+
+    //   if (this.scale === 2) {
+    //     this.context.scale(0.75, 0.75);
+    //     this.background.scale(0.5, 0.75);
+    //     this.foreground.scale(0.75, 0.75);
+    //   }
     },
 
     initFPS: function () {
@@ -742,6 +748,8 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
         sh = shadow.height * os,
         ox = -sprite.offsetX * os,
         oy = -sprite.offsetY * os;
+
+      // ctx.scale(0.5, 0.5);
 
       canvas.width = w;
       canvas.height = h;
