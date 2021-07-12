@@ -131,6 +131,8 @@ module.exports = World = cls.Class.extend({
       });
 
       player.onBroadcastToZone(function (message, ignoreSelf) {
+        // @TODO what is player.group?
+        console.log("~~~~~player.group", player.group);
         self.pushToGroup(player.group, message, ignoreSelf ? player.id : null);
       });
 
@@ -1043,11 +1045,7 @@ module.exports = World = cls.Class.extend({
 
   updatePopulation: function (totalPlayers, playerPopulation) {
     this.pushBroadcast(
-      new Messages.Population(
-        this.playerCount,
-        totalPlayers || this.playerCount,
-        this.getPlayerPopulation(),
-      ),
+      new Messages.Population(this.playerCount, totalPlayers || this.playerCount, this.getPlayerPopulation()),
     );
   },
 });

@@ -625,6 +625,8 @@ module.exports = Player = Character.extend({
   },
 
   broadcastToZone: function (message, ignoreSelf) {
+    console.log("~~~~message", message);
+    // console.log("~~~~player.group", self.group);
     if (this.broadcastzone_callback) {
       this.broadcastzone_callback(message, ignoreSelf === undefined ? true : ignoreSelf);
     }

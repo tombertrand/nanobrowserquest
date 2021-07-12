@@ -109,6 +109,8 @@ define(['jquery', 'area'], function($, Area) {
                     default : o = Types.Orientations.DOWN;
                 }
 
+                console.log('~~~~door', door)
+
                 doors[self.GridPositionToTileIndex(door.x, door.y)] = {
                     x: door.tx,
                     y: door.ty,

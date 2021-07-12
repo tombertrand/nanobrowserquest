@@ -1118,7 +1118,13 @@ define([
             self.player.turnTo(dest.orientation);
             self.client.sendTeleport(dest.x, dest.y);
 
+            console.log("~~~self.renderer.mobile", self.renderer.mobile);
+            console.log("~~~dest", dest);
             if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
+              
+             
+              console.log("~~~dest.cameraX", dest.cameraX);
+              console.log("~~~dest.cameraY", dest.cameraY);
               self.camera.setGridPosition(dest.cameraX, dest.cameraY);
               self.resetZone();
             } else {
@@ -1808,7 +1814,7 @@ define([
               // 10s range
               // @TODO people getting banned here?
               // if (absS < 1000 * 10) {
-                self.player.stop_pathing_callback(71, 21, true);
+              self.player.stop_pathing_callback(71, 21, true);
               // } else {
               //   self.client.sendBanPlayer(`Invalid check time ${check}, ${s}, ${now}`);
               // }

@@ -97,7 +97,8 @@ define(function () {
         this.data.player.guild = {
           id: guild.id,
           name: guild.name,
-          members: JSON.stringify(guild.members),
+          // @TODO: Fix if supporting guild
+          // members: JSON.stringify(guild.members),
         };
         this.save();
       } else {

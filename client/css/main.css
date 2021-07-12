@@ -1114,6 +1114,7 @@ footer, header, hgroup, menu, nav, section {
         body.intro {background:-webkit-gradient(radial, center center, 120, center center, 400, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
         body {background:#000;}
         #logosparks {-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;display:none;}
+		/* #container {height:516px;width:960px;position:relative;left:0;top:0;margin:0;} */
 		#container {height:258px;width:480px;position:relative;left:50%;top:50%;margin:-128px auto 0 -240px;}
 		#canvasborder {background:none;padding:0;}
         #expbar{right:0;width: 10px;}
@@ -1132,7 +1133,7 @@ footer, header, hgroup, menu, nav, section {
         #character div {height:21px;width:12px;position:absolute;top:0;left:0;background-position:-366px -12px;opacity:1;}
         #character.disabled div {opacity:0;pointer-events:none;}
         #parchment input, #parchment textarea {margin-top:10px; border-bottom:1px dashed #b2af9b; font-size:14px;-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;color:#eee;}
-        #parchment textarea { height: 30px; padding-top: 6px; }
+        #parchment textarea { height: 42px; padding-top: 6px; }
         #parchment.createcharacter input {margin-top:4px;height:15px;}
         .button {height:54px;width:204px;background-position:-500px -952px;margin:20px auto 0 auto;position:relative;background-size:844px;}
         .play, #create-new {font-size:16px;}
@@ -1190,6 +1191,8 @@ footer, header, hgroup, menu, nav, section {
         #playercount {font-size:20px;left:270px;top:10px;width:114px;text-align:center;}
         #playercount span {display:none;}
         #playercount span.count {display:inline;}
+        #population {right:98px;bottom:34px;width:130px;font-size:9px;line-height:12px;}
+        #population div{background-size:480px;background-position:-240px -52px;}
 
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:360px;}

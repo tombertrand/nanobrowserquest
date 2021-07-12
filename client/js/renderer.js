@@ -16,7 +16,7 @@ function(Camera, Item, Character, Player, Timer) {
             this.initFPS();
             this.tilesize = 16;
 
-            this.upscaledRendering = this.context.mozImageSmoothingEnabled !== undefined;
+            this.upscaledRendering = true; //this.context.imageSmoothingEnabled !== undefined;
             this.supportsSilhouettes = this.upscaledRendering;
 
             this.rescale(this.getScaleFactor());
@@ -55,6 +55,7 @@ function(Camera, Item, Character, Player, Timer) {
 
             this.mobile = false;
 
+            // @TODO Adjust scale on mobile & tablet
             if(w <= 1000) {
                 scale = 2;
                 this.mobile = true;
@@ -74,9 +75,9 @@ function(Camera, Item, Character, Player, Timer) {
 
             this.createCamera();
 
-            this.context.mozImageSmoothingEnabled = false;
-            this.background.mozImageSmoothingEnabled = false;
-            this.foreground.mozImageSmoothingEnabled = false;
+            this.context.imageSmoothingEnabled = false;
+            this.background.imageSmoothingEnabled = false;
+            this.foreground.imageSmoothingEnabled = false;
 
             this.initFont();
             this.initFPS();
@@ -364,9 +365,9 @@ function(Camera, Item, Character, Player, Timer) {
                     this.context.globalAlpha = entity.fadingAlpha;
                 }
 
-                if(!this.mobile && !this.tablet) {
+                // if(!this.mobile && !this.tablet) {
                     this.drawEntityName(entity);
-                }
+                // }
 
                 this.context.save();
                 if(entity.flipSpriteX) {
