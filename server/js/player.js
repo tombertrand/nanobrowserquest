@@ -12,6 +12,7 @@ const bcrypt = require("bcrypt");
 const { enqueueSendPayout } = require("./payout");
 const { Sentry } = require("./sentry");
 
+const MIN_LEVEL = 12;
 const MIN_TIME = 1000 * 60 * 8;
 const MAX_AMOUNT = Utils.getMaxPayoutAmount();
 
@@ -307,11 +308,11 @@ module.exports = Player = Character.extend({
 
         if (!self.hash) {
           // BOSS room validation
-          // Has played for more than 8 minutes, has at least X amount of exp (level10)
+          // Has played for more than 8 minutes, has at least X amount of exp (MIN_LEVEL)
           // Has at least "REDARMOR" or "REDSWORD"
           if (
             self.createdAt + MIN_TIME > Date.now() ||
-            self.level < 10 ||
+            self.level < MIN_LEVEL ||
             !(
               [Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
               [Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
@@ -353,7 +354,7 @@ module.exports = Player = Character.extend({
         if (
           self.hash ||
           self.createdAt + MIN_TIME > Date.now() ||
-          self.level < 10 ||
+          self.level < MIN_LEVEL ||
           !(
             [Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
             [Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
@@ -369,7 +370,7 @@ module.exports = Player = Character.extend({
             reason = `Already have hash ${self.hash}`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             reason = `Less then 8 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
-          } else if (self.level < 10) {
+          } else if (self.level < MIN_LEVEL) {
             reason = `Min level not obtained, player is level ${self.level}`;
           } else if (
             !(
