@@ -411,7 +411,6 @@ define(["jquery", "storage"], function ($, Storage) {
 
     showChat: function () {
       if (this.game.started) {
-        $("#chatbox").addClass("active");
         $("#chatinput").focus();
         $("#chatbutton").addClass("active").removeClass("blink");
         $("#text-window").show();
@@ -420,9 +419,10 @@ define(["jquery", "storage"], function ($, Storage) {
 
     hideChat: function () {
       if (this.game.started) {
-        $("#chatbox").removeClass("active");
+        // $("#chatbox").removeClass("active");
         $("#chatinput").blur();
         $("#chatbutton").removeClass("active");
+        $("#text-window").hide();
       }
     },
 

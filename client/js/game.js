@@ -1149,7 +1149,6 @@ define([
               }, 500);
             }
             self.player.forEachAttacker(function (attacker) {
-              // @TODO Return to pos x,y
               attacker.disengage();
               attacker.idle();
             });
@@ -1785,12 +1784,12 @@ define([
           }
         });
 
-        self.client.onChatMessage(function (entityId, name, message) {
+        self.client.onChatMessage(function (entityId, name, message, type) {
           var entity = self.getEntityById(entityId);
           self.createBubble(entityId, message);
           self.assignBubbleTo(entity);
           self.audioManager.playSound("chat");
-          self.chat_callback(entityId, name, message);
+          self.chat_callback(entityId, name, message, type);
         });
 
         self.client.onPopulationChange(function (worldPlayers, totalPlayers, players) {

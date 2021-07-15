@@ -424,6 +424,8 @@ module.exports = Player = Character.extend({
             message,
             hash,
           });
+
+          self.server.updatePopulation();
         }
       } else if (action === Types.Messages.BAN_PLAYER) {
         // Just don't...

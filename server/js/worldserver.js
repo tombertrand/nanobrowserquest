@@ -654,10 +654,11 @@ module.exports = World = cls.Class.extend({
 
   getPlayerPopulation: function () {
     let players = _.sortBy(
-      Object.values(this.players).reduce((acc, { name, level }) => {
+      Object.values(this.players).reduce((acc, { name, level, hash }) => {
         acc.push({
           name,
           level,
+          isCompleted: !!hash,
         });
 
         return acc;

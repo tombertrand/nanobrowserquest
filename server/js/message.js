@@ -102,13 +102,14 @@ Messages.Drop = Message.extend({
 });
 
 Messages.Chat = Message.extend({
-  init: function (player, message) {
+  init: function (player, message, type) {
     this.playerId = player.id;
     this.name = player.name;
     this.message = message;
+    this.type = type;
   },
   serialize: function () {
-    return [Types.Messages.CHAT, this.playerId, this.name, this.message];
+    return [Types.Messages.CHAT, this.playerId, this.name, this.message, this.type];
   },
 });
 

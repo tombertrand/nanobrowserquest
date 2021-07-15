@@ -378,6 +378,9 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
      			<div id="text-window">
                     <div id="minimize"></div>
                     <div id="text-list"></div>
+                    <form action="none" method="get" accept-charset="utf-8">
+					    <input id="chatinput" class="gp" type="text" maxlength="100">
+				    </form>
                  </div>
     			<div id="inspector">
                     <div class="headshot"><div> </div></div>
@@ -421,18 +424,12 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                         <span class="count">0</span> <span>players</span>
                     </div>
                     <div id="barbuttons">
-                        <div id="chatbutton" class="barbutton clickable"></div>
+                        <div id="chatbutton" class="barbutton clickable active"></div>
                         <div id="achievementsbutton" class="barbutton clickable"></div>
-                        <!-- <div id="completedbutton" class="barbutton clickable"></div> -->
                         <div id="helpbutton" class="barbutton clickable"></div>
                         <div id="mutebutton" class="barbutton clickable active"></div>
                     </div>
     			</div>
-				<div id="chatbox">
-				    <form action="none" method="get" accept-charset="utf-8">
-					    <input id="chatinput" class="gp" type="text" maxlength="100">
-				    </form>
-				</div>
 				<!-- TODO div id="dialogbox">
 					Right now this happens in the footer.
 				</div to accept members for instance… -->

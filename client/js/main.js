@@ -216,10 +216,17 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
 
       $("#minimize").on("click", function (e) {
         e.preventDefault();
-        $("#text-window").hide();
+        e.stopPropagation();
+        app.hideChat();
       });
 
       log.info("App initialized.");
+
+      $("#chatinput").on("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).focus();
+      });
 
       initGame();
     });
@@ -245,6 +252,8 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
         app.initEquipmentIcons();
         var entry = new EntryPoint();
         entry.execute(game);
+
+        game.chat_callback(null, null, `Welcome ${game.player.name}`, "world");
       });
 
       game.onDisconnect(function (message) {
@@ -290,8 +299,8 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
         $("#hitpoints").toggleClass("invincible");
       });
 
-      game.onChatMessage(function (entityId, name, message) {
-        if (!$("#text-window").is(":visible") && name !== game.storage.data.player.name) {
+      game.onChatMessage(function (entityId, name, message, type) {
+        if (!$("#text-window").is(":visible") && name !== game.storage.data.player.name && type !== "world") {
           $("#chatbutton").addClass("blink");
         }
 
@@ -301,9 +310,14 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
           scrollToBottom = true;
         }
 
+        let className = name === game.storage.data.player.name ? "active" : "";
+        if (type === "world") {
+          className = type;
+        }
+
         $("<div/>", {
-          class: name === game.storage.data.player.name ? "active" : "",
-          html: `<span>${name}:</span> <span>${message}</span>`,
+          class: className,
+          html: `${name ? `<span>${name}:</span>` : ""}<span>${message}</span>`,
         }).appendTo("#text-list");
 
         const messages = $("#text-list > div");
@@ -334,13 +348,20 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
           setWorldPlayersString("players");
         }
 
-        // @TODO Update on level change as well
         $("#player-list").empty();
         if (Array.isArray(players)) {
-          players.forEach(({ name, level }) => {
+          players.forEach(({ name, level, isCompleted }) => {
             $("<div/>", {
               class: name === game.storage.data.player.name ? "active" : "",
-              html: `<span>${name}</span><span>lv.${level}</span>`,
+              html: `
+                <span>${name}</span>
+                ${
+                  isCompleted
+                    ? '<span id="nano-completed" title="Completed the game and received the payout"></span>'
+                    : ""
+                }
+                <span>lv.${level}</span>
+              `,
             }).appendTo("#player-list");
           });
         }
@@ -378,7 +399,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
       app.initExpBar();
       $("#nameinput").val("");
       $("#accountinput").val("");
-      $("#chatbox").val("");
+      // $("#chatbox").val("");
 
       if (game.renderer.mobile || game.renderer.tablet) {
         $("#foreground").bind("touchstart", function (event) {
@@ -489,13 +510,11 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
           $chat = $("#chatinput");
 
         if (key === Types.Keys.ENTER) {
-          if ($("#chatbox").hasClass("active")) {
-            app.hideChat();
-          } else {
+          if (!$("#text-window").is(":visible")) {
             app.showChat();
           }
         } else if (key === 16) game.pvpFlag = true;
-        if (game.started && !$("#chatbox").hasClass("active")) {
+        if (game.started && !$("#chatinput").is(":focus")) {
           pos = {
             x: game.player.gridX,
             y: game.player.gridY,
@@ -566,7 +585,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
               game.say($chat.val());
             }
             $chat.val("");
-            app.hideChat();
+            // app.hideChat();
             $("#foreground").focus();
             return false;
           } else {
