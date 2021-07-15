@@ -1,4 +1,4 @@
-define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
+define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, App, EntryPoint) {
   var app, game;
 
   var initApp = function () {
@@ -64,6 +64,15 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
           clearInterval(app.blinkInterval);
         }
         $(this).removeClass("blink");
+      });
+
+      $("#completedbutton").click(function () {
+        app.hideWindows();
+        app.toggleCompleted();
+        // if (app.blinkInterval) {
+        //   clearInterval(app.blinkInterval);
+        // }
+        // $(this).removeClass("blink");
       });
 
       $("#instructions").click(function () {
@@ -196,6 +205,20 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
       $("#resize-check").bind("webkitTransitionEnd", app.resizeUi.bind(app));
       $("#resize-check").bind("oTransitionEnd", app.resizeUi.bind(app));
 
+      $("#text-window")
+        .draggable()
+        .resizable({
+          // maxHeight: $("#container").height() / 2,
+          // maxWidth: $("#container").width() * 0.75,
+          minHeight: $("#container").height() / 4,
+          minWidth: $("#container").width() / 3,
+        });
+
+      $("#minimize").on("click", function (e) {
+        e.preventDefault();
+        $("#text-window").hide();
+      });
+
       log.info("App initialized.");
 
       initGame();
@@ -265,6 +288,32 @@ define(["jquery", "app", "entrypoint"], function ($, App, EntryPoint) {
 
       game.onPlayerInvincible(function () {
         $("#hitpoints").toggleClass("invincible");
+      });
+
+      game.onChatMessage(function (entityId, name, message) {
+        if (!$("#text-window").is(":visible") && name !== game.storage.data.player.name) {
+          $("#chatbutton").addClass("blink");
+        }
+
+        const textList = $("#text-list");
+        let scrollToBottom = false;
+        if (textList[0].scrollHeight - textList.scrollTop() == Math.floor(textList.outerHeight())) {
+          scrollToBottom = true;
+        }
+
+        $("<div/>", {
+          class: name === game.storage.data.player.name ? "active" : "",
+          html: `<span>${name}:</span> <span>${message}</span>`,
+        }).appendTo("#text-list");
+
+        const messages = $("#text-list > div");
+        if (messages.length > 50) {
+          messages.first().remove();
+        }
+
+        if (scrollToBottom) {
+          textList.scrollTop(textList[0].scrollHeight);
+        }
       });
 
       game.onNbPlayersChange(function (worldPlayers, totalPlayers, players) {

@@ -544,7 +544,7 @@ footer, header, hgroup, menu, nav, section {
     #player-list { max-height: 40vh; overflow-y: auto; }
     #player-list > div { display: flex; justify-content: space-between; padding: 0 12px; }
     #player-list > div:last-child { padding-bottom: 6px; }
-    #population .active { color: #FCE045 }
+    #population .active, #text-window .active { color: #FCE045 }
 
     #payout {
         margin-left: 50px;
@@ -572,12 +572,30 @@ footer, header, hgroup, menu, nav, section {
         background-color: rgba(0,0,255,0.5);
       }
 
+    #text-window {
+        z-index: 100;
+        overflow: hidden;
+        font-family:'GraphicPixel';
+        color:#e3e3e3;
+        background-color:rgba(0, 0, 0, 0.43);
+        position: absolute;
+        bottom: 50px;
+        left: 15px;
+        width: 40%;
+        height: 30vh;
+    }
+    
+    #text-list { margin-top: 20px; height: calc(100% - 20px); overflow-y: auto; }
+    #text-list > div { display: flex; padding: 0 12px; }
+    #text-list > div span:first-of-type { margin-right: 6px; white-space: nowrap; }
+    #minimize { position: absolute; top: 0; right: 0; }
+
     /* #nano {margin-left:200px;scale:0.7;} */
 	@media screen and (min-width: 1501px) {
         #nano {margin-left:-240px;}
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
-	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #population div{background-image:url('../img/3/barsheet.png');}
+	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled #population div{background-image:url('../img/3/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/3/achievements.png');}
 	    
 	    
@@ -679,7 +697,8 @@ footer, header, hgroup, menu, nav, section {
 
         .barbutton {background-size:1440px;height:45px;width:42px;}
         #chatbutton {background-position:-306px -51px;top:3px;left:1260px;}
-        #chatbutton:hover {background-position:-348px -51px;}
+        #chatbutton:hover, #chatbutton.blink:hover {background-position:-348px -51px;}
+        #chatbutton.blink {background-position:-906px -51px;}
         #chatbutton.active {background-position:-390px -51px;}
         #achievementsbutton {background-position:-432px -51px;top:3px;left:1305px;}
         #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-474px -51px;}
@@ -695,6 +714,9 @@ footer, header, hgroup, menu, nav, section {
         #chatbox {height:48px;width:1182px;background-size:1440px;background-position:0 -96px;margin-left:-591px;bottom:18px;}
         #chatbox.active {bottom:66px;}
 		#chatbox input {font-size:20px;background:none;width:90%;border:0;margin-left:2%;padding:16px 0;}
+
+        #minimize {height:27px;width:27px;background-position:-948px -51px;}
+        #minimize:hover {background-position:-975px -51px;}
 		
 		/*Credits*/
         #credits, #death, #about {width:1266px;height:546px;margin-left:-633px;margin-top:-273px;font-size:30px;}
@@ -746,7 +768,7 @@ footer, header, hgroup, menu, nav, section {
 	@media screen and (max-width: 1500px), screen and (max-height: 870px) {
         #nano {margin-left:-200px;margin-top:-20px;scale:0.7;}
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
-	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #population div{background-image:url('../img/2/barsheet.png');}
+	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled #population div{background-image:url('../img/2/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/2/achievements.png');}
 
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}        
@@ -850,7 +872,8 @@ footer, header, hgroup, menu, nav, section {
 
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:840px;}
-        #chatbutton:hover {background-position:-232px -34px;}
+        #chatbutton:hover, #chatbutton.blink:hover {background-position:-232px -34px;}
+        #chatbutton.blink {background-position:-604px -34px;}
         #chatbutton.active {background-position:-260px -34px;}
         #achievementsbutton {background-position:-288px -34px;top:2px;left:870px;}
         #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-316px -34px;}
@@ -866,6 +889,9 @@ footer, header, hgroup, menu, nav, section {
 		#chatbox {height:32px;width:788px;background-size:960px;background-position:0 -64px;margin-left:-394px;bottom:12px;}
 		#chatbox.active {bottom:44px;}
 		#chatbox input {font-size:14px;background:none;width:90%;border:0;margin-left:2%;padding:8px 0;}
+
+        #minimize {height:18px;width:18px;background-position:-632px -34px;}
+        #minimize:hover {background-position:-650px -34px;}
 		
 		/*Credits*/
         #credits, #death, #about {width:844px;height:364px;margin-left:-422px;margin-top:-182px;font-size:20px;}
@@ -1025,7 +1051,8 @@ footer, header, hgroup, menu, nav, section {
 
         .barbutton {background-size:480px;height:15px;width:14px;}
         #chatbutton {background-position:-102px -17px;top:1px;left:420px;}
-        #chatbutton:hover {background-position:-116px -17px;}
+        #chatbutton:hover, #chatbutton.blink:hover {background-position:-116px -17px;}
+        #chatbutton.blink {background-position:-302px -17px;}
         #chatbutton.active {background-position:-130px -17px;}
         #achievementsbutton {background-position:-144px -17px;top:1px;left:435px;}
         #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-158px -17px;}
@@ -1195,7 +1222,8 @@ footer, header, hgroup, menu, nav, section {
 
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:360px;}
-        #chatbutton:hover {background-position:-232px -34px;}
+        #chatbutton:hover, #chatbutton.blink:hover {background-position:-232px -34px;}
+        #chatbutton.blink {background-position:-604px -34px;}
         #chatbutton.active {background-position:-260px -34px;}
         #achievementsbutton {background-position:-288px -34px;top:2px;left:390px;}
         #achievementsbutton:hover, #achievementsbutton.blink {background-position:-316px -34px;}

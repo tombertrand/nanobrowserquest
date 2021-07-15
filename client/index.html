@@ -29,6 +29,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <meta property="og:description" content="Play Nano BrowserQuest, a remake of the popular BrowserQuest HTML5 massively multiplayer game with Nano payout for killing the end BOSS!">
         <link rel="stylesheet" href="css/main.css" type="text/css">
         <link rel="stylesheet" href="css/achievements.css" type="text/css">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" type="text/css">
 
         <link href="img/common/apple-touch-icon-57x57.png" rel="apple-touch-icon-precomposed" sizes="57x57">
         <link href="img/common/apple-touch-icon-72x72.png" rel="apple-touch-icon-precomposed" sizes="72x72">
@@ -374,7 +375,10 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
     			</div>
     			<div id="bubbles"></div>
      			<div id="expbar"></div>
-     			<div id="textWindow"></div>
+     			<div id="text-window">
+                    <div id="minimize"></div>
+                    <div id="text-list"></div>
+                 </div>
     			<div id="inspector">
                     <div class="headshot"><div> </div></div>
                     <div class="details">
@@ -419,13 +423,14 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                     <div id="barbuttons">
                         <div id="chatbutton" class="barbutton clickable"></div>
                         <div id="achievementsbutton" class="barbutton clickable"></div>
+                        <!-- <div id="completedbutton" class="barbutton clickable"></div> -->
                         <div id="helpbutton" class="barbutton clickable"></div>
                         <div id="mutebutton" class="barbutton clickable active"></div>
                     </div>
     			</div>
 				<div id="chatbox">
 				    <form action="none" method="get" accept-charset="utf-8">
-					    <input id="chatinput" class="gp" type="text" maxlength="60">
+					    <input id="chatinput" class="gp" type="text" maxlength="100">
 				    </form>
 				</div>
 				<!-- TODO div id="dialogbox">
@@ -503,5 +508,6 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         </script>
         <script data-main="js/home" src="js/lib/require.js"></script>
         <script src="js/lib/jquery.js"></script>
+        <!-- <script src="js/lib/jquery-ui.js"></script> -->
 	</body>
 </html>

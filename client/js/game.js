@@ -1785,11 +1785,12 @@ define([
           }
         });
 
-        self.client.onChatMessage(function (entityId, message) {
+        self.client.onChatMessage(function (entityId, name, message) {
           var entity = self.getEntityById(entityId);
           self.createBubble(entityId, message);
           self.assignBubbleTo(entity);
           self.audioManager.playSound("chat");
+          self.chat_callback(entityId, name, message);
         });
 
         self.client.onPopulationChange(function (worldPlayers, totalPlayers, players) {
@@ -1826,14 +1827,15 @@ define([
               //   self.client.sendBanPlayer(`Invalid check time ${check}, ${s}, ${now}`);
               // }
             }
+
+            self.player.switchWeapon("redsword");
+            self.player.armorloot_callback("redarmor");
+            self.equipment_callback();
           } else if (status === "failed") {
             self.bosscheckfailed_callback(message);
           } else if (status === "completed") {
             self.gamecompleted_callback({ hash, fightAgain: true });
           }
-          // else if (status === "ban") {
-          //   self.client.sendBanPlayer();
-          // }
         });
 
         self.client.onReceiveNotification(function (data) {
@@ -2843,6 +2845,10 @@ define([
 
     onNbPlayersChange: function (callback) {
       this.nbplayers_callback = callback;
+    },
+
+    onChatMessage: function (callback) {
+      this.chat_callback = callback;
     },
 
     onGuildPopulationChange: function (callback) {

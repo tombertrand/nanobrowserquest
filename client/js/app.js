@@ -3,6 +3,7 @@ define(["jquery", "storage"], function ($, Storage) {
     init: function () {
       this.currentPage = 1;
       this.blinkInterval = null;
+      this.achievementTimeout = null;
       this.isParchmentReady = true;
       this.ready = false;
       this.storage = new Storage();
@@ -412,7 +413,8 @@ define(["jquery", "storage"], function ($, Storage) {
       if (this.game.started) {
         $("#chatbox").addClass("active");
         $("#chatinput").focus();
-        $("#chatbutton").addClass("active");
+        $("#chatbutton").addClass("active").removeClass("blink");
+        $("#text-window").show();
       }
     },
 
@@ -439,6 +441,15 @@ define(["jquery", "storage"], function ($, Storage) {
       }
       this.resetPage();
       $("#achievements").toggleClass("active");
+    },
+
+    toggleCompleted: function () {
+      // if ($("#completed").hasClass("active")) {
+      //   this.toggleInstructions();
+      //   $("#helpbutton").removeClass("active");
+      // }
+      this.resetPage();
+      $("#completed").toggleClass("active");
     },
 
     resetPage: function () {
@@ -508,7 +519,9 @@ define(["jquery", "storage"], function ($, Storage) {
           $button.toggleClass("blink");
         }, 500);
       }
-      setTimeout(function () {
+
+      clearTimeout(this.achievementTimeout);
+      this.achievementTimeout = setTimeout(function () {
         $notif.removeClass("active");
         $button.removeClass("blink");
       }, 5000);

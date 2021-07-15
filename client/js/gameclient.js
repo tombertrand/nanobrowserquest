@@ -316,11 +316,12 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     },
 
     receiveChat: function (data) {
-      var id = data[1],
-        text = data[2];
+      var id = data[1];
+      var name = data[2];
+      var text = data[3];
 
       if (this.chat_callback) {
-        this.chat_callback(id, text);
+        this.chat_callback(id, name, text);
       }
     },
 

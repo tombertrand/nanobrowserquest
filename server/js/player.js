@@ -155,11 +155,14 @@ module.exports = Player = Character.extend({
         var msg = Utils.sanitize(message[1]);
         log.info("CHAT: " + self.name + ": " + msg);
 
+        // if (msg === '/town')
+
         // Sanitized messages may become empty. No need to broadcast empty chat messages.
         if (msg && msg !== "") {
-          msg = msg.substr(0, 60); // Enforce maxlength of chat input
+          msg = msg.substr(0, 100); // Enforce maxlength of chat input
           // CHAD COMMAND HANDLING IN ASKY VERSION HAPPENS HERE!
-          self.broadcastToZone(new Messages.Chat(self, msg), false);
+          self.broadcast(new Messages.Chat(self, msg), false);
+          // self.broadcastToZone(new Messages.Chat(self, msg), false);
         }
       } else if (action === Types.Messages.MOVE) {
         // log.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
@@ -309,7 +312,10 @@ module.exports = Player = Character.extend({
           if (
             self.createdAt + MIN_TIME > Date.now() ||
             self.level < 10 ||
-            !(Types.Entities.REDARMOR === self.armor || Types.Entities.REDSWORD === self.weapon)
+            !(
+              [Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
+              [Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
+            )
           ) {
             self.connection.send({
               type: Types.Messages.BOSS_CHECK,
@@ -322,11 +328,13 @@ module.exports = Player = Character.extend({
         }
 
         // Reset player to "REDARMOR" / "REDSWORD"
-        if (message[1]) {
+        // if (message[1]) {
+        if (self.armor === Types.Entities.GOLDENARMOR) {
           self.equipItem(Types.Entities.REDARMOR, false);
-          self.equipItem(Types.Entities.REDSWORD, false);
-
           self.broadcast(self.equip(Types.Entities.REDARMOR), false);
+        }
+        if (self.weapon === Types.Entities.GOLDENSWORD) {
+          self.equipItem(Types.Entities.REDSWORD, false);
           self.broadcast(self.equip(Types.Entities.REDSWORD), false);
         }
 
