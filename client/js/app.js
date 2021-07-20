@@ -427,34 +427,29 @@ define(["jquery", "storage"], function ($, Storage) {
     },
 
     toggleInstructions: function () {
-      if ($("#achievements").hasClass("active")) {
-        this.toggleAchievements();
-        $("#achievementsbutton").removeClass("active");
-      }
       $("#instructions").toggleClass("active");
     },
 
     toggleAchievements: function () {
-      if ($("#instructions").hasClass("active")) {
-        this.toggleInstructions();
-        $("#helpbutton").removeClass("active");
-      }
-      this.resetPage();
+      this.resetAchievementPage();
       $("#achievements").toggleClass("active");
     },
 
     toggleCompleted: function () {
-      // if ($("#completed").hasClass("active")) {
-      //   this.toggleInstructions();
-      //   $("#helpbutton").removeClass("active");
-      // }
-      this.resetPage();
       $("#completed").toggleClass("active");
     },
 
-    resetPage: function () {
-      var self = this,
-        $achievements = $("#achievements");
+    toggleAbout: function () {
+      if ($("body").hasClass("about")) {
+        this.closeInGameScroll("about");
+      } else {
+        this.toggleScrollContent("about");
+      }
+    },
+
+    resetAchievementPage: function () {
+      var self = this;
+      var $achievements = $("#achievements");
 
       if ($achievements.hasClass("active")) {
         $achievements.bind(TRANSITIONEND, function () {
@@ -488,7 +483,6 @@ define(["jquery", "storage"], function ($, Storage) {
       }
       if ($("#instructions").hasClass("active")) {
         this.toggleInstructions();
-        $("#helpbutton").removeClass("active");
       }
       if ($("body").hasClass("credits")) {
         this.closeInGameScroll("credits");
@@ -500,7 +494,12 @@ define(["jquery", "storage"], function ($, Storage) {
         this.closeInGameScroll("about");
       }
       if ($("#completed").hasClass("active")) {
-        $("#completed").removeClass("active");
+        this.toggleCompleted();
+        $("#completedbutton").removeClass("active");
+      }
+      if ($("#about").hasClass("active")) {
+        this.toggleAbout();
+        $("#completedbutton").removeClass("active");
       }
       if ($("#failed").hasClass("active")) {
         $("#failed").removeClass("active");
@@ -614,7 +613,7 @@ define(["jquery", "storage"], function ($, Storage) {
         }
 
         if (content !== "about") {
-          $("#helpbutton").removeClass("active");
+          $("#completedbutton").removeClass("active");
         }
       } else {
         if (currentState !== "animate") {
@@ -634,7 +633,7 @@ define(["jquery", "storage"], function ($, Storage) {
         $("body").addClass("death");
       }
       if (content === "about") {
-        $("#helpbutton").removeClass("active");
+        $("#completedbutton").removeClass("active");
       }
     },
 

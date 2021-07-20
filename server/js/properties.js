@@ -124,7 +124,7 @@ var Properties = {
       redsword: 20,
       firepotion: 5,
     },
-    hp: 220,
+    hp: 200,
     armor: 2,
     weapon: 4,
   },

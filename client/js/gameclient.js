@@ -105,7 +105,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
           if (e === "messagetoplayer") {
             // self.disconnected_callback(
-            //   "The connection to NanoBrowserQuest has been lost"
+            //   "The connection to Nano BrowserQuest has been lost"
             // );
           }
 
@@ -124,7 +124,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
             if (self.isTimeout) {
               self.disconnected_callback("You have been disconnected for being inactive for too long");
             } else {
-              self.disconnected_callback("The connection to NanoBrowserQuest has been lost");
+              self.disconnected_callback("The connection to Nano BrowserQuest has been lost");
             }
           }
         });

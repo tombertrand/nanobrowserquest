@@ -799,7 +799,7 @@ define([
           self.loadAudio();
 
           self.initMusicAreas();
-          // self.initAchievements();
+          self.initAchievements();
           self.initCursors();
           self.initAnimations();
           self.initShadows();
@@ -970,7 +970,7 @@ define([
         self.resetCamera();
         self.updatePlateauMode();
         self.audioManager.updateMusic();
-        self.initAchievements();
+        // self.initAchievements();
 
         self.addEntity(self.player);
         self.player.dirtyRect = self.renderer.getEntityBoundingRect(self.player);
@@ -1833,12 +1833,16 @@ define([
           } else if (status === "failed") {
             self.bosscheckfailed_callback(message);
           } else if (status === "completed") {
-            self.gamecompleted_callback({ hash, fightAgain: true });
+            self.gamecompleted_callback({ hash, fightAgain: true, show: true });
           }
         });
 
         self.client.onReceiveNotification(function (data) {
           const { message, hash } = data;
+
+          if (hash) {
+            self.gamecompleted_callback({ hash });
+          }
 
           setTimeout(() => {
             self.showNotification(message, 30000);

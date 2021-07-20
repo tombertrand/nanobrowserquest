@@ -47,19 +47,14 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
         }
       });
 
-      $("#helpbutton").click(function () {
-        app.hideWindows();
-        if ($("body").hasClass("about")) {
-          app.closeInGameScroll("about");
-          $("#helpbutton").removeClass("active");
-        } else {
-          app.toggleScrollContent("about");
-        }
-      });
-
       $("#achievementsbutton").click(function () {
+        let isOpened = $("#achievements").hasClass("active");
+
         app.hideWindows();
-        app.toggleAchievements();
+        if (!isOpened) {
+          app.toggleAchievements();
+        }
+
         if (app.blinkInterval) {
           clearInterval(app.blinkInterval);
         }
@@ -67,8 +62,16 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
       });
 
       $("#completedbutton").click(function () {
+        let isOpened = $("#completed").hasClass("active");
+
         app.hideWindows();
-        app.toggleCompleted();
+        if (!isOpened) {
+          if ($("#transaction-hash").text()) {
+            app.toggleCompleted();
+          } else {
+            app.toggleAbout();
+          }
+        }
         // if (app.blinkInterval) {
         //   clearInterval(app.blinkInterval);
         // }
@@ -270,12 +273,18 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
         $("body").addClass("death");
       });
 
-      game.onGameCompleted(function ({ hash, fightAgain }) {
+      game.onGameCompleted(function ({ hash, fightAgain, show = false }) {
         $("#completed")
-          .addClass("active")
           .find("#transaction-hash")
           .attr("href", "https://nanolooker.com/block/" + hash)
           .text(hash);
+
+        $("#completedbutton").addClass("completed");
+
+        if (show) {
+          $("#completed").addClass("active");
+          $("#completedbutton").addClass("active");
+        }
 
         if (fightAgain) {
           $("#completed").addClass("boss-check");
@@ -357,7 +366,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
                 <span>${name}</span>
                 ${
                   isCompleted
-                    ? '<span id="nano-completed" title="Completed the game and received the payout"></span>'
+                    ? '<span class="nano-logo" title="Completed the game and received the payout"></span>'
                     : ""
                 }
                 <span>lv.${level}</span>
@@ -547,7 +556,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
               $("#achievementsbutton").click();
               break;
             case Types.Keys.H:
-              $("#helpbutton").click();
+              $("#completedbutton").click();
               break;
             case Types.Keys.M:
               $("#mutebutton").click();

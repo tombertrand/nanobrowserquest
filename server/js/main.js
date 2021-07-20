@@ -46,7 +46,7 @@ function main(config) {
     }
   }, 1000);
 
-  log.info("Starting NanoBrowserQuest game server...");
+  log.info("Starting Nano BrowserQuest game server...");
   var selector = DatabaseSelector(config);
   databaseHandler = new selector(config);
 
