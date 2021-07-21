@@ -126,6 +126,10 @@ define(['mobs', 'items', 'npcs', 'warrior', 'chest'], function(Mobs, Items, NPCs
         return new Items.Flask(id);
     };
 
+    EntityFactory.builders[Types.Entities.NANOPOTION] = function(id) {
+        return new Items.NanoPotion(id);
+    };
+
     EntityFactory.builders[Types.Entities.FIREPOTION] = function(id) {
         return new Items.FirePotion(id);
     };

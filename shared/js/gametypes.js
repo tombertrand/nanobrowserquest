@@ -90,6 +90,7 @@ Types = {
     BURGER: 36,
     CHEST: 37,
     FIREPOTION: 38,
+    NANOPOTION: 67,
     CAKE: 39,
 
     // NPCs
@@ -187,6 +188,7 @@ var kinds = {
   burger: [Types.Entities.BURGER, "object"],
   chest: [Types.Entities.CHEST, "object"],
   firepotion: [Types.Entities.FIREPOTION, "object"],
+  nanopotion: [Types.Entities.NANOPOTION, "object"],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],

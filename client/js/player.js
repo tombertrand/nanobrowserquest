@@ -80,23 +80,23 @@ define(["character", "exceptions"], function (Character, Exceptions) {
 
         if (item.type === "armor") {
           rank = Types.getArmorRank(item.kind);
-          currentRank = Types.getArmorRank(
-            Types.getKindFromString(currentArmorName)
-          );
+          if (rank !== 1 && rank * 2 > this.level) {
+            throw new Exceptions.LootException("You can't wear this armor yet.");
+          }
+          currentRank = Types.getArmorRank(Types.getKindFromString(currentArmorName));
           msg = "You are wearing a better armor";
         } else if (item.type === "weapon") {
           rank = Types.getWeaponRank(item.kind);
-          currentRank = Types.getWeaponRank(
-            Types.getKindFromString(this.weaponName)
-          );
+          if (rank !== 1 && rank * 2 > this.level) {
+            throw new Exceptions.LootException("You can't weild this weapon yet.");
+          }
+          currentRank = Types.getWeaponRank(Types.getKindFromString(this.weaponName));
           msg = "You are wielding a better weapon";
         }
 
         if (rank && currentRank) {
           if (rank === currentRank) {
-            throw new Exceptions.LootException(
-              "You already have this " + item.type
-            );
+            throw new Exceptions.LootException("You already have this " + item.type);
           } else if (rank <= currentRank) {
             throw new Exceptions.LootException(msg);
           }
@@ -159,9 +159,7 @@ define(["character", "exceptions"], function (Character, Exceptions) {
         var itemSprite = sprites[itemString];
         if (itemSprite) {
           if (type === "armor") {
-            this.inventory[inventoryNumber] = Types.getKindFromString(
-              this.getArmorName()
-            );
+            this.inventory[inventoryNumber] = Types.getKindFromString(this.getArmorName());
             this.setSpriteName(itemString);
             this.setSprite(itemSprite);
             this.setArmorName(itemString);

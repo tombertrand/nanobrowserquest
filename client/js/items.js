@@ -87,6 +87,13 @@ define(['item'], function(Item) {
             },
         }),
 
+        NanoPotion: Item.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.NANOPOTION, "object");
+                this.lootMessage = "You drink a NANO potion";
+            },
+        }),
+
         Cake: Item.extend({
             init: function(id) {
                 this._super(id, Types.Entities.CAKE, "object");

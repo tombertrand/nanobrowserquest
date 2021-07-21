@@ -178,6 +178,7 @@ define([
         "item-redarmor",
         "item-goldenarmor",
         "item-flask",
+        "item-nanopotion",
         "item-cake",
         "item-burger",
         "morningstar",
@@ -3096,6 +3097,10 @@ define([
         if (item.kind === Types.Entities.FIREPOTION) {
           this.tryUnlockingAchievement("FOXY");
           this.audioManager.playSound("firefox");
+        }
+
+        if (item.kind === Types.Entities.NANOPOTION) {
+          this.tryUnlockingAchievement("NANO_POTION");
         }
 
         if (Types.isHealingItem(item.kind)) {

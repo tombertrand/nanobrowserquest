@@ -17,6 +17,7 @@ const MIN_TIME = 1000 * 60 * 8;
 const MAX_AMOUNT = Utils.getMaxPayoutAmount();
 
 let index = 0;
+const NO_TIMEOUT_ACCOUNT = "nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
 
 module.exports = Player = Character.extend({
   init: function (connection, worldServer, databaseHandler) {
@@ -756,6 +757,8 @@ module.exports = Player = Character.extend({
 
   resetTimeout: function () {
     clearTimeout(this.disconnectTimeout);
+    // This account doesn't timeout
+    if (this.account === NO_TIMEOUT_ACCOUNT) return;
     this.disconnectTimeout = setTimeout(this.timeout.bind(this), 1000 * 60 * 15); // 15 min.
   },
 
