@@ -63,6 +63,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
 
       $("#completedbutton").click(function () {
         let isOpened = $("#completed").hasClass("active");
+        $("#completed").removeClass("boss-check");
 
         app.hideWindows();
         if (!isOpened) {
