@@ -408,7 +408,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
       app.initTargetHud();
       app.initExpBar();
       $("#nameinput").val("");
-      $("#accountinput").val("");
+      // $("#accountinput").val("");
       // $("#chatbox").val("");
 
       if (game.renderer.mobile || game.renderer.tablet) {

@@ -10,22 +10,37 @@ define(["jquery", "storage"], function ($, Storage) {
       this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
       this.initFormFields();
 
-      if (localStorage && localStorage.data) {
+      if (
+        this.storage &&
+        this.storage.data &&
+        this.storage.data.player &&
+        this.storage.data.player.name &&
+        this.storage.data.player.account
+      ) {
         this.frontPage = "loadcharacter";
 
-        if (
-          this.storage &&
-          this.storage.data &&
-          this.storage.data.player &&
-          this.storage.data.player.name &&
-          this.storage.data.player.account
-        ) {
-          $("#loginnameinput").val(this.storage.data.player.name);
-          $("#loginaccountinput").val(this.storage.data.player.account);
-        }
+        $("#loginnameinput").val(this.storage.data.player.name);
+        $("#loginaccountinput").val(this.storage.data.player.account);
       } else {
         this.frontPage = "createcharacter";
+
+        const ACCOUNT_REGEX = /((nano|xrb)_)?[13][13-9a-km-uw-z]{59}/;
+
+        const getAccountAddressFromText = text => {
+          if (!text || typeof text !== "string") return;
+          const [, address] =
+            text.match(new RegExp(`[^sS]*?(${ACCOUNT_REGEX.toString().replace(/\//g, "")})[^sS]*?`, "i")) || [];
+          return address;
+        };
+
+        const account = getAccountAddressFromText(window.location.search);
+
+        if (account) {
+          $("#accountinput").val(account);
+        }
       }
+
+      document.getElementById("parchment").className = this.frontPage;
     },
 
     setGame: function (game) {
@@ -54,7 +69,6 @@ define(["jquery", "storage"], function ($, Storage) {
 
       // Create new character form fields
       this.$nameinput = $("#nameinput");
-      this.$accountinput = $("#accountinput");
       this.$accountinput = $("#accountinput");
       this.createNewCharacterFormFields = [this.$nameinput, this.$accountinput, this.$accountinput];
 
@@ -334,7 +348,12 @@ define(["jquery", "storage"], function ($, Storage) {
 
         $(el).fadeIn("fast");
 
-        // @TODO setTimeout if npc on mobile
+        if (!self.isDesktop) {
+          var hideTarget = _.debounce(() => {
+            self.game.player.onRemoveTarget;
+          }, 3000);
+          hideTarget();
+        }
       });
 
       self.game.onUpdateTarget(function (target) {
