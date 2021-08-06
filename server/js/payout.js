@@ -5,7 +5,8 @@ const { PromiseQueue } = require("./promise-queue");
 const queue = new PromiseQueue();
 
 const sender = "nano_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay";
-const key = process.env.PRIVATE_KEY;
+
+const { PRIVATE_KEY, BPOW_USERNAME, BPOW_API_KEY, BPOW_DOMAIN, RPC_DOMAIN } = process.env;
 
 // function sleep(ms) {
 //   return new Promise(resolve => setTimeout(resolve, ms));
@@ -13,14 +14,14 @@ const key = process.env.PRIVATE_KEY;
 
 const getWorkFromService = async hash => {
   const params = {
-    user: process.env.BPOW_USERNAME,
-    api_key: process.env.BPOW_API_KEY,
+    user: BPOW_USERNAME,
+    api_key: BPOW_API_KEY,
     hash,
     timeout: 15,
     difficulty: "fffffff800000000",
   };
 
-  const res = await fetch(process.env.BPOW_DOMAIN, {
+  const res = await fetch(BPOW_DOMAIN, {
     method: "POST",
     body: JSON.stringify(params),
   });
@@ -41,7 +42,7 @@ const rpc = async (action, params) => {
     });
 
     // @TODO Figure out what to do with rpc enabled...
-    res = await fetch(process.env.RPC_DOMAIN, {
+    res = await fetch(RPC_DOMAIN, {
       method: "POST",
       body,
     });
@@ -87,7 +88,7 @@ const sendPayout = async ({ account: receiver, amount }) => {
       representative,
       balance: new BigNumber(balance).minus(amount).toFixed(),
       link: receiver,
-      key,
+      key: PRIVATE_KEY,
       ...(work ? { work } : null),
     });
 
@@ -120,53 +121,3 @@ const sendPayout = async ({ account: receiver, amount }) => {
 module.exports = {
   enqueueSendPayout,
 };
-
-// Run block_create
-// curl -d '{
-//     "action": "block_create",
-//     "json_block": "true",
-//     "type": "state",
-//     "previous": "0",
-//     "account": "nano_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay",
-//     "representative": "nano_1kd4h9nqaxengni43xy9775gcag8ptw8ddjifnm77qes1efuoqikoqy5sjq3",
-//     "balance": "1000000000000000000000000000000",
-//     "link": "DA4094425E76C1A11035CE15FD2E52EFAEE25EBFD241EB7CE2648E3DF5E75DA3",
-//     "key": "8237a230a2d77114d40a4e8d8b28ded30fa112e4b99db19e4101af0b163ff703"
-//   }' '[68.183.110.185]:7076'
-// From block_create
-// {
-//     "hash": "AB7CC19DFD23276CF56F31A3F34F2E66F216C4E6467DB7CBDCE4D86E2A8AE8D6",
-//     "difficulty": "fffffe78c945bb9c",
-//     "block": {
-//         "type": "state",
-//         "account": "nano_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay",
-//         "previous": "0000000000000000000000000000000000000000000000000000000000000000",
-//         "representative": "nano_1kd4h9nqaxengni43xy9775gcag8ptw8ddjifnm77qes1efuoqikoqy5sjq3",
-//         "balance": "1000000000000000000000000000000",
-//         "link": "DA4094425E76C1A11035CE15FD2E52EFAEE25EBFD241EB7CE2648E3DF5E75DA3",
-//         "link_as_account": "nano_3pk1kj37wxp3n6a5dmioznq77uxgwbhdznk3xfyg6s6g9qtygqf5eiwomnqf",
-//         "signature": "E349F7926B7795F9FA9F4799031DC4B35522B00DACB3E979651EC41057D16DBEDC9D957B59D5EFF0DAEC8606B55349F58848B9C438FB160FD6BB8814C3C61403",
-//         "work": "36c22af0a4ee8649"
-//     }
-// }
-// Run process
-// curl -d '{
-//     "action": "process",
-//     "json_block": "true",
-//     "subtype": "open",
-//     "block": {
-//       "type": "state",
-//       "account": "nano_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay",
-//       "previous": "0000000000000000000000000000000000000000000000000000000000000000",
-//       "representative": "nano_1kd4h9nqaxengni43xy9775gcag8ptw8ddjifnm77qes1efuoqikoqy5sjq3",
-//       "balance": "1000000000000000000000000000000",
-//       "link": "DA4094425E76C1A11035CE15FD2E52EFAEE25EBFD241EB7CE2648E3DF5E75DA3",
-//       "link_as_account": "nano_3pk1kj37wxp3n6a5dmioznq77uxgwbhdznk3xfyg6s6g9qtygqf5eiwomnqf",
-//       "signature": "E349F7926B7795F9FA9F4799031DC4B35522B00DACB3E979651EC41057D16DBEDC9D957B59D5EFF0DAEC8606B55349F58848B9C438FB160FD6BB8814C3C61403",
-//       "work": "36c22af0a4ee8649"
-//     }
-//   }' '[68.183.110.185]:7076'
-// Response
-// {
-//     "hash": "AB7CC19DFD23276CF56F31A3F34F2E66F216C4E6467DB7CBDCE4D86E2A8AE8D6"
-// }
