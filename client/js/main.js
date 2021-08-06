@@ -133,6 +133,10 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
         app.animateParchment("confirmation", "loadcharacter");
       });
 
+      $("#back-to-login span").click(function () {
+        app.animateParchment("createcharacter", "loadcharacter");
+      });
+
       $(".ribbon").click(function () {
         app.toggleScrollContent("about");
       });
