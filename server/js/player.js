@@ -220,10 +220,12 @@ module.exports = Player = Character.extend({
             }
           } else {
             mob.hitPoints -= dmg;
-            mob.server.handleHurtEntity(mob);
-            if (mob.hitPoints <= 0) {
-              mob.isDead = true;
-              self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
+            if (mob.server) {
+              mob.server.handleHurtEntity(mob);
+              if (mob.hitPoints <= 0) {
+                mob.isDead = true;
+                self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
+              }
             }
           }
         }
