@@ -1,4 +1,4 @@
-define(["jquery", "storage"], function ($, Storage) {
+define(["jquery", "storage", "util"], function ($, Storage) {
   var App = Class.extend({
     init: function () {
       this.currentPage = 1;
@@ -24,17 +24,7 @@ define(["jquery", "storage"], function ($, Storage) {
       } else {
         this.frontPage = "createcharacter";
 
-        const ACCOUNT_REGEX = /((nano|xrb)_)?[13][13-9a-km-uw-z]{59}/;
-
-        const getAccountAddressFromText = text => {
-          if (!text || typeof text !== "string") return;
-          const [, address] =
-            text.match(new RegExp(`[^sS]*?(${ACCOUNT_REGEX.toString().replace(/\//g, "")})[^sS]*?`, "i")) || [];
-          return address;
-        };
-
         const account = getAccountAddressFromText(window.location.search);
-
         if (account) {
           $("#accountinput").val(account);
         }
@@ -261,7 +251,7 @@ define(["jquery", "storage"], function ($, Storage) {
         return false;
       }
 
-      if (!account || !/nano_?(1|3)[1-9a-z]{59}/.test(account)) {
+      if (!isValidAccountAddress(account)) {
         this.addValidationError(this.getAccountField(), "Please enter a valid nano account.");
         return false;
       }
@@ -398,6 +388,15 @@ define(["jquery", "storage"], function ($, Storage) {
       this.game.onPlayerHurt(this.blinkHealthBar.bind(this));
     },
 
+    initPlayerInfo: function () {
+      const { name: username, account } = this.game.storage.data.player;
+
+      $("#player-username").text(username);
+      $("#player-account")
+        .attr("href", "https://nanolooker.com/account/" + account)
+        .text(account);
+    },
+
     blinkHealthBar: function () {
       var $hitpoints = $("#hitpoints");
 
@@ -493,6 +492,9 @@ define(["jquery", "storage"], function ($, Storage) {
       if (armor !== "firefox") {
         $("#armor").css("background-image", 'url("' + armorPath + '")');
       }
+
+      $("#player-weapon").text(this.game.player.getDisplayWeaponName(weapon));
+      $("#player-armor").text(this.game.player.getDisplayArmorName(armor));
     },
 
     hideWindows: function () {
@@ -658,6 +660,10 @@ define(["jquery", "storage"], function ($, Storage) {
 
     togglePopulationInfo: function () {
       $("#population").toggleClass("visible");
+    },
+
+    togglePlayerInfo: function () {
+      $("#player").toggleClass("visible");
     },
 
     openPopup: function (type, url) {

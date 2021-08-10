@@ -91,6 +91,19 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
         app.togglePopulationInfo();
       });
 
+      $("#bar-container").click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      $("#player").click(function (e) {
+        e.stopPropagation();
+      });
+
+      $("#healthbar, #hitpoints, #weapon, #armor").click(function () {
+        app.togglePlayerInfo();
+      });
+
       $(".clickable").click(function (event) {
         event.stopPropagation();
       });
@@ -411,6 +424,8 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
       app.initHealthBar();
       app.initTargetHud();
       app.initExpBar();
+      app.initPlayerInfo();
+
       $("#nameinput").val("");
       // $("#accountinput").val("");
       // $("#chatbox").val("");

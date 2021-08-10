@@ -44,3 +44,15 @@ const raiToRaw = rai => {
   const value = new BigNumber(rai.toString());
   return value.shiftedBy(30).toNumber();
 };
+
+// 02LV are not present in addresses
+const ACCOUNT_REGEX = /((nano|xrb)_)?[13][13-9a-km-uw-z]{59}/;
+
+const isValidAccountAddress = address =>
+  new RegExp(`^${ACCOUNT_REGEX.toString().replace(/\//g, "")}$`, "i").test(address);
+
+const getAccountAddressFromText = text => {
+  const [, address] =
+    text.match(new RegExp(`[^sS]*?(${ACCOUNT_REGEX.toString().replace(/\//g, "")})[^sS]*?`, "i")) || [];
+  return address;
+};

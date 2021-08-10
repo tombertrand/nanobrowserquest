@@ -2884,6 +2884,7 @@ define([
     updateBars: function () {
       if (this.player && this.playerhp_callback) {
         this.playerhp_callback(this.player.hitPoints, this.player.maxHitPoints);
+        $("#player-hp").text(this.player.maxHitPoints);
       }
     },
     updateExpBar: function () {
@@ -2891,6 +2892,8 @@ define([
         var expInThisLevel = this.player.experience - Types.expForLevel[this.player.level - 1];
         var expForLevelUp = Types.expForLevel[this.player.level] - Types.expForLevel[this.player.level - 1];
         this.playerexp_callback(expInThisLevel, expForLevelUp);
+
+        $("#player-level").text(this.player.level);
       }
     },
     updateTarget: function (targetId, points, healthPoints, maxHp) {

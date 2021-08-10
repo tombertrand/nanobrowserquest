@@ -824,8 +824,8 @@ module.exports = World = cls.Class.extend({
       p = 0,
       item = null;
 
-    // 1 chance out of 100 to drop a nanopotion
-    if (Types.Entities.BOSS !== mob.kind && v === 42) {
+    // 3% chance to drop a NANO potion
+    if (Types.Entities.BOSS !== mob.kind && [23, 42, 69].includes(v)) {
       item = this.addItem(this.createItem(Types.getKindFromString("nanopotion"), mob.x, mob.y));
     } else {
       for (var itemName in drops) {

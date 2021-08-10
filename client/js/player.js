@@ -121,6 +121,29 @@ define(["character", "exceptions"], function (Character, Exceptions) {
       return this.spriteName;
     },
 
+    getDisplayArmorName: function () {
+      if (this.spriteName === "clotharmor") {
+        return "Cloth Armor";
+      }
+      if (this.spriteName === "leatherarmor") {
+        return "Leather Armor";
+      }
+      if (this.spriteName === "mailarmor") {
+        return "Mail Armor";
+      }
+      if (this.spriteName === "platearmor") {
+        return "Plate Armor";
+      }
+      if (this.spriteName === "redarmor") {
+        return "Ruby Armor";
+      }
+      if (this.spriteName === "goldenarmor") {
+        return "Golden Armor";
+      }
+
+      return this.spriteName;
+    },
+
     setSpriteName: function (name) {
       this.spriteName = name;
     },
@@ -142,6 +165,32 @@ define(["character", "exceptions"], function (Character, Exceptions) {
     },
 
     getWeaponName: function () {
+      return this.weaponName;
+    },
+
+    getDisplayWeaponName: function () {
+      if (this.weaponName === "sword1") {
+        return "Glaive";
+      }
+      if (this.weaponName === "sword2") {
+        return "Steel Sword";
+      }
+      if (this.weaponName === "axe") {
+        return "Axe";
+      }
+      if (this.weaponName === "morningstar") {
+        return "Morning Star";
+      }
+      if (this.weaponName === "bluesword") {
+        return "Magic Sword";
+      }
+      if (this.weaponName === "redsword") {
+        return "Blazing Sword";
+      }
+      if (this.weaponName === "goldensword") {
+        return "Ultimate Sword";
+      }
+
       return this.weaponName;
     },
 
