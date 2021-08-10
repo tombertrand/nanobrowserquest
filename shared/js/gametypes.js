@@ -153,13 +153,13 @@ Types = {
 var kinds = {
   warrior: [Types.Entities.WARRIOR, "player"],
 
-  rat: [Types.Entities.RAT, "mob", 5, 2],
+  rat: [Types.Entities.RAT, "mob", 3, 2],
   skeleton: [Types.Entities.SKELETON, "mob", 15, 8],
   goblin: [Types.Entities.GOBLIN, "mob", 8, 5],
   ogre: [Types.Entities.OGRE, "mob", 27, 12],
   spectre: [Types.Entities.SPECTRE, "mob", 53, 21],
   deathknight: [Types.Entities.DEATHKNIGHT, "mob", 70, 24],
-  crab: [Types.Entities.CRAB, "mob", 1, 1],
+  crab: [Types.Entities.CRAB, "mob", 3, 1],
   snake: [Types.Entities.SNAKE, "mob", 25, 10],
   bat: [Types.Entities.BAT, "mob", 6, 3],
   wizard: [Types.Entities.WIZARD, "mob", 7, 1],
@@ -239,11 +239,11 @@ Types.rankedArmors = [
 
 Types.expForLevel = [
   1,
-  2,
-  5,
-  16,
-  39,
-  81,
+  8,
+  18,
+  36,
+  68,
+  100,
   150,
   256,
   410,
@@ -466,7 +466,7 @@ Types.isItem = function (kind) {
 };
 
 Types.isHealingItem = function (kind) {
-  return kind === Types.Entities.FLASK || kind === Types.Entities.BURGER;
+  return kind === Types.Entities.FLASK || kind === Types.Entities.BURGER || kind === Types.Entities.NANOPOTION;
 };
 
 Types.isExpendableItem = function (kind) {

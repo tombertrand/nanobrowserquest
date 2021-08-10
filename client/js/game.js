@@ -778,6 +778,7 @@ define([
 
     initMusicAreas: function () {
       var self = this;
+
       _.each(this.map.musicAreas, function (area) {
         self.audioManager.addArea(area.x, area.y, area.w, area.h, area.id);
       });
@@ -860,7 +861,7 @@ define([
       if (id in this.entities) {
         return this.entities[id];
       } else {
-        log.error("Unknown entity id : " + id, true);
+        // log.error("Unknown entity id : " + id, true);
       }
     },
 

@@ -23,7 +23,7 @@ var Mob = Character.extend({
     this.tankerlist = [];
   },
 
-  destroy: function () {
+  destroy: function (delay = 30000) {
     this.isDead = true;
     this.hatelist = [];
     this.tankerlist = [];
@@ -31,7 +31,7 @@ var Mob = Character.extend({
     this.updateHitPoints();
     this.resetPosition();
 
-    this.handleRespawn();
+    this.handleRespawn(delay);
   },
 
   receiveDamage: function (points, playerId) {
@@ -154,8 +154,7 @@ var Mob = Character.extend({
     }
   },
 
-  handleRespawn: function () {
-    var delay = 30000;
+  handleRespawn: function (delay) {
     var self = this;
 
     if (this.area && this.area instanceof MobArea) {
@@ -166,7 +165,7 @@ var Mob = Character.extend({
         this.area.removeFromArea(this);
       }
 
-      setTimeout(function () {
+      this.respawnTimeout = setTimeout(function () {
         if (self.respawnCallback) {
           self.respawnCallback();
         }

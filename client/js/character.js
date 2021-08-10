@@ -421,7 +421,7 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
       if (this.isAttackedBy(character)) {
         delete this.attackers[character.id];
       } else {
-        log.error(this.id + " is not attacked by " + character.id);
+        // log.error(this.id + " is not attacked by " + character.id);
       }
     },
 

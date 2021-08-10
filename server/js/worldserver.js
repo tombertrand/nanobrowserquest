@@ -401,7 +401,16 @@ module.exports = World = cls.Class.extend({
       this.clearMobHateLinks(entity);
     }
 
-    entity.destroy();
+    var delay = 30000;
+    if (entity.kind === Types.Entities.DEATHKNIGHT) {
+      // Each additional player removes 7.5s to DK spawn delay
+      delay = delay - (this.getPlayersCountInBossRoom() - 1) * 7500;
+      if (delay < 3000) {
+        delay = 3000;
+      }
+    }
+
+    entity.destroy(delay);
     this.removeFromGroups(entity);
     log.debug("Removed " + Types.getKindAsString(entity.kind) + " : " + entity.id);
   },
@@ -815,13 +824,18 @@ module.exports = World = cls.Class.extend({
       p = 0,
       item = null;
 
-    for (var itemName in drops) {
-      var percentage = drops[itemName];
+    // 1 chance out of 100 to drop a nanopotion
+    if (Types.Entities.BOSS !== mob.kind && v === 42) {
+      item = this.addItem(this.createItem(Types.getKindFromString("nanopotion"), mob.x, mob.y));
+    } else {
+      for (var itemName in drops) {
+        var percentage = drops[itemName];
 
-      p += percentage;
-      if (v <= p) {
-        item = this.addItem(this.createItem(Types.getKindFromString(itemName), mob.x, mob.y));
-        break;
+        p += percentage;
+        if (v <= p) {
+          item = this.addItem(this.createItem(Types.getKindFromString(itemName), mob.x, mob.y));
+          break;
+        }
       }
     }
 
@@ -1040,6 +1054,35 @@ module.exports = World = cls.Class.extend({
         area.addToArea(mob);
       }
     });
+  },
+
+  getPlayersCountInBossRoom: function () {
+    let counter = 0;
+
+    const bossArea = { x: 140, y: 48, w: 29, h: 25, id: "boss" };
+    function isInsideBossRoom(entity) {
+      if (entity) {
+        return (
+          entity.x >= bossArea.x &&
+          entity.y >= bossArea.y &&
+          entity.x < bossArea.x + bossArea.w &&
+          entity.y < bossArea.y + bossArea.h
+        );
+      } else {
+        return false;
+      }
+    }
+
+    for (id in this.players) {
+      if (isInsideBossRoom(this.players[id])) {
+        counter += 1;
+        // Max difficulty of 6
+        if (counter === 6) {
+          break;
+        }
+      }
+    }
+    return counter;
   },
 
   updatePopulation: function (totalPlayers, playerPopulation) {

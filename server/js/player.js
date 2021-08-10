@@ -209,11 +209,16 @@ module.exports = Player = Character.extend({
       } else if (action === Types.Messages.HIT) {
         log.info("HIT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
+
         if (mob) {
           var dmg = Formulas.dmg(self.weaponLevel, mob.armorLevel);
-
           if (dmg > 0) {
             if (mob.type !== "player") {
+              // Reduce dmg on boss by 10% per player in boss room
+              if (mob.kind === Types.Entities.BOSS) {
+                dmg = Math.floor(dmg - dmg * ((self.server.getPlayersCountInBossRoom() - 1) * 0.1));
+              }
+
               mob.receiveDamage(dmg, self.id);
               self.server.handleMobHate(mob.id, self.id, dmg);
               self.server.handleHurtEntity(mob, self, dmg);
@@ -271,6 +276,9 @@ module.exports = Player = Character.extend({
                   break;
                 case Types.Entities.BURGER:
                   amount = 100;
+                  break;
+                case Types.Entities.NANOPOTION:
+                  amount = 250;
                   break;
               }
 
@@ -743,7 +751,7 @@ module.exports = Player = Character.extend({
   },
 
   updateHitPoints: function () {
-    this.resetHitPoints(Formulas.hp(this.armorLevel));
+    this.resetHitPoints(Formulas.hp(this.armorLevel, this.level));
   },
 
   updatePosition: function () {
