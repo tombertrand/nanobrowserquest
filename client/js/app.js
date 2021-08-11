@@ -494,7 +494,9 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       }
 
       $("#player-weapon").text(this.game.player.getDisplayWeaponName(weapon));
-      $("#player-armor").text(this.game.player.getDisplayArmorName(armor));
+      if (armor !== "firefox") {
+        $("#player-armor").text(this.game.player.getDisplayArmorName(armor));
+      }
     },
 
     hideWindows: function () {
