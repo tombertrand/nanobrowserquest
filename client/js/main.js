@@ -333,7 +333,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
 
         const textList = $("#text-list");
         let scrollToBottom = false;
-        if (textList[0].scrollHeight - textList.scrollTop() == Math.floor(textList.outerHeight())) {
+        if (textList[0].scrollHeight - textList.scrollTop() - Math.floor(textList.outerHeight()) <= 10) {
           scrollToBottom = true;
         }
 
