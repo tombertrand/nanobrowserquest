@@ -15,7 +15,7 @@ var Properties = {
   bat: {
     drops: {
       flask: 50,
-      axe: 10,
+      axe: 15,
       firepotion: 5,
     },
     hp: 80,
@@ -62,8 +62,8 @@ var Properties = {
     drops: {
       burger: 10,
       flask: 50,
-      platearmor: 20,
-      morningstar: 20,
+      platearmor: 15,
+      morningstar: 15,
       firepotion: 5,
     },
     hp: 200,
@@ -98,8 +98,8 @@ var Properties = {
   skeleton2: {
     drops: {
       flask: 60,
-      platearmor: 15,
-      bluesword: 15,
+      platearmor: 10,
+      bluesword: 10,
       firepotion: 5,
     },
     hp: 200,
@@ -109,8 +109,8 @@ var Properties = {
 
   eye: {
     drops: {
-      flask: 75,
-      redarmor: 20,
+      flask: 60,
+      redarmor: 15,
       firepotion: 5,
     },
     hp: 200,
@@ -120,8 +120,8 @@ var Properties = {
 
   spectre: {
     drops: {
-      flask: 75,
-      redsword: 20,
+      flask: 60,
+      redsword: 15,
       firepotion: 5,
     },
     hp: 200,

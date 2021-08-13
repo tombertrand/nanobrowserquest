@@ -403,8 +403,8 @@ module.exports = World = cls.Class.extend({
 
     var delay = 30000;
     if (entity.kind === Types.Entities.DEATHKNIGHT) {
-      // Each additional player removes 7.5s to DK spawn delay
-      delay = delay - (this.getPlayersCountInBossRoom() - 1) * 7500;
+      // Each additional player removes 10s to DK spawn delay
+      delay = delay - (this.getPlayersCountInBossRoom() - 1) * 10000;
       if (delay < 3000) {
         delay = 3000;
       }

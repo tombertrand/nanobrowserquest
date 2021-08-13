@@ -214,9 +214,9 @@ module.exports = Player = Character.extend({
           var dmg = Formulas.dmg(self.weaponLevel, mob.armorLevel);
           if (dmg > 0) {
             if (mob.type !== "player") {
-              // Reduce dmg on boss by 10% per player in boss room
+              // Reduce dmg on boss by 12.5% per player in boss room
               if (mob.kind === Types.Entities.BOSS) {
-                dmg = Math.floor(dmg - dmg * ((self.server.getPlayersCountInBossRoom() - 1) * 0.1));
+                dmg = Math.floor(dmg - dmg * ((self.server.getPlayersCountInBossRoom() - 1) * 0.125));
               }
 
               mob.receiveDamage(dmg, self.id);
