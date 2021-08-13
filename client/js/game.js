@@ -1579,7 +1579,6 @@ define([
 
         self.client.onEntityMove(function (id, x, y) {
           var entity = null;
-
           if (id !== self.playerId) {
             entity = self.getEntityById(id);
 
@@ -1608,7 +1607,6 @@ define([
 
         self.client.onPlayerMoveToItem(function (playerId, itemId) {
           var player, item;
-
           if (playerId !== self.playerId) {
             player = self.getEntityById(playerId);
             item = self.getEntityById(itemId);
@@ -2378,15 +2376,25 @@ define([
       this.processInput(pos);
     },
 
+    isProcessInputDisabled: false,
+
     /**
      * Processes game logic when the user triggers a click/touch event during the game.
      */
     processInput: function (pos) {
       var entity;
 
+      // Add a timeout before re-enabling the character movements, it happened that a movement
+      // was started while a zoning was happening so the player ended up being in the wrong zone
+      // and couldn't move anymore. (The freeze bug)
+      if (this.isZoning()) {
+        this.isProcessInputDisabled = true;
+      }
+
       if (
         this.started &&
         this.player &&
+        !this.isProcessInputDisabled &&
         !this.isZoning() &&
         !this.isZoningTile(this.player.nextGridX, this.player.nextGridY) &&
         !this.player.isDead &&
@@ -2499,7 +2507,6 @@ define([
 
         if (!target.isMoving() && attacker.isAdjacentNonDiagonal(target) && this.isMobOnSameTile(attacker)) {
           var pos = this.getFreeAdjacentNonDiagonalPosition(target);
-
           // avoid stacking mobs on the same tile next to a player
           // by making them go to adjacent tiles if they are available
           if (pos && !target.adjacentTiles[pos.o]) {
@@ -2669,6 +2676,10 @@ define([
         var pos = this.zoningQueue[0];
         this.startZoningFrom(pos.x, pos.y);
       }
+
+      setTimeout(() => {
+        this.isProcessInputDisabled = false;
+      }, 250);
     },
 
     isZoning: function () {
