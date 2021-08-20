@@ -623,6 +623,23 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       $el.find(".achievement-nano").html(nano / 100000 + "Ñ");
     },
 
+    updateNanoPotions: function (nanoPotions) {
+      for (var i = 0; i < nanoPotions; i++) {
+        if (i === 5) break;
+        $("#nanopotion-count").find(`.item-nanopotion:eq(${i})`).addClass("active");
+      }
+    },
+
+    updateGems: function (gems) {
+      $("#achievements-unlocks-count")
+        .find(".item-gem")
+        .each((index, element) => {
+          if (gems[index] !== 0) {
+            $(element).addClass("active");
+          }
+        });
+    },
+
     toggleScrollContent: function (content) {
       var currentState = $("#parchment").attr("class");
 

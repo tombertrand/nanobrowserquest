@@ -123,7 +123,6 @@ module.exports = Player = Character.extend({
             self.connection.close("Already logged in " + self.name);
             return;
           }
-          // databaseHandler.checkBan(self);
           databaseHandler.loadPlayer(self);
         }
 
@@ -259,7 +258,11 @@ module.exports = Player = Character.extend({
             self.broadcast(item.despawn());
             self.server.removeEntity(item);
 
-            if (kind === Types.Entities.FIREPOTION) {
+            if (Types.Entities.Gems.includes(kind)) {
+              let index = Types.Entities.Gems.indexOf(kind);
+
+              databaseHandler.foundGem(self.name, index);
+            } else if (kind === Types.Entities.FIREPOTION) {
               self.updateHitPoints();
               self.broadcast(self.equip(Types.Entities.FIREFOX));
               self.firepotionTimeout = setTimeout(function () {
@@ -280,6 +283,10 @@ module.exports = Player = Character.extend({
                 case Types.Entities.NANOPOTION:
                   amount = 250;
                   break;
+              }
+
+              if (kind === Types.Entities.NANOPOTION) {
+                databaseHandler.foundNanoPotion(self.name);
               }
 
               if (!self.hasFullHealth()) {
@@ -373,8 +380,8 @@ module.exports = Player = Character.extend({
           // Check for required achievements
           !self.achievement[1] || //  -> INTO_THE_WILD
           !self.achievement[11] || // -> NO_MANS_LAND
-          !self.achievement[15] || // -> HOT_SPOT
-          !self.achievement[16] //    -> HERO
+          !self.achievement[16] || // -> HOT_SPOT
+          !self.achievement[20] // -> HERO
         ) {
           let reason;
           if (self.hash) {
@@ -390,8 +397,8 @@ module.exports = Player = Character.extend({
             )
           ) {
             reason = `Player item doesn't match requirement, armor is ${self.armor}, weapon is ${self.weapon}`;
-          } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[15] || !self.achievement[16]) {
-            reason = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[15]}, ${self.achievement[16]}`;
+          } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[16] || !self.achievement[20]) {
+            reason = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}, ${self.achievement[20]}`;
           }
 
           databaseHandler.banPlayer(self, reason);
@@ -870,6 +877,8 @@ module.exports = Player = Character.extend({
     chatBanEndTime = 0,
     achievement,
     hash,
+    nanoPotions,
+    gems,
   }) {
     var self = this;
     self.kind = Types.Entities.WARRIOR;
@@ -913,6 +922,8 @@ module.exports = Player = Character.extend({
       self.experience,
       achievement,
       hash,
+      nanoPotions,
+      gems,
     ]);
 
     self.hasEnteredGame = true;

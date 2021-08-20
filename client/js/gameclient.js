@@ -197,7 +197,9 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         weaponAvatar = data[9],
         experience = data[10],
         achievement = data[11],
-        hash = data[12];
+        hash = data[12],
+        nanoPotions = data[13],
+        gems = data[14];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -213,6 +215,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           experience,
           achievement,
           hash,
+          nanoPotions,
+          gems,
         });
       }
     },

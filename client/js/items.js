@@ -94,6 +94,34 @@ define(['item'], function(Item) {
             },
         }),
 
+        GemRuby: Item.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.GEMRUBY, "object");
+                this.lootMessage = "You pick up a Ruby";
+            },
+        }),
+
+        GemEmerald: Item.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.GEMEMERALD, "object");
+                this.lootMessage = "You pick up an Emerald";
+            },
+        }),
+
+        GemAmethyst: Item.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.GEMAMETHYST, "object");
+                this.lootMessage = "You pick up an Amethyst";
+            },
+        }),
+
+        GemTopaz: Item.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.GEMTOPAZ, "object");
+                this.lootMessage = "You pick up a Topaz";
+            },
+        }),
+
         Cake: Item.extend({
             init: function(id) {
                 this._super(id, Types.Entities.CAKE, "object");

@@ -91,6 +91,10 @@ Types = {
     CHEST: 37,
     FIREPOTION: 38,
     NANOPOTION: 67,
+    GEMRUBY: 68,
+    GEMEMERALD: 69,
+    GEMAMETHYST: 70,
+    GEMTOPAZ: 71,
     CAKE: 39,
 
     // NPCs
@@ -150,6 +154,26 @@ Types = {
   },
 };
 
+Types.Entities.Gems = [
+  Types.Entities.GEMRUBY,
+  Types.Entities.GEMEMERALD,
+  Types.Entities.GEMAMETHYST,
+  Types.Entities.GEMTOPAZ,
+];
+
+Types.getGemNameFromKind = function (kind) {
+  if (kind === Types.Entities.GEMRUBY) {
+    return "Ruby";
+  } else if (kind === Types.Entities.GEMEMERALD) {
+    return "Emerald";
+  } else if (kind === Types.Entities.GEMAMETHYST) {
+    return "Amethyst";
+  } else if (kind === Types.Entities.GEMTOPAZ) {
+    return "Topaz";
+  }
+  return kind;
+};
+
 var kinds = {
   warrior: [Types.Entities.WARRIOR, "player"],
 
@@ -189,6 +213,10 @@ var kinds = {
   chest: [Types.Entities.CHEST, "object"],
   firepotion: [Types.Entities.FIREPOTION, "object"],
   nanopotion: [Types.Entities.NANOPOTION, "object"],
+  gemruby: [Types.Entities.GEMRUBY, "object"],
+  gememerald: [Types.Entities.GEMEMERALD, "object"],
+  gemamethyst: [Types.Entities.GEMAMETHYST, "object"],
+  gemtopaz: [Types.Entities.GEMTOPAZ, "object"],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],

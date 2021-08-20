@@ -1,7 +1,5 @@
-define(["character", "exceptions"], function (Character, Exceptions) {
+define(["character", "exceptions", "../../shared/js/gametypes"], function (Character, Exceptions) {
   var Player = Character.extend({
-    MAX_LEVEL: 10,
-
     init: function (id, name, account, kind, guild) {
       this._super(id, kind);
 
@@ -19,6 +17,8 @@ define(["character", "exceptions"], function (Character, Exceptions) {
       this.spriteName = "clotharmor";
       this.armorName = "clotharmor";
       this.weaponName = "sword1";
+      this.gems = [];
+      this.nanoPotions = 0;
 
       // modes
       this.isLootMoving = false;
@@ -78,7 +78,16 @@ define(["character", "exceptions"], function (Character, Exceptions) {
           currentArmorName = this.spriteName;
         }
 
-        if (item.type === "armor") {
+        if (Types.Entities.Gems.includes(item.kind)) {
+          var index = Types.Entities.Gems.indexOf(item.kind);
+          if (index > -1 && this.gems[index] !== 0) {
+            throw new Exceptions.LootException(`You already collected the ${Types.getGemNameFromKind(item.kind)} gem.`);
+          } else {
+            this.gems[index] = 1;
+          }
+        } else if (item.kind === Types.Entities.NANOPOTION) {
+          this.nanoPotions += 1;
+        } else if (item.type === "armor") {
           rank = Types.getArmorRank(item.kind);
           if (rank !== 1 && rank * 2 > this.level) {
             throw new Exceptions.LootException("You can't wear this armor yet.");
@@ -88,7 +97,7 @@ define(["character", "exceptions"], function (Character, Exceptions) {
         } else if (item.type === "weapon") {
           rank = Types.getWeaponRank(item.kind);
           if (rank !== 1 && rank * 2 > this.level) {
-            throw new Exceptions.LootException("You can't weild this weapon yet.");
+            throw new Exceptions.LootException("You can't wield this weapon yet.");
           }
           currentRank = Types.getWeaponRank(Types.getKindFromString(this.weaponName));
           msg = "You are wielding a better weapon";

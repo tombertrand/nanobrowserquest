@@ -108,10 +108,14 @@ const achievementToNanoMap = {
   NINJA_LOOT: 4,
   NO_MANS_LAND: 3, // -> Required
   HUNTER: 4,
-  STILL_ALIVE: 7,
+  STILL_ALIVE: 5,
   MEATSHIELD: 7,
+  NYAN: 3,
   HOT_SPOT: 3, // -> Required
-  HERO: 50, // -> Required
+  SPECTRE_COLLECTOR: 8,
+  GEM_HUNTER: 8,
+  NANO_POTIONS: 8,
+  HERO: 25, // -> Required
   FOXY: 2,
   FOR_SCIENCE: 4,
   RICKROLLD: 6,

@@ -6,6 +6,10 @@ var cls = require("../lib/class"),
   redis = require("redis"),
   bcrypt = require("bcrypt");
 
+const ACHIEVEMENT_COUNT = 20;
+const GEM_COUNT = 4;
+const NANOPOTION_COUNT = 5;
+
 module.exports = DatabaseHandler = cls.Class.extend({
   init: function () {
     client = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST, {
@@ -42,6 +46,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "x") // 16
             .hget(userKey, "y") // 17
             .hget(userKey, "hash") // 18
+            .hget(userKey, "nanoPotions") // 19
+            .hget(userKey, "gems") // 20
             .exec(function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
@@ -54,9 +60,25 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var inventory = [replies[8], replies[10]];
               var inventoryNumber = [Utils.NaN2Zero(replies[9]), Utils.NaN2Zero(replies[11])];
 
-              var achievement = new Array(20).fill(0);
+              var achievement = new Array(ACHIEVEMENT_COUNT).fill(0);
               try {
                 achievement = JSON.parse(replies[12]);
+
+                // @NOTE Migrate old achievements to new
+                if (achievement.length === 20) {
+                  achievement = achievement
+                    .slice(0, 15)
+                    .concat([0, achievement[15], 0, 0, 0])
+                    .concat(achievement.slice(16, 20));
+
+                  client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
+                }
+              } catch {
+                // invalid json
+              }
+              var gems = new Array(GEM_COUNT).fill(0);
+              try {
+                gems = JSON.parse(replies[20] || gems);
               } catch {
                 // invalid json
               }
@@ -67,6 +89,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var x = Utils.NaN2Zero(replies[16]);
               var y = Utils.NaN2Zero(replies[17]);
               var hash = replies[18];
+              var nanoPotions = parseInt(replies[19] || 0);
 
               // Check Account
 
@@ -108,6 +131,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 y,
                 achievement,
                 hash,
+                nanoPotions,
+                gems,
               });
             });
           return;
@@ -143,7 +168,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "exp", 0)
           .hset(userKey, "ip", player.ip || "")
           .hset(userKey, "createdAt", curTime)
-          .hset(userKey, "achievement", JSON.stringify(new Array(20).fill(0)))
+          .hset(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
+          .hset(userKey, "nanoPotions", 0)
+          .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
           .exec(function (err, replies) {
             log.info("New User: " + player.name);
             player.sendWelcome({
@@ -158,7 +185,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
               inventoryNumber: [0, 0],
               x: player.x,
               y: player.y,
-              achievement: new Array(20).fill(0),
+              achievement: new Array(ACHIEVEMENT_COUNT).fill(0),
+              nanoPotions: 0,
+              gems: new Array(GEM_COUNT).fill(0),
             });
           });
       }
@@ -271,10 +300,33 @@ module.exports = DatabaseHandler = cls.Class.extend({
     log.info("Found Achievement: " + name + " " + index + 1);
     client.hget("u:" + name, "achievement", function (err, reply) {
       try {
-        achievement = JSON.parse(reply);
+        var achievement = JSON.parse(reply);
         achievement[index] = 1;
         achievement = JSON.stringify(achievement);
         client.hset("u:" + name, "achievement", achievement);
+      } catch (err) {}
+    });
+  },
+  foundNanoPotion: function (name) {
+    log.info("Found NanoPotion: " + name);
+    client.hget("u:" + name, "nanoPotions", function (err, reply) {
+      try {
+        if (reply) {
+          client.hincrby("u:" + name, "nanoPotions", 1);
+        } else {
+          client.hset("u:" + name, "nanoPotions", 1);
+        }
+      } catch (err) {}
+    });
+  },
+  foundGem: function (name, index) {
+    log.info("Found Gem: " + name + " " + index + 1);
+    client.hget("u:" + name, "gems", function (err, reply) {
+      try {
+        var gems = reply ? JSON.parse(reply) : new Array(GEM_COUNT).fill(0);
+        gems[index] = 1;
+        gems = JSON.stringify(gems);
+        client.hset("u:" + name, "gems", gems);
       } catch (err) {}
     });
   },

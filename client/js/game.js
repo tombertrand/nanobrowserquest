@@ -179,6 +179,10 @@ define([
         "item-goldenarmor",
         "item-flask",
         "item-nanopotion",
+        "item-gemruby",
+        "item-gememerald",
+        "item-gemamethyst",
+        "item-gemtopaz",
         "item-cake",
         "item-burger",
         "morningstar",
@@ -395,34 +399,61 @@ define([
           },
           nano: 7,
         },
-        HOT_SPOT: {
+        NYAN: {
           id: 16,
+          name: "Nyan Cat",
+          desc: "Find the Nyan cat",
+          nano: 3,
+        },
+        HOT_SPOT: {
+          id: 17,
           name: "Hot Spot",
           desc: "Enter the volcanic mountains",
           nano: 3,
         },
+        SPECTRE_COLLECTOR: {
+          id: 18,
+          name: "No Fear",
+          desc: "Kill 10 spectres",
+          isCompleted: function () {
+            return self.storage.getSpectreCount() >= 10;
+          },
+          nano: 8,
+        },
+        GEM_HUNTER: {
+          id: 19,
+          name: "Gem Hunter",
+          desc: "Collect all the hidden gems",
+          nano: 8,
+        },
+        NANO_POTIONS: {
+          id: 20,
+          name: "Lucky Find",
+          desc: "Collect 5 NANO potions",
+          nano: 8,
+        },
         HERO: {
-          id: 17,
+          id: 21,
           name: "Hero",
           desc: "Defeat the final boss to get the payout",
-          nano: 50,
+          nano: 25,
         },
         FOXY: {
-          id: 18,
+          id: 22,
           name: "Foxy",
           desc: "Find the Firefox costume",
           hidden: true,
           nano: 2,
         },
         FOR_SCIENCE: {
-          id: 19,
+          id: 23,
           name: "For Science",
           desc: "Enter into a portal",
           hidden: true,
           nano: 4,
         },
         RICKROLLD: {
-          id: 20,
+          id: 24,
           name: "Rickroll'd",
           desc: "Take some singing lessons",
           hidden: true,
@@ -801,7 +832,7 @@ define([
           self.loadAudio();
 
           self.initMusicAreas();
-          self.initAchievements();
+          // self.initAchievements();
           self.initCursors();
           self.initAnimations();
           self.initShadows();
@@ -945,6 +976,8 @@ define([
         experience,
         achievement,
         hash,
+        nanoPotions,
+        gems,
       }) {
         log.info("Received player ID from server : " + id);
         self.player.id = id;
@@ -972,7 +1005,10 @@ define([
         self.resetCamera();
         self.updatePlateauMode();
         self.audioManager.updateMusic();
-        // self.initAchievements();
+        self.initAchievements();
+
+        self.player.nanoPotions = nanoPotions;
+        self.player.gems = gems;
 
         self.addEntity(self.player);
         self.player.dirtyRect = self.renderer.getEntityBoundingRect(self.player);
@@ -980,6 +1016,9 @@ define([
         setTimeout(function () {
           self.tryUnlockingAchievement("STILL_ALIVE");
         }, 1500);
+
+        self.app.updateNanoPotions(nanoPotions);
+        self.app.updateGems(gems);
 
         self.storage.initPlayer(self.player.name, self.player.account);
         self.storage.savePlayer(
@@ -1691,14 +1730,13 @@ define([
           if (kind === Types.Entities.RAT) {
             self.storage.incrementRatCount();
             self.tryUnlockingAchievement("ANGRY_RATS");
-          }
-
-          if (kind === Types.Entities.SKELETON || kind === Types.Entities.SKELETON2) {
+          } else if (kind === Types.Entities.SKELETON || kind === Types.Entities.SKELETON2) {
             self.storage.incrementSkeletonCount();
             self.tryUnlockingAchievement("SKULL_COLLECTOR");
-          }
-
-          if (kind === Types.Entities.BOSS) {
+          } else if (kind === Types.Entities.SPECTRE) {
+            self.storage.incrementSpectreCount();
+            self.tryUnlockingAchievement("SPECTRE_COLLECTOR");
+          } else if (kind === Types.Entities.BOSS) {
             self.tryUnlockingAchievement("HERO").then(() => {
               self.client.sendRequestPayout();
             });
@@ -2035,9 +2073,12 @@ define([
           this.destroyBubble(npc.id);
           this.audioManager.playSound("npc-end");
         }
+
         this.tryUnlockingAchievement("SMALL_TALK");
 
-        if (npc.kind === Types.Entities.RICK) {
+        if (npc.kind === Types.Entities.NYAN) {
+          this.tryUnlockingAchievement("NYAN");
+        } else if (npc.kind === Types.Entities.RICK) {
           this.tryUnlockingAchievement("RICKROLLD");
         }
       }
@@ -3099,23 +3140,21 @@ define([
 
         if (item.type === "armor") {
           this.tryUnlockingAchievement("FAT_LOOT");
-        }
-
-        if (item.type === "weapon") {
+        } else if (item.type === "weapon") {
           this.tryUnlockingAchievement("A_TRUE_WARRIOR");
-        }
-
-        if (item.kind === Types.Entities.CAKE) {
+        } else if (item.kind === Types.Entities.CAKE) {
           this.tryUnlockingAchievement("FOR_SCIENCE");
-        }
-
-        if (item.kind === Types.Entities.FIREPOTION) {
+        } else if (item.kind === Types.Entities.FIREPOTION) {
           this.tryUnlockingAchievement("FOXY");
           this.audioManager.playSound("firefox");
-        }
-
-        if (item.kind === Types.Entities.NANOPOTION) {
-          this.tryUnlockingAchievement("NANO_POTION");
+        } else if (item.kind === Types.Entities.NANOPOTION) {
+          this.tryUnlockingAchievement("NANO_POTIONS");
+          this.app.updateNanoPotions(this.player.nanoPotions);
+        } else if (Types.Entities.Gems.includes(item.kind)) {
+          this.app.updateGems(this.player.gems);
+          if (!this.player.gems.some(found => !found)) {
+            this.tryUnlockingAchievement("GEM_HUNTER");
+          }
         }
 
         if (Types.isHealingItem(item.kind)) {

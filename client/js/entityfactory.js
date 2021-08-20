@@ -130,6 +130,22 @@ define(['mobs', 'items', 'npcs', 'warrior', 'chest'], function(Mobs, Items, NPCs
         return new Items.NanoPotion(id);
     };
 
+    EntityFactory.builders[Types.Entities.GEMRUBY] = function(id) {
+        return new Items.GemRuby(id);
+    };
+
+    EntityFactory.builders[Types.Entities.GEMEMERALD] = function(id) {
+        return new Items.GemEmerald(id);
+    };
+
+    EntityFactory.builders[Types.Entities.GEMAMETHYST] = function(id) {
+        return new Items.GemAmethyst(id);
+    };
+
+    EntityFactory.builders[Types.Entities.GEMTOPAZ] = function(id) {
+        return new Items.GemTopaz(id);
+    };
+
     EntityFactory.builders[Types.Entities.FIREPOTION] = function(id) {
         return new Items.FirePotion(id);
     };

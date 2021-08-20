@@ -25,11 +25,12 @@ define(function () {
           unlocked: [],
           ratCount: 0,
           skeletonCount: 0,
+          spectreCount: 0,
           totalKills: 0,
           totalDmg: 0,
           totalRevives: 0,
         },
-        achievement: new Array(20).fill(0),
+        achievement: new Array(24).fill(0),
       };
     },
 
@@ -154,6 +155,22 @@ define(function () {
     incrementSkeletonCount: function () {
       if (this.data.achievements.skeletonCount < 10) {
         this.data.achievements.skeletonCount++;
+        this.save();
+      }
+    },
+
+    // Spectre Collector
+    getSpectreCount: function () {
+      return this.data.achievements.spectreCount;
+    },
+
+    incrementSpectreCount: function () {
+      if (!this.data.achievements.spectreCount) {
+        this.data.achievements.spectreCount = 0;
+      }
+
+      if (this.data.achievements.spectreCount < 10) {
+        this.data.achievements.spectreCount++;
         this.save();
       }
     },

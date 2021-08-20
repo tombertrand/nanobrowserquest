@@ -86,26 +86,46 @@ module.exports = function processMap(json, options) {
                 log.info("** Processing map tileset properties...");
 
                 // iterate through tileset tile properties
-                _.each(tileset.tileproperties, function(value, name) {
-                    var tileId = parseInt(name, 10) + 1;
+                // _.each(tileset.tileproperties, function(value, name) {
+                //     var tileId = parseInt(name, 10) + 1;
+                //     log.info("*** Processing Tile ID " + tileId);
+
+                //     // iterate through individual properties
+                //     _.each(value, function(value, name) {
+                //         handleTileProp(name, (isNumber(parseInt(value, 10))) ? parseInt(value, 10) : value, tileId);
+                //     });
+                // });
+
+                _.each(tileset.tiles, function({ id, properties}) {
+                    var tileId = parseInt(id, 10) + 1;
+
                     log.info("*** Processing Tile ID " + tileId);
 
-                    // iterate through individual properties
-                    _.each(value, function(value, name) {
+                    var newProperties = properties.reduce((acc, property) => { acc[property.name] = property.value; return acc }, {});
+
+                     _.each(newProperties, function(value, name) {
                         handleTileProp(name, (isNumber(parseInt(value, 10))) ? parseInt(value, 10) : value, tileId);
                     });
-                });
+
+                })
+                
             }
             else if (tileSetName === "mobs" && mode === "server") {
                 log.info("** Processing static entity properties...");
                 mobsFirstGid = tileset.firstgid;
 
+                _.each(tileset.tiles, function({ id, properties}) {
+                    var tileId = parseInt(id, 10) + 1;
+                    log.info("*** Processing Entity ID " + tileId + " type " + properties[0].value);
+                    staticEntities[tileId] = properties[0].value;
+                })
+
                 // iterate through tileset tile properties
-                _.each(tileset.tileproperties, function(value, name) {
-                   var tileId = parseInt(name, 10) + 1;
-                    log.info("*** Processing Entity ID " + tileId + " type " + value.type);
-                    staticEntities[tileId] = value.type;
-                });
+                // _.each(tileset.tileproperties, function(value, name) {
+                //    var tileId = parseInt(name, 10) + 1;
+                //     log.info("*** Processing Entity ID " + tileId + " type " + value.type);
+                //     staticEntities[tileId] = value.type;
+                // });
             }
         });
     } else {
@@ -132,7 +152,7 @@ module.exports = function processMap(json, options) {
                 }
 
                 // iterate through the door properties
-                var doorProperties = doors[j].properties;
+                var doorProperties = doors[j].properties.reduce((acc, property) => { acc[property.name] = property.value; return acc }, {});
                 _.each(doorProperties, function(value, name) {
                     map.doors[j]['t'+name] = (isNumber(parseInt(value, 10))) ? parseInt(value, 10) : value;
                 });
@@ -146,7 +166,7 @@ module.exports = function processMap(json, options) {
             // iterate through areas
             for (var j = 0; j < areas.length; j += 1) {
                 if(areas[j].properties) {
-                    var nb = parseInt(areas[j].properties.nb, 10);
+                    var nb = parseInt(areas[j].properties[0].value, 10);
                 }
 
                 map.roamingAreas[j] = {
@@ -173,6 +193,8 @@ module.exports = function processMap(json, options) {
                     w: area.width / map.tilesize,
                     h: area.height / map.tilesize
                 };
+
+                area.properties = area.properties.reduce((acc, property) => { acc[property.name] = property.value; return acc }, {});
 
                 // get items
                 chestArea['i'] = _.map(area.properties.items.split(','), function(name) {
@@ -201,6 +223,8 @@ module.exports = function processMap(json, options) {
                     y: chest.y / map.tilesize
                 }
 
+                chest.properties = chest.properties.reduce((acc, property) => { acc[property.name] = property.value; return acc }, {});
+
                 // get items
                 newChest['i'] = _.map(chest.properties.items.split(','), function(name) {
                     return Types.getKindFromString(name);
@@ -221,7 +245,7 @@ module.exports = function processMap(json, options) {
                     y: music.y / map.tilesize,
                     w: music.width / map.tilesize,
                     h: music.height / map.tilesize,
-                    id: music.properties.id
+                    id: music.properties[0].value
                 };
 
                 map.musicAreas.push(musicArea);
