@@ -3148,8 +3148,10 @@ define([
           this.tryUnlockingAchievement("FOXY");
           this.audioManager.playSound("firefox");
         } else if (item.kind === Types.Entities.NANOPOTION) {
-          this.tryUnlockingAchievement("NANO_POTIONS");
           this.app.updateNanoPotions(this.player.nanoPotions);
+          if (this.player.nanoPotions >= 5) {
+            this.tryUnlockingAchievement("NANO_POTIONS");
+          }
         } else if (Types.Entities.Gems.includes(item.kind)) {
           this.app.updateGems(this.player.gems);
           if (!this.player.gems.some(found => !found)) {
