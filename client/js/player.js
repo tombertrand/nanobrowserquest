@@ -197,7 +197,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         return "Blazing Sword";
       }
       if (this.weaponName === "goldensword") {
-        return "Ultimate Sword";
+        return "Golden Sword";
       }
 
       return this.weaponName;

@@ -97,6 +97,12 @@ define(["npc"], function (Npc) {
         this._super(id, Types.Entities.OCTOCAT, 1);
       },
     }),
+
+    Anvil: Npc.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.ANVIL, 1);
+      },
+    }),
   };
 
   return NPCs;

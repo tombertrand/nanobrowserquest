@@ -119,20 +119,25 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                                 <span class="right-ornament"></span>
                             </h1>
                             <br />
-                            Nano is a feeless, instant, secure and green cryptocurrency,
-                            <a href="https://nanolooker.com/what-is-nano" target="_blank">learn more</a>.
-                            You will be earning a small payout for completing the game!
-                            You can create a free wallet by downloading a mobile wallet such as Natrium 
-                            (<a href="https://itunes.apple.com/us/app/natrium/id1451425707?ls=1&mt=8" target="_blank">iOS</a> and 
-                            <a href="https://play.google.com/store/apps/details?id=co.banano.natriumwallet" target="_blank">Android</a>) or
-                            Nalli (<a href="https://apps.apple.com/app/id1515601975" target="_blank">iOS</a> and 
-                            <a href="https://play.google.com/store/apps/details?id=fi.heimo.nalli" target="_blank">Android</a>)
-                            or by using <a href="https://nault.cc" target="_blank">Nault</a> (web-based).
-
-                            <br />
-                            <br />
-                            Once your wallet is created, paste your public address in the "nano_ Account" field and make sure to backup your seed!
-                            <br />
+                            <div class="createaccount-instructions">
+                                Nano is a feeless, instant, secure and green cryptocurrency,
+                                <a href="https://nanolooker.com/what-is-nano" target="_blank">learn more</a>.
+                                You will be earning a small payout for completing the game!
+                                You can create a free wallet by downloading a mobile wallet such as Natrium
+                                (<a href="https://itunes.apple.com/us/app/natrium/id1451425707?ls=1&mt=8" target="_blank">iOS</a> and
+                                <a href="https://play.google.com/store/apps/details?id=co.banano.natriumwallet" target="_blank">Android</a>) or
+                                Nalli (<a href="https://apps.apple.com/app/id1515601975" target="_blank">iOS</a> and
+                                <a href="https://play.google.com/store/apps/details?id=fi.heimo.nalli" target="_blank">Android</a>)
+                                or by using <a href="https://nault.cc" target="_blank">Nault</a> (web-based).
+                                <br />
+                                <br />
+                                Once your wallet is created, you'll get a your public address starting with "nano_", this address can be shared as a way to receive funds.
+                                <br />
+                                <br />
+                                You'll also get a Nano seed / Nano mnemonic phrase.
+                                <strong>Create a backup and NEVER share your seed / mnemonic phrase with anyone, they are the keys to your funds.</strong>
+                                If they are lost you will lose access to your funds forever.
+                            </div>
                             <br />
                             <div id="create-new-account-ok">
                                 <span class="link">Ok</span>
@@ -312,12 +317,34 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
      	               <span class="right-ornament"></span>
 	                </h1>
 	                <ul>
-	                   <li><span class="icon"></span>Left click or tap to move, attack and pick up items. Hold SHIFT to attack another player.</li>
-	                   <li><span class="icon"></span>Press ENTER to chat.</li>
-	                   <li><span class="icon"></span>Your character is automatically saved as you play. The blue line on the right is your exp bar.</li>
+	                   <li><span class="icon"></span>Left click or tap to move, attack and pick up items.</li>
+	                   <li><span class="icon"></span>Press ENTER to chat with other players.</li>
+	                   <li><span class="icon"></span>Your character is automatically saved as you play.</li>
+	                </ul>
+                    <!-- <p>- click anywhere to close -</p> -->
+		        </article>
+                <!-- <article id="instructions-advanced" class="clickable">
+		            <div class="close"></div>
+		            <h1>
+     	               <span class="left-ornament"></span>
+     	               Advanced instructions
+     	               <span class="right-ornament"></span>
+	                </h1>
+	                <ul>
+	                    <li>You get a base 60 hp, 15 hp per armor class and 6 hp per level.</li>
+                        <li>You can upgrade any weapon / armor up to +5, breaking your item will reduce its efficiency by 25%.</li>
+                        <li>Upgrade chances: +1 95%, +2 85%, +3 60%, +4 40%, +5 20%.</li>
+                        <li>
+                            Drop chances:
+                            <ul>
+                                <li>Nano potion 3% on all mobs above level 3</li>
+                                <li>Upgrade scroll 2% on all mobs above level 3</li>
+                                <li>Superior upgrade scrolls 0.5% on mobs level 10 and above</li>
+                            </ul>
+                        </li>
 	                </ul>
 	                    <p>- click anywhere to close -</p>
-		        </article>
+		        </article> -->
 		        <article id="achievements" class="page1 clickable">
 		            <div class="close"></div>
 		            <div id="achievements-wrapper">
@@ -503,9 +530,6 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 		    <div id="privacy-link" class="clickable">
 		      <span class="dash">&ndash;</span> <span id="toggle-legal">Privacy</span>
 		    </div>
-		    <div id="legal-link" class="clickable">
-		      <span class="dash">&ndash;</span> <a class="clickable" target="_blank" href="https://www.mozilla.org/en-US/about/legal.html">Legal notices</a>
-		    </div>
 		    <div id="credits-link" class="clickable">
 		      <span class="dash">&ndash;</span> <span id="toggle-credits">Credits</span>
 		    </div>
@@ -530,7 +554,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 
         <div id="resize-check"></div>
 
-        <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/8.0.2/bignumber.min.js" integrity="sha512-7UzDjRNKHpQnkh1Wf1l6i/OPINS9P2DDzTwQNX79JxfbInCXGpgI1RPb3ZD+uTP3O5X7Ke4e0+cxt2TxV7n0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
         <script type="text/javascript">

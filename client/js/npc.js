@@ -153,6 +153,12 @@ define(['character'], function(Character) {
             'Check out <a target="_blank" href="https://github.com/browserquest/BrowserQuest">the repository on GitHub</a>'
         ],
 
+        "anvil": [
+            "A mysterious object!",
+            "What could be its purpose ...",
+            'Magic is coming out of it.'
+        ],
+
         "coder": [
             "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",
             "That's the beauty of HTML5!",

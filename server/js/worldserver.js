@@ -906,7 +906,7 @@ module.exports = World = cls.Class.extend({
 
         if (group) {
           if (
-            !_.include(group.entities, entity.id) &&
+            !_.includes(group.entities, entity.id) &&
             //  Items dropped off of mobs are handled differently via DROP messages. See handleHurtEntity.
             (!isItem || isChest || (isItem && !isDroppedItem))
           ) {

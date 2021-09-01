@@ -62,7 +62,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
       });
 
       $("#completedbutton").click(function () {
-        let isOpened = $("#completed").hasClass("active");
+        let isOpened = $("#completed").hasClass("active") || $("#parchment").hasClass("about");
         $("#completed").removeClass("boss-check");
 
         app.hideWindows();
@@ -73,15 +73,16 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
             app.toggleAbout();
           }
         }
+
         // if (app.blinkInterval) {
         //   clearInterval(app.blinkInterval);
         // }
         // $(this).removeClass("blink");
       });
 
-      $("#instructions").click(function () {
-        app.hideWindows();
-      });
+      // $("#instructions").click(function () {
+      //   app.hideWindows();
+      // });
 
       $("#playercount").click(function () {
         app.togglePopulationInfo();
@@ -573,6 +574,9 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
               game.makePlayerAttackNext();
               break;
             case Types.Keys.I:
+              $("#healthbar").click();
+              break;
+            case Types.Keys.Q:
               $("#achievementsbutton").click();
               break;
             case Types.Keys.H:
@@ -655,6 +659,9 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
 
       $("#mutebutton").click(function () {
         game.audioManager.toggle();
+
+        
+
       });
 
       $(document).bind("keydown", function (e) {

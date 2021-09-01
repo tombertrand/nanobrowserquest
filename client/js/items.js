@@ -34,7 +34,7 @@ define(['item'], function(Item) {
         GoldenSword: Item.extend({
             init: function(id) {
                 this._super(id, Types.Entities.GOLDENSWORD, "weapon");
-                this.lootMessage = "You pick up the ultimate sword";
+                this.lootMessage = "You pick up a golden sword";
             },
         }),
 

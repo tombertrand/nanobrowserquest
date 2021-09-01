@@ -196,7 +196,8 @@ define(["jquery", "storage", "util"], function ($, Storage) {
     start: function () {
       this.hideIntro();
       $("body").addClass("started");
-      if (self.firstTimePlaying) {
+
+      if (this.firstTimePlaying) {
         this.toggleInstructions();
       }
     },

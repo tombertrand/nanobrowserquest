@@ -208,10 +208,6 @@ define(['mobs', 'items', 'npcs', 'warrior', 'chest'], function(Mobs, Items, NPCs
         return new NPCs.Sorcerer(id);
     };
 
-    EntityFactory.builders[Types.Entities.OCTOCAT] = function(id) {
-        return new NPCs.Octocat(id);
-    };
-
     EntityFactory.builders[Types.Entities.BEACHNPC] = function(id) {
         return new NPCs.BeachNpc(id);
     };
@@ -226,6 +222,14 @@ define(['mobs', 'items', 'npcs', 'warrior', 'chest'], function(Mobs, Items, NPCs
 
     EntityFactory.builders[Types.Entities.LAVANPC] = function(id) {
         return new NPCs.LavaNpc(id);
+    };
+
+    EntityFactory.builders[Types.Entities.OCTOCAT] = function(id) {
+        return new NPCs.Octocat(id);
+    };
+
+    EntityFactory.builders[Types.Entities.ANVIL] = function(id) {
+        return new NPCs.Anvil(id);
     };
 
     return EntityFactory;

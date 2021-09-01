@@ -632,6 +632,7 @@ footer, header, hgroup, menu, nav, section {
         #chatinput { padding: 6px 12px; }
         #completed p { font-size: 24px !important; }
         #completed.boss-check .link { font-size: 34px; }
+        .createaccount-instructions { font-size: 25px; }
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
@@ -813,6 +814,7 @@ footer, header, hgroup, menu, nav, section {
         #completed.boss-check .link { font-size: 18px; }
         #nano {margin-left:-200px;margin-top:-20px;scale:0.7;}
         #completedbutton .nano-logo { width: 40px; height: 18.5px; }
+        .createaccount-instructions { font-size: 17px; }
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled #population div, .upscaled #player div{background-image:url('../img/2/barsheet.png');}
@@ -1001,6 +1003,7 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton .nano-logo { width: 20px; height: 9px; }
         #text-window { width: 60%; }
         .world { font-size: 12px;}
+        .createaccount-instructions { font-size: 8px; }
 
         canvas {image-rendering:optimizeSpeed;}
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
@@ -1181,6 +1184,7 @@ footer, header, hgroup, menu, nav, section {
 	@media screen and (max-width: 800px) {
         #text-window { width: 60%; }
         #completedbutton .nano-logo { width: 40px; height: 18.5px; }
+        .createaccount-instructions { font-size: 8px; }
 
         body {border-top:0px;}
         .intro #container, .game #logo, .game #parchment {display:none;}

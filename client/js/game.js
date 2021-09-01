@@ -148,6 +148,7 @@ define([
         "priest",
         "sorcerer",
         "octocat",
+        "anvil",
         "beachnpc",
         "forestnpc",
         "desertnpc",
@@ -532,12 +533,12 @@ define([
       this.spritesets[0] = {};
       this.spritesets[1] = {};
       this.spritesets[2] = {};
-      _.map(this.spriteNames, this.loadSprite, this);
+      _.map(this.spriteNames, this.loadSprite.bind(this));
     },
 
     spritesLoaded: function () {
       if (
-        _.any(this.sprites, function (sprite) {
+        _.some(this.sprites, function (sprite) {
           return !sprite.isLoaded;
         })
       ) {
@@ -832,7 +833,6 @@ define([
           self.loadAudio();
 
           self.initMusicAreas();
-          // self.initAchievements();
           self.initCursors();
           self.initAnimations();
           self.initShadows();
@@ -946,12 +946,12 @@ define([
       });
 
       this.client.onEntityList(function (list) {
-        var entityIds = _.pluck(self.entities, "id"),
+        var entityIds = _.map(self.entities, "id"),
           knownIds = _.intersection(entityIds, list),
           newIds = _.difference(list, knownIds);
 
         self.obsoleteEntities = _.reject(self.entities, function (entity) {
-          return _.include(knownIds, entity.id) || entity.id === self.player.id;
+          return _.includes(knownIds, entity.id) || entity.id === self.player.id;
         });
 
         // Destroy entities outside of the player's zone group
@@ -1094,6 +1094,7 @@ define([
           }
 
           if (self.isZoningTile(self.player.gridX, self.player.gridY)) {
+            self.isCharacterZoning = true;
             self.enqueueZoningFrom(self.player.gridX, self.player.gridY);
           }
 
@@ -1300,12 +1301,12 @@ define([
         });
 
         self.client.onSpawnItem(function (item, x, y) {
-          log.info("Spawned " + Types.getKindAsString(item.kind) + " (" + item.id + ") at " + x + ", " + y);
+          // log.info("Spawned " + Types.getKindAsString(item.kind) + " (" + item.id + ") at " + x + ", " + y);
           self.addItem(item, x, y);
         });
 
         self.client.onSpawnChest(function (chest, x, y) {
-          log.info("Spawned chest (" + chest.id + ") at " + x + ", " + y);
+          // log.info("Spawned chest (" + chest.id + ") at " + x + ", " + y);
           chest.setSprite(self.sprites[chest.getSpriteName()]);
           chest.setGridPosition(x, y);
           chest.setAnimation("idle_down", 150);
@@ -1334,16 +1335,16 @@ define([
 
                 self.addEntity(entity);
 
-                log.debug(
-                  "Spawned " +
-                    Types.getKindAsString(entity.kind) +
-                    " (" +
-                    entity.id +
-                    ") at " +
-                    entity.gridX +
-                    ", " +
-                    entity.gridY,
-                );
+                // log.debug(
+                //   "Spawned " +
+                //     Types.getKindAsString(entity.kind) +
+                //     " (" +
+                //     entity.id +
+                //     ") at " +
+                //     entity.gridX +
+                //     ", " +
+                //     entity.gridY,
+                // );
 
                 if (entity instanceof Character) {
                   entity.onBeforeStep(function () {
@@ -1916,7 +1917,6 @@ define([
       if (attacker.hasTarget()) {
         attacker.removeTarget();
       }
-
       attacker.engage(target);
 
       if (attacker.id !== this.playerId) {
@@ -2073,7 +2073,6 @@ define([
           this.destroyBubble(npc.id);
           this.audioManager.playSound("npc-end");
         }
-
         this.tryUnlockingAchievement("SMALL_TALK");
 
         if (npc.kind === Types.Entities.NYAN) {
@@ -2417,7 +2416,7 @@ define([
       this.processInput(pos);
     },
 
-    isProcessInputDisabled: false,
+    isCharacterZoning: false,
 
     /**
      * Processes game logic when the user triggers a click/touch event during the game.
@@ -2425,17 +2424,9 @@ define([
     processInput: function (pos) {
       var entity;
 
-      // Add a timeout before re-enabling the character movements, it happened that a movement
-      // was started while a zoning was happening so the player ended up being in the wrong zone
-      // and couldn't move anymore. (The freeze bug)
-      if (this.isZoning()) {
-        this.isProcessInputDisabled = true;
-      }
-
       if (
         this.started &&
         this.player &&
-        !this.isProcessInputDisabled &&
         !this.isZoning() &&
         !this.isZoningTile(this.player.nextGridX, this.player.nextGridY) &&
         !this.player.isDead &&
@@ -2710,6 +2701,7 @@ define([
 
     endZoning: function () {
       this.currentZoning = null;
+      this.isCharacterZoning = false;
       this.resetZone();
       this.zoningQueue.shift();
 
@@ -2717,14 +2709,10 @@ define([
         var pos = this.zoningQueue[0];
         this.startZoningFrom(pos.x, pos.y);
       }
-
-      setTimeout(() => {
-        this.isProcessInputDisabled = false;
-      }, 250);
     },
 
     isZoning: function () {
-      return !_.isNull(this.currentZoning);
+      return !_.isNull(this.currentZoning) || this.isCharacterZoning;
     },
 
     resetZone: function () {
@@ -3015,7 +3003,7 @@ define([
           "Removed " +
             nb +
             " entities: " +
-            _.pluck(
+            _.map(
               _.reject(this.obsoleteEntities, function (id) {
                 return id === self.player.id;
               }),
@@ -3165,7 +3153,7 @@ define([
           this.audioManager.playSound("loot");
         }
 
-        if (item.wasDropped && !_(item.playersInvolved).include(this.playerId)) {
+        if (item.wasDropped && !_(item.playersInvolved).includes(this.playerId)) {
           this.tryUnlockingAchievement("NINJA_LOOT");
         }
       } catch (e) {

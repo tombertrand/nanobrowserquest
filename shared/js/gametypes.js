@@ -101,6 +101,7 @@ Types = {
     GUARD: 40,
     KING: 41,
     OCTOCAT: 42,
+    ANVIL: 72,
     VILLAGEGIRL: 43,
     VILLAGER: 44,
     PRIEST: 45,
@@ -123,6 +124,8 @@ Types = {
     MORNINGSTAR: 64,
     AXE: 65,
     BLUESWORD: 66,
+    DIAMONDSWORD: 73,
+    KRYPTONITESWORD: 74,
   },
 
   Orientations: {
@@ -143,6 +146,7 @@ Types = {
     S: 83,
     D: 68,
     SPACE: 32,
+    Q: 81,
     I: 73,
     H: 72,
     M: 77,
@@ -229,11 +233,12 @@ var kinds = {
   nyan: [Types.Entities.NYAN, "npc"],
   sorcerer: [Types.Entities.SORCERER, "npc"],
   agent: [Types.Entities.AGENT, "npc"],
-  octocat: [Types.Entities.OCTOCAT, "npc"],
   beachnpc: [Types.Entities.BEACHNPC, "npc"],
   forestnpc: [Types.Entities.FORESTNPC, "npc"],
   desertnpc: [Types.Entities.DESERTNPC, "npc"],
   lavanpc: [Types.Entities.LAVANPC, "npc"],
+  octocat: [Types.Entities.OCTOCAT, "npc"],
+  anvil: [Types.Entities.ANVIL, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];

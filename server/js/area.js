@@ -27,7 +27,7 @@ var Area = cls.Class.extend({
     },
 
     removeFromArea: function (entity) {
-        var i = _.indexOf(_.pluck(this.entities, 'id'), entity.id);
+        var i = _.indexOf(_.map(this.entities, 'id'), entity.id);
         this.entities.splice(i, 1);
 
         if (this.isEmpty() && this.hasCompletelyRespawned && this.emptyCallback) {
@@ -56,7 +56,7 @@ var Area = cls.Class.extend({
     },
 
     isEmpty: function () {
-        return !_.any(this.entities, function (entity) { return !entity.isDead; });
+        return !_.some(this.entities, function (entity) { return !entity.isDead; });
     },
 
     isFull: function () {

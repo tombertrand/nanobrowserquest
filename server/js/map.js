@@ -86,7 +86,7 @@ var Map = cls.Class.extend({
             for (var j, i = 0; i < this.height; i++) {
                 this.grid[i] = [];
                 for (j = 0; j < this.width; j++) {
-                    if (_.include(this.collisions, tileIndex)) {
+                    if (_.includes(this.collisions, tileIndex)) {
                         this.grid[i][j] = 1;
                     } else {
                         this.grid[i][j] = 0;
@@ -110,7 +110,7 @@ var Map = cls.Class.extend({
     },
     isPVP: function(x,y){
         var area = null;
-        area = _.detect(this.pvpAreas, function(area){
+        area = _.find(this.pvpAreas, function(area){
             return area.contains(x,y);
         });
         if(area){
@@ -159,7 +159,7 @@ var Map = cls.Class.extend({
         // groups connected via doors
         _.each(this.connectedGroups[id], function (position) {
             // don't add a connected group if it's already part of the surrounding ones.
-            if (!_.any(list, function(groupPos) { return equalPositions(groupPos, position); })) {
+            if (!_.some(list, function(groupPos) { return equalPositions(groupPos, position); })) {
                 list.push(position);
             }
         });

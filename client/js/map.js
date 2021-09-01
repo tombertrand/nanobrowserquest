@@ -222,7 +222,7 @@ define(['jquery', 'area'], function($, Area) {
             for(var j, i = 0; i < this.height; i++) {
                 this.plateauGrid[i] = [];
                 for(j = 0; j < this.width; j++) {
-                    if(_.include(this.plateau, tileIndex)) {
+                    if(_.includes(this.plateau, tileIndex)) {
                         this.plateauGrid[i][j] = 1;
                     } else {
                         this.plateauGrid[i][j] = 0;
@@ -300,7 +300,7 @@ define(['jquery', 'area'], function($, Area) {
         },
 
         getCurrentCheckpoint: function(entity) {
-            return _.detect(this.checkpoints, function(checkpoint) {
+            return _.find(this.checkpoints, function(checkpoint) {
                 return checkpoint.contains(entity);
             });
         }

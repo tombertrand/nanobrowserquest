@@ -152,7 +152,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         } else {
           data = JSON.parse(message);
         }
-        log.debug("data: " + message);
+        // log.debug("data: " + message);
 
         if (data instanceof Array) {
           if (data[0] instanceof Array) {

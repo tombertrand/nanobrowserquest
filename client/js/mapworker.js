@@ -39,7 +39,7 @@ function generatePlateauGrid() {
     for(var j, i = 0; i < mapData.height; i++) {
         mapData.plateauGrid[i] = [];
         for(j = 0; j < mapData.width; j++) {
-            if(_.include(mapData.plateau, tileIndex)) {
+            if(_.includes(mapData.plateau, tileIndex)) {
                 mapData.plateauGrid[i][j] = 1;
             } else {
                 mapData.plateauGrid[i][j] = 0;

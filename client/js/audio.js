@@ -108,7 +108,7 @@ define(['area'], function(Area) {
             if(!this.sounds[name]) {
                 return null;
             }
-            var sound = _.detect(this.sounds[name], function(sound) {
+            var sound = _.find(this.sounds[name], function(sound) {
                 return sound.ended || sound.paused;
             });
             if(sound && sound.ended) {
@@ -134,7 +134,7 @@ define(['area'], function(Area) {
 
         getSurroundingMusic: function(entity) {
             var music = null,
-                area = _.detect(this.areas, function(area) {
+                area = _.find(this.areas, function(area) {
                     return area.contains(entity);
                 });
 

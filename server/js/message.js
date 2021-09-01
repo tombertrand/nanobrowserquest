@@ -95,7 +95,7 @@ Messages.Drop = Message.extend({
     this.item = item;
   },
   serialize: function () {
-    var drop = [Types.Messages.DROP, this.mob.id, this.item.id, this.item.kind, _.pluck(this.mob.hatelist, "id")];
+    var drop = [Types.Messages.DROP, this.mob.id, this.item.id, this.item.kind, _.map(this.mob.hatelist, "id")];
 
     return drop;
   },

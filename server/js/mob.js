@@ -39,14 +39,14 @@ var Mob = Character.extend({
   },
 
   hates: function (playerId) {
-    return _.any(this.hatelist, function (obj) {
+    return _.some(this.hatelist, function (obj) {
       return obj.id === playerId;
     });
   },
 
   increaseHateFor: function (playerId, points) {
     if (this.hates(playerId)) {
-      _.detect(this.hatelist, function (obj) {
+      _.find(this.hatelist, function (obj) {
         return obj.id === playerId;
       }).hate += points;
     } else {
