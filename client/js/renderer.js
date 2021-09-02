@@ -101,11 +101,11 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
       this.forecanvas.height = this.canvas.height;
       log.debug("#foreground set to " + this.forecanvas.width + " x " + this.forecanvas.height);
 
-    //   if (this.scale === 2) {
-    //     this.context.scale(0.75, 0.75);
-    //     this.background.scale(0.5, 0.75);
-    //     this.foreground.scale(0.75, 0.75);
-    //   }
+      //   if (this.scale === 2) {
+      //     this.context.scale(0.75, 0.75);
+      //     this.background.scale(0.5, 0.75);
+      //     this.foreground.scale(0.75, 0.75);
+      //   }
     },
 
     initFPS: function () {
@@ -136,8 +136,8 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
     },
 
     drawText: function (text, x, y, centered, color, strokeColor) {
-      var ctx = this.context,
-        strokeSize;
+      var ctx = this.context;
+      var strokeSize;
 
       switch (this.scale) {
         case 1:
@@ -434,11 +434,11 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
 
           if (weapon) {
             var weaponAnimData = weapon.animationData[anim.name],
-              index = frame.index < weaponAnimData.length ? frame.index : frame.index % weaponAnimData.length,
-              wx = weapon.width * index * os,
-              wy = weapon.height * anim.row * os,
-              ww = weapon.width * os,
-              wh = weapon.height * os;
+              index = frame.index < weaponAnimData.length ? frame.index : frame.index % weaponAnimData.length;
+            (wx = weapon.width * index * os),
+              (wy = weapon.height * anim.row * os),
+              (ww = weapon.width * os),
+              (wh = weapon.height * os);
 
             this.context.drawImage(
               weapon.image,
@@ -683,8 +683,8 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
     drawDebugInfo: function () {
       if (this.isDebugInfoVisible) {
         this.drawFPS();
-        //this.drawText("A: " + this.animatedTileCount, 100, 30, false);
-        //this.drawText("H: " + this.highTileCount, 140, 30, false);
+        // this.drawText("A: " + this.animatedTileCount, 100, 30, false);
+        // this.drawText("H: " + this.highTileCount, 140, 30, false);
       }
     },
 

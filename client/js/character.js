@@ -84,7 +84,8 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
 
     turnTo: function (orientation) {
       this.orientation = orientation;
-      this.idle();
+      // @NOTE Removing idle as it prevents the attack animation
+      // this.idle();
     },
 
     setOrientation: function (orientation) {

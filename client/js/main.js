@@ -659,9 +659,6 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
 
       $("#mutebutton").click(function () {
         game.audioManager.toggle();
-
-        
-
       });
 
       $(document).bind("keydown", function (e) {
