@@ -141,6 +141,7 @@ define([
         "king",
         "villagegirl",
         "villager",
+        "carlosmatos",
         "coder",
         "agent",
         "rick",

@@ -115,6 +115,7 @@ Types = {
     DESERTNPC: 53,
     LAVANPC: 54,
     CODER: 55,
+    CARLOSMATOS: 73,
 
     // Weapons
     SWORD1: 60,
@@ -124,8 +125,8 @@ Types = {
     MORNINGSTAR: 64,
     AXE: 65,
     BLUESWORD: 66,
-    DIAMONDSWORD: 73,
-    KRYPTONITESWORD: 74,
+    DIAMONDSWORD: 74,
+    KRYPTONITESWORD: 75,
   },
 
   Orientations: {
@@ -225,6 +226,7 @@ var kinds = {
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
   villager: [Types.Entities.VILLAGER, "npc"],
+  carlosmatos: [Types.Entities.CARLOSMATOS, "npc"],
   coder: [Types.Entities.CODER, "npc"],
   scientist: [Types.Entities.SCIENTIST, "npc"],
   priest: [Types.Entities.PRIEST, "npc"],

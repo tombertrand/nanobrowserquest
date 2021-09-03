@@ -41,6 +41,15 @@ define(['character'], function(Character) {
             "or instead, cook a rat stew."
         ],
 
+        "carlosmatos": [
+            "Hey hey hey!",
+            "Wassa-wassa-wassa-wassa-wassa-wassa-wassa-wassup!",
+            "Bitcoooonnnneeeeeccctttt!!!!",
+            "Hey! You’re gonna lose all your money!",
+            "My wife still doesn't even believe in me",
+            "let me tell you, I love, BITCONNECT!"
+        ],
+
         "agent": [
             "Do not try to bend the sword",
             "That's impossible",
@@ -100,17 +109,7 @@ define(['character'], function(Character) {
             "nyan nyan nyan nyan nyan nyan nyan nyan"
         ],
 
-        "beachnpc": [
-            "lorem ipsum dolor sit amet",
-            "consectetur adipisicing elit, sed do eiusmod tempor"
-        ],
-
         "forestnpc": [
-            "lorem ipsum dolor sit amet",
-            "consectetur adipisicing elit, sed do eiusmod tempor"
-        ],
-
-        "desertnpc": [
             "lorem ipsum dolor sit amet",
             "consectetur adipisicing elit, sed do eiusmod tempor"
         ],

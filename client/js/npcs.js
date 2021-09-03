@@ -36,6 +36,12 @@ define(["npc"], function (Npc) {
       },
     }),
 
+    CarlosMatos: Npc.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.CARLOSMATOS, 1);
+      },
+    }),
+
     Coder: Npc.extend({
       init: function (id) {
         this._super(id, Types.Entities.CODER, 1);
