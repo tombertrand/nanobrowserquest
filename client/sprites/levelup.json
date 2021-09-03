@@ -1,0 +1,12 @@
+{
+	"id": "levelup",
+	"width": 16,
+	"height": 32,
+	"animations": {
+		"levelup": {
+			"length": 4,
+			"row": 0
+		}
+	},
+	"offset_y": -16
+}

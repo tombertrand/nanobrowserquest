@@ -39,7 +39,7 @@ function main(config) {
         if (totalPlayers !== lastTotalPlayers) {
           lastTotalPlayers = totalPlayers;
           _.each(worlds, function (world) {
-            world.updatePopulation(totalPlayers);
+            world.updatePopulation({ totalPlayers });
           });
         }
       });
@@ -83,7 +83,7 @@ function main(config) {
   var onPopulationChange = function () {
     metrics.updatePlayerCounters(worlds, function (totalPlayers) {
       _.each(worlds, function (world) {
-        world.updatePopulation(totalPlayers);
+        world.updatePopulation({ totalPlayers });
       });
     });
     metrics.updateWorldDistribution(getWorldDistribution(worlds));

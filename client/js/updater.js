@@ -257,6 +257,11 @@ define(['character', 'timer'], function(Character, Timer) {
             if(target) {
                 target.update(t);
             }
+
+            var levelup = this.game.levelupAnimation;
+            if(levelup) {
+                levelup.update(t);
+            }
         },
 
         updateAnimatedTiles: function() {

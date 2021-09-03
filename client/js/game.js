@@ -120,6 +120,7 @@ define([
         "sword",
         "loot",
         "target",
+        "levelup",
         "talk",
         "sparks",
         "shadow16",
@@ -271,6 +272,9 @@ define([
 
       this.sparksAnimation = new Animation("idle_down", 6, 0, 16, 16);
       this.sparksAnimation.setSpeed(120);
+
+      this.levelupAnimation = new Animation("idle_down", 4, 0, 16, 16);
+      this.levelupAnimation.setSpeed(50);
     },
 
     initHurtSprites: function () {
@@ -1831,9 +1835,16 @@ define([
           self.chat_callback(entityId, name, message, type);
         });
 
-        self.client.onPopulationChange(function (worldPlayers, totalPlayers, players) {
+        self.client.onPopulationChange(function (worldPlayers, totalPlayers, players, levelupPlayer) {
           if (self.nbplayers_callback) {
             self.nbplayers_callback(worldPlayers, totalPlayers, players);
+          }
+          if (levelupPlayer) {
+            self.entities[levelupPlayer].setLevelup();
+
+            if (levelupPlayer === self.playerId) {
+              self.audioManager.playSound("levelup");
+            }
           }
         });
 

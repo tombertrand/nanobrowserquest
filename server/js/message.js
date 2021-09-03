@@ -135,13 +135,14 @@ Messages.Damage = Message.extend({
 });
 
 Messages.Population = Message.extend({
-  init: function (world, total, players) {
+  init: function (world, total, players, levelupPlayer) {
     this.world = world;
     this.total = total;
     this.players = players;
+    this.levelupPlayer = levelupPlayer;
   },
   serialize: function () {
-    return [Types.Messages.POPULATION, this.world, this.total, this.players];
+    return [Types.Messages.POPULATION, this.world, this.total, this.players, this.levelupPlayer];
   },
 });
 

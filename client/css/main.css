@@ -553,19 +553,19 @@ footer, header, hgroup, menu, nav, section {
     #expbar{
         border-top-left-radius: 2px;
         position: absolute;
-        background-color: rgba(0,0,255,0.35);
+        background-color: rgba(250,188,0,0.5);
         height: 90%;
         margin-left: 0px;
         padding: 0px;
         border: 0px;
         bottom: 8.5%;
         width: 16px;
-        -webkit-box-shadow: inset 1px 1px 3px 1px #373737;
-        box-shadow: inset 1px 1px 3px 1px #373737;
+        -webkit-box-shadow: inset 1px 1px 1px 1px #373737;
+        box-shadow: inset 1px 1px 1px 1px #373737;
     }
 
     #expbar:hover {
-        background-color: rgba(0,0,255,0.5);
+        background-color: rgba(250,188,0,0.8);
     }
 
     #text-window {

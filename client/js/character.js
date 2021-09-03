@@ -38,6 +38,7 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
       this.followingMode = false;
 
       this.inspecting = null;
+      this.isLevelup = false;
     },
 
     clean: function () {
@@ -62,6 +63,13 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
 
     hasShadow: function () {
       return true;
+    },
+
+    setLevelup: function () {
+      this.isLevelup = true;
+      setTimeout(() => {
+        this.isLevelup = false;
+      }, 1500);
     },
 
     animate: function (animation, speed, count, onEndCount) {
