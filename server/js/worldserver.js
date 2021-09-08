@@ -825,10 +825,7 @@ module.exports = World = cls.Class.extend({
       item = null;
 
     //@NOTE 3% chance to drop a NANO potion
-    if (
-      ![Types.Entities.BOSS, Types.Entities.RAT, Types.Entities.CRAB].includes(mob.kind) &&
-      [23, 42, 69].includes(v)
-    ) {
+    if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {
       item = this.addItem(this.createItem(Types.getKindFromString("nanopotion"), mob.x, mob.y));
     } else {
       for (var itemName in drops) {
@@ -1088,7 +1085,7 @@ module.exports = World = cls.Class.extend({
     return counter;
   },
 
-  updatePopulation: function ({ totalPlayers, levelupPlayer }) {
+  updatePopulation: function ({ totalPlayers, levelupPlayer } = {}) {
     this.pushBroadcast(
       new Messages.Population(
         this.playerCount,
