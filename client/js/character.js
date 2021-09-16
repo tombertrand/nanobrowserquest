@@ -569,7 +569,7 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
       var self = this;
 
       this.stopHurting();
-      // @Note directly go for the whiteSprite
+      // @NOTE directly go for the whiteSprite
       this.sprite = this.sprite.whiteSprite;
       this.hurting = setTimeout(this.stopHurting.bind(this), 75);
     },

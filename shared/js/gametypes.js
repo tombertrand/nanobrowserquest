@@ -24,7 +24,7 @@ Types = {
     WHO: 21,
     ZONE: 22,
     DESTROY: 23,
-    HP: 24,
+    STATS: 24,
     BLINK: 25,
     OPEN: 26,
     CHECK: 27,
@@ -36,6 +36,7 @@ Types = {
     BAN_PLAYER: 33,
     REQUEST_PAYOUT: 34,
     NOTIFICATION: 35,
+    INVENTORY: 36,
     GUILDERRORTYPE: {
       DOESNOTEXIST: 1,
       BADNAME: 2,
@@ -96,6 +97,9 @@ Types = {
     GEMAMETHYST: 70,
     GEMTOPAZ: 71,
     CAKE: 39,
+    SCROLLUPGRADELOW: 74,
+    SCROLLUPGRADEMEDIUM: 75,
+    SCROLLUPGRADEHIGH: 76,
 
     // NPCs
     GUARD: 40,
@@ -120,13 +124,11 @@ Types = {
     // Weapons
     SWORD1: 60,
     SWORD2: 61,
-    REDSWORD: 62,
-    GOLDENSWORD: 63,
     MORNINGSTAR: 64,
     AXE: 65,
     BLUESWORD: 66,
-    DIAMONDSWORD: 74,
-    KRYPTONITESWORD: 75,
+    REDSWORD: 62,
+    GOLDENSWORD: 63,
   },
 
   Orientations: {
@@ -148,6 +150,8 @@ Types = {
     D: 68,
     SPACE: 32,
     Q: 81,
+    C: 67,
+    U: 85,
     I: 73,
     H: 72,
     M: 77,
@@ -166,22 +170,39 @@ Types.Entities.Gems = [
   Types.Entities.GEMTOPAZ,
 ];
 
+Types.Entities.Weapons = [
+  Types.Entities.SWORD1,
+  Types.Entities.SWORD2,
+  Types.Entities.MORNINGSTAR,
+  Types.Entities.BLUESWORD,
+  Types.Entities.REDSWORD,
+  Types.Entities.GOLDENSWORD,
+];
+
+Types.Entities.Armors = [
+  Types.Entities.CLOTHARMOR,
+  Types.Entities.LEATHERARMOR,
+  Types.Entities.MAILARMOR,
+  Types.Entities.PLATEARMOR,
+  Types.Entities.REDARMOR,
+  Types.Entities.GOLDENARMOR,
+];
+
 Types.getGemNameFromKind = function (kind) {
-  if (kind === Types.Entities.GEMRUBY) {
-    return "Ruby";
-  } else if (kind === Types.Entities.GEMEMERALD) {
-    return "Emerald";
-  } else if (kind === Types.Entities.GEMAMETHYST) {
-    return "Amethyst";
-  } else if (kind === Types.Entities.GEMTOPAZ) {
-    return "Topaz";
-  }
-  return kind;
+  const gems = {
+    [Types.Entities.GEMRUBY]: "Ruby",
+    [Types.Entities.GEMEMERALD]: "Emerald",
+    [Types.Entities.GEMAMETHYST]: "Amethyst",
+    [Types.Entities.GEMTOPAZ]: "Topaz",
+  };
+
+  return gems[kind] || kind;
 };
 
 var kinds = {
   warrior: [Types.Entities.WARRIOR, "player"],
 
+  // ID, exp, level
   rat: [Types.Entities.RAT, "mob", 3, 2],
   skeleton: [Types.Entities.SKELETON, "mob", 15, 8],
   goblin: [Types.Entities.GOBLIN, "mob", 8, 5],
@@ -196,21 +217,23 @@ var kinds = {
   skeleton2: [Types.Entities.SKELETON2, "mob", 38, 15],
   boss: [Types.Entities.BOSS, "mob", 140, 48],
 
-  sword1: [Types.Entities.SWORD1, "weapon"],
-  sword2: [Types.Entities.SWORD2, "weapon"],
-  axe: [Types.Entities.AXE, "weapon"],
-  redsword: [Types.Entities.REDSWORD, "weapon"],
-  bluesword: [Types.Entities.BLUESWORD, "weapon"],
-  goldensword: [Types.Entities.GOLDENSWORD, "weapon"],
-  morningstar: [Types.Entities.MORNINGSTAR, "weapon"],
+  // kind, type, level, damage
+  sword1: [Types.Entities.SWORD1, "weapon", "Dagger", 1, 1],
+  sword2: [Types.Entities.SWORD2, "weapon", "Sword", 1, 3],
+  axe: [Types.Entities.AXE, "weapon", "Axe", 2, 5],
+  morningstar: [Types.Entities.MORNINGSTAR, "weapon", "Morning Star", 3, 7],
+  bluesword: [Types.Entities.BLUESWORD, "weapon", "Magic Sword", 5, 10],
+  redsword: [Types.Entities.REDSWORD, "weapon", "Blazing Sword", 7, 15],
+  goldensword: [Types.Entities.GOLDENSWORD, "weapon", "Golden Sword", 10, 20],
 
+  // kind, type, level, defense
+  clotharmor: [Types.Entities.CLOTHARMOR, "armor", "Cloth Armor", 1, 1],
+  leatherarmor: [Types.Entities.LEATHERARMOR, "armor", "Leather Armor", 1, 3],
+  mailarmor: [Types.Entities.MAILARMOR, "armor", "Mail Armor", 3, 5],
+  platearmor: [Types.Entities.PLATEARMOR, "armor", "Plate Armor", 5, 10],
+  redarmor: [Types.Entities.REDARMOR, "armor", "Ruby Armor", 7, 15],
+  goldenarmor: [Types.Entities.GOLDENARMOR, "armor", "Golden Armor", 10, 20],
   firefox: [Types.Entities.FIREFOX, "armor"],
-  clotharmor: [Types.Entities.CLOTHARMOR, "armor"],
-  leatherarmor: [Types.Entities.LEATHERARMOR, "armor"],
-  mailarmor: [Types.Entities.MAILARMOR, "armor"],
-  platearmor: [Types.Entities.PLATEARMOR, "armor"],
-  redarmor: [Types.Entities.REDARMOR, "armor"],
-  goldenarmor: [Types.Entities.GOLDENARMOR, "armor"],
 
   flask: [Types.Entities.FLASK, "object"],
   cake: [Types.Entities.CAKE, "object"],
@@ -222,6 +245,9 @@ var kinds = {
   gememerald: [Types.Entities.GEMEMERALD, "object"],
   gemamethyst: [Types.Entities.GEMAMETHYST, "object"],
   gemtopaz: [Types.Entities.GEMTOPAZ, "object"],
+  scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "object", "Upgrade scroll", 1],
+  scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "object", "Upgrade scroll", 5],
+  scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "object", "Superior upgrade scroll", 10],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -249,6 +275,9 @@ var kinds = {
     return kinds[Types.getKindAsString(kind)][2];
   },
   getMobLevel: function (kind) {
+    return kinds[Types.getKindAsString(kind)][3];
+  },
+  getBaseLevel: function (kind) {
     return kinds[Types.getKindAsString(kind)][3];
   },
 };
@@ -463,6 +492,9 @@ Types.getMobExp = function (mobKind) {
 Types.getMobLevel = function (mobKind) {
   return kinds.getMobLevel(mobKind);
 };
+Types.getBaseLevel = function (kind) {
+  return kinds.getBaseLevel(kind);
+};
 
 Types.isPlayer = function (kind) {
   return kinds.getType(kind) === "player";
@@ -480,12 +512,28 @@ Types.isCharacter = function (kind) {
   return Types.isMob(kind) || Types.isNpc(kind) || Types.isPlayer(kind);
 };
 
-Types.isArmor = function (kind) {
-  return kinds.getType(kind) === "armor";
+Types.isArmor = function (kindOrString) {
+  if (typeof kindOrString === "number") {
+    return kinds.getType(kindOrString) === "armor";
+  } else {
+    return kinds[kindOrString][1] === "armor";
+  }
 };
 
-Types.isWeapon = function (kind) {
-  return kinds.getType(kind) === "weapon";
+Types.isScroll = function (kind) {
+  return [
+    Types.Entities.SCROLLUPGRADELOW,
+    Types.Entities.SCROLLUPGRADEMEDIUM,
+    Types.Entities.SCROLLUPGRADEHIGH,
+  ].includes(kind);
+};
+
+Types.isWeapon = function (kindOrString) {
+  if (typeof kindOrString === "number") {
+    return kinds.getType(kindOrString) === "weapon";
+  } else {
+    return kinds[kindOrString][1] === "weapon";
+  }
 };
 
 Types.isObject = function (kind) {
@@ -522,6 +570,10 @@ Types.getKindAsString = function (kind) {
   }
 };
 
+Types.getDisplayableName = function (name) {
+  return kinds[name][2];
+};
+
 Types.getAliasFromName = function (name) {
   if (name === "skeleton2") {
     return "skeleton warrior";
@@ -543,7 +595,7 @@ Types.forEachKind = function (callback) {
 
 Types.forEachArmor = function (callback) {
   Types.forEachKind(function (kind, kindName) {
-    if (Types.isArmor(kind)) {
+    if (kind && Types.isArmor(kind)) {
       callback(kind, kindName);
     }
   });
@@ -551,7 +603,7 @@ Types.forEachArmor = function (callback) {
 
 Types.forEachMobOrNpcKind = function (callback) {
   Types.forEachKind(function (kind, kindName) {
-    if (Types.isMob(kind) || Types.isNpc(kind)) {
+    if (kind && (Types.isMob(kind) || Types.isNpc(kind))) {
       callback(kind, kindName);
     }
   });
@@ -559,14 +611,14 @@ Types.forEachMobOrNpcKind = function (callback) {
 
 Types.forEachArmorKind = function (callback) {
   Types.forEachKind(function (kind, kindName) {
-    if (Types.isArmor(kind)) {
+    if (kind && Types.isArmor(kind)) {
       callback(kind, kindName);
     }
   });
 };
 Types.forEachWeaponKind = function (callback) {
   Types.forEachKind(function (kind, kindName) {
-    if (Types.isWeapon(kind)) {
+    if (kind && Types.isWeapon(kind)) {
       callback(kind, kindName);
     }
   });
@@ -614,3 +666,99 @@ Types.getMessageTypeAsString = function (type) {
 if (!(typeof exports === "undefined")) {
   module.exports = Types;
 }
+
+// kind, type, name, level, defense
+Types.getArmorDefense = function (armor, level) {
+  const defense = kinds[armor][4];
+  const defensePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 180, 205, 235];
+  // const defensePercentPerLevel = [100, 102.5, 105, 108, 110.5, 113.5, 117.5, 123.5, 132, 145];
+
+  const defenseBonus = level >= 7 ? level - 6 : 0;
+
+  return Math.ceil((defense + defenseBonus) * (defensePercentPerLevel[level - 1] / 100));
+};
+
+Types.getArmorHealthBonus = function (level) {
+  // const healthBonusPerLevel = [2, 2, 4, 6, 8, 10, 12, 15, 19, 24];
+  const healthBonusPerLevel = [2, 4, 8, 14, 20, 30, 42, 60, 80, 110];
+
+  return healthBonusPerLevel[level - 1];
+};
+
+Types.getWeaponDamage = function (weapon, level) {
+  const damage = kinds[weapon][4];
+  const damagePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 180, 205, 235];
+  const damageBonus = level >= 7 ? level - 6 : 0;
+
+  return Math.ceil((damage + damageBonus) * (damagePercentPerLevel[level - 1] / 100));
+};
+
+Types.getWeaponMagicDamage = function (level) {
+  return level * 3;
+};
+
+Types.getItemDetails = function (item, level) {
+  const isWeapon = Types.isWeapon(item);
+  const isArmor = Types.isArmor(item);
+  const baseLevel = kinds[item][3];
+
+  const isEquipment = isWeapon || isArmor;
+  let magicDamage = 0;
+  let healthBonus = 0;
+
+  let type = "item";
+  if (isWeapon) {
+    type = "weapon";
+    magicDamage = Types.getWeaponMagicDamage(level);
+  } else if (isArmor) {
+    type = "armor";
+    healthBonus = Types.getArmorHealthBonus(level);
+  }
+
+  let itemClass;
+  if (baseLevel < 5) {
+    if (!level || level <= 5) {
+      itemClass = "low";
+    } else if (level <= 8) {
+      itemClass = "medium";
+    } else {
+      itemClass = "high";
+    }
+  } else if (baseLevel < 10) {
+    if (!level || level <= 5) {
+      itemClass = "medium";
+    } else {
+      itemClass = "high";
+    }
+  } else if (baseLevel >= 10) {
+    itemClass = "high";
+  }
+
+  const multiplier = itemClass === "high" ? 2 : 1;
+  const requirement = baseLevel + level * multiplier;
+  const description = Types.itemDescription[item];
+
+  return {
+    item,
+    name: Types.getDisplayName(item),
+    type,
+    ...(itemClass ? { itemClass } : null),
+    ...(isArmor ? { defense: Types.getArmorDefense(item, level), healthBonus } : null),
+    ...(isWeapon ? { damage: Types.getWeaponDamage(item, level), magicDamage } : null),
+    ...(isEquipment ? { requirement } : null),
+    ...(description ? { description } : null),
+  };
+};
+
+Types.getDisplayName = function (item) {
+  return kinds[item][2];
+};
+
+Types.itemDescription = {
+  scrollupgradelow:
+    "Upgrade low class items. The chances for a successful upgrade varies depending on the item's level.",
+  scrollupgrademedium:
+    "Upgrade medium class items. The chances for a successful upgrade varies depending on the item's level.",
+  scrollupgradehigh:
+    "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level.",
+};

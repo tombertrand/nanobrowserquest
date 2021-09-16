@@ -31,13 +31,14 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.handlers[Types.Messages.LIST] = this.receiveList;
       this.handlers[Types.Messages.DESTROY] = this.receiveDestroy;
       this.handlers[Types.Messages.KILL] = this.receiveKill;
-      this.handlers[Types.Messages.HP] = this.receiveHitPoints;
+      this.handlers[Types.Messages.STATS] = this.receiveStats;
       this.handlers[Types.Messages.BLINK] = this.receiveBlink;
       this.handlers[Types.Messages.GUILDERROR] = this.receiveGuildError;
       this.handlers[Types.Messages.GUILD] = this.receiveGuild;
       this.handlers[Types.Messages.PVP] = this.receivePVP;
       this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
       this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
+      this.handlers[Types.Messages.INVENTORY] = this.receiveInventory;
       this.useBison = false;
       this.enable();
     },
@@ -193,13 +194,12 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         hp = data[5],
         armor = data[6],
         weapon = data[7],
-        avatar = data[8],
-        weaponAvatar = data[9],
-        experience = data[10],
-        achievement = data[11],
-        hash = data[12],
-        nanoPotions = data[13],
-        gems = data[14];
+        experience = data[8],
+        achievement = data[9],
+        inventory = data[10],
+        hash = data[11],
+        nanoPotions = data[12],
+        gems = data[13];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -210,10 +210,9 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           hp,
           armor,
           weapon,
-          avatar,
-          weaponAvatar,
           experience,
           achievement,
+          inventory,
           hash,
           nanoPotions,
           gems,
@@ -268,13 +267,13 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           this.spawn_chest_callback(item, x, y);
         }
       } else {
-        var name, orientation, target, weapon, armor, level;
+        var name, orientation, target, weapon, weaponLevel, armor, armorLevel, level;
 
         if (Types.isPlayer(kind)) {
           name = data[5];
           orientation = data[6];
-          armor = data[7];
-          weapon = data[8];
+          [armor, armorLevel] = data[7].split(":");
+          [weapon, weaponLevel] = data[8].split(":");
           if (data.length > 9) {
             target = data[9];
           }
@@ -409,11 +408,13 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       }
     },
 
-    receiveHitPoints: function (data) {
-      var maxHp = data[1];
+    receiveStats: function (data) {
+      var maxHitPoints = data[1];
+      var damage = data[2];
+      var absorb = data[3];
 
-      if (this.hp_callback) {
-        this.hp_callback(maxHp);
+      if (this.stats_callback) {
+        this.stats_callback({ maxHitPoints, damage, absorb });
       }
     },
 
@@ -471,6 +472,14 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     receiveNotification: function (data) {
       if (this.receivenotification_callback) {
         this.receivenotification_callback(data);
+      }
+    },
+
+    receiveInventory: function (data) {
+      var inventory = data[1];
+
+      if (this.receiveinventory_callback) {
+        this.receiveinventory_callback(inventory);
       }
     },
 
@@ -558,8 +567,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.destroy_callback = callback;
     },
 
-    onPlayerChangeMaxHitPoints: function (callback) {
-      this.hp_callback = callback;
+    onPlayerChangeStats: function (callback) {
+      this.stats_callback = callback;
     },
 
     onItemBlink: function (callback) {
@@ -614,6 +623,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     onReceiveNotification: function (callback) {
       this.receivenotification_callback = callback;
+    },
+
+    onReceiveInventory: function (callback) {
+      this.receiveinventory_callback = callback;
     },
 
     sendCreate: function (player) {
@@ -739,6 +752,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     sendRequestPayout: function () {
       this.sendMessage([Types.Messages.REQUEST_PAYOUT]);
+    },
+
+    sendInventory: function (fromSlot, toSlot) {
+      this.sendMessage([Types.Messages.INVENTORY, fromSlot, toSlot]);
     },
   });
 

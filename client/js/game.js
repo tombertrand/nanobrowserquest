@@ -186,6 +186,9 @@ define([
         "item-gememerald",
         "item-gemamethyst",
         "item-gemtopaz",
+        "item-scrollupgradelow",
+        "item-scrollupgrademedium",
+        "item-scrollupgradehigh",
         "item-cake",
         "item-burger",
         "morningstar",
@@ -294,6 +297,192 @@ define([
       });
       self.sprites["chest"].createSilhouette();
       self.sprites["item-cake"].createSilhouette();
+    },
+
+    initTooltips: function () {
+      var self = this;
+
+      $(document).tooltip({
+        items: "[data-item]",
+        track: true,
+        position: { my: "left bottom-10", at: "left bottom", collision: "flipfit" },
+        content: function () {
+          const element = $(this);
+          const item = element.attr("data-item");
+          const level = element.attr("data-level");
+
+          const { name, itemClass, defense, damage, healthBonus, magicDamage, requirement, description } =
+            Types.getItemDetails(item, level);
+
+          return `<div>
+            <div class="item-title">${name}${level ? `(+${level})` : ""} </div>
+            ${itemClass ? `<div class="item-class">(${itemClass} class item)</div>` : ""}
+            ${defense ? `<div class="item-description">Defense: ${defense}</div>` : ""}
+            ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
+            ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
+            ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
+            ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
+            ${description ? `<div class="item-description">${description}</div>` : ""}
+          </div>`;
+        },
+      });
+    },
+
+    initDroppable: function () {
+      var self = this;
+
+      $(".item-droppable").droppable({
+        greedy: true,
+        over: function () {},
+        out: function () {},
+        drop: function (event, ui) {
+          // @NOTE Delay droppable.drop() callback for draggable.stop()
+          setTimeout(() => {
+            const itemEl = $(ui.draggable[0]);
+            const fromSlot = itemEl.parent().data("slot");
+            const toSlot = $(this).data("slot");
+            if (itemEl.parent().hasClass("item-inventory")) {
+              itemEl.parent().addClass("item-droppable");
+            }
+
+            const item = itemEl.attr("data-item");
+            const level = itemEl.attr("data-level");
+            const kind = kinds[item][1];
+
+            // @NOTE Send the inventory change to BE
+            self.client.sendInventory(fromSlot, toSlot);
+
+            if ($(this).hasClass("item-weapon")) {
+              self.player.switchWeapon(item, level);
+            } else if ($(this).hasClass("item-armor")) {
+              self.player.switchArmor(self.sprites[item], level);
+            } else if ($(this).parent().attr("id") === "item-delete") {
+              itemEl.remove();
+              return;
+            }
+
+            $(this).removeClass("item-droppable").append(itemEl.detach());
+
+            if (kind === "armor" && $(".item-armor").is(":empty")) {
+              self.player.switchArmor(self.sprites["clotharmor"], 1);
+            } else if (kind === "weapon" && $(".item-weapon").is(":empty")) {
+              self.player.switchWeapon("sword1", 1);
+            }
+          });
+        },
+      });
+    },
+    destroyDroppable: function () {
+      $(".item-droppable").droppable("destroy");
+    },
+
+    initDraggable: function () {
+      var self = this;
+
+      $(".item-draggable").draggable({
+        zIndex: 100,
+        revertDuration: 0,
+        revert: true,
+        containment: "#canvasborder",
+        drag: function () {},
+        start: function () {
+          $(this).parent().addClass("ui-droppable-origin");
+
+          const item = $(this).attr("data-item");
+          const type = kinds[item][1];
+
+          if (["weapon", "armor"].includes(type) && $(`.item-${type}`).is(":empty")) {
+            $(`.item-${type}`).addClass("item-droppable");
+          }
+
+          self.initDroppable();
+        },
+        stop: function (event, ui) {
+          self.destroyDroppable();
+
+          $(".ui-droppable-origin").removeClass("ui-droppable-origin");
+          $(".item-weapon, .item-armor").removeClass("item-droppable");
+        },
+      });
+    },
+
+    destroyDraggable: function () {
+      $(".item-draggable").draggable("destroy");
+    },
+
+    initInventory: function () {
+      const scale = this.renderer.getScaleFactor();
+      const getIconPath = function (spriteName) {
+        return `img/${scale}/item-${spriteName}.png`;
+      };
+
+      $("#item-inventory").empty();
+      for (var i = 0; i < 24; i++) {
+        $("#item-inventory").append(`<div class="item-slot item-inventory item-droppable" data-slot="${i}"></div>`);
+      }
+
+      $("#item-weapon").empty().append('<div class="item-slot item-weapon" data-slot="100"></div>');
+      $("#item-armor").empty().append('<div class="item-slot item-armor" data-slot="101"></div>');
+      $("#item-delete").empty().append('<div class="item-slot item-droppable" data-slot="-1"></div>');
+
+      if (this.player.weaponName !== "sword1") {
+        $(".item-weapon").append(
+          $("<div />", {
+            class: "item-draggable",
+            css: {
+              "background-image": `url("${getIconPath(this.player.weaponName)}")`,
+            },
+            "data-item": this.player.weaponName,
+            "data-level": this.player.weaponLevel,
+          }),
+        );
+      }
+      if (this.player.armorName !== "clotharmor") {
+        $(".item-armor").append(
+          $("<div />", {
+            class: "item-draggable",
+            css: {
+              "background-image": `url("${getIconPath(this.player.armorName)}")`,
+            },
+            "data-item": this.player.armorName,
+            "data-level": this.player.armorLevel,
+          }),
+        );
+      }
+
+      this.updateInventory();
+    },
+
+    updateInventory: function () {
+      const scale = this.renderer.getScaleFactor();
+      const getIconPath = function (spriteName) {
+        return `img/${scale}/item-${spriteName}.png`;
+      };
+
+      if ($("#inventory").hasClass("visible")) {
+        this.destroyDraggable();
+      }
+
+      $(".item-inventory").empty();
+      this.player.inventory.forEach(({ item, level, quantity, slot }) => {
+        $(`#item-inventory .item-slot:eq(${slot})`)
+          .removeClass("item-droppable")
+          .append(
+            $("<div />", {
+              class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+              css: {
+                "background-image": `url("${getIconPath(item)}")`,
+              },
+              "data-item": item,
+              "data-level": level,
+              "data-quantity": quantity,
+            }),
+          );
+      });
+
+      if ($("#inventory").hasClass("visible")) {
+        this.initDraggable();
+      }
     },
 
     initAchievements: function () {
@@ -853,12 +1042,10 @@ define([
           self.initRenderingGrid();
 
           self.setPathfinder(new Pathfinder(self.map.width, self.map.height));
-
           self.initPlayer();
           self.setCursor("hand");
 
           self.connect(action, started_callback);
-
           clearInterval(wait);
         }
       }, 100);
@@ -976,10 +1163,9 @@ define([
         hp,
         armor,
         weapon,
-        avatar,
-        weaponAvatar,
         experience,
         achievement,
+        inventory,
         hash,
         nanoPotions,
         gems,
@@ -991,6 +1177,9 @@ define([
         // sanitize and shorten names exceeding the allowed length.
         self.player.name = name;
 
+        var [armor, armorLevel] = armor.split(":");
+        var [weapon, weaponLevel] = weapon.split(":");
+
         self.storage.setPlayerName(name);
         self.storage.setPlayerArmor(armor);
         self.storage.setPlayerWeapon(weapon);
@@ -999,11 +1188,14 @@ define([
         self.player.setGridPosition(x, y);
         self.player.setMaxHitPoints(hp);
         self.player.setArmorName(armor);
-        self.player.setSpriteName(avatar);
+        self.player.setArmorLevel(armorLevel);
+        self.player.setSpriteName(armor);
         self.player.setWeaponName(weapon);
+        self.player.setWeaponLevel(weaponLevel);
         self.initPlayer();
         self.player.experience = experience;
         self.player.level = Types.getLevel(experience);
+        self.player.setInventory(inventory);
 
         self.updateBars();
         self.updateExpBar();
@@ -1011,6 +1203,8 @@ define([
         self.updatePlateauMode();
         self.audioManager.updateMusic();
         self.initAchievements();
+        self.initInventory();
+        self.initTooltips();
 
         self.player.nanoPotions = nanoPotions;
         self.player.gems = gems;
@@ -1778,10 +1972,21 @@ define([
           }
         });
 
-        self.client.onPlayerChangeMaxHitPoints(function (hp) {
-          self.player.maxHitPoints = hp;
-          self.player.hitPoints = hp;
-          self.updateBars();
+        self.client.onPlayerChangeStats(function ({ maxHitPoints, damage, absorb }) {
+          if (self.player.maxHitPoints !== maxHitPoints) {
+            self.player.maxHitPoints = maxHitPoints;
+            self.player.hitPoints = maxHitPoints;
+
+            self.updateBars();
+          }
+          if (self.player.damage !== damage) {
+            self.player.damage = damage;
+            self.updateDamage();
+          }
+          if (self.player.absorb !== absorb) {
+            self.player.absorb = absorb;
+            self.updateAbsorb();
+          }
         });
 
         self.client.onPlayerEquipItem(function (playerId, itemKind) {
@@ -1898,6 +2103,11 @@ define([
           setTimeout(() => {
             self.showNotification(message, 30000);
           }, 250);
+        });
+
+        self.client.onReceiveInventory(function (data) {
+          self.player.setInventory(data);
+          self.updateInventory();
         });
 
         self.client.onDisconnected(function (message) {
@@ -2938,6 +3148,12 @@ define([
         this.playerhp_callback(this.player.hitPoints, this.player.maxHitPoints);
         $("#player-hp").text(this.player.maxHitPoints);
       }
+    },
+    updateDamage: function () {
+      $("#player-damage").text(this.player.damage);
+    },
+    updateAbsorb: function () {
+      $("#player-absorb").text(this.player.absorb);
     },
     updateExpBar: function () {
       if (this.player && this.playerexp_callback) {

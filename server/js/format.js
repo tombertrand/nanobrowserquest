@@ -22,7 +22,8 @@ var Types = require("../../shared/js/gametypes");
         (this.formats[Types.Messages.ACHIEVEMENT] = ["n", "s"]),
         (this.formats[Types.Messages.BOSS_CHECK] = ["b"]),
         (this.formats[Types.Messages.BAN_PLAYER] = ["s"]),
-        (this.formats[Types.Messages.REQUEST_PAYOUT] = []);
+        (this.formats[Types.Messages.REQUEST_PAYOUT] = []),
+        (this.formats[Types.Messages.INVENTORY] = ['n', 'n']);
     },
 
     check: function (msg) {
@@ -87,6 +88,8 @@ var Types = require("../../shared/js/gametypes");
         return message.length === 1 && _.isString(message[0]);
       } else if ([Types.Messages.REQUEST_PAYOUT].includes(type)) {
         return message.length === 0;
+      } else if (type === Types.Messages.INVENTORY) {
+        return message.length === 2 && _.isNumber(message[0]) && _.isNumber(message[1]);
       } else {
         log.error("Unknown message type: " + type);
         return false;

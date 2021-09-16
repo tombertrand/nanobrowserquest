@@ -43,11 +43,9 @@ define(['character'], function(Character) {
 
         "carlosmatos": [
             "Hey hey hey!",
-            "Wassa-wassa-wassa-wassa-wassa-wassa-wassa-wassup!",
-            "Bitcoooonnnneeeeeccctttt!!!!",
-            "Hey! You’re gonna lose all your money!",
+            "Wassa-wassa-wassa-wassup!",
             "My wife still doesn't even believe in me",
-            "let me tell you, I love, BITCONNECT!"
+            "Let me tell you, I love, BITCONNECT!"
         ],
 
         "agent": [

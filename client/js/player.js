@@ -16,9 +16,14 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       // sprites
       this.spriteName = "clotharmor";
       this.armorName = "clotharmor";
+      this.armorLevel = 1;
       this.weaponName = "sword1";
+      this.weaponLevel = 1;
+      this.inventory = [];
       this.gems = [];
       this.nanoPotions = 0;
+      this.damage = "0";
+      this.absorb = "0";
 
       // modes
       this.isLootMoving = false;
@@ -87,35 +92,19 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
           }
         } else if (item.kind === Types.Entities.NANOPOTION) {
           this.nanoPotions += 1;
-        } else if (item.type === "armor") {
-          rank = Types.getArmorRank(item.kind);
-          if (rank !== 1 && rank * 2 > this.level) {
-            throw new Exceptions.LootException("You can't wear this armor yet.");
-          }
-          currentRank = Types.getArmorRank(Types.getKindFromString(currentArmorName));
-          msg = "You are wearing a better armor";
-        } else if (item.type === "weapon") {
-          rank = Types.getWeaponRank(item.kind);
-          if (rank !== 1 && rank * 2 > this.level) {
-            throw new Exceptions.LootException("You can't wield this weapon yet.");
-          }
-          currentRank = Types.getWeaponRank(Types.getKindFromString(this.weaponName));
-          msg = "You are wielding a better weapon";
-        }
-
-        if (rank && currentRank) {
-          if (rank === currentRank) {
-            throw new Exceptions.LootException("You already have this " + item.type);
-          } else if (rank <= currentRank) {
-            throw new Exceptions.LootException(msg);
+        } else if (item.type === "armor" || item.type === "weapon") {
+          // @TODO Check for stack-able items with quantity
+          if (this.inventory.length >= 24) {
+            throw new Exceptions.LootException("Your inventory is full.");
           }
         }
 
         log.info("Player " + this.id + " has looted " + item.id);
         if (Types.isArmor(item.kind) && this.invincible) {
           this.stopInvincibility();
+        } else if (item.kind === Types.Entities.FIREPOTION) {
+          item.onLoot(this);
         }
-        item.onLoot(this);
       }
     },
 
@@ -130,36 +119,12 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       return this.spriteName;
     },
 
-    getDisplayArmorName: function () {
-      if (this.spriteName === "clotharmor") {
-        return "Cloth Armor";
-      }
-      if (this.spriteName === "leatherarmor") {
-        return "Leather Armor";
-      }
-      if (this.spriteName === "mailarmor") {
-        return "Mail Armor";
-      }
-      if (this.spriteName === "platearmor") {
-        return "Plate Armor";
-      }
-      if (this.spriteName === "redarmor") {
-        return "Ruby Armor";
-      }
-      if (this.spriteName === "goldenarmor") {
-        return "Golden Armor";
-      }
-
-      return this.spriteName;
+    getDisplayArmorName: function (armorName) {
+      return armorMap[armorName] || armorName;
     },
 
     setSpriteName: function (name) {
       this.spriteName = name;
-    },
-
-    getArmorName: function () {
-      var sprite = this.getArmorSprite();
-      return sprite.id;
     },
 
     getArmorSprite: function () {
@@ -169,37 +134,25 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         return this.sprite;
       }
     },
+
+    getArmorName: function () {
+      var sprite = this.getArmorSprite();
+      return sprite.id;
+    },
+
     setArmorName: function (name) {
       this.armorName = name;
     },
 
-    getWeaponName: function () {
-      return this.weaponName;
+    getArmorLevel: function () {
+      return this.armorLevel;
     },
 
-    getDisplayWeaponName: function () {
-      if (this.weaponName === "sword1") {
-        return "Glaive";
-      }
-      if (this.weaponName === "sword2") {
-        return "Steel Sword";
-      }
-      if (this.weaponName === "axe") {
-        return "Axe";
-      }
-      if (this.weaponName === "morningstar") {
-        return "Morning Star";
-      }
-      if (this.weaponName === "bluesword") {
-        return "Magic Sword";
-      }
-      if (this.weaponName === "redsword") {
-        return "Blazing Sword";
-      }
-      if (this.weaponName === "goldensword") {
-        return "Golden Sword";
-      }
+    setArmorLevel: function (level) {
+      this.armorLevel = level;
+    },
 
+    getWeaponName: function () {
       return this.weaponName;
     },
 
@@ -207,104 +160,73 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.weaponName = name;
     },
 
+    getWeaponLevel: function () {
+      return this.weaponLevel;
+    },
+
+    setWeaponLevel: function (level) {
+      this.weaponLevel = level;
+    },
+
     hasWeapon: function () {
       return this.weaponName !== null;
     },
-    equipFromInventory: function (type, inventoryNumber, sprites) {
-      var itemString = Types.getKindAsString(this.inventory[inventoryNumber]);
 
-      if (itemString) {
-        var itemSprite = sprites[itemString];
-        if (itemSprite) {
-          if (type === "armor") {
-            this.inventory[inventoryNumber] = Types.getKindFromString(this.getArmorName());
-            this.setSpriteName(itemString);
-            this.setSprite(itemSprite);
-            this.setArmorName(itemString);
-          } else if (type === "avatar") {
-            this.inventory[inventoryNumber] = null;
-            this.setSpriteName(itemString);
-            this.setSprite(itemSprite);
-          }
-        }
+    switchWeapon: function (weapon, level) {
+      var self = this;
+      var isDifferent = false;
+
+      if (weapon !== this.getWeaponName()) {
+        isDifferent = true;
+        self.setWeaponName(weapon);
       }
-    },
-    switchArmor: function (armorName, sprite) {
-      this.setSpriteName(armorName);
-      this.setSprite(sprite);
-      this.setArmorName(armorName);
-      if (this.switch_callback) {
-        this.switch_callback();
+      if (level !== this.getWeaponLevel()) {
+        isDifferent = true;
+        self.setWeaponLevel(level);
       }
-    },
-    switchWeapon: function (newWeaponName) {
-      var count = 14,
-        value = false,
-        self = this;
 
-      var toggle = function () {
-        value = !value;
-        return value;
-      };
-
-      if (newWeaponName !== this.getWeaponName()) {
-        if (this.isSwitchingWeapon) {
-          clearInterval(blanking);
-        }
-
-        this.switchingWeapon = true;
-        var blanking = setInterval(function () {
-          if (toggle()) {
-            self.setWeaponName(newWeaponName);
-          } else {
-            self.setWeaponName(null);
-          }
-
-          count -= 1;
-          if (count === 1) {
-            clearInterval(blanking);
-            self.switchingWeapon = false;
-
-            if (self.switch_callback) {
-              self.switch_callback();
-            }
-          }
-        }, 90);
+      if (isDifferent && self.switch_callback) {
+        self.switch_callback();
       }
     },
 
-    switchArmor: function (newArmorSprite) {
-      var count = 14,
-        value = false,
-        self = this;
+    switchArmor: function (armorSprite, level) {
+      var self = this;
+      var hasChanged = false;
 
-      var toggle = function () {
-        value = !value;
-        return value;
-      };
-
-      if (newArmorSprite && newArmorSprite.id !== this.getSpriteName()) {
-        if (this.isSwitchingArmor) {
-          clearInterval(blanking);
-        }
-
-        this.isSwitchingArmor = true;
-        self.setSprite(newArmorSprite);
-        self.setSpriteName(newArmorSprite.id);
-        var blanking = setInterval(function () {
-          self.setVisible(toggle());
-
-          count -= 1;
-          if (count === 1) {
-            clearInterval(blanking);
-            self.isSwitchingArmor = false;
-
-            if (self.switch_callback) {
-              self.switch_callback();
-            }
-          }
-        }, 90);
+      if (armorSprite && armorSprite.id !== this.getSpriteName()) {
+        hasChanged = true;
+        self.setSprite(armorSprite);
+        self.setSpriteName(armorSprite.id);
+        self.setArmorName(armorSprite.id);
       }
+
+      if (level !== this.getArmorLevel) {
+        hasChanged = true;
+        this.setArmorLevel(level);
+      }
+
+      if (hasChanged && self.switch_callback) {
+        self.switch_callback();
+      }
+    },
+
+    setInventory: function (inventory) {
+      this.inventory = inventory
+        .map((rawItem, slot) => {
+          if (!rawItem) return false;
+
+          const [item, levelOrQuantity] = rawItem.split(":");
+          const isWeapon = kinds[item][1] === "weapon";
+          const isArmor = kinds[item][1] === "armor";
+
+          return {
+            item,
+            [isWeapon || isArmor ? "level" : "quantity"]: levelOrQuantity,
+            slot,
+          };
+        })
+        .filter(Boolean);
     },
 
     onArmorLoot: function (callback) {

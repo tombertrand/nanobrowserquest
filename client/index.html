@@ -479,8 +479,8 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                         <div id="mutebutton" class="barbutton clickable active"></div>
                     </div>
     			</div>
-                <div id="player">
-                    <div id="player-header">
+                <div id="player" class="panel">
+                    <div class="panel-header">
                       <div id="player-username" class="active"></div>
                       <a id="player-account" href="" target="_blank"></a>
                     </div>
@@ -498,8 +498,16 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                             <span id="player-weapon"></span>
                         </div>
                         <div>
+                            <span>Damage</span>
+                            <span id="player-damage"></span>
+                        </div>
+                        <div>
                             <span>Armor</span>
                             <span id="player-armor"></span>
+                        </div>
+                        <div>
+                            <span>Absorb</span>
+                            <span id="player-absorb"></span>
                         </div>
                     </div>
                 </div>
@@ -507,8 +515,8 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 				<!-- TODO div id="dialogbox">
 					Right now this happens in the footer.
 				</div to accept members for instance… -->
-                <div id="population">
-                    <div id="instance-population" class="">
+                <div id="population" class="panel">
+                    <div id="instance-population" class="panel-header">
                         <span class="active">0</span> <span>players</span> online<!--  in your instance -->
                     </div>
                     <div id="player-list"></div>
@@ -518,6 +526,45 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                     <div id="world-population" class="">
                         <span>0</span> <span>players</span> total
                     </div> -->
+                </div>
+
+
+                <div id="upgrade" class="panel">
+                    <div class="panel-header"></div>
+                    <div class="panel-spaced-row">
+                        <div id="upgrade-item">
+                            <div class="item-slot" data-slot="200"></div>
+                        </div>
+                        <div id="upgrade-ingredient">
+                            <div class="item-slot" data-slot="201"></div>
+                            <div class="item-slot" data-slot="202"></div>
+                            <div class="item-slot" data-slot="203"></div>
+                            <div class="item-slot" data-slot="204"></div>
+                            <div class="item-slot" data-slot="201"></div>
+                            <div class="item-slot" data-slot="201"></div>
+                            <div class="item-slot" data-slot="201"></div>
+                            <div class="item-slot" data-slot="201"></div>
+                            <div class="item-slot" data-slot="201"></div>
+                            
+                        </div>
+                        <div id="upgrade-result">
+                            <div class="item-slot" data-slot="201"></div>
+                        </div>
+                    </div>
+                    <div class="panel-header reverse"></div>
+                </div>
+                <div id="inventory" class="panel">
+                    <div class="panel-header"></div>
+                    <div class="panel-spaced-row">
+                        <!-- <img id="player-image" /> -->
+                        <div id="item-player">
+                            <div id="item-weapon"></div>
+                            <div id="item-armor"></div>
+                        </div>
+                        <div id="item-delete"></div>
+                    </div>
+                    <div id="item-inventory"></div>
+                    <div class="panel-header reverse"></div>
                 </div>
 		    </div>
 		</div>

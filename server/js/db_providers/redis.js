@@ -5,10 +5,14 @@ var cls = require("../lib/class"),
   Messages = require("../message"),
   redis = require("redis"),
   bcrypt = require("bcrypt");
+const { Sentry } = require("../sentry");
 
-const ACHIEVEMENT_COUNT = 20;
+const INVENTORY_SLOT_COUNT = 24;
+const WEAPON_SLOT = 100;
+const ARMOR_SLOT = 101;
+const DELETE_SLOT = -1;
+const ACHIEVEMENT_COUNT = 24;
 const GEM_COUNT = 4;
-const NANOPOTION_COUNT = 5;
 
 module.exports = DatabaseHandler = cls.Class.extend({
   init: function () {
@@ -32,37 +36,35 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "weapon") // 2
             .hget(userKey, "exp") // 3
             .hget(userKey, "createdAt") // 4
-            .hget(userKey, "avatar") // 5
-            .zrange("adrank", "-1", "-1") // 6
-            .get("nextNewArmor") // 7
-            .hget(userKey, "inventory0") // 8
-            .hget(userKey, "inventory0:number") // 9
-            .hget(userKey, "inventory1") // 10
-            .hget(userKey, "inventory1:number") // 11
-            .hget(userKey, "achievement") // 12
-            .smembers("adminname") // 13
-            .zscore("adrank", player.name) // 14
-            .hget(userKey, "weaponAvatar") // 15
-            .hget(userKey, "x") // 16
-            .hget(userKey, "y") // 17
-            .hget(userKey, "hash") // 18
-            .hget(userKey, "nanoPotions") // 19
-            .hget(userKey, "gems") // 20
+            .hget(userKey, "achievement") // 5
+            .hget(userKey, "inventory") // 6
+            .hget(userKey, "x") // 7
+            .hget(userKey, "y") // 8
+            .hget(userKey, "hash") // 9
+            .hget(userKey, "nanoPotions") // 10
+            .hget(userKey, "gems") // 11
             .exec(function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
               var weapon = replies[2];
               var exp = Utils.NaN2Zero(replies[3]);
               var createdAt = Utils.NaN2Zero(replies[4]);
-              var avatar = replies[5];
-              var pubTopName = replies[6];
-              var nextNewArmor = replies[7];
-              var inventory = [replies[8], replies[10]];
-              var inventoryNumber = [Utils.NaN2Zero(replies[9]), Utils.NaN2Zero(replies[11])];
+
+              var [playerArmor, armorLevel] = armor.split(":");
+              if (isNaN(armorLevel)) {
+                armor = `${playerArmor}:1`;
+                client.hset("u:" + player.name, "armor", armor);
+              }
+
+              var [playerWeapon, weaponLevel] = weapon.split(":");
+              if (isNaN(weaponLevel)) {
+                weapon = `${playerWeapon}:1`;
+                client.hset("u:" + player.name, "weapon", weapon);
+              }
 
               var achievement = new Array(ACHIEVEMENT_COUNT).fill(0);
               try {
-                achievement = JSON.parse(replies[12]);
+                achievement = JSON.parse(replies[5]);
 
                 // @NOTE Migrate old achievements to new
                 if (achievement.length === 20) {
@@ -73,25 +75,38 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
                   client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
                 }
-              } catch {
+              } catch (err) {
                 // invalid json
+                Sentry.captureException(err);
               }
+
+              var inventory = new Array(INVENTORY_SLOT_COUNT).fill(0);
+              try {
+                inventory = JSON.parse(replies[6]);
+
+                // @NOTE Migrate inventory
+                if (inventory.length < 24) {
+                  inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
+
+                  client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+                }
+              } catch (err) {
+                // invalid json
+                Sentry.captureException(err);
+              }
+
               var gems = new Array(GEM_COUNT).fill(0);
               try {
-                gems = JSON.parse(replies[20] || gems);
-              } catch {
+                gems = JSON.parse(replies[11] || gems);
+              } catch (err) {
                 // invalid json
+                Sentry.captureException(err);
               }
 
-              var adminnames = replies[13];
-              var pubPoint = Utils.NaN2Zero(replies[14]);
-              var weaponAvatar = replies[15] ? replies[15] : weapon;
-              var x = Utils.NaN2Zero(replies[16]);
-              var y = Utils.NaN2Zero(replies[17]);
-              var hash = replies[18];
-              var nanoPotions = parseInt(replies[19] || 0);
-
-              // Check Account
+              var x = Utils.NaN2Zero(replies[7]);
+              var y = Utils.NaN2Zero(replies[8]);
+              var hash = replies[9];
+              var nanoPotions = parseInt(replies[10] || 0);
 
               // bcrypt.compare(player.account, account, function(err, res) {
               if (player.account != account) {
@@ -100,18 +115,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 return;
               }
 
-              if (player.name === pubTopName.toString()) {
-                avatar = nextNewArmor;
-              }
-
-              var admin = null;
-              var i = 0;
-              for (i = 0; i < adminnames.length; i++) {
-                if (adminnames[i] === player.name) {
-                  admin = 1;
-                  log.info("Admin " + player.name + "login");
-                }
-              }
               log.info("Player name: " + player.name);
               log.info("Armor: " + armor);
               log.info("Weapon: " + weapon);
@@ -120,16 +123,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
               player.sendWelcome({
                 armor,
                 weapon,
-                avatar,
-                weaponAvatar,
                 exp,
-                admin,
                 createdAt,
                 inventory,
-                inventoryNumber,
                 x,
                 y,
                 achievement,
+                inventory,
                 hash,
                 nanoPotions,
                 gems,
@@ -162,30 +162,25 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .multi()
           .sadd("usr", player.name)
           .hset(userKey, "account", player.account)
-          .hset(userKey, "armor", "clotharmor")
-          .hset(userKey, "avatar", "clotharmor")
-          .hset(userKey, "weapon", "sword1")
+          .hset(userKey, "armor", "clotharmor:1")
           .hset(userKey, "exp", 0)
           .hset(userKey, "ip", player.ip || "")
           .hset(userKey, "createdAt", curTime)
           .hset(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
+          .hset(userKey, "inventory", JSON.stringify(new Array(INVENTORY_SLOT_COUNT).fill(0)))
           .hset(userKey, "nanoPotions", 0)
           .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
           .exec(function (err, replies) {
             log.info("New User: " + player.name);
             player.sendWelcome({
-              armor: "clotharmor",
-              weapon: "sword1",
-              avatar: "clotharmor",
-              weaponAvatar: "sword1",
+              armor: "clotharmor:1",
+              weapon: "sword1:1",
               exp: 0,
-              admin: null,
               createdAt: curTime,
-              inventory: [null, null],
-              inventoryNumber: [0, 0],
               x: player.x,
               y: player.y,
               achievement: new Array(ACHIEVEMENT_COUNT).fill(0),
+              inventory: [],
               nanoPotions: 0,
               gems: new Array(GEM_COUNT).fill(0),
             });
@@ -260,17 +255,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
   banTerm: function (time) {
     return Math.pow(2, time) * 500 * 60;
   },
-  equipArmor: function (name, armor) {
-    log.info("Set Armor: " + name + " " + armor);
-    client.hset("u:" + name, "armor", armor);
+  equipArmor: function (name, armor, level) {
+    log.info("Set Armor: " + name + " " + armor + ":" + level);
+    client.hset("u:" + name, "armor", `${armor}:${level}`);
   },
-  equipAvatar: function (name, armor) {
-    log.info("Set Avatar: " + name + " " + armor);
-    client.hset("u:" + name, "avatar", armor);
-  },
-  equipWeapon: function (name, weapon) {
-    log.info("Set Weapon: " + name + " " + weapon);
-    client.hset("u:" + name, "weapon", weapon);
+  equipWeapon: function (name, weapon, level) {
+    log.info("Set Weapon: " + name + " " + weapon + ":" + level);
+    client.hset("u:" + name, "weapon", `${weapon}:${level}`);
   },
   setExp: function (name, exp) {
     log.info("Set Exp: " + name + " " + exp);
@@ -280,21 +271,96 @@ module.exports = DatabaseHandler = cls.Class.extend({
     log.info("Set Hash: " + name + " " + hash);
     client.hset("u:" + name, "hash", hash);
   },
-  setInventory: function (name, itemKind, inventoryNumber, itemNumber) {
-    if (itemKind) {
-      client.hset("u:" + name, "inventory" + inventoryNumber, Types.getKindAsString(itemKind));
-      client.hset("u:" + name, "inventory" + inventoryNumber + ":number", itemNumber);
-      log.info(
-        "SetInventory: " + name + ", " + Types.getKindAsString(itemKind) + ", " + inventoryNumber + ", " + itemNumber,
-      );
-    } else {
-      this.makeEmptyInventory(name, inventoryNumber);
-    }
+  setInventory({ player, item, level, quantity, fromSlot, toSlot }) {
+    client.hget("u:" + player.name, "inventory", function (err, reply) {
+      console.log("~~~player", !!player, item, level, quantity, fromSlot, toSlot);
+
+      try {
+        let inventory = JSON.parse(reply);
+
+        if (typeof toSlot === "number" && typeof fromSlot === "number") {
+          // When an inventory item is moved or equipped
+          let fromInventory = inventory[fromSlot];
+
+          if (fromSlot === WEAPON_SLOT) {
+            fromInventory = `${player.weapon}:${player.weaponLevel}`;
+          } else if (fromSlot === ARMOR_SLOT) {
+            fromInventory = `${player.armor}:${player.armorLevel}`;
+          }
+
+          const [fromItem, fromLevel] = fromInventory.split(":");
+
+          if (toSlot === DELETE_SLOT) {
+            // When an item is deleted
+            inventory[fromSlot] = 0;
+          } else if (toSlot === WEAPON_SLOT) {
+            if (Types.isWeapon(fromItem)) {
+              if (player.weapon !== "sword1") {
+                inventory[fromSlot] = `${player.weapon}:${player.weaponLevel}`;
+              } else {
+                inventory[fromSlot] = 0;
+              }
+              player.equipItem(fromItem, fromLevel);
+              player.broadcast(player.equip(player.weaponKind), false);
+            }
+          } else if (fromSlot === WEAPON_SLOT) {
+            inventory[toSlot] = fromInventory;
+            player.equipItem("sword1", 1);
+            player.broadcast(player.equip(player.weaponKind), false);
+          } else if (toSlot === ARMOR_SLOT) {
+            if (Types.isArmor(fromItem)) {
+              if (player.armor !== "clotharmor") {
+                inventory[fromSlot] = `${player.armor}:${player.armorLevel}`;
+              } else {
+                inventory[fromSlot] = 0;
+              }
+              player.equipItem(fromItem, fromLevel);
+              player.broadcast(player.equip(player.armorKind), false);
+            }
+          } else if (fromSlot === ARMOR_SLOT) {
+            inventory[toSlot] = fromInventory;
+            player.equipItem("clotharmor", 1);
+            player.broadcast(player.equip(player.armorKind), false);
+          } else {
+            inventory[fromSlot] = inventory[toSlot];
+            inventory[toSlot] = `${fromItem}:${fromLevel}`;
+          }
+        } else if (item) {
+          // When an item is looted
+          let slotIndex = quantity
+            ? inventory.findIndex(inventoryItem => typeof inventoryItem === "string" && inventoryItem.startsWith(item))
+            : -1;
+
+          if (slotIndex > -1) {
+            const [, oldQuantity] = inventory[slotIndex].split(":");
+            inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + quantity}`;
+          } else if (slotIndex === -1) {
+            slotIndex = inventory.indexOf(0);
+            if (slotIndex !== -1) {
+              inventory[slotIndex] = `${item}:${level || quantity}`;
+            }
+          }
+        }
+        player.send([Types.Messages.INVENTORY, inventory]);
+
+        inventory = JSON.stringify(inventory);
+        client.hset("u:" + player.name, "inventory", inventory);
+      } catch (err) {
+        console.log("~~~err", err);
+        Sentry.captureException(err);
+      }
+    });
   },
-  makeEmptyInventory: function (name, number) {
-    log.info("Empty Inventory: " + name + " " + number);
-    client.hdel("u:" + name, "inventory" + number);
-    client.hdel("u:" + name, "inventory" + number + ":number");
+  deleteInventory(player, slot) {
+    if (slot === WEAPON_SLOT) {
+      player.equipItem("sword1", 1);
+      player.broadcast(player.equip(player.weaponKind), false);
+    } else if (slot === ARMOR_SLOT) {
+      player.equipItem("clotharmor", 1);
+      player.broadcast(player.equip(player.armorKind), false);
+    } else {
+      this.setInventory({ player, fromSlot: slot });
+    }
   },
   foundAchievement: function (name, index) {
     log.info("Found Achievement: " + name + " " + index + 1);
@@ -304,7 +370,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
         achievement[index] = 1;
         achievement = JSON.stringify(achievement);
         client.hset("u:" + name, "achievement", achievement);
-      } catch (err) {}
+      } catch (err) {
+        Sentry.captureException(err);
+      }
     });
   },
   foundNanoPotion: function (name) {
@@ -316,7 +384,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
         } else {
           client.hset("u:" + name, "nanoPotions", 1);
         }
-      } catch (err) {}
+      } catch (err) {
+        Sentry.captureException(err);
+      }
     });
   },
   foundGem: function (name, index) {

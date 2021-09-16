@@ -70,12 +70,14 @@ Messages.Health = Message.extend({
   },
 });
 
-Messages.HitPoints = Message.extend({
-  init: function (maxHitPoints) {
+Messages.Stats = Message.extend({
+  init: function ({ maxHitPoints, damage, absorb }) {
     this.maxHitPoints = maxHitPoints;
+    this.damage = damage;
+    this.absorb = absorb;
   },
   serialize: function () {
-    return [Types.Messages.HP, this.maxHitPoints];
+    return [Types.Messages.STATS, this.maxHitPoints, this.damage, this.absorb];
   },
 });
 

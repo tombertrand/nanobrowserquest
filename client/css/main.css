@@ -154,15 +154,15 @@ footer, header, hgroup, menu, nav, section {
     #notifications div.top {-moz-transition:0.5s top ease;-webkit-transition:0.5s top ease;-o-transition:0.5s top ease;-ms-transition:0.5s top ease;transition:0.5s top ease;}
     #notifications div.top #message1 {opacity:0;-moz-transition:0.2s opacity linear;-webkit-transition:0.2s opacity linear;-o-transition:0.2s opacity linear;-ms-transition:0.2s opacity linear;transition:0.2s opacity linear;}
     #notifications span {display:block;text-align:center;width:100%;opacity:1;-moz-user-select:none;-webkit-user-select:none;}
-    
+
     #playercount {font-family:'GraphicPixel';color:#e3e3e3;position:absolute;}
     #playercount:hover {cursor:pointer;color:#FCE045;}
-    #population, #player {position:absolute;font-family:'GraphicPixel';color:#fff;text-align:center;height:0;overflow:hidden;pointer-events:none;-moz-transition:0.2s height ease; -webkit-transition: 0.2s height ease;-o-transition:0.2s height ease;-ms-transition:0.2s height ease;transition:0.2s height ease;}
-    #population div, #player div {background:url('../img/1/barsheet.png');image-rendering:-moz-crisp-edges;opacity:0;-moz-transition:0.2s opacity linear;-webkit-transition:0.2s opacity linear;-o-transition:0.2s opacity linear;-ms-transition:0.2s opacity linear;transition:0.2s opacity linear;}
+    .panel {position:absolute;font-family:'GraphicPixel';color:#fff;text-align:center;height:0;pointer-events:none;-moz-transition:0.2s height ease; -webkit-transition: 0.2s height ease;-o-transition:0.2s height ease;-ms-transition:0.2s height ease;transition:0.2s height ease;}
+    .panel > div {background:url('../img/1/barsheet.png');image-rendering:-moz-crisp-edges;opacity:0;-moz-transition:0.2s opacity linear;-webkit-transition:0.2s opacity linear;-o-transition:0.2s opacity linear;-ms-transition:0.2s opacity linear;transition:0.2s opacity linear;}
     /* #guild-name, #population span:nth-child(1) {color:#FCE045;} */
-    #population.visible div, #player.visible div {opacity:1;}
+    .panel.visible div {opacity:1;}
     #guild-population {height:0;overflow:hidden;}
-    #population.visible, #guild-population.visible, #player.visible {height:auto;pointer-events:auto;}
+    .panel.visible {height:auto;pointer-events:auto;}
     
     .barbutton {background:url('../img/1/barsheet.png');image-rendering:-moz-crispt-edges;position:absolute;}
     
@@ -285,7 +285,7 @@ footer, header, hgroup, menu, nav, section {
 
     #credits, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #death, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
     
-    #playerimage {image-rendering: -moz-crisp-edges; image-rendering: -webkit-optimize-contrast;}
+    #player-image {image-rendering: -moz-crisp-edges; image-rendering: -webkit-optimize-contrast;}
     
     #parchment p {font-family:'GraphicPixel';}
     
@@ -624,7 +624,72 @@ footer, header, hgroup, menu, nav, section {
         cursor: pointer;
     }
 
-    /* #nano {margin-left:200px;scale:0.7;} */
+    .ui-widget-content {
+        min-width:220px;
+        text-align: center;
+        font-family: 'GraphicPixel' !important;
+        padding: 10px 10px 15px !important;
+        border: none !important;
+        background: rgba(0,0,0,0.75) !important;
+    }
+    .item-title {
+        font-weight: bold;
+        color: #d16afa;
+        margin-bottom: 6px;
+    }
+    .item-class {
+        color: #fff;
+        text-transform: capitalize;
+        font-size: 0.80em;
+        margin-bottom:12px;
+    }
+    .item-description {
+        color: #fff;
+        margin-top:6px;
+    }
+    .item-bonus {
+        /* color: #55a3ff; */
+        color: #35ee35;
+        margin-top:6px;
+    }
+    .item-description.requirement {
+        color: red;
+    }
+
+    #upgrade { bottom: auto; right: 5%; top: 10%;}
+    #inventory.upgrade { bottom: 10%; right: 5%; top:auto;}
+    #inventory.upgrade .panel-spaced-row { display: none;}
+
+    #inventory { bottom: auto; right: 5%; top: 20%;}
+    #item-inventory { position: relative; display: flex; flex-wrap: wrap; justify-content: center; z-index:1;}
+
+    .ui-droppable-hover { border-color: yellow !important;}
+    .ui-droppable-origin { border-color: #fff !important;}
+
+    .item-slot { padding: 1px; border: solid 1px #2d2b29; background: #171717; }
+    .item-draggable {background-color: transparent; z-index:2; border-radius: 4px; border: solid 2px #928f8c; background: #171717;}
+    /* .item-draggable:hover::before { background-image: url('../img/2/target.png'); } */
+    .ui-draggable-dragging { cursor: url(../img/2/loot.png) 2 5, move; }
+
+    .panel { cursor: url(../img/2/hand.png) 2 5, move; }
+    .panel-header {min-height: 4px;}
+    .panel-header.reverse {transform: rotate(180deg);}
+    .panel-spaced-row { display: flex; justify-content: space-between; align-items: center; padding: 0 10px}
+
+    #item-player { display: flex; justify-content: center; padding-bottom: 12px}
+    #item-weapon { padding-right: 6px;}
+    #item-delete > .item-slot { -webkit-box-shadow: inset 0px 0px 10px 6px #9e0000; box-shadow: inset 0px 0px 10px 6px #9e0000; }
+    .item-quantity::after {
+        content: attr(data-quantity);
+        position: absolute;
+        bottom: 1px;
+        left: 2px;
+        line-height: 1;
+        font-size: 0.9em;
+    }
+
+    #upgrade-ingredient {width: 120px;display: flex;flex-wrap: wrap;}
+
 	@media screen and (min-width: 1501px) {
         #completedbutton .nano-logo { width: 60px; height: 28px; }
         #nano {margin-left:-240px;}
@@ -637,7 +702,7 @@ footer, header, hgroup, menu, nav, section {
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
-	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled #population div, .upscaled #player div{background-image:url('../img/3/barsheet.png');}
+	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/3/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/3/achievements.png');}
         .upscaled .item-gem, .upscaled .item-nanopotion {background-image:url('../img/3/achievements-unlocks.png');}
 	    
@@ -692,7 +757,7 @@ footer, header, hgroup, menu, nav, section {
         #instructions li:nth-child(3) span {height:63px;width:48px;background-position:-1218px -36px; display:block;float:left;margin: 0 27px 0 60px;position: relative;top: -18px;}
         #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:20px;clear:left;margin-top:50px;}
         
-        #playerimage {height: 96px; width: 96px;}
+        #player-image {height: 96px; width: 96px;}
         
         .close {height:48px;width:48px;top:-12px;right:-15px;background-position:-1062px -378px;}
         .close:hover {background-position:-1110px -378px;}
@@ -725,7 +790,9 @@ footer, header, hgroup, menu, nav, section {
 		#hitpoints {width:0px;height:33px;top:12px;left:33px;z-index:10;position:absolute;}
 		#hpguide {left: 33px; top: 12px; width: 2px; height: 33px; z-index: 30; }
 
-        #armor, #weapon {width:48px;height:48px;position:absolute;background-size:288px;background-position:-96px;}
+        .item-slot { width:52px; height:52px; }
+        #armor, #weapon, .item-draggable {width:48px;height:48px;background-size:288px;background-position:-96px;}
+        #armor, #weapon {position:absolute;}
         #weapon {left:312px;top:3px;background-size:288px;}
         #armor {left:363px;top:3px;}
 
@@ -734,11 +801,12 @@ footer, header, hgroup, menu, nav, section {
         #notifications span {line-height:45px;height:45px;}
 
         #playercount {font-size:20px;left:1032px;top:18px;width:172px;text-align:center;}
-        #population, #player {width:393px;bottom:66px;font-size:20px;line-height:30px;}
+        .panel {width:393px;bottom:66px;font-size:20px;line-height:30px;}
         #population {right:105px;}
         #player {left: 20px;}
-        #population div, #player div {background-size:1440px;background-position:-720px -156px;}
-        #instance-population, #player-header {background-size:1440px; background-position:-720px -144px !important;padding-top: 12px;}
+
+        .panel > div {background-size:1440px;background-position:-720px -156px;}
+        .panel-header {background-size:1440px; background-position:-720px -144px !important;padding-top: 12px;}
 
         .barbutton {background-size:1440px;height:45px;width:42px;}
         #chatbutton {background-position:-306px -51px;top:3px;left:1215px;}
@@ -818,7 +886,7 @@ footer, header, hgroup, menu, nav, section {
         .createaccount-instructions { font-size: 17px; }
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
-	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled #population div, .upscaled #player div{background-image:url('../img/2/barsheet.png');}
+	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/2/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background-image:url('../img/2/achievements.png');}
         .upscaled .item-gem, .upscaled .item-nanopotion {background-image:url('../img/2/achievements-unlocks.png');}
 
@@ -873,7 +941,7 @@ footer, header, hgroup, menu, nav, section {
         #instructions li:nth-child(3) span {height:42px;width:32px;background-position:-812px -24px; display:block;float:left;margin: 0 18px 0 40px;position: relative;top: -12px;}
         #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:20px;clear:left;margin-top:20px;}
 
-        #playerimage {height: 64px; width: 64px;}
+        #player-image {height: 64px; width: 64px;}
         
         .close {height:32px;width:32px;top:-8px;right:-10px;background-position:-708px -252px;}
         .close:hover {background-position:-740px -252px;}
@@ -907,7 +975,9 @@ footer, header, hgroup, menu, nav, section {
 		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
-        #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
+        .item-slot { width:36px; height: 36px; }
+        #armor, #weapon, .item-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        #armor, #weapon { position:absolute; }
         #weapon {left:208px;top:2px;}
         #armor {left:242px;top:2px;}
 
@@ -917,11 +987,12 @@ footer, header, hgroup, menu, nav, section {
         .windows #notifications span {line-height:34px;}
 
         #playercount {font-size:16px;left:696px;top:10px;width:110px;text-align:center;}
-        #population, #player {bottom:44px;width:262px;font-size:14px;line-height:20px;}
+        .panel {bottom:44px;width:262px;font-size:14px;line-height:20px;}
         #population {right:70px;}
         #player {left: 20px;}
-        #population div, #player div {background-size:960px;background-position:-480px -104px;}
-        #instance-population, #player-header {background-position:-480px -98px !important;padding-top: 6px;}
+
+        .panel > div {background-size:960px;background-position:-480px -104px;}
+        .panel-header {background-position:-480px -96px !important;padding-top: 8px;}
 
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:810px;}
@@ -1061,7 +1132,7 @@ footer, header, hgroup, menu, nav, section {
 
         #foreground { cursor: default;}
         
-        #playerimage {height: 32px; width: 32px;}
+        #player-image {height: 32px; width: 32px;}
         
         .close {height:16px;width:16px;top:-4px;right:-5px;background-position:-354px -126px;}
         .close:hover {background-position:-370px -126px;}
@@ -1094,7 +1165,10 @@ footer, header, hgroup, menu, nav, section {
 		#healthbar {height:13px;background-position:0 -17px;width:102px;top:3px;background-size:480px;z-index:20;}
 		#hitpoints {width:0px;height:11px;top:4px;left:11px;z-index:10;position:absolute;}
 		#hpguide {left: 11px; top: 4px; width: 1px; height: 11px; z-index: 30; }
-        #armor, #weapon {width:16px;height:16px;position:absolute;background-size:96px;background-position:-32px;}
+
+        .item-slot { width:20px; height: 20px; }
+        #armor, #weapon, .item-draggable {width:16px;height:16px;background-size:96px;background-position:-32px;}
+        #armor, #weapon {position:absolute;}
         #weapon {left:104px;top:1px;}
         #armor {left:121px;top:1px;}
 
@@ -1103,17 +1177,16 @@ footer, header, hgroup, menu, nav, section {
         #notifications span {line-height:15px;height:15px;}
 
         #playercount {font-size:10px;left:348px;top:4px;width:54px;text-align:center;}
-        /* #population {right:35px;bottom:22px;width:130px;font-size:10px;line-height:12px;} */
-        /* #population div{background-size:480px;background-position:-240px -52px;} */
-        /* #instance-population{padding-top:4px;background-position:-240px -48px !important;} */
+
         #completedbutton {background-position:-435px -17px;;top:1px;left:435px;width:29px;}
         #completedbutton:hover {background-position:-435px -32px;}
         #completedbutton.active {background-position:-435px -47px;}
-        #population, #player {bottom:22px;width:262px;font-size:14px;line-height:20px;}
+        .panel {bottom:22px;width:262px;font-size:14px;line-height:20px;}
         #population {right:70px;}
         #player {left:20px;}
-        #population div, #player div {background-size:960px;background-position:-480px -104px;}
-        #instance-population, #player-header {background-position:-480px -98px !important;padding-top: 6px;}
+
+        .panel > div {background-size:960px;background-position:-480px -104px;}
+        .panel-header {background-position:-480px -96px !important;padding-top: 8px;}
 
         .barbutton {background-size:480px;height:15px;width:14px;}
         #chatbutton {background-position:-102px -17px;top:1px;left:405px;}
@@ -1266,7 +1339,7 @@ footer, header, hgroup, menu, nav, section {
 		#confirmation, #error {top:70%;}
 		#confirmation p, #error p {margin:10px 0;line-height:12px;font-size:12px;}
 		
-		#playerimage {display:none;}
+		#player-image {display:none;}
 		
 		/*GUI Bar*/
 		#bar-container {height:34px;top:-2px;background-size:960px;background-position:0 -96px;}
@@ -1275,7 +1348,9 @@ footer, header, hgroup, menu, nav, section {
 		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
-        #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
+        .item-slot { width:36px; height:36px; }
+        #armor, #weapon, .item-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        #armor, #weapon {position:absolute;}
         #weapon {left:208px;top:2px;}
         #armor {left:242px;top:2px;}
 
@@ -1286,11 +1361,12 @@ footer, header, hgroup, menu, nav, section {
         #playercount span.count {display:inline;}
         /* #population {right:98px;bottom:34px;width:130px;font-size:10px;line-height:12px;} */
         /* #population div{background-size:480px;background-position:-240px -52px;} */
-        #population, #player {bottom:34px;width:262px;font-size:14px;line-height:20px;}
+        .panel {bottom:34px;width:262px;font-size:14px;line-height:20px;}
         #population {right:70px;}
         #player {left:20px;}
-        #population div, #player div {background-size:960px;background-position:-480px -104px;}
-        #instance-population, #player-header {background-position:-480px -98px !important;padding-top: 6px;}
+
+        .panel > div {background-size:960px;background-position:-480px -104px;}
+        .panel-header {background-position:-480px -96px !important;padding-top: 8px;}
 
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:360px;}

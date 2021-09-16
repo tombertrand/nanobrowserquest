@@ -210,7 +210,7 @@ module.exports = Player = Character.extend({
         var mob = self.server.getEntityById(message[1]);
 
         if (mob) {
-          var dmg = Formulas.dmg(self.weaponLevel, mob.armorLevel);
+          var dmg = Formulas.dmg(self.weapon, self.weaponLevel, self.level, mob.armorLevel);
           if (dmg > 0) {
             if (mob.type !== "player") {
               // Reduce dmg on boss by 12.5% per player in boss room
@@ -237,7 +237,7 @@ module.exports = Player = Character.extend({
         log.info("HURT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
         if (mob && self.hitPoints > 0) {
-          self.hitPoints -= Formulas.dmg(mob.weaponLevel, self.armorLevel);
+          self.hitPoints -= Formulas.dmgFromMob(mob.weaponLevel, self.armor, self.armorLevel, self.level);
           self.server.handleHurtEntity(self, mob);
 
           if (self.hitPoints <= 0) {
@@ -269,7 +269,7 @@ module.exports = Player = Character.extend({
                 self.broadcast(self.equip(self.armor)); // return to normal after 15 sec
                 self.firepotionTimeout = null;
               }, 15000);
-              self.send(new Messages.HitPoints(self.maxHitPoints).serialize());
+              self.send(new Messages.Stats({ maxHitPoints: self.maxHitPoints }).serialize());
             } else if (Types.isHealingItem(kind)) {
               var amount;
 
@@ -281,7 +281,7 @@ module.exports = Player = Character.extend({
                   amount = 100;
                   break;
                 case Types.Entities.NANOPOTION:
-                  amount = 250;
+                  amount = 200;
                   break;
               }
 
@@ -294,8 +294,12 @@ module.exports = Player = Character.extend({
                 self.server.pushToPlayer(self, self.health());
               }
             } else if (Types.isArmor(kind) || Types.isWeapon(kind)) {
-              self.equipItem(item.kind);
-              self.broadcast(self.equip(kind));
+              const baseLevel = Types.getBaseLevel(kind);
+              const level = baseLevel <= 5 ? Utils.randomInt(1, 3) : 1;
+
+              databaseHandler.setInventory({ player: self, item: Types.getKindAsString(kind), level });
+            } else if (Types.isScroll(kind)) {
+              databaseHandler.setInventory({ player: self, item: Types.getKindAsString(kind), quantity: 1 });
             }
           }
         }
@@ -347,15 +351,15 @@ module.exports = Player = Character.extend({
         }
 
         // Reset player to "REDARMOR" / "REDSWORD"
-        // if (message[1]) {
-        if (self.armor === Types.Entities.GOLDENARMOR) {
-          self.equipItem(Types.Entities.REDARMOR, false);
-          self.broadcast(self.equip(Types.Entities.REDARMOR), false);
-        }
-        if (self.weapon === Types.Entities.GOLDENSWORD) {
-          self.equipItem(Types.Entities.REDSWORD, false);
-          self.broadcast(self.equip(Types.Entities.REDSWORD), false);
-        }
+        // @TODO instead of that, put a CAP for defense and dmg, don't alter peoples characters
+        // if (self.armor === Types.Entities.GOLDENARMOR) {
+        //   self.equipItem(Types.Entities.REDARMOR, 1, false);
+        //   self.broadcast(self.equip(Types.Entities.REDARMOR), false);
+        // }
+        // if (self.weapon === Types.Entities.GOLDENSWORD) {
+        //   self.equipItem(Types.Entities.REDSWORD, 1, false);
+        //   self.broadcast(self.equip(Types.Entities.REDSWORD), false);
+        // }
 
         const position = Math.floor(Math.random() * 6) + 1;
         const date = `${Date.now()}`;
@@ -463,85 +467,9 @@ module.exports = Player = Character.extend({
           databaseHandler.setCheckpoint(self.name, self.x, self.y);
         }
       } else if (action === Types.Messages.INVENTORY) {
-        log.info("INVENTORY: " + self.name + " " + message[1] + " " + message[2] + " " + message[3]);
-        var inventoryNumber = message[2],
-          count = message[3];
+        log.info("INVENTORY: " + self.name + " " + message[1] + " " + message[2]);
 
-        if (inventoryNumber !== 0 && inventoryNumber !== 1) {
-          return;
-        }
-
-        var itemKind = self.inventory[inventoryNumber];
-        if (itemKind) {
-          if (message[1] === "avatar" || message[1] === "armor") {
-            if (message[1] === "avatar") {
-              self.inventory[inventoryNumber] = null;
-              databaseHandler.makeEmptyInventory(self.name, inventoryNumber);
-              self.equipItem(itemKind, true);
-            } else {
-              self.inventory[inventoryNumber] = self.armor;
-              databaseHandler.setInventory(self.name, self.armor, inventoryNumber, 1);
-              self.equipItem(itemKind, false);
-            }
-            self.broadcast(self.equip(itemKind));
-          } else if (message[1] === "empty") {
-            //var item = self.server.addItem(self.server.createItem(itemKind, self.x, self.y));
-            var item = self.server.addItemFromChest(itemKind, self.x, self.y);
-            if (Types.isHealingItem(item.kind)) {
-              if (count < 0) count = 0;
-              else if (count > self.inventoryCount[inventoryNumber]) count = self.inventoryCount[inventoryNumber];
-              item.count = count;
-            }
-
-            if (item.count > 0) {
-              self.server.handleItemDespawn(item);
-
-              if (Types.isHealingItem(item.kind)) {
-                if (item.count === self.inventoryCount[inventoryNumber]) {
-                  self.inventory[inventoryNumber] = null;
-                  databaseHandler.makeEmptyInventory(self.name, inventoryNumber);
-                } else {
-                  self.inventoryCount[inventoryNumber] -= item.count;
-                  databaseHandler.setInventory(
-                    self.name,
-                    self.inventory[inventoryNumber],
-                    inventoryNumber,
-                    self.inventoryCount[inventoryNumber],
-                  );
-                }
-              } else {
-                self.inventory[inventoryNumber] = null;
-                databaseHandler.makeEmptyInventory(self.name, inventoryNumber);
-              }
-            }
-          } else if (message[1] === "eat") {
-            var amount;
-
-            switch (itemKind) {
-              case Types.Entities.FLASK:
-                amount = 80;
-                break;
-              case Types.Entities.BURGER:
-                amount = 200;
-                break;
-            }
-
-            if (!self.hasFullHealth()) {
-              self.regenHealthBy(amount);
-              self.server.pushToPlayer(self, self.health());
-            }
-            self.inventoryCount[inventoryNumber] -= 1;
-            if (self.inventoryCount[inventoryNumber] <= 0) {
-              self.inventory[inventoryNumber] = null;
-            }
-            databaseHandler.setInventory(
-              self.name,
-              self.inventory[inventoryNumber],
-              inventoryNumber,
-              self.inventoryCount[inventoryNumber],
-            );
-          }
-        }
+        databaseHandler.setInventory({ player: self, fromSlot: message[1], toSlot: message[2] });
       } else if (action === Types.Messages.ACHIEVEMENT) {
         log.info("ACHIEVEMENT: " + self.name + " " + message[1] + " " + message[2]);
         const index = parseInt(message[1]) - 1;
@@ -715,50 +643,38 @@ module.exports = Player = Character.extend({
     });
   },
 
-  equipArmor: function (kind) {
-    this.armor = kind;
-    this.armorLevel = Properties.getArmorLevel(kind);
+  equipArmor: function (armor, kind, level) {
+    this.armor = armor;
+    this.armorKind = kind;
+    this.armorLevel = level; //Properties.getArmorLevel(kind);
   },
 
-  equipAvatar: function (kind) {
-    if (kind) {
-      this.avatar = kind;
-    } else {
-      this.avatar = Types.Entities.CLOTHARMOR;
-    }
+  equipWeapon: function (weapon, kind, level) {
+    this.weapon = weapon;
+    this.weaponKind = kind;
+    this.weaponLevel = level; // Properties.getWeaponLevel(kind);
   },
 
-  equipWeapon: function (kind) {
-    this.weapon = kind;
-    this.weaponLevel = Properties.getWeaponLevel(kind);
-  },
+  equipItem: function (item, level) {
+    if (item && level) {
+      const kind = Types.getKindFromString(item);
 
-  equipItem: function (itemKind, isAvatar) {
-    if (itemKind) {
-      log.debug(this.name + " equips " + Types.getKindAsString(itemKind));
+      log.debug(this.name + " equips " + item);
 
-      if (Types.isArmor(itemKind)) {
-        if (isAvatar) {
-          databaseHandler.equipAvatar(this.name, Types.getKindAsString(itemKind));
-          this.equipAvatar(itemKind);
-        } else {
-          databaseHandler.equipAvatar(this.name, Types.getKindAsString(itemKind));
-          this.equipAvatar(itemKind);
-
-          databaseHandler.equipArmor(this.name, Types.getKindAsString(itemKind));
-          this.equipArmor(itemKind);
-        }
-        this.updateHitPoints();
-        this.send(new Messages.HitPoints(this.maxHitPoints).serialize());
-      } else if (Types.isWeapon(itemKind)) {
-        databaseHandler.equipWeapon(this.name, Types.getKindAsString(itemKind));
-        this.equipWeapon(itemKind);
+      if (Types.isArmor(kind)) {
+        databaseHandler.equipArmor(this.name, item, level);
+        this.equipArmor(item, kind, level);
+      } else if (Types.isWeapon(kind)) {
+        databaseHandler.equipWeapon(this.name, item, level);
+        this.equipWeapon(item, kind, level);
       }
+
+      this.sendPlayerStats();
     }
   },
 
   updateHitPoints: function () {
-    this.resetHitPoints(Formulas.hp(this.armorLevel, this.level));
+    this.resetHitPoints(Formulas.hp(Properties.getArmorLevel(this.armorKind), this.armorLevel, this.level));
   },
 
   updatePosition: function () {
@@ -784,15 +700,28 @@ module.exports = Player = Character.extend({
     this.connection.close("Player was idle for too long");
   },
 
+  sendPlayerStats: function () {
+    this.updateHitPoints();
+
+    var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb(this.armor, this.armorLevel, this.level);
+    var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage(this.weapon, this.weaponLevel, this.level);
+
+    this.send(
+      new Messages.Stats({
+        maxHitPoints: this.maxHitPoints,
+        damage: minDamage !== maxDamage ? `${minDamage}-${maxDamage}` : maxDamage,
+        absorb: minAbsorb !== maxAbsorb ? `${minAbsorb}-${maxAbsorb}` : maxAbsorb,
+      }).serialize(),
+    );
+  },
+
   incExp: function (gotexp) {
     this.experience = parseInt(this.experience) + parseInt(gotexp);
     databaseHandler.setExp(this.name, this.experience);
     var origLevel = this.level;
     this.level = Types.getLevel(this.experience);
     if (origLevel !== this.level) {
-      this.updateHitPoints();
-      this.send(new Messages.HitPoints(this.maxHitPoints).serialize());
-
+      this.sendPlayerStats();
       // @NOTE Update the player levels
       this.server.updatePopulation({ levelupPlayer: this.id });
     }
@@ -865,40 +794,35 @@ module.exports = Player = Character.extend({
   sendWelcome: function ({
     armor,
     weapon,
-    avatar,
-    weaponAvatar,
     exp,
-    admin,
-    createdAt, // bannedTime,
-    // banUseTime,
-    inventory,
-    inventoryNumber,
+    createdAt,
     x,
     y,
     chatBanEndTime = 0,
     achievement,
+    inventory,
     hash,
     nanoPotions,
     gems,
   }) {
     var self = this;
+
+    const [playerArmor, playerArmorLevel = 1] = armor.split(":");
+    const [playerWeapon, playerWeaponLevel = 1] = weapon.split(":");
+
     self.kind = Types.Entities.WARRIOR;
-    self.admin = admin;
-    self.equipArmor(Types.getKindFromString(armor));
-    self.equipAvatar(Types.getKindFromString(avatar));
-    self.equipWeapon(Types.getKindFromString(weapon));
-    self.inventory[0] = Types.getKindFromString(inventory[0]);
-    self.inventory[1] = Types.getKindFromString(inventory[1]);
-    self.inventoryCount[0] = inventoryNumber[0];
-    self.inventoryCount[1] = inventoryNumber[1];
+    self.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel);
+    self.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel);
+
     self.achievement = achievement;
+    self.inventory = inventory;
     self.hash = hash;
 
     self.createdAt = createdAt;
     self.experience = exp;
     self.level = Types.getLevel(self.experience);
     self.orientation = Utils.randomOrientation;
-    self.updateHitPoints();
+
     if (x === 0 && y === 0) {
       self.updatePosition();
     } else {
@@ -918,14 +842,15 @@ module.exports = Player = Character.extend({
       self.hitPoints,
       armor,
       weapon,
-      avatar,
-      weaponAvatar,
       self.experience,
       achievement,
+      inventory,
       hash,
       nanoPotions,
       gems,
     ]);
+
+    self.sendPlayerStats();
 
     self.hasEnteredGame = true;
     self.isDead = false;

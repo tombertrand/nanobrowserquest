@@ -4,8 +4,9 @@ var Properties = {
   rat: {
     drops: {
       flask: 40,
-      burger: 10,
+      burger: 5,
       firepotion: 5,
+      scrollupgradelow: 20,
     },
     hp: 25,
     armor: 1,
@@ -17,6 +18,7 @@ var Properties = {
       flask: 50,
       axe: 15,
       firepotion: 5,
+      scrollupgradelow: 15,
     },
     hp: 80,
     armor: 2,
@@ -40,6 +42,8 @@ var Properties = {
       mailarmor: 10,
       axe: 20,
       firepotion: 5,
+      scrollupgradelow: 3,
+      scrollupgrademedium: 12,
     },
     hp: 110,
     armor: 2,
@@ -48,10 +52,12 @@ var Properties = {
 
   goblin: {
     drops: {
-      flask: 50,
+      flask: 45,
       leatherarmor: 20,
       axe: 10,
       firepotion: 5,
+      scrollupgradelow: 12,
+      scrollupgrademedium: 3,
     },
     hp: 90,
     armor: 2,
@@ -61,10 +67,11 @@ var Properties = {
   ogre: {
     drops: {
       burger: 10,
-      flask: 50,
+      flask: 35,
       platearmor: 15,
       morningstar: 15,
       firepotion: 5,
+      scrollupgrademedium: 15,
     },
     hp: 200,
     armor: 3,
@@ -73,10 +80,11 @@ var Properties = {
 
   crab: {
     drops: {
-      flask: 50,
+      flask: 45,
       axe: 20,
       leatherarmor: 10,
       firepotion: 5,
+      scrollupgradelow: 10,
     },
     hp: 60,
     armor: 2,
@@ -89,6 +97,8 @@ var Properties = {
       mailarmor: 10,
       morningstar: 10,
       firepotion: 5,
+      scrollupgradelow: 5,
+      scrollupgrademedium: 10,
     },
     hp: 150,
     armor: 3,
@@ -101,6 +111,8 @@ var Properties = {
       platearmor: 10,
       bluesword: 10,
       firepotion: 5,
+      scrollupgradelow: 5,
+      scrollupgrademedium: 10,
     },
     hp: 200,
     armor: 3,
@@ -112,6 +124,7 @@ var Properties = {
       flask: 70,
       redarmor: 15,
       firepotion: 5,
+      scrollupgrademedium: 10,
     },
     hp: 200,
     armor: 3,
@@ -123,6 +136,7 @@ var Properties = {
       flask: 70,
       redsword: 15,
       firepotion: 5,
+      scrollupgrademedium: 10,
     },
     hp: 200,
     armor: 2,

@@ -97,12 +97,16 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
         e.stopPropagation();
       });
 
-      $("#player").click(function (e) {
+      $("#player, #inventory").click(function (e) {
         e.stopPropagation();
       });
 
-      $("#healthbar, #hitpoints, #weapon, #armor").click(function () {
+      $("#healthbar, #hitpoints").click(function () {
         app.togglePlayerInfo();
+      });
+
+      $("#weapon, #armor").click(function () {
+        app.toggleInventory();
       });
 
       $(".clickable").click(function (event) {
@@ -213,7 +217,8 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
       if (data.hasAlreadyPlayed) {
         if (data.player.name && data.player.name !== "") {
           $("#playername").html(data.player.name);
-          $("#playerimage").attr("src", data.player.image);
+          // @NOTE Delete this?
+          // $("#playerimage").attr("src", data.player.image);
         }
       }
 
@@ -573,7 +578,13 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
             case Types.Keys.SPACE:
               game.makePlayerAttackNext();
               break;
+            case Types.Keys.U:
+              app.toggleUpgrade();
+              break;
             case Types.Keys.I:
+              $("#weapon").click();
+              break;
+            case Types.Keys.C:
               $("#healthbar").click();
               break;
             case Types.Keys.Q:

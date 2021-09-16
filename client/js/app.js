@@ -480,23 +480,29 @@ define(["jquery", "storage", "util"], function ($, Storage) {
     },
 
     initEquipmentIcons: function () {
-      var scale = this.game.renderer.getScaleFactor(),
-        getIconPath = function (spriteName) {
-          return "img/" + scale + "/item-" + spriteName + ".png";
-        },
-        weapon = this.game.player.getWeaponName(),
-        armor = this.game.player.getSpriteName(),
-        weaponPath = getIconPath(weapon),
-        armorPath = getIconPath(armor);
+      var scale = this.game.renderer.getScaleFactor();
+      var getIconPath = function (spriteName) {
+        return "img/" + scale + "/item-" + spriteName + ".png";
+      };
+      var weapon = this.game.player.getWeaponName();
+      var weaponLevel = this.game.player.getWeaponLevel();
+      var armor = this.game.player.getArmorName();
+      var armorLevel = this.game.player.getArmorLevel();
+      var weaponPath = getIconPath(weapon);
+      var armorPath = getIconPath(armor);
 
-      $("#weapon").css("background-image", 'url("' + weaponPath + '")');
-      if (armor !== "firefox") {
-        $("#armor").css("background-image", 'url("' + armorPath + '")');
-      }
+      $("#weapon")
+        .css("background-image", 'url("' + weaponPath + '")')
+        .attr("data-item", weapon)
+        .attr("data-level", weaponLevel);
+      $("#player-weapon").text(`${Types.getDisplayableName(weapon)} +${weaponLevel}`);
 
-      $("#player-weapon").text(this.game.player.getDisplayWeaponName(weapon));
       if (armor !== "firefox") {
-        $("#player-armor").text(this.game.player.getDisplayArmorName(armor));
+        $("#armor")
+          .css("background-image", 'url("' + armorPath + '")')
+          .attr("data-item", armor)
+          .attr("data-level", armorLevel);
+        $("#player-armor").text(`${Types.getDisplayableName(armor)} +${armorLevel}`);
       }
     },
 
@@ -605,7 +611,7 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       });
 
       $("#total-achievements").text($("#achievements").find("li").length);
-      $("#total-nano-achievements").text(totalNano / 100000 + "Ñ");
+      $("#total-nano-achievements").text(totalNano / 100000 + "Ӿ");
     },
 
     initUnlockedAchievements: function (ids, totalNano) {
@@ -621,7 +627,7 @@ define(["jquery", "storage", "util"], function ($, Storage) {
     setAchievementData: function ($el, name, desc, nano) {
       $el.find(".achievement-name").html(name);
       $el.find(".achievement-description").html(desc);
-      $el.find(".achievement-nano").html(nano / 100000 + "Ñ");
+      $el.find(".achievement-nano").html(nano / 100000 + "Ӿ");
     },
 
     updateNanoPotions: function (nanoPotions) {
@@ -684,6 +690,28 @@ define(["jquery", "storage", "util"], function ($, Storage) {
 
     togglePlayerInfo: function () {
       $("#player").toggleClass("visible");
+    },
+
+    toggleInventory: function () {
+      $("#inventory").toggleClass("visible");
+
+      if ($("#inventory").hasClass("visible")) {
+        $("#player").addClass("visible");
+        this.game.initDraggable();
+      } else {
+        $("#player").removeClass("visible");
+        this.game.destroyDraggable();
+      }
+    },
+
+    toggleUpgrade: function () {
+      $("#upgrade").toggleClass("visible");
+
+      if ($("#upgrade").hasClass("visible")) {
+        $("#inventory").addClass("visible upgrade");
+      } else {
+        $("#inventory").removeClass("visible upgrade");
+      }
     },
 
     openPopup: function (type, url) {
