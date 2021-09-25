@@ -39,6 +39,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
       this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
       this.handlers[Types.Messages.INVENTORY] = this.receiveInventory;
+      this.handlers[Types.Messages.UPGRADE] = this.receiveUpgrade;
       this.useBison = false;
       this.enable();
     },
@@ -287,8 +288,9 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         var character = EntityFactory.createEntity(kind, id, name);
 
         if (character instanceof Player) {
-          character.weaponName = Types.getKindAsString(weapon);
-          character.spriteName = Types.getKindAsString(armor);
+          // @TODO load badass level8+ armor and weapon effects
+          character.weaponName = weapon; //Types.getKindAsString(weapon);
+          character.spriteName = armor; //Types.getKindAsString(armor);
         }
 
         if (this.spawn_character_callback) {
@@ -329,8 +331,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     },
 
     receiveEquipItem: function (data) {
-      var id = data[1],
-        itemKind = data[2];
+      var id = data[1];
+      var itemKind = data[2];
 
       if (this.equip_callback) {
         this.equip_callback(id, itemKind);
@@ -385,10 +387,11 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     receiveKill: function (data) {
       var mobKind = data[1];
       var level = data[2];
-      var exp = data[3];
+      var playerExp = data[3];
+      var exp = data[4];
 
       if (this.kill_callback) {
-        this.kill_callback(mobKind, level, exp);
+        this.kill_callback(mobKind, level, playerExp, exp);
       }
     },
 
@@ -480,6 +483,14 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
       if (this.receiveinventory_callback) {
         this.receiveinventory_callback(inventory);
+      }
+    },
+
+    receiveUpgrade: function (data) {
+      var upgrade = data[1];
+
+      if (this.receiveupgrade_callback) {
+        this.receiveupgrade_callback(upgrade);
       }
     },
 
@@ -629,6 +640,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.receiveinventory_callback = callback;
     },
 
+    onReceiveUpgrade: function (callback) {
+      this.receiveupgrade_callback = callback;
+    },
+
     sendCreate: function (player) {
       this.sendMessage([Types.Messages.CREATE, player.name, player.account]);
     },
@@ -754,8 +769,16 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.sendMessage([Types.Messages.REQUEST_PAYOUT]);
     },
 
-    sendInventory: function (fromSlot, toSlot) {
-      this.sendMessage([Types.Messages.INVENTORY, fromSlot, toSlot]);
+    sendMoveItem: function (fromSlot, toSlot) {
+      this.sendMessage([Types.Messages.MOVE_ITEM, fromSlot, toSlot]);
+    },
+
+    sendMoveUpgradeItemsToInventory: function () {
+      this.sendMessage([Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY]);
+    },
+
+    sendUpgradeItem: function () {
+      this.sendMessage([Types.Messages.UPGRADE_ITEM]);
     },
   });
 

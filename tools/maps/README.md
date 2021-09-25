@@ -26,7 +26,7 @@ This tool is to be used from the command line after the map has been exported in
 
 1. `cd tools/maps/`
 
-2. `./exportmap.js tiled_exported_file.json [mode] [destination]`
+2. `./exportmap.js tmx/map.json [mode] [destination]`
 
 mode & destination values:
 * `direct` (default) → updates current server and map files (WARNING: SHOULD ONLY BE CALLED FROM `BrowserQuest/tools/maps` see 1);

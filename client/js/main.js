@@ -1,4 +1,10 @@
-define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, App, EntryPoint) {
+define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoint"], function (
+  $,
+  jqueryUI,
+  touchPunch,
+  App,
+  EntryPoint,
+) {
   var app, game;
 
   var initApp = function () {
@@ -80,10 +86,6 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
         // $(this).removeClass("blink");
       });
 
-      // $("#instructions").click(function () {
-      //   app.hideWindows();
-      // });
-
       $("#playercount").click(function () {
         app.togglePopulationInfo();
       });
@@ -97,7 +99,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
         e.stopPropagation();
       });
 
-      $("#player, #inventory").click(function (e) {
+      $("#player, #inventory, #upgrade").on("click mouseup", function (e) {
         e.stopPropagation();
       });
 
@@ -441,7 +443,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
           app.center();
           app.setMouseCoordinates(event.originalEvent.touches[0]);
           game.click();
-          app.hideWindows();
+          // app.hideWindows();
         });
       } else {
         $("#foreground").click(function (event) {
@@ -451,7 +453,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
             game.pvpFlag = event.shiftKey;
             game.click();
           }
-          app.hideWindows();
+          // app.hideWindows();
         });
       }
 
@@ -578,9 +580,6 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
             case Types.Keys.SPACE:
               game.makePlayerAttackNext();
               break;
-            case Types.Keys.U:
-              app.toggleUpgrade();
-              break;
             case Types.Keys.I:
               $("#weapon").click();
               break;
@@ -669,7 +668,7 @@ define(["jquery", "lib/jquery-ui", "app", "entrypoint"], function ($, jqueryUI, 
       });
 
       $("#mutebutton").click(function () {
-        game.audioManager.toggle();
+        app.toggleMute()
       });
 
       $(document).bind("keydown", function (e) {

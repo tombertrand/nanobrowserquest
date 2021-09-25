@@ -55,6 +55,7 @@ define([
       this.ready = false;
       this.started = false;
       this.hasNeverStarted = true;
+      this.isUpgradeItemSent = false;
 
       this.renderer = null;
       this.updater = null;
@@ -165,6 +166,7 @@ define([
         "death",
         "sword1",
         "axe",
+        "blueaxe",
         "chest",
         "sword2",
         "redsword",
@@ -172,6 +174,7 @@ define([
         "goldensword",
         "item-sword2",
         "item-axe",
+        "item-blueaxe",
         "item-redsword",
         "item-bluesword",
         "item-goldensword",
@@ -299,6 +302,17 @@ define([
       self.sprites["item-cake"].createSilhouette();
     },
 
+    initMuteButton: function () {
+      var self = this;
+      console.log("~~~~self.storage", self.storage);
+
+      if (!self.storage.isAudioEnabled()) {
+        self.audioManager.disableAudio();
+      } else {
+        $("#mutebutton").addClass("active");
+      }
+    },
+
     initTooltips: function () {
       var self = this;
 
@@ -328,6 +342,42 @@ define([
       });
     },
 
+    initSendUpgradeItem: function () {
+      var self = this;
+      $("#upgrade-btn").on("click", function () {
+        if (self.player.upgrade.length !== 2) return;
+
+        if (!self.isUpgradeItemSent) {
+          self.client.sendUpgradeItem();
+        }
+        self.isUpgradeItemSent = true;
+      });
+    },
+
+    initUpgradeItemPreview: function () {
+      var self = this;
+
+      $("#upgrade-preview-btn").on("click", function () {
+        self.player.upgrade.forEach(({ item, level, slot }) => {
+          if (slot !== 0) return;
+          const previewSlot = $(`#upgrade .item-slot:eq(10)`);
+
+          if (previewSlot.is(":empty")) {
+            previewSlot.append(
+              $("<div />", {
+                class: `item-not-draggable`,
+                css: {
+                  "background-image": `url("${self.getIconPath(item)}")`,
+                },
+                "data-item": item,
+                "data-level": parseInt(level) + 1,
+              }),
+            );
+          }
+        });
+      });
+    },
+
     initDroppable: function () {
       var self = this;
 
@@ -338,36 +388,42 @@ define([
         drop: function (event, ui) {
           // @NOTE Delay droppable.drop() callback for draggable.stop()
           setTimeout(() => {
-            const itemEl = $(ui.draggable[0]);
-            const fromSlot = itemEl.parent().data("slot");
+            const fromItemEl = $(ui.draggable[0]);
+            const fromItemElParent = fromItemEl.parent();
+            const fromSlot = fromItemElParent.data("slot");
             const toSlot = $(this).data("slot");
-            if (itemEl.parent().hasClass("item-inventory")) {
-              itemEl.parent().addClass("item-droppable");
-            }
+            const toItemEl = $(this).find("> div");
 
-            const item = itemEl.attr("data-item");
-            const level = itemEl.attr("data-level");
-            const kind = kinds[item][1];
-
-            // @NOTE Send the inventory change to BE
-            self.client.sendInventory(fromSlot, toSlot);
-
-            if ($(this).hasClass("item-weapon")) {
-              self.player.switchWeapon(item, level);
-            } else if ($(this).hasClass("item-armor")) {
-              self.player.switchArmor(self.sprites[item], level);
-            } else if ($(this).parent().attr("id") === "item-delete") {
-              itemEl.remove();
+            if (fromSlot === toSlot) {
               return;
             }
 
-            $(this).removeClass("item-droppable").append(itemEl.detach());
+            const item = fromItemEl.attr("data-item");
+            const level = fromItemEl.attr("data-level");
 
-            if (kind === "armor" && $(".item-armor").is(":empty")) {
-              self.player.switchArmor(self.sprites["clotharmor"], 1);
-            } else if (kind === "weapon" && $(".item-weapon").is(":empty")) {
-              self.player.switchWeapon("sword1", 1);
+            self.client.sendMoveItem(fromSlot, toSlot);
+
+            if (toSlot === -1) {
+              fromItemEl.remove();
+            } else {
+              $(this).append(fromItemEl.detach());
+              if (toItemEl.length) {
+                $(fromItemElParent).append(toItemEl.detach());
+              }
             }
+
+            if (toSlot === 100) {
+              self.player.switchWeapon(item, level);
+            } else if (toSlot === 101) {
+              self.player.switchArmor(self.sprites[item], level);
+            }
+
+            // const type = kinds[item][1];
+            // if (type === "armor" && $(".item-equip-armor").is(":empty")) {
+            //   self.player.switchArmor(self.sprites["clotharmor"], 1);
+            // } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
+            //   self.player.switchWeapon("sword1", 1);
+            // }
           });
         },
       });
@@ -393,6 +449,8 @@ define([
 
           if (["weapon", "armor"].includes(type) && $(`.item-${type}`).is(":empty")) {
             $(`.item-${type}`).addClass("item-droppable");
+          } else if (["scrollupgradelow", "scrollupgrademedium", "scrollupgradehigh"].includes(item)) {
+            $(`.item-scroll`).addClass("item-droppable");
           }
 
           self.initDroppable();
@@ -401,7 +459,7 @@ define([
           self.destroyDroppable();
 
           $(".ui-droppable-origin").removeClass("ui-droppable-origin");
-          $(".item-weapon, .item-armor").removeClass("item-droppable");
+          $(".item-weapon, .item-armor, .item-scroll").removeClass("item-droppable");
         },
       });
     },
@@ -410,27 +468,28 @@ define([
       $(".item-draggable").draggable("destroy");
     },
 
-    initInventory: function () {
+    getIconPath: function (spriteName) {
       const scale = this.renderer.getScaleFactor();
-      const getIconPath = function (spriteName) {
-        return `img/${scale}/item-${spriteName}.png`;
-      };
 
+      return `img/${scale}/item-${spriteName}.png`;
+    },
+
+    initInventory: function () {
       $("#item-inventory").empty();
       for (var i = 0; i < 24; i++) {
         $("#item-inventory").append(`<div class="item-slot item-inventory item-droppable" data-slot="${i}"></div>`);
       }
 
-      $("#item-weapon").empty().append('<div class="item-slot item-weapon" data-slot="100"></div>');
-      $("#item-armor").empty().append('<div class="item-slot item-armor" data-slot="101"></div>');
+      $("#item-weapon").empty().append('<div class="item-slot item-equip-weapon item-weapon" data-slot="100"></div>');
+      $("#item-armor").empty().append('<div class="item-slot item-equip-armor item-armor" data-slot="101"></div>');
       $("#item-delete").empty().append('<div class="item-slot item-droppable" data-slot="-1"></div>');
 
       if (this.player.weaponName !== "sword1") {
-        $(".item-weapon").append(
+        $(".item-equip-weapon").append(
           $("<div />", {
             class: "item-draggable",
             css: {
-              "background-image": `url("${getIconPath(this.player.weaponName)}")`,
+              "background-image": `url("${this.getIconPath(this.player.weaponName)}")`,
             },
             "data-item": this.player.weaponName,
             "data-level": this.player.weaponLevel,
@@ -438,11 +497,11 @@ define([
         );
       }
       if (this.player.armorName !== "clotharmor") {
-        $(".item-armor").append(
+        $(".item-equip-armor").append(
           $("<div />", {
             class: "item-draggable",
             css: {
-              "background-image": `url("${getIconPath(this.player.armorName)}")`,
+              "background-image": `url("${this.getIconPath(this.player.armorName)}")`,
             },
             "data-item": this.player.armorName,
             "data-level": this.player.armorLevel,
@@ -454,24 +513,20 @@ define([
     },
 
     updateInventory: function () {
-      const scale = this.renderer.getScaleFactor();
-      const getIconPath = function (spriteName) {
-        return `img/${scale}/item-${spriteName}.png`;
-      };
-
       if ($("#inventory").hasClass("visible")) {
         this.destroyDraggable();
       }
 
+      // @TODO instead of empty-ing, compare and replace
       $(".item-inventory").empty();
       this.player.inventory.forEach(({ item, level, quantity, slot }) => {
         $(`#item-inventory .item-slot:eq(${slot})`)
-          .removeClass("item-droppable")
+          // .removeClass("item-droppable")
           .append(
             $("<div />", {
               class: `item-draggable ${quantity ? "item-quantity" : ""}`,
               css: {
-                "background-image": `url("${getIconPath(item)}")`,
+                "background-image": `url("${this.getIconPath(item)}")`,
               },
               "data-item": item,
               "data-level": level,
@@ -480,7 +535,63 @@ define([
           );
       });
 
+      // $("#item-inventory .item-slot:empty").addClass("item-droppable");
+
       if ($("#inventory").hasClass("visible")) {
+        this.initDraggable();
+      }
+    },
+
+    initUpgrade: function () {
+      $("#upgrade-scroll").empty();
+      for (var i = 1; i < 10; i++) {
+        $("#upgrade-scroll").append(`<div class="item-slot item-scroll" data-slot="${200 + i}"></div>`);
+      }
+      $("#upgrade-item")
+        .empty()
+        .append(
+          '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor" data-slot="200"></div>',
+        );
+      $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
+    },
+
+    updateUpgrade: function () {
+      if ($("#inventory").hasClass("visible")) {
+        this.destroyDraggable();
+      }
+
+      $(".item-scroll").empty();
+      $(".item-upgrade").empty();
+      $(".item-upgraded").empty();
+
+      let upgradeInfoText = "&nbsp;";
+
+      this.player.upgrade.forEach(({ item, level, quantity, slot }) => {
+        if (slot === 0 && level) {
+          const successRates = Types.getUpgradeSuccessRates();
+          const successRate = successRates[parseInt(level) - 1];
+
+          upgradeInfoText = `A level ${level} item has ${successRate}% chance of success`;
+        }
+
+        $(`#upgrade .item-slot:eq(${slot})`)
+          .removeClass("item-droppable")
+          .append(
+            $("<div />", {
+              class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+              css: {
+                "background-image": `url("${this.getIconPath(item)}")`,
+              },
+              "data-item": item,
+              "data-level": level,
+              "data-quantity": quantity,
+            }),
+          );
+      });
+
+      $("#upgrade-info").html(upgradeInfoText);
+
+      if ($("#upgrade").hasClass("visible")) {
         this.initDraggable();
       }
     },
@@ -1197,6 +1308,7 @@ define([
         self.player.level = Types.getLevel(experience);
         self.player.setInventory(inventory);
 
+        self.initMuteButton();
         self.updateBars();
         self.updateExpBar();
         self.resetCamera();
@@ -1204,7 +1316,10 @@ define([
         self.audioManager.updateMusic();
         self.initAchievements();
         self.initInventory();
+        self.initUpgrade();
         self.initTooltips();
+        self.initSendUpgradeItem();
+        self.initUpgradeItemPreview();
 
         self.player.nanoPotions = nanoPotions;
         self.player.gems = gems;
@@ -1237,6 +1352,9 @@ define([
         if (hash) {
           self.gamecompleted_callback({ hash, fightAgain: false });
         }
+
+        // @NOTE possibly optimize this? sending request to move items to inventory
+        self.client.sendMoveUpgradeItemsToInventory();
 
         self.player.onStartPathing(function (path) {
           var i = path.length - 1,
@@ -1890,13 +2008,15 @@ define([
           }
         });
 
-        self.client.onPlayerKillMob(function (kind, level, exp) {
+        self.client.onPlayerKillMob(function (kind, level, playerExp, exp) {
           var mobExp = Types.getMobExp(kind);
           self.player.level = level;
-          self.player.experience = exp;
-          self.updateExpBar();
+          self.player.experience = playerExp;
 
-          self.infoManager.addDamageInfo("+" + mobExp + " exp", self.player.x, self.player.y - 15, "exp", 3000);
+          if (exp) {
+            self.updateExpBar();
+            self.infoManager.addDamageInfo("+" + mobExp + " exp", self.player.x, self.player.y - 15, "exp", 3000);
+          }
 
           // var expInThisLevel = self.player.experience - Types.expForLevel[self.player.level - 1];
           // var expForLevelUp = Types.expForLevel[self.player.level] - Types.expForLevel[self.player.level - 1];
@@ -1990,8 +2110,8 @@ define([
         });
 
         self.client.onPlayerEquipItem(function (playerId, itemKind) {
-          var player = self.getEntityById(playerId),
-            itemName = Types.getKindAsString(itemKind);
+          var player = self.getEntityById(playerId);
+          var itemName = Types.getKindAsString(itemKind);
 
           if (player) {
             if (Types.isArmor(itemKind)) {
@@ -2046,7 +2166,9 @@ define([
             self.nbplayers_callback(worldPlayers, totalPlayers, players);
           }
           if (levelupPlayer) {
-            self.entities[levelupPlayer].setLevelup();
+            if (self.entities[levelupPlayer]) {
+              self.entities[levelupPlayer].setLevelup();
+            }
 
             if (levelupPlayer === self.playerId) {
               self.audioManager.playSound("levelup");
@@ -2083,9 +2205,9 @@ define([
               // }
             }
 
-            self.player.switchWeapon("redsword");
-            self.player.armorloot_callback("redarmor");
-            self.equipment_callback();
+            // self.player.switchWeapon("redsword");
+            // self.player.armorloot_callback("redarmor");
+            // self.equipment_callback();
           } else if (status === "failed") {
             self.bosscheckfailed_callback(message);
           } else if (status === "completed") {
@@ -2108,6 +2230,12 @@ define([
         self.client.onReceiveInventory(function (data) {
           self.player.setInventory(data);
           self.updateInventory();
+        });
+
+        self.client.onReceiveUpgrade(function (data) {
+          self.isUpgradeItemSent = false;
+          self.player.setUpgrade(data);
+          self.updateUpgrade();
         });
 
         self.client.onDisconnected(function (message) {
@@ -2301,6 +2429,9 @@ define([
           this.tryUnlockingAchievement("NYAN");
         } else if (npc.kind === Types.Entities.RICK) {
           this.tryUnlockingAchievement("RICKROLLD");
+        } else if (npc.kind === Types.Entities.ANVIL) {
+          console.log("!!!open it!");
+          this.app.openUpgrade();
         }
       }
     },
@@ -3131,10 +3262,10 @@ define([
     },
 
     resize: function () {
-      var x = this.camera.x,
-        y = this.camera.y,
-        currentScale = this.renderer.scale,
-        newScale = this.renderer.getScaleFactor();
+      var x = this.camera.x;
+      var y = this.camera.y;
+      var currentScale = this.renderer.scale;
+      var newScale = this.renderer.getScaleFactor();
 
       this.renderer.rescale(newScale);
       this.camera = this.renderer.camera;

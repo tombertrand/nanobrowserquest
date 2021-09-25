@@ -219,7 +219,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                         You can complete the game as many time as you like.<br />
                         Play with your friends and introduce them to Nano!<br /><br />
 
-                        <strong>No farming, no cheating. You will get banned.</strong><br />
+                        <strong>No exploits, no cheating. You will get banned.</strong><br />
                         The game is funded entirely by NanoLooker donations, keep it friendly.<br/><br/>
                         
                         <div id="continue">
@@ -288,19 +288,6 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                              We're sorry, but your browser does not support WebSockets.<br>
                              In order to play, we recommend using the latest version of Firefox, Chrome or Safari.
                          </p>
-                    </article>
-                    <article id="legal">
-          	           <h1>
-          	               <span class="left-ornament"></span>
-          	               Privacy
-          	               <span class="right-ornament"></span>
-                         </h1>
-                         <p>
-                             Nano BrowserQuest stores your character name, game achievements and equipment in your browser and does not send them to Mozilla. We do collect server log data (such as IP address) as well as web analytics data. We handle info we receive about you as explained in our <a class="clickable" target="_blank" href="https://www.mozilla.org/en-US/privacy-policy">Privacy Policy</a>.
-                         </p>
- 	                    <div id="close-legal">
- 	                        <span>- click anywhere to close -</span>
-                         </div>
                     </article>
 	            </div>
 	            <div class="parchment-right"></div>
@@ -476,7 +463,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                         <div id="completedbutton" class="barbutton clickable">
                             <span class="nano-logo"></span>
                         </div>
-                        <div id="mutebutton" class="barbutton clickable active"></div>
+                        <div id="mutebutton" class="barbutton clickable"></div>
                     </div>
     			</div>
                 <div id="player" class="panel">
@@ -517,54 +504,43 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 				</div to accept members for instance… -->
                 <div id="population" class="panel">
                     <div id="instance-population" class="panel-header">
-                        <span class="active">0</span> <span>players</span> online<!--  in your instance -->
+                        <span class="active">0</span> <span>players</span> online
                     </div>
                     <div id="player-list"></div>
-                    <!-- <div id="guild-population" class="">
+                    <!--<div id="guild-population" class="">
 						<span>0</span> <span>players</span> in «&nbsp;<span id="guild-name"></span>&nbsp;»
-					</div>
-                    <div id="world-population" class="">
-                        <span>0</span> <span>players</span> total
-                    </div> -->
+					</div>-->
                 </div>
 
-
-                <div id="upgrade" class="panel">
-                    <div class="panel-header"></div>
-                    <div class="panel-spaced-row">
-                        <div id="upgrade-item">
-                            <div class="item-slot" data-slot="200"></div>
+                <div class="panel-container">
+                    <div id="upgrade" class="panel">
+                        <span class="close"></span>
+                        <div class="panel-header"></div>
+                        <div class="panel-spaced-row">
+                            <div id="upgrade-item"></div>
+                            <div id="upgrade-scroll"></div>
+                            <div id="upgrade-result"></div>
                         </div>
-                        <div id="upgrade-ingredient">
-                            <div class="item-slot" data-slot="201"></div>
-                            <div class="item-slot" data-slot="202"></div>
-                            <div class="item-slot" data-slot="203"></div>
-                            <div class="item-slot" data-slot="204"></div>
-                            <div class="item-slot" data-slot="201"></div>
-                            <div class="item-slot" data-slot="201"></div>
-                            <div class="item-slot" data-slot="201"></div>
-                            <div class="item-slot" data-slot="201"></div>
-                            <div class="item-slot" data-slot="201"></div>
-                            
+                        <div id="upgrade-info">&nbsp;</div>
+                        <div class="panel-spaced-row">
+                            <button class="btn" id="upgrade-btn">Upgrade</button>
+                            <button class="btn" id="upgrade-preview-btn">Preview</button>
                         </div>
-                        <div id="upgrade-result">
-                            <div class="item-slot" data-slot="201"></div>
-                        </div>
+                        <div class="panel-header reverse"></div>
                     </div>
-                    <div class="panel-header reverse"></div>
-                </div>
-                <div id="inventory" class="panel">
-                    <div class="panel-header"></div>
-                    <div class="panel-spaced-row">
-                        <!-- <img id="player-image" /> -->
-                        <div id="item-player">
-                            <div id="item-weapon"></div>
-                            <div id="item-armor"></div>
+                    <div id="inventory" class="panel">
+                        <div class="panel-header"></div>
+                        <div class="panel-spaced-row">
+                            <!-- <img id="player-image" /> -->
+                            <div id="item-player">
+                                <div id="item-weapon"></div>
+                                <div id="item-armor"></div>
+                            </div>
+                            <div id="item-delete"></div>
                         </div>
-                        <div id="item-delete"></div>
+                        <div id="item-inventory"></div>
+                        <div class="panel-header reverse"></div>
                     </div>
-                    <div id="item-inventory"></div>
-                    <div class="panel-header reverse"></div>
                 </div>
 		    </div>
 		</div>
@@ -574,8 +550,8 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
               <a href="https://twitter.com/share?url=https%3A%2F%2Fnanobrowserquest.com&amp;text=NanoBrowserQuest%3A%20HTML5%20massively%20multiplayer%20adventure%20game%20%23demo%20%23websockets&amp;related=glecollinet:Creators%20of%20BrowserQuest%2Cwhatthefranck" class="twitter"></a>
               <a href="https://www.facebook.com/share.php?u=https://nanobrowserquest.com/" class="facebook"></a>
 		    </div>
-		    <div id="privacy-link" class="clickable">
-		      <span class="dash">&ndash;</span> <span id="toggle-legal">Privacy</span>
+		    <div id="nano-link" class="clickable">
+		      <span class="dash">&ndash;</span> <a href="https://github.com/running-coder/NanoBrowserQuest" target="_blank">Github</a>
 		    </div>
 		    <div id="credits-link" class="clickable">
 		      <span class="dash">&ndash;</span> <span id="toggle-credits">Credits</span>

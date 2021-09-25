@@ -23,13 +23,15 @@ var Types = require("../../shared/js/gametypes");
         (this.formats[Types.Messages.BOSS_CHECK] = ["b"]),
         (this.formats[Types.Messages.BAN_PLAYER] = ["s"]),
         (this.formats[Types.Messages.REQUEST_PAYOUT] = []),
-        (this.formats[Types.Messages.INVENTORY] = ['n', 'n']);
+        (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n"]),
+        (this.formats[Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY] = []),
+        (this.formats[Types.Messages.UPGRADE_ITEM] = []);
     },
 
     check: function (msg) {
-      var message = msg.slice(0),
-        type = message[0],
-        format = this.formats[type];
+      var message = msg.slice(0);
+      var type = message[0];
+      var format = this.formats[type];
 
       message.shift();
 
@@ -86,9 +88,15 @@ var Types = require("../../shared/js/gametypes");
         return message.length === 1 && _.isString(message[0]);
       } else if (type === Types.Messages.BOSS_CHECK) {
         return message.length === 1 && _.isString(message[0]);
-      } else if ([Types.Messages.REQUEST_PAYOUT].includes(type)) {
+      } else if (
+        [
+          Types.Messages.REQUEST_PAYOUT,
+          Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY,
+          Types.Messages.UPGRADE_ITEM,
+        ].includes(type)
+      ) {
         return message.length === 0;
-      } else if (type === Types.Messages.INVENTORY) {
+      } else if (type === Types.Messages.MOVE_ITEM) {
         return message.length === 2 && _.isNumber(message[0]) && _.isNumber(message[1]);
       } else {
         log.error("Unknown message type: " + type);

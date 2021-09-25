@@ -20,6 +20,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.weaponName = "sword1";
       this.weaponLevel = 1;
       this.inventory = [];
+      this.upgrade = [];
       this.gems = [];
       this.nanoPotions = 0;
       this.damage = "0";
@@ -213,6 +214,24 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
 
     setInventory: function (inventory) {
       this.inventory = inventory
+        .map((rawItem, slot) => {
+          if (!rawItem) return false;
+
+          const [item, levelOrQuantity] = rawItem.split(":");
+          const isWeapon = kinds[item][1] === "weapon";
+          const isArmor = kinds[item][1] === "armor";
+
+          return {
+            item,
+            [isWeapon || isArmor ? "level" : "quantity"]: levelOrQuantity,
+            slot,
+          };
+        })
+        .filter(Boolean);
+    },
+
+    setUpgrade: function (upgrade) {
+      this.upgrade = upgrade
         .map((rawItem, slot) => {
           if (!rawItem) return false;
 

@@ -37,6 +37,10 @@ Types = {
     REQUEST_PAYOUT: 34,
     NOTIFICATION: 35,
     INVENTORY: 36,
+    UPGRADE: 37,
+    MOVE_ITEM: 38,
+    MOVE_UPGRADE_ITEMS_TO_INVENTORY: 39,
+    UPGRADE_ITEM: 40,
     GUILDERRORTYPE: {
       DOESNOTEXIST: 1,
       BADNAME: 2,
@@ -129,6 +133,7 @@ Types = {
     BLUESWORD: 66,
     REDSWORD: 62,
     GOLDENSWORD: 63,
+    BLUEAXE: 77,
   },
 
   Orientations: {
@@ -177,6 +182,7 @@ Types.Entities.Weapons = [
   Types.Entities.BLUESWORD,
   Types.Entities.REDSWORD,
   Types.Entities.GOLDENSWORD,
+  Types.Entities.BLUEAXE,
 ];
 
 Types.Entities.Armors = [
@@ -203,18 +209,18 @@ var kinds = {
   warrior: [Types.Entities.WARRIOR, "player"],
 
   // ID, exp, level
+  wizard: [Types.Entities.WIZARD, "mob", 7, 1],
   rat: [Types.Entities.RAT, "mob", 3, 2],
-  skeleton: [Types.Entities.SKELETON, "mob", 15, 8],
+  crab: [Types.Entities.CRAB, "mob", 3, 1],
+  bat: [Types.Entities.BAT, "mob", 6, 3],
   goblin: [Types.Entities.GOBLIN, "mob", 8, 5],
+  skeleton: [Types.Entities.SKELETON, "mob", 15, 8],
+  snake: [Types.Entities.SNAKE, "mob", 25, 10],
   ogre: [Types.Entities.OGRE, "mob", 27, 12],
+  skeleton2: [Types.Entities.SKELETON2, "mob", 38, 15],
+  eye: [Types.Entities.EYE, "mob", 45, 18],
   spectre: [Types.Entities.SPECTRE, "mob", 53, 21],
   deathknight: [Types.Entities.DEATHKNIGHT, "mob", 70, 24],
-  crab: [Types.Entities.CRAB, "mob", 3, 1],
-  snake: [Types.Entities.SNAKE, "mob", 25, 10],
-  bat: [Types.Entities.BAT, "mob", 6, 3],
-  wizard: [Types.Entities.WIZARD, "mob", 7, 1],
-  eye: [Types.Entities.EYE, "mob", 45, 18],
-  skeleton2: [Types.Entities.SKELETON2, "mob", 38, 15],
   boss: [Types.Entities.BOSS, "mob", 140, 48],
 
   // kind, type, level, damage
@@ -222,9 +228,10 @@ var kinds = {
   sword2: [Types.Entities.SWORD2, "weapon", "Sword", 1, 3],
   axe: [Types.Entities.AXE, "weapon", "Axe", 2, 5],
   morningstar: [Types.Entities.MORNINGSTAR, "weapon", "Morning Star", 3, 7],
-  bluesword: [Types.Entities.BLUESWORD, "weapon", "Magic Sword", 5, 10],
+  bluesword: [Types.Entities.BLUESWORD, "weapon", "Frozen Sword", 5, 10],
   redsword: [Types.Entities.REDSWORD, "weapon", "Blazing Sword", 7, 15],
   goldensword: [Types.Entities.GOLDENSWORD, "weapon", "Golden Sword", 10, 20],
+  blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 12, 22],
 
   // kind, type, level, defense
   clotharmor: [Types.Entities.CLOTHARMOR, "armor", "Cloth Armor", 1, 1],
@@ -290,6 +297,7 @@ Types.rankedWeapons = [
   Types.Entities.BLUESWORD,
   Types.Entities.REDSWORD,
   Types.Entities.GOLDENSWORD,
+  Types.Entities.BLUEAXE,
 ];
 
 Types.rankedArmors = [
@@ -520,12 +528,16 @@ Types.isArmor = function (kindOrString) {
   }
 };
 
-Types.isScroll = function (kind) {
-  return [
-    Types.Entities.SCROLLUPGRADELOW,
-    Types.Entities.SCROLLUPGRADEMEDIUM,
-    Types.Entities.SCROLLUPGRADEHIGH,
-  ].includes(kind);
+Types.isScroll = function (kindOrString) {
+  if (typeof kindOrString === "number") {
+    return [
+      Types.Entities.SCROLLUPGRADELOW,
+      Types.Entities.SCROLLUPGRADEMEDIUM,
+      Types.Entities.SCROLLUPGRADEHIGH,
+    ].includes(kindOrString);
+  } else {
+    return kindOrString.startsWith("scroll");
+  }
 };
 
 Types.isWeapon = function (kindOrString) {
@@ -667,6 +679,10 @@ if (!(typeof exports === "undefined")) {
   module.exports = Types;
 }
 
+Types.getUpgradeSuccessRates = () => {
+  return [100, 100, 90, 80, 55, 30, 7, 4, 1];
+};
+
 // kind, type, name, level, defense
 Types.getArmorDefense = function (armor, level) {
   const defense = kinds[armor][4];
@@ -697,23 +713,8 @@ Types.getWeaponMagicDamage = function (level) {
   return level * 3;
 };
 
-Types.getItemDetails = function (item, level) {
-  const isWeapon = Types.isWeapon(item);
-  const isArmor = Types.isArmor(item);
+Types.getItemClass = function (item, level) {
   const baseLevel = kinds[item][3];
-
-  const isEquipment = isWeapon || isArmor;
-  let magicDamage = 0;
-  let healthBonus = 0;
-
-  let type = "item";
-  if (isWeapon) {
-    type = "weapon";
-    magicDamage = Types.getWeaponMagicDamage(level);
-  } else if (isArmor) {
-    type = "armor";
-    healthBonus = Types.getArmorHealthBonus(level);
-  }
 
   let itemClass;
   if (baseLevel < 5) {
@@ -733,6 +734,29 @@ Types.getItemDetails = function (item, level) {
   } else if (baseLevel >= 10) {
     itemClass = "high";
   }
+
+  return itemClass;
+};
+
+Types.getItemDetails = function (item, level) {
+  const isWeapon = Types.isWeapon(item);
+  const isArmor = Types.isArmor(item);
+  const baseLevel = kinds[item][3];
+
+  const isEquipment = isWeapon || isArmor;
+  let magicDamage = 0;
+  let healthBonus = 0;
+
+  let type = "item";
+  if (isWeapon) {
+    type = "weapon";
+    magicDamage = Types.getWeaponMagicDamage(level);
+  } else if (isArmor) {
+    type = "armor";
+    healthBonus = Types.getArmorHealthBonus(level);
+  }
+
+  let itemClass = Types.getItemClass(item, level);
 
   const multiplier = itemClass === "high" ? 2 : 1;
   const requirement = baseLevel + level * multiplier;

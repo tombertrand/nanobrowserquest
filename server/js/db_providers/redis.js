@@ -1,16 +1,17 @@
-var Utils = require("../utils");
-
-var cls = require("../lib/class"),
-  Player = require("../player"),
-  Messages = require("../message"),
-  redis = require("redis"),
-  bcrypt = require("bcrypt");
+const Utils = require("../utils");
+const cls = require("../lib/class");
+const Player = require("../player");
+const Messages = require("../message");
+const redis = require("redis");
+const bcrypt = require("bcrypt");
 const { Sentry } = require("../sentry");
 
 const INVENTORY_SLOT_COUNT = 24;
 const WEAPON_SLOT = 100;
 const ARMOR_SLOT = 101;
 const DELETE_SLOT = -1;
+const UPGRADE_SLOT_COUNT = 11;
+const UPGRADE_SLOT_RANGE = 200;
 const ACHIEVEMENT_COUNT = 24;
 const GEM_COUNT = 4;
 
@@ -43,6 +44,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "hash") // 9
             .hget(userKey, "nanoPotions") // 10
             .hget(userKey, "gems") // 11
+            .hget(userKey, "upgrade") // 12
             .exec(function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
@@ -80,18 +82,35 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 Sentry.captureException(err);
               }
 
-              var inventory = new Array(INVENTORY_SLOT_COUNT).fill(0);
+              var inventory = replies[6];
               try {
-                inventory = JSON.parse(replies[6]);
-
-                // @NOTE Migrate inventory
-                if (inventory.length < 24) {
-                  inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
-
+                if (!inventory) {
+                  inventory = new Array(INVENTORY_SLOT_COUNT).fill(0);
                   client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+                } else {
+                  inventory = JSON.parse(replies[6]);
+
+                  // @NOTE Migrate inventory
+                  if (inventory.length < 24) {
+                    inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
+
+                    client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+                  }
                 }
               } catch (err) {
-                // invalid json
+                console.log(err);
+                Sentry.captureException(err);
+              }
+
+              var upgrade = replies[12];
+              try {
+                // @NOTE Migrate upgrade
+                if (!upgrade) {
+                  upgrade = new Array(UPGRADE_SLOT_COUNT).fill(0);
+                  client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
+                }
+              } catch (err) {
+                console.log(err);
                 Sentry.captureException(err);
               }
 
@@ -99,7 +118,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               try {
                 gems = JSON.parse(replies[11] || gems);
               } catch (err) {
-                // invalid json
+                console.log(err);
                 Sentry.captureException(err);
               }
 
@@ -170,6 +189,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "inventory", JSON.stringify(new Array(INVENTORY_SLOT_COUNT).fill(0)))
           .hset(userKey, "nanoPotions", 0)
           .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
+          .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
           .exec(function (err, replies) {
             log.info("New User: " + player.name);
             player.sendWelcome({
@@ -271,97 +291,254 @@ module.exports = DatabaseHandler = cls.Class.extend({
     log.info("Set Hash: " + name + " " + hash);
     client.hset("u:" + name, "hash", hash);
   },
-  setInventory({ player, item, level, quantity, fromSlot, toSlot }) {
-    client.hget("u:" + player.name, "inventory", function (err, reply) {
-      console.log("~~~player", !!player, item, level, quantity, fromSlot, toSlot);
 
+  getItemLocation: function (slot) {
+    if (slot < INVENTORY_SLOT_COUNT) {
+      return ["inventory", 0];
+    } else if (slot === WEAPON_SLOT) {
+      return ["weapon", 0];
+    } else if (slot === ARMOR_SLOT) {
+      return ["armor", 0];
+    } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + 10) {
+      return ["upgrade", UPGRADE_SLOT_RANGE];
+    }
+
+    return [];
+  },
+
+  sendMoveItem: function ({ player, location, data }) {
+    if (location === "inventory") {
+      player.send([Types.Messages.INVENTORY, data]);
+    } else if (location === "weapon") {
+      if (!data) {
+        data = "sword1:1";
+      }
+      player.equipItem(...data.split(":"));
+      player.broadcast(player.equip(player.weaponKind), false);
+    } else if (location === "armor") {
+      if (!data) {
+        data = "clotharmor:1";
+      }
+      player.equipItem(...data.split(":"));
+      player.broadcast(player.equip(player.armorKind), false);
+    } else if (location === "upgrade") {
+      player.send([Types.Messages.UPGRADE, data]);
+    } else if (location === "delete") {
+    }
+  },
+
+  moveItem: function ({ player, fromSlot, toSlot }) {
+    if (fromSlot === toSlot) return;
+
+    const self = this;
+
+    const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
+    const [toLocation, toRange] = this.getItemLocation(toSlot);
+    const isMultipleFrom = ["inventory", "upgrade"].includes(fromLocation);
+    const isMultipleTo = ["inventory", "upgrade"].includes(toLocation);
+
+    if (!fromLocation || !toLocation) return;
+
+    client.hget("u:" + player.name, fromLocation, function (err, fromReply) {
       try {
-        let inventory = JSON.parse(reply);
+        let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
+        const fromItem = isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed;
 
-        if (typeof toSlot === "number" && typeof fromSlot === "number") {
-          // When an inventory item is moved or equipped
-          let fromInventory = inventory[fromSlot];
+        // @NOTE Should never happen but who knows
+        if (["sword:1", "clotharmor:1"].includes(fromItem)) return;
 
-          if (fromSlot === WEAPON_SLOT) {
-            fromInventory = `${player.weapon}:${player.weaponLevel}`;
-          } else if (fromSlot === ARMOR_SLOT) {
-            fromInventory = `${player.armor}:${player.armorLevel}`;
-          }
+        if (toLocation === fromLocation) {
+          const toItem = fromReplyParsed[toSlot - toRange];
 
-          const [fromItem, fromLevel] = fromInventory.split(":");
-
-          if (toSlot === DELETE_SLOT) {
-            // When an item is deleted
-            inventory[fromSlot] = 0;
-          } else if (toSlot === WEAPON_SLOT) {
-            if (Types.isWeapon(fromItem)) {
-              if (player.weapon !== "sword1") {
-                inventory[fromSlot] = `${player.weapon}:${player.weaponLevel}`;
-              } else {
-                inventory[fromSlot] = 0;
-              }
-              player.equipItem(fromItem, fromLevel);
-              player.broadcast(player.equip(player.weaponKind), false);
-            }
-          } else if (fromSlot === WEAPON_SLOT) {
-            inventory[toSlot] = fromInventory;
-            player.equipItem("sword1", 1);
-            player.broadcast(player.equip(player.weaponKind), false);
-          } else if (toSlot === ARMOR_SLOT) {
-            if (Types.isArmor(fromItem)) {
-              if (player.armor !== "clotharmor") {
-                inventory[fromSlot] = `${player.armor}:${player.armorLevel}`;
-              } else {
-                inventory[fromSlot] = 0;
-              }
-              player.equipItem(fromItem, fromLevel);
-              player.broadcast(player.equip(player.armorKind), false);
-            }
-          } else if (fromSlot === ARMOR_SLOT) {
-            inventory[toSlot] = fromInventory;
-            player.equipItem("clotharmor", 1);
-            player.broadcast(player.equip(player.armorKind), false);
+          if (toSlot !== -1) {
+            fromReplyParsed[toSlot - toRange] = fromItem;
+            fromReplyParsed[fromSlot - fromRange] = toItem || 0;
           } else {
-            inventory[fromSlot] = inventory[toSlot];
-            inventory[toSlot] = `${fromItem}:${fromLevel}`;
+            // Delete the item in the -1 toSlot
+            fromReplyParsed[fromSlot - fromRange] = 0;
           }
-        } else if (item) {
-          // When an item is looted
-          let slotIndex = quantity
-            ? inventory.findIndex(inventoryItem => typeof inventoryItem === "string" && inventoryItem.startsWith(item))
-            : -1;
 
-          if (slotIndex > -1) {
-            const [, oldQuantity] = inventory[slotIndex].split(":");
-            inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + quantity}`;
-          } else if (slotIndex === -1) {
-            slotIndex = inventory.indexOf(0);
-            if (slotIndex !== -1) {
-              inventory[slotIndex] = `${item}:${level || quantity}`;
+          self.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
+          client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
+        } else {
+          client.hget("u:" + player.name, toLocation, function (err, toReply) {
+            try {
+              let toReplyParsed = isMultipleTo ? JSON.parse(toReply) : toReply;
+              let toItem = isMultipleTo ? toReplyParsed[toSlot - toRange] : toReplyParsed;
+
+              if (["sword1:1", "clotharmor:1"].includes(toItem)) {
+                toItem = 0;
+              }
+
+              // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
+              let isFromReplyDone = false;
+              let isToReplyDone = false;
+              if (Types.isScroll(fromItem)) {
+                const [fromScroll, fromQuantity] = fromItem.split(":");
+                if (toLocation === "inventory") {
+                  let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(fromScroll));
+
+                  if (toItemIndex === -1) {
+                    toItemIndex = toItem ? toReplyParsed.indexOf(0) : toSlot;
+                  }
+
+                  if (toItemIndex > -1) {
+                    const [, toQuantity = 0] = (toReplyParsed[toItemIndex] || "").split(":");
+                    toReplyParsed[toItemIndex - toRange] = `${fromScroll}:${
+                      parseInt(toQuantity) + parseInt(fromQuantity)
+                    }`;
+
+                    if (fromLocation === "upgrade") {
+                      fromReplyParsed[fromSlot - fromRange] = 0;
+                      isFromReplyDone = true;
+                    }
+
+                    isToReplyDone = true;
+                  }
+                } else if (toLocation === "upgrade") {
+                  if (!toReplyParsed.some((a, i) => i !== 0 && a !== 0)) {
+                    fromReplyParsed[fromSlot - fromRange] =
+                      fromQuantity > 1 ? `${fromScroll}:${parseInt(fromQuantity) - 1}` : 0;
+                    toReplyParsed[toSlot - toRange] = `${fromScroll}:1`;
+                  }
+
+                  isFromReplyDone = true;
+                  isToReplyDone = true;
+                }
+              }
+
+              if (!isToReplyDone) {
+                if (isMultipleTo) {
+                  toReplyParsed[toSlot - toRange] = fromItem;
+                } else {
+                  toReplyParsed = fromItem;
+                }
+              }
+
+              if (!isFromReplyDone) {
+                if (isMultipleFrom) {
+                  fromReplyParsed[fromSlot - fromRange] = toItem || 0;
+                } else {
+                  fromReplyParsed = toItem || 0;
+                }
+              }
+
+              self.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
+              if (isMultipleFrom) {
+                client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
+              }
+
+              self.sendMoveItem({ player, location: toLocation, data: toReplyParsed });
+              if (isMultipleTo) {
+                client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed));
+              }
+            } catch (err) {
+              console.log(err);
+              Sentry.captureException(err);
             }
-          }
+          });
         }
-        player.send([Types.Messages.INVENTORY, inventory]);
-
-        inventory = JSON.stringify(inventory);
-        client.hset("u:" + player.name, "inventory", inventory);
       } catch (err) {
-        console.log("~~~err", err);
+        console.log(err);
         Sentry.captureException(err);
       }
     });
   },
-  deleteInventory(player, slot) {
-    if (slot === WEAPON_SLOT) {
-      player.equipItem("sword1", 1);
-      player.broadcast(player.equip(player.weaponKind), false);
-    } else if (slot === ARMOR_SLOT) {
-      player.equipItem("clotharmor", 1);
-      player.broadcast(player.equip(player.armorKind), false);
-    } else {
-      this.setInventory({ player, fromSlot: slot });
-    }
+
+  lootItems: function ({ player, items }) {
+    client.hget("u:" + player.name, "inventory", function (err, reply) {
+      try {
+        let inventory = JSON.parse(reply);
+
+        items.forEach(({ item, level, quantity }) => {
+          let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
+
+          if (slotIndex > -1) {
+            const [, oldQuantity] = inventory[slotIndex].split(":");
+            inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(quantity)}`;
+          } else if (slotIndex === -1) {
+            slotIndex = inventory.indexOf(0);
+            if (slotIndex !== -1) {
+              inventory[slotIndex] = `${item}:${level}`;
+            }
+          }
+        });
+
+        player.send([Types.Messages.INVENTORY, inventory]);
+        client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+      } catch (err) {
+        console.log(err);
+        Sentry.captureException(err);
+      }
+    });
   },
+
+  moveUpgradeItemsToInventory: function (player) {
+    const self = this;
+
+    client.hget("u:" + player.name, "upgrade", function (err, reply) {
+      try {
+        let upgrade = JSON.parse(reply);
+        filteredUpgrade = upgrade.filter(Boolean);
+
+        if (filteredUpgrade.length) {
+          const items = filteredUpgrade.reduce((acc, rawItem) => {
+            if (!rawItem) return acc;
+            const [item, level] = rawItem.split(":");
+            const isQuantity = Types.isScroll(item);
+
+            acc.push({
+              item,
+              [isQuantity ? "quantity" : "level"]: level,
+            });
+            return acc;
+          }, []);
+
+          self.lootItems({ player, items });
+
+          upgrade = upgrade.map(() => 0);
+
+          player.send([Types.Messages.UPGRADE, upgrade]);
+          client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
+        }
+      } catch (err) {
+        console.log(err);
+        Sentry.captureException(err);
+      }
+    });
+  },
+
+  upgradeItem: function (player) {
+    var self = this;
+
+    client.hget("u:" + player.name, "upgrade", function (err, reply) {
+      try {
+        let upgrade = JSON.parse(reply);
+        filteredUpgrade = upgrade.filter(Boolean);
+
+        if (Utils.isValidUpgradeItems(filteredUpgrade)) {
+          const [item, level] = filteredUpgrade[0].split(":");
+          let upgradedItem = 0;
+
+          if (Utils.isUpgradeSuccess(level)) {
+            upgradedItem = `${item}:${parseInt(level) + 1}`;
+          }
+
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = upgradedItem;
+        } else {
+          self.moveUpgradeItemsToInventory(player);
+        }
+
+        player.send([Types.Messages.UPGRADE, upgrade]);
+        client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
+      } catch (err) {
+        console.log(err);
+        Sentry.captureException(err);
+      }
+    });
+  },
+
   foundAchievement: function (name, index) {
     log.info("Found Achievement: " + name + " " + index + 1);
     client.hget("u:" + name, "achievement", function (err, reply) {

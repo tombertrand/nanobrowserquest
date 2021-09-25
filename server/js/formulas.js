@@ -1,13 +1,17 @@
-var Utils = require("./utils");
-var Types = require("../../shared/js/gametypes");
+const Utils = require("./utils");
+const Types = require("../../shared/js/gametypes");
 
-var Formulas = {};
+const Formulas = {};
+
+module.exports = Formulas;
 
 Formulas.minMaxDamage = function (weapon, weaponLevel, playerLevel) {
   const min =
-    Math.ceil(Types.getWeaponDamage(weapon, weaponLevel) * 1.2) + playerLevel + Types.getWeaponMagicDamage(weaponLevel);
+    Math.ceil(Types.getWeaponDamage(weapon, weaponLevel) * 1.2 + playerLevel / 2) +
+    Types.getWeaponMagicDamage(weaponLevel);
   const max =
-    Math.ceil(Types.getWeaponDamage(weapon, weaponLevel) * 2) + playerLevel + Types.getWeaponMagicDamage(weaponLevel);
+    Math.ceil(Types.getWeaponDamage(weapon, weaponLevel) * 2 + playerLevel / 2) +
+    Types.getWeaponMagicDamage(weaponLevel);
 
   return {
     min,
@@ -62,10 +66,6 @@ Formulas.hp = function (armorLevel, level, playerLevel) {
   return baseHp + armorHp + playerLevelHp;
 };
 
-if (typeof exports !== "undefined") {
-  module.exports = Formulas;
-}
-
 // Armor
 // level, %, bonus
 // +1, 100%, 2
@@ -78,16 +78,3 @@ if (typeof exports !== "undefined") {
 // +8, 123.5%, 15
 // +9, 132%, 19
 // +10, 145%, 24
-
-// Upgrade success rate
-// level, rate
-// +1, 100%
-// +2, 100%
-// +3, 100%
-// +4, 75%
-// +5, 65%
-// +6, 50%
-// +7, 25%
-// +8, 10%
-// +9, 5%
-// +10, 1%

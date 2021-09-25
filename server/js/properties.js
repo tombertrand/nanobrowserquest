@@ -3,7 +3,7 @@ var Types = require("../../shared/js/gametypes");
 var Properties = {
   rat: {
     drops: {
-      flask: 40,
+      flask: 60,
       burger: 5,
       firepotion: 5,
       scrollupgradelow: 20,

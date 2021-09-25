@@ -1,21 +1,21 @@
-var cls = require("./lib/class"),
-  _ = require("underscore"),
-  Log = require("log"),
-  Entity = require("./entity"),
-  Character = require("./character"),
-  Mob = require("./mob"),
-  Map = require("./map"),
-  Npc = require("./npc"),
-  Player = require("./player"),
-  Guild = require("./guild"),
-  Item = require("./item"),
-  MobArea = require("./mobarea"),
-  ChestArea = require("./chestarea"),
-  Chest = require("./chest"),
-  Messages = require("./message"),
-  Properties = require("./properties"),
-  Utils = require("./utils"),
-  Types = require("../../shared/js/gametypes");
+const cls = require("./lib/class");
+const _ = require("underscore");
+const Log = require("log");
+const Entity = require("./entity");
+const Character = require("./character");
+const Mob = require("./mob");
+const Map = require("./map");
+const Npc = require("./npc");
+const Player = require("./player");
+const Guild = require("./guild");
+const Item = require("./item");
+const MobArea = require("./mobarea");
+const ChestArea = require("./chestarea");
+const Chest = require("./chest");
+const Messages = require("./message");
+const Properties = require("./properties");
+const Utils = require("./utils");
+const Types = require("../../shared/js/gametypes");
 
 // ======= GAME SERVER ========
 
@@ -687,9 +687,20 @@ module.exports = World = cls.Class.extend({
     }
   },
 
-  handleHurtEntity: function (entity, attacker, damage) {
-    var self = this;
+  receivedExp: function (player, mob) {
+    const playerLevel = player.level;
+    const mobLevel = Types.getMobLevel(mob.kind);
 
+    if (mob.kind !== Types.Entities.BOSS) {
+      if (playerLevel + 8 < mobLevel || playerLevel - 8 > mobLevel) {
+        return 0;
+      }
+    }
+
+    return Types.getMobExp(mob.kind);
+  },
+
+  handleHurtEntity: function (entity, attacker, damage) {
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
       this.pushToPlayer(entity, entity.health());
@@ -703,16 +714,22 @@ module.exports = World = cls.Class.extend({
     // If the entity is about to die
     if (entity.hitPoints <= 0) {
       if (entity.type === "mob") {
-        var mob = entity,
-          item = this.getDroppedItem(mob);
+        var mob = entity;
+        var item = this.getDroppedItem(mob);
         var mainTanker = this.getEntityById(mob.getMainTankerId());
 
         if (mainTanker && mainTanker instanceof Player) {
-          mainTanker.incExp(Types.getMobExp(mob.kind));
-          this.pushToPlayer(mainTanker, new Messages.Kill(mob, mainTanker.level, mainTanker.experience));
+          const exp = this.receivedExp(mainTanker, mob);
+          if (exp) {
+            mainTanker.incExp(Types.getMobExp(mob.kind));
+          }
+          this.pushToPlayer(mainTanker, new Messages.Kill(mob, mainTanker.level, mainTanker.experience, exp));
         } else {
-          attacker.incExp(Types.getMobExp(mob.kind));
-          this.pushToPlayer(attacker, new Messages.Kill(mob, attacker.level, attacker.experience));
+          const exp = this.receivedExp(attacker, mob);
+          if (exp) {
+            attacker.incExp(Types.getMobExp(mob.kind));
+          }
+          this.pushToPlayer(attacker, new Messages.Kill(mob, attacker.level, attacker.experience, exp));
         }
 
         this.pushToAdjacentGroups(mob.group, mob.despawn()); // Despawn must be enqueued before the item drop
@@ -818,11 +835,13 @@ module.exports = World = cls.Class.extend({
   },
 
   getDroppedItem: function (mob) {
-    var kind = Types.getKindAsString(mob.kind),
-      drops = Properties[kind].drops,
-      v = Utils.random(100),
-      p = 0,
-      item = null;
+    var kind = Types.getKindAsString(mob.kind);
+    var drops = Properties[kind].drops;
+    var v = Utils.random(100);
+    var p = 0;
+    var item = null;
+
+    // return this.addItem(this.createItem(Types.getKindFromString("blueaxe"), mob.x, mob.y));
 
     //@NOTE 3% chance to drop a NANO potion
     if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {

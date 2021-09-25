@@ -149,13 +149,14 @@ Messages.Population = Message.extend({
 });
 
 Messages.Kill = Message.extend({
-  init: function (mob, level, exp) {
+  init: function (mob, level, playerExp, exp) {
     this.mob = mob;
     this.level = level;
+    this.playerExp = playerExp;
     this.exp = exp;
   },
   serialize: function () {
-    return [Types.Messages.KILL, this.mob.kind, this.level, this.exp];
+    return [Types.Messages.KILL, this.mob.kind, this.level, this.playerExp, this.exp];
   },
 });
 

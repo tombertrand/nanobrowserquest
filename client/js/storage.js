@@ -20,6 +20,7 @@ define(function () {
           guild: "",
           image: "",
         },
+        audio: true,
         // old format
         achievements: {
           unlocked: [],
@@ -106,6 +107,18 @@ define(function () {
         delete this.data.player.guild;
         this.save();
       }
+    },
+
+    setAudioEnabled: function (enabled) {
+      this.data.audio = enabled;
+      this.save();
+    },
+
+    isAudioEnabled: function () {
+      if (typeof this.data.audio !== "boolean" || this.data.audio) {
+        return true;
+      }
+      return false;
     },
 
     savePlayer: function (img, armor, weapon, guild) {

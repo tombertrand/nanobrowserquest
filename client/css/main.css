@@ -157,9 +157,11 @@ footer, header, hgroup, menu, nav, section {
 
     #playercount {font-family:'GraphicPixel';color:#e3e3e3;position:absolute;}
     #playercount:hover {cursor:pointer;color:#FCE045;}
-    .panel {position:absolute;font-family:'GraphicPixel';color:#fff;text-align:center;height:0;pointer-events:none;-moz-transition:0.2s height ease; -webkit-transition: 0.2s height ease;-o-transition:0.2s height ease;-ms-transition:0.2s height ease;transition:0.2s height ease;}
+    .panel {position:absolute;font-family:'GraphicPixel';color:#fff;text-align:center;height:0;pointer-events:none;}
     .panel > div {background:url('../img/1/barsheet.png');image-rendering:-moz-crisp-edges;opacity:0;-moz-transition:0.2s opacity linear;-webkit-transition:0.2s opacity linear;-o-transition:0.2s opacity linear;-ms-transition:0.2s opacity linear;transition:0.2s opacity linear;}
     /* #guild-name, #population span:nth-child(1) {color:#FCE045;} */
+    .panel {display: none;}
+    .panel.visible {display: block;}
     .panel.visible div {opacity:1;}
     #guild-population {height:0;overflow:hidden;}
     .panel.visible {height:auto;pointer-events:auto;}
@@ -656,18 +658,34 @@ footer, header, hgroup, menu, nav, section {
         color: red;
     }
 
-    #upgrade { bottom: auto; right: 5%; top: 10%;}
-    #inventory.upgrade { bottom: 10%; right: 5%; top:auto;}
+    .panel-container {
+        display: flex;
+        flex-direction: column;
+        right: 5%;
+        justify-content: center;
+        right: 5%;
+        width: 262px;
+        top: 0;
+        height: 100%;
+        position: absolute;
+    }
+    .panel-container > .panel {
+        position: relative;
+    }
+
+    #upgrade { bottom: auto;}
+    #inventory { bottom: auto;}
+    /* #inventory.upgrade { bottom: 10%; right: 5%; top:auto;} */
     #inventory.upgrade .panel-spaced-row { display: none;}
 
-    #inventory { bottom: auto; right: 5%; top: 20%;}
+    /* #inventory { bottom: auto; right: 5%; top: 20%;} */
     #item-inventory { position: relative; display: flex; flex-wrap: wrap; justify-content: center; z-index:1;}
 
     .ui-droppable-hover { border-color: yellow !important;}
     .ui-droppable-origin { border-color: #fff !important;}
 
     .item-slot { padding: 1px; border: solid 1px #2d2b29; background: #171717; }
-    .item-draggable {background-color: transparent; z-index:2; border-radius: 4px; border: solid 2px #928f8c; background: #171717;}
+    .item-draggable, .item-not-draggable {background-color: transparent; z-index:2; border-radius: 4px; border: solid 2px #928f8c; background: #171717;}
     /* .item-draggable:hover::before { background-image: url('../img/2/target.png'); } */
     .ui-draggable-dragging { cursor: url(../img/2/loot.png) 2 5, move; }
 
@@ -677,6 +695,7 @@ footer, header, hgroup, menu, nav, section {
     .panel-spaced-row { display: flex; justify-content: space-between; align-items: center; padding: 0 10px}
 
     #item-player { display: flex; justify-content: center; padding-bottom: 12px}
+    #item-delete { padding-bottom: 12px;}
     #item-weapon { padding-right: 6px;}
     #item-delete > .item-slot { -webkit-box-shadow: inset 0px 0px 10px 6px #9e0000; box-shadow: inset 0px 0px 10px 6px #9e0000; }
     .item-quantity::after {
@@ -687,8 +706,54 @@ footer, header, hgroup, menu, nav, section {
         line-height: 1;
         font-size: 0.9em;
     }
+    #upgrade-scroll {display: flex;flex-wrap: wrap;}
+    #upgrade-info {
+        color: #ababa4;
+        font-size: 0.75em;
+    }
 
-    #upgrade-ingredient {width: 120px;display: flex;flex-wrap: wrap;}
+    .item-equip-weapon, .item-equip-armor { position: relative; }
+    .item-equip-weapon::before, .item-equip-armor::before {
+        content: "";
+        position: absolute;
+        filter: grayscale(100%);
+        opacity: 0.35;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    .btn {
+        cursor: url(../img/2/hand.png) 2 5, move;
+        border: none;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        color: #6d211d;
+        text-shadow: 0 2px 0 #D37370;
+        font-family:'GraphicPixel';
+        font-weight: bold;
+        font-size: 15px;
+        padding: 4px 22px 8px;
+        background-color: #C74640;
+        -webkit-box-shadow: inset -2px 2px 0 2px #d2726f, inset 2px -2px 0 2px #8c2a25, inset -1px 1px 0 4px #db8f8d;
+        -moz-box-shadow: inset -2px 2px 0 2px #d2726f, inset 2px -2px 0 2px #8c2a25, inset -1px 1px 0 4px #db8f8d;
+        box-shadow: inset -2px 2px 0 2px #d2726f, inset 2px -2px 0 2px #8c2a25, inset -1px 1px 0 4px #db8f8d;
+        text-decoration: none;
+        text-align: center;
+    }
+    .btn:hover {
+        -webkit-box-shadow:inset 2px -2px 0 2px #d2726f, inset -2px 2px 0 2px #8c2a25, inset 1px -1px 0 4px #db8f8d;
+        -moz-box-shadow: inset 2px -2px 0 2px #d2726f, inset -2px 2px 0 2px #8c2a25, inset 1px -1px 0 4px #db8f8d;
+        box-shadow: inset 2px -2px 0 2px #d2726f, inset -2px 2px 0 2px #8c2a25, inset 1px -1px 0 4px #db8f8d;
+    }
+    .btn.disabled {
+        opacity: 0.8;
+        box-shadow: none;
+        text-shadow: none;
+    }
+    
 
 	@media screen and (min-width: 1501px) {
         #completedbutton .nano-logo { width: 60px; height: 28px; }
@@ -699,6 +764,10 @@ footer, header, hgroup, menu, nav, section {
         #completed p { font-size: 24px !important; }
         #completed.boss-check .link { font-size: 34px; }
         .createaccount-instructions { font-size: 25px; }
+        #upgrade-scroll { width: 168px; }
+        .panel-spaced-row { padding: 0 12px}
+        .item-equip-weapon::before {background-image: url('../img/3/item-sword1.png');}
+        .item-equip-armor::before {top: 10%;background-image: url('../img/3/item-clotharmor.png');}
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
@@ -791,7 +860,7 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 33px; top: 12px; width: 2px; height: 33px; z-index: 30; }
 
         .item-slot { width:52px; height:52px; }
-        #armor, #weapon, .item-draggable {width:48px;height:48px;background-size:288px;background-position:-96px;}
+        #armor, #weapon, .item-draggable, .item-not-draggable {width:48px;height:48px;background-size:288px;background-position:-96px;}
         #armor, #weapon {position:absolute;}
         #weapon {left:312px;top:3px;background-size:288px;}
         #armor {left:363px;top:3px;}
@@ -801,7 +870,8 @@ footer, header, hgroup, menu, nav, section {
         #notifications span {line-height:45px;height:45px;}
 
         #playercount {font-size:20px;left:1032px;top:18px;width:172px;text-align:center;}
-        .panel {width:393px;bottom:66px;font-size:20px;line-height:30px;}
+        .panel {width:360px;bottom:66px;font-size:20px;line-height:30px;}
+        .panel-container {width:360px;}
         #population {right:105px;}
         #player {left: 20px;}
 
@@ -884,6 +954,9 @@ footer, header, hgroup, menu, nav, section {
         #nano {margin-left:-200px;margin-top:-20px;scale:0.7;}
         #completedbutton .nano-logo { width: 40px; height: 18.5px; }
         .createaccount-instructions { font-size: 17px; }
+        #upgrade-scroll { width: 120px; }
+        .item-equip-weapon::before {background-image: url('../img/2/item-sword1.png');}
+        .item-equip-armor::before {top: 10%;background-image: url('../img/2/item-clotharmor.png');}
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/2/barsheet.png');}
@@ -965,7 +1038,7 @@ footer, header, hgroup, menu, nav, section {
 		
 		/*Bubbles*/
 		#bubbles {width:960px;height:448px;margin-bottom:-448px;position:relative;top:-448px;pointer-events:none;}
-		p {font-family:arial, sans-serif;font-size:12px;margin:0;padding:0;line-height:35px;}
+		p {font-family:arial, sans-serif;font-size:12px;margin:0;padding:5px 0;line-height:1.5;}
 	    .bubble p {font-family:"GraphicPixel"; font-size:14px;}
 	    
 	    /*GUI Bar*/
@@ -976,7 +1049,7 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         .item-slot { width:36px; height: 36px; }
-        #armor, #weapon, .item-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        #armor, #weapon, .item-draggable, .item-not-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
         #armor, #weapon { position:absolute; }
         #weapon {left:208px;top:2px;}
         #armor {left:242px;top:2px;}
@@ -988,6 +1061,7 @@ footer, header, hgroup, menu, nav, section {
 
         #playercount {font-size:16px;left:696px;top:10px;width:110px;text-align:center;}
         .panel {bottom:44px;width:262px;font-size:14px;line-height:20px;}
+        .panel-container {width:262px;}
         #population {right:70px;}
         #player {left: 20px;}
 
@@ -1076,6 +1150,9 @@ footer, header, hgroup, menu, nav, section {
         #text-window { width: 60%; }
         .world { font-size: 12px;}
         .createaccount-instructions { font-size: 8px; }
+        #upgrade-scroll { width: 120px; }
+        .item-equip-weapon::before {background-image: url('../img/1/item-sword1.png');}
+        .item-equip-armor::before {top: 10%;background-image: url('../img/1/item-clotharmor.png');}
 
         canvas {image-rendering:optimizeSpeed;}
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
@@ -1167,7 +1244,7 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 11px; top: 4px; width: 1px; height: 11px; z-index: 30; }
 
         .item-slot { width:20px; height: 20px; }
-        #armor, #weapon, .item-draggable {width:16px;height:16px;background-size:96px;background-position:-32px;}
+        #armor, #weapon, .item-draggable, .item-not-draggable {width:16px;height:16px;background-size:96px;background-position:-32px;}
         #armor, #weapon {position:absolute;}
         #weapon {left:104px;top:1px;}
         #armor {left:121px;top:1px;}
@@ -1182,6 +1259,7 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton:hover {background-position:-435px -32px;}
         #completedbutton.active {background-position:-435px -47px;}
         .panel {bottom:22px;width:262px;font-size:14px;line-height:20px;}
+        .panel-container {width:262px;}
         #population {right:70px;}
         #player {left:20px;}
 
@@ -1259,6 +1337,9 @@ footer, header, hgroup, menu, nav, section {
         #text-window { width: 60%; }
         #completedbutton .nano-logo { width: 40px; height: 18.5px; }
         .createaccount-instructions { font-size: 8px; }
+        #upgrade-scroll { width: 120px; }
+        .item-equip-weapon::before {background-image: url('../img/1/item-sword1.png');}
+        .item-equip-armor::before {top: 10%;background-image: url('../img/1/item-clotharmor.png');}
 
         body {border-top:0px;}
         .intro #container, .game #logo, .game #parchment {display:none;}
@@ -1349,7 +1430,7 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         .item-slot { width:36px; height:36px; }
-        #armor, #weapon, .item-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        #armor, #weapon, .item-draggable, .item-not-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
         #armor, #weapon {position:absolute;}
         #weapon {left:208px;top:2px;}
         #armor {left:242px;top:2px;}
@@ -1362,6 +1443,7 @@ footer, header, hgroup, menu, nav, section {
         /* #population {right:98px;bottom:34px;width:130px;font-size:10px;line-height:12px;} */
         /* #population div{background-size:480px;background-position:-240px -52px;} */
         .panel {bottom:34px;width:262px;font-size:14px;line-height:20px;}
+        .panel-container {width:262px;}
         #population {right:70px;}
         #player {left:20px;}
 

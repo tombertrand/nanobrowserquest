@@ -534,6 +534,9 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       if ($("#failed").hasClass("active")) {
         $("#failed").removeClass("active");
       }
+      if ($("#upgrade").hasClass("visible")) {
+        this.toggleUpgrade();
+      }
     },
 
     showAchievementNotification: function (id, name) {
@@ -692,24 +695,51 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       $("#player").toggleClass("visible");
     },
 
-    toggleInventory: function () {
-      $("#inventory").toggleClass("visible");
+    toggleMute: function () {
+      if ($("#mutebutton").hasClass("active")) {
+        this.storage.setAudioEnabled(true);
+        this.game.audioManager.enableAudio();
+      } else {
+        this.storage.setAudioEnabled(false);
+        this.game.audioManager.disableAudio();
+      }
+    },
 
-      if ($("#inventory").hasClass("visible")) {
+    toggleInventory: function () {
+      if ($("#upgrade").hasClass("visible")) {
+        $("#upgrade").removeClass("visible");
+        $("#inventory").removeClass("upgrade");
+        $("#player").addClass("visible");
+      } else if (!$("#inventory").hasClass("visible")) {
+        $("#inventory").addClass("visible");
         $("#player").addClass("visible");
         this.game.initDraggable();
       } else {
+        $("#inventory").removeClass("visible");
         $("#player").removeClass("visible");
         this.game.destroyDraggable();
       }
+    },
+
+    openUpgrade: function () {
+      if ($("#upgrade").hasClass("visible")) return;
+
+      this.toggleUpgrade();
     },
 
     toggleUpgrade: function () {
       $("#upgrade").toggleClass("visible");
 
       if ($("#upgrade").hasClass("visible")) {
+        if (!$("#inventory").hasClass("visible")) {
+          this.game.initDraggable();
+        }
         $("#inventory").addClass("visible upgrade");
+        $("#player").removeClass("visible");
       } else {
+        this.game.destroyDraggable();
+
+        this.game.client.sendMoveUpgradeItemsToInventory();
         $("#inventory").removeClass("visible upgrade");
       }
     },

@@ -1,7 +1,7 @@
-var sanitizer = require("sanitizer");
-var Types = require("../../shared/js/gametypes");
-var BigNumber = require("bignumber.js");
-var Utils = {};
+const sanitizer = require("sanitizer");
+const Types = require("../../shared/js/gametypes");
+const BigNumber = require("bignumber.js");
+const Utils = {};
 
 module.exports = Utils;
 
@@ -141,4 +141,54 @@ Utils.getPayoutAmount = achievements => {
   });
 
   return Utils.raiToRaw(new BigNumber(amount).dividedBy(100000).toFixed());
+};
+
+Utils.isValidUpgradeItems = items => {
+  if (items.length !== 2) {
+    return false;
+  }
+
+  const [item, level] = items[0].split(":");
+  const isWeapon = Types.isWeapon(item);
+  const isArmor = Types.isArmor(item);
+
+  if ((!isWeapon && !isArmor) || level === 10) {
+    return false;
+  }
+
+  const [scroll, scrollLevel] = items[1].split(":");
+  const isScroll = Types.isScroll(scroll);
+
+  if (!isScroll) {
+    return false;
+  }
+
+  const itemClass = Types.getItemClass(item, parseInt(level));
+  const scrollClass = Types.getItemClass(scroll, parseInt(scrollLevel));
+
+  if (itemClass !== scrollClass) {
+    return false;
+  }
+
+  return true;
+};
+
+Utils.isUpgradeSuccess = level => {
+  // Upgrade success rate
+  // +1 -> +2, 100%
+  // +2 -> +3, 100%
+  // +3 -> +4, 90%
+  // +4 -> +5, 75%
+  // +5 -> +6, 50%
+  // +6 -> +7, 25%
+  // +7 -> +8, 7%
+  // +8 -> +9, 4%
+  // +9 -> +10, 1%
+  const successRates = Types.getUpgradeSuccessRates();
+  const successRate = successRates[parseInt(level) - 1];
+  const random = Utils.randomInt(1, 100);
+
+  console.log("~~~~random", random, successRate);
+
+  return random <= successRate;
 };

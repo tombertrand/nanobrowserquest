@@ -363,7 +363,7 @@
     .achievement-sharing .twitter, .upscaled .achievement-sharing .twitter {height:11px;width:16px;background-position:-377px -196px;margin-left:5px;}
     .achievement-sharing .twitter:hover, .upscaled .achievement-sharing .twitter:hover {background-position:-377px -207px;}
 
-    #achievement-notification, .upscaled #achievement-notification {width:216px;bottom:22px;height:0;margin-left:-108px;background-position:0 -248px;}
+    #achievement-notification, .upscaled #achievement-notification {width:216px;bottom:36px;height:0;margin-left:-108px;background-position:0 -248px;}
     #achievement-notification.active {height:34px;}
     #achievement-notification .coin {position:absolute;top:-20px;left:50%;margin-left:-12px;opacity:0;}
     #achievement-notification.active .coin {opacity:1;}

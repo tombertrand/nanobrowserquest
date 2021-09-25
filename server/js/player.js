@@ -45,6 +45,7 @@ module.exports = Player = Character.extend({
     this.inventory = [];
     this.inventoryCount = [];
     this.achievement = [];
+    this.hasRequestedPayout = false;
 
     this.chatBanEndTime = 0;
     this.hash = null;
@@ -297,9 +298,9 @@ module.exports = Player = Character.extend({
               const baseLevel = Types.getBaseLevel(kind);
               const level = baseLevel <= 5 ? Utils.randomInt(1, 3) : 1;
 
-              databaseHandler.setInventory({ player: self, item: Types.getKindAsString(kind), level });
+              databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), level }] });
             } else if (Types.isScroll(kind)) {
-              databaseHandler.setInventory({ player: self, item: Types.getKindAsString(kind), quantity: 1 });
+              databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), quantity: 1 }] });
             }
           }
         }
@@ -330,16 +331,8 @@ module.exports = Player = Character.extend({
 
         if (!self.hash) {
           // BOSS room validation
-          // Has played for more than 8 minutes, has at least X amount of exp (MIN_LEVEL)
-          // Has at least "REDARMOR" or "REDSWORD"
-          if (
-            self.createdAt + MIN_TIME > Date.now() ||
-            self.level < MIN_LEVEL ||
-            !(
-              [Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
-              [Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
-            )
-          ) {
+          // Has played for more than 12 minutes, has at least X amount of exp (MIN_LEVEL)
+          if (self.createdAt + MIN_TIME > Date.now() || self.level < MIN_LEVEL) {
             self.connection.send({
               type: Types.Messages.BOSS_CHECK,
               status: "failed",
@@ -349,17 +342,6 @@ module.exports = Player = Character.extend({
             return;
           }
         }
-
-        // Reset player to "REDARMOR" / "REDSWORD"
-        // @TODO instead of that, put a CAP for defense and dmg, don't alter peoples characters
-        // if (self.armor === Types.Entities.GOLDENARMOR) {
-        //   self.equipItem(Types.Entities.REDARMOR, 1, false);
-        //   self.broadcast(self.equip(Types.Entities.REDARMOR), false);
-        // }
-        // if (self.weapon === Types.Entities.GOLDENSWORD) {
-        //   self.equipItem(Types.Entities.REDSWORD, 1, false);
-        //   self.broadcast(self.equip(Types.Entities.REDSWORD), false);
-        // }
 
         const position = Math.floor(Math.random() * 6) + 1;
         const date = `${Date.now()}`;
@@ -371,10 +353,17 @@ module.exports = Player = Character.extend({
           check,
         });
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
+        if (self.hasRequestedPayout) {
+          return;
+        }
+
+        self.hasRequestedPayout = true;
+
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         // @TODO Verify that killing the boss a second time doesn't ban the player because it wouldn't request a payout! (fix .then())
         if (
           self.hash ||
+          self.hasRequestedPayout ||
           self.createdAt + MIN_TIME > Date.now() ||
           self.level < MIN_LEVEL ||
           !(
@@ -466,10 +455,19 @@ module.exports = Player = Character.extend({
           self.lastCheckpoint = checkpoint;
           databaseHandler.setCheckpoint(self.name, self.x, self.y);
         }
-      } else if (action === Types.Messages.INVENTORY) {
-        log.info("INVENTORY: " + self.name + " " + message[1] + " " + message[2]);
+      } else if (action === Types.Messages.MOVE_ITEM) {
+        log.info("MOVE ITEM: " + self.name + " " + message[1] + " " + message[2]);
 
-        databaseHandler.setInventory({ player: self, fromSlot: message[1], toSlot: message[2] });
+        databaseHandler.moveItem({ player: self, fromSlot: message[1], toSlot: message[2] });
+      } else if (action === Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY) {
+        log.info("MOVE UPGRADE ITEMS TO INVENTORY: " + self.name);
+
+        databaseHandler.moveUpgradeItemsToInventory(self);
+      } else if (action === Types.Messages.UPGRADE_ITEM) {
+        log.info("UPGRADE ITEM: " + self.name);
+        // @TODO GET the item to be upgraded, run the odds formulea, add the item +1 to slot 210 if success
+
+        databaseHandler.upgradeItem(self);
       } else if (action === Types.Messages.ACHIEVEMENT) {
         log.info("ACHIEVEMENT: " + self.name + " " + message[1] + " " + message[2]);
         const index = parseInt(message[1]) - 1;
@@ -555,7 +553,13 @@ module.exports = Player = Character.extend({
 
   getState: function () {
     var basestate = this._getBaseState(),
-      state = [this.name, this.orientation, this.armor, this.weapon, this.level];
+      state = [
+        this.name,
+        this.orientation,
+        `${this.armor}:${this.armorLevel}`,
+        `${this.weapon}:${this.weaponLevel}`,
+        this.level,
+      ];
 
     if (this.target) {
       state.push(this.target);
@@ -817,6 +821,7 @@ module.exports = Player = Character.extend({
     self.achievement = achievement;
     self.inventory = inventory;
     self.hash = hash;
+    self.hasRequestedPayout = !!hash;
 
     self.createdAt = createdAt;
     self.experience = exp;
