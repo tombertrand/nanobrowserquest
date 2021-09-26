@@ -220,11 +220,13 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
           const [item, levelOrQuantity] = rawItem.split(":");
           const isWeapon = kinds[item][1] === "weapon";
           const isArmor = kinds[item][1] === "armor";
+          const requirement = isWeapon || isArmor ? Types.getItemRequirement(item, levelOrQuantity) : 0;
 
           return {
             item,
             [isWeapon || isArmor ? "level" : "quantity"]: levelOrQuantity,
             slot,
+            requirement,
           };
         })
         .filter(Boolean);

@@ -890,9 +890,9 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton {background-position:-1305px -51px;top:3px;left:1305px;width:88px;}
         #completedbutton:hover {background-position:-1305px -96px;}
         #completedbutton.active {background-position:-1305px -141px;}
-        #mutebutton {background-position:-684px -51px;top:3px;left:1395px;}
-        #mutebutton:hover {background-position:-726px -51px;}
-        #mutebutton.active {background-position:-768px -51px;}
+        #mute-button {background-position:-684px -51px;top:3px;left:1395px;}
+        #mute-button:hover {background-position:-726px -51px;}
+        #mute-button.active {background-position:-768px -51px;}
         
         #chatbox {height:48px;width:1182px;background-size:1440px;background-position:0 -96px;margin-left:-591px;bottom:18px;}
         #chatbox.active {bottom:66px;}
@@ -1080,9 +1080,9 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton {background-position:-869px -34px;top:2px;left:869px;width:60px;}
         #completedbutton:hover {background-position:-869px -64px;}
         #completedbutton.active {background-position:-869px -94px;}
-        #mutebutton {background-position:-456px -34px;top:2px;left:930px;}
-        #mutebutton:hover {background-position:-484px -34px;}
-        #mutebutton.active {background-position:-512px -34px;}
+        #mute-button {background-position:-456px -34px;top:2px;left:930px;}
+        #mute-button:hover {background-position:-484px -34px;}
+        #mute-button.active {background-position:-512px -34px;}
 
 		#chatbox {height:32px;width:788px;background-size:960px;background-position:0 -64px;margin-left:-394px;bottom:12px;}
 		#chatbox.active {bottom:44px;}
@@ -1275,9 +1275,9 @@ footer, header, hgroup, menu, nav, section {
         #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-158px -17px;}
         #achievementsbutton.blink {background-position:-288px -17px;}
         #achievementsbutton.active {background-position:-172px -17px;}
-        #mutebutton {background-position:-228px -17px;top:1px;left:465px;}
-        #mutebutton:hover {background-position:-242px -17px;}
-        #mutebutton.active {background-position:-256px -17px;}
+        #mute-button {background-position:-228px -17px;top:1px;left:465px;}
+        #mute-button:hover {background-position:-242px -17px;}
+        #mute-button.active {background-position:-256px -17px;}
 
 		#chatbox {height:16px;width:394px;background-size:480px;background-position:0 -32px;margin-left:-197px;bottom:6px;}
 		#chatbox.active {bottom:22px;}
@@ -1461,10 +1461,10 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton {background-position:-869px -34px;top:2px;left:419px;width:60px;}
         #completedbutton:hover {background-position:-869px -64px;}
         #completedbutton.active {background-position:-869px -94px;}
-        #mutebutton { display: none; }
-        /* #mutebutton {background-position:-456px -34px;top:2px;left:450px;}
-        #mutebutton:hover {background-position:-484px -34px;}
-        #mutebutton.active {background-position:-512px -34px;} */
+        #mute-button { display: none; }
+        /* #mute-button {background-position:-456px -34px;top:2px;left:450px;}
+        #mute-button:hover {background-position:-484px -34px;}
+        #mute-button.active {background-position:-512px -34px;} */
 
 		#chatbox {height:32px;width:480px;background-size:960px;background-position:0 -64px;margin-left:-240px;bottom:2px;}
 		#chatbox.active {bottom:34px;}

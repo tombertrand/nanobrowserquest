@@ -323,7 +323,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
       player.broadcast(player.equip(player.armorKind), false);
     } else if (location === "upgrade") {
       player.send([Types.Messages.UPGRADE, data]);
-    } else if (location === "delete") {
     }
   },
 
@@ -345,7 +344,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         const fromItem = isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed;
 
         // @NOTE Should never happen but who knows
-        if (["sword:1", "clotharmor:1"].includes(fromItem)) return;
+        if (["sword1:1", "clotharmor:1"].includes(fromItem) && toSlot !== -1) return;
 
         if (toLocation === fromLocation) {
           const toItem = fromReplyParsed[toSlot - toRange];
@@ -365,14 +364,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
             try {
               let toReplyParsed = isMultipleTo ? JSON.parse(toReply) : toReply;
               let toItem = isMultipleTo ? toReplyParsed[toSlot - toRange] : toReplyParsed;
+              let isFromReplyDone = false;
+              let isToReplyDone = false;
 
               if (["sword1:1", "clotharmor:1"].includes(toItem)) {
                 toItem = 0;
               }
 
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
-              let isFromReplyDone = false;
-              let isToReplyDone = false;
               if (Types.isScroll(fromItem)) {
                 const [fromScroll, fromQuantity] = fromItem.split(":");
                 if (toLocation === "inventory") {
@@ -402,6 +401,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
                     toReplyParsed[toSlot - toRange] = `${fromScroll}:1`;
                   }
 
+                  isFromReplyDone = true;
+                  isToReplyDone = true;
+                }
+              } else if (["weapon", "armor"].includes(toLocation)) {
+                const [item, fromLevel] = fromItem.split(":");
+                if (Types.getItemRequirement(item, fromLevel) > player.level) {
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }

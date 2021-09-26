@@ -738,10 +738,17 @@ Types.getItemClass = function (item, level) {
   return itemClass;
 };
 
+Types.getItemRequirement = function (item, level) {
+  const baseLevel = kinds[item][3];
+  const multiplier = Types.getItemClass(item, level) === "high" ? 2 : 1;
+  const requirement = baseLevel + level * multiplier;
+
+  return requirement;
+};
+
 Types.getItemDetails = function (item, level) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
-  const baseLevel = kinds[item][3];
 
   const isEquipment = isWeapon || isArmor;
   let magicDamage = 0;
@@ -758,8 +765,7 @@ Types.getItemDetails = function (item, level) {
 
   let itemClass = Types.getItemClass(item, level);
 
-  const multiplier = itemClass === "high" ? 2 : 1;
-  const requirement = baseLevel + level * multiplier;
+  const requirement = Types.getItemRequirement(item, level);
   const description = Types.itemDescription[item];
 
   return {

@@ -593,7 +593,7 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
               $("#completedbutton").click();
               break;
             case Types.Keys.M:
-              $("#mutebutton").click();
+              $("#mute-button").click();
               break;
             case Types.Keys.P:
               $("#playercount").click();
@@ -667,7 +667,7 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
         $("#name-tooltip").removeClass("visible");
       });
 
-      $("#mutebutton").click(function () {
+      $("#mute-button").click(function () {
         app.toggleMute()
       });
 

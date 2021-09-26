@@ -304,12 +304,10 @@ define([
 
     initMuteButton: function () {
       var self = this;
-      console.log("~~~~self.storage", self.storage);
-
       if (!self.storage.isAudioEnabled()) {
         self.audioManager.disableAudio();
       } else {
-        $("#mutebutton").addClass("active");
+        $("#mute-button").addClass("active");
       }
     },
 
@@ -401,6 +399,10 @@ define([
             const item = fromItemEl.attr("data-item");
             const level = fromItemEl.attr("data-level");
 
+            if ([100, 101].includes(toSlot) && Types.getItemRequirement(item, level) > self.player.level) {
+              return;
+            }
+
             self.client.sendMoveItem(fromSlot, toSlot);
 
             if (toSlot === -1) {
@@ -418,12 +420,12 @@ define([
               self.player.switchArmor(self.sprites[item], level);
             }
 
-            // const type = kinds[item][1];
-            // if (type === "armor" && $(".item-equip-armor").is(":empty")) {
-            //   self.player.switchArmor(self.sprites["clotharmor"], 1);
-            // } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
-            //   self.player.switchWeapon("sword1", 1);
-            // }
+            const type = kinds[item][1];
+            if (type === "armor" && $(".item-equip-armor").is(":empty")) {
+              self.player.switchArmor(self.sprites["clotharmor"], 1);
+            } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
+              self.player.switchWeapon("sword1", 1);
+            }
           });
         },
       });
@@ -510,6 +512,7 @@ define([
       }
 
       this.updateInventory();
+      this.updateRequirement();
     },
 
     updateInventory: function () {
@@ -519,27 +522,40 @@ define([
 
       // @TODO instead of empty-ing, compare and replace
       $(".item-inventory").empty();
-      this.player.inventory.forEach(({ item, level, quantity, slot }) => {
-        $(`#item-inventory .item-slot:eq(${slot})`)
-          // .removeClass("item-droppable")
-          .append(
-            $("<div />", {
-              class: `item-draggable ${quantity ? "item-quantity" : ""}`,
-              css: {
-                "background-image": `url("${this.getIconPath(item)}")`,
-              },
-              "data-item": item,
-              "data-level": level,
-              "data-quantity": quantity,
-            }),
-          );
+      this.player.inventory.forEach(({ item, level, quantity, requirement, slot }) => {
+        $(`#item-inventory .item-slot:eq(${slot})`).append(
+          $("<div />", {
+            class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+            css: {
+              "background-image": `url("${this.getIconPath(item)}")`,
+            },
+            "data-item": item,
+            "data-level": level,
+            "data-quantity": quantity,
+            "data-requirement": requirement,
+          }),
+        );
       });
-
-      // $("#item-inventory .item-slot:empty").addClass("item-droppable");
 
       if ($("#inventory").hasClass("visible")) {
         this.initDraggable();
       }
+
+      this.updateRequirement();
+    },
+
+    updateRequirement: function () {
+      var self = this;
+
+      $("[data-requirement]").each(function () {
+        const requirement = $(this).data("requirement");
+
+        let backgroundColor = "inherit";
+        if (requirement > self.player.level) {
+          backgroundColor = "rgba(158, 0, 0, 0.5)";
+        }
+        $(this).css("background-color", backgroundColor);
+      });
     },
 
     initUpgrade: function () {
@@ -571,7 +587,7 @@ define([
           const successRates = Types.getUpgradeSuccessRates();
           const successRate = successRates[parseInt(level) - 1];
 
-          upgradeInfoText = `A level ${level} item has ${successRate}% chance of success`;
+          upgradeInfoText = `${successRate}% chance of successful upgrade`;
         }
 
         $(`#upgrade .item-slot:eq(${slot})`)
@@ -2010,8 +2026,12 @@ define([
 
         self.client.onPlayerKillMob(function (kind, level, playerExp, exp) {
           var mobExp = Types.getMobExp(kind);
-          self.player.level = level;
           self.player.experience = playerExp;
+
+          if (self.player.level !== level) {
+            self.player.level = level;
+            self.updateRequirement();
+          }
 
           if (exp) {
             self.updateExpBar();
@@ -2204,10 +2224,6 @@ define([
               //   self.client.sendBanPlayer(`Invalid check time ${check}, ${s}, ${now}`);
               // }
             }
-
-            // self.player.switchWeapon("redsword");
-            // self.player.armorloot_callback("redarmor");
-            // self.equipment_callback();
           } else if (status === "failed") {
             self.bosscheckfailed_callback(message);
           } else if (status === "completed") {

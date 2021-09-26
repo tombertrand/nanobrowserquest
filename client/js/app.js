@@ -696,7 +696,7 @@ define(["jquery", "storage", "util"], function ($, Storage) {
     },
 
     toggleMute: function () {
-      if ($("#mutebutton").hasClass("active")) {
+      if ($("#mute-button").hasClass("active")) {
         this.storage.setAudioEnabled(true);
         this.game.audioManager.enableAudio();
       } else {
@@ -710,6 +710,9 @@ define(["jquery", "storage", "util"], function ($, Storage) {
         $("#upgrade").removeClass("visible");
         $("#inventory").removeClass("upgrade");
         $("#player").addClass("visible");
+        if (this.game.player.upgrade.length) {
+          this.game.client.sendMoveUpgradeItemsToInventory();
+        }
       } else if (!$("#inventory").hasClass("visible")) {
         $("#inventory").addClass("visible");
         $("#player").addClass("visible");
@@ -738,8 +741,9 @@ define(["jquery", "storage", "util"], function ($, Storage) {
         $("#player").removeClass("visible");
       } else {
         this.game.destroyDraggable();
-
-        this.game.client.sendMoveUpgradeItemsToInventory();
+        if (this.game.player.upgrade.length) {
+          this.game.client.sendMoveUpgradeItemsToInventory();
+        }
         $("#inventory").removeClass("visible upgrade");
       }
     },
