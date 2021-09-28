@@ -52,35 +52,35 @@ define(["item"], function (Item) {
     LeatherArmor: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.LEATHERARMOR, "armor");
-        this.lootMessage = "You equip a leather armor";
+        this.lootMessage = "You pick up a leather armor";
       },
     }),
 
     MailArmor: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.MAILARMOR, "armor");
-        this.lootMessage = "You equip a mail armor";
+        this.lootMessage = "You pick up a mail armor";
       },
     }),
 
     PlateArmor: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.PLATEARMOR, "armor");
-        this.lootMessage = "You equip a plate armor";
+        this.lootMessage = "You pick up a plate armor";
       },
     }),
 
     RedArmor: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.REDARMOR, "armor");
-        this.lootMessage = "You equip a ruby armor";
+        this.lootMessage = "You pick up a ruby armor";
       },
     }),
 
     GoldenArmor: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.GOLDENARMOR, "armor");
-        this.lootMessage = "You equip a golden armor";
+        this.lootMessage = "You pick up a golden armor";
       },
     }),
 
