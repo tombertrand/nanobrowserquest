@@ -52,16 +52,26 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var exp = Utils.NaN2Zero(replies[3]);
               var createdAt = Utils.NaN2Zero(replies[4]);
 
-              var [playerArmor, armorLevel] = armor.split(":");
-              if (isNaN(armorLevel)) {
-                armor = `${playerArmor}:1`;
+              if (!armor) {
+                armor = `clotharmor:1`;
                 client.hset("u:" + player.name, "armor", armor);
+              } else {
+                var [playerArmor, armorLevel] = armor.split(":");
+                if (isNaN(armorLevel)) {
+                  armor = `${playerArmor}:1`;
+                  client.hset("u:" + player.name, "armor", armor);
+                }
               }
 
-              var [playerWeapon, weaponLevel] = weapon.split(":");
-              if (isNaN(weaponLevel)) {
-                weapon = `${playerWeapon}:1`;
+              if (!weapon) {
+                weapon = `sword1:1`;
                 client.hset("u:" + player.name, "weapon", weapon);
+              } else {
+                var [playerWeapon, weaponLevel] = (weapon || "").split(":");
+                if (isNaN(weaponLevel)) {
+                  weapon = `${playerWeapon}:1`;
+                  client.hset("u:" + player.name, "weapon", weapon);
+                }
               }
 
               var achievement = new Array(ACHIEVEMENT_COUNT).fill(0);
@@ -192,6 +202,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
           .hset(userKey, "inventory", JSON.stringify(new Array(INVENTORY_SLOT_COUNT).fill(0)))
           .hset(userKey, "nanoPotions", 0)
+          .hset(userKey, "weapon", "sword1:1")
+          .hset(userKey, "armor", "clotharmor:1")
           .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
           .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
           .exec(function (err, replies) {
