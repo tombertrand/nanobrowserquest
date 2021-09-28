@@ -23,7 +23,7 @@ Formulas.minMaxDamage = function (weapon, weaponLevel, playerLevel) {
 Formulas.dmg = function (weapon, weaponLevel, playerLevel, armorLevel) {
   const { min, max } = Formulas.minMaxDamage(weapon, weaponLevel, playerLevel);
   const dealt = Utils.randomInt(min, max);
-  const absorbed = armorLevel * Utils.randomInt(1, 3);
+  const absorbed = Math.floor(armorLevel * Utils.randomInt(2, 4));
   const dmg = dealt - absorbed;
 
   //console.log("abs: "+absorbed+"   dealt: "+ dealt+"   dmg: "+ (dealt - absorbed));
@@ -45,7 +45,7 @@ Formulas.minMaxAbsorb = function (armor, armorLevel, playerLevel) {
 };
 
 Formulas.dmgFromMob = function (weaponLevel, armor, armorLevel, playerLevel) {
-  const dealt = weaponLevel * Utils.randomInt(8, 12);
+  const dealt = Math.ceil(weaponLevel * Utils.randomInt(8, 12));
   const { min, max } = Formulas.minMaxAbsorb(armor, armorLevel, playerLevel);
   const absorbed = Utils.randomInt(min, max);
   const dmg = dealt - absorbed;

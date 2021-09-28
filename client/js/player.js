@@ -202,7 +202,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         self.setArmorName(armorSprite.id);
       }
 
-      if (level !== this.getArmorLevel) {
+      if (armorSprite.kind !== Types.Entities.FIREFOX && level && level !== this.getArmorLevel) {
         hasChanged = true;
         this.setArmorLevel(level);
       }

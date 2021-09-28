@@ -308,8 +308,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     },
 
     receiveHealth: function (data) {
-      var points = data[1],
-        isRegen = false;
+      var points = data[1];
+      var isRegen = false;
 
       if (data[2]) {
         isRegen = true;

@@ -695,7 +695,6 @@ Types.getArmorDefense = function (armor, level) {
 };
 
 Types.getArmorHealthBonus = function (level) {
-  // const healthBonusPerLevel = [2, 2, 4, 6, 8, 10, 12, 15, 19, 24];
   const healthBonusPerLevel = [2, 4, 8, 14, 20, 30, 42, 60, 80, 110];
 
   return healthBonusPerLevel[level - 1];
@@ -710,7 +709,9 @@ Types.getWeaponDamage = function (weapon, level) {
 };
 
 Types.getWeaponMagicDamage = function (level) {
-  return level * 3;
+  const magicDamagePerLevel = [1, 3, 5, 8, 11, 15, 18, 25, 35, 50];
+
+  return magicDamagePerLevel[level - 1];
 };
 
 Types.getItemClass = function (item, level) {

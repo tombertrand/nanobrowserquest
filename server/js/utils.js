@@ -188,7 +188,7 @@ Utils.isUpgradeSuccess = level => {
   const successRate = successRates[parseInt(level) - 1];
   const random = Utils.randomInt(1, 100);
 
-  console.log("~~~~random", random, successRate);
+  log.info(`Random ${random}, Success rate: ${successRate} -> ${random <= successRate ? "SUCCESS" : "FAILURE"}`);
 
   return random <= successRate;
 };

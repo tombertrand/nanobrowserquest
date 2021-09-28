@@ -28,6 +28,13 @@ var Character = Entity.extend({
     this.hitPoints = this.maxHitPoints;
   },
 
+  updateMaxHitPoints: function (maxHitPoints) {
+    this.maxHitPoints = maxHitPoints;
+    if (this.hitPoints > maxHitPoints) {
+      this.hitPoints = maxHitPoints;
+    }
+  },
+
   regenHealthBy: function (value) {
     var hp = this.hitPoints,
       max = this.maxHitPoints;

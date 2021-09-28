@@ -116,7 +116,11 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
               var gems = new Array(GEM_COUNT).fill(0);
               try {
-                gems = JSON.parse(replies[11] || gems);
+                if (!replies[11]) {
+                  client.hset("u:" + player.name, "gems", JSON.stringify(gems));
+                } else {
+                  gems = JSON.parse(replies[11]);
+                }
               } catch (err) {
                 console.log(err);
                 Sentry.captureException(err);
@@ -464,7 +468,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           } else if (slotIndex === -1) {
             slotIndex = inventory.indexOf(0);
             if (slotIndex !== -1) {
-              inventory[slotIndex] = `${item}:${level}`;
+              inventory[slotIndex] = `${item}:${level || quantity}`;
             }
           }
         });

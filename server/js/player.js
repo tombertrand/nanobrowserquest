@@ -12,8 +12,8 @@ const bcrypt = require("bcrypt");
 const { enqueueSendPayout } = require("./payout");
 const { Sentry } = require("./sentry");
 
-const MIN_LEVEL = 12;
-const MIN_TIME = 1000 * 60 * 8;
+const MIN_LEVEL = 14;
+const MIN_TIME = 1000 * 60 * 15;
 const MAX_AMOUNT = Utils.getMaxPayoutAmount();
 
 let index = 0;
@@ -264,13 +264,13 @@ module.exports = Player = Character.extend({
 
               databaseHandler.foundGem(self.name, index);
             } else if (kind === Types.Entities.FIREPOTION) {
-              self.updateHitPoints();
+              self.updateHitPoints(true);
               self.broadcast(self.equip(Types.Entities.FIREFOX));
               self.firepotionTimeout = setTimeout(function () {
                 self.broadcast(self.equip(self.armor)); // return to normal after 15 sec
                 self.firepotionTimeout = null;
               }, 15000);
-              self.send(new Messages.Stats({ maxHitPoints: self.maxHitPoints }).serialize());
+              self.sendPlayerStats();
             } else if (Types.isHealingItem(kind)) {
               var amount;
 
@@ -331,7 +331,7 @@ module.exports = Player = Character.extend({
 
         if (!self.hash) {
           // BOSS room validation
-          // Has played for more than 12 minutes, has at least X amount of exp (MIN_LEVEL)
+          // Has played for more than 15 minutes, has at least X amount of exp (MIN_LEVEL)
           if (self.createdAt + MIN_TIME > Date.now() || self.level < MIN_LEVEL) {
             self.connection.send({
               type: Types.Messages.BOSS_CHECK,
@@ -357,8 +357,6 @@ module.exports = Player = Character.extend({
           return;
         }
 
-        self.hasRequestedPayout = true;
-
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         // @TODO Verify that killing the boss a second time doesn't ban the player because it wouldn't request a payout! (fix .then())
         if (
@@ -366,10 +364,6 @@ module.exports = Player = Character.extend({
           self.hasRequestedPayout ||
           self.createdAt + MIN_TIME > Date.now() ||
           self.level < MIN_LEVEL ||
-          !(
-            [Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
-            [Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
-          ) ||
           // Check for required achievements
           !self.achievement[1] || //  -> INTO_THE_WILD
           !self.achievement[11] || // -> NO_MANS_LAND
@@ -379,23 +373,21 @@ module.exports = Player = Character.extend({
           let reason;
           if (self.hash) {
             reason = `Already have hash ${self.hash}`;
+          } else if (self.hasRequestedPayout) {
+            reason = `Has already requested payout`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             reason = `Less then 8 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
           } else if (self.level < MIN_LEVEL) {
             reason = `Min level not obtained, player is level ${self.level}`;
-          } else if (
-            !(
-              [Types.Entities.REDARMOR, Types.Entities.GOLDENARMOR].includes(self.armor) ||
-              [Types.Entities.REDSWORD, Types.Entities.GOLDENSWORD].includes(self.weapon)
-            )
-          ) {
-            reason = `Player item doesn't match requirement, armor is ${self.armor}, weapon is ${self.weapon}`;
           } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[16] || !self.achievement[20]) {
             reason = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}, ${self.achievement[20]}`;
           }
 
+          log.info(`Reason: ${reason}`);
           databaseHandler.banPlayer(self, reason);
         } else {
+          self.hasRequestedPayout = true;
+
           self.connection.send({
             type: Types.Messages.NOTIFICATION,
             message: "Payout is being sent!",
@@ -673,12 +665,19 @@ module.exports = Player = Character.extend({
         this.equipWeapon(item, kind, level);
       }
 
+      this.updateHitPoints();
       this.sendPlayerStats();
     }
   },
 
-  updateHitPoints: function () {
-    this.resetHitPoints(Formulas.hp(Properties.getArmorLevel(this.armorKind), this.armorLevel, this.level));
+  updateHitPoints: function (reset) {
+    const maxHitPoints = Formulas.hp(Properties.getArmorLevel(this.armorKind), this.armorLevel, this.level);
+
+    if (reset) {
+      this.resetHitPoints(maxHitPoints);
+    } else {
+      this.updateMaxHitPoints(maxHitPoints);
+    }
   },
 
   updatePosition: function () {
@@ -705,8 +704,6 @@ module.exports = Player = Character.extend({
   },
 
   sendPlayerStats: function () {
-    this.updateHitPoints();
-
     var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb(this.armor, this.armorLevel, this.level);
     var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage(this.weapon, this.weaponLevel, this.level);
 
@@ -725,6 +722,7 @@ module.exports = Player = Character.extend({
     var origLevel = this.level;
     this.level = Types.getLevel(this.experience);
     if (origLevel !== this.level) {
+      this.updateHitPoints(true);
       this.sendPlayerStats();
       // @NOTE Update the player levels
       this.server.updatePopulation({ levelupPlayer: this.id });
@@ -855,6 +853,7 @@ module.exports = Player = Character.extend({
       gems,
     ]);
 
+    self.updateHitPoints(true);
     self.sendPlayerStats();
 
     self.hasEnteredGame = true;

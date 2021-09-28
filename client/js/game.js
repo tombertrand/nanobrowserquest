@@ -431,6 +431,7 @@ define([
       });
     },
     destroyDroppable: function () {
+      $(".item-not-draggable").remove();
       $(".item-droppable").droppable("destroy");
     },
 
@@ -467,7 +468,7 @@ define([
     },
 
     destroyDraggable: function () {
-      $(".item-draggable").draggable("destroy");
+      $(".item-draggable.ui-draggable").draggable("destroy");
     },
 
     getIconPath: function (spriteName) {
@@ -2113,7 +2114,7 @@ define([
         });
 
         self.client.onPlayerChangeStats(function ({ maxHitPoints, damage, absorb }) {
-          if (self.player.maxHitPoints !== maxHitPoints) {
+          if (self.player.maxHitPoints !== maxHitPoints || self.player.invincible) {
             self.player.maxHitPoints = maxHitPoints;
             self.player.hitPoints = maxHitPoints;
 
@@ -2446,7 +2447,6 @@ define([
         } else if (npc.kind === Types.Entities.RICK) {
           this.tryUnlockingAchievement("RICKROLLD");
         } else if (npc.kind === Types.Entities.ANVIL) {
-          console.log("!!!open it!");
           this.app.openUpgrade();
         }
       }

@@ -841,7 +841,7 @@ module.exports = World = cls.Class.extend({
     var p = 0;
     var item = null;
 
-    // return this.addItem(this.createItem(Types.getKindFromString("blueaxe"), mob.x, mob.y));
+    // return this.addItem(this.createItem(Types.getKindFromString("firepotion"), mob.x, mob.y));
 
     //@NOTE 3% chance to drop a NANO potion
     if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {

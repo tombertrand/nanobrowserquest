@@ -374,9 +374,10 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
           this.context.globalAlpha = entity.fadingAlpha;
         }
 
-        // if(!this.mobile && !this.tablet) {
-        this.drawEntityName(entity);
-        // }
+        // @NOTE Why is the entity name persisting?
+        if (!this.mobile && !this.tablet) {
+          this.drawEntityName(entity);
+        }
 
         this.context.save();
         if (entity.flipSpriteX) {
