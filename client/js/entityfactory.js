@@ -124,6 +124,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.GoldenArmor(id);
   };
 
+  EntityFactory.builders[Types.Entities.FROZENARMOR] = function (id) {
+    return new Items.FrozenArmor(id);
+  };
+
   EntityFactory.builders[Types.Entities.FLASK] = function (id) {
     return new Items.Flask(id);
   };

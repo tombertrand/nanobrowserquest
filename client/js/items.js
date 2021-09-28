@@ -84,6 +84,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    FrozenArmor: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.FROZENARMOR, "armor");
+        this.lootMessage = "You pick up a frozen armor";
+      },
+    }),
+
     Flask: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.FLASK, "object");

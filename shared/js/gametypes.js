@@ -89,6 +89,7 @@ Types = {
     PLATEARMOR: 24,
     REDARMOR: 25,
     GOLDENARMOR: 26,
+    FROZENARMOR: 78,
 
     // Objects
     FLASK: 35,
@@ -192,6 +193,7 @@ Types.Entities.Armors = [
   Types.Entities.PLATEARMOR,
   Types.Entities.REDARMOR,
   Types.Entities.GOLDENARMOR,
+  Types.Entities.FROZENARMOR,
 ];
 
 Types.getGemNameFromKind = function (kind) {
@@ -240,6 +242,7 @@ var kinds = {
   platearmor: [Types.Entities.PLATEARMOR, "armor", "Plate Armor", 5, 10],
   redarmor: [Types.Entities.REDARMOR, "armor", "Ruby Armor", 7, 15],
   goldenarmor: [Types.Entities.GOLDENARMOR, "armor", "Golden Armor", 10, 20],
+  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 14, 24],
   firefox: [Types.Entities.FIREFOX, "armor"],
 
   flask: [Types.Entities.FLASK, "object"],
@@ -307,6 +310,7 @@ Types.rankedArmors = [
   Types.Entities.PLATEARMOR,
   Types.Entities.REDARMOR,
   Types.Entities.GOLDENARMOR,
+  Types.Entities.FROZENARMOR,
 ];
 
 Types.expForLevel = [

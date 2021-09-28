@@ -17,7 +17,8 @@ const MIN_TIME = 1000 * 60 * 15;
 const MAX_AMOUNT = Utils.getMaxPayoutAmount();
 
 let index = 0;
-const NO_TIMEOUT_ACCOUNT = "nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
+// const NO_TIMEOUT_ACCOUNT = "nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
+const NO_TIMEOUT_ACCOUNT = "nano_3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6m8epqxmy7anix";
 
 module.exports = Player = Character.extend({
   init: function (connection, worldServer, databaseHandler) {
