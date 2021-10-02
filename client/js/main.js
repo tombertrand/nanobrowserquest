@@ -99,10 +99,6 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
         e.stopPropagation();
       });
 
-      $("#player, #inventory, #upgrade").on("click mouseup", function (e) {
-        e.stopPropagation();
-      });
-
       $("#healthbar, #hitpoints").click(function () {
         app.togglePlayerInfo();
       });
@@ -489,7 +485,9 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
         }
 
         if (game.started && !game.renderer.mobile && game.player && !hasClosedParchment) {
-          game.click();
+          if (!$(event.target).closest(".panel.visible").length) {
+            game.click();
+          }
         }
       });
 
@@ -668,7 +666,7 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
       });
 
       $("#mute-button").click(function () {
-        app.toggleMute()
+        app.toggleMute();
       });
 
       $(document).bind("keydown", function (e) {
