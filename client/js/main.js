@@ -192,7 +192,9 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
 
       $("#notifications div").bind(TRANSITIONEND, app.resetMessagesPosition.bind(app));
 
-      $(".close").click(function () {
+      $(".close").click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         app.hideWindows();
       });
 

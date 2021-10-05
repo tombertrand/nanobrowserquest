@@ -535,9 +535,7 @@ define(["jquery", "storage", "util"], function ($, Storage) {
         $("#failed").removeClass("active");
       }
 
-      if ($("#inventory").hasClass("visible")) {
-        this.toggleInventory();
-      } else if ($("#upgrade").hasClass("visible")) {
+      if ($("#upgrade").hasClass("visible")) {
         this.toggleUpgrade();
       }
     },
