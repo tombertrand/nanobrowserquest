@@ -152,6 +152,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.GemTopaz(id);
   };
 
+  EntityFactory.builders[Types.Entities.GEMSAPPHIRE] = function (id) {
+    return new Items.GemSapphire(id);
+  };
+
   EntityFactory.builders[Types.Entities.SCROLLUPGRADELOW] = function (id) {
     return new Items.ScrollUpgradeLow(id);
   };

@@ -534,7 +534,10 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       if ($("#failed").hasClass("active")) {
         $("#failed").removeClass("active");
       }
-      if ($("#upgrade").hasClass("visible")) {
+
+      if ($("#inventory").hasClass("visible")) {
+        this.toggleInventory();
+      } else if ($("#upgrade").hasClass("visible")) {
         this.toggleUpgrade();
       }
     },
@@ -689,6 +692,10 @@ define(["jquery", "storage", "util"], function ($, Storage) {
 
     togglePopulationInfo: function () {
       $("#population").toggleClass("visible");
+
+      if ($("#upgrade, #inventory").hasClass("visible")) {
+        this.toggleInventory();
+      }
     },
 
     togglePlayerInfo: function () {

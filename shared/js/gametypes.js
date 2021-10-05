@@ -101,6 +101,7 @@ Types = {
     GEMEMERALD: 69,
     GEMAMETHYST: 70,
     GEMTOPAZ: 71,
+    GEMSAPPHIRE: 79,
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
@@ -174,6 +175,7 @@ Types.Entities.Gems = [
   Types.Entities.GEMEMERALD,
   Types.Entities.GEMAMETHYST,
   Types.Entities.GEMTOPAZ,
+  Types.Entities.GEMSAPPHIRE,
 ];
 
 Types.Entities.Weapons = [
@@ -202,6 +204,7 @@ Types.getGemNameFromKind = function (kind) {
     [Types.Entities.GEMEMERALD]: "Emerald",
     [Types.Entities.GEMAMETHYST]: "Amethyst",
     [Types.Entities.GEMTOPAZ]: "Topaz",
+    [Types.Entities.GEMSAPPHIRE]: "Sapphire",
   };
 
   return gems[kind] || kind;
@@ -255,6 +258,7 @@ var kinds = {
   gememerald: [Types.Entities.GEMEMERALD, "object"],
   gemamethyst: [Types.Entities.GEMAMETHYST, "object"],
   gemtopaz: [Types.Entities.GEMTOPAZ, "object"],
+  gemsapphire: [Types.Entities.GEMSAPPHIRE, "object"],
   scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "object", "Upgrade scroll", 1],
   scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "object", "Upgrade scroll", 5],
   scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "object", "Superior upgrade scroll", 10],

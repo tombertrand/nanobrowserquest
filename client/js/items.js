@@ -133,6 +133,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    GemSapphire: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.GEMSAPPHIRE, "object");
+        this.lootMessage = "You pick up a Sapphire";
+      },
+    }),
+
     ScrollUpgradeLow: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.SCROLLUPGRADELOW, "object");

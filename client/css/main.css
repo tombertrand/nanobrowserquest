@@ -155,16 +155,16 @@ footer, header, hgroup, menu, nav, section {
     #notifications div.top #message1 {opacity:0;-moz-transition:0.2s opacity linear;-webkit-transition:0.2s opacity linear;-o-transition:0.2s opacity linear;-ms-transition:0.2s opacity linear;transition:0.2s opacity linear;}
     #notifications span {display:block;text-align:center;width:100%;opacity:1;-moz-user-select:none;-webkit-user-select:none;}
 
-    #playercount {font-family:'GraphicPixel';color:#e3e3e3;position:absolute;}
-    #playercount:hover {cursor:pointer;color:#FCE045;}
-    .panel {position:absolute;font-family:'GraphicPixel';color:#fff;text-align:center;height:0;pointer-events:none;}
+    #player-count {font-family:'GraphicPixel';color:#e3e3e3;position:absolute;}
+    #player-count:hover {cursor:pointer;color:#FCE045;}
+    .panel {position:absolute;font-family:'GraphicPixel';color:#fff;text-align:center;height:0;}
     .panel > div {background:url('../img/1/barsheet.png');image-rendering:-moz-crisp-edges;opacity:0;-moz-transition:0.2s opacity linear;-webkit-transition:0.2s opacity linear;-o-transition:0.2s opacity linear;-ms-transition:0.2s opacity linear;transition:0.2s opacity linear;}
     /* #guild-name, #population span:nth-child(1) {color:#FCE045;} */
     .panel {display: none;}
     .panel.visible {display: block;}
     .panel.visible div {opacity:1;}
     #guild-population {height:0;overflow:hidden;}
-    .panel.visible {height:auto;pointer-events:auto;}
+    .panel.visible {height:auto;}
     
     .barbutton {background:url('../img/1/barsheet.png');image-rendering:-moz-crispt-edges;position:absolute;}
     
@@ -535,7 +535,7 @@ footer, header, hgroup, menu, nav, section {
     #completed.boss-check p { margin-top: 0 !important; }
     #completed.boss-check .link { font-size: 24px; }
 
-    #player-list { max-height: 40vh; overflow-y: auto; }
+    #player-list { overflow-y: auto; }
     #player-list > div, #player-info > div { display: flex; align-items: baseline; padding: 0 12px; }
     #player-list > div:last-child,#player-info > div:last-child { padding-bottom: 6px; }
     #player-list > div span:first-of-type,#player-info > div span:first-of-type { margin-right: 3px; }
@@ -609,10 +609,6 @@ footer, header, hgroup, menu, nav, section {
         justify-content: center;
         align-items: center;
     }
-    /* #completedbutton .nano-logo {
-        width: 60px;
-        height: 28px;
-    } */
 
     #completedbutton .nano-logo {
         background-image: url(../img/3/nano-small.png);
@@ -675,10 +671,7 @@ footer, header, hgroup, menu, nav, section {
 
     #upgrade { bottom: auto;}
     #inventory { bottom: auto;}
-    /* #inventory.upgrade { bottom: 10%; right: 5%; top:auto;} */
     #inventory.upgrade .panel-spaced-row { display: none;}
-
-    /* #inventory { bottom: auto; right: 5%; top: 20%;} */
     #item-inventory { position: relative; display: flex; flex-wrap: wrap; justify-content: center; z-index:1;}
 
     .ui-droppable-hover { border-color: yellow !important;}
@@ -686,7 +679,6 @@ footer, header, hgroup, menu, nav, section {
 
     .item-slot { padding: 1px; border: solid 1px #2d2b29; background: #171717; }
     .item-draggable, .item-not-draggable {background-color: transparent; z-index:2; border-radius: 4px; border: solid 2px #928f8c; background: #171717;}
-    /* .item-draggable:hover::before { background-image: url('../img/2/target.png'); } */
     .ui-draggable-dragging { cursor: url(../img/2/loot.png) 2 5, move; }
 
     .panel { cursor: url(../img/2/hand.png) 2 5, move; }
@@ -768,6 +760,7 @@ footer, header, hgroup, menu, nav, section {
         .panel-spaced-row { padding: 0 12px}
         .item-equip-weapon::before {background-image: url('../img/3/item-sword1.png');}
         .item-equip-armor::before {top: 10%;background-image: url('../img/3/item-clotharmor.png');}
+        #player-list {max-height: 366px;}
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
@@ -869,7 +862,7 @@ footer, header, hgroup, menu, nav, section {
         #notifications div.top {top:-45px;}
         #notifications span {line-height:45px;height:45px;}
 
-        #playercount {font-size:20px;left:1032px;top:18px;width:172px;text-align:center;}
+        #player-count {font-size:20px;left:1032px;top:18px;width:172px;text-align:center;}
         .panel {width:360px;bottom:66px;font-size:20px;line-height:30px;}
         .panel-container {width:360px;}
         #population {right:105px;}
@@ -957,6 +950,7 @@ footer, header, hgroup, menu, nav, section {
         #upgrade-scroll { width: 120px; }
         .item-equip-weapon::before {background-image: url('../img/2/item-sword1.png');}
         .item-equip-armor::before {top: 10%;background-image: url('../img/2/item-clotharmor.png');}
+        #player-list {max-height: 266px;}
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/2/barsheet.png');}
@@ -1059,7 +1053,7 @@ footer, header, hgroup, menu, nav, section {
         #notifications span {line-height:30px;height:30px;}
         .windows #notifications span {line-height:34px;}
 
-        #playercount {font-size:16px;left:696px;top:10px;width:110px;text-align:center;}
+        #player-count {font-size:16px;left:696px;top:10px;width:110px;text-align:center;}
         .panel {bottom:44px;width:262px;font-size:14px;line-height:20px;}
         .panel-container {width:262px;}
         #population {right:70px;}
@@ -1151,6 +1145,7 @@ footer, header, hgroup, menu, nav, section {
         .world { font-size: 12px;}
         .createaccount-instructions { font-size: 8px; }
         #upgrade-scroll { width: 120px; }
+        #player-list {max-height: 266px;}
 
         canvas {image-rendering:optimizeSpeed;}
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
@@ -1251,7 +1246,7 @@ footer, header, hgroup, menu, nav, section {
         #notifications div.top {top:-15px;}
         #notifications span {line-height:15px;height:15px;}
 
-        #playercount {font-size:10px;left:348px;top:4px;width:54px;text-align:center;}
+        #player-count {font-size:10px;left:348px;top:4px;width:54px;text-align:center;}
 
         #completedbutton {background-position:-435px -17px;;top:1px;left:435px;width:29px;}
         #completedbutton:hover {background-position:-435px -32px;}
@@ -1313,8 +1308,6 @@ footer, header, hgroup, menu, nav, section {
         #about .left p, #about .right p {font-size:9px;text-align:left;line-height:10px;padding:0;margin-top:-6px;}
         #about .left {width:37%;float:left;margin-left:10%;}
         #about .right {width:37%;float:right;margin-right:12%;}
-/*        #about .left .img {height:30px;width:27px;float:left;background-position:-354px -172px;margin-right:7px;}
-        #about .right .img {height:30px;width:56px;float:left;background-position:-354px -142px;margin-right:7px;}*/
         #about .img {display:none;}
         #about .link {clear:both;font-size:9px;margin:10px 0;display:block;text-align:left;line-height:5px;}
         #about .link a {color:#2e7fdd;text-decoration:none;}
@@ -1343,8 +1336,10 @@ footer, header, hgroup, menu, nav, section {
             right: 0;
         }
         .panel {scale: 0.8;}
+        .panel#population { bottom: 16px; }
         .panel#player {left: -20px; bottom: 18px;}
         .panel#upgrade {position: relative;left: 42px;}
+        #player-list {max-height: 166px;}
 
         body {border-top:0px;}
         .intro #container, .game #logo, .game #parchment {display:none;}
@@ -1426,8 +1421,7 @@ footer, header, hgroup, menu, nav, section {
 		#confirmation p, #error p {margin:10px 0;line-height:12px;font-size:12px;}
 		
 		#player-image {display:none;}
-		
-		/*GUI Bar*/
+
 		#bar-container {height:34px;top:-2px;background-size:960px;background-position:0 -96px;}
 
 		#healthbar {height:26px;background-position:0 -34px;width:204px;top:6px;background-size:960px;z-index:20;}
@@ -1442,18 +1436,16 @@ footer, header, hgroup, menu, nav, section {
 
         #notifications {display:none;}
 
-        #playercount {font-size:20px;left:270px;top:10px;width:114px;text-align:center;}
-        #playercount span {display:none;}
-        #playercount span.count {display:inline;}
-        /* #population {right:98px;bottom:34px;width:130px;font-size:10px;line-height:12px;} */
-        /* #population div{background-size:480px;background-position:-240px -52px;} */
+        #player-count {font-size:20px;left:270px;top:10px;width:114px;text-align:center;}
+        #player-count span {display:none;}
+        #player-count span.count {display:inline;}
         .panel {bottom:34px;width:262px;font-size:14px;line-height:20px;}
         .panel-container {width:262px;}
-        #population {right:70px;}
+        #population {right:0px;}
         #player {left:20px;}
 
         .panel > div {background-size:960px;background-position:-480px -104px;}
-        .panel-header {background-position:-480px -96px !important;padding-top: 8px;}
+        .panel-header {background-position:-480px -96px !important;padding-top: 6px;}
 
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:360px;}
@@ -1467,9 +1459,6 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton:hover {background-position:-869px -64px;}
         #completedbutton.active {background-position:-869px -94px;}
         #mute-button { display: none; }
-        /* #mute-button {background-position:-456px -34px;top:2px;left:450px;}
-        #mute-button:hover {background-position:-484px -34px;}
-        #mute-button.active {background-position:-512px -34px;} */
 
 		#chatbox {height:32px;width:480px;background-size:960px;background-position:0 -64px;margin-left:-240px;bottom:2px;}
 		#chatbox.active {bottom:34px;}
@@ -1541,7 +1530,7 @@ footer, header, hgroup, menu, nav, section {
 /* Workarounds for chrome windows bugs */
 
     .windows #parchment, .windows #parchment input, .windows #parchment textarea, .windows #notifications, .windows #instructions, .windows #completed, .windows #failed, .windows #achievements, .windows #achievement-notification, 
-    .windows #playercount, .windows #credits, .windows #loadcharacter, .windows #banned, .windows #invalidconnection, .windows #confirmation, .windows #death, .windows #error, .windows #about, .windows #legal, 
+    .windows #player-count, .windows #credits, .windows #loadcharacter, .windows #banned, .windows #invalidconnection, .windows #confirmation, .windows #death, .windows #error, .windows #about, .windows #legal, 
     .windows #parchment p, .windows #portrait p, .windows .alert, .windows footer, .windows .bubble p, .windows #population .windows #player, .windows #chatinput {font-family:'AdvoCut';}
 
 /* Workarounds for opera's lack of pointer-events support */

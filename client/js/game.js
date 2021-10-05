@@ -191,6 +191,7 @@ define([
         "item-gememerald",
         "item-gemamethyst",
         "item-gemtopaz",
+        "item-gemsapphire",
         "item-scrollupgradelow",
         "item-scrollupgrademedium",
         "item-scrollupgradehigh",

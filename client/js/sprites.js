@@ -36,6 +36,7 @@ define([
   "text!../sprites/item-gememerald.json",
   "text!../sprites/item-gemamethyst.json",
   "text!../sprites/item-gemtopaz.json",
+  "text!../sprites/item-gemsapphire.json",
   "text!../sprites/item-scrollupgradelow.json",
   "text!../sprites/item-scrollupgrademedium.json",
   "text!../sprites/item-scrollupgradehigh.json",

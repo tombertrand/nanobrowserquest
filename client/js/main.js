@@ -86,11 +86,7 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
         // $(this).removeClass("blink");
       });
 
-      $("#playercount").click(function () {
-        app.togglePopulationInfo();
-      });
-
-      $("#population").click(function () {
+      $("#player-count").click(function () {
         app.togglePopulationInfo();
       });
 
@@ -104,6 +100,9 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
       });
 
       $("#weapon, #armor").click(function () {
+        if ($("#population").hasClass("visible")) {
+          $("#population").removeClass("visible");
+        }
         app.toggleInventory();
       });
 
@@ -364,13 +363,13 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
       game.onNbPlayersChange(function (worldPlayers, totalPlayers, players) {
         var setWorldPlayersString = function (string) {
           $("#instance-population").find("span:nth-child(2)").text(string);
-          $("#playercount").find("span:nth-child(2)").text(string);
+          $("#player-count").find("span:nth-child(2)").text(string);
         };
         // var setTotalPlayersString = function (string) {
         //   $("#world-population").find("span:nth-child(2)").text(string);
         // };
 
-        $("#playercount").find("span.count").text(worldPlayers);
+        $("#player-count").find("span.count").text(worldPlayers);
 
         $("#instance-population").find("span").text(worldPlayers);
         if (worldPlayers == 1) {
@@ -582,7 +581,7 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
               $("#weapon").click();
               break;
             case Types.Keys.C:
-              $("#healthbar").click();
+              app.togglePlayerInfo();
               break;
             case Types.Keys.Q:
               $("#achievementsbutton").click();
@@ -594,7 +593,7 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
               $("#mute-button").click();
               break;
             case Types.Keys.P:
-              $("#playercount").click();
+              $("#player-count").click();
               break;
             default:
               break;

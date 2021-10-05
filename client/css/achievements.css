@@ -68,6 +68,7 @@
     #gem-emerald.active {background-position:-42px 0px;}
     #gem-amethyst.active {background-position:-63px 0px;}
     #gem-topaz.active {background-position:-84px 0px;}
+    #gem-sapphire.active {background-position:-105px 0px;}
     .item-nanopotion {background-position:0 -18px; width: 21px; height: 30px}
     .item-nanopotion.active {background-position:-21px -18px;}
 
@@ -162,6 +163,7 @@
     #gem-emerald.active {background-position:-28px 0px;}
     #gem-amethyst.active {background-position:-42px 0px;}
     #gem-topaz.active {background-position:-56px 0px;}
+    #gem-sapphire.active {background-position:-70px 0px;}
     .item-nanopotion {background-position:0 -12px; width: 14px; height: 20px}
     .item-nanopotion.active {background-position:-14px -12px;}
 
@@ -254,6 +256,7 @@
     #gem-emerald.active {background-position:-28px 0px;}
     #gem-amethyst.active {background-position:-42px 0px;}
     #gem-topaz.active {background-position:-56px 0px;}
+    #gem-sapphire.active {background-position:-70px 0px;}
     .item-nanopotion {background-position:0 -12px; width: 14px; height: 20px}
     .item-nanopotion.active {background-position:-14px -12px;}
     
@@ -346,6 +349,7 @@
     #gem-emerald.active {background-position:-14px 0px;}
     #gem-amethyst.active {background-position:-21px 0px;}
     #gem-topaz.active {background-position:-28px 0px;}
+    #gem-sapphire.active {background-position:-35px 0px;}
     .item-nanopotion {background-position:0 -6px; width: 7px; height: 10px}
     .item-nanopotion.active {background-position:-7px -6px;}
 
@@ -439,6 +443,7 @@
     #gem-emerald.active {background-position:-28px 0px;}
     #gem-amethyst.active {background-position:-42px 0px;}
     #gem-topaz.active {background-position:-56px 0px;}
+    #gem-sapphire.active {background-position:-70px 0px;}
     .item-nanopotion {background-position:0 -12px; width: 14px; height: 20px}
     .item-nanopotion.active {background-position:-14px -12px;}
 

@@ -541,6 +541,7 @@ module.exports = World = cls.Class.extend({
   createChest: function (x, y, items) {
     var chest = this.createItem(Types.Entities.CHEST, x, y);
     chest.setItems(items);
+
     return chest;
   },
 

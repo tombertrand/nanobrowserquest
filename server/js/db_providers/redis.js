@@ -13,7 +13,7 @@ const DELETE_SLOT = -1;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
 const ACHIEVEMENT_COUNT = 24;
-const GEM_COUNT = 4;
+const GEM_COUNT = 5;
 
 module.exports = DatabaseHandler = cls.Class.extend({
   init: function () {
@@ -130,6 +130,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   client.hset("u:" + player.name, "gems", JSON.stringify(gems));
                 } else {
                   gems = JSON.parse(replies[11]);
+
+                  if (gems.length !== GEM_COUNT) {
+                    gems = gems.concat(new Array(GEM_COUNT - gems.length).fill(0));
+
+                    client.hset("u:" + player.name, "gems", JSON.stringify(gems));
+                  }
                 }
               } catch (err) {
                 console.log(err);
