@@ -749,8 +749,8 @@ Types.getItemClass = function (item, level) {
 
 Types.getItemRequirement = function (item, level) {
   const baseLevel = kinds[item][3];
-  const multiplier = Types.getItemClass(item, level) === "high" ? 2 : 1;
-  const requirement = baseLevel + level * multiplier;
+  const multiplier = Types.getItemClass(item, level) === "high" ? 1.5 : 1;
+  const requirement = Math.floor(baseLevel + level * multiplier);
 
   return requirement;
 };

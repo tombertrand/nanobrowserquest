@@ -1621,12 +1621,12 @@ define([
         });
 
         self.player.onSwitchItem(function () {
-          self.storage.savePlayer(
-            self.renderer.getPlayerImage(),
-            self.player.getArmorName(),
-            self.player.getWeaponName(),
-            self.player.getGuild(),
-          );
+          // self.storage.savePlayer(
+          //   self.renderer.getPlayerImage(),
+          //   self.player.getArmorName(),
+          //   self.player.getWeaponName(),
+          //   self.player.getGuild(),
+          // );
           if (self.equipment_callback) {
             self.equipment_callback();
           }
