@@ -148,15 +148,14 @@ define(["character"], function (Character) {
 
     octocat: [
       "Welcome to Nano BrowserQuest!",
-      "Want to report an issue?",
-      'Check out <a target="_blank" href="https://github.com/running-coder/NanoBrowserQuest">NanoBrowserQuest repository on GitHub</a>',
-      "Want to see the source code?",
-      'Check out <a target="_blank" href="https://github.com/browserquest/BrowserQuest">BrowserQuest repository on GitHub</a>',
+      'Want to report an issue? Check out <a target="_blank" href="https://github.com/running-coder/NanoBrowserQuest">NanoBrowserQuest repository on GitHub</a>',
+      'Want to see the source code? Check out <a target="_blank" href="https://github.com/browserquest/BrowserQuest">BrowserQuest repository on GitHub</a>',
     ],
 
     anvil: [
       "Drop and item in the left slot and<br/>choose a middle slot for your upgrade scroll",
-      "If the upgrade succeed it will<br/>be placed in the right slot",
+      "Keep a backup item in case the one you attempt to upgrade gets destroyed",
+      "If the upgrade succeed it will<br/>be placed in the slot on the right",
       "Upgrading an item becomes increasingly difficult",
     ],
 

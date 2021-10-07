@@ -761,6 +761,7 @@ footer, header, hgroup, menu, nav, section {
         .item-equip-weapon::before {background-image: url('../img/3/item-sword1.png');}
         .item-equip-armor::before {top: 10%;background-image: url('../img/3/item-clotharmor.png');}
         #player-list {max-height: 366px;}
+        .btn {font-size:22px;}
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
@@ -805,18 +806,20 @@ footer, header, hgroup, menu, nav, section {
         
 		#container {width:1470px;margin:0 auto;position:absolute;top:50%;margin-top:-378px;left:50%;margin-left:-735px;}
 
-    #canvasborder {padding:15px;background:url('../img/3/border.png') no-repeat;}
-    #expbar{right:15px}
+        #canvasborder {padding:15px;background:url('../img/3/border.png') no-repeat;}
+        #expbar{right:15px}
 		#canvas {width:100%;height:672px;}
 		#fade {width:1440px;height:672px;top:15px;left:15px;}
 		
 		#instructions, #completed, #failed {height:516px;width:1251px;background-position:0 -1581px;margin-left:-624px;margin-top:-279px;color:#373737;}
-		#instructions h1, #completed h1, #failed h1 {font-size:40px;text-align:center;margin:50px 0;}
+		#instructions h1, #completed h1, #failed h1 {font-size:40px;text-align:center;margin:50px 0 40px;}
         #instructions ul {font-size:30px;margin-top:30px;}
-        #instructions ul li {margin:20px 0; clear:left;}
-        #instructions li:nth-child(1) span {height:87px;width:45px;background-position:-1134px -36px; display:block;float:left;margin: 0 30px 9px 60px;position: relative;top: -39px;}
-        #instructions li:nth-child(2) span {height:48px;width:39px;background-position:-1179px -36px; display:block;float:left;margin: 0 36px 42px 60px;position: relative;top: -9px;}
-        #instructions li:nth-child(3) span {height:63px;width:48px;background-position:-1218px -36px; display:block;float:left;margin: 0 27px 0 60px;position: relative;top: -18px;}
+        #instructions ul li {margin:0 0; clear:left;}
+        #instructions ul li span {display:block;float:left;position: relative;}
+        #instructions li:nth-child(1) span {height:87px;width:45px;background-position:-1134px -36px; margin: 0 30px -8px 60px;top: -39px;}
+        #instructions li:nth-child(2) span {height:48px;width:39px;background-position:-1179px -36px; margin: 0 36px 28px 60px;top: -9px;}
+        #instructions li:nth-child(3) span {height:63px;width:48px;background-position:-1218px -36px; margin: 0 27px 14px 60px;top: -18px;}
+        #instructions li:nth-child(4) span {height:84px;width:53px;background:url('../img/2/anvil.png') no-repeat; margin: 0 30px 0 52px;top: -32px;}
         #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:20px;clear:left;margin-top:50px;}
         
         #player-image {height: 96px; width: 96px;}
@@ -1000,12 +1003,14 @@ footer, header, hgroup, menu, nav, section {
 		#fade {width:960px;height:448px;top:10px;left:10px;}
 
 		#instructions, #completed, #failed {height:344px;width:834px;background-position:0 -1054px;margin-left:-416px;margin-top:-186px;color:#373737;}
-		#instructions h1, #completed h1, #failed h1 {font-size:30px;text-align:center;margin:40px 0;}
-        #instructions ul {font-size:20px;margin-top:40px;}
+		#instructions h1, #completed h1, #failed h1 {font-size:30px;text-align:center;margin:40px 0 30px;}
+        #instructions ul {font-size:20px;margin-top:20px;}
         #instructions ul li {margin:20px 0; clear:left;}
-        #instructions li:nth-child(1) span {height:58px;width:30px;background-position:-756px -24px; display:block;float:left;margin: 0 20px 6px 40px;position: relative;top: -26px;}
-        #instructions li:nth-child(2) span {height:32px;width:26px;background-position:-786px -24px; display:block;float:left;margin: 0 24px 28px 40px;position: relative;top: -6px;}
-        #instructions li:nth-child(3) span {height:42px;width:32px;background-position:-812px -24px; display:block;float:left;margin: 0 18px 0 40px;position: relative;top: -12px;}
+        #instructions ul li span {display:block;float:left;position: relative;}
+        #instructions li:nth-child(1) span {height:58px;width:30px;background-position:-756px -24px;margin: 0 20px 0 40px;top: -26px;}
+        #instructions li:nth-child(2) span {height:32px;width:26px;background-position:-786px -24px;margin: 0 24px 24px 40px;top: -6px;}
+        #instructions li:nth-child(3) span {height:42px;width:32px;background-position:-812px -24px;margin: 0 18px 16px 40px;top: -12px;}
+        #instructions li:nth-child(4) span {height:64px;width:40px;background:url('../img/1/anvil.png') no-repeat;background-size: cover;margin: 0 17px 0 34px;top: -30px;}
         #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:20px;clear:left;margin-top:20px;}
 
         #player-image {height: 64px; width: 64px;}
@@ -1195,9 +1200,11 @@ footer, header, hgroup, menu, nav, section {
 		#instructions h1, #completed h1, #failed h1 {font-size:20px;text-align:center;margin-bottom:0;}
         #instructions ul {font-size:10px;margin-top:10px;}
         #instructions ul li {margin:10px 0; clear:left;}
-        #instructions li:nth-child(1) span {height:29px;width:15px;background-position:-378px -12px; display:block;float:left;margin: 0 10px 3px 20px;position: relative;top: -13px;}
-        #instructions li:nth-child(2) span {height:16px;width:13px;background-position:-393px -12px; display:block;float:left;margin: 0 12px 14px 20px;position: relative;top: -3px;}
-        #instructions li:nth-child(3) span {height:21px;width:16px;background-position:-406px -12px; display:block;float:left;margin: 0 9px 0 20px;position: relative;top: -6px;}
+        #instructions ul li span {display:block;float:left;position: relative;}
+        #instructions li:nth-child(1) span {height:29px;width:15px;background-position:-378px -12px;margin: 0 10px 0 20px;top: -13px;}
+        #instructions li:nth-child(2) span {height:16px;width:13px;background-position:-393px -12px;margin: 0 12px 14px 20px;top: -3px;}
+        #instructions li:nth-child(3) span {height:21px;width:16px;background-position:-406px -12px;margin: 0 9px 6px 20px;top: -6px;}
+        #instructions li:nth-child(4) span {height:38px;width:28px;background:url('../img/1/anvil.png') no-repeat;background-size: cover;margin: 0 2px 0 16px;top: -16px;}
         #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:10px;clear:left;margin:0;}
 
         #foreground { cursor: default;}
@@ -1394,12 +1401,14 @@ footer, header, hgroup, menu, nav, section {
 		#instructions h1, #completed h1, #failed h1 {font-size:20px;text-align:center;margin-bottom:0;}
         #instructions ul {font-size:13px;margin-top:15px;}
         #instructions ul li {margin:10px 0; clear:left;}
-        #instructions li:nth-child(1) span {height:29px;width:15px;background-position:-378px -12px; display:block;float:left;margin: 0 10px 3px 20px;position: relative;top: -13px;}
-        #instructions li:nth-child(2) span {height:16px;width:13px;background-position:-393px -12px; display:block;float:left;margin: 0 12px 14px 20px;position: relative;top: -3px;}
-        #instructions li:nth-child(3) span {height:21px;width:16px;background-position:-406px -12px; display:block;float:left;margin: 0 9px 0 20px;position: relative;top: -6px;}
+        #instructions ul li span {display:block;float:left;position: relative;}
+        #instructions li:nth-child(1) span {height:29px;width:15px;background-position:-378px -12px;margin: 0 10px 0 20px;top: -13px;}
+        #instructions li:nth-child(2) span {height:16px;width:13px;background-position:-393px -12px;margin: 0 12px 14px 20px;top: -3px;}
+        #instructions li:nth-child(3) span {height:21px;width:16px;background-position:-406px -12px;margin: 0 9px 6px 20px;top: -6px;}
+        #instructions li:nth-child(4) span {height:38px;width:28px;background:url('../img/1/anvil.png') no-repeat;background-size: cover;margin: 0 2px 0 16px;top: -16px;}
         #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:10px;clear:left;margin:0;}
 		
-		#foreground { cursor: default; }
+		#foreground { cursor:default; }
 		
 		#parchment.animate {-moz-animation:none;-webkit-animation:none;-o-animation:none;-webkit-animation:none;}
 		
