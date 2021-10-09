@@ -56,6 +56,10 @@ define([
       this.started = false;
       this.hasNeverStarted = true;
       this.isUpgradeItemSent = false;
+      this.isAnvilSuccess = false;
+      this.anvilSuccessTimeout = null;
+      this.isAnvilFail = false;
+      this.anvilFailTimeout = null;
 
       this.renderer = null;
       this.updater = null;
@@ -152,6 +156,8 @@ define([
         "sorcerer",
         "octocat",
         "anvil",
+        "anvil-success",
+        "anvil-fail",
         "beachnpc",
         "forestnpc",
         "desertnpc",
@@ -285,6 +291,12 @@ define([
 
       this.levelupAnimation = new Animation("idle_down", 4, 0, 16, 16);
       this.levelupAnimation.setSpeed(50);
+
+      this.anvilSuccessAnimation = new Animation("idle_down", 4, 0, 15, 8);
+      this.anvilSuccessAnimation.setSpeed(80);
+
+      this.anvilFailAnimation = new Animation("idle_down", 4, 0, 15, 8);
+      this.anvilFailAnimation.setSpeed(80);
     },
 
     initHurtSprites: function () {
@@ -2258,6 +2270,14 @@ define([
           self.updateUpgrade();
         });
 
+        self.client.onReceiveAnvilUpgrade(function (isSuccess) {
+          if (isSuccess) {
+            self.setAnvilSuccess();
+          } else {
+            self.setAnvilFail();
+          }
+        });
+
         self.client.onDisconnected(function (message) {
           if (self.player) {
             self.player.die();
@@ -2424,6 +2444,26 @@ define([
     makePlayerAttack: function (mob) {
       this.createAttackLink(this.player, mob);
       this.client.sendAttack(mob);
+    },
+
+    setAnvilSuccess: function () {
+      this.isAnvilFail = false;
+      this.isAnvilSuccess = true;
+      clearTimeout(this.anvilFailTimeout);
+      clearTimeout(this.anvilSuccessTimeout);
+      this.anvilSuccessTimeout = setTimeout(() => {
+        this.isAnvilSuccess = false;
+      }, 3000);
+    },
+
+    setAnvilFail: function () {
+      this.isAnvilFail = true;
+      this.isAnvilSuccess = false;
+      clearTimeout(this.anvilFailTimeout);
+      clearTimeout(this.anvilSuccessTimeout);
+      this.anvilFailTimeout = setTimeout(() => {
+        this.isAnvilFail = false;
+      }, 3000);
     },
 
     /**

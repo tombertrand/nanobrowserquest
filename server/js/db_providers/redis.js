@@ -537,6 +537,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
   upgradeItem: function (player) {
     var self = this;
+    var isSuccess = false;
 
     client.hget("u:" + player.name, "upgrade", function (err, reply) {
       try {
@@ -549,6 +550,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
           if (Utils.isUpgradeSuccess(level)) {
             upgradedItem = `${item}:${parseInt(level) + 1}`;
+            isSuccess = true;
           }
 
           upgrade = upgrade.map(() => 0);
@@ -558,6 +560,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         }
 
         player.send([Types.Messages.UPGRADE, upgrade]);
+        player.broadcast(new Messages.AnvilUpgrade(isSuccess), false);
         client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
       } catch (err) {
         console.log(err);

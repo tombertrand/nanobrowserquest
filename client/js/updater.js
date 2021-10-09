@@ -262,6 +262,16 @@ define(['character', 'timer'], function(Character, Timer) {
             if(levelup) {
                 levelup.update(t);
             }
+
+            var anvilSuccess = this.game.anvilSuccessAnimation;
+            if(anvilSuccess) {
+                anvilSuccess.update(t);
+            }
+
+            var anvilFail = this.game.anvilFailAnimation;
+            if(anvilFail) {
+                anvilFail.update(t);
+            }
         },
 
         updateAnimatedTiles: function() {

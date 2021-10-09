@@ -40,6 +40,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
       this.handlers[Types.Messages.INVENTORY] = this.receiveInventory;
       this.handlers[Types.Messages.UPGRADE] = this.receiveUpgrade;
+      this.handlers[Types.Messages.ANVIL_UPGRADE] = this.receiveAnvilUpgrade;
       this.useBison = false;
       this.enable();
     },
@@ -494,6 +495,14 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       }
     },
 
+    receiveAnvilUpgrade: function (data) {
+      var isSuccess = data[1];
+
+      if (this.receiveanvilupgrade_callback) {
+        this.receiveanvilupgrade_callback(isSuccess);
+      }
+    },
+
     onDispatched: function (callback) {
       this.dispatched_callback = callback;
     },
@@ -642,6 +651,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     onReceiveUpgrade: function (callback) {
       this.receiveupgrade_callback = callback;
+    },
+
+    onReceiveAnvilUpgrade: function (callback) {
+      this.receiveanvilupgrade_callback = callback;
     },
 
     sendCreate: function (player) {

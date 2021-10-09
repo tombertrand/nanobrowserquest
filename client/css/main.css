@@ -761,7 +761,7 @@ footer, header, hgroup, menu, nav, section {
         .item-equip-weapon::before {background-image: url('../img/3/item-sword1.png');}
         .item-equip-armor::before {top: 10%;background-image: url('../img/3/item-clotharmor.png');}
         #player-list {max-height: 366px;}
-        .btn {font-size:22px;}
+        .btn {font-size:18px;}
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    

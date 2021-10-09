@@ -60,6 +60,8 @@ define([
   "text!../sprites/nyan.json",
   "text!../sprites/octocat.json",
   "text!../sprites/anvil.json",
+  "text!../sprites/anvil-success.json",
+  "text!../sprites/anvil-fail.json",
   "text!../sprites/ogre.json",
   "text!../sprites/platearmor.json",
   "text!../sprites/priest.json",

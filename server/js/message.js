@@ -124,6 +124,15 @@ Messages.Teleport = Message.extend({
   },
 });
 
+Messages.AnvilUpgrade = Message.extend({
+  init: function (isSuccess) {
+    this.isSuccess = isSuccess;
+  },
+  serialize: function () {
+    return [Types.Messages.ANVIL_UPGRADE, this.isSuccess];
+  },
+});
+
 Messages.Damage = Message.extend({
   init: function (entity, points, hp, maxHp) {
     this.entity = entity;
