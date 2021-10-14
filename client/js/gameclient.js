@@ -196,12 +196,14 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         hp = data[5],
         armor = data[6],
         weapon = data[7],
-        experience = data[8],
-        achievement = data[9],
-        inventory = data[10],
-        hash = data[11],
-        nanoPotions = data[12],
-        gems = data[13];
+        ring1 = data[8],
+        ring2 = data[9],
+        experience = data[10],
+        achievement = data[11],
+        inventory = data[12],
+        hash = data[13],
+        nanoPotions = data[14],
+        gems = data[15];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -212,6 +214,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           hp,
           armor,
           weapon,
+          ring1,
+          ring2,
           experience,
           achievement,
           inventory,

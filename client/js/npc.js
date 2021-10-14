@@ -133,16 +133,9 @@ define(["character"], function (Character) {
     ],
 
     sorcerer: [
-      "Ah... I had foreseen you would come to see me.",
-      "Well? How do you like my new staff?",
-      "Pretty cool, eh?",
-      "Where did I get it, you ask?",
-      "I understand. It's easy to get envious.",
-      "I actually crafted it myself, using my mad wizard skills.",
-      "But let me tell you one thing...",
-      "There are lots of items in this game.",
-      "Some more powerful than others.",
-      "In order to find them, exploration is key.",
+      "You can upgrade your items at the Anvil in town.",
+      "Use the same scroll class as the item class you are upgrading.",
+      "Careful, upgrading items gets more difficult as it's getting more powerful.",
       "Good luck.",
     ],
 

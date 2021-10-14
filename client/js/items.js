@@ -91,6 +91,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    HornedArmor: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.HORNEDARMOR, "armor");
+        this.lootMessage = "You pick up a horned armor";
+      },
+    }),
+
     Flask: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.FLASK, "object");
@@ -137,6 +144,27 @@ define(["item"], function (Item) {
       init: function (id) {
         this._super(id, Types.Entities.GEMSAPPHIRE, "object");
         this.lootMessage = "You pick up a Sapphire";
+      },
+    }),
+
+    RingBronze: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RINGBRONZE, "object");
+        this.lootMessage = "You pick up a bronze ring";
+      },
+    }),
+
+    RingSilver: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RINGSILVER, "object");
+        this.lootMessage = "You pick up a silver ring";
+      },
+    }),
+
+    RingGold: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RINGGOLD, "object");
+        this.lootMessage = "You pick up a gold ring";
       },
     }),
 

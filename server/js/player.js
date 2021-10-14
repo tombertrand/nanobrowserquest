@@ -43,6 +43,9 @@ module.exports = Player = Character.extend({
     this.level = 0;
     this.lastWorldChatMinutes = 99;
 
+    // Item bonuses (Rings, amulet, Uniques?)
+    this.resetBonus();
+
     this.inventory = [];
     this.inventoryCount = [];
     this.achievement = [];
@@ -212,7 +215,16 @@ module.exports = Player = Character.extend({
         var mob = self.server.getEntityById(message[1]);
 
         if (mob) {
-          var dmg = Formulas.dmg(self.weapon, self.weaponLevel, self.level, mob.armorLevel);
+          var dmg = Formulas.dmg({
+            weapon: self.weapon,
+            weaponLevel: self.weaponLevel,
+            playerLevel: self.level,
+            armorLevel: mob.armorLevel,
+            minDamage: self.bonus.minDamage,
+            maxDamage: self.bonus.maxDamage,
+            magicDamage: self.bonus.magicDamage,
+            weaponDamage: self.bonus.weaponDamage,
+          });
           if (dmg > 0) {
             if (mob.type !== "player") {
               // Reduce dmg on boss by 12.5% per player in boss room
@@ -239,7 +251,14 @@ module.exports = Player = Character.extend({
         log.info("HURT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
         if (mob && self.hitPoints > 0) {
-          self.hitPoints -= Formulas.dmgFromMob(mob.weaponLevel, self.armor, self.armorLevel, self.level);
+          self.hitPoints -= Formulas.dmgFromMob({
+            weaponLevel: mob.weaponLevel,
+            armor: self.armor,
+            armorLevel: self.armorLevel,
+            playerLevel: self.level,
+            defense: self.bonus.defense,
+            absorbedDamage: self.bonus.absorbedDamage,
+          });
           self.server.handleHurtEntity(self, mob);
 
           if (self.hitPoints <= 0) {
@@ -302,6 +321,24 @@ module.exports = Player = Character.extend({
               databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), level }] });
             } else if (Types.isScroll(kind)) {
               databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), quantity: 1 }] });
+            } else if (Types.isRing(kind)) {
+              const lowLevelBonus = [0, 1, 2, 3];
+              const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
+              const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+              let bonus = [];
+              if (kind === Types.Entities.RINGBRONZE) {
+                bonus = _.shuffle(lowLevelBonus).slice(0, 1);
+              } else if (kind === Types.Entities.RINGSILVER) {
+                bonus = _.shuffle(mediumLevelBonus).slice(0, 2).sort();
+              } else if (kind === Types.Entities.RINGGOLD) {
+                bonus = _.shuffle(highLevelBonus).slice(0, 3).sort();
+              }
+
+              databaseHandler.lootItems({
+                player: self,
+                items: [{ item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus) }],
+              });
             }
           }
         }
@@ -652,8 +689,75 @@ module.exports = Player = Character.extend({
     this.weaponLevel = level; // Properties.getWeaponLevel(kind);
   },
 
-  equipItem: function (item, level) {
-    if (item && level) {
+  equipRing1: function (ring, level, bonus) {
+    this.ring1 = ring;
+    this.ring1Level = level;
+    this.ring1Bonus = bonus ? JSON.parse(bonus) : null;
+  },
+
+  equipRing2: function (ring, level, bonus) {
+    this.ring2 = ring;
+    this.ring2Level = level;
+    this.ring2Bonus = bonus ? JSON.parse(bonus) : null;
+  },
+
+  calculateBonus: function () {
+    this.resetBonus();
+
+    try {
+      // @NOTE Could include weapon & armor when uniques
+      const bonusToCalculate = [
+        this.ring1
+          ? {
+              item: this.ring1,
+              level: this.ring1Level,
+              bonus: this.ring1Bonus,
+            }
+          : null,
+        this.ring2
+          ? {
+              item: this.ring2,
+              level: this.ring2Level,
+              bonus: this.ring2Bonus,
+            }
+          : null,
+      ].filter(Boolean);
+
+      bonusToCalculate.forEach(({ bonus, level }) => {
+        Types.getBonus(bonus, level).forEach(({ type, stats }) => {
+          this.bonus[type] += stats;
+        });
+      });
+    } catch (err) {
+      console.log("Error: ", err);
+      Sentry.captureException(err);
+    }
+  },
+
+  resetBonus: function () {
+    this.bonus = {
+      minDamage: 0,
+      maxDamage: 0,
+      weaponDamage: 0,
+      health: 0,
+      magicDamage: 0,
+      defense: 0,
+      absorbedDamage: 0,
+      exp: 0,
+      regenerateHealth: 0,
+    };
+  },
+
+  equipItem: function ({ item, level, bonus, type }) {
+    if (["ring1", "ring2"].includes(type)) {
+      if (type === "ring1") {
+        this.equipRing1(item, level, bonus);
+        databaseHandler.equipRing1({ name: this.name, item, level, bonus });
+      } else if (type === "ring2") {
+        this.equipRing2(item, level, bonus);
+        databaseHandler.equipRing2({ name: this.name, item, level, bonus });
+      }
+    } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
       log.debug(this.name + " equips " + item);
@@ -665,14 +769,16 @@ module.exports = Player = Character.extend({
         databaseHandler.equipWeapon(this.name, item, level);
         this.equipWeapon(item, kind, level);
       }
-
-      this.updateHitPoints();
-      this.sendPlayerStats();
     }
+
+    this.calculateBonus();
+    this.updateHitPoints();
+    this.sendPlayerStats();
   },
 
   updateHitPoints: function (reset) {
-    const maxHitPoints = Formulas.hp(Properties.getArmorLevel(this.armorKind), this.armorLevel, this.level);
+    const maxHitPoints =
+      Formulas.hp(Properties.getArmorLevel(this.armorKind), this.armorLevel, this.level) + this.bonus.health;
 
     if (reset) {
       this.resetHitPoints(maxHitPoints);
@@ -705,8 +811,22 @@ module.exports = Player = Character.extend({
   },
 
   sendPlayerStats: function () {
-    var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb(this.armor, this.armorLevel, this.level);
-    var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage(this.weapon, this.weaponLevel, this.level);
+    var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb({
+      armor: this.armor,
+      armorLevel: this.armorLevel,
+      playerLevel: this.level,
+      defense: this.bonus.defense,
+      absorbedDamage: this.bonus.absorbedDamage,
+    });
+    var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage({
+      weapon: this.weapon,
+      weaponLevel: this.weaponLevel,
+      playerLevel: this.level,
+      minDamage: this.bonus.minDamage,
+      maxDamage: this.bonus.maxDamage,
+      magicDamage: this.bonus.magicDamage,
+      weaponDamage: this.bonus.weaponDamage,
+    });
 
     this.send(
       new Messages.Stats({
@@ -717,8 +837,8 @@ module.exports = Player = Character.extend({
     );
   },
 
-  incExp: function (gotexp) {
-    this.experience = parseInt(this.experience) + parseInt(gotexp);
+  incExp: function (exp) {
+    this.experience = parseInt(this.experience) + Math.round((parseInt(exp) * this.bonus.exp) / 100 + parseInt(exp));
     databaseHandler.setExp(this.name, this.experience);
     var origLevel = this.level;
     this.level = Types.getLevel(this.experience);
@@ -797,6 +917,8 @@ module.exports = Player = Character.extend({
   sendWelcome: function ({
     armor,
     weapon,
+    ring1,
+    ring2,
     exp,
     createdAt,
     x,
@@ -816,6 +938,15 @@ module.exports = Player = Character.extend({
     self.kind = Types.Entities.WARRIOR;
     self.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel);
     self.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel);
+
+    if (ring1) {
+      const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
+      self.equipRing1(playerRing1, playerRing1Level, playerRing1Bonus);
+    }
+    if (ring2) {
+      const [playerRing2, playerRing2Level, playerRing2Bonus] = ring2.split(":");
+      self.equipRing2(playerRing2, playerRing2Level, playerRing2Bonus);
+    }
 
     self.achievement = achievement;
     self.inventory = inventory;
@@ -846,6 +977,8 @@ module.exports = Player = Character.extend({
       self.hitPoints,
       armor,
       weapon,
+      ring1,
+      ring2,
       self.experience,
       achievement,
       inventory,
@@ -854,6 +987,7 @@ module.exports = Player = Character.extend({
       gems,
     ]);
 
+    self.calculateBonus();
     self.updateHitPoints(true);
     self.sendPlayerStats();
 

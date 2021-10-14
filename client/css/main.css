@@ -686,9 +686,10 @@ footer, header, hgroup, menu, nav, section {
     .panel-header.reverse {transform: rotate(180deg);}
     .panel-spaced-row { display: flex; justify-content: space-between; align-items: center; padding: 0 10px}
 
-    #item-player { display: flex; justify-content: center; padding-bottom: 12px}
+
+    #item-player > div { display: flex; justify-content: center;}
+    #item-weapon, #item-armor, #item-ring1, #item-ring2, #item-belt {padding-right: 6px;padding-bottom: 6px;}
     #item-delete { padding-bottom: 12px;}
-    #item-weapon { padding-right: 6px;}
     #item-delete > .item-slot { -webkit-box-shadow: inset 0px 0px 10px 6px #9e0000; box-shadow: inset 0px 0px 10px 6px #9e0000; }
     .item-quantity::after {
         content: attr(data-quantity);
@@ -704,8 +705,8 @@ footer, header, hgroup, menu, nav, section {
         font-size: 0.75em;
     }
 
-    .item-equip-weapon, .item-equip-armor { position: relative; }
-    .item-equip-weapon::before, .item-equip-armor::before {
+    .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-belt, .item-delete { position: relative; }
+    .item-equip-weapon::before, .item-equip-armor::before, .item-equip-ring::before, .item-equip-belt::before, .item-delete::before {
         content: "";
         position: absolute;
         filter: grayscale(100%);
@@ -758,8 +759,11 @@ footer, header, hgroup, menu, nav, section {
         .createaccount-instructions { font-size: 25px; }
         #upgrade-scroll { width: 168px; }
         .panel-spaced-row { padding: 0 12px}
-        .item-equip-weapon::before {background-image: url('../img/3/item-sword1.png');}
-        .item-equip-armor::before {top: 10%;background-image: url('../img/3/item-clotharmor.png');}
+        .item-equip-weapon::before {background-image: url('../img/3/inventory-placeholder.png');}
+        .item-equip-armor::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -45px;}
+        .item-equip-ring::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -93px;}
+        .item-equip-belt::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -196px;}
+        .item-delete::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -141px;}
         #player-list {max-height: 366px;}
         .btn {font-size:18px;}
 
@@ -951,9 +955,13 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton .nano-logo { width: 40px; height: 18.5px; }
         .createaccount-instructions { font-size: 17px; }
         #upgrade-scroll { width: 120px; }
-        .item-equip-weapon::before {background-image: url('../img/2/item-sword1.png');}
-        .item-equip-armor::before {top: 10%;background-image: url('../img/2/item-clotharmor.png');}
+        .item-equip-weapon::before {background-image: url('../img/2/inventory-placeholder.png');}
+        .item-equip-armor::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -29px;}
+        .item-equip-ring::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -61px;}
+        .item-equip-belt::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -130px;}
+        .item-delete::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -93px;}
         #player-list {max-height: 266px;}
+        .btn {font-size:16px;}
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/2/barsheet.png');}

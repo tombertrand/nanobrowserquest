@@ -169,6 +169,7 @@ define([
         "redarmor",
         "goldenarmor",
         "frozenarmor",
+        "hornedarmor",
         "firefox",
         "death",
         "sword1",
@@ -191,6 +192,7 @@ define([
         "item-redarmor",
         "item-goldenarmor",
         "item-frozenarmor",
+        "item-hornedarmor",
         "item-flask",
         "item-nanopotion",
         "item-gemruby",
@@ -198,6 +200,9 @@ define([
         "item-gemamethyst",
         "item-gemtopaz",
         "item-gemsapphire",
+        "item-ringbronze",
+        "item-ringsilver",
+        "item-ringgold",
         "item-scrollupgradelow",
         "item-scrollupgrademedium",
         "item-scrollupgradehigh",
@@ -332,14 +337,25 @@ define([
       $(document).tooltip({
         items: "[data-item]",
         track: true,
+        // hide: 1000000,
         position: { my: "left bottom-10", at: "left bottom", collision: "flipfit" },
         content: function () {
           const element = $(this);
           const item = element.attr("data-item");
           const level = element.attr("data-level");
+          const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
 
-          const { name, itemClass, defense, damage, healthBonus, magicDamage, requirement, description } =
-            Types.getItemDetails(item, level);
+          const {
+            name,
+            itemClass,
+            defense,
+            damage,
+            healthBonus,
+            magicDamage,
+            bonus = [],
+            requirement,
+            description,
+          } = Types.getItemDetails(item, level, rawBonus);
 
           return `<div>
             <div class="item-title">${name}${level ? `(+${level})` : ""} </div>
@@ -348,6 +364,7 @@ define([
             ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
             ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
+            ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
             ${description ? `<div class="item-description">${description}</div>` : ""}
           </div>`;
@@ -371,7 +388,7 @@ define([
       var self = this;
 
       $("#upgrade-preview-btn").on("click", function () {
-        self.player.upgrade.forEach(({ item, level, slot }) => {
+        self.player.upgrade.forEach(({ item, level, slot, bonus }) => {
           if (slot !== 0) return;
           const previewSlot = $(`#upgrade .item-slot:eq(10)`);
 
@@ -384,6 +401,7 @@ define([
                 },
                 "data-item": item,
                 "data-level": parseInt(level) + 1,
+                "data-bonus": bonus,
               }),
             );
           }
@@ -414,7 +432,7 @@ define([
             const item = fromItemEl.attr("data-item");
             const level = fromItemEl.attr("data-level");
 
-            if ([100, 101].includes(toSlot) && Types.getItemRequirement(item, level) > self.player.level) {
+            if ([100, 101, 102, 103, 104].includes(toSlot) && Types.getItemRequirement(item, level) > self.player.level) {
               return;
             }
 
@@ -465,7 +483,7 @@ define([
           const item = $(this).attr("data-item");
           const type = kinds[item][1];
 
-          if (["weapon", "armor"].includes(type) && $(`.item-${type}`).is(":empty")) {
+          if (["weapon", "armor", "ring"].includes(type) && $(`.item-${type}`).is(":empty")) {
             $(`.item-${type}`).addClass("item-droppable");
           } else if (["scrollupgradelow", "scrollupgrademedium", "scrollupgradehigh"].includes(item)) {
             $(`.item-scroll`).addClass("item-droppable");
@@ -477,7 +495,7 @@ define([
           self.destroyDroppable();
 
           $(".ui-droppable-origin").removeClass("ui-droppable-origin");
-          $(".item-weapon, .item-armor, .item-scroll").removeClass("item-droppable");
+          $(".item-weapon, .item-armor, .item-ring, item-belt, .item-scroll").removeClass("item-droppable");
         },
       });
     },
@@ -500,7 +518,16 @@ define([
 
       $("#item-weapon").empty().append('<div class="item-slot item-equip-weapon item-weapon" data-slot="100"></div>');
       $("#item-armor").empty().append('<div class="item-slot item-equip-armor item-armor" data-slot="101"></div>');
-      $("#item-delete").empty().append('<div class="item-slot item-droppable" data-slot="-1"></div>');
+      $("#item-ring1")
+        .empty()
+        .append('<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="102"></div>');
+      $("#item-ring2")
+        .empty()
+        .append('<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="103"></div>');
+      $("#item-belt")
+        .empty()
+        .append('<div class="item-slot item-equip-belt item-belt" data-slot="104"></div>');
+      $("#item-delete").empty().append('<div class="item-slot item-droppable item-delete" data-slot="-1"></div>');
 
       if (this.player.weaponName !== "sword1") {
         $(".item-equip-weapon").append(
@@ -527,6 +554,34 @@ define([
         );
       }
 
+      if (this.player.ring1Name) {
+        $(".item-ring1").append(
+          $("<div />", {
+            class: "item-draggable",
+            css: {
+              "background-image": `url("${this.getIconPath(this.player.ring1Name)}")`,
+            },
+            "data-item": this.player.ring1Name,
+            "data-level": this.player.ring1Level,
+            "data-bonus": this.player.ring1Bonus,
+          }),
+        );
+      }
+
+      if (this.player.ring2Name) {
+        $(".item-ring2").append(
+          $("<div />", {
+            class: "item-draggable",
+            css: {
+              "background-image": `url("${this.getIconPath(this.player.ring2Name)}")`,
+            },
+            "data-item": this.player.ring2Name,
+            "data-level": this.player.ring2Level,
+            "data-bonus": this.player.ring2Bonus,
+          }),
+        );
+      }
+
       this.updateInventory();
       this.updateRequirement();
     },
@@ -538,7 +593,7 @@ define([
 
       // @TODO instead of empty-ing, compare and replace
       $(".item-inventory").empty();
-      this.player.inventory.forEach(({ item, level, quantity, requirement, slot }) => {
+      this.player.inventory.forEach(({ item, level, quantity, bonus, requirement, slot }) => {
         $(`#item-inventory .item-slot:eq(${slot})`).append(
           $("<div />", {
             class: `item-draggable ${quantity ? "item-quantity" : ""}`,
@@ -548,6 +603,7 @@ define([
             "data-item": item,
             "data-level": level,
             "data-quantity": quantity,
+            "data-bonus": bonus,
             "data-requirement": requirement,
           }),
         );
@@ -582,7 +638,7 @@ define([
       $("#upgrade-item")
         .empty()
         .append(
-          '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor" data-slot="200"></div>',
+          '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-belt" data-slot="200"></div>',
         );
       $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
     },
@@ -598,7 +654,7 @@ define([
 
       let upgradeInfoText = "&nbsp;";
 
-      this.player.upgrade.forEach(({ item, level, quantity, slot }) => {
+      this.player.upgrade.forEach(({ item, level, quantity, slot, bonus }) => {
         if (slot === 0 && level) {
           const successRates = Types.getUpgradeSuccessRates();
           const successRate = successRates[parseInt(level) - 1];
@@ -617,6 +673,7 @@ define([
               "data-item": item,
               "data-level": level,
               "data-quantity": quantity,
+              "data-bonus": bonus,
             }),
           );
       });
@@ -812,17 +869,15 @@ define([
 
       this.app.initAchievementList(this.achievements);
 
-      if (this.storage.hasAlreadyPlayed()) {
-        const unlockedAchievementIds = this.storage.data.achievement
-          .map((unlocked, index) => (unlocked ? index + 1 : false))
-          .filter(Boolean);
-        const totalNano = unlockedAchievementIds.reduce((acc, id) => {
-          acc += Object.values(self.achievements)[id - 1].nano;
-          return acc;
-        }, 0);
+      const unlockedAchievementIds = this.storage.data.achievement
+        .map((unlocked, index) => (unlocked ? index + 1 : false))
+        .filter(Boolean);
+      const totalNano = unlockedAchievementIds.reduce((acc, id) => {
+        acc += Object.values(self.achievements)[id - 1].nano;
+        return acc;
+      }, 0);
 
-        this.app.initUnlockedAchievements(unlockedAchievementIds, totalNano);
-      }
+      this.app.initUnlockedAchievements(unlockedAchievementIds, totalNano);
     },
 
     getAchievementById: function (id) {
@@ -1306,6 +1361,8 @@ define([
         hp,
         armor,
         weapon,
+        ring1,
+        ring2,
         experience,
         achievement,
         inventory,
@@ -1335,6 +1392,8 @@ define([
         self.player.setSpriteName(armor);
         self.player.setWeaponName(weapon);
         self.player.setWeaponLevel(weaponLevel);
+        self.player.setRing1(ring1);
+        self.player.setRing2(ring2);
         self.initPlayer();
         self.player.experience = experience;
         self.player.level = Types.getLevel(experience);
@@ -2041,7 +2100,6 @@ define([
         });
 
         self.client.onPlayerKillMob(function (kind, level, playerExp, exp) {
-          var mobExp = Types.getMobExp(kind);
           self.player.experience = playerExp;
 
           if (self.player.level !== level) {
@@ -2051,7 +2109,7 @@ define([
 
           if (exp) {
             self.updateExpBar();
-            self.infoManager.addDamageInfo("+" + mobExp + " exp", self.player.x, self.player.y - 15, "exp", 3000);
+            self.infoManager.addDamageInfo("+" + exp + " exp", self.player.x, self.player.y - 15, "exp", 3000);
           }
 
           // var expInThisLevel = self.player.experience - Types.expForLevel[self.player.level - 1];
@@ -2939,6 +2997,8 @@ define([
           }
 
           if (pos) {
+            // @TODO Disengage attacker?
+
             attacker.previousTarget = target;
             attacker.disengage();
             attacker.idle();

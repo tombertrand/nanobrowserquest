@@ -9,6 +9,8 @@ const { Sentry } = require("../sentry");
 const INVENTORY_SLOT_COUNT = 24;
 const WEAPON_SLOT = 100;
 const ARMOR_SLOT = 101;
+const RING1_SLOT = 102;
+const RING2_SLOT = 103;
 const DELETE_SLOT = -1;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
@@ -45,10 +47,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "nanoPotions") // 10
             .hget(userKey, "gems") // 11
             .hget(userKey, "upgrade") // 12
+            .hget(userKey, "ring1") // 13
+            .hget(userKey, "ring2") // 14
             .exec(function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
               var weapon = replies[2];
+              var ring1 = replies[13];
+              var ring2 = replies[14];
               var exp = Utils.NaN2Zero(replies[3]);
               var createdAt = Utils.NaN2Zero(replies[4]);
 
@@ -162,6 +168,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
               player.sendWelcome({
                 armor,
                 weapon,
+                ring1,
+                ring2,
                 exp,
                 createdAt,
                 inventory,
@@ -210,6 +218,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "nanoPotions", 0)
           .hset(userKey, "weapon", "sword1:1")
           .hset(userKey, "armor", "clotharmor:1")
+          .hset(userKey, "ring1", null)
+          .hset(userKey, "ring2", null)
           .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
           .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
           .exec(function (err, replies) {
@@ -305,6 +315,26 @@ module.exports = DatabaseHandler = cls.Class.extend({
     log.info("Set Weapon: " + name + " " + weapon + ":" + level);
     client.hset("u:" + name, "weapon", `${weapon}:${level}`);
   },
+  equipRing1: function ({ name, item, level, bonus }) {
+    const ring1 = [item, level, bonus].filter(Boolean).join(":") || null;
+
+    log.info(`Set Ring1: ${name} ring1`);
+    if (ring1) {
+      client.hset("u:" + name, "ring1", ring1);
+    } else {
+      client.hdel("u:" + name, "ring1");
+    }
+  },
+  equipRing2: function ({ name, item, level, bonus }) {
+    const ring2 = [item, level, bonus].filter(Boolean).join(":") || null;
+
+    log.info(`Set Ring2: ${name} ring2`);
+    if (ring2) {
+      client.hset("u:" + name, "ring2", ring2);
+    } else {
+      client.hdel("u:" + name, "ring2");
+    }
+  },
   setExp: function (name, exp) {
     log.info("Set Exp: " + name + " " + exp);
     client.hset("u:" + name, "exp", exp);
@@ -321,6 +351,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
       return ["weapon", 0];
     } else if (slot === ARMOR_SLOT) {
       return ["armor", 0];
+    } else if (slot === RING1_SLOT) {
+      return ["ring1", 0];
+    } else if (slot === RING2_SLOT) {
+      return ["ring2", 0];
     } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + 10) {
       return ["upgrade", UPGRADE_SLOT_RANGE];
     }
@@ -332,17 +366,41 @@ module.exports = DatabaseHandler = cls.Class.extend({
     if (location === "inventory") {
       player.send([Types.Messages.INVENTORY, data]);
     } else if (location === "weapon") {
-      if (!data) {
-        data = "sword1:1";
+      let item = "sword1";
+      let level = 1;
+      if (data) {
+        [item, level] = data.split(":");
       }
-      player.equipItem(...data.split(":"));
+
+      player.equipItem({ item, level, type: "weapon" });
       player.broadcast(player.equip(player.weaponKind), false);
     } else if (location === "armor") {
-      if (!data) {
-        data = "clotharmor:1";
+      let item = "clotharmor";
+      let level = 1;
+      if (data) {
+        [item, level] = data.split(":");
       }
-      player.equipItem(...data.split(":"));
+
+      player.equipItem({ item, level, type: "armor" });
       player.broadcast(player.equip(player.armorKind), false);
+    } else if (location === "ring1") {
+      let item = null;
+      let level = null;
+      let bonus = null;
+      if (data) {
+        [item, level, bonus] = data.split(":");
+      }
+
+      player.equipItem({ item, level, bonus, type: "ring1" });
+    } else if (location === "ring2") {
+      let item = null;
+      let level = null;
+      let bonus = null;
+      if (data) {
+        [item, level, bonus] = data.split(":");
+      }
+
+      player.equipItem({ item, level, bonus, type: "ring2" });
     } else if (location === "upgrade") {
       player.send([Types.Messages.UPGRADE, data]);
     }
@@ -426,7 +484,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }
-              } else if (["weapon", "armor"].includes(toLocation)) {
+              } else if (["weapon", "armor", "ring1", "ring2"].includes(toLocation)) {
                 const [item, fromLevel] = fromItem.split(":");
                 if (Types.getItemRequirement(item, fromLevel) > player.level) {
                   isFromReplyDone = true;
@@ -477,16 +535,17 @@ module.exports = DatabaseHandler = cls.Class.extend({
       try {
         let inventory = JSON.parse(reply);
 
-        items.forEach(({ item, level, quantity }) => {
+        items.forEach(({ item, level, quantity, bonus }) => {
           let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
 
+          // Increase the scroll count
           if (slotIndex > -1) {
             const [, oldQuantity] = inventory[slotIndex].split(":");
             inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(quantity)}`;
           } else if (slotIndex === -1) {
             slotIndex = inventory.indexOf(0);
             if (slotIndex !== -1) {
-              inventory[slotIndex] = `${item}:${level || quantity}`;
+              inventory[slotIndex] = [item, level || quantity, bonus].join(":");
             }
           }
         });
@@ -511,12 +570,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
         if (filteredUpgrade.length) {
           const items = filteredUpgrade.reduce((acc, rawItem) => {
             if (!rawItem) return acc;
-            const [item, level] = rawItem.split(":");
+            const [item, level, bonus] = rawItem.split(":");
             const isQuantity = Types.isScroll(item);
 
             acc.push({
               item,
               [isQuantity ? "quantity" : "level"]: level,
+              bonus,
             });
             return acc;
           }, []);
@@ -537,7 +597,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
   upgradeItem: function (player) {
     var self = this;
-    var isSuccess = false;
 
     client.hget("u:" + player.name, "upgrade", function (err, reply) {
       try {
@@ -545,22 +604,23 @@ module.exports = DatabaseHandler = cls.Class.extend({
         filteredUpgrade = upgrade.filter(Boolean);
 
         if (Utils.isValidUpgradeItems(filteredUpgrade)) {
-          const [item, level] = filteredUpgrade[0].split(":");
+          const [item, level, bonus] = filteredUpgrade[0].split(":");
           let upgradedItem = 0;
+          let isSuccess = false;
 
           if (Utils.isUpgradeSuccess(level)) {
-            upgradedItem = `${item}:${parseInt(level) + 1}`;
+            upgradedItem = [item, parseInt(level) + 1, bonus].join(":");
             isSuccess = true;
           }
 
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = upgradedItem;
+          player.broadcast(new Messages.AnvilUpgrade(isSuccess), false);
         } else {
           self.moveUpgradeItemsToInventory(player);
         }
 
         player.send([Types.Messages.UPGRADE, upgrade]);
-        player.broadcast(new Messages.AnvilUpgrade(isSuccess), false);
         client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
       } catch (err) {
         console.log(err);

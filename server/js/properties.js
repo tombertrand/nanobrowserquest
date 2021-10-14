@@ -3,9 +3,10 @@ var Types = require("../../shared/js/gametypes");
 var Properties = {
   rat: {
     drops: {
-      flask: 65,
+      flask: 50,
       firepotion: 5,
-      scrollupgradelow: 30,
+      scrollupgradelow: 25,
+      ringbronze: 8,
     },
     hp: 25,
     armor: 0.5,
@@ -14,11 +15,12 @@ var Properties = {
 
   crab: {
     drops: {
-      flask: 40,
-      axe: 20,
+      flask: 35,
+      axe: 15,
       leatherarmor: 10,
       firepotion: 5,
       scrollupgradelow: 15,
+      ringbronze: 8,
     },
     hp: 60,
     armor: 2,
@@ -27,10 +29,11 @@ var Properties = {
 
   bat: {
     drops: {
-      flask: 50,
+      flask: 45,
       axe: 15,
       firepotion: 5,
       scrollupgradelow: 20,
+      ringbronze: 8,
     },
     hp: 80,
     armor: 2,
@@ -39,12 +42,13 @@ var Properties = {
 
   goblin: {
     drops: {
-      flask: 40,
-      leatherarmor: 20,
+      flask: 35,
+      leatherarmor: 15,
       axe: 10,
       firepotion: 5,
       scrollupgradelow: 15,
       scrollupgrademedium: 10,
+      ringbronze: 8,
     },
     hp: 90,
     armor: 2,
@@ -64,14 +68,14 @@ var Properties = {
 
   skeleton: {
     drops: {
-      flask: 40,
+      flask: 35,
       mailarmor: 10,
       axe: 15,
       firepotion: 5,
-      scrollupgradelow: 5,
       scrollupgrademedium: 15,
+      ringbronze: 8,
     },
-    hp: 110,
+    hp: 115,
     armor: 2,
     weapon: 2,
   },
@@ -79,85 +83,97 @@ var Properties = {
   ogre: {
     drops: {
       burger: 10,
-      flask: 35,
+      flask: 30,
       platearmor: 15,
       morningstar: 15,
       firepotion: 5,
       scrollupgrademedium: 15,
+      ringbronze: 8,
+      ringsilver: 2,
     },
-    hp: 240,
+    hp: 250,
     armor: 3,
     weapon: 3,
   },
 
   snake: {
     drops: {
-      flask: 45,
+      flask: 35,
       mailarmor: 10,
       morningstar: 10,
       firepotion: 5,
       scrollupgradelow: 5,
       scrollupgrademedium: 15,
+      ringbronze: 8,
+      ringsilver: 2,
     },
-    hp: 150,
+    hp: 165,
     armor: 3,
     weapon: 2,
   },
 
   skeleton2: {
     drops: {
-      flask: 55,
+      flask: 45,
       platearmor: 10,
       bluesword: 10,
       firepotion: 5,
       scrollupgradelow: 5,
       scrollupgrademedium: 15,
+      ringbronze: 8,
+      ringsilver: 2,
     },
-    hp: 200,
+    hp: 220,
     armor: 3,
     weapon: 3,
   },
 
   eye: {
     drops: {
-      flask: 65,
+      flask: 55,
       redarmor: 15,
       firepotion: 5,
       scrollupgrademedium: 15,
+      ringbronze: 5,
+      ringsilver: 5,
     },
-    hp: 200,
-    armor: 3,
+    hp: 240,
+    armor: 4,
     weapon: 3,
   },
 
   spectre: {
     drops: {
-      flask: 65,
+      flask: 45,
       redsword: 15,
       firepotion: 5,
       scrollupgrademedium: 15,
+      ringbronze: 5,
+      ringsilver: 5,
     },
-    hp: 200,
+    hp: 240,
     armor: 2,
     weapon: 4,
   },
 
   deathknight: {
     drops: {
-      burger: 100,
+      burger: 90,
+      ringbronze: 2,
+      ringsilver: 8,
     },
     hp: 250,
-    armor: 3,
-    weapon: 4,
+    armor: 4,
+    weapon: 5,
   },
 
   boss: {
     drops: {
       goldensword: 100,
     },
-    hp: 850,
-    armor: 4,
-    weapon: 6,
+    hp: 1100,
+    armor: 6,
+    weapon: 7,
   },
 };
 

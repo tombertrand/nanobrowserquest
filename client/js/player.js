@@ -25,6 +25,12 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.nanoPotions = 0;
       this.damage = "0";
       this.absorb = "0";
+      this.ring1Name = null;
+      this.ring1Level = null;
+      this.ring1Bonus = null;
+      this.ring2Name = null;
+      this.ring2Level = null;
+      this.ring2Bonus = null;
 
       // modes
       this.isLootMoving = false;
@@ -169,6 +175,34 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.weaponLevel = level;
     },
 
+    setRing1: function (ring) {
+      if (ring) {
+        const [name, level, bonus] = ring.split(":");
+
+        this.ring1Name = name;
+        this.ring1Level = level;
+        this.ring1Bonus = bonus;
+      } else {
+        this.ring1Name = null;
+        this.ring1Level = null;
+        this.ring1Bonus = null;
+      }
+    },
+
+    setRing2: function (ring) {
+      if (ring) {
+        const [name, level, bonus] = ring.split(":");
+
+        this.ring2Name = name;
+        this.ring2Level = level;
+        this.ring2Bonus = bonus;
+      } else {
+        this.ring2Name = null;
+        this.ring2Level = null;
+        this.ringBonus = null;
+      }
+    },
+
     hasWeapon: function () {
       return this.weaponName !== null;
     },
@@ -217,14 +251,16 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         .map((rawItem, slot) => {
           if (!rawItem) return false;
 
-          const [item, levelOrQuantity] = rawItem.split(":");
+          const [item, levelOrQuantity, bonus] = rawItem.split(":");
           const isWeapon = kinds[item][1] === "weapon";
           const isArmor = kinds[item][1] === "armor";
-          const requirement = isWeapon || isArmor ? Types.getItemRequirement(item, levelOrQuantity) : 0;
+          const isRing = kinds[item][1] === "ring";
+          const requirement = isWeapon || isArmor || isRing ? Types.getItemRequirement(item, levelOrQuantity) : 0;
 
           return {
             item,
-            [isWeapon || isArmor ? "level" : "quantity"]: levelOrQuantity,
+            [isWeapon || isArmor || isRing ? "level" : "quantity"]: levelOrQuantity,
+            bonus,
             slot,
             requirement,
           };
@@ -237,14 +273,16 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         .map((rawItem, slot) => {
           if (!rawItem) return false;
 
-          const [item, levelOrQuantity] = rawItem.split(":");
+          const [item, levelOrQuantity, bonus] = rawItem.split(":");
           const isWeapon = kinds[item][1] === "weapon";
           const isArmor = kinds[item][1] === "armor";
+          const isRing = kinds[item][1] === "ring";
 
           return {
             item,
-            [isWeapon || isArmor ? "level" : "quantity"]: levelOrQuantity,
+            [isWeapon || isArmor || isRing ? "level" : "quantity"]: levelOrQuantity,
             slot,
+            bonus,
           };
         })
         .filter(Boolean);

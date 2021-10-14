@@ -128,6 +128,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.FrozenArmor(id);
   };
 
+  EntityFactory.builders[Types.Entities.HORNEDARMOR] = function (id) {
+    return new Items.HornedArmor(id);
+  };
+
   EntityFactory.builders[Types.Entities.FLASK] = function (id) {
     return new Items.Flask(id);
   };
@@ -154,6 +158,18 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   EntityFactory.builders[Types.Entities.GEMSAPPHIRE] = function (id) {
     return new Items.GemSapphire(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RINGBRONZE] = function (id) {
+    return new Items.RingBronze(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RINGSILVER] = function (id) {
+    return new Items.RingSilver(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RINGGOLD] = function (id) {
+    return new Items.RingGold(id);
   };
 
   EntityFactory.builders[Types.Entities.SCROLLUPGRADELOW] = function (id) {

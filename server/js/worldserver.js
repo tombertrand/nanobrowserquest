@@ -168,7 +168,12 @@ module.exports = World = cls.Class.extend({
     this.onRegenTick(function () {
       self.forEachCharacter(function (character) {
         if (!character.hasFullHealth()) {
-          character.regenHealthBy(Math.floor(character.maxHitPoints / 25));
+          let regenerateHealth = Math.floor(character.maxHitPoints / 25);
+          if (character.bonus && character.bonus.regenerateHealth) {
+            regenerateHealth += character.bonus.regenerateHealth;
+          }
+
+          character.regenHealthBy(regenerateHealth);
 
           if (character.type === "player") {
             self.pushToPlayer(character, character.regen());
@@ -688,17 +693,35 @@ module.exports = World = cls.Class.extend({
     }
   },
 
+  // @NOTE Exp start decreasing 6 levels higher than the mob
+  // Can't earn exp from mob if it's 6 level higher than the player
   receivedExp: function (player, mob) {
     const playerLevel = player.level;
     const mobLevel = Types.getMobLevel(mob.kind);
 
+    // Start nerfing at level 4, end exp gains 6 levels higher
+    const EXP_LEVEL_START_RANGE = 6;
+    const EXP_LEVEL_END_RANGE = 12;
+    let exp = Types.getMobExp(mob.kind);
     if (mob.kind !== Types.Entities.BOSS) {
-      if (playerLevel + 8 < mobLevel || playerLevel - 8 > mobLevel) {
-        return 0;
+      const levelDifference = playerLevel - mobLevel;
+      if (levelDifference < 0) {
+        if (levelDifference < -EXP_LEVEL_START_RANGE) {
+          return 0;
+        }
+      } else if (levelDifference > 0) {
+        // Too high level for mob
+        if (levelDifference > EXP_LEVEL_END_RANGE) {
+          return 0;
+        } else if (levelDifference > EXP_LEVEL_START_RANGE) {
+          // Nerf exp per level
+          const multiplier = (levelDifference - EXP_LEVEL_START_RANGE) / 10;
+          exp = exp - Math.ceil(exp * multiplier);
+        }
       }
     }
 
-    return Types.getMobExp(mob.kind);
+    return exp;
   },
 
   handleHurtEntity: function (entity, attacker, damage) {
@@ -722,13 +745,13 @@ module.exports = World = cls.Class.extend({
         if (mainTanker && mainTanker instanceof Player) {
           const exp = this.receivedExp(mainTanker, mob);
           if (exp) {
-            mainTanker.incExp(Types.getMobExp(mob.kind));
+            mainTanker.incExp(exp);
           }
           this.pushToPlayer(mainTanker, new Messages.Kill(mob, mainTanker.level, mainTanker.experience, exp));
         } else {
           const exp = this.receivedExp(attacker, mob);
           if (exp) {
-            attacker.incExp(Types.getMobExp(mob.kind));
+            attacker.incExp(exp);
           }
           this.pushToPlayer(attacker, new Messages.Kill(mob, attacker.level, attacker.experience, exp));
         }
@@ -842,7 +865,10 @@ module.exports = World = cls.Class.extend({
     var p = 0;
     var item = null;
 
-    // return this.addItem(this.createItem(Types.getKindFromString("firepotion"), mob.x, mob.y));
+    // var random = Utils.random(3);
+    // const items = ["ringbronze", "ringsilver", "ringgold"];
+    // return this.addItem(this.createItem(Types.getKindFromString(items[random]), mob.x, mob.y));
+    // return this.addItem(this.createItem(Types.getKindFromString("ringbronze"), mob.x, mob.y));
 
     //@NOTE 3% chance to drop a NANO potion
     if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {

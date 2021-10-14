@@ -91,6 +91,7 @@ Types = {
     REDARMOR: 25,
     GOLDENARMOR: 26,
     FROZENARMOR: 78,
+    HORNEDARMOR: 83,
 
     // Objects
     FLASK: 35,
@@ -103,10 +104,14 @@ Types = {
     GEMAMETHYST: 70,
     GEMTOPAZ: 71,
     GEMSAPPHIRE: 79,
+
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
     SCROLLUPGRADEHIGH: 76,
+    RINGBRONZE: 80,
+    RINGSILVER: 81,
+    RINGGOLD: 82,
 
     // NPCs
     GUARD: 40,
@@ -197,7 +202,10 @@ Types.Entities.Armors = [
   Types.Entities.REDARMOR,
   Types.Entities.GOLDENARMOR,
   Types.Entities.FROZENARMOR,
+  Types.Entities.HORNEDARMOR,
 ];
+
+Types.Entities.Rings = [Types.Entities.RINGBRONZE, Types.Entities.RINGSILVER, Types.Entities.RINGGOLD];
 
 Types.getGemNameFromKind = function (kind) {
   const gems = {
@@ -222,12 +230,12 @@ var kinds = {
   goblin: [Types.Entities.GOBLIN, "mob", 8, 5],
   skeleton: [Types.Entities.SKELETON, "mob", 15, 8],
   snake: [Types.Entities.SNAKE, "mob", 25, 10],
-  ogre: [Types.Entities.OGRE, "mob", 27, 12],
+  ogre: [Types.Entities.OGRE, "mob", 32, 12],
   skeleton2: [Types.Entities.SKELETON2, "mob", 38, 15],
   eye: [Types.Entities.EYE, "mob", 45, 18],
   spectre: [Types.Entities.SPECTRE, "mob", 53, 21],
-  deathknight: [Types.Entities.DEATHKNIGHT, "mob", 70, 24],
-  boss: [Types.Entities.BOSS, "mob", 140, 48],
+  deathknight: [Types.Entities.DEATHKNIGHT, "mob", 65, 24],
+  boss: [Types.Entities.BOSS, "mob", 100, 30],
 
   // kind, type, level, damage
   sword1: [Types.Entities.SWORD1, "weapon", "Dagger", 1, 1],
@@ -247,7 +255,13 @@ var kinds = {
   redarmor: [Types.Entities.REDARMOR, "armor", "Ruby Armor", 7, 15],
   goldenarmor: [Types.Entities.GOLDENARMOR, "armor", "Golden Armor", 10, 20],
   frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 14, 24],
+  hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 14, 28],
   firefox: [Types.Entities.FIREFOX, "armor"],
+
+  // kind, type, level
+  ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
+  ringsilver: [Types.Entities.RINGSILVER, "ring", "Silver Ring", 10],
+  ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 20],
 
   flask: [Types.Entities.FLASK, "object"],
   cake: [Types.Entities.CAKE, "object"],
@@ -260,9 +274,9 @@ var kinds = {
   gemamethyst: [Types.Entities.GEMAMETHYST, "object"],
   gemtopaz: [Types.Entities.GEMTOPAZ, "object"],
   gemsapphire: [Types.Entities.GEMSAPPHIRE, "object"],
-  scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "object", "Upgrade scroll", 1],
-  scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "object", "Upgrade scroll", 5],
-  scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "object", "Superior upgrade scroll", 10],
+  scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "object", "Upgrade scroll", 3],
+  scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "object", "Upgrade scroll", 6],
+  scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "object", "Superior upgrade scroll", 15],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -316,6 +330,7 @@ Types.rankedArmors = [
   Types.Entities.REDARMOR,
   Types.Entities.GOLDENARMOR,
   Types.Entities.FROZENARMOR,
+  Types.Entities.HORNEDARMOR,
 ];
 
 Types.expForLevel = [
@@ -557,6 +572,14 @@ Types.isWeapon = function (kindOrString) {
   }
 };
 
+Types.isRing = function (kindOrString) {
+  if (typeof kindOrString === "number") {
+    return kinds.getType(kindOrString) === "ring";
+  } else {
+    return kinds[kindOrString][1] === "ring";
+  }
+};
+
 Types.isObject = function (kind) {
   return kinds.getType(kind) === "object";
 };
@@ -566,7 +589,9 @@ Types.isChest = function (kind) {
 };
 
 Types.isItem = function (kind) {
-  return Types.isWeapon(kind) || Types.isArmor(kind) || (Types.isObject(kind) && !Types.isChest(kind));
+  return (
+    Types.isWeapon(kind) || Types.isArmor(kind) || Types.isRing(kind) || (Types.isObject(kind) && !Types.isChest(kind))
+  );
 };
 
 Types.isHealingItem = function (kind) {
@@ -684,9 +709,69 @@ Types.getMessageTypeAsString = function (type) {
   return typeName;
 };
 
-if (!(typeof exports === "undefined")) {
-  module.exports = Types;
-}
+Types.getBonusDescriptionMap = [
+  "+# Minimum damage",
+  "+# Maximum damage",
+  "+# Attack",
+  "+# Health",
+  "+# Magic damage",
+  "+# Defense",
+  "+# Absorbed damage",
+  "+#% experience",
+  "+# health regeneration per second",
+];
+
+Types.getBonus = function (rawBonus, level) {
+  const minDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const maxDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const weaponDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const healthPerLevel = [2, 4, 6, 8, 10, 12, 16, 22, 28, 40];
+  const magicDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const defensePerLevel = [1, 2, 4, 6, 8, 11, 15, 22, 28, 40];
+  const absorbPerLevel = [2, 4, 6, 8, 10, 13, 15, 18, 22, 28];
+  const expPerLevel = [1, 2, 3, 4, 5, 6, 7, 10, 15, 20];
+  const regenerateHealthPerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
+
+  const bonusPerLevel = [
+    minDamagePerLevel,
+    maxDamagePerLevel,
+    weaponDamagePerLevel,
+    healthPerLevel,
+    magicDamagePerLevel,
+    defensePerLevel,
+    absorbPerLevel,
+    expPerLevel,
+    regenerateHealthPerLevel,
+  ];
+
+  const bonusType = [
+    "minDamage",
+    "maxDamage",
+    "weaponDamage",
+    "health",
+    "magicDamage",
+    "defense",
+    "absorbedDamage",
+    "exp",
+    "regenerateHealth",
+  ];
+
+  const bonus = [];
+
+  for (let i = 0; i < rawBonus.length; i++) {
+    const type = bonusType[rawBonus[i]];
+    const stats = bonusPerLevel[rawBonus[i]][level - 1];
+    const description = Types.getBonusDescriptionMap[rawBonus[i]].replace("#", stats);
+
+    bonus.push({
+      type,
+      stats,
+      description,
+    });
+  }
+
+  return bonus;
+};
 
 Types.getUpgradeSuccessRates = () => {
   return [100, 100, 90, 80, 55, 30, 7, 4, 1];
@@ -756,13 +841,15 @@ Types.getItemRequirement = function (item, level) {
   return requirement;
 };
 
-Types.getItemDetails = function (item, level) {
+Types.getItemDetails = function (item, level, rawBonus = [1, 3]) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
+  const isRing = Types.isRing(item);
 
-  const isEquipment = isWeapon || isArmor;
+  const isEquipment = isWeapon || isArmor || isRing;
   let magicDamage = 0;
   let healthBonus = 0;
+  let bonus = [];
 
   let type = "item";
   if (isWeapon) {
@@ -771,6 +858,8 @@ Types.getItemDetails = function (item, level) {
   } else if (isArmor) {
     type = "armor";
     healthBonus = Types.getArmorHealthBonus(level);
+  } else if (isRing) {
+    bonus = Types.getBonus(rawBonus, level);
   }
 
   let itemClass = Types.getItemClass(item, level);
@@ -787,6 +876,7 @@ Types.getItemDetails = function (item, level) {
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level), magicDamage } : null),
     ...(isEquipment ? { requirement } : null),
     ...(description ? { description } : null),
+    ...(bonus ? { bonus } : null),
   };
 };
 
@@ -802,3 +892,7 @@ Types.itemDescription = {
   scrollupgradehigh:
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level.",
 };
+
+if (!(typeof exports === "undefined")) {
+  module.exports = Types;
+}
