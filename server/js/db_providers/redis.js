@@ -545,7 +545,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           } else if (slotIndex === -1) {
             slotIndex = inventory.indexOf(0);
             if (slotIndex !== -1) {
-              inventory[slotIndex] = [item, level || quantity, bonus].join(":");
+              inventory[slotIndex] = [item, level || quantity, bonus].filter(Boolean).join(":");
             }
           }
         });
