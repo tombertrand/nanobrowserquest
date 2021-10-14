@@ -1354,6 +1354,8 @@ footer, header, hgroup, menu, nav, section {
         .panel#population { bottom: 16px; }
         .panel#player {left: -20px; bottom: 18px;}
         .panel#upgrade {position: relative;left: 42px;}
+        .panel#inventory {bottom:22px;}
+        .panel#inventory.upgrade {bottom:auto}
         #player-list {max-height: 166px;}
 
         body {border-top:0px;}

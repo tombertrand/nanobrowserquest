@@ -147,7 +147,7 @@ define(["character"], function (Character) {
 
     anvil: [
       "Drop and item in the left slot and<br/>choose a middle slot for your upgrade scroll",
-      "Keep a backup item in case the one you attempt to upgrade gets destroyed",
+      "Keep a backup item in case the one<br/>you attempt to upgrade gets destroyed",
       "If the upgrade succeed it will<br/>be placed in the slot on the right",
       "Upgrading an item becomes increasingly difficult",
     ],
