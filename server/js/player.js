@@ -314,7 +314,7 @@ module.exports = Player = Character.extend({
                 self.regenHealthBy(amount);
                 self.server.pushToPlayer(self, self.health());
               }
-            } else if (Types.isArmor(kind) || Types.isWeapon(kind)) {
+            } else if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind)) {
               const baseLevel = Types.getBaseLevel(kind);
               const level = baseLevel <= 5 ? Utils.randomInt(1, 3) : 1;
 
@@ -680,13 +680,18 @@ module.exports = Player = Character.extend({
   equipArmor: function (armor, kind, level) {
     this.armor = armor;
     this.armorKind = kind;
-    this.armorLevel = level; //Properties.getArmorLevel(kind);
+    this.armorLevel = level;
   },
 
   equipWeapon: function (weapon, kind, level) {
     this.weapon = weapon;
     this.weaponKind = kind;
-    this.weaponLevel = level; // Properties.getWeaponLevel(kind);
+    this.weaponLevel = level;
+  },
+
+  equipBelt: function (belt, level) {
+    this.belt = belt;
+    this.beltLevel = level;
   },
 
   equipRing1: function (ring, level, bonus) {
@@ -757,6 +762,9 @@ module.exports = Player = Character.extend({
         this.equipRing2(item, level, bonus);
         databaseHandler.equipRing2({ name: this.name, item, level, bonus });
       }
+    } else if (["belt"].includes(type)) {
+      databaseHandler.equipBelt(this.name, item, level);
+      this.equipBelt(item, level);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
@@ -917,6 +925,7 @@ module.exports = Player = Character.extend({
   sendWelcome: function ({
     armor,
     weapon,
+    belt,
     ring1,
     ring2,
     exp,
@@ -938,6 +947,11 @@ module.exports = Player = Character.extend({
     self.kind = Types.Entities.WARRIOR;
     self.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel);
     self.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel);
+
+    if (belt) {
+      const [playerBelt, playerBeltLevel] = belt.split(":");
+      self.equipBelt(playerBelt, Types.getKindFromString(playerBelt), playerBeltLevel);
+    }
 
     if (ring1) {
       const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
@@ -977,6 +991,7 @@ module.exports = Player = Character.extend({
       self.hitPoints,
       armor,
       weapon,
+      belt,
       ring1,
       ring2,
       self.experience,

@@ -9,8 +9,9 @@ const { Sentry } = require("../sentry");
 const INVENTORY_SLOT_COUNT = 24;
 const WEAPON_SLOT = 100;
 const ARMOR_SLOT = 101;
-const RING1_SLOT = 102;
-const RING2_SLOT = 103;
+const BELT_SLOT = 102;
+const RING1_SLOT = 103;
+const RING2_SLOT = 104;
 const DELETE_SLOT = -1;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
@@ -49,12 +50,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "upgrade") // 12
             .hget(userKey, "ring1") // 13
             .hget(userKey, "ring2") // 14
+            .hget(userKey, "belt") // 15
             .exec(function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
               var weapon = replies[2];
               var ring1 = replies[13];
               var ring2 = replies[14];
+              var belt = replies[15];
               var exp = Utils.NaN2Zero(replies[3]);
               var createdAt = Utils.NaN2Zero(replies[4]);
 
@@ -168,6 +171,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               player.sendWelcome({
                 armor,
                 weapon,
+                belt,
                 ring1,
                 ring2,
                 exp,
@@ -218,6 +222,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "nanoPotions", 0)
           .hset(userKey, "weapon", "sword1:1")
           .hset(userKey, "armor", "clotharmor:1")
+          .hset(userKey, "belt", null)
           .hset(userKey, "ring1", null)
           .hset(userKey, "ring2", null)
           .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
@@ -227,6 +232,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             player.sendWelcome({
               armor: "clotharmor:1",
               weapon: "sword1:1",
+              belt: null,
               exp: 0,
               createdAt: curTime,
               x: player.x,
@@ -307,13 +313,22 @@ module.exports = DatabaseHandler = cls.Class.extend({
   banTerm: function (time) {
     return Math.pow(2, time) * 500 * 60;
   },
+  equipWeapon: function (name, weapon, level) {
+    log.info("Set Weapon: " + name + " " + weapon + ":" + level);
+    client.hset("u:" + name, "weapon", `${weapon}:${level}`);
+  },
   equipArmor: function (name, armor, level) {
     log.info("Set Armor: " + name + " " + armor + ":" + level);
     client.hset("u:" + name, "armor", `${armor}:${level}`);
   },
-  equipWeapon: function (name, weapon, level) {
-    log.info("Set Weapon: " + name + " " + weapon + ":" + level);
-    client.hset("u:" + name, "weapon", `${weapon}:${level}`);
+  equipBelt: function (name, belt, level) {
+    if (belt) {
+      log.info("Set Belt: " + name + " " + belt + ":" + level);
+      client.hset("u:" + name, "belt", `${belt}:${level}`);
+    } else {
+      log.info("Delete Belt");
+      client.hdel("u:" + name, "belt");
+    }
   },
   equipRing1: function ({ name, item, level, bonus }) {
     const ring1 = [item, level, bonus].filter(Boolean).join(":") || null;
@@ -351,6 +366,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
       return ["weapon", 0];
     } else if (slot === ARMOR_SLOT) {
       return ["armor", 0];
+    } else if (slot === BELT_SLOT) {
+      return ["belt", 0];
     } else if (slot === RING1_SLOT) {
       return ["ring1", 0];
     } else if (slot === RING2_SLOT) {
@@ -383,6 +400,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
       player.equipItem({ item, level, type: "armor" });
       player.broadcast(player.equip(player.armorKind), false);
+    } else if (location === "belt") {
+      let item = null;
+      let level = null;
+      if (data) {
+        [item, level] = data.split(":");
+      }
+      player.equipItem({ item, level, type: "belt" });
     } else if (location === "ring1") {
       let item = null;
       let level = null;
@@ -484,7 +508,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }
-              } else if (["weapon", "armor", "ring1", "ring2"].includes(toLocation)) {
+              } else if (["weapon", "armor", "belt", "ring1", "ring2"].includes(toLocation)) {
                 const [item, fromLevel] = fromItem.split(":");
                 if (Types.getItemRequirement(item, fromLevel) > player.level) {
                   isFromReplyDone = true;

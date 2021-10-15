@@ -151,9 +151,10 @@ Utils.isValidUpgradeItems = items => {
   const [item, level] = items[0].split(":");
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
+  const isBelt = Types.isBelt(item);
   const isRing = Types.isRing(item);
 
-  if ((!isWeapon && !isArmor && !isRing) || level === 10) {
+  if ((!isWeapon && !isArmor && !isBelt && !isRing) || level === 10) {
     return false;
   }
 

@@ -98,6 +98,20 @@ define(["item"], function (Item) {
       },
     }),
 
+    BeltLeather: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.BELTLEATHER, "armor");
+        this.lootMessage = "You pick up a leather belt";
+      },
+    }),
+
+    BeltPlated: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.BELTPLATED, "armor");
+        this.lootMessage = "You pick up a plated belt";
+      },
+    }),
+
     Flask: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.FLASK, "object");

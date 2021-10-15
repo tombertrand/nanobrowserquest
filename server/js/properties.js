@@ -3,7 +3,7 @@ var Types = require("../../shared/js/gametypes");
 var Properties = {
   rat: {
     drops: {
-      flask: 50,
+      flask: 45,
       firepotion: 5,
       scrollupgradelow: 20,
       ringbronze: 5,
@@ -15,12 +15,13 @@ var Properties = {
 
   crab: {
     drops: {
-      flask: 35,
+      flask: 30,
       axe: 15,
       leatherarmor: 10,
       firepotion: 5,
       scrollupgradelow: 15,
       ringbronze: 5,
+      beltleather: 10,
     },
     hp: 60,
     armor: 2,
@@ -29,11 +30,12 @@ var Properties = {
 
   bat: {
     drops: {
-      flask: 45,
+      flask: 40,
       axe: 15,
       firepotion: 5,
-      scrollupgradelow: 20,
+      scrollupgradelow: 15,
       ringbronze: 5,
+      beltleather: 10,
     },
     hp: 80,
     armor: 2,
@@ -42,13 +44,14 @@ var Properties = {
 
   goblin: {
     drops: {
-      flask: 35,
+      flask: 30,
       leatherarmor: 15,
       axe: 10,
       firepotion: 5,
       scrollupgradelow: 15,
       scrollupgrademedium: 10,
       ringbronze: 5,
+      beltleather: 10,
     },
     hp: 90,
     armor: 2,
@@ -74,6 +77,7 @@ var Properties = {
       firepotion: 5,
       scrollupgrademedium: 13,
       ringbronze: 5,
+      beltleather: 10,
     },
     hp: 115,
     armor: 2,
@@ -85,11 +89,11 @@ var Properties = {
       burger: 10,
       flask: 30,
       platearmor: 15,
-      morningstar: 15,
       firepotion: 5,
       scrollupgrademedium: 13,
       ringbronze: 5,
       ringsilver: 2,
+      beltleather: 15,
     },
     hp: 250,
     armor: 3,
@@ -106,6 +110,7 @@ var Properties = {
       scrollupgrademedium: 13,
       ringbronze: 5,
       ringsilver: 2,
+      beltleather: 10,
     },
     hp: 165,
     armor: 3,
@@ -114,7 +119,7 @@ var Properties = {
 
   skeleton2: {
     drops: {
-      flask: 45,
+      flask: 40,
       platearmor: 10,
       bluesword: 10,
       firepotion: 5,
@@ -122,6 +127,7 @@ var Properties = {
       scrollupgrademedium: 13,
       ringbronze: 5,
       ringsilver: 2,
+      beltplated: 5,
     },
     hp: 220,
     armor: 3,
@@ -130,12 +136,13 @@ var Properties = {
 
   eye: {
     drops: {
-      flask: 55,
+      flask: 45,
       redarmor: 15,
       firepotion: 5,
       scrollupgrademedium: 13,
       ringbronze: 2,
       ringsilver: 4,
+      beltplated: 10,
     },
     hp: 240,
     armor: 4,
@@ -150,6 +157,7 @@ var Properties = {
       scrollupgrademedium: 13,
       ringbronze: 2,
       ringsilver: 4,
+      beltplated: 10,
     },
     hp: 240,
     armor: 2,
@@ -158,9 +166,10 @@ var Properties = {
 
   deathknight: {
     drops: {
-      burger: 90,
+      burger: 83,
       ringbronze: 2,
-      ringsilver: 4,
+      ringsilver: 5,
+      beltplated: 10,
     },
     hp: 250,
     armor: 4,

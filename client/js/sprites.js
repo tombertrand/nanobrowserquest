@@ -47,6 +47,8 @@ define([
   "text!../sprites/item-goldenarmor.json",
   "text!../sprites/item-frozenarmor.json",
   "text!../sprites/item-hornedarmor.json",
+  "text!../sprites/item-beltleather.json",
+  "text!../sprites/item-beltplated.json",
   "text!../sprites/item-goldensword.json",
   "text!../sprites/item-leatherarmor.json",
   "text!../sprites/item-mailarmor.json",

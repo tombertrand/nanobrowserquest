@@ -194,6 +194,8 @@ define([
         "item-goldenarmor",
         "item-frozenarmor",
         "item-hornedarmor",
+        "item-beltleather",
+        "item-beltplated",
         "item-flask",
         "item-nanopotion",
         "item-gemruby",
@@ -487,7 +489,7 @@ define([
           const item = $(this).attr("data-item");
           const type = kinds[item][1];
 
-          if (["weapon", "armor", "ring"].includes(type) && $(`.item-${type}`).is(":empty")) {
+          if (["weapon", "armor", "belt", "ring"].includes(type) && $(`.item-${type}`).is(":empty")) {
             $(`.item-${type}`).addClass("item-droppable");
           } else if (["scrollupgradelow", "scrollupgrademedium", "scrollupgradehigh"].includes(item)) {
             $(`.item-scroll`).addClass("item-droppable");
@@ -522,13 +524,13 @@ define([
 
       $("#item-weapon").empty().append('<div class="item-slot item-equip-weapon item-weapon" data-slot="100"></div>');
       $("#item-armor").empty().append('<div class="item-slot item-equip-armor item-armor" data-slot="101"></div>');
+      $("#item-belt").empty().append('<div class="item-slot item-equip-belt item-belt" data-slot="102"></div>');
       $("#item-ring1")
         .empty()
-        .append('<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="102"></div>');
+        .append('<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="103"></div>');
       $("#item-ring2")
         .empty()
-        .append('<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="103"></div>');
-      $("#item-belt").empty().append('<div class="item-slot item-equip-belt item-belt" data-slot="104"></div>');
+        .append('<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="104"></div>');
       $("#item-delete").empty().append('<div class="item-slot item-droppable item-delete" data-slot="-1"></div>');
 
       if (this.player.weaponName !== "sword1") {
@@ -552,6 +554,19 @@ define([
             },
             "data-item": this.player.armorName,
             "data-level": this.player.armorLevel,
+          }),
+        );
+      }
+
+      if (this.player.beltName) {
+        $(".item-equip-belt").append(
+          $("<div />", {
+            class: "item-draggable",
+            css: {
+              "background-image": `url("${this.getIconPath(this.player.beltName)}")`,
+            },
+            "data-item": this.player.beltName,
+            "data-level": this.player.beltLevel,
           }),
         );
       }
@@ -1363,6 +1378,7 @@ define([
         hp,
         armor,
         weapon,
+        belt,
         ring1,
         ring2,
         experience,
@@ -1394,6 +1410,7 @@ define([
         self.player.setSpriteName(armor);
         self.player.setWeaponName(weapon);
         self.player.setWeaponLevel(weaponLevel);
+        self.player.setBelt(belt);
         self.player.setRing1(ring1);
         self.player.setRing2(ring2);
         self.initPlayer();

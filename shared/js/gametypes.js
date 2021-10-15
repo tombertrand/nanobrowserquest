@@ -93,6 +93,10 @@ Types = {
     FROZENARMOR: 78,
     HORNEDARMOR: 83,
 
+    // Belts
+    BELTLEATHER: 85,
+    BELTPLATED: 86,
+
     // Objects
     FLASK: 35,
     BURGER: 36,
@@ -206,6 +210,8 @@ Types.Entities.Armors = [
   Types.Entities.HORNEDARMOR,
 ];
 
+Types.Entities.Belts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED];
+
 Types.Entities.Rings = [Types.Entities.RINGBRONZE, Types.Entities.RINGSILVER, Types.Entities.RINGGOLD];
 
 Types.getGemNameFromKind = function (kind) {
@@ -258,6 +264,10 @@ var kinds = {
   frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 14, 24],
   hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 14, 28],
   firefox: [Types.Entities.FIREFOX, "armor"],
+
+  // kind, type, level, defense
+  beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 2, 2],
+  beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 6, 4],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -334,6 +344,8 @@ Types.rankedArmors = [
   Types.Entities.FROZENARMOR,
   Types.Entities.HORNEDARMOR,
 ];
+
+Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED];
 
 Types.expForLevel = [
   1,
@@ -554,6 +566,14 @@ Types.isArmor = function (kindOrString) {
   }
 };
 
+Types.isBelt = function (kindOrString) {
+  if (typeof kindOrString === "number") {
+    return kinds.getType(kindOrString) === "belt";
+  } else {
+    return kinds[kindOrString][1] === "belt";
+  }
+};
+
 Types.isScroll = function (kindOrString) {
   if (typeof kindOrString === "number") {
     return [
@@ -592,7 +612,11 @@ Types.isChest = function (kind) {
 
 Types.isItem = function (kind) {
   return (
-    Types.isWeapon(kind) || Types.isArmor(kind) || Types.isRing(kind) || (Types.isObject(kind) && !Types.isChest(kind))
+    Types.isWeapon(kind) ||
+    Types.isArmor(kind) ||
+    Types.isRing(kind) ||
+    Types.isBelt(kind) ||
+    (Types.isObject(kind) && !Types.isChest(kind))
   );
 };
 
@@ -847,8 +871,9 @@ Types.getItemDetails = function (item, level, rawBonus = [1, 3]) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
   const isRing = Types.isRing(item);
+  const isBelt = Types.isBelt(item);
 
-  const isEquipment = isWeapon || isArmor || isRing;
+  const isEquipment = isWeapon || isArmor || isBelt || isRing;
   let magicDamage = 0;
   let healthBonus = 0;
   let bonus = [];
@@ -859,6 +884,9 @@ Types.getItemDetails = function (item, level, rawBonus = [1, 3]) {
     magicDamage = Types.getWeaponMagicDamage(level);
   } else if (isArmor) {
     type = "armor";
+    healthBonus = Types.getArmorHealthBonus(level);
+  } else if (isBelt) {
+    type = "belt";
     healthBonus = Types.getArmorHealthBonus(level);
   } else if (isRing) {
     bonus = Types.getBonus(rawBonus, level);
@@ -874,7 +902,7 @@ Types.getItemDetails = function (item, level, rawBonus = [1, 3]) {
     name: Types.getDisplayName(item),
     type,
     ...(itemClass ? { itemClass } : null),
-    ...(isArmor ? { defense: Types.getArmorDefense(item, level), healthBonus } : null),
+    ...(isArmor || isBelt ? { defense: Types.getArmorDefense(item, level), healthBonus } : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level), magicDamage } : null),
     ...(isEquipment ? { requirement } : null),
     ...(description ? { description } : null),

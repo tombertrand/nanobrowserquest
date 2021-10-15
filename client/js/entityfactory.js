@@ -132,6 +132,14 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.HornedArmor(id);
   };
 
+  EntityFactory.builders[Types.Entities.BELTLEATHER] = function (id) {
+    return new Items.BeltLeather(id);
+  };
+
+  EntityFactory.builders[Types.Entities.BELTPLATED] = function (id) {
+    return new Items.BeltPlated(id);
+  };
+
   EntityFactory.builders[Types.Entities.FLASK] = function (id) {
     return new Items.Flask(id);
   };

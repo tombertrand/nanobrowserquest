@@ -168,7 +168,7 @@ module.exports = World = cls.Class.extend({
     this.onRegenTick(function () {
       self.forEachCharacter(function (character) {
         if (!character.hasFullHealth()) {
-          let regenerateHealth = Math.floor(character.maxHitPoints / 25);
+          let regenerateHealth = Math.floor(character.maxHitPoints / 33);
           if (character.bonus && character.bonus.regenerateHealth) {
             regenerateHealth += character.bonus.regenerateHealth;
           }
@@ -868,7 +868,7 @@ module.exports = World = cls.Class.extend({
     // var random = Utils.random(3);
     // const items = ["ringbronze", "ringsilver", "ringgold"];
     // return this.addItem(this.createItem(Types.getKindFromString(items[random]), mob.x, mob.y));
-    // return this.addItem(this.createItem(Types.getKindFromString("ringbronze"), mob.x, mob.y));
+    // return this.addItem(this.createItem(Types.getKindFromString("beltleather"), mob.x, mob.y));
 
     //@NOTE 3% chance to drop a NANO potion
     if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {

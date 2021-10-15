@@ -19,6 +19,8 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.armorLevel = 1;
       this.weaponName = "sword1";
       this.weaponLevel = 1;
+      this.beltName = null;
+      this.beltLevel = 1;
       this.inventory = [];
       this.upgrade = [];
       this.gems = [];
@@ -175,6 +177,18 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.weaponLevel = level;
     },
 
+    setBelt: function (rawBelt) {
+      if (rawBelt) {
+        const [belt, level] = rawBelt.split(":");
+
+        this.beltName = belt;
+        this.beltLevel = level;
+      } else {
+        this.beltName = null;
+        this.beltLevel = null;
+      }
+    },
+
     setRing1: function (ring) {
       if (ring) {
         const [name, level, bonus] = ring.split(":");
@@ -254,12 +268,14 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
           const [item, levelOrQuantity, bonus] = rawItem.split(":");
           const isWeapon = kinds[item][1] === "weapon";
           const isArmor = kinds[item][1] === "armor";
+          const isBelt = kinds[item][1] === "belt";
           const isRing = kinds[item][1] === "ring";
-          const requirement = isWeapon || isArmor || isRing ? Types.getItemRequirement(item, levelOrQuantity) : 0;
+          const requirement =
+            isWeapon || isArmor || isBelt || isRing ? Types.getItemRequirement(item, levelOrQuantity) : 0;
 
           return {
             item,
-            [isWeapon || isArmor || isRing ? "level" : "quantity"]: levelOrQuantity,
+            [isWeapon || isArmor || isBelt || isRing ? "level" : "quantity"]: levelOrQuantity,
             bonus,
             slot,
             requirement,
@@ -276,11 +292,12 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
           const [item, levelOrQuantity, bonus] = rawItem.split(":");
           const isWeapon = kinds[item][1] === "weapon";
           const isArmor = kinds[item][1] === "armor";
+          const isBelt = kinds[item][1] === "belt";
           const isRing = kinds[item][1] === "ring";
 
           return {
             item,
-            [isWeapon || isArmor || isRing ? "level" : "quantity"]: levelOrQuantity,
+            [isWeapon || isArmor || isBelt || isRing ? "level" : "quantity"]: levelOrQuantity,
             slot,
             bonus,
           };
