@@ -109,6 +109,12 @@ define(["npc"], function (Npc) {
         this._super(id, Types.Entities.ANVIL, 1);
       },
     }),
+
+    Waypoint: Npc.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.WAYPOINT, 1);
+      },
+    }),
   };
 
   return NPCs;

@@ -158,6 +158,7 @@ define([
         "anvil",
         "anvil-success",
         "anvil-fail",
+        "waypoint",
         "beachnpc",
         "forestnpc",
         "desertnpc",
@@ -432,7 +433,10 @@ define([
             const item = fromItemEl.attr("data-item");
             const level = fromItemEl.attr("data-level");
 
-            if ([100, 101, 102, 103, 104].includes(toSlot) && Types.getItemRequirement(item, level) > self.player.level) {
+            if (
+              [100, 101, 102, 103, 104].includes(toSlot) &&
+              Types.getItemRequirement(item, level) > self.player.level
+            ) {
               return;
             }
 
@@ -524,9 +528,7 @@ define([
       $("#item-ring2")
         .empty()
         .append('<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="103"></div>');
-      $("#item-belt")
-        .empty()
-        .append('<div class="item-slot item-equip-belt item-belt" data-slot="104"></div>');
+      $("#item-belt").empty().append('<div class="item-slot item-equip-belt item-belt" data-slot="104"></div>');
       $("#item-delete").empty().append('<div class="item-slot item-droppable item-delete" data-slot="-1"></div>');
 
       if (this.player.weaponName !== "sword1") {

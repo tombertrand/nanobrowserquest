@@ -102,7 +102,7 @@ define(function () {
             this.currentAnimation.reset();
           }
 
-          if (this.kind === Types.Entities.ANVIL) {
+          if (this.kind === Types.Entities.ANVIL || this.kind === Types.Entities.WAYPOINT) {
             this.currentAnimation.setSpeed(150);
           } else {
             this.currentAnimation.setSpeed(speed);
