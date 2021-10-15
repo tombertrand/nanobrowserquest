@@ -67,9 +67,12 @@ Formulas.dmg = function ({
   }
 };
 
-Formulas.minMaxAbsorb = function ({ armor, armorLevel, playerLevel, defense, absorbedDamage }) {
-  let min = Math.ceil((Types.getArmorDefense(armor, armorLevel) + defense) * 1 + playerLevel / 2) + absorbedDamage;
-  let max = Math.ceil((Types.getArmorDefense(armor, armorLevel) + defense) * 1.25 + playerLevel / 2) + absorbedDamage;
+Formulas.minMaxAbsorb = function ({ armor, armorLevel, playerLevel, defense, absorbedDamage, belt, beltLevel }) {
+  const armorDefense = Types.getArmorDefense(armor, armorLevel);
+  const beltDefense = Types.getArmorDefense(belt, beltLevel);
+
+  let min = Math.ceil((armorDefense + beltDefense + defense) * 1 + playerLevel / 2) + absorbedDamage;
+  let max = Math.ceil((armorDefense + beltDefense + defense) * 1.25 + playerLevel / 2) + absorbedDamage;
 
   return {
     min,
@@ -77,9 +80,26 @@ Formulas.minMaxAbsorb = function ({ armor, armorLevel, playerLevel, defense, abs
   };
 };
 
-Formulas.dmgFromMob = function ({ weaponLevel, armor, armorLevel, playerLevel, defense, absorbedDamage }) {
+Formulas.dmgFromMob = function ({
+  weaponLevel,
+  armor,
+  armorLevel,
+  playerLevel,
+  defense,
+  absorbedDamage,
+  belt,
+  beltLevel,
+}) {
   const dealt = Math.ceil(weaponLevel * Utils.randomInt(8, 12));
-  const { min, max } = Formulas.minMaxAbsorb({ armor, armorLevel, playerLevel, defense, absorbedDamage });
+  const { min, max } = Formulas.minMaxAbsorb({
+    armor,
+    armorLevel,
+    playerLevel,
+    defense,
+    absorbedDamage,
+    belt,
+    beltLevel,
+  });
 
   const absorbed = Utils.randomInt(min, max);
   const dmg = dealt - absorbed;
@@ -91,12 +111,13 @@ Formulas.dmgFromMob = function ({ weaponLevel, armor, armorLevel, playerLevel, d
   }
 };
 
-Formulas.hp = function (armorLevel, level, playerLevel) {
+Formulas.hp = function ({ armorLevel, level, playerLevel, beltLevel }) {
   const baseHp = 70;
   const armorHp = (armorLevel - 1) * 10 + Types.getArmorHealthBonus(level);
+  const beltHp = Types.getArmorHealthBonus(beltLevel);
   const playerLevelHp = playerLevel * 6;
 
-  return baseHp + armorHp + playerLevelHp;
+  return baseHp + armorHp + beltHp + playerLevelHp;
 };
 
 // Armor

@@ -805,6 +805,8 @@ Types.getUpgradeSuccessRates = () => {
 
 // kind, type, name, level, defense
 Types.getArmorDefense = function (armor, level) {
+  if (!armor || !level) return 0;
+
   const defense = kinds[armor][4];
   const defensePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 180, 205, 235];
   // const defensePercentPerLevel = [100, 102.5, 105, 108, 110.5, 113.5, 117.5, 123.5, 132, 145];
@@ -815,6 +817,8 @@ Types.getArmorDefense = function (armor, level) {
 };
 
 Types.getArmorHealthBonus = function (level) {
+  if (!level) return 0;
+
   const healthBonusPerLevel = [2, 4, 8, 14, 20, 30, 42, 60, 80, 110];
 
   return healthBonusPerLevel[level - 1];

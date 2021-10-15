@@ -255,6 +255,8 @@ module.exports = Player = Character.extend({
             weaponLevel: mob.weaponLevel,
             armor: self.armor,
             armorLevel: self.armorLevel,
+            belt: self.belt,
+            beltLevel: self.beltLevel,
             playerLevel: self.level,
             defense: self.bonus.defense,
             absorbedDamage: self.bonus.absorbedDamage,
@@ -786,7 +788,12 @@ module.exports = Player = Character.extend({
 
   updateHitPoints: function (reset) {
     const maxHitPoints =
-      Formulas.hp(Properties.getArmorLevel(this.armorKind), this.armorLevel, this.level) + this.bonus.health;
+      Formulas.hp({
+        armorLevel: Properties.getArmorLevel(this.armorKind),
+        level: this.armorLevel,
+        playerLevel: this.level,
+        beltLevel: this.beltLevel,
+      }) + this.bonus.health;
 
     if (reset) {
       this.resetHitPoints(maxHitPoints);
@@ -822,6 +829,8 @@ module.exports = Player = Character.extend({
     var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb({
       armor: this.armor,
       armorLevel: this.armorLevel,
+      belt: this.belt,
+      beltLevel: this.beltLevel,
       playerLevel: this.level,
       defense: this.bonus.defense,
       absorbedDamage: this.bonus.absorbedDamage,
@@ -950,7 +959,7 @@ module.exports = Player = Character.extend({
 
     if (belt) {
       const [playerBelt, playerBeltLevel] = belt.split(":");
-      self.equipBelt(playerBelt, Types.getKindFromString(playerBelt), playerBeltLevel);
+      self.equipBelt(playerBelt, playerBeltLevel);
     }
 
     if (ring1) {
