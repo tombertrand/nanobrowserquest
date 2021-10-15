@@ -271,8 +271,8 @@ var kinds = {
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
-  ringsilver: [Types.Entities.RINGSILVER, "ring", "Silver Ring", 10],
-  ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 20],
+  ringsilver: [Types.Entities.RINGSILVER, "ring", "Silver Ring", 9],
+  ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 16],
 
   flask: [Types.Entities.FLASK, "object"],
   cake: [Types.Entities.CAKE, "object"],
