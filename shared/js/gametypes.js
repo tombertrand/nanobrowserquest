@@ -90,6 +90,7 @@ Types = {
     PLATEARMOR: 24,
     REDARMOR: 25,
     GOLDENARMOR: 26,
+    BLUEARMOR: 87,
     FROZENARMOR: 78,
     HORNEDARMOR: 83,
 
@@ -206,6 +207,7 @@ Types.Entities.Armors = [
   Types.Entities.PLATEARMOR,
   Types.Entities.REDARMOR,
   Types.Entities.GOLDENARMOR,
+  Types.Entities.BLUEARMOR,
   Types.Entities.FROZENARMOR,
   Types.Entities.HORNEDARMOR,
 ];
@@ -261,8 +263,9 @@ var kinds = {
   platearmor: [Types.Entities.PLATEARMOR, "armor", "Plate Armor", 5, 10],
   redarmor: [Types.Entities.REDARMOR, "armor", "Ruby Armor", 7, 15],
   goldenarmor: [Types.Entities.GOLDENARMOR, "armor", "Golden Armor", 10, 20],
-  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 14, 24],
-  hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 14, 28],
+  bluearmor: [Types.Entities.BLUEARMOR, "armor", "Sapphire Armor", 14, 24],
+  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 14, 28],
+  hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 14, 30],
   firefox: [Types.Entities.FIREFOX, "armor"],
 
   // kind, type, level, defense
@@ -341,6 +344,7 @@ Types.rankedArmors = [
   Types.Entities.PLATEARMOR,
   Types.Entities.REDARMOR,
   Types.Entities.GOLDENARMOR,
+  Types.Entities.BLUEARMOR,
   Types.Entities.FROZENARMOR,
   Types.Entities.HORNEDARMOR,
 ];

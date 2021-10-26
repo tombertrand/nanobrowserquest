@@ -84,6 +84,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    BlueArmor: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.BLUEARMOR, "armor");
+        this.lootMessage = "You pick up a sapphire armor";
+      },
+    }),
+
     FrozenArmor: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.FROZENARMOR, "armor");
