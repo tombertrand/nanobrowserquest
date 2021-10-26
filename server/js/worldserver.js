@@ -700,24 +700,23 @@ module.exports = World = cls.Class.extend({
     const mobLevel = Types.getMobLevel(mob.kind);
 
     // Start nerfing at level 4, end exp gains 6 levels higher
-    const EXP_LEVEL_START_RANGE = 6;
-    const EXP_LEVEL_END_RANGE = 12;
+    const EXP_LEVEL_START_RANGE = 4;
+    const EXP_LEVEL_END_RANGE = 8;
     let exp = Types.getMobExp(mob.kind);
-    if (mob.kind !== Types.Entities.BOSS) {
-      const levelDifference = playerLevel - mobLevel;
-      if (levelDifference < 0) {
-        if (levelDifference < -EXP_LEVEL_START_RANGE) {
-          return 0;
-        }
-      } else if (levelDifference > 0) {
-        // Too high level for mob
-        if (levelDifference > EXP_LEVEL_END_RANGE) {
-          return 0;
-        } else if (levelDifference > EXP_LEVEL_START_RANGE) {
-          // Nerf exp per level
-          const multiplier = (levelDifference - EXP_LEVEL_START_RANGE) / 10;
-          exp = exp - Math.ceil(exp * multiplier);
-        }
+
+    const levelDifference = playerLevel - mobLevel;
+    if (levelDifference < 0) {
+      if (levelDifference < -EXP_LEVEL_START_RANGE) {
+        return 0;
+      }
+    } else if (levelDifference > 0) {
+      // Too high level for mob
+      if (levelDifference > EXP_LEVEL_END_RANGE) {
+        return 0;
+      } else if (levelDifference > EXP_LEVEL_START_RANGE) {
+        // Nerf exp per level
+        const multiplier = (levelDifference - EXP_LEVEL_START_RANGE) / 5;
+        exp = exp - Math.ceil(exp * multiplier);
       }
     }
 
