@@ -128,7 +128,6 @@ var Properties = {
       scrollupgrademedium: 13,
       ringbronze: 5,
       ringsilver: 2,
-      beltplated: 5,
     },
     hp: 220,
     armor: 3,
@@ -184,6 +183,52 @@ var Properties = {
     hp: 1100,
     armor: 6,
     weapon: 7,
+  },
+
+  yeti: {
+    drops: {
+      burger: 20,
+      flask: 20,
+      bluearmor: 15,
+      firepotion: 3,
+      scrollupgradehigh: 5,
+      ringsilver: 5,
+      ringgold: 3,
+      // beltiron: 10,
+    },
+    hp: 450,
+    armor: 7,
+    weapon: 8,
+  },
+
+  werewolf: {
+    drops: {
+      burger: 20,
+      flask: 20,
+      bluearmor: 15,
+      firepotion: 3,
+      scrollupgradehigh: 5,
+      ringsilver: 5,
+      ringgold: 3,
+    },
+    hp: 375,
+    armor: 6,
+    weapon: 10,
+  },
+
+  wraith: {
+    drops: {
+      burger: 20,
+      flask: 20,
+      bluearmor: 15,
+      firepotion: 3,
+      scrollupgradehigh: 5,
+      ringsilver: 5,
+      ringgold: 3,
+    },
+    hp: 575,
+    armor: 7,
+    weapon: 9,
   },
 };
 

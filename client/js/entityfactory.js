@@ -74,6 +74,18 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Mobs.Boss(id);
   };
 
+  EntityFactory.builders[Types.Entities.YETI] = function (id) {
+    return new Mobs.Yeti(id);
+  };
+
+  EntityFactory.builders[Types.Entities.WEREWOLF] = function (id) {
+    return new Mobs.Werewolf(id);
+  };
+
+  EntityFactory.builders[Types.Entities.WRAITH] = function (id) {
+    return new Mobs.Wraith(id);
+  };
+
   //===== items ======
 
   EntityFactory.builders[Types.Entities.SWORD2] = function (id) {
@@ -144,6 +156,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.BeltPlated(id);
   };
 
+  EntityFactory.builders[Types.Entities.BELTFROZEN] = function (id) {
+    return new Items.BeltFrozen(id);
+  };
+
   EntityFactory.builders[Types.Entities.FLASK] = function (id) {
     return new Items.Flask(id);
   };
@@ -170,6 +186,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   EntityFactory.builders[Types.Entities.GEMSAPPHIRE] = function (id) {
     return new Items.GemSapphire(id);
+  };
+
+  EntityFactory.builders[Types.Entities.GOLD] = function (id) {
+    return new Items.Gold(id);
   };
 
   EntityFactory.builders[Types.Entities.RINGBRONZE] = function (id) {

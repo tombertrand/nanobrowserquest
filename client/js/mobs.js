@@ -47,26 +47,6 @@ define(['mob', 'timer'], function(Mob, Timer) {
             }
         }),
 
-        Deathknight: Mob.extend({
-            init: function(id) {
-                this._super(id, Types.Entities.DEATHKNIGHT);
-                this.atkSpeed = 50;
-                this.moveSpeed = 220;
-                this.walkSpeed = 100;
-                this.idleSpeed = 450;
-                this.setAttackRate(800);
-                this.aggroRange = 3;
-            },
-
-            idle: function(orientation) {
-                if(!this.hasTarget()) {
-                    this._super(Types.Orientations.DOWN);
-                } else {
-                    this._super(orientation);
-                }
-            }
-        }),
-
         Goblin: Mob.extend({
             init: function(id) {
                 this._super(id, Types.Entities.GOBLIN);
@@ -135,6 +115,26 @@ define(['mob', 'timer'], function(Mob, Timer) {
             }
         }),
 
+        Deathknight: Mob.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.DEATHKNIGHT);
+                this.atkSpeed = 50;
+                this.moveSpeed = 220;
+                this.walkSpeed = 100;
+                this.idleSpeed = 450;
+                this.setAttackRate(800);
+                this.aggroRange = 3;
+            },
+
+            idle: function(orientation) {
+                if(!this.hasTarget()) {
+                    this._super(Types.Orientations.DOWN);
+                } else {
+                    this._super(orientation);
+                }
+            }
+        }),
+
         Boss: Mob.extend({
             init: function(id) {
                 this._super(id, Types.Entities.BOSS);
@@ -153,7 +153,45 @@ define(['mob', 'timer'], function(Mob, Timer) {
                     this._super(orientation);
                 }
             }
-        })
+        }),
+
+        Yeti: Mob.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.YETI);
+                this.moveSpeed = 300;
+                this.atkSpeed = 100;
+                this.idleSpeed = 600;
+            }
+        }),
+
+        Werewolf: Mob.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.WEREWOLF);
+                this.moveSpeed = 200;
+                this.atkSpeed = 80;
+                this.idleSpeed = 600;
+            }
+        }),
+
+        Wraith: Mob.extend({
+            init: function(id) {
+                this._super(id, Types.Entities.WRAITH);
+                this.atkSpeed = 50;
+                this.moveSpeed = 220;
+                this.walkSpeed = 100;
+                this.idleSpeed = 450;
+                this.setAttackRate(800);
+                // this.aggroRange = 3;
+            },
+
+            // idle: function(orientation) {
+            //     if(!this.hasTarget()) {
+            //         this._super(Types.Orientations.DOWN);
+            //     } else {
+            //         this._super(orientation);
+            //     }
+            // }
+        }),
     };
 
     return Mobs;

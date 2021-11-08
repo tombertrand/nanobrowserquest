@@ -704,6 +704,8 @@ module.exports = World = cls.Class.extend({
     const EXP_LEVEL_END_RANGE = 8;
     let exp = Types.getMobExp(mob.kind);
 
+    // @TODO check on boss???
+
     const levelDifference = playerLevel - mobLevel;
     if (levelDifference < 0) {
       if (levelDifference < -EXP_LEVEL_START_RANGE) {
@@ -715,7 +717,7 @@ module.exports = World = cls.Class.extend({
         return 0;
       } else if (levelDifference > EXP_LEVEL_START_RANGE) {
         // Nerf exp per level
-        const multiplier = (levelDifference - EXP_LEVEL_START_RANGE) / 5;
+        const multiplier = (levelDifference - EXP_LEVEL_START_RANGE) / 10;
         exp = exp - Math.ceil(exp * multiplier);
       }
     }
@@ -867,7 +869,7 @@ module.exports = World = cls.Class.extend({
     // var random = Utils.random(3);
     // const items = ["ringbronze", "ringsilver", "ringgold"];
     // return this.addItem(this.createItem(Types.getKindFromString(items[random]), mob.x, mob.y));
-    // return this.addItem(this.createItem(Types.getKindFromString("beltleather"), mob.x, mob.y));
+    // return this.addItem(this.createItem(Types.getKindFromString("gold"), mob.x, mob.y));
 
     //@NOTE 3% chance to drop a NANO potion
     if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {

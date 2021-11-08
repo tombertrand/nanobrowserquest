@@ -119,6 +119,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    BeltFrozen: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.BELTFROZEN, "armor");
+        this.lootMessage = "You pick up a frozen belt";
+      },
+    }),
+
     Flask: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.FLASK, "object");
@@ -165,6 +172,13 @@ define(["item"], function (Item) {
       init: function (id) {
         this._super(id, Types.Entities.GEMSAPPHIRE, "object");
         this.lootMessage = "You pick up a Sapphire";
+      },
+    }),
+
+    Gold: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.GOLD, "object");
+        this.lootMessage = "You pick up some gold";
       },
     }),
 

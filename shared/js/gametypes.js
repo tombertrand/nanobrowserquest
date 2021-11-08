@@ -81,6 +81,9 @@ Types = {
     SKELETON2: 12,
     BOSS: 13,
     DEATHKNIGHT: 14,
+    YETI: 88,
+    WEREWOLF: 89,
+    WRAITH: 90,
 
     // Armors
     FIREFOX: 20,
@@ -97,6 +100,7 @@ Types = {
     // Belts
     BELTLEATHER: 85,
     BELTPLATED: 86,
+    BELTFROZEN: 91,
 
     // Objects
     FLASK: 35,
@@ -109,6 +113,7 @@ Types = {
     GEMAMETHYST: 70,
     GEMTOPAZ: 71,
     GEMSAPPHIRE: 79,
+    GOLD: 92,
 
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
@@ -212,7 +217,7 @@ Types.Entities.Armors = [
   Types.Entities.HORNEDARMOR,
 ];
 
-Types.Entities.Belts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED];
+Types.Entities.Belts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
 
 Types.Entities.Rings = [Types.Entities.RINGBRONZE, Types.Entities.RINGSILVER, Types.Entities.RINGGOLD];
 
@@ -245,6 +250,9 @@ var kinds = {
   spectre: [Types.Entities.SPECTRE, "mob", 53, 21],
   deathknight: [Types.Entities.DEATHKNIGHT, "mob", 65, 24],
   boss: [Types.Entities.BOSS, "mob", 100, 30],
+  yeti: [Types.Entities.YETI, "mob", 140, 34],
+  werewolf: [Types.Entities.WEREWOLF, "mob", 180, 38],
+  wraith: [Types.Entities.WRAITH, "mob", 220, 42],
 
   // kind, type, level, damage
   sword1: [Types.Entities.SWORD1, "weapon", "Dagger", 1, 1],
@@ -269,8 +277,9 @@ var kinds = {
   firefox: [Types.Entities.FIREFOX, "armor"],
 
   // kind, type, level, defense
-  beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 2, 2],
-  beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 6, 4],
+  beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
+  beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 12, 4],
+  beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 18, 10],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -288,6 +297,7 @@ var kinds = {
   gemamethyst: [Types.Entities.GEMAMETHYST, "object"],
   gemtopaz: [Types.Entities.GEMTOPAZ, "object"],
   gemsapphire: [Types.Entities.GEMSAPPHIRE, "object"],
+  gold: [Types.Entities.GOLD, "object"],
   scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "object", "Upgrade scroll", 3],
   scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "object", "Upgrade scroll", 6],
   scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "object", "Superior upgrade scroll", 15],
@@ -349,7 +359,7 @@ Types.rankedArmors = [
   Types.Entities.HORNEDARMOR,
 ];
 
-Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED];
+Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
 
 Types.expForLevel = [
   1,
