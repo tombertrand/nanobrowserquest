@@ -88,8 +88,8 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   //===== items ======
 
-  EntityFactory.builders[Types.Entities.SWORD2] = function (id) {
-    return new Items.Sword2(id);
+  EntityFactory.builders[Types.Entities.SWORD] = function (id) {
+    return new Items.Sword(id);
   };
 
   EntityFactory.builders[Types.Entities.AXE] = function (id) {

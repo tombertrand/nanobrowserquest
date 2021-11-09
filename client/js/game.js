@@ -122,7 +122,7 @@ define([
       // sprites
       this.spriteNames = [
         "hand",
-        "sword",
+        "attack",
         "loot",
         "target",
         "levelup",
@@ -177,15 +177,15 @@ define([
         "hornedarmor",
         "firefox",
         "death",
-        "sword1",
+        "dagger",
         "axe",
         "blueaxe",
         "chest",
-        "sword2",
+        "sword",
         "redsword",
         "bluesword",
         "goldensword",
-        "item-sword2",
+        "item-sword",
         "item-axe",
         "item-blueaxe",
         "item-redsword",
@@ -289,7 +289,7 @@ define([
 
     initCursors: function () {
       this.cursors["hand"] = this.sprites["hand"];
-      this.cursors["sword"] = this.sprites["sword"];
+      this.cursors["attack"] = this.sprites["attack"];
       this.cursors["loot"] = this.sprites["loot"];
       this.cursors["target"] = this.sprites["target"];
       this.cursors["arrow"] = this.sprites["arrow"];
@@ -470,7 +470,7 @@ define([
             if (type === "armor" && $(".item-equip-armor").is(":empty")) {
               self.player.switchArmor(self.sprites["clotharmor"], 1);
             } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
-              self.player.switchWeapon("sword1", 1);
+              self.player.switchWeapon("dagger", 1);
             }
           });
         },
@@ -540,7 +540,7 @@ define([
         .append('<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="104"></div>');
       $("#item-delete").empty().append('<div class="item-slot item-droppable item-delete" data-slot="-1"></div>');
 
-      if (this.player.weaponName !== "sword1") {
+      if (this.player.weaponName !== "dagger") {
         $(".item-equip-weapon").append(
           $("<div />", {
             class: "item-draggable",
@@ -980,13 +980,13 @@ define([
       }
 
       if (this.hoveringPlayer && this.started) {
-        if (this.pvpFlag) this.setCursor("sword");
+        if (this.pvpFlag) this.setCursor("attack");
         else this.setCursor("hand");
         this.hoveringTarget = false;
         this.hoveringMob = false;
         this.targetCellVisible = false;
       } else if (this.hoveringMob && this.started) {
-        this.setCursor("sword");
+        this.setCursor("attack");
         this.hoveringTarget = false;
         this.hoveringPlayer = false;
         this.targetCellVisible = false;

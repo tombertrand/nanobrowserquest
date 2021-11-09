@@ -72,13 +72,16 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 }
               }
 
-              if (!weapon) {
-                weapon = `sword1:1`;
+              if (!weapon || weapon.startsWith("sword1")) {
+                weapon = `dagger:1`;
                 client.hset("u:" + player.name, "weapon", weapon);
               } else {
                 var [playerWeapon, weaponLevel] = (weapon || "").split(":");
                 if (isNaN(weaponLevel)) {
                   weapon = `${playerWeapon}:1`;
+                  client.hset("u:" + player.name, "weapon", weapon);
+                } else if (playerWeapon === "sword2") {
+                  weapon = `sword:${weaponLevel}`;
                   client.hset("u:" + player.name, "weapon", weapon);
                 }
               }
@@ -107,10 +110,11 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   inventory = new Array(INVENTORY_SLOT_COUNT).fill(0);
                   client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
                 } else {
-                  inventory = JSON.parse(replies[6]);
+                  let hasSword2 = /sword2/.test(replies[6]);
+                  inventory = JSON.parse(replies[6].replace(/sword2/g, "sword"));
 
                   // @NOTE Migrate inventory
-                  if (inventory.length < 24) {
+                  if (inventory.length < 24 || hasSword2) {
                     inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
 
                     client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
@@ -220,7 +224,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
           .hset(userKey, "inventory", JSON.stringify(new Array(INVENTORY_SLOT_COUNT).fill(0)))
           .hset(userKey, "nanoPotions", 0)
-          .hset(userKey, "weapon", "sword1:1")
+          .hset(userKey, "weapon", "dagger:1")
           .hset(userKey, "armor", "clotharmor:1")
           .hset(userKey, "belt", null)
           .hset(userKey, "ring1", null)
@@ -231,7 +235,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             log.info("New User: " + player.name);
             player.sendWelcome({
               armor: "clotharmor:1",
-              weapon: "sword1:1",
+              weapon: "dagger:1",
               belt: null,
               exp: 0,
               createdAt: curTime,
@@ -383,7 +387,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     if (location === "inventory") {
       player.send([Types.Messages.INVENTORY, data]);
     } else if (location === "weapon") {
-      let item = "sword1";
+      let item = "dagger";
       let level = 1;
       if (data) {
         [item, level] = data.split(":");
@@ -448,7 +452,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         const fromItem = isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed;
 
         // @NOTE Should never happen but who knows
-        if (["sword1:1", "clotharmor:1"].includes(fromItem) && toSlot !== -1) return;
+        if (["dagger:1", "clotharmor:1"].includes(fromItem) && toSlot !== -1) return;
 
         if (toLocation === fromLocation) {
           const toItem = fromReplyParsed[toSlot - toRange];
@@ -471,7 +475,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               let isFromReplyDone = false;
               let isToReplyDone = false;
 
-              if (["sword1:1", "clotharmor:1"].includes(toItem)) {
+              if (["dagger:1", "clotharmor:1"].includes(toItem)) {
                 toItem = 0;
               }
 

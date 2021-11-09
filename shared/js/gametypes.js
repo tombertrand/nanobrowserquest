@@ -145,8 +145,8 @@ Types = {
     WAYPOINT: 84,
 
     // Weapons
-    SWORD1: 60,
-    SWORD2: 61,
+    DAGGER: 60,
+    SWORD: 61,
     MORNINGSTAR: 64,
     AXE: 65,
     BLUESWORD: 66,
@@ -196,8 +196,8 @@ Types.Entities.Gems = [
 ];
 
 Types.Entities.Weapons = [
-  Types.Entities.SWORD1,
-  Types.Entities.SWORD2,
+  Types.Entities.DAGGER,
+  Types.Entities.SWORD,
   Types.Entities.MORNINGSTAR,
   Types.Entities.BLUESWORD,
   Types.Entities.REDSWORD,
@@ -255,8 +255,8 @@ var kinds = {
   wraith: [Types.Entities.WRAITH, "mob", 220, 42],
 
   // kind, type, level, damage
-  sword1: [Types.Entities.SWORD1, "weapon", "Dagger", 1, 1],
-  sword2: [Types.Entities.SWORD2, "weapon", "Sword", 1, 3],
+  dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
+  sword: [Types.Entities.SWORD, "weapon", "Sword", 1, 3],
   axe: [Types.Entities.AXE, "weapon", "Axe", 2, 5],
   morningstar: [Types.Entities.MORNINGSTAR, "weapon", "Morning Star", 3, 7],
   bluesword: [Types.Entities.BLUESWORD, "weapon", "Frozen Sword", 5, 10],
@@ -278,8 +278,8 @@ var kinds = {
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
-  beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 12, 4],
-  beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 18, 10],
+  beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 9, 4],
+  beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 16, 10],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -337,8 +337,8 @@ var kinds = {
 };
 
 Types.rankedWeapons = [
-  Types.Entities.SWORD1,
-  Types.Entities.SWORD2,
+  Types.Entities.DAGGER,
+  Types.Entities.SWORD,
   Types.Entities.AXE,
   Types.Entities.MORNINGSTAR,
   Types.Entities.BLUESWORD,
@@ -729,7 +729,7 @@ Types.getOrientationAsString = function (orientation) {
 
 Types.getRandomItemKind = function (item) {
   var all = _.union(this.rankedWeapons, this.rankedArmors),
-    forbidden = [Types.Entities.SWORD1, Types.Entities.CLOTHARMOR],
+    forbidden = [Types.Entities.DAGGER, Types.Entities.CLOTHARMOR],
     itemKinds = _.difference(all, forbidden),
     i = Math.floor(Math.random() * _.size(itemKinds));
 

@@ -17,7 +17,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.spriteName = "clotharmor";
       this.armorName = "clotharmor";
       this.armorLevel = 1;
-      this.weaponName = "sword1";
+      this.weaponName = "dagger";
       this.weaponLevel = 1;
       this.beltName = null;
       this.beltLevel = 1;

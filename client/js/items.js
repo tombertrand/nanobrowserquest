@@ -1,8 +1,8 @@
 define(["item"], function (Item) {
   var Items = {
-    Sword2: Item.extend({
+    Sword: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.SWORD2, "weapon");
+        this._super(id, Types.Entities.SWORD, "weapon");
         this.lootMessage = "You pick up a sword";
       },
     }),
