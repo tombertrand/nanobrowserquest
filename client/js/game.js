@@ -442,6 +442,18 @@ define([
             const item = fromItemEl.attr("data-item");
             const level = fromItemEl.attr("data-level");
 
+            const toItem = toItemEl.attr("data-item");
+            const toLevel = toItemEl.attr("data-level");
+
+            if (toItem) {
+              if (
+                [100, 101, 102, 103, 104].includes(fromSlot) &&
+                (!toLevel || !Types.isCorrectTypeForSlot(fromSlot, toItem) || toLevel > self.player.level)
+              ) {
+                return;
+              }
+            }
+
             if (
               [100, 101, 102, 103, 104].includes(toSlot) &&
               Types.getItemRequirement(item, level) > self.player.level

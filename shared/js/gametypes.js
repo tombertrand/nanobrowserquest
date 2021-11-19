@@ -634,6 +634,34 @@ Types.isItem = function (kind) {
   );
 };
 
+Types.Slot = {
+  WEAPON: 100,
+  ARMOR: 101,
+  BELT: 102,
+  RING1: 103,
+  RING2: 104,
+};
+
+Types.isCorrectTypeForSlot = function (slot, item) {
+  switch (slot) {
+    case "weapon":
+    case Types.Slot.WEAPON:
+      return Types.isWeapon(item);
+    case "armor":
+    case Types.Slot.ARMOR:
+      return Types.isArmor(item);
+    case "ring":
+    case "ring1":
+    case "ring2":
+    case Types.Slot.RING1:
+    case Types.Slot.RING2:
+      return Types.isRing(item);
+    case "belt":
+    case Types.Slot.BELT:
+      return Types.isBelt(item);
+  }
+};
+
 Types.isHealingItem = function (kind) {
   return kind === Types.Entities.FLASK || kind === Types.Entities.BURGER || kind === Types.Entities.NANOPOTION;
 };

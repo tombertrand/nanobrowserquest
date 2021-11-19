@@ -7,12 +7,7 @@ const bcrypt = require("bcrypt");
 const { Sentry } = require("../sentry");
 
 const INVENTORY_SLOT_COUNT = 24;
-const WEAPON_SLOT = 100;
-const ARMOR_SLOT = 101;
-const BELT_SLOT = 102;
-const RING1_SLOT = 103;
-const RING2_SLOT = 104;
-const DELETE_SLOT = -1;
+// const DELETE_SLOT = -1;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
 const ACHIEVEMENT_COUNT = 24;
@@ -366,15 +361,15 @@ module.exports = DatabaseHandler = cls.Class.extend({
   getItemLocation: function (slot) {
     if (slot < INVENTORY_SLOT_COUNT) {
       return ["inventory", 0];
-    } else if (slot === WEAPON_SLOT) {
+    } else if (slot === Types.Slot.WEAPON) {
       return ["weapon", 0];
-    } else if (slot === ARMOR_SLOT) {
+    } else if (slot === Types.Slot.ARMOR) {
       return ["armor", 0];
-    } else if (slot === BELT_SLOT) {
+    } else if (slot === Types.Slot.BELT) {
       return ["belt", 0];
-    } else if (slot === RING1_SLOT) {
+    } else if (slot === Types.Slot.RING1) {
       return ["ring1", 0];
-    } else if (slot === RING2_SLOT) {
+    } else if (slot === Types.Slot.RING2) {
       return ["ring2", 0];
     } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + 10) {
       return ["upgrade", UPGRADE_SLOT_RANGE];
@@ -515,6 +510,16 @@ module.exports = DatabaseHandler = cls.Class.extend({
               } else if (["weapon", "armor", "belt", "ring1", "ring2"].includes(toLocation)) {
                 const [item, fromLevel] = fromItem.split(":");
                 if (Types.getItemRequirement(item, fromLevel) > player.level) {
+                  isFromReplyDone = true;
+                  isToReplyDone = true;
+                }
+              } else if (["weapon", "armor", "belt", "ring1", "ring2"].includes(fromLocation)) {
+                const [item, toLevel] = toItem.split(":");
+
+                if (
+                  Types.getItemRequirement(item, toLevel) > player.level ||
+                  !Types.isCorrectTypeForSlot(fromLocation, item)
+                ) {
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }
