@@ -152,7 +152,8 @@ define(["character"], function (Character) {
       "Upgrading an item becomes increasingly difficult",
     ],
 
-    waypoint: ["The second chapter evil is growing ...", "Brrrrr"],
+    waypointx: ["The second chapter evil is growing ...", "Brrrrr"],
+    waypointn: ["Back to town!"],
 
     coder: [
       "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",

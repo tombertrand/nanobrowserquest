@@ -306,8 +306,12 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new NPCs.Anvil(id);
   };
 
-  EntityFactory.builders[Types.Entities.WAYPOINT] = function (id) {
-    return new NPCs.Waypoint(id);
+  EntityFactory.builders[Types.Entities.WAYPOINTX] = function (id) {
+    return new NPCs.Waypointx(id);
+  };
+
+  EntityFactory.builders[Types.Entities.WAYPOINTN] = function (id) {
+    return new NPCs.Waypointn(id);
   };
 
   return EntityFactory;

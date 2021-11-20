@@ -161,7 +161,8 @@ define([
         "anvil",
         "anvil-success",
         "anvil-fail",
-        "waypoint",
+        "waypointx",
+        "waypointn",
         "beachnpc",
         "forestnpc",
         "desertnpc",
@@ -894,17 +895,20 @@ define([
         },
         SKELETON_KEY: {
           id: 27,
-          name: "Uncommon Key",
+          name: "Unique Key",
           desc: "Find the skeleton key",
           hidden: false,
           nano: 10,
         },
-        INDIANA_JONES: {
-          id: 28,
-          name: "Indiana Jones",
-          desc: "Recover the lost artifact",
+        BLOODLUST: {
+          id: 31,
+          name: "Bloodlust",
+          desc: "Defeat 25 Werewolves",
           hidden: false,
-          nano: 12,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getWerewolfCount() >= 25;
+          },
         },
         SATOSHI: {
           id: 29,
@@ -920,19 +924,16 @@ define([
           hidden: false,
           nano: 6,
         },
-        BLOODLUST: {
-          id: 31,
-          name: "Bloodlust",
-          desc: "Defeat 25 Werewolves",
+        INDIANA_JONES: {
+          id: 28,
+          name: "Indiana Jones",
+          desc: "Reassemble the lost artifact",
           hidden: false,
-          nano: 15,
-          isCompleted: function () {
-            return self.storage.getWerewolfCount() >= 25;
-          },
+          nano: 12,
         },
         MYTH_OR_REAL: {
           id: 32,
-          name: "Myth or Real?",
+          name: "Myth or Real",
           desc: "Defeat 25 Yetis",
           hidden: false,
           nano: 15,
@@ -952,7 +953,7 @@ define([
         },
         TRUE_LEADER: {
           id: 34,
-          name: "True Leader",
+          name: "Bones and Flesh",
           desc: "Kill the undead leader",
           hidden: false,
           nano: 18,

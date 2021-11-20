@@ -142,7 +142,8 @@ Types = {
     LAVANPC: 54,
     CODER: 55,
     CARLOSMATOS: 73,
-    WAYPOINT: 84,
+    WAYPOINTX: 84,
+    WAYPOINTN: 93,
 
     // Weapons
     DAGGER: 60,
@@ -320,7 +321,8 @@ var kinds = {
   lavanpc: [Types.Entities.LAVANPC, "npc"],
   octocat: [Types.Entities.OCTOCAT, "npc"],
   anvil: [Types.Entities.ANVIL, "npc"],
-  waypoint: [Types.Entities.WAYPOINT, "npc"],
+  waypointx: [Types.Entities.WAYPOINTX, "npc"],
+  waypointn: [Types.Entities.WAYPOINTN, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
