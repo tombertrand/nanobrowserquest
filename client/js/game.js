@@ -854,7 +854,7 @@ define([
         HERO: {
           id: 21,
           name: "Hero",
-          desc: "Defeat the final boss to get the payout",
+          desc: "Defeat the Skeleton King",
           nano: 25,
         },
         FOXY: {
@@ -877,6 +877,133 @@ define([
           desc: "Take some singing lessons",
           hidden: true,
           nano: 6,
+        },
+        XNO: {
+          id: 25,
+          name: "XNO",
+          desc: "Complete your first purchase!",
+          hidden: false,
+          nano: 133,
+        },
+        WAYPOINT: {
+          id: 26,
+          name: "BrrRRrr",
+          desc: "Enter the freezing lands",
+          hidden: false,
+          nano: 12,
+        },
+        SKELETON_KEY: {
+          id: 27,
+          name: "Uncommon Key",
+          desc: "Find the skeleton key",
+          hidden: false,
+          nano: 10,
+        },
+        INDIANA_JONES: {
+          id: 28,
+          name: "Indiana Jones",
+          desc: "Recover the lost artifact",
+          hidden: false,
+          nano: 12,
+        },
+        SATOSHI: {
+          id: 29,
+          name: "Satoshi",
+          desc: "Have a chat with Satoshi Nakamoto",
+          hidden: false,
+          nano: 10,
+        },
+        WEN: {
+          id: 30,
+          name: "WEN?",
+          desc: "Find a very very large announcement",
+          hidden: false,
+          nano: 6,
+        },
+        BLOODLUST: {
+          id: 31,
+          name: "Bloodlust",
+          desc: "Defeat 25 Werewolves",
+          hidden: false,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getWerewolfCount() >= 25;
+          },
+        },
+        MYTH_OR_REAL: {
+          id: 32,
+          name: "Myth or Real?",
+          desc: "Defeat 25 Yetis",
+          hidden: false,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getYetiCount() >= 25;
+          },
+        },
+        RIP: {
+          id: 33,
+          name: "R.I.P.",
+          desc: "Kill 25 Undead Guardians",
+          hidden: false,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getUndeadGuardianCount() >= 25;
+          },
+        },
+        TRUE_LEADER: {
+          id: 34,
+          name: "True Leader",
+          desc: "Kill the undead leader",
+          hidden: false,
+          nano: 18,
+        },
+        WALK_ON_WATER: {
+          id: 35,
+          name: "Walk on Water",
+          desc: "Make your way though the floating ice",
+          hidden: false,
+          nano: 8,
+        },
+        GHOSTBUSTER: {
+          id: 36,
+          name: "Ghostbusters",
+          desc: "Kill 25 Wraiths",
+          hidden: false,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getWraithCount() >= 25;
+          },
+        },
+        NECROMANCER: {
+          id: 37,
+          name: "Necromancer",
+          desc: "Defeat the Necromancer warrior",
+          hidden: false,
+          nano: 36,
+        },
+        AGAINST_THE_ODDS: {
+          id: 38,
+          name: "Against the Odds",
+          desc: "Upgrade an item to +7",
+          hidden: true,
+          nano: 13,
+        },
+        INUIT: {
+          id: 39,
+          name: "Like an Inuit",
+          desc: "Placeholder1",
+          hidden: true,
+          nano: 10,
+        },
+        DEAD_NEVER_DIE: {
+          id: 40,
+          name: "What is dead may never die",
+          desc: "Kill 50 zombies",
+          hidden: true,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getZombieCount() >= 50;
+          },
         },
       };
 

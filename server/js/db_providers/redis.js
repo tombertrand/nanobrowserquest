@@ -15,7 +15,7 @@ const RING2_SLOT = 104;
 const DELETE_SLOT = -1;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
-const ACHIEVEMENT_COUNT = 24;
+const ACHIEVEMENT_COUNT = 40;
 const GEM_COUNT = 5;
 
 module.exports = DatabaseHandler = cls.Class.extend({
@@ -99,6 +99,11 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
                   client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
                 }
+
+                if (achievement.length < ACHIEVEMENT_COUNT) {
+                  achievement = achievement.concat(new Array(ACHIEVEMENT_COUNT - achievement.length).fill(0));
+                  client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
+                }
               } catch (err) {
                 // invalid json
                 Sentry.captureException(err);
@@ -114,7 +119,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   inventory = JSON.parse(replies[6].replace(/sword2/g, "sword"));
 
                   // @NOTE Migrate inventory
-                  if (inventory.length < 24 || hasSword2) {
+                  if (inventory.length < INVENTORY_SLOT_COUNT || hasSword2) {
                     inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
 
                     client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));

@@ -27,11 +27,16 @@ define(function () {
           ratCount: 0,
           skeletonCount: 0,
           spectreCount: 0,
+          yetiCount: 0,
+          werewolfCount: 0,
+          undeadGuardianCount: 0,
+          wraithCount: 0,
+          zombieCount: 0,
           totalKills: 0,
           totalDmg: 0,
           totalRevives: 0,
         },
-        achievement: new Array(24).fill(0),
+        achievement: new Array(40).fill(0),
       };
     },
 
@@ -184,6 +189,86 @@ define(function () {
 
       if (this.data.achievements.spectreCount < 10) {
         this.data.achievements.spectreCount++;
+        this.save();
+      }
+    },
+
+    // Werewolf Collector
+    getWerewolfCount: function () {
+      return this.data.achievements.werewolfCount;
+    },
+
+    incrementWerewolfCount: function () {
+      if (!this.data.achievements.werewolfCount) {
+        this.data.achievements.werewolfCount = 0;
+      }
+
+      if (this.data.achievements.werewolfCount < 10) {
+        this.data.achievements.werewolfCount++;
+        this.save();
+      }
+    },
+
+    // Yeti Collector
+    getYetiCount: function () {
+      return this.data.achievements.yetiCount;
+    },
+
+    incrementYetiCount: function () {
+      if (!this.data.achievements.yetiCount) {
+        this.data.achievements.yetiCount = 0;
+      }
+
+      if (this.data.achievements.yetiCount < 10) {
+        this.data.achievements.yetiCount++;
+        this.save();
+      }
+    },
+
+    // Undead Guardian collector
+    getUndeadGuardianCount: function () {
+      return this.data.achievements.undeadGuardianCount;
+    },
+
+    incrementUndeadGuardianCount: function () {
+      if (!this.data.achievements.undeadGuardianCount) {
+        this.data.achievements.undeadGuardianCount = 0;
+      }
+
+      if (this.data.achievements.undeadGuardianCount < 10) {
+        this.data.achievements.undeadGuardianCount++;
+        this.save();
+      }
+    },
+
+    // Wraith collector
+    getWraithCount: function () {
+      return this.data.achievements.wraithCount;
+    },
+
+    incrementWraithCount: function () {
+      if (!this.data.achievements.wraithCount) {
+        this.data.achievements.wraithCount = 0;
+      }
+
+      if (this.data.achievements.wraithCount < 10) {
+        this.data.achievements.wraithCount++;
+        this.save();
+      }
+    },
+
+    // Zombie collector
+    getZombieCount: function () {
+      return this.data.achievements.zombieCount;
+    },
+
+    incrementZombieCount: function () {
+      if (!this.data.achievements.zombieCount) {
+        this.data.achievements.zombieCount = 0;
+      }
+
+      if (this.data.achievements.zombieCount < 10) {
+        this.data.achievements.zombieCount++;
         this.save();
       }
     },
