@@ -909,7 +909,8 @@ define([
         .map((unlocked, index) => (unlocked ? index + 1 : false))
         .filter(Boolean);
       const totalNano = unlockedAchievementIds.reduce((acc, id) => {
-        acc += Object.values(self.achievements)[id - 1].nano;
+        const achievement = Object.values(self.achievements)[id - 1];
+        acc += achievement ? achievement.nano : 0;
         return acc;
       }, 0);
 
