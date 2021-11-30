@@ -132,8 +132,10 @@ define([
         "rat",
         "skeleton",
         "skeleton2",
+        "skeleton3",
         "spectre",
         "boss",
+        "undeadleader",
         "deathknight",
         "ogre",
         "yeti",
@@ -186,12 +188,14 @@ define([
         "redsword",
         "bluesword",
         "goldensword",
+        "frozensword",
         "item-sword",
         "item-axe",
         "item-blueaxe",
         "item-redsword",
         "item-bluesword",
         "item-goldensword",
+        "item-frozensword",
         "item-leatherarmor",
         "item-mailarmor",
         "item-platearmor",
@@ -217,6 +221,11 @@ define([
         "item-scrollupgradelow",
         "item-scrollupgrademedium",
         "item-scrollupgradehigh",
+        "item-skeletonkey",
+        "item-raiblockstl",
+        "item-raiblockstr",
+        "item-raiblocksbl",
+        "item-raiblocksbr",
         "item-cake",
         "item-burger",
         "morningstar",
@@ -953,7 +962,7 @@ define([
         },
         TRUE_LEADER: {
           id: 34,
-          name: "Bones and Flesh",
+          name: "What is dead may never die",
           desc: "Kill the undead leader",
           hidden: false,
           nano: 18,
@@ -991,15 +1000,15 @@ define([
         },
         INUIT: {
           id: 39,
-          name: "Like an Inuit",
-          desc: "Placeholder1",
+          name: "Barely Alive",
+          desc: "Kill a monster with 5% or less HP left",
           hidden: true,
           nano: 10,
         },
         DEAD_NEVER_DIE: {
           id: 40,
-          name: "What is dead may never die",
-          desc: "Kill 50 zombies",
+          name: "Not Safu",
+          desc: "Be surrounded by 20 zombies ",
           hidden: true,
           nano: 15,
           isCompleted: function () {
@@ -2292,6 +2301,15 @@ define([
             self.showNotification("You killed the skeleton king");
           }
 
+          if (mobName === "skeleton3") {
+            mobName = "undead guardian";
+          }
+
+          if (mobName === "undeadleader") {
+            mobName = "undead leader";
+          }
+
+
           self.storage.incrementTotalKills();
           self.tryUnlockingAchievement("HUNTER");
 
@@ -2309,6 +2327,7 @@ define([
               self.client.sendRequestPayout();
             });
           }
+          // @TODO Add quest check here!
         });
 
         self.client.onPlayerChangeHealth(function (points, isRegen) {

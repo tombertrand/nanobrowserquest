@@ -86,6 +86,14 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Mobs.Wraith(id);
   };
 
+  EntityFactory.builders[Types.Entities.SKELETON3] = function (id) {
+    return new Mobs.Skeleton3(id);
+  };
+
+  EntityFactory.builders[Types.Entities.UNDEADLEADER] = function (id) {
+    return new Mobs.UndeadLeader(id);
+  };
+
   //===== items ======
 
   EntityFactory.builders[Types.Entities.SWORD] = function (id) {
@@ -110,6 +118,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   EntityFactory.builders[Types.Entities.GOLDENSWORD] = function (id) {
     return new Items.GoldenSword(id);
+  };
+
+  EntityFactory.builders[Types.Entities.FROZENSWORD] = function (id) {
+    return new Items.FrozenSword(id);
   };
 
   EntityFactory.builders[Types.Entities.MORNINGSTAR] = function (id) {
@@ -214,6 +226,26 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   EntityFactory.builders[Types.Entities.SCROLLUPGRADEHIGH] = function (id) {
     return new Items.ScrollUpgradeHigh(id);
+  };
+
+  EntityFactory.builders[Types.Entities.SKELETONKEY] = function (id) {
+    return new Items.SkeletonKey(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RAIBLOCKSTL] = function (id) {
+    return new Items.RaiblocksTL(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RAIBLOCKSTR] = function (id) {
+    return new Items.RaiblocksTR(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RAIBLOCKSBL] = function (id) {
+    return new Items.RaiblocksBL(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RAIBLOCKSBR] = function (id) {
+    return new Items.RaiblocksBR(id);
   };
 
   EntityFactory.builders[Types.Entities.FIREPOTION] = function (id) {

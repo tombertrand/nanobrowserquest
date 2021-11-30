@@ -84,6 +84,8 @@ Types = {
     YETI: 88,
     WEREWOLF: 89,
     WRAITH: 90,
+    SKELETON3: 99,
+    UNDEADLEADER: 101,
 
     // Armors
     FIREFOX: 20,
@@ -114,6 +116,11 @@ Types = {
     GEMTOPAZ: 71,
     GEMSAPPHIRE: 79,
     GOLD: 92,
+    SKELETONKEY: 94,
+    RAIBLOCKSTL: 95,
+    RAIBLOCKSTR: 96,
+    RAIBLOCKSBL: 97,
+    RAIBLOCKSBR: 98,
 
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
@@ -154,6 +161,7 @@ Types = {
     REDSWORD: 62,
     GOLDENSWORD: 63,
     BLUEAXE: 77,
+    FROZENSWORD: 100,
   },
 
   Orientations: {
@@ -204,6 +212,7 @@ Types.Entities.Weapons = [
   Types.Entities.REDSWORD,
   Types.Entities.GOLDENSWORD,
   Types.Entities.BLUEAXE,
+  Types.Entities.FROZENSWORD,
 ];
 
 Types.Entities.Armors = [
@@ -254,6 +263,8 @@ var kinds = {
   yeti: [Types.Entities.YETI, "mob", 140, 34],
   werewolf: [Types.Entities.WEREWOLF, "mob", 180, 38],
   wraith: [Types.Entities.WRAITH, "mob", 220, 42],
+  skeleton3: [Types.Entities.SKELETON3, "mob", 160, 40],
+  undeadleader: [Types.Entities.UNDEADLEADER, "mob", 300, 50],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
@@ -264,6 +275,7 @@ var kinds = {
   redsword: [Types.Entities.REDSWORD, "weapon", "Blazing Sword", 7, 15],
   goldensword: [Types.Entities.GOLDENSWORD, "weapon", "Golden Sword", 10, 20],
   blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 12, 22],
+  frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 14, 24],
 
   // kind, type, level, defense
   clotharmor: [Types.Entities.CLOTHARMOR, "armor", "Cloth Armor", 1, 1],
@@ -302,6 +314,11 @@ var kinds = {
   scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "object", "Upgrade scroll", 3],
   scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "object", "Upgrade scroll", 6],
   scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "object", "Superior upgrade scroll", 15],
+  skeletonkey: [Types.Entities.SKELETONKEY, "object", "Skeleton Key"],
+  raiblockstl: [Types.Entities.RAIBLOCKSTL, "object", "Raiblocks artifact"],
+  raiblockstr: [Types.Entities.RAIBLOCKSTR, "object", "Raiblocks artifact"],
+  raiblocksbl: [Types.Entities.RAIBLOCKSBL, "object", "Raiblocks artifact"],
+  raiblocksbr: [Types.Entities.RAIBLOCKSBR, "object", "Raiblocks artifact"],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -671,6 +688,10 @@ Types.getAliasFromName = function (name) {
     return "death knight";
   } else if (name === "boss") {
     return "skeleton king";
+  } else if (name === "skeleton3") {
+    return "Undead guardian";
+  } else if (name === "undeadleader") {
+    return "Undead leader";
   }
   return name;
 };

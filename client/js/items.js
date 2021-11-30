@@ -14,6 +14,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    MorningStar: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.MORNINGSTAR, "weapon");
+        this.lootMessage = "You pick up a morning star";
+      },
+    }),
+
     BlueAxe: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.BLUEAXE, "weapon");
@@ -42,10 +49,10 @@ define(["item"], function (Item) {
       },
     }),
 
-    MorningStar: Item.extend({
+    FrozenSword: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.MORNINGSTAR, "weapon");
-        this.lootMessage = "You pick up a morning star";
+        this._super(id, Types.Entities.FROZENSWORD, "weapon");
+        this.lootMessage = "You pick up a Sapphire sword";
       },
     }),
 
@@ -221,6 +228,41 @@ define(["item"], function (Item) {
       init: function (id) {
         this._super(id, Types.Entities.SCROLLUPGRADEHIGH, "object");
         this.lootMessage = "You pick up a high class upgrade scroll";
+      },
+    }),
+
+    SkeletonKey: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.SKELETONKEY, "object");
+        this.lootMessage = "You pick up a skeleton key";
+      },
+    }),
+
+    RaiblocksTL: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RAIBLOCKSTL, "object");
+        this.lootMessage = "You pick up a Raiblocks artifact part";
+      },
+    }),
+
+    RaiblocksBL: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RAIBLOCKSBL, "object");
+        this.lootMessage = "You pick up a Raiblocks artifact part";
+      },
+    }),
+
+    RaiblocksBR: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RAIBLOCKSBR, "object");
+        this.lootMessage = "You pick up a Raiblocks artifact part";
+      },
+    }),
+
+    RaiblocksTR: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RAIBLOCKSTR, "object");
+        this.lootMessage = "You pick up a Raiblocks artifact part";
       },
     }),
 

@@ -216,6 +216,30 @@ var Properties = {
     weapon: 10,
   },
 
+  skeleton3: {
+    drops: {
+      flask: 5,
+      hornedarmor: 10,
+      scrollupgradehigh: 10,
+      ringsilver: 2,
+      ringgold: 5,
+    },
+    hp: 220,
+    armor: 8,
+    weapon: 8,
+  },
+
+  undeadleader: {
+    drops: {
+      burger: 85,
+      ringgold: 5,
+      scrollupgradehigh: 10,
+    },
+    hp: 1500,
+    armor: 10,
+    weapon: 12,
+  },
+
   wraith: {
     drops: {
       burger: 20,
