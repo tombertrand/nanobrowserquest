@@ -1,18 +1,18 @@
 {
-	"id": "undeadleader",
-	"width": 64,
-	"height": 72,
+	"id": "zombie",
+	"width": 42,
+	"height": 42,
 	"animations": {
 		"atk_right": {
-			"length": 6,
+			"length": 5,
 			"row": 0
 		},
 		"walk_right": {
-			"length": 3,
+			"length": 4,
 			"row": 1
 		},
 		"idle_right": {
-			"length": 4,
+			"length": 2,
 			"row": 2
 		},
 		"atk_up": {
@@ -24,11 +24,11 @@
 			"row": 4
 		},
 		"idle_up": {
-			"length": 4,
+			"length": 2,
 			"row": 5
 		},
 		"atk_down": {
-			"length": 6,
+			"length": 5,
 			"row": 6
 		},
 		"walk_down": {
@@ -36,14 +36,10 @@
 			"row": 7
 		},
 		"idle_down": {
-			"length": 4,
+			"length": 2,
 			"row": 8
-		},
-		"Group 5": {
-			"length": 3,
-			"row": 9
 		}
 	},
-	"offset_x": -24,
-	"offset_y": -36
+	"offset_x": -13,
+	"offset_y": -17
 }

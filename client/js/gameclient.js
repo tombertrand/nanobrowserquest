@@ -204,7 +204,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         inventory = data[13],
         hash = data[14],
         nanoPotions = data[15],
-        gems = data[16];
+        gems = data[16],
+        artifact = data[17];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -224,6 +225,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           hash,
           nanoPotions,
           gems,
+          artifact,
         });
       }
     },

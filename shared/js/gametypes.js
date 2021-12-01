@@ -85,7 +85,12 @@ Types = {
     WEREWOLF: 89,
     WRAITH: 90,
     SKELETON3: 99,
-    UNDEADLEADER: 101,
+    SKELETONLEADER: 101,
+    GOBLIN2: 102,
+    SNAKE2: 103,
+    BAT2: 104,
+    ZOMBIE: 105,
+    NECROMANCER: 106,
 
     // Armors
     FIREFOX: 20,
@@ -161,6 +166,7 @@ Types = {
     REDSWORD: 62,
     GOLDENSWORD: 63,
     BLUEAXE: 77,
+    BLUEMORNINGSTAR: 107,
     FROZENSWORD: 100,
   },
 
@@ -204,6 +210,13 @@ Types.Entities.Gems = [
   Types.Entities.GEMSAPPHIRE,
 ];
 
+Types.Entities.Artifact = [
+  Types.Entities.RAIBLOCKSTL,
+  Types.Entities.RAIBLOCKSTR,
+  Types.Entities.RAIBLOCKSBL,
+  Types.Entities.RAIBLOCKSBR,
+];
+
 Types.Entities.Weapons = [
   Types.Entities.DAGGER,
   Types.Entities.SWORD,
@@ -212,6 +225,7 @@ Types.Entities.Weapons = [
   Types.Entities.REDSWORD,
   Types.Entities.GOLDENSWORD,
   Types.Entities.BLUEAXE,
+  Types.Entities.BLUEMORNINGSTAR,
   Types.Entities.FROZENSWORD,
 ];
 
@@ -223,8 +237,8 @@ Types.Entities.Armors = [
   Types.Entities.REDARMOR,
   Types.Entities.GOLDENARMOR,
   Types.Entities.BLUEARMOR,
-  Types.Entities.FROZENARMOR,
   Types.Entities.HORNEDARMOR,
+  Types.Entities.FROZENARMOR,
 ];
 
 Types.Entities.Belts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
@@ -241,6 +255,17 @@ Types.getGemNameFromKind = function (kind) {
   };
 
   return gems[kind] || kind;
+};
+
+Types.getArtifactNameFromKind = function (kind) {
+  const artifact = {
+    [Types.Entities.RAIBLOCKSTL]: "Raiblocks top left",
+    [Types.Entities.RAIBLOCKSTR]: "Raiblocks top right",
+    [Types.Entities.RAIBLOCKSBL]: "Raiblocks bottom left",
+    [Types.Entities.RAIBLOCKSBR]: "Raiblocks bottom right",
+  };
+
+  return artifact[kind] || kind;
 };
 
 var kinds = {
@@ -260,11 +285,16 @@ var kinds = {
   spectre: [Types.Entities.SPECTRE, "mob", 53, 21],
   deathknight: [Types.Entities.DEATHKNIGHT, "mob", 65, 24],
   boss: [Types.Entities.BOSS, "mob", 100, 30],
+  bat2: [Types.Entities.BAT2, "mob", 90, 24],
+  goblin2: [Types.Entities.GOBLIN2, "mob", 100, 30],
   yeti: [Types.Entities.YETI, "mob", 140, 34],
   werewolf: [Types.Entities.WEREWOLF, "mob", 180, 38],
-  wraith: [Types.Entities.WRAITH, "mob", 220, 42],
   skeleton3: [Types.Entities.SKELETON3, "mob", 160, 40],
-  undeadleader: [Types.Entities.UNDEADLEADER, "mob", 300, 50],
+  skeletonleader: [Types.Entities.SKELETONLEADER, "mob", 300, 50],
+  snake2: [Types.Entities.SNAKE2, "mob", 200, 40],
+  wraith: [Types.Entities.WRAITH, "mob", 220, 42],
+  zombie: [Types.Entities.ZOMBIE, "mob", 300, 42],
+  necromancer: [Types.Entities.NECROMANCER, "mob", 220, 50],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
@@ -274,8 +304,9 @@ var kinds = {
   bluesword: [Types.Entities.BLUESWORD, "weapon", "Frozen Sword", 5, 10],
   redsword: [Types.Entities.REDSWORD, "weapon", "Blazing Sword", 7, 15],
   goldensword: [Types.Entities.GOLDENSWORD, "weapon", "Golden Sword", 10, 20],
-  blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 12, 22],
-  frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 14, 24],
+  blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 12, 24],
+  bluemorningstar: [Types.Entities.BLUEMORNINGSTAR, "weapon", "Frozen Morning Star", 14, 26],
+  frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 16, 30],
 
   // kind, type, level, defense
   clotharmor: [Types.Entities.CLOTHARMOR, "armor", "Cloth Armor", 1, 1],
@@ -285,8 +316,8 @@ var kinds = {
   redarmor: [Types.Entities.REDARMOR, "armor", "Ruby Armor", 7, 15],
   goldenarmor: [Types.Entities.GOLDENARMOR, "armor", "Golden Armor", 10, 20],
   bluearmor: [Types.Entities.BLUEARMOR, "armor", "Sapphire Armor", 14, 24],
-  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 14, 28],
-  hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 14, 30],
+  hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 14, 28],
+  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 14, 30],
   firefox: [Types.Entities.FIREFOX, "armor"],
 
   // kind, type, level, defense
@@ -364,6 +395,8 @@ Types.rankedWeapons = [
   Types.Entities.REDSWORD,
   Types.Entities.GOLDENSWORD,
   Types.Entities.BLUEAXE,
+  Types.Entities.BLUEMORNINGSTAR,
+  Types.Entities.FROZENSWORD,
 ];
 
 Types.rankedArmors = [
@@ -374,8 +407,8 @@ Types.rankedArmors = [
   Types.Entities.REDARMOR,
   Types.Entities.GOLDENARMOR,
   Types.Entities.BLUEARMOR,
-  Types.Entities.FROZENARMOR,
   Types.Entities.HORNEDARMOR,
+  Types.Entities.FROZENARMOR,
 ];
 
 Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
@@ -689,9 +722,9 @@ Types.getAliasFromName = function (name) {
   } else if (name === "boss") {
     return "skeleton king";
   } else if (name === "skeleton3") {
-    return "Undead guardian";
-  } else if (name === "undeadleader") {
-    return "Undead leader";
+    return "skeleton guard";
+  } else if (name === "skeletonleader") {
+    return "skeleton leader";
   }
   return name;
 };

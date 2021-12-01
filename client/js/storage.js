@@ -29,7 +29,7 @@ define(function () {
           spectreCount: 0,
           yetiCount: 0,
           werewolfCount: 0,
-          undeadGuardianCount: 0,
+          skeleton3Count: 0,
           wraithCount: 0,
           zombieCount: 0,
           totalKills: 0,
@@ -193,7 +193,7 @@ define(function () {
       }
     },
 
-    // Werewolf Collector
+    // Bloodlust
     getWerewolfCount: function () {
       return this.data.achievements.werewolfCount;
     },
@@ -209,7 +209,7 @@ define(function () {
       }
     },
 
-    // Yeti Collector
+    // Myth or Real
     getYetiCount: function () {
       return this.data.achievements.yetiCount;
     },
@@ -225,23 +225,23 @@ define(function () {
       }
     },
 
-    // Undead Guardian collector
-    getUndeadGuardianCount: function () {
-      return this.data.achievements.undeadGuardianCount;
+    // R.I.P.
+    getSkeleton3Count: function () {
+      return this.data.achievements.skeleton3Count;
     },
 
-    incrementUndeadGuardianCount: function () {
-      if (!this.data.achievements.undeadGuardianCount) {
-        this.data.achievements.undeadGuardianCount = 0;
+    incrementSkeleton3Count: function () {
+      if (!this.data.achievements.skeleton3Count) {
+        this.data.achievements.skeleton3Count = 0;
       }
 
-      if (this.data.achievements.undeadGuardianCount < 10) {
-        this.data.achievements.undeadGuardianCount++;
+      if (this.data.achievements.skeleton3Count < 10) {
+        this.data.achievements.skeleton3Count++;
         this.save();
       }
     },
 
-    // Wraith collector
+    // Ghostbusters
     getWraithCount: function () {
       return this.data.achievements.wraithCount;
     },
@@ -253,22 +253,6 @@ define(function () {
 
       if (this.data.achievements.wraithCount < 10) {
         this.data.achievements.wraithCount++;
-        this.save();
-      }
-    },
-
-    // Zombie collector
-    getZombieCount: function () {
-      return this.data.achievements.zombieCount;
-    },
-
-    incrementZombieCount: function () {
-      if (!this.data.achievements.zombieCount) {
-        this.data.achievements.zombieCount = 0;
-      }
-
-      if (this.data.achievements.zombieCount < 10) {
-        this.data.achievements.zombieCount++;
         this.save();
       }
     },

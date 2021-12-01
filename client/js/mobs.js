@@ -153,6 +153,27 @@ define(["mob", "timer"], function (Mob, Timer) {
       },
     }),
 
+    Bat2: Mob.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.BAT2);
+        this.moveSpeed = 120;
+        this.atkSpeed = 90;
+        this.idleSpeed = 90;
+        this.walkSpeed = 85;
+        this.isAggressive = false;
+      },
+    }),
+
+    Goblin2: Mob.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.GOBLIN2);
+        this.moveSpeed = 150;
+        this.atkSpeed = 60;
+        this.idleSpeed = 600;
+        this.setAttackRate(700);
+      },
+    }),
+
     Yeti: Mob.extend({
       init: function (id) {
         this._super(id, Types.Entities.YETI);
@@ -168,6 +189,50 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.moveSpeed = 200;
         this.atkSpeed = 80;
         this.idleSpeed = 600;
+      },
+    }),
+
+    Skeleton3: Mob.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.SKELETON3);
+        this.moveSpeed = 200;
+        this.atkSpeed = 100;
+        this.idleSpeed = 800;
+        this.walkSpeed = 200;
+        this.shadowOffsetY = 1;
+        this.aggroRange = 2;
+        this.setAttackRate(1300);
+      },
+    }),
+
+    SkeletonLeader: Mob.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.SKELETONLEADER);
+        this.moveSpeed = 300;
+        this.atkSpeed = 50;
+        this.idleSpeed = 400;
+        this.atkRate = 2000;
+        this.attackCooldown = new Timer(this.atkRate);
+        this.aggroRange = 3;
+      },
+
+      idle: function (orientation) {
+        if (!this.hasTarget()) {
+          this._super(Types.Orientations.DOWN);
+        } else {
+          this._super(orientation);
+        }
+      },
+    }),
+
+    Snake2: Mob.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.SNAKE2);
+        this.moveSpeed = 200;
+        this.atkSpeed = 40;
+        this.idleSpeed = 250;
+        this.walkSpeed = 100;
+        this.shadowOffsetY = -4;
       },
     }),
 
@@ -191,22 +256,21 @@ define(["mob", "timer"], function (Mob, Timer) {
       // }
     }),
 
-    Skeleton3: Mob.extend({
+    Zombie: Mob.extend({
       init: function (id) {
-        this._super(id, Types.Entities.SKELETON3);
-        this.moveSpeed = 200;
-        this.atkSpeed = 100;
-        this.idleSpeed = 800;
-        this.walkSpeed = 200;
-        this.shadowOffsetY = 1;
-        this.aggroRange = 2;
-        this.setAttackRate(1300);
+        this._super(id, Types.Entities.ZOMBIE);
+        this.atkSpeed = 50;
+        this.moveSpeed = 220;
+        this.walkSpeed = 100;
+        this.idleSpeed = 450;
+        this.setAttackRate(800);
+        this.aggroRange = 4;
       },
     }),
 
-    UndeadLeader: Mob.extend({
+    Necromancer: Mob.extend({
       init: function (id) {
-        this._super(id, Types.Entities.UNDEADLEADER);
+        this._super(id, Types.Entities.NECROMANCER);
         this.moveSpeed = 300;
         this.atkSpeed = 50;
         this.idleSpeed = 400;

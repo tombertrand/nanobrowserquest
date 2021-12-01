@@ -651,6 +651,10 @@ define(["jquery", "storage", "util"], function ($, Storage) {
         });
     },
 
+    updateArtifact: function (artifact) {
+      console.log("~~~~artifact", artifact);
+    },
+
     toggleScrollContent: function (content) {
       var currentState = $("#parchment").attr("class");
 

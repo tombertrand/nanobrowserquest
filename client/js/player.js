@@ -24,6 +24,8 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.inventory = [];
       this.upgrade = [];
       this.gems = [];
+      this.artifact = [];
+      this.skeletonKey = false;
       this.nanoPotions = 0;
       this.damage = "0";
       this.absorb = "0";
@@ -98,6 +100,21 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
             throw new Exceptions.LootException(`You already collected the ${Types.getGemNameFromKind(item.kind)} gem.`);
           } else {
             this.gems[index] = 1;
+          }
+        } else if (Types.Entities.Artifact.includes(item.kind)) {
+          var index = Types.Entities.Artifact.indexOf(item.kind);
+          if (index > -1 && this.artifact[index] !== 0) {
+            throw new Exceptions.LootException(
+              `You already collected the ${Types.getArtifactNameFromKind(item.kind)} part.`,
+            );
+          } else {
+            this.artifact[index] = 1;
+          }
+        } else if (item.kind === Types.Entities.SKELETONKEY) {
+          if (this.skeletonKey) {
+            throw new Exceptions.LootException(`You already have the Skeleton Key.`);
+          } else {
+            this.skeletonKey = true;
           }
         } else if (item.kind === Types.Entities.NANOPOTION) {
           this.nanoPotions += 1;

@@ -74,6 +74,14 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Mobs.Boss(id);
   };
 
+  EntityFactory.builders[Types.Entities.BAT2] = function (id) {
+    return new Mobs.Bat2(id);
+  };
+
+  EntityFactory.builders[Types.Entities.GOBLIN2] = function (id) {
+    return new Mobs.Goblin2(id);
+  };
+
   EntityFactory.builders[Types.Entities.YETI] = function (id) {
     return new Mobs.Yeti(id);
   };
@@ -82,16 +90,28 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Mobs.Werewolf(id);
   };
 
-  EntityFactory.builders[Types.Entities.WRAITH] = function (id) {
-    return new Mobs.Wraith(id);
-  };
-
   EntityFactory.builders[Types.Entities.SKELETON3] = function (id) {
     return new Mobs.Skeleton3(id);
   };
 
-  EntityFactory.builders[Types.Entities.UNDEADLEADER] = function (id) {
-    return new Mobs.UndeadLeader(id);
+  EntityFactory.builders[Types.Entities.SKELETONLEADER] = function (id) {
+    return new Mobs.SkeletonLeader(id);
+  };
+
+  EntityFactory.builders[Types.Entities.SNAKE2] = function (id) {
+    return new Mobs.Snake2(id);
+  };
+
+  EntityFactory.builders[Types.Entities.WRAITH] = function (id) {
+    return new Mobs.Wraith(id);
+  };
+
+  EntityFactory.builders[Types.Entities.ZOMBIE] = function (id) {
+    return new Mobs.Zombie(id);
+  };
+
+  EntityFactory.builders[Types.Entities.NECROMANCER] = function (id) {
+    return new Mobs.Necromancer(id);
   };
 
   //===== items ======
@@ -106,6 +126,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   EntityFactory.builders[Types.Entities.BLUEAXE] = function (id) {
     return new Items.BlueAxe(id);
+  };
+
+  EntityFactory.builders[Types.Entities.BLUEMORNINGSTAR] = function (id) {
+    return new Items.BlueMorningStar(id);
   };
 
   EntityFactory.builders[Types.Entities.REDSWORD] = function (id) {

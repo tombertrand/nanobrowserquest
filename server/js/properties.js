@@ -201,14 +201,35 @@ var Properties = {
     weapon: 8,
   },
 
+  bat2: {
+    drops: {
+      burger: 20,
+      scrollupgradehigh: 1,
+      bluearmor: 5,
+      ringgold: 2,
+    },
+    hp: 180,
+    armor: 7,
+    weapon: 7,
+  },
+
+  goblin2: {
+    drops: {
+      burger: 20,
+      scrollupgradehigh: 1,
+      blueaxe: 5,
+      ringgold: 2,
+    },
+    hp: 265,
+    armor: 6,
+    weapon: 8,
+  },
+
   werewolf: {
     drops: {
       burger: 20,
-      flask: 20,
-      bluearmor: 15,
-      firepotion: 3,
-      scrollupgradehigh: 5,
-      ringsilver: 5,
+      scrollupgradehigh: 3,
+      bluearmor: 6,
       ringgold: 3,
     },
     hp: 375,
@@ -218,41 +239,71 @@ var Properties = {
 
   skeleton3: {
     drops: {
-      flask: 5,
-      hornedarmor: 10,
-      scrollupgradehigh: 10,
-      ringsilver: 2,
-      ringgold: 5,
+      burger: 20,
+      scrollupgradehigh: 2,
+      hornedarmor: 5,
+      ringgold: 3,
     },
     hp: 220,
     armor: 8,
     weapon: 8,
   },
 
-  undeadleader: {
+  skeletonleader: {
     drops: {
-      burger: 85,
+      burger: 20,
+      scrollupgradehigh: 5,
+      hornedarmor: 5,
       ringgold: 5,
-      scrollupgradehigh: 10,
     },
     hp: 1500,
     armor: 10,
     weapon: 12,
   },
 
+  snake2: {
+    drops: {
+      burger: 20,
+      scrollupgradehigh: 3,
+      ringgold: 4,
+    },
+    hp: 265,
+    armor: 6,
+    weapon: 12,
+  },
+
   wraith: {
     drops: {
       burger: 20,
-      flask: 20,
-      bluearmor: 15,
-      firepotion: 3,
-      scrollupgradehigh: 5,
-      ringsilver: 5,
-      ringgold: 3,
+      scrollupgradehigh: 3,
+      frozenarmor: 5,
+      ringgold: 5,
     },
-    hp: 575,
+    hp: 475,
     armor: 7,
     weapon: 9,
+  },
+
+  zombie: {
+    drops: {
+      burger: 20,
+      scrollupgradehigh: 1,
+      ringgold: 3,
+    },
+    hp: 265,
+    armor: 8,
+    weapon: 8,
+  },
+
+  necromancer: {
+    drops: {
+      burger: 20,
+      scrollupgradehigh: 10,
+      ringgold: 10,
+    },
+    hp: 3000,
+    armor: 12,
+    weapon: 10,
   },
 };
 

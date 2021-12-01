@@ -285,6 +285,10 @@ module.exports = Player = Character.extend({
               let index = Types.Entities.Gems.indexOf(kind);
 
               databaseHandler.foundGem(self.name, index);
+            } else if (Types.Entities.Artifact.includes(kind)) {
+              let index = Types.Entities.Artifact.indexOf(kind);
+
+              databaseHandler.foundArtifact(self.name, index);
             } else if (kind === Types.Entities.FIREPOTION) {
               self.updateHitPoints(true);
               self.broadcast(self.equip(Types.Entities.FIREFOX));
@@ -947,6 +951,7 @@ module.exports = Player = Character.extend({
     hash,
     nanoPotions,
     gems,
+    artifact,
   }) {
     var self = this;
 
@@ -1009,6 +1014,7 @@ module.exports = Player = Character.extend({
       hash,
       nanoPotions,
       gems,
+      artifact,
     ]);
 
     self.calculateBonus();

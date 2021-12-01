@@ -28,6 +28,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    BlueMorningStar: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.BLUEMORNINGSTAR, "weapon");
+        this.lootMessage = "You pick up a frozen morning star";
+      },
+    }),
+
     RedSword: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.REDSWORD, "weapon");

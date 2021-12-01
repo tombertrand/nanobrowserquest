@@ -135,7 +135,7 @@ define([
         "skeleton3",
         "spectre",
         "boss",
-        "undeadleader",
+        "skeletonleader",
         "deathknight",
         "ogre",
         "yeti",
@@ -143,9 +143,14 @@ define([
         "wraith",
         "crab",
         "snake",
+        "snake2",
         "eye",
         "bat",
+        "bat2",
         "goblin",
+        "goblin2",
+        "zombie",
+        "necromancer",
         "wizard",
         "guard",
         "king",
@@ -183,6 +188,7 @@ define([
         "dagger",
         "axe",
         "blueaxe",
+        "bluemorningstar",
         "chest",
         "sword",
         "redsword",
@@ -192,6 +198,7 @@ define([
         "item-sword",
         "item-axe",
         "item-blueaxe",
+        "item-bluemorningstar",
         "item-redsword",
         "item-bluesword",
         "item-goldensword",
@@ -910,13 +917,13 @@ define([
           nano: 10,
         },
         BLOODLUST: {
-          id: 31,
+          id: 28,
           name: "Bloodlust",
-          desc: "Defeat 25 Werewolves",
+          desc: "Defeat 10 Werewolves",
           hidden: false,
           nano: 15,
           isCompleted: function () {
-            return self.storage.getWerewolfCount() >= 25;
+            return self.storage.getWerewolfCount() >= 10;
           },
         },
         SATOSHI: {
@@ -934,7 +941,7 @@ define([
           nano: 6,
         },
         INDIANA_JONES: {
-          id: 28,
+          id: 31,
           name: "Indiana Jones",
           desc: "Reassemble the lost artifact",
           hidden: false,
@@ -943,27 +950,27 @@ define([
         MYTH_OR_REAL: {
           id: 32,
           name: "Myth or Real",
-          desc: "Defeat 25 Yetis",
+          desc: "Defeat 10 Yetis",
           hidden: false,
           nano: 15,
           isCompleted: function () {
-            return self.storage.getYetiCount() >= 25;
+            return self.storage.getYetiCount() >= 10;
           },
         },
         RIP: {
           id: 33,
           name: "R.I.P.",
-          desc: "Kill 25 Undead Guardians",
+          desc: "Defeat 10 Skeleton Guards",
           hidden: false,
           nano: 15,
           isCompleted: function () {
-            return self.storage.getUndeadGuardianCount() >= 25;
+            return self.storage.getSkeleton3Count() >= 10;
           },
         },
-        TRUE_LEADER: {
+        DEAD_NEVER_DIE: {
           id: 34,
           name: "What is dead may never die",
-          desc: "Kill the undead leader",
+          desc: "Defeat the Skeleton Leader",
           hidden: false,
           nano: 18,
         },
@@ -974,14 +981,14 @@ define([
           hidden: false,
           nano: 8,
         },
-        GHOSTBUSTER: {
+        GHOSTBUSTERS: {
           id: 36,
           name: "Ghostbusters",
-          desc: "Kill 25 Wraiths",
+          desc: "Kill 10 Wraiths",
           hidden: false,
           nano: 15,
           isCompleted: function () {
-            return self.storage.getWraithCount() >= 25;
+            return self.storage.getWraithCount() >= 10;
           },
         },
         NECROMANCER: {
@@ -991,29 +998,26 @@ define([
           hidden: false,
           nano: 36,
         },
-        AGAINST_THE_ODDS: {
+        LUCKY7: {
           id: 38,
-          name: "Against the Odds",
-          desc: "Upgrade an item to +7",
+          name: "Lucky 7",
+          desc: "Successfully upgrade a high class item to +7",
           hidden: true,
           nano: 13,
         },
-        INUIT: {
+        NOT_SAFU: {
           id: 39,
-          name: "Barely Alive",
+          name: "Not Safu",
           desc: "Kill a monster with 5% or less HP left",
           hidden: true,
           nano: 10,
         },
-        DEAD_NEVER_DIE: {
+        TICKLE_FROM_UNDER: {
           id: 40,
-          name: "Not Safu",
-          desc: "Be surrounded by 20 zombies ",
+          name: "Tickle from Under",
+          desc: "Be surrounded by 20 zombies",
           hidden: true,
           nano: 15,
-          isCompleted: function () {
-            return self.storage.getZombieCount() >= 50;
-          },
         },
       };
 
@@ -1531,6 +1535,7 @@ define([
         hash,
         nanoPotions,
         gems,
+        artifact,
       }) {
         log.info("Received player ID from server : " + id);
         self.player.id = id;
@@ -1577,6 +1582,8 @@ define([
 
         self.player.nanoPotions = nanoPotions;
         self.player.gems = gems;
+        self.player.artifact = artifact;
+        self.player.skeletonKey = !!achievement[26];
 
         self.addEntity(self.player);
         self.player.dirtyRect = self.renderer.getEntityBoundingRect(self.player);
@@ -1587,6 +1594,7 @@ define([
 
         self.app.updateNanoPotions(nanoPotions);
         self.app.updateGems(gems);
+        self.app.updateArtifact(artifact);
 
         self.storage.initPlayer(self.player.name, self.player.account);
         self.storage.savePlayer(
@@ -2302,13 +2310,12 @@ define([
           }
 
           if (mobName === "skeleton3") {
-            mobName = "undead guardian";
+            mobName = "skeleton guard";
           }
 
-          if (mobName === "undeadleader") {
-            mobName = "undead leader";
+          if (mobName === "skeletonleader") {
+            mobName = "skeleton leader";
           }
-
 
           self.storage.incrementTotalKills();
           self.tryUnlockingAchievement("HUNTER");
@@ -2326,6 +2333,18 @@ define([
             self.tryUnlockingAchievement("HERO").then(() => {
               self.client.sendRequestPayout();
             });
+          } else if (kind === Types.Entities.WEREWOLF) {
+            self.storage.incrementWerewolfCount();
+            self.tryUnlockingAchievement("BLOODLUST");
+          } else if (kind === Types.Entities.YETI) {
+            self.storage.incrementYetiCount();
+            self.tryUnlockingAchievement("MYTH_OR_REAL");
+          } else if (kind === Types.Entities.SKELETON3) {
+            self.storage.incrementSkeleton3Count();
+            self.tryUnlockingAchievement("RIP");
+          } else if (kind === Types.Entities.WRAITH) {
+            self.storage.incrementWraithCount();
+            self.tryUnlockingAchievement("GHOSTBUSTERS");
           }
           // @TODO Add quest check here!
         });
@@ -3796,6 +3815,13 @@ define([
           if (!this.player.gems.some(found => !found)) {
             this.tryUnlockingAchievement("GEM_HUNTER");
           }
+        } else if (Types.Entities.Artifact.includes(item.kind)) {
+          this.app.updateArtifact(this.player.artifact);
+          if (!this.player.artifact.some(found => !found)) {
+            this.tryUnlockingAchievement("INDIANA_JONES");
+          }
+        } else if (item.kind === Types.Entities.SKELETONKEY) {
+          this.tryUnlockingAchievement("SKELETON_KEY");
         }
 
         if (Types.isHealingItem(item.kind)) {

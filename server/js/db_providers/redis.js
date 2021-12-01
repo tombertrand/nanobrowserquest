@@ -17,6 +17,7 @@ const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
 const ACHIEVEMENT_COUNT = 40;
 const GEM_COUNT = 5;
+const ARTIFACT_COUNT = 4;
 
 module.exports = DatabaseHandler = cls.Class.extend({
   init: function () {
@@ -51,6 +52,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "ring1") // 13
             .hget(userKey, "ring2") // 14
             .hget(userKey, "belt") // 15
+            .hget(userKey, "artifact") // 16
             .exec(function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
@@ -160,6 +162,18 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 Sentry.captureException(err);
               }
 
+              var artifact = new Array(ARTIFACT_COUNT).fill(0);
+              try {
+                if (!replies[16]) {
+                  client.hset("u:" + player.name, "artifact", JSON.stringify(artifact));
+                } else {
+                  artifact = JSON.parse(replies[16]);
+                }
+              } catch (err) {
+                console.log(err);
+                Sentry.captureException(err);
+              }
+
               var x = Utils.NaN2Zero(replies[7]);
               var y = Utils.NaN2Zero(replies[8]);
               var hash = replies[9];
@@ -193,6 +207,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 hash,
                 nanoPotions,
                 gems,
+                artifact,
               });
             });
           return;
@@ -235,6 +250,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "ring1", null)
           .hset(userKey, "ring2", null)
           .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
+          .hset(userKey, "artifact", JSON.stringify(new Array(ARTIFACT_COUNT).fill(0)))
           .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
           .exec(function (err, replies) {
             log.info("New User: " + player.name);
@@ -250,6 +266,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               inventory: [],
               nanoPotions: 0,
               gems: new Array(GEM_COUNT).fill(0),
+              artifact: new Array(ARTIFACT_COUNT).fill(0),
             });
           });
       }
@@ -697,6 +714,18 @@ module.exports = DatabaseHandler = cls.Class.extend({
         gems[index] = 1;
         gems = JSON.stringify(gems);
         client.hset("u:" + name, "gems", gems);
+      } catch (err) {}
+    });
+  },
+
+  foundArtifact: function (name, index) {
+    log.info("Found Artifact: " + name + " " + index + 1);
+    client.hget("u:" + name, "artifact", function (err, reply) {
+      try {
+        var artifact = reply ? JSON.parse(reply) : new Array(ARTIFACT_COUNT).fill(0);
+        artifact[index] = 1;
+        artifact = JSON.stringify(artifact);
+        client.hset("u:" + name, "artifact", artifact);
       } catch (err) {}
     });
   },
