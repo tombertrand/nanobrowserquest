@@ -81,16 +81,17 @@ Types = {
     SKELETON2: 12,
     BOSS: 13,
     DEATHKNIGHT: 14,
-    YETI: 88,
-    WEREWOLF: 89,
-    WRAITH: 90,
-    SKELETON3: 99,
-    SKELETONLEADER: 101,
-    GOBLIN2: 102,
-    SNAKE2: 103,
-    BAT2: 104,
-    ZOMBIE: 105,
-    NECROMANCER: 106,
+    RAT2: 88,
+    BAT2: 89,
+    GOBLIN2: 90,
+    YETI: 99,
+    WEREWOLF: 101,
+    SKELETON3: 102,
+    SKELETONLEADER: 103,
+    SNAKE2: 104,
+    WRAITH: 105,
+    ZOMBIE: 106,
+    NECROMANCER: 108,
 
     // Armors
     FIREFOX: 20,
@@ -111,6 +112,8 @@ Types = {
 
     // Objects
     FLASK: 35,
+    REJUVENATIONPOTION: 110,
+    POISONPOTION: 111,
     BURGER: 36,
     CHEST: 37,
     FIREPOTION: 38,
@@ -153,7 +156,8 @@ Types = {
     DESERTNPC: 53,
     LAVANPC: 54,
     CODER: 55,
-    CARLOSMATOS: 73,
+    CARLOSMATOS: 109,
+    SATOSHI: 73,
     WAYPOINTX: 84,
     WAYPOINTN: 93,
 
@@ -201,6 +205,13 @@ Types = {
     KEYPAD_2: 98,
   },
 };
+
+Types.Entities.Potion = [
+  Types.Entities.FLASK,
+  Types.Entities.FIREPOTION,
+  Types.Entities.REJUVENATIONPOTION,
+  Types.Entities.NANOPOTION,
+];
 
 Types.Entities.Gems = [
   Types.Entities.GEMRUBY,
@@ -285,6 +296,7 @@ var kinds = {
   spectre: [Types.Entities.SPECTRE, "mob", 53, 21],
   deathknight: [Types.Entities.DEATHKNIGHT, "mob", 65, 24],
   boss: [Types.Entities.BOSS, "mob", 100, 30],
+  rat2: [Types.Entities.RAT2, "mob", 80, 22],
   bat2: [Types.Entities.BAT2, "mob", 90, 24],
   goblin2: [Types.Entities.GOBLIN2, "mob", 100, 30],
   yeti: [Types.Entities.YETI, "mob", 140, 34],
@@ -331,6 +343,8 @@ var kinds = {
   ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 16],
 
   flask: [Types.Entities.FLASK, "object"],
+  rejuvenationpotion: [Types.Entities.REJUVENATIONPOTION, "object"],
+  poisonpotion: [Types.Entities.POISONPOTION, "object"],
   cake: [Types.Entities.CAKE, "object"],
   burger: [Types.Entities.BURGER, "object"],
   chest: [Types.Entities.CHEST, "object"],
@@ -355,6 +369,7 @@ var kinds = {
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
   villager: [Types.Entities.VILLAGER, "npc"],
   carlosmatos: [Types.Entities.CARLOSMATOS, "npc"],
+  satoshi: [Types.Entities.SATOSHI, "npc"],
   coder: [Types.Entities.CODER, "npc"],
   scientist: [Types.Entities.SCIENTIST, "npc"],
   priest: [Types.Entities.PRIEST, "npc"],
@@ -725,6 +740,18 @@ Types.getAliasFromName = function (name) {
     return "skeleton guard";
   } else if (name === "skeletonleader") {
     return "skeleton leader";
+  } else if (name === "carlosmatos") {
+    return "carlos matos";
+  } else if (name === "satoshi") {
+    return "satoshi nakamoto";
+  } else if (name === "rat2") {
+    return "undead rat";
+  } else if (name === "bat2") {
+    return "vampire bat";
+  } else if (name === "goblin2") {
+    return "undead goblin";
+  } else if (name === "snake2") {
+    return "sea snake";
   }
   return name;
 };

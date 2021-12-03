@@ -147,6 +147,20 @@ define(["item"], function (Item) {
       },
     }),
 
+    RejuvenationPotion: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.REJUVENATIONPOTION, "object");
+        this.lootMessage = "You drink a rejuvenation potion";
+      },
+    }),
+
+    PoisonPotion: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.POISONPOTION, "object");
+        this.lootMessage = "You drink a poisonous potion";
+      },
+    }),
+
     NanoPotion: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.NANOPOTION, "object");

@@ -74,6 +74,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Mobs.Boss(id);
   };
 
+  EntityFactory.builders[Types.Entities.RAT2] = function (id) {
+    return new Mobs.Rat2(id);
+  };
+
   EntityFactory.builders[Types.Entities.BAT2] = function (id) {
     return new Mobs.Bat2(id);
   };
@@ -200,6 +204,14 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.Flask(id);
   };
 
+  EntityFactory.builders[Types.Entities.REJUVENATIONPOTION] = function (id) {
+    return new Items.RejuvenationPotion(id);
+  };
+
+  EntityFactory.builders[Types.Entities.POISONPOTION] = function (id) {
+    return new Items.PoisonPotion(id);
+  };
+
   EntityFactory.builders[Types.Entities.NANOPOTION] = function (id) {
     return new Items.NanoPotion(id);
   };
@@ -308,6 +320,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   EntityFactory.builders[Types.Entities.CARLOSMATOS] = function (id) {
     return new NPCs.CarlosMatos(id);
+  };
+
+  EntityFactory.builders[Types.Entities.SATOSHI] = function (id) {
+    return new NPCs.Satoshi(id);
   };
 
   EntityFactory.builders[Types.Entities.CODER] = function (id) {

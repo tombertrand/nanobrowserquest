@@ -42,6 +42,12 @@ define(["npc"], function (Npc) {
       },
     }),
 
+    Satoshi: Npc.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.SATOSHI, 1);
+      },
+    }),
+
     Coder: Npc.extend({
       init: function (id) {
         this._super(id, Types.Entities.CODER, 1);

@@ -41,6 +41,8 @@ define([
   "text!../sprites/item-cake.json",
   "text!../sprites/item-firepotion.json",
   "text!../sprites/item-flask.json",
+  "text!../sprites/item-rejuvenationpotion.json",
+  "text!../sprites/item-poisonpotion.json",
   "text!../sprites/item-nanopotion.json",
   "text!../sprites/item-gemruby.json",
   "text!../sprites/item-gememerald.json",
@@ -96,6 +98,7 @@ define([
   "text!../sprites/platearmor.json",
   "text!../sprites/priest.json",
   "text!../sprites/rat.json",
+  "text!../sprites/rat2.json",
   "text!../sprites/redarmor.json",
   "text!../sprites/redsword.json",
   "text!../sprites/rick.json",
@@ -118,6 +121,7 @@ define([
   "text!../sprites/villagegirl.json",
   "text!../sprites/villager.json",
   "text!../sprites/carlosmatos.json",
+  "text!../sprites/satoshi.json",
   "text!../sprites/wizard.json",
 ], function () {
   var sprites = {};

@@ -153,6 +153,16 @@ define(["mob", "timer"], function (Mob, Timer) {
       },
     }),
 
+    Rat2: Mob.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RAT2);
+        this.moveSpeed = 350;
+        this.idleSpeed = 700;
+        this.shadowOffsetY = -2;
+        this.isAggressive = false;
+      },
+    }),
+
     Bat2: Mob.extend({
       init: function (id) {
         this._super(id, Types.Entities.BAT2);

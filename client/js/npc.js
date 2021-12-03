@@ -47,6 +47,13 @@ define(["character"], function (Character) {
       "Let me tell you, I love, BITCONNECT!",
     ],
 
+    satoshi: [
+      "This is not what I have envisionned for Bitcoin",
+      "It is an environmental disaster",
+      "If only there was an environmental friendly, peer to peer, feeless and instant crypto ...",
+      "Do I know Colin? Yes, he's my nephew",
+    ],
+
     agent: [
       "Do not try to bend the sword",
       "That's impossible",

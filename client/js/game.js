@@ -130,6 +130,7 @@ define([
         "sparks",
         "shadow16",
         "rat",
+        "rat2",
         "skeleton",
         "skeleton2",
         "skeleton3",
@@ -157,6 +158,7 @@ define([
         "villagegirl",
         "villager",
         "carlosmatos",
+        "satoshi",
         "coder",
         "agent",
         "rick",
@@ -215,6 +217,8 @@ define([
         "item-beltplated",
         "item-beltfrozen",
         "item-flask",
+        "item-rejuvenationpotion",
+        "item-poisonpotion",
         "item-nanopotion",
         "item-gemruby",
         "item-gememerald",
@@ -902,7 +906,7 @@ define([
           hidden: false,
           nano: 133,
         },
-        WAYPOINT: {
+        FREEZING_LANDS: {
           id: 26,
           name: "BrrRRrr",
           desc: "Enter the freezing lands",
@@ -993,8 +997,8 @@ define([
         },
         NECROMANCER: {
           id: 37,
-          name: "Necromancer",
-          desc: "Defeat the Necromancer warrior",
+          name: "Black Magic",
+          desc: "Defeat the Necromancer",
           hidden: false,
           nano: 36,
         },
@@ -1707,6 +1711,14 @@ define([
             self.tryUnlockingAchievement("TOMB_RAIDER");
           }
 
+          if (self.player.gridY > 444) {
+            self.tryUnlockingAchievement("FREEZING_LANDS");
+          }
+
+          if (self.player.gridY >= 350 && self.player.gridY <= 365 && self.player.gridX <= 80) {
+            self.tryUnlockingAchievement("WALK_ON_WATER");
+          }
+
           self.updatePlayerCheckpoint();
 
           if (!self.player.isDead) {
@@ -2345,8 +2357,14 @@ define([
           } else if (kind === Types.Entities.WRAITH) {
             self.storage.incrementWraithCount();
             self.tryUnlockingAchievement("GHOSTBUSTERS");
+          } else if (kind === Types.Entities.SKELETONLEADER) {
+            self.tryUnlockingAchievement("DEAD_NEVER_DIE");
           }
           // @TODO Add quest check here!
+
+          if (self.player.hitPoints <= 20 && kind >= Types.Entities.RAT2) {
+            self.tryUnlockingAchievement("NOT_SAFU");
+          }
         });
 
         self.client.onPlayerChangeHealth(function (points, isRegen) {
@@ -2741,6 +2759,10 @@ define([
           this.tryUnlockingAchievement("RICKROLLD");
         } else if (npc.kind === Types.Entities.ANVIL) {
           this.app.openUpgrade();
+        } else if (npc.kind === Types.Entities.WAYPOINTX || npc.kind === Types.Entities.WAYPOINTN) {
+          // @TODO Open Waypoint menu
+        } else if (npc.kind === Types.Entities.SATOSHI) {
+          this.tryUnlockingAchievement("SATOSHI");
         }
       }
     },
