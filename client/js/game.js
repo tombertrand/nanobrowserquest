@@ -995,7 +995,7 @@ define([
             return self.storage.getWraithCount() >= 10;
           },
         },
-        NECROMANCER: {
+        BLACK_MAGIC: {
           id: 37,
           name: "Black Magic",
           desc: "Defeat the Necromancer",
@@ -1005,14 +1005,14 @@ define([
         LUCKY7: {
           id: 38,
           name: "Lucky 7",
-          desc: "Successfully upgrade a high class item to +7",
+          desc: "Upgrade a high class item to +7",
           hidden: true,
           nano: 13,
         },
         NOT_SAFU: {
           id: 39,
           name: "Not Safu",
-          desc: "Kill a monster with 5% or less HP left",
+          desc: "Kill a monster with less than 15 HP left",
           hidden: true,
           nano: 10,
         },
@@ -1719,6 +1719,15 @@ define([
             self.tryUnlockingAchievement("WALK_ON_WATER");
           }
 
+          if (
+            self.player.gridY >= 328 &&
+            self.player.gridY <= 332 &&
+            self.player.gridX >= 13 &&
+            self.player.gridX <= 23
+          ) {
+            self.tryUnlockingAchievement("WEN");
+          }
+
           self.updatePlayerCheckpoint();
 
           if (!self.player.isDead) {
@@ -1807,8 +1816,14 @@ define([
           if (self.player.target instanceof Npc) {
             self.makeNpcTalk(self.player.target);
           } else if (self.player.target instanceof Chest) {
-            self.client.sendOpen(self.player.target);
-            self.audioManager.playSound("chest");
+            if (self.player.target.gridX === 154 && self.player.target.gridY === 365 && !self.player.skeletonKey) {
+              // @NOTE skip playing the chest open sound if the SKELETON_KEY quest is not completed
+              self.showNotification("You need to find the Skeleton Key");
+              self.audioManager.playSound("noloot");
+            } else {
+              self.client.sendOpen(self.player.target);
+              self.audioManager.playSound("chest");
+            }
           }
 
           self.player.forEachAttacker(function (attacker) {
@@ -2360,9 +2375,8 @@ define([
           } else if (kind === Types.Entities.SKELETONLEADER) {
             self.tryUnlockingAchievement("DEAD_NEVER_DIE");
           }
-          // @TODO Add quest check here!
 
-          if (self.player.hitPoints <= 20 && kind >= Types.Entities.RAT2) {
+          if (self.player.hitPoints <= 15 && kind > Types.Entities.RAT2) {
             self.tryUnlockingAchievement("NOT_SAFU");
           }
         });
@@ -2532,10 +2546,14 @@ define([
           self.updateInventory();
         });
 
-        self.client.onReceiveUpgrade(function (data) {
+        self.client.onReceiveUpgrade(function (data, isLucky7) {
           self.isUpgradeItemSent = false;
           self.player.setUpgrade(data);
           self.updateUpgrade();
+
+          if (isLucky7) {
+            self.tryUnlockingAchievement("LUCKY7");
+          }
         });
 
         self.client.onReceiveAnvilUpgrade(function (isSuccess) {
@@ -3844,6 +3862,7 @@ define([
           }
         } else if (item.kind === Types.Entities.SKELETONKEY) {
           this.tryUnlockingAchievement("SKELETON_KEY");
+          this.player.skeletonKey = true;
         }
 
         if (Types.isHealingItem(item.kind)) {

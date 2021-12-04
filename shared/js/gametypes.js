@@ -935,6 +935,12 @@ Types.getWeaponMagicDamage = function (level) {
   return magicDamagePerLevel[level - 1];
 };
 
+Types.isBaseHighClassItem = item => {
+  const baseLevel = kinds[item][3];
+
+  return baseLevel >= 10;
+};
+
 Types.getItemClass = function (item, level) {
   const baseLevel = kinds[item][3];
 

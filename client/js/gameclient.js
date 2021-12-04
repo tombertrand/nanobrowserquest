@@ -497,9 +497,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     receiveUpgrade: function (data) {
       var upgrade = data[1];
+      var isLucky7 = data[2];
 
       if (this.receiveupgrade_callback) {
-        this.receiveupgrade_callback(upgrade);
+        this.receiveupgrade_callback(upgrade, isLucky7);
       }
     },
 

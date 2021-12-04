@@ -650,6 +650,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
     client.hget("u:" + player.name, "upgrade", function (err, reply) {
       try {
+        let isLucky7 = false;
         let upgrade = JSON.parse(reply);
         filteredUpgrade = upgrade.filter(Boolean);
 
@@ -659,8 +660,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
           let isSuccess = false;
 
           if (Utils.isUpgradeSuccess(level)) {
+            const upgradedLevel = parseInt(level) + 1;
             upgradedItem = [item, parseInt(level) + 1, bonus].join(":");
             isSuccess = true;
+            isLucky7 = upgradedLevel === 7 && Types.isBaseHighClassItem(item);
           }
 
           upgrade = upgrade.map(() => 0);
@@ -670,7 +673,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           self.moveUpgradeItemsToInventory(player);
         }
 
-        player.send([Types.Messages.UPGRADE, upgrade]);
+        player.send([Types.Messages.UPGRADE, upgrade, isLucky7]);
         client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
       } catch (err) {
         console.log(err);
