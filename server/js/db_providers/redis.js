@@ -58,7 +58,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var ring1 = replies[13];
               var ring2 = replies[14];
               var belt = replies[15];
-              var expansion1 = replies[17];
+              var expansion1 = parseInt(replies[17] || "0");
               var exp = Utils.NaN2Zero(replies[3]);
               var createdAt = Utils.NaN2Zero(replies[4]);
 
@@ -110,17 +110,23 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 Sentry.captureException(err);
               }
 
+              // Waypoint
+              // 0 - Not Available, the player did not open the waypoint
+              // 1 - Available, the character opened the waypoint
+              // 2 - Locked, the player did not purchase the expansion
               let waypoints;
               try {
                 waypoints = JSON.parse(replies[18]);
 
-                // Waypoint
-                // 0 - Not Available, the player did not open the waypoint
-                // 1 - Available, the character opened the waypoint
-                // 2 - Locked, the player did not purchase the expansion
-                if (!waypoints) {
+                if (waypoints && !expansion1) {
+                  const classicWaypoint = waypoints.slice(0, 3);
+                  const expansion1Waypoint = [2, 2, 2];
+                  waypoints = classicWaypoint.concat(expansion1Waypoint);
+
+                  client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
+                } else if (!waypoints) {
                   const classicWaypoint = [1, 0, 0];
-                  const expansion1Waypoint = expansion1 ? [0, 0, 0] : [2, 2, 2];
+                  const expansion1Waypoint = !!expansion1 ? [0, 0, 0] : [2, 2, 2];
                   waypoints = classicWaypoint.concat(expansion1Waypoint);
 
                   client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
