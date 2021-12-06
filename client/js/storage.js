@@ -27,11 +27,16 @@ define(function () {
           ratCount: 0,
           skeletonCount: 0,
           spectreCount: 0,
+          yetiCount: 0,
+          werewolfCount: 0,
+          skeleton3Count: 0,
+          wraithCount: 0,
+          zombieCount: 0,
           totalKills: 0,
           totalDmg: 0,
           totalRevives: 0,
         },
-        achievement: new Array(24).fill(0),
+        achievement: new Array(40).fill(0),
       };
     },
 
@@ -184,6 +189,70 @@ define(function () {
 
       if (this.data.achievements.spectreCount < 10) {
         this.data.achievements.spectreCount++;
+        this.save();
+      }
+    },
+
+    // Bloodlust
+    getWerewolfCount: function () {
+      return this.data.achievements.werewolfCount;
+    },
+
+    incrementWerewolfCount: function () {
+      if (!this.data.achievements.werewolfCount) {
+        this.data.achievements.werewolfCount = 0;
+      }
+
+      if (this.data.achievements.werewolfCount < 10) {
+        this.data.achievements.werewolfCount++;
+        this.save();
+      }
+    },
+
+    // Myth or Real
+    getYetiCount: function () {
+      return this.data.achievements.yetiCount;
+    },
+
+    incrementYetiCount: function () {
+      if (!this.data.achievements.yetiCount) {
+        this.data.achievements.yetiCount = 0;
+      }
+
+      if (this.data.achievements.yetiCount < 10) {
+        this.data.achievements.yetiCount++;
+        this.save();
+      }
+    },
+
+    // R.I.P.
+    getSkeleton3Count: function () {
+      return this.data.achievements.skeleton3Count;
+    },
+
+    incrementSkeleton3Count: function () {
+      if (!this.data.achievements.skeleton3Count) {
+        this.data.achievements.skeleton3Count = 0;
+      }
+
+      if (this.data.achievements.skeleton3Count < 10) {
+        this.data.achievements.skeleton3Count++;
+        this.save();
+      }
+    },
+
+    // Ghostbusters
+    getWraithCount: function () {
+      return this.data.achievements.wraithCount;
+    },
+
+    incrementWraithCount: function () {
+      if (!this.data.achievements.wraithCount) {
+        this.data.achievements.wraithCount = 0;
+      }
+
+      if (this.data.achievements.wraithCount < 10) {
+        this.data.achievements.wraithCount++;
         this.save();
       }
     },

@@ -42,6 +42,12 @@ define(["npc"], function (Npc) {
       },
     }),
 
+    Satoshi: Npc.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.SATOSHI, 1);
+      },
+    }),
+
     Coder: Npc.extend({
       init: function (id) {
         this._super(id, Types.Entities.CODER, 1);
@@ -110,9 +116,15 @@ define(["npc"], function (Npc) {
       },
     }),
 
-    Waypoint: Npc.extend({
+    Waypointx: Npc.extend({
       init: function (id) {
-        this._super(id, Types.Entities.WAYPOINT, 1);
+        this._super(id, Types.Entities.WAYPOINTX, 1);
+      },
+    }),
+
+    Waypointn: Npc.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.WAYPOINTN, 1);
       },
     }),
   };

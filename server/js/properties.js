@@ -185,30 +185,52 @@ var Properties = {
     weapon: 7,
   },
 
-  yeti: {
+  rat2: {
     drops: {
       burger: 20,
-      flask: 20,
-      bluearmor: 15,
-      firepotion: 3,
-      scrollupgradehigh: 5,
-      ringsilver: 5,
-      ringgold: 3,
-      // beltiron: 10,
+      rejuvenationpotion: 10,
+      scrollupgradehigh: 1,
+      bluearmor: 1,
+      ringgold: 1,
     },
-    hp: 450,
+    hp: 180,
     armor: 7,
+    weapon: 7,
+  },
+
+  bat2: {
+    drops: {
+      rejuvenationpotion: 20,
+      scrollupgradehigh: 3,
+      blueaxe: 5,
+      beltfrozen: 3,
+      bluearmor: 3,
+      ringgold: 1,
+    },
+    hp: 180,
+    armor: 7,
+    weapon: 7,
+  },
+
+  goblin2: {
+    drops: {
+      rejuvenationpotion: 30,
+      scrollupgradehigh: 3,
+      blueaxe: 5,
+      beltfrozen: 3,
+      ringgold: 2,
+    },
+    hp: 265,
+    armor: 6,
     weapon: 8,
   },
 
   werewolf: {
     drops: {
-      burger: 20,
-      flask: 20,
-      bluearmor: 15,
-      firepotion: 3,
-      scrollupgradehigh: 5,
-      ringsilver: 5,
+      rejuvenationpotion: 30,
+      scrollupgradehigh: 3,
+      bluearmor: 6,
+      bluemorningstar: 5,
       ringgold: 3,
     },
     hp: 375,
@@ -216,19 +238,85 @@ var Properties = {
     weapon: 10,
   },
 
-  wraith: {
+  yeti: {
     drops: {
-      burger: 20,
-      flask: 20,
-      bluearmor: 15,
-      firepotion: 3,
-      scrollupgradehigh: 5,
-      ringsilver: 5,
+      rejuvenationpotion: 30,
+      bluearmor: 5,
+      bluemorningstar: 5,
+      scrollupgradehigh: 3,
       ringgold: 3,
     },
-    hp: 575,
+    hp: 450,
+    armor: 7,
+    weapon: 8,
+  },
+
+  skeleton3: {
+    drops: {
+      rejuvenationpotion: 30,
+      scrollupgradehigh: 3,
+      hornedarmor: 5,
+      beltfrozen: 5,
+      ringgold: 3,
+    },
+    hp: 220,
+    armor: 8,
+    weapon: 8,
+  },
+
+  skeletonleader: {
+    drops: {
+      scrollupgradehigh: 3,
+      hornedarmor: 5,
+      ringgold: 3,
+    },
+    hp: 1500,
+    armor: 10,
+    weapon: 12,
+  },
+
+  snake2: {
+    drops: {
+      rejuvenationpotion: 30,
+      scrollupgradehigh: 3,
+      ringgold: 3,
+    },
+    hp: 265,
+    armor: 6,
+    weapon: 12,
+  },
+
+  wraith: {
+    drops: {
+      rejuvenationpotion: 30,
+      scrollupgradehigh: 3,
+      frozenarmor: 5,
+      ringgold: 3,
+    },
+    hp: 475,
     armor: 7,
     weapon: 9,
+  },
+
+  zombie: {
+    drops: {
+      rejuvenationpotion: 30,
+      scrollupgradehigh: 3,
+      ringgold: 3,
+    },
+    hp: 265,
+    armor: 8,
+    weapon: 8,
+  },
+
+  necromancer: {
+    drops: {
+      scrollupgradehigh: 5,
+      ringgold: 5,
+    },
+    hp: 3000,
+    armor: 12,
+    weapon: 10,
   },
 };
 

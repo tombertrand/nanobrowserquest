@@ -130,10 +130,13 @@ define([
         "sparks",
         "shadow16",
         "rat",
+        "rat2",
         "skeleton",
         "skeleton2",
+        "skeleton3",
         "spectre",
         "boss",
+        "skeletonleader",
         "deathknight",
         "ogre",
         "yeti",
@@ -141,15 +144,21 @@ define([
         "wraith",
         "crab",
         "snake",
+        "snake2",
         "eye",
         "bat",
+        "bat2",
         "goblin",
+        "goblin2",
+        "zombie",
+        "necromancer",
         "wizard",
         "guard",
         "king",
         "villagegirl",
         "villager",
         "carlosmatos",
+        "satoshi",
         "coder",
         "agent",
         "rick",
@@ -161,7 +170,8 @@ define([
         "anvil",
         "anvil-success",
         "anvil-fail",
-        "waypoint",
+        "waypointx",
+        "waypointn",
         "beachnpc",
         "forestnpc",
         "desertnpc",
@@ -180,17 +190,21 @@ define([
         "dagger",
         "axe",
         "blueaxe",
+        "bluemorningstar",
         "chest",
         "sword",
         "redsword",
         "bluesword",
         "goldensword",
+        "frozensword",
         "item-sword",
         "item-axe",
         "item-blueaxe",
+        "item-bluemorningstar",
         "item-redsword",
         "item-bluesword",
         "item-goldensword",
+        "item-frozensword",
         "item-leatherarmor",
         "item-mailarmor",
         "item-platearmor",
@@ -203,6 +217,8 @@ define([
         "item-beltplated",
         "item-beltfrozen",
         "item-flask",
+        "item-rejuvenationpotion",
+        "item-poisonpotion",
         "item-nanopotion",
         "item-gemruby",
         "item-gememerald",
@@ -216,6 +232,11 @@ define([
         "item-scrollupgradelow",
         "item-scrollupgrademedium",
         "item-scrollupgradehigh",
+        "item-skeletonkey",
+        "item-raiblockstl",
+        "item-raiblockstr",
+        "item-raiblocksbl",
+        "item-raiblocksbr",
         "item-cake",
         "item-burger",
         "morningstar",
@@ -866,7 +887,7 @@ define([
         HERO: {
           id: 21,
           name: "Hero",
-          desc: "Defeat the final boss to get the payout",
+          desc: "Defeat the Skeleton King",
           nano: 25,
         },
         FOXY: {
@@ -889,6 +910,130 @@ define([
           desc: "Take some singing lessons",
           hidden: true,
           nano: 6,
+        },
+        XNO: {
+          id: 25,
+          name: "XNO",
+          desc: "Complete your first purchase!",
+          hidden: false,
+          nano: 133,
+        },
+        FREEZING_LANDS: {
+          id: 26,
+          name: "BrrRRrr",
+          desc: "Enter the freezing lands",
+          hidden: false,
+          nano: 12,
+        },
+        SKELETON_KEY: {
+          id: 27,
+          name: "Unique Key",
+          desc: "Find the skeleton key",
+          hidden: false,
+          nano: 10,
+        },
+        BLOODLUST: {
+          id: 28,
+          name: "Bloodlust",
+          desc: "Defeat 10 Werewolves",
+          hidden: false,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getWerewolfCount() >= 10;
+          },
+        },
+        SATOSHI: {
+          id: 29,
+          name: "Satoshi",
+          desc: "Have a chat with Satoshi Nakamoto",
+          hidden: false,
+          nano: 10,
+        },
+        WEN: {
+          id: 30,
+          name: "WEN?",
+          desc: "Find a very very large announcement",
+          hidden: false,
+          nano: 6,
+        },
+        INDIANA_JONES: {
+          id: 31,
+          name: "Indiana Jones",
+          desc: "Reassemble the lost artifact",
+          hidden: false,
+          nano: 12,
+        },
+        MYTH_OR_REAL: {
+          id: 32,
+          name: "Myth or Real",
+          desc: "Defeat 10 Yetis",
+          hidden: false,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getYetiCount() >= 10;
+          },
+        },
+        RIP: {
+          id: 33,
+          name: "R.I.P.",
+          desc: "Defeat 10 Skeleton Guards",
+          hidden: false,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getSkeleton3Count() >= 10;
+          },
+        },
+        DEAD_NEVER_DIE: {
+          id: 34,
+          name: "What is dead may never die",
+          desc: "Defeat the Skeleton Leader",
+          hidden: false,
+          nano: 18,
+        },
+        WALK_ON_WATER: {
+          id: 35,
+          name: "Walk on Water",
+          desc: "Make your way though the floating ice",
+          hidden: false,
+          nano: 8,
+        },
+        GHOSTBUSTERS: {
+          id: 36,
+          name: "Ghostbusters",
+          desc: "Kill 10 Wraiths",
+          hidden: false,
+          nano: 15,
+          isCompleted: function () {
+            return self.storage.getWraithCount() >= 10;
+          },
+        },
+        BLACK_MAGIC: {
+          id: 37,
+          name: "Black Magic",
+          desc: "Defeat the Necromancer",
+          hidden: false,
+          nano: 36,
+        },
+        LUCKY7: {
+          id: 38,
+          name: "Lucky 7",
+          desc: "Upgrade a high class item to +7",
+          hidden: true,
+          nano: 13,
+        },
+        NOT_SAFU: {
+          id: 39,
+          name: "Not Safu",
+          desc: "Kill a monster with less than 15 HP left",
+          hidden: true,
+          nano: 10,
+        },
+        TICKLE_FROM_UNDER: {
+          id: 40,
+          name: "Tickle from Under",
+          desc: "Be surrounded by 20 zombies",
+          hidden: true,
+          nano: 15,
         },
       };
 
@@ -925,6 +1070,58 @@ define([
         }
       });
       return found;
+    },
+
+    initWaypoints: function (waypoints) {
+      $("#waypoint-list").empty();
+      var self = this;
+
+      if (Array.isArray(waypoints)) {
+        waypoints.forEach((status, i) => {
+          // Statuses
+          // 0, disabled
+          // 1, available
+          // 2, locked (no expansion)
+          let statusClass = "";
+          if (status === 0) {
+            statusClass = "disabled";
+          } else if (status === 2) {
+            statusClass = "locked";
+          }
+
+          $("<div/>", {
+            id: `waypoint-${Types.waypoints[i].id}`,
+            "data-waypoint-id": Types.waypoints[i].id,
+            class: `waypoint-spaced-row waypoint-row ${statusClass}`,
+            html: `
+            <div class="waypoint-icon"></div>
+            <div class="waypoint-text">${Types.waypoints[i].name}</div>
+            `,
+            click: function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+
+              // Only teleport to enabled locations
+              if ($(this).hasClass("locked") || $(this).hasClass("disabled") || $(this).hasClass("active")) return;
+
+              const id = parseInt($(this).data("waypoint-id"));
+              const clickedWaypoint = Types.waypoints.find(({ id: waypointId }) => waypointId === id);
+
+              // Waypoint has to be enabled
+              if (clickedWaypoint && self.player.waypoints[id - 1] === 1) {
+                const { gridX, gridY } = clickedWaypoint;
+
+                self.app.closeWaypoint();
+                self.player.stop_pathing_callback({ x: gridX + 1, y: gridY, isWaypoint: true });
+              }
+            },
+          }).appendTo("#waypoint-list");
+        });
+      }
+    },
+
+    activateWaypoint: function (id) {
+      $(`#waypoint-${id}`).removeClass("disabled locked").addClass("active");
     },
 
     loadSprite: function (name) {
@@ -1407,6 +1604,9 @@ define([
         hash,
         nanoPotions,
         gems,
+        artifact,
+        expansion1,
+        waypoints,
       }) {
         log.info("Received player ID from server : " + id);
         self.player.id = id;
@@ -1450,9 +1650,13 @@ define([
         self.initTooltips();
         self.initSendUpgradeItem();
         self.initUpgradeItemPreview();
+        self.initWaypoints(waypoints);
 
         self.player.nanoPotions = nanoPotions;
         self.player.gems = gems;
+        self.player.artifact = artifact;
+        self.player.waypoints = waypoints;
+        self.player.skeletonKey = !!achievement[26];
 
         self.addEntity(self.player);
         self.player.dirtyRect = self.renderer.getEntityBoundingRect(self.player);
@@ -1463,6 +1667,7 @@ define([
 
         self.app.updateNanoPotions(nanoPotions);
         self.app.updateGems(gems);
+        self.app.updateArtifact(artifact);
 
         self.storage.initPlayer(self.player.name, self.player.account);
         self.storage.savePlayer(
@@ -1575,6 +1780,23 @@ define([
             self.tryUnlockingAchievement("TOMB_RAIDER");
           }
 
+          if (self.player.gridY > 444) {
+            self.tryUnlockingAchievement("FREEZING_LANDS");
+          }
+
+          if (self.player.gridY >= 350 && self.player.gridY <= 365 && self.player.gridX <= 80) {
+            self.tryUnlockingAchievement("WALK_ON_WATER");
+          }
+
+          if (
+            self.player.gridY >= 328 &&
+            self.player.gridY <= 332 &&
+            self.player.gridX >= 13 &&
+            self.player.gridX <= 23
+          ) {
+            self.tryUnlockingAchievement("WEN");
+          }
+
           self.updatePlayerCheckpoint();
 
           if (!self.player.isDead) {
@@ -1582,7 +1804,7 @@ define([
           }
         });
 
-        self.player.onStopPathing(function (x, y, confirmed) {
+        self.player.onStopPathing(function ({ x, y, confirmed, isWaypoint }) {
           if (self.player.hasTarget()) {
             self.player.lookAtTarget();
           }
@@ -1594,8 +1816,9 @@ define([
             self.tryLootingItem(item);
           }
 
-          if (!self.player.hasTarget() && self.map.isDoor(x, y)) {
-            var dest = self.map.getDoorDestination(x, y);
+          const isDoor = !isWaypoint && self.map.isDoor(x, y);
+          if ((!self.player.hasTarget() && isDoor) || isWaypoint) {
+            var dest = isWaypoint ? { x, y, orientation: 2 } : self.map.getDoorDestination(x, y);
             if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
               self.client.sendBossCheck(false);
               return;
@@ -1651,7 +1874,7 @@ define([
               self.renderer.clearScreen(self.renderer.context);
             }
 
-            if (dest.portal) {
+            if (dest.portal || isWaypoint) {
               self.audioManager.playSound("teleport");
             }
 
@@ -1660,11 +1883,17 @@ define([
             }
           }
 
-          if (self.player.target instanceof Npc) {
+          if (self.player.target instanceof Npc && !isWaypoint) {
             self.makeNpcTalk(self.player.target);
           } else if (self.player.target instanceof Chest) {
-            self.client.sendOpen(self.player.target);
-            self.audioManager.playSound("chest");
+            if (self.player.target.gridX === 154 && self.player.target.gridY === 365 && !self.player.skeletonKey) {
+              // @NOTE skip playing the chest open sound if the SKELETON_KEY quest is not completed
+              self.showNotification("You need to find the Skeleton Key");
+              self.audioManager.playSound("noloot");
+            } else {
+              self.client.sendOpen(self.player.target);
+              self.audioManager.playSound("chest");
+            }
           }
 
           self.player.forEachAttacker(function (attacker) {
@@ -2160,22 +2389,7 @@ define([
           // );
 
           var mobName = Types.getKindAsString(kind);
-
-          if (mobName === "skeleton2") {
-            mobName = "skeleton warrior";
-          }
-
-          if (mobName === "eye") {
-            mobName = "evil eye";
-          }
-
-          if (mobName === "deathknight") {
-            mobName = "death knight";
-          }
-
-          if (mobName === "boss") {
-            self.showNotification("You killed the skeleton king");
-          }
+          mobName = Types.getAliasFromName(mobName);
 
           self.storage.incrementTotalKills();
           self.tryUnlockingAchievement("HUNTER");
@@ -2193,6 +2407,24 @@ define([
             self.tryUnlockingAchievement("HERO").then(() => {
               self.client.sendRequestPayout();
             });
+          } else if (kind === Types.Entities.WEREWOLF) {
+            self.storage.incrementWerewolfCount();
+            self.tryUnlockingAchievement("BLOODLUST");
+          } else if (kind === Types.Entities.YETI) {
+            self.storage.incrementYetiCount();
+            self.tryUnlockingAchievement("MYTH_OR_REAL");
+          } else if (kind === Types.Entities.SKELETON3) {
+            self.storage.incrementSkeleton3Count();
+            self.tryUnlockingAchievement("RIP");
+          } else if (kind === Types.Entities.WRAITH) {
+            self.storage.incrementWraithCount();
+            self.tryUnlockingAchievement("GHOSTBUSTERS");
+          } else if (kind === Types.Entities.SKELETONLEADER) {
+            self.tryUnlockingAchievement("DEAD_NEVER_DIE");
+          }
+
+          if (self.player.hitPoints <= 15 && kind > Types.Entities.RAT2) {
+            self.tryUnlockingAchievement("NOT_SAFU");
           }
         });
 
@@ -2332,7 +2564,7 @@ define([
               // 10s range
               // @TODO people getting banned here?
               // if (absS < 1000 * 10) {
-              self.player.stop_pathing_callback(71, 21, true);
+              self.player.stop_pathing_callback({ x: 71, y: 21, confirmed: true });
               // } else {
               //   self.client.sendBanPlayer(`Invalid check time ${check}, ${s}, ${now}`);
               // }
@@ -2361,10 +2593,14 @@ define([
           self.updateInventory();
         });
 
-        self.client.onReceiveUpgrade(function (data) {
+        self.client.onReceiveUpgrade(function (data, isLucky7) {
           self.isUpgradeItemSent = false;
           self.player.setUpgrade(data);
           self.updateUpgrade();
+
+          if (isLucky7) {
+            self.tryUnlockingAchievement("LUCKY7");
+          }
         });
 
         self.client.onReceiveAnvilUpgrade(function (isSuccess) {
@@ -2588,8 +2824,24 @@ define([
           this.tryUnlockingAchievement("RICKROLLD");
         } else if (npc.kind === Types.Entities.ANVIL) {
           this.app.openUpgrade();
+        } else if (npc.kind === Types.Entities.WAYPOINTX || npc.kind === Types.Entities.WAYPOINTN) {
+          const activeWaypoint = this.getWaypointFromGrid(npc.gridX, npc.gridY);
+          this.app.openWaypoint(activeWaypoint);
+
+          // Send enable request for disabled waypoint
+          if (activeWaypoint && this.player.waypoints[activeWaypoint.id - 1] === 0) {
+            this.player.waypoints[activeWaypoint.id - 1] = 1;
+            this.activateWaypoint(activeWaypoint.id);
+            this.client.sendWaypoint(activeWaypoint.id);
+          }
+        } else if (npc.kind === Types.Entities.SATOSHI) {
+          this.tryUnlockingAchievement("SATOSHI");
         }
       }
+    },
+
+    getWaypointFromGrid: function (x, y) {
+      return Types.waypoints.find(({ gridX, gridY }) => gridX === x && gridY === y);
     },
 
     /**
@@ -3662,6 +3914,14 @@ define([
           if (!this.player.gems.some(found => !found)) {
             this.tryUnlockingAchievement("GEM_HUNTER");
           }
+        } else if (Types.Entities.Artifact.includes(item.kind)) {
+          this.app.updateArtifact(this.player.artifact);
+          if (!this.player.artifact.some(found => !found)) {
+            this.tryUnlockingAchievement("INDIANA_JONES");
+          }
+        } else if (item.kind === Types.Entities.SKELETONKEY) {
+          this.tryUnlockingAchievement("SKELETON_KEY");
+          this.player.skeletonKey = true;
         }
 
         if (Types.isHealingItem(item.kind)) {

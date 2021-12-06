@@ -74,6 +74,18 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Mobs.Boss(id);
   };
 
+  EntityFactory.builders[Types.Entities.RAT2] = function (id) {
+    return new Mobs.Rat2(id);
+  };
+
+  EntityFactory.builders[Types.Entities.BAT2] = function (id) {
+    return new Mobs.Bat2(id);
+  };
+
+  EntityFactory.builders[Types.Entities.GOBLIN2] = function (id) {
+    return new Mobs.Goblin2(id);
+  };
+
   EntityFactory.builders[Types.Entities.YETI] = function (id) {
     return new Mobs.Yeti(id);
   };
@@ -82,8 +94,28 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Mobs.Werewolf(id);
   };
 
+  EntityFactory.builders[Types.Entities.SKELETON3] = function (id) {
+    return new Mobs.Skeleton3(id);
+  };
+
+  EntityFactory.builders[Types.Entities.SKELETONLEADER] = function (id) {
+    return new Mobs.SkeletonLeader(id);
+  };
+
+  EntityFactory.builders[Types.Entities.SNAKE2] = function (id) {
+    return new Mobs.Snake2(id);
+  };
+
   EntityFactory.builders[Types.Entities.WRAITH] = function (id) {
     return new Mobs.Wraith(id);
+  };
+
+  EntityFactory.builders[Types.Entities.ZOMBIE] = function (id) {
+    return new Mobs.Zombie(id);
+  };
+
+  EntityFactory.builders[Types.Entities.NECROMANCER] = function (id) {
+    return new Mobs.Necromancer(id);
   };
 
   //===== items ======
@@ -100,6 +132,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.BlueAxe(id);
   };
 
+  EntityFactory.builders[Types.Entities.BLUEMORNINGSTAR] = function (id) {
+    return new Items.BlueMorningStar(id);
+  };
+
   EntityFactory.builders[Types.Entities.REDSWORD] = function (id) {
     return new Items.RedSword(id);
   };
@@ -110,6 +146,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   EntityFactory.builders[Types.Entities.GOLDENSWORD] = function (id) {
     return new Items.GoldenSword(id);
+  };
+
+  EntityFactory.builders[Types.Entities.FROZENSWORD] = function (id) {
+    return new Items.FrozenSword(id);
   };
 
   EntityFactory.builders[Types.Entities.MORNINGSTAR] = function (id) {
@@ -164,6 +204,14 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.Flask(id);
   };
 
+  EntityFactory.builders[Types.Entities.REJUVENATIONPOTION] = function (id) {
+    return new Items.RejuvenationPotion(id);
+  };
+
+  EntityFactory.builders[Types.Entities.POISONPOTION] = function (id) {
+    return new Items.PoisonPotion(id);
+  };
+
   EntityFactory.builders[Types.Entities.NANOPOTION] = function (id) {
     return new Items.NanoPotion(id);
   };
@@ -216,6 +264,26 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.ScrollUpgradeHigh(id);
   };
 
+  EntityFactory.builders[Types.Entities.SKELETONKEY] = function (id) {
+    return new Items.SkeletonKey(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RAIBLOCKSTL] = function (id) {
+    return new Items.RaiblocksTL(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RAIBLOCKSTR] = function (id) {
+    return new Items.RaiblocksTR(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RAIBLOCKSBL] = function (id) {
+    return new Items.RaiblocksBL(id);
+  };
+
+  EntityFactory.builders[Types.Entities.RAIBLOCKSBR] = function (id) {
+    return new Items.RaiblocksBR(id);
+  };
+
   EntityFactory.builders[Types.Entities.FIREPOTION] = function (id) {
     return new Items.FirePotion(id);
   };
@@ -252,6 +320,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   EntityFactory.builders[Types.Entities.CARLOSMATOS] = function (id) {
     return new NPCs.CarlosMatos(id);
+  };
+
+  EntityFactory.builders[Types.Entities.SATOSHI] = function (id) {
+    return new NPCs.Satoshi(id);
   };
 
   EntityFactory.builders[Types.Entities.CODER] = function (id) {
@@ -306,8 +378,12 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new NPCs.Anvil(id);
   };
 
-  EntityFactory.builders[Types.Entities.WAYPOINT] = function (id) {
-    return new NPCs.Waypoint(id);
+  EntityFactory.builders[Types.Entities.WAYPOINTX] = function (id) {
+    return new NPCs.Waypointx(id);
+  };
+
+  EntityFactory.builders[Types.Entities.WAYPOINTN] = function (id) {
+    return new NPCs.Waypointn(id);
   };
 
   return EntityFactory;

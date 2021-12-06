@@ -538,6 +538,9 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       if ($("#upgrade").hasClass("visible")) {
         this.toggleUpgrade();
       }
+      if ($("#waypoint").hasClass("visible")) {
+        this.closeWaypoint();
+      }
     },
 
     showAchievementNotification: function (id, name) {
@@ -651,6 +654,10 @@ define(["jquery", "storage", "util"], function ($, Storage) {
         });
     },
 
+    updateArtifact: function (artifact) {
+      console.log("~~~~artifact", artifact);
+    },
+
     toggleScrollContent: function (content) {
       var currentState = $("#parchment").attr("class");
 
@@ -751,6 +758,26 @@ define(["jquery", "storage", "util"], function ($, Storage) {
         }
         $("#inventory").removeClass("visible upgrade");
       }
+    },
+
+    openWaypoint: function (activeWaypoint) {
+      $("#waypoint").find(".active").removeClass("active");
+      if (activeWaypoint) {
+        $(`#waypoint-${activeWaypoint.id}`).addClass("active");
+      }
+      $("#waypoint").addClass("visible");
+
+      $("#foreground")
+        .off(".waypoint")
+        .on("click.waypoint", () => {
+          this.closeWaypoint();
+          $("#foreground").off(".waypoint");
+        });
+    },
+
+    closeWaypoint: function () {
+      $("#waypoint").find(".active").removeClass("active");
+      $("#waypoint").removeClass("visible");
     },
 
     openPopup: function (type, url) {
