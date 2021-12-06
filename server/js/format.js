@@ -20,6 +20,7 @@ var Types = require("../../shared/js/gametypes");
         (this.formats[Types.Messages.OPEN] = ["n"]),
         (this.formats[Types.Messages.CHECK] = ["n"]),
         (this.formats[Types.Messages.ACHIEVEMENT] = ["n", "s"]),
+        (this.formats[Types.Messages.WAYPOINT] = ["n", "s"]),
         (this.formats[Types.Messages.BOSS_CHECK] = ["b"]),
         (this.formats[Types.Messages.BAN_PLAYER] = ["s"]),
         (this.formats[Types.Messages.REQUEST_PAYOUT] = []),
@@ -82,7 +83,7 @@ var Types = require("../../shared/js/gametypes");
           log.error("Unknown message type: " + type);
           return false;
         }
-      } else if (type === Types.Messages.ACHIEVEMENT) {
+      } else if (type === Types.Messages.ACHIEVEMENT || type === Types.Messages.WAYPOINT) {
         return message.length === 2 && _.isNumber(message[0]) && _.isString(message[1]);
       } else if (type === Types.Messages.BAN_PLAYER) {
         return message.length === 1 && _.isString(message[0]);

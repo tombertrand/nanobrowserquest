@@ -205,7 +205,9 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         hash = data[14],
         nanoPotions = data[15],
         gems = data[16],
-        artifact = data[17];
+        artifact = data[17],
+        expansion1 = data[18],
+        waypoints = data[19];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -226,6 +228,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           nanoPotions,
           gems,
           artifact,
+          expansion1,
+          waypoints,
         });
       }
     },
@@ -757,6 +761,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     sendAchievement: function (id) {
       this.sendMessage([Types.Messages.ACHIEVEMENT, id, "found"]);
+    },
+
+    sendWaypoint: function (id) {
+      this.sendMessage([Types.Messages.WAYPOINT, id, "found"]);
     },
 
     sendBossCheck: function (again) {

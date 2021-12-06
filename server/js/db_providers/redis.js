@@ -16,6 +16,7 @@ const DELETE_SLOT = -1;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
 const ACHIEVEMENT_COUNT = 40;
+const WAYPOINT_COUNT = 6;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
 
@@ -53,6 +54,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "ring2") // 14
             .hget(userKey, "belt") // 15
             .hget(userKey, "artifact") // 16
+            .hget(userKey, "expansion1") // 17
+            .hget(userKey, "waypoints") // 18
             .exec(function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
@@ -60,6 +63,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var ring1 = replies[13];
               var ring2 = replies[14];
               var belt = replies[15];
+              var expansion1 = replies[17];
               var exp = Utils.NaN2Zero(replies[3]);
               var createdAt = Utils.NaN2Zero(replies[4]);
 
@@ -105,6 +109,38 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 if (achievement.length < ACHIEVEMENT_COUNT) {
                   achievement = achievement.concat(new Array(ACHIEVEMENT_COUNT - achievement.length).fill(0));
                   client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
+                }
+              } catch (err) {
+                // invalid json
+                Sentry.captureException(err);
+              }
+
+              let waypoints;
+              try {
+                waypoints = JSON.parse(replies[18]);
+
+                // Waypoint
+                // 0 - Not Available, the player did not open the waypoint
+                // 1 - Available, the character opened the waypoint
+                // 2 - Locked, the player did not purchase the expansion
+                if (!waypoints) {
+                  const classicWaypoint = [1, 0, 0];
+                  const expansion1Waypoint = expansion1 ? [0, 0, 0] : [2, 2, 2];
+                  waypoints = classicWaypoint.concat(expansion1Waypoint);
+
+                  client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
+                } else if (expansion1 && waypoints.includes(2)) {
+                  // Unlock expansion waypoints
+                  waypoints = waypoints.map((waypoint, index) => {
+                    if (index === 3) {
+                      waypoint = 1;
+                    } else if (index > 3 && waypoint === 2) {
+                      waypoint = 0;
+                    }
+                    return waypoint;
+                  });
+
+                  client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 }
               } catch (err) {
                 // invalid json
@@ -208,6 +244,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 nanoPotions,
                 gems,
                 artifact,
+                expansion1,
+                waypoints,
               });
             });
           return;
@@ -252,6 +290,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
           .hset(userKey, "artifact", JSON.stringify(new Array(ARTIFACT_COUNT).fill(0)))
           .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
+          .hset(userKey, "expansion1", 0)
+          .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2]))
           .exec(function (err, replies) {
             log.info("New User: " + player.name);
             player.sendWelcome({
@@ -267,6 +307,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
               nanoPotions: 0,
               gems: new Array(GEM_COUNT).fill(0),
               artifact: new Array(ARTIFACT_COUNT).fill(0),
+              expansion1: 0,
+              waypoints: [1, 0, 0, 2, 2, 2],
             });
           });
       }
@@ -695,6 +737,36 @@ module.exports = DatabaseHandler = cls.Class.extend({
       }
     });
   },
+
+  foundWaypoint: function (name, index) {
+    log.info("Found Waypoint: " + name + " " + index);
+    client.hget("u:" + name, "waypoints", function (err, reply) {
+      try {
+        var waypoints = JSON.parse(reply);
+        waypoints[index] = 1;
+        waypoints = JSON.stringify(waypoints);
+        client.hset("u:" + name, "waypoints", waypoints);
+      } catch (err) {
+        Sentry.captureException(err);
+      }
+    });
+  },
+
+  unlockExpansion1: function (name) {
+    log.info("Unlock Expansion1: " + name);
+    client.hset("u:" + name, "expansion1", 1);
+    client.hget("u:" + name, "waypoints", function (err, reply) {
+      try {
+        var waypoints = JSON.parse(reply);
+        waypoints = waypoints.slice(0, 3).concat([1, 0, 0]);
+        waypoints = JSON.stringify(waypoints);
+        client.hset("u:" + name, "waypoints", waypoints);
+      } catch (err) {
+        Sentry.captureException(err);
+      }
+    });
+  },
+
   foundNanoPotion: function (name) {
     log.info("Found NanoPotion: " + name);
     client.hget("u:" + name, "nanoPotions", function (err, reply) {

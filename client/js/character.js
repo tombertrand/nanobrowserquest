@@ -248,7 +248,7 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
           this.idle();
 
           if (this.stop_pathing_callback) {
-            this.stop_pathing_callback(this.gridX, this.gridY);
+            this.stop_pathing_callback({ x: this.gridX, y: this.gridY });
           }
         }
       }

@@ -1059,6 +1059,58 @@ define([
       return found;
     },
 
+    initWaypoints: function (waypoints) {
+      $("#waypoint-list").empty();
+      var self = this;
+
+      if (Array.isArray(waypoints)) {
+        waypoints.forEach((status, i) => {
+          // Statuses
+          // 0, disabled
+          // 1, available
+          // 2, locked (no expansion)
+          let statusClass = "";
+          if (status === 0) {
+            statusClass = "disabled";
+          } else if (status === 2) {
+            statusClass = "locked";
+          }
+
+          $("<div/>", {
+            id: `waypoint-${Types.waypoints[i].id}`,
+            "data-waypoint-id": Types.waypoints[i].id,
+            class: `waypoint-spaced-row waypoint-row ${statusClass}`,
+            html: `
+            <div class="waypoint-icon"></div>
+            <div class="waypoint-text">${Types.waypoints[i].name}</div>
+            `,
+            click: function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+
+              // Only teleport to enabled locations
+              if ($(this).hasClass("locked") || $(this).hasClass("disabled") || $(this).hasClass("active")) return;
+
+              const id = parseInt($(this).data("waypoint-id"));
+              const clickedWaypoint = Types.waypoints.find(({ id: waypointId }) => waypointId === id);
+
+              // Waypoint has to be enabled
+              if (clickedWaypoint && self.player.waypoints[id - 1] === 1) {
+                const { gridX, gridY } = clickedWaypoint;
+
+                self.app.closeWaypoint();
+                self.player.stop_pathing_callback({ x: gridX + 1, y: gridY, isWaypoint: true });
+              }
+            },
+          }).appendTo("#waypoint-list");
+        });
+      }
+    },
+
+    activateWaypoint: function (id) {
+      $(`#waypoint-${id}`).removeClass("disabled locked").addClass("active");
+    },
+
     loadSprite: function (name) {
       if (this.renderer.upscaledRendering) {
         this.spritesets[0][name] = new Sprite(name, 1);
@@ -1540,6 +1592,8 @@ define([
         nanoPotions,
         gems,
         artifact,
+        expansion1,
+        waypoints,
       }) {
         log.info("Received player ID from server : " + id);
         self.player.id = id;
@@ -1583,10 +1637,12 @@ define([
         self.initTooltips();
         self.initSendUpgradeItem();
         self.initUpgradeItemPreview();
+        self.initWaypoints(waypoints);
 
         self.player.nanoPotions = nanoPotions;
         self.player.gems = gems;
         self.player.artifact = artifact;
+        self.player.waypoints = waypoints;
         self.player.skeletonKey = !!achievement[26];
 
         self.addEntity(self.player);
@@ -1735,7 +1791,7 @@ define([
           }
         });
 
-        self.player.onStopPathing(function (x, y, confirmed) {
+        self.player.onStopPathing(function ({ x, y, confirmed, isWaypoint }) {
           if (self.player.hasTarget()) {
             self.player.lookAtTarget();
           }
@@ -1747,8 +1803,9 @@ define([
             self.tryLootingItem(item);
           }
 
-          if (!self.player.hasTarget() && self.map.isDoor(x, y)) {
-            var dest = self.map.getDoorDestination(x, y);
+          const isDoor = !isWaypoint && self.map.isDoor(x, y);
+          if ((!self.player.hasTarget() && isDoor) || isWaypoint) {
+            var dest = isWaypoint ? { x, y, orientation: 2 } : self.map.getDoorDestination(x, y);
             if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
               self.client.sendBossCheck(false);
               return;
@@ -1804,7 +1861,7 @@ define([
               self.renderer.clearScreen(self.renderer.context);
             }
 
-            if (dest.portal) {
+            if (dest.portal || isWaypoint) {
               self.audioManager.playSound("teleport");
             }
 
@@ -1813,7 +1870,7 @@ define([
             }
           }
 
-          if (self.player.target instanceof Npc) {
+          if (self.player.target instanceof Npc && !isWaypoint) {
             self.makeNpcTalk(self.player.target);
           } else if (self.player.target instanceof Chest) {
             if (self.player.target.gridX === 154 && self.player.target.gridY === 365 && !self.player.skeletonKey) {
@@ -2319,30 +2376,7 @@ define([
           // );
 
           var mobName = Types.getKindAsString(kind);
-
-          if (mobName === "skeleton2") {
-            mobName = "skeleton warrior";
-          }
-
-          if (mobName === "eye") {
-            mobName = "evil eye";
-          }
-
-          if (mobName === "deathknight") {
-            mobName = "death knight";
-          }
-
-          if (mobName === "boss") {
-            self.showNotification("You killed the skeleton king");
-          }
-
-          if (mobName === "skeleton3") {
-            mobName = "skeleton guard";
-          }
-
-          if (mobName === "skeletonleader") {
-            mobName = "skeleton leader";
-          }
+          mobName = Types.getAliasFromName(mobName);
 
           self.storage.incrementTotalKills();
           self.tryUnlockingAchievement("HUNTER");
@@ -2517,7 +2551,7 @@ define([
               // 10s range
               // @TODO people getting banned here?
               // if (absS < 1000 * 10) {
-              self.player.stop_pathing_callback(71, 21, true);
+              self.player.stop_pathing_callback({ x: 71, y: 21, confirmed: true });
               // } else {
               //   self.client.sendBanPlayer(`Invalid check time ${check}, ${s}, ${now}`);
               // }
@@ -2778,11 +2812,23 @@ define([
         } else if (npc.kind === Types.Entities.ANVIL) {
           this.app.openUpgrade();
         } else if (npc.kind === Types.Entities.WAYPOINTX || npc.kind === Types.Entities.WAYPOINTN) {
-          // @TODO Open Waypoint menu
+          const activeWaypoint = this.getWaypointFromGrid(npc.gridX, npc.gridY);
+          this.app.openWaypoint(activeWaypoint);
+
+          // Send enable request for disabled waypoint
+          if (activeWaypoint && this.player.waypoints[activeWaypoint.id - 1] === 0) {
+            this.player.waypoints[activeWaypoint.id - 1] = 1;
+            this.activateWaypoint(activeWaypoint.id);
+            this.client.sendWaypoint(activeWaypoint.id);
+          }
         } else if (npc.kind === Types.Entities.SATOSHI) {
           this.tryUnlockingAchievement("SATOSHI");
         }
       }
+    },
+
+    getWaypointFromGrid: function (x, y) {
+      return Types.waypoints.find(({ gridX, gridY }) => gridX === x && gridY === y);
     },
 
     /**

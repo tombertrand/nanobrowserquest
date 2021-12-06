@@ -42,6 +42,7 @@ Types = {
     MOVE_UPGRADE_ITEMS_TO_INVENTORY: 39,
     UPGRADE_ITEM: 40,
     ANVIL_UPGRADE: 41,
+    WAYPOINT: 42,
     GUILDERRORTYPE: {
       DOESNOTEXIST: 1,
       BADNAME: 2,
@@ -752,9 +753,50 @@ Types.getAliasFromName = function (name) {
     return "undead goblin";
   } else if (name === "snake2") {
     return "sea snake";
+  } else if (name.startsWith("waypoint")) {
+    return "waypoint";
   }
   return name;
 };
+
+Types.waypoints = [
+  {
+    id: 1,
+    name: "Village",
+    gridX: 49,
+    gridY: 213,
+  },
+  {
+    id: 2,
+    name: "No Man's Land",
+    gridX: 70,
+    gridY: 90,
+  },
+  {
+    id: 3,
+    name: "Volcanic Mountains",
+    gridX: 63,
+    gridY: 51,
+  },
+  {
+    id: 4,
+    name: "Freezing Lands",
+    gridX: 77,
+    gridY: 450,
+  },
+  {
+    id: 5,
+    name: "High Plateau",
+    gridX: 22,
+    gridY: 391,
+  },
+  {
+    id: 6,
+    name: "Necromancer Lair",
+    gridX: 45,
+    gridY: 344,
+  },
+];
 
 Types.forEachKind = function (callback) {
   for (var k in kinds) {
@@ -826,6 +868,7 @@ Types.getMessageTypeAsString = function (type) {
       typeName = name;
     }
   });
+
   if (!typeName) {
     typeName = "UNKNOWN";
   }

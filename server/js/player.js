@@ -176,6 +176,12 @@ module.exports = Player = Character.extend({
           var x = message[1],
             y = message[2];
 
+          if (y >= 314 && !self.expansion1) {
+            self.connection.sendUTF8("invalidconnection");
+            self.connection.close("You have not unlocked the expansion.");
+            return;
+          }
+
           if (self.server.isValidPosition(x, y)) {
             self.setPosition(x, y);
             self.clearTarget();
@@ -510,6 +516,14 @@ module.exports = Player = Character.extend({
         if (message[2] === "found") {
           self.achievement[index] = 1;
           databaseHandler.foundAchievement(self.name, index);
+        }
+      } else if (action === Types.Messages.WAYPOINT) {
+        log.info("WAYPOINT: " + self.name + " " + message[1] + " " + message[2]);
+        // From waypointID to index
+        const index = parseInt(message[1]) - 1;
+        if (message[2] === "found" && !self.waypoints[index]) {
+          self.waypoints[index] = 1;
+          databaseHandler.foundWaypoint(self.name, index);
         }
       } else if (action === Types.Messages.GUILD) {
         if (message[1] === Types.Messages.GUILDACTION.CREATE) {
@@ -952,6 +966,8 @@ module.exports = Player = Character.extend({
     nanoPotions,
     gems,
     artifact,
+    expansion1,
+    waypoints,
   }) {
     var self = this;
 
@@ -977,6 +993,8 @@ module.exports = Player = Character.extend({
     }
 
     self.achievement = achievement;
+    self.waypoints = waypoints;
+    self.expansion1 = expansion1;
     self.inventory = inventory;
     self.hash = hash;
     self.hasRequestedPayout = !!hash;
@@ -1015,6 +1033,8 @@ module.exports = Player = Character.extend({
       nanoPotions,
       gems,
       artifact,
+      expansion1,
+      waypoints,
     ]);
 
     self.calculateBonus();

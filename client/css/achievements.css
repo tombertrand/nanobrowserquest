@@ -8,6 +8,7 @@
 #achievements-unlocks-count > div { margin-right: 10px; }
 #nanopotion-count > div { margin-left: 10px; }
 #nanopotion-count { justify-content: flex-end;}
+#achievements li, .upscaled #achievements li { display: flex; align-items: center; }
 
 @media screen and (min-width: 1501px) {
     .coin {width:72px;height:78px;}
@@ -94,9 +95,8 @@
 
     #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .achievement-sharing a, #previous, #next {background-size:1248px;}
     #achievements {height:588px;width:1248px;margin-left:-624px;margin-top:-324px;font-size:30px;}
-    #achievements li, .upscaled #achievements li {height:78px;width:1116px;background-position:0 -588px;margin:15px 0;}
+    #achievements li, .upscaled #achievements li { height:78px;width:1116px;background-position:0 -588px;margin:15px 0;}
     #achievements li .coin {margin-right:30px;}
-    #achievements li span {padding-top:27px;}
     .achievement-sharing {right:24px;top:24px;}
     .achievement-sharing .facebook {height:33px;width:15px;background-position:-1116px -588px;}
     .achievement-sharing .facebook:hover {background-position:-1116px -621px;}
@@ -212,7 +212,6 @@
     #achievements {height:392px;width:832px;margin-left:-416px;margin-top:-216px;font-size:20px;}
     #achievements li, .upscaled #achievements li {height:52px;width:744px;background-position:0 -392px;margin:10px 0;}
     #achievements li .coin {margin-right:20px;}
-    #achievements li span {padding-top:18px;}
     .achievement-sharing {right:16px;top:16px;}
     .achievement-sharing .facebook {height:22px;width:10px;background-position:-744px -392px;}
     .achievement-sharing .facebook:hover {background-position:-744px -414px;}
@@ -325,7 +324,6 @@
     #achievements {height:392px;width:832px;margin-left:-416px;margin-top:-216px;font-size:20px;}
     #achievements li, .upscaled #achievements li {height:52px;width:744px;background-position:0 -392px;margin:10px 0;}
     #achievements li .coin {margin-right:20px;}
-    #achievements li span {padding-top:18px;}
     .achievement-sharing {right:16px;top:16px;}
     .achievement-sharing .facebook {height:22px;width:10px;background-position:-744px -392px;}
     .achievement-sharing .facebook:hover {background-position:-744px -414px;}
@@ -441,7 +439,6 @@
     #achievements {height:196px;width:416px;margin-left:-208px;margin-top:-108px;font-size:10px;}
     #achievements li, .upscaled #achievements li {height:26px;width:372px;background-position:0 -196px;margin:5px 0;}
     #achievements li .coin {margin-right:10px;}
-    #achievements li span {padding-top:9px;}
     .achievement-sharing {right:8px;top:8px;}
     .achievement-sharing .facebook {height:11px;width:5px;background-position:-372px -196px;}
     .achievement-sharing .facebook:hover {background-position:-372px -207px;}
