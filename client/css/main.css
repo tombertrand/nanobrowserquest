@@ -656,7 +656,6 @@ footer, header, hgroup, menu, nav, section {
     .panel-container {
         display: flex;
         flex-direction: column;
-        right: 5%;
         justify-content: center;
         right: 5%;
         width: 262px;

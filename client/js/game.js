@@ -1024,7 +1024,7 @@ define([
         NOT_SAFU: {
           id: 39,
           name: "Not Safu",
-          desc: "Kill a monster with less than 15 HP left",
+          desc: "Kill a monster with less than 1% HP left",
           hidden: true,
           nano: 10,
         },
@@ -2421,9 +2421,14 @@ define([
             self.tryUnlockingAchievement("GHOSTBUSTERS");
           } else if (kind === Types.Entities.SKELETONLEADER) {
             self.tryUnlockingAchievement("DEAD_NEVER_DIE");
+          } else if (kind === Types.Entities.NECROMANCER) {
+            self.tryUnlockingAchievement("BLACK_MAGIC").then(() => {
+              // @TODO Configure second payout
+              // self.client.sendRequestPayout();
+            });
           }
 
-          if (self.player.hitPoints <= 15 && kind > Types.Entities.RAT2) {
+          if (Math.floor((self.player.hitPoints * 100) / self.player.maxHitPoints) <= 1 && kind > Types.Entities.RAT2) {
             self.tryUnlockingAchievement("NOT_SAFU");
           }
         });

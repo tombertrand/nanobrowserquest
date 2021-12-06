@@ -486,7 +486,8 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
         }
 
         if (game.started && !game.renderer.mobile && game.player && !hasClosedParchment) {
-          if (!$(".panel.visible").length) {
+          const hasOpenedPanel = $(".panel.visible").length;
+          if (!hasOpenedPanel || (hasOpenedPanel && !$(event.target).closest(".panel").is(":visible"))) {
             game.click();
           }
         }
