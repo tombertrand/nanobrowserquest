@@ -39,11 +39,19 @@
 			"length": 4,
 			"row": 8
 		},
-		"Group 5": {
-			"length": 3,
+		"raise_right": {
+			"length": 4,
 			"row": 9
+		},
+		"raise_up": {
+			"length": 4,
+			"row": 10
+		},
+		"raise_down": {
+			"length": 4,
+			"row": 11
 		}
 	},
 	"offset_x": -24,
-	"offset_y": -36
+	"offset_y": -48
 }

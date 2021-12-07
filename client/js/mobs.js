@@ -254,16 +254,16 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.walkSpeed = 100;
         this.idleSpeed = 450;
         this.setAttackRate(800);
-        this.aggroRange = 2;
+        this.aggroRange = 3;
       },
 
-      // idle: function(orientation) {
-      //     if(!this.hasTarget()) {
-      //         this._super(Types.Orientations.DOWN);
-      //     } else {
-      //         this._super(orientation);
-      //     }
-      // }
+      idle: function (orientation) {
+        if (!this.hasTarget()) {
+          this._super(Types.Orientations.DOWN);
+        } else {
+          this._super(orientation);
+        }
+      },
     }),
 
     Zombie: Mob.extend({
@@ -275,6 +275,14 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.idleSpeed = 450;
         this.setAttackRate(800);
         this.aggroRange = 4;
+      },
+
+      idle: function (orientation) {
+        if (!this.hasTarget()) {
+          this._super(Types.Orientations.DOWN);
+        } else {
+          this._super(orientation);
+        }
       },
     }),
 
