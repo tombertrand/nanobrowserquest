@@ -541,6 +541,10 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       if ($("#waypoint").hasClass("visible")) {
         this.closeWaypoint();
       }
+
+      if ($("#store").hasClass("visible")) {
+        this.closeStore();
+      }
     },
 
     showAchievementNotification: function (id, name) {
@@ -780,6 +784,14 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       $("#waypoint").removeClass("visible");
     },
 
+    openStore: function () {
+      this.hideWindows();
+      $("#store").addClass("visible");
+    },
+
+    closeStore: function () {
+      $("#store").removeClass("visible");
+    },
     openPopup: function (type, url) {
       var h = $(window).height(),
         w = $(window).width(),

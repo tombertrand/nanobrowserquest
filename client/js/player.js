@@ -352,7 +352,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.invincibleTimeout = setTimeout(function () {
         self.stopInvincibility();
         self.idle();
-      }, 15000);
+      }, 10000);
     },
 
     stopInvincibility: function () {

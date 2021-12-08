@@ -2829,6 +2829,8 @@ define([
           this.tryUnlockingAchievement("RICKROLLD");
         } else if (npc.kind === Types.Entities.ANVIL) {
           this.app.openUpgrade();
+          // } else if (npc.kind === Types.Entities.SORCERER) {
+          //   this.app.openStore();
         } else if (npc.kind === Types.Entities.WAYPOINTX || npc.kind === Types.Entities.WAYPOINTN) {
           const activeWaypoint = this.getWaypointFromGrid(npc.gridX, npc.gridY);
           this.app.openWaypoint(activeWaypoint);

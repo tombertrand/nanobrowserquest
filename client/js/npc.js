@@ -1,10 +1,10 @@
 define(["character"], function (Character) {
   var NpcTalk = {
     guard: [
-      "Hello there",
-      "We don't need to see your identification",
-      "You are not the player we're looking for",
-      "Move along, move along...",
+      "You can upgrade your items at the Anvil in town.",
+      "Use the same scroll class as the item class you are upgrading.",
+      "Careful, upgrading items gets more difficult as it's getting more powerful.",
+      "Good luck.",
     ],
 
     king: [
@@ -24,10 +24,8 @@ define(["character"], function (Character) {
     villagegirl: [
       "Hi there, adventurer!",
       "How do you like this game?",
-      "It's all happening in a single web page! Isn't it crazy?",
-      "It's all made possible thanks to WebSockets.",
-      "I don't know much about it, after all I'm just a program.",
-      'Why don&#x27;t you read this <a target="_blank" href="https://hacks.mozilla.org/2012/03/browserquest/">blog post</a> and learn all about it?',
+      "Make sure to share it with your friends and play it as many time as you like.",
+      "Hop over the Nano discord and get engaged with the community!",
     ],
 
     villager: [
@@ -48,10 +46,11 @@ define(["character"], function (Character) {
     ],
 
     satoshi: [
-      "This is not what I have envisionned for Bitcoin",
-      "It is an environmental disaster",
+      "This is not what I have envisionned for Bitcoin when I created it",
+      "It was supposed to be the solution of a broken banking system",
+      "But is is now an environmental disaster",
       "If only there was an environmental friendly, peer to peer, feeless and instant crypto ...",
-      "Do I know Colin? Yes, he's my nephew",
+      "Do I know Colin? Of course! He's my nephew.",
     ],
 
     agent: [
@@ -140,10 +139,10 @@ define(["character"], function (Character) {
     ],
 
     sorcerer: [
-      "You can upgrade your items at the Anvil in town.",
-      "Use the same scroll class as the item class you are upgrading.",
-      "Careful, upgrading items gets more difficult as it's getting more powerful.",
-      "Good luck.",
+      "You'll soon be able to get the Freezing Lands expansion from me.",
+      "Have you heard of the Necromancer?",
+      "He was banned from the Guardian order because he practiced black magic.",
+      "Only the bravest of warriors would dare to end his reign.",
     ],
 
     octocat: [

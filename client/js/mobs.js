@@ -256,14 +256,6 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.setAttackRate(800);
         this.aggroRange = 3;
       },
-
-      idle: function (orientation) {
-        if (!this.hasTarget()) {
-          this._super(Types.Orientations.DOWN);
-        } else {
-          this._super(orientation);
-        }
-      },
     }),
 
     Zombie: Mob.extend({
