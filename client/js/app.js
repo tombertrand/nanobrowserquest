@@ -542,7 +542,7 @@ define(["jquery", "storage", "util"], function ($, Storage) {
         this.closeWaypoint();
       }
 
-      if ($("#store").hasClass("visible")) {
+      if ($("#store").hasClass("active")) {
         this.closeStore();
       }
     },
@@ -786,12 +786,13 @@ define(["jquery", "storage", "util"], function ($, Storage) {
 
     openStore: function () {
       this.hideWindows();
-      $("#store").addClass("visible");
+      $("#store").addClass("active");
     },
 
     closeStore: function () {
-      $("#store").removeClass("visible");
+      $("#store").removeClass("active");
     },
+
     openPopup: function (type, url) {
       var h = $(window).height(),
         w = $(window).width(),
