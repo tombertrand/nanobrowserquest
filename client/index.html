@@ -29,6 +29,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <meta property="og:description" content="Play Nano BrowserQuest, a remake of the popular BrowserQuest HTML5 massively multiplayer game with Nano payout for killing the skeleton king!">
         <link rel="stylesheet" href="css/main.css" type="text/css">
         <link rel="stylesheet" href="css/achievements.css" type="text/css">
+        <link rel="stylesheet" href="css/shop.css" type="text/css">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" type="text/css">
 
         <link href="img/common/apple-touch-icon-57x57.png" rel="apple-touch-icon-precomposed" sizes="57x57">
@@ -62,37 +63,37 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <title>Nano BrowserQuest</title>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2641261794144402"
      crossorigin="anonymous"></script>
-	</head>
+    </head>
     <!--[if lt IE 9]>
-	<body class="intro upscaled">
+    <body class="intro upscaled">
     <![endif]-->
     <body class="intro">
-	    <noscript>
-	       <div class="alert">
-	           You need to enable JavaScript to play Nano BrowserQuest.
-	       </div>
-	    </noscript>
-	    <div id="intro">
+        <noscript>
+            <div class="alert">
+                You need to enable JavaScript to play Nano BrowserQuest.
+            </div>
+        </noscript>
+        <div id="intro">
             <span id="logo">	          
                 <span id="logosparks"></span>
                 <span id="nano">	  
                     <span id="nanosparks"></span>
                 </span>
             </span>
-	        <article id="portrait">
-	            <p>
-	               Please rotate your device to landscape mode
-	            </p>
-	            <div id="tilt"></div>
-	        </article>
-	        <section id="parchment" class="createcharacter">
-	            <div class="parchment-left"></div>
-	            <div class="parchment-middle">
+            <article id="portrait">
+                <p>
+                    Please rotate your device to landscape mode
+                </p>
+                <div id="tilt"></div>
+            </article>
+            <section id="parchment" class="createcharacter">
+                <div class="parchment-left"></div>
+                <div class="parchment-middle">
                     <article id="createcharacter">
-          	           <h1>
-          	               <span class="left-ornament"></span>
-          	               Create New Character
-          	               <span class="right-ornament"></span>
+                        <h1>
+                            <span class="left-ornament"></span>
+                            Create New Character
+                            <span class="right-ornament"></span>
                         </h1>
                         <form action="none" method="get" accept-charset="utf-8">
                             <input type="text" id="nameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16">
@@ -143,26 +144,26 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                                 <span class="link">Ok</span>
                             </div>
                         </div>
-                   </article>
+                    </article>
                     <article id="loadcharacter">
-          	           <h1>
-          	               <span class="left-ornament"></span>
-          	               Nano BrowserQuest
-          	               <span class="right-ornament"></span>
-                         </h1>
-                         <form action="none" method="get" accept-charset="utf-8">
-                             <input type="text" id="loginnameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16" autofocus>
-                             <textarea id="loginaccountinput" class="stroke" name="player-loginaccount" placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"
-                             ></textarea>
-                         </form>
-                         <div class="play">
-                           <span class="link">Login</span>
-                           <img src="img/common/spinner2.gif">
-                         </div>
-                         <div class="validation-summary"></div>
-                         <div id="create-new">
+                        <h1>
+                            <span class="left-ornament"></span>
+                            Nano BrowserQuest
+                            <span class="right-ornament"></span>
+                        </h1>
+                        <form action="none" method="get" accept-charset="utf-8">
+                            <input type="text" id="loginnameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16" autofocus>
+                            <textarea id="loginaccountinput" class="stroke" name="player-loginaccount" placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"
+                            ></textarea>
+                        </form>
+                        <div class="play">
+                            <span class="link">Login</span>
+                            <img src="img/common/spinner2.gif">
+                        </div>
+                        <div class="validation-summary"></div>
+                        <div id="create-new">
                             <span class="link">Create New Character</span>
-                         </div>
+                        </div>
                     </article>
                     <article id="banned">
                         <h1>
@@ -207,8 +208,8 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                         </div>
                     </article>
                     <article id="confirmation">
-          	            <h1>
-          	               <span class="left-ornament"></span>
+                        <h1>
+                            <span class="left-ornament"></span>
                            You need to accept the following terms of usage<span class="right-ornament"></span><br />
                            before creating a new character.
                         </h1>
@@ -226,13 +227,13 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                             <span class="link">Continue</span>
                         </div>
                     </article>
-    	            <article id="credits">
-        	            <h1>
-         	               <span class="left-ornament"></span>
-         	               <span class="title">
-         	                   Made for Mozilla by <a target="_blank" class="stroke clickable" href="http://www.littleworkshop.fr/">Little Workshop</a>
-         	               </span>
-         	               <span class="right-ornament"></span>
+                    <article id="credits">
+                        <h1>
+                            <span class="left-ornament"></span>
+                            <span class="title">
+                                Made for Mozilla by <a target="_blank" class="stroke clickable" href="http://www.littleworkshop.fr/">Little Workshop</a>
+                            </span>
+                            <span class="right-ornament"></span>
                         </h1>
                         <div id="authors">
                             <div id="guillaume">
@@ -247,22 +248,20 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                             </div>
                         </div>
                         <div id="seb">
-
                             <span id="note"></span>
                             Music by <a class="clickable" target="_blank" href="http://soundcloud.com/gyrowolf">Terrel O'Brien</a>, <a class="clickable" target="_blank" href="http://blog.dayjo.org">Joel Day</a>, <a class="clickable" target="_blank" href="http://www.dantilden.com">Dan Tilden</a>, &amp; <a target="_blank" class="clickable" href="https://soundcloud.com/aaron-anderson-11">Aaron Krogh</a>
-
                         </div>
-	                    <div id="close-credits">
-	                        <span>- click anywhere to close -</span>
+                        <div id="close-credits">
+                            <span>- click anywhere to close -</span>
                         </div>
-    	            </article>
-    	            <article id="about">
-        	            <h1>
-         	               <span class="left-ornament"></span>
-         	               <span class="title">
+                    </article>
+                    <article id="about">
+                        <h1>
+                            <span class="left-ornament"></span>
+                            <span class="title">
                                 Welcome to Nano BrowserQuest
-         	               </span>
-         	               <span class="right-ornament"></span>
+                            </span>
+                            <span class="right-ornament"></span>
                         </h1>
                         <p id="game-desc">
                             Nano BrowserQuest is a multiplayer game inviting you to explore a
@@ -273,61 +272,79 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                             You can complete the game as many time as you like.<br /><br />
                             Play with your friends and introduce them to Nano!
                         </p>
-                  </article>
-    	            <article id="death">
-                        <p>You are dead...</p>
-    					<div id="respawn" class="button"></div>
-    	            </article>
-                    <article id="error">
-          	           <h1>
-          	               <span class="left-ornament"></span>
-          	               Your browser cannot run Nano BrowserQuest!
-          	               <span class="right-ornament"></span>
-                         </h1>
-                         <p>
-                             We're sorry, but your browser does not support WebSockets.<br>
-                             In order to play, we recommend using the latest version of Firefox, Chrome or Safari.
-                         </p>
                     </article>
-	            </div>
-	            <div class="parchment-right"></div>
-	        </section>
-	    </div>
+                    <article id="death">
+                        <p>You are dead...</p>
+                        <div id="respawn" class="button"></div>
+                    </article>
+                    <article id="error">
+                        <h1>
+                            <span class="left-ornament"></span>
+                            Your browser cannot run Nano BrowserQuest!
+                            <span class="right-ornament"></span>
+                            </h1>
+                            <p>
+                                We're sorry, but your browser does not support WebSockets.<br>
+                                In order to play, we recommend using the latest version of Firefox, Chrome or Safari.
+                            </p>
+                    </article>
+                </div>
+                <div class="parchment-right"></div>
+            </section>
+        </div>
 
-		<div id="container">
-		    <div id="canvasborder">
+        <div id="container">
+            <div id="canvasborder">
                 <article id="store" class="clickable">
-		            <div class="close"></div>
-		            <h1>
-     	               <span class="left-ornament"></span>
-     	               Shop
-     	               <span class="right-ornament"></span>
-	                </h1>
-		        </article>
-		        <article id="instructions" class="clickable">
-		            <div class="close"></div>
-		            <h1>
-     	               <span class="left-ornament"></span>
-     	               How to play
-     	               <span class="right-ornament"></span>
-	                </h1>
-	                <ul>
-	                   <li><span class="icon"></span>Left click or tap to move, attack and pick up items.</li>
-	                   <li><span class="icon"></span>Press ENTER to chat with other players.</li>
-	                   <li><span class="icon"></span>Your character is automatically saved as you play.</li>
-	                   <li><span class="icon"></span>Upgrade your items at the Anvil in town.</li>
-	                </ul>
+                    <div class="close"></div>
+                    <h1>
+                        <span class="left-ornament"></span>
+                        Shop
+                        <span class="right-ornament"></span>
+                    </h1>
+                    <div class="shop-wrapper">
+                        <div class="item-wrapper">
+                            <div class="item-icon">
+                                <div class="expansion1 locked"></div>
+                            </div>
+                            <p>Freezing Lands expansion</p>
+                            <p>1 Ӿ</p>
+                            <button class="btn" id="">Purchase</button>
+                        </div>
+                        <div class="item-wrapper">
+                            <div class="item-icon">
+                                <div class="scrollupgradehigh"></div>
+                            </div>
+                            <p>High class upgrade scrolls<br/>(Pack of 10)</p>
+                            <p>0.25 Ӿ</p>
+                            <button class="btn" id="">Purchase</button>
+                        </div>
+                    </div>
+                </article>
+                <article id="instructions" class="clickable">
+                    <div class="close"></div>
+                    <h1>
+                        <span class="left-ornament"></span>
+                        How to play
+                        <span class="right-ornament"></span>
+                    </h1>
+                    <ul>
+                        <li><span class="icon"></span>Left click or tap to move, attack and pick up items.</li>
+                        <li><span class="icon"></span>Press ENTER to chat with other players.</li>
+                        <li><span class="icon"></span>Your character is automatically saved as you play.</li>
+                        <li><span class="icon"></span>Upgrade your items at the Anvil in town.</li>
+                    </ul>
                     <!-- <p>- click anywhere to close -</p> -->
-		        </article>
+                </article>
                 <!-- <article id="instructions-advanced" class="clickable">
-		            <div class="close"></div>
-		            <h1>
-     	               <span class="left-ornament"></span>
-     	               Advanced instructions
-     	               <span class="right-ornament"></span>
-	                </h1>
-	                <ul>
-	                    <li>You get a base 60 hp, 15 hp per armor class and 6 hp per level.</li>
+                    <div class="close"></div>
+                    <h1>
+                        <span class="left-ornament"></span>
+                        Advanced instructions
+                        <span class="right-ornament"></span>
+                    </h1>
+                    <ul>
+                        <li>You get a base 60 hp, 15 hp per armor class and 6 hp per level.</li>
                         <li>You can upgrade any weapon / armor up to +5, breaking your item will reduce its efficiency by 25%.</li>
                         <li>Upgrade chances: +1 95%, +2 85%, +3 60%, +4 40%, +5 20%.</li>
                         <li>
@@ -338,15 +355,15 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                                 <li>Superior upgrade scrolls 0.5% on mobs level 10 and above</li>
                             </ul>
                         </li>
-	                </ul>
-	                    <p>- click anywhere to close -</p>
-		        </article> -->
-		        <article id="achievements" class="page1 clickable">
-		            <div class="close"></div>
-		            <div id="achievements-wrapper">
-		                <div id="lists">
-        		        </div>
-    		        </div>
+                    </ul>
+                        <p>- click anywhere to close -</p>
+                </article> -->
+                <article id="achievements" class="page1 clickable">
+                    <div class="close"></div>
+                    <div id="achievements-wrapper">
+                        <div id="lists">
+                        </div>
+                    </div>
 
                     <div id="achievements-count" class="stroke">
                         <div id="achievements-unlocks-count" class="stroke">
@@ -372,25 +389,25 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                             <div id="nanopotion-4" class="item-nanopotion"></div>
                             <div id="nanopotion-5" class="item-nanopotion"></div>
                         </div>
-    		            <div>
-    		                <span id="unlocked-nano-achievements">0</span>
-    		                /
-    		                <span id="total-nano-achievements"></span>
-    		            </div>
-    		        </div>
+                        <div>
+                            <span id="unlocked-nano-achievements">0</span>
+                            /
+                            <span id="total-nano-achievements"></span>
+                        </div>
+                    </div>
 
-		            <nav class="clickable">
-		                <div id="previous"></div>
-		                <div id="next"></div>
-		            </nav>
-		        </article>
+                    <nav class="clickable">
+                        <div id="previous"></div>
+                        <div id="next"></div>
+                    </nav>
+                </article>
                 <article id="completed" class="clickable">
-		            <div class="close"></div>
+                    <div class="close"></div>
                     <h1>
-     	               <span class="left-ornament"></span>
-     	               Game Completed
-     	               <span class="right-ornament"></span>
-	                </h1>
+                        <span class="left-ornament"></span>
+                        Game Payouts
+                        <span class="right-ornament"></span>
+                    </h1>
                     <p>
                         You killed the skeleton king and received a Nano payout.
                     </p>
@@ -402,31 +419,31 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                     <div class="fight-again" style="text-align: center; margin-top: 10px;">
                         <button class="btn" id="fight-again">Fight Again!</button>
                     </div>
-		        </article>
+                </article>
                 <article id="failed" class="clickable">
-		            <div class="close"></div>
+                    <div class="close"></div>
                     <h1>
-     	               <span class="left-ornament"></span>
-     	               Not yet!
-     	               <span class="right-ornament"></span>
-	                </h1>
+                        <span class="left-ornament"></span>
+                        Not yet!
+                        <span class="right-ornament"></span>
+                    </h1>
                     <p></p>
-		        </article>
-    			<div id="canvas">
-    				<canvas id="background"></canvas>
-    				<canvas id="entities"></canvas>
-    				<canvas id="foreground" class="clickable"></canvas>
-    			</div>
-    			<div id="bubbles"></div>
-     			<div id="expbar"></div>
-     			<div id="text-window">
+                </article>
+                <div id="canvas">
+                    <canvas id="background"></canvas>
+                    <canvas id="entities"></canvas>
+                    <canvas id="foreground" class="clickable"></canvas>
+                </div>
+                <div id="bubbles"></div>
+                <div id="expbar"></div>
+                <div id="text-window">
                     <div id="minimize"></div>
                     <div id="text-list"></div>
                     <form action="none" method="get" accept-charset="utf-8">
-					    <input id="chatinput" class="gp" type="text" maxlength="100">
-				    </form>
-                 </div>
-    			<div id="inspector">
+                        <input id="chatinput" class="gp" type="text" maxlength="100">
+                    </form>
+                    </div>
+                <div id="inspector">
                     <div class="headshot"><div> </div></div>
                     <div class="details">
                         <div class="name"></div>
@@ -442,40 +459,38 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                         <span id="dropCancel">&nbsp;Cancel&nbsp;</span>
                     </div>
                 </div>
- 			<div id="achievement-notification">
-    			    <div class="coin">
-    			        <div id="coinsparks"></div>
-    			    </div>
-    			    <div id="achievement-info">
-        			    <div class="title">New Achievement Unlocked!</div>
-        			    <div class="name"></div>
-    			    </div>
-    			</div>
-    			<div id="bar-container">
-					<div id="healthbar">
-					</div>
-					<div id="hitpoints">
-					</div>
-					<div id="weapon"></div>
-					<div id="armor"></div>
-					<div id="notifications">
-					    <div>
-					       <span id="message1"></span>
-					       <span id="message2"></span>
-					    </div>
-					</div>
+                <div id="achievement-notification">
+                    <div class="coin">
+                        <div id="coinsparks"></div>
+                    </div>
+                    <div id="achievement-info">
+                        <div class="title">New Achievement Unlocked!</div>
+                        <div class="name"></div>
+                    </div>
+                </div>
+                <div id="bar-container">
+                    <div id="healthbar">
+                    </div>
+                    <div id="hitpoints">
+                    </div>
+                    <div id="weapon"></div>
+                    <div id="armor"></div>
+                    <div id="notifications">
+                        <div>
+                            <span id="message1"></span>
+                            <span id="message2"></span>
+                        </div>
+                    </div>
                     <div id="player-count" class="clickable">
                         <span class="count">0</span> <span>players</span>
                     </div>
                     <div id="barbuttons">
                         <div id="chatbutton" class="barbutton clickable"></div>
                         <div id="achievementsbutton" class="barbutton clickable"></div>
-                        <div id="completedbutton" class="barbutton clickable">
-                            <span class="nano-logo"></span>
-                        </div>
+                        <div id="completedbutton" class="barbutton clickable"></div>
                         <div id="mute-button" class="barbutton clickable"></div>
                     </div>
-    			</div>
+                </div>
 
                 <div id="waypoint" class="panel">
                     <span class="close"></span>
@@ -564,23 +579,23 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                     </div>
                     <div id="player-list"></div>
                     <!--<div id="guild-population" class="">
-						<span>0</span> <span>players</span> in «&nbsp;<span id="guild-name"></span>&nbsp;»
-					</div>-->
+                        <span>0</span> <span>players</span> in «&nbsp;<span id="guild-name"></span>&nbsp;»
+                    </div>-->
                 </div>
-		    </div>
-		</div>
-		<footer>
-		    <div id="sharing" class="clickable">
-		      Share this on
-              <a href="https://twitter.com/share?url=https%3A%2F%2Fnanobrowserquest.com&amp;text=NanoBrowserQuest%3A%20HTML5%20massively%20multiplayer%20adventure%20game%20%23demo%20%23websockets&amp;related=glecollinet:Creators%20of%20BrowserQuest%2Cwhatthefranck" class="twitter"></a>
-              <a href="https://www.facebook.com/share.php?u=https://nanobrowserquest.com/" class="facebook"></a>
-		    </div>
+            </div>
+        </div>
+        <footer>
+            <div id="sharing" class="clickable">
+                Share this on
+                <a href="https://twitter.com/share?url=https%3A%2F%2Fnanobrowserquest.com&amp;text=NanoBrowserQuest%3A%20HTML5%20massively%20multiplayer%20adventure%20game%20%23demo%20%23websockets&amp;related=glecollinet:Creators%20of%20BrowserQuest%2Cwhatthefranck" class="twitter"></a>
+                <a href="https://www.facebook.com/share.php?u=https://nanobrowserquest.com/" class="facebook"></a>
+            </div>
             <div id="nano-link" class="clickable">
                 <span class="dash">&ndash;</span> <a href="https://nanolooker.com/nanobrowserquest" target="_blank">How to play</a>
-              </div>
-		    <div id="nano-link" class="clickable">
-		      <span class="dash">&ndash;</span> <a href="https://github.com/running-coder/NanoBrowserQuest" target="_blank">Report a bug</a>
-		    </div>
+                </div>
+            <div id="nano-link" class="clickable">
+                <span class="dash">&ndash;</span> <a href="https://github.com/running-coder/NanoBrowserQuest" target="_blank">Report a bug</a>
+            </div>
             <div id="nano-link" class="clickable">
                 <span class="dash">&ndash;</span> <a href="https://nanolooker.com/what-is-nano" target="_blank">What is Nano?</a>
                 </span>
@@ -588,9 +603,9 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
             <div id="credits-link" class="clickable">
                 <span class="dash">&ndash;</span> <span id="toggle-credits">Credits</span>
             </div>
-		</footer>
+        </footer>
 
-		<ul id="page-tmpl" class="clickable" style="display:none">
+        <ul id="page-tmpl" class="clickable" style="display:none">
         </ul>
         <ul>
             <li id="achievement-tmpl" style="display:none">
@@ -623,7 +638,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 
         <script src="js/lib/log.js"></script>
         <script>
-                var require = { waitSeconds: 60 };
+            var require = { waitSeconds: 60 };
         </script>
         <script data-main="js/home" src="js/lib/require.js"></script>
         <script src="js/lib/jquery.js"></script>

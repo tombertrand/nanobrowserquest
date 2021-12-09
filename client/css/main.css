@@ -286,7 +286,7 @@ footer, header, hgroup, menu, nav, section {
     @-webkit-keyframes blink { 0% {color:red;} 100% {color:#880000;}}
     .blink {-webkit-animation:blink 0.3s linear 5 alternate;-moz-animation:blink 0.3s linear 5 alternate;animation:blink 0.3s linear 5 alternate;}
 
-    #credits, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #death, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
+    #credits, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #death, #store, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
     
     #player-image {image-rendering: -moz-crisp-edges; image-rendering: -webkit-optimize-contrast;}
     
@@ -611,10 +611,6 @@ footer, header, hgroup, menu, nav, section {
         align-items: center;
     }
 
-    #completedbutton .nano-logo {
-        background-image: url(../img/3/nano-small.png);
-    }
-
     #completedbutton:not(.completed) {
         filter: grayscale(100%);
     }
@@ -763,9 +759,9 @@ footer, header, hgroup, menu, nav, section {
         right: 10%;
         background-color: #404040;
     }
+    #store .expansion1 {margin:0 auto;}
 
 	@media screen and (min-width: 1501px) {
-        #completedbutton .nano-logo { width: 60px; height: 28px; }
         #nano {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }
         #text-list > div { padding: 0 12px; }
@@ -791,6 +787,7 @@ footer, header, hgroup, menu, nav, section {
         .waypoint-row.active .waypoint-icon {background-position-x: -69px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -138px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 3px #373737;}
+        #store .expansion1.locked {width:69px; height: 69px; background-image: url('../img/3/waypoint.png'); background-position-x: -138px;}
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
@@ -913,9 +910,10 @@ footer, header, hgroup, menu, nav, section {
         #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-474px -51px;}
         #achievementsbutton.blink {background-position:-864px -51px;}
         #achievementsbutton.active {background-position:-516px -51px;}
-        #completedbutton {background-position:-1305px -51px;top:3px;left:1305px;width:88px;}
-        #completedbutton:hover {background-position:-1305px -96px;}
-        #completedbutton.active {background-position:-1305px -141px;}
+        #completedbutton {background-position:-1002px -51px;top:3px;left:1305px;width:42px;}
+        #completedbutton:hover {background-position:-1044px -51px;}
+        #completedbutton.active {background-position:-1086px -51px;}
+        /* #completedbutton.completed {background-position:-1170px -51px;} */
         #mute-button {background-position:-684px -51px;top:3px;left:1395px;}
         #mute-button:hover {background-position:-726px -51px;}
         #mute-button.active {background-position:-768px -51px;}
@@ -976,7 +974,6 @@ footer, header, hgroup, menu, nav, section {
 
 	@media screen and (max-width: 1500px), screen and (max-height: 870px) {
         #nano {margin-left:-200px;margin-top:-20px;scale:0.7;}
-        #completedbutton .nano-logo { width: 40px; height: 18.5px; }
         .createaccount-instructions { font-size: 17px; }
         #upgrade-scroll { width: 120px; }
         .item-equip-weapon::before {background-image: url('../img/2/inventory-placeholder.png');}
@@ -994,6 +991,7 @@ footer, header, hgroup, menu, nav, section {
         .waypoint-row.active .waypoint-icon {background-position-x: -46px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -92px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 2px #373737;}
+        #store .expansion1.locked {width:46px; height: 46px; background-image: url('../img/2/waypoint.png'); background-position-x: -92px;margin:0 auto;}
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/2/barsheet.png');}
@@ -1117,9 +1115,10 @@ footer, header, hgroup, menu, nav, section {
         #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-316px -34px;}
         #achievementsbutton.blink {background-position:-576px -34px;}
         #achievementsbutton.active {background-position:-344px -34px;}
-        #completedbutton {background-position:-869px -34px;top:2px;left:869px;width:60px;}
-        #completedbutton:hover {background-position:-869px -64px;}
-        #completedbutton.active {background-position:-869px -94px;}
+        #completedbutton {background-position:-668px -34px;top:2px;left:870px;width:28px;}
+        #completedbutton:hover {background-position:-696px -34px;}
+        #completedbutton.active {background-position:-724px -34px;}
+        /* #completedbutton.completed {background-position:-752px -34px;} */
         #mute-button {background-position:-456px -34px;top:2px;left:930px;}
         #mute-button:hover {background-position:-484px -34px;}
         #mute-button.active {background-position:-512px -34px;}
@@ -1186,7 +1185,6 @@ footer, header, hgroup, menu, nav, section {
 	
 	@media screen and (max-width: 1000px) {
         #nano {margin-left:-170px;margin-top:-42px;scale:0.35;}
-        #completedbutton .nano-logo { width: 20px; height: 9px; }
         #text-window { width: 60%; }
         .world { font-size: 12px;}
         .createaccount-instructions { font-size: 8px; }
@@ -1199,6 +1197,7 @@ footer, header, hgroup, menu, nav, section {
         .waypoint-row.active .waypoint-icon {background-position-x: -23px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -46px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 2px #373737; padding: 6px 0;}
+        #store .expansion1.locked {width:23px; height: 23px; background-image: url('../img/1/waypoint.png'); transform: scale(1.3); margin: 0 12px 0 6px;background-position-x: -46px;}
 
         canvas {image-rendering:optimizeSpeed;}
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
@@ -1303,9 +1302,11 @@ footer, header, hgroup, menu, nav, section {
 
         #player-count {font-size:10px;left:348px;top:4px;width:54px;text-align:center;}
 
-        #completedbutton {background-position:-435px -17px;;top:1px;left:435px;width:29px;}
-        #completedbutton:hover {background-position:-435px -32px;}
-        #completedbutton.active {background-position:-435px -47px;}
+        #completedbutton {background-position:-668px -34px;top:2px;left:870px;width:28px;}
+        #completedbutton:hover {background-position:-696px -34px;}
+        #completedbutton.active {background-position:-724px -34px;}
+        /* #completedbutton.completed {background-position:-752px -34px;} */
+
         .panel {bottom:22px;width:262px;font-size:14px;line-height:20px;}
         .panel-container {width:262px;}
         #population {right:70px;}
@@ -1382,7 +1383,6 @@ footer, header, hgroup, menu, nav, section {
 
 	@media screen and (max-width: 800px) {
         #text-window { width: 60%; }
-        #completedbutton .nano-logo { width: 40px; height: 18.5px; }
         .createaccount-instructions { font-size: 8px; }
         #upgrade-scroll { width: 120px; }
         .panel-container {
@@ -1517,9 +1517,9 @@ footer, header, hgroup, menu, nav, section {
         #achievementsbutton {background-position:-288px -34px;top:2px;left:390px;}
         #achievementsbutton:hover, #achievementsbutton.blink {background-position:-316px -34px;}
         #achievementsbutton.active {background-position:-344px -34px;}
-        #completedbutton {background-position:-869px -34px;top:2px;left:419px;width:60px;}
-        #completedbutton:hover {background-position:-869px -64px;}
-        #completedbutton.active {background-position:-869px -94px;}
+        #completedbutton {background-position:-668px -34px;top:2px;left:420px;width:28px;}
+        #completedbutton:hover {background-position:-696px -34px;}
+        #completedbutton.active {background-position:-724px -34px;}
         #mute-button { display: none; }
 
 		#chatbox {height:32px;width:480px;background-size:960px;background-position:0 -64px;margin-left:-240px;bottom:2px;}

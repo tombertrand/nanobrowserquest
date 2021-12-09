@@ -107,7 +107,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 }
               } catch (err) {
                 // invalid json
-                Sentry.captureException(err);
+                Sentry.captureException(err, {
+                  user: {
+                    username: player.name,
+                  },
+                  extra: {
+                    achievement,
+                  },
+                });
               }
 
               // Waypoint
@@ -145,7 +152,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 }
               } catch (err) {
                 // invalid json
-                Sentry.captureException(err);
+                Sentry.captureException(err, {
+                  user: {
+                    username: player.name,
+                  },
+                  extra: {
+                    waypoints,
+                  },
+                });
               }
 
               var inventory = replies[6];
@@ -165,8 +179,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   }
                 }
               } catch (err) {
-                console.log(err);
-                Sentry.captureException(err);
+                Sentry.captureException(err, {
+                  user: {
+                    username: player.name,
+                  },
+                  extra: {
+                    inventory,
+                  },
+                });
               }
 
               var upgrade = replies[12];
@@ -178,7 +198,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 }
               } catch (err) {
                 console.log(err);
-                Sentry.captureException(err);
+                Sentry.captureException(err, {
+                  user: {
+                    username: player.name,
+                  },
+                  extra: {
+                    upgrade,
+                  },
+                });
               }
 
               var gems = new Array(GEM_COUNT).fill(0);
@@ -195,7 +222,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   }
                 }
               } catch (err) {
-                console.log(err);
                 Sentry.captureException(err);
               }
 
@@ -207,7 +233,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   artifact = JSON.parse(replies[16]);
                 }
               } catch (err) {
-                console.log(err);
                 Sentry.captureException(err);
               }
 

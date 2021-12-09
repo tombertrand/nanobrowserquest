@@ -786,6 +786,7 @@ define(["jquery", "storage", "util"], function ($, Storage) {
 
     openStore: function () {
       this.hideWindows();
+
       $("#store").addClass("active");
     },
 
@@ -900,6 +901,10 @@ define(["jquery", "storage", "util"], function ($, Storage) {
           this.game.renderer.rescale(newScale);
         }
       }
+    },
+
+    snowfall: function () {
+      // $("body").snowfall();
     },
   });
 

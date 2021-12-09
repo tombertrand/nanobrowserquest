@@ -299,7 +299,7 @@ module.exports = Player = Character.extend({
               self.updateHitPoints(true);
               self.broadcast(self.equip(Types.Entities.FIREFOX));
               self.firepotionTimeout = setTimeout(function () {
-                self.broadcast(self.equip(self.armor)); // return to normal after 8 sec
+                self.broadcast(self.equip(self.armor)); // return to normal after 10 sec
                 self.firepotionTimeout = null;
               }, 10000);
               self.sendPlayerStats();
@@ -755,7 +755,11 @@ module.exports = Player = Character.extend({
       });
     } catch (err) {
       console.log("Error: ", err);
-      Sentry.captureException(err);
+      Sentry.captureException(err, {
+        user: {
+          username: self.name,
+        },
+      });
     }
   },
 

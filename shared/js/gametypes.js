@@ -952,6 +952,9 @@ Types.getBonus = function (rawBonus, level) {
 
   const bonus = [];
 
+  // A glitch in the inventory system allowed for scrolls to be added as rings
+  if (!rawBonus || !Array.isArray(rawBonus)) return bonus;
+
   for (let i = 0; i < rawBonus.length; i++) {
     const type = bonusType[rawBonus[i]];
     const stats = bonusPerLevel[rawBonus[i]][level - 1];

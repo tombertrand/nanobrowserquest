@@ -1,7 +1,8 @@
-define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoint"], function (
+define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "lib/jquery.snowfall", "app", "entrypoint"], function (
   $,
   jqueryUI,
   touchPunch,
+  snowfall,
   App,
   EntryPoint,
 ) {
@@ -425,6 +426,8 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "app", "entrypoi
       });
 
       game.onNotification(app.showMessage);
+
+      app.snowfall();
 
       app.initHealthBar();
       app.initTargetHud();
