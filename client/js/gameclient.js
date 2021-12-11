@@ -207,7 +207,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         gems = data[16],
         artifact = data[17],
         expansion1 = data[18],
-        waypoints = data[19];
+        waypoints = data[19],
+        depositAccount = data[20];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -230,6 +231,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           artifact,
           expansion1,
           waypoints,
+          depositAccount,
         });
       }
     },
@@ -809,6 +811,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     sendUpgradeItem: function () {
       this.sendMessage([Types.Messages.UPGRADE_ITEM]);
+    },
+
+    sendStoreRegisterPurchase: function (id, account) {
+      this.sendMessage([Types.Messages.STORE_REGISTER_PURCHASE, id, account]);
     },
   });
 

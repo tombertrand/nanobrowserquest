@@ -1,12 +1,13 @@
 const fetch = require("node-fetch");
 const BigNumber = require("bignumber.js");
 const { PromiseQueue } = require("./promise-queue");
+const { rpc } = require("./rpc");
 
 const queue = new PromiseQueue();
 
 const sender = "nano_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay";
 
-const { PRIVATE_KEY, BPOW_USERNAME, BPOW_API_KEY, BPOW_DOMAIN, RPC_DOMAIN } = process.env;
+const { PRIVATE_KEY, BPOW_USERNAME, BPOW_API_KEY, BPOW_DOMAIN } = process.env;
 
 // function sleep(ms) {
 //   return new Promise(resolve => setTimeout(resolve, ms));
@@ -26,32 +27,6 @@ const getWorkFromService = async hash => {
     body: JSON.stringify(params),
   });
   const json = await res.json();
-
-  return json;
-};
-
-const rpc = async (action, params) => {
-  let res;
-  let json;
-
-  try {
-    const body = JSON.stringify({
-      jsonrpc: "2.0",
-      action,
-      ...params,
-    });
-
-    // @TODO Figure out what to do with rpc enabled...
-    res = await fetch(RPC_DOMAIN, {
-      method: "POST",
-      body,
-    });
-
-    json = await res.json();
-  } catch (err) {
-    console.log("Error", err);
-    throw err;
-  }
 
   return json;
 };
@@ -92,6 +67,7 @@ const sendPayout = async ({ account: receiver, amount }) => {
       ...(work ? { work } : null),
     });
 
+    // @TODO add more debug when this error occurs
     if (blockCreate.error) {
       throw new Error("Unable to block_create");
     }

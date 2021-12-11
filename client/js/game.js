@@ -255,6 +255,10 @@ define([
       this.storage = storage;
     },
 
+    setStore: function (store) {
+      this.store = store;
+    },
+
     setRenderer: function (renderer) {
       this.renderer = renderer;
     },
@@ -1607,6 +1611,7 @@ define([
         artifact,
         expansion1,
         waypoints,
+        depositAccount,
       }) {
         log.info("Received player ID from server : " + id);
         self.player.id = id;
@@ -1651,6 +1656,9 @@ define([
         self.initSendUpgradeItem();
         self.initUpgradeItemPreview();
         self.initWaypoints(waypoints);
+
+        self.store.expansion1 = expansion1;
+        self.store.depositAccount = depositAccount;
 
         self.player.nanoPotions = nanoPotions;
         self.player.gems = gems;
@@ -2829,8 +2837,8 @@ define([
           this.tryUnlockingAchievement("RICKROLLD");
         } else if (npc.kind === Types.Entities.ANVIL) {
           this.app.openUpgrade();
-          // } else if (npc.kind === Types.Entities.SORCERER) {
-          //   this.app.openStore();
+        } else if (npc.kind === Types.Entities.SORCERER) {
+          this.store.openStore();
         } else if (npc.kind === Types.Entities.WAYPOINTX || npc.kind === Types.Entities.WAYPOINTN) {
           const activeWaypoint = this.getWaypointFromGrid(npc.gridX, npc.gridY);
           this.app.openWaypoint(activeWaypoint);

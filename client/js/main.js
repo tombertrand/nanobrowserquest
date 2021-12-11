@@ -1,10 +1,20 @@
-define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "lib/jquery.snowfall", "app", "entrypoint"], function (
+define([
+  "jquery",
+  "app",
+  "entrypoint",
+  "lib/jquery-ui",
+  "lib/jquery.ui.touch-punch",
+  "lib/jquery.snowfall",
+  "lib/jquery.qrcode",
+], function (
   $,
+
+  App,
+  EntryPoint,
   jqueryUI,
   touchPunch,
   snowfall,
-  App,
-  EntryPoint,
+  qrcode,
 ) {
   var app, game;
 
@@ -269,6 +279,7 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "lib/jquery.snow
       game = new Game(app);
       game.setup("#bubbles", canvas, background, foreground, input);
       game.setStorage(app.storage);
+      game.setStore(app.store);
       app.setGame(game);
 
       if (app.isDesktop && app.supportsWorkers) {
@@ -390,7 +401,7 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "lib/jquery.snow
                 <span>${name}</span>
                 ${
                   isCompleted
-                    ? '<span class="nano-logo" title="Completed the game and received the payout"></span>'
+                    ? '<span class="xno-payout" title="Killed the Skeleton King and received a payout"></span>'
                     : ""
                 }
                 <span>lv.${level}</span>
@@ -488,11 +499,8 @@ define(["jquery", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "lib/jquery.snow
           }
         }
 
-        if (game.started && !game.renderer.mobile && game.player && !hasClosedParchment) {
-          const hasOpenedPanel = $(".panel.visible").length;
-          if (!hasOpenedPanel || (hasOpenedPanel && !$(event.target).closest(".panel").is(":visible"))) {
-            game.click();
-          }
+        if (event.target.id === "foreground") {
+          game.click();
         }
       });
 

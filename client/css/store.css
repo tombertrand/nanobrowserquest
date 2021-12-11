@@ -1,0 +1,268 @@
+.store-wrapper {
+  font-family: "GraphicPixel";
+}
+
+.item-wrapper {
+  align-self: center;
+  width: 33.33%;
+  padding: 0 10px;
+}
+.item-wrapper-large {
+  width: 66.66%;
+}
+
+.item-icon {
+  border-radius: 4px;
+  border: solid 2px #928f8c;
+  background: #171717;
+  display: inline-block;
+  padding: 3px;
+  background-color: inherit;
+  position: relative;
+}
+
+.scrollupgradehigh {
+  height: 100%;
+}
+
+#store-item-list,
+#store-item-purchase {
+  display: none;
+}
+
+#store-item-list.active,
+#store-item-purchase.active {
+  display: flex;
+}
+
+#store-item-purchase {
+  justify-content: space-between;
+}
+
+#qrcode {
+  background: #fff;
+  position: relative;
+  padding: 5px;
+}
+
+#qrcode > canvas {
+  left: 5px;
+}
+
+#store .store-wrapper input {
+  height: auto;
+  font-size: 14px;
+  padding: 5px;
+  -moz-animation: none;
+  -webkit-animation: none;
+  -o-animation: none;
+  -ms-animation: none;
+  animation: none;
+  color: #333;
+  margin-top: 0;
+}
+
+.nano-account {
+  word-break: break-all;
+  user-select: all;
+}
+
+.note {
+  color: #555;
+}
+
+.note-high-resolution {
+  display: block;
+}
+.note-low-resolution {
+  display: none;
+}
+
+@media screen and (min-width: 1501px) {
+  .store-wrapper {
+    margin: -20px 20px 0;
+  }
+  .item-icon {
+    width: 69px;
+    height: 69px;
+  }
+  .scrollupgradehigh {
+    background-position: 0px -5px;
+    background-image: url(../img/3/item-scrollupgradehigh.png);
+    background-repeat: no-repeat;
+    background-size: 440px;
+  }
+
+  #store .expansion1.locked {
+    width: 69px;
+    height: 69px;
+    background-image: url("../img/3/waypoint.png");
+    background-position-x: -138px;
+  }
+
+  #qrcode {
+    height: 130px;
+    width: 130px;
+    margin: 10px auto;
+  }
+
+  .item-wrapper .name {
+    font-size: 25px;
+  }
+
+  .item-wrapper .description {
+    font-size: 20px;
+  }
+
+  .item-wrapper .prices {
+    font-size: 18px;
+  }
+
+  .nano-account {
+    font-size: 18px;
+  }
+
+  .note {
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 1500px), screen and (max-height: 870px) {
+  #store h1 {
+    margin-bottom: 10px;
+  }
+
+  #store-item-purchase {
+    height: 240px;
+  }
+
+  .store-wrapper {
+    margin: -10px 10px 0;
+  }
+  .item-icon {
+    width: 46px;
+    height: 46px;
+  }
+  .scrollupgradehigh {
+    background-position: 0px -3px !important;
+    background-size: auto !important;
+    background-image: url(../img/3/item-scrollupgradehigh.png);
+  }
+
+  #store .expansion1.locked {
+    width: 46px;
+    height: 46px;
+    background-image: url("../img/2/waypoint.png");
+    background-position-x: -92px;
+    margin: 0 auto;
+  }
+
+  #qrcode {
+    height: 130px;
+    width: 130px;
+    margin: 10px auto;
+  }
+
+  .item-wrapper .name {
+    font-size: 17px;
+  }
+
+  .item-wrapper .description {
+    font-size: 14px;
+  }
+
+  .item-wrapper .prices {
+    font-size: 15px;
+  }
+
+  .nano-account {
+    font-size: 12px;
+  }
+
+  .note {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .store-wrapper {
+    margin: -10px 10px 0;
+  }
+
+  .store-wrapper p {
+    line-height: 1;
+  }
+
+  #store-item-list .description {
+    display: none;
+  }
+
+  .item-icon {
+    width: 23px;
+    height: 23px;
+  }
+  .scrollupgradehigh {
+    background-size: 160px !important;
+  }
+
+  #store-item-purchase {
+    height: 120px;
+  }
+
+  #qrcode {
+    display: none;
+  }
+
+  #store .expansion1.locked {
+    width: 23px;
+    height: 23px;
+    background-image: url("../img/1/waypoint.png");
+    transform: scale(1.3);
+    background-position-x: -46px;
+  }
+
+  .item-wrapper .name {
+    font-size: 13px;
+  }
+
+  .item-wrapper .description {
+    font-size: 10px;
+  }
+
+  .item-wrapper .prices {
+    font-size: 15px;
+  }
+
+  .nano-account {
+    font-size: 12px;
+  }
+
+  .note {
+    font-size: 10px;
+  }
+
+  .store-wrapper .btn {
+    font-size: 12px;
+    padding: 6px 22px;
+    margin-top: 6px;
+  }
+
+  .note-high-resolution {
+    display: none;
+  }
+  .note-low-resolution {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .store-wrapper {
+    margin: -5px 5px 0;
+  }
+}
+
+@media screen and (max-width: 800px) and (orientation: portrait) {
+}
+
+@media screen and (max-width: 640px) and (orientation: portrait) {
+}

@@ -29,7 +29,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <meta property="og:description" content="Play Nano BrowserQuest, a remake of the popular BrowserQuest HTML5 massively multiplayer game with Nano payout for killing the skeleton king!">
         <link rel="stylesheet" href="css/main.css" type="text/css">
         <link rel="stylesheet" href="css/achievements.css" type="text/css">
-        <link rel="stylesheet" href="css/shop.css" type="text/css">
+        <link rel="stylesheet" href="css/store.css" type="text/css">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" type="text/css">
 
         <link href="img/common/apple-touch-icon-57x57.png" rel="apple-touch-icon-precomposed" sizes="57x57">
@@ -299,26 +299,12 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                     <div class="close"></div>
                     <h1>
                         <span class="left-ornament"></span>
-                        Shop
+                        Store
                         <span class="right-ornament"></span>
                     </h1>
-                    <div class="shop-wrapper">
-                        <div class="item-wrapper">
-                            <div class="item-icon">
-                                <div class="expansion1 locked"></div>
-                            </div>
-                            <p>Freezing Lands expansion</p>
-                            <p>1 Ӿ</p>
-                            <button class="btn" id="">Purchase</button>
-                        </div>
-                        <div class="item-wrapper">
-                            <div class="item-icon">
-                                <div class="scrollupgradehigh"></div>
-                            </div>
-                            <p>High class upgrade scrolls<br/>(Pack of 10)</p>
-                            <p>0.25 Ӿ</p>
-                            <button class="btn" id="">Purchase</button>
-                        </div>
+                    <div class="store-wrapper">
+                        <div id="store-item-list"></div>
+                        <div id="store-item-purchase"></div>
                     </div>
                 </article>
                 <article id="instructions" class="clickable">
@@ -334,30 +320,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                         <li><span class="icon"></span>Your character is automatically saved as you play.</li>
                         <li><span class="icon"></span>Upgrade your items at the Anvil in town.</li>
                     </ul>
-                    <!-- <p>- click anywhere to close -</p> -->
                 </article>
-                <!-- <article id="instructions-advanced" class="clickable">
-                    <div class="close"></div>
-                    <h1>
-                        <span class="left-ornament"></span>
-                        Advanced instructions
-                        <span class="right-ornament"></span>
-                    </h1>
-                    <ul>
-                        <li>You get a base 60 hp, 15 hp per armor class and 6 hp per level.</li>
-                        <li>You can upgrade any weapon / armor up to +5, breaking your item will reduce its efficiency by 25%.</li>
-                        <li>Upgrade chances: +1 95%, +2 85%, +3 60%, +4 40%, +5 20%.</li>
-                        <li>
-                            Drop chances:
-                            <ul>
-                                <li>Nano potion 3% on all mobs above level 3</li>
-                                <li>Upgrade scroll 2% on all mobs above level 3</li>
-                                <li>Superior upgrade scrolls 0.5% on mobs level 10 and above</li>
-                            </ul>
-                        </li>
-                    </ul>
-                        <p>- click anywhere to close -</p>
-                </article> -->
                 <article id="achievements" class="page1 clickable">
                     <div class="close"></div>
                     <div id="achievements-wrapper">

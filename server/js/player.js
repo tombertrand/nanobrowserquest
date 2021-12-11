@@ -11,6 +11,7 @@ const Types = require("../../shared/js/gametypes");
 const bcrypt = require("bcrypt");
 const { enqueueSendPayout } = require("./payout");
 const { Sentry } = require("./sentry");
+const { registerWebsocketAccount } = require("./store");
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
@@ -50,6 +51,9 @@ module.exports = Player = Character.extend({
     this.inventoryCount = [];
     this.achievement = [];
     this.hasRequestedPayout = false;
+
+    this.expansion1 = 0;
+    this.depositAccount = null;
 
     this.chatBanEndTime = 0;
     this.hash = null;
@@ -444,13 +448,14 @@ module.exports = Player = Character.extend({
           });
 
           const amount = Utils.getPayoutAmount(self.achievement);
+          const raiPayoutAmount = Utils.rawToRai(amount);
 
-          if (Utils.rawToRai(amount) > MAX_AMOUNT) {
-            databaseHandler.banPlayer(self, `Tried to withdraw ${Utils.rawToRai(amount)}`);
+          if (raiPayoutAmount > MAX_AMOUNT) {
+            databaseHandler.banPlayer(self, `Tried to withdraw ${raiPayoutAmount}`);
             return;
           }
 
-          log.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + Utils.rawToRai(amount));
+          log.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + raiPayoutAmount);
           index += 1;
           const response =
             (await enqueueSendPayout({
@@ -524,6 +529,12 @@ module.exports = Player = Character.extend({
         if (message[2] === "found" && !self.waypoints[index]) {
           self.waypoints[index] = 1;
           databaseHandler.foundWaypoint(self.name, index);
+        }
+      } else if (action === Types.Messages.STORE_REGISTER_PURCHASE) {
+        log.info("STORE_REGISTER_PURCHASE: " + self.name + " " + message[1] + " " + message[2]);
+
+        if (message[2] === self.depositAccount) {
+          registerWebsocketAccount(self.depositAccount);
         }
       } else if (action === Types.Messages.GUILD) {
         if (message[1] === Types.Messages.GUILDACTION.CREATE) {
@@ -972,6 +983,7 @@ module.exports = Player = Character.extend({
     artifact,
     expansion1,
     waypoints,
+    depositAccount,
   }) {
     var self = this;
 
@@ -999,6 +1011,7 @@ module.exports = Player = Character.extend({
     self.achievement = achievement;
     self.waypoints = waypoints;
     self.expansion1 = expansion1;
+    self.depositAccount = depositAccount;
     self.inventory = inventory;
     self.hash = hash;
     self.hasRequestedPayout = !!hash;
@@ -1039,6 +1052,7 @@ module.exports = Player = Character.extend({
       artifact,
       expansion1,
       waypoints,
+      depositAccount,
     ]);
 
     self.calculateBonus();

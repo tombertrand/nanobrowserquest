@@ -1,4 +1,4 @@
-define(["jquery", "storage", "util"], function ($, Storage) {
+define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($, Storage, Store) {
   var App = Class.extend({
     init: function () {
       this.currentPage = 1;
@@ -7,6 +7,7 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       this.isParchmentReady = true;
       this.ready = false;
       this.storage = new Storage();
+      this.store = new Store(this);
       this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
       this.initFormFields();
 
@@ -543,7 +544,7 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       }
 
       if ($("#store").hasClass("active")) {
-        this.closeStore();
+        this.store.closeStore();
       }
     },
 
@@ -622,7 +623,10 @@ define(["jquery", "storage", "util"], function ($, Storage) {
       });
 
       $("#total-achievements").text($("#achievements").find("li").length);
-      $("#total-nano-achievements").text(totalNano / 100000 + "Ӿ");
+      $("#total-nano-achievements").html(`
+        <span>${totalNano / 100000}</span>
+        <span class="xno">Ӿ</span>
+      `);
     },
 
     initUnlockedAchievements: function (ids, totalNano) {
@@ -638,7 +642,10 @@ define(["jquery", "storage", "util"], function ($, Storage) {
     setAchievementData: function ($el, name, desc, nano) {
       $el.find(".achievement-name").html(name);
       $el.find(".achievement-description").html(desc);
-      $el.find(".achievement-nano").html(nano / 100000 + "Ӿ");
+      $el.find(".achievement-nano").html(`
+        <span>${nano / 100000}</span>
+        <span class="xno">Ӿ</span>
+      `);
     },
 
     updateNanoPotions: function (nanoPotions) {
@@ -782,16 +789,6 @@ define(["jquery", "storage", "util"], function ($, Storage) {
     closeWaypoint: function () {
       $("#waypoint").find(".active").removeClass("active");
       $("#waypoint").removeClass("visible");
-    },
-
-    openStore: function () {
-      this.hideWindows();
-
-      $("#store").addClass("active");
-    },
-
-    closeStore: function () {
-      $("#store").removeClass("active");
     },
 
     openPopup: function (type, url) {

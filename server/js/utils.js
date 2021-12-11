@@ -134,8 +134,9 @@ Utils.getMaxPayoutAmount = () => {
 Utils.getPayoutAmount = achievements => {
   let amount = 0;
   let payouts = Object.values(achievementToNanoMap);
+
   achievements.map((completed, index) => {
-    if (completed) {
+    if (completed && payouts[index]) {
       amount += payouts[index];
     }
   });

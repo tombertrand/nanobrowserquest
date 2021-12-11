@@ -2,6 +2,8 @@ const Utils = require("../utils");
 const cls = require("../lib/class");
 const Player = require("../player");
 const Messages = require("../message");
+const { getNewDepositAccountByIndex } = require("../store");
+const { PromiseQueue } = require("../promise-queue");
 const redis = require("redis");
 const bcrypt = require("bcrypt");
 const { Sentry } = require("../sentry");
@@ -11,9 +13,10 @@ const INVENTORY_SLOT_COUNT = 24;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
 const ACHIEVEMENT_COUNT = 40;
-const WAYPOINT_COUNT = 6;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
+
+const queue = new PromiseQueue();
 
 module.exports = DatabaseHandler = cls.Class.extend({
   init: function () {
@@ -21,6 +24,11 @@ module.exports = DatabaseHandler = cls.Class.extend({
       socket_nodelay: true,
       password: process.env.REDIS_PASSWORD,
     });
+
+    client.on("connect", () => {
+      this.setDepositAccount();
+    });
+
     // client.auth(process.env.REDIS_PASSWORD || "");
   },
   loadPlayer: function (player) {
@@ -51,16 +59,42 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "artifact") // 16
             .hget(userKey, "expansion1") // 17
             .hget(userKey, "waypoints") // 18
-            .exec(function (err, replies) {
+            .hget(userKey, "depositAccount") // 19
+            .exec(async function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
               var weapon = replies[2];
+              var exp = Utils.NaN2Zero(replies[3]);
+              var createdAt = Utils.NaN2Zero(replies[4]);
               var ring1 = replies[13];
               var ring2 = replies[14];
               var belt = replies[15];
               var expansion1 = parseInt(replies[17] || "0");
-              var exp = Utils.NaN2Zero(replies[3]);
-              var createdAt = Utils.NaN2Zero(replies[4]);
+              var depositAccount = replies[19];
+
+              try {
+                if (!depositAccount) {
+                  const depositAccountIndex = await self.createDepositAccount();
+                  depositAccount = await getNewDepositAccountByIndex(depositAccountIndex);
+                  client.hmset(
+                    "u:" + player.name,
+                    "depositAccount",
+                    depositAccount,
+                    "depositAccountIndex",
+                    depositAccountIndex,
+                  );
+                }
+              } catch (err) {
+                Sentry.captureException(err, {
+                  user: {
+                    username: player.name,
+                  },
+                  extra: {
+                    depositAccountIndex,
+                    depositAccount,
+                  },
+                });
+              }
 
               if (!armor) {
                 armor = `clotharmor:1`;
@@ -272,6 +306,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 artifact,
                 expansion1,
                 waypoints,
+                depositAccount,
               });
             });
           return;
@@ -286,17 +321,21 @@ module.exports = DatabaseHandler = cls.Class.extend({
   },
 
   createPlayer: function (player) {
+    var self = this;
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
 
     // Check if username is taken
-    client.sismember("usr", player.name, function (err, reply) {
+    client.sismember("usr", player.name, async function (err, reply) {
       if (reply === 1) {
         player.connection.sendUTF8("userexists");
         player.connection.close("Username not available: " + player.name);
         return;
       } else {
         // Add the player
+
+        const depositAccountIndex = await self.createDepositAccount();
+
         client
           .multi()
           .sadd("usr", player.name)
@@ -318,6 +357,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
           .hset(userKey, "expansion1", 0)
           .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2]))
+          .hset(userKey, "depositAccountIndex", depositAccountIndex)
+          .hset(userKey, "depositAccount", getNewDepositAccountByIndex(depositAccountIndex))
           .exec(function (err, replies) {
             log.info("New User: " + player.name);
             player.sendWelcome({
@@ -738,7 +779,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
           if (Utils.isUpgradeSuccess(level)) {
             const upgradedLevel = parseInt(level) + 1;
-            upgradedItem = [item, parseInt(level) + 1, bonus].join(":");
+            upgradedItem = [item, parseInt(level) + 1, bonus].filter(Boolean).join(":");
             isSuccess = true;
             isLucky7 = upgradedLevel === 7 && Types.isBaseHighClassItem(item);
           }
@@ -1093,5 +1134,20 @@ module.exports = DatabaseHandler = cls.Class.extend({
         }
       });
     }
+  },
+
+  setDepositAccount: function () {
+    client.setnx("deposit_account_count", 0);
+  },
+
+  createDepositAccount: async function () {
+    return await queue.enqueue(
+      () =>
+        new Promise((resolve, reject) => {
+          client.incr("deposit_account_count", function (error, reply) {
+            resolve(reply);
+          });
+        }),
+    );
   },
 });
