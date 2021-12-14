@@ -16,6 +16,9 @@ const Messages = require("./message");
 const Properties = require("./properties");
 const Utils = require("./utils");
 const Types = require("../../shared/js/gametypes");
+const { purchase } = require("./store/purchase");
+
+require("./store/cron");
 
 // ======= GAME SERVER ========
 
@@ -135,6 +138,8 @@ module.exports = World = cls.Class.extend({
       });
 
       player.onExit(function () {
+        purchase.cancel(player.depositAccount);
+
         log.info(player.name + " has left the game.");
         if (player.hasGuild()) {
           self.pushToGuild(

@@ -1090,7 +1090,7 @@ define([
           if (status === 0) {
             statusClass = "disabled";
           } else if (status === 2) {
-            statusClass = "locked";
+            statusClass = "locked disabled expansion1";
           }
 
           $("<div/>", {
@@ -1114,7 +1114,6 @@ define([
               // Waypoint has to be enabled
               if (clickedWaypoint && self.player.waypoints[id - 1] === 1) {
                 const { gridX, gridY } = clickedWaypoint;
-
                 self.app.closeWaypoint();
                 self.player.stop_pathing_callback({ x: gridX + 1, y: gridY, isWaypoint: true });
               }
@@ -1657,12 +1656,12 @@ define([
         self.initUpgradeItemPreview();
         self.initWaypoints(waypoints);
 
-        self.store.expansion1 = expansion1;
         self.store.depositAccount = depositAccount;
 
         self.player.nanoPotions = nanoPotions;
         self.player.gems = gems;
         self.player.artifact = artifact;
+        self.player.expansion1 = expansion1;
         self.player.waypoints = waypoints;
         self.player.skeletonKey = !!achievement[26];
 
@@ -2158,8 +2157,8 @@ define([
                   }
                 }
               }
-            } catch (e) {
-              log.error(e);
+            } catch (err) {
+              log.error(err);
             }
           } else {
             log.debug("Character " + entity.id + " already exists. Don't respawn.");
@@ -2622,6 +2621,26 @@ define([
           } else {
             self.setAnvilFail();
           }
+        });
+
+        self.client.onReceiveStoreItems(function (items) {
+          self.store.addStoreItems(items);
+        });
+
+        self.client.onReceivePurchaseCompleted(function (payment) {
+          if (payment.id === Types.Store.EXPANSION1) {
+            self.player.expansion1 = true;
+          }
+          self.store.purchaseCompleted(payment);
+        });
+
+        self.client.onReceivePurchaseError(function (error) {
+          self.store.purchaseError(error);
+        });
+
+        self.client.onReceiveWaypointsUpdate(function (waypoints) {
+          self.player.waypoints = waypoints;
+          self.initWaypoints(waypoints);
         });
 
         self.client.onDisconnected(function (message) {
@@ -3948,12 +3967,12 @@ define([
         if (item.wasDropped && !_(item.playersInvolved).includes(this.playerId)) {
           this.tryUnlockingAchievement("NINJA_LOOT");
         }
-      } catch (e) {
-        if (e instanceof Exceptions.LootException) {
-          this.showNotification(e.message);
+      } catch (err) {
+        if (err instanceof Exceptions.LootException) {
+          this.showNotification(err.message);
           this.audioManager.playSound("noloot");
         } else {
-          throw e;
+          throw err;
         }
       }
     },

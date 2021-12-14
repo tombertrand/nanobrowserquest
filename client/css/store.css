@@ -21,7 +21,8 @@
   position: relative;
 }
 
-.scrollupgradehigh {
+.scrollupgradehigh,
+.scrollupgrademedium {
   height: 100%;
 }
 
@@ -86,11 +87,20 @@
     width: 69px;
     height: 69px;
   }
-  .scrollupgradehigh {
+
+  .scrollupgradehigh,
+  .scrollupgrademedium {
     background-position: 0px -5px;
-    background-image: url(../img/3/item-scrollupgradehigh.png);
     background-repeat: no-repeat;
     background-size: 440px;
+  }
+
+  .scrollupgradehigh {
+    background-image: url(../img/3/item-scrollupgradehigh.png);
+  }
+
+  .scrollupgrademedium {
+    background-image: url(../img/3/item-scrollupgrademedium.png);
   }
 
   #store .expansion1.locked {
@@ -143,10 +153,19 @@
     width: 46px;
     height: 46px;
   }
-  .scrollupgradehigh {
+
+  .scrollupgradehigh,
+  .scrollupgrademedium {
     background-position: 0px -3px !important;
     background-size: auto !important;
+  }
+
+  .scrollupgradehigh {
     background-image: url(../img/3/item-scrollupgradehigh.png);
+  }
+
+  .scrollupgrademedium {
+    background-image: url(../img/3/item-scrollupgrademedium.png);
   }
 
   #store .expansion1.locked {
@@ -201,7 +220,9 @@
     width: 23px;
     height: 23px;
   }
-  .scrollupgradehigh {
+  
+  .scrollupgradehigh,
+  .scrollupgrademedium {
     background-size: 160px !important;
   }
 

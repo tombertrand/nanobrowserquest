@@ -1,50 +1,65 @@
-define(function () {
+define(["../../shared/js/gametypes"], function () {
   var Store = Class.extend({
     init: function (app) {
       this.app = app;
-      this.expansion1 = 0;
       this.depositAccount = null;
 
       this.storeItems = [
         {
-          id: 1,
+          id: Types.Store.EXPANSION1,
           icon: "expansion1",
           name: "Freezing Lands Expansion",
-          description: "Continue the adventure, waypoints will be unlocked. Requires lv.20 to enter.",
-          confirmedMessage: "The Freezing Lands Expansion has been unlocked.",
+          description: "Continue the adventure, waypoints will be unlocked.",
+          confirmedMessage:
+            "The Freezing Lands Expansion has been unlocked. You can now access the expansion using the waypoint.",
           requiresInventorySlot: false,
-          xno: 0.00001,
-          usd: 5,
         },
         {
-          id: 2,
+          id: Types.Store.SCROLLUPGRADEHIGH,
           icon: "scrollupgradehigh",
           name: "High class upgrade scrolls",
           description: "Pack of 10 scrolls",
           confirmedMessage: "10 High class upgrade scrolls were added to your inventory.",
           requiresInventorySlot: true,
-          xno: 0.00002,
-          usd: 1.0,
         },
         {
-          id: 3,
-          icon: "cape",
-          name: "Cape",
-          description:
-            "A cape adds a random bonus to your character. When upgraded to +7 the cape adds 2 bonuses, +8 adds 3 bonuses, etc.",
-          confirmedMessage: "A cape was added to your inventory.",
+          id: Types.Store.SCROLLUPGRADEMEDIUM,
+          icon: "scrollupgrademedium",
+          name: "Medium class upgrade scrolls",
+          description: "Pack of 10 scrolls",
+          confirmedMessage: "10 Medium class upgrade scrolls were added to your inventory.",
           requiresInventorySlot: true,
-          xno: 0.00003,
-          usd: 1.25,
         },
+        // {
+        //   id: Types.Store.CAPE,
+        //   icon: "cape",
+        //   name: "Cape",
+        //   description:
+        //     "A cape adds a random bonus to your character. When upgraded to +7 the cape adds 2 bonuses, +8 adds 3 bonuses, etc.",
+        //   confirmedMessage: "A cape was added to your inventory.",
+        //   requiresInventorySlot: true,
+        // },
       ];
     },
 
     openStore: function () {
-      return;
       this.app.hideWindows();
+      this.app.game.client.sendStoreItems();
 
       $("#store, #store-item-list").addClass("active");
+
+      return;
+    },
+
+    addStoreItems: function (items) {
+      this.storeItems = this.storeItems.map(item => {
+        const { xno, usd } = items.find(({ id }) => item.id === id);
+
+        item.xno = xno;
+        item.usd = usd;
+
+        return item;
+      });
 
       this.storeItems.forEach(({ id, icon, name, description, xno, usd }) => {
         const item = $("<div/>", {
@@ -62,7 +77,7 @@ define(function () {
             `,
         });
 
-        const isDisabled = id === 1 && this.expansion1;
+        const isDisabled = id === Types.Store.EXPANSION1 && this.app.game.player.expansion1;
 
         item.append(
           $("<button/>", {
@@ -93,7 +108,14 @@ define(function () {
       const item = this.storeItems.find(({ id: itemId }) => id === itemId);
       const { icon, name, description, xno, requiresInventorySlot } = item;
 
-      this.app.game.client.sendStoreRegisterPurchase(id, this.depositAccount);
+      this.app.game.client.sendPurchaseCreate(id, this.depositAccount);
+
+      $(".close")
+        .off(".purchase-cancel")
+        .on("click.purchase-cancel", () => {
+          this.app.game.client.sendPurchaseCancel(this.depositAccount);
+          $(".close").off(".purchase-cancel");
+        });
 
       $("<div/>", {
         class: "item-wrapper",
@@ -152,18 +174,11 @@ define(function () {
 
         $("#qrcode").qrcode({ width: 130, height: 130, text });
       } else {
-        $("<div/>", {
-          class: "item-wrapper item-wrapper-large",
-          html: `
-            <p class="description">An error happened. Try again later or contact the game admin if it persists.</p>
-          `,
-        }).appendTo("#store-item-purchase");
       }
     },
 
-    selectStoreItemPurchaseConfirmed: function (id) {
-      const item = this.storeItems.find(({ id: itemId }) => id === itemId);
-
+    purchaseCompleted: function (payment) {
+      const item = this.storeItems.find(({ id }) => payment.id === id);
       const { confirmedMessage } = item;
 
       $(".waiting-for-transaction").remove();
@@ -171,7 +186,22 @@ define(function () {
         class: "item-wrapper item-wrapper-large",
         html: `
           <p class="name">Transaction confirmed!</p>
+          <p>
+            <a href="https://nanolooker.com/block/${payment.hash}" target="_blank">${payment.hash}</a>
+          </p>
           <p class="description">${confirmedMessage}</p>
+        `,
+      }).appendTo("#store-item-purchase");
+    },
+
+    purchaseError: function (error) {
+      const { message = "An error happened. Try again later or contact the game admin if it persists." } = error || {};
+
+      $(".waiting-for-transaction").remove();
+      $("<div/>", {
+        class: "item-wrapper item-wrapper-large",
+        html: `
+          <p class="description">${message}</p>
         `,
       }).appendTo("#store-item-purchase");
     },

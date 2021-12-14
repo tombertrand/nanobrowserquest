@@ -11,7 +11,8 @@ const Types = require("../../shared/js/gametypes");
 const bcrypt = require("bcrypt");
 const { enqueueSendPayout } = require("./payout");
 const { Sentry } = require("./sentry");
-const { registerWebsocketAccount } = require("./store");
+const { store } = require("./store/store");
+const { purchase } = require("./store/purchase");
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
@@ -24,6 +25,8 @@ const NO_TIMEOUT_ACCOUNT = "nano_3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6
 module.exports = Player = Character.extend({
   init: function (connection, worldServer, databaseHandler) {
     var self = this;
+
+    purchase.databaseHandler = databaseHandler;
 
     this.server = worldServer;
     this.connection = connection;
@@ -52,7 +55,7 @@ module.exports = Player = Character.extend({
     this.achievement = [];
     this.hasRequestedPayout = false;
 
-    this.expansion1 = 0;
+    this.expansion1 = false;
     this.depositAccount = null;
 
     this.chatBanEndTime = 0;
@@ -530,12 +533,21 @@ module.exports = Player = Character.extend({
           self.waypoints[index] = 1;
           databaseHandler.foundWaypoint(self.name, index);
         }
-      } else if (action === Types.Messages.STORE_REGISTER_PURCHASE) {
-        log.info("STORE_REGISTER_PURCHASE: " + self.name + " " + message[1] + " " + message[2]);
+      } else if (action === Types.Messages.PURCHASE_CREATE) {
+        log.info("PURCHASE_CREATE: " + self.name + " " + message[1] + " " + message[2]);
 
         if (message[2] === self.depositAccount) {
-          registerWebsocketAccount(self.depositAccount);
+          purchase.create({ player: self, account: self.depositAccount, id: message[1] });
         }
+      } else if (action === Types.Messages.PURCHASE_CANCEL) {
+        log.info("PURCHASE_CANCEL: " + self.name + " " + message[1]);
+
+        purchase.cancel(message[1]);
+      } else if (action === Types.Messages.STORE_ITEMS) {
+        log.info("STORE_ITEMS");
+
+        const items = store.getItems();
+        self.send([Types.Messages.STORE_ITEMS, items]);
       } else if (action === Types.Messages.GUILD) {
         if (message[1] === Types.Messages.GUILDACTION.CREATE) {
           var guildname = Utils.sanitize(message[2]);

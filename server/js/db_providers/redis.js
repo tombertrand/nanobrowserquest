@@ -2,10 +2,10 @@ const Utils = require("../utils");
 const cls = require("../lib/class");
 const Player = require("../player");
 const Messages = require("../message");
-const { getNewDepositAccountByIndex } = require("../store");
 const { PromiseQueue } = require("../promise-queue");
 const redis = require("redis");
 const bcrypt = require("bcrypt");
+const NanocurrencyWeb = require("nanocurrency-web");
 const { Sentry } = require("../sentry");
 
 const INVENTORY_SLOT_COUNT = 24;
@@ -17,6 +17,12 @@ const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
 
 const queue = new PromiseQueue();
+
+const getNewDepositAccountByIndex = async index => {
+  const depositAccount = await NanocurrencyWeb.wallet.legacyAccounts(process.env.DEPOSIT_SEED, index, index)[0].address;
+
+  return depositAccount;
+};
 
 module.exports = DatabaseHandler = cls.Class.extend({
   init: function () {
@@ -69,7 +75,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var ring1 = replies[13];
               var ring2 = replies[14];
               var belt = replies[15];
-              var expansion1 = parseInt(replies[17] || "0");
+              var expansion1 = !!parseInt(replies[17] || "0");
               var depositAccount = replies[19];
 
               try {
@@ -374,7 +380,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               nanoPotions: 0,
               gems: new Array(GEM_COUNT).fill(0),
               artifact: new Array(ARTIFACT_COUNT).fill(0),
-              expansion1: 0,
+              expansion1: false,
               waypoints: [1, 0, 0, 2, 2, 2],
             });
           });
@@ -828,15 +834,16 @@ module.exports = DatabaseHandler = cls.Class.extend({
     });
   },
 
-  unlockExpansion1: function (name) {
-    log.info("Unlock Expansion1: " + name);
-    client.hset("u:" + name, "expansion1", 1);
-    client.hget("u:" + name, "waypoints", function (err, reply) {
+  unlockExpansion1: function (player) {
+    log.info("Unlock Expansion1: " + player.name);
+    client.hset("u:" + player.name, "expansion1", 1);
+    client.hget("u:" + player.name, "waypoints", function (err, reply) {
       try {
         var waypoints = JSON.parse(reply);
         waypoints = waypoints.slice(0, 3).concat([1, 0, 0]);
+        player.send([Types.Messages.WAYPOINTS_UPDATE, waypoints]);
         waypoints = JSON.stringify(waypoints);
-        client.hset("u:" + name, "waypoints", waypoints);
+        client.hset("u:" + player.name, "waypoints", waypoints);
       } catch (err) {
         Sentry.captureException(err);
       }
@@ -1149,5 +1156,33 @@ module.exports = DatabaseHandler = cls.Class.extend({
           });
         }),
     );
+  },
+
+  settlePurchase: function ({ player, account, amount, hash, id }) {
+    try {
+      if (id === Types.Store.EXPANSION1) {
+        player.expansion1 = true;
+        this.unlockExpansion1(player);
+      } else if (id === Types.Store.SCROLLUPGRADEHIGH) {
+        this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
+      } else if (id === Types.Store.SCROLLUPGRADEMEDIUM) {
+        this.lootItems({ player, items: [{ item: "scrollupgrademedium", quantity: 10 }] });
+      } else {
+        throw new Error("Invalid purchase id");
+      }
+
+      player.send([Types.Messages.PURCHASE_COMPLETED, { hash, id }]);
+
+      client.sadd("purchase", JSON.stringify({ player: player.name, account, hash, id, amount }));
+    } catch (err) {
+      player.send([
+        Types.Messages.PURCHASE_ERROR,
+        {
+          message: "An error happened while completing your purchase, contact the game admin to receive your purchase.",
+        },
+      ]);
+
+      Sentry.captureException(err, { extra: { account, amount, hash, id } });
+    }
   },
 });

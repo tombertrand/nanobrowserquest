@@ -25,6 +25,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.upgrade = [];
       this.gems = [];
       this.artifact = [];
+      this.expansion1 = false;
       this.waypoints = [];
       this.skeletonKey = false;
       this.nanoPotions = 0;

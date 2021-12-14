@@ -666,7 +666,8 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
     },
 
     updateArtifact: function (artifact) {
-      console.log("~~~~artifact", artifact);
+      // @TODO Update an artifact grayed out "map"?
+      // console.log("~~~~artifact", artifact);
     },
 
     toggleScrollContent: function (content) {

@@ -81,7 +81,7 @@ define(["jquery", "animation", "sprites"], function ($, Animation, sprites) {
           width: this.width,
           height: this.height,
         };
-      } catch (e) {
+      } catch (err) {
         log.error("Error getting image data for sprite : " + this.name);
       }
     },

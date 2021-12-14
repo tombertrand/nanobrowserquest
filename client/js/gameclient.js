@@ -41,6 +41,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.handlers[Types.Messages.INVENTORY] = this.receiveInventory;
       this.handlers[Types.Messages.UPGRADE] = this.receiveUpgrade;
       this.handlers[Types.Messages.ANVIL_UPGRADE] = this.receiveAnvilUpgrade;
+      this.handlers[Types.Messages.STORE_ITEMS] = this.receiveStoreItems;
+      this.handlers[Types.Messages.PURCHASE_COMPLETED] = this.receivePurchaseCompleted;
+      this.handlers[Types.Messages.PURCHASE_ERROR] = this.receivePurchaseError;
+      this.handlers[Types.Messages.WAYPOINTS_UPDATE] = this.receiveWaypointsUpdate;
       this.useBison = false;
       this.enable();
     },
@@ -518,6 +522,38 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       }
     },
 
+    receiveStoreItems: function (data) {
+      const items = data[1];
+
+      if (this.receivestoreitems_callback) {
+        this.receivestoreitems_callback(items);
+      }
+    },
+
+    receivePurchaseCompleted: function (data) {
+      const payment = data[1];
+
+      if (this.receivepurchasecompleted_callback) {
+        this.receivepurchasecompleted_callback(payment);
+      }
+    },
+
+    receivePurchaseError: function (data) {
+      const error = data[1];
+
+      if (this.receivepurchaseerror_callback) {
+        this.receivepurchaseerror_callback(error);
+      }
+    },
+
+    receiveWaypointsUpdate: function (data) {
+      const waypoints = data[1];
+
+      if (this.receivewaypointsupdate_callback) {
+        this.receivewaypointsupdate_callback(waypoints);
+      }
+    },
+
     onDispatched: function (callback) {
       this.dispatched_callback = callback;
     },
@@ -672,6 +708,22 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.receiveanvilupgrade_callback = callback;
     },
 
+    onReceiveStoreItems: function (callback) {
+      this.receivestoreitems_callback = callback;
+    },
+
+    onReceivePurchaseCompleted: function (callback) {
+      this.receivepurchasecompleted_callback = callback;
+    },
+
+    onReceivePurchaseError: function (callback) {
+      this.receivepurchaseerror_callback = callback;
+    },
+
+    onReceiveWaypointsUpdate: function (callback) {
+      this.receivewaypointsupdate_callback = callback;
+    },
+
     sendCreate: function (player) {
       this.sendMessage([Types.Messages.CREATE, player.name, player.account]);
     },
@@ -813,8 +865,16 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.sendMessage([Types.Messages.UPGRADE_ITEM]);
     },
 
-    sendStoreRegisterPurchase: function (id, account) {
-      this.sendMessage([Types.Messages.STORE_REGISTER_PURCHASE, id, account]);
+    sendStoreItems: function () {
+      this.sendMessage([Types.Messages.STORE_ITEMS]);
+    },
+
+    sendPurchaseCreate: function (id, account) {
+      this.sendMessage([Types.Messages.PURCHASE_CREATE, id, account]);
+    },
+
+    sendPurchaseCancel: function (account) {
+      this.sendMessage([Types.Messages.PURCHASE_CANCEL, account]);
     },
   });
 
