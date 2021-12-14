@@ -5,8 +5,9 @@ const { rawToRai } = require("../utils");
 const { Sentry } = require("../sentry");
 
 const ERROR_MESSAGES = {
-  noSession: "Received payment for an unregistered session account",
-  wrongAmount: "Wrong amount sent to deposit address",
+  noSession: "Received payment for an unregistered session account.",
+  wrongAmount: "Wrong amount sent to deposit address.",
+  notAvailable: "The store is not currently available, try again later.",
 };
 
 class Purchase {
@@ -31,7 +32,24 @@ class Purchase {
       const { xno } = store.storeItems.find(item => id === item.id);
 
       this.sessions.push({ player, account, id, xno });
-      websocket.registerAccount(account);
+
+      if (!websocket.registerAccount(account)) {
+        player.send([
+          Types.Messages.PURCHASE_ERROR,
+          {
+            message: ERROR_MESSAGES.notAvailable,
+          },
+        ]);
+
+        Sentry.captureException(new Error(ERROR_MESSAGES.notAvailable), {
+          extra: {
+            player: player.name,
+            account,
+            id,
+            xno,
+          },
+        });
+      }
     }
   }
 
@@ -150,8 +168,7 @@ class Websocket {
       this.watchedAccounts.push(account);
     }
     if (!this.isReady) {
-      //@TODO return error
-      return;
+      return false;
     }
 
     log.debug("WEBSOCKET - registerAccount: " + account);
@@ -164,11 +181,12 @@ class Websocket {
           accounts_add: [account],
         },
       };
-
       this.connection.send(JSON.stringify(confirmation_subscription));
     } catch (err) {
       Sentry.captureException(err);
+      return false;
     }
+    return true;
   }
 
   unregisterAccount(account) {

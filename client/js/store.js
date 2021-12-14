@@ -186,7 +186,7 @@ define(["../../shared/js/gametypes"], function () {
         class: "item-wrapper item-wrapper-large",
         html: `
           <p class="name">Transaction confirmed!</p>
-          <p>
+          <p class="description overflow-text">
             <a href="https://nanolooker.com/block/${payment.hash}" target="_blank">${payment.hash}</a>
           </p>
           <p class="description">${confirmedMessage}</p>

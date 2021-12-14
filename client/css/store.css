@@ -88,6 +88,10 @@
     height: 69px;
   }
 
+  #store-item-purchase {
+    height: 260px;
+  }
+
   .scrollupgradehigh,
   .scrollupgrademedium {
     background-position: 0px -5px;

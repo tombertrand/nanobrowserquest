@@ -1173,7 +1173,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
       player.send([Types.Messages.PURCHASE_COMPLETED, { hash, id }]);
 
-      client.sadd("purchase", JSON.stringify({ player: player.name, account, hash, id, amount }));
+      const now = Date.now();
+      client.zadd("purchase", now, JSON.stringify({ player: player.name, account, hash, id, amount }));
     } catch (err) {
       player.send([
         Types.Messages.PURCHASE_ERROR,
