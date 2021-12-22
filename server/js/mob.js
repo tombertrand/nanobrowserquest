@@ -15,23 +15,27 @@ var Mob = Character.extend({
     this.spawningY = y;
     this.armorLevel = Properties.getArmorLevel(this.kind);
     this.weaponLevel = Properties.getWeaponLevel(this.kind);
-    this.hatelist = [];
+    this.hateList = [];
     this.respawnTimeout = null;
     this.returnTimeout = null;
     this.isDead = false;
     this.hateCount = 0;
     this.tankerlist = [];
+    this.destroyTime = null;
   },
 
   destroy: function (delay = 30000) {
     this.isDead = true;
-    this.hatelist = [];
+    this.destroyTime = Date.now();
+    this.hateList = [];
     this.tankerlist = [];
     this.clearTarget();
     this.updateHitPoints();
     this.resetPosition();
 
-    this.handleRespawn(delay);
+    if (this.kind !== Types.Entities.ZOMBIE) {
+      this.handleRespawn(delay);
+    }
   },
 
   receiveDamage: function (points, playerId) {
@@ -39,25 +43,19 @@ var Mob = Character.extend({
   },
 
   hates: function (playerId) {
-    return _.some(this.hatelist, function (obj) {
+    return _.some(this.hateList, function (obj) {
       return obj.id === playerId;
     });
   },
 
   increaseHateFor: function (playerId, points) {
     if (this.hates(playerId)) {
-      _.find(this.hatelist, function (obj) {
+      _.find(this.hateList, function (obj) {
         return obj.id === playerId;
       }).hate += points;
     } else {
-      this.hatelist.push({ id: playerId, hate: points });
+      this.hateList.push({ id: playerId, hate: points });
     }
-
-    /*
-        log.debug("Hatelist : "+this.id);
-        _.each(this.hatelist, function(obj) {
-            log.debug(obj.id + " -> " + obj.hate);
-        });*/
 
     if (this.returnTimeout) {
       // Prevent the mob from returning to its spawning position
@@ -101,10 +99,10 @@ var Mob = Character.extend({
   getHatedPlayerId: function (hateRank) {
     var i,
       playerId,
-      sorted = _.sortBy(this.hatelist, function (obj) {
+      sorted = _.sortBy(this.hateList, function (obj) {
         return obj.hate;
       }),
-      size = _.size(this.hatelist);
+      size = _.size(this.hateList);
 
     if (hateRank && hateRank <= size) {
       i = size - hateRank;
@@ -130,20 +128,20 @@ var Mob = Character.extend({
   },
 
   forgetPlayer: function (playerId, duration) {
-    this.hatelist = _.reject(this.hatelist, function (obj) {
+    this.hateList = _.reject(this.hateList, function (obj) {
       return obj.id === playerId;
     });
     this.tankerlist = _.reject(this.tankerlist, function (obj) {
       return obj.id === playerId;
     });
 
-    if (this.hatelist.length === 0) {
+    if (this.hateList.length === 0) {
       this.returnToSpawningPosition(duration);
     }
   },
 
   forgetEveryone: function () {
-    this.hatelist = [];
+    this.hateList = [];
     this.tankerlist = [];
     this.returnToSpawningPosition(1);
   },
@@ -164,7 +162,6 @@ var Mob = Character.extend({
       if (this.area && this.area instanceof ChestArea) {
         this.area.removeFromArea(this);
       }
-
       this.respawnTimeout = setTimeout(function () {
         if (self.respawnCallback) {
           self.respawnCallback();

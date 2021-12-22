@@ -39,6 +39,14 @@
 			"length": 2,
 			"row": 8
 		},
+		"raise_right": {
+			"length": 5,
+			"row": 9
+		},
+		"raise_up": {
+			"length": 5,
+			"row": 9
+		},
 		"raise_down": {
 			"length": 5,
 			"row": 9

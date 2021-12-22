@@ -66,6 +66,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "expansion1") // 17
             .hget(userKey, "waypoints") // 18
             .hget(userKey, "depositAccount") // 19
+            .hget(userKey, "hash1") // 20
             .exec(async function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
@@ -279,6 +280,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var x = Utils.NaN2Zero(replies[7]);
               var y = Utils.NaN2Zero(replies[8]);
               var hash = replies[9];
+              var hash1 = replies[20];
               var nanoPotions = parseInt(replies[10] || 0);
 
               // bcrypt.compare(player.account, account, function(err, res) {
@@ -307,6 +309,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 achievement,
                 inventory,
                 hash,
+                hash1,
                 nanoPotions,
                 gems,
                 artifact,
@@ -498,6 +501,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
   setHash: function (name, hash) {
     log.info("Set Hash: " + name + " " + hash);
     client.hset("u:" + name, "hash", hash);
+  },
+  setHash1: function (name, hash) {
+    log.info("Set Hash1: " + name + " " + hash);
+    client.hset("u:" + name, "hash1", hash);
   },
 
   getItemLocation: function (slot) {

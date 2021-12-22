@@ -68,6 +68,10 @@ var Character = Entity.extend({
     return new Messages.Attack(this.id, this.target);
   },
 
+  raise: function (mobId) {
+    return new Messages.Raise(mobId);
+  },
+
   health: function () {
     return new Messages.Health(this.hitPoints, false);
   },

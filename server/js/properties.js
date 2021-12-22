@@ -284,9 +284,8 @@ var Properties = {
 
   wraith: {
     drops: {
-      rejuvenationpotion: 90,
+      rejuvenationpotion: 60,
       scrollupgradehigh: 2,
-      frozenarmor: 5,
       ringgold: 3,
     },
     hp: 475,

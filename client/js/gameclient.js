@@ -18,6 +18,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.handlers[Types.Messages.MOVE] = this.receiveMove;
       this.handlers[Types.Messages.LOOTMOVE] = this.receiveLootMove;
       this.handlers[Types.Messages.ATTACK] = this.receiveAttack;
+      this.handlers[Types.Messages.RAISE] = this.receiveRaise;
       this.handlers[Types.Messages.SPAWN] = this.receiveSpawn;
       this.handlers[Types.Messages.DESPAWN] = this.receiveDespawn;
       this.handlers[Types.Messages.SPAWN_BATCH] = this.receiveSpawnBatch;
@@ -207,12 +208,13 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         achievement = data[12],
         inventory = data[13],
         hash = data[14],
-        nanoPotions = data[15],
-        gems = data[16],
-        artifact = data[17],
-        expansion1 = data[18],
-        waypoints = data[19],
-        depositAccount = data[20];
+        hash1 = data[15],
+        nanoPotions = data[16],
+        gems = data[17],
+        artifact = data[18],
+        expansion1 = data[19],
+        waypoints = data[20],
+        depositAccount = data[21];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -230,6 +232,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           achievement,
           inventory,
           hash,
+          hash1,
           nanoPotions,
           gems,
           artifact,
@@ -265,6 +268,14 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
       if (this.attack_callback) {
         this.attack_callback(attacker, target);
+      }
+    },
+
+    receiveRaise: function (data) {
+      var mobId = data[1];
+
+      if (this.raise_callback) {
+        this.raise_callback(mobId);
       }
     },
 
@@ -594,6 +605,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.attack_callback = callback;
     },
 
+    onEntityRaise: function (callback) {
+      this.raise_callback = callback;
+    },
+
     onPlayerChangeHealth: function (callback) {
       this.health_callback = callback;
     },
@@ -849,8 +864,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.sendMessage([Types.Messages.BAN_PLAYER, message]);
     },
 
-    sendRequestPayout: function () {
-      this.sendMessage([Types.Messages.REQUEST_PAYOUT]);
+    sendRequestPayout: function (kind) {
+      this.sendMessage([Types.Messages.REQUEST_PAYOUT, kind]);
     },
 
     sendMoveItem: function (fromSlot, toSlot) {

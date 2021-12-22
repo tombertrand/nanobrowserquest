@@ -16,7 +16,8 @@ const { purchase } = require("./store/purchase");
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
-const MAX_AMOUNT = Utils.getMaxPayoutAmount();
+const MAX_CLASSIC_PAYOUT = Utils.getClassicMaxPayout();
+const MAX_EXPANSION1_PAYOUT = Utils.getExpansion1MaxPayout();
 
 let index = 0;
 // const NO_TIMEOUT_ACCOUNT = "nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
@@ -53,13 +54,15 @@ module.exports = Player = Character.extend({
     this.inventory = [];
     this.inventoryCount = [];
     this.achievement = [];
-    this.hasRequestedPayout = false;
+    this.hasRequestedBossPayout = false;
+    this.hasRequestedNecromancerPayout = false;
 
     this.expansion1 = false;
     this.depositAccount = null;
 
     this.chatBanEndTime = 0;
     this.hash = null;
+    this.hash1 = null;
 
     this.connection.listen(async message => {
       var action = parseInt(message[0]);
@@ -242,7 +245,14 @@ module.exports = Player = Character.extend({
             if (mob.type !== "player") {
               // Reduce dmg on boss by 12.5% per player in boss room
               if (mob.kind === Types.Entities.BOSS) {
-                dmg = Math.floor(dmg - dmg * ((self.server.getPlayersCountInBossRoom() - 1) * 0.125));
+                const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+                  x: 140,
+                  y: 48,
+                  w: 29,
+                  h: 25,
+                });
+
+                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
               }
 
               mob.receiveDamage(dmg, self.id);
@@ -377,11 +387,12 @@ module.exports = Player = Character.extend({
           self.server.pushRelevantEntityListTo(self);
         }
       } else if (action === Types.Messages.BOSS_CHECK) {
-        if (self.hash && !message[1]) {
+        if ((self.hash || self.hash1) && !message[1]) {
           self.connection.send({
             type: Types.Messages.BOSS_CHECK,
             status: "completed",
             hash: self.hash,
+            hash1: self.hash1,
           });
           return;
         }
@@ -410,28 +421,35 @@ module.exports = Player = Character.extend({
           check,
         });
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
-        if (self.hasRequestedPayout) {
+        const isClassicPayout = message[1] && message[1] === Types.Entities.BOSS;
+        const isExpansion1Payout = message[1] && message[1] === Types.Entities.NECROMANCER;
+
+        if (
+          (!isClassicPayout && !isExpansion1Payout) ||
+          (isClassicPayout && self.hasRequestedBossPayout) ||
+          (isExpansion1Payout && self.hasRequestedNecromancerPayout)
+        ) {
           return;
         }
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
-        // @TODO Verify that killing the boss a second time doesn't ban the player because it wouldn't request a payout! (fix .then())
         if (
-          self.hash ||
-          self.hasRequestedPayout ||
-          self.createdAt + MIN_TIME > Date.now() ||
-          self.level < MIN_LEVEL ||
-          // Check for required achievements
-          !self.achievement[1] || //  -> INTO_THE_WILD
-          !self.achievement[11] || // -> NO_MANS_LAND
-          !self.achievement[16] || // -> HOT_SPOT
-          !self.achievement[20] // -> HERO
+          isClassicPayout &&
+          (self.hash ||
+            self.hasRequestedBossPayout ||
+            self.createdAt + MIN_TIME > Date.now() ||
+            self.level < MIN_LEVEL ||
+            // Check for required achievements
+            !self.achievement[1] || //  -> INTO_THE_WILD
+            !self.achievement[11] || // -> NO_MANS_LAND
+            !self.achievement[16] || // -> HOT_SPOT
+            !self.achievement[20]) // -> HERO
         ) {
           let reason;
           if (self.hash) {
             reason = `Already have hash ${self.hash}`;
-          } else if (self.hasRequestedPayout) {
-            reason = `Has already requested payout`;
+          } else if (self.hasRequestedBossPayout) {
+            reason = `Has already requested payout for Classic`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             reason = `Less then 8 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
           } else if (self.level < MIN_LEVEL) {
@@ -442,19 +460,55 @@ module.exports = Player = Character.extend({
 
           log.info(`Reason: ${reason}`);
           databaseHandler.banPlayer(self, reason);
-        } else {
-          self.hasRequestedPayout = true;
+        } else if (
+          isExpansion1Payout &&
+          (self.hash1 ||
+            self.hasRequestedNecromancerPayout ||
+            // Check for required achievements
+            !self.achievement[24] || // -> XNO
+            !self.achievement[25] || // -> FREEZING_LANDS
+            !self.achievement[34] || // -> WALK_ON_WATER
+            !self.achievement[36] || // -> BLACK_MAGIC
+            !self.expansion1)
+        ) {
+          let reason;
+          if (self.hash1) {
+            reason = `Already have hash1 ${self.hash1}`;
+          } else if (self.hasRequestedNecromancerPayout) {
+            reason = `Has already requested payout for Expansion1`;
+          } else if (!self.achievement[24] || !self.achievement[25] || !self.achievement[34] || !self.achievement[36]) {
+            reason = `Player has not completed required quests ${self.achievement[24]}, ${self.achievement[25]}, ${self.achievement[34]}, ${self.achievement[36]}`;
+          } else if (self.expansion1) {
+            reason = `Requested payout without having bought Expansion1`;
+          }
 
+          log.info(`Reason: ${reason}`);
+          databaseHandler.banPlayer(self, reason);
+        } else {
           self.connection.send({
             type: Types.Messages.NOTIFICATION,
             message: "Payout is being sent!",
           });
 
-          const amount = Utils.getPayoutAmount(self.achievement);
+          let amount;
+          let maxAmount;
+          if (isClassicPayout) {
+            self.hasRequestedBossPayout = true;
+            amount = Utils.getClassicPayout(self.achievement.slice(0, 24));
+            maxAmount = MAX_CLASSIC_PAYOUT;
+          } else if (isExpansion1Payout) {
+            self.hasRequestedNecromancerPayout = true;
+            amount = Utils.getExpansion1Payout(self.achievement.slice(24, 40));
+            maxAmount = MAX_EXPANSION1_PAYOUT;
+          }
+
           const raiPayoutAmount = Utils.rawToRai(amount);
 
-          if (raiPayoutAmount > MAX_AMOUNT) {
-            databaseHandler.banPlayer(self, `Tried to withdraw ${raiPayoutAmount}`);
+          if (raiPayoutAmount > maxAmount) {
+            databaseHandler.banPlayer(
+              self,
+              `Tried to withdraw ${raiPayoutAmount} but max is ${maxAmount} for quest of kind: ${message[1]}`,
+            );
             return;
           }
 
@@ -468,10 +522,17 @@ module.exports = Player = Character.extend({
             })) || {};
           const { err, message, hash } = response;
 
+          // If payout succeeds there will be a hash in the response!
           if (hash) {
-            log.info("PAYOUT COMPLETED: " + self.name + " " + self.account);
-            self.hash = hash;
-            databaseHandler.setHash(self.name, hash);
+            log.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
+
+            if (isClassicPayout) {
+              self.hash = hash;
+              databaseHandler.setHash(self.name, hash);
+            } else if (isExpansion1Payout) {
+              self.hash1 = hash;
+              databaseHandler.setHash1(self.name, hash);
+            }
           } else {
             log.info("PAYOUT FAILED: " + self.name + " " + self.account);
             Sentry.captureException(err, {
@@ -484,7 +545,8 @@ module.exports = Player = Character.extend({
           self.connection.send({
             type: Types.Messages.NOTIFICATION,
             message,
-            hash,
+            hash: self.hash,
+            hash1: self.hash1,
           });
 
           self.server.updatePopulation();
@@ -990,6 +1052,7 @@ module.exports = Player = Character.extend({
     achievement,
     inventory,
     hash,
+    hash1,
     nanoPotions,
     gems,
     artifact,
@@ -1026,7 +1089,9 @@ module.exports = Player = Character.extend({
     self.depositAccount = depositAccount;
     self.inventory = inventory;
     self.hash = hash;
-    self.hasRequestedPayout = !!hash;
+    self.hash1 = hash1;
+    self.hasRequestedBossPayout = !!hash;
+    self.hasRequestedNecromancerPayout = !!hash1;
 
     self.createdAt = createdAt;
     self.experience = exp;
@@ -1059,6 +1124,7 @@ module.exports = Player = Character.extend({
       achievement,
       inventory,
       hash,
+      hash1,
       nanoPotions,
       gems,
       artifact,

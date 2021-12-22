@@ -84,7 +84,7 @@ define([
 
         app.hideWindows();
         if (!isOpened) {
-          if ($("#transaction-hash").text()) {
+          if ($("#transaction-hash").text() || $("#transaction-hash1").text()) {
             app.toggleCompleted();
           } else {
             app.toggleAbout();
@@ -308,11 +308,19 @@ define([
         $("body").addClass("death");
       });
 
-      game.onGameCompleted(function ({ hash, fightAgain, show = false }) {
-        $("#completed")
-          .find("#transaction-hash")
-          .attr("href", "https://nanolooker.com/block/" + hash)
-          .text(hash);
+      game.onGameCompleted(function ({ hash, hash1, fightAgain, show = false }) {
+        if (hash) {
+          $("#completed")
+            .find("#transaction-hash")
+            .attr("href", "https://nanolooker.com/block/" + hash)
+            .text(hash);
+        }
+        if (hash1) {
+          $("#completed")
+            .find("#transaction-hash1")
+            .attr("href", "https://nanolooker.com/block/" + hash1)
+            .text(hash1);
+        }
 
         $("#completedbutton").addClass("completed");
 
@@ -394,16 +402,13 @@ define([
 
         $("#player-list").empty();
         if (Array.isArray(players)) {
-          players.forEach(({ name, level, isCompleted }) => {
+          players.forEach(({ name, level, hash, hash1 }) => {
             $("<div/>", {
               class: name === game.storage.data.player.name ? "active" : "",
               html: `
                 <span>${name}</span>
-                ${
-                  isCompleted
-                    ? '<span class="xno-payout" title="Killed the Skeleton King and received a payout"></span>'
-                    : ""
-                }
+                ${hash ? '<span class="xno-payout" title="Killed the Skeleton King and received a payout"></span>' : ""}
+                ${hash1 ? '<span class="xno-payout" title="Killed the Necromancer and received a payout"></span>' : ""}
                 <span>lv.${level}</span>
               `,
             }).appendTo("#player-list");

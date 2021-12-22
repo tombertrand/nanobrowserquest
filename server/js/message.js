@@ -55,6 +55,15 @@ Messages.Attack = Message.extend({
   },
 });
 
+Messages.Raise = Message.extend({
+  init: function (mobId) {
+    this.mobId = mobId;
+  },
+  serialize: function () {
+    return [Types.Messages.RAISE, this.mobId];
+  },
+});
+
 Messages.Health = Message.extend({
   init: function (points, isRegen) {
     this.points = points;
@@ -97,7 +106,7 @@ Messages.Drop = Message.extend({
     this.item = item;
   },
   serialize: function () {
-    var drop = [Types.Messages.DROP, this.mob.id, this.item.id, this.item.kind, _.map(this.mob.hatelist, "id")];
+    var drop = [Types.Messages.DROP, this.mob.id, this.item.id, this.item.kind, _.map(this.mob.hateList, "id")];
 
     return drop;
   },

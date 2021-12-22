@@ -902,7 +902,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
     },
 
     snowfall: function () {
-      // $("body").snowfall();
+      // $("body").snowfall({round : true, minSize: 5, maxSize:8});
     },
   });
 

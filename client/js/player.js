@@ -120,7 +120,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
           }
         } else if (item.kind === Types.Entities.NANOPOTION) {
           this.nanoPotions += 1;
-        } else if (item.type === "armor" || item.type === "weapon") {
+        } else if (item.type === "armor" || item.type === "weapon" || item.type === "belt" || item.type === "ring") {
           // @TODO Check for stack-able items with quantity
           if (this.inventory.length >= 24) {
             throw new Exceptions.LootException("Your inventory is full.");

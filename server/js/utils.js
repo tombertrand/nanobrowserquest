@@ -94,7 +94,7 @@ Utils.raiToRaw = rai => {
   return value.shiftedBy(30).toNumber();
 };
 
-const achievementToNanoMap = {
+const classicAchievementToNanoMap = {
   A_TRUE_WARRIOR: 3,
   INTO_THE_WILD: 2, // -> Required
   ANGRY_RATS: 5,
@@ -121,9 +121,28 @@ const achievementToNanoMap = {
   RICKROLLD: 6,
 };
 
-Utils.getMaxPayoutAmount = () => {
+const expansion1AchievementToNanoMap = {
+  XNO: 133, // -> Required
+  FREEZING_LANDS: 12, // -> Required
+  SKELETON_KEY: 15,
+  BLOODLUST: 15,
+  SATOSHI: 10,
+  WEN: 12,
+  INDIANA_JONES: 35,
+  MYTH_OR_REAL: 15,
+  RIP: 15,
+  DEAD_NEVER_DIE: 30,
+  WALK_ON_WATER: 10, // -> Required
+  GHOSTBUSTERS: 15,
+  BLACK_MAGIC: 50, // -> Required
+  LUCKY7: 13,
+  NOT_SAFU: 20,
+  TICKLE_FROM_UNDER: 15,
+};
+
+const calculateMaxPayout = payouts => {
   let amount = 0;
-  let payouts = Object.values(achievementToNanoMap);
+
   payouts.map(payout => {
     amount += payout;
   });
@@ -131,9 +150,16 @@ Utils.getMaxPayoutAmount = () => {
   return new BigNumber(amount).dividedBy(100000).toFixed();
 };
 
-Utils.getPayoutAmount = achievements => {
+Utils.getClassicMaxPayout = () => {
+  return calculateMaxPayout(Object.values(classicAchievementToNanoMap));
+};
+
+Utils.getExpansion1MaxPayout = () => {
+  return calculateMaxPayout(Object.values(expansion1AchievementToNanoMap));
+};
+
+const getPayout = (achievements, payouts) => {
   let amount = 0;
-  let payouts = Object.values(achievementToNanoMap);
 
   achievements.map((completed, index) => {
     if (completed && payouts[index]) {
@@ -142,6 +168,14 @@ Utils.getPayoutAmount = achievements => {
   });
 
   return Utils.raiToRaw(new BigNumber(amount).dividedBy(100000).toFixed());
+};
+
+Utils.getClassicPayout = achievements => {
+  return getPayout(achievements, Object.values(classicAchievementToNanoMap));
+};
+
+Utils.getExpansion1Payout = achievements => {
+  return getPayout(achievements, Object.values(expansion1AchievementToNanoMap));
 };
 
 Utils.isValidUpgradeItems = items => {

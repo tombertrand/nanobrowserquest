@@ -46,6 +46,7 @@ module.exports = World = cls.Class.extend({
     this.mobAreas = [];
     this.chestAreas = [];
     this.groups = {};
+    this.zombies = [];
 
     this.outgoingQueues = {};
 
@@ -53,6 +54,7 @@ module.exports = World = cls.Class.extend({
     this.playerCount = 0;
 
     this.zoneGroupsReady = false;
+    this.raiseInterval = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -167,6 +169,13 @@ module.exports = World = cls.Class.extend({
       if (target && attacker.type === "mob") {
         var pos = self.findPositionNextTo(attacker, target);
         self.moveEntity(attacker, pos.x, pos.y);
+      }
+    });
+
+    this.onEntityRaise(function (attacker) {
+      if (attacker.type === "mob") {
+        // var pos = self.findPositionNextTo(attacker, target);
+        // self.moveEntity(attacker, pos.x, pos.y);
       }
     });
 
@@ -413,11 +422,26 @@ module.exports = World = cls.Class.extend({
 
     var delay = 30000;
     if (entity.kind === Types.Entities.DEATHKNIGHT) {
+      const adjustedDifficulty = this.getPlayersCountInBossRoom({
+        x: 140,
+        y: 48,
+        w: 29,
+        h: 25,
+      });
+
       // Each additional player removes 10s to DK spawn delay
-      delay = delay - (this.getPlayersCountInBossRoom() - 1) * 10000;
+      delay = delay - (adjustedDifficulty - 1) * 10000;
       if (delay < 3000) {
         delay = 3000;
       }
+    }
+
+    if (entity.kind === Types.Entities.ZOMBIE) {
+      this.zombies.find(({ id }) => entity.id === id).isDead = true;
+    }
+
+    if (entity.kind === Types.Entities.NECROMANCER) {
+      this.despawnZombies();
     }
 
     entity.destroy(delay);
@@ -585,7 +609,7 @@ module.exports = World = cls.Class.extend({
   clearMobHateLinks: function (mob) {
     var self = this;
     if (mob) {
-      _.each(mob.hatelist, function (obj) {
+      _.each(mob.hateList, function (obj) {
         var player = self.getEntityById(obj.id);
         if (player) {
           player.removeHater(mob);
@@ -626,6 +650,12 @@ module.exports = World = cls.Class.extend({
       mob.increaseHateFor(playerId, hatePoints);
       player.addHater(mob);
 
+      if (mob.kind === Types.Entities.NECROMANCER) {
+        if (!this.raiseInterval) {
+          this.startRaiseInterval(player, mob);
+        }
+      }
+
       if (mob.hitPoints > 0) {
         // only choose a target if still alive
         this.chooseMobTarget(mob);
@@ -654,6 +684,10 @@ module.exports = World = cls.Class.extend({
     this.attack_callback = callback;
   },
 
+  onEntityRaise: function (callback) {
+    this.raise_callback = callback;
+  },
+
   getEntityById: function (id) {
     if (id in this.entities) {
       return this.entities[id];
@@ -674,11 +708,12 @@ module.exports = World = cls.Class.extend({
 
   getPlayerPopulation: function () {
     let players = _.sortBy(
-      Object.values(this.players).reduce((acc, { name, level, hash }) => {
+      Object.values(this.players).reduce((acc, { name, level, hash, hash1 }) => {
         acc.push({
           name,
           level,
-          isCompleted: !!hash,
+          hash: !!hash,
+          hash1: !!hash1,
         });
 
         return acc;
@@ -695,6 +730,68 @@ module.exports = World = cls.Class.extend({
     }
     if (this.attack_callback) {
       this.attack_callback(character);
+    }
+  },
+
+  startRaiseInterval: function (character, mob) {
+    this.stopRaiseInterval();
+
+    this.raiseInterval = setInterval(() => {
+      if (mob && Array.isArray(mob.hateList) && !mob.hateList.length) {
+        console.log("~~~~~STOP RAISE!");
+        this.stopRaiseInterval();
+        this.despawnZombies();
+      } else {
+        // @TODO REMOVE THIS FAKE DIFFICULTY ONCE READY
+        const adjustedDifficulty = this.getPlayersCountInBossRoom({
+          x: 140,
+          y: 324,
+          w: 29,
+          h: 25,
+        });
+
+        const minRaise = adjustedDifficulty > 1 ? adjustedDifficulty : 2;
+
+        if (minRaise) {
+          console.log("~~~~~SEND RAISE!");
+          this.broadcastRaise(character, mob.id);
+
+          let zombieCount = 0;
+          const randomZombies = this.shuffle(this.zombies);
+
+          for (let i = 0; i < randomZombies.length; i++) {
+            if (zombieCount === minRaise) break;
+
+            const entity = randomZombies[i];
+            if (
+              entity.isDead &&
+              (!entity.destroyTime || entity.destroyTime < Date.now() - 1000) &&
+              entity.x <= character.x + 5 && // Left
+              entity.x >= character.x - 5 && // Right
+              entity.y <= character.y + 5 && // Bottom
+              entity.y >= character.y - 5 // Top
+            ) {
+              zombieCount++;
+              entity.respawnCallback();
+            }
+          }
+        }
+      }
+    }, 3000);
+  },
+
+  stopRaiseInterval: function () {
+    clearInterval(this.raiseInterval);
+    this.raiseInterval = null;
+  },
+
+  broadcastRaise: function (character, mobId) {
+    if (character && mobId) {
+      this.pushToAdjacentGroups(character.group, character.raise(mobId));
+    }
+    if (this.raise_callback) {
+      // @NOTE May need for raising zombies?
+      // this.raise_callback(mob);
     }
   },
 
@@ -786,6 +883,12 @@ module.exports = World = cls.Class.extend({
     }
   },
 
+  despawnZombies: function () {
+    this.zombies.forEach(zombie => {
+      this.despawn(zombie);
+    });
+  },
+
   spawnStaticEntities: function () {
     var self = this,
       count = 0;
@@ -798,16 +901,25 @@ module.exports = World = cls.Class.extend({
         self.addNpc(kind, pos.x + 1, pos.y);
       }
       if (Types.isMob(kind)) {
-        var mob = new Mob("7" + kind + count++, kind, pos.x + 1, pos.y);
+        const id = `7${kind}${count++}`;
+        const mob = new Mob(id, kind, pos.x + 1, pos.y);
+
         mob.onRespawn(function () {
           mob.isDead = false;
+
           self.addMob(mob);
           if (mob.area && mob.area instanceof ChestArea) {
             mob.area.addToArea(mob);
           }
         });
         mob.onMove(self.onMobMoveCallback.bind(self));
-        self.addMob(mob);
+
+        if (kind === Types.Entities.ZOMBIE) {
+          mob.isDead = true;
+          self.zombies.push(mob);
+        } else {
+          self.addMob(mob);
+        }
         self.tryAddingMobToChestArea(mob);
       }
       if (Types.isItem(kind)) {
@@ -875,6 +987,7 @@ module.exports = World = cls.Class.extend({
     // const items = ["ringbronze", "ringsilver", "ringgold"];
     // return this.addItem(this.createItem(Types.getKindFromString(items[random]), mob.x, mob.y));
     // return this.addItem(this.createItem(Types.getKindFromString("gold"), mob.x, mob.y));
+    // return this.addItem(this.createItem(Types.getKindFromString("ringgold"), mob.x, mob.y));
 
     //@NOTE 3% chance to drop a NANO potion
     if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {
@@ -1108,10 +1221,9 @@ module.exports = World = cls.Class.extend({
     });
   },
 
-  getPlayersCountInBossRoom: function () {
+  getPlayersCountInBossRoom: function (bossArea) {
     let counter = 0;
 
-    const bossArea = { x: 140, y: 48, w: 29, h: 25, id: "boss" };
     function isInsideBossRoom(entity) {
       if (entity) {
         return (
@@ -1146,5 +1258,22 @@ module.exports = World = cls.Class.extend({
         levelupPlayer,
       ),
     );
+  },
+
+  shuffle: function (array) {
+    let currentIndex = array.length,
+      randomIndex;
+
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
   },
 });

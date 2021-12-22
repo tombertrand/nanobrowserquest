@@ -12,6 +12,7 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
 
       // Speeds
       this.atkSpeed = 50;
+      this.raiseSpeed = null;
       this.moveSpeed = 120;
       this.walkSpeed = 100;
       this.idleSpeed = 450;
@@ -34,6 +35,7 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
 
       // Modes
       this.isDead = false;
+      this.raisingMode = false;
       this.attackingMode = false;
       this.followingMode = false;
 
@@ -73,7 +75,7 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
     },
 
     animate: function (animation, speed, count, onEndCount) {
-      var oriented = ["atk", "walk", "idle"],
+      var oriented = ["atk", "walk", "idle", "raise"],
         o = this.orientation;
 
       if (!(this.currentAnimation && this.currentAnimation.name === "death")) {
@@ -117,7 +119,19 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
       this.animate("walk", this.walkSpeed);
     },
 
+    raise: function (orientation) {
+      this.setOrientation(orientation);
+      this.animate("raise", this.raiseSpeed, 1);
+    },
+
     moveTo_: function (x, y, callback) {
+      if (this.kind === Types.Entities.NECROMANCER) {
+        if (this.isRaising()) {
+          this.aggroRange = 10;
+          return;
+        }
+      }
+
       this.destination = { gridX: x, gridY: y };
       this.adjacentTiles = {};
 
@@ -245,7 +259,10 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
         if (stop) {
           // Path is complete or has been interrupted
           this.path = null;
-          this.idle();
+
+          if (this.kind !== Types.Entities.NECROMANCER) {
+            this.idle();
+          }
 
           if (this.stop_pathing_callback) {
             this.stop_pathing_callback({ x: this.gridX, y: this.gridY });
@@ -264,6 +281,21 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
 
     isMoving: function () {
       return !(this.path === null);
+    },
+
+    setRaisingMode: function () {
+      if (this.raisingModeTimeout) return;
+
+      this.raisingMode = true;
+
+      this.raisingModeTimeout = setTimeout(() => {
+        this.raisingMode = false;
+        this.raisingModeTimeout = null;
+      }, this.raiseRate);
+    },
+
+    isRaising: function () {
+      return this.raisingMode;
     },
 
     hasNextStep: function () {
@@ -482,14 +514,16 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
     /**
      * Removes the current attack target.
      */
-    removeTarget: function () {
+    removeTarget: function (withoutCallback) {
       var self = this;
 
       if (this.target) {
         if (this.target instanceof Character) {
           this.target.removeAttacker(this);
         }
-        if (this.removetarget_callback) this.removetarget_callback(this.target.id);
+        if (this.removetarget_callback && !withoutCallback) {
+          this.removetarget_callback(this.target.id);
+        }
         this.target = null;
       }
     },
@@ -530,6 +564,15 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
      */
     canAttack: function (time) {
       if (this.canReachTarget() && this.attackCooldown.isOver(time)) {
+        return true;
+      }
+      return false;
+    },
+
+    canRaise: function (time) {
+      if (this.raiseCooldown.isOver(time)) {
+        // this.isAggressive = true;
+        // this.aggroRange = 3;
         return true;
       }
       return false;

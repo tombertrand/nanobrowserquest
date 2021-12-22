@@ -121,21 +121,21 @@ define(["item"], function (Item) {
 
     BeltLeather: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.BELTLEATHER, "armor");
+        this._super(id, Types.Entities.BELTLEATHER, "belt");
         this.lootMessage = "You pick up a leather belt";
       },
     }),
 
     BeltPlated: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.BELTPLATED, "armor");
+        this._super(id, Types.Entities.BELTPLATED, "belt");
         this.lootMessage = "You pick up a plated belt";
       },
     }),
 
     BeltFrozen: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.BELTFROZEN, "armor");
+        this._super(id, Types.Entities.BELTFROZEN, "belt");
         this.lootMessage = "You pick up a frozen belt";
       },
     }),
@@ -212,42 +212,42 @@ define(["item"], function (Item) {
 
     RingBronze: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.RINGBRONZE, "object");
+        this._super(id, Types.Entities.RINGBRONZE, "ring");
         this.lootMessage = "You pick up a bronze ring";
       },
     }),
 
     RingSilver: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.RINGSILVER, "object");
+        this._super(id, Types.Entities.RINGSILVER, "ring");
         this.lootMessage = "You pick up a silver ring";
       },
     }),
 
     RingGold: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.RINGGOLD, "object");
+        this._super(id, Types.Entities.RINGGOLD, "ring");
         this.lootMessage = "You pick up a gold ring";
       },
     }),
 
     ScrollUpgradeLow: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.SCROLLUPGRADELOW, "object");
+        this._super(id, Types.Entities.SCROLLUPGRADELOW, "scroll");
         this.lootMessage = "You pick up a low class upgrade scroll";
       },
     }),
 
     ScrollUpgradeMedium: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.SCROLLUPGRADEMEDIUM, "object");
+        this._super(id, Types.Entities.SCROLLUPGRADEMEDIUM, "scroll");
         this.lootMessage = "You pick up a medium class upgrade scroll";
       },
     }),
 
     ScrollUpgradeHigh: Item.extend({
       init: function (id) {
-        this._super(id, Types.Entities.SCROLLUPGRADEHIGH, "object");
+        this._super(id, Types.Entities.SCROLLUPGRADEHIGH, "scroll");
         this.lootMessage = "You pick up a high class upgrade scroll";
       },
     }),

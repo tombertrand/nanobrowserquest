@@ -844,7 +844,7 @@ define([
           isCompleted: function () {
             return self.storage.getTotalRevives() >= 5;
           },
-          nano: 7,
+          nano: 5,
         },
         MEATSHIELD: {
           id: 15,
@@ -934,7 +934,7 @@ define([
           name: "Unique Key",
           desc: "Find the skeleton key",
           hidden: false,
-          nano: 10,
+          nano: 15,
         },
         BLOODLUST: {
           id: 28,
@@ -958,14 +958,14 @@ define([
           name: "WEN?",
           desc: "Find a very very large announcement",
           hidden: false,
-          nano: 6,
+          nano: 12,
         },
         INDIANA_JONES: {
           id: 31,
           name: "Indiana Jones",
           desc: "Reassemble the lost artifact",
           hidden: false,
-          nano: 12,
+          nano: 35,
         },
         MYTH_OR_REAL: {
           id: 32,
@@ -992,14 +992,14 @@ define([
           name: "What is dead may never die",
           desc: "Defeat the Skeleton Leader",
           hidden: false,
-          nano: 18,
+          nano: 30,
         },
         WALK_ON_WATER: {
           id: 35,
           name: "Walk on Water",
           desc: "Make your way though the floating ice",
           hidden: false,
-          nano: 8,
+          nano: 10,
         },
         GHOSTBUSTERS: {
           id: 36,
@@ -1016,7 +1016,7 @@ define([
           name: "Black Magic",
           desc: "Defeat the Necromancer",
           hidden: false,
-          nano: 36,
+          nano: 50,
         },
         LUCKY7: {
           id: 38,
@@ -1030,12 +1030,12 @@ define([
           name: "Not Safu",
           desc: "Kill a monster with less than 1% HP left",
           hidden: true,
-          nano: 10,
+          nano: 20,
         },
         TICKLE_FROM_UNDER: {
           id: 40,
           name: "Tickle from Under",
-          desc: "Be surrounded by 20 zombies",
+          desc: "Be surrounded by 15 zombies",
           hidden: true,
           nano: 15,
         },
@@ -1230,7 +1230,11 @@ define([
         this.entities[entity.id] = entity;
         this.registerEntityPosition(entity);
 
-        if (!(entity instanceof Item && entity.wasDropped) && !(this.renderer.mobile || this.renderer.tablet)) {
+        if (
+          !(entity instanceof Item && entity.wasDropped) &&
+          !(this.renderer.mobile || this.renderer.tablet) &&
+          entity.kind !== Types.Entities.ZOMBIE
+        ) {
           entity.fadeIn(this.currentTime);
         }
 
@@ -1605,6 +1609,7 @@ define([
         achievement,
         inventory,
         hash,
+        hash1,
         nanoPotions,
         gems,
         artifact,
@@ -1691,8 +1696,8 @@ define([
           // self.storage.setPlayerName(name);
         }
 
-        if (hash) {
-          self.gamecompleted_callback({ hash, fightAgain: false });
+        if (hash || hash1) {
+          self.gamecompleted_callback({ hash, hash1, fightAgain: false });
         }
 
         // @NOTE possibly optimize this? sending request to move items to inventory
@@ -1725,7 +1730,7 @@ define([
 
         self.player.onCheckAggro(function () {
           self.forEachMob(function (mob) {
-            if (mob.isAggressive && !mob.isAttacking() && self.player.isNear(mob, mob.aggroRange)) {
+            if (mob.isAggressive && !mob.isAttacking() && self.player.isNear(mob, mob.aggroRange) && !mob.isRaising()) {
               self.player.aggro(mob);
             }
           });
@@ -2014,7 +2019,17 @@ define([
                 entity.setSprite(self.sprites[entity.getSpriteName()]);
                 entity.setGridPosition(x, y);
                 entity.setOrientation(orientation);
-                entity.idle();
+                if (entity.kind === Types.Entities.ZOMBIE) {
+                  console.log("~~~~RAISE ZOMBIE");
+                  entity.raise();
+
+                  setTimeout(() => {
+                    entity.aggroRange = 10;
+                    entity.isAggressive = true;
+                  }, 1000);
+                } else {
+                  entity.idle();
+                }
 
                 self.addEntity(entity);
 
@@ -2364,6 +2379,12 @@ define([
           }
         });
 
+        self.client.onEntityRaise(function (mobId) {
+          var mob = self.getEntityById(mobId);
+
+          mob.setRaisingMode();
+        });
+
         self.client.onPlayerDamageMob(function (mobId, points, healthPoints, maxHp) {
           var mob = self.getEntityById(mobId);
           if (mob && points) {
@@ -2412,7 +2433,7 @@ define([
             self.tryUnlockingAchievement("SPECTRE_COLLECTOR");
           } else if (kind === Types.Entities.BOSS) {
             self.tryUnlockingAchievement("HERO").then(() => {
-              self.client.sendRequestPayout();
+              self.client.sendRequestPayout(Types.Entities.BOSS);
             });
           } else if (kind === Types.Entities.WEREWOLF) {
             self.storage.incrementWerewolfCount();
@@ -2430,8 +2451,7 @@ define([
             self.tryUnlockingAchievement("DEAD_NEVER_DIE");
           } else if (kind === Types.Entities.NECROMANCER) {
             self.tryUnlockingAchievement("BLACK_MAGIC").then(() => {
-              // @TODO Configure second payout
-              // self.client.sendRequestPayout();
+              self.client.sendRequestPayout(Types.Entities.NECROMANCER);
             });
           }
 
@@ -2560,7 +2580,7 @@ define([
         });
 
         self.client.onBossCheck(function (data) {
-          const { status, message, hash, check } = data;
+          const { status, message, hash, hash1, check } = data;
 
           if (status === "ok") {
             const position = parseInt(check[check.length - 1]);
@@ -2584,15 +2604,15 @@ define([
           } else if (status === "failed") {
             self.bosscheckfailed_callback(message);
           } else if (status === "completed") {
-            self.gamecompleted_callback({ hash, fightAgain: true, show: true });
+            self.gamecompleted_callback({ hash, hash1, fightAgain: true, show: true });
           }
         });
 
         self.client.onReceiveNotification(function (data) {
-          const { message, hash } = data;
+          const { message, hash, hash1 } = data;
 
-          if (hash) {
-            self.gamecompleted_callback({ hash });
+          if (hash || hash1) {
+            self.gamecompleted_callback({ hash, hash1 });
           }
 
           setTimeout(() => {
@@ -2676,6 +2696,10 @@ define([
 
       if (attacker.id !== this.playerId) {
         target.addAttacker(attacker);
+
+        if (attacker.kind === Types.Entities.ZOMBIE && Object.keys(target.attackers).length >= 15) {
+          this.tryUnlockingAchievement("TICKLE_FROM_UNDER");
+        }
       }
     },
 
@@ -3376,8 +3400,17 @@ define([
       }
 
       if (character.isAttacking() && (!character.previousTarget || character.id === this.playerId)) {
-        var isMoving = this.tryMovingToADifferentTile(character); // Don't let multiple mobs stack on the same tile when attacking a player.
+        if (character.kind === Types.Entities.NECROMANCER) {
+          if (character.isRaising()) {
+            if (character.canRaise(time)) {
+              character.stop();
+              character.raise();
+            }
+            return;
+          }
+        }
 
+        var isMoving = this.tryMovingToADifferentTile(character); // Don't let multiple mobs stack on the same tile when attacking a player.
         if (character.canAttack(time)) {
           if (!isMoving) {
             // don't hit target if moving to a different tile.

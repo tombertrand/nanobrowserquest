@@ -181,6 +181,8 @@ define(["../../shared/js/gametypes"], function () {
       const item = this.storeItems.find(({ id }) => payment.id === id);
       const { confirmedMessage } = item;
 
+      this.app.game.tryUnlockingAchievement("XNO");
+
       $(".waiting-for-transaction").remove();
       $("<div/>", {
         class: "item-wrapper item-wrapper-large",

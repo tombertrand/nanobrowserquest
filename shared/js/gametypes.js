@@ -15,6 +15,7 @@ Types = {
     LOOTMOVE: 6,
     AGGRO: 7,
     ATTACK: 8,
+    RAISE: 49,
     HIT: 9,
     HURT: 10,
     HEALTH: 11,
@@ -369,9 +370,9 @@ var kinds = {
   gemtopaz: [Types.Entities.GEMTOPAZ, "object"],
   gemsapphire: [Types.Entities.GEMSAPPHIRE, "object"],
   gold: [Types.Entities.GOLD, "object"],
-  scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "object", "Upgrade scroll", 3],
-  scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "object", "Upgrade scroll", 6],
-  scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "object", "Superior upgrade scroll", 15],
+  scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "scroll", "Upgrade scroll", 3],
+  scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "scroll", "Upgrade scroll", 6],
+  scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "scroll", "Superior upgrade scroll", 15],
   skeletonkey: [Types.Entities.SKELETONKEY, "object", "Skeleton Key"],
   raiblockstl: [Types.Entities.RAIBLOCKSTL, "object", "Raiblocks artifact"],
   raiblockstr: [Types.Entities.RAIBLOCKSTR, "object", "Raiblocks artifact"],
@@ -833,8 +834,8 @@ Types.waypoints = [
   {
     id: 6,
     name: "Necromancer Lair",
-    gridX: 45,
-    gridY: 344,
+    gridX: 35,
+    gridY: 342,
   },
 ];
 

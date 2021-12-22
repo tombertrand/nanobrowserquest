@@ -262,11 +262,12 @@ define(["mob", "timer"], function (Mob, Timer) {
       init: function (id) {
         this._super(id, Types.Entities.ZOMBIE);
         this.atkSpeed = 50;
+        this.raiseSpeed = 250;
         this.moveSpeed = 220;
         this.walkSpeed = 100;
         this.idleSpeed = 450;
         this.setAttackRate(800);
-        this.aggroRange = 4;
+        this.isAggressive = false;
       },
 
       idle: function (orientation) {
@@ -282,10 +283,13 @@ define(["mob", "timer"], function (Mob, Timer) {
       init: function (id) {
         this._super(id, Types.Entities.NECROMANCER);
         this.moveSpeed = 300;
-        this.atkSpeed = 50;
+        this.atkSpeed = 100;
+        this.raiseSpeed = 250;
         this.idleSpeed = 400;
         this.atkRate = 2000;
+        this.raiseRate = 2000;
         this.attackCooldown = new Timer(this.atkRate);
+        this.raiseCooldown = new Timer(this.raiseRate);
         this.aggroRange = 3;
       },
 
