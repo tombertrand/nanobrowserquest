@@ -182,7 +182,7 @@ define(["../../shared/js/gametypes"], function () {
 
     purchaseCompleted: function (payment) {
       const item = this.storeItems.find(({ id }) => payment.id === id);
-      const { id, icon, confirmedMessage } = item;
+      const { id, icon, name, description, confirmedMessage } = item;
       const isLocked = id !== Types.Store.EXPANSION1;
 
       this.app.game.tryUnlockingAchievement("XNO");
@@ -192,13 +192,15 @@ define(["../../shared/js/gametypes"], function () {
         class: "item-wrapper item-wrapper-full",
         html: `
           <p class="title">Transaction confirmed!</p>
+          <div class="item-icon">
+              <div class="${icon} ${isLocked ? "locked" : "unlocked"}"></div>
+          </div>
+          <p class="name">${name}</p>
+          ${description ? `<p class="description">${description}</p>` : ""}
           <p class="description overflow-text">
             <a href="https://nanolooker.com/block/${payment.hash}" target="_blank">${payment.hash}</a>
           </p>
-          <div class="item-icon">
-            <div class="${icon} ${isLocked ? "locked" : "unlocked"}"></div>
-          </div>
-          <p class="name">${confirmedMessage}</p>
+          <p class="description">${confirmedMessage}</p>
         `,
       }).appendTo("#store-item-purchase");
     },

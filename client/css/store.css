@@ -91,8 +91,9 @@
     height: 69px;
   }
 
+  #store-item-list,
   #store-item-purchase {
-    height: 260px;
+    height: 360px;
   }
 
   .scrollupgradehigh,
@@ -160,6 +161,7 @@
     margin-bottom: 10px;
   }
 
+  #store-item-list,
   #store-item-purchase {
     height: 240px;
   }
@@ -255,6 +257,7 @@
     background-size: 160px !important;
   }
 
+  #store-item-list,
   #store-item-purchase {
     height: 120px;
   }
