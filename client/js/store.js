@@ -10,9 +10,10 @@ define(["../../shared/js/gametypes"], function () {
           icon: "expansion1",
           name: "Freezing Lands Expansion",
           description: "Continue the adventure, waypoints will be unlocked.",
-          confirmedMessage:
-            "The Freezing Lands Expansion has been unlocked. You can now access the expansion using the waypoint.",
-          requiresInventorySlot: false,
+          confirmedMessage: `The Freezing Lands Expansion has been unlocked.<br/>
+            You can now access the expansion using the waypoint.<br/>
+            As a thank you bonus you've also received 5 High class upgrade scrolls`.trim(),
+          requiresInventorySlot: true,
         },
         {
           id: Types.Store.SCROLLUPGRADEHIGH,
@@ -53,20 +54,24 @@ define(["../../shared/js/gametypes"], function () {
 
     addStoreItems: function (items) {
       this.storeItems = this.storeItems.map(item => {
-        const { xno, usd } = items.find(({ id }) => item.id === id);
+        const { xno, usd, isAvailable } = items.find(({ id }) => item.id === id);
 
         item.xno = xno;
         item.usd = usd;
+        item.isAvailable = isAvailable;
 
         return item;
       });
 
-      this.storeItems.forEach(({ id, icon, name, description, xno, usd }) => {
+      this.storeItems.forEach(({ id, icon, name, description, xno, usd, isAvailable }) => {
+        const isLocked = id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1;
+        const isDisabled = !isAvailable || (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1);
+
         const item = $("<div/>", {
           class: "item-wrapper",
           html: `
             <div class="item-icon">
-              <div class="${icon} locked"></div>
+              <div class="${icon} ${isLocked ? "locked" : "unlocked"}"></div>
             </div>
             <p class="name">${name}</p>
             ${description ? `<p class="description">${description}</p>` : ""}
@@ -77,12 +82,10 @@ define(["../../shared/js/gametypes"], function () {
             `,
         });
 
-        const isDisabled = id === Types.Store.EXPANSION1 && this.app.game.player.expansion1;
-
         item.append(
           $("<button/>", {
             class: `btn ${isDisabled ? "disabled" : ""}`,
-            text: isDisabled ? "Purchased" : "Purchase",
+            text: isAvailable ? (isDisabled ? "Purchased" : "Purchase") : "Available soon",
             click: () => {
               if (isDisabled) return;
               this.selectStoreItemPurchase(id);
@@ -118,7 +121,7 @@ define(["../../shared/js/gametypes"], function () {
         });
 
       $("<div/>", {
-        class: "item-wrapper",
+        class: "item-wrapper purchased-item",
         html: `
             <div class="item-icon">
               <div class="${icon} locked"></div>
@@ -179,19 +182,23 @@ define(["../../shared/js/gametypes"], function () {
 
     purchaseCompleted: function (payment) {
       const item = this.storeItems.find(({ id }) => payment.id === id);
-      const { confirmedMessage } = item;
+      const { id, icon, confirmedMessage } = item;
+      const isLocked = id !== Types.Store.EXPANSION1;
 
       this.app.game.tryUnlockingAchievement("XNO");
 
-      $(".waiting-for-transaction").remove();
+      $("#store-item-purchase").empty();
       $("<div/>", {
-        class: "item-wrapper item-wrapper-large",
+        class: "item-wrapper item-wrapper-full",
         html: `
-          <p class="name">Transaction confirmed!</p>
+          <p class="title">Transaction confirmed!</p>
           <p class="description overflow-text">
             <a href="https://nanolooker.com/block/${payment.hash}" target="_blank">${payment.hash}</a>
           </p>
-          <p class="description">${confirmedMessage}</p>
+          <div class="item-icon">
+            <div class="${icon} ${isLocked ? "locked" : "unlocked"}"></div>
+          </div>
+          <p class="name">${confirmedMessage}</p>
         `,
       }).appendTo("#store-item-purchase");
     },

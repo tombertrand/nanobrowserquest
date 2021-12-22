@@ -711,6 +711,7 @@ Types.isItem = function (kind) {
     Types.isArmor(kind) ||
     Types.isRing(kind) ||
     Types.isBelt(kind) ||
+    Types.isScroll(kind) ||
     (Types.isObject(kind) && !Types.isChest(kind))
   );
 };

@@ -1170,6 +1170,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       if (id === Types.Store.EXPANSION1) {
         player.expansion1 = true;
         this.unlockExpansion1(player);
+        this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 5 }] });
       } else if (id === Types.Store.SCROLLUPGRADEHIGH) {
         this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
       } else if (id === Types.Store.SCROLLUPGRADEMEDIUM) {

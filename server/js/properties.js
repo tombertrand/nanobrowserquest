@@ -8,7 +8,7 @@ var Properties = {
       scrollupgradelow: 20,
       ringbronze: 5,
     },
-    hp: 25,
+    hp: 20,
     armor: 0.5,
     weapon: 0.5,
   },
@@ -115,7 +115,7 @@ var Properties = {
     },
     hp: 165,
     armor: 3,
-    weapon: 2,
+    weapon: 3,
   },
 
   skeleton2: {
@@ -188,7 +188,6 @@ var Properties = {
       burger: 40,
       rejuvenationpotion: 40,
       bluearmor: 5,
-      scrollupgradehigh: 1,
     },
     hp: 180,
     armor: 7,

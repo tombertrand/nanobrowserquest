@@ -10,16 +10,19 @@ class Store {
       id: Types.Store.EXPANSION1,
       xno: 0,
       usd: isDevelopmentAmounts ? 0.01 : 5,
+      isAvailable: false,
     },
     {
       id: Types.Store.SCROLLUPGRADEHIGH,
       xno: 0,
       usd: isDevelopmentAmounts ? 0.02 : 0.75,
+      isAvailable: true,
     },
     {
       id: Types.Store.SCROLLUPGRADEMEDIUM,
       xno: 0,
       usd: isDevelopmentAmounts ? 0.03 : 0.25,
+      isAvailable: true,
     },
     // {
     //   id: Types.Store.CAPE,

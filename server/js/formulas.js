@@ -90,7 +90,7 @@ Formulas.dmgFromMob = function ({
   belt,
   beltLevel,
 }) {
-  const dealt = Math.ceil(weaponLevel * Utils.randomInt(8, 12));
+  const dealt = Math.ceil(weaponLevel * Utils.randomInt(10, 15));
   const { min, max } = Formulas.minMaxAbsorb({
     armor,
     armorLevel,

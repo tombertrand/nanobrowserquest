@@ -139,7 +139,6 @@ define(["character"], function (Character) {
     ],
 
     sorcerer: [
-      "I'll be the one unlocking you the Freezing Lands expansion.",
       "Have you heard of the Necromancer?",
       "He was banned from the Guardian order because he practiced forbidden magic.",
       "Only the bravest of warriors would dare to confront him.",
