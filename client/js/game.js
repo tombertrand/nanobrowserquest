@@ -2383,6 +2383,7 @@ define([
           var mob = self.getEntityById(mobId);
 
           mob.setRaisingMode();
+          self.audioManager.playSound("raise");
         });
 
         self.client.onPlayerDamageMob(function (mobId, points, healthPoints, maxHp) {

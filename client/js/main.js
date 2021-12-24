@@ -1,19 +1,10 @@
-define([
-  "jquery",
-  "app",
-  "entrypoint",
-  "lib/jquery-ui",
-  "lib/jquery.ui.touch-punch",
-  "lib/jquery.snowfall",
-  "lib/jquery.qrcode",
-], function (
+define(["jquery", "app", "entrypoint", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "lib/jquery.qrcode"], function (
   $,
 
   App,
   EntryPoint,
   jqueryUI,
   touchPunch,
-  snowfall,
   qrcode,
 ) {
   var app, game;
@@ -314,12 +305,14 @@ define([
             .find("#transaction-hash")
             .attr("href", "https://nanolooker.com/block/" + hash)
             .text(hash);
+          $("#container-payout-hash").show();
         }
         if (hash1) {
           $("#completed")
             .find("#transaction-hash1")
             .attr("href", "https://nanolooker.com/block/" + hash1)
             .text(hash1);
+          $("#container-payout-hash1").show();
         }
 
         $("#completedbutton").addClass("completed");

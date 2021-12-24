@@ -9,7 +9,19 @@ define(["area"], function (Area) {
       this.game = game;
       this.currentMusic = null;
       this.areas = [];
-      this.musicNames = ["village", "beach", "forest", "cave", "desert", "lavaland", "boss"];
+      this.musicNames = [
+        "village",
+        "beach",
+        "forest",
+        "cave",
+        "desert",
+        "lavaland",
+        "boss",
+        "freezingland",
+        "icewalk",
+        "skeletonleader",
+        "necromancer",
+      ];
       this.soundNames = [
         "loot",
         "hit1",
@@ -29,6 +41,7 @@ define(["area"], function (Area) {
         "chest",
         "npc",
         "npc-end",
+        "raise"
       ];
 
       var loadSoundFiles = function () {

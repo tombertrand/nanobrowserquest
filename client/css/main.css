@@ -754,12 +754,16 @@ footer, header, hgroup, menu, nav, section {
 
     .xno {font-family:arial, sans-serif;}
 
+    #container-payout-hash,
+    #container-payout-hash1 {
+        display: none;
+    }
+
 	@media screen and (min-width: 1501px) {
         #nano {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }
         #text-list > div { padding: 0 12px; }
         #chatinput { padding: 6px 12px; }
-        #completed p { font-size: 24px !important; }
         #completed.boss-check .link { font-size: 34px; }
         .createaccount-instructions { font-size: 25px; }
         #upgrade-scroll { width: 168px; }
@@ -840,7 +844,7 @@ footer, header, hgroup, menu, nav, section {
         #instructions li:nth-child(3) span {height:63px;width:48px;background-position:-1218px -36px; margin: 0 27px 14px 60px;top: -18px;}
         #instructions li:nth-child(4) span {height:84px;width:53px;background:url('../img/2/anvil.png') no-repeat; margin: 0 30px 0 52px;top: -32px;}
         #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:20px;clear:left;margin-top:50px;}
-        #completed p { margin-top:10px; }
+        #completed p { margin-top:10px; font-size: 24px; }
         
         #player-image {height: 96px; width: 96px;}
         
@@ -1044,7 +1048,7 @@ footer, header, hgroup, menu, nav, section {
         #instructions li:nth-child(3) span {height:42px;width:32px;background-position:-812px -24px;margin: 0 18px 16px 40px;top: -12px;}
         #instructions li:nth-child(4) span {height:64px;width:40px;background:url('../img/1/anvil.png') no-repeat;background-size: cover;margin: 0 17px 0 34px;top: -30px;}
         #instructions p, #completed p, #failed p {text-align:center;font-family:'GraphicPixel';font-size:18px;clear:left;margin-top:20px;}
-        #completed p { margin-top:5; }
+        #container #completed p { margin-top:5px; font-size:16px; }
 
         #player-image {height: 64px; width: 64px;}
         

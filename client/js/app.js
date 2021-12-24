@@ -667,7 +667,6 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
 
     updateArtifact: function (artifact) {
       // @TODO Update an artifact grayed out "map"?
-      // console.log("~~~~artifact", artifact);
     },
 
     toggleScrollContent: function (content) {
@@ -902,7 +901,11 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
     },
 
     snowfall: function () {
-      // $("body").snowfall({round : true, minSize: 5, maxSize:8});
+      // let snowString = "";
+      // for (let i = 0; i < 100; i++) {
+      //   snowString += "<div class='snow'></div>";
+      // }
+      // $("#snow-container").append(snowString);
     },
   });
 

@@ -776,7 +776,7 @@ module.exports = World = cls.Class.extend({
           }
         }
       }
-    }, 3000);
+    }, 5000);
   },
 
   stopRaiseInterval: function () {

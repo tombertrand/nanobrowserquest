@@ -10,7 +10,7 @@ class Store {
       id: Types.Store.EXPANSION1,
       xno: 0,
       usd: isDevelopmentAmounts ? 0.01 : 5,
-      isAvailable: false,
+      isAvailable: true,
     },
     {
       id: Types.Store.SCROLLUPGRADEHIGH,
