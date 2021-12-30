@@ -297,12 +297,12 @@ var Properties = {
 
   zombie: {
     drops: {
-      rejuvenationpotion: 50,
+      rejuvenationpotion: 65,
       scrollupgradehigh: 2,
       ringgold: 2,
     },
     hp: 265,
-    armor: 8,
+    armor: 6,
     weapon: 8,
   },
 
@@ -311,8 +311,8 @@ var Properties = {
       scrollupgradehigh: 5,
       ringgold: 5,
     },
-    hp: 1500,
-    armor: 12,
+    hp: 3000,
+    armor: 14,
     weapon: 10,
   },
 };

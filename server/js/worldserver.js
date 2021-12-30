@@ -525,8 +525,6 @@ module.exports = World = cls.Class.extend({
 
   removePlayer: function (player) {
     player.broadcast(player.despawn());
-    // @TODO Validate this? all we need is for zombies to be despawned on disconnect, or if necromancer hateList is empty???
-    this.handlePlayerVanish(player);
     this.removeEntity(player);
     if (player.hasGuild()) {
       player.getGuild().removeMember(player);
@@ -778,7 +776,7 @@ module.exports = World = cls.Class.extend({
           }
         }
       }
-    }, 5000);
+    }, 7500);
   },
 
   stopRaiseInterval: function () {

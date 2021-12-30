@@ -34,11 +34,11 @@ define(["character", "timer"], function (Character, Timer) {
     },
 
     updatePlayerAggro: function () {
-      var t = this.game.currentTime,
-        player = this.game.player;
+      const t = this.game.currentTime;
+      const player = this.game.player;
 
       // Check player aggro every 1s when not moving nor attacking
-      if (player && !player.isMoving() && !player.isAttacking() && this.playerAggroTimer.isOver(t)) {
+      if (player && !player.isMoving() && this.playerAggroTimer.isOver(t)) {
         player.checkAggro();
       }
     },

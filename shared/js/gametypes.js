@@ -317,9 +317,9 @@ var kinds = {
   werewolf: [Types.Entities.WEREWOLF, "mob", 180, 30],
   skeleton3: [Types.Entities.SKELETON3, "mob", 160, 32],
   skeletonleader: [Types.Entities.SKELETONLEADER, "mob", 300, 40],
-  snake2: [Types.Entities.SNAKE2, "mob", 200, 34],
-  wraith: [Types.Entities.WRAITH, "mob", 220, 36],
-  zombie: [Types.Entities.ZOMBIE, "mob", 150, 38],
+  snake2: [Types.Entities.SNAKE2, "mob", 160, 34],
+  wraith: [Types.Entities.WRAITH, "mob", 180, 36],
+  zombie: [Types.Entities.ZOMBIE, "mob", 130, 38],
   necromancer: [Types.Entities.NECROMANCER, "mob", 500, 45],
 
   // kind, type, level, damage
