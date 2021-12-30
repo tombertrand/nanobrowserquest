@@ -253,6 +253,24 @@ module.exports = Player = Character.extend({
                 });
 
                 dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
+              } else if (mob.kind === Types.Entities.SKELETONLEADER) {
+                const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+                  x: 140,
+                  y: 360,
+                  w: 29,
+                  h: 25,
+                });
+
+                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
+              } else if (mob.kind === Types.Entities.NECROMANCER) {
+                const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+                  x: 140,
+                  y: 324,
+                  w: 29,
+                  h: 25,
+                });
+
+                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
               }
 
               mob.receiveDamage(dmg, self.id);
@@ -299,11 +317,9 @@ module.exports = Player = Character.extend({
 
         if (item) {
           var kind = item.kind;
-
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());
             self.server.removeEntity(item);
-
             if (Types.Entities.Gems.includes(kind)) {
               let index = Types.Entities.Gems.indexOf(kind);
 
@@ -322,7 +338,6 @@ module.exports = Player = Character.extend({
               self.sendPlayerStats();
             } else if (Types.isHealingItem(kind)) {
               var amount;
-
               switch (kind) {
                 case Types.Entities.FLASK:
                   amount = 40;
@@ -332,6 +347,9 @@ module.exports = Player = Character.extend({
                   break;
                 case Types.Entities.NANOPOTION:
                   amount = 200;
+                  break;
+                case Types.Entities.REJUVENATIONPOTION:
+                  amount = Math.ceil(self.maxHitPoints / 2);
                   break;
               }
 
@@ -962,7 +980,7 @@ module.exports = Player = Character.extend({
   },
 
   incExp: function (exp) {
-    this.experience = parseInt(this.experience) + Math.round((parseInt(exp) * this.bonus.exp) / 100 + parseInt(exp));
+    this.experience = parseInt(this.experience) + exp;
     databaseHandler.setExp(this.name, this.experience);
     var origLevel = this.level;
     this.level = Types.getLevel(this.experience);

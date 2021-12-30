@@ -185,13 +185,14 @@ var Properties = {
 
   rat2: {
     drops: {
-      burger: 40,
-      rejuvenationpotion: 40,
+      rejuvenationpotion: 80,
       bluearmor: 5,
+      ringsilver: 3,
+      scrollupgradehigh: 2,
     },
-    hp: 180,
+    hp: 240,
     armor: 7,
-    weapon: 7,
+    weapon: 5,
   },
 
   bat2: {
@@ -200,11 +201,11 @@ var Properties = {
       blueaxe: 5,
       beltfrozen: 3,
       bluearmor: 3,
-      scrollupgradehigh: 1,
+      scrollupgradehigh: 3,
     },
-    hp: 180,
-    armor: 7,
-    weapon: 7,
+    hp: 280,
+    armor: 6,
+    weapon: 6,
   },
 
   goblin2: {
@@ -212,17 +213,17 @@ var Properties = {
       rejuvenationpotion: 80,
       blueaxe: 5,
       beltfrozen: 3,
-      scrollupgradehigh: 1,
+      scrollupgradehigh: 3,
     },
-    hp: 265,
-    armor: 6,
-    weapon: 8,
+    hp: 235,
+    armor: 5,
+    weapon: 6,
   },
 
   werewolf: {
     drops: {
-      rejuvenationpotion: 80,
-      scrollupgradehigh: 2,
+      rejuvenationpotion: 65,
+      scrollupgradehigh: 3,
       bluearmor: 6,
       bluemorningstar: 5,
       beltfrozen: 3,
@@ -230,7 +231,7 @@ var Properties = {
     },
     hp: 375,
     armor: 6,
-    weapon: 10,
+    weapon: 7,
   },
 
   yeti: {
@@ -238,7 +239,7 @@ var Properties = {
       rejuvenationpotion: 80,
       bluearmor: 5,
       bluemorningstar: 5,
-      scrollupgradehigh: 2,
+      scrollupgradehigh: 3,
       ringgold: 2,
     },
     hp: 450,
@@ -249,52 +250,54 @@ var Properties = {
   skeleton3: {
     drops: {
       rejuvenationpotion: 80,
-      scrollupgradehigh: 2,
+      scrollupgradehigh: 3,
       hornedarmor: 5,
-      beltfrozen: 5,
+      beltfrozen: 3,
       ringgold: 2,
     },
-    hp: 220,
+    hp: 420,
     armor: 8,
-    weapon: 8,
+    weapon: 9,
   },
 
   skeletonleader: {
     drops: {
-      scrollupgradehigh: 2,
+      scrollupgradehigh: 5,
       hornedarmor: 5,
-      ringgold: 3,
+      ringgold: 5,
     },
-    hp: 1500,
-    armor: 10,
+    hp: 2500,
+    armor: 12,
     weapon: 12,
   },
 
   snake2: {
     drops: {
-      rejuvenationpotion: 90,
-      scrollupgradehigh: 2,
+      rejuvenationpotion: 80,
+      beltfrozen: 3,
+      scrollupgradehigh: 3,
       ringgold: 3,
     },
-    hp: 265,
-    armor: 6,
-    weapon: 12,
+    hp: 465,
+    armor: 7,
+    weapon: 10,
   },
 
   wraith: {
     drops: {
       rejuvenationpotion: 60,
-      scrollupgradehigh: 2,
+      beltfrozen: 3,
+      scrollupgradehigh: 4,
       ringgold: 3,
     },
-    hp: 475,
+    hp: 575,
     armor: 7,
     weapon: 9,
   },
 
   zombie: {
     drops: {
-      rejuvenationpotion: 30,
+      rejuvenationpotion: 50,
       scrollupgradehigh: 2,
       ringgold: 2,
     },
@@ -308,7 +311,7 @@ var Properties = {
       scrollupgradehigh: 5,
       ringgold: 5,
     },
-    hp: 1000,
+    hp: 1500,
     armor: 12,
     weapon: 10,
   },

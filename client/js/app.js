@@ -597,6 +597,8 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
         count = 0,
         $p = null;
 
+      $lists.empty();
+
       var totalNano = 0;
       _.each(achievements, function (achievement) {
         count++;

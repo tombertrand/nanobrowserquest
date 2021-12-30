@@ -525,6 +525,8 @@ module.exports = World = cls.Class.extend({
 
   removePlayer: function (player) {
     player.broadcast(player.despawn());
+    // @TODO Validate this? all we need is for zombies to be despawned on disconnect, or if necromancer hateList is empty???
+    this.handlePlayerVanish(player);
     this.removeEntity(player);
     if (player.hasGuild()) {
       player.getGuild().removeMember(player);
@@ -749,7 +751,7 @@ module.exports = World = cls.Class.extend({
           h: 25,
         });
 
-        const minRaise = adjustedDifficulty > 1 ? adjustedDifficulty : 2;
+        const minRaise = adjustedDifficulty + 1;
 
         if (minRaise) {
           console.log("~~~~~SEND RAISE!");
@@ -794,18 +796,14 @@ module.exports = World = cls.Class.extend({
     }
   },
 
-  // @NOTE Exp start decreasing 6 levels higher than the mob
-  // Can't earn exp from mob if it's 6 level higher than the player
   receivedExp: function (player, mob) {
     const playerLevel = player.level;
     const mobLevel = Types.getMobLevel(mob.kind);
 
-    // Start nerfing at level 4, end exp gains 6 levels higher
-    const EXP_LEVEL_START_RANGE = 4;
-    const EXP_LEVEL_END_RANGE = 8;
+    // Only able to get exp from monster if player is no lower than 8 levels below or 6 levels above
+    const EXP_LEVEL_START_RANGE = 8;
+    const EXP_LEVEL_END_RANGE = 6;
     let exp = Types.getMobExp(mob.kind);
-
-    // @TODO check on boss???
 
     const levelDifference = playerLevel - mobLevel;
     if (levelDifference < 0) {
@@ -822,6 +820,8 @@ module.exports = World = cls.Class.extend({
         exp = exp - Math.ceil(exp * multiplier);
       }
     }
+
+    exp = Math.round((parseInt(exp) * player.bonus.exp) / 100 + parseInt(exp));
 
     return exp;
   },
@@ -950,12 +950,21 @@ module.exports = World = cls.Class.extend({
       mob.clearTarget();
       mob.forgetPlayer(player.id, 1000);
       mob.removeAttacker(player);
+
+      if (mob.hateList.length === 0 && mob.kind === Types.Entities.ZOMBIE) {
+        self.despawn(mob);
+      }
     });
 
     _.each(previousAttackers, function (mob) {
       player.removeAttacker(mob);
       mob.clearTarget();
       mob.forgetPlayer(player.id, 1000);
+
+      if (mob.hateList.length === 0 && mob.kind === Types.Entities.ZOMBIE) {
+        // @NOTE maybe not needed
+        self.despawn(mob);
+      }
     });
 
     this.handleEntityGroupMembership(player);
@@ -1197,12 +1206,12 @@ module.exports = World = cls.Class.extend({
     }
     return null;
   },
-  removePlayer: function (player) {
-    player.broadcast(player.despawn());
-    this.removeEntity(player);
-    delete this.players[player.id];
-    delete this.outgoingQueues[player.id];
-  },
+  // removePlayer: function (player) {
+  //   player.broadcast(player.despawn());
+  //   this.removeEntity(player);
+  //   delete this.players[player.id];
+  //   delete this.outgoingQueues[player.id];
+  // },
   loggedInPlayer: function (name) {
     for (var id in this.players) {
       if (this.players[id].name === name) {

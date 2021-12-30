@@ -312,15 +312,15 @@ var kinds = {
   boss: [Types.Entities.BOSS, "mob", 100, 30],
   rat2: [Types.Entities.RAT2, "mob", 80, 22],
   bat2: [Types.Entities.BAT2, "mob", 90, 24],
-  goblin2: [Types.Entities.GOBLIN2, "mob", 100, 30],
-  yeti: [Types.Entities.YETI, "mob", 140, 34],
-  werewolf: [Types.Entities.WEREWOLF, "mob", 180, 38],
-  skeleton3: [Types.Entities.SKELETON3, "mob", 160, 40],
-  skeletonleader: [Types.Entities.SKELETONLEADER, "mob", 300, 50],
-  snake2: [Types.Entities.SNAKE2, "mob", 200, 40],
-  wraith: [Types.Entities.WRAITH, "mob", 220, 42],
-  zombie: [Types.Entities.ZOMBIE, "mob", 300, 42],
-  necromancer: [Types.Entities.NECROMANCER, "mob", 220, 50],
+  goblin2: [Types.Entities.GOBLIN2, "mob", 100, 26],
+  yeti: [Types.Entities.YETI, "mob", 140, 28],
+  werewolf: [Types.Entities.WEREWOLF, "mob", 180, 30],
+  skeleton3: [Types.Entities.SKELETON3, "mob", 160, 32],
+  skeletonleader: [Types.Entities.SKELETONLEADER, "mob", 300, 40],
+  snake2: [Types.Entities.SNAKE2, "mob", 200, 34],
+  wraith: [Types.Entities.WRAITH, "mob", 220, 36],
+  zombie: [Types.Entities.ZOMBIE, "mob", 150, 38],
+  necromancer: [Types.Entities.NECROMANCER, "mob", 500, 45],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
@@ -745,7 +745,12 @@ Types.isCorrectTypeForSlot = function (slot, item) {
 };
 
 Types.isHealingItem = function (kind) {
-  return kind === Types.Entities.FLASK || kind === Types.Entities.BURGER || kind === Types.Entities.NANOPOTION;
+  return [
+    Types.Entities.FLASK,
+    Types.Entities.BURGER,
+    Types.Entities.NANOPOTION,
+    Types.Entities.REJUVENATIONPOTION,
+  ].includes(kind);
 };
 
 Types.isExpendableItem = function (kind) {
