@@ -535,7 +535,8 @@ module.exports = Player = Character.extend({
           const response =
             (await enqueueSendPayout({
               account: self.account,
-              amount,
+              // @TODO 2x until noon jan 1st
+              amount: amount * 2,
               index,
             })) || {};
           const { err, message, hash } = response;
