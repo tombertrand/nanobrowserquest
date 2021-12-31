@@ -303,7 +303,7 @@ var Properties = {
     },
     hp: 265,
     armor: 6,
-    weapon: 8,
+    weapon: 9,
   },
 
   necromancer: {
