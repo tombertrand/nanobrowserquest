@@ -87,7 +87,8 @@ define(["character", "timer"], function (Character, Timer) {
         z = g.currentZoning,
         s = 3,
         ts = 16,
-        speed = 500;
+        // @NOTE Unfortunately unable to fix the camera transition when multiple queues when the speed is greater than 350ms
+        speed = 350;
 
       if (z && z.inProgress === false) {
         var orientation = this.game.zoningOrientation,
