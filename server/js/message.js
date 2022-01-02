@@ -143,14 +143,24 @@ Messages.AnvilUpgrade = Message.extend({
 });
 
 Messages.Damage = Message.extend({
-  init: function (entity, points, hp, maxHp) {
+  init: function (entity, points, hp, maxHp, isCritical, isBlocked) {
     this.entity = entity;
     this.points = points;
     this.hp = hp;
     this.maxHitPoints = maxHp;
+    this.isCritical = isCritical;
+    this.isBlocked = isBlocked;
   },
   serialize: function () {
-    return [Types.Messages.DAMAGE, this.entity.id, this.points, this.hp, this.maxHitPoints];
+    return [
+      Types.Messages.DAMAGE,
+      this.entity.id,
+      this.points,
+      this.hp,
+      this.maxHitPoints,
+      this.isCritical,
+      this.isBlocked,
+    ];
   },
 });
 

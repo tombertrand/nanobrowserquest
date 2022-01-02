@@ -204,17 +204,18 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         belt = data[8],
         ring1 = data[9],
         ring2 = data[10],
-        experience = data[11],
-        achievement = data[12],
-        inventory = data[13],
-        hash = data[14],
-        hash1 = data[15],
-        nanoPotions = data[16],
-        gems = data[17],
-        artifact = data[18],
-        expansion1 = data[19],
-        waypoints = data[20],
-        depositAccount = data[21];
+        amulet = data[11],
+        experience = data[12],
+        achievement = data[13],
+        inventory = data[14],
+        hash = data[15],
+        hash1 = data[16],
+        nanoPotions = data[17],
+        gems = data[18],
+        artifact = data[19],
+        expansion1 = data[20],
+        waypoints = data[21],
+        depositAccount = data[22];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -228,6 +229,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           belt,
           ring1,
           ring2,
+          amulet,
           experience,
           achievement,
           inventory,
@@ -394,12 +396,15 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     },
 
     receiveDamage: function (data) {
-      var id = data[1],
-        dmg = data[2];
-      (hp = parseInt(data[3])), (maxHp = parseInt(data[4]));
+      var id = data[1];
+      var dmg = data[2];
+      var hp = parseInt(data[3]);
+      var maxHp = parseInt(data[4]);
+      var isCritical = data[5];
+      var isBlocked = data[6];
 
       if (this.dmg_callback) {
-        this.dmg_callback(id, dmg, hp, maxHp);
+        this.dmg_callback({ id, dmg, hp, maxHp, isCritical, isBlocked });
       }
     },
 

@@ -105,7 +105,7 @@ Formulas.dmgFromMob = function ({
   const dmg = dealt - absorbed;
 
   if (dmg <= 0) {
-    return Utils.randomInt(0, 3);
+    return Utils.randomInt(3, 5);
   } else {
     return dmg;
   }

@@ -11,7 +11,8 @@ define(["jquery", "animation", "sprites"], function ($, Animation, sprites) {
 
     loadJSON: function (data) {
       this.id = data.id;
-      this.filepath = "img/" + this.scale + "/" + this.id + ".png";
+      this.fileExtension = ".png";
+
       this.animationData = data.animations;
       this.width = data.width;
       this.height = data.height;
@@ -26,7 +27,17 @@ define(["jquery", "animation", "sprites"], function ($, Animation, sprites) {
 
       this.image = new Image();
       this.image.crossOrigin = "Anonymous";
-      this.image.src = this.filepath;
+      this.image.src = "img/" + this.scale + "/" + this.id + this.fileExtension;
+
+      if (Types.isWeapon(this.name) && this.name !== "dagger") {
+        this.image7 = new Image();
+        this.image7.crossOrigin = "Anonymous";
+        this.image7.src = "img/" + this.scale + "/" + this.id + "7" + this.fileExtension;
+
+        this.image8 = new Image();
+        this.image8.crossOrigin = "Anonymous";
+        this.image8.src = "img/" + this.scale + "/" + this.id + "8" + this.fileExtension;
+      }
 
       this.image.onload = function () {
         self.isLoaded = true;

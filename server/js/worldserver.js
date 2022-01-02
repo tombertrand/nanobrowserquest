@@ -738,7 +738,6 @@ module.exports = World = cls.Class.extend({
 
     this.raiseInterval = setInterval(() => {
       if (mob && Array.isArray(mob.hateList) && !mob.hateList.length) {
-        console.log("~~~~~STOP RAISE!");
         this.stopRaiseInterval();
         this.despawnZombies();
       } else {
@@ -752,7 +751,6 @@ module.exports = World = cls.Class.extend({
         const minRaise = adjustedDifficulty + 1;
 
         if (minRaise) {
-          console.log("~~~~~SEND RAISE!");
           this.broadcastRaise(character, mob.id);
 
           let zombieCount = 0;
@@ -824,15 +822,17 @@ module.exports = World = cls.Class.extend({
     return exp;
   },
 
-  handleHurtEntity: function (entity, attacker, damage) {
+  handleHurtEntity: function ({ entity, attacker, damage, isCritical = false, isBlocked = false }) {
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
       this.pushToPlayer(entity, entity.health());
     }
-
     if (entity.type === "mob") {
       // Let the mob's attacker (player) know how much damage was inflicted
-      this.pushToPlayer(attacker, new Messages.Damage(entity, damage, entity.hitPoints, entity.maxHitPoints));
+      this.pushToPlayer(
+        attacker,
+        new Messages.Damage(entity, damage, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
+      );
     }
 
     // If the entity is about to die
@@ -989,8 +989,8 @@ module.exports = World = cls.Class.extend({
     var p = 0;
     var item = null;
 
-    // var random = Utils.random(3);
-    // const items = ["ringbronze", "ringsilver", "ringgold"];
+    // var random = Utils.random(2);
+    // const items = ["amuletsilver", "amuletgold"];
     // return this.addItem(this.createItem(Types.getKindFromString(items[random]), mob.x, mob.y));
     // return this.addItem(this.createItem(Types.getKindFromString("gold"), mob.x, mob.y));
     // return this.addItem(this.createItem(Types.getKindFromString("scrollupgradelow"), mob.x, mob.y));

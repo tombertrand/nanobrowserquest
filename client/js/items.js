@@ -231,6 +231,20 @@ define(["item"], function (Item) {
       },
     }),
 
+    AmuletSilver: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.AMULETSILVER, "amulet");
+        this.lootMessage = "You pick up a silver amulet";
+      },
+    }),
+
+    AmuletGold: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.AMULETGOLD, "amulet");
+        this.lootMessage = "You pick up a gold amulet";
+      },
+    }),
+
     ScrollUpgradeLow: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.SCROLLUPGRADELOW, "scroll");

@@ -252,6 +252,14 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.RingGold(id);
   };
 
+  EntityFactory.builders[Types.Entities.AMULETSILVER] = function (id) {
+    return new Items.AmuletSilver(id);
+  };
+
+  EntityFactory.builders[Types.Entities.AMULETGOLD] = function (id) {
+    return new Items.AmuletGold(id);
+  };
+
   EntityFactory.builders[Types.Entities.SCROLLUPGRADELOW] = function (id) {
     return new Items.ScrollUpgradeLow(id);
   };

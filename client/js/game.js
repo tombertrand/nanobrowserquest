@@ -229,6 +229,8 @@ define([
         "item-ringbronze",
         "item-ringsilver",
         "item-ringgold",
+        "item-amuletsilver",
+        "item-amuletgold",
         "item-scrollupgradelow",
         "item-scrollupgrademedium",
         "item-scrollupgradehigh",
@@ -533,7 +535,7 @@ define([
           const item = $(this).attr("data-item");
           const type = kinds[item][1];
 
-          if (["weapon", "armor", "belt", "ring"].includes(type) && $(`.item-${type}`).is(":empty")) {
+          if (["weapon", "armor", "belt", "ring", "amulet"].includes(type) && $(`.item-${type}`).is(":empty")) {
             $(`.item-${type}`).addClass("item-droppable");
           } else if (["scrollupgradelow", "scrollupgrademedium", "scrollupgradehigh"].includes(item)) {
             $(`.item-scroll`).addClass("item-droppable");
@@ -545,7 +547,9 @@ define([
           self.destroyDroppable();
 
           $(".ui-droppable-origin").removeClass("ui-droppable-origin");
-          $(".item-weapon, .item-armor, .item-ring, item-belt, .item-scroll").removeClass("item-droppable");
+          $(".item-weapon, .item-armor, .item-ring, .item-amulet, item-belt, .item-scroll").removeClass(
+            "item-droppable",
+          );
         },
       });
     },
@@ -575,6 +579,9 @@ define([
       $("#item-ring2")
         .empty()
         .append('<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="104"></div>');
+      $("#item-amulet")
+        .empty()
+        .append('<div class="item-slot item-equip-amulet item-amulet item-amulet" data-slot="105"></div>');
       $("#item-delete").empty().append('<div class="item-slot item-droppable item-delete" data-slot="-1"></div>');
 
       if (this.player.weaponName !== "dagger") {
@@ -643,6 +650,20 @@ define([
         );
       }
 
+      if (this.player.amuletName) {
+        $(".item-amulet").append(
+          $("<div />", {
+            class: "item-draggable",
+            css: {
+              "background-image": `url("${this.getIconPath(this.player.amuletName)}")`,
+            },
+            "data-item": this.player.amuletName,
+            "data-level": this.player.amuletLevel,
+            "data-bonus": this.player.amuletBonus,
+          }),
+        );
+      }
+
       this.updateInventory();
       this.updateRequirement();
     },
@@ -654,6 +675,7 @@ define([
 
       // @TODO instead of empty-ing, compare and replace
       $(".item-inventory").empty();
+
       this.player.inventory.forEach(({ item, level, quantity, bonus, requirement, slot }) => {
         $(`#item-inventory .item-slot:eq(${slot})`).append(
           $("<div />", {
@@ -699,7 +721,7 @@ define([
       $("#upgrade-item")
         .empty()
         .append(
-          '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-belt" data-slot="200"></div>',
+          '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt" data-slot="200"></div>',
         );
       $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
     },
@@ -1605,6 +1627,7 @@ define([
         belt,
         ring1,
         ring2,
+        amulet,
         experience,
         achievement,
         inventory,
@@ -1642,6 +1665,7 @@ define([
         self.player.setBelt(belt);
         self.player.setRing1(ring1);
         self.player.setRing2(ring2);
+        self.player.setAmulet(amulet);
         self.initPlayer();
         self.player.experience = experience;
         self.player.level = Types.getLevel(experience);
@@ -2020,7 +2044,6 @@ define([
                 entity.setGridPosition(x, y);
                 entity.setOrientation(orientation);
                 if (entity.kind === Types.Entities.ZOMBIE) {
-                  console.log("~~~~RAISE ZOMBIE");
                   entity.raise();
 
                   setTimeout(() => {
@@ -2386,13 +2409,13 @@ define([
           self.audioManager.playSound("raise");
         });
 
-        self.client.onPlayerDamageMob(function (mobId, points, healthPoints, maxHp) {
-          var mob = self.getEntityById(mobId);
-          if (mob && points) {
-            self.infoManager.addDamageInfo(points, mob.x, mob.y - 15, "inflicted");
+        self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHp, isCritical }) {
+          var mob = self.getEntityById(id);
+          if (mob && dmg) {
+            self.infoManager.addDamageInfo({ value: dmg, x: mob.x, y: mob.y - 15, type: "inflicted", isCritical });
           }
           if (self.player.hasTarget()) {
-            self.updateTarget(mobId, points, healthPoints, maxHp);
+            self.updateTarget(id, dmg, hp, maxHp);
           }
         });
 
@@ -2406,7 +2429,13 @@ define([
 
           if (exp) {
             self.updateExpBar();
-            self.infoManager.addDamageInfo("+" + exp + " exp", self.player.x, self.player.y - 15, "exp", 3000);
+            self.infoManager.addDamageInfo({
+              value: "+" + exp + " exp",
+              x: self.player.x,
+              y: self.player.y - 15,
+              type: "exp",
+              duration: 3000,
+            });
           }
 
           // var expInThisLevel = self.player.experience - Types.expForLevel[self.player.level - 1];
@@ -2476,7 +2505,7 @@ define([
             }
             if (isHurt) {
               player.hurt();
-              self.infoManager.addDamageInfo(diff, player.x, player.y - 15, "received");
+              self.infoManager.addDamageInfo({ value: diff, x: player.x, y: player.y - 15, type: "received" });
               self.audioManager.playSound("hurt");
               self.storage.addDamage(-diff);
               self.tryUnlockingAchievement("MEATSHIELD");
@@ -2484,7 +2513,7 @@ define([
                 self.playerhurt_callback();
               }
             } else if (!isRegen) {
-              self.infoManager.addDamageInfo("+" + diff, player.x, player.y - 15, "healed");
+              self.infoManager.addDamageInfo({ value: "+" + diff, x: player.x, y: player.y - 15, type: "healed" });
             }
             self.updateBars();
           }

@@ -61,12 +61,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "upgrade") // 12
             .hget(userKey, "ring1") // 13
             .hget(userKey, "ring2") // 14
-            .hget(userKey, "belt") // 15
-            .hget(userKey, "artifact") // 16
-            .hget(userKey, "expansion1") // 17
-            .hget(userKey, "waypoints") // 18
-            .hget(userKey, "depositAccount") // 19
-            .hget(userKey, "hash1") // 20
+            .hget(userKey, "amulet") // 15
+            .hget(userKey, "belt") // 16
+            .hget(userKey, "artifact") // 17
+            .hget(userKey, "expansion1") // 18
+            .hget(userKey, "waypoints") // 19
+            .hget(userKey, "depositAccount") // 20
+            .hget(userKey, "hash1") // 21
             .exec(async function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
@@ -75,9 +76,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var createdAt = Utils.NaN2Zero(replies[4]);
               var ring1 = replies[13];
               var ring2 = replies[14];
-              var belt = replies[15];
-              var expansion1 = !!parseInt(replies[17] || "0");
-              var depositAccount = replies[19];
+              var amulet = replies[15];
+              var belt = replies[16];
+              var expansion1 = !!parseInt(replies[18] || "0");
+              var depositAccount = replies[20];
 
               try {
                 if (!depositAccount) {
@@ -164,7 +166,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               // 2 - Locked, the player did not purchase the expansion
               let waypoints;
               try {
-                waypoints = JSON.parse(replies[18]);
+                waypoints = JSON.parse(replies[19]);
 
                 if (waypoints && !expansion1) {
                   const classicWaypoint = waypoints.slice(0, 3);
@@ -268,10 +270,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
               var artifact = new Array(ARTIFACT_COUNT).fill(0);
               try {
-                if (!replies[16]) {
+                if (!replies[17]) {
                   client.hset("u:" + player.name, "artifact", JSON.stringify(artifact));
                 } else {
-                  artifact = JSON.parse(replies[16]);
+                  artifact = JSON.parse(replies[17]);
                 }
               } catch (err) {
                 Sentry.captureException(err);
@@ -280,7 +282,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var x = Utils.NaN2Zero(replies[7]);
               var y = Utils.NaN2Zero(replies[8]);
               var hash = replies[9];
-              var hash1 = replies[20];
+              var hash1 = replies[21];
               var nanoPotions = parseInt(replies[10] || 0);
 
               // bcrypt.compare(player.account, account, function(err, res) {
@@ -301,6 +303,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 belt,
                 ring1,
                 ring2,
+                amulet,
                 exp,
                 createdAt,
                 inventory,
@@ -361,6 +364,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "belt", null)
           .hset(userKey, "ring1", null)
           .hset(userKey, "ring2", null)
+          .hset(userKey, "amulet", null)
           .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
           .hset(userKey, "artifact", JSON.stringify(new Array(ARTIFACT_COUNT).fill(0)))
           .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
@@ -494,6 +498,16 @@ module.exports = DatabaseHandler = cls.Class.extend({
       client.hdel("u:" + name, "ring2");
     }
   },
+  equipAmulet: function ({ name, item, level, bonus }) {
+    const amulet = [item, level, bonus].filter(Boolean).join(":") || null;
+
+    log.info(`Set Amulet: ${name} amulet`);
+    if (amulet) {
+      client.hset("u:" + name, "amulet", amulet);
+    } else {
+      client.hdel("u:" + name, "amulet");
+    }
+  },
   setExp: function (name, exp) {
     log.info("Set Exp: " + name + " " + exp);
     client.hset("u:" + name, "exp", exp);
@@ -520,6 +534,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
       return ["ring1", 0];
     } else if (slot === Types.Slot.RING2) {
       return ["ring2", 0];
+    } else if (slot === Types.Slot.AMULET) {
+      return ["amulet", 0];
     } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + 10) {
       return ["upgrade", UPGRADE_SLOT_RANGE];
     }
@@ -573,6 +589,15 @@ module.exports = DatabaseHandler = cls.Class.extend({
       }
 
       player.equipItem({ item, level, bonus, type: "ring2" });
+    } else if (location === "amulet") {
+      let item = null;
+      let level = null;
+      let bonus = null;
+      if (data) {
+        [item, level, bonus] = data.split(":");
+      }
+
+      player.equipItem({ item, level, bonus, type: "amulet" });
     } else if (location === "upgrade") {
       player.send([Types.Messages.UPGRADE, data]);
     }
@@ -656,13 +681,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }
-              } else if (["weapon", "armor", "belt", "ring1", "ring2"].includes(toLocation)) {
+              } else if (["weapon", "armor", "belt", "ring1", "ring2", "amulet"].includes(toLocation)) {
                 const [item, fromLevel] = fromItem.split(":");
                 if (Types.getItemRequirement(item, fromLevel) > player.level) {
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }
-              } else if (["weapon", "armor", "belt", "ring1", "ring2"].includes(fromLocation) && toItem) {
+              } else if (["weapon", "armor", "belt", "ring1", "ring2", "amulet"].includes(fromLocation) && toItem) {
                 const [item, toLevel] = toItem.split(":");
                 if (
                   Types.getItemRequirement(item, toLevel) > player.level ||

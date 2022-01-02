@@ -231,7 +231,8 @@ module.exports = Player = Character.extend({
         var mob = self.server.getEntityById(message[1]);
 
         if (mob) {
-          var dmg = Formulas.dmg({
+          let isCritical = false;
+          let dmg = Formulas.dmg({
             weapon: self.weapon,
             weaponLevel: self.weaponLevel,
             playerLevel: self.level,
@@ -241,6 +242,14 @@ module.exports = Player = Character.extend({
             magicDamage: self.bonus.magicDamage,
             weaponDamage: self.bonus.weaponDamage,
           });
+
+          if (self.bonus.criticalHit) {
+            isCritical = Utils.random(100) <= self.bonus.criticalHit;
+            if (isCritical) {
+              dmg = dmg * 2;
+            }
+          }
+
           if (dmg > 0) {
             if (mob.type !== "player") {
               // Reduce dmg on boss by 12.5% per player in boss room
@@ -275,12 +284,12 @@ module.exports = Player = Character.extend({
 
               mob.receiveDamage(dmg, self.id);
               self.server.handleMobHate(mob.id, self.id, dmg);
-              self.server.handleHurtEntity(mob, self, dmg);
+              self.server.handleHurtEntity({ entity: mob, attacker: self, damage: dmg, isCritical });
             }
           } else {
             mob.hitPoints -= dmg;
             if (mob.server) {
-              mob.server.handleHurtEntity(mob);
+              mob.server.handleHurtEntity({ entity: mob, isCritical });
               if (mob.hitPoints <= 0) {
                 mob.isDead = true;
                 self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
@@ -292,7 +301,8 @@ module.exports = Player = Character.extend({
         log.info("HURT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
         if (mob && self.hitPoints > 0) {
-          self.hitPoints -= Formulas.dmgFromMob({
+          let isBlocked = false;
+          let dmg = Formulas.dmgFromMob({
             weaponLevel: mob.weaponLevel,
             armor: self.armor,
             armorLevel: self.armorLevel,
@@ -302,7 +312,16 @@ module.exports = Player = Character.extend({
             defense: self.bonus.defense,
             absorbedDamage: self.bonus.absorbedDamage,
           });
-          self.server.handleHurtEntity(self, mob);
+
+          if (self.bonus.blockChance) {
+            isBlocked = Utils.random(100) <= self.bonus.blockChance;
+            if (isBlocked) {
+              dmg = 0;
+            }
+          }
+
+          self.hitPoints -= dmg;
+          self.server.handleHurtEntity({ entity: self, attacker: mob, isBlocked });
 
           if (self.hitPoints <= 0) {
             self.isDead = true;
@@ -368,18 +387,25 @@ module.exports = Player = Character.extend({
               databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), level }] });
             } else if (Types.isScroll(kind)) {
               databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), quantity: 1 }] });
-            } else if (Types.isRing(kind)) {
+            } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
               const lowLevelBonus = [0, 1, 2, 3];
               const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
               const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+              // @TODO Implement "11" -> attackSpeed
+              const amuletHighLevelBonus = [9, 10];
 
               let bonus = [];
               if (kind === Types.Entities.RINGBRONZE) {
                 bonus = _.shuffle(lowLevelBonus).slice(0, 1);
-              } else if (kind === Types.Entities.RINGSILVER) {
+              } else if (kind === Types.Entities.RINGSILVER || kind === Types.Entities.AMULETSILVER) {
                 bonus = _.shuffle(mediumLevelBonus).slice(0, 2).sort();
               } else if (kind === Types.Entities.RINGGOLD) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).sort();
+              } else if (kind === Types.Entities.AMULETGOLD) {
+                bonus = _.shuffle(mediumLevelBonus)
+                  .slice(0, 2)
+                  .sort()
+                  .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
               }
 
               databaseHandler.lootItems({
@@ -830,6 +856,12 @@ module.exports = Player = Character.extend({
     this.ring2Bonus = bonus ? JSON.parse(bonus) : null;
   },
 
+  equipAmulet: function (amulet, level, bonus) {
+    this.amulet = amulet;
+    this.amuletLevel = level;
+    this.amuletBonus = bonus ? JSON.parse(bonus) : null;
+  },
+
   calculateBonus: function () {
     this.resetBonus();
 
@@ -848,6 +880,13 @@ module.exports = Player = Character.extend({
               item: this.ring2,
               level: this.ring2Level,
               bonus: this.ring2Bonus,
+            }
+          : null,
+        this.amulet
+          ? {
+              item: this.amulet,
+              level: this.amuletLevel,
+              bonus: this.amuletBonus,
             }
           : null,
       ].filter(Boolean);
@@ -878,6 +917,9 @@ module.exports = Player = Character.extend({
       absorbedDamage: 0,
       exp: 0,
       regenerateHealth: 0,
+      criticalHit: 0,
+      blockChance: 0,
+      attackSpeed: 0,
     };
   },
 
@@ -890,6 +932,9 @@ module.exports = Player = Character.extend({
         this.equipRing2(item, level, bonus);
         databaseHandler.equipRing2({ name: this.name, item, level, bonus });
       }
+    } else if (["amulet"].includes(type)) {
+      this.equipAmulet(item, level, bonus);
+      databaseHandler.equipAmulet({ name: this.name, item, level, bonus });
     } else if (["belt"].includes(type)) {
       databaseHandler.equipBelt(this.name, item, level);
       this.equipBelt(item, level);
@@ -1063,6 +1108,7 @@ module.exports = Player = Character.extend({
     belt,
     ring1,
     ring2,
+    amulet,
     exp,
     createdAt,
     x,
@@ -1092,7 +1138,6 @@ module.exports = Player = Character.extend({
       const [playerBelt, playerBeltLevel] = belt.split(":");
       self.equipBelt(playerBelt, playerBeltLevel);
     }
-
     if (ring1) {
       const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
       self.equipRing1(playerRing1, playerRing1Level, playerRing1Bonus);
@@ -1100,6 +1145,10 @@ module.exports = Player = Character.extend({
     if (ring2) {
       const [playerRing2, playerRing2Level, playerRing2Bonus] = ring2.split(":");
       self.equipRing2(playerRing2, playerRing2Level, playerRing2Bonus);
+    }
+    if (amulet) {
+      const [playerAmulet, playerAmuletLevel, playerAmuletBonus] = amulet.split(":");
+      self.equipAmulet(playerAmulet, playerAmuletLevel, playerAmuletBonus);
     }
 
     self.achievement = achievement;
@@ -1139,6 +1188,7 @@ module.exports = Player = Character.extend({
       belt,
       ring1,
       ring2,
+      amulet,
       self.experience,
       achievement,
       inventory,

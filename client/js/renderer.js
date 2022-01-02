@@ -431,6 +431,15 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
         }
 
         if (entity instanceof Character && !entity.isDead && entity.hasWeapon()) {
+          let weaponLevel = entity.getWeaponLevel();
+          if (weaponLevel < 7) {
+            weaponLevel = "";
+          } else if (weaponLevel === 7) {
+            weaponLevel = "7";
+          } else if (weaponLevel > 7) {
+            weaponLevel = "8";
+          }
+
           var weapon = this.game.sprites[entity.getWeaponName()];
 
           if (weapon) {
@@ -442,7 +451,7 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
               (wh = weapon.height * os);
 
             this.context.drawImage(
-              weapon.image,
+              weapon[`image${weaponLevel}`],
               wx,
               wy,
               ww,
