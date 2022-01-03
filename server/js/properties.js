@@ -137,9 +137,9 @@ var Properties = {
   eye: {
     drops: {
       flask: 45,
-      redarmor: 15,
+      redarmor: 12,
       firepotion: 5,
-      scrollupgrademedium: 13,
+      scrollupgrademedium: 15,
       ringsilver: 4,
       beltplated: 3,
       amuletsilver: 2,
@@ -154,7 +154,7 @@ var Properties = {
       flask: 45,
       redsword: 15,
       firepotion: 5,
-      scrollupgrademedium: 13,
+      scrollupgrademedium: 15,
       ringsilver: 4,
       beltplated: 3,
       amuletsilver: 2,
@@ -166,10 +166,11 @@ var Properties = {
 
   deathknight: {
     drops: {
-      burger: 80,
+      burger: 70,
       ringsilver: 5,
       beltplated: 5,
       amuletsilver: 2,
+      scrollupgrademedium: 10,
     },
     hp: 275,
     armor: 4,
@@ -190,7 +191,7 @@ var Properties = {
       rejuvenationpotion: 80,
       bluearmor: 5,
       ringsilver: 3,
-      scrollupgradehigh: 2,
+      scrollupgradehigh: 3,
       amuletgold: 1,
     },
     hp: 240,
@@ -204,7 +205,7 @@ var Properties = {
       blueaxe: 5,
       beltfrozen: 3,
       bluearmor: 3,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 4,
       amuletgold: 1,
     },
     hp: 280,
@@ -217,7 +218,7 @@ var Properties = {
       rejuvenationpotion: 80,
       blueaxe: 5,
       beltfrozen: 3,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 4,
       amuletgold: 1,
     },
     hp: 235,
@@ -228,7 +229,7 @@ var Properties = {
   werewolf: {
     drops: {
       rejuvenationpotion: 65,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 4,
       bluearmor: 6,
       bluemorningstar: 5,
       beltfrozen: 3,
@@ -245,7 +246,7 @@ var Properties = {
       rejuvenationpotion: 75,
       bluearmor: 5,
       bluemorningstar: 5,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 4,
       ringgold: 2,
       amuletgold: 2,
     },
@@ -256,8 +257,8 @@ var Properties = {
 
   skeleton3: {
     drops: {
-      rejuvenationpotion: 88,
-      scrollupgradehigh: 3,
+      rejuvenationpotion: 85,
+      scrollupgradehigh: 4,
       hornedarmor: 5,
       ringgold: 2,
       amuletgold: 2,
@@ -269,7 +270,7 @@ var Properties = {
 
   skeletonleader: {
     drops: {
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 6,
       hornedarmor: 5,
       ringgold: 4,
       amuletgold: 4,
@@ -283,7 +284,7 @@ var Properties = {
     drops: {
       rejuvenationpotion: 80,
       beltfrozen: 3,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 4,
       ringgold: 3,
       amuletgold: 2,
     },
@@ -296,7 +297,7 @@ var Properties = {
     drops: {
       rejuvenationpotion: 60,
       beltfrozen: 3,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       ringgold: 3,
       amuletgold: 2,
     },
@@ -307,8 +308,8 @@ var Properties = {
 
   zombie: {
     drops: {
-      rejuvenationpotion: 65,
-      scrollupgradehigh: 2,
+      rejuvenationpotion: 70,
+      scrollupgradehigh: 3,
       ringgold: 2,
       amuletgold: 2,
     },
@@ -319,7 +320,7 @@ var Properties = {
 
   necromancer: {
     drops: {
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 7,
       ringgold: 5,
       amuletgold: 5,
     },
