@@ -256,15 +256,14 @@ var Properties = {
 
   skeleton3: {
     drops: {
-      rejuvenationpotion: 70,
+      rejuvenationpotion: 88,
       scrollupgradehigh: 3,
       hornedarmor: 5,
-      beltfrozen: 3,
       ringgold: 2,
       amuletgold: 2,
     },
     hp: 420,
-    armor: 9,
+    armor: 8,
     weapon: 9,
   },
 
@@ -275,7 +274,7 @@ var Properties = {
       ringgold: 4,
       amuletgold: 4,
     },
-    hp: 2750,
+    hp: 2500,
     armor: 12,
     weapon: 12,
   },
@@ -288,7 +287,7 @@ var Properties = {
       ringgold: 3,
       amuletgold: 2,
     },
-    hp: 465,
+    hp: 380,
     armor: 7,
     weapon: 10,
   },
