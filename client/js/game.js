@@ -474,7 +474,7 @@ define([
 
             if (toItem) {
               if (
-                [100, 101, 102, 103, 104].includes(fromSlot) &&
+                [100, 101, 102, 103, 104, 105].includes(fromSlot) &&
                 (!toLevel || !Types.isCorrectTypeForSlot(fromSlot, toItem) || toLevel > self.player.level)
               ) {
                 return;
@@ -482,7 +482,7 @@ define([
             }
 
             if (
-              [100, 101, 102, 103, 104].includes(toSlot) &&
+              [100, 101, 102, 103, 104, 105].includes(toSlot) &&
               Types.getItemRequirement(item, level) > self.player.level
             ) {
               return;

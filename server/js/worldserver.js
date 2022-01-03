@@ -797,13 +797,15 @@ module.exports = World = cls.Class.extend({
     const mobLevel = Types.getMobLevel(mob.kind);
 
     // Only able to get exp from monster if player is no lower than 8 levels below or 6 levels above
-    const EXP_LEVEL_START_RANGE = 8;
+    const EXP_LEVEL_BELOW_MOB = 8;
+    const EXP_LEVEL_START_RANGE = 2;
     const EXP_LEVEL_END_RANGE = 6;
     let exp = Types.getMobExp(mob.kind);
 
     const levelDifference = playerLevel - mobLevel;
+
     if (levelDifference < 0) {
-      if (levelDifference < -EXP_LEVEL_START_RANGE) {
+      if (levelDifference < -EXP_LEVEL_BELOW_MOB) {
         return 0;
       }
     } else if (levelDifference > 0) {
@@ -812,7 +814,7 @@ module.exports = World = cls.Class.extend({
         return 0;
       } else if (levelDifference > EXP_LEVEL_START_RANGE) {
         // Nerf exp per level
-        const multiplier = (levelDifference - EXP_LEVEL_START_RANGE) / 10;
+        const multiplier = (levelDifference - EXP_LEVEL_START_RANGE) / 8;
         exp = exp - Math.ceil(exp * multiplier);
       }
     }
