@@ -91,12 +91,13 @@ Messages.Stats = Message.extend({
 });
 
 Messages.EquipItem = Message.extend({
-  init: function (player, itemKind) {
+  init: function (player, itemKind, itemLevel) {
     this.playerId = player.id;
     this.itemKind = itemKind;
+    this.itemLevel = parseInt(itemLevel);
   },
   serialize: function () {
-    return [Types.Messages.EQUIP, this.playerId, this.itemKind];
+    return [Types.Messages.EQUIP, this.playerId, this.itemKind, this.itemLevel];
   },
 });
 

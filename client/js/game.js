@@ -2536,15 +2536,17 @@ define([
           }
         });
 
-        self.client.onPlayerEquipItem(function (playerId, itemKind) {
+        self.client.onPlayerEquipItem(function (playerId, itemKind, itemLevel) {
           var player = self.getEntityById(playerId);
           var itemName = Types.getKindAsString(itemKind);
 
           if (player) {
             if (Types.isArmor(itemKind)) {
+              player.setArmorLevel(itemLevel);
               player.setSprite(self.sprites[itemName]);
             } else if (Types.isWeapon(itemKind)) {
               player.setWeaponName(itemName);
+              player.setWeaponLevel(itemLevel);
             }
           }
         });

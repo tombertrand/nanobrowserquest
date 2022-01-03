@@ -320,9 +320,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         var character = EntityFactory.createEntity(kind, id, name);
 
         if (character instanceof Player) {
-          // @TODO load badass level8+ armor and weapon effects
-          character.weaponName = weapon; //Types.getKindAsString(weapon);
-          character.spriteName = armor; //Types.getKindAsString(armor);
+          character.setWeaponName(weapon);
+          character.setWeaponLevel(weaponLevel);
+          character.spriteName = armor;
+          character.setArmorLevel(armorLevel);
         }
 
         if (this.spawn_character_callback) {
@@ -365,9 +366,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     receiveEquipItem: function (data) {
       var id = data[1];
       var itemKind = data[2];
+      var itemLevel = data[3];
 
       if (this.equip_callback) {
-        this.equip_callback(id, itemKind);
+        this.equip_callback(id, itemKind, itemLevel);
       }
     },
 

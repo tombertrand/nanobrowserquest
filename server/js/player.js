@@ -351,7 +351,7 @@ module.exports = Player = Character.extend({
               self.updateHitPoints(true);
               self.broadcast(self.equip(Types.Entities.FIREFOX));
               self.firepotionTimeout = setTimeout(function () {
-                self.broadcast(self.equip(self.armor)); // return to normal after 10 sec
+                self.broadcast(self.equip(self.armor, self.armorLevel)); // return to normal after 10 sec
                 self.firepotionTimeout = null;
               }, 10000);
               self.sendPlayerStats();
@@ -803,8 +803,8 @@ module.exports = Player = Character.extend({
     this.broadcastzone_callback = callback;
   },
 
-  equip: function (item) {
-    return new Messages.EquipItem(this, item);
+  equip: function (item, level) {
+    return new Messages.EquipItem(this, item, level);
   },
 
   addHater: function (mob) {

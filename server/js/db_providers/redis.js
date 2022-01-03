@@ -554,7 +554,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       }
 
       player.equipItem({ item, level, type: "weapon" });
-      player.broadcast(player.equip(player.weaponKind), false);
+      player.broadcast(player.equip(player.weaponKind, player.weaponLevel), false);
     } else if (location === "armor") {
       let item = "clotharmor";
       let level = 1;
@@ -563,7 +563,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       }
 
       player.equipItem({ item, level, type: "armor" });
-      player.broadcast(player.equip(player.armorKind), false);
+      player.broadcast(player.equip(player.armorKind, player.armorLevel), false);
     } else if (location === "belt") {
       let item = null;
       let level = null;
