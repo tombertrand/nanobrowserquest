@@ -323,8 +323,8 @@ var kinds = {
   yeti: [Types.Entities.YETI, "mob", 120, 32],
   skeleton3: [Types.Entities.SKELETON3, "mob", 130, 34],
   skeletonleader: [Types.Entities.SKELETONLEADER, "mob", 250, 40],
-  snake2: [Types.Entities.SNAKE2, "mob", 130, 34],
-  wraith: [Types.Entities.WRAITH, "mob", 140, 36],
+  snake2: [Types.Entities.SNAKE2, "mob", 130, 38],
+  wraith: [Types.Entities.WRAITH, "mob", 140, 40],
   zombie: [Types.Entities.ZOMBIE, "mob", 100, 38],
   necromancer: [Types.Entities.NECROMANCER, "mob", 500, 45],
 

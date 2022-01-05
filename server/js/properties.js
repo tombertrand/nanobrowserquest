@@ -297,8 +297,8 @@ var Properties = {
       amuletgold: 2,
     },
     hp: 575,
-    armor: 7,
-    weapon: 9,
+    armor: 10,
+    weapon: 10,
   },
 
   zombie: {
@@ -308,7 +308,7 @@ var Properties = {
       ringgold: 2,
       amuletgold: 2,
     },
-    hp: 265,
+    hp: 305,
     armor: 6,
     weapon: 10,
   },
