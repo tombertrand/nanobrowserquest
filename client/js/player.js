@@ -22,6 +22,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.beltName = null;
       this.beltLevel = 1;
       this.inventory = [];
+      this.stash = [];
       this.upgrade = [];
       this.gems = [];
       this.artifact = [];
@@ -296,8 +297,8 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       }
     },
 
-    setInventory: function (inventory) {
-      this.inventory = inventory
+    prepareRawItems: function (items) {
+      return items
         .map((rawItem, slot) => {
           if (!rawItem) return false;
 
@@ -321,26 +322,16 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         .filter(Boolean);
     },
 
+    setInventory: function (inventory) {
+      this.inventory = this.prepareRawItems(inventory);
+    },
+
     setUpgrade: function (upgrade) {
-      this.upgrade = upgrade
-        .map((rawItem, slot) => {
-          if (!rawItem) return false;
+      this.upgrade = this.prepareRawItems(upgrade);
+    },
 
-          const [item, levelOrQuantity, bonus] = rawItem.split(":");
-          const isWeapon = kinds[item][1] === "weapon";
-          const isArmor = kinds[item][1] === "armor";
-          const isBelt = kinds[item][1] === "belt";
-          const isRing = kinds[item][1] === "ring";
-          const isAmulet = kinds[item][1] === "amulet";
-
-          return {
-            item,
-            [isWeapon || isArmor || isBelt || isRing || isAmulet ? "level" : "quantity"]: levelOrQuantity,
-            slot,
-            bonus,
-          };
-        })
-        .filter(Boolean);
+    setStash: function (stash) {
+      this.stash = this.prepareRawItems(stash);
     },
 
     onArmorLoot: function (callback) {

@@ -394,5 +394,9 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new NPCs.Waypointn(id);
   };
 
+  EntityFactory.builders[Types.Entities.STASH] = function (id) {
+    return new NPCs.Stash(id);
+  };
+
   return EntityFactory;
 });

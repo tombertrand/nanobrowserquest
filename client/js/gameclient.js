@@ -40,6 +40,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
       this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
       this.handlers[Types.Messages.INVENTORY] = this.receiveInventory;
+      this.handlers[Types.Messages.STASH] = this.receiveStash;
       this.handlers[Types.Messages.UPGRADE] = this.receiveUpgrade;
       this.handlers[Types.Messages.ANVIL_UPGRADE] = this.receiveAnvilUpgrade;
       this.handlers[Types.Messages.STORE_ITEMS] = this.receiveStoreItems;
@@ -208,14 +209,15 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         experience = data[12],
         achievement = data[13],
         inventory = data[14],
-        hash = data[15],
-        hash1 = data[16],
-        nanoPotions = data[17],
-        gems = data[18],
-        artifact = data[19],
-        expansion1 = data[20],
-        waypoints = data[21],
-        depositAccount = data[22];
+        stash = data[15],
+        hash = data[16],
+        hash1 = data[17],
+        nanoPotions = data[18],
+        gems = data[19],
+        artifact = data[20],
+        expansion1 = data[21],
+        waypoints = data[22],
+        depositAccount = data[23];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -233,6 +235,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           experience,
           achievement,
           inventory,
+          stash,
           hash,
           hash1,
           nanoPotions,
@@ -523,6 +526,14 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       }
     },
 
+    receiveStash: function (data) {
+      var stash = data[1];
+
+      if (this.receivestash_callback) {
+        this.receivestash_callback(stash);
+      }
+    },
+
     receiveUpgrade: function (data) {
       var upgrade = data[1];
       var isLucky7 = data[2];
@@ -720,6 +731,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     onReceiveInventory: function (callback) {
       this.receiveinventory_callback = callback;
+    },
+
+    onReceiveStash: function (callback) {
+      this.receivestash_callback = callback;
     },
 
     onReceiveUpgrade: function (callback) {

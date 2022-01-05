@@ -159,6 +159,7 @@ define(["character"], function (Character) {
 
     waypointx: [""],
     waypointn: [""],
+    stash: [""],
 
     coder: [
       "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",

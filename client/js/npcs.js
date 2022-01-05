@@ -127,6 +127,12 @@ define(["npc"], function (Npc) {
         this._super(id, Types.Entities.WAYPOINTN, 1);
       },
     }),
+
+    Stash: Npc.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.STASH, 1);
+      },
+    }),
   };
 
   return NPCs;

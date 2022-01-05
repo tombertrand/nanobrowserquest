@@ -1116,6 +1116,7 @@ module.exports = Player = Character.extend({
     chatBanEndTime = 0,
     achievement,
     inventory,
+    stash,
     hash,
     hash1,
     nanoPotions,
@@ -1156,6 +1157,7 @@ module.exports = Player = Character.extend({
     self.expansion1 = expansion1;
     self.depositAccount = depositAccount;
     self.inventory = inventory;
+    self.stash = stash;
     self.hash = hash;
     self.hash1 = hash1;
     self.hasRequestedBossPayout = !!hash;
@@ -1192,6 +1194,7 @@ module.exports = Player = Character.extend({
       self.experience,
       achievement,
       inventory,
+      stash,
       hash,
       hash1,
       nanoPotions,

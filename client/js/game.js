@@ -172,6 +172,7 @@ define([
         "anvil-fail",
         "waypointx",
         "waypointn",
+        "stash",
         "beachnpc",
         "forestnpc",
         "desertnpc",
@@ -699,6 +700,37 @@ define([
       this.updateRequirement();
     },
 
+    updateStash: function () {
+      if ($("#stash").hasClass("visible")) {
+        this.destroyDraggable();
+      }
+
+      // @TODO instead of empty-ing, compare and replace
+      $(".item-stash").empty();
+
+      this.player.stash.forEach(({ item, level, quantity, bonus, requirement, slot }) => {
+        $(`#item-stash .item-slot:eq(${slot})`).append(
+          $("<div />", {
+            class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+            css: {
+              "background-image": `url("${this.getIconPath(item)}")`,
+            },
+            "data-item": item,
+            "data-level": level,
+            "data-quantity": quantity,
+            "data-bonus": bonus,
+            "data-requirement": requirement,
+          }),
+        );
+      });
+
+      if ($("#stash").hasClass("visible")) {
+        this.initDraggable();
+      }
+
+      this.updateRequirement();
+    },
+
     updateRequirement: function () {
       var self = this;
 
@@ -766,6 +798,15 @@ define([
       if ($("#upgrade").hasClass("visible")) {
         this.initDraggable();
       }
+    },
+
+    initStash: function () {
+      $("#item-stash").empty();
+      for (var i = 0; i < 48; i++) {
+        $("#item-stash").append(`<div class="item-slot item-stash item-droppable" data-slot="${i + 300}"></div>`);
+      }
+
+      this.updateStash();
     },
 
     initAchievements: function () {
@@ -1631,6 +1672,7 @@ define([
         experience,
         achievement,
         inventory,
+        stash,
         hash,
         hash1,
         nanoPotions,
@@ -1670,6 +1712,7 @@ define([
         self.player.experience = experience;
         self.player.level = Types.getLevel(experience);
         self.player.setInventory(inventory);
+        self.player.setStash(stash);
 
         self.initMuteButton();
         self.updateBars();
@@ -1680,6 +1723,7 @@ define([
         self.initAchievements();
         self.initInventory();
         self.initUpgrade();
+        self.initStash();
         self.initTooltips();
         self.initSendUpgradeItem();
         self.initUpgradeItemPreview();
@@ -2404,9 +2448,10 @@ define([
 
         self.client.onEntityRaise(function (mobId) {
           var mob = self.getEntityById(mobId);
-
-          mob.setRaisingMode();
-          self.audioManager.playSound("raise");
+          if (mob) {
+            mob.setRaisingMode();
+            self.audioManager.playSound("raise");
+          }
         });
 
         self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHp, isCritical }) {
@@ -2655,6 +2700,11 @@ define([
         self.client.onReceiveInventory(function (data) {
           self.player.setInventory(data);
           self.updateInventory();
+        });
+
+        self.client.onReceiveStash(function (data) {
+          self.player.setStash(data);
+          self.updateStash();
         });
 
         self.client.onReceiveUpgrade(function (data, isLucky7) {
@@ -2914,6 +2964,8 @@ define([
           this.app.openUpgrade();
         } else if (npc.kind === Types.Entities.SORCERER) {
           this.store.openStore();
+        } else if (npc.kind === Types.Entities.STASH) {
+          this.app.openStash();
         } else if (npc.kind === Types.Entities.WAYPOINTX || npc.kind === Types.Entities.WAYPOINTN) {
           const activeWaypoint = this.getWaypointFromGrid(npc.gridX, npc.gridY);
           this.app.openWaypoint(activeWaypoint);

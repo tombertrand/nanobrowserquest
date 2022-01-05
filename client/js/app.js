@@ -542,6 +542,9 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
       if ($("#waypoint").hasClass("visible")) {
         this.closeWaypoint();
       }
+      if ($("#stash").hasClass("visible")) {
+        this.closeStash();
+      }
 
       if ($("#store").hasClass("active")) {
         this.store.closeStore();
@@ -739,18 +742,45 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
           this.game.client.sendMoveUpgradeItemsToInventory();
         }
       } else if (!$("#inventory").hasClass("visible")) {
-        $("#inventory").addClass("visible");
         $("#player").addClass("visible");
-        this.game.initDraggable();
+        this.openInventory();
       } else {
-        $("#inventory").removeClass("visible");
-        $("#player").removeClass("visible");
-        this.game.destroyDraggable();
+        this.closeInventory();
       }
+    },
+
+    openInventory: function () {
+      if (!$("#inventory").hasClass("visible")) {
+        $("#inventory").addClass("visible");
+        this.game.initDraggable();
+      }
+    },
+
+    closeInventory: function () {
+      $("#inventory").removeClass("visible");
+      $("#player").removeClass("visible");
+      this.game.destroyDraggable();
+    },
+
+    openStash: function () {
+      this.closeUpgrade();
+      $("#stash").addClass("visible");
+      this.openInventory();
+    },
+
+    closeStash: function () {
+      $("#stash").removeClass("visible");
+      this.closeInventory();
     },
 
     openUpgrade: function () {
       if ($("#upgrade").hasClass("visible")) return;
+      this.closeStash();
+      this.toggleUpgrade();
+    },
+
+    closeUpgrade: function () {
+      if (!$("#upgrade").hasClass("visible")) return;
 
       this.toggleUpgrade();
     },

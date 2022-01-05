@@ -44,6 +44,7 @@ Types = {
     REQUEST_PAYOUT: 34,
     NOTIFICATION: 35,
     INVENTORY: 36,
+    STASH: 50,
     UPGRADE: 37,
     MOVE_ITEM: 38,
     MOVE_UPGRADE_ITEMS_TO_INVENTORY: 39,
@@ -176,6 +177,7 @@ Types = {
     SATOSHI: 73,
     WAYPOINTX: 84,
     WAYPOINTN: 93,
+    STASH: 114,
 
     // Weapons
     DAGGER: 60,
@@ -317,13 +319,13 @@ var kinds = {
   rat2: [Types.Entities.RAT2, "mob", 80, 22],
   bat2: [Types.Entities.BAT2, "mob", 90, 24],
   goblin2: [Types.Entities.GOBLIN2, "mob", 100, 26],
-  yeti: [Types.Entities.YETI, "mob", 120, 28],
-  werewolf: [Types.Entities.WEREWOLF, "mob", 130, 30],
-  skeleton3: [Types.Entities.SKELETON3, "mob", 140, 34],
-  skeletonleader: [Types.Entities.SKELETONLEADER, "mob", 300, 40],
-  snake2: [Types.Entities.SNAKE2, "mob", 140, 34],
-  wraith: [Types.Entities.WRAITH, "mob", 150, 36],
-  zombie: [Types.Entities.ZOMBIE, "mob", 110, 38],
+  werewolf: [Types.Entities.WEREWOLF, "mob", 120, 30],
+  yeti: [Types.Entities.YETI, "mob", 120, 32],
+  skeleton3: [Types.Entities.SKELETON3, "mob", 130, 34],
+  skeletonleader: [Types.Entities.SKELETONLEADER, "mob", 250, 40],
+  snake2: [Types.Entities.SNAKE2, "mob", 130, 34],
+  wraith: [Types.Entities.WRAITH, "mob", 140, 36],
+  zombie: [Types.Entities.ZOMBIE, "mob", 100, 38],
   necromancer: [Types.Entities.NECROMANCER, "mob", 500, 45],
 
   // kind, type, level, damage
@@ -407,6 +409,7 @@ var kinds = {
   anvil: [Types.Entities.ANVIL, "npc"],
   waypointx: [Types.Entities.WAYPOINTX, "npc"],
   waypointn: [Types.Entities.WAYPOINTN, "npc"],
+  stash: [Types.Entities.STASH, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -969,6 +972,7 @@ Types.getBonus = function (rawBonus, level) {
   const regenerateHealthPerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
   const criticalHitPerLevel = [1, 2, 3, 4, 5, 7, 10, 15, 20, 30];
   const blockChancePerLevel = [1, 1, 2, 3, 4, 6, 10, 15, 20, 30];
+  const magicFindPerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
   const attackSpeedPerLevel = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30];
 
   const bonusPerLevel = [
@@ -983,6 +987,7 @@ Types.getBonus = function (rawBonus, level) {
     regenerateHealthPerLevel,
     criticalHitPerLevel,
     blockChancePerLevel,
+    magicFindPerLevel,
     attackSpeedPerLevel,
   ];
 
@@ -998,6 +1003,7 @@ Types.getBonus = function (rawBonus, level) {
     "regenerateHealth",
     "criticalHit",
     "blockChance",
+    "magicFind",
     "attackSpeed",
   ];
 

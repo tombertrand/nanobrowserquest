@@ -190,9 +190,7 @@ var Properties = {
     drops: {
       rejuvenationpotion: 80,
       bluearmor: 5,
-      ringsilver: 3,
       scrollupgradehigh: 3,
-      amuletgold: 1,
     },
     hp: 240,
     armor: 7,
@@ -204,9 +202,7 @@ var Properties = {
       rejuvenationpotion: 70,
       blueaxe: 5,
       beltfrozen: 3,
-      bluearmor: 3,
-      scrollupgradehigh: 4,
-      amuletgold: 1,
+      scrollupgradehigh: 3,
     },
     hp: 280,
     armor: 6,
@@ -217,7 +213,7 @@ var Properties = {
     drops: {
       rejuvenationpotion: 80,
       blueaxe: 5,
-      beltfrozen: 3,
+      beltfrozen: 5,
       scrollupgradehigh: 4,
       amuletgold: 1,
     },
@@ -228,13 +224,13 @@ var Properties = {
 
   werewolf: {
     drops: {
-      rejuvenationpotion: 65,
+      rejuvenationpotion: 75,
       scrollupgradehigh: 4,
-      bluearmor: 6,
-      bluemorningstar: 5,
+      bluearmor: 3,
+      bluemorningstar: 3,
       beltfrozen: 3,
       ringgold: 2,
-      amuletgold: 2,
+      amuletgold: 1,
     },
     hp: 375,
     armor: 6,
@@ -243,15 +239,14 @@ var Properties = {
 
   yeti: {
     drops: {
-      rejuvenationpotion: 75,
-      bluearmor: 5,
-      bluemorningstar: 5,
+      rejuvenationpotion: 80,
+      bluearmor: 3,
+      bluemorningstar: 3,
       scrollupgradehigh: 4,
-      ringgold: 2,
-      amuletgold: 2,
+      ringgold: 3,
     },
-    hp: 450,
-    armor: 7,
+    hp: 420,
+    armor: 8,
     weapon: 8,
   },
 
@@ -259,9 +254,9 @@ var Properties = {
     drops: {
       rejuvenationpotion: 85,
       scrollupgradehigh: 4,
-      hornedarmor: 5,
+      hornedarmor: 3,
       ringgold: 2,
-      amuletgold: 2,
+      amuletgold: 1,
     },
     hp: 420,
     armor: 8,
@@ -270,10 +265,10 @@ var Properties = {
 
   skeletonleader: {
     drops: {
-      scrollupgradehigh: 6,
+      scrollupgradehigh: 7,
       hornedarmor: 5,
       ringgold: 4,
-      amuletgold: 4,
+      amuletgold: 3,
     },
     hp: 2500,
     armor: 12,
@@ -283,10 +278,10 @@ var Properties = {
   snake2: {
     drops: {
       rejuvenationpotion: 80,
-      beltfrozen: 3,
+      beltfrozen: 2,
       scrollupgradehigh: 4,
       ringgold: 3,
-      amuletgold: 2,
+      amuletgold: 1,
     },
     hp: 420,
     armor: 7,
@@ -320,13 +315,13 @@ var Properties = {
 
   necromancer: {
     drops: {
-      scrollupgradehigh: 7,
+      scrollupgradehigh: 10,
       ringgold: 5,
-      amuletgold: 5,
+      amuletgold: 4,
     },
     hp: 3250,
     armor: 14,
-    weapon: 10,
+    weapon: 12,
   },
 };
 

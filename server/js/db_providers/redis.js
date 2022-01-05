@@ -9,9 +9,11 @@ const NanocurrencyWeb = require("nanocurrency-web");
 const { Sentry } = require("../sentry");
 
 const INVENTORY_SLOT_COUNT = 24;
+const STASH_SLOT_COUNT = 48;
 // const DELETE_SLOT = -1;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
+const STASH_SLOT_RANGE = 300;
 const ACHIEVEMENT_COUNT = 40;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
@@ -68,6 +70,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "waypoints") // 19
             .hget(userKey, "depositAccount") // 20
             .hget(userKey, "hash1") // 21
+            .hget(userKey, "stash") // 22
             .exec(async function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
@@ -156,6 +159,22 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   },
                   extra: {
                     achievement,
+                  },
+                });
+              }
+
+              var stash = new Array(STASH_SLOT_COUNT).fill(0);
+              try {
+                if (replies[22]) {
+                  stash = JSON.parse(replies[22]);
+                } else {
+                  client.hset("u:" + player.name, "stash", JSON.stringify(stash));
+                }
+              } catch (err) {
+                // invalid json
+                Sentry.captureException(err, {
+                  user: {
+                    username: player.name,
                   },
                 });
               }
@@ -311,6 +330,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 y,
                 achievement,
                 inventory,
+                stash,
                 hash,
                 hash1,
                 nanoPotions,
@@ -358,6 +378,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "createdAt", curTime)
           .hset(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
           .hset(userKey, "inventory", JSON.stringify(new Array(INVENTORY_SLOT_COUNT).fill(0)))
+          .hset(userKey, "stash", JSON.stringify(new Array(STASH_SLOT_COUNT).fill(0)))
           .hset(userKey, "nanoPotions", 0)
           .hset(userKey, "weapon", "dagger:1")
           .hset(userKey, "armor", "clotharmor:1")
@@ -389,6 +410,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               artifact: new Array(ARTIFACT_COUNT).fill(0),
               expansion1: false,
               waypoints: [1, 0, 0, 2, 2, 2],
+              stash: new Array(STASH_SLOT_COUNT).fill(0),
             });
           });
       }
@@ -538,6 +560,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
       return ["amulet", 0];
     } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + 10) {
       return ["upgrade", UPGRADE_SLOT_RANGE];
+    } else if (slot >= STASH_SLOT_RANGE && slot <= STASH_SLOT_RANGE + STASH_SLOT_COUNT) {
+      return ["stash", STASH_SLOT_RANGE];
     }
 
     return [];
@@ -546,6 +570,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
   sendMoveItem: function ({ player, location, data }) {
     if (location === "inventory") {
       player.send([Types.Messages.INVENTORY, data]);
+    } else if (location === "stash") {
+      player.send([Types.Messages.STASH, data]);
     } else if (location === "weapon") {
       let item = "dagger";
       let level = 1;
@@ -610,8 +636,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
     const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
     const [toLocation, toRange] = this.getItemLocation(toSlot);
-    const isMultipleFrom = ["inventory", "upgrade"].includes(fromLocation);
-    const isMultipleTo = ["inventory", "upgrade"].includes(toLocation);
+    const isMultipleFrom = ["inventory", "upgrade", "stash"].includes(fromLocation);
+    const isMultipleTo = ["inventory", "upgrade", "stash"].includes(toLocation);
 
     if (!fromLocation || !toLocation) return;
 
@@ -651,24 +677,19 @@ module.exports = DatabaseHandler = cls.Class.extend({
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
               if (Types.isScroll(fromItem)) {
                 const [fromScroll, fromQuantity] = fromItem.split(":");
-                if (toLocation === "inventory") {
+                if (toLocation === "inventory" || toLocation === "stash") {
                   let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(fromScroll));
 
                   if (toItemIndex === -1) {
-                    toItemIndex = toItem ? toReplyParsed.indexOf(0) : toSlot;
+                    toItemIndex = toItem ? toReplyParsed.indexOf(0) : toSlot - toRange;
                   }
 
                   if (toItemIndex > -1) {
                     const [, toQuantity = 0] = (toReplyParsed[toItemIndex] || "").split(":");
-                    toReplyParsed[toItemIndex - toRange] = `${fromScroll}:${
-                      parseInt(toQuantity) + parseInt(fromQuantity)
-                    }`;
+                    toReplyParsed[toItemIndex] = `${fromScroll}:${parseInt(toQuantity) + parseInt(fromQuantity)}`;
 
-                    if (fromLocation === "upgrade") {
-                      fromReplyParsed[fromSlot - fromRange] = 0;
-                      isFromReplyDone = true;
-                    }
-
+                    fromReplyParsed[fromSlot - fromRange] = 0;
+                    isFromReplyDone = true;
                     isToReplyDone = true;
                   }
                 } else if (toLocation === "upgrade") {

@@ -93,6 +93,7 @@ define([
   "text!../sprites/anvil-fail.json",
   "text!../sprites/waypointx.json",
   "text!../sprites/waypointn.json",
+  "text!../sprites/stash.json",
   "text!../sprites/ogre.json",
   "text!../sprites/yeti.json",
   "text!../sprites/werewolf.json",
