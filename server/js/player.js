@@ -251,6 +251,14 @@ module.exports = Player = Character.extend({
             }
           }
 
+          if (self.bonus.drainLife) {
+            dmg += self.bonus.drainLife;
+            if (!self.hasFullHealth()) {
+              self.regenHealthBy(self.bonus.drainLife);
+              self.server.pushToPlayer(self, self.health());
+            }
+          }
+
           if (dmg > 0) {
             if (mob.type !== "player") {
               // Reduce dmg on boss by 12.5% per player in boss room

@@ -975,7 +975,7 @@ Types.getBonusDescriptionMap = [
   "+#% Block enemy attack",
   "+#% Megic find",
   "+#% Attack speed",
-  "+#% Drain life",
+  "+# Drain life",
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -992,7 +992,7 @@ Types.getBonus = function (rawBonus, level) {
   const blockChancePerLevel = [1, 1, 2, 3, 4, 6, 10, 15, 20, 30];
   const magicFindPerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
   const attackSpeedPerLevel = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30];
-  const drainLifePerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
+  const drainLifePerLevel = [1, 2, 3, 3, 4, 5, 6, 8, 12, 17];
 
   const bonusPerLevel = [
     minDamagePerLevel,

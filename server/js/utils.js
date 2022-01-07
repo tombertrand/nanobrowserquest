@@ -223,7 +223,7 @@ Utils.isUpgradeSuccess = (level, isLuckySlot) => {
   // +8 -> +9, 4%
   // +9 -> +10, 1%
   const successRates = Types.getUpgradeSuccessRates();
-  const successRate = successRates[parseInt(level) - 1];
+  let successRate = successRates[parseInt(level) - 1];
   let random = Utils.randomInt(1, 100);
 
   if (isLuckySlot) {
