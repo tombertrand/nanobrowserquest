@@ -47,6 +47,7 @@ module.exports = Player = Character.extend({
     this.experience = 0;
     this.level = 0;
     this.lastWorldChatMinutes = 99;
+    this.auras = [];
 
     // Item bonuses (Rings, amulet, Uniques?)
     this.resetBonus();
@@ -391,8 +392,10 @@ module.exports = Player = Character.extend({
               const lowLevelBonus = [0, 1, 2, 3];
               const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
               const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-              // @TODO Implement "11" -> attackSpeed
               const amuletHighLevelBonus = [9, 10];
+              const drainLifeBonus = [13];
+              // @TODO Implement "11" -> magicFind
+              // @TODO Implement "12" -> attackSpeed
 
               let bonus = [];
               if (kind === Types.Entities.RINGBRONZE) {
@@ -406,6 +409,8 @@ module.exports = Player = Character.extend({
                   .slice(0, 2)
                   .sort()
                   .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
+              } else if (kind === Types.Entities.RINGNECROMANCER) {
+                bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(drainLifeBonus);
               }
 
               databaseHandler.lootItems({
@@ -739,6 +744,7 @@ module.exports = Player = Character.extend({
         `${this.armor}:${this.armorLevel}`,
         `${this.weapon}:${this.weaponLevel}`,
         this.level,
+        this.auras,
       ];
 
     if (this.target) {
@@ -896,6 +902,12 @@ module.exports = Player = Character.extend({
           this.bonus[type] += stats;
         });
       });
+
+      if (this.bonus.drainLife) {
+        this.addAura("drainlife");
+      } else {
+        this.removeAura("drainlife");
+      }
     } catch (err) {
       console.log("Error: ", err);
       Sentry.captureException(err, {
@@ -919,7 +931,9 @@ module.exports = Player = Character.extend({
       regenerateHealth: 0,
       criticalHit: 0,
       blockChance: 0,
+      magicFind: 0,
       attackSpeed: 0,
+      drainLife: 0,
     };
   },
 
@@ -957,6 +971,23 @@ module.exports = Player = Character.extend({
     this.sendPlayerStats();
   },
 
+  addAura: function (aura) {
+    const index = this.auras.indexOf(aura);
+    if (index === -1) {
+      this.auras.push(aura);
+      setTimeout(() => {
+        this.broadcast(new Messages.Auras(this), false);
+      }, 500);
+    }
+  },
+
+  removeAura: function (aura) {
+    const index = this.auras.indexOf(aura);
+    if (index > -1) {
+      this.auras.splice(index, 1);
+      this.broadcast(new Messages.Auras(this), false);
+    }
+  },
   updateHitPoints: function (reset) {
     const maxHitPoints =
       Formulas.hp({
@@ -1175,6 +1206,8 @@ module.exports = Player = Character.extend({
     }
     self.chatBanEndTime = chatBanEndTime;
 
+    self.calculateBonus();
+
     self.server.addPlayer(self);
     self.server.enter_callback(self);
 
@@ -1205,7 +1238,6 @@ module.exports = Player = Character.extend({
       depositAccount,
     ]);
 
-    self.calculateBonus();
     self.updateHitPoints(true);
     self.sendPlayerStats();
 

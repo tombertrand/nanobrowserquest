@@ -800,6 +800,8 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
           this.game.client.sendMoveUpgradeItemsToInventory();
         }
         $("#inventory").removeClass("visible upgrade");
+        $(".item-scroll").empty();
+        $("#upgrade .item-slot").removeClass("item-upgrade-success-slot item-upgrade-fail-slot");
       }
     },
 

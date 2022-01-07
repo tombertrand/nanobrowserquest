@@ -257,6 +257,11 @@ define(["character", "timer"], function (Character, Timer) {
         levelup.update(t);
       }
 
+      var drainLife = this.game.drainLifeAnimation;
+      if (drainLife) {
+        drainLife.update(t);
+      }
+
       var anvilSuccess = this.game.anvilSuccessAnimation;
       if (anvilSuccess) {
         anvilSuccess.update(t);

@@ -318,9 +318,10 @@ var Properties = {
       scrollupgradehigh: 10,
       ringgold: 5,
       amuletgold: 4,
+      ringnecromancer: 1,
     },
-    hp: 3250,
-    armor: 14,
+    hp: 3500,
+    armor: 13,
     weapon: 12,
   },
 };

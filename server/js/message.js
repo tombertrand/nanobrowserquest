@@ -101,6 +101,16 @@ Messages.EquipItem = Message.extend({
   },
 });
 
+Messages.Auras = Message.extend({
+  init: function (player) {
+    this.playerId = player.id;
+    this.auras = player.auras;
+  },
+  serialize: function () {
+    return [Types.Messages.AURAS, this.playerId, this.auras];
+  },
+});
+
 Messages.Drop = Message.extend({
   init: function (mob, item) {
     this.mob = mob;

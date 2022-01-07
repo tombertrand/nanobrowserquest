@@ -25,6 +25,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.handlers[Types.Messages.HEALTH] = this.receiveHealth;
       this.handlers[Types.Messages.CHAT] = this.receiveChat;
       this.handlers[Types.Messages.EQUIP] = this.receiveEquipItem;
+      this.handlers[Types.Messages.AURAS] = this.receiveAuras;
       this.handlers[Types.Messages.DROP] = this.receiveDrop;
       this.handlers[Types.Messages.TELEPORT] = this.receiveTeleport;
       this.handlers[Types.Messages.DAMAGE] = this.receiveDamage;
@@ -303,16 +304,17 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           this.spawn_chest_callback(item, x, y);
         }
       } else {
-        var name, orientation, target, weapon, weaponLevel, armor, armorLevel, level;
+        var name, orientation, target, weapon, weaponLevel, armor, armorLevel, level, auras;
 
         if (Types.isPlayer(kind)) {
           name = data[5];
           orientation = data[6];
           [armor, armorLevel] = data[7].split(":");
           [weapon, weaponLevel] = data[8].split(":");
-          if (data.length > 9) {
-            target = data[9];
-          }
+          auras = data[10];
+          // if (data.length > 9) {
+          //   target = data[9];
+          // }
         } else if (Types.isMob(kind)) {
           orientation = data[5];
           if (data.length > 6) {
@@ -327,6 +329,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           character.setWeaponLevel(weaponLevel);
           character.spriteName = armor;
           character.setArmorLevel(armorLevel);
+          character.setAuras(auras);
         }
 
         if (this.spawn_character_callback) {
@@ -373,6 +376,15 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
       if (this.equip_callback) {
         this.equip_callback(id, itemKind, itemLevel);
+      }
+    },
+
+    receiveAuras: function (data) {
+      var id = data[1];
+      var auras = data[2];
+
+      if (this.auras_callback) {
+        this.auras_callback(id, auras);
       }
     },
 
@@ -536,10 +548,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     receiveUpgrade: function (data) {
       var upgrade = data[1];
-      var isLucky7 = data[2];
+      const { luckySlot, isLucky7, isSuccess } = data[2] || {};
 
       if (this.receiveupgrade_callback) {
-        this.receiveupgrade_callback(upgrade, isLucky7);
+        this.receiveupgrade_callback(upgrade, { luckySlot, isLucky7, isSuccess });
       }
     },
 
@@ -633,6 +645,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     onPlayerEquipItem: function (callback) {
       this.equip_callback = callback;
+    },
+
+    onPlayerAuras: function (callback) {
+      this.auras_callback = callback;
     },
 
     onPlayerMoveToItem: function (callback) {

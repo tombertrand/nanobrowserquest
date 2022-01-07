@@ -41,6 +41,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.amuletName = null;
       this.amuletLevel = null;
       this.amuletBonus = null;
+      this.auras = [];
 
       // modes
       this.isLootMoving = false;
@@ -252,6 +253,10 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         this.amuletLevel = null;
         this.amuletBonus = null;
       }
+    },
+
+    setAuras: function (auras) {
+      this.auras = auras;
     },
 
     hasWeapon: function () {

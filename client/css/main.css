@@ -632,6 +632,9 @@ footer, header, hgroup, menu, nav, section {
         color: #d16afa;
         margin-bottom: 6px;
     }
+    .item-title.unique {
+        color: #d3c59c
+    }
     .item-class {
         color: #fff;
         text-transform: capitalize;
@@ -763,6 +766,32 @@ footer, header, hgroup, menu, nav, section {
         position: absolute;
         right: 20px;
     }
+
+    .item-upgrade-success-slot {
+        -moz-box-shadow:    inset 0 0 10px rgba(252,255,1,0.75);
+        -webkit-box-shadow: inset 0 0 10px rgba(252,255,1,0.75);
+        box-shadow:         inset 0 0 10px rgba(252,255,1,0.75);
+    }
+    .item-upgrade-fail-slot {
+        animation-iteration-count: 1;
+        animation: failed-upgrade 1s;
+        -moz-box-shadow:    inset 0 0 10px #C74640;
+        -webkit-box-shadow: inset 0 0 10px #C74640;
+        box-shadow:         inset 0 0 10px #C74640;
+    }
+
+    @keyframes failed-upgrade {
+        from {
+            -moz-box-shadow:    inset 0 0 50px #C74640;
+            -webkit-box-shadow: inset 0 0 50px #C74640;
+            box-shadow:         inset 0 0 50px #C74640;
+        }
+        to {
+            -moz-box-shadow:    inset 0 0 10px #C74640;
+            -webkit-box-shadow: inset 0 0 10px #C74640;
+            box-shadow:         inset 0 0 10px #C74640;
+        }
+      }
 
 	@media screen and (min-width: 1501px) {
         #nano {margin-left:-240px;}

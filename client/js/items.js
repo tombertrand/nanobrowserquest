@@ -231,6 +231,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    RingNecromancer: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RINGNECROMANCER, "ring");
+        this.lootMessage = "You pick up a Necromancer Death Wish";
+      },
+    }),
+
     AmuletSilver: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.AMULETSILVER, "amulet");

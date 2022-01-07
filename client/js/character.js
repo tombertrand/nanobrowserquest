@@ -41,6 +41,7 @@ define(["entity", "transition", "timer"], function (Entity, Transition, Timer) {
 
       this.inspecting = null;
       this.isLevelup = false;
+      this.auras = [];
     },
 
     clean: function () {

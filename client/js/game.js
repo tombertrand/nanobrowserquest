@@ -126,6 +126,7 @@ define([
         "loot",
         "target",
         "levelup",
+        "drainlife",
         "talk",
         "sparks",
         "shadow16",
@@ -230,6 +231,7 @@ define([
         "item-ringbronze",
         "item-ringsilver",
         "item-ringgold",
+        "item-ringnecromancer",
         "item-amuletsilver",
         "item-amuletgold",
         "item-scrollupgradelow",
@@ -335,6 +337,9 @@ define([
       this.levelupAnimation = new Animation("idle_down", 4, 0, 16, 16);
       this.levelupAnimation.setSpeed(50);
 
+      this.drainLifeAnimation = new Animation("idle_down", 5, 0, 16, 8);
+      this.drainLifeAnimation.setSpeed(200);
+
       this.anvilSuccessAnimation = new Animation("idle_down", 4, 0, 15, 8);
       this.anvilSuccessAnimation.setSpeed(80);
 
@@ -385,6 +390,7 @@ define([
 
           const {
             name,
+            isUnique,
             itemClass,
             defense,
             damage,
@@ -396,8 +402,8 @@ define([
           } = Types.getItemDetails(item, level, rawBonus);
 
           return `<div>
-            <div class="item-title">${name}${level ? `(+${level})` : ""} </div>
-            ${itemClass ? `<div class="item-class">(${itemClass} class item)</div>` : ""}
+            <div class="item-title${isUnique ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
+            ${itemClass ? `<div class="item-class">(${isUnique ? "Unique " : ""}${itemClass} class item)</div>` : ""}
             ${defense ? `<div class="item-description">Defense: ${defense}</div>` : ""}
             ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
             ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
@@ -758,16 +764,29 @@ define([
       $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
     },
 
-    updateUpgrade: function () {
+    updateUpgrade: function ({ luckySlot, isSuccess }) {
       if ($("#inventory").hasClass("visible")) {
         this.destroyDraggable();
       }
 
-      $(".item-scroll").empty();
       $(".item-upgrade").empty();
       $(".item-upgraded").empty();
 
       let upgradeInfoText = "&nbsp;";
+
+      $("#upgrade .item-slot").removeClass("item-upgrade-success-slot item-upgrade-fail-slot");
+      if (luckySlot) {
+        $(`#upgrade .item-slot:eq(${luckySlot})`).addClass("item-upgrade-success-slot");
+        $(".item-scroll").find("> div").css("opacity", 0.25);
+      } else {
+        $(".item-scroll").empty();
+      }
+
+      if (isSuccess) {
+        $("#upgrade-result .item-slot").addClass("item-upgrade-success-slot");
+      } else if (isSuccess === false) {
+        $("#upgrade-result .item-slot").addClass("item-upgrade-fail-slot");
+      }
 
       this.player.upgrade.forEach(({ item, level, quantity, slot, bonus }) => {
         if (slot === 0 && level) {
@@ -2081,6 +2100,12 @@ define([
         });
 
         self.client.onSpawnCharacter(function (entity, x, y, orientation, targetId) {
+          // if (entity instanceof Character) {
+          //   if (self.entityIdExists(entity.id)) {
+          //     self.removeEntity(entity);
+          //   }
+          // }
+
           if (!self.entityIdExists(entity.id)) {
             try {
               if (entity.id !== self.playerId) {
@@ -2596,6 +2621,13 @@ define([
           }
         });
 
+        self.client.onPlayerAuras(function (playerId, auras) {
+          var player = self.getEntityById(playerId);
+          if (player) {
+            player.setAuras(auras);
+          }
+        });
+
         self.client.onPlayerTeleport(function (id, x, y) {
           var entity = null,
             currentOrientation;
@@ -2707,10 +2739,12 @@ define([
           self.updateStash();
         });
 
-        self.client.onReceiveUpgrade(function (data, isLucky7) {
+        self.client.onReceiveUpgrade(function (data, meta) {
+          const { luckySlot, isLucky7, isSuccess } = meta || {};
+
           self.isUpgradeItemSent = false;
           self.player.setUpgrade(data);
-          self.updateUpgrade();
+          self.updateUpgrade({ luckySlot, isSuccess });
 
           if (isLucky7) {
             self.tryUnlockingAchievement("LUCKY7");

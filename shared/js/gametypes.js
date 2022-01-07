@@ -22,6 +22,7 @@ Types = {
     CHAT: 12,
     LOOT: 13,
     EQUIP: 14,
+    AURAS: 51,
     DROP: 15,
     TELEPORT: 16,
     DAMAGE: 17,
@@ -152,6 +153,7 @@ Types = {
     RINGBRONZE: 80,
     RINGSILVER: 81,
     RINGGOLD: 82,
+    RINGNECROMANCER: 115,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
 
@@ -272,7 +274,12 @@ Types.Entities.Armors = [
 
 Types.Entities.Belts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
 
-Types.Entities.Rings = [Types.Entities.RINGBRONZE, Types.Entities.RINGSILVER, Types.Entities.RINGGOLD];
+Types.Entities.Rings = [
+  Types.Entities.RINGBRONZE,
+  Types.Entities.RINGSILVER,
+  Types.Entities.RINGGOLD,
+  Types.Entities.RINGNECROMANCER,
+];
 
 Types.Entities.Amulets = [Types.Entities.AMULETSILVER, Types.Entities.AMULETGOLD];
 
@@ -361,6 +368,7 @@ var kinds = {
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
   ringsilver: [Types.Entities.RINGSILVER, "ring", "Silver Ring", 9],
   ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 16],
+  ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 28],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
@@ -719,6 +727,14 @@ Types.isObject = function (kind) {
   return kinds.getType(kind) === "object";
 };
 
+Types.isUniqueItem = function (kindOrString) {
+  if (typeof kindOrString === "number") {
+    return [Types.Entities.RINGNECROMANCER].includes(kindOrString);
+  } else {
+    return ["ringnecromancer"].includes(kindOrString);
+  }
+};
+
 Types.isChest = function (kind) {
   return kind === Types.Entities.CHEST;
 };
@@ -957,7 +973,9 @@ Types.getBonusDescriptionMap = [
   "+# health regeneration per second",
   "+#% Critical hit",
   "+#% Block enemy attack",
+  "+#% Megic find",
   "+#% Attack speed",
+  "+#% Drain life",
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -974,6 +992,7 @@ Types.getBonus = function (rawBonus, level) {
   const blockChancePerLevel = [1, 1, 2, 3, 4, 6, 10, 15, 20, 30];
   const magicFindPerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
   const attackSpeedPerLevel = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30];
+  const drainLifePerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -989,6 +1008,7 @@ Types.getBonus = function (rawBonus, level) {
     blockChancePerLevel,
     magicFindPerLevel,
     attackSpeedPerLevel,
+    drainLifePerLevel,
   ];
 
   const bonusType = [
@@ -1005,6 +1025,7 @@ Types.getBonus = function (rawBonus, level) {
     "blockChance",
     "magicFind",
     "attackSpeed",
+    "drainLife",
   ];
 
   const bonus = [];
@@ -1029,6 +1050,10 @@ Types.getBonus = function (rawBonus, level) {
 
 Types.getUpgradeSuccessRates = () => {
   return [100, 100, 90, 80, 55, 30, 7, 4, 1];
+};
+
+Types.getLuckySlotSuccessRateBonus = () => {
+  return [0, 0, 10, 8, 6, 5, 4, 3, 2];
 };
 
 // kind, type, name, level, defense
@@ -1111,6 +1136,7 @@ Types.getItemDetails = function (item, level, rawBonus = [1, 3]) {
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
   const isBelt = Types.isBelt(item);
+  const isUnique = Types.isUniqueItem(item);
 
   const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;
@@ -1144,6 +1170,7 @@ Types.getItemDetails = function (item, level, rawBonus = [1, 3]) {
     item,
     name: Types.getDisplayName(item),
     type,
+    isUnique,
     ...(itemClass ? { itemClass } : null),
     ...(isArmor || isBelt ? { defense: Types.getArmorDefense(item, level), healthBonus } : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level), magicDamage } : null),

@@ -604,7 +604,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
       if (data) {
         [item, level, bonus] = data.split(":");
       }
-
       player.equipItem({ item, level, bonus, type: "ring1" });
     } else if (location === "ring2") {
       let item = null;
@@ -829,14 +828,17 @@ module.exports = DatabaseHandler = cls.Class.extend({
       try {
         let isLucky7 = false;
         let upgrade = JSON.parse(reply);
-        filteredUpgrade = upgrade.filter(Boolean);
+        const slotIndex = upgrade.findIndex(index => index && index.startsWith("scroll"));
+        const luckySlot = Utils.randomInt(1, 9);
+        const isLuckySlot = slotIndex === luckySlot;
+        const filteredUpgrade = upgrade.filter(Boolean);
+        let isSuccess = false;
 
         if (Utils.isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus] = filteredUpgrade[0].split(":");
           let upgradedItem = 0;
-          let isSuccess = false;
 
-          if (Utils.isUpgradeSuccess(level)) {
+          if (Utils.isUpgradeSuccess(level, isLuckySlot)) {
             const upgradedLevel = parseInt(level) + 1;
             upgradedItem = [item, parseInt(level) + 1, bonus].filter(Boolean).join(":");
             isSuccess = true;
@@ -850,7 +852,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           self.moveUpgradeItemsToInventory(player);
         }
 
-        player.send([Types.Messages.UPGRADE, upgrade, isLucky7]);
+        player.send([Types.Messages.UPGRADE, upgrade, { luckySlot, isLucky7, isSuccess }]);
         client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
       } catch (err) {
         console.log(err);

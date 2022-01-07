@@ -518,6 +518,32 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
           }
         }
 
+        if (entity instanceof Character && entity.auras.includes("drainlife")) {
+          var sprite = this.game.sprites["drainlife"];
+          var anim = this.game.drainLifeAnimation;
+
+          if (sprite && anim) {
+            var os = this.upscaledRendering ? 1 : this.scale;
+            var ds = this.upscaledRendering ? this.scale : 1;
+            var { x: entityX, y: entityY } = entity;
+
+            var frame = anim.currentFrame,
+              s = this.scale,
+              x = frame.x * os,
+              y = frame.y * os,
+              w = sprite.width * os,
+              h = sprite.height * os,
+              ts = -12,
+              dx = entityX * s,
+              dy = entityY * s,
+              dw = w * ds,
+              dh = h * ds;
+
+            this.context.translate(0, ts * -ds);
+            this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
+          }
+        }
+
         if (entity instanceof Character && entity.isLevelup) {
           var sprite = this.game.sprites["levelup"];
           var anim = this.game.levelupAnimation;
