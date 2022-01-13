@@ -320,7 +320,7 @@ var Properties = {
       amuletgold: 4,
       ringnecromancer: 1,
     },
-    hp: 3500,
+    hp: 3000,
     armor: 13,
     weapon: 12,
   },
