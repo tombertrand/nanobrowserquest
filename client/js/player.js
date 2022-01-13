@@ -17,10 +17,13 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.spriteName = "clotharmor";
       this.armorName = "clotharmor";
       this.armorLevel = 1;
+      this.armorBonus = null;
       this.weaponName = "dagger";
       this.weaponLevel = 1;
+      this.weaponBonus = null;
       this.beltName = null;
       this.beltLevel = 1;
+      this.beltBonus = null;
       this.inventory = [];
       this.stash = [];
       this.upgrade = [];
@@ -185,6 +188,14 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.armorLevel = level;
     },
 
+    getArmorBonus: function () {
+      return this.armorBonus;
+    },
+
+    setArmorBonus: function (bonus) {
+      this.armorBonus = bonus;
+    },
+
     getWeaponName: function () {
       return this.weaponName;
     },
@@ -201,15 +212,25 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       this.weaponLevel = level;
     },
 
+    getWeaponBonus: function () {
+      return this.weaponBonus;
+    },
+
+    setWeaponBonus: function (bonus) {
+      this.weaponBonus = bonus;
+    },
+
     setBelt: function (rawBelt) {
       if (rawBelt) {
-        const [belt, level] = rawBelt.split(":");
+        const [belt, level, bonus] = rawBelt.split(":");
 
         this.beltName = belt;
         this.beltLevel = level;
+        this.beltBonus = bonus;
       } else {
         this.beltName = null;
         this.beltLevel = null;
+        this.beltBonus = null;
       }
     },
 
@@ -263,7 +284,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
       return this.weaponName !== null;
     },
 
-    switchWeapon: function (weapon, level) {
+    switchWeapon: function (weapon, level, bonus) {
       var self = this;
       var isDifferent = false;
 
@@ -275,29 +296,38 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         isDifferent = true;
         self.setWeaponLevel(level);
       }
+      if (bonus !== this.getWeaponBonus()) {
+        isDifferent = true;
+        self.setWeaponBonus(bonus);
+      }
 
       if (isDifferent && self.switch_callback) {
         self.switch_callback();
       }
     },
 
-    switchArmor: function (armorSprite, level) {
+    switchArmor: function (armorSprite, level, bonus) {
       var self = this;
-      var hasChanged = false;
+      var isDifferent = false;
 
       if (armorSprite && armorSprite.id !== this.getSpriteName()) {
-        hasChanged = true;
+        isDifferent = true;
         self.setSprite(armorSprite);
         self.setSpriteName(armorSprite.id);
         self.setArmorName(armorSprite.id);
       }
 
       if (armorSprite.kind !== Types.Entities.FIREFOX && level && level !== this.getArmorLevel) {
-        hasChanged = true;
-        this.setArmorLevel(level);
+        isDifferent = true;
+        self.setArmorLevel(level);
       }
 
-      if (hasChanged && self.switch_callback) {
+      if (bonus !== this.getArmorBonus()) {
+        isDifferent = true;
+        self.setArmorBonus(bonus);
+      }
+
+      if (isDifferent && self.switch_callback) {
         self.switch_callback();
       }
     },

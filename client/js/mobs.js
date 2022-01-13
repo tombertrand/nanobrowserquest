@@ -217,7 +217,7 @@ define(["mob", "timer"], function (Mob, Timer) {
 
     SkeletonLeader: Mob.extend({
       init: function (id) {
-        this._super(id, Types.Entities.SKELETONLEADER);
+        this._super(id, Types.Entities.SKELETONCOMMANDER);
         this.moveSpeed = 300;
         this.atkSpeed = 50;
         this.idleSpeed = 400;

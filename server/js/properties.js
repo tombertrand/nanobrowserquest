@@ -263,7 +263,7 @@ var Properties = {
     weapon: 9,
   },
 
-  skeletonleader: {
+  skeletoncommander: {
     drops: {
       scrollupgradehigh: 7,
       hornedarmor: 5,
@@ -310,7 +310,7 @@ var Properties = {
     },
     hp: 305,
     armor: 6,
-    weapon: 10,
+    weapon: 11,
   },
 
   necromancer: {

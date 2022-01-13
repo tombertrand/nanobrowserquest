@@ -37,6 +37,14 @@ define(["jquery", "animation", "sprites"], function ($, Animation, sprites) {
         this.image8 = new Image();
         this.image8.crossOrigin = "Anonymous";
         this.image8.src = "img/" + this.scale + "/" + this.id + "8" + this.fileExtension;
+
+        this.imageunique = new Image();
+        this.imageunique.crossOrigin = "Anonymous";
+        this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + this.fileExtension;
+
+        this.imageunique7 = new Image();
+        this.imageunique7.crossOrigin = "Anonymous";
+        this.imageunique7.src = "img/" + this.scale + "/" + this.id + "unique7" + this.fileExtension;
       }
 
       this.image.onload = function () {

@@ -487,23 +487,28 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
       };
       var weapon = this.game.player.getWeaponName();
       var weaponLevel = this.game.player.getWeaponLevel();
+      var weaponBonus = this.game.player.getWeaponBonus();
+      
       var armor = this.game.player.getArmorName();
       var armorLevel = this.game.player.getArmorLevel();
+      var armorBonus = this.game.player.getArmorBonus();
       var weaponPath = getIconPath(weapon);
       var armorPath = getIconPath(armor);
 
       $("#weapon")
         .css("background-image", 'url("' + weaponPath + '")')
         .attr("data-item", weapon)
-        .attr("data-level", weaponLevel);
-      $("#player-weapon").text(`${Types.getDisplayableName(weapon)} +${weaponLevel}`);
+        .attr("data-level", weaponLevel)
+        .attr("data-bonus", weaponBonus);
+      $("#player-weapon").text(`${Types.getDisplayName(weapon, !!weaponBonus)} +${weaponLevel}`);
 
       if (armor !== "firefox") {
         $("#armor")
           .css("background-image", 'url("' + armorPath + '")')
           .attr("data-item", armor)
-          .attr("data-level", armorLevel);
-        $("#player-armor").text(`${Types.getDisplayableName(armor)} +${armorLevel}`);
+          .attr("data-level", armorLevel)
+          .attr("data-bonus", armorBonus);
+        $("#player-armor").text(`${Types.getDisplayName(armor, !!armorBonus)} +${armorLevel}`);
       }
     },
 

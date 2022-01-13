@@ -9,7 +9,7 @@ define([
   "text!../sprites/beachnpc.json",
   "text!../sprites/bluesword.json",
   "text!../sprites/boss.json",
-  "text!../sprites/skeletonleader.json",
+  "text!../sprites/skeletoncommander.json",
   "text!../sprites/chest.json",
   "text!../sprites/clotharmor.json",
   "text!../sprites/coder.json",

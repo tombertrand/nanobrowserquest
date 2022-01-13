@@ -483,18 +483,18 @@ module.exports = DatabaseHandler = cls.Class.extend({
   banTerm: function (time) {
     return Math.pow(2, time) * 500 * 60;
   },
-  equipWeapon: function (name, weapon, level) {
+  equipWeapon: function (name, weapon, level, bonus) {
     log.info("Set Weapon: " + name + " " + weapon + ":" + level);
-    client.hset("u:" + name, "weapon", `${weapon}:${level}`);
+    client.hset("u:" + name, "weapon", `${weapon}:${level}${bonus ? `:${bonus}` : ""}`);
   },
-  equipArmor: function (name, armor, level) {
+  equipArmor: function (name, armor, level, bonus) {
     log.info("Set Armor: " + name + " " + armor + ":" + level);
-    client.hset("u:" + name, "armor", `${armor}:${level}`);
+    client.hset("u:" + name, "armor", `${armor}:${level}${bonus ? `:${bonus}` : ""}`);
   },
-  equipBelt: function (name, belt, level) {
+  equipBelt: function (name, belt, level, bonus) {
     if (belt) {
       log.info("Set Belt: " + name + " " + belt + ":" + level);
-      client.hset("u:" + name, "belt", `${belt}:${level}`);
+      client.hset("u:" + name, "belt", `${belt}:${level}${bonus ? `:${bonus}` : ""}`);
     } else {
       log.info("Delete Belt");
       client.hdel("u:" + name, "belt");
@@ -575,28 +575,31 @@ module.exports = DatabaseHandler = cls.Class.extend({
     } else if (location === "weapon") {
       let item = "dagger";
       let level = 1;
+      let bonus = null;
       if (data) {
-        [item, level] = data.split(":");
+        [item, level, bonus] = data.split(":");
       }
 
-      player.equipItem({ item, level, type: "weapon" });
-      player.broadcast(player.equip(player.weaponKind, player.weaponLevel), false);
+      player.equipItem({ item, level, type: "weapon", bonus });
+      player.broadcast(player.equip(player.weaponKind, player.weaponLevel, player.weaponBonus), false);
     } else if (location === "armor") {
       let item = "clotharmor";
       let level = 1;
+      let bonus = null;
       if (data) {
-        [item, level] = data.split(":");
+        [item, level, bonus] = data.split(":");
       }
 
-      player.equipItem({ item, level, type: "armor" });
-      player.broadcast(player.equip(player.armorKind, player.armorLevel), false);
+      player.equipItem({ item, level, type: "armor", bonus });
+      player.broadcast(player.equip(player.armorKind, player.armorLevel, player.armorBonus), false);
     } else if (location === "belt") {
       let item = null;
       let level = null;
+      let bonus = null;
       if (data) {
-        [item, level] = data.split(":");
+        [item, level, bonus] = data.split(":");
       }
-      player.equipItem({ item, level, type: "belt" });
+      player.equipItem({ item, level, type: "belt", bonus });
     } else if (location === "ring1") {
       let item = null;
       let level = null;

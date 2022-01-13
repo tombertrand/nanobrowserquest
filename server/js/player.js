@@ -242,6 +242,7 @@ module.exports = Player = Character.extend({
             maxDamage: self.bonus.maxDamage,
             magicDamage: self.bonus.magicDamage,
             weaponDamage: self.bonus.weaponDamage,
+            flameDamage: self.bonus.flameDamage,
           });
 
           if (self.bonus.criticalHit) {
@@ -261,7 +262,7 @@ module.exports = Player = Character.extend({
 
           if (dmg > 0) {
             if (mob.type !== "player") {
-              // Reduce dmg on boss by 12.5% per player in boss room
+              // Reduce dmg on boss by 20% per player in boss room
               if (mob.kind === Types.Entities.BOSS) {
                 const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
                   x: 140,
@@ -271,7 +272,7 @@ module.exports = Player = Character.extend({
                 });
 
                 dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
-              } else if (mob.kind === Types.Entities.SKELETONLEADER) {
+              } else if (mob.kind === Types.Entities.SKELETONCOMMANDER) {
                 const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
                   x: 140,
                   y: 360,
@@ -279,7 +280,7 @@ module.exports = Player = Character.extend({
                   h: 25,
                 });
 
-                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
+                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
               } else if (mob.kind === Types.Entities.NECROMANCER) {
                 const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
                   x: 140,
@@ -288,7 +289,7 @@ module.exports = Player = Character.extend({
                   h: 25,
                 });
 
-                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
+                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
               }
 
               mob.receiveDamage(dmg, self.id);
@@ -317,6 +318,7 @@ module.exports = Player = Character.extend({
             armorLevel: self.armorLevel,
             belt: self.belt,
             beltLevel: self.beltLevel,
+            isUniqueBelt: !!self.beltBonus,
             playerLevel: self.level,
             defense: self.bonus.defense,
             absorbedDamage: self.bonus.absorbedDamage,
@@ -360,7 +362,7 @@ module.exports = Player = Character.extend({
               self.updateHitPoints(true);
               self.broadcast(self.equip(Types.Entities.FIREFOX));
               self.firepotionTimeout = setTimeout(function () {
-                self.broadcast(self.equip(self.armor, self.armorLevel)); // return to normal after 10 sec
+                self.broadcast(self.equip(self.armor, self.armorLevel, self.armorBonus)); // return to normal after 10 sec
                 self.firepotionTimeout = null;
               }, 10000);
               self.sendPlayerStats();
@@ -390,10 +392,26 @@ module.exports = Player = Character.extend({
                 self.server.pushToPlayer(self, self.health());
               }
             } else if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind)) {
+              const isUnique = Utils.random(100) === 42;
               const baseLevel = Types.getBaseLevel(kind);
-              const level = baseLevel <= 5 ? Utils.randomInt(1, 3) : 1;
+              const level = baseLevel <= 5 && !isUnique ? Utils.randomInt(1, 3) : 1;
+              let bonus = null;
 
-              databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), level }] });
+              if (isUnique) {
+                if (Types.isArmor(kind)) {
+                  bonus = [6];
+                } else if (Types.isWeapon(kind)) {
+                  bonus = [3, 14];
+                } else if (Types.isBelt(kind)) {
+                  const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
+                  bonus = _.shuffle(mediumLevelBonus).slice(0, 1).sort();
+                }
+              }
+
+              databaseHandler.lootItems({
+                player: self,
+                items: [{ item: Types.getKindAsString(kind), level, bonus: JSON.stringify(bonus) }],
+              });
             } else if (Types.isScroll(kind)) {
               databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), quantity: 1 }] });
             } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
@@ -817,8 +835,8 @@ module.exports = Player = Character.extend({
     this.broadcastzone_callback = callback;
   },
 
-  equip: function (item, level) {
-    return new Messages.EquipItem(this, item, level);
+  equip: function (item, level, bonus) {
+    return new Messages.EquipItem(this, item, level, bonus);
   },
 
   addHater: function (mob) {
@@ -841,21 +859,24 @@ module.exports = Player = Character.extend({
     });
   },
 
-  equipArmor: function (armor, kind, level) {
+  equipArmor: function (armor, kind, level, bonus) {
     this.armor = armor;
     this.armorKind = kind;
     this.armorLevel = level;
+    this.armorBonus = bonus ? JSON.parse(bonus) : null;
   },
 
-  equipWeapon: function (weapon, kind, level) {
+  equipWeapon: function (weapon, kind, level, bonus) {
     this.weapon = weapon;
     this.weaponKind = kind;
     this.weaponLevel = level;
+    this.weaponBonus = bonus ? JSON.parse(bonus) : null;
   },
 
-  equipBelt: function (belt, level) {
+  equipBelt: function (belt, level, bonus) {
     this.belt = belt;
     this.beltLevel = level;
+    this.beltBonus = bonus ? JSON.parse(bonus) : null;
   },
 
   equipRing1: function (ring, level, bonus) {
@@ -884,23 +905,38 @@ module.exports = Player = Character.extend({
       const bonusToCalculate = [
         this.ring1
           ? {
-              item: this.ring1,
               level: this.ring1Level,
               bonus: this.ring1Bonus,
             }
           : null,
         this.ring2
           ? {
-              item: this.ring2,
               level: this.ring2Level,
               bonus: this.ring2Bonus,
             }
           : null,
         this.amulet
           ? {
-              item: this.amulet,
               level: this.amuletLevel,
               bonus: this.amuletBonus,
+            }
+          : null,
+        this.weaponBonus
+          ? {
+              level: this.weaponLevel,
+              bonus: this.weaponBonus,
+            }
+          : null,
+        this.armorBonus
+          ? {
+              level: this.armorLevel,
+              bonus: this.armorBonus,
+            }
+          : null,
+        this.beltBonus
+          ? {
+              level: this.beltLevel,
+              bonus: this.beltBonus,
             }
           : null,
       ].filter(Boolean);
@@ -942,6 +978,7 @@ module.exports = Player = Character.extend({
       magicFind: 0,
       attackSpeed: 0,
       drainLife: 0,
+      flameDamage: 0,
     };
   },
 
@@ -958,19 +995,19 @@ module.exports = Player = Character.extend({
       this.equipAmulet(item, level, bonus);
       databaseHandler.equipAmulet({ name: this.name, item, level, bonus });
     } else if (["belt"].includes(type)) {
-      databaseHandler.equipBelt(this.name, item, level);
-      this.equipBelt(item, level);
+      databaseHandler.equipBelt(this.name, item, level, bonus);
+      this.equipBelt(item, level, bonus);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
       log.debug(this.name + " equips " + item);
 
       if (Types.isArmor(kind)) {
-        databaseHandler.equipArmor(this.name, item, level);
-        this.equipArmor(item, kind, level);
+        databaseHandler.equipArmor(this.name, item, level, bonus);
+        this.equipArmor(item, kind, level, bonus);
       } else if (Types.isWeapon(kind)) {
-        databaseHandler.equipWeapon(this.name, item, level);
-        this.equipWeapon(item, kind, level);
+        databaseHandler.equipWeapon(this.name, item, level, bonus);
+        this.equipWeapon(item, kind, level, bonus);
       }
     }
 
@@ -1039,8 +1076,10 @@ module.exports = Player = Character.extend({
     var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb({
       armor: this.armor,
       armorLevel: this.armorLevel,
+      isUniqueArmor: !!this.armorBonus,
       belt: this.belt,
       beltLevel: this.beltLevel,
+      isUniqueBelt: !!this.beltBonus,
       playerLevel: this.level,
       defense: this.bonus.defense,
       absorbedDamage: this.bonus.absorbedDamage,
@@ -1053,6 +1092,7 @@ module.exports = Player = Character.extend({
       maxDamage: this.bonus.maxDamage,
       magicDamage: this.bonus.magicDamage,
       weaponDamage: this.bonus.weaponDamage,
+      flameDamage: this.bonus.flameDamage,
     });
 
     this.send(
@@ -1167,16 +1207,16 @@ module.exports = Player = Character.extend({
   }) {
     var self = this;
 
-    const [playerArmor, playerArmorLevel = 1] = armor.split(":");
-    const [playerWeapon, playerWeaponLevel = 1] = weapon.split(":");
+    const [playerArmor, playerArmorLevel = 1, playerArmorBonus] = armor.split(":");
+    const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus] = weapon.split(":");
 
     self.kind = Types.Entities.WARRIOR;
-    self.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel);
-    self.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel);
+    self.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel, playerArmorBonus);
+    self.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel, playerWeaponBonus);
 
     if (belt) {
-      const [playerBelt, playerBeltLevel] = belt.split(":");
-      self.equipBelt(playerBelt, playerBeltLevel);
+      const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
+      self.equipBelt(playerBelt, playerBeltLevel, playerBeltBonus);
     }
     if (ring1) {
       const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
@@ -1190,7 +1230,6 @@ module.exports = Player = Character.extend({
       const [playerAmulet, playerAmuletLevel, playerAmuletBonus] = amulet.split(":");
       self.equipAmulet(playerAmulet, playerAmuletLevel, playerAmuletBonus);
     }
-
     self.achievement = achievement;
     self.waypoints = waypoints;
     self.expansion1 = expansion1;
@@ -1218,7 +1257,6 @@ module.exports = Player = Character.extend({
 
     self.server.addPlayer(self);
     self.server.enter_callback(self);
-
     self.send([
       Types.Messages.WELCOME,
       self.id,

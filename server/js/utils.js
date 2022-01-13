@@ -130,10 +130,10 @@ const expansion1AchievementToNanoMap = {
   WEN: 12,
   INDIANA_JONES: 35,
   MYTH_OR_REAL: 15,
-  RIP: 15,
+  RIP: 25,
   DEAD_NEVER_DIE: 30,
   WALK_ON_WATER: 10, // -> Required
-  GHOSTBUSTERS: 15,
+  GHOSTBUSTERS: 25,
   BLACK_MAGIC: 50, // -> Required
   LUCKY7: 13,
   NOT_SAFU: 20,
@@ -183,14 +183,14 @@ Utils.isValidUpgradeItems = items => {
     return false;
   }
 
-  const [item, level] = items[0].split(":");
+  const [item, level, bonus] = items[0].split(":");
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
   const isBelt = Types.isBelt(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
 
-  if ((!isWeapon && !isArmor && !isBelt && !isRing && !isAmulet) || level === 10) {
+  if ((!isWeapon && !isArmor && !isBelt && !isRing && !isAmulet) || parseInt(level) === 10) {
     return false;
   }
 

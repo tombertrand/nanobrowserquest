@@ -98,7 +98,7 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Mobs.Skeleton3(id);
   };
 
-  EntityFactory.builders[Types.Entities.SKELETONLEADER] = function (id) {
+  EntityFactory.builders[Types.Entities.SKELETONCOMMANDER] = function (id) {
     return new Mobs.SkeletonLeader(id);
   };
 

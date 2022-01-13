@@ -373,9 +373,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       var id = data[1];
       var itemKind = data[2];
       var itemLevel = data[3];
+      var itemBonus = data[4];
 
       if (this.equip_callback) {
-        this.equip_callback(id, itemKind, itemLevel);
+        this.equip_callback(id, itemKind, itemLevel, itemBonus);
       }
     },
 

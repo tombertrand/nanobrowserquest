@@ -103,7 +103,7 @@ Types = {
     YETI: 99,
     WEREWOLF: 101,
     SKELETON3: 102,
-    SKELETONLEADER: 103,
+    SKELETONCOMMANDER: 103,
     SNAKE2: 104,
     WRAITH: 105,
     ZOMBIE: 106,
@@ -329,10 +329,10 @@ var kinds = {
   werewolf: [Types.Entities.WEREWOLF, "mob", 120, 30],
   yeti: [Types.Entities.YETI, "mob", 120, 32],
   skeleton3: [Types.Entities.SKELETON3, "mob", 130, 34],
-  skeletonleader: [Types.Entities.SKELETONLEADER, "mob", 250, 40],
+  skeletoncommander: [Types.Entities.SKELETONCOMMANDER, "mob", 250, 40],
   snake2: [Types.Entities.SNAKE2, "mob", 130, 38],
   wraith: [Types.Entities.WRAITH, "mob", 140, 40],
-  zombie: [Types.Entities.ZOMBIE, "mob", 100, 38],
+  zombie: [Types.Entities.ZOMBIE, "mob", 90, 42],
   necromancer: [Types.Entities.NECROMANCER, "mob", 500, 45],
 
   // kind, type, level, damage
@@ -340,7 +340,7 @@ var kinds = {
   sword: [Types.Entities.SWORD, "weapon", "Sword", 1, 3],
   axe: [Types.Entities.AXE, "weapon", "Axe", 2, 5],
   morningstar: [Types.Entities.MORNINGSTAR, "weapon", "Morning Star", 3, 7],
-  bluesword: [Types.Entities.BLUESWORD, "weapon", "Frozen Sword", 5, 10],
+  bluesword: [Types.Entities.BLUESWORD, "weapon", "Magic Sword", 5, 10],
   redsword: [Types.Entities.REDSWORD, "weapon", "Blazing Sword", 7, 15],
   goldensword: [Types.Entities.GOLDENSWORD, "weapon", "Golden Sword", 10, 20],
   blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 12, 24],
@@ -459,6 +459,34 @@ Types.rankedArmors = [
 ];
 
 Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
+
+Types.itemUniqueMap = {
+  // name, level, attack
+  sword: ["Faketoshi's Lies", 1, 5],
+  axe: ["Saylormoon", 2, 8],
+  morningstar: ["Block Latte", 3, 10],
+  bluesword: ["Acyclic Graph", 5, 15],
+  redsword: ["Volcanic Miner", 7, 18],
+  goldensword: ["Satoshi's Nephiew", 12, 22],
+  blueaxe: ["Feeless Cutter", 14, 26],
+  bluemorningstar: ["NonDisclosure Agreement", 16, 28],
+  frozensword: ["Broccolish Fury", 20, 32],
+
+  // name, level, defense
+  leatherarmor: ["The Representative", 2, 4],
+  mailarmor: ["ForeX Guard", 4, 6],
+  platearmor: ["Green Alternative", 6, 12],
+  redarmor: ["Appia's Road", 8, 16],
+  goldenarmor: ["Store of Value", 12, 22],
+  bluearmor: ["Firano's Hide", 15, 26],
+  hornedarmor: ["Rai Blocks", 15, 30],
+  frozenarmor: ["Wall of Encrypted Energy", 15, 32],
+
+  // name, level, defense
+  beltleather: ["Proof of Wear", 4, 4],
+  beltplated: ["The Hodler", 9, 6],
+  beltfrozen: ["Spam Resist0r", 18, 12],
+};
 
 Types.expForLevel = [
   1,
@@ -727,12 +755,16 @@ Types.isObject = function (kind) {
   return kinds.getType(kind) === "object";
 };
 
-Types.isUniqueItem = function (kindOrString) {
+Types.isUniqueRing = function (kindOrString) {
   if (typeof kindOrString === "number") {
     return [Types.Entities.RINGNECROMANCER].includes(kindOrString);
   } else {
     return ["ringnecromancer"].includes(kindOrString);
   }
+};
+
+Types.isUniqueWeapon = function (bonus) {
+  return !!bonus;
 };
 
 Types.isChest = function (kind) {
@@ -810,10 +842,6 @@ Types.getKindAsString = function (kind) {
   }
 };
 
-Types.getDisplayableName = function (name) {
-  return kinds[name][2];
-};
-
 Types.getAliasFromName = function (name) {
   if (name === "skeleton2") {
     return "skeleton warrior";
@@ -825,8 +853,8 @@ Types.getAliasFromName = function (name) {
     return "skeleton king";
   } else if (name === "skeleton3") {
     return "skeleton guard";
-  } else if (name === "skeletonleader") {
-    return "skeleton leader";
+  } else if (name === "skeletoncommander") {
+    return "skeleton commander";
   } else if (name === "carlosmatos") {
     return "carlos matos";
   } else if (name === "satoshi") {
@@ -973,9 +1001,10 @@ Types.getBonusDescriptionMap = [
   "+# health regeneration per second",
   "+#% Critical hit",
   "+#% Block enemy attack",
-  "+#% Megic find",
+  "+#% Magic find",
   "+#% Attack speed",
   "+# Drain life",
+  "+# Flame damage",
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -993,6 +1022,7 @@ Types.getBonus = function (rawBonus, level) {
   const magicFindPerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
   const attackSpeedPerLevel = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30];
   const drainLifePerLevel = [1, 2, 3, 3, 4, 5, 6, 8, 12, 17];
+  const flameDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1009,6 +1039,7 @@ Types.getBonus = function (rawBonus, level) {
     magicFindPerLevel,
     attackSpeedPerLevel,
     drainLifePerLevel,
+    flameDamagePerLevel,
   ];
 
   const bonusType = [
@@ -1026,6 +1057,7 @@ Types.getBonus = function (rawBonus, level) {
     "magicFind",
     "attackSpeed",
     "drainLife",
+    "flameDamage",
   ];
 
   const bonus = [];
@@ -1057,13 +1089,11 @@ Types.getLuckySlotSuccessRateBonus = () => {
 };
 
 // kind, type, name, level, defense
-Types.getArmorDefense = function (armor, level) {
+Types.getArmorDefense = function (armor, level, isUnique) {
   if (!armor || !level) return 0;
 
-  const defense = kinds[armor][4];
+  const defense = isUnique && Types.itemUniqueMap[armor] ? Types.itemUniqueMap[armor][2] : kinds[armor][4];
   const defensePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 180, 205, 235];
-  // const defensePercentPerLevel = [100, 102.5, 105, 108, 110.5, 113.5, 117.5, 123.5, 132, 145];
-
   const defenseBonus = level >= 7 ? level - 6 : 0;
 
   return Math.ceil((defense + defenseBonus) * (defensePercentPerLevel[level - 1] / 100));
@@ -1077,8 +1107,8 @@ Types.getArmorHealthBonus = function (level) {
   return healthBonusPerLevel[level - 1];
 };
 
-Types.getWeaponDamage = function (weapon, level) {
-  const damage = kinds[weapon][4];
+Types.getWeaponDamage = function (weapon, level, isUnique) {
+  const damage = isUnique && Types.itemUniqueMap[weapon] ? Types.itemUniqueMap[weapon][2] : kinds[weapon][4];
   const damagePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 180, 205, 235];
   const damageBonus = level >= 7 ? level - 6 : 0;
 
@@ -1097,8 +1127,8 @@ Types.isBaseHighClassItem = item => {
   return baseLevel >= 10;
 };
 
-Types.getItemClass = function (item, level) {
-  const baseLevel = kinds[item][3];
+Types.getItemClass = function (item, level, isUnique) {
+  const baseLevel = Types.getItemBaseLevel(item, isUnique);
 
   let itemClass;
   if (baseLevel < 5) {
@@ -1122,21 +1152,26 @@ Types.getItemClass = function (item, level) {
   return itemClass;
 };
 
-Types.getItemRequirement = function (item, level) {
-  const baseLevel = kinds[item][3];
-  const multiplier = Types.getItemClass(item, level) === "high" ? 1.5 : 1;
+Types.getItemBaseLevel = function (item, isUnique) {
+  return isUnique && Types.itemUniqueMap[item] ? Types.itemUniqueMap[item][1] : kinds[item][3];
+};
+
+Types.getItemRequirement = function (item, level, isUnique) {
+  const baseLevel = Types.getItemBaseLevel(item, isUnique);
+  const multiplier = Types.getItemClass(item, level, isUnique) === "high" ? 1.5 : 1;
   const requirement = Math.floor(baseLevel + level * multiplier);
 
   return requirement;
 };
 
-Types.getItemDetails = function (item, level, rawBonus = [1, 3]) {
+Types.getItemDetails = function (item, level, rawBonus) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
   const isBelt = Types.isBelt(item);
-  const isUnique = Types.isUniqueItem(item);
+  const isUniqueRing = Types.isUniqueRing(item);
+  const isUnique = ((isArmor || isWeapon || isBelt) && !!rawBonus) || isUniqueRing;
 
   const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;
@@ -1144,9 +1179,12 @@ Types.getItemDetails = function (item, level, rawBonus = [1, 3]) {
   let bonus = [];
 
   let type = "item";
+
   if (isWeapon) {
     type = "weapon";
-    magicDamage = Types.getWeaponMagicDamage(level);
+    if (!isUnique) {
+      magicDamage = Types.getWeaponMagicDamage(level);
+    }
   } else if (isArmor) {
     type = "armor";
     healthBonus = Types.getArmorHealthBonus(level);
@@ -1155,33 +1193,40 @@ Types.getItemDetails = function (item, level, rawBonus = [1, 3]) {
     healthBonus = Types.getArmorHealthBonus(level);
   } else if (isRing) {
     type = "ring";
-    bonus = Types.getBonus(rawBonus, level);
+    // bonus = Types.getBonus(rawBonus, level);
   } else if (isAmulet) {
     type = "amulet";
+  }
+  if (rawBonus) {
     bonus = Types.getBonus(rawBonus, level);
   }
 
-  let itemClass = Types.getItemClass(item, level);
-
-  const requirement = Types.getItemRequirement(item, level);
+  const itemClass = Types.getItemClass(item, level, isUnique);
+  const requirement = Types.getItemRequirement(item, level, isUnique);
   const description = Types.itemDescription[item];
 
   return {
     item,
-    name: Types.getDisplayName(item),
+    name: Types.getDisplayName(item, isUnique),
     type,
     isUnique,
     ...(itemClass ? { itemClass } : null),
-    ...(isArmor || isBelt ? { defense: Types.getArmorDefense(item, level), healthBonus } : null),
-    ...(isWeapon ? { damage: Types.getWeaponDamage(item, level), magicDamage } : null),
+    ...(isArmor || isBelt ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
+    ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
+    ...(healthBonus ? { healthBonus } : null),
+    ...(magicDamage ? { magicDamage } : null),
     ...(isEquipment ? { requirement } : null),
     ...(description ? { description } : null),
     ...(bonus ? { bonus } : null),
   };
 };
 
-Types.getDisplayName = function (item) {
-  return kinds[item][2];
+Types.getDisplayName = function (item, isUnique = false) {
+  if (isUnique && Types.itemUniqueMap[item]) {
+    return Types.itemUniqueMap[item][0];
+  } else {
+    return kinds[item][2];
+  }
 };
 
 Types.itemDescription = {

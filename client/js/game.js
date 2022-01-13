@@ -137,7 +137,7 @@ define([
         "skeleton3",
         "spectre",
         "boss",
-        "skeletonleader",
+        "skeletoncommander",
         "deathknight",
         "ogre",
         "yeti",
@@ -396,6 +396,7 @@ define([
             damage,
             healthBonus,
             magicDamage,
+            flameDamage,
             bonus = [],
             requirement,
             description,
@@ -407,6 +408,7 @@ define([
             ${defense ? `<div class="item-description">Defense: ${defense}</div>` : ""}
             ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
             ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
+            ${flameDamage ? `<div class="item-bonus">Flame damage: ${flameDamage}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
@@ -475,6 +477,7 @@ define([
 
             const item = fromItemEl.attr("data-item");
             const level = fromItemEl.attr("data-level");
+            const bonus = fromItemEl.attr("data-bonus");
 
             const toItem = toItemEl.attr("data-item");
             const toLevel = toItemEl.attr("data-level");
@@ -507,9 +510,9 @@ define([
             }
 
             if (toSlot === 100) {
-              self.player.switchWeapon(item, level);
+              self.player.switchWeapon(item, level, bonus);
             } else if (toSlot === 101) {
-              self.player.switchArmor(self.sprites[item], level);
+              self.player.switchArmor(self.sprites[item], level, bonus);
             }
 
             const type = kinds[item][1];
@@ -600,6 +603,7 @@ define([
             },
             "data-item": this.player.weaponName,
             "data-level": this.player.weaponLevel,
+            "data-bonus": this.player.weaponBonus,
           }),
         );
       }
@@ -612,6 +616,7 @@ define([
             },
             "data-item": this.player.armorName,
             "data-level": this.player.armorLevel,
+            "data-bonus": this.player.armorBonus,
           }),
         );
       }
@@ -625,6 +630,7 @@ define([
             },
             "data-item": this.player.beltName,
             "data-level": this.player.beltLevel,
+            "data-bonus": this.player.beltBonus,
           }),
         );
       }
@@ -952,9 +958,9 @@ define([
         SPECTRE_COLLECTOR: {
           id: 18,
           name: "No Fear",
-          desc: "Kill 10 spectres",
+          desc: "Kill 15 spectres",
           isCompleted: function () {
-            return self.storage.getSpectreCount() >= 10;
+            return self.storage.getSpectreCount() >= 15;
           },
           nano: 8,
         },
@@ -1021,11 +1027,11 @@ define([
         BLOODLUST: {
           id: 28,
           name: "Bloodlust",
-          desc: "Defeat 10 Werewolves",
+          desc: "Defeat 25 Werewolves",
           hidden: false,
           nano: 15,
           isCompleted: function () {
-            return self.storage.getWerewolfCount() >= 10;
+            return self.storage.getWerewolfCount() >= 25;
           },
         },
         SATOSHI: {
@@ -1052,21 +1058,21 @@ define([
         MYTH_OR_REAL: {
           id: 32,
           name: "Myth or Real",
-          desc: "Defeat 10 Yetis",
+          desc: "Defeat 25 Yetis",
           hidden: false,
           nano: 15,
           isCompleted: function () {
-            return self.storage.getYetiCount() >= 10;
+            return self.storage.getYetiCount() >= 25;
           },
         },
         RIP: {
           id: 33,
           name: "R.I.P.",
-          desc: "Defeat 10 Skeleton Guards",
+          desc: "Defeat 50 Skeleton Guards",
           hidden: false,
-          nano: 15,
+          nano: 25,
           isCompleted: function () {
-            return self.storage.getSkeleton3Count() >= 10;
+            return self.storage.getSkeleton3Count() >= 50;
           },
         },
         DEAD_NEVER_DIE: {
@@ -1086,11 +1092,11 @@ define([
         GHOSTBUSTERS: {
           id: 36,
           name: "Ghostbusters",
-          desc: "Kill 10 Wraiths",
+          desc: "Kill 50 Wraiths",
           hidden: false,
-          nano: 15,
+          nano: 25,
           isCompleted: function () {
-            return self.storage.getWraithCount() >= 10;
+            return self.storage.getWraithCount() >= 50;
           },
         },
         BLACK_MAGIC: {
@@ -1708,8 +1714,8 @@ define([
         // sanitize and shorten names exceeding the allowed length.
         self.player.name = name;
 
-        var [armor, armorLevel] = armor.split(":");
-        var [weapon, weaponLevel] = weapon.split(":");
+        var [armor, armorLevel, armorBonus] = armor.split(":");
+        var [weapon, weaponLevel, weaponBonus] = weapon.split(":");
 
         self.storage.setPlayerName(name);
         self.storage.setPlayerArmor(armor);
@@ -1720,9 +1726,11 @@ define([
         self.player.setMaxHitPoints(hp);
         self.player.setArmorName(armor);
         self.player.setArmorLevel(armorLevel);
+        self.player.setArmorBonus(armorBonus);
         self.player.setSpriteName(armor);
         self.player.setWeaponName(weapon);
         self.player.setWeaponLevel(weaponLevel);
+        self.player.setWeaponBonus(weaponBonus);
         self.player.setBelt(belt);
         self.player.setRing1(ring1);
         self.player.setRing2(ring2);
@@ -2547,7 +2555,7 @@ define([
           } else if (kind === Types.Entities.WRAITH) {
             self.storage.incrementWraithCount();
             self.tryUnlockingAchievement("GHOSTBUSTERS");
-          } else if (kind === Types.Entities.SKELETONLEADER) {
+          } else if (kind === Types.Entities.SKELETONCOMMANDER) {
             self.tryUnlockingAchievement("DEAD_NEVER_DIE");
           } else if (kind === Types.Entities.NECROMANCER) {
             self.tryUnlockingAchievement("BLACK_MAGIC").then(() => {
@@ -2606,17 +2614,19 @@ define([
           }
         });
 
-        self.client.onPlayerEquipItem(function (playerId, itemKind, itemLevel) {
+        self.client.onPlayerEquipItem(function (playerId, itemKind, itemLevel, itemBonus) {
           var player = self.getEntityById(playerId);
           var itemName = Types.getKindAsString(itemKind);
 
           if (player) {
             if (Types.isArmor(itemKind)) {
               player.setArmorLevel(itemLevel);
+              player.setArmorBonus(itemBonus);
               player.setSprite(self.sprites[itemName]);
             } else if (Types.isWeapon(itemKind)) {
               player.setWeaponName(itemName);
               player.setWeaponLevel(itemLevel);
+              player.setWeaponBonus(itemBonus);
             }
           }
         });

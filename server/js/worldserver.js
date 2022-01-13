@@ -736,45 +736,51 @@ module.exports = World = cls.Class.extend({
   startRaiseInterval: function (character, mob) {
     this.stopRaiseInterval();
 
+    const raiseZombies = () => {
+      const adjustedDifficulty = this.getPlayersCountInBossRoom({
+        x: 140,
+        y: 324,
+        w: 29,
+        h: 25,
+      });
+
+      const minRaise = adjustedDifficulty + 1;
+
+      if (minRaise) {
+        this.broadcastRaise(character, mob.id);
+
+        let zombieCount = 0;
+        const randomZombies = this.shuffle(this.zombies);
+
+        for (let i = 0; i < randomZombies.length; i++) {
+          if (zombieCount === minRaise) break;
+
+          const entity = randomZombies[i];
+          if (
+            entity.isDead &&
+            (!entity.destroyTime || entity.destroyTime < Date.now() - 1000) &&
+            entity.x <= character.x + 5 && // Left
+            entity.x >= character.x - 5 && // Right
+            entity.y <= character.y + 5 && // Bottom
+            entity.y >= character.y - 5 // Top
+          ) {
+            zombieCount++;
+            entity.respawnCallback();
+          }
+        }
+      }
+    };
+
     this.raiseInterval = setInterval(() => {
       if (mob && Array.isArray(mob.hateList) && !mob.hateList.length) {
         this.stopRaiseInterval();
         this.despawnZombies();
       } else {
-        const adjustedDifficulty = this.getPlayersCountInBossRoom({
-          x: 140,
-          y: 324,
-          w: 29,
-          h: 25,
-        });
-
-        const minRaise = adjustedDifficulty + 1;
-
-        if (minRaise) {
-          this.broadcastRaise(character, mob.id);
-
-          let zombieCount = 0;
-          const randomZombies = this.shuffle(this.zombies);
-
-          for (let i = 0; i < randomZombies.length; i++) {
-            if (zombieCount === minRaise) break;
-
-            const entity = randomZombies[i];
-            if (
-              entity.isDead &&
-              (!entity.destroyTime || entity.destroyTime < Date.now() - 1000) &&
-              entity.x <= character.x + 5 && // Left
-              entity.x >= character.x - 5 && // Right
-              entity.y <= character.y + 5 && // Bottom
-              entity.y >= character.y - 5 // Top
-            ) {
-              zombieCount++;
-              entity.respawnCallback();
-            }
-          }
-        }
+        raiseZombies();
       }
     }, 7500);
+
+    raiseZombies();
   },
 
   stopRaiseInterval: function () {
@@ -992,7 +998,7 @@ module.exports = World = cls.Class.extend({
     var item = null;
 
     // var random = Utils.random(2);
-    // const items = ["amuletsilver", "amuletgold"];
+    // const items = ["ringgold", "amuletgold"];
     // return this.addItem(this.createItem(Types.getKindFromString(items[random]), mob.x, mob.y));
     // return this.addItem(this.createItem(Types.getKindFromString("gold"), mob.x, mob.y));
     // return this.addItem(this.createItem(Types.getKindFromString("ringnecromancer"), mob.x, mob.y));
