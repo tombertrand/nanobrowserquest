@@ -332,8 +332,8 @@ var kinds = {
   skeletoncommander: [Types.Entities.SKELETONCOMMANDER, "mob", 250, 40],
   snake2: [Types.Entities.SNAKE2, "mob", 130, 38],
   wraith: [Types.Entities.WRAITH, "mob", 140, 40],
-  zombie: [Types.Entities.ZOMBIE, "mob", 90, 42],
-  necromancer: [Types.Entities.NECROMANCER, "mob", 500, 45],
+  zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
+  necromancer: [Types.Entities.NECROMANCER, "mob", 450, 45],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],

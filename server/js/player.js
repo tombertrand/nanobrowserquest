@@ -410,7 +410,7 @@ module.exports = Player = Character.extend({
 
               databaseHandler.lootItems({
                 player: self,
-                items: [{ item: Types.getKindAsString(kind), level, bonus: JSON.stringify(bonus) }],
+                items: [{ item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null }],
               });
             } else if (Types.isScroll(kind)) {
               databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), quantity: 1 }] });
@@ -983,6 +983,11 @@ module.exports = Player = Character.extend({
   },
 
   equipItem: function ({ item, level, bonus, type }) {
+    // @NOTE safety...
+    if (bonus === "null") {
+      bonus = null;
+    }
+
     if (["ring1", "ring2"].includes(type)) {
       if (type === "ring1") {
         this.equipRing1(item, level, bonus);
