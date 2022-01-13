@@ -791,7 +791,9 @@ footer, header, hgroup, menu, nav, section {
             -webkit-box-shadow: inset 0 0 10px #C74640;
             box-shadow:         inset 0 0 10px #C74640;
         }
-      }
+    }
+
+    .store-notice { font-size: 11px; }
 
 	@media screen and (min-width: 1501px) {
         #nano {margin-left:-240px;}

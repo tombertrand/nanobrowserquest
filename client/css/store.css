@@ -159,6 +159,7 @@
 @media screen and (max-width: 1500px), screen and (max-height: 870px) {
   #store h1 {
     margin-bottom: 10px;
+    margin-top: 20px;
   }
 
   #store-item-list,
@@ -215,6 +216,7 @@
 
   .item-wrapper .name {
     font-size: 17px;
+    padding-bottom: 0;
   }
 
   .item-wrapper .description {
@@ -320,8 +322,16 @@
 }
 
 @media screen and (max-width: 800px) {
+  #store h1 {
+    display: none;
+  }
+
   .store-wrapper {
-    margin: -5px 5px 0;
+    margin: 10px 5px 0;
+  }
+
+  .store-notice {
+    font-size: 10px;
   }
 }
 
