@@ -767,8 +767,8 @@ module.exports = Player = Character.extend({
       state = [
         this.name,
         this.orientation,
-        `${this.armor}:${this.armorLevel}`,
-        `${this.weapon}:${this.weaponLevel}`,
+        `${this.armor}:${this.armorLevel}:${this.armorBonus}`,
+        `${this.weapon}:${this.weaponLevel}:${this.weaponBonus}`,
         this.level,
         this.auras,
       ];
@@ -1025,9 +1025,7 @@ module.exports = Player = Character.extend({
     const index = this.auras.indexOf(aura);
     if (index === -1) {
       this.auras.push(aura);
-      setTimeout(() => {
-        this.broadcast(new Messages.Auras(this), false);
-      }, 500);
+      this.broadcast(new Messages.Auras(this), false);
     }
   },
 
@@ -1287,6 +1285,7 @@ module.exports = Player = Character.extend({
       expansion1,
       waypoints,
       depositAccount,
+      self.auras,
     ]);
 
     self.updateHitPoints(true);

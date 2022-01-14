@@ -196,29 +196,30 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     },
 
     receiveWelcome: function (data) {
-      var id = data[1],
-        name = data[2],
-        x = data[3],
-        y = data[4],
-        hp = data[5],
-        armor = data[6],
-        weapon = data[7],
-        belt = data[8],
-        ring1 = data[9],
-        ring2 = data[10],
-        amulet = data[11],
-        experience = data[12],
-        achievement = data[13],
-        inventory = data[14],
-        stash = data[15],
-        hash = data[16],
-        hash1 = data[17],
-        nanoPotions = data[18],
-        gems = data[19],
-        artifact = data[20],
-        expansion1 = data[21],
-        waypoints = data[22],
-        depositAccount = data[23];
+      var id = data[1];
+      var name = data[2];
+      var x = data[3];
+      var y = data[4];
+      var hp = data[5];
+      var armor = data[6];
+      var weapon = data[7];
+      var belt = data[8];
+      var ring1 = data[9];
+      var ring2 = data[10];
+      var amulet = data[11];
+      var experience = data[12];
+      var achievement = data[13];
+      var inventory = data[14];
+      var stash = data[15];
+      var hash = data[16];
+      var hash1 = data[17];
+      var nanoPotions = data[18];
+      var gems = data[19];
+      var artifact = data[20];
+      var expansion1 = data[21];
+      var waypoints = data[22];
+      var depositAccount = data[23];
+      var auras = data[24];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -245,6 +246,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           expansion1,
           waypoints,
           depositAccount,
+          auras,
         });
       }
     },
@@ -304,13 +306,13 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           this.spawn_chest_callback(item, x, y);
         }
       } else {
-        var name, orientation, target, weapon, weaponLevel, armor, armorLevel, level, auras;
+        var name, orientation, target, weapon, weaponLevel, weaponBonus, armor, armorLevel, armorBonus, level, auras;
 
         if (Types.isPlayer(kind)) {
           name = data[5];
           orientation = data[6];
-          [armor, armorLevel] = data[7].split(":");
-          [weapon, weaponLevel] = data[8].split(":");
+          [armor, armorLevel, armorBonus] = data[7].split(":");
+          [weapon, weaponLevel, weaponBonus] = data[8].split(":");
           auras = data[10];
           // if (data.length > 9) {
           //   target = data[9];
@@ -327,8 +329,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         if (character instanceof Player) {
           character.setWeaponName(weapon);
           character.setWeaponLevel(weaponLevel);
+          character.setWeaponBonus(weaponBonus);
           character.spriteName = armor;
           character.setArmorLevel(armorLevel);
+          character.setArmorBonus(armorBonus);
           character.setAuras(auras);
         }
 

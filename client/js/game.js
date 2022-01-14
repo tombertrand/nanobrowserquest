@@ -1706,6 +1706,7 @@ define([
         expansion1,
         waypoints,
         depositAccount,
+        auras,
       }) {
         log.info("Received player ID from server : " + id);
         self.player.id = id;
@@ -1735,6 +1736,7 @@ define([
         self.player.setRing1(ring1);
         self.player.setRing2(ring2);
         self.player.setAmulet(amulet);
+        self.player.setAuras(auras);
         self.initPlayer();
         self.player.experience = experience;
         self.player.level = Types.getLevel(experience);
@@ -2123,6 +2125,7 @@ define([
                 if (entity.kind === Types.Entities.ZOMBIE) {
                   entity.raise();
 
+                  // NOTE wait for the raise animation to complete before chasing players
                   setTimeout(() => {
                     entity.aggroRange = 10;
                     entity.isAggressive = true;
@@ -3323,7 +3326,9 @@ define([
             this.timeout = setTimeout(function () {
               $("#inspector").fadeOut("fast");
               $("#inspector .health").text("");
-              self.player.inspecting = null;
+              if (self.player) {
+                self.player.inspecting = null;
+              }
             }, 2000);
             this.timeout = undefined;
           }
@@ -3791,6 +3796,7 @@ define([
 
       this.player = new Warrior("player", this.username);
       this.player.account = this.useraccount;
+
       this.initPlayer();
       this.app.initTargetHud();
 
