@@ -767,8 +767,8 @@ module.exports = Player = Character.extend({
       state = [
         this.name,
         this.orientation,
-        `${this.armor}:${this.armorLevel}:${this.armorBonus}`,
-        `${this.weapon}:${this.weaponLevel}:${this.weaponBonus}`,
+        `${this.armor}:${this.armorLevel}${this.armorBonus ? `:${this.armorBonus}` : ""}`,
+        `${this.weapon}:${this.weaponLevel}${this.weaponBonus ? `:${this.weaponBonus}` : ""}`,
         this.level,
         this.auras,
       ];
