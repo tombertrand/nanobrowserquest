@@ -807,6 +807,9 @@ module.exports = World = cls.Class.extend({
     const EXP_LEVEL_START_RANGE = 2;
     const EXP_LEVEL_END_RANGE = 6;
     let exp = Types.getMobExp(mob.kind);
+    const isBoss = [Types.Entities.BOSS, Types.Entities.SKELETONCOMMANDER, Types.Entities.NECROMANCER].includes(
+      mob.kind,
+    );
 
     const levelDifference = playerLevel - mobLevel;
 
@@ -816,7 +819,7 @@ module.exports = World = cls.Class.extend({
       }
     } else if (levelDifference > 0) {
       // Too high level for mob
-      if (levelDifference > EXP_LEVEL_END_RANGE) {
+      if (levelDifference > EXP_LEVEL_END_RANGE || (isBoss && levelDifference >= EXP_LEVEL_END_RANGE)) {
         return 0;
       } else if (levelDifference > EXP_LEVEL_START_RANGE) {
         // Nerf exp per level

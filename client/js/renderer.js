@@ -455,6 +455,11 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
               (ww = weapon.width * os),
               (wh = weapon.height * os);
 
+            // @TODO Why does this happens?
+            if (!weapon[`image${weaponSuffix}`]) {
+              weaponSuffix = "";
+            }
+
             this.context.drawImage(
               weapon[`image${weaponSuffix}`],
               wx,
