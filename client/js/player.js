@@ -185,7 +185,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
     },
 
     setArmorLevel: function (level) {
-      this.armorLevel = level;
+      this.armorLevel = parseInt(level);
     },
 
     getArmorBonus: function () {
@@ -209,7 +209,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
     },
 
     setWeaponLevel: function (level) {
-      this.weaponLevel = level;
+      this.weaponLevel = parseInt(level);
     },
 
     getWeaponBonus: function () {
@@ -225,7 +225,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         const [belt, level, bonus] = rawBelt.split(":");
 
         this.beltName = belt;
-        this.beltLevel = level;
+        this.beltLevel = parseInt(level);
         this.beltBonus = bonus;
       } else {
         this.beltName = null;
@@ -239,7 +239,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         const [name, level, bonus] = ring.split(":");
 
         this.ring1Name = name;
-        this.ring1Level = level;
+        this.ring1Level = parseInt(level);
         this.ring1Bonus = bonus;
       } else {
         this.ring1Name = null;
@@ -253,7 +253,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         const [name, level, bonus] = ring.split(":");
 
         this.ring2Name = name;
-        this.ring2Level = level;
+        this.ring2Level = parseInt(level);
         this.ring2Bonus = bonus;
       } else {
         this.ring2Name = null;
@@ -267,7 +267,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
         const [name, level, bonus] = amulet.split(":");
 
         this.amuletName = name;
-        this.amuletLevel = level;
+        this.amuletLevel = parseInt(level);
         this.amuletBonus = bonus;
       } else {
         this.amuletName = null;

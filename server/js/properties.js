@@ -278,10 +278,10 @@ var Properties = {
   snake2: {
     drops: {
       rejuvenationpotion: 80,
-      beltfrozen: 2,
-      scrollupgradehigh: 4,
+      beltfrozen: 5,
+      scrollupgradehigh: 5,
       ringgold: 3,
-      amuletgold: 1,
+      amuletgold: 2,
     },
     hp: 420,
     armor: 7,
