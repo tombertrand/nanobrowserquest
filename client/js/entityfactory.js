@@ -99,7 +99,7 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
   };
 
   EntityFactory.builders[Types.Entities.SKELETONCOMMANDER] = function (id) {
-    return new Mobs.SkeletonLeader(id);
+    return new Mobs.SkeletonCommander(id);
   };
 
   EntityFactory.builders[Types.Entities.SNAKE2] = function (id) {

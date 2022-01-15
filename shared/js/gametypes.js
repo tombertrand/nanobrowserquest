@@ -462,14 +462,14 @@ Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Type
 
 Types.itemUniqueMap = {
   // name, level, attack
-  sword: ["Faketoshi's Lies", 1, 5],
-  axe: ["Saylormoon", 2, 8],
+  sword: ["Faketoshi", 1, 5],
+  axe: ["NonDisclosure Agreement", 2, 8],
   morningstar: ["Block Latte", 3, 10],
   bluesword: ["Acyclic Graph", 5, 15],
   redsword: ["Volcanic Miner", 7, 18],
   goldensword: ["Satoshi's Nephiew", 12, 22],
   blueaxe: ["Feeless Cutter", 14, 26],
-  bluemorningstar: ["NonDisclosure Agreement", 16, 28],
+  bluemorningstar: ["Saylormoon", 16, 28],
   frozensword: ["Broccolish Fury", 20, 32],
 
   // name, level, defense
@@ -479,13 +479,13 @@ Types.itemUniqueMap = {
   redarmor: ["Appia's Road", 8, 16],
   goldenarmor: ["Store of Value", 12, 22],
   bluearmor: ["Firano's Hide", 15, 26],
-  hornedarmor: ["Rai Blocks", 15, 30],
+  hornedarmor: ["RaiBlocks", 15, 30],
   frozenarmor: ["Wall of Encrypted Energy", 15, 32],
 
   // name, level, defense
   beltleather: ["Proof of Wear", 4, 4],
   beltplated: ["The Hodler", 9, 6],
-  beltfrozen: ["Spam Resist0r", 18, 12],
+  beltfrozen: ["Spam Resistor", 18, 12],
 };
 
 Types.expForLevel = [

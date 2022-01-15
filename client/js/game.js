@@ -1078,7 +1078,7 @@ define([
         DEAD_NEVER_DIE: {
           id: 34,
           name: "What is dead may never die",
-          desc: "Defeat the Skeleton Leader",
+          desc: "Defeat the Skeleton Commander",
           hidden: false,
           nano: 30,
         },
