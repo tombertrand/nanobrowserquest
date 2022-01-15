@@ -31,6 +31,13 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
       this.tablet = Detect.isTablet(window.innerWidth);
 
       this.fixFlickeringTimer = new Timer(100);
+
+      this.brightnessMap = {
+        7: 125,
+        8: 150,
+        9: 175,
+        10: 200,
+      };
     },
 
     getWidth: function () {
@@ -405,7 +412,63 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
             );
           }
 
+          let isFilterApplied = false;
+
+          // @NOTE Glowing armor when level is above 7
+          if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
+            isFilterApplied = true;
+
+            const factor = (entity.armorLevel - 6) * 25;
+            const milliseconds = Math.floor(this.game.currentTime / 100);
+            const ms = milliseconds % 10;
+            const isEven = (Math.floor(milliseconds / 10) % 10) % 2;
+            let brightness = this.brightnessMap[entity.armorLevel];
+
+            if (isEven) {
+              if (ms <= 2) {
+                brightness = brightness - Math.floor(factor * 1);
+              } else if (ms === 3) {
+                brightness = brightness - Math.floor(factor * 0.9);
+              } else if (ms === 4) {
+                brightness = brightness - Math.floor(factor * 0.75);
+              } else if (ms === 5) {
+                brightness = brightness - Math.floor(factor * 0.6);
+              } else if (ms === 6) {
+                brightness = brightness - Math.floor(factor * 0.45);
+              } else if (ms === 7) {
+                brightness = brightness - Math.floor(factor * 0.3);
+              } else if (ms === 8) {
+                brightness = brightness - Math.floor(factor * 0.15);
+              } else if (ms === 9) {
+                brightness = brightness - Math.floor(factor * 0);
+              }
+            } else {
+              if (ms === 0) {
+                brightness = brightness - Math.floor(factor * 0);
+              } else if (ms === 1) {
+                brightness = brightness - Math.floor(factor * 0.15);
+              } else if (ms === 2) {
+                brightness = brightness - Math.floor(factor * 0.3);
+              } else if (ms === 3) {
+                brightness = brightness - Math.floor(factor * 0.45);
+              } else if (ms === 4) {
+                brightness = brightness - Math.floor(factor * 0.6);
+              } else if (ms === 5) {
+                brightness = brightness - Math.floor(factor * 0.75);
+              } else if (ms === 6) {
+                brightness = brightness - Math.floor(factor * 0.9);
+              } else if (ms >= 7) {
+                brightness = brightness - Math.floor(factor * 1);
+              }
+            }
+            this.context.filter = `brightness(${brightness}%)`;
+          }
+
           this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
+
+          if (isFilterApplied) {
+            this.context.filter = "brightness(100%)";
+          }
 
           if (entity instanceof Item && entity.kind !== Types.Entities.CAKE) {
             var sparks = this.game.sprites["sparks"],

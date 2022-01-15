@@ -331,6 +331,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           character.setWeaponLevel(weaponLevel);
           character.setWeaponBonus(weaponBonus);
           character.spriteName = armor;
+          character.setArmorName(armor);
           character.setArmorLevel(armorLevel);
           character.setArmorBonus(armorBonus);
           character.setAuras(auras);

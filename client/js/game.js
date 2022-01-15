@@ -2623,6 +2623,7 @@ define([
 
           if (player) {
             if (Types.isArmor(itemKind)) {
+              player.setArmorName(itemName);
               player.setArmorLevel(itemLevel);
               player.setArmorBonus(itemBonus);
               player.setSprite(self.sprites[itemName]);
