@@ -203,7 +203,7 @@ define(function () {
         this.data.achievements.werewolfCount = 0;
       }
 
-      if (this.data.achievements.werewolfCount < 10) {
+      if (this.data.achievements.werewolfCount < 25) {
         this.data.achievements.werewolfCount++;
         this.save();
       }
@@ -219,7 +219,7 @@ define(function () {
         this.data.achievements.yetiCount = 0;
       }
 
-      if (this.data.achievements.yetiCount < 10) {
+      if (this.data.achievements.yetiCount < 25) {
         this.data.achievements.yetiCount++;
         this.save();
       }
@@ -235,7 +235,7 @@ define(function () {
         this.data.achievements.skeleton3Count = 0;
       }
 
-      if (this.data.achievements.skeleton3Count < 10) {
+      if (this.data.achievements.skeleton3Count < 50) {
         this.data.achievements.skeleton3Count++;
         this.save();
       }
@@ -251,7 +251,7 @@ define(function () {
         this.data.achievements.wraithCount = 0;
       }
 
-      if (this.data.achievements.wraithCount < 10) {
+      if (this.data.achievements.wraithCount < 50) {
         this.data.achievements.wraithCount++;
         this.save();
       }
