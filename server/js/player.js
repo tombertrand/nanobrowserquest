@@ -451,6 +451,8 @@ module.exports = Player = Character.extend({
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(lightningDamageBonus);
               } else if (kind === Types.Entities.RINGRAISTONE) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(lightningDamageBonus);
+
+                databaseHandler.logLoot({ player: self, item: `${Types.getKindAsString(kind)}:1:[${bonus}]` });
               }
 
               databaseHandler.lootItems({
@@ -1244,6 +1246,7 @@ module.exports = Player = Character.extend({
     expansion1,
     waypoints,
     depositAccount,
+    depositAccountIndex,
   }) {
     var self = this;
 
@@ -1274,6 +1277,7 @@ module.exports = Player = Character.extend({
     self.waypoints = waypoints;
     self.expansion1 = expansion1;
     self.depositAccount = depositAccount;
+    self.depositAccountIndex = depositAccountIndex;
     self.inventory = inventory;
     self.stash = stash;
     self.hash = hash;

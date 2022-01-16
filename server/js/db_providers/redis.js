@@ -69,8 +69,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
             .hget(userKey, "expansion1") // 18
             .hget(userKey, "waypoints") // 19
             .hget(userKey, "depositAccount") // 20
-            .hget(userKey, "hash1") // 21
-            .hget(userKey, "stash") // 22
+            .hget(userKey, "depositAccountIndex") // 21
+            .hget(userKey, "hash1") // 22
+            .hget(userKey, "stash") // 23
             .exec(async function (err, replies) {
               var account = replies[0];
               var armor = replies[1];
@@ -83,10 +84,11 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var belt = replies[16];
               var expansion1 = !!parseInt(replies[18] || "0");
               var depositAccount = replies[20];
+              var depositAccountIndex = replies[21];
 
               try {
                 if (!depositAccount) {
-                  const depositAccountIndex = await self.createDepositAccount();
+                  depositAccountIndex = await self.createDepositAccount();
                   depositAccount = await getNewDepositAccountByIndex(depositAccountIndex);
                   client.hmset(
                     "u:" + player.name,
@@ -165,8 +167,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
               var stash = new Array(STASH_SLOT_COUNT).fill(0);
               try {
-                if (replies[22]) {
-                  stash = JSON.parse(replies[22]);
+                if (replies[23]) {
+                  stash = JSON.parse(replies[23]);
                 } else {
                   client.hset("u:" + player.name, "stash", JSON.stringify(stash));
                 }
@@ -301,7 +303,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var x = Utils.NaN2Zero(replies[7]);
               var y = Utils.NaN2Zero(replies[8]);
               var hash = replies[9];
-              var hash1 = replies[21];
+              var hash1 = replies[22];
               var nanoPotions = parseInt(replies[10] || 0);
 
               // bcrypt.compare(player.account, account, function(err, res) {
@@ -339,6 +341,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 expansion1,
                 waypoints,
                 depositAccount,
+                depositAccountIndex,
               });
             });
           return;
@@ -367,6 +370,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         // Add the player
 
         const depositAccountIndex = await self.createDepositAccount();
+        const depositAccount = await getNewDepositAccountByIndex(depositAccountIndex);
 
         client
           .multi()
@@ -392,7 +396,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "expansion1", 0)
           .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2]))
           .hset(userKey, "depositAccountIndex", depositAccountIndex)
-          .hset(userKey, "depositAccount", getNewDepositAccountByIndex(depositAccountIndex))
+          .hset(userKey, "depositAccount", depositAccount)
           .exec(function (err, replies) {
             log.info("New User: " + player.name);
             player.sendWelcome({
@@ -411,6 +415,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
               expansion1: false,
               waypoints: [1, 0, 0, 2, 2, 2],
               stash: new Array(STASH_SLOT_COUNT).fill(0),
+              depositAccount,
+              depositAccountIndex,
             });
           });
       }
@@ -1241,7 +1247,18 @@ module.exports = DatabaseHandler = cls.Class.extend({
       player.send([Types.Messages.PURCHASE_COMPLETED, { hash, id }]);
 
       const now = Date.now();
-      client.zadd("purchase", now, JSON.stringify({ player: player.name, account, hash, id, amount }));
+      client.zadd(
+        "purchase",
+        now,
+        JSON.stringify({
+          player: player.name,
+          account,
+          hash,
+          id,
+          amount,
+          depositAccountIndex: player.depositAccountIndex,
+        }),
+      );
     } catch (err) {
       player.send([
         Types.Messages.PURCHASE_ERROR,
@@ -1257,5 +1274,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
   logUpgrade: function ({ player, item, isSuccess }) {
     const now = Date.now();
     client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
+  },
+
+  logLoot: function ({ player, item }) {
+    const now = Date.now();
+    client.zadd("loot", now, JSON.stringify({ player: player.name, item }));
   },
 });

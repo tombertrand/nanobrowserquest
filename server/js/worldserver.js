@@ -1001,9 +1001,9 @@ module.exports = World = cls.Class.extend({
     var item = null;
     var superUnique = Utils.random(1000);
 
-    if (superUnique === 420) {
+    if (superUnique === 420 && mob.kind >= Types.Entities.EYE) {
       //@NOTE 0.1% chance to drop a Rai Stone
-      item = this.addItem(this.createItem(Types.getKindFromString("raistone"), mob.x, mob.y));
+      item = this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
     } else if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO potion
       item = this.addItem(this.createItem(Types.getKindFromString("nanopotion"), mob.x, mob.y));
