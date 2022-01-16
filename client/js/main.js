@@ -233,15 +233,6 @@ define(["jquery", "app", "entrypoint", "lib/jquery-ui", "lib/jquery.ui.touch-pun
       $("#resize-check").bind("webkitTransitionEnd", app.resizeUi.bind(app));
       $("#resize-check").bind("oTransitionEnd", app.resizeUi.bind(app));
 
-      $("#text-window")
-        .draggable()
-        .resizable({
-          // maxHeight: $("#container").height() / 2,
-          // maxWidth: $("#container").width() * 0.75,
-          minHeight: $("#container").height() / 4,
-          minWidth: $("#container").width() / 3,
-        });
-
       $("#minimize").on("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -464,6 +455,16 @@ define(["jquery", "app", "entrypoint", "lib/jquery-ui", "lib/jquery.ui.touch-pun
           }
           // app.hideWindows();
         });
+
+        // @NOTE Only draggable / resizable for desktop size
+        $("#text-window")
+          .draggable()
+          .resizable({
+            // maxHeight: $("#container").height() / 2,
+            // maxWidth: $("#container").width() * 0.75,
+            minHeight: $("#container").height() / 4,
+            minWidth: $("#container").width() / 3,
+          });
       }
 
       $("body").unbind("click");

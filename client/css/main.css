@@ -1421,7 +1421,7 @@ footer, header, hgroup, menu, nav, section {
 	}
 
 	@media screen and (max-width: 800px) {
-        #text-window { width: 60%; }
+        #text-window { width: calc(100% - 30px); height: 50vh; }
         .createaccount-instructions { font-size: 8px; }
         #upgrade-scroll { width: 120px; }
         .panel-container {
