@@ -214,7 +214,7 @@ var Properties = {
       rejuvenationpotion: 80,
       blueaxe: 5,
       beltfrozen: 5,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 3,
       amuletgold: 1,
     },
     hp: 235,
@@ -265,7 +265,7 @@ var Properties = {
 
   skeletoncommander: {
     drops: {
-      scrollupgradehigh: 7,
+      scrollupgradehigh: 5,
       hornedarmor: 5,
       ringgold: 4,
       amuletgold: 3,
@@ -279,7 +279,7 @@ var Properties = {
     drops: {
       rejuvenationpotion: 80,
       beltfrozen: 5,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       ringgold: 3,
       amuletgold: 2,
     },
@@ -292,7 +292,7 @@ var Properties = {
     drops: {
       rejuvenationpotion: 60,
       beltfrozen: 3,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       ringgold: 3,
       amuletgold: 2,
     },
@@ -304,7 +304,7 @@ var Properties = {
   zombie: {
     drops: {
       rejuvenationpotion: 70,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 2,
       ringgold: 2,
       amuletgold: 2,
     },
@@ -315,8 +315,8 @@ var Properties = {
 
   necromancer: {
     drops: {
-      scrollupgradehigh: 10,
-      ringgold: 5,
+      scrollupgradehigh: 6,
+      ringgold: 4,
       amuletgold: 4,
       ringnecromancer: 1,
     },

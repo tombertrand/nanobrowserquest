@@ -846,6 +846,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
             upgradedItem = [item, parseInt(level) + 1, bonus].filter(Boolean).join(":");
             isSuccess = true;
             isLucky7 = upgradedLevel === 7 && Types.isBaseHighClassItem(item);
+
+            if (upgradedLevel >= 8) {
+              self.logUpgrade({ player, item: upgradedItem, isSuccess });
+            }
+          } else {
+            if (parseInt(level) >= 8) {
+              self.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false });
+            }
           }
 
           upgrade = upgrade.map(() => 0);
@@ -1244,5 +1252,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
       Sentry.captureException(err, { extra: { account, amount, hash, id } });
     }
+  },
+
+  logUpgrade: function ({ player, item, isSuccess }) {
+    const now = Date.now();
+    client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
   },
 });
