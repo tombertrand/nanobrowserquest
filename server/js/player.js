@@ -243,6 +243,7 @@ module.exports = Player = Character.extend({
             magicDamage: self.bonus.magicDamage,
             weaponDamage: self.bonus.weaponDamage,
             flameDamage: self.bonus.flameDamage,
+            lightningDamage: self.bonus.lightningDamage,
           });
 
           if (self.bonus.criticalHit) {
@@ -420,6 +421,7 @@ module.exports = Player = Character.extend({
               const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
               const amuletHighLevelBonus = [9, 10];
               const drainLifeBonus = [13];
+              const lightningDamageBonus = [15];
               // @TODO Implement "11" -> magicFind
               // @TODO Implement "12" -> attackSpeed
 
@@ -437,6 +439,8 @@ module.exports = Player = Character.extend({
                   .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
               } else if (kind === Types.Entities.RINGNECROMANCER) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(drainLifeBonus);
+              } else if (kind === Types.Entities.AMULETCOW) {
+                bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(lightningDamageBonus);
               }
 
               databaseHandler.lootItems({
@@ -898,6 +902,16 @@ module.exports = Player = Character.extend({
   },
 
   calculateBonus: function () {
+    let hasDrainLifeAura = false;
+    let hasThunderstormAura = false;
+
+    if (this.bonus.drainLife) {
+      hasDrainLifeAura = true;
+    }
+    if (this.bonus.lightningDamage) {
+      hasThunderstormAura = true;
+    }
+
     this.resetBonus();
 
     try {
@@ -949,8 +963,14 @@ module.exports = Player = Character.extend({
 
       if (this.bonus.drainLife) {
         this.addAura("drainlife");
-      } else {
+      } else if (hasDrainLifeAura && !this.bonus.drainLife) {
         this.removeAura("drainlife");
+      }
+
+      if (this.bonus.lightningDamage) {
+        this.addAura("thunderstorm");
+      } else if (hasThunderstormAura && !this.bonus.lightningDamage) {
+        this.removeAura("thunderstorm");
       }
     } catch (err) {
       console.log("Error: ", err);
@@ -979,6 +999,7 @@ module.exports = Player = Character.extend({
       attackSpeed: 0,
       drainLife: 0,
       flameDamage: 0,
+      lightningDamage: 0,
     };
   },
 
@@ -1096,6 +1117,7 @@ module.exports = Player = Character.extend({
       magicDamage: this.bonus.magicDamage,
       weaponDamage: this.bonus.weaponDamage,
       flameDamage: this.bonus.flameDamage,
+      lightningDamage: this.bonus.lightningDamage,
     });
 
     this.send(

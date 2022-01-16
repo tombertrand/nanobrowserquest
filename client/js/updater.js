@@ -262,6 +262,11 @@ define(["character", "timer"], function (Character, Timer) {
         drainLife.update(t);
       }
 
+      var thunderStorm = this.game.thunderstormAnimation;
+      if (thunderStorm) {
+        thunderStorm.update(t);
+      }
+
       var anvilSuccess = this.game.anvilSuccessAnimation;
       if (anvilSuccess) {
         anvilSuccess.update(t);

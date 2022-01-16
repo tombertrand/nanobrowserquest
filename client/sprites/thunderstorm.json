@@ -1,0 +1,12 @@
+{
+  "id": "thunderstorm",
+  "width": 16,
+  "height": 8,
+  "animations": {
+    "idle_down": {
+      "length": 4,
+      "row": 0
+    }
+  },
+  "offset_y": -16
+}

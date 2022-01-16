@@ -14,6 +14,7 @@ Formulas.minMaxDamage = function ({
   magicDamage,
   weaponDamage,
   flameDamage,
+  lightningDamage,
 }) {
   const isUnique = !!flameDamage;
   const weaponMagicDamage = isUnique ? 0 : Types.getWeaponMagicDamage(weaponLevel);
@@ -22,12 +23,14 @@ Formulas.minMaxDamage = function ({
     weaponMagicDamage +
     magicDamage +
     flameDamage +
+    lightningDamage +
     minDamage;
   const max =
     Math.ceil((Types.getWeaponDamage(weapon, weaponLevel, isUnique) + weaponDamage) * 2 + playerLevel / 2) +
     weaponMagicDamage +
     magicDamage +
     flameDamage +
+    lightningDamage +
     maxDamage;
 
   if (min > max) {
@@ -51,6 +54,7 @@ Formulas.dmg = function ({
   magicDamage,
   weaponDamage,
   flameDamage,
+  lightningDamage,
 }) {
   const { min, max } = Formulas.minMaxDamage({
     weapon,
@@ -61,6 +65,7 @@ Formulas.dmg = function ({
     magicDamage,
     weaponDamage,
     flameDamage,
+    lightningDamage,
   });
   const dealt = Utils.randomInt(min, max);
   const absorbed = Math.floor(armorLevel * Utils.randomInt(2, 4));

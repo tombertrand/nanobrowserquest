@@ -127,6 +127,7 @@ define([
         "target",
         "levelup",
         "drainlife",
+        "thunderstorm",
         "talk",
         "sparks",
         "shadow16",
@@ -232,6 +233,7 @@ define([
         "item-ringsilver",
         "item-ringgold",
         "item-ringnecromancer",
+        "item-amuletcow",
         "item-amuletsilver",
         "item-amuletgold",
         "item-scrollupgradelow",
@@ -340,6 +342,9 @@ define([
       this.drainLifeAnimation = new Animation("idle_down", 5, 0, 16, 8);
       this.drainLifeAnimation.setSpeed(200);
 
+      this.thunderstormAnimation = new Animation("idle_down", 6, 0, 16, 8);
+      this.thunderstormAnimation.setSpeed(200);
+
       this.anvilSuccessAnimation = new Animation("idle_down", 4, 0, 15, 8);
       this.anvilSuccessAnimation.setSpeed(80);
 
@@ -397,6 +402,7 @@ define([
             healthBonus,
             magicDamage,
             flameDamage,
+            lightningDamage,
             bonus = [],
             requirement,
             description,
@@ -409,6 +415,7 @@ define([
             ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
             ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
             ${flameDamage ? `<div class="item-bonus">Flame damage: ${flameDamage}</div>` : ""}
+            ${lightningDamage ? `<div class="item-bonus">Lightning damage: ${lightningDamage}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}

@@ -154,6 +154,7 @@ Types = {
     RINGSILVER: 81,
     RINGGOLD: 82,
     RINGNECROMANCER: 115,
+    AMULETCOW: 116,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
 
@@ -281,7 +282,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGNECROMANCER,
 ];
 
-Types.Entities.Amulets = [Types.Entities.AMULETSILVER, Types.Entities.AMULETGOLD];
+Types.Entities.Amulets = [Types.Entities.AMULETSILVER, Types.Entities.AMULETGOLD, Types.Entities.AMULETCOW];
 
 Types.getGemNameFromKind = function (kind) {
   const gems = {
@@ -370,6 +371,7 @@ var kinds = {
   ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 16],
   ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 28],
 
+  amuletcow: [Types.Entities.AMULETCOW, "amulet", "Cow King Holy Talisman", 35],
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
 
@@ -757,9 +759,9 @@ Types.isObject = function (kind) {
 
 Types.isUniqueRing = function (kindOrString) {
   if (typeof kindOrString === "number") {
-    return [Types.Entities.RINGNECROMANCER].includes(kindOrString);
+    return [Types.Entities.RINGNECROMANCER, Types.Entities.AMULETCOW].includes(kindOrString);
   } else {
-    return ["ringnecromancer"].includes(kindOrString);
+    return ["ringnecromancer", "amuletcow"].includes(kindOrString);
   }
 };
 
@@ -1005,6 +1007,7 @@ Types.getBonusDescriptionMap = [
   "+#% Attack speed",
   "+# Drain life",
   "+# Flame damage",
+  "+# Lightning damage",
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1023,6 +1026,7 @@ Types.getBonus = function (rawBonus, level) {
   const attackSpeedPerLevel = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30];
   const drainLifePerLevel = [1, 2, 3, 3, 4, 5, 6, 8, 12, 17];
   const flameDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
+  const lightningDamagePerLevel = [1, 2, 3, 4, 6, 10, 15, 22, 30, 40];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1040,6 +1044,7 @@ Types.getBonus = function (rawBonus, level) {
     attackSpeedPerLevel,
     drainLifePerLevel,
     flameDamagePerLevel,
+    lightningDamagePerLevel,
   ];
 
   const bonusType = [
@@ -1058,6 +1063,7 @@ Types.getBonus = function (rawBonus, level) {
     "attackSpeed",
     "drainLife",
     "flameDamage",
+    "lightningDamage",
   ];
 
   const bonus = [];

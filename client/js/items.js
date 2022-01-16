@@ -238,6 +238,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    AmuletCow: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.AMULETCOW, "amulet");
+        this.lootMessage = "You pick up a Cow King Holy Talisman";
+      },
+    }),
+
     AmuletSilver: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.AMULETSILVER, "amulet");

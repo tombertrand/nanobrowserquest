@@ -256,6 +256,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.RingNecromancer(id);
   };
 
+  EntityFactory.builders[Types.Entities.AMULETCOW] = function (id) {
+    return new Items.AmuletCow(id);
+  };
+
   EntityFactory.builders[Types.Entities.AMULETSILVER] = function (id) {
     return new Items.AmuletSilver(id);
   };
