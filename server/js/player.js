@@ -233,6 +233,7 @@ module.exports = Player = Character.extend({
 
         if (mob) {
           let isCritical = false;
+
           let dmg = Formulas.dmg({
             weapon: self.weapon,
             weaponLevel: self.weaponLevel,
@@ -313,6 +314,7 @@ module.exports = Player = Character.extend({
         var mob = self.server.getEntityById(message[1]);
         if (mob && self.hitPoints > 0) {
           let isBlocked = false;
+          let lightningDamage = false;
           let dmg = Formulas.dmgFromMob({
             weaponLevel: mob.weaponLevel,
             armor: self.armor,
@@ -330,6 +332,12 @@ module.exports = Player = Character.extend({
             if (isBlocked) {
               dmg = 0;
             }
+          }
+
+          if (self.bonus.lightningDamage) {
+            lightningDamage = self.bonus.lightningDamage;
+
+            self.server.handleHurtEntity({ entity: mob, attacker: self, damage: lightningDamage });
           }
 
           self.hitPoints -= dmg;
@@ -440,6 +448,8 @@ module.exports = Player = Character.extend({
               } else if (kind === Types.Entities.RINGNECROMANCER) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(drainLifeBonus);
               } else if (kind === Types.Entities.AMULETCOW) {
+                bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(lightningDamageBonus);
+              } else if (kind === Types.Entities.RINGRAISTONE) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(lightningDamageBonus);
               }
 
@@ -1124,7 +1134,12 @@ module.exports = Player = Character.extend({
       new Messages.Stats({
         maxHitPoints: this.maxHitPoints,
         damage: minDamage !== maxDamage ? `${minDamage}-${maxDamage}` : maxDamage,
-        absorb: minAbsorb !== maxAbsorb ? `${minAbsorb}-${maxAbsorb}` : maxAbsorb,
+        defense:
+          minAbsorb !== maxAbsorb
+            ? `${minAbsorb - this.bonus.absorbedDamage}-${maxAbsorb - this.bonus.absorbedDamage}`
+            : maxAbsorb - this.bonus.absorbedDamage,
+        absorb: this.bonus.absorbedDamage,
+        // absorb: minAbsorb !== maxAbsorb ? `${minAbsorb}-${maxAbsorb}` : maxAbsorb,
       }).serialize(),
     );
   },

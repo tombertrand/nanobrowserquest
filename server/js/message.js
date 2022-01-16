@@ -80,13 +80,14 @@ Messages.Health = Message.extend({
 });
 
 Messages.Stats = Message.extend({
-  init: function ({ maxHitPoints, damage, absorb }) {
+  init: function ({ maxHitPoints, damage, defense, absorb }) {
     this.maxHitPoints = maxHitPoints;
     this.damage = damage;
+    this.defense = defense;
     this.absorb = absorb;
   },
   serialize: function () {
-    return [Types.Messages.STATS, this.maxHitPoints, this.damage, this.absorb];
+    return [Types.Messages.STATS, this.maxHitPoints, this.damage, this.defense, this.absorb];
   },
 });
 

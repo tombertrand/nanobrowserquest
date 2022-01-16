@@ -256,8 +256,8 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.RingNecromancer(id);
   };
 
-  EntityFactory.builders[Types.Entities.AMULETCOW] = function (id) {
-    return new Items.AmuletCow(id);
+  EntityFactory.builders[Types.Entities.RINGRAISTONE] = function (id) {
+    return new Items.RingRaiStone(id);
   };
 
   EntityFactory.builders[Types.Entities.AMULETSILVER] = function (id) {
@@ -266,6 +266,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
 
   EntityFactory.builders[Types.Entities.AMULETGOLD] = function (id) {
     return new Items.AmuletGold(id);
+  };
+
+  EntityFactory.builders[Types.Entities.AMULETCOW] = function (id) {
+    return new Items.AmuletCow(id);
   };
 
   EntityFactory.builders[Types.Entities.SCROLLUPGRADELOW] = function (id) {

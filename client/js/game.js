@@ -233,9 +233,10 @@ define([
         "item-ringsilver",
         "item-ringgold",
         "item-ringnecromancer",
-        "item-amuletcow",
+        "item-ringraistone",
         "item-amuletsilver",
         "item-amuletgold",
+        "item-amuletcow",
         "item-scrollupgradelow",
         "item-scrollupgrademedium",
         "item-scrollupgradehigh",
@@ -2607,7 +2608,7 @@ define([
           }
         });
 
-        self.client.onPlayerChangeStats(function ({ maxHitPoints, damage, absorb }) {
+        self.client.onPlayerChangeStats(function ({ maxHitPoints, damage, defense, absorb }) {
           if (self.player.maxHitPoints !== maxHitPoints || self.player.invincible) {
             self.player.maxHitPoints = maxHitPoints;
             self.player.hitPoints = maxHitPoints;
@@ -2617,6 +2618,10 @@ define([
           if (self.player.damage !== damage) {
             self.player.damage = damage;
             self.updateDamage();
+          }
+          if (self.player.defense !== defense) {
+            self.player.defense = defense;
+            self.updateDefense();
           }
           if (self.player.absorb !== absorb) {
             self.player.absorb = absorb;
@@ -3901,6 +3906,9 @@ define([
     },
     updateDamage: function () {
       $("#player-damage").text(this.player.damage);
+    },
+    updateDefense: function () {
+      $("#player-defense").text(this.player.defense);
     },
     updateAbsorb: function () {
       $("#player-absorb").text(this.player.absorb);

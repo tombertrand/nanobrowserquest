@@ -154,9 +154,10 @@ Types = {
     RINGSILVER: 81,
     RINGGOLD: 82,
     RINGNECROMANCER: 115,
-    AMULETCOW: 116,
+    RINGRAISTONE: 117,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
+    AMULETCOW: 116,
 
     // NPCs
     GUARD: 40,
@@ -280,6 +281,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGSILVER,
   Types.Entities.RINGGOLD,
   Types.Entities.RINGNECROMANCER,
+  Types.Entities.RINGRAISTONE,
 ];
 
 Types.Entities.Amulets = [Types.Entities.AMULETSILVER, Types.Entities.AMULETGOLD, Types.Entities.AMULETCOW];
@@ -370,10 +372,11 @@ var kinds = {
   ringsilver: [Types.Entities.RINGSILVER, "ring", "Silver Ring", 9],
   ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 16],
   ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 28],
+  ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
 
-  amuletcow: [Types.Entities.AMULETCOW, "amulet", "Cow King Holy Talisman", 35],
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
+  amuletcow: [Types.Entities.AMULETCOW, "amulet", "Cow King Holy Talisman", 35],
 
   flask: [Types.Entities.FLASK, "object"],
   rejuvenationpotion: [Types.Entities.REJUVENATIONPOTION, "object"],
@@ -759,9 +762,11 @@ Types.isObject = function (kind) {
 
 Types.isUniqueRing = function (kindOrString) {
   if (typeof kindOrString === "number") {
-    return [Types.Entities.RINGNECROMANCER, Types.Entities.AMULETCOW].includes(kindOrString);
+    return [Types.Entities.RINGNECROMANCER, Types.Entities.AMULETCOW, Types.Entities.RINGRAISTONE].includes(
+      kindOrString,
+    );
   } else {
-    return ["ringnecromancer", "amuletcow"].includes(kindOrString);
+    return ["ringnecromancer", "amuletcow", "ringraistone"].includes(kindOrString);
   }
 };
 

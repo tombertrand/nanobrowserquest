@@ -472,10 +472,11 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     receiveStats: function (data) {
       var maxHitPoints = data[1];
       var damage = data[2];
-      var absorb = data[3];
+      var defense = data[3];
+      var absorb = data[4];
 
       if (this.stats_callback) {
-        this.stats_callback({ maxHitPoints, damage, absorb });
+        this.stats_callback({ maxHitPoints, damage, defense, absorb });
       }
     },
 
