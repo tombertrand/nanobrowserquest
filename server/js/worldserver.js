@@ -999,7 +999,7 @@ module.exports = World = cls.Class.extend({
     var v = Utils.random(100);
     var p = 0;
     var item = null;
-    var superUnique = Utils.random(1000);
+    var superUnique = Utils.random(2500);
 
     if (superUnique === 420 && mob.kind >= Types.Entities.EYE) {
       //@NOTE 0.1% chance to drop a Rai Stone
