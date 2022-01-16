@@ -187,7 +187,7 @@ define(function () {
         this.data.achievements.spectreCount = 0;
       }
 
-      if (this.data.achievements.spectreCount < 10) {
+      if (this.data.achievements.spectreCount < 15) {
         this.data.achievements.spectreCount++;
         this.save();
       }
