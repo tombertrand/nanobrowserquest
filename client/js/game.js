@@ -789,8 +789,6 @@ define([
       $(".item-upgrade").empty();
       $(".item-upgraded").empty();
 
-      let upgradeInfoText = "&nbsp;";
-
       $("#upgrade .item-slot").removeClass("item-upgrade-success-slot item-upgrade-fail-slot");
       if (luckySlot) {
         $(`#upgrade .item-slot:eq(${luckySlot})`).addClass("item-upgrade-success-slot");
@@ -805,12 +803,20 @@ define([
         $("#upgrade-result .item-slot").addClass("item-upgrade-fail-slot");
       }
 
+      let successRate;
+      let itemLevel;
+
       this.player.upgrade.forEach(({ item, level, quantity, slot, bonus }) => {
         if (slot === 0 && level) {
-          const successRates = Types.getUpgradeSuccessRates();
-          const successRate = successRates[parseInt(level) - 1];
+          itemLevel = level;
+          successRates = Types.getUpgradeSuccessRates();
+          successRate = successRates[parseInt(level) - 1];
+        }
 
-          upgradeInfoText = `${successRate}% chance of successful upgrade`;
+        if (itemLevel && slot && item.startsWith("scrollupgradeblessed")) {
+          const blessedRates = Types.getBlessedSuccessRateBonus();
+          const blessedRate = blessedRates[parseInt(itemLevel) - 1];
+          successRate += blessedRate;
         }
 
         $(`#upgrade .item-slot:eq(${slot})`)
@@ -829,7 +835,7 @@ define([
           );
       });
 
-      $("#upgrade-info").html(upgradeInfoText);
+      $("#upgrade-info").html(successRate ? `${successRate}% chance of successful upgrade` : "&nbsp;");
 
       if ($("#upgrade").hasClass("visible")) {
         this.initDraggable();
