@@ -1104,7 +1104,7 @@ Types.getLuckySlotSuccessRateBonus = () => {
 };
 
 Types.getBlessedSuccessRateBonus = () => {
-  return [0, 0, 10, 8, 6, 5, 4, 3, 2];
+  return [0, 0, 10, 8, 6, 5, 3, 1, 1];
 };
 
 // kind, type, name, level, defense
