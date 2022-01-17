@@ -16,6 +16,14 @@ define(["../../shared/js/gametypes"], function () {
           requiresInventorySlot: true,
         },
         {
+          id: Types.Store.SCROLLUPGRADEBLESSED,
+          icon: "scrollupgradeblessed",
+          name: "Blessed High class upgrade scrolls",
+          description: "Pack of 5 blessed scrolls giving a higher chance of successful upgrade (4-6%)",
+          confirmedMessage: "5 Blessed High class upgrade scrolls were added to your inventory.",
+          requiresInventorySlot: true,
+        },
+        {
           id: Types.Store.SCROLLUPGRADEHIGH,
           icon: "scrollupgradehigh",
           name: "High class upgrade scrolls",
@@ -68,7 +76,7 @@ define(["../../shared/js/gametypes"], function () {
         const isDisabled = !isAvailable || (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1);
 
         const item = $("<div/>", {
-          class: "item-wrapper",
+          class: `item-wrapper item-name-${icon}`,
           html: `
             <div class="item-icon">
               <div class="${icon} ${isLocked ? "locked" : "unlocked"}"></div>
@@ -76,8 +84,8 @@ define(["../../shared/js/gametypes"], function () {
             <p class="name">${name}</p>
             ${description ? `<p class="description">${description}</p>` : ""}
             <p class="prices">
-              <span class="xno">Ӿ${xno}</span> /
-              <span>$${usd.toFixed(2)}</span>
+              <span class="xno">Ӿ${xno}</span>
+              <span class="usd"> / $${usd.toFixed(2)}</span>
             </p>
             `,
         });

@@ -13,6 +13,12 @@ class Store {
       isAvailable: true,
     },
     {
+      id: Types.Store.SCROLLUPGRADEBLESSED,
+      xno: 0,
+      usd: isDevelopmentAmounts ? 0.015 : 1.25,
+      isAvailable: true,
+    },
+    {
       id: Types.Store.SCROLLUPGRADEHIGH,
       xno: 0,
       usd: isDevelopmentAmounts ? 0.02 : 0.75,

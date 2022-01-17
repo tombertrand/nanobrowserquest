@@ -287,6 +287,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    ScrollUpgradeBlessed: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.SCROLLUPGRADEBLESSED, "scroll");
+        this.lootMessage = "You pick up a blessed high class upgrade scroll";
+      },
+    }),
+
     SkeletonKey: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.SKELETONKEY, "object");

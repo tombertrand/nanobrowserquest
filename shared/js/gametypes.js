@@ -3,7 +3,8 @@ Types = {
     EXPANSION1: 1,
     SCROLLUPGRADEHIGH: 2,
     SCROLLUPGRADEMEDIUM: 3,
-    CAPE: 4,
+    SCROLLUPGRADEBLESSED: 4,
+    CAPE: 5,
   },
   Messages: {
     CREATE: 0,
@@ -150,6 +151,7 @@ Types = {
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
     SCROLLUPGRADEHIGH: 76,
+    SCROLLUPGRADEBLESSED: 118,
     RINGBRONZE: 80,
     RINGSILVER: 81,
     RINGGOLD: 82,
@@ -395,6 +397,7 @@ var kinds = {
   scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "scroll", "Upgrade scroll", 3],
   scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "scroll", "Upgrade scroll", 6],
   scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "scroll", "Superior upgrade scroll", 15],
+  scrollupgradeblessed: [Types.Entities.SCROLLUPGRADEBLESSED, "scroll", "Blessed upgrade scroll", 15],
   skeletonkey: [Types.Entities.SKELETONKEY, "object", "Skeleton Key"],
   raiblockstl: [Types.Entities.RAIBLOCKSTL, "object", "Raiblocks artifact"],
   raiblockstr: [Types.Entities.RAIBLOCKSTR, "object", "Raiblocks artifact"],
@@ -726,6 +729,7 @@ Types.isScroll = function (kindOrString) {
       Types.Entities.SCROLLUPGRADELOW,
       Types.Entities.SCROLLUPGRADEMEDIUM,
       Types.Entities.SCROLLUPGRADEHIGH,
+      Types.Entities.SCROLLUPGRADEBLESSED,
     ].includes(kindOrString);
   } else {
     return kindOrString.startsWith("scroll");
@@ -1099,6 +1103,10 @@ Types.getLuckySlotSuccessRateBonus = () => {
   return [0, 0, 10, 8, 6, 5, 4, 3, 2];
 };
 
+Types.getBlessedSuccessRateBonus = () => {
+  return [0, 0, 10, 8, 6, 5, 4, 3, 2];
+};
+
 // kind, type, name, level, defense
 Types.getArmorDefense = function (armor, level, isUnique) {
   if (!armor || !level) return 0;
@@ -1247,6 +1255,8 @@ Types.itemDescription = {
     "Upgrade medium class items. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgradehigh:
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level.",
+  scrollupgradeblessed:
+    "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level. Blessed scrolls gives a higher chance of successful upgrade.",
 };
 
 if (!(typeof exports === "undefined")) {

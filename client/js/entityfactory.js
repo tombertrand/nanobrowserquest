@@ -284,6 +284,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.ScrollUpgradeHigh(id);
   };
 
+  EntityFactory.builders[Types.Entities.SCROLLUPGRADEBLESSED] = function (id) {
+    return new Items.ScrollUpgradeBlessed(id);
+  };
+
   EntityFactory.builders[Types.Entities.SKELETONKEY] = function (id) {
     return new Items.SkeletonKey(id);
   };

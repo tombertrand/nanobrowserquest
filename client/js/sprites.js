@@ -61,6 +61,7 @@ define([
   "text!../sprites/item-scrollupgradelow.json",
   "text!../sprites/item-scrollupgrademedium.json",
   "text!../sprites/item-scrollupgradehigh.json",
+  "text!../sprites/item-scrollupgradeblessed.json",
   "text!../sprites/item-skeletonkey.json",
   "text!../sprites/item-raiblockstl.json",
   "text!../sprites/item-raiblockstr.json",

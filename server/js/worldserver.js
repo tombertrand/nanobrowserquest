@@ -1013,7 +1013,16 @@ module.exports = World = cls.Class.extend({
 
         p += percentage;
         if (v <= p) {
-          item = this.addItem(this.createItem(Types.getKindFromString(itemName), mob.x, mob.y));
+          var kind = Types.getKindFromString(itemName);
+          if (kind === Types.Entities.SCROLLUPGRADEHIGH) {
+            var blessedScroll = Utils.random(25);
+
+            if (blessedScroll === 22) {
+              kind = Types.Entities.SCROLLUPGRADEBLESSED;
+            }
+          }
+
+          item = this.addItem(this.createItem(kind, mob.x, mob.y));
           break;
         }
       }

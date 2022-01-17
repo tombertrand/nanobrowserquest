@@ -240,6 +240,7 @@ define([
         "item-scrollupgradelow",
         "item-scrollupgrademedium",
         "item-scrollupgradehigh",
+        "item-scrollupgradeblessed",
         "item-skeletonkey",
         "item-raiblockstl",
         "item-raiblockstr",
@@ -555,7 +556,9 @@ define([
 
           if (["weapon", "armor", "belt", "ring", "amulet"].includes(type) && $(`.item-${type}`).is(":empty")) {
             $(`.item-${type}`).addClass("item-droppable");
-          } else if (["scrollupgradelow", "scrollupgrademedium", "scrollupgradehigh"].includes(item)) {
+          } else if (
+            ["scrollupgradelow", "scrollupgrademedium", "scrollupgradehigh", "scrollupgradeblessed"].includes(item)
+          ) {
             $(`.item-scroll`).addClass("item-droppable");
           }
 

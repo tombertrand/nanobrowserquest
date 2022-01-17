@@ -211,7 +211,7 @@ Utils.isValidUpgradeItems = items => {
   return true;
 };
 
-Utils.isUpgradeSuccess = (level, isLuckySlot) => {
+Utils.isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
   // Upgrade success rate
   // +1 -> +2, 100%
   // +2 -> +3, 100%
@@ -226,11 +226,20 @@ Utils.isUpgradeSuccess = (level, isLuckySlot) => {
   let successRate = successRates[parseInt(level) - 1];
   let random = Utils.randomInt(1, 100);
 
+  log.info(`Base Success rate ${successRate}`);
+
   if (isLuckySlot) {
     const luckyRates = Types.getLuckySlotSuccessRateBonus();
     const bonusRate = luckyRates[parseInt(level) - 1];
     successRate += bonusRate;
-    log.info(`Lucky slot bonus rate ${bonusRate} granted, success rate ${successRate}`);
+    log.info(`Lucky slot bonus rate ${bonusRate} granted, new success rate ${successRate}`);
+  }
+
+  if (isBlessed) {
+    const blessedRates = Types.getBlessedSuccessRateBonus();
+    const blessedRate = blessedRates[parseInt(level) - 1];
+    successRate += blessedRate;
+    log.info(`Blessed rate ${blessedRate} granted, new success rate ${successRate}`);
   }
 
   log.info(`Random ${random}, Success rate: ${successRate} -> ${random <= successRate ? "SUCCESS" : "FAILURE"}`);

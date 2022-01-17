@@ -837,7 +837,16 @@ module.exports = DatabaseHandler = cls.Class.extend({
       try {
         let isLucky7 = false;
         let upgrade = JSON.parse(reply);
-        const slotIndex = upgrade.findIndex(index => index && index.startsWith("scroll"));
+        let isBlessed = false;
+        const slotIndex = upgrade.findIndex(index => {
+          if (index) {
+            if (index.startsWith("scrollupgradeblessed")) {
+              isBlessed = true;
+            }
+
+            return index.startsWith("scroll");
+          }
+        });
         const luckySlot = Utils.randomInt(1, 9);
         const isLuckySlot = slotIndex === luckySlot;
         const filteredUpgrade = upgrade.filter(Boolean);
@@ -847,7 +856,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           const [item, level, bonus] = filteredUpgrade[0].split(":");
           let upgradedItem = 0;
 
-          if (Utils.isUpgradeSuccess(level, isLuckySlot)) {
+          if (Utils.isUpgradeSuccess({ level, isLuckySlot, isBlessed })) {
             const upgradedLevel = parseInt(level) + 1;
             upgradedItem = [item, parseInt(level) + 1, bonus].filter(Boolean).join(":");
             isSuccess = true;
@@ -1236,6 +1245,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
         player.expansion1 = true;
         this.unlockExpansion1(player);
         this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 5 }] });
+      } else if (id === Types.Store.SCROLLUPGRADEBLESSED) {
+        this.lootItems({ player, items: [{ item: "scrollupgradeblessed", quantity: 5 }] });
       } else if (id === Types.Store.SCROLLUPGRADEHIGH) {
         this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
       } else if (id === Types.Store.SCROLLUPGRADEMEDIUM) {
