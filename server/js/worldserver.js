@@ -999,10 +999,10 @@ module.exports = World = cls.Class.extend({
     var v = Utils.random(100);
     var p = 0;
     var item = null;
-    var superUnique = Utils.random(2500);
+    var superUnique = Utils.random(5000);
 
     if (superUnique === 420 && mob.kind >= Types.Entities.EYE) {
-      //@NOTE 0.1% chance to drop a Rai Stone
+      //@NOTE 0.02% chance to drop a Rai Stone
       item = this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
     } else if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO potion
@@ -1015,9 +1015,9 @@ module.exports = World = cls.Class.extend({
         if (v <= p) {
           var kind = Types.getKindFromString(itemName);
           if (kind === Types.Entities.SCROLLUPGRADEHIGH) {
-            var blessedScroll = Utils.random(25);
+            var blessedScroll = Utils.random(32);
 
-            if (blessedScroll === 22) {
+            if (blessedScroll === 21) {
               kind = Types.Entities.SCROLLUPGRADEBLESSED;
             }
           }
