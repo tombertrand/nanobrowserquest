@@ -34,9 +34,9 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
 
       this.brightnessMap = {
         7: 125,
-        8: 150,
-        9: 175,
-        10: 200,
+        8: 160,
+        9: 200,
+        10: 250,
       };
     },
 

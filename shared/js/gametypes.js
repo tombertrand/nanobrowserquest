@@ -1128,8 +1128,8 @@ Types.getArmorHealthBonus = function (level) {
 
 Types.getWeaponDamage = function (weapon, level, isUnique) {
   const damage = isUnique && Types.itemUniqueMap[weapon] ? Types.itemUniqueMap[weapon][2] : kinds[weapon][4];
-  const damagePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 180, 205, 235];
-  const damageBonus = level >= 7 ? level - 6 : 0;
+  const damagePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 185, 215, 255];
+  const damageBonus = level >= 7 ? Math.ceil((level - 6) * 2) : 0;
 
   return Math.ceil((damage + damageBonus) * (damagePercentPerLevel[level - 1] / 100));
 };
