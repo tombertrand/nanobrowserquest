@@ -118,6 +118,14 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Mobs.Necromancer(id);
   };
 
+  EntityFactory.builders[Types.Entities.COW] = function (id) {
+    return new Mobs.Cow(id);
+  };
+
+  EntityFactory.builders[Types.Entities.COWKING] = function (id) {
+    return new Mobs.CowKing(id);
+  };
+
   //===== items ======
 
   EntityFactory.builders[Types.Entities.SWORD] = function (id) {

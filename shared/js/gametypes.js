@@ -339,6 +339,8 @@ var kinds = {
   wraith: [Types.Entities.WRAITH, "mob", 120, 40],
   zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
   necromancer: [Types.Entities.NECROMANCER, "mob", 400, 45],
+  cow: [Types.Entities.COW, "mob", 50, 50],
+  cowking: [Types.Entities.COWKING, "mob", 200, 52],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
@@ -879,6 +881,8 @@ Types.getAliasFromName = function (name) {
     return "undead goblin";
   } else if (name === "snake2") {
     return "sea snake";
+  } else if (name === "cowking") {
+    return "cow king";
   } else if (name.startsWith("waypoint")) {
     return "waypoint";
   }

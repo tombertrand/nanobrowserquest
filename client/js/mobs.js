@@ -302,6 +302,32 @@ define(["mob", "timer"], function (Mob, Timer) {
         }
       },
     }),
+
+    Cow: Mob.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.COW);
+        this.moveSpeed = 200;
+        this.atkSpeed = 100;
+        this.idleSpeed = 800;
+        this.walkSpeed = 200;
+        this.shadowOffsetY = 1;
+        this.aggroRange = 4;
+        this.setAttackRate(1300);
+      },
+    }),
+
+    CowKing: Mob.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.COWKING);
+        this.moveSpeed = 200;
+        this.atkSpeed = 100;
+        this.idleSpeed = 800;
+        this.walkSpeed = 200;
+        this.shadowOffsetY = 1;
+        this.aggroRange = 4;
+        this.setAttackRate(1300);
+      },
+    }),
   };
 
   return Mobs;

@@ -24,6 +24,8 @@ define([
   "text!../sprites/goblin2.json",
   "text!../sprites/zombie.json",
   "text!../sprites/necromancer.json",
+  "text!../sprites/cow.json",
+  "text!../sprites/cowking.json",
   "text!../sprites/goldenarmor.json",
   "text!../sprites/bluearmor.json",
   "text!../sprites/frozenarmor.json",

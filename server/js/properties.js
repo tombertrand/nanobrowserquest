@@ -324,6 +324,25 @@ var Properties = {
     armor: 13,
     weapon: 12,
   },
+
+  cow: {
+    drops: {
+      rejuvenationpotion: 85,
+      scrollupgradehigh: 4,
+    },
+    hp: 100,
+    armor: 3,
+    weapon: 3,
+  },
+
+  cowking: {
+    drops: {
+      amuletcow: 100,
+    },
+    hp: 111,
+    armor: 3,
+    weapon: 3,
+  },
 };
 
 Properties.getArmorLevel = function (kind) {
