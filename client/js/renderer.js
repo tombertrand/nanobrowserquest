@@ -355,6 +355,54 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
       ctx.clearRect(x, y, h, w);
     },
 
+    calculateBrightnessPerLevel: function (level) {
+      const factor = (level - 6) * 25;
+      const milliseconds = Math.floor(this.game.currentTime / 100);
+      const ms = milliseconds % 10;
+      const isEven = (Math.floor(milliseconds / 10) % 10) % 2;
+      let brightness = this.brightnessMap[level];
+
+      if (isEven) {
+        if (ms <= 2) {
+          brightness = brightness - Math.floor(factor * 1);
+        } else if (ms === 3) {
+          brightness = brightness - Math.floor(factor * 0.9);
+        } else if (ms === 4) {
+          brightness = brightness - Math.floor(factor * 0.75);
+        } else if (ms === 5) {
+          brightness = brightness - Math.floor(factor * 0.6);
+        } else if (ms === 6) {
+          brightness = brightness - Math.floor(factor * 0.45);
+        } else if (ms === 7) {
+          brightness = brightness - Math.floor(factor * 0.3);
+        } else if (ms === 8) {
+          brightness = brightness - Math.floor(factor * 0.15);
+        } else if (ms === 9) {
+          brightness = brightness - Math.floor(factor * 0);
+        }
+      } else {
+        if (ms === 0) {
+          brightness = brightness - Math.floor(factor * 0);
+        } else if (ms === 1) {
+          brightness = brightness - Math.floor(factor * 0.15);
+        } else if (ms === 2) {
+          brightness = brightness - Math.floor(factor * 0.3);
+        } else if (ms === 3) {
+          brightness = brightness - Math.floor(factor * 0.45);
+        } else if (ms === 4) {
+          brightness = brightness - Math.floor(factor * 0.6);
+        } else if (ms === 5) {
+          brightness = brightness - Math.floor(factor * 0.75);
+        } else if (ms === 6) {
+          brightness = brightness - Math.floor(factor * 0.9);
+        } else if (ms >= 7) {
+          brightness = brightness - Math.floor(factor * 1);
+        }
+      }
+
+      return brightness;
+    },
+
     drawEntity: function (entity) {
       var sprite = entity.sprite,
         shadow = this.game.shadows["small"],
@@ -413,54 +461,11 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
           }
 
           let isFilterApplied = false;
-
-          // @NOTE Glowing armor when level is above 7
           if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
             isFilterApplied = true;
 
-            const factor = (entity.armorLevel - 6) * 25;
-            const milliseconds = Math.floor(this.game.currentTime / 100);
-            const ms = milliseconds % 10;
-            const isEven = (Math.floor(milliseconds / 10) % 10) % 2;
-            let brightness = this.brightnessMap[entity.armorLevel];
+            const brightness = this.calculateBrightnessPerLevel(entity.armorLevel);
 
-            if (isEven) {
-              if (ms <= 2) {
-                brightness = brightness - Math.floor(factor * 1);
-              } else if (ms === 3) {
-                brightness = brightness - Math.floor(factor * 0.9);
-              } else if (ms === 4) {
-                brightness = brightness - Math.floor(factor * 0.75);
-              } else if (ms === 5) {
-                brightness = brightness - Math.floor(factor * 0.6);
-              } else if (ms === 6) {
-                brightness = brightness - Math.floor(factor * 0.45);
-              } else if (ms === 7) {
-                brightness = brightness - Math.floor(factor * 0.3);
-              } else if (ms === 8) {
-                brightness = brightness - Math.floor(factor * 0.15);
-              } else if (ms === 9) {
-                brightness = brightness - Math.floor(factor * 0);
-              }
-            } else {
-              if (ms === 0) {
-                brightness = brightness - Math.floor(factor * 0);
-              } else if (ms === 1) {
-                brightness = brightness - Math.floor(factor * 0.15);
-              } else if (ms === 2) {
-                brightness = brightness - Math.floor(factor * 0.3);
-              } else if (ms === 3) {
-                brightness = brightness - Math.floor(factor * 0.45);
-              } else if (ms === 4) {
-                brightness = brightness - Math.floor(factor * 0.6);
-              } else if (ms === 5) {
-                brightness = brightness - Math.floor(factor * 0.75);
-              } else if (ms === 6) {
-                brightness = brightness - Math.floor(factor * 0.9);
-              } else if (ms >= 7) {
-                brightness = brightness - Math.floor(factor * 1);
-              }
-            }
             this.context.filter = `brightness(${brightness}%)`;
           }
 
@@ -523,6 +528,14 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
               weaponSuffix = "";
             }
 
+            let isFilterApplied = false;
+            if (weaponSuffix) {
+              isFilterApplied = true;
+
+              const brightness = this.calculateBrightnessPerLevel(entity.weaponLevel);
+              this.context.filter = `brightness(${brightness}%)`;
+            }
+
             this.context.drawImage(
               weapon[`image${weaponSuffix}`],
               wx,
@@ -534,6 +547,10 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
               ww * ds,
               wh * ds,
             );
+
+            if (isFilterApplied) {
+              this.context.filter = "brightness(100%)";
+            }
           }
         }
 
