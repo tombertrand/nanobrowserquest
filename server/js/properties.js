@@ -190,7 +190,7 @@ var Properties = {
     drops: {
       rejuvenationpotion: 80,
       bluearmor: 5,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 2,
     },
     hp: 240,
     armor: 7,
@@ -217,7 +217,7 @@ var Properties = {
       scrollupgradehigh: 3,
       amuletgold: 1,
     },
-    hp: 235,
+    hp: 240,
     armor: 5,
     weapon: 6,
   },

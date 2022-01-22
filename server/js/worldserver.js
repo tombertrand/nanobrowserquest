@@ -850,7 +850,7 @@ module.exports = World = cls.Class.extend({
     if (entity.hitPoints <= 0) {
       if (entity.type === "mob") {
         var mob = entity;
-        var item = this.getDroppedItem(mob);
+        var item = this.getDroppedItem(mob, attacker);
         var mainTanker = this.getEntityById(mob.getMainTankerId());
 
         if (mainTanker && mainTanker instanceof Player) {
@@ -993,7 +993,7 @@ module.exports = World = cls.Class.extend({
     }
   },
 
-  getDroppedItem: function (mob) {
+  getDroppedItem: function (mob, attacker) {
     var kind = Types.getKindAsString(mob.kind);
     var drops = Properties[kind].drops;
     var v = Utils.random(100);
@@ -1013,16 +1013,27 @@ module.exports = World = cls.Class.extend({
 
         p += percentage;
         if (v <= p) {
-          var kind = Types.getKindFromString(itemName);
-          if (kind === Types.Entities.SCROLLUPGRADEHIGH) {
-            var blessedScroll = Utils.random(32);
+          const itemKind = Types.getKindFromString(itemName);
 
-            if (blessedScroll === 21) {
-              kind = Types.Entities.SCROLLUPGRADEBLESSED;
+          if (itemKind === Types.Entities.SCROLLUPGRADEHIGH) {
+            const mobLevel = Types.getMobLevel(mob.kind);
+            if (attacker && attacker.level - 6 > mobLevel) {
+              // @NOTE Reduce scroll drops to prevent crazy farming
+              if (Utils.random(4) === 1) {
+                break;
+              }
+            }
+
+            if (mob.kind >= Types.Entities.YETI) {
+              var blessedScroll = Utils.random(32);
+
+              if (blessedScroll === 21) {
+                itemKind = Types.Entities.SCROLLUPGRADEBLESSED;
+              }
             }
           }
 
-          item = this.addItem(this.createItem(kind, mob.x, mob.y));
+          item = this.addItem(this.createItem(itemKind, mob.x, mob.y));
           break;
         }
       }

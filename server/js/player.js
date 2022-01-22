@@ -337,6 +337,7 @@ module.exports = Player = Character.extend({
           if (self.bonus.lightningDamage) {
             lightningDamage = self.bonus.lightningDamage;
 
+            mob.receiveDamage(lightningDamage, self.id);
             self.server.handleHurtEntity({ entity: mob, attacker: self, damage: lightningDamage });
           }
 

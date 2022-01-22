@@ -15,7 +15,7 @@ class Store {
     {
       id: Types.Store.SCROLLUPGRADEBLESSED,
       xno: 0,
-      usd: isDevelopmentAmounts ? 0.015 : 1.25,
+      usd: isDevelopmentAmounts ? 0.015 : 1.5,
       isAvailable: true,
     },
     {
@@ -30,11 +30,6 @@ class Store {
       usd: isDevelopmentAmounts ? 0.03 : 0.25,
       isAvailable: true,
     },
-    // {
-    //   id: Types.Store.CAPE,
-    //   xno: 0,
-    //   usd: 1.25,
-    // },
   ];
 
   constructor() {}
