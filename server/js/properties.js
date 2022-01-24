@@ -179,7 +179,8 @@ var Properties = {
 
   boss: {
     drops: {
-      goldensword: 100,
+      goldensword: 90,
+      skeletonkingcage: 10,
     },
     hp: 1200,
     armor: 6,
@@ -315,6 +316,7 @@ var Properties = {
 
   necromancer: {
     drops: {
+      necromancerheart: 10,
       scrollupgradehigh: 6,
       ringgold: 4,
       amuletgold: 4,

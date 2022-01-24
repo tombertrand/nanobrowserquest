@@ -123,7 +123,7 @@ define(["character"], function (Character) {
 
     forestnpc: ["lorem ipsum dolor sit amet", "consectetur adipisicing elit, sed do eiusmod tempor"],
 
-    lavanpc: ["lorem ipsum dolor sit amet", "consectetur adipisicing elit, sed do eiusmod tempor"],
+    lavanpc: ["I took an arrow to the knee", "I can't feel my leg anymore", "Help me"],
 
     priest: [
       "Oh, hello, young man.",
