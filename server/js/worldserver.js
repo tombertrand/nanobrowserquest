@@ -1019,13 +1019,13 @@ module.exports = World = cls.Class.extend({
             const mobLevel = Types.getMobLevel(mob.kind);
             if (attacker && attacker.level - 6 > mobLevel) {
               // @NOTE Reduce scroll drops to prevent crazy farming
-              if (Utils.random(4) === 1) {
+              if (Utils.random(3) === 1) {
                 break;
               }
             }
 
             if (mob.kind >= Types.Entities.YETI) {
-              var blessedScroll = Utils.random(32);
+              var blessedScroll = Utils.random(25);
 
               if (blessedScroll === 21) {
                 itemKind = Types.Entities.SCROLLUPGRADEBLESSED;
