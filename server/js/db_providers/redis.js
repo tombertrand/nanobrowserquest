@@ -712,7 +712,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 }
               } else if (["weapon", "armor", "belt", "ring1", "ring2", "amulet"].includes(toLocation)) {
                 const [item, fromLevel] = fromItem.split(":");
-                if (Types.getItemRequirement(item, fromLevel) > player.level) {
+                if (
+                  Types.getItemRequirement(item, fromLevel) > player.level ||
+                  !Types.isCorrectTypeForSlot(toLocation, item)
+                ) {
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }

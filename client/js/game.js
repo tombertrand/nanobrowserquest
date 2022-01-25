@@ -568,7 +568,7 @@ define([
           self.destroyDroppable();
 
           $(".ui-droppable-origin").removeClass("ui-droppable-origin");
-          $(".item-weapon, .item-armor, .item-ring, .item-amulet, item-belt, .item-scroll").removeClass(
+          $(".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-scroll").removeClass(
             "item-droppable",
           );
         },

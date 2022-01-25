@@ -824,6 +824,7 @@ Types.isCorrectTypeForSlot = function (slot, item) {
     case Types.Slot.BELT:
       return Types.isBelt(item);
   }
+  return false;
 };
 
 Types.isHealingItem = function (kind) {
