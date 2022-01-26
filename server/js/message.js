@@ -65,17 +65,13 @@ Messages.Raise = Message.extend({
 });
 
 Messages.Health = Message.extend({
-  init: function (points, isRegen) {
+  init: function ({ points, isRegen, isHurt }) {
     this.points = points;
     this.isRegen = isRegen;
+    this.isHurt = isHurt;
   },
   serialize: function () {
-    var health = [Types.Messages.HEALTH, this.points];
-
-    if (this.isRegen) {
-      health.push(1);
-    }
-    return health;
+    return [Types.Messages.HEALTH, this.points, this.isRegen, this.isHurt];
   },
 });
 

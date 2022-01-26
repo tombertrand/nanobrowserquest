@@ -72,12 +72,12 @@ var Character = Entity.extend({
     return new Messages.Raise(mobId);
   },
 
-  health: function () {
-    return new Messages.Health(this.hitPoints, false);
+  health: function ({ isHurt }) {
+    return new Messages.Health({ points: this.hitPoints, isRegen: false, isHurt });
   },
 
   regen: function () {
-    return new Messages.Health(this.hitPoints, true);
+    return new Messages.Health({ points: this.hitPoints, isRegen: true });
   },
 
   addAttacker: function (entity) {

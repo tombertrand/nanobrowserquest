@@ -520,6 +520,11 @@ define(["jquery", "app", "entrypoint", "lib/jquery-ui", "lib/jquery.ui.touch-pun
       $(document).keyup(function (e) {
         var key = e.which;
 
+        if (!game.player) {
+          // Return if player is dead
+          return;
+        }
+
         if (game.started && !$("#chatbox").hasClass("active")) {
           switch (key) {
             case Types.Keys.LEFT:
@@ -562,6 +567,11 @@ define(["jquery", "app", "entrypoint", "lib/jquery-ui", "lib/jquery.ui.touch-pun
           }
         } else if (key === 16) game.pvpFlag = true;
         if (game.started && !$("#chatinput").is(":focus")) {
+          if (!game.player) {
+            // Return if player is dead
+            return;
+          }
+
           pos = {
             x: game.player.gridX,
             y: game.player.gridY,

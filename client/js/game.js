@@ -472,65 +472,62 @@ define([
         over: function () {},
         out: function () {},
         drop: function (event, ui) {
-          // @NOTE Delay droppable.drop() callback for draggable.stop()
-          setTimeout(() => {
-            const fromItemEl = $(ui.draggable[0]);
-            const fromItemElParent = fromItemEl.parent();
-            const fromSlot = fromItemElParent.data("slot");
-            const toSlot = $(this).data("slot");
-            const toItemEl = $(this).find("> div");
+          const fromItemEl = $(ui.draggable[0]);
+          const fromItemElParent = fromItemEl.parent();
+          const fromSlot = fromItemElParent.data("slot");
+          const toSlot = $(this).data("slot");
+          const toItemEl = $(this).find("> div");
 
-            if (fromSlot === toSlot) {
-              return;
-            }
+          if (fromSlot === toSlot) {
+            return;
+          }
 
-            const item = fromItemEl.attr("data-item");
-            const level = fromItemEl.attr("data-level");
-            const bonus = fromItemEl.attr("data-bonus");
+          const item = fromItemEl.attr("data-item");
+          const level = fromItemEl.attr("data-level");
+          const bonus = fromItemEl.attr("data-bonus");
 
-            const toItem = toItemEl.attr("data-item");
-            const toLevel = toItemEl.attr("data-level");
+          const toItem = toItemEl.attr("data-item");
+          const toLevel = toItemEl.attr("data-level");
 
-            if (toItem) {
-              if (
-                [100, 101, 102, 103, 104, 105].includes(fromSlot) &&
-                (!toLevel || !Types.isCorrectTypeForSlot(fromSlot, toItem) || toLevel > self.player.level)
-              ) {
-                return;
-              }
-            }
-
+          if (toItem) {
             if (
-              [100, 101, 102, 103, 104, 105].includes(toSlot) &&
-              Types.getItemRequirement(item, level) > self.player.level
+              [100, 101, 102, 103, 104, 105].includes(fromSlot) &&
+              (!toLevel || !Types.isCorrectTypeForSlot(fromSlot, toItem) || toLevel > self.player.level)
             ) {
               return;
             }
+          }
 
-            self.client.sendMoveItem(fromSlot, toSlot);
+          if (
+            [100, 101, 102, 103, 104, 105].includes(toSlot) &&
+            Types.getItemRequirement(item, level) > self.player.level
+          ) {
+            return;
+          }
 
-            if (toSlot === -1) {
-              fromItemEl.remove();
-            } else {
-              $(this).append(fromItemEl.detach());
-              if (toItemEl.length) {
-                $(fromItemElParent).append(toItemEl.detach());
-              }
+          self.client.sendMoveItem(fromSlot, toSlot);
+
+          if (toSlot === -1) {
+            fromItemEl.remove();
+          } else {
+            $(this).append(fromItemEl.detach());
+            if (toItemEl.length) {
+              $(fromItemElParent).append(toItemEl.detach());
             }
+          }
 
-            if (toSlot === 100) {
-              self.player.switchWeapon(item, level, bonus);
-            } else if (toSlot === 101) {
-              self.player.switchArmor(self.sprites[item], level, bonus);
-            }
+          if (toSlot === 100) {
+            self.player.switchWeapon(item, level, bonus);
+          } else if (toSlot === 101) {
+            self.player.switchArmor(self.sprites[item], level, bonus);
+          }
 
-            const type = kinds[item][1];
-            if (type === "armor" && $(".item-equip-armor").is(":empty")) {
-              self.player.switchArmor(self.sprites["clotharmor"], 1);
-            } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
-              self.player.switchWeapon("dagger", 1);
-            }
-          });
+          const type = kinds[item][1];
+          if (type === "armor" && $(".item-equip-armor").is(":empty")) {
+            self.player.switchArmor(self.sprites["clotharmor"], 1);
+          } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
+            self.player.switchWeapon("dagger", 1);
+          }
         },
       });
     },
@@ -542,7 +539,7 @@ define([
     initDraggable: function () {
       var self = this;
 
-      $(".item-draggable").draggable({
+      $(".item-draggable:not(.item-faded)").draggable({
         zIndex: 100,
         revertDuration: 0,
         revert: true,
@@ -792,7 +789,7 @@ define([
       $("#upgrade .item-slot").removeClass("item-upgrade-success-slot item-upgrade-fail-slot");
       if (luckySlot) {
         $(`#upgrade .item-slot:eq(${luckySlot})`).addClass("item-upgrade-success-slot");
-        $(".item-scroll").find("> div").css("opacity", 0.25);
+        $(".item-scroll").find("> div").addClass("item-faded");
       } else {
         $(".item-scroll").empty();
       }
@@ -2588,15 +2585,13 @@ define([
           }
         });
 
-        self.client.onPlayerChangeHealth(function (points, isRegen) {
-          var player = self.player,
-            diff,
-            isHurt;
+        self.client.onPlayerChangeHealth(function ({ health, isRegen, isHurt }) {
+          var player = self.player;
+          var diff;
 
           if (player && !player.isDead && !player.invincible) {
-            isHurt = points <= player.hitPoints;
-            diff = points - player.hitPoints;
-            player.hitPoints = points;
+            diff = health - player.hitPoints;
+            player.hitPoints = health;
 
             if (player.hitPoints <= 0) {
               player.die();

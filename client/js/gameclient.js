@@ -352,15 +352,12 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
     },
 
     receiveHealth: function (data) {
-      var points = data[1];
-      var isRegen = false;
-
-      if (data[2]) {
-        isRegen = true;
-      }
+      var health = data[1];
+      var isRegen = data[2];
+      var isHurt = data[3];
 
       if (this.health_callback) {
-        this.health_callback(points, isRegen);
+        this.health_callback({ health, isRegen, isHurt });
       }
     },
 

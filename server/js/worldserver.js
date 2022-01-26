@@ -836,7 +836,7 @@ module.exports = World = cls.Class.extend({
   handleHurtEntity: function ({ entity, attacker, damage, isCritical = false, isBlocked = false }) {
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
-      this.pushToPlayer(entity, entity.health());
+      this.pushToPlayer(entity, entity.health({ isHurt: true }));
     }
     if (entity.type === "mob") {
       // Let the mob's attacker (player) know how much damage was inflicted
