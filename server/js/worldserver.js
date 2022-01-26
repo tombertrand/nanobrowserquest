@@ -930,6 +930,7 @@ module.exports = World = cls.Class.extend({
         }
         self.tryAddingMobToChestArea(mob);
       }
+
       if (Types.isItem(kind)) {
         self.addStaticItem(self.createItem(kind, pos.x + 1, pos.y));
       }

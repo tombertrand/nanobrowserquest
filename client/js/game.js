@@ -367,10 +367,7 @@ define([
     initSilhouettes: function () {
       var self = this;
 
-      console.log("~~~self.sprites", self.sprites);
-
       Types.forEachMobOrNpcKind(function (kind, kindName) {
-        console.log("~~~~kindName", kindName);
         self.sprites[kindName].createSilhouette();
       });
       self.sprites["chest"].createSilhouette();

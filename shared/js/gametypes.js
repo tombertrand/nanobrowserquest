@@ -109,6 +109,8 @@ Types = {
     WRAITH: 105,
     ZOMBIE: 106,
     NECROMANCER: 108,
+    COW: 119,
+    COWKING: 120,
 
     // Armors
     FIREFOX: 20,
