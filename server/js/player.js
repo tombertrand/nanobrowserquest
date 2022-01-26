@@ -262,52 +262,57 @@ module.exports = Player = Character.extend({
             }
           }
 
-          if (dmg > 0) {
-            if (mob.type !== "player") {
-              // Reduce dmg on boss by 20% per player in boss room
-              if (mob.kind === Types.Entities.BOSS) {
-                const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-                  x: 140,
-                  y: 48,
-                  w: 29,
-                  h: 25,
-                });
+          // if (dmg > 0) {
+          if (mob.type !== "player") {
+            // Reduce dmg on boss by 20% per player in boss room
+            if (mob.kind === Types.Entities.BOSS) {
+              const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+                x: 140,
+                y: 48,
+                w: 29,
+                h: 25,
+              });
 
-                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
-              } else if (mob.kind === Types.Entities.SKELETONCOMMANDER) {
-                const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-                  x: 140,
-                  y: 360,
-                  w: 29,
-                  h: 25,
-                });
+              dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
+            } else if (mob.kind === Types.Entities.SKELETONCOMMANDER) {
+              const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+                x: 140,
+                y: 360,
+                w: 29,
+                h: 25,
+              });
 
-                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
-              } else if (mob.kind === Types.Entities.NECROMANCER) {
-                const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-                  x: 140,
-                  y: 324,
-                  w: 29,
-                  h: 25,
-                });
+              dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
+            } else if (mob.kind === Types.Entities.NECROMANCER) {
+              const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+                x: 140,
+                y: 324,
+                w: 29,
+                h: 25,
+              });
 
-                dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
-              }
-
-              mob.receiveDamage(dmg, self.id);
-              self.server.handleMobHate(mob.id, self.id, dmg);
-              self.server.handleHurtEntity({ entity: mob, attacker: self, damage: dmg, isCritical });
+              dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
             }
-          } else {
-            mob.hitPoints -= dmg;
-            if (mob.server) {
-              mob.server.handleHurtEntity({ entity: mob, isCritical });
-              if (mob.hitPoints <= 0) {
-                mob.isDead = true;
-                self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
-              }
+
+            mob.receiveDamage(dmg);
+            self.server.handleMobHate(mob.id, self.id, dmg);
+            self.server.handleHurtEntity({ entity: mob, attacker: self, damage: dmg, isCritical });
+
+            if (mob.hitPoints <= 0) {
+              mob.isDead = true;
+              self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
             }
           }
+          // } else {
+          //   mob.receiveDamage(dmg);
+          //   if (mob.server) {
+          //     mob.server.handleHurtEntity({ entity: mob, isCritical });
+          //     if (mob.hitPoints <= 0) {
+          //       mob.isDead = true;
+          //       self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
+          //     }
+          //   }
+          // }
         }
       } else if (action === Types.Messages.HURT) {
         log.info("HURT: " + self.name + " " + message[1]);
@@ -357,6 +362,7 @@ module.exports = Player = Character.extend({
 
         if (item) {
           var kind = item.kind;
+
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());
             self.server.removeEntity(item);
@@ -423,7 +429,10 @@ module.exports = Player = Character.extend({
                 items: [{ item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null }],
               });
             } else if (Types.isScroll(kind)) {
-              databaseHandler.lootItems({ player: self, items: [{ item: Types.getKindAsString(kind), quantity: 1 }] });
+              databaseHandler.lootItems({
+                player: self,
+                items: [{ item: Types.getKindAsString(kind), quantity: 1 }],
+              });
             } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
               const lowLevelBonus = [0, 1, 2, 3];
               const mediumLevelBonus = [0, 1, 2, 3, 4, 5];

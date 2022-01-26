@@ -72,7 +72,7 @@ var Character = Entity.extend({
     return new Messages.Raise(mobId);
   },
 
-  health: function ({ isHurt }) {
+  health: function ({ isHurt } = {}) {
     return new Messages.Health({ points: this.hitPoints, isRegen: false, isHurt });
   },
 
