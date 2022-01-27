@@ -1013,7 +1013,7 @@ module.exports = World = cls.Class.extend({
 
         p += percentage;
         if (v <= p) {
-          const itemKind = Types.getKindFromString(itemName);
+          let itemKind = Types.getKindFromString(itemName);
 
           if (itemKind === Types.Entities.SCROLLUPGRADEHIGH) {
             const mobLevel = Types.getMobLevel(mob.kind);
