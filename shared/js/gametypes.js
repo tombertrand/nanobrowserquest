@@ -198,6 +198,7 @@ Types = {
     BLUEAXE: 77,
     BLUEMORNINGSTAR: 107,
     FROZENSWORD: 100,
+    DIAMONDSWORD: 121,
   },
 
   Orientations: {
@@ -264,6 +265,7 @@ Types.Entities.Weapons = [
   Types.Entities.BLUEAXE,
   Types.Entities.BLUEMORNINGSTAR,
   Types.Entities.FROZENSWORD,
+  Types.Entities.DIAMONDSWORD,
 ];
 
 Types.Entities.Armors = [
@@ -355,6 +357,7 @@ var kinds = {
   blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 12, 24],
   bluemorningstar: [Types.Entities.BLUEMORNINGSTAR, "weapon", "Frozen Morning Star", 14, 26],
   frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 16, 30],
+  diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 26, 36],
 
   // kind, type, level, defense
   clotharmor: [Types.Entities.CLOTHARMOR, "armor", "Cloth Armor", 1, 1],
@@ -456,6 +459,7 @@ Types.rankedWeapons = [
   Types.Entities.BLUEAXE,
   Types.Entities.BLUEMORNINGSTAR,
   Types.Entities.FROZENSWORD,
+  Types.Entities.DIAMONDSWORD,
 ];
 
 Types.rankedArmors = [
@@ -483,6 +487,7 @@ Types.itemUniqueMap = {
   blueaxe: ["Feeless Cutter", 14, 26],
   bluemorningstar: ["Saylormoon", 16, 28],
   frozensword: ["Broccolish Fury", 20, 32],
+  diamondsword: ["Find Cool Name", 28, 40],
 
   // name, level, defense
   leatherarmor: ["The Representative", 2, 4],

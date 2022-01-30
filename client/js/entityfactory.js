@@ -160,6 +160,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.FrozenSword(id);
   };
 
+  EntityFactory.builders[Types.Entities.DIAMONDSWORD] = function (id) {
+    return new Items.DiamondSword(id);
+  };
+
   EntityFactory.builders[Types.Entities.MORNINGSTAR] = function (id) {
     return new Items.MorningStar(id);
   };

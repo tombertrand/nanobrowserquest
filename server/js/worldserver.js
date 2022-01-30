@@ -1002,6 +1002,10 @@ module.exports = World = cls.Class.extend({
     var item = null;
     var superUnique = Utils.random(5000);
 
+    // var randomDrop = Utils.random(2);
+    // var drops = ["diamondsword", "amuletcow"];
+    // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
+
     if (superUnique === 420 && mob.kind >= Types.Entities.EYE) {
       //@NOTE 0.02% chance to drop a Rai Stone
       item = this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));

@@ -439,6 +439,7 @@ module.exports = Player = Character.extend({
               const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
               const amuletHighLevelBonus = [9, 10];
               const drainLifeBonus = [13];
+              const fireDamageBonus = [14];
               const lightningDamageBonus = [15];
               // @TODO Implement "11" -> magicFind
               // @TODO Implement "12" -> attackSpeed
@@ -447,27 +448,32 @@ module.exports = Player = Character.extend({
               if (kind === Types.Entities.RINGBRONZE) {
                 bonus = _.shuffle(lowLevelBonus).slice(0, 1);
               } else if (kind === Types.Entities.RINGSILVER || kind === Types.Entities.AMULETSILVER) {
-                bonus = _.shuffle(mediumLevelBonus).slice(0, 2).sort();
+                bonus = _.shuffle(mediumLevelBonus).slice(0, 2);
               } else if (kind === Types.Entities.RINGGOLD) {
-                bonus = _.shuffle(highLevelBonus).slice(0, 3).sort();
+                bonus = _.shuffle(highLevelBonus).slice(0, 3);
               } else if (kind === Types.Entities.AMULETGOLD) {
-                bonus = _.shuffle(mediumLevelBonus)
-                  .slice(0, 2)
-                  .sort()
-                  .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
+                bonus = _.shuffle(mediumLevelBonus).slice(0, 2).concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
               } else if (kind === Types.Entities.RINGNECROMANCER) {
-                bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(drainLifeBonus);
+                bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
               } else if (kind === Types.Entities.AMULETCOW) {
-                bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(lightningDamageBonus);
+                bonus = _.shuffle(highLevelBonus)
+                  .slice(0, 2)
+                  .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+                  .concat(_.shuffle(fireDamageBonus.concat(lightningDamageBonus)).slice(0, 1));
               } else if (kind === Types.Entities.RINGRAISTONE) {
-                bonus = _.shuffle(highLevelBonus).slice(0, 3).sort().concat(lightningDamageBonus);
+                bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
 
-                databaseHandler.logLoot({ player: self, item: `${Types.getKindAsString(kind)}:1:[${bonus}]` });
+                databaseHandler.logLoot({
+                  player: self,
+                  item: `${Types.getKindAsString(kind)}:1:[${bonus.sort((a, b) => a - b)}]`,
+                });
               }
 
               databaseHandler.lootItems({
                 player: self,
-                items: [{ item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus) }],
+                items: [
+                  { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) },
+                ],
               });
             }
           }
