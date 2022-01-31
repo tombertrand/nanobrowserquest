@@ -353,15 +353,28 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
           const isBelt = kinds[item][1] === "belt";
           const isRing = kinds[item][1] === "ring";
           const isAmulet = kinds[item][1] === "amulet";
-          const requirement =
-            isWeapon || isArmor || isBelt || isRing || isAmulet ? Types.getItemRequirement(item, levelOrQuantity) : 0;
+
+          let requirement = null;
+          let level = null;
+          let quantity = null;
+          if (isWeapon || isArmor || isBelt || isRing || isAmulet) {
+            level = levelOrQuantity;
+            requirement = Types.getItemRequirement(item, levelOrQuantity);
+          } else if (Types.isScroll(item)) {
+            quantity = levelOrQuantity;
+          }
+
+          const isSingle = Types.isSingle(item);
 
           return {
             item,
-            [isWeapon || isArmor || isBelt || isRing || isAmulet ? "level" : "quantity"]: levelOrQuantity,
+            // [isWeapon || isArmor || isBelt || isRing || isAmulet ? "level" : "quantity"]: levelOrQuantity,
             bonus,
             slot,
             requirement,
+            ...{ requirement },
+            ...{ level },
+            ...{ quantity },
           };
         })
         .filter(Boolean);

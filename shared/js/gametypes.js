@@ -414,8 +414,8 @@ var kinds = {
   raiblockstr: [Types.Entities.RAIBLOCKSTR, "object", "Raiblocks artifact"],
   raiblocksbl: [Types.Entities.RAIBLOCKSBL, "object", "Raiblocks artifact"],
   raiblocksbr: [Types.Entities.RAIBLOCKSBR, "object", "Raiblocks artifact"],
-  skeletonkingcage: [Types.Entities.SKELETONKINGCAGE, "object", "Skeleton King's thoratic cage"],
-  necromancerheart: [Types.Entities.NECROMANCERHEART, "object", "Necromancer's heart"],
+  skeletonkingcage: [Types.Entities.SKELETONKINGCAGE, "recipe", "Skeleton King's thoratic cage"],
+  necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -813,6 +813,7 @@ Types.isItem = function (kind) {
     Types.isAmulet(kind) ||
     Types.isBelt(kind) ||
     Types.isScroll(kind) ||
+    Types.isSingle(kind) ||
     (Types.isObject(kind) && !Types.isChest(kind))
   );
 };

@@ -1000,11 +1000,11 @@ module.exports = World = cls.Class.extend({
     var v = Utils.random(100);
     var p = 0;
     var item = null;
-    var superUnique = Utils.random(10000);
+    var superUnique = Utils.random(7500);
 
-    var randomDrop = Utils.random(2);
+    var randomDrop = Utils.random(3);
     // var drops = ["diamondsword", "amuletcow"];
-    var drops = ["necromancerheart", "scrollupgradelow"]; //, "skeletonkingcage", "wirtleg"];
+    var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
 
     if (superUnique === 420 && mob.kind >= Types.Entities.EYE) {

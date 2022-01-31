@@ -561,10 +561,10 @@ define([
 
           if (["weapon", "armor", "belt", "ring", "amulet"].includes(type) && $(`.item-${type}`).is(":empty")) {
             $(`.item-${type}`).addClass("item-droppable");
-          } else if (
-            ["scrollupgradelow", "scrollupgrademedium", "scrollupgradehigh", "scrollupgradeblessed"].includes(item)
-          ) {
-            $(`.item-scroll`).addClass("item-droppable");
+          } else if (Types.isScroll(item)) {
+            $(".item-scroll").addClass("item-droppable");
+          } else if (Types.isSingle(item)) {
+            $(".item-recipe").addClass("item-droppable");
           }
 
           self.initDroppable();
@@ -776,7 +776,7 @@ define([
     initUpgrade: function () {
       $("#upgrade-scroll").empty();
       for (var i = 1; i < 10; i++) {
-        $("#upgrade-scroll").append(`<div class="item-slot item-scroll" data-slot="${200 + i}"></div>`);
+        $("#upgrade-scroll").append(`<div class="item-slot item-scroll item-recipe" data-slot="${200 + i}"></div>`);
       }
       $("#upgrade-item")
         .empty()

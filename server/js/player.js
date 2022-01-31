@@ -363,6 +363,9 @@ module.exports = Player = Character.extend({
         if (item) {
           var kind = item.kind;
 
+          console.log("~~~~kind", kind);
+          console.log("~~~~Types.isItem(kind)", Types.isItem(kind));
+
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());
             self.server.removeEntity(item);
