@@ -428,7 +428,7 @@ module.exports = Player = Character.extend({
                 player: self,
                 items: [{ item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null }],
               });
-            } else if (Types.isScroll(kind)) {
+            } else if (Types.isScroll(kind) || Types.isSingle(kind)) {
               databaseHandler.lootItems({
                 player: self,
                 items: [{ item: Types.getKindAsString(kind), quantity: 1 }],
@@ -441,8 +441,6 @@ module.exports = Player = Character.extend({
               const drainLifeBonus = [13];
               const fireDamageBonus = [14];
               const lightningDamageBonus = [15];
-              // @TODO Implement "11" -> magicFind
-              // @TODO Implement "12" -> attackSpeed
 
               let bonus = [];
               if (kind === Types.Entities.RINGBRONZE) {

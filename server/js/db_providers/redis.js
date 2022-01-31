@@ -778,8 +778,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
           // Increase the scroll count
           if (slotIndex > -1) {
-            const [, oldQuantity] = inventory[slotIndex].split(":");
-            inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(quantity)}`;
+            if (Types.isSingle(item)) {
+              inventory[slotIndex] = `${item}:1`;
+            } else {
+              const [, oldQuantity] = inventory[slotIndex].split(":");
+              inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(quantity)}`;
+            }
           } else if (slotIndex === -1) {
             slotIndex = inventory.indexOf(0);
             if (slotIndex !== -1) {

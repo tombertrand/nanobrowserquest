@@ -1000,14 +1000,15 @@ module.exports = World = cls.Class.extend({
     var v = Utils.random(100);
     var p = 0;
     var item = null;
-    var superUnique = Utils.random(5000);
+    var superUnique = Utils.random(10000);
 
-    // var randomDrop = Utils.random(2);
+    var randomDrop = Utils.random(2);
     // var drops = ["diamondsword", "amuletcow"];
-    // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
+    var drops = ["necromancerheart", "scrollupgradelow"]; //, "skeletonkingcage", "wirtleg"];
+    return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
 
     if (superUnique === 420 && mob.kind >= Types.Entities.EYE) {
-      //@NOTE 0.02% chance to drop a Rai Stone
+      //@NOTE 0.01% chance to drop a Rai Stone
       item = this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
     } else if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO potion

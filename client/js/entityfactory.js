@@ -320,6 +320,18 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.RaiblocksBR(id);
   };
 
+  EntityFactory.builders[Types.Entities.WIRTLEG] = function (id) {
+    return new Items.WirtLeg(id);
+  };
+
+  EntityFactory.builders[Types.Entities.SKELETONKINGCAGE] = function (id) {
+    return new Items.SkeletonKingCage(id);
+  };
+
+  EntityFactory.builders[Types.Entities.NECROMANCERHEART] = function (id) {
+    return new Items.NecromancerHeart(id);
+  };
+
   EntityFactory.builders[Types.Entities.FIREPOTION] = function (id) {
     return new Items.FirePotion(id);
   };

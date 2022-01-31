@@ -133,6 +133,16 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
           if (this.inventory.length >= 24) {
             throw new Exceptions.LootException("Your inventory is full.");
           }
+        } else if (Types.isSingle(item.kind)) {
+          const { itemKind } = item;
+          const isFound = this.inventory
+            .concat(this.upgrade)
+            .concat(this.stash)
+            .some(({ item }) => item === itemKind);
+
+          if (isFound) {
+            throw new Exceptions.LootException("You already have this item.");
+          }
         }
 
         log.info("Player " + this.id + " has looted " + item.id);

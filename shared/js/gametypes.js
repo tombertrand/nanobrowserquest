@@ -148,6 +148,9 @@ Types = {
     RAIBLOCKSTR: 96,
     RAIBLOCKSBL: 97,
     RAIBLOCKSBR: 98,
+    WIRTLEG: 122,
+    SKELETONKINGCAGE: 123,
+    NECROMANCERHEART: 124,
 
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
@@ -348,6 +351,7 @@ var kinds = {
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
+  wirtleg: [Types.Entities.WIRTLEG, "weapon", "Wirt's leg", 1, 2],
   sword: [Types.Entities.SWORD, "weapon", "Sword", 1, 3],
   axe: [Types.Entities.AXE, "weapon", "Axe", 2, 5],
   morningstar: [Types.Entities.MORNINGSTAR, "weapon", "Morning Star", 3, 7],
@@ -410,6 +414,8 @@ var kinds = {
   raiblockstr: [Types.Entities.RAIBLOCKSTR, "object", "Raiblocks artifact"],
   raiblocksbl: [Types.Entities.RAIBLOCKSBL, "object", "Raiblocks artifact"],
   raiblocksbr: [Types.Entities.RAIBLOCKSBR, "object", "Raiblocks artifact"],
+  skeletonkingcage: [Types.Entities.SKELETONKINGCAGE, "object", "Skeleton King's thoratic cage"],
+  necromancerheart: [Types.Entities.NECROMANCERHEART, "object", "Necromancer's heart"],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -789,6 +795,14 @@ Types.isUniqueWeapon = function (bonus) {
 
 Types.isChest = function (kind) {
   return kind === Types.Entities.CHEST;
+};
+
+Types.isSingle = function (kindOrString) {
+  if (typeof kindOrString === "number") {
+    return [Types.Entities.SKELETONKINGCAGE, Types.Entities.NECROMANCERHEART].includes(kindOrString);
+  } else {
+    return ["skeletonkingcage", "necromancerheart"].includes(kindOrString);
+  }
 };
 
 Types.isItem = function (kind) {
@@ -1224,7 +1238,6 @@ Types.getItemDetails = function (item, level, rawBonus) {
     healthBonus = Types.getArmorHealthBonus(level);
   } else if (isRing) {
     type = "ring";
-    // bonus = Types.getBonus(rawBonus, level);
   } else if (isAmulet) {
     type = "amulet";
   }
@@ -1241,14 +1254,14 @@ Types.getItemDetails = function (item, level, rawBonus) {
     name: Types.getDisplayName(item, isUnique),
     type,
     isUnique,
-    ...(itemClass ? { itemClass } : null),
+    itemClass,
     ...(isArmor || isBelt ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
-    ...(healthBonus ? { healthBonus } : null),
-    ...(magicDamage ? { magicDamage } : null),
-    ...(isEquipment ? { requirement } : null),
-    ...(description ? { description } : null),
-    ...(bonus ? { bonus } : null),
+    healthBonus,
+    magicDamage,
+    requirement,
+    description,
+    bonus,
   };
 };
 
@@ -1261,6 +1274,8 @@ Types.getDisplayName = function (item, isUnique = false) {
 };
 
 Types.itemDescription = {
+  skeletonkingcage: "The thoracic cage of the Skeleton King. An unknown magic is still being emitted from the remains.",
+  necromancerheart: "The heart of the Necromancer. An unknown magic is still being emitted from the remains.",
   scrollupgradelow:
     "Upgrade low class items. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgrademedium:

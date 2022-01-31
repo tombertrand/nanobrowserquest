@@ -336,6 +336,27 @@ define(["item"], function (Item) {
       },
     }),
 
+    WirtLeg: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.WIRTLEG, "object");
+        this.lootMessage = "You pick up Wirt's leg";
+      },
+    }),
+
+    SkeletonKingCage: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.SKELETONKINGCAGE, "object");
+        this.lootMessage = "You pick up the Skeleton King's thoracic cage";
+      },
+    }),
+
+    NecromancerHeart: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.NECROMANCERHEART, "object");
+        this.lootMessage = "You pick the Necromancer's heart";
+      },
+    }),
+
     Cake: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.CAKE, "object");
