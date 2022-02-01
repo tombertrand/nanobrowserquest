@@ -488,7 +488,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
       var weapon = this.game.player.getWeaponName();
       var weaponLevel = this.game.player.getWeaponLevel();
       var weaponBonus = this.game.player.getWeaponBonus();
-      
+
       var armor = this.game.player.getArmorName();
       var armorLevel = this.game.player.getArmorLevel();
       var armorBonus = this.game.player.getArmorBonus();
@@ -593,7 +593,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
       var nb = parseInt($("#unlocked-achievements").text());
       const totalNano = parseInt(parseFloat($("#unlocked-nano-achievements").text()) * 100000);
       $("#unlocked-achievements").text(nb + 1);
-      $("#unlocked-nano-achievements").text((totalNano + nano) / 100000);
+      $("#unlocked-nano-achievements").text((totalNano + (nano || 0)) / 100000);
     },
 
     initAchievementList: function (achievements) {
@@ -620,7 +620,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
 
         $a.show();
 
-        totalNano += achievement.nano;
+        totalNano += achievement.nano || 0;
 
         if ((count - 1) % 4 === 0) {
           page++;
@@ -653,8 +653,8 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($,
       $el.find(".achievement-name").html(name);
       $el.find(".achievement-description").html(desc);
       $el.find(".achievement-nano").html(`
-        <span>${nano / 100000}</span>
-        <span class="xno">Ӿ</span>
+        <span>${nano ? nano / 100000 : ""}</span>
+        <span class="xno">${nano ? "Ӿ" : ""}</span>
       `);
     },
 

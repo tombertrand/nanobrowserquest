@@ -41,7 +41,8 @@ define(["area"], function (Area) {
         "chest",
         "npc",
         "npc-end",
-        "raise"
+        "raise",
+        "portal-open",
       ];
 
       var loadSoundFiles = function () {

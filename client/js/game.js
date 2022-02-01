@@ -1166,9 +1166,9 @@ define([
           desc: "Defeat the Cow King",
           hidden: true,
         },
-        MEAT_FEST: {
+        FRESH_MEAT: {
           id: 43,
-          name: "Meat Fest",
+          name: "Fresh Meat",
           desc: "Kill 250 cows",
           hidden: true,
           isCompleted: function () {
@@ -1201,7 +1201,7 @@ define([
         .filter(Boolean);
       const totalNano = unlockedAchievementIds.reduce((acc, id) => {
         const achievement = Object.values(self.achievements)[id - 1];
-        acc += achievement ? achievement.nano : 0;
+        acc += achievement && achievement.nano ? achievement.nano : 0;
         return acc;
       }, 0);
 
@@ -2619,7 +2619,7 @@ define([
               self.client.sendRequestPayout(Types.Entities.NECROMANCER);
             });
           } else if (kind === Types.Entities.COW) {
-            self.tryUnlockingAchievement("MEAT_FEST");
+            self.tryUnlockingAchievement("FRESH_MEAT");
           } else if (kind === Types.Entities.COWKING) {
             self.tryUnlockingAchievement("COW_KING");
           }
@@ -2842,6 +2842,8 @@ define([
 
           if (recipe === "cowLevel") {
             self.app.closeUpgrade();
+            console.log("~~~~play portal-open");
+            self.audioManager.playSound("portal-open");
             // @TODO
             // - play open portal sound
             // - start portal animation
