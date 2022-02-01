@@ -52,13 +52,14 @@ Types = {
     MOVE_UPGRADE_ITEMS_TO_INVENTORY: 39,
     UPGRADE_ITEM: 40,
     ANVIL_UPGRADE: 41,
-    WAYPOINT: 42,
-    WAYPOINTS_UPDATE: 43,
-    STORE_ITEMS: 44,
-    PURCHASE_CREATE: 45,
-    PURCHASE_CANCEL: 46,
-    PURCHASE_COMPLETED: 47,
-    PURCHASE_ERROR: 48,
+    ANVIL_RECIPE: 42,
+    WAYPOINT: 43,
+    WAYPOINTS_UPDATE: 44,
+    STORE_ITEMS: 45,
+    PURCHASE_CREATE: 46,
+    PURCHASE_CANCEL: 47,
+    PURCHASE_COMPLETED: 48,
+    PURCHASE_ERROR: 49,
     GUILDERRORTYPE: {
       DOESNOTEXIST: 1,
       BADNAME: 2,
@@ -189,6 +190,7 @@ Types = {
     WAYPOINTX: 84,
     WAYPOINTN: 93,
     STASH: 114,
+    COWPORTAL: 125,
 
     // Weapons
     DAGGER: 60,
@@ -439,6 +441,7 @@ var kinds = {
   waypointx: [Types.Entities.WAYPOINTX, "npc"],
   waypointn: [Types.Entities.WAYPOINTN, "npc"],
   stash: [Types.Entities.STASH, "npc"],
+  cowportal: [Types.Entities.COWPORTAL, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -907,6 +910,8 @@ Types.getAliasFromName = function (name) {
     return "cow king";
   } else if (name.startsWith("waypoint")) {
     return "waypoint";
+  } else if (name === "cowportal") {
+    return "Portal";
   }
   return name;
 };

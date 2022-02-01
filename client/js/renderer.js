@@ -555,56 +555,39 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
         }
 
         if (entity instanceof Character && entity.sprite.name === "anvil") {
-          if (this.game.isAnvilSuccess) {
-            var sprite = this.game.sprites["anvil-success"];
-            var anim = this.game.anvilSuccessAnimation;
-
-            if (sprite && anim) {
-              var os = this.upscaledRendering ? 1 : this.scale;
-              var ds = this.upscaledRendering ? this.scale : 1;
-
-              var { x: entityX, y: entityY } = entity;
-
-              var frame = anim.currentFrame,
-                s = this.scale,
-                x = frame.x * os,
-                y = frame.y * os,
-                w = sprite.width * os,
-                h = sprite.height * os,
-                ts = -12,
-                dx = entityX * s,
-                dy = entityY * s,
-                dw = w * ds,
-                dh = h * ds;
-
-              this.context.translate(0, ts * -ds);
-              this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
-            }
+          var sprite = null;
+          var anim = null;
+          if (this.game.isAnvilRecipe) {
+            sprite = this.game.sprites["anvil-recipe"];
+            anim = this.game.anvilRecipeAnimation;
+          } else if (this.game.isAnvilSuccess) {
+            sprite = this.game.sprites["anvil-success"];
+            anim = this.game.anvilSuccessAnimation;
           } else if (this.game.isAnvilFail) {
-            var sprite = this.game.sprites["anvil-fail"];
-            var anim = this.game.anvilFailAnimation;
+            sprite = this.game.sprites["anvil-fail"];
+            anim = this.game.anvilFailAnimation;
+          }
 
-            if (sprite && anim) {
-              var os = this.upscaledRendering ? 1 : this.scale;
-              var ds = this.upscaledRendering ? this.scale : 1;
+          if (sprite && anim) {
+            var os = this.upscaledRendering ? 1 : this.scale;
+            var ds = this.upscaledRendering ? this.scale : 1;
 
-              var { x: entityX, y: entityY } = entity;
+            var { x: entityX, y: entityY } = entity;
 
-              var frame = anim.currentFrame,
-                s = this.scale,
-                x = frame.x * os,
-                y = frame.y * os,
-                w = sprite.width * os,
-                h = sprite.height * os,
-                ts = -12,
-                dx = entityX * s,
-                dy = entityY * s,
-                dw = w * ds,
-                dh = h * ds;
+            var frame = anim.currentFrame,
+              s = this.scale,
+              x = frame.x * os,
+              y = frame.y * os,
+              w = sprite.width * os,
+              h = sprite.height * os,
+              ts = -12,
+              dx = entityX * s,
+              dy = entityY * s,
+              dw = w * ds,
+              dh = h * ds;
 
-              this.context.translate(0, ts * -ds);
-              this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
-            }
+            this.context.translate(0, ts * -ds);
+            this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
           }
         }
 

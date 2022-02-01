@@ -133,6 +133,12 @@ define(["npc"], function (Npc) {
         this._super(id, Types.Entities.STASH, 1);
       },
     }),
+
+    CowPortal: Npc.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.COWPORTAL, 1);
+      },
+    }),
   };
 
   return NPCs;

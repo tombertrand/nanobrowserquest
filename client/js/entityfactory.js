@@ -438,5 +438,9 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new NPCs.Stash(id);
   };
 
+  EntityFactory.builders[Types.Entities.COWPORTAL] = function (id) {
+    return new NPCs.CowPortal(id);
+  };
+
   return EntityFactory;
 });

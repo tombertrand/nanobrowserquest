@@ -172,11 +172,13 @@ define([
         "sorcerer",
         "octocat",
         "anvil",
+        "anvil-recipe",
         "anvil-success",
         "anvil-fail",
         "waypointx",
         "waypointn",
         "stash",
+        "cowportal",
         "beachnpc",
         "forestnpc",
         "desertnpc",
@@ -355,6 +357,9 @@ define([
       this.thunderstormAnimation = new Animation("idle_down", 6, 0, 16, 8);
       this.thunderstormAnimation.setSpeed(200);
 
+      this.anvilRecipeAnimation = new Animation("idle_down", 4, 0, 15, 8);
+      this.anvilRecipeAnimation.setSpeed(80);
+
       this.anvilSuccessAnimation = new Animation("idle_down", 4, 0, 15, 8);
       this.anvilSuccessAnimation.setSpeed(80);
 
@@ -438,7 +443,7 @@ define([
     initSendUpgradeItem: function () {
       var self = this;
       $("#upgrade-btn").on("click", function () {
-        if (self.player.upgrade.length !== 2) return;
+        if (self.player.upgrade.length < 2) return;
 
         if (!self.isUpgradeItemSent) {
           self.client.sendUpgradeItem();
@@ -1148,6 +1153,33 @@ define([
           desc: "Be surrounded by 15 zombies",
           hidden: true,
           nano: 15,
+        },
+        SECRET_LEVEL: {
+          id: 41,
+          name: "Leap of faith",
+          desc: "Jump into the void",
+          hidden: false,
+        },
+        COW_KING: {
+          id: 42,
+          name: "I'm the Butcher",
+          desc: "Defeat the Cow King",
+          hidden: true,
+        },
+        MEAT_FEST: {
+          id: 43,
+          name: "Meat Fest",
+          desc: "Kill 250 cows",
+          hidden: true,
+          isCompleted: function () {
+            return self.storage.getCowCount() >= 250;
+          },
+        },
+        MAGIC8: {
+          id: 44,
+          name: "Magic 8",
+          desc: "Upgrade a high class item to +8",
+          hidden: true,
         },
       };
 
@@ -2586,6 +2618,10 @@ define([
             self.tryUnlockingAchievement("BLACK_MAGIC").then(() => {
               self.client.sendRequestPayout(Types.Entities.NECROMANCER);
             });
+          } else if (kind === Types.Entities.COW) {
+            self.tryUnlockingAchievement("MEAT_FEST");
+          } else if (kind === Types.Entities.COWKING) {
+            self.tryUnlockingAchievement("COW_KING");
           }
 
           if (Math.floor((self.player.hitPoints * 100) / self.player.maxHitPoints) <= 1 && kind > Types.Entities.RAT2) {
@@ -2778,7 +2814,7 @@ define([
         });
 
         self.client.onReceiveUpgrade(function (data, meta) {
-          const { luckySlot, isLucky7, isSuccess } = meta || {};
+          const { luckySlot, isLucky7, isMagic8, isSuccess } = meta || {};
 
           self.isUpgradeItemSent = false;
           self.player.setUpgrade(data);
@@ -2786,6 +2822,8 @@ define([
 
           if (isLucky7) {
             self.tryUnlockingAchievement("LUCKY7");
+          } else if (isMagic8) {
+            self.tryUnlockingAchievement("MAGIC8");
           }
         });
 
@@ -2794,6 +2832,19 @@ define([
             self.setAnvilSuccess();
           } else {
             self.setAnvilFail();
+          }
+        });
+
+        self.client.onReceiveAnvilRecipe(function (recipe) {
+          self.setAnvilRecipe();
+
+          console.log("~~~~Recipe", recipe);
+
+          if (recipe === "cowLevel") {
+            self.app.closeUpgrade();
+            // @TODO
+            // - play open portal sound
+            // - start portal animation
           }
         });
 
@@ -2989,11 +3040,25 @@ define([
       this.client.sendAttack(mob);
     },
 
+    setAnvilRecipe: function () {
+      this.isAnvilFail = false;
+      this.isAnvilSuccess = false;
+      this.isAnvilRecipe = true;
+      clearTimeout(this.anvilFailTimeout);
+      clearTimeout(this.anvilSuccessTimeout);
+      clearTimeout(this.anvilRecipeTimeout);
+      this.anvilRecipeTimeout = setTimeout(() => {
+        this.isAnvilRecipe = false;
+      }, 3000);
+    },
+
     setAnvilSuccess: function () {
       this.isAnvilFail = false;
       this.isAnvilSuccess = true;
+      this.isAnvilRecipe = false;
       clearTimeout(this.anvilFailTimeout);
       clearTimeout(this.anvilSuccessTimeout);
+      clearTimeout(this.anvilRecipeTimeout);
       this.anvilSuccessTimeout = setTimeout(() => {
         this.isAnvilSuccess = false;
       }, 3000);
@@ -3002,8 +3067,10 @@ define([
     setAnvilFail: function () {
       this.isAnvilFail = true;
       this.isAnvilSuccess = false;
+      this.isAnvilRecipe = false;
       clearTimeout(this.anvilFailTimeout);
       clearTimeout(this.anvilSuccessTimeout);
+      clearTimeout(this.anvilRecipeTimeout);
       this.anvilFailTimeout = setTimeout(() => {
         this.isAnvilFail = false;
       }, 3000);
@@ -3050,6 +3117,11 @@ define([
           }
         } else if (npc.kind === Types.Entities.SATOSHI) {
           this.tryUnlockingAchievement("SATOSHI");
+        } else if (npc.kind === Types.Entities.COWPORTAL) {
+          this.tryUnlockingAchievement("SECRET_LEVEL");
+          // @TODO
+          // - Check player level, 45+
+          // - Move to position (look at WP code)
         }
       }
     },

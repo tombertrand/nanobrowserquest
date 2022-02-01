@@ -843,6 +843,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     client.hget("u:" + player.name, "upgrade", function (err, reply) {
       try {
         let isLucky7 = false;
+        let isMagic8 = false;
         let upgrade = JSON.parse(reply);
         let isBlessed = false;
         const slotIndex = upgrade.findIndex(index => {
@@ -858,6 +859,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         const isLuckySlot = slotIndex === luckySlot;
         const filteredUpgrade = upgrade.filter(Boolean);
         let isSuccess = false;
+        let recipe = null;
 
         if (Utils.isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus] = filteredUpgrade[0].split(":");
@@ -867,7 +869,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
             const upgradedLevel = parseInt(level) + 1;
             upgradedItem = [item, parseInt(level) + 1, bonus].filter(Boolean).join(":");
             isSuccess = true;
-            isLucky7 = upgradedLevel === 7 && Types.isBaseHighClassItem(item);
+
+            if (Types.isBaseHighClassItem(item)) {
+              if (upgradedLevel === 7) {
+                isLucky7 = true;
+              } else if (upgradedLevel === 8) {
+                isMagic8 = true;
+              }
+            }
 
             if (upgradedLevel >= 8) {
               self.logUpgrade({ player, item: upgradedItem, isSuccess });
@@ -882,10 +891,29 @@ module.exports = DatabaseHandler = cls.Class.extend({
           upgrade[upgrade.length - 1] = upgradedItem;
           player.broadcast(new Messages.AnvilUpgrade(isSuccess), false);
         } else {
-          self.moveUpgradeItemsToInventory(player);
+          recipe = Utils.isValidRecipe(filteredUpgrade);
+
+          if (recipe) {
+            if (recipe === "cowLevel") {
+              // @TODO
+              // - Check if another cowLevel is up, if yes abort and move items to inventory
+              // - Spawn portal
+              // - Randomize and revive packs of cows
+              // - Spawn the king somewhere within a pack
+              // - Start a 30m timer to close the portal and evacuate players
+
+              console.log("~~~~COW LEVEL!");
+
+              // @TODO Uncomment once the testing is done
+              // upgrade = upgrade.map(() => 0);
+              player.broadcast(new Messages.AnvilRecipe(recipe), false);
+            }
+          } else {
+            self.moveUpgradeItemsToInventory(player);
+          }
         }
 
-        player.send([Types.Messages.UPGRADE, upgrade, { luckySlot, isLucky7, isSuccess }]);
+        player.send([Types.Messages.UPGRADE, upgrade, { luckySlot, isLucky7, isMagic8, isSuccess, recipe }]);
         client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
       } catch (err) {
         console.log(err);

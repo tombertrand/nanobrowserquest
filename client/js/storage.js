@@ -31,7 +31,7 @@ define(function () {
           werewolfCount: 0,
           skeleton3Count: 0,
           wraithCount: 0,
-          zombieCount: 0,
+          cowCount: 0,
           totalKills: 0,
           totalDmg: 0,
           totalRevives: 0,
@@ -253,6 +253,22 @@ define(function () {
 
       if (this.data.achievements.wraithCount < 50) {
         this.data.achievements.wraithCount++;
+        this.save();
+      }
+    },
+
+    // Meat Fest
+    getCowCount: function () {
+      return this.data.achievements.cowCount;
+    },
+
+    incrementCowCount: function () {
+      if (!this.data.achievements.cowCount) {
+        this.data.achievements.cowCount = 0;
+      }
+
+      if (this.data.achievements.cowCount < 250) {
+        this.data.achievements.cowCount++;
         this.save();
       }
     },

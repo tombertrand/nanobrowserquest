@@ -151,6 +151,15 @@ Messages.AnvilUpgrade = Message.extend({
   },
 });
 
+Messages.AnvilRecipe = Message.extend({
+  init: function (recipe) {
+    this.recipe = recipe;
+  },
+  serialize: function () {
+    return [Types.Messages.ANVIL_RECIPE, this.recipe];
+  },
+});
+
 Messages.Damage = Message.extend({
   init: function (entity, points, hp, maxHp, isCritical, isBlocked) {
     this.entity = entity;

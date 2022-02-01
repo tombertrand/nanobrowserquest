@@ -267,6 +267,11 @@ define(["character", "timer"], function (Character, Timer) {
         thunderStorm.update(t);
       }
 
+      var anvilRecipe = this.game.anvilRecipeAnimation;
+      if (anvilRecipe) {
+        anvilRecipe.update(t);
+      }
+
       var anvilSuccess = this.game.anvilSuccessAnimation;
       if (anvilSuccess) {
         anvilSuccess.update(t);

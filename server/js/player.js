@@ -363,9 +363,6 @@ module.exports = Player = Character.extend({
         if (item) {
           var kind = item.kind;
 
-          console.log("~~~~kind", kind);
-          console.log("~~~~Types.isItem(kind)", Types.isItem(kind));
-
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());
             self.server.removeEntity(item);
@@ -686,7 +683,6 @@ module.exports = Player = Character.extend({
         databaseHandler.moveUpgradeItemsToInventory(self);
       } else if (action === Types.Messages.UPGRADE_ITEM) {
         log.info("UPGRADE ITEM: " + self.name);
-        // @TODO GET the item to be upgraded, run the odds formulea, add the item +1 to slot 210 if success
 
         databaseHandler.upgradeItem(self);
       } else if (action === Types.Messages.ACHIEVEMENT) {

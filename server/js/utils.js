@@ -246,3 +246,28 @@ Utils.isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
 
   return random <= successRate;
 };
+
+const recipes = {
+  cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
+};
+
+Utils.isValidRecipe = items => {
+  const result = Object.entries(recipes).find(([recipe, formulae]) => {
+    if (formulae.length !== items.length) return;
+
+    for (let i = 0; i < items.length; i++) {
+      const [item] = items[i].split(":");
+      const index = formulae.indexOf(item);
+
+      if (index === -1) break;
+
+      formulae[index] = false;
+    }
+
+    if (formulae.filter(Boolean).length === 0) return true;
+  });
+
+  if (result) {
+    return result[0];
+  }
+};

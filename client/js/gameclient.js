@@ -44,6 +44,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.handlers[Types.Messages.STASH] = this.receiveStash;
       this.handlers[Types.Messages.UPGRADE] = this.receiveUpgrade;
       this.handlers[Types.Messages.ANVIL_UPGRADE] = this.receiveAnvilUpgrade;
+      this.handlers[Types.Messages.ANVIL_RECIPE] = this.receiveAnvilRecipe;
       this.handlers[Types.Messages.STORE_ITEMS] = this.receiveStoreItems;
       this.handlers[Types.Messages.PURCHASE_COMPLETED] = this.receivePurchaseCompleted;
       this.handlers[Types.Messages.PURCHASE_ERROR] = this.receivePurchaseError;
@@ -552,10 +553,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     receiveUpgrade: function (data) {
       var upgrade = data[1];
-      const { luckySlot, isLucky7, isSuccess } = data[2] || {};
+      const { luckySlot, isLucky7, isMagic8, isSuccess } = data[2] || {};
 
       if (this.receiveupgrade_callback) {
-        this.receiveupgrade_callback(upgrade, { luckySlot, isLucky7, isSuccess });
+        this.receiveupgrade_callback(upgrade, { luckySlot, isLucky7, isMagic8, isSuccess });
       }
     },
 
@@ -564,6 +565,14 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
       if (this.receiveanvilupgrade_callback) {
         this.receiveanvilupgrade_callback(isSuccess);
+      }
+    },
+
+    receiveAnvilRecipe: function (data) {
+      var recipe = data[1];
+
+      if (this.receiveanvilrecipe_callback) {
+        this.receiveanvilrecipe_callback(recipe);
       }
     },
 
@@ -763,6 +772,10 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     onReceiveAnvilUpgrade: function (callback) {
       this.receiveanvilupgrade_callback = callback;
+    },
+
+    onReceiveAnvilRecipe: function (callback) {
+      this.receiveanvilrecipe_callback = callback;
     },
 
     onReceiveStoreItems: function (callback) {
