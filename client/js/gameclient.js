@@ -49,6 +49,8 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       this.handlers[Types.Messages.PURCHASE_COMPLETED] = this.receivePurchaseCompleted;
       this.handlers[Types.Messages.PURCHASE_ERROR] = this.receivePurchaseError;
       this.handlers[Types.Messages.WAYPOINTS_UPDATE] = this.receiveWaypointsUpdate;
+      this.handlers[Types.Messages.COWLEVEL_START] = this.receiveCowLevelStart;
+      this.handlers[Types.Messages.COWLEVEL_END] = this.receiveCowLevelEnd;
       this.useBison = false;
       this.enable();
     },
@@ -608,6 +610,18 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       }
     },
 
+    receiveCowLevelStart: function () {
+      if (this.receivecowlevelstart_callback) {
+        this.receivecowlevelstart_callback();
+      }
+    },
+
+    receiveCowLevelEnd: function () {
+      if (this.receivecowlevelend_callback) {
+        this.receivecowlevelend_callback();
+      }
+    },
+
     onDispatched: function (callback) {
       this.dispatched_callback = callback;
     },
@@ -792,6 +806,14 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
 
     onReceiveWaypointsUpdate: function (callback) {
       this.receivewaypointsupdate_callback = callback;
+    },
+
+    onReceiveCowLevelStart: function (callback) {
+      this.receivecowlevelstart_callback = callback;
+    },
+
+    onReceiveCowLevelEnd: function (callback) {
+      this.receivecowlevelend_callback = callback;
     },
 
     sendCreate: function (player) {

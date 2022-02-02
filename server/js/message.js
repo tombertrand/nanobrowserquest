@@ -64,6 +64,20 @@ Messages.Raise = Message.extend({
   },
 });
 
+Messages.CowLevelStart = Message.extend({
+  init: function () {},
+  serialize: function () {
+    return [Types.Messages.COWLEVEL_START];
+  },
+});
+
+Messages.CowLevelEnd = Message.extend({
+  init: function () {},
+  serialize: function () {
+    return [Types.Messages.COWLEVEL_END];
+  },
+});
+
 Messages.Health = Message.extend({
   init: function ({ points, isRegen, isHurt }) {
     this.points = points;

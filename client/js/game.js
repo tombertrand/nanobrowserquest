@@ -1981,7 +1981,7 @@ define([
 
           const isDoor = !isWaypoint && self.map.isDoor(x, y);
           if ((!self.player.hasTarget() && isDoor) || isWaypoint) {
-            var dest = isWaypoint ? { x, y, orientation: 2 } : self.map.getDoorDestination(x, y);
+            var dest = isWaypoint ? { x, y, orientation: Types.Orientations.DOWN } : self.map.getDoorDestination(x, y);
             if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
               self.client.sendBossCheck(false);
               return;
@@ -2004,6 +2004,7 @@ define([
             self.player.nextGridX = dest.x;
             self.player.nextGridY = desty;
             self.player.turnTo(dest.orientation);
+            self.player.idle();
             self.client.sendTeleport(dest.x, desty);
 
             if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
@@ -2164,6 +2165,7 @@ define([
         });
 
         self.client.onSpawnCharacter(function (entity, x, y, orientation, targetId) {
+          // @TODO Investigate why the player is not properly spawned / despawned when alt tabbed and back
           // if (entity instanceof Character) {
           //   if (self.entityIdExists(entity.id)) {
           //     self.removeEntity(entity);
@@ -2184,6 +2186,13 @@ define([
                     entity.aggroRange = 10;
                     entity.isAggressive = true;
                   }, 1000);
+                } else if (entity.kind === Types.Entities.COWPORTAL) {
+                  entity.setSpeed(75);
+                  entity.raise();
+                  setTimeout(() => {
+                    entity.setSpeed(150);
+                    entity.idle();
+                  }, 1200);
                 } else {
                   entity.idle();
                 }
@@ -2838,15 +2847,9 @@ define([
         self.client.onReceiveAnvilRecipe(function (recipe) {
           self.setAnvilRecipe();
 
-          console.log("~~~~Recipe", recipe);
-
           if (recipe === "cowLevel") {
             self.app.closeUpgrade();
-            console.log("~~~~play portal-open");
             self.audioManager.playSound("portal-open");
-            // @TODO
-            // - play open portal sound
-            // - start portal animation
           }
         });
 
@@ -2868,6 +2871,27 @@ define([
         self.client.onReceiveWaypointsUpdate(function (waypoints) {
           self.player.waypoints = waypoints;
           self.initWaypoints(waypoints);
+        });
+
+        self.client.onReceiveCowLevelStart(function () {
+          // - start portal animation
+
+          // const portal = self.getNpcAt(43, 211);
+          // console.log("~~~~portal", portal);
+
+          // portal.setSpeed(75);
+          // portal.raise();
+          // setTimeout(() => {
+          //   portal.setSpeed(150);
+          //   portal.idle();
+          // }, 1200);
+
+          console.log("~~~~onReceiveCowLevelStart");
+        });
+
+        self.client.onReceiveCowLevelEnd(function () {
+          // npc.die();
+          console.log("~~~~onReceiveCowLevelEnd");
         });
 
         self.client.onDisconnected(function (message) {
@@ -3120,10 +3144,15 @@ define([
         } else if (npc.kind === Types.Entities.SATOSHI) {
           this.tryUnlockingAchievement("SATOSHI");
         } else if (npc.kind === Types.Entities.COWPORTAL) {
-          this.tryUnlockingAchievement("SECRET_LEVEL");
-          // @TODO
-          // - Check player level, 45+
-          // - Move to position (look at WP code)
+          if (this.player.level >= 45) {
+            this.tryUnlockingAchievement("SECRET_LEVEL");
+
+            if (npc.gridX === 43 && npc.gridY === 211) {
+              this.player.stop_pathing_callback({ x: 79, y: 477, isWaypoint: true });
+            } else {
+              this.player.stop_pathing_callback({ x: 43, y: 212, isWaypoint: true });
+            }
+          }
         }
       }
     },
@@ -3229,23 +3258,28 @@ define([
      * Returns the entity located at the given position on the world grid.
      * @returns {Entity} the entity located at (x, y) or null if there is none.
      */
-    getEntityAt: function (x, y) {
+    getEntityAt: function (x, y, instance) {
       if (this.map.isOutOfBounds(x, y) || !this.entityGrid) {
         return null;
       }
 
-      var entities = this.entityGrid[y][x],
-        entity = null;
+      var entities = this.entityGrid[y][x];
+      var entity = null;
       if (_.size(entities) > 0) {
-        entity = entities[_.keys(entities)[0]];
+        if (instance) {
+          entity = Object.values(entities).find(entity => entity instanceof instance);
+        } else {
+          entity = entities[_.keys(entities)[0]];
+        }
       } else {
         entity = this.getItemAt(x, y);
       }
+
       return entity;
     },
 
     getMobAt: function (x, y) {
-      var entity = this.getEntityAt(x, y);
+      var entity = this.getEntityAt(x, y, Mob);
       if (entity && entity instanceof Mob) {
         return entity;
       }
@@ -3253,7 +3287,7 @@ define([
     },
 
     getPlayerAt: function (x, y) {
-      var entity = this.getEntityAt(x, y);
+      var entity = this.getEntityAt(x, y, Player);
       if (entity && entity instanceof Player && entity !== this.player && this.player.pvpFlag) {
         return entity;
       }
@@ -3261,7 +3295,7 @@ define([
     },
 
     getNpcAt: function (x, y) {
-      var entity = this.getEntityAt(x, y);
+      var entity = this.getEntityAt(x, y, Npc);
       if (entity && entity instanceof Npc) {
         return entity;
       }
@@ -3269,7 +3303,7 @@ define([
     },
 
     getChestAt: function (x, y) {
-      var entity = this.getEntityAt(x, y);
+      var entity = this.getEntityAt(x, y, Chest);
       if (entity && entity instanceof Chest) {
         return entity;
       }

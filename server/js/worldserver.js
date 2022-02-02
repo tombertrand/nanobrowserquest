@@ -47,6 +47,9 @@ module.exports = World = cls.Class.extend({
     this.chestAreas = [];
     this.groups = {};
     this.zombies = [];
+    this.cowLevelClock = null;
+    this.cowLevelInterval = null;
+    this.cowLevelNpcId = null;
 
     this.outgoingQueues = {};
 
@@ -547,8 +550,20 @@ module.exports = World = cls.Class.extend({
   },
 
   addNpc: function (kind, x, y) {
+    var self = this;
     var npc = new Npc("8" + x + "" + y, kind, x, y);
-    this.addEntity(npc);
+
+    npc.onRespawn(function () {
+      npc.isDead = false;
+      self.addMob(npc);
+    });
+
+    if (kind === Types.Entities.COWPORTAL && x === 43 && y === 211) {
+      npc.isDead = true;
+      this.cowLevelNpcId = npc.id;
+    } else {
+      this.addEntity(npc);
+    }
     this.npcs[npc.id] = npc;
     return npc;
   },
@@ -558,6 +573,44 @@ module.exports = World = cls.Class.extend({
     this.items[item.id] = item;
 
     return item;
+  },
+
+  startCowLevel: function () {
+    this.cowLevelClock = 5;
+
+    this.pushBroadcast(new Messages.CowLevelStart());
+
+    const portal = this.npcs[this.cowLevelNpcId];
+    portal.respawnCallback();
+
+    // @TODO Spawn cows!
+
+    this.cowLevelInterval = setInterval(() => {
+      this.cowLevelClock -= 1;
+
+      console.log("~~~~cowLevelClock", this.cowLevelClock);
+
+      if (this.cowLevelClock < 0) {
+        clearInterval(this.cowLevelInterval);
+        this.cowLevelInterval = null;
+        this.cowLevelClock = null;
+
+        console.log("~~~~endCowLevel");
+
+        this.endCowLevel();
+      }
+    }, 1000);
+  },
+
+  endCowLevel: function () {
+    // @TODO All players within x,y to spawn back in town
+
+    const portal = this.npcs[this.cowLevelNpcId];
+    // portal.respawnCallback();
+
+    this.despawn(portal);
+
+    this.pushBroadcast(new Messages.CowLevelEnd());
   },
 
   createItem: function (kind, x, y) {
@@ -907,8 +960,7 @@ module.exports = World = cls.Class.extend({
 
       if (Types.isNpc(kind)) {
         self.addNpc(kind, pos.x + 1, pos.y);
-      }
-      if (Types.isMob(kind)) {
+      } else if (Types.isMob(kind)) {
         const id = `7${kind}${count++}`;
         const mob = new Mob(id, kind, pos.x + 1, pos.y);
 

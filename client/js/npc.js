@@ -160,7 +160,14 @@ define(["character"], function (Character) {
     waypointx: [""],
     waypointn: [""],
     stash: [""],
-    cowportal: [""],
+    cowportal: [
+      {
+        condition: function (game) {
+          return game.player.level < 45;
+        },
+        text: ["You need to be lv.45 and above to access the secret level"],
+      },
+    ],
 
     coder: [
       "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",

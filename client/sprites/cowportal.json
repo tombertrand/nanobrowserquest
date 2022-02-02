@@ -1,13 +1,17 @@
 {
-	"id": "cowportal",
-	"width": 24,
-	"height": 24,
-	"animations": {
-		"idle_down": {
-			"length": 2,
-			"row": 0
-		}
-	},
-	"offset_x": -4,
-	"offset_y": -8
+  "id": "cowportal",
+  "width": 32,
+  "height": 42,
+  "animations": {
+    "raise_down": {
+      "length": 16,
+      "row": 0
+    },
+    "idle_down": {
+      "length": 4,
+      "row": 1
+    }
+  },
+  "offset_x": -8,
+  "offset_y": -28
 }
