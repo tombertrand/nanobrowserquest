@@ -821,12 +821,14 @@ define([
           itemLevel = level;
           successRates = Types.getUpgradeSuccessRates();
           successRate = successRates[parseInt(level) - 1];
-        }
-
-        if (itemLevel && slot && item.startsWith("scrollupgradeblessed")) {
-          const blessedRates = Types.getBlessedSuccessRateBonus();
-          const blessedRate = blessedRates[parseInt(itemLevel) - 1];
-          successRate += blessedRate;
+        } else if (slot) {
+          if (!item.startsWith("scrollupgrade")) {
+            successRate = null;
+          } else if (itemLevel && item.startsWith("scrollupgradeblessed")) {
+            const blessedRates = Types.getBlessedSuccessRateBonus();
+            const blessedRate = blessedRates[parseInt(itemLevel) - 1];
+            successRate += blessedRate;
+          }
         }
 
         $(`#upgrade .item-slot:eq(${slot})`)
