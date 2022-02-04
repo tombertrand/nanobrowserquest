@@ -499,7 +499,7 @@ Types.itemUniqueMap = {
   blueaxe: ["Feeless Cutter", 14, 26],
   bluemorningstar: ["Saylormoon", 16, 28],
   frozensword: ["Broccolish Fury", 20, 32],
-  diamondsword: ["Find Cool Name", 28, 40],
+  diamondsword: ["Inevitable", 28, 40],
 
   // name, level, defense
   leatherarmor: ["The Representative", 2, 4],

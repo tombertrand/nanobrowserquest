@@ -339,7 +339,7 @@ var Properties = {
     },
     hp: 600,
     armor: 16,
-    weapon: 16,
+    weapon: 20,
   },
 
   cowking: {
@@ -350,7 +350,7 @@ var Properties = {
       beltfrozen: 3,
     },
     hp: 6000,
-    armor: 20,
+    armor: 24,
     weapon: 24,
   },
 };

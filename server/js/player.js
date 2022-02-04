@@ -293,6 +293,15 @@ module.exports = Player = Character.extend({
               });
 
               dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
+            } else if (mob.kind === Types.Entities.COWKING) {
+              const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+                x: 0,
+                y: 464,
+                w: 92,
+                h: 71,
+              });
+
+              dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
             }
 
             mob.receiveDamage(dmg);
