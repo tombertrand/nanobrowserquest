@@ -460,6 +460,42 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
             );
           }
 
+          // @NOTE Drawing auras first (under the character)
+          if (entity instanceof Character && entity.auras.length) {
+            entity.auras.forEach(aura => {
+              var sprite = null;
+              var anim = null;
+              if (aura === "drainlife") {
+                sprite = this.game.sprites["aura-drainlife"];
+                anim = this.game.drainLifeAnimation;
+              } else if (aura === "thunderstorm") {
+                sprite = this.game.sprites["aura-thunderstorm"];
+                anim = this.game.thunderstormAnimation;
+              } else if (aura === "piercearmor") {
+                sprite = this.game.sprites["aura-piercearmor"];
+                anim = this.game.pierceArmorAnimation;
+              }
+
+              if (sprite && anim) {
+                var os = this.upscaledRendering ? 1 : this.scale;
+                var ds = this.upscaledRendering ? this.scale : 1;
+
+                var frame = anim.currentFrame,
+                  x = frame.x * os,
+                  y = frame.y * os,
+                  w = sprite.width * os,
+                  h = sprite.height * os,
+                  ts = -12,
+                  dw = w * ds,
+                  dh = h * ds;
+
+                this.context.translate(0, ts * -ds);
+                this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
+                this.context.translate(0, ts * ds);
+              }
+            });
+          }
+
           let isFilterApplied = false;
           if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
             isFilterApplied = true;
@@ -557,6 +593,7 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
         if (entity instanceof Character && entity.sprite.name === "anvil") {
           var sprite = null;
           var anim = null;
+          // var filter = null;
           if (this.game.isAnvilRecipe) {
             sprite = this.game.sprites["anvil-recipe"];
             anim = this.game.anvilRecipeAnimation;
@@ -586,62 +623,15 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
               dw = w * ds,
               dh = h * ds;
 
+            // @NOTE To be researched https://codepen.io/sosuke/pen/Pjoqqp
+            // this.context.filter = "sepia(50%)";
+            // this.context.fillStyle = "hsl(-121, 100%, 50%)";
+            // this.context.filter = "hue-rotate(-200deg)";
+            // this.context.filter = filter;
+            // this.context.fillStyle = "hsl(" + 360 * Math.random() + ",100%,50%)";
             this.context.translate(0, ts * -ds);
             this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
-          }
-        }
-
-        if (entity instanceof Character && entity.auras.includes("drainlife")) {
-          var sprite = this.game.sprites["drainlife"];
-          var anim = this.game.drainLifeAnimation;
-
-          if (sprite && anim) {
-            var os = this.upscaledRendering ? 1 : this.scale;
-            var ds = this.upscaledRendering ? this.scale : 1;
-            var { x: entityX, y: entityY } = entity;
-
-            var frame = anim.currentFrame,
-              s = this.scale,
-              x = frame.x * os,
-              y = frame.y * os,
-              w = sprite.width * os,
-              h = sprite.height * os,
-              ts = -12,
-              dx = entityX * s,
-              dy = entityY * s,
-              dw = w * ds,
-              dh = h * ds;
-
-            this.context.translate(0, ts * -ds);
-            this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
-            this.context.translate(0, ts * ds);
-          }
-        }
-
-        if (entity instanceof Character && entity.auras.includes("thunderstorm")) {
-          var sprite = this.game.sprites["thunderstorm"];
-          var anim = this.game.thunderstormAnimation;
-
-          if (sprite && anim) {
-            var os = this.upscaledRendering ? 1 : this.scale;
-            var ds = this.upscaledRendering ? this.scale : 1;
-            var { x: entityX, y: entityY } = entity;
-
-            var frame = anim.currentFrame,
-              s = this.scale,
-              x = frame.x * os,
-              y = frame.y * os,
-              w = sprite.width * os,
-              h = sprite.height * os,
-              ts = -12,
-              dx = entityX * s,
-              dy = entityY * s,
-              dw = w * ds,
-              dh = h * ds;
-
-            this.context.translate(0, ts * -ds);
-            this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
-            this.context.translate(0, ts * ds);
+            // this.context.filter = "none";
           }
         }
 

@@ -60,6 +60,7 @@ define([
       this.anvilSuccessTimeout = null;
       this.isAnvilFail = false;
       this.anvilFailTimeout = null;
+      this.cowPortalStart = false;
 
       this.renderer = null;
       this.updater = null;
@@ -126,8 +127,9 @@ define([
         "loot",
         "target",
         "levelup",
-        "drainlife",
-        "thunderstorm",
+        "aura-drainlife",
+        "aura-thunderstorm",
+        "aura-piercearmor",
         "talk",
         "sparks",
         "shadow16",
@@ -357,6 +359,9 @@ define([
       this.thunderstormAnimation = new Animation("idle_down", 6, 0, 16, 8);
       this.thunderstormAnimation.setSpeed(200);
 
+      this.pierceArmorAnimation = new Animation("idle_down", 6, 0, 16, 8);
+      this.pierceArmorAnimation.setSpeed(140);
+
       this.anvilRecipeAnimation = new Animation("idle_down", 4, 0, 15, 8);
       this.anvilRecipeAnimation.setSpeed(80);
 
@@ -418,6 +423,7 @@ define([
             magicDamage,
             flameDamage,
             lightningDamage,
+            pierceArmor,
             bonus = [],
             requirement,
             description,
@@ -431,6 +437,7 @@ define([
             ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
             ${flameDamage ? `<div class="item-bonus">Flame damage: ${flameDamage}</div>` : ""}
             ${lightningDamage ? `<div class="item-bonus">Lightning damage: ${lightningDamage}</div>` : ""}
+            ${pierceArmor ? `<div class="item-bonus">Armor Piercing: ${pierceArmor}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
@@ -2189,16 +2196,17 @@ define([
                     entity.isAggressive = true;
                   }, 1000);
                 } else if (entity.kind === Types.Entities.COWPORTAL && entity.gridX === 43 && entity.gridY === 211) {
-                  // @TODO Fix Portal animations, so it doesn't start again in town
+                  if (self.cowPortalStart) {
+                    entity.setSpeed(75);
+                    entity.raise();
 
-                  // console.log("~~~~entity.spawnTime", entity.spawnTime);
-
-                  entity.setSpeed(75);
-                  entity.raise();
-                  setTimeout(() => {
-                    entity.setSpeed(150);
+                    setTimeout(() => {
+                      entity.setSpeed(150);
+                      entity.idle();
+                    }, 1200);
+                  } else {
                     entity.idle();
-                  }, 1200);
+                  }
                 } else {
                   entity.idle();
                 }
@@ -2881,33 +2889,42 @@ define([
         });
 
         self.client.onReceiveCowLevelStart(function () {
-          // - start portal animation
+          self.cowPortalStart = true;
+          setTimeout(() => {
+            self.cowPortalStart = false;
+          }, 1200);
+        });
 
-          // const portal = self.getNpcAt(43, 211);
-          // console.log("~~~~portal", portal);
+        self.client.onReceiveCowLevelInProgress(function (cowLevelClock) {
+          var selectedDate = new Date().valueOf() + cowLevelClock * 1000;
 
-          // portal.setSpeed(75);
-          // portal.raise();
-          // setTimeout(() => {
-          //   portal.setSpeed(150);
-          //   portal.idle();
-          // }, 1200);
+          $("#countdown")
+            .countdown(selectedDate.toString())
+            .on("update.countdown", function (event) {
+              $(this).html(event.strftime("%M:%S"));
+            })
+            .on("finish.countdown", function (event) {
+              $(this).html("Portal to the secret level closed.");
 
-          console.log("~~~~onReceiveCowLevelStart");
+              setTimeout(() => {
+                $(this).html("");
+              }, 5000);
+            });
         });
 
         self.client.onReceiveCowLevelEnd(function () {
-          // npc.die();
-          console.log("~~~~onReceiveCowLevelEnd");
+          $("#countdown").countdown(0);
+          $("#countdown").countdown("remove");
 
           if (self.player.gridY >= 464 && self.player.gridY <= 535) {
             self.player.stop();
             self.player.nextStep();
-            // setTimeout(() => {
+
+            const x = Math.ceil(randomRange(40, 45));
+            const y = Math.ceil(randomRange(208, 213));
 
             // self.player.idle();
-            console.log("~~~~teleport back to town");
-            self.player.stop_pathing_callback({ x: 45, y: 213, isWaypoint: true });
+            self.player.stop_pathing_callback({ x, y, isWaypoint: true });
             // }, 100);
           }
         });

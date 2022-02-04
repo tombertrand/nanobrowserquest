@@ -55,6 +55,7 @@ Formulas.dmg = function ({
   weaponDamage,
   flameDamage,
   lightningDamage,
+  pierceArmor,
 }) {
   const { min, max } = Formulas.minMaxDamage({
     weapon,
@@ -66,10 +67,12 @@ Formulas.dmg = function ({
     weaponDamage,
     flameDamage,
     lightningDamage,
+    pierceArmor,
   });
   const dealt = Utils.randomInt(min, max);
   const absorbed = Math.floor(armorLevel * Utils.randomInt(2, 4));
-  const dmg = dealt - absorbed;
+  // @TODO Properly calculate pierceArmor
+  const dmg = dealt + pierceArmor - absorbed;
 
   //console.log("abs: "+absorbed+"   dealt: "+ dealt+"   dmg: "+ (dealt - absorbed));
   if (dmg <= 0) {

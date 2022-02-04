@@ -61,7 +61,8 @@ Types = {
     PURCHASE_COMPLETED: 48,
     PURCHASE_ERROR: 52,
     COWLEVEL_START: 53,
-    COWLEVEL_END: 54,
+    COWLEVEL_INPROGRESS: 54,
+    COWLEVEL_END: 55,
     GUILDERRORTYPE: {
       DOESNOTEXIST: 1,
       BADNAME: 2,
@@ -351,7 +352,7 @@ var kinds = {
   zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
   necromancer: [Types.Entities.NECROMANCER, "mob", 400, 45],
   cow: [Types.Entities.COW, "mob", 50, 49],
-  cowking: [Types.Entities.COWKING, "mob", 500, 50],
+  cowking: [Types.Entities.COWKING, "mob", 400, 50],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
@@ -1051,6 +1052,7 @@ Types.getBonusDescriptionMap = [
   "+# Drain life",
   "+# Flame damage",
   "+# Lightning damage",
+  "+# Pierce armor attack",
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1070,6 +1072,7 @@ Types.getBonus = function (rawBonus, level) {
   const drainLifePerLevel = [1, 2, 3, 3, 4, 5, 6, 8, 12, 17];
   const flameDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const lightningDamagePerLevel = [1, 2, 3, 4, 6, 10, 15, 22, 30, 40];
+  const pierceArmorPerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1088,6 +1091,7 @@ Types.getBonus = function (rawBonus, level) {
     drainLifePerLevel,
     flameDamagePerLevel,
     lightningDamagePerLevel,
+    pierceArmorPerLevel,
   ];
 
   const bonusType = [
@@ -1107,6 +1111,7 @@ Types.getBonus = function (rawBonus, level) {
     "drainLife",
     "flameDamage",
     "lightningDamage",
+    "pierceArmor",
   ];
 
   const bonus = [];

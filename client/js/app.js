@@ -1,4 +1,8 @@
-define(["jquery", "storage", "store", "util", "lib/jquery.qrcode"], function ($, Storage, Store) {
+define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.countdown"], function (
+  $,
+  Storage,
+  Store,
+) {
   var App = Class.extend({
     init: function () {
       this.currentPage = 1;

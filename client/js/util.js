@@ -65,3 +65,7 @@ function copyToClipboard(text) {
   document.execCommand("copy");
   document.body.removeChild(sampleTextarea);
 }
+
+function randomRange(min, max) {
+  return min + Math.random() * (max - min);
+}

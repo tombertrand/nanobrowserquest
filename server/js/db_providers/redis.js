@@ -896,21 +896,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
           if (recipe) {
             if (recipe === "cowLevel") {
               if (player.server.cowLevelClock) {
-                console.log("~~~~~cowLevelClock exists!");
                 self.moveUpgradeItemsToInventory(player);
               } else {
                 player.server.startCowLevel();
-                // @TODO
-                // - Check if another cowLevel is up, if yes abort and move items to inventory
-                // - Spawn portal
-                // - Randomize and revive packs of cows
-                // - Spawn the king somewhere within a pack
-                // - Start a 30m timer to close the portal and evacuate players
-
-                console.log("~~~~COW LEVEL!");
-
-                // @TODO Uncomment once the testing is done
-                // upgrade = upgrade.map(() => 0);
+                upgrade = upgrade.map(() => 0);
                 player.broadcast(new Messages.AnvilRecipe(recipe), false);
               }
             }

@@ -1,4 +1,12 @@
-define(["jquery", "app", "entrypoint", "lib/jquery-ui", "lib/jquery.ui.touch-punch", "lib/jquery.qrcode"], function (
+define([
+  "jquery",
+  "app",
+  "entrypoint",
+  "lib/jquery-ui",
+  "lib/jquery.ui.touch-punch",
+  "lib/jquery.qrcode",
+  "lib/jquery.countdown",
+], function (
   $,
 
   App,
@@ -6,6 +14,7 @@ define(["jquery", "app", "entrypoint", "lib/jquery-ui", "lib/jquery.ui.touch-pun
   jqueryUI,
   touchPunch,
   qrcode,
+  countdown,
 ) {
   var app, game;
 

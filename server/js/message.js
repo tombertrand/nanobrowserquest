@@ -71,6 +71,15 @@ Messages.CowLevelStart = Message.extend({
   },
 });
 
+Messages.CowLevelInProgress = Message.extend({
+  init: function (cowLevelClock) {
+    this.cowLevelClock = cowLevelClock;
+  },
+  serialize: function () {
+    return [Types.Messages.COWLEVEL_INPROGRESS, this.cowLevelClock];
+  },
+});
+
 Messages.CowLevelEnd = Message.extend({
   init: function () {},
   serialize: function () {

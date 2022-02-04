@@ -267,6 +267,11 @@ define(["character", "timer"], function (Character, Timer) {
         thunderStorm.update(t);
       }
 
+      var pierceArmor = this.game.pierceArmorAnimation;
+      if (pierceArmor) {
+        pierceArmor.update(t);
+      }
+
       var anvilRecipe = this.game.anvilRecipeAnimation;
       if (anvilRecipe) {
         anvilRecipe.update(t);

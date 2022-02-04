@@ -245,6 +245,7 @@ module.exports = Player = Character.extend({
             weaponDamage: self.bonus.weaponDamage,
             flameDamage: self.bonus.flameDamage,
             lightningDamage: self.bonus.lightningDamage,
+            pierceArmor: self.bonus.pierceArmor,
           });
 
           if (self.bonus.criticalHit) {
@@ -441,6 +442,7 @@ module.exports = Player = Character.extend({
               const drainLifeBonus = [13];
               const fireDamageBonus = [14];
               const lightningDamageBonus = [15];
+              const pierceArmorBonus = [16];
 
               let bonus = [];
               if (kind === Types.Entities.RINGBRONZE) {
@@ -457,10 +459,12 @@ module.exports = Player = Character.extend({
                 bonus = _.shuffle(highLevelBonus)
                   .slice(0, 2)
                   .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-                  .concat(_.shuffle(fireDamageBonus.concat(lightningDamageBonus)).slice(0, 1));
+                  .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceArmorBonus]).slice(0, 1));
               } else if (kind === Types.Entities.RINGRAISTONE) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
+              }
 
+              if (kind === Types.Entities.AMULETCOW || kind === Types.Entities.RINGRAISTONE) {
                 databaseHandler.logLoot({
                   player: self,
                   item: `${Types.getKindAsString(kind)}:1:[${bonus.sort((a, b) => a - b)}]`,
@@ -490,6 +494,10 @@ module.exports = Player = Character.extend({
 
           self.server.handlePlayerVanish(self);
           self.server.pushRelevantEntityListTo(self);
+
+          if (y >= 464 && y <= 535) {
+            self.send(new Messages.CowLevelInProgress(self.server.cowLevelClock).serialize());
+          }
         }
       } else if (action === Types.Messages.BOSS_CHECK) {
         if ((self.hash || self.hash1) && !message[1]) {
@@ -926,12 +934,17 @@ module.exports = Player = Character.extend({
   calculateBonus: function () {
     let hasDrainLifeAura = false;
     let hasThunderstormAura = false;
+    let hasPierceArmor = false;
 
     if (this.bonus.drainLife) {
       hasDrainLifeAura = true;
     }
     if (this.bonus.lightningDamage) {
       hasThunderstormAura = true;
+    }
+
+    if (this.bonus.pierceArmor) {
+      hasPierceArmor = true;
     }
 
     this.resetBonus();
@@ -994,6 +1007,12 @@ module.exports = Player = Character.extend({
       } else if (hasThunderstormAura && !this.bonus.lightningDamage) {
         this.removeAura("thunderstorm");
       }
+
+      if (this.bonus.pierceArmor) {
+        this.addAura("piercearmor");
+      } else if (hasPierceArmor && !this.bonus.pierceArmor) {
+        this.removeAura("piercearmor");
+      }
     } catch (err) {
       console.log("Error: ", err);
       Sentry.captureException(err, {
@@ -1022,6 +1041,7 @@ module.exports = Player = Character.extend({
       drainLife: 0,
       flameDamage: 0,
       lightningDamage: 0,
+      pierceArmor: 0,
     };
   },
 
@@ -1151,7 +1171,6 @@ module.exports = Player = Character.extend({
             ? `${minAbsorb - this.bonus.absorbedDamage}-${maxAbsorb - this.bonus.absorbedDamage}`
             : maxAbsorb - this.bonus.absorbedDamage,
         absorb: this.bonus.absorbedDamage,
-        // absorb: minAbsorb !== maxAbsorb ? `${minAbsorb}-${maxAbsorb}` : maxAbsorb,
       }).serialize(),
     );
   },

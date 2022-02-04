@@ -605,7 +605,7 @@ module.exports = World = cls.Class.extend({
   },
 
   startCowLevel: function () {
-    this.cowLevelClock = 11115;
+    this.cowLevelClock = 30 * 60; // 30 minutes
 
     this.pushBroadcast(new Messages.CowLevelStart());
 
@@ -617,7 +617,7 @@ module.exports = World = cls.Class.extend({
 
     cowCoords.map(({ x, y }, coordsIndex) => {
       // Spawn the surrounding cows
-      const cowCount = Utils.randomRange(7, 22);
+      const cowCount = Math.ceil(Utils.randomRange(7, 22));
 
       for (let i = 0; i < cowCount; i++) {
         // Cow king is possibly at the center of 1 of the 30 shuffled packs
@@ -635,14 +635,10 @@ module.exports = World = cls.Class.extend({
     this.cowLevelInterval = setInterval(() => {
       this.cowLevelClock -= 1;
 
-      console.log("~~~~cowLevelClock", this.cowLevelClock);
-
       if (this.cowLevelClock < 0) {
         clearInterval(this.cowLevelInterval);
         this.cowLevelInterval = null;
         this.cowLevelClock = null;
-
-        console.log("~~~~endCowLevel");
 
         this.endCowLevel();
       }
@@ -1108,11 +1104,11 @@ module.exports = World = cls.Class.extend({
     var v = Utils.random(100);
     var p = 0;
     var item = null;
-    var superUnique = Utils.random(7500);
+    var superUnique = Utils.random(5000);
 
-    // var randomDrop = Utils.random(3);
-    // // var drops = ["diamondsword", "amuletcow"];
-    // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // var randomDrop = Utils.random(1);
+    // var drops = ["amuletcow"];
+    // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
 
     if (superUnique === 420 && mob.kind >= Types.Entities.EYE) {
