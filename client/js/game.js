@@ -3664,7 +3664,7 @@ define([
           // avoid stacking mobs on the same tile next to a player
           // by making them go to adjacent tiles if they are available
           if (pos && !target.adjacentTiles[pos.o]) {
-            if (this.player.target && attacker.id === this.player.target.id) {
+            if (this.player && this.player.target && attacker.id === this.player.target.id) {
               return false; // never unstack the player's target
             }
 

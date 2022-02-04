@@ -605,7 +605,7 @@ module.exports = World = cls.Class.extend({
   },
 
   startCowLevel: function () {
-    this.cowLevelClock = 30 * 60; // 30 minutes
+    this.cowLevelClock = 15 * 60; // 15 minutes
 
     this.pushBroadcast(new Messages.CowLevelStart());
 

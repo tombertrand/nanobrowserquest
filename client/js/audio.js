@@ -21,6 +21,7 @@ define(["area"], function (Area) {
         "icewalk",
         "skeletoncommander",
         "necromancer",
+        "cowlevel",
       ];
       this.soundNames = [
         "loot",
