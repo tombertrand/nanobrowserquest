@@ -250,7 +250,7 @@ module.exports = Player = Character.extend({
           if (self.bonus.criticalHit) {
             isCritical = Utils.random(100) <= self.bonus.criticalHit;
             if (isCritical) {
-              dmg = dmg * 2;
+              dmg = Math.ceil(dmg * 1.5);
             }
           }
 
@@ -792,19 +792,16 @@ module.exports = Player = Character.extend({
   },
 
   getState: function () {
-    var basestate = this._getBaseState(),
-      state = [
-        this.name,
-        this.orientation,
-        `${this.armor}:${this.armorLevel}${this.armorBonus ? `:${this.armorBonus}` : ""}`,
-        `${this.weapon}:${this.weaponLevel}${this.weaponBonus ? `:${this.weaponBonus}` : ""}`,
-        this.level,
-        this.auras,
-      ];
-
-    if (this.target) {
-      state.push(this.target);
-    }
+    var basestate = this._getBaseState();
+    var state = [
+      this.orientation,
+      this.target,
+      this.name,
+      `${this.armor}:${this.armorLevel}${this.armorBonus ? `:${this.armorBonus}` : ""}`,
+      `${this.weapon}:${this.weaponLevel}${this.weaponBonus ? `:${this.weaponBonus}` : ""}`,
+      this.level,
+      this.auras,
+    ];
 
     return basestate.concat(state);
   },

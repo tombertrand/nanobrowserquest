@@ -50,6 +50,35 @@ module.exports = World = cls.Class.extend({
     this.cowLevelClock = null;
     this.cowLevelInterval = null;
     this.cowLevelNpcId = null;
+    this.cowPossibleCoords = [];
+    this.cowEntityIds = [];
+    this.cowPackOrder = [
+      [0, 0],
+      [-1, 0],
+      [-1, -1],
+      [0, -1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+      [-1, 1],
+      [-2, 1],
+      [-2, 0],
+      [-2, -1],
+      [-2, -2],
+      [-1, -2],
+      [0, -2],
+      [1, -2],
+      [2, -2],
+      [2, -1],
+      [2, 0],
+      [2, 1],
+      [2, 2],
+      [1, 2],
+      [0, 2],
+      [-1, 2],
+      [-2, 2],
+    ];
 
     this.outgoingQueues = {};
 
@@ -347,8 +376,8 @@ module.exports = World = cls.Class.extend({
   },
 
   pushToGroup: function (groupId, message, ignoredPlayer) {
-    var self = this,
-      group = this.groups[groupId];
+    var self = this;
+    var group = this.groups[groupId];
 
     if (group) {
       _.each(group.players, function (playerId) {
@@ -576,14 +605,32 @@ module.exports = World = cls.Class.extend({
   },
 
   startCowLevel: function () {
-    this.cowLevelClock = 5;
+    this.cowLevelClock = 11115;
 
     this.pushBroadcast(new Messages.CowLevelStart());
 
     const portal = this.npcs[this.cowLevelNpcId];
     portal.respawnCallback();
 
-    // @TODO Spawn cows!
+    let count = 0;
+    const cowCoords = _.shuffle(this.cowPossibleCoords).slice(0, 30);
+
+    cowCoords.map(({ x, y }, coordsIndex) => {
+      // Spawn the surrounding cows
+      const cowCount = Utils.randomRange(7, 22);
+
+      for (let i = 0; i < cowCount; i++) {
+        // Cow king is possibly at the center of 1 of the 30 shuffled packs
+        const kind = coordsIndex === 0 && i === 0 ? Types.Entities.COWKING : Types.Entities.COW;
+        const id = `7${kind}${count++}`;
+        const mob = new Mob(id, kind, x + this.cowPackOrder[i][0], y + this.cowPackOrder[i][1]);
+        mob.onMove(this.onMobMoveCallback.bind(this));
+        // mob.onRespawn(() => {});
+
+        this.addMob(mob);
+        this.cowEntityIds.push(id);
+      }
+    });
 
     this.cowLevelInterval = setInterval(() => {
       this.cowLevelClock -= 1;
@@ -609,8 +656,13 @@ module.exports = World = cls.Class.extend({
     // portal.respawnCallback();
 
     this.despawn(portal);
-
     this.pushBroadcast(new Messages.CowLevelEnd());
+
+    // Despawn all cows
+    this.cowEntityIds.map(entityId => {
+      delete this.entities[entityId];
+      delete this.mobs[entityId];
+    });
   },
 
   createItem: function (kind, x, y) {
@@ -951,36 +1003,40 @@ module.exports = World = cls.Class.extend({
   },
 
   spawnStaticEntities: function () {
-    var self = this,
-      count = 0;
+    var self = this;
+    var count = 0;
 
     _.each(this.map.staticEntities, function (kindName, tid) {
-      var kind = Types.getKindFromString(kindName),
-        pos = self.map.tileIndexToGridPosition(tid);
+      var kind = Types.getKindFromString(kindName);
+      var pos = self.map.tileIndexToGridPosition(tid);
 
       if (Types.isNpc(kind)) {
         self.addNpc(kind, pos.x + 1, pos.y);
       } else if (Types.isMob(kind)) {
-        const id = `7${kind}${count++}`;
-        const mob = new Mob(id, kind, pos.x + 1, pos.y);
-
-        mob.onRespawn(function () {
-          mob.isDead = false;
-
-          self.addMob(mob);
-          if (mob.area && mob.area instanceof ChestArea) {
-            mob.area.addToArea(mob);
-          }
-        });
-        mob.onMove(self.onMobMoveCallback.bind(self));
-
-        if (kind === Types.Entities.ZOMBIE) {
-          mob.isDead = true;
-          self.zombies.push(mob);
+        if (kind === Types.Entities.COW) {
+          self.cowPossibleCoords.push({ x: pos.x + 1, y: pos.y });
         } else {
-          self.addMob(mob);
+          const id = `7${kind}${count++}`;
+          const mob = new Mob(id, kind, pos.x + 1, pos.y);
+
+          mob.onRespawn(function () {
+            mob.isDead = false;
+
+            self.addMob(mob);
+            if (mob.area && mob.area instanceof ChestArea) {
+              mob.area.addToArea(mob);
+            }
+          });
+          mob.onMove(self.onMobMoveCallback.bind(self));
+
+          if (kind === Types.Entities.ZOMBIE) {
+            mob.isDead = true;
+            self.zombies.push(mob);
+          } else {
+            self.addMob(mob);
+          }
+          self.tryAddingMobToChestArea(mob);
         }
-        self.tryAddingMobToChestArea(mob);
       }
 
       if (Types.isItem(kind)) {
@@ -1054,10 +1110,10 @@ module.exports = World = cls.Class.extend({
     var item = null;
     var superUnique = Utils.random(7500);
 
-    var randomDrop = Utils.random(3);
-    // var drops = ["diamondsword", "amuletcow"];
-    var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
-    return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
+    // var randomDrop = Utils.random(3);
+    // // var drops = ["diamondsword", "amuletcow"];
+    // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
 
     if (superUnique === 420 && mob.kind >= Types.Entities.EYE) {
       //@NOTE 0.01% chance to drop a Rai Stone

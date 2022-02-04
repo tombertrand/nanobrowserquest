@@ -12,13 +12,11 @@ var Character = Entity.extend({
   },
 
   getState: function () {
-    var basestate = this._getBaseState(),
-      state = [];
+    var basestate = this._getBaseState();
+    var state = [];
 
     state.push(this.orientation);
-    if (this.target) {
-      state.push(this.target);
-    }
+    state.push(this.target);
 
     return basestate.concat(state);
   },

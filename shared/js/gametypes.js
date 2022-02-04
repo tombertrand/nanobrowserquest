@@ -59,9 +59,9 @@ Types = {
     PURCHASE_CREATE: 46,
     PURCHASE_CANCEL: 47,
     PURCHASE_COMPLETED: 48,
-    PURCHASE_ERROR: 49,
-    COWLEVEL_START: 50,
-    COWLEVEL_END: 51,
+    PURCHASE_ERROR: 52,
+    COWLEVEL_START: 53,
+    COWLEVEL_END: 54,
     GUILDERRORTYPE: {
       DOESNOTEXIST: 1,
       BADNAME: 2,
@@ -350,8 +350,8 @@ var kinds = {
   wraith: [Types.Entities.WRAITH, "mob", 120, 40],
   zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
   necromancer: [Types.Entities.NECROMANCER, "mob", 400, 45],
-  cow: [Types.Entities.COW, "mob", 50, 50],
-  cowking: [Types.Entities.COWKING, "mob", 200, 52],
+  cow: [Types.Entities.COW, "mob", 50, 49],
+  cowking: [Types.Entities.COWKING, "mob", 500, 50],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],

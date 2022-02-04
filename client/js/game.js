@@ -2188,7 +2188,11 @@ define([
                     entity.aggroRange = 10;
                     entity.isAggressive = true;
                   }, 1000);
-                } else if (entity.kind === Types.Entities.COWPORTAL) {
+                } else if (entity.kind === Types.Entities.COWPORTAL && entity.gridX === 43 && entity.gridY === 211) {
+                  // @TODO Fix Portal animations, so it doesn't start again in town
+
+                  // console.log("~~~~entity.spawnTime", entity.spawnTime);
+
                   entity.setSpeed(75);
                   entity.raise();
                   setTimeout(() => {
@@ -2630,6 +2634,7 @@ define([
               self.client.sendRequestPayout(Types.Entities.NECROMANCER);
             });
           } else if (kind === Types.Entities.COW) {
+            self.storage.incrementCowCount();
             self.tryUnlockingAchievement("FRESH_MEAT");
           } else if (kind === Types.Entities.COWKING) {
             self.tryUnlockingAchievement("COW_KING");
@@ -2894,6 +2899,17 @@ define([
         self.client.onReceiveCowLevelEnd(function () {
           // npc.die();
           console.log("~~~~onReceiveCowLevelEnd");
+
+          if (self.player.gridY >= 464 && self.player.gridY <= 535) {
+            self.player.stop();
+            self.player.nextStep();
+            // setTimeout(() => {
+
+            // self.player.idle();
+            console.log("~~~~teleport back to town");
+            self.player.stop_pathing_callback({ x: 45, y: 213, isWaypoint: true });
+            // }, 100);
+          }
         });
 
         self.client.onDisconnected(function (message) {

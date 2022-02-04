@@ -311,20 +311,15 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       } else {
         var name, orientation, target, weapon, weaponLevel, weaponBonus, armor, armorLevel, armorBonus, level, auras;
 
+        orientation = data[5];
+        target = data[6];
+
         if (Types.isPlayer(kind)) {
-          name = data[5];
-          orientation = data[6];
-          [armor, armorLevel, armorBonus] = data[7].split(":");
-          [weapon, weaponLevel, weaponBonus] = data[8].split(":");
-          auras = data[10];
-          // if (data.length > 9) {
-          //   target = data[9];
-          // }
-        } else if (Types.isMob(kind)) {
-          orientation = data[5];
-          if (data.length > 6) {
-            target = data[6];
-          }
+          name = data[7];
+          [armor, armorLevel, armorBonus] = data[8].split(":");
+          [weapon, weaponLevel, weaponBonus] = data[9].split(":");
+          level = data[10];
+          auras = data[11];
         }
 
         var character = EntityFactory.createEntity(kind, id, name);

@@ -311,7 +311,7 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.idleSpeed = 800;
         this.walkSpeed = 200;
         this.shadowOffsetY = 1;
-        this.aggroRange = 4;
+        this.aggroRange = 3;
         this.setAttackRate(1300);
       },
     }),
@@ -324,7 +324,7 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.idleSpeed = 800;
         this.walkSpeed = 200;
         this.shadowOffsetY = 1;
-        this.aggroRange = 4;
+        this.aggroRange = 3;
         this.setAttackRate(1300);
       },
     }),
