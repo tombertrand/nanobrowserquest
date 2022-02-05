@@ -247,11 +247,11 @@ Utils.isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
   return random <= successRate;
 };
 
-const recipes = {
-  cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
-};
-
 Utils.isValidRecipe = items => {
+  const recipes = {
+    cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
+  };
+
   const result = Object.entries(recipes).find(([recipe, formulae]) => {
     if (formulae.length !== items.length) return;
 

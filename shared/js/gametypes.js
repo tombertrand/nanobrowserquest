@@ -351,7 +351,7 @@ var kinds = {
   wraith: [Types.Entities.WRAITH, "mob", 120, 40],
   zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
   necromancer: [Types.Entities.NECROMANCER, "mob", 400, 45],
-  cow: [Types.Entities.COW, "mob", 50, 49],
+  cow: [Types.Entities.COW, "mob", 25, 49],
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
 
   // kind, type, level, damage
