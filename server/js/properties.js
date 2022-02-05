@@ -334,7 +334,6 @@ var Properties = {
       frozenarmor: 1,
       frozensword: 1,
       beltfrozen: 1,
-      diamondsword: 1,
       scrollupgradehigh: 1,
     },
     hp: 600,

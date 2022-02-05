@@ -744,6 +744,19 @@ Types.isBelt = function (kindOrString) {
   }
 };
 
+Types.isBoss = function (kindOrString) {
+  if (typeof kindOrString === "number") {
+    return [
+      Types.Entities.BOSS,
+      Types.Entities.NECROMANCER,
+      Types.Entities.SKELETONCOMMANDER,
+      Types.Entities.COWKING,
+    ].includes(kindOrString);
+  } else {
+    return ["boss", "skeletoncommander", "necromancer", "cowking"].includes(kindOrString);
+  }
+};
+
 Types.isScroll = function (kindOrString) {
   if (typeof kindOrString === "number") {
     return [

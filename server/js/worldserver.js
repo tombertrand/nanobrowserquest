@@ -908,9 +908,6 @@ module.exports = World = cls.Class.extend({
     const EXP_LEVEL_START_RANGE = 2;
     const EXP_LEVEL_END_RANGE = 6;
     let exp = Types.getMobExp(mob.kind);
-    const isBoss = [Types.Entities.BOSS, Types.Entities.SKELETONCOMMANDER, Types.Entities.NECROMANCER].includes(
-      mob.kind,
-    );
 
     const levelDifference = playerLevel - mobLevel;
 
@@ -920,7 +917,7 @@ module.exports = World = cls.Class.extend({
       }
     } else if (levelDifference > 0) {
       // Too high level for mob
-      if (levelDifference > EXP_LEVEL_END_RANGE || (isBoss && levelDifference >= EXP_LEVEL_END_RANGE)) {
+      if (levelDifference > EXP_LEVEL_END_RANGE || (Types.isBoss(mob.kind) && levelDifference >= EXP_LEVEL_END_RANGE)) {
         return 0;
       } else if (levelDifference > EXP_LEVEL_START_RANGE) {
         // Nerf exp per level
@@ -1104,18 +1101,26 @@ module.exports = World = cls.Class.extend({
     var v = Utils.random(100);
     var p = 0;
     var item = null;
-    var superUnique = Utils.random(5000);
 
     // var randomDrop = Utils.random(1);
     // var drops = ["amuletcow"];
     // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
 
-    if (superUnique === 420 && mob.kind >= Types.Entities.EYE) {
-      //@NOTE 0.01% chance to drop a Rai Stone
-      item = this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
-    } else if (![Types.Entities.BOSS].includes(mob.kind) && [23, 42, 69].includes(v)) {
-      //@NOTE 3% chance to drop a NANO potion
+    if (mob.kind === Types.Entities.COW) {
+      if (Utils.random(300) === 69) {
+        return this.addItem(this.createItem(Types.getKindFromString("diamondsword"), mob.x, mob.y));
+      }
+    }
+    if (mob.kind >= Types.Entities.EYE) {
+      if (Utils.random(5500) === 420) {
+        //@NOTE 0.02% chance to drop a Rai Stone
+        return this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
+      }
+    }
+
+    if (!Types.isBoss(mob.kind) && [23, 42, 69].includes(v)) {
+      //@NOTE 3% chance to drop a NANO potion on non-boss monsters
       item = this.addItem(this.createItem(Types.getKindFromString("nanopotion"), mob.x, mob.y));
     } else {
       for (var itemName in drops) {
