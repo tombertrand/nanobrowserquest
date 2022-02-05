@@ -166,6 +166,7 @@ Types = {
     RINGGOLD: 82,
     RINGNECROMANCER: 115,
     RINGRAISTONE: 117,
+    RINGFOUNTAIN: 126,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
     AMULETCOW: 116,
@@ -296,6 +297,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGGOLD,
   Types.Entities.RINGNECROMANCER,
   Types.Entities.RINGRAISTONE,
+  Types.Entities.RINGFOUNTAIN,
 ];
 
 Types.Entities.Amulets = [Types.Entities.AMULETSILVER, Types.Entities.AMULETGOLD, Types.Entities.AMULETCOW];
@@ -391,6 +393,7 @@ var kinds = {
   ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 16],
   ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 28],
   ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
+  ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
@@ -490,6 +493,7 @@ Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Type
 
 Types.itemUniqueMap = {
   // name, level, attack
+  wirtleg: ["Faketoshi", 1, 5],
   sword: ["Faketoshi", 1, 5],
   axe: ["NonDisclosure Agreement", 2, 8],
   morningstar: ["Block Latte", 3, 10],
@@ -800,11 +804,14 @@ Types.isObject = function (kind) {
 
 Types.isUniqueRing = function (kindOrString) {
   if (typeof kindOrString === "number") {
-    return [Types.Entities.RINGNECROMANCER, Types.Entities.AMULETCOW, Types.Entities.RINGRAISTONE].includes(
-      kindOrString,
-    );
+    return [
+      Types.Entities.RINGNECROMANCER,
+      Types.Entities.AMULETCOW,
+      Types.Entities.RINGRAISTONE,
+      Types.Entities.RINGFOUNTAIN,
+    ].includes(kindOrString);
   } else {
-    return ["ringnecromancer", "amuletcow", "ringraistone"].includes(kindOrString);
+    return ["ringnecromancer", "amuletcow", "ringraistone", "ringfountain"].includes(kindOrString);
   }
 };
 
@@ -1066,6 +1073,7 @@ Types.getBonusDescriptionMap = [
   "+# Flame damage",
   "+# Lightning damage",
   "+# Pierce armor attack",
+  "+# Health",
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1086,6 +1094,7 @@ Types.getBonus = function (rawBonus, level) {
   const flameDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const lightningDamagePerLevel = [1, 2, 3, 4, 6, 10, 15, 22, 30, 40];
   const pierceArmorPerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
+  const highHealthPerLevel = [10, 20, 30, 40, 50, 65, 80, 100, 130, 160];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1105,6 +1114,7 @@ Types.getBonus = function (rawBonus, level) {
     flameDamagePerLevel,
     lightningDamagePerLevel,
     pierceArmorPerLevel,
+    highHealthPerLevel,
   ];
 
   const bonusType = [
@@ -1125,6 +1135,7 @@ Types.getBonus = function (rawBonus, level) {
     "flameDamage",
     "lightningDamage",
     "pierceArmor",
+    "highHealth",
   ];
 
   const bonus = [];

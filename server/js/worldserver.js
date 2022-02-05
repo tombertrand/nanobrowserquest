@@ -1113,9 +1113,11 @@ module.exports = World = cls.Class.extend({
       }
     }
     if (mob.kind >= Types.Entities.EYE) {
-      if (Utils.random(5500) === 420) {
-        //@NOTE 0.02% chance to drop a Rai Stone
+      const random = Utils.random(10000);
+      if (random === 420) {
         return this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
+      } else if (mob.kind >= Types.Entities.RAT2 && random === 6969) {
+        return this.addItem(this.createItem(Types.getKindFromString("ringfountain"), mob.x, mob.y));
       }
     }
 

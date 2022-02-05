@@ -452,6 +452,7 @@ module.exports = Player = Character.extend({
               const fireDamageBonus = [14];
               const lightningDamageBonus = [15];
               const pierceArmorBonus = [16];
+              const highHealthBonus = [17];
 
               let bonus = [];
               if (kind === Types.Entities.RINGBRONZE) {
@@ -471,9 +472,17 @@ module.exports = Player = Character.extend({
                   .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceArmorBonus]).slice(0, 1));
               } else if (kind === Types.Entities.RINGRAISTONE) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
+              } else if (kind === Types.Entities.RINGFOUNTAIN) {
+                bonus = _.shuffle([5, 6, ...drainLifeBonus])
+                  .slice(0, 2)
+                  .concat([8, ...highHealthBonus]);
               }
 
-              if (kind === Types.Entities.AMULETCOW || kind === Types.Entities.RINGRAISTONE) {
+              if (
+                kind === Types.Entities.AMULETCOW ||
+                kind === Types.Entities.RINGRAISTONE ||
+                kind === Types.Entities.RINGFOUNTAIN
+              ) {
                 databaseHandler.logLoot({
                   player: self,
                   item: `${Types.getKindAsString(kind)}:1:[${bonus.sort((a, b) => a - b)}]`,
@@ -1051,6 +1060,7 @@ module.exports = Player = Character.extend({
       flameDamage: 0,
       lightningDamage: 0,
       pierceArmor: 0,
+      highHealth: 0,
     };
   },
 
@@ -1115,7 +1125,9 @@ module.exports = Player = Character.extend({
         level: this.armorLevel,
         playerLevel: this.level,
         beltLevel: this.beltLevel,
-      }) + this.bonus.health;
+      }) +
+      this.bonus.health +
+      this.bonus.highHealth;
 
     if (reset) {
       this.resetHitPoints(maxHitPoints);

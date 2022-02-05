@@ -252,6 +252,13 @@ define(["item"], function (Item) {
       },
     }),
 
+    RingFountain: Item.extend({
+      init: function (id) {
+        this._super(id, Types.Entities.RINGFOUNTAIN, "ring");
+        this.lootMessage = "You pick up a Fountain of Youth";
+      },
+    }),
+
     AmuletSilver: Item.extend({
       init: function (id) {
         this._super(id, Types.Entities.AMULETSILVER, "amulet");

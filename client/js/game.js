@@ -243,6 +243,7 @@ define([
         "item-ringgold",
         "item-ringnecromancer",
         "item-ringraistone",
+        "item-ringfountain",
         "item-amuletsilver",
         "item-amuletgold",
         "item-amuletcow",

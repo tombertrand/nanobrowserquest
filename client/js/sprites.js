@@ -58,6 +58,7 @@ define([
   "text!../sprites/item-ringgold.json",
   "text!../sprites/item-ringnecromancer.json",
   "text!../sprites/item-ringraistone.json",
+  "text!../sprites/item-ringfountain.json",
   "text!../sprites/item-amuletsilver.json",
   "text!../sprites/item-amuletgold.json",
   "text!../sprites/item-amuletcow.json",

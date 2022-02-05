@@ -272,6 +272,10 @@ define(["mobs", "items", "npcs", "warrior", "chest"], function (Mobs, Items, NPC
     return new Items.RingRaiStone(id);
   };
 
+  EntityFactory.builders[Types.Entities.RINGFOUNTAIN] = function (id) {
+    return new Items.RingFountain(id);
+  };
+
   EntityFactory.builders[Types.Entities.AMULETSILVER] = function (id) {
     return new Items.AmuletSilver(id);
   };
