@@ -493,7 +493,7 @@ Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Type
 
 Types.itemUniqueMap = {
   // name, level, attack
-  wirtleg: ["Faketoshi", 1, 5],
+  wirtleg: ["Bored Ape Yacht Club", 1, 5],
   sword: ["Faketoshi", 1, 5],
   axe: ["NonDisclosure Agreement", 2, 8],
   morningstar: ["Block Latte", 3, 10],
@@ -1094,7 +1094,7 @@ Types.getBonus = function (rawBonus, level) {
   const flameDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const lightningDamagePerLevel = [1, 2, 3, 4, 6, 10, 15, 22, 30, 40];
   const pierceArmorPerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
-  const highHealthPerLevel = [10, 20, 30, 40, 50, 65, 80, 100, 130, 160];
+  const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
 
   const bonusPerLevel = [
     minDamagePerLevel,
