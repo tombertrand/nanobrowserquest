@@ -267,9 +267,9 @@ define(["character", "timer"], function (Character, Timer) {
         thunderStorm.update(t);
       }
 
-      var pierceArmor = this.game.pierceArmorAnimation;
-      if (pierceArmor) {
-        pierceArmor.update(t);
+      var highHealth = this.game.highHealthAnimation;
+      if (highHealth) {
+        highHealth.update(t);
       }
 
       var anvilRecipe = this.game.anvilRecipeAnimation;

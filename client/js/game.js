@@ -129,7 +129,7 @@ define([
         "levelup",
         "aura-drainlife",
         "aura-thunderstorm",
-        "aura-piercearmor",
+        "aura-highhealth",
         "talk",
         "sparks",
         "shadow16",
@@ -360,8 +360,8 @@ define([
       this.thunderstormAnimation = new Animation("idle_down", 6, 0, 16, 8);
       this.thunderstormAnimation.setSpeed(200);
 
-      this.pierceArmorAnimation = new Animation("idle_down", 6, 0, 16, 8);
-      this.pierceArmorAnimation.setSpeed(140);
+      this.highHealthAnimation = new Animation("idle_down", 6, 0, 16, 8);
+      this.highHealthAnimation.setSpeed(140);
 
       this.anvilRecipeAnimation = new Animation("idle_down", 4, 0, 15, 8);
       this.anvilRecipeAnimation.setSpeed(80);

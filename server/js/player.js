@@ -952,7 +952,7 @@ module.exports = Player = Character.extend({
   calculateBonus: function () {
     let hasDrainLifeAura = false;
     let hasThunderstormAura = false;
-    let hasPierceArmor = false;
+    let hasHighHealth = false;
 
     if (this.bonus.drainLife) {
       hasDrainLifeAura = true;
@@ -961,8 +961,8 @@ module.exports = Player = Character.extend({
       hasThunderstormAura = true;
     }
 
-    if (this.bonus.pierceArmor) {
-      hasPierceArmor = true;
+    if (this.bonus.highHealth) {
+      hasHighHealth = true;
     }
 
     this.resetBonus();
@@ -1026,10 +1026,10 @@ module.exports = Player = Character.extend({
         this.removeAura("thunderstorm");
       }
 
-      if (this.bonus.pierceArmor) {
-        this.addAura("piercearmor");
-      } else if (hasPierceArmor && !this.bonus.pierceArmor) {
-        this.removeAura("piercearmor");
+      if (this.bonus.highHealth) {
+        this.addAura("highhealth");
+      } else if (hasHighHealth && !this.bonus.highHealth) {
+        this.removeAura("highhealth");
       }
     } catch (err) {
       console.log("Error: ", err);

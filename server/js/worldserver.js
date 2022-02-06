@@ -1103,8 +1103,8 @@ module.exports = World = cls.Class.extend({
     var item = null;
 
     // var randomDrop = Utils.random(1);
-    // var drops = ["amuletcow"];
-    // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // var drops = ["ringfountain"];
+    // // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
 
     if (mob.kind === Types.Entities.COW) {
@@ -1113,7 +1113,7 @@ module.exports = World = cls.Class.extend({
       }
     }
     if (mob.kind >= Types.Entities.EYE) {
-      const random = Utils.random(10000);
+      const random = Utils.random(11000);
       if (random === 420) {
         return this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
       } else if (mob.kind >= Types.Entities.RAT2 && random === 6969) {

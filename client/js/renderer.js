@@ -471,9 +471,9 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
               } else if (aura === "thunderstorm") {
                 sprite = this.game.sprites["aura-thunderstorm"];
                 anim = this.game.thunderstormAnimation;
-              } else if (aura === "piercearmor") {
-                sprite = this.game.sprites["aura-piercearmor"];
-                anim = this.game.pierceArmorAnimation;
+              } else if (aura === "highhealth") {
+                sprite = this.game.sprites["aura-highhealth"];
+                anim = this.game.highHealthAnimation;
               }
 
               if (sprite && anim) {

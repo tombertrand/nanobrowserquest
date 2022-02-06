@@ -138,7 +138,7 @@ define([
   "text!../sprites/levelup.json",
   "text!../sprites/aura-drainlife.json",
   "text!../sprites/aura-thunderstorm.json",
-  "text!../sprites/aura-piercearmor.json",
+  "text!../sprites/aura-highhealth.json",
   "text!../sprites/villagegirl.json",
   "text!../sprites/villager.json",
   "text!../sprites/carlosmatos.json",
