@@ -274,7 +274,8 @@ module.exports = Player = Character.extend({
                 h: 25,
               });
 
-              dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.125));
+              const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+              dmg = Math.floor(dmg * percentReduce);
             } else if (mob.kind === Types.Entities.SKELETONCOMMANDER) {
               const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
                 x: 140,
@@ -283,7 +284,8 @@ module.exports = Player = Character.extend({
                 h: 25,
               });
 
-              dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
+              const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+              dmg = Math.floor(dmg * percentReduce);
             } else if (mob.kind === Types.Entities.NECROMANCER) {
               const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
                 x: 140,
@@ -292,7 +294,8 @@ module.exports = Player = Character.extend({
                 h: 25,
               });
 
-              dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
+              const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+              dmg = Math.floor(dmg * percentReduce);
             } else if (mob.kind === Types.Entities.COWKING) {
               const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
                 x: 0,
@@ -301,7 +304,8 @@ module.exports = Player = Character.extend({
                 h: 71,
               });
 
-              dmg = Math.floor(dmg - dmg * ((adjustedDifficulty - 1) * 0.2));
+              const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+              dmg = Math.floor(dmg * percentReduce);
             }
 
             mob.receiveDamage(dmg);
