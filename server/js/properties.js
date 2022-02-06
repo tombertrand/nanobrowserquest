@@ -329,7 +329,7 @@ var Properties = {
 
   cow: {
     drops: {
-      rejuvenationpotion: 80,
+      rejuvenationpotion: 95,
       hornedarmor: 1,
       frozenarmor: 1,
       frozensword: 1,
@@ -343,7 +343,7 @@ var Properties = {
 
   cowking: {
     drops: {
-      scrollupgradehigh: 15,
+      scrollupgradehigh: 89,
       diamondsword: 5,
       amuletcow: 3,
       beltfrozen: 3,
