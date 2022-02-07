@@ -343,10 +343,10 @@ var Properties = {
 
   cowking: {
     drops: {
-      scrollupgradehigh: 89,
+      scrollupgradehigh: 85,
       diamondsword: 5,
-      amuletcow: 3,
-      beltfrozen: 3,
+      amuletcow: 5,
+      beltfrozen: 5,
     },
     hp: 6000,
     armor: 24,

@@ -47,6 +47,7 @@ module.exports = World = cls.Class.extend({
     this.chestAreas = [];
     this.groups = {};
     this.zombies = [];
+    this.cowTotal = 0;
     this.cowLevelClock = null;
     this.cowLevelInterval = null;
     this.cowLevelNpcId = null;
@@ -605,6 +606,7 @@ module.exports = World = cls.Class.extend({
   },
 
   startCowLevel: function () {
+    this.cowTotal = 0;
     this.cowLevelClock = 15 * 60; // 15 minutes
 
     this.pushBroadcast(new Messages.CowLevelStart());
@@ -618,6 +620,7 @@ module.exports = World = cls.Class.extend({
     cowCoords.map(({ x, y }, coordsIndex) => {
       // Spawn the surrounding cows
       const cowCount = Math.ceil(Utils.randomRange(7, 22));
+      this.cowTotal += cowCount;
 
       for (let i = 0; i < cowCount; i++) {
         // Cow king is possibly at the center of 1 of the 30 shuffled packs
@@ -646,10 +649,7 @@ module.exports = World = cls.Class.extend({
   },
 
   endCowLevel: function () {
-    // @TODO All players within x,y to spawn back in town
-
     const portal = this.npcs[this.cowLevelNpcId];
-    // portal.respawnCallback();
 
     this.despawn(portal);
     this.pushBroadcast(new Messages.CowLevelEnd());

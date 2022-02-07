@@ -317,16 +317,6 @@ module.exports = Player = Character.extend({
               self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
             }
           }
-          // } else {
-          //   mob.receiveDamage(dmg);
-          //   if (mob.server) {
-          //     mob.server.handleHurtEntity({ entity: mob, isCritical });
-          //     if (mob.hitPoints <= 0) {
-          //       mob.isDead = true;
-          //       self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
-          //     }
-          //   }
-          // }
         }
       } else if (action === Types.Messages.HURT) {
         log.info("HURT: " + self.name + " " + message[1]);
@@ -473,7 +463,14 @@ module.exports = Player = Character.extend({
                 bonus = _.shuffle(highLevelBonus)
                   .slice(0, 2)
                   .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-                  .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceArmorBonus]).slice(0, 1));
+                  .concat(
+                    _.shuffle([
+                      ...fireDamageBonus,
+                      ...highHealthBonus,
+                      ...lightningDamageBonus,
+                      ...pierceArmorBonus,
+                    ]).slice(0, 1),
+                  );
               } else if (kind === Types.Entities.RINGRAISTONE) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
               } else if (kind === Types.Entities.RINGFOUNTAIN) {

@@ -1268,6 +1268,7 @@ define([
                 const { gridX, gridY } = clickedWaypoint;
                 self.app.closeWaypoint();
                 self.player.stop_pathing_callback({ x: gridX + 1, y: gridY, isWaypoint: true });
+                $("#foreground").off(".waypoint");
               }
             },
           }).appendTo("#waypoint-list");
@@ -1978,6 +1979,13 @@ define([
         });
 
         self.player.onStopPathing(function ({ x, y, confirmed, isWaypoint }) {
+          if (isWaypoint) {
+            // Make sure the character is paused / halted when entering a waypoin,
+            // else the player goes invisible
+            self.player.stop();
+            self.player.nextStep();
+          }
+
           if (self.player.hasTarget()) {
             self.player.lookAtTarget();
           }
@@ -2728,8 +2736,8 @@ define([
         });
 
         self.client.onPlayerTeleport(function (id, x, y) {
-          var entity = null,
-            currentOrientation;
+          var entity = null;
+          var currentOrientation;
 
           if (id !== self.playerId) {
             entity = self.getEntityById(id);
@@ -2918,9 +2926,6 @@ define([
           $("#countdown").countdown("remove");
 
           if (self.player.gridY >= 464 && self.player.gridY <= 535) {
-            self.player.stop();
-            self.player.nextStep();
-
             const x = Math.ceil(randomRange(40, 45));
             const y = Math.ceil(randomRange(208, 213));
 
@@ -3545,6 +3550,8 @@ define([
     processInput: function (pos) {
       var entity;
 
+      // console.log("~~~~problem with zones here");
+
       if (
         this.started &&
         this.player &&
@@ -3570,8 +3577,9 @@ define([
             if (!this.player.disableKeyboardNpcTalk) {
               this.makeNpcTalk(entity);
 
-              if (this.player.moveUp || this.player.moveDown || this.player.moveLeft || this.player.moveRight)
+              if (this.player.moveUp || this.player.moveDown || this.player.moveLeft || this.player.moveRight) {
                 this.player.disableKeyboardNpcTalk = true;
+              }
             }
           }
         } else if (entity instanceof Chest) {
@@ -3966,7 +3974,7 @@ define([
       this.player = new Warrior("player", this.username);
       this.player.account = this.useraccount;
 
-      this.initPlayer();
+      // this.initPlayer();
       this.app.initTargetHud();
 
       this.started = true;

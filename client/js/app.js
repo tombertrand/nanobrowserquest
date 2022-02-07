@@ -372,6 +372,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       });
 
       $("#expbar").mouseover(function () {
+        if (!self.game.player) return;
         var expInThisLevel = self.game.player.experience - Types.expForLevel[self.game.player.level - 1];
         var expForLevelUp = Types.expForLevel[self.game.player.level] - Types.expForLevel[self.game.player.level - 1];
         var expPercentThisLevel = (100 * expInThisLevel) / expForLevelUp;

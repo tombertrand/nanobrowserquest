@@ -567,8 +567,8 @@ define([
       });
 
       $(document).keydown(function (e) {
-        var key = e.which,
-          $chat = $("#chatinput");
+        var key = e.which;
+        var $chat = $("#chatinput");
 
         if (key === Types.Keys.ENTER) {
           if (!$("#text-window").is(":visible")) {
