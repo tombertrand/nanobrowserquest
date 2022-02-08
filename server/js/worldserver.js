@@ -1127,7 +1127,7 @@ module.exports = World = cls.Class.extend({
     var item = null;
 
     // var randomDrop = Utils.random(1);
-    // var drops = ["ringfountain"];
+    // var drops = ["amuletcow"];
     // // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
 

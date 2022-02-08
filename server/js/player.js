@@ -461,7 +461,7 @@ module.exports = Player = Character.extend({
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
               } else if (kind === Types.Entities.AMULETCOW) {
                 bonus = _.shuffle(highLevelBonus)
-                  .slice(0, 2)
+                  .slice(0, 3)
                   .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
                   .concat(
                     _.shuffle([
