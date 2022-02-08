@@ -48,9 +48,12 @@ module.exports = World = cls.Class.extend({
     this.groups = {};
     this.zombies = [];
     this.cowTotal = 0;
+    this.cowLevelCoords = {};
     this.cowLevelClock = null;
     this.cowLevelInterval = null;
+    this.cowLevelTownNpcId = null;
     this.cowLevelNpcId = null;
+    this.cowLevelNpcIds = [];
     this.cowPossibleCoords = [];
     this.cowEntityIds = [];
     this.cowPackOrder = [
@@ -588,9 +591,14 @@ module.exports = World = cls.Class.extend({
       self.addMob(npc);
     });
 
-    if (kind === Types.Entities.COWPORTAL && x === 43 && y === 211) {
+    if (kind === Types.Entities.COWPORTAL) {
       npc.isDead = true;
-      this.cowLevelNpcId = npc.id;
+
+      if (x === 43 && y === 211) {
+        this.cowLevelTownNpcId = npc.id;
+      } else {
+        this.cowLevelNpcIds.push(npc.id);
+      }
     } else {
       this.addEntity(npc);
     }
@@ -609,17 +617,22 @@ module.exports = World = cls.Class.extend({
     this.cowTotal = 0;
     this.cowLevelClock = 15 * 60; // 15 minutes
 
-    this.pushBroadcast(new Messages.CowLevelStart());
+    const townPortal = this.npcs[this.cowLevelTownNpcId];
+    townPortal.respawnCallback();
 
-    const portal = this.npcs[this.cowLevelNpcId];
-    portal.respawnCallback();
+    this.cowLevelNpcId = _.shuffle(this.cowLevelNpcIds).slice(0, 1);
+    const cowLevelPortal = this.npcs[this.cowLevelNpcId];
+    cowLevelPortal.respawnCallback();
+
+    this.cowLevelCoords = { x: cowLevelPortal.x, y: cowLevelPortal.y + 1 };
+    this.pushBroadcast(new Messages.CowLevelStart(this.cowLevelCoords));
 
     let count = 0;
     const cowCoords = _.shuffle(this.cowPossibleCoords).slice(0, 30);
 
     cowCoords.map(({ x, y }, coordsIndex) => {
       // Spawn the surrounding cows
-      const cowCount = Math.ceil(Utils.randomRange(7, 22));
+      const cowCount = Math.ceil(Utils.randomRange(8, 24));
       this.cowTotal += cowCount;
 
       for (let i = 0; i < cowCount; i++) {
@@ -628,7 +641,16 @@ module.exports = World = cls.Class.extend({
         const id = `7${kind}${count++}`;
         const mob = new Mob(id, kind, x + this.cowPackOrder[i][0], y + this.cowPackOrder[i][1]);
         mob.onMove(this.onMobMoveCallback.bind(this));
-        // mob.onRespawn(() => {});
+        mob.onDestroy(() => {
+          this.cowTotal--;
+          if (this.cowTotal === 0) {
+            clearInterval(this.cowLevelInterval);
+            setTimeout(() => {
+              // Return everyone to town, leave 3s to loot any last drop
+              this.endCowLevel(true);
+            }, 3000);
+          }
+        });
 
         this.addMob(mob);
         this.cowEntityIds.push(id);
@@ -637,22 +659,24 @@ module.exports = World = cls.Class.extend({
 
     this.cowLevelInterval = setInterval(() => {
       this.cowLevelClock -= 1;
-
       if (this.cowLevelClock < 0) {
         clearInterval(this.cowLevelInterval);
-        this.cowLevelInterval = null;
-        this.cowLevelClock = null;
-
         this.endCowLevel();
       }
     }, 1000);
   },
 
-  endCowLevel: function () {
-    const portal = this.npcs[this.cowLevelNpcId];
+  endCowLevel: function (isCompleted = false) {
+    this.cowLevelInterval = null;
+    this.cowLevelClock = null;
 
-    this.despawn(portal);
-    this.pushBroadcast(new Messages.CowLevelEnd());
+    const townPortal = this.npcs[this.cowLevelTownNpcId];
+    this.despawn(townPortal);
+
+    const cowLevelPortal = this.npcs[this.cowLevelNpcId];
+    this.despawn(cowLevelPortal);
+
+    this.pushBroadcast(new Messages.CowLevelEnd(isCompleted));
 
     // Despawn all cows
     this.cowEntityIds.map(entityId => {

@@ -61,6 +61,7 @@ define([
       this.isAnvilFail = false;
       this.anvilFailTimeout = null;
       this.cowPortalStart = false;
+      this.cowLevelPortalCoords = {};
 
       this.renderer = null;
       this.updater = null;
@@ -1179,18 +1180,24 @@ define([
         FRESH_MEAT: {
           id: 43,
           name: "Fresh Meat",
-          desc: "Kill 250 cows",
+          desc: "Kill 500 cows",
           hidden: true,
           isCompleted: function () {
-            return self.storage.getCowCount() >= 250;
+            return self.storage.getCowCount() >= 500;
           },
         },
-        MAGIC8: {
+        FARMER: {
           id: 44,
-          name: "Magic 8",
-          desc: "Upgrade a high class item to +8",
+          name: "Pro Farmer",
+          desc: "Kill every monster in the secret level",
           hidden: true,
         },
+        // MAGIC8: {
+        //   id: 44,
+        //   name: "Magic 8",
+        //   desc: "Upgrade a high class item to +8",
+        //   hidden: true,
+        // },
       };
 
       _.each(this.achievements, function (obj) {
@@ -1772,6 +1779,7 @@ define([
         waypoints,
         depositAccount,
         auras,
+        cowLevelPortalCoords,
       }) {
         log.info("Received player ID from server : " + id);
         self.player.id = id;
@@ -1831,6 +1839,7 @@ define([
         self.player.expansion1 = expansion1;
         self.player.waypoints = waypoints;
         self.player.skeletonKey = !!achievement[26];
+        self.cowLevelPortalCoords = cowLevelPortalCoords;
 
         self.addEntity(self.player);
         self.player.dirtyRect = self.renderer.getEntityBoundingRect(self.player);
@@ -2856,7 +2865,8 @@ define([
           if (isLucky7) {
             self.tryUnlockingAchievement("LUCKY7");
           } else if (isMagic8) {
-            self.tryUnlockingAchievement("MAGIC8");
+            // @NOTE Note ready yet, maybe later
+            // self.tryUnlockingAchievement("MAGIC8");
           }
         });
 
@@ -2897,7 +2907,12 @@ define([
           self.initWaypoints(waypoints);
         });
 
-        self.client.onReceiveCowLevelStart(function () {
+        self.client.onReceiveCowLevelStart(function ({ x, y }) {
+          self.cowLevelPortalCoords = {
+            x,
+            y,
+          };
+
           self.cowPortalStart = true;
           setTimeout(() => {
             self.cowPortalStart = false;
@@ -2906,6 +2921,10 @@ define([
 
         self.client.onReceiveCowLevelInProgress(function (cowLevelClock) {
           var selectedDate = new Date().valueOf() + cowLevelClock * 1000;
+
+          if (!self.player.expansion1 || self.player.level < 45) {
+            self.client.sendBanPlayer("Entered CowLevel without expansion or lower than lv.45");
+          }
 
           $("#countdown")
             .countdown(selectedDate.toString())
@@ -2921,9 +2940,11 @@ define([
             });
         });
 
-        self.client.onReceiveCowLevelEnd(function () {
+        self.client.onReceiveCowLevelEnd(function (isCompleted) {
           $("#countdown").countdown(0);
           $("#countdown").countdown("remove");
+
+          self.cowLevelPortalCoords = {};
 
           if (self.player.gridY >= 464 && self.player.gridY <= 535) {
             const x = Math.ceil(randomRange(40, 45));
@@ -2932,6 +2953,10 @@ define([
             // self.player.idle();
             self.player.stop_pathing_callback({ x, y, isWaypoint: true });
             // }, 100);
+
+            if (isCompleted) {
+              self.tryUnlockingAchievement("FARMER");
+            }
           }
         });
 
@@ -3186,10 +3211,14 @@ define([
           this.tryUnlockingAchievement("SATOSHI");
         } else if (npc.kind === Types.Entities.COWPORTAL) {
           if (this.player.level >= 45) {
-            this.tryUnlockingAchievement("SECRET_LEVEL");
-
             if (npc.gridX === 43 && npc.gridY === 211) {
-              this.player.stop_pathing_callback({ x: 79, y: 477, isWaypoint: true });
+              this.tryUnlockingAchievement("SECRET_LEVEL");
+
+              this.player.stop_pathing_callback({
+                x: this.cowLevelPortalCoords.x,
+                y: this.cowLevelPortalCoords.y,
+                isWaypoint: true,
+              });
             } else {
               this.player.stop_pathing_callback({ x: 43, y: 212, isWaypoint: true });
             }

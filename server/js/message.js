@@ -65,9 +65,12 @@ Messages.Raise = Message.extend({
 });
 
 Messages.CowLevelStart = Message.extend({
-  init: function () {},
+  init: function ({ x, y }) {
+    this.x = x;
+    this.y = y;
+  },
   serialize: function () {
-    return [Types.Messages.COWLEVEL_START];
+    return [Types.Messages.COWLEVEL_START, this.x, this.y];
   },
 });
 
@@ -81,9 +84,11 @@ Messages.CowLevelInProgress = Message.extend({
 });
 
 Messages.CowLevelEnd = Message.extend({
-  init: function () {},
+  init: function (isCompleted) {
+    this.isCompleted = isCompleted;
+  },
   serialize: function () {
-    return [Types.Messages.COWLEVEL_END];
+    return [Types.Messages.COWLEVEL_END, this.isCompleted];
   },
 });
 

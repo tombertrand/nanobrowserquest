@@ -1378,6 +1378,7 @@ module.exports = Player = Character.extend({
       waypoints,
       depositAccount,
       self.auras,
+      self.server.cowLevelCoords,
     ]);
 
     self.updateHitPoints(true);

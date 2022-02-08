@@ -267,7 +267,7 @@ define(function () {
         this.data.achievements.cowCount = 0;
       }
 
-      if (this.data.achievements.cowCount < 250) {
+      if (this.data.achievements.cowCount < 500) {
         this.data.achievements.cowCount++;
         this.save();
       }

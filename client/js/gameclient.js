@@ -224,6 +224,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       var waypoints = data[22];
       var depositAccount = data[23];
       var auras = data[24];
+      var cowLevelPortalCoords = data[25];
 
       if (this.welcome_callback) {
         this.welcome_callback({
@@ -251,6 +252,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
           waypoints,
           depositAccount,
           auras,
+          cowLevelPortalCoords,
         });
       }
     },
@@ -606,9 +608,11 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       }
     },
 
-    receiveCowLevelStart: function () {
+    receiveCowLevelStart: function (data) {
+      const x = data[1];
+      const y = data[2];
       if (this.receivecowlevelstart_callback) {
-        this.receivecowlevelstart_callback();
+        this.receivecowlevelstart_callback({ x, y });
       }
     },
 
@@ -620,9 +624,11 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       }
     },
 
-    receiveCowLevelEnd: function () {
+    receiveCowLevelEnd: function (data) {
+      const isCompleted = data[1];
+
       if (this.receivecowlevelend_callback) {
-        this.receivecowlevelend_callback();
+        this.receivecowlevelend_callback(isCompleted);
       }
     },
 

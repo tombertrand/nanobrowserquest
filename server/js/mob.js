@@ -36,6 +36,10 @@ var Mob = Character.extend({
     if (this.kind !== Types.Entities.ZOMBIE) {
       this.handleRespawn(delay);
     }
+
+    if (this.destroyCallback) {
+      this.destroyCallback();
+    }
   },
 
   receiveDamage: function (points, playerId) {
@@ -188,6 +192,10 @@ var Mob = Character.extend({
       self.resetPosition();
       self.move(self.x, self.y);
     }, delay);
+  },
+
+  onDestroy: function (callback) {
+    this.destroyCallback = callback;
   },
 
   onMove: function (callback) {
