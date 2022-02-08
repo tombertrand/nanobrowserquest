@@ -1079,7 +1079,7 @@ Types.getBonusDescriptionMap = [
 Types.getBonus = function (rawBonus, level) {
   const minDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const maxDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const weaponDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const attackDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const healthPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
   const magicDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const defensePerLevel = [1, 2, 4, 6, 8, 11, 15, 22, 28, 40];
@@ -1099,7 +1099,7 @@ Types.getBonus = function (rawBonus, level) {
   const bonusPerLevel = [
     minDamagePerLevel,
     maxDamagePerLevel,
-    weaponDamagePerLevel,
+    attackDamagePerLevel,
     healthPerLevel,
     magicDamagePerLevel,
     defensePerLevel,
@@ -1120,7 +1120,7 @@ Types.getBonus = function (rawBonus, level) {
   const bonusType = [
     "minDamage",
     "maxDamage",
-    "weaponDamage",
+    "attackDamage",
     "health",
     "magicDamage",
     "defense",

@@ -242,7 +242,7 @@ module.exports = Player = Character.extend({
             minDamage: self.bonus.minDamage,
             maxDamage: self.bonus.maxDamage,
             magicDamage: self.bonus.magicDamage,
-            weaponDamage: self.bonus.weaponDamage,
+            attackDamage: self.bonus.attackDamage,
             flameDamage: self.bonus.flameDamage,
             lightningDamage: self.bonus.lightningDamage,
             pierceArmor: self.bonus.pierceArmor,
@@ -1046,7 +1046,7 @@ module.exports = Player = Character.extend({
     this.bonus = {
       minDamage: 0,
       maxDamage: 0,
-      weaponDamage: 0,
+      attackDamage: 0,
       health: 0,
       magicDamage: 0,
       defense: 0,
@@ -1179,9 +1179,10 @@ module.exports = Player = Character.extend({
       minDamage: this.bonus.minDamage,
       maxDamage: this.bonus.maxDamage,
       magicDamage: this.bonus.magicDamage,
-      weaponDamage: this.bonus.weaponDamage,
+      attackDamage: this.bonus.attackDamage,
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
+      pierceArmor: this.bonus.pierceArmor,
     });
 
     this.send(
