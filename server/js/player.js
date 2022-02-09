@@ -456,7 +456,7 @@ module.exports = Player = Character.extend({
               } else if (kind === Types.Entities.RINGGOLD) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3);
               } else if (kind === Types.Entities.AMULETGOLD) {
-                bonus = _.shuffle(mediumLevelBonus).slice(0, 2).concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
+                bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
               } else if (kind === Types.Entities.RINGNECROMANCER) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
               } else if (kind === Types.Entities.AMULETCOW) {

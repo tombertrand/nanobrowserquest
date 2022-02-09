@@ -1132,12 +1132,12 @@ module.exports = World = cls.Class.extend({
     // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
 
     if (mob.kind === Types.Entities.COW) {
-      if (Utils.random(300) === 69) {
+      if (Utils.random(200) === 69) {
         return this.addItem(this.createItem(Types.getKindFromString("diamondsword"), mob.x, mob.y));
       }
     }
     if (mob.kind >= Types.Entities.EYE) {
-      const random = Utils.random(11000);
+      const random = Utils.random(10000);
       if (random === 420) {
         return this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
       } else if (mob.kind >= Types.Entities.RAT2 && random === 6969) {

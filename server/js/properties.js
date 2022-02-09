@@ -329,11 +329,13 @@ var Properties = {
 
   cow: {
     drops: {
-      rejuvenationpotion: 95,
+      rejuvenationpotion: 93,
       hornedarmor: 1,
       frozenarmor: 1,
       frozensword: 1,
       beltfrozen: 1,
+      ringgold: 1,
+      amuletgold: 1,
       scrollupgradehigh: 1,
     },
     hp: 600,
