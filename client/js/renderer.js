@@ -98,15 +98,15 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
 
       this.canvas.width = this.camera.gridW * this.tilesize * this.scale;
       this.canvas.height = this.camera.gridH * this.tilesize * this.scale;
-      log.debug("#entities set to " + this.canvas.width + " x " + this.canvas.height);
+      console.debug("#entities set to " + this.canvas.width + " x " + this.canvas.height);
 
       this.backcanvas.width = this.canvas.width;
       this.backcanvas.height = this.canvas.height;
-      log.debug("#background set to " + this.backcanvas.width + " x " + this.backcanvas.height);
+      console.debug("#background set to " + this.backcanvas.width + " x " + this.backcanvas.height);
 
       this.forecanvas.width = this.canvas.width;
       this.forecanvas.height = this.canvas.height;
-      log.debug("#foreground set to " + this.forecanvas.width + " x " + this.forecanvas.height);
+      console.debug("#foreground set to " + this.forecanvas.width + " x " + this.forecanvas.height);
 
       //   if (this.scale === 2) {
       //     this.context.scale(0.75, 0.75);
@@ -726,7 +726,7 @@ define(["camera", "item", "character", "player", "timer"], function (Camera, Ite
       }
 
       if (count > 0) {
-        //log.debug("count:"+count);
+        //console.debug("count:"+count);
       }
     },
 

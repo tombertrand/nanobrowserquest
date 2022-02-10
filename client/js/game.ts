@@ -1,55 +1,42 @@
-define([
-  "infomanager",
-  "bubble",
-  "renderer",
-  "map",
-  "animation",
-  "sprite",
-  "tile",
-  "warrior",
-  "gameclient",
-  "audio",
-  "updater",
-  "transition",
-  "pathfinder",
-  "item",
-  "mob",
-  "npc",
-  "player",
-  "character",
-  "chest",
-  "mobs",
-  "exceptions",
-  "config",
-  "guild",
-  "../../shared/js/gametypes",
-], function (
-  InfoManager,
-  BubbleManager,
-  Renderer,
-  Map,
-  Animation,
-  Sprite,
-  AnimatedTile,
-  Warrior,
-  GameClient,
-  AudioManager,
-  Updater,
-  Transition,
-  Pathfinder,
-  Item,
-  Mob,
-  Npc,
-  Player,
-  Character,
-  Chest,
-  Mobs,
-  Exceptions,
-  config,
-  Guild,
-) {
-  var Game = Class.extend({
-    init: function (app) {
+import { randomRange } from "./utils";
+
+import InfoManager from "./infomanager";
+import Bubble from "./infomanager";
+import Renderer from "./renderer";
+import Map from "./map";
+import Animation from "./animation";
+import Sprite from "./sprite";
+import Tile from "./tile";
+import Warrior from "./warrior";
+import GameClient from "./gameclient";
+import Audio from "./audio";
+import Updater from "./updater";
+import Transition from "./transition";
+import PathFinder from "./pathfinder";
+import Item from "./item";
+import Mob from "./mob";
+import Npc from "./npc";
+import Player from "./player";
+import Character from "./character";
+import Chest from "./chest";
+import Mobs from "./mobs";
+import Exceptions from "./exceptions";
+import Config from "./config";
+import Guild from "./guild";
+
+import { Type } from "../../shared/js/gametypes";
+import { App as AppType } from "./types/app";
+
+
+
+ class Game {
+
+    app: AppType;
+
+
+
+
+    constructor (app) {
       this.app = app;
       this.app.config = config;
       this.ready = false;
@@ -268,53 +255,53 @@ define([
       ];
     },
 
-    setup: function ($bubbleContainer, canvas, background, foreground, input) {
+    setup ($bubbleContainer, canvas, background, foreground, input) {
       this.setBubbleManager(new BubbleManager($bubbleContainer));
       this.setRenderer(new Renderer(this, canvas, background, foreground));
       this.setChatInput(input);
     },
 
-    setStorage: function (storage) {
+    setStorage (storage) {
       this.storage = storage;
     },
 
-    setStore: function (store) {
+    setStore (store) {
       this.store = store;
     },
 
-    setRenderer: function (renderer) {
+    setRenderer (renderer) {
       this.renderer = renderer;
     },
 
-    setUpdater: function (updater) {
+    setUpdater (updater) {
       this.updater = updater;
     },
 
-    setPathfinder: function (pathfinder) {
+    setPathfinder (pathfinder) {
       this.pathfinder = pathfinder;
     },
 
-    setChatInput: function (element) {
+    setChatInput (element) {
       this.chatinput = element;
     },
 
-    setBubbleManager: function (bubbleManager) {
+    setBubbleManager (bubbleManager) {
       this.bubbleManager = bubbleManager;
     },
 
-    loadMap: function () {
+    loadMap () {
       var self = this;
 
       this.map = new Map(!this.renderer.upscaledRendering, this);
 
       this.map.ready(function () {
-        log.info("Map loaded.");
+        console.info("Map loaded.");
         var tilesetIndex = self.renderer.upscaledRendering ? 0 : self.renderer.scale - 1;
         self.renderer.setTileset(self.map.tilesets[tilesetIndex]);
       });
     },
 
-    initPlayer: function () {
+    initPlayer () {
       if (this.storage.hasAlreadyPlayed() && this.storage.data.player) {
         if (this.storage.data.player.armor && this.storage.data.player.weapon) {
           this.player.setSpriteName(this.storage.data.player.armor);
@@ -327,15 +314,15 @@ define([
       this.player.setSprite(this.sprites[this.player.getSpriteName()]);
       this.player.idle();
 
-      log.debug("Finished initPlayer");
+      console.debug("Finished initPlayer");
     },
 
-    initShadows: function () {
+    initShadows () {
       this.shadows = {};
       this.shadows["small"] = this.sprites["shadow16"];
     },
 
-    initCursors: function () {
+    initCursors () {
       this.cursors["hand"] = this.sprites["hand"];
       this.cursors["attack"] = this.sprites["attack"];
       this.cursors["loot"] = this.sprites["loot"];
@@ -345,7 +332,7 @@ define([
       this.cursors["join"] = this.sprites["talk"];
     },
 
-    initAnimations: function () {
+    initAnimations () {
       this.targetAnimation = new Animation("idle_down", 4, 0, 16, 16);
       this.targetAnimation.setSpeed(50);
 
@@ -374,7 +361,7 @@ define([
       this.anvilFailAnimation.setSpeed(80);
     },
 
-    initHurtSprites: function () {
+    initHurtSprites () {
       var self = this;
 
       Types.forEachArmorKind(function (kind, kindName) {
@@ -382,7 +369,7 @@ define([
       });
     },
 
-    initSilhouettes: function () {
+    initSilhouettes () {
       var self = this;
 
       Types.forEachMobOrNpcKind(function (kind, kindName) {
@@ -392,7 +379,7 @@ define([
       self.sprites["item-cake"].createSilhouette();
     },
 
-    initMuteButton: function () {
+    initMuteButton () {
       var self = this;
       if (!self.storage.isAudioEnabled()) {
         self.audioManager.disableAudio();
@@ -401,7 +388,7 @@ define([
       }
     },
 
-    initTooltips: function () {
+    initTooltips () {
       var self = this;
 
       $(document).tooltip({
@@ -409,7 +396,7 @@ define([
         track: true,
         // hide: 1000000,
         position: { my: "left bottom-10", at: "left bottom", collision: "flipfit" },
-        content: function () {
+        content () {
           const element = $(this);
           const item = element.attr("data-item");
           const level = element.attr("data-level");
@@ -449,7 +436,7 @@ define([
       });
     },
 
-    initSendUpgradeItem: function () {
+    initSendUpgradeItem () {
       var self = this;
       $("#upgrade-btn").on("click", function () {
         if (self.player.upgrade.length < 2) return;
@@ -461,7 +448,7 @@ define([
       });
     },
 
-    initUpgradeItemPreview: function () {
+    initUpgradeItemPreview () {
       var self = this;
 
       $("#upgrade-preview-btn").on("click", function () {
@@ -486,14 +473,14 @@ define([
       });
     },
 
-    initDroppable: function () {
+    initDroppable () {
       var self = this;
 
       $(".item-droppable").droppable({
         greedy: true,
-        over: function () {},
-        out: function () {},
-        drop: function (event, ui) {
+        over () {},
+        out () {},
+        drop (event, ui) {
           const fromItemEl = $(ui.draggable[0]);
           const fromItemElParent = fromItemEl.parent();
           const fromSlot = fromItemElParent.data("slot");
@@ -553,12 +540,12 @@ define([
         },
       });
     },
-    destroyDroppable: function () {
+    destroyDroppable () {
       $(".item-not-draggable").remove();
       $(".item-droppable").droppable("destroy");
     },
 
-    initDraggable: function () {
+    initDraggable () {
       var self = this;
 
       $(".item-draggable:not(.item-faded)").draggable({
@@ -566,8 +553,8 @@ define([
         revertDuration: 0,
         revert: true,
         containment: "#canvasborder",
-        drag: function () {},
-        start: function () {
+        drag () {},
+        start () {
           $(this).parent().addClass("ui-droppable-origin");
 
           const item = $(this).attr("data-item");
@@ -583,7 +570,7 @@ define([
 
           self.initDroppable();
         },
-        stop: function (event, ui) {
+        stop (event, ui) {
           self.destroyDroppable();
 
           $(".ui-droppable-origin").removeClass("ui-droppable-origin");
@@ -594,17 +581,17 @@ define([
       });
     },
 
-    destroyDraggable: function () {
+    destroyDraggable () {
       $(".item-draggable.ui-draggable").draggable("destroy");
     },
 
-    getIconPath: function (spriteName) {
+    getIconPath (spriteName) {
       const scale = this.renderer.getScaleFactor();
 
       return `img/${scale}/item-${spriteName}.png`;
     },
 
-    initInventory: function () {
+    initInventory () {
       $("#item-inventory").empty();
       for (var i = 0; i < 24; i++) {
         $("#item-inventory").append(`<div class="item-slot item-inventory item-droppable" data-slot="${i}"></div>`);
@@ -711,7 +698,7 @@ define([
       this.updateRequirement();
     },
 
-    updateInventory: function () {
+    updateInventory () {
       if ($("#inventory").hasClass("visible")) {
         this.destroyDraggable();
       }
@@ -742,7 +729,7 @@ define([
       this.updateRequirement();
     },
 
-    updateStash: function () {
+    updateStash () {
       if ($("#stash").hasClass("visible")) {
         this.destroyDraggable();
       }
@@ -773,7 +760,7 @@ define([
       this.updateRequirement();
     },
 
-    updateRequirement: function () {
+    updateRequirement () {
       var self = this;
 
       $("[data-requirement]").each(function () {
@@ -787,7 +774,7 @@ define([
       });
     },
 
-    initUpgrade: function () {
+    initUpgrade () {
       $("#upgrade-scroll").empty();
       for (var i = 1; i < 10; i++) {
         $("#upgrade-scroll").append(`<div class="item-slot item-scroll item-recipe" data-slot="${200 + i}"></div>`);
@@ -800,7 +787,7 @@ define([
       $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
     },
 
-    updateUpgrade: function ({ luckySlot, isSuccess }) {
+    updateUpgrade ({ luckySlot, isSuccess }) {
       if ($("#inventory").hasClass("visible")) {
         this.destroyDraggable();
       }
@@ -863,7 +850,7 @@ define([
       }
     },
 
-    initStash: function () {
+    initStash () {
       $("#item-stash").empty();
       for (var i = 0; i < 48; i++) {
         $("#item-stash").append(`<div class="item-slot item-stash item-droppable" data-slot="${i + 300}"></div>`);
@@ -872,7 +859,7 @@ define([
       this.updateStash();
     },
 
-    initAchievements: function () {
+    initAchievements () {
       var self = this;
 
       this.achievements = {
@@ -892,7 +879,7 @@ define([
           id: 3,
           name: "Angry Rats",
           desc: "Kill 10 rats",
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getRatCount() >= 10;
           },
           nano: 5,
@@ -937,7 +924,7 @@ define([
           id: 10,
           name: "Skull Collector",
           desc: "Kill 10 skeletons",
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getSkeletonCount() >= 10;
           },
           nano: 8,
@@ -958,7 +945,7 @@ define([
           id: 13,
           name: "Hunter",
           desc: "Kill 50 enemies",
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getTotalKills() >= 50;
           },
           nano: 4,
@@ -967,7 +954,7 @@ define([
           id: 14,
           name: "Still Alive",
           desc: "Revive your character five times",
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getTotalRevives() >= 5;
           },
           nano: 5,
@@ -976,7 +963,7 @@ define([
           id: 15,
           name: "Meatshield",
           desc: "Take 5,000 points of damage",
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getTotalDamageTaken() >= 5000;
           },
           nano: 7,
@@ -997,7 +984,7 @@ define([
           id: 18,
           name: "No Fear",
           desc: "Kill 15 spectres",
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getSpectreCount() >= 15;
           },
           nano: 8,
@@ -1068,7 +1055,7 @@ define([
           desc: "Defeat 25 Werewolves",
           hidden: false,
           nano: 15,
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getWerewolfCount() >= 25;
           },
         },
@@ -1099,7 +1086,7 @@ define([
           desc: "Defeat 25 Yetis",
           hidden: false,
           nano: 15,
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getYetiCount() >= 25;
           },
         },
@@ -1109,7 +1096,7 @@ define([
           desc: "Defeat 50 Skeleton Guards",
           hidden: false,
           nano: 25,
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getSkeleton3Count() >= 50;
           },
         },
@@ -1133,7 +1120,7 @@ define([
           desc: "Kill 50 Wraiths",
           hidden: false,
           nano: 25,
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getWraithCount() >= 50;
           },
         },
@@ -1182,7 +1169,7 @@ define([
           name: "Fresh Meat",
           desc: "Kill 500 cows",
           hidden: true,
-          isCompleted: function () {
+          isCompleted () {
             return self.storage.getCowCount() >= 500;
           },
         },
@@ -1225,7 +1212,7 @@ define([
       this.app.initUnlockedAchievements(unlockedAchievementIds, totalNano);
     },
 
-    getAchievementById: function (id) {
+    getAchievementById (id) {
       var found = null;
       _.each(this.achievements, function (achievement, key) {
         if (achievement.id === parseInt(id)) {
@@ -1235,7 +1222,7 @@ define([
       return found;
     },
 
-    initWaypoints: function (waypoints) {
+    initWaypoints (waypoints) {
       $("#waypoint-list").empty();
       var self = this;
 
@@ -1260,7 +1247,7 @@ define([
             <div class="waypoint-icon"></div>
             <div class="waypoint-text">${Types.waypoints[i].name}</div>
             `,
-            click: function (e) {
+            click (e) {
               e.preventDefault();
               e.stopPropagation();
 
@@ -1283,11 +1270,11 @@ define([
       }
     },
 
-    activateWaypoint: function (id) {
+    activateWaypoint (id) {
       $(`#waypoint-${id}`).removeClass("disabled locked").addClass("active");
     },
 
-    loadSprite: function (name) {
+    loadSprite (name) {
       if (this.renderer.upscaledRendering) {
         this.spritesets[0][name] = new Sprite(name, 1);
       } else {
@@ -1298,7 +1285,7 @@ define([
       }
     },
 
-    setSpriteScale: function (scale) {
+    setSpriteScale (scale) {
       var self = this;
 
       if (this.renderer.upscaledRendering) {
@@ -1316,8 +1303,8 @@ define([
       }
     },
 
-    loadSprites: function () {
-      log.info("Loading sprites...");
+    loadSprites () {
+      console.info("Loading sprites...");
       this.spritesets = [];
       this.spritesets[0] = {};
       this.spritesets[1] = {};
@@ -1325,7 +1312,7 @@ define([
       _.map(this.spriteNames, this.loadSprite.bind(this));
     },
 
-    spritesLoaded: function () {
+    spritesLoaded () {
       if (
         _.some(this.sprites, function (sprite) {
           return !sprite.isLoaded;
@@ -1336,7 +1323,7 @@ define([
       return true;
     },
 
-    setCursor: function (name, orientation) {
+    setCursor (name, orientation) {
       if (name in this.cursors) {
         this.currentCursor = this.cursors[name];
         this.currentCursorOrientation = orientation;
@@ -1345,7 +1332,7 @@ define([
       }
     },
 
-    updateCursorLogic: function () {
+    updateCursorLogic () {
       if (this.hoveringCollidingTile && this.started) {
         this.targetColor = "rgba(255, 50, 50, 0.5)";
       } else {
@@ -1379,11 +1366,11 @@ define([
       }
     },
 
-    focusPlayer: function () {
+    focusPlayer () {
       this.renderer.camera.lookAt(this.player);
     },
 
-    addEntity: function (entity) {
+    addEntity (entity) {
       var self = this;
 
       if (this.entities[entity.id] === undefined) {
@@ -1411,7 +1398,7 @@ define([
       }
     },
 
-    removeEntity: function (entity) {
+    removeEntity (entity) {
       if (entity.id in this.entities) {
         this.unregisterEntityPosition(entity);
         delete this.entities[entity.id];
@@ -1420,14 +1407,14 @@ define([
       }
     },
 
-    addItem: function (item, x, y) {
+    addItem (item, x, y) {
       item.setSprite(this.sprites[item.getSpriteName()]);
       item.setGridPosition(x, y);
       item.setAnimation("idle", 150);
       this.addEntity(item);
     },
 
-    removeItem: function (item) {
+    removeItem (item) {
       if (item) {
         this.removeFromItemGrid(item, item.gridX, item.gridY);
         this.removeFromRenderingGrid(item, item.gridX, item.gridY);
@@ -1437,7 +1424,7 @@ define([
       }
     },
 
-    initPathingGrid: function () {
+    initPathingGrid () {
       this.pathingGrid = [];
       for (var i = 0; i < this.map.height; i += 1) {
         this.pathingGrid[i] = [];
@@ -1445,10 +1432,10 @@ define([
           this.pathingGrid[i][j] = this.map.grid[i][j];
         }
       }
-      log.info("Initialized the pathing grid with static colliding cells.");
+      console.info("Initialized the pathing grid with static colliding cells.");
     },
 
-    initEntityGrid: function () {
+    initEntityGrid () {
       this.entityGrid = [];
       for (var i = 0; i < this.map.height; i += 1) {
         this.entityGrid[i] = [];
@@ -1456,10 +1443,10 @@ define([
           this.entityGrid[i][j] = {};
         }
       }
-      log.info("Initialized the entity grid.");
+      console.info("Initialized the entity grid.");
     },
 
-    initRenderingGrid: function () {
+    initRenderingGrid () {
       this.renderingGrid = [];
       for (var i = 0; i < this.map.height; i += 1) {
         this.renderingGrid[i] = [];
@@ -1467,10 +1454,10 @@ define([
           this.renderingGrid[i][j] = {};
         }
       }
-      log.info("Initialized the rendering grid.");
+      console.info("Initialized the rendering grid.");
     },
 
-    initItemGrid: function () {
+    initItemGrid () {
       this.itemGrid = [];
       for (var i = 0; i < this.map.height; i += 1) {
         this.itemGrid[i] = [];
@@ -1478,13 +1465,13 @@ define([
           this.itemGrid[i][j] = {};
         }
       }
-      log.info("Initialized the item grid.");
+      console.info("Initialized the item grid.");
     },
 
     /**
      *
      */
-    initAnimatedTiles: function () {
+    initAnimatedTiles () {
       var self = this,
         m = this.map;
 
@@ -1499,34 +1486,34 @@ define([
           self.animatedTiles.push(tile);
         }
       }, 1);
-      //log.info("Initialized animated tiles.");
+      //console.info("Initialized animated tiles.");
     },
 
-    addToRenderingGrid: function (entity, x, y) {
+    addToRenderingGrid (entity, x, y) {
       if (!this.map.isOutOfBounds(x, y)) {
         this.renderingGrid[y][x][entity.id] = entity;
       }
     },
 
-    removeFromRenderingGrid: function (entity, x, y) {
+    removeFromRenderingGrid (entity, x, y) {
       if (entity && this.renderingGrid[y][x] && entity.id in this.renderingGrid[y][x]) {
         delete this.renderingGrid[y][x][entity.id];
       }
     },
 
-    removeFromEntityGrid: function (entity, x, y) {
+    removeFromEntityGrid (entity, x, y) {
       if (this.entityGrid[y][x][entity.id]) {
         delete this.entityGrid[y][x][entity.id];
       }
     },
 
-    removeFromItemGrid: function (item, x, y) {
+    removeFromItemGrid (item, x, y) {
       if (item && this.itemGrid[y][x][item.id]) {
         delete this.itemGrid[y][x][item.id];
       }
     },
 
-    removeFromPathingGrid: function (x, y) {
+    removeFromPathingGrid (x, y) {
       this.pathingGrid[y][x] = 0;
     },
 
@@ -1537,7 +1524,7 @@ define([
      *
      * @param {Entity} entity The moving entity
      */
-    registerEntityDualPosition: function (entity) {
+    registerEntityDualPosition (entity) {
       if (entity) {
         this.entityGrid[entity.gridY][entity.gridX][entity.id] = entity;
 
@@ -1557,7 +1544,7 @@ define([
      *
      * @param {Entity} entity The moving entity
      */
-    unregisterEntityPosition: function (entity) {
+    unregisterEntityPosition (entity) {
       if (entity) {
         this.removeFromEntityGrid(entity, entity.gridX, entity.gridY);
         this.removeFromPathingGrid(entity.gridX, entity.gridY);
@@ -1571,7 +1558,7 @@ define([
       }
     },
 
-    registerEntityPosition: function (entity) {
+    registerEntityPosition (entity) {
       var x = entity.gridX,
         y = entity.gridY;
 
@@ -1590,18 +1577,18 @@ define([
       }
     },
 
-    setServerOptions: function (host, port, username, useraccount) {
+    setServerOptions (host, port, username, useraccount) {
       this.host = host;
       this.port = port;
       this.username = username;
       this.useraccount = useraccount;
     },
 
-    loadAudio: function () {
+    loadAudio () {
       this.audioManager = new AudioManager(this);
     },
 
-    initMusicAreas: function () {
+    initMusicAreas () {
       var self = this;
 
       _.each(this.map.musicAreas, function (area) {
@@ -1609,7 +1596,7 @@ define([
       });
     },
 
-    run: function (action, started_callback) {
+    run (action, started_callback) {
       var self = this;
 
       this.loadSprites();
@@ -1621,7 +1608,7 @@ define([
       var wait = setInterval(function () {
         if (self.map.isLoaded && self.spritesLoaded()) {
           self.ready = true;
-          log.debug("All sprites loaded.");
+          console.debug("All sprites loaded.");
 
           self.loadAudio();
 
@@ -1650,7 +1637,7 @@ define([
       }, 100);
     },
 
-    tick: function () {
+    tick () {
       this.currentTime = new Date().getTime();
 
       if (this.started) {
@@ -1664,22 +1651,22 @@ define([
       }
     },
 
-    start: function () {
+    start () {
       this.tick();
       this.hasNeverStarted = false;
-      log.info("Game loop started.");
+      console.info("Game loop started.");
     },
 
-    stop: function () {
-      log.info("Game stopped.");
+    stop () {
+      console.info("Game stopped.");
       this.isStopped = true;
     },
 
-    entityIdExists: function (id) {
+    entityIdExists (id) {
       return id in this.entities;
     },
 
-    getEntityById: function (id) {
+    getEntityById (id) {
       if (id in this.entities) {
         return this.entities[id];
       } else {
@@ -1687,7 +1674,7 @@ define([
       }
     },
 
-    connect: function (action, started_callback) {
+    connect (action, started_callback) {
       var self = this,
         connecting = false; // always in dispatcher mode in the build version
 
@@ -1715,7 +1702,7 @@ define([
       //>>includeEnd("prodHost");
 
       this.client.onDispatched(function (host, port) {
-        log.debug("Dispatched to game server " + host + ":" + port);
+        console.debug("Dispatched to game server " + host + ":" + port);
 
         self.client.host = host;
         self.client.port = port;
@@ -1723,7 +1710,7 @@ define([
       });
 
       this.client.onConnected(function () {
-        log.info("Starting client/server handshake");
+        console.info("Starting client/server handshake");
 
         self.player.name = self.username;
         self.player.account = self.useraccount;
@@ -1781,7 +1768,7 @@ define([
         auras,
         cowLevelPortalCoords,
       }) {
-        log.info("Received player ID from server : " + id);
+        console.info("Received player ID from server : " + id);
         self.player.id = id;
         self.playerId = id;
         // Always accept name received from the server which will
@@ -1918,7 +1905,7 @@ define([
         self.player.onBeforeStep(function () {
           var blockingEntity = self.getEntityAt(self.player.nextGridX, self.player.nextGridY);
           if (blockingEntity && blockingEntity.id !== self.playerId) {
-            log.debug("Blocked by " + blockingEntity.id);
+            console.debug("Blocked by " + blockingEntity.id);
           }
           self.unregisterEntityPosition(self.player);
         });
@@ -2107,12 +2094,12 @@ define([
         });
 
         self.player.onDeath(function () {
-          log.info(self.playerId + " is dead");
+          console.info(self.playerId + " is dead");
 
           self.player.stopBlinking();
           self.player.setSprite(self.sprites["death"]);
           self.player.animate("death", 120, 1, function () {
-            log.info(self.playerId + " was removed");
+            console.info(self.playerId + " was removed");
 
             self.removeEntity(self.player);
             self.removeFromRenderingGrid(self.player, self.player.gridX, self.player.gridY);
@@ -2168,12 +2155,12 @@ define([
         });
 
         self.client.onSpawnItem(function (item, x, y) {
-          // log.info("Spawned " + Types.getKindAsString(item.kind) + " (" + item.id + ") at " + x + ", " + y);
+          // console.info("Spawned " + Types.getKindAsString(item.kind) + " (" + item.id + ") at " + x + ", " + y);
           self.addItem(item, x, y);
         });
 
         self.client.onSpawnChest(function (chest, x, y) {
-          // log.info("Spawned chest (" + chest.id + ") at " + x + ", " + y);
+          // console.info("Spawned chest (" + chest.id + ") at " + x + ", " + y);
           chest.setSprite(self.sprites[chest.getSpriteName()]);
           chest.setGridPosition(x, y);
           chest.setAnimation("idle_down", 150);
@@ -2183,7 +2170,7 @@ define([
             chest.stopBlinking();
             chest.setSprite(self.sprites["death"]);
             chest.setAnimation("death", 120, 1, function () {
-              log.info(chest.id + " was removed");
+              console.info(chest.id + " was removed");
               self.removeEntity(chest);
               self.removeFromRenderingGrid(chest, chest.gridX, chest.gridY);
               self.previousClickPosition = {};
@@ -2231,7 +2218,7 @@ define([
 
                 self.addEntity(entity);
 
-                // log.debug(
+                // console.debug(
                 //   "Spawned " +
                 //     Types.getKindAsString(entity.kind) +
                 //     " (" +
@@ -2315,7 +2302,7 @@ define([
                   });
 
                   entity.onDeath(function () {
-                    log.info(entity.id + " is dead");
+                    console.info(entity.id + " is dead");
 
                     if (entity instanceof Mob) {
                       // Keep track of where mobs die in order to spawn their dropped items
@@ -2329,7 +2316,7 @@ define([
                     entity.isDying = true;
                     entity.setSprite(self.sprites[entity instanceof Mobs.Rat ? "rat" : "death"]);
                     entity.animate("death", 120, 1, function () {
-                      log.info(entity.id + " was removed");
+                      console.info(entity.id + " was removed");
 
                       self.removeEntity(entity);
                       self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
@@ -2374,7 +2361,7 @@ define([
               log.error(err);
             }
           } else {
-            log.debug("Character " + entity.id + " already exists. Don't respawn.");
+            console.debug("Character " + entity.id + " already exists. Don't respawn.");
           }
         });
 
@@ -2382,7 +2369,7 @@ define([
           var entity = self.getEntityById(entityId);
 
           if (entity) {
-            log.info("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id + ")");
+            console.info("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id + ")");
 
             if (entity.gridX === self.previousClickPosition.x && entity.gridY === self.previousClickPosition.y) {
               self.previousClickPosition = {};
@@ -2537,7 +2524,7 @@ define([
             } else {
               self.removeEntity(entity);
             }
-            log.debug("Entity was destroyed: " + entity.id);
+            console.debug("Entity was destroyed: " + entity.id);
           }
         });
 
@@ -2558,7 +2545,7 @@ define([
           var target = self.getEntityById(targetId);
 
           if (attacker && target && attacker.id !== self.playerId) {
-            log.debug(attacker.id + " attacks " + target.id);
+            console.debug(attacker.id + " attacks " + target.id);
 
             if (
               attacker &&
@@ -2985,7 +2972,7 @@ define([
      * @param {Entity} attacker The attacker entity
      * @param {Entity} target The target entity
      */
-    createAttackLink: function (attacker, target) {
+    createAttackLink (attacker, target) {
       if (attacker.hasTarget()) {
         attacker.removeTarget();
       }
@@ -3004,7 +2991,7 @@ define([
      * Converts the current mouse position on the screen to world grid coordinates.
      * @returns {Object} An object containing x and y properties.
      */
-    getMouseGridPosition: function () {
+    getMouseGridPosition () {
       var mx = this.mouse.x,
         my = this.mouse.y,
         c = this.renderer.camera,
@@ -3024,7 +3011,7 @@ define([
      * @param {Number} x The x coordinate of the target location.
      * @param {Number} y The y coordinate of the target location.
      */
-    makeCharacterGoTo: function (character, x, y) {
+    makeCharacterGoTo (character, x, y) {
       if (!this.map.isOutOfBounds(x, y)) {
         character.go(x, y);
       }
@@ -3033,7 +3020,7 @@ define([
     /**
      *
      */
-    makeCharacterTeleportTo: function (character, x, y) {
+    makeCharacterTeleportTo (character, x, y) {
       if (!this.map.isOutOfBounds(x, y)) {
         this.unregisterEntityPosition(character);
 
@@ -3042,14 +3029,14 @@ define([
         this.registerEntityPosition(character);
         this.assignBubbleTo(character);
       } else {
-        log.debug("Teleport out of bounds: " + x + ", " + y);
+        console.debug("Teleport out of bounds: " + x + ", " + y);
       }
     },
 
     /**
      *
      */
-    makePlayerAttackNext: function () {
+    makePlayerAttackNext () {
       pos = {
         x: this.player.gridX,
         y: this.player.gridY,
@@ -3080,7 +3067,7 @@ define([
     /**
      *
      */
-    makePlayerAttackTo: function (pos) {
+    makePlayerAttackTo (pos) {
       entity = this.getEntityAt(pos.x, pos.y);
       if (entity instanceof Mob) {
         this.makePlayerAttack(entity);
@@ -3091,7 +3078,7 @@ define([
      * Moves the current player to a given target location.
      * @see makeCharacterGoTo
      */
-    makePlayerGoTo: function (x, y) {
+    makePlayerGoTo (x, y) {
       this.makeCharacterGoTo(this.player, x, y);
     },
 
@@ -3099,7 +3086,7 @@ define([
      * Moves the current player towards a specific item.
      * @see makeCharacterGoTo
      */
-    makePlayerGoToItem: function (item) {
+    makePlayerGoToItem (item) {
       if (item) {
         this.player.isLootMoving = true;
         this.makePlayerGoTo(item.gridX, item.gridY);
@@ -3110,14 +3097,14 @@ define([
     /**
      *
      */
-    makePlayerTalkTo: function (npc) {
+    makePlayerTalkTo (npc) {
       if (npc) {
         this.player.setTarget(npc);
         this.player.follow(npc);
       }
     },
 
-    makePlayerOpenChest: function (chest) {
+    makePlayerOpenChest (chest) {
       if (chest) {
         this.player.setTarget(chest);
         this.player.follow(chest);
@@ -3127,12 +3114,12 @@ define([
     /**
      *
      */
-    makePlayerAttack: function (mob) {
+    makePlayerAttack (mob) {
       this.createAttackLink(this.player, mob);
       this.client.sendAttack(mob);
     },
 
-    setAnvilRecipe: function () {
+    setAnvilRecipe () {
       this.isAnvilFail = false;
       this.isAnvilSuccess = false;
       this.isAnvilRecipe = true;
@@ -3144,7 +3131,7 @@ define([
       }, 3000);
     },
 
-    setAnvilSuccess: function () {
+    setAnvilSuccess () {
       this.isAnvilFail = false;
       this.isAnvilSuccess = true;
       this.isAnvilRecipe = false;
@@ -3156,7 +3143,7 @@ define([
       }, 3000);
     },
 
-    setAnvilFail: function () {
+    setAnvilFail () {
       this.isAnvilFail = true;
       this.isAnvilSuccess = false;
       this.isAnvilRecipe = false;
@@ -3171,7 +3158,7 @@ define([
     /**
      *
      */
-    makeNpcTalk: function (npc) {
+    makeNpcTalk (npc) {
       var msg;
 
       if (npc) {
@@ -3227,7 +3214,7 @@ define([
       }
     },
 
-    getWaypointFromGrid: function (x, y) {
+    getWaypointFromGrid (x, y) {
       return Types.waypoints.find(({ gridX, gridY }) => gridX === x && gridY === y);
     },
 
@@ -3235,7 +3222,7 @@ define([
      * Loops through all the entities currently present in the game.
      * @param {Function} callback The function to call back (must accept one entity argument).
      */
-    forEachEntity: function (callback) {
+    forEachEntity (callback) {
       _.each(this.entities, function (entity) {
         callback(entity);
       });
@@ -3245,7 +3232,7 @@ define([
      * Same as forEachEntity but only for instances of the Mob subclass.
      * @see forEachEntity
      */
-    forEachMob: function (callback) {
+    forEachMob (callback) {
       _.each(this.entities, function (entity) {
         if (entity instanceof Mob) {
           callback(entity);
@@ -3258,7 +3245,7 @@ define([
      * Lower 'y' value means higher depth.
      * Note: This is used by the Renderer to know in which order to render entities.
      */
-    forEachVisibleEntityByDepth: function (callback) {
+    forEachVisibleEntityByDepth (callback) {
       var self = this,
         m = this.map;
 
@@ -3279,7 +3266,7 @@ define([
     /**
      *
      */
-    forEachVisibleTileIndex: function (callback, extra) {
+    forEachVisibleTileIndex (callback, extra) {
       var m = this.map;
 
       this.camera.forEachVisiblePosition(function (x, y) {
@@ -3292,7 +3279,7 @@ define([
     /**
      *
      */
-    forEachVisibleTile: function (callback, extra) {
+    forEachVisibleTile (callback, extra) {
       var self = this,
         m = this.map;
 
@@ -3316,7 +3303,7 @@ define([
     /**
      *
      */
-    forEachAnimatedTile: function (callback) {
+    forEachAnimatedTile (callback) {
       if (this.animatedTiles) {
         _.each(this.animatedTiles, function (tile) {
           callback(tile);
@@ -3328,7 +3315,7 @@ define([
      * Returns the entity located at the given position on the world grid.
      * @returns {Entity} the entity located at (x, y) or null if there is none.
      */
-    getEntityAt: function (x, y, instance) {
+    getEntityAt (x, y, instance) {
       if (this.map.isOutOfBounds(x, y) || !this.entityGrid) {
         return null;
       }
@@ -3348,7 +3335,7 @@ define([
       return entity;
     },
 
-    getMobAt: function (x, y) {
+    getMobAt (x, y) {
       var entity = this.getEntityAt(x, y, Mob);
       if (entity && entity instanceof Mob) {
         return entity;
@@ -3356,7 +3343,7 @@ define([
       return null;
     },
 
-    getPlayerAt: function (x, y) {
+    getPlayerAt (x, y) {
       var entity = this.getEntityAt(x, y, Player);
       if (entity && entity instanceof Player && entity !== this.player && this.player.pvpFlag) {
         return entity;
@@ -3364,7 +3351,7 @@ define([
       return null;
     },
 
-    getNpcAt: function (x, y) {
+    getNpcAt (x, y) {
       var entity = this.getEntityAt(x, y, Npc);
       if (entity && entity instanceof Npc) {
         return entity;
@@ -3372,7 +3359,7 @@ define([
       return null;
     },
 
-    getChestAt: function (x, y) {
+    getChestAt (x, y) {
       var entity = this.getEntityAt(x, y, Chest);
       if (entity && entity instanceof Chest) {
         return entity;
@@ -3380,7 +3367,7 @@ define([
       return null;
     },
 
-    getItemAt: function (x, y) {
+    getItemAt (x, y) {
       if (this.map.isOutOfBounds(x, y) || !this.itemGrid) {
         return null;
       }
@@ -3407,26 +3394,26 @@ define([
      * Returns true if an entity is located at the given position on the world grid.
      * @returns {Boolean} Whether an entity is at (x, y).
      */
-    isEntityAt: function (x, y) {
+    isEntityAt (x, y) {
       return !_.isNull(this.getEntityAt(x, y));
     },
 
-    isMobAt: function (x, y) {
+    isMobAt (x, y) {
       return !_.isNull(this.getMobAt(x, y));
     },
-    isPlayerAt: function (x, y) {
+    isPlayerAt (x, y) {
       return !_.isNull(this.getPlayerAt(x, y));
     },
 
-    isItemAt: function (x, y) {
+    isItemAt (x, y) {
       return !_.isNull(this.getItemAt(x, y));
     },
 
-    isNpcAt: function (x, y) {
+    isNpcAt (x, y) {
       return !_.isNull(this.getNpcAt(x, y));
     },
 
-    isChestAt: function (x, y) {
+    isChestAt (x, y) {
       return !_.isNull(this.getChestAt(x, y));
     },
 
@@ -3434,7 +3421,7 @@ define([
      * Finds a path to a grid position for the specified character.
      * The path will pass through any entity present in the ignore list.
      */
-    findPath: function (character, x, y, ignoreList) {
+    findPath (character, x, y, ignoreList) {
       var self = this,
         grid = this.pathingGrid,
         path = [],
@@ -3465,7 +3452,7 @@ define([
     /**
      * Toggles the visibility of the pathing grid for debugging purposes.
      */
-    togglePathingGrid: function () {
+    togglePathingGrid () {
       if (this.debugPathing) {
         this.debugPathing = false;
       } else {
@@ -3476,7 +3463,7 @@ define([
     /**
      * Toggles the visibility of the FPS counter and other debugging info.
      */
-    toggleDebugInfo: function () {
+    toggleDebugInfo () {
       if (this.renderer && this.renderer.isDebugInfoVisible) {
         this.renderer.isDebugInfoVisible = false;
       } else {
@@ -3487,7 +3474,7 @@ define([
     /**
      *
      */
-    movecursor: function () {
+    movecursor () {
       var mouse = this.getMouseGridPosition(),
         x = mouse.x,
         y = mouse.y;
@@ -3543,7 +3530,7 @@ define([
     /**
      * Moves the player one space, if possible
      */
-    keys: function (pos, orientation) {
+    keys (pos, orientation) {
       this.hoveringCollidingTile = false;
       this.hoveringPlateauTile = false;
 
@@ -3559,7 +3546,7 @@ define([
       }
     },
 
-    click: function () {
+    click () {
       var pos = this.getMouseGridPosition();
 
       if (pos.x === this.previousClickPosition.x && pos.y === this.previousClickPosition.y) {
@@ -3576,7 +3563,7 @@ define([
     /**
      * Processes game logic when the user triggers a click/touch event during the game.
      */
-    processInput: function (pos) {
+    processInput (pos) {
       var entity;
 
       // console.log("~~~~problem with zones here");
@@ -3619,7 +3606,7 @@ define([
       }
     },
 
-    isMobOnSameTile: function (mob, x, y) {
+    isMobOnSameTile (mob, x, y) {
       var X = x || mob.gridX,
         Y = y || mob.gridY,
         list = this.entityGrid[Y][X],
@@ -3633,7 +3620,7 @@ define([
       return result;
     },
 
-    getFreeAdjacentNonDiagonalPosition: function (entity) {
+    getFreeAdjacentNonDiagonalPosition (entity) {
       var self = this,
         result = null;
 
@@ -3645,7 +3632,7 @@ define([
       return result;
     },
 
-    tryMovingToADifferentTile: function (character) {
+    tryMovingToADifferentTile (character) {
       var attacker = character,
         target = character.target;
 
@@ -3722,7 +3709,7 @@ define([
     /**
      *
      */
-    onCharacterUpdate: function (character) {
+    onCharacterUpdate (character) {
       var time = this.currentTime,
         self = this;
 
@@ -3792,7 +3779,7 @@ define([
     /**
      *
      */
-    isZoningTile: function (x, y) {
+    isZoningTile (x, y) {
       var c = this.camera;
 
       x = x - c.gridX;
@@ -3807,7 +3794,7 @@ define([
     /**
      *
      */
-    getZoningOrientation: function (x, y) {
+    getZoningOrientation (x, y) {
       var orientation = "",
         c = this.camera;
 
@@ -3827,7 +3814,7 @@ define([
       return orientation;
     },
 
-    startZoningFrom: function (x, y) {
+    startZoningFrom (x, y) {
       this.zoningOrientation = this.getZoningOrientation(x, y);
 
       if (this.renderer.mobile || this.renderer.tablet) {
@@ -3860,7 +3847,7 @@ define([
       this.client.sendZone();
     },
 
-    enqueueZoningFrom: function (x, y) {
+    enqueueZoningFrom (x, y) {
       this.zoningQueue.push({ x: x, y: y });
 
       if (this.zoningQueue.length === 1) {
@@ -3868,7 +3855,7 @@ define([
       }
     },
 
-    endZoning: function () {
+    endZoning () {
       this.currentZoning = null;
       this.isCharacterZoning = false;
       this.resetZone();
@@ -3880,22 +3867,22 @@ define([
       }
     },
 
-    isZoning: function () {
+    isZoning () {
       return !_.isNull(this.currentZoning) || this.isCharacterZoning;
     },
 
-    resetZone: function () {
+    resetZone () {
       this.bubbleManager.clean();
       this.initAnimatedTiles();
       this.renderer.renderStaticCanvases();
     },
 
-    resetCamera: function () {
+    resetCamera () {
       this.camera.focusEntity(this.player);
       this.resetZone();
     },
 
-    say: function (message) {
+    say (message) {
       //#cli guilds
       var regexp = /^\/guild\ (invite|create|accept)\s+([^\s]*)|(guild:)\s*(.*)$|^\/guild\ (leave)$/i;
       var args = message.match(regexp);
@@ -3951,15 +3938,15 @@ define([
       this.client.sendChat(message);
     },
 
-    createBubble: function (id, message) {
+    createBubble (id, message) {
       this.bubbleManager.create(id, message, this.currentTime);
     },
 
-    destroyBubble: function (id) {
+    destroyBubble (id) {
       this.bubbleManager.destroyBubble(id);
     },
 
-    assignBubbleTo: function (character) {
+    assignBubbleTo (character) {
       var bubble = this.bubbleManager.getBubbleById(character.id);
 
       if (bubble) {
@@ -3992,8 +3979,8 @@ define([
       }
     },
 
-    respawn: function () {
-      log.debug("Beginning respawn");
+    respawn () {
+      console.debug("Beginning respawn");
 
       this.entities = {};
       this.initEntityGrid();
@@ -4016,69 +4003,69 @@ define([
         this.renderer.clearScreen(this.renderer.context);
       }
 
-      log.debug("Finished respawn");
+      console.debug("Finished respawn");
     },
 
-    onGameStart: function (callback) {
+    onGameStart (callback) {
       this.gamestart_callback = callback;
     },
 
-    onDisconnect: function (callback) {
+    onDisconnect (callback) {
       this.disconnect_callback = callback;
     },
 
-    onPlayerDeath: function (callback) {
+    onPlayerDeath (callback) {
       this.playerdeath_callback = callback;
     },
 
-    onGameCompleted: function (callback) {
+    onGameCompleted (callback) {
       this.gamecompleted_callback = callback;
     },
 
-    onBossCheckFailed: function (callback) {
+    onBossCheckFailed (callback) {
       this.bosscheckfailed_callback = callback;
     },
 
-    onUpdateTarget: function (callback) {
+    onUpdateTarget (callback) {
       this.updatetarget_callback = callback;
     },
-    onPlayerExpChange: function (callback) {
+    onPlayerExpChange (callback) {
       this.playerexp_callback = callback;
     },
 
-    onPlayerHealthChange: function (callback) {
+    onPlayerHealthChange (callback) {
       this.playerhp_callback = callback;
     },
 
-    onPlayerHurt: function (callback) {
+    onPlayerHurt (callback) {
       this.playerhurt_callback = callback;
     },
 
-    onPlayerEquipmentChange: function (callback) {
+    onPlayerEquipmentChange (callback) {
       this.equipment_callback = callback;
     },
 
-    onNbPlayersChange: function (callback) {
+    onNbPlayersChange (callback) {
       this.nbplayers_callback = callback;
     },
 
-    onChatMessage: function (callback) {
+    onChatMessage (callback) {
       this.chat_callback = callback;
     },
 
-    onGuildPopulationChange: function (callback) {
+    onGuildPopulationChange (callback) {
       this.nbguildplayers_callback = callback;
     },
 
-    onNotification: function (callback) {
+    onNotification (callback) {
       this.notification_callback = callback;
     },
 
-    onPlayerInvincible: function (callback) {
+    onPlayerInvincible (callback) {
       this.invincible_callback = callback;
     },
 
-    resize: function () {
+    resize () {
       var x = this.camera.x;
       var y = this.camera.y;
       var currentScale = this.renderer.scale;
@@ -4091,22 +4078,22 @@ define([
       this.renderer.renderStaticCanvases();
     },
 
-    updateBars: function () {
+    updateBars () {
       if (this.player && this.playerhp_callback) {
         this.playerhp_callback(this.player.hitPoints, this.player.maxHitPoints);
         $("#player-hp").text(this.player.maxHitPoints);
       }
     },
-    updateDamage: function () {
+    updateDamage () {
       $("#player-damage").text(this.player.damage);
     },
-    updateDefense: function () {
+    updateDefense () {
       $("#player-defense").text(this.player.defense);
     },
-    updateAbsorb: function () {
+    updateAbsorb () {
       $("#player-absorb").text(this.player.absorb);
     },
-    updateExpBar: function () {
+    updateExpBar () {
       if (this.player && this.playerexp_callback) {
         var expInThisLevel = this.player.experience - Types.expForLevel[this.player.level - 1];
         var expForLevelUp = Types.expForLevel[this.player.level] - Types.expForLevel[this.player.level - 1];
@@ -4115,7 +4102,7 @@ define([
         $("#player-level").text(this.player.level);
       }
     },
-    updateTarget: function (targetId, points, healthPoints, maxHp) {
+    updateTarget (targetId, points, healthPoints, maxHp) {
       if (this.player.hasTarget() && this.updatetarget_callback) {
         var target = this.getEntityById(targetId);
         target.name = Types.getKindAsString(target.kind);
@@ -4126,7 +4113,7 @@ define([
       }
     },
 
-    getDeadMobPosition: function (mobId) {
+    getDeadMobPosition (mobId) {
       var position;
 
       if (mobId in this.deathpositions) {
@@ -4137,11 +4124,11 @@ define([
       return position;
     },
 
-    onAchievementUnlock: function (callback) {
+    onAchievementUnlock (callback) {
       this.unlock_callback = callback;
     },
 
-    tryUnlockingAchievement: function (name) {
+    tryUnlockingAchievement (name) {
       var achievement = null;
       var self = this;
 
@@ -4161,13 +4148,13 @@ define([
       });
     },
 
-    showNotification: function (message, timeout) {
+    showNotification (message, timeout) {
       if (this.notification_callback) {
         this.notification_callback(message, timeout);
       }
     },
 
-    removeObsoleteEntities: function () {
+    removeObsoleteEntities () {
       var nb = _.size(this.obsoleteEntities),
         self = this;
 
@@ -4178,7 +4165,7 @@ define([
             self.removeEntity(entity);
           }
         });
-        log.debug(
+        console.debug(
           "Removed " +
             nb +
             " entities: " +
@@ -4199,7 +4186,7 @@ define([
      * For instance, to get rid of the sword cursor in case the mouse is still hovering over a dying mob.
      * Also useful when the mouse is hovering a tile where an item is appearing.
      */
-    updateCursor: function () {
+    updateCursor () {
       if (!this.cursorVisible) var keepCursorHidden = true;
 
       this.movecursor();
@@ -4211,7 +4198,7 @@ define([
     /**
      * Change player plateau mode when necessary
      */
-    updatePlateauMode: function () {
+    updatePlateauMode () {
       if (this.map.isPlateau(this.player.gridX, this.player.gridY)) {
         this.player.isOnPlateau = true;
       } else {
@@ -4219,7 +4206,7 @@ define([
       }
     },
 
-    updatePlayerCheckpoint: function () {
+    updatePlayerCheckpoint () {
       var checkpoint = this.map.getCurrentCheckpoint(this.player);
 
       if (checkpoint) {
@@ -4231,7 +4218,7 @@ define([
       }
     },
 
-    checkUndergroundAchievement: function () {
+    checkUndergroundAchievement () {
       var music = this.audioManager.getSurroundingMusic(this.player);
 
       if (music) {
@@ -4241,7 +4228,7 @@ define([
       }
     },
 
-    makeAttackerFollow: function (attacker) {
+    makeAttackerFollow (attacker) {
       var target = attacker.target;
 
       if (attacker.isAdjacent(attacker.target)) {
@@ -4251,7 +4238,7 @@ define([
       }
     },
 
-    forEachEntityAround: function (x, y, r, callback) {
+    forEachEntityAround (x, y, r, callback) {
       for (var i = x - r, max_i = x + r; i <= max_i; i += 1) {
         for (var j = y - r, max_j = y + r; j <= max_j; j += 1) {
           if (!this.map.isOutOfBounds(i, j)) {
@@ -4263,7 +4250,7 @@ define([
       }
     },
 
-    checkOtherDirtyRects: function (r1, source, x, y) {
+    checkOtherDirtyRects (r1, source, x, y) {
       var r = this.renderer;
 
       this.forEachEntityAround(x, y, 2, function (e2) {
@@ -4298,7 +4285,7 @@ define([
       }
     },
 
-    tryLootingItem: function (item) {
+    tryLootingItem (item) {
       try {
         this.player.loot(item);
         this.client.sendLoot(item); // Notify the server that this item has been looted

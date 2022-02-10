@@ -70,7 +70,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       var url = protocol + "://" + this.host + port + "/";
       var self = this;
 
-      log.info("Trying to connect to server : " + url);
+      console.info("Trying to connect to server : " + url);
 
       this.connection = io(url, { forceNew: true, reconnection: false }); // This sets the connection as a socket.io Socket.
 
@@ -88,7 +88,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         });
       } else {
         this.connection.on("connection", function () {
-          log.info("Connected to server " + self.host + ":" + self.port);
+          console.info("Connected to server " + self.host + ":" + self.port);
         });
 
         this.connection.on("message", function (e) {
@@ -131,7 +131,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         });
 
         this.connection.on("disconnect", function () {
-          log.debug("Connection closed");
+          console.debug("Connection closed");
           $("#container").addClass("error");
 
           if (self.disconnected_callback) {
@@ -166,7 +166,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         } else {
           data = JSON.parse(message);
         }
-        // log.debug("data: " + message);
+        // console.debug("data: " + message);
 
         if (data instanceof Array) {
           if (data[0] instanceof Array) {

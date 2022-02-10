@@ -1,41 +1,45 @@
-define(["mob", "timer"], function (Mob, Timer) {
-  var Mobs = {
-    Rat: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.RAT);
-        this.moveSpeed = 350;
-        this.idleSpeed = 700;
-        this.shadowOffsetY = -2;
-        this.isAggressive = false;
-      },
-    }),
+import Mob from './mob'
+import Timer from './timer'
 
-    Skeleton: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.SKELETON);
+import { Types } from '../../shared/js/gametypes'
+
+export const Mobs = {
+  Rat: class Rat extends Mob {
+    constructor(id) {
+      super(id, Types.Entities.RAT);
+      this.moveSpeed = 350;
+      this.idleSpeed = 700;
+      this.shadowOffsetY = -2;
+      this.isAggressive = false;
+    }
+  },
+   
+    Skeleton: class Skeleton extends Mob{
+      constructor (id) {
+        super(id, Types.Entities.SKELETON);
         this.moveSpeed = 350;
         this.atkSpeed = 100;
         this.idleSpeed = 800;
         this.shadowOffsetY = 1;
         this.setAttackRate(1300);
-      },
-    }),
+      }
+    },
 
-    Skeleton2: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.SKELETON2);
+    Skeleton2: class Skeleton extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.SKELETON2);
         this.moveSpeed = 200;
         this.atkSpeed = 100;
         this.idleSpeed = 800;
         this.walkSpeed = 200;
         this.shadowOffsetY = 1;
         this.setAttackRate(1300);
-      },
-    }),
+      }
+    },
 
-    Spectre: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.SPECTRE);
+    Spectre: class Spectre extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.SPECTRE);
         this.moveSpeed = 150;
         this.atkSpeed = 50;
         this.idleSpeed = 200;
@@ -43,79 +47,79 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.shadowOffsetY = 1;
         this.setAttackRate(900);
       },
-    }),
+    },
 
-    Goblin: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.GOBLIN);
+    Goblin: class Goblin extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.GOBLIN);
         this.moveSpeed = 150;
         this.atkSpeed = 60;
         this.idleSpeed = 600;
         this.setAttackRate(700);
-      },
-    }),
+      }
+    },
 
-    Ogre: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.OGRE);
+    Ogre: class Ogre extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.OGRE);
         this.moveSpeed = 300;
         this.atkSpeed = 100;
         this.idleSpeed = 600;
-      },
-    }),
+      }
+    },
 
-    Crab: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.CRAB);
+    Crab: class Crab extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.CRAB);
         this.moveSpeed = 200;
         this.atkSpeed = 40;
         this.idleSpeed = 500;
-      },
-    }),
+      }
+    },
 
-    Snake: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.SNAKE);
+    Snake: class Snake extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.SNAKE);
         this.moveSpeed = 200;
         this.atkSpeed = 40;
         this.idleSpeed = 250;
         this.walkSpeed = 100;
         this.shadowOffsetY = -4;
-      },
-    }),
+      }
+    },
 
-    Eye: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.EYE);
+    Eye: class Eye extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.EYE);
         this.moveSpeed = 200;
         this.atkSpeed = 40;
         this.idleSpeed = 50;
-      },
-    }),
+      }
+    },
 
-    Bat: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.BAT);
+    Bat: class Bat extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.BAT);
         this.moveSpeed = 120;
         this.atkSpeed = 90;
         this.idleSpeed = 90;
         this.walkSpeed = 85;
         this.isAggressive = false;
-      },
-    }),
+      }
+    },
 
-    Wizard: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.WIZARD);
+    Wizard: class Wizard extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.WIZARD);
         this.moveSpeed = 200;
         this.atkSpeed = 100;
         this.idleSpeed = 150;
-      },
-    }),
+      }
+    },
 
-    Deathknight: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.DEATHKNIGHT);
+    Deathknight: class Deathknight extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.DEATHKNIGHT);
         this.atkSpeed = 50;
         this.moveSpeed = 220;
         this.walkSpeed = 100;
@@ -124,18 +128,18 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.aggroRange = 3;
       },
 
-      idle: function (orientation) {
+      idle (orientation) {
         if (!this.hasTarget()) {
-          this._super(Types.Orientations.DOWN);
+          super(Types.Orientations.DOWN);
         } else {
-          this._super(orientation);
+          super(orientation);
         }
-      },
-    }),
+      }
+    },
 
-    Boss: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.BOSS);
+    Boss: class Boss extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.BOSS);
         this.moveSpeed = 300;
         this.atkSpeed = 50;
         this.idleSpeed = 400;
@@ -144,67 +148,67 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.aggroRange = 3;
       },
 
-      idle: function (orientation) {
+      idle (orientation) {
         if (!this.hasTarget()) {
-          this._super(Types.Orientations.DOWN);
+          super(Types.Orientations.DOWN);
         } else {
-          this._super(orientation);
+          super(orientation);
         }
-      },
-    }),
+      }
+    },
 
-    Rat2: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.RAT2);
+    Rat2: class Rat2 extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.RAT2);
         this.moveSpeed = 350;
         this.idleSpeed = 700;
         this.shadowOffsetY = -2;
         this.isAggressive = false;
-      },
-    }),
+      }
+    },
 
-    Bat2: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.BAT2);
+    Bat2: class Bat2 extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.BAT2);
         this.moveSpeed = 120;
         this.atkSpeed = 90;
         this.idleSpeed = 90;
         this.walkSpeed = 85;
         this.isAggressive = false;
-      },
-    }),
+      }
+    },
 
-    Goblin2: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.GOBLIN2);
+    Goblin2: class Goblin2 extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.GOBLIN2);
         this.moveSpeed = 150;
         this.atkSpeed = 60;
         this.idleSpeed = 600;
         this.setAttackRate(700);
-      },
-    }),
+      }
+    },
 
-    Yeti: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.YETI);
+    Yeti: class Yeti extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.YETI);
         this.moveSpeed = 300;
         this.atkSpeed = 100;
         this.idleSpeed = 600;
-      },
-    }),
+      }
+    },
 
-    Werewolf: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.WEREWOLF);
+    Werewolf: class Werewolf extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.WEREWOLF);
         this.moveSpeed = 200;
         this.atkSpeed = 80;
         this.idleSpeed = 600;
-      },
-    }),
+      }
+    },
 
-    Skeleton3: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.SKELETON3);
+    Skeleton3: class Skeleton3 extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.SKELETON3);
         this.moveSpeed = 200;
         this.atkSpeed = 100;
         this.idleSpeed = 800;
@@ -212,56 +216,56 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.shadowOffsetY = 1;
         this.aggroRange = 3;
         this.setAttackRate(1300);
-      },
-    }),
+      }
+    },
 
-    SkeletonCommander: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.SKELETONCOMMANDER);
+    SkeletonCommander: class SkeletonCommander extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.SKELETONCOMMANDER);
         this.moveSpeed = 300;
         this.atkSpeed = 50;
         this.idleSpeed = 400;
         this.atkRate = 2000;
         this.attackCooldown = new Timer(this.atkRate);
         this.aggroRange = 3;
-      },
+      }
 
-      idle: function (orientation) {
+      idle (orientation) {
         if (!this.hasTarget()) {
-          this._super(Types.Orientations.DOWN);
+          super(Types.Orientations.DOWN);
         } else {
-          this._super(orientation);
+          super(orientation);
         }
-      },
-    }),
+      }
+    },
 
-    Snake2: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.SNAKE2);
+    Snake2: class Snake2 extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.SNAKE2);
         this.moveSpeed = 200;
         this.atkSpeed = 40;
         this.idleSpeed = 250;
         this.walkSpeed = 100;
         this.shadowOffsetY = -4;
         this.aggroRange = 3;
-      },
-    }),
+      }
+    },
 
-    Wraith: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.WRAITH);
+    Wraith: class Wraith extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.WRAITH);
         this.atkSpeed = 50;
         this.moveSpeed = 220;
         this.walkSpeed = 100;
         this.idleSpeed = 450;
         this.setAttackRate(800);
         this.aggroRange = 3;
-      },
-    }),
+      }
+    },
 
-    Zombie: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.ZOMBIE);
+    Zombie: class Zombie extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.ZOMBIE);
         this.atkSpeed = 50;
         this.raiseSpeed = 250;
         this.moveSpeed = 220;
@@ -269,20 +273,20 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.idleSpeed = 450;
         this.setAttackRate(800);
         this.isAggressive = false;
-      },
+      }
 
-      idle: function (orientation) {
+      idle(orientation: number) {
         if (!this.hasTarget()) {
-          this._super(Types.Orientations.DOWN);
+          this.orientation = Types.Orientations.DOWN;
         } else {
-          this._super(orientation);
+          this.orientation = orientation;
         }
-      },
-    }),
+      }
+    },
 
-    Necromancer: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.NECROMANCER);
+    Necromancer: class Necromancer extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.NECROMANCER);
         this.moveSpeed = 300;
         this.atkSpeed = 100;
         this.raiseSpeed = 250;
@@ -294,18 +298,18 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.aggroRange = 3;
       },
 
-      idle: function (orientation) {
+      idle(orientation) {
         if (!this.hasTarget()) {
-          this._super(Types.Orientations.DOWN);
+          super(Types.Orientations.DOWN);
         } else {
-          this._super(orientation);
+          super(orientation);
         }
-      },
-    }),
+      }
+    },
 
-    Cow: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.COW);
+    Cow: class Cow extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.COW);
         this.moveSpeed = 200;
         this.atkSpeed = 100;
         this.idleSpeed = 800;
@@ -313,12 +317,12 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.shadowOffsetY = 1;
         this.aggroRange = 3;
         this.setAttackRate(1300);
-      },
-    }),
+      }
+    },
 
-    CowKing: Mob.extend({
-      init: function (id) {
-        this._super(id, Types.Entities.COWKING);
+    CowKing: class CowKing extends Mob{
+      constructor(id) {
+        super(id, Types.Entities.COWKING);
         this.moveSpeed = 200;
         this.atkSpeed = 100;
         this.idleSpeed = 800;
@@ -326,9 +330,8 @@ define(["mob", "timer"], function (Mob, Timer) {
         this.shadowOffsetY = 1;
         this.aggroRange = 3;
         this.setAttackRate(1300);
-      },
-    }),
+      }
+    }
   };
 
-  return Mobs;
-});
+export default Mobs

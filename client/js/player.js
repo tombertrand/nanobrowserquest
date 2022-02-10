@@ -145,7 +145,7 @@ define(["character", "exceptions", "../../shared/js/gametypes"], function (Chara
           }
         }
 
-        log.info("Player " + this.id + " has looted " + item.id);
+        console.info("Player " + this.id + " has looted " + item.id);
         if (Types.isArmor(item.kind) && this.invincible) {
           this.stopInvincibility();
         } else if (item.kind === Types.Entities.FIREPOTION) {

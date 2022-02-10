@@ -1,4 +1,6 @@
-Types = {
+import * as _ from "lodash";
+
+export const Types: any = {
   Store: {
     EXPANSION1: 1,
     SCROLLUPGRADEHIGH: 2,
@@ -302,7 +304,7 @@ Types.Entities.Rings = [
 
 Types.Entities.Amulets = [Types.Entities.AMULETSILVER, Types.Entities.AMULETGOLD, Types.Entities.AMULETCOW];
 
-Types.getGemNameFromKind = function (kind) {
+Types.getGemNameFromKind = function (kind: number) {
   const gems = {
     [Types.Entities.GEMRUBY]: "Ruby",
     [Types.Entities.GEMEMERALD]: "Emerald",
@@ -314,7 +316,7 @@ Types.getGemNameFromKind = function (kind) {
   return gems[kind] || kind;
 };
 
-Types.getArtifactNameFromKind = function (kind) {
+Types.getArtifactNameFromKind = function (kind: number) {
   const artifact = {
     [Types.Entities.RAIBLOCKSTL]: "Raiblocks top left",
     [Types.Entities.RAIBLOCKSTR]: "Raiblocks top right",
@@ -690,7 +692,7 @@ Types.expForLevel = [
   108243216,
 ];
 
-Types.getLevel = function (exp) {
+Types.getLevel = function (exp: number) {
   var i = 1;
   for (i = 1; i < 135; i++) {
     if (exp < Types.expForLevel[i]) {
@@ -699,40 +701,40 @@ Types.getLevel = function (exp) {
   }
   return 135;
 };
-Types.getWeaponRank = function (weaponKind) {
-  return _.indexOf(Types.rankedWeapons, weaponKind);
+Types.getWeaponRank = function (weaponKind: number) {
+  return Types.rankedWeapons.indexOf(weaponKind);
 };
 
-Types.getArmorRank = function (armorKind) {
-  return _.indexOf(Types.rankedArmors, armorKind);
+Types.getArmorRank = function (armorKind: number) {
+  return Types.rankedArmors.indexOf(armorKind);
 };
-Types.getMobExp = function (mobKind) {
+Types.getMobExp = function (mobKind: number) {
   return kinds.getMobExp(mobKind);
 };
-Types.getMobLevel = function (mobKind) {
+Types.getMobLevel = function (mobKind: number) {
   return kinds.getMobLevel(mobKind);
 };
-Types.getBaseLevel = function (kind) {
+Types.getBaseLevel = function (kind: number) {
   return kinds.getBaseLevel(kind);
 };
 
-Types.isPlayer = function (kind) {
+Types.isPlayer = function (kind: number) {
   return kinds.getType(kind) === "player";
 };
 
-Types.isMob = function (kind) {
+Types.isMob = function (kind: number) {
   return kinds.getType(kind) === "mob";
 };
 
-Types.isNpc = function (kind) {
+Types.isNpc = function (kind: number) {
   return kinds.getType(kind) === "npc";
 };
 
-Types.isCharacter = function (kind) {
+Types.isCharacter = function (kind: number) {
   return Types.isMob(kind) || Types.isNpc(kind) || Types.isPlayer(kind);
 };
 
-Types.isArmor = function (kindOrString) {
+Types.isArmor = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return kinds.getType(kindOrString) === "armor";
   } else {
@@ -740,7 +742,7 @@ Types.isArmor = function (kindOrString) {
   }
 };
 
-Types.isBelt = function (kindOrString) {
+Types.isBelt = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return kinds.getType(kindOrString) === "belt";
   } else {
@@ -748,7 +750,7 @@ Types.isBelt = function (kindOrString) {
   }
 };
 
-Types.isBoss = function (kindOrString) {
+Types.isBoss = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [
       Types.Entities.BOSS,
@@ -761,7 +763,7 @@ Types.isBoss = function (kindOrString) {
   }
 };
 
-Types.isScroll = function (kindOrString) {
+Types.isScroll = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [
       Types.Entities.SCROLLUPGRADELOW,
@@ -774,7 +776,7 @@ Types.isScroll = function (kindOrString) {
   }
 };
 
-Types.isWeapon = function (kindOrString) {
+Types.isWeapon = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return kinds.getType(kindOrString) === "weapon";
   } else {
@@ -782,7 +784,7 @@ Types.isWeapon = function (kindOrString) {
   }
 };
 
-Types.isRing = function (kindOrString) {
+Types.isRing = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return kinds.getType(kindOrString) === "ring";
   } else {
@@ -790,7 +792,7 @@ Types.isRing = function (kindOrString) {
   }
 };
 
-Types.isAmulet = function (kindOrString) {
+Types.isAmulet = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return kinds.getType(kindOrString) === "amulet";
   } else {
@@ -798,11 +800,11 @@ Types.isAmulet = function (kindOrString) {
   }
 };
 
-Types.isObject = function (kind) {
+Types.isObject = function (kind: number) {
   return kinds.getType(kind) === "object";
 };
 
-Types.isUniqueRing = function (kindOrString) {
+Types.isUniqueRing = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [
       Types.Entities.RINGNECROMANCER,
@@ -815,15 +817,15 @@ Types.isUniqueRing = function (kindOrString) {
   }
 };
 
-Types.isUniqueWeapon = function (bonus) {
+Types.isUniqueWeapon = function (bonus: any) {
   return !!bonus;
 };
 
-Types.isChest = function (kind) {
+Types.isChest = function (kind: number) {
   return kind === Types.Entities.CHEST;
 };
 
-Types.isSingle = function (kindOrString) {
+Types.isSingle = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [Types.Entities.SKELETONKINGCAGE, Types.Entities.NECROMANCERHEART].includes(kindOrString);
   } else {
@@ -831,7 +833,7 @@ Types.isSingle = function (kindOrString) {
   }
 };
 
-Types.isItem = function (kind) {
+Types.isItem = function (kind: number) {
   return (
     Types.isWeapon(kind) ||
     Types.isArmor(kind) ||
@@ -853,7 +855,7 @@ Types.Slot = {
   AMULET: 105,
 };
 
-Types.isCorrectTypeForSlot = function (slot, item) {
+Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
   switch (slot) {
     case "weapon":
     case Types.Slot.WEAPON:
@@ -877,7 +879,7 @@ Types.isCorrectTypeForSlot = function (slot, item) {
   return false;
 };
 
-Types.isHealingItem = function (kind) {
+Types.isHealingItem = function (kind: number) {
   return [
     Types.Entities.FLASK,
     Types.Entities.BURGER,
@@ -886,17 +888,17 @@ Types.isHealingItem = function (kind) {
   ].includes(kind);
 };
 
-Types.isExpendableItem = function (kind) {
+Types.isExpendableItem = function (kind: number) {
   return Types.isHealingItem(kind) || kind === Types.Entities.FIREPOTION || kind === Types.Entities.CAKE;
 };
 
-Types.getKindFromString = function (kind) {
+Types.getKindFromString = function (kind: number) {
   if (kind in kinds) {
     return kinds[kind][0];
   }
 };
 
-Types.getKindAsString = function (kind) {
+Types.getKindAsString = function (kind: number) {
   for (var k in kinds) {
     if (kinds[k][0] === kind) {
       return k;
@@ -904,7 +906,7 @@ Types.getKindAsString = function (kind) {
   }
 };
 
-Types.getAliasFromName = function (name) {
+Types.getAliasFromName = function (name: string) {
   if (name === "skeleton2") {
     return "skeleton warrior";
   } else if (name === "eye") {
@@ -978,7 +980,7 @@ Types.waypoints = [
   },
 ];
 
-Types.forEachKind = function (callback) {
+Types.forEachKind = function (callback: any) {
   for (var k in kinds) {
     callback(kinds[k][0], k);
   }
@@ -1015,7 +1017,7 @@ Types.forEachWeaponKind = function (callback) {
   });
 };
 
-Types.getOrientationAsString = function (orientation) {
+Types.getOrientationAsString = function (orientation: number) {
   switch (orientation) {
     case Types.Orientations.LEFT:
       return "left";
@@ -1032,7 +1034,7 @@ Types.getOrientationAsString = function (orientation) {
   }
 };
 
-Types.getRandomItemKind = function (item) {
+Types.getRandomItemKind = function () {
   var all = _.union(this.rankedWeapons, this.rankedArmors),
     forbidden = [Types.Entities.DAGGER, Types.Entities.CLOTHARMOR],
     itemKinds = _.difference(all, forbidden),
@@ -1041,9 +1043,9 @@ Types.getRandomItemKind = function (item) {
   return itemKinds[i];
 };
 
-Types.getMessageTypeAsString = function (type) {
+Types.getMessageTypeAsString = function (type: number) {
   var typeName;
-  _.each(Types.Messages, function (value, name) {
+  _.each(Types.Messages, function (value: number, name: string) {
     if (value === type) {
       typeName = name;
     }
@@ -1138,7 +1140,7 @@ Types.getBonus = function (rawBonus, level) {
     "highHealth",
   ];
 
-  const bonus = [];
+  const bonus: { type: string; stats: number; description: string }[] = [];
 
   // A glitch in the inventory system allowed for scrolls to be added as rings
   if (!rawBonus || !Array.isArray(rawBonus)) return bonus;
@@ -1171,7 +1173,7 @@ Types.getBlessedSuccessRateBonus = () => {
 };
 
 // kind, type, name, level, defense
-Types.getArmorDefense = function (armor, level, isUnique) {
+Types.getArmorDefense = function (armor: string, level: number, isUnique: boolean) {
   if (!armor || !level) return 0;
 
   const defense = isUnique && Types.itemUniqueMap[armor] ? Types.itemUniqueMap[armor][2] : kinds[armor][4];
@@ -1181,7 +1183,7 @@ Types.getArmorDefense = function (armor, level, isUnique) {
   return Math.ceil((defense + defenseBonus) * (defensePercentPerLevel[level - 1] / 100));
 };
 
-Types.getArmorHealthBonus = function (level) {
+Types.getArmorHealthBonus = function (level: number) {
   if (!level) return 0;
 
   const healthBonusPerLevel = [2, 4, 8, 14, 20, 30, 42, 60, 80, 110];
@@ -1189,7 +1191,7 @@ Types.getArmorHealthBonus = function (level) {
   return healthBonusPerLevel[level - 1];
 };
 
-Types.getWeaponDamage = function (weapon, level, isUnique) {
+Types.getWeaponDamage = function (weapon: string, level: number, isUnique: boolean) {
   const damage = isUnique && Types.itemUniqueMap[weapon] ? Types.itemUniqueMap[weapon][2] : kinds[weapon][4];
   const damagePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 185, 215, 255];
   const damageBonus = level >= 7 ? Math.ceil((level - 6) * 2) : 0;
@@ -1197,19 +1199,19 @@ Types.getWeaponDamage = function (weapon, level, isUnique) {
   return Math.ceil((damage + damageBonus) * (damagePercentPerLevel[level - 1] / 100));
 };
 
-Types.getWeaponMagicDamage = function (level) {
+Types.getWeaponMagicDamage = function (level: number) {
   const magicDamagePerLevel = [1, 3, 5, 8, 11, 15, 18, 25, 35, 50];
 
   return magicDamagePerLevel[level - 1];
 };
 
-Types.isBaseHighClassItem = item => {
+Types.isBaseHighClassItem = (item: string) => {
   const baseLevel = kinds[item][3];
 
   return baseLevel >= 10;
 };
 
-Types.getItemClass = function (item, level, isUnique) {
+Types.getItemClass = function (item: string, level: number, isUnique: boolean) {
   const baseLevel = Types.getItemBaseLevel(item, isUnique);
 
   let itemClass;
@@ -1234,11 +1236,11 @@ Types.getItemClass = function (item, level, isUnique) {
   return itemClass;
 };
 
-Types.getItemBaseLevel = function (item, isUnique) {
+Types.getItemBaseLevel = function (item: string, isUnique: boolean) {
   return isUnique && Types.itemUniqueMap[item] ? Types.itemUniqueMap[item][1] : kinds[item][3];
 };
 
-Types.getItemRequirement = function (item, level, isUnique) {
+Types.getItemRequirement = function (item: string, level: number, isUnique: boolean) {
   const baseLevel = Types.getItemBaseLevel(item, isUnique);
   const multiplier = Types.getItemClass(item, level, isUnique) === "high" ? 1.5 : 1;
   const requirement = Math.floor(baseLevel + level * multiplier);
@@ -1246,7 +1248,7 @@ Types.getItemRequirement = function (item, level, isUnique) {
   return requirement;
 };
 
-Types.getItemDetails = function (item, level, rawBonus) {
+Types.getItemDetails = function (item: string, level: number, rawBonus: number[]) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
   const isRing = Types.isRing(item);
@@ -1302,7 +1304,7 @@ Types.getItemDetails = function (item, level, rawBonus) {
   };
 };
 
-Types.getDisplayName = function (item, isUnique = false) {
+Types.getDisplayName = function (item: string, isUnique = false) {
   if (isUnique && Types.itemUniqueMap[item]) {
     return Types.itemUniqueMap[item][0];
   } else {
@@ -1323,6 +1325,6 @@ Types.itemDescription = {
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level. Blessed scrolls gives a higher chance of successful upgrade.",
 };
 
-if (!(typeof exports === "undefined")) {
-  module.exports = Types;
-}
+// if (!(typeof exports === "undefined")) {
+//   module.exports = Types;
+// }

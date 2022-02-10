@@ -1,10 +1,16 @@
-define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.countdown"], function (
-  $,
-  Storage,
-  Store,
-) {
-  var App = Class.extend({
-    init: function () {
+import { TRANSITIONEND, isValidAccountAddress, getAccountAddressFromText } from "./utils";
+
+
+import Storage from './storage';
+import Store from './store';
+
+
+// define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.countdown"], function (
+
+
+
+  class App {
+    constructor () {
       this.currentPage = 1;
       this.blinkInterval = null;
       this.achievementTimeout = null;
@@ -36,18 +42,18 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
 
       document.getElementById("parchment").className = this.frontPage;
-    },
+    }
 
-    setGame: function (game) {
+    setGame (game) {
       this.game = game;
       this.isMobile = this.game.renderer.mobile;
       this.isTablet = this.game.renderer.tablet;
       this.isDesktop = !(this.isMobile || this.isTablet);
       this.supportsWorkers = !!window.Worker;
       this.ready = true;
-    },
+    }
 
-    initFormFields: function () {
+    initFormFields () {
       var self = this;
 
       // Play button
@@ -75,21 +81,21 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       this.getAccountField = function () {
         return this.createNewCharacterFormActive() ? this.$accountinput : this.$loginaccountinput;
       };
-    },
+    }
 
-    center: function () {
+    center () {
       window.scrollTo(0, 1);
-    },
+    }
 
-    canStartGame: function () {
+    canStartGame () {
       if (this.isDesktop) {
         return this.game && this.game.map && this.game.map.isLoaded;
       } else {
         return this.game;
       }
-    },
+    }
 
-    tryStartingGame: function () {
+    tryStartingGame () {
       if (this.starting) return; // Already loading
 
       var self = this;
@@ -103,7 +109,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
 
       if (!this.ready || !this.canStartGame()) {
         var watchCanStart = setInterval(function () {
-          log.debug("waiting...");
+          console.debug("waiting...");
           if (self.canStartGame()) {
             clearInterval(watchCanStart);
             self.startGame(action, username, useraccount);
@@ -112,9 +118,9 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       } else {
         this.startGame(action, username, useraccount);
       }
-    },
+    }
 
-    startGame: function (action, username, useraccount) {
+    startGame (action, username, useraccount) {
       var self = this;
       self.firstTimePlaying = !self.storage.hasAlreadyPlayed();
 
@@ -124,10 +130,10 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
 
         //>>includeStart("devHost", pragmas.devHost);
         if (config.local) {
-          log.debug("Starting game with local dev config.");
+          console.debug("Starting game with local dev config.");
           this.game.setServerOptions(config.local.host, config.local.port, username, useraccount);
         } else {
-          log.debug("Starting game with default dev config.");
+          console.debug("Starting game with default dev config.");
           this.game.setServerOptions(config.dev.host, config.dev.port, username, useraccount);
         }
         optionsSet = true;
@@ -135,7 +141,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
 
         //>>includeStart("prodHost", pragmas.prodHost);
         if (!optionsSet) {
-          log.debug("Starting game with build config.");
+          console.debug("Starting game with build config.");
           this.game.setServerOptions(config.build.host, config.build.port, username, useraccount);
         }
         //>>includeEnd("prodHost");
@@ -198,7 +204,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    start: function () {
+    start () {
       this.hideIntro();
       $("body").addClass("started");
 
@@ -207,7 +213,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    setPlayButtonState: function (enabled) {
+    setPlayButtonState (enabled) {
       var self = this;
       var $playButton = this.getPlayButton();
 
@@ -230,17 +236,17 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    getActiveForm: function () {
+    getActiveForm () {
       if (this.loginFormActive()) return $("#loadcharacter");
       else if (this.createNewCharacterFormActive()) return $("#createcharacter");
       else return null;
     },
 
-    loginFormActive: function () {
+    loginFormActive () {
       return $("#parchment").hasClass("loadcharacter");
     },
 
-    createNewCharacterFormActive: function () {
+    createNewCharacterFormActive () {
       return $("#parchment").hasClass("createcharacter");
     },
 
@@ -249,7 +255,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
      * out, account match looks valid). Assumes either the login or the create new character form
      * is currently active.
      */
-    validateFormFields: function (username, account) {
+    validateFormFields (username, account) {
       this.clearValidationErrors();
 
       if (!username) {
@@ -265,7 +271,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       return true;
     },
 
-    addValidationError: function (field, errorText) {
+    addValidationError (field, errorText) {
       $("<span/>", {
         class: "validation-error blink",
         text: errorText,
@@ -281,7 +287,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    clearValidationErrors: function () {
+    clearValidationErrors () {
       var fields = this.loginFormActive() ? this.loginFormFields : this.createNewCharacterFormFields;
       $.each(fields, function (i, field) {
         field.removeClass("field-error");
@@ -289,7 +295,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       $(".validation-error").remove();
     },
 
-    setMouseCoordinates: function (event) {
+    setMouseCoordinates (event) {
       var gamePos = $("#container").offset(),
         scale = this.game.renderer.getScaleFactor(),
         width = this.game.renderer.getWidth(),
@@ -312,7 +318,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
     //Init the hud that makes it show what creature you are mousing over and attacking
-    initTargetHud: function () {
+    initTargetHud () {
       var self = this;
       var scale = self.game.renderer.getScaleFactor(),
         healthMaxWidth = $("#inspector .health").width() - 12 * scale,
@@ -362,7 +368,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
         self.game.player.inspecting = null;
       });
     },
-    initExpBar: function () {
+    initExpBar () {
       var self = this;
       var maxHeight = $("#expbar").height();
 
@@ -383,7 +389,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       });
     },
 
-    initHealthBar: function () {
+    initHealthBar () {
       var scale = this.game.renderer.getScaleFactor(),
         healthMaxWidth = $("#healthbar").width() - 12 * scale;
 
@@ -395,7 +401,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       this.game.onPlayerHurt(this.blinkHealthBar.bind(this));
     },
 
-    initPlayerInfo: function () {
+    initPlayerInfo () {
       const { name: username, account } = this.game.storage.data.player;
 
       $("#player-username").text(username);
@@ -404,7 +410,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
         .text(account);
     },
 
-    blinkHealthBar: function () {
+    blinkHealthBar () {
       var $hitpoints = $("#hitpoints");
 
       $hitpoints.addClass("white");
@@ -413,7 +419,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }, 500);
     },
 
-    toggleButton: function () {
+    toggleButton () {
       var name = $("#parchment input").val(),
         $play = $("#createcharacter .play");
 
@@ -426,7 +432,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    hideIntro: function () {
+    hideIntro () {
       clearInterval(this.watchNameInputInterval);
       $("body").removeClass("intro");
       setTimeout(function () {
@@ -434,7 +440,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }, 500);
     },
 
-    showChat: function () {
+    showChat () {
       if (this.game.started) {
         $("#chatinput").focus();
         $("#chatbutton").addClass("active").removeClass("blink");
@@ -442,7 +448,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    hideChat: function () {
+    hideChat () {
       if (this.game.started) {
         // $("#chatbox").removeClass("active");
         $("#chatinput").blur();
@@ -451,20 +457,20 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    toggleInstructions: function () {
+    toggleInstructions () {
       $("#instructions").toggleClass("active");
     },
 
-    toggleAchievements: function () {
+    toggleAchievements () {
       this.resetAchievementPage();
       $("#achievements").toggleClass("active");
     },
 
-    toggleCompleted: function () {
+    toggleCompleted () {
       $("#completed").toggleClass("active");
     },
 
-    toggleAbout: function () {
+    toggleAbout () {
       if ($("body").hasClass("about")) {
         this.closeInGameScroll("about");
       } else {
@@ -472,7 +478,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    resetAchievementPage: function () {
+    resetAchievementPage () {
       var self = this;
       var $achievements = $("#achievements");
 
@@ -485,7 +491,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    initEquipmentIcons: function () {
+    initEquipmentIcons () {
       var scale = this.game.renderer.getScaleFactor();
       var getIconPath = function (spriteName) {
         return "img/" + scale + "/item-" + spriteName + ".png";
@@ -517,7 +523,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    hideWindows: function () {
+    hideWindows () {
       if ($("#achievements").hasClass("active")) {
         this.toggleAchievements();
         $("#achievementsbutton").removeClass("active");
@@ -561,7 +567,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    showAchievementNotification: function (id, name) {
+    showAchievementNotification (id, name) {
       var $notif = $("#achievement-notification"),
         $name = $notif.find(".name"),
         $button = $("#achievementsbutton");
@@ -581,7 +587,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }, 5000);
     },
 
-    displayUnlockedAchievement: function (id) {
+    displayUnlockedAchievement (id) {
       var $achievement = $("#achievements li.achievement" + id),
         achievement = this.game.getAchievementById(id);
 
@@ -591,7 +597,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       $achievement.addClass("unlocked");
     },
 
-    unlockAchievement: function (id, name, nano) {
+    unlockAchievement (id, name, nano) {
       this.showAchievementNotification(id, name);
       this.displayUnlockedAchievement(id);
 
@@ -601,7 +607,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       $("#unlocked-nano-achievements").text((totalNano + (nano || 0)) / 100000);
     },
 
-    initAchievementList: function (achievements) {
+    initAchievementList (achievements) {
       var self = this,
         $lists = $("#lists"),
         $page = $("#page-tmpl"),
@@ -644,7 +650,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       `);
     },
 
-    initUnlockedAchievements: function (ids, totalNano) {
+    initUnlockedAchievements (ids, totalNano) {
       var self = this;
 
       _.each(ids, function (id) {
@@ -654,7 +660,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       $("#unlocked-nano-achievements").text(totalNano / 100000);
     },
 
-    setAchievementData: function ($el, name, desc, nano) {
+    setAchievementData ($el, name, desc, nano) {
       $el.find(".achievement-name").html(name);
       $el.find(".achievement-description").html(desc);
       $el.find(".achievement-nano").html(`
@@ -663,14 +669,14 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       `);
     },
 
-    updateNanoPotions: function (nanoPotions) {
+    updateNanoPotions (nanoPotions) {
       for (var i = 0; i < nanoPotions; i++) {
         if (i === 5) break;
         $("#nanopotion-count").find(`.item-nanopotion:eq(${i})`).addClass("active");
       }
     },
 
-    updateGems: function (gems) {
+    updateGems (gems) {
       $("#achievements-unlocks-count")
         .find(".item-gem")
         .each((index, element) => {
@@ -680,11 +686,11 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
         });
     },
 
-    updateArtifact: function (artifact) {
+    updateArtifact (artifact) {
       // @TODO Update an artifact grayed out "map"?
     },
 
-    toggleScrollContent: function (content) {
+    toggleScrollContent (content) {
       var currentState = $("#parchment").attr("class");
 
       if (this.game.started) {
@@ -710,7 +716,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    closeInGameScroll: function (content) {
+    closeInGameScroll (content) {
       $("body").removeClass(content);
       $("#parchment").removeClass(content);
       if (!this.game.player) {
@@ -721,7 +727,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    togglePopulationInfo: function () {
+    togglePopulationInfo () {
       $("#population").toggleClass("visible");
 
       if ($("#upgrade, #inventory").hasClass("visible")) {
@@ -729,11 +735,11 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    togglePlayerInfo: function () {
+    togglePlayerInfo () {
       $("#player").toggleClass("visible");
     },
 
-    toggleMute: function () {
+    toggleMute () {
       if ($("#mute-button").hasClass("active")) {
         this.storage.setAudioEnabled(true);
         this.game.audioManager.enableAudio();
@@ -743,7 +749,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    toggleInventory: function () {
+    toggleInventory () {
       if ($("#upgrade").hasClass("visible")) {
         $("#upgrade").removeClass("visible");
         $("#inventory").removeClass("upgrade");
@@ -759,43 +765,43 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    openInventory: function () {
+    openInventory () {
       if (!$("#inventory").hasClass("visible")) {
         $("#inventory").addClass("visible");
         this.game.initDraggable();
       }
     },
 
-    closeInventory: function () {
+    closeInventory () {
       $("#inventory").removeClass("visible");
       $("#player").removeClass("visible");
       this.game.destroyDraggable();
     },
 
-    openStash: function () {
+    openStash () {
       this.closeUpgrade();
       $("#stash").addClass("visible");
       this.openInventory();
     },
 
-    closeStash: function () {
+    closeStash () {
       $("#stash").removeClass("visible");
       this.closeInventory();
     },
 
-    openUpgrade: function () {
+    openUpgrade () {
       if ($("#upgrade").hasClass("visible")) return;
       this.closeStash();
       this.toggleUpgrade();
     },
 
-    closeUpgrade: function () {
+    closeUpgrade () {
       if (!$("#upgrade").hasClass("visible")) return;
 
       this.toggleUpgrade();
     },
 
-    toggleUpgrade: function () {
+    toggleUpgrade () {
       $("#upgrade").toggleClass("visible");
 
       if ($("#upgrade").hasClass("visible")) {
@@ -815,7 +821,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    openWaypoint: function (activeWaypoint) {
+    openWaypoint (activeWaypoint) {
       $("#waypoint").find(".active").removeClass("active");
       if (activeWaypoint) {
         $(`#waypoint-${activeWaypoint.id}`).addClass("active");
@@ -830,12 +836,12 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
         });
     },
 
-    closeWaypoint: function () {
+    closeWaypoint () {
       $("#waypoint").find(".active").removeClass("active");
       $("#waypoint").removeClass("visible");
     },
 
-    openPopup: function (type, url) {
+    openPopup (type, url) {
       var h = $(window).height(),
         w = $(window).width(),
         popupHeight,
@@ -867,7 +873,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    animateParchment: function (origin, destination) {
+    animateParchment (origin, destination) {
       var self = this,
         $parchment = $("#parchment"),
         duration = 1;
@@ -896,13 +902,13 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    animateMessages: function () {
+    animateMessages () {
       var $messages = $("#notifications div");
 
       $messages.addClass("top");
     },
 
-    resetMessagesPosition: function () {
+    resetMessagesPosition () {
       var message = $("#message2").text();
 
       $("#notifications div").removeClass("top");
@@ -910,7 +916,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       $("#message1").text(message);
     },
 
-    showMessage: function (message, timeout) {
+    showMessage (message, timeout) {
       var $wrapper = $("#notifications div"),
         $message = $("#notifications #message2");
 
@@ -925,11 +931,11 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }, timeout || 5000);
     },
 
-    resetMessageTimer: function () {
+    resetMessageTimer () {
       clearTimeout(this.messageTimer);
     },
 
-    resizeUi: function () {
+    resizeUi () {
       if (this.game) {
         if (this.game.started) {
           this.game.resize();
@@ -944,7 +950,7 @@ define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.c
       }
     },
 
-    snowfall: function () {
+    snowfall () {
       // let snowString = "";
       // for (let i = 0; i < 100; i++) {
       //   snowString += "<div class='snow'></div>";
