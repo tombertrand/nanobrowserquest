@@ -7,12 +7,6 @@
  |   \/  |  /  \_|  |  |_/ \_|/  /  | |/  \|  |   |  |/  / \_|
  |(__/   |_/\__/  \/ \/   \/ |__/   |_/\__/\_/ \_/|_/|__/ \/ |_/
 
-Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworkshop.fr
-
-* Client libraries used: RequireJS, Underscore.js, jQuery, Modernizr
-* Server-side: Node.js, Socket.io
-* Should work in latest versions of Firefox, Chrome, Safari, Opera, Safari Mobile and Firefox for Android
-
  -->
 <html lang="en">
 	<head>
@@ -45,14 +39,6 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <link href="img/common/apple-touch-startup-image-1536x2008.png" rel="apple-touch-startup-image" media="(device-width: 1536px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)">
         <link href="img/common/apple-touch-startup-image-1496x2048.png" rel="apple-touch-startup-image" media="(device-width: 1536px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)">
 
-        <script src="js/lib/modernizr.js" type="text/javascript"></script>
-        <!--[if lt IE 9]>
-                <link rel="stylesheet" href="css/ie.css" type="text/css">
-                <script src="js/lib/css3-mediaqueries.js" type="text/javascript"></script>
-                <script type="text/javascript">
-                document.getElementById('parchment').className = ('error');
-                </script>
-        <![endif]-->
         <script src="js/detect.js" type="text/javascript"></script>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-V98K4M6T34"></script>
         <script>
@@ -65,9 +51,6 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2641261794144402"
      crossorigin="anonymous"></script>
     </head>
-    <!--[if lt IE 9]>
-    <body class="intro upscaled">
-    <![endif]-->
     <body class="intro">
         <noscript>
             <div class="alert">
@@ -627,14 +610,5 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 
             // parchment.className = "confirmation";
         </script>
-
-        <script src="js/lib/log.js"></script>
-        <script>
-            var require = { waitSeconds: 60 };
-        </script>
-        <script data-main="js/home" src="js/lib/require.js"></script>
-        <script src="js/lib/jquery.js"></script>
-        <!-- <script src="js/lib/jquery-ui.js"></script> -->
-        <div id="snow-container"></div>
 	</body>
 </html>

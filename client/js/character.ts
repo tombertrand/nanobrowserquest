@@ -152,7 +152,7 @@ class Character extends Entity {
     if (this.request_path_callback) {
       return this.request_path_callback(x, y);
     } else {
-      log.error(this.id + " couldn't request pathfinding to " + x + ", " + y);
+      console.error(this.id + " couldn't request pathfinding to " + x + ", " + y);
       return [];
     }
   }
@@ -454,7 +454,7 @@ class Character extends Entity {
     if (!this.isAttackedBy(character)) {
       this.attackers[character.id] = character;
     } else {
-      log.error(this.id + " is already attacked by " + character.id);
+      console.error(this.id + " is already attacked by " + character.id);
     }
   }
 
@@ -466,7 +466,7 @@ class Character extends Entity {
     if (this.isAttackedBy(character)) {
       delete this.attackers[character.id];
     } else {
-      // log.error(this.id + " is not attacked by " + character.id);
+      // console.error(this.id + " is not attacked by " + character.id);
     }
   }
 

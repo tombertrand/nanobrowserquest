@@ -127,7 +127,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
         });
 
         this.connection.on("error", function (e) {
-          log.error(e, true);
+          console.error(e, true);
         });
 
         this.connection.on("disconnect", function () {
@@ -187,7 +187,7 @@ define(["player", "entityfactory", "lib/bison"], function (Player, EntityFactory
       if (this.handlers[action] && _.isFunction(this.handlers[action])) {
         this.handlers[action].call(this, data);
       } else {
-        log.error("Unknown action : " + action);
+        console.error("Unknown action : " + action);
       }
     },
 

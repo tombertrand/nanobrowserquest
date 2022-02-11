@@ -40,7 +40,7 @@ class Storage {
   }
 
   hasLocalStorage() {
-    return Modernizr.localstorage;
+    return true;
   }
 
   save() {

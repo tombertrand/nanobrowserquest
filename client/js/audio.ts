@@ -140,7 +140,7 @@ class AudioManager {
     sound.addEventListener(
       "error",
       function (e) {
-        log.error("Error: " + path + " could not be loaded.");
+        console.error("Error: " + path + " could not be loaded.");
         self.sounds[name] = null;
       },
       false,

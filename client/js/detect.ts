@@ -29,7 +29,7 @@ Detect.isChromeOnWindows = function () {
 };
 
 Detect.canPlayMP3 = function () {
-  return Modernizr.audio.mp3;
+  return true;
 };
 
 Detect.isSafari = function () {

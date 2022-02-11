@@ -42,7 +42,7 @@ class Entity {
 
   setSprite(sprite) {
     if (!sprite) {
-      log.error(this.id + " : sprite is null", true);
+      console.error(this.id + " : sprite is null", true);
       throw "Sprite error";
     }
 
@@ -79,7 +79,7 @@ class Entity {
     if (name in this.animations) {
       animation = this.animations[name];
     } else {
-      log.error("No animation called " + name);
+      console.error("No animation called " + name);
     }
     return animation;
   }
@@ -143,7 +143,7 @@ class Entity {
   }
 
   log_error(message) {
-    log.error("[" + this.id + "] " + message);
+    console.error("[" + this.id + "] " + message);
   }
 
   setHighlight(value) {

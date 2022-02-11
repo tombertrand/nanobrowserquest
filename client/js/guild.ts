@@ -1,10 +1,9 @@
-define(function() {
-    var Guild = Class.extend({
-        init: function(id, name) {
-           this.members = [];//name
-           this.id = id;
-           this.name = name; 
-        }/*, Maybe useful later… see #updateguild tag
+class Guild {
+  constructor(id, name) {
+    this.members = []; //name
+    this.id = id;
+    this.name = name;
+  } /*, Maybe useful later… see #updateguild tag
 
         addMembers: function(membersList) {
 			//maybe we could have tested the form of the array…
@@ -18,7 +17,5 @@ define(function() {
 		listMembers: function(iterator) {
 			return _.filter(this.members, iterator);
 		}*/
-    });
-
-    return Guild;
-});
+}
+export default Guild;
