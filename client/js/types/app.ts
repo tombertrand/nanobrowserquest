@@ -27,7 +27,6 @@ export interface App {
   initEquipmentIcons: () => void;
   unlockAchievement: (arg0: any, arg1: any, arg2: any) => void;
   showMessage: any;
-  snowfall: () => void;
   initHealthBar: () => void;
   initTargetHud: () => void;
   initExpBar: () => void;

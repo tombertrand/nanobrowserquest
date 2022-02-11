@@ -19,12 +19,11 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "outDir": "./dist/",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "module": "es6",
     "target": "es5",
     "allowJs": true,
     "moduleResolution": "node",
-    // "noImplicitThis": false,
-    "noImplicitAnyForClassMembers": false
+    "noImplicitThis": false
   }
 }

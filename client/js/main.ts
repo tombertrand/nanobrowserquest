@@ -428,8 +428,6 @@ var initGame = function () {
 
   game.onNotification(app.showMessage);
 
-  app.snowfall();
-
   app.initHealthBar();
   app.initTargetHud();
   app.initExpBar();

@@ -5,7 +5,7 @@ import Store from "./store";
 
 import { Types } from "../../shared/js/gametypes";
 
-// define(["jquery", "storage", "store", "util", "lib/jquery.qrcode", "lib/jquery.countdown"], function (
+// define(["jquery", "lib/jquery.qrcode", "lib/jquery.countdown"], function (
 
 class App {
   constructor() {
