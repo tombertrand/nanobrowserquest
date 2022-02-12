@@ -1,8 +1,63 @@
 import Character from "./character";
 import Exceptions from "./exceptions";
-import { Types } from "../../shared/js/gametypes";
+import { Types, kinds } from "../../shared/js/gametypes";
 
 class Player extends Character {
+  spriteName: any;
+  name: any;
+  account: any;
+  nameOffsetY: number;
+  armorName: string;
+  armorLevel: number;
+  armorBonus: null;
+  weaponName: string;
+  weaponLevel: number;
+  weaponBonus: null;
+  beltName: null;
+  beltLevel: number | null;
+  beltBonus: null;
+  inventory: any[];
+  stash: any[];
+  upgrade: any[];
+  gems: any;
+  artifact: any;
+  expansion1: boolean;
+  waypoints: any[];
+  skeletonKey: boolean;
+  nanoPotions: number;
+  damage: string;
+  absorb: string;
+  ring1Name: null;
+  ring1Level: number | null;
+  ring1Bonus: null;
+  ring2Name: null;
+  ring2Level: number | null;
+  ring2Bonus: null;
+  amuletName: null;
+  amuletLevel: number | null;
+  amuletBonus: null;
+  auras: string[];
+  isLootMoving: boolean;
+  isSwitchingWeapon: boolean;
+  pvpFlag: boolean;
+  guild: any;
+  invite: any;
+  currentArmorSprite: any;
+  id: any;
+  invincible: any;
+  sprite: any;
+  switch_callback: any;
+  invincible_callback: any;
+  invincibleTimeout: any;
+  level: any;
+  x: number;
+  y: number;
+  moveUp: boolean;
+  moveDown: boolean;
+  moveLeft: boolean;
+  moveRight: boolean;
+  disableKeyboardNpcTalk: boolean;
+
   constructor(id, name, account, kind, guild) {
     super(id, kind);
 
@@ -55,6 +110,11 @@ class Player extends Character {
 
     // PVP Flag
     this.pvpFlag = true;
+    this.moveUp = false;
+    this.moveDown = false;
+    this.moveLeft = false;
+    this.moveRight = false;
+    this.disableKeyboardNpcTalk = false;
   }
 
   getGuild() {
@@ -166,10 +226,6 @@ class Player extends Character {
 
   getSpriteName() {
     return this.spriteName;
-  }
-
-  getDisplayArmorName(armorName) {
-    return armorMap[armorName] || armorName;
   }
 
   setSpriteName(name) {
@@ -297,7 +353,7 @@ class Player extends Character {
     return this.weaponName !== null;
   }
 
-  switchWeapon(weapon, level, bonus) {
+  switchWeapon(weapon, level: number, bonus?: number[]) {
     var self = this;
     var isDifferent = false;
 
@@ -319,7 +375,7 @@ class Player extends Character {
     }
   }
 
-  switchArmor(armorSprite, level, bonus) {
+  switchArmor(armorSprite, level: number, bonus?: number[]) {
     var self = this;
     var isDifferent = false;
 
@@ -330,7 +386,7 @@ class Player extends Character {
       self.setArmorName(armorSprite.id);
     }
 
-    if (armorSprite.kind !== Types.Entities.FIREFOX && level && level !== this.getArmorLevel) {
+    if (armorSprite.kind !== Types.Entities.FIREFOX && level && level !== this.getArmorLevel()) {
       isDifferent = true;
       self.setArmorLevel(level);
     }
@@ -375,7 +431,6 @@ class Player extends Character {
           bonus,
           slot,
           requirement,
-          ...{ requirement },
           ...{ level },
           ...{ quantity },
         };
@@ -393,10 +448,6 @@ class Player extends Character {
 
   setStash(stash) {
     this.stash = this.prepareRawItems(stash);
-  }
-
-  onArmorLoot(callback) {
-    this.armorloot_callback = callback;
   }
 
   onSwitchItem(callback) {
@@ -423,7 +474,7 @@ class Player extends Character {
 
     this.invincibleTimeout = setTimeout(function () {
       self.stopInvincibility();
-      self.idle();
+      self.idle(Types.Orientations.DOWN);
     }, 10000);
   }
 

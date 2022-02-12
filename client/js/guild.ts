@@ -1,4 +1,8 @@
 class Guild {
+  members: any[];
+  id: any;
+  name: any;
+
   constructor(id, name) {
     this.members = []; //name
     this.id = id;

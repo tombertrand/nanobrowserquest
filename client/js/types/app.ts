@@ -1,4 +1,15 @@
 export interface App {
+  config: { dev: { host: string; port: number; dispatcher: boolean; }; build: any; local: any; };
+  initAchievementList(achievements: any);
+  initUnlockedAchievements(unlockedAchievementIds: any, totalNano: any);
+  closeWaypoint();
+  updateNanoPotions(nanoPotions: any);
+  updateGems(gems: any);
+  updateArtifact(artifact: any);
+  closeUpgrade();
+  openUpgrade();
+  openStash();
+  openWaypoint(activeWaypoint: any);
   center: () => void;
   toggleScrollContent: (arg0: string) => void;
   showChat: () => void;

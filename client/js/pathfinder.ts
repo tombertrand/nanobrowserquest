@@ -2,6 +2,12 @@ import * as _ from "lodash";
 import AStar from "./lib/astar";
 
 class Pathfinder {
+  width: any;
+  height: any;
+  grid: any;
+  blankGrid: any;
+  ignored: any;
+
   constructor(width, height) {
     this.width = width;
     this.height = height;

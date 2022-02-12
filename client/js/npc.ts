@@ -93,7 +93,7 @@ var NpcTalk = {
       ],
     },
     {
-      condition(game: Game) {
+      condition(game: any) {
         return game.player.invincible;
       },
       text: [
@@ -103,7 +103,7 @@ var NpcTalk = {
       ],
     },
     {
-      condition(game: Game) {
+      condition(game: any) {
         return game.player.getSpriteName() == "firefox" && !game.player.invincible;
       },
       text: [
@@ -166,7 +166,7 @@ var NpcTalk = {
   stash: [""],
   cowportal: [
     {
-      condition(game: Game) {
+      condition(game: any) {
         return game.player.level < 45;
       },
       text: ["You need to be lv.45 and above to access the secret level"],
@@ -202,10 +202,10 @@ class Npc extends Character {
   talkCount: number;
   itemKind: any;
   talkIndex: number;
-  kind?: number;
+  kind: number;
 
   constructor(id, kind) {
-    super(id, kind, 1);
+    super(id, kind);
     this.itemKind = Types.getKindAsString(this.kind);
     if (typeof NpcTalk[this.itemKind][0] === "string") {
       this.discourse = -1;

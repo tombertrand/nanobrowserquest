@@ -1,5 +1,30 @@
+import type Player from "../player";
+import type Renderer from "../renderer";
+
 export interface Game {
-  renderer: { mobile: any; tablet: any };
+  forEachEntity(arg0: (entity: any) => void);
+  onCharacterUpdate(entity: any);
+  currentTime: any;
+  currentZoning: any;
+  camera: any;
+  zoningOrientation: any;
+  initAnimatedTiles();
+  endZoning();
+  keys(pos: { x: any; y: any }, UP: any);
+  sparksAnimation: any;
+  targetAnimation: any;
+  levelupAnimation: any;
+  drainLifeAnimation: any;
+  thunderstormAnimation: any;
+  highHealthAnimation: any;
+  anvilRecipeAnimation: any;
+  anvilSuccessAnimation: any;
+  anvilFailAnimation: any;
+  forEachAnimatedTile(arg0: (tile: any) => void);
+  checkOtherDirtyRects(dirtyRect: any, tile: any, x: any, y: any);
+  bubbleManager: any;
+  infoManager: any;
+  renderer: Renderer;
   setup: (
     arg0: string,
     arg1: HTMLElement | null,
@@ -12,21 +37,7 @@ export interface Game {
   loadMap: () => void;
   onGameStart: (arg0: () => void) => void;
   chat_callback: (arg0: null, arg1: null, arg2: string, arg3: string) => void;
-  player: {
-    name: any;
-    moveLeft: boolean;
-    disableKeyboardNpcTalk: boolean;
-    moveRight: boolean;
-    moveUp: boolean;
-    moveDown: boolean;
-    gridX: any;
-    gridY: any;
-    attackers: any;
-    hitPoints: number;
-    maxHitPoints: number;
-    inventory: { [x: string]: any };
-    inventoryCount: { [x: string]: number };
-  };
+  player: Player;
   onDisconnect: (arg0: (message: any) => void) => void;
   onPlayerDeath: (arg0: () => void) => void;
   onGameCompleted: (

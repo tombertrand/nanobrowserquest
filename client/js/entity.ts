@@ -1,9 +1,35 @@
-class Entity {
-  constructor(id, kind) {
-    var self = this;
+import { Types } from "../../shared/js/gametypes";
 
+class Entity {
+  id: any;
+  kind: any;
+  sprite: any;
+  flipSpriteX: boolean;
+  flipSpriteY: boolean;
+  animations: any;
+  currentAnimation: any;
+  shadowOffsetY: number;
+  isLoaded: boolean;
+  isHighlighted: boolean;
+  visible: boolean;
+  isFading: boolean;
+  name: any;
+  x: any;
+  y: any;
+  gridX: any;
+  gridY: any;
+  normalSprite: any;
+  hurtSprite: any;
+  ready_func: any;
+  startFadingTime: any;
+  blinking: any;
+  isDirty: boolean;
+  dirty_callback: any;
+
+  constructor(id, kind) {
     this.id = id;
     this.kind = kind;
+    this.isDirty = false;
 
     // Renderer
     this.sprite = null;
@@ -84,7 +110,7 @@ class Entity {
     return animation;
   }
 
-  setAnimation(name, speed, count, onEndCount) {
+  setAnimation(name, speed, count = 0, onEndCount?: () => void) {
     var self = this;
 
     if (this.isLoaded) {
@@ -117,6 +143,7 @@ class Entity {
           count ? count : 0,
           onEndCount ||
             function () {
+              // @ts-ignore
               self.idle();
             },
         );

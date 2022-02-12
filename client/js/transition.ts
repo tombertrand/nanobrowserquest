@@ -1,8 +1,18 @@
 class Transition {
+  startValue: number;
+  endValue: number;
+  duration: number;
+  inProgress: boolean;
+  startTime: any;
+  updateFunction: any;
+  stopFunction: any;
+  count: number;
+
   constructor() {
     this.startValue = 0;
     this.endValue = 0;
     this.duration = 0;
+    this.count = 0;
     this.inProgress = false;
   }
 

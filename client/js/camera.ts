@@ -1,5 +1,5 @@
 class Camera {
-  renderer: Renderer;
+  renderer: any;
   x: number;
   y: number;
   gridX: number;

@@ -1,6 +1,11 @@
+import * as _ from "lodash";
 import Timer from "./timer";
 
 class Bubble {
+  id: any;
+  element: any;
+  timer: Timer;
+
   constructor(id, element, time) {
     this.id = id;
     this.element = element;
@@ -24,6 +29,8 @@ class Bubble {
 }
 
 class BubbleManager {
+  container: any;
+  bubbles: {};
   constructor(container) {
     this.container = container;
     this.bubbles = {};
@@ -52,7 +59,7 @@ class BubbleManager {
     var self = this,
       bubblesToDelete = [];
 
-    _.each(this.bubbles, function (bubble) {
+    _.each(this.bubbles, function (bubble: Bubble) {
       if (bubble.isOver(time)) {
         bubble.destroy();
         bubblesToDelete.push(bubble.id);
@@ -68,7 +75,7 @@ class BubbleManager {
     var self = this,
       bubblesToDelete = [];
 
-    _.each(this.bubbles, function (bubble) {
+    _.each(this.bubbles, function (bubble: Bubble) {
       bubble.destroy();
       bubblesToDelete.push(bubble.id);
     });

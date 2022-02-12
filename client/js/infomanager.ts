@@ -1,13 +1,32 @@
+import * as _ from "lodash";
 import type { Game } from "./types/game";
 
 class InfoManager {
+  game: Game;
+  infos: {};
+  destroyQueue: any[];
+
   constructor(game: Game) {
     this.game = game;
     this.infos = {};
     this.destroyQueue = [];
   }
 
-  addDamageInfo({ value, x, y, type, duration, isCritical }) {
+  addDamageInfo({
+    value,
+    x,
+    y,
+    type,
+    duration = 1000,
+    isCritical,
+  }: {
+    value: any;
+    x: number;
+    y: number;
+    type: string;
+    duration?: number;
+    isCritical?: boolean;
+  }) {
     var time = this.game.currentTime;
     var id = time + "" + (isNaN(value * 1) ? value : value * 1) + "" + x + "" + y;
     var self = this;
@@ -19,7 +38,7 @@ class InfoManager {
       type = "inflicted";
     }
 
-    var info = new HoveringInfo(id, string, x, y, duration ? duration : 1000, type);
+    var info = new HoveringInfo(id, string, x, y, duration, type);
 
     info.onDestroy(function (id) {
       self.destroyQueue.push(id);
@@ -73,7 +92,18 @@ var damageInfoColors = {
 };
 
 class HoveringInfo {
-  DURATION: 1000;
+  id: any;
+  value: any;
+  duration: any;
+  x: any;
+  y: any;
+  opacity: number;
+  lastTime: number;
+  speed: number;
+  fillColor: any;
+  strokeColor: any;
+  type: string;
+  destroy_callback: any;
 
   constructor(id, value, x, y, duration, type) {
     this.id = id;
@@ -84,6 +114,7 @@ class HoveringInfo {
     this.opacity = 1.0;
     this.lastTime = 0;
     this.speed = 100;
+    this.type = type;
     this.fillColor = damageInfoColors[type].fill;
     this.strokeColor = damageInfoColors[type].stroke;
   }

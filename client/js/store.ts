@@ -26,8 +26,10 @@ interface BackendStoreItem {
 class Store {
   depositAccount: null | string;
   storeItems: Partial<StoreItem>[];
+  app: any;
 
-  constructor() {
+  constructor(app) {
+    this.app = app;
     this.depositAccount = null;
 
     this.storeItems = [
@@ -78,8 +80,8 @@ class Store {
   }
 
   openStore() {
-    App.hideWindows();
-    App.game.client.sendStoreItems();
+    this.app.hideWindows();
+    this.app.game.client.sendStoreItems();
 
     $("#store, #store-item-list").addClass("active");
 
@@ -98,8 +100,8 @@ class Store {
     });
 
     this.storeItems.forEach(({ id, icon, name, description, xno, usd, isAvailable }) => {
-      const isLocked = id === Types.Store.EXPANSION1 && !App.game.player.expansion1;
-      const isDisabled = !isAvailable || (id === Types.Store.EXPANSION1 && App.game.player.expansion1);
+      const isLocked = id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1;
+      const isDisabled = !isAvailable || (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1);
 
       const item = $("<div/>", {
         class: `item-wrapper item-name-${icon}`,
@@ -145,12 +147,12 @@ class Store {
     const item = this.storeItems.find(({ id: itemId }) => id === itemId)!;
     const { icon, name, description, xno, requiresInventorySlot } = item;
 
-    App.game.client.sendPurchaseCreate(id, this.depositAccount);
+    this.app.game.client.sendPurchaseCreate(id, this.depositAccount);
 
     $(".close")
       .off(".purchase-cancel")
       .on("click.purchase-cancel", () => {
-        App.game.client.sendPurchaseCancel(this.depositAccount);
+        this.app.game.client.sendPurchaseCancel(this.depositAccount);
         $(".close").off(".purchase-cancel");
       });
 
@@ -165,7 +167,7 @@ class Store {
           `,
     }).appendTo("#store-item-purchase");
 
-    if (requiresInventorySlot && App.game.player.inventory.length >= 24) {
+    if (requiresInventorySlot && this.app.game.player.inventory.length >= 24) {
       $("<div/>", {
         class: "item-wrapper item-wrapper-large",
         html: `
@@ -219,7 +221,7 @@ class Store {
     const { id, icon, name, description, confirmedMessage } = item;
     const isLocked = id !== Types.Store.EXPANSION1;
 
-    App.game.tryUnlockingAchievement("XNO");
+    this.app.game.tryUnlockingAchievement("XNO");
 
     $("#store-item-purchase").empty();
     $("<div/>", {

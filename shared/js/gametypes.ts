@@ -327,7 +327,7 @@ Types.getArtifactNameFromKind = function (kind: number) {
   return artifact[kind] || kind;
 };
 
-var kinds = {
+export const kinds = {
   warrior: [Types.Entities.WARRIOR, "player"],
 
   // ID, exp, level

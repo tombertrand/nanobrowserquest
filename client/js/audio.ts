@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import Area from "./area";
-
+import Detect from "./detect";
 import type { Game } from "./types/game";
 
 class AudioManager {
@@ -129,6 +129,7 @@ class AudioManager {
     sound.addEventListener(
       "canplaythrough",
       function (e) {
+        // @ts-ignore
         this.removeEventListener("canplaythrough", arguments.callee, false);
         console.debug(path + " is ready to play.");
         if (loaded_callback) {
@@ -161,8 +162,9 @@ class AudioManager {
     this.load("audio/sounds/", name, handleLoaded, 4);
   }
 
-  loadMusic(name, handleLoaded) {
+  loadMusic(name, handleLoaded?: () => void) {
     this.load("audio/music/", name, handleLoaded, 1);
+
     var music = this.sounds[name][0];
     music.loop = true;
     music.addEventListener(

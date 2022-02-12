@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import App from "./app";
 import Game from "./game";
 import { Types } from "../../shared/js/gametypes";
@@ -7,6 +8,8 @@ import type { App as AppType } from "./types/app";
 import type { Game as GameType } from "./types/game";
 
 import { TRANSITIONEND } from "./utils";
+import Entity from "./entity";
+import Character from "./character";
 
 // jqueryUI,
 // touchPunch,
@@ -18,6 +21,7 @@ var game: GameType;
 
 var initApp = function () {
   $(document).ready(function () {
+    // @ts-ignore
     app = new App();
     app.center();
 
@@ -171,9 +175,6 @@ var initApp = function () {
     $("#accountinput").bind("keyup", function () {
       app.toggleButton();
     });
-    $("#accountinput").bind("keyup", function () {
-      app.toggleButton();
-    });
 
     $("#previous").click(function () {
       var $achievements = $("#achievements");
@@ -262,6 +263,7 @@ var initGame = function () {
     foreground = document.getElementById("foreground"),
     input = document.getElementById("chatinput");
 
+  // @ts-ignore
   game = new Game(app);
   game.setup("#bubbles", canvas, background, foreground, input);
   game.setStorage(app.storage);
@@ -664,9 +666,9 @@ var initGame = function () {
       $(this).val(placeholder);
     }
 
-    if ($(this).val() === placeholder) {
-      this.setSelectionRange(0, 0);
-    }
+    // if ($(this).val() === placeholder) {
+    //   this.setSelectionRange(0, 0);
+    // }
   });
 
   $("#nameinput").focusin(function () {
@@ -707,7 +709,7 @@ var initGame = function () {
       if (key === 27) {
         // ESC
         app.hideWindows();
-        _.each(game.player.attackers, function (attacker) {
+        _.each(game.player.attackers, function (attacker: Character) {
           attacker.stop();
         });
         return false;
@@ -726,39 +728,39 @@ var initGame = function () {
     }
   });
 
-  $("#healthbar").click(function (e) {
-    var hb = $("#healthbar");
-    var hp = $("#hitpoints");
-    var hpg = $("#hpguide");
+  // $("#healthbar").click(function (e) {
+  //   var hb = $("#healthbar");
+  //   var hp = $("#hitpoints");
+  //   var hpg = $("#hpguide");
 
-    var hbp = hb.position();
-    var hpp = hp.position();
+  //   var hbp = hb.position();
+  //   var hpp = hp.position();
 
-    if (e.offsetX >= hpp.left && e.offsetX < hb.width()) {
-      if (hpg.css("display") === "none") {
-        hpg.css("display", "block");
+  //   if (e.offsetX >= hpp.left && e.offsetX < hb.width()) {
+  //     if (hpg.css("display") === "none") {
+  //       hpg.css("display", "block");
 
-        setInterval(function () {
-          if (
-            game.player.hitPoints / game.player.maxHitPoints <= game.hpGuide &&
-            game.healShortCut >= 0 &&
-            Types.isHealingItem(game.player.inventory[game.healShortCut]) &&
-            game.player.inventoryCount[game.healShortCut] > 0
-          ) {
-            game.eat(game.healShortCut);
-          }
-        }, 100);
-      }
-      hpg.css("left", e.offsetX + "px");
+  //       setInterval(function () {
+  //         if (
+  //           game.player.hitPoints / game.player.maxHitPoints <= game.hpGuide &&
+  //           game.healShortCut >= 0 &&
+  //           Types.isHealingItem(game.player.inventory[game.healShortCut]) &&
+  //           game.player.inventoryCount[game.healShortCut] > 0
+  //         ) {
+  //           game.eat(game.healShortCut);
+  //         }
+  //       }, 100);
+  //     }
+  //     hpg.css("left", e.offsetX + "px");
 
-      game.hpGuide = (e.offsetX - hpp.left) / (hb.width() - hpp.left);
-    }
+  //     game.hpGuide = (e.offsetX - hpp.left) / (hb.width() - hpp.left);
+  //   }
 
-    return false;
-  });
-  if (game.renderer.tablet) {
-    $("body").addClass("tablet");
-  }
+  //   return false;
+  // });
+  // if (game.renderer.tablet) {
+  //   $("body").addClass("tablet");
+  // }
 };
 
 initApp();

@@ -3,18 +3,18 @@ import * as _ from "lodash";
 import { randomRange } from "./utils";
 
 import InfoManager from "./infomanager";
-import Bubble from "./infomanager";
+import BubbleManager from "./bubble";
 import Renderer from "./renderer";
 import Map from "./map";
 import Animation from "./animation";
 import Sprite from "./sprite";
-import Tile from "./tile";
+import AnimatedTile from "./tile";
 import Warrior from "./warrior";
 import GameClient from "./gameclient";
-import Audio from "./audio";
+import AudioManager from "./audio";
 import Updater from "./updater";
 import Transition from "./transition";
-import PathFinder from "./pathfinder";
+import Pathfinder from "./pathfinder";
 import Item from "./item";
 import Mob from "./mob";
 import Npc from "./npc";
@@ -23,13 +23,115 @@ import Character from "./character";
 import Chest from "./chest";
 import Mobs from "./mobs";
 import Exceptions from "./exceptions";
-import Config from "./config";
+import config from "./config";
 import Guild from "./guild";
 
-import { Types } from "../../shared/js/gametypes";
+import { Types, kinds } from "../../shared/js/gametypes";
 import { App as AppType } from "./types/app";
+import Entity from "./entity";
 
 class Game {
+  app: AppType;
+  ready: boolean;
+  started: boolean;
+  hasNeverStarted: boolean;
+  isUpgradeItemSent: boolean;
+  isAnvilSuccess: boolean;
+  anvilSuccessTimeout: any;
+  anvilRecipeTimeout: any;
+  isAnvilFail: boolean;
+  anvilFailTimeout: any;
+  cowPortalStart: boolean;
+  cowLevelPortalCoords: { x: number; y: number } | null;
+  renderer: Renderer;
+  updater: Updater;
+  pathfinder: Pathfinder;
+  chatinput: null;
+  bubbleManager: BubbleManager;
+  audioManager: AudioManager;
+  player: Warrior;
+  entities: {};
+  deathpositions: {};
+  entityGrid: any;
+  pathingGrid: any;
+  renderingGrid: any;
+  itemGrid: any;
+  currentCursor: null;
+  mouse: { x: number; y: number };
+  zoningQueue: any[];
+  previousClickPosition: { x: number; y: number };
+  cursorVisible: boolean;
+  selectedX: number;
+  selectedY: number;
+  selectedCellVisible: boolean;
+  targetColor: string;
+  targetCellVisible: boolean;
+  hoveringTarget: boolean;
+  hoveringPlayer: boolean;
+  hoveringMob: boolean;
+  hoveringItem: boolean;
+  hoveringCollidingTile: boolean;
+  infoManager: InfoManager;
+  currentZoning: Transition | null;
+  cursors: {};
+  sprites: {};
+  currentTime: any;
+  animatedTiles: any;
+  debugPathing: boolean;
+  pvpFlag: boolean;
+  spriteNames: string[];
+  storage: any;
+  store: any;
+  map: Map;
+  shadows: any;
+  targetAnimation: Animation;
+  sparksAnimation: Animation;
+  levelupAnimation: Animation;
+  drainLifeAnimation: Animation;
+  thunderstormAnimation: Animation;
+  highHealthAnimation: Animation;
+  anvilRecipeAnimation: Animation;
+  anvilSuccessAnimation: Animation;
+  anvilFailAnimation: Animation;
+  client: any;
+  achievements: any;
+  spritesets: any;
+  currentCursorOrientation: any;
+  hoveringNpc: any;
+  hoveringChest: any;
+  camera: any;
+  host: any;
+  port: any;
+  username: any;
+  useraccount: any;
+  isStopped: any;
+  obsoleteEntities: any[];
+  playerId: any;
+  drawTarget: any;
+  clearTarget: any;
+  equipment_callback: any;
+  playerhurt_callback: any;
+  nbplayers_callback: any;
+  nbguildplayers_callback: any;
+  disconnect_callback: any;
+  gamestart_callback: any;
+  playerdeath_callback: any;
+  gamecompleted_callback: any;
+  bosscheckfailed_callback: any;
+  chat_callback: any;
+  invincible_callback: any;
+  isAnvilRecipe: any;
+  hoveringPlateauTile: any;
+  hoveringOtherPlayer: any;
+  lastHovered: any;
+  timeout: any;
+  zoningOrientation: any;
+  updatetarget_callback: any;
+  playerexp_callback: any;
+  playerhp_callback: any;
+  notification_callback: any;
+  unlock_callback: any;
+
   constructor(app) {
     this.app = app;
     this.app.config = config;
@@ -42,7 +144,7 @@ class Game {
     this.isAnvilFail = false;
     this.anvilFailTimeout = null;
     this.cowPortalStart = false;
-    this.cowLevelPortalCoords = {};
+    this.cowLevelPortalCoords = null;
 
     this.renderer = null;
     this.updater = null;
@@ -50,14 +152,23 @@ class Game {
     this.chatinput = null;
     this.bubbleManager = null;
     this.audioManager = null;
+    this.targetAnimation = null;
+    this.sparksAnimation = null;
+    this.levelupAnimation = null;
+    this.drainLifeAnimation = null;
+    this.thunderstormAnimation = null;
+    this.highHealthAnimation = null;
+    this.anvilRecipeAnimation = null;
+    this.anvilSuccessAnimation = null;
+    this.anvilFailAnimation = null;
 
     // Player
     this.player = new Warrior("player", "");
-    this.player.moveUp = false;
-    this.player.moveDown = false;
-    this.player.moveLeft = false;
-    this.player.moveRight = false;
-    this.player.disableKeyboardNpcTalk = false;
+    // this.player.moveUp = false;
+    // this.player.moveDown = false;
+    // this.player.moveLeft = false;
+    // this.player.moveRight = false;
+    // this.player.disableKeyboardNpcTalk = false;
 
     // Game state
     this.entities = {};
@@ -69,7 +180,7 @@ class Game {
     this.currentCursor = null;
     this.mouse = { x: 0, y: 0 };
     this.zoningQueue = [];
-    this.previousClickPosition = {};
+    this.previousClickPosition = null;
 
     this.cursorVisible = true;
     this.selectedX = 0;
@@ -84,6 +195,7 @@ class Game {
     this.hoveringCollidingTile = false;
 
     // combat
+    // @ts-ignore
     this.infoManager = new InfoManager(this);
 
     // zoning
@@ -286,6 +398,7 @@ class Game {
   loadMap() {
     var self = this;
 
+    // @ts-ignore
     this.map = new Map(!this.renderer.upscaledRendering, this);
 
     this.map.ready(function () {
@@ -486,8 +599,16 @@ class Game {
         }
 
         const item = fromItemEl.attr("data-item");
-        const level = fromItemEl.attr("data-level");
-        const bonus = fromItemEl.attr("data-bonus");
+        const level = parseInt(fromItemEl.attr("data-level"));
+        const rawBonus = fromItemEl.attr("data-bonus");
+        let bonus: number[];
+        if (rawBonus) {
+          try {
+            bonus = JSON.parse(rawBonus) as number[];
+          } catch (err) {
+            // Silence error
+          }
+        }
 
         const toItem = toItemEl.attr("data-item");
         const toLevel = toItemEl.attr("data-level");
@@ -519,10 +640,12 @@ class Game {
           }
         }
 
-        if (toSlot === 100) {
-          self.player.switchWeapon(item, level, bonus);
-        } else if (toSlot === 101) {
-          self.player.switchArmor(self.sprites[item], level, bonus);
+        if (!isNaN(level)) {
+          if (toSlot === 100) {
+            self.player.switchWeapon(item, level, bonus);
+          } else if (toSlot === 101) {
+            self.player.switchArmor(self.sprites[item], level, bonus);
+          }
         }
 
         const type = kinds[item][1];
@@ -810,7 +933,7 @@ class Game {
     this.player.upgrade.forEach(({ item, level, quantity, slot, bonus }) => {
       if (slot === 0 && level) {
         itemLevel = level;
-        successRates = Types.getUpgradeSuccessRates();
+        const successRates = Types.getUpgradeSuccessRates();
         successRate = successRates[parseInt(level) - 1];
       } else if (slot) {
         if (!item.startsWith("scrollupgrade")) {
@@ -1199,7 +1322,7 @@ class Game {
       .map((unlocked, index) => (unlocked ? index + 1 : false))
       .filter(Boolean);
     const totalNano = unlockedAchievementIds.reduce((acc, id) => {
-      const achievement = Object.values(self.achievements)[id - 1];
+      const achievement: any = Object.values(self.achievements)[id - 1];
       acc += achievement && achievement.nano ? achievement.nano : 0;
       return acc;
     }, 0);
@@ -1288,7 +1411,7 @@ class Game {
     } else {
       this.sprites = this.spritesets[scale - 1];
 
-      _.each(this.entities, function (entity) {
+      _.each(this.entities, function (entity: Entity) {
         entity.sprite = null;
         entity.setSprite(self.sprites[entity.getSpriteName()]);
       });
@@ -1309,7 +1432,7 @@ class Game {
 
   spritesLoaded() {
     if (
-      _.some(this.sprites, function (sprite) {
+      _.some(this.sprites, function (sprite: any) {
         return !sprite.isLoaded;
       })
     ) {
@@ -1318,7 +1441,7 @@ class Game {
     return true;
   }
 
-  setCursor(name, orientation) {
+  setCursor(name, orientation = Types.Orientations.DOWN) {
     if (name in this.cursors) {
       this.currentCursor = this.cursors[name];
       this.currentCursorOrientation = orientation;
@@ -1595,6 +1718,7 @@ class Game {
     var self = this;
 
     this.loadSprites();
+    // @ts-ignore
     this.setUpdater(new Updater(this));
     this.camera = this.renderer.camera;
 
@@ -1642,7 +1766,7 @@ class Game {
     }
 
     if (!this.isStopped) {
-      requestAnimFrame(this.tick.bind(this));
+      window.requestAnimFrame(this.tick.bind(this));
     }
   }
 
@@ -1723,7 +1847,7 @@ class Game {
         knownIds = _.intersection(entityIds, list),
         newIds = _.difference(list, knownIds);
 
-      self.obsoleteEntities = _.reject(self.entities, function (entity) {
+      self.obsoleteEntities = _.reject(self.entities, function (entity: Entity) {
         return _.includes(knownIds, entity.id) || entity.id === self.player.id;
       });
 
@@ -2093,7 +2217,7 @@ class Game {
 
         self.player.stopBlinking();
         self.player.setSprite(self.sprites["death"]);
-        self.player.animate("death", 120, 1, function () {
+        self.player.animate("death", 120, 1, () => {
           console.info(self.playerId + " was removed");
 
           self.removeEntity(self.player);
@@ -2128,10 +2252,6 @@ class Game {
         }
       });
 
-      self.player.onArmorLoot(function (armorName) {
-        self.player.switchArmor(self.sprites[armorName]);
-      });
-
       self.player.onSwitchItem(function () {
         // self.storage.savePlayer(
         //   self.renderer.getPlayerImage(),
@@ -2146,7 +2266,7 @@ class Game {
 
       self.player.onInvincible(function () {
         self.invincible_callback();
-        self.player.switchArmor(self.sprites["firefox"]);
+        self.player.switchArmor(self.sprites["firefox"], 1);
       });
 
       self.client.onSpawnItem(function (item, x, y) {
@@ -2159,7 +2279,7 @@ class Game {
         chest.setSprite(self.sprites[chest.getSpriteName()]);
         chest.setGridPosition(x, y);
         chest.setAnimation("idle_down", 150);
-        self.addEntity(chest, x, y);
+        self.addEntity(chest);
 
         chest.onOpen(function () {
           chest.stopBlinking();
@@ -2168,7 +2288,7 @@ class Game {
             console.info(chest.id + " was removed");
             self.removeEntity(chest);
             self.removeFromRenderingGrid(chest, chest.gridX, chest.gridY);
-            self.previousClickPosition = {};
+            self.previousClickPosition = null;
           });
         });
       });
@@ -2367,7 +2487,7 @@ class Game {
           console.info("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id + ")");
 
           if (entity.gridX === self.previousClickPosition.x && entity.gridY === self.previousClickPosition.y) {
-            self.previousClickPosition = {};
+            self.previousClickPosition = null;
           }
 
           if (entity instanceof Item) {
@@ -2492,6 +2612,7 @@ class Game {
       self.client.onReceiveGuildMembers(function (memberNames) {
         self.showNotification(
           memberNames.join(", ") + (memberNames.length === 1 ? " is " : " are ") + "currently online.",
+          3000,
         ); //#updateguild
       });
 
@@ -2823,7 +2944,7 @@ class Game {
         }
 
         setTimeout(() => {
-          self.showNotification(message, 30000);
+          self.showNotification(message);
         }, 250);
       });
 
@@ -2911,6 +3032,7 @@ class Game {
         $("#countdown")
           .countdown(selectedDate.toString())
           .on("update.countdown", function (event) {
+            // @ts-ignore
             $(this).html(event.strftime("%M:%S"));
           })
           .on("finish.countdown", function (event) {
@@ -2926,7 +3048,7 @@ class Game {
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
-        self.cowLevelPortalCoords = {};
+        self.cowLevelPortalCoords = null;
 
         if (self.player.gridY >= 464 && self.player.gridY <= 535) {
           const x = Math.ceil(randomRange(40, 45));
@@ -3032,7 +3154,7 @@ class Game {
    *
    */
   makePlayerAttackNext() {
-    pos = {
+    const pos = {
       x: this.player.gridX,
       y: this.player.gridY,
     };
@@ -3063,7 +3185,7 @@ class Game {
    *
    */
   makePlayerAttackTo(pos) {
-    entity = this.getEntityAt(pos.x, pos.y);
+    const entity = this.getEntityAt(pos.x, pos.y);
     if (entity instanceof Mob) {
       this.makePlayerAttack(entity);
     }
@@ -3158,7 +3280,7 @@ class Game {
 
     if (npc) {
       msg = npc.talk(this);
-      this.previousClickPosition = {};
+      this.previousClickPosition = null;
       if (msg) {
         this.createBubble(npc.id, msg);
         this.assignBubbleTo(npc);
@@ -3194,13 +3316,15 @@ class Game {
       } else if (npc.kind === Types.Entities.COWPORTAL) {
         if (this.player.level >= 45) {
           if (npc.gridX === 43 && npc.gridY === 211) {
-            this.tryUnlockingAchievement("SECRET_LEVEL");
+            if (this.cowLevelPortalCoords) {
+              this.tryUnlockingAchievement("SECRET_LEVEL");
 
-            this.player.stop_pathing_callback({
-              x: this.cowLevelPortalCoords.x,
-              y: this.cowLevelPortalCoords.y,
-              isWaypoint: true,
-            });
+              this.player.stop_pathing_callback({
+                x: this.cowLevelPortalCoords.x,
+                y: this.cowLevelPortalCoords.y,
+                isWaypoint: true,
+              });
+            }
           } else {
             this.player.stop_pathing_callback({ x: 43, y: 212, isWaypoint: true });
           }
@@ -3228,7 +3352,7 @@ class Game {
    * @see forEachEntity
    */
   forEachMob(callback) {
-    _.each(this.entities, function (entity) {
+    _.each(this.entities, function (entity: Entity) {
       if (entity instanceof Mob) {
         callback(entity);
       }
@@ -3310,7 +3434,7 @@ class Game {
    * Returns the entity located at the given position on the world grid.
    * @returns {Entity} the entity located at (x, y) or null if there is none.
    */
-  getEntityAt(x, y, instance) {
+  getEntityAt(x, y, instance = null) {
     if (this.map.isOutOfBounds(x, y) || !this.entityGrid) {
       return null;
     }
@@ -3545,6 +3669,7 @@ class Game {
   click() {
     var pos = this.getMouseGridPosition();
 
+    // ~~~~~ Invisible block here!
     if (pos.x === this.previousClickPosition.x && pos.y === this.previousClickPosition.y) {
       return;
     } else {
@@ -3554,7 +3679,7 @@ class Game {
     this.processInput(pos);
   }
 
-  isCharacterZoning: false;
+  isCharacterZoning = false;
 
   /**
    * Processes game logic when the user triggers a click/touch event during the game.
@@ -3602,11 +3727,11 @@ class Game {
     }
   }
 
-  isMobOnSameTile(mob, x, y) {
-    var X = x || mob.gridX,
-      Y = y || mob.gridY,
-      list = this.entityGrid[Y][X],
-      result = false;
+  isMobOnSameTile(mob, x?: number, y?: number) {
+    var X = x || mob.gridX;
+    var Y = y || mob.gridY;
+    var list = this.entityGrid[Y][X];
+    var result = false;
 
     _.each(list, function (entity) {
       if (entity instanceof Mob && entity.id !== mob.id) {
@@ -3879,6 +4004,8 @@ class Game {
   }
 
   say(message) {
+    var self = this;
+
     //#cli guilds
     var regexp = /^\/guild\ (invite|create|accept)\s+([^\s]*)|(guild:)\s*(.*)$|^\/guild\ (leave)$/i;
     var args = message.match(regexp);
@@ -4134,7 +4261,7 @@ class Game {
     var achievement = null;
     var self = this;
 
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       if (name in this.achievements) {
         achievement = this.achievements[name];
 
@@ -4150,7 +4277,7 @@ class Game {
     });
   }
 
-  showNotification(message, timeout) {
+  showNotification(message, timeout = 3000) {
     if (this.notification_callback) {
       this.notification_callback(message, timeout);
     }
@@ -4329,7 +4456,7 @@ class Game {
         this.audioManager.playSound("loot");
       }
 
-      if (item.wasDropped && !_(item.playersInvolved).includes(this.playerId)) {
+      if (item.wasDropped && !item.playersInvolved.includes(this.playerId)) {
         this.tryUnlockingAchievement("NINJA_LOOT");
       }
     } catch (err) {

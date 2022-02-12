@@ -144,7 +144,7 @@ const carlosmatos = require("../sprites/carlosmatos.json");
 const satoshi = require("../sprites/satoshi.json");
 const wizard = require("../sprites/wizard.json");
 
-export const sprites = {
+const sprites = {
   agent,
   arrow,
   axe,
@@ -291,3 +291,5 @@ export const sprites = {
   satoshi,
   wizard,
 };
+
+export default sprites;

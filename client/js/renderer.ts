@@ -9,7 +9,35 @@ import Detect from "./detect";
 import * as _ from "lodash";
 
 class Renderer {
-  constuctor(game, canvas, background, foreground) {
+  game: any;
+  context: any;
+  background: any;
+  foreground: any;
+  canvas: any;
+  backcanvas: any;
+  forecanvas: any;
+  tilesize: number;
+  upscaledRendering: boolean;
+  supportsSilhouettes: any;
+  lastTime: Date;
+  frameCount: number;
+  maxFPS: any;
+  FPS: any;
+  realFPS: number;
+  isDebugInfoVisible: boolean;
+  animatedTileCount: number;
+  highTileCount: number;
+  tablet: any;
+  fixFlickeringTimer: Timer;
+  brightnessMap: { 7: number; 8: number; 9: number; 10: number };
+  tileset: any;
+  mobile: boolean;
+  scale: any;
+  camera: Camera;
+  lastTargetPos: { x: any; y: any };
+  targetRect: {};
+
+  constructor(game, canvas, background, foreground) {
     this.game = game;
     this.context = canvas && canvas.getContext ? canvas.getContext("2d") : null;
     this.background = background && background.getContext ? background.getContext("2d") : null;
@@ -151,7 +179,7 @@ class Renderer {
     this.background.font = font;
   }
 
-  drawText(text, x, y, centered, color, strokeColor) {
+  drawText(text, x, y, centered, color?: string, strokeColor?: string) {
     var ctx = this.context;
     var strokeSize;
 
@@ -267,8 +295,8 @@ class Renderer {
     if (this.game.selectedCellVisible) {
       if (this.mobile || this.tablet) {
         if (this.game.drawTarget) {
-          var x = this.game.selectedX,
-            y = this.game.selectedY;
+          var x: number = this.game.selectedX;
+          var y: number = this.game.selectedY;
 
           this.drawCellHighlight(this.game.selectedX, this.game.selectedY, "rgb(51, 255, 0)");
           this.lastTargetPos = { x: x, y: y };
@@ -535,7 +563,7 @@ class Renderer {
         }
       }
 
-      if (entity instanceof Character && !entity.isDead && entity.hasWeapon()) {
+      if (entity instanceof Player && !entity.isDead && entity.hasWeapon()) {
         let weaponLevel = entity.getWeaponLevel();
         let weaponSuffix = "";
 
@@ -553,12 +581,12 @@ class Renderer {
         var weapon = this.game.sprites[entity.getWeaponName()];
 
         if (weapon) {
-          var weaponAnimData = weapon.animationData[anim.name],
-            index = frame.index < weaponAnimData.length ? frame.index : frame.index % weaponAnimData.length;
-          (wx = weapon.width * index * os),
-            (wy = weapon.height * anim.row * os),
-            (ww = weapon.width * os),
-            (wh = weapon.height * os);
+          var weaponAnimData = weapon.animationData[anim.name];
+          var index = frame.index < weaponAnimData.length ? frame.index : frame.index % weaponAnimData.length;
+          var wx = weapon.width * index * os;
+          var wy = weapon.height * anim.row * os;
+          var ww = weapon.width * os;
+          var wh = weapon.height * os;
 
           // @TODO Why does this happens?
           if (!weapon[`image${weaponSuffix}`]) {
@@ -671,7 +699,7 @@ class Renderer {
     }
   }
 
-  drawEntities(dirtyOnly) {
+  drawEntities(dirtyOnly?: boolean) {
     var self = this;
 
     this.game.forEachVisibleEntityByDepth(function (entity) {
@@ -732,7 +760,7 @@ class Renderer {
   }
 
   getEntityBoundingRect(entity) {
-    var rect = {},
+    var rect: any = {},
       s = this.scale,
       spr;
 
@@ -757,7 +785,7 @@ class Renderer {
   }
 
   getTileBoundingRect(tile) {
-    var rect = {},
+    var rect: any = {},
       gridW = this.game.map.width,
       s = this.scale,
       ts = this.tilesize,
@@ -775,8 +803,8 @@ class Renderer {
     return rect;
   }
 
-  getTargetBoundingRect(x, y) {
-    var rect = {},
+  getTargetBoundingRect(x?: number, y?: number) {
+    var rect: any = {},
       s = this.scale,
       ts = this.tilesize,
       tx = x || this.game.selectedX,
@@ -832,7 +860,7 @@ class Renderer {
     }, 1);
   }
 
-  drawAnimatedTiles(dirtyOnly) {
+  drawAnimatedTiles(dirtyOnly?: boolean) {
     var self = this,
       m = this.game.map,
       tilesetwidth = this.tileset.width / m.tilesize;

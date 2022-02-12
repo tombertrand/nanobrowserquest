@@ -46,7 +46,7 @@ var AStar = (function () {
       $S = S < rows && !grid[S][x],
       $E = E < cols && !grid[y][E],
       $W = W > -1 && !grid[y][W],
-      result = [],
+      result: any[] = [],
       i = 0;
     $N && (result[i++] = { x: x, y: N });
     $E && (result[i++] = { x: E, y: y });
@@ -69,14 +69,14 @@ var AStar = (function () {
     return f1(start.x - end.x) + f1(start.y - end.y);
   }
 
-  function AStar(grid, start, end, f) {
+  function AStar(grid, start, end, f?) {
     var cols = grid[0].length,
       rows = grid.length,
       limit = cols * rows,
       f1 = Math.abs,
       f2 = Math.max,
       list = {},
-      result = [],
+      result: any[] = [],
       open = [{ x: start[0], y: start[1], f: 0, g: 0, v: start[0] + start[1] * cols }],
       length = 1,
       adj,

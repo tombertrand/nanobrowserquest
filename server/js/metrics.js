@@ -14,13 +14,10 @@ Metrics = cls.Class.extend({
       password: process.env.REDIS_PASSWORD,
     });
 
-    // this.client = new (require('memcache')).Client(config.memcached_port, config.memcached_host);
-    // this.client.connect();
-
     this.isReady = false;
 
     this.client.on("connect", function () {
-      log.info("Metrics enabled: Redis client connected to " + config.memcached_host + ":" + config.memcached_port);
+      log.info("Metrics enabled: Redis client connected to " + config.redis_host + ":" + config.redis_port);
       self.isReady = true;
       if (self.readyCallback) {
         self.readyCallback();
@@ -67,7 +64,7 @@ Metrics = cls.Class.extend({
         });
       });
     } else {
-      log.error("Memcached client not connected");
+      log.error("Redis client not connected");
     }
   },
 

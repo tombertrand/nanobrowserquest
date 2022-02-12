@@ -1,6 +1,15 @@
 class Tile {}
 
 class AnimatedTile extends Tile {
+  startId: any;
+  id: any;
+  length: any;
+  speed: any;
+  index: any;
+  lastTime: number;
+  x: number;
+  y: number;
+
   constructor(id, length, speed, index) {
     super();
     this.startId = id;

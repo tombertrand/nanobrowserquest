@@ -3,7 +3,9 @@ import Entity from "./entity";
 import { Types } from "../../shared/js/gametypes";
 
 class Chest extends Entity {
-  constructor(id, kind) {
+  open_callback: any;
+
+  constructor(id) {
     super(id, Types.Entities.CHEST);
   }
 

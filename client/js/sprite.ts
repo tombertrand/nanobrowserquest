@@ -32,11 +32,11 @@ class Sprite {
     this.offsetX = 0;
     this.offsetY = 0;
     this.loadJSON(sprites[name]);
+    this.fileExtension = ".png";
   }
 
   loadJSON(data) {
     this.id = data.id;
-    this.fileExtension = ".png";
 
     this.animationData = data.animations;
     this.width = data.width;

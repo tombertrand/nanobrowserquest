@@ -1,8 +1,6 @@
 var cls = require('./lib/class')
-    _ = require('underscore');
+var _ = require('underscore');
 var fs = require('fs');
-var file = require('../../shared/js/file');
-var path = require('path');
 var Utils = require('./utils');
 var Checkpoint = require('./checkpoint');
 
@@ -12,7 +10,7 @@ var Map = cls.Class.extend({
 
         this.isLoaded = false;
 
-        file.exists(filepath, function (exists) {
+        fs.existsSync(filepath, function (exists) {
 
             if (!exists) {
                 log.error(filepath + ' doesn\'t exist.');

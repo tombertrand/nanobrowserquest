@@ -4,6 +4,7 @@ class Area {
   width: number;
   height: number;
   musicName: string = "";
+  id: number;
 
   constructor(x, y, width, height) {
     this.x = x;

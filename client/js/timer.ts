@@ -1,6 +1,9 @@
 class Timer {
-  constructor(duration, startTime) {
-    this.lastTime = startTime || 0;
+  lastTime: any;
+  duration: any;
+
+  constructor(duration, startTime = 0) {
+    this.lastTime = startTime;
     this.duration = duration;
   }
 

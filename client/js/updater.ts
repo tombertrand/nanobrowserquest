@@ -6,9 +6,14 @@ import { Types } from "../../shared/js/gametypes";
 import type { Game } from "./types/game";
 
 class Updater {
+  game: Game;
+  playerAggroTimer: Timer;
+  isFading: boolean;
+
   constructor(game: Game) {
     this.game = game;
     this.playerAggroTimer = new Timer(1000);
+    this.isFading = false;
   }
 
   update() {
@@ -95,6 +100,9 @@ class Updater {
       ts = 16,
       // @NOTE Unfortunately unable to fix the camera transition when multiple queues when the speed is greater than 350ms
       speed = 350;
+
+    var endValue;
+    var offset;
 
     if (z && z.inProgress === false) {
       var orientation = this.game.zoningOrientation,

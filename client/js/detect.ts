@@ -1,7 +1,7 @@
 var Detect: any = {};
 
 Detect.supportsWebSocket = function () {
-  return window.WebSocket || window.MozWebSocket;
+  return window.WebSocket;
 };
 
 Detect.userAgentContains = function (string: string) {

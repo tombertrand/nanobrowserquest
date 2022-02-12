@@ -1,12 +1,71 @@
+import * as _ from "lodash";
+
 import Entity from "./entity";
 import Transition from "./transition";
 import Timer from "./timer";
 
-class Character extends Entity {
-  constructor(id, kind) {
-    var self = this;
+import { Types } from "../../shared/js/gametypes";
 
-    this._super(id, kind);
+class Character extends Entity {
+  nextGridX: number;
+  nextGridY: number;
+  orientation: any;
+  atkSpeed: number;
+  raiseSpeed: any;
+  moveSpeed: number;
+  walkSpeed: number;
+  idleSpeed: number;
+  movement: Transition;
+  path: any;
+  newDestination: any;
+  adjacentTiles: {};
+  target: any;
+  unconfirmedTarget: any;
+  attackers: {};
+  hitPoints: number;
+  maxHitPoints: number;
+  isDead: boolean;
+  raisingMode: boolean;
+  attackingMode: boolean;
+  followingMode: boolean;
+  inspecting: any;
+  isLevelup: boolean;
+  auras: string[];
+  currentAnimation: any;
+  flipSpriteX: any;
+  flipSpriteY: any;
+  kind: any;
+  aggroRange: any;
+  destination: any;
+  request_path_callback: any;
+  id: any;
+  start_pathing_callback: any;
+  stop_pathing_callback: any;
+  step: any;
+  before_step_callback: any;
+  interrupted: any;
+  step_callback: any;
+  gridX: any;
+  gridY: any;
+  raisingModeTimeout: any;
+  aggro_callback: any;
+  checkaggro_callback: any;
+  death_callback: any;
+  settarget_callback: any;
+  removetarget_callback: any;
+  attackCooldown: any;
+  raiseCooldown: any;
+  hasmoved_callback: any;
+  sprite: any;
+  hurting: any;
+  normalSprite: any;
+  isDying: any;
+  previousTarget: any;
+  atkRate: number;
+  raiseRate: number;
+
+  constructor(id, kind) {
+    super(id, kind);
 
     // Position and orientation
     this.nextGridX = -1;
@@ -78,7 +137,7 @@ class Character extends Entity {
     }, 1500);
   }
 
-  animate(animation, speed, count, onEndCount) {
+  animate(animation, speed, count = 0, onEndCount?: () => void) {
     var oriented = ["atk", "walk", "idle", "raise"],
       o = this.orientation;
 
@@ -108,7 +167,7 @@ class Character extends Entity {
     }
   }
 
-  idle(orientation) {
+  idle(orientation?: any) {
     this.setOrientation(orientation);
     this.animate("idle", this.idleSpeed);
   }
@@ -128,7 +187,7 @@ class Character extends Entity {
     this.animate("raise", this.raiseSpeed, 1);
   }
 
-  moveTo_(x, y, callback) {
+  moveTo_(x, y) {
     if (this.kind === Types.Entities.NECROMANCER) {
       if (this.isRaising()) {
         this.aggroRange = 10;
@@ -520,7 +579,7 @@ class Character extends Entity {
   /**
    * Removes the current attack target.
    */
-  removeTarget(withoutCallback) {
+  removeTarget(withoutCallback?: boolean) {
     var self = this;
 
     if (this.target) {

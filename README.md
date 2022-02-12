@@ -30,7 +30,6 @@ Getting the server up and running is pretty easy. You need to have the following
 * Node.js ← Versions 0.8.x-0.10.x work.  **Do not use 0.6.x, it [does not work](https://github.com/senchalabs/connect/issues/858).**
 * gcc-c++ ← optional.  Not needed on windows.
 * GNU make ← optional.  Not needed on windows.
-* Memcached ← optional. This is needed to enable metrics.
 * zlib-devel ← this is the Fedora/RHEL package name, others may be sightly different.  Not needed on windows.
 * Redis server ← this is needed for the game to connect to the backend database.
 
@@ -39,7 +38,7 @@ Ubuntu
 
     $ sudo apt-get update
     $ sudo apt-get upgrade
-    $ sudo apt-get install g++ make memcached libncurses5 redis-server git -y
+    $ sudo apt-get install g++ make libncurses5 redis-server git -y
     $ curl -sL https://deb.nodesource.com/setup | sudo bash -
     $ sudo apt-get install nodejs
 
@@ -79,9 +78,9 @@ BrowserQuest start page should appear, and the game should work.
 Mac OS X
 --------
 
-Node.js, Memcached, and Redis installed through Homebrew are known to work:
+Node.js, and Redis installed through Homebrew are known to work:
 
-    $ brew install node redis memcached
+    $ brew install node redis
     $ ln -sfv /usr/local/opt/redis/*.plist ~/Library/LaunchAgents
     $ launchctl load ~/Library/LaunchAgents/homebrew.mxcl.redis.plist
     $ git clone git://github.com/browserquest/BrowserQuest.git
@@ -107,10 +106,10 @@ You can try interacting with it by starting another terminal and typing:
     redis> get foo
     "bar"
 
-Node.js, Memcached, and Redis for Fedora 16+ and RHEL/CentOS/SL 6.x
+Node.js, and Redis for Fedora 16+ and RHEL/CentOS/SL 6.x
 -------------------------------------------------------------------
 
-On Fedora 16+ and RHEL/CentOS/SL 6.x, you can install Redis (required) and Memcached (optional) using
+On Fedora 16+ and RHEL/CentOS/SL 6.x, you can install Redis (required) using
 yum.
 
 For just RHEL/CentOS/SL 6.x, you need to add the EPEL repo first.  Not needed for Fedora:
@@ -119,14 +118,12 @@ For just RHEL/CentOS/SL 6.x, you need to add the EPEL repo first.  Not needed fo
 
 Then install Node.js and everything else needed:
 
-    $ sudo yum install zlib-devel gcc gcc-c++ autoconf automake make redis nodejs npm memcached
+    $ sudo yum install zlib-devel gcc gcc-c++ autoconf automake make redis nodejs npm
     $ sudo chkconfig redis on
-    $ sudo chkconfig memcached on
 
-Start Redis and Memcached by running:
+Start Redis by running:
 
     $ sudo service redis start
-    $ sudo service memcached start
 
 Now continue on with the normal steps to clone the BrowserQuest git repo, and start up BrowserQuest:
 
@@ -144,17 +141,6 @@ extensions for npm modules installed.
 
 You can download an experimental Win32/64 version of Redis
 from here: http://redis.io/download
-
-You can download the latest version of Memcached for Win32/64 from here:
-http://blog.elijaa.org/index.php?post/2010/10/15/Memcached-for-Windows&similar
-
-Deploying BrowserQuest
-----------------------
-
-Currently, BrowserQuest can run on the following PAAS (Platform as a Service) providers:
-* [OpenShift](https://www.openshift.com)
-* [Heroku](https://www.heroku.com)
-
 ### Instructions for OpenShift ###
 1. Follow the instructions to get started with the OpenShift client tools [here](https://www.openshift.com/get-started).
 

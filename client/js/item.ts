@@ -1,6 +1,13 @@
 import Entity from "./entity";
+import { Types } from "../../shared/js/gametypes";
 
 class Item extends Entity {
+  kind: any;
+  itemKind: any;
+  type: any;
+  wasDropped: boolean;
+  lootMessage: any;
+
   constructor(id, kind, type) {
     super(id, kind);
 
@@ -12,8 +19,6 @@ class Item extends Entity {
   hasShadow() {
     return true;
   }
-
-  onLoot() {}
 
   getSpriteName() {
     return "item-" + this.itemKind;

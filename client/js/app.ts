@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import { TRANSITIONEND, isValidAccountAddress, getAccountAddressFromText } from "./utils";
 
 import Storage from "./storage";
@@ -5,9 +6,37 @@ import Store from "./store";
 
 import { Types } from "../../shared/js/gametypes";
 
-// define(["jquery", "lib/jquery.qrcode", "lib/jquery.countdown"], function (
-
 class App {
+  currentPage: number;
+  blinkInterval: any;
+  achievementTimeout: any;
+  isParchmentReady: boolean;
+  ready: boolean;
+  storage: Storage;
+  store: Store;
+  watchNameInputInterval: NodeJS.Timer;
+  frontPage: string;
+  game: any;
+  isMobile: any;
+  isTablet: any;
+  isDesktop: boolean;
+  supportsWorkers: boolean;
+  $play: JQuery<HTMLElement> | null;
+  $loginnameinput: JQuery<HTMLElement> | null;
+  $loginaccountinput: JQuery<HTMLElement> | null;
+  loginFormFields: any[];
+  $nameinput: JQuery<HTMLElement> | null;
+  $accountinput: JQuery<HTMLElement> | null;
+  createNewCharacterFormFields: any[];
+  getPlayButton: () => any;
+  getUsernameField: () => any;
+  getAccountField: () => any;
+  starting: any;
+  firstTimePlaying: boolean;
+  config: any;
+  playButtonRestoreText: any;
+  messageTimer: any;
+
   constructor() {
     this.currentPage = 1;
     this.blinkInterval = null;
@@ -16,6 +45,19 @@ class App {
     this.ready = false;
     this.storage = new Storage();
     this.store = new Store(this);
+    this.getUsernameField = () => {};
+    this.getPlayButton = () => {};
+    this.getAccountField = () => {};
+    this.isDesktop = true;
+    this.firstTimePlaying = true;
+    this.supportsWorkers = false;
+    this.$play = null;
+    this.$loginnameinput = null;
+    this.$loginaccountinput = null;
+    this.$nameinput = null;
+    this.$accountinput = null;
+    this.loginFormFields = [];
+    this.createNewCharacterFormFields = [];
     this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
     this.initFormFields();
 
@@ -39,7 +81,7 @@ class App {
       }
     }
 
-    document.getElementById("parchment").className = this.frontPage;
+    document.getElementById("parchment")!.className = this.frontPage;
   }
 
   setGame(game) {
@@ -214,7 +256,7 @@ class App {
 
     if (enabled) {
       this.starting = false;
-      this.$play.removeClass("loading");
+      this.$play!.removeClass("loading");
       $playButton.click(function () {
         self.tryStartingGame();
       });
@@ -224,7 +266,7 @@ class App {
     } else {
       // Loading state
       this.starting = true;
-      this.$play.addClass("loading");
+      this.$play!.addClass("loading");
       $playButton.unbind("click");
       this.playButtonRestoreText = $playButton.text();
       $playButton.text("Loading...");
@@ -291,11 +333,13 @@ class App {
   }
 
   setMouseCoordinates(event) {
-    var gamePos = $("#container").offset(),
-      scale = this.game.renderer.getScaleFactor(),
-      width = this.game.renderer.getWidth(),
-      height = this.game.renderer.getHeight(),
-      mouse = this.game.mouse;
+    var gamePos = $("#container").offset();
+    var scale = this.game.renderer.getScaleFactor();
+    var width = this.game.renderer.getWidth();
+    var height = this.game.renderer.getHeight();
+    var mouse = this.game.mouse;
+
+    if (!gamePos) return;
 
     mouse.x = event.pageX - gamePos.left - (this.isMobile ? 0 : 5 * scale);
     mouse.y = event.pageY - gamePos.top - (this.isMobile ? 0 : 7 * scale);
@@ -316,9 +360,9 @@ class App {
   //Init the hud that makes it show what creature you are mousing over and attacking
   initTargetHud() {
     var self = this;
-    var scale = self.game.renderer.getScaleFactor(),
-      healthMaxWidth = $("#inspector .health").width() - 12 * scale,
-      timeout;
+    var scale = self.game.renderer.getScaleFactor();
+    // var healthMaxWidth = $("#inspector .health")!.width() - 12 * scale;
+    // var timeout;
 
     this.game.player.onSetTarget(function (target, name, mouseover) {
       var el = "#inspector";
@@ -367,7 +411,7 @@ class App {
 
   initExpBar() {
     var self = this;
-    var maxHeight = $("#expbar").height();
+    var maxHeight = $("#expbar").height() || 0;
 
     this.game.onPlayerExpChange(function (expInThisLevel, expForLevelUp) {
       var barHeight = Math.round((maxHeight / expForLevelUp) * (expInThisLevel > 0 ? expInThisLevel : 0));
@@ -387,8 +431,8 @@ class App {
   }
 
   initHealthBar() {
-    var scale = this.game.renderer.getScaleFactor(),
-      healthMaxWidth = $("#healthbar").width() - 12 * scale;
+    var scale = this.game.renderer.getScaleFactor();
+    var healthMaxWidth = $("#healthbar").width()! - 12 * scale;
 
     this.game.onPlayerHealthChange(function (hp, maxHp) {
       var barWidth = Math.round((healthMaxWidth / maxHp) * (hp > 0 ? hp : 0));
@@ -417,10 +461,10 @@ class App {
   }
 
   toggleButton() {
-    var name = $("#parchment input").val(),
-      $play = $("#createcharacter .play");
+    var name = $("#parchment input").val() as string;
+    var $play = $("#createcharacter .play");
 
-    if (name && name.length > 0) {
+    if (name?.length > 0) {
       $play.removeClass("disabled");
       $("#character").removeClass("disabled");
     } else {
@@ -599,7 +643,8 @@ class App {
     this.displayUnlockedAchievement(id);
 
     var nb = parseInt($("#unlocked-achievements").text());
-    const totalNano = parseInt(parseFloat($("#unlocked-nano-achievements").text()) * 100000);
+    // @ts
+    const totalNano = parseInt(`${parseFloat($("#unlocked-nano-achievements").text()) * 100000}`, 10);
     $("#unlocked-achievements").text(nb + 1);
     $("#unlocked-nano-achievements").text((totalNano + (nano || 0)) / 100000);
   }
@@ -611,7 +656,7 @@ class App {
       $achievement = $("#achievement-tmpl"),
       page = 0,
       count = 0,
-      $p = null;
+      $p: JQuery<HTMLElement> | null = null;
 
     $lists.empty();
 
@@ -637,7 +682,7 @@ class App {
         $p.show();
         $lists.append($p);
       }
-      $p.append($a);
+      $p!.append($a);
     });
 
     $("#total-achievements").text($("#achievements").find("li").length);
@@ -839,8 +884,8 @@ class App {
   }
 
   openPopup(type, url) {
-    var h = $(window).height(),
-      w = $(window).width(),
+    var h = $(window).height() || 0,
+      w = $(window).width() || 0,
       popupHeight,
       popupWidth,
       top,
@@ -860,13 +905,13 @@ class App {
     top = h / 2 - popupHeight / 2;
     left = w / 2 - popupWidth / 2;
 
-    newwindow = window.open(
+    var newWindow = window.open(
       url,
       "name",
       "height=" + popupHeight + ",width=" + popupWidth + ",top=" + top + ",left=" + left,
     );
-    if (window.focus) {
-      newwindow.focus();
+    if (newWindow?.focus) {
+      newWindow.focus();
     }
   }
 

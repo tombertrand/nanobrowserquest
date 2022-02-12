@@ -1,4 +1,6 @@
 class Storage {
+  data: any;
+
   constructor() {
     if (this.hasLocalStorage() && localStorage.data) {
       this.data = JSON.parse(localStorage.data);
