@@ -124,22 +124,28 @@ class AudioManager {
   }
 
   load(basePath, name, loaded_callback, channels) {
-    var path = basePath + name + "." + this.extension,
-      sound = document.createElement("audio"),
-      self = this;
+    var path = basePath + name + "." + this.extension;
+    var sound = document.createElement("audio");
+    var self = this;
 
-    sound.addEventListener(
-      "canplaythrough",
-      function () {
-        // @ts-ignore
-        this.removeEventListener("canplaythrough", arguments.callee, false);
-        console.debug(path + " is ready to play.");
-        if (loaded_callback) {
-          loaded_callback();
-        }
-      },
-      false,
-    );
+    // const listener = function () {
+    //   // this.removeEventListener("canplaythrough", arguments.callee, false);
+
+    //   sound
+    //   console.debug(path + " is ready to play.");
+    //   if (loaded_callback) {
+    //     loaded_callback();
+    //   }
+    // }
+
+    // sound.addEventListener(
+    //   "canplaythrough",
+    //   listener,
+    //   false,
+    // );
+
+    loaded_callback?.();
+
     sound.addEventListener(
       "error",
       function () {

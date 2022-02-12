@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-
 import Storage from "./storage";
 import Store from "./store";
 import { getAccountAddressFromText, isValidAccountAddress, TRANSITIONEND } from "./utils";
@@ -139,9 +138,9 @@ class App {
     var self = this;
     var action = this.createNewCharacterFormActive() ? "create" : "login";
     var username = this.getUsernameField().val();
-    var useraccount = this.getAccountField().val();
+    var account = this.getAccountField().val();
 
-    if (!this.validateFormFields(username, useraccount)) return;
+    if (!this.validateFormFields(username, account)) return;
 
     this.setPlayButtonState(false);
 
@@ -150,39 +149,40 @@ class App {
         console.debug("waiting...");
         if (self.canStartGame()) {
           clearInterval(watchCanStart);
-          self.startGame(action, username, useraccount);
+          self.startGame(action, username, account);
         }
       }, 100);
     } else {
-      this.startGame(action, username, useraccount);
+      this.startGame(action, username, account);
     }
   }
 
-  startGame(action, username, useraccount) {
+  startGame(action, username, account) {
     var self = this;
     self.firstTimePlaying = !self.storage.hasAlreadyPlayed();
 
     if (username && !this.game.started) {
-      var optionsSet = false,
-        config = this.config;
+      this.game.setPlayerAccount(username, account);
+      // var optionsSet = false;
+      // var config = this.config;
 
-      //>>includeStart("devHost", pragmas.devHost);
-      if (config.local) {
-        console.debug("Starting game with local dev config.");
-        this.game.setServerOptions(config.local.host, config.local.port, username, useraccount);
-      } else {
-        console.debug("Starting game with default dev config.");
-        this.game.setServerOptions(config.dev.host, config.dev.port, username, useraccount);
-      }
-      optionsSet = true;
-      //>>includeEnd("devHost");
+      // //>>includeStart("devHost", pragmas.devHost);
+      // if (config.local) {
+      //   console.debug("Starting game with local dev config.");
+      this.game.setServerOptions("localhost", 8000);
+      // } else {
+      //   console.debug("Starting game with default dev config.");
+      //   this.game.setServerOptions(config.dev.host, config.dev.port, username, account);
+      // }
+      // optionsSet = true;
+      // //>>includeEnd("devHost");
 
-      //>>includeStart("prodHost", pragmas.prodHost);
-      if (!optionsSet) {
-        console.debug("Starting game with build config.");
-        this.game.setServerOptions(config.build.host, config.build.port, username, useraccount);
-      }
-      //>>includeEnd("prodHost");
+      // //>>includeStart("prodHost", pragmas.prodHost);
+      // if (!optionsSet) {
+      //   console.debug("Starting game with build config.");
+      //   this.game.setServerOptions(config.build.host, config.build.port, username, account);
+      // }
+      // //>>includeEnd("prodHost");
 
       if (!self.isDesktop) {
         // On mobile and tablet we load the map after the player has clicked
@@ -956,9 +956,9 @@ class App {
   }
 
   showMessage(message, timeout) {
-    var $wrapper = $("#notifications div"),
-      $message = $("#notifications #message2");
-
+    var $wrapper = $("#notifications div");
+    var $message = $("#notifications #message2");
+    console.log("~~~~this", this);
     this.animateMessages();
     $message.text(message);
     if (this.messageTimer) {

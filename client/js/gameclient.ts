@@ -2,7 +2,6 @@ import * as _ from "lodash";
 import { io } from "socket.io-client";
 
 import { Types } from "../../shared/js/gametypes";
-
 import EntityFactory from "./entityfactory";
 import BISON from "./lib/bison";
 import Player from "./player";

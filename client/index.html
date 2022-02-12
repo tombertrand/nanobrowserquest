@@ -38,7 +38,6 @@
         <link href="img/common/apple-touch-startup-image-1536x2008.png" rel="apple-touch-startup-image" media="(device-width: 1536px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)">
         <link href="img/common/apple-touch-startup-image-1496x2048.png" rel="apple-touch-startup-image" media="(device-width: 1536px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)">
 
-        <script src="js/detect.js" type="text/javascript"></script>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-V98K4M6T34"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
@@ -135,9 +134,9 @@
                             <span class="right-ornament"></span>
                         </h1>
                         <form action="none" method="get" accept-charset="utf-8">
-                            <input type="text" id="loginnameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16" autofocus>
+                            <input value="running-coder" type="text" id="loginnameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16" autofocus>
                             <textarea id="loginaccountinput" class="stroke" name="player-loginaccount" placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"
-                            ></textarea>
+                            >nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3</textarea>
                         </form>
                         <div class="play">
                             <span class="link">Login</span>
@@ -593,19 +592,10 @@
         <div id="resize-check"></div>
 
         <script type="text/javascript">
-            var ctx = document.querySelector('canvas').getContext('2d'),
-                parchment = document.getElementById("parchment");
-
-            if(!Detect.supportsWebSocket()) {
-                parchment.className = "error";
-            }
+            var ctx = document.querySelector('canvas').getContext('2d');
+            var parchment = document.getElementById("parchment");
 
             document.querySelector('body').className += ' upscaled';
-
-            // parchment.className = "confirmation";
         </script>
-
-        <script src="./vendor.bundle.js"></script>
-        <script src="./app.bundle.js"></script>
 	</body>
 </html>

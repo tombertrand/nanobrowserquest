@@ -1,5 +1,4 @@
 import { kinds,Types } from "../../shared/js/gametypes";
-
 import Character from "./character";
 import Exceptions from "./exceptions";
 

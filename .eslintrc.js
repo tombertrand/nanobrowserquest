@@ -38,16 +38,16 @@ module.exports = {
     ],
     "import/order": "off",
     "promise/param-names": "error",
-    "no-restricted-imports": [
-      "error",
-      {
-        patterns: [
-          {
-            group: ["../../*"],
-            message: 'Use an import alias like "~/shared" or "~/root" instead.',
-          },
-        ],
-      },
-    ],
+    // "no-restricted-imports": [
+    //   "error",
+    //   {
+    //     patterns: [
+    //       {
+    //         group: ["../../*"],
+    //         message: 'Use an import alias like "~/shared" or "~/root" instead.',
+    //       },
+    //     ],
+    //   },
+    // ],
   },
 };

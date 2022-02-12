@@ -1,13 +1,11 @@
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
-
 import Animation from "./animation";
 import AudioManager from "./audio";
 import BubbleManager from "./bubble";
 import Character from "./character";
 import Chest from "./chest";
-import config from "./config";
 import Entity from "./entity";
 import Exceptions from "./exceptions";
 import GameClient from "./gameclient";
@@ -102,7 +100,7 @@ class Game {
   host: any;
   port: any;
   username: any;
-  useraccount: any;
+  account: any;
   isStopped: any;
   obsoleteEntities: any[];
   playerId: any;
@@ -133,7 +131,6 @@ class Game {
 
   constructor(app) {
     this.app = app;
-    this.app.config = config;
     this.ready = false;
     this.started = false;
     this.hasNeverStarted = true;
@@ -1692,11 +1689,14 @@ class Game {
     }
   }
 
-  setServerOptions(host, port, username, useraccount) {
+  setPlayerAccount(username, account) {
+    this.username = username;
+    this.account = account;
+  }
+
+  setServerOptions(host, port) {
     this.host = host;
     this.port = port;
-    this.username = username;
-    this.useraccount = useraccount;
   }
 
   loadAudio() {
@@ -1791,8 +1791,7 @@ class Game {
   }
 
   connect(action, started_callback) {
-    var self = this,
-      connecting = false; // always in dispatcher mode in the build version
+    var self = this;
 
     this.client = new GameClient(this.host, this.port);
     this.client.fail_callback = function (reason) {
@@ -1803,19 +1802,7 @@ class Game {
       self.started = false;
     };
 
-    //>>excludeStart("prodHost", pragmas.prodHost);
-    var config = this.app.config.local || this.app.config.dev;
-    if (config) {
-      this.client.connect(config.dispatcher); // false if the client connects directly to a game server
-      connecting = true;
-    }
-    //>>excludeEnd("prodHost");
-
-    //>>includeStart("prodHost", pragmas.prodHost);
-    if (!connecting) {
-      this.client.connect(false); // dont use the dispatcher in production
-    }
-    //>>includeEnd("prodHost");
+    this.client.connect(false);
 
     this.client.onDispatched(function (host, port) {
       console.debug("Dispatched to game server " + host + ":" + port);
@@ -1829,7 +1816,7 @@ class Game {
       console.info("Starting client/server handshake");
 
       self.player.name = self.username;
-      self.player.account = self.useraccount;
+      self.player.account = self.account;
       self.started = true;
 
       if (action === "create") {
@@ -2298,6 +2285,8 @@ class Game {
         //   }
         // }
 
+        console.log("~~~~entity", entity);
+
         if (!self.entityIdExists(entity.id)) {
           try {
             if (entity.id !== self.playerId) {
@@ -2483,7 +2472,7 @@ class Game {
         if (entity) {
           console.info("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id + ")");
 
-          if (entity.gridX === self.previousClickPosition.x && entity.gridY === self.previousClickPosition.y) {
+          if (entity.gridX === self.previousClickPosition?.x && entity.gridY === self.previousClickPosition?.y) {
             self.previousClickPosition = null;
           }
 
@@ -3640,7 +3629,7 @@ class Game {
     this.hoveringCollidingTile = false;
     this.hoveringPlateauTile = false;
 
-    if ((pos.x === this.previousClickPosition.x && pos.y === this.previousClickPosition.y) || this.isZoning()) {
+    if ((pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) || this.isZoning()) {
       return;
     } else {
       if (!this.player.disableKeyboardNpcTalk) this.previousClickPosition = pos;
@@ -3655,8 +3644,10 @@ class Game {
   click() {
     var pos = this.getMouseGridPosition();
 
+    console.log("~~~~this", this);
+
     // ~~~~~ Invisible block here!
-    if (pos.x === this.previousClickPosition.x && pos.y === this.previousClickPosition.y) {
+    if (pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) {
       return;
     } else {
       this.previousClickPosition = pos;
@@ -4096,7 +4087,7 @@ class Game {
     this.initRenderingGrid();
 
     this.player = new Warrior("player", this.username);
-    this.player.account = this.useraccount;
+    this.player.account = this.account;
 
     // this.initPlayer();
     this.app.initTargetHud();
@@ -4177,7 +4168,7 @@ class Game {
   resize() {
     var x = this.camera.x;
     var y = this.camera.y;
-  
+
     this.renderer.rescale();
     this.camera = this.renderer.camera;
     this.camera.setPosition(x, y);

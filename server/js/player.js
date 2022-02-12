@@ -1300,94 +1300,99 @@ module.exports = Player = Character.extend({
     depositAccount,
     depositAccountIndex,
   }) {
-    var self = this;
+    console.log("~~~~SEND WELCOME!");
+    try {
+      var self = this;
 
-    const [playerArmor, playerArmorLevel = 1, playerArmorBonus] = armor.split(":");
-    const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus] = weapon.split(":");
+      const [playerArmor, playerArmorLevel = 1, playerArmorBonus] = armor.split(":");
+      const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus] = weapon.split(":");
 
-    self.kind = Types.Entities.WARRIOR;
-    self.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel, playerArmorBonus);
-    self.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel, playerWeaponBonus);
+      self.kind = Types.Entities.WARRIOR;
+      self.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel, playerArmorBonus);
+      self.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel, playerWeaponBonus);
 
-    if (belt) {
-      const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
-      self.equipBelt(playerBelt, playerBeltLevel, playerBeltBonus);
+      if (belt) {
+        const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
+        self.equipBelt(playerBelt, playerBeltLevel, playerBeltBonus);
+      }
+      if (ring1) {
+        const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
+        self.equipRing1(playerRing1, playerRing1Level, playerRing1Bonus);
+      }
+      if (ring2) {
+        const [playerRing2, playerRing2Level, playerRing2Bonus] = ring2.split(":");
+        self.equipRing2(playerRing2, playerRing2Level, playerRing2Bonus);
+      }
+      if (amulet) {
+        const [playerAmulet, playerAmuletLevel, playerAmuletBonus] = amulet.split(":");
+        self.equipAmulet(playerAmulet, playerAmuletLevel, playerAmuletBonus);
+      }
+      self.achievement = achievement;
+      self.waypoints = waypoints;
+      self.expansion1 = expansion1;
+      self.depositAccount = depositAccount;
+      self.depositAccountIndex = depositAccountIndex;
+      self.inventory = inventory;
+      self.stash = stash;
+      self.hash = hash;
+      self.hash1 = hash1;
+      self.hasRequestedBossPayout = !!hash;
+      self.hasRequestedNecromancerPayout = !!hash1;
+
+      self.createdAt = createdAt;
+      self.experience = exp;
+      self.level = Types.getLevel(self.experience);
+      self.orientation = Utils.randomOrientation;
+      if (x === 0 && y === 0) {
+        self.updatePosition();
+      } else {
+        self.setPosition(x, y);
+      }
+      self.chatBanEndTime = chatBanEndTime;
+
+      self.calculateBonus();
+
+      self.server.addPlayer(self);
+      self.server.enter_callback(self);
+
+      self.send([
+        Types.Messages.WELCOME,
+        self.id,
+        self.name,
+        self.x,
+        self.y,
+        self.hitPoints,
+        armor,
+        weapon,
+        belt,
+        ring1,
+        ring2,
+        amulet,
+        self.experience,
+        achievement,
+        inventory,
+        stash,
+        hash,
+        hash1,
+        nanoPotions,
+        gems,
+        artifact,
+        expansion1,
+        waypoints,
+        depositAccount,
+        self.auras,
+        self.server.cowLevelCoords,
+      ]);
+
+      self.updateHitPoints(true);
+      self.sendPlayerStats();
+
+      self.hasEnteredGame = true;
+      self.isDead = false;
+
+      // self.server.addPlayer(self, aGuildId);
+    } catch (err) {
+      console.log("~~~err", err);
     }
-    if (ring1) {
-      const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
-      self.equipRing1(playerRing1, playerRing1Level, playerRing1Bonus);
-    }
-    if (ring2) {
-      const [playerRing2, playerRing2Level, playerRing2Bonus] = ring2.split(":");
-      self.equipRing2(playerRing2, playerRing2Level, playerRing2Bonus);
-    }
-    if (amulet) {
-      const [playerAmulet, playerAmuletLevel, playerAmuletBonus] = amulet.split(":");
-      self.equipAmulet(playerAmulet, playerAmuletLevel, playerAmuletBonus);
-    }
-    self.achievement = achievement;
-    self.waypoints = waypoints;
-    self.expansion1 = expansion1;
-    self.depositAccount = depositAccount;
-    self.depositAccountIndex = depositAccountIndex;
-    self.inventory = inventory;
-    self.stash = stash;
-    self.hash = hash;
-    self.hash1 = hash1;
-    self.hasRequestedBossPayout = !!hash;
-    self.hasRequestedNecromancerPayout = !!hash1;
-
-    self.createdAt = createdAt;
-    self.experience = exp;
-    self.level = Types.getLevel(self.experience);
-    self.orientation = Utils.randomOrientation;
-
-    if (x === 0 && y === 0) {
-      self.updatePosition();
-    } else {
-      self.setPosition(x, y);
-    }
-    self.chatBanEndTime = chatBanEndTime;
-
-    self.calculateBonus();
-
-    self.server.addPlayer(self);
-    self.server.enter_callback(self);
-    self.send([
-      Types.Messages.WELCOME,
-      self.id,
-      self.name,
-      self.x,
-      self.y,
-      self.hitPoints,
-      armor,
-      weapon,
-      belt,
-      ring1,
-      ring2,
-      amulet,
-      self.experience,
-      achievement,
-      inventory,
-      stash,
-      hash,
-      hash1,
-      nanoPotions,
-      gems,
-      artifact,
-      expansion1,
-      waypoints,
-      depositAccount,
-      self.auras,
-      self.server.cowLevelCoords,
-    ]);
-
-    self.updateHitPoints(true);
-    self.sendPlayerStats();
-
-    self.hasEnteredGame = true;
-    self.isDead = false;
-
-    // self.server.addPlayer(self, aGuildId);
   },
 });

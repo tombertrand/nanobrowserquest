@@ -1,148 +1,149 @@
-const agent = require("../sprites/agent.json");
-const arrow = require("../sprites/arrow.json");
-const axe = require("../sprites/axe.json");
-const blueaxe = require("../sprites/blueaxe.json");
-const bluemorningstar = require("../sprites/bluemorningstar.json");
-const bat = require("../sprites/bat.json");
-const bat2 = require("../sprites/bat2.json");
-const beachnpc = require("../sprites/beachnpc.json");
-const bluesword = require("../sprites/bluesword.json");
-const boss = require("../sprites/boss.json");
-const skeletoncommander = require("../sprites/skeletoncommander.json");
-const chest = require("../sprites/chest.json");
-const clotharmor = require("../sprites/clotharmor.json");
-const coder = require("../sprites/coder.json");
-const crab = require("../sprites/crab.json");
-const death = require("../sprites/death.json");
-const deathknight = require("../sprites/deathknight.json");
-const desertnpc = require("../sprites/desertnpc.json");
-const eye = require("../sprites/eye.json");
-const firefox = require("../sprites/firefox.json");
-const forestnpc = require("../sprites/forestnpc.json");
-const goblin = require("../sprites/goblin.json");
-const goblin2 = require("../sprites/goblin2.json");
-const zombie = require("../sprites/zombie.json");
-const necromancer = require("../sprites/necromancer.json");
-const cow = require("../sprites/cow.json");
-const cowking = require("../sprites/cowking.json");
-const goldenarmor = require("../sprites/goldenarmor.json");
-const bluearmor = require("../sprites/bluearmor.json");
-const frozenarmor = require("../sprites/frozenarmor.json");
-const hornedarmor = require("../sprites/hornedarmor.json");
-const goldensword = require("../sprites/goldensword.json");
-const frozensword = require("../sprites/frozensword.json");
-const diamondsword = require("../sprites/diamondsword.json");
-const guard = require("../sprites/guard.json");
-const hand = require("../sprites/hand.json");
-const impact = require("../sprites/impact.json");
-const itemAxe = require("../sprites/item-axe.json");
-const itemBlueaxe = require("../sprites/item-blueaxe.json");
-const itemBluemorningstar = require("../sprites/item-bluemorningstar.json");
-const itemBluesword = require("../sprites/item-bluesword.json");
-const itemBurger = require("../sprites/item-burger.json");
-const itemCake = require("../sprites/item-cake.json");
-const itemFirepotion = require("../sprites/item-firepotion.json");
-const itemFlask = require("../sprites/item-flask.json");
-const itemRejuvenationpotion = require("../sprites/item-rejuvenationpotion.json");
-const itemPoisonpotion = require("../sprites/item-poisonpotion.json");
-const itemNanopotion = require("../sprites/item-nanopotion.json");
-const itemGemruby = require("../sprites/item-gemruby.json");
-const itemGememerald = require("../sprites/item-gememerald.json");
-const itemGemamethyst = require("../sprites/item-gemamethyst.json");
-const itemGemtopaz = require("../sprites/item-gemtopaz.json");
-const itemGemsapphire = require("../sprites/item-gemsapphire.json");
-const itemGold = require("../sprites/item-gold.json");
-const itemRingbronze = require("../sprites/item-ringbronze.json");
-const itemRingsilver = require("../sprites/item-ringsilver.json");
-const itemRinggold = require("../sprites/item-ringgold.json");
-const itemRingnecromancer = require("../sprites/item-ringnecromancer.json");
-const itemRingraistone = require("../sprites/item-ringraistone.json");
-const itemRingfountain = require("../sprites/item-ringfountain.json");
-const itemAmuletsilver = require("../sprites/item-amuletsilver.json");
-const itemAmuletgold = require("../sprites/item-amuletgold.json");
-const itemAmuletcow = require("../sprites/item-amuletcow.json");
-const itemScrollupgradelow = require("../sprites/item-scrollupgradelow.json");
-const itemScrollupgrademedium = require("../sprites/item-scrollupgrademedium.json");
-const itemScrollupgradehigh = require("../sprites/item-scrollupgradehigh.json");
-const itemScrollupgradeblessed = require("../sprites/item-scrollupgradeblessed.json");
-const itemSkeletonkey = require("../sprites/item-skeletonkey.json");
-const itemRaiblockstl = require("../sprites/item-raiblockstl.json");
-const itemRaiblockstr = require("../sprites/item-raiblockstr.json");
-const itemRaiblocksbl = require("../sprites/item-raiblocksbl.json");
-const itemRaiblocksbr = require("../sprites/item-raiblocksbr.json");
-const itemWirtleg = require("../sprites/item-wirtleg.json");
-const itemSkeletonkingcage = require("../sprites/item-skeletonkingcage.json");
-const itemNecromancerheart = require("../sprites/item-necromancerheart.json");
-const itemGoldenarmor = require("../sprites/item-goldenarmor.json");
-const itemBluearmor = require("../sprites/item-bluearmor.json");
-const itemFrozenarmor = require("../sprites/item-frozenarmor.json");
-const itemHornedarmor = require("../sprites/item-hornedarmor.json");
-const itemBeltleather = require("../sprites/item-beltleather.json");
-const itemBeltplated = require("../sprites/item-beltplated.json");
-const itemBeltfrozen = require("../sprites/item-beltfrozen.json");
-const itemGoldensword = require("../sprites/item-goldensword.json");
-const itemFrozensword = require("../sprites/item-frozensword.json");
-const itemDiamondsword = require("../sprites/item-diamondsword.json");
-const itemLeatherarmor = require("../sprites/item-leatherarmor.json");
-const itemMailarmor = require("../sprites/item-mailarmor.json");
-const itemMorningstar = require("../sprites/item-morningstar.json");
-const itemPlatearmor = require("../sprites/item-platearmor.json");
-const itemRedarmor = require("../sprites/item-redarmor.json");
-const itemRedsword = require("../sprites/item-redsword.json");
-const itemDagger = require("../sprites/item-dagger.json");
-const itemSword = require("../sprites/item-sword.json");
-const king = require("../sprites/king.json");
-const lavanpc = require("../sprites/lavanpc.json");
-const leatherarmor = require("../sprites/leatherarmor.json");
-const loot = require("../sprites/loot.json");
-const mailarmor = require("../sprites/mailarmor.json");
-const morningstar = require("../sprites/morningstar.json");
-const nyan = require("../sprites/nyan.json");
-const octocat = require("../sprites/octocat.json");
-const anvil = require("../sprites/anvil.json");
-const anvilRecipe = require("../sprites/anvil-recipe.json");
-const anvilSuccess = require("../sprites/anvil-success.json");
-const anvilFail = require("../sprites/anvil-fail.json");
-const waypointx = require("../sprites/waypointx.json");
-const waypointn = require("../sprites/waypointn.json");
-const stash = require("../sprites/stash.json");
-const cowportal = require("../sprites/cowportal.json");
-const ogre = require("../sprites/ogre.json");
-const yeti = require("../sprites/yeti.json");
-const werewolf = require("../sprites/werewolf.json");
-const wraith = require("../sprites/wraith.json");
-const platearmor = require("../sprites/platearmor.json");
-const priest = require("../sprites/priest.json");
-const rat = require("../sprites/rat.json");
-const rat2 = require("../sprites/rat2.json");
-const redarmor = require("../sprites/redarmor.json");
-const redsword = require("../sprites/redsword.json");
-const rick = require("../sprites/rick.json");
-const scientist = require("../sprites/scientist.json");
-const shadow16 = require("../sprites/shadow16.json");
-const skeleton = require("../sprites/skeleton.json");
-const skeleton2 = require("../sprites/skeleton2.json");
-const skeleton3 = require("../sprites/skeleton3.json");
-const snake = require("../sprites/snake.json");
-const snake2 = require("../sprites/snake2.json");
-const sorcerer = require("../sprites/sorcerer.json");
-const sparks = require("../sprites/sparks.json");
-const spectre = require("../sprites/spectre.json");
-const attack = require("../sprites/attack.json");
-const wirtleg = require("../sprites/wirtleg.json");
-const dagger = require("../sprites/dagger.json");
-const sword = require("../sprites/sword.json");
-const talk = require("../sprites/talk.json");
-const target = require("../sprites/target.json");
-const levelup = require("../sprites/levelup.json");
-const auraDrainlife = require("../sprites/aura-drainlife.json");
-const auraThunderstorm = require("../sprites/aura-thunderstorm.json");
-const auraHighhealth = require("../sprites/aura-highhealth.json");
-const villagegirl = require("../sprites/villagegirl.json");
-const villager = require("../sprites/villager.json");
-const carlosmatos = require("../sprites/carlosmatos.json");
-const satoshi = require("../sprites/satoshi.json");
-const wizard = require("../sprites/wizard.json");
+/* eslint-disable simple-import-sort/imports */
+import agent from "../sprites/agent.json";
+import arrow from "../sprites/arrow.json";
+import axe from "../sprites/axe.json";
+import blueaxe from "../sprites/blueaxe.json";
+import bluemorningstar from "../sprites/bluemorningstar.json";
+import bat from "../sprites/bat.json";
+import bat2 from "../sprites/bat2.json";
+import beachnpc from "../sprites/beachnpc.json";
+import bluesword from "../sprites/bluesword.json";
+import boss from "../sprites/boss.json";
+import skeletoncommander from "../sprites/skeletoncommander.json";
+import chest from "../sprites/chest.json";
+import clotharmor from "../sprites/clotharmor.json";
+import coder from "../sprites/coder.json";
+import crab from "../sprites/crab.json";
+import death from "../sprites/death.json";
+import deathknight from "../sprites/deathknight.json";
+import desertnpc from "../sprites/desertnpc.json";
+import eye from "../sprites/eye.json";
+import firefox from "../sprites/firefox.json";
+import forestnpc from "../sprites/forestnpc.json";
+import goblin from "../sprites/goblin.json";
+import goblin2 from "../sprites/goblin2.json";
+import zombie from "../sprites/zombie.json";
+import necromancer from "../sprites/necromancer.json";
+import cow from "../sprites/cow.json";
+import cowking from "../sprites/cowking.json";
+import goldenarmor from "../sprites/goldenarmor.json";
+import bluearmor from "../sprites/bluearmor.json";
+import frozenarmor from "../sprites/frozenarmor.json";
+import hornedarmor from "../sprites/hornedarmor.json";
+import goldensword from "../sprites/goldensword.json";
+import frozensword from "../sprites/frozensword.json";
+import diamondsword from "../sprites/diamondsword.json";
+import guard from "../sprites/guard.json";
+import hand from "../sprites/hand.json";
+import impact from "../sprites/impact.json";
+import itemAxe from "../sprites/item-axe.json";
+import itemBlueaxe from "../sprites/item-blueaxe.json";
+import itemBluemorningstar from "../sprites/item-bluemorningstar.json";
+import itemBluesword from "../sprites/item-bluesword.json";
+import itemBurger from "../sprites/item-burger.json";
+import itemCake from "../sprites/item-cake.json";
+import itemFirepotion from "../sprites/item-firepotion.json";
+import itemFlask from "../sprites/item-flask.json";
+import itemRejuvenationpotion from "../sprites/item-rejuvenationpotion.json";
+import itemPoisonpotion from "../sprites/item-poisonpotion.json";
+import itemNanopotion from "../sprites/item-nanopotion.json";
+import itemGemruby from "../sprites/item-gemruby.json";
+import itemGememerald from "../sprites/item-gememerald.json";
+import itemGemamethyst from "../sprites/item-gemamethyst.json";
+import itemGemtopaz from "../sprites/item-gemtopaz.json";
+import itemGemsapphire from "../sprites/item-gemsapphire.json";
+import itemGold from "../sprites/item-gold.json";
+import itemRingbronze from "../sprites/item-ringbronze.json";
+import itemRingsilver from "../sprites/item-ringsilver.json";
+import itemRinggold from "../sprites/item-ringgold.json";
+import itemRingnecromancer from "../sprites/item-ringnecromancer.json";
+import itemRingraistone from "../sprites/item-ringraistone.json";
+import itemRingfountain from "../sprites/item-ringfountain.json";
+import itemAmuletsilver from "../sprites/item-amuletsilver.json";
+import itemAmuletgold from "../sprites/item-amuletgold.json";
+import itemAmuletcow from "../sprites/item-amuletcow.json";
+import itemScrollupgradelow from "../sprites/item-scrollupgradelow.json";
+import itemScrollupgrademedium from "../sprites/item-scrollupgrademedium.json";
+import itemScrollupgradehigh from "../sprites/item-scrollupgradehigh.json";
+import itemScrollupgradeblessed from "../sprites/item-scrollupgradeblessed.json";
+import itemSkeletonkey from "../sprites/item-skeletonkey.json";
+import itemRaiblockstl from "../sprites/item-raiblockstl.json";
+import itemRaiblockstr from "../sprites/item-raiblockstr.json";
+import itemRaiblocksbl from "../sprites/item-raiblocksbl.json";
+import itemRaiblocksbr from "../sprites/item-raiblocksbr.json";
+import itemWirtleg from "../sprites/item-wirtleg.json";
+import itemSkeletonkingcage from "../sprites/item-skeletonkingcage.json";
+import itemNecromancerheart from "../sprites/item-necromancerheart.json";
+import itemGoldenarmor from "../sprites/item-goldenarmor.json";
+import itemBluearmor from "../sprites/item-bluearmor.json";
+import itemFrozenarmor from "../sprites/item-frozenarmor.json";
+import itemHornedarmor from "../sprites/item-hornedarmor.json";
+import itemBeltleather from "../sprites/item-beltleather.json";
+import itemBeltplated from "../sprites/item-beltplated.json";
+import itemBeltfrozen from "../sprites/item-beltfrozen.json";
+import itemGoldensword from "../sprites/item-goldensword.json";
+import itemFrozensword from "../sprites/item-frozensword.json";
+import itemDiamondsword from "../sprites/item-diamondsword.json";
+import itemLeatherarmor from "../sprites/item-leatherarmor.json";
+import itemMailarmor from "../sprites/item-mailarmor.json";
+import itemMorningstar from "../sprites/item-morningstar.json";
+import itemPlatearmor from "../sprites/item-platearmor.json";
+import itemRedarmor from "../sprites/item-redarmor.json";
+import itemRedsword from "../sprites/item-redsword.json";
+import itemDagger from "../sprites/item-dagger.json";
+import itemSword from "../sprites/item-sword.json";
+import king from "../sprites/king.json";
+import lavanpc from "../sprites/lavanpc.json";
+import leatherarmor from "../sprites/leatherarmor.json";
+import loot from "../sprites/loot.json";
+import mailarmor from "../sprites/mailarmor.json";
+import morningstar from "../sprites/morningstar.json";
+import nyan from "../sprites/nyan.json";
+import octocat from "../sprites/octocat.json";
+import anvil from "../sprites/anvil.json";
+import anvilRecipe from "../sprites/anvil-recipe.json";
+import anvilSuccess from "../sprites/anvil-success.json";
+import anvilFail from "../sprites/anvil-fail.json";
+import waypointx from "../sprites/waypointx.json";
+import waypointn from "../sprites/waypointn.json";
+import stash from "../sprites/stash.json";
+import cowportal from "../sprites/cowportal.json";
+import ogre from "../sprites/ogre.json";
+import yeti from "../sprites/yeti.json";
+import werewolf from "../sprites/werewolf.json";
+import wraith from "../sprites/wraith.json";
+import platearmor from "../sprites/platearmor.json";
+import priest from "../sprites/priest.json";
+import rat from "../sprites/rat.json";
+import rat2 from "../sprites/rat2.json";
+import redarmor from "../sprites/redarmor.json";
+import redsword from "../sprites/redsword.json";
+import rick from "../sprites/rick.json";
+import scientist from "../sprites/scientist.json";
+import shadow16 from "../sprites/shadow16.json";
+import skeleton from "../sprites/skeleton.json";
+import skeleton2 from "../sprites/skeleton2.json";
+import skeleton3 from "../sprites/skeleton3.json";
+import snake from "../sprites/snake.json";
+import snake2 from "../sprites/snake2.json";
+import sorcerer from "../sprites/sorcerer.json";
+import sparks from "../sprites/sparks.json";
+import spectre from "../sprites/spectre.json";
+import attack from "../sprites/attack.json";
+import wirtleg from "../sprites/wirtleg.json";
+import dagger from "../sprites/dagger.json";
+import sword from "../sprites/sword.json";
+import talk from "../sprites/talk.json";
+import target from "../sprites/target.json";
+import levelup from "../sprites/levelup.json";
+import auraDrainlife from "../sprites/aura-drainlife.json";
+import auraThunderstorm from "../sprites/aura-thunderstorm.json";
+import auraHighhealth from "../sprites/aura-highhealth.json";
+import villagegirl from "../sprites/villagegirl.json";
+import villager from "../sprites/villager.json";
+import carlosmatos from "../sprites/carlosmatos.json";
+import satoshi from "../sprites/satoshi.json";
+import wizard from "../sprites/wizard.json";
 
 const sprites = {
   agent,
@@ -182,62 +183,62 @@ const sprites = {
   guard,
   hand,
   impact,
-  itemAxe,
-  itemBlueaxe,
-  itemBluemorningstar,
-  itemBluesword,
-  itemBurger,
-  itemCake,
-  itemFirepotion,
-  itemFlask,
-  itemRejuvenationpotion,
-  itemPoisonpotion,
-  itemNanopotion,
-  itemGemruby,
-  itemGememerald,
-  itemGemamethyst,
-  itemGemtopaz,
-  itemGemsapphire,
-  itemGold,
-  itemRingbronze,
-  itemRingsilver,
-  itemRinggold,
-  itemRingnecromancer,
-  itemRingraistone,
-  itemRingfountain,
-  itemAmuletsilver,
-  itemAmuletgold,
-  itemAmuletcow,
-  itemScrollupgradelow,
-  itemScrollupgrademedium,
-  itemScrollupgradehigh,
-  itemScrollupgradeblessed,
-  itemSkeletonkey,
-  itemRaiblockstl,
-  itemRaiblockstr,
-  itemRaiblocksbl,
-  itemRaiblocksbr,
-  itemWirtleg,
-  itemSkeletonkingcage,
-  itemNecromancerheart,
-  itemGoldenarmor,
-  itemBluearmor,
-  itemFrozenarmor,
-  itemHornedarmor,
-  itemBeltleather,
-  itemBeltplated,
-  itemBeltfrozen,
-  itemGoldensword,
-  itemFrozensword,
-  itemDiamondsword,
-  itemLeatherarmor,
-  itemMailarmor,
-  itemMorningstar,
-  itemPlatearmor,
-  itemRedarmor,
-  itemRedsword,
-  itemDagger,
-  itemSword,
+  "item-axe": itemAxe,
+  "item-blueaxe": itemBlueaxe,
+  "item-bluemorningstar": itemBluemorningstar,
+  "item-bluesword": itemBluesword,
+  "item-burger": itemBurger,
+  "item-cake": itemCake,
+  "item-firepotion": itemFirepotion,
+  "item-flask": itemFlask,
+  "item-rejuvenationpotion": itemRejuvenationpotion,
+  "item-poisonpotion": itemPoisonpotion,
+  "item-nanopotion": itemNanopotion,
+  "item-gemruby": itemGemruby,
+  "item-gememerald": itemGememerald,
+  "item-gemamethyst": itemGemamethyst,
+  "item-gemtopaz": itemGemtopaz,
+  "item-gemsapphire": itemGemsapphire,
+  "item-gold": itemGold,
+  "item-ringbronze": itemRingbronze,
+  "item-ringsilver": itemRingsilver,
+  "item-ringgold": itemRinggold,
+  "item-ringnecromancer": itemRingnecromancer,
+  "item-ringraistone": itemRingraistone,
+  "item-ringfountain": itemRingfountain,
+  "item-amuletsilver": itemAmuletsilver,
+  "item-amuletgold": itemAmuletgold,
+  "item-amuletcow": itemAmuletcow,
+  "item-scrollupgradelow": itemScrollupgradelow,
+  "item-scrollupgrademedium": itemScrollupgrademedium,
+  "item-scrollupgradehigh": itemScrollupgradehigh,
+  "item-scrollupgradeblessed": itemScrollupgradeblessed,
+  "item-skeletonkey": itemSkeletonkey,
+  "item-raiblockstl": itemRaiblockstl,
+  "item-raiblockstr": itemRaiblockstr,
+  "item-raiblocksbl": itemRaiblocksbl,
+  "item-raiblocksbr": itemRaiblocksbr,
+  "item-wirtleg": itemWirtleg,
+  "item-skeletonkingcage": itemSkeletonkingcage,
+  "item-necromancerheart": itemNecromancerheart,
+  "item-goldenarmor": itemGoldenarmor,
+  "item-bluearmor": itemBluearmor,
+  "item-frozenarmor": itemFrozenarmor,
+  "item-hornedarmor": itemHornedarmor,
+  "item-beltleather": itemBeltleather,
+  "item-beltplated": itemBeltplated,
+  "item-beltfrozen": itemBeltfrozen,
+  "item-goldensword": itemGoldensword,
+  "item-frozensword": itemFrozensword,
+  "item-diamondsword": itemDiamondsword,
+  "item-leatherarmor": itemLeatherarmor,
+  "item-mailarmor": itemMailarmor,
+  "item-morningstar": itemMorningstar,
+  "item-platearmor": itemPlatearmor,
+  "item-redarmor": itemRedarmor,
+  "item-redsword": itemRedsword,
+  "item-dagger": itemDagger,
+  "item-sword": itemSword,
   king,
   lavanpc,
   leatherarmor,
@@ -247,9 +248,9 @@ const sprites = {
   nyan,
   octocat,
   anvil,
-  anvilRecipe,
-  anvilSuccess,
-  anvilFail,
+  "anvil-recipe": anvilRecipe,
+  "anvil-success": anvilSuccess,
+  "anvil-fail": anvilFail,
   waypointx,
   waypointn,
   stash,
@@ -282,9 +283,9 @@ const sprites = {
   talk,
   target,
   levelup,
-  auraDrainlife,
-  auraThunderstorm,
-  auraHighhealth,
+  "aura-drainlife": auraDrainlife,
+  "aura-thunderstorm": auraThunderstorm,
+  "aura-highhealth": auraHighhealth,
   villagegirl,
   villager,
   carlosmatos,

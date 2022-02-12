@@ -1,20 +1,21 @@
 const path = require("path");
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   mode: "development",
   // context: path.resolve(__dirname, 'client/js'),
   entry: {
-    vendor: [
-      "jquery",
-      "jquery-ui",
-      "jquery-countdown",
-      "jquery.qrcode",
-      "jquery-ui-touch-punch",
-      "bignumber.js",
-      "socket.io",
-    ],
+    vendor: ["jquery", "jquery-countdown", "jquery.qrcode", "jquery-ui-touch-punch", "bignumber.js"],
     app: "./client/js/index.ts",
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "dist"),
+    },
+    compress: true,
+    port: 8001,
   },
   module: {
     rules: [
@@ -23,26 +24,23 @@ module.exports = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
+      {
+        test: /\.json$/,
+        loader: "json-loader",
+        exclude: /node_modules/,
+        options: {
+          esModule: true,
+        },
+        type: "javascript/auto",
+      },
     ],
   },
-  resolve: {
-    extensions: [".ts", ".js"],
-  },
   output: {
-    filename: "[name].bundle.js",
+    filename: "[name].[hash].bundle.js",
     path: path.resolve(__dirname, "dist"),
     clean: true,
   },
-  plugins: [
-    new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-      jquery: "jquery",
-      "window.jQuery": "jquery'",
-      "window.$": "jquery",
-    }),
-    //  new MiniCssExtractPlugin(miniCssExtractOptions),
-  ],
+
   resolve: {
     fallback: {
       fs: false,
@@ -54,5 +52,33 @@ module.exports = {
       querystring: false,
       crypto: false,
     },
+    extensions: [".ts", ".js", ".json"],
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      jquery: "jquery",
+      "window.jQuery": "jquery'",
+      "window.$": "jquery",
+    }),
+    new HtmlWebpackPlugin({
+      // title: 'Fate of the Four',
+      template: "./client/index.html",
+    }),
+    //  new MiniCssExtractPlugin(miniCssExtractOptions),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "client/img/", to: "img/" },
+        { from: "client/audio/", to: "audio/" },
+        { from: "client/css/", to: "css/" },
+        { from: "client/fonts/", to: "fonts/" },
+        { from: "client/maps/", to: "maps/" },
+        { from: "client/js/mapworker.js", to: "mapworker.js" },
+        // {from: 'client/sprites/', to: 'sprites/'},
+        // {from: 'client/ts/lib/', to: 'lib/'},
+        // {from: `client/config/config.prod.json`, to: 'client/config/config.json'},
+      ],
+    }),
+  ],
 };

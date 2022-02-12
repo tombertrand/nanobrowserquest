@@ -1,5 +1,4 @@
 import { Types } from "../../shared/js/gametypes";
-
 import Animation from "./animation";
 import sprites from "./sprites";
 
@@ -19,7 +18,6 @@ class Sprite {
   onload_func;
   whiteSprite;
   silhouetteSprite;
-  fileExtension: string;
   image7: any;
   image8: any;
   imageunique: any;
@@ -32,7 +30,6 @@ class Sprite {
     this.offsetX = 0;
     this.offsetY = 0;
     this.loadJSON(sprites[name]);
-    this.fileExtension = ".png";
   }
 
   loadJSON(data) {
@@ -52,24 +49,24 @@ class Sprite {
 
     this.image = new Image();
     this.image.crossOrigin = "Anonymous";
-    this.image.src = "img/" + this.scale + "/" + this.id + this.fileExtension;
+    this.image.src = "img/" + this.scale + "/" + this.id + ".png";
 
     if (Types.isWeapon(this.name) && this.name !== "dagger") {
       this.image7 = new Image();
       this.image7.crossOrigin = "Anonymous";
-      this.image7.src = "img/" + this.scale + "/" + this.id + "7" + this.fileExtension;
+      this.image7.src = "img/" + this.scale + "/" + this.id + "7" + ".png";
 
       this.image8 = new Image();
       this.image8.crossOrigin = "Anonymous";
-      this.image8.src = "img/" + this.scale + "/" + this.id + "8" + this.fileExtension;
+      this.image8.src = "img/" + this.scale + "/" + this.id + "8" + ".png";
 
       this.imageunique = new Image();
       this.imageunique.crossOrigin = "Anonymous";
-      this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + this.fileExtension;
+      this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + ".png";
 
       this.imageunique7 = new Image();
       this.imageunique7.crossOrigin = "Anonymous";
-      this.imageunique7.src = "img/" + this.scale + "/" + this.id + "unique7" + this.fileExtension;
+      this.imageunique7.src = "img/" + this.scale + "/" + this.id + "unique7" + ".png";
     }
 
     this.image.onload = function () {
@@ -113,7 +110,14 @@ class Sprite {
         data[i] = 255;
         data[i + 1] = data[i + 2] = 75;
       }
-      spriteData.data = data;
+
+      // spriteData.data = data;
+      Object.defineProperties(spriteData, {
+        data: {
+          value: data,
+          writable: true,
+        },
+      });
 
       ctx.putImageData(spriteData, 0, 0);
 

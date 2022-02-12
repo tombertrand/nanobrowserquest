@@ -1,7 +1,11 @@
+import "jquery-ui/ui/widgets/draggable";
+import "jquery-ui/ui/widgets/droppable";
+import "jquery-ui/ui/widgets/resizable";
+import "jquery-ui/ui/widgets/tooltip";
+
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-
 import App from "./app";
 import Character from "./character";
 import Detect from "./detect";
@@ -423,7 +427,9 @@ var initGame = function () {
     app.unlockAchievement(id, name, nano);
   });
 
-  game.onNotification(app.showMessage);
+  console.log("~~~~app", app);
+
+  game.onNotification(app.showMessage.bind(app));
 
   app.initHealthBar();
   app.initTargetHud();
