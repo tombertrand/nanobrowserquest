@@ -1,6 +1,6 @@
-import Player from "./player";
-
 import { Types } from "../../shared/js/gametypes";
+
+import Player from "./player";
 
 class Warrior extends Player {
   moveUp: any;

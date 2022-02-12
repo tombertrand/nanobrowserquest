@@ -1,7 +1,7 @@
+import { Types } from "../../shared/js/gametypes";
+
 import Mob from "./mob";
 import Timer from "./timer";
-
-import { Types } from "../../shared/js/gametypes";
 
 export const Mobs = {
   Rat: class Rat extends Mob {

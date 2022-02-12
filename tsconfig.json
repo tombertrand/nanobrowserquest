@@ -16,15 +16,22 @@
       "noImplicitAny": false
     }
   },
+
   "compilerOptions": {
     "strict": false,
     "skipLibCheck": true,
     "outDir": "./dist/",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "noImplicitAny": false,
     "module": "es6",
     "target": "es5",
     "allowJs": true,
-    "moduleResolution": "node",
-    "noImplicitThis": false
-  }
+    // "moduleResolution": "node",
+    "noImplicitThis": false,
+    "resolveMappedPaths": true,
+    "baseUrl": "."
+  },
+  "exclude": ["dist/", "node_modules"],
+  "include": ["**/*.ts", "**/*.config.js"]
 }

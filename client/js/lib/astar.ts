@@ -33,7 +33,7 @@ var AStar = (function () {
     return result;
   }
 
-  function nothingToDo($N, $S, $E, $W, N, S, E, W, grid, rows, cols, result, i) {
+  function nothingToDo($N, $S, $E, $W, N, S, E, W, grid, rows, cols, result) {
     return result;
   }
 
@@ -65,7 +65,7 @@ var AStar = (function () {
     return f2(x * x + y * y);
   }
 
-  function manhattan(start, end, f1, f2) {
+  function manhattan(start, end, f1, _f2) {
     return f1(start.x - end.x) + f1(start.y - end.y);
   }
 

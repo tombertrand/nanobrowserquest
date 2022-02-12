@@ -118,8 +118,7 @@ class Entity {
         return;
       }
 
-      var s = this.sprite,
-        a = this.getAnimationByName(name);
+      var a = this.getAnimationByName(name);
 
       if (a) {
         this.currentAnimation = a;
@@ -212,7 +211,6 @@ class Entity {
   isCloseTo(entity) {
     var dx,
       dy,
-      d,
       close = false;
     if (entity) {
       dx = Math.abs(entity.gridX - this.gridX);
@@ -267,7 +265,7 @@ class Entity {
     this.startFadingTime = currentTime;
   }
 
-  blink(speed, callback) {
+  blink(speed) {
     var self = this;
 
     this.blinking = setInterval(function () {

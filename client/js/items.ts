@@ -1,6 +1,6 @@
-import Item from "./item";
-
 import { Types } from "../../shared/js/gametypes";
+
+import Item from "./item";
 
 var Items = {
   Sword: class Sword extends Item {

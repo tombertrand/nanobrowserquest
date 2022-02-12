@@ -1,7 +1,7 @@
+import { Types } from "../../shared/js/gametypes";
+
 import Character from "./character";
 import Timer from "./timer";
-
-import { Types } from "../../shared/js/gametypes";
 
 import type { Game } from "./types/game";
 
@@ -96,7 +96,6 @@ class Updater {
     var g = this.game,
       c = g.camera,
       z = g.currentZoning,
-      s = 3,
       ts = 16,
       // @NOTE Unfortunately unable to fix the camera transition when multiple queues when the speed is greater than 350ms
       speed = 350;
@@ -143,8 +142,6 @@ class Updater {
   }
 
   updateCharacter(c) {
-    var self = this;
-
     // Estimate of the movement distance for one update
     var tick = Math.round(16 / Math.round(c.moveSpeed / (1000 / this.game.renderer.FPS)));
 

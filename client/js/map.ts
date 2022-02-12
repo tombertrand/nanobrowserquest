@@ -1,10 +1,11 @@
 import * as _ from "lodash";
-import Area from "./area";
-
-import type { Game as GameType } from "./types/game";
-import { isInt } from "./utils";
 
 import { Types } from "../../shared/js/gametypes";
+
+import Area from "./area";
+import { isInt } from "./utils";
+
+import type { Game as GameType } from "./types/game";
 
 class Map {
   game: GameType;
@@ -227,7 +228,6 @@ class Map {
   }
 
   _generateCollisionGrid() {
-    var tileIndex = 0;
     var self = this;
 
     this.grid = [];

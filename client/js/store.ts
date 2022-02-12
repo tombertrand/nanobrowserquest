@@ -1,11 +1,8 @@
-// define(["../../shared/js/gametypes"], function () {
+import BigNumber from "bignumber.js";
 
 import { Types } from "../../shared/js/gametypes";
-import BigNumber from "bignumber.js";
-import { raiToRaw, copyToClipboard } from "./utils";
 
-import App from "./app";
-import Game from "./game";
+import { copyToClipboard,raiToRaw } from "./utils";
 
 interface StoreItem extends BackendStoreItem {
   id: number;

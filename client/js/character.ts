@@ -1,10 +1,10 @@
 import * as _ from "lodash";
 
-import Entity from "./entity";
-import Transition from "./transition";
-import Timer from "./timer";
-
 import { Types } from "../../shared/js/gametypes";
+
+import Entity from "./entity";
+import Timer from "./timer";
+import Transition from "./transition";
 
 class Character extends Entity {
   nextGridX: number;
@@ -580,8 +580,6 @@ class Character extends Entity {
    * Removes the current attack target.
    */
   removeTarget(withoutCallback?: boolean) {
-    var self = this;
-
     if (this.target) {
       if (this.target instanceof Character) {
         this.target.removeAttacker(this);
@@ -675,8 +673,6 @@ class Character extends Entity {
   }
 
   hurt() {
-    var self = this;
-
     this.stopHurting();
     // @NOTE directly go for the whiteSprite
     this.sprite = this.sprite.whiteSprite;

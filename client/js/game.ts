@@ -1,34 +1,33 @@
 import * as _ from "lodash";
 
-import { randomRange } from "./utils";
+import { kinds, Types } from "../../shared/js/gametypes";
 
-import InfoManager from "./infomanager";
-import BubbleManager from "./bubble";
-import Renderer from "./renderer";
-import Map from "./map";
 import Animation from "./animation";
-import Sprite from "./sprite";
-import AnimatedTile from "./tile";
-import Warrior from "./warrior";
-import GameClient from "./gameclient";
 import AudioManager from "./audio";
-import Updater from "./updater";
-import Transition from "./transition";
-import Pathfinder from "./pathfinder";
-import Item from "./item";
-import Mob from "./mob";
-import Npc from "./npc";
-import Player from "./player";
+import BubbleManager from "./bubble";
 import Character from "./character";
 import Chest from "./chest";
-import Mobs from "./mobs";
-import Exceptions from "./exceptions";
 import config from "./config";
-import Guild from "./guild";
-
-import { Types, kinds } from "../../shared/js/gametypes";
-import { App as AppType } from "./types/app";
 import Entity from "./entity";
+import Exceptions from "./exceptions";
+import GameClient from "./gameclient";
+import Guild from "./guild";
+import InfoManager from "./infomanager";
+import Item from "./item";
+import Map from "./map";
+import Mob from "./mob";
+import Mobs from "./mobs";
+import Npc from "./npc";
+import Pathfinder from "./pathfinder";
+import Player from "./player";
+import Renderer from "./renderer";
+import Sprite from "./sprite";
+import AnimatedTile from "./tile";
+import Transition from "./transition";
+import { App as AppType } from "./types/app";
+import Updater from "./updater";
+import { randomRange } from "./utils";
+import Warrior from "./warrior";
 
 class Game {
   app: AppType;
@@ -496,8 +495,6 @@ class Game {
   }
 
   initTooltips() {
-    var self = this;
-
     $(document).tooltip({
       items: "[data-item]",
       track: true,
@@ -688,7 +685,7 @@ class Game {
 
         self.initDroppable();
       },
-      stop(event, ui) {
+      stop() {
         self.destroyDroppable();
 
         $(".ui-droppable-origin").removeClass("ui-droppable-origin");
@@ -1332,7 +1329,7 @@ class Game {
 
   getAchievementById(id) {
     var found = null;
-    _.each(this.achievements, function (achievement, key) {
+    _.each(this.achievements, function (achievement) {
       if (achievement.id === parseInt(id)) {
         found = achievement;
       }
@@ -2367,7 +2364,7 @@ class Game {
                   }
                 });
 
-                entity.onStopPathing(function (x, y) {
+                entity.onStopPathing(function () {
                   if (!entity.isDying) {
                     if (entity.hasTarget() && entity.isAdjacent(entity.target)) {
                       entity.lookAtTarget();
@@ -2725,9 +2722,6 @@ class Game {
         //   "Total xp: " + self.player.experience + ". " + expPercentThisLevel.toFixed(0) + "% of this level done.",
         // );
 
-        var mobName = Types.getKindAsString(kind);
-        mobName = Types.getAliasFromName(mobName);
-
         self.storage.incrementTotalKills();
         self.tryUnlockingAchievement("HUNTER");
 
@@ -2915,12 +2909,12 @@ class Game {
           if (check[position] != position) {
             self.client.sendBanPlayer("Invalid check position");
           } else {
-            let s = check;
-            s = s.slice(0, position) + s.slice(position + 1, s.length - 1);
-            s = parseInt(s);
+            // let s = check;
+            // s = s.slice(0, position) + s.slice(position + 1, s.length - 1);
+            // s = parseInt(s);
 
-            const now = Date.now();
-            const absS = Math.abs(s - now);
+            // const now = Date.now();
+            // const absS = Math.abs(s - now);
             // 10s range
             // @TODO people getting banned here?
             // if (absS < 1000 * 10) {
@@ -3035,7 +3029,7 @@ class Game {
             // @ts-ignore
             $(this).html(event.strftime("%M:%S"));
           })
-          .on("finish.countdown", function (event) {
+          .on("finish.countdown", function () {
             $(this).html("Portal to the secret level closed.");
 
             setTimeout(() => {
@@ -3395,12 +3389,8 @@ class Game {
     }, extra);
   }
 
-  /**
-   *
-   */
   forEachVisibleTile(callback, extra) {
-    var self = this,
-      m = this.map;
+    var m = this.map;
 
     if (m.isLoaded) {
       this.forEachVisibleTileIndex(function (tileIndex) {
@@ -3419,9 +3409,6 @@ class Game {
     }
   }
 
-  /**
-   *
-   */
   forEachAnimatedTile(callback) {
     if (this.animatedTiles) {
       _.each(this.animatedTiles, function (tile) {
@@ -3544,8 +3531,7 @@ class Game {
   findPath(character, x, y, ignoreList) {
     var self = this,
       grid = this.pathingGrid,
-      path = [],
-      isPlayer = character === this.player;
+      path = [];
 
     if (this.map.isColliding(x, y)) {
       return path;
@@ -3650,7 +3636,7 @@ class Game {
   /**
    * Moves the player one space, if possible
    */
-  keys(pos, orientation) {
+  keys(pos) {
     this.hoveringCollidingTile = false;
     this.hoveringPlateauTile = false;
 
@@ -3831,8 +3817,7 @@ class Game {
    *
    */
   onCharacterUpdate(character) {
-    var time = this.currentTime,
-      self = this;
+    var time = this.currentTime;
 
     // If mob has finished moving to a different tile in order to avoid stacking, attack again from the new position.
     if (character.previousTarget && !character.isMoving() && character instanceof Mob) {
@@ -4192,10 +4177,8 @@ class Game {
   resize() {
     var x = this.camera.x;
     var y = this.camera.y;
-    var currentScale = this.renderer.scale;
-    var newScale = this.renderer.getScaleFactor();
-
-    this.renderer.rescale(newScale);
+  
+    this.renderer.rescale();
     this.camera = this.renderer.camera;
     this.camera.setPosition(x, y);
 

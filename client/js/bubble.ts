@@ -1,4 +1,5 @@
 import * as _ from "lodash";
+
 import Timer from "./timer";
 
 class Bubble {

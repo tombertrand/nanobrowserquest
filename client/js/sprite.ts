@@ -1,7 +1,7 @@
+import { Types } from "../../shared/js/gametypes";
+
 import Animation from "./animation";
 import sprites from "./sprites";
-
-import { Types } from "../../shared/js/gametypes";
 
 class Sprite {
   id;
@@ -139,7 +139,6 @@ class Sprite {
     var ctx: CanvasRenderingContext2D = canvas.getContext("2d")!;
     var width = this.image.width;
     var height = this.image.height;
-    var spriteData;
     var finalData;
     var data: any;
 

@@ -1,6 +1,6 @@
-import Npc from "./npc";
-
 import { Types } from "../../shared/js/gametypes";
+
+import Npc from "./npc";
 
 var Npcs = {
   Guard: class Guard extends Npc {

@@ -1,6 +1,6 @@
-import Entity from "./entity";
-
 import { Types } from "../../shared/js/gametypes";
+
+import Entity from "./entity";
 
 class Chest extends Entity {
   open_callback: any;

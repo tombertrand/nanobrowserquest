@@ -1,6 +1,7 @@
+import { Types } from "../../shared/js/gametypes";
+
 import Character from "./character";
 
-import { Types } from "../../shared/js/gametypes";
 import type { Game } from "./types/game";
 
 var NpcTalk = {

@@ -1,4 +1,5 @@
 import * as _ from "lodash";
+
 import type { Game } from "./types/game";
 
 class InfoManager {
@@ -47,9 +48,7 @@ class InfoManager {
   }
 
   forEachInfo(callback) {
-    var self = this;
-
-    _.each(this.infos, function (info, id) {
+    _.each(this.infos, function (info) {
       callback(info);
     });
   }

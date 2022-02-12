@@ -1,10 +1,10 @@
 import * as _ from "lodash";
-import { TRANSITIONEND, isValidAccountAddress, getAccountAddressFromText } from "./utils";
+
+import { Types } from "../../shared/js/gametypes";
 
 import Storage from "./storage";
 import Store from "./store";
-
-import { Types } from "../../shared/js/gametypes";
+import { getAccountAddressFromText, isValidAccountAddress, TRANSITIONEND } from "./utils";
 
 class App {
   currentPage: number;
@@ -94,8 +94,6 @@ class App {
   }
 
   initFormFields() {
-    var self = this;
-
     // Play button
     this.$play = $(".play");
     this.getPlayButton = function () {
@@ -360,11 +358,10 @@ class App {
   //Init the hud that makes it show what creature you are mousing over and attacking
   initTargetHud() {
     var self = this;
-    var scale = self.game.renderer.getScaleFactor();
     // var healthMaxWidth = $("#inspector .health")!.width() - 12 * scale;
     // var timeout;
 
-    this.game.player.onSetTarget(function (target, name, mouseover) {
+    this.game.player.onSetTarget(function (target, name) {
       var el = "#inspector";
       // var sprite = target.sprite;
 
@@ -402,7 +399,7 @@ class App {
       $("#inspector .health").css("width", Math.round((target.healthPoints / target.maxHp) * 100) + "%");
     });
 
-    self.game.player.onRemoveTarget(function (targetId) {
+    self.game.player.onRemoveTarget(function () {
       $("#inspector").fadeOut("fast");
       $("#inspector .level").text("");
       self.game.player.inspecting = null;
@@ -728,7 +725,7 @@ class App {
       });
   }
 
-  updateArtifact(artifact) {
+  updateArtifact(_artifact) {
     // @TODO Update an artifact grayed out "map"?
   }
 

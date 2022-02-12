@@ -1,9 +1,11 @@
 import * as _ from "lodash";
-import Player from "./player";
-import EntityFactory from "./entityfactory";
-import BISON from "./lib/bison";
+import { io } from "socket.io-client";
 
 import { Types } from "../../shared/js/gametypes";
+
+import EntityFactory from "./entityfactory";
+import BISON from "./lib/bison";
+import Player from "./player";
 
 class GameClient {
   connection: any;
@@ -227,7 +229,7 @@ class GameClient {
   }
 
   receiveMessage(message) {
-    var data, action;
+    var data;
 
     if (this.isListening) {
       if (this.useBison) {
@@ -381,7 +383,7 @@ class GameClient {
         this.spawn_chest_callback(item, x, y);
       }
     } else {
-      var name, orientation, target, weapon, weaponLevel, weaponBonus, armor, armorLevel, armorBonus, level, auras;
+      var name, orientation, target, weapon, weaponLevel, weaponBonus, armor, armorLevel, armorBonus, auras;
 
       orientation = data[5];
       target = data[6];
@@ -390,7 +392,7 @@ class GameClient {
         name = data[7];
         [armor, armorLevel, armorBonus] = data[8].split(":");
         [weapon, weaponLevel, weaponBonus] = data[9].split(":");
-        level = data[10];
+        // level = data[10];
         auras = data[11];
       }
 
@@ -978,7 +980,7 @@ class GameClient {
     this.sendMessage([Types.Messages.CHECK, id]);
   }
 
-  sendCheckStorage(id) {
+  sendCheckStorage() {
     this.sendMessage([Types.Messages.CHECK_STORAGE]);
   }
 

@@ -1,5 +1,6 @@
-import Entity from "./entity";
 import { Types } from "../../shared/js/gametypes";
+
+import Entity from "./entity";
 
 class Item extends Entity {
   kind: any;

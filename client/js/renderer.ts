@@ -1,12 +1,13 @@
-import Camera from "./camera";
-import Item from "./item";
-import Character from "./character";
-import Player from "./player";
-import Timer from "./timer";
+import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+
+import Camera from "./camera";
+import Character from "./character";
 import Detect from "./detect";
-import * as _ from "lodash";
+import Item from "./item";
+import Player from "./player";
+import Timer from "./timer";
 
 class Renderer {
   game: any;
@@ -53,7 +54,7 @@ class Renderer {
     this.upscaledRendering = true; //this.context.imageSmoothingEnabled !== undefined;
     this.supportsSilhouettes = this.upscaledRendering;
 
-    this.rescale(this.getScaleFactor());
+    this.rescale();
 
     this.lastTime = new Date();
     this.frameCount = 0;
@@ -109,7 +110,7 @@ class Renderer {
     return scale;
   }
 
-  rescale(factor) {
+  rescale() {
     this.scale = this.getScaleFactor();
 
     this.createCamera();
@@ -835,7 +836,7 @@ class Renderer {
     this.context.save();
     if (entity.name && entity instanceof Player) {
       var color = entity.id === this.game.playerId ? "#fcda5c" : "white";
-      var name = entity.level ? "lv." + entity.level + " " + entity.name : entity.name;
+      // var name = entity.level ? "lv." + entity.level + " " + entity.name : entity.name;
       this.drawText(
         entity.name,
         (entity.x + 8) * this.scale,

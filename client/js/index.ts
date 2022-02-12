@@ -1,14 +1,15 @@
 import * as _ from "lodash";
-import App from "./app";
-import Game from "./game";
+
 import { Types } from "../../shared/js/gametypes";
+
+import App from "./app";
+import Character from "./character";
 import Detect from "./detect";
+import Game from "./game";
+import { TRANSITIONEND } from "./utils";
 
 import type { App as AppType } from "./types/app";
 import type { Game as GameType } from "./types/game";
-
-import { TRANSITIONEND } from "./utils";
-import Character from "./character";
 
 var app: AppType;
 var game: GameType;
@@ -225,7 +226,7 @@ var initApp = function () {
       }
     }
 
-    $(".play span").click(function (event) {
+    $(".play span").click(function () {
       app.tryStartingGame();
     });
 
@@ -404,7 +405,7 @@ var initGame = function () {
     // }
   });
 
-  game.onGuildPopulationChange(function (guildName, guildPopulation) {
+  game.onGuildPopulationChange(function (_guildName, _guildPopulation) {
     // var setGuildPlayersString = function (string) {
     //   $("#guild-population").find("span:nth-child(2)").text(string);
     // };
@@ -464,12 +465,9 @@ var initGame = function () {
 
   $("body").unbind("click");
   $("body").click(function (event) {
-    var hasClosedParchment = false;
-
     if ($("#parchment").hasClass("credits")) {
       if (game.started) {
         app.closeInGameScroll("credits");
-        hasClosedParchment = true;
       } else {
         app.toggleScrollContent("credits");
       }
@@ -478,7 +476,6 @@ var initGame = function () {
     if ($("#parchment").hasClass("legal")) {
       if (game.started) {
         app.closeInGameScroll("legal");
-        hasClosedParchment = true;
       } else {
         app.toggleScrollContent("legal");
       }
@@ -487,7 +484,6 @@ var initGame = function () {
     if ($("#parchment").hasClass("about")) {
       if (game.started) {
         app.closeInGameScroll("about");
-        hasClosedParchment = true;
       } else {
         app.toggleScrollContent("about");
       }
@@ -498,7 +494,7 @@ var initGame = function () {
     }
   });
 
-  $("#respawn").click(function (event) {
+  $("#respawn").click(function () {
     game.audioManager.playSound("revive");
     game.respawn();
     $("body").removeClass("death");
@@ -621,8 +617,7 @@ var initGame = function () {
   });
   $("#chatinput").keydown(function (e) {
     var key = e.which,
-      $chat = $("#chatinput"),
-      placeholder = $(this).attr("placeholder");
+      $chat = $("#chatinput");
 
     //   if (!(e.shiftKey && e.keyCode === 16) && e.keyCode !== 9) {
     //        if ($(this).val() === placeholder) {
@@ -653,7 +648,7 @@ var initGame = function () {
     }
   });
 
-  $("#chatinput").focus(function (e) {
+  $("#chatinput").focus(function () {
     var placeholder = $(this).attr("placeholder");
 
     if (!Detect.isFirefoxAndroid()) {
@@ -673,7 +668,7 @@ var initGame = function () {
     $("#name-tooltip").removeClass("visible");
   });
 
-  $("#nameinput").keypress(function (event) {
+  $("#nameinput").keypress(function () {
     $("#name-tooltip").removeClass("visible");
   });
 

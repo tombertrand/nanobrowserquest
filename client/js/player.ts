@@ -1,6 +1,7 @@
+import { kinds,Types } from "../../shared/js/gametypes";
+
 import Character from "./character";
 import Exceptions from "./exceptions";
-import { Types, kinds } from "../../shared/js/gametypes";
 
 class Player extends Character {
   spriteName: any;
@@ -159,14 +160,6 @@ class Player extends Character {
 
   loot(item) {
     if (item) {
-      var rank, currentRank, msg, currentArmorName;
-
-      if (this.currentArmorSprite) {
-        currentArmorName = this.currentArmorSprite.name;
-      } else {
-        currentArmorName = this.spriteName;
-      }
-
       if (Types.Entities.Gems.includes(item.kind)) {
         var index = Types.Entities.Gems.indexOf(item.kind);
         if (index > -1 && this.gems[index] !== 0) {
@@ -423,7 +416,7 @@ class Player extends Character {
           quantity = levelOrQuantity;
         }
 
-        const isSingle = Types.isSingle(item);
+        // const isSingle = Types.isSingle(item);
 
         return {
           item,

@@ -1,6 +1,8 @@
 import * as _ from "lodash";
+
 import Area from "./area";
 import Detect from "./detect";
+
 import type { Game } from "./types/game";
 
 class AudioManager {
@@ -128,7 +130,7 @@ class AudioManager {
 
     sound.addEventListener(
       "canplaythrough",
-      function (e) {
+      function () {
         // @ts-ignore
         this.removeEventListener("canplaythrough", arguments.callee, false);
         console.debug(path + " is ready to play.");
@@ -140,7 +142,7 @@ class AudioManager {
     );
     sound.addEventListener(
       "error",
-      function (e) {
+      function () {
         console.error("Error: " + path + " could not be loaded.");
         self.sounds[name] = null;
       },

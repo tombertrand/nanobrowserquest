@@ -1,12 +1,12 @@
 import * as _ from "lodash";
 
-import Mobs from "./mobs";
+import { Types } from "../../shared/js/gametypes";
+
+import Chest from "./chest";
 import Items from "./items";
+import Mobs from "./mobs";
 import Npcs from "./npcs";
 import Warrior from "./warrior";
-import Chest from "./chest";
-
-import { Types } from "../../shared/js/gametypes";
 
 var EntityFactory: any = {};
 

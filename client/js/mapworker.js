@@ -1,7 +1,7 @@
 
 importScripts('../maps/world_client.js', 'lib/underscore.min.js');
 
-onmessage = function (event) {
+onmessage = function () {
     generateCollisionGrid();
     generatePlateauGrid();
 
@@ -9,8 +9,6 @@ onmessage = function (event) {
 };
 
 function generateCollisionGrid() {
-    var tileIndex = 0;
-
     mapData.grid = [];
     for(var j, i = 0; i < mapData.height; i++) {
         mapData.grid[i] = [];
