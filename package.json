@@ -5,7 +5,7 @@
     "start": "nodemon server.js",
     "map": "cd tools/maps/ && ./exportmap.js tmx/map.json",
     "test": "make test",
-    "build:client": "NODE_ENV=production webpack --progress --profile --color"
+    "build:client": "webpack --progress --profile --color"
   },
   "dependencies": {
     "@sentry/node": "^6.8.0",
@@ -14,6 +14,7 @@
     "bison": "~1.1.1",
     "connect": "^3.7.0",
     "dotenv": "^10.0.0",
+    "jquery": "^3.1.1",
     "jquery-countdown": "^2.2.0",
     "jquery-ui": "^1.12.1",
     "jquery-ui-touch-punch": "^0.2.3",

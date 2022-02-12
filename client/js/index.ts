@@ -8,13 +8,7 @@ import type { App as AppType } from "./types/app";
 import type { Game as GameType } from "./types/game";
 
 import { TRANSITIONEND } from "./utils";
-import Entity from "./entity";
 import Character from "./character";
-
-// jqueryUI,
-// touchPunch,
-// qrcode,
-// countdown,
 
 var app: AppType;
 var game: GameType;

@@ -2,6 +2,8 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
+  mode: "development",
+  // context: path.resolve(__dirname, 'client/js'),
   entry: {
     vendor: [
       "jquery",
@@ -41,4 +43,16 @@ module.exports = {
     }),
     //  new MiniCssExtractPlugin(miniCssExtractOptions),
   ],
+  resolve: {
+    fallback: {
+      fs: false,
+      http: false,
+      zlib: false,
+      path: false,
+      stream: false,
+      url: false,
+      querystring: false,
+      crypto: false,
+    },
+  },
 };
