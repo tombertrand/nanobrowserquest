@@ -1,12 +1,13 @@
-const Utils = require("../utils");
-const cls = require("../lib/class");
-const Player = require("../player");
-const Messages = require("../message");
-const { PromiseQueue } = require("../promise-queue");
-const redis = require("redis");
-const bcrypt = require("bcrypt");
-const NanocurrencyWeb = require("nanocurrency-web");
-const { Sentry } = require("../sentry");
+// import bcrypt  from "bcrypt";
+import NanocurrencyWeb from "nanocurrency-web";
+import redis from "redis";
+
+import { Types } from "../../../shared/js/gametypes";
+// import Player from "../player";
+import Messages from "../message";
+import { PromiseQueue } from "../promise-queue";
+import { Sentry } from "../sentry";
+import { isUpgradeSuccess, isValidRecipe, isValidUpgradeItems, NaN2Zero, randomInt } from "../utils";
 
 const INVENTORY_SLOT_COUNT = 24;
 const STASH_SLOT_COUNT = 48;
@@ -26,27 +27,28 @@ const getNewDepositAccountByIndex = async index => {
   return depositAccount;
 };
 
-module.exports = DatabaseHandler = cls.Class.extend({
-  init: function () {
-    client = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST, {
+class DatabaseHandler {
+  client: any;
+
+  constructor() {
+    this.client = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST, {
       socket_nodelay: true,
       password: process.env.REDIS_PASSWORD,
     });
 
-    client.on("connect", () => {
+    this.client.on("connect", () => {
       this.setDepositAccount();
     });
 
     // client.auth(process.env.REDIS_PASSWORD || "");
-  },
-  loadPlayer: function (player) {
-    var self = this;
+  }
+
+  loadPlayer(player) {
     var userKey = "u:" + player.name;
-    var curTime = new Date().getTime();
-    client.smembers("usr", function (err, replies) {
+    this.client.smembers("usr", (err, replies) => {
       for (var index = 0; index < replies.length; index++) {
         if (replies[index].toString() === player.name) {
-          client
+          this.client
             .multi()
             .hget(userKey, "account") // 0
             .hget(userKey, "armor") // 1
@@ -76,8 +78,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var account = replies[0];
               var armor = replies[1];
               var weapon = replies[2];
-              var exp = Utils.NaN2Zero(replies[3]);
-              var createdAt = Utils.NaN2Zero(replies[4]);
+              var exp = NaN2Zero(replies[3]);
+              var createdAt = NaN2Zero(replies[4]);
               var ring1 = replies[13];
               var ring2 = replies[14];
               var amulet = replies[15];
@@ -88,9 +90,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
               try {
                 if (!depositAccount) {
-                  depositAccountIndex = await self.createDepositAccount();
+                  depositAccountIndex = await this.createDepositAccount();
                   depositAccount = await getNewDepositAccountByIndex(depositAccountIndex);
-                  client.hmset(
+                  this.client.hmset(
                     "u:" + player.name,
                     "depositAccount",
                     depositAccount,
@@ -112,26 +114,26 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
               if (!armor) {
                 armor = `clotharmor:1`;
-                client.hset("u:" + player.name, "armor", armor);
+                this.client.hset("u:" + player.name, "armor", armor);
               } else {
                 var [playerArmor, armorLevel] = armor.split(":");
                 if (isNaN(armorLevel)) {
                   armor = `${playerArmor}:1`;
-                  client.hset("u:" + player.name, "armor", armor);
+                  this.client.hset("u:" + player.name, "armor", armor);
                 }
               }
 
               if (!weapon || weapon.startsWith("sword1")) {
                 weapon = `dagger:1`;
-                client.hset("u:" + player.name, "weapon", weapon);
+                this.client.hset("u:" + player.name, "weapon", weapon);
               } else {
                 var [playerWeapon, weaponLevel] = (weapon || "").split(":");
                 if (isNaN(weaponLevel)) {
                   weapon = `${playerWeapon}:1`;
-                  client.hset("u:" + player.name, "weapon", weapon);
+                  this.client.hset("u:" + player.name, "weapon", weapon);
                 } else if (playerWeapon === "sword2") {
                   weapon = `sword:${weaponLevel}`;
-                  client.hset("u:" + player.name, "weapon", weapon);
+                  this.client.hset("u:" + player.name, "weapon", weapon);
                 }
               }
 
@@ -146,12 +148,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
                     .concat([0, achievement[15], 0, 0, 0])
                     .concat(achievement.slice(16, 20));
 
-                  client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
+                  this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
                 }
 
                 if (achievement.length < ACHIEVEMENT_COUNT) {
                   achievement = achievement.concat(new Array(ACHIEVEMENT_COUNT - achievement.length).fill(0));
-                  client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
+                  this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
                 }
               } catch (err) {
                 // invalid json
@@ -170,7 +172,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 if (replies[23]) {
                   stash = JSON.parse(replies[23]);
                 } else {
-                  client.hset("u:" + player.name, "stash", JSON.stringify(stash));
+                  this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
                 }
               } catch (err) {
                 // invalid json
@@ -194,13 +196,13 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   const expansion1Waypoint = [2, 2, 2];
                   waypoints = classicWaypoint.concat(expansion1Waypoint);
 
-                  client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
+                  this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 } else if (!waypoints) {
                   const classicWaypoint = [1, 0, 0];
                   const expansion1Waypoint = !!expansion1 ? [0, 0, 0] : [2, 2, 2];
                   waypoints = classicWaypoint.concat(expansion1Waypoint);
 
-                  client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
+                  this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 } else if (expansion1 && waypoints.includes(2)) {
                   // Unlock expansion waypoints
                   waypoints = waypoints.map((waypoint, index) => {
@@ -212,7 +214,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                     return waypoint;
                   });
 
-                  client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
+                  this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 }
               } catch (err) {
                 // invalid json
@@ -230,7 +232,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               try {
                 if (!inventory) {
                   inventory = new Array(INVENTORY_SLOT_COUNT).fill(0);
-                  client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+                  this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
                 } else {
                   let hasSword2 = /sword2/.test(replies[6]);
                   inventory = JSON.parse(replies[6].replace(/sword2/g, "sword"));
@@ -239,7 +241,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                   if (inventory.length < INVENTORY_SLOT_COUNT || hasSword2) {
                     inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
 
-                    client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+                    this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
                   }
                 }
               } catch (err) {
@@ -258,7 +260,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 // @NOTE Migrate upgrade
                 if (!upgrade) {
                   upgrade = new Array(UPGRADE_SLOT_COUNT).fill(0);
-                  client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
+                  this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
                 }
               } catch (err) {
                 console.log(err);
@@ -275,14 +277,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var gems = new Array(GEM_COUNT).fill(0);
               try {
                 if (!replies[11]) {
-                  client.hset("u:" + player.name, "gems", JSON.stringify(gems));
+                  this.client.hset("u:" + player.name, "gems", JSON.stringify(gems));
                 } else {
                   gems = JSON.parse(replies[11]);
 
                   if (gems.length !== GEM_COUNT) {
                     gems = gems.concat(new Array(GEM_COUNT - gems.length).fill(0));
 
-                    client.hset("u:" + player.name, "gems", JSON.stringify(gems));
+                    this.client.hset("u:" + player.name, "gems", JSON.stringify(gems));
                   }
                 }
               } catch (err) {
@@ -292,7 +294,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
               var artifact = new Array(ARTIFACT_COUNT).fill(0);
               try {
                 if (!replies[17]) {
-                  client.hset("u:" + player.name, "artifact", JSON.stringify(artifact));
+                  this.client.hset("u:" + player.name, "artifact", JSON.stringify(artifact));
                 } else {
                   artifact = JSON.parse(replies[17]);
                 }
@@ -300,8 +302,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 Sentry.captureException(err);
               }
 
-              var x = Utils.NaN2Zero(replies[7]);
-              var y = Utils.NaN2Zero(replies[8]);
+              var x = NaN2Zero(replies[7]);
+              var y = NaN2Zero(replies[8]);
               var hash = replies[9];
               var hash1 = replies[22];
               var nanoPotions = parseInt(replies[10] || 0);
@@ -313,10 +315,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 return;
               }
 
-              log.info("Player name: " + player.name);
-              log.info("Armor: " + armor);
-              log.info("Weapon: " + weapon);
-              log.info("Experience: " + exp);
+              console.info("Player name: " + player.name);
+              console.info("Armor: " + armor);
+              console.info("Weapon: " + weapon);
+              console.info("Experience: " + exp);
 
               player.sendWelcome({
                 armor,
@@ -327,7 +329,6 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 amulet,
                 exp,
                 createdAt,
-                inventory,
                 x,
                 y,
                 achievement,
@@ -353,15 +354,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
       player.connection.close("User does not exist: " + player.name);
       return;
     });
-  },
+  }
 
-  createPlayer: function (player) {
-    var self = this;
+  createPlayer(player) {
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
 
     // Check if username is taken
-    client.sismember("usr", player.name, async function (err, reply) {
+    this.client.sismember("usr", player.name, async (err, reply) => {
       if (reply === 1) {
         player.connection.sendUTF8("userexists");
         player.connection.close("Username not available: " + player.name);
@@ -369,10 +369,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
       } else {
         // Add the player
 
-        const depositAccountIndex = await self.createDepositAccount();
+        const depositAccountIndex = await this.createDepositAccount();
         const depositAccount = await getNewDepositAccountByIndex(depositAccountIndex);
 
-        client
+        this.client
           .multi()
           .sadd("usr", player.name)
           .hset(userKey, "account", player.account)
@@ -397,8 +397,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2]))
           .hset(userKey, "depositAccountIndex", depositAccountIndex)
           .hset(userKey, "depositAccount", depositAccount)
-          .exec(function (err, replies) {
-            log.info("New User: " + player.name);
+          .exec(function (_err, _replies) {
+            console.info("New User: " + player.name);
             player.sendWelcome({
               armor: "clotharmor:1",
               weapon: "dagger:1",
@@ -421,23 +421,23 @@ module.exports = DatabaseHandler = cls.Class.extend({
           });
       }
     });
-  },
+  }
 
-  checkIsBanned: async player => {
-    return new Promise((resolve, reject) => {
+  async checkIsBanned(player) {
+    return new Promise((resolve, _reject) => {
       const ipKey = "ipban:" + player.connection._connection.handshake.headers["cf-connecting-ip"];
-      client.hget(ipKey, "timestamp", (err, reply) => {
+      this.client.hget(ipKey, "timestamp", (err, reply) => {
         const timestamp = parseInt(reply);
         // isBanned is true if DB time is greater than now
         resolve(reply && timestamp > Date.now() ? timestamp : false);
       });
     });
-  },
+  }
 
-  banPlayer: function (banPlayer, reason) {
+  banPlayer(banPlayer, reason) {
     // 24h
     let days = 1;
-    client.hget(
+    this.client.hget(
       "ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
       "timestamp",
       (err, reply) => {
@@ -445,7 +445,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           days = 365;
         }
         const until = days * 24 * 60 * 60 * 1000 + Date.now();
-        client.hset(
+        this.client.hset(
           "ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
           "timestamp",
           until,
@@ -459,9 +459,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
     );
 
     return;
-  },
-  chatBan: function (adminPlayer, targetPlayer) {
-    client.smembers("adminname", function (err, replies) {
+  }
+
+  chatBan(adminPlayer, targetPlayer) {
+    this.client.smembers("adminname", function (err, replies) {
       for (var index = 0; index < replies.length; index++) {
         if (replies[index].toString() === adminPlayer.name) {
           var curTime = new Date().getTime();
@@ -469,12 +470,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
             new Messages.Chat(targetPlayer, "/1 " + adminPlayer.name + "-- 채금 ->" + targetPlayer.name + " 10분"),
           );
           targetPlayer.chatBanEndTime = curTime + 10 * 60 * 1000;
-          client.hset(
+          this.client.hset(
             "cb:" + targetPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
             "etime",
             targetPlayer.chatBanEndTime.toString(),
           );
-          log.info(
+          console.info(
             adminPlayer.name +
               "-- Chatting BAN ->" +
               targetPlayer.name +
@@ -485,71 +486,81 @@ module.exports = DatabaseHandler = cls.Class.extend({
         }
       }
     });
-  },
-  banTerm: function (time) {
+  }
+
+  banTerm(time) {
     return Math.pow(2, time) * 500 * 60;
-  },
-  equipWeapon: function (name, weapon, level, bonus) {
-    log.info("Set Weapon: " + name + " " + weapon + ":" + level);
-    client.hset("u:" + name, "weapon", `${weapon}:${level}${bonus ? `:${bonus}` : ""}`);
-  },
-  equipArmor: function (name, armor, level, bonus) {
-    log.info("Set Armor: " + name + " " + armor + ":" + level);
-    client.hset("u:" + name, "armor", `${armor}:${level}${bonus ? `:${bonus}` : ""}`);
-  },
-  equipBelt: function (name, belt, level, bonus) {
+  }
+
+  equipWeapon(name, weapon, level, bonus) {
+    console.info("Set Weapon: " + name + " " + weapon + ":" + level);
+    this.client.hset("u:" + name, "weapon", `${weapon}:${level}${bonus ? `:${bonus}` : ""}`);
+  }
+
+  equipArmor(name, armor, level, bonus) {
+    console.info("Set Armor: " + name + " " + armor + ":" + level);
+    this.client.hset("u:" + name, "armor", `${armor}:${level}${bonus ? `:${bonus}` : ""}`);
+  }
+
+  equipBelt(name, belt, level, bonus) {
     if (belt) {
-      log.info("Set Belt: " + name + " " + belt + ":" + level);
-      client.hset("u:" + name, "belt", `${belt}:${level}${bonus ? `:${bonus}` : ""}`);
+      console.info("Set Belt: " + name + " " + belt + ":" + level);
+      this.client.hset("u:" + name, "belt", `${belt}:${level}${bonus ? `:${bonus}` : ""}`);
     } else {
-      log.info("Delete Belt");
-      client.hdel("u:" + name, "belt");
+      console.info("Delete Belt");
+      this.client.hdel("u:" + name, "belt");
     }
-  },
-  equipRing1: function ({ name, item, level, bonus }) {
+  }
+
+  equipRing1({ name, item, level, bonus }) {
     const ring1 = [item, level, bonus].filter(Boolean).join(":") || null;
 
-    log.info(`Set Ring1: ${name} ring1`);
+    console.info(`Set Ring1: ${name} ring1`);
     if (ring1) {
-      client.hset("u:" + name, "ring1", ring1);
+      this.client.hset("u:" + name, "ring1", ring1);
     } else {
-      client.hdel("u:" + name, "ring1");
+      this.client.hdel("u:" + name, "ring1");
     }
-  },
-  equipRing2: function ({ name, item, level, bonus }) {
+  }
+
+  equipRing2({ name, item, level, bonus }) {
     const ring2 = [item, level, bonus].filter(Boolean).join(":") || null;
 
-    log.info(`Set Ring2: ${name} ring2`);
+    console.info(`Set Ring2: ${name} ring2`);
     if (ring2) {
-      client.hset("u:" + name, "ring2", ring2);
+      this.client.hset("u:" + name, "ring2", ring2);
     } else {
-      client.hdel("u:" + name, "ring2");
+      this.client.hdel("u:" + name, "ring2");
     }
-  },
-  equipAmulet: function ({ name, item, level, bonus }) {
+  }
+
+  equipAmulet({ name, item, level, bonus }) {
     const amulet = [item, level, bonus].filter(Boolean).join(":") || null;
 
-    log.info(`Set Amulet: ${name} amulet`);
+    console.info(`Set Amulet: ${name} amulet`);
     if (amulet) {
-      client.hset("u:" + name, "amulet", amulet);
+      this.client.hset("u:" + name, "amulet", amulet);
     } else {
-      client.hdel("u:" + name, "amulet");
+      this.client.hdel("u:" + name, "amulet");
     }
-  },
-  setExp: function (name, exp) {
-    log.info("Set Exp: " + name + " " + exp);
-    client.hset("u:" + name, "exp", exp);
-  },
-  setHash: function (name, hash) {
-    log.info("Set Hash: " + name + " " + hash);
-    client.hset("u:" + name, "hash", hash);
-  },
-  setHash1: function (name, hash) {
-    log.info("Set Hash1: " + name + " " + hash);
-    client.hset("u:" + name, "hash1", hash);
-  },
+  }
 
-  getItemLocation: function (slot) {
+  setExp(name, exp) {
+    console.info("Set Exp: " + name + " " + exp);
+    this.client.hset("u:" + name, "exp", exp);
+  }
+
+  setHash(name, hash) {
+    console.info("Set Hash: " + name + " " + hash);
+    this.client.hset("u:" + name, "hash", hash);
+  }
+
+  setHash1(name, hash) {
+    console.info("Set Hash1: " + name + " " + hash);
+    this.client.hset("u:" + name, "hash1", hash);
+  }
+
+  getItemLocation(slot: number): [string, number] {
     if (slot < INVENTORY_SLOT_COUNT) {
       return ["inventory", 0];
     } else if (slot === Types.Slot.WEAPON) {
@@ -570,10 +581,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
       return ["stash", STASH_SLOT_RANGE];
     }
 
-    return [];
-  },
+    return ["", 0];
+  }
 
-  sendMoveItem: function ({ player, location, data }) {
+  sendMoveItem({ player, location, data }) {
     if (location === "inventory") {
       player.send([Types.Messages.INVENTORY, data]);
     } else if (location === "stash") {
@@ -635,9 +646,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
     } else if (location === "upgrade") {
       player.send([Types.Messages.UPGRADE, data]);
     }
-  },
+  }
 
-  moveItem: function ({ player, fromSlot, toSlot }) {
+  moveItem({ player, fromSlot, toSlot }) {
     if (fromSlot === toSlot) return;
 
     const self = this;
@@ -649,7 +660,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
     if (!fromLocation || !toLocation) return;
 
-    client.hget("u:" + player.name, fromLocation, function (err, fromReply) {
+    this.client.hget("u:" + player.name, fromLocation, function (err, fromReply) {
       try {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
         const fromItem = isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed;
@@ -669,9 +680,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
           }
 
           self.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
-          client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
+          this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
         } else {
-          client.hget("u:" + player.name, toLocation, function (err, toReply) {
+          this.client.hget("u:" + player.name, toLocation, function (err, toReply) {
             try {
               let toReplyParsed = isMultipleTo ? JSON.parse(toReply) : toReply;
               let toItem = isMultipleTo ? toReplyParsed[toSlot - toRange] : toReplyParsed;
@@ -748,12 +759,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
               self.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
               if (isMultipleFrom) {
-                client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
+                this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
               }
 
               self.sendMoveItem({ player, location: toLocation, data: toReplyParsed });
               if (isMultipleTo) {
-                client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed));
+                this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed));
               }
             } catch (err) {
               console.log(err);
@@ -766,10 +777,10 @@ module.exports = DatabaseHandler = cls.Class.extend({
         Sentry.captureException(err);
       }
     });
-  },
+  }
 
-  lootItems: function ({ player, items }) {
-    client.hget("u:" + player.name, "inventory", function (err, reply) {
+  lootItems({ player, items }) {
+    this.client.hget("u:" + player.name, "inventory", function (err, reply) {
       try {
         let inventory = JSON.parse(reply);
 
@@ -793,21 +804,21 @@ module.exports = DatabaseHandler = cls.Class.extend({
         });
 
         player.send([Types.Messages.INVENTORY, inventory]);
-        client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+        this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
       } catch (err) {
         console.log(err);
         Sentry.captureException(err);
       }
     });
-  },
+  }
 
-  moveUpgradeItemsToInventory: function (player) {
+  moveUpgradeItemsToInventory(player) {
     const self = this;
 
-    client.hget("u:" + player.name, "upgrade", function (err, reply) {
+    this.client.hget("u:" + player.name, "upgrade", function (err, reply) {
       try {
         let upgrade = JSON.parse(reply);
-        filteredUpgrade = upgrade.filter(Boolean);
+        const filteredUpgrade = upgrade.filter(Boolean);
 
         if (filteredUpgrade.length) {
           const items = filteredUpgrade.reduce((acc, rawItem) => {
@@ -828,19 +839,19 @@ module.exports = DatabaseHandler = cls.Class.extend({
           upgrade = upgrade.map(() => 0);
 
           player.send([Types.Messages.UPGRADE, upgrade]);
-          client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
+          this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
         }
       } catch (err) {
         console.log(err);
         Sentry.captureException(err);
       }
     });
-  },
+  }
 
-  upgradeItem: function (player) {
+  upgradeItem(player) {
     var self = this;
 
-    client.hget("u:" + player.name, "upgrade", function (err, reply) {
+    this.client.hget("u:" + player.name, "upgrade", function (err, reply) {
       try {
         let isLucky7 = false;
         let isMagic8 = false;
@@ -855,17 +866,17 @@ module.exports = DatabaseHandler = cls.Class.extend({
             return index.startsWith("scroll");
           }
         });
-        const luckySlot = Utils.randomInt(1, 9);
+        const luckySlot = randomInt(1, 9);
         const isLuckySlot = slotIndex === luckySlot;
         const filteredUpgrade = upgrade.filter(Boolean);
         let isSuccess = false;
         let recipe = null;
 
-        if (Utils.isValidUpgradeItems(filteredUpgrade)) {
+        if (isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus] = filteredUpgrade[0].split(":");
-          let upgradedItem = 0;
+          let upgradedItem: number | string = 0;
 
-          if (Utils.isUpgradeSuccess({ level, isLuckySlot, isBlessed })) {
+          if (isUpgradeSuccess({ level, isLuckySlot, isBlessed })) {
             const upgradedLevel = parseInt(level) + 1;
             upgradedItem = [item, parseInt(level) + 1, bonus].filter(Boolean).join(":");
             isSuccess = true;
@@ -891,7 +902,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           upgrade[upgrade.length - 1] = upgradedItem;
           player.broadcast(new Messages.AnvilUpgrade(isSuccess), false);
         } else {
-          recipe = Utils.isValidRecipe(filteredUpgrade);
+          recipe = isValidRecipe(filteredUpgrade);
 
           if (recipe) {
             if (recipe === "cowLevel") {
@@ -909,112 +920,117 @@ module.exports = DatabaseHandler = cls.Class.extend({
         }
 
         player.send([Types.Messages.UPGRADE, upgrade, { luckySlot, isLucky7, isMagic8, isSuccess, recipe }]);
-        client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
+        this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
       } catch (err) {
         console.log(err);
         Sentry.captureException(err);
       }
     });
-  },
+  }
 
-  foundAchievement: function (name, index) {
-    log.info("Found Achievement: " + name + " " + index + 1);
-    client.hget("u:" + name, "achievement", function (err, reply) {
+  foundAchievement(name, index) {
+    console.info("Found Achievement: " + name + " " + index + 1);
+    this.client.hget("u:" + name, "achievement", function (err, reply) {
       try {
         var achievement = JSON.parse(reply);
         achievement[index] = 1;
         achievement = JSON.stringify(achievement);
-        client.hset("u:" + name, "achievement", achievement);
+        this.client.hset("u:" + name, "achievement", achievement);
       } catch (err) {
         Sentry.captureException(err);
       }
     });
-  },
+  }
 
-  foundWaypoint: function (name, index) {
-    log.info("Found Waypoint: " + name + " " + index);
-    client.hget("u:" + name, "waypoints", function (err, reply) {
+  foundWaypoint(name, index) {
+    console.info("Found Waypoint: " + name + " " + index);
+    this.client.hget("u:" + name, "waypoints", function (err, reply) {
       try {
         var waypoints = JSON.parse(reply);
         waypoints[index] = 1;
         waypoints = JSON.stringify(waypoints);
-        client.hset("u:" + name, "waypoints", waypoints);
+        this.client.hset("u:" + name, "waypoints", waypoints);
       } catch (err) {
         Sentry.captureException(err);
       }
     });
-  },
+  }
 
-  unlockExpansion1: function (player) {
-    log.info("Unlock Expansion1: " + player.name);
-    client.hset("u:" + player.name, "expansion1", 1);
-    client.hget("u:" + player.name, "waypoints", function (err, reply) {
+  unlockExpansion1(player) {
+    console.info("Unlock Expansion1: " + player.name);
+    this.client.hset("u:" + player.name, "expansion1", 1);
+    this.client.hget("u:" + player.name, "waypoints", function (err, reply) {
       try {
         var waypoints = JSON.parse(reply);
         waypoints = waypoints.slice(0, 3).concat([1, 0, 0]);
         player.send([Types.Messages.WAYPOINTS_UPDATE, waypoints]);
         waypoints = JSON.stringify(waypoints);
-        client.hset("u:" + player.name, "waypoints", waypoints);
+        this.client.hset("u:" + player.name, "waypoints", waypoints);
       } catch (err) {
         Sentry.captureException(err);
       }
     });
-  },
+  }
 
-  foundNanoPotion: function (name) {
-    log.info("Found NanoPotion: " + name);
-    client.hget("u:" + name, "nanoPotions", function (err, reply) {
+  foundNanoPotion(name) {
+    console.info("Found NanoPotion: " + name);
+    this.client.hget("u:" + name, "nanoPotions", function (err, reply) {
       try {
         if (reply) {
-          client.hincrby("u:" + name, "nanoPotions", 1);
+          this.client.hincrby("u:" + name, "nanoPotions", 1);
         } else {
-          client.hset("u:" + name, "nanoPotions", 1);
+          this.client.hset("u:" + name, "nanoPotions", 1);
         }
       } catch (err) {
         Sentry.captureException(err);
       }
     });
-  },
-  foundGem: function (name, index) {
-    log.info("Found Gem: " + name + " " + index + 1);
-    client.hget("u:" + name, "gems", function (err, reply) {
+  }
+
+  foundGem(name, index) {
+    console.info("Found Gem: " + name + " " + index + 1);
+    this.client.hget("u:" + name, "gems", function (err, reply) {
       try {
         var gems = reply ? JSON.parse(reply) : new Array(GEM_COUNT).fill(0);
         gems[index] = 1;
         gems = JSON.stringify(gems);
-        client.hset("u:" + name, "gems", gems);
+        this.client.hset("u:" + name, "gems", gems);
       } catch (err) {}
     });
-  },
+  }
 
-  foundArtifact: function (name, index) {
-    log.info("Found Artifact: " + name + " " + index + 1);
-    client.hget("u:" + name, "artifact", function (err, reply) {
+  foundArtifact(name, index) {
+    console.info("Found Artifact: " + name + " " + index + 1);
+    this.client.hget("u:" + name, "artifact", function (err, reply) {
       try {
         var artifact = reply ? JSON.parse(reply) : new Array(ARTIFACT_COUNT).fill(0);
         artifact[index] = 1;
         artifact = JSON.stringify(artifact);
-        client.hset("u:" + name, "artifact", artifact);
+        this.client.hset("u:" + name, "artifact", artifact);
       } catch (err) {}
     });
-  },
-  // progressAchievement: function (name, number, progress) {
-  //   log.info("Progress Achievement: " + name + " " + number + " " + progress);
+  }
+
+  // progressAchievement (name, number, progress) {
+  //   console.info("Progress Achievement: " + name + " " + number + " " + progress);
   //   client.hset("u:" + name, "achievement" + number + ":progress", progress);
   // },
-  setUsedPubPts: function (name, usedPubPts) {
-    log.info("Set Used Pub Points: " + name + " " + usedPubPts);
-    client.hset("u:" + name, "usedPubPts", usedPubPts);
-  },
-  setCheckpoint: function (name, x, y) {
-    log.info("Set Check Point: " + name + " " + x + " " + y);
-    client.hset("u:" + name, "x", x);
-    client.hset("u:" + name, "y", y);
-  },
-  loadBoard: function (player, command, number, replyNumber) {
-    log.info("Load Board: " + player.name + " " + command + " " + number + " " + replyNumber);
+
+  setUsedPubPts(name, usedPubPts) {
+    console.info("Set Used Pub Points: " + name + " " + usedPubPts);
+    this.client.hset("u:" + name, "usedPubPts", usedPubPts);
+  }
+
+  setCheckpoint(name, x, y) {
+    console.info("Set Check Point: " + name + " " + x + " " + y);
+    this.client.hset("u:" + name, "x", x);
+    this.client.hset("u:" + name, "y", y);
+  }
+
+  loadBoard(player, command, number, replyNumber) {
+    console.info("Load Board: " + player.name + " " + command + " " + number + " " + replyNumber);
     if (command === "view") {
-      client
+      this.client
         .multi()
         .hget("bo:free", number + ":title")
         .hget("bo:free", number + ":content")
@@ -1034,7 +1050,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
           player.send([Types.Messages.BOARD, "view", title, content, writer, counter, up, down, time]);
         });
     } else if (command === "reply") {
-      client
+      this.client
         .multi()
         .hget("bo:free", number + ":reply:" + replyNumber + ":writer")
         .hget("bo:free", number + ":reply:" + replyNumber + ":content")
@@ -1089,27 +1105,27 @@ module.exports = DatabaseHandler = cls.Class.extend({
         });
     } else if (command === "up") {
       if (player.level >= 50) {
-        client.sadd("bo:free:" + number + ":up", player.name);
+        this.client.sadd("bo:free:" + number + ":up", player.name);
       }
     } else if (command === "down") {
       if (player.level >= 50) {
-        client.sadd("bo:free:" + number + ":down", player.name);
+        this.client.sadd("bo:free:" + number + ":down", player.name);
       }
     } else if (command === "replyup") {
       if (player.level >= 50) {
-        client.sadd("bo:free:" + number + ":reply:" + replyNumber + ":up", player.name);
+        this.client.sadd("bo:free:" + number + ":reply:" + replyNumber + ":up", player.name);
       }
     } else if (command === "replydown") {
       if (player.level >= 50) {
-        client.sadd("bo:free:" + number + ":reply:" + replyNumber + ":down", player.name);
+        this.client.sadd("bo:free:" + number + ":reply:" + replyNumber + ":down", player.name);
       }
     } else if (command === "list") {
-      client.hget("bo:free", "lastnum", function (err, reply) {
+      this.client.hget("bo:free", "lastnum", function (err, reply) {
         var lastnum = reply;
         if (number > 0) {
           lastnum = number;
         }
-        client
+        this.client
           .multi()
           .hget("bo:free", lastnum + ":title")
           .hget("bo:free", lastnum - 1 + ":title")
@@ -1195,13 +1211,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
           });
       });
     }
-  },
-  writeBoard: function (player, title, content) {
-    log.info("Write Board: " + player.name + " " + title);
-    client.hincrby("bo:free", "lastnum", 1, function (err, reply) {
+  }
+
+  writeBoard(player, title, content) {
+    console.info("Write Board: " + player.name + " " + title);
+    this.client.hincrby("bo:free", "lastnum", 1, function (err, reply) {
       var curTime = new Date().getTime();
       var number = reply ? reply : 1;
-      client
+      this.client
         .multi()
         .hset("bo:free", number + ":title", title)
         .hset("bo:free", number + ":content", content)
@@ -1210,22 +1227,23 @@ module.exports = DatabaseHandler = cls.Class.extend({
         .exec();
       player.send([Types.Messages.BOARD, "view", title, content, player.name, 0, 0, 0, curTime]);
     });
-  },
-  writeReply: function (player, content, number) {
-    log.info("Write Reply: " + player.name + " " + content + " " + number);
-    var self = this;
-    client.hincrby("bo:free", number + ":replynum", 1, function (err, reply) {
+  }
+
+  writeReply(player, content, number) {
+    console.info("Write Reply: " + player.name + " " + content + " " + number);
+    this.client.hincrby("bo:free", number + ":replynum", 1, function (err, reply) {
       var replyNum = reply ? reply : 1;
-      client
+      this.client
         .multi()
         .hset("bo:free", number + ":reply:" + replyNum + ":content", content)
         .hset("bo:free", number + ":reply:" + replyNum + ":writer", player.name)
-        .exec(function (err, replies) {
+        .exec(function (_err, _replies) {
           player.send([Types.Messages.BOARD, "reply", player.name, content]);
         });
     });
-  },
-  pushKungWord: function (player, word) {
+  }
+
+  pushKungWord(player, word) {
     var server = player.server;
 
     if (player === server.lastKungPlayer) {
@@ -1239,12 +1257,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
     }
 
     if (server.kungWords.length === 0) {
-      client.srandmember("dic", function (err, reply) {
+      this.client.srandmember("dic", function (err, reply) {
         var randWord = reply;
         server.pushKungWord(player, randWord);
       });
     } else {
-      client.sismember("dic", word, function (err, reply) {
+      this.client.sismember("dic", word, function (err, reply) {
         if (reply === 1) {
           server.pushKungWord(player, word);
         } else {
@@ -1252,24 +1270,24 @@ module.exports = DatabaseHandler = cls.Class.extend({
         }
       });
     }
-  },
+  }
 
-  setDepositAccount: function () {
-    client.setnx("deposit_account_count", 0);
-  },
+  setDepositAccount() {
+    this.client.setnx("deposit_account_count", 0);
+  }
 
-  createDepositAccount: async function () {
+  async createDepositAccount() {
     return await queue.enqueue(
       () =>
-        new Promise((resolve, reject) => {
-          client.incr("deposit_account_count", function (error, reply) {
+        new Promise((resolve, _reject) => {
+          this.client.incr("deposit_account_count", function (error, reply) {
             resolve(reply);
           });
         }),
     );
-  },
+  }
 
-  settlePurchase: function ({ player, account, amount, hash, id }) {
+  settlePurchase({ player, account, amount, hash, id }) {
     try {
       if (id === Types.Store.EXPANSION1) {
         player.expansion1 = true;
@@ -1288,7 +1306,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
       player.send([Types.Messages.PURCHASE_COMPLETED, { hash, id }]);
 
       const now = Date.now();
-      client.zadd(
+      this.client.zadd(
         "purchase",
         now,
         JSON.stringify({
@@ -1310,15 +1328,17 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
       Sentry.captureException(err, { extra: { account, amount, hash, id } });
     }
-  },
+  }
 
-  logUpgrade: function ({ player, item, isSuccess }) {
+  logUpgrade({ player, item, isSuccess }) {
     const now = Date.now();
-    client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
-  },
+    this.client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
+  }
 
-  logLoot: function ({ player, item }) {
+  logLoot({ player, item }) {
     const now = Date.now();
-    client.zadd("loot", now, JSON.stringify({ player: player.name, item }));
-  },
-});
+    this.client.zadd("loot", now, JSON.stringify({ player: player.name, item }));
+  }
+}
+
+export default DatabaseHandler;

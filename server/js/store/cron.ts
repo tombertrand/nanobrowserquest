@@ -1,6 +1,8 @@
-const fetch = require("node-fetch");
-const cron = require("node-cron");
-const { nodeCache } = require("./cache");
+import cron from "node-cron";
+import fetch from "node-fetch";
+
+import { Sentry } from "../sentry";
+import { nodeCache } from "./cache";
 
 const getNanoUsdPrice = async () => {
   try {

@@ -1,11 +1,17 @@
-var _ = require("underscore");
-var Area = require("./area");
-var Types = require("../../shared/js/gametypes");
-var Utils = require("./utils");
+import * as _ from "lodash";
 
-var MobArea = Area.extend({
-  init: function (id, nb, kind, x, y, width, height, world) {
-    this._super(id, x, y, width, height, world);
+import { Types } from "../../shared/js/gametypes";
+import Area from "./area";
+import Mob from "./mob";
+import { random } from "./utils";
+
+class MobArea extends Area {
+  nb: any;
+  kind: any;
+  respawns: any[];
+
+  constructor(id, nb, kind, x, y, width, height, world) {
+    super(id, x, y, width, height, world);
     this.nb = nb;
     this.kind = kind;
     this.respawns = [];
@@ -14,26 +20,26 @@ var MobArea = Area.extend({
     // Enable random roaming for monsters
     // (comment this out to disable roaming)
     this.initRoaming();
-  },
+  }
 
-  spawnMobs: function () {
+  spawnMobs() {
     for (var i = 0; i < this.nb; i += 1) {
       this.addToArea(this._createMobInsideArea());
     }
-  },
+  }
 
-  _createMobInsideArea: function () {
+  _createMobInsideArea() {
     var k = Types.getKindFromString(this.kind);
-    var Mob = require("./mob");
+
     var pos = this._getRandomPositionInsideArea();
     var mob = new Mob("1" + this.id + "" + k + "" + this.entities.length, k, pos.x, pos.y);
 
     mob.onMove(this.world.onMobMoveCallback.bind(this.world));
 
     return mob;
-  },
+  }
 
-  respawnMob: function (mob, delay) {
+  respawnMob(mob, delay) {
     var self = this;
 
     this.removeFromArea(mob);
@@ -48,14 +54,14 @@ var MobArea = Area.extend({
       self.addToArea(mob);
       self.world.addMob(mob);
     }, delay);
-  },
+  }
 
-  initRoaming: function (mob) {
+  initRoaming() {
     var self = this;
 
     setInterval(function () {
       _.each(self.entities, function (mob) {
-        var canRoam = Utils.random(20) === 1;
+        var canRoam = random(20) === 1;
         var pos;
 
         if (canRoam) {
@@ -66,13 +72,13 @@ var MobArea = Area.extend({
         }
       });
     }, 500);
-  },
+  }
 
-  createReward: function () {
+  createReward() {
     var pos = this._getRandomPositionInsideArea();
 
     return { x: pos.x, y: pos.y, kind: Types.Entities.CHEST };
-  },
-});
+  }
+}
 
-module.exports = MobArea;
+export default MobArea;

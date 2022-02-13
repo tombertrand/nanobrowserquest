@@ -1,5 +1,5 @@
-const fs = require("fs");
-const Sentry = require("@sentry/node");
+import Sentry from "@sentry/node";
+import fs from "fs";
 
 Sentry.init({
   dsn: process.env.SENTRY_DNS,
@@ -22,6 +22,4 @@ process.on("unhandledRejection", (reason, promise) => {
   });
 });
 
-module.exports = {
-  Sentry,
-};
+export { Sentry };

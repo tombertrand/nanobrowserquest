@@ -1,28 +1,25 @@
 const sanitizer = require("sanitizer");
 const Types = require("../../shared/js/gametypes");
 const BigNumber = require("bignumber.js");
-const Utils = {};
 
-module.exports = Utils;
-
-Utils.sanitize = function (string) {
+export const sanitize = function (string) {
   // Strip unsafe tags, then escape as html entities.
   return sanitizer.escape(sanitizer.sanitize(string));
 };
 
-Utils.random = function (range) {
+export const random = function (range) {
   return Math.floor(Math.random() * range);
 };
 
-Utils.randomRange = function (min, max) {
+export const randomRange = function (min, max) {
   return min + Math.random() * (max - min);
 };
 
-Utils.randomInt = function (min, max) {
+export const randomInt = function (min, max) {
   return min + Math.floor(Math.random() * (max - min + 1));
 };
 
-Utils.clamp = function (min, max, value) {
+export const clamp = function (min, max, value) {
   if (value < min) {
     return min;
   } else if (value > max) {
@@ -32,9 +29,9 @@ Utils.clamp = function (min, max, value) {
   }
 };
 
-Utils.randomOrientation = function () {
+export const randomOrientation = function () {
   var o,
-    r = Utils.random(4);
+    r = random(4);
 
   if (r === 0) {
     o = Types.Orientations.LEFT;
@@ -52,7 +49,7 @@ Utils.randomOrientation = function () {
   return o;
 };
 
-Utils.Mixin = function (target, source) {
+export const Mixin = function (target, source) {
   if (source) {
     for (var key, keys = Object.keys(source), l = keys.length; l--; ) {
       key = keys[l];
@@ -65,14 +62,14 @@ Utils.Mixin = function (target, source) {
   return target;
 };
 
-Utils.distanceTo = function (x, y, x2, y2) {
+export const distanceTo = function (x, y, x2, y2) {
   var distX = Math.abs(x - x2),
     distY = Math.abs(y - y2);
 
   return distX > distY ? distX : distY;
 };
 
-Utils.NaN2Zero = function (num) {
+export const NaN2Zero = function (num) {
   if (isNaN(num * 1)) {
     return 0;
   } else {
@@ -80,16 +77,16 @@ Utils.NaN2Zero = function (num) {
   }
 };
 
-Utils.trueFalse = function (bool) {
+export const trueFalse = function (bool) {
   return bool === "true" ? true : false;
 };
 
-Utils.rawToRai = raw => {
+export const rawToRai = raw => {
   const value = new BigNumber(raw.toString());
   return value.shiftedBy(30 * -1).toNumber();
 };
 
-Utils.raiToRaw = rai => {
+export const raiToRaw = rai => {
   const value = new BigNumber(rai.toString());
   return value.shiftedBy(30).toNumber();
 };
@@ -150,11 +147,11 @@ const calculateMaxPayout = payouts => {
   return new BigNumber(amount).dividedBy(100000).toFixed();
 };
 
-Utils.getClassicMaxPayout = () => {
+export const getClassicMaxPayout = () => {
   return calculateMaxPayout(Object.values(classicAchievementToNanoMap));
 };
 
-Utils.getExpansion1MaxPayout = () => {
+export const getExpansion1MaxPayout = () => {
   return calculateMaxPayout(Object.values(expansion1AchievementToNanoMap));
 };
 
@@ -167,23 +164,23 @@ const getPayout = (achievements, payouts) => {
     }
   });
 
-  return Utils.raiToRaw(new BigNumber(amount).dividedBy(100000).toFixed());
+  return raiToRaw(new BigNumber(amount).dividedBy(100000).toFixed());
 };
 
-Utils.getClassicPayout = achievements => {
+export const getClassicPayout = achievements => {
   return getPayout(achievements, Object.values(classicAchievementToNanoMap));
 };
 
-Utils.getExpansion1Payout = achievements => {
+export const getExpansion1Payout = achievements => {
   return getPayout(achievements, Object.values(expansion1AchievementToNanoMap));
 };
 
-Utils.isValidUpgradeItems = items => {
+export const isValidUpgradeItems = items => {
   if (items.length !== 2) {
     return false;
   }
 
-  const [item, level, bonus] = items[0].split(":");
+  const [item, level] = items[0].split(":");
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
   const isBelt = Types.isBelt(item);
@@ -211,7 +208,7 @@ Utils.isValidUpgradeItems = items => {
   return true;
 };
 
-Utils.isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
+export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
   // Upgrade success rate
   // +1 -> +2, 100%
   // +2 -> +3, 100%
@@ -224,35 +221,35 @@ Utils.isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
   // +9 -> +10, 1%
   const successRates = Types.getUpgradeSuccessRates();
   let successRate = successRates[parseInt(level) - 1];
-  let random = Utils.randomInt(1, 100);
+  let random = randomInt(1, 100);
 
-  log.info(`Base Success rate ${successRate}`);
+  console.info(`Base Success rate ${successRate}`);
 
   if (isLuckySlot) {
     const luckyRates = Types.getLuckySlotSuccessRateBonus();
     const bonusRate = luckyRates[parseInt(level) - 1];
     successRate += bonusRate;
-    log.info(`Lucky slot bonus rate ${bonusRate} granted, new success rate ${successRate}`);
+    console.info(`Lucky slot bonus rate ${bonusRate} granted, new success rate ${successRate}`);
   }
 
   if (isBlessed) {
     const blessedRates = Types.getBlessedSuccessRateBonus();
     const blessedRate = blessedRates[parseInt(level) - 1];
     successRate += blessedRate;
-    log.info(`Blessed rate ${blessedRate} granted, new success rate ${successRate}`);
+    console.info(`Blessed rate ${blessedRate} granted, new success rate ${successRate}`);
   }
 
-  log.info(`Random ${random}, Success rate: ${successRate} -> ${random <= successRate ? "SUCCESS" : "FAILURE"}`);
+  console.info(`Random ${random}, Success rate: ${successRate} -> ${random <= successRate ? "SUCCESS" : "FAILURE"}`);
 
   return random <= successRate;
 };
 
-Utils.isValidRecipe = items => {
+export const isValidRecipe = items => {
   const recipes = {
     cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
   };
 
-  const result = Object.entries(recipes).find(([recipe, formulae]) => {
+  const result = Object.entries(recipes).find(([_recipe, formulae]) => {
     if (formulae.length !== items.length) return;
 
     for (let i = 0; i < items.length; i++) {
@@ -261,6 +258,7 @@ Utils.isValidRecipe = items => {
 
       if (index === -1) break;
 
+      // @ts-ignore
       formulae[index] = false;
     }
 

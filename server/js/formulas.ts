@@ -1,9 +1,7 @@
-const Utils = require("./utils");
-const Types = require("../../shared/js/gametypes");
+import { Types } from "../../shared/js/gametypes";
+import { randomInt } from "./utils";
 
-const Formulas = {};
-
-module.exports = Formulas;
+const Formulas: any = {};
 
 Formulas.minMaxDamage = function ({
   weapon,
@@ -66,15 +64,15 @@ Formulas.dmg = function ({
     lightningDamage,
     pierceArmor,
   });
-  const dealt = Utils.randomInt(min, max);
-  const absorbed = Math.floor(armorLevel * Utils.randomInt(2, 4));
+  const dealt = randomInt(min, max);
+  const absorbed = Math.floor(armorLevel * randomInt(2, 4));
 
   // @TODO Properly calculate pierceArmor, should be something special
   const dmg = dealt + pierceArmor - absorbed;
 
   //console.log("abs: "+absorbed+"   dealt: "+ dealt+"   dmg: "+ (dealt - absorbed));
   if (dmg <= 0) {
-    return Utils.randomInt(0, 3);
+    return randomInt(0, 3);
   } else {
     return dmg;
   }
@@ -114,7 +112,7 @@ Formulas.dmgFromMob = function ({
   beltLevel,
   isUniqueBelt,
 }) {
-  const dealt = Math.ceil(weaponLevel * Utils.randomInt(10, 15));
+  const dealt = Math.ceil(weaponLevel * randomInt(10, 15));
   const { min, max } = Formulas.minMaxAbsorb({
     armor,
     armorLevel,
@@ -126,11 +124,11 @@ Formulas.dmgFromMob = function ({
     isUniqueBelt,
   });
 
-  const absorbed = Utils.randomInt(min, max);
+  const absorbed = randomInt(min, max);
   const dmg = dealt - absorbed;
 
   if (dmg <= 0) {
-    return Utils.randomInt(3, 5);
+    return randomInt(3, 5);
   } else {
     return dmg;
   }
@@ -157,3 +155,5 @@ Formulas.hp = function ({ armorLevel, level, playerLevel, beltLevel }) {
 // +8, 123.5%, 15
 // +9, 132%, 19
 // +10, 145%, 24
+
+export default Formulas;

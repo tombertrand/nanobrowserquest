@@ -1,14 +1,34 @@
-var _ = require("underscore");
-var Character = require("./character");
-var ChestArea = require("./chestarea");
-var Messages = require("./message");
-var MobArea = require("./mobarea");
-var Properties = require("./properties");
-var Utils = require("./utils");
+import * as _ from "lodash";
 
-var Mob = Character.extend({
-  init: function (id, kind, x, y) {
-    this._super(id, "mob", kind, x, y);
+import { Types } from "../../shared/js/gametypes";
+import Character from "./character";
+import ChestArea from "./chestarea";
+import Messages from "./message";
+import MobArea from "./mobarea";
+import Properties from "./properties";
+import { distanceTo,random } from "./utils";
+
+class Mob extends Character {
+  spawningX: any;
+  spawningY: any;
+  armorLevel: any;
+  weaponLevel: any;
+  hateList: any[];
+  respawnTimeout: any;
+  returnTimeout: any;
+  isDead: boolean;
+  hateCount: number;
+  tankerlist: any[];
+  destroyTime: any;
+  destroyCallback: any;
+  hitPoints: any;
+  area: MobArea;
+  respawnCallback: any;
+  moveCallback: any;
+  kind: number;
+
+  constructor(id, kind, x, y) {
+    super(id, "mob", kind, x, y);
 
     this.updateHitPoints();
     this.spawningX = x;
@@ -22,9 +42,9 @@ var Mob = Character.extend({
     this.hateCount = 0;
     this.tankerlist = [];
     this.destroyTime = null;
-  },
+  }
 
-  destroy: function (delay = 30000) {
+  destroy(delay = 30000) {
     this.isDead = true;
     this.destroyTime = Date.now();
     this.hateList = [];
@@ -40,19 +60,19 @@ var Mob = Character.extend({
     if (this.destroyCallback) {
       this.destroyCallback();
     }
-  },
+  }
 
-  receiveDamage: function (points, playerId) {
+  receiveDamage(points) {
     this.hitPoints -= points;
-  },
+  }
 
-  hates: function (playerId) {
+  hates(playerId) {
     return _.some(this.hateList, function (obj) {
       return obj.id === playerId;
     });
-  },
+  }
 
-  increaseHateFor: function (playerId, points) {
+  increaseHateFor(playerId, points) {
     if (this.hates(playerId)) {
       _.find(this.hateList, function (obj) {
         return obj.id === playerId;
@@ -67,8 +87,9 @@ var Mob = Character.extend({
       clearTimeout(this.returnTimeout);
       this.returnTimeout = null;
     }
-  },
-  addTanker: function (playerId) {
+  }
+
+  addTanker(playerId) {
     var i = 0;
     for (i = 0; i < this.tankerlist.length; i++) {
       if (this.tankerlist[i].id === playerId) {
@@ -79,8 +100,9 @@ var Mob = Character.extend({
     if (i >= this.tankerlist.length) {
       this.tankerlist.push({ id: playerId, points: 1 });
     }
-  },
-  getMainTankerId: function () {
+  }
+
+  getMainTankerId() {
     var i = 0;
     var mainTanker = null;
     for (i = 0; i < this.tankerlist.length; i++) {
@@ -98,9 +120,9 @@ var Mob = Character.extend({
     } else {
       return null;
     }
-  },
+  }
 
-  getHatedPlayerId: function (hateRank) {
+  getHatedPlayerId(hateRank) {
     var i,
       playerId,
       sorted = _.sortBy(this.hateList, function (obj) {
@@ -117,8 +139,8 @@ var Mob = Character.extend({
         this.hateCount++;
         if (this.hateCount > size * 1.3) {
           this.hateCount = 0;
-          i = size - 1 - Utils.random(size - 1);
-          log.info("CHANGE TARGET: " + i);
+          i = size - 1 - random(size - 1);
+          console.info("CHANGE TARGET: " + i);
         } else {
           return 0;
         }
@@ -129,9 +151,9 @@ var Mob = Character.extend({
     }
 
     return playerId;
-  },
+  }
 
-  forgetPlayer: function (playerId, duration) {
+  forgetPlayer(playerId, duration) {
     this.hateList = _.reject(this.hateList, function (obj) {
       return obj.id === playerId;
     });
@@ -142,21 +164,21 @@ var Mob = Character.extend({
     if (this.hateList.length === 0) {
       this.returnToSpawningPosition(duration);
     }
-  },
+  }
 
-  forgetEveryone: function () {
+  forgetEveryone() {
     this.hateList = [];
     this.tankerlist = [];
     this.returnToSpawningPosition(1);
-  },
+  }
 
-  drop: function (item) {
+  drop(item) {
     if (item) {
       return new Messages.Drop(this, item);
     }
-  },
+  }
 
-  handleRespawn: function (delay) {
+  handleRespawn(delay) {
     var self = this;
 
     if (this.area && this.area instanceof MobArea) {
@@ -172,17 +194,17 @@ var Mob = Character.extend({
         }
       }, delay);
     }
-  },
+  }
 
-  onRespawn: function (callback) {
+  onRespawn(callback) {
     this.respawnCallback = callback;
-  },
+  }
 
-  resetPosition: function () {
+  resetPosition() {
     this.setPosition(this.spawningX, this.spawningY);
-  },
+  }
 
-  returnToSpawningPosition: function (waitDuration) {
+  returnToSpawningPosition(waitDuration) {
     var self = this;
     var delay = waitDuration || 4000;
 
@@ -192,30 +214,30 @@ var Mob = Character.extend({
       self.resetPosition();
       self.move(self.x, self.y);
     }, delay);
-  },
+  }
 
-  onDestroy: function (callback) {
+  onDestroy(callback) {
     this.destroyCallback = callback;
-  },
+  }
 
-  onMove: function (callback) {
+  onMove(callback) {
     this.moveCallback = callback;
-  },
+  }
 
-  move: function (x, y) {
+  move(x, y) {
     this.setPosition(x, y);
     if (this.moveCallback) {
       this.moveCallback(this);
     }
-  },
+  }
 
-  updateHitPoints: function () {
+  updateHitPoints() {
     this.resetHitPoints(Properties.getHitPoints(this.kind));
-  },
+  }
 
-  distanceToSpawningPoint: function (x, y) {
-    return Utils.distanceTo(x, y, this.spawningX, this.spawningY);
-  },
-});
+  distanceToSpawningPoint(x, y) {
+    return distanceTo(x, y, this.spawningX, this.spawningY);
+  }
+}
 
-module.exports = Mob;
+export default Mob;

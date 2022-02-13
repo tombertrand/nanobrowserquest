@@ -1,8 +1,10 @@
-const WS = require("ws");
-const ReconnectingWebSocket = require("reconnecting-websocket");
-const { store } = require("./store");
-const { rawToRai } = require("../utils");
-const { Sentry } = require("../sentry");
+import ReconnectingWebSocket from "reconnecting-websocket";
+import WS from "ws";
+
+import { Types } from "../../../shared/js/gametypes";
+import { Sentry } from "../sentry";
+import { rawToRai } from "../utils";
+import { store } from "./store";
 
 const ERROR_MESSAGES = {
   noSession: "Received payment for an unregistered session account.",
@@ -54,21 +56,21 @@ class Purchase {
   }
 
   cancel(account) {
-    log.debug("PURCHASE - cancel: " + account);
+    console.debug("PURCHASE - cancel: " + account);
 
     this.sessions = this.sessions.filter(session => session.account !== account);
     websocket.unregisterAccount(account);
   }
 
   complete(account) {
-    log.debug("PURCHASE - complete: " + account);
+    console.debug("PURCHASE - complete: " + account);
 
     this.sessions = this.sessions.filter(session => session.account !== account);
     websocket.unregisterAccount(account);
   }
 
   settle(payment) {
-    log.debug("PURCHASE - settle: " + payment.account);
+    console.debug("PURCHASE - settle: " + payment.account);
 
     const session = this.sessions.find(session => session.account === payment.account);
     if (!session) {
@@ -114,7 +116,7 @@ class Websocket {
     });
 
     this.connection.onopen = () => {
-      log.debug("WEBSOCKET - onopen");
+      console.debug("WEBSOCKET - onopen");
       this.isReady = true;
 
       const confirmation_subscription = {
@@ -133,12 +135,12 @@ class Websocket {
     };
 
     this.connection.onclose = () => {
-      log.debug("WEBSOCKET - onclosed");
+      console.debug("WEBSOCKET - onclosed");
       this.isReady = false;
     };
 
     this.connection.onerror = err => {
-      log.debug("WEBSOCKET - onerror");
+      console.debug("WEBSOCKET - onerror");
 
       Sentry.captureException(err);
       this.isReady = false;
@@ -171,7 +173,7 @@ class Websocket {
       return false;
     }
 
-    log.debug("WEBSOCKET - registerAccount: " + account);
+    console.debug("WEBSOCKET - registerAccount: " + account);
 
     try {
       const confirmation_subscription = {
@@ -195,7 +197,7 @@ class Websocket {
       this.watchedAccounts.splice(index, 1);
     }
 
-    log.debug("WEBSOCKET - registerAccount: " + account);
+    console.debug("WEBSOCKET - registerAccount: " + account);
 
     try {
       const confirmation_subscription = {
@@ -216,7 +218,4 @@ class Websocket {
 const purchase = new Purchase();
 const websocket = new Websocket();
 
-module.exports = {
-  purchase,
-  websocket,
-};
+export { purchase, websocket };

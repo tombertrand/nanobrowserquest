@@ -1,7 +1,8 @@
-const fetch = require("node-fetch");
-const BigNumber = require("bignumber.js");
-const { PromiseQueue } = require("./promise-queue");
-const { rpc } = require("./rpc");
+import BigNumber from "bignumber.js";
+import fetch from "node-fetch";
+
+import { PromiseQueue } from "./promise-queue";
+import { rpc } from "./rpc";
 
 const queue = new PromiseQueue();
 
@@ -94,6 +95,4 @@ const sendPayout = async ({ account: receiver, amount }) => {
   };
 };
 
-module.exports = {
-  enqueueSendPayout,
-};
+export { enqueueSendPayout };

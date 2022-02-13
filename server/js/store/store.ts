@@ -1,5 +1,7 @@
-const BigNumber = require("bignumber.js");
-const { nodeCache } = require("./cache");
+import BigNumber from "bignumber.js";
+
+import { Types } from "../../../shared/js/gametypes";
+import { nodeCache } from "./cache";
 
 const { NODE_ENV } = process.env;
 const isDevelopmentAmounts = NODE_ENV === "development";
@@ -52,6 +54,4 @@ class Store {
 
 const store = new Store();
 
-module.exports = {
-  store,
-};
+export { store };

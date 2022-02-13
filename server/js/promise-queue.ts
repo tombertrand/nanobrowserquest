@@ -1,4 +1,7 @@
 class PromiseQueue {
+  queue: any[];
+  isRunning: boolean;
+
   constructor() {
     this.queue = [];
     this.isRunning = false;
@@ -42,6 +45,4 @@ class PromiseQueue {
   }
 }
 
-module.exports = {
-  PromiseQueue,
-};
+export { PromiseQueue };

@@ -1,38 +1,113 @@
-const cls = require("./lib/class");
-const _ = require("underscore");
-const Character = require("./character");
-const Chest = require("./chest");
-const Messages = require("./message");
-const Utils = require("./utils");
-const Properties = require("./properties");
-const Formulas = require("./formulas");
-const check = require("./format").check;
-const Types = require("../../shared/js/gametypes");
-const bcrypt = require("bcrypt");
-const { enqueueSendPayout } = require("./payout");
-const { Sentry } = require("./sentry");
-const { store } = require("./store/store");
-const { purchase } = require("./store/purchase");
+// import bcrypt from "bcrypt";
+import * as _ from "lodash";
+
+import { Types } from "../../shared/js/gametypes";
+import Character from "./character";
+import Chest from "./chest";
+import FormatChecker from "./format";
+import Formulas from "./formulas";
+import Messages from "./message";
+import { enqueueSendPayout } from "./payout";
+import Properties from "./properties";
+import { Sentry } from "./sentry";
+import { purchase } from "./store/purchase";
+import { store } from "./store/store";
+import {
+  getClassicMaxPayout,
+  getClassicPayout,
+  getExpansion1MaxPayout,
+  getExpansion1Payout,
+  random,
+  randomInt,
+  randomOrientation,
+  rawToRai,
+  sanitize,
+} from "./utils";
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
-const MAX_CLASSIC_PAYOUT = Utils.getClassicMaxPayout();
-const MAX_EXPANSION1_PAYOUT = Utils.getExpansion1MaxPayout();
+const MAX_CLASSIC_PAYOUT = getClassicMaxPayout();
+const MAX_EXPANSION1_PAYOUT = getExpansion1MaxPayout();
 
-let index = 0;
+let payoutIndex = 0;
 // const NO_TIMEOUT_ACCOUNT = "nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
 const NO_TIMEOUT_ACCOUNT = "nano_3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6m8epqxmy7anix";
 
-module.exports = Player = Character.extend({
-  init: function (connection, worldServer, databaseHandler) {
-    var self = this;
+class Player extends Character {
+  server: any;
+  connection: any;
+  hasEnteredGame: boolean;
+  isDead: boolean;
+  haters: {};
+  lastCheckpoint: any;
+  formatChecker: any;
+  disconnectTimeout: any;
+  pvpFlag: boolean;
+  bannedTime: number;
+  banUseTime: number;
+  experience: number;
+  level: number;
+  lastWorldChatMinutes: number;
+  auras: string[];
+  inventory: any[];
+  inventoryCount: any[];
+  achievement: any[];
+  hasRequestedBossPayout: boolean;
+  hasRequestedNecromancerPayout: boolean;
+  expansion1: boolean;
+  depositAccount: any;
+  chatBanEndTime: number;
+  hash: string;
+  hash1: string;
+  name: string;
+  ip: string;
+  account: any;
+  move_callback: any;
+  lootmove_callback: any;
+  weapon: string;
+  weaponLevel: number;
+  weaponBonus: number[] | null;
+  armor: string;
+  armorLevel: number;
+  armorBonus: number[] | null;
+  belt: string;
+  beltLevel: number;
+  beltBonus: number[] | null;
+  firepotionTimeout: any;
+  createdAt: number;
+  waypoints: any;
+  group: any;
+  bonus: any;
+  armorKind: number;
+  weaponKind: number;
+  ring1: string;
+  ring1Level: number;
+  ring1Bonus: number[];
+  ring2: string;
+  ring2Level: number;
+  ring2Bonus: number[];
+  amulet: string;
+  amuletLevel: number;
+  amuletBonus: number[];
+  requestpos_callback: any;
+  message_callback: any;
+  exit_callback: any;
+  broadcast_callback: any;
+  broadcastzone_callback: any;
+  zone_callback: any;
+  orient_callback: any;
+  guildId: any;
+  depositAccountIndex: number;
+  stash: any;
 
+  constructor(connection, worldServer, databaseHandler) {
+    super(connection.id, "player", Types.Entities.WARRIOR, 0, 0);
     purchase.databaseHandler = databaseHandler;
+
+    var self = this;
 
     this.server = worldServer;
     this.connection = connection;
-
-    this._super(this.connection.id, "player", Types.Entities.WARRIOR, 0, 0, "");
 
     this.hasEnteredGame = false;
     this.isDead = false;
@@ -68,8 +143,8 @@ module.exports = Player = Character.extend({
     this.connection.listen(async message => {
       var action = parseInt(message[0]);
 
-      log.debug("Received: " + message);
-      if (!check(message)) {
+      console.debug("Received: " + message);
+      if (!this.formatChecker.check(message)) {
         self.connection.close("Invalid " + Types.getMessageTypeAsString(action) + " message format: " + message);
         return;
       }
@@ -110,8 +185,8 @@ module.exports = Player = Character.extend({
           return;
         }
 
-        var name = Utils.sanitize(message[1]);
-        var account = Utils.sanitize(message[2]);
+        var name = sanitize(message[1]);
+        var account = sanitize(message[2]);
 
         // Always ensure that the name is not longer than a maximum length.
         // (also enforced by the maxlength attribute of the name input element).
@@ -129,11 +204,11 @@ module.exports = Player = Character.extend({
 
         // @TODO rate-limit player creation
         if (action === Types.Messages.CREATE) {
-          log.info("CREATE: " + self.name);
+          console.info("CREATE: " + self.name);
           // self.account = hash;
           databaseHandler.createPlayer(self);
         } else {
-          log.info("LOGIN: " + self.name);
+          console.info("LOGIN: " + self.name);
           if (self.server.loggedInPlayer(self.name)) {
             self.connection.sendUTF8("loggedin");
             self.connection.close("Already logged in " + self.name);
@@ -162,15 +237,15 @@ module.exports = Player = Character.extend({
         // self.hasEnteredGame = true;
         // self.isDead = false;
       } else if (action === Types.Messages.WHO) {
-        log.info("WHO: " + self.name);
+        console.info("WHO: " + self.name);
         message.shift();
         self.server.pushSpawnsToPlayer(self, message);
       } else if (action === Types.Messages.ZONE) {
-        log.info("ZONE: " + self.name);
+        console.info("ZONE: " + self.name);
         self.zone_callback();
       } else if (action === Types.Messages.CHAT) {
-        var msg = Utils.sanitize(message[1]);
-        log.info("CHAT: " + self.name + ": " + msg);
+        var msg = sanitize(message[1]);
+        console.info("CHAT: " + self.name + ": " + msg);
 
         // if (msg === '/town')
 
@@ -182,7 +257,7 @@ module.exports = Player = Character.extend({
           // self.broadcastToZone(new Messages.Chat(self, msg), false);
         }
       } else if (action === Types.Messages.MOVE) {
-        // log.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
         if (self.move_callback) {
           var x = message[1],
             y = message[2];
@@ -202,7 +277,7 @@ module.exports = Player = Character.extend({
           }
         }
       } else if (action === Types.Messages.LOOTMOVE) {
-        // log.info("LOOTMOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        // console.info("LOOTMOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
         if (self.lootmove_callback) {
           self.setPosition(message[1], message[2]);
 
@@ -215,12 +290,12 @@ module.exports = Player = Character.extend({
           }
         }
       } else if (action === Types.Messages.AGGRO) {
-        log.info("AGGRO: " + self.name + " " + message[1]);
+        console.info("AGGRO: " + self.name + " " + message[1]);
         if (self.move_callback) {
           self.server.handleMobHate(message[1], self.id, 5);
         }
       } else if (action === Types.Messages.ATTACK) {
-        log.info("ATTACK: " + self.name + " " + message[1]);
+        console.info("ATTACK: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
 
         if (mob) {
@@ -228,7 +303,7 @@ module.exports = Player = Character.extend({
           self.server.broadcastAttacker(self);
         }
       } else if (action === Types.Messages.HIT) {
-        log.info("HIT: " + self.name + " " + message[1]);
+        console.info("HIT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
 
         if (mob) {
@@ -249,7 +324,7 @@ module.exports = Player = Character.extend({
           });
 
           if (self.bonus.criticalHit) {
-            isCritical = Utils.random(100) <= self.bonus.criticalHit;
+            isCritical = random(100) <= self.bonus.criticalHit;
             if (isCritical) {
               dmg = Math.ceil(dmg * 1.5);
             }
@@ -319,7 +394,7 @@ module.exports = Player = Character.extend({
           }
         }
       } else if (action === Types.Messages.HURT) {
-        log.info("HURT: " + self.name + " " + message[1]);
+        console.info("HURT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
         if (mob && self.hitPoints > 0) {
           let isBlocked = false;
@@ -337,7 +412,7 @@ module.exports = Player = Character.extend({
           });
 
           if (self.bonus.blockChance) {
-            isBlocked = Utils.random(100) <= self.bonus.blockChance;
+            isBlocked = random(100) <= self.bonus.blockChance;
             if (isBlocked) {
               dmg = 0;
             }
@@ -361,7 +436,7 @@ module.exports = Player = Character.extend({
           }
         }
       } else if (action === Types.Messages.LOOT) {
-        log.info("LOOT: " + self.name + " " + message[1]);
+        console.info("LOOT: " + self.name + " " + message[1]);
         var item = self.server.getEntityById(message[1]);
 
         if (item) {
@@ -380,7 +455,7 @@ module.exports = Player = Character.extend({
               databaseHandler.foundArtifact(self.name, index);
             } else if (kind === Types.Entities.FIREPOTION) {
               self.updateHitPoints(true);
-              self.broadcast(self.equip(Types.Entities.FIREFOX));
+              self.broadcast(self.equip(Types.Entities.FIREFOX, 1));
               self.firepotionTimeout = setTimeout(function () {
                 self.broadcast(self.equip(self.armor, self.armorLevel, self.armorBonus)); // return to normal after 10 sec
                 self.firepotionTimeout = null;
@@ -412,9 +487,9 @@ module.exports = Player = Character.extend({
                 self.server.pushToPlayer(self, self.health());
               }
             } else if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind)) {
-              const isUnique = Utils.random(100) === 42;
+              const isUnique = random(100) === 42;
               const baseLevel = Types.getBaseLevel(kind);
-              const level = baseLevel <= 5 && !isUnique ? Utils.randomInt(1, 3) : 1;
+              const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
               let bonus = null;
 
               if (isUnique) {
@@ -500,7 +575,7 @@ module.exports = Player = Character.extend({
           }
         }
       } else if (action === Types.Messages.TELEPORT) {
-        log.info("TELEPORT: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        console.info("TELEPORT: " + self.name + "(" + message[1] + ", " + message[2] + ")");
 
         var x = message[1];
         var y = message[2];
@@ -590,7 +665,7 @@ module.exports = Player = Character.extend({
             reason = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}, ${self.achievement[20]}`;
           }
 
-          log.info(`Reason: ${reason}`);
+          console.info(`Reason: ${reason}`);
           databaseHandler.banPlayer(self, reason);
         } else if (
           isExpansion1Payout &&
@@ -614,7 +689,7 @@ module.exports = Player = Character.extend({
             reason = `Requested payout without having bought Expansion1`;
           }
 
-          log.info(`Reason: ${reason}`);
+          console.info(`Reason: ${reason}`);
           databaseHandler.banPlayer(self, reason);
         } else {
           self.connection.send({
@@ -626,15 +701,15 @@ module.exports = Player = Character.extend({
           let maxAmount;
           if (isClassicPayout) {
             self.hasRequestedBossPayout = true;
-            amount = Utils.getClassicPayout(self.achievement.slice(0, 24));
+            amount = getClassicPayout(self.achievement.slice(0, 24));
             maxAmount = MAX_CLASSIC_PAYOUT;
           } else if (isExpansion1Payout) {
             self.hasRequestedNecromancerPayout = true;
-            amount = Utils.getExpansion1Payout(self.achievement.slice(24, 40));
+            amount = getExpansion1Payout(self.achievement.slice(24, 40));
             maxAmount = MAX_EXPANSION1_PAYOUT;
           }
 
-          const raiPayoutAmount = Utils.rawToRai(amount);
+          const raiPayoutAmount = rawToRai(amount);
 
           if (raiPayoutAmount > maxAmount) {
             databaseHandler.banPlayer(
@@ -644,20 +719,20 @@ module.exports = Player = Character.extend({
             return;
           }
 
-          log.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + raiPayoutAmount);
-          index += 1;
+          console.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + raiPayoutAmount);
+          payoutIndex += 1;
           const response =
             (await enqueueSendPayout({
               account: self.account,
               // @TODO 2x until noon jan 1st
               amount: amount * 2,
-              index,
+              payoutIndex,
             })) || {};
-          const { err, message, hash } = response;
+          const { err, message: msg, hash } = response as any;
 
           // If payout succeeds there will be a hash in the response!
           if (hash) {
-            log.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
+            console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
 
             if (isClassicPayout) {
               self.hash = hash;
@@ -667,17 +742,22 @@ module.exports = Player = Character.extend({
               databaseHandler.setHash1(self.name, hash);
             }
           } else {
-            log.info("PAYOUT FAILED: " + self.name + " " + self.account);
+            console.info("PAYOUT FAILED: " + self.name + " " + self.account);
             Sentry.captureException(err, {
-              status: "PAYOUT FAILED",
-              player: self.name,
-              account: self.account,
+              user: {
+                username: self.name,
+              },
+              tags: {
+                player: self.name,
+                account: self.account,
+              },
+              extra: { status: "PAYOUT FAILED" },
             });
           }
 
           self.connection.send({
             type: Types.Messages.NOTIFICATION,
-            message,
+            message: msg,
             hash: self.hash,
             hash1: self.hash1,
           });
@@ -688,39 +768,39 @@ module.exports = Player = Character.extend({
         // Just don't...
         databaseHandler.banPlayer(self, message[1]);
       } else if (action === Types.Messages.OPEN) {
-        log.info("OPEN: " + self.name + " " + message[1]);
+        console.info("OPEN: " + self.name + " " + message[1]);
         var chest = self.server.getEntityById(message[1]);
         if (chest && chest instanceof Chest) {
           self.server.handleOpenedChest(chest, self);
         }
       } else if (action === Types.Messages.CHECK) {
-        log.info("CHECK: " + self.name + " " + message[1]);
+        console.info("CHECK: " + self.name + " " + message[1]);
         var checkpoint = self.server.map.getCheckpoint(message[1]);
         if (checkpoint) {
           self.lastCheckpoint = checkpoint;
           databaseHandler.setCheckpoint(self.name, self.x, self.y);
         }
       } else if (action === Types.Messages.MOVE_ITEM) {
-        log.info("MOVE ITEM: " + self.name + " " + message[1] + " " + message[2]);
+        console.info("MOVE ITEM: " + self.name + " " + message[1] + " " + message[2]);
 
         databaseHandler.moveItem({ player: self, fromSlot: message[1], toSlot: message[2] });
       } else if (action === Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY) {
-        log.info("MOVE UPGRADE ITEMS TO INVENTORY: " + self.name);
+        console.info("MOVE UPGRADE ITEMS TO INVENTORY: " + self.name);
 
         databaseHandler.moveUpgradeItemsToInventory(self);
       } else if (action === Types.Messages.UPGRADE_ITEM) {
-        log.info("UPGRADE ITEM: " + self.name);
+        console.info("UPGRADE ITEM: " + self.name);
 
         databaseHandler.upgradeItem(self);
       } else if (action === Types.Messages.ACHIEVEMENT) {
-        log.info("ACHIEVEMENT: " + self.name + " " + message[1] + " " + message[2]);
+        console.info("ACHIEVEMENT: " + self.name + " " + message[1] + " " + message[2]);
         const index = parseInt(message[1]) - 1;
         if (message[2] === "found") {
           self.achievement[index] = 1;
           databaseHandler.foundAchievement(self.name, index);
         }
       } else if (action === Types.Messages.WAYPOINT) {
-        log.info("WAYPOINT: " + self.name + " " + message[1] + " " + message[2]);
+        console.info("WAYPOINT: " + self.name + " " + message[1] + " " + message[2]);
         // From waypointID to index
         const index = parseInt(message[1]) - 1;
         if (message[2] === "found" && !self.waypoints[index]) {
@@ -728,23 +808,23 @@ module.exports = Player = Character.extend({
           databaseHandler.foundWaypoint(self.name, index);
         }
       } else if (action === Types.Messages.PURCHASE_CREATE) {
-        log.info("PURCHASE_CREATE: " + self.name + " " + message[1] + " " + message[2]);
+        console.info("PURCHASE_CREATE: " + self.name + " " + message[1] + " " + message[2]);
 
         if (message[2] === self.depositAccount) {
           purchase.create({ player: self, account: self.depositAccount, id: message[1] });
         }
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
-        log.info("PURCHASE_CANCEL: " + self.name + " " + message[1]);
+        console.info("PURCHASE_CANCEL: " + self.name + " " + message[1]);
 
         purchase.cancel(message[1]);
       } else if (action === Types.Messages.STORE_ITEMS) {
-        log.info("STORE_ITEMS");
+        console.info("STORE_ITEMS");
 
         const items = store.getItems();
         self.send([Types.Messages.STORE_ITEMS, items]);
       } else if (action === Types.Messages.GUILD) {
         if (message[1] === Types.Messages.GUILDACTION.CREATE) {
-          var guildname = Utils.sanitize(message[2]);
+          var guildname = sanitize(message[2]);
           if (guildname === "") {
             //inaccurate name
             self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.BADNAME, message[2]));
@@ -767,7 +847,7 @@ module.exports = Player = Character.extend({
           var userName = message[2];
           var invitee;
           if (self.group in self.server.groups) {
-            invitee = _.find(self.server.groups[self.group].entities, function (entity, key) {
+            invitee = _.find(self.server.groups[self.group].entities, function (entity) {
               return entity instanceof Player && entity.name == userName ? entity : false;
             });
             if (invitee) {
@@ -802,9 +882,9 @@ module.exports = Player = Character.extend({
     });
 
     this.connection.sendUTF8("go"); // Notify client that the HELLO/WELCOME handshake can start
-  },
+  }
 
-  destroy: function () {
+  destroy() {
     var self = this;
 
     this.forEachAttacker(function (mob) {
@@ -816,9 +896,9 @@ module.exports = Player = Character.extend({
       mob.forgetPlayer(self.id);
     });
     this.haters = {};
-  },
+  }
 
-  getState: function () {
+  getState() {
     var basestate = this._getBaseState();
     var state = [
       this.orientation,
@@ -831,126 +911,126 @@ module.exports = Player = Character.extend({
     ];
 
     return basestate.concat(state);
-  },
+  }
 
-  send: function (message) {
+  send(message) {
     this.connection.send(message);
-  },
+  }
 
-  flagPVP: function (pvpFlag) {
+  flagPVP(pvpFlag) {
     if (this.pvpFlag != pvpFlag) {
       this.pvpFlag = pvpFlag;
       this.send(new Messages.PVP(this.pvpFlag).serialize());
     }
-  },
+  }
 
-  broadcast: function (message, ignoreSelf) {
+  broadcast(message, ignoreSelf: boolean = false) {
     if (this.broadcast_callback) {
       this.broadcast_callback(message, ignoreSelf === undefined ? true : ignoreSelf);
     }
-  },
+  }
 
-  broadcastToZone: function (message, ignoreSelf) {
+  broadcastToZone(message, ignoreSelf: boolean = false) {
     if (this.broadcastzone_callback) {
       this.broadcastzone_callback(message, ignoreSelf === undefined ? true : ignoreSelf);
     }
-  },
+  }
 
-  onExit: function (callback) {
+  onExit(callback) {
     this.exit_callback = callback;
-  },
+  }
 
-  onMove: function (callback) {
+  onMove(callback) {
     this.move_callback = callback;
-  },
+  }
 
-  onLootMove: function (callback) {
+  onLootMove(callback) {
     this.lootmove_callback = callback;
-  },
+  }
 
-  onZone: function (callback) {
+  onZone(callback) {
     this.zone_callback = callback;
-  },
+  }
 
-  onOrient: function (callback) {
+  onOrient(callback) {
     this.orient_callback = callback;
-  },
+  }
 
-  onMessage: function (callback) {
+  onMessage(callback) {
     this.message_callback = callback;
-  },
+  }
 
-  onBroadcast: function (callback) {
+  onBroadcast(callback) {
     this.broadcast_callback = callback;
-  },
+  }
 
-  onBroadcastToZone: function (callback) {
+  onBroadcastToZone(callback) {
     this.broadcastzone_callback = callback;
-  },
+  }
 
-  equip: function (item, level, bonus) {
+  equip(item, level: number, bonus?: number[]) {
     return new Messages.EquipItem(this, item, level, bonus);
-  },
+  }
 
-  addHater: function (mob) {
+  addHater(mob) {
     if (mob) {
       if (!(mob.id in this.haters)) {
         this.haters[mob.id] = mob;
       }
     }
-  },
+  }
 
-  removeHater: function (mob) {
+  removeHater(mob) {
     if (mob && mob.id in this.haters) {
       delete this.haters[mob.id];
     }
-  },
+  }
 
-  forEachHater: function (callback) {
+  forEachHater(callback) {
     _.each(this.haters, function (mob) {
       callback(mob);
     });
-  },
+  }
 
-  equipArmor: function (armor, kind, level, bonus) {
+  equipArmor(armor, kind, level, bonus) {
     this.armor = armor;
     this.armorKind = kind;
     this.armorLevel = level;
     this.armorBonus = bonus ? JSON.parse(bonus) : null;
-  },
+  }
 
-  equipWeapon: function (weapon, kind, level, bonus) {
+  equipWeapon(weapon, kind, level, bonus) {
     this.weapon = weapon;
     this.weaponKind = kind;
     this.weaponLevel = level;
     this.weaponBonus = bonus ? JSON.parse(bonus) : null;
-  },
+  }
 
-  equipBelt: function (belt, level, bonus) {
+  equipBelt(belt, level, bonus) {
     this.belt = belt;
     this.beltLevel = level;
     this.beltBonus = bonus ? JSON.parse(bonus) : null;
-  },
+  }
 
-  equipRing1: function (ring, level, bonus) {
+  equipRing1(ring, level, bonus) {
     this.ring1 = ring;
     this.ring1Level = level;
     this.ring1Bonus = bonus ? JSON.parse(bonus) : null;
-  },
+  }
 
-  equipRing2: function (ring, level, bonus) {
+  equipRing2(ring, level, bonus) {
     this.ring2 = ring;
     this.ring2Level = level;
     this.ring2Bonus = bonus ? JSON.parse(bonus) : null;
-  },
+  }
 
-  equipAmulet: function (amulet, level, bonus) {
+  equipAmulet(amulet, level, bonus) {
     this.amulet = amulet;
     this.amuletLevel = level;
     this.amuletBonus = bonus ? JSON.parse(bonus) : null;
-  },
+  }
 
-  calculateBonus: function () {
+  calculateBonus() {
     let hasDrainLifeAura = false;
     let hasThunderstormAura = false;
     let hasHighHealth = false;
@@ -1040,9 +1120,9 @@ module.exports = Player = Character.extend({
         },
       });
     }
-  },
+  }
 
-  resetBonus: function () {
+  resetBonus() {
     this.bonus = {
       minDamage: 0,
       maxDamage: 0,
@@ -1063,9 +1143,9 @@ module.exports = Player = Character.extend({
       pierceArmor: 0,
       highHealth: 0,
     };
-  },
+  }
 
-  equipItem: function ({ item, level, bonus, type }) {
+  equipItem({ item, level, bonus, type }) {
     // @NOTE safety...
     if (bonus === "null") {
       bonus = null;
@@ -1088,7 +1168,7 @@ module.exports = Player = Character.extend({
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
-      log.debug(this.name + " equips " + item);
+      console.debug(this.name + " equips " + item);
 
       if (Types.isArmor(kind)) {
         databaseHandler.equipArmor(this.name, item, level, bonus);
@@ -1102,24 +1182,25 @@ module.exports = Player = Character.extend({
     this.calculateBonus();
     this.updateHitPoints();
     this.sendPlayerStats();
-  },
+  }
 
-  addAura: function (aura) {
+  addAura(aura) {
     const index = this.auras.indexOf(aura);
     if (index === -1) {
       this.auras.push(aura);
       this.broadcast(new Messages.Auras(this), false);
     }
-  },
+  }
 
-  removeAura: function (aura) {
+  removeAura(aura) {
     const index = this.auras.indexOf(aura);
     if (index > -1) {
       this.auras.splice(index, 1);
       this.broadcast(new Messages.Auras(this), false);
     }
-  },
-  updateHitPoints: function (reset) {
+  }
+
+  updateHitPoints(reset?: boolean) {
     const maxHitPoints =
       Formulas.hp({
         armorLevel: Properties.getArmorLevel(this.armorKind),
@@ -1135,32 +1216,32 @@ module.exports = Player = Character.extend({
     } else {
       this.updateMaxHitPoints(maxHitPoints);
     }
-  },
+  }
 
-  updatePosition: function () {
+  updatePosition() {
     if (this.requestpos_callback) {
       var pos = this.requestpos_callback();
       this.setPosition(pos.x, pos.y);
     }
-  },
+  }
 
-  onRequestPosition: function (callback) {
+  onRequestPosition(callback) {
     this.requestpos_callback = callback;
-  },
+  }
 
-  resetTimeout: function () {
+  resetTimeout() {
     clearTimeout(this.disconnectTimeout);
     // This account doesn't timeout
     if (this.account === NO_TIMEOUT_ACCOUNT) return;
     this.disconnectTimeout = setTimeout(this.timeout.bind(this), 1000 * 60 * 15); // 15 min.
-  },
+  }
 
-  timeout: function () {
+  timeout() {
     this.connection.sendUTF8("timeout");
     this.connection.close("Player was idle for too long");
-  },
+  }
 
-  sendPlayerStats: function () {
+  sendPlayerStats() {
     var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb({
       armor: this.armor,
       armorLevel: this.armorLevel,
@@ -1196,10 +1277,10 @@ module.exports = Player = Character.extend({
         absorb: this.bonus.absorbedDamage,
       }).serialize(),
     );
-  },
+  }
 
-  incExp: function (exp) {
-    this.experience = parseInt(this.experience) + exp;
+  incExp(exp) {
+    this.experience = this.experience + exp;
     databaseHandler.setExp(this.name, this.experience);
     var origLevel = this.level;
     this.level = Types.getLevel(this.experience);
@@ -1209,25 +1290,25 @@ module.exports = Player = Character.extend({
       // @NOTE Update the player levels
       this.server.updatePopulation({ levelupPlayer: this.id });
     }
-  },
+  }
 
-  setGuildId: function (id) {
+  setGuildId(id) {
     if (typeof this.server.guilds[id] !== "undefined") {
       this.guildId = id;
     } else {
-      log.error(this.id + " cannot add guild " + id + ", it does not exist");
+      console.error(this.id + " cannot add guild " + id + ", it does not exist");
     }
-  },
+  }
 
-  getGuild: function () {
+  getGuild() {
     return this.hasGuild ? this.server.guilds[this.guildId] : undefined;
-  },
+  }
 
-  hasGuild: function () {
+  hasGuild() {
     return typeof this.guildId !== "undefined";
-  },
+  }
 
-  leaveGuild: function () {
+  leaveGuild() {
     if (this.hasGuild()) {
       var leftGuild = this.getGuild();
       leftGuild.removeMember(this);
@@ -1243,9 +1324,9 @@ module.exports = Player = Character.extend({
     } else {
       this.server.pushToPlayer(this, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.NOLEAVE, ""));
     }
-  },
+  }
 
-  checkName: function (name) {
+  checkName(name) {
     if (name === null) return false;
     else if (name === "") return false;
     else if (name === " ") return false;
@@ -1273,9 +1354,9 @@ module.exports = Player = Character.extend({
       }
     }
     return true;
-  },
+  }
 
-  sendWelcome: function ({
+  sendWelcome({
     armor,
     weapon,
     belt,
@@ -1340,7 +1421,7 @@ module.exports = Player = Character.extend({
     self.createdAt = createdAt;
     self.experience = exp;
     self.level = Types.getLevel(self.experience);
-    self.orientation = Utils.randomOrientation;
+    self.orientation = randomOrientation();
     if (x === 0 && y === 0) {
       self.updatePosition();
     } else {
@@ -1389,5 +1470,7 @@ module.exports = Player = Character.extend({
     self.isDead = false;
 
     // self.server.addPlayer(self, aGuildId);
-  },
-});
+  }
+}
+
+export default Player;

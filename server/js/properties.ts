@@ -1,6 +1,6 @@
-var Types = require("../../shared/js/gametypes");
+import { Types } from "../../shared/js/gametypes";
 
-var Properties = {
+var Properties: any = {
   rat: {
     drops: {
       flask: 45,
@@ -364,8 +364,8 @@ Properties.getArmorLevel = function (kind) {
       return Types.getArmorRank(kind) + 1;
     }
   } catch (err) {
-    log.error("No level found for armor: " + Types.getKindAsString(kind));
-    log.error("Error stack: " + err.stack);
+    console.error("No level found for armor: " + Types.getKindAsString(kind));
+    console.error("Error stack: " + err.stack);
   }
 };
 
@@ -377,8 +377,8 @@ Properties.getWeaponLevel = function (kind) {
       return Types.getWeaponRank(kind) + 1;
     }
   } catch (err) {
-    log.error("No level found for weapon: " + Types.getKindAsString(kind));
-    log.error("Error stack: " + err.stack);
+    console.error("No level found for weapon: " + Types.getKindAsString(kind));
+    console.error("Error stack: " + err.stack);
   }
 };
 
@@ -389,4 +389,4 @@ Properties.getExp = function (kind) {
   return Properties[Types.getKindAsString(kind)].exp;
 };
 
-module.exports = Properties;
+export default Properties;

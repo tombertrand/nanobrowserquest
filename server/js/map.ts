@@ -1,18 +1,38 @@
-var cls = require("./lib/class");
-var _ = require("underscore");
-var fs = require("fs");
-var Utils = require("./utils");
-var Checkpoint = require("./checkpoint");
+import fs from "fs";
+import * as _ from "lodash";
 
-var Map = cls.Class.extend({
-  init: function (filepath) {
+import Area from "./area";
+import Checkpoint from "./checkpoint";
+import { randomInt } from "./utils";
+
+class Map {
+  isLoaded: boolean;
+  width: any;
+  height: any;
+  collisions: any;
+  mobAreas: any;
+  chestAreas: any;
+  staticChests: any;
+  staticEntities: any;
+  zoneWidth: number;
+  zoneHeight: number;
+  groupWidth: number;
+  groupHeight: number;
+  readyFunc: any;
+  grid: any[];
+  connectedGroups: any;
+  checkpoints: {};
+  startingAreas: any[];
+  pvpAreas: any[];
+
+  constructor(filepath) {
     var self = this;
 
     this.isLoaded = false;
 
     fs.exists(filepath, function (exists) {
       if (!exists) {
-        log.error(filepath + " doesn't exist.");
+        console.error(filepath + " doesn't exist.");
         return;
       }
 
@@ -22,9 +42,9 @@ var Map = cls.Class.extend({
         self.initMap(json);
       });
     });
-  },
+  }
 
-  initMap: function (thismap) {
+  initMap(thismap) {
     this.width = thismap.width;
     this.height = thismap.height;
     this.collisions = thismap.collisions;
@@ -47,13 +67,13 @@ var Map = cls.Class.extend({
     if (this.readyFunc) {
       this.readyFunc();
     }
-  },
+  }
 
-  ready: function (f) {
+  ready(f) {
     this.readyFunc = f;
-  },
+  }
 
-  tileIndexToGridPosition: function (tileNum) {
+  tileIndexToGridPosition(tileNum) {
     var x = 0;
     var y = 0;
 
@@ -69,13 +89,13 @@ var Map = cls.Class.extend({
     y = Math.floor(tileNum / this.width);
 
     return { x: x, y: y };
-  },
+  }
 
-  GridPositionToTileIndex: function (x, y) {
+  GridPositionToTileIndex(x, y) {
     return y * this.width + x + 1;
-  },
+  }
 
-  generateCollisionGrid: function () {
+  generateCollisionGrid() {
     this.grid = [];
 
     if (this.isLoaded) {
@@ -91,21 +111,22 @@ var Map = cls.Class.extend({
           tileIndex += 1;
         }
       }
-      log.debug("Collision grid generated.");
+      console.debug("Collision grid generated.");
     }
-  },
+  }
 
-  isOutOfBounds: function (x, y) {
+  isOutOfBounds(x, y) {
     return x <= 0 || x >= this.width || y <= 0 || y >= this.height;
-  },
+  }
 
-  isColliding: function (x, y) {
+  isColliding(x, y) {
     if (this.isOutOfBounds(x, y)) {
       return false;
     }
     return this.grid[y][x] === 1;
-  },
-  isPVP: function (x, y) {
+  }
+
+  isPVP(x, y) {
     var area = null;
     area = _.find(this.pvpAreas, function (area) {
       return area.contains(x, y);
@@ -115,15 +136,15 @@ var Map = cls.Class.extend({
     } else {
       return false;
     }
-  },
+  }
 
-  GroupIdToGroupPosition: function (id) {
+  GroupIdToGroupPosition(id) {
     var posArray = id.split("-");
 
     return pos(parseInt(posArray[0], 10), parseInt(posArray[1], 10));
-  },
+  }
 
-  forEachGroup: function (callback) {
+  forEachGroup(callback) {
     var width = this.groupWidth;
     var height = this.groupHeight;
 
@@ -132,18 +153,18 @@ var Map = cls.Class.extend({
         callback(x + "-" + y);
       }
     }
-  },
+  }
 
-  getGroupIdFromPosition: function (x, y) {
+  getGroupIdFromPosition(x, y) {
     var w = this.zoneWidth;
     var h = this.zoneHeight;
     var gx = Math.floor((x - 1) / w);
     var gy = Math.floor((y - 1) / h);
 
     return gx + "-" + gy;
-  },
+  }
 
-  getAdjacentGroupPositions: function (id) {
+  getAdjacentGroupPositions(id) {
     var self = this;
     var position = this.GroupIdToGroupPosition(id);
     var x = position.x;
@@ -176,17 +197,17 @@ var Map = cls.Class.extend({
     return _.reject(list, function (pos) {
       return pos.x < 0 || pos.y < 0 || pos.x >= self.groupWidth || pos.y >= self.groupHeight;
     });
-  },
+  }
 
-  forEachAdjacentGroup: function (groupId, callback) {
+  forEachAdjacentGroup(groupId, callback) {
     if (groupId) {
       _.each(this.getAdjacentGroupPositions(groupId), function (pos) {
         callback(pos.x + "-" + pos.y);
       });
     }
-  },
+  }
 
-  initConnectedGroups: function (doors) {
+  initConnectedGroups(doors) {
     var self = this;
 
     this.connectedGroups = {};
@@ -201,9 +222,9 @@ var Map = cls.Class.extend({
         self.connectedGroups[groupId] = [connectedPosition];
       }
     });
-  },
+  }
 
-  initCheckpoints: function (cpList) {
+  initCheckpoints(cpList) {
     var self = this;
 
     this.checkpoints = {};
@@ -216,20 +237,21 @@ var Map = cls.Class.extend({
         self.startingAreas.push(checkpoint);
       }
     });
-  },
+  }
 
-  getCheckpoint: function (id) {
+  getCheckpoint(id) {
     return this.checkpoints[id];
-  },
+  }
 
-  getRandomStartingPosition: function () {
+  getRandomStartingPosition() {
     var nbAreas = _.size(this.startingAreas),
-      i = Utils.randomInt(0, nbAreas - 1),
+      i = randomInt(0, nbAreas - 1),
       area = this.startingAreas[i];
 
     return area.getRandomPosition();
-  },
-  initPVPAreas: function (pvpList) {
+  }
+
+  initPVPAreas(pvpList) {
     var self = this;
 
     this.pvpAreas = [];
@@ -237,8 +259,8 @@ var Map = cls.Class.extend({
       var pvpArea = new Area(pvp.id, pvp.x, pvp.y, pvp.w, pvp.h, null);
       self.pvpAreas.push(pvpArea);
     });
-  },
-});
+  }
+}
 
 var pos = function (x, y) {
   return { x: x, y: y };
@@ -248,4 +270,4 @@ var equalPositions = function (pos1, pos2) {
   return pos1.x === pos2.x && pos2.y === pos2.y;
 };
 
-module.exports = Map;
+export default Map;

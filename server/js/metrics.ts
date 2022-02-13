@@ -1,10 +1,13 @@
-var _ = require("underscore");
-var cls = require("./lib/class");
-var redis = require("redis");
-var Metrics = {};
+import * as _ from "lodash";
+import redis from "redis";
 
-Metrics = cls.Class.extend({
-  init: function (config) {
+class Metrics {
+  config: any;
+  client: any;
+  isReady: boolean;
+  readyCallback: any;
+
+  constructor(config) {
     var self = this;
 
     this.config = config;
@@ -17,19 +20,19 @@ Metrics = cls.Class.extend({
     this.isReady = false;
 
     this.client.on("connect", function () {
-      log.info("Metrics enabled: Redis client connected to " + config.redis_host + ":" + config.redis_port);
+      console.info("Metrics enabled: Redis client connected to " + config.redis_host + ":" + config.redis_port);
       self.isReady = true;
       if (self.readyCallback) {
         self.readyCallback();
       }
     });
-  },
+  }
 
-  ready: function (callback) {
+  ready(callback) {
     this.readyCallback = callback;
-  },
+  }
 
-  updatePlayerCounters: function (worlds, updatedCallback) {
+  updatePlayerCounters(worlds, updatedCallback) {
     var self = this;
     var config = this.config;
     var numServers = _.size(config.game_servers);
@@ -64,35 +67,35 @@ Metrics = cls.Class.extend({
         });
       });
     } else {
-      log.error("Redis client not connected");
+      console.error("Redis client not connected");
     }
-  },
+  }
 
-  updateWorldDistribution: function (worlds) {
+  updateWorldDistribution(worlds) {
     this.client.set("world_distribution_" + this.config.server_name, worlds);
-  },
+  }
 
-  updateWorldCount: function () {
+  updateWorldCount() {
     this.client.set("world_count_" + this.config.server_name, this.config.nb_worlds);
-  },
+  }
 
-  getOpenWorldCount: function (callback) {
+  getOpenWorldCount(callback) {
     this.client.get("world_count_" + this.config.server_name, function (error, result) {
       callback(result);
     });
-  },
+  }
 
-  getTotalPlayers: function (callback) {
+  getTotalPlayers(callback) {
     this.client.get("total_players", function (error, result) {
       callback(result);
     });
-  },
+  }
 
-  getWorldPlayers: function (callback) {
+  getWorldPlayers(callback) {
     this.client.get("world_players_" + this.config.server_name, function (error, result) {
       callback(result);
     });
-  },
-});
+  }
+}
 
-module.exports = Metrics;
+export default Metrics;

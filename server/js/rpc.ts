@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
 const { RPC_DOMAIN } = process.env;
 
@@ -28,6 +28,4 @@ const rpc = async (action, params) => {
   return json;
 };
 
-module.exports = {
-  rpc,
-};
+export { rpc };
