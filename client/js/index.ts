@@ -2,6 +2,9 @@ import "jquery-ui/ui/widgets/draggable";
 import "jquery-ui/ui/widgets/droppable";
 import "jquery-ui/ui/widgets/resizable";
 import "jquery-ui/ui/widgets/tooltip";
+import "jquery-countdown";
+import "jquery.qrcode";
+import "jquery-ui-touch-punch";
 
 import * as _ from "lodash";
 
@@ -426,8 +429,6 @@ var initGame = function () {
   game.onAchievementUnlock(function (id, name, nano) {
     app.unlockAchievement(id, name, nano);
   });
-
-  console.log("~~~~app", app);
 
   game.onNotification(app.showMessage.bind(app));
 

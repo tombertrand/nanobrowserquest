@@ -2285,8 +2285,6 @@ class Game {
         //   }
         // }
 
-        console.log("~~~~entity", entity);
-
         if (!self.entityIdExists(entity.id)) {
           try {
             if (entity.id !== self.playerId) {
@@ -2303,12 +2301,12 @@ class Game {
                 }, 1000);
               } else if (entity.kind === Types.Entities.COWPORTAL && entity.gridX === 43 && entity.gridY === 211) {
                 if (self.cowPortalStart) {
-                  entity.setSpeed(75);
                   entity.raise();
+                  entity.currentAnimation.setSpeed(75);
 
                   setTimeout(() => {
-                    entity.setSpeed(150);
                     entity.idle();
+                    entity.currentAnimation.setSpeed(150);
                   }, 1200);
                 } else {
                   entity.idle();
@@ -3643,8 +3641,6 @@ class Game {
 
   click() {
     var pos = this.getMouseGridPosition();
-
-    console.log("~~~~this", this);
 
     // ~~~~~ Invisible block here!
     if (pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) {

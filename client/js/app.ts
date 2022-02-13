@@ -958,7 +958,7 @@ class App {
   showMessage(message, timeout) {
     var $wrapper = $("#notifications div");
     var $message = $("#notifications #message2");
-    console.log("~~~~this", this);
+
     this.animateMessages();
     $message.text(message);
     if (this.messageTimer) {

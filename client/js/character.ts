@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-
 import Entity from "./entity";
 import Timer from "./timer";
 import Transition from "./transition";

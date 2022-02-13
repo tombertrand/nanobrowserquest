@@ -5,9 +5,8 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   mode: "development",
-  // context: path.resolve(__dirname, 'client/js'),
   entry: {
-    vendor: ["jquery", "jquery-countdown", "jquery.qrcode", "jquery-ui-touch-punch", "bignumber.js"],
+    vendor: ["jquery", "bignumber.js"],
     app: "./client/js/index.ts",
   },
   devServer: {
