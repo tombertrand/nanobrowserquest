@@ -1,6 +1,6 @@
 import Entity from "./entity";
 import Messages from "./message";
-import {Utils} from "./utils";
+import { randomOrientation } from "./utils";
 
 class Character extends Entity {
   orientation: any;
@@ -10,15 +10,15 @@ class Character extends Entity {
   hitPoints: any;
   id: any;
 
-  constructor (id, type, kind, x, y) {
+  constructor(id, type, kind, x, y) {
     super(id, type, kind, x, y);
 
-    this.orientation = Utils.randomOrientation();
+    this.orientation = randomOrientation();
     this.attackers = {};
     this.target = null;
   }
 
-  getState () {
+  getState() {
     var basestate = this._getBaseState();
     var state = [];
 
@@ -28,19 +28,19 @@ class Character extends Entity {
     return basestate.concat(state);
   }
 
-  resetHitPoints (maxHitPoints) {
+  resetHitPoints(maxHitPoints) {
     this.maxHitPoints = maxHitPoints;
     this.hitPoints = this.maxHitPoints;
   }
 
-  updateMaxHitPoints (maxHitPoints) {
+  updateMaxHitPoints(maxHitPoints) {
     this.maxHitPoints = maxHitPoints;
     if (this.hitPoints > maxHitPoints) {
       this.hitPoints = maxHitPoints;
     }
   }
 
-  regenHealthBy (value) {
+  regenHealthBy(value) {
     var hp = this.hitPoints,
       max = this.maxHitPoints;
 
@@ -53,52 +53,54 @@ class Character extends Entity {
     }
   }
 
-  hasFullHealth () {
+  hasFullHealth() {
     return this.hitPoints === this.maxHitPoints;
   }
 
-  setTarget (entity) {
+  setTarget(entity) {
     this.target = entity.id;
   }
 
-  clearTarget () {
+  clearTarget() {
     this.target = null;
   }
 
-  hasTarget () {
+  hasTarget() {
     return this.target !== null;
   }
 
-  attack () {
+  attack() {
     return new Messages.Attack(this.id, this.target);
   }
 
-  raise (mobId) {
+  raise(mobId) {
     return new Messages.Raise(mobId);
   }
 
-  health ({ isHurt = false } = {}) {
+  health({ isHurt = false } = {}) {
     return new Messages.Health({ points: this.hitPoints, isRegen: false, isHurt });
   }
 
-  regen () {
+  regen() {
     return new Messages.Health({ points: this.hitPoints, isRegen: true });
   }
 
-  addAttacker (entity) {
+  addAttacker(entity) {
     if (entity) {
       this.attackers[entity.id] = entity;
     }
   }
 
-  removeAttacker (entity) {
+  removeAttacker(entity) {
     if (entity && entity.id in this.attackers) {
       delete this.attackers[entity.id];
-      log.debug(this.id + " REMOVED ATTACKER " + entity.id);
+      console.debug(this.id + " REMOVED ATTACKER " + entity.id);
     }
   }
 
-  forEachAttacker (callback) {
+  forEachAttacker(callback) {
+    console.log("~~~this.attackers", this.attackers);
+    // @ts-ignore
     for (var id = 0; id < this.attackers.length; id++) {
       callback(this.attackers[id]);
     }

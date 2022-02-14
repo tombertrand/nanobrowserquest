@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-
 import Area from "./area";
 import { isInt } from "./utils";
 
@@ -61,7 +60,7 @@ class Map {
     if (useWorker) {
       console.info("Loading map with web worker.");
       // var worker = new Worker("js/mapworker.js");
-      var worker = new Worker('mapworker.js');
+      var worker = new Worker("mapworker.js");
       worker.postMessage(1);
 
       worker.onmessage = function (event) {

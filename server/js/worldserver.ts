@@ -1,29 +1,72 @@
-const cls = require("./lib/class");
-const _ = require("underscore");
-const Log = require("log");
-const Entity = require("./entity");
-const Character = require("./character");
-const Mob = require("./mob");
-const Map = require("./map");
-const Npc = require("./npc");
-const Player = require("./player");
-const Guild = require("./guild");
-const Item = require("./item");
-const MobArea = require("./mobarea");
-const ChestArea = require("./chestarea");
-const Chest = require("./chest");
-const Messages = require("./message");
-const Properties = require("./properties");
-const Utils = require("./utils");
-const Types = require("../../shared/js/gametypes");
-const { purchase } = require("./store/purchase");
+import "./store/cron";
 
-require("./store/cron");
+// import "./area";
+import * as _ from "lodash";
+
+import { Types } from "../../shared/js/gametypes";
+import { ChestArea, MobArea } from "./area";
+// import Character from "./character";
+import Chest from "./chest";
+// import ChestArea from "./chestarea";
+// import Entity from "./entity";
+import Guild from "./guild";
+import Item from "./item";
+import Map from "./map";
+import Messages from "./message";
+import Mob from "./mob";
+import Npc from "./npc";
+import Player from "./player";
+import Properties from "./properties";
+import { purchase } from "./store/purchase";
+import { random, randomRange } from "./utils";
 
 // ======= GAME SERVER ========
 
-module.exports = World = cls.Class.extend({
-  init: function (id, maxPlayers, websocketServer, databaseHandler) {
+class World {
+  id: any;
+  maxPlayers: any;
+  server: any;
+  ups: number;
+  databaseHandler: any;
+  map: any;
+  entities: {};
+  players: {};
+  guilds: {};
+  mobs: {};
+  attackers: {};
+  items: {};
+  equipping: {};
+  hurt: {};
+  npcs: {};
+  mobAreas: any[];
+  chestAreas: any[];
+  groups: {};
+  zombies: any[];
+  cowTotal: number;
+  cowLevelCoords: {};
+  cowLevelClock: any;
+  cowLevelInterval: any;
+  cowLevelTownNpcId: any;
+  cowLevelNpcId: any;
+  cowLevelNpcIds: any[];
+  cowPossibleCoords: any[];
+  cowEntityIds: any[];
+  cowPackOrder: number[][];
+  outgoingQueues: any;
+  itemCount: number;
+  playerCount: number;
+  zoneGroupsReady: boolean;
+  raiseInterval: any;
+  removed_callback: any;
+  added_callback: any;
+  regen_callback: any;
+  init_callback: any;
+  connect_callback: any;
+  enter_callback: any;
+  attack_callback: any;
+  raise_callback: any;
+
+  constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
 
     this.id = id;
@@ -103,7 +146,7 @@ module.exports = World = cls.Class.extend({
     });
 
     this.onPlayerEnter(function (player) {
-      log.info(
+      console.info(
         player.name +
           "(" +
           player.connection._connection.handshake.headers["cf-connecting-ip"] +
@@ -133,7 +176,7 @@ module.exports = World = cls.Class.extend({
       self.pushRelevantEntityListTo(player);
 
       var move_callback = function (x, y) {
-        log.debug(player.name + " is moving to (" + x + ", " + y + ").");
+        console.debug(player.name + " is moving to (" + x + ", " + y + ").");
         var isPVP = self.map.isPVP(x, y);
         player.flagPVP(isPVP);
         player.forEachAttacker(function (mob) {
@@ -178,7 +221,7 @@ module.exports = World = cls.Class.extend({
       player.onExit(function () {
         purchase.cancel(player.depositAccount);
 
-        log.info(player.name + " has left the game.");
+        console.info(player.name + " has left the game.");
         if (player.hasGuild()) {
           self.pushToGuild(
             player.getGuild(),
@@ -231,9 +274,9 @@ module.exports = World = cls.Class.extend({
         }
       });
     });
-  },
+  }
 
-  run: function (mapFilePath) {
+  run(mapFilePath) {
     var self = this;
 
     this.map = new Map(mapFilePath);
@@ -290,38 +333,38 @@ module.exports = World = cls.Class.extend({
       }
     }, 1000 / this.ups);
 
-    log.info("" + this.id + " created (capacity: " + this.maxPlayers + " players).");
-  },
+    console.info("" + this.id + " created (capacity: " + this.maxPlayers + " players).");
+  }
 
-  setUpdatesPerSecond: function (ups) {
+  setUpdatesPerSecond(ups) {
     this.ups = ups;
-  },
+  }
 
-  onInit: function (callback) {
+  onInit(callback) {
     this.init_callback = callback;
-  },
+  }
 
-  onPlayerConnect: function (callback) {
+  onPlayerConnect(callback) {
     this.connect_callback = callback;
-  },
+  }
 
-  onPlayerEnter: function (callback) {
+  onPlayerEnter(callback) {
     this.enter_callback = callback;
-  },
+  }
 
-  onPlayerAdded: function (callback) {
+  onPlayerAdded(callback) {
     this.added_callback = callback;
-  },
+  }
 
-  onPlayerRemoved: function (callback) {
+  onPlayerRemoved(callback) {
     this.removed_callback = callback;
-  },
+  }
 
-  onRegenTick: function (callback) {
+  onRegenTick(callback) {
     this.regen_callback = callback;
-  },
+  }
 
-  pushRelevantEntityListTo: function (player) {
+  pushRelevantEntityListTo(player) {
     var entities;
 
     if (player && player.group in this.groups) {
@@ -336,9 +379,9 @@ module.exports = World = cls.Class.extend({
         this.pushToPlayer(player, new Messages.List(entities));
       }
     }
-  },
+  }
 
-  pushSpawnsToPlayer: function (player, ids) {
+  pushSpawnsToPlayer(player, ids) {
     var self = this;
 
     _.each(ids, function (id) {
@@ -348,18 +391,18 @@ module.exports = World = cls.Class.extend({
       }
     });
 
-    log.debug("Pushed " + _.size(ids) + " new spawns to " + player.id);
-  },
+    console.debug("Pushed " + _.size(ids) + " new spawns to " + player.id);
+  }
 
-  pushToPlayer: function (player, message) {
+  pushToPlayer(player, message) {
     if (player && player.id in this.outgoingQueues) {
       this.outgoingQueues[player.id].push(message.serialize());
     } else {
-      log.error("pushToPlayer: player was undefined");
+      console.error("pushToPlayer: player was undefined");
     }
-  },
+  }
 
-  pushToGuild: function (guild, message, except) {
+  pushToGuild(guild, message, except) {
     var self = this;
 
     if (guild) {
@@ -375,11 +418,11 @@ module.exports = World = cls.Class.extend({
         });
       }
     } else {
-      log.error("pushToGuild: guild was undefined");
+      console.error("pushToGuild: guild was undefined");
     }
-  },
+  }
 
-  pushToGroup: function (groupId, message, ignoredPlayer) {
+  pushToGroup(groupId, message, ignoredPlayer?: number) {
     var self = this;
     var group = this.groups[groupId];
 
@@ -390,18 +433,18 @@ module.exports = World = cls.Class.extend({
         }
       });
     } else {
-      log.error("groupId: " + groupId + " is not a valid group");
+      console.error("groupId: " + groupId + " is not a valid group");
     }
-  },
+  }
 
-  pushToAdjacentGroups: function (groupId, message, ignoredPlayer) {
+  pushToAdjacentGroups(groupId, message, ignoredPlayer?: any) {
     var self = this;
     self.map.forEachAdjacentGroup(groupId, function (id) {
       self.pushToGroup(id, message, ignoredPlayer);
     });
-  },
+  }
 
-  pushToPreviousGroups: function (player, message) {
+  pushToPreviousGroups(player, message) {
     var self = this;
 
     // Push this message to all groups which are not going to be updated anymore,
@@ -410,19 +453,18 @@ module.exports = World = cls.Class.extend({
       self.pushToGroup(id, message);
     });
     player.recentlyLeftGroups = [];
-  },
+  }
 
-  pushBroadcast: function (message, ignoredPlayer) {
+  pushBroadcast(message, ignoredPlayer?: any) {
     for (var id in this.outgoingQueues) {
       if (id != ignoredPlayer) {
         this.outgoingQueues[id].push(message.serialize());
       }
     }
-  },
+  }
 
-  processQueues: function () {
-    var self = this,
-      connection;
+  processQueues() {
+    var connection;
 
     for (var id in this.outgoingQueues) {
       if (this.outgoingQueues[id].length > 0) {
@@ -433,14 +475,14 @@ module.exports = World = cls.Class.extend({
         this.outgoingQueues[id] = [];
       }
     }
-  },
+  }
 
-  addEntity: function (entity) {
+  addEntity(entity) {
     this.entities[entity.id] = entity;
     this.handleEntityGroupMembership(entity);
-  },
+  }
 
-  removeEntity: function (entity) {
+  removeEntity(entity) {
     if (entity.id in this.entities) {
       delete this.entities[entity.id];
     }
@@ -482,10 +524,10 @@ module.exports = World = cls.Class.extend({
 
     entity.destroy(delay);
     this.removeFromGroups(entity);
-    log.debug("Removed " + Types.getKindAsString(entity.kind) + " : " + entity.id);
-  },
+    console.debug("Removed " + Types.getKindAsString(entity.kind) + " : " + entity.id);
+  }
 
-  joinGuild: function (player, guildId, answer) {
+  joinGuild(player, guildId, answer?: string) {
     if (typeof this.guilds[guildId] === "undefined") {
       this.pushToPlayer(player, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.DOESNOTEXIST, guildId));
     }
@@ -501,18 +543,18 @@ module.exports = World = cls.Class.extend({
       return res;
     }
     return false;
-  },
+  }
 
-  reloadGuild: function (guildId, guildName) {
-    var res = false;
-    var lastItem = 0;
+  reloadGuild(guildId, guildName) {
+    var res: any = false;
+    var lastItem: any = 0;
     if (typeof this.guilds[guildId] !== "undefined") {
       if (this.guilds[guildId].name === guildName) {
         res = guildId;
       }
     }
     if (res === false) {
-      _.every(this.guilds, function (guild, key) {
+      _.every(this.guilds, function (guild: any, key) {
         if (guild.name === guildName) {
           res = parseInt(key, 10);
           return false;
@@ -532,12 +574,12 @@ module.exports = World = cls.Class.extend({
       res = guildId;
     }
     return res;
-  },
+  }
 
-  addGuild: function (guildName) {
-    var res = true;
+  addGuild(guildName) {
+    var res: any = true;
     var id = 0; //an ID here
-    res = _.every(this.guilds, function (guild, key) {
+    res = _.every(this.guilds, function (guild: any, key) {
       id = parseInt(key, 10) + 1;
       return guild.name !== guildName;
     });
@@ -546,9 +588,9 @@ module.exports = World = cls.Class.extend({
       res = id;
     }
     return res;
-  },
+  }
 
-  addPlayer: function (player, guildId) {
+  addPlayer(player, guildId) {
     this.addEntity(player);
     this.players[player.id] = player;
     this.outgoingQueues[player.id] = [];
@@ -557,9 +599,9 @@ module.exports = World = cls.Class.extend({
       res = this.joinGuild(player, guildId);
     }
     return res;
-  },
+  }
 
-  removePlayer: function (player) {
+  removePlayer(player) {
     player.broadcast(player.despawn());
     this.removeEntity(player);
     if (player.hasGuild()) {
@@ -567,22 +609,23 @@ module.exports = World = cls.Class.extend({
     }
     delete this.players[player.id];
     delete this.outgoingQueues[player.id];
-  },
-  loggedInPlayer: function (name) {
+  }
+
+  loggedInPlayer(name) {
     for (var id in this.players) {
       if (this.players[id].name === name) {
         if (!this.players[id].isDead) return true;
       }
     }
     return false;
-  },
+  }
 
-  addMob: function (mob) {
+  addMob(mob) {
     this.addEntity(mob);
     this.mobs[mob.id] = mob;
-  },
+  }
 
-  addNpc: function (kind, x, y) {
+  addNpc(kind, x, y) {
     var self = this;
     var npc = new Npc("8" + x + "" + y, kind, x, y);
 
@@ -604,16 +647,16 @@ module.exports = World = cls.Class.extend({
     }
     this.npcs[npc.id] = npc;
     return npc;
-  },
+  }
 
-  addItem: function (item) {
+  addItem(item) {
     this.addEntity(item);
     this.items[item.id] = item;
 
     return item;
-  },
+  }
 
-  startCowLevel: function () {
+  startCowLevel() {
     this.cowTotal = 0;
     this.cowLevelClock = 15 * 60; // 15 minutes
 
@@ -632,7 +675,7 @@ module.exports = World = cls.Class.extend({
 
     cowCoords.map(({ x, y }, coordsIndex) => {
       // Spawn the surrounding cows
-      const cowCount = Math.ceil(Utils.randomRange(8, 24));
+      const cowCount = Math.ceil(randomRange(8, 24));
       this.cowTotal += cowCount;
 
       for (let i = 0; i < cowCount; i++) {
@@ -664,9 +707,9 @@ module.exports = World = cls.Class.extend({
         this.endCowLevel();
       }
     }, 1000);
-  },
+  }
 
-  endCowLevel: function (isCompleted = false) {
+  endCowLevel(isCompleted = false) {
     this.cowLevelInterval = null;
     this.cowLevelClock = null;
 
@@ -683,9 +726,9 @@ module.exports = World = cls.Class.extend({
       delete this.entities[entityId];
       delete this.mobs[entityId];
     });
-  },
+  }
 
-  createItem: function (kind, x, y) {
+  createItem(kind, x, y) {
     var id = "9" + this.itemCount++,
       item = null;
 
@@ -695,33 +738,33 @@ module.exports = World = cls.Class.extend({
       item = new Item(id, kind, x, y);
     }
     return item;
-  },
+  }
 
-  createChest: function (x, y, items) {
+  createChest(x, y, items) {
     var chest = this.createItem(Types.Entities.CHEST, x, y);
     chest.setItems(items);
 
     return chest;
-  },
+  }
 
-  addStaticItem: function (item) {
+  addStaticItem(item) {
     item.isStatic = true;
     item.onRespawn(this.addStaticItem.bind(this, item));
 
     return this.addItem(item);
-  },
+  }
 
-  addItemFromChest: function (kind, x, y) {
+  addItemFromChest(kind, x, y) {
     var item = this.createItem(kind, x, y);
     item.isFromChest = true;
 
     return this.addItem(item);
-  },
+  }
 
   /**
    * The mob will no longer be registered as an attacker of its current target.
    */
-  clearMobAggroLink: function (mob) {
+  clearMobAggroLink(mob) {
     var player = null;
     if (mob.target) {
       player = this.getEntityById(mob.target);
@@ -729,9 +772,9 @@ module.exports = World = cls.Class.extend({
         player.removeAttacker(mob);
       }
     }
-  },
+  }
 
-  clearMobHateLinks: function (mob) {
+  clearMobHateLinks(mob) {
     var self = this;
     if (mob) {
       _.each(mob.hateList, function (obj) {
@@ -741,35 +784,34 @@ module.exports = World = cls.Class.extend({
         }
       });
     }
-  },
+  }
 
-  forEachEntity: function (callback) {
+  forEachEntity(callback) {
     for (var id in this.entities) {
       callback(this.entities[id]);
     }
-  },
+  }
 
-  forEachPlayer: function (callback) {
+  forEachPlayer(callback) {
     for (var id in this.players) {
       callback(this.players[id]);
     }
-  },
+  }
 
-  forEachMob: function (callback) {
+  forEachMob(callback) {
     for (var id in this.mobs) {
       callback(this.mobs[id]);
     }
-  },
+  }
 
-  forEachCharacter: function (callback) {
+  forEachCharacter(callback) {
     this.forEachPlayer(callback);
     this.forEachMob(callback);
-  },
+  }
 
-  handleMobHate: function (mobId, playerId, hatePoints) {
-    var mob = this.getEntityById(mobId),
-      player = this.getEntityById(playerId),
-      mostHated;
+  handleMobHate(mobId, playerId, hatePoints) {
+    var mob = this.getEntityById(mobId);
+    var player = this.getEntityById(playerId);
 
     if (player && mob) {
       mob.increaseHateFor(playerId, hatePoints);
@@ -786,9 +828,9 @@ module.exports = World = cls.Class.extend({
         this.chooseMobTarget(mob);
       }
     }
-  },
+  }
 
-  chooseMobTarget: function (mob, hateRank) {
+  chooseMobTarget(mob, hateRank?: number) {
     var player = this.getEntityById(mob.getHatedPlayerId(hateRank));
 
     // If the mob is not already attacking the player, create an attack link between them.
@@ -801,27 +843,27 @@ module.exports = World = cls.Class.extend({
       mob.setTarget(player);
 
       this.broadcastAttacker(mob);
-      log.debug(mob.id + " is now attacking " + player.id);
+      console.debug(mob.id + " is now attacking " + player.id);
     }
-  },
+  }
 
-  onEntityAttack: function (callback) {
+  onEntityAttack(callback) {
     this.attack_callback = callback;
-  },
+  }
 
-  onEntityRaise: function (callback) {
+  onEntityRaise(callback) {
     this.raise_callback = callback;
-  },
+  }
 
-  getEntityById: function (id) {
+  getEntityById(id) {
     if (id in this.entities) {
       return this.entities[id];
     } else {
-      log.error("Unknown entity : " + id);
+      console.error("Unknown entity : " + id);
     }
-  },
+  }
 
-  getPlayerCount: function () {
+  getPlayerCount() {
     var count = 0;
     for (var p in this.players) {
       if (this.players.hasOwnProperty(p)) {
@@ -829,11 +871,12 @@ module.exports = World = cls.Class.extend({
       }
     }
     return count;
-  },
+  }
 
-  getPlayerPopulation: function () {
+  getPlayerPopulation() {
     let players = _.sortBy(
-      Object.values(this.players).reduce((acc, { name, level, hash, hash1 }) => {
+      // @ts-ignore
+      Object.values(this.players).reduce((acc: any[], { name, level, hash, hash1 }) => {
         acc.push({
           name,
           level,
@@ -847,18 +890,18 @@ module.exports = World = cls.Class.extend({
     );
 
     return players;
-  },
+  }
 
-  broadcastAttacker: function (character) {
+  broadcastAttacker(character) {
     if (character) {
       this.pushToAdjacentGroups(character.group, character.attack(), character.id);
     }
     if (this.attack_callback) {
       this.attack_callback(character);
     }
-  },
+  }
 
-  startRaiseInterval: function (character, mob) {
+  startRaiseInterval(character, mob) {
     this.stopRaiseInterval();
 
     const raiseZombies = () => {
@@ -906,14 +949,14 @@ module.exports = World = cls.Class.extend({
     }, 7500);
 
     raiseZombies();
-  },
+  }
 
-  stopRaiseInterval: function () {
+  stopRaiseInterval() {
     clearInterval(this.raiseInterval);
     this.raiseInterval = null;
-  },
+  }
 
-  broadcastRaise: function (character, mobId) {
+  broadcastRaise(character, mobId) {
     if (character && mobId) {
       this.pushToAdjacentGroups(character.group, character.raise(mobId));
     }
@@ -921,9 +964,9 @@ module.exports = World = cls.Class.extend({
       // @NOTE May need for raising zombies?
       // this.raise_callback(mob);
     }
-  },
+  }
 
-  receivedExp: function (player, mob) {
+  receivedExp(player, mob) {
     const playerLevel = player.level;
     const mobLevel = Types.getMobLevel(mob.kind);
 
@@ -953,9 +996,9 @@ module.exports = World = cls.Class.extend({
     exp = Math.round((parseInt(exp) * player.bonus.exp) / 100 + parseInt(exp));
 
     return exp;
-  },
+  }
 
-  handleHurtEntity: function ({ entity, attacker, damage, isCritical = false, isBlocked = false }) {
+  handleHurtEntity({ entity, attacker, damage, isCritical = false, isBlocked = false }) {
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
       this.pushToPlayer(entity, entity.health({ isHurt: true }));
@@ -1003,23 +1046,23 @@ module.exports = World = cls.Class.extend({
 
       this.removeEntity(entity);
     }
-  },
+  }
 
-  despawn: function (entity) {
+  despawn(entity) {
     this.pushToAdjacentGroups(entity.group, entity.despawn());
 
     if (entity.id in this.entities) {
       this.removeEntity(entity);
     }
-  },
+  }
 
-  despawnZombies: function () {
+  despawnZombies() {
     this.zombies.forEach(zombie => {
       this.despawn(zombie);
     });
-  },
+  }
 
-  spawnStaticEntities: function () {
+  spawnStaticEntities() {
     var self = this;
     var count = 0;
 
@@ -1060,16 +1103,16 @@ module.exports = World = cls.Class.extend({
         self.addStaticItem(self.createItem(kind, pos.x + 1, pos.y));
       }
     });
-  },
+  }
 
-  isValidPosition: function (x, y) {
+  isValidPosition(x, y) {
     if (this.map && _.isNumber(x) && _.isNumber(y) && !this.map.isOutOfBounds(x, y) && !this.map.isColliding(x, y)) {
       return true;
     }
     return false;
-  },
+  }
 
-  handlePlayerVanish: function (player) {
+  handlePlayerVanish(player) {
     var self = this;
     var previousAttackers = [];
 
@@ -1080,7 +1123,7 @@ module.exports = World = cls.Class.extend({
     });
 
     // When a player dies or teleports, all of his attackers go and attack their second most hated player or return to their original x,y.
-    Object.entries(player.haters).map(([id, mob]) => {
+    Object.entries(player.haters).map(([_id, mob]: [any, Mob]) => {
       player.removeHater(mob);
       mob.clearTarget();
       mob.forgetPlayer(player.id, 1000);
@@ -1103,44 +1146,44 @@ module.exports = World = cls.Class.extend({
     });
 
     this.handleEntityGroupMembership(player);
-  },
+  }
 
-  setPlayerCount: function (count) {
+  setPlayerCount(count) {
     this.playerCount = count;
-  },
+  }
 
-  incrementPlayerCount: function () {
+  incrementPlayerCount() {
     this.setPlayerCount(this.playerCount + 1);
-  },
+  }
 
-  decrementPlayerCount: function () {
+  decrementPlayerCount() {
     if (this.playerCount > 0) {
       this.setPlayerCount(this.playerCount - 1);
     }
-  },
+  }
 
-  getDroppedItem: function (mob, attacker) {
+  getDroppedItem(mob, attacker) {
     var kind = Types.getKindAsString(mob.kind);
     var drops = Properties[kind].drops;
-    var v = Utils.random(100);
+    var v = random(100);
     var p = 0;
     var item = null;
 
-    // var randomDrop = Utils.random(1);
+    // var randomDrop = random(1);
     // var drops = ["amuletcow"];
     // // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
 
     if (mob.kind === Types.Entities.COW) {
-      if (Utils.random(200) === 69) {
+      if (random(200) === 69) {
         return this.addItem(this.createItem(Types.getKindFromString("diamondsword"), mob.x, mob.y));
       }
     }
     if (mob.kind >= Types.Entities.EYE) {
-      const random = Utils.random(10000);
-      if (random === 420) {
+      const vv = random(10000);
+      if (vv === 420) {
         return this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
-      } else if (mob.kind >= Types.Entities.RAT2 && random === 6969) {
+      } else if (mob.kind >= Types.Entities.RAT2 && vv === 6969) {
         return this.addItem(this.createItem(Types.getKindFromString("ringfountain"), mob.x, mob.y));
       }
     }
@@ -1160,13 +1203,13 @@ module.exports = World = cls.Class.extend({
             const mobLevel = Types.getMobLevel(mob.kind);
             if (attacker && attacker.level - 6 > mobLevel) {
               // @NOTE Reduce scroll drops to prevent crazy farming
-              if (Utils.random(4) === 1) {
+              if (random(4) === 1) {
                 break;
               }
             }
 
             if (mob.kind >= Types.Entities.YETI) {
-              var blessedScroll = Utils.random(25);
+              var blessedScroll = random(25);
 
               if (blessedScroll === 21) {
                 itemKind = Types.Entities.SCROLLUPGRADEBLESSED;
@@ -1181,14 +1224,14 @@ module.exports = World = cls.Class.extend({
     }
 
     return item;
-  },
+  }
 
-  onMobMoveCallback: function (mob) {
+  onMobMoveCallback(mob) {
     this.pushToAdjacentGroups(mob.group, new Messages.Move(mob));
     this.handleEntityGroupMembership(mob);
-  },
+  }
 
-  findPositionNextTo: function (entity, target) {
+  findPositionNextTo(entity, target) {
     var valid = false,
       pos;
 
@@ -1197,18 +1240,18 @@ module.exports = World = cls.Class.extend({
       valid = this.isValidPosition(pos.x, pos.y);
     }
     return pos;
-  },
+  }
 
-  initZoneGroups: function () {
+  initZoneGroups() {
     var self = this;
 
     this.map.forEachGroup(function (id) {
       self.groups[id] = { entities: {}, players: [], incoming: [] };
     });
     this.zoneGroupsReady = true;
-  },
+  }
 
-  removeFromGroups: function (entity) {
+  removeFromGroups(entity) {
     var self = this,
       oldGroups = [];
 
@@ -1229,13 +1272,13 @@ module.exports = World = cls.Class.extend({
       entity.group = null;
     }
     return oldGroups;
-  },
+  }
 
   /**
    * Registers an entity as "incoming" into several groups, meaning that it just entered them.
    * All players inside these groups will receive a Spawn message when WorldServer.processGroups is called.
    */
-  addAsIncomingToGroup: function (entity, groupId) {
+  addAsIncomingToGroup(entity, groupId) {
     var self = this,
       isChest = entity && entity instanceof Chest,
       isItem = entity && entity instanceof Item,
@@ -1256,9 +1299,9 @@ module.exports = World = cls.Class.extend({
         }
       });
     }
-  },
+  }
 
-  addToGroup: function (entity, groupId) {
+  addToGroup(entity, groupId) {
     var self = this,
       newGroups = [];
 
@@ -1274,16 +1317,16 @@ module.exports = World = cls.Class.extend({
       }
     }
     return newGroups;
-  },
+  }
 
-  logGroupPlayers: function (groupId) {
-    log.debug("Players inside group " + groupId + ":");
+  logGroupPlayers(groupId) {
+    console.debug("Players inside group " + groupId + ":");
     _.each(this.groups[groupId].players, function (id) {
-      log.debug("- player " + id);
+      console.debug("- player " + id);
     });
-  },
+  }
 
-  handleEntityGroupMembership: function (entity) {
+  handleEntityGroupMembership(entity) {
     var hasChangedGroups = false;
     if (entity) {
       var groupId = this.map.getGroupIdFromPosition(entity.x, entity.y);
@@ -1295,21 +1338,20 @@ module.exports = World = cls.Class.extend({
 
         if (_.size(oldGroups) > 0) {
           entity.recentlyLeftGroups = _.difference(oldGroups, newGroups);
-          log.debug("group diff: " + entity.recentlyLeftGroups);
+          // console.debug("group diff: " + entity.recentlyLeftGroups);
         }
       }
     }
     return hasChangedGroups;
-  },
+  }
 
-  processGroups: function () {
+  processGroups() {
     var self = this;
 
     if (this.zoneGroupsReady) {
       this.map.forEachGroup(function (id) {
-        var spawns = [];
         if (self.groups[id].incoming.length > 0) {
-          spawns = _.each(self.groups[id].incoming, function (entity) {
+          _.each(self.groups[id].incoming, function (entity) {
             if (entity instanceof Player) {
               self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
             } else {
@@ -1320,43 +1362,43 @@ module.exports = World = cls.Class.extend({
         }
       });
     }
-  },
+  }
 
-  moveEntity: function (entity, x, y) {
+  moveEntity(entity, x, y) {
     if (entity) {
       entity.setPosition(x, y);
       this.handleEntityGroupMembership(entity);
     }
-  },
+  }
 
-  handleItemDespawn: function (item) {
+  handleItemDespawn(item) {
     var self = this;
 
     if (item) {
       item.handleDespawn({
         beforeBlinkDelay: 10000,
-        blinkCallback: function () {
+        blinkCallback() {
           self.pushToAdjacentGroups(item.group, new Messages.Blink(item));
         },
         blinkingDuration: 4000,
-        despawnCallback: function () {
+        despawnCallback() {
           self.pushToAdjacentGroups(item.group, new Messages.Destroy(item));
           self.removeEntity(item);
         },
       });
     }
-  },
+  }
 
-  handleEmptyMobArea: function (area) {},
+  handleEmptyMobArea(_area) {}
 
-  handleEmptyChestArea: function (area) {
+  handleEmptyChestArea(area) {
     if (area) {
       var chest = this.addItem(this.createChest(area.chestX, area.chestY, area.items));
       this.handleItemDespawn(chest);
     }
-  },
+  }
 
-  handleOpenedChest: function (chest, player) {
+  handleOpenedChest(chest, _player) {
     this.pushToAdjacentGroups(chest.group, chest.despawn());
     this.removeEntity(chest);
 
@@ -1365,39 +1407,33 @@ module.exports = World = cls.Class.extend({
       var item = this.addItemFromChest(kind, chest.x, chest.y);
       this.handleItemDespawn(item);
     }
-  },
-  getPlayerByName: function (name) {
+  }
+
+  getPlayerByName(name) {
     for (var id in this.players) {
       if (this.players[id].name === name) {
         return this.players[id];
       }
     }
     return null;
-  },
-  // removePlayer: function (player) {
+  }
+
+  // removePlayer (player) {
   //   player.broadcast(player.despawn());
   //   this.removeEntity(player);
   //   delete this.players[player.id];
   //   delete this.outgoingQueues[player.id];
   // },
-  loggedInPlayer: function (name) {
-    for (var id in this.players) {
-      if (this.players[id].name === name) {
-        if (!this.players[id].isDead) return true;
-      }
-    }
-    return false;
-  },
 
-  tryAddingMobToChestArea: function (mob) {
+  tryAddingMobToChestArea(mob) {
     _.each(this.chestAreas, function (area) {
       if (area.contains(mob)) {
         area.addToArea(mob);
       }
     });
-  },
+  }
 
-  getPlayersCountInBossRoom: function (bossArea) {
+  getPlayersCountInBossRoom(bossArea) {
     let counter = 0;
 
     function isInsideBossRoom(entity) {
@@ -1413,7 +1449,7 @@ module.exports = World = cls.Class.extend({
       }
     }
 
-    for (id in this.players) {
+    for (let id in this.players) {
       if (isInsideBossRoom(this.players[id])) {
         counter += 1;
         // Max difficulty of 6
@@ -1423,9 +1459,9 @@ module.exports = World = cls.Class.extend({
       }
     }
     return counter;
-  },
+  }
 
-  updatePopulation: function ({ totalPlayers, levelupPlayer } = {}) {
+  updatePopulation({ totalPlayers = 0, levelupPlayer = undefined } = {}) {
     this.pushBroadcast(
       new Messages.Population(
         this.playerCount,
@@ -1434,9 +1470,9 @@ module.exports = World = cls.Class.extend({
         levelupPlayer,
       ),
     );
-  },
+  }
 
-  shuffle: function (array) {
+  shuffle(array) {
     let currentIndex = array.length,
       randomIndex;
 
@@ -1451,5 +1487,7 @@ module.exports = World = cls.Class.extend({
     }
 
     return array;
-  },
-});
+  }
+}
+
+export default World;

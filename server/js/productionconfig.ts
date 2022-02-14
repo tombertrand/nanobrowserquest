@@ -27,4 +27,4 @@ class ProductionConfig {
   }
 }
 
-module.exports = ProductionConfig;
+export default ProductionConfig;

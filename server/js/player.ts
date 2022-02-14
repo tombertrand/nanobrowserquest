@@ -99,10 +99,12 @@ class Player extends Character {
   guildId: any;
   depositAccountIndex: number;
   stash: any;
+  databaseHandler: any;
 
   constructor(connection, worldServer, databaseHandler) {
     super(connection.id, "player", Types.Entities.WARRIOR, 0, 0);
     purchase.databaseHandler = databaseHandler;
+    this.databaseHandler = databaseHandler;
 
     var self = this;
 
@@ -1154,16 +1156,16 @@ class Player extends Character {
     if (["ring1", "ring2"].includes(type)) {
       if (type === "ring1") {
         this.equipRing1(item, level, bonus);
-        databaseHandler.equipRing1({ name: this.name, item, level, bonus });
+        this.databaseHandler.equipRing1({ name: this.name, item, level, bonus });
       } else if (type === "ring2") {
         this.equipRing2(item, level, bonus);
-        databaseHandler.equipRing2({ name: this.name, item, level, bonus });
+        this.databaseHandler.equipRing2({ name: this.name, item, level, bonus });
       }
     } else if (["amulet"].includes(type)) {
       this.equipAmulet(item, level, bonus);
-      databaseHandler.equipAmulet({ name: this.name, item, level, bonus });
+      this.databaseHandler.equipAmulet({ name: this.name, item, level, bonus });
     } else if (["belt"].includes(type)) {
-      databaseHandler.equipBelt(this.name, item, level, bonus);
+      this.databaseHandler.equipBelt(this.name, item, level, bonus);
       this.equipBelt(item, level, bonus);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
@@ -1171,10 +1173,10 @@ class Player extends Character {
       console.debug(this.name + " equips " + item);
 
       if (Types.isArmor(kind)) {
-        databaseHandler.equipArmor(this.name, item, level, bonus);
+        this.databaseHandler.equipArmor(this.name, item, level, bonus);
         this.equipArmor(item, kind, level, bonus);
       } else if (Types.isWeapon(kind)) {
-        databaseHandler.equipWeapon(this.name, item, level, bonus);
+        this.databaseHandler.equipWeapon(this.name, item, level, bonus);
         this.equipWeapon(item, kind, level, bonus);
       }
     }
@@ -1281,7 +1283,7 @@ class Player extends Character {
 
   incExp(exp) {
     this.experience = this.experience + exp;
-    databaseHandler.setExp(this.name, this.experience);
+    this.databaseHandler.setExp(this.name, this.experience);
     var origLevel = this.level;
     this.level = Types.getLevel(this.experience);
     if (origLevel !== this.level) {

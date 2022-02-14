@@ -2,7 +2,6 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 import Messages from "./message";
-import {} from "./utils";
 
 class Guild {
   members: {};

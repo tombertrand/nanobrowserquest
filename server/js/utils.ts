@@ -1,5 +1,5 @@
 const sanitizer = require("sanitizer");
-const Types = require("../../shared/js/gametypes");
+const { Types } = require("../../shared/js/gametypes");
 const BigNumber = require("bignumber.js");
 
 export const sanitize = function (string) {

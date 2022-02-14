@@ -1,7 +1,7 @@
 import fs from "fs";
 import * as _ from "lodash";
 
-import Area from "./area";
+import { Area } from "./area";
 import Checkpoint from "./checkpoint";
 import { randomInt } from "./utils";
 

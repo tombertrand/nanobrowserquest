@@ -1,12 +1,12 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import {ChestArea,MobArea} from "./area";
 import Character from "./character";
-import ChestArea from "./chestarea";
+// import ChestArea from "./chestarea";
 import Messages from "./message";
-import MobArea from "./mobarea";
 import Properties from "./properties";
-import { distanceTo,random } from "./utils";
+import { distanceTo, random } from "./utils";
 
 class Mob extends Character {
   spawningX: any;
@@ -122,13 +122,13 @@ class Mob extends Character {
     }
   }
 
-  getHatedPlayerId(hateRank) {
-    var i,
-      playerId,
-      sorted = _.sortBy(this.hateList, function (obj) {
-        return obj.hate;
-      }),
-      size = _.size(this.hateList);
+  getHatedPlayerId(hateRank?: number) {
+    var i;
+    var playerId;
+    var sorted = _.sortBy(this.hateList, function (obj) {
+      return obj.hate;
+    });
+    var size = _.size(this.hateList);
 
     if (hateRank && hateRank <= size) {
       i = size - hateRank;

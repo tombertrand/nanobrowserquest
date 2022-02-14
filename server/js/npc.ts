@@ -2,6 +2,7 @@ import Entity from "./entity";
 
 class Npc extends Entity {
   respawnCallback: any;
+  isDead: boolean;
 
   constructor(id, kind, x, y) {
     super(id, "npc", kind, x, y);
