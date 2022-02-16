@@ -179,7 +179,7 @@ var Properties: any = {
 
   boss: {
     drops: {
-      goldensword: 85,
+      goldensword: 80,
       skeletonkingcage: 20,
     },
     hp: 1200,
@@ -345,8 +345,9 @@ var Properties: any = {
 
   cowking: {
     drops: {
-      scrollupgradehigh: 85,
+      scrollupgradehigh: 80,
       diamondsword: 5,
+      diamondarmor: 5,
       amuletcow: 5,
       beltfrozen: 5,
     },

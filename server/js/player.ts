@@ -102,11 +102,13 @@ class Player extends Character {
   databaseHandler: any;
 
   constructor(connection, worldServer, databaseHandler) {
-    super(connection.id, "player", Types.Entities.WARRIOR, 0, 0);
-    purchase.databaseHandler = databaseHandler;
-    this.databaseHandler = databaseHandler;
+    //@ts-ignore
+    super(connection.id, "player", Types.Entities.WARRIOR);
 
     var self = this;
+
+    purchase.databaseHandler = databaseHandler;
+    this.databaseHandler = databaseHandler;
 
     this.server = worldServer;
     this.connection = connection;
@@ -143,7 +145,7 @@ class Player extends Character {
     this.hash1 = null;
 
     this.connection.listen(async message => {
-      var action = parseInt(message[0]);
+      const action = parseInt(message[0]);
 
       console.debug("Received: " + message);
       if (!this.formatChecker.check(message)) {
@@ -171,6 +173,8 @@ class Player extends Character {
       if (action === Types.Messages.CREATE || action === Types.Messages.LOGIN) {
         // Get IP from CloudFlare
         const clientIP = self.connection._connection.handshake.headers["cf-connecting-ip"];
+
+        console.log("~~~~process.env.NODE_ENV", process.env.NODE_ENV);
 
         if (process.env.NODE_ENV === "production" && !clientIP) {
           self.connection.sendUTF8("invalidconnection");
@@ -1118,7 +1122,7 @@ class Player extends Character {
       console.log("Error: ", err);
       Sentry.captureException(err, {
         user: {
-          username: self.name,
+          username: this.name,
         },
       });
     }

@@ -127,8 +127,10 @@ export const Types: any = {
     REDARMOR: 25,
     GOLDENARMOR: 26,
     BLUEARMOR: 87,
-    FROZENARMOR: 78,
     HORNEDARMOR: 83,
+    FROZENARMOR: 78,
+    DIAMONDARMOR: 127,
+    SPIKEARMOR: 128,
 
     // Belts
     BELTLEATHER: 85,
@@ -289,6 +291,8 @@ Types.Entities.Armors = [
   Types.Entities.BLUEARMOR,
   Types.Entities.HORNEDARMOR,
   Types.Entities.FROZENARMOR,
+  Types.Entities.DIAMONDARMOR,
+  Types.Entities.SPIKEARMOR,
 ];
 
 Types.Entities.Belts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
@@ -373,6 +377,7 @@ export const kinds = {
   diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 26, 36],
 
   // kind, type, level, defense
+  firefox: [Types.Entities.FIREFOX, "armor"],
   clotharmor: [Types.Entities.CLOTHARMOR, "armor", "Cloth Armor", 1, 1],
   leatherarmor: [Types.Entities.LEATHERARMOR, "armor", "Leather Armor", 1, 3],
   mailarmor: [Types.Entities.MAILARMOR, "armor", "Mail Armor", 3, 5],
@@ -380,9 +385,10 @@ export const kinds = {
   redarmor: [Types.Entities.REDARMOR, "armor", "Ruby Armor", 7, 15],
   goldenarmor: [Types.Entities.GOLDENARMOR, "armor", "Golden Armor", 10, 20],
   bluearmor: [Types.Entities.BLUEARMOR, "armor", "Sapphire Armor", 14, 24],
-  hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 14, 28],
-  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 14, 30],
-  firefox: [Types.Entities.FIREFOX, "armor"],
+  hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 18, 28],
+  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 22, 30],
+  diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 26, 32],
+  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 30, 34],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -489,6 +495,8 @@ Types.rankedArmors = [
   Types.Entities.BLUEARMOR,
   Types.Entities.HORNEDARMOR,
   Types.Entities.FROZENARMOR,
+  Types.Entities.DIAMONDARMOR,
+  Types.Entities.SPIKEARMOR,
 ];
 
 Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
@@ -513,9 +521,11 @@ Types.itemUniqueMap = {
   platearmor: ["Green Alternative", 6, 12],
   redarmor: ["Appia's Road", 8, 16],
   goldenarmor: ["Store of Value", 12, 22],
-  bluearmor: ["Firano's Hide", 15, 26],
-  hornedarmor: ["RaiBlocks", 15, 30],
-  frozenarmor: ["Wall of Encrypted Energy", 15, 32],
+  bluearmor: ["Firano's Hide", 14, 26],
+  hornedarmor: ["RaiBlocks", 18, 30],
+  frozenarmor: ["Wall of Encrypted Energy", 24, 32],
+  diamondarmor: ["Zero-knowledge Proof", 28, 34],
+  spikearmor: ["???", 32, 36],
 
   // name, level, defense
   beltleather: ["Proof of Wear", 4, 4],

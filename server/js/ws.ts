@@ -1,7 +1,9 @@
 import express from "express";
 import { createServer } from "http";
 import * as _ from "lodash";
+import path from "path";
 import { Server as SocketServer } from "socket.io";
+import MessageParser from "socket.io-msgpack-parser";
 
 import { random } from "./utils";
 
@@ -18,12 +20,17 @@ export class Server {
     this.port = port;
     var self = this;
 
-    // const app = express();
-    // const server = http.createServer(app);
-    // this.io = new SocketServer();
     const app = express();
-    const httpServer = createServer(app);
-    this.io = new SocketServer(httpServer, {});
+    const server = createServer(app);
+    this.io = new SocketServer(server, { parser: MessageParser });
+
+    app.use(express.static(path.join(process.cwd(), "dist/client")));
+    // this.io = new SocketServer(httpServer, {
+    //   cors: {
+    //     // ~~~~ remove this
+    //     origin: "*",
+    //   },
+    // });
 
     this.io.on("connection", function (connection) {
       console.info("a user connected");
@@ -42,11 +49,10 @@ export class Server {
       self.error_callback();
     });
 
-    this.io.listen(8000);
-
-    // server.listen(port, function () {
-    //   console.info('listening on *:' + port);
-    // });
+    // this.io.listen(port);
+    server.listen(port, function () {
+      console.info("listening on *:" + port);
+    });
   }
 
   _createId() {

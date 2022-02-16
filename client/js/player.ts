@@ -1,4 +1,4 @@
-import { kinds,Types } from "../../shared/js/gametypes";
+import { kinds, Types } from "../../shared/js/gametypes";
 import Character from "./character";
 import Exceptions from "./exceptions";
 
@@ -397,6 +397,8 @@ class Player extends Character {
     return items
       .map((rawItem, slot) => {
         if (!rawItem) return false;
+
+        console.log("~~~rawItem", rawItem);
 
         const [item, levelOrQuantity, bonus] = rawItem.split(":");
         const isWeapon = kinds[item][1] === "weapon";

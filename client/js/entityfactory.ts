@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-
 import Chest from "./chest";
 import Items from "./items";
 import Mobs from "./mobs";
@@ -201,12 +200,20 @@ EntityFactory.builders[Types.Entities.BLUEARMOR] = function (id) {
   return new Items.BlueArmor(id);
 };
 
+EntityFactory.builders[Types.Entities.HORNEDARMOR] = function (id) {
+  return new Items.HornedArmor(id);
+};
+
 EntityFactory.builders[Types.Entities.FROZENARMOR] = function (id) {
   return new Items.FrozenArmor(id);
 };
 
-EntityFactory.builders[Types.Entities.HORNEDARMOR] = function (id) {
-  return new Items.HornedArmor(id);
+EntityFactory.builders[Types.Entities.DIAMONDARMOR] = function (id) {
+  return new Items.DiamondArmor(id);
+};
+
+EntityFactory.builders[Types.Entities.SPIKEARMOR] = function (id) {
+  return new Items.SpikeArmor(id);
 };
 
 EntityFactory.builders[Types.Entities.BELTLEATHER] = function (id) {

@@ -8,7 +8,10 @@
     "start": "nodemon server/js/index.ts",
     "map": "cd tools/maps/ && ./exportmap.js tmx/map.json",
     "test": "make test",
-    "build:client": "webpack --progress --profile --color"
+    "watch:client": "NODE_ENV=development ./node_modules/.bin/webpack-dev-server --progress --open",
+    "watch:server": "nodemon -e ts --exec \"npm run build:server\"",
+    "build:client": "NODE_ENV=production webpack  --progress --color",
+    "build:server": "ts-node server/js/index.ts"
   },
   "dependencies": {
     "@sentry/node": "^6.17.7",
@@ -39,6 +42,7 @@
     "serve-static": "^1.7.1",
     "socket.io": "^4.1.2",
     "socket.io-client": "^4.4.1",
+    "socket.io-msgpack-parser": "^3.0.1",
     "underscore": "^1.13.1",
     "ws": "^8.3.0"
   },

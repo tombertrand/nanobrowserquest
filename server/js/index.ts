@@ -45,14 +45,6 @@ function main(config) {
         // world.updatePopulation();
       });
     }
-    // else {
-    //   // simply fill each world sequentially until they are full
-    //   world = _.detect(worlds, function (world) {
-    //     return world.playerCount < config.nb_players_per_world;
-    //   });
-    //   world.updatePopulation();
-    //   connect();
-    // }
   });
 
   server.onError(function () {
@@ -122,6 +114,5 @@ process.argv.forEach(function (val, index) {
 });
 
 getConfigFile(configPath, function (config) {
-  console.log("~~~config", config);
   main(config);
 });

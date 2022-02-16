@@ -10,21 +10,10 @@
     // "files": true,
 
     "compilerOptions": {
-      // "esModuleInterop": true,
-      // compilerOptions specified here will override those declared below,
-      // but *only* in ts-node.  Useful if you want ts-node and tsc to use
-      // different options with a single tsconfig.json.
-      // "noImplicitAny": false,
-      // "resolveJsonModule": true
-
-      // "module": "ESNext",
-      // "target": "ESNext",
       "module": "commonjs",
-      // "moduleResolution": "node",
-
-      "isolatedModules": true,
-      "noEmit": true,
-      "lib": ["es2020"]
+      "lib": ["es2020"],
+      "baseUrl": "./server",
+      "outDir": "./dist/server",
     }
   },
 
@@ -33,7 +22,7 @@
     "noImplicitUseStrict": true,
     "removeComments": true,
     "skipLibCheck": true,
-    "outDir": "./dist/",
+    "outDir": "./dist/client",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
@@ -44,7 +33,6 @@
     "moduleResolution": "node",
     "isolatedModules": true,
     "noImplicitThis": false
-    // "baseUrl": "."
   },
   "exclude": ["dist/", "node_modules"],
   "include": ["**/*.ts", "**/*.config.js"]

@@ -1,9 +1,9 @@
 import * as _ from "lodash";
 import { io } from "socket.io-client";
+import MessageParser from "socket.io-msgpack-parser";
 
 import { Types } from "../../shared/js/gametypes";
 import EntityFactory from "./entityfactory";
-import BISON from "./lib/bison";
 import Player from "./player";
 
 class GameClient {
@@ -18,7 +18,6 @@ class GameClient {
   notify_callback: any;
   handlers: any;
   receiveSpawnBatch: any;
-  useBison: boolean;
   isListening?: boolean;
   isTimeout?: boolean;
   disconnected_callback: any;
@@ -122,7 +121,6 @@ class GameClient {
     this.handlers[Types.Messages.COWLEVEL_START] = this.receiveCowLevelStart;
     this.handlers[Types.Messages.COWLEVEL_INPROGRESS] = this.receiveCowLevelInProgress;
     this.handlers[Types.Messages.COWLEVEL_END] = this.receiveCowLevelEnd;
-    this.useBison = false;
     this.enable();
   }
 
@@ -142,7 +140,7 @@ class GameClient {
 
     console.info("Trying to connect to server : " + url);
 
-    this.connection = io(url, { forceNew: true, reconnection: false }); // This sets the connection as a socket.io Socket.
+    this.connection = io(url, { forceNew: true, reconnection: false, parser: MessageParser }); // This sets the connection as a socket.io Socket.
 
     if (dispatcherMode) {
       this.connection.on("message", function (e) {
@@ -196,8 +194,8 @@ class GameClient {
         self.receiveMessage(e);
       });
 
-      this.connection.on("error", function (e) {
-        console.error(e, true);
+      this.connection.on("error", function (err) {
+        console.error(err);
       });
 
       this.connection.on("disconnect", function () {
@@ -216,38 +214,23 @@ class GameClient {
   }
 
   sendMessage(json) {
-    var data;
     if (this.connection.connected === true) {
-      if (this.useBison) {
-        data = BISON.encode(json);
-      } else {
-        data = JSON.stringify(json);
-      }
-      this.connection.send(data);
+      this.connection.send(json);
     }
   }
 
   receiveMessage(message) {
-    var data;
-
     if (this.isListening) {
-      if (this.useBison) {
-        data = BISON.decode(message);
-      } else {
-        data = JSON.parse(message);
-      }
-      // console.debug("data: " + message);
-
-      if (data instanceof Array) {
-        if (data[0] instanceof Array) {
+      if (message instanceof Array) {
+        if (message[0] instanceof Array) {
           // Multiple actions received
-          this.receiveActionBatch(data);
+          this.receiveActionBatch(message);
         } else {
           // Only one action received
-          this.receiveAction(data);
+          this.receiveAction(message);
         }
-      } else if (data && data.type) {
-        this.receiveAction(data);
+      } else if (message && message.type) {
+        this.receiveAction(message);
       }
     }
   }

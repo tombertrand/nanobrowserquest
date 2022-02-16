@@ -1,5 +1,4 @@
 import { Types } from "../../shared/js/gametypes";
-
 import Item from "./item";
 
 var Items = {
@@ -115,6 +114,13 @@ var Items = {
     }
   },
 
+  HornedArmor: class HornedArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HORNEDARMOR, "armor");
+      this.lootMessage = "You pick up a horned armor";
+    }
+  },
+
   FrozenArmor: class FrozenArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.FROZENARMOR, "armor");
@@ -122,10 +128,17 @@ var Items = {
     }
   },
 
-  HornedArmor: class HornedArmor extends Item {
+  DiamondArmor: class DiamondArmor extends Item {
     constructor(id) {
-      super(id, Types.Entities.HORNEDARMOR, "armor");
-      this.lootMessage = "You pick up a horned armor";
+      super(id, Types.Entities.DIAMONDARMOR, "armor");
+      this.lootMessage = "You pick up a diamond armor";
+    }
+  },
+
+  SpikeArmor: class SpikeArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SPIKEARMOR, "armor");
+      this.lootMessage = "You pick up a spike armor";
     }
   },
 

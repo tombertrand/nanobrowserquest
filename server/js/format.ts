@@ -59,14 +59,12 @@ class FormatChecker {
       return true;
     } else if (type === Types.Messages.WHO) {
       // WHO messages have a variable amount of params, all of which must be numbers.
-      // @NOTE What is this?
-      return false;
-      // return (
-      //   message.length > 0 &&
-      //   _.all(message, function (param) {
-      //     return _.isNumber(param);
-      //   })
-      // );
+      return (
+        message.length > 0 &&
+        _.every(message, function (param) {
+          return _.isNumber(param);
+        })
+      );
     } else if (type === Types.Messages.LOGIN) {
       // LOGIN with or without guild
       return (

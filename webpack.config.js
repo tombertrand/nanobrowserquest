@@ -11,10 +11,15 @@ module.exports = {
   },
   devServer: {
     static: {
-      directory: path.join(__dirname, "dist"),
+      directory: path.join(__dirname, "dist/client"),
     },
     compress: true,
-    port: 8000,
+    port: 8010,
+    //   proxy: {
+    //     "/": {
+    //       target: "http://localhost:8000",
+    //     },
+    //   },
   },
   module: {
     rules: [
@@ -36,7 +41,7 @@ module.exports = {
   },
   output: {
     filename: "[name].[hash].bundle.js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dist/client"),
     clean: true,
   },
 
