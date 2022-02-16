@@ -1,10 +1,13 @@
+require("dotenv").config();
+
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  mode: "development",
+  mode: process.env.NODE_ENV,
   entry: {
     vendor: ["jquery", "bignumber.js"],
     app: "./client/js/index.ts",
@@ -24,6 +27,13 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(png|svg|jpg|gif)$/,
+        loader: "file-loader",
+        options: {
+          name: "img/[name].[ext]",
+        },
+      },
+      {
         test: /\.[jt]s$/,
         use: "ts-loader",
         exclude: /node_modules/,
@@ -37,6 +47,10 @@ module.exports = {
         },
         type: "javascript/auto",
       },
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, { loader: "css-loader", options: { url: false, sourceMap: true } }],
+      },
     ],
   },
   output: {
@@ -44,7 +58,6 @@ module.exports = {
     path: path.resolve(__dirname, "dist/client"),
     clean: true,
   },
-
   resolve: {
     fallback: {
       fs: false,
@@ -67,21 +80,18 @@ module.exports = {
       "window.$": "jquery",
     }),
     new HtmlWebpackPlugin({
-      // title: 'Fate of the Four',
       template: "./client/index.html",
     }),
-    //  new MiniCssExtractPlugin(miniCssExtractOptions),
+    new MiniCssExtractPlugin({
+      filename: "css/[name].[hash].bundle.css",
+    }),
     new CopyWebpackPlugin({
       patterns: [
         { from: "client/img/", to: "img/" },
         { from: "client/audio/", to: "audio/" },
-        { from: "client/css/", to: "css/" },
         { from: "client/fonts/", to: "fonts/" },
         { from: "client/maps/", to: "maps/" },
         { from: "client/js/mapworker.js", to: "mapworker.js" },
-        // {from: 'client/sprites/', to: 'sprites/'},
-        // {from: 'client/ts/lib/', to: 'lib/'},
-        // {from: `client/config/config.prod.json`, to: 'client/config/config.json'},
       ],
     }),
   ],

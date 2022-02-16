@@ -106,10 +106,10 @@ class MobArea extends Area {
   }
 
   _createMobInsideArea() {
-    var k = Types.getKindFromString(this.kind);
+    var kind = Types.getKindFromString(this.kind);
 
     var pos = this._getRandomPositionInsideArea();
-    var mob = new Mob("1" + this.id + "" + k + "" + this.entities.length, k, pos.x, pos.y);
+    var mob = new Mob("1" + this.id + "" + kind + "" + this.entities.length, kind, pos.x, pos.y);
 
     mob.onMove(this.world.onMobMoveCallback.bind(this.world));
 

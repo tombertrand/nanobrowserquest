@@ -1,5 +1,4 @@
 import { Types } from "../../shared/js/gametypes";
-
 import Character from "./character";
 import Timer from "./timer";
 

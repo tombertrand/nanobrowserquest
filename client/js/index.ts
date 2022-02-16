@@ -5,6 +5,10 @@ import "jquery-ui/ui/widgets/tooltip";
 import "jquery-countdown";
 import "jquery.qrcode";
 import "jquery-ui-touch-punch";
+import "../css/main.css";
+import "../css/achievements.css";
+import "../css/store.css";
+import "jquery-ui/themes/base/all.css";
 
 import * as _ from "lodash";
 

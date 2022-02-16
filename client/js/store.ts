@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 
 import { Types } from "../../shared/js/gametypes";
-
 import { copyToClipboard,raiToRaw } from "./utils";
 
 interface StoreItem extends BackendStoreItem {

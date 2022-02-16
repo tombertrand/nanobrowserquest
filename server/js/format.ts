@@ -35,6 +35,10 @@ class FormatChecker {
   }
 
   check(msg) {
+    if (!msg?.slice) {
+      return false;
+    }
+
     var message = msg.slice(0);
     var type = message[0];
     var format = this.formats[type];

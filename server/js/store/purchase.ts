@@ -140,7 +140,10 @@ class Websocket {
     };
 
     this.connection.onerror = err => {
-      console.debug("WEBSOCKET - onerror");
+      console.debug("WEBSOCKET - onerror", err.message);
+
+
+      
 
       Sentry.captureException(err);
       this.isReady = false;
@@ -162,7 +165,7 @@ class Websocket {
   keepAlive() {
     this.keepAliveInterval = setInterval(() => {
       this.connection.send(JSON.stringify({ action: "ping" }));
-    }, 30000);
+    }, 20000);
   }
 
   registerAccount(account) {

@@ -312,7 +312,7 @@ class Player extends Character {
         console.info("HIT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
 
-        if (mob) {
+        if (mob?.type === "mob") {
           let isCritical = false;
 
           let dmg = Formulas.dmg({
@@ -344,59 +344,71 @@ class Player extends Character {
             }
           }
 
-          // if (dmg > 0) {
-          if (mob.type !== "player") {
-            // Reduce dmg on boss by 20% per player in boss room
-            if (mob.kind === Types.Entities.BOSS) {
-              const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-                x: 140,
-                y: 48,
-                w: 29,
-                h: 25,
-              });
+          // Reduce dmg on boss by 20% per player in boss room
+          if (mob.kind === Types.Entities.BOSS) {
+            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+              x: 140,
+              y: 48,
+              w: 29,
+              h: 25,
+            });
 
-              const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-              dmg = Math.floor(dmg * percentReduce);
-            } else if (mob.kind === Types.Entities.SKELETONCOMMANDER) {
-              const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-                x: 140,
-                y: 360,
-                w: 29,
-                h: 25,
-              });
+            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+            dmg = Math.floor(dmg * percentReduce);
+          } else if (mob.kind === Types.Entities.SKELETONCOMMANDER) {
+            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+              x: 140,
+              y: 360,
+              w: 29,
+              h: 25,
+            });
 
-              const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-              dmg = Math.floor(dmg * percentReduce);
-            } else if (mob.kind === Types.Entities.NECROMANCER) {
-              const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-                x: 140,
-                y: 324,
-                w: 29,
-                h: 25,
-              });
+            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+            dmg = Math.floor(dmg * percentReduce);
+          } else if (mob.kind === Types.Entities.NECROMANCER) {
+            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+              x: 140,
+              y: 324,
+              w: 29,
+              h: 25,
+            });
 
-              const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-              dmg = Math.floor(dmg * percentReduce);
-            } else if (mob.kind === Types.Entities.COWKING) {
-              const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-                x: 0,
-                y: 464,
-                w: 92,
-                h: 71,
-              });
+            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+            dmg = Math.floor(dmg * percentReduce);
+          } else if (mob.kind === Types.Entities.COWKING) {
+            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
+              x: 0,
+              y: 464,
+              w: 92,
+              h: 71,
+            });
 
-              const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-              dmg = Math.floor(dmg * percentReduce);
-            }
+            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+            dmg = Math.floor(dmg * percentReduce);
+          }
 
-            mob.receiveDamage(dmg);
-            self.server.handleMobHate(mob.id, self.id, dmg);
-            self.server.handleHurtEntity({ entity: mob, attacker: self, damage: dmg, isCritical });
+          // @NOTE: Evaluate character distance to mob when receiving hits? and time between
+          if (!mob?.receiveDamage) {
+            self.connection.close("Invalid mob");
+            Sentry.captureException(new Error("Invalid mob"), {
+              user: {
+                username: self.name,
+              },
+              tags: {
+                player: self.name,
+                account: self.account,
+              },
+              extra: { kind: mob.kind, id: mob.id },
+            });
+          }
 
-            if (mob.hitPoints <= 0) {
-              mob.isDead = true;
-              self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
-            }
+          mob.receiveDamage(dmg);
+          self.server.handleMobHate(mob.id, self.id, dmg);
+          self.server.handleHurtEntity({ entity: mob, attacker: self, damage: dmg, isCritical });
+
+          if (mob.hitPoints <= 0) {
+            mob.isDead = true;
+            self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
           }
         }
       } else if (action === Types.Messages.HURT) {

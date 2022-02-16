@@ -525,7 +525,7 @@ Types.itemUniqueMap = {
   hornedarmor: ["RaiBlocks", 18, 30],
   frozenarmor: ["Wall of Encrypted Energy", 24, 32],
   diamondarmor: ["Zero-knowledge Proof", 28, 34],
-  spikearmor: ["???", 32, 36],
+  spikearmor: ["Explorer's Block", 32, 36],
 
   // name, level, defense
   beltleather: ["Proof of Wear", 4, 4],

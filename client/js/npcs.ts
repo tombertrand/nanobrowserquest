@@ -1,5 +1,4 @@
 import { Types } from "../../shared/js/gametypes";
-
 import Npc from "./npc";
 
 var Npcs = {

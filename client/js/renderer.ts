@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-
 import Camera from "./camera";
 import Character from "./character";
 import Detect from "./detect";

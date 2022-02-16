@@ -25,12 +25,6 @@ export class Server {
     this.io = new SocketServer(server, { parser: MessageParser });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
-    // this.io = new SocketServer(httpServer, {
-    //   cors: {
-    //     // ~~~~ remove this
-    //     origin: "*",
-    //   },
-    // });
 
     this.io.on("connection", function (connection) {
       console.info("a user connected");
