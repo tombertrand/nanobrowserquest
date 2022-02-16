@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log level'
+        description: "Log level"
         required: true
-        default: 'warning'
+        default: "warning"
 
 jobs:
   build:
@@ -29,11 +29,12 @@ jobs:
       - name: Build static assets
         run: |
           npm install
+          npm run build:client
 
       - name: Rsync deployment
         uses: burnett01/rsync-deployments@4.0
         with:
-          switches: -avzr --delete --exclude=".env" --exclude="server/data/"
+          switches: -avzr --delete --exclude=".env" --exclude="tools/" --exclude="client/"
           path: "."
           remote_path: /var/www/www.nanobrowserquest.com
           remote_host: ${{ secrets.DO_HOST }}

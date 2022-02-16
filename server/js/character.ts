@@ -99,9 +99,7 @@ class Character extends Entity {
   }
 
   forEachAttacker(callback) {
-    console.log("~~~this.attackers", this.attackers);
-    // @ts-ignore
-    for (var id = 0; id < this.attackers.length; id++) {
+    for (let id in this.attackers) {
       callback(this.attackers[id]);
     }
   }
