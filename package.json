@@ -1,17 +1,30 @@
 {
-  "name": "NanoBrowserQuest",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/browserquest/BrowserQuest.git"
-  },
+  "name": "nanobrowserquest",
   "version": "0.0.1",
+  "scripts": {
+    "lint": "eslint 'client/**/*.{ts}' --cache --cache-location ./node_modules/.cache",
+    "lint:fix": "eslint 'client/**/*.ts' --fix",
+    "map": "cd tools/maps/ && ts-node exportmap.js tmx/map.json",
+    "serve:client": "webpack serve --progress --open",
+    "watch:server": "nodemon --watch dist/ --watch server/ -e ts,js --exec \"npm run build:server\"",
+    "build:client": "webpack  --progress --color",
+    "build:server": "ts-node server/js/index.ts",
+    "start": "npm run watch:server"
+  },
   "dependencies": {
-    "@sentry/node": "^6.8.0",
+    "@sentry/node": "^6.17.7",
     "bcrypt": ">=0",
     "bignumber.js": "^9.0.1",
     "bison": "~1.1.1",
     "connect": "^3.7.0",
     "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "jquery": "^3.1.1",
+    "jquery-countdown": "^2.2.0",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-touch-punch": "^0.2.3",
+    "jquery.qrcode": "^1.0.3",
+    "lodash": "^4.17.21",
     "log": "~1.4.0",
     "memcache": "~0.3.0",
     "morgan": "^1.5.0",
@@ -19,7 +32,6 @@
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.0",
     "node-fetch": "^2.6.6",
-    "nodemon": "^2.0.11",
     "reconnecting-websocket": "^4.4.0",
     "redis": ">=0",
     "requirejs": ">=2",
@@ -27,20 +39,38 @@
     "semver": ">=0",
     "serve-static": "^1.7.1",
     "socket.io": "^4.1.2",
+    "socket.io-client": "^4.4.1",
+    "socket.io-msgpack-parser": "^3.0.1",
     "underscore": "^1.13.1",
     "ws": "^8.3.0"
   },
   "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/jquery": "^3.5.13",
+    "@types/lodash": "^4.14.178",
+    "@typescript-eslint/eslint-plugin": "^5.11.0",
+    "@typescript-eslint/parser": "^5.11.0",
+    "copy-webpack-plugin": "^10.2.4",
+    "css-loader": "^6.6.0",
+    "eslint": "^8.9.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "json-loader": "^0.5.7",
+    "mini-css-extract-plugin": "^2.5.3",
     "mocha": ">=1",
+    "nodemon": "^2.0.15",
     "should": ">=1",
-    "sinon": ">=1"
+    "sinon": ">=1",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5",
+    "webpack": "^5.68.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.7.4"
   },
-  "scripts": {
-    "start": "nodemon server.js",
-    "test": "make test"
-  },
-  "engines": {
-    "node": "0.10.x",
-    "npm": "1.2.x"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/browserquest/BrowserQuest.git"
   }
 }

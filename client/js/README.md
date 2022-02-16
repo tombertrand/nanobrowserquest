@@ -36,10 +36,10 @@ detect.js
 Detect is user is using Safari, Chrome, Firefox, Android or Opera
 
 entity.js
-Handles NPCs (town folk and enemies)
+Handles Npcs (town folk and enemies)
 
 entityfactory.js
-The NPCs and other items which are in game
+The Npcs and other items which are in game
 
 entrypoint.js
 Code to stop people from cheating by giving themself a firefox suit
@@ -93,7 +93,7 @@ npc.js
 What each NPC says and how he says it
 
 npcs.js
-init the different NPCs
+init the different Npcs
 
 pathfinder.js
 How to find the best path from X to Y

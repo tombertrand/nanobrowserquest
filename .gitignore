@@ -11,3 +11,4 @@ config_local*
 browserquest.conf
 *.sublime-project
 *.sublime-workspace
+/dist

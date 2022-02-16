@@ -120,8 +120,6 @@ footer, header, hgroup, menu, nav, section {
 
     h1 {font-weight:normal;}
     
-    .preload {display:none;}
-    
 /* Common rules */
     
     /* body.upscaled.game {background:#000;} */
@@ -312,7 +310,7 @@ footer, header, hgroup, menu, nav, section {
     #sharing .facebook:hover {background-position:-822px -224px;}
     #sharing .twitter {height:22px;width:32px;background-position:-770px -224px;margin:0 12px 0 0;}
     #sharing .twitter:hover {background-position:-770px -224px;}
-    #sharing .gplus {height:22px;width:22px;background:url('../img/common/gplus.png');margin:0 12px 0 0px;}
+    #sharing .gplus {height:22px;width:22px;margin:0 12px 0 0px;}
     #toggle-credits {display:inline-block;margin-left:12px;}
     #legal-link a, #nano-link a {text-decoration:none;color:inherit;}
     #nano-link a {
@@ -1585,7 +1583,7 @@ footer, header, hgroup, menu, nav, section {
 		.parchment-middle {width:100%;left:0px;margin-left:0px;height:auto;position:relative;}
 		#toggle-credits, #credits {display:none;}
 		
-		.game.death #parchment {background:url('../img/spritesheet.png') 0 -294px;height:182px;width:422px;position:absolute;top:50%;left:50%;margin-top:-91px;margin-left:-211px;}
+		.game.death #parchment {background:url('../img/1/spritesheet.png') 0 -294px;height:182px;width:422px;position:absolute;top:50%;left:50%;margin-top:-91px;margin-left:-211px;}
         .game.death .parchment-middle {width:100%;position:relative;top:0;left:0;margin-left:0;margin-top:0;}
         .game.death #death {position:relative;top:0;left:0;margin-top:0;margin-left:0;width:100%;}
         .game.death #death p {padding-top:30px;color:#373737;font-size:20px;margin-top:0;width:80%;margin:0 auto;}

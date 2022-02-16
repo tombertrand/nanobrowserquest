@@ -1,0 +1,39 @@
+{
+  "extends": "@tsconfig/recommended/tsconfig.json",
+
+  // Most ts-node options can be specified here using their programmatic names.
+  "ts-node": {
+    // It is faster to skip typechecking.
+    // Remove if you want ts-node to do typechecking.
+    "transpileOnly": true,
+
+    // "files": true,
+
+    "compilerOptions": {
+      "module": "commonjs",
+      "lib": ["es2020"],
+      "baseUrl": "./server",
+      "outDir": "./dist/server",
+    }
+  },
+
+  "compilerOptions": {
+    "strict": false,
+    "noImplicitUseStrict": true,
+    "removeComments": true,
+    "skipLibCheck": true,
+    "outDir": "./dist/client",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "module": "es6",
+    "target": "es5",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "noImplicitThis": false
+  },
+  "exclude": ["dist/", "node_modules"],
+  "include": ["**/*.ts", "**/*.config.js"]
+}
