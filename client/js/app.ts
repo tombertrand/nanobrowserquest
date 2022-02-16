@@ -169,7 +169,13 @@ class App {
       // //>>includeStart("devHost", pragmas.devHost);
       // if (config.local) {
       //   console.debug("Starting game with local dev config.");
-      this.game.setServerOptions("localhost", 8000);
+
+      let config = { host: "localhost", port: 8000 };
+      if (process.env.NODE_ENV !== "development") {
+        config = { host: "", port: 8000 };
+      }
+
+      this.game.setServerOptions(config.host, config.port);
       // } else {
       //   console.debug("Starting game with default dev config.");
       //   this.game.setServerOptions(config.dev.host, config.dev.port, username, account);

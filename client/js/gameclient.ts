@@ -138,6 +138,8 @@ class GameClient {
     var url = protocol + "://" + this.host + port + "/";
     var self = this;
 
+    console.log("~~~~url", url);
+
     console.info("Trying to connect to server : " + url);
 
     this.connection = io(url, { forceNew: true, reconnection: false, parser: MessageParser }); // This sets the connection as a socket.io Socket.
