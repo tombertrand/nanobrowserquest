@@ -5,7 +5,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CompressionPlugin = require("compression-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -24,6 +24,17 @@ module.exports = {
     //       target: "http://localhost:8000",
     //     },
     //   },
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          mangle: true,
+          safari10: true,
+        },
+      }),
+    ],
   },
   module: {
     rules: [
@@ -95,6 +106,5 @@ module.exports = {
         { from: "client/js/mapworker.js", to: "mapworker.js" },
       ],
     }),
-    new CompressionPlugin(),
   ],
 };
