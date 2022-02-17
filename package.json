@@ -50,6 +50,7 @@
     "@types/lodash": "^4.14.178",
     "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.11.0",
+    "compression-webpack-plugin": "^9.2.0",
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.6.0",
     "eslint": "^8.9.0",

@@ -5,6 +5,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -94,5 +95,6 @@ module.exports = {
         { from: "client/js/mapworker.js", to: "mapworker.js" },
       ],
     }),
+    new CompressionPlugin(),
   ],
 };
