@@ -530,7 +530,8 @@ Types.itemUniqueMap = {
   // name, level, defense
   beltleather: ["Proof of Wear", 4, 4],
   beltplated: ["The Hodler", 9, 6],
-  beltfrozen: ["Spam Resistor", 18, 12],
+  beltfrozen: ["Spam Resistor", 22, 12],
+  // beltdiamond: ["TaaC", 38, 18],
 };
 
 Types.expForLevel = [
