@@ -55,9 +55,9 @@ class Updater {
 
   updateEntityFading(entity) {
     if (entity && entity.isFading) {
-      var duration = 1000,
-        t = this.game.currentTime,
-        dt = t - entity.startFadingTime;
+      var duration = 1000;
+      var t = this.game.currentTime;
+      var dt = t - entity.startFadingTime;
 
       if (dt > duration) {
         this.isFading = false;

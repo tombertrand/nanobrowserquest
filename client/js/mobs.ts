@@ -129,9 +129,9 @@ export const Mobs = {
 
     idle(orientation) {
       if (!this.hasTarget()) {
-        this.setOrientation(Types.Orientations.DOWN);
+        super.idle(Types.Orientations.DOWN);
       } else {
-        this.setOrientation(orientation);
+        super.idle(orientation);
       }
     }
   },
@@ -149,9 +149,9 @@ export const Mobs = {
 
     idle(orientation) {
       if (!this.hasTarget()) {
-        this.setOrientation(Types.Orientations.DOWN);
+        super.idle(Types.Orientations.DOWN);
       } else {
-        this.setOrientation(orientation);
+        super.idle(orientation);
       }
     }
   },
@@ -231,9 +231,9 @@ export const Mobs = {
 
     idle(orientation) {
       if (!this.hasTarget()) {
-        this.setOrientation(Types.Orientations.DOWN);
+        super.idle(Types.Orientations.DOWN);
       } else {
-        this.setOrientation(orientation);
+        super.idle(orientation);
       }
     }
   },
@@ -274,11 +274,11 @@ export const Mobs = {
       this.isAggressive = false;
     }
 
-    idle(orientation: number) {
+    idle(orientation) {
       if (!this.hasTarget()) {
-        this.orientation = Types.Orientations.DOWN;
+        super.idle(Types.Orientations.DOWN);
       } else {
-        this.orientation = orientation;
+        super.idle(orientation);
       }
     }
   },
@@ -299,9 +299,9 @@ export const Mobs = {
 
     idle(orientation) {
       if (!this.hasTarget()) {
-        this.setOrientation(Types.Orientations.DOWN);
+        super.idle(Types.Orientations.DOWN);
       } else {
-        this.setOrientation(orientation);
+        super.idle(orientation);
       }
     }
   },

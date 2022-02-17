@@ -174,8 +174,6 @@ class Player extends Character {
         // Get IP from CloudFlare
         const clientIP = self.connection._connection.handshake.headers["cf-connecting-ip"];
 
-        console.log("~~~~process.env.NODE_ENV", process.env.NODE_ENV);
-
         if (process.env.NODE_ENV === "production" && !clientIP) {
           self.connection.sendUTF8("invalidconnection");
           self.connection.close("Unable to get IP.");
