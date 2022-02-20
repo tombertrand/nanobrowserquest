@@ -250,8 +250,8 @@ class Character extends Entity {
   }
 
   updateMovement() {
-    var p = this.path,
-      i = this.step;
+    var p = this.path;
+    var i = this.step;
 
     if (p[i][0] < p[i - 1][0]) {
       this.walk(Types.Orientations.LEFT);

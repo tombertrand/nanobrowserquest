@@ -19,11 +19,9 @@ module.exports = {
     },
     compress: true,
     port: 8010,
-    //   proxy: {
-    //     "/": {
-    //       target: "http://localhost:8000",
-    //     },
-    //   },
+    // proxy: {
+    //   "/": "http://localhost:8000",
+    // },
   },
   optimization: {
     minimize: true,

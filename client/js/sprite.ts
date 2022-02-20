@@ -10,7 +10,7 @@ class Sprite {
   animationData;
   width;
   height;
-  isLoaded = false;
+  isLoaded;
   offsetX = 0;
   offsetY = 0;
   image: any;

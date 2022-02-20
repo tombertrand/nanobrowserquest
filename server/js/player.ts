@@ -565,7 +565,7 @@ class Player extends Character {
               } else if (kind === Types.Entities.RINGRAISTONE) {
                 bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
               } else if (kind === Types.Entities.RINGFOUNTAIN) {
-                bonus = _.shuffle([0, 3, 5, 6])
+                bonus = _.shuffle([5, 6])
                   .slice(0, 2)
                   .concat([8, ...highHealthBonus]);
               }

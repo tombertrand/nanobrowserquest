@@ -163,6 +163,13 @@ var Items = {
     }
   },
 
+  BeltDiamond: class BeltDiamond extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTDIAMOND, "belt");
+      this.lootMessage = "You pick up a diamond belt";
+    }
+  },
+
   Flask: class Flask extends Item {
     constructor(id) {
       super(id, Types.Entities.FLASK, "object");

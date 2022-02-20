@@ -22,7 +22,13 @@ export class Server {
 
     const app = express();
     const server = createServer(app);
-    this.io = new SocketServer(server, { parser: MessageParser });
+    let cors = null;
+
+    if (process.env.NODE_ENV === "development") {
+      cors = { origin: "http://localhost:8010" };
+    }
+
+    this.io = new SocketServer(server, { parser: MessageParser, cors });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 

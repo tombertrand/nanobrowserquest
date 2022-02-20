@@ -136,6 +136,7 @@ export const Types: any = {
     BELTLEATHER: 85,
     BELTPLATED: 86,
     BELTFROZEN: 91,
+    BELTDIAMOND: 129,
 
     // Objects
     FLASK: 35,
@@ -295,7 +296,12 @@ Types.Entities.Armors = [
   Types.Entities.SPIKEARMOR,
 ];
 
-Types.Entities.Belts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
+Types.Entities.Belts = [
+  Types.Entities.BELTLEATHER,
+  Types.Entities.BELTPLATED,
+  Types.Entities.BELTFROZEN,
+  Types.Entities.BELTDIAMOND,
+];
 
 Types.Entities.Rings = [
   Types.Entities.RINGBRONZE,
@@ -394,6 +400,7 @@ export const kinds = {
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
   beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 9, 4],
   beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 16, 10],
+  beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 16],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -499,7 +506,12 @@ Types.rankedArmors = [
   Types.Entities.SPIKEARMOR,
 ];
 
-Types.rankedBelts = [Types.Entities.BELTLEATHER, Types.Entities.BELTPLATED, Types.Entities.BELTFROZEN];
+Types.rankedBelts = [
+  Types.Entities.BELTLEATHER,
+  Types.Entities.BELTPLATED,
+  Types.Entities.BELTFROZEN,
+  Types.Entities.BELTDIAMOND,
+];
 
 Types.itemUniqueMap = {
   // name, level, attack
@@ -531,7 +543,7 @@ Types.itemUniqueMap = {
   beltleather: ["Proof of Wear", 4, 4],
   beltplated: ["The Hodler", 9, 6],
   beltfrozen: ["Spam Resistor", 22, 12],
-  // beltdiamond: ["TaaC", 38, 18],
+  beltdiamond: ["TaaC", 38, 18],
 };
 
 Types.expForLevel = [
@@ -1176,11 +1188,11 @@ Types.getUpgradeSuccessRates = () => {
 };
 
 Types.getLuckySlotSuccessRateBonus = () => {
-  return [0, 0, 10, 8, 6, 5, 4, 3, 2];
+  return [0, 0, 10, 8, 6, 5, 3, 2, 1];
 };
 
 Types.getBlessedSuccessRateBonus = () => {
-  return [0, 0, 10, 8, 6, 5, 3, 1, 1];
+  return [0, 0, 10, 8, 6, 5, 3, 2, 1];
 };
 
 // kind, type, name, level, defense
@@ -1268,7 +1280,7 @@ Types.getItemDetails = function (item: string, level: number, rawBonus: number[]
   const isUniqueRing = Types.isUniqueRing(item);
   const isUnique = ((isArmor || isWeapon || isBelt) && !!rawBonus) || isUniqueRing;
 
-  const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
+  // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;
   let healthBonus = 0;
   let bonus = [];

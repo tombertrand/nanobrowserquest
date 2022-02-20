@@ -1172,13 +1172,18 @@ class World {
     var item = null;
 
     // var randomDrop = random(1);
-    // var drops = ["amuletcow"];
+    // var randomDrops = ["beltdiamond"] as any;
     // // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
-    // return this.addItem(this.createItem(Types.getKindFromString(drops[randomDrop]), mob.x, mob.y));
+    // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 
     if (mob.kind === Types.Entities.COW) {
-      if (random(200) === 69) {
+      const diamondRandom = random(600);
+      if (diamondRandom === 69) {
         return this.addItem(this.createItem(Types.getKindFromString("diamondsword"), mob.x, mob.y));
+      } else if (diamondRandom === 133) {
+        return this.addItem(this.createItem(Types.getKindFromString("diamondarmor"), mob.x, mob.y));
+      } else if (diamondRandom === 420) {
+        return this.addItem(this.createItem(Types.getKindFromString("diamondbelt"), mob.x, mob.y));
       }
     }
     if (mob.kind >= Types.Entities.EYE) {

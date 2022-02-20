@@ -228,6 +228,10 @@ EntityFactory.builders[Types.Entities.BELTFROZEN] = function (id) {
   return new Items.BeltFrozen(id);
 };
 
+EntityFactory.builders[Types.Entities.BELTDIAMOND] = function (id) {
+  return new Items.BeltDiamond(id);
+};
+
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {
   return new Items.Flask(id);
 };

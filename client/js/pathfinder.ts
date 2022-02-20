@@ -28,12 +28,13 @@ class Pathfinder {
   }
 
   findPath(grid, entity, x, y, findIncomplete) {
-    var start = [entity.gridX, entity.gridY],
-      end = [x, y],
-      path;
+    var start = [entity.gridX, entity.gridY];
+    var end = [x, y];
+    var path;
 
     this.grid = grid;
     this.applyIgnoreList_(true);
+
     path = AStar(this.grid, start, end);
 
     if (path.length === 0 && findIncomplete === true) {

@@ -85,6 +85,7 @@ import itemSpikearmor from "../sprites/item-spikearmor.json";
 import itemBeltleather from "../sprites/item-beltleather.json";
 import itemBeltplated from "../sprites/item-beltplated.json";
 import itemBeltfrozen from "../sprites/item-beltfrozen.json";
+import itemBeltdiamond from "../sprites/item-beltdiamond.json";
 import itemGoldensword from "../sprites/item-goldensword.json";
 import itemFrozensword from "../sprites/item-frozensword.json";
 import itemDiamondsword from "../sprites/item-diamondsword.json";
@@ -236,6 +237,7 @@ const sprites = {
   "item-beltleather": itemBeltleather,
   "item-beltplated": itemBeltplated,
   "item-beltfrozen": itemBeltfrozen,
+  "item-beltdiamond": itemBeltdiamond,
   "item-goldensword": itemGoldensword,
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,

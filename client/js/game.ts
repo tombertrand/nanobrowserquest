@@ -322,6 +322,7 @@ class Game {
       "item-beltleather",
       "item-beltplated",
       "item-beltfrozen",
+      "item-beltdiamond",
       "item-flask",
       "item-rejuvenationpotion",
       "item-poisonpotion",
@@ -1664,7 +1665,6 @@ class Game {
     if (entity) {
       this.removeFromEntityGrid(entity, entity.gridX, entity.gridY);
       this.removeFromPathingGrid(entity.gridX, entity.gridY);
-
       this.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
 
       if (entity.nextGridX >= 0 && entity.nextGridY >= 0) {
@@ -1675,8 +1675,8 @@ class Game {
   }
 
   registerEntityPosition(entity) {
-    var x = entity.gridX,
-      y = entity.gridY;
+    var x = entity.gridX;
+    var y = entity.gridY;
 
     if (entity) {
       if (entity instanceof Character || entity instanceof Chest) {
@@ -2082,6 +2082,9 @@ class Game {
       });
 
       self.player.onStopPathing(function ({ x, y, confirmed, isWaypoint }) {
+        // Start by unregistering the entity at its previous coords
+        self.unregisterEntityPosition(self.player);
+
         if (isWaypoint) {
           // Make sure the character is paused / halted when entering a waypoin,
           // else the player goes invisible
@@ -2187,7 +2190,6 @@ class Game {
           }
         });
 
-        self.unregisterEntityPosition(self.player);
         self.registerEntityPosition(self.player);
       });
 
@@ -2282,13 +2284,6 @@ class Game {
       });
 
       self.client.onSpawnCharacter(function (entity, x, y, orientation, targetId) {
-        // @TODO Investigate why the player is not properly spawned / despawned when alt tabbed and back
-        // if (entity instanceof Character) {
-        //   if (self.entityIdExists(entity.id)) {
-        //     self.removeEntity(entity);
-        //   }
-        // }
-
         if (!self.entityIdExists(entity.id)) {
           try {
             if (entity.id !== self.playerId) {
@@ -2356,6 +2351,8 @@ class Game {
                 });
 
                 entity.onStopPathing(function () {
+                  self.unregisterEntityPosition(entity);
+
                   if (!entity.isDying) {
                     if (entity.hasTarget() && entity.isAdjacent(entity.target)) {
                       entity.lookAtTarget();
@@ -2377,7 +2374,6 @@ class Game {
                       }
                     });
 
-                    self.unregisterEntityPosition(entity);
                     self.registerEntityPosition(entity);
                   }
                 });
@@ -2464,7 +2460,28 @@ class Game {
             console.error(err);
           }
         } else {
-          console.debug("Character " + entity.id + " already exists. Don't respawn.");
+          if (entity instanceof Player) {
+            // @NOTE Manually update locally stored entity to prevent invisible unupdated coords entity
+            // Before this the entities were not updated because they already existed
+            const currentEntity = self.getEntityById(entity.id);
+            self.unregisterEntityPosition(currentEntity);
+
+            currentEntity.setWeaponName(entity.weaponName);
+            currentEntity.setWeaponLevel(entity.weaponLevel);
+            currentEntity.setWeaponBonus(entity.weaponBonus);
+            currentEntity.setSpriteName(entity.armorName);
+            currentEntity.setArmorName(entity.armorName);
+            currentEntity.setArmorLevel(entity.armorLevel);
+            currentEntity.setArmorBonus(entity.armorBonus);
+            currentEntity.setAuras(entity.auras);
+
+            currentEntity.setSprite(self.sprites[entity.getSpriteName()]);
+            currentEntity.setGridPosition(x, y);
+
+            self.registerEntityPosition(currentEntity);
+          } else {
+            console.debug("Character " + entity.id + " already exists. Don't respawn.");
+          }
         }
       });
 
@@ -3646,7 +3663,6 @@ class Game {
   click() {
     var pos = this.getMouseGridPosition();
 
-    // ~~~~~ Invisible block here!
     if (pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) {
       return;
     } else {
@@ -3664,8 +3680,6 @@ class Game {
   processInput(pos) {
     var entity;
 
-    // console.log("~~~~problem with zones here");
-
     if (
       this.started &&
       this.player &&
@@ -3676,6 +3690,13 @@ class Game {
       !this.hoveringPlateauTile
     ) {
       entity = this.getEntityAt(pos.x, pos.y);
+
+      // @NOTE: For an unknown reason when a mob dies and it's moving, it doesn't unregister it's "1" on
+      // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
+      // to "0" the pathing map if there is no entity registered on the coords.
+      if (entity === null) {
+        this.removeFromPathingGrid(pos.x, pos.y);
+      }
 
       if (
         entity instanceof Mob ||

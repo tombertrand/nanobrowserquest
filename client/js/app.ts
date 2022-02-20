@@ -395,7 +395,7 @@ class App {
 
       if (!self.isDesktop) {
         var hideTarget = _.debounce(() => {
-          self.game.player.onRemoveTarget;
+          self.game.player.onRemoveTarget();
         }, 3000);
         hideTarget();
       }

@@ -68,7 +68,7 @@ class Entity {
 
   setSprite(sprite) {
     if (!sprite) {
-      console.error(this.id + " : sprite is null", true);
+      console.error(this.id + " : sprite is null", sprite);
       throw "Sprite error";
     }
 
