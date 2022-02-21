@@ -132,6 +132,11 @@ class Websocket {
       this.connection.send(JSON.stringify(confirmation_subscription));
 
       this.keepAlive();
+
+      // @NOTE: Re-add sessions if the socket reconnects
+      purchase.sessions?.forEach(({ account }) => {
+        websocket.registerAccount(account);
+      });
     };
 
     this.connection.onclose = () => {
@@ -141,9 +146,6 @@ class Websocket {
 
     this.connection.onerror = err => {
       console.debug("WEBSOCKET - onerror", err.message);
-
-
-      
 
       Sentry.captureException(err);
       this.isReady = false;
@@ -200,7 +202,7 @@ class Websocket {
       this.watchedAccounts.splice(index, 1);
     }
 
-    console.debug("WEBSOCKET - registerAccount: " + account);
+    console.debug("WEBSOCKET - unregisterAccount: " + account);
 
     try {
       const confirmation_subscription = {
