@@ -42,6 +42,7 @@ class GameClient {
   list_callback: any;
   destroy_callback: any;
   stats_callback: any;
+  setbonus_callback: any;
   blink_callback: any;
   pvp_callback: any;
   guilderror_callback: any;
@@ -103,6 +104,7 @@ class GameClient {
     this.handlers[Types.Messages.DESTROY] = this.receiveDestroy;
     this.handlers[Types.Messages.KILL] = this.receiveKill;
     this.handlers[Types.Messages.STATS] = this.receiveStats;
+    this.handlers[Types.Messages.SETBONUS] = this.receiveSetBonus;
     this.handlers[Types.Messages.BLINK] = this.receiveBlink;
     this.handlers[Types.Messages.GUILDERROR] = this.receiveGuildError;
     this.handlers[Types.Messages.GUILD] = this.receiveGuild;
@@ -347,10 +349,10 @@ class GameClient {
   }
 
   receiveSpawn(data) {
-    var id = data[1],
-      kind = data[2],
-      x = data[3],
-      y = data[4];
+    var id = data[1];
+    var kind = data[2];
+    var x = data[3];
+    var y = data[4];
 
     if (Types.isItem(kind)) {
       var item = EntityFactory.createEntity(kind, id);
@@ -528,6 +530,15 @@ class GameClient {
 
     if (this.stats_callback) {
       this.stats_callback({ maxHitPoints, damage, defense, absorb });
+    }
+  }
+
+  receiveSetBonus(data) {
+    var bonus = data[1];
+    var set = data[2];
+
+    if (this.setbonus_callback) {
+      this.setbonus_callback(bonus, set);
     }
   }
 
@@ -780,6 +791,10 @@ class GameClient {
 
   onPlayerChangeStats(callback) {
     this.stats_callback = callback;
+  }
+
+  onSetBonus(callback) {
+    this.setbonus_callback = callback;
   }
 
   onItemBlink(callback) {

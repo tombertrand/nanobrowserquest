@@ -832,8 +832,16 @@ class World {
     }
   }
 
-  chooseMobTarget(mob, hateRank?: number) {
-    var player = this.getEntityById(mob.getHatedPlayerId(hateRank));
+  chooseMobTarget(mob, hateRank?: number, ignorePlayerId?: number) {
+    var playerId = mob.getHatedPlayerId(hateRank);
+    var player;
+
+    // @NOTE Fix monsters teleporting with players
+    if (ignorePlayerId && ignorePlayerId === playerId) {
+      player = null;
+    } else {
+      player = this.getEntityById(playerId);
+    }
 
     // If the mob is not already attacking the player, create an attack link between them.
     // @TODO REMOVE FORM ATTACKERS!!!
@@ -1121,7 +1129,7 @@ class World {
     // When a player dies or teleports, all of his attackers go and attack their second most hated player.
     player.forEachAttacker(function (mob) {
       previousAttackers.push(mob);
-      self.chooseMobTarget(mob, 2);
+      self.chooseMobTarget(mob, 2, player.id);
     });
 
     // When a player dies or teleports, all of his attackers go and attack their second most hated player or return to their original x,y.
@@ -1359,6 +1367,7 @@ class World {
       this.map.forEachGroup(function (id) {
         if (self.groups[id].incoming.length > 0) {
           _.each(self.groups[id].incoming, function (entity) {
+            //
             if (entity instanceof Player) {
               self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
             } else {

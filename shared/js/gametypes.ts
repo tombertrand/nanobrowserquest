@@ -65,6 +65,7 @@ export const Types: any = {
     COWLEVEL_START: 53,
     COWLEVEL_INPROGRESS: 54,
     COWLEVEL_END: 55,
+    SETBONUS: 56,
     GUILDERRORTYPE: {
       DOESNOTEXIST: 1,
       BADNAME: 2,
@@ -544,6 +545,19 @@ Types.itemUniqueMap = {
   beltplated: ["The Hodler", 9, 6],
   beltfrozen: ["Spam Resistor", 22, 12],
   beltdiamond: ["TaaC", 38, 18],
+};
+
+Types.setBonus = {
+  frozen: {
+    minDamage: 10,
+    criticalHit: 2,
+    defense: 10,
+  },
+  diamond: {
+    exp: 5,
+    blockChance: 2,
+    health: 30,
+  },
 };
 
 Types.expForLevel = [
@@ -1101,6 +1115,27 @@ Types.getBonusDescriptionMap = [
   "+# Health",
 ];
 
+Types.bonusType = [
+  "minDamage",
+  "maxDamage",
+  "attackDamage",
+  "health",
+  "magicDamage",
+  "defense",
+  "absorbedDamage",
+  "exp",
+  "regenerateHealth",
+  "criticalHit",
+  "blockChance",
+  "magicFind",
+  "attackSpeed",
+  "drainLife",
+  "flameDamage",
+  "lightningDamage",
+  "pierceArmor",
+  "highHealth",
+];
+
 Types.getBonus = function (rawBonus, level) {
   const minDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const maxDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
@@ -1111,11 +1146,11 @@ Types.getBonus = function (rawBonus, level) {
   const absorbPerLevel = [2, 4, 6, 8, 10, 13, 15, 18, 22, 28];
   const expPerLevel = [1, 2, 3, 4, 5, 6, 7, 10, 15, 20];
   const regenerateHealthPerLevel = [1, 2, 3, 6, 9, 12, 15, 20, 25, 40];
-  const criticalHitPerLevel = [1, 2, 3, 4, 5, 7, 10, 15, 20, 30];
-  const blockChancePerLevel = [1, 1, 2, 3, 4, 6, 10, 15, 20, 30];
+  const criticalHitPerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
+  const blockChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
   const magicFindPerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
   const attackSpeedPerLevel = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30];
-  const drainLifePerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const drainLifePerLevel = [1, 3, 5, 8, 11, 14, 18, 23, 30, 40];
   const flameDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const lightningDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const pierceArmorPerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
@@ -1142,34 +1177,13 @@ Types.getBonus = function (rawBonus, level) {
     highHealthPerLevel,
   ];
 
-  const bonusType = [
-    "minDamage",
-    "maxDamage",
-    "attackDamage",
-    "health",
-    "magicDamage",
-    "defense",
-    "absorbedDamage",
-    "exp",
-    "regenerateHealth",
-    "criticalHit",
-    "blockChance",
-    "magicFind",
-    "attackSpeed",
-    "drainLife",
-    "flameDamage",
-    "lightningDamage",
-    "pierceArmor",
-    "highHealth",
-  ];
-
   const bonus: { type: string; stats: number; description: string }[] = [];
 
   // A glitch in the inventory system allowed for scrolls to be added as rings
   if (!rawBonus || !Array.isArray(rawBonus)) return bonus;
 
   for (let i = 0; i < rawBonus.length; i++) {
-    const type = bonusType[rawBonus[i]];
+    const type = Types.bonusType[rawBonus[i]];
     const stats = bonusPerLevel[rawBonus[i]][level - 1];
     const description = Types.getBonusDescriptionMap[rawBonus[i]].replace("#", stats);
 
@@ -1181,6 +1195,26 @@ Types.getBonus = function (rawBonus, level) {
   }
 
   return bonus;
+};
+
+Types.getSetBonus = (rawSetBonus: { [key: string]: number }): any[] => {
+  let setBonus = [];
+  if (!rawSetBonus) return setBonus;
+
+  Object.entries(rawSetBonus).map(([type, stats]) => {
+    var index = Types.bonusType.indexOf(type);
+    if (index >= 0) {
+      const description = Types.getBonusDescriptionMap[index].replace("#", stats);
+
+      setBonus.push({
+        type,
+        stats,
+        description,
+      });
+    }
+  });
+
+  return setBonus;
 };
 
 Types.getUpgradeSuccessRates = () => {
@@ -1271,7 +1305,12 @@ Types.getItemRequirement = function (item: string, level: number, isUnique: bool
   return requirement;
 };
 
-Types.getItemDetails = function (item: string, level: number, rawBonus: number[]) {
+Types.getItemDetails = function (
+  item: string,
+  level: number,
+  rawBonus: number[],
+  rawSetBonus?: { [key: string]: number },
+) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
   const isRing = Types.isRing(item);
@@ -1284,6 +1323,7 @@ Types.getItemDetails = function (item: string, level: number, rawBonus: number[]
   let magicDamage = 0;
   let healthBonus = 0;
   let bonus = [];
+  let setBonus = [];
 
   let type = "item";
 
@@ -1307,6 +1347,10 @@ Types.getItemDetails = function (item: string, level: number, rawBonus: number[]
     bonus = Types.getBonus(rawBonus, level);
   }
 
+  if (rawSetBonus) {
+    setBonus = Types.getSetBonus(rawSetBonus);
+  }
+
   const itemClass = Types.getItemClass(item, level, isUnique);
   const requirement = Types.getItemRequirement(item, level, isUnique);
   const description = Types.itemDescription[item];
@@ -1324,6 +1368,7 @@ Types.getItemDetails = function (item: string, level: number, rawBonus: number[]
     requirement,
     description,
     bonus,
+    setBonus,
   };
 };
 

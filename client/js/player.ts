@@ -37,6 +37,8 @@ class Player extends Character {
   amuletLevel: number | null;
   amuletBonus: null;
   auras: string[];
+  set?: string;
+  setBonus: any;
   isLootMoving: boolean;
   isSwitchingWeapon: boolean;
   pvpFlag: boolean;
@@ -103,6 +105,8 @@ class Player extends Character {
     this.amuletLevel = null;
     this.amuletBonus = null;
     this.auras = [];
+    this.set = null;
+    this.setBonus = null;
 
     // modes
     this.isLootMoving = false;

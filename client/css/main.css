@@ -644,8 +644,15 @@ footer, header, hgroup, menu, nav, section {
         margin-top:6px;
     }
     .item-bonus {
-        /* color: #55a3ff; */
         color: #35ee35;
+        margin-top:6px;
+    }
+    .item-set-description {
+        color: #fff;
+        margin-top:12px;
+    }
+    .item-set-bonus {
+        color: #55a3ff;
         margin-top:6px;
     }
     .item-description.requirement {

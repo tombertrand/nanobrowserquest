@@ -497,6 +497,8 @@ class Game {
   }
 
   initTooltips() {
+    var self = this;
+
     $(document).tooltip({
       items: "[data-item]",
       track: true,
@@ -507,6 +509,9 @@ class Game {
         const item = element.attr("data-item");
         const level = element.attr("data-level");
         const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
+        const slot = element.parent().attr("data-slot");
+
+        const rawSetBonus = [100, 101, 102].includes(parseInt(slot, 10)) ? self.player.setBonus : null;
 
         const {
           name,
@@ -522,7 +527,8 @@ class Game {
           bonus = [],
           requirement,
           description,
-        } = Types.getItemDetails(item, level, rawBonus);
+          setBonus = [],
+        } = Types.getItemDetails(item, level, rawBonus, rawSetBonus);
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
@@ -537,6 +543,8 @@ class Game {
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
             ${description ? `<div class="item-description">${description}</div>` : ""}
+            ${setBonus.length ? `<div class="item-set-description">${self.player.set} Set Bonuses</div>` : ""}
+            ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
           </div>`;
       },
     });
@@ -2086,8 +2094,7 @@ class Game {
         self.unregisterEntityPosition(self.player);
 
         if (isWaypoint) {
-          // Make sure the character is paused / halted when entering a waypoin,
-          // else the player goes invisible
+          // Make sure the character is paused / halted when entering a waypoint, else the player goes invisible
           self.player.stop();
           self.player.nextStep();
         }
@@ -2154,7 +2161,6 @@ class Game {
           });
 
           self.updatePlateauMode();
-
           self.checkUndergroundAchievement();
 
           if (self.renderer.mobile || self.renderer.tablet) {
@@ -2822,6 +2828,11 @@ class Game {
           self.player.absorb = absorb;
           self.updateAbsorb();
         }
+      });
+
+      self.client.onSetBonus(function (bonus, set) {
+        self.player.setBonus = bonus;
+        self.player.set = set;
       });
 
       self.client.onPlayerEquipItem(function (playerId, itemKind, itemLevel, itemBonus) {

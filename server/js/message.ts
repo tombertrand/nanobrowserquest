@@ -85,6 +85,13 @@ Messages.Stats = class Message {
   }
 };
 
+Messages.SetBonus = class Message {
+  constructor(private bonus, private set) {}
+  serialize() {
+    return [Types.Messages.SETBONUS, this.bonus, this.set];
+  }
+};
+
 Messages.EquipItem = class Message {
   constructor(private player, private itemKind, private itemLevel, private itemBonus) {}
   serialize() {

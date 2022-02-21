@@ -1065,7 +1065,6 @@ class Player extends Character {
     this.resetBonus();
 
     try {
-      // @NOTE Could include weapon & armor when uniques
       const bonusToCalculate = [
         this.ring1
           ? {
@@ -1196,8 +1195,37 @@ class Player extends Character {
     }
 
     this.calculateBonus();
+    this.calculateSetBonus();
     this.updateHitPoints();
     this.sendPlayerStats();
+  }
+
+  calculateSetBonus() {
+    let bonus = null;
+    let set = null;
+    if (
+      this.armorKind === Types.Entities.FROZENARMOR &&
+      this.belt === "beltfrozen" &&
+      this.weaponKind === Types.Entities.FROZENSWORD
+    ) {
+      set = "Frozen";
+      bonus = Types.setBonus.frozen;
+    } else if (
+      this.armorKind === Types.Entities.DIAMONDARMOR &&
+      this.belt === "beltdiamond" &&
+      this.weaponKind === Types.Entities.DIAMONDSWORD
+    ) {
+      set = "Diamond";
+      bonus = Types.setBonus.diamond;
+    }
+
+    if (bonus) {
+      Object.entries(bonus).map(([type, stats]) => {
+        this.bonus[type] += stats;
+      });
+    }
+
+    this.send(new Messages.SetBonus(bonus, set).serialize());
   }
 
   addAura(aura) {
@@ -1303,7 +1331,6 @@ class Player extends Character {
     if (origLevel !== this.level) {
       this.updateHitPoints(true);
       this.sendPlayerStats();
-      // @NOTE Update the player levels
       this.server.updatePopulation({ levelupPlayer: this.id });
     }
   }
@@ -1445,8 +1472,6 @@ class Player extends Character {
     }
     self.chatBanEndTime = chatBanEndTime;
 
-    self.calculateBonus();
-
     self.server.addPlayer(self);
     self.server.enter_callback(self);
 
@@ -1479,6 +1504,8 @@ class Player extends Character {
       self.server.cowLevelCoords,
     ]);
 
+    self.calculateBonus();
+    self.calculateSetBonus();
     self.updateHitPoints(true);
     self.sendPlayerStats();
 
