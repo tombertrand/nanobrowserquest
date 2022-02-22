@@ -276,7 +276,7 @@ footer, header, hgroup, menu, nav, section {
     #forget-player, #create-new, #create-new-account {margin-top:6px;}
     #forget-player, #playername, #playerimage, #login-play-button {display: none; }
     #playername {color:#fff;}
-    #playerimage {image-rendering:pixelated;image-rendering:crisp-edges; margin-top: 20px;}
+    #playerimage {image-rendering:pixelated;image-rendering:crisp-edges; margin-top: 20px; margin-left: -1.25%;}
     .dimmed { color: #b2af9b !important}
     /* .loadcharacter .play { margin: 0 auto !important; } */
     .loadcharacter .play div {cursor:pointer;}

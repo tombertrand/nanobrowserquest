@@ -1191,7 +1191,7 @@ class World {
       } else if (diamondRandom === 133) {
         return this.addItem(this.createItem(Types.getKindFromString("diamondarmor"), mob.x, mob.y));
       } else if (diamondRandom === 420) {
-        return this.addItem(this.createItem(Types.getKindFromString("diamondbelt"), mob.x, mob.y));
+        return this.addItem(this.createItem(Types.getKindFromString("beltdiamond"), mob.x, mob.y));
       }
     }
     if (mob.kind >= Types.Entities.EYE) {

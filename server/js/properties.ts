@@ -347,7 +347,7 @@ var Properties: any = {
     drops: {
       diamondsword: 5,
       diamondarmor: 5,
-      diamondbelt: 5,
+      beltdiamond: 5,
       amuletcow: 5,
       scrollupgradehigh: 80,
     },
