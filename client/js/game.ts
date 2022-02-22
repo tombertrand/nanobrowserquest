@@ -1898,8 +1898,6 @@ class Game {
       self.storage.setPlayerWeapon(weapon);
       self.storage.setAchievement(achievement);
 
-      // @TODO Verify default grid position when creating player
-
       self.player.setGridPosition(x, y);
       self.player.setMaxHitPoints(hp);
       self.player.setArmorName(armor);

@@ -1472,11 +1472,13 @@ class Player extends Character {
     self.experience = exp;
     self.level = Types.getLevel(self.experience);
     self.orientation = randomOrientation();
-    if (x === 0 && y === 0) {
+
+    if (!x || !y) {
       self.updatePosition();
     } else {
       self.setPosition(x, y);
     }
+
     self.chatBanEndTime = chatBanEndTime;
 
     self.server.addPlayer(self);
