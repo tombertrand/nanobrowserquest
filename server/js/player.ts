@@ -251,14 +251,25 @@ class Player extends Character {
         var msg = sanitize(message[1]);
         console.info("CHAT: " + self.name + ": " + msg);
 
-        // if (msg === '/town')
-
         // Sanitized messages may become empty. No need to broadcast empty chat messages.
         if (msg && msg !== "") {
           msg = msg.substr(0, 100); // Enforce maxlength of chat input
-          // CHAD COMMAND HANDLING IN ASKY VERSION HAPPENS HERE!
-          self.broadcast(new Messages.Chat(self, msg), false);
-          // self.broadcastToZone(new Messages.Chat(self, msg), false);
+
+          if (self.name === "running-coder") {
+            if (msg === "startCowLevel") {
+              if (!self.server.cowLevelClock) {
+                self.server.startCowLevel();
+                self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
+              }
+              return;
+            }
+          }
+
+          // Zone chat
+          // self.broadcast(new Messages.Chat(self, msg), false);
+
+          // Global chat
+          self.server.pushBroadcast(new Messages.Chat(self, msg), false);
         }
       } else if (action === Types.Messages.MOVE) {
         // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
@@ -406,7 +417,6 @@ class Player extends Character {
 
           if (mob.hitPoints <= 0) {
             mob.isDead = true;
-            self.server.pushBroadcast(new Messages.Chat(self, self.name + "M-M-M-MONSTER KILLED" + mob.name));
           }
         }
       } else if (action === Types.Messages.HURT) {

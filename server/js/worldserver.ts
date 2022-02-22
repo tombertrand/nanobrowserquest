@@ -458,8 +458,6 @@ class World {
   pushBroadcast(message, ignoredPlayer?: any) {
     for (var id in this.outgoingQueues) {
       if (id != ignoredPlayer) {
-        // console.log()
-
         this.outgoingQueues[id].push(message.serialize());
       }
     }

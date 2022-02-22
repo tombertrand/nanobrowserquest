@@ -583,6 +583,9 @@ class App {
     if ($("#upgrade").hasClass("visible")) {
       this.toggleUpgrade();
     }
+    if ($("#inventory").hasClass("visible")) {
+      this.closeInventory();
+    }
     if ($("#waypoint").hasClass("visible")) {
       this.closeWaypoint();
     }

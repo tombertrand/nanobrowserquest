@@ -2,6 +2,8 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 
+import type { Recipes } from './types'
+
 var Messages: any = {};
 module.exports = Messages;
 
@@ -137,7 +139,7 @@ Messages.AnvilUpgrade = class Message {
 };
 
 Messages.AnvilRecipe = class Message {
-  constructor(private recipe) {}
+  constructor(private recipe: Recipes) {}
   serialize() {
     return [Types.Messages.ANVIL_RECIPE, this.recipe];
   }

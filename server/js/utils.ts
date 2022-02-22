@@ -1,6 +1,8 @@
-const sanitizer = require("sanitizer");
-const { Types } = require("../../shared/js/gametypes");
-const BigNumber = require("bignumber.js");
+import BigNumber from "bignumber.js"
+import sanitizer from "sanitizer"
+
+import { Types } from "../../shared/js/gametypes"
+import { Recipes } from './types'
 
 export const sanitize = function (string) {
   // Strip unsafe tags, then escape as html entities.
@@ -245,7 +247,7 @@ export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
 };
 
 export const isValidRecipe = items => {
-  const recipes = {
+  const recipes: { [key in Recipes]: string[] } = {
     cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
   };
 
@@ -266,6 +268,6 @@ export const isValidRecipe = items => {
   });
 
   if (result) {
-    return result[0];
+    return result[0] as Recipes;
   }
 };

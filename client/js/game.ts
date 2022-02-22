@@ -2112,6 +2112,9 @@ class Game {
 
         const isDoor = !isWaypoint && self.map.isDoor(x, y);
         if ((!self.player.hasTarget() && isDoor) || isWaypoint) {
+          // Close all when teleporting
+          self.app.hideWindows();
+
           var dest = isWaypoint ? { x, y, orientation: Types.Orientations.DOWN } : self.map.getDoorDestination(x, y);
           if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
             self.client.sendBossCheck(false);
@@ -3705,7 +3708,7 @@ class Game {
       // @NOTE: For an unknown reason when a mob dies and it's moving, it doesn't unregister it's "1" on
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
       // to "0" the pathing map if there is no entity registered on the coords.
-      if (entity === null) {
+      if (entity === null || entity instanceof Item) {
         this.removeFromPathingGrid(pos.x, pos.y);
       }
 
