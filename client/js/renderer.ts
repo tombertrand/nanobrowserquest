@@ -986,8 +986,6 @@ class Renderer {
       ox = -sprite.offsetX * os,
       oy = -sprite.offsetY * os;
 
-    // ctx.scale(0.5, 0.5);
-
     canvas.width = w;
     canvas.height = h;
 

@@ -58,7 +58,6 @@ class App {
     this.loginFormFields = [];
     this.createNewCharacterFormFields = [];
     this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
-    this.initFormFields();
 
     if (
       this.storage &&
@@ -81,6 +80,7 @@ class App {
     }
 
     document.getElementById("parchment")!.className = this.frontPage;
+    this.initFormFields();
   }
 
   setGame(game) {
@@ -96,7 +96,7 @@ class App {
     // Play button
     this.$play = $(".play");
     this.getPlayButton = function () {
-      return this.getActiveForm().find(".play span");
+      return this.getActiveForm().find(".play span, .play.button div");
     };
     this.setPlayButtonState(true);
 
@@ -163,12 +163,6 @@ class App {
 
     if (username && !this.game.started) {
       this.game.setPlayerAccount(username, account);
-      // var optionsSet = false;
-      // var config = this.config;
-
-      // //>>includeStart("devHost", pragmas.devHost);
-      // if (config.local) {
-      //   console.debug("Starting game with local dev config.");
 
       let config = { host: "localhost", port: 8000 };
       if (process.env.NODE_ENV !== "development") {
@@ -176,19 +170,6 @@ class App {
       }
 
       this.game.setServerOptions(config.host, config.port);
-      // } else {
-      //   console.debug("Starting game with default dev config.");
-      //   this.game.setServerOptions(config.dev.host, config.dev.port, username, account);
-      // }
-      // optionsSet = true;
-      // //>>includeEnd("devHost");
-
-      // //>>includeStart("prodHost", pragmas.prodHost);
-      // if (!optionsSet) {
-      //   console.debug("Starting game with build config.");
-      //   this.game.setServerOptions(config.build.host, config.build.port, username, account);
-      // }
-      // //>>includeEnd("prodHost");
 
       if (!self.isDesktop) {
         // On mobile and tablet we load the map after the player has clicked
@@ -273,7 +254,10 @@ class App {
       this.$play!.addClass("loading");
       $playButton.unbind("click");
       this.playButtonRestoreText = $playButton.text();
-      $playButton.text("Loading...");
+
+      if (!$("#login-play-button").is(":visible")) {
+        $playButton.text("Loading...");
+      }
     }
   }
 
@@ -300,12 +284,12 @@ class App {
     this.clearValidationErrors();
 
     if (!username) {
-      this.addValidationError(this.getUsernameField(), "Please enter a username.");
+      this.addValidationError(this.getUsernameField(), "Enter a character name.");
       return false;
     }
 
     if (!isValidAccountAddress(account)) {
-      this.addValidationError(this.getAccountField(), "Please enter a valid nano account.");
+      this.addValidationError(this.getAccountField(), "Enter a valid nano_ account.");
       return false;
     }
 
@@ -919,9 +903,11 @@ class App {
   }
 
   animateParchment(origin, destination) {
-    var self = this,
-      $parchment = $("#parchment"),
-      duration = 1;
+    var self = this;
+    var $parchment = $("#parchment");
+    var duration = 1;
+
+    this.clearValidationErrors();
 
     if (this.isMobile) {
       $parchment.removeClass(origin).addClass(destination);

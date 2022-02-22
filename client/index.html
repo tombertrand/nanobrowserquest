@@ -125,19 +125,30 @@
                     <article id="loadcharacter">
                         <h1>
                             <span class="left-ornament"></span>
-                            Nano BrowserQuest
+                                <span id="no-playername">Nano BrowserQuest</span>
+                                <span id="playername" class="stroke"></span>
                             <span class="right-ornament"></span>
                         </h1>
+
+                        <img id="playerimage" src="">
+
                         <form action="none" method="get" accept-charset="utf-8">
                             <input type="text" id="loginnameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16" autofocus>
                             <textarea id="loginaccountinput" class="stroke" name="player-loginaccount" placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"
                             ></textarea>
                         </form>
-                        <div class="play">
+                        <div id="login-play-link" class="play">
                             <span class="link">Login</span>
                             <img src="img/common/spinner2.gif">
                         </div>
-                        <div class="validation-summary"></div>
+                        <div class="validation-summary"> </div>
+                        <div id="login-play-button" class="play button">
+                            <div></div>
+                            <img src="img/common/spinner.gif" alt="">
+                        </div>
+                        <div id="forget-player">
+                            <span class="link">Forget Player</span>
+                        </div>
                         <div id="create-new">
                             <span class="link">Create New Character</span>
                         </div>

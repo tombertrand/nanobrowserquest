@@ -1898,6 +1898,8 @@ class Game {
       self.storage.setPlayerWeapon(weapon);
       self.storage.setAchievement(achievement);
 
+      // @TODO Verify default grid position when creating player
+
       self.player.setGridPosition(x, y);
       self.player.setMaxHitPoints(hp);
       self.player.setArmorName(armor);
@@ -2249,12 +2251,12 @@ class Game {
       });
 
       self.player.onSwitchItem(function () {
-        // self.storage.savePlayer(
-        //   self.renderer.getPlayerImage(),
-        //   self.player.getArmorName(),
-        //   self.player.getWeaponName(),
-        //   self.player.getGuild(),
-        // );
+        self.storage.savePlayer(
+          self.renderer.getPlayerImage(),
+          self.player.getArmorName(),
+          self.player.getWeaponName(),
+          self.player.getGuild(),
+        );
         if (self.equipment_callback) {
           self.equipment_callback();
         }

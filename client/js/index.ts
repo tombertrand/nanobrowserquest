@@ -144,7 +144,7 @@ var initApp = function () {
       }
     });
 
-    $("#create-new span").click(function () {
+    $("#create-new > .link").click(function () {
       app.animateParchment("loadcharacter", "confirmation");
     });
 
@@ -228,14 +228,36 @@ var initApp = function () {
       return false;
     });
 
-    var data = app.storage.data;
+    const { data } = app.storage;
     if (data.hasAlreadyPlayed) {
-      if (data.player.name && data.player.name !== "") {
-        $("#playername").html(data.player.name);
-        // @NOTE Delete this?
-        // $("#playerimage").attr("src", data.player.image);
+      if (data?.player?.name && data?.player?.image) {
+        $("#loginnameinput").hide();
+        $("#loginaccountinput").hide();
+        $("#login-play-link").hide();
+        $("#no-playername").hide();
+
+        $("#login-play-button").show();
+        $("#forget-player").show();
+        $("#playername").html(data.player.name).show();
+        $("#playerimage").attr("src", data.player.image).show();
       }
     }
+
+    $("#forget-player .link").on("click", () => {
+      app.storage.clear();
+
+      $("#no-playername").show();
+      $("#loginnameinput").val("").show();
+      $("#loginaccountinput").val("").show();
+      $("#login-play-link").show();
+
+      $("#playername").hide();
+      $("#playerimage").hide();
+      $("#login-play-button").hide();
+      $("#forget-player").hide();
+
+      app.animateParchment("loadcharacter", "loadcharacter");
+    });
 
     $(".play span").click(function () {
       app.tryStartingGame();

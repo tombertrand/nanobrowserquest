@@ -329,7 +329,7 @@ var Properties: any = {
 
   cow: {
     drops: {
-      rejuvenationpotion: 92,
+      rejuvenationpotion: 93,
       hornedarmor: 1,
       frozenarmor: 1,
       frozensword: 1,
@@ -349,7 +349,7 @@ var Properties: any = {
       diamondarmor: 5,
       diamondbelt: 5,
       amuletcow: 5,
-      scrollupgradehigh: 79,
+      scrollupgradehigh: 80,
     },
     hp: 6000,
     armor: 24,

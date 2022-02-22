@@ -273,10 +273,15 @@ footer, header, hgroup, menu, nav, section {
     .play img {display:none;}
     .play.loading span:hover {color:inherit;cursor:default;}
     .play.loading img {display:inline;}
-    #create-new {margin-top:1em;}
+    #forget-player, #create-new, #create-new-account {margin-top:6px;}
+    #forget-player, #playername, #playerimage, #login-play-button {display: none; }
     #playername {color:#fff;}
+    #playerimage {image-rendering:pixelated;image-rendering:crisp-edges; margin-top: 20px;}
+    .dimmed { color: #b2af9b !important}
+    /* .loadcharacter .play { margin: 0 auto !important; } */
+    .loadcharacter .play div {cursor:pointer;}
 
-    .validation-summary {margin:.5em;min-height:1em;}
+    .validation-summary { margin: 0 auto; text-align: center; min-height: 1.25rem; }
     .validation-error {color:#880000;text-shadow:2px 2px 2px #ff6666;}
     @keyframes blink { 0% {color:red;} 100% {color:#880000;}}
     @-webkit-keyframes blink { 0% {color:red;} 100% {color:#880000;}}
@@ -813,6 +818,13 @@ footer, header, hgroup, menu, nav, section {
         text-shadow: 0px 1px #000;
     }
 
+    #login-play-button.play.loading img {
+        display: block;
+        position: absolute;
+        top: 54%;
+        left: 50%;
+    }
+
 	@media screen and (min-width: 1501px) {
         #nano {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }
@@ -840,7 +852,13 @@ footer, header, hgroup, menu, nav, section {
         .waypoint-row.active .waypoint-icon {background-position-x: -69px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -138px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 3px #373737;}
- 
+        #playerimage { height: 96px; width: 96px; }
+        #login-play-button.play.loading img {
+            margin-top: -16px;
+            margin-left: -16px;
+            height: 32px;
+            width: 32px;
+        }
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
@@ -865,7 +883,7 @@ footer, header, hgroup, menu, nav, section {
         #parchment input, #parchment textarea, #store input {margin-top:30px; padding:0 15px; border:3px dashed #b2af9b; font-size:30px;border-radius:9px;height:61px;color:#eee;}
         #parchment textarea { height: 88px; padding-top: 10px; }
         #parchment.createcharacter input {margin-top:20px;height:50px;}
-        #createcharacter .play {margin: 10px auto 10px auto;}
+        #createcharacter .play {margin: 6px auto 0 auto;}
         .button {height:153px;width:375px;background-position:-687px -306px;margin:30px auto 0 auto;position:relative;}
         .play div {height:153px;width:375px;background-position:-687px 0px;}
         .play div:active {background-position:-687px -459px;}
@@ -874,8 +892,8 @@ footer, header, hgroup, menu, nav, section {
         .stroke, .achievement-name {text-shadow:3px 3px 0 #373737, 3px -3px 0 #373737, 0 3px 0 #373737, 3px 0 0 #373737, -3px 3px 0 #373737, -3px -3px 0 #373737, 0 -3px 0 #373737, 0 3px 0 #373737, -3px 0 0 #373737;}
 
         #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:30px;}
-        #playername {margin-top:15px;}
-        .loadcharacter .play, .confirmation .delete {margin:15px auto 15px auto;}
+        /* #playername {margin-top:15px;} */
+        .loadcharacter .play, .confirmation .delete {margin:15px auto 0 auto;}
         #confirmation p, #error p {font-size:30px;margin-top:60px;line-height:40px;}
         #legal p {margin:50px auto 0;}
         #error p {width:70%;margin:60px auto 0;}
@@ -1047,6 +1065,13 @@ footer, header, hgroup, menu, nav, section {
         .waypoint-row.active .waypoint-icon {background-position-x: -46px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -92px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 2px #373737;}
+        #playerimage { height: 64px; width: 64px; }
+        .play.loading img {
+            margin-top: -12px;
+            margin-left: -12px;
+            height: 24px;
+            width: 24px;
+        }
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/2/barsheet.png');}
@@ -1069,23 +1094,22 @@ footer, header, hgroup, menu, nav, section {
         #parchment input, #parchment textarea, #store input {margin-top:20px; padding:0 10px; border:2px dashed #b2af9b; font-size:20px;border-radius:6px;height:41px;color:#eee;}
         #parchment textarea { height: 64px; padding-top: 10px; }
         #parchment.createcharacter input {margin-top:15px;height:30px;}
-        #createcharacter .play {margin: 8px auto 8px auto;}
+        #createcharacter .play {margin: 6px auto 0 auto;}
         .button {height:102px;width:250px;background-position:-458px -204px;margin:20px auto 0 auto;position:relative;}
         .play div {height:102px;width:250px;background-position:-458px 0px;}
         .play div:active {background-position:-458px -306px;}
         .play.loading div {background-position:-454px -1452px;}
-        .play.loading img {height:16px;width:16px;}
+        #login-play-link.play.loading img {height:16px;width:16px;}
         .stroke, .achievement-name {text-shadow:2px 2px 0 #373737, 2px -2px 0 #373737, 0 2px 0 #373737, 2px 0 0 #373737, -2px 2px 0 #373737, -2px -2px 0 #373737, 0 -2px 0 #373737, 0 2px 0 #373737, -2px 0 0 #373737;}
         
         #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:20px;}
-        #playername {margin-top:10px;}
-        .loadcharacter .play, .confirmation .delete {margin:10px auto 10px auto;}
+        /* #playername {margin-top:10px;} */
+        .loadcharacter .play, .confirmation .delete {margin:6px auto 0 auto;}
         #confirmation p, #error p {font-size:20px;margin-top:40px;line-height:30px;}
         #legal p {margin:30px auto 0;font-size:16px;line-height:24px;}
         #error p {width:70%;margin:40px auto 0;}
         .button.delete {background-position:-458px -102px;}
         .button.delete:active {background-position:0 -1452px;}
-        .validation-summary {margin:0 auto .5em auto;}
         .validation-error {font-size:16px;}
         
 		#container {width:980px;margin:0 auto;position:absolute;top:50%;margin-top:-252px;left:50%;margin-left:-490px;}
@@ -1285,7 +1309,7 @@ footer, header, hgroup, menu, nav, section {
         .stroke, .achievement-name {text-shadow:1px 1px 0 #373737, 1px -1px 0 #373737, 0 1px 0 #373737, 1px 0 0 #373737, -1px 1px 0 #373737, -1px -1px 0 #373737, 0 -1px 0 #373737, 0 1px 0 #373737, -1px 0 0 #373737;}
         
         #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:20px;}
-        #playername {margin-top:5px;}
+        /* #playername {margin-top:5px;} */
         .loadcharacter .play, .confirmation .delete {margin:5px auto 5px auto;}
         #confirmation p, #error p, #legal p {font-size:10px;margin-top:20px;line-height:20px;}
         #legal p {margin:20px auto 0;line-height:12px;}
@@ -1531,7 +1555,7 @@ footer, header, hgroup, menu, nav, section {
 	
 	    #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #createcharacter h1, #error h1, #legal h1 {font-size:12px;}
 	    #createcharacter{padding-bottom:20px;}
-		#playername {font-size:20px;margin:10px 0px;}
+		#playername {font-size:20px;}
 		#continue {margin:20px 0px;font-size:16px;}
 		#cancel {margin:20px 0;font-size:16px;}
 		.button.delete {background-position:-612px -1398px;}

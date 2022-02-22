@@ -1175,7 +1175,7 @@ class World {
   getDroppedItem(mob, attacker) {
     var kind = Types.getKindAsString(mob.kind);
     var drops = Properties[kind].drops;
-    var v = random(100);
+    var v = random(100) + 1;
     var p = 0;
     var item = null;
 
@@ -1217,7 +1217,7 @@ class World {
           if (itemKind === Types.Entities.SCROLLUPGRADEHIGH) {
             const mobLevel = Types.getMobLevel(mob.kind);
             if (attacker && attacker.level - 6 > mobLevel) {
-              // @NOTE Reduce scroll drops to prevent crazy farming
+              // Reduce scroll drops to prevent crazy farming
               if (random(4) === 1) {
                 break;
               }

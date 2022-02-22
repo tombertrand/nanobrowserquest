@@ -1,5 +1,5 @@
 // import bcrypt  from "bcrypt";
-import NanocurrencyWeb from "nanocurrency-web";
+import * as NanocurrencyWeb from "nanocurrency-web";
 import redis from "redis";
 
 import { Types } from "../../../shared/js/gametypes";

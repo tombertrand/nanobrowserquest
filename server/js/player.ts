@@ -441,6 +441,13 @@ class Player extends Character {
             self.server.handleHurtEntity({ entity: mob, attacker: self, damage: lightningDamage });
           }
 
+          if (mob.kind === Types.isBoss(mob.kind)) {
+            // Each boss gets a 10% crit chance
+            if (random(10) === 3) {
+              dmg = Math.ceil(dmg * 1.5);
+            }
+          }
+
           self.hitPoints -= dmg;
           self.server.handleHurtEntity({ entity: self, attacker: mob, isBlocked });
 
