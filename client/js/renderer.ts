@@ -129,6 +129,31 @@ class Renderer {
     }
   }
 
+  getWeaponImage(entity) {
+    let weaponLevel = entity.getWeaponLevel();
+    let weaponSuffix = "";
+
+    if (!!entity.weaponBonus) {
+      weaponSuffix = "unique";
+      if (weaponLevel >= 7) {
+        weaponSuffix += "7";
+      }
+    } else if (weaponLevel === 7) {
+      weaponSuffix = "7";
+    } else if (weaponLevel > 7) {
+      weaponSuffix = "8";
+    }
+
+    var weapon = this.game.sprites[entity.getWeaponName()];
+
+    // @TODO Why does this happens?
+    if (!weapon[`image${weaponSuffix}`]) {
+      weaponSuffix = "";
+    }
+
+    return { weapon, weaponSuffix, weaponImage: weapon[`image${weaponSuffix}`] };
+  }
+
   createCamera() {
     this.camera = new Camera(this);
     this.camera.rescale();
@@ -564,21 +589,7 @@ class Renderer {
       }
 
       if (entity instanceof Player && !entity.isDead && entity.hasWeapon()) {
-        let weaponLevel = entity.getWeaponLevel();
-        let weaponSuffix = "";
-
-        if (!!entity.weaponBonus) {
-          weaponSuffix = "unique";
-          if (weaponLevel >= 7) {
-            weaponSuffix += "7";
-          }
-        } else if (weaponLevel === 7) {
-          weaponSuffix = "7";
-        } else if (weaponLevel > 7) {
-          weaponSuffix = "8";
-        }
-
-        var weapon = this.game.sprites[entity.getWeaponName()];
+        const { weapon, weaponSuffix, weaponImage } = this.getWeaponImage(entity);
 
         if (weapon) {
           var weaponAnimData = weapon.animationData[anim.name];
@@ -588,11 +599,6 @@ class Renderer {
           var ww = weapon.width * os;
           var wh = weapon.height * os;
 
-          // @TODO Why does this happens?
-          if (!weapon[`image${weaponSuffix}`]) {
-            weaponSuffix = "";
-          }
-
           let isFilterApplied = false;
           if (weaponSuffix) {
             isFilterApplied = true;
@@ -601,17 +607,7 @@ class Renderer {
             this.context.filter = `brightness(${brightness}%)`;
           }
 
-          this.context.drawImage(
-            weapon[`image${weaponSuffix}`],
-            wx,
-            wy,
-            ww,
-            wh,
-            weapon.offsetX * s,
-            weapon.offsetY * s,
-            ww * ds,
-            wh * ds,
-          );
+          this.context.drawImage(weaponImage, wx, wy, ww, wh, weapon.offsetX * s, weapon.offsetY * s, ww * ds, wh * ds);
 
           if (isFilterApplied) {
             this.context.filter = "brightness(100%)";
@@ -961,11 +957,12 @@ class Renderer {
   }
 
   getPlayerImage() {
+    const { weapon, weaponImage } = this.getWeaponImage(this.game.player);
+
     var canvas = document.createElement("canvas"),
       ctx = canvas.getContext("2d"),
       os = this.upscaledRendering ? 1 : this.scale,
-      player = this.game.player,
-      sprite = player.getArmorSprite(),
+      sprite = this.game.player.getArmorSprite(),
       spriteAnim = sprite.animationData["idle_down"],
       // character
       row = spriteAnim.row,
@@ -973,26 +970,25 @@ class Renderer {
       h = sprite.height * os,
       y = row * h,
       // weapon
-      weapon = this.game.sprites[this.game.player.getWeaponName()],
       ww = weapon.width * os,
       wh = weapon.height * os,
       wy = wh * row,
-      offsetX = (weapon.offsetX - sprite.offsetX) * os,
-      offsetY = (weapon.offsetY - sprite.offsetY) * os,
+      offsetX = (weapon.offsetX - sprite.offsetX) * os + 2,
+      offsetY = (weapon.offsetY - sprite.offsetY) * os + 2,
       // shadow
       shadow = this.game.shadows["small"],
       sw = shadow.width * os,
       sh = shadow.height * os,
-      ox = -sprite.offsetX * os,
-      oy = -sprite.offsetY * os;
+      ox = -sprite.offsetX * os + 2,
+      oy = -sprite.offsetY * os + 4;
 
     canvas.width = w;
     canvas.height = h;
 
     ctx.clearRect(0, 0, w, h);
     ctx.drawImage(shadow.image, 0, 0, sw, sh, ox, oy, sw, sh);
-    ctx.drawImage(sprite.image, 0, y, w, h, 0, 0, w, h);
-    ctx.drawImage(weapon.image, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
+    ctx.drawImage(sprite.image, 0, y, w, h, 2, 2, w, h);
+    ctx.drawImage(weaponImage, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
 
     return canvas.toDataURL("image/png");
   }
