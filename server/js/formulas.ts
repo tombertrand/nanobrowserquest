@@ -11,6 +11,7 @@ Formulas.minMaxDamage = function ({
   maxDamage,
   magicDamage,
   attackDamage,
+  drainLife,
   flameDamage,
   lightningDamage,
   pierceArmor,
@@ -21,6 +22,7 @@ Formulas.minMaxDamage = function ({
     Math.ceil((Types.getWeaponDamage(weapon, weaponLevel, isUnique) + attackDamage) * 1.2 + playerLevel / 2) +
     weaponMagicDamage +
     magicDamage +
+    drainLife +
     flameDamage +
     lightningDamage +
     pierceArmor;
@@ -48,6 +50,7 @@ Formulas.dmg = function ({
   maxDamage,
   magicDamage,
   attackDamage,
+  drainLife,
   flameDamage,
   lightningDamage,
   pierceArmor,
@@ -60,6 +63,7 @@ Formulas.dmg = function ({
     maxDamage,
     magicDamage,
     attackDamage,
+    drainLife,
     flameDamage,
     lightningDamage,
     pierceArmor,

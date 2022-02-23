@@ -333,6 +333,7 @@ class Player extends Character {
             maxDamage: self.bonus.maxDamage,
             magicDamage: self.bonus.magicDamage,
             attackDamage: self.bonus.attackDamage,
+            drainLife: self.bonus.drainLife,
             flameDamage: self.bonus.flameDamage,
             lightningDamage: self.bonus.lightningDamage,
             pierceArmor: self.bonus.pierceArmor,
@@ -341,12 +342,11 @@ class Player extends Character {
           if (self.bonus.criticalHit) {
             isCritical = random(100) <= self.bonus.criticalHit;
             if (isCritical) {
-              dmg = Math.ceil(dmg * 1.5);
+              dmg = Math.ceil((dmg - self.bonus.drainLife) * 1.5);
             }
           }
 
           if (self.bonus.drainLife) {
-            dmg += self.bonus.drainLife;
             if (!self.hasFullHealth()) {
               self.regenHealthBy(self.bonus.drainLife);
               self.server.pushToPlayer(self, self.health());
@@ -1322,6 +1322,7 @@ class Player extends Character {
       maxDamage: this.bonus.maxDamage,
       magicDamage: this.bonus.magicDamage,
       attackDamage: this.bonus.attackDamage,
+      drainLife: this.bonus.drainLife,
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
       pierceArmor: this.bonus.pierceArmor,

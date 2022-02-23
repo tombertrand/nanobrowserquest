@@ -1150,9 +1150,9 @@ Types.getBonus = function (rawBonus, level) {
   const blockChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
   const magicFindPerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
   const attackSpeedPerLevel = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30];
-  const drainLifePerLevel = [1, 3, 5, 8, 11, 14, 18, 23, 30, 40];
+  const drainLifePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const flameDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
-  const lightningDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
+  const lightningDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const pierceArmorPerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
 
