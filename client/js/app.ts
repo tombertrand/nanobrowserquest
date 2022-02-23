@@ -354,7 +354,6 @@ class App {
     this.game.player.onSetTarget(function (target, name) {
       var el = "#inspector";
       // var sprite = target.sprite;
-
       // var x = (sprite.animationData.idle_down.length - 1) * sprite.width;
       // var y = sprite.animationData.idle_down.row * sprite.height;
 
@@ -377,22 +376,17 @@ class App {
 
       $(el).fadeIn("fast");
 
-      if (!self.isDesktop) {
-        var hideTarget = _.debounce(() => {
-          self.game.player.onRemoveTarget();
-        }, 3000);
-        hideTarget();
-      }
+      self.game.onRemoveTarget();
     });
 
     self.game.onUpdateTarget(function (target) {
       $("#inspector .health").css("width", Math.round((target.healthPoints / target.maxHp) * 100) + "%");
-    });
 
-    self.game.player.onRemoveTarget(function () {
-      $("#inspector").fadeOut("fast");
-      $("#inspector .level").text("");
-      self.game.player.inspecting = null;
+      if (target.healthPoints <= 0) {
+        self.game.onRemoveTarget.flush();
+      } else {
+        self.game.onRemoveTarget();
+      }
     });
   }
 

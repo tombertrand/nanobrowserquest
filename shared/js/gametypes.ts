@@ -550,13 +550,13 @@ Types.itemUniqueMap = {
 Types.setBonus = {
   frozen: {
     minDamage: 10,
-    criticalHit: 2,
-    defense: 10,
+    criticalHit: 3,
+    defense: 15,
   },
   diamond: {
     exp: 5,
-    blockChance: 2,
-    health: 30,
+    blockChance: 3,
+    health: 50,
   },
 };
 

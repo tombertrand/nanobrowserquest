@@ -3640,20 +3640,21 @@ class Game {
       } else if (this.lastHovered) {
         this.lastHovered.setHighlight(null);
         if (this.timeout === undefined && !this.player.hasTarget()) {
-          var self = this;
-          this.timeout = setTimeout(function () {
-            $("#inspector").fadeOut("fast");
-            $("#inspector .health").text("");
-            if (self.player) {
-              self.player.inspecting = null;
-            }
-          }, 2000);
-          this.timeout = undefined;
+          this.onRemoveTarget();
         }
         this.lastHovered = null;
       }
     }
   }
+
+  onRemoveTarget = _.debounce(() => {
+    $("#inspector").fadeOut("fast");
+    $("#inspector .level").text("");
+    $("#inspector .health").text("");
+    if (this.player) {
+      this.player.inspecting = null;
+    }
+  }, 2000);
 
   /**
    * Moves the player one space, if possible
@@ -3663,6 +3664,11 @@ class Game {
     this.hoveringPlateauTile = false;
 
     if ((pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) || this.isZoning()) {
+      if (this.getEntityAt(pos.x, pos.y)) {
+        this.previousClickPosition = null;
+        this.processInput(pos);
+      }
+
       return;
     } else {
       if (!this.player.disableKeyboardNpcTalk) this.previousClickPosition = pos;
