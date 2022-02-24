@@ -2184,7 +2184,7 @@ class Game {
           self.makeNpcTalk(self.player.target);
         } else if (self.player.target instanceof Chest) {
           if (self.player.target.gridX === 154 && self.player.target.gridY === 365 && !self.player.skeletonKey) {
-            // @NOTE skip playing the chest open sound if the SKELETON_KEY quest is not completed
+            // skip playing the chest open sound if the SKELETON_KEY quest is not completed
             self.showNotification("You need to find the Skeleton Key");
             self.audioManager.playSound("noloot");
           } else {
@@ -3664,12 +3664,9 @@ class Game {
     this.hoveringPlateauTile = false;
 
     if ((pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) || this.isZoning()) {
-      if (this.getEntityAt(pos.x, pos.y)) {
-        this.previousClickPosition = null;
-        this.processInput(pos);
+      if (!this.getEntityAt(pos.x, pos.y)) {
+        return;
       }
-
-      return;
     } else {
       if (!this.player.disableKeyboardNpcTalk) this.previousClickPosition = pos;
     }
@@ -3714,7 +3711,7 @@ class Game {
       // @NOTE: For an unknown reason when a mob dies and it's moving, it doesn't unregister it's "1" on
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
       // to "0" the pathing map if there is no entity registered on the coords.
-      if (entity === null || entity instanceof Item) {
+      if ((entity === null || entity instanceof Item) && this.map.grid[pos.y][pos.x] !== 1) {
         this.removeFromPathingGrid(pos.x, pos.y);
       }
 
@@ -3811,8 +3808,6 @@ class Game {
         }
 
         if (pos) {
-          // @TODO Disengage attacker?
-
           attacker.previousTarget = target;
           attacker.disengage();
           attacker.idle();

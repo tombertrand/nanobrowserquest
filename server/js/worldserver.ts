@@ -968,10 +968,6 @@ class World {
     if (character && mobId) {
       this.pushToAdjacentGroups(character.group, character.raise(mobId));
     }
-    if (this.raise_callback) {
-      // @NOTE May need for raising zombies?
-      // this.raise_callback(mob);
-    }
   }
 
   receivedExp(player, mob) {

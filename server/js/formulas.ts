@@ -40,7 +40,6 @@ Formulas.minMaxDamage = function ({
   };
 };
 
-// @NOTE Do proper formula with +1 - +10 armors / weapons
 Formulas.dmg = function ({
   weapon,
   weaponLevel,

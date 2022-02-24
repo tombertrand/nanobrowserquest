@@ -141,7 +141,7 @@ class DatabaseHandler {
               try {
                 achievement = JSON.parse(replies[5]);
 
-                // @NOTE Migrate old achievements to new
+                // Migrate old achievements to new
                 if (achievement.length === 20) {
                   achievement = achievement
                     .slice(0, 15)
@@ -237,7 +237,7 @@ class DatabaseHandler {
                   let hasSword2 = /sword2/.test(replies[6]);
                   inventory = JSON.parse(replies[6].replace(/sword2/g, "sword"));
 
-                  // @NOTE Migrate inventory
+                  // Migrate inventory
                   if (inventory.length < INVENTORY_SLOT_COUNT || hasSword2) {
                     inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
 
@@ -257,7 +257,7 @@ class DatabaseHandler {
 
               var upgrade = replies[12];
               try {
-                // @NOTE Migrate upgrade
+                // Migrate upgrade
                 if (!upgrade) {
                   upgrade = new Array(UPGRADE_SLOT_COUNT).fill(0);
                   this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
@@ -663,7 +663,7 @@ class DatabaseHandler {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
         const fromItem = isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed;
 
-        // @NOTE Should never happen but who knows
+        // Should never happen but who knows
         if (["dagger:1", "clotharmor:1"].includes(fromItem) && toSlot !== -1) return;
 
         if (toLocation === fromLocation) {

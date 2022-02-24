@@ -485,12 +485,9 @@ var initGame = function () {
       // app.hideWindows();
     });
 
-    // @NOTE Only draggable / resizable for desktop size
     $("#text-window")
       .draggable()
       .resizable({
-        // maxHeight: $("#container").height() / 2,
-        // maxWidth: $("#container").width() * 0.75,
         minHeight: $("#container").height() / 4,
         minWidth: $("#container").width() / 3,
       });

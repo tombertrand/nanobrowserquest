@@ -322,7 +322,7 @@ class Character extends Entity {
         // Path is complete or has been interrupted
         this.path = null;
 
-        if (this.kind !== Types.Entities.NECROMANCER) {
+        if (!this.isAttacking() || this.isMoving()) {
           this.idle();
         }
 
