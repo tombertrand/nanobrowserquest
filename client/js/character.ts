@@ -322,9 +322,7 @@ class Character extends Entity {
         // Path is complete or has been interrupted
         this.path = null;
 
-        if (!this.isAttacking() || this.isMoving()) {
-          this.idle();
-        }
+        this.idle();
 
         if (this.stop_pathing_callback) {
           this.stop_pathing_callback({ x: this.gridX, y: this.gridY });

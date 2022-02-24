@@ -2504,8 +2504,16 @@ class Game {
         if (entity) {
           console.info("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id + ")");
 
-          if (entity.gridX === self.previousClickPosition?.x && entity.gridY === self.previousClickPosition?.y) {
-            self.previousClickPosition = null;
+          // Instead of checking the absolute position, give a 1 tile buffer range for clearing the position
+          // This is an attempt at solving the issue where after a monster death the player could not attack
+          // in the same direction if the mob has moved before the attack and the wrong pos are then recorded
+          if (self.previousClickPosition) {
+            const isNear =
+              Math.abs(entity.gridX - self.previousClickPosition.x) <= 1 &&
+              Math.abs(entity.gridY - self.previousClickPosition.y) <= 1;
+            if (isNear) {
+              self.previousClickPosition = null;
+            }
           }
 
           if (entity instanceof Item) {
@@ -3671,9 +3679,7 @@ class Game {
     this.hoveringPlateauTile = false;
 
     if ((pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) || this.isZoning()) {
-      if (!this.getEntityAt(pos.x, pos.y)) {
-        return;
-      }
+      return;
     } else {
       if (!this.player.disableKeyboardNpcTalk) this.previousClickPosition = pos;
     }
