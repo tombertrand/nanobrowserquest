@@ -543,7 +543,7 @@ footer, header, hgroup, menu, nav, section {
     #player-list > div span:first-of-type,#player-info > div span:first-of-type { margin-right: 3px; }
     #player-list > div span:last-of-type,#player-info > div span:last-of-type { margin-left: auto; }
     #population .active, #text-window .active, #player .active { color: #FCE045 }
-    #text-window .world { color: #55a3ff }
+    #text-window .event { color: #55a3ff }
     #player-account {color: #55a3ff; display: inline-block; white-space: nowrap;overflow: hidden;text-overflow: ellipsis; padding: 0 12px; width:calc(100% - 24px);}
     #healthbar, #hitpoints, #weapon, #armor { cursor: pointer;}
 

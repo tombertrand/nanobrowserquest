@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-shadow */
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
@@ -26,6 +28,8 @@ import { App as AppType } from "./types/app";
 import Updater from "./updater";
 import { randomRange } from "./utils";
 import Warrior from "./warrior";
+
+import type { ChatType } from "../../server/js/types";
 
 class Game {
   app: AppType;
@@ -2894,10 +2898,13 @@ class Game {
         }
       });
 
-      self.client.onChatMessage(function (entityId, name, message, type) {
+      self.client.onChatMessage(function (entityId: number, name: string, message: string, type: ChatType) {
         var entity = self.getEntityById(entityId);
-        self.createBubble(entityId, message);
-        self.assignBubbleTo(entity);
+        if (entity) {
+          self.createBubble(entityId, message);
+          self.assignBubbleTo(entity);
+        }
+
         self.audioManager.playSound("chat");
         self.chat_callback(entityId, name, message, type);
       });

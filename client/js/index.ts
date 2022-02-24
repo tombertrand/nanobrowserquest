@@ -21,6 +21,7 @@ import { TRANSITIONEND } from "./utils";
 
 import type { App as AppType } from "./types/app";
 import type { Game as GameType } from "./types/game";
+import { ChatType } from "../../server/js/types";
 
 var app: AppType;
 var game: GameType;
@@ -304,7 +305,7 @@ var initGame = function () {
 
   game.onGameStart(function () {
     app.initEquipmentIcons();
-    game.chat_callback(null, null, `Welcome ${game.player.name}`, "world");
+    game.chat_callback(null, null, `Welcome ${game.player.name}`, "event");
   });
 
   game.onDisconnect(function (message) {
@@ -366,8 +367,8 @@ var initGame = function () {
     $("#hitpoints").toggleClass("invincible");
   });
 
-  game.onChatMessage(function (entityId, name, message, type) {
-    if (!$("#text-window").is(":visible") && name !== game.storage.data.player.name && type !== "world") {
+  game.onChatMessage(function (entityId: number, name: string, message: string, type: ChatType) {
+    if (!$("#text-window").is(":visible") && name !== game.storage.data.player.name && type !== "event") {
       $("#chatbutton").addClass("blink");
     }
 
@@ -378,7 +379,7 @@ var initGame = function () {
     }
 
     let className = name === game.storage.data.player.name ? "active" : "";
-    if (type === "world") {
+    if (type === "event") {
       className = type;
     }
 
