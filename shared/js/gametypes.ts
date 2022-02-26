@@ -394,8 +394,8 @@ export const kinds = {
   bluearmor: [Types.Entities.BLUEARMOR, "armor", "Sapphire Armor", 14, 24],
   hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 18, 28],
   frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 22, 30],
-  diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 26, 32],
-  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 30, 34],
+  diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 26, 34],
+  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 30, 36],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -548,15 +548,23 @@ Types.itemUniqueMap = {
 };
 
 Types.setBonus = {
+  diamond: {
+    exp: 5,
+    blockChance: 3,
+    health: 50,
+  },
   frozen: {
     minDamage: 10,
     criticalHit: 3,
     defense: 15,
   },
-  diamond: {
-    exp: 5,
-    blockChance: 3,
-    health: 50,
+  plated: {
+    attackDamage: 4,
+    defense: 4,
+  },
+  leather: {
+    maxDamage: 3,
+    health: 15,
   },
 };
 

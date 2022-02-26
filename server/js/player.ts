@@ -1234,7 +1234,15 @@ class Player extends Character {
     ) {
       set = "Diamond";
       bonus = Types.setBonus.diamond;
+    } else if (this.armorKind === Types.Entities.PLATEARMOR && this.belt === "beltplated") {
+      set = "Plated";
+      bonus = Types.setBonus.plated;
+    } else if (this.armorKind === Types.Entities.LEATHERARMOR && this.belt === "beltleather") {
+      set = "Leather";
+      bonus = Types.setBonus.leather;
     }
+
+    console.log("~~~bonus", bonus);
 
     if (bonus) {
       Object.entries(bonus).map(([type, stats]) => {

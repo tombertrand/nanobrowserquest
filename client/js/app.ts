@@ -351,7 +351,7 @@ class App {
     // var healthMaxWidth = $("#inspector .health")!.width() - 12 * scale;
     // var timeout;
 
-    this.game.player.onSetTarget(function (target, name) {
+    this.game.player?.onSetTarget(function (target, name) {
       var el = "#inspector";
       // var sprite = target.sprite;
       // var x = (sprite.animationData.idle_down.length - 1) * sprite.width;
@@ -754,6 +754,7 @@ class App {
   }
 
   togglePopulationInfo() {
+    // $("#party").toggleClass("visible");
     $("#population").toggleClass("visible");
 
     if ($("#upgrade, #inventory").hasClass("visible")) {

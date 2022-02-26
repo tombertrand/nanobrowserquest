@@ -8,10 +8,12 @@ import "jquery-ui-touch-punch";
 import "../css/main.css";
 import "../css/achievements.css";
 import "../css/store.css";
+import "../css/party.css";
 import "jquery-ui/themes/base/all.css";
 
 import * as _ from "lodash";
 
+import { ChatType } from "../../server/js/types";
 import { Types } from "../../shared/js/gametypes";
 import App from "./app";
 import Character from "./character";
@@ -21,7 +23,6 @@ import { TRANSITIONEND } from "./utils";
 
 import type { App as AppType } from "./types/app";
 import type { Game as GameType } from "./types/game";
-import { ChatType } from "../../server/js/types";
 
 var app: AppType;
 var game: GameType;
