@@ -2638,22 +2638,24 @@ class Game {
         self.player.setPartyLeader(partyLeader);
         self.player.setPartyMembers(members);
 
+        members?.forEach(({ id }) => {
+          self.getEntityById(id).setPartyId(partyId);
+        });
+
         let message = "Party joined";
         if (data.playerName !== self.player.name) {
-          message = `${data.playerName} joined the Party`;
+          message = `${data.playerName} joined the party`;
+        } else if (members.length === 1 && partyLeader.name === self.player.name) {
+          message = `Party created, you are the party leader`;
         }
         self.chat_callback({ message, type: "info" });
-
-        // self.showNotification("You joined the party");
       });
 
       self.client.onPartyInvite(function (data) {
-        // self.showNotification("Party invite");
-
         const { partyId, partyLeader } = data;
 
         self.chat_callback({
-          message: `${partyLeader.name} invite you to join the party id ${partyId}. To accept type /party join ${partyId}`,
+          message: `${partyLeader.name} invite you to join the party. To accept type /party join ${partyId}`,
           type: "info",
         });
       });
@@ -2661,14 +2663,46 @@ class Game {
       self.client.onPartyLeave(function (data) {
         const { partyId, partyLeader, members, playerName } = data;
 
+        // Leaving player will update it's entity list
+        if (!partyId) {
+          self.player.partyMembers?.forEach(({ id }) => {
+            self.getEntityById(id)?.setPartyId(partyId);
+          });
+        } else {
+          // When a player in the party left, diff the member list and remove the partyId of the leaving player
+          _.differenceWith(self.player.partyMembers, members, _.isEqual)?.forEach(({ id }) => {
+            self.getEntityById(id)?.setPartyId(undefined);
+          });
+        }
+
         self.player.setPartyId(partyId);
         self.player.setPartyLeader(partyLeader);
         self.player.setPartyMembers(members);
 
         let message = "You left the party";
         if (playerName !== self.player.name) {
-          message = `${playerName} left the Party`;
+          message = `${playerName} left the party`;
         }
+        // @NOTE add isNewLeader to determine when to display this?
+        // if (self.player.name === partyLeader?.name) {
+        //   message += ", you are now the party leader";
+        // }
+        self.chat_callback({ message, type: "info" });
+      });
+
+      self.client.onPartyDisband(function () {
+        self.player.partyMembers?.forEach(({ id }) => {
+          self.getEntityById(id)?.setPartyId(undefined);
+        });
+
+        self.player.setPartyId(undefined);
+        self.player.setPartyLeader(undefined);
+        self.player.setPartyMembers(undefined);
+
+        self.chat_callback({ message: "Party was disbaned", type: "info" });
+      });
+
+      self.client.onPartyInfo(function (message) {
         self.chat_callback({ message, type: "info" });
       });
 
@@ -4088,7 +4122,7 @@ class Game {
   }
 
   say(message) {
-    const partyRegexp = /\/party (create|join|invite|leave|remove)(.+)?/;
+    const partyRegexp = /\/party (create|join|invite|leave|remove|disband)(.+)?/;
     const args = message.match(partyRegexp);
 
     if (args) {
@@ -4117,7 +4151,14 @@ class Game {
           }
           break;
         case "leave":
-          this.client.sendPartyLeave();
+          if (this.player.partyId) {
+            this.client.sendPartyLeave();
+          } else {
+            this.chat_callback({
+              message: "You are not in a party",
+              type: "error",
+            });
+          }
           break;
         case "remove":
           if (param) {
@@ -4129,7 +4170,29 @@ class Game {
             });
           }
           break;
+        case "disband":
+          if (!this.player.partyLeader?.id) {
+            this.chat_callback({
+              message: "You are not in a party",
+              type: "error",
+            });
+          } else if (this.player.partyLeader?.id === this.player.id) {
+            this.client.sendPartyDisband(param);
+          } else {
+            this.chat_callback({
+              message: "Only the party leader can disband the party",
+              type: "error",
+            });
+          }
+          break;
+        default:
+          this.chat_callback({
+            message: "invalid /party command",
+            type: "error",
+          });
       }
+
+      return;
     }
 
     //#cli guilds

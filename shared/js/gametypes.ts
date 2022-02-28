@@ -95,7 +95,8 @@ export const Types: any = {
       REMOVE: 62,
       DISBAND: 63,
       LEADER: 64,
-      ERROR: 65,
+      INFO: 65,
+      ERROR: 66,
     },
   },
 

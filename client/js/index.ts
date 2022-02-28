@@ -261,6 +261,20 @@ var initApp = function () {
       app.animateParchment("loadcharacter", "loadcharacter");
     });
 
+    $("#running-coder .link").on("click", () => {
+      $("#loginnameinput").val("running-coder").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+
+      app.tryStartingGame();
+    });
+
+    $("#ddd .link").on("click", () => {
+      $("#loginnameinput").val("ddd").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+
+      app.tryStartingGame();
+    });
+
     $(".play span").click(function () {
       app.tryStartingGame();
     });

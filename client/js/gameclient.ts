@@ -60,6 +60,8 @@ class GameClient {
   partyjoin_callback: any;
   partyinvite_callback: any;
   partyleave_callback: any;
+  partydisband_callback: any;
+  partyinfo_callback: any;
   partyerror_callback: any;
   receivenotification_callback: any;
   receiveinventory_callback: any;
@@ -373,7 +375,7 @@ class GameClient {
         this.spawn_chest_callback(item, x, y);
       }
     } else {
-      var name, orientation, target, weapon, weaponLevel, weaponBonus, armor, armorLevel, armorBonus, auras;
+      var name, orientation, target, weapon, weaponLevel, weaponBonus, armor, armorLevel, armorBonus, auras, partyId;
 
       orientation = data[5];
       target = data[6];
@@ -384,6 +386,7 @@ class GameClient {
         [weapon, weaponLevel, weaponBonus] = data[9].split(":");
         // level = data[10];
         auras = data[11];
+        partyId = data[12];
       }
 
       var character = EntityFactory.createEntity(kind, id, name);
@@ -397,6 +400,7 @@ class GameClient {
         character.setArmorLevel(armorLevel);
         character.setArmorBonus(armorBonus);
         character.setAuras(auras);
+        character.setPartyId(partyId);
       }
 
       if (this.spawn_character_callback) {
@@ -582,6 +586,10 @@ class GameClient {
       this.partyinvite_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.LEAVE && this.partyleave_callback) {
       this.partyleave_callback(data[2]);
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.DISBAND && this.partydisband_callback) {
+      this.partydisband_callback(data[2]);
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.INFO && this.partyinfo_callback) {
+      this.partyinfo_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.ERROR && this.partyerror_callback) {
       this.partyerror_callback(data[2]);
     }
@@ -862,6 +870,14 @@ class GameClient {
     this.partyleave_callback = callback;
   }
 
+  onPartyDisband(callback) {
+    this.partydisband_callback = callback;
+  }
+
+  onPartyInfo(callback) {
+    this.partyinfo_callback = callback;
+  }
+
   onPartyError(callback) {
     this.partyerror_callback = callback;
   }
@@ -1077,6 +1093,10 @@ class GameClient {
 
   sendPartyRemove(playerName) {
     this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.REMOVE, playerName]);
+  }
+
+  sendPartyDisband() {
+    this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.DISBAND]);
   }
 
   // sendNewGuild(name) {

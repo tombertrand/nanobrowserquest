@@ -103,6 +103,10 @@ class FormatChecker {
         return message.length === 1;
       } else if (message[0] === Types.Messages.PARTY_ACTIONS.REMOVE) {
         return message.length === 2 && _.isString(message[1]);
+      } else if (message[0] === Types.Messages.PARTY_ACTIONS.DISBAND) {
+        return message.length === 1;
+      } else if (message[0] === Types.Messages.PARTY_ACTIONS.INFO) {
+        return message.length === 2 && _.isString(message[1]);
       } else if (message[0] === Types.Messages.PARTY_ACTIONS.ERROR) {
         return message.length === 2 && _.isString(message[1]);
       }

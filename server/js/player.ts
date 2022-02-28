@@ -878,10 +878,7 @@ class Player extends Character {
 
           if (!party) {
             self.send(
-              new Messages.Party(
-                Types.Messages.PARTY_ACTIONS.ERROR,
-                `There is no party with id: ${message[2]}`,
-              ).serialize(),
+              new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `There is no party id ${message[2]}`).serialize(),
             );
           } else {
             party.addMember(self);
@@ -919,6 +916,12 @@ class Player extends Character {
               );
             } else {
               party.invite(playerToInvite);
+              self.send(
+                new Messages.Party(
+                  Types.Messages.PARTY_ACTIONS.INFO,
+                  `Party invite sent to ${playerToInvite.name}`,
+                ).serialize(),
+              );
             }
           }
         } else if (message[1] === Types.Messages.PARTY_ACTIONS.LEAVE) {
@@ -945,6 +948,17 @@ class Player extends Character {
               new Messages.Party(
                 Types.Messages.PARTY_ACTIONS.ERROR,
                 `Only the party leader can remove a player from the party`,
+              ).serialize(),
+            );
+          }
+        } else if (message[1] === Types.Messages.PARTY_ACTIONS.DISBAND) {
+          if (self.id === self.getParty()?.partyLeader.id) {
+            self.getParty().disband();
+          } else {
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                `Only the party leader can disband the party`,
               ).serialize(),
             );
           }
@@ -1035,6 +1049,7 @@ class Player extends Character {
       `${this.weapon}:${this.weaponLevel}${this.weaponBonus ? `:${this.weaponBonus}` : ""}`,
       this.level,
       this.auras,
+      this.partyId,
     ];
 
     return basestate.concat(state);

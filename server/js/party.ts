@@ -67,7 +67,6 @@ class Party {
     this.sentInvites[player.id] = new Date().valueOf();
     this.server.pushToPlayer(
       player,
-      // new Messages.Guild(Types.Messages.PARTY, Types.Messages.PARTY.INVITE, [this.id, inviter.name]),
       new Messages.Party(Types.Messages.PARTY_ACTIONS.INVITE, [{ partyId: this.id, partyLeader: this.partyLeader }]),
     );
   }

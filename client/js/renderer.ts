@@ -830,11 +830,17 @@ class Renderer {
   drawEntityName(entity) {
     this.context.save();
     if (entity.name && entity instanceof Player) {
-      var color = entity.id === this.game.playerId ? "#fcda5c" : "white";
+      const isSelf = entity.id === this.game.playerId;
+
+      let color = isSelf ? "#fcda5c" : "white";
+      if (!isSelf && entity?.partyId && this.game.player?.partyId === entity?.partyId) {
+        color = "#35ee35";
+      }
+
       // var name = entity.level ? "lv." + entity.level + " " + entity.name : entity.name;
 
       let entityName = "";
-      if (this.game.player.partyLeader?.id === entity.id) {
+      if (this.game.player?.partyLeader?.id === entity.id) {
         entityName += "[P] ";
       }
 
