@@ -11,7 +11,7 @@ import Chest from "./chest";
 import Entity from "./entity";
 import Exceptions from "./exceptions";
 import GameClient from "./gameclient";
-import Guild from "./guild";
+// import Guild from "./guild";
 import InfoManager from "./infomanager";
 import Item from "./item";
 import Map from "./map";
@@ -419,9 +419,9 @@ class Game {
         this.player.setSpriteName(this.storage.data.player.armor);
         this.player.setWeaponName(this.storage.data.player.weapon);
       }
-      if (this.storage.data.player.guild) {
-        this.player.setGuild(this.storage.data.player.guild);
-      }
+      // if (this.storage.data.player.guild) {
+      //   this.player.setGuild(this.storage.data.player.guild);
+      // }
     }
     this.player.setSprite(this.sprites[this.player.getSpriteName()]);
     this.player.idle();
@@ -1963,7 +1963,7 @@ class Game {
         self.renderer.getPlayerImage(),
         self.player.getSpriteName(),
         self.player.getWeaponName(),
-        self.player.getGuild(),
+        // self.player.getGuild(),
       );
 
       if (!self.storage.hasAlreadyPlayed()) {
@@ -2260,7 +2260,7 @@ class Game {
           self.renderer.getPlayerImage(),
           self.player.getArmorName(),
           self.player.getWeaponName(),
-          self.player.getGuild(),
+          // self.player.getGuild(),
         );
         if (self.equipment_callback) {
           self.equipment_callback();
@@ -2541,83 +2541,83 @@ class Game {
         }
       });
 
-      self.client.onGuildError(function (errorType, info) {
-        if (errorType === Types.Messages.GUILDERRORTYPE.BADNAME) {
-          self.showNotification(info + " seems to be an inappropriate guild name…");
-        } else if (errorType === Types.Messages.GUILDERRORTYPE.ALREADYEXISTS) {
-          self.showNotification(info + " already exists…");
-          setTimeout(function () {
-            self.showNotification("Either change the name of YOUR guild");
-          }, 2500);
-          setTimeout(function () {
-            self.showNotification("Or ask a member of " + info + " if you can join them.");
-          }, 5000);
-        } else if (errorType === Types.Messages.GUILDERRORTYPE.IDWARNING) {
-          self.showNotification("WARNING: the server was rebooted.");
-          setTimeout(function () {
-            self.showNotification(info + " has changed ID.");
-          }, 2500);
-        } else if (errorType === Types.Messages.GUILDERRORTYPE.BADINVITE) {
-          self.showNotification(info + " is ALREADY a member of “" + self.player.getGuild().name + "”");
-        }
-      });
+      // self.client.onGuildError(function (errorType, info) {
+      //   if (errorType === Types.Messages.GUILDERRORTYPE.BADNAME) {
+      //     self.showNotification(info + " seems to be an inappropriate guild name…");
+      //   } else if (errorType === Types.Messages.GUILDERRORTYPE.ALREADYEXISTS) {
+      //     self.showNotification(info + " already exists…");
+      //     setTimeout(function () {
+      //       self.showNotification("Either change the name of YOUR guild");
+      //     }, 2500);
+      //     setTimeout(function () {
+      //       self.showNotification("Or ask a member of " + info + " if you can join them.");
+      //     }, 5000);
+      //   } else if (errorType === Types.Messages.GUILDERRORTYPE.IDWARNING) {
+      //     self.showNotification("WARNING: the server was rebooted.");
+      //     setTimeout(function () {
+      //       self.showNotification(info + " has changed ID.");
+      //     }, 2500);
+      //   } else if (errorType === Types.Messages.GUILDERRORTYPE.BADINVITE) {
+      //     self.showNotification(info + " is ALREADY a member of “" + self.player.getGuild().name + "”");
+      //   }
+      // });
 
-      self.client.onGuildCreate(function (guildId, guildName) {
-        self.player.setGuild(new Guild(guildId, guildName));
-        self.storage.setPlayerGuild(self.player.getGuild());
-        self.showNotification("You successfully created and joined…");
-        setTimeout(function () {
-          self.showNotification("…" + self.player.getGuild().name);
-        }, 2500);
-      });
+      // self.client.onGuildCreate(function (guildId, guildName) {
+      //   self.player.setGuild(new Guild(guildId, guildName));
+      //   self.storage.setPlayerGuild(self.player.getGuild());
+      //   self.showNotification("You successfully created and joined…");
+      //   setTimeout(function () {
+      //     self.showNotification("…" + self.player.getGuild().name);
+      //   }, 2500);
+      // });
 
-      self.client.onGuildInvite(function (guildId, guildName, invitorName) {
-        self.showNotification(invitorName + " invited you to join “" + guildName + "”.");
-        self.player.addInvite(guildId);
-        setTimeout(function () {
-          $("#chatinput").attr(
-            "placeholder",
-            "Do you want to join " + guildName + " ? Type /guild accept yes or /guild accept no",
-          );
-          self.app.showChat();
-        }, 2500);
-      });
+      // self.client.onGuildInvite(function (guildId, guildName, inviterName) {
+      //   self.showNotification(inviterName + " invited you to join “" + guildName + "”.");
+      //   self.player.addInvite(guildId);
+      //   setTimeout(function () {
+      //     $("#chatinput").attr(
+      //       "placeholder",
+      //       "Do you want to join " + guildName + " ? Type /guild accept yes or /guild accept no",
+      //     );
+      //     self.app.showChat();
+      //   }, 2500);
+      // });
 
-      self.client.onGuildJoin(function (playerName, id, guildId, guildName) {
-        if (typeof id === "undefined") {
-          self.showNotification(playerName + " failed to answer to your invitation in time.");
-          setTimeout(function () {
-            self.showNotification("Might have to send another invite…");
-          }, 2500);
-        } else if (id === false) {
-          self.showNotification(playerName + " respectfully declined your offer…");
-          setTimeout(function () {
-            self.showNotification("…to join “" + self.player.getGuild().name + "”.");
-          }, 2500);
-        } else if (id === self.player.id) {
-          self.player.setGuild(new Guild(guildId, guildName));
-          self.storage.setPlayerGuild(self.player.getGuild());
-          self.showNotification("You just joined “" + guildName + "”.");
-        } else {
-          self.showNotification(playerName + " is now a jolly member of “" + guildName + "”."); //#updateguild
-        }
-      });
+      // self.client.onGuildJoin(function (playerName, id, guildId, guildName) {
+      //   if (typeof id === "undefined") {
+      //     self.showNotification(playerName + " failed to answer to your invitation in time.");
+      //     setTimeout(function () {
+      //       self.showNotification("Might have to send another invite…");
+      //     }, 2500);
+      //   } else if (id === false) {
+      //     self.showNotification(playerName + " respectfully declined your offer…");
+      //     setTimeout(function () {
+      //       self.showNotification("…to join “" + self.player.getGuild().name + "”.");
+      //     }, 2500);
+      //   } else if (id === self.player.id) {
+      //     self.player.setGuild(new Guild(guildId, guildName));
+      //     self.storage.setPlayerGuild(self.player.getGuild());
+      //     self.showNotification("You just joined “" + guildName + "”.");
+      //   } else {
+      //     self.showNotification(playerName + " is now a jolly member of “" + guildName + "”."); //#updateguild
+      //   }
+      // });
 
-      self.client.onGuildLeave(function (name, playerId, guildName) {
-        if (self.player.id === playerId) {
-          if (self.player.hasGuild()) {
-            if (self.player.getGuild().name === guildName) {
-              //do not erase new guild on create
-              self.player.unsetGuild();
-              self.storage.setPlayerGuild();
-              self.showNotification("You successfully left “" + guildName + "”.");
-            }
-          }
-          //missing elses above should not happen (errors)
-        } else {
-          self.showNotification(name + " has left “" + guildName + "”."); //#updateguild
-        }
-      });
+      // self.client.onGuildLeave(function (name, playerId, guildName) {
+      //   if (self.player.id === playerId) {
+      //     if (self.player.hasGuild()) {
+      //       if (self.player.getGuild().name === guildName) {
+      //         //do not erase new guild on create
+      //         self.player.unsetGuild();
+      //         self.storage.setPlayerGuild();
+      //         self.showNotification("You successfully left “" + guildName + "”.");
+      //       }
+      //     }
+      //     //missing elses above should not happen (errors)
+      //   } else {
+      //     self.showNotification(name + " has left “" + guildName + "”."); //#updateguild
+      //   }
+      // });
 
       self.client.onGuildTalk(function (name, id, message) {
         if (id === self.player.id) {
@@ -2625,6 +2625,55 @@ class Game {
         } else {
           self.showNotification(name + ": " + message);
         }
+      });
+
+      self.client.onPartyCreate(function () {
+        self.chat_callback({ message: "Party created!", type: "event" });
+      });
+
+      self.client.onPartyJoin(function (data) {
+        const { partyId, partyLeader, members } = data;
+
+        self.player.setPartyId(partyId);
+        self.player.setPartyLeader(partyLeader);
+        self.player.setPartyMembers(members);
+
+        let message = "Party joined";
+        if (data.playerName !== self.player.name) {
+          message = `${data.playerName} joined the Party`;
+        }
+        self.chat_callback({ message, type: "info" });
+
+        // self.showNotification("You joined the party");
+      });
+
+      self.client.onPartyInvite(function (data) {
+        // self.showNotification("Party invite");
+
+        const { partyId, partyLeader } = data;
+
+        self.chat_callback({
+          message: `${partyLeader.name} invite you to join the party id ${partyId}. To accept type /party join ${partyId}`,
+          type: "info",
+        });
+      });
+
+      self.client.onPartyLeave(function (data) {
+        const { partyId, partyLeader, members, playerName } = data;
+
+        self.player.setPartyId(partyId);
+        self.player.setPartyLeader(partyLeader);
+        self.player.setPartyMembers(members);
+
+        let message = "You left the party";
+        if (playerName !== self.player.name) {
+          message = `${playerName} left the Party`;
+        }
+        self.chat_callback({ message, type: "info" });
+      });
+
+      self.client.onPartyError(function (message) {
+        self.chat_callback({ message, type: "error" });
       });
 
       self.client.onMemberConnect(function (name) {
@@ -2906,7 +2955,17 @@ class Game {
         }
       });
 
-      self.client.onChatMessage(function (entityId: number, name: string, message: string, type: ChatType) {
+      self.client.onChatMessage(function ({
+        entityId,
+        name,
+        message,
+        type,
+      }: {
+        entityId: number;
+        name: string;
+        message: string;
+        type: ChatType;
+      }) {
         var entity = self.getEntityById(entityId);
         if (entity) {
           self.createBubble(entityId, message);
@@ -2914,7 +2973,7 @@ class Game {
         }
 
         self.audioManager.playSound("chat");
-        self.chat_callback(entityId, name, message, type);
+        self.chat_callback({ entityId, name, message, type });
       });
 
       self.client.onPopulationChange(function (worldPlayers, totalPlayers, players, levelupPlayer) {
@@ -4029,60 +4088,102 @@ class Game {
   }
 
   say(message) {
-    var self = this;
+    const partyRegexp = /\/party (create|join|invite|leave|remove)(.+)?/;
+    const args = message.match(partyRegexp);
 
-    //#cli guilds
-    var regexp = /^\/guild\ (invite|create|accept)\s+([^\s]*)|(guild:)\s*(.*)$|^\/guild\ (leave)$/i;
-    var args = message.match(regexp);
-    if (args != undefined) {
-      switch (args[1]) {
-        case "invite":
-          if (this.player.hasGuild()) {
-            this.client.sendGuildInvite(args[2]);
-          } else {
-            this.showNotification("Invite " + args[2] + " to where?");
-          }
-          break;
+    if (args) {
+      const action = args[1];
+      const param = (args[2] || "").trim();
+
+      switch (action) {
         case "create":
-          this.client.sendNewGuild(args[2]);
+          this.client.sendPartyCreate();
           break;
-        case undefined:
-          if (args[5] === "leave") {
-            this.client.sendLeaveGuild();
-          } else if (this.player.hasGuild()) {
-            this.client.talkToGuild(args[4]);
+        case "join":
+          if (param) {
+            this.client.sendPartyJoin(parseInt(param, 10));
           } else {
-            this.showNotification("You got no-one to talk to…");
+            this.chat_callback({ message: "You must specify the party id you want to join", type: "error" });
           }
           break;
-        case "accept":
-          var status;
-          if (args[2] === "yes") {
-            status = this.player.checkInvite();
-            if (status === false) {
-              this.showNotification("You were not invited anyway…");
-            } else if (status < 0) {
-              this.showNotification("Sorry to say it's too late…");
-              setTimeout(function () {
-                self.showNotification("Find someone and ask for another invite.");
-              }, 2500);
-            } else {
-              this.client.sendGuildInviteReply(this.player.invite.guildId, true);
-            }
-          } else if (args[2] === "no") {
-            status = this.player.checkInvite();
-            if (status !== false) {
-              this.client.sendGuildInviteReply(this.player.invite.guildId, false);
-              this.player.deleteInvite();
-            } else {
-              this.showNotification("Whatever…");
-            }
+        case "invite":
+          if (param) {
+            this.client.sendPartyInvite(param);
           } else {
-            this.showNotification("“guild accept” is a YES or NO question!!");
+            this.chat_callback({
+              message: "You must specify the player you want to invite to the party",
+              type: "error",
+            });
+          }
+          break;
+        case "leave":
+          this.client.sendPartyLeave();
+          break;
+        case "remove":
+          if (param) {
+            this.client.sendPartyRemove(param);
+          } else {
+            this.chat_callback({
+              message: "You must specify the player name you want to remove from the party",
+              type: "error",
+            });
           }
           break;
       }
     }
+
+    //#cli guilds
+    // var regexp = /^\/guild\ (invite|create|accept)\s+([^\s]*)|(guild:)\s*(.*)$|^\/guild\ (leave)$/i;
+    // var args = message.match(regexp);
+    // if (args != undefined) {
+    //   switch (args[1]) {
+    //     case "invite":
+    //       if (this.player.hasGuild()) {
+    //         this.client.sendGuildInvite(args[2]);
+    //       } else {
+    //         this.showNotification("Invite " + args[2] + " to where?");
+    //       }
+    //       break;
+    //     case "create":
+    //       this.client.sendNewGuild(args[2]);
+    //       break;
+    //     case undefined:
+    //       if (args[5] === "leave") {
+    //         this.client.sendLeaveGuild();
+    //       } else if (this.player.hasGuild()) {
+    //         this.client.talkToGuild(args[4]);
+    //       } else {
+    //         this.showNotification("You got no-one to talk to…");
+    //       }
+    //       break;
+    //     case "accept":
+    //       var status;
+    //       if (args[2] === "yes") {
+    //         status = this.player.checkInvite();
+    //         if (status === false) {
+    //           this.showNotification("You were not invited anyway…");
+    //         } else if (status < 0) {
+    //           this.showNotification("Sorry to say it's too late…");
+    //           setTimeout(function () {
+    //             self.showNotification("Find someone and ask for another invite.");
+    //           }, 2500);
+    //         } else {
+    //           this.client.sendGuildInviteReply(this.player.invite.guildId, true);
+    //         }
+    //       } else if (args[2] === "no") {
+    //         status = this.player.checkInvite();
+    //         if (status !== false) {
+    //           this.client.sendGuildInviteReply(this.player.invite.guildId, false);
+    //           this.player.deleteInvite();
+    //         } else {
+    //           this.showNotification("Whatever…");
+    //         }
+    //       } else {
+    //         this.showNotification("“guild accept” is a YES or NO question!!");
+    //       }
+    //       break;
+    //   }
+    // }
     this.client.sendChat(message);
   }
 

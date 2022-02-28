@@ -2,7 +2,7 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 
-import type { Recipes } from './types'
+import type { Recipes } from "./types";
 
 var Messages: any = {};
 module.exports = Messages;
@@ -205,19 +205,26 @@ Messages.Blink = class Message {
   }
 };
 
-Messages.GuildError = class Message {
-  constructor(private errorType, private guildName) {}
+Messages.Party = class Message {
+  constructor(private action, private info) {}
   serialize() {
-    return [Types.Messages.GUILDERROR, this.errorType, this.guildName];
+    return [Types.Messages.PARTY, this.action].concat(this.info);
   }
 };
 
-Messages.Guild = class Message {
-  constructor(private action, private info) {}
-  serialize() {
-    return [Types.Messages.GUILD, this.action].concat(this.info);
-  }
-};
+// Messages.GuildError = class Message {
+//   constructor(private errorType, private guildName) {}
+//   serialize() {
+//     return [Types.Messages.GUILDERROR, this.errorType, this.guildName];
+//   }
+// };
+
+// Messages.Guild = class Message {
+//   constructor(private action, private info) {}
+//   serialize() {
+//     return [Types.Messages.GUILD, this.action].concat(this.info);
+//   }
+// };
 
 Messages.PVP = class Message {
   constructor(private isPVP) {}

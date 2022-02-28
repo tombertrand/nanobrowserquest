@@ -77,20 +77,34 @@ class FormatChecker {
         _.isNumber(message[2]) &&
         (message.length == 3 || (_.isNumber(message[3]) && _.isString(message[4]) && message.length == 5))
       );
-    } else if (type === Types.Messages.GUILD) {
-      if (message[0] === Types.Messages.GUILDACTION.CREATE) {
+      // } else if (type === Types.Messages.GUILD) {
+      //   if (message[0] === Types.Messages.GUILDACTION.CREATE) {
+      //     return message.length === 2 && _.isString(message[1]);
+      //   } else if (message[0] === Types.Messages.GUILDACTION.INVITE) {
+      //     return message.length === 2 && _.isString(message[1]);
+      //   } else if (message[0] === Types.Messages.GUILDACTION.JOIN) {
+      //     return message.length === 3 && _.isNumber(message[1]) && _.isBoolean(message[2]);
+      //   } else if (message[0] === Types.Messages.GUILDACTION.LEAVE) {
+      //     return message.length === 1;
+      //   } else if (message[0] === Types.Messages.GUILDACTION.TALK) {
+      //     return message.length === 2 && _.isString(message[1]);
+      //   } else {
+      //     console.error("Unknown message type: " + type);
+      //     return false;
+      //   }
+    } else if (type === Types.Messages.PARTY) {
+      if (message[0] === Types.Messages.PARTY_ACTIONS.CREATE) {
+        return true;
+      } else if (message[0] === Types.Messages.PARTY_ACTIONS.JOIN) {
+        return message.length === 2 && _.isNumber(message[1]);
+      } else if (message[0] === Types.Messages.PARTY_ACTIONS.INVITE) {
         return message.length === 2 && _.isString(message[1]);
-      } else if (message[0] === Types.Messages.GUILDACTION.INVITE) {
-        return message.length === 2 && _.isString(message[1]);
-      } else if (message[0] === Types.Messages.GUILDACTION.JOIN) {
-        return message.length === 3 && _.isNumber(message[1]) && _.isBoolean(message[2]);
-      } else if (message[0] === Types.Messages.GUILDACTION.LEAVE) {
+      } else if (message[0] === Types.Messages.PARTY_ACTIONS.LEAVE) {
         return message.length === 1;
-      } else if (message[0] === Types.Messages.GUILDACTION.TALK) {
+      } else if (message[0] === Types.Messages.PARTY_ACTIONS.REMOVE) {
         return message.length === 2 && _.isString(message[1]);
-      } else {
-        console.error("Unknown message type: " + type);
-        return false;
+      } else if (message[0] === Types.Messages.PARTY_ACTIONS.ERROR) {
+        return message.length === 2 && _.isString(message[1]);
       }
     } else if (
       type === Types.Messages.ACHIEVEMENT ||

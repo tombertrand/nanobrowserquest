@@ -56,6 +56,8 @@ class Purchase {
   }
 
   cancel(account) {
+    if (!this.sessions.find(session => session.account === account)) return;
+
     console.debug("PURCHASE - cancel: " + account);
 
     this.sessions = this.sessions.filter(session => session.account !== account);

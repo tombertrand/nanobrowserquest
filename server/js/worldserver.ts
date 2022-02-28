@@ -7,14 +7,15 @@ import { Types } from "../../shared/js/gametypes";
 import { ChestArea, MobArea } from "./area";
 // import Character from "./character";
 import Chest from "./chest";
-// import ChestArea from "./chestarea";
-// import Entity from "./entity";
-import Guild from "./guild";
 import Item from "./item";
 import Map from "./map";
 import Messages from "./message";
 import Mob from "./mob";
 import Npc from "./npc";
+// import ChestArea from "./chestarea";
+// import Entity from "./entity";
+// import Guild from "./guild";
+import Party from "./party";
 import Player from "./player";
 import Properties from "./properties";
 import { purchase } from "./store/purchase";
@@ -65,6 +66,8 @@ class World {
   enter_callback: any;
   attack_callback: any;
   raise_callback: any;
+  parties: any;
+  currentPartyId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -80,6 +83,8 @@ class World {
     this.entities = {};
     this.players = {};
     this.guilds = {};
+    this.parties = {};
+    this.currentPartyId = 0;
     this.mobs = {};
     this.attackers = {};
     this.items = {};
@@ -162,17 +167,17 @@ class World {
 
       // Number of players in this world
       self.pushToPlayer(player, new Messages.Population(self.playerCount));
-      if (player.hasGuild()) {
-        self.pushToGuild(
-          player.getGuild(),
-          new Messages.Guild(Types.Messages.GUILDACTION.CONNECT, player.name),
-          player,
-        );
-        var names = _.without(player.getGuild().memberNames(), player.name);
-        if (names.length > 0) {
-          self.pushToPlayer(player, new Messages.Guild(Types.Messages.GUILDACTION.ONLINE, names));
-        }
-      }
+      // if (player.hasGuild()) {
+      //   self.pushToGuild(
+      //     player.getGuild(),
+      //     new Messages.Guild(Types.Messages.GUILDACTION.CONNECT, player.name),
+      //     player,
+      //   );
+      //   var names = _.without(player.getGuild().memberNames(), player.name);
+      //   if (names.length > 0) {
+      //     self.pushToPlayer(player, new Messages.Guild(Types.Messages.GUILDACTION.ONLINE, names));
+      //   }
+      // }
       self.pushRelevantEntityListTo(player);
 
       var move_callback = function (x, y) {
@@ -222,13 +227,20 @@ class World {
         purchase.cancel(player.depositAccount);
 
         console.info(player.name + " has left the game.");
-        if (player.hasGuild()) {
-          self.pushToGuild(
-            player.getGuild(),
-            new Messages.Guild(Types.Messages.GUILDACTION.DISCONNECT, player.name),
+        if (player.hasParty()) {
+          self.pushToParty(
+            player.getParty(),
+            new Messages.Party(Types.Messages.PARTY_ACTIONS.DISCONNECT, [player.name]),
             player,
           );
         }
+        // if (player.hasGuild()) {
+        //   self.pushToGuild(
+        //     player.getGuild(),
+        //     new Messages.Guild(Types.Messages.GUILDACTION.DISCONNECT, player.name),
+        //     player,
+        //   );
+        // }
         self.removePlayer(player);
         self.decrementPlayerCount();
 
@@ -402,25 +414,39 @@ class World {
     }
   }
 
-  pushToGuild(guild, message, except) {
-    var self = this;
+  pushToParty(party: Party, message: string, except?: Player) {
+    const exceptPlayerId = except?.id;
 
-    if (guild) {
-      if (typeof except === "undefined") {
-        guild.forEachMember(function (player, id) {
-          self.pushToPlayer(self.getEntityById(id), message);
-        });
-      } else {
-        guild.forEachMember(function (player, id) {
-          if (parseInt(id, 10) !== except.id) {
-            self.pushToPlayer(self.getEntityById(id), message);
-          }
-        });
-      }
+    if (party) {
+      party.forEachMember(({ id }) => {
+        if (!exceptPlayerId || exceptPlayerId !== id) {
+          this.pushToPlayer(this.getEntityById(id), message);
+        }
+      });
     } else {
-      console.error("pushToGuild: guild was undefined");
+      console.error("pushToParty: party was undefined");
     }
   }
+
+  // pushToGuild(guild, message, except) {
+  //   var self = this;
+
+  //   if (guild) {
+  //     if (typeof except === "undefined") {
+  //       guild.forEachMember(function (player, id) {
+  //         self.pushToPlayer(self.getEntityById(id), message);
+  //       });
+  //     } else {
+  //       guild.forEachMember(function (player, id) {
+  //         if (parseInt(id, 10) !== except.id) {
+  //           self.pushToPlayer(self.getEntityById(id), message);
+  //         }
+  //       });
+  //     }
+  //   } else {
+  //     console.error("pushToGuild: guild was undefined");
+  //   }
+  // }
 
   pushToGroup(groupId, message, ignoredPlayer?: number) {
     var self = this;
@@ -527,85 +553,90 @@ class World {
     console.debug("Removed " + Types.getKindAsString(entity.kind) + " : " + entity.id);
   }
 
-  joinGuild(player, guildId, answer?: string) {
-    if (typeof this.guilds[guildId] === "undefined") {
-      this.pushToPlayer(player, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.DOESNOTEXIST, guildId));
-    }
-    //#guildupdate (guildrules)
-    else {
-      if (player.hasGuild()) {
-        var formerGuildId = player.guildId;
-      }
-      var res = this.guilds[guildId].addMember(player, answer);
-      if (res !== false && typeof formerGuildId !== "undefined") {
-        this.guilds[formerGuildId].removeMember(player);
-      }
-      return res;
-    }
-    return false;
+  // joinGuild(player, guildId, answer?: string) {
+  //   if (typeof this.guilds[guildId] === "undefined") {
+  //     this.pushToPlayer(player, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.DOESNOTEXIST, guildId));
+  //   }
+  //   //#guildupdate (guildrules)
+  //   else {
+  //     if (player.hasGuild()) {
+  //       var formerGuildId = player.guildId;
+  //     }
+  //     var res = this.guilds[guildId].addMember(player, answer);
+  //     if (res !== false && typeof formerGuildId !== "undefined") {
+  //       this.guilds[formerGuildId].removeMember(player);
+  //     }
+  //     return res;
+  //   }
+  //   return false;
+  // }
+
+  // reloadGuild(guildId, guildName) {
+  //   var res: any = false;
+  //   var lastItem: any = 0;
+  //   if (typeof this.guilds[guildId] !== "undefined") {
+  //     if (this.guilds[guildId].name === guildName) {
+  //       res = guildId;
+  //     }
+  //   }
+  //   if (res === false) {
+  //     _.every(this.guilds, function (guild: any, key) {
+  //       if (guild.name === guildName) {
+  //         res = parseInt(key, 10);
+  //         return false;
+  //       } else {
+  //         lastItem = key;
+  //         return true;
+  //       }
+  //     });
+  //   }
+
+  //   if (res === false) {
+  //     //first connected after reboot.
+  //     if (typeof this.guilds[guildId] !== "undefined") {
+  //       guildId = parseInt(lastItem, 10) + 1;
+  //     }
+  //     this.guilds[guildId] = new Guild(guildId, guildName, this);
+  //     res = guildId;
+  //   }
+  //   return res;
+  // }
+
+  // addGuild(guildName) {
+  //   var res: any = true;
+  //   var id = 0; //an ID here
+  //   res = _.every(this.guilds, function (guild: any, key) {
+  //     id = parseInt(key, 10) + 1;
+  //     return guild.name !== guildName;
+  //   });
+  //   if (res) {
+  //     this.guilds[id] = new Guild(id, guildName, this);
+  //     res = id;
+  //   }
+  //   return res;
+  // }
+
+  addParty(player: Player) {
+    this.currentPartyId += 1;
+
+    const party = new Party(this.currentPartyId, player, this);
+    this.parties[this.currentPartyId] = party;
+
+    return party;
   }
 
-  reloadGuild(guildId, guildName) {
-    var res: any = false;
-    var lastItem: any = 0;
-    if (typeof this.guilds[guildId] !== "undefined") {
-      if (this.guilds[guildId].name === guildName) {
-        res = guildId;
-      }
-    }
-    if (res === false) {
-      _.every(this.guilds, function (guild: any, key) {
-        if (guild.name === guildName) {
-          res = parseInt(key, 10);
-          return false;
-        } else {
-          lastItem = key;
-          return true;
-        }
-      });
-    }
-
-    if (res === false) {
-      //first connected after reboot.
-      if (typeof this.guilds[guildId] !== "undefined") {
-        guildId = parseInt(lastItem, 10) + 1;
-      }
-      this.guilds[guildId] = new Guild(guildId, guildName, this);
-      res = guildId;
-    }
-    return res;
-  }
-
-  addGuild(guildName) {
-    var res: any = true;
-    var id = 0; //an ID here
-    res = _.every(this.guilds, function (guild: any, key) {
-      id = parseInt(key, 10) + 1;
-      return guild.name !== guildName;
-    });
-    if (res) {
-      this.guilds[id] = new Guild(id, guildName, this);
-      res = id;
-    }
-    return res;
-  }
-
-  addPlayer(player, guildId) {
+  addPlayer(player: Player) {
     this.addEntity(player);
     this.players[player.id] = player;
     this.outgoingQueues[player.id] = [];
-    var res = true;
-    if (typeof guildId !== "undefined") {
-      res = this.joinGuild(player, guildId);
-    }
-    return res;
+    return true;
   }
 
-  removePlayer(player) {
+  removePlayer(player: Player) {
     player.broadcast(player.despawn());
     this.removeEntity(player);
-    if (player.hasGuild()) {
-      player.getGuild().removeMember(player);
+    if (player.hasParty()) {
+      player.getParty().removeMember(player);
     }
     delete this.players[player.id];
     delete this.outgoingQueues[player.id];

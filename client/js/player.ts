@@ -2,6 +2,11 @@ import { kinds, Types } from "../../shared/js/gametypes";
 import Character from "./character";
 import Exceptions from "./exceptions";
 
+interface PartyMember {
+  id: number;
+  name: string;
+}
+
 class Player extends Character {
   spriteName: any;
   name: any;
@@ -42,7 +47,7 @@ class Player extends Character {
   isLootMoving: boolean;
   isSwitchingWeapon: boolean;
   pvpFlag: boolean;
-  guild: any;
+  // guild: any;
   invite: any;
   currentArmorSprite: any;
   id: any;
@@ -60,15 +65,19 @@ class Player extends Character {
   moveRight: boolean;
   disableKeyboardNpcTalk: boolean;
 
-  constructor(id, name, account, kind, guild) {
+  partyId?: number;
+  partyLeader?: PartyMember;
+  partyMembers: PartyMember[];
+
+  constructor(id, name, account, kind) {
     super(id, kind);
 
     this.name = name;
     this.account = account;
 
-    if (typeof guild !== "undefined") {
-      this.setGuild(guild);
-    }
+    // if (typeof guild !== "undefined") {
+    //   this.setGuild(guild);
+    // }
 
     // Renderer
     this.nameOffsetY = -10;
@@ -119,47 +128,63 @@ class Player extends Character {
     this.moveLeft = false;
     this.moveRight = false;
     this.disableKeyboardNpcTalk = false;
+
+    this.partyId = null;
+    this.partyLeader = null;
+    this.partyMembers = null;
   }
 
-  getGuild() {
-    return this.guild;
+  setPartyId(partyId) {
+    this.partyId = partyId;
   }
 
-  setGuild(guild) {
-    this.guild = guild;
-    $("#guild-population").addClass("visible");
-    $("#guild-name").html(guild.name);
+  setPartyLeader(partyLeader) {
+    this.partyLeader = partyLeader;
   }
 
-  unsetGuild() {
-    delete this.guild;
-    $("#guild-population").removeClass("visible");
+  setPartyMembers(partyMembers) {
+    this.partyMembers = partyMembers;
   }
 
-  hasGuild() {
-    return typeof this.guild !== "undefined";
-  }
+  // getGuild() {
+  //   return this.guild;
+  // }
 
-  addInvite(inviteGuildId) {
-    this.invite = { time: new Date().valueOf(), guildId: inviteGuildId };
-  }
+  // setGuild(guild) {
+  //   this.guild = guild;
+  //   $("#guild-population").addClass("visible");
+  //   $("#guild-name").html(guild.name);
+  // }
 
-  deleteInvite() {
-    delete this.invite;
-  }
+  // unsetGuild() {
+  //   delete this.guild;
+  //   $("#guild-population").removeClass("visible");
+  // }
 
-  checkInvite() {
-    if (this.invite && new Date().valueOf() - this.invite.time < 595000) {
-      return this.invite.guildId;
-    } else {
-      if (this.invite) {
-        this.deleteInvite();
-        return -1;
-      } else {
-        return false;
-      }
-    }
-  }
+  // hasGuild() {
+  //   return typeof this.guild !== "undefined";
+  // }
+
+  // addInvite(inviteGuildId) {
+  //   this.invite = { time: new Date().valueOf(), guildId: inviteGuildId };
+  // }
+
+  // deleteInvite() {
+  //   delete this.invite;
+  // }
+
+  // checkInvite() {
+  //   if (this.invite && new Date().valueOf() - this.invite.time < 595000) {
+  //     return this.invite.guildId;
+  //   } else {
+  //     if (this.invite) {
+  //       this.deleteInvite();
+  //       return -1;
+  //     } else {
+  //       return false;
+  //     }
+  //   }
+  // }
 
   loot(item) {
     if (item) {

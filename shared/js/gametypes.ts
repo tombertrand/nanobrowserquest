@@ -86,6 +86,17 @@ export const Types: any = {
       JOIN: 15,
       POPULATION: 16,
     },
+    PARTY: 57,
+    PARTY_ACTIONS: {
+      CREATE: 58,
+      JOIN: 59,
+      INVITE: 60,
+      LEAVE: 61,
+      REMOVE: 62,
+      DISBAND: 63,
+      LEADER: 64,
+      ERROR: 65,
+    },
   },
 
   Entities: {

@@ -14,7 +14,7 @@ class Warrior extends Player {
   lastCheckpoint: any;
 
   constructor(id, name) {
-    super(id, name, "", Types.Entities.WARRIOR, undefined);
+    super(id, name, "", Types.Entities.WARRIOR);
   }
 }
 

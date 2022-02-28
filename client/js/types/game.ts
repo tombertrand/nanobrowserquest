@@ -1,3 +1,4 @@
+import type { ChatType } from "../../../server/js/types";
 import type Player from "../player";
 import type Renderer from "../renderer";
 
@@ -36,7 +37,7 @@ export interface Game {
   setStore: (arg0: any) => void;
   loadMap: () => void;
   onGameStart: (arg0: () => void) => void;
-  chat_callback: (arg0: null, arg1: null, arg2: string, arg3: string) => void;
+  chat_callback: (arg0: { entityId?: number; name?: string; message: string; type?: ChatType }) => void;
   player: Player;
   onDisconnect: (arg0: (message: any) => void) => void;
   onPlayerDeath: (arg0: () => void) => void;

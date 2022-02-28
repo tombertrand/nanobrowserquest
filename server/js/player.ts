@@ -24,6 +24,8 @@ import {
   sanitize,
 } from "./utils";
 
+import type Party from "./party";
+
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
 const MAX_CLASSIC_PAYOUT = getClassicMaxPayout();
@@ -34,6 +36,7 @@ let payoutIndex = 0;
 const NO_TIMEOUT_ACCOUNT = "nano_3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6m8epqxmy7anix";
 
 class Player extends Character {
+  id: number;
   server: any;
   connection: any;
   hasEnteredGame: boolean;
@@ -100,6 +103,7 @@ class Player extends Character {
   depositAccountIndex: number;
   stash: any;
   databaseHandler: any;
+  partyId?: number;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -855,48 +859,138 @@ class Player extends Character {
 
         const items = store.getItems();
         self.send([Types.Messages.STORE_ITEMS, items]);
-      } else if (action === Types.Messages.GUILD) {
-        if (message[1] === Types.Messages.GUILDACTION.CREATE) {
-          var guildname = sanitize(message[2]);
-          if (guildname === "") {
-            //inaccurate name
-            self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.BADNAME, message[2]));
+      } else if (action === Types.Messages.PARTY) {
+        console.log("~~~PARTY", message);
+
+        if (message[1] === Types.Messages.PARTY_ACTIONS.CREATE) {
+          if (!self.partyId) {
+            self.server.addParty(self);
           } else {
-            var guildId = self.server.addGuild(guildname);
-            if (guildId === false) {
-              self.server.pushToPlayer(
-                self,
-                new Messages.GuildError(Types.Messages.GUILDERRORTYPE.ALREADYEXISTS, guildname),
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                "Leave current party to create a party",
+              ).serialize(),
+            );
+          }
+        } else if (message[1] === Types.Messages.PARTY_ACTIONS.JOIN) {
+          const party = self.server.parties[message[2]];
+
+          if (!party) {
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                `There is no party with id: ${message[2]}`,
+              ).serialize(),
+            );
+          } else {
+            party.addMember(self);
+          }
+        } else if (message[1] === Types.Messages.PARTY_ACTIONS.INVITE) {
+          const party = self.getParty();
+
+          if (!party) {
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                "You need to be in a party to invite other players",
+              ).serialize(),
+            );
+          } else if (party.partyLeader.id !== self.id) {
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                "Only the party leader can invite other players",
+              ).serialize(),
+            );
+          } else {
+            const playerToInvite = self.server.getPlayerByName(message[2]);
+
+            if (!playerToInvite) {
+              self.send(
+                new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `${message[2]} is not online`).serialize(),
+              );
+            } else if (playerToInvite.partyId) {
+              self.send(
+                new Messages.Party(
+                  Types.Messages.PARTY_ACTIONS.ERROR,
+                  `${playerToInvite.name} is already in a party`,
+                ).serialize(),
               );
             } else {
-              self.server.joinGuild(self, guildId);
-              self.server.pushToPlayer(
-                self,
-                new Messages.Guild(Types.Messages.GUILDACTION.CREATE, [guildId, guildname]),
+              party.invite(playerToInvite);
+            }
+          }
+        } else if (message[1] === Types.Messages.PARTY_ACTIONS.LEAVE) {
+          self.getParty()?.removeMember(self);
+        } else if (message[1] === Types.Messages.PARTY_ACTIONS.REMOVE) {
+          if (self.id === self.getParty()?.partyLeader.id) {
+            const playerToRemove = self.server.getPlayerByName(message[2]);
+            if (!playerToRemove) {
+              self.send(
+                new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `${message[2]} is not online`).serialize(),
               );
+            } else if (playerToRemove.partyId !== self.partyId) {
+              self.send(
+                new Messages.Party(
+                  Types.Messages.PARTY_ACTIONS.ERROR,
+                  `${playerToRemove.name} is not in the party`,
+                ).serialize(),
+              );
+            } else {
+              self.getParty().removeMember(playerToRemove);
             }
+          } else {
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                `Only the party leader can remove a player from the party`,
+              ).serialize(),
+            );
           }
-        } else if (message[1] === Types.Messages.GUILDACTION.INVITE) {
-          var userName = message[2];
-          var invitee;
-          if (self.group in self.server.groups) {
-            invitee = _.find(self.server.groups[self.group].entities, function (entity) {
-              return entity instanceof Player && entity.name == userName ? entity : false;
-            });
-            if (invitee) {
-              self.getGuild().invite(invitee, self);
-            }
-          }
-        } else if (message[1] === Types.Messages.GUILDACTION.JOIN) {
-          self.server.joinGuild(self, message[2], message[3]);
-        } else if (message[1] === Types.Messages.GUILDACTION.LEAVE) {
-          self.leaveGuild();
-        } else if (message[1] === Types.Messages.GUILDACTION.TALK) {
-          self.server.pushToGuild(
-            self.getGuild(),
-            new Messages.Guild(Types.Messages.GUILDACTION.TALK, [self.name, self.id, message[2]]),
-          );
         }
+
+        // if (message[1] === Types.Messages.GUILDACTION.CREATE) {
+        //   var guildname = sanitize(message[2]);
+        //   if (guildname === "") {
+        //     //inaccurate name
+        //     self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.BADNAME, message[2]));
+        //   } else {
+        //     var guildId = self.server.addGuild(guildname);
+        //     if (guildId === false) {
+        //       self.server.pushToPlayer(
+        //         self,
+        //         new Messages.GuildError(Types.Messages.GUILDERRORTYPE.ALREADYEXISTS, guildname),
+        //       );
+        //     } else {
+        //       self.server.joinGuild(self, guildId);
+        //       self.server.pushToPlayer(
+        //         self,
+        //         new Messages.Guild(Types.Messages.GUILDACTION.CREATE, [guildId, guildname]),
+        //       );
+        //     }
+        //   }
+        // } else if (message[1] === Types.Messages.GUILDACTION.INVITE) {
+        //   var userName = message[2];
+        //   var invitee;
+        //   if (self.group in self.server.groups) {
+        //     invitee = _.find(self.server.groups[self.group].entities, function (entity) {
+        //       return entity instanceof Player && entity.name == userName ? entity : false;
+        //     });
+        //     if (invitee) {
+        //       self.getGuild().invite(invitee, self);
+        //     }
+        //   }
+        // } else if (message[1] === Types.Messages.GUILDACTION.JOIN) {
+        //   self.server.joinGuild(self, message[2], message[3]);
+        // } else if (message[1] === Types.Messages.GUILDACTION.LEAVE) {
+        //   self.leaveGuild();
+        // } else if (message[1] === Types.Messages.GUILDACTION.TALK) {
+        //   self.server.pushToGuild(
+        //     self.getGuild(),
+        //     new Messages.Guild(Types.Messages.GUILDACTION.TALK, [self.name, self.id, message[2]]),
+        //   );
+        // }
       } else {
         if (self.message_callback) {
           self.message_callback(message);
@@ -1242,8 +1336,6 @@ class Player extends Character {
       bonus = Types.setBonus.leather;
     }
 
-    console.log("~~~bonus", bonus);
-
     if (bonus) {
       Object.entries(bonus).map(([type, stats]) => {
         this.bonus[type] += stats;
@@ -1361,44 +1453,46 @@ class Player extends Character {
     }
   }
 
-  setGuildId(id) {
-    if (typeof this.server.guilds[id] !== "undefined") {
-      this.guildId = id;
-    } else {
-      console.error(this.id + " cannot add guild " + id + ", it does not exist");
-    }
+  hasParty() {
+    return typeof this.partyId !== "undefined";
   }
 
-  getGuild() {
-    return this.hasGuild ? this.server.guilds[this.guildId] : undefined;
+  getParty(): Party | undefined {
+    return this.partyId ? this.server.parties[this.partyId] : undefined;
   }
 
-  hasGuild() {
-    return typeof this.guildId !== "undefined";
+  setPartyId(partyId) {
+    this.partyId = partyId;
   }
 
-  leaveGuild() {
-    if (this.hasGuild()) {
-      var leftGuild = this.getGuild();
-      leftGuild.removeMember(this);
-      this.server.pushToGuild(
-        leftGuild,
-        new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]),
-      );
-      delete this.guildId;
-      this.server.pushToPlayer(
-        this,
-        new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]),
-      );
-    } else {
-      this.server.pushToPlayer(this, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.NOLEAVE, ""));
-    }
-  }
+  // getGuild() {
+  //   return this.hasGuild ? this.server.guilds[this.guildId] : undefined;
+  // }
+
+  // hasGuild() {
+  //   return typeof this.guildId !== "undefined";
+  // }
+
+  // leaveGuild() {
+  //   if (this.hasGuild()) {
+  //     var leftGuild = this.getGuild();
+  //     leftGuild.removeMember(this);
+  //     this.server.pushToGuild(
+  //       leftGuild,
+  //       new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]),
+  //     );
+  //     delete this.guildId;
+  //     this.server.pushToPlayer(
+  //       this,
+  //       new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]),
+  //     );
+  //   } else {
+  //     this.server.pushToPlayer(this, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.NOLEAVE, ""));
+  //   }
+  // }
 
   checkName(name) {
-    if (name === null) return false;
-    else if (name === "") return false;
-    else if (name === " ") return false;
+    if (!name?.trim()) return false;
 
     for (var i = 0; i < name.length; i++) {
       var c = name.charCodeAt(i);

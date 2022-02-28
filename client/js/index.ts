@@ -306,7 +306,7 @@ var initGame = function () {
 
   game.onGameStart(function () {
     app.initEquipmentIcons();
-    game.chat_callback(null, null, `Welcome ${game.player.name}`, "event");
+    game.chat_callback({ message: `Welcome ${game.player.name}`, type: "event" });
   });
 
   game.onDisconnect(function (message) {
@@ -368,7 +368,7 @@ var initGame = function () {
     $("#hitpoints").toggleClass("invincible");
   });
 
-  game.onChatMessage(function (entityId: number, name: string, message: string, type: ChatType) {
+  game.onChatMessage(function ({ name, message, type }: { name: string; message: string; type: ChatType }) {
     if (!$("#text-window").is(":visible") && name !== game.storage.data.player.name && type !== "event") {
       $("#chatbutton").addClass("blink");
     }
@@ -380,7 +380,7 @@ var initGame = function () {
     }
 
     let className = name === game.storage.data.player.name ? "active" : "";
-    if (type === "event") {
+    if (type) {
       className = type;
     }
 

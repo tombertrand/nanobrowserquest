@@ -832,13 +832,15 @@ class Renderer {
     if (entity.name && entity instanceof Player) {
       var color = entity.id === this.game.playerId ? "#fcda5c" : "white";
       // var name = entity.level ? "lv." + entity.level + " " + entity.name : entity.name;
-      this.drawText(
-        entity.name,
-        (entity.x + 8) * this.scale,
-        (entity.y + entity.nameOffsetY) * this.scale,
-        true,
-        color,
-      );
+
+      let entityName = "";
+      if (this.game.player.partyLeader?.id === entity.id) {
+        entityName += "[P] ";
+      }
+
+      entityName += entity.name;
+
+      this.drawText(entityName, (entity.x + 8) * this.scale, (entity.y + entity.nameOffsetY) * this.scale, true, color);
     }
     this.context.restore();
   }

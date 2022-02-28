@@ -56,6 +56,11 @@ class GameClient {
   guildleave_callback: any;
   guildtalk_callback: any;
   bosscheck_callback: any;
+  partycreate_callback: any;
+  partyjoin_callback: any;
+  partyinvite_callback: any;
+  partyleave_callback: any;
+  partyerror_callback: any;
   receivenotification_callback: any;
   receiveinventory_callback: any;
   receivestash_callback: any;
@@ -107,6 +112,7 @@ class GameClient {
     this.handlers[Types.Messages.SETBONUS] = this.receiveSetBonus;
     this.handlers[Types.Messages.BLINK] = this.receiveBlink;
     this.handlers[Types.Messages.GUILDERROR] = this.receiveGuildError;
+    this.handlers[Types.Messages.PARTY] = this.receiveParty;
     this.handlers[Types.Messages.GUILD] = this.receiveGuild;
     this.handlers[Types.Messages.PVP] = this.receivePVP;
     this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
@@ -418,12 +424,12 @@ class GameClient {
   }
 
   receiveChat(data) {
-    var id = data[1];
+    var entityId = data[1];
     var name = data[2];
-    var text = data[3];
+    var message = data[3];
 
     if (this.chat_callback) {
-      this.chat_callback(id, name, text);
+      this.chat_callback({ entityId, name, message });
     }
   }
 
@@ -563,6 +569,41 @@ class GameClient {
     if (this.guilderror_callback) {
       this.guilderror_callback(errorType, guildName);
     }
+  }
+
+  receiveParty(data) {
+    console.log("~~~~receiveParty", data);
+
+    if (data[1] === Types.Messages.PARTY_ACTIONS.CREATE && this.partycreate_callback) {
+      this.partycreate_callback();
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.JOIN && this.partyjoin_callback) {
+      this.partyjoin_callback(data[2]);
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.INVITE && this.partyinvite_callback) {
+      this.partyinvite_callback(data[2]);
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.LEAVE && this.partyleave_callback) {
+      this.partyleave_callback(data[2]);
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.ERROR && this.partyerror_callback) {
+      this.partyerror_callback(data[2]);
+    }
+
+    // else if (data[1] === Types.Messages.PARTY_ACTIONS.DISCONNECT && this.guildmemberdisconnect_callback) {
+    //   this.guildmemberdisconnect_callback(data[2]); //member name
+    // } else if (data[1] === Types.Messages.PARTY_ACTIONS.ONLINE && this.guildonlinemembers_callback) {
+    //   data.splice(0, 2);
+    //   this.guildonlinemembers_callback(data); //member names
+    // } else if (data[1] === Types.Messages.PARTY_ACTIONS.CREATE && this.guildcreate_callback) {
+    //   this.guildcreate_callback(data[2], data[3]); //id, name
+    // } else if (data[1] === Types.Messages.PARTY_ACTIONS.INVITE && this.guildinvite_callback) {
+    //   this.guildinvite_callback(data[2], data[3], data[4]); //id, name, invitor name
+    // } else if (data[1] === Types.Messages.GUILDACTION.POPULATION && this.guildpopulation_callback) {
+    //   this.guildpopulation_callback(data[2], data[3]); //name, count
+    // } else if (data[1] === Types.Messages.GUILDACTION.JOIN && this.guildjoin_callback) {
+    //   this.guildjoin_callback(data[2], data[3], data[4], data[5]); //name, (id, (guildId, guildName))
+    // } else if (data[1] === Types.Messages.GUILDACTION.LEAVE && this.guildleave_callback) {
+    //   this.guildleave_callback(data[2], data[3], data[4]); //name, id, guildname
+    // } else if (data[1] === Types.Messages.GUILDACTION.TALK && this.guildtalk_callback) {
+    //   this.guildtalk_callback(data[2], data[3], data[4]); //name, id, message
+    // }
   }
 
   receiveGuild(data) {
@@ -805,6 +846,26 @@ class GameClient {
     this.pvp_callback = callback;
   }
 
+  onPartyCreate(callback) {
+    this.partycreate_callback = callback;
+  }
+
+  onPartyJoin(callback) {
+    this.partyjoin_callback = callback;
+  }
+
+  onPartyInvite(callback) {
+    this.partyinvite_callback = callback;
+  }
+
+  onPartyLeave(callback) {
+    this.partyleave_callback = callback;
+  }
+
+  onPartyError(callback) {
+    this.partyerror_callback = callback;
+  }
+
   onGuildError(callback) {
     this.guilderror_callback = callback;
   }
@@ -998,25 +1059,45 @@ class GameClient {
     this.sendMessage([Types.Messages.BOSS_CHECK, again]);
   }
 
-  sendNewGuild(name) {
-    this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.CREATE, name]);
+  sendPartyCreate() {
+    this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.CREATE]);
   }
 
-  sendGuildInvite(invitee) {
-    this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.INVITE, invitee]);
+  sendPartyJoin(partyId) {
+    this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.JOIN, partyId]);
   }
 
-  sendGuildInviteReply(guild, answer) {
-    this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.JOIN, guild, answer]);
+  sendPartyInvite(playerName) {
+    this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.INVITE, playerName]);
   }
 
-  talkToGuild(message) {
-    this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.TALK, message]);
+  sendPartyLeave() {
+    this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.LEAVE]);
   }
 
-  sendLeaveGuild() {
-    this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.LEAVE]);
+  sendPartyRemove(playerName) {
+    this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.REMOVE, playerName]);
   }
+
+  // sendNewGuild(name) {
+  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.CREATE, name]);
+  // }
+
+  // sendGuildInvite(invitee) {
+  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.INVITE, invitee]);
+  // }
+
+  // sendGuildInviteReply(guild, answer) {
+  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.JOIN, guild, answer]);
+  // }
+
+  // talkToGuild(message) {
+  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.TALK, message]);
+  // }
+
+  // sendLeaveGuild() {
+  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.LEAVE]);
+  // }
 
   sendBanPlayer(message) {
     this.sendMessage([Types.Messages.BAN_PLAYER, message]);
