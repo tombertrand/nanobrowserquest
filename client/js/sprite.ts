@@ -67,6 +67,10 @@ class Sprite {
       this.imageunique7 = new Image();
       this.imageunique7.crossOrigin = "Anonymous";
       this.imageunique7.src = "img/" + this.scale + "/" + this.id + "unique7" + ".png";
+    } else if (this.name === "diamondarmor") {
+      this.imageunique = new Image();
+      this.imageunique.crossOrigin = "Anonymous";
+      this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + ".png";
     }
 
     this.image.onload = function () {

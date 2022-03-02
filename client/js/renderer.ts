@@ -551,6 +551,7 @@ class Renderer {
         }
 
         let isFilterApplied = false;
+        let spriteImage = sprite.image;
         if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
           isFilterApplied = true;
 
@@ -559,7 +560,11 @@ class Renderer {
           this.context.filter = `brightness(${brightness}%)`;
         }
 
-        this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
+        if (sprite.name === "diamondarmor" && entity.armorBonus) {
+          spriteImage = sprite.imageunique;
+        }
+
+        this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
 
         if (isFilterApplied) {
           this.context.filter = "brightness(100%)";
@@ -993,9 +998,14 @@ class Renderer {
     canvas.width = w;
     canvas.height = h;
 
+    let spriteImage = sprite.image;
+    if (this.game.player.armorName === "diamondarmor" && this.game.player.armorBonus) {
+      spriteImage = sprite.imageunique;
+    }
+
     ctx.clearRect(0, 0, w, h);
     ctx.drawImage(shadow.image, 0, 0, sw, sh, ox, oy, sw, sh);
-    ctx.drawImage(sprite.image, 0, y, w, h, 2, 2, w, h);
+    ctx.drawImage(spriteImage, 0, y, w, h, 2, 2, w, h);
     ctx.drawImage(weaponImage, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
 
     return canvas.toDataURL("image/png");
