@@ -516,16 +516,14 @@ class Player extends Character {
               }
             } else {
               let player = self;
+              let isUnique = false;
+
               if (self.partyId) {
                 player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
-                self.server.pushToParty(
-                  self.getParty(),
-                  new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [{ playerName: player.name, kind }]),
-                );
               }
 
               if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind)) {
-                const isUnique = random(100) === 42;
+                isUnique = random(100) === 42;
                 const baseLevel = Types.getBaseLevel(kind);
                 const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
                 let bonus = null;
@@ -609,6 +607,13 @@ class Player extends Character {
                     { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) },
                   ],
                 });
+              }
+
+              if (self.partyId) {
+                self.server.pushToParty(
+                  self.getParty(),
+                  new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [{ playerName: player.name, kind, isUnique }]),
+                );
               }
             }
           }
@@ -1349,6 +1354,18 @@ class Player extends Character {
       this.resetHitPoints(maxHitPoints);
     } else {
       this.updateMaxHitPoints(maxHitPoints);
+    }
+
+    if (this.hasParty()) {
+      this.server.pushToParty(
+        this.getParty(),
+        new Messages.Party(Types.Messages.PARTY_ACTIONS.HEALTH, {
+          playerId: this.id,
+          hitPoints: this.hitPoints,
+          maxHitPoints,
+        }),
+        this,
+      );
     }
   }
 

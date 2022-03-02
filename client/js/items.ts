@@ -61,14 +61,14 @@ var Items = {
   FrozenSword: class FrozenSword extends Item {
     constructor(id) {
       super(id, Types.Entities.FROZENSWORD, "weapon");
-      this.lootMessage = "You pick up a Sapphire sword";
+      this.lootMessage = "You pick up a sapphire sword";
     }
   },
 
   DiamondSword: class DiamondSword extends Item {
     constructor(id) {
       super(id, Types.Entities.DIAMONDSWORD, "weapon");
-      this.lootMessage = "You pick up a Diamond sword";
+      this.lootMessage = "You pick up a diamond sword";
     }
   },
 
@@ -264,21 +264,21 @@ var Items = {
   RingNecromancer: class RingNecromancer extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGNECROMANCER, "ring");
-      this.lootMessage = "You pick up a Necromancer Death Wish";
+      this.lootMessage = "You pick up the Necromancer Death Wish";
     }
   },
 
   RingRaiStone: class RingRaiStone extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGRAISTONE, "ring");
-      this.lootMessage = "You pick up a Rai Stone";
+      this.lootMessage = "You pick up the Rai Stone";
     }
   },
 
   RingFountain: class RingFountain extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGFOUNTAIN, "ring");
-      this.lootMessage = "You pick up a Fountain of Youth";
+      this.lootMessage = "You pick up the Fountain of Youth";
     }
   },
 
@@ -299,7 +299,7 @@ var Items = {
   AmuletCow: class AmuletCow extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETCOW, "amulet");
-      this.lootMessage = "You pick up a Cow King Holy Talisman";
+      this.lootMessage = "You pick up the Cow King Holy Talisman";
     }
   },
 
@@ -334,7 +334,7 @@ var Items = {
   SkeletonKey: class SkeletonKey extends Item {
     constructor(id) {
       super(id, Types.Entities.SKELETONKEY, "object");
-      this.lootMessage = "You pick up a skeleton key";
+      this.lootMessage = "You pick up the Skeleton Key";
     }
   },
 

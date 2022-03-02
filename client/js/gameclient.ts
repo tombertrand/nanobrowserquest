@@ -54,6 +54,7 @@ class GameClient {
   partyinfo_callback: any;
   partyerror_callback: any;
   partyloot_callback: any;
+  partyhealth_callback: any;
   receivenotification_callback: any;
   receiveinventory_callback: any;
   receivestash_callback: any;
@@ -576,6 +577,8 @@ class GameClient {
       this.partyerror_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.LOOT && this.partyloot_callback) {
       this.partyloot_callback(data[2]);
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.HEALTH && this.partyhealth_callback) {
+      this.partyhealth_callback(data[2]);
     }
   }
 
@@ -826,6 +829,10 @@ class GameClient {
 
   onPartyLoot(callback) {
     this.partyloot_callback = callback;
+  }
+
+  onPartyHealth(callback) {
+    this.partyhealth_callback = callback;
   }
 
   onBossCheck(callback) {

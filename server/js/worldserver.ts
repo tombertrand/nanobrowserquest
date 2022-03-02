@@ -932,6 +932,18 @@ class World {
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
       this.pushToPlayer(entity, entity.health({ isHurt: true }));
+
+      if (entity.hasParty()) {
+        this.pushToParty(
+          entity.getParty(),
+          new Messages.Party(Types.Messages.PARTY_ACTIONS.HEALTH, {
+            playerId: entity.id,
+            hitPoints: entity.hitPoints,
+            maxHitPoints: entity.maxHitPoints,
+          }),
+          entity,
+        );
+      }
     }
     if (entity.type === "mob") {
       // Let the mob's attacker (player) know how much damage was inflicted
@@ -1108,7 +1120,7 @@ class World {
     let itemKind = null;
 
     if (mob.kind === Types.Entities.COW) {
-      const diamondRandom = random(600);
+      const diamondRandom = random(700);
       if (diamondRandom === 69) {
         return "diamondsword";
       } else if (diamondRandom === 133) {
@@ -1118,7 +1130,7 @@ class World {
       }
     }
     if (mob.kind >= Types.Entities.EYE) {
-      const vv = random(10000);
+      const vv = random(12000);
       if (vv === 420) {
         return "ringraistone";
       } else if (mob.kind >= Types.Entities.RAT2 && vv === 6969) {

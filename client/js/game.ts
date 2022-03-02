@@ -2569,6 +2569,8 @@ class Game {
           message: `${partyLeader.name} invite you to join the party. To accept type /party join ${partyId}`,
           type: "info",
         });
+
+        // @TODO: Update healthbars
       });
 
       self.client.onPartyLeave(function (data) {
@@ -2599,6 +2601,8 @@ class Game {
         //   message += ", you are now the party leader";
         // }
         self.chat_callback({ message, type: "info" });
+
+        // @TODO: Update healthbars
       });
 
       self.client.onPartyDisband(function () {
@@ -2611,6 +2615,8 @@ class Game {
         self.player.setPartyMembers(undefined);
 
         self.chat_callback({ message: "Party was disbaned", type: "info" });
+
+        // @TODO: Update healthbars
       });
 
       self.client.onPartyInfo(function (message) {
@@ -2621,12 +2627,23 @@ class Game {
         self.chat_callback({ message, type: "error" });
       });
 
-      self.client.onPartyLoot(function ({ playerName, kind }) {
-        const message = `${playerName} received ${EntityFactory.builders[kind]()
-          .getLootMessage()
-          .replace("You pick up", "")}`;
+      self.client.onPartyLoot(function ({ playerName, kind, isUnique }) {
+        let message = "";
+        if (isUnique) {
+          message = `${playerName} received the ${Types.itemUniqueMap[Types.getKindAsString(kind)][0]}`;
+        } else {
+          message = `${playerName} received ${EntityFactory.builders[kind]()
+            .getLootMessage()
+            .replace("You pick up", "")}`;
+        }
 
         self.chat_callback({ message, type: "loot" });
+      });
+
+      self.client.onPartyHealth(function (members) {
+        console.log("~~~~health", members);
+
+        // @TODO: Update healthbars
       });
 
       self.client.onEntityMove(function (id, x, y) {

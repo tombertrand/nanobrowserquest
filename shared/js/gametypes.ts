@@ -76,6 +76,7 @@ export const Types: any = {
       INFO: 65,
       ERROR: 66,
       LOOT: 67,
+      HEALTH: 68,
     },
   },
 
@@ -520,7 +521,7 @@ Types.itemUniqueMap = {
   diamondsword: ["Inevitable", 28, 40],
 
   // name, level, defense
-  leatherarmor: ["The Representative", 2, 4],
+  leatherarmor: ["Representative", 2, 4],
   mailarmor: ["ForeX Guard", 4, 6],
   platearmor: ["Green Alternative", 6, 12],
   redarmor: ["Appia's Road", 8, 16],
@@ -533,7 +534,7 @@ Types.itemUniqueMap = {
 
   // name, level, defense
   beltleather: ["Proof of Wear", 4, 4],
-  beltplated: ["The Hodler", 9, 6],
+  beltplated: ["Hodler", 9, 6],
   beltfrozen: ["Spam Resistor", 22, 12],
   beltdiamond: ["TaaC", 38, 18],
 };
