@@ -6,11 +6,13 @@ class Item extends Entity {
   blinkTimeout: NodeJS.Timeout;
   despawnTimeout: NodeJS.Timeout;
   respawnCallback: any;
+  partyId?: number;
 
-  constructor(id, kind, x, y) {
+  constructor(id, kind, x, y, partyId?: number) {
     super(id, "item", kind, x, y);
     this.isStatic = false;
     this.isFromChest = false;
+    this.partyId = partyId;
   }
 
   handleDespawn(params) {

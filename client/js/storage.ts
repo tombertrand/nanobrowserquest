@@ -18,7 +18,6 @@ class Storage {
         name: "",
         weapon: "",
         armor: "",
-        guild: "",
         image: "",
       },
       audio: true,
@@ -100,21 +99,6 @@ class Storage {
     this.save();
   }
 
-  setPlayerGuild(guild) {
-    if (typeof guild !== "undefined") {
-      this.data.player.guild = {
-        id: guild.id,
-        name: guild.name,
-        // @TODO: Fix if supporting guild
-        // members: JSON.stringify(guild.members),
-      };
-      this.save();
-    } else {
-      delete this.data.player.guild;
-      this.save();
-    }
-  }
-
   setAudioEnabled(enabled) {
     this.data.audio = enabled;
     this.save();
@@ -127,11 +111,10 @@ class Storage {
     return false;
   }
 
-  savePlayer(img, armor, weapon, guild) {
+  savePlayer(img, armor, weapon) {
     this.setPlayerImage(img);
     this.setPlayerArmor(armor);
     this.setPlayerWeapon(weapon);
-    this.setPlayerGuild(guild);
   }
 
   // Achievements

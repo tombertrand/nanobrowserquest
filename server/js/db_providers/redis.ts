@@ -3,7 +3,6 @@ import * as NanocurrencyWeb from "nanocurrency-web";
 import redis from "redis";
 
 import { Types } from "../../../shared/js/gametypes";
-// import Player from "../player";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
@@ -488,10 +487,6 @@ class DatabaseHandler {
     });
   }
 
-  banTerm(time) {
-    return Math.pow(2, time) * 500 * 60;
-  }
-
   equipWeapon(name, weapon, level, bonus) {
     console.info("Set Weapon: " + name + " " + weapon + ":" + level);
     this.client.hset("u:" + name, "weapon", `${weapon}:${level}${bonus ? `:${bonus}` : ""}`);
@@ -797,6 +792,8 @@ class DatabaseHandler {
             slotIndex = inventory.indexOf(0);
             if (slotIndex !== -1) {
               inventory[slotIndex] = [item, level || quantity, bonus].filter(Boolean).join(":");
+            } else if (player.hasParty()) {
+              // @TODO re-call the lootItems fn with next party member
             }
           }
         });

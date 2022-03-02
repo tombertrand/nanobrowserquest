@@ -111,7 +111,14 @@ Messages.Auras = class Message {
 Messages.Drop = class Message {
   constructor(private mob, private item) {}
   serialize() {
-    var drop = [Types.Messages.DROP, this.mob.id, this.item.id, this.item.kind, _.map(this.mob.hateList, "id")];
+    var drop = [
+      Types.Messages.DROP,
+      this.mob.id,
+      this.item.id,
+      this.item.kind,
+      _.map(this.mob.hateList, "id"),
+      this.item.partyId,
+    ];
 
     return drop;
   }
@@ -211,20 +218,6 @@ Messages.Party = class Message {
     return [Types.Messages.PARTY, this.action].concat(this.info);
   }
 };
-
-// Messages.GuildError = class Message {
-//   constructor(private errorType, private guildName) {}
-//   serialize() {
-//     return [Types.Messages.GUILDERROR, this.errorType, this.guildName];
-//   }
-// };
-
-// Messages.Guild = class Message {
-//   constructor(private action, private info) {}
-//   serialize() {
-//     return [Types.Messages.GUILD, this.action].concat(this.info);
-//   }
-// };
 
 Messages.PVP = class Message {
   constructor(private isPVP) {}

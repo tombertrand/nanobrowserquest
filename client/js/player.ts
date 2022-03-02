@@ -47,7 +47,6 @@ class Player extends Character {
   isLootMoving: boolean;
   isSwitchingWeapon: boolean;
   pvpFlag: boolean;
-  // guild: any;
   invite: any;
   currentArmorSprite: any;
   id: any;
@@ -74,10 +73,6 @@ class Player extends Character {
 
     this.name = name;
     this.account = account;
-
-    // if (typeof guild !== "undefined") {
-    //   this.setGuild(guild);
-    // }
 
     // Renderer
     this.nameOffsetY = -10;
@@ -146,46 +141,6 @@ class Player extends Character {
     this.partyMembers = partyMembers;
   }
 
-  // getGuild() {
-  //   return this.guild;
-  // }
-
-  // setGuild(guild) {
-  //   this.guild = guild;
-  //   $("#guild-population").addClass("visible");
-  //   $("#guild-name").html(guild.name);
-  // }
-
-  // unsetGuild() {
-  //   delete this.guild;
-  //   $("#guild-population").removeClass("visible");
-  // }
-
-  // hasGuild() {
-  //   return typeof this.guild !== "undefined";
-  // }
-
-  // addInvite(inviteGuildId) {
-  //   this.invite = { time: new Date().valueOf(), guildId: inviteGuildId };
-  // }
-
-  // deleteInvite() {
-  //   delete this.invite;
-  // }
-
-  // checkInvite() {
-  //   if (this.invite && new Date().valueOf() - this.invite.time < 595000) {
-  //     return this.invite.guildId;
-  //   } else {
-  //     if (this.invite) {
-  //       this.deleteInvite();
-  //       return -1;
-  //     } else {
-  //       return false;
-  //     }
-  //   }
-  // }
-
   loot(item) {
     if (item) {
       if (Types.Entities.Gems.includes(item.kind)) {
@@ -227,6 +182,9 @@ class Player extends Character {
         if (isFound) {
           throw new Exceptions.LootException("You already have this item.");
         }
+      } else if (item.partyId && item.partyId !== this.partyId) {
+        // @TODO Allow item to be looted if player is alone in the party
+        throw new Exceptions.LootException("Can't loot item, it belongs to a party.");
       }
 
       console.info("Player " + this.id + " has looted " + item.id);

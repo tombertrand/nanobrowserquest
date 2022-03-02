@@ -45,16 +45,6 @@ class GameClient {
   setbonus_callback: any;
   blink_callback: any;
   pvp_callback: any;
-  guilderror_callback: any;
-  guildmemberconnect_callback: any;
-  guildmemberdisconnect_callback: any;
-  guildonlinemembers_callback: any;
-  guildcreate_callback: any;
-  guildinvite_callback: any;
-  guildpopulation_callback: any;
-  guildjoin_callback: any;
-  guildleave_callback: any;
-  guildtalk_callback: any;
   bosscheck_callback: any;
   partycreate_callback: any;
   partyjoin_callback: any;
@@ -63,6 +53,7 @@ class GameClient {
   partydisband_callback: any;
   partyinfo_callback: any;
   partyerror_callback: any;
+  partyloot_callback: any;
   receivenotification_callback: any;
   receiveinventory_callback: any;
   receivestash_callback: any;
@@ -113,9 +104,7 @@ class GameClient {
     this.handlers[Types.Messages.STATS] = this.receiveStats;
     this.handlers[Types.Messages.SETBONUS] = this.receiveSetBonus;
     this.handlers[Types.Messages.BLINK] = this.receiveBlink;
-    this.handlers[Types.Messages.GUILDERROR] = this.receiveGuildError;
     this.handlers[Types.Messages.PARTY] = this.receiveParty;
-    this.handlers[Types.Messages.GUILD] = this.receiveGuild;
     this.handlers[Types.Messages.PVP] = this.receivePVP;
     this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
     this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
@@ -288,6 +277,7 @@ class GameClient {
     var depositAccount = data[23];
     var auras = data[24];
     var cowLevelPortalCoords = data[25];
+    var party = data[26];
 
     if (this.welcome_callback) {
       this.welcome_callback({
@@ -316,6 +306,7 @@ class GameClient {
         depositAccount,
         auras,
         cowLevelPortalCoords,
+        party,
       });
     }
   }
@@ -363,13 +354,13 @@ class GameClient {
     var y = data[4];
 
     if (Types.isItem(kind)) {
-      var item = EntityFactory.createEntity(kind, id);
+      var item = EntityFactory.createEntity({ kind, id });
 
       if (this.spawn_item_callback) {
         this.spawn_item_callback(item, x, y);
       }
     } else if (Types.isChest(kind)) {
-      var item = EntityFactory.createEntity(kind, id);
+      var item = EntityFactory.createEntity({ kind, id });
 
       if (this.spawn_chest_callback) {
         this.spawn_chest_callback(item, x, y);
@@ -389,7 +380,7 @@ class GameClient {
         partyId = data[12];
       }
 
-      var character = EntityFactory.createEntity(kind, id, name);
+      var character = EntityFactory.createEntity({ kind, id, name });
 
       if (character instanceof Player) {
         character.setWeaponName(weapon);
@@ -458,13 +449,15 @@ class GameClient {
   }
 
   receiveDrop(data) {
-    var mobId = data[1],
-      id = data[2],
-      kind = data[3],
-      item = EntityFactory.createEntity(kind, id);
+    var mobId = data[1];
+    var id = data[2];
+    var kind = data[3];
+
+    var item = EntityFactory.createEntity({ kind, id });
 
     item.wasDropped = true;
     item.playersInvolved = data[4];
+    item.partyId = data[5];
 
     if (this.drop_callback) {
       this.drop_callback(item, mobId);
@@ -566,18 +559,7 @@ class GameClient {
       this.pvp_callback(pvp);
     }
   }
-
-  receiveGuildError(data) {
-    var errorType = data[1];
-    var guildName = data[2];
-    if (this.guilderror_callback) {
-      this.guilderror_callback(errorType, guildName);
-    }
-  }
-
   receiveParty(data) {
-    console.log("~~~~receiveParty", data);
-
     if (data[1] === Types.Messages.PARTY_ACTIONS.CREATE && this.partycreate_callback) {
       this.partycreate_callback();
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.JOIN && this.partyjoin_callback) {
@@ -592,48 +574,8 @@ class GameClient {
       this.partyinfo_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.ERROR && this.partyerror_callback) {
       this.partyerror_callback(data[2]);
-    }
-
-    // else if (data[1] === Types.Messages.PARTY_ACTIONS.DISCONNECT && this.guildmemberdisconnect_callback) {
-    //   this.guildmemberdisconnect_callback(data[2]); //member name
-    // } else if (data[1] === Types.Messages.PARTY_ACTIONS.ONLINE && this.guildonlinemembers_callback) {
-    //   data.splice(0, 2);
-    //   this.guildonlinemembers_callback(data); //member names
-    // } else if (data[1] === Types.Messages.PARTY_ACTIONS.CREATE && this.guildcreate_callback) {
-    //   this.guildcreate_callback(data[2], data[3]); //id, name
-    // } else if (data[1] === Types.Messages.PARTY_ACTIONS.INVITE && this.guildinvite_callback) {
-    //   this.guildinvite_callback(data[2], data[3], data[4]); //id, name, invitor name
-    // } else if (data[1] === Types.Messages.GUILDACTION.POPULATION && this.guildpopulation_callback) {
-    //   this.guildpopulation_callback(data[2], data[3]); //name, count
-    // } else if (data[1] === Types.Messages.GUILDACTION.JOIN && this.guildjoin_callback) {
-    //   this.guildjoin_callback(data[2], data[3], data[4], data[5]); //name, (id, (guildId, guildName))
-    // } else if (data[1] === Types.Messages.GUILDACTION.LEAVE && this.guildleave_callback) {
-    //   this.guildleave_callback(data[2], data[3], data[4]); //name, id, guildname
-    // } else if (data[1] === Types.Messages.GUILDACTION.TALK && this.guildtalk_callback) {
-    //   this.guildtalk_callback(data[2], data[3], data[4]); //name, id, message
-    // }
-  }
-
-  receiveGuild(data) {
-    if (data[1] === Types.Messages.GUILDACTION.CONNECT && this.guildmemberconnect_callback) {
-      this.guildmemberconnect_callback(data[2]); //member name
-    } else if (data[1] === Types.Messages.GUILDACTION.DISCONNECT && this.guildmemberdisconnect_callback) {
-      this.guildmemberdisconnect_callback(data[2]); //member name
-    } else if (data[1] === Types.Messages.GUILDACTION.ONLINE && this.guildonlinemembers_callback) {
-      data.splice(0, 2);
-      this.guildonlinemembers_callback(data); //member names
-    } else if (data[1] === Types.Messages.GUILDACTION.CREATE && this.guildcreate_callback) {
-      this.guildcreate_callback(data[2], data[3]); //id, name
-    } else if (data[1] === Types.Messages.GUILDACTION.INVITE && this.guildinvite_callback) {
-      this.guildinvite_callback(data[2], data[3], data[4]); //id, name, invitor name
-    } else if (data[1] === Types.Messages.GUILDACTION.POPULATION && this.guildpopulation_callback) {
-      this.guildpopulation_callback(data[2], data[3]); //name, count
-    } else if (data[1] === Types.Messages.GUILDACTION.JOIN && this.guildjoin_callback) {
-      this.guildjoin_callback(data[2], data[3], data[4], data[5]); //name, (id, (guildId, guildName))
-    } else if (data[1] === Types.Messages.GUILDACTION.LEAVE && this.guildleave_callback) {
-      this.guildleave_callback(data[2], data[3], data[4]); //name, id, guildname
-    } else if (data[1] === Types.Messages.GUILDACTION.TALK && this.guildtalk_callback) {
-      this.guildtalk_callback(data[2], data[3], data[4]); //name, id, message
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.LOOT && this.partyloot_callback) {
+      this.partyloot_callback(data[2]);
     }
   }
 
@@ -882,44 +824,8 @@ class GameClient {
     this.partyerror_callback = callback;
   }
 
-  onGuildError(callback) {
-    this.guilderror_callback = callback;
-  }
-
-  onGuildCreate(callback) {
-    this.guildcreate_callback = callback;
-  }
-
-  onGuildInvite(callback) {
-    this.guildinvite_callback = callback;
-  }
-
-  onGuildJoin(callback) {
-    this.guildjoin_callback = callback;
-  }
-
-  onGuildLeave(callback) {
-    this.guildleave_callback = callback;
-  }
-
-  onGuildTalk(callback) {
-    this.guildtalk_callback = callback;
-  }
-
-  onMemberConnect(callback) {
-    this.guildmemberconnect_callback = callback;
-  }
-
-  onMemberDisconnect(callback) {
-    this.guildmemberdisconnect_callback = callback;
-  }
-
-  onReceiveGuildMembers(callback) {
-    this.guildonlinemembers_callback = callback;
-  }
-
-  onGuildPopulation(callback) {
-    this.guildpopulation_callback = callback;
+  onPartyLoot(callback) {
+    this.partyloot_callback = callback;
   }
 
   onBossCheck(callback) {
@@ -985,26 +891,6 @@ class GameClient {
   sendLogin(player) {
     this.sendMessage([Types.Messages.LOGIN, player.name, player.account]);
   }
-
-  //  sendHello(player) {
-  //if(player.hasGuild()){
-  //	this.sendMessage([Types.Messages.HELLO,
-  //					  player.name,
-  //            player.pw,
-  //           player.email,
-  //					  Types.getKindFromString(player.getSpriteName()),
-  //					  Types.getKindFromString(player.getWeaponName()),
-  //					  player.guild.id, player.guild.name]);
-  //}
-  //else{
-  //this.sendMessage([Types.Messages.HELLO,
-  //player.name,
-  //player.pw,
-  //player.email,
-  //Types.getKindFromString(player.getSpriteName()),
-  //Types.getKindFromString(player.getWeaponName())]);
-  //}
-  // },
 
   sendMove(x, y) {
     this.sendMessage([Types.Messages.MOVE, x, y]);
@@ -1098,26 +984,6 @@ class GameClient {
   sendPartyDisband() {
     this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.DISBAND]);
   }
-
-  // sendNewGuild(name) {
-  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.CREATE, name]);
-  // }
-
-  // sendGuildInvite(invitee) {
-  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.INVITE, invitee]);
-  // }
-
-  // sendGuildInviteReply(guild, answer) {
-  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.JOIN, guild, answer]);
-  // }
-
-  // talkToGuild(message) {
-  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.TALK, message]);
-  // }
-
-  // sendLeaveGuild() {
-  //   this.sendMessage([Types.Messages.GUILD, Types.Messages.GUILDACTION.LEAVE]);
-  // }
 
   sendBanPlayer(message) {
     this.sendMessage([Types.Messages.BAN_PLAYER, message]);

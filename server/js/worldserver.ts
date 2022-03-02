@@ -1,20 +1,15 @@
 import "./store/cron";
 
-// import "./area";
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 import { ChestArea, MobArea } from "./area";
-// import Character from "./character";
 import Chest from "./chest";
 import Item from "./item";
 import Map from "./map";
 import Messages from "./message";
 import Mob from "./mob";
 import Npc from "./npc";
-// import ChestArea from "./chestarea";
-// import Entity from "./entity";
-// import Guild from "./guild";
 import Party from "./party";
 import Player from "./player";
 import Properties from "./properties";
@@ -32,7 +27,6 @@ class World {
   map: any;
   entities: {};
   players: {};
-  guilds: {};
   mobs: {};
   attackers: {};
   items: {};
@@ -82,7 +76,6 @@ class World {
 
     this.entities = {};
     this.players = {};
-    this.guilds = {};
     this.parties = {};
     this.currentPartyId = 0;
     this.mobs = {};
@@ -156,9 +149,7 @@ class World {
           "(" +
           player.connection._connection.handshake.headers["cf-connecting-ip"] +
           ") has joined " +
-          self.id +
-          " in guild " +
-          player.guildId,
+          self.id,
       );
 
       if (!player.hasEnteredGame) {
@@ -167,17 +158,6 @@ class World {
 
       // Number of players in this world
       self.pushToPlayer(player, new Messages.Population(self.playerCount));
-      // if (player.hasGuild()) {
-      //   self.pushToGuild(
-      //     player.getGuild(),
-      //     new Messages.Guild(Types.Messages.GUILDACTION.CONNECT, player.name),
-      //     player,
-      //   );
-      //   var names = _.without(player.getGuild().memberNames(), player.name);
-      //   if (names.length > 0) {
-      //     self.pushToPlayer(player, new Messages.Guild(Types.Messages.GUILDACTION.ONLINE, names));
-      //   }
-      // }
       self.pushRelevantEntityListTo(player);
 
       var move_callback = function (x, y) {
@@ -234,13 +214,7 @@ class World {
             player,
           );
         }
-        // if (player.hasGuild()) {
-        //   self.pushToGuild(
-        //     player.getGuild(),
-        //     new Messages.Guild(Types.Messages.GUILDACTION.DISCONNECT, player.name),
-        //     player,
-        //   );
-        // }
+
         self.removePlayer(player);
         self.decrementPlayerCount();
 
@@ -428,26 +402,6 @@ class World {
     }
   }
 
-  // pushToGuild(guild, message, except) {
-  //   var self = this;
-
-  //   if (guild) {
-  //     if (typeof except === "undefined") {
-  //       guild.forEachMember(function (player, id) {
-  //         self.pushToPlayer(self.getEntityById(id), message);
-  //       });
-  //     } else {
-  //       guild.forEachMember(function (player, id) {
-  //         if (parseInt(id, 10) !== except.id) {
-  //           self.pushToPlayer(self.getEntityById(id), message);
-  //         }
-  //       });
-  //     }
-  //   } else {
-  //     console.error("pushToGuild: guild was undefined");
-  //   }
-  // }
-
   pushToGroup(groupId, message, ignoredPlayer?: number) {
     var self = this;
     var group = this.groups[groupId];
@@ -553,69 +507,6 @@ class World {
     console.debug("Removed " + Types.getKindAsString(entity.kind) + " : " + entity.id);
   }
 
-  // joinGuild(player, guildId, answer?: string) {
-  //   if (typeof this.guilds[guildId] === "undefined") {
-  //     this.pushToPlayer(player, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.DOESNOTEXIST, guildId));
-  //   }
-  //   //#guildupdate (guildrules)
-  //   else {
-  //     if (player.hasGuild()) {
-  //       var formerGuildId = player.guildId;
-  //     }
-  //     var res = this.guilds[guildId].addMember(player, answer);
-  //     if (res !== false && typeof formerGuildId !== "undefined") {
-  //       this.guilds[formerGuildId].removeMember(player);
-  //     }
-  //     return res;
-  //   }
-  //   return false;
-  // }
-
-  // reloadGuild(guildId, guildName) {
-  //   var res: any = false;
-  //   var lastItem: any = 0;
-  //   if (typeof this.guilds[guildId] !== "undefined") {
-  //     if (this.guilds[guildId].name === guildName) {
-  //       res = guildId;
-  //     }
-  //   }
-  //   if (res === false) {
-  //     _.every(this.guilds, function (guild: any, key) {
-  //       if (guild.name === guildName) {
-  //         res = parseInt(key, 10);
-  //         return false;
-  //       } else {
-  //         lastItem = key;
-  //         return true;
-  //       }
-  //     });
-  //   }
-
-  //   if (res === false) {
-  //     //first connected after reboot.
-  //     if (typeof this.guilds[guildId] !== "undefined") {
-  //       guildId = parseInt(lastItem, 10) + 1;
-  //     }
-  //     this.guilds[guildId] = new Guild(guildId, guildName, this);
-  //     res = guildId;
-  //   }
-  //   return res;
-  // }
-
-  // addGuild(guildName) {
-  //   var res: any = true;
-  //   var id = 0; //an ID here
-  //   res = _.every(this.guilds, function (guild: any, key) {
-  //     id = parseInt(key, 10) + 1;
-  //     return guild.name !== guildName;
-  //   });
-  //   if (res) {
-  //     this.guilds[id] = new Guild(id, guildName, this);
-  //     res = id;
-  //   }
-  //   return res;
-  // }
-
   addParty(player: Player) {
     this.currentPartyId += 1;
 
@@ -623,6 +514,10 @@ class World {
     this.parties[this.currentPartyId] = party;
 
     return party;
+  }
+
+  getParty(partyId: number) {
+    return (partyId && this.parties[partyId]) || null;
   }
 
   addPlayer(player: Player) {
@@ -636,7 +531,7 @@ class World {
     player.broadcast(player.despawn());
     this.removeEntity(player);
     if (player.hasParty()) {
-      player.getParty().removeMember(player);
+      player.getParty()?.removeMember(player);
     }
     delete this.players[player.id];
     delete this.outgoingQueues[player.id];
@@ -759,14 +654,14 @@ class World {
     });
   }
 
-  createItem(kind, x, y) {
+  createItem(kind, x, y, partyId?: number) {
     var id = "9" + this.itemCount++,
       item = null;
 
     if (kind === Types.Entities.CHEST) {
       item = new Chest(id, x, y);
     } else {
-      item = new Item(id, kind, x, y);
+      item = new Item(id, kind, x, y, partyId);
     }
     return item;
   }
@@ -1051,21 +946,29 @@ class World {
       if (entity.type === "mob") {
         var mob = entity;
         var item = this.getDroppedItem(mob, attacker);
-        var mainTanker = this.getEntityById(mob.getMainTankerId());
+        // var mainTanker = this.getEntityById(mob.getMainTankerId());
 
-        if (mainTanker && mainTanker instanceof Player) {
-          const exp = this.receivedExp(mainTanker, mob);
-          if (exp) {
-            mainTanker.incExp(exp);
-          }
-          this.pushToPlayer(mainTanker, new Messages.Kill(mob, mainTanker.level, mainTanker.experience, exp));
-        } else {
-          const exp = this.receivedExp(attacker, mob);
-          if (exp) {
-            attacker.incExp(exp);
-          }
-          this.pushToPlayer(attacker, new Messages.Kill(mob, attacker.level, attacker.experience, exp));
+        // var lastHitPlayer = mainTanker instanceof Player || attacker;
+
+        const exp = this.receivedExp(attacker, mob);
+        if (exp) {
+          attacker.incExp(exp);
         }
+        this.pushToPlayer(attacker, new Messages.Kill(mob, attacker.level, attacker.experience, exp));
+
+        // if (mainTanker && mainTanker instanceof Player) {
+        //   const exp = this.receivedExp(mainTanker, mob);
+        //   if (exp) {
+        //     mainTanker.incExp(exp);
+        //   }
+        //   this.pushToPlayer(mainTanker, new Messages.Kill(mob, mainTanker.level, mainTanker.experience, exp));
+        // } else {
+        //   const exp = this.receivedExp(attacker, mob);
+        //   if (exp) {
+        //     attacker.incExp(exp);
+        //   }
+        //   this.pushToPlayer(attacker, new Messages.Kill(mob, attacker.level, attacker.experience, exp));
+        // }
 
         this.pushToAdjacentGroups(mob.group, mob.despawn()); // Despawn must be enqueued before the item drop
         if (item) {
@@ -1197,47 +1100,42 @@ class World {
     }
   }
 
-  getDroppedItem(mob, attacker) {
+  getDroppedItemName(mob, attacker) {
     var kind = Types.getKindAsString(mob.kind);
     var drops = Properties[kind].drops;
     var v = random(100) + 1;
     var p = 0;
-    var item = null;
-
-    // var randomDrop = random(1);
-    // var randomDrops = ["beltdiamond"] as any;
-    // // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
-    // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
+    let itemKind = null;
 
     if (mob.kind === Types.Entities.COW) {
       const diamondRandom = random(600);
       if (diamondRandom === 69) {
-        return this.addItem(this.createItem(Types.getKindFromString("diamondsword"), mob.x, mob.y));
+        return "diamondsword";
       } else if (diamondRandom === 133) {
-        return this.addItem(this.createItem(Types.getKindFromString("diamondarmor"), mob.x, mob.y));
+        return "diamondarmor";
       } else if (diamondRandom === 420) {
-        return this.addItem(this.createItem(Types.getKindFromString("beltdiamond"), mob.x, mob.y));
+        return "beltdiamond";
       }
     }
     if (mob.kind >= Types.Entities.EYE) {
       const vv = random(10000);
       if (vv === 420) {
-        return this.addItem(this.createItem(Types.getKindFromString("ringraistone"), mob.x, mob.y));
+        return "ringraistone";
       } else if (mob.kind >= Types.Entities.RAT2 && vv === 6969) {
-        return this.addItem(this.createItem(Types.getKindFromString("ringfountain"), mob.x, mob.y));
+        return "ringfountain";
       }
     }
 
     if (!Types.isBoss(mob.kind) && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO potion on non-boss monsters
-      item = this.addItem(this.createItem(Types.getKindFromString("nanopotion"), mob.x, mob.y));
+      return "nanopotion";
     } else {
       for (var itemName in drops) {
         var percentage = drops[itemName];
 
         p += percentage;
         if (v <= p) {
-          let itemKind = Types.getKindFromString(itemName);
+          itemKind = Types.getKindFromString(itemName);
 
           if (itemKind === Types.Entities.SCROLLUPGRADEHIGH) {
             const mobLevel = Types.getMobLevel(mob.kind);
@@ -1256,14 +1154,25 @@ class World {
               }
             }
           }
-
-          item = this.addItem(this.createItem(itemKind, mob.x, mob.y));
-          break;
+          return Types.getKindAsString(itemKind);
         }
       }
     }
+  }
 
-    return item;
+  getDroppedItem(mob, attacker) {
+    const itemName = this.getDroppedItemName(mob, attacker);
+    const kind = Types.getKindFromString(itemName);
+
+    // var randomDrop = random(1);
+    // var randomDrops = ["beltdiamond"] as any;
+    // // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
+
+    // Potions can be looted by anyone
+    const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;
+
+    return itemName ? this.addItem(this.createItem(Types.getKindFromString(itemName), mob.x, mob.y, partyId)) : null;
   }
 
   onMobMoveCallback(mob) {
@@ -1423,6 +1332,7 @@ class World {
         },
         blinkingDuration: 4000,
         despawnCallback() {
+          // @NOTE Perhaps not pushed to all players...
           self.pushToAdjacentGroups(item.group, new Messages.Destroy(item));
           self.removeEntity(item);
         },

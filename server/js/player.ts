@@ -99,7 +99,6 @@ class Player extends Character {
   broadcastzone_callback: any;
   zone_callback: any;
   orient_callback: any;
-  guildId: any;
   depositAccountIndex: number;
   stash: any;
   databaseHandler: any;
@@ -224,26 +223,6 @@ class Player extends Character {
           }
           databaseHandler.loadPlayer(self);
         }
-
-        // self.kind = Types.Entities.WARRIOR;
-        // self.equipArmor(message[2]);
-        // self.equipWeapon(message[3]);
-        // if(typeof message[4] !== 'undefined') {
-        //     var aGuildId = self.server.reloadGuild(message[4],message[5]);
-        //     if( aGuildId !== message[4]) {
-        //         self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.IDWARNING,message[5]));
-        //     }
-        // }
-        // self.orientation = Utils.randomOrientation();
-        // self.updateHitPoints();
-        // self.updatePosition();
-        //
-        // self.server.addPlayer(self, aGuildId);
-        // self.server.enter_callback(self);
-        //
-        // self.send([Types.Messages.WELCOME, self.id, self.name, self.x, self.y, self.hitPoints]);
-        // self.hasEnteredGame = true;
-        // self.isDead = false;
       } else if (action === Types.Messages.WHO) {
         console.info("WHO: " + self.name);
         message.shift();
@@ -297,6 +276,7 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.LOOTMOVE) {
         // console.info("LOOTMOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+
         if (self.lootmove_callback) {
           self.setPosition(message[1], message[2]);
 
@@ -477,6 +457,17 @@ class Player extends Character {
         var item = self.server.getEntityById(message[1]);
 
         if (item) {
+          if (item.partyId) {
+            // Allow looting if party only has 1 member
+            if ((self.server.getParty(item.partyId)?.members.length || 0) > 1 && self.partyId !== item.partyId) {
+              self.connection.send({
+                type: Types.Messages.NOTIFICATION,
+                message: "Can't loot item, it belongs to a party.",
+              });
+              return;
+            }
+          }
+
           var kind = item.kind;
 
           if (Types.isItem(kind)) {
@@ -523,91 +514,102 @@ class Player extends Character {
                 self.regenHealthBy(amount);
                 self.server.pushToPlayer(self, self.health());
               }
-            } else if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind)) {
-              const isUnique = random(100) === 42;
-              const baseLevel = Types.getBaseLevel(kind);
-              const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
-              let bonus = null;
+            } else {
+              let player = self;
+              if (self.partyId) {
+                player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+                self.server.pushToParty(
+                  self.getParty(),
+                  new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [{ playerName: player.name, kind }]),
+                );
+              }
 
-              if (isUnique) {
-                if (Types.isArmor(kind)) {
-                  bonus = [6];
-                } else if (Types.isWeapon(kind)) {
-                  bonus = [3, 14];
-                } else if (Types.isBelt(kind)) {
-                  const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
-                  bonus = _.shuffle(mediumLevelBonus).slice(0, 1).sort();
+              if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind)) {
+                const isUnique = random(100) === 42;
+                const baseLevel = Types.getBaseLevel(kind);
+                const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
+                let bonus = null;
+
+                if (isUnique) {
+                  if (Types.isArmor(kind)) {
+                    bonus = [6];
+                  } else if (Types.isWeapon(kind)) {
+                    bonus = [3, 14];
+                  } else if (Types.isBelt(kind)) {
+                    const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
+                    bonus = _.shuffle(mediumLevelBonus).slice(0, 1).sort();
+                  }
                 }
-              }
 
-              databaseHandler.lootItems({
-                player: self,
-                items: [{ item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null }],
-              });
-            } else if (Types.isScroll(kind) || Types.isSingle(kind)) {
-              databaseHandler.lootItems({
-                player: self,
-                items: [{ item: Types.getKindAsString(kind), quantity: 1 }],
-              });
-            } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
-              const lowLevelBonus = [0, 1, 2, 3];
-              const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
-              const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-              const amuletHighLevelBonus = [9, 10];
-              const drainLifeBonus = [13];
-              const fireDamageBonus = [14];
-              const lightningDamageBonus = [15];
-              const pierceArmorBonus = [16];
-              const highHealthBonus = [17];
+                databaseHandler.lootItems({
+                  player,
+                  items: [{ item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null }],
+                });
+              } else if (Types.isScroll(kind) || Types.isSingle(kind)) {
+                databaseHandler.lootItems({
+                  player,
+                  items: [{ item: Types.getKindAsString(kind), quantity: 1 }],
+                });
+              } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
+                const lowLevelBonus = [0, 1, 2, 3];
+                const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
+                const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+                const amuletHighLevelBonus = [9, 10];
+                const drainLifeBonus = [13];
+                const fireDamageBonus = [14];
+                const lightningDamageBonus = [15];
+                const pierceArmorBonus = [16];
+                const highHealthBonus = [17];
 
-              let bonus = [];
-              if (kind === Types.Entities.RINGBRONZE) {
-                bonus = _.shuffle(lowLevelBonus).slice(0, 1);
-              } else if (kind === Types.Entities.RINGSILVER || kind === Types.Entities.AMULETSILVER) {
-                bonus = _.shuffle(mediumLevelBonus).slice(0, 2);
-              } else if (kind === Types.Entities.RINGGOLD) {
-                bonus = _.shuffle(highLevelBonus).slice(0, 3);
-              } else if (kind === Types.Entities.AMULETGOLD) {
-                bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
-              } else if (kind === Types.Entities.RINGNECROMANCER) {
-                bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
-              } else if (kind === Types.Entities.AMULETCOW) {
-                bonus = _.shuffle(highLevelBonus)
-                  .slice(0, 3)
-                  .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-                  .concat(
-                    _.shuffle([
-                      ...fireDamageBonus,
-                      ...highHealthBonus,
-                      ...lightningDamageBonus,
-                      ...pierceArmorBonus,
-                    ]).slice(0, 1),
-                  );
-              } else if (kind === Types.Entities.RINGRAISTONE) {
-                bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
-              } else if (kind === Types.Entities.RINGFOUNTAIN) {
-                bonus = _.shuffle([5, 6])
-                  .slice(0, 2)
-                  .concat([8, ...highHealthBonus]);
-              }
+                let bonus = [];
+                if (kind === Types.Entities.RINGBRONZE) {
+                  bonus = _.shuffle(lowLevelBonus).slice(0, 1);
+                } else if (kind === Types.Entities.RINGSILVER || kind === Types.Entities.AMULETSILVER) {
+                  bonus = _.shuffle(mediumLevelBonus).slice(0, 2);
+                } else if (kind === Types.Entities.RINGGOLD) {
+                  bonus = _.shuffle(highLevelBonus).slice(0, 3);
+                } else if (kind === Types.Entities.AMULETGOLD) {
+                  bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
+                } else if (kind === Types.Entities.RINGNECROMANCER) {
+                  bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
+                } else if (kind === Types.Entities.AMULETCOW) {
+                  bonus = _.shuffle(highLevelBonus)
+                    .slice(0, 3)
+                    .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+                    .concat(
+                      _.shuffle([
+                        ...fireDamageBonus,
+                        ...highHealthBonus,
+                        ...lightningDamageBonus,
+                        ...pierceArmorBonus,
+                      ]).slice(0, 1),
+                    );
+                } else if (kind === Types.Entities.RINGRAISTONE) {
+                  bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
+                } else if (kind === Types.Entities.RINGFOUNTAIN) {
+                  bonus = _.shuffle([5, 6])
+                    .slice(0, 2)
+                    .concat([8, ...highHealthBonus]);
+                }
 
-              if (
-                kind === Types.Entities.AMULETCOW ||
-                kind === Types.Entities.RINGRAISTONE ||
-                kind === Types.Entities.RINGFOUNTAIN
-              ) {
-                databaseHandler.logLoot({
-                  player: self,
-                  item: `${Types.getKindAsString(kind)}:1:[${bonus.sort((a, b) => a - b)}]`,
+                if (
+                  kind === Types.Entities.AMULETCOW ||
+                  kind === Types.Entities.RINGRAISTONE ||
+                  kind === Types.Entities.RINGFOUNTAIN
+                ) {
+                  databaseHandler.logLoot({
+                    player,
+                    item: `${Types.getKindAsString(kind)}:1:[${bonus.sort((a, b) => a - b)}]`,
+                  });
+                }
+
+                databaseHandler.lootItems({
+                  player,
+                  items: [
+                    { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) },
+                  ],
                 });
               }
-
-              databaseHandler.lootItems({
-                player: self,
-                items: [
-                  { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) },
-                ],
-              });
             }
           }
         }
@@ -860,8 +862,6 @@ class Player extends Character {
         const items = store.getItems();
         self.send([Types.Messages.STORE_ITEMS, items]);
       } else if (action === Types.Messages.PARTY) {
-        console.log("~~~PARTY", message);
-
         if (message[1] === Types.Messages.PARTY_ACTIONS.CREATE) {
           if (!self.partyId) {
             self.server.addParty(self);
@@ -963,48 +963,6 @@ class Player extends Character {
             );
           }
         }
-
-        // if (message[1] === Types.Messages.GUILDACTION.CREATE) {
-        //   var guildname = sanitize(message[2]);
-        //   if (guildname === "") {
-        //     //inaccurate name
-        //     self.server.pushToPlayer(self, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.BADNAME, message[2]));
-        //   } else {
-        //     var guildId = self.server.addGuild(guildname);
-        //     if (guildId === false) {
-        //       self.server.pushToPlayer(
-        //         self,
-        //         new Messages.GuildError(Types.Messages.GUILDERRORTYPE.ALREADYEXISTS, guildname),
-        //       );
-        //     } else {
-        //       self.server.joinGuild(self, guildId);
-        //       self.server.pushToPlayer(
-        //         self,
-        //         new Messages.Guild(Types.Messages.GUILDACTION.CREATE, [guildId, guildname]),
-        //       );
-        //     }
-        //   }
-        // } else if (message[1] === Types.Messages.GUILDACTION.INVITE) {
-        //   var userName = message[2];
-        //   var invitee;
-        //   if (self.group in self.server.groups) {
-        //     invitee = _.find(self.server.groups[self.group].entities, function (entity) {
-        //       return entity instanceof Player && entity.name == userName ? entity : false;
-        //     });
-        //     if (invitee) {
-        //       self.getGuild().invite(invitee, self);
-        //     }
-        //   }
-        // } else if (message[1] === Types.Messages.GUILDACTION.JOIN) {
-        //   self.server.joinGuild(self, message[2], message[3]);
-        // } else if (message[1] === Types.Messages.GUILDACTION.LEAVE) {
-        //   self.leaveGuild();
-        // } else if (message[1] === Types.Messages.GUILDACTION.TALK) {
-        //   self.server.pushToGuild(
-        //     self.getGuild(),
-        //     new Messages.Guild(Types.Messages.GUILDACTION.TALK, [self.name, self.id, message[2]]),
-        //   );
-        // }
       } else {
         if (self.message_callback) {
           self.message_callback(message);
@@ -1469,7 +1427,7 @@ class Player extends Character {
   }
 
   hasParty() {
-    return typeof this.partyId !== "undefined";
+    return !!this.partyId;
   }
 
   getParty(): Party | undefined {
@@ -1479,32 +1437,6 @@ class Player extends Character {
   setPartyId(partyId) {
     this.partyId = partyId;
   }
-
-  // getGuild() {
-  //   return this.hasGuild ? this.server.guilds[this.guildId] : undefined;
-  // }
-
-  // hasGuild() {
-  //   return typeof this.guildId !== "undefined";
-  // }
-
-  // leaveGuild() {
-  //   if (this.hasGuild()) {
-  //     var leftGuild = this.getGuild();
-  //     leftGuild.removeMember(this);
-  //     this.server.pushToGuild(
-  //       leftGuild,
-  //       new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]),
-  //     );
-  //     delete this.guildId;
-  //     this.server.pushToPlayer(
-  //       this,
-  //       new Messages.Guild(Types.Messages.GUILDACTION.LEAVE, [this.name, this.id, leftGuild.name]),
-  //     );
-  //   } else {
-  //     this.server.pushToPlayer(this, new Messages.GuildError(Types.Messages.GUILDERRORTYPE.NOLEAVE, ""));
-  //   }
-  // }
 
   checkName(name) {
     if (!name?.trim()) return false;
@@ -1612,6 +1544,8 @@ class Player extends Character {
     self.server.addPlayer(self);
     self.server.enter_callback(self);
 
+    const { members, partyLeader } = self.getParty() || {};
+
     self.send([
       Types.Messages.WELCOME,
       self.id,
@@ -1639,6 +1573,7 @@ class Player extends Character {
       depositAccount,
       self.auras,
       self.server.cowLevelCoords,
+      self.hasParty() ? { partyId: self.partyId, members, partyLeader } : null,
     ]);
 
     self.calculateBonus();
@@ -1648,8 +1583,6 @@ class Player extends Character {
 
     self.hasEnteredGame = true;
     self.isDead = false;
-
-    // self.server.addPlayer(self, aGuildId);
   }
 }
 

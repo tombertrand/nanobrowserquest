@@ -156,11 +156,9 @@ footer, header, hgroup, menu, nav, section {
     #player-count:hover {cursor:pointer;color:#FCE045;}
     .panel {position:absolute;font-family:'GraphicPixel';color:#fff;text-align:center;height:0;}
     .panel > div {background:url('../img/1/barsheet.png');image-rendering:-moz-crisp-edges;opacity:0;-moz-transition:0.2s opacity linear;-webkit-transition:0.2s opacity linear;-o-transition:0.2s opacity linear;-ms-transition:0.2s opacity linear;transition:0.2s opacity linear;}
-    /* #guild-name, #population span:nth-child(1) {color:#FCE045;} */
     .panel {display: none;}
     .panel.visible {display: block;}
     .panel.visible > div {opacity:1;}
-    #guild-population {height:0;overflow:hidden;}
     .panel.visible {height:auto;}
     
     .barbutton {background:url('../img/1/barsheet.png');image-rendering:-moz-crispt-edges;position:absolute;}
@@ -544,7 +542,7 @@ footer, header, hgroup, menu, nav, section {
     #player-list > div span:last-of-type,#player-info > div span:last-of-type { margin-left: auto; }
     #population .active, #text-window .active, #player .active { color: #FCE045 }
     #text-window .event { color: #55a3ff }
-    #text-window .info { color: #bfc2db }
+    #text-window .info, #text-window .loot { color: #bfc2db }
     #text-window .error { color: #b57979 }
     #text-window span {text-shadow:1px -1px 1px #000, 1px 1px 1px #000,-1px 1px 1px #000}
     #player-account {color: #55a3ff; display: inline-block; white-space: nowrap;overflow: hidden;text-overflow: ellipsis; padding: 0 12px; width:calc(100% - 24px);}

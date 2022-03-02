@@ -11,7 +11,6 @@ import Chest from "./chest";
 import Entity from "./entity";
 import Exceptions from "./exceptions";
 import GameClient from "./gameclient";
-// import Guild from "./guild";
 import InfoManager from "./infomanager";
 import Item from "./item";
 import Map from "./map";
@@ -28,6 +27,7 @@ import { App as AppType } from "./types/app";
 import Updater from "./updater";
 import { randomRange } from "./utils";
 import Warrior from "./warrior";
+import EntityFactory from "./entityfactory";
 
 import type { ChatType } from "../../server/js/types";
 
@@ -113,7 +113,6 @@ class Game {
   equipment_callback: any;
   playerhurt_callback: any;
   nbplayers_callback: any;
-  nbguildplayers_callback: any;
   disconnect_callback: any;
   gamestart_callback: any;
   playerdeath_callback: any;
@@ -419,9 +418,6 @@ class Game {
         this.player.setSpriteName(this.storage.data.player.armor);
         this.player.setWeaponName(this.storage.data.player.weapon);
       }
-      // if (this.storage.data.player.guild) {
-      //   this.player.setGuild(this.storage.data.player.guild);
-      // }
     }
     this.player.setSprite(this.sprites[this.player.getSpriteName()]);
     this.player.idle();
@@ -1886,6 +1882,7 @@ class Game {
       depositAccount,
       auras,
       cowLevelPortalCoords,
+      party,
     }) {
       console.info("Received player ID from server : " + id);
       self.player.id = id;
@@ -1947,6 +1944,14 @@ class Game {
       self.player.skeletonKey = !!achievement[26];
       self.cowLevelPortalCoords = cowLevelPortalCoords;
 
+      if (party) {
+        const { partyId, partyLeader, members } = party;
+
+        self.player.setPartyId(partyId);
+        self.player.setPartyLeader(partyLeader);
+        self.player.setPartyMembers(members);
+      }
+
       self.addEntity(self.player);
       self.player.dirtyRect = self.renderer.getEntityBoundingRect(self.player);
 
@@ -1959,12 +1964,7 @@ class Game {
       self.app.updateArtifact(artifact);
 
       self.storage.initPlayer(self.player.name, self.player.account);
-      self.storage.savePlayer(
-        self.renderer.getPlayerImage(),
-        self.player.getSpriteName(),
-        self.player.getWeaponName(),
-        // self.player.getGuild(),
-      );
+      self.storage.savePlayer(self.renderer.getPlayerImage(), self.player.getSpriteName(), self.player.getWeaponName());
 
       if (!self.storage.hasAlreadyPlayed()) {
         self.showNotification("Welcome to Nano BrowserQuest!");
@@ -2260,7 +2260,6 @@ class Game {
           self.renderer.getPlayerImage(),
           self.player.getArmorName(),
           self.player.getWeaponName(),
-          // self.player.getGuild(),
         );
         if (self.equipment_callback) {
           self.equipment_callback();
@@ -2273,12 +2272,10 @@ class Game {
       });
 
       self.client.onSpawnItem(function (item, x, y) {
-        // console.info("Spawned " + Types.getKindAsString(item.kind) + " (" + item.id + ") at " + x + ", " + y);
         self.addItem(item, x, y);
       });
 
       self.client.onSpawnChest(function (chest, x, y) {
-        // console.info("Spawned chest (" + chest.id + ") at " + x + ", " + y);
         chest.setSprite(self.sprites[chest.getSpriteName()]);
         chest.setGridPosition(x, y);
         chest.setAnimation("idle_down", 150);
@@ -2541,92 +2538,6 @@ class Game {
         }
       });
 
-      // self.client.onGuildError(function (errorType, info) {
-      //   if (errorType === Types.Messages.GUILDERRORTYPE.BADNAME) {
-      //     self.showNotification(info + " seems to be an inappropriate guild name…");
-      //   } else if (errorType === Types.Messages.GUILDERRORTYPE.ALREADYEXISTS) {
-      //     self.showNotification(info + " already exists…");
-      //     setTimeout(function () {
-      //       self.showNotification("Either change the name of YOUR guild");
-      //     }, 2500);
-      //     setTimeout(function () {
-      //       self.showNotification("Or ask a member of " + info + " if you can join them.");
-      //     }, 5000);
-      //   } else if (errorType === Types.Messages.GUILDERRORTYPE.IDWARNING) {
-      //     self.showNotification("WARNING: the server was rebooted.");
-      //     setTimeout(function () {
-      //       self.showNotification(info + " has changed ID.");
-      //     }, 2500);
-      //   } else if (errorType === Types.Messages.GUILDERRORTYPE.BADINVITE) {
-      //     self.showNotification(info + " is ALREADY a member of “" + self.player.getGuild().name + "”");
-      //   }
-      // });
-
-      // self.client.onGuildCreate(function (guildId, guildName) {
-      //   self.player.setGuild(new Guild(guildId, guildName));
-      //   self.storage.setPlayerGuild(self.player.getGuild());
-      //   self.showNotification("You successfully created and joined…");
-      //   setTimeout(function () {
-      //     self.showNotification("…" + self.player.getGuild().name);
-      //   }, 2500);
-      // });
-
-      // self.client.onGuildInvite(function (guildId, guildName, inviterName) {
-      //   self.showNotification(inviterName + " invited you to join “" + guildName + "”.");
-      //   self.player.addInvite(guildId);
-      //   setTimeout(function () {
-      //     $("#chatinput").attr(
-      //       "placeholder",
-      //       "Do you want to join " + guildName + " ? Type /guild accept yes or /guild accept no",
-      //     );
-      //     self.app.showChat();
-      //   }, 2500);
-      // });
-
-      // self.client.onGuildJoin(function (playerName, id, guildId, guildName) {
-      //   if (typeof id === "undefined") {
-      //     self.showNotification(playerName + " failed to answer to your invitation in time.");
-      //     setTimeout(function () {
-      //       self.showNotification("Might have to send another invite…");
-      //     }, 2500);
-      //   } else if (id === false) {
-      //     self.showNotification(playerName + " respectfully declined your offer…");
-      //     setTimeout(function () {
-      //       self.showNotification("…to join “" + self.player.getGuild().name + "”.");
-      //     }, 2500);
-      //   } else if (id === self.player.id) {
-      //     self.player.setGuild(new Guild(guildId, guildName));
-      //     self.storage.setPlayerGuild(self.player.getGuild());
-      //     self.showNotification("You just joined “" + guildName + "”.");
-      //   } else {
-      //     self.showNotification(playerName + " is now a jolly member of “" + guildName + "”."); //#updateguild
-      //   }
-      // });
-
-      // self.client.onGuildLeave(function (name, playerId, guildName) {
-      //   if (self.player.id === playerId) {
-      //     if (self.player.hasGuild()) {
-      //       if (self.player.getGuild().name === guildName) {
-      //         //do not erase new guild on create
-      //         self.player.unsetGuild();
-      //         self.storage.setPlayerGuild();
-      //         self.showNotification("You successfully left “" + guildName + "”.");
-      //       }
-      //     }
-      //     //missing elses above should not happen (errors)
-      //   } else {
-      //     self.showNotification(name + " has left “" + guildName + "”."); //#updateguild
-      //   }
-      // });
-
-      self.client.onGuildTalk(function (name, id, message) {
-        if (id === self.player.id) {
-          self.showNotification("YOU: " + message);
-        } else {
-          self.showNotification(name + ": " + message);
-        }
-      });
-
       self.client.onPartyCreate(function () {
         self.chat_callback({ message: "Party created!", type: "event" });
       });
@@ -2639,7 +2550,7 @@ class Game {
         self.player.setPartyMembers(members);
 
         members?.forEach(({ id }) => {
-          self.getEntityById(id).setPartyId(partyId);
+          self.getEntityById(id)?.setPartyId(partyId);
         });
 
         let message = "Party joined";
@@ -2710,19 +2621,12 @@ class Game {
         self.chat_callback({ message, type: "error" });
       });
 
-      self.client.onMemberConnect(function (name) {
-        self.showNotification(name + " connected to your world."); //#updateguild
-      });
+      self.client.onPartyLoot(function ({ playerName, kind }) {
+        const message = `${playerName} received ${EntityFactory.builders[kind]()
+          .getLootMessage()
+          .replace("You pick up", "")}`;
 
-      self.client.onMemberDisconnect(function (name) {
-        self.showNotification(name + " lost connection with your world.");
-      });
-
-      self.client.onReceiveGuildMembers(function (memberNames) {
-        self.showNotification(
-          memberNames.join(", ") + (memberNames.length === 1 ? " is " : " are ") + "currently online.",
-          3000,
-        ); //#updateguild
+        self.chat_callback({ message, type: "loot" });
       });
 
       self.client.onEntityMove(function (id, x, y) {
@@ -3022,12 +2926,6 @@ class Game {
           if (levelupPlayer === self.playerId) {
             self.audioManager.playSound("levelup");
           }
-        }
-      });
-
-      self.client.onGuildPopulation(function (guildName, guildPopulation) {
-        if (self.nbguildplayers_callback) {
-          self.nbguildplayers_callback(guildName, guildPopulation);
         }
       });
 
@@ -4195,58 +4093,6 @@ class Game {
       return;
     }
 
-    //#cli guilds
-    // var regexp = /^\/guild\ (invite|create|accept)\s+([^\s]*)|(guild:)\s*(.*)$|^\/guild\ (leave)$/i;
-    // var args = message.match(regexp);
-    // if (args != undefined) {
-    //   switch (args[1]) {
-    //     case "invite":
-    //       if (this.player.hasGuild()) {
-    //         this.client.sendGuildInvite(args[2]);
-    //       } else {
-    //         this.showNotification("Invite " + args[2] + " to where?");
-    //       }
-    //       break;
-    //     case "create":
-    //       this.client.sendNewGuild(args[2]);
-    //       break;
-    //     case undefined:
-    //       if (args[5] === "leave") {
-    //         this.client.sendLeaveGuild();
-    //       } else if (this.player.hasGuild()) {
-    //         this.client.talkToGuild(args[4]);
-    //       } else {
-    //         this.showNotification("You got no-one to talk to…");
-    //       }
-    //       break;
-    //     case "accept":
-    //       var status;
-    //       if (args[2] === "yes") {
-    //         status = this.player.checkInvite();
-    //         if (status === false) {
-    //           this.showNotification("You were not invited anyway…");
-    //         } else if (status < 0) {
-    //           this.showNotification("Sorry to say it's too late…");
-    //           setTimeout(function () {
-    //             self.showNotification("Find someone and ask for another invite.");
-    //           }, 2500);
-    //         } else {
-    //           this.client.sendGuildInviteReply(this.player.invite.guildId, true);
-    //         }
-    //       } else if (args[2] === "no") {
-    //         status = this.player.checkInvite();
-    //         if (status !== false) {
-    //           this.client.sendGuildInviteReply(this.player.invite.guildId, false);
-    //           this.player.deleteInvite();
-    //         } else {
-    //           this.showNotification("Whatever…");
-    //         }
-    //       } else {
-    //         this.showNotification("“guild accept” is a YES or NO question!!");
-    //       }
-    //       break;
-    //   }
-    // }
     this.client.sendChat(message);
   }
 
@@ -4364,10 +4210,6 @@ class Game {
 
   onChatMessage(callback) {
     this.chat_callback = callback;
-  }
-
-  onGuildPopulationChange(callback) {
-    this.nbguildplayers_callback = callback;
   }
 
   onNotification(callback) {
@@ -4606,7 +4448,10 @@ class Game {
       this.player.loot(item);
       this.client.sendLoot(item); // Notify the server that this item has been looted
       this.removeItem(item);
-      this.showNotification(item.getLootMessage());
+
+      if (!this.player.partyId) {
+        this.showNotification(item.getLootMessage());
+      }
 
       if (item.type === "armor") {
         this.tryUnlockingAchievement("FAT_LOOT");

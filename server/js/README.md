@@ -29,10 +29,6 @@ sets if a function is either a string or a number (is chest open? 0 or
 formulas.js
 formulas for weapon damage and defense damage
 
-guild.js
-Functions how the guild works - guild invite, how many members are
-online etc
-
 item.js
 Handles how items on the ground starts blinking and then despawns if
 left untouched

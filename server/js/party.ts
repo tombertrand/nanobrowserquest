@@ -11,8 +11,7 @@ interface Member {
   name: string;
 }
 
-// @TODO CAP IT!
-// const MAX_MEMBERS = 4;
+const MAX_MEMBERS = 4;
 
 class Party {
   members: Member[] = [];
@@ -33,12 +32,26 @@ class Party {
       id: player.id,
       name: player.name,
     };
-    this.lootMemberIndex = 0;
+    this.lootMemberIndex = -1;
 
     this.addMember(player);
   }
 
+  getNextLootMemberId() {
+    if (this.lootMemberIndex + 1 >= this.members.length) {
+      this.lootMemberIndex = 0;
+    } else {
+      this.lootMemberIndex += 1;
+    }
+
+    return this.members[this.lootMemberIndex].id;
+  }
+
   addMember(player: Player) {
+    if (this.members.length === MAX_MEMBERS) {
+      player.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, "The party is full").serialize());
+      return;
+    }
     if (!this.sentInvites[player.id]) {
       player.send(
         new Messages.Party(
@@ -75,19 +88,6 @@ class Party {
     delete this.sentInvites[playerId];
   }
 
-  checkInvite(_invitee) {
-    // var now = new Date().valueOf();
-    // var self = this;
-    // _.each(this.sentInvites, function (time, id) {
-    //   if (now - time > 600000) {
-    //     var belated = self.server.getEntityById(id);
-    //     self.deleteInvite(id);
-    //     self.server.pushToParty(self, new Messages.Party(Types.Messages.PARTY.JOIN, belated.name), belated);
-    //   }
-    // });
-    // return typeof this.sentInvites[invitee.id] !== "undefined";
-  }
-
   removeMember(player) {
     const playerIndex = this.members.findIndex(({ id }) => player.id === id);
 
@@ -98,12 +98,6 @@ class Party {
       if (playerIndex === 0 && this.members.length) {
         // Party leader should always be index 0 so the first player who was invited gets the role
         this.partyLeader = this.members[0];
-
-        // this.server.pushToParty(
-        //   this,
-        //   new Messages.Party(Types.Messages.PARTY.LEADER, { partyLeader: this.partyLeader }),
-        //   player,
-        // );
       }
 
       this.server.pushToParty(
@@ -129,9 +123,13 @@ class Party {
   }
 
   disband() {
-    this.forEachMember((player: Player) => {
-      this.server.pushToPlayer(player, new Messages.Party(Types.Messages.PARTY_ACTIONS.DISBAND));
-      player.partyId = undefined;
+    this.forEachMember(({ id }) => {
+      const player = this.server.getEntityById(id);
+
+      if (player) {
+        this.server.pushToPlayer(player, new Messages.Party(Types.Messages.PARTY_ACTIONS.DISBAND));
+        player.setPartyId(undefined);
+      }
     });
 
     delete this.server.parties[this.id];

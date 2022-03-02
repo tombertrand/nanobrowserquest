@@ -56,9 +56,6 @@ gameclient.js
 How the client connects to server, gets info regarding drops,
 population, chat messages etc
 
-guild.js
-Functions for the guilds
-
 home.js
 >>to add info about<<
 
@@ -99,8 +96,7 @@ pathfinder.js
 How to find the best path from X to Y
 
 player.js
-Get information about player (if he's in a guild, what rank item he is
-wearing, if he is moving towards loot etc
+Get information about player
 
 renderer.js
 Rendering engine - can tun on debug mode for FPS etc.

@@ -61,7 +61,6 @@ export interface Game {
   onChatMessage: (arg0: (entityId: any, name: any, message: any, type: any) => void) => void;
   storage: { data: { player: { name: any } } };
   onNbPlayersChange: (arg0: (worldPlayers: any, totalPlayers: any, players: any) => void) => void;
-  onGuildPopulationChange: (arg0: (guildName: any, guildPopulation: any) => void) => void;
   onAchievementUnlock: (arg0: (id: any, name: any, nano: any) => void) => void;
   onNotification: (arg0: any) => void;
   click: () => void;

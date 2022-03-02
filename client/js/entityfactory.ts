@@ -9,7 +9,7 @@ import Warrior from "./warrior";
 
 var EntityFactory: any = {};
 
-EntityFactory.createEntity = function (kind, id, name) {
+EntityFactory.createEntity = function ({ kind, id, name }) {
   if (!kind) {
     console.error("kind is undefined", true);
     return;

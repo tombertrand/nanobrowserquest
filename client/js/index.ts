@@ -261,19 +261,19 @@ var initApp = function () {
       app.animateParchment("loadcharacter", "loadcharacter");
     });
 
-    $("#running-coder .link").on("click", () => {
-      $("#loginnameinput").val("running-coder").show();
-      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+    // $("#running-coder .link").on("click", () => {
+    //   $("#loginnameinput").val("running-coder").show();
+    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
 
-      app.tryStartingGame();
-    });
+    //   app.tryStartingGame();
+    // });
 
-    $("#ddd .link").on("click", () => {
-      $("#loginnameinput").val("ddd").show();
-      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+    // $("#ddd .link").on("click", () => {
+    //   $("#loginnameinput").val("ddd").show();
+    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
 
-      app.tryStartingGame();
-    });
+    //   app.tryStartingGame();
+    // });
 
     $(".play span").click(function () {
       app.tryStartingGame();
@@ -383,7 +383,7 @@ var initGame = function () {
   });
 
   game.onChatMessage(function ({ name, message, type }: { name: string; message: string; type: ChatType }) {
-    if (!$("#text-window").is(":visible") && name !== game.storage.data.player.name && type !== "event") {
+    if (!$("#text-window").is(":visible") && !["event", "loot"].includes(type)) {
       $("#chatbutton").addClass("blink");
     }
 
@@ -451,20 +451,6 @@ var initGame = function () {
     //   setTotalPlayersString("player");
     // } else {
     //   setTotalPlayersString("players");
-    // }
-  });
-
-  game.onGuildPopulationChange(function (_guildName, _guildPopulation) {
-    // var setGuildPlayersString = function (string) {
-    //   $("#guild-population").find("span:nth-child(2)").text(string);
-    // };
-    // $("#guild-population").addClass("visible");
-    // $("#guild-population").find("span").text(guildPopulation);
-    // $("#guild-name").text(guildName);
-    // if (guildPopulation == 1) {
-    //   setGuildPlayersString("player");
-    // } else {
-    //   setGuildPlayersString("players");
     // }
   });
 

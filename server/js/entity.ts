@@ -4,9 +4,9 @@ import { random } from "./utils";
 class Entity {
   id: number;
   type: any;
-  kind: any;
-  x: any;
-  y: any;
+  kind: number;
+  x: number;
+  y: number;
   
   constructor(id, type, kind, x, y) {
     this.id = parseInt(id, 10);
