@@ -167,8 +167,11 @@ class Player extends Character {
         }
       } else if (item.kind === Types.Entities.NANOPOTION) {
         this.nanoPotions += 1;
+      } else if (item.partyId && item.partyId !== this.partyId) {
+        // @NOTE Allow item to be looted by others if player is alone in the party?
+        throw new Exceptions.LootException("Can't loot item, it belongs to a party.");
       } else if (item.type === "armor" || item.type === "weapon" || item.type === "belt" || item.type === "ring") {
-        // @TODO Check for stack-able items with quantity
+        // @NOTE Check for stack-able items with quantity
         if (this.inventory.length >= 24) {
           throw new Exceptions.LootException("Your inventory is full.");
         }
@@ -182,9 +185,6 @@ class Player extends Character {
         if (isFound) {
           throw new Exceptions.LootException("You already have this item.");
         }
-      } else if (item.partyId && item.partyId !== this.partyId) {
-        // @TODO Allow item to be looted if player is alone in the party
-        throw new Exceptions.LootException("Can't loot item, it belongs to a party.");
       }
 
       console.info("Player " + this.id + " has looted " + item.id);

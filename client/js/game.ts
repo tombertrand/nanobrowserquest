@@ -4020,7 +4020,7 @@ class Game {
   }
 
   say(message) {
-    const partyRegexp = /\/party (create|join|invite|leave|remove|disband)(.+)?/;
+    const partyRegexp = /^\/party (create|join|invite|leave|remove|disband|leader)(.+)?/;
     const args = message.match(partyRegexp);
 
     if (args) {
@@ -4079,6 +4079,22 @@ class Game {
           } else {
             this.chat_callback({
               message: "Only the party leader can disband the party",
+              type: "error",
+            });
+          }
+          break;
+        case "leader":
+          if (!this.player.partyLeader?.id) {
+            this.chat_callback({
+              message: "You are not in a party",
+              type: "error",
+            });
+          } else if (this.player.partyLeader?.id === this.player.id) {
+            // @TODO!
+            // this.client.sendPartyLeader(param);
+          } else {
+            this.chat_callback({
+              message: "Only the party leader can assign another player as the party leader",
               type: "error",
             });
           }
