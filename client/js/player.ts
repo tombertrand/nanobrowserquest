@@ -21,6 +21,9 @@ class Player extends Character {
   beltName: null;
   beltLevel: number | null;
   beltBonus: null;
+  cape?: string;
+  capeLevel?: number;
+  capeBonus: null | number[];
   inventory: any[];
   stash: any[];
   upgrade: any[];
@@ -88,6 +91,9 @@ class Player extends Character {
     this.beltName = null;
     this.beltLevel = 1;
     this.beltBonus = null;
+    this.cape = null;
+    this.capeLevel = null;
+    this.capeBonus = null;
     this.inventory = [];
     this.stash = [];
     this.upgrade = [];
@@ -170,7 +176,7 @@ class Player extends Character {
       } else if (item.partyId && item.partyId !== this.partyId) {
         // @NOTE Allow item to be looted by others if player is alone in the party?
         throw new Exceptions.LootException("Can't loot item, it belongs to a party.");
-      } else if (item.type === "armor" || item.type === "weapon" || item.type === "belt" || item.type === "ring") {
+      } else if (["armor", "weapon", "belt", "cape", "ring", "amulet"].includes(item.type)) {
         // @NOTE Check for stack-able items with quantity
         if (this.inventory.length >= 24) {
           throw new Exceptions.LootException("Your inventory is full.");
@@ -282,6 +288,20 @@ class Player extends Character {
     }
   }
 
+  setCape(rawCape) {
+    if (rawCape) {
+      const [cape, level, bonus] = rawCape.split(":");
+
+      this.cape = cape;
+      this.capeLevel = parseInt(level);
+      this.capeBonus = bonus;
+    } else {
+      this.cape = null;
+      this.capeLevel = null;
+      this.capeBonus = null;
+    }
+  }
+
   setRing1(ring) {
     if (ring) {
       const [name, level, bonus] = ring.split(":");
@@ -380,6 +400,28 @@ class Player extends Character {
     }
   }
 
+  switchCape(cape, level: number, bonus?: number[]) {
+    var self = this;
+    var isDifferent = false;
+
+    if (cape !== this.cape) {
+      isDifferent = true;
+      this.cape = cape;
+    }
+    if (level !== this.capeLevel) {
+      isDifferent = true;
+      this.capeLevel = level;
+    }
+    if (bonus !== this.capeBonus) {
+      isDifferent = true;
+      this.capeBonus = bonus;
+    }
+
+    if (isDifferent && self.switch_callback) {
+      self.switch_callback();
+    }
+  }
+
   prepareRawItems(items) {
     return items
       .map((rawItem, slot) => {
@@ -389,24 +431,22 @@ class Player extends Character {
         const isWeapon = kinds[item][1] === "weapon";
         const isArmor = kinds[item][1] === "armor";
         const isBelt = kinds[item][1] === "belt";
+        const isCape = kinds[item][1] === "cape";
         const isRing = kinds[item][1] === "ring";
         const isAmulet = kinds[item][1] === "amulet";
 
         let requirement = null;
         let level = null;
         let quantity = null;
-        if (isWeapon || isArmor || isBelt || isRing || isAmulet) {
+        if (isWeapon || isArmor || isBelt || isCape || isRing || isAmulet) {
           level = levelOrQuantity;
           requirement = Types.getItemRequirement(item, levelOrQuantity);
         } else if (Types.isScroll(item)) {
           quantity = levelOrQuantity;
         }
 
-        // const isSingle = Types.isSingle(item);
-
         return {
           item,
-          // [isWeapon || isArmor || isBelt || isRing || isAmulet ? "level" : "quantity"]: levelOrQuantity,
           bonus,
           slot,
           requirement,

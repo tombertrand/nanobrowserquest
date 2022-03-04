@@ -9,6 +9,7 @@ import BubbleManager from "./bubble";
 import Character from "./character";
 import Chest from "./chest";
 import Entity from "./entity";
+import EntityFactory from "./entityfactory";
 import Exceptions from "./exceptions";
 import GameClient from "./gameclient";
 import InfoManager from "./infomanager";
@@ -27,7 +28,6 @@ import { App as AppType } from "./types/app";
 import Updater from "./updater";
 import { randomRange } from "./utils";
 import Warrior from "./warrior";
-import EntityFactory from "./entityfactory";
 
 import type { ChatType } from "../../server/js/types";
 
@@ -326,6 +326,7 @@ class Game {
       "item-beltplated",
       "item-beltfrozen",
       "item-beltdiamond",
+      "item-cape",
       "item-flask",
       "item-rejuvenationpotion",
       "item-poisonpotion",
@@ -622,17 +623,14 @@ class Game {
 
         if (toItem) {
           if (
-            [100, 101, 102, 103, 104, 105].includes(fromSlot) &&
+            Object.values(Types.Slot).includes(fromSlot) &&
             (!toLevel || !Types.isCorrectTypeForSlot(fromSlot, toItem) || toLevel > self.player.level)
           ) {
             return;
           }
         }
 
-        if (
-          [100, 101, 102, 103, 104, 105].includes(toSlot) &&
-          Types.getItemRequirement(item, level) > self.player.level
-        ) {
+        if (Object.values(Types.Slot).includes(toSlot) && Types.getItemRequirement(item, level) > self.player.level) {
           return;
         }
 
@@ -647,11 +645,13 @@ class Game {
           }
         }
 
-        if (!isNaN(level)) {
-          if (toSlot === 100) {
+        if (typeof level === "number") {
+          if (toSlot === Types.Slot.WEAPON) {
             self.player.switchWeapon(item, level, bonus);
-          } else if (toSlot === 101) {
+          } else if (toSlot === Types.Slot.ARMOR) {
             self.player.switchArmor(self.sprites[item], level, bonus);
+          } else if (toSlot === Types.Slot.CAPE) {
+            self.player.switchCape(item, level, bonus);
           }
         }
 
@@ -660,6 +660,8 @@ class Game {
           self.player.switchArmor(self.sprites["clotharmor"], 1);
         } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
           self.player.switchWeapon("dagger", 1);
+        } else if (type === "cape" && $(".item-equip-cape").is(":empty")) {
+          self.player.switchCape(null, null, null);
         }
       },
     });
@@ -685,7 +687,7 @@ class Game {
         const item = $(this).attr("data-item");
         const type = kinds[item][1];
 
-        if (["weapon", "armor", "belt", "ring", "amulet"].includes(type) && $(`.item-${type}`).is(":empty")) {
+        if (["weapon", "armor", "belt", "cape", "ring", "amulet"].includes(type) && $(`.item-${type}`).is(":empty")) {
           $(`.item-${type}`).addClass("item-droppable");
         } else if (Types.isScroll(item)) {
           $(".item-scroll").addClass("item-droppable");
@@ -699,7 +701,7 @@ class Game {
         self.destroyDroppable();
 
         $(".ui-droppable-origin").removeClass("ui-droppable-origin");
-        $(".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-scroll").removeClass(
+        $(".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-cape, .item-scroll").removeClass(
           "item-droppable",
         );
       },
@@ -725,6 +727,7 @@ class Game {
     $("#item-weapon").empty().append('<div class="item-slot item-equip-weapon item-weapon" data-slot="100"></div>');
     $("#item-armor").empty().append('<div class="item-slot item-equip-armor item-armor" data-slot="101"></div>');
     $("#item-belt").empty().append('<div class="item-slot item-equip-belt item-belt" data-slot="102"></div>');
+    $("#item-cape").empty().append('<div class="item-slot item-equip-cape item-cape" data-slot="106"></div>');
     $("#item-ring1")
       .empty()
       .append('<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="103"></div>');
@@ -773,6 +776,20 @@ class Game {
           "data-item": this.player.beltName,
           "data-level": this.player.beltLevel,
           "data-bonus": this.player.beltBonus,
+        }),
+      );
+    }
+
+    if (this.player.cape) {
+      $(".item-equip-cape").append(
+        $("<div />", {
+          class: "item-draggable",
+          css: {
+            "background-image": `url("${this.getIconPath(this.player.cape)}")`,
+          },
+          "data-item": this.player.cape,
+          "data-level": this.player.capeLevel,
+          "data-bonus": this.player.capeBonus,
         }),
       );
     }
@@ -907,7 +924,7 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt" data-slot="200"></div>',
+        '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt item-cape" data-slot="200"></div>',
       );
     $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
   }
@@ -1865,6 +1882,7 @@ class Game {
       armor,
       weapon,
       belt,
+      cape,
       ring1,
       ring2,
       amulet,
@@ -1909,6 +1927,7 @@ class Game {
       self.player.setWeaponLevel(weaponLevel);
       self.player.setWeaponBonus(weaponBonus);
       self.player.setBelt(belt);
+      self.player.setCape(cape);
       self.player.setRing1(ring1);
       self.player.setRing2(ring2);
       self.player.setAmulet(amulet);
@@ -2484,6 +2503,7 @@ class Game {
             currentEntity.setArmorLevel(entity.armorLevel);
             currentEntity.setArmorBonus(entity.armorBonus);
             currentEntity.setAuras(entity.auras);
+            currentEntity.setCape(`${entity.cape}:${entity.capeLevel}:${entity.capeBonus}`);
 
             currentEntity.setSprite(self.sprites[entity.getSpriteName()]);
             currentEntity.setGridPosition(x, y);
@@ -2868,6 +2888,9 @@ class Game {
             player.setWeaponName(itemName);
             player.setWeaponLevel(itemLevel);
             player.setWeaponBonus(itemBonus);
+          } else if (Types.isCape(itemKind)) {
+            player.setCape(`${itemName}:${itemLevel}:${itemBonus}`);
+            // player.setSprite(self.sprites[itemName]);
           }
         }
       });

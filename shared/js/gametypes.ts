@@ -131,6 +131,9 @@ export const Types: any = {
     BELTFROZEN: 91,
     BELTDIAMOND: 129,
 
+    // Capes
+    CAPE: 130,
+
     // Objects
     FLASK: 35,
     REJUVENATIONPOTION: 110,
@@ -395,6 +398,8 @@ export const kinds = {
   beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 16, 10],
   beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 16],
 
+  cape: [Types.Entities.CAPE, "cape", "Cape", 24, 2],
+
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
   ringsilver: [Types.Entities.RINGSILVER, "ring", "Silver Ring", 9],
@@ -514,7 +519,7 @@ Types.itemUniqueMap = {
   morningstar: ["Block Latte", 3, 10],
   bluesword: ["Acyclic Graph", 5, 15],
   redsword: ["Volcanic Miner", 7, 18],
-  goldensword: ["Satoshi's Nephiew", 12, 22],
+  goldensword: ["Satoshi's Nephew", 12, 22],
   blueaxe: ["Feeless Cutter", 14, 26],
   bluemorningstar: ["Saylormoon", 16, 28],
   frozensword: ["Broccolish Fury", 20, 32],
@@ -787,6 +792,14 @@ Types.isBelt = function (kindOrString: number | string) {
   }
 };
 
+Types.isCape = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return kinds.getType(kindOrString) === "cape";
+  } else {
+    return kinds[kindOrString][1] === "cape";
+  }
+};
+
 Types.isBoss = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [
@@ -877,6 +890,7 @@ Types.isItem = function (kind: number) {
     Types.isRing(kind) ||
     Types.isAmulet(kind) ||
     Types.isBelt(kind) ||
+    Types.isCape(kind) ||
     Types.isScroll(kind) ||
     Types.isSingle(kind) ||
     (Types.isObject(kind) && !Types.isChest(kind))
@@ -890,6 +904,7 @@ Types.Slot = {
   RING1: 103,
   RING2: 104,
   AMULET: 105,
+  CAPE: 106,
 };
 
 Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
@@ -912,6 +927,9 @@ Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
     case "belt":
     case Types.Slot.BELT:
       return Types.isBelt(item);
+    case "cape":
+    case Types.Slot.CAPE:
+      return Types.isCape(item);
   }
   return false;
 };
@@ -1093,6 +1111,18 @@ Types.getMessageTypeAsString = function (type: number) {
   }
   return typeName;
 };
+
+Types.getTeamBonusDescriptionMap = [
+  "+# Minimum damage",
+  "+# Maximum damage",
+  "+#% Attack",
+  "+# Health",
+  "+# Magic damage",
+  "+#% Defense",
+  "+# Absorbed damage",
+  "+#% Experience",
+  "+# health regeneration per second",
+];
 
 Types.getBonusDescriptionMap = [
   "+# Minimum damage",
@@ -1316,6 +1346,7 @@ Types.getItemDetails = function (
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
   const isBelt = Types.isBelt(item);
+  const isCape = Types.isCape(item);
   const isUniqueRing = Types.isUniqueRing(item);
   const isUnique = ((isArmor || isWeapon || isBelt) && !!rawBonus) || isUniqueRing;
 
@@ -1338,6 +1369,8 @@ Types.getItemDetails = function (
   } else if (isBelt) {
     type = "belt";
     healthBonus = Types.getArmorHealthBonus(level);
+  } else if (isCape) {
+    type = "cape";
   } else if (isRing) {
     type = "ring";
   } else if (isAmulet) {

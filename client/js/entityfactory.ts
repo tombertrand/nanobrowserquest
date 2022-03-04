@@ -232,6 +232,10 @@ EntityFactory.builders[Types.Entities.BELTDIAMOND] = function (id) {
   return new Items.BeltDiamond(id);
 };
 
+EntityFactory.builders[Types.Entities.CAPE] = function (id) {
+  return new Items.Cape(id);
+};
+
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {
   return new Items.Flask(id);
 };

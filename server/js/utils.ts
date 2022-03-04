@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js"
-import sanitizer from "sanitizer"
+import BigNumber from "bignumber.js";
+import sanitizer from "sanitizer";
 
-import { Types } from "../../shared/js/gametypes"
-import { Recipes } from './types'
+import { Types } from "../../shared/js/gametypes";
+import { Recipes } from "./types";
 
 export const sanitize = function (string) {
   // Strip unsafe tags, then escape as html entities.
@@ -186,10 +186,11 @@ export const isValidUpgradeItems = items => {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
   const isBelt = Types.isBelt(item);
+  const isCape = Types.isCape(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
 
-  if ((!isWeapon && !isArmor && !isBelt && !isRing && !isAmulet) || parseInt(level) === 10) {
+  if ((!isWeapon && !isArmor && !isBelt && !isCape && !isRing && !isAmulet) || parseInt(level) === 10) {
     return false;
   }
 

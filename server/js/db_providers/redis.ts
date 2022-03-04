@@ -73,6 +73,7 @@ class DatabaseHandler {
             .hget(userKey, "depositAccountIndex") // 21
             .hget(userKey, "hash1") // 22
             .hget(userKey, "stash") // 23
+            .hget(userKey, "cape") // 24
             .exec(async (err, replies) => {
               var account = replies[0];
               var armor = replies[1];
@@ -83,6 +84,7 @@ class DatabaseHandler {
               var ring2 = replies[14];
               var amulet = replies[15];
               var belt = replies[16];
+              var cape = replies[24];
               var expansion1 = !!parseInt(replies[18] || "0");
               var depositAccount = replies[20];
               var depositAccountIndex = replies[21];
@@ -323,6 +325,7 @@ class DatabaseHandler {
                 armor,
                 weapon,
                 belt,
+                cape,
                 ring1,
                 ring2,
                 amulet,
@@ -386,6 +389,7 @@ class DatabaseHandler {
           .hset(userKey, "weapon", "dagger:1")
           .hset(userKey, "armor", "clotharmor:1")
           .hset(userKey, "belt", null)
+          .hset(userKey, "cape", null)
           .hset(userKey, "ring1", null)
           .hset(userKey, "ring2", null)
           .hset(userKey, "amulet", null)
@@ -402,6 +406,7 @@ class DatabaseHandler {
               armor: "clotharmor:1",
               weapon: "dagger:1",
               belt: null,
+              cape: null,
               exp: 0,
               createdAt: curTime,
               x: player.x,
@@ -507,6 +512,16 @@ class DatabaseHandler {
     }
   }
 
+  equipCape(name, cape, level, bonus) {
+    if (cape) {
+      console.info("Set Cape: " + name + " " + cape + ":" + level);
+      this.client.hset("u:" + name, "cape", `${cape}:${level}${bonus ? `:${bonus}` : ""}`);
+    } else {
+      console.info("Delete Cape");
+      this.client.hdel("u:" + name, "cape");
+    }
+  }
+
   equipRing1({ name, item, level, bonus }) {
     const ring1 = [item, level, bonus].filter(Boolean).join(":") || null;
 
@@ -564,6 +579,8 @@ class DatabaseHandler {
       return ["armor", 0];
     } else if (slot === Types.Slot.BELT) {
       return ["belt", 0];
+    } else if (slot === Types.Slot.CAPE) {
+      return ["cape", 0];
     } else if (slot === Types.Slot.RING1) {
       return ["ring1", 0];
     } else if (slot === Types.Slot.RING2) {
@@ -612,6 +629,14 @@ class DatabaseHandler {
         [item, level, bonus] = data.split(":");
       }
       player.equipItem({ item, level, type: "belt", bonus });
+    } else if (location === "cape") {
+      let item = null;
+      let level = null;
+      let bonus = null;
+      if (data) {
+        [item, level, bonus] = data.split(":");
+      }
+      player.equipItem({ item, level, type: "cape", bonus });
     } else if (location === "ring1") {
       let item = null;
       let level = null;
@@ -714,7 +739,7 @@ class DatabaseHandler {
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }
-              } else if (["weapon", "armor", "belt", "ring1", "ring2", "amulet"].includes(toLocation)) {
+              } else if (["weapon", "armor", "belt", "cape", "ring1", "ring2", "amulet"].includes(toLocation)) {
                 const [item, fromLevel] = fromItem.split(":");
                 if (
                   Types.getItemRequirement(item, fromLevel) > player.level ||
@@ -723,7 +748,10 @@ class DatabaseHandler {
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }
-              } else if (["weapon", "armor", "belt", "ring1", "ring2", "amulet"].includes(fromLocation) && toItem) {
+              } else if (
+                ["weapon", "armor", "belt", "cape", "ring1", "ring2", "amulet"].includes(fromLocation) &&
+                toItem
+              ) {
                 const [item, toLevel] = toItem.split(":");
                 if (
                   Types.getItemRequirement(item, toLevel) > player.level ||

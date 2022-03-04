@@ -552,16 +552,22 @@ class Renderer {
 
         let isFilterApplied = false;
         let spriteImage = sprite.image;
-        if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
-          isFilterApplied = true;
 
-          const brightness = this.calculateBrightnessPerLevel(entity.armorLevel);
+        if (entity instanceof Player) {
+          if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
+            isFilterApplied = true;
 
-          this.context.filter = `brightness(${brightness}%)`;
-        }
+            const brightness = this.calculateBrightnessPerLevel(entity.armorLevel);
 
-        if (sprite.name === "diamondarmor" && entity.armorBonus) {
-          spriteImage = sprite.imageunique;
+            this.context.filter = `brightness(${brightness}%)`;
+          }
+
+          if (["hornedarmor", "frozenarmor", "diamondarmor"].includes(sprite.name) && entity.armorBonus) {
+            spriteImage = sprite.imageunique;
+          }
+
+          // @TODO: Render the caperino
+          // console.log("~~~~~entity.cape", entity.cape);
         }
 
         this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
@@ -999,7 +1005,10 @@ class Renderer {
     canvas.height = h;
 
     let spriteImage = sprite.image;
-    if (this.game.player.armorName === "diamondarmor" && this.game.player.armorBonus) {
+    if (
+      ["hornedarmor", "frozenarmor", "diamondarmor"].includes(this.game.player.armorName) &&
+      this.game.player.armorBonus
+    ) {
       spriteImage = sprite.imageunique;
     }
 

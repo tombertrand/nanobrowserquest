@@ -76,6 +76,9 @@ class Player extends Character {
   belt: string;
   beltLevel: number;
   beltBonus: number[] | null;
+  cape: string;
+  capeLevel: number;
+  capeBonus: number[] | null;
   firepotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -518,7 +521,8 @@ class Player extends Character {
               let player = self;
               let isUnique = false;
 
-              if (self.partyId) {
+              // Single items can't be party looted, like potions
+              if (!Types.isSingle(kind) && self.partyId) {
                 player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
               }
 
@@ -547,6 +551,18 @@ class Player extends Character {
                 databaseHandler.lootItems({
                   player,
                   items: [{ item: Types.getKindAsString(kind), quantity: 1 }],
+                });
+              } else if (Types.isCape(kind)) {
+                const lowLevelBonus = [0, 1, 2, 3];
+
+                let bonus = [];
+                bonus = _.shuffle(lowLevelBonus).slice(0, 1);
+
+                databaseHandler.lootItems({
+                  player,
+                  items: [
+                    { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) },
+                  ],
                 });
               } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
                 const lowLevelBonus = [0, 1, 2, 3];
@@ -1013,6 +1029,7 @@ class Player extends Character {
       this.level,
       this.auras,
       this.partyId,
+      `${this.cape}:${this.capeLevel}:${this.capeBonus}`,
     ];
 
     return basestate.concat(state);
@@ -1115,6 +1132,12 @@ class Player extends Character {
     this.belt = belt;
     this.beltLevel = level;
     this.beltBonus = bonus ? JSON.parse(bonus) : null;
+  }
+
+  equipCape(cape, level, bonus) {
+    this.cape = cape;
+    this.capeLevel = level;
+    this.capeBonus = bonus ? JSON.parse(bonus) : null;
   }
 
   equipRing1(ring, level, bonus) {
@@ -1263,12 +1286,15 @@ class Player extends Character {
         this.equipRing2(item, level, bonus);
         this.databaseHandler.equipRing2({ name: this.name, item, level, bonus });
       }
-    } else if (["amulet"].includes(type)) {
+    } else if (type === "amulet") {
       this.equipAmulet(item, level, bonus);
       this.databaseHandler.equipAmulet({ name: this.name, item, level, bonus });
-    } else if (["belt"].includes(type)) {
+    } else if (type === "belt") {
       this.databaseHandler.equipBelt(this.name, item, level, bonus);
       this.equipBelt(item, level, bonus);
+    } else if (type === "cape") {
+      this.databaseHandler.equipCape(this.name, item, level, bonus);
+      this.equipCape(item, level, bonus);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
@@ -1487,6 +1513,7 @@ class Player extends Character {
     armor,
     weapon,
     belt,
+    cape,
     ring1,
     ring2,
     amulet,
@@ -1520,6 +1547,10 @@ class Player extends Character {
     if (belt) {
       const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
       self.equipBelt(playerBelt, playerBeltLevel, playerBeltBonus);
+    }
+    if (cape) {
+      const [playerCape, playerCapeLevel, playerCapeBonus] = cape.split(":");
+      self.equipCape(playerCape, playerCapeLevel, playerCapeBonus);
     }
     if (ring1) {
       const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
@@ -1573,6 +1604,7 @@ class Player extends Character {
       armor,
       weapon,
       belt,
+      cape,
       ring1,
       ring2,
       amulet,

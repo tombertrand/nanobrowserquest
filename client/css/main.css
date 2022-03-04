@@ -706,9 +706,10 @@ footer, header, hgroup, menu, nav, section {
     .waypoint-row.disabled { color: #616161;}
     .waypoint-row.locked { color: #616161;}
 
-    #item-player > div { display: flex; justify-content: center;}
-    #item-weapon, #item-armor, #item-ring1, #item-ring2, #item-amulet, #item-belt {padding-right: 6px;padding-bottom: 6px;}
-    #item-delete { padding-bottom: 12px;}
+    #item-player { width: 100% }
+    #item-player > div { display: flex; justify-content: start;}
+    #item-weapon, #item-armor, #item-ring1, #item-ring2, #item-amulet, #item-belt, #item-cape {padding-right: 6px;padding-bottom: 6px;}
+    #item-delete { margin-left: auto; }
     #item-delete > .item-slot { -webkit-box-shadow: inset 0px 0px 10px 6px #9e0000; box-shadow: inset 0px 0px 10px 6px #9e0000; }
     .item-quantity::after {
         content: attr(data-quantity);
@@ -724,8 +725,8 @@ footer, header, hgroup, menu, nav, section {
         font-size: 0.75em;
     }
 
-    .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-delete { position: relative; }
-    .item-equip-weapon::before, .item-equip-armor::before, .item-equip-ring::before, .item-equip-amulet::before, .item-equip-belt::before, .item-delete::before {
+    .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-equip-cape, .item-delete { position: relative; }
+    .item-equip-weapon::before, .item-equip-armor::before, .item-equip-ring::before, .item-equip-amulet::before, .item-equip-belt::before, .item-equip-cape::before, .item-delete::before {
         content: "";
         position: absolute;
         filter: grayscale(100%);
@@ -841,6 +842,7 @@ footer, header, hgroup, menu, nav, section {
         .item-equip-ring::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -93px;}
         .item-equip-amulet::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -237px;}
         .item-equip-belt::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -192px;}
+        .item-equip-cape::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -285px;}
         .item-delete::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -141px;}
         #player-list {max-height: 366px;}
         .btn {font-size:18px;}
@@ -1055,6 +1057,7 @@ footer, header, hgroup, menu, nav, section {
         .item-equip-ring::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -61px;}
         .item-equip-amulet::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -157px;}
         .item-equip-belt::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -126px;}
+        .item-equip-cape::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -189px;}
         .item-delete::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -93px;}
         #player-list {max-height: 266px;}
         .btn {font-size:16px;}

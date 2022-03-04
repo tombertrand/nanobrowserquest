@@ -170,6 +170,13 @@ var Items = {
     }
   },
 
+  Cape: class Cape extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CAPE, "cape");
+      this.lootMessage = "You pick up a cape";
+    }
+  },
+
   Flask: class Flask extends Item {
     constructor(id) {
       super(id, Types.Entities.FLASK, "object");

@@ -261,24 +261,25 @@ class GameClient {
     var armor = data[6];
     var weapon = data[7];
     var belt = data[8];
-    var ring1 = data[9];
-    var ring2 = data[10];
-    var amulet = data[11];
-    var experience = data[12];
-    var achievement = data[13];
-    var inventory = data[14];
-    var stash = data[15];
-    var hash = data[16];
-    var hash1 = data[17];
-    var nanoPotions = data[18];
-    var gems = data[19];
-    var artifact = data[20];
-    var expansion1 = data[21];
-    var waypoints = data[22];
-    var depositAccount = data[23];
-    var auras = data[24];
-    var cowLevelPortalCoords = data[25];
-    var party = data[26];
+    var cape = data[9];
+    var ring1 = data[10];
+    var ring2 = data[11];
+    var amulet = data[12];
+    var experience = data[13];
+    var achievement = data[14];
+    var inventory = data[15];
+    var stash = data[16];
+    var hash = data[17];
+    var hash1 = data[18];
+    var nanoPotions = data[19];
+    var gems = data[20];
+    var artifact = data[21];
+    var expansion1 = data[22];
+    var waypoints = data[23];
+    var depositAccount = data[24];
+    var auras = data[25];
+    var cowLevelPortalCoords = data[26];
+    var party = data[27];
 
     if (this.welcome_callback) {
       this.welcome_callback({
@@ -290,6 +291,7 @@ class GameClient {
         armor,
         weapon,
         belt,
+        cape,
         ring1,
         ring2,
         amulet,
@@ -367,7 +369,18 @@ class GameClient {
         this.spawn_chest_callback(item, x, y);
       }
     } else {
-      var name, orientation, target, weapon, weaponLevel, weaponBonus, armor, armorLevel, armorBonus, auras, partyId;
+      var name,
+        orientation,
+        target,
+        weapon,
+        weaponLevel,
+        weaponBonus,
+        armor,
+        armorLevel,
+        armorBonus,
+        auras,
+        partyId,
+        cape;
 
       orientation = data[5];
       target = data[6];
@@ -379,6 +392,7 @@ class GameClient {
         // level = data[10];
         auras = data[11];
         partyId = data[12];
+        cape = data[13];
       }
 
       var character = EntityFactory.createEntity({ kind, id, name });
@@ -393,6 +407,8 @@ class GameClient {
         character.setArmorBonus(armorBonus);
         character.setAuras(auras);
         character.setPartyId(partyId);
+        console.log("~~~~receiveSpawn cape", cape);
+        character.setCape(cape);
       }
 
       if (this.spawn_character_callback) {
@@ -453,6 +469,8 @@ class GameClient {
     var mobId = data[1];
     var id = data[2];
     var kind = data[3];
+
+    console.log("~~~data", data);
 
     var item = EntityFactory.createEntity({ kind, id });
 
