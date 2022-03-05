@@ -457,6 +457,36 @@ class Renderer {
     return brightness;
   }
 
+  drawCape(entity) {
+    if (!entity.cape) return;
+
+    var sprite = this.game.sprites["cape"];
+    var anim = entity.currentAnimation;
+
+    var spriteImage = sprite.image;
+    if (entity.capeLevel >= 7) {
+      spriteImage = sprite.image7;
+    }
+
+    if (sprite && anim) {
+      var os = this.upscaledRendering ? 1 : this.scale;
+      var ds = this.upscaledRendering ? this.scale : 1;
+
+      var frame = anim.currentFrame,
+        s = this.scale,
+        x = frame.x * os,
+        y = frame.y * os,
+        w = sprite.width * os,
+        h = sprite.height * os,
+        ox = sprite.offsetX * s,
+        oy = sprite.offsetY * s,
+        dw = w * ds,
+        dh = h * ds;
+
+      this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
+    }
+  }
+
   drawEntity(entity) {
     var sprite = entity.sprite,
       shadow = this.game.shadows["small"],
@@ -554,6 +584,10 @@ class Renderer {
         let spriteImage = sprite.image;
 
         if (entity instanceof Player) {
+          if (entity.orientation !== Types.Orientations.UP) {
+            this.drawCape(entity);
+          }
+
           if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
             isFilterApplied = true;
 
@@ -565,15 +599,16 @@ class Renderer {
           if (["hornedarmor", "frozenarmor", "diamondarmor"].includes(sprite.name) && entity.armorBonus) {
             spriteImage = sprite.imageunique;
           }
-
-          // @TODO: Render the caperino
-          // console.log("~~~~~entity.cape", entity.cape);
         }
 
         this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
 
         if (isFilterApplied) {
           this.context.filter = "brightness(100%)";
+        }
+
+        if (entity instanceof Player && entity.orientation === Types.Orientations.UP) {
+          this.drawCape(entity);
         }
 
         if (entity instanceof Item && entity.kind !== Types.Entities.CAKE) {

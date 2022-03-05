@@ -410,7 +410,7 @@ export const kinds = {
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
-  amuletcow: [Types.Entities.AMULETCOW, "amulet", "Cow King Holy Talisman", 35],
+  amuletcow: [Types.Entities.AMULETCOW, "amulet", "Holy Cow King Talisman", 35],
 
   flask: [Types.Entities.FLASK, "object"],
   rejuvenationpotion: [Types.Entities.REJUVENATIONPOTION, "object"],
@@ -954,6 +954,7 @@ Types.getKindFromString = function (kind: number) {
 };
 
 Types.getKindAsString = function (kind: number) {
+  if (!kind) return null;
   for (var k in kinds) {
     if (kinds[k][0] === kind) {
       return k;

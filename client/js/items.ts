@@ -306,7 +306,7 @@ var Items = {
   AmuletCow: class AmuletCow extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETCOW, "amulet");
-      this.lootMessage = "You pick up the Cow King Holy Talisman";
+      this.lootMessage = "You pick up the Holy Cow King Talisman";
     }
   },
 

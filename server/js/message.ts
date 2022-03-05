@@ -95,9 +95,9 @@ Messages.SetBonus = class Message {
 };
 
 Messages.EquipItem = class Message {
-  constructor(private player, private itemKind, private itemLevel, private itemBonus) {}
+  constructor(private player, private kind, private level, private bonus, private type) {}
   serialize() {
-    return [Types.Messages.EQUIP, this.player.id, this.itemKind, this.itemLevel, this.itemBonus];
+    return [Types.Messages.EQUIP, this.player.id, this.kind, this.level, this.bonus, this.type];
   }
 };
 

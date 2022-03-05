@@ -1176,14 +1176,10 @@ class World {
     const itemName = this.getDroppedItemName(mob, attacker);
     const kind = Types.getKindFromString(itemName);
 
-    var randomDrop = random(1);
-    var randomDrops = ["cape"] as any;
-
-    console.log("~~~~", randomDrops[randomDrop]);
-    console.log("~~~~", Types.getKindFromString(randomDrops[randomDrop]));
-
-    // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
-    return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
+    // var randomDrop = random(1);
+    // var randomDrops = ["cape"] as any;
+    // // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 
     // Potions can be looted by anyone
     const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;

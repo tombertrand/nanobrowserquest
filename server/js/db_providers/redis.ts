@@ -602,6 +602,7 @@ class DatabaseHandler {
     } else if (location === "stash") {
       player.send([Types.Messages.STASH, data]);
     } else if (location === "weapon") {
+      const type = "weapon";
       let item = "dagger";
       let level = 1;
       let bonus = null;
@@ -609,9 +610,13 @@ class DatabaseHandler {
         [item, level, bonus] = data.split(":");
       }
 
-      player.equipItem({ item, level, type: "weapon", bonus });
-      player.broadcast(player.equip(player.weaponKind, player.weaponLevel, player.weaponBonus), false);
+      player.equipItem({ item, level, type, bonus });
+      player.broadcast(
+        player.equip({ kind: player.weaponKind, level: player.weaponLevel, bonus: player.weaponBonus, type }),
+        false,
+      );
     } else if (location === "armor") {
+      const type = "armor";
       let item = "clotharmor";
       let level = 1;
       let bonus = null;
@@ -619,8 +624,11 @@ class DatabaseHandler {
         [item, level, bonus] = data.split(":");
       }
 
-      player.equipItem({ item, level, type: "armor", bonus });
-      player.broadcast(player.equip(player.armorKind, player.armorLevel, player.armorBonus), false);
+      player.equipItem({ item, level, type, bonus });
+      player.broadcast(
+        player.equip({ kind: player.armorKind, level: player.armorLevel, bonus: player.armorBonus, type }),
+        false,
+      );
     } else if (location === "belt") {
       let item = null;
       let level = null;
@@ -630,13 +638,18 @@ class DatabaseHandler {
       }
       player.equipItem({ item, level, type: "belt", bonus });
     } else if (location === "cape") {
+      const type = "cape";
       let item = null;
       let level = null;
       let bonus = null;
       if (data) {
         [item, level, bonus] = data.split(":");
       }
-      player.equipItem({ item, level, type: "cape", bonus });
+      player.equipItem({ item, level, type, bonus });
+      player.broadcast(
+        player.equip({ kind: player.capeKind, level: player.capeLevel, bonus: player.capeBonus, type }),
+        false,
+      );
     } else if (location === "ring1") {
       let item = null;
       let level = null;

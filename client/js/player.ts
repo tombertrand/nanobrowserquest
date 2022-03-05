@@ -353,55 +353,52 @@ class Player extends Character {
   }
 
   switchWeapon(weapon, level: number, bonus?: number[]) {
-    var self = this;
     var isDifferent = false;
 
     if (weapon !== this.getWeaponName()) {
       isDifferent = true;
-      self.setWeaponName(weapon);
+      this.setWeaponName(weapon);
     }
     if (level !== this.getWeaponLevel()) {
       isDifferent = true;
-      self.setWeaponLevel(level);
+      this.setWeaponLevel(level);
     }
     if (bonus !== this.getWeaponBonus()) {
       isDifferent = true;
-      self.setWeaponBonus(bonus);
+      this.setWeaponBonus(bonus);
     }
 
-    if (isDifferent && self.switch_callback) {
-      self.switch_callback();
+    if (isDifferent && this.switch_callback) {
+      this.switch_callback();
     }
   }
 
   switchArmor(armorSprite, level: number, bonus?: number[]) {
-    var self = this;
     var isDifferent = false;
 
     if (armorSprite && armorSprite.id !== this.getSpriteName()) {
       isDifferent = true;
-      self.setSprite(armorSprite);
-      self.setSpriteName(armorSprite.id);
-      self.setArmorName(armorSprite.id);
+      this.setSprite(armorSprite);
+      this.setSpriteName(armorSprite.id);
+      this.setArmorName(armorSprite.id);
     }
 
     if (armorSprite.kind !== Types.Entities.FIREFOX && level && level !== this.getArmorLevel()) {
       isDifferent = true;
-      self.setArmorLevel(level);
+      this.setArmorLevel(level);
     }
 
     if (bonus !== this.getArmorBonus()) {
       isDifferent = true;
-      self.setArmorBonus(bonus);
+      this.setArmorBonus(bonus);
     }
 
-    if (isDifferent && self.switch_callback) {
-      self.switch_callback();
+    if (isDifferent && this.switch_callback) {
+      this.switch_callback();
     }
   }
 
   switchCape(cape, level: number, bonus?: number[]) {
-    var self = this;
     var isDifferent = false;
 
     if (cape !== this.cape) {
@@ -417,8 +414,18 @@ class Player extends Character {
       this.capeBonus = bonus;
     }
 
-    if (isDifferent && self.switch_callback) {
-      self.switch_callback();
+    if (isDifferent && this.switch_callback) {
+      this.switch_callback();
+    }
+  }
+
+  removeCape() {
+    this.cape = null;
+    this.capeLevel = null;
+    this.capeBonus = null;
+
+    if (this.switch_callback) {
+      this.switch_callback();
     }
   }
 

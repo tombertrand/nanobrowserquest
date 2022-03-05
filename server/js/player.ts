@@ -77,6 +77,7 @@ class Player extends Character {
   beltLevel: number;
   beltBonus: number[] | null;
   cape: string;
+  capeKind: number;
   capeLevel: number;
   capeBonus: number[] | null;
   firepotionTimeout: any;
@@ -486,9 +487,11 @@ class Player extends Character {
               databaseHandler.foundArtifact(self.name, index);
             } else if (kind === Types.Entities.FIREPOTION) {
               self.updateHitPoints(true);
-              self.broadcast(self.equip(Types.Entities.FIREFOX, 1));
+              self.broadcast(self.equip({ kind: Types.Entities.FIREFOX, level: 1 }));
               self.firepotionTimeout = setTimeout(function () {
-                self.broadcast(self.equip(self.armor, self.armorLevel, self.armorBonus)); // return to normal after 10 sec
+                self.broadcast(
+                  self.equip({ kind: self.armorKind, level: self.armorLevel, bonus: self.armorBonus, type: "armor" }),
+                ); // return to normal after 10 sec
                 self.firepotionTimeout = null;
               }, 10000);
               self.sendPlayerStats();
@@ -1029,7 +1032,7 @@ class Player extends Character {
       this.level,
       this.auras,
       this.partyId,
-      `${this.cape}:${this.capeLevel}:${this.capeBonus}`,
+      [this.cape, this.capeLevel, this.capeBonus].filter(Boolean).join(":"),
     ];
 
     return basestate.concat(state);
@@ -1090,8 +1093,8 @@ class Player extends Character {
     this.broadcastzone_callback = callback;
   }
 
-  equip(item, level: number, bonus?: number[]) {
-    return new Messages.EquipItem(this, item, level, bonus);
+  equip({ kind, level, bonus, type }: { kind: number; level: number; bonus?: number[]; type?: string }) {
+    return new Messages.EquipItem(this, kind, level, bonus, type);
   }
 
   addHater(mob) {
@@ -1134,8 +1137,9 @@ class Player extends Character {
     this.beltBonus = bonus ? JSON.parse(bonus) : null;
   }
 
-  equipCape(cape, level, bonus) {
+  equipCape(cape, kind, level, bonus) {
     this.cape = cape;
+    this.capeKind = kind;
     this.capeLevel = level;
     this.capeBonus = bonus ? JSON.parse(bonus) : null;
   }
@@ -1293,8 +1297,9 @@ class Player extends Character {
       this.databaseHandler.equipBelt(this.name, item, level, bonus);
       this.equipBelt(item, level, bonus);
     } else if (type === "cape") {
+      const kind = Types.getKindFromString(item);
       this.databaseHandler.equipCape(this.name, item, level, bonus);
-      this.equipCape(item, level, bonus);
+      this.equipCape(item, kind, level, bonus);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
@@ -1550,7 +1555,7 @@ class Player extends Character {
     }
     if (cape) {
       const [playerCape, playerCapeLevel, playerCapeBonus] = cape.split(":");
-      self.equipCape(playerCape, playerCapeLevel, playerCapeBonus);
+      self.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
     }
     if (ring1) {
       const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");

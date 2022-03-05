@@ -71,6 +71,10 @@ class Sprite {
       this.imageunique = new Image();
       this.imageunique.crossOrigin = "Anonymous";
       this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + ".png";
+    } else if (this.name === "cape") {
+      this.image7 = new Image();
+      this.image7.crossOrigin = "Anonymous";
+      this.image7.src = "img/" + this.scale + "/" + this.id + "7" + ".png";
     }
 
     this.image.onload = function () {

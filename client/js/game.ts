@@ -303,6 +303,7 @@ class Game {
       "goldensword",
       "frozensword",
       "diamondsword",
+      "cape",
       "item-sword",
       "item-axe",
       "item-blueaxe",
@@ -661,7 +662,7 @@ class Game {
         } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
           self.player.switchWeapon("dagger", 1);
         } else if (type === "cape" && $(".item-equip-cape").is(":empty")) {
-          self.player.switchCape(null, null, null);
+          self.player.removeCape();
         }
       },
     });
@@ -2503,7 +2504,11 @@ class Game {
             currentEntity.setArmorLevel(entity.armorLevel);
             currentEntity.setArmorBonus(entity.armorBonus);
             currentEntity.setAuras(entity.auras);
-            currentEntity.setCape(`${entity.cape}:${entity.capeLevel}:${entity.capeBonus}`);
+            if (!entity.cape || !entity.capeLevel || !entity.capeBonus) {
+              currentEntity.removeCape();
+            } else {
+              currentEntity.setCape(`${entity.cape}:${entity.capeLevel}:${entity.capeBonus}`);
+            }
 
             currentEntity.setSprite(self.sprites[entity.getSpriteName()]);
             currentEntity.setGridPosition(x, y);
@@ -2874,23 +2879,26 @@ class Game {
         self.player.set = set;
       });
 
-      self.client.onPlayerEquipItem(function (playerId, itemKind, itemLevel, itemBonus) {
+      self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, type }) {
         var player = self.getEntityById(playerId);
-        var itemName = Types.getKindAsString(itemKind);
+        var name = Types.getKindAsString(kind);
 
         if (player) {
-          if (Types.isArmor(itemKind)) {
-            player.setArmorName(itemName);
-            player.setArmorLevel(itemLevel);
-            player.setArmorBonus(itemBonus);
-            player.setSprite(self.sprites[itemName]);
-          } else if (Types.isWeapon(itemKind)) {
-            player.setWeaponName(itemName);
-            player.setWeaponLevel(itemLevel);
-            player.setWeaponBonus(itemBonus);
-          } else if (Types.isCape(itemKind)) {
-            player.setCape(`${itemName}:${itemLevel}:${itemBonus}`);
-            // player.setSprite(self.sprites[itemName]);
+          if (type === "armor") {
+            player.setArmorName(name);
+            player.setArmorLevel(level);
+            player.setArmorBonus(bonus);
+            player.setSprite(self.sprites[name]);
+          } else if (type === "weapon") {
+            player.setWeaponName(name);
+            player.setWeaponLevel(level);
+            player.setWeaponBonus(bonus);
+          } else if (type === "cape") {
+            if (!kind || !level || !bonus) {
+              player.removeCape();
+            } else {
+              player.setCape(`${name}:${level}:${bonus}`);
+            }
           }
         }
       });

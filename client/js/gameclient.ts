@@ -407,7 +407,6 @@ class GameClient {
         character.setArmorBonus(armorBonus);
         character.setAuras(auras);
         character.setPartyId(partyId);
-        console.log("~~~~receiveSpawn cape", cape);
         character.setCape(cape);
       }
 
@@ -447,12 +446,13 @@ class GameClient {
 
   receiveEquipItem(data) {
     var id = data[1];
-    var itemKind = data[2];
-    var itemLevel = data[3];
-    var itemBonus = data[4];
+    var kind = data[2];
+    var level = data[3];
+    var bonus = data[4];
+    var type = data[5];
 
     if (this.equip_callback) {
-      this.equip_callback(id, itemKind, itemLevel, itemBonus);
+      this.equip_callback({ id, kind, level, bonus, type });
     }
   }
 
@@ -469,8 +469,6 @@ class GameClient {
     var mobId = data[1];
     var id = data[2];
     var kind = data[3];
-
-    console.log("~~~data", data);
 
     var item = EntityFactory.createEntity({ kind, id });
 
