@@ -131,6 +131,7 @@ class Game {
   playerhp_callback: any;
   notification_callback: any;
   unlock_callback: any;
+  slotToDelete?: number;
 
   constructor(app) {
     this.app = app;
@@ -530,6 +531,7 @@ class Game {
           requirement,
           description,
           setBonus = [],
+          partyBonus = [],
         } = Types.getItemDetails(item, level, rawBonus, rawSetBonus);
 
         return `<div>
@@ -547,6 +549,8 @@ class Game {
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${setBonus.length ? `<div class="item-set-description">${self.player.set} Set Bonuses</div>` : ""}
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+            ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
+            ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
           </div>`;
       },
     });
@@ -577,7 +581,7 @@ class Game {
             $("<div />", {
               class: `item-not-draggable`,
               css: {
-                "background-image": `url("${self.getIconPath(item)}")`,
+                "background-image": `url("${self.getIconPath(item, parseInt(level) + 1)}")`,
               },
               "data-item": item,
               "data-level": parseInt(level) + 1,
@@ -635,9 +639,12 @@ class Game {
           return;
         }
 
-        self.client.sendMoveItem(fromSlot, toSlot);
-
         if (toSlot === -1) {
+          if (!level || level !== 1) {
+            $("#dialog-delete-item").dialog("open");
+            self.slotToDelete = fromSlot;
+            return;
+          }
           fromItemEl.remove();
         } else {
           $(this).append(fromItemEl.detach());
@@ -645,6 +652,8 @@ class Game {
             $(fromItemElParent).append(toItemEl.detach());
           }
         }
+
+        self.client.sendMoveItem(fromSlot, toSlot);
 
         if (typeof level === "number") {
           if (toSlot === Types.Slot.WEAPON) {
@@ -666,6 +675,11 @@ class Game {
         }
       },
     });
+  }
+
+  deleteItemFromSlot() {
+    if (typeof this.slotToDelete !== "number") return;
+    this.client.sendMoveItem(this.slotToDelete, -1);
   }
 
   destroyDroppable() {
@@ -713,10 +727,15 @@ class Game {
     $(".item-draggable.ui-draggable").draggable("destroy");
   }
 
-  getIconPath(spriteName) {
+  getIconPath(spriteName: string, level?: string | number) {
     const scale = this.renderer.getScaleFactor();
 
-    return `img/${scale}/item-${spriteName}.png`;
+    let suffix = "";
+    if (spriteName === "cape" && parseInt(level as string, 10) >= 7) {
+      suffix = "7";
+    }
+
+    return `img/${scale}/item-${spriteName}${suffix}.png`;
   }
 
   initInventory() {
@@ -786,7 +805,7 @@ class Game {
         $("<div />", {
           class: "item-draggable",
           css: {
-            "background-image": `url("${this.getIconPath(this.player.cape)}")`,
+            "background-image": `url("${this.getIconPath(this.player.cape, this.player.capeLevel)}")`,
           },
           "data-item": this.player.cape,
           "data-level": this.player.capeLevel,
@@ -854,7 +873,7 @@ class Game {
         $("<div />", {
           class: `item-draggable ${quantity ? "item-quantity" : ""}`,
           css: {
-            "background-image": `url("${this.getIconPath(item)}")`,
+            "background-image": `url("${this.getIconPath(item, level)}")`,
           },
           "data-item": item,
           "data-level": level,
@@ -885,7 +904,7 @@ class Game {
         $("<div />", {
           class: `item-draggable ${quantity ? "item-quantity" : ""}`,
           css: {
-            "background-image": `url("${this.getIconPath(item)}")`,
+            "background-image": `url("${this.getIconPath(item, level)}")`,
           },
           "data-item": item,
           "data-level": level,
@@ -976,7 +995,7 @@ class Game {
           $("<div />", {
             class: `item-draggable ${quantity ? "item-quantity" : ""}`,
             css: {
-              "background-image": `url("${this.getIconPath(item)}")`,
+              "background-image": `url("${this.getIconPath(item, level)}")`,
             },
             "data-item": item,
             "data-level": level,

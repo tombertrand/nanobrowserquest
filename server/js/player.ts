@@ -85,6 +85,7 @@ class Player extends Character {
   waypoints: any;
   group: any;
   bonus: any;
+  partyBonus: any;
   armorKind: number;
   weaponKind: number;
   ring1: string;
@@ -137,6 +138,7 @@ class Player extends Character {
 
     // Item bonuses (Rings, amulet, Uniques?)
     this.resetBonus();
+    this.resetPartyBonus();
 
     this.inventory = [];
     this.inventoryCount = [];
@@ -325,6 +327,7 @@ class Player extends Character {
             flameDamage: self.bonus.flameDamage,
             lightningDamage: self.bonus.lightningDamage,
             pierceArmor: self.bonus.pierceArmor,
+            partyAttackDamage: self.partyBonus.attackDamage,
           });
 
           if (self.bonus.criticalHit) {
@@ -423,6 +426,9 @@ class Player extends Character {
             playerLevel: self.level,
             defense: self.bonus.defense,
             absorbedDamage: self.bonus.absorbedDamage,
+            partyDefense: self.partyBonus.defense,
+            cape: self.cape,
+            capeLevel: self.capeLevel,
           });
 
           if (self.bonus.blockChance) {
@@ -556,10 +562,7 @@ class Player extends Character {
                   items: [{ item: Types.getKindAsString(kind), quantity: 1 }],
                 });
               } else if (Types.isCape(kind)) {
-                const lowLevelBonus = [0, 1, 2, 3];
-
-                let bonus = [];
-                bonus = _.shuffle(lowLevelBonus).slice(0, 1);
+                const bonus = self.generateRandomCapeBonus();
 
                 databaseHandler.lootItems({
                   player,
@@ -1007,6 +1010,12 @@ class Player extends Character {
     this.connection.sendUTF8("go"); // Notify client that the HELLO/WELCOME handshake can start
   }
 
+  generateRandomCapeBonus() {
+    const lowLevelBonus = [0, 1, 2];
+
+    return _.shuffle(lowLevelBonus).slice(0, 1);
+  }
+
   destroy() {
     var self = this;
 
@@ -1253,6 +1262,16 @@ class Player extends Character {
     }
   }
 
+  calculatePartyBonus() {
+    this.resetPartyBonus();
+
+    if (this.cape && this.getParty()?.members.length >= 2) {
+      Types.getPartyBonus(this.capeBonus, this.capeLevel).forEach(({ type, stats }) => {
+        this.partyBonus[type] += stats;
+      });
+    }
+  }
+
   resetBonus() {
     this.bonus = {
       minDamage: 0,
@@ -1273,6 +1292,14 @@ class Player extends Character {
       lightningDamage: 0,
       pierceArmor: 0,
       highHealth: 0,
+    };
+  }
+
+  resetPartyBonus() {
+    this.partyBonus = {
+      attackDamage: 0,
+      defense: 0,
+      exp: 0,
     };
   }
 
@@ -1316,6 +1343,7 @@ class Player extends Character {
 
     this.calculateBonus();
     this.calculateSetBonus();
+    this.calculatePartyBonus();
     this.updateHitPoints();
     this.sendPlayerStats();
   }
@@ -1434,6 +1462,9 @@ class Player extends Character {
       playerLevel: this.level,
       defense: this.bonus.defense,
       absorbedDamage: this.bonus.absorbedDamage,
+      cape: this.cape,
+      capeLevel: this.capeLevel,
+      partyDefense: this.getParty()?.members.length >= 2 ? this.partyBonus.defense : 0,
     });
     var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage({
       weapon: this.weapon,
@@ -1447,6 +1478,7 @@ class Player extends Character {
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
       pierceArmor: this.bonus.pierceArmor,
+      partyAttackDamage: this.getParty()?.members.length >= 2 ? this.partyBonus.attackDamage : 0,
     });
 
     this.send(
@@ -1632,6 +1664,7 @@ class Player extends Character {
 
     self.calculateBonus();
     self.calculateSetBonus();
+    self.calculatePartyBonus();
     self.updateHitPoints(true);
     self.sendPlayerStats();
 

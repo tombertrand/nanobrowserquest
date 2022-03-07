@@ -227,8 +227,35 @@ class App {
   }
 
   start() {
+    var self = this;
     this.hideIntro();
     $("body").addClass("started");
+    $("#dialog-delete-item").dialog({
+      dialogClass: "no-close",
+      autoOpen: false,
+      draggable: false,
+      title: "Delete item",
+      buttons: [
+        {
+          text: "Cancel",
+          class: "btn",
+          click: function () {
+            self.game.slotToDelete = null;
+            $(this).dialog("close");
+          },
+        },
+        {
+          text: "Ok",
+          class: "btn",
+          click: function () {
+            self.game.deleteItemFromSlot();
+            $(this).dialog("close");
+          },
+        },
+      ],
+    });
+
+    $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
 
     if (this.firstTimePlaying) {
       this.toggleInstructions();

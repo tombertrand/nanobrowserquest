@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 
 import { Types } from "../../shared/js/gametypes";
-import { copyToClipboard,raiToRaw } from "./utils";
+import { copyToClipboard, raiToRaw } from "./utils";
 
 interface StoreItem extends BackendStoreItem {
   id: number;
@@ -55,23 +55,22 @@ class Store {
         confirmedMessage: "10 High class upgrade scrolls were added to your inventory.",
         requiresInventorySlot: true,
       },
-      {
-        id: Types.Store.SCROLLUPGRADEMEDIUM,
-        icon: "scrollupgrademedium",
-        name: "Medium class upgrade scrolls",
-        description: "Pack of 10 scrolls",
-        confirmedMessage: "10 Medium class upgrade scrolls were added to your inventory.",
-        requiresInventorySlot: true,
-      },
       // {
-      //   id: Types.Store.CAPE,
-      //   icon: "cape",
-      //   name: "Cape",
-      //   description:
-      //     "A cape adds a random bonus to your character. When upgraded to +7 the cape adds 2 bonuses, +8 adds 3 bonuses, etc.",
-      //   confirmedMessage: "A cape was added to your inventory.",
+      //   id: Types.Store.SCROLLUPGRADEMEDIUM,
+      //   icon: "scrollupgrademedium",
+      //   name: "Medium class upgrade scrolls",
+      //   description: "Pack of 10 scrolls",
+      //   confirmedMessage: "10 Medium class upgrade scrolls were added to your inventory.",
       //   requiresInventorySlot: true,
       // },
+      {
+        id: Types.Store.CAPE,
+        icon: "cape",
+        name: "Cape",
+        description: "A cape adds a random bonus (attack, defense or exp) when your character is in a party.",
+        confirmedMessage: "A cape was added to your inventory.",
+        requiresInventorySlot: true,
+      },
     ];
   }
 

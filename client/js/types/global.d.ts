@@ -17,5 +17,6 @@ declare global {
     droppable(arg: any): JQuery;
     countdown(arg: any): JQuery;
     resizable(arg: any): JQuery;
+    dialog(arg: any): JQuery;
   }
 }

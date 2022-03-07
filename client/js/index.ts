@@ -2,6 +2,7 @@ import "jquery-ui/ui/widgets/draggable";
 import "jquery-ui/ui/widgets/droppable";
 import "jquery-ui/ui/widgets/resizable";
 import "jquery-ui/ui/widgets/tooltip";
+import "jquery-ui/ui/widgets/dialog";
 import "jquery-countdown";
 import "jquery.qrcode";
 import "jquery-ui-touch-punch";
@@ -584,7 +585,10 @@ var initGame = function () {
     var key = e.which;
 
     if (key === Types.Keys.ENTER) {
-      if (!$("#text-window").is(":visible")) {
+      if ($(".ui-dialog").is(":visible")) {
+        $("#dialog-delete-item").dialog("close");
+        game.deleteItemFromSlot();
+      } else if (!$("#text-window").is(":visible")) {
         app.showChat();
       }
     } else if (key === 16) game.pvpFlag = true;

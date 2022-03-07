@@ -1023,6 +1023,11 @@ class Renderer {
       w = sprite.width * os,
       h = sprite.height * os,
       y = row * h,
+      // cape
+      row = spriteAnim.row,
+      w = sprite.width * os,
+      h = sprite.height * os,
+      y = row * h,
       // weapon
       ww = weapon.width * os,
       wh = weapon.height * os,
@@ -1049,6 +1054,14 @@ class Renderer {
 
     ctx.clearRect(0, 0, w, h);
     ctx.drawImage(shadow.image, 0, 0, sw, sh, ox, oy, sw, sh);
+    if (this.game.player.cape) {
+      var sprite = this.game.sprites["cape"];
+      var capeImage = sprite.image;
+      if (this.game.player.capeLevel >= 7) {
+        capeImage = sprite.image7;
+      }
+      ctx.drawImage(capeImage, 0, y, w, h, 2, 2, w, h);
+    }
     ctx.drawImage(spriteImage, 0, y, w, h, 2, 2, w, h);
     ctx.drawImage(weaponImage, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
 

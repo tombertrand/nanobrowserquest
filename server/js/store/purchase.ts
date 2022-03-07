@@ -16,8 +16,6 @@ class Purchase {
   sessions = [];
   databaseHandler = null;
 
-  constructor() {}
-
   create({ player, account, id }) {
     const accountSession = this.sessions.find(({ account: registeredAccount }) => account === registeredAccount);
 

@@ -631,6 +631,36 @@ footer, header, hgroup, menu, nav, section {
         border: none !important;
         background: rgba(0,0,0,0.75) !important;
     }
+
+    .ui-dialog {
+        background: none !important;
+    }
+
+    .ui-dialog-titlebar {
+        color: #fff !important;
+        background: #171717 !important;
+        border: none !important;
+        border-radius: 0 !important;
+    }
+
+    .ui-dialog .ui-button {
+        background: inherit;
+    }
+
+    .ui-dialog-content.ui-widget-content {
+        color: #fff;
+        background: #404040 !important;
+    }
+    .ui-dialog-buttonpane.ui-widget-content  {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #404040 !important;
+    }
+
+    .no-close .ui-dialog-titlebar-close {
+        display: none;
+    }
+
     .item-title {
         font-weight: bold;
         color: #d16afa;

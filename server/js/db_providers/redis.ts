@@ -20,9 +20,8 @@ const ARTIFACT_COUNT = 4;
 
 const queue = new PromiseQueue();
 
-const getNewDepositAccountByIndex = async index => {
+const getNewDepositAccountByIndex = async (index: number): Promise<string> => {
   const depositAccount = await NanocurrencyWeb.wallet.legacyAccounts(process.env.DEPOSIT_SEED, index, index)[0].address;
-
   return depositAccount;
 };
 
@@ -66,14 +65,15 @@ class DatabaseHandler {
             .hget(userKey, "ring2") // 14
             .hget(userKey, "amulet") // 15
             .hget(userKey, "belt") // 16
-            .hget(userKey, "artifact") // 17
-            .hget(userKey, "expansion1") // 18
-            .hget(userKey, "waypoints") // 19
-            .hget(userKey, "depositAccount") // 20
-            .hget(userKey, "depositAccountIndex") // 21
-            .hget(userKey, "hash1") // 22
-            .hget(userKey, "stash") // 23
-            .hget(userKey, "cape") // 24
+            .hget(userKey, "cape") // 17
+            .hget(userKey, "artifact") // 18
+            .hget(userKey, "expansion1") // 19
+            .hget(userKey, "waypoints") // 20
+            .hget(userKey, "depositAccount") // 21
+            .hget(userKey, "depositAccountIndex") // 22
+            .hget(userKey, "hash1") // 23
+            .hget(userKey, "stash") // 24
+
             .exec(async (err, replies) => {
               var account = replies[0];
               var armor = replies[1];
@@ -84,10 +84,10 @@ class DatabaseHandler {
               var ring2 = replies[14];
               var amulet = replies[15];
               var belt = replies[16];
-              var cape = replies[24];
-              var expansion1 = !!parseInt(replies[18] || "0");
-              var depositAccount = replies[20];
-              var depositAccountIndex = replies[21];
+              var cape = replies[17];
+              var expansion1 = !!parseInt(replies[19] || "0");
+              var depositAccount = replies[21];
+              var depositAccountIndex = replies[22];
 
               try {
                 if (!depositAccount) {
@@ -170,8 +170,8 @@ class DatabaseHandler {
 
               var stash = new Array(STASH_SLOT_COUNT).fill(0);
               try {
-                if (replies[23]) {
-                  stash = JSON.parse(replies[23]);
+                if (replies[24]) {
+                  stash = JSON.parse(replies[24]);
                 } else {
                   this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
                 }
@@ -190,7 +190,7 @@ class DatabaseHandler {
               // 2 - Locked, the player did not purchase the expansion
               let waypoints;
               try {
-                waypoints = JSON.parse(replies[19]);
+                waypoints = JSON.parse(replies[20]);
 
                 if (waypoints && !expansion1) {
                   const classicWaypoint = waypoints.slice(0, 3);
@@ -294,10 +294,10 @@ class DatabaseHandler {
 
               var artifact = new Array(ARTIFACT_COUNT).fill(0);
               try {
-                if (!replies[17]) {
+                if (!replies[18]) {
                   this.client.hset("u:" + player.name, "artifact", JSON.stringify(artifact));
                 } else {
-                  artifact = JSON.parse(replies[17]);
+                  artifact = JSON.parse(replies[18]);
                 }
               } catch (err) {
                 Sentry.captureException(err);
@@ -306,7 +306,7 @@ class DatabaseHandler {
               var x = NaN2Zero(replies[7]);
               var y = NaN2Zero(replies[8]);
               var hash = replies[9];
-              var hash1 = replies[22];
+              var hash1 = replies[23];
               var nanoPotions = parseInt(replies[10] || 0);
 
               // bcrypt.compare(player.account, account, function(err, res) {
@@ -372,7 +372,7 @@ class DatabaseHandler {
         // Add the player
 
         const depositAccountIndex = await this.createDepositAccount();
-        const depositAccount = await getNewDepositAccountByIndex(depositAccountIndex);
+        const depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number);
 
         this.client
           .multi()
@@ -1068,11 +1068,11 @@ class DatabaseHandler {
     this.client.setnx("deposit_account_count", 0);
   }
 
-  async createDepositAccount() {
+  async createDepositAccount(): Promise<unknown> {
     return await queue.enqueue(
       () =>
         new Promise((resolve, _reject) => {
-          this.client.incr("deposit_account_count", (_err, reply) => {
+          this.client.incr("deposit_account_count", (_err, reply: number) => {
             resolve(reply);
           });
         }),
@@ -1091,6 +1091,13 @@ class DatabaseHandler {
         this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
       } else if (id === Types.Store.SCROLLUPGRADEMEDIUM) {
         this.lootItems({ player, items: [{ item: "scrollupgrademedium", quantity: 10 }] });
+      } else if (id === Types.Store.CAPE) {
+        const bonus = player.generateRandomCapeBonus();
+
+        this.lootItems({
+          player,
+          items: [{ item: "cape", level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) }],
+        });
       } else {
         throw new Error("Invalid purchase id");
       }

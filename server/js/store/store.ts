@@ -27,11 +27,17 @@ class Store {
       isAvailable: true,
     },
     {
-      id: Types.Store.SCROLLUPGRADEMEDIUM,
+      id: Types.Store.CAPE,
       xno: 0,
-      usd: isDevelopmentAmounts ? 0.03 : 0.25,
+      usd: isDevelopmentAmounts ? 0.03 : 1.25,
       isAvailable: true,
     },
+    // {
+    //   id: Types.Store.SCROLLUPGRADEMEDIUM,
+    //   xno: 0,
+    //   usd: isDevelopmentAmounts ? 0.03 : 0.25,
+    //   isAvailable: true,
+    // },
   ];
 
   constructor() {}

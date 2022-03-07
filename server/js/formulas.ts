@@ -15,6 +15,7 @@ Formulas.minMaxDamage = function ({
   flameDamage,
   lightningDamage,
   pierceArmor,
+  partyAttackDamage,
 }) {
   const isUnique = !!flameDamage;
   const weaponMagicDamage = isUnique ? 0 : Types.getWeaponMagicDamage(weaponLevel);
@@ -28,10 +29,15 @@ Formulas.minMaxDamage = function ({
     pierceArmor;
 
   let min = baseDamage + minDamage + Math.round(Math.pow(0.7, Math.floor(playerLevel / 10)) * playerLevel);
-  const max = baseDamage + maxDamage + Math.round(Math.pow(1.075, Math.floor(playerLevel / 10)) * playerLevel);
+  let max = baseDamage + maxDamage + Math.round(Math.pow(1.075, Math.floor(playerLevel / 10)) * playerLevel);
 
   if (min > max) {
     min = max;
+  }
+
+  if (partyAttackDamage) {
+    min = Math.round((partyAttackDamage / 100) * min) + min;
+    max = Math.round((partyAttackDamage / 100) * max) + max;
   }
 
   return {
@@ -53,6 +59,7 @@ Formulas.dmg = function ({
   flameDamage,
   lightningDamage,
   pierceArmor,
+  partyAttackDamage,
 }) {
   const { min, max } = Formulas.minMaxDamage({
     weapon,
@@ -66,6 +73,7 @@ Formulas.dmg = function ({
     flameDamage,
     lightningDamage,
     pierceArmor,
+    partyAttackDamage,
   });
   const dealt = randomInt(min, max);
   const absorbed = Math.floor(armorLevel * randomInt(2, 4));
@@ -91,12 +99,21 @@ Formulas.minMaxAbsorb = function ({
   beltLevel,
   isUniqueArmor,
   isUniqueBelt,
+  partyDefense,
+  cape,
+  capeLevel,
 }) {
   const armorDefense = Types.getArmorDefense(armor, armorLevel, isUniqueArmor);
   const beltDefense = Types.getArmorDefense(belt, beltLevel, isUniqueBelt);
+  const capeDefense = Types.getArmorDefense(cape, capeLevel);
 
-  const min = Math.ceil((armorDefense + beltDefense + defense) * 1.2) + absorbedDamage;
-  const max = min + Math.ceil(Math.pow(1.075, playerLevel));
+  let min = Math.ceil((armorDefense + beltDefense + capeDefense + defense) * 1.2) + absorbedDamage;
+  let max = min + Math.ceil(Math.pow(1.075, playerLevel));
+
+  if (partyDefense) {
+    min = Math.round((partyDefense / 100) * min) + min;
+    max = Math.round((partyDefense / 100) * max) + max;
+  }
 
   return {
     min,
@@ -114,6 +131,9 @@ Formulas.dmgFromMob = function ({
   belt,
   beltLevel,
   isUniqueBelt,
+  partyDefense,
+  cape,
+  capeLevel,
 }) {
   const dealt = Math.ceil(weaponLevel * randomInt(10, 15));
   const { min, max } = Formulas.minMaxAbsorb({
@@ -125,6 +145,9 @@ Formulas.dmgFromMob = function ({
     belt,
     beltLevel,
     isUniqueBelt,
+    partyDefense,
+    cape,
+    capeLevel,
   });
 
   const absorbed = randomInt(min, max);

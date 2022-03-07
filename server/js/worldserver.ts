@@ -962,8 +962,11 @@ class World {
 
         // var lastHitPlayer = mainTanker instanceof Player || attacker;
 
-        const exp = this.receivedExp(attacker, mob);
+        let exp = this.receivedExp(attacker, mob);
         if (exp) {
+          if (attacker.partyBonus.exp) {
+            exp = Math.round((attacker.partyBonus.exp / 100) * exp) + exp;
+          }
           attacker.incExp(exp);
         }
         this.pushToPlayer(attacker, new Messages.Kill(mob, attacker.level, attacker.experience, exp));

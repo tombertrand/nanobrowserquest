@@ -74,6 +74,7 @@ class Party {
     );
 
     this.deleteInvite(player.id);
+    this.updatePartyBonus();
   }
 
   invite(player: Player) {
@@ -86,6 +87,15 @@ class Party {
 
   deleteInvite(playerId) {
     delete this.sentInvites[playerId];
+  }
+
+  updatePartyBonus() {
+    this.forEachMember(({ id }) => {
+      const player = this.server.getEntityById(id);
+
+      player.calculatePartyBonus();
+      player.sendPlayerStats();
+    });
   }
 
   removeMember(player) {
@@ -112,6 +122,8 @@ class Party {
 
       player.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.LEAVE, { playerName: player.name }).serialize());
 
+      this.updatePartyBonus();
+
       if (!this.members.length) {
         delete this.server.parties[this.id];
       }
@@ -131,6 +143,8 @@ class Party {
         player.setPartyId(undefined);
       }
     });
+
+    this.updatePartyBonus();
 
     delete this.server.parties[this.id];
   }
