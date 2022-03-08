@@ -61,3 +61,47 @@
   top: 5%;
   left: 5%;
 }
+
+#party-player-list {
+  pointer-events: none;
+  position: absolute;
+  top: 10%;
+  right: 5%;
+}
+
+#party-player-list > div {
+  margin-bottom: 12px;
+}
+
+.player-name {
+  color: #fff;
+  font-family: "GraphicPixel";
+  text-shadow: 1px -1px 1px #000, 1px 1px 1px #000, -1px 1px 1px #000;
+}
+
+.player-health-bar-container {
+  width: 100px;
+  height: 9px;
+  position: relative;
+  margin-top: 4px;
+}
+
+.player-health-bar-container > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.player-health-bar {
+  height: 100%;
+  width: 100%;
+  background-image: url(../img/1/barsheet.png);
+  background-position: -1px -69px;
+}
+
+.player-health {
+  width: 100%;
+  height: 100%;
+  background: #d83939;
+  border-radius: 6px;
+}

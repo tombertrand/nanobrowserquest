@@ -483,7 +483,14 @@ class Renderer {
         dw = w * ds,
         dh = h * ds;
 
+      // this.context.filter = "sepia(50%)";
+      // this.context.fillStyle = "hsl(-121, 100%, 50%)";
+      // this.context.filter = "hue-rotate(-100deg)";
+      // this.context.filter = filter;
+      // this.context.fillStyle = "hsl(" + 360 * Math.random() + ",100%,50%)";
+
       this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
+      // this.context.filter = "none";
     }
   }
 

@@ -382,7 +382,21 @@ class World {
 
   pushToPlayer(player, message) {
     if (player && player.id in this.outgoingQueues) {
-      this.outgoingQueues[player.id].push(message.serialize());
+      const serializedMessage = message.serialize();
+      this.outgoingQueues[player.id].push(serializedMessage);
+
+      // @NOTE When a player health is updated, push it!
+      if (serializedMessage[0] === Types.Messages.HEALTH && player.hasParty()) {
+        this.pushToParty(
+          player.getParty(),
+          new Messages.Party(Types.Messages.PARTY_ACTIONS.HEALTH, {
+            playerId: player.id,
+            hitPoints: player.hitPoints,
+            maxHitPoints: player.maxHitPoints,
+          }),
+          player,
+        );
+      }
     } else {
       console.error("pushToPlayer: player was undefined");
     }
@@ -932,18 +946,6 @@ class World {
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
       this.pushToPlayer(entity, entity.health({ isHurt: true }));
-
-      if (entity.hasParty()) {
-        this.pushToParty(
-          entity.getParty(),
-          new Messages.Party(Types.Messages.PARTY_ACTIONS.HEALTH, {
-            playerId: entity.id,
-            hitPoints: entity.hitPoints,
-            maxHitPoints: entity.maxHitPoints,
-          }),
-          entity,
-        );
-      }
     }
     if (entity.type === "mob") {
       // Let the mob's attacker (player) know how much damage was inflicted

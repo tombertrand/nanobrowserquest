@@ -2603,6 +2603,9 @@ class Game {
         } else if (members.length === 1 && partyLeader.name === self.player.name) {
           message = `Party created, you are the party leader`;
         }
+
+        self.app.updatePartyMembers(members);
+
         self.chat_callback({ message, type: "info" });
       });
 
@@ -2639,14 +2642,15 @@ class Game {
         let message = "You left the party";
         if (playerName !== self.player.name) {
           message = `${playerName} left the party`;
+          self.app.updatePartyMembers(members);
+        } else {
+          self.app.removePartyHealthBar();
         }
         // @NOTE add isNewLeader to determine when to display this?
         // if (self.player.name === partyLeader?.name) {
         //   message += ", you are now the party leader";
         // }
         self.chat_callback({ message, type: "info" });
-
-        // @TODO: Update healthbars
       });
 
       self.client.onPartyDisband(function () {
@@ -2660,7 +2664,7 @@ class Game {
 
         self.chat_callback({ message: "Party was disbaned", type: "info" });
 
-        // @TODO: Update healthbars
+        self.app.removePartyHealthBar();
       });
 
       self.client.onPartyInfo(function (message) {
@@ -2684,10 +2688,8 @@ class Game {
         self.chat_callback({ message, type: "loot" });
       });
 
-      self.client.onPartyHealth(function (members) {
-        console.log("~~~~health", members);
-
-        // @TODO: Update healthbars
+      self.client.onPartyHealth(function (member) {
+        self.app.updatePartyHealthBar(member);
       });
 
       self.client.onEntityMove(function (id, x, y) {

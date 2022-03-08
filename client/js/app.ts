@@ -254,6 +254,7 @@ class App {
         },
       ],
     });
+    $("#dialog-delete-item").text("Are you sure you want to delete this item?");
 
     $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
 
@@ -286,6 +287,34 @@ class App {
         $playButton.text("Loading...");
       }
     }
+  }
+
+  updatePartyMembers(members: { id: number; name: string }[]) {
+    const partyHtml = members
+      .map(({ id, name }) => {
+        if (name === this.game.player.name) return "";
+
+        return `<div>
+      <div class="player-name">${name}</div>
+      <div class="player-health-bar-container">
+        <div id="player-health-${id}" class="player-health"></div>
+        <div class="player-health-bar"></div>
+      </div>
+    </div>`;
+      })
+      .join("");
+
+    $("#party-player-list").empty().html(partyHtml);
+  }
+
+  updatePartyHealthBar(member: { playerId: number; hitPoints: number; maxHitPoints: number }) {
+    const { playerId: id, hitPoints, maxHitPoints } = member;
+
+    $(`#player-health-${id}`).css("width", `${Math.floor((hitPoints * 100) / maxHitPoints)}%`);
+  }
+
+  removePartyHealthBar() {
+    $("#party-player-list").empty();
   }
 
   getActiveForm() {

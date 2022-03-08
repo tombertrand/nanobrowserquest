@@ -48,4 +48,7 @@ export interface App {
   toggleMute: () => void;
   loginFormActive: () => any;
   createNewCharacterFormActive: () => any;
+  updatePartyMembers: (members: any[]) => any;
+  updatePartyHealthBar: (members: any[]) => any;
+  removePartyHealthBar: () => any;
 }
