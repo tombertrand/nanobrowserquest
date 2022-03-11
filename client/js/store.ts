@@ -173,20 +173,27 @@ class Store {
       $("<div/>", {
         class: "item-wrapper waiting-for-transaction",
         html: `
-            <p class="description">Send <b><span class="xno">Ӿ</span>${xno}</b></p>
-            <p class="note note-high-resolution">* By scanning the QR code with Natrium, the amount will be auto-added. If you use another wallet make sure you send the exact amount.</p>
-            <p class="note note-low-resolution">* Make sure you send the exact amount.</p>
+            <p class="name">Send <span class="xno">Ӿ</span><b>${xno}</b> to</p>
+            <p class="nano-account">${self.depositAccount}</p>
             <br/>
             <p class="name"><img src="img/common/spinner2.gif"> Waiting for transaction</p>
+            <br/>
+            <p class="note note-high-resolution">* Make sure you send the exact amount to your deposit account</p>
           `,
       }).appendTo("#store-item-purchase");
 
       $("<div/>", {
         class: "item-wrapper waiting-for-transaction",
         html: `
+          <p class="note note-high-resolution">Scan the QR code with Natrium.</p>
           <div id="qrcode"></div>
-          <p class="nano-account">${this.depositAccount}</p>
+          <div class="or-line hide-on-mobile"><span>OR</span></div>
           <div id="store-account-button"></div>
+          <div class="or-line hide-on-mobile"><span>OR</span></div>
+          <p class="note note-high-resolution">Use 
+            <a href="https://nault.cc/send?to=${self.depositAccount}&amount=${xno}" target="_blank">Nault.cc</a> to send the amount
+          </p>
+          <p class="note note-high-resolution">* Not sure? <a href="https://www.youtube.com/watch?v=rvdOzv0pnSw" target="_blank">Watch a tutorial</a></p>
         `,
       }).appendTo("#store-item-purchase");
 
