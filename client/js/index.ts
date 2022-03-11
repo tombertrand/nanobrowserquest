@@ -634,8 +634,8 @@ var initGame = function () {
         case Types.Keys.H:
           $("#completedbutton").click();
           break;
-        case Types.Keys.M:
-          $("#mute-button").click();
+        case Types.Keys.O:
+          $("#settings-button").click();
           break;
         case Types.Keys.P:
           $("#player-count").click();
@@ -708,7 +708,11 @@ var initGame = function () {
     $("#name-tooltip").removeClass("visible");
   });
 
-  $("#mute-button").click(function () {
+  $("#settings-button").on("click", () => {
+    app.toggleSettings();
+  });
+
+  $("#mute-checkbox").on("change", function () {
     app.toggleMute();
   });
 

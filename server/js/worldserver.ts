@@ -390,9 +390,9 @@ class World {
         this.pushToParty(
           player.getParty(),
           new Messages.Party(Types.Messages.PARTY_ACTIONS.HEALTH, {
-            playerId: player.id,
-            hitPoints: player.hitPoints,
-            maxHitPoints: player.maxHitPoints,
+            id: player.id,
+            hp: player.hitPoints,
+            mHp: player.maxHitPoints,
           }),
           player,
         );

@@ -125,7 +125,7 @@ footer, header, hgroup, menu, nav, section {
     /* body.upscaled.game {background:#000;} */
     .game #logo {display:none;-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;animation:none;}
         
-    #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #completed, #failed, .icon, #tilt, .parchment-left, .parchment-middle, .parchment-right, .avatar, .facebook, .twitter, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background:url('../img/1/spritesheet.png');image-rendering:-moz-crisp-edges; image-rendering:-webkit-optimize-contrast;}
+    #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #settings, #party, #completed, #failed, .icon, #tilt, .parchment-left, .parchment-middle, .parchment-right, .avatar, .facebook, .twitter, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background:url('../img/1/spritesheet.png');image-rendering:-moz-crisp-edges; image-rendering:-webkit-optimize-contrast;}
     
     #moztab {height:49px;width:118px;position:fixed;top:0;right:15%;background:url('../img/1/spritesheet.png') no-repeat -229px -204px;display:block;}
 
@@ -235,8 +235,8 @@ footer, header, hgroup, menu, nav, section {
 
     .bubble p {-moz-user-select:none;-webkit-user-select:none;}
     
-    #instructions, #store, #completed, #failed {position:absolute;top:50%;left:50%;z-index:1000;font-family:'GraphicPixel';pointer-events:none;opacity:0;-moz-transition:0.25s opacity linear;-webkit-transition:0.4s top ease, 0.4s opacity linear;-o-transition:0.4s top ease, 0.4s opacity linear;-ms-transition:0.4s top ease, 0.4s opacity linear;transition:0.4s top ease, 0.4s opacity linear;}
-    #instructions.active, #store.active, #achievements.active, #completed.active, #failed.active {opacity:1;pointer-events:auto;}
+    #instructions, #store, #settings, #party, #completed, #failed {position:absolute;top:50%;left:50%;z-index:1000;font-family:'GraphicPixel';pointer-events:none;opacity:0;-moz-transition:0.25s opacity linear;-webkit-transition:0.4s top ease, 0.4s opacity linear;-o-transition:0.4s top ease, 0.4s opacity linear;-ms-transition:0.4s top ease, 0.4s opacity linear;transition:0.4s top ease, 0.4s opacity linear;}
+    #instructions.active, #store.active, #settings.active, #party.active, #achievements.active, #completed.active, #failed.active {opacity:1;pointer-events:auto;}
     
     #weapon, #armor {image-rendering:-moz-crisp-edges;}
 
@@ -285,7 +285,7 @@ footer, header, hgroup, menu, nav, section {
     @-webkit-keyframes blink { 0% {color:red;} 100% {color:#880000;}}
     .blink {-webkit-animation:blink 0.3s linear 5 alternate;-moz-animation:blink 0.3s linear 5 alternate;animation:blink 0.3s linear 5 alternate;}
 
-    #credits, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #death, #store, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
+    #credits, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #death, #store, #settings, #party, #error, #about, #legal {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel', sans-serif;z-index:1000;}
     
     #player-image {image-rendering: -moz-crisp-edges; image-rendering: -webkit-optimize-contrast;}
     
@@ -337,7 +337,7 @@ footer, header, hgroup, menu, nav, section {
     
     .alert {height:50px;background:#d83939;width:100%;color:#eee;font-size:20px;font-family:'GraphicPixel', arial, sans-serif;text-align:center;line-height:50px;border-bottom:1px solid #000;}
 
-    #instructions, #store, #achievements, #completed, #failed, #lists, #about, #credits, .ribbon, .play, .play div, .barbutton {-webkit-tap-highlight-color:transparent;}
+    #instructions, #store, #settings, #party, #achievements, #completed, #failed, #lists, #about, #credits, .ribbon, .play, .play div, .barbutton {-webkit-tap-highlight-color:transparent;}
     #nameinput::-webkit-input-placeholder  {color:#fff;}
 
     #resize-check {position:absolute;height:0;top:0;left:0;-moz-transition:0.001s height ease;-webkit-transition:0.001s height ease;-o-transition:0.001s height ease;-ms-transition:0.001s height ease;transition:0.001s height ease;}
@@ -723,7 +723,7 @@ footer, header, hgroup, menu, nav, section {
     .item-draggable, .item-not-draggable {background-color: transparent; z-index:2; border-radius: 4px; border: solid 2px #928f8c; background: #171717;}
     .ui-draggable-dragging { cursor: url(../img/2/loot.png) 2 5, move; }
 
-    .panel { cursor: url(../img/2/hand.png) 2 5, move; }
+    .panel, label, input[type=checkbox], #settings, #store { cursor: url(../img/2/hand.png) 2 5, move; }
     .panel-header {min-height: 4px;}
     .panel-header.reverse {transform: rotate(180deg);}
     .panel-spaced-row { display: flex; justify-content: space-between; align-items: center; padding: 0 10px}
@@ -891,8 +891,9 @@ footer, header, hgroup, menu, nav, section {
             height: 32px;
             width: 32px;
         }
+        .setting {font-size:20px;}
 
-	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
+	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/3/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/3/achievements.png');}
@@ -901,7 +902,7 @@ footer, header, hgroup, menu, nav, section {
 	    
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood2.png') no-repeat 1587px 138px, url('../img/1/wood2.png') no-repeat 51px 519px, url('../img/1/wood3.png') no-repeat 228px 219px, url('../img/1/wood.png') repeat, #000; background-size:auto, 15px auto, 15px auto, 60px auto, 384px;}
         body {background:-webkit-gradient(radial, center center, 360, center center, 1200, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/3/wood2.png') no-repeat 1587px 138px, url('../img/3/wood2.png') no-repeat 51px 519px, url('../img/3/wood3.png') no-repeat 228px 219px, url('../img/3/wood.png') repeat, #000; background-size:auto, 15px auto, 15px auto, 60px auto, 384px;}
-        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:1266px auto;}
+        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #settings, #party, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:1266px auto;}
         #logo {height:126px;width:687px;position:absolute;top:42px;left:50%;margin-left:-244px;z-index:3;}
         #logosparks {width:687px;height:126px;z-index:4;-moz-animation:logo3 .8s steps(6, end) infinite;-webkit-animation:logo3 .8s steps(6, end) infinite;-o-animation:logo3 .8s steps(6, end) infinite;-ms-animation:logo3 .8s steps(6, end) infinite;}
         #parchment, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #error, #legal {width:1266px;height:596px;position:absolute;top:55%;left:50%;margin-left:-633px;margin-top:-318px;font-size:30px;text-align:center;z-index:2;}
@@ -940,8 +941,8 @@ footer, header, hgroup, menu, nav, section {
 		#canvas {width:100%;height:672px;}
 		#fade {width:1440px;height:672px;top:15px;left:15px;}
 		
-		#instructions, #store, #completed, #failed {height:579px;width:1251px;background-position:0 -1704px;margin-left:-624px;margin-top:-312px;color:#373737;}
-		#instructions h1, #store h1, #completed h1, #failed h1 {font-size:40px;text-align:center;margin:50px 0 40px;}
+		#instructions, #store, #settings, #party, #completed, #failed {height:579px;width:1251px;background-position:0 -1704px;margin-left:-624px;margin-top:-312px;color:#373737;}
+		#instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:40px;text-align:center;margin:50px 0 40px;}
         #instructions ul {font-size:30px;margin-top:30px;}
         #instructions ul li {margin:0 0; clear:left;}
         #instructions ul li span {display:block;float:left;position: relative;}
@@ -1017,10 +1018,9 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton {background-position:-1002px -51px;top:3px;left:1305px;width:42px;}
         #completedbutton:hover {background-position:-1044px -51px;}
         #completedbutton.active {background-position:-1086px -51px;}
-        /* #completedbutton.completed {background-position:-1170px -51px;} */
-        #mute-button {background-position:-684px -51px;top:3px;left:1395px;}
-        #mute-button:hover {background-position:-726px -51px;}
-        #mute-button.active {background-position:-768px -51px;}
+        #settings-button {background-position:-1128px -51px;top:3px;left:1395px;}
+        #settings-button:hover {background-position:-1170px -51px;}
+        #settings-button.active {background-position:-1212px -51px;}
         
         #chatbox {height:48px;width:1182px;background-size:1440px;background-position:0 -96px;margin-left:-591px;bottom:18px;}
         #chatbox.active {bottom:66px;}
@@ -1106,14 +1106,14 @@ footer, header, hgroup, menu, nav, section {
             width: 24px;
         }
 
-	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
+	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/2/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background-image:url('../img/2/achievements.png');}
         .upscaled .item-gem, .upscaled .item-nanopotion {background-image:url('../img/2/achievements-unlocks.png');}
 
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}        
         body {background:-webkit-gradient(radial, center center, 240, center center, 800, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}
-        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:844px auto;}
+        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #settings, #party, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:844px auto;}
         #logo {height:84px;width:458px;position:absolute;top:10%;left:50%;margin-left:-179px;z-index:3;}
         #logosparks {width:458px;height:84px;z-index:4;-moz-animation:logo2 .8s steps(6, end) infinite;-webkit-animation:logo2 .8s steps(6, end) infinite;-o-animation:logo2 .8s steps(6, end) infinite;-ms-animation:logo2 .8s steps(6, end) infinite;}
         #parchment, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #error, #legal {width:844px;height:400px;position:absolute;top:55%;left:50%;margin-left:-422px;margin-top:-220px;font-size:20px;text-align:center; z-index:2;}
@@ -1135,7 +1135,7 @@ footer, header, hgroup, menu, nav, section {
         #login-play-link.play.loading img {height:16px;width:16px;}
         .stroke, .achievement-name {text-shadow:2px 2px 0 #373737, 2px -2px 0 #373737, 0 2px 0 #373737, 2px 0 0 #373737, -2px 2px 0 #373737, -2px -2px 0 #373737, 0 -2px 0 #373737, 0 2px 0 #373737, -2px 0 0 #373737;}
         
-        #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top:20px;}
+        #loadcharacter h1, #banned h1, #createaccount h1, #invalidconnection h1, #confirmation h1, #error h1, #legal h1 {margin-top: 30px; margin-bottom: 10px;}
         /* #playername {margin-top:10px;} */
         .loadcharacter .play, .confirmation .delete {margin:6px auto 0 auto;}
         #confirmation p, #error p {font-size:20px;margin-top:40px;line-height:30px;}
@@ -1152,8 +1152,8 @@ footer, header, hgroup, menu, nav, section {
 		#canvas {width:100%;height:448px;}
 		#fade {width:960px;height:448px;top:10px;left:10px;}
 
-		#instructions, #store, #completed, #failed {height:386px;width:834px;background-position:0 -1136px;margin-left:-416px;margin-top:-210px;color:#373737;}
-		#instructions h1, #store h1, #completed h1, #failed h1 {font-size:30px;text-align:center;margin:40px 0 30px;}
+		#instructions, #store, #settings, #party, #completed, #failed {height:386px;width:834px;background-position:0 -1136px;margin-left:-416px;margin-top:-210px;color:#373737;}
+		#instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:30px;text-align:center;margin:40px 0 30px;}
         #completed h1 { margin-bottom: 0}
         #instructions ul {font-size:20px;margin-top:20px;}
         #instructions ul li {margin:20px 0; clear:left;}
@@ -1239,9 +1239,9 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton:hover {background-position:-696px -34px;}
         #completedbutton.active {background-position:-724px -34px;}
         /* #completedbutton.completed {background-position:-752px -34px;} */
-        #mute-button {background-position:-456px -34px;top:2px;left:930px;}
-        #mute-button:hover {background-position:-484px -34px;}
-        #mute-button.active {background-position:-512px -34px;}
+        #settings-button {background-position:-752px -34px;top:2px;left:930px;}
+        #settings-button:hover {background-position:-780px -34px;}
+        #settings-button.active {background-position:-808px -34px;}
 
 		#chatbox {height:32px;width:788px;background-size:960px;background-position:0 -64px;margin-left:-394px;bottom:12px;}
 		#chatbox.active {bottom:44px;}
@@ -1259,7 +1259,7 @@ footer, header, hgroup, menu, nav, section {
 
         #credits h1, #about h1 {margin-top:25px;font-weight:normal;}
         #credits h1 a {font-size:24px;}
-        .game #credits h1, .game #about h1 {margin-top:40px;}
+        .game #credits h1, .game #about h1 {margin-top:60px;}
         #credits h1 span.title {max-width:200px;display:inline-block;line-height:26px;margin-top:-60px;position:relative;top:24px;}
         #authors {clear:both;margin-top:70px;}
         #guillaume, #franck {width:47%;line-height:26px;}
@@ -1326,11 +1326,11 @@ footer, header, hgroup, menu, nav, section {
             background: url(../img/1/achievements.png);
         }
         .upscaled .item-gem, .upscaled .item-nanopotion {background-image:url('../img/1/achievements-unlocks.png');}
-        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:422px auto;}
+        #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #settings, #party, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:422px auto;}
         #logo {height:42px;width:229px;position:absolute;top:10%;left:50%;margin-left:-64px;z-index:3;}
         #logosparks {width:229px;height:42px;z-index:4;-moz-animation:logo1 .8s steps(6, end) infinite;-webkit-animation:logo1 .8s steps(6, end) infinite;-o-animation:logo1 .8s steps(6, end) infinite;-ms-animation:logo1 .8s steps(6, end) infinite;}
         #parchment, #loadcharacter, #banned, #createaccount, #invalidconnection, #confirmation, #error, #legal {width:422px;height:198px;position:absolute;top:50%;left:50%;margin-left:-211px;margin-top:-101px;font-size:10px;text-align:center;z-index:2;}
-        #parchment h1, #instructions h1, #store h1, #completed h1, #failed h1 {margin-top:20px;font-weight:normal;}
+        #parchment h1, #instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {margin-top:20px;font-weight:normal;}
         .left-ornament, .right-ornament {height:12px;width:31px;display:inline-block;margin:0 10px;position:relative;top:3px;}
         .left-ornament {background-position:-354px 0;}
         .right-ornament {background-position:-385px 0;}
@@ -1368,8 +1368,8 @@ footer, header, hgroup, menu, nav, section {
             width: 32px;
         }
 		
-		#instructions, #store, #completed, #failed {height:193px;width:417px;background-position:0 -568px;margin-left:-208px;margin-top:-103px;color:#373737;}
-		#instructions h1, #store h1, #completed h1, #failed h1 {font-size:20px;text-align:center;margin-bottom:0;}
+		#instructions, #store, #settings, #party, #completed, #failed {height:193px;width:417px;background-position:0 -568px;margin-left:-208px;margin-top:-103px;color:#373737;}
+		#instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:20px;text-align:center;margin-bottom:0;}
         #instructions ul {font-size:10px;margin-top:10px;}
         #instructions ul li {margin:10px 0; clear:left;}
         #instructions ul li span {display:block;float:left;position: relative;}
@@ -1450,9 +1450,9 @@ footer, header, hgroup, menu, nav, section {
         #achievementsbutton:hover, #achievementsbutton.blink:hover {background-position:-158px -17px;}
         #achievementsbutton.blink {background-position:-288px -17px;}
         #achievementsbutton.active {background-position:-172px -17px;}
-        #mute-button {background-position:-228px -17px;top:1px;left:465px;}
-        #mute-button:hover {background-position:-242px -17px;}
-        #mute-button.active {background-position:-256px -17px;}
+        #settings-button {background-position:-376px -17px;top:1px;left:465px;}
+        #settings-button:hover {background-position:-390px -17px;}
+        #settings-button.active {background-position:-404px -17px;}
 
 		#chatbox {height:16px;width:394px;background-size:480px;background-position:0 -32px;margin-left:-197px;bottom:6px;}
 		#chatbox.active {bottom:22px;}
@@ -1551,13 +1551,13 @@ footer, header, hgroup, menu, nav, section {
 		#canvasborder {background:none;padding:0;}
         #expbar{right:0;width: 10px;}
 		
-		#parchment, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #completed, #failed, .icon {background-size:422px auto;}
+		#parchment, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #settings, #party, #completed, #failed, .icon {background-size:422px auto;}
         #parchment {background:none;}
         #logo {height:42px;width:229px;position:absolute;top:10%;left:50%;margin-left:-114px;z-index:3;background-size:422px;}
         /* #logo {height:84px;width:458px;position:absolute;top:10%;left:50%;margin-left:-229px;z-index:3;background-size:844px;} */
         #parchment {width:100%;height:auto;position:absolute;left:0;top:82px;margin-left:0;margin-top:0;font-size:10px;text-align:center;z-index:2;color:#eee;}
         #parchment h1 {margin-top:0px;font-weight:normal;}
-        #instructions h1, #store h1, #completed h1, #failed h1 {margin-top:15px;font-size:14px;}
+        #instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {margin-top:15px;font-size:14px;}
         .left-ornament, .right-ornament {height:12px;width:31px;display:inline-block;margin:0 10px;position:relative;top:3px;}
         .left-ornament {background-position:-354px 0;}
         .right-ornament {background-position:-385px 0;}
@@ -1575,8 +1575,8 @@ footer, header, hgroup, menu, nav, section {
         .stroke {text-shadow:1px 1px 0 #373737, 1px -1px 0 #373737, 0 1px 0 #373737, 1px 0 0 #373737, -1px 1px 0 #373737, -1px -1px 0 #373737, 0 -1px 0 #373737, 0 1px 0 #373737, -1px 0 0 #373737;}
         .validation-error {color:#ffc2c2;}
 		
-		#instructions, #store, #completed, #failed {height:193px;width:417px;background-position:0 -568px;margin-left:-208px;margin-top:-113px;color:#373737;}
-		#instructions h1, #store h1, #completed h1, #failed h1 {font-size:20px;text-align:center;margin-bottom:0;}
+		#instructions, #store, #settings, #party, #completed, #failed {height:193px;width:417px;background-position:0 -568px;margin-left:-208px;margin-top:-113px;color:#373737;}
+		#instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:20px;text-align:center;margin-bottom:0;}
         #instructions ul {font-size:13px;margin-top:15px;}
         #instructions ul li {margin:10px 0; clear:left;}
         #instructions ul li span {display:block;float:left;position: relative;}
@@ -1646,7 +1646,7 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton {background-position:-668px -34px;top:2px;left:420px;width:28px;}
         #completedbutton:hover {background-position:-696px -34px;}
         #completedbutton.active {background-position:-724px -34px;}
-        #mute-button { display: none; }
+        #settings-button { display: none; }
 
 		#chatbox {height:32px;width:480px;background-size:960px;background-position:0 -64px;margin-left:-240px;bottom:2px;}
 		#chatbox.active {bottom:34px;}
@@ -1715,7 +1715,7 @@ footer, header, hgroup, menu, nav, section {
 /* Tablet mode */
 
     .tablet .animate .parchment-left, .tablet .animate .parchment-right, .tablet .animate .parchment-middle {-webkit-animation:none;-moz-animation:none;-o-animation:none;-ms-animation:none;}
-    .tablet #instructions, .tablet #store, .tablet #completed, .tablet #failed, .tablet #achievements, .tablet #lists {-webkit-transition:none;-moz-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
+    .tablet #instructions, .tablet #store, .tablet #settings, .tablet #party, .tablet #completed, .tablet #failed, .tablet #achievements, .tablet #lists {-webkit-transition:none;-moz-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
     .tablet #achievements li.unlocked .achievement-sharing {display:block;}
     .tablet #coinsparks {display:none; -moz-animation:none;}
     
@@ -1724,7 +1724,7 @@ footer, header, hgroup, menu, nav, section {
     
 /* Workarounds for chrome windows bugs */
 
-    .windows #parchment, .windows #parchment input, .windows , #store input, .windows #parchment textarea, .windows #notifications, .windows #instructions, .windows #store, .windows #completed, .windows #failed, .windows #achievements, .windows #achievement-notification, 
+    .windows #parchment, .windows #parchment input, .windows , #store input, .windows #parchment textarea, .windows #notifications, .windows #instructions, .windows #store, .windows #settings, .windows #party, .windows #completed, .windows #failed, .windows #achievements, .windows #achievement-notification, 
     .windows #player-count, .windows #credits, .windows #loadcharacter, .windows #banned, .windows #invalidconnection, .windows #confirmation, .windows #death, .windows #error, .windows #about, .windows #legal, 
     .windows #parchment p, .windows #portrait p, .windows .alert, .windows footer, .windows .bubble p, .windows #population .windows #player, .windows #chatinput {font-family:'AdvoCut';}
 

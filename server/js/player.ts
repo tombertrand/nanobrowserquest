@@ -1419,9 +1419,9 @@ class Player extends Character {
       this.server.pushToParty(
         this.getParty(),
         new Messages.Party(Types.Messages.PARTY_ACTIONS.HEALTH, {
-          playerId: this.id,
-          hitPoints: this.hitPoints,
-          maxHitPoints,
+          id: this.id,
+          hp: this.hitPoints,
+          mHp: maxHitPoints,
         }),
         this,
       );

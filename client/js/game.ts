@@ -495,7 +495,7 @@ class Game {
     if (!self.storage.isAudioEnabled()) {
       self.audioManager.disableAudio();
     } else {
-      $("#mute-button").addClass("active");
+      $("#mute-checkbox").prop("checked", true);
     }
   }
 

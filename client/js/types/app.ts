@@ -19,6 +19,7 @@ export interface App {
   blinkInterval: NodeJS.Timeout;
   toggleCompleted: () => void;
   toggleAbout: () => void;
+  toggleSettings: () => void;
   togglePopulationInfo: () => void;
   togglePlayerInfo: () => void;
   toggleInventory: () => void;

@@ -307,10 +307,10 @@ class App {
     $("#party-player-list").empty().html(partyHtml);
   }
 
-  updatePartyHealthBar(member: { playerId: number; hitPoints: number; maxHitPoints: number }) {
-    const { playerId: id, hitPoints, maxHitPoints } = member;
+  updatePartyHealthBar(member: { id: number; hp: number; mHp: number }) {
+    const { id, hp, mHp } = member;
 
-    $(`#player-health-${id}`).css("width", `${Math.floor((hitPoints * 100) / maxHitPoints)}%`);
+    $(`#player-health-${id}`).css("width", `${Math.floor((hp * 100) / mHp)}%`);
   }
 
   removePartyHealthBar() {
@@ -556,6 +556,10 @@ class App {
     }
   }
 
+  toggleSettings() {
+    $("#settings").toggleClass("active");
+  }
+
   resetAchievementPage() {
     var self = this;
     var $achievements = $("#achievements");
@@ -645,6 +649,11 @@ class App {
 
     if ($("#store").hasClass("active")) {
       this.store.closeStore();
+    }
+
+    if ($("#settings").hasClass("active")) {
+      this.toggleSettings();
+      $("#settings-button").removeClass("active");
     }
   }
 
@@ -823,7 +832,7 @@ class App {
   }
 
   toggleMute() {
-    if ($("#mute-button").hasClass("active")) {
+    if ($("#mute-checkbox").is(":checked")) {
       this.storage.setAudioEnabled(true);
       this.game.audioManager.enableAudio();
     } else {
