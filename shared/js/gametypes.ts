@@ -78,6 +78,7 @@ export const Types: any = {
       LOOT: 67,
       HEALTH: 68,
     },
+    SETTINGS: 69,
   },
 
   Entities: {

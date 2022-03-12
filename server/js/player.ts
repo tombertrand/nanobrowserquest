@@ -80,6 +80,7 @@ class Player extends Character {
   capeKind: number;
   capeLevel: number;
   capeBonus: number[] | null;
+  capeHue: number;
   firepotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -990,6 +991,14 @@ class Player extends Character {
             );
           }
         }
+      } else if (action === Types.Messages.SETTINGS) {
+        const settings = message[1];
+
+        if (settings.capeHue) {
+          this.capeHue = settings.capeHue;
+          this.databaseHandler.setCapeHue(this.name, settings.capeHue);
+          this.broadcast(new Messages.Settings(this, settings), false);
+        }
       } else {
         if (self.message_callback) {
           self.message_callback(message);
@@ -1042,6 +1051,9 @@ class Player extends Character {
       this.auras,
       this.partyId,
       [this.cape, this.capeLevel, this.capeBonus].filter(Boolean).join(":"),
+      {
+        capeHue: this.capeHue,
+      },
     ];
 
     return basestate.concat(state);
@@ -1571,6 +1583,7 @@ class Player extends Character {
     waypoints,
     depositAccount,
     depositAccountIndex,
+    settings,
   }) {
     var self = this;
 
@@ -1612,6 +1625,7 @@ class Player extends Character {
     self.hash1 = hash1;
     self.hasRequestedBossPayout = !!hash;
     self.hasRequestedNecromancerPayout = !!hash1;
+    self.capeHue = settings.capeHue;
 
     self.createdAt = createdAt;
     self.experience = exp;
@@ -1660,6 +1674,7 @@ class Player extends Character {
       self.auras,
       self.server.cowLevelCoords,
       self.hasParty() ? { partyId: self.partyId, members, partyLeader } : null,
+      settings,
     ]);
 
     self.calculateBonus();

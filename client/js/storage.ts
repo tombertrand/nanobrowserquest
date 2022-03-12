@@ -4,6 +4,10 @@ class Storage {
   constructor() {
     if (this.hasLocalStorage() && localStorage.data) {
       this.data = JSON.parse(localStorage.data);
+
+      if (!this.data.settings) {
+        this.resetData();
+      }
     } else {
       this.resetData();
     }
@@ -20,10 +24,13 @@ class Storage {
         armor: "",
         image: "",
       },
-      audio: true,
-      // old format
+      settings: {
+        audio: true,
+        showEntityName: true,
+        showDamageInfo: true,
+        capeHue: 0,
+      },
       achievements: {
-        unlocked: [],
         ratCount: 0,
         skeletonCount: 0,
         spectreCount: 0,
@@ -36,7 +43,7 @@ class Storage {
         totalDmg: 0,
         totalRevives: 0,
       },
-      achievement: new Array(40).fill(0),
+      achievement: new Array(44).fill(0),
     };
   }
 
@@ -100,12 +107,36 @@ class Storage {
   }
 
   setAudioEnabled(enabled) {
-    this.data.audio = enabled;
+    this.data.settings.audio = enabled;
+    this.save();
+  }
+
+  setShowEntityNameEnabled(enabled) {
+    this.data.settings.showEntityName = enabled;
+    this.save();
+  }
+
+  setShowDamageInfoEnabled(enabled) {
+    this.data.settings.showDamageInfo = enabled;
     this.save();
   }
 
   isAudioEnabled() {
-    if (typeof this.data.audio !== "boolean" || this.data.audio) {
+    if (typeof this.data.settings.audio !== "boolean" || this.data.settings.audio) {
+      return true;
+    }
+    return false;
+  }
+
+  showEntityNameEnabled() {
+    if (typeof this.data.settings.showEntityName !== "boolean" || this.data.settings.showEntityName) {
+      return true;
+    }
+    return false;
+  }
+
+  showDamageInfoEnabled() {
+    if (typeof this.data.settings.showDamageInfo !== "boolean" || this.data.settings.showDamageInfo) {
       return true;
     }
     return false;
@@ -133,7 +164,6 @@ class Storage {
   }
 
   getAchievementCount() {
-    //   return _.size(this.data.achievements.unlocked);
     return this.data.achievement.filter(Boolean).length;
   }
 

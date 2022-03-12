@@ -1,5 +1,5 @@
 export interface App {
-  config: { dev: { host: string; port: number; dispatcher: boolean; }; build: any; local: any; };
+  config: { dev: { host: string; port: number; dispatcher: boolean }; build: any; local: any };
   initAchievementList(achievements: any);
   initUnlockedAchievements(unlockedAchievementIds: any, totalNano: any);
   closeWaypoint();
@@ -44,9 +44,10 @@ export interface App {
   initExpBar: () => void;
   initPlayerInfo: () => void;
   setMouseCoordinates: (arg0: any) => void;
-  dropDialogPopuped: any;
   closeInGameScroll: (arg0: string) => void;
   toggleMute: () => void;
+  toggleEntityName: () => void;
+  toggleDamageInfo: () => void;
   loginFormActive: () => any;
   createNewCharacterFormActive: () => any;
   updatePartyMembers: (members: any[]) => any;

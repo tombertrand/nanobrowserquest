@@ -624,15 +624,20 @@ footer, header, hgroup, menu, nav, section {
     }
 
     .ui-widget-content {
+        font-family: 'GraphicPixel' !important;
+    }
+
+    .ui-tooltip {
         min-width:220px;
         text-align: center;
-        font-family: 'GraphicPixel' !important;
-        padding: 10px 10px 15px !important;
+        padding: 10px 10px 15px;
         border: none !important;
         background: rgba(0,0,0,0.75) !important;
     }
 
     .ui-dialog {
+        padding: 10px 10px 15px;
+        border: none !important;
         background: none !important;
     }
 
@@ -652,9 +657,15 @@ footer, header, hgroup, menu, nav, section {
         background: #404040 !important;
     }
     .ui-dialog-buttonpane.ui-widget-content  {
+        border: none;
         margin: 0 !important;
         padding: 0 !important;
         background: #404040 !important;
+    }
+
+    #cape-hue-slider {
+        margin: 6px auto;
+        width: 50%;
     }
 
     .no-close .ui-dialog-titlebar-close {
@@ -855,6 +866,15 @@ footer, header, hgroup, menu, nav, section {
         top: 54%;
         left: 50%;
     }
+
+    .ui-slider-handle {
+        cursor: inherit !important;
+        text-align: center;
+        width: auto !important;
+        padding: 0px 4px;
+    }
+
+    .setting {margin: 6px 0}
 
 	@media screen and (min-width: 1501px) {
         #nano {margin-left:-240px;}

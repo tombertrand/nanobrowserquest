@@ -24,6 +24,7 @@ class Player extends Character {
   cape?: string;
   capeLevel?: number;
   capeBonus: null | number[];
+  capeHue: number;
   inventory: any[];
   stash: any[];
   upgrade: any[];
@@ -94,6 +95,7 @@ class Player extends Character {
     this.cape = null;
     this.capeLevel = null;
     this.capeBonus = null;
+    this.capeHue = 0;
     this.inventory = [];
     this.stash = [];
     this.upgrade = [];
@@ -145,6 +147,10 @@ class Player extends Character {
 
   setPartyMembers(partyMembers) {
     this.partyMembers = partyMembers;
+  }
+
+  setCapeHue(hue: number) {
+    this.capeHue = hue;
   }
 
   loot(item) {
@@ -299,6 +305,12 @@ class Player extends Character {
       this.cape = null;
       this.capeLevel = null;
       this.capeBonus = null;
+    }
+  }
+
+  setSettings(settings) {
+    if (settings.capeHue) {
+      this.capeHue = settings.capeHue;
     }
   }
 

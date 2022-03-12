@@ -490,13 +490,45 @@ class Game {
     self.sprites["item-cake"].createSilhouette();
   }
 
-  initMuteButton() {
-    var self = this;
-    if (!self.storage.isAudioEnabled()) {
-      self.audioManager.disableAudio();
+  initSettings(settings) {
+    if (!this.storage.isAudioEnabled()) {
+      this.audioManager.disableAudio();
     } else {
       $("#mute-checkbox").prop("checked", true);
     }
+
+    if (this.storage.showEntityNameEnabled()) {
+      this.renderer.setDrawEntityName(true);
+      $("#entity-name-checkbox").prop("checked", true);
+    } else {
+      this.renderer.setDrawEntityName(false);
+    }
+
+    if (this.storage.showDamageInfoEnabled()) {
+      this.infoManager.setShowDamageInfo(true);
+      $("#damage-info-checkbox").prop("checked", true);
+    } else {
+      this.infoManager.setShowDamageInfo(false);
+    }
+
+    this.player.capeHue = settings.capeHue;
+
+    var handle = $("#cape-hue-handle");
+    $("#cape-hue-slider").slider({
+      min: 0,
+      max: 360,
+      value: settings.capeHue,
+      create: () => {
+        handle.text(settings.capeHue);
+      },
+      slide: (_event, ui) => {
+        handle.text(ui.value);
+      },
+      change: (_event, ui) => {
+        this.player.setCapeHue(ui.value);
+        this.client.sendSettings({ capeHue: ui.value });
+      },
+    });
   }
 
   initTooltips() {
@@ -1921,6 +1953,7 @@ class Game {
       auras,
       cowLevelPortalCoords,
       party,
+      settings,
     }) {
       console.info("Received player ID from server : " + id);
       self.player.id = id;
@@ -1948,6 +1981,7 @@ class Game {
       self.player.setWeaponBonus(weaponBonus);
       self.player.setBelt(belt);
       self.player.setCape(cape);
+
       self.player.setRing1(ring1);
       self.player.setRing2(ring2);
       self.player.setAmulet(amulet);
@@ -1958,7 +1992,7 @@ class Game {
       self.player.setInventory(inventory);
       self.player.setStash(stash);
 
-      self.initMuteButton();
+      self.initSettings(settings);
       self.updateBars();
       self.updateExpBar();
       self.resetCamera();
@@ -2892,6 +2926,13 @@ class Game {
         if (self.player.absorb !== absorb) {
           self.player.absorb = absorb;
           self.updateAbsorb();
+        }
+      });
+
+      self.client.onPlayerSettings(function ({ playerId, settings }) {
+        var player = self.getEntityById(playerId);
+        if (typeof settings.capeHue === "number") {
+          player.capeHue = settings.capeHue;
         }
       });
 

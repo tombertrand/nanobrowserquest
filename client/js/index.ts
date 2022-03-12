@@ -3,6 +3,7 @@ import "jquery-ui/ui/widgets/droppable";
 import "jquery-ui/ui/widgets/resizable";
 import "jquery-ui/ui/widgets/tooltip";
 import "jquery-ui/ui/widgets/dialog";
+import "jquery-ui/ui/widgets/slider";
 import "jquery-countdown";
 import "jquery.qrcode";
 import "jquery-ui-touch-punch";
@@ -481,7 +482,7 @@ var initGame = function () {
     $("#foreground").click(function (event) {
       app.center();
       app.setMouseCoordinates(event);
-      if (game && !app.dropDialogPopuped) {
+      if (game) {
         game.pvpFlag = event.shiftKey;
         game.click();
       }
@@ -714,6 +715,14 @@ var initGame = function () {
 
   $("#mute-checkbox").on("change", function () {
     app.toggleMute();
+  });
+
+  $("#entity-name-checkbox").on("change", function () {
+    app.toggleEntityName();
+  });
+
+  $("#damage-info-checkbox").on("change", function () {
+    app.toggleDamageInfo();
   });
 
   $(document).bind("keydown", function (e) {

@@ -118,6 +118,8 @@ class FormatChecker {
       return message.length === 1 && _.isNumber(message[0]);
     } else if (type === Types.Messages.PURCHASE_CANCEL) {
       return message.length === 1 && _.isString(message[0]);
+    } else if (type === Types.Messages.SETTINGS) {
+      return message.length === 1 && typeof message[0] === "object";
     } else {
       console.error("Unknown message type: " + type);
       return false;

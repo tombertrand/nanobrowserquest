@@ -6,11 +6,17 @@ class InfoManager {
   game: Game;
   infos: {};
   destroyQueue: any[];
+  showDamageInfo: boolean;
 
   constructor(game: Game) {
     this.game = game;
     this.infos = {};
     this.destroyQueue = [];
+    this.showDamageInfo = true;
+  }
+
+  setShowDamageInfo(showDamageInfo: boolean) {
+    this.showDamageInfo = showDamageInfo;
   }
 
   addDamageInfo({
@@ -28,6 +34,8 @@ class InfoManager {
     duration?: number;
     isCritical?: boolean;
   }) {
+    if (!this.showDamageInfo) return;
+
     var time = this.game.currentTime;
     var id = time + "" + (isNaN(value * 1) ? value : value * 1) + "" + x + "" + y;
     var self = this;

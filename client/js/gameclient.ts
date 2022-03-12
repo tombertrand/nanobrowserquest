@@ -68,6 +68,7 @@ class GameClient {
   receivecowlevelstart_callback: any;
   receivecowlevelinprogress_callback: any;
   receivecowlevelend_callback: any;
+  settings_callback: any;
 
   constructor(host, port) {
     this.connection = null;
@@ -104,6 +105,7 @@ class GameClient {
     this.handlers[Types.Messages.KILL] = this.receiveKill;
     this.handlers[Types.Messages.STATS] = this.receiveStats;
     this.handlers[Types.Messages.SETBONUS] = this.receiveSetBonus;
+    this.handlers[Types.Messages.SETTINGS] = this.receiveSettings;
     this.handlers[Types.Messages.BLINK] = this.receiveBlink;
     this.handlers[Types.Messages.PARTY] = this.receiveParty;
     this.handlers[Types.Messages.PVP] = this.receivePVP;
@@ -280,6 +282,7 @@ class GameClient {
     var auras = data[25];
     var cowLevelPortalCoords = data[26];
     var party = data[27];
+    var settings = data[28];
 
     if (this.welcome_callback) {
       this.welcome_callback({
@@ -310,6 +313,7 @@ class GameClient {
         auras,
         cowLevelPortalCoords,
         party,
+        settings,
       });
     }
   }
@@ -380,7 +384,8 @@ class GameClient {
         armorBonus,
         auras,
         partyId,
-        cape;
+        cape,
+        settings;
 
       orientation = data[5];
       target = data[6];
@@ -393,6 +398,7 @@ class GameClient {
         auras = data[11];
         partyId = data[12];
         cape = data[13];
+        settings = data[14];
       }
 
       var character = EntityFactory.createEntity({ kind, id, name });
@@ -408,6 +414,7 @@ class GameClient {
         character.setAuras(auras);
         character.setPartyId(partyId);
         character.setCape(cape);
+        character.setSettings(settings);
       }
 
       if (this.spawn_character_callback) {
@@ -550,6 +557,15 @@ class GameClient {
 
     if (this.stats_callback) {
       this.stats_callback({ maxHitPoints, damage, defense, absorb });
+    }
+  }
+
+  receiveSettings(data) {
+    var playerId = data[1];
+    var settings = data[2];
+
+    if (this.settings_callback) {
+      this.settings_callback({ playerId, settings });
     }
   }
 
@@ -803,6 +819,10 @@ class GameClient {
     this.stats_callback = callback;
   }
 
+  onPlayerSettings(callback) {
+    this.settings_callback = callback;
+  }
+
   onSetBonus(callback) {
     this.setbonus_callback = callback;
   }
@@ -1038,6 +1058,10 @@ class GameClient {
 
   sendPurchaseCancel(account) {
     this.sendMessage([Types.Messages.PURCHASE_CANCEL, account]);
+  }
+
+  sendSettings(settings) {
+    this.sendMessage([Types.Messages.SETTINGS, settings]);
   }
 }
 

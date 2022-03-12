@@ -73,6 +73,7 @@ class DatabaseHandler {
             .hget(userKey, "depositAccountIndex") // 22
             .hget(userKey, "hash1") // 23
             .hget(userKey, "stash") // 24
+            .hget(userKey, "capeHue") // 25
 
             .exec(async (err, replies) => {
               var account = replies[0];
@@ -88,6 +89,7 @@ class DatabaseHandler {
               var expansion1 = !!parseInt(replies[19] || "0");
               var depositAccount = replies[21];
               var depositAccountIndex = replies[22];
+              var capeHue = parseInt(replies[25] || 0, 10);
 
               try {
                 if (!depositAccount) {
@@ -345,6 +347,9 @@ class DatabaseHandler {
                 waypoints,
                 depositAccount,
                 depositAccountIndex,
+                settings: {
+                  capeHue,
+                },
               });
             });
           return;
@@ -390,6 +395,7 @@ class DatabaseHandler {
           .hset(userKey, "armor", "clotharmor:1")
           .hset(userKey, "belt", null)
           .hset(userKey, "cape", null)
+          .hset(userKey, "capeHue", 0)
           .hset(userKey, "ring1", null)
           .hset(userKey, "ring2", null)
           .hset(userKey, "amulet", null)
@@ -421,6 +427,9 @@ class DatabaseHandler {
               stash: new Array(STASH_SLOT_COUNT).fill(0),
               depositAccount,
               depositAccountIndex,
+              settings: {
+                capeHue: 0,
+              },
             });
           });
       }
@@ -519,6 +528,13 @@ class DatabaseHandler {
     } else {
       console.info("Delete Cape");
       this.client.hdel("u:" + name, "cape");
+    }
+  }
+
+  setCapeHue(name, capeHue) {
+    if (typeof capeHue === "number") {
+      console.info("Set Cape Hue: " + name + " " + capeHue);
+      this.client.hset("u:" + name, "capeHue", capeHue);
     }
   }
 

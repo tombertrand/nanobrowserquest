@@ -36,6 +36,7 @@ class Renderer {
   camera: Camera;
   lastTargetPos: { x: any; y: any };
   targetRect: {};
+  isDrawEntityName: boolean;
 
   constructor(game, canvas, background, foreground) {
     this.game = game;
@@ -49,6 +50,8 @@ class Renderer {
 
     this.initFPS();
     this.tilesize = 16;
+
+    this.isDrawEntityName = true;
 
     this.upscaledRendering = true; //this.context.imageSmoothingEnabled !== undefined;
     this.supportsSilhouettes = this.upscaledRendering;
@@ -484,14 +487,21 @@ class Renderer {
         dh = h * ds;
 
       // this.context.filter = "sepia(50%)";
-      // this.context.fillStyle = "hsl(-121, 100%, 50%)";
-      // this.context.filter = "hue-rotate(-100deg)";
+      this.context.fillStyle = "hsl(-121, 100%, 50%)";
+      if (typeof entity.capeHue === "number") {
+        this.context.filter = `hue-rotate(${entity.capeHue}deg)`;
+      }
+      // this.context.filter = `contrast(200%)`;
       // this.context.filter = filter;
       // this.context.fillStyle = "hsl(" + 360 * Math.random() + ",100%,50%)";
 
       this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
-      // this.context.filter = "none";
+      this.context.filter = "none";
     }
+  }
+
+  setDrawEntityName(isDrawEntityName: boolean) {
+    this.isDrawEntityName = isDrawEntityName;
   }
 
   drawEntity(entity) {
@@ -521,7 +531,7 @@ class Renderer {
       }
 
       // @NOTE Why is the entity name persisting?
-      if (!this.mobile && !this.tablet) {
+      if (this.isDrawEntityName && !this.mobile && !this.tablet) {
         this.drawEntityName(entity);
       }
 
@@ -905,14 +915,14 @@ class Renderer {
   }
 
   drawTerrain() {
-    var self = this,
-      m = this.game.map,
-      tilesetwidth = this.tileset.width / m.tilesize;
+    var self = this;
+    var m = this.game.map;
+    var tilesetWidth = this.tileset.width / m.tilesize;
 
     this.game.forEachVisibleTile(function (id, index) {
       if (!m.isHighTile(id) && !m.isAnimatedTile(id)) {
         // Don't draw unnecessary tiles
-        self.drawTile(self.background, id, self.tileset, tilesetwidth, m.width, index);
+        self.drawTile(self.background, id, self.tileset, tilesetWidth, m.width, index);
       }
     }, 1);
   }

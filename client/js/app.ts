@@ -841,6 +841,20 @@ class App {
     }
   }
 
+  toggleEntityName() {
+    const isChecked = $("#entity-name-checkbox").is(":checked");
+
+    this.storage.setShowEntityNameEnabled(isChecked);
+    this.game.renderer.setDrawEntityName(isChecked);
+  }
+
+  toggleDamageInfo() {
+    const isChecked = $("#damage-info-checkbox").is(":checked");
+
+    this.storage.setShowDamageInfoEnabled(isChecked);
+    this.game.infoManager.setShowDamageInfo(isChecked);
+  }
+
   toggleInventory() {
     if ($("#upgrade").hasClass("visible")) {
       $("#upgrade").removeClass("visible");

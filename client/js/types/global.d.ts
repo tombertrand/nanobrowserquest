@@ -18,5 +18,6 @@ declare global {
     countdown(arg: any): JQuery;
     resizable(arg: any): JQuery;
     dialog(arg: any): JQuery;
+    slider(arg: any): JQuery;
   }
 }
