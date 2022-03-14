@@ -73,6 +73,27 @@ Messages.CowLevelEnd = class Message {
   }
 };
 
+Messages.MinotaurLevelStart = class Message {
+  constructor(private coords) {}
+  serialize() {
+    return [Types.Messages.MINOTAURLEVEL_START];
+  }
+};
+
+Messages.MinotaurLevelInProgress = class Message {
+  constructor(private minotaurLevelClock) {}
+  serialize() {
+    return [Types.Messages.MINOTAURLEVEL_INPROGRESS, this.minotaurLevelClock];
+  }
+};
+
+Messages.MinotaurLevelEnd = class Message {
+  constructor(private isCompleted) {}
+  serialize() {
+    return [Types.Messages.MINOTAURLEVEL_END];
+  }
+};
+
 Messages.Health = class Message {
   constructor(private health) {}
   serialize() {

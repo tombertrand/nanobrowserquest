@@ -331,6 +331,19 @@ export const Mobs = {
       this.setAttackRate(1300);
     }
   },
+
+  Minotaur: class Minotaur extends Mob {
+    constructor(id) {
+      super(id, Types.Entities.MINOTAUR);
+      this.moveSpeed = 200;
+      this.atkSpeed = 100;
+      this.idleSpeed = 800;
+      this.walkSpeed = 200;
+      this.shadowOffsetY = 1;
+      this.aggroRange = 4;
+      this.setAttackRate(1300);
+    }
+  },
 };
 
 export default Mobs;

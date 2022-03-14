@@ -132,7 +132,7 @@ class Entity {
           this.kind === Types.Entities.WAYPOINTN
         ) {
           this.currentAnimation.setSpeed(150);
-        } else if (this.kind === Types.Entities.COWPORTAL) {
+        } else if (this.kind === Types.Entities.COWPORTAL || this.kind === Types.Entities.MINOTAURPORTAL) {
           this.currentAnimation.setSpeed(150);
         } else {
           this.currentAnimation.setSpeed(speed);

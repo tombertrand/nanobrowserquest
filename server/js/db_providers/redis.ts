@@ -962,6 +962,14 @@ class DatabaseHandler {
                 upgrade = upgrade.map(() => 0);
                 player.broadcast(new Messages.AnvilRecipe(recipe), false);
               }
+            } else if (recipe === "minotaurLevel") {
+              if (player.server.minotaurLevelClock) {
+                this.moveUpgradeItemsToInventory(player);
+              } else {
+                player.server.startMinotaurLevel();
+                upgrade = upgrade.map(() => 0);
+                player.broadcast(new Messages.AnvilRecipe(recipe), false);
+              }
             }
           } else {
             this.moveUpgradeItemsToInventory(player);

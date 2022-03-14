@@ -250,6 +250,7 @@ export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
 export const isValidRecipe = items => {
   const recipes: { [key in Recipes]: string[] } = {
     cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
+    minotaurLevel: ["wirtleg", "cowkinghorn"],
   };
 
   const result = Object.entries(recipes).find(([_recipe, formulae]) => {

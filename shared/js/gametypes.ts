@@ -79,6 +79,9 @@ export const Types: any = {
       HEALTH: 68,
     },
     SETTINGS: 69,
+    MINOTAURLEVEL_START: 70,
+    MINOTAURLEVEL_INPROGRESS: 71,
+    MINOTAURLEVEL_END: 72,
   },
 
   Entities: {
@@ -111,6 +114,7 @@ export const Types: any = {
     NECROMANCER: 108,
     COW: 119,
     COWKING: 120,
+    MINOTAUR: 131,
 
     // Armors
     FIREFOX: 20,
@@ -131,6 +135,7 @@ export const Types: any = {
     BELTPLATED: 86,
     BELTFROZEN: 91,
     BELTDIAMOND: 129,
+    BELTMINOTAUR: 134,
 
     // Capes
     CAPE: 130,
@@ -169,6 +174,7 @@ export const Types: any = {
     RINGNECROMANCER: 115,
     RINGRAISTONE: 117,
     RINGFOUNTAIN: 126,
+    RINGMINOTAUR: 132,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
     AMULETCOW: 116,
@@ -197,6 +203,7 @@ export const Types: any = {
     WAYPOINTN: 93,
     STASH: 114,
     COWPORTAL: 125,
+    MINOTAURPORTAL: 135,
 
     // Weapons
     DAGGER: 60,
@@ -210,6 +217,7 @@ export const Types: any = {
     BLUEMORNINGSTAR: 107,
     FROZENSWORD: 100,
     DIAMONDSWORD: 121,
+    MINOTAURAXE: 133,
   },
 
   Orientations: {
@@ -278,6 +286,7 @@ Types.Entities.Weapons = [
   Types.Entities.BLUEMORNINGSTAR,
   Types.Entities.FROZENSWORD,
   Types.Entities.DIAMONDSWORD,
+  Types.Entities.MINOTAURAXE,
 ];
 
 Types.Entities.Armors = [
@@ -299,6 +308,7 @@ Types.Entities.Belts = [
   Types.Entities.BELTPLATED,
   Types.Entities.BELTFROZEN,
   Types.Entities.BELTDIAMOND,
+  Types.Entities.BELTMINOTAUR,
 ];
 
 Types.Entities.Rings = [
@@ -308,6 +318,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGNECROMANCER,
   Types.Entities.RINGRAISTONE,
   Types.Entities.RINGFOUNTAIN,
+  Types.Entities.RINGMINOTAUR,
 ];
 
 Types.Entities.Amulets = [Types.Entities.AMULETSILVER, Types.Entities.AMULETGOLD, Types.Entities.AMULETCOW];
@@ -365,6 +376,7 @@ export const kinds = {
   necromancer: [Types.Entities.NECROMANCER, "mob", 400, 45],
   cow: [Types.Entities.COW, "mob", 25, 49],
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
+  minotaur: [Types.Entities.MINOTAUR, "mob", 500, 52],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
@@ -379,6 +391,7 @@ export const kinds = {
   bluemorningstar: [Types.Entities.BLUEMORNINGSTAR, "weapon", "Frozen Morning Star", 14, 26],
   frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 16, 30],
   diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 26, 36],
+  minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 30, 38],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -399,6 +412,7 @@ export const kinds = {
   beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 9, 4],
   beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 16, 10],
   beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 16],
+  beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 34, 18],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 10, 2],
 
@@ -409,6 +423,7 @@ export const kinds = {
   ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 28],
   ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
   ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
+  ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Minotaur", 30],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
@@ -463,6 +478,7 @@ export const kinds = {
   waypointn: [Types.Entities.WAYPOINTN, "npc"],
   stash: [Types.Entities.STASH, "npc"],
   cowportal: [Types.Entities.COWPORTAL, "npc"],
+  minotaurportal: [Types.Entities.MINOTAURPORTAL, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -490,6 +506,7 @@ Types.rankedWeapons = [
   Types.Entities.BLUEMORNINGSTAR,
   Types.Entities.FROZENSWORD,
   Types.Entities.DIAMONDSWORD,
+  Types.Entities.MINOTAURAXE,
 ];
 
 Types.rankedArmors = [
@@ -511,6 +528,7 @@ Types.rankedBelts = [
   Types.Entities.BELTPLATED,
   Types.Entities.BELTFROZEN,
   Types.Entities.BELTDIAMOND,
+  Types.Entities.BELTMINOTAUR,
 ];
 
 Types.itemUniqueMap = {
@@ -526,6 +544,7 @@ Types.itemUniqueMap = {
   bluemorningstar: ["Saylormoon", 16, 28],
   frozensword: ["Broccolish Fury", 20, 32],
   diamondsword: ["Inevitable", 28, 40],
+  minotauraxe: ["TODO", 34, 42],
 
   // name, level, defense
   leatherarmor: ["Representative", 2, 4],
@@ -544,9 +563,16 @@ Types.itemUniqueMap = {
   beltplated: ["Hodler", 9, 6],
   beltfrozen: ["Spam Resistor", 22, 12],
   beltdiamond: ["TaaC", 38, 18],
+  beltminotaur: ["TODO", 40, 20],
 };
 
 Types.setBonus = {
+  minotaur: {
+    attack: 5,
+    minDamage: 5,
+    defense: 5,
+    health: 50,
+  },
   diamond: {
     exp: 5,
     blockChance: 3,
@@ -809,9 +835,10 @@ Types.isBoss = function (kindOrString: number | string) {
       Types.Entities.NECROMANCER,
       Types.Entities.SKELETONCOMMANDER,
       Types.Entities.COWKING,
+      Types.Entities.MINOTAUR,
     ].includes(kindOrString);
   } else {
-    return ["boss", "skeletoncommander", "necromancer", "cowking"].includes(kindOrString);
+    return ["boss", "skeletoncommander", "necromancer", "cowking", "minotaur"].includes(kindOrString);
   }
 };
 
@@ -863,9 +890,10 @@ Types.isUniqueRing = function (kindOrString: number | string) {
       Types.Entities.AMULETCOW,
       Types.Entities.RINGRAISTONE,
       Types.Entities.RINGFOUNTAIN,
+      Types.Entities.RINGMINOTAUR,
     ].includes(kindOrString);
   } else {
-    return ["ringnecromancer", "amuletcow", "ringraistone", "ringfountain"].includes(kindOrString);
+    return ["ringnecromancer", "amuletcow", "ringraistone", "ringfountain", "ringminotaur"].includes(kindOrString);
   }
 };
 
@@ -993,7 +1021,7 @@ Types.getAliasFromName = function (name: string) {
     return "cow king";
   } else if (name.startsWith("waypoint")) {
     return "waypoint";
-  } else if (name === "cowportal") {
+  } else if (name === "cowportal" || name === "minotaurportal") {
     return "Portal";
   }
   return name;

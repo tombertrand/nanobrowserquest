@@ -47,6 +47,10 @@ class World {
   cowPossibleCoords: any[];
   cowEntityIds: any[];
   cowPackOrder: number[][];
+  minotaurLevelClock: any;
+  minotaurLevelInterval: any;
+  minotaurLevelTownNpcId: any;
+  minotaurLevelNpcId: any;
   outgoingQueues: any;
   itemCount: number;
   playerCount: number;
@@ -124,6 +128,10 @@ class World {
       [-1, 2],
       [-2, 2],
     ];
+    this.minotaurLevelClock = null;
+    this.minotaurLevelInterval = null;
+    this.minotaurLevelTownNpcId = null;
+    this.minotaurLevelNpcId = null;
 
     this.outgoingQueues = {};
 
@@ -582,6 +590,14 @@ class World {
       } else {
         this.cowLevelNpcIds.push(npc.id);
       }
+    } else if (kind === Types.Entities.MINOTAURPORTAL) {
+      npc.isDead = true;
+
+      if (x === 40 && y === 210) {
+        this.minotaurLevelTownNpcId = npc.id;
+      } else {
+        this.minotaurLevelNpcId = npc.id;
+      }
     } else {
       this.addEntity(npc);
     }
@@ -666,6 +682,39 @@ class World {
       delete this.entities[entityId];
       delete this.mobs[entityId];
     });
+  }
+
+  startMinotaurLevel() {
+    this.minotaurLevelClock = 15 * 60; // 15 minutes
+
+    const townPortal = this.npcs[this.minotaurLevelTownNpcId];
+    townPortal.respawnCallback();
+
+    const minotaurLevelPortal = this.npcs[this.minotaurLevelNpcId];
+    minotaurLevelPortal.respawnCallback();
+
+    this.pushBroadcast(new Messages.MinotaurLevelStart());
+
+    this.minotaurLevelInterval = setInterval(() => {
+      this.minotaurLevelClock -= 1;
+      if (this.minotaurLevelClock < 0) {
+        clearInterval(this.minotaurLevelInterval);
+        this.endMinotaurLevel();
+      }
+    }, 1000);
+  }
+
+  endMinotaurLevel() {
+    this.minotaurLevelInterval = null;
+    this.minotaurLevelClock = null;
+
+    const townPortal = this.npcs[this.minotaurLevelTownNpcId];
+    this.despawn(townPortal);
+
+    const minotaurLevelPortal = this.npcs[this.minotaurLevelNpcId];
+    this.despawn(minotaurLevelPortal);
+
+    this.pushBroadcast(new Messages.MinotaurLevelEnd());
   }
 
   createItem(kind, x, y, partyId?: number) {

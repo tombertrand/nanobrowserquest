@@ -68,6 +68,9 @@ class GameClient {
   receivecowlevelstart_callback: any;
   receivecowlevelinprogress_callback: any;
   receivecowlevelend_callback: any;
+  receiveminotaurlevelstart_callback: any;
+  receiveminotaurlevelinprogress_callback: any;
+  receiveminotaurlevelend_callback: any;
   settings_callback: any;
 
   constructor(host, port) {
@@ -123,6 +126,9 @@ class GameClient {
     this.handlers[Types.Messages.COWLEVEL_START] = this.receiveCowLevelStart;
     this.handlers[Types.Messages.COWLEVEL_INPROGRESS] = this.receiveCowLevelInProgress;
     this.handlers[Types.Messages.COWLEVEL_END] = this.receiveCowLevelEnd;
+    this.handlers[Types.Messages.MINOTAURLEVEL_START] = this.receiveMinotaurLevelStart;
+    this.handlers[Types.Messages.MINOTAURLEVEL_INPROGRESS] = this.receiveMinotaurLevelInProgress;
+    this.handlers[Types.Messages.MINOTAURLEVEL_END] = this.receiveMinotaurLevelEnd;
     this.enable();
   }
 
@@ -723,6 +729,26 @@ class GameClient {
     }
   }
 
+  receiveMinotaurLevelStart() {
+    if (this.receiveminotaurlevelstart_callback) {
+      this.receiveminotaurlevelstart_callback();
+    }
+  }
+
+  receiveMinotaurLevelInProgress(data) {
+    const minotaurLevelClock = data[1];
+
+    if (this.receiveminotaurlevelinprogress_callback) {
+      this.receiveminotaurlevelinprogress_callback(minotaurLevelClock);
+    }
+  }
+
+  receiveMinotaurLevelEnd() {
+    if (this.receiveminotaurlevelend_callback) {
+      this.receiveminotaurlevelend_callback();
+    }
+  }
+
   onDispatched(callback) {
     this.dispatched_callback = callback;
   }
@@ -925,6 +951,18 @@ class GameClient {
 
   onReceiveCowLevelEnd(callback) {
     this.receivecowlevelend_callback = callback;
+  }
+
+  onReceiveMinotaurLevelStart(callback) {
+    this.receiveminotaurlevelstart_callback = callback;
+  }
+
+  onReceiveMinotaurLevelInProgress(callback) {
+    this.receiveminotaurlevelinprogress_callback = callback;
+  }
+
+  onReceiveMinotaurLevelEnd(callback) {
+    this.receiveminotaurlevelend_callback = callback;
   }
 
   sendCreate(player) {

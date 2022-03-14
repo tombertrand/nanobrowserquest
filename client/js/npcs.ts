@@ -141,6 +141,12 @@ var Npcs = {
       super(id, Types.Entities.COWPORTAL);
     }
   },
+
+  MinotaurPortal: class MinotaurPortal extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.MINOTAURPORTAL);
+    }
+  },
 };
 
 export default Npcs;

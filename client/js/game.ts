@@ -44,6 +44,8 @@ class Game {
   anvilFailTimeout: any;
   cowPortalStart: boolean;
   cowLevelPortalCoords: { x: number; y: number } | null;
+  minotaurPortalStart: boolean;
+  minotaurLevelPortalCoords: { x: number; y: number };
   renderer: Renderer;
   updater: Updater;
   pathfinder: Pathfinder;
@@ -145,6 +147,8 @@ class Game {
     this.anvilFailTimeout = null;
     this.cowPortalStart = false;
     this.cowLevelPortalCoords = null;
+    this.minotaurPortalStart = false;
+    this.minotaurLevelPortalCoords = { x: 34, y: 498 };
 
     this.renderer = null;
     this.updater = null;
@@ -252,6 +256,7 @@ class Game {
       "necromancer",
       "cow",
       "cowking",
+      "minotaur",
       "wizard",
       "guard",
       "king",
@@ -275,6 +280,7 @@ class Game {
       "waypointn",
       "stash",
       "cowportal",
+      "minotaurportal",
       "beachnpc",
       "forestnpc",
       "desertnpc",
@@ -304,6 +310,7 @@ class Game {
       "goldensword",
       "frozensword",
       "diamondsword",
+      "minotauraxe",
       "cape",
       "item-sword",
       "item-axe",
@@ -314,6 +321,7 @@ class Game {
       "item-goldensword",
       "item-frozensword",
       "item-diamondsword",
+      "item-minotauraxe",
       "item-leatherarmor",
       "item-mailarmor",
       "item-platearmor",
@@ -328,6 +336,7 @@ class Game {
       "item-beltplated",
       "item-beltfrozen",
       "item-beltdiamond",
+      "item-beltminotaur",
       "item-cape",
       "item-flask",
       "item-rejuvenationpotion",
@@ -345,6 +354,7 @@ class Game {
       "item-ringnecromancer",
       "item-ringraistone",
       "item-ringfountain",
+      "item-ringminotaur",
       "item-amuletsilver",
       "item-amuletgold",
       "item-amuletcow",
@@ -2393,6 +2403,18 @@ class Game {
                 } else {
                   entity.idle();
                 }
+              } else if (entity.kind === Types.Entities.MINOTAURPORTAL && entity.gridX === 40 && entity.gridY === 210) {
+                if (self.minotaurPortalStart) {
+                  entity.raise();
+                  entity.currentAnimation.setSpeed(75);
+
+                  setTimeout(() => {
+                    entity.idle();
+                    entity.currentAnimation.setSpeed(150);
+                  }, 1200);
+                } else {
+                  entity.idle();
+                }
               } else {
                 entity.idle();
               }
@@ -2874,6 +2896,8 @@ class Game {
           self.tryUnlockingAchievement("FRESH_MEAT");
         } else if (kind === Types.Entities.COWKING) {
           self.tryUnlockingAchievement("COW_KING");
+        } else if (kind === Types.Entities.MINOTAUR) {
+          self.tryUnlockingAchievement("MINOTAUR");
         }
 
         if (Math.floor((self.player.hitPoints * 100) / self.player.maxHitPoints) <= 1 && kind > Types.Entities.RAT2) {
@@ -3116,7 +3140,7 @@ class Game {
       self.client.onReceiveAnvilRecipe(function (recipe) {
         self.setAnvilRecipe();
 
-        if (recipe === "cowLevel") {
+        if (recipe === "cowLevel" || recipe === "minotaurLevel") {
           self.app.closeUpgrade();
           self.audioManager.playSound("portal-open");
         }
@@ -3193,6 +3217,47 @@ class Game {
           if (isCompleted) {
             self.tryUnlockingAchievement("FARMER");
           }
+        }
+      });
+
+      self.client.onReceiveMinotaurLevelStart(function () {
+        self.minotaurPortalStart = true;
+        setTimeout(() => {
+          self.minotaurPortalStart = false;
+        }, 1200);
+      });
+
+      self.client.onReceiveMinotaurLevelInProgress(function (minotaurLevelClock) {
+        var selectedDate = new Date().valueOf() + minotaurLevelClock * 1000;
+
+        if (!self.player.expansion1 || self.player.level < 45) {
+          self.client.sendBanPlayer("Entered MinotaurLevel without expansion or lower than lv.45");
+        }
+
+        $("#countdown")
+          .countdown(selectedDate.toString())
+          .on("update.countdown", function (event) {
+            // @ts-ignore
+            $(this).html(event.strftime("%M:%S"));
+          })
+          .on("finish.countdown", function () {
+            $(this).html("Portal to the secret level closed.");
+
+            setTimeout(() => {
+              $(this).html("");
+            }, 5000);
+          });
+      });
+
+      self.client.onReceiveCowLevelEnd(function () {
+        $("#countdown").countdown(0);
+        $("#countdown").countdown("remove");
+
+        if (self.player.gridY >= 464 && self.player.gridY <= 535) {
+          const x = Math.ceil(randomRange(40, 45));
+          const y = Math.ceil(randomRange(208, 213));
+
+          self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }
       });
 
@@ -3459,6 +3524,20 @@ class Game {
             }
           } else {
             this.player.stop_pathing_callback({ x: 43, y: 212, isWaypoint: true });
+          }
+        }
+      } else if (npc.kind === Types.Entities.MINOTAURPORTAL) {
+        if (this.player.level >= 50) {
+          if (npc.gridX === 40 && npc.gridY === 210) {
+            if (this.minotaurLevelPortalCoords) {
+              this.player.stop_pathing_callback({
+                x: this.minotaurLevelPortalCoords.x,
+                y: this.minotaurLevelPortalCoords.y,
+                isWaypoint: true,
+              });
+            }
+          } else {
+            this.player.stop_pathing_callback({ x: 40, y: 211, isWaypoint: true });
           }
         }
       }

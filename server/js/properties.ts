@@ -355,6 +355,29 @@ var Properties: any = {
     armor: 24,
     weapon: 24,
   },
+
+  minotaur: {
+    drops: {
+      bluemorningstar: 1,
+      hornedarmor: 1,
+      frozenarmor: 1,
+      frozensword: 1,
+      beltfrozen: 1,
+      diamondsword: 1,
+      diamondarmor: 1,
+      beltdiamond: 1,
+      ringfountain: 1,
+      ringraistone: 1,
+      ringminotaur: 1,
+      beltminotaur: 1,
+      minotauraxe: 1,
+      scrollupgradehigh: 1,
+      scrollupgradeblessed: 1,
+    },
+    hp: 10000,
+    armor: 35,
+    weapon: 35,
+  },
 };
 
 Properties.getArmorLevel = function (kind) {

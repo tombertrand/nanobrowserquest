@@ -72,6 +72,13 @@ var Items = {
     }
   },
 
+  MinotaurAxe: class MinotaurAxe extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MINOTAURAXE, "weapon");
+      this.lootMessage = "You pick up a minotaur axe";
+    }
+  },
+
   LeatherArmor: class LeatherArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.LEATHERARMOR, "armor");
@@ -167,6 +174,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.BELTDIAMOND, "belt");
       this.lootMessage = "You pick up a diamond belt";
+    }
+  },
+
+  BeltMinotaur: class BeltMinotaur extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTMINOTAUR, "belt");
+      this.lootMessage = "You pick up a minotaur belt";
     }
   },
 
@@ -286,6 +300,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.RINGFOUNTAIN, "ring");
       this.lootMessage = "You pick up the Fountain of Youth";
+    }
+  },
+
+  RingMinotaur: class RingMinotaur extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGMINOTAUR, "ring");
+      this.lootMessage = "You pick up the Minotaur";
     }
   },
 

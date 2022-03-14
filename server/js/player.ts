@@ -246,10 +246,16 @@ class Player extends Character {
           msg = msg.substr(0, 100); // Enforce maxlength of chat input
 
           if (self.name === "running-coder") {
-            if (msg === "startCowLevel") {
+            if (msg == "startCowLevel") {
               if (!self.server.cowLevelClock) {
                 self.server.startCowLevel();
                 self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
+              }
+              return;
+            } else if (msg == "startMinotaurLevel") {
+              if (!self.server.minotaurLevelClock) {
+                self.server.startMinotaurLevel();
+                self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
               }
               return;
             }
@@ -376,7 +382,7 @@ class Player extends Character {
 
             const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
             dmg = Math.floor(dmg * percentReduce);
-          } else if (mob.kind === Types.Entities.COWKING) {
+          } else if (mob.kind === Types.Entities.COWKING || mob.kind === Types.Entities.MINOTAUR) {
             const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
               x: 0,
               y: 464,
@@ -611,12 +617,18 @@ class Player extends Character {
                   bonus = _.shuffle([5, 6])
                     .slice(0, 2)
                     .concat([8, ...highHealthBonus]);
+                } else if (kind === Types.Entities.RINGMINOTAUR) {
+                  // @TODO Do correct bonus
+                  bonus = _.shuffle([5, 6])
+                    .slice(0, 2)
+                    .concat([8, ...highHealthBonus]);
                 }
 
                 if (
                   kind === Types.Entities.AMULETCOW ||
                   kind === Types.Entities.RINGRAISTONE ||
-                  kind === Types.Entities.RINGFOUNTAIN
+                  kind === Types.Entities.RINGFOUNTAIN ||
+                  kind === Types.Entities.RINGMINOTAUR
                 ) {
                   databaseHandler.logLoot({
                     player,
@@ -656,7 +668,9 @@ class Player extends Character {
           self.server.handlePlayerVanish(self);
           self.server.pushRelevantEntityListTo(self);
 
-          if (y >= 464 && y <= 535) {
+          if (x === 34 && y === 498) {
+            self.send(new Messages.MinotaurLevelInProgress(self.server.minotaurLevelClock).serialize());
+          } else if (y >= 464 && y <= 535) {
             self.send(new Messages.CowLevelInProgress(self.server.cowLevelClock).serialize());
           }
         }
@@ -1383,6 +1397,13 @@ class Player extends Character {
     } else if (this.armorKind === Types.Entities.LEATHERARMOR && this.belt === "beltleather") {
       set = "Leather";
       bonus = Types.setBonus.leather;
+    } else if (
+      this.belt === "beltminotaur" &&
+      this.weaponKind === Types.Entities.MINOTAURAXE &&
+      [this.ring1, this.ring2].includes("ringminotaur")
+    ) {
+      set = "Minotaur";
+      bonus = Types.setBonus.minotaur;
     }
 
     if (bonus) {

@@ -26,6 +26,7 @@ import zombie from "../sprites/zombie.json";
 import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
 import cowking from "../sprites/cowking.json";
+import minotaur from "../sprites/minotaur.json";
 import goldenarmor from "../sprites/goldenarmor.json";
 import bluearmor from "../sprites/bluearmor.json";
 import hornedarmor from "../sprites/hornedarmor.json";
@@ -35,6 +36,7 @@ import spikearmor from "../sprites/spikearmor.json";
 import goldensword from "../sprites/goldensword.json";
 import frozensword from "../sprites/frozensword.json";
 import diamondsword from "../sprites/diamondsword.json";
+import minotauraxe from "../sprites/minotauraxe.json";
 import guard from "../sprites/guard.json";
 import hand from "../sprites/hand.json";
 import impact from "../sprites/impact.json";
@@ -62,6 +64,7 @@ import itemRinggold from "../sprites/item-ringgold.json";
 import itemRingnecromancer from "../sprites/item-ringnecromancer.json";
 import itemRingraistone from "../sprites/item-ringraistone.json";
 import itemRingfountain from "../sprites/item-ringfountain.json";
+import itemRingminotaur from "../sprites/item-ringminotaur.json";
 import itemAmuletsilver from "../sprites/item-amuletsilver.json";
 import itemAmuletgold from "../sprites/item-amuletgold.json";
 import itemAmuletcow from "../sprites/item-amuletcow.json";
@@ -87,10 +90,12 @@ import itemBeltleather from "../sprites/item-beltleather.json";
 import itemBeltplated from "../sprites/item-beltplated.json";
 import itemBeltfrozen from "../sprites/item-beltfrozen.json";
 import itemBeltdiamond from "../sprites/item-beltdiamond.json";
+import itemBeltminotaur from "../sprites/item-beltminotaur.json";
 import itemCape from "../sprites/item-cape.json";
 import itemGoldensword from "../sprites/item-goldensword.json";
 import itemFrozensword from "../sprites/item-frozensword.json";
 import itemDiamondsword from "../sprites/item-diamondsword.json";
+import itemMinotauraxe from "../sprites/item-minotauraxe.json";
 import itemLeatherarmor from "../sprites/item-leatherarmor.json";
 import itemMailarmor from "../sprites/item-mailarmor.json";
 import itemMorningstar from "../sprites/item-morningstar.json";
@@ -115,6 +120,7 @@ import waypointx from "../sprites/waypointx.json";
 import waypointn from "../sprites/waypointn.json";
 import stash from "../sprites/stash.json";
 import cowportal from "../sprites/cowportal.json";
+import minotaurportal from "../sprites/minotaurportal.json";
 import ogre from "../sprites/ogre.json";
 import yeti from "../sprites/yeti.json";
 import werewolf from "../sprites/werewolf.json";
@@ -180,6 +186,7 @@ const sprites = {
   necromancer,
   cow,
   cowking,
+  minotaur,
   goldenarmor,
   bluearmor,
   hornedarmor,
@@ -189,6 +196,7 @@ const sprites = {
   goldensword,
   frozensword,
   diamondsword,
+  minotauraxe,
   guard,
   hand,
   impact,
@@ -216,6 +224,7 @@ const sprites = {
   "item-ringnecromancer": itemRingnecromancer,
   "item-ringraistone": itemRingraistone,
   "item-ringfountain": itemRingfountain,
+  "item-ringminotaur": itemRingminotaur,
   "item-amuletsilver": itemAmuletsilver,
   "item-amuletgold": itemAmuletgold,
   "item-amuletcow": itemAmuletcow,
@@ -241,10 +250,12 @@ const sprites = {
   "item-beltplated": itemBeltplated,
   "item-beltfrozen": itemBeltfrozen,
   "item-beltdiamond": itemBeltdiamond,
+  "item-beltminotaur": itemBeltminotaur,
   "item-cape": itemCape,
   "item-goldensword": itemGoldensword,
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,
+  "item-minotauraxe": itemMinotauraxe,
   "item-leatherarmor": itemLeatherarmor,
   "item-mailarmor": itemMailarmor,
   "item-morningstar": itemMorningstar,
@@ -269,6 +280,7 @@ const sprites = {
   waypointn,
   stash,
   cowportal,
+  minotaurportal,
   ogre,
   yeti,
   werewolf,

@@ -134,6 +134,10 @@ EntityFactory.builders[Types.Entities.COWKING] = function (id) {
   return new Mobs.CowKing(id);
 };
 
+EntityFactory.builders[Types.Entities.MINOTAUR] = function (id) {
+  return new Mobs.Minotaur(id);
+};
+
 //===== items ======
 
 EntityFactory.builders[Types.Entities.SWORD] = function (id) {
@@ -170,6 +174,10 @@ EntityFactory.builders[Types.Entities.FROZENSWORD] = function (id) {
 
 EntityFactory.builders[Types.Entities.DIAMONDSWORD] = function (id) {
   return new Items.DiamondSword(id);
+};
+
+EntityFactory.builders[Types.Entities.MINOTAURAXE] = function (id) {
+  return new Items.MinotaurAxe(id);
 };
 
 EntityFactory.builders[Types.Entities.MORNINGSTAR] = function (id) {
@@ -230,6 +238,10 @@ EntityFactory.builders[Types.Entities.BELTFROZEN] = function (id) {
 
 EntityFactory.builders[Types.Entities.BELTDIAMOND] = function (id) {
   return new Items.BeltDiamond(id);
+};
+
+EntityFactory.builders[Types.Entities.BELTMINOTAUR] = function (id) {
+  return new Items.BeltMinotaur(id);
 };
 
 EntityFactory.builders[Types.Entities.CAPE] = function (id) {
@@ -298,6 +310,10 @@ EntityFactory.builders[Types.Entities.RINGRAISTONE] = function (id) {
 
 EntityFactory.builders[Types.Entities.RINGFOUNTAIN] = function (id) {
   return new Items.RingFountain(id);
+};
+
+EntityFactory.builders[Types.Entities.RINGMINOTAUR] = function (id) {
+  return new Items.RingMinotaur(id);
 };
 
 EntityFactory.builders[Types.Entities.AMULETSILVER] = function (id) {
