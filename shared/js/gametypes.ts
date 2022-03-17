@@ -140,6 +140,9 @@ export const Types: any = {
     // Capes
     CAPE: 130,
 
+    // Chests
+    CHESTBLUE: 136,
+
     // Objects
     FLASK: 35,
     REJUVENATIONPOTION: 110,
@@ -162,6 +165,7 @@ export const Types: any = {
     WIRTLEG: 122,
     SKELETONKINGCAGE: 123,
     NECROMANCERHEART: 124,
+    COWKINGHORN: 137,
 
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
@@ -423,11 +427,13 @@ export const kinds = {
   ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 28],
   ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
   ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
-  ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Minotaur", 30],
+  ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Minotaur Hell Freeze", 30],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
   amuletcow: [Types.Entities.AMULETCOW, "amulet", "Holy Cow King Talisman", 35],
+
+  chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 50],
 
   flask: [Types.Entities.FLASK, "object"],
   rejuvenationpotion: [Types.Entities.REJUVENATIONPOTION, "object"],
@@ -454,6 +460,7 @@ export const kinds = {
   raiblocksbr: [Types.Entities.RAIBLOCKSBR, "object", "Raiblocks artifact"],
   skeletonkingcage: [Types.Entities.SKELETONKINGCAGE, "recipe", "Skeleton King's thoratic cage"],
   necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
+  cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -544,7 +551,7 @@ Types.itemUniqueMap = {
   bluemorningstar: ["Saylormoon", 16, 28],
   frozensword: ["Broccolish Fury", 20, 32],
   diamondsword: ["Inevitable", 28, 40],
-  minotauraxe: ["TODO", 34, 42],
+  minotauraxe: ["PoS4QoS", 34, 42],
 
   // name, level, defense
   leatherarmor: ["Representative", 2, 4],
@@ -562,8 +569,8 @@ Types.itemUniqueMap = {
   beltleather: ["Proof of Wear", 4, 4],
   beltplated: ["Hodler", 9, 6],
   beltfrozen: ["Spam Resistor", 22, 12],
-  beltdiamond: ["TaaC", 38, 18],
-  beltminotaur: ["TODO", 40, 20],
+  beltdiamond: ["Election scheduler", 38, 18],
+  beltminotaur: ["TaaC", 40, 20],
 };
 
 Types.setBonus = {
@@ -591,6 +598,20 @@ Types.setBonus = {
     maxDamage: 3,
     health: 15,
   },
+};
+
+// @TODO Connect these with the tooltips
+Types.setItems = {
+  minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
+  diamond: ["diamondarmor", "beltdiamond", "diamondsword"],
+  frozen: ["frozenarmor", "beltfrozen", "frozensword"],
+  plated: ["platearmor", "beltplated"],
+  leather: ["leatherarmor", "beltleather"],
+};
+
+// @TODO Display on the mob inspect and reduce dmg in the formulas
+Types.immunities = {
+  minotaur: ["flameDamage", "lightningDamage", "coldDamage"],
 };
 
 Types.expForLevel = [
@@ -851,7 +872,15 @@ Types.isScroll = function (kindOrString: number | string) {
       Types.Entities.SCROLLUPGRADEBLESSED,
     ].includes(kindOrString);
   } else {
-    return kindOrString.startsWith("scroll");
+    return kindOrString?.startsWith("scroll");
+  }
+};
+
+Types.isChest = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return [Types.Entities.CHESTBLUE].includes(kindOrString);
+  } else {
+    return kindOrString?.startsWith("chest");
   }
 };
 
@@ -901,15 +930,17 @@ Types.isUniqueWeapon = function (bonus: any) {
   return !!bonus;
 };
 
-Types.isChest = function (kind: number) {
+Types.isStaticChest = function (kind: number) {
   return kind === Types.Entities.CHEST;
 };
 
 Types.isSingle = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
-    return [Types.Entities.SKELETONKINGCAGE, Types.Entities.NECROMANCERHEART].includes(kindOrString);
+    return [Types.Entities.SKELETONKINGCAGE, Types.Entities.NECROMANCERHEART, Types.Entities.COWKINGHORN].includes(
+      kindOrString,
+    );
   } else {
-    return ["skeletonkingcage", "necromancerheart"].includes(kindOrString);
+    return ["skeletonkingcage", "necromancerheart", "cowkinghorn"].includes(kindOrString);
   }
 };
 
@@ -923,7 +954,8 @@ Types.isItem = function (kind: number) {
     Types.isCape(kind) ||
     Types.isScroll(kind) ||
     Types.isSingle(kind) ||
-    (Types.isObject(kind) && !Types.isChest(kind))
+    Types.isChest(kind) ||
+    (Types.isObject(kind) && !Types.isStaticChest(kind))
   );
 };
 
@@ -1166,6 +1198,8 @@ Types.getBonusDescriptionMap = [
   "+# Lightning damage",
   "+# Pierce armor attack",
   "+# Health",
+  "+# Cold damage",
+  "+#% Freeze the enemy",
 ];
 
 Types.bonusType = [
@@ -1187,6 +1221,8 @@ Types.bonusType = [
   "lightningDamage",
   "pierceArmor",
   "highHealth",
+  "coldDamage",
+  "freezeChance",
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1197,7 +1233,7 @@ Types.getBonus = function (rawBonus, level) {
   const magicDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const defensePerLevel = [1, 2, 4, 6, 8, 11, 15, 22, 28, 40];
   const absorbPerLevel = [2, 4, 6, 8, 10, 13, 15, 18, 22, 28];
-  const expPerLevel = [1, 2, 3, 4, 5, 6, 8, 11, 15, 20];
+  const expPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
   const regenerateHealthPerLevel = [1, 2, 3, 6, 9, 12, 15, 20, 25, 40];
   const criticalHitPerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
   const blockChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
@@ -1208,6 +1244,8 @@ Types.getBonus = function (rawBonus, level) {
   const lightningDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const pierceArmorPerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
+  const coldDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const freezeChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1228,6 +1266,8 @@ Types.getBonus = function (rawBonus, level) {
     lightningDamagePerLevel,
     pierceArmorPerLevel,
     highHealthPerLevel,
+    coldDamagePerLevel,
+    freezeChancePerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];
@@ -1273,7 +1313,7 @@ Types.getSetBonus = (rawSetBonus: { [key: string]: number }): any[] => {
 Types.getPartyBonus = function (rawBonus, level) {
   const attackDamagePerLevel = [1, 1, 2, 3, 4, 5, 6, 8, 10, 15];
   const defensePerLevel = [1, 1, 2, 3, 4, 5, 6, 8, 10, 15];
-  const expPerLevel = [1, 2, 3, 4, 5, 6, 8, 11, 15, 20];
+  const expPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
 
   const bonusPerLevel = [attackDamagePerLevel, defensePerLevel, expPerLevel];
 
@@ -1471,6 +1511,8 @@ Types.getDisplayName = function (item: string, isUnique = false) {
 Types.itemDescription = {
   skeletonkingcage: "The thoracic cage of the Skeleton King. An unknown magic is still being emitted from the remains.",
   necromancerheart: "The heart of the Necromancer. An unknown magic is still being emitted from the remains.",
+  cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
+  chestblue: "The chest may contain a very precious item.",
   scrollupgradelow:
     "Upgrade low class items. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgrademedium:

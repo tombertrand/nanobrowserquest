@@ -81,6 +81,8 @@ class Player extends Character {
   capeLevel: number;
   capeBonus: number[] | null;
   capeHue: number;
+  capeSaturate: number;
+  capeContrast: number;
   firepotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -246,13 +248,13 @@ class Player extends Character {
           msg = msg.substr(0, 100); // Enforce maxlength of chat input
 
           if (self.name === "running-coder") {
-            if (msg == "startCowLevel") {
+            if (msg == "startCowLevel" || msg === "/cow") {
               if (!self.server.cowLevelClock) {
                 self.server.startCowLevel();
                 self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
               }
               return;
-            } else if (msg == "startMinotaurLevel") {
+            } else if (msg == "startMinotaurLevel" || msg === "/minotaur") {
               if (!self.server.minotaurLevelClock) {
                 self.server.startMinotaurLevel();
                 self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
@@ -333,6 +335,7 @@ class Player extends Character {
             drainLife: self.bonus.drainLife,
             flameDamage: self.bonus.flameDamage,
             lightningDamage: self.bonus.lightningDamage,
+            coldDamage: self.bonus.coldDamage,
             pierceArmor: self.bonus.pierceArmor,
             partyAttackDamage: self.partyBonus.attackDamage,
           });
@@ -535,114 +538,12 @@ class Player extends Character {
               }
             } else {
               let player = self;
-              let isUnique = false;
-
               // Single items can't be party looted, like potions
               if (!Types.isSingle(kind) && self.partyId) {
                 player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
               }
 
-              if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind)) {
-                isUnique = random(100) === 42;
-                const baseLevel = Types.getBaseLevel(kind);
-                const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
-                let bonus = null;
-
-                if (isUnique) {
-                  if (Types.isArmor(kind)) {
-                    bonus = [6];
-                  } else if (Types.isWeapon(kind)) {
-                    bonus = [3, 14];
-                  } else if (Types.isBelt(kind)) {
-                    const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
-                    bonus = _.shuffle(mediumLevelBonus).slice(0, 1).sort();
-                  }
-                }
-
-                databaseHandler.lootItems({
-                  player,
-                  items: [{ item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null }],
-                });
-              } else if (Types.isScroll(kind) || Types.isSingle(kind)) {
-                databaseHandler.lootItems({
-                  player,
-                  items: [{ item: Types.getKindAsString(kind), quantity: 1 }],
-                });
-              } else if (Types.isCape(kind)) {
-                const bonus = self.generateRandomCapeBonus();
-
-                databaseHandler.lootItems({
-                  player,
-                  items: [
-                    { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) },
-                  ],
-                });
-              } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
-                const lowLevelBonus = [0, 1, 2, 3];
-                const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
-                const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-                const amuletHighLevelBonus = [9, 10];
-                const drainLifeBonus = [13];
-                const fireDamageBonus = [14];
-                const lightningDamageBonus = [15];
-                const pierceArmorBonus = [16];
-                const highHealthBonus = [17];
-
-                let bonus = [];
-                if (kind === Types.Entities.RINGBRONZE) {
-                  bonus = _.shuffle(lowLevelBonus).slice(0, 1);
-                } else if (kind === Types.Entities.RINGSILVER || kind === Types.Entities.AMULETSILVER) {
-                  bonus = _.shuffle(mediumLevelBonus).slice(0, 2);
-                } else if (kind === Types.Entities.RINGGOLD) {
-                  bonus = _.shuffle(highLevelBonus).slice(0, 3);
-                } else if (kind === Types.Entities.AMULETGOLD) {
-                  bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
-                } else if (kind === Types.Entities.RINGNECROMANCER) {
-                  bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
-                } else if (kind === Types.Entities.AMULETCOW) {
-                  bonus = _.shuffle(highLevelBonus)
-                    .slice(0, 3)
-                    .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-                    .concat(
-                      _.shuffle([
-                        ...fireDamageBonus,
-                        ...highHealthBonus,
-                        ...lightningDamageBonus,
-                        ...pierceArmorBonus,
-                      ]).slice(0, 1),
-                    );
-                } else if (kind === Types.Entities.RINGRAISTONE) {
-                  bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
-                } else if (kind === Types.Entities.RINGFOUNTAIN) {
-                  bonus = _.shuffle([5, 6])
-                    .slice(0, 2)
-                    .concat([8, ...highHealthBonus]);
-                } else if (kind === Types.Entities.RINGMINOTAUR) {
-                  // @TODO Do correct bonus
-                  bonus = _.shuffle([5, 6])
-                    .slice(0, 2)
-                    .concat([8, ...highHealthBonus]);
-                }
-
-                if (
-                  kind === Types.Entities.AMULETCOW ||
-                  kind === Types.Entities.RINGRAISTONE ||
-                  kind === Types.Entities.RINGFOUNTAIN ||
-                  kind === Types.Entities.RINGMINOTAUR
-                ) {
-                  databaseHandler.logLoot({
-                    player,
-                    item: `${Types.getKindAsString(kind)}:1:[${bonus.sort((a, b) => a - b)}]`,
-                  });
-                }
-
-                databaseHandler.lootItems({
-                  player,
-                  items: [
-                    { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) },
-                  ],
-                });
-              }
+              const { isUnique, ...generatedItem } = self.generateItem({ kind });
 
               if (self.partyId) {
                 self.server.pushToParty(
@@ -650,6 +551,11 @@ class Player extends Character {
                   new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [{ playerName: player.name, kind, isUnique }]),
                 );
               }
+
+              this.databaseHandler.lootItems({
+                player,
+                items: [generatedItem],
+              });
             }
           }
         }
@@ -1008,9 +914,18 @@ class Player extends Character {
       } else if (action === Types.Messages.SETTINGS) {
         const settings = message[1];
 
-        if (settings.capeHue) {
-          this.capeHue = settings.capeHue;
-          this.databaseHandler.setCapeHue(this.name, settings.capeHue);
+        if (settings) {
+          if (settings.capeHue) {
+            this.capeHue = settings.capeHue;
+          }
+          if (settings.capeSaturate) {
+            this.capeSaturate = settings.capeSaturate;
+          }
+          if (settings.capeContrast) {
+            this.capeContrast = settings.capeContrast;
+          }
+
+          this.databaseHandler.setSettings(this.name, settings);
           this.broadcast(new Messages.Settings(this, settings), false);
         }
       } else {
@@ -1037,6 +952,89 @@ class Player extends Character {
     const lowLevelBonus = [0, 1, 2];
 
     return _.shuffle(lowLevelBonus).slice(0, 1);
+  }
+
+  generateItem({ kind, uniqueChances = 1 }): {
+    item: string;
+    level?: number;
+    quantity?: 1;
+    bonus: string;
+    isUnique?: boolean;
+  } {
+    let isUnique = false;
+    let item;
+
+    if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind)) {
+      const randomIsUnique = random(100);
+      isUnique = randomIsUnique < uniqueChances;
+
+      const baseLevel = Types.getBaseLevel(kind);
+      const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
+      let bonus = null;
+
+      if (isUnique) {
+        if (Types.isArmor(kind)) {
+          bonus = [6];
+        } else if (Types.isWeapon(kind)) {
+          bonus = [3, 14];
+        } else if (Types.isBelt(kind)) {
+          const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
+          bonus = _.shuffle(mediumLevelBonus).slice(0, 1).sort();
+        }
+      }
+
+      item = { item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null, isUnique };
+    } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isChest(kind)) {
+      item = { item: Types.getKindAsString(kind), quantity: 1 };
+    } else if (Types.isCape(kind)) {
+      const bonus = this.generateRandomCapeBonus();
+
+      item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
+    } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
+      const lowLevelBonus = [0, 1, 2, 3];
+      const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
+      const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      const amuletHighLevelBonus = [9, 10];
+      const drainLifeBonus = [13];
+      const fireDamageBonus = [14];
+      const lightningDamageBonus = [15];
+      const pierceArmorBonus = [16];
+      const highHealthBonus = [17];
+      const coldDamageBonus = [18];
+      const freezeChanceBonus = [19];
+
+      let bonus = [];
+      if (kind === Types.Entities.RINGBRONZE) {
+        bonus = _.shuffle(lowLevelBonus).slice(0, 1);
+      } else if (kind === Types.Entities.RINGSILVER || kind === Types.Entities.AMULETSILVER) {
+        bonus = _.shuffle(mediumLevelBonus).slice(0, 2);
+      } else if (kind === Types.Entities.RINGGOLD) {
+        bonus = _.shuffle(highLevelBonus).slice(0, 3);
+      } else if (kind === Types.Entities.AMULETGOLD) {
+        bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
+      } else if (kind === Types.Entities.RINGNECROMANCER) {
+        bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
+      } else if (kind === Types.Entities.AMULETCOW) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceArmorBonus]).slice(0, 1));
+      } else if (kind === Types.Entities.RINGRAISTONE) {
+        bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
+      } else if (kind === Types.Entities.RINGFOUNTAIN) {
+        bonus = _.shuffle([5, 6])
+          .slice(0, 2)
+          .concat([8, ...highHealthBonus]);
+      } else if (kind === Types.Entities.RINGMINOTAUR) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat([...coldDamageBonus, ...freezeChanceBonus]);
+      }
+
+      item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
+    }
+
+    return item;
   }
 
   destroy() {
@@ -1067,6 +1065,8 @@ class Player extends Character {
       [this.cape, this.capeLevel, this.capeBonus].filter(Boolean).join(":"),
       {
         capeHue: this.capeHue,
+        capeSaturate: this.capeSaturate,
+        capeContrast: this.capeContrast,
       },
     ];
 
@@ -1201,6 +1201,7 @@ class Player extends Character {
     let hasDrainLifeAura = false;
     let hasThunderstormAura = false;
     let hasHighHealth = false;
+    let hasFreezeAura = false;
 
     if (this.bonus.drainLife) {
       hasDrainLifeAura = true;
@@ -1209,8 +1210,8 @@ class Player extends Character {
       hasThunderstormAura = true;
     }
 
-    if (this.bonus.highHealth) {
-      hasHighHealth = true;
+    if (this.bonus.freezeChance) {
+      hasFreezeAura = true;
     }
 
     this.resetBonus();
@@ -1278,6 +1279,12 @@ class Player extends Character {
       } else if (hasHighHealth && !this.bonus.highHealth) {
         this.removeAura("highhealth");
       }
+
+      if (this.bonus.freezeChance) {
+        this.addAura("freeze");
+      } else if (hasFreezeAura && !this.bonus.freezeChance) {
+        this.removeAura("freeze");
+      }
     } catch (err) {
       console.log("Error: ", err);
       Sentry.captureException(err, {
@@ -1318,6 +1325,8 @@ class Player extends Character {
       lightningDamage: 0,
       pierceArmor: 0,
       highHealth: 0,
+      coldDamage: 0,
+      freezeChance: 0,
     };
   }
 
@@ -1382,27 +1391,27 @@ class Player extends Character {
       this.belt === "beltfrozen" &&
       this.weaponKind === Types.Entities.FROZENSWORD
     ) {
-      set = "Frozen";
+      set = "frozen";
       bonus = Types.setBonus.frozen;
     } else if (
       this.armorKind === Types.Entities.DIAMONDARMOR &&
       this.belt === "beltdiamond" &&
       this.weaponKind === Types.Entities.DIAMONDSWORD
     ) {
-      set = "Diamond";
+      set = "diamond";
       bonus = Types.setBonus.diamond;
     } else if (this.armorKind === Types.Entities.PLATEARMOR && this.belt === "beltplated") {
-      set = "Plated";
+      set = "plated";
       bonus = Types.setBonus.plated;
     } else if (this.armorKind === Types.Entities.LEATHERARMOR && this.belt === "beltleather") {
-      set = "Leather";
+      set = "leather";
       bonus = Types.setBonus.leather;
     } else if (
       this.belt === "beltminotaur" &&
       this.weaponKind === Types.Entities.MINOTAURAXE &&
       [this.ring1, this.ring2].includes("ringminotaur")
     ) {
-      set = "Minotaur";
+      set = "minotaur";
       bonus = Types.setBonus.minotaur;
     }
 
@@ -1510,6 +1519,7 @@ class Player extends Character {
       drainLife: this.bonus.drainLife,
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
+      coldDamage: this.bonus.coldDamage,
       pierceArmor: this.bonus.pierceArmor,
       partyAttackDamage: this.getParty()?.members.length >= 2 ? this.partyBonus.attackDamage : 0,
     });
@@ -1647,6 +1657,8 @@ class Player extends Character {
     self.hasRequestedBossPayout = !!hash;
     self.hasRequestedNecromancerPayout = !!hash1;
     self.capeHue = settings.capeHue;
+    self.capeSaturate = settings.capeSaturate;
+    self.capeContrast = settings.capeContrast;
 
     self.createdAt = createdAt;
     self.experience = exp;

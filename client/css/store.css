@@ -27,7 +27,7 @@
 .scrollupgradeblessed,
 .scrollupgradehigh,
 .scrollupgrademedium,
-.cape {
+.cape, .cape7 {
   height: 100%;
 }
 
@@ -112,6 +112,14 @@
   right: 0;
 }
 
+.cape {
+  background-image: url(../img/3/item-cape.png);
+}
+
+.cape7 {
+  background-image: url(../img/3/item-cape7.png);
+}
+
 @media screen and (min-width: 1501px) {
   .store-wrapper {
     margin: -20px 20px 0;
@@ -130,14 +138,10 @@
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
-  .cape {
+  .cape, .cape7 {
     background-position: 0px -5px;
     background-repeat: no-repeat;
     background-size: 440px;
-  }
-
-  .cape {
-    background-image: url(../img/3/item-cape.png);
   }
 
   .scrollupgradeblessed {
@@ -227,13 +231,9 @@
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
-  .cape {
+  .cape, .cape7 {
     background-position: 0px -3px !important;
     background-size: auto !important;
-  }
-
-  .cape {
-    background-image: url(../img/3/item-cape.png);
   }
 
   .scrollupgradeblessed {
@@ -328,7 +328,7 @@
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
-  .cape {
+  .cape, .cape7 {
     background-size: 160px !important;
   }
 

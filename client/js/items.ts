@@ -306,7 +306,7 @@ var Items = {
   RingMinotaur: class RingMinotaur extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGMINOTAUR, "ring");
-      this.lootMessage = "You pick up the Minotaur";
+      this.lootMessage = "You pick up the Minotaur Hell Freeze";
     }
   },
 
@@ -328,6 +328,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.AMULETCOW, "amulet");
       this.lootMessage = "You pick up the Holy Cow King Talisman";
+    }
+  },
+
+  ChestBlue: class ChestBlue extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHESTBLUE, "chest");
+      this.lootMessage = "You pick up a blue chest";
     }
   },
 
@@ -412,6 +419,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.NECROMANCERHEART, "object");
       this.lootMessage = "You pick the Necromancer's heart";
+    }
+  },
+
+  CowkingHorn: class CowkingHorn extends Item {
+    constructor(id) {
+      super(id, Types.Entities.COWKINGHORN, "object");
+      this.lootMessage = "You pick the Cow King's horn";
     }
   },
 

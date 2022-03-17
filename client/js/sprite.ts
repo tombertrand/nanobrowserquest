@@ -47,8 +47,6 @@ class Sprite {
   load() {
     var self = this;
 
-    console.log("~~~~this.name", this.name);
-
     this.image = new Image();
     this.image.crossOrigin = "Anonymous";
     this.image.src = "img/" + this.scale + "/" + this.id + ".png";

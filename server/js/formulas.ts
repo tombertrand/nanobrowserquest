@@ -14,6 +14,7 @@ Formulas.minMaxDamage = function ({
   drainLife,
   flameDamage,
   lightningDamage,
+  coldDamage,
   pierceArmor,
   partyAttackDamage,
 }) {
@@ -26,6 +27,7 @@ Formulas.minMaxDamage = function ({
     drainLife +
     flameDamage +
     lightningDamage +
+    coldDamage +
     pierceArmor;
 
   let min = baseDamage + minDamage + Math.round(Math.pow(0.7, Math.floor(playerLevel / 10)) * playerLevel);
@@ -58,6 +60,7 @@ Formulas.dmg = function ({
   drainLife,
   flameDamage,
   lightningDamage,
+  coldDamage,
   pierceArmor,
   partyAttackDamage,
 }) {
@@ -72,6 +75,7 @@ Formulas.dmg = function ({
     drainLife,
     flameDamage,
     lightningDamage,
+    coldDamage,
     pierceArmor,
     partyAttackDamage,
   });

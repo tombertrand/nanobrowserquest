@@ -68,6 +68,7 @@ import itemRingminotaur from "../sprites/item-ringminotaur.json";
 import itemAmuletsilver from "../sprites/item-amuletsilver.json";
 import itemAmuletgold from "../sprites/item-amuletgold.json";
 import itemAmuletcow from "../sprites/item-amuletcow.json";
+import itemChestblue from "../sprites/item-chestblue.json";
 import itemScrollupgradelow from "../sprites/item-scrollupgradelow.json";
 import itemScrollupgrademedium from "../sprites/item-scrollupgrademedium.json";
 import itemScrollupgradehigh from "../sprites/item-scrollupgradehigh.json";
@@ -80,6 +81,7 @@ import itemRaiblocksbr from "../sprites/item-raiblocksbr.json";
 import itemWirtleg from "../sprites/item-wirtleg.json";
 import itemSkeletonkingcage from "../sprites/item-skeletonkingcage.json";
 import itemNecromancerheart from "../sprites/item-necromancerheart.json";
+import itemCowkinghorn from "../sprites/item-cowkinghorn.json";
 import itemGoldenarmor from "../sprites/item-goldenarmor.json";
 import itemBluearmor from "../sprites/item-bluearmor.json";
 import itemHornedarmor from "../sprites/item-hornedarmor.json";
@@ -152,6 +154,7 @@ import levelup from "../sprites/levelup.json";
 import auraDrainlife from "../sprites/aura-drainlife.json";
 import auraThunderstorm from "../sprites/aura-thunderstorm.json";
 import auraHighhealth from "../sprites/aura-highhealth.json";
+import auraFreeze from "../sprites/aura-freeze.json";
 import villagegirl from "../sprites/villagegirl.json";
 import villager from "../sprites/villager.json";
 import carlosmatos from "../sprites/carlosmatos.json";
@@ -228,6 +231,7 @@ const sprites = {
   "item-amuletsilver": itemAmuletsilver,
   "item-amuletgold": itemAmuletgold,
   "item-amuletcow": itemAmuletcow,
+  "item-chestblue": itemChestblue,
   "item-scrollupgradelow": itemScrollupgradelow,
   "item-scrollupgrademedium": itemScrollupgrademedium,
   "item-scrollupgradehigh": itemScrollupgradehigh,
@@ -240,6 +244,7 @@ const sprites = {
   "item-wirtleg": itemWirtleg,
   "item-skeletonkingcage": itemSkeletonkingcage,
   "item-necromancerheart": itemNecromancerheart,
+  "item-cowkinghorn": itemCowkinghorn,
   "item-goldenarmor": itemGoldenarmor,
   "item-bluearmor": itemBluearmor,
   "item-hornedarmor": itemHornedarmor,
@@ -312,6 +317,7 @@ const sprites = {
   "aura-drainlife": auraDrainlife,
   "aura-thunderstorm": auraThunderstorm,
   "aura-highhealth": auraHighhealth,
+  "aura-freeze": auraFreeze,
   villagegirl,
   villager,
   carlosmatos,

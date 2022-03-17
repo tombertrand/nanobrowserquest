@@ -173,6 +173,15 @@ var NpcTalk = {
     },
   ],
 
+  minotaurportal: [
+    {
+      condition(game: any) {
+        return game.player.level < 54;
+      },
+      text: ["You need to be lv.54 and above to access the secret level"],
+    },
+  ],
+
   coder: [
     "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",
     "That's the beauty of HTML5!",
@@ -207,6 +216,7 @@ class Npc extends Character {
   constructor(id, kind) {
     super(id, kind);
     this.itemKind = Types.getKindAsString(this.kind);
+
     if (typeof NpcTalk[this.itemKind][0] === "string") {
       this.discourse = -1;
       this.talkCount = NpcTalk[this.itemKind].length;

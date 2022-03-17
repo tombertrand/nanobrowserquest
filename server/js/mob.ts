@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-import {ChestArea,MobArea} from "./area";
+import { ChestArea, MobArea } from "./area";
 import Character from "./character";
 // import ChestArea from "./chestarea";
 import Messages from "./message";
@@ -53,7 +53,8 @@ class Mob extends Character {
     this.updateHitPoints();
     this.resetPosition();
 
-    if (this.kind !== Types.Entities.ZOMBIE) {
+    // @TODO Finish the Minotaur 8h respawn
+    if (this.kind !== Types.Entities.ZOMBIE || this.kind !== Types.Entities.MINOTAUR) {
       this.handleRespawn(delay);
     }
 

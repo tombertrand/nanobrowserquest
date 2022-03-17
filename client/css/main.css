@@ -663,11 +663,6 @@ footer, header, hgroup, menu, nav, section {
         background: #404040 !important;
     }
 
-    #cape-hue-slider {
-        margin: 6px auto;
-        width: 50%;
-    }
-
     .no-close .ui-dialog-titlebar-close {
         display: none;
     }

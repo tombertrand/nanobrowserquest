@@ -1,0 +1,12 @@
+{
+  "id": "aura-freeze",
+  "width": 16,
+  "height": 8,
+  "animations": {
+    "idle_down": {
+      "length": 10,
+      "row": 0
+    }
+  },
+  "offset_y": -16
+}

@@ -93,6 +93,7 @@ class Game {
   drainLifeAnimation: Animation;
   thunderstormAnimation: Animation;
   highHealthAnimation: Animation;
+  freezeAnimation: Animation;
   anvilRecipeAnimation: Animation;
   anvilSuccessAnimation: Animation;
   anvilFailAnimation: Animation;
@@ -162,6 +163,7 @@ class Game {
     this.drainLifeAnimation = null;
     this.thunderstormAnimation = null;
     this.highHealthAnimation = null;
+    this.freezeAnimation = null;
     this.anvilRecipeAnimation = null;
     this.anvilSuccessAnimation = null;
     this.anvilFailAnimation = null;
@@ -228,6 +230,7 @@ class Game {
       "aura-drainlife",
       "aura-thunderstorm",
       "aura-highhealth",
+      "aura-freeze",
       "talk",
       "sparks",
       "shadow16",
@@ -358,6 +361,7 @@ class Game {
       "item-amuletsilver",
       "item-amuletgold",
       "item-amuletcow",
+      "item-chestblue",
       "item-scrollupgradelow",
       "item-scrollupgrademedium",
       "item-scrollupgradehigh",
@@ -370,6 +374,7 @@ class Game {
       "item-wirtleg",
       "item-skeletonkingcage",
       "item-necromancerheart",
+      "item-cowkinghorn",
       "item-cake",
       "item-burger",
       "morningstar",
@@ -472,6 +477,9 @@ class Game {
     this.highHealthAnimation = new Animation("idle_down", 6, 0, 16, 8);
     this.highHealthAnimation.setSpeed(140);
 
+    this.freezeAnimation = new Animation("idle_down", 8, 0, 16, 8);
+    this.freezeAnimation.setSpeed(140);
+
     this.anvilRecipeAnimation = new Animation("idle_down", 4, 0, 15, 8);
     this.anvilRecipeAnimation.setSpeed(80);
 
@@ -522,23 +530,74 @@ class Game {
     }
 
     this.player.capeHue = settings.capeHue;
-
-    var handle = $("#cape-hue-handle");
+    var handleHue = $("#cape-hue-handle");
     $("#cape-hue-slider").slider({
       min: 0,
       max: 360,
       value: settings.capeHue,
       create: () => {
-        handle.text(settings.capeHue);
+        handleHue.text(settings.capeHue);
       },
       slide: (_event, ui) => {
-        handle.text(ui.value);
+        handleHue.text(ui.value);
+        this.player.setCapeHue(ui.value);
+        this.updateCapePreview();
       },
       change: (_event, ui) => {
-        this.player.setCapeHue(ui.value);
         this.client.sendSettings({ capeHue: ui.value });
       },
     });
+
+    this.player.capeSaturate = settings.capeSaturate;
+    var handleSaturate = $("#cape-saturate-handle");
+    $("#cape-saturate-slider").slider({
+      min: 0,
+      max: 400,
+      value: settings.capeSaturate,
+      create: () => {
+        handleSaturate.text(`${settings.capeSaturate}%`);
+      },
+      slide: (_event, ui) => {
+        handleSaturate.text(`${ui.value}%`);
+        this.player.setCapeSaturate(ui.value);
+        this.updateCapePreview();
+      },
+      change: (_event, ui) => {
+        this.client.sendSettings({ capeSaturate: ui.value });
+      },
+    });
+
+    this.player.capeContrast = settings.capeContrast;
+    var handleContrast = $("#cape-contrast-handle");
+    $("#cape-contrast-slider").slider({
+      min: 0,
+      max: 300,
+      value: settings.capeContrast,
+      create: () => {
+        handleContrast.text(`${settings.capeContrast}%`);
+      },
+      slide: (_event, ui) => {
+        handleContrast.text(`${ui.value}%`);
+        this.player.setCapeContrast(ui.value);
+        this.updateCapePreview();
+      },
+      change: (_event, ui) => {
+        this.client.sendSettings({ capeContrast: ui.value });
+      },
+    });
+
+    this.updateCapePreview();
+  }
+
+  updateCapePreview() {
+    // @NOTE Adjustment because css filters and canvas filters are not the same
+    const saturate = this.player.capeSaturate + 40 > 100 ? this.player.capeSaturate + 40 : 100;
+    const contrast = this.player.capeContrast + 40 > 100 ? this.player.capeContrast + 40 : 100;
+
+    $("#settings-cape-preview").css(
+      "filter",
+      `hue-rotate(${this.player.capeHue}deg) saturate(${saturate}%) contrast(${contrast}%)`,
+    );
   }
 
   initTooltips() {
@@ -554,9 +613,16 @@ class Game {
         const item = element.attr("data-item");
         const level = element.attr("data-level");
         const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
-        const slot = element.parent().attr("data-slot");
+        const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
 
-        const rawSetBonus = [100, 101, 102].includes(parseInt(slot, 10)) ? self.player.setBonus : null;
+        let rawSetBonus = null;
+        if (
+          self.player.set &&
+          Object.values(Types.Slot).includes(slot) &&
+          Types.setItems[self.player.set]?.includes(item)
+        ) {
+          rawSetBonus = self.player.setBonus;
+        }
 
         const {
           name,
@@ -601,12 +667,15 @@ class Game {
   initSendUpgradeItem() {
     var self = this;
     $("#upgrade-btn").on("click", function () {
-      if (self.player.upgrade.length < 2) return;
-
-      if (!self.isUpgradeItemSent) {
-        self.client.sendUpgradeItem();
+      if (
+        self.player.upgrade.length >= 2 ||
+        (self.player.upgrade.length === 1 && Types.isChest(self.player.upgrade[0]?.item))
+      ) {
+        if (!self.isUpgradeItemSent) {
+          self.client.sendUpgradeItem();
+        }
+        self.isUpgradeItemSent = true;
       }
-      self.isUpgradeItemSent = true;
     });
   }
 
@@ -626,7 +695,7 @@ class Game {
                 "background-image": `url("${self.getIconPath(item, parseInt(level) + 1)}")`,
               },
               "data-item": item,
-              "data-level": parseInt(level) + 1,
+              "data-level": level ? parseInt(level) + 1 : "",
               "data-bonus": bonus,
             }),
           );
@@ -744,7 +813,10 @@ class Game {
         const item = $(this).attr("data-item");
         const type = kinds[item][1];
 
-        if (["weapon", "armor", "belt", "cape", "ring", "amulet"].includes(type) && $(`.item-${type}`).is(":empty")) {
+        if (
+          ["weapon", "armor", "belt", "cape", "chest", "ring", "amulet"].includes(type) &&
+          $(`.item-${type}`).is(":empty")
+        ) {
           $(`.item-${type}`).addClass("item-droppable");
         } else if (Types.isScroll(item)) {
           $(".item-scroll").addClass("item-droppable");
@@ -758,9 +830,9 @@ class Game {
         self.destroyDroppable();
 
         $(".ui-droppable-origin").removeClass("ui-droppable-origin");
-        $(".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-cape, .item-scroll").removeClass(
-          "item-droppable",
-        );
+        $(
+          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-cape, .item-chest .item-scroll",
+        ).removeClass("item-droppable");
       },
     });
   }
@@ -986,7 +1058,7 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt item-cape" data-slot="200"></div>',
+        '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt item-cape item-chest" data-slot="200"></div>',
       );
     $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
   }
@@ -2958,6 +3030,12 @@ class Game {
         if (typeof settings.capeHue === "number") {
           player.capeHue = settings.capeHue;
         }
+        if (typeof settings.capeSaturate === "number") {
+          player.capeSaturate = settings.capeSaturate;
+        }
+        if (typeof settings.capeContrast === "number") {
+          player.capeContrast = settings.capeContrast;
+        }
       });
 
       self.client.onSetBonus(function (bonus, set) {
@@ -3230,8 +3308,8 @@ class Game {
       self.client.onReceiveMinotaurLevelInProgress(function (minotaurLevelClock) {
         var selectedDate = new Date().valueOf() + minotaurLevelClock * 1000;
 
-        if (!self.player.expansion1 || self.player.level < 45) {
-          self.client.sendBanPlayer("Entered MinotaurLevel without expansion or lower than lv.45");
+        if (!self.player.expansion1 || self.player.level < 54) {
+          self.client.sendBanPlayer("Entered MinotaurLevel without expansion or lower than lv.54");
         }
 
         $("#countdown")
@@ -3249,7 +3327,7 @@ class Game {
           });
       });
 
-      self.client.onReceiveCowLevelEnd(function () {
+      self.client.onReceiveMinotaurLevelEnd(function () {
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 

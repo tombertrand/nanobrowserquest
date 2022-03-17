@@ -685,7 +685,7 @@ class World {
   }
 
   startMinotaurLevel() {
-    this.minotaurLevelClock = 15 * 60; // 15 minutes
+    this.minotaurLevelClock = 35; //15 * 60; // 15 minutes
 
     const townPortal = this.npcs[this.minotaurLevelTownNpcId];
     townPortal.respawnCallback();
@@ -1083,6 +1083,16 @@ class World {
           const id = `7${kind}${count++}`;
           const mob = new Mob(id, kind, pos.x + 1, pos.y);
 
+          if (kind === Types.Entities.MINOTAUR) {
+            mob.onDestroy(() => {
+              clearInterval(this.minotaurLevelInterval);
+              setTimeout(() => {
+                // Return everyone to town, leave 3s to loot any last drop
+                this.endMinotaurLevel(true);
+              }, 3000);
+            });
+          }
+
           mob.onRespawn(function () {
             mob.isDead = false;
 
@@ -1173,7 +1183,33 @@ class World {
     var p = 0;
     let itemKind = null;
 
-    if (mob.kind === Types.Entities.COW) {
+    if (mob.kind === Types.Entities.MINOTAUR) {
+      let members = [attacker.id];
+      let party = null;
+
+      if (attacker.partyId) {
+        party = this.getParty(attacker.partyId);
+        members = party.members.map(({ id }) => id);
+      }
+
+      members.forEach(id => {
+        const player = this.getEntityById(id);
+
+        this.databaseHandler.lootItems({
+          player,
+          items: [{ item: "chestblue", quantity: 1 }],
+        });
+
+        if (party) {
+          this.pushToParty(
+            party,
+            new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
+              { playerName: player.name, kind: Types.Entities.CHESTBLUE },
+            ]),
+          );
+        }
+      });
+    } else if (mob.kind === Types.Entities.COW) {
       const diamondRandom = random(700);
       if (diamondRandom === 69) {
         return "diamondsword";
@@ -1230,9 +1266,9 @@ class World {
     const itemName = this.getDroppedItemName(mob, attacker);
     const kind = Types.getKindFromString(itemName);
 
-    // var randomDrop = random(1);
-    // var randomDrops = ["cape"] as any;
-    // // // var drops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
+    // // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // var randomDrop = random(randomDrops.length);
     // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 
     // Potions can be looted by anyone

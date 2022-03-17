@@ -29,6 +29,8 @@ class Storage {
         showEntityName: true,
         showDamageInfo: true,
         capeHue: 0,
+        capeSaturate: 0,
+        capeContrast: 0,
       },
       achievements: {
         ratCount: 0,

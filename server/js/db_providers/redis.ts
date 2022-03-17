@@ -6,7 +6,16 @@ import { Types } from "../../../shared/js/gametypes";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
-import { isUpgradeSuccess, isValidRecipe, isValidUpgradeItems, NaN2Zero, randomInt } from "../utils";
+import {
+  generateBlueChestItem,
+  isUpgradeSuccess,
+  isValidRecipe,
+  isValidUpgradeItems,
+  NaN2Zero,
+  randomInt,
+} from "../utils";
+
+import type Player from "../player";
 
 const INVENTORY_SLOT_COUNT = 24;
 const STASH_SLOT_COUNT = 48;
@@ -73,7 +82,7 @@ class DatabaseHandler {
             .hget(userKey, "depositAccountIndex") // 22
             .hget(userKey, "hash1") // 23
             .hget(userKey, "stash") // 24
-            .hget(userKey, "capeHue") // 25
+            .hget(userKey, "settings") // 25
 
             .exec(async (err, replies) => {
               var account = replies[0];
@@ -89,7 +98,6 @@ class DatabaseHandler {
               var expansion1 = !!parseInt(replies[19] || "0");
               var depositAccount = replies[21];
               var depositAccountIndex = replies[22];
-              var capeHue = parseInt(replies[25] || 0, 10);
 
               try {
                 if (!depositAccount) {
@@ -305,6 +313,13 @@ class DatabaseHandler {
                 Sentry.captureException(err);
               }
 
+              var settings = replies[25];
+              try {
+                settings = JSON.parse(settings || "{}");
+              } catch (_err) {
+                // Silence err
+              }
+
               var x = NaN2Zero(replies[7]);
               var y = NaN2Zero(replies[8]);
               var hash = replies[9];
@@ -347,9 +362,7 @@ class DatabaseHandler {
                 waypoints,
                 depositAccount,
                 depositAccountIndex,
-                settings: {
-                  capeHue,
-                },
+                settings,
               });
             });
           return;
@@ -395,7 +408,7 @@ class DatabaseHandler {
           .hset(userKey, "armor", "clotharmor:1")
           .hset(userKey, "belt", null)
           .hset(userKey, "cape", null)
-          .hset(userKey, "capeHue", 0)
+          .hset(userKey, "settings", "{}")
           .hset(userKey, "ring1", null)
           .hset(userKey, "ring2", null)
           .hset(userKey, "amulet", null)
@@ -429,6 +442,8 @@ class DatabaseHandler {
               depositAccountIndex,
               settings: {
                 capeHue: 0,
+                capeSaturate: 0,
+                capeContrast: 0,
               },
             });
           });
@@ -531,11 +546,17 @@ class DatabaseHandler {
     }
   }
 
-  setCapeHue(name, capeHue) {
-    if (typeof capeHue === "number") {
-      console.info("Set Cape Hue: " + name + " " + capeHue);
-      this.client.hset("u:" + name, "capeHue", capeHue);
-    }
+  setSettings(name, settings) {
+    this.client.hget("u:" + name, "settings", (err, reply) => {
+      try {
+        var parsedReply = reply ? JSON.parse(reply) : {};
+
+        settings = JSON.stringify(Object.assign(parsedReply, settings));
+        this.client.hset("u:" + name, "settings", settings);
+      } catch (err) {
+        Sentry.captureException(err);
+      }
+    });
   }
 
   equipRing1({ name, item, level, bonus }) {
@@ -741,7 +762,7 @@ class DatabaseHandler {
               }
 
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
-              if (Types.isScroll(fromItem)) {
+              if (Types.isScroll(fromItem) || Types.isChest(fromItem)) {
                 const [fromScroll, fromQuantity] = fromItem.split(":");
                 if (toLocation === "inventory" || toLocation === "stash") {
                   let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(fromScroll));
@@ -874,7 +895,7 @@ class DatabaseHandler {
           const items = filteredUpgrade.reduce((acc, rawItem) => {
             if (!rawItem) return acc;
             const [item, level, bonus] = rawItem.split(":");
-            const isQuantity = Types.isScroll(item);
+            const isQuantity = Types.isScroll(item) || Types.isChest(item);
 
             acc.push({
               item,
@@ -899,7 +920,7 @@ class DatabaseHandler {
     });
   }
 
-  upgradeItem(player) {
+  upgradeItem(player: Player) {
     this.client.hget("u:" + player.name, "upgrade", (_err, reply) => {
       try {
         let isLucky7 = false;
@@ -915,7 +936,7 @@ class DatabaseHandler {
             return index.startsWith("scroll");
           }
         });
-        const luckySlot = randomInt(1, 9);
+        let luckySlot = randomInt(1, 9);
         const isLuckySlot = slotIndex === luckySlot;
         const filteredUpgrade = upgrade.filter(Boolean);
         let isSuccess = false;
@@ -953,26 +974,50 @@ class DatabaseHandler {
         } else {
           recipe = isValidRecipe(filteredUpgrade);
 
+          let isWorkingRecipe = false;
+          let generatedItem: number | string = 0;
+
           if (recipe) {
             if (recipe === "cowLevel") {
-              if (player.server.cowLevelClock) {
-                this.moveUpgradeItemsToInventory(player);
-              } else {
+              if (!player.server.cowLevelClock) {
+                isWorkingRecipe = true;
                 player.server.startCowLevel();
-                upgrade = upgrade.map(() => 0);
-                player.broadcast(new Messages.AnvilRecipe(recipe), false);
               }
             } else if (recipe === "minotaurLevel") {
-              if (player.server.minotaurLevelClock) {
-                this.moveUpgradeItemsToInventory(player);
-              } else {
+              if (!player.server.minotaurLevelClock) {
+                isWorkingRecipe = true;
                 player.server.startMinotaurLevel();
-                upgrade = upgrade.map(() => 0);
-                player.broadcast(new Messages.AnvilRecipe(recipe), false);
               }
+            } else if (recipe === "chestblue") {
+              const { item, uniqueChances } = generateBlueChestItem();
+
+              luckySlot = null;
+
+              isWorkingRecipe = true;
+
+              console.log("~~~~~item", item);
+              console.log("~~~~~uniqueChances", uniqueChances);
+              // console.log("~~~~~Types.getKindFromString(item)", Types.getKindFromString(item));
+
+              const {
+                item: itemName,
+                level,
+                quantity,
+                bonus,
+              } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
+
+              generatedItem = [itemName, level, quantity, bonus].filter(Boolean).join(":");
+
+              console.log("~~~~~generatedItem", generatedItem);
             }
-          } else {
+          }
+
+          if (!isWorkingRecipe) {
             this.moveUpgradeItemsToInventory(player);
+          } else {
+            upgrade = upgrade.map(() => 0);
+            upgrade[upgrade.length - 1] = generatedItem;
+            player.broadcast(new Messages.AnvilRecipe(recipe), false);
           }
         }
 

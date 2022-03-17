@@ -372,7 +372,7 @@ class GameClient {
       if (this.spawn_item_callback) {
         this.spawn_item_callback(item, x, y);
       }
-    } else if (Types.isChest(kind)) {
+    } else if (Types.isStaticChest(kind)) {
       var item = EntityFactory.createEntity({ kind, id });
 
       if (this.spawn_chest_callback) {

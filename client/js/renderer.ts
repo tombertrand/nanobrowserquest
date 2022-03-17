@@ -486,14 +486,22 @@ class Renderer {
         dw = w * ds,
         dh = h * ds;
 
+      // @NOTE To be researched https://codepen.io/sosuke/pen/Pjoqqp
       // this.context.filter = "sepia(50%)";
-      this.context.fillStyle = "hsl(-121, 100%, 50%)";
-      if (typeof entity.capeHue === "number") {
-        this.context.filter = `hue-rotate(${entity.capeHue}deg)`;
-      }
-      // this.context.filter = `contrast(200%)`;
-      // this.context.filter = filter;
       // this.context.fillStyle = "hsl(" + 360 * Math.random() + ",100%,50%)";
+      // this.context.fillStyle = "hsl(-121, 100%, 50%)";
+
+      let filter = "";
+      if (typeof entity.capeHue === "number") {
+        filter += ` hue-rotate(${entity.capeHue}deg)`;
+      }
+      if (typeof entity.capeSaturate === "number") {
+        filter += ` saturate(${entity.capeSaturate + 100}%)`;
+      }
+      if (typeof entity.capeContrast === "number") {
+        filter += ` contrast(${entity.capeContrast + 100}%)`;
+      }
+      this.context.filter = filter;
 
       this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
       this.context.filter = "none";
@@ -575,6 +583,9 @@ class Renderer {
             } else if (aura === "highhealth") {
               sprite = this.game.sprites["aura-highhealth"];
               anim = this.game.highHealthAnimation;
+            } else if (aura === "freeze") {
+              sprite = this.game.sprites["aura-freeze"];
+              anim = this.game.freezeAnimation;
             }
 
             if (sprite && anim) {
@@ -711,15 +722,8 @@ class Renderer {
             dw = w * ds,
             dh = h * ds;
 
-          // @NOTE To be researched https://codepen.io/sosuke/pen/Pjoqqp
-          // this.context.filter = "sepia(50%)";
-          // this.context.fillStyle = "hsl(-121, 100%, 50%)";
-          // this.context.filter = "hue-rotate(-200deg)";
-          // this.context.filter = filter;
-          // this.context.fillStyle = "hsl(" + 360 * Math.random() + ",100%,50%)";
           this.context.translate(0, ts * -ds);
           this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
-          // this.context.filter = "none";
         }
       }
 

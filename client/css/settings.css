@@ -1,0 +1,27 @@
+.settings-panel {
+  display: flex;
+  justify-content: space-around;
+}
+
+.settings-panel > div {
+  width: 50%;
+}
+
+.setting .ui-slider-horizontal {
+  height: 10px;
+}
+
+.setting .ui-slider-horizontal .ui-slider-handle {
+  top: -8px;
+}
+
+.setting .ui-slider .ui-slider-handle {
+  height: 22px;
+}
+
+#cape-hue-slider,
+#cape-saturate-slider,
+#cape-contrast-slider {
+  margin: 6px auto;
+  width: 60%;
+}

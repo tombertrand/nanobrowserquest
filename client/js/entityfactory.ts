@@ -328,6 +328,10 @@ EntityFactory.builders[Types.Entities.AMULETCOW] = function (id) {
   return new Items.AmuletCow(id);
 };
 
+EntityFactory.builders[Types.Entities.CHESTBLUE] = function (id) {
+  return new Items.ChestBlue(id);
+};
+
 EntityFactory.builders[Types.Entities.SCROLLUPGRADELOW] = function (id) {
   return new Items.ScrollUpgradeLow(id);
 };
@@ -374,6 +378,10 @@ EntityFactory.builders[Types.Entities.SKELETONKINGCAGE] = function (id) {
 
 EntityFactory.builders[Types.Entities.NECROMANCERHEART] = function (id) {
   return new Items.NecromancerHeart(id);
+};
+
+EntityFactory.builders[Types.Entities.COWKINGHORN] = function (id) {
+  return new Items.CowkingHorn(id);
 };
 
 EntityFactory.builders[Types.Entities.FIREPOTION] = function (id) {
@@ -485,5 +493,11 @@ EntityFactory.builders[Types.Entities.STASH] = function (id) {
 EntityFactory.builders[Types.Entities.COWPORTAL] = function (id) {
   return new Npcs.CowPortal(id);
 };
+
+EntityFactory.builders[Types.Entities.MINOTAURPORTAL] = function (id) {
+  return new Npcs.MinotaurPortal(id);
+};
+
+
 
 export default EntityFactory;

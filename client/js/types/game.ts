@@ -18,6 +18,7 @@ export interface Game {
   drainLifeAnimation: any;
   thunderstormAnimation: any;
   highHealthAnimation: any;
+  freezeAnimation: any;
   anvilRecipeAnimation: any;
   anvilSuccessAnimation: any;
   anvilFailAnimation: any;

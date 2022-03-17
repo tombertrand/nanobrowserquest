@@ -251,6 +251,7 @@ export const isValidRecipe = items => {
   const recipes: { [key in Recipes]: string[] } = {
     cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
     minotaurLevel: ["wirtleg", "cowkinghorn"],
+    chestblue: ["chestblue"],
   };
 
   const result = Object.entries(recipes).find(([_recipe, formulae]) => {
@@ -272,4 +273,38 @@ export const isValidRecipe = items => {
   if (result) {
     return result[0] as Recipes;
   }
+};
+
+export const generateBlueChestItem = (): { item: string; uniqueChances?: number } => {
+  // 50%
+  const items = [
+    { item: "bluemorningstar", uniqueChances: 80 },
+    { item: "hornedarmor", uniqueChances: 70 },
+    { item: "frozenarmor", uniqueChances: 40 },
+    { item: "beltfrozen", uniqueChances: 40 },
+    { item: "diamondarmor", uniqueChances: 20 },
+    { item: "beltdiamond", uniqueChances: 20 },
+    { item: "beltminotaur", uniqueChances: 5 },
+    { item: "minotauraxe", uniqueChances: 5 },
+    // { item: "cape" },
+  ];
+
+  // 40%
+  const scrolls = [{ item: "scrollupgradehigh" }, { item: "scrollupgradeblessed" }];
+
+  // 10%
+  const rings = [{ item: "ringraistone" }, { item: "ringfountain" }, { item: "ringminotaur" }];
+
+  const randomCategory = random(10) + 1;
+  let category: any = items;
+
+  if (randomCategory > 9) {
+    category = rings;
+  } else if (randomCategory > 5) {
+    category = scrolls;
+  }
+
+  const randomItem = random(category.length);
+
+  return category[randomItem];
 };

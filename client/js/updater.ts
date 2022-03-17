@@ -282,6 +282,11 @@ class Updater {
       highHealth.update(t);
     }
 
+    var freeze = this.game.freezeAnimation;
+    if (freeze) {
+      freeze.update(t);
+    }
+
     var anvilRecipe = this.game.anvilRecipeAnimation;
     if (anvilRecipe) {
       anvilRecipe.update(t);

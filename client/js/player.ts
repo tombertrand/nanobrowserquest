@@ -25,6 +25,8 @@ class Player extends Character {
   capeLevel?: number;
   capeBonus: null | number[];
   capeHue: number;
+  capeSaturate: number;
+  capeContrast: number;
   inventory: any[];
   stash: any[];
   upgrade: any[];
@@ -96,6 +98,8 @@ class Player extends Character {
     this.capeLevel = null;
     this.capeBonus = null;
     this.capeHue = 0;
+    this.capeSaturate = 0;
+    this.capeContrast = 0;
     this.inventory = [];
     this.stash = [];
     this.upgrade = [];
@@ -151,6 +155,14 @@ class Player extends Character {
 
   setCapeHue(hue: number) {
     this.capeHue = hue;
+  }
+
+  setCapeSaturate(saturate: number) {
+    this.capeSaturate = saturate;
+  }
+
+  setCapeContrast(contrast: number) {
+    this.capeContrast = contrast;
   }
 
   loot(item) {
@@ -312,6 +324,12 @@ class Player extends Character {
     if (settings.capeHue) {
       this.capeHue = settings.capeHue;
     }
+    if (settings.capeSaturate) {
+      this.capeSaturate = settings.capeSaturate;
+    }
+    if (settings.capeContrast) {
+      this.capeContrast = settings.capeContrast;
+    }
   }
 
   setRing1(ring) {
@@ -445,14 +463,15 @@ class Player extends Character {
     return items
       .map((rawItem, slot) => {
         if (!rawItem) return false;
-
         const [item, levelOrQuantity, bonus] = rawItem.split(":");
+
         const isWeapon = kinds[item][1] === "weapon";
         const isArmor = kinds[item][1] === "armor";
         const isBelt = kinds[item][1] === "belt";
         const isCape = kinds[item][1] === "cape";
         const isRing = kinds[item][1] === "ring";
         const isAmulet = kinds[item][1] === "amulet";
+        const isChest = kinds[item][1] === "chest";
 
         let requirement = null;
         let level = null;
@@ -460,7 +479,7 @@ class Player extends Character {
         if (isWeapon || isArmor || isBelt || isCape || isRing || isAmulet) {
           level = levelOrQuantity;
           requirement = Types.getItemRequirement(item, levelOrQuantity);
-        } else if (Types.isScroll(item)) {
+        } else if (Types.isScroll(item) || isChest) {
           quantity = levelOrQuantity;
         }
 
