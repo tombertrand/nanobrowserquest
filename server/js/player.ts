@@ -1242,7 +1242,9 @@ class Player extends Character {
     if (this.bonus.lightningDamage) {
       hasThunderstormAura = true;
     }
-
+    if (this.bonus.highHealth) {
+      hasHighHealth = true;
+    }
     if (this.bonus.freezeChance) {
       hasFreezeAura = true;
     }

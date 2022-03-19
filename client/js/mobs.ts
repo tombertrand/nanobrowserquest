@@ -329,7 +329,7 @@ export const Mobs = {
       this.walkSpeed = 200;
       this.shadowOffsetY = 1;
       this.aggroRange = 3;
-      this.auras = ["highhealth"];
+      this.auras = ["thunderstorm"];
       this.resistances = Types.Resistances[Types.Entities.COWKING];
       this.setAttackRate(1300);
     }
