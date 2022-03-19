@@ -3307,7 +3307,7 @@ class Game {
       self.client.onReceiveMinotaurLevelInProgress(function (minotaurLevelClock) {
         var selectedDate = new Date().valueOf() + minotaurLevelClock * 1000;
 
-        if (!self.player.expansion1 || self.player.level < 54) {
+        if (!self.player.expansion1 || self.player.level < 53) {
           self.client.sendBanPlayer("Entered MinotaurLevel without expansion or lower than lv.54");
         }
 

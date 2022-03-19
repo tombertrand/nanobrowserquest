@@ -112,6 +112,7 @@ class Player extends Character {
   databaseHandler: any;
   partyId?: number;
   freezeChanceLevel: number;
+  minotaurDamage: number;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -140,6 +141,7 @@ class Player extends Character {
     this.lastWorldChatMinutes = 99;
     this.auras = [];
     this.freezeChanceLevel = 0;
+    this.minotaurDamage = 0;
 
     // Item bonuses (Rings, amulet, Uniques?)
     this.resetBonus();
@@ -406,6 +408,11 @@ class Player extends Character {
 
             const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
             dmg = Math.floor(dmg * percentReduce);
+          }
+
+          if (mob.kind === Types.Entities.MINOTAUR) {
+            self.minotaurDamage += dmg;
+            self.unregisterMinotaurDamage();
           }
 
           // @NOTE: Evaluate character distance to mob when receiving hits? and time between
@@ -965,6 +972,10 @@ class Player extends Character {
 
     this.connection.sendUTF8("go"); // Notify client that the HELLO/WELCOME handshake can start
   }
+
+  unregisterMinotaurDamage = _.debounce(() => {
+    this.minotaurDamage = 0;
+  }, 30000);
 
   generateRandomCapeBonus(uniqueChances = 1) {
     const randomIsUnique = random(100);

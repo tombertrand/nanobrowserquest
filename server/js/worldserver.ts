@@ -1204,18 +1204,20 @@ class World {
       members.forEach(id => {
         const player = this.getEntityById(id);
 
-        this.databaseHandler.lootItems({
-          player,
-          items: [{ item: "chestblue", quantity: 1 }],
-        });
+        if (player.minotaurDamage >= 2000) {
+          this.databaseHandler.lootItems({
+            player,
+            items: [{ item: "chestblue", quantity: 1 }],
+          });
 
-        if (party) {
-          this.pushToParty(
-            party,
-            new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
-              { playerName: player.name, kind: Types.Entities.CHESTBLUE },
-            ]),
-          );
+          if (party) {
+            this.pushToParty(
+              party,
+              new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
+                { playerName: player.name, kind: Types.Entities.CHESTBLUE },
+              ]),
+            );
+          }
         }
       });
     } else if (mob.kind === Types.Entities.COW) {

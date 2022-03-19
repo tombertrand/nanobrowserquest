@@ -176,7 +176,7 @@ var NpcTalk = {
   minotaurportal: [
     {
       condition(game: any) {
-        return game.player.level < 54;
+        return game.player.level < 53;
       },
       text: ["You need to be lv.54 and above to access the secret level"],
     },

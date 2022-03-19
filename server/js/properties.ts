@@ -361,12 +361,9 @@ var Properties: any = {
     drops: {
       scrollupgradehigh: 100,
     },
-    hp: 11300,
-    armor: 1,
-    weapon: 1,
-    // hp: 15000,
-    // armor: 35,
-    // weapon: 35,
+    hp: 12500,
+    armor: 25,
+    weapon: 30,
   },
 };
 
