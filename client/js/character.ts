@@ -106,7 +106,7 @@ class Character extends Entity {
     this.inspecting = null;
     this.isLevelup = false;
     this.auras = [];
-    this.resistances = {};
+    // this.resistances = {};
   }
 
   clean() {

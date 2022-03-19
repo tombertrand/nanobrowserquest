@@ -431,7 +431,7 @@ class App {
         inspector.find(".level").text("");
       }
 
-      if (Object.keys(target.resistances).length) {
+      if (target?.resistances) {
         let html = "";
 
         Object.entries(target.resistances).map(([type, { display, percentage }]: any) => {
