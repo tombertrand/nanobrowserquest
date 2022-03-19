@@ -669,7 +669,8 @@ class Game {
     $("#upgrade-btn").on("click", function () {
       if (
         self.player.upgrade.length >= 2 ||
-        (self.player.upgrade.length === 1 && Types.isChest(self.player.upgrade[0]?.item))
+        (self.player.upgrade.length === 1 &&
+          (Types.isChest(self.player.upgrade[0]?.item) || self.player.upgrade[0]?.item === "cowkinghorn"))
       ) {
         if (!self.isUpgradeItemSent) {
           self.client.sendUpgradeItem();
@@ -2744,8 +2745,6 @@ class Game {
           message: `${partyLeader.name} invite you to join the party. To accept type /party join ${partyId}`,
           type: "info",
         });
-
-        // @TODO: Update healthbars
       });
 
       self.client.onPartyLeave(function (data) {
@@ -3337,6 +3336,12 @@ class Game {
 
           self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }
+      });
+
+      self.client.onFrozen(function (entityId, itemLevel) {
+        const time = Types.getFrozenTimePerLevel(itemLevel);
+
+        self.getEntityById(entityId).setFrozen(time);
       });
 
       self.client.onDisconnected(function (message) {
@@ -4140,7 +4145,8 @@ class Game {
         }
       }
 
-      var isMoving = this.tryMovingToADifferentTile(character); // Don't let multiple mobs stack on the same tile when attacking a player.
+      // Don't let multiple mobs stack on the same tile when attacking a player.
+      var isMoving = this.tryMovingToADifferentTile(character);
       if (character.canAttack(time)) {
         if (!isMoving) {
           // don't hit target if moving to a different tile.

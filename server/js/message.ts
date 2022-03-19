@@ -101,6 +101,13 @@ Messages.Health = class Message {
   }
 };
 
+Messages.Frozen = class Message {
+  constructor(private entityId, private freezeChanceLevel) {}
+  serialize() {
+    return [Types.Messages.FROZEN, this.entityId, this.freezeChanceLevel];
+  }
+};
+
 Messages.Stats = class Message {
   constructor(private stats) {}
   serialize() {

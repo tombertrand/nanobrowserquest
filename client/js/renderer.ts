@@ -629,7 +629,12 @@ class Renderer {
           }
         }
 
+        if (entity.isFrozen) {
+          this.context.filter = "sepia(100%) hue-rotate(190deg) saturate(500%)";
+        }
+
         this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
+        this.context.filter = "none";
 
         if (isFilterApplied) {
           this.context.filter = "brightness(100%)";

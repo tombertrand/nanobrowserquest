@@ -111,6 +111,7 @@ class Player extends Character {
   stash: any;
   databaseHandler: any;
   partyId?: number;
+  freezeChanceLevel: number;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -138,6 +139,7 @@ class Player extends Character {
     this.level = 0;
     this.lastWorldChatMinutes = 99;
     this.auras = [];
+    this.freezeChanceLevel = 0;
 
     // Item bonuses (Rings, amulet, Uniques?)
     this.resetBonus();
@@ -255,7 +257,7 @@ class Player extends Character {
               }
               return;
             } else if (msg == "startMinotaurLevel" || msg === "/minotaur") {
-              if (!self.server.minotaurLevelClock) {
+              if (!self.server.minotaurLevelClock && !self.server.minotaurSpawnTimeout) {
                 self.server.startMinotaurLevel();
                 self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
               }
@@ -341,9 +343,16 @@ class Player extends Character {
           });
 
           if (self.bonus.criticalHit) {
-            isCritical = random(100) <= self.bonus.criticalHit;
+            isCritical = random(100) < self.bonus.criticalHit;
             if (isCritical) {
               dmg = Math.ceil((dmg - self.bonus.drainLife) * 1.5);
+            }
+          }
+
+          if (self.bonus.freezeChance && !Types.isBoss(mob.kind)) {
+            const isFrozen = random(100) < self.bonus.freezeChance;
+            if (isFrozen) {
+              self.broadcast(new Messages.Frozen(mob.id, self.freezeChanceLevel));
             }
           }
 
@@ -442,7 +451,7 @@ class Player extends Character {
           });
 
           if (self.bonus.blockChance) {
-            isBlocked = random(100) <= self.bonus.blockChance;
+            isBlocked = random(100) < self.bonus.blockChance;
             if (isBlocked) {
               dmg = 0;
             }
@@ -456,9 +465,16 @@ class Player extends Character {
           }
 
           if (mob.kind === Types.isBoss(mob.kind)) {
-            // Each boss gets a 10% crit chance
-            if (random(10) === 3) {
+            // Each boss gets a 15% crit chance
+            if (random(100) < 15) {
               dmg = Math.ceil(dmg * 1.5);
+            }
+          }
+
+          if (mob.kind === Types.Entities.MINOTAUR) {
+            const isFrozen = random(100) < 20;
+            if (isFrozen) {
+              self.broadcast(new Messages.Frozen(self.id, 10));
             }
           }
 
@@ -948,10 +964,13 @@ class Player extends Character {
     this.connection.sendUTF8("go"); // Notify client that the HELLO/WELCOME handshake can start
   }
 
-  generateRandomCapeBonus() {
+  generateRandomCapeBonus(uniqueChances = 1) {
+    const randomIsUnique = random(100);
+    const isUnique = randomIsUnique < uniqueChances;
+
     const lowLevelBonus = [0, 1, 2];
 
-    return _.shuffle(lowLevelBonus).slice(0, 1);
+    return _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
   }
 
   generateItem({ kind, uniqueChances = 1 }): {
@@ -987,7 +1006,7 @@ class Player extends Character {
     } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isChest(kind)) {
       item = { item: Types.getKindAsString(kind), quantity: 1 };
     } else if (Types.isCape(kind)) {
-      const bonus = this.generateRandomCapeBonus();
+      const bonus = this.generateRandomCapeBonus(uniqueChances);
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
     } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
@@ -1202,6 +1221,7 @@ class Player extends Character {
     let hasThunderstormAura = false;
     let hasHighHealth = false;
     let hasFreezeAura = false;
+    this.freezeChanceLevel = 0;
 
     if (this.bonus.drainLife) {
       hasDrainLifeAura = true;
@@ -1258,6 +1278,9 @@ class Player extends Character {
 
       bonusToCalculate.forEach(({ bonus, level }) => {
         Types.getBonus(bonus, level).forEach(({ type, stats }) => {
+          if (type === "freezeChance" && level > this.freezeChanceLevel) {
+            this.freezeChanceLevel = level;
+          }
           this.bonus[type] += stats;
         });
       });

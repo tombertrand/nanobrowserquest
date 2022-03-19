@@ -51,6 +51,7 @@ class World {
   minotaurLevelInterval: any;
   minotaurLevelTownNpcId: any;
   minotaurLevelNpcId: any;
+  minotaurSpawnTimeout: any;
   outgoingQueues: any;
   itemCount: number;
   playerCount: number;
@@ -132,6 +133,7 @@ class World {
     this.minotaurLevelInterval = null;
     this.minotaurLevelTownNpcId = null;
     this.minotaurLevelNpcId = null;
+    this.minotaurSpawnTimeout = null;
 
     this.outgoingQueues = {};
 
@@ -685,7 +687,7 @@ class World {
   }
 
   startMinotaurLevel() {
-    this.minotaurLevelClock = 35; //15 * 60; // 15 minutes
+    this.minotaurLevelClock = 15 * 60; // 15 minutes
 
     const townPortal = this.npcs[this.minotaurLevelTownNpcId];
     townPortal.respawnCallback();
@@ -1085,11 +1087,18 @@ class World {
 
           if (kind === Types.Entities.MINOTAUR) {
             mob.onDestroy(() => {
-              clearInterval(this.minotaurLevelInterval);
+              clearInterval(self.minotaurLevelInterval);
               setTimeout(() => {
                 // Return everyone to town, leave 3s to loot any last drop
-                this.endMinotaurLevel(true);
+                self.endMinotaurLevel();
               }, 3000);
+
+              const time = (random(120) + 60 * 6) * 60 * 1000;
+
+              self.minotaurSpawnTimeout = setTimeout(() => {
+                mob.handleRespawn(0);
+                self.minotaurSpawnTimeout = null;
+              }, time);
             });
           }
 
@@ -1267,7 +1276,7 @@ class World {
     const kind = Types.getKindFromString(itemName);
 
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
-    // // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // // // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrop = random(randomDrops.length);
     // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 

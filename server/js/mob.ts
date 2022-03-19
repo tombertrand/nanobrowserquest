@@ -53,8 +53,7 @@ class Mob extends Character {
     this.updateHitPoints();
     this.resetPosition();
 
-    // @TODO Finish the Minotaur 8h respawn
-    if (this.kind !== Types.Entities.ZOMBIE || this.kind !== Types.Entities.MINOTAUR) {
+    if (this.kind !== Types.Entities.ZOMBIE && this.kind !== Types.Entities.MINOTAUR) {
       this.handleRespawn(delay);
     }
 

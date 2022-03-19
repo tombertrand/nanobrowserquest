@@ -82,6 +82,7 @@ export const Types: any = {
     MINOTAURLEVEL_START: 70,
     MINOTAURLEVEL_INPROGRESS: 71,
     MINOTAURLEVEL_END: 72,
+    FROZEN: 73,
   },
 
   Entities: {
@@ -565,6 +566,8 @@ Types.itemUniqueMap = {
   diamondarmor: ["Zero-knowledge Proof", 28, 34],
   spikearmor: ["Explorer's Block", 32, 36],
 
+  cape: ["Cloak of Levitation", 12, 2],
+
   // name, level, defense
   beltleather: ["Proof of Wear", 4, 4],
   beltplated: ["Hodler", 9, 6],
@@ -600,7 +603,6 @@ Types.setBonus = {
   },
 };
 
-// @TODO Connect these with the tooltips
 Types.setItems = {
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
   diamond: ["diamondarmor", "beltdiamond", "diamondsword"],
@@ -1179,6 +1181,8 @@ Types.getPartyBonusDescriptionMap = ["+#% Attack", "+#% Defense", "+#% Experienc
 
 Types.partyBonusType = ["attackDamage", "defense", "exp"];
 
+Types.getFrozenTimePerLevel = itemLevel => 1000 + itemLevel * 150;
+
 Types.getBonusDescriptionMap = [
   "+# Minimum damage",
   "+# Maximum damage",
@@ -1199,7 +1203,7 @@ Types.getBonusDescriptionMap = [
   "+# Pierce armor attack",
   "+# Health",
   "+# Cold damage",
-  "+#% Freeze the enemy",
+  "+#% Freeze the enemy for # seconds",
 ];
 
 Types.bonusType = [
@@ -1278,7 +1282,11 @@ Types.getBonus = function (rawBonus, level) {
   for (let i = 0; i < rawBonus.length; i++) {
     const type = Types.bonusType[rawBonus[i]];
     const stats = bonusPerLevel[rawBonus[i]][level - 1];
-    const description = Types.getBonusDescriptionMap[rawBonus[i]].replace("#", stats);
+    let description = Types.getBonusDescriptionMap[rawBonus[i]].replace("#", stats);
+
+    if (type === "freezeChance") {
+      description = description.replace("#", Types.getFrozenTimePerLevel(level) / 1000);
+    }
 
     bonus.push({
       type,
@@ -1437,7 +1445,8 @@ Types.getItemDetails = function (
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
   const isUniqueRing = Types.isUniqueRing(item);
-  const isUnique = ((isArmor || isWeapon || isBelt) && !!rawBonus) || isUniqueRing;
+  const isUniqueCape = isCape && rawBonus.length >= 2;
+  const isUnique = ((isArmor || isWeapon || isBelt) && !!rawBonus) || isUniqueRing || isUniqueCape;
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;

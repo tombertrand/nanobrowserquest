@@ -62,6 +62,8 @@ class Character extends Entity {
   previousTarget: any;
   atkRate: number;
   raiseRate: number;
+  isFrozen: boolean;
+  frozenTimeout: any;
 
   constructor(id, kind) {
     super(id, kind);
@@ -228,7 +230,7 @@ class Character extends Entity {
   }
 
   followPath(path) {
-    if (path.length > 1) {
+    if (path.length > 1 && !this.isFrozen) {
       // Length of 1 means the player has clicked on himself
       this.path = path;
       this.step = 0;
@@ -624,7 +626,7 @@ class Character extends Entity {
    *
    */
   canAttack(time) {
-    if (this.canReachTarget() && this.attackCooldown.isOver(time)) {
+    if (this.canReachTarget() && this.attackCooldown.isOver(time) && !this.isFrozen) {
       return true;
     }
     return false;
@@ -683,6 +685,22 @@ class Character extends Entity {
 
   setAttackRate(rate) {
     this.attackCooldown = new Timer(rate);
+  }
+
+  setFrozen(time: number) {
+    this.isFrozen = true;
+    this.currentAnimation.pause();
+
+    this.disengage();
+    this.nextStep();
+
+    clearTimeout(this.frozenTimeout);
+
+    this.frozenTimeout = setTimeout(() => {
+      this.isFrozen = false;
+      this.frozenTimeout = null;
+      this.currentAnimation.play();
+    }, time);
   }
 }
 

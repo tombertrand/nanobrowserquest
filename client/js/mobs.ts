@@ -295,6 +295,7 @@ export const Mobs = {
       this.attackCooldown = new Timer(this.atkRate);
       this.raiseCooldown = new Timer(this.raiseRate);
       this.aggroRange = 3;
+      this.auras = ["drainlife"];
     }
 
     idle(orientation) {
@@ -328,6 +329,7 @@ export const Mobs = {
       this.walkSpeed = 200;
       this.shadowOffsetY = 1;
       this.aggroRange = 3;
+      this.auras = ["highhealth"];
       this.setAttackRate(1300);
     }
   },
@@ -340,7 +342,8 @@ export const Mobs = {
       this.idleSpeed = 800;
       this.walkSpeed = 200;
       this.shadowOffsetY = 1;
-      this.aggroRange = 4;
+      this.aggroRange = 9;
+      this.auras = ["freeze"];
       this.setAttackRate(1300);
     }
   },

@@ -9,6 +9,7 @@ class Animation {
   endcount_callback: any;
   lastTime: number = 0;
   speed: number = 0;
+  isPaused: boolean = false;
 
   constructor(name, length, row, width, height) {
     this.name = name;
@@ -60,11 +61,21 @@ class Animation {
 
     if (this.isTimeToAnimate(time)) {
       this.lastTime = time;
-      this.tick();
+      if (!this.isPaused) {
+        this.tick();
+      }
       return true;
     } else {
       return false;
     }
+  }
+
+  pause() {
+    this.isPaused = true;
+  }
+
+  play() {
+    this.isPaused = false;
   }
 
   reset() {

@@ -250,7 +250,7 @@ export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
 export const isValidRecipe = items => {
   const recipes: { [key in Recipes]: string[] } = {
     cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
-    minotaurLevel: ["wirtleg", "cowkinghorn"],
+    minotaurLevel: ["cowkinghorn"],
     chestblue: ["chestblue"],
   };
 
@@ -276,31 +276,31 @@ export const isValidRecipe = items => {
 };
 
 export const generateBlueChestItem = (): { item: string; uniqueChances?: number } => {
-  // 50%
+  // 53%
   const items = [
-    { item: "bluemorningstar", uniqueChances: 80 },
+    { item: "bluemorningstar", uniqueChances: 70 },
     { item: "hornedarmor", uniqueChances: 70 },
-    { item: "frozenarmor", uniqueChances: 40 },
-    { item: "beltfrozen", uniqueChances: 40 },
+    { item: "frozenarmor", uniqueChances: 35 },
+    { item: "beltfrozen", uniqueChances: 35 },
     { item: "diamondarmor", uniqueChances: 20 },
     { item: "beltdiamond", uniqueChances: 20 },
     { item: "beltminotaur", uniqueChances: 5 },
     { item: "minotauraxe", uniqueChances: 5 },
-    // { item: "cape" },
+    { item: "cape", uniqueChances: 5 },
   ];
 
   // 40%
   const scrolls = [{ item: "scrollupgradehigh" }, { item: "scrollupgradeblessed" }];
 
-  // 10%
+  // 7%
   const rings = [{ item: "ringraistone" }, { item: "ringfountain" }, { item: "ringminotaur" }];
 
-  const randomCategory = random(10) + 1;
+  const randomCategory = random(100);
   let category: any = items;
 
-  if (randomCategory > 9) {
+  if (randomCategory < 7) {
     category = rings;
-  } else if (randomCategory > 5) {
+  } else if (randomCategory < 47) {
     category = scrolls;
   }
 

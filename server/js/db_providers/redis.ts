@@ -978,6 +978,7 @@ class DatabaseHandler {
           let generatedItem: number | string = 0;
 
           if (recipe) {
+            isSuccess = true;
             if (recipe === "cowLevel") {
               if (!player.server.cowLevelClock) {
                 isWorkingRecipe = true;
@@ -989,26 +990,21 @@ class DatabaseHandler {
                 player.server.startMinotaurLevel();
               }
             } else if (recipe === "chestblue") {
-              const { item, uniqueChances } = generateBlueChestItem();
+              if (!player.server.minotaurSpawnTimeout) {
+                const { item, uniqueChances } = generateBlueChestItem();
 
-              luckySlot = null;
+                luckySlot = null;
+                isWorkingRecipe = true;
 
-              isWorkingRecipe = true;
+                const {
+                  item: itemName,
+                  level,
+                  quantity,
+                  bonus,
+                } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
 
-              console.log("~~~~~item", item);
-              console.log("~~~~~uniqueChances", uniqueChances);
-              // console.log("~~~~~Types.getKindFromString(item)", Types.getKindFromString(item));
-
-              const {
-                item: itemName,
-                level,
-                quantity,
-                bonus,
-              } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
-
-              generatedItem = [itemName, level, quantity, bonus].filter(Boolean).join(":");
-
-              console.log("~~~~~generatedItem", generatedItem);
+                generatedItem = [itemName, level, quantity, bonus].filter(Boolean).join(":");
+              }
             }
           }
 
