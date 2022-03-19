@@ -985,26 +985,24 @@ class DatabaseHandler {
                 player.server.startCowLevel();
               }
             } else if (recipe === "minotaurLevel") {
-              if (!player.server.minotaurLevelClock) {
+              if (!player.server.minotaurLevelClock && !player.server.minotaurSpawnTimeout) {
                 isWorkingRecipe = true;
                 player.server.startMinotaurLevel();
               }
             } else if (recipe === "chestblue") {
-              if (!player.server.minotaurSpawnTimeout) {
-                const { item, uniqueChances } = generateBlueChestItem();
+              const { item, uniqueChances } = generateBlueChestItem();
 
-                luckySlot = null;
-                isWorkingRecipe = true;
+              luckySlot = null;
+              isWorkingRecipe = true;
 
-                const {
-                  item: itemName,
-                  level,
-                  quantity,
-                  bonus,
-                } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
+              const {
+                item: itemName,
+                level,
+                quantity,
+                bonus,
+              } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
 
-                generatedItem = [itemName, level, quantity, bonus].filter(Boolean).join(":");
-              }
+              generatedItem = [itemName, level, quantity, bonus].filter(Boolean).join(":");
             }
           }
 

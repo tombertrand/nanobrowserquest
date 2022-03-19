@@ -93,8 +93,10 @@ class Party {
     this.forEachMember(({ id }) => {
       const player = this.server.getEntityById(id);
 
-      player.calculatePartyBonus();
-      player.sendPlayerStats();
+      if (player) {
+        player.calculatePartyBonus();
+        player.sendPlayerStats();
+      }
     });
   }
 
