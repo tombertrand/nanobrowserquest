@@ -325,6 +325,8 @@ class Player extends Character {
         if (mob?.type === "mob") {
           let isCritical = false;
 
+          const resistances = Types.Resistances[mob.kind] || {};
+
           let dmg = Formulas.dmg({
             weapon: self.weapon,
             weaponLevel: self.weaponLevel,
@@ -332,14 +334,14 @@ class Player extends Character {
             armorLevel: mob.armorLevel,
             minDamage: self.bonus.minDamage,
             maxDamage: self.bonus.maxDamage,
-            magicDamage: self.bonus.magicDamage,
-            attackDamage: self.bonus.attackDamage,
+            magicDamage: resistances.magicDamage ? 0 : self.bonus.magicDamage,
+            attackDamage: resistances.physicalDamage ? 0 : self.bonus.attackDamage,
             drainLife: self.bonus.drainLife,
-            flameDamage: self.bonus.flameDamage,
-            lightningDamage: self.bonus.lightningDamage,
-            coldDamage: self.bonus.coldDamage,
-            pierceArmor: self.bonus.pierceArmor,
-            partyAttackDamage: self.partyBonus.attackDamage,
+            flameDamage: resistances.flameDamage ? 0 : self.bonus.flameDamage,
+            lightningDamage: resistances.lightningDamage ? 0 : self.bonus.lightningDamage,
+            coldDamage: resistances.coldDamage ? 0 : self.bonus.coldDamage,
+            pierceDamage: self.bonus.pierceDamage,
+            partyAttackDamage: resistances.physicalDamage ? 0 : self.partyBonus.attackDamage,
           });
 
           if (self.bonus.criticalHit) {
@@ -457,7 +459,7 @@ class Player extends Character {
             }
           }
 
-          if (self.bonus.lightningDamage) {
+          if (self.bonus.lightningDamage && !Types.Resistances[mob.kind]?.lightningDamage) {
             lightningDamage = self.bonus.lightningDamage;
 
             mob.receiveDamage(lightningDamage, self.id);
@@ -1017,7 +1019,7 @@ class Player extends Character {
       const drainLifeBonus = [13];
       const fireDamageBonus = [14];
       const lightningDamageBonus = [15];
-      const pierceArmorBonus = [16];
+      const pierceDamageBonus = [16];
       const highHealthBonus = [17];
       const coldDamageBonus = [18];
       const freezeChanceBonus = [19];
@@ -1037,7 +1039,7 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-          .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceArmorBonus]).slice(0, 1));
+          .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceDamageBonus]).slice(0, 1));
       } else if (kind === Types.Entities.RINGRAISTONE) {
         bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
       } else if (kind === Types.Entities.RINGFOUNTAIN) {
@@ -1346,7 +1348,7 @@ class Player extends Character {
       drainLife: 0,
       flameDamage: 0,
       lightningDamage: 0,
-      pierceArmor: 0,
+      pierceDamage: 0,
       highHealth: 0,
       coldDamage: 0,
       freezeChance: 0,
@@ -1543,7 +1545,7 @@ class Player extends Character {
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
       coldDamage: this.bonus.coldDamage,
-      pierceArmor: this.bonus.pierceArmor,
+      pierceDamage: this.bonus.pierceDamage,
       partyAttackDamage: this.getParty()?.members.length >= 2 ? this.partyBonus.attackDamage : 0,
     });
 

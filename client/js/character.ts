@@ -64,6 +64,7 @@ class Character extends Entity {
   raiseRate: number;
   isFrozen: boolean;
   frozenTimeout: any;
+  resistances: { [key: string]: { display: string; percentage: number } };
 
   constructor(id, kind) {
     super(id, kind);
@@ -105,6 +106,7 @@ class Character extends Entity {
     this.inspecting = null;
     this.isLevelup = false;
     this.auras = [];
+    this.resistances = {};
   }
 
   clean() {

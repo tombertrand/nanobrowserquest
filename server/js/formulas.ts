@@ -15,7 +15,7 @@ Formulas.minMaxDamage = function ({
   flameDamage,
   lightningDamage,
   coldDamage,
-  pierceArmor,
+  pierceDamage,
   partyAttackDamage,
 }) {
   const isUnique = !!flameDamage;
@@ -28,7 +28,7 @@ Formulas.minMaxDamage = function ({
     flameDamage +
     lightningDamage +
     coldDamage +
-    pierceArmor;
+    pierceDamage;
 
   let min = baseDamage + minDamage + Math.round(Math.pow(0.7, Math.floor(playerLevel / 10)) * playerLevel);
   let max = baseDamage + maxDamage + Math.round(Math.pow(1.075, Math.floor(playerLevel / 10)) * playerLevel);
@@ -61,7 +61,7 @@ Formulas.dmg = function ({
   flameDamage,
   lightningDamage,
   coldDamage,
-  pierceArmor,
+  pierceDamage,
   partyAttackDamage,
 }) {
   const { min, max } = Formulas.minMaxDamage({
@@ -76,14 +76,13 @@ Formulas.dmg = function ({
     flameDamage,
     lightningDamage,
     coldDamage,
-    pierceArmor,
+    pierceDamage,
     partyAttackDamage,
   });
   const dealt = randomInt(min, max);
   const absorbed = Math.floor(armorLevel * randomInt(2, 4));
 
-  // @TODO Properly calculate pierceArmor, should be something special
-  const dmg = dealt + pierceArmor - absorbed;
+  const dmg = dealt + pierceDamage - absorbed;
 
   //console.log("abs: "+absorbed+"   dealt: "+ dealt+"   dmg: "+ (dealt - absorbed));
   if (dmg <= 0) {

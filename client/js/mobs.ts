@@ -330,6 +330,7 @@ export const Mobs = {
       this.shadowOffsetY = 1;
       this.aggroRange = 3;
       this.auras = ["highhealth"];
+      this.resistances = Types.Resistances[Types.Entities.COWKING];
       this.setAttackRate(1300);
     }
   },
@@ -344,6 +345,7 @@ export const Mobs = {
       this.shadowOffsetY = 1;
       this.aggroRange = 9;
       this.auras = ["freeze"];
+      this.resistances = Types.Resistances[Types.Entities.MINOTAUR];
       this.setAttackRate(1300);
     }
   },

@@ -611,9 +611,31 @@ Types.setItems = {
   leather: ["leatherarmor", "beltleather"],
 };
 
-// @TODO Display on the mob inspect and reduce dmg in the formulas
-Types.immunities = {
-  minotaur: ["flameDamage", "lightningDamage", "coldDamage"],
+Types.Resistances = {
+  [Types.Entities.COWKING]: {
+    lightningDamage: {
+      percentage: 100,
+      display: "lightning damage",
+    },
+  },
+  [Types.Entities.MINOTAUR]: {
+    flameDamage: {
+      percentage: 100,
+      display: "flame damage",
+    },
+    lightningDamage: {
+      percentage: 100,
+      display: "lightning damage",
+    },
+    coldDamage: {
+      percentage: 100,
+      display: "cold damage",
+    },
+    magicDamage: {
+      percentage: 100,
+      display: "magic damage",
+    },
+  },
 };
 
 Types.expForLevel = [
@@ -1223,7 +1245,7 @@ Types.bonusType = [
   "drainLife",
   "flameDamage",
   "lightningDamage",
-  "pierceArmor",
+  "pierceDamage",
   "highHealth",
   "coldDamage",
   "freezeChance",
@@ -1246,7 +1268,7 @@ Types.getBonus = function (rawBonus, level) {
   const drainLifePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const flameDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const lightningDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
-  const pierceArmorPerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
+  const pierceDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
   const coldDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const freezeChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
@@ -1268,7 +1290,7 @@ Types.getBonus = function (rawBonus, level) {
     drainLifePerLevel,
     flameDamagePerLevel,
     lightningDamagePerLevel,
-    pierceArmorPerLevel,
+    pierceDamagePerLevel,
     highHealthPerLevel,
     coldDamagePerLevel,
     freezeChancePerLevel,

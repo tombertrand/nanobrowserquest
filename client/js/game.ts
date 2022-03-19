@@ -634,7 +634,7 @@ class Game {
           magicDamage,
           flameDamage,
           lightningDamage,
-          pierceArmor,
+          pierceDamage,
           bonus = [],
           requirement,
           description,
@@ -650,7 +650,7 @@ class Game {
             ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
             ${flameDamage ? `<div class="item-bonus">Flame damage: ${flameDamage}</div>` : ""}
             ${lightningDamage ? `<div class="item-bonus">Lightning damage: ${lightningDamage}</div>` : ""}
-            ${pierceArmor ? `<div class="item-bonus">Armor Piercing: ${pierceArmor}</div>` : ""}
+            ${pierceDamage ? `<div class="item-bonus">Pierce damage: ${pierceDamage}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
