@@ -165,6 +165,13 @@ class Player extends Character {
 
       console.debug("Received: " + message);
       if (!this.formatChecker.check(message)) {
+        Sentry.captureException(new Error("FormatChecker failed"), {
+          user: {
+            username: self.name,
+          },
+          extra: { message },
+        });
+
         self.connection.close("Invalid " + Types.getMessageTypeAsString(action) + " message format: " + message);
         return;
       }
@@ -469,8 +476,10 @@ class Player extends Character {
           if (self.bonus.lightningDamage && !Types.Resistances[mob.kind]?.lightningDamage) {
             lightningDamage = self.bonus.lightningDamage;
 
-            mob.receiveDamage(lightningDamage, self.id);
-            self.server.handleHurtEntity({ entity: mob, attacker: self, damage: lightningDamage });
+            if (mob) {
+              mob.receiveDamage(lightningDamage, self.id);
+              self.server.handleHurtEntity({ entity: mob, attacker: self, damage: lightningDamage });
+            }
           }
 
           if (mob.kind === Types.isBoss(mob.kind)) {
@@ -1064,6 +1073,8 @@ class Player extends Character {
       }
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
+    } else {
+      Sentry.captureException(new Error("Generate Item Invalid Kind"), { extra: { kind } });
     }
 
     return item;

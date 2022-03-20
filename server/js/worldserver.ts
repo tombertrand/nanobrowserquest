@@ -13,6 +13,7 @@ import Npc from "./npc";
 import Party from "./party";
 import Player from "./player";
 import Properties from "./properties";
+import { Sentry } from "./sentry";
 import { purchase } from "./store/purchase";
 import { random, randomRange } from "./utils";
 
@@ -1203,7 +1204,12 @@ class World {
       }
 
       if (members.length > 4) {
-        this.databaseHandler.logEvent({ event: "loot from Minotaur", membersLength: members.length });
+        Sentry.captureException(new Error("Loot party for Minotaur"), {
+          user: {
+            username: attacker.name,
+          },
+          extra: { members },
+        });
 
         members = _.uniq(members);
       }
@@ -1211,7 +1217,14 @@ class World {
       members.forEach(id => {
         const player = this.getEntityById(id);
 
-        if (player.minotaurDamage >= 2500) {
+        if (!player) {
+          Sentry.captureException(new Error("Missing party member"), {
+            user: {
+              username: attacker.name,
+            },
+            extra: { id },
+          });
+        } else if (player?.minotaurDamage >= 2500) {
           this.databaseHandler.lootItems({
             player,
             items: [{ item: "chestblue", quantity: 1 }],

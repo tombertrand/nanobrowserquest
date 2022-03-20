@@ -4,6 +4,7 @@ import { Types } from "../../shared/js/gametypes";
 import Messages from "./message";
 
 import type Player from "./player";
+import { Sentry } from "./sentry";
 import type World from "./worldserver";
 
 interface Member {
@@ -100,6 +101,12 @@ class Party {
       if (player) {
         player.calculatePartyBonus();
         player.sendPlayerStats();
+      } else {
+        Sentry.captureException(new Error("Missing entity ID in party"), {
+          extra: {
+            id,
+          },
+        });
       }
     });
   }

@@ -729,15 +729,17 @@ class DatabaseHandler {
     if (!fromLocation || !toLocation) return;
 
     this.client.hget("u:" + player.name, fromLocation, (_err, fromReply) => {
+      let fromItem;
+      let toItem;
       try {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
-        const fromItem = isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed;
+        fromItem = isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed;
 
         // Should never happen but who knows
         if (["dagger:1", "clotharmor:1"].includes(fromItem) && toSlot !== -1) return;
 
         if (toLocation === fromLocation) {
-          const toItem = fromReplyParsed[toSlot - toRange];
+          toItem = fromReplyParsed[toSlot - toRange];
 
           if (toSlot !== -1) {
             fromReplyParsed[toSlot - toRange] = fromItem;
@@ -752,10 +754,10 @@ class DatabaseHandler {
         } else {
           this.client.hget("u:" + player.name, toLocation, (_err, toReply) => {
             try {
-              let toReplyParsed = isMultipleTo ? JSON.parse(toReply) : toReply;
-              let toItem = isMultipleTo ? toReplyParsed[toSlot - toRange] : toReplyParsed;
               let isFromReplyDone = false;
               let isToReplyDone = false;
+              let toReplyParsed = isMultipleTo ? JSON.parse(toReply) : toReply;
+              toItem = isMultipleTo ? toReplyParsed[toSlot - toRange] : toReplyParsed;
 
               if (["dagger:1", "clotharmor:1"].includes(toItem)) {
                 toItem = 0;
@@ -845,7 +847,12 @@ class DatabaseHandler {
         }
       } catch (err) {
         console.log(err);
-        Sentry.captureException(err);
+        Sentry.captureException(err, {
+          extra: {
+            fromItem,
+            toItem,
+          },
+        });
       }
     });
   }
