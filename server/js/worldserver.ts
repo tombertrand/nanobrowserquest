@@ -553,10 +553,11 @@ class World {
 
   removePlayer(player: Player) {
     player.broadcast(player.despawn());
-    this.removeEntity(player);
+
     if (player.hasParty()) {
       player.getParty()?.removeMember(player);
     }
+    this.removeEntity(player);
     delete this.players[player.id];
     delete this.outgoingQueues[player.id];
   }
@@ -1201,10 +1202,16 @@ class World {
         members = party.members.map(({ id }) => id);
       }
 
+      if (members.length > 4) {
+        this.databaseHandler.logEvent({ event: "loot from Minotaur", membersLength: members.length });
+
+        members = _.uniq(members);
+      }
+
       members.forEach(id => {
         const player = this.getEntityById(id);
 
-        if (player.minotaurDamage >= 2000) {
+        if (player.minotaurDamage >= 2500) {
           this.databaseHandler.lootItems({
             player,
             items: [{ item: "chestblue", quantity: 1 }],

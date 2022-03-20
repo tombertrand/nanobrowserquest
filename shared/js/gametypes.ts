@@ -1553,7 +1553,3 @@ Types.itemDescription = {
   scrollupgradeblessed:
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level. Blessed scrolls gives a higher chance of successful upgrade.",
 };
-
-// if (!(typeof exports === "undefined")) {
-//   module.exports = Types;
-// }

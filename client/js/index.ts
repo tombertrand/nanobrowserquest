@@ -278,6 +278,13 @@ var initApp = function () {
     //   app.tryStartingGame();
     // });
 
+    // $("#aaa1 .link").on("click", () => {
+    //   $("#loginnameinput").val("aaa1").show();
+    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+
+    //   app.tryStartingGame();
+    // });
+
     $(".play span").click(function () {
       app.tryStartingGame();
     });

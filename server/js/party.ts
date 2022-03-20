@@ -51,6 +51,10 @@ class Party {
     if (this.members.length === MAX_MEMBERS) {
       player.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, "The party is full").serialize());
       return;
+    } else if (this.members.length > MAX_MEMBERS) {
+      this.server.databaseHandler.logEvent({ event: "addMember - disband", memberLength: this.members.length });
+      this.disband();
+      return;
     }
     if (!this.sentInvites[player.id]) {
       player.send(

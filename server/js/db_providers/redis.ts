@@ -1201,6 +1201,11 @@ class DatabaseHandler {
     const now = Date.now();
     this.client.zadd("loot", now, JSON.stringify({ player: player.name, item }));
   }
+
+  logEvent(event) {
+    const now = Date.now();
+    this.client.zadd("event", now, JSON.stringify(event));
+  }
 }
 
 export default DatabaseHandler;
