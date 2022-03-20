@@ -52,6 +52,7 @@ class Player extends Character {
   level: number;
   lastWorldChatMinutes: number;
   auras: string[];
+  set: null;
   inventory: any[];
   inventoryCount: any[];
   achievement: any[];
@@ -489,7 +490,7 @@ class Player extends Character {
             }
           }
 
-          if (mob.kind === Types.Entities.MINOTAUR) {
+          if (mob.kind === Types.Entities.MINOTAUR && self.set !== "minotaur") {
             const isFrozen = random(100) < 20;
             if (isFrozen) {
               self.broadcast(new Messages.Frozen(self.id, 10));
@@ -1435,6 +1436,7 @@ class Player extends Character {
   calculateSetBonus() {
     let bonus = null;
     let set = null;
+
     if (
       this.armorKind === Types.Entities.FROZENARMOR &&
       this.belt === "beltfrozen" &&
@@ -1463,6 +1465,8 @@ class Player extends Character {
       set = "minotaur";
       bonus = Types.setBonus.minotaur;
     }
+
+    this.set = set;
 
     if (bonus) {
       Object.entries(bonus).map(([type, stats]) => {

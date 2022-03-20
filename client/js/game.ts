@@ -657,6 +657,7 @@ class Game {
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${setBonus.length ? `<div class="item-set-description">${self.player.set} Set Bonuses</div>` : ""}
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+            ${self.player.set === "minotaur" ? `<div class="item-set-bonus">Cannot be frozen</div>` : ""}
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
           </div>`;

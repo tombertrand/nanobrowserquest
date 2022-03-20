@@ -343,7 +343,7 @@ export const Mobs = {
       this.idleSpeed = 800;
       this.walkSpeed = 200;
       this.shadowOffsetY = 1;
-      this.aggroRange = 9;
+      this.aggroRange = 5;
       this.auras = ["freeze"];
       this.resistances = Types.Resistances[Types.Entities.MINOTAUR];
       this.setAttackRate(1300);

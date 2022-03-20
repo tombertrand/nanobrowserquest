@@ -578,13 +578,13 @@ Types.itemUniqueMap = {
 
 Types.setBonus = {
   minotaur: {
-    attack: 5,
-    minDamage: 5,
-    defense: 5,
+    minDamage: 15,
+    defense: 15,
+    coldDamage: 15,
     health: 50,
   },
   diamond: {
-    exp: 5,
+    exp: 10,
     blockChance: 3,
     health: 50,
   },

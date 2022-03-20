@@ -1210,9 +1210,10 @@ class World {
           },
           extra: { members },
         });
-
-        members = _.uniq(members);
       }
+
+      // Safety check?
+      members = _.uniq(members);
 
       members.forEach(id => {
         const player = this.getEntityById(id);
