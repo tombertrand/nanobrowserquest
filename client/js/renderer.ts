@@ -505,7 +505,6 @@ class Renderer {
         filter += ` brightness(${entity.capeBrightness})`;
       }
       this.context.filter = filter;
-
       this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
       this.context.filter = "none";
     }

@@ -745,7 +745,7 @@ class Game {
         const toSlot = $(this).data("slot");
         const toItemEl = $(this).find("> div");
 
-        if (fromSlot === toSlot) {
+        if (fromSlot === toSlot || typeof fromSlot !== "number" || typeof toSlot !== "number") {
           return;
         }
 

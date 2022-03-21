@@ -478,7 +478,8 @@ class Player extends Character {
           if (self.bonus.lightningDamage && !Types.Resistances[mob.kind]?.lightningDamage) {
             lightningDamage = self.bonus.lightningDamage;
 
-            if (mob) {
+            // @NOTE: Only has effect on mobs for now
+            if (mob?.receiveDamage) {
               mob.receiveDamage(lightningDamage, self.id);
               self.server.handleHurtEntity({ entity: mob, attacker: self, damage: lightningDamage });
             }
