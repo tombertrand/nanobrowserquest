@@ -572,25 +572,30 @@ class Player extends Character {
                 self.server.pushToPlayer(self, self.health());
               }
             } else {
-              let player = self;
-              // Single items can't be party looted, like potions
-              if (!Types.isSingle(kind) && self.partyId) {
-                player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+              const { isUnique, ...generatedItem } = self.generateItem({ kind }) || {};
+
+              if (generatedItem) {
+                let player = self;
+
+                // Single items can't be party looted, like potions
+                if (!Types.isSingle(kind) && self.partyId) {
+                  player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+                }
+
+                if (self.partyId) {
+                  self.server.pushToParty(
+                    self.getParty(),
+                    new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
+                      { playerName: player.name, kind, isUnique },
+                    ]),
+                  );
+                }
+
+                this.databaseHandler.lootItems({
+                  player,
+                  items: [generatedItem],
+                });
               }
-
-              const { isUnique, ...generatedItem } = self.generateItem({ kind });
-
-              if (self.partyId) {
-                self.server.pushToParty(
-                  self.getParty(),
-                  new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [{ playerName: player.name, kind, isUnique }]),
-                );
-              }
-
-              this.databaseHandler.lootItems({
-                player,
-                items: [generatedItem],
-              });
             }
           }
         }
@@ -1074,8 +1079,6 @@ class Player extends Character {
       }
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
-    } else {
-      Sentry.captureException(new Error("Generate Item Invalid Kind"), { extra: { kind } });
     }
 
     return item;
