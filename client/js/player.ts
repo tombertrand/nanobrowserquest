@@ -27,6 +27,7 @@ class Player extends Character {
   capeHue: number;
   capeSaturate: number;
   capeContrast: number;
+  capeBrightness: number;
   inventory: any[];
   stash: any[];
   upgrade: any[];
@@ -100,6 +101,7 @@ class Player extends Character {
     this.capeHue = 0;
     this.capeSaturate = 0;
     this.capeContrast = 0;
+    this.capeBrightness = 1;
     this.inventory = [];
     this.stash = [];
     this.upgrade = [];
@@ -163,6 +165,10 @@ class Player extends Character {
 
   setCapeContrast(contrast: number) {
     this.capeContrast = contrast;
+  }
+
+  setCapeBrightness(brightness: number) {
+    this.capeBrightness = brightness;
   }
 
   loot(item) {
@@ -329,6 +335,9 @@ class Player extends Character {
     }
     if (settings.capeContrast) {
       this.capeContrast = settings.capeContrast;
+    }
+    if (settings.capeBrightness) {
+      this.capeBrightness = settings.capeBrightness;
     }
   }
 

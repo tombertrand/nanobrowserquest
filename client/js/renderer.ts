@@ -496,10 +496,13 @@ class Renderer {
         filter += ` hue-rotate(${entity.capeHue}deg)`;
       }
       if (typeof entity.capeSaturate === "number") {
-        filter += ` saturate(${entity.capeSaturate + 100}%)`;
+        filter += ` saturate(${entity.capeSaturate}%)`;
       }
       if (typeof entity.capeContrast === "number") {
-        filter += ` contrast(${entity.capeContrast + 100}%)`;
+        filter += ` contrast(${entity.capeContrast}%)`;
+      }
+      if (typeof entity.capeBrightness === "number") {
+        filter += ` brightness(${entity.capeBrightness})`;
       }
       this.context.filter = filter;
 

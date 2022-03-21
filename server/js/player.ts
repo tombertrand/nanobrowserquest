@@ -84,6 +84,7 @@ class Player extends Character {
   capeHue: number;
   capeSaturate: number;
   capeContrast: number;
+  capeBrightness: number;
   firepotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -964,6 +965,9 @@ class Player extends Character {
           if (settings.capeContrast) {
             this.capeContrast = settings.capeContrast;
           }
+          if (settings.capeBrightness) {
+            this.capeBrightness = settings.capeBrightness;
+          }
 
           this.databaseHandler.setSettings(this.name, settings);
           this.broadcast(new Messages.Settings(this, settings), false);
@@ -1114,6 +1118,7 @@ class Player extends Character {
         capeHue: this.capeHue,
         capeSaturate: this.capeSaturate,
         capeContrast: this.capeContrast,
+        capeBrightness: this.capeBrightness,
       },
     ];
 
@@ -1715,6 +1720,7 @@ class Player extends Character {
     self.capeHue = settings.capeHue;
     self.capeSaturate = settings.capeSaturate;
     self.capeContrast = settings.capeContrast;
+    self.capeBrightness = settings.capeBrightness;
 
     self.createdAt = createdAt;
     self.experience = exp;

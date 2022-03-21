@@ -34,6 +34,13 @@ const getNewDepositAccountByIndex = async (index: number): Promise<string> => {
   return depositAccount;
 };
 
+const defaultSettings = {
+  capeHue: 0,
+  capeSaturate: 0,
+  capeContrast: 0,
+  capeBrightness: 1,
+};
+
 class DatabaseHandler {
   client: any;
 
@@ -315,7 +322,7 @@ class DatabaseHandler {
 
               var settings = replies[25];
               try {
-                settings = JSON.parse(settings || "{}");
+                settings = Object.assign(defaultSettings, JSON.parse(settings || "{}"));
               } catch (_err) {
                 // Silence err
               }
@@ -440,11 +447,7 @@ class DatabaseHandler {
               stash: new Array(STASH_SLOT_COUNT).fill(0),
               depositAccount,
               depositAccountIndex,
-              settings: {
-                capeHue: 0,
-                capeSaturate: 0,
-                capeContrast: 0,
-              },
+              settings: defaultSettings,
             });
           });
       }

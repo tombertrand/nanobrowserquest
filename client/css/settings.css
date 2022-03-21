@@ -21,7 +21,8 @@
 
 #cape-hue-slider,
 #cape-saturate-slider,
-#cape-contrast-slider {
+#cape-contrast-slider,
+#cape-brightness-slider {
   margin: 6px auto;
   width: 60%;
 }

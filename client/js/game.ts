@@ -586,17 +586,38 @@ class Game {
       },
     });
 
+    this.player.capeBrightness = settings.capeBrightness;
+    var handleBrightness = $("#cape-brightness-handle");
+    $("#cape-brightness-slider").slider({
+      min: 0,
+      max: 10,
+      value: settings.capeBrightness,
+      create: () => {
+        handleBrightness.text(`${settings.capeBrightness}`);
+      },
+      slide: (_event, ui) => {
+        handleBrightness.text(`${ui.value}`);
+        this.player.setCapeBrightness(ui.value);
+        this.updateCapePreview();
+      },
+      change: (_event, ui) => {
+        this.client.sendSettings({ capeBrightness: ui.value });
+      },
+    });
+
     this.updateCapePreview();
   }
 
   updateCapePreview() {
     // @NOTE Adjustment because css filters and canvas filters are not the same
+    const hue = this.player.capeHue;
     const saturate = this.player.capeSaturate + 40 > 100 ? this.player.capeSaturate + 40 : 100;
     const contrast = this.player.capeContrast + 40 > 100 ? this.player.capeContrast + 40 : 100;
+    const brightness = this.player.capeBrightness;
 
     $("#settings-cape-preview").css(
       "filter",
-      `hue-rotate(${this.player.capeHue}deg) saturate(${saturate}%) contrast(${contrast}%)`,
+      `hue-rotate(${hue}deg) saturate(${saturate}%) contrast(${contrast}%) brightness(${brightness})`,
     );
   }
 
@@ -657,7 +678,12 @@ class Game {
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${setBonus.length ? `<div class="item-set-description">${self.player.set} Set Bonuses</div>` : ""}
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-            ${self.player.set === "minotaur" ? `<div class="item-set-bonus">Cannot be frozen</div>` : ""}
+            ${
+              // @TODO Move this to Bonus map cannotBeFrozen: true
+              self.player.set === "minotaur" && setBonus.length
+                ? `<div class="item-set-bonus">Cannot be frozen</div>`
+                : ""
+            }
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
           </div>`;

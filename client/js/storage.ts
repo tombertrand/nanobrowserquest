@@ -31,6 +31,7 @@ class Storage {
         capeHue: 0,
         capeSaturate: 0,
         capeContrast: 0,
+        capeBrightness: 1,
       },
       achievements: {
         ratCount: 0,
