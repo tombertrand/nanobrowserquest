@@ -693,8 +693,8 @@ class Character extends Entity {
     this.isFrozen = true;
     this.currentAnimation.pause();
 
-    this.disengage();
-    this.nextStep();
+    // this.disengage();
+    // this.nextStep();
 
     clearTimeout(this.frozenTimeout);
 

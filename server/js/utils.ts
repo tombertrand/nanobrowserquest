@@ -278,14 +278,12 @@ export const isValidRecipe = items => {
 export const generateBlueChestItem = (): { item: string; uniqueChances?: number } => {
   // 53%
   const items = [
-    { item: "bluemorningstar", uniqueChances: 70 },
-    { item: "hornedarmor", uniqueChances: 70 },
-    { item: "frozenarmor", uniqueChances: 35 },
-    { item: "beltfrozen", uniqueChances: 35 },
+    { item: "frozenarmor", uniqueChances: 40 },
+    { item: "beltfrozen", uniqueChances: 40 },
     { item: "diamondarmor", uniqueChances: 20 },
     { item: "beltdiamond", uniqueChances: 20 },
-    { item: "beltminotaur", uniqueChances: 5 },
-    { item: "minotauraxe", uniqueChances: 5 },
+    { item: "beltminotaur", uniqueChances: 10 },
+    { item: "minotauraxe", uniqueChances: 10 },
     { item: "cape", uniqueChances: 5 },
   ];
 

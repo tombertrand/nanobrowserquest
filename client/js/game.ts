@@ -532,8 +532,8 @@ class Game {
     this.player.capeHue = settings.capeHue;
     var handleHue = $("#cape-hue-handle");
     $("#cape-hue-slider").slider({
-      min: 0,
-      max: 360,
+      min: -180,
+      max: 180,
       value: settings.capeHue,
       create: () => {
         handleHue.text(settings.capeHue);
@@ -609,10 +609,9 @@ class Game {
   }
 
   updateCapePreview() {
-    // @NOTE Adjustment because css filters and canvas filters are not the same
     const hue = this.player.capeHue;
-    const saturate = this.player.capeSaturate + 40 > 100 ? this.player.capeSaturate + 40 : 100;
-    const contrast = this.player.capeContrast + 40 > 100 ? this.player.capeContrast + 40 : 100;
+    const saturate = this.player.capeSaturate;
+    const contrast = this.player.capeContrast;
     const brightness = this.player.capeBrightness;
 
     $("#settings-cape-preview").css(
@@ -4007,7 +4006,8 @@ class Game {
       !this.isZoningTile(this.player.nextGridX, this.player.nextGridY) &&
       !this.player.isDead &&
       !this.hoveringCollidingTile &&
-      !this.hoveringPlateauTile
+      !this.hoveringPlateauTile &&
+      this.map.grid
     ) {
       entity = this.getEntityAt(pos.x, pos.y);
 
