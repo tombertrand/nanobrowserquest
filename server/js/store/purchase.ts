@@ -76,7 +76,7 @@ class Purchase {
     if (!session) {
       this.error(ERROR_MESSAGES.noSession, payment);
     } else if (payment.amount < session.xno) {
-      this.error(ERROR_MESSAGES.wrongAmount, { xno: session.xno, payment });
+      this.error(ERROR_MESSAGES.wrongAmount, { xno: session.xno, payment, player: session.player.name });
 
       session.player.send([
         Types.Messages.PURCHASE_ERROR,
