@@ -171,7 +171,7 @@ class Player extends Character {
           user: {
             username: self.name,
           },
-          extra: { message },
+          extra: { message, action },
         });
 
         self.connection.close("Invalid " + Types.getMessageTypeAsString(action) + " message format: " + message);

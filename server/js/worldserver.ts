@@ -1225,7 +1225,7 @@ class World {
             },
             extra: { id },
           });
-        } else if (player?.minotaurDamage >= 2500) {
+        } else if (player?.minotaurDamage >= 2000) {
           this.databaseHandler.lootItems({
             player,
             items: [{ item: "chestblue", quantity: 1 }],
