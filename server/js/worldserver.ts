@@ -48,6 +48,7 @@ class World {
   cowPossibleCoords: any[];
   cowEntityIds: any[];
   cowPackOrder: number[][];
+  minotaur: any;
   minotaurLevelClock: any;
   minotaurLevelInterval: any;
   minotaurLevelTownNpcId: any;
@@ -130,6 +131,7 @@ class World {
       [-1, 2],
       [-2, 2],
     ];
+    this.minotaur = null;
     this.minotaurLevelClock = null;
     this.minotaurLevelInterval = null;
     this.minotaurLevelTownNpcId = null;
@@ -651,6 +653,14 @@ class World {
             setTimeout(() => {
               // Return everyone to town, leave 3s to loot any last drop
               this.endCowLevel(true);
+
+              // When the cow level is cleared, 20% chance of spawning the Minotaur
+              if (this.minotaurSpawnTimeout && random(4) === 0) {
+                this.minotaur.handleRespawn(0);
+
+                clearTimeout(this.minotaurSpawnTimeout);
+                this.minotaurSpawnTimeout = null;
+              }
             }, 3000);
           }
         });
@@ -1088,6 +1098,7 @@ class World {
           const mob = new Mob(id, kind, pos.x + 1, pos.y);
 
           if (kind === Types.Entities.MINOTAUR) {
+            self.minotaur = mob;
             mob.onDestroy(() => {
               clearInterval(self.minotaurLevelInterval);
               setTimeout(() => {

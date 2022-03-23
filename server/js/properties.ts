@@ -345,12 +345,12 @@ var Properties: any = {
 
   cowking: {
     drops: {
-      diamondsword: 5,
-      diamondarmor: 5,
-      beltdiamond: 5,
+      diamondsword: 10,
+      diamondarmor: 10,
+      beltdiamond: 10,
       amuletcow: 5,
-      cowkinghorn: 10,
-      scrollupgradehigh: 70,
+      cowkinghorn: 25,
+      scrollupgradehigh: 40,
     },
     hp: 6000,
     armor: 24,
@@ -359,7 +359,10 @@ var Properties: any = {
 
   minotaur: {
     drops: {
-      scrollupgradehigh: 100,
+      ringminotaur: 5,
+      minotauraxe: 10,
+      beltminotaur: 10,
+      scrollupgradehigh: 75,
     },
     hp: 12500,
     armor: 32,
