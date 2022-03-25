@@ -655,7 +655,7 @@ class World {
               this.endCowLevel(true);
 
               // When the cow level is cleared, 20% chance of spawning the Minotaur
-              if (this.minotaurSpawnTimeout && random(4) === 0) {
+              if (this.minotaurSpawnTimeout && this.minotaur.isDead && random(4) === 0) {
                 this.minotaur.handleRespawn(0);
 
                 clearTimeout(this.minotaurSpawnTimeout);
