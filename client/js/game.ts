@@ -3074,19 +3074,14 @@ class Game {
 
         if (player) {
           if (type === "armor") {
-            player.setArmorName(name);
-            player.setArmorLevel(level);
-            player.setArmorBonus(bonus);
-            player.setSprite(self.sprites[name]);
+            self.player.switchArmor(self.sprites[name], level, bonus);
           } else if (type === "weapon") {
-            player.setWeaponName(name);
-            player.setWeaponLevel(level);
-            player.setWeaponBonus(bonus);
+            self.player.switchWeapon(name, level, bonus);
           } else if (type === "cape") {
             if (!kind || !level || !bonus) {
               player.removeCape();
             } else {
-              player.setCape(`${name}:${level}:${bonus}`);
+              self.player.switchCape(name, level, bonus);
             }
           }
         }
