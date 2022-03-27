@@ -407,7 +407,6 @@ class World {
             hp: player.hitPoints,
             mHp: player.maxHitPoints,
           }),
-          player,
         );
       }
     } else {

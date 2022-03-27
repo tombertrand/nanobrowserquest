@@ -352,9 +352,9 @@ var Properties: any = {
       cowkinghorn: 20,
       scrollupgradehigh: 45,
     },
-    hp: 6000,
-    armor: 24,
-    weapon: 25,
+    hp: 6500,
+    armor: 22,
+    weapon: 24,
   },
 
   minotaur: {

@@ -1527,7 +1527,6 @@ class Player extends Character {
           hp: this.hitPoints,
           mHp: maxHitPoints,
         }),
-        this,
       );
     }
   }
