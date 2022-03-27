@@ -614,7 +614,7 @@ class Renderer {
         let spriteImage = sprite.image;
 
         if (entity instanceof Player) {
-          if (entity.orientation !== Types.Orientations.UP) {
+          if (entity.capeOrientation !== Types.Orientations.UP) {
             this.drawCape(entity);
           }
 
@@ -642,7 +642,7 @@ class Renderer {
           this.context.filter = "brightness(100%)";
         }
 
-        if (entity instanceof Player && entity.orientation === Types.Orientations.UP) {
+        if (entity instanceof Player && entity.capeOrientation === Types.Orientations.UP) {
           this.drawCape(entity);
         }
 

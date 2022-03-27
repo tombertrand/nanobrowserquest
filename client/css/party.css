@@ -79,6 +79,15 @@
   text-shadow: 1px -1px 1px #000, 1px 1px 1px #000, -1px 1px 1px #000;
 }
 
+.player-name.self {
+  color: #fcda5c;
+}
+
+.player-name .party-leader {
+  position: absolute;
+  left: -24px;
+}
+
 .player-health-bar-container {
   width: 100px;
   height: 9px;

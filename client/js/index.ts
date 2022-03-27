@@ -271,6 +271,20 @@ var initApp = function () {
     //   app.tryStartingGame();
     // });
 
+    // $("#bbb .link").on("click", () => {
+    //   $("#loginnameinput").val("bbb").show();
+    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+
+    //   app.tryStartingGame();
+    // });
+
+    // $("#ccc .link").on("click", () => {
+    //   $("#loginnameinput").val("ccc").show();
+    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+
+    //   app.tryStartingGame();
+    // });
+
     // $("#ddd .link").on("click", () => {
     //   $("#loginnameinput").val("ddd").show();
     //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();

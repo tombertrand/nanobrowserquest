@@ -8,7 +8,8 @@ import Transition from "./transition";
 class Character extends Entity {
   nextGridX: number;
   nextGridY: number;
-  orientation: any;
+  orientation: number;
+  capeOrientation: number;
   atkSpeed: number;
   raiseSpeed: any;
   moveSpeed: number;
@@ -141,8 +142,7 @@ class Character extends Entity {
   }
 
   animate(animation, speed, count = 0, onEndCount?: () => void) {
-    var oriented = ["atk", "walk", "idle", "raise"],
-      o = this.orientation;
+    var oriented = ["atk", "walk", "idle", "raise"];
 
     if (!(this.currentAnimation && this.currentAnimation.name === "death")) {
       // don't change animation if the character is dying
@@ -150,8 +150,15 @@ class Character extends Entity {
       this.flipSpriteY = false;
 
       if (_.indexOf(oriented, animation) >= 0) {
-        animation += "_" + (o === Types.Orientations.LEFT ? "right" : Types.getOrientationAsString(o));
+        animation +=
+          "_" +
+          (this.orientation === Types.Orientations.LEFT ? "right" : Types.getOrientationAsString(this.orientation));
         this.flipSpriteX = this.orientation === Types.Orientations.LEFT ? true : false;
+      }
+
+      if (this.kind === Types.Entities.WARRIOR) {
+        // @NOTE Make sure the cape is always in sync with the animation
+        this.capeOrientation = this.orientation;
       }
 
       this.setAnimation(animation, speed, count, onEndCount);

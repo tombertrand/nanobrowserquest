@@ -292,10 +292,13 @@ class App {
   updatePartyMembers(members: { id: number; name: string }[]) {
     const partyHtml = members
       .map(({ id, name }) => {
-        if (name === this.game.player.name) return "";
+        const isPartyLeader = this.game.player.partyLeader?.name === name;
+        const isSelf = this.game.player.name === name;
 
         return `<div>
-      <div class="player-name">${name}</div>
+      <div class="player-name ${isSelf ? "self" : ""}">
+        ${isPartyLeader ? "<span class='party-leader'>[P]</span>" : ""}${name}
+      </div>
       <div class="player-health-bar-container">
         <div id="player-health-${id}" class="player-health"></div>
         <div class="player-health-bar"></div>

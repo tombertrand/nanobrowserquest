@@ -973,7 +973,7 @@ class World {
     }
   }
 
-  receivedExp(player, mob) {
+  incrementExp(player, mob, expOverride?: number) {
     const playerLevel = player.level;
     const mobLevel = Types.getMobLevel(mob.kind);
 
@@ -981,7 +981,7 @@ class World {
     const EXP_LEVEL_BELOW_MOB = 8;
     const EXP_LEVEL_START_RANGE = 2;
     const EXP_LEVEL_END_RANGE = 6;
-    let exp = Types.getMobExp(mob.kind);
+    let exp = expOverride || Types.getMobExp(mob.kind);
 
     const levelDifference = playerLevel - mobLevel;
 
@@ -1000,7 +1000,12 @@ class World {
       }
     }
 
-    exp = Math.round((parseInt(exp) * player.bonus.exp) / 100 + parseInt(exp));
+    exp = Math.round((parseInt(exp) * (player.bonus.exp + player.partyBonus.exp)) / 100 + parseInt(exp));
+
+    if (exp) {
+      player.incExp(exp);
+      this.pushToPlayer(player, new Messages.Kill(mob, player.level, player.experience, exp));
+    }
 
     return exp;
   }
@@ -1027,14 +1032,11 @@ class World {
 
         // var lastHitPlayer = mainTanker instanceof Player || attacker;
 
-        let exp = this.receivedExp(attacker, mob);
-        if (exp) {
-          if (attacker.partyBonus.exp) {
-            exp = Math.round((attacker.partyBonus.exp / 100) * exp) + exp;
-          }
-          attacker.incExp(exp);
+        if (attacker.hasParty()) {
+          attacker.getParty().shareExp(mob);
+        } else {
+          this.incrementExp(attacker, mob);
         }
-        this.pushToPlayer(attacker, new Messages.Kill(mob, attacker.level, attacker.experience, exp));
 
         // if (mainTanker && mainTanker instanceof Player) {
         //   const exp = this.receivedExp(mainTanker, mob);

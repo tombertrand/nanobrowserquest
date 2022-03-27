@@ -2,9 +2,9 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 import Messages from "./message";
+import { Sentry } from "./sentry";
 
 import type Player from "./player";
-import { Sentry } from "./sentry";
 import type World from "./worldserver";
 
 interface Member {
@@ -12,7 +12,15 @@ interface Member {
   name: string;
 }
 
-const MAX_MEMBERS = 4;
+const MAX_MEMBERS = 6;
+
+// 1 player = 100% of mob exp
+// 2 players = 65% of mob exp
+// 3 players = 50% of mob exp
+// 4 players = 40% of mob exp
+// 5 players = 30% of mob exp
+// 6 players = 25% of mob exp
+const expPerPlayerMap = [100, 65, 50, 40, 30, 25];
 
 class Party {
   members: Member[] = [];
@@ -66,8 +74,6 @@ class Party {
       );
       return;
     }
-
-    console.log(`addMember: ${player.name}`);
     this.members.push({ id: player.id, name: player.name });
     player.setPartyId(this.id);
 
@@ -107,6 +113,24 @@ class Party {
             id,
           },
         });
+      }
+    });
+  }
+
+  shareExp(mob) {
+    const baseExp = Types.getMobExp(mob.kind);
+    const expPerPlayer = (baseExp * expPerPlayerMap[this.members.length]) / 100;
+
+    this.forEachMember(({ id }) => {
+      const player = this.server.getEntityById(id);
+
+      if (!player) return;
+
+      const x = Math.abs(player.x - mob.x);
+      const y = Math.abs(player.y - mob.y);
+
+      if (x <= 50 && y <= 50) {
+        this.server.incrementExp(player, mob, expPerPlayer);
       }
     });
   }

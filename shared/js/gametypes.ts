@@ -1256,7 +1256,7 @@ Types.getBonus = function (rawBonus, level) {
   const maxDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const attackDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const healthPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
-  const magicDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const magicDamagePerLevel = [1, 2, 3, 4, 6, 8, 12, 18, 26, 40];
   const defensePerLevel = [1, 2, 4, 6, 8, 11, 15, 22, 28, 40];
   const absorbPerLevel = [2, 4, 6, 8, 10, 13, 15, 18, 22, 28];
   const expPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
@@ -1270,7 +1270,7 @@ Types.getBonus = function (rawBonus, level) {
   const lightningDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const pierceDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
-  const coldDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const coldDamagePerLevel = [1, 2, 4, 6, 8, 11, 15, 22, 28, 40];
   const freezeChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
 
   const bonusPerLevel = [
@@ -1341,9 +1341,9 @@ Types.getSetBonus = (rawSetBonus: { [key: string]: number }): any[] => {
 };
 
 Types.getPartyBonus = function (rawBonus, level) {
-  const attackDamagePerLevel = [1, 1, 2, 3, 4, 5, 6, 8, 10, 15];
-  const defensePerLevel = [1, 1, 2, 3, 4, 5, 6, 8, 10, 15];
-  const expPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
+  const attackDamagePerLevel = [1, 2, 3, 4, 6, 8, 11, 15, 20, 30];
+  const defensePerLevel = [1, 2, 3, 4, 6, 8, 11, 15, 20, 30];
+  const expPerLevel = [1, 2, 3, 4, 6, 8, 11, 15, 20, 30];
 
   const bonusPerLevel = [attackDamagePerLevel, defensePerLevel, expPerLevel];
 
