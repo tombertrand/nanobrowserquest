@@ -280,6 +280,8 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
   const items = [
     { item: "frozenarmor", uniqueChances: 40 },
     { item: "beltfrozen", uniqueChances: 40 },
+    { item: "frozensword", uniqueChances: 40 },
+    { item: "diamondsword", uniqueChances: 20 },
     { item: "diamondarmor", uniqueChances: 20 },
     { item: "beltdiamond", uniqueChances: 20 },
     { item: "beltminotaur", uniqueChances: 10 },

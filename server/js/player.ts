@@ -561,7 +561,7 @@ class Player extends Character {
                   amount = 200;
                   break;
                 case Types.Entities.REJUVENATIONPOTION:
-                  amount = Math.ceil(self.maxHitPoints / 2);
+                  amount = Math.ceil(self.maxHitPoints / 3);
                   break;
               }
 
