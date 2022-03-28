@@ -492,7 +492,7 @@ class Player extends Character {
             }
           }
 
-          if (mob.kind === Types.Entities.MINOTAUR && self.set !== "minotaur") {
+          if (!isBlocked && mob.kind === Types.Entities.MINOTAUR && self.set !== "minotaur") {
             const isFrozen = random(100) < 20;
             if (isFrozen) {
               self.broadcast(new Messages.Frozen(self.id, 10));
