@@ -67,7 +67,7 @@ export interface Game {
   onNotification: (arg0: any) => void;
   click: () => void;
   pvpFlag: boolean;
-  started: any;
+  started: boolean;
   audioManager: { playSound: (arg0: string) => void };
   respawn: () => void;
   movecursor: () => void;

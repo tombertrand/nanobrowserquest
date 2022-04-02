@@ -496,36 +496,37 @@ var initGame = function () {
       });
   }
 
-  $("body").unbind("click");
-  $("body").click(function (event) {
-    if ($("#parchment").hasClass("credits")) {
-      if (game.started) {
-        app.closeInGameScroll("credits");
-      } else {
-        app.toggleScrollContent("credits");
+  $("body")
+    .off("click")
+    .on("click", function (event) {
+      if ($("#parchment").hasClass("credits")) {
+        if (game.started) {
+          app.closeInGameScroll("credits");
+        } else {
+          app.toggleScrollContent("credits");
+        }
       }
-    }
 
-    if ($("#parchment").hasClass("legal")) {
-      if (game.started) {
-        app.closeInGameScroll("legal");
-      } else {
-        app.toggleScrollContent("legal");
+      if ($("#parchment").hasClass("legal")) {
+        if (game.started) {
+          app.closeInGameScroll("legal");
+        } else {
+          app.toggleScrollContent("legal");
+        }
       }
-    }
 
-    if ($("#parchment").hasClass("about")) {
-      if (game.started) {
-        app.closeInGameScroll("about");
-      } else {
-        app.toggleScrollContent("about");
+      if ($("#parchment").hasClass("about")) {
+        if (game.started) {
+          app.closeInGameScroll("about");
+        } else {
+          app.toggleScrollContent("about");
+        }
       }
-    }
 
-    if (event.target.id === "foreground") {
-      game.click();
-    }
-  });
+      if (event.target.id === "foreground") {
+        game.click();
+      }
+    });
 
   $("#respawn").click(function () {
     game.audioManager.playSound("revive");
@@ -591,7 +592,10 @@ var initGame = function () {
       } else if (!$("#text-window").is(":visible")) {
         app.showChat();
       }
-    } else if (key === 16) game.pvpFlag = true;
+    } else if (key === 16) {
+      game.pvpFlag = true;
+    }
+
     if (game.started && !$("#chatinput").is(":focus")) {
       if (!game.player) {
         // Return if player is dead
