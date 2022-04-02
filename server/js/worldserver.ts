@@ -991,12 +991,12 @@ class World {
 
     if (levelDifference < 0) {
       if (levelDifference < -EXP_LEVEL_BELOW_MOB) {
-        return 0;
+        exp = 0;
       }
     } else if (levelDifference > 0) {
       // Too high level for mob
       if (levelDifference > EXP_LEVEL_END_RANGE || (Types.isBoss(mob.kind) && levelDifference >= EXP_LEVEL_END_RANGE)) {
-        return 0;
+        exp = 0;
       } else if (levelDifference > EXP_LEVEL_START_RANGE) {
         // Nerf exp per level
         const multiplier = (levelDifference - EXP_LEVEL_START_RANGE) / 8;
@@ -1004,12 +1004,12 @@ class World {
       }
     }
 
-    exp = Math.round((parseInt(exp) * (player.bonus.exp + player.partyBonus.exp)) / 100 + parseInt(exp));
-
     if (exp) {
+      exp = Math.round((parseInt(exp) * (player.bonus.exp + player.partyBonus.exp)) / 100 + parseInt(exp));
       player.incExp(exp);
-      this.pushToPlayer(player, new Messages.Kill(mob, player.level, player.experience, exp));
     }
+
+    this.pushToPlayer(player, new Messages.Kill(mob, player.level, player.experience, exp));
 
     return exp;
   }
