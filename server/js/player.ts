@@ -492,6 +492,7 @@ class Player extends Character {
             }
           }
 
+          // @TODO Add bonus cannotBeFrozen instead of checking set?
           if (!isBlocked && mob.kind === Types.Entities.MINOTAUR && self.set !== "minotaur") {
             const isFrozen = random(100) < 20;
             if (isFrozen) {

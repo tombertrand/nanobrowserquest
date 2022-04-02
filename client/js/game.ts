@@ -629,6 +629,9 @@ class Game {
       // hide: 1000000,
       position: { my: "left bottom-10", at: "left bottom", collision: "flipfit" },
       content() {
+        // Player is dead
+        if (!self.player) return;
+
         const element = $(this);
         const item = element.attr("data-item");
         const level = element.attr("data-level");
@@ -3329,7 +3332,7 @@ class Game {
         var selectedDate = new Date().valueOf() + minotaurLevelClock * 1000;
 
         if (!self.player.expansion1 || self.player.level < 53) {
-          self.client.sendBanPlayer("Entered MinotaurLevel without expansion or lower than lv.54");
+          self.client.sendBanPlayer("Entered MinotaurLevel without expansion or lower than lv.53");
         }
 
         $("#countdown")
@@ -3631,7 +3634,7 @@ class Game {
           }
         }
       } else if (npc.kind === Types.Entities.MINOTAURPORTAL) {
-        if (this.player.level >= 50) {
+        if (this.player.level >= 53) {
           if (npc.gridX === 40 && npc.gridY === 210) {
             if (this.minotaurLevelPortalCoords) {
               this.player.stop_pathing_callback({

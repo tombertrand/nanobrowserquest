@@ -490,7 +490,12 @@ class World {
 
   removeEntity(entity) {
     if (entity.id in this.entities) {
-      delete this.entities[entity.id];
+      // Don't remove player in case they are in a party
+      if (entity.type === "player") {
+        entity.isDead = true;
+      } else {
+        delete this.entities[entity.id];
+      }
     }
     if (entity.id in this.mobs) {
       delete this.mobs[entity.id];

@@ -396,7 +396,7 @@ export const kinds = {
   bluemorningstar: [Types.Entities.BLUEMORNINGSTAR, "weapon", "Frozen Morning Star", 14, 26],
   frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 16, 30],
   diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 26, 36],
-  minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 30, 38],
+  minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 30, 40],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -410,13 +410,13 @@ export const kinds = {
   hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 18, 28],
   frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 22, 30],
   diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 26, 34],
-  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 30, 36],
+  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 30, 38],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
   beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 9, 4],
   beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 16, 10],
-  beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 16],
+  beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 14],
   beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 34, 18],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 10, 2],
@@ -552,19 +552,19 @@ Types.itemUniqueMap = {
   bluemorningstar: ["Saylormoon", 16, 28],
   frozensword: ["Broccolish Fury", 20, 32],
   diamondsword: ["Inevitable", 28, 40],
-  minotauraxe: ["PoS4QoS", 34, 42],
+  minotauraxe: ["PoS4QoS", 34, 44],
 
   // name, level, defense
-  leatherarmor: ["Representative", 2, 4],
-  mailarmor: ["ForeX Guard", 4, 6],
+  leatherarmor: ["Representative", 2, 5],
+  mailarmor: ["ForeX Guard", 4, 7],
   platearmor: ["Green Alternative", 6, 12],
-  redarmor: ["Appia's Road", 8, 16],
+  redarmor: ["Appia's Road", 8, 17],
   goldenarmor: ["Store of Value", 12, 22],
   bluearmor: ["Firano's Hide", 14, 26],
   hornedarmor: ["RaiBlocks", 18, 30],
   frozenarmor: ["Wall of Encrypted Energy", 24, 32],
-  diamondarmor: ["Zero-knowledge Proof", 28, 34],
-  spikearmor: ["Explorer's Block", 32, 36],
+  diamondarmor: ["Zero-knowledge Proof", 28, 38],
+  spikearmor: ["Explorer's Block", 32, 42],
 
   cape: ["Cloak of Levitation", 12, 2],
 
@@ -573,7 +573,7 @@ Types.itemUniqueMap = {
   beltplated: ["Hodler", 9, 6],
   beltfrozen: ["Spam Resistor", 22, 12],
   beltdiamond: ["Election scheduler", 38, 18],
-  beltminotaur: ["TaaC", 40, 20],
+  beltminotaur: ["TaaC", 40, 22],
 };
 
 Types.setBonus = {
