@@ -1,7 +1,7 @@
 {
 	"id": "minotauraxe",
-	"width": 48,
-	"height": 48,
+	"width": 50,
+	"height": 50,
 	"animations": {
 		"atk_right": {
 			"length": 5,
@@ -40,6 +40,6 @@
 			"row": 8
 		}
 	},
-	"offset_x": -16,
-	"offset_y": -20
+	"offset_x": -14,
+	"offset_y": -18
 }
