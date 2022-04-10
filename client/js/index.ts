@@ -545,7 +545,7 @@ var initGame = function () {
   $(document).keyup(function (e) {
     var key = e.which;
 
-    if (!game.player) {
+    if (!game.player || game.player.isDead) {
       // Return if player is dead
       return;
     }
@@ -597,7 +597,7 @@ var initGame = function () {
     }
 
     if (game.started && !$("#chatinput").is(":focus")) {
-      if (!game.player) {
+      if (!game.player || game.player.isDead) {
         // Return if player is dead
         return;
       }

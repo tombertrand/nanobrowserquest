@@ -2723,7 +2723,10 @@ class Game {
                 attacker.hit();
               }
             });
-            entity.die();
+            // Only if not properly despawned
+            if (!entity.isDead) {
+              entity.die();
+            }
           } else if (entity instanceof Chest) {
             entity.open();
           }
@@ -4009,10 +4012,15 @@ class Game {
     ) {
       entity = this.getEntityAt(pos.x, pos.y);
 
-      // @NOTE: For an unknown reason when a mob dies and it's moving, it doesn't unregister it's "1" on
+      // @NOTE: For an unknown reason when a mob dies and is moving, it doesn't unregister its "1" on
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
       // to "0" the pathing map if there is no entity registered on the coords.
-      if ((entity === null || entity instanceof Item) && this.map.grid[pos.y][pos.x] !== 1) {
+      if (
+        (entity === null || entity instanceof Item) &&
+        pos.x >= 0 &&
+        pos.y >= 0 &&
+        this.map.grid[pos.y][pos.x] !== 1
+      ) {
         this.removeFromPathingGrid(pos.x, pos.y);
       }
 
