@@ -10,7 +10,7 @@ import Map from "./map";
 import Messages from "./message";
 import Mob from "./mob";
 import Npc from "./npc";
-import Party from "./party";
+import Party, { MAX_PARTY_MEMBERS } from "./party";
 import Player from "./player";
 import Properties from "./properties";
 import { Sentry } from "./sentry";
@@ -1220,7 +1220,7 @@ class World {
         members = party.members.map(({ id }) => id);
       }
 
-      if (members.length > 4) {
+      if (members.length > MAX_PARTY_MEMBERS) {
         Sentry.captureException(new Error("Loot party for Minotaur"), {
           user: {
             username: attacker.name,

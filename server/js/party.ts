@@ -12,7 +12,7 @@ interface Member {
   name: string;
 }
 
-const MAX_MEMBERS = 6;
+export const MAX_PARTY_MEMBERS = 6;
 
 // 1 player = 100% of mob exp
 // 2 players = 65% of mob exp
@@ -57,10 +57,10 @@ class Party {
   }
 
   addMember(player: Player) {
-    if (this.members.length === MAX_MEMBERS) {
+    if (this.members.length === MAX_PARTY_MEMBERS) {
       player.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, "The party is full").serialize());
       return;
-    } else if (this.members.length > MAX_MEMBERS) {
+    } else if (this.members.length > MAX_PARTY_MEMBERS) {
       this.server.databaseHandler.logEvent({ event: "addMember - disband", memberLength: this.members.length });
       this.disband();
       return;
