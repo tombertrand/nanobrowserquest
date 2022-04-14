@@ -736,7 +736,19 @@ class App {
         self.setAchievementData($a, achievement.name, achievement.desc, achievement.nano);
       }
 
+      $a.find(".twitter").attr(
+        "href",
+        "https://twitter.com/share?url=https%3A%2F%2Fnanobrowserquest.com&text=I%20unlocked%20the%20%27" +
+          achievement.name +
+          "%27%20achievement%20on%20%23NanoBrowserQuest%20%23BrowserQuest%20%23nbq",
+      );
       $a.show();
+      $a.find("a").click(function () {
+        var url = $(this).attr("href");
+
+        self.openPopup("twitter", url);
+        return false;
+      });
 
       totalNano += achievement.nano || 0;
 

@@ -278,6 +278,7 @@ footer, header, hgroup, menu, nav, section {
     #achievement-info {overflow:hidden;height:100%;}
     .achievement-sharing {position:absolute;display:none;}
     #achievements li.unlocked:hover .achievement-sharing {display:block;}
+    #achievements li.unlocked:hover .achievement-nano {display:none;}
     .achievement-sharing a {display:block;float:left;}
     
     #achievements .achievement-nano {
