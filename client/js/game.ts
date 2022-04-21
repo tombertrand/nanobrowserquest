@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-shadow */
+import * as Sentry from "@sentry/browser";
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
@@ -135,6 +136,7 @@ class Game {
   notification_callback: any;
   unlock_callback: any;
   slotToDelete?: number;
+  worldPlayers: any[];
 
   constructor(app) {
     this.app = app;
@@ -170,6 +172,7 @@ class Game {
 
     // Player
     this.player = new Warrior("player", "");
+    this.worldPlayers = [];
     // this.player.moveUp = false;
     // this.player.moveDown = false;
     // this.player.moveLeft = false;
@@ -2067,6 +2070,11 @@ class Game {
       party,
       settings,
     }) {
+      Sentry.configureScope(scope => {
+        // scope.setTag("name", name);
+        scope.setUser({ username: name });
+      });
+
       console.info("Received player ID from server : " + id);
       self.player.id = id;
       self.playerId = id;
@@ -3152,9 +3160,11 @@ class Game {
         self.chat_callback({ entityId, name, message, type });
       });
 
-      self.client.onPopulationChange(function (worldPlayers, totalPlayers, players, levelupPlayer) {
+      self.client.onPopulationChange(function (players, levelupPlayer) {
+        self.worldPlayers = players;
+
         if (self.nbplayers_callback) {
-          self.nbplayers_callback(worldPlayers, totalPlayers, players);
+          self.nbplayers_callback();
         }
         if (levelupPlayer) {
           if (self.entities[levelupPlayer]) {

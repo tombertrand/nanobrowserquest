@@ -576,6 +576,10 @@ class App {
     $("#settings").toggleClass("active");
   }
 
+  togglePlayers() {
+    $("#party").toggleClass("active");
+  }
+
   resetAchievementPage() {
     var self = this;
     var $achievements = $("#achievements");
@@ -670,6 +674,10 @@ class App {
     if ($("#settings").hasClass("active")) {
       this.toggleSettings();
       $("#settings-button").removeClass("active");
+    }
+
+    if ($("#party").hasClass("active")) {
+      this.togglePlayers();
     }
   }
 
@@ -847,7 +855,6 @@ class App {
   }
 
   togglePopulationInfo() {
-    // $("#party").toggleClass("visible");
     $("#population").toggleClass("visible");
 
     if ($("#upgrade, #inventory").hasClass("visible")) {

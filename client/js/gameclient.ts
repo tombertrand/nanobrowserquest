@@ -520,13 +520,11 @@ class GameClient {
   }
 
   receivePopulation(data) {
-    var worldPlayers = data[1];
-    var totalPlayers = data[2];
-    var players = data[3];
-    var levelupPlayer = data[4];
+    var players = data[1];
+    var levelupPlayer = data[2];
 
     if (this.population_callback) {
-      this.population_callback(worldPlayers, totalPlayers, players, levelupPlayer);
+      this.population_callback(players, levelupPlayer);
     }
   }
 

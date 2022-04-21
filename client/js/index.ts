@@ -14,6 +14,7 @@ import "../css/party.css";
 import "../css/settings.css";
 import "jquery-ui/themes/base/all.css";
 
+import * as Sentry from "@sentry/browser";
 import * as _ from "lodash";
 
 import { ChatType } from "../../server/js/types";
@@ -26,6 +27,10 @@ import { TRANSITIONEND } from "./utils";
 
 import type { App as AppType } from "./types/app";
 import type { Game as GameType } from "./types/game";
+
+Sentry.init({
+  dsn: process.env.NODE_ENV !== "development" ? process.env.SENTRY_DNS : "",
+});
 
 var app: AppType;
 var game: GameType;
@@ -414,7 +419,7 @@ var initGame = function () {
     }
   });
 
-  game.onNbPlayersChange(function (worldPlayers, totalPlayers, players) {
+  game.onNbPlayersChange(function () {
     var setWorldPlayersString = function (string) {
       $("#instance-population").find("span:nth-child(2)").text(string);
       $("#player-count").find("span:nth-child(2)").text(string);
@@ -423,26 +428,33 @@ var initGame = function () {
     //   $("#world-population").find("span:nth-child(2)").text(string);
     // };
 
-    $("#player-count").find("span.count").text(worldPlayers);
+    $("#player-count").find("span.count").text(game.worldPlayers.length);
 
-    $("#instance-population").find("span").text(worldPlayers);
-    if (worldPlayers == 1) {
+    $("#instance-population").find("span").text(game.worldPlayers.length);
+    if (game.worldPlayers.length === 1) {
       setWorldPlayersString("player");
     } else {
       setWorldPlayersString("players");
     }
 
     $("#player-list").empty();
-    if (Array.isArray(players)) {
-      players.forEach(({ name, level, hash, hash1 }) => {
+    if (Array.isArray(game.worldPlayers)) {
+      game.worldPlayers.forEach(({ name, level, hash, hash1 }) => {
+        let className = "";
+        if (name === game.storage.data.player.name) {
+          className = "active";
+        } else if (game.player.partyMembers?.find(({ name: playerName }) => playerName === name)) {
+          className = "party";
+        }
+
         $("<div/>", {
-          class: name === game.storage.data.player.name ? "active" : "",
+          class: className,
           html: `
-                <span>${name}</span>
-                ${hash ? '<span class="xno-payout" title="Killed the Skeleton King and received a payout"></span>' : ""}
-                ${hash1 ? '<span class="xno-payout" title="Killed the Necromancer and received a payout"></span>' : ""}
-                <span>lv.${level}</span>
-              `,
+            <span>${name}</span>
+            ${hash ? '<span class="xno-payout" title="Killed the Skeleton King and received a payout"></span>' : ""}
+            ${hash1 ? '<span class="xno-payout" title="Killed the Necromancer and received a payout"></span>' : ""}
+            <span>lv.${level}</span>
+          `,
         }).appendTo("#player-list");
       });
     }

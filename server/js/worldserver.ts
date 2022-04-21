@@ -170,7 +170,7 @@ class World {
       }
 
       // Number of players in this world
-      self.pushToPlayer(player, new Messages.Population(self.playerCount));
+      // self.pushToPlayer(player, new Messages.Population(self.playerCount));
       self.pushRelevantEntityListTo(player);
 
       var move_callback = function (x, y) {
@@ -1563,11 +1563,9 @@ class World {
     return counter;
   }
 
-  updatePopulation({ totalPlayers = 0, levelupPlayer = undefined } = {}) {
+  updatePopulation({ levelupPlayer = undefined } = {}) {
     this.pushBroadcast(
       new Messages.Population(
-        this.playerCount,
-        totalPlayers || this.playerCount,
         this.getPlayerPopulation(),
         levelupPlayer,
       ),

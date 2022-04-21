@@ -12,6 +12,7 @@
     "start": "npm run watch:server"
   },
   "dependencies": {
+    "@sentry/browser": "^6.19.6",
     "@sentry/node": "^6.17.7",
     "bcrypt": ">=0",
     "bignumber.js": "^9.0.1",

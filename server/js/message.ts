@@ -210,9 +210,9 @@ Messages.Damage = class Message {
 };
 
 Messages.Population = class Message {
-  constructor(private world, private total, private players, private levelupPlayer) {}
+  constructor(private players, private levelupPlayer) {}
   serialize() {
-    return [Types.Messages.POPULATION, this.world, this.total, this.players, this.levelupPlayer];
+    return [Types.Messages.POPULATION, this.players, this.levelupPlayer];
   }
 };
 

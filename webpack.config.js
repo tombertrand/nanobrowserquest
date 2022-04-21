@@ -104,5 +104,9 @@ module.exports = {
         { from: "client/js/mapworker.js", to: "mapworker.js" },
       ],
     }),
+    new webpack.DefinePlugin({
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      "process.env.SENTRY_DNS": JSON.stringify(process.env.SENTRY_DNS),
+    }),
   ],
 };

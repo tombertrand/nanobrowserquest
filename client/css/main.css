@@ -563,6 +563,7 @@ footer, header, hgroup, menu, nav, section {
     #player-list > div span:first-of-type,#player-info > div span:first-of-type { margin-right: 3px; }
     #player-list > div span:last-of-type,#player-info > div span:last-of-type { margin-left: auto; }
     #population .active, #text-window .active, #player .active { color: #FCE045 }
+    #population .party, #text-window .party, #player .party { color: #35ee35 }
     #text-window .event { color: #55a3ff }
     #text-window .info, #text-window .loot { color: #bfc2db }
     #text-window .error { color: #b57979 }

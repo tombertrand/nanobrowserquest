@@ -14,21 +14,21 @@ function main(config) {
   var server = new Server(config.port);
   var metrics = config.metrics_enabled ? new Metrics(config) : null;
   var worlds = [];
-  var lastTotalPlayers = 0;
+  // var lastTotalPlayers = 0;
   var databaseHandler = new DatabaseHandler();
 
-  setInterval(function () {
-    if (metrics && metrics.isReady) {
-      metrics.getTotalPlayers(function (totalPlayers) {
-        if (totalPlayers !== lastTotalPlayers) {
-          lastTotalPlayers = totalPlayers;
-          _.each(worlds, function (world) {
-            world.updatePopulation(totalPlayers);
-          });
-        }
-      });
-    }
-  }, 1000);
+  // setInterval(function () {
+  //   if (metrics && metrics.isReady) {
+  //     metrics.getTotalPlayers(function (totalPlayers) {
+  //       if (totalPlayers !== lastTotalPlayers) {
+  //         lastTotalPlayers = totalPlayers;
+  //         _.each(worlds, function (world) {
+  //           world.updatePopulation();
+  //         });
+  //       }
+  //     });
+  //   }
+  // }, 1000);
 
   console.info("Starting BrowserQuest game server...");
 
@@ -54,9 +54,9 @@ function main(config) {
   });
 
   var onPopulationChange = function () {
-    metrics.updatePlayerCounters(worlds, function (totalPlayers) {
+    metrics.updatePlayerCounters(worlds, function () {
       _.each(worlds, function (world) {
-        world.updatePopulation(totalPlayers);
+        world.updatePopulation();
       });
     });
     metrics.updateWorldDistribution(getWorldDistribution(worlds));

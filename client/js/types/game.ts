@@ -62,7 +62,7 @@ export interface Game {
   onPlayerInvincible: (arg0: () => void) => void;
   onChatMessage: (arg0: (entityId: any, name: any, message: any, type: any) => void) => void;
   storage: { data: { player: { name: any } } };
-  onNbPlayersChange: (arg0: (worldPlayers: any, totalPlayers: any, players: any) => void) => void;
+  onNbPlayersChange: (arg0: () => void) => void;
   onAchievementUnlock: (arg0: (id: any, name: any, nano: any) => void) => void;
   onNotification: (arg0: any) => void;
   click: () => void;
@@ -76,4 +76,5 @@ export interface Game {
   hpGuide: number;
   healShortCut: number;
   eat: (arg0: any) => void;
+  worldPlayers: any[];
 }
