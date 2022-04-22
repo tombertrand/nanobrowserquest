@@ -78,6 +78,7 @@ class Player extends Character {
   constructor(id, name, account, kind) {
     super(id, kind);
 
+    this.type = "player";
     this.name = name;
     this.account = account;
 

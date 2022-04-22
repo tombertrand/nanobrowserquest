@@ -66,6 +66,7 @@ class Character extends Entity {
   isFrozen: boolean;
   frozenTimeout: any;
   resistances: { [key: string]: { display: string; percentage: number } };
+  type: "mob" | "player" | "npc";
 
   constructor(id, kind) {
     super(id, kind);

@@ -28,14 +28,14 @@ import { TRANSITIONEND } from "./utils";
 import type { App as AppType } from "./types/app";
 import type { Game as GameType } from "./types/game";
 
-Sentry.init({
-  dsn: process.env.NODE_ENV !== "development" ? process.env.SENTRY_DNS : "",
-});
-
 var app: AppType;
 var game: GameType;
 
 var initApp = function () {
+  Sentry.init({
+    dsn: process.env.NODE_ENV !== "development" ? process.env.SENTRY_DNS : "",
+  });
+
   $(document).ready(function () {
     // @ts-ignore
     app = new App();
@@ -269,17 +269,17 @@ var initApp = function () {
       app.animateParchment("loadcharacter", "loadcharacter");
     });
 
-    // $("#running-coder .link").on("click", () => {
-    //   $("#loginnameinput").val("running-coder").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#running-coder .link").on("click", () => {
+      $("#loginnameinput").val("running-coder").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
-    // $("#ddd .link").on("click", () => {
-    //   $("#loginnameinput").val("ddd").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#ddd .link").on("click", () => {
+      $("#loginnameinput").val("ddd").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
     $(".play span").click(function () {
       app.tryStartingGame();

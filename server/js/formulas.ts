@@ -52,7 +52,6 @@ Formulas.dmg = function ({
   weapon,
   weaponLevel,
   playerLevel,
-  armorLevel,
   minDamage,
   maxDamage,
   magicDamage,
@@ -80,9 +79,8 @@ Formulas.dmg = function ({
     partyAttackDamage,
   });
   const dealt = randomInt(min, max);
-  const absorbed = Math.floor(armorLevel * randomInt(2, 4));
 
-  const dmg = dealt + pierceDamage - absorbed;
+  const dmg = dealt + pierceDamage;
 
   //console.log("abs: "+absorbed+"   dealt: "+ dealt+"   dmg: "+ (dealt - absorbed));
   if (dmg <= 0) {
@@ -90,6 +88,12 @@ Formulas.dmg = function ({
   } else {
     return dmg;
   }
+};
+
+Formulas.mobDefense = function ({ armorLevel }) {
+  const defense = armorLevel ? Math.floor(armorLevel * randomInt(2, 4)) : 0;
+
+  return defense;
 };
 
 Formulas.minMaxAbsorb = function ({
@@ -124,8 +128,11 @@ Formulas.minMaxAbsorb = function ({
   };
 };
 
-Formulas.dmgFromMob = function ({
-  weaponLevel,
+Formulas.dmgFromMob = function ({ weaponLevel }) {
+  return Math.ceil(weaponLevel * randomInt(10, 15));
+};
+
+Formulas.playerDefense = ({
   armor,
   armorLevel,
   playerLevel,
@@ -137,8 +144,7 @@ Formulas.dmgFromMob = function ({
   partyDefense,
   cape,
   capeLevel,
-}) {
-  const dealt = Math.ceil(weaponLevel * randomInt(10, 15));
+}) => {
   const { min, max } = Formulas.minMaxAbsorb({
     armor,
     armorLevel,
@@ -153,14 +159,7 @@ Formulas.dmgFromMob = function ({
     capeLevel,
   });
 
-  const absorbed = randomInt(min, max);
-  const dmg = dealt - absorbed;
-
-  if (dmg <= 0) {
-    return randomInt(3, 5);
-  } else {
-    return dmg;
-  }
+  return randomInt(min, max);
 };
 
 Formulas.hp = function ({ armorLevel, level, playerLevel, beltLevel }) {

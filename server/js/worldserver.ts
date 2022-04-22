@@ -1019,13 +1019,13 @@ class World {
       // A player is only aware of his own hitpoints
       this.pushToPlayer(entity, entity.health({ isHurt: true }));
     }
-    if (entity.type === "mob") {
-      // Let the mob's attacker (player) know how much damage was inflicted
-      this.pushToPlayer(
-        attacker,
-        new Messages.Damage(entity, damage, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
-      );
-    }
+    // if (entity.type === "mob") {
+    // Let the mob's attacker (player) know how much damage was inflicted
+    this.pushToPlayer(
+      attacker,
+      new Messages.Damage(entity, damage, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
+    );
+    // }
 
     // If the entity is about to die
     if (entity.hitPoints <= 0) {
@@ -1564,12 +1564,7 @@ class World {
   }
 
   updatePopulation({ levelupPlayer = undefined } = {}) {
-    this.pushBroadcast(
-      new Messages.Population(
-        this.getPlayerPopulation(),
-        levelupPlayer,
-      ),
-    );
+    this.pushBroadcast(new Messages.Population(this.getPlayerPopulation(), levelupPlayer));
   }
 
   shuffle(array) {

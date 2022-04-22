@@ -2776,6 +2776,7 @@ class Game {
         self.app.updatePartyMembers(members);
 
         self.chat_callback({ message, type: "info" });
+        self.nbplayers_callback();
       });
 
       self.client.onPartyInvite(function (data) {
@@ -2818,6 +2819,7 @@ class Game {
         //   message += ", you are now the party leader";
         // }
         self.chat_callback({ message, type: "info" });
+        self.nbplayers_callback();
       });
 
       self.client.onPartyDisband(function () {
@@ -2830,6 +2832,7 @@ class Game {
         self.player.setPartyMembers(undefined);
 
         self.chat_callback({ message: "Party was disbaned", type: "info" });
+        self.nbplayers_callback();
 
         self.app.removePartyHealthBar();
       });
@@ -4207,11 +4210,14 @@ class Game {
             this.audioManager.playSound("hit" + Math.floor(Math.random() * 2 + 1));
           }
 
+          console.log("~~~~~character.type", character);
+
           if (
             character.hasTarget() &&
             character.target.id === this.playerId &&
             this.player &&
-            !this.player.invincible
+            !this.player.invincible &&
+            character.type !== "player"
           ) {
             this.client.sendHurt(character);
           }
