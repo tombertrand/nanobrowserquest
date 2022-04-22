@@ -108,12 +108,12 @@ class Store {
             </div>
             <p class="name">${name}</p>
             ${description ? `<p class="description">${description}</p>` : ""}
+            ${id === Types.Store.EXPANSION1 ? ' <img src="img/common/50-off.png" width="50" height="31">' : ""}
             <p class="prices">
               <span class="xno">Ӿ${xno}</span>
               <span class="usd"> / $${usd.toFixed(2)}</span>
-              ${usdRegular ? `<span class="usd line-through">${usdRegular.toFixed(2)}</span>` : ""}
+              ${usdRegular ? `<span class="usd line-through">$${usdRegular.toFixed(2)}</span>` : ""}
             </p>
-            ${id === Types.Store.EXPANSION1 ? '<img src="img/common/50-off.png" width="50" height="31">' : ""}
             `,
       });
 
