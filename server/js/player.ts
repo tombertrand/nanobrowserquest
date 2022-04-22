@@ -333,7 +333,7 @@ class Player extends Character {
         console.info("HIT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
 
-        if (mob?.type === "mob") {
+        if (mob?.type === "mob" || mob?.type === "player") {
           let isCritical = false;
 
           const resistances = Types.Resistances[mob.kind] || {};
@@ -342,7 +342,6 @@ class Player extends Character {
             weapon: self.weapon,
             weaponLevel: self.weaponLevel,
             playerLevel: self.level,
-            armorLevel: mob.armorLevel,
             minDamage: self.bonus.minDamage,
             maxDamage: self.bonus.maxDamage,
             magicDamage: resistances.magicDamage ? 0 : self.bonus.magicDamage,
@@ -424,24 +423,23 @@ class Player extends Character {
             self.unregisterMinotaurDamage();
           }
 
-          // @NOTE: Evaluate character distance to mob when receiving hits? and time between
-          if (!mob?.receiveDamage) {
-            self.connection.close("Invalid mob");
-            Sentry.captureException(new Error("Invalid mob"), {
-              user: {
-                username: self.name,
-              },
-              tags: {
-                player: self.name,
-                account: self.account,
-              },
-              extra: { kind: mob.kind, id: mob.id },
-            });
+          let defense = 0;
+          let isBlocked = false;
+
+          if (mob.type === "mob") {
+            defense = Formulas.mobDefense({ armorLevel: mob.armorLevel });
+
+            dmg = dmg - defense;
+          } else if (mob.type === "player") {
+            ({ dmg, isBlocked } = mob.handleHurtDmg(this, dmg));
           }
 
-          mob.receiveDamage(dmg);
-          self.server.handleMobHate(mob.id, self.id, dmg);
-          self.server.handleHurtEntity({ entity: mob, attacker: self, damage: dmg, isCritical });
+          if (mob?.type === "mob" && mob?.receiveDamage) {
+            mob.receiveDamage(dmg);
+            self.server.handleMobHate(mob.id, self.id, dmg);
+          }
+
+          self.server.handleHurtEntity({ entity: mob, attacker: self, dmg, isCritical, isBlocked, isHit: true });
 
           if (mob.hitPoints <= 0) {
             mob.isDead = true;
@@ -451,64 +449,10 @@ class Player extends Character {
         console.info("HURT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
         if (mob && self.hitPoints > 0) {
-          let isBlocked = false;
-          let lightningDamage = false;
           let dmg = Formulas.dmgFromMob({
             weaponLevel: mob.weaponLevel,
-            armor: self.armor,
-            armorLevel: self.armorLevel,
-            belt: self.belt,
-            beltLevel: self.beltLevel,
-            isUniqueBelt: !!self.beltBonus,
-            playerLevel: self.level,
-            defense: self.bonus.defense,
-            absorbedDamage: self.bonus.absorbedDamage,
-            partyDefense: self.partyBonus.defense,
-            cape: self.cape,
-            capeLevel: self.capeLevel,
           });
-
-          if (self.bonus.blockChance) {
-            isBlocked = random(100) < self.bonus.blockChance;
-            if (isBlocked) {
-              dmg = 0;
-            }
-          }
-
-          if (self.bonus.lightningDamage && !Types.Resistances[mob.kind]?.lightningDamage) {
-            lightningDamage = self.bonus.lightningDamage;
-
-            // @NOTE: Only has effect on mobs for now
-            if (mob?.receiveDamage) {
-              mob.receiveDamage(lightningDamage, self.id);
-              self.server.handleHurtEntity({ entity: mob, attacker: self, damage: lightningDamage });
-            }
-          }
-
-          if (mob.kind === Types.isBoss(mob.kind)) {
-            // Each boss gets a 15% crit chance
-            if (random(100) < 15) {
-              dmg = Math.ceil(dmg * 1.5);
-            }
-          }
-
-          // @TODO Add bonus cannotBeFrozen instead of checking set?
-          if (!isBlocked && mob.kind === Types.Entities.MINOTAUR && self.set !== "minotaur") {
-            const isFrozen = random(100) < 20;
-            if (isFrozen) {
-              self.broadcast(new Messages.Frozen(self.id, 10));
-            }
-          }
-
-          self.hitPoints -= dmg;
-          self.server.handleHurtEntity({ entity: self, attacker: mob, isBlocked });
-
-          if (self.hitPoints <= 0) {
-            self.isDead = true;
-            if (self.firepotionTimeout) {
-              clearTimeout(self.firepotionTimeout);
-            }
-          }
+          self.handleHurtDmg(mob, dmg);
         }
       } else if (action === Types.Messages.LOOT) {
         console.info("LOOT: " + self.name + " " + message[1]);
@@ -1125,6 +1069,72 @@ class Player extends Character {
     ];
 
     return basestate.concat(state);
+  }
+
+  handleHurtDmg(mob, dmg: number) {
+    let isBlocked = false;
+    let lightningDamage = 0;
+
+    let defense = Formulas.playerDefense({
+      armor: this.armor,
+      armorLevel: this.armorLevel,
+      belt: this.belt,
+      beltLevel: this.beltLevel,
+      isUniqueBelt: !!this.beltBonus,
+      playerLevel: this.level,
+      defense: this.bonus.defense,
+      absorbedDamage: this.bonus.absorbedDamage,
+      partyDefense: this.partyBonus.defense,
+      cape: this.cape,
+      capeLevel: this.capeLevel,
+    });
+
+    dmg = defense > dmg ? 0 : dmg - defense;
+
+    if (this.bonus.blockChance) {
+      isBlocked = random(100) < this.bonus.blockChance;
+      if (isBlocked) {
+        dmg = 0;
+      }
+    }
+
+    if (this.bonus.lightningDamage && !Types.Resistances[mob.kind]?.lightningDamage) {
+      lightningDamage = this.bonus.lightningDamage;
+
+      if (mob.type === "mob") {
+        mob.receiveDamage(lightningDamage, this.id);
+      } else if (mob.type === "player") {
+        mob.hitPoints -= lightningDamage;
+      }
+      this.server.handleHurtEntity({ entity: mob, attacker: this, dmg: lightningDamage });
+    }
+
+    if (mob.kind === Types.isBoss(mob.kind)) {
+      // Each boss gets a 15% crit chance
+      if (random(100) < 15) {
+        dmg = Math.ceil(dmg * 1.5);
+      }
+    }
+
+    // @TODO Add bonus cannotBeFrozen instead of checking set?
+    if (!isBlocked && mob.kind === Types.Entities.MINOTAUR && this.set !== "minotaur") {
+      const isFrozen = random(100) < 20;
+      if (isFrozen) {
+        this.broadcast(new Messages.Frozen(this.id, 10));
+      }
+    }
+
+    this.hitPoints -= dmg;
+    this.server.handleHurtEntity({ entity: this, attacker: mob, isBlocked });
+
+    if (this.hitPoints <= 0) {
+      this.isDead = true;
+      if (this.firepotionTimeout) {
+        clearTimeout(this.firepotionTimeout);
+      }
+    }
+
+    return { dmg, isBlocked };
   }
 
   send(message) {

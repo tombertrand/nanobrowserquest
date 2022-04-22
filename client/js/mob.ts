@@ -9,6 +9,7 @@ class Mob extends Character {
 
     this.aggroRange = 1;
     this.isAggressive = true;
+    this.type = "mob";
   }
 }
 

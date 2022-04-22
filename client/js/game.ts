@@ -2776,6 +2776,7 @@ class Game {
         self.app.updatePartyMembers(members);
 
         self.chat_callback({ message, type: "info" });
+        self.nbplayers_callback();
       });
 
       self.client.onPartyInvite(function (data) {
@@ -2818,6 +2819,7 @@ class Game {
         //   message += ", you are now the party leader";
         // }
         self.chat_callback({ message, type: "info" });
+        self.nbplayers_callback();
       });
 
       self.client.onPartyDisband(function () {
@@ -2830,6 +2832,7 @@ class Game {
         self.player.setPartyMembers(undefined);
 
         self.chat_callback({ message: "Party was disbaned", type: "info" });
+        self.nbplayers_callback();
 
         self.app.removePartyHealthBar();
       });
@@ -2931,10 +2934,18 @@ class Game {
         }
       });
 
-      self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHp, isCritical }) {
+      self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHp, isCritical, isBlocked }) {
         var mob = self.getEntityById(id);
-        if (mob && dmg) {
-          self.infoManager.addDamageInfo({ value: dmg, x: mob.x, y: mob.y - 15, type: "inflicted", isCritical });
+
+        if (mob && (dmg || isBlocked)) {
+          self.infoManager.addDamageInfo({
+            value: dmg,
+            x: mob.x,
+            y: mob.y - 15,
+            type: "inflicted",
+            isCritical,
+            isBlocked,
+          });
         }
         if (self.player.hasTarget()) {
           self.updateTarget(id, dmg, hp, maxHp);
@@ -3789,7 +3800,11 @@ class Game {
   getPlayerAt(x, y) {
     var entity = this.getEntityAt(x, y, Player);
     if (entity && entity instanceof Player && entity !== this.player && this.player.pvpFlag) {
-      return entity;
+      // PvP is limited to 20 levels above or below
+      const canPvP = Math.abs(entity.level - this.player.level) <= 20;
+      if (canPvP) {
+        return entity;
+      }
     }
     return null;
   }
@@ -4211,7 +4226,8 @@ class Game {
             character.hasTarget() &&
             character.target.id === this.playerId &&
             this.player &&
-            !this.player.invincible
+            !this.player.invincible &&
+            character.type !== "player"
           ) {
             this.client.sendHurt(character);
           }

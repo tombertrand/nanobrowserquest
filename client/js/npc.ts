@@ -216,6 +216,7 @@ class Npc extends Character {
   constructor(id, kind) {
     super(id, kind);
     this.itemKind = Types.getKindAsString(this.kind);
+    this.type = "npc";
 
     if (typeof NpcTalk[this.itemKind][0] === "string") {
       this.discourse = -1;
