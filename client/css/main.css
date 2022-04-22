@@ -254,6 +254,10 @@ footer, header, hgroup, menu, nav, section {
       cursor: hand;
     }
 
+    .line-through {
+        text-decoration: line-through;
+    }
+
     .bubble p {-moz-user-select:none;-webkit-user-select:none;}
     
     #instructions, #store, #settings, #party, #completed, #failed {position:absolute;top:50%;left:50%;z-index:1000;font-family:'GraphicPixel';pointer-events:none;opacity:0;-moz-transition:0.25s opacity linear;-webkit-transition:0.4s top ease, 0.4s opacity linear;-o-transition:0.4s top ease, 0.4s opacity linear;-ms-transition:0.4s top ease, 0.4s opacity linear;transition:0.4s top ease, 0.4s opacity linear;}

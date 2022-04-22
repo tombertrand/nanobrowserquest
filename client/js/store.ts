@@ -16,6 +16,7 @@ interface BackendStoreItem {
   id: number;
   xno: number;
   usd: number;
+  usdRegular?: number;
   isAvailable: boolean;
 }
 
@@ -85,16 +86,17 @@ class Store {
 
   addStoreItems(items: BackendStoreItem[]) {
     this.storeItems = this.storeItems.map(item => {
-      const { xno, usd, isAvailable } = items.find(({ id }) => item.id === id);
+      const { xno, usd, usdRegular, isAvailable } = items.find(({ id }) => item.id === id);
 
       item.xno = xno;
       item.usd = usd;
+      item.usdRegular = usdRegular;
       item.isAvailable = isAvailable;
 
       return item;
     });
 
-    this.storeItems.forEach(({ id, icon, name, description, xno, usd, isAvailable }) => {
+    this.storeItems.forEach(({ id, icon, name, description, xno, usd, usdRegular, isAvailable }) => {
       const isLocked = id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1;
       const isDisabled = !isAvailable || (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1);
 
@@ -109,7 +111,9 @@ class Store {
             <p class="prices">
               <span class="xno">Ӿ${xno}</span>
               <span class="usd"> / $${usd.toFixed(2)}</span>
+              ${usdRegular ? `<span class="usd line-through">${usdRegular.toFixed(2)}</span>` : ""}
             </p>
+            ${id === Types.Store.EXPANSION1 ? '<img src="img/common/50-off.png" width="50" height="31">' : ""}
             `,
       });
 
