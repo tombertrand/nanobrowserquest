@@ -11,25 +11,25 @@ class Store {
     {
       id: Types.Store.EXPANSION1,
       xno: 0,
-      usd: isDevelopmentAmounts ? 0.01 : 5,
+      usd: isDevelopmentAmounts ? 0.01 : 2.5, // 5
       isAvailable: true,
     },
     {
       id: Types.Store.SCROLLUPGRADEBLESSED,
       xno: 0,
-      usd: isDevelopmentAmounts ? 0.015 : 1.5,
+      usd: isDevelopmentAmounts ? 0.015 : 1.1, // 1.5
       isAvailable: true,
     },
     {
       id: Types.Store.SCROLLUPGRADEHIGH,
       xno: 0,
-      usd: isDevelopmentAmounts ? 0.02 : 0.75,
+      usd: isDevelopmentAmounts ? 0.02 : 0.5, // 0.75
       isAvailable: true,
     },
     {
       id: Types.Store.CAPE,
       xno: 0,
-      usd: isDevelopmentAmounts ? 0.03 : 1.25,
+      usd: isDevelopmentAmounts ? 0.03 : 1, // 1.25
       isAvailable: true,
     },
     // {
