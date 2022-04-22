@@ -3077,14 +3077,16 @@ class Game {
 
       self.client.onPlayerSettings(function ({ playerId, settings }) {
         var player = self.getEntityById(playerId);
-        if (typeof settings.capeHue === "number") {
-          player.capeHue = settings.capeHue;
-        }
-        if (typeof settings.capeSaturate === "number") {
-          player.capeSaturate = settings.capeSaturate;
-        }
-        if (typeof settings.capeContrast === "number") {
-          player.capeContrast = settings.capeContrast;
+        if (player) {
+          if (typeof settings.capeHue === "number") {
+            player.capeHue = settings.capeHue;
+          }
+          if (typeof settings.capeSaturate === "number") {
+            player.capeSaturate = settings.capeSaturate;
+          }
+          if (typeof settings.capeContrast === "number") {
+            player.capeContrast = settings.capeContrast;
+          }
         }
       });
 
@@ -4611,7 +4613,9 @@ class Game {
   updateTarget(targetId, points, healthPoints, maxHp) {
     if (this.player.hasTarget() && this.updatetarget_callback) {
       var target = this.getEntityById(targetId);
-      target.name = Types.getKindAsString(target.kind);
+      if (target.type !== "player") {
+        target.name = Types.getAliasFromName(Types.getKindAsString(target.kind));
+      }
       target.points = points;
       target.healthPoints = healthPoints;
       target.maxHp = maxHp;
