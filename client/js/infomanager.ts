@@ -26,6 +26,7 @@ class InfoManager {
     type,
     duration = 1000,
     isCritical,
+    isBlocked,
   }: {
     value: any;
     x: number;
@@ -33,6 +34,7 @@ class InfoManager {
     type: string;
     duration?: number;
     isCritical?: boolean;
+    isBlocked?: boolean;
   }) {
     if (!this.showDamageInfo) return;
 
@@ -42,7 +44,7 @@ class InfoManager {
     var string = value;
     if (isCritical) {
       string += " Critical";
-    } else if (value === 0) {
+    } else if (isBlocked) {
       string = "Blocked";
       type = "inflicted";
     }

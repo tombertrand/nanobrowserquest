@@ -424,14 +424,14 @@ class Player extends Character {
           }
 
           let defense = 0;
-          // let isBlocked = false;
+          let isBlocked = false;
 
           if (mob.type === "mob") {
             defense = Formulas.mobDefense({ armorLevel: mob.armorLevel });
 
             dmg = dmg - defense;
           } else if (mob.type === "player") {
-            ({ dmg /*, isBlocked*/ } = mob.handleHurtDmg(this, dmg));
+            ({ dmg, isBlocked } = mob.handleHurtDmg(this, dmg));
           }
 
           if (mob?.type === "mob" && mob?.receiveDamage) {
@@ -439,7 +439,7 @@ class Player extends Character {
             self.server.handleMobHate(mob.id, self.id, dmg);
           }
 
-          self.server.handleHurtEntity({ entity: mob, attacker: self, damage: dmg, isCritical });
+          self.server.handleHurtEntity({ entity: mob, attacker: self, dmg, isCritical, isBlocked, isHit: true });
 
           if (mob.hitPoints <= 0) {
             mob.isDead = true;
@@ -1073,7 +1073,7 @@ class Player extends Character {
 
   handleHurtDmg(mob, dmg: number) {
     let isBlocked = false;
-    let lightningDamage = false;
+    let lightningDamage = 0;
 
     let defense = Formulas.playerDefense({
       armor: this.armor,
@@ -1089,7 +1089,7 @@ class Player extends Character {
       capeLevel: this.capeLevel,
     });
 
-    dmg = dmg - defense;
+    dmg = defense > dmg ? 0 : dmg - defense;
 
     if (this.bonus.blockChance) {
       isBlocked = random(100) < this.bonus.blockChance;
@@ -1101,10 +1101,12 @@ class Player extends Character {
     if (this.bonus.lightningDamage && !Types.Resistances[mob.kind]?.lightningDamage) {
       lightningDamage = this.bonus.lightningDamage;
 
-      if (mob?.receiveDamage) {
+      if (mob.type === "mob") {
         mob.receiveDamage(lightningDamage, this.id);
+      } else if (mob.type === "player") {
+        mob.hitPoints -= lightningDamage;
       }
-      this.server.handleHurtEntity({ entity: mob, attacker: this, damage: lightningDamage });
+      this.server.handleHurtEntity({ entity: mob, attacker: this, dmg: lightningDamage });
     }
 
     if (mob.kind === Types.isBoss(mob.kind)) {

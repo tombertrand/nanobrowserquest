@@ -81,6 +81,7 @@ class Player extends Character {
     this.type = "player";
     this.name = name;
     this.account = account;
+    this.level = 1;
 
     // Renderer
     this.nameOffsetY = -10;
@@ -382,6 +383,10 @@ class Player extends Character {
       this.amuletLevel = null;
       this.amuletBonus = null;
     }
+  }
+
+  setLevel(level) {
+    this.level = level;
   }
 
   setAuras(auras) {

@@ -2934,10 +2934,18 @@ class Game {
         }
       });
 
-      self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHp, isCritical }) {
+      self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHp, isCritical, isBlocked }) {
         var mob = self.getEntityById(id);
-        if (mob && dmg) {
-          self.infoManager.addDamageInfo({ value: dmg, x: mob.x, y: mob.y - 15, type: "inflicted", isCritical });
+
+        if (mob && (dmg || isBlocked)) {
+          self.infoManager.addDamageInfo({
+            value: dmg,
+            x: mob.x,
+            y: mob.y - 15,
+            type: "inflicted",
+            isCritical,
+            isBlocked,
+          });
         }
         if (self.player.hasTarget()) {
           self.updateTarget(id, dmg, hp, maxHp);
@@ -3792,7 +3800,11 @@ class Game {
   getPlayerAt(x, y) {
     var entity = this.getEntityAt(x, y, Player);
     if (entity && entity instanceof Player && entity !== this.player && this.player.pvpFlag) {
-      return entity;
+      // PvP is limited to 20 levels above or below
+      const canPvP = Math.abs(entity.level - this.player.level) <= 20;
+      if (canPvP) {
+        return entity;
+      }
     }
     return null;
   }
@@ -4209,8 +4221,6 @@ class Game {
           if (character instanceof Player && this.camera.isVisible(character)) {
             this.audioManager.playSound("hit" + Math.floor(Math.random() * 2 + 1));
           }
-
-          console.log("~~~~~character.type", character);
 
           if (
             character.hasTarget() &&

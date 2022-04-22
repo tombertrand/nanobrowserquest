@@ -190,7 +190,7 @@ Messages.AnvilRecipe = class Message {
 Messages.Damage = class Message {
   constructor(
     private entity,
-    private points,
+    private dmg,
     private hp,
     private maxHitPoints,
     private isCritical,
@@ -200,7 +200,7 @@ Messages.Damage = class Message {
     return [
       Types.Messages.DAMAGE,
       this.entity.id,
-      this.points,
+      this.dmg,
       this.hp,
       this.maxHitPoints,
       this.isCritical,

@@ -390,6 +390,7 @@ class GameClient {
         armor,
         armorLevel,
         armorBonus,
+        level,
         auras,
         partyId,
         cape,
@@ -402,7 +403,7 @@ class GameClient {
         name = data[7];
         [armor, armorLevel, armorBonus] = data[8].split(":");
         [weapon, weaponLevel, weaponBonus] = data[9].split(":");
-        // level = data[10];
+        level = data[10];
         auras = data[11];
         partyId = data[12];
         cape = data[13];
@@ -419,6 +420,7 @@ class GameClient {
         character.setArmorName(armor);
         character.setArmorLevel(armorLevel);
         character.setArmorBonus(armorBonus);
+        character.setLevel(level);
         character.setAuras(auras);
         character.setPartyId(partyId);
         character.setCape(cape);
