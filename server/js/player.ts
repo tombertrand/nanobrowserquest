@@ -429,7 +429,12 @@ class Player extends Character {
           if (mob.type === "mob") {
             defense = Formulas.mobDefense({ armorLevel: mob.armorLevel });
 
-            dmg = dmg - defense;
+            dmg = defense > dmg ? 0 : dmg - defense;
+
+            // Minimum Hit dmg (can't be 0)
+            if (!dmg) {
+              dmg = randomInt(3, 5);
+            }
           } else if (mob.type === "player") {
             ({ dmg, isBlocked } = mob.handleHurtDmg(this, dmg));
           }
