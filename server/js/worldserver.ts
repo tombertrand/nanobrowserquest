@@ -1015,18 +1015,17 @@ class World {
   }
 
   // entity is receiver
-  handleHurtEntity({ entity, attacker, dmg, isCritical = false, isBlocked = false, isHit = false }) {
+  handleHurtEntity({ entity, attacker, dmg, isCritical = false, isBlocked = false }) {
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
       this.pushToPlayer(entity, entity.health({ isHurt: true }));
     }
-    if (isHit) {
-      // Let the player know how much damage was inflicted
-      this.pushToPlayer(
-        attacker,
-        new Messages.Damage(entity, dmg, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
-      );
-    }
+
+    // Let the player know how much damage was inflicted
+    this.pushToPlayer(
+      attacker,
+      new Messages.Damage(entity, dmg, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
+    );
 
     // If the entity is about to die
     if (entity.hitPoints <= 0) {

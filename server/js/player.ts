@@ -439,7 +439,7 @@ class Player extends Character {
             self.server.handleMobHate(mob.id, self.id, dmg);
           }
 
-          self.server.handleHurtEntity({ entity: mob, attacker: self, dmg, isCritical, isBlocked, isHit: true });
+          self.server.handleHurtEntity({ entity: mob, attacker: self, dmg, isCritical, isBlocked });
 
           if (mob.hitPoints <= 0) {
             mob.isDead = true;
@@ -452,6 +452,7 @@ class Player extends Character {
           let dmg = Formulas.dmgFromMob({
             weaponLevel: mob.weaponLevel,
           });
+
           self.handleHurtDmg(mob, dmg);
         }
       } else if (action === Types.Messages.LOOT) {
@@ -1090,6 +1091,11 @@ class Player extends Character {
     });
 
     dmg = defense > dmg ? 0 : dmg - defense;
+
+    // Minimum Hurt dmg (can't be 0)
+    if (!dmg) {
+      dmg = randomInt(3, 5);
+    }
 
     if (this.bonus.blockChance) {
       isBlocked = random(100) < this.bonus.blockChance;
