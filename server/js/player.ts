@@ -1005,6 +1005,7 @@ class Player extends Character {
       const highHealthBonus = [17];
       const coldDamageBonus = [18];
       const freezeChanceBonus = [19];
+      const reduceFrozenChanceBonus = [20];
 
       let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
@@ -1022,6 +1023,13 @@ class Player extends Character {
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
           .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceDamageBonus]).slice(0, 1));
+      } else if (kind === Types.Entities.AMULETFROZEN) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(coldDamageBonus)
+          .concat(freezeChanceBonus)
+          .concat(reduceFrozenChanceBonus);
       } else if (kind === Types.Entities.RINGRAISTONE) {
         bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
       } else if (kind === Types.Entities.RINGFOUNTAIN) {
@@ -1127,11 +1135,12 @@ class Player extends Character {
       }
     }
 
-    // @TODO Add bonus cannotBeFrozen instead of checking set?
-    if (!isBlocked && mob.kind === Types.Entities.MINOTAUR && this.set !== "minotaur") {
+    if (!isBlocked && mob.kind === Types.Entities.MINOTAUR) {
       const isFrozen = random(100) < 20;
       if (isFrozen) {
-        this.broadcast(new Messages.Frozen(this.id, 10));
+        if (random(100) > this.bonus.reduceFrozenChance) {
+          this.broadcast(new Messages.Frozen(this.id, 10));
+        }
       }
     }
 
@@ -1408,6 +1417,7 @@ class Player extends Character {
       highHealth: 0,
       coldDamage: 0,
       freezeChance: 0,
+      reduceFrozenChance: 0,
     };
   }
 

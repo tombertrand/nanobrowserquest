@@ -68,6 +68,7 @@ import itemRingminotaur from "../sprites/item-ringminotaur.json";
 import itemAmuletsilver from "../sprites/item-amuletsilver.json";
 import itemAmuletgold from "../sprites/item-amuletgold.json";
 import itemAmuletcow from "../sprites/item-amuletcow.json";
+import itemAmuletfrozen from "../sprites/item-amuletfrozen.json";
 import itemChestblue from "../sprites/item-chestblue.json";
 import itemScrollupgradelow from "../sprites/item-scrollupgradelow.json";
 import itemScrollupgrademedium from "../sprites/item-scrollupgrademedium.json";
@@ -231,6 +232,7 @@ const sprites = {
   "item-amuletsilver": itemAmuletsilver,
   "item-amuletgold": itemAmuletgold,
   "item-amuletcow": itemAmuletcow,
+  "item-amuletfrozen": itemAmuletfrozen,
   "item-chestblue": itemChestblue,
   "item-scrollupgradelow": itemScrollupgradelow,
   "item-scrollupgrademedium": itemScrollupgrademedium,

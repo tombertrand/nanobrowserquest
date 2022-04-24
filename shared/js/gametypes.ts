@@ -183,6 +183,7 @@ export const Types: any = {
     AMULETSILVER: 112,
     AMULETGOLD: 113,
     AMULETCOW: 116,
+    AMULETFROZEN: 138,
 
     // NPCs
     GUARD: 40,
@@ -326,7 +327,12 @@ Types.Entities.Rings = [
   Types.Entities.RINGMINOTAUR,
 ];
 
-Types.Entities.Amulets = [Types.Entities.AMULETSILVER, Types.Entities.AMULETGOLD, Types.Entities.AMULETCOW];
+Types.Entities.Amulets = [
+  Types.Entities.AMULETSILVER,
+  Types.Entities.AMULETGOLD,
+  Types.Entities.AMULETCOW,
+  Types.Entities.AMULETFROZEN,
+];
 
 Types.getGemNameFromKind = function (kind: number) {
   const gems = {
@@ -394,7 +400,7 @@ export const kinds = {
   goldensword: [Types.Entities.GOLDENSWORD, "weapon", "Golden Sword", 10, 20],
   blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 12, 24],
   bluemorningstar: [Types.Entities.BLUEMORNINGSTAR, "weapon", "Frozen Morning Star", 14, 26],
-  frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 16, 30],
+  frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 26, 30],
   diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 26, 36],
   minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 30, 40],
 
@@ -408,16 +414,16 @@ export const kinds = {
   goldenarmor: [Types.Entities.GOLDENARMOR, "armor", "Golden Armor", 10, 20],
   bluearmor: [Types.Entities.BLUEARMOR, "armor", "Sapphire Armor", 14, 24],
   hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 18, 28],
-  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 22, 30],
-  diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 26, 34],
-  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 30, 38],
+  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 28, 30],
+  diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 36, 34],
+  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 40, 38],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
   beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 9, 4],
-  beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 16, 10],
+  beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 22, 10],
   beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 14],
-  beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 34, 18],
+  beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 40, 18],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 10, 2],
 
@@ -425,14 +431,15 @@ export const kinds = {
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
   ringsilver: [Types.Entities.RINGSILVER, "ring", "Silver Ring", 9],
   ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 16],
-  ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 28],
+  ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 38],
   ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
   ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
-  ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Minotaur Hell Freeze", 30],
+  ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Minotaur Hell Freeze", 36],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
-  amuletcow: [Types.Entities.AMULETCOW, "amulet", "Holy Cow King Talisman", 35],
+  amuletcow: [Types.Entities.AMULETCOW, "amulet", "Holy Cow King Talisman", 34],
+  amuletfrozen: [Types.Entities.AMULETFROZEN, "amulet", "Frozen Heart", 34],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 50],
 
@@ -582,6 +589,7 @@ Types.setBonus = {
     defense: 10,
     coldDamage: 15,
     health: 50,
+    reduceFrozenChance: 25,
   },
   diamond: {
     exp: 10,
@@ -940,13 +948,20 @@ Types.isUniqueRing = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [
       Types.Entities.RINGNECROMANCER,
-      Types.Entities.AMULETCOW,
       Types.Entities.RINGRAISTONE,
       Types.Entities.RINGFOUNTAIN,
       Types.Entities.RINGMINOTAUR,
     ].includes(kindOrString);
   } else {
-    return ["ringnecromancer", "amuletcow", "ringraistone", "ringfountain", "ringminotaur"].includes(kindOrString);
+    return ["ringnecromancer", "ringraistone", "ringfountain", "ringminotaur"].includes(kindOrString);
+  }
+};
+
+Types.isUniqueAmulet = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return [Types.Entities.AMULETCOW, Types.Entities.AMULETFORZEN].includes(kindOrString);
+  } else {
+    return ["amuletcow", "amuletfrozen"].includes(kindOrString);
   }
 };
 
@@ -1226,6 +1241,7 @@ Types.getBonusDescriptionMap = [
   "+# Health",
   "+# Cold damage",
   "+#% Freeze the enemy for # seconds",
+  "+#% Reduced chance of being frozen",
 ];
 
 Types.bonusType = [
@@ -1249,6 +1265,7 @@ Types.bonusType = [
   "highHealth",
   "coldDamage",
   "freezeChance",
+  "reduceFrozenChance",
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1272,6 +1289,7 @@ Types.getBonus = function (rawBonus, level) {
   const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
   const coldDamagePerLevel = [1, 2, 4, 6, 8, 11, 15, 22, 28, 40];
   const freezeChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
+  const reduceFrozenChancePerLevel = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1294,6 +1312,7 @@ Types.getBonus = function (rawBonus, level) {
     highHealthPerLevel,
     coldDamagePerLevel,
     freezeChancePerLevel,
+    reduceFrozenChancePerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];
@@ -1467,8 +1486,9 @@ Types.getItemDetails = function (
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
   const isUniqueRing = Types.isUniqueRing(item);
+  const isUniqueAmulet = Types.isUniqueAmulet(item);
   const isUniqueCape = isCape && rawBonus.length >= 2;
-  const isUnique = ((isArmor || isWeapon || isBelt) && !!rawBonus) || isUniqueRing || isUniqueCape;
+  const isUnique = ((isArmor || isWeapon || isBelt) && !!rawBonus) || isUniqueRing || isUniqueAmulet || isUniqueCape;
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;

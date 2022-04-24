@@ -1274,6 +1274,8 @@ class World {
         return "ringraistone";
       } else if (mob.kind >= Types.Entities.RAT2 && vv === 6969) {
         return "ringfountain";
+      } else if (mob.kind >= Types.Entities.COW && vv === 133) {
+        return "amuletfrozen";
       }
     }
 
@@ -1315,8 +1317,9 @@ class World {
     const itemName = this.getDroppedItemName(mob, attacker);
     const kind = Types.getKindFromString(itemName);
 
+    // var randomDrops = ["amuletfrozen"] as any;
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
-    // // // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrop = random(randomDrops.length);
     // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 

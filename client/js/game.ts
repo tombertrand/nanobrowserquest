@@ -364,6 +364,7 @@ class Game {
       "item-amuletsilver",
       "item-amuletgold",
       "item-amuletcow",
+      "item-amuletfrozen",
       "item-chestblue",
       "item-scrollupgradelow",
       "item-scrollupgrademedium",
@@ -683,12 +684,6 @@ class Game {
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${setBonus.length ? `<div class="item-set-description">${self.player.set} Set Bonuses</div>` : ""}
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-            ${
-              // @TODO Move this to Bonus map cannotBeFrozen: true
-              self.player.set === "minotaur" && setBonus.length
-                ? `<div class="item-set-bonus">Cannot be frozen</div>`
-                : ""
-            }
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
           </div>`;

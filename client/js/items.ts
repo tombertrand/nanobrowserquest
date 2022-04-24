@@ -331,6 +331,13 @@ var Items = {
     }
   },
 
+  AmuletFrozen: class AmuletFrozen extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETFROZEN, "amulet");
+      this.lootMessage = "You pick up the Frozen Heart";
+    }
+  },
+
   ChestBlue: class ChestBlue extends Item {
     constructor(id) {
       super(id, Types.Entities.CHESTBLUE, "chest");

@@ -328,6 +328,10 @@ EntityFactory.builders[Types.Entities.AMULETCOW] = function (id) {
   return new Items.AmuletCow(id);
 };
 
+EntityFactory.builders[Types.Entities.AMULETFROZEN] = function (id) {
+  return new Items.AmuletFrozen(id);
+};
+
 EntityFactory.builders[Types.Entities.CHESTBLUE] = function (id) {
   return new Items.ChestBlue(id);
 };
