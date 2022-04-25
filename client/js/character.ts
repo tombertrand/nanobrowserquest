@@ -544,7 +544,6 @@ class Character extends Entity {
    */
   forEachAttacker(callback) {
     _.each(this.attackers, function (attacker) {
-      // @TODO Figure out why entering though door, mob follow hater from hater perspective but is idle from the second player perspective
       callback(attacker);
     });
   }

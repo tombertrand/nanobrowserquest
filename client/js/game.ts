@@ -2202,7 +2202,7 @@ class Game {
       });
 
       self.player.onAggro(function (mob) {
-        if (!mob.isWaitingToAttack(self.player) && !self.player.isAttackedBy(mob)) {
+        if (!self.player.isDead && !mob.isWaitingToAttack(self.player) && !self.player.isAttackedBy(mob)) {
           self.player.log_info("Aggroed by " + mob.id + " at (" + self.player.gridX + ", " + self.player.gridY + ")");
           self.client.sendAggro(mob);
           mob.waitToAttack(self.player);
@@ -2424,7 +2424,7 @@ class Game {
 
         self.player.forEachAttacker(function (attacker) {
           attacker.disengage();
-          attacker.idle();
+          // attacker.idle();
         });
 
         self.audioManager.fadeOutCurrentMusic();

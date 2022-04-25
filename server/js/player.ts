@@ -564,8 +564,10 @@ class Player extends Character {
 
           self.broadcast(new Messages.Teleport(self));
 
-          self.server.handlePlayerVanish(self);
-          self.server.pushRelevantEntityListTo(self);
+          // self.server.handlePlayerVanish(self);
+          // self.server.pushRelevantEntityListTo(self);
+
+          self.zone_callback();
 
           if (x === 34 && y === 498) {
             self.send(new Messages.MinotaurLevelInProgress(self.server.minotaurLevelClock).serialize());
