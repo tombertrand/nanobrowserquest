@@ -276,7 +276,7 @@ export const isValidRecipe = items => {
 };
 
 export const generateBlueChestItem = (): { item: string; uniqueChances?: number } => {
-  // 53%
+  // 50%
   const items = [
     { item: "frozenarmor", uniqueChances: 40 },
     { item: "beltfrozen", uniqueChances: 40 },
@@ -292,15 +292,20 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
   // 40%
   const scrolls = [{ item: "scrollupgradehigh" }, { item: "scrollupgradeblessed" }];
 
-  // 7%
-  const rings = [{ item: "ringraistone" }, { item: "ringfountain" }, { item: "ringminotaur" }];
+  // 10%
+  const ringOrAmulets = [
+    { item: "ringraistone" },
+    { item: "ringfountain" },
+    { item: "ringminotaur" },
+    { item: "amuletfrozen" },
+  ];
 
   const randomCategory = random(100);
   let category: any = items;
 
-  if (randomCategory < 7) {
-    category = rings;
-  } else if (randomCategory < 47) {
+  if (randomCategory < 10) {
+    category = ringOrAmulets;
+  } else if (randomCategory < 50) {
     category = scrolls;
   }
 
