@@ -1026,14 +1026,10 @@ class World {
       new Messages.Damage(entity, dmg, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
     );
 
-    // If the entity is about to die
     if (entity.hitPoints <= 0) {
       if (entity.type === "mob") {
         var mob = entity;
         var item = this.getDroppedItem(mob, attacker);
-        // var mainTanker = this.getEntityById(mob.getMainTankerId());
-
-        // var lastHitPlayer = mainTanker instanceof Player || attacker;
 
         if (attacker.hasParty()) {
           attacker.getParty().shareExp(mob);
@@ -1041,28 +1037,12 @@ class World {
           this.incrementExp(attacker, mob);
         }
 
-        // if (mainTanker && mainTanker instanceof Player) {
-        //   const exp = this.receivedExp(mainTanker, mob);
-        //   if (exp) {
-        //     mainTanker.incExp(exp);
-        //   }
-        //   this.pushToPlayer(mainTanker, new Messages.Kill(mob, mainTanker.level, mainTanker.experience, exp));
-        // } else {
-        //   const exp = this.receivedExp(attacker, mob);
-        //   if (exp) {
-        //     attacker.incExp(exp);
-        //   }
-        //   this.pushToPlayer(attacker, new Messages.Kill(mob, attacker.level, attacker.experience, exp));
-        // }
-
         this.pushToAdjacentGroups(mob.group, mob.despawn()); // Despawn must be enqueued before the item drop
         if (item) {
           this.pushToAdjacentGroups(mob.group, mob.drop(item));
           this.handleItemDespawn(item);
         }
-      }
-
-      if (entity.type === "player") {
+      } else if (entity.type === "player") {
         this.handlePlayerVanish(entity);
         this.pushToAdjacentGroups(entity.group, entity.despawn());
       }

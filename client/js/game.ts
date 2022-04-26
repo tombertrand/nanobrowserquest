@@ -2725,10 +2725,8 @@ class Game {
                 attacker.hit();
               }
             });
-            // Only if not properly despawned
-            if (!entity.isDead) {
-              entity.die();
-            }
+
+            entity.die();
           } else if (entity instanceof Chest) {
             entity.open();
           }
@@ -3029,9 +3027,10 @@ class Game {
           diff = health - player.hitPoints;
           player.hitPoints = health;
 
-          if (player.hitPoints <= 0) {
-            player.die();
-          }
+          // @NOTE prevent calling die twice when onDespawnEntity
+          // if (player.hitPoints <= 0) {
+          //   player.die();
+          // }
           if (isHurt) {
             player.hurt();
             self.infoManager.addDamageInfo({ value: diff, x: player.x, y: player.y - 15, type: "received" });
@@ -3990,11 +3989,6 @@ class Game {
     this.hoveringPlateauTile = false;
 
     if ((pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) || this.isZoning()) {
-      console.log(
-        "DEBUG NO WEAPON - processInput - keys",
-        pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y,
-        this.isZoning(),
-      );
       return;
     } else {
       if (!this.player.disableKeyboardNpcTalk) this.previousClickPosition = pos;
@@ -4010,11 +4004,6 @@ class Game {
     var pos = this.getMouseGridPosition();
 
     if (pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) {
-      console.log(
-        "DEBUG NO WEAPON - processInput - click",
-        pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y,
-        this.isZoning(),
-      );
       return;
     } else {
       this.previousClickPosition = pos;

@@ -309,8 +309,6 @@ var initApp = function () {
       $(this).focus();
     });
 
-    console.log('DEBUG NO WEAPON - initGame')
-
     initGame();
   });
 };
