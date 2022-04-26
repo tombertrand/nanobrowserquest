@@ -201,7 +201,6 @@ class World {
 
       player.onZone(function () {
         var hasChangedGroups = self.handleEntityGroupMembership(player);
-
         if (hasChangedGroups) {
           self.pushToPreviousGroups(player, new Messages.Destroy(player));
           self.pushRelevantEntityListTo(player);

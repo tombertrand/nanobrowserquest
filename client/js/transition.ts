@@ -46,9 +46,7 @@ class Transition {
 
         if (elapsed === this.duration || i === this.endValue) {
           this.stop();
-          if (this.stopFunction) {
-            this.stopFunction();
-          }
+          this.stopFunction?.();
         } else if (this.updateFunction) {
           this.updateFunction(i);
         }

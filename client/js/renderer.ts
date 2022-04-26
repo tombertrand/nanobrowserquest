@@ -669,6 +669,10 @@ class Renderer {
         }
       }
 
+      if (entity.name === this.game.player?.name) {
+        console.log("DEBUG NO WEAPON - renderer", entity instanceof Player, entity.isDead, entity.hasWeapon());
+      }
+
       if (entity instanceof Player && !entity.isDead && entity.hasWeapon()) {
         const { weapon, weaponSuffix, weaponImage } = this.getWeaponImage(entity);
 

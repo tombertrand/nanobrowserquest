@@ -2424,7 +2424,6 @@ class Game {
 
         self.player.forEachAttacker(function (attacker) {
           attacker.disengage();
-          // attacker.idle();
         });
 
         self.audioManager.fadeOutCurrentMusic();
@@ -3991,6 +3990,11 @@ class Game {
     this.hoveringPlateauTile = false;
 
     if ((pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) || this.isZoning()) {
+      console.log(
+        "DEBUG NO WEAPON - processInput - keys",
+        pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y,
+        this.isZoning(),
+      );
       return;
     } else {
       if (!this.player.disableKeyboardNpcTalk) this.previousClickPosition = pos;
@@ -4006,6 +4010,11 @@ class Game {
     var pos = this.getMouseGridPosition();
 
     if (pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y) {
+      console.log(
+        "DEBUG NO WEAPON - processInput - click",
+        pos.x === this.previousClickPosition?.x && pos.y === this.previousClickPosition?.y,
+        this.isZoning(),
+      );
       return;
     } else {
       this.previousClickPosition = pos;
@@ -4314,7 +4323,10 @@ class Game {
   }
 
   enqueueZoningFrom(x, y) {
-    this.zoningQueue.push({ x: x, y: y });
+    // @NOTE: Prevent re-adding same x,y when player is chasing a mob multi-zone
+    if (!this.zoningQueue.some(({ x: queueX, y: queueY }) => x === queueX && y === queueY)) {
+      this.zoningQueue.push({ x: x, y: y });
+    }
 
     if (this.zoningQueue.length === 1) {
       this.startZoningFrom(x, y);

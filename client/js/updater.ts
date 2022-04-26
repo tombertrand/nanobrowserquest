@@ -97,7 +97,7 @@ class Updater {
       z = g.currentZoning,
       ts = 16,
       // @NOTE Unfortunately unable to fix the camera transition when multiple queues when the speed is greater than 350ms
-      speed = 200;
+      speed = 180;
 
     var endValue;
     var offset;
