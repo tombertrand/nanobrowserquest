@@ -356,6 +356,10 @@ var initGame = function () {
         .attr("href", "https://nanolooker.com/block/" + hash)
         .text(hash);
       $("#container-payout-hash").show();
+
+      if (!hash1) {
+        $("#container-payout-hash").find(".no-hash1").show();
+      }
     }
     if (hash1) {
       $("#completed")

@@ -663,8 +663,6 @@ class Character extends Entity {
   die() {
     this.removeTarget();
 
-    console.log("~~~~~character die");
-
     this.isDead = true;
 
     if (this.death_callback) {

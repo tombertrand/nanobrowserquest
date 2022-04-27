@@ -2076,9 +2076,6 @@ class Game {
       // sanitize and shorten names exceeding the allowed length.
       self.player.name = name;
 
-      console.log("~~~~onWelcome", self.player);
-      console.log("~~~~onWelcome - isDead", self.player.isDead);
-
       var [armor, armorLevel, armorBonus] = armor.split(":");
       var [weapon, weaponLevel, weaponBonus] = weapon.split(":");
 
@@ -2727,10 +2724,7 @@ class Game {
                 attacker.hit();
               }
             });
-            console.log("~~~~~ entity.isDead", entity.isDead);
             if (!entity.isDead) {
-              console.log("~~~~~ entity.die()");
-
               entity.die();
             }
           } else if (entity instanceof Chest) {
@@ -3033,9 +3027,7 @@ class Game {
           diff = health - player.hitPoints;
           player.hitPoints = health;
 
-          // @NOTE prevent calling die twice when onDespawnEntity
           if (player.hitPoints <= 0) {
-            console.log("~~~~~ player.die()");
             player.die();
           }
           if (isHurt) {
@@ -4024,8 +4016,6 @@ class Game {
    */
   processInput(pos) {
     var entity;
-
-    console.log("~~~~processInput", this.player);
 
     if (
       this.started &&
