@@ -258,7 +258,7 @@ class World {
 
     this.onRegenTick(function () {
       self.forEachCharacter(function (character) {
-        if (!character.hasFullHealth()) {
+        if (!character.hasFullHealth() && !character.isDead) {
           let regenerateHealth = Math.floor(character.maxHitPoints / 33);
           if (character.bonus && character.bonus.regenerateHealth) {
             regenerateHealth += character.bonus.regenerateHealth;
