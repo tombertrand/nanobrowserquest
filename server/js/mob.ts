@@ -45,6 +45,9 @@ class Mob extends Character {
   }
 
   destroy(delay = 30000) {
+
+    console.log("~~~~~mob destroy");
+
     this.isDead = true;
     this.destroyTime = Date.now();
     this.hateList = [];

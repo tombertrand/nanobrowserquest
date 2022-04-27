@@ -1935,7 +1935,6 @@ class Game {
         self.initRenderingGrid();
 
         self.setPathfinder(new Pathfinder(self.map.width, self.map.height));
-        self.initPlayer();
         self.setCursor("hand");
 
         self.connect(action, started_callback);
@@ -2076,6 +2075,9 @@ class Game {
       // Always accept name received from the server which will
       // sanitize and shorten names exceeding the allowed length.
       self.player.name = name;
+
+      console.log("~~~~onWelcome", self.player);
+      console.log("~~~~onWelcome - isDead", self.player.isDead);
 
       var [armor, armorLevel, armorBonus] = armor.split(":");
       var [weapon, weaponLevel, weaponBonus] = weapon.split(":");
@@ -2725,8 +2727,10 @@ class Game {
                 attacker.hit();
               }
             });
-
+            console.log("~~~~~ entity.isDead", entity.isDead);
             if (!entity.isDead) {
+              console.log("~~~~~ entity.die()");
+
               entity.die();
             }
           } else if (entity instanceof Chest) {
@@ -3031,8 +3035,10 @@ class Game {
 
           // @NOTE prevent calling die twice when onDespawnEntity
           if (player.hitPoints <= 0) {
+            console.log("~~~~~ player.die()");
             player.die();
-          } else if (isHurt) {
+          }
+          if (isHurt) {
             player.hurt();
             self.infoManager.addDamageInfo({ value: diff, x: player.x, y: player.y - 15, type: "received" });
             self.audioManager.playSound("hurt");
@@ -4018,6 +4024,8 @@ class Game {
    */
   processInput(pos) {
     var entity;
+
+    console.log("~~~~processInput", this.player);
 
     if (
       this.started &&
