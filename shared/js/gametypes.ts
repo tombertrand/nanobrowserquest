@@ -1078,6 +1078,8 @@ Types.getAliasFromName = function (name: string) {
     return "skeleton commander";
   } else if (name === "carlosmatos") {
     return "carlos matos";
+  } else if (name === "lavanpc") {
+    return "Wirt";
   } else if (name === "satoshi") {
     return "satoshi nakamoto";
   } else if (name === "rat2") {

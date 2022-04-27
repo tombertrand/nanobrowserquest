@@ -2726,7 +2726,9 @@ class Game {
               }
             });
 
-            entity.die();
+            if (!entity.isDead) {
+              entity.die();
+            }
           } else if (entity instanceof Chest) {
             entity.open();
           }
@@ -3028,18 +3030,15 @@ class Game {
           player.hitPoints = health;
 
           // @NOTE prevent calling die twice when onDespawnEntity
-          // if (player.hitPoints <= 0) {
-          //   player.die();
-          // }
-          if (isHurt) {
+          if (player.hitPoints <= 0) {
+            player.die();
+          } else if (isHurt) {
             player.hurt();
             self.infoManager.addDamageInfo({ value: diff, x: player.x, y: player.y - 15, type: "received" });
             self.audioManager.playSound("hurt");
             self.storage.addDamage(-diff);
             self.tryUnlockingAchievement("MEATSHIELD");
-            if (self.playerhurt_callback) {
-              self.playerhurt_callback();
-            }
+            self?.playerhurt_callback();
           } else if (!isRegen) {
             self.infoManager.addDamageInfo({ value: "+" + diff, x: player.x, y: player.y - 15, type: "healed" });
           }

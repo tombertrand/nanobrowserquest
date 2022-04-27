@@ -48,7 +48,7 @@ class Updater {
     const player = this.game.player;
 
     // Check player aggro every 1s when not moving nor attacking
-    if (player && !player.isMoving() && this.playerAggroTimer.isOver(t)) {
+    if (player && !player.isMoving() && !player.isDead && this.playerAggroTimer.isOver(t)) {
       player.checkAggro();
     }
   }
