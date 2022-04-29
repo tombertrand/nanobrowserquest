@@ -36,6 +36,7 @@ class Game {
   app: AppType;
   ready: boolean;
   started: boolean;
+  isLoaded: boolean;
   hasNeverStarted: boolean;
   isUpgradeItemSent: boolean;
   isAnvilSuccess: boolean;
@@ -108,7 +109,8 @@ class Game {
   host: any;
   port: any;
   username: any;
-  account: any;
+  account: string;
+  password: string;
   isStopped: any;
   obsoleteEntities: any[];
   playerId: any;
@@ -142,6 +144,7 @@ class Game {
     this.app = app;
     this.ready = false;
     this.started = false;
+    this.isLoaded = false;
     this.hasNeverStarted = true;
     this.isUpgradeItemSent = false;
     this.isAnvilSuccess = false;
@@ -1880,9 +1883,10 @@ class Game {
     }
   }
 
-  setPlayerAccount(username, account) {
+  setPlayerAccount(username, account, password) {
     this.username = username;
     this.account = account;
+    this.password = password;
   }
 
   setServerOptions(host, port) {
@@ -1902,45 +1906,53 @@ class Game {
     });
   }
 
-  run(action, started_callback) {
+  run() {
     var self = this;
 
-    this.loadSprites();
-    // @ts-ignore
-    this.setUpdater(new Updater(this));
-    this.camera = this.renderer.camera;
-
-    this.setSpriteScale(this.renderer.scale);
-
-    var wait = setInterval(function () {
-      if (self.map.isLoaded && self.spritesLoaded()) {
-        self.ready = true;
-        console.debug("All sprites loaded.");
-
-        self.loadAudio();
-
-        self.initMusicAreas();
-        self.initCursors();
-        self.initAnimations();
-        self.initShadows();
-        self.initHurtSprites();
-
-        if (!self.renderer.mobile && !self.renderer.tablet && self.renderer.upscaledRendering) {
-          self.initSilhouettes();
-        }
-
-        self.initEntityGrid();
-        self.initItemGrid();
-        self.initPathingGrid();
-        self.initRenderingGrid();
-
-        self.setPathfinder(new Pathfinder(self.map.width, self.map.height));
-        self.setCursor("hand");
-
-        self.connect(action, started_callback);
-        clearInterval(wait);
+    return new Promise(resolve => {
+      if (self.isLoaded) {
+        resolve(true);
+        return;
       }
-    }, 100);
+
+      this.loadSprites();
+      // @ts-ignore
+      this.setUpdater(new Updater(this));
+      this.camera = this.renderer.camera;
+
+      this.setSpriteScale(this.renderer.scale);
+
+      var wait = setInterval(function () {
+        if (self.map.isLoaded && self.spritesLoaded()) {
+          self.ready = true;
+          console.debug("All sprites loaded.");
+
+          self.loadAudio();
+
+          self.initMusicAreas();
+          self.initCursors();
+          self.initAnimations();
+          self.initShadows();
+          self.initHurtSprites();
+
+          if (!self.renderer.mobile && !self.renderer.tablet && self.renderer.upscaledRendering) {
+            self.initSilhouettes();
+          }
+
+          self.initEntityGrid();
+          self.initItemGrid();
+          self.initPathingGrid();
+          self.initRenderingGrid();
+
+          self.setPathfinder(new Pathfinder(self.map.width, self.map.height));
+          self.setCursor("hand");
+
+          clearInterval(wait);
+          self.isLoaded = true;
+          resolve(true);
+        }
+      }, 100);
+    });
   }
 
   tick() {
@@ -1980,8 +1992,10 @@ class Game {
     }
   }
 
-  connect(action, started_callback) {
+  async connect(action, started_callback) {
     var self = this;
+
+    await self.run();
 
     this.client = new GameClient(this.host, this.port);
     this.client.fail_callback = function (reason) {
@@ -2012,7 +2026,7 @@ class Game {
       if (action === "create") {
         self.client.sendCreate(self.player);
       } else {
-        self.client.sendLogin(self.player);
+        self.client.sendLogin({ name: self.username, account: self.account, password: self.password });
       }
     });
 
@@ -2064,6 +2078,9 @@ class Game {
       party,
       settings,
     }) {
+      // @ts-ignore
+      self.app.start();
+
       Sentry.configureScope(scope => {
         // scope.setTag("name", name);
         scope.setUser({ username: name });
@@ -4496,7 +4513,7 @@ class Game {
 
     this.started = true;
     this.client.enable();
-    this.client.sendLogin(this.player);
+    this.client.sendLogin({ name: this.username, account: this.account, password: this.password });
 
     this.storage.incrementRevives();
 

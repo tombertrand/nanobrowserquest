@@ -1,4 +1,4 @@
-// import bcrypt  from "bcrypt";
+import bcrypt from "bcrypt";
 import * as NanocurrencyWeb from "nanocurrency-web";
 import redis from "redis";
 
@@ -1115,6 +1115,80 @@ class DatabaseHandler {
         artifact[index] = 1;
         artifact = JSON.stringify(artifact);
         this.client.hset("u:" + name, "artifact", artifact);
+      } catch (err) {
+        Sentry.captureException(err);
+      }
+    });
+  }
+
+  passwordIsRequired(player) {
+    return new Promise((resolve, _reject) => {
+      var userKey = "u:" + player.name;
+
+      try {
+        this.client
+          .multi()
+          .hget(userKey, "password")
+          .hget(userKey, "expansion1")
+          .exec((err, replies) => {
+            const password = replies[0];
+            const expansion1 = !!parseInt(replies[1] || "0");
+
+            let hasPassword = !!password;
+            let isPasswordRequired = expansion1;
+
+            player.isPasswordRequired = isPasswordRequired;
+
+            if (isPasswordRequired) {
+              if (hasPassword) {
+                player.connection.sendUTF8("passwordlogin");
+              } else {
+                player.connection.sendUTF8("passwordcreate");
+              }
+            }
+
+            resolve(isPasswordRequired);
+          });
+      } catch (err) {
+        Sentry.captureException(err);
+      }
+    });
+  }
+
+  passwordLoginOrCreate(player, loginPassword) {
+    return new Promise((resolve, _reject) => {
+      var userKey = "u:" + player.name;
+      var self = this;
+
+      try {
+        this.client
+          .multi()
+          .hget(userKey, "account")
+          .hget(userKey, "password")
+          .exec(async (err, replies) => {
+            const account = replies[0];
+            const password = replies[1];
+            let isValid = false;
+
+            if (player.account === account) {
+              if (!password) {
+                const salt = await bcrypt.genSalt(10);
+                const passwordHash = await bcrypt.hash(loginPassword, salt);
+
+                self.client.hset(userKey, "password", passwordHash);
+
+                isValid = true;
+                player.isPasswordValid = isValid;
+              } else {
+                isValid = await bcrypt.compare(loginPassword, password);
+              }
+            }
+
+            if (!isValid) {
+              player.connection.sendUTF8("passwordinvalid");
+            }
+            resolve(isValid);
+          });
       } catch (err) {
         Sentry.captureException(err);
       }

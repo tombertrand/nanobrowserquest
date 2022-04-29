@@ -8,7 +8,7 @@ class FormatChecker {
   constructor() {
     this.formats = [];
     (this.formats[Types.Messages.CREATE] = ["s", "s"]),
-      (this.formats[Types.Messages.LOGIN] = ["s", "s"]),
+      (this.formats[Types.Messages.LOGIN] = ["s", "s", "s"]),
       (this.formats[Types.Messages.MOVE] = ["n", "n"]),
       (this.formats[Types.Messages.LOOTMOVE] = ["n", "n", "n"]),
       (this.formats[Types.Messages.AGGRO] = ["n"]),

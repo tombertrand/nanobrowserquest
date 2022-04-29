@@ -187,7 +187,10 @@ class GameClient {
           e === "invalidusername" ||
           e === "banned-1" ||
           e === "banned-365" ||
-          e === "invalidconnection"
+          e === "invalidconnection" ||
+          e === "passwordcreate" ||
+          e === "passwordlogin" ||
+          e === "passwordinvalid"
         ) {
           if (self.fail_callback) {
             self.fail_callback(e);
@@ -984,8 +987,8 @@ class GameClient {
     this.sendMessage([Types.Messages.CREATE, player.name, player.account]);
   }
 
-  sendLogin(player) {
-    this.sendMessage([Types.Messages.LOGIN, player.name, player.account]);
+  sendLogin({ name, account, password = "" }) {
+    this.sendMessage([Types.Messages.LOGIN, name, account, password]);
   }
 
   sendMove(x, y) {

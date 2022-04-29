@@ -133,10 +133,15 @@
 
                         <img id="playerimage" src="">
 
+                        <div class="password-create" style="display: none">To secure your account,<br/>enter a password between 4 and 24 characters.<br/>Make sure to remember it!</div>
+                        <div class="password-login" style="display: none">Enter your account password</div>
+
                         <form action="none" method="get" accept-charset="utf-8">
                             <input type="text" id="loginnameinput" class="stroke" name="player-name" placeholder="Character Name" maxlength="16" autofocus>
-                            <textarea id="loginaccountinput" class="stroke" name="player-loginaccount" placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"
-                            ></textarea>
+                            <textarea id="loginaccountinput" class="stroke" name="player-loginaccount" placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"></textarea>
+
+                            <input type="text" id="loginpasswordinput" class="stroke password-login password-create" name="player-password" placeholder="Password" maxlength="24" style="display: none">
+                            <input type="text" id="loginpasswordconfirminput" class="stroke password-create" name="player-password-confirm" placeholder="Confirm Password" maxlength="24" style="display: none">
                         </form>
                         <div id="login-play-link" class="play">
                             <span class="link">Login</span>
@@ -156,11 +161,13 @@
                         <div id="running-coder">
                             <span class="link">running-coder</span>
                         </div> -->
-                        <div id="forget-player">
-                            <span class="link">Forget Player</span>
-                        </div>
-                        <div id="create-new">
-                            <span class="link">Create New Character</span>
+                        <div class="login-options">
+                            <div id="forget-player">
+                                <span class="link">Forget Player</span>
+                            </div>
+                            <div id="create-new">
+                                <span class="link">Create New Character</span>
+                            </div>
                         </div>
                     </article>
                     <article id="banned">

@@ -1,4 +1,3 @@
-// import bcrypt from "bcrypt";
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
@@ -115,6 +114,8 @@ class Player extends Character {
   partyId?: number;
   freezeChanceLevel: number;
   minotaurDamage: number;
+  isPasswordRequired: boolean;
+  isPasswordValid: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -216,6 +217,7 @@ class Player extends Character {
 
         var name = sanitize(message[1]);
         var account = sanitize(message[2]);
+        var password = sanitize(message[3]);
 
         // Always ensure that the name is not longer than a maximum length.
         // (also enforced by the maxlength attribute of the name input element).
@@ -243,6 +245,17 @@ class Player extends Character {
             self.connection.close("Already logged in " + self.name);
             return;
           }
+
+          if (!password) {
+            if (await databaseHandler.passwordIsRequired(self)) {
+              return;
+            }
+          } else {
+            if (!(await databaseHandler.passwordLoginOrCreate(self, password))) {
+              return;
+            }
+          }
+
           databaseHandler.loadPlayer(self);
         }
       } else if (action === Types.Messages.WHO) {
@@ -1713,6 +1726,16 @@ class Player extends Character {
     settings,
   }) {
     var self = this;
+
+    // @NOTE: Make sure the player has authenticated if he has the expansion
+    if (self.isPasswordRequired && !self.isPasswordValid) {
+      self.connection.sendUTF8("passwordinvalid");
+      return;
+    }
+
+    // @NOTE: Leave no trace
+    delete self.isPasswordRequired;
+    delete self.isPasswordValid;
 
     const [playerArmor, playerArmorLevel = 1, playerArmorBonus] = armor.split(":");
     const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus] = weapon.split(":");

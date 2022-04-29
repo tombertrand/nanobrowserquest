@@ -21,20 +21,24 @@ class App {
   isDesktop: boolean;
   supportsWorkers: boolean;
   $play: JQuery<HTMLElement> | null;
-  $loginnameinput: JQuery<HTMLElement> | null;
-  $loginaccountinput: JQuery<HTMLElement> | null;
+  $loginNameInput: JQuery<HTMLElement> | null;
+  $loginAccountInput: JQuery<HTMLElement> | null;
+  $loginPasswordInput: JQuery<HTMLElement> | null;
+  $loginPasswordConfirmInput: JQuery<HTMLElement> | null;
   loginFormFields: any[];
-  $nameinput: JQuery<HTMLElement> | null;
-  $accountinput: JQuery<HTMLElement> | null;
+  $nameInput: JQuery<HTMLElement> | null;
+  $accountInput: JQuery<HTMLElement> | null;
   createNewCharacterFormFields: any[];
   getPlayButton: () => any;
   getUsernameField: () => any;
   getAccountField: () => any;
+  getPasswordField: () => any;
+  getPasswordConfirmField: () => any;
   starting: any;
   firstTimePlaying: boolean;
   config: any;
-  playButtonRestoreText: any;
   messageTimer: any;
+  playButtonRestoreText: string;
 
   constructor() {
     this.currentPage = 1;
@@ -47,17 +51,22 @@ class App {
     this.getUsernameField = () => {};
     this.getPlayButton = () => {};
     this.getAccountField = () => {};
+    this.getPasswordField = () => {};
+    this.getPasswordConfirmField = () => {};
     this.isDesktop = true;
     this.firstTimePlaying = true;
     this.supportsWorkers = false;
     this.$play = null;
-    this.$loginnameinput = null;
-    this.$loginaccountinput = null;
-    this.$nameinput = null;
-    this.$accountinput = null;
+    this.$loginNameInput = null;
+    this.$loginAccountInput = null;
+    this.$loginPasswordInput = null;
+    this.$loginPasswordConfirmInput = null;
+    this.$nameInput = null;
+    this.$accountInput = null;
     this.loginFormFields = [];
     this.createNewCharacterFormFields = [];
     this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
+    this.playButtonRestoreText = "";
 
     if (
       this.storage &&
@@ -101,22 +110,37 @@ class App {
     this.setPlayButtonState(true);
 
     // Login form fields
-    this.$loginnameinput = $("#loginnameinput");
-    this.$loginaccountinput = $("#loginaccountinput");
-    this.loginFormFields = [this.$loginnameinput, this.$loginaccountinput];
+    this.$loginNameInput = $("#loginnameinput");
+    this.$loginAccountInput = $("#loginaccountinput");
+    this.$loginPasswordInput = $("#loginpasswordinput");
+    this.$loginPasswordConfirmInput = $("#loginpasswordconfirminput");
+    this.loginFormFields = [
+      this.$loginNameInput,
+      this.$loginAccountInput,
+      this.$loginPasswordInput,
+      this.$loginPasswordConfirmInput,
+    ];
 
     // Create new character form fields
-    this.$nameinput = $("#nameinput");
-    this.$accountinput = $("#accountinput");
-    this.createNewCharacterFormFields = [this.$nameinput, this.$accountinput, this.$accountinput];
+    this.$nameInput = $("#nameinput");
+    this.$accountInput = $("#accountinput");
+    this.createNewCharacterFormFields = [this.$nameInput, this.$accountInput, this.$accountInput];
 
     // Functions to return the proper username / account fields to use, depending on which form
     // (login or create new character) is currently active.
     this.getUsernameField = function () {
-      return this.createNewCharacterFormActive() ? this.$nameinput : this.$loginnameinput;
+      return this.createNewCharacterFormActive() ? this.$nameInput : this.$loginNameInput;
     };
     this.getAccountField = function () {
-      return this.createNewCharacterFormActive() ? this.$accountinput : this.$loginaccountinput;
+      return this.createNewCharacterFormActive() ? this.$accountInput : this.$loginAccountInput;
+    };
+
+    this.getPasswordField = function () {
+      return this.$loginPasswordInput;
+    };
+
+    this.getPasswordConfirmField = function () {
+      return this.$loginPasswordConfirmInput;
     };
   }
 
@@ -139,8 +163,12 @@ class App {
     var action = this.createNewCharacterFormActive() ? "create" : "login";
     var username = this.getUsernameField().val();
     var account = this.getAccountField().val();
+    var password = this.getPasswordField().is(":visible") ? this.getPasswordField().val() : undefined;
+    var passwordConfirm = this.getPasswordConfirmField().is(":visible")
+      ? this.getPasswordConfirmField().val()
+      : undefined;
 
-    if (!this.validateFormFields(username, account)) return;
+    if (!this.validateFormFields(username, account, password, passwordConfirm)) return;
 
     this.setPlayButtonState(false);
 
@@ -149,20 +177,20 @@ class App {
         console.debug("waiting...");
         if (self.canStartGame()) {
           clearInterval(watchCanStart);
-          self.startGame(action, username, account);
+          self.startGame(action, username, account, password);
         }
       }, 100);
     } else {
-      this.startGame(action, username, account);
+      this.startGame(action, username, account, password);
     }
   }
 
-  startGame(action, username, account) {
+  startGame(action, username, account, password) {
     var self = this;
     self.firstTimePlaying = !self.storage.hasAlreadyPlayed();
 
     if (username && !this.game.started) {
-      this.game.setPlayerAccount(username, account);
+      this.game.setPlayerAccount(username, account, password);
 
       let config = { host: "localhost", port: 8000 };
       if (process.env.NODE_ENV !== "development") {
@@ -179,10 +207,9 @@ class App {
       }
 
       this.center();
-      this.game.run(action, function (result) {
-        if (result.success === true) {
-          self.start();
-        } else {
+
+      this.game.connect(action, function (result) {
+        if (result.reason) {
           self.setPlayButtonState(true);
 
           switch (result.reason) {
@@ -213,6 +240,28 @@ class App {
               break;
             case "invalidconnection":
               self.animateParchment("loadcharacter", "invalidconnection");
+              break;
+            case "passwordcreate":
+              $("#playerimage").hide();
+              $("#loginnameinput").hide();
+              $("#loginaccountinput").hide();
+              $("#create-new").hide();
+              $(".password-login").hide();
+              $(".login-options").hide();
+              $(".password-create").show();
+              $("#loginpasswordinput").focus();
+              break;
+            case "passwordlogin":
+              $("#loginnameinput").hide();
+              $("#loginaccountinput").hide();
+              $("#create-new").hide();
+              $(".password-create").hide();
+              $(".login-options").hide();
+              $(".password-login").show();
+              $("#loginpasswordinput").focus();
+              break;
+            case "passwordinvalid":
+              self.addValidationError(null, "The password is incorrect.");
               break;
             default:
               self.addValidationError(
@@ -267,24 +316,27 @@ class App {
     var self = this;
     var $playButton = this.getPlayButton();
 
+    if ($playButton.find(".link").text() !== "Loading...") {
+      this.playButtonRestoreText = $playButton.find(".link").text();
+    }
+
     if (enabled) {
       this.starting = false;
       this.$play!.removeClass("loading");
       $playButton.click(function () {
         self.tryStartingGame();
       });
-      if (this.playButtonRestoreText) {
-        $playButton.text(this.playButtonRestoreText);
+      if (!$playButton.hasClass("button")) {
+        $playButton.find(".link").text(this.playButtonRestoreText);
       }
     } else {
       // Loading state
       this.starting = true;
       this.$play!.addClass("loading");
       $playButton.unbind("click");
-      this.playButtonRestoreText = $playButton.text();
 
-      if (!$("#login-play-button").is(":visible")) {
-        $playButton.text("Loading...");
+      if (!$playButton.hasClass("button")) {
+        $playButton.find(".link").text("Loading...");
       }
     }
   }
@@ -339,7 +391,7 @@ class App {
    * out, account match looks valid). Assumes either the login or the create new character form
    * is currently active.
    */
-  validateFormFields(username, account) {
+  validateFormFields(username, account, password, passwordConfirm) {
     this.clearValidationErrors();
 
     if (!username) {
@@ -349,6 +401,17 @@ class App {
 
     if (!isValidAccountAddress(account)) {
       this.addValidationError(this.getAccountField(), "Enter a valid nano_ account.");
+      return false;
+    }
+
+    if (typeof password === "string" && (password.length < 4 || password.length > 24)) {
+      this.addValidationError(this.getPasswordField(), "Password must be between 4 and 24 characters.");
+      return false;
+    } else if (typeof passwordConfirm === "string" && (passwordConfirm.length < 4 || passwordConfirm.length > 24)) {
+      this.addValidationError(this.getPasswordConfirmField(), "Password confirm must be between 4 and 24 characters.");
+      return false;
+    } else if (typeof password === "string" && typeof passwordConfirm === "string" && password !== passwordConfirm) {
+      this.addValidationError(this.getPasswordConfirmField(), "Password confirm must be the same as the password.");
       return false;
     }
 
