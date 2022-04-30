@@ -187,7 +187,7 @@ class App {
 
   startGame(action, username, account, password) {
     var self = this;
-    self.firstTimePlaying = !self.storage.hasAlreadyPlayed();
+    self.firstTimePlaying = !password || !self.storage.hasAlreadyPlayed();
 
     if (username && !this.game.started) {
       this.game.setPlayerAccount(username, account, password);

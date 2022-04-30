@@ -635,10 +635,6 @@ Types.Resistances = {
       percentage: 100,
       display: "lightning damage",
     },
-    coldDamage: {
-      percentage: 100,
-      display: "cold damage",
-    },
     magicDamage: {
       percentage: 100,
       display: "magic damage",
