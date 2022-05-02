@@ -100,6 +100,7 @@ class Store {
       const isLocked = id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1;
       const isDisabled = !isAvailable || (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1);
 
+      // ${id === Types.Store.EXPANSION1 ? ' <img src="img/common/50-off.png" width="50" height="31">' : ""}
       const item = $("<div/>", {
         class: `item-wrapper item-name-${icon}`,
         html: `
@@ -108,7 +109,6 @@ class Store {
             </div>
             <p class="name">${name}</p>
             ${description ? `<p class="description">${description}</p>` : ""}
-            ${id === Types.Store.EXPANSION1 ? ' <img src="img/common/50-off.png" width="50" height="31">' : ""}
             <p class="prices">
               <span class="xno">Ӿ${xno}</span>
               <span class="usd"> / $${usd.toFixed(2)}</span>
