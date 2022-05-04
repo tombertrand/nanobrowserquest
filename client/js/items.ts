@@ -219,6 +219,13 @@ var Items = {
     }
   },
 
+  BananoPotion: class BananoPotion extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BANANOPOTION, "object");
+      this.lootMessage = "You drink a BANANO potion";
+    }
+  },
+
   GemRuby: class GemRuby extends Item {
     constructor(id) {
       super(id, Types.Entities.GEMRUBY, "object");
@@ -450,10 +457,10 @@ var Items = {
     }
   },
 
-  FirePotion: class FirePotion extends Item {
+  Monkeypotion: class Monkeypotion extends Item {
     constructor(id) {
-      super(id, Types.Entities.FIREPOTION, "object");
-      this.lootMessage = "You feel the power of Firefox!";
+      super(id, Types.Entities.MONKEYPOTION, "object");
+      this.lootMessage = "You feel the power of Monkeys!";
     }
 
     onLoot(player) {

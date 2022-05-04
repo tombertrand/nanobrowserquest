@@ -1,5 +1,7 @@
 import BigNumber from "bignumber.js";
 
+import type { Network } from "./game";
+
 Function.prototype.bind = function (bind) {
   var self = this;
   return function () {
@@ -28,25 +30,31 @@ window.requestAnimFrame = (function () {
   );
 })();
 
-export const rawToRai = (raw: string | number) => {
+export const rawToRai = (raw: string | number, network: Network) => {
+  const decimals = network === "nano" ? 30 : 29;
   const value = new BigNumber(raw.toString());
-  return value.shiftedBy(30 * -1).toNumber();
+  return value.shiftedBy(decimals * -1).toNumber();
 };
 
-export const raiToRaw = (rai: string | number) => {
+export const raiToRaw = (rai: string | number, network: Network) => {
+  const decimals = network === "nano" ? 30 : 29;
   const value = new BigNumber(rai.toString());
-  return value.shiftedBy(30).toNumber();
+  return value.shiftedBy(decimals).toNumber();
 };
 
 // 02LV are not present in addresses
-const ACCOUNT_REGEX = /((nano|xrb)_)?[13][13-9a-km-uw-z]{59}/;
+const NANO_ACCOUNT_REGEX = /((nano|xrb)_)?[13][13-9a-km-uw-z]{59}/;
+const BAN_ACCOUNT_REGEX = /((ban)_)?[13][13-9a-km-uw-z]{59}/;
 
-export const isValidAccountAddress = (address: string) =>
-  new RegExp(`^${ACCOUNT_REGEX.toString().replace(/\//g, "")}$`, "i").test(address);
+export const isValidAccountAddress = (address: string, network: Network) => {
+  const regex = network === "nano" ? NANO_ACCOUNT_REGEX : BAN_ACCOUNT_REGEX;
 
-export const getAccountAddressFromText = (text: string) => {
-  const [, address] =
-    text.match(new RegExp(`[^sS]*?(${ACCOUNT_REGEX.toString().replace(/\//g, "")})[^sS]*?`, "i")) || [];
+  return new RegExp(`^${regex.toString().replace(/\//g, "")}$`, "i").test(address);
+};
+
+export const getAccountAddressFromText = (text: string, network: Network) => {
+  const regex = network === "nano" ? NANO_ACCOUNT_REGEX : BAN_ACCOUNT_REGEX;
+  const [, address] = text.match(new RegExp(`[^sS]*?(${regex.toString().replace(/\//g, "")})[^sS]*?`, "i")) || [];
   return address;
 };
 

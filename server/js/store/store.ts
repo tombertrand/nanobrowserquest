@@ -10,31 +10,35 @@ class Store {
   storeItems = [
     {
       id: Types.Store.EXPANSION1,
-      xno: 0,
-      usd: isDevelopmentAmounts ? 0.01 : 5,
+      nano: 0,
+      ban: 0,
+      usd: isDevelopmentAmounts ? 0.05 : 5,
       isAvailable: true,
     },
     {
       id: Types.Store.SCROLLUPGRADEBLESSED,
-      xno: 0,
-      usd: isDevelopmentAmounts ? 0.015 : 1.5,
+      nano: 0,
+      ban: 0,
+      usd: isDevelopmentAmounts ? 0.1 : 1.5,
       isAvailable: true,
     },
     {
       id: Types.Store.SCROLLUPGRADEHIGH,
-      xno: 0,
-      usd: isDevelopmentAmounts ? 0.02 : 0.5,
+      nano: 0,
+      ban: 0,
+      usd: isDevelopmentAmounts ? 0.15 : 0.5,
       isAvailable: true,
     },
     {
       id: Types.Store.CAPE,
-      xno: 0,
-      usd: isDevelopmentAmounts ? 0.03 : 1.25,
+      nano: 0,
+      ban: 0,
+      usd: isDevelopmentAmounts ? 0.2 : 1.25,
       isAvailable: true,
     },
     // {
     //   id: Types.Store.SCROLLUPGRADEMEDIUM,
-    //   xno: 0,
+    //   nano: 0,
     //   usd: isDevelopmentAmounts ? 0.03 : 0.25,
     //   isAvailable: true,
     // },
@@ -43,14 +47,16 @@ class Store {
   constructor() {}
 
   getItems() {
-    const usd = nodeCache.get("PRICE_NANO_USD");
+    const nanoToUsd = nodeCache.get("PRICE_NANO_USD");
+    const banToUsd = nodeCache.get("PRICE_BAN_USD");
 
-    if (!usd) {
+    if (!nanoToUsd || !banToUsd) {
       return [];
     }
 
     this.storeItems.map(item => {
-      item.xno = parseFloat(new BigNumber(item.usd).dividedBy(usd).toFormat(3));
+      item.nano = parseFloat(new BigNumber(item.usd).dividedBy(nanoToUsd).toFormat(3));
+      item.ban = parseInt(new BigNumber(item.usd).dividedBy(banToUsd).toFormat());
 
       return item;
     });

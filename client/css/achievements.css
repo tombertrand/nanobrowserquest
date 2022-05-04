@@ -2,12 +2,12 @@
 #achievements ul:first-child {margin-left:0;}
 #lists {-moz-transition:0.5s left ease-in-out;-webkit-transition:0.5s left ease-in-out;-o-transition:0.5s left ease-in-out;-ms-transition:0.5s left ease-in-out;transition:0.5s left ease-in-out;position:relative;}
 #achievements-count {float:left;color:#fff;}
-#achievements-nano-count {float:right;color:#fff;}
+#achievements-potion-count {float:right;color:#fff;}
 #achievement-notification .coin {-moz-transition:0.2s opacity linear;-webkit-transition:0.2s opacity linear;-o-transition:0.2s opacity linear;-ms-transition:0.2s opacity linear;transition:0.2s opacity linear;}
-#achievements-unlocks-count, #nanopotion-count { display: flex; align-items: center; }
+#achievements-unlocks-count, #potion-count { display: flex; align-items: center; }
 #achievements-unlocks-count > div { margin-right: 10px; }
-#nanopotion-count > div { margin-left: 10px; }
-#nanopotion-count { justify-content: flex-end;}
+#potion-count > div { margin-left: 10px; }
+#potion-count { justify-content: flex-end;}
 #achievements li, .upscaled #achievements li { display: flex; align-items: center; }
 
 @media screen and (min-width: 1501px) {
@@ -85,8 +85,8 @@
     #achievements.page11 #lists {left:-11760px;}
     
     #achievements-count {margin:12px 0 0 72px;}
-    #achievements-nano-count {margin:12px 72px 0 0;}
-    #achievements-unlocks-count, #nanopotion-count {margin-bottom: 12px;}
+    #achievements-potion-count {margin:12px 72px 0 0;}
+    #achievements-unlocks-count, #potion-count {margin-bottom: 12px;}
     #achievements-unlocks-count {height: 30px;}
 
     .item-gem {background-position:0px 0px; width: 21px; height: 18px;}
@@ -95,8 +95,9 @@
     #gem-amethyst.active {background-position:-63px 0px;}
     #gem-topaz.active {background-position:-84px 0px;}
     #gem-sapphire.active {background-position:-105px 0px;}
-    .item-nanopotion {background-position:0 -18px; width: 21px; height: 30px}
-    .item-nanopotion.active {background-position:-21px -18px;}
+    .item-potion {background-position:0 -18px; width: 21px; height: 30px}
+    .item-potion.active {background-position:-21px -18px;}
+    .item-potion.banano.active {background-position:-42px -18px;}
 
     #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .achievement-sharing a, #previous, #next {background-size:1248px;}
     #achievements {height:588px;width:1248px;margin-left:-624px;margin-top:-324px;font-size:30px;}
@@ -205,8 +206,8 @@
     #achievements.page11 #lists {left:-7840px;}
 
     #achievements-count {margin:12px 0 0 48px;}
-    #achievements-nano-count {margin:12px 48px 0 0;}
-    #achievements-unlocks-count, #nanopotion-count {margin-bottom: 12px;}
+    #achievements-potion-count {margin:12px 48px 0 0;}
+    #achievements-unlocks-count, #potion-count {margin-bottom: 12px;}
     #achievements-unlocks-count {height: 20px;}
 
     .item-gem {background-position:0 0; width: 14px; height: 12px;}
@@ -215,8 +216,9 @@
     #gem-amethyst.active {background-position:-42px 0px;}
     #gem-topaz.active {background-position:-56px 0px;}
     #gem-sapphire.active {background-position:-70px 0px;}
-    .item-nanopotion {background-position:0 -12px; width: 14px; height: 20px}
-    .item-nanopotion.active {background-position:-14px -12px;}
+    .item-potion {background-position:0 -12px; width: 14px; height: 20px}
+    .item-potion.active {background-position:-14px -12px;}
+    .item-potion.banano.active {background-position:-28px -12px;}
 
     #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .upscaled #coinsparks, .achievement-sharing a, #previous, #next {background-size:832px;}
     #achievements {height:392px;width:832px;margin-left:-416px;margin-top:-216px;font-size:20px;}
@@ -322,8 +324,8 @@
     #achievements.page11 #lists {left:-7840px;}
     
     #achievements-count {margin:6px 0 0 48px;}
-    #achievements-nano-count {margin:6px 48px 0 0;}
-    #achievements-unlocks-count, #nanopotion-count {margin-bottom: 12px;}
+    #achievements-potion-count {margin:6px 48px 0 0;}
+    #achievements-unlocks-count, #potion-count {margin-bottom: 12px;}
     #achievements-unlocks-count {height: 20px;}
 
     .item-gem {background-position:0 0; width: 14px; height: 12px;}
@@ -332,8 +334,9 @@
     #gem-amethyst.active {background-position:-42px 0px;}
     #gem-topaz.active {background-position:-56px 0px;}
     #gem-sapphire.active {background-position:-70px 0px;}
-    .item-nanopotion {background-position:0 -12px; width: 14px; height: 20px}
-    .item-nanopotion.active {background-position:-14px -12px;}
+    .item-potion {background-position:0 -12px; width: 14px; height: 20px}
+    .item-potion.active {background-position:-14px -12px;}
+    .item-potion.banano.active {background-position:-28px -12px;}
     
     #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .upscaled #coinsparks, .achievement-sharing a, #previous, #next {background-size:832px;}
     #achievements {height:392px;width:832px;margin-left:-416px;margin-top:-216px;font-size:20px;}
@@ -439,8 +442,8 @@
     #achievements.page11 #lists {left:-3920px;}
 
     #achievements-count {margin:0 0 0 24px;}
-    #achievements-nano-count {margin:0 24px 0 0;}
-    #achievements-unlocks-count, #nanopotion-count {margin-bottom: 6px;}
+    #achievements-potion-count {margin:0 24px 0 0;}
+    #achievements-unlocks-count, #potion-count {margin-bottom: 6px;}
     #achievements-unlocks-count {height: 10px;}
 
     .item-gem {background-position:0px 0px; width: 7px; height: 6px;}
@@ -449,11 +452,12 @@
     #gem-amethyst.active {background-position:-21px 0px;}
     #gem-topaz.active {background-position:-28px 0px;}
     #gem-sapphire.active {background-position:-35px 0px;}
-    .item-nanopotion {background-position:0 -6px; width: 7px; height: 10px}
-    .item-nanopotion.active {background-position:-7px -6px;}
+    .item-potion {background-position:0 -6px; width: 7px; height: 10px}
+    .item-potion.active {background-position:-7px -6px;}
+    .item-potion.banano.active {background-position:-14px -12px;}
 
     #achievements-unlocks-count > div { margin-right: 6px; }
-    #nanopotion-count > div { margin-left: 6px; }
+    #potion-count > div { margin-left: 6px; }
     
     #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .achievement-sharing a, #previous, #next {background-size:416px;}
     #achievements {height:196px;width:416px;margin-left:-208px;margin-top:-108px;font-size:10px;}
@@ -557,8 +561,8 @@
     #achievements.page11 #lists {left:-3920px;}
     
     #achievements-count {margin:6px 0 0 24px;}
-    #achievements-nano-count {margin:6px 24px 0 0;}
-    #achievements-unlocks-count, #nanopotion-count {margin-bottom: 6px;}
+    #achievements-potion-count {margin:6px 24px 0 0;}
+    #achievements-unlocks-count, #potion-count {margin-bottom: 6px;}
     #achievements-unlocks-count {height: 20px;}
 
     .item-gem {background-position:0 0; width: 14px; height: 12px;}
@@ -567,8 +571,9 @@
     #gem-amethyst.active {background-position:-42px 0px;}
     #gem-topaz.active {background-position:-56px 0px;}
     #gem-sapphire.active {background-position:-70px 0px;}
-    .item-nanopotion {background-position:0 -12px; width: 14px; height: 20px}
-    .item-nanopotion.active {background-position:-14px -12px;}
+    .item-potion {background-position:0 -12px; width: 14px; height: 20px}
+    .item-potion.active {background-position:-14px -12px;}
+    .item-potion.banano.active {background-position:-28px -12px;}
 
     #achievement-notification, #achievement-notification .coin, #coinsparks {background-size:832px;}
     #achievement-notification, .upscaled #achievement-notification {width:432px;bottom:34px;height:0;margin-left:-216px;background-position:0 -496px;}

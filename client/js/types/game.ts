@@ -43,17 +43,7 @@ export interface Game {
   onDisconnect: (arg0: (message: any) => void) => void;
   onPlayerDeath: (arg0: () => void) => void;
   onGameCompleted: (
-    arg0: ({
-      hash,
-      hash1,
-      fightAgain,
-      show,
-    }: {
-      hash: any;
-      hash1: any;
-      fightAgain: any;
-      show?: boolean | undefined;
-    }) => void,
+    arg0: ({ hash, fightAgain, show }: { hash: any; fightAgain: any; show?: boolean | undefined }) => void,
   ) => void;
   client: { sendBossCheck: (arg0: boolean) => void };
   onBossCheckFailed: (arg0: (message: any) => void) => void;
@@ -63,7 +53,7 @@ export interface Game {
   onChatMessage: (arg0: (entityId: any, name: any, message: any, type: any) => void) => void;
   storage: { data: { player: { name: any } } };
   onNbPlayersChange: (arg0: () => void) => void;
-  onAchievementUnlock: (arg0: (id: any, name: any, nano: any) => void) => void;
+  onAchievementUnlock: (arg0: (id: any, name: any, payout: any) => void) => void;
   onNotification: (arg0: any) => void;
   click: () => void;
   pvpFlag: boolean;
@@ -77,4 +67,5 @@ export interface Game {
   healShortCut: number;
   eat: (arg0: any) => void;
   worldPlayers: any[];
+  network: any;
 }

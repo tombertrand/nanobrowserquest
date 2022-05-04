@@ -75,6 +75,8 @@ class Player extends Character {
   partyLeader?: PartyMember;
   partyMembers: PartyMember[];
 
+  network: "nano" | "ban";
+
   constructor(id, name, account, kind) {
     super(id, kind);
 
@@ -143,6 +145,8 @@ class Player extends Character {
     this.partyId = null;
     this.partyLeader = null;
     this.partyMembers = null;
+
+    this.network = null;
   }
 
   setPartyId(partyId) {
@@ -197,7 +201,7 @@ class Player extends Character {
         } else {
           this.skeletonKey = true;
         }
-      } else if (item.kind === Types.Entities.NANOPOTION) {
+      } else if (item.kind === Types.Entities.NANOPOTION || item.kind === Types.Entities.BANANOPOTION) {
         this.nanoPotions += 1;
       } else if (item.partyId && item.partyId !== this.partyId) {
         // @NOTE Allow item to be looted by others if player is alone in the party?
@@ -222,7 +226,7 @@ class Player extends Character {
       console.info("Player " + this.id + " has looted " + item.id);
       if (Types.isArmor(item.kind) && this.invincible) {
         this.stopInvincibility();
-      } else if (item.kind === Types.Entities.FIREPOTION) {
+      } else if (item.kind === Types.Entities.MONKEYPOTION) {
         item.onLoot(this);
       }
     }
@@ -428,7 +432,7 @@ class Player extends Character {
       this.setArmorName(armorSprite.id);
     }
 
-    if (armorSprite.kind !== Types.Entities.FIREFOX && level && level !== this.getArmorLevel()) {
+    if (armorSprite.kind !== Types.Entities.MONKEY && level && level !== this.getArmorLevel()) {
       isDifferent = true;
       this.setArmorLevel(level);
     }

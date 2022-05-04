@@ -4,6 +4,8 @@ import sanitizer from "sanitizer";
 import { Types } from "../../shared/js/gametypes";
 import { Recipes } from "./types";
 
+import type { Network } from "./types";
+
 export const sanitize = function (string) {
   // Strip unsafe tags, then escape as html entities.
   return sanitizer.escape(sanitizer.sanitize(string));
@@ -83,81 +85,93 @@ export const trueFalse = function (bool) {
   return bool === "true" ? true : false;
 };
 
-export const rawToRai = raw => {
+export const rawToRai = (raw, network: Network) => {
+  const decimals = network === "nano" ? 30 : 29;
   const value = new BigNumber(raw.toString());
-  return value.shiftedBy(30 * -1).toNumber();
+  return value.shiftedBy(decimals * -1).toNumber();
 };
 
-export const raiToRaw = rai => {
+export const raiToRaw = (rai, network: Network) => {
+  const decimals = network === "nano" ? 30 : 29;
   const value = new BigNumber(rai.toString());
-  return value.shiftedBy(30).toNumber();
+  return value.shiftedBy(decimals).toNumber();
 };
 
-const classicAchievementToNanoMap = {
-  A_TRUE_WARRIOR: 3,
-  INTO_THE_WILD: 2, // -> Required
-  ANGRY_RATS: 5,
-  SMALL_TALK: 3,
-  FAT_LOOT: 5,
-  UNDERGROUND: 3,
-  AT_WORLDS_END: 5,
-  COWARD: 4,
-  TOMB_RAIDER: 5,
-  SKULL_COLLECTOR: 8,
-  NINJA_LOOT: 4,
-  NO_MANS_LAND: 3, // -> Required
-  HUNTER: 4,
-  STILL_ALIVE: 5,
-  MEATSHIELD: 7,
-  NYAN: 3,
-  HOT_SPOT: 3, // -> Required
-  SPECTRE_COLLECTOR: 8,
-  GEM_HUNTER: 8,
-  NANO_POTIONS: 8,
-  HERO: 25, // -> Required
-  FOXY: 2,
-  FOR_SCIENCE: 4,
-  RICKROLLD: 6,
+const classicAchievementMap = {
+  nano: {
+    A_TRUE_WARRIOR: 3,
+    INTO_THE_WILD: 2, // -> Required
+    ANGRY_RATS: 5,
+    SMALL_TALK: 3,
+    FAT_LOOT: 5,
+    UNDERGROUND: 3,
+    AT_WORLDS_END: 5,
+    COWARD: 4,
+    TOMB_RAIDER: 5,
+    SKULL_COLLECTOR: 8,
+    NINJA_LOOT: 4,
+    NO_MANS_LAND: 3, // -> Required
+    HUNTER: 4,
+    STILL_ALIVE: 5,
+    MEATSHIELD: 7,
+    NYAN: 3,
+    HOT_SPOT: 3, // -> Required
+    SPECTRE_COLLECTOR: 8,
+    GEM_HUNTER: 8,
+    NANO_POTIONS: 8,
+    HERO: 25, // -> Required
+    MONKEY: 2,
+    FOR_SCIENCE: 4,
+    RICKROLLD: 6,
+  },
+  ban: {
+    A_TRUE_WARRIOR: 75,
+    INTO_THE_WILD: 50, // -> Required
+    ANGRY_RATS: 125,
+    SMALL_TALK: 75,
+    FAT_LOOT: 125,
+    UNDERGROUND: 75,
+    AT_WORLDS_END: 125,
+    COWARD: 100,
+    TOMB_RAIDER: 125,
+    SKULL_COLLECTOR: 200,
+    NINJA_LOOT: 100,
+    NO_MANS_LAND: 75, // -> Required
+    HUNTER: 100,
+    STILL_ALIVE: 125,
+    MEATSHIELD: 175,
+    NYAN: 75,
+    HOT_SPOT: 75, // -> Required
+    SPECTRE_COLLECTOR: 200,
+    GEM_HUNTER: 200,
+    NANO_POTIONS: 200,
+    HERO: 625, // -> Required
+    MONKEY: 50,
+    FOR_SCIENCE: 100,
+    RICKROLLD: 150,
+  },
 };
 
-const expansion1AchievementToNanoMap = {
-  XNO: 133, // -> Required
-  FREEZING_LANDS: 12, // -> Required
-  SKELETON_KEY: 15,
-  BLOODLUST: 15,
-  SATOSHI: 10,
-  WEN: 12,
-  INDIANA_JONES: 35,
-  MYTH_OR_REAL: 15,
-  RIP: 25,
-  DEAD_NEVER_DIE: 30,
-  WALK_ON_WATER: 10, // -> Required
-  GHOSTBUSTERS: 25,
-  BLACK_MAGIC: 50, // -> Required
-  LUCKY7: 13,
-  NOT_SAFU: 20,
-  TICKLE_FROM_UNDER: 15,
+const networkDividerMap = {
+  nano: 100000,
+  ban: 10000,
 };
 
-const calculateMaxPayout = payouts => {
+const calculateMaxPayout = (payouts, network) => {
   let amount = 0;
 
   payouts.map(payout => {
     amount += payout;
   });
 
-  return new BigNumber(amount).dividedBy(100000).toFixed();
+  return new BigNumber(amount).dividedBy(networkDividerMap[network]).toFixed();
 };
 
-export const getClassicMaxPayout = () => {
-  return calculateMaxPayout(Object.values(classicAchievementToNanoMap));
+export const getClassicMaxPayout = (network: Network) => {
+  return calculateMaxPayout(Object.values(classicAchievementMap[network]), network);
 };
 
-export const getExpansion1MaxPayout = () => {
-  return calculateMaxPayout(Object.values(expansion1AchievementToNanoMap));
-};
-
-const getPayout = (achievements, payouts) => {
+const getPayout = (achievements, payouts, network: Network) => {
   let amount = 0;
 
   achievements.map((completed, index) => {
@@ -166,15 +180,11 @@ const getPayout = (achievements, payouts) => {
     }
   });
 
-  return raiToRaw(new BigNumber(amount).dividedBy(100000).toFixed());
+  return raiToRaw(new BigNumber(amount).dividedBy(networkDividerMap[network]).toFixed(), network);
 };
 
-export const getClassicPayout = achievements => {
-  return getPayout(achievements, Object.values(classicAchievementToNanoMap));
-};
-
-export const getExpansion1Payout = achievements => {
-  return getPayout(achievements, Object.values(expansion1AchievementToNanoMap));
+export const getClassicPayout = (achievements, network: Network) => {
+  return getPayout(achievements, Object.values(classicAchievementMap[network]), network);
 };
 
 export const isValidUpgradeItems = items => {

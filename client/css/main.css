@@ -266,8 +266,8 @@ footer, header, hgroup, menu, nav, section {
     #weapon, #armor {image-rendering:-moz-crisp-edges;}
 
     #achievements, #achievements li, .coin, #achievement-notification, #coinsparks, .achievement-sharing a, #previous, #next {background:url('../img/1/achievements.png');image-rendering:-moz-crisp-edges;}
-    .item-gem, .item-nanopotion {background-image:url('../img/1/achievements-unlocks.png');image-rendering:-moz-crisp-edges;opacity:0.75;}
-    .item-gem.active, .item-nanopotion.active { opacity:1;}
+    .item-gem, .item-potion {background-image:url('../img/1/achievements-unlocks.png');image-rendering:-moz-crisp-edges;opacity:0.75;}
+    .item-gem.active, .item-potion.active { opacity:1;}
     #achievements {font-family:'GraphicPixel'; position:absolute;top:50%;left:50%;z-index:1000;opacity:0;pointer-events:none;-moz-transition:0.25s opacity linear;-webkit-transition:0.4s top ease, 0.4s opacity linear;-o-transition:0.4s top ease, 0.4s opacity linear;-ms-transition:0.4s top ease, 0.4s opacity linear;transition:0.4s top ease, 0.4s opacity linear;}
     #achievements li {clear:both;position:relative;}
     /* #achievements li .coin, #achievements li .achievement-name {float:left;} */
@@ -282,10 +282,10 @@ footer, header, hgroup, menu, nav, section {
     #achievement-info {overflow:hidden;height:100%;}
     .achievement-sharing {position:absolute;display:none;}
     #achievements li.unlocked:hover .achievement-sharing {display:block;}
-    #achievements li.unlocked:hover .achievement-nano {display:none;}
+    #achievements li.unlocked:hover .achievement-payout {display:none;}
     .achievement-sharing a {display:block;float:left;}
     
-    #achievements .achievement-nano {
+    #achievements .achievement-payout {
         position: absolute;
         right: 20px;
         top: calc(50% - 10px);
@@ -546,10 +546,14 @@ footer, header, hgroup, menu, nav, section {
     @-o-keyframes invincible { from {background:#fa6a00;} to {background:#fabc00;} }
     @-ms-keyframes invincible { from {background:#fa6a00;} to {background:#fabc00;} }
 
-    #nano {height:126px;width:246px;position:absolute;z-index:3;background-image:url('../img/3/nano.png');}
-    #nanosparks {display:block;position:absolute;top:0;left:0;}
-    #nanosparks {background-image:url('../img/3/nano.png');}
-    #nanosparks {width:246px;height:126px;z-index:4;-moz-animation:logo3 .8s steps(6, end) infinite;-webkit-animation:logo3 .8s steps(6, end) infinite;-o-animation:logo3 .8s steps(6, end) infinite;-ms-animation:logo3 .8s steps(6, end) infinite;}
+    .home-logo {height:126px;width:246px;position:absolute;z-index:3;}
+    .home-logo.nano {background-image:url('../img/3/nano.png')}
+    .home-logo.banano {background-image:url('../img/3/banano.png')}
+    .home-logo-sparks {display:block;position:absolute;top:0;left:0;}
+    .home-logo-sparks {width:246px;height:126px;z-index:4;-moz-animation:logo3 .8s steps(6, end) infinite;-webkit-animation:logo3 .8s steps(6, end) infinite;-o-animation:logo3 .8s steps(6, end) infinite;-ms-animation:logo3 .8s steps(6, end) infinite;}
+    .home-logo-sparks.nano {background-image:url('../img/3/nano.png');}
+    .home-logo-sparks.banano {background-image:url('../img/3/banano.png');}
+
     #parchment textarea { resize: none; }
     .banned-1, .banned-365 { display: none; }
     article a { color: #4A90E2 }
@@ -629,13 +633,20 @@ footer, header, hgroup, menu, nav, section {
         background-color:rgba(0, 0, 0, 0.20);
     }
 
-    .xno-payout {
+    .payout-icon {
         display: inline-block;
         width: 10px;
         height: 12px;
-        background-image: url(../img/3/xno.png);
+       
         background-size: cover;
     }
+    .payout-icon.nano {
+        background-image: url(../img/3/xno.png);
+    }
+    .payout-icon.ban {
+        background-image: url(../img/3/ban.png);
+    }
+
     #completedbutton {
         display: flex;
         justify-content: center;
@@ -832,10 +843,9 @@ footer, header, hgroup, menu, nav, section {
     }
 
 
-    .xno {font-family:arial, sans-serif;}
+    .arial-font {font-family:arial, sans-serif;}
 
-    #container-payout-hash,
-    #container-payout-hash1 {
+    #container-payout-hash {
         display: none;
     }
 
@@ -899,7 +909,7 @@ footer, header, hgroup, menu, nav, section {
     .setting {margin: 6px 0}
 
 	@media screen and (min-width: 1501px) {
-        #nano {margin-left:-240px;}
+        .home-logo {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }
         #text-list > div { padding: 0 12px; }
         #chatinput { padding: 6px 12px; }
@@ -940,7 +950,7 @@ footer, header, hgroup, menu, nav, section {
 	    
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/3/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/3/achievements.png');}
-        .upscaled .item-gem, .upscaled .item-nanopotion {background-image:url('../img/3/achievements-unlocks.png');}
+        .upscaled .item-gem, .upscaled .item-potion {background-image:url('../img/3/achievements-unlocks.png');}
 	    
 	    
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood2.png') no-repeat 1587px 138px, url('../img/1/wood2.png') no-repeat 51px 519px, url('../img/1/wood3.png') no-repeat 228px 219px, url('../img/1/wood.png') repeat, #000; background-size:auto, 15px auto, 15px auto, 60px auto, 384px;}
@@ -1120,7 +1130,7 @@ footer, header, hgroup, menu, nav, section {
 	}
 
 	@media screen and (max-width: 1500px), screen and (max-height: 870px) {
-        #nano {margin-left:-200px;margin-top:-20px;scale:0.7;}
+        .home-logo {margin-left:-200px;margin-top:-20px;scale:0.7;}
         .createaccount-instructions { font-size: 17px; }
         #upgrade-scroll { width: 120px; }
         .item-equip-weapon::before {background-image: url('../img/2/inventory-placeholder.png');}
@@ -1152,7 +1162,7 @@ footer, header, hgroup, menu, nav, section {
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/2/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background-image:url('../img/2/achievements.png');}
-        .upscaled .item-gem, .upscaled .item-nanopotion {background-image:url('../img/2/achievements-unlocks.png');}
+        .upscaled .item-gem, .upscaled .item-potion {background-image:url('../img/2/achievements-unlocks.png');}
 
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}        
         body {background:-webkit-gradient(radial, center center, 240, center center, 800, from(rgba(0,0,0,0)), to(rgba(0,0,0,1))), url('../img/2/wood.png') repeat, #000; background-size:auto, 256px;}
@@ -1347,7 +1357,7 @@ footer, header, hgroup, menu, nav, section {
 }
 	
 	@media screen and (max-width: 1000px) {
-        #nano {margin-left:-170px;margin-top:-42px;scale:0.35;}
+        .home-logo {margin-left:-170px;margin-top:-42px;scale:0.35;}
         #text-window { width: 60%; }
         .world { font-size: 12px;}
         .createaccount-instructions { font-size: 8px; }
@@ -1368,7 +1378,7 @@ footer, header, hgroup, menu, nav, section {
         .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {
             background: url(../img/1/achievements.png);
         }
-        .upscaled .item-gem, .upscaled .item-nanopotion {background-image:url('../img/1/achievements-unlocks.png');}
+        .upscaled .item-gem, .upscaled .item-potion {background-image:url('../img/1/achievements-unlocks.png');}
         #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #settings, #party, #completed, #failed, .icon, .avatar, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background-size:422px auto;}
         #logo {height:42px;width:229px;position:absolute;top:10%;left:50%;margin-left:-64px;z-index:3;}
         #logosparks {width:229px;height:42px;z-index:4;-moz-animation:logo1 .8s steps(6, end) infinite;-webkit-animation:logo1 .8s steps(6, end) infinite;-o-animation:logo1 .8s steps(6, end) infinite;-ms-animation:logo1 .8s steps(6, end) infinite;}

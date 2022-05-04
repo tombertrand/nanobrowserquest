@@ -3,7 +3,12 @@ import * as _ from "lodash";
 import { Types } from "../../shared/js/gametypes";
 import Storage from "./storage";
 import Store from "./store";
-import { getAccountAddressFromText, isValidAccountAddress, TRANSITIONEND } from "./utils";
+import { isValidAccountAddress, TRANSITIONEND } from "./utils";
+
+const networkDividerMap = {
+  nano: 100000,
+  ban: 10000,
+};
 
 class App {
   currentPage: number;
@@ -23,6 +28,7 @@ class App {
   $play: JQuery<HTMLElement> | null;
   $loginNameInput: JQuery<HTMLElement> | null;
   $loginAccountInput: JQuery<HTMLElement> | null;
+  $loginNetworkInput: JQuery<HTMLElement> | null;
   $loginPasswordInput: JQuery<HTMLElement> | null;
   $loginPasswordConfirmInput: JQuery<HTMLElement> | null;
   loginFormFields: any[];
@@ -32,6 +38,7 @@ class App {
   getPlayButton: () => any;
   getUsernameField: () => any;
   getAccountField: () => any;
+  getNetworkField: () => any;
   getPasswordField: () => any;
   getPasswordConfirmField: () => any;
   starting: any;
@@ -51,6 +58,7 @@ class App {
     this.getUsernameField = () => {};
     this.getPlayButton = () => {};
     this.getAccountField = () => {};
+    this.getNetworkField = () => {};
     this.getPasswordField = () => {};
     this.getPasswordConfirmField = () => {};
     this.isDesktop = true;
@@ -59,6 +67,7 @@ class App {
     this.$play = null;
     this.$loginNameInput = null;
     this.$loginAccountInput = null;
+    this.$loginNetworkInput = null;
     this.$loginPasswordInput = null;
     this.$loginPasswordConfirmInput = null;
     this.$nameInput = null;
@@ -82,10 +91,10 @@ class App {
     } else {
       this.frontPage = "createcharacter";
 
-      const account = getAccountAddressFromText(window.location.search);
-      if (account) {
-        $("#accountinput").val(account);
-      }
+      // const account = getAccountAddressFromText(window.location.search);
+      // if (account) {
+      //   $("#accountinput").val(account);
+      // }
     }
 
     document.getElementById("parchment")!.className = this.frontPage;
@@ -112,6 +121,7 @@ class App {
     // Login form fields
     this.$loginNameInput = $("#loginnameinput");
     this.$loginAccountInput = $("#loginaccountinput");
+    this.$loginNetworkInput = $("#loginnetworkinput");
     this.$loginPasswordInput = $("#loginpasswordinput");
     this.$loginPasswordConfirmInput = $("#loginpasswordconfirminput");
     this.loginFormFields = [
@@ -134,7 +144,9 @@ class App {
     this.getAccountField = function () {
       return this.createNewCharacterFormActive() ? this.$accountInput : this.$loginAccountInput;
     };
-
+    this.getNetworkField = function () {
+      return this.$loginNetworkInput;
+    };
     this.getPasswordField = function () {
       return this.$loginPasswordInput;
     };
@@ -167,8 +179,12 @@ class App {
     var passwordConfirm = this.getPasswordConfirmField().is(":visible")
       ? this.getPasswordConfirmField().val()
       : undefined;
+    var network = this.getNetworkField().val();
+    if (!["ban", "nano"].includes(network)) {
+      network = "nano";
+    }
 
-    if (!this.validateFormFields(username, account, password, passwordConfirm)) return;
+    if (!this.validateFormFields({ username, account, network, password, passwordConfirm })) return;
 
     this.setPlayButtonState(false);
 
@@ -177,20 +193,20 @@ class App {
         console.debug("waiting...");
         if (self.canStartGame()) {
           clearInterval(watchCanStart);
-          self.startGame(action, username, account, password);
+          self.startGame(action, username, account, network, password);
         }
       }, 100);
     } else {
-      this.startGame(action, username, account, password);
+      this.startGame(action, username, account, network, password);
     }
   }
 
-  startGame(action, username, account, password) {
+  startGame(action, username, account, network, password) {
     var self = this;
-    self.firstTimePlaying = !password || !self.storage.hasAlreadyPlayed();
+    self.firstTimePlaying = !password && !self.storage.hasAlreadyPlayed();
 
     if (username && !this.game.started) {
-      this.game.setPlayerAccount(username, account, password);
+      this.game.setPlayerAccount(username, account, network, password);
 
       let config = { host: "localhost", port: 8000 };
       if (process.env.NODE_ENV !== "development") {
@@ -391,7 +407,7 @@ class App {
    * out, account match looks valid). Assumes either the login or the create new character form
    * is currently active.
    */
-  validateFormFields(username, account, password, passwordConfirm) {
+  validateFormFields({ username, account, network, password, passwordConfirm }) {
     this.clearValidationErrors();
 
     if (!username) {
@@ -399,8 +415,8 @@ class App {
       return false;
     }
 
-    if (!isValidAccountAddress(account)) {
-      this.addValidationError(this.getAccountField(), "Enter a valid nano_ account.");
+    if (!isValidAccountAddress(account, network)) {
+      this.addValidationError(this.getAccountField(), `Enter a valid ${network}_ account.`);
       return false;
     }
 
@@ -678,7 +694,7 @@ class App {
       .attr("data-bonus", weaponBonus);
     $("#player-weapon").text(`${Types.getDisplayName(weapon, !!weaponBonus)} +${weaponLevel}`);
 
-    if (armor !== "firefox") {
+    if (armor !== "monkey") {
       $("#armor")
         .css("background-image", 'url("' + armorPath + '")')
         .attr("data-item", armor)
@@ -769,20 +785,23 @@ class App {
       achievement = this.game.getAchievementById(id);
 
     if (achievement && achievement.hidden) {
-      this.setAchievementData($achievement, achievement.name, achievement.desc, achievement.nano);
+      this.setAchievementData($achievement, achievement.name, achievement.desc, achievement[this.game.network]);
     }
     $achievement.addClass("unlocked");
   }
 
-  unlockAchievement(id, name, nano) {
+  unlockAchievement(id, name, payout) {
     this.showAchievementNotification(id, name);
     this.displayUnlockedAchievement(id);
 
     var nb = parseInt($("#unlocked-achievements").text());
     // @ts
-    const totalNano = parseInt(`${parseFloat($("#unlocked-nano-achievements").text()) * 100000}`, 10);
+    const totalPayout = parseInt(
+      `${parseFloat($("#unlocked-payout-achievements").text()) * networkDividerMap[this.game.network]}`,
+      10,
+    );
     $("#unlocked-achievements").text(nb + 1);
-    $("#unlocked-nano-achievements").text((totalNano + (nano || 0)) / 100000);
+    $("#unlocked-payout-achievements").text((totalPayout + (payout || 0)) / networkDividerMap[this.game.network]);
   }
 
   initAchievementList(achievements) {
@@ -796,7 +815,8 @@ class App {
 
     $lists.empty();
 
-    var totalNano = 0;
+    var totalPayout = 0;
+    const domain = this.game.network === "ban" ? `bananobrowserquest.com` : "nanobrowserquest.com";
     _.each(achievements, function (achievement) {
       count++;
 
@@ -804,12 +824,12 @@ class App {
       $a.removeAttr("id");
       $a.addClass("achievement" + count);
       if (!achievement.hidden) {
-        self.setAchievementData($a, achievement.name, achievement.desc, achievement.nano);
+        self.setAchievementData($a, achievement.name, achievement.desc, achievement[self.game.network]);
       }
 
       $a.find(".twitter").attr(
         "href",
-        "https://twitter.com/share?url=https%3A%2F%2Fnanobrowserquest.com&text=I%20unlocked%20the%20%27" +
+        `https://twitter.com/share?url=https%3A%2F%2F${domain}&text=I%20unlocked%20the%20%27` +
           achievement.name +
           "%27%20achievement%20on%20%23NanoBrowserQuest%20%23BrowserQuest%20%23nbq",
       );
@@ -821,7 +841,7 @@ class App {
         return false;
       });
 
-      totalNano += achievement.nano || 0;
+      totalPayout += achievement[self.game.network] || 0;
 
       if ((count - 1) % 4 === 0) {
         page++;
@@ -834,35 +854,55 @@ class App {
     });
 
     $("#total-achievements").text($("#achievements").find("li").length);
-    $("#total-nano-achievements").html(`
-        <span>${totalNano / 100000}</span>
-        <span class="xno">Ӿ</span>
+    $("#total-payout-achievements").html(`
+        ${this.getCurrencyPrefix()}
+        <span>${totalPayout / networkDividerMap[this.game.network]}</span>
+        ${this.getCurrencySuffix()}
       `);
   }
 
-  initUnlockedAchievements(ids, totalNano) {
+  getCurrencyPrefix() {
+    if (this.game.network === "ban") {
+      return "";
+    } else {
+      return '<span class="arial-font">Ӿ</span> ';
+    }
+  }
+
+  getCurrencySuffix() {
+    if (this.game.network === "ban") {
+      return " BAN";
+    } else {
+      return "";
+    }
+  }
+
+  initUnlockedAchievements(ids, totalPayout) {
     var self = this;
 
     _.each(ids, function (id) {
       self.displayUnlockedAchievement(id);
     });
     $("#unlocked-achievements").text(ids.length);
-    $("#unlocked-nano-achievements").text(totalNano / 100000);
+    $("#unlocked-payout-achievements").text(totalPayout / networkDividerMap[this.game.network]);
   }
 
-  setAchievementData($el, name, desc, nano) {
+  setAchievementData($el, name, desc, payout) {
+    const { network } = this.game;
+
     $el.find(".achievement-name").html(name);
     $el.find(".achievement-description").html(desc);
-    $el.find(".achievement-nano").html(`
-        <span>${nano ? nano / 100000 : ""}</span>
-        <span class="xno">${nano ? "Ӿ" : ""}</span>
+    $el.find(".achievement-payout").html(`
+        ${payout ? this.getCurrencyPrefix() : ''}
+        <span>${payout ? payout / networkDividerMap[network] : ""}</span>
+        ${payout ? this.getCurrencySuffix() : ''}
       `);
   }
 
   updateNanoPotions(nanoPotions) {
     for (var i = 0; i < nanoPotions; i++) {
       if (i === 5) break;
-      $("#nanopotion-count").find(`.item-nanopotion:eq(${i})`).addClass("active");
+      $("#potion-count").find(`.item-potion:eq(${i})`).addClass("active");
     }
   }
 

@@ -283,17 +283,17 @@ class GameClient {
     var inventory = data[15];
     var stash = data[16];
     var hash = data[17];
-    var hash1 = data[18];
-    var nanoPotions = data[19];
-    var gems = data[20];
-    var artifact = data[21];
-    var expansion1 = data[22];
-    var waypoints = data[23];
-    var depositAccount = data[24];
-    var auras = data[25];
-    var cowLevelPortalCoords = data[26];
-    var party = data[27];
-    var settings = data[28];
+    var nanoPotions = data[18];
+    var gems = data[19];
+    var artifact = data[20];
+    var expansion1 = data[21];
+    var waypoints = data[22];
+    var depositAccount = data[23];
+    var auras = data[24];
+    var cowLevelPortalCoords = data[25];
+    var party = data[26];
+    var settings = data[27];
+    var network = data[28];
 
     if (this.welcome_callback) {
       this.welcome_callback({
@@ -314,7 +314,6 @@ class GameClient {
         inventory,
         stash,
         hash,
-        hash1,
         nanoPotions,
         gems,
         artifact,
@@ -325,6 +324,7 @@ class GameClient {
         cowLevelPortalCoords,
         party,
         settings,
+        network,
       });
     }
   }
@@ -983,12 +983,12 @@ class GameClient {
     this.receivefrozen_callback = callback;
   }
 
-  sendCreate(player) {
-    this.sendMessage([Types.Messages.CREATE, player.name, player.account]);
+  sendCreate({ name, account, network }) {
+    this.sendMessage([Types.Messages.CREATE, name, account, network]);
   }
 
-  sendLogin({ name, account, password = "" }) {
-    this.sendMessage([Types.Messages.LOGIN, name, account, password]);
+  sendLogin({ name, account, network, password = "" }) {
+    this.sendMessage([Types.Messages.LOGIN, name, account, network, password]);
   }
 
   sendMove(x, y) {

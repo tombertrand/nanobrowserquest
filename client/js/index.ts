@@ -102,7 +102,7 @@ var initApp = function () {
 
       app.hideWindows();
       if (!isOpened) {
-        if ($("#transaction-hash").text() || $("#transaction-hash1").text()) {
+        if ($("#transaction-hash").text()) {
           app.toggleCompleted();
         } else {
           app.toggleAbout();
@@ -349,24 +349,13 @@ var initGame = function () {
     $("body").addClass("death");
   });
 
-  game.onGameCompleted(function ({ hash, hash1, fightAgain, show = false }) {
+  game.onGameCompleted(function ({ hash, fightAgain, show = false }) {
     if (hash) {
       $("#completed")
         .find("#transaction-hash")
         .attr("href", "https://nanolooker.com/block/" + hash)
         .text(hash);
       $("#container-payout-hash").show();
-
-      if (!hash1) {
-        $("#container-payout-hash").find(".no-hash1").show();
-      }
-    }
-    if (hash1) {
-      $("#completed")
-        .find("#transaction-hash1")
-        .attr("href", "https://nanolooker.com/block/" + hash1)
-        .text(hash1);
-      $("#container-payout-hash1").show();
     }
 
     $("#completedbutton").addClass("completed");
@@ -449,7 +438,7 @@ var initGame = function () {
 
     $("#player-list").empty();
     if (Array.isArray(game.worldPlayers)) {
-      game.worldPlayers.forEach(({ name, level, hash, hash1 }) => {
+      game.worldPlayers.forEach(({ name, level, hash }) => {
         let className = "";
         if (name === game.storage.data.player.name) {
           className = "active";
@@ -461,8 +450,7 @@ var initGame = function () {
           class: className,
           html: `
             <span>${name}</span>
-            ${hash ? '<span class="xno-payout" title="Killed the Skeleton King and received a payout"></span>' : ""}
-            ${hash1 ? '<span class="xno-payout" title="Killed the Necromancer and received a payout"></span>' : ""}
+            ${hash ? `<span class="payout-icon ${game.network}" title="Killed the Skeleton King and received a payout"></span>` : ""}
             <span>lv.${level}</span>
           `,
         }).appendTo("#player-list");
@@ -477,8 +465,8 @@ var initGame = function () {
     // }
   });
 
-  game.onAchievementUnlock(function (id, name, nano) {
-    app.unlockAchievement(id, name, nano);
+  game.onAchievementUnlock(function (id, name, payout) {
+    app.unlockAchievement(id, name, payout);
   });
 
   game.onNotification(app.showMessage.bind(app));

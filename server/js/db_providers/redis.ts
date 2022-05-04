@@ -16,6 +16,7 @@ import {
 } from "../utils";
 
 import type Player from "../player";
+import type { Network } from "../types";
 
 const INVENTORY_SLOT_COUNT = 24;
 const STASH_SLOT_COUNT = 48;
@@ -29,8 +30,13 @@ const ARTIFACT_COUNT = 4;
 
 const queue = new PromiseQueue();
 
-const getNewDepositAccountByIndex = async (index: number): Promise<string> => {
-  const depositAccount = await NanocurrencyWeb.wallet.legacyAccounts(process.env.DEPOSIT_SEED, index, index)[0].address;
+const getNewDepositAccountByIndex = async (index: number, network: Network): Promise<string> => {
+  let depositAccount = await NanocurrencyWeb.wallet.legacyAccounts(process.env.DEPOSIT_SEED, index, index)[0].address;
+
+  if (network === "ban") {
+    depositAccount = depositAccount.replace("nano_", "ban_");
+  }
+
   return depositAccount;
 };
 
@@ -59,7 +65,7 @@ class DatabaseHandler {
 
   loadPlayer(player) {
     var userKey = "u:" + player.name;
-    this.client.smembers("usr", (err, replies) => {
+    this.client.smembers("usr", (_err, replies) => {
       for (var index = 0; index < replies.length; index++) {
         if (replies[index].toString() === player.name) {
           this.client
@@ -87,9 +93,9 @@ class DatabaseHandler {
             .hget(userKey, "waypoints") // 20
             .hget(userKey, "depositAccount") // 21
             .hget(userKey, "depositAccountIndex") // 22
-            .hget(userKey, "hash1") // 23
-            .hget(userKey, "stash") // 24
-            .hget(userKey, "settings") // 25
+            .hget(userKey, "stash") // 23
+            .hget(userKey, "settings") // 24
+            .hget(userKey, "network") // 25
 
             .exec(async (err, replies) => {
               var account = replies[0];
@@ -105,11 +111,26 @@ class DatabaseHandler {
               var expansion1 = !!parseInt(replies[19] || "0");
               var depositAccount = replies[21];
               var depositAccountIndex = replies[22];
+              var network = replies[25];
+
+              if (player.account != account) {
+                player.connection.sendUTF8("invalidlogin");
+                player.connection.close("Wrong Account: " + player.name);
+                return;
+              }
+
+              if (err) {
+                Sentry.captureException(err, {
+                  user: {
+                    username: player.name,
+                  },
+                });
+              }
 
               try {
                 if (!depositAccount) {
                   depositAccountIndex = await this.createDepositAccount();
-                  depositAccount = await getNewDepositAccountByIndex(depositAccountIndex);
+                  depositAccount = await getNewDepositAccountByIndex(depositAccountIndex, network);
                   this.client.hmset(
                     "u:" + player.name,
                     "depositAccount",
@@ -118,8 +139,8 @@ class DatabaseHandler {
                     depositAccountIndex,
                   );
                 }
-              } catch (err) {
-                Sentry.captureException(err, {
+              } catch (errDepositAccount) {
+                Sentry.captureException(errDepositAccount, {
                   user: {
                     username: player.name,
                   },
@@ -173,9 +194,9 @@ class DatabaseHandler {
                   achievement = achievement.concat(new Array(ACHIEVEMENT_COUNT - achievement.length).fill(0));
                   this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
                 }
-              } catch (err) {
+              } catch (errAchievements) {
                 // invalid json
-                Sentry.captureException(err, {
+                Sentry.captureException(errAchievements, {
                   user: {
                     username: player.name,
                   },
@@ -187,14 +208,14 @@ class DatabaseHandler {
 
               var stash = new Array(STASH_SLOT_COUNT).fill(0);
               try {
-                if (replies[24]) {
-                  stash = JSON.parse(replies[24]);
+                if (replies[23]) {
+                  stash = JSON.parse(replies[23]);
                 } else {
                   this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
                 }
-              } catch (err) {
+              } catch (errStash) {
                 // invalid json
-                Sentry.captureException(err, {
+                Sentry.captureException(errStash, {
                   user: {
                     username: player.name,
                   },
@@ -234,9 +255,9 @@ class DatabaseHandler {
 
                   this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 }
-              } catch (err) {
+              } catch (errWaypoints) {
                 // invalid json
-                Sentry.captureException(err, {
+                Sentry.captureException(errWaypoints, {
                   user: {
                     username: player.name,
                   },
@@ -262,8 +283,8 @@ class DatabaseHandler {
                     this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
                   }
                 }
-              } catch (err) {
-                Sentry.captureException(err, {
+              } catch (errInventory) {
+                Sentry.captureException(errInventory, {
                   user: {
                     username: player.name,
                   },
@@ -280,9 +301,8 @@ class DatabaseHandler {
                   upgrade = new Array(UPGRADE_SLOT_COUNT).fill(0);
                   this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
                 }
-              } catch (err) {
-                console.log(err);
-                Sentry.captureException(err, {
+              } catch (errUpgrade) {
+                Sentry.captureException(errUpgrade, {
                   user: {
                     username: player.name,
                   },
@@ -305,8 +325,8 @@ class DatabaseHandler {
                     this.client.hset("u:" + player.name, "gems", JSON.stringify(gems));
                   }
                 }
-              } catch (err) {
-                Sentry.captureException(err);
+              } catch (errGems) {
+                Sentry.captureException(errGems);
               }
 
               var artifact = new Array(ARTIFACT_COUNT).fill(0);
@@ -316,11 +336,11 @@ class DatabaseHandler {
                 } else {
                   artifact = JSON.parse(replies[18]);
                 }
-              } catch (err) {
-                Sentry.captureException(err);
+              } catch (errArtifact) {
+                Sentry.captureException(errArtifact);
               }
 
-              var settings = replies[25];
+              var settings = replies[24];
               try {
                 settings = Object.assign(defaultSettings, JSON.parse(settings || "{}"));
               } catch (_err) {
@@ -330,15 +350,7 @@ class DatabaseHandler {
               var x = NaN2Zero(replies[7]);
               var y = NaN2Zero(replies[8]);
               var hash = replies[9];
-              var hash1 = replies[23];
               var nanoPotions = parseInt(replies[10] || 0);
-
-              // bcrypt.compare(player.account, account, function(err, res) {
-              if (player.account != account) {
-                player.connection.sendUTF8("invalidlogin");
-                player.connection.close("Wrong Account: " + player.name);
-                return;
-              }
 
               console.info("Player name: " + player.name);
               console.info("Armor: " + armor);
@@ -361,7 +373,6 @@ class DatabaseHandler {
                 inventory,
                 stash,
                 hash,
-                hash1,
                 nanoPotions,
                 gems,
                 artifact,
@@ -370,6 +381,7 @@ class DatabaseHandler {
                 depositAccount,
                 depositAccountIndex,
                 settings,
+                network,
               });
             });
           return;
@@ -395,9 +407,8 @@ class DatabaseHandler {
         return;
       } else {
         // Add the player
-
         const depositAccountIndex = await this.createDepositAccount();
-        const depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number);
+        const depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number, player.network);
 
         this.client
           .multi()
@@ -426,6 +437,7 @@ class DatabaseHandler {
           .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2]))
           .hset(userKey, "depositAccountIndex", depositAccountIndex)
           .hset(userKey, "depositAccount", depositAccount)
+          .hset(userKey, "network", player.network)
           .exec((_err, _replies) => {
             console.info("New User: " + player.name);
             player.sendWelcome({
@@ -603,11 +615,6 @@ class DatabaseHandler {
   setHash(name, hash) {
     console.info("Set Hash: " + name + " " + hash);
     this.client.hset("u:" + name, "hash", hash);
-  }
-
-  setHash1(name, hash) {
-    console.info("Set Hash1: " + name + " " + hash);
-    this.client.hset("u:" + name, "hash1", hash);
   }
 
   getItemLocation(slot: number): [string, number] {
@@ -1257,6 +1264,7 @@ class DatabaseHandler {
         now,
         JSON.stringify({
           player: player.name,
+          network: player.network,
           account,
           hash,
           id,

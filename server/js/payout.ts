@@ -6,7 +6,7 @@ import { rpc } from "./rpc";
 
 const queue = new PromiseQueue();
 
-const sender = "nano_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay";
+const sender = "1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay";
 
 const { PRIVATE_KEY, BPOW_USERNAME, BPOW_API_KEY, BPOW_DOMAIN } = process.env;
 
@@ -36,13 +36,13 @@ const enqueueSendPayout = async params => {
   return await queue.enqueue(() => sendPayout(params));
 };
 
-const sendPayout = async ({ account: receiver, amount }) => {
+const sendPayout = async ({ account: receiver, amount, network = "nano" }) => {
   let hash;
   let work;
   try {
     // await sleep(Math.floor(Math.random() * 250) + 1);
 
-    const accountInfo = await rpc("account_info", { account: sender, representative: "true" });
+    const accountInfo = await rpc("account_info", { account: `${network}_${sender}`, representative: "true" }, network);
 
     if (accountInfo.error) {
       throw new Error("Unable to get account_info");
@@ -66,7 +66,7 @@ const sendPayout = async ({ account: receiver, amount }) => {
       link: receiver,
       key: PRIVATE_KEY,
       ...(work ? { work } : null),
-    });
+    }, network);
 
     // @TODO add more debug when this error occurs
     if (blockCreate.error) {
@@ -76,7 +76,7 @@ const sendPayout = async ({ account: receiver, amount }) => {
       json_block: true,
       subtype: "send",
       block: blockCreate.block,
-    });
+    }, network);
 
     if (process.error) {
       throw new Error("Unable to process");

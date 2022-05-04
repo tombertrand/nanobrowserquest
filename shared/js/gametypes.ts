@@ -118,7 +118,7 @@ export const Types: any = {
     MINOTAUR: 131,
 
     // Armors
-    FIREFOX: 20,
+    MONKEY: 20,
     CLOTHARMOR: 21,
     LEATHERARMOR: 22,
     MAILARMOR: 23,
@@ -150,8 +150,9 @@ export const Types: any = {
     POISONPOTION: 111,
     BURGER: 36,
     CHEST: 37,
-    FIREPOTION: 38,
+    MONKEYPOTION: 38,
     NANOPOTION: 67,
+    BANANOPOTION: 139,
     GEMRUBY: 68,
     GEMEMERALD: 69,
     GEMAMETHYST: 70,
@@ -261,9 +262,10 @@ export const Types: any = {
 
 Types.Entities.Potion = [
   Types.Entities.FLASK,
-  Types.Entities.FIREPOTION,
+  Types.Entities.MONKEYPOTION,
   Types.Entities.REJUVENATIONPOTION,
   Types.Entities.NANOPOTION,
+  Types.Entities.BANANOPOTION,
 ];
 
 Types.Entities.Gems = [
@@ -405,7 +407,7 @@ export const kinds = {
   minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 30, 40],
 
   // kind, type, level, defense
-  firefox: [Types.Entities.FIREFOX, "armor"],
+  monkey: [Types.Entities.MONKEY, "armor"],
   clotharmor: [Types.Entities.CLOTHARMOR, "armor", "Cloth Armor", 1, 1],
   leatherarmor: [Types.Entities.LEATHERARMOR, "armor", "Leather Armor", 1, 3],
   mailarmor: [Types.Entities.MAILARMOR, "armor", "Mail Armor", 3, 5],
@@ -449,8 +451,9 @@ export const kinds = {
   cake: [Types.Entities.CAKE, "object"],
   burger: [Types.Entities.BURGER, "object"],
   chest: [Types.Entities.CHEST, "object"],
-  firepotion: [Types.Entities.FIREPOTION, "object"],
+  monkeypotion: [Types.Entities.MONKEYPOTION, "object"],
   nanopotion: [Types.Entities.NANOPOTION, "object"],
+  bananopotion: [Types.Entities.BANANOPOTION, "object"],
   gemruby: [Types.Entities.GEMRUBY, "object"],
   gememerald: [Types.Entities.GEMEMERALD, "object"],
   gemamethyst: [Types.Entities.GEMAMETHYST, "object"],
@@ -1036,12 +1039,13 @@ Types.isHealingItem = function (kind: number) {
     Types.Entities.FLASK,
     Types.Entities.BURGER,
     Types.Entities.NANOPOTION,
+    Types.Entities.BANANOPOTION,
     Types.Entities.REJUVENATIONPOTION,
   ].includes(kind);
 };
 
 Types.isExpendableItem = function (kind: number) {
-  return Types.isHealingItem(kind) || kind === Types.Entities.FIREPOTION || kind === Types.Entities.CAKE;
+  return Types.isHealingItem(kind) || kind === Types.Entities.MONKEYPOTION || kind === Types.Entities.CAKE;
 };
 
 Types.getKindFromString = function (kind: number) {
