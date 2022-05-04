@@ -2043,12 +2043,11 @@ class Game {
       // @TODO get the network from the login form in an hidden input or smt
 
       if (action === "create") {
-        self.client.sendCreate({ name: self.username, account: self.account, network: self.player.network });
+        self.client.sendCreate({ name: self.username, account: self.account });
       } else {
         self.client.sendLogin({
           name: self.username,
           account: self.account,
-          network: self.network,
           password: self.password,
         });
       }

@@ -28,7 +28,6 @@ class App {
   $play: JQuery<HTMLElement> | null;
   $loginNameInput: JQuery<HTMLElement> | null;
   $loginAccountInput: JQuery<HTMLElement> | null;
-  $loginNetworkInput: JQuery<HTMLElement> | null;
   $loginPasswordInput: JQuery<HTMLElement> | null;
   $loginPasswordConfirmInput: JQuery<HTMLElement> | null;
   loginFormFields: any[];
@@ -38,7 +37,6 @@ class App {
   getPlayButton: () => any;
   getUsernameField: () => any;
   getAccountField: () => any;
-  getNetworkField: () => any;
   getPasswordField: () => any;
   getPasswordConfirmField: () => any;
   starting: any;
@@ -58,7 +56,6 @@ class App {
     this.getUsernameField = () => {};
     this.getPlayButton = () => {};
     this.getAccountField = () => {};
-    this.getNetworkField = () => {};
     this.getPasswordField = () => {};
     this.getPasswordConfirmField = () => {};
     this.isDesktop = true;
@@ -67,7 +64,6 @@ class App {
     this.$play = null;
     this.$loginNameInput = null;
     this.$loginAccountInput = null;
-    this.$loginNetworkInput = null;
     this.$loginPasswordInput = null;
     this.$loginPasswordConfirmInput = null;
     this.$nameInput = null;
@@ -121,7 +117,6 @@ class App {
     // Login form fields
     this.$loginNameInput = $("#loginnameinput");
     this.$loginAccountInput = $("#loginaccountinput");
-    this.$loginNetworkInput = $("#loginnetworkinput");
     this.$loginPasswordInput = $("#loginpasswordinput");
     this.$loginPasswordConfirmInput = $("#loginpasswordconfirminput");
     this.loginFormFields = [
@@ -144,13 +139,9 @@ class App {
     this.getAccountField = function () {
       return this.createNewCharacterFormActive() ? this.$accountInput : this.$loginAccountInput;
     };
-    this.getNetworkField = function () {
-      return this.$loginNetworkInput;
-    };
     this.getPasswordField = function () {
       return this.$loginPasswordInput;
     };
-
     this.getPasswordConfirmField = function () {
       return this.$loginPasswordConfirmInput;
     };
@@ -179,12 +170,10 @@ class App {
     var passwordConfirm = this.getPasswordConfirmField().is(":visible")
       ? this.getPasswordConfirmField().val()
       : undefined;
-    var network = this.getNetworkField().val();
-    if (!["ban", "nano"].includes(network)) {
-      network = "nano";
-    }
 
-    if (!this.validateFormFields({ username, account, network, password, passwordConfirm })) return;
+    var [network] = account.split("_");
+
+    if (!this.validateFormFields({ username, account, password, passwordConfirm })) return;
 
     this.setPlayButtonState(false);
 
@@ -407,7 +396,7 @@ class App {
    * out, account match looks valid). Assumes either the login or the create new character form
    * is currently active.
    */
-  validateFormFields({ username, account, network, password, passwordConfirm }) {
+  validateFormFields({ username, account, password, passwordConfirm }) {
     this.clearValidationErrors();
 
     if (!username) {
@@ -415,8 +404,8 @@ class App {
       return false;
     }
 
-    if (!isValidAccountAddress(account, network)) {
-      this.addValidationError(this.getAccountField(), `Enter a valid ${network}_ account.`);
+    if (!isValidAccountAddress(account)) {
+      this.addValidationError(this.getAccountField(), `Enter a valid ${$("#loginnetworkinput").val()}_ account.`);
       return false;
     }
 
@@ -893,9 +882,9 @@ class App {
     $el.find(".achievement-name").html(name);
     $el.find(".achievement-description").html(desc);
     $el.find(".achievement-payout").html(`
-        ${payout ? this.getCurrencyPrefix() : ''}
+        ${payout ? this.getCurrencyPrefix() : ""}
         <span>${payout ? payout / networkDividerMap[network] : ""}</span>
-        ${payout ? this.getCurrencySuffix() : ''}
+        ${payout ? this.getCurrencySuffix() : ""}
       `);
   }
 

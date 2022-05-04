@@ -15,27 +15,33 @@ const ERROR_MESSAGES = {
 };
 
 class Purchase {
+  network: Network = null;
   sessions = [];
   databaseHandler = null;
 
+  constructor(network: Network) {
+    this.network = network;
+  }
+
   create({ player, account, id }) {
     const accountSession = this.sessions.find(({ account: registeredAccount }) => account === registeredAccount);
+    const { nano, ban } = store.storeItems.find(item => id === item.id);
 
     if (accountSession) {
       this.sessions.map(session => {
         if (session.account === accountSession.account) {
           // Replace the purchase id in case the websocket is listening for another item id
-          session.id = accountSession.id;
+          session.id = id;
+          session.nano = nano;
+          session.ban = ban;
         }
 
         return session;
       });
     } else {
-      const { nano, ban } = store.storeItems.find(item => id === item.id);
-
       this.sessions.push({ player, account, id, nano, ban });
 
-      if (!websocket[player.network].registerAccount(account)) {
+      if (!websocket[this.network].registerAccount(account)) {
         player.send([
           Types.Messages.PURCHASE_ERROR,
           {
@@ -46,6 +52,7 @@ class Purchase {
         Sentry.captureException(new Error(ERROR_MESSAGES.notAvailable), {
           extra: {
             player: player.name,
+            network: this.network,
             account,
             id,
             nano,
@@ -59,47 +66,45 @@ class Purchase {
   cancel(account) {
     if (!this.sessions.find(session => session.account === account)) return;
 
-    const [network] = account.split("_");
-
-    console.debug("PURCHASE - cancel: " + account);
+    console.debug(`[${this.network}] PURCHASE - cancel: ` + account);
 
     this.sessions = this.sessions.filter(session => session.account !== account);
-    websocket[network].unregisterAccount(account);
+    websocket[this.network].unregisterAccount(account);
   }
 
   complete(account) {
-    console.debug("PURCHASE - complete: " + account);
-
-    const [network] = account.split("_");
+    console.debug(`[${this.network}] PURCHASE - complete: ` + account);
 
     this.sessions = this.sessions.filter(session => session.account !== account);
-    websocket[network].unregisterAccount(account);
+    websocket[this.network].unregisterAccount(account);
   }
 
   settle(payment) {
-    console.debug("PURCHASE - settle: " + payment.account);
-
     const session = this.sessions.find(session => session.account === payment.account);
 
     if (!session) {
       this.error(ERROR_MESSAGES.noSession, payment);
-    } else if (payment.amount < session[session.player.network]) {
+    } else if (payment.amount < session[this.network]) {
       this.error(ERROR_MESSAGES.wrongAmount, {
-        [session.player.network]: session[session.player.network],
+        [this.network]: session[this.network],
         payment,
         player: session.player.name,
       });
+
+      // let prefix = 
 
       session.player.send([
         Types.Messages.PURCHASE_ERROR,
         {
           message: `${ERROR_MESSAGES.wrongAmount}. You sent ${payment.amount} instead of sending ${
-            session[session.player.network]
+            session[this.network]
           }. Try again or contact an admin.`,
         },
       ]);
       this.cancel(session.account);
     } else {
+      console.debug(`[${this.network}] PURCHASE - settle: ` + payment.account);
+
       this.databaseHandler.settlePurchase({ player: session.player, ...payment, id: session.id });
       this.complete(session.account);
     }
@@ -153,7 +158,7 @@ class Websocket {
       this.keepAlive();
 
       // @NOTE: Re-add sessions if the socket reconnects
-      purchase.sessions?.forEach(({ account }) => {
+      purchase[this.network].sessions?.forEach(({ account }) => {
         this.registerAccount(account);
       });
     };
@@ -179,7 +184,7 @@ class Websocket {
         block: { link_as_account },
       } = message;
 
-      purchase.settle({ account: link_as_account, amount: rawToRai(amount, this.network), hash });
+      purchase[this.network].settle({ account: link_as_account, amount: rawToRai(amount, this.network), hash });
     };
   }
 
@@ -239,7 +244,10 @@ class Websocket {
   }
 }
 
-const purchase = new Purchase();
+const purchase: { [key in Network]: Purchase } = {
+  nano: new Purchase("nano"),
+  ban: new Purchase("ban"),
+};
 
 const websocket: { [key in Network]: Websocket } = {
   nano: new Websocket("nano"),

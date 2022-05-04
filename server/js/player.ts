@@ -120,7 +120,8 @@ class Player extends Character {
 
     var self = this;
 
-    purchase.databaseHandler = databaseHandler;
+    purchase["nano"].databaseHandler = databaseHandler;
+    purchase["ban"].databaseHandler = databaseHandler;
     this.databaseHandler = databaseHandler;
 
     this.server = worldServer;
@@ -213,11 +214,18 @@ class Player extends Character {
 
         var name = sanitize(message[1]);
         var account = sanitize(message[2]);
-        var network: Network = sanitize(message[3]) === "ban" ? "ban" : "nano";
+        var [network]: [Network] = account.split("_");
         var password;
 
+        if (!["nano", "ban"].includes(network)) {
+          self.connection.sendUTF8("invalidconnection");
+          self.connection.close("Bad network.");
+          return;
+        }
+        // var network: Network = sanitize(message[3]) === "ban" ? "ban" : "nano";
+
         if (action === Types.Messages.LOGIN) {
-          password = sanitize(message[4]);
+          password = sanitize(message[3]);
         }
 
         // Always ensure that the name is not longer than a maximum length.
@@ -773,12 +781,12 @@ class Player extends Character {
         console.info("PURCHASE_CREATE: " + self.name + " " + message[1] + " " + message[2]);
 
         if (message[2] === self.depositAccount) {
-          purchase.create({ player: self, account: self.depositAccount, id: message[1] });
+          purchase[self.network].create({ player: self, account: self.depositAccount, id: message[1] });
         }
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
         console.info("PURCHASE_CANCEL: " + self.name + " " + message[1]);
 
-        purchase.cancel(message[1]);
+        purchase[self.network].cancel(message[1]);
       } else if (action === Types.Messages.STORE_ITEMS) {
         console.info("STORE_ITEMS");
 

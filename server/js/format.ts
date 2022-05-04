@@ -7,8 +7,8 @@ class FormatChecker {
 
   constructor() {
     this.formats = [];
-    (this.formats[Types.Messages.CREATE] = ["s", "s", "s"]),
-      (this.formats[Types.Messages.LOGIN] = ["s", "s", "s", "s"]),
+    (this.formats[Types.Messages.CREATE] = ["s", "s"]),
+      (this.formats[Types.Messages.LOGIN] = ["s", "s", "s"]),
       (this.formats[Types.Messages.MOVE] = ["n", "n"]),
       (this.formats[Types.Messages.LOOTMOVE] = ["n", "n", "n"]),
       (this.formats[Types.Messages.AGGRO] = ["n"]),
@@ -72,11 +72,12 @@ class FormatChecker {
     } else if (type === Types.Messages.LOGIN) {
       console.log("~~~~~LOGIN", message);
 
+      // @TODO Validate this!?
+
       return (
         _.isString(message[0]) &&
         _.isString(message[1]) &&
-        _.isString(message[2]) &&
-        (message.length == 3 || (_.isString(message[3]) && message.length === 4))
+        (message.length == 2 || (_.isString(message[2]) && message.length === 3))
       );
     } else if (type === Types.Messages.PARTY) {
       if (message[0] === Types.Messages.PARTY_ACTIONS.CREATE) {

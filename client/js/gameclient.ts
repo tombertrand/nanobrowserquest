@@ -983,12 +983,12 @@ class GameClient {
     this.receivefrozen_callback = callback;
   }
 
-  sendCreate({ name, account, network }) {
-    this.sendMessage([Types.Messages.CREATE, name, account, network]);
+  sendCreate({ name, account }) {
+    this.sendMessage([Types.Messages.CREATE, name, account]);
   }
 
-  sendLogin({ name, account, network, password = "" }) {
-    this.sendMessage([Types.Messages.LOGIN, name, account, network, password]);
+  sendLogin({ name, account, password = "" }) {
+    this.sendMessage([Types.Messages.LOGIN, name, account, password]);
   }
 
   sendMove(x, y) {

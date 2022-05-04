@@ -98,6 +98,15 @@ class DatabaseHandler {
             .hget(userKey, "network") // 25
 
             .exec(async (err, replies) => {
+              if (err) {
+                Sentry.captureException(err, {
+                  user: {
+                    username: player.name,
+                  },
+                });
+                return;
+              }
+
               var account = replies[0];
               var armor = replies[1];
               var weapon = replies[2];
@@ -113,18 +122,13 @@ class DatabaseHandler {
               var depositAccountIndex = replies[22];
               var network = replies[25];
 
-              if (player.account != account) {
+              const [, rawAccount] = account.split("_");
+              const [rawNetwork, rawPlayerAccount] = player.account.split("_");
+
+              if (rawPlayerAccount != rawAccount) {
                 player.connection.sendUTF8("invalidlogin");
                 player.connection.close("Wrong Account: " + player.name);
                 return;
-              }
-
-              if (err) {
-                Sentry.captureException(err, {
-                  user: {
-                    username: player.name,
-                  },
-                });
               }
 
               try {
@@ -149,6 +153,15 @@ class DatabaseHandler {
                     depositAccount,
                   },
                 });
+                return;
+              }
+
+              // @NOTE: Change the player network and depositAccount according to the login account so
+              // nano players can be on bananobrowserquest and ban players can be on nanobrowserquest
+              network = rawNetwork;
+              if (!depositAccount.startsWith(network)) {
+                const [, rawDepositAccount] = depositAccount.split("_");
+                depositAccount = `${network}_${rawDepositAccount}`;
               }
 
               if (!armor) {

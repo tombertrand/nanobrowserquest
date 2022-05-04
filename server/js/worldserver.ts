@@ -216,7 +216,7 @@ class World {
       });
 
       player.onExit(function () {
-        purchase.cancel(player.depositAccount);
+        purchase[player.network].cancel(player.depositAccount);
 
         console.info(player.name + " has left the game.");
         if (player.hasParty()) {
