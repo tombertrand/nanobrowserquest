@@ -890,10 +890,11 @@ class World {
   getPlayerPopulation() {
     let players = _.sortBy(
       // @ts-ignore
-      Object.values(this.players).reduce((acc: any[], { name, level, hash }) => {
+      Object.values(this.players).reduce((acc: any[], { name, level, hash, network }) => {
         acc.push({
           name,
           level,
+          network,
           hash: !!hash,
         });
 
@@ -1300,11 +1301,11 @@ class World {
     const kind = Types.getKindFromString(itemName);
 
     // var randomDrops = ["amuletfrozen"] as any;
-    var randomDrops = ["bananopotion"] as any;
+    // var randomDrops = ["bananopotion"] as any;
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
-    var randomDrop = random(randomDrops.length);
-    return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
+    // var randomDrop = random(randomDrops.length);
+    // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 
     // Potions can be looted by anyone
     const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;

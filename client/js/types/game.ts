@@ -68,4 +68,5 @@ export interface Game {
   eat: (arg0: any) => void;
   worldPlayers: any[];
   network: any;
+  explorer: any;
 }

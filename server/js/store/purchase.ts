@@ -66,14 +66,14 @@ class Purchase {
   cancel(account) {
     if (!this.sessions.find(session => session.account === account)) return;
 
-    console.debug(`[${this.network}] PURCHASE - cancel: ` + account);
+    console.debug(`[${this.network}] PURCHASE - cancel: ${account}`);
 
     this.sessions = this.sessions.filter(session => session.account !== account);
     websocket[this.network].unregisterAccount(account);
   }
 
   complete(account) {
-    console.debug(`[${this.network}] PURCHASE - complete: ` + account);
+    console.debug(`[${this.network}] PURCHASE - complete: ${account}`);
 
     this.sessions = this.sessions.filter(session => session.account !== account);
     websocket[this.network].unregisterAccount(account);
@@ -91,7 +91,7 @@ class Purchase {
         player: session.player.name,
       });
 
-      // let prefix = 
+      // let prefix =
 
       session.player.send([
         Types.Messages.PURCHASE_ERROR,
@@ -103,7 +103,7 @@ class Purchase {
       ]);
       this.cancel(session.account);
     } else {
-      console.debug(`[${this.network}] PURCHASE - settle: ` + payment.account);
+      console.debug(`[${this.network}] PURCHASE - settle: ${payment.account}`);
 
       this.databaseHandler.settlePurchase({ player: session.player, ...payment, id: session.id });
       this.complete(session.account);
@@ -131,6 +131,8 @@ class Websocket {
     this.network = network;
     this.websocketDomain = network === "nano" ? process.env.NANO_WEBSOCKET_DOMAIN : process.env.BAN_WEBSOCKET_DOMAIN;
 
+    console.debug(`[${this.network}] WEBSOCKET - ${this.websocketDomain}`);
+
     this.connection = new ReconnectingWebSocket(this.websocketDomain, [], {
       WebSocket: WS,
       connectionTimeout: 1000,
@@ -140,7 +142,7 @@ class Websocket {
     });
 
     this.connection.onopen = () => {
-      console.debug(`WEBSOCKET ${this.network} - onopen`);
+      console.debug(`[${this.network}] WEBSOCKET - onopen`);
       this.isReady = true;
 
       const confirmation_subscription = {
@@ -164,12 +166,12 @@ class Websocket {
     };
 
     this.connection.onclose = () => {
-      console.debug(`WEBSOCKET ${this.network} - onclosed`);
+      console.debug(`[${this.network}] WEBSOCKET - onclosed`);
       this.isReady = false;
     };
 
     this.connection.onerror = err => {
-      console.debug(`WEBSOCKET ${this.network} - onerror`, err.message);
+      console.debug(`[${this.network}] WEBSOCKET - onerror: ${err.message}`);
 
       Sentry.captureException(err);
       this.isReady = false;
@@ -202,7 +204,7 @@ class Websocket {
       return false;
     }
 
-    console.debug(`WEBSOCKET ${this.network} - registerAccount: ` + account);
+    console.debug(`WEBSOCKET ${this.network} - registerAccount: ${account}`);
 
     try {
       const confirmation_subscription = {
@@ -226,7 +228,7 @@ class Websocket {
       this.watchedAccounts.splice(index, 1);
     }
 
-    console.debug(`WEBSOCKET ${this.network} - unregisterAccount: ` + account);
+    console.debug(`[${this.network}] WEBSOCKET - unregisterAccount: ${account}`);
 
     try {
       const confirmation_subscription = {

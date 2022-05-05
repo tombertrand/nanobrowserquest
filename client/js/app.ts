@@ -564,12 +564,11 @@ class App {
   }
 
   initPlayerInfo() {
-    const { name: username, account } = this.game.storage.data.player;
+    const { name, account } = this.game.player;
 
-    $("#player-username").text(username);
-    $("#player-account")
-      .attr("href", "https://nanolooker.com/account/" + account)
-      .text(account);
+    $("#player-username").text(name);
+    $("#player-account").attr("href", `https://${this.game.explorer}.com/account/${account}`).text(account);
+    $("#completedbutton").addClass(this.game.network);
   }
 
   blinkHealthBar() {
@@ -805,7 +804,8 @@ class App {
     $lists.empty();
 
     var totalPayout = 0;
-    const domain = this.game.network === "ban" ? `bananobrowserquest.com` : "nanobrowserquest.com";
+    const domain = this.game.network === "ban" ? `BananoBrowserQuest` : "NanoBrowserQuest";
+    const currency = this.game.network === "ban" ? `ban` : "xno";
     _.each(achievements, function (achievement) {
       count++;
 
@@ -818,9 +818,9 @@ class App {
 
       $a.find(".twitter").attr(
         "href",
-        `https://twitter.com/share?url=https%3A%2F%2F${domain}&text=I%20unlocked%20the%20%27` +
+        `https://twitter.com/share?url=https%3A%2F%2F${domain.toLowerCase()}.com&text=I%20unlocked%20the%20%27` +
           achievement.name +
-          "%27%20achievement%20on%20%23NanoBrowserQuest%20%23BrowserQuest%20%23nbq",
+          `%27%20achievement%20on%20%23${domain}%20%23BrowserQuest%20$${currency}`,
       );
       $a.show();
       $a.find("a").click(function () {
@@ -877,15 +877,17 @@ class App {
   }
 
   setAchievementData($el, name, desc, payout) {
-    const { network } = this.game;
-
     $el.find(".achievement-name").html(name);
     $el.find(".achievement-description").html(desc);
     $el.find(".achievement-payout").html(`
         ${payout ? this.getCurrencyPrefix() : ""}
-        <span>${payout ? payout / networkDividerMap[network] : ""}</span>
+        <span>${payout ? payout / networkDividerMap[this.game.network] : ""}</span>
         ${payout ? this.getCurrencySuffix() : ""}
       `);
+  }
+
+  initNanoPotions() {
+    $(".item-potion").addClass(this.game.network);
   }
 
   updateNanoPotions(nanoPotions) {

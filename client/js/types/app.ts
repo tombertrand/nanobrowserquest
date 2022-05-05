@@ -43,6 +43,7 @@ export interface App {
   initTargetHud: () => void;
   initExpBar: () => void;
   initPlayerInfo: () => void;
+  initNanoPotions: () => void;
   setMouseCoordinates: (arg0: any) => void;
   closeInGameScroll: (arg0: string) => void;
   toggleMute: () => void;

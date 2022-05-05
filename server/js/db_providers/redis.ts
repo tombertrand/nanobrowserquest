@@ -1190,7 +1190,10 @@ class DatabaseHandler {
             const password = replies[1];
             let isValid = false;
 
-            if (player.account === account) {
+            const [, rawAccount] = account.split("_");
+            const [, rawPlayerAccount] = player.account.split("_");
+
+            if (rawPlayerAccount == rawAccount) {
               if (!password) {
                 const salt = await bcrypt.genSalt(10);
                 const passwordHash = await bcrypt.hash(loginPassword, salt);

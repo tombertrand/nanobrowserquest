@@ -33,6 +33,7 @@ import Warrior from "./warrior";
 import type { ChatType } from "../../server/js/types";
 
 export type Network = "nano" | "ban";
+export type Explorer = "nanolooker" | "bananolooker";
 
 class Game {
   app: AppType;
@@ -142,6 +143,7 @@ class Game {
   slotToDelete?: number;
   worldPlayers: any[];
   network: Network;
+  explorer: Explorer;
 
   constructor(app) {
     this.app = app;
@@ -158,6 +160,8 @@ class Game {
     this.cowLevelPortalCoords = null;
     this.minotaurPortalStart = false;
     this.minotaurLevelPortalCoords = { x: 34, y: 498 };
+    this.network = null;
+    this.explorer = null;
 
     this.renderer = null;
     this.updater = null;
@@ -718,14 +722,14 @@ class Game {
     var self = this;
 
     $("#upgrade-preview-btn").on("click", function () {
-      self.player.upgrade.forEach(({ item, level, slot, bonus }) => {
+      self.player.upgrade.forEach(({ item, level, slot, bonus, isUnique }) => {
         if (slot !== 0) return;
         const previewSlot = $(`#upgrade .item-slot:eq(10)`);
 
         if (previewSlot.is(":empty")) {
           previewSlot.append(
             $("<div />", {
-              class: `item-not-draggable`,
+              class: `item-not-draggable ${isUnique ? "item-unique" : ""}`,
               css: {
                 "background-image": `url("${self.getIconPath(item, parseInt(level) + 1)}")`,
               },
@@ -911,7 +915,7 @@ class Game {
     if (this.player.weaponName !== "dagger") {
       $(".item-equip-weapon").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${this.player.weaponBonus ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.weaponName)}")`,
           },
@@ -924,7 +928,7 @@ class Game {
     if (this.player.armorName !== "clotharmor") {
       $(".item-equip-armor").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${this.player.armorBonus ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.armorName)}")`,
           },
@@ -938,7 +942,7 @@ class Game {
     if (this.player.beltName) {
       $(".item-equip-belt").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${this.player.beltBonus ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.beltName)}")`,
           },
@@ -952,7 +956,7 @@ class Game {
     if (this.player.cape) {
       $(".item-equip-cape").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${this.player.capeBonus.length >= 5 ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.cape, this.player.capeLevel)}")`,
           },
@@ -966,7 +970,7 @@ class Game {
     if (this.player.ring1Name) {
       $(".item-ring1").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${Types.isUniqueRing(this.player.ring1Name) ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.ring1Name)}")`,
           },
@@ -980,7 +984,7 @@ class Game {
     if (this.player.ring2Name) {
       $(".item-ring2").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${Types.isUniqueRing(this.player.ring2Name) ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.ring2Name)}")`,
           },
@@ -994,7 +998,7 @@ class Game {
     if (this.player.amuletName) {
       $(".item-amulet").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${Types.isUniqueAmulet(this.player.amuletName) ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.amuletName)}")`,
           },
@@ -1017,10 +1021,10 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-inventory").empty();
 
-    this.player.inventory.forEach(({ item, level, quantity, bonus, requirement, slot }) => {
+    this.player.inventory.forEach(({ item, level, quantity, bonus, requirement, isUnique, slot }) => {
       $(`#item-inventory .item-slot:eq(${slot})`).append(
         $("<div />", {
-          class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+          class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(item, level)}")`,
           },
@@ -1048,10 +1052,10 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-stash").empty();
 
-    this.player.stash.forEach(({ item, level, quantity, bonus, requirement, slot }) => {
+    this.player.stash.forEach(({ item, level, quantity, bonus, requirement, isUnique, slot }) => {
       $(`#item-stash .item-slot:eq(${slot})`).append(
         $("<div />", {
-          class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+          class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(item, level)}")`,
           },
@@ -1123,7 +1127,7 @@ class Game {
     let successRate;
     let itemLevel;
 
-    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus }) => {
+    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, isUnique }) => {
       if (slot === 0 && level) {
         itemLevel = level;
         const successRates = Types.getUpgradeSuccessRates();
@@ -1142,7 +1146,7 @@ class Game {
         .removeClass("item-droppable")
         .append(
           $("<div />", {
-            class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+            class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
             css: {
               "background-image": `url("${this.getIconPath(item, level)}")`,
             },
@@ -1900,6 +1904,7 @@ class Game {
     this.username = username;
     this.account = account;
     this.network = network;
+    this.explorer = network === "nano" ? "nanolooker" : "bananolooker";
     this.password = password;
   }
 
@@ -2037,10 +2042,6 @@ class Game {
       self.player.account = self.account;
       self.player.network = self.network;
       self.started = true;
-      // @TODO: Configure this with the domain?
-      //
-
-      // @TODO get the network from the login form in an hidden input or smt
 
       if (action === "create") {
         self.client.sendCreate({ name: self.username, account: self.account });
@@ -2190,6 +2191,8 @@ class Game {
       self.app.updateNanoPotions(nanoPotions);
       self.app.updateGems(gems);
       self.app.updateArtifact(artifact);
+      self.app.initPlayerInfo();
+      self.app.initNanoPotions();
 
       self.storage.initPlayer(self.player.name, self.player.account);
       self.storage.savePlayer(self.renderer.getPlayerImage(), self.player.getSpriteName(), self.player.getWeaponName());

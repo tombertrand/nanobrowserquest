@@ -269,17 +269,17 @@ var initApp = function () {
       app.animateParchment("loadcharacter", "loadcharacter");
     });
 
-    // $("#running-coder .link").on("click", () => {
-    //   $("#loginnameinput").val("running-coder").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#running-coder .link").on("click", () => {
+      $("#loginnameinput").val("running-coder").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
-    // $("#ddd .link").on("click", () => {
-    //   $("#loginnameinput").val("ddd").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#banano .link").on("click", () => {
+      $("#loginnameinput").val("banano").show();
+      $("#loginaccountinput").val("ban_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
     // $("#aaa1 .link").on("click", () => {
     //   $("#loginnameinput").val("aaa1").show();
@@ -351,10 +351,7 @@ var initGame = function () {
 
   game.onGameCompleted(function ({ hash, fightAgain, show = false }) {
     if (hash) {
-      $("#completed")
-        .find("#transaction-hash")
-        .attr("href", "https://nanolooker.com/block/" + hash)
-        .text(hash);
+      $("#completed").find("#transaction-hash").attr("href", `https://${game.explorer}.com/block/${hash}`).text(hash);
       $("#container-payout-hash").show();
     }
 
@@ -438,7 +435,7 @@ var initGame = function () {
 
     $("#player-list").empty();
     if (Array.isArray(game.worldPlayers)) {
-      game.worldPlayers.forEach(({ name, level, hash }) => {
+      game.worldPlayers.forEach(({ name, level, hash, network }) => {
         let className = "";
         if (name === game.storage.data.player.name) {
           className = "active";
@@ -450,7 +447,11 @@ var initGame = function () {
           class: className,
           html: `
             <span>${name}</span>
-            ${hash ? `<span class="payout-icon ${game.network}" title="Killed the Skeleton King and received a payout"></span>` : ""}
+            ${
+              hash
+                ? `<span class="payout-icon ${network}" title="Killed the Skeleton King and received a ${network} payout"></span>`
+                : ""
+            }
             <span>lv.${level}</span>
           `,
         }).appendTo("#player-list");
@@ -474,7 +475,6 @@ var initGame = function () {
   app.initHealthBar();
   app.initTargetHud();
   app.initExpBar();
-  app.initPlayerInfo();
 
   $("#nameinput").val("");
   // $("#accountinput").val("");

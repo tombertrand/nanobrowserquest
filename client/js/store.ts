@@ -246,7 +246,7 @@ class Store {
           <p class="name">${name}</p>
           ${description ? `<p class="description">${description}</p>` : ""}
           <p class="description overflow-text">
-            <a href="https://nanolooker.com/block/${payment.hash}" target="_blank">${payment.hash}</a>
+            <a href="https://${this.app.game.explorer}.com/block/${payment.hash}" target="_blank">${payment.hash}</a>
           </p>
           <p class="description">${confirmedMessage}</p>
         `,

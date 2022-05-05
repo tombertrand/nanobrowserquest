@@ -125,7 +125,7 @@ footer, header, hgroup, menu, nav, section {
     /* body.upscaled.game {background:#000;} */
     .game #logo {display:none;-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;animation:none;}
         
-    #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #settings, #party, #completed, #failed, .icon, #tilt, .parchment-left, .parchment-middle, .parchment-right, .avatar, .facebook, .twitter, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background:url('../img/1/spritesheet.png');image-rendering:-moz-crisp-edges; image-rendering:-webkit-optimize-contrast;}
+    #logo, #logosparks, .left-ornament, .right-ornament, #character, #character div, .button, .button div, #respawn, #scroll, #instructions, #store, #settings, #party, #completed, #failed, .icon, #tilt, .parchment-left, .parchment-middle, .parchment-right, .avatar, .facebook, .twitter, .discord, .close, #note, .ribbon .top, .ribbon .bottom, #about .img, .ext-link {background:url('../img/1/spritesheet.png');image-rendering:-moz-crisp-edges; image-rendering:-webkit-optimize-contrast;}
     
     #moztab {height:49px;width:118px;position:fixed;top:0;right:15%;background:url('../img/1/spritesheet.png') no-repeat -229px -204px;display:block;}
 
@@ -339,6 +339,15 @@ footer, header, hgroup, menu, nav, section {
     #sharing .facebook:hover {background-position:-822px -224px;}
     #sharing .twitter {height:22px;width:32px;background-position:-770px -224px;margin:0 12px 0 0;}
     #sharing .twitter:hover {background-position:-770px -224px;}
+    a .discord {    height: 24px;
+        display: inline-block;
+        width: 24px;
+        background-size: 844px;
+        background-position: -820px -252px;
+        margin: 0px 6px -4px 0;}
+    a:hover .discord {
+        transform: scale(1.15);
+    }
     #sharing .gplus {height:22px;width:22px;margin:0 12px 0 0px;}
     #toggle-credits {display:inline-block;margin-left:12px;}
     #legal-link a, #nano-link a {text-decoration:none;color:inherit;}
@@ -635,15 +644,16 @@ footer, header, hgroup, menu, nav, section {
 
     .payout-icon {
         display: inline-block;
-        width: 10px;
-        height: 12px;
-       
         background-size: cover;
     }
     .payout-icon.nano {
+        width: 10px;
+        height: 12px;
         background-image: url(../img/3/xno.png);
     }
     .payout-icon.ban {
+        width: 20px;
+        height: 12px;
         background-image: url(../img/3/ban.png);
     }
 
@@ -712,6 +722,10 @@ footer, header, hgroup, menu, nav, section {
     }
     .item-title.unique {
         color: #d3c59c
+    }
+    .item-unique {
+        /* box-shadow: inset 0px 0px 3px 1px gold; */
+        border-color: #d3c59c !important;
     }
     .item-class {
         color: #fff;
@@ -946,7 +960,7 @@ footer, header, hgroup, menu, nav, section {
         .setting {font-size:20px;}
         #inspector .resistances { font-size: 13px; }
 
-	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
+	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .discord, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/3/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background:url('../img/3/achievements.png');}
@@ -1074,6 +1088,9 @@ footer, header, hgroup, menu, nav, section {
         #settings-button {background-position:-1128px -51px;top:3px;left:1395px;}
         #settings-button:hover {background-position:-1170px -51px;}
         #settings-button.active {background-position:-1212px -51px;}
+        #completedbutton.ban {background-position:-1254px -51px;}
+        #completedbutton.ban:hover {background-position:-1296px -51px;}
+        #completedbutton.ban.active {background-position:-1338px -51px;}
         
         #chatbox {height:48px;width:1182px;background-size:1440px;background-position:0 -96px;margin-left:-591px;bottom:18px;}
         #chatbox.active {bottom:66px;}
@@ -1130,7 +1147,7 @@ footer, header, hgroup, menu, nav, section {
 	}
 
 	@media screen and (max-width: 1500px), screen and (max-height: 870px) {
-        .home-logo {margin-left:-200px;margin-top:-20px;scale:0.7;}
+        .home-logo {margin-left:-200px;margin-top:-20px;transform:scale(0.7);}
         .createaccount-instructions { font-size: 17px; }
         #upgrade-scroll { width: 120px; }
         .item-equip-weapon::before {background-image: url('../img/2/inventory-placeholder.png');}
@@ -1159,7 +1176,7 @@ footer, header, hgroup, menu, nav, section {
             width: 24px;
         }
 
-	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
+	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .discord, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/2/spritesheet.png');}
 	    .upscaled #bar-container, .upscaled #healthbar, .upscaled .barbutton, .upscaled #chatbox, .upscaled #minimize, .upscaled .panel > div{background-image:url('../img/2/barsheet.png');}
 	    .upscaled #achievements, .upscaled #achievements li, .upscaled .coin, .upscaled #achievement-notification, .upscaled #coinsparks, .upscaled .achievement-sharing a, .upscaled #previous, .upscaled #next {background-image:url('../img/2/achievements.png');}
         .upscaled .item-gem, .upscaled .item-potion {background-image:url('../img/2/achievements-unlocks.png');}
@@ -1291,10 +1308,12 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton {background-position:-668px -34px;top:2px;left:870px;width:28px;}
         #completedbutton:hover {background-position:-696px -34px;}
         #completedbutton.active {background-position:-724px -34px;}
-        /* #completedbutton.completed {background-position:-752px -34px;} */
         #settings-button {background-position:-752px -34px;top:2px;left:930px;}
         #settings-button:hover {background-position:-780px -34px;}
         #settings-button.active {background-position:-808px -34px;}
+        #completedbutton.ban {background-position:-836px -34px;}
+        #completedbutton.ban:hover {background-position:-864px -34px;}
+        #completedbutton.ban.active {background-position:-892px -34px;}
 
 		#chatbox {height:32px;width:788px;background-size:960px;background-position:0 -64px;margin-left:-394px;bottom:12px;}
 		#chatbox.active {bottom:44px;}
@@ -1357,7 +1376,7 @@ footer, header, hgroup, menu, nav, section {
 }
 	
 	@media screen and (max-width: 1000px) {
-        .home-logo {margin-left:-170px;margin-top:-42px;scale:0.35;}
+        .home-logo {margin-left:-170px;margin-top:-42px;transform:scale(0.35);}
         #text-window { width: 60%; }
         .world { font-size: 12px;}
         .createaccount-instructions { font-size: 8px; }
@@ -1483,7 +1502,9 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton {background-position:-668px -34px;top:2px;left:870px;width:28px;}
         #completedbutton:hover {background-position:-696px -34px;}
         #completedbutton.active {background-position:-724px -34px;}
-        /* #completedbutton.completed {background-position:-752px -34px;} */
+        #completedbutton.ban {background-position:-836px -34px;}
+        #completedbutton.ban:hover {background-position:-864px -34px;}
+        #completedbutton.ban.active {background-position:-892px -34px;}
 
         .panel {bottom:22px;width:262px;font-size:14px;line-height:20px;}
         .panel-container {right: calc(5% + 262px);}
@@ -1569,6 +1590,7 @@ footer, header, hgroup, menu, nav, section {
             left: auto;
             right: 0;
         }
+        #container #completed p { font-size: 10px; }
         .panel {scale: 0.8;}
         .panel#population { bottom: 16px; }
         .panel#player {left: -20px; bottom: 18px;}
@@ -1699,6 +1721,9 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton {background-position:-668px -34px;top:2px;left:420px;width:28px;}
         #completedbutton:hover {background-position:-696px -34px;}
         #completedbutton.active {background-position:-724px -34px;}
+        #completedbutton.ban {background-position:-836px -34px;}
+        #completedbutton.ban:hover {background-position:-864px -34px;}
+        #completedbutton.ban.active {background-position:-892px -34px;}
         #settings-button { display: none; }
 
 		#chatbox {height:32px;width:480px;background-size:960px;background-position:0 -64px;margin-left:-240px;bottom:2px;}
