@@ -89,9 +89,6 @@ module.exports = {
       "window.jQuery": "jquery'",
       "window.$": "jquery",
     }),
-    new HtmlWebpackPlugin({
-      template: "./client/index.html",
-    }),
     new MiniCssExtractPlugin({
       filename: "css/[name].[hash].bundle.css",
     }),
@@ -107,6 +104,14 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
       "process.env.SENTRY_DNS": JSON.stringify(process.env.SENTRY_DNS),
+    }),
+    new HtmlWebpackPlugin({
+      filename: "index.html",
+      template: "./client/index.html",
+    }),
+    new HtmlWebpackPlugin({
+      filename: "index_ban.html",
+      template: "./client/index_ban.html",
     }),
   ],
 };

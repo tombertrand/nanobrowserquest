@@ -113,6 +113,7 @@ class Player extends Character {
   isPasswordRequired: boolean;
   isPasswordValid: boolean;
   network: Network;
+  nanoPotions: number;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -540,7 +541,11 @@ class Player extends Character {
                   break;
               }
 
-              if (kind === Types.Entities.NANOPOTION || kind === Types.Entities.BANANOPOTION) {
+              if (
+                (kind === Types.Entities.NANOPOTION || kind === Types.Entities.BANANOPOTION) &&
+                self.nanoPotions < 5
+              ) {
+                self.nanoPotions += 1;
                 databaseHandler.foundNanoPotion(self.name);
               }
 
@@ -1757,6 +1762,7 @@ class Player extends Character {
     self.level = Types.getLevel(self.experience);
     self.orientation = randomOrientation();
     self.network = network;
+    self.nanoPotions = nanoPotions;
 
     if (!x || !y) {
       self.updatePosition();
