@@ -42,7 +42,7 @@ entityfactory.js
 The Npcs and other items which are in game
 
 entrypoint.js
-Code to stop people from cheating by giving themself a firefox suit
+Code to stop people from cheating by giving themself a monkey suit
 
 exceptions.js
 Sends exception if a user for example already have an item thats

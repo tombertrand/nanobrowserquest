@@ -14,7 +14,8 @@ interface StoreItem extends BackendStoreItem {
 
 interface BackendStoreItem {
   id: number;
-  xno: number;
+  nano: number;
+  ban: number;
   usd: number;
   usdRegular?: number;
   isAvailable: boolean;
@@ -86,9 +87,10 @@ class Store {
 
   addStoreItems(items: BackendStoreItem[]) {
     this.storeItems = this.storeItems.map(item => {
-      const { xno, usd, usdRegular, isAvailable } = items.find(({ id }) => item.id === id);
+      const { nano, ban, usd, usdRegular, isAvailable } = items.find(({ id }) => item.id === id);
 
-      item.xno = xno;
+      item.nano = nano;
+      item.ban = ban;
       item.usd = usd;
       item.usdRegular = usdRegular;
       item.isAvailable = isAvailable;
@@ -96,9 +98,10 @@ class Store {
       return item;
     });
 
-    this.storeItems.forEach(({ id, icon, name, description, xno, usd, usdRegular, isAvailable }) => {
+    this.storeItems.forEach(({ id, icon, name, description, nano, ban, usd, usdRegular, isAvailable }) => {
       const isLocked = id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1;
       const isDisabled = !isAvailable || (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1);
+      const price = this.app.game.network === "nano" ? nano : ban;
 
       // ${id === Types.Store.EXPANSION1 ? ' <img src="img/common/50-off.png" width="50" height="31">' : ""}
       const item = $("<div/>", {
@@ -110,7 +113,7 @@ class Store {
             <p class="name">${name}</p>
             ${description ? `<p class="description">${description}</p>` : ""}
             <p class="prices">
-              <span class="xno">Ӿ${xno}</span>
+              ${this.app.getCurrencyPrefix()}${price}${this.app.getCurrencySuffix()}
               <span class="usd"> / $${usd.toFixed(2)}</span>
               ${usdRegular ? `<span class="usd line-through">$${usdRegular.toFixed(2)}</span>` : ""}
             </p>
@@ -144,7 +147,8 @@ class Store {
     $("#store-item-purchase").empty().addClass("active");
 
     const item = this.storeItems.find(({ id: itemId }) => id === itemId)!;
-    const { icon, name, description, xno, requiresInventorySlot } = item;
+    const { icon, name, description, requiresInventorySlot } = item;
+    const price = item[this.app.game.network];
 
     this.app.game.client.sendPurchaseCreate(id, this.depositAccount);
 
@@ -177,7 +181,7 @@ class Store {
       $("<div/>", {
         class: "item-wrapper waiting-for-transaction",
         html: `
-            <p class="name">Send <span class="xno">Ӿ</span><b>${xno}</b> to</p>
+            <p class="name">Send ${this.app.getCurrencyPrefix()}<b>${price}</b>${this.app.getCurrencySuffix()} to</p>
             <p class="nano-account">${self.depositAccount}</p>
             <br/>
             <p class="name"><img src="img/common/spinner2.gif"> Waiting for transaction</p>
@@ -195,7 +199,7 @@ class Store {
           <div id="store-account-button"></div>
           <div class="or-line hide-on-mobile"><span>OR</span></div>
           <p class="note note-high-resolution">Use 
-            <a href="https://nault.cc/send?to=${self.depositAccount}&amount=${xno}" target="_blank">Nault.cc</a> to send the amount
+            <a href="https://nault.cc/send?to=${self.depositAccount}&amount=${price}" target="_blank">Nault.cc</a> to send the amount
           </p>
           <p class="note note-high-resolution">* Not sure? <a href="https://www.youtube.com/watch?v=rvdOzv0pnSw" target="_blank">Watch a tutorial</a></p>
         `,
@@ -215,7 +219,9 @@ class Store {
         },
       }).appendTo("#store-account-button");
 
-      const text = `nano:${this.depositAccount}?amount=${new BigNumber(raiToRaw(xno)).toString(10)}`;
+      const { network } = this.app.game;
+
+      const text = `${network}:${this.depositAccount}?amount=${new BigNumber(raiToRaw(price, network)).toString(10)}`;
 
       $("#qrcode").qrcode({ width: 130, height: 130, text });
     } else {
@@ -240,7 +246,7 @@ class Store {
           <p class="name">${name}</p>
           ${description ? `<p class="description">${description}</p>` : ""}
           <p class="description overflow-text">
-            <a href="https://nanolooker.com/block/${payment.hash}" target="_blank">${payment.hash}</a>
+            <a href="https://${this.app.game.explorer}.com/block/${payment.hash}" target="_blank">${payment.hash}</a>
           </p>
           <p class="description">${confirmedMessage}</p>
         `,

@@ -18,7 +18,7 @@ import death from "../sprites/death.json";
 import deathknight from "../sprites/deathknight.json";
 import desertnpc from "../sprites/desertnpc.json";
 import eye from "../sprites/eye.json";
-import firefox from "../sprites/firefox.json";
+import monkey from "../sprites/monkey.json";
 import forestnpc from "../sprites/forestnpc.json";
 import goblin from "../sprites/goblin.json";
 import goblin2 from "../sprites/goblin2.json";
@@ -47,11 +47,12 @@ import itemBluemorningstar from "../sprites/item-bluemorningstar.json";
 import itemBluesword from "../sprites/item-bluesword.json";
 import itemBurger from "../sprites/item-burger.json";
 import itemCake from "../sprites/item-cake.json";
-import itemFirepotion from "../sprites/item-firepotion.json";
+import itemMonkeypotion from "../sprites/item-monkeypotion.json";
 import itemFlask from "../sprites/item-flask.json";
 import itemRejuvenationpotion from "../sprites/item-rejuvenationpotion.json";
 import itemPoisonpotion from "../sprites/item-poisonpotion.json";
 import itemNanopotion from "../sprites/item-nanopotion.json";
+import itemBananopotion from "../sprites/item-bananopotion.json";
 import itemGemruby from "../sprites/item-gemruby.json";
 import itemGememerald from "../sprites/item-gememerald.json";
 import itemGemamethyst from "../sprites/item-gemamethyst.json";
@@ -182,7 +183,7 @@ const sprites = {
   deathknight,
   desertnpc,
   eye,
-  firefox,
+  monkey,
   forestnpc,
   goblin,
   goblin2,
@@ -211,11 +212,12 @@ const sprites = {
   "item-bluesword": itemBluesword,
   "item-burger": itemBurger,
   "item-cake": itemCake,
-  "item-firepotion": itemFirepotion,
+  "item-monkeypotion": itemMonkeypotion,
   "item-flask": itemFlask,
   "item-rejuvenationpotion": itemRejuvenationpotion,
   "item-poisonpotion": itemPoisonpotion,
   "item-nanopotion": itemNanopotion,
+  "item-bananopotion": itemBananopotion,
   "item-gemruby": itemGemruby,
   "item-gememerald": itemGememerald,
   "item-gemamethyst": itemGemamethyst,

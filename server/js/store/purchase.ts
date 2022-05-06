@@ -6,6 +6,8 @@ import { Sentry } from "../sentry";
 import { rawToRai } from "../utils";
 import { store } from "./store";
 
+import type { Network } from "../types";
+
 const ERROR_MESSAGES = {
   noSession: "Received payment for an unregistered session account.",
   wrongAmount: "Wrong amount sent to deposit address.",
@@ -13,27 +15,33 @@ const ERROR_MESSAGES = {
 };
 
 class Purchase {
+  network: Network = null;
   sessions = [];
   databaseHandler = null;
 
+  constructor(network: Network) {
+    this.network = network;
+  }
+
   create({ player, account, id }) {
     const accountSession = this.sessions.find(({ account: registeredAccount }) => account === registeredAccount);
+    const { nano, ban } = store.storeItems.find(item => id === item.id);
 
     if (accountSession) {
       this.sessions.map(session => {
         if (session.account === accountSession.account) {
           // Replace the purchase id in case the websocket is listening for another item id
-          session.id = accountSession.id;
+          session.id = id;
+          session.nano = nano;
+          session.ban = ban;
         }
 
         return session;
       });
     } else {
-      const { xno } = store.storeItems.find(item => id === item.id);
+      this.sessions.push({ player, account, id, nano, ban });
 
-      this.sessions.push({ player, account, id, xno });
-
-      if (!websocket.registerAccount(account)) {
+      if (!websocket[this.network].registerAccount(account)) {
         player.send([
           Types.Messages.PURCHASE_ERROR,
           {
@@ -44,9 +52,11 @@ class Purchase {
         Sentry.captureException(new Error(ERROR_MESSAGES.notAvailable), {
           extra: {
             player: player.name,
+            network: this.network,
             account,
             id,
-            xno,
+            nano,
+            ban,
           },
         });
       }
@@ -56,36 +66,45 @@ class Purchase {
   cancel(account) {
     if (!this.sessions.find(session => session.account === account)) return;
 
-    console.debug("PURCHASE - cancel: " + account);
+    console.debug(`[${this.network}] PURCHASE - cancel: ${account}`);
 
     this.sessions = this.sessions.filter(session => session.account !== account);
-    websocket.unregisterAccount(account);
+    websocket[this.network].unregisterAccount(account);
   }
 
   complete(account) {
-    console.debug("PURCHASE - complete: " + account);
+    console.debug(`[${this.network}] PURCHASE - complete: ${account}`);
 
     this.sessions = this.sessions.filter(session => session.account !== account);
-    websocket.unregisterAccount(account);
+    websocket[this.network].unregisterAccount(account);
   }
 
   settle(payment) {
-    console.debug("PURCHASE - settle: " + payment.account);
-
     const session = this.sessions.find(session => session.account === payment.account);
+
     if (!session) {
       this.error(ERROR_MESSAGES.noSession, payment);
-    } else if (payment.amount < session.xno) {
-      this.error(ERROR_MESSAGES.wrongAmount, { xno: session.xno, payment, player: session.player.name });
+    } else if (payment.amount < session[this.network]) {
+      this.error(ERROR_MESSAGES.wrongAmount, {
+        [this.network]: session[this.network],
+        payment,
+        player: session.player.name,
+      });
+
+      // let prefix =
 
       session.player.send([
         Types.Messages.PURCHASE_ERROR,
         {
-          message: `${ERROR_MESSAGES.wrongAmount}. You sent Ӿ${payment.amount} instead of sending Ӿ${session.xno}. Try again or contact an admin.`,
+          message: `${ERROR_MESSAGES.wrongAmount}. You sent ${payment.amount} instead of sending ${
+            session[this.network]
+          }. Try again or contact an admin.`,
         },
       ]);
       this.cancel(session.account);
     } else {
+      console.debug(`[${this.network}] PURCHASE - settle: ${payment.account}`);
+
       this.databaseHandler.settlePurchase({ player: session.player, ...payment, id: session.id });
       this.complete(session.account);
     }
@@ -101,13 +120,20 @@ class Purchase {
 }
 
 class Websocket {
+  network: Network = null;
+  websocketDomain = null;
   connection = null;
   isReady = false;
   watchedAccounts = [];
   keepAliveInterval = null;
 
-  constructor() {
-    this.connection = new ReconnectingWebSocket(process.env.WEBSOCKET_DOMAIN, [], {
+  constructor(network: Network) {
+    this.network = network;
+    this.websocketDomain = network === "nano" ? process.env.NANO_WEBSOCKET_DOMAIN : process.env.BAN_WEBSOCKET_DOMAIN;
+
+    console.debug(`[${this.network}] WEBSOCKET - ${this.websocketDomain}`);
+
+    this.connection = new ReconnectingWebSocket(this.websocketDomain, [], {
       WebSocket: WS,
       connectionTimeout: 1000,
       maxRetries: 100000,
@@ -116,7 +142,7 @@ class Websocket {
     });
 
     this.connection.onopen = () => {
-      console.debug("WEBSOCKET - onopen");
+      console.debug(`[${this.network}] WEBSOCKET - onopen`);
       this.isReady = true;
 
       const confirmation_subscription = {
@@ -134,18 +160,18 @@ class Websocket {
       this.keepAlive();
 
       // @NOTE: Re-add sessions if the socket reconnects
-      purchase.sessions?.forEach(({ account }) => {
-        websocket.registerAccount(account);
+      purchase[this.network].sessions?.forEach(({ account }) => {
+        this.registerAccount(account);
       });
     };
 
     this.connection.onclose = () => {
-      console.debug("WEBSOCKET - onclosed");
+      console.debug(`[${this.network}] WEBSOCKET - onclosed`);
       this.isReady = false;
     };
 
     this.connection.onerror = err => {
-      console.debug("WEBSOCKET - onerror", err.message);
+      console.debug(`[${this.network}] WEBSOCKET - onerror: ${err.message}`);
 
       Sentry.captureException(err);
       this.isReady = false;
@@ -160,7 +186,7 @@ class Websocket {
         block: { link_as_account },
       } = message;
 
-      purchase.settle({ account: link_as_account, amount: rawToRai(amount), hash });
+      purchase[this.network].settle({ account: link_as_account, amount: rawToRai(amount, this.network), hash });
     };
   }
 
@@ -178,7 +204,7 @@ class Websocket {
       return false;
     }
 
-    console.debug("WEBSOCKET - registerAccount: " + account);
+    console.debug(`WEBSOCKET ${this.network} - registerAccount: ${account}`);
 
     try {
       const confirmation_subscription = {
@@ -202,7 +228,7 @@ class Websocket {
       this.watchedAccounts.splice(index, 1);
     }
 
-    console.debug("WEBSOCKET - unregisterAccount: " + account);
+    console.debug(`[${this.network}] WEBSOCKET - unregisterAccount: ${account}`);
 
     try {
       const confirmation_subscription = {
@@ -220,7 +246,14 @@ class Websocket {
   }
 }
 
-const purchase = new Purchase();
-const websocket = new Websocket();
+const purchase: { [key in Network]: Purchase } = {
+  nano: new Purchase("nano"),
+  ban: new Purchase("ban"),
+};
 
-export { purchase, websocket };
+const websocket: { [key in Network]: Websocket } = {
+  nano: new Websocket("nano"),
+  ban: new Websocket("ban"),
+};
+
+export { purchase };

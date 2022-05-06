@@ -14,8 +14,6 @@ import { store } from "./store/store";
 import {
   getClassicMaxPayout,
   getClassicPayout,
-  getExpansion1MaxPayout,
-  getExpansion1Payout,
   random,
   randomInt,
   randomOrientation,
@@ -24,15 +22,15 @@ import {
 } from "./utils";
 
 import type Party from "./party";
+import type { Network } from "./types";
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
-const MAX_CLASSIC_PAYOUT = getClassicMaxPayout();
-const MAX_EXPANSION1_PAYOUT = getExpansion1MaxPayout();
 
 let payoutIndex = 0;
-// const NO_TIMEOUT_ACCOUNT = "nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
-const NO_TIMEOUT_ACCOUNT = "nano_3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6m8epqxmy7anix";
+
+// const NO_TIMEOUT_ACCOUNT = "3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
+const NO_TIMEOUT_ACCOUNT = "3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6m8epqxmy7anix";
 
 class Player extends Character {
   id: number;
@@ -56,12 +54,10 @@ class Player extends Character {
   inventoryCount: any[];
   achievement: any[];
   hasRequestedBossPayout: boolean;
-  hasRequestedNecromancerPayout: boolean;
   expansion1: boolean;
   depositAccount: any;
   chatBanEndTime: number;
   hash: string;
-  hash1: string;
   name: string;
   ip: string;
   account: any;
@@ -84,7 +80,7 @@ class Player extends Character {
   capeSaturate: number;
   capeContrast: number;
   capeBrightness: number;
-  firepotionTimeout: any;
+  monkeypotionTimeout: any;
   createdAt: number;
   waypoints: any;
   group: any;
@@ -116,6 +112,8 @@ class Player extends Character {
   minotaurDamage: number;
   isPasswordRequired: boolean;
   isPasswordValid: boolean;
+  network: Network;
+  nanoPotions: number;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -123,7 +121,8 @@ class Player extends Character {
 
     var self = this;
 
-    purchase.databaseHandler = databaseHandler;
+    purchase["nano"].databaseHandler = databaseHandler;
+    purchase["ban"].databaseHandler = databaseHandler;
     this.databaseHandler = databaseHandler;
 
     this.server = worldServer;
@@ -131,6 +130,7 @@ class Player extends Character {
 
     this.hasEnteredGame = false;
     this.isDead = false;
+    this.network = null;
     this.haters = {};
     this.lastCheckpoint = null;
     this.formatChecker = new FormatChecker();
@@ -154,14 +154,12 @@ class Player extends Character {
     this.inventoryCount = [];
     this.achievement = [];
     this.hasRequestedBossPayout = false;
-    this.hasRequestedNecromancerPayout = false;
 
     this.expansion1 = false;
     this.depositAccount = null;
 
     this.chatBanEndTime = 0;
     this.hash = null;
-    this.hash1 = null;
 
     this.connection.listen(async message => {
       const action = parseInt(message[0]);
@@ -217,7 +215,19 @@ class Player extends Character {
 
         var name = sanitize(message[1]);
         var account = sanitize(message[2]);
-        var password = sanitize(message[3]);
+        var [network]: [Network] = account.split("_");
+        var password;
+
+        if (!["nano", "ban"].includes(network)) {
+          self.connection.sendUTF8("invalidconnection");
+          self.connection.close("Bad network.");
+          return;
+        }
+        // var network: Network = sanitize(message[3]) === "ban" ? "ban" : "nano";
+
+        if (action === Types.Messages.LOGIN) {
+          password = sanitize(message[3]);
+        }
 
         // Always ensure that the name is not longer than a maximum length.
         // (also enforced by the maxlength attribute of the name input element).
@@ -232,6 +242,7 @@ class Player extends Character {
           return;
         }
         self.account = account.substr(0, 65);
+        self.network = network;
 
         // @TODO rate-limit player creation
         if (action === Types.Messages.CREATE) {
@@ -502,14 +513,14 @@ class Player extends Character {
               let index = Types.Entities.Artifact.indexOf(kind);
 
               databaseHandler.foundArtifact(self.name, index);
-            } else if (kind === Types.Entities.FIREPOTION) {
+            } else if (kind === Types.Entities.MONKEYPOTION) {
               self.updateHitPoints(true);
-              self.broadcast(self.equip({ kind: Types.Entities.FIREFOX, level: 1 }));
-              self.firepotionTimeout = setTimeout(function () {
+              self.broadcast(self.equip({ kind: Types.Entities.MONKEY, level: 1 }));
+              self.monkeypotionTimeout = setTimeout(function () {
                 self.broadcast(
                   self.equip({ kind: self.armorKind, level: self.armorLevel, bonus: self.armorBonus, type: "armor" }),
                 ); // return to normal after 10 sec
-                self.firepotionTimeout = null;
+                self.monkeypotionTimeout = null;
               }, 10000);
               self.sendPlayerStats();
             } else if (Types.isHealingItem(kind)) {
@@ -522,6 +533,7 @@ class Player extends Character {
                   amount = 100;
                   break;
                 case Types.Entities.NANOPOTION:
+                case Types.Entities.BANANOPOTION:
                   amount = 200;
                   break;
                 case Types.Entities.REJUVENATIONPOTION:
@@ -529,7 +541,11 @@ class Player extends Character {
                   break;
               }
 
-              if (kind === Types.Entities.NANOPOTION) {
+              if (
+                (kind === Types.Entities.NANOPOTION || kind === Types.Entities.BANANOPOTION) &&
+                self.nanoPotions < 5
+              ) {
+                self.nanoPotions += 1;
                 databaseHandler.foundNanoPotion(self.name);
               }
 
@@ -590,12 +606,11 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.BOSS_CHECK) {
-        if ((self.hash || self.hash1) && !message[1]) {
+        if (self.hash && !message[1]) {
           self.connection.send({
             type: Types.Messages.BOSS_CHECK,
             status: "completed",
             hash: self.hash,
-            hash1: self.hash1,
           });
           return;
         }
@@ -625,13 +640,8 @@ class Player extends Character {
         });
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
         const isClassicPayout = message[1] && message[1] === Types.Entities.BOSS;
-        const isExpansion1Payout = message[1] && message[1] === Types.Entities.NECROMANCER;
 
-        if (
-          (!isClassicPayout && !isExpansion1Payout) ||
-          (isClassicPayout && self.hasRequestedBossPayout) ||
-          (isExpansion1Payout && self.hasRequestedNecromancerPayout)
-        ) {
+        if (isClassicPayout && self.hasRequestedBossPayout) {
           return;
         }
 
@@ -663,31 +673,8 @@ class Player extends Character {
 
           console.info(`Reason: ${reason}`);
           databaseHandler.banPlayer(self, reason);
-        } else if (
-          isExpansion1Payout &&
-          (self.hash1 ||
-            self.hasRequestedNecromancerPayout ||
-            // Check for required achievements
-            !self.achievement[24] || // -> XNO
-            !self.achievement[25] || // -> FREEZING_LANDS
-            !self.achievement[34] || // -> WALK_ON_WATER
-            !self.achievement[36] || // -> BLACK_MAGIC
-            !self.expansion1)
-        ) {
-          let reason;
-          if (self.hash1) {
-            reason = `Already have hash1 ${self.hash1}`;
-          } else if (self.hasRequestedNecromancerPayout) {
-            reason = `Has already requested payout for Expansion1`;
-          } else if (!self.achievement[24] || !self.achievement[25] || !self.achievement[34] || !self.achievement[36]) {
-            reason = `Player has not completed required quests ${self.achievement[24]}, ${self.achievement[25]}, ${self.achievement[34]}, ${self.achievement[36]}`;
-          } else if (self.expansion1) {
-            reason = `Requested payout without having bought Expansion1`;
-          }
-
-          console.info(`Reason: ${reason}`);
-          databaseHandler.banPlayer(self, reason);
-        } else {
+        }
+        {
           self.connection.send({
             type: Types.Messages.NOTIFICATION,
             message: "Payout is being sent!",
@@ -697,15 +684,11 @@ class Player extends Character {
           let maxAmount;
           if (isClassicPayout) {
             self.hasRequestedBossPayout = true;
-            amount = getClassicPayout(self.achievement.slice(0, 24));
-            maxAmount = MAX_CLASSIC_PAYOUT;
-          } else if (isExpansion1Payout) {
-            self.hasRequestedNecromancerPayout = true;
-            amount = getExpansion1Payout(self.achievement.slice(24, 40));
-            maxAmount = MAX_EXPANSION1_PAYOUT;
+            amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
+            maxAmount = getClassicMaxPayout(self.network);
           }
 
-          const raiPayoutAmount = rawToRai(amount);
+          const raiPayoutAmount = rawToRai(amount, self.network);
 
           if (raiPayoutAmount > maxAmount) {
             databaseHandler.banPlayer(
@@ -733,9 +716,6 @@ class Player extends Character {
             if (isClassicPayout) {
               self.hash = hash;
               databaseHandler.setHash(self.name, hash);
-            } else if (isExpansion1Payout) {
-              self.hash1 = hash;
-              databaseHandler.setHash1(self.name, hash);
             }
           } else {
             console.info("PAYOUT FAILED: " + self.name + " " + self.account);
@@ -755,7 +735,6 @@ class Player extends Character {
             type: Types.Messages.NOTIFICATION,
             message: msg,
             hash: self.hash,
-            hash1: self.hash1,
           });
 
           self.server.updatePopulation();
@@ -807,12 +786,12 @@ class Player extends Character {
         console.info("PURCHASE_CREATE: " + self.name + " " + message[1] + " " + message[2]);
 
         if (message[2] === self.depositAccount) {
-          purchase.create({ player: self, account: self.depositAccount, id: message[1] });
+          purchase[self.network].create({ player: self, account: self.depositAccount, id: message[1] });
         }
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
         console.info("PURCHASE_CANCEL: " + self.name + " " + message[1]);
 
-        purchase.cancel(message[1]);
+        purchase[self.network].cancel(message[1]);
       } else if (action === Types.Messages.STORE_ITEMS) {
         console.info("STORE_ITEMS");
 
@@ -948,8 +927,8 @@ class Player extends Character {
     });
 
     this.connection.onClose(function () {
-      if (self.firepotionTimeout) {
-        clearTimeout(self.firepotionTimeout);
+      if (self.monkeypotionTimeout) {
+        clearTimeout(self.monkeypotionTimeout);
       }
       clearTimeout(self.disconnectTimeout);
       if (self.exit_callback) {
@@ -1165,8 +1144,8 @@ class Player extends Character {
 
     if (this.hitPoints <= 0) {
       this.isDead = true;
-      if (this.firepotionTimeout) {
-        clearTimeout(this.firepotionTimeout);
+      if (this.monkeypotionTimeout) {
+        clearTimeout(this.monkeypotionTimeout);
       }
     }
 
@@ -1593,7 +1572,7 @@ class Player extends Character {
   resetTimeout() {
     clearTimeout(this.disconnectTimeout);
     // This account doesn't timeout
-    if (this.account === NO_TIMEOUT_ACCOUNT) return;
+    if (this.account === `${this.network}_${NO_TIMEOUT_ACCOUNT}`) return;
     this.disconnectTimeout = setTimeout(this.timeout.bind(this), 1000 * 60 * 15); // 15 min.
   }
 
@@ -1715,7 +1694,6 @@ class Player extends Character {
     inventory,
     stash,
     hash,
-    hash1,
     nanoPotions,
     gems,
     artifact,
@@ -1724,6 +1702,7 @@ class Player extends Character {
     depositAccount,
     depositAccountIndex,
     settings,
+    network,
   }) {
     var self = this;
 
@@ -1772,9 +1751,7 @@ class Player extends Character {
     self.inventory = inventory;
     self.stash = stash;
     self.hash = hash;
-    self.hash1 = hash1;
     self.hasRequestedBossPayout = !!hash;
-    self.hasRequestedNecromancerPayout = !!hash1;
     self.capeHue = settings.capeHue;
     self.capeSaturate = settings.capeSaturate;
     self.capeContrast = settings.capeContrast;
@@ -1784,6 +1761,8 @@ class Player extends Character {
     self.experience = exp;
     self.level = Types.getLevel(self.experience);
     self.orientation = randomOrientation();
+    self.network = network;
+    self.nanoPotions = nanoPotions;
 
     if (!x || !y) {
       self.updatePosition();
@@ -1817,7 +1796,6 @@ class Player extends Character {
       inventory,
       stash,
       hash,
-      hash1,
       nanoPotions,
       gems,
       artifact,
@@ -1828,6 +1806,7 @@ class Player extends Character {
       self.server.cowLevelCoords,
       self.hasParty() ? { partyId: self.partyId, members, partyLeader } : null,
       settings,
+      network,
     ]);
 
     self.calculateBonus();

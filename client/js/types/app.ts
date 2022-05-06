@@ -1,7 +1,7 @@
 export interface App {
   config: { dev: { host: string; port: number; dispatcher: boolean }; build: any; local: any };
   initAchievementList(achievements: any);
-  initUnlockedAchievements(unlockedAchievementIds: any, totalNano: any);
+  initUnlockedAchievements(unlockedAchievementIds: any, totalPayout: any);
   closeWaypoint();
   updateNanoPotions(nanoPotions: any);
   updateGems(gems: any);
@@ -43,6 +43,7 @@ export interface App {
   initTargetHud: () => void;
   initExpBar: () => void;
   initPlayerInfo: () => void;
+  initNanoPotions: () => void;
   setMouseCoordinates: (arg0: any) => void;
   closeInGameScroll: (arg0: string) => void;
   toggleMute: () => void;

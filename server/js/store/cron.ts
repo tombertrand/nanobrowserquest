@@ -4,18 +4,18 @@ import fetch from "node-fetch";
 import { Sentry } from "../sentry";
 import { nodeCache } from "./cache";
 
-const getNanoUsdPrice = async () => {
+const getNetworkUsdPrice = async () => {
   try {
-    const res = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd&include_24hr_change=true`,
-    );
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=nano,banano&vs_currencies=usd`);
     const json = await res.json();
 
     const {
-      nano: { usd },
+      nano: { usd: nanoToUsd },
+      banano: { usd: banToUsd },
     } = json;
 
-    nodeCache.set("PRICE_NANO_USD", usd);
+    nodeCache.set("PRICE_NANO_USD", nanoToUsd);
+    nodeCache.set("PRICE_BAN_USD", banToUsd);
   } catch (err) {
     console.log("Error", err);
     Sentry.captureException(err);
@@ -25,7 +25,7 @@ const getNanoUsdPrice = async () => {
 // https://crontab.guru/#*/2_*_*_*_*
 // At every 2nd minute.
 cron.schedule("*/2 * * * *", async () => {
-  getNanoUsdPrice();
+  getNetworkUsdPrice();
 });
 
-getNanoUsdPrice();
+getNetworkUsdPrice();

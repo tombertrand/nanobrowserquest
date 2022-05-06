@@ -24,13 +24,26 @@ export class Server {
     const server = createServer(app);
     let cors = null;
 
+    this.io = new SocketServer(server, { parser: MessageParser, cors });
+
     if (process.env.NODE_ENV === "development") {
       cors = { origin: "http://localhost:8010" };
     }
 
-    this.io = new SocketServer(server, { parser: MessageParser, cors });
+    app.use(function (req, res, next) {
+      console.log("~~~~~~req.host", req.host);
 
-    app.use(express.static(path.join(process.cwd(), "dist/client")));
+      switch (req.host) {
+        case "nanobrowserquet.com":
+          express.static(path.join(process.cwd(), "dist/client"))(req, res, next);
+          break;
+        case "bananobrowserquest.com":
+          express.static(path.join(process.cwd(), "dist/client/index_ban.html"))(req, res, next);
+          break;
+        default:
+          app.use(express.static(path.join(process.cwd(), "dist/client")));
+      }
+    });
 
     this.io.on("connection", function (connection) {
       console.info("a user connected");

@@ -86,7 +86,7 @@ var NpcTalk = {
         "Greetings.",
         "I am the inventor of these two potions.",
         "The red one will replenish your health points...",
-        "The orange one will turn you into a firefox and make you invincible...",
+        "The green one will turn you into a monkey and make you invincible...",
         "But it only lasts for a short while.",
         "So make good use of it!",
         "Now if you'll excuse me, I need to get back to my experiments...",
@@ -104,7 +104,7 @@ var NpcTalk = {
     },
     {
       condition(game: any) {
-        return game.player.getSpriteName() == "firefox" && !game.player.invincible;
+        return game.player.getSpriteName() == "monkey" && !game.player.invincible;
       },
       text: [
         "Ha ha ha, *name*",

@@ -264,6 +264,10 @@ EntityFactory.builders[Types.Entities.NANOPOTION] = function (id) {
   return new Items.NanoPotion(id);
 };
 
+EntityFactory.builders[Types.Entities.BANANOPOTION] = function (id) {
+  return new Items.BananoPotion(id);
+};
+
 EntityFactory.builders[Types.Entities.GEMRUBY] = function (id) {
   return new Items.GemRuby(id);
 };
@@ -388,8 +392,8 @@ EntityFactory.builders[Types.Entities.COWKINGHORN] = function (id) {
   return new Items.CowkingHorn(id);
 };
 
-EntityFactory.builders[Types.Entities.FIREPOTION] = function (id) {
-  return new Items.FirePotion(id);
+EntityFactory.builders[Types.Entities.MONKEYPOTION] = function (id) {
+  return new Items.Monkeypotion(id);
 };
 
 EntityFactory.builders[Types.Entities.BURGER] = function (id) {

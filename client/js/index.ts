@@ -102,7 +102,7 @@ var initApp = function () {
 
       app.hideWindows();
       if (!isOpened) {
-        if ($("#transaction-hash").text() || $("#transaction-hash1").text()) {
+        if ($("#transaction-hash").text()) {
           app.toggleCompleted();
         } else {
           app.toggleAbout();
@@ -269,17 +269,17 @@ var initApp = function () {
       app.animateParchment("loadcharacter", "loadcharacter");
     });
 
-    // $("#running-coder .link").on("click", () => {
-    //   $("#loginnameinput").val("running-coder").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#running-coder .link").on("click", () => {
+      $("#loginnameinput").val("running-coder").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
-    // $("#ddd .link").on("click", () => {
-    //   $("#loginnameinput").val("ddd").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#banano .link").on("click", () => {
+      $("#loginnameinput").val("banano").show();
+      $("#loginaccountinput").val("ban_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
     // $("#aaa1 .link").on("click", () => {
     //   $("#loginnameinput").val("aaa1").show();
@@ -349,24 +349,10 @@ var initGame = function () {
     $("body").addClass("death");
   });
 
-  game.onGameCompleted(function ({ hash, hash1, fightAgain, show = false }) {
+  game.onGameCompleted(function ({ hash, fightAgain, show = false }) {
     if (hash) {
-      $("#completed")
-        .find("#transaction-hash")
-        .attr("href", "https://nanolooker.com/block/" + hash)
-        .text(hash);
+      $("#completed").find("#transaction-hash").attr("href", `https://${game.explorer}.com/block/${hash}`).text(hash);
       $("#container-payout-hash").show();
-
-      if (!hash1) {
-        $("#container-payout-hash").find(".no-hash1").show();
-      }
-    }
-    if (hash1) {
-      $("#completed")
-        .find("#transaction-hash1")
-        .attr("href", "https://nanolooker.com/block/" + hash1)
-        .text(hash1);
-      $("#container-payout-hash1").show();
     }
 
     $("#completedbutton").addClass("completed");
@@ -449,7 +435,7 @@ var initGame = function () {
 
     $("#player-list").empty();
     if (Array.isArray(game.worldPlayers)) {
-      game.worldPlayers.forEach(({ name, level, hash, hash1 }) => {
+      game.worldPlayers.forEach(({ name, level, hash, network }) => {
         let className = "";
         if (name === game.storage.data.player.name) {
           className = "active";
@@ -461,8 +447,11 @@ var initGame = function () {
           class: className,
           html: `
             <span>${name}</span>
-            ${hash ? '<span class="xno-payout" title="Killed the Skeleton King and received a payout"></span>' : ""}
-            ${hash1 ? '<span class="xno-payout" title="Killed the Necromancer and received a payout"></span>' : ""}
+            ${
+              hash
+                ? `<span class="payout-icon ${network}" title="Killed the Skeleton King and received a ${network} payout"></span>`
+                : ""
+            }
             <span>lv.${level}</span>
           `,
         }).appendTo("#player-list");
@@ -477,8 +466,8 @@ var initGame = function () {
     // }
   });
 
-  game.onAchievementUnlock(function (id, name, nano) {
-    app.unlockAchievement(id, name, nano);
+  game.onAchievementUnlock(function (id, name, payout) {
+    app.unlockAchievement(id, name, payout);
   });
 
   game.onNotification(app.showMessage.bind(app));
@@ -486,7 +475,6 @@ var initGame = function () {
   app.initHealthBar();
   app.initTargetHud();
   app.initExpBar();
-  app.initPlayerInfo();
 
   $("#nameinput").val("");
   // $("#accountinput").val("");

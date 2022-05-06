@@ -1,8 +1,14 @@
 import fetch from "node-fetch";
 
-const { RPC_DOMAIN } = process.env;
+import type { Network } from "./types";
 
-const rpc = async (action, params) => {
+const { NANO_RPC_DOMAIN, BAN_RPC_DOMAIN } = process.env;
+const rpcToDomainMap: { [key in Network]: string } = {
+  nano: NANO_RPC_DOMAIN,
+  ban: BAN_RPC_DOMAIN,
+};
+
+const rpc = async (action, params, network) => {
   let res;
   let json;
 
@@ -14,7 +20,7 @@ const rpc = async (action, params) => {
     });
 
     // @TODO Figure out what to do with rpc enabled...
-    res = await fetch(RPC_DOMAIN, {
+    res = await fetch(rpcToDomainMap[network], {
       method: "POST",
       body,
     });

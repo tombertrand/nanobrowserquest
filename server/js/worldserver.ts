@@ -216,7 +216,7 @@ class World {
       });
 
       player.onExit(function () {
-        purchase.cancel(player.depositAccount);
+        purchase[player.network].cancel(player.depositAccount);
 
         console.info(player.name + " has left the game.");
         if (player.hasParty()) {
@@ -890,12 +890,12 @@ class World {
   getPlayerPopulation() {
     let players = _.sortBy(
       // @ts-ignore
-      Object.values(this.players).reduce((acc: any[], { name, level, hash, hash1 }) => {
+      Object.values(this.players).reduce((acc: any[], { name, level, hash, network }) => {
         acc.push({
           name,
           level,
+          network,
           hash: !!hash,
-          hash1: !!hash1,
         });
 
         return acc;
@@ -1259,8 +1259,12 @@ class World {
     }
 
     if (!Types.isBoss(mob.kind) && [23, 42, 69].includes(v)) {
-      //@NOTE 3% chance to drop a NANO potion on non-boss monsters
-      return "nanopotion";
+      //@NOTE 3% chance to drop a NANO/BANANO potion on non-boss monsters
+      if (attacker.network === "ban") {
+        return "bananopotion";
+      } else {
+        return "nanopotion";
+      }
     } else {
       for (var itemName in drops) {
         var percentage = drops[itemName];
@@ -1297,6 +1301,7 @@ class World {
     const kind = Types.getKindFromString(itemName);
 
     // var randomDrops = ["amuletfrozen"] as any;
+    // var randomDrops = ["bananopotion"] as any;
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrop = random(randomDrops.length);

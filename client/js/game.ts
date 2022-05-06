@@ -32,6 +32,9 @@ import Warrior from "./warrior";
 
 import type { ChatType } from "../../server/js/types";
 
+export type Network = "nano" | "ban";
+export type Explorer = "nanolooker" | "bananolooker";
+
 class Game {
   app: AppType;
   ready: boolean;
@@ -139,6 +142,8 @@ class Game {
   unlock_callback: any;
   slotToDelete?: number;
   worldPlayers: any[];
+  network: Network;
+  explorer: Explorer;
 
   constructor(app) {
     this.app = app;
@@ -155,6 +160,8 @@ class Game {
     this.cowLevelPortalCoords = null;
     this.minotaurPortalStart = false;
     this.minotaurLevelPortalCoords = { x: 34, y: 498 };
+    this.network = null;
+    this.explorer = null;
 
     this.renderer = null;
     this.updater = null;
@@ -305,7 +312,7 @@ class Game {
       "frozenarmor",
       "diamondarmor",
       "spikearmor",
-      "firefox",
+      "monkey",
       "death",
       "dagger",
       "axe",
@@ -351,6 +358,7 @@ class Game {
       "item-rejuvenationpotion",
       "item-poisonpotion",
       "item-nanopotion",
+      "item-bananopotion",
       "item-gemruby",
       "item-gememerald",
       "item-gemamethyst",
@@ -386,7 +394,7 @@ class Game {
       "item-burger",
       "morningstar",
       "item-morningstar",
-      "item-firepotion",
+      "item-monkeypotion",
     ];
   }
 
@@ -714,14 +722,14 @@ class Game {
     var self = this;
 
     $("#upgrade-preview-btn").on("click", function () {
-      self.player.upgrade.forEach(({ item, level, slot, bonus }) => {
+      self.player.upgrade.forEach(({ item, level, slot, bonus, isUnique }) => {
         if (slot !== 0) return;
         const previewSlot = $(`#upgrade .item-slot:eq(10)`);
 
         if (previewSlot.is(":empty")) {
           previewSlot.append(
             $("<div />", {
-              class: `item-not-draggable`,
+              class: `item-not-draggable ${isUnique ? "item-unique" : ""}`,
               css: {
                 "background-image": `url("${self.getIconPath(item, parseInt(level) + 1)}")`,
               },
@@ -907,7 +915,7 @@ class Game {
     if (this.player.weaponName !== "dagger") {
       $(".item-equip-weapon").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${this.player.weaponBonus ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.weaponName)}")`,
           },
@@ -920,7 +928,7 @@ class Game {
     if (this.player.armorName !== "clotharmor") {
       $(".item-equip-armor").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${this.player.armorBonus ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.armorName)}")`,
           },
@@ -934,7 +942,7 @@ class Game {
     if (this.player.beltName) {
       $(".item-equip-belt").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${this.player.beltBonus ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.beltName)}")`,
           },
@@ -948,7 +956,7 @@ class Game {
     if (this.player.cape) {
       $(".item-equip-cape").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${this.player.capeBonus.length >= 5 ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.cape, this.player.capeLevel)}")`,
           },
@@ -962,7 +970,7 @@ class Game {
     if (this.player.ring1Name) {
       $(".item-ring1").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${Types.isUniqueRing(this.player.ring1Name) ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.ring1Name)}")`,
           },
@@ -976,7 +984,7 @@ class Game {
     if (this.player.ring2Name) {
       $(".item-ring2").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${Types.isUniqueRing(this.player.ring2Name) ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.ring2Name)}")`,
           },
@@ -990,7 +998,7 @@ class Game {
     if (this.player.amuletName) {
       $(".item-amulet").append(
         $("<div />", {
-          class: "item-draggable",
+          class: `item-draggable ${Types.isUniqueAmulet(this.player.amuletName) ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.amuletName)}")`,
           },
@@ -1013,10 +1021,10 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-inventory").empty();
 
-    this.player.inventory.forEach(({ item, level, quantity, bonus, requirement, slot }) => {
+    this.player.inventory.forEach(({ item, level, quantity, bonus, requirement, isUnique, slot }) => {
       $(`#item-inventory .item-slot:eq(${slot})`).append(
         $("<div />", {
-          class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+          class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(item, level)}")`,
           },
@@ -1044,10 +1052,10 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-stash").empty();
 
-    this.player.stash.forEach(({ item, level, quantity, bonus, requirement, slot }) => {
+    this.player.stash.forEach(({ item, level, quantity, bonus, requirement, isUnique, slot }) => {
       $(`#item-stash .item-slot:eq(${slot})`).append(
         $("<div />", {
-          class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+          class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(item, level)}")`,
           },
@@ -1119,7 +1127,7 @@ class Game {
     let successRate;
     let itemLevel;
 
-    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus }) => {
+    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, isUnique }) => {
       if (slot === 0 && level) {
         itemLevel = level;
         const successRates = Types.getUpgradeSuccessRates();
@@ -1138,7 +1146,7 @@ class Game {
         .removeClass("item-droppable")
         .append(
           $("<div />", {
-            class: `item-draggable ${quantity ? "item-quantity" : ""}`,
+            class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
             css: {
               "background-image": `url("${this.getIconPath(item, level)}")`,
             },
@@ -1175,12 +1183,14 @@ class Game {
         name: "A True Warrior",
         desc: "Find a new weapon",
         nano: 3,
+        ban: 75,
       },
       INTO_THE_WILD: {
         id: 2,
         name: "Into the Wild",
         desc: "Venture outside the village",
         nano: 2,
+        ban: 50,
       },
       ANGRY_RATS: {
         id: 3,
@@ -1190,42 +1200,49 @@ class Game {
           return self.storage.getRatCount() >= 10;
         },
         nano: 5,
+        ban: 125,
       },
       SMALL_TALK: {
         id: 4,
         name: "Small Talk",
         desc: "Talk to a non-player character",
         nano: 3,
+        ban: 75,
       },
       FAT_LOOT: {
         id: 5,
         name: "Fat Loot",
         desc: "Get a new armor set",
         nano: 5,
+        ban: 125,
       },
       UNDERGROUND: {
         id: 6,
         name: "Underground",
         desc: "Explore at least one cave",
         nano: 3,
+        ban: 75,
       },
       AT_WORLDS_END: {
         id: 7,
         name: "At World's End",
         desc: "Reach the south shore",
         nano: 5,
+        ban: 125,
       },
       COWARD: {
         id: 8,
         name: "Coward",
         desc: "Successfully escape an enemy",
         nano: 4,
+        ban: 100,
       },
       TOMB_RAIDER: {
         id: 9,
         name: "Tomb Raider",
         desc: "Find the graveyard",
         nano: 5,
+        ban: 125,
       },
       SKULL_COLLECTOR: {
         id: 10,
@@ -1235,18 +1252,21 @@ class Game {
           return self.storage.getSkeletonCount() >= 10;
         },
         nano: 8,
+        ban: 200,
       },
       NINJA_LOOT: {
         id: 11,
         name: "Ninja Loot",
         desc: "Get an item you didn't fight for",
         nano: 4,
+        ban: 100,
       },
       NO_MANS_LAND: {
         id: 12,
         name: "No Man's Land",
         desc: "Travel through the desert",
         nano: 3,
+        ban: 75,
       },
       HUNTER: {
         id: 13,
@@ -1256,6 +1276,7 @@ class Game {
           return self.storage.getTotalKills() >= 50;
         },
         nano: 4,
+        ban: 100,
       },
       STILL_ALIVE: {
         id: 14,
@@ -1265,6 +1286,7 @@ class Game {
           return self.storage.getTotalRevives() >= 5;
         },
         nano: 5,
+        ban: 125,
       },
       MEATSHIELD: {
         id: 15,
@@ -1274,18 +1296,21 @@ class Game {
           return self.storage.getTotalDamageTaken() >= 5000;
         },
         nano: 7,
+        ban: 175,
       },
       NYAN: {
         id: 16,
         name: "Nyan Cat",
         desc: "Find the Nyan cat",
         nano: 3,
+        ban: 75,
       },
       HOT_SPOT: {
         id: 17,
         name: "Hot Spot",
         desc: "Enter the volcanic mountains",
         nano: 3,
+        ban: 75,
       },
       SPECTRE_COLLECTOR: {
         id: 18,
@@ -1295,31 +1320,36 @@ class Game {
           return self.storage.getSpectreCount() >= 15;
         },
         nano: 8,
+        ban: 200,
       },
       GEM_HUNTER: {
         id: 19,
         name: "Gem Hunter",
         desc: "Collect all the hidden gems",
         nano: 8,
+        ban: 200,
       },
       NANO_POTIONS: {
         id: 20,
         name: "Lucky Find",
-        desc: "Collect 5 NANO potions",
+        desc: self.network === "ban" ? "Collect 5 BANANO potions" : "Collect 5 NANO potions",
         nano: 8,
+        ban: 200,
       },
       HERO: {
         id: 21,
         name: "Hero",
         desc: "Defeat the Skeleton King",
         nano: 25,
+        ban: 625,
       },
-      FOXY: {
+      MONKEY: {
         id: 22,
-        name: "Foxy",
-        desc: "Find the Firefox costume",
+        name: "Monkey",
+        desc: "Find the Monkey costume",
         hidden: true,
         nano: 2,
+        ban: 50,
       },
       FOR_SCIENCE: {
         id: 23,
@@ -1327,6 +1357,7 @@ class Game {
         desc: "Enter into a portal",
         hidden: true,
         nano: 4,
+        ban: 100,
       },
       RICKROLLD: {
         id: 24,
@@ -1334,34 +1365,31 @@ class Game {
         desc: "Take some singing lessons",
         hidden: true,
         nano: 6,
+        ban: 150,
       },
       XNO: {
         id: 25,
-        name: "XNO",
+        name: self.network === "ban" ? "BAN" : "XNO",
         desc: "Complete your first purchase!",
         hidden: false,
-        nano: 133,
       },
       FREEZING_LANDS: {
         id: 26,
         name: "BrrRRrr",
         desc: "Enter the freezing lands",
         hidden: false,
-        nano: 12,
       },
       SKELETON_KEY: {
         id: 27,
         name: "Unique Key",
         desc: "Find the skeleton key",
         hidden: false,
-        nano: 15,
       },
       BLOODLUST: {
         id: 28,
         name: "Bloodlust",
         desc: "Defeat 25 Werewolves",
         hidden: false,
-        nano: 15,
         isCompleted() {
           return self.storage.getWerewolfCount() >= 25;
         },
@@ -1371,28 +1399,24 @@ class Game {
         name: "Satoshi",
         desc: "Have a chat with Satoshi Nakamoto",
         hidden: false,
-        nano: 10,
       },
       WEN: {
         id: 30,
         name: "WEN?",
         desc: "Find a very very large announcement",
         hidden: false,
-        nano: 12,
       },
       INDIANA_JONES: {
         id: 31,
         name: "Indiana Jones",
         desc: "Reassemble the lost artifact",
         hidden: false,
-        nano: 35,
       },
       MYTH_OR_REAL: {
         id: 32,
         name: "Myth or Real",
         desc: "Defeat 25 Yetis",
         hidden: false,
-        nano: 15,
         isCompleted() {
           return self.storage.getYetiCount() >= 25;
         },
@@ -1402,7 +1426,6 @@ class Game {
         name: "R.I.P.",
         desc: "Defeat 50 Skeleton Guards",
         hidden: false,
-        nano: 25,
         isCompleted() {
           return self.storage.getSkeleton3Count() >= 50;
         },
@@ -1412,21 +1435,18 @@ class Game {
         name: "What is dead may never die",
         desc: "Defeat the Skeleton Commander",
         hidden: false,
-        nano: 30,
       },
       WALK_ON_WATER: {
         id: 35,
         name: "Walk on Water",
         desc: "Make your way though the floating ice",
         hidden: false,
-        nano: 10,
       },
       GHOSTBUSTERS: {
         id: 36,
         name: "Ghostbusters",
         desc: "Kill 50 Wraiths",
         hidden: false,
-        nano: 25,
         isCompleted() {
           return self.storage.getWraithCount() >= 50;
         },
@@ -1436,28 +1456,24 @@ class Game {
         name: "Black Magic",
         desc: "Defeat the Necromancer",
         hidden: false,
-        nano: 50,
       },
       LUCKY7: {
         id: 38,
         name: "Lucky 7",
         desc: "Upgrade a high class item to +7",
         hidden: true,
-        nano: 13,
       },
       NOT_SAFU: {
         id: 39,
         name: "Not Safu",
         desc: "Kill a monster with less than 1% HP left",
         hidden: true,
-        nano: 20,
       },
       TICKLE_FROM_UNDER: {
         id: 40,
         name: "Tickle from Under",
         desc: "Be surrounded by 15 zombies",
         hidden: true,
-        nano: 15,
       },
       SECRET_LEVEL: {
         id: 41,
@@ -1510,13 +1526,14 @@ class Game {
     const unlockedAchievementIds = this.storage.data.achievement
       .map((unlocked, index) => (unlocked ? index + 1 : false))
       .filter(Boolean);
-    const totalNano = unlockedAchievementIds.reduce((acc, id) => {
+
+    const totalPayout = unlockedAchievementIds.reduce((acc, id) => {
       const achievement: any = Object.values(self.achievements)[id - 1];
-      acc += achievement && achievement.nano ? achievement.nano : 0;
+      acc += achievement?.[this.network] || 0;
       return acc;
     }, 0);
 
-    this.app.initUnlockedAchievements(unlockedAchievementIds, totalNano);
+    this.app.initUnlockedAchievements(unlockedAchievementIds, totalPayout);
   }
 
   getAchievementById(id) {
@@ -1883,9 +1900,11 @@ class Game {
     }
   }
 
-  setPlayerAccount(username, account, password) {
+  setPlayerAccount(username, account, network, password) {
     this.username = username;
     this.account = account;
+    this.network = network;
+    this.explorer = network === "nano" ? "nanolooker" : "bananolooker";
     this.password = password;
   }
 
@@ -2021,12 +2040,17 @@ class Game {
 
       self.player.name = self.username;
       self.player.account = self.account;
+      self.player.network = self.network;
       self.started = true;
 
       if (action === "create") {
-        self.client.sendCreate(self.player);
+        self.client.sendCreate({ name: self.username, account: self.account });
       } else {
-        self.client.sendLogin({ name: self.username, account: self.account, password: self.password });
+        self.client.sendLogin({
+          name: self.username,
+          account: self.account,
+          password: self.password,
+        });
       }
     });
 
@@ -2066,7 +2090,6 @@ class Game {
       inventory,
       stash,
       hash,
-      hash1,
       nanoPotions,
       gems,
       artifact,
@@ -2077,6 +2100,7 @@ class Game {
       cowLevelPortalCoords,
       party,
       settings,
+      network,
     }) {
       // @ts-ignore
       self.app.start();
@@ -2092,6 +2116,7 @@ class Game {
       // Always accept name received from the server which will
       // sanitize and shorten names exceeding the allowed length.
       self.player.name = name;
+      self.player.network = network;
 
       var [armor, armorLevel, armorBonus] = armor.split(":");
       var [weapon, weaponLevel, weaponBonus] = weapon.split(":");
@@ -2166,6 +2191,8 @@ class Game {
       self.app.updateNanoPotions(nanoPotions);
       self.app.updateGems(gems);
       self.app.updateArtifact(artifact);
+      self.app.initPlayerInfo();
+      self.app.initNanoPotions();
 
       self.storage.initPlayer(self.player.name, self.player.account);
       self.storage.savePlayer(self.renderer.getPlayerImage(), self.player.getSpriteName(), self.player.getWeaponName());
@@ -2177,8 +2204,8 @@ class Game {
         // self.storage.setPlayerName(name);
       }
 
-      if (hash || hash1) {
-        self.gamecompleted_callback({ hash, hash1, fightAgain: false });
+      if (hash) {
+        self.gamecompleted_callback({ hash, fightAgain: false });
       }
 
       // @NOTE possibly optimize this? sending request to move items to inventory
@@ -2471,7 +2498,7 @@ class Game {
 
       self.player.onInvincible(function () {
         self.invincible_callback();
-        self.player.switchArmor(self.sprites["firefox"], 1);
+        self.player.switchArmor(self.sprites["monkey"], 1);
       });
 
       self.client.onSpawnItem(function (item, x, y) {
@@ -3019,9 +3046,7 @@ class Game {
         } else if (kind === Types.Entities.SKELETONCOMMANDER) {
           self.tryUnlockingAchievement("DEAD_NEVER_DIE");
         } else if (kind === Types.Entities.NECROMANCER) {
-          self.tryUnlockingAchievement("BLACK_MAGIC").then(() => {
-            self.client.sendRequestPayout(Types.Entities.NECROMANCER);
-          });
+          self.tryUnlockingAchievement("BLACK_MAGIC");
         } else if (kind === Types.Entities.COW) {
           self.storage.incrementCowCount();
           self.tryUnlockingAchievement("FRESH_MEAT");
@@ -3198,7 +3223,7 @@ class Game {
       });
 
       self.client.onBossCheck(function (data) {
-        const { status, message, hash, hash1, check } = data;
+        const { status, message, hash, check } = data;
 
         if (status === "ok") {
           const position = parseInt(check[check.length - 1]);
@@ -3222,15 +3247,15 @@ class Game {
         } else if (status === "failed") {
           self.bosscheckfailed_callback(message);
         } else if (status === "completed") {
-          self.gamecompleted_callback({ hash, hash1, fightAgain: true, show: true });
+          self.gamecompleted_callback({ hash, fightAgain: true, show: true });
         }
       });
 
       self.client.onReceiveNotification(function (data) {
-        const { message, hash, hash1 } = data;
+        const { message, hash } = data;
 
-        if (hash || hash1) {
-          self.gamecompleted_callback({ hash, hash1 });
+        if (hash) {
+          self.gamecompleted_callback({ hash });
         }
 
         setTimeout(() => {
@@ -4659,7 +4684,7 @@ class Game {
         if (achievement.isCompleted() && self.storage.unlockAchievement(achievement.id)) {
           if (self.unlock_callback) {
             self.client.sendAchievement(achievement.id);
-            self.unlock_callback(achievement.id, achievement.name, achievement.nano);
+            self.unlock_callback(achievement.id, achievement.name, achievement[self.network]);
             self.audioManager.playSound("achievement");
             resolve();
           }
@@ -4821,10 +4846,10 @@ class Game {
         this.tryUnlockingAchievement("A_TRUE_WARRIOR");
       } else if (item.kind === Types.Entities.CAKE) {
         this.tryUnlockingAchievement("FOR_SCIENCE");
-      } else if (item.kind === Types.Entities.FIREPOTION) {
-        this.tryUnlockingAchievement("FOXY");
-        this.audioManager.playSound("firefox");
-      } else if (item.kind === Types.Entities.NANOPOTION) {
+      } else if (item.kind === Types.Entities.MONKEYPOTION) {
+        this.tryUnlockingAchievement("MONKEY");
+        this.audioManager.playSound("monkey");
+      } else if (item.kind === Types.Entities.NANOPOTION || item.kind === Types.Entities.BANANOPOTION) {
         this.app.updateNanoPotions(this.player.nanoPotions);
         if (this.player.nanoPotions >= 5) {
           this.tryUnlockingAchievement("NANO_POTIONS");
