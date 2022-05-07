@@ -14,6 +14,11 @@ const ERROR_MESSAGES = {
   notAvailable: "The store is not currently available, try again later.",
 };
 
+let websocket: { [key in Network]: Websocket | null } = {
+  nano: null,
+  ban: null,
+};
+
 class Purchase {
   network: Network = null;
   sessions = [];
@@ -91,8 +96,6 @@ class Purchase {
         player: session.player.name,
       });
 
-      // let prefix =
-
       session.player.send([
         Types.Messages.PURCHASE_ERROR,
         {
@@ -135,7 +138,7 @@ class Websocket {
 
     this.connection = new ReconnectingWebSocket(this.websocketDomain, [], {
       WebSocket: WS,
-      connectionTimeout: 3000,
+      connectionTimeout: 1000,
       maxRetries: 100000,
       maxReconnectionDelay: 2000,
       minReconnectionDelay: 10,
@@ -251,9 +254,11 @@ const purchase: { [key in Network]: Purchase } = {
   ban: new Purchase("ban"),
 };
 
-const websocket: { [key in Network]: Websocket } = {
-  nano: new Websocket("nano"),
-  ban: new Websocket("ban"),
-};
+setTimeout(() => {
+  websocket = {
+    nano: new Websocket("nano"),
+    ban: new Websocket("ban"),
+  };
+}, 1000);
 
 export { purchase };
