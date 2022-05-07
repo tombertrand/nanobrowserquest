@@ -135,7 +135,7 @@ class Websocket {
 
     this.connection = new ReconnectingWebSocket(this.websocketDomain, [], {
       WebSocket: WS,
-      connectionTimeout: 1000,
+      connectionTimeout: 3000,
       maxRetries: 100000,
       maxReconnectionDelay: 2000,
       minReconnectionDelay: 10,

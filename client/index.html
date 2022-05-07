@@ -83,9 +83,9 @@
                     </h1>
                     <form action="none" method="get" accept-charset="utf-8">
                         <input type="text" id="nameinput" class="stroke" name="player-name" placeholder="Character Name"
-                            maxlength="16">
+                            maxlength="16" autocomplete="off">
                         <textarea id="accountinput" class="stroke" name="player-account" placeholder="nano_ Account"
-                            maxlength="65" rows="3" spellcheck="false"></textarea>
+                            maxlength="65" rows="3" spellcheck="false" autocomplete="off"></textarea>
                     </form>
                     <div class="play">
                         <span class="link">Create Character</span>
@@ -155,9 +155,10 @@
 
                     <form action="none" method="get" accept-charset="utf-8">
                         <input type="text" id="loginnameinput" class="stroke" name="player-name"
-                            placeholder="Character Name" maxlength="16" autofocus />
+                            placeholder="Character Name" maxlength="16" autofocus autocomplete="off" />
                         <textarea id="loginaccountinput" class="stroke" name="player-loginaccount"
-                            placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"></textarea>
+                            placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"
+                            autocomplete="off"></textarea>
                         <input type="hidden" id="loginnetworkinput" value="nano" />
                         <input type="password" id="loginpasswordinput" class="stroke password-login password-create"
                             name="player-password" placeholder="Password" maxlength="24" style="display: none" />
@@ -503,7 +504,7 @@
                 <div id="minimize"></div>
                 <div id="text-list"></div>
                 <form action="none" method="get" accept-charset="utf-8">
-                    <input id="chatinput" class="gp" type="text" maxlength="100">
+                    <input id="chatinput" class="gp" type="text" maxlength="250">
                 </form>
             </div>
             <div id="inspector">

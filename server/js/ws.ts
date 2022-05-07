@@ -24,11 +24,11 @@ export class Server {
     const server = createServer(app);
     let cors = null;
 
-    this.io = new SocketServer(server, { parser: MessageParser, cors });
-
     if (process.env.NODE_ENV === "development") {
       cors = { origin: "http://localhost:8010" };
     }
+
+    this.io = new SocketServer(server, { parser: MessageParser, cors });
 
     app.use(function (req, res, next) {
       console.log("~~~~~~req.host", req.host);
@@ -41,7 +41,7 @@ export class Server {
           express.static(path.join(process.cwd(), "dist/client/index_ban.html"))(req, res, next);
           break;
         default:
-          app.use(express.static(path.join(process.cwd(), "dist/client")));
+          express.static(path.join(process.cwd(), "dist/client"));
       }
     });
 
