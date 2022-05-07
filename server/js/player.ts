@@ -706,6 +706,7 @@ class Player extends Character {
               // @TODO 2x until noon jan 1st
               amount: amount * 2,
               payoutIndex,
+              network: self.network,
             })) || {};
           const { err, message: msg, hash } = response as any;
 

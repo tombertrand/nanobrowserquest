@@ -56,27 +56,35 @@ const sendPayout = async ({ account: receiver, amount, network = "nano" }) => {
       console.log("Bpow error", err);
     }
 
-    const blockCreate = await rpc("block_create", {
-      json_block: true,
-      type: "state",
-      previous: frontier,
-      account: sender,
-      representative,
-      balance: new BigNumber(balance).minus(amount).toFixed(),
-      link: receiver,
-      key: PRIVATE_KEY,
-      ...(work ? { work } : null),
-    }, network);
+    const blockCreate = await rpc(
+      "block_create",
+      {
+        json_block: true,
+        type: "state",
+        previous: frontier,
+        account: `${network}_${sender}`,
+        representative,
+        balance: new BigNumber(balance).minus(amount).toFixed(),
+        link: receiver,
+        key: PRIVATE_KEY,
+        ...(work ? { work } : null),
+      },
+      network,
+    );
 
     // @TODO add more debug when this error occurs
     if (blockCreate.error) {
       throw new Error("Unable to block_create");
     }
-    const process = await rpc("process", {
-      json_block: true,
-      subtype: "send",
-      block: blockCreate.block,
-    }, network);
+    const process = await rpc(
+      "process",
+      {
+        json_block: true,
+        subtype: "send",
+        block: blockCreate.block,
+      },
+      network,
+    );
 
     if (process.error) {
       throw new Error("Unable to process");

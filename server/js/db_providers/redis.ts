@@ -473,6 +473,7 @@ class DatabaseHandler {
               depositAccount,
               depositAccountIndex,
               settings: defaultSettings,
+              network: player.network,
             });
           });
       }
