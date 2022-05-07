@@ -30,14 +30,7 @@ export class Server {
 
     this.io = new SocketServer(server, { parser: MessageParser, cors });
 
-    app.use(function (req, res, next) {
-      // if (req.hostname.endsWith("bananobrowserquest.com") && req.url === '/') {
-      // @TODO same static folder, different index.html
-      // express.static(path.join(process.cwd(), "dist/client/index_ban.html"))(req, res, next);
-      //   res.sendFile(path.join(process.cwd(), "dist/client/index_ban.html"));
-      // } else {
-      express.static(path.join(process.cwd(), "dist/client"))(req, res, next);
-    });
+    app.use(express.static(path.join(process.cwd(), "dist/client")));
 
     this.io.on("connection", function (connection) {
       console.info("a user connected");
