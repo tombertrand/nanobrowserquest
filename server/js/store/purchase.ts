@@ -259,6 +259,6 @@ setTimeout(() => {
     nano: new Websocket("nano"),
     ban: new Websocket("ban"),
   };
-}, 1000);
+}, 12000);
 
 export { purchase };
