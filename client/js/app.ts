@@ -603,9 +603,9 @@ class App {
 
   showChat() {
     if (this.game.started) {
-      $("#chatinput").focus();
       $("#chatbutton").addClass("active").removeClass("blink");
       $("#text-window").show();
+      $("#chatinput").focus();
     }
   }
 
