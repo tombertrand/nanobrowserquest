@@ -645,6 +645,7 @@ footer, header, hgroup, menu, nav, section {
     .payout-icon {
         display: inline-block;
         background-size: cover;
+        filter: grayscale(100%);
     }
     .payout-icon.nano {
         width: 10px;
@@ -655,6 +656,11 @@ footer, header, hgroup, menu, nav, section {
         width: 20px;
         height: 12px;
         background-image: url(../img/3/ban.png);
+    }
+    .payout-icon.completed {
+        display: inline-block;
+        background-size: cover;
+        filter: grayscale(0%);
     }
 
     #completedbutton {

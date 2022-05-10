@@ -447,11 +447,12 @@ var initGame = function () {
           class: className,
           html: `
             <span>${name}</span>
-            ${
-              hash
-                ? `<span class="payout-icon ${network}" title="Killed the Skeleton King and received a ${network} payout"></span>`
-                : ""
-            }
+           
+          <span class="payout-icon ${network} ${hash ? "completed" : ""}" title="${
+            hash
+              ? `Killed the Skeleton King and received a ${network} payout`
+              : `Did not complete the game to receive a ${network} payout`
+          }"></span>
             <span>lv.${level}</span>
           `,
         }).appendTo("#player-list");
