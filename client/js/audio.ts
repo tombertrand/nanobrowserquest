@@ -47,7 +47,7 @@ class AudioManager {
       "chat",
       "revive",
       "death",
-      "monkey",
+      "firefox",
       "achievement",
       "levelup",
       "kill1",

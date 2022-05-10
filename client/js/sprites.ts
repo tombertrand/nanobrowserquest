@@ -18,7 +18,7 @@ import death from "../sprites/death.json";
 import deathknight from "../sprites/deathknight.json";
 import desertnpc from "../sprites/desertnpc.json";
 import eye from "../sprites/eye.json";
-import monkey from "../sprites/monkey.json";
+import firefox from "../sprites/firefox.json";
 import forestnpc from "../sprites/forestnpc.json";
 import goblin from "../sprites/goblin.json";
 import goblin2 from "../sprites/goblin2.json";
@@ -47,7 +47,7 @@ import itemBluemorningstar from "../sprites/item-bluemorningstar.json";
 import itemBluesword from "../sprites/item-bluesword.json";
 import itemBurger from "../sprites/item-burger.json";
 import itemCake from "../sprites/item-cake.json";
-import itemMonkeypotion from "../sprites/item-monkeypotion.json";
+import itemFirefoxpotion from "../sprites/item-firefoxpotion.json";
 import itemFlask from "../sprites/item-flask.json";
 import itemRejuvenationpotion from "../sprites/item-rejuvenationpotion.json";
 import itemPoisonpotion from "../sprites/item-poisonpotion.json";
@@ -183,7 +183,7 @@ const sprites = {
   deathknight,
   desertnpc,
   eye,
-  monkey,
+  firefox,
   forestnpc,
   goblin,
   goblin2,
@@ -212,7 +212,7 @@ const sprites = {
   "item-bluesword": itemBluesword,
   "item-burger": itemBurger,
   "item-cake": itemCake,
-  "item-monkeypotion": itemMonkeypotion,
+  "item-firefoxpotion": itemFirefoxpotion,
   "item-flask": itemFlask,
   "item-rejuvenationpotion": itemRejuvenationpotion,
   "item-poisonpotion": itemPoisonpotion,

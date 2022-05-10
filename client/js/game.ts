@@ -312,7 +312,7 @@ class Game {
       "frozenarmor",
       "diamondarmor",
       "spikearmor",
-      "monkey",
+      "firefox",
       "death",
       "dagger",
       "axe",
@@ -394,7 +394,7 @@ class Game {
       "item-burger",
       "morningstar",
       "item-morningstar",
-      "item-monkeypotion",
+      "item-firefoxpotion",
     ];
   }
 
@@ -1343,10 +1343,10 @@ class Game {
         nano: 25,
         ban: 625,
       },
-      MONKEY: {
+      FOXY: {
         id: 22,
-        name: "Monkey",
-        desc: "Find the Monkey costume",
+        name: "firefox",
+        desc: "Find the Firefox costume",
         hidden: true,
         nano: 2,
         ban: 50,
@@ -2498,7 +2498,7 @@ class Game {
 
       self.player.onInvincible(function () {
         self.invincible_callback();
-        self.player.switchArmor(self.sprites["monkey"], 1);
+        self.player.switchArmor(self.sprites["firefox"], 1);
       });
 
       self.client.onSpawnItem(function (item, x, y) {
@@ -4846,9 +4846,9 @@ class Game {
         this.tryUnlockingAchievement("A_TRUE_WARRIOR");
       } else if (item.kind === Types.Entities.CAKE) {
         this.tryUnlockingAchievement("FOR_SCIENCE");
-      } else if (item.kind === Types.Entities.MONKEYPOTION) {
-        this.tryUnlockingAchievement("MONKEY");
-        this.audioManager.playSound("monkey");
+      } else if (item.kind === Types.Entities.FIREFOXPOTION) {
+        this.tryUnlockingAchievement("firefox");
+        this.audioManager.playSound("firefox");
       } else if (item.kind === Types.Entities.NANOPOTION || item.kind === Types.Entities.BANANOPOTION) {
         this.app.updateNanoPotions(this.player.nanoPotions);
         if (this.player.nanoPotions >= 5) {

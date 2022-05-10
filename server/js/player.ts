@@ -80,7 +80,7 @@ class Player extends Character {
   capeSaturate: number;
   capeContrast: number;
   capeBrightness: number;
-  monkeypotionTimeout: any;
+  firefoxpotionTimeout: any;
   createdAt: number;
   waypoints: any;
   group: any;
@@ -513,14 +513,14 @@ class Player extends Character {
               let index = Types.Entities.Artifact.indexOf(kind);
 
               databaseHandler.foundArtifact(self.name, index);
-            } else if (kind === Types.Entities.MONKEYPOTION) {
+            } else if (kind === Types.Entities.FIREFOXPOTION) {
               self.updateHitPoints(true);
-              self.broadcast(self.equip({ kind: Types.Entities.MONKEY, level: 1 }));
-              self.monkeypotionTimeout = setTimeout(function () {
+              self.broadcast(self.equip({ kind: Types.Entities.FIREFOX, level: 1 }));
+              self.firefoxpotionTimeout = setTimeout(function () {
                 self.broadcast(
                   self.equip({ kind: self.armorKind, level: self.armorLevel, bonus: self.armorBonus, type: "armor" }),
                 ); // return to normal after 10 sec
-                self.monkeypotionTimeout = null;
+                self.firefoxpotionTimeout = null;
               }, 10000);
               self.sendPlayerStats();
             } else if (Types.isHealingItem(kind)) {
@@ -703,8 +703,8 @@ class Player extends Character {
           const response =
             (await enqueueSendPayout({
               account: self.account,
-              // @TODO 2x until noon jan 1st
-              amount: amount * 2,
+              // @TODO 2x until noon jan 1st only for nano network
+              amount: amount * (self.network === "nano" ? 2 : 1),
               payoutIndex,
               network: self.network,
             })) || {};
@@ -928,8 +928,8 @@ class Player extends Character {
     });
 
     this.connection.onClose(function () {
-      if (self.monkeypotionTimeout) {
-        clearTimeout(self.monkeypotionTimeout);
+      if (self.firefoxpotionTimeout) {
+        clearTimeout(self.firefoxpotionTimeout);
       }
       clearTimeout(self.disconnectTimeout);
       if (self.exit_callback) {
@@ -1145,8 +1145,8 @@ class Player extends Character {
 
     if (this.hitPoints <= 0) {
       this.isDead = true;
-      if (this.monkeypotionTimeout) {
-        clearTimeout(this.monkeypotionTimeout);
+      if (this.firefoxpotionTimeout) {
+        clearTimeout(this.firefoxpotionTimeout);
       }
     }
 

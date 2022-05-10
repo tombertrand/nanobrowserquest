@@ -392,8 +392,8 @@ EntityFactory.builders[Types.Entities.COWKINGHORN] = function (id) {
   return new Items.CowkingHorn(id);
 };
 
-EntityFactory.builders[Types.Entities.MONKEYPOTION] = function (id) {
-  return new Items.Monkeypotion(id);
+EntityFactory.builders[Types.Entities.FIREFOXPOTION] = function (id) {
+  return new Items.Firefoxpotion(id);
 };
 
 EntityFactory.builders[Types.Entities.BURGER] = function (id) {

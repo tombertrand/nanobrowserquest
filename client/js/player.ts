@@ -226,7 +226,7 @@ class Player extends Character {
       console.info("Player " + this.id + " has looted " + item.id);
       if (Types.isArmor(item.kind) && this.invincible) {
         this.stopInvincibility();
-      } else if (item.kind === Types.Entities.MONKEYPOTION) {
+      } else if (item.kind === Types.Entities.FIREFOXPOTION) {
         item.onLoot(this);
       }
     }
@@ -432,7 +432,7 @@ class Player extends Character {
       this.setArmorName(armorSprite.id);
     }
 
-    if (armorSprite.kind !== Types.Entities.MONKEY && level && level !== this.getArmorLevel()) {
+    if (armorSprite.kind !== Types.Entities.FIREFOX && level && level !== this.getArmorLevel()) {
       isDifferent = true;
       this.setArmorLevel(level);
     }

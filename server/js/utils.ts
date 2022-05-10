@@ -120,7 +120,7 @@ const classicAchievementMap = {
     GEM_HUNTER: 8,
     NANO_POTIONS: 8,
     HERO: 25, // -> Required
-    MONKEY: 2,
+    FOXY: 2,
     FOR_SCIENCE: 4,
     RICKROLLD: 6,
   },
@@ -146,7 +146,7 @@ const classicAchievementMap = {
     GEM_HUNTER: 200,
     NANO_POTIONS: 200,
     HERO: 625, // -> Required
-    MONKEY: 50,
+    FOXY: 50,
     FOR_SCIENCE: 100,
     RICKROLLD: 150,
   },

@@ -118,7 +118,7 @@ export const Types: any = {
     MINOTAUR: 131,
 
     // Armors
-    MONKEY: 20,
+    FIREFOX: 20,
     CLOTHARMOR: 21,
     LEATHERARMOR: 22,
     MAILARMOR: 23,
@@ -150,7 +150,7 @@ export const Types: any = {
     POISONPOTION: 111,
     BURGER: 36,
     CHEST: 37,
-    MONKEYPOTION: 38,
+    FIREFOXPOTION: 38,
     NANOPOTION: 67,
     BANANOPOTION: 139,
     GEMRUBY: 68,
@@ -262,7 +262,7 @@ export const Types: any = {
 
 Types.Entities.Potion = [
   Types.Entities.FLASK,
-  Types.Entities.MONKEYPOTION,
+  Types.Entities.FIREFOXPOTION,
   Types.Entities.REJUVENATIONPOTION,
   Types.Entities.NANOPOTION,
   Types.Entities.BANANOPOTION,
@@ -407,7 +407,7 @@ export const kinds = {
   minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 30, 40],
 
   // kind, type, level, defense
-  monkey: [Types.Entities.MONKEY, "armor"],
+  firefox: [Types.Entities.FIREFOX, "armor"],
   clotharmor: [Types.Entities.CLOTHARMOR, "armor", "Cloth Armor", 1, 1],
   leatherarmor: [Types.Entities.LEATHERARMOR, "armor", "Leather Armor", 1, 3],
   mailarmor: [Types.Entities.MAILARMOR, "armor", "Mail Armor", 3, 5],
@@ -451,7 +451,7 @@ export const kinds = {
   cake: [Types.Entities.CAKE, "object"],
   burger: [Types.Entities.BURGER, "object"],
   chest: [Types.Entities.CHEST, "object"],
-  monkeypotion: [Types.Entities.MONKEYPOTION, "object"],
+  firefoxpotion: [Types.Entities.FIREFOXPOTION, "object"],
   nanopotion: [Types.Entities.NANOPOTION, "object"],
   bananopotion: [Types.Entities.BANANOPOTION, "object"],
   gemruby: [Types.Entities.GEMRUBY, "object"],
@@ -1045,7 +1045,7 @@ Types.isHealingItem = function (kind: number) {
 };
 
 Types.isExpendableItem = function (kind: number) {
-  return Types.isHealingItem(kind) || kind === Types.Entities.MONKEYPOTION || kind === Types.Entities.CAKE;
+  return Types.isHealingItem(kind) || kind === Types.Entities.FIREFOXPOTION || kind === Types.Entities.CAKE;
 };
 
 Types.getKindFromString = function (kind: number) {

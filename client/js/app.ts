@@ -686,7 +686,7 @@ class App {
       .attr("data-bonus", weaponBonus);
     $("#player-weapon").text(`${Types.getDisplayName(weapon, !!weaponBonus)} +${weaponLevel}`);
 
-    if (armor !== "monkey") {
+    if (armor !== "firefox") {
       $("#armor")
         .css("background-image", 'url("' + armorPath + '")')
         .attr("data-item", armor)

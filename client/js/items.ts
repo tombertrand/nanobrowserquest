@@ -457,10 +457,10 @@ var Items = {
     }
   },
 
-  Monkeypotion: class Monkeypotion extends Item {
+  Firefoxpotion: class Firefoxpotion extends Item {
     constructor(id) {
-      super(id, Types.Entities.MONKEYPOTION, "object");
-      this.lootMessage = "You feel the power of Monkeys!";
+      super(id, Types.Entities.FIREFOXPOTION, "object");
+      this.lootMessage = "You feel the power of Firefox!";
     }
 
     onLoot(player) {
