@@ -36,10 +36,14 @@ const enqueueSendPayout = async params => {
   return await queue.enqueue(() => sendPayout(params));
 };
 
-const sendPayout = async ({ account: receiver, amount, network = "nano" }) => {
+const sendPayout = async ({ account: receiver, amount, network }) => {
   let hash;
   let work;
   try {
+    if (!network) {
+      throw new Error("Invalid payout network");
+    }
+
     // await sleep(Math.floor(Math.random() * 250) + 1);
 
     const accountInfo = await rpc("account_info", { account: `${network}_${sender}`, representative: "true" }, network);
