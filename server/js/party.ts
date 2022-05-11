@@ -187,7 +187,7 @@ class Party {
   }
 
   forEachMember(iterator) {
-    if (!this.members.length) return;
+    if (!this.members.length || !this.members?.[0]?.id) return;
 
     _.each(this.members, iterator);
   }

@@ -40,7 +40,6 @@ class App {
   getPasswordField: () => any;
   getPasswordConfirmField: () => any;
   starting: any;
-  firstTimePlaying: boolean;
   config: any;
   messageTimer: any;
   playButtonRestoreText: string;
@@ -59,7 +58,6 @@ class App {
     this.getPasswordField = () => {};
     this.getPasswordConfirmField = () => {};
     this.isDesktop = true;
-    this.firstTimePlaying = true;
     this.supportsWorkers = false;
     this.$play = null;
     this.$loginNameInput = null;
@@ -192,8 +190,6 @@ class App {
 
   startGame(action, username, account, network, password) {
     var self = this;
-    self.firstTimePlaying = !password && !self.storage.hasAlreadyPlayed();
-
     if (username && !this.game.started) {
       this.game.setPlayerAccount(username, account, network, password);
 
@@ -315,10 +311,6 @@ class App {
     $("#dialog-delete-item").text("Are you sure you want to delete this item?");
 
     $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
-
-    if (this.firstTimePlaying) {
-      this.toggleInstructions();
-    }
   }
 
   setPlayButtonState(enabled) {
@@ -964,13 +956,25 @@ class App {
     $("#player").toggleClass("visible");
   }
 
-  toggleMute() {
-    if ($("#mute-checkbox").is(":checked")) {
-      this.storage.setAudioEnabled(true);
-      this.game.audioManager.enableAudio();
+  toggleMuteMusic() {
+    const isEnabled = $("#mute-music-checkbox").is(":checked");
+    this.storage.setMusicEnabled(isEnabled);
+
+    if (isEnabled) {
+      this.game.audioManager.enableMusic();
     } else {
-      this.storage.setAudioEnabled(false);
-      this.game.audioManager.disableAudio();
+      this.game.audioManager.disableMusic();
+    }
+  }
+
+  toggleMuteSound() {
+    const isEnabled = $("#mute-sound-checkbox").is(":checked");
+    this.storage.setSoundEnabled(isEnabled);
+
+    if (isEnabled) {
+      this.game.audioManager.enableSound();
+    } else {
+      this.game.audioManager.disableSound();
     }
   }
 

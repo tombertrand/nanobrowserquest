@@ -524,11 +524,51 @@ class Game {
   }
 
   initSettings(settings) {
-    if (!this.storage.isAudioEnabled()) {
-      this.audioManager.disableAudio();
+    const { musicVolume = 0.6, soundVolume = 0.6 } = this.storage.data.settings;
+
+    if (!this.storage.isMusicEnabled()) {
+      this.audioManager.disableMusic();
     } else {
-      $("#mute-checkbox").prop("checked", true);
+      $("#mute-music-checkbox").prop("checked", true);
+      this.audioManager.updateMusicVolume(musicVolume);
     }
+
+    if (!this.storage.isSoundEnabled()) {
+      this.audioManager.disableSound();
+    } else {
+      $("#mute-sound-checkbox").prop("checked", true);
+      this.audioManager.updateSoundVolume(soundVolume);
+    }
+
+    var handleMusic = $("#music-handle");
+    $("#music-slider").slider({
+      min: 0,
+      max: 100,
+      value: musicVolume * 100,
+      create: () => {
+        handleMusic.text(`${musicVolume * 100}`);
+      },
+      slide: (_event, ui) => {
+        handleMusic.text(ui.value);
+        this.storage.setMusicVolume(ui.value / 100);
+        this.audioManager.updateMusicVolume(ui.value / 100);
+      },
+    });
+
+    var handleSound = $("#sound-handle");
+    $("#sound-slider").slider({
+      min: 0,
+      max: 100,
+      value: soundVolume * 100,
+      create: () => {
+        handleSound.text(`${soundVolume * 100}`);
+      },
+      slide: (_event, ui) => {
+        handleSound.text(ui.value);
+        this.storage.setSoundVolume(ui.value / 100);
+        this.audioManager.updateSoundVolume(ui.value / 100);
+      },
+    });
 
     if (this.storage.showEntityNameEnabled()) {
       this.renderer.setDrawEntityName(true);
@@ -2199,8 +2239,9 @@ class Game {
       self.storage.initPlayer(self.player.name, self.player.account);
       self.storage.savePlayer(self.renderer.getPlayerImage(), self.player.getSpriteName(), self.player.getWeaponName());
 
-      if (!self.storage.hasAlreadyPlayed()) {
-        self.showNotification("Welcome to Nano BrowserQuest!");
+      if (!self.storage.hasAlreadyPlayed() || self.player.level === 1) {
+        self.showNotification(`Welcome to ${network === "nano" ? "Nano" : "Banano"} BrowserQuest!`);
+        self.app.toggleInstructions();
       } else {
         self.showNotification("Welcome Back. You are level " + self.player.level + ".");
         // self.storage.setPlayerName(name);

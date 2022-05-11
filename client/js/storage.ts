@@ -25,7 +25,10 @@ class Storage {
         image: "",
       },
       settings: {
-        audio: true,
+        music: true,
+        musicVolume: 0.7,
+        sound: true,
+        soundVolume: 0.7,
         showEntityName: true,
         showDamageInfo: true,
         capeHue: 0,
@@ -109,8 +112,23 @@ class Storage {
     this.save();
   }
 
-  setAudioEnabled(enabled) {
-    this.data.settings.audio = enabled;
+  setMusicEnabled(enabled) {
+    this.data.settings.music = enabled;
+    this.save();
+  }
+
+  setMusicVolume(volume) {
+    this.data.settings.musicVolume = volume;
+    this.save();
+  }
+
+  setSoundEnabled(enabled) {
+    this.data.settings.sound = enabled;
+    this.save();
+  }
+
+  setSoundVolume(volume) {
+    this.data.settings.soundVolume = volume;
     this.save();
   }
 
@@ -124,8 +142,22 @@ class Storage {
     this.save();
   }
 
-  isAudioEnabled() {
-    if (typeof this.data.settings.audio !== "boolean" || this.data.settings.audio) {
+  // isAudioEnabled() {
+  //   if (typeof this.data.settings.audio !== "boolean" || this.data.settings.audio) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
+  isMusicEnabled() {
+    if (typeof this.data.settings.music !== "boolean" || this.data.settings.music) {
+      return true;
+    }
+    return false;
+  }
+
+  isSoundEnabled() {
+    if (typeof this.data.settings.sound !== "boolean" || this.data.settings.sound) {
       return true;
     }
     return false;

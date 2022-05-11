@@ -16,6 +16,7 @@ export interface App {
   hideChat: () => void;
   hideWindows: () => void;
   toggleAchievements: () => void;
+  toggleInstructions: () => void;
   blinkInterval: NodeJS.Timeout;
   toggleCompleted: () => void;
   toggleAbout: () => void;
@@ -46,7 +47,8 @@ export interface App {
   initNanoPotions: () => void;
   setMouseCoordinates: (arg0: any) => void;
   closeInGameScroll: (arg0: string) => void;
-  toggleMute: () => void;
+  toggleMuteMusic: () => void;
+  toggleMuteSound: () => void;
   toggleEntityName: () => void;
   toggleDamageInfo: () => void;
   loginFormActive: () => any;

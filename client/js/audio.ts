@@ -6,7 +6,10 @@ import Detect from "./detect";
 import type { Game } from "./types/game";
 
 class AudioManager {
-  enabled: boolean;
+  isMusicEnabled: boolean;
+  musicVolume: number;
+  isSoundEnabled: boolean;
+  soundVolume: number;
   extension: string;
   sounds: any;
   game: Game;
@@ -18,7 +21,11 @@ class AudioManager {
   constructor(game) {
     var self = this;
 
-    this.enabled = true;
+    this.isMusicEnabled = true;
+    this.musicVolume = 0.7;
+    this.isSoundEnabled = true;
+    this.soundVolume = 0.7;
+
     this.extension = Detect.canPlayMP3() ? "mp3" : "ogg";
     this.sounds = {};
     this.game = game;
@@ -94,33 +101,53 @@ class AudioManager {
     if (!(Detect.isSafari() && Detect.isWindows())) {
       loadSoundFiles();
     } else {
-      this.enabled = false; // Disable audio on Safari Windows
+      this.isMusicEnabled = false; // Disable audio on Safari Windows
+      this.isSoundEnabled = false; // Disable audio on Safari Windows
     }
   }
 
-  disableAudio() {
-    this.enabled = false;
+  updateMusicVolume(volume) {
+    if (typeof volume !== "number" || volume > 1 || volume < 0) {
+      volume = 0.7;
+    }
 
+    this.musicVolume = volume;
+
+    const music = this.getSurroundingMusic(this.game.player);
+    if (music) {
+      music.sound.volume = this.musicVolume;
+    }
+  }
+
+  updateSoundVolume(volume) {
+    if (typeof volume !== "number" || volume > 1 || volume < 0) {
+      volume = 0.7;
+    }
+
+    this.soundVolume = volume;
+  }
+
+  disableMusic() {
+    this.isMusicEnabled = false;
     if (this.currentMusic) {
       this.resetMusic(this.currentMusic);
     }
   }
 
-  enableAudio() {
-    this.enabled = true;
-
+  enableMusic() {
+    this.isMusicEnabled = true;
     if (this.currentMusic) {
       this.currentMusic = null;
     }
     this.updateMusic();
   }
 
-  toggle() {
-    if (this.enabled) {
-      this.disableAudio();
-    } else {
-      this.enableAudio();
-    }
+  disableSound() {
+    this.isSoundEnabled = false;
+  }
+
+  enableSound() {
+    this.isSoundEnabled = true;
   }
 
   load(basePath, name, loaded_callback, channels) {
@@ -200,9 +227,9 @@ class AudioManager {
   }
 
   playSound(name) {
-    var sound = this.enabled && this.getSound(name);
+    var sound = this.isSoundEnabled && this.getSound(name);
     if (sound) {
-      sound.volume = 1;
+      sound.volume = this.soundVolume;
       sound.play();
     }
   }
@@ -226,7 +253,7 @@ class AudioManager {
   }
 
   updateMusic() {
-    if (this.enabled) {
+    if (this.isMusicEnabled) {
       var music = this.getSurroundingMusic(this.game.player);
 
       if (music) {
@@ -247,11 +274,11 @@ class AudioManager {
   }
 
   playMusic(music) {
-    if (this.enabled && music && music.sound) {
+    if (this.isMusicEnabled && music && music.sound) {
       if (music.sound.fadingOut) {
         this.fadeInMusic(music);
       } else {
-        music.sound.volume = 0.5;
+        music.sound.volume = this.musicVolume;
         music.sound.play();
       }
       this.currentMusic = music;
@@ -273,7 +300,7 @@ class AudioManager {
         var step = 0.02,
           volume = music.sound.volume - step;
 
-        if (self.enabled && volume >= step) {
+        if (self.isMusicEnabled && volume >= step) {
           music.sound.volume = volume;
         } else {
           music.sound.volume = 0;
@@ -292,10 +319,10 @@ class AudioManager {
         var step = 0.01,
           volume = music.sound.volume + step;
 
-        if (self.enabled && volume < 1 - step) {
+        if (self.isMusicEnabled && volume < this.musicVolume - step) {
           music.sound.volume = volume;
         } else {
-          music.sound.volume = 1;
+          music.sound.volume = this.musicVolume;
           self.clearFadeIn(music);
         }
       }, 30);

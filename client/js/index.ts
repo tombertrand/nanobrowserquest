@@ -727,8 +727,12 @@ var initGame = function () {
     app.toggleSettings();
   });
 
-  $("#mute-checkbox").on("change", function () {
-    app.toggleMute();
+  $("#mute-music-checkbox").on("change", function () {
+    app.toggleMuteMusic();
+  });
+
+  $("#mute-sound-checkbox").on("change", function () {
+    app.toggleMuteSound();
   });
 
   $("#entity-name-checkbox").on("change", function () {
