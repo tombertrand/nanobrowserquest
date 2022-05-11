@@ -1217,7 +1217,7 @@ class Game {
   initAchievements() {
     var self = this;
 
-    const BAN_PAYOUT_MULTIPLIER = 6;
+    const BAN_PAYOUT_MULTIPLIER = 10;
 
     this.achievements = {
       A_TRUE_WARRIOR: {

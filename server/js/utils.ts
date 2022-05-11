@@ -97,7 +97,7 @@ export const raiToRaw = (rai, network: Network) => {
   return value.shiftedBy(decimals).toNumber();
 };
 
-const BAN_PAYOUT_MULTIPLIER = 6;
+const BAN_PAYOUT_MULTIPLIER = 10;
 
 const classicAchievementMap = {
   nano: {
