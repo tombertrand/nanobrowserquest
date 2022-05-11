@@ -72,7 +72,7 @@ class Entity {
       throw "Sprite error";
     }
 
-    if (this.sprite && this.sprite.name === sprite.name) {
+    if (!sprite.name || (this.sprite && this.sprite.name === sprite.name)) {
       return;
     }
 

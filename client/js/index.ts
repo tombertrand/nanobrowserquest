@@ -380,8 +380,12 @@ var initGame = function () {
     app.initEquipmentIcons();
   });
 
-  game.onPlayerInvincible(function () {
-    $("#hitpoints").toggleClass("invincible");
+  game.onPlayerStartInvincible(function () {
+    $("#hitpoints").addClass("invincible");
+  });
+
+  game.onPlayerStopInvincible(function () {
+    $("#hitpoints").removeClass("invincible");
   });
 
   game.onChatMessage(function ({ name, message, type }: { name: string; message: string; type: ChatType }) {

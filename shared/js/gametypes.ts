@@ -469,7 +469,7 @@ export const kinds = {
   raiblockstr: [Types.Entities.RAIBLOCKSTR, "object", "Raiblocks artifact"],
   raiblocksbl: [Types.Entities.RAIBLOCKSBL, "object", "Raiblocks artifact"],
   raiblocksbr: [Types.Entities.RAIBLOCKSBR, "object", "Raiblocks artifact"],
-  skeletonkingcage: [Types.Entities.SKELETONKINGCAGE, "recipe", "Skeleton King's thoratic cage"],
+  skeletonkingcage: [Types.Entities.SKELETONKINGCAGE, "recipe", "Skeleton King's thoracic cage"],
   necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
 

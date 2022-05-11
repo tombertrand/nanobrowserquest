@@ -114,7 +114,7 @@ class AudioManager {
     this.musicVolume = volume;
 
     const music = this.getSurroundingMusic(this.game.player);
-    if (music) {
+    if (music?.sound) {
       music.sound.volume = this.musicVolume;
     }
   }
@@ -274,7 +274,7 @@ class AudioManager {
   }
 
   playMusic(music) {
-    if (this.isMusicEnabled && music && music.sound) {
+    if (this.isMusicEnabled && music?.sound) {
       if (music.sound.fadingOut) {
         this.fadeInMusic(music);
       } else {

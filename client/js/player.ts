@@ -60,7 +60,8 @@ class Player extends Character {
   invincible: any;
   sprite: any;
   switch_callback: any;
-  invincible_callback: any;
+  invinciblestart_callback: any;
+  invinciblestop_callback: any;
   invincibleTimeout: any;
   level: any;
   x: number;
@@ -224,9 +225,7 @@ class Player extends Character {
       }
 
       console.info("Player " + this.id + " has looted " + item.id);
-      if (Types.isArmor(item.kind) && this.invincible) {
-        this.stopInvincibility();
-      } else if (item.kind === Types.Entities.FIREFOXPOTION) {
+      if (item.kind === Types.Entities.FIREFOXPOTION) {
         item.onLoot(this);
       }
     }
@@ -249,7 +248,7 @@ class Player extends Character {
 
   getArmorSprite() {
     if (this.invincible) {
-      return this.currentArmorSprite;
+      return this.normalSprite; //this.currentArmorSprite;
     } else {
       return this.sprite;
     }
@@ -432,7 +431,7 @@ class Player extends Character {
       this.setArmorName(armorSprite.id);
     }
 
-    if (armorSprite.kind !== Types.Entities.FIREFOX && level && level !== this.getArmorLevel()) {
+    if (armorSprite.name !== "firefox" && level && level !== this.getArmorLevel()) {
       isDifferent = true;
       this.setArmorLevel(level);
     }
@@ -442,7 +441,7 @@ class Player extends Character {
       this.setArmorBonus(bonus);
     }
 
-    if (isDifferent && this.switch_callback) {
+    if (armorSprite.name !== "firefox" && isDifferent && this.switch_callback) {
       this.switch_callback();
     }
   }
@@ -542,22 +541,26 @@ class Player extends Character {
     this.switch_callback = callback;
   }
 
-  onInvincible(callback) {
-    this.invincible_callback = callback;
+  onInvincibleStart(callback) {
+    this.invinciblestart_callback = callback;
+  }
+
+  onInvincibleStop(callback) {
+    this.invinciblestop_callback = callback;
   }
 
   startInvincibility() {
     var self = this;
 
+    if (this.invincibleTimeout) {
+      clearTimeout(this.invincibleTimeout);
+      this.invincibleTimeout = null;
+    }
+
     if (!this.invincible) {
       this.currentArmorSprite = this.getSprite();
       this.invincible = true;
-      this.invincible_callback();
-    } else {
-      // If the player already has invincibility, just reset its duration.
-      if (this.invincibleTimeout) {
-        clearTimeout(this.invincibleTimeout);
-      }
+      this.invinciblestart_callback();
     }
 
     this.invincibleTimeout = setTimeout(function () {
@@ -567,16 +570,18 @@ class Player extends Character {
   }
 
   stopInvincibility() {
-    this.invincible_callback();
     this.invincible = false;
+    this.invinciblestop_callback();
+
+    if (this.invincibleTimeout) {
+      clearTimeout(this.invincibleTimeout);
+      this.invincibleTimeout = null;
+    }
 
     if (this.currentArmorSprite) {
       this.setSprite(this.currentArmorSprite);
       this.setSpriteName(this.currentArmorSprite.id);
       this.currentArmorSprite = null;
-    }
-    if (this.invincibleTimeout) {
-      clearTimeout(this.invincibleTimeout);
     }
   }
 

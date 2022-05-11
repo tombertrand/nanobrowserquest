@@ -49,7 +49,8 @@ export interface Game {
   onBossCheckFailed: (arg0: (message: any) => void) => void;
   onPlayerEquipmentChange: (arg0: () => void) => void;
   deleteItemFromSlot: () => void;
-  onPlayerInvincible: (arg0: () => void) => void;
+  onPlayerStartInvincible: (arg0: () => void) => void;
+  onPlayerStopInvincible: (arg0: () => void) => void;
   onChatMessage: (arg0: (entityId: any, name: any, message: any, type: any) => void) => void;
   storage: { data: { player: { name: any } } };
   onNbPlayersChange: (arg0: () => void) => void;

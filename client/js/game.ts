@@ -128,7 +128,8 @@ class Game {
   gamecompleted_callback: any;
   bosscheckfailed_callback: any;
   chat_callback: any;
-  invincible_callback: any;
+  invinciblestart_callback: any;
+  invinciblestop_callback: any;
   isAnvilRecipe: any;
   hoveringPlateauTile: any;
   hoveringOtherPlayer: any;
@@ -2539,9 +2540,13 @@ class Game {
         }
       });
 
-      self.player.onInvincible(function () {
-        self.invincible_callback();
+      self.player.onInvincibleStart(function () {
+        self.invinciblestart_callback();
         self.player.switchArmor(self.sprites["firefox"], 1);
+      });
+
+      self.player.onInvincibleStop(function () {
+        self.invinciblestop_callback();
       });
 
       self.client.onSpawnItem(function (item, x, y) {
@@ -4644,8 +4649,12 @@ class Game {
     this.notification_callback = callback;
   }
 
-  onPlayerInvincible(callback) {
-    this.invincible_callback = callback;
+  onPlayerStartInvincible(callback) {
+    this.invinciblestart_callback = callback;
+  }
+
+  onPlayerStopInvincible(callback) {
+    this.invinciblestop_callback = callback;
   }
 
   resize() {
