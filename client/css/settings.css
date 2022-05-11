@@ -17,6 +17,7 @@
 
 .setting .ui-slider .ui-slider-handle {
   height: 22px;
+  line-height: 21px;
 }
 
 #music-slider,

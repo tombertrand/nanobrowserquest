@@ -545,12 +545,12 @@ class Game {
     $("#music-slider").slider({
       min: 0,
       max: 100,
-      value: musicVolume * 100,
+      value: Math.round(musicVolume * 100),
       create: () => {
-        handleMusic.text(`${musicVolume * 100}`);
+        handleMusic.text(`${Math.round(musicVolume * 100)}%`);
       },
       slide: (_event, ui) => {
-        handleMusic.text(ui.value);
+        handleMusic.text(`${ui.value}%`);
         this.storage.setMusicVolume(ui.value / 100);
         this.audioManager.updateMusicVolume(ui.value / 100);
       },
@@ -560,12 +560,12 @@ class Game {
     $("#sound-slider").slider({
       min: 0,
       max: 100,
-      value: soundVolume * 100,
+      value: Math.round(soundVolume * 100),
       create: () => {
-        handleSound.text(`${soundVolume * 100}`);
+        handleSound.text(`${Math.round(soundVolume * 100)}%`);
       },
       slide: (_event, ui) => {
-        handleSound.text(ui.value);
+        handleSound.text(`${ui.value}%`);
         this.storage.setSoundVolume(ui.value / 100);
         this.audioManager.updateSoundVolume(ui.value / 100);
       },
