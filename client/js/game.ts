@@ -1177,20 +1177,22 @@ class Game {
   initAchievements() {
     var self = this;
 
+    const BAN_PAYOUT_MULTIPLIER = 6;
+
     this.achievements = {
       A_TRUE_WARRIOR: {
         id: 1,
         name: "A True Warrior",
         desc: "Find a new weapon",
         nano: 3,
-        ban: 75,
+        ban: 75 * BAN_PAYOUT_MULTIPLIER,
       },
       INTO_THE_WILD: {
         id: 2,
         name: "Into the Wild",
         desc: "Venture outside the village",
         nano: 2,
-        ban: 50,
+        ban: 50 * BAN_PAYOUT_MULTIPLIER,
       },
       ANGRY_RATS: {
         id: 3,
@@ -1200,49 +1202,49 @@ class Game {
           return self.storage.getRatCount() >= 10;
         },
         nano: 5,
-        ban: 125,
+        ban: 125 * BAN_PAYOUT_MULTIPLIER,
       },
       SMALL_TALK: {
         id: 4,
         name: "Small Talk",
         desc: "Talk to a non-player character",
         nano: 3,
-        ban: 75,
+        ban: 75 * BAN_PAYOUT_MULTIPLIER,
       },
       FAT_LOOT: {
         id: 5,
         name: "Fat Loot",
         desc: "Get a new armor set",
         nano: 5,
-        ban: 125,
+        ban: 125 * BAN_PAYOUT_MULTIPLIER,
       },
       UNDERGROUND: {
         id: 6,
         name: "Underground",
         desc: "Explore at least one cave",
         nano: 3,
-        ban: 75,
+        ban: 75 * BAN_PAYOUT_MULTIPLIER,
       },
       AT_WORLDS_END: {
         id: 7,
         name: "At World's End",
         desc: "Reach the south shore",
         nano: 5,
-        ban: 125,
+        ban: 125 * BAN_PAYOUT_MULTIPLIER,
       },
       COWARD: {
         id: 8,
         name: "Coward",
         desc: "Successfully escape an enemy",
         nano: 4,
-        ban: 100,
+        ban: 100 * BAN_PAYOUT_MULTIPLIER,
       },
       TOMB_RAIDER: {
         id: 9,
         name: "Tomb Raider",
         desc: "Find the graveyard",
         nano: 5,
-        ban: 125,
+        ban: 125 * BAN_PAYOUT_MULTIPLIER,
       },
       SKULL_COLLECTOR: {
         id: 10,
@@ -1252,21 +1254,21 @@ class Game {
           return self.storage.getSkeletonCount() >= 10;
         },
         nano: 8,
-        ban: 200,
+        ban: 200 * BAN_PAYOUT_MULTIPLIER,
       },
       NINJA_LOOT: {
         id: 11,
         name: "Ninja Loot",
         desc: "Get an item you didn't fight for",
         nano: 4,
-        ban: 100,
+        ban: 100 * BAN_PAYOUT_MULTIPLIER,
       },
       NO_MANS_LAND: {
         id: 12,
         name: "No Man's Land",
         desc: "Travel through the desert",
         nano: 3,
-        ban: 75,
+        ban: 75 * BAN_PAYOUT_MULTIPLIER,
       },
       HUNTER: {
         id: 13,
@@ -1276,7 +1278,7 @@ class Game {
           return self.storage.getTotalKills() >= 50;
         },
         nano: 4,
-        ban: 100,
+        ban: 100 * BAN_PAYOUT_MULTIPLIER,
       },
       STILL_ALIVE: {
         id: 14,
@@ -1286,7 +1288,7 @@ class Game {
           return self.storage.getTotalRevives() >= 5;
         },
         nano: 5,
-        ban: 125,
+        ban: 125 * BAN_PAYOUT_MULTIPLIER,
       },
       MEATSHIELD: {
         id: 15,
@@ -1296,21 +1298,21 @@ class Game {
           return self.storage.getTotalDamageTaken() >= 5000;
         },
         nano: 7,
-        ban: 175,
+        ban: 175 * BAN_PAYOUT_MULTIPLIER,
       },
       NYAN: {
         id: 16,
         name: "Nyan Cat",
         desc: "Find the Nyan cat",
         nano: 3,
-        ban: 75,
+        ban: 75 * BAN_PAYOUT_MULTIPLIER,
       },
       HOT_SPOT: {
         id: 17,
         name: "Hot Spot",
         desc: "Enter the volcanic mountains",
         nano: 3,
-        ban: 75,
+        ban: 75 * BAN_PAYOUT_MULTIPLIER,
       },
       SPECTRE_COLLECTOR: {
         id: 18,
@@ -1320,28 +1322,28 @@ class Game {
           return self.storage.getSpectreCount() >= 15;
         },
         nano: 8,
-        ban: 200,
+        ban: 200 * BAN_PAYOUT_MULTIPLIER,
       },
       GEM_HUNTER: {
         id: 19,
         name: "Gem Hunter",
         desc: "Collect all the hidden gems",
         nano: 8,
-        ban: 200,
+        ban: 200 * BAN_PAYOUT_MULTIPLIER,
       },
       NANO_POTIONS: {
         id: 20,
         name: "Lucky Find",
         desc: self.network === "ban" ? "Collect 5 BANANO potions" : "Collect 5 NANO potions",
         nano: 8,
-        ban: 200,
+        ban: 200 * BAN_PAYOUT_MULTIPLIER,
       },
       HERO: {
         id: 21,
         name: "Hero",
         desc: "Defeat the Skeleton King",
         nano: 25,
-        ban: 625,
+        ban: 625 * BAN_PAYOUT_MULTIPLIER,
       },
       FOXY: {
         id: 22,
@@ -1349,7 +1351,7 @@ class Game {
         desc: "Find the Firefox costume",
         hidden: true,
         nano: 2,
-        ban: 50,
+        ban: 50 * BAN_PAYOUT_MULTIPLIER,
       },
       FOR_SCIENCE: {
         id: 23,
@@ -1357,7 +1359,7 @@ class Game {
         desc: "Enter into a portal",
         hidden: true,
         nano: 4,
-        ban: 100,
+        ban: 100 * BAN_PAYOUT_MULTIPLIER,
       },
       RICKROLLD: {
         id: 24,
@@ -1365,7 +1367,7 @@ class Game {
         desc: "Take some singing lessons",
         hidden: true,
         nano: 6,
-        ban: 150,
+        ban: 150 * BAN_PAYOUT_MULTIPLIER,
       },
       XNO: {
         id: 25,
