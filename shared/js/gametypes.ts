@@ -1289,7 +1289,7 @@ Types.getBonus = function (rawBonus, level) {
   const lightningDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const pierceDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
-  const coldDamagePerLevel = [1, 2, 4, 6, 8, 11, 15, 22, 28, 40];
+  const coldDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const freezeChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
   const reduceFrozenChancePerLevel = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 

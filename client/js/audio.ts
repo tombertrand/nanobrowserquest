@@ -316,13 +316,13 @@ class AudioManager {
     if (music && !music.sound.fadingIn) {
       this.clearFadeOut(music);
       music.sound.fadingIn = setInterval(function () {
-        var step = 0.01,
-          volume = music.sound.volume + step;
+        var step = 0.01;
+        var volume = music.sound.volume + step;
 
         if (self.isMusicEnabled && volume < this.musicVolume - step) {
           music.sound.volume = volume;
         } else {
-          music.sound.volume = this.musicVolume;
+          music.sound.volume = self.musicVolume;
           self.clearFadeIn(music);
         }
       }, 30);
