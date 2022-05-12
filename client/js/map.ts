@@ -2,6 +2,7 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 import Area from "./area";
+import Detect from "./detect";
 import { isInt } from "./utils";
 
 import type { Game as GameType } from "./types/game";
@@ -38,7 +39,7 @@ class Map {
     this.mapLoaded = false;
     this.loadMultiTilesheets = loadMultiTilesheets;
 
-    var useWorker = !(this.game.renderer.mobile || this.game.renderer.tablet);
+    var useWorker = !(this.game.renderer.mobile || this.game.renderer.tablet) && !Detect.isSafari;
 
     this._loadMap(useWorker);
     this._initTilesets();

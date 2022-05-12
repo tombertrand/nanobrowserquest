@@ -1,5 +1,6 @@
 import { Types } from "../../shared/js/gametypes";
 import Animation from "./animation";
+import Detect from "./detect";
 import sprites from "./sprites";
 
 class Sprite {
@@ -118,14 +119,6 @@ class Sprite {
         data[i] = 255;
         data[i + 1] = data[i + 2] = 75;
       }
-
-      // spriteData.data = data;
-      Object.defineProperties(spriteData, {
-        data: {
-          value: data,
-          writable: true,
-        },
-      });
 
       ctx.putImageData(spriteData, 0, 0);
 
