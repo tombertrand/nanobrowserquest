@@ -204,7 +204,14 @@ class Player extends Character {
           return;
         }
 
-        const timestamp = await databaseHandler.checkIsBanned(self);
+        let timestamp;
+        let reason;
+        var name = sanitize(message[1]);
+        var account = sanitize(message[2]);
+        var [network]: [Network] = account.split("_");
+        var password;
+
+        timestamp = await databaseHandler.checkIsBannedByIP(self);
         if (timestamp) {
           const days = timestamp > Date.now() + 24 * 60 * 60 * 1000 ? 365 : 1;
 
@@ -213,10 +220,14 @@ class Player extends Character {
           return;
         }
 
-        var name = sanitize(message[1]);
-        var account = sanitize(message[2]);
-        var [network]: [Network] = account.split("_");
-        var password;
+        ({ timestamp, reason } = await databaseHandler.checkIsBannedForReason(name));
+        if (timestamp && reason) {
+          const days = timestamp > Date.now() + 24 * 60 * 60 * 1000 ? 365 : 1;
+
+          self.connection.sendUTF8(`banned-${reason}-${days}`);
+          self.connection.close("You are banned, no misbehaving.");
+          return;
+        }
 
         if (!["nano", "ban"].includes(network)) {
           self.connection.sendUTF8("invalidconnection");
@@ -282,19 +293,31 @@ class Player extends Character {
 
         // Sanitized messages may become empty. No need to broadcast empty chat messages.
         if (msg && msg !== "") {
-          msg = msg.substr(0, 100); // Enforce maxlength of chat input
+          msg = msg.substr(0, 255); // Enforce maxlength of chat input
 
           if (self.name === "running-coder") {
-            if (msg == "startCowLevel" || msg === "/cow") {
+            if (msg === "/cow") {
               if (!self.server.cowLevelClock) {
                 self.server.startCowLevel();
                 self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
               }
               return;
-            } else if (msg == "startMinotaurLevel" || msg === "/minotaur") {
+            } else if (msg === "/minotaur") {
               if (!self.server.minotaurLevelClock && !self.server.minotaurSpawnTimeout) {
                 self.server.startMinotaurLevel();
                 self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
+              }
+              return;
+            } else if (msg.startsWith("/ban")) {
+              const periods = { 1: 86400, 7: 86400 * 7, 365: 86400 * 365 };
+              const reasons = ["misbehaved"];
+
+              const [, period, reason, playerName] = msg.match(/\s(\w+)\s(\w+)\s(.+)/);
+
+              if (periods[period] && reasons.includes(reason) && playerName) {
+                self.databaseHandler.banPlayerForReason(playerName, period, reason);
+
+                self.server.disconnectPlayer(playerName);
               }
               return;
             }
@@ -672,7 +695,7 @@ class Player extends Character {
           }
 
           console.info(`Reason: ${reason}`);
-          databaseHandler.banPlayer(self, reason);
+          databaseHandler.banPlayerByIP(self, reason);
         }
         {
           self.connection.send({
@@ -691,7 +714,7 @@ class Player extends Character {
           const raiPayoutAmount = rawToRai(amount, self.network);
 
           if (raiPayoutAmount > maxAmount) {
-            databaseHandler.banPlayer(
+            databaseHandler.banPlayerByIP(
               self,
               `Tried to withdraw ${raiPayoutAmount} but max is ${maxAmount} for quest of kind: ${message[1]}`,
             );
@@ -742,7 +765,7 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.BAN_PLAYER) {
         // Just don't...
-        databaseHandler.banPlayer(self, message[1]);
+        databaseHandler.banPlayerByIP(self, message[1]);
       } else if (action === Types.Messages.OPEN) {
         console.info("OPEN: " + self.name + " " + message[1]);
         var chest = self.server.getEntityById(message[1]);

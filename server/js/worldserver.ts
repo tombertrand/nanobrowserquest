@@ -379,6 +379,12 @@ class World {
     }
   }
 
+  disconnectPlayer(playerName) {
+    const player = this.getPlayerByName(playerName);
+
+    player?.connection.close();
+  }
+
   pushSpawnsToPlayer(player, ids) {
     var self = this;
 

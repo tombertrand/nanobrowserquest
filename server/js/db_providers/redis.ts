@@ -480,7 +480,7 @@ class DatabaseHandler {
     });
   }
 
-  async checkIsBanned(player) {
+  async checkIsBannedByIP(player) {
     return new Promise((resolve, _reject) => {
       const ipKey = "ipban:" + player.connection._connection.handshake.headers["cf-connecting-ip"];
       this.client.hget(ipKey, "timestamp", (err, reply) => {
@@ -491,7 +491,21 @@ class DatabaseHandler {
     });
   }
 
-  banPlayer(banPlayer, reason) {
+  async checkIsBannedForReason(playerName) {
+    return new Promise((resolve, _reject) => {
+      const banKey = "ban:" + playerName;
+
+      this.client
+        .multi()
+        .hget(banKey, "timestamp") // 0
+        .hget(banKey, "reason") // 1
+        .exec(async (err, replies) => {
+          resolve({ timestamp: replies[0], reason: replies[1] });
+        });
+    });
+  }
+
+  banPlayerByIP(banPlayer, reason) {
     // 24h
     let days = 1;
     this.client.hget(
@@ -515,6 +529,13 @@ class DatabaseHandler {
       },
     );
 
+    return;
+  }
+
+  banPlayerForReason(playerName, period, reason) {
+    const until = parseInt(period) * 24 * 60 * 60 * 1000 + Date.now();
+
+    this.client.hmset("ban:" + playerName, "timestamp", until, "reason", reason);
     return;
   }
 

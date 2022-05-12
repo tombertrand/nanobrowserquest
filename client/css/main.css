@@ -564,7 +564,7 @@ footer, header, hgroup, menu, nav, section {
     .home-logo-sparks.banano {background-image:url('../img/3/banano.png');}
 
     #parchment textarea { resize: none; }
-    .banned-1, .banned-365 { display: none; }
+    .banned-1, .banned-365, .banned-misbehaved-1, .banned-misbehaved-365 { display: none; }
     article a { color: #4A90E2 }
 
     #completed.boss-check .fight-again { display: inherit; }

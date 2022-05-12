@@ -240,6 +240,8 @@ class App {
               break;
             case "banned-1":
             case "banned-365":
+            case "banned-misbehaved-1":
+            case "banned-misbehaved-365":
               $("." + result.reason).show();
               self.animateParchment("loadcharacter", "banned");
               break;

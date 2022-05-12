@@ -12,7 +12,6 @@ var Properties: any = {
     armor: 0.5,
     weapon: 0.5,
   },
-
   crab: {
     drops: {
       flask: 30,
@@ -27,7 +26,6 @@ var Properties: any = {
     armor: 2,
     weapon: 1,
   },
-
   bat: {
     drops: {
       flask: 40,
@@ -41,7 +39,6 @@ var Properties: any = {
     armor: 2,
     weapon: 1,
   },
-
   goblin: {
     drops: {
       flask: 30,
@@ -57,7 +54,6 @@ var Properties: any = {
     armor: 2,
     weapon: 1,
   },
-
   wizard: {
     drops: {
       flask: 50,
@@ -68,7 +64,6 @@ var Properties: any = {
     armor: 2,
     weapon: 6,
   },
-
   skeleton: {
     drops: {
       flask: 35,
@@ -84,7 +79,6 @@ var Properties: any = {
     armor: 2,
     weapon: 2,
   },
-
   ogre: {
     drops: {
       burger: 10,
@@ -100,7 +94,6 @@ var Properties: any = {
     armor: 3,
     weapon: 3,
   },
-
   snake: {
     drops: {
       flask: 35,
@@ -117,7 +110,6 @@ var Properties: any = {
     armor: 3,
     weapon: 3,
   },
-
   skeleton2: {
     drops: {
       flask: 40,
@@ -133,7 +125,6 @@ var Properties: any = {
     armor: 3,
     weapon: 3,
   },
-
   eye: {
     drops: {
       flask: 45,
@@ -148,7 +139,6 @@ var Properties: any = {
     armor: 4,
     weapon: 3,
   },
-
   spectre: {
     drops: {
       flask: 45,
@@ -163,7 +153,6 @@ var Properties: any = {
     armor: 2,
     weapon: 4,
   },
-
   deathknight: {
     drops: {
       burger: 70,
@@ -176,7 +165,6 @@ var Properties: any = {
     armor: 4,
     weapon: 5,
   },
-
   boss: {
     drops: {
       goldensword: 80,
@@ -186,7 +174,6 @@ var Properties: any = {
     armor: 6,
     weapon: 7,
   },
-
   rat2: {
     drops: {
       rejuvenationpotion: 80,
@@ -197,7 +184,6 @@ var Properties: any = {
     armor: 7,
     weapon: 5,
   },
-
   bat2: {
     drops: {
       rejuvenationpotion: 70,
@@ -209,7 +195,6 @@ var Properties: any = {
     armor: 6,
     weapon: 6,
   },
-
   goblin2: {
     drops: {
       rejuvenationpotion: 80,
@@ -222,7 +207,6 @@ var Properties: any = {
     armor: 5,
     weapon: 6,
   },
-
   werewolf: {
     drops: {
       rejuvenationpotion: 75,
@@ -237,7 +221,6 @@ var Properties: any = {
     armor: 6,
     weapon: 7,
   },
-
   yeti: {
     drops: {
       rejuvenationpotion: 80,
@@ -250,7 +233,6 @@ var Properties: any = {
     armor: 8,
     weapon: 8,
   },
-
   skeleton3: {
     drops: {
       rejuvenationpotion: 85,
@@ -263,7 +245,6 @@ var Properties: any = {
     armor: 8,
     weapon: 9,
   },
-
   skeletoncommander: {
     drops: {
       scrollupgradehigh: 5,
@@ -275,7 +256,6 @@ var Properties: any = {
     armor: 12,
     weapon: 12,
   },
-
   snake2: {
     drops: {
       rejuvenationpotion: 80,
@@ -288,7 +268,6 @@ var Properties: any = {
     armor: 7,
     weapon: 10,
   },
-
   wraith: {
     drops: {
       rejuvenationpotion: 60,
@@ -301,7 +280,6 @@ var Properties: any = {
     armor: 10,
     weapon: 10,
   },
-
   zombie: {
     drops: {
       rejuvenationpotion: 70,
@@ -313,7 +291,6 @@ var Properties: any = {
     armor: 6,
     weapon: 11,
   },
-
   necromancer: {
     drops: {
       necromancerheart: 15,
@@ -326,7 +303,6 @@ var Properties: any = {
     armor: 13,
     weapon: 12,
   },
-
   cow: {
     drops: {
       rejuvenationpotion: 93,
@@ -342,7 +318,6 @@ var Properties: any = {
     armor: 16,
     weapon: 20,
   },
-
   cowking: {
     drops: {
       diamondsword: 10,
@@ -356,7 +331,6 @@ var Properties: any = {
     armor: 22,
     weapon: 24,
   },
-
   minotaur: {
     drops: {
       ringminotaur: 5,
