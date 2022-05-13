@@ -483,11 +483,14 @@ class DatabaseHandler {
   async checkIsBannedByIP(player) {
     return new Promise((resolve, _reject) => {
       const ipKey = "ipban:" + player.connection._connection.handshake.headers["cf-connecting-ip"];
-      this.client.hget(ipKey, "timestamp", (err, reply) => {
-        const timestamp = parseInt(reply);
-        // isBanned is true if DB time is greater than now
-        resolve(reply && timestamp > Date.now() ? timestamp : false);
-      });
+
+      this.client
+        .multi()
+        .hget(ipKey, "timestamp") // 0
+        .hget(ipKey, "reason") // 1
+        .exec(async (err, replies) => {
+          resolve({ timestamp: replies[0], reason: replies[1] });
+        });
     });
   }
 
@@ -505,7 +508,7 @@ class DatabaseHandler {
     });
   }
 
-  banPlayerByIP(banPlayer, reason) {
+  banPlayerByIP(banPlayer, reason, message) {
     // 24h
     let days = 1;
     this.client.hget(
@@ -522,10 +525,12 @@ class DatabaseHandler {
           until,
           "reason",
           reason || "",
+          "message",
+          message || "",
         );
 
-        banPlayer.connection.sendUTF8("banned-" + days);
-        banPlayer.connection.close("You are banned, no cheating.");
+        banPlayer.connection.sendUTF8(`banned-${reason}-${days}`);
+        banPlayer.connection.close(`You are banned, ${reason}.`);
       },
     );
 

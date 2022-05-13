@@ -238,8 +238,8 @@ class App {
                 "A player with the specified username is already logged in.",
               );
               break;
-            case "banned-1":
-            case "banned-365":
+            case "banned-cheating-1":
+            case "banned-cheating-365":
             case "banned-misbehaved-1":
             case "banned-misbehaved-365":
               $("." + result.reason).show();

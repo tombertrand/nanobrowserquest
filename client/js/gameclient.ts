@@ -185,8 +185,8 @@ class GameClient {
           e === "userexists" ||
           e === "loggedin" ||
           e === "invalidusername" ||
-          e === "banned-1" ||
-          e === "banned-365" ||
+          e === "banned-cheating-1" ||
+          e === "banned-cheating-365" ||
           e === "banned-misbehaved-1" ||
           e === "banned-misbehaved-365" ||
           e === "invalidconnection" ||

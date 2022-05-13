@@ -211,11 +211,11 @@ class Player extends Character {
         var [network]: [Network] = account.split("_");
         var password;
 
-        timestamp = await databaseHandler.checkIsBannedByIP(self);
-        if (timestamp) {
+        ({ timestamp, reason } = await databaseHandler.checkIsBannedByIP(self));
+        if (timestamp && reason) {
           const days = timestamp > Date.now() + 24 * 60 * 60 * 1000 ? 365 : 1;
 
-          self.connection.sendUTF8("banned-" + days);
+          self.connection.sendUTF8(`banned-${reason}-${days}`);
           self.connection.close("You are banned, no cheating.");
           return;
         }
@@ -316,6 +316,7 @@ class Player extends Character {
 
               if (periods[period] && reasons.includes(reason) && playerName) {
                 self.databaseHandler.banPlayerForReason(playerName, period, reason);
+                self.databaseHandler.banPlayerByIP(self, reason, "Misbehaved towards others");
 
                 self.server.disconnectPlayer(playerName);
               }
@@ -695,7 +696,7 @@ class Player extends Character {
           }
 
           console.info(`Reason: ${reason}`);
-          databaseHandler.banPlayerByIP(self, reason);
+          databaseHandler.banPlayerByIP(self, "cheating", reason);
         }
         {
           self.connection.send({
@@ -716,6 +717,7 @@ class Player extends Character {
           if (raiPayoutAmount > maxAmount) {
             databaseHandler.banPlayerByIP(
               self,
+              "cheating",
               `Tried to withdraw ${raiPayoutAmount} but max is ${maxAmount} for quest of kind: ${message[1]}`,
             );
             return;
@@ -765,7 +767,7 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.BAN_PLAYER) {
         // Just don't...
-        databaseHandler.banPlayerByIP(self, message[1]);
+        databaseHandler.banPlayerByIP(self, "cheating", message[1]);
       } else if (action === Types.Messages.OPEN) {
         console.info("OPEN: " + self.name + " " + message[1]);
         var chest = self.server.getEntityById(message[1]);
