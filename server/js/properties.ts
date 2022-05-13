@@ -178,7 +178,7 @@ var Properties: any = {
     drops: {
       rejuvenationpotion: 80,
       bluearmor: 5,
-      scrollupgradehigh: 2,
+      scrollupgradehigh: 3,
     },
     hp: 240,
     armor: 7,
@@ -189,7 +189,7 @@ var Properties: any = {
       rejuvenationpotion: 70,
       blueaxe: 5,
       beltfrozen: 3,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 4,
     },
     hp: 280,
     armor: 6,
@@ -200,7 +200,7 @@ var Properties: any = {
       rejuvenationpotion: 80,
       blueaxe: 5,
       beltfrozen: 5,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 4,
       amuletgold: 1,
     },
     hp: 240,
@@ -210,7 +210,7 @@ var Properties: any = {
   werewolf: {
     drops: {
       rejuvenationpotion: 75,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       bluearmor: 3,
       bluemorningstar: 3,
       beltfrozen: 3,
@@ -226,7 +226,7 @@ var Properties: any = {
       rejuvenationpotion: 80,
       bluearmor: 3,
       bluemorningstar: 3,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       ringgold: 3,
     },
     hp: 420,
@@ -236,7 +236,7 @@ var Properties: any = {
   skeleton3: {
     drops: {
       rejuvenationpotion: 85,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       hornedarmor: 3,
       ringgold: 2,
       amuletgold: 1,
@@ -247,7 +247,7 @@ var Properties: any = {
   },
   skeletoncommander: {
     drops: {
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 6,
       hornedarmor: 5,
       ringgold: 4,
       amuletgold: 3,
@@ -260,7 +260,7 @@ var Properties: any = {
     drops: {
       rejuvenationpotion: 80,
       beltfrozen: 5,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       ringgold: 3,
       amuletgold: 2,
     },
@@ -272,7 +272,7 @@ var Properties: any = {
     drops: {
       rejuvenationpotion: 60,
       beltfrozen: 3,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       ringgold: 3,
       amuletgold: 2,
     },
@@ -283,7 +283,7 @@ var Properties: any = {
   zombie: {
     drops: {
       rejuvenationpotion: 70,
-      scrollupgradehigh: 2,
+      scrollupgradehigh: 3,
       ringgold: 2,
       amuletgold: 2,
     },

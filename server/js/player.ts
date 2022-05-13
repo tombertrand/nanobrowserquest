@@ -295,14 +295,14 @@ class Player extends Character {
         if (msg && msg !== "") {
           msg = msg.substr(0, 255); // Enforce maxlength of chat input
 
-          if (self.name === "running-coder") {
-            if (msg === "/cow") {
+          if (self.name === "running-coder" || self.name === "oldschooler") {
+            if (msg === "/cow" && self.name === "running-coder") {
               if (!self.server.cowLevelClock) {
                 self.server.startCowLevel();
                 self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
               }
               return;
-            } else if (msg === "/minotaur") {
+            } else if (msg === "/minotaur" && self.name === "running-coder") {
               if (!self.server.minotaurLevelClock && !self.server.minotaurSpawnTimeout) {
                 self.server.startMinotaurLevel();
                 self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
