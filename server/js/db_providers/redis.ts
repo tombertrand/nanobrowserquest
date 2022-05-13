@@ -1281,7 +1281,7 @@ class DatabaseHandler {
       if (id === Types.Store.EXPANSION1) {
         player.expansion1 = true;
         this.unlockExpansion1(player);
-        this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 5 }] });
+        this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
       } else if (id === Types.Store.SCROLLUPGRADEBLESSED) {
         this.lootItems({ player, items: [{ item: "scrollupgradeblessed", quantity: 5 }] });
       } else if (id === Types.Store.SCROLLUPGRADEHIGH) {

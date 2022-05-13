@@ -38,7 +38,7 @@ class Store {
         description: "Continue the adventure, waypoints will be unlocked.",
         confirmedMessage: `The Freezing Lands Expansion has been unlocked.<br/>
             You can now access the expansion using the waypoint.<br/>
-            As a thank you bonus you've also received 5 High class upgrade scrolls`.trim(),
+            As a thank you bonus you've also received 10 High class upgrade scrolls`.trim(),
         requiresInventorySlot: true,
       },
       {
