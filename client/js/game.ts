@@ -1013,7 +1013,9 @@ class Game {
     if (this.player.ring1Name) {
       $(".item-ring1").append(
         $("<div />", {
-          class: `item-draggable ${Types.isUniqueRing(this.player.ring1Name) ? "item-unique" : ""}`,
+          class: `item-draggable ${
+            Types.isUniqueRing(this.player.ring1Name, this.player.ring1Bonus) ? "item-unique" : ""
+          }`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.ring1Name)}")`,
           },
@@ -1027,7 +1029,9 @@ class Game {
     if (this.player.ring2Name) {
       $(".item-ring2").append(
         $("<div />", {
-          class: `item-draggable ${Types.isUniqueRing(this.player.ring2Name) ? "item-unique" : ""}`,
+          class: `item-draggable ${
+            Types.isUniqueRing(this.player.ring2Name, this.player.ring2Bonus) ? "item-unique" : ""
+          }`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.ring2Name)}")`,
           },
@@ -2405,15 +2409,15 @@ class Game {
           var desty = dest.y;
 
           // @TODO Fix this...
-          if (self.renderer.mobile) {
-            //push them off the door spot so they can use the
-            //arrow keys and mouse to walk back in or out
-            if (dest.orientation === Types.Orientations.UP) {
-              desty--;
-            } else if (dest.orientation === Types.Orientations.DOWN) {
-              desty++;
-            }
+          // if (self.renderer.mobile) {
+          //push them off the door spot so they can use the
+          //arrow keys and mouse to walk back in or out
+          if (dest.orientation === Types.Orientations.UP) {
+            desty--;
+          } else if (dest.orientation === Types.Orientations.DOWN) {
+            desty++;
           }
+          // }
 
           self.player.setGridPosition(dest.x, desty);
           self.player.nextGridX = dest.x;

@@ -948,24 +948,75 @@ Types.isObject = function (kind: number) {
   return kinds.getType(kind) === "object";
 };
 
-Types.isUniqueRing = function (kindOrString: number | string) {
+Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = []) {
+  // @TODO Think of a unification strategy
+  if (typeof bonus === "string") {
+    bonus = JSON.parse(bonus);
+  }
+
   if (typeof kindOrString === "number") {
-    return [
-      Types.Entities.RINGNECROMANCER,
-      Types.Entities.RINGRAISTONE,
-      Types.Entities.RINGFOUNTAIN,
-      Types.Entities.RINGMINOTAUR,
-    ].includes(kindOrString);
+    if (
+      [
+        Types.Entities.RINGNECROMANCER,
+        Types.Entities.RINGRAISTONE,
+        Types.Entities.RINGFOUNTAIN,
+        Types.Entities.RINGMINOTAUR,
+      ].includes(kindOrString)
+    ) {
+      return true;
+    }
+
+    if (Types.Entities.RINGBRONZE === kindOrString && bonus.length === 2) {
+      return true;
+    }
+    if (Types.Entities.RINGSILVER === kindOrString && bonus.length === 3) {
+      return true;
+    }
+    if (Types.Entities.RINGGOLD === kindOrString && bonus.length === 4) {
+      return true;
+    }
   } else {
-    return ["ringnecromancer", "ringraistone", "ringfountain", "ringminotaur"].includes(kindOrString);
+    if (["ringnecromancer", "ringraistone", "ringfountain", "ringminotaur"].includes(kindOrString)) {
+      return true;
+    }
+    if ("ringbronze" === kindOrString && bonus.length === 2) {
+      return true;
+    }
+    if ("ringsilver" === kindOrString && bonus.length === 3) {
+      return true;
+    }
+    if ("ringgold" === kindOrString && bonus.length === 4) {
+      return true;
+    }
   }
 };
 
-Types.isUniqueAmulet = function (kindOrString: number | string) {
+Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] = []) {
+  // @TODO Think of a unification strategy
+  if (typeof bonus === "string") {
+    bonus = JSON.parse(bonus);
+  }
+
   if (typeof kindOrString === "number") {
-    return [Types.Entities.AMULETCOW, Types.Entities.AMULETFORZEN].includes(kindOrString);
+    if ([Types.Entities.AMULETCOW, Types.Entities.AMULETFORZEN].includes(kindOrString)) {
+      return true;
+    }
+    if (Types.Entities.AMULETSILVER === kindOrString && bonus.length === 3) {
+      return true;
+    }
+    if (Types.Entities.AMULETGOLD === kindOrString && bonus.length === 4) {
+      return true;
+    }
   } else {
-    return ["amuletcow", "amuletfrozen"].includes(kindOrString);
+    if (["amuletcow", "amuletfrozen"].includes(kindOrString)) {
+      return true;
+    }
+    if ("amuletsilver" === kindOrString && bonus.length === 3) {
+      return true;
+    }
+    if ("amuletgold" === kindOrString && bonus.length === 4) {
+      return true;
+    }
   }
 };
 
@@ -1491,9 +1542,9 @@ Types.isUnique = function (item, bonus) {
   let isUnique = false;
 
   if (isRing) {
-    isUnique = Types.isUniqueRing(item);
+    isUnique = Types.isUniqueRing(item, typeof bonus === "string" ? JSON.parse(bonus) : bonus);
   } else if (isAmulet) {
-    isUnique = Types.isUniqueAmulet(item);
+    isUnique = Types.isUniqueAmulet(item, typeof bonus === "string" ? JSON.parse(bonus) : bonus);
   } else if (isCape) {
     isUnique = (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 2;
   } else if (isArmor || isWeapon || isBelt) {

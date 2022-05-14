@@ -1021,6 +1021,9 @@ class Player extends Character {
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
     } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
+      const randomIsUnique = random(100);
+      isUnique = randomIsUnique < uniqueChances;
+
       const lowLevelBonus = [0, 1, 2, 3];
       const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
       const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -1036,13 +1039,15 @@ class Player extends Character {
 
       let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
-        bonus = _.shuffle(lowLevelBonus).slice(0, 1);
+        bonus = _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
       } else if (kind === Types.Entities.RINGSILVER || kind === Types.Entities.AMULETSILVER) {
-        bonus = _.shuffle(mediumLevelBonus).slice(0, 2);
+        bonus = _.shuffle(mediumLevelBonus).slice(0, isUnique ? 3 : 2);
       } else if (kind === Types.Entities.RINGGOLD) {
-        bonus = _.shuffle(highLevelBonus).slice(0, 3);
+        bonus = _.shuffle(highLevelBonus).slice(0, isUnique ? 4 : 3);
       } else if (kind === Types.Entities.AMULETGOLD) {
-        bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, isUnique ? 3 : 2)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
       } else if (kind === Types.Entities.RINGNECROMANCER) {
         bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
       } else if (kind === Types.Entities.AMULETCOW) {
