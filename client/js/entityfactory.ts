@@ -224,6 +224,10 @@ EntityFactory.builders[Types.Entities.SPIKEARMOR] = function (id) {
   return new Items.SpikeArmor(id);
 };
 
+EntityFactory.builders[Types.Entities.DEMONARMOR] = function (id) {
+  return new Items.DemonArmor(id);
+};
+
 EntityFactory.builders[Types.Entities.BELTLEATHER] = function (id) {
   return new Items.BeltLeather(id);
 };

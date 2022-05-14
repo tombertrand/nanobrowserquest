@@ -33,6 +33,7 @@ import hornedarmor from "../sprites/hornedarmor.json";
 import frozenarmor from "../sprites/frozenarmor.json";
 import diamondarmor from "../sprites/diamondarmor.json";
 import spikearmor from "../sprites/spikearmor.json";
+import demonarmor from "../sprites/demonarmor.json";
 import goldensword from "../sprites/goldensword.json";
 import frozensword from "../sprites/frozensword.json";
 import diamondsword from "../sprites/diamondsword.json";
@@ -90,6 +91,7 @@ import itemHornedarmor from "../sprites/item-hornedarmor.json";
 import itemFrozenarmor from "../sprites/item-frozenarmor.json";
 import itemDiamondarmor from "../sprites/item-diamondarmor.json";
 import itemSpikearmor from "../sprites/item-spikearmor.json";
+import itemDemonarmor from "../sprites/item-demonarmor.json";
 import itemBeltleather from "../sprites/item-beltleather.json";
 import itemBeltplated from "../sprites/item-beltplated.json";
 import itemBeltfrozen from "../sprites/item-beltfrozen.json";
@@ -198,6 +200,7 @@ const sprites = {
   frozenarmor,
   diamondarmor,
   spikearmor,
+  demonarmor,
   goldensword,
   frozensword,
   diamondsword,
@@ -255,6 +258,7 @@ const sprites = {
   "item-frozenarmor": itemFrozenarmor,
   "item-diamondarmor": itemDiamondarmor,
   "item-spikearmor": itemSpikearmor,
+  "item-demonarmor": itemDemonarmor,
   "item-beltleather": itemBeltleather,
   "item-beltplated": itemBeltplated,
   "item-beltfrozen": itemBeltfrozen,

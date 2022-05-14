@@ -626,7 +626,10 @@ class Renderer {
             this.context.filter = `brightness(${brightness}%)`;
           }
 
-          if (["hornedarmor", "frozenarmor", "diamondarmor"].includes(sprite.name) && entity.armorBonus) {
+          if (
+            ["hornedarmor", "frozenarmor", "diamondarmor", "spikearmor", "demonarmor"].includes(sprite.name) &&
+            entity.armorBonus
+          ) {
             spriteImage = sprite.imageunique;
           }
         }
@@ -1074,7 +1077,7 @@ class Renderer {
 
     let spriteImage = sprite.image;
     if (
-      ["hornedarmor", "frozenarmor", "diamondarmor"].includes(this.game.player.armorName) &&
+      ["hornedarmor", "frozenarmor", "diamondarmor", "spikearmor", "demonarmor"].includes(this.game.player.armorName) &&
       this.game.player.armorBonus
     ) {
       spriteImage = sprite.imageunique;

@@ -149,6 +149,13 @@ var Items = {
     }
   },
 
+  DemonArmor: class DemonArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.DEMONARMOR, "armor");
+      this.lootMessage = "You pick up a demon armor";
+    }
+  },
+
   BeltLeather: class BeltLeather extends Item {
     constructor(id) {
       super(id, Types.Entities.BELTLEATHER, "belt");

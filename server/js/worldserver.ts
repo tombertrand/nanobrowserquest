@@ -1306,7 +1306,7 @@ class World {
     const itemName = this.getDroppedItemName(mob, attacker);
     const kind = Types.getKindFromString(itemName);
 
-    // var randomDrops = ["firefoxpotion"] as any;
+    // var randomDrops = ["demonarmor"] as any;
     // var randomDrops = ["bananopotion"] as any;
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];

@@ -68,7 +68,7 @@ class Sprite {
       this.imageunique7 = new Image();
       this.imageunique7.crossOrigin = "Anonymous";
       this.imageunique7.src = "img/" + this.scale + "/" + this.id + "unique7" + ".png";
-    } else if (["hornedarmor", "frozenarmor", "diamondarmor"].includes(this.name)) {
+    } else if (["hornedarmor", "frozenarmor", "diamondarmor", "spikearmor", "demonarmor"].includes(this.name)) {
       this.imageunique = new Image();
       this.imageunique.crossOrigin = "Anonymous";
       this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + ".png";
