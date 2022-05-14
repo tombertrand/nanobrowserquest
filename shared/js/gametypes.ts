@@ -1475,6 +1475,29 @@ Types.getItemRequirement = function (item: string, level: number, isUnique: bool
   return requirement;
 };
 
+Types.isUnique = function (item, bonus) {
+  const isWeapon = kinds[item][1] === "weapon";
+  const isArmor = kinds[item][1] === "armor";
+  const isBelt = kinds[item][1] === "belt";
+  const isCape = kinds[item][1] === "cape";
+  const isRing = kinds[item][1] === "ring";
+  const isAmulet = kinds[item][1] === "amulet";
+
+  let isUnique = false;
+
+  if (isRing) {
+    isUnique = Types.isUniqueRing(item);
+  } else if (isAmulet) {
+    isUnique = Types.isUniqueAmulet(item);
+  } else if (isCape) {
+    isUnique = (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 2;
+  } else if (isArmor || isWeapon || isBelt) {
+    isUnique = !!bonus;
+  }
+
+  return isUnique;
+};
+
 Types.getItemDetails = function (
   item: string,
   level: number,
@@ -1487,10 +1510,7 @@ Types.getItemDetails = function (
   const isAmulet = Types.isAmulet(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
-  const isUniqueRing = Types.isUniqueRing(item);
-  const isUniqueAmulet = Types.isUniqueAmulet(item);
-  const isUniqueCape = isCape && rawBonus.length >= 2;
-  const isUnique = ((isArmor || isWeapon || isBelt) && !!rawBonus) || isUniqueRing || isUniqueAmulet || isUniqueCape;
+  const isUnique = Types.isUnique(item, rawBonus);
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;

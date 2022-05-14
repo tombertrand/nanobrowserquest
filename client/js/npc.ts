@@ -34,12 +34,8 @@ var NpcTalk = {
 
   villager: [
     "Howdy stranger. Do you like poetry?",
-    "Roses are red, violets are blue...",
-    "I like hunting rats, and so do you...",
-    "The rats are dead, now what to do?",
-    "To be honest, I have no clue.",
-    "Maybe the forest, could interest you...",
-    "or instead, cook a rat stew.",
+    "Roses are red, bans are yellow...",
+    "I was deep into Terra, that's now out the window",
   ],
 
   carlosmatos: [

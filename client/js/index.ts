@@ -277,7 +277,7 @@ var initApp = function () {
 
     // $("#banano .link").on("click", () => {
     //   $("#loginnameinput").val("banano").show();
-    //   $("#loginaccountinput").val("ban_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+    //   $("#loginaccountinput").val("ban_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay").show();
     //   app.tryStartingGame();
     // });
 

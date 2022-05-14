@@ -295,7 +295,9 @@ class Player extends Character {
         if (msg && msg !== "") {
           msg = msg.substr(0, 255); // Enforce maxlength of chat input
 
-          if (self.name === "running-coder" || self.name === "oldschooler") {
+          const admins = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas"];
+
+          if (msg.startsWith("/") && admins.includes(self.name)) {
             if (msg === "/cow" && self.name === "running-coder") {
               if (!self.server.cowLevelClock) {
                 self.server.startCowLevel();
@@ -309,14 +311,18 @@ class Player extends Character {
               }
               return;
             } else if (msg.startsWith("/ban")) {
-              const periods = { 1: 86400, 7: 86400 * 7, 365: 86400 * 365 };
+              const periods = { 1: 86400, 365: 86400 * 365 };
               const reasons = ["misbehaved"];
 
               const [, period, reason, playerName] = msg.match(/\s(\w+)\s(\w+)\s(.+)/);
 
               if (periods[period] && reasons.includes(reason) && playerName) {
                 self.databaseHandler.banPlayerForReason(playerName, period, reason);
-                self.databaseHandler.banPlayerByIP(self, reason, "Misbehaved towards others");
+                self.databaseHandler.banPlayerByIP(
+                  self.server.getPlayerByName(playerName),
+                  reason,
+                  "Misbehaved towards others",
+                );
 
                 self.server.disconnectPlayer(playerName);
               }

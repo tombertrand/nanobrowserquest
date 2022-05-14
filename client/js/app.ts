@@ -677,7 +677,7 @@ class App {
       .css("background-image", 'url("' + weaponPath + '")')
       .attr("data-item", weapon)
       .attr("data-level", weaponLevel)
-      .attr("data-bonus", weaponBonus);
+      .attr("data-bonus", typeof weaponBonus === "string" ? weaponBonus : JSON.stringify(weaponBonus));
     $("#player-weapon").text(`${Types.getDisplayName(weapon, !!weaponBonus)} +${weaponLevel}`);
 
     if (armor !== "firefox") {
@@ -685,7 +685,7 @@ class App {
         .css("background-image", 'url("' + armorPath + '")')
         .attr("data-item", armor)
         .attr("data-level", armorLevel)
-        .attr("data-bonus", armorBonus);
+        .attr("data-bonus", typeof armorBonus === "string" ? armorBonus : JSON.stringify(armorBonus));
       $("#player-armor").text(`${Types.getDisplayName(armor, !!armorBonus)} +${armorLevel}`);
     }
   }

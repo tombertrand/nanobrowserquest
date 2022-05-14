@@ -831,7 +831,7 @@ class Game {
         }
 
         if (toSlot === -1) {
-          if (!level || level !== 1) {
+          if (!level || level !== 1 || Types.isUnique(item, rawBonus)) {
             $("#dialog-delete-item").dialog("open");
             self.slotToDelete = fromSlot;
             return;
@@ -911,7 +911,7 @@ class Game {
 
         $(".ui-droppable-origin").removeClass("ui-droppable-origin");
         $(
-          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-cape, .item-chest .item-scroll",
+          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-cape, .item-chest, .item-scroll",
         ).removeClass("item-droppable");
       },
     });
@@ -1056,7 +1056,7 @@ class Game {
 
   updateInventory() {
     if ($("#inventory").hasClass("visible")) {
-      this.destroyDraggable();
+      $("#inventory .item-draggable.ui-draggable").draggable("destroy");
     }
 
     // @TODO instead of empty-ing, compare and replace
@@ -1087,7 +1087,7 @@ class Game {
 
   updateStash() {
     if ($("#stash").hasClass("visible")) {
-      this.destroyDraggable();
+      $("#stash .item-draggable.ui-draggable").draggable("destroy");
     }
 
     // @TODO instead of empty-ing, compare and replace
@@ -1145,7 +1145,7 @@ class Game {
 
   updateUpgrade({ luckySlot, isSuccess }) {
     if ($("#inventory").hasClass("visible")) {
-      this.destroyDraggable();
+      $("#upgrade .item-draggable.ui-draggable").draggable("destroy");
     }
 
     $(".item-upgrade").empty();

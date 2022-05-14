@@ -509,6 +509,8 @@ class DatabaseHandler {
   }
 
   banPlayerByIP(banPlayer, reason, message) {
+    if (!banPlayer?.connection?._connection?.handshake?.headers?.["cf-connecting-ip"]) return;
+
     // 24h
     let days = 1;
     this.client.hget(

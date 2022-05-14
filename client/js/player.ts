@@ -490,26 +490,17 @@ class Player extends Character {
         const isRing = kinds[item][1] === "ring";
         const isAmulet = kinds[item][1] === "amulet";
         const isChest = kinds[item][1] === "chest";
+        const isUnique = Types.isUnique(item, bonus);
 
         let requirement = null;
         let level = null;
         let quantity = null;
-        let isUnique = false;
+
         if (isWeapon || isArmor || isBelt || isCape || isRing || isAmulet) {
           level = levelOrQuantity;
           requirement = Types.getItemRequirement(item, levelOrQuantity);
         } else if (Types.isScroll(item) || isChest) {
           quantity = levelOrQuantity;
-        }
-
-        if (isRing) {
-          isUnique = Types.isUniqueRing(item);
-        } else if (isAmulet) {
-          isUnique = Types.isUniqueAmulet(item);
-        } else if (isCape) {
-          isUnique = JSON.parse(bonus).length >= 2;
-        } else if (isArmor || isWeapon || isBelt) {
-          isUnique = !!bonus;
         }
 
         return {
