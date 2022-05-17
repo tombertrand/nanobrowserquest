@@ -4906,7 +4906,7 @@ class Game {
       } else if (item.kind === Types.Entities.CAKE) {
         this.tryUnlockingAchievement("FOR_SCIENCE");
       } else if (item.kind === Types.Entities.FIREFOXPOTION) {
-        this.tryUnlockingAchievement("firefox");
+        this.tryUnlockingAchievement("FOXY");
         this.audioManager.playSound("firefox");
       } else if (item.kind === Types.Entities.NANOPOTION || item.kind === Types.Entities.BANANOPOTION) {
         this.app.updateNanoPotions(this.player.nanoPotions);
