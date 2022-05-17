@@ -117,7 +117,7 @@ var Items = {
   BlueArmor: class BlueArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.BLUEARMOR, "armor");
-      this.lootMessage = "You pick up a sapphire armor";
+      this.lootMessage = "You pick up a frozen armor";
     }
   },
 
@@ -131,7 +131,7 @@ var Items = {
   FrozenArmor: class FrozenArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.FROZENARMOR, "armor");
-      this.lootMessage = "You pick up a frozen armor";
+      this.lootMessage = "You pick up a sapphire armor";
     }
   },
 
@@ -174,6 +174,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.BELTFROZEN, "belt");
       this.lootMessage = "You pick up a frozen belt";
+    }
+  },
+
+  BeltHorned: class BeltHorned extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTHORNED, "belt");
+      this.lootMessage = "You pick up a horned belt";
     }
   },
 

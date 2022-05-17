@@ -238,6 +238,7 @@ var Properties: any = {
       rejuvenationpotion: 85,
       scrollupgradehigh: 5,
       hornedarmor: 3,
+      belthorned: 2,
       ringgold: 2,
       amuletgold: 1,
     },
@@ -248,6 +249,7 @@ var Properties: any = {
   skeletoncommander: {
     drops: {
       scrollupgradehigh: 6,
+      belthorned: 2,
       hornedarmor: 5,
       ringgold: 4,
       amuletgold: 3,
@@ -259,26 +261,28 @@ var Properties: any = {
   snake2: {
     drops: {
       rejuvenationpotion: 80,
-      beltfrozen: 5,
+      beltfrozen: 1,
+      belthorned: 3,
       scrollupgradehigh: 5,
       ringgold: 3,
       amuletgold: 2,
     },
     hp: 420,
-    armor: 7,
+    armor: 8,
     weapon: 10,
   },
   wraith: {
     drops: {
       rejuvenationpotion: 60,
       beltfrozen: 3,
+      belthorned: 1,
       scrollupgradehigh: 5,
       ringgold: 3,
       amuletgold: 2,
     },
     hp: 575,
     armor: 10,
-    weapon: 10,
+    weapon: 11,
   },
   zombie: {
     drops: {
@@ -289,7 +293,7 @@ var Properties: any = {
     },
     hp: 305,
     armor: 6,
-    weapon: 11,
+    weapon: 12,
   },
   necromancer: {
     drops: {
@@ -301,7 +305,7 @@ var Properties: any = {
     },
     hp: 3000,
     armor: 13,
-    weapon: 12,
+    weapon: 13,
   },
   cow: {
     drops: {
@@ -310,6 +314,7 @@ var Properties: any = {
       frozenarmor: 1,
       frozensword: 1,
       beltfrozen: 1,
+      belthorned: 1,
       ringgold: 1,
       amuletgold: 1,
       scrollupgradehigh: 1,

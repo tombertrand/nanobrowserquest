@@ -801,8 +801,8 @@ class Renderer {
   }
 
   clearDirtyRects() {
-    var self = this,
-      count = 0;
+    var self = this;
+    var count = 0;
 
     this.game.forEachVisibleEntityByDepth(function (entity) {
       if (entity.isDirty && entity.oldDirtyRect) {
@@ -819,8 +819,8 @@ class Renderer {
     });
 
     if (this.game.clearTarget && this.lastTargetPos) {
-      var last = this.lastTargetPos,
-        rect = this.getTargetBoundingRect(last.x, last.y);
+      var last = this.lastTargetPos;
+      var rect = this.getTargetBoundingRect(last.x, last.y);
 
       this.clearDirtyRect(rect);
       this.game.clearTarget = false;

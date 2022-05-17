@@ -354,6 +354,7 @@ class Game {
       "item-beltleather",
       "item-beltplated",
       "item-beltfrozen",
+      "item-belthorned",
       "item-beltdiamond",
       "item-beltminotaur",
       "item-cape",
@@ -736,7 +737,7 @@ class Game {
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
             ${description ? `<div class="item-description">${description}</div>` : ""}
-            ${setBonus.length ? `<div class="item-set-description">${self.player.set} Set Bonuses</div>` : ""}
+            ${setBonus.length ? `<div class="item-set-description">${_.capitalize(self.player.set)} set bonuses</div>` : ""}
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
@@ -3009,7 +3010,7 @@ class Game {
           ) {
             setTimeout(function () {
               self.createAttackLink(attacker, target);
-            }, 200); // delay to prevent other players attacking mobs from ending up on the same tile as they walk towards each other.
+            }, 200); // delay to prevent other attacking mobs from ending up on the same tile as they walk towards each other.
           } else {
             self.createAttackLink(attacker, target);
           }

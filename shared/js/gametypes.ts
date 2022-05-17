@@ -136,6 +136,7 @@ export const Types: any = {
     BELTLEATHER: 85,
     BELTPLATED: 86,
     BELTFROZEN: 91,
+    BELTHORNED: 141,
     BELTDIAMOND: 129,
     BELTMINOTAUR: 134,
 
@@ -317,6 +318,7 @@ Types.Entities.Belts = [
   Types.Entities.BELTLEATHER,
   Types.Entities.BELTPLATED,
   Types.Entities.BELTFROZEN,
+  Types.Entities.BELTFHORNED,
   Types.Entities.BELTDIAMOND,
   Types.Entities.BELTMINOTAUR,
 ];
@@ -416,9 +418,9 @@ export const kinds = {
   platearmor: [Types.Entities.PLATEARMOR, "armor", "Plate Armor", 5, 10],
   redarmor: [Types.Entities.REDARMOR, "armor", "Ruby Armor", 7, 15],
   goldenarmor: [Types.Entities.GOLDENARMOR, "armor", "Golden Armor", 10, 20],
-  bluearmor: [Types.Entities.BLUEARMOR, "armor", "Sapphire Armor", 14, 24],
+  bluearmor: [Types.Entities.BLUEARMOR, "armor", "Frozen Armor", 14, 24],
   hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 18, 28],
-  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Frozen Armor", 28, 30],
+  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Sapphire Armor", 28, 30],
   diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 36, 34],
   spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 36, 42],
   demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 36, 46],
@@ -427,6 +429,7 @@ export const kinds = {
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
   beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 9, 4],
   beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 22, 10],
+  belthorned: [Types.Entities.BELTHORNED, "belt", "Horned Belt", 26, 12],
   beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 14],
   beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 40, 18],
 
@@ -549,6 +552,7 @@ Types.rankedBelts = [
   Types.Entities.BELTLEATHER,
   Types.Entities.BELTPLATED,
   Types.Entities.BELTFROZEN,
+  Types.Entities.BELTHORNED,
   Types.Entities.BELTDIAMOND,
   Types.Entities.BELTMINOTAUR,
 ];
@@ -587,6 +591,7 @@ Types.itemUniqueMap = {
   beltleather: ["Proof of Wear", 4, 4],
   beltplated: ["Hodler", 9, 6],
   beltfrozen: ["Spam Resistor", 22, 12],
+  belthorned: ["Dee-Fye", 28, 14],
   beltdiamond: ["Election scheduler", 38, 18],
   beltminotaur: ["TaaC", 40, 22],
 };
@@ -596,7 +601,6 @@ Types.setBonus = {
     minDamage: 15,
     defense: 10,
     coldDamage: 15,
-    health: 50,
     reduceFrozenChance: 25,
   },
   diamond: {
@@ -604,10 +608,29 @@ Types.setBonus = {
     blockChance: 3,
     health: 50,
   },
-  frozen: {
+  sapphire: {
     minDamage: 10,
     criticalHit: 3,
-    defense: 15,
+    defense: 10,
+  },
+  horned: {
+    minDamage: 6,
+    maxDamage: 6,
+    attackDamage: 6,
+  },
+  frozen: {
+    attackDamage: 10,
+    absorbedDamage: 10,
+    coldDamage: 10,
+  },
+  golden: {
+    magicDamage: 10,
+    criticalHit: 6,
+    defense: 10,
+  },
+  ruby: {
+    attackDamage: 4,
+    health: 30,
   },
   plated: {
     attackDamage: 4,
@@ -615,14 +638,18 @@ Types.setBonus = {
   },
   leather: {
     maxDamage: 3,
-    health: 15,
+    health: 10,
   },
 };
 
 Types.setItems = {
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
   diamond: ["diamondarmor", "beltdiamond", "diamondsword"],
-  frozen: ["frozenarmor", "beltfrozen", "frozensword"],
+  sapphire: ["frozenarmor", "frozensword"],
+  horned: ["hornedarmor", "belthorned"],
+  frozen: ["bluearmor", "beltfrozen", "bluemorningstar", "blueaxe"],
+  golden: ["goldenarmor", "goldensword"],
+  ruby: ["redarmor", "redsword"],
   plated: ["platearmor", "beltplated"],
   leather: ["leatherarmor", "beltleather"],
 };

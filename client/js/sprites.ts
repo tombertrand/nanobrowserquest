@@ -95,6 +95,7 @@ import itemDemonarmor from "../sprites/item-demonarmor.json";
 import itemBeltleather from "../sprites/item-beltleather.json";
 import itemBeltplated from "../sprites/item-beltplated.json";
 import itemBeltfrozen from "../sprites/item-beltfrozen.json";
+import itemBelthorned from "../sprites/item-belthorned.json";
 import itemBeltdiamond from "../sprites/item-beltdiamond.json";
 import itemBeltminotaur from "../sprites/item-beltminotaur.json";
 import itemCape from "../sprites/item-cape.json";
@@ -262,6 +263,7 @@ const sprites = {
   "item-beltleather": itemBeltleather,
   "item-beltplated": itemBeltplated,
   "item-beltfrozen": itemBeltfrozen,
+  "item-belthorned": itemBelthorned,
   "item-beltdiamond": itemBeltdiamond,
   "item-beltminotaur": itemBeltminotaur,
   "item-cape": itemCape,

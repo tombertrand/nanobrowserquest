@@ -213,7 +213,6 @@ class Character extends Entity {
       this.continueTo(x, y);
     } else {
       var path = this.requestPathfindingTo(x, y);
-
       this.followPath(path);
     }
   }
@@ -306,7 +305,6 @@ class Character extends Entity {
           this.nextGridX = this.path[this.step + 1][0];
           this.nextGridY = this.path[this.step + 1][1];
         }
-
         if (this.step_callback) {
           this.step_callback();
         }

@@ -35,6 +35,14 @@ class Pathfinder {
     this.grid = grid;
     this.applyIgnoreList_(true);
 
+    // @NOTE Check if the ending position is the same as the starting position
+    // This happens when player tries to glitch the monster against a bottom wall
+    if (entity.gridX === x && entity.gridY === y) {
+      if (!grid[y][entity.gridX + 1]) {
+        start = [entity.gridX + 1, entity.gridY];
+      }
+    }
+
     path = AStar(this.grid, start, end);
 
     if (path.length === 0 && findIncomplete === true) {

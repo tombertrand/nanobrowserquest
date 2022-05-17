@@ -854,9 +854,11 @@ class World {
     }
 
     // If the mob is not already attacking the player, create an attack link between them.
-    // @TODO REMOVE FORM ATTACKERS!!!
-    if (player) {
-      // && !(mob.id in player.attackers)) {
+    // @TODO REMOVE FORM ATTACKERS!!! WATCH THIS CONDITION CLOSELY... do we need that second part?
+    // When using the second part, the server is not constantly sending the attack link when
+    // the player exploits a bottom wall to have the enemy over and not attacking
+    // The second part was commented to fix attacker though doors
+    if (player && !(mob.id in player.attackers)) {
       this.clearMobAggroLink(mob);
 
       player.addAttacker(mob);
@@ -1026,11 +1028,13 @@ class World {
       this.pushToPlayer(entity, entity.health({ isHurt: true }));
     }
 
-    // Let the player know how much damage was inflicted
-    this.pushToPlayer(
-      attacker,
-      new Messages.Damage(entity, dmg, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
-    );
+    if (attacker.type === "player") {
+      // Let the player know how much damage was inflicted
+      this.pushToPlayer(
+        attacker,
+        new Messages.Damage(entity, dmg, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
+      );
+    }
 
     if (entity.hitPoints <= 0) {
       if (entity.type === "mob") {
@@ -1307,7 +1311,8 @@ class World {
     const kind = Types.getKindFromString(itemName);
 
     // var randomDrops = ["ringbronze", "ringsilver", "ringgold", "amuletsilver", "amuletgold"] as any;
-    // var randomDrops = ["bananopotion"] as any;
+    // var randomDrops = ["belthorned", "hornedarmor"] as any;
+    // var randomDrops = ["beltfrozen", "blueaxe", "bluemorningstar", "frozensword"] as any;
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrop = random(randomDrops.length);
