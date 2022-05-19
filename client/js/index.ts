@@ -115,8 +115,8 @@ var initApp = function () {
       // $(this).removeClass("blink");
     });
 
-    $("#player-count").click(function () {
-      app.togglePopulationInfo();
+    $("#player-count").on("click", function () {
+      app.togglePopulationInfo($("#population").hasClass("visible"));
     });
 
     $("#bar-container").click(function (e) {

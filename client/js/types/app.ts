@@ -21,7 +21,7 @@ export interface App {
   toggleCompleted: () => void;
   toggleAbout: () => void;
   toggleSettings: () => void;
-  togglePopulationInfo: () => void;
+  togglePopulationInfo: (isVisible: boolean) => void;
   togglePlayerInfo: () => void;
   toggleInventory: () => void;
   animateParchment: (arg0: string, arg1: string) => void;

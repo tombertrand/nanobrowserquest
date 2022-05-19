@@ -722,7 +722,7 @@ class App {
       $("#failed").removeClass("active");
     }
     if ($("#population").hasClass("visible")) {
-      $("#population").toggleClass("visible");
+      $("#population").removeClass("visible");
     }
     if ($("#upgrade").hasClass("visible")) {
       this.toggleUpgrade();
@@ -948,10 +948,10 @@ class App {
     }
   }
 
-  togglePopulationInfo() {
+  togglePopulationInfo(isVisible) {
     this.hideWindows();
 
-    $("#population").toggleClass("visible");
+    $("#population").toggleClass("visible", !isVisible);
   }
 
   togglePlayerInfo() {
