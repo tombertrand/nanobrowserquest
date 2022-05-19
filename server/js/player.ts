@@ -1524,7 +1524,11 @@ class Player extends Character {
     ) {
       set = "diamond";
       bonus = Types.setBonus.diamond;
-    } else if (this.armorKind === Types.Entities.FROZENARMOR && this.weaponKind === Types.Entities.FROZENSWORD) {
+    } else if (
+      this.armorKind === Types.Entities.FROZENARMOR &&
+      this.weaponKind === Types.Entities.FROZENSWORD &&
+      this.belt === "beltfrozen"
+    ) {
       set = "sapphire";
       bonus = Types.setBonus.sapphire;
     } else if (this.armorKind === Types.Entities.HORNEDARMOR && this.belt === "belthorned") {
@@ -1532,7 +1536,6 @@ class Player extends Character {
       bonus = Types.setBonus.horned;
     } else if (
       this.armorKind === Types.Entities.BLUEARMOR &&
-      this.belt === "beltfrozen" &&
       [Types.Entities.BLUEAXE, Types.Entities.BLUEMORNINGSTAR].includes(this.weaponKind)
     ) {
       set = "frozen";

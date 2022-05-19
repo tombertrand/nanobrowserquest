@@ -173,7 +173,7 @@ var Items = {
   BeltFrozen: class BeltFrozen extends Item {
     constructor(id) {
       super(id, Types.Entities.BELTFROZEN, "belt");
-      this.lootMessage = "You pick up a frozen belt";
+      this.lootMessage = "You pick up a sapphire belt";
     }
   },
 

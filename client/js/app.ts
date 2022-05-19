@@ -622,6 +622,7 @@ class App {
   }
 
   toggleAchievements() {
+    this.hideWindows();
     this.resetAchievementPage();
     $("#achievements").toggleClass("active");
   }
@@ -639,6 +640,7 @@ class App {
   }
 
   toggleSettings() {
+    this.hideWindows();
     $("#settings").toggleClass("active");
   }
 
@@ -693,7 +695,7 @@ class App {
 
   hideWindows() {
     if ($("#achievements").hasClass("active")) {
-      this.toggleAchievements();
+      $("#achievements").removeClass("active");
       $("#achievementsbutton").removeClass("active");
     }
     if ($("#instructions").hasClass("active")) {
@@ -719,7 +721,9 @@ class App {
     if ($("#failed").hasClass("active")) {
       $("#failed").removeClass("active");
     }
-
+    if ($("#population").hasClass("visible")) {
+      $("#population").toggleClass("visible");
+    }
     if ($("#upgrade").hasClass("visible")) {
       this.toggleUpgrade();
     }
@@ -732,16 +736,13 @@ class App {
     if ($("#stash").hasClass("visible")) {
       this.closeStash();
     }
-
     if ($("#store").hasClass("active")) {
       this.store.closeStore();
     }
-
     if ($("#settings").hasClass("active")) {
-      this.toggleSettings();
+      $("#settings").removeClass("active");
       $("#settings-button").removeClass("active");
     }
-
     if ($("#party").hasClass("active")) {
       this.togglePlayers();
     }
@@ -948,11 +949,9 @@ class App {
   }
 
   togglePopulationInfo() {
-    $("#population").toggleClass("visible");
+    this.hideWindows();
 
-    if ($("#upgrade, #inventory").hasClass("visible")) {
-      this.toggleInventory();
-    }
+    $("#population").toggleClass("visible");
   }
 
   togglePlayerInfo() {
@@ -1068,6 +1067,8 @@ class App {
   }
 
   openWaypoint(activeWaypoint) {
+    this.hideWindows();
+
     $("#waypoint").find(".active").removeClass("active");
     if (activeWaypoint) {
       $(`#waypoint-${activeWaypoint.id}`).addClass("active");

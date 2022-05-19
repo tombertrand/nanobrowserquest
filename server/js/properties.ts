@@ -238,7 +238,7 @@ var Properties: any = {
       rejuvenationpotion: 85,
       scrollupgradehigh: 5,
       hornedarmor: 3,
-      belthorned: 2,
+      belthorned: 1,
       ringgold: 2,
       amuletgold: 1,
     },
@@ -249,7 +249,7 @@ var Properties: any = {
   skeletoncommander: {
     drops: {
       scrollupgradehigh: 6,
-      belthorned: 2,
+      belthorned: 1,
       hornedarmor: 5,
       ringgold: 4,
       amuletgold: 3,

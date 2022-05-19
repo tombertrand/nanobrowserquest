@@ -428,7 +428,7 @@ export const kinds = {
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
   beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 9, 4],
-  beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Frozen Belt", 22, 10],
+  beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Sapphire Belt", 24, 10],
   belthorned: [Types.Entities.BELTHORNED, "belt", "Horned Belt", 26, 12],
   beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 14],
   beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 40, 18],
@@ -606,12 +606,12 @@ Types.setBonus = {
   diamond: {
     exp: 10,
     blockChance: 3,
-    health: 50,
+    health: 60,
   },
   sapphire: {
     minDamage: 10,
     criticalHit: 3,
-    defense: 10,
+    defense: 12,
   },
   horned: {
     minDamage: 6,
@@ -645,9 +645,9 @@ Types.setBonus = {
 Types.setItems = {
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
   diamond: ["diamondarmor", "beltdiamond", "diamondsword"],
-  sapphire: ["frozenarmor", "frozensword"],
+  sapphire: ["frozenarmor", "frozensword", "beltfrozen"],
   horned: ["hornedarmor", "belthorned"],
-  frozen: ["bluearmor", "beltfrozen", "bluemorningstar", "blueaxe"],
+  frozen: ["bluearmor", "bluemorningstar", "blueaxe"],
   golden: ["goldenarmor", "goldensword"],
   ruby: ["redarmor", "redsword"],
   plated: ["platearmor", "beltplated"],

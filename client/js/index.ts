@@ -703,18 +703,6 @@ var initGame = function () {
     }
   });
 
-  $("#chatinput").focus(function () {
-    var placeholder = $(this).attr("placeholder");
-
-    if (!Detect.isFirefoxAndroid()) {
-      $(this).val(placeholder);
-    }
-
-    // if ($(this).val() === placeholder) {
-    //   this.setSelectionRange(0, 0);
-    // }
-  });
-
   $("#nameinput").focusin(function () {
     $("#name-tooltip").addClass("visible");
   });
@@ -748,8 +736,8 @@ var initGame = function () {
   });
 
   $(document).bind("keydown", function (e) {
-    var key = e.which,
-      $chat = $("#chatinput");
+    var key = e.which;
+    var $chat = $("#chatinput");
 
     if (key === 13) {
       // Enter
