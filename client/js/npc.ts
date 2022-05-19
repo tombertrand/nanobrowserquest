@@ -29,7 +29,7 @@ var NpcTalk = {
     "Hi there, adventurer!",
     "How do you like this game?",
     "Make sure to share it with your friends and play it as many time as you like.",
-    "Hop over the Nano discord and get engaged with the community!",
+    "Hop over the NanoBrowserQuest discord and get engaged with the community!",
   ],
 
   villager: [
@@ -42,7 +42,7 @@ var NpcTalk = {
     "Hey hey hey!",
     "Wassa-wassa-wassa-wassup!",
     "My wife still doesn't even believe in me",
-    "Let me tell you, I love, BITCONNECT!",
+    "Let me tell you, I love, BITCONNEEeeeEECT!",
   ],
 
   satoshi: [

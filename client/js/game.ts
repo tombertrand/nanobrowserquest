@@ -4752,7 +4752,7 @@ class Game {
     });
   }
 
-  showNotification(message, timeout = 3000) {
+  showNotification(message, timeout = 3500) {
     if (this.notification_callback) {
       this.notification_callback(message, timeout);
     }

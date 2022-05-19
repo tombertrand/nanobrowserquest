@@ -23,6 +23,8 @@ class Sprite {
   image8: any;
   imageunique: any;
   imageunique7: any;
+  imagenano: any;
+  imageban: any;
 
   constructor(name, scale) {
     this.name = name;
@@ -51,6 +53,16 @@ class Sprite {
     this.image = new Image();
     this.image.crossOrigin = "Anonymous";
     this.image.src = "img/" + this.scale + "/" + this.id + ".png";
+
+    if (this.name === "guard") {
+      this.imagenano = new Image();
+      this.imagenano.crossOrigin = "Anonymous";
+      this.imagenano.src = "img/" + this.scale + "/nanoguard.png";
+
+      this.imageban = new Image();
+      this.imageban.crossOrigin = "Anonymous";
+      this.imageban.src = "img/" + this.scale + "/banguard.png";
+    }
 
     if (Types.isWeapon(this.name) && this.name !== "dagger") {
       this.image7 = new Image();

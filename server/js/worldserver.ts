@@ -1315,6 +1315,7 @@ class World {
     // var randomDrops = ["beltfrozen", "blueaxe", "bluemorningstar", "frozensword"] as any;
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // var randomDrops = ["firefoxpotion"];
     // var randomDrop = random(randomDrops.length);
     // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 

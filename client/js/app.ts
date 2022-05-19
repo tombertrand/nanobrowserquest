@@ -542,9 +542,10 @@ class App {
       var expInThisLevel = self.game.player.experience - Types.expForLevel[self.game.player.level - 1];
       var expForLevelUp = Types.expForLevel[self.game.player.level] - Types.expForLevel[self.game.player.level - 1];
       var expPercentThisLevel = (100 * expInThisLevel) / expForLevelUp;
+      var expPercentAsString = `${expPercentThisLevel * 100}`;
 
       self.game.showNotification(
-        "You are level " + self.game.player.level + ". " + expPercentThisLevel.toFixed(0) + "% of this level done.",
+        `You are level ${self.game.player.level}. ${parseInt(expPercentAsString, 10) / 100} % of this level done.`,
       );
     });
   }

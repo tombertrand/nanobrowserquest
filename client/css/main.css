@@ -512,28 +512,28 @@ footer, header, hgroup, menu, nav, section {
     }
 
     @-moz-keyframes parchmiddle1 {
-        0% {width:346px;margin-left:-173px;background-position:-38px -294px;}
-        45% {width:0px;margin-left:0px;background-position: -211px -294px;}
-        55% {width:0px;margin-left:0px;background-position: -211px -294px;}
-        100% {width:346px;margin-left:-173px;background-position:-38px -294px;}
+        0% {width:346px;margin-left:-173px;background-position:-38px -356px;}
+        45% {width:0px;margin-left:0px;background-position: -211px -356px;}
+        55% {width:0px;margin-left:0px;background-position: -211px -356px;}
+        100% {width:346px;margin-left:-173px;background-position:-38px -356px;}
     }
     @-webkit-keyframes parchmiddle1 {
-        0% {width:346px;margin-left:-173px;background-position:-38px -294px;}
-        45% {width:0px;margin-left:0px;background-position: -211px -294px;}
-        55% {width:0px;margin-left:0px;background-position: -211px -294px;}
-        100% {width:346px;margin-left:-173px;background-position:-38px -294px;}
+        0% {width:346px;margin-left:-173px;background-position:-38px -356px;}
+        45% {width:0px;margin-left:0px;background-position: -211px -356px;}
+        55% {width:0px;margin-left:0px;background-position: -211px -356px;}
+        100% {width:346px;margin-left:-173px;background-position:-38px -356px;}
     }
     @-o-keyframes parchmiddle1 {
-        0% {width:346px;margin-left:-173px;background-position:-38px -294px;}
-        45% {width:0px;margin-left:0px;background-position: -211px -294px;}
-        55% {width:0px;margin-left:0px;background-position: -211px -294px;}
-        100% {width:346px;margin-left:-173px;background-position:-38px -294px;}
+        0% {width:346px;margin-left:-173px;background-position:-38px -356px;}
+        45% {width:0px;margin-left:0px;background-position: -211px -356px;}
+        55% {width:0px;margin-left:0px;background-position: -211px -356px;}
+        100% {width:346px;margin-left:-173px;background-position:-38px -356px;}
     }
     @-ms-keyframes parchmiddle1 {
-        0% {width:346px;margin-left:-173px;background-position:-38px -294px;}
-        45% {width:0px;margin-left:0px;background-position: -211px -294px;}
-        55% {width:0px;margin-left:0px;background-position: -211px -294px;}
-        100% {width:346px;margin-left:-173px;background-position:-38px -294px;}
+        0% {width:346px;margin-left:-173px;background-position:-38px -356px;}
+        45% {width:0px;margin-left:0px;background-position: -211px -356px;}
+        55% {width:0px;margin-left:0px;background-position: -211px -356px;}
+        100% {width:346px;margin-left:-173px;background-position:-38px -356px;}
     }
 
 
@@ -1421,7 +1421,7 @@ footer, header, hgroup, menu, nav, section {
         .button {height:51px;width:125px;background-position:-229px -102px;margin:10px auto 0 auto;position:relative;}
         .play div {height:51px;width:125px;background-position:-229px 0px;}
         .play div:active {background-position:-229px -153px;}
-        .play.loading div {background-position:-651px -204px;}
+        .play.loading div {background-position:-640px -566px}
         .play.loading img {height:18px;width:18px; top: 62%;}
         .stroke, .achievement-name {text-shadow:1px 1px 0 #373737, 1px -1px 0 #373737, 0 1px 0 #373737, 1px 0 0 #373737, -1px 1px 0 #373737, -1px -1px 0 #373737, 0 -1px 0 #373737, 0 1px 0 #373737, -1px 0 0 #373737;}
         
@@ -1478,7 +1478,7 @@ footer, header, hgroup, menu, nav, section {
         /*Death & Respawn*/
         #death p {font-size:10px;margin-top:45px;}
         #death p em {margin-top:0px;}
-		#respawn {width:125px;height:51px;margin:21px auto 0 auto;background-position: 0 -476px;}
+		#respawn {width:125px;height:51px;margin:21px auto 0 auto;background-position: 0 -300px;}
 		#respawn:active {background-position:-125px -476px;}
 		
 		/*Bubbles*/
@@ -1542,9 +1542,9 @@ footer, header, hgroup, menu, nav, section {
         #credits, #death, #about {width:422px;height:182px;top:50%;margin-left:-211px;margin-top:-91px;font-size:10px;}
         #credits h1 a {font-size:12px;}
         .parchment-left, .parchment-right, .parchment-middle {background-size:422px;}
-        .parchment-left {width:38px;height:198px;background-position:0px -357px;}
-        .parchment-right {width:38px;height:198px;background-position:-384px -357px;}
-        .parchment-middle {height:198px;background-position:-38px -357px;width:346px;margin-left:-173px;}
+        .parchment-left {width:38px;height:198px;background-position:0px -356px;}
+        .parchment-right {width:38px;height:198px;background-position:-384px -356px;}
+        .parchment-middle {height:198px;background-position:-38px -356px;width:346px;margin-left:-173px;}
         
         #credits h1, #about h1 {margin-top:12px;font-weight:normal;}
         .game #credits h1, .game #about h1 {margin-top:20px;}
@@ -1577,8 +1577,8 @@ footer, header, hgroup, menu, nav, section {
         
         .animate .parchment-middle {-moz-animation:parchmiddle1 1s ease 1;-webkit-animation:parchmiddle1 1s ease 1;-o-animation:parchmiddle1 1s ease 1;-ms-animation:parchmiddle1 1s ease 1;}
         
-        .game .parchment-middle {background-position: -211px -294px;}
-        .game.credits .parchment-middle, .game.death .parchment-middle, .game.about .parchment-middle, .game.legal .parchment-middle {width:346px;margin-left:-173px;background-position: -38px -294px;}
+        .game .parchment-middle {background-position: -211px -356px;}
+        .game.credits .parchment-middle, .game.death .parchment-middle, .game.about .parchment-middle, .game.legal .parchment-middle {width:346px;margin-left:-173px;background-position: -38px -356px;}
 
         #resize-check {height:1px;}
         
@@ -1742,15 +1742,15 @@ footer, header, hgroup, menu, nav, section {
 		.parchment-middle {width:100%;left:0px;margin-left:0px;height:auto;position:relative;}
 		#toggle-credits, #credits {display:none;}
 		
-		.game.death #parchment {background:url('../img/1/spritesheet.png') 0 -294px;height:182px;width:422px;position:absolute;top:50%;left:50%;margin-top:-101px;margin-left:-211px;}
+		.game.death #parchment {background:url('../img/1/spritesheet.png') 0 -355px;height:202px;width:422px;position:absolute;top:50%;left:50%;margin-top:-116px;margin-left:-211px;}
         .game.death .parchment-middle {width:100%;position:relative;top:0;left:0;margin-left:0;margin-top:0;}
-        .game.death #death {position:relative;top:0;left:0;margin-top:0;margin-left:0;width:100%;}
+        .game.death #death { position:relative;top:0;left:0;margin-top:0;margin-left:0;width:100%;}
         .game.death #death p {padding-top:30px;color:#373737;font-size:20px;margin-top:0;width:80%;margin:0 auto;}
         .game.death #death p em {display:block;margin-top:15px;font-style:normal;}
 
         #instructions, #completed, #failed, #achievements, #lists, #about {-webkit-transition:none;-moz-transition:none;-o-transition:none;-ms-transition:none;transition:none;}
 
-		.game.death #death {height:193px;width:417px;margin-left:-208px;margin-top:-113px;color:#373737;background:url('../img/1/spritesheet.png') 0 -568px;margin:-10px 0 0 0;}
+		.game.death #death {height:193px;width:417px;margin-left:-208px;margin-top:-113px;color:#373737;/*background:url('../img/1/spritesheet.png') 0 -568px;*/margin:-10px 0 0 0;}
         /* #respawn { background-position: -204px -1398px; background-size: 844px auto; width: 204px; height: 54px;}
 		#respawn:active {background-position:-408px -1398px;} */
         #respawn {

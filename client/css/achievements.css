@@ -99,7 +99,7 @@
     .item-potion.active {background-position:-21px -18px;}
     .item-potion.ban.active {background-position:-42px -18px;}
 
-    #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .achievement-sharing a, #previous, #next {background-size:1248px;}
+    #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .achievement-sharing a, #previous, #next {background-size:1248px !important;}
     #achievements {height:588px;width:1248px;margin-left:-624px;margin-top:-324px;font-size:30px;}
     #achievements li, .upscaled #achievements li { height:78px;width:1116px;background-position:0 -588px;margin:15px 0;}
     #achievements li .coin {margin-right:30px;}
@@ -249,124 +249,6 @@
     #achievement-notification .name {color:#eee;font-size:20px;margin:6px 0;}
 }
 
-@media screen and (max-height: 850px) {
-    .coin {width:48px;height:52px;}
-    .achievement1 .coin {background-position:0 -444px;}
-    .achievement2 .coin {background-position:-48px -444px;}
-    .achievement3 .coin {background-position:-96px -444px;}
-    .achievement4 .coin {background-position:-144px -444px;}
-    .achievement5 .coin {background-position:-192px -444px;}
-    .achievement6 .coin {background-position:-240px -444px;}
-    .achievement7 .coin {background-position:-288px -444px;}
-    .achievement8 .coin {background-position:-336px -444px;}
-    .achievement9 .coin {background-position:-384px -444px;}
-    .achievement10 .coin {background-position:-432px -444px;}
-    .achievement11 .coin {background-position:-480px -444px;}
-    .achievement12 .coin {background-position:-528px -444px;}
-    .achievement13 .coin {background-position:-576px -444px;}
-    .achievement14 .coin {background-position:-624px -444px;}
-    .achievement15 .coin {background-position:-672px -444px;}
-    .achievement16 .coin {background-position:-672px -548px;}
-    .achievement17 .coin {background-position:-720px -444px;}
-    .achievement18 .coin {background-position:-720px -548px;}
-    .achievement19 .coin {background-position:-576px -548px;}
-    .achievement20 .coin {background-position:-624px -548px;}
-    .achievement21 .coin {background-position:-768px -444px;}
-    .achievement22 .coin {background-position:-432px -548px;}
-    .achievement23 .coin {background-position:-480px -548px;}
-    .achievement24 .coin {background-position:-528px -548px;}
-    .achievement25 .coin {background-position:-432px -600px;}
-    .achievement26 .coin {background-position:-480px -600px;}
-    .achievement27 .coin {background-position:-528px -600px;}
-    .achievement28 .coin {background-position:-576px -600px;}
-    .achievement29 .coin {background-position:-624px -600px;}
-    .achievement30 .coin {background-position:-672px -600px;}
-    .achievement31 .coin {background-position:-720px -600px;}
-    .achievement32 .coin {background-position:-768px -600px;}
-    .achievement33 .coin {background-position:-432px -652px;}
-    .achievement34 .coin {background-position:-480px -652px;}
-    .achievement35 .coin {background-position:-528px -652px;}
-    .achievement36 .coin {background-position:-576px -652px;}
-    .achievement37 .coin {background-position:-624px -652px;}
-    .achievement38 .coin {background-position:-672px -652px;}
-    .achievement39 .coin {background-position:-720px -652px;}
-    .achievement40 .coin {background-position:-768px -652px;}
-    .achievement41 .coin {background-position:-432px -704px;}
-    .achievement42 .coin {background-position:-480px -704px;}
-    .achievement43 .coin {background-position:-528px -704px;}
-    .achievement44 .coin {background-position:-576px -704px;}
-
-    #achievements-wrapper {height:258px;width:744px;margin:30px 0 10px 40px;}
-    #achievements ul {float:left;margin-left:40px;}
-    #achievements nav {height:44px;width:135px;margin:0 auto;}
-    #previous, #next {height:44px;width:68px;display:inline-block;}
-    .page1 #previous, .upscaled .page1 #previous {background-position:0px -564px;}
-    .page11 #next, .upscaled .page11 #next {background-position:-66px -564px;}
-    #previous, .upscaled #previous {background-position:-134px -564px;}
-    #previous:active, .upscaled #previous:active {background-position:-268px -564px;}
-    #next, .upscaled #next {margin-left:-10px;background-position:-200px -564px;}
-    #next:active, .upscaled #next:active {background-position:-334px -564px;}
-    
-    .page1 #previous:hover, .page1 #previous:active {background-position:0px -564px;}
-    .page11 #next:hover, .page11 #next:active {background-position:-66px -564px}
-    
-    #lists {width:9000px;}
-    #achievements.page1 #lists {left:0;}
-    #achievements.page2 #lists {left:-784px;}
-    #achievements.page3 #lists {left:-1568px;}
-    #achievements.page4 #lists {left:-2352px;}
-    #achievements.page5 #lists {left:-3136px;}
-    #achievements.page6 #lists {left:-3920px;}
-    #achievements.page7 #lists {left:-4704px;}
-    #achievements.page8 #lists {left:-5488px;}
-    #achievements.page9 #lists {left:-6272px;}
-    #achievements.page10 #lists {left:-7056px;}
-    #achievements.page11 #lists {left:-7840px;}
-    
-    #achievements-count {margin:6px 0 0 48px;}
-    #achievements-potion-count {margin:6px 48px 0 0;}
-    #achievements-unlocks-count, #potion-count {margin-bottom: 12px;}
-    #achievements-unlocks-count {height: 20px;}
-
-    .item-gem {background-position:0 0; width: 14px; height: 12px;}
-    #gem-ruby.active {background-position:-14px 0px;}
-    #gem-emerald.active {background-position:-28px 0px;}
-    #gem-amethyst.active {background-position:-42px 0px;}
-    #gem-topaz.active {background-position:-56px 0px;}
-    #gem-sapphire.active {background-position:-70px 0px;}
-    .item-potion {background-position:0 -12px; width: 14px; height: 20px}
-    .item-potion.active {background-position:-14px -12px;}
-    .item-potion.ban.active {background-position:-28px -12px;}
-    
-    #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .upscaled #coinsparks, .achievement-sharing a, #previous, #next {background-size:832px;}
-    #achievements {height:392px;width:832px;margin-left:-416px;margin-top:-216px;font-size:20px;}
-    #achievements li, .upscaled #achievements li {height:52px;width:744px;background-position:0 -392px;margin:10px 0;}
-    #achievements li .coin {margin-right:20px;}
-    .achievement-sharing {right:16px;top:16px;}
-    .achievement-sharing .facebook {height:22px;width:10px;background-position:-744px -392px;}
-    .achievement-sharing .facebook:hover {background-position:-744px -414px;}
-    .achievement-sharing .twitter, .upscaled .achievement-sharing .twitter {height:22px;width:32px;background-position:-754px -392px;margin-left:10px;}
-    .achievement-sharing .twitter:hover, .upscaled .achievement-sharing .twitter:hover {background-position:-754px -414px;}
-    
-    #achievement-notification, .upscaled #achievement-notification {width:432px;bottom:44px;height:0;margin-left:-216px;background-position:0 -496px;}
-    #achievement-notification.active {height:68px;}
-    #achievement-notification .coin {position:absolute;top:-40px;left:50%;margin-left:-24px;opacity:0;}
-    #achievement-notification.active .coin {opacity:1;}
-    #achievement-notification.active #coinsparks, .upscaled #achievement-notification.active #coinsparks {
-        height:52px;width:48px;
-        -moz-animation:coinsparks2 0.8s steps(6, end) 7;
-        -webkit-animation:coinsparks2 0.8s steps(6, end) 7;
-        -o-animation:coinsparks2 0.8s steps(6, end) 7;
-        -ms-animation:coinsparks2 0.8s steps(6, end) 7;
-        -moz-animation-iteration-count: infinite;
-        -webkit-animation-iteration-count: infinite;
-        -o-animation-iteration-count: infinite;
-        -ms-animation-iteration-count: infinite;
-    }
-    #achievement-notification .title {color:#fce045;font-size:14px;margin:18px 0 6px 0;}
-    #achievement-notification .name {color:#eee;font-size:20px;margin:6px 0;}
-}
-
 @media screen and (max-width: 1000px) {
     .coin {width:24px;height:26px;}
     .achievement1 .coin {background-position:0 -222px;}
@@ -459,7 +341,7 @@
     #achievements-unlocks-count > div { margin-right: 6px; }
     #potion-count > div { margin-left: 6px; }
     
-    #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .achievement-sharing a, #previous, #next {background-size:416px;}
+    #achievements, #achievements li, #achievements .coin, #achievement-notification, #achievement-notification .coin, #coinsparks, .achievement-sharing a, #previous, #next {background-size:416px !important;}
     #achievements {height:196px;width:416px;margin-left:-208px;margin-top:-108px;font-size:10px;}
     #achievements li, .upscaled #achievements li {height:26px;width:372px;background-position:0 -196px;margin:5px 0;}
     #achievements li .coin {margin-right:10px;}
@@ -560,8 +442,8 @@
     #achievements.page10 #lists {left:-3528px;}
     #achievements.page11 #lists {left:-3920px;}
     
-    #achievements-count {margin:6px 0 0 24px;}
-    #achievements-potion-count {margin:6px 24px 0 0;}
+    #achievements-count {margin:0 0 0 24px;}
+    #achievements-potion-count {margin:0 24px 0 0;}
     #achievements-unlocks-count, #potion-count {margin-bottom: 6px;}
     #achievements-unlocks-count {height: 20px;}
 
@@ -571,9 +453,9 @@
     #gem-amethyst.active {background-position:-42px 0px;}
     #gem-topaz.active {background-position:-56px 0px;}
     #gem-sapphire.active {background-position:-70px 0px;}
-    .item-potion {background-position:0 -12px; width: 14px; height: 20px}
-    .item-potion.active {background-position:-14px -12px;}
-    .item-potion.ban.active {background-position:-28px -12px;}
+    .item-potion {background-position:0 -6px; width: 7px; height: 10px}
+    .item-potion.active {background-position:-7px -6px;}
+    .item-potion.ban.active {background-position:-14px -12px;}
 
     #achievement-notification, #achievement-notification .coin, #coinsparks {background-size:832px;}
     #achievement-notification, .upscaled #achievement-notification {width:432px;bottom:34px;height:0;margin-left:-216px;background-position:0 -496px;}
