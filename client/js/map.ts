@@ -3,12 +3,11 @@ import * as _ from "lodash";
 import { Types } from "../../shared/js/gametypes";
 import Area from "./area";
 import Detect from "./detect";
+import Game from "./game";
 import { isInt } from "./utils";
 
-import type { Game as GameType } from "./types/game";
-
 class Map {
-  game: GameType;
+  game: Game;
   data: any[];
   isLoaded: boolean;
   tilesetsLoaded: boolean;
@@ -31,7 +30,7 @@ class Map {
   checkpoints?: any;
   tilesets?: any;
 
-  constructor(loadMultiTilesheets: any, game: GameType) {
+  constructor(loadMultiTilesheets: any, game: Game) {
     this.game = game;
     this.data = [];
     this.isLoaded = false;

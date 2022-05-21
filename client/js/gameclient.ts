@@ -460,9 +460,10 @@ class GameClient {
     var entityId = data[1];
     var name = data[2];
     var message = data[3];
+    var type = data[4];
 
     if (this.chat_callback) {
-      this.chat_callback({ entityId, name, message });
+      this.chat_callback({ entityId, name, message, type });
     }
   }
 

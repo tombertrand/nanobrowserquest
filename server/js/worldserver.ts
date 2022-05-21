@@ -862,7 +862,6 @@ class World {
     // the player exploits a bottom wall to have the enemy over and not attacking
     // The second part was commented to fix attacker though doors
     if (player && !player.attackers[mob.id]) {
-      // && !(mob.id in player.attackers)) {
       player.addAttacker(mob);
       mob.setTarget(player);
 
@@ -1317,7 +1316,7 @@ class World {
     // var randomDrops = ["beltfrozen", "blueaxe", "bluemorningstar", "frozensword"] as any;
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
-    // var randomDrops = ["firefoxpotion"];
+    // var randomDrops = ["cape"];
     // var randomDrop = random(randomDrops.length);
     // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 

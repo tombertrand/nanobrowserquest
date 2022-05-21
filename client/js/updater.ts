@@ -1,8 +1,7 @@
 import { Types } from "../../shared/js/gametypes";
 import Character from "./character";
+import Game from "./game";
 import Timer from "./timer";
-
-import type { Game } from "./types/game";
 
 class Updater {
   game: Game;
@@ -226,16 +225,16 @@ class Updater {
 
     if (player.moveUp) {
       pos.y -= 1;
-      game.keys(pos, Types.Orientations.UP);
+      game.keys(pos);
     } else if (player.moveDown) {
       pos.y += 1;
-      game.keys(pos, Types.Orientations.DOWN);
+      game.keys(pos);
     } else if (player.moveRight) {
       pos.x += 1;
-      game.keys(pos, Types.Orientations.RIGHT);
+      game.keys(pos);
     } else if (player.moveLeft) {
       pos.x -= 1;
-      game.keys(pos, Types.Orientations.LEFT);
+      game.keys(pos);
     }
   }
 

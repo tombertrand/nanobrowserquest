@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-import type { Game } from "./types/game";
+import Game from "./game";
 
 class InfoManager {
   game: Game;

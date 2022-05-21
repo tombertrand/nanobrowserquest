@@ -5,6 +5,7 @@ import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
 import Animation from "./animation";
+import App from "./app";
 import AudioManager from "./audio";
 import BubbleManager from "./bubble";
 import Character from "./character";
@@ -25,7 +26,6 @@ import Renderer from "./renderer";
 import Sprite from "./sprite";
 import AnimatedTile from "./tile";
 import Transition from "./transition";
-import { App as AppType } from "./types/app";
 import Updater from "./updater";
 import { randomRange } from "./utils";
 import Warrior from "./warrior";
@@ -36,7 +36,7 @@ export type Network = "nano" | "ban";
 export type Explorer = "nanolooker" | "bananolooker";
 
 class Game {
-  app: AppType;
+  app: App;
   ready: boolean;
   started: boolean;
   isLoaded: boolean;
@@ -145,6 +145,7 @@ class Game {
   worldPlayers: any[];
   network: Network;
   explorer: Explorer;
+  hoverSlotToDelete: number | null;
 
   constructor(app) {
     this.app = app;
@@ -163,6 +164,7 @@ class Game {
     this.minotaurLevelPortalCoords = { x: 34, y: 498 };
     this.network = null;
     this.explorer = null;
+    this.hoverSlotToDelete = null;
 
     this.renderer = null;
     this.updater = null;
@@ -687,6 +689,9 @@ class Game {
       track: true,
       // hide: 1000000,
       position: { my: "left bottom-10", at: "left bottom", collision: "flipfit" },
+      close: function () {
+        self.hoverSlotToDelete = null;
+      },
       content() {
         // Player is dead
         if (!self.player) return;
@@ -696,6 +701,8 @@ class Game {
         const level = element.attr("data-level");
         const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
+
+        self.hoverSlotToDelete = slot;
 
         let rawSetBonus = null;
         if (
@@ -737,7 +744,11 @@ class Game {
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
             ${description ? `<div class="item-description">${description}</div>` : ""}
-            ${setBonus.length ? `<div class="item-set-description">${_.capitalize(self.player.set)} set bonuses</div>` : ""}
+            ${
+              setBonus.length
+                ? `<div class="item-set-description">${_.capitalize(self.player.set)} set bonuses</div>`
+                : ""
+            }
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
@@ -794,86 +805,95 @@ class Game {
       greedy: true,
       over() {},
       out() {},
-      drop(event, ui) {
-        const fromItemEl = $(ui.draggable[0]);
-        const fromItemElParent = fromItemEl.parent();
-        const fromSlot = fromItemElParent.data("slot");
+      drop(_event, ui) {
+        const fromSlot = $(ui.draggable[0]).parent().data("slot");
         const toSlot = $(this).data("slot");
-        const toItemEl = $(this).find("> div");
 
-        if (fromSlot === toSlot || typeof fromSlot !== "number" || typeof toSlot !== "number") {
-          return;
-        }
+        self.dropItem(fromSlot, toSlot);
 
-        const item = fromItemEl.attr("data-item");
-        const level = parseInt(fromItemEl.attr("data-level"));
-        const rawBonus = fromItemEl.attr("data-bonus");
-        let bonus: number[];
-        if (rawBonus) {
-          try {
-            bonus = JSON.parse(rawBonus) as number[];
-          } catch (err) {
-            // Silence error
-          }
-        }
-
-        const toItem = toItemEl.attr("data-item");
-        const toLevel = toItemEl.attr("data-level");
-
-        if (toItem) {
-          if (
-            Object.values(Types.Slot).includes(fromSlot) &&
-            (!toLevel || !Types.isCorrectTypeForSlot(fromSlot, toItem) || toLevel > self.player.level)
-          ) {
-            return;
-          }
-        }
-
-        if (Object.values(Types.Slot).includes(toSlot) && Types.getItemRequirement(item, level) > self.player.level) {
-          return;
-        }
-
-        if (toSlot === -1) {
-          if (!level || level !== 1 || Types.isUnique(item, rawBonus)) {
-            $("#dialog-delete-item").dialog("open");
-            self.slotToDelete = fromSlot;
-            return;
-          }
-          fromItemEl.remove();
-        } else {
-          $(this).append(fromItemEl.detach());
-          if (toItemEl.length) {
-            $(fromItemElParent).append(toItemEl.detach());
-          }
-        }
-
-        self.client.sendMoveItem(fromSlot, toSlot);
-
-        if (typeof level === "number") {
-          if (toSlot === Types.Slot.WEAPON) {
-            self.player.switchWeapon(item, level, bonus);
-          } else if (toSlot === Types.Slot.ARMOR) {
-            self.player.switchArmor(self.sprites[item], level, bonus);
-          } else if (toSlot === Types.Slot.CAPE) {
-            self.player.switchCape(item, level, bonus);
-          }
-        }
-
-        const type = kinds[item][1];
-        if (type === "armor" && $(".item-equip-armor").is(":empty")) {
-          self.player.switchArmor(self.sprites["clotharmor"], 1);
-        } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
-          self.player.switchWeapon("dagger", 1);
-        } else if (type === "cape" && $(".item-equip-cape").is(":empty")) {
-          self.player.removeCape();
-        }
+        $(document).tooltip("enable");
       },
     });
+  }
+
+  dropItem(fromSlot, toSlot) {
+    if (fromSlot === toSlot || typeof fromSlot !== "number" || typeof toSlot !== "number") {
+      return;
+    }
+
+    const fromSlotEl = $(`[data-slot="${fromSlot}"]`);
+    const fromItemEl = fromSlotEl.find(">div");
+    const toSlotEl = $(`[data-slot="${toSlot}"]`);
+    const toItemEl = toSlotEl.find(">div");
+    const item = fromItemEl.attr("data-item");
+    const level = parseInt(fromItemEl.attr("data-level"));
+    const rawBonus = fromItemEl.attr("data-bonus");
+    let bonus: number[];
+
+    if (rawBonus) {
+      try {
+        bonus = JSON.parse(rawBonus) as number[];
+      } catch (err) {
+        // Silence error
+      }
+    }
+
+    const toItem = toItemEl.attr("data-item");
+    const toLevel = toItemEl.attr("data-level");
+
+    if (toItem) {
+      if (
+        Object.values(Types.Slot).includes(fromSlot) &&
+        (!toLevel || !Types.isCorrectTypeForSlot(fromSlot, toItem) || toLevel > this.player.level)
+      ) {
+        return;
+      }
+    }
+
+    if (Object.values(Types.Slot).includes(toSlot) && Types.getItemRequirement(item, level) > this.player.level) {
+      return;
+    }
+
+    if (toSlot === -1) {
+      if (!level || level !== 1 || Types.isUnique(item, rawBonus)) {
+        $("#dialog-delete-item").dialog("open");
+        this.slotToDelete = fromSlot;
+        return;
+      }
+      fromItemEl.remove();
+    } else {
+      toSlotEl.append(fromItemEl.detach());
+      if (toItemEl.length) {
+        fromSlotEl.append(toItemEl.detach());
+      }
+    }
+
+    this.client.sendMoveItem(fromSlot, toSlot);
+
+    if (typeof level === "number") {
+      if (toSlot === Types.Slot.WEAPON) {
+        this.player.switchWeapon(item, level, bonus);
+      } else if (toSlot === Types.Slot.ARMOR) {
+        this.player.switchArmor(this.sprites[item], level, bonus);
+      } else if (toSlot === Types.Slot.CAPE) {
+        this.player.switchCape(item, level, bonus);
+      }
+    }
+
+    const type = kinds[item][1];
+    if (type === "armor" && $(".item-equip-armor").is(":empty")) {
+      this.player.switchArmor(this.sprites["clotharmor"], 1);
+    } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
+      this.player.switchWeapon("dagger", 1);
+    } else if (type === "cape" && $(".item-equip-cape").is(":empty")) {
+      this.player.removeCape();
+    }
   }
 
   deleteItemFromSlot() {
     if (typeof this.slotToDelete !== "number") return;
     this.client.sendMoveItem(this.slotToDelete, -1);
+    $(`[data-slot="${this.slotToDelete}"] >div`).remove();
   }
 
   destroyDroppable() {
@@ -891,6 +911,7 @@ class Game {
       containment: "#canvasborder",
       drag() {},
       start() {
+        $(document).tooltip("disable");
         $(this).parent().addClass("ui-droppable-origin");
 
         const item = $(this).attr("data-item");

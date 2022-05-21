@@ -325,12 +325,21 @@ class Player extends Character {
                 );
 
                 self.server.disconnectPlayer(playerName);
+                self.send(
+                  new Messages.Chat(
+                    {},
+                    `You banned ${playerName} for ${period} days, for ${reason} reason.`,
+                    "event",
+                  ).serialize(),
+                );
               }
               return;
             } else if (msg.startsWith("/kick")) {
               const [, playerName] = msg.match(/\s(.+)/);
 
               self.server.disconnectPlayer(playerName);
+              self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
+              return;
             }
           }
 
@@ -400,9 +409,9 @@ class Player extends Character {
             weapon: self.weapon,
             weaponLevel: self.weaponLevel,
             playerLevel: self.level,
-            minDamage: self.bonus.minDamage,
-            maxDamage: self.bonus.maxDamage,
-            magicDamage: resistances.magicDamage ? 0 : self.bonus.magicDamage,
+            minDamage: self.bonus.minDamage + self.partyBonus.minDamage,
+            maxDamage: self.bonus.maxDamage + self.partyBonus.maxDamage,
+            magicDamage: resistances.magicDamage ? 0 : self.bonus.magicDamage + self.partyBonus.magicDamage,
             attackDamage: resistances.physicalDamage ? 0 : self.bonus.attackDamage,
             drainLife: self.bonus.drainLife,
             flameDamage: resistances.flameDamage ? 0 : self.bonus.flameDamage,
@@ -983,9 +992,12 @@ class Player extends Character {
     const randomIsUnique = random(100);
     const isUnique = randomIsUnique < uniqueChances;
 
-    const lowLevelBonus = [0, 1, 2];
+    const baseBonus = [0, 1, 2];
+    const uniqueBonus = [3, 4, 5, 6];
 
-    return _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
+    return _.shuffle(baseBonus)
+      .slice(0, 1)
+      .concat(isUnique ? _.shuffle(uniqueBonus).slice(0, 1) : []);
   }
 
   generateItem({ kind, uniqueChances = 1 }): {
@@ -1462,6 +1474,10 @@ class Player extends Character {
       attackDamage: 0,
       defense: 0,
       exp: 0,
+      minDamage: 0,
+      maxDamage: 0,
+      health: 0,
+      magicDamage: 0,
     };
   }
 
@@ -1586,6 +1602,8 @@ class Player extends Character {
   }
 
   updateHitPoints(reset?: boolean) {
+    const isInParty = this.getParty()?.members.length >= 2;
+
     const maxHitPoints =
       Formulas.hp({
         armorLevel: Properties.getArmorLevel(this.armorKind),
@@ -1594,7 +1612,8 @@ class Player extends Character {
         beltLevel: this.beltLevel,
       }) +
       this.bonus.health +
-      this.bonus.highHealth;
+      this.bonus.highHealth +
+      (isInParty ? this.partyBonus.health : 0);
 
     if (reset) {
       this.resetHitPoints(maxHitPoints);
@@ -1638,6 +1657,8 @@ class Player extends Character {
   }
 
   sendPlayerStats() {
+    const isInParty = this.getParty()?.members.length >= 2;
+
     var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb({
       armor: this.armor,
       armorLevel: this.armorLevel,
@@ -1650,22 +1671,22 @@ class Player extends Character {
       absorbedDamage: this.bonus.absorbedDamage,
       cape: this.cape,
       capeLevel: this.capeLevel,
-      partyDefense: this.getParty()?.members.length >= 2 ? this.partyBonus.defense : 0,
+      partyDefense: isInParty ? this.partyBonus.defense : 0,
     });
     var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage({
       weapon: this.weapon,
       weaponLevel: this.weaponLevel,
       playerLevel: this.level,
-      minDamage: this.bonus.minDamage,
-      maxDamage: this.bonus.maxDamage,
-      magicDamage: this.bonus.magicDamage,
+      minDamage: this.bonus.minDamage + (isInParty ? this.partyBonus.minDamage : 0),
+      maxDamage: this.bonus.maxDamage + (isInParty ? this.partyBonus.maxDamage : 0),
+      magicDamage: this.bonus.magicDamage + (isInParty ? this.partyBonus.magicDamage : 0),
       attackDamage: this.bonus.attackDamage,
       drainLife: this.bonus.drainLife,
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
       coldDamage: this.bonus.coldDamage,
       pierceDamage: this.bonus.pierceDamage,
-      partyAttackDamage: this.getParty()?.members.length >= 2 ? this.partyBonus.attackDamage : 0,
+      partyAttackDamage: isInParty ? this.partyBonus.attackDamage : 0,
     });
 
     this.send(

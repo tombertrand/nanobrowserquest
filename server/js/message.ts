@@ -188,14 +188,7 @@ Messages.AnvilRecipe = class Message {
 };
 
 Messages.Damage = class Message {
-  constructor(
-    private entity,
-    private dmg,
-    private hp,
-    private maxHitPoints,
-    private isCritical,
-    private isBlocked,
-  ) {}
+  constructor(private entity, private dmg, private hp, private maxHitPoints, private isCritical, private isBlocked) {}
   serialize() {
     return [
       Types.Messages.DAMAGE,

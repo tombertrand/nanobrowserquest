@@ -238,6 +238,8 @@ export const Types: any = {
 
   Keys: {
     ENTER: 13,
+    BACKSPACE: 8,
+    DELETE: 46,
     UP: 38,
     DOWN: 40,
     LEFT: 37,
@@ -1299,9 +1301,17 @@ Types.getMessageTypeAsString = function (type: number) {
   return typeName;
 };
 
-Types.getPartyBonusDescriptionMap = ["+#% Attack", "+#% Defense", "+#% Experience"];
+Types.getPartyBonusDescriptionMap = [
+  "+#% Attack",
+  "+#% Defense",
+  "+#% Experience",
+  "+# Minimum damage",
+  "+# Maximum damage",
+  "+# Health",
+  "+# Magic damage",
+];
 
-Types.partyBonusType = ["attackDamage", "defense", "exp"];
+Types.partyBonusType = ["attackDamage", "defense", "exp", "minDamage", "maxDamage", "health", "magicDamage"];
 
 Types.getFrozenTimePerLevel = itemLevel => 1000 + itemLevel * 150;
 
@@ -1448,8 +1458,20 @@ Types.getPartyBonus = function (rawBonus, level) {
   const attackDamagePerLevel = [1, 2, 3, 4, 6, 8, 11, 15, 20, 30];
   const defensePerLevel = [1, 2, 3, 4, 6, 8, 11, 15, 20, 30];
   const expPerLevel = [1, 2, 3, 4, 6, 8, 11, 15, 20, 30];
+  const minDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const maxDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const healthPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const magicDamagePerLevel = [1, 2, 3, 4, 6, 8, 12, 18, 26, 40];
 
-  const bonusPerLevel = [attackDamagePerLevel, defensePerLevel, expPerLevel];
+  const bonusPerLevel = [
+    attackDamagePerLevel,
+    defensePerLevel,
+    expPerLevel,
+    minDamagePerLevel,
+    maxDamagePerLevel,
+    healthPerLevel,
+    magicDamagePerLevel,
+  ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];
 

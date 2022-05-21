@@ -25,11 +25,8 @@ import Detect from "./detect";
 import Game from "./game";
 import { TRANSITIONEND } from "./utils";
 
-import type { App as AppType } from "./types/app";
-import type { Game as GameType } from "./types/game";
-
-var app: AppType;
-var game: GameType;
+var app: App;
+var game: Game;
 
 var initApp = function () {
   Sentry.init({
@@ -618,6 +615,12 @@ var initGame = function () {
       }
 
       switch (key) {
+        case Types.Keys.DELETE:
+        case Types.Keys.BACKSPACE:
+          if (typeof game.hoverSlotToDelete === "number") {
+            game.dropItem(game.hoverSlotToDelete, -1);
+          }
+          break;
         case Types.Keys.LEFT:
         case Types.Keys.A:
         case Types.Keys.KEYPAD_4:
