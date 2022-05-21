@@ -174,7 +174,7 @@ class Entity {
 
   setHighlight(value) {
     if (value === true) {
-      this.sprite = this.sprite.silhouetteSprite;
+      this.sprite = this.sprite?.silhouetteSprite;
       this.isHighlighted = true;
     } else {
       this.sprite = this.normalSprite;

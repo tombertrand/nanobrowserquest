@@ -327,6 +327,10 @@ class Player extends Character {
                 self.server.disconnectPlayer(playerName);
               }
               return;
+            } else if (msg.startsWith("/kick")) {
+              const [, playerName] = msg.match(/\s(.+)/);
+
+              self.server.disconnectPlayer(playerName);
             }
           }
 

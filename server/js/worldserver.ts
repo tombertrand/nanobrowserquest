@@ -853,14 +853,16 @@ class World {
       player = this.getEntityById(playerId);
     }
 
+    // @NOTE Make sure the link is always cleared?
+    this.clearMobAggroLink(mob);
+
     // If the mob is not already attacking the player, create an attack link between them.
     // @TODO REMOVE FORM ATTACKERS!!! WATCH THIS CONDITION CLOSELY... do we need that second part?
     // When using the second part, the server is not constantly sending the attack link when
     // the player exploits a bottom wall to have the enemy over and not attacking
     // The second part was commented to fix attacker though doors
-    if (player && !(mob.id in player.attackers)) {
-      this.clearMobAggroLink(mob);
-
+    if (player && !player.attackers[mob.id]) {
+      // && !(mob.id in player.attackers)) {
       player.addAttacker(mob);
       mob.setTarget(player);
 

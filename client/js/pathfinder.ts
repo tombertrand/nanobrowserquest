@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import AStar from "./lib/astar";
+import Player from "./player";
 
 class Pathfinder {
   width: any;
@@ -37,7 +38,7 @@ class Pathfinder {
 
     // @NOTE Check if the ending position is the same as the starting position
     // This happens when player tries to glitch the monster against a bottom wall
-    if (entity.gridX === x && entity.gridY === y) {
+    if (!(entity instanceof Player) && entity.gridX === x && entity.gridY === y) {
       if (!grid[y][entity.gridX + 1]) {
         start = [entity.gridX + 1, entity.gridY];
       }

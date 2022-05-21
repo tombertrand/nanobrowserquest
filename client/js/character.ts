@@ -697,6 +697,7 @@ class Character extends Entity {
 
   setFrozen(time: number) {
     this.isFrozen = true;
+    this.stop();
     this.currentAnimation.pause();
 
     // this.disengage();

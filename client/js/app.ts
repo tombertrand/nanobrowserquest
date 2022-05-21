@@ -640,8 +640,9 @@ class App {
   }
 
   toggleSettings() {
+    const isActive = $("#settings").hasClass("active");
     this.hideWindows();
-    $("#settings").toggleClass("active");
+    $("#settings").toggleClass("active", !isActive);
   }
 
   togglePlayers() {
@@ -1025,6 +1026,7 @@ class App {
 
   openStash() {
     this.closeUpgrade();
+    $("#population").removeClass("visible");
     $("#stash").addClass("visible");
     this.openInventory();
   }
@@ -1036,6 +1038,7 @@ class App {
 
   openUpgrade() {
     if ($("#upgrade").hasClass("visible")) return;
+    $("#population").removeClass("visible");
     this.closeStash();
     this.toggleUpgrade();
   }
