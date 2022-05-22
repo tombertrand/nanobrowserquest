@@ -613,7 +613,7 @@ Types.setBonus = {
   sapphire: {
     minDamage: 10,
     criticalHit: 3,
-    defense: 12,
+    defense: 15,
   },
   horned: {
     minDamage: 6,

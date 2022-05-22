@@ -894,6 +894,7 @@ class Game {
     if (typeof this.slotToDelete !== "number") return;
     this.client.sendMoveItem(this.slotToDelete, -1);
     $(`[data-slot="${this.slotToDelete}"] >div`).remove();
+    this.hoverSlotToDelete = null;
   }
 
   destroyDroppable() {
@@ -3499,7 +3500,8 @@ class Game {
       self.client.onFrozen(function (entityId, itemLevel) {
         const time = Types.getFrozenTimePerLevel(itemLevel);
 
-        self.getEntityById(entityId).setFrozen(time);
+        // Entity may not be send to every player
+        self.getEntityById(entityId)?.setFrozen(time);
       });
 
       self.client.onDisconnected(function (message) {
