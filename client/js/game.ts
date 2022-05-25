@@ -2944,7 +2944,7 @@ class Game {
         self.player.setPartyLeader(undefined);
         self.player.setPartyMembers(undefined);
 
-        self.chat_callback({ message: "Party was disbaned", type: "info" });
+        self.chat_callback({ message: "Party was disbanded", type: "info" });
         self.nbplayers_callback();
 
         self.app.removePartyHealthBar();
@@ -3083,14 +3083,6 @@ class Game {
             duration: 3000,
           });
         }
-
-        // var expInThisLevel = self.player.experience - Types.expForLevel[self.player.level - 1];
-        // var expForLevelUp = Types.expForLevel[self.player.level] - Types.expForLevel[self.player.level - 1];
-        // var expPercentThisLevel = (100 * expInThisLevel) / expForLevelUp;
-
-        // self.showNotification(
-        //   "Total xp: " + self.player.experience + ". " + expPercentThisLevel.toFixed(0) + "% of this level done.",
-        // );
 
         self.storage.incrementTotalKills();
         self.tryUnlockingAchievement("HUNTER");
@@ -3941,20 +3933,32 @@ class Game {
     if (this.map.isOutOfBounds(x, y) || !this.itemGrid) {
       return null;
     }
-    var items = this.itemGrid[y][x],
-      item = null;
+    var items = this.itemGrid[y][x];
+    var item = null;
 
     if (_.size(items) > 0) {
       // If there are potions/burgers stacked with equipment items on the same tile, always get expendable items first.
-      _.each(items, function (i) {
+      _.each(items, i => {
         if (Types.isExpendableItem(i.kind)) {
-          item = i;
+          if (this.renderingGrid[y][x][i.id]) {
+            item = i;
+          } else {
+            // Remove item from unreceived de-spawn message
+            this.removeItem(i);
+          }
         }
       });
 
       // Else, get the first item of the stack
       if (!item) {
-        item = items[_.keys(items)[0]];
+        _.keys(items).forEach(entityId => {
+          if (this.renderingGrid[y][x][entityId]) {
+            item = items[entityId];
+          } else {
+            // Remove item from unreceived de-spawn message
+            this.removeItem(items[entityId]);
+          }
+        });
       }
     }
     return item;

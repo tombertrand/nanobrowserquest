@@ -293,7 +293,7 @@ class Player extends Character {
 
         // Sanitized messages may become empty. No need to broadcast empty chat messages.
         if (msg && msg !== "") {
-          msg = msg.substr(0, 255); // Enforce maxlength of chat input
+          msg = msg.substr(0, 255); // Enforce maxLength of chat input
 
           const admins = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas"];
 

@@ -645,8 +645,10 @@ class App {
     $("#settings").toggleClass("active", !isActive);
   }
 
-  togglePlayers() {
-    $("#party").toggleClass("active");
+  toggleParty() {
+    const isActive = $("#party").hasClass("active");
+    this.hideWindows();
+    $("#party").toggleClass("active", !isActive);
   }
 
   resetAchievementPage() {
@@ -745,7 +747,8 @@ class App {
       $("#settings-button").removeClass("active");
     }
     if ($("#party").hasClass("active")) {
-      this.togglePlayers();
+      $("#party").removeClass("active");
+      $("#party-button").removeClass("active");
     }
   }
 

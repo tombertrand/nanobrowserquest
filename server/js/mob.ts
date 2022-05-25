@@ -122,9 +122,14 @@ class Mob extends Character {
     }
   }
 
-  getHatedPlayerId(hateRank?: number) {
+  getHatedPlayerId(hateRank?: number, ignorePlayerId?: number) {
     var i;
     var playerId;
+
+    if (ignorePlayerId) {
+      this.hateList = this.hateList.filter(hatedPlayer => hatedPlayer.id !== ignorePlayerId);
+    }
+
     var sorted = _.sortBy(this.hateList, function (obj) {
       return obj.hate;
     });

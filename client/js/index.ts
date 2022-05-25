@@ -722,6 +722,10 @@ var initGame = function () {
     app.toggleSettings();
   });
 
+  $("#party-button").on("click", () => {
+    app.toggleParty();
+  });
+
   $("#mute-music-checkbox").on("change", function () {
     app.toggleMuteMusic();
   });

@@ -1098,6 +1098,10 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton.ban {background-position:-1254px -51px;}
         #completedbutton.ban:hover {background-position:-1296px -51px;}
         #completedbutton.ban.active {background-position:-1338px -51px;}
+        #party-button {background-position: -1212px -96px;top: 3px;left: 1350px;}
+        #party-button:hover {background-position:-1254px -96px;}
+        #party-button.blink {background-position:-1296px -96px;}
+        #party-button.active {background-position:-1338px -96px;}
         
         #chatbox {height:48px;width:1182px;background-size:1440px;background-position:0 -96px;margin-left:-591px;bottom:18px;}
         #chatbox.active {bottom:66px;}
@@ -1321,6 +1325,10 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton.ban {background-position:-836px -34px;}
         #completedbutton.ban:hover {background-position:-864px -34px;}
         #completedbutton.ban.active {background-position:-892px -34px;}
+        #party-button {background-position:-808px -64px;top:2px;left:900px;}
+        #party-button:hover {background-position:-836px -64px;}
+        #party-button.blink {background-position:-864px -64px;}
+        #party-button.active {background-position:-892px -64px;}
 
 		#chatbox {height:32px;width:788px;background-size:960px;background-position:0 -64px;margin-left:-394px;bottom:12px;}
 		#chatbox.active {bottom:44px;}
@@ -1534,6 +1542,10 @@ footer, header, hgroup, menu, nav, section {
         #settings-button {background-position:-376px -17px;top:1px;left:465px;}
         #settings-button:hover {background-position:-390px -17px;}
         #settings-button.active {background-position:-404px -17px;}
+        #party-button {background-position:-404px -32px;top:1px;left:450px;}
+        #party-button:hover {background-position:-418px -32px;}
+        #party-button.blink {background-position:-432px -32px;}
+        #party-button.active {background-position:-446px -32px;}
 
 		#chatbox {height:16px;width:394px;background-size:480px;background-position:0 -32px;margin-left:-197px;bottom:6px;}
 		#chatbox.active {bottom:22px;}
@@ -1732,6 +1744,10 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton.ban:hover {background-position:-864px -34px;}
         #completedbutton.ban.active {background-position:-892px -34px;}
         #settings-button { display: none; }
+        #party-button {background-position:-808px -64px;top:2px;left:450px;}
+        #party-button:hover {background-position:-836px -64px;}
+        #party-button.blink {background-position:-864px -64px;}
+        #party-button.active {background-position:-892px -64px;}
 
 		#chatbox {height:32px;width:480px;background-size:960px;background-position:0 -64px;margin-left:-240px;bottom:2px;}
 		#chatbox.active {bottom:34px;}
