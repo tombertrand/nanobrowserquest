@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import { Types } from "../../shared/js/gametypes";
 import Character from "./character";
 import Chest from "./chest";
+import { postMessageToDiscord } from "./discord";
 import FormatChecker from "./format";
 import Formulas from "./formulas";
 import Messages from "./message";
@@ -343,6 +344,8 @@ class Player extends Character {
             }
           }
 
+          postMessageToDiscord(`${self.name}: ${msg}`);
+
           // Zone chat
           // self.broadcast(new Messages.Chat(self, msg), false);
 
@@ -515,6 +518,10 @@ class Player extends Character {
 
           if (mob.hitPoints <= 0) {
             mob.isDead = true;
+
+            if (mob?.type) {
+              postMessageToDiscord(`${self.name} killed ${mob.name} 💀`);
+            }
           }
         }
       } else if (action === Types.Messages.HURT) {
@@ -757,6 +764,12 @@ class Player extends Character {
           // If payout succeeds there will be a hash in the response!
           if (hash) {
             console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
+
+            postMessageToDiscord(
+              `${self.name} killed the Skeleton King and received a payout of ${raiPayoutAmount} ${
+                self.network === "nano" ? "XNO" : "BAN"
+              } 🎉`,
+            );
 
             if (isClassicPayout) {
               self.hash = hash;
