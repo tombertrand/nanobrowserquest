@@ -146,6 +146,7 @@ class Game {
   network: Network;
   explorer: Explorer;
   hoverSlotToDelete: number | null;
+  isTeleporting: boolean;
 
   constructor(app) {
     this.app = app;
@@ -165,6 +166,7 @@ class Game {
     this.network = null;
     this.explorer = null;
     this.hoverSlotToDelete = null;
+    this.isTeleporting = false;
 
     this.renderer = null;
     this.updater = null;
@@ -3434,17 +3436,29 @@ class Game {
 
         self.cowLevelPortalCoords = null;
 
-        if (self.player.gridY >= 464 && self.player.gridY <= 535) {
-          const x = Math.ceil(randomRange(40, 45));
-          const y = Math.ceil(randomRange(208, 213));
+        const teleportBackToTown = () => {
+          if (self.player.gridY >= 464 && self.player.gridY <= 535) {
+            const x = Math.ceil(randomRange(40, 45));
+            const y = Math.ceil(randomRange(208, 213));
 
-          // self.player.idle();
-          self.player.stop_pathing_callback({ x, y, isWaypoint: true });
-          // }, 100);
+            self.player.stop_pathing_callback({ x, y, isWaypoint: true });
 
-          if (isCompleted) {
-            self.tryUnlockingAchievement("FARMER");
+            if (isCompleted) {
+              self.tryUnlockingAchievement("FARMER");
+            }
           }
+        };
+
+        if (!self.isZoning()) {
+          teleportBackToTown();
+        } else {
+          self.isTeleporting = true;
+
+          // Prevent teleportation while player is zoning, see updateZoning() for timeout delay
+          setTimeout(() => {
+            teleportBackToTown();
+            self.isTeleporting = false;
+          }, 200);
         }
       });
 
@@ -4143,7 +4157,9 @@ class Game {
 
     if (
       this.started &&
+      this.client.connection.connected &&
       this.player &&
+      !this.isTeleporting &&
       !this.isZoning() &&
       !this.isZoningTile(this.player.nextGridX, this.player.nextGridY) &&
       !this.player.isDead &&

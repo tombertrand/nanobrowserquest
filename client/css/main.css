@@ -929,6 +929,23 @@ footer, header, hgroup, menu, nav, section {
 
     .setting {margin: 6px 0}
 
+    #reconnecting {
+        display: none;
+        position: absolute;
+        top: 0; bottom: 0; left: 0;right: 0;
+        text-shadow: 0px 1px #fff;
+        font-size: 24px;
+        font-family:'GraphicPixel';
+        color: #373737;
+    }
+    #reconnecting.visible {
+        background: rgba(255,255,255,0.3);
+        z-index: 11;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
 	@media screen and (min-width: 1501px) {
         .home-logo {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }

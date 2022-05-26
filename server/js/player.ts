@@ -173,7 +173,6 @@ class Player extends Character {
           },
           extra: { message, action },
         });
-
         self.connection.close("Invalid " + Types.getMessageTypeAsString(action) + " message format: " + message);
         return;
       }

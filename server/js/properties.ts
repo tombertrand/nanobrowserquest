@@ -248,7 +248,7 @@ var Properties: any = {
   },
   skeletoncommander: {
     drops: {
-      scrollupgradehigh: 6,
+      scrollupgradehigh: 3,
       belthorned: 1,
       hornedarmor: 5,
       ringgold: 4,
@@ -297,8 +297,8 @@ var Properties: any = {
   },
   necromancer: {
     drops: {
-      necromancerheart: 15,
-      scrollupgradehigh: 6,
+      necromancerheart: 20,
+      scrollupgradehigh: 3,
       ringgold: 4,
       amuletgold: 4,
       ringnecromancer: 1,

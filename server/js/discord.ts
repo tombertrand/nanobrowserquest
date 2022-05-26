@@ -3,6 +3,8 @@ import fetch from "node-fetch";
 import { Sentry } from "./sentry";
 
 const postMessageToDiscord = (content: string) => {
+  if (process.env.NODE_ENV !== "production") return;
+
   try {
     const body = JSON.stringify({
       content,

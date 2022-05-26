@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import DatabaseHandler from "./db_providers/redis";
 import Metrics from "./metrics";
 import Player from "./player";
+import { Sentry } from "./sentry";
 import World from "./worldserver";
 import Server from "./ws";
 
@@ -82,8 +83,9 @@ function main(config) {
     });
   }
 
-  process.on("uncaughtException", function (e) {
-    console.error("uncaughtException: " + e);
+  process.on("uncaughtException", function (err) {
+    console.error("uncaughtException: " + err);
+    Sentry.captureException(err);
   });
 }
 

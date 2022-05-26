@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import MessageParser from "socket.io-msgpack-parser";
 
 import { Types } from "../../shared/js/gametypes";
@@ -7,7 +7,7 @@ import EntityFactory from "./entityfactory";
 import Player from "./player";
 
 class GameClient {
-  connection: any;
+  connection: Socket;
   host: any;
   port: any;
   dispatched_callback: any;
@@ -146,18 +146,25 @@ class GameClient {
     var protocol = window.location.hostname === "localhost" ? "ws" : "wss";
     var port = window.location.hostname === "localhost" ? ":8000" : "";
     var url = protocol + "://" + this.host + port + "/";
-    var self = this;
 
     console.info("Trying to connect to server : " + url);
 
-    this.connection = io(url, { forceNew: true, reconnection: false, parser: MessageParser }); // This sets the connection as a socket.io Socket.
+    this.connection = null;
+    this.connection = io(url, {
+      // forceNew: true,
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 3000,
+      reconnectionAttempts: 5,
+      parser: MessageParser,
+    });
 
     if (dispatcherMode) {
-      this.connection.on("message", function (e) {
+      this.connection.on("message", e => {
         var reply = JSON.parse(e.data);
 
         if (reply.status === "OK") {
-          self.dispatched_callback(reply.host, reply.port);
+          this.dispatched_callback(reply.host, reply.port);
         } else if (reply.status === "FULL") {
           alert("BrowserQuest is currently at maximum player population. Please retry later.");
         } else {
@@ -165,19 +172,19 @@ class GameClient {
         }
       });
     } else {
-      this.connection.on("connection", function () {
-        console.info("Connected to server " + self.host + ":" + self.port);
+      this.connection.on("connection", () => {
+        console.info("Connected to server " + this.host + ":" + this.port);
       });
 
-      this.connection.on("message", function (e) {
+      this.connection.on("message", e => {
         if (e === "go") {
-          if (self.connected_callback) {
-            self.connected_callback();
+          if (this.connected_callback) {
+            this.connected_callback();
           }
           return;
         }
         if (e === "timeout") {
-          self.isTimeout = true;
+          this.isTimeout = true;
           return;
         }
         if (
@@ -194,9 +201,7 @@ class GameClient {
           e === "passwordlogin" ||
           e === "passwordinvalid"
         ) {
-          if (self.fail_callback) {
-            self.fail_callback(e);
-          }
+          this.fail_callback?.(e);
           return;
         }
 
@@ -206,23 +211,43 @@ class GameClient {
           // );
         }
 
-        self.receiveMessage(e);
+        this.receiveMessage(e);
       });
 
-      this.connection.on("error", function (err) {
+      this.connection.on("error", err => {
         console.error(err);
+        $("#container").addClass("error");
+        this.disconnected_callback?.("The connection to Nano BrowserQuest has been lost");
       });
 
-      this.connection.on("disconnect", function () {
-        console.debug("Connection closed");
-        $("#container").addClass("error");
+      this.connection.io.off("reconnect_attempt").on("reconnect_attempt", attempt => {
+        console.info(`Reconnect failed, attempt ${attempt}`);
 
-        if (self.disconnected_callback) {
-          if (self.isTimeout) {
-            self.disconnected_callback("You have been disconnected for being inactive for too long");
-          } else {
-            self.disconnected_callback("The connection to Nano BrowserQuest has been lost");
-          }
+        if (attempt > 5) {
+          this.connection.disconnect();
+        }
+      });
+
+      this.connection.io.on("reconnect", () => {
+        $("#reconnecting").removeClass("visible");
+      });
+
+      this.connection.on("disconnect", reason => {
+        console.info(`Connection closed, ${reason}`);
+
+        let disconnectMessage;
+        if (reason === "transport close") {
+          disconnectMessage = "The connection to Nano BrowserQuest has been lost";
+        } else if (this.isTimeout) {
+          disconnectMessage = "You have been disconnected for being inactive for too long";
+        } else {
+          $("#reconnecting").addClass("visible");
+        }
+
+        if (disconnectMessage) {
+          $("#container").addClass("error");
+          this.disconnected_callback?.(disconnectMessage);
+          this.connection.disconnect();
         }
       });
     }
