@@ -121,9 +121,11 @@ import morningstar from "../sprites/morningstar.json";
 import nyan from "../sprites/nyan.json";
 import octocat from "../sprites/octocat.json";
 import anvil from "../sprites/anvil.json";
-import anvilRecipe from "../sprites/anvil-recipe.json";
 import anvilSuccess from "../sprites/anvil-success.json";
 import anvilFail from "../sprites/anvil-fail.json";
+import anvilRecipe from "../sprites/anvil-recipe.json";
+import anvilTransmute from "../sprites/anvil-transmute.json";
+import anvilChestblue from "../sprites/anvil-chestblue.json";
 import waypointx from "../sprites/waypointx.json";
 import waypointn from "../sprites/waypointn.json";
 import stash from "../sprites/stash.json";
@@ -290,9 +292,11 @@ const sprites = {
   nyan,
   octocat,
   anvil,
-  "anvil-recipe": anvilRecipe,
   "anvil-success": anvilSuccess,
   "anvil-fail": anvilFail,
+  "anvil-recipe": anvilRecipe,
+  "anvil-transmute": anvilTransmute,
+  "anvil-chestblue": anvilChestblue,
   waypointx,
   waypointn,
   stash,

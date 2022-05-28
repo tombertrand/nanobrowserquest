@@ -691,10 +691,10 @@ class GameClient {
   }
 
   receiveAnvilUpgrade(data) {
-    var isSuccess = data[1];
+    const { isSuccess, isTransmute, isChestblue } = data[1];
 
     if (this.receiveanvilupgrade_callback) {
-      this.receiveanvilupgrade_callback(isSuccess);
+      this.receiveanvilupgrade_callback({ isSuccess, isTransmute, isChestblue });
     }
   }
 

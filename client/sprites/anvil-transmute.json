@@ -1,0 +1,11 @@
+{
+  "id": "anvil-transmute",
+  "width": 15,
+  "height": 8,
+  "animations": {
+    "idle_down": {
+      "length": 4,
+      "row": 0
+    }
+  }
+}

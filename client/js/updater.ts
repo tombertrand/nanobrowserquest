@@ -286,19 +286,9 @@ class Updater {
       freeze.update(t);
     }
 
-    var anvilRecipe = this.game.anvilRecipeAnimation;
-    if (anvilRecipe) {
-      anvilRecipe.update(t);
-    }
-
-    var anvilSuccess = this.game.anvilSuccessAnimation;
-    if (anvilSuccess) {
-      anvilSuccess.update(t);
-    }
-
-    var anvilFail = this.game.anvilFailAnimation;
-    if (anvilFail) {
-      anvilFail.update(t);
+    var anvilAnimation = this.game.anvilAnimation;
+    if (anvilAnimation) {
+      anvilAnimation.update(t);
     }
   }
 

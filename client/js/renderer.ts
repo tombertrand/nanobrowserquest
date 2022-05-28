@@ -703,17 +703,23 @@ class Renderer {
 
       if (entity instanceof Character && entity.sprite.name === "anvil") {
         var sprite = null;
-        var anim = null;
-        // var filter = null;
+        var spriteName = null;
+        var anim = this.game.anvilAnimation;
+
         if (this.game.isAnvilRecipe) {
-          sprite = this.game.sprites["anvil-recipe"];
-          anim = this.game.anvilRecipeAnimation;
+          spriteName = "anvil-recipe";
         } else if (this.game.isAnvilSuccess) {
-          sprite = this.game.sprites["anvil-success"];
-          anim = this.game.anvilSuccessAnimation;
+          spriteName = "anvil-success";
         } else if (this.game.isAnvilFail) {
-          sprite = this.game.sprites["anvil-fail"];
-          anim = this.game.anvilFailAnimation;
+          spriteName = "anvil-fail";
+        } else if (this.game.isAnvilTransmute) {
+          spriteName = "anvil-transmute";
+        } else if (this.game.isAnvilChestblue) {
+          spriteName = "anvil-chestblue";
+        }
+
+        if (spriteName) {
+          sprite = this.game.sprites[spriteName];
         }
 
         if (sprite && anim) {

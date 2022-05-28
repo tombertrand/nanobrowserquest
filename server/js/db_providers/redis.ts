@@ -1032,7 +1032,7 @@ class DatabaseHandler {
 
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = upgradedItem;
-          player.broadcast(new Messages.AnvilUpgrade(isSuccess), false);
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((transmuteRates = isValidTransmuteItems(filteredUpgrade))) {
           const [item, level] = filteredUpgrade[0].split(":");
           let generatedItem: number | string = 0;
@@ -1054,23 +1054,27 @@ class DatabaseHandler {
 
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = generatedItem;
-          player.broadcast(new Messages.AnvilUpgrade(isSuccess), false);
+          player.broadcast(new Messages.AnvilUpgrade({ isTransmute: isSuccess }), false);
         } else {
           recipe = isValidRecipe(filteredUpgrade);
 
           let isWorkingRecipe = false;
           let generatedItem: number | string = 0;
+          let isRecipe = false;
+          let isChestblue = false;
 
           if (recipe) {
             isSuccess = true;
             if (recipe === "cowLevel") {
               if (!player.server.cowLevelClock) {
                 isWorkingRecipe = true;
+                isRecipe = true;
                 player.server.startCowLevel();
               }
             } else if (recipe === "minotaurLevel") {
               if (!player.server.minotaurLevelClock && !player.server.minotaurSpawnTimeout) {
                 isWorkingRecipe = true;
+                isRecipe = true;
                 player.server.startMinotaurLevel();
               }
             } else if (recipe === "chestblue") {
@@ -1078,6 +1082,7 @@ class DatabaseHandler {
 
               luckySlot = null;
               isWorkingRecipe = true;
+              isChestblue = true;
 
               const {
                 item: itemName,
@@ -1095,7 +1100,11 @@ class DatabaseHandler {
           } else {
             upgrade = upgrade.map(() => 0);
             upgrade[upgrade.length - 1] = generatedItem;
-            player.broadcast(new Messages.AnvilRecipe(recipe), false);
+            if (isRecipe) {
+              player.broadcast(new Messages.AnvilRecipe(recipe), false);
+            } else if (isChestblue) {
+              player.broadcast(new Messages.AnvilUpgrade({ isChestblue }), false);
+            }
           }
         }
 

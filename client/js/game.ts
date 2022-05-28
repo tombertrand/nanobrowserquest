@@ -43,10 +43,11 @@ class Game {
   hasNeverStarted: boolean;
   isUpgradeItemSent: boolean;
   isAnvilSuccess: boolean;
-  anvilSuccessTimeout: any;
-  anvilRecipeTimeout: any;
   isAnvilFail: boolean;
-  anvilFailTimeout: any;
+  isAnvilRecipe: boolean;
+  isAnvilTransmute: boolean;
+  isAnvilChestblue: boolean;
+  anvilAnimationTimeout: any;
   cowPortalStart: boolean;
   cowLevelPortalCoords: { x: number; y: number } | null;
   minotaurPortalStart: boolean;
@@ -99,9 +100,7 @@ class Game {
   thunderstormAnimation: Animation;
   highHealthAnimation: Animation;
   freezeAnimation: Animation;
-  anvilRecipeAnimation: Animation;
-  anvilSuccessAnimation: Animation;
-  anvilFailAnimation: Animation;
+  anvilAnimation: Animation;
   client: any;
   achievements: any;
   spritesets: any;
@@ -130,7 +129,6 @@ class Game {
   chat_callback: any;
   invinciblestart_callback: any;
   invinciblestop_callback: any;
-  isAnvilRecipe: any;
   hoveringPlateauTile: any;
   hoveringOtherPlayer: any;
   lastHovered: any;
@@ -156,9 +154,11 @@ class Game {
     this.hasNeverStarted = true;
     this.isUpgradeItemSent = false;
     this.isAnvilSuccess = false;
-    this.anvilSuccessTimeout = null;
     this.isAnvilFail = false;
-    this.anvilFailTimeout = null;
+    this.isAnvilRecipe = false;
+    this.isAnvilTransmute = false;
+    this.isAnvilChestblue = false;
+    this.anvilAnimationTimeout = null;
     this.cowPortalStart = false;
     this.cowLevelPortalCoords = null;
     this.minotaurPortalStart = false;
@@ -181,9 +181,7 @@ class Game {
     this.thunderstormAnimation = null;
     this.highHealthAnimation = null;
     this.freezeAnimation = null;
-    this.anvilRecipeAnimation = null;
-    this.anvilSuccessAnimation = null;
-    this.anvilFailAnimation = null;
+    this.anvilAnimation = null;
 
     // Player
     this.player = new Warrior("player", "");
@@ -294,9 +292,11 @@ class Game {
       "sorcerer",
       "octocat",
       "anvil",
-      "anvil-recipe",
       "anvil-success",
       "anvil-fail",
+      "anvil-recipe",
+      "anvil-transmute",
+      "anvil-chestblue",
       "waypointx",
       "waypointn",
       "stash",
@@ -504,14 +504,8 @@ class Game {
     this.freezeAnimation = new Animation("idle_down", 8, 0, 16, 8);
     this.freezeAnimation.setSpeed(140);
 
-    this.anvilRecipeAnimation = new Animation("idle_down", 4, 0, 15, 8);
-    this.anvilRecipeAnimation.setSpeed(80);
-
-    this.anvilSuccessAnimation = new Animation("idle_down", 4, 0, 15, 8);
-    this.anvilSuccessAnimation.setSpeed(80);
-
-    this.anvilFailAnimation = new Animation("idle_down", 4, 0, 15, 8);
-    this.anvilFailAnimation.setSpeed(80);
+    this.anvilAnimation = new Animation("idle_down", 4, 0, 15, 8);
+    this.anvilAnimation.setSpeed(80);
   }
 
   initHurtSprites() {
@@ -3385,9 +3379,13 @@ class Game {
         }
       });
 
-      self.client.onReceiveAnvilUpgrade(function (isSuccess) {
+      self.client.onReceiveAnvilUpgrade(function ({ isSuccess, isTransmute, isChestblue }) {
         if (isSuccess) {
           self.setAnvilSuccess();
+        } else if (isTransmute) {
+          self.setAnvilTransmute();
+        } else if (isChestblue) {
+          self.setAnvilChestblue();
         } else {
           self.setAnvilFail();
         }
@@ -3708,39 +3706,52 @@ class Game {
     this.client.sendAttack(mob);
   }
 
-  setAnvilRecipe() {
+  resetAnvilAnimation() {
     this.isAnvilFail = false;
     this.isAnvilSuccess = false;
-    this.isAnvilRecipe = true;
-    clearTimeout(this.anvilFailTimeout);
-    clearTimeout(this.anvilSuccessTimeout);
-    clearTimeout(this.anvilRecipeTimeout);
-    this.anvilRecipeTimeout = setTimeout(() => {
-      this.isAnvilRecipe = false;
-    }, 3000);
+    this.isAnvilRecipe = false;
+    this.isAnvilTransmute = false;
+    this.isAnvilChestblue = false;
+    clearTimeout(this.anvilAnimationTimeout);
   }
 
   setAnvilSuccess() {
-    this.isAnvilFail = false;
+    this.resetAnvilAnimation();
     this.isAnvilSuccess = true;
-    this.isAnvilRecipe = false;
-    clearTimeout(this.anvilFailTimeout);
-    clearTimeout(this.anvilSuccessTimeout);
-    clearTimeout(this.anvilRecipeTimeout);
-    this.anvilSuccessTimeout = setTimeout(() => {
+    this.anvilAnimationTimeout = setTimeout(() => {
       this.isAnvilSuccess = false;
     }, 3000);
   }
 
   setAnvilFail() {
+    this.resetAnvilAnimation();
     this.isAnvilFail = true;
-    this.isAnvilSuccess = false;
-    this.isAnvilRecipe = false;
-    clearTimeout(this.anvilFailTimeout);
-    clearTimeout(this.anvilSuccessTimeout);
-    clearTimeout(this.anvilRecipeTimeout);
-    this.anvilFailTimeout = setTimeout(() => {
+    this.anvilAnimationTimeout = setTimeout(() => {
       this.isAnvilFail = false;
+    }, 3000);
+  }
+
+  setAnvilRecipe() {
+    this.resetAnvilAnimation();
+    this.isAnvilRecipe = true;
+    this.anvilAnimationTimeout = setTimeout(() => {
+      this.isAnvilRecipe = false;
+    }, 3000);
+  }
+
+  setAnvilTransmute() {
+    this.resetAnvilAnimation();
+    this.isAnvilTransmute = true;
+    this.anvilAnimationTimeout = setTimeout(() => {
+      this.isAnvilTransmute = false;
+    }, 3000);
+  }
+
+  setAnvilChestblue() {
+    this.resetAnvilAnimation();
+    this.isAnvilChestblue = true;
+    this.anvilAnimationTimeout = setTimeout(() => {
+      this.isAnvilChestblue = false;
     }, 3000);
   }
 
