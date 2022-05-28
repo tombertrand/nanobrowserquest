@@ -364,6 +364,10 @@ EntityFactory.builders[Types.Entities.SCROLLUPGRADEBLESSED] = function (id) {
   return new Items.ScrollUpgradeBlessed(id);
 };
 
+EntityFactory.builders[Types.Entities.SCROLLTRANSMUTE] = function (id) {
+  return new Items.ScrollTransmute(id);
+};
+
 EntityFactory.builders[Types.Entities.SKELETONKEY] = function (id) {
   return new Items.SkeletonKey(id);
 };
@@ -513,7 +517,5 @@ EntityFactory.builders[Types.Entities.COWPORTAL] = function (id) {
 EntityFactory.builders[Types.Entities.MINOTAURPORTAL] = function (id) {
   return new Npcs.MinotaurPortal(id);
 };
-
-
 
 export default EntityFactory;

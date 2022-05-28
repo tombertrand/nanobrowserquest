@@ -8,8 +8,10 @@ import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
 import {
   generateBlueChestItem,
+  getIsTransmuteSuccess,
   isUpgradeSuccess,
   isValidRecipe,
+  isValidTransmuteItems,
   isValidUpgradeItems,
   NaN2Zero,
   randomInt,
@@ -1000,6 +1002,7 @@ class DatabaseHandler {
         const filteredUpgrade = upgrade.filter(Boolean);
         let isSuccess = false;
         let recipe = null;
+        let transmuteRates;
 
         if (isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus] = filteredUpgrade[0].split(":");
@@ -1029,6 +1032,28 @@ class DatabaseHandler {
 
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = upgradedItem;
+          player.broadcast(new Messages.AnvilUpgrade(isSuccess), false);
+        } else if ((transmuteRates = isValidTransmuteItems(filteredUpgrade))) {
+          const [item, level] = filteredUpgrade[0].split(":");
+          let generatedItem: number | string = 0;
+
+          const { isTransmuteSuccess, isUniqueSuccess } = getIsTransmuteSuccess({ ...transmuteRates, isLuckySlot });
+
+          if (
+            (typeof isTransmuteSuccess === "boolean" && isTransmuteSuccess) ||
+            (typeof isTransmuteSuccess === "undefined" && isUniqueSuccess)
+          ) {
+            isSuccess = true;
+            const { item: itemName, bonus } = player.generateItem({
+              kind: Types.getKindFromString(item),
+              uniqueChances: isUniqueSuccess ? 100 : 0,
+            });
+
+            generatedItem = [itemName, level, bonus].filter(Boolean).join(":");
+          }
+
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = generatedItem;
           player.broadcast(new Messages.AnvilUpgrade(isSuccess), false);
         } else {
           recipe = isValidRecipe(filteredUpgrade);

@@ -394,6 +394,13 @@ var Items = {
     }
   },
 
+  ScrollTransmute: class ScrollTransmute extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLTRANSMUTE, "scroll");
+      this.lootMessage = "You pick up a transmute scroll";
+    }
+  },
+
   SkeletonKey: class SkeletonKey extends Item {
     constructor(id) {
       super(id, Types.Entities.SKELETONKEY, "object");
@@ -446,14 +453,14 @@ var Items = {
   NecromancerHeart: class NecromancerHeart extends Item {
     constructor(id) {
       super(id, Types.Entities.NECROMANCERHEART, "object");
-      this.lootMessage = "You pick the Necromancer's heart";
+      this.lootMessage = "You pick up the Necromancer's heart";
     }
   },
 
   CowkingHorn: class CowkingHorn extends Item {
     constructor(id) {
       super(id, Types.Entities.COWKINGHORN, "object");
-      this.lootMessage = "You pick the Cow King's horn";
+      this.lootMessage = "You pick up the Cow King's horn";
     }
   },
 

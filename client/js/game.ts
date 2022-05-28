@@ -389,6 +389,7 @@ class Game {
       "item-scrollupgrademedium",
       "item-scrollupgradehigh",
       "item-scrollupgradeblessed",
+      "item-scrolltransmute",
       "item-skeletonkey",
       "item-raiblockstl",
       "item-raiblockstr",
@@ -778,25 +779,41 @@ class Game {
   initUpgradeItemPreview() {
     var self = this;
 
-    $("#upgrade-preview-btn").on("click", function () {
-      self.player.upgrade.forEach(({ item, level, slot, bonus, isUnique }) => {
-        if (slot !== 0) return;
-        const previewSlot = $(`#upgrade .item-slot:eq(10)`);
+    const previewSlot = $(`#upgrade .item-slot:eq(10)`);
 
+    $("#upgrade-preview-btn").on("click", function () {
+      let itemName;
+      let itemLevel;
+      let itemBonus;
+      let isItemUnique;
+      let isUpgrade = false;
+
+      self.player.upgrade.forEach(({ item, level, slot, bonus, isUnique }) => {
+        if (slot === 0) {
+          itemName = item;
+          itemLevel = level;
+          itemBonus = bonus;
+          isItemUnique = isUnique;
+        } else if (item.startsWith("scrollupgrade")) {
+          isUpgrade = true;
+        }
+      });
+
+      if (isUpgrade && itemName && itemLevel) {
         if (previewSlot.is(":empty")) {
           previewSlot.append(
             $("<div />", {
-              class: `item-not-draggable ${isUnique ? "item-unique" : ""}`,
+              class: `item-not-draggable ${isItemUnique ? "item-unique" : ""}`,
               css: {
-                "background-image": `url("${self.getIconPath(item, parseInt(level) + 1)}")`,
+                "background-image": `url("${self.getIconPath(itemName, parseInt(itemLevel) + 1)}")`,
               },
-              "data-item": item,
-              "data-level": level ? parseInt(level) + 1 : "",
-              "data-bonus": bonus,
+              "data-item": itemName,
+              "data-level": itemLevel ? parseInt(itemLevel) + 1 : "",
+              "data-bonus": itemBonus,
             }),
           );
         }
-      });
+      }
     });
   }
 
@@ -1198,14 +1215,23 @@ class Game {
 
     let successRate;
     let itemLevel;
+    let itemName;
+    let itemBonus;
+    let actionText = "upgrade";
 
     this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, isUnique }) => {
       if (slot === 0 && level) {
         itemLevel = level;
+        itemName = item;
+        itemBonus = bonus;
         const successRates = Types.getUpgradeSuccessRates();
         successRate = successRates[parseInt(level) - 1];
       } else if (slot) {
-        if (!item.startsWith("scrollupgrade")) {
+        if (itemName && item.startsWith("scrolltransmute")) {
+          const { transmuteSuccessRate, uniqueSuccessRate } = Types.getTransmuteSuccessRate(itemName, itemBonus) || {};
+          successRate = transmuteSuccessRate || uniqueSuccessRate;
+          actionText = "transmute";
+        } else if (!item.startsWith("scrollupgrade")) {
           successRate = null;
         } else if (itemLevel && item.startsWith("scrollupgradeblessed")) {
           const blessedRates = Types.getBlessedSuccessRateBonus();
@@ -1230,7 +1256,7 @@ class Game {
         );
     });
 
-    $("#upgrade-info").html(successRate ? `${successRate}% chance of successful upgrade` : "&nbsp;");
+    $("#upgrade-info").html(successRate ? `${successRate}% chance of successful ${actionText}` : "&nbsp;");
 
     if ($("#upgrade").hasClass("visible")) {
       this.initDraggable();

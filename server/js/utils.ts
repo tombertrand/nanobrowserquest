@@ -207,7 +207,7 @@ export const isValidUpgradeItems = items => {
   }
 
   const [scroll, scrollLevel] = items[1].split(":");
-  const isScroll = Types.isScroll(scroll);
+  const isScroll = Types.isScroll(scroll) && scroll.startsWith("scrollupgrade");
 
   if (!isScroll) {
     return false;
@@ -259,6 +259,54 @@ export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
   return random <= successRate;
 };
 
+export const isValidTransmuteItems = items => {
+  if (items.length !== 2) {
+    return false;
+  }
+
+  const [item, , bonus] = items[0].split(":");
+  const transmuteRate = Types.getTransmuteSuccessRate(item, bonus);
+  if (!transmuteRate) {
+    return false;
+  }
+
+  const [scroll] = items[1].split(":");
+  const isScroll = scroll === "scrolltransmute";
+  if (!isScroll) {
+    return false;
+  }
+
+  return transmuteRate;
+};
+
+export const getIsTransmuteSuccess = ({ transmuteSuccessRate = 0, uniqueSuccessRate = 0, isLuckySlot }) => {
+  let random = randomInt(1, 100);
+
+  if (isLuckySlot) {
+    transmuteSuccessRate = Math.ceil(transmuteSuccessRate * 1.25);
+    uniqueSuccessRate = Math.ceil(uniqueSuccessRate * 1.25);
+  }
+
+  const isTransmuteSuccess = random <= transmuteSuccessRate;
+  const isUniqueSuccess = random <= uniqueSuccessRate;
+
+  console.info(
+    `Random ${random}, Transmute success rate: ${transmuteSuccessRate} -> ${
+      random <= transmuteSuccessRate ? "SUCCESS" : "FAILURE"
+    }`,
+  );
+  console.info(
+    `Random ${random}, Unique Transmute success rate: ${uniqueSuccessRate} -> ${
+      random <= uniqueSuccessRate ? "SUCCESS" : "FAILURE"
+    }`,
+  );
+
+  return {
+    ...(transmuteSuccessRate ? { isTransmuteSuccess } : null),
+    ...(uniqueSuccessRate ? { isUniqueSuccess } : null),
+  };
+};
+
 export const isValidRecipe = items => {
   const recipes: { [key in Recipes]: string[] } = {
     cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
@@ -303,7 +351,7 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
   ];
 
   // 40%
-  const scrolls = [{ item: "scrollupgradehigh" }, { item: "scrollupgradeblessed" }];
+  const scrolls = [{ item: "scrollupgradehigh" }, { item: "scrollupgradeblessed" }, { item: "scrolltransmute" }];
 
   // 10%
   const ringOrAmulets = [

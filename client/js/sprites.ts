@@ -76,6 +76,7 @@ import itemScrollupgradelow from "../sprites/item-scrollupgradelow.json";
 import itemScrollupgrademedium from "../sprites/item-scrollupgrademedium.json";
 import itemScrollupgradehigh from "../sprites/item-scrollupgradehigh.json";
 import itemScrollupgradeblessed from "../sprites/item-scrollupgradeblessed.json";
+import itemScrolltransmute from "../sprites/item-scrolltransmute.json";
 import itemSkeletonkey from "../sprites/item-skeletonkey.json";
 import itemRaiblockstl from "../sprites/item-raiblockstl.json";
 import itemRaiblockstr from "../sprites/item-raiblockstr.json";
@@ -244,6 +245,7 @@ const sprites = {
   "item-scrollupgrademedium": itemScrollupgrademedium,
   "item-scrollupgradehigh": itemScrollupgradehigh,
   "item-scrollupgradeblessed": itemScrollupgradeblessed,
+  "item-scrolltransmute": itemScrolltransmute,
   "item-skeletonkey": itemSkeletonkey,
   "item-raiblockstl": itemRaiblockstl,
   "item-raiblockstr": itemRaiblockstr,

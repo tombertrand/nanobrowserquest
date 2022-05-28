@@ -152,21 +152,18 @@ class Sprite {
   }
 
   createSilhouette() {
-    var canvas = document.createElement("canvas");
-    var ctx: CanvasRenderingContext2D = canvas.getContext("2d")!;
-    var width = this.image.width;
-    var height = this.image.height;
-    var finalData;
-    var data: any;
+    var canvas = document.createElement("canvas"),
+      ctx = canvas.getContext("2d"),
+      width = this.image.width,
+      height = this.image.height,
+      spriteData;
 
     canvas.width = width;
     canvas.height = height;
 
     try {
       ctx.drawImage(this.image, 0, 0, width, height);
-      data = ctx.getImageData(0, 0, width, height).data;
-      finalData = ctx.getImageData(0, 0, width, height);
-      var fdata = finalData.data;
+      spriteData = ctx.getImageData(0, 0, width, height);
 
       var getIndex = function (x, y) {
         return (width * (y - 1) + x - 1) * 4;
@@ -182,41 +179,46 @@ class Sprite {
         return { x: x, y: y };
       };
 
-      var hasAdjacentPixel = function (i) {
+      var hasAdjacentPixel = i => {
         var pos = getPosition(i);
+        var hasPixel = false;
 
         if (pos.x < width && !isBlankPixel(getIndex(pos.x + 1, pos.y))) {
-          return true;
+          hasPixel = true;
+        } else if (pos.x > 1 && !isBlankPixel(getIndex(pos.x - 1, pos.y))) {
+          hasPixel = true;
+        } else if (pos.y < height && !isBlankPixel(getIndex(pos.x, pos.y + 1))) {
+          hasPixel = true;
+        } else if (pos.y > 1 && !isBlankPixel(getIndex(pos.x, pos.y - 1))) {
+          hasPixel = true;
         }
-        if (pos.x > 1 && !isBlankPixel(getIndex(pos.x - 1, pos.y))) {
-          return true;
-        }
-        if (pos.y < height && !isBlankPixel(getIndex(pos.x, pos.y + 1))) {
-          return true;
-        }
-        if (pos.y > 1 && !isBlankPixel(getIndex(pos.x, pos.y - 1))) {
-          return true;
-        }
-        return false;
+
+        return hasPixel;
       };
 
-      var isBlankPixel = function (i) {
-        if (i < 0 || i >= data.length) {
+      var isBlankPixel = (i: number) => {
+        if (i < 0 || i >= spriteData.data.length) {
           return true;
         }
-        return data[i] === 0 && data[i + 1] === 0 && data[i + 2] === 0 && data[i + 3] === 0;
+
+        return (
+          (spriteData.data[i] === 0 &&
+            spriteData.data[i + 1] === 0 &&
+            spriteData.data[i + 2] === 0 &&
+            spriteData.data[i + 3] === 0) ||
+          spriteData.data[i + 3] === 150
+        );
       };
 
-      for (var i = 0; i < data.length; i += 4) {
+      for (var i = 0; i < spriteData.data.length; i += 4) {
         if (isBlankPixel(i) && hasAdjacentPixel(i)) {
-          fdata[i] = fdata[i + 1] = 255;
-          fdata[i + 2] = 150;
-          fdata[i + 3] = 150;
+          spriteData.data[i] = spriteData.data[i + 1] = 255;
+          spriteData.data[i + 2] = 150;
+          spriteData.data[i + 3] = 150;
         }
       }
 
-      finalData.data = fdata;
-      ctx.putImageData(finalData, 0, 0);
+      ctx.putImageData(spriteData, 0, 0);
 
       this.silhouetteSprite = {
         image: canvas,
@@ -226,7 +228,7 @@ class Sprite {
         width: this.width,
         height: this.height,
       };
-    } catch (err) {
+    } catch (e) {
       this.silhouetteSprite = this;
     }
   }

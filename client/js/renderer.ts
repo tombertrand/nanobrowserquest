@@ -633,7 +633,7 @@ class Renderer {
             spriteImage = sprite.imageunique;
           }
         } else if (entity.kind === Types.Entities.GUARD) {
-          spriteImage = sprite[`image${this.game.player.network}`];
+          spriteImage = sprite[`image${entity.isHighlighted ? "" : this.game.player.network}`];
         }
 
         if (entity.isFrozen) {

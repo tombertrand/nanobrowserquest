@@ -176,6 +176,7 @@ export const Types: any = {
     SCROLLUPGRADEMEDIUM: 75,
     SCROLLUPGRADEHIGH: 76,
     SCROLLUPGRADEBLESSED: 118,
+    SCROLLTRANSMUTE: 142,
     RINGBRONZE: 80,
     RINGSILVER: 81,
     RINGGOLD: 82,
@@ -405,12 +406,12 @@ export const kinds = {
   morningstar: [Types.Entities.MORNINGSTAR, "weapon", "Morning Star", 3, 7],
   bluesword: [Types.Entities.BLUESWORD, "weapon", "Magic Sword", 5, 10],
   redsword: [Types.Entities.REDSWORD, "weapon", "Blazing Sword", 7, 15],
-  goldensword: [Types.Entities.GOLDENSWORD, "weapon", "Golden Sword", 10, 20],
-  blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 12, 24],
-  bluemorningstar: [Types.Entities.BLUEMORNINGSTAR, "weapon", "Frozen Morning Star", 14, 26],
+  goldensword: [Types.Entities.GOLDENSWORD, "weapon", "Golden Sword", 16, 20],
+  blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 18, 24],
+  bluemorningstar: [Types.Entities.BLUEMORNINGSTAR, "weapon", "Frozen Morning Star", 20, 26],
   frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 26, 30],
-  diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 26, 36],
-  minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 30, 40],
+  diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 36, 36],
+  minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 40, 40],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -420,12 +421,12 @@ export const kinds = {
   platearmor: [Types.Entities.PLATEARMOR, "armor", "Plate Armor", 5, 10],
   redarmor: [Types.Entities.REDARMOR, "armor", "Ruby Armor", 7, 15],
   goldenarmor: [Types.Entities.GOLDENARMOR, "armor", "Golden Armor", 10, 20],
-  bluearmor: [Types.Entities.BLUEARMOR, "armor", "Frozen Armor", 14, 24],
-  hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 18, 28],
-  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Sapphire Armor", 28, 30],
-  diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 36, 34],
-  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 36, 42],
-  demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 36, 46],
+  bluearmor: [Types.Entities.BLUEARMOR, "armor", "Frozen Armor", 18, 24],
+  hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 22, 28],
+  frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Sapphire Armor", 26, 30],
+  diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 36, 36],
+  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 40, 42],
+  demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 42, 46],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -435,7 +436,7 @@ export const kinds = {
   beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 14],
   beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 40, 18],
 
-  cape: [Types.Entities.CAPE, "cape", "Cape", 10, 2],
+  cape: [Types.Entities.CAPE, "cape", "Cape", 20, 2],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -472,6 +473,7 @@ export const kinds = {
   scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "scroll", "Upgrade scroll", 6],
   scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "scroll", "Superior upgrade scroll", 15],
   scrollupgradeblessed: [Types.Entities.SCROLLUPGRADEBLESSED, "scroll", "Blessed upgrade scroll", 15],
+  scrolltransmute: [Types.Entities.SCROLLTRANSMUTE, "scroll", "Transmute scroll", 20],
   skeletonkey: [Types.Entities.SKELETONKEY, "object", "Skeleton Key"],
   raiblockstl: [Types.Entities.RAIBLOCKSTL, "object", "Raiblocks artifact"],
   raiblockstr: [Types.Entities.RAIBLOCKSTR, "object", "Raiblocks artifact"],
@@ -935,6 +937,7 @@ Types.isScroll = function (kindOrString: number | string) {
       Types.Entities.SCROLLUPGRADEMEDIUM,
       Types.Entities.SCROLLUPGRADEHIGH,
       Types.Entities.SCROLLUPGRADEBLESSED,
+      Types.Entities.SCROLLTRANSMUTE,
     ].includes(kindOrString);
   } else {
     return kindOrString?.startsWith("scroll");
@@ -1382,7 +1385,7 @@ Types.getBonus = function (rawBonus, level) {
   const lightningDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const pierceDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
-  const coldDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
+  const coldDamagePerLevel = [1, 2, 3, 4, 6, 8, 12, 18, 26, 40];
   const freezeChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
   const reduceFrozenChancePerLevel = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 
@@ -1502,6 +1505,58 @@ Types.getLuckySlotSuccessRateBonus = () => {
 
 Types.getBlessedSuccessRateBonus = () => {
   return [0, 0, 10, 8, 6, 5, 3, 2, 1];
+};
+
+Types.getTransmuteSuccessRate = (item, bonus) => {
+  const isUnique = Types.isUnique(item, bonus);
+  const isRing = Types.isRing(item);
+  const isAmulet = Types.isAmulet(item);
+  const isBelt = Types.isBelt(item);
+  const isCape = Types.isCape(item);
+  const isUniqueRing = isRing && isUnique;
+  const isUniqueAmulet = isAmulet && isUnique;
+  const isUniqueBelt = isBelt && isUnique;
+  const isUniqueCape = isCape && isUnique;
+
+  const uniqueSuccessRateMap = {
+    goldensword: 20,
+    blueaxe: 18,
+    bluemorningstar: 18,
+    frozensword: 15,
+    diamondsword: 11,
+    minotauraxe: 8,
+
+    goldenarmor: 20,
+    bluearmor: 18,
+    hornedarmor: 15,
+    frozenarmor: 15,
+    diamondarmor: 11,
+    spikearmor: 9,
+    demonarmor: 7,
+
+    beltfrozen: 15,
+    belthorned: 15,
+    beltdiamond: 11,
+    beltminotaur: 8,
+
+    cape: 10,
+    ringgold: 12,
+    amuletgold: 12,
+  };
+
+  const transmuteSuccessRate = 50;
+
+  if (isUniqueRing || isUniqueAmulet || isUniqueBelt || isUniqueCape) {
+    return { transmuteSuccessRate, uniqueSuccessRate: 100 };
+  } else if (!isUnique && uniqueSuccessRateMap[item]) {
+    return {
+      uniqueSuccessRate: uniqueSuccessRateMap[item],
+      ...(isRing || isAmulet || isCape ? { transmuteSuccessRate } : null),
+    };
+  }
+
+  // Can't use scroll on the item
+  return null;
 };
 
 // kind, type, name, level, defense
@@ -1699,4 +1754,5 @@ Types.itemDescription = {
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgradeblessed:
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level. Blessed scrolls gives a higher chance of successful upgrade.",
+  scrolltransmute: `Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.`,
 };
