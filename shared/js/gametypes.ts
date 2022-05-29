@@ -1544,7 +1544,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     amuletgold: 12,
   };
 
-  const transmuteSuccessRate = 60;
+  const transmuteSuccessRate = 75;
 
   if (isUniqueRing || isUniqueAmulet || isUniqueBelt || isUniqueCape) {
     return { transmuteSuccessRate, uniqueSuccessRate: 100 };
