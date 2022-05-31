@@ -173,13 +173,18 @@ class Entity {
   }
 
   setHighlight(value) {
+    this.isHighlighted = !!value;
+
     // @NOTE Unable to set highlight silhouette for guards due to nano/ban
-    if (value === true && !this.kind !== Types.Entities.GUARD) {
+    if (this.kind === Types.Entities.GUARD) {
+      this.sprite = this.normalSprite;
+      return;
+    }
+
+    if (value === true) {
       this.sprite = this.sprite?.silhouetteSprite;
-      this.isHighlighted = true;
     } else {
       this.sprite = this.normalSprite;
-      this.isHighlighted = false;
     }
   }
 

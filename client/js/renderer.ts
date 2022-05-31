@@ -632,9 +632,12 @@ class Renderer {
           ) {
             spriteImage = sprite.imageunique;
           }
-        } else if (entity.kind === Types.Entities.GUARD) {
-          spriteImage = sprite[`image${entity.isHighlighted ? "" : this.game.player.network}`];
         }
+        //  else if (entity.kind === Types.Entities.GUARD) {
+        //   console.log("~~~isHighlighted", entity.isHighlighted);
+
+        //   spriteImage = sprite[`image${entity.isHighlighted ? "" : this.game.player.network}`];
+        // }
 
         if (entity.isFrozen) {
           this.context.filter = "sepia(100%) hue-rotate(190deg) saturate(500%)";
