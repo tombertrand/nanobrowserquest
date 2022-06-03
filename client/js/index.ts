@@ -278,8 +278,8 @@ var initApp = function () {
     //   app.tryStartingGame();
     // });
 
-    // $("#aaa1 .link").on("click", () => {
-    //   $("#loginnameinput").val("aaa1").show();
+    // $("#aaa .link").on("click", () => {
+    //   $("#loginnameinput").val("aaa").show();
     //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
     //   app.tryStartingGame();
     // });
@@ -417,13 +417,14 @@ var initGame = function () {
   });
 
   game.onNbPlayersChange(function () {
+    // if ($("#party").hasClass("active")) {
+    //   app.updatePartyPanel();
+    // }
+
     var setWorldPlayersString = function (string) {
       $("#instance-population").find("span:nth-child(2)").text(string);
       $("#player-count").find("span:nth-child(2)").text(string);
     };
-    // var setTotalPlayersString = function (string) {
-    //   $("#world-population").find("span:nth-child(2)").text(string);
-    // };
 
     $("#player-count").find("span.count").text(game.worldPlayers.length);
 
@@ -448,8 +449,7 @@ var initGame = function () {
           class: className,
           html: `
             <span>${name}</span>
-           
-          <span class="payout-icon ${network} ${hash ? "completed" : ""}" title="${
+            <span class="payout-icon ${network} ${hash ? "completed" : ""}" title="${
             hash
               ? `Killed the Skeleton King and received a ${network} payout`
               : `Did not complete the game to receive a ${network} payout`
@@ -459,13 +459,6 @@ var initGame = function () {
         }).appendTo("#player-list");
       });
     }
-
-    // $("#world-population").find("span:nth-child(1)").text(totalPlayers);
-    // if (totalPlayers == 1) {
-    //   setTotalPlayersString("player");
-    // } else {
-    //   setTotalPlayersString("players");
-    // }
   });
 
   game.onAchievementUnlock(function (id, name, payout) {

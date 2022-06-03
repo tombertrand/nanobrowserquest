@@ -581,7 +581,7 @@ footer, header, hgroup, menu, nav, section {
     #player-list > div span:first-of-type,#player-info > div span:first-of-type { margin-right: 3px; }
     #player-list > div span:last-of-type,#player-info > div span:last-of-type { margin-left: auto; }
     #population .active, #text-window .active, #player .active { color: #FCE045 }
-    #population .party, #text-window .party, #player .party { color: #35ee35 }
+    #population .party, #text-window .party, #player .party, #party .party { color: #35ee35 }
     #text-window .event { color: #55a3ff }
     #text-window .info, #text-window .loot { color: #bfc2db }
     #text-window .error { color: #b57979 }
@@ -650,12 +650,13 @@ footer, header, hgroup, menu, nav, section {
     }
     .payout-icon.nano {
         width: 10px;
-        height: 12px;
+        height: 13px;
         background-image: url(../img/3/xno.png);
     }
     .payout-icon.ban {
-        width: 20px;
+        width: 18px;
         height: 12px;
+        margin-top: 2px;
         background-image: url(../img/3/ban.png);
     }
     .payout-icon.completed {
@@ -852,6 +853,7 @@ footer, header, hgroup, menu, nav, section {
         text-decoration: none;
         text-align: center;
     }
+    .btn.small { color: #fff; font-size: 12px; padding: 2px 8px 4px; }
     .btn:hover {
         -webkit-box-shadow:inset 2px -2px 0 2px #d2726f, inset -2px 2px 0 2px #8c2a25, inset 1px -1px 0 4px #db8f8d;
         -moz-box-shadow: inset 2px -2px 0 2px #d2726f, inset -2px 2px 0 2px #8c2a25, inset 1px -1px 0 4px #db8f8d;
@@ -1034,6 +1036,7 @@ footer, header, hgroup, menu, nav, section {
 		
 		#instructions, #store, #settings, #party, #completed, #failed {height:579px;width:1251px;background-position:0 -1704px;margin-left:-624px;margin-top:-312px;color:#373737;}
 		#instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:40px;text-align:center;margin:50px 0 40px;}
+        #party h1 { margin-bottom: 20px; }
         #instructions ul {font-size:30px;margin-top:30px;}
         #instructions ul li {margin:0 0; clear:left;}
         #instructions ul li span {display:block;float:left;position: relative;}
@@ -1252,6 +1255,7 @@ footer, header, hgroup, menu, nav, section {
 
 		#instructions, #store, #settings, #party, #completed, #failed {height:386px;width:834px;background-position:0 -1136px;margin-left:-416px;margin-top:-210px;color:#373737;}
 		#instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:30px;text-align:center;margin:40px 0 30px;}
+        #party h1 { margin-bottom: 10px; }
         #completed h1 { margin-bottom: 0}
         #instructions ul {font-size:20px;margin-top:20px;}
         #instructions ul li {margin:20px 0; clear:left;}

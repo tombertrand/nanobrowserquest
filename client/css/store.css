@@ -104,7 +104,7 @@
   padding: 0 10px;
 }
 
-.store-notice {
+.panel-notice {
   position: absolute;
   bottom: 20px;
   font-size: 11px;
@@ -200,7 +200,7 @@
     font-size: 16px;
   }
 
-  .store-notice {
+  .panel-notice {
     bottom: 40px;
   }
 
@@ -294,7 +294,7 @@
     font-size: 12px;
   }
 
-  .store-notice {
+  .panel-notice {
     bottom: 20px;
   }
 
@@ -394,7 +394,7 @@
     display: block;
   }
 
-  .store-notice {
+  .panel-notice {
     bottom: 20px;
     font-size: 9px;
   }
@@ -417,7 +417,7 @@
     margin: 20px 5px 0;
   }
 
-  .store-notice {
+  .panel-notice {
     font-size: 10px;
   }
 
@@ -437,7 +437,7 @@
     font-size: 11px;
   }
 
-  .store-notice {
+  .panel-notice {
     bottom: 10px;
   }
 }

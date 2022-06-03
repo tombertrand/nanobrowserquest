@@ -50,3 +50,32 @@
   background: #d83939;
   border-radius: 6px;
 }
+
+#party-players .row,
+#other-players .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.party-panel {
+  display: flex;
+  justify-content: space-around;
+}
+
+.party-panel > div {
+  width: 45%;
+}
+
+.party-panel .party {
+  text-shadow: 1px -1px 1px #000, 1px 1px 1px #000, -1px 1px 1px #000;
+}
+
+.party-header {
+  color: #777;
+}
+
+.party-empty {
+  margin-top: 20px;
+}

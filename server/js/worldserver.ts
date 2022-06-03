@@ -901,12 +901,13 @@ class World {
   getPlayerPopulation() {
     let players = _.sortBy(
       // @ts-ignore
-      Object.values(this.players).reduce((acc: any[], { name, level, hash, network }) => {
+      Object.values(this.players).reduce((acc: any[], { name, level, hash, network, partyId }) => {
         acc.push({
           name,
           level,
           network,
           hash: !!hash,
+          partyId,
         });
 
         return acc;

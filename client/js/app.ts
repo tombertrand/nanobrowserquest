@@ -313,6 +313,14 @@ class App {
     $("#dialog-delete-item").text("Are you sure you want to delete this item?");
 
     $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
+
+    $("#reconnecting")
+      .off("click")
+      .on("click", () => {
+        if (this.game.client.connection.connected) {
+          $("#reconnecting").removeClass("visible");
+        }
+      });
   }
 
   setPlayButtonState(enabled) {
@@ -649,6 +657,125 @@ class App {
     const isActive = $("#party").hasClass("active");
     this.hideWindows();
     $("#party").toggleClass("active", !isActive);
+
+    // if (!isActive) {
+    //   this.updatePartyPanel();
+    // }
+  }
+
+  updatePartyPanel() {
+    // @NOTE update population when someone joins/leaves a party
+    console.log("~~~~~this.game.worldPlayers", this.game.worldPlayers);
+
+    const filteredPlayers = this.game.worldPlayers.filter(({ name }) => name !== this.game.player.name);
+
+    let partyPlayers = [];
+    let otherPlayers = [];
+    let partyPlayersHtml = "";
+    let otherPlayersHtml = "";
+
+    const { partyId, partyLeader } = this.game.player;
+    const isPartyLeader = partyId ? partyLeader?.name === this.game.player.name : false;
+
+    if (partyId) {
+      filteredPlayers.map(player => {
+        if (player.partyId === partyId) {
+          partyPlayers.push(player);
+        } else {
+          otherPlayers.push(player);
+        }
+      });
+    } else {
+      otherPlayers = filteredPlayers;
+    }
+
+    if (partyPlayers.length) {
+      partyPlayersHtml += '<div class="party-header">Players in your party</div>';
+      partyPlayers.forEach(({ name, level, hash, network }) => {
+        partyPlayersHtml += `
+        <div class="row">
+          <div class="party">
+            ${name} <span class="payout-icon ${network} ${hash ? "completed" : ""}"></span> lv.${level}
+          </div>
+          ${isPartyLeader ? `<button class="btn small" data-party-remove="${name}">Remove</button>` : ""}
+        </div>
+      `;
+      });
+
+      partyPlayersHtml += `
+      <div class="row">
+        <button class="btn small" data-party-leave="">Leave</button>
+        ${isPartyLeader ? `<button class="btn small" data-party-disband="">Disband</button>` : ""}
+      </div>
+      `;
+    } else {
+      partyPlayersHtml += `<div class="party-empty">${
+        partyId
+          ? "No players in your party"
+          : `You are not in a party<br/><br/><br/><button class="btn small" data-party-create="">Create party</button>`
+      }</div>`;
+    }
+
+    if (otherPlayers.length) {
+      otherPlayersHtml += '<div class="party-header">World players</div>';
+      otherPlayers.forEach(({ name, level, hash, partyId: isInParty, network }) => {
+        otherPlayersHtml += `
+        <div class="row">
+          <div>
+            ${name} <span class="payout-icon ${network} ${hash ? "completed" : ""}"></span> lv.${level}
+          </div>
+          ${isInParty ? `<div>In a party</div>` : ""}
+          ${!isInParty && isPartyLeader ? `<button class="btn small" data-party-invite="${name}">Invite</button>` : ""}
+        </div>
+      `;
+      });
+    } else {
+      otherPlayersHtml += '<div class="party-empty">No player to invite</div>';
+    }
+
+    $("#party-players").html(partyPlayersHtml);
+    $("#other-players").html(otherPlayersHtml);
+
+    if (!partyId) {
+      $("#party-players [data-party-create]")
+        .off("click")
+        .on("click", e => {
+          $(e.currentTarget).addClass("disabled").attr("disabled", "disabled");
+          this.game.client.sendPartyCreate();
+        });
+    } else {
+      $("#party-players [data-party-leave]")
+        .off("click")
+        .on("click", e => {
+          $(e.currentTarget).addClass("disabled").attr("disabled", "disabled");
+          this.game.client.sendPartyLeave();
+        });
+    }
+
+    if (isPartyLeader) {
+      $("#other-players [data-party-invite]")
+        .off("click")
+        .on("click", e => {
+          $(e.currentTarget).addClass("disabled").attr("disabled", "disabled").text("Invite sent");
+          const playerName = $(e.currentTarget).data("party-invite");
+          this.game.client.sendPartyInvite(playerName);
+        });
+
+      $("#party-players [data-party-remove]")
+        .off("click")
+        .on("click", e => {
+          $(e.currentTarget).addClass("disabled").attr("disabled", "disabled");
+          const playerName = $(e.currentTarget).data("party-remove");
+          this.game.client.sendPartyRemove(playerName);
+        });
+
+      $("#party-players [data-party-disband]")
+        .off("click")
+        .on("click", e => {
+          $(e.currentTarget).addClass("disabled").attr("disabled", "disabled");
+          this.game.client.sendPartyDisband();
+        });
+    }
   }
 
   resetAchievementPage() {

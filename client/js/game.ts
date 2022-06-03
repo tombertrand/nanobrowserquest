@@ -35,6 +35,14 @@ import type { ChatType } from "../../server/js/types";
 export type Network = "nano" | "ban";
 export type Explorer = "nanolooker" | "bananolooker";
 
+interface WorldPlayer {
+  name: string;
+  level: number;
+  network: Network;
+  hash: boolean;
+  partyId?: number;
+}
+
 class Game {
   app: App;
   ready: boolean;
@@ -140,7 +148,7 @@ class Game {
   notification_callback: any;
   unlock_callback: any;
   slotToDelete?: number;
-  worldPlayers: any[];
+  worldPlayers: WorldPlayer[];
   network: Network;
   explorer: Explorer;
   hoverSlotToDelete: number | null;
