@@ -1036,7 +1036,8 @@ footer, header, hgroup, menu, nav, section {
 		
 		#instructions, #store, #settings, #party, #completed, #failed {height:579px;width:1251px;background-position:0 -1704px;margin-left:-624px;margin-top:-312px;color:#373737;}
 		#instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:40px;text-align:center;margin:50px 0 40px;}
-        #party h1 { margin-bottom: 20px; }
+        #party h1 { margin-bottom: 20px; margin-top: 30px; }
+        #party .party-panel { height: 450px; }
         #instructions ul {font-size:30px;margin-top:30px;}
         #instructions ul li {margin:0 0; clear:left;}
         #instructions ul li span {display:block;float:left;position: relative;}
@@ -1255,7 +1256,8 @@ footer, header, hgroup, menu, nav, section {
 
 		#instructions, #store, #settings, #party, #completed, #failed {height:386px;width:834px;background-position:0 -1136px;margin-left:-416px;margin-top:-210px;color:#373737;}
 		#instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:30px;text-align:center;margin:40px 0 30px;}
-        #party h1 { margin-bottom: 10px; }
+        #party h1 { margin-bottom: 10px; margin-top: 20px; }
+        #party .party-panel { height: 300px; }
         #completed h1 { margin-bottom: 0}
         #instructions ul {font-size:20px;margin-top:20px;}
         #instructions ul li {margin:20px 0; clear:left;}

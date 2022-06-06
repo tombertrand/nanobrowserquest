@@ -59,13 +59,19 @@
   margin: 4px 0;
 }
 
-.party-panel {
-  display: flex;
+#party-players .row.row-around,
+#other-players .row.row-around {
   justify-content: space-around;
 }
 
+.party-panel {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 40px;
+}
+
 .party-panel > div {
-  width: 45%;
+  width: 46%;
 }
 
 .party-panel .party {
@@ -78,4 +84,14 @@
 
 .party-empty {
   margin-top: 20px;
+}
+
+.player-name {
+  margin: 3px 0;
+  position: relative;
+}
+
+.party-separator {
+  width: 1px !important;
+  border-left: dotted 3px #c7c4ac;
 }

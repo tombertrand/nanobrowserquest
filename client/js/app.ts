@@ -43,6 +43,7 @@ class App {
   config: any;
   messageTimer: any;
   playButtonRestoreText: string;
+  partyBlinkInterval: NodeJS.Timer;
 
   constructor() {
     this.currentPage = 1;
@@ -70,6 +71,7 @@ class App {
     this.createNewCharacterFormFields = [];
     this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
     this.playButtonRestoreText = "";
+    this.partyBlinkInterval = null;
 
     if (
       this.storage &&
@@ -658,15 +660,14 @@ class App {
     this.hideWindows();
     $("#party").toggleClass("active", !isActive);
 
-    // if (!isActive) {
-    //   this.updatePartyPanel();
-    // }
+    if (!isActive) {
+      clearInterval(this.partyBlinkInterval);
+      $("#party-button").removeClass("blink");
+      this.updatePartyPanel();
+    }
   }
 
   updatePartyPanel() {
-    // @NOTE update population when someone joins/leaves a party
-    console.log("~~~~~this.game.worldPlayers", this.game.worldPlayers);
-
     const filteredPlayers = this.game.worldPlayers.filter(({ name }) => name !== this.game.player.name);
 
     let partyPlayers = [];
@@ -689,48 +690,77 @@ class App {
       otherPlayers = filteredPlayers;
     }
 
-    if (partyPlayers.length) {
-      partyPlayersHtml += '<div class="party-header">Players in your party</div>';
+    partyPlayersHtml += '<div class="party-header">Your party</div>';
+
+    if (this.game.partyInvites.length) {
+      this.game.partyInvites.forEach(({ name, partyId: joinPartyId }) => {
+        partyPlayersHtml += `
+        <div class="row">
+          <div class="player-name">
+            ${name} invites you
+          </div>
+          <div>
+            <button class="btn small" data-party-refuse="${joinPartyId}">Refuse</button>
+            <button class="btn small" data-party-join="${joinPartyId}">Join</button>
+          </div>
+        </div>
+      `;
+      });
+    } else if (partyPlayers.length) {
       partyPlayers.forEach(({ name, level, hash, network }) => {
         partyPlayersHtml += `
         <div class="row">
-          <div class="party">
-            ${name} <span class="payout-icon ${network} ${hash ? "completed" : ""}"></span> lv.${level}
+          <div class="player-name party">
+            ${
+              partyLeader.name === name ? "<span class='party-leader'>[P]</span>" : ""
+            } ${name} <span class="payout-icon ${network} ${hash ? "completed" : ""}"></span> lv.${level}
           </div>
           ${isPartyLeader ? `<button class="btn small" data-party-remove="${name}">Remove</button>` : ""}
         </div>
       `;
       });
-
-      partyPlayersHtml += `
-      <div class="row">
-        <button class="btn small" data-party-leave="">Leave</button>
-        ${isPartyLeader ? `<button class="btn small" data-party-disband="">Disband</button>` : ""}
-      </div>
-      `;
     } else {
       partyPlayersHtml += `<div class="party-empty">${
         partyId
           ? "No players in your party"
-          : `You are not in a party<br/><br/><br/><button class="btn small" data-party-create="">Create party</button>`
+          : `You are not in a party<br/><br/><button class="btn small" data-party-create="">Create party</button>`
       }</div>`;
     }
 
+    if (partyId) {
+      partyPlayersHtml += `
+      <div class="row row-around">
+        <button class="btn small" data-party-leave="">Leave</button>
+        ${
+          isPartyLeader && partyPlayers.length ? `<button class="btn small" data-party-disband="">Disband</button>` : ""
+        }
+      </div>
+      `;
+    }
+
+    otherPlayersHtml += '<div class="party-header">World players</div>';
+
     if (otherPlayers.length) {
-      otherPlayersHtml += '<div class="party-header">World players</div>';
       otherPlayers.forEach(({ name, level, hash, partyId: isInParty, network }) => {
+        const isInviteSent = this.game.partyInvitees.includes(name);
         otherPlayersHtml += `
-        <div class="row">
-          <div>
+        <div class="row ${partyId ? "" : "row-around"}">
+          <div class="player-name">
             ${name} <span class="payout-icon ${network} ${hash ? "completed" : ""}"></span> lv.${level}
           </div>
-          ${isInParty ? `<div>In a party</div>` : ""}
-          ${!isInParty && isPartyLeader ? `<button class="btn small" data-party-invite="${name}">Invite</button>` : ""}
+          ${partyId && isInParty ? `<div>In a party</div>` : ""}
+          ${
+            !isInParty && isPartyLeader
+              ? `<button class="btn small ${isInviteSent ? "disabled" : ""}" data-party-invite="${name}" ${
+                  isInviteSent ? "disabled" : ""
+                }">Invite${isInviteSent ? " sent" : ""}</button>`
+              : ""
+          }
         </div>
       `;
       });
     } else {
-      otherPlayersHtml += '<div class="party-empty">No player to invite</div>';
+      otherPlayersHtml += `<div class="party-empty">No other player online</div>`;
     }
 
     $("#party-players").html(partyPlayersHtml);
@@ -742,6 +772,22 @@ class App {
         .on("click", e => {
           $(e.currentTarget).addClass("disabled").attr("disabled", "disabled");
           this.game.client.sendPartyCreate();
+        });
+
+      $("#party-players [data-party-join]")
+        .off("click")
+        .on("click", e => {
+          $(e.currentTarget).addClass("disabled").attr("disabled", "disabled");
+          const joinPartyId = $(e.currentTarget).data("party-join");
+          this.game.client.sendPartyJoin(joinPartyId);
+        });
+
+      $("#party-players [data-party-refuse]")
+        .off("click")
+        .on("click", e => {
+          $(e.currentTarget).addClass("disabled").attr("disabled", "disabled");
+          const refusePartyId = $(e.currentTarget).data("party-refuse");
+          this.game.client.sendPartyRefuse(refusePartyId);
         });
     } else {
       $("#party-players [data-party-leave]")
@@ -759,6 +805,7 @@ class App {
           $(e.currentTarget).addClass("disabled").attr("disabled", "disabled").text("Invite sent");
           const playerName = $(e.currentTarget).data("party-invite");
           this.game.client.sendPartyInvite(playerName);
+          this.game.partyInvitees.push(playerName);
         });
 
       $("#party-players [data-party-remove]")
@@ -787,6 +834,33 @@ class App {
         $achievements.removeClass("page" + self.currentPage).addClass("page1");
         self.currentPage = 1;
         $achievements.unbind(TRANSITIONEND);
+      });
+    }
+  }
+
+  updatePopulationList() {
+    $("#player-list").empty();
+    if (Array.isArray(this.game.worldPlayers)) {
+      this.game.worldPlayers.forEach(({ name, level, hash, network }) => {
+        let className = "";
+        if (name === this.game.storage.data.player.name) {
+          className = "active";
+        } else if (this.game.player.partyMembers?.find(({ name: playerName }) => playerName === name)) {
+          className = "party";
+        }
+
+        $("<div/>", {
+          class: className,
+          html: `
+            <span>${name}</span>
+            <span class="payout-icon ${network} ${hash ? "completed" : ""}" title="${
+            hash
+              ? `Killed the Skeleton King and received a ${network} payout`
+              : `Did not complete the game to receive a ${network} payout`
+          }"></span>
+            <span>lv.${level}</span>
+          `,
+        }).appendTo("#player-list");
       });
     }
   }
@@ -1083,6 +1157,10 @@ class App {
     this.hideWindows();
 
     $("#population").toggleClass("visible", !isVisible);
+
+    if (!isVisible) {
+      this.updatePopulationList();
+    }
   }
 
   togglePlayerInfo() {

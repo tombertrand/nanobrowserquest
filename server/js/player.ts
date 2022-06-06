@@ -753,8 +753,7 @@ class Player extends Character {
           const response =
             (await enqueueSendPayout({
               account: self.account,
-              // @TODO 2x until noon jan 1st only for nano network
-              amount: amount * (self.network === "nano" ? 2 : 1),
+              amount,
               payoutIndex,
               network: self.network,
             })) || {};
@@ -855,9 +854,12 @@ class Player extends Character {
         const items = store.getItems();
         self.send([Types.Messages.STORE_ITEMS, items]);
       } else if (action === Types.Messages.PARTY) {
+        let isWorldPartyUpdate = false;
+
         if (message[1] === Types.Messages.PARTY_ACTIONS.CREATE) {
           if (!self.partyId) {
-            self.server.addParty(self);
+            self.server.partyCreate(self);
+            isWorldPartyUpdate = true;
           } else {
             self.send(
               new Messages.Party(
@@ -875,6 +877,17 @@ class Player extends Character {
             );
           } else {
             party.addMember(self);
+            isWorldPartyUpdate = true;
+          }
+        } else if (message[1] === Types.Messages.PARTY_ACTIONS.REFUSE) {
+          const party = self.server.parties[message[2]];
+
+          if (!party) {
+            self.send(
+              new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `There is no party id ${message[2]}`).serialize(),
+            );
+          } else {
+            party.refuse(self);
           }
         } else if (message[1] === Types.Messages.PARTY_ACTIONS.INVITE) {
           const party = self.getParty();
@@ -907,6 +920,13 @@ class Player extends Character {
                   `${playerToInvite.name} is already in a party`,
                 ).serialize(),
               );
+            } else if (party.sentInvites[playerToInvite.id]) {
+              self.send(
+                new Messages.Party(
+                  Types.Messages.PARTY_ACTIONS.ERROR,
+                  `${playerToInvite.name} is already invited`,
+                ).serialize(),
+              );
             } else {
               party.invite(playerToInvite);
               self.send(
@@ -915,10 +935,12 @@ class Player extends Character {
                   `Party invite sent to ${playerToInvite.name}`,
                 ).serialize(),
               );
+              isWorldPartyUpdate = true;
             }
           }
         } else if (message[1] === Types.Messages.PARTY_ACTIONS.LEAVE) {
           self.getParty()?.removeMember(self);
+          isWorldPartyUpdate = true;
         } else if (message[1] === Types.Messages.PARTY_ACTIONS.REMOVE) {
           if (self.id === self.getParty()?.partyLeader.id) {
             const playerToRemove = self.server.getPlayerByName(message[2]);
@@ -935,6 +957,7 @@ class Player extends Character {
               );
             } else {
               self.getParty().removeMember(playerToRemove);
+              isWorldPartyUpdate = true;
             }
           } else {
             self.send(
@@ -947,6 +970,7 @@ class Player extends Character {
         } else if (message[1] === Types.Messages.PARTY_ACTIONS.DISBAND) {
           if (self.id === self.getParty()?.partyLeader.id) {
             self.getParty().disband();
+            isWorldPartyUpdate = true;
           } else {
             self.send(
               new Messages.Party(
@@ -955,6 +979,10 @@ class Player extends Character {
               ).serialize(),
             );
           }
+        }
+
+        if (isWorldPartyUpdate) {
+          self.server.updatePopulation();
         }
       } else if (action === Types.Messages.SETTINGS) {
         const settings = message[1];

@@ -48,6 +48,7 @@ class GameClient {
   bosscheck_callback: any;
   partycreate_callback: any;
   partyjoin_callback: any;
+  partyrefuse_callback: any;
   partyinvite_callback: any;
   partyleave_callback: any;
   partydisband_callback: any;
@@ -636,6 +637,8 @@ class GameClient {
       this.partycreate_callback();
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.JOIN && this.partyjoin_callback) {
       this.partyjoin_callback(data[2]);
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.REFUSE && this.partyrefuse_callback) {
+      this.partyrefuse_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.INVITE && this.partyinvite_callback) {
       this.partyinvite_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.LEAVE && this.partyleave_callback) {
@@ -911,6 +914,10 @@ class GameClient {
     this.partyjoin_callback = callback;
   }
 
+  onPartyRefuse(callback) {
+    this.partyrefuse_callback = callback;
+  }
+
   onPartyInvite(callback) {
     this.partyinvite_callback = callback;
   }
@@ -1094,6 +1101,10 @@ class GameClient {
 
   sendPartyJoin(partyId) {
     this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.JOIN, partyId]);
+  }
+
+  sendPartyRefuse(partyId) {
+    this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.REFUSE, partyId]);
   }
 
   sendPartyInvite(playerName) {

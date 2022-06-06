@@ -386,7 +386,7 @@ var initGame = function () {
   });
 
   game.onChatMessage(function ({ name, message, type }: { name: string; message: string; type: ChatType }) {
-    if (!$("#text-window").is(":visible") && !["event", "loot"].includes(type)) {
+    if (!$("#text-window").is(":visible") && !["event", "loot", "info"].includes(type)) {
       $("#chatbutton").addClass("blink");
     }
 
@@ -403,7 +403,7 @@ var initGame = function () {
 
     $("<div/>", {
       class: className,
-      html: `${name ? `<span>${name}:</span>` : ""}<span>${message}</span>`,
+      html: `<span>${name ? `${name}: ` : ""}</span><span>${message}</span>`,
     }).appendTo("#text-list");
 
     const messages = $("#text-list > div");
@@ -417,9 +417,12 @@ var initGame = function () {
   });
 
   game.onNbPlayersChange(function () {
-    // if ($("#party").hasClass("active")) {
-    //   app.updatePartyPanel();
-    // }
+    if ($("#party").hasClass("active")) {
+      app.updatePartyPanel();
+    }
+    if ($("#population").hasClass("visible")) {
+      app.updatePopulationList();
+    }
 
     var setWorldPlayersString = function (string) {
       $("#instance-population").find("span:nth-child(2)").text(string);
@@ -433,31 +436,6 @@ var initGame = function () {
       setWorldPlayersString("player");
     } else {
       setWorldPlayersString("players");
-    }
-
-    $("#player-list").empty();
-    if (Array.isArray(game.worldPlayers)) {
-      game.worldPlayers.forEach(({ name, level, hash, network }) => {
-        let className = "";
-        if (name === game.storage.data.player.name) {
-          className = "active";
-        } else if (game.player.partyMembers?.find(({ name: playerName }) => playerName === name)) {
-          className = "party";
-        }
-
-        $("<div/>", {
-          class: className,
-          html: `
-            <span>${name}</span>
-            <span class="payout-icon ${network} ${hash ? "completed" : ""}" title="${
-            hash
-              ? `Killed the Skeleton King and received a ${network} payout`
-              : `Did not complete the game to receive a ${network} payout`
-          }"></span>
-            <span>lv.${level}</span>
-          `,
-        }).appendTo("#player-list");
-      });
     }
   });
 
@@ -653,7 +631,8 @@ var initGame = function () {
           $("#settings-button").click();
           break;
         case Types.Keys.P:
-          $("#player-count").click();
+          // $("#player-count").click();
+          $("#party-button").trigger("click");
           break;
         default:
           break;

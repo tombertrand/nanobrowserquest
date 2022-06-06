@@ -84,6 +84,8 @@ class FormatChecker {
         return true;
       } else if (message[0] === Types.Messages.PARTY_ACTIONS.JOIN) {
         return message.length === 2 && _.isNumber(message[1]);
+      } else if (message[0] === Types.Messages.PARTY_ACTIONS.REFUSE) {
+        return message.length === 2 && _.isNumber(message[1]);
       } else if (message[0] === Types.Messages.PARTY_ACTIONS.INVITE) {
         return message.length === 2 && _.isString(message[1]);
       } else if (message[0] === Types.Messages.PARTY_ACTIONS.LEAVE) {

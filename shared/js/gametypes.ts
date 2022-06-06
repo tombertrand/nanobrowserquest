@@ -68,6 +68,7 @@ export const Types: any = {
     PARTY_ACTIONS: {
       CREATE: 58,
       JOIN: 59,
+      REFUSE: 74,
       INVITE: 60,
       LEAVE: 61,
       REMOVE: 62,

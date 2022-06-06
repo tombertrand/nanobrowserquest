@@ -67,7 +67,7 @@ class World {
   enter_callback: any;
   attack_callback: any;
   raise_callback: any;
-  parties: any;
+  parties: { [key: number]: Party };
   currentPartyId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
@@ -226,6 +226,9 @@ class World {
             player,
           );
         }
+
+        // Cleanup party invitations for the leaving player
+        Object.values(self.parties || []).forEach(party => party.deleteInvite(player));
 
         self.removePlayer(player);
         self.decrementPlayerCount();
@@ -543,7 +546,7 @@ class World {
     console.debug("Removed " + Types.getKindAsString(entity.kind) + " : " + entity.id);
   }
 
-  addParty(player: Player) {
+  partyCreate(player: Player) {
     this.currentPartyId += 1;
 
     const party = new Party(this.currentPartyId, player, this);

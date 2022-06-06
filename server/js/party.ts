@@ -84,7 +84,7 @@ class Party {
       ]),
     );
 
-    this.deleteInvite(player.id);
+    this.deleteInvite(player);
     this.updatePartyBonus();
   }
 
@@ -96,8 +96,14 @@ class Party {
     );
   }
 
-  deleteInvite(playerId) {
-    delete this.sentInvites[playerId];
+  deleteInvite(player) {
+    delete this.sentInvites[player.id];
+  }
+
+  refuse(player) {
+    this.deleteInvite(player);
+
+    this.server.pushToPlayer(player, new Messages.Party(Types.Messages.PARTY_ACTIONS.REFUSE, [{ partyId: this.id }]));
   }
 
   updatePartyBonus() {
