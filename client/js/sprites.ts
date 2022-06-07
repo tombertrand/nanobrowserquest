@@ -42,6 +42,8 @@ import guard from "../sprites/guard.json";
 import hand from "../sprites/hand.json";
 import impact from "../sprites/impact.json";
 import cape from "../sprites/cape.json";
+import shieldwood from "../sprites/shieldwood.json";
+import shieldiron from "../sprites/shieldiron.json";
 import itemAxe from "../sprites/item-axe.json";
 import itemBlueaxe from "../sprites/item-blueaxe.json";
 import itemBluemorningstar from "../sprites/item-bluemorningstar.json";
@@ -100,6 +102,8 @@ import itemBelthorned from "../sprites/item-belthorned.json";
 import itemBeltdiamond from "../sprites/item-beltdiamond.json";
 import itemBeltminotaur from "../sprites/item-beltminotaur.json";
 import itemCape from "../sprites/item-cape.json";
+import itemShieldwood from "../sprites/item-shieldwood.json";
+import itemShieldiron from "../sprites/item-shieldiron.json";
 import itemGoldensword from "../sprites/item-goldensword.json";
 import itemFrozensword from "../sprites/item-frozensword.json";
 import itemDiamondsword from "../sprites/item-diamondsword.json";
@@ -213,6 +217,8 @@ const sprites = {
   hand,
   impact,
   cape,
+  shieldwood,
+  shieldiron,
   "item-axe": itemAxe,
   "item-blueaxe": itemBlueaxe,
   "item-bluemorningstar": itemBluemorningstar,
@@ -271,6 +277,8 @@ const sprites = {
   "item-beltdiamond": itemBeltdiamond,
   "item-beltminotaur": itemBeltminotaur,
   "item-cape": itemCape,
+  "item-shieldwood": itemShieldwood,
+  "item-shieldiron": itemShieldiron,
   "item-goldensword": itemGoldensword,
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,

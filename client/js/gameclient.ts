@@ -303,25 +303,26 @@ class GameClient {
     var weapon = data[7];
     var belt = data[8];
     var cape = data[9];
-    var ring1 = data[10];
-    var ring2 = data[11];
-    var amulet = data[12];
-    var experience = data[13];
-    var achievement = data[14];
-    var inventory = data[15];
-    var stash = data[16];
-    var hash = data[17];
-    var nanoPotions = data[18];
-    var gems = data[19];
-    var artifact = data[20];
-    var expansion1 = data[21];
-    var waypoints = data[22];
-    var depositAccount = data[23];
-    var auras = data[24];
-    var cowLevelPortalCoords = data[25];
-    var party = data[26];
-    var settings = data[27];
-    var network = data[28];
+    var shield = data[10];
+    var ring1 = data[11];
+    var ring2 = data[12];
+    var amulet = data[13];
+    var experience = data[14];
+    var achievement = data[15];
+    var inventory = data[16];
+    var stash = data[17];
+    var hash = data[18];
+    var nanoPotions = data[19];
+    var gems = data[20];
+    var artifact = data[21];
+    var expansion1 = data[22];
+    var waypoints = data[23];
+    var depositAccount = data[24];
+    var auras = data[25];
+    var cowLevelPortalCoords = data[26];
+    var party = data[27];
+    var settings = data[28];
+    var network = data[29];
 
     if (this.welcome_callback) {
       this.welcome_callback({
@@ -334,6 +335,7 @@ class GameClient {
         weapon,
         belt,
         cape,
+        shield,
         ring1,
         ring2,
         amulet,

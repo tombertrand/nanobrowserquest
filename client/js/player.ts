@@ -28,6 +28,9 @@ class Player extends Character {
   capeSaturate: number;
   capeContrast: number;
   capeBrightness: number;
+  shieldName: null;
+  shieldLevel: number | null;
+  shieldBonus: null;
   inventory: any[];
   stash: any[];
   upgrade: any[];
@@ -107,6 +110,9 @@ class Player extends Character {
     this.capeSaturate = 0;
     this.capeContrast = 0;
     this.capeBrightness = 1;
+    this.shieldName = null;
+    this.shieldLevel = 1;
+    this.shieldBonus = null;
     this.inventory = [];
     this.stash = [];
     this.upgrade = [];
@@ -207,7 +213,7 @@ class Player extends Character {
       } else if (item.partyId && item.partyId !== this.partyId) {
         // @NOTE Allow item to be looted by others if player is alone in the party?
         throw new Exceptions.LootException("Can't loot item, it belongs to a party.");
-      } else if (["armor", "weapon", "belt", "cape", "ring", "amulet"].includes(item.type)) {
+      } else if (["armor", "weapon", "belt", "cape", "shield", "ring", "amulet"].includes(item.type)) {
         // @NOTE Check for stack-able items with quantity
         if (this.inventory.length >= 24) {
           throw new Exceptions.LootException("Your inventory is full.");
@@ -303,6 +309,30 @@ class Player extends Character {
     this.weaponBonus = bonus;
   }
 
+  getShieldName() {
+    return this.shieldName;
+  }
+
+  setShieldName(name) {
+    this.shieldName = name;
+  }
+
+  getShieldLevel() {
+    return this.shieldLevel;
+  }
+
+  setShieldLevel(level) {
+    this.shieldLevel = parseInt(level);
+  }
+
+  getShieldBonus() {
+    return this.shieldBonus;
+  }
+
+  setShieldBonus(bonus) {
+    this.shieldBonus = bonus;
+  }
+
   setBelt(rawBelt) {
     if (rawBelt) {
       const [belt, level, bonus] = rawBelt.split(":");
@@ -328,6 +358,20 @@ class Player extends Character {
       this.cape = null;
       this.capeLevel = null;
       this.capeBonus = null;
+    }
+  }
+
+  setShield(rawShield) {
+    if (rawShield) {
+      const [shield, level, bonus] = rawShield.split(":");
+
+      this.shieldName = shield;
+      this.shieldLevel = parseInt(level);
+      this.shieldBonus = bonus;
+    } else {
+      this.shieldName = null;
+      this.shieldLevel = null;
+      this.shieldBonus = null;
     }
   }
 
@@ -467,9 +511,40 @@ class Player extends Character {
     }
   }
 
+  switchShield(shield, level: number, bonus?: number[]) {
+    var isDifferent = false;
+
+    if (shield !== this.getShieldName()) {
+      isDifferent = true;
+      this.setShieldName(shield);
+    }
+    if (level !== this.getShieldLevel()) {
+      isDifferent = true;
+      this.setShieldLevel(level);
+    }
+    if (bonus !== this.getShieldBonus()) {
+      isDifferent = true;
+      this.setShieldBonus(bonus);
+    }
+
+    if (isDifferent && this.switch_callback) {
+      this.switch_callback();
+    }
+  }
+
   removeCape() {
     this.cape = null;
     this.capeLevel = null;
+    this.capeBonus = null;
+
+    if (this.switch_callback) {
+      this.switch_callback();
+    }
+  }
+
+  removeShield() {
+    this.shieldName = null;
+    this.shieldLevel = null;
     this.capeBonus = null;
 
     if (this.switch_callback) {
@@ -487,6 +562,7 @@ class Player extends Character {
         const isArmor = kinds[item][1] === "armor";
         const isBelt = kinds[item][1] === "belt";
         const isCape = kinds[item][1] === "cape";
+        const isShield = kinds[item][1] === "shield";
         const isRing = kinds[item][1] === "ring";
         const isAmulet = kinds[item][1] === "amulet";
         const isChest = kinds[item][1] === "chest";
@@ -496,7 +572,7 @@ class Player extends Character {
         let level = null;
         let quantity = null;
 
-        if (isWeapon || isArmor || isBelt || isCape || isRing || isAmulet) {
+        if (isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet) {
           level = levelOrQuantity;
           requirement = Types.getItemRequirement(item, levelOrQuantity);
         } else if (Types.isScroll(item) || isChest) {

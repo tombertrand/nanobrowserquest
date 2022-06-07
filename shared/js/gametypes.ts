@@ -144,6 +144,10 @@ export const Types: any = {
     // Capes
     CAPE: 130,
 
+    // Shields
+    SHIELDWOOD: 143,
+    SHIELDIRON: 144,
+
     // Chests
     CHESTBLUE: 136,
 
@@ -327,6 +331,8 @@ Types.Entities.Belts = [
   Types.Entities.BELTMINOTAUR,
 ];
 
+Types.Entities.Shields = [Types.Entities.SHIELDWOOD, Types.Entities.SHIELDIRON];
+
 Types.Entities.Rings = [
   Types.Entities.RINGBRONZE,
   Types.Entities.RINGSILVER,
@@ -438,6 +444,10 @@ export const kinds = {
   beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 40, 18],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 20, 2],
+
+  // kind, type, level, defense
+  shieldwood: [Types.Entities.SHIELDWOOD, "shield", "Wood Shield", 3, 2],
+  shieldiron: [Types.Entities.SHIELDIRON, "shield", "Iron Shield", 3, 3],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -917,6 +927,14 @@ Types.isCape = function (kindOrString: number | string) {
   }
 };
 
+Types.isShield = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return kinds.getType(kindOrString) === "shield";
+  } else {
+    return kinds[kindOrString][1] === "shield";
+  }
+};
+
 Types.isBoss = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [
@@ -1079,6 +1097,7 @@ Types.isItem = function (kind: number) {
     Types.isAmulet(kind) ||
     Types.isBelt(kind) ||
     Types.isCape(kind) ||
+    Types.isShield(kind) ||
     Types.isScroll(kind) ||
     Types.isSingle(kind) ||
     Types.isChest(kind) ||
@@ -1094,6 +1113,7 @@ Types.Slot = {
   RING2: 104,
   AMULET: 105,
   CAPE: 106,
+  SHIELD: 107,
 };
 
 Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
@@ -1119,6 +1139,9 @@ Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
     case "cape":
     case Types.Slot.CAPE:
       return Types.isCape(item);
+    case "shield":
+    case Types.Slot.SHIELD:
+      return Types.isShield(item);
   }
   return false;
 };
@@ -1514,10 +1537,12 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
   const isAmulet = Types.isAmulet(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
+  const isShield = Types.isShield(item);
   const isUniqueRing = isRing && isUnique;
   const isUniqueAmulet = isAmulet && isUnique;
   const isUniqueBelt = isBelt && isUnique;
   const isUniqueCape = isCape && isUnique;
+  const isUniqueShield = isShield && isUnique;
 
   const uniqueSuccessRateMap = {
     goldensword: 20,
@@ -1547,7 +1572,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
 
   const transmuteSuccessRate = 75;
 
-  if (isUniqueRing || isUniqueAmulet || isUniqueBelt || isUniqueCape) {
+  if (isUniqueRing || isUniqueAmulet || isUniqueBelt || isUniqueCape || isUniqueShield) {
     return { transmuteSuccessRate, uniqueSuccessRate: 100 };
   } else if (!isUnique && uniqueSuccessRateMap[item]) {
     return {
@@ -1641,6 +1666,7 @@ Types.isUnique = function (item, bonus) {
   const isArmor = kinds[item][1] === "armor";
   const isBelt = kinds[item][1] === "belt";
   const isCape = kinds[item][1] === "cape";
+  const isShield = kinds[item][1] === "shield";
   const isRing = kinds[item][1] === "ring";
   const isAmulet = kinds[item][1] === "amulet";
 
@@ -1652,7 +1678,7 @@ Types.isUnique = function (item, bonus) {
     isUnique = Types.isUniqueAmulet(item, typeof bonus === "string" ? JSON.parse(bonus) : bonus);
   } else if (isCape) {
     isUnique = (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 2;
-  } else if (isArmor || isWeapon || isBelt) {
+  } else if (isArmor || isWeapon || isBelt || isShield) {
     isUnique = !!bonus;
   }
 
@@ -1671,6 +1697,7 @@ Types.getItemDetails = function (
   const isAmulet = Types.isAmulet(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
+  const isShield = Types.isShield(item);
   const isUnique = Types.isUnique(item, rawBonus);
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
@@ -1692,6 +1719,9 @@ Types.getItemDetails = function (
     healthBonus = Types.getArmorHealthBonus(level);
   } else if (isBelt) {
     type = "belt";
+    healthBonus = Types.getArmorHealthBonus(level);
+  } else if (isShield) {
+    type = "shield";
     healthBonus = Types.getArmorHealthBonus(level);
   } else if (isCape) {
     type = "cape";
@@ -1722,7 +1752,7 @@ Types.getItemDetails = function (
     type,
     isUnique,
     itemClass,
-    ...(isArmor || isBelt || isCape ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
+    ...(isArmor || isBelt || isCape || isShield ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
     healthBonus,
     magicDamage,

@@ -256,6 +256,14 @@ EntityFactory.builders[Types.Entities.CAPE] = function (id) {
   return new Items.Cape(id);
 };
 
+EntityFactory.builders[Types.Entities.SHIELDWOOD] = function (id) {
+  return new Items.ShieldWood(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDIRON] = function (id) {
+  return new Items.ShieldIron(id);
+};
+
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {
   return new Items.Flask(id);
 };

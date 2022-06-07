@@ -205,6 +205,20 @@ var Items = {
     }
   },
 
+  ShieldWood: class ShieldWood extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDWOOD, "shield");
+      this.lootMessage = "You pick up a wood shield";
+    }
+  },
+
+  ShieldIron: class ShieldIron extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDIRON, "shield");
+      this.lootMessage = "You pick up an iron shield";
+    }
+  },
+
   Flask: class Flask extends Item {
     constructor(id) {
       super(id, Types.Entities.FLASK, "object");

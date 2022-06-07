@@ -346,6 +346,8 @@ class Game {
       "diamondsword",
       "minotauraxe",
       "cape",
+      "shieldwood",
+      "shieldiron",
       "item-sword",
       "item-axe",
       "item-blueaxe",
@@ -374,6 +376,8 @@ class Game {
       "item-beltdiamond",
       "item-beltminotaur",
       "item-cape",
+      "item-shieldwood",
+      "item-shieldiron",
       "item-flask",
       "item-rejuvenationpotion",
       "item-poisonpotion",
@@ -912,6 +916,8 @@ class Game {
       this.player.switchWeapon("dagger", 1);
     } else if (type === "cape" && $(".item-equip-cape").is(":empty")) {
       this.player.removeCape();
+    } else if (type === "shield" && $(".item-equip-shield").is(":empty")) {
+      this.player.removeShield();
     }
   }
 
@@ -944,7 +950,7 @@ class Game {
         const type = kinds[item][1];
 
         if (
-          ["weapon", "armor", "belt", "cape", "chest", "ring", "amulet"].includes(type) &&
+          ["weapon", "armor", "belt", "cape", "shield", "chest", "ring", "amulet"].includes(type) &&
           $(`.item-${type}`).is(":empty")
         ) {
           $(`.item-${type}`).addClass("item-droppable");
@@ -961,7 +967,7 @@ class Game {
 
         $(".ui-droppable-origin").removeClass("ui-droppable-origin");
         $(
-          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-cape, .item-chest, .item-scroll",
+          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-shield, .item-cape, .item-chest, .item-scroll",
         ).removeClass("item-droppable");
       },
     });
@@ -992,6 +998,7 @@ class Game {
     $("#item-armor").empty().append('<div class="item-slot item-equip-armor item-armor" data-slot="101"></div>');
     $("#item-belt").empty().append('<div class="item-slot item-equip-belt item-belt" data-slot="102"></div>');
     $("#item-cape").empty().append('<div class="item-slot item-equip-cape item-cape" data-slot="106"></div>');
+    $("#item-shield").empty().append('<div class="item-slot item-equip-shield item-shield" data-slot="107"></div>');
     $("#item-ring1")
       .empty()
       .append('<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="103"></div>');
@@ -1054,6 +1061,20 @@ class Game {
           "data-item": this.player.cape,
           "data-level": this.player.capeLevel,
           "data-bonus": this.player.capeBonus,
+        }),
+      );
+    }
+
+    if (this.player.shieldName) {
+      $(".item-equip-shield").append(
+        $("<div />", {
+          class: `item-draggable ${this.player.shieldBonus ? "item-unique" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(this.player.shieldName)}")`,
+          },
+          "data-item": this.player.shieldName,
+          "data-level": this.player.shieldLevel,
+          "data-bonus": this.player.shieldBonus,
         }),
       );
     }
@@ -1192,7 +1213,7 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt item-cape item-chest" data-slot="200"></div>',
+        '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="200"></div>',
       );
     $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
   }
@@ -1546,7 +1567,7 @@ class Game {
       WALK_ON_WATER: {
         id: 35,
         name: "Walk on Water",
-        desc: "Make your way though the floating ice",
+        desc: "Make your way through the floating ice",
         hidden: false,
       },
       GHOSTBUSTERS: {
@@ -2189,6 +2210,7 @@ class Game {
       weapon,
       belt,
       cape,
+      shield,
       ring1,
       ring2,
       amulet,
@@ -2244,6 +2266,7 @@ class Game {
       self.player.setWeaponBonus(weaponBonus);
       self.player.setBelt(belt);
       self.player.setCape(cape);
+      self.player.setShield(shield);
 
       self.player.setRing1(ring1);
       self.player.setRing2(ring2);
@@ -2843,6 +2866,11 @@ class Game {
             } else {
               currentEntity.setCape(`${entity.cape}:${entity.capeLevel}:${entity.capeBonus}`);
             }
+            if (!entity.shieldName || !entity.shieldLevel || !entity.shieldBonus) {
+              currentEntity.removeShield();
+            } else {
+              currentEntity.setShield(`${entity.shieldName}:${entity.shieldLevel}:${entity.shieldBonus}`);
+            }
 
             currentEntity.setSprite(self.sprites[entity.getSpriteName()]);
             currentEntity.setGridPosition(x, y);
@@ -3266,6 +3294,9 @@ class Game {
         var player = self.getEntityById(playerId);
         var name = Types.getKindAsString(kind);
 
+        console.log("~~~~~~", playerId, kind, level, bonus, type);
+        // ~~~~~~ 5938 143 1 null shield
+
         if (player) {
           if (type === "armor") {
             player.switchArmor(self.sprites[name], level, bonus);
@@ -3276,6 +3307,12 @@ class Game {
               player.removeCape();
             } else {
               player.switchCape(name, level, bonus);
+            }
+          } else if (type === "shield") {
+            if (!kind || !level) {
+              player.removeShield();
+            } else {
+              player.switchShield(name, level, bonus);
             }
           }
         }
