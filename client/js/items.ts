@@ -219,6 +219,27 @@ var Items = {
     }
   },
 
+  ShieldPlate: class ShieldPlate extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDPLATE, "shield");
+      this.lootMessage = "You pick up a plate shield";
+    }
+  },
+
+  ShieldRed: class ShieldRed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDRED, "shield");
+      this.lootMessage = "You pick up a red shield";
+    }
+  },
+
+  ShieldGolden: class ShieldGolden extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDGOLDEN, "shield");
+      this.lootMessage = "You pick up a golden shield";
+    }
+  },
+
   Flask: class Flask extends Item {
     constructor(id) {
       super(id, Types.Entities.FLASK, "object");

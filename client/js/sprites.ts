@@ -44,6 +44,9 @@ import impact from "../sprites/impact.json";
 import cape from "../sprites/cape.json";
 import shieldwood from "../sprites/shieldwood.json";
 import shieldiron from "../sprites/shieldiron.json";
+import shieldplate from "../sprites/shieldplate.json";
+import shieldred from "../sprites/shieldred.json";
+import shieldgolden from "../sprites/shieldgolden.json";
 import itemAxe from "../sprites/item-axe.json";
 import itemBlueaxe from "../sprites/item-blueaxe.json";
 import itemBluemorningstar from "../sprites/item-bluemorningstar.json";
@@ -104,6 +107,9 @@ import itemBeltminotaur from "../sprites/item-beltminotaur.json";
 import itemCape from "../sprites/item-cape.json";
 import itemShieldwood from "../sprites/item-shieldwood.json";
 import itemShieldiron from "../sprites/item-shieldiron.json";
+import itemShieldplate from "../sprites/item-shieldplate.json";
+import itemShieldred from "../sprites/item-shieldred.json";
+import itemShieldgolden from "../sprites/item-shieldgolden.json";
 import itemGoldensword from "../sprites/item-goldensword.json";
 import itemFrozensword from "../sprites/item-frozensword.json";
 import itemDiamondsword from "../sprites/item-diamondsword.json";
@@ -219,6 +225,9 @@ const sprites = {
   cape,
   shieldwood,
   shieldiron,
+  shieldplate,
+  shieldred,
+  shieldgolden,
   "item-axe": itemAxe,
   "item-blueaxe": itemBlueaxe,
   "item-bluemorningstar": itemBluemorningstar,
@@ -279,6 +288,9 @@ const sprites = {
   "item-cape": itemCape,
   "item-shieldwood": itemShieldwood,
   "item-shieldiron": itemShieldiron,
+  "item-shieldplate": itemShieldplate,
+  "item-shieldred": itemShieldred,
+  "item-shieldgolden": itemShieldgolden,
   "item-goldensword": itemGoldensword,
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,

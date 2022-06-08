@@ -264,6 +264,18 @@ EntityFactory.builders[Types.Entities.SHIELDIRON] = function (id) {
   return new Items.ShieldIron(id);
 };
 
+EntityFactory.builders[Types.Entities.SHIELDPLATE] = function (id) {
+  return new Items.ShieldPlate(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDRED] = function (id) {
+  return new Items.ShieldRed(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDGOLDEN] = function (id) {
+  return new Items.ShieldGolden(id);
+};
+
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {
   return new Items.Flask(id);
 };
