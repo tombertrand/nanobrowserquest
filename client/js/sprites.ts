@@ -47,6 +47,10 @@ import shieldiron from "../sprites/shieldiron.json";
 import shieldplate from "../sprites/shieldplate.json";
 import shieldred from "../sprites/shieldred.json";
 import shieldgolden from "../sprites/shieldgolden.json";
+import shieldblue from "../sprites/shieldblue.json";
+import shieldhorned from "../sprites/shieldhorned.json";
+import shieldfrozen from "../sprites/shieldfrozen.json";
+import shielddiamond from "../sprites/shielddiamond.json";
 import itemAxe from "../sprites/item-axe.json";
 import itemBlueaxe from "../sprites/item-blueaxe.json";
 import itemBluemorningstar from "../sprites/item-bluemorningstar.json";
@@ -110,6 +114,10 @@ import itemShieldiron from "../sprites/item-shieldiron.json";
 import itemShieldplate from "../sprites/item-shieldplate.json";
 import itemShieldred from "../sprites/item-shieldred.json";
 import itemShieldgolden from "../sprites/item-shieldgolden.json";
+import itemShieldblue from "../sprites/item-shieldblue.json";
+import itemShieldhorned from "../sprites/item-shieldhorned.json";
+import itemShieldfrozen from "../sprites/item-shieldfrozen.json";
+import itemShielddiamond from "../sprites/item-shielddiamond.json";
 import itemGoldensword from "../sprites/item-goldensword.json";
 import itemFrozensword from "../sprites/item-frozensword.json";
 import itemDiamondsword from "../sprites/item-diamondsword.json";
@@ -228,6 +236,10 @@ const sprites = {
   shieldplate,
   shieldred,
   shieldgolden,
+  shieldblue,
+  shieldhorned,
+  shieldfrozen,
+  shielddiamond,
   "item-axe": itemAxe,
   "item-blueaxe": itemBlueaxe,
   "item-bluemorningstar": itemBluemorningstar,
@@ -291,6 +303,10 @@ const sprites = {
   "item-shieldplate": itemShieldplate,
   "item-shieldred": itemShieldred,
   "item-shieldgolden": itemShieldgolden,
+  "item-shieldblue": itemShieldblue,
+  "item-shieldhorned": itemShieldhorned,
+  "item-shieldfrozen": itemShieldfrozen,
+  "item-shielddiamond": itemShielddiamond,
   "item-goldensword": itemGoldensword,
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,

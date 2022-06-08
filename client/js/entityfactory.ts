@@ -276,6 +276,22 @@ EntityFactory.builders[Types.Entities.SHIELDGOLDEN] = function (id) {
   return new Items.ShieldGolden(id);
 };
 
+EntityFactory.builders[Types.Entities.SHIELDBLUE] = function (id) {
+  return new Items.ShieldBlue(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDHORNED] = function (id) {
+  return new Items.ShieldHorned(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDFROZEN] = function (id) {
+  return new Items.ShieldFrozen(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDDIAMOND] = function (id) {
+  return new Items.ShieldDiamond(id);
+};
+
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {
   return new Items.Flask(id);
 };

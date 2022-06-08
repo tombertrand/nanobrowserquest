@@ -240,6 +240,34 @@ var Items = {
     }
   },
 
+  ShieldBlue: class ShieldBlue extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDBLUE, "shield");
+      this.lootMessage = "You pick up a blue shield";
+    }
+  },
+
+  ShieldHorned: class ShieldHorned extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDHORNED, "shield");
+      this.lootMessage = "You pick up a horned shield";
+    }
+  },
+
+  ShieldFrozen: class ShieldFrozen extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDFROZEN, "shield");
+      this.lootMessage = "You pick up a frozen shield";
+    }
+  },
+
+  ShieldDiamond: class ShieldDiamond extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDDIAMOND, "shield");
+      this.lootMessage = "You pick up a diamond shield";
+    }
+  },
+
   Flask: class Flask extends Item {
     constructor(id) {
       super(id, Types.Entities.FLASK, "object");

@@ -150,6 +150,10 @@ export const Types: any = {
     SHIELDPLATE: 145,
     SHIELDRED: 146,
     SHIELDGOLDEN: 147,
+    SHIELDBLUE: 148,
+    SHIELDHORNED: 149,
+    SHIELDFROZEN: 150,
+    SHIELDDIAMOND: 151,
 
     // Chests
     CHESTBLUE: 136,
@@ -340,6 +344,10 @@ Types.Entities.Shields = [
   Types.Entities.SHIELDPLATE,
   Types.Entities.SHIELDRED,
   Types.Entities.SHIELDGOLDEN,
+  Types.Entities.SHIELDBLUE,
+  Types.Entities.SHIELDHORNED,
+  Types.Entities.SHIELDFROZEN,
+  Types.Entities.SHIELDDIAMOND,
 ];
 
 Types.Entities.Rings = [
@@ -455,11 +463,15 @@ export const kinds = {
   cape: [Types.Entities.CAPE, "cape", "Cape", 20, 2],
 
   // kind, type, level, defense
-  shieldwood: [Types.Entities.SHIELDWOOD, "shield", "Wood Shield", 2, 2],
+  shieldwood: [Types.Entities.SHIELDWOOD, "shield", "Wood Shield", 1, 2],
   shieldiron: [Types.Entities.SHIELDIRON, "shield", "Iron Shield", 3, 3],
   shieldplate: [Types.Entities.SHIELDPLATE, "shield", "Plate Shield", 5, 5],
-  shieldred: [Types.Entities.SHIELDRED, "shield", "Red Shield", 8, 7],
-  shieldgolden: [Types.Entities.SHIELDGOLDEN, "shield", "Golden Shield", 10, 11],
+  shieldred: [Types.Entities.SHIELDRED, "shield", "Red Shield", 7, 7],
+  shieldgolden: [Types.Entities.SHIELDGOLDEN, "shield", "Golden Shield", 10, 10],
+  shieldblue: [Types.Entities.SHIELDBLUE, "shield", "Frozen Shield", 18, 12],
+  shieldhorned: [Types.Entities.SHIELDHORNED, "shield", "Horned Shield", 22, 14],
+  shieldfrozen: [Types.Entities.SHIELDFROZEN, "shield", "Sapphire Shield", 26, 16],
+  shielddiamond: [Types.Entities.SHIELDDIAMOND, "shield", "Diamond Shield", 36, 18],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
