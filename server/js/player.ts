@@ -1070,11 +1070,16 @@ class Player extends Character {
         } else if (Types.isBelt(kind)) {
           const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
           bonus = _.shuffle(mediumLevelBonus).slice(0, 1).sort();
-        } else if (Types.isShield(kind)) {
-          // const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
-          // bonus = _.shuffle(mediumLevelBonus).slice(0, 1).sort();
-          // Resistance + defensive spell
         }
+      }
+
+      if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
+        const resistanceBonus = [21, 22, 23, 24];
+        const defensiveSkill = [25, 26, 27];
+        bonus = _.shuffle(resistanceBonus)
+          .slice(0, isUnique ? 2 : 1)
+          .concat(_.shuffle(defensiveSkill).slice(0, 1))
+          .sort();
       }
 
       item = { item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null, isUnique };

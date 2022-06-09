@@ -1327,7 +1327,7 @@ class World {
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = ["scrolltransmute", "ringgold", "amuletgold"];
-    var randomDrops = ["shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
+    var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     var randomDrop = random(randomDrops.length);
 
     console.log("~~~~randomDrops[randomDrop]", randomDrops[randomDrop]);

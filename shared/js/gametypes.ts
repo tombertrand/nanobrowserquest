@@ -1375,7 +1375,9 @@ Types.getPartyBonusDescriptionMap = [
 
 Types.partyBonusType = ["attackDamage", "defense", "exp", "minDamage", "maxDamage", "health", "magicDamage"];
 
-Types.getFrozenTimePerLevel = itemLevel => 1000 + itemLevel * 150;
+Types.getFrozenTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
+Types.getDefenseSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
+Types.getCurseAttackSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
 
 Types.getBonusDescriptionMap = [
   "+# Minimum damage",
@@ -1403,34 +1405,40 @@ Types.getBonusDescriptionMap = [
   "+#% Flame resistance",
   "+#% Lightning resistance",
   "+#% Cold resistance",
+  "+#% Instant health regeneration (Skill)",
+  "+#% defense for # seconds in exchange of attack damage (Skill)",
+  "-#% Attack damage from your enemies for # seconds (Skill)",
 ];
 
 Types.bonusType = [
-  "minDamage",
-  "maxDamage",
-  "attackDamage",
-  "health",
-  "magicDamage",
-  "defense",
-  "absorbedDamage",
-  "exp",
-  "regenerateHealth",
-  "criticalHit",
-  "blockChance",
-  "magicFind",
-  "attackSpeed",
-  "drainLife",
-  "flameDamage",
-  "lightningDamage",
-  "pierceDamage",
-  "highHealth",
-  "coldDamage",
-  "freezeChance",
-  "reduceFrozenChance",
-  "magicResistance",
-  "flameResistance",
-  "lightningResistance",
-  "coldResistance",
+  "minDamage", // 0
+  "maxDamage", // 1
+  "attackDamage", // 2
+  "health", // 3
+  "magicDamage", // 4
+  "defense", // 5
+  "absorbedDamage", // 6
+  "exp", // 7
+  "regenerateHealth", // 8
+  "criticalHit", // 9
+  "blockChance", // 10
+  "magicFind", // 11
+  "attackSpeed", // 12
+  "drainLife", // 13
+  "flameDamage", // 14
+  "lightningDamage", // 15
+  "pierceDamage", // 16
+  "highHealth", // 17
+  "coldDamage", // 18
+  "freezeChance", // 19
+  "reduceFrozenChance", // 20
+  "magicResistance", // 21
+  "flameResistance", // 22
+  "lightningResistance", // 23
+  "coldResistance", // 24
+  "regenerateHealthSkill", // 25
+  "defenseSkill", // 26
+  "curseAttackSkill", // 27
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1459,6 +1467,9 @@ Types.getBonus = function (rawBonus, level) {
   const flameResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  const defenseSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1486,6 +1497,9 @@ Types.getBonus = function (rawBonus, level) {
     flameResistancePerLevel,
     lightningResistancePerLevel,
     coldResistancePerLevel,
+    regenerateHealthSkillPerLevel,
+    defenseSkillPerLevel,
+    curseAttackSkillPerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];
@@ -1500,6 +1514,10 @@ Types.getBonus = function (rawBonus, level) {
 
     if (type === "freezeChance") {
       description = description.replace("#", Types.getFrozenTimePerLevel(level) / 1000);
+    } else if (type === "defenseSkill") {
+      description = description.replace("#", Types.getDefenseSkillTimePerLevel(level) / 1000);
+    } else if (type === "curseAttackSkill") {
+      description = description.replace("#", Types.getCurseAttackSkillTimePerLevel(level) / 1000);
     }
 
     bonus.push({
