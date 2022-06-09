@@ -752,6 +752,7 @@ class Game {
           lightningDamage,
           pierceDamage,
           bonus = [],
+          skill,
           requirement,
           description,
           setBonus = [],
@@ -769,7 +770,6 @@ class Game {
             ${pierceDamage ? `<div class="item-bonus">Pierce damage: ${pierceDamage}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
-            ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${
               setBonus.length
@@ -779,6 +779,8 @@ class Game {
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+            ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
+            ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
           </div>`;
       },
     });

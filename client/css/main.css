@@ -745,7 +745,8 @@ footer, header, hgroup, menu, nav, section {
         color: #fff;
         margin-top:6px;
     }
-    .item-bonus {
+    .item-bonus,
+    .item-set-bonus {
         color: #35ee35;
         margin-top:6px;
     }
@@ -753,10 +754,9 @@ footer, header, hgroup, menu, nav, section {
         color: #fff;
         margin-top:12px;
     }
-    .item-set-bonus {
-        /* color: #55a3ff; */
-        color: #35ee35;
+    .item-skill {
         margin-top:6px;
+        color: #74b5ff;
     }
     .item-description.requirement {
         color: red;
@@ -1088,11 +1088,11 @@ footer, header, hgroup, menu, nav, section {
         #weapon {left:312px;top:3px;background-size:288px;}
         #armor {left:363px;top:3px;}
 
-        #notifications {width:544px;margin-left:-294px;font-size:20px;color:#eee;top:6px;height:45px;}
+        #notifications {width: 516px;margin-left: -200px;font-size: 17px;color:#eee;top:6px;height:45px;}
         #notifications div.top {top:-45px;}
         #notifications span {line-height:45px;height:45px;}
 
-        #player-count {font-size:20px;left:1032px;top:18px;width:172px;text-align:center;}
+        #player-count {font-size:20px;left:1042px;top:18px;width:168px;text-align:center;}
         .panel {width:360px;bottom:66px;font-size:20px;line-height:30px;}
         .panel-container {right: calc(5% + 360px);}
         #population {right:105px;}
@@ -1317,12 +1317,12 @@ footer, header, hgroup, menu, nav, section {
         #weapon {left:208px;top:2px;}
         #armor {left:242px;top:2px;}
 
-        #notifications {width:370px;margin-left:-196px;font-size:16px;color:#eee;top:2px;height:30px;}
+        #notifications {width: 330px;margin-left:-134px;font-size:14px;color:#eee;top:2px;height:30px;}
         #notifications div.top {top:-30px;}
         #notifications span {line-height:30px;height:30px;}
         .windows #notifications span {line-height:34px;}
 
-        #player-count {font-size:16px;left:696px;top:10px;width:110px;text-align:center;}
+        #player-count {font-size:16px;left:680px;top:10px;width:125px;text-align:center;}
         .panel {bottom:44px;width:262px;font-size:14px;line-height:20px;}
         .panel-container {right: calc(5% + 262px);}
         #population {right:70px;}

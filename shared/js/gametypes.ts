@@ -704,6 +704,72 @@ Types.setItems = {
   leather: ["leatherarmor", "beltleather"],
 };
 
+Types.getSet = ({ belt, weaponKind, armorKind, shieldKind, ring1, ring2 }) => {
+  let set = null;
+  let bonus = null;
+
+  if (belt === "beltminotaur" && weaponKind === Types.Entities.MINOTAURAXE && [ring1, ring2].includes("ringminotaur")) {
+    set = "minotaur";
+    bonus = Types.setBonus.minotaur;
+  } else if (
+    armorKind === Types.Entities.DIAMONDARMOR &&
+    belt === "beltdiamond" &&
+    weaponKind === Types.Entities.DIAMONDSWORD &&
+    shieldKind === Types.Entities.SHIELDDIAMOND
+  ) {
+    set = "diamond";
+    bonus = Types.setBonus.diamond;
+  } else if (
+    armorKind === Types.Entities.FROZENARMOR &&
+    weaponKind === Types.Entities.FROZENSWORD &&
+    shieldKind === Types.Entities.SHIELDFORZEN &&
+    belt === "beltfrozen"
+  ) {
+    set = "sapphire";
+    bonus = Types.setBonus.sapphire;
+  } else if (
+    armorKind === Types.Entities.HORNEDARMOR &&
+    shieldKind === Types.Entities.SHIELDHORNED &&
+    belt === "belthorned"
+  ) {
+    set = "horned";
+    bonus = Types.setBonus.horned;
+  } else if (
+    armorKind === Types.Entities.BLUEARMOR &&
+    shieldKind === Types.Entities.SHIELDBLUE &&
+    [Types.Entities.BLUEAXE, Types.Entities.BLUEMORNINGSTAR].includes(weaponKind)
+  ) {
+    set = "frozen";
+    bonus = Types.setBonus.frozen;
+  } else if (
+    armorKind === Types.Entities.GOLDENARMOR &&
+    shieldKind === Types.Entities.SHIELDGOLDEN &&
+    weaponKind === Types.Entities.GOLDENSWORD
+  ) {
+    set = "golden";
+    bonus = Types.setBonus.golden;
+  } else if (armorKind === Types.Entities.REDARMOR && weaponKind === Types.Entities.REDSWORD) {
+    set = "ruby";
+    bonus = Types.setBonus.ruby;
+  } else if (
+    armorKind === Types.Entities.PLATEARMOR &&
+    shieldKind === Types.Entities.SHIELDPLATE &&
+    belt === "beltplated"
+  ) {
+    set = "plated";
+    bonus = Types.setBonus.plated;
+  } else if (
+    armorKind === Types.Entities.LEATHERARMOR &&
+    shieldKind === Types.Entities.SHIELDWOOD &&
+    belt === "beltleather"
+  ) {
+    set = "leather";
+    bonus = Types.setBonus.leather;
+  }
+
+  return { set, bonus };
+};
+
 Types.Resistances = {
   [Types.Entities.COWKING]: {
     lightningDamage: {
@@ -1377,6 +1443,7 @@ Types.partyBonusType = ["attackDamage", "defense", "exp", "minDamage", "maxDamag
 
 Types.getFrozenTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
 Types.getDefenseSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
+Types.getBlockChanceSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
 Types.getCurseAttackSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
 
 Types.getBonusDescriptionMap = [
@@ -1405,9 +1472,10 @@ Types.getBonusDescriptionMap = [
   "+#% Flame resistance",
   "+#% Lightning resistance",
   "+#% Cold resistance",
-  "+#% Instant health regeneration (Skill)",
-  "+#% defense for # seconds in exchange of attack damage (Skill)",
-  "-#% Attack damage from your enemies for # seconds (Skill)",
+  "+#% Instant health regeneration",
+  "+#% defense for # seconds in exchange of attack damage",
+  "+#% block chances for # seconds",
+  // "-#% Attack damage from your enemies for # seconds",
 ];
 
 Types.bonusType = [
@@ -1438,7 +1506,9 @@ Types.bonusType = [
   "coldResistance", // 24
   "regenerateHealthSkill", // 25
   "defenseSkill", // 26
-  "curseAttackSkill", // 27
+  "blockChanceSkill", // 27
+  // "freezeNovaSkill", // 28
+  // "curseAttackSkill", // 29
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1460,7 +1530,7 @@ Types.getBonus = function (rawBonus, level) {
   const lightningDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const pierceDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
-  const coldDamagePerLevel = [1, 2, 3, 4, 6, 8, 12, 18, 26, 40];
+  const coldDamagePerLevel = [1, 3, 5, 7, 10, 13, 16, 20, 26, 34];
   const freezeChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
   const reduceFrozenChancePerLevel = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
   const magicResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
@@ -1469,7 +1539,9 @@ Types.getBonus = function (rawBonus, level) {
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const defenseSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  const blockChanceSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  // const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  // const freezeNovaSkillPerLevel = [1, 3, 6, 10, 15, 22, 30, 40, 55, 70];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1499,10 +1571,13 @@ Types.getBonus = function (rawBonus, level) {
     coldResistancePerLevel,
     regenerateHealthSkillPerLevel,
     defenseSkillPerLevel,
-    curseAttackSkillPerLevel,
+    blockChanceSkillPerLevel,
+    // curseAttackSkillPerLevel,
+    // freezeNovaSkillPerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];
+  let skill: { type: string; stats: number; description: string } | null = null;
 
   // A glitch in the inventory system allowed for scrolls to be added as rings
   if (!rawBonus || !Array.isArray(rawBonus)) return bonus;
@@ -1510,6 +1585,8 @@ Types.getBonus = function (rawBonus, level) {
   for (let i = 0; i < rawBonus.length; i++) {
     const type = Types.bonusType[rawBonus[i]];
     const stats = bonusPerLevel[rawBonus[i]][level - 1];
+    const isSkill = type.endsWith("Skill");
+
     let description = Types.getBonusDescriptionMap[rawBonus[i]].replace("#", stats);
 
     if (type === "freezeChance") {
@@ -1518,16 +1595,22 @@ Types.getBonus = function (rawBonus, level) {
       description = description.replace("#", Types.getDefenseSkillTimePerLevel(level) / 1000);
     } else if (type === "curseAttackSkill") {
       description = description.replace("#", Types.getCurseAttackSkillTimePerLevel(level) / 1000);
+    } else if (type === "blockChanceSkill") {
+      description = description.replace("#", Types.getBlockChanceSkillTimePerLevel(level) / 1000);
     }
 
-    bonus.push({
-      type,
-      stats,
-      description,
-    });
+    if (isSkill) {
+      skill = { type, stats, description };
+    } else {
+      bonus.push({
+        type,
+        stats,
+        description,
+      });
+    }
   }
 
-  return bonus;
+  return { bonus, skill };
 };
 
 Types.getSetBonus = (rawSetBonus: { [key: string]: number }): any[] => {
@@ -1747,7 +1830,9 @@ Types.isUnique = function (item, bonus) {
     isUnique = Types.isUniqueAmulet(item, typeof bonus === "string" ? JSON.parse(bonus) : bonus);
   } else if (isCape) {
     isUnique = (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 2;
-  } else if (isArmor || isWeapon || isBelt || isShield) {
+  } else if (isShield) {
+    isUnique = !!bonus ? (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 3 : false;
+  } else if (isArmor || isWeapon || isBelt) {
     isUnique = !!bonus;
   }
 
@@ -1773,6 +1858,7 @@ Types.getItemDetails = function (
   let magicDamage = 0;
   let healthBonus = 0;
   let bonus = [];
+  let skill = null;
   let setBonus = [];
   let partyBonus = [];
 
@@ -1803,7 +1889,7 @@ Types.getItemDetails = function (
     if (isCape) {
       partyBonus = Types.getPartyBonus(rawBonus, level);
     } else {
-      bonus = Types.getBonus(rawBonus, level);
+      ({ bonus, skill } = Types.getBonus(rawBonus, level));
     }
   }
 
@@ -1830,6 +1916,7 @@ Types.getItemDetails = function (
     bonus,
     setBonus,
     partyBonus,
+    skill,
   };
 };
 

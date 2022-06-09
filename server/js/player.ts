@@ -1596,49 +1596,14 @@ class Player extends Character {
     let bonus = null;
     let set = null;
 
-    if (
-      this.belt === "beltminotaur" &&
-      this.weaponKind === Types.Entities.MINOTAURAXE &&
-      [this.ring1, this.ring2].includes("ringminotaur")
-    ) {
-      set = "minotaur";
-      bonus = Types.setBonus.minotaur;
-    } else if (
-      this.armorKind === Types.Entities.DIAMONDARMOR &&
-      this.belt === "beltdiamond" &&
-      this.weaponKind === Types.Entities.DIAMONDSWORD
-    ) {
-      set = "diamond";
-      bonus = Types.setBonus.diamond;
-    } else if (
-      this.armorKind === Types.Entities.FROZENARMOR &&
-      this.weaponKind === Types.Entities.FROZENSWORD &&
-      this.belt === "beltfrozen"
-    ) {
-      set = "sapphire";
-      bonus = Types.setBonus.sapphire;
-    } else if (this.armorKind === Types.Entities.HORNEDARMOR && this.belt === "belthorned") {
-      set = "horned";
-      bonus = Types.setBonus.horned;
-    } else if (
-      this.armorKind === Types.Entities.BLUEARMOR &&
-      [Types.Entities.BLUEAXE, Types.Entities.BLUEMORNINGSTAR].includes(this.weaponKind)
-    ) {
-      set = "frozen";
-      bonus = Types.setBonus.frozen;
-    } else if (this.armorKind === Types.Entities.GOLDENARMOR && this.weaponKind === Types.Entities.GOLDENSWORD) {
-      set = "golden";
-      bonus = Types.setBonus.golden;
-    } else if (this.armorKind === Types.Entities.REDARMOR && this.weaponKind === Types.Entities.REDSWORD) {
-      set = "ruby";
-      bonus = Types.setBonus.ruby;
-    } else if (this.armorKind === Types.Entities.PLATEARMOR && this.belt === "beltplated") {
-      set = "plated";
-      bonus = Types.setBonus.plated;
-    } else if (this.armorKind === Types.Entities.LEATHERARMOR && this.belt === "beltleather") {
-      set = "leather";
-      bonus = Types.setBonus.leather;
-    }
+    ({ set, bonus } = Types.getSet({
+      belt: this.belt,
+      weaponKind: this.weaponKind,
+      armorKind: this.armorKind,
+      shieldKind: this.shieldKind,
+      ring1: this.ring1,
+      ring2: this.ring2,
+    }));
 
     this.set = set;
 
