@@ -1148,6 +1148,10 @@ class Renderer {
       ctx.drawImage(capeImage, 0, y, w, h, 2, 2, w, h);
     }
     ctx.drawImage(spriteImage, 0, y, w, h, 2, 2, w, h);
+    if (this.game.player.shieldName) {
+      var shieldImage = this.game.sprites[this.game.player.shieldName].image;
+      ctx.drawImage(shieldImage, 0, y, w, h, 2, 2, w, h);
+    }
     ctx.drawImage(weaponImage, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
 
     return canvas.toDataURL("image/png");

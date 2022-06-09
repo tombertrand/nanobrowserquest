@@ -1255,13 +1255,15 @@ class World {
         }
       });
     } else if (mob.kind === Types.Entities.COW) {
-      const diamondRandom = random(720);
+      const diamondRandom = random(800);
       if (diamondRandom === 69) {
         return "diamondsword";
       } else if (diamondRandom === 133) {
         return "diamondarmor";
       } else if (diamondRandom === 420) {
         return "beltdiamond";
+      } else if (diamondRandom === 555) {
+        return "shielddiamond";
       } else if (diamondRandom === 699) {
         return "scrolltransmute";
       }

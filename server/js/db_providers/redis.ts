@@ -810,6 +810,8 @@ class DatabaseHandler {
     const isMultipleFrom = ["inventory", "upgrade", "stash"].includes(fromLocation);
     const isMultipleTo = ["inventory", "upgrade", "stash"].includes(toLocation);
 
+    // @TODO check for race condition that causes fromLocation to not be saved
+
     if (!fromLocation || !toLocation) return;
 
     this.client.hget("u:" + player.name, fromLocation, (_err, fromReply) => {

@@ -1197,6 +1197,9 @@ class Player extends Character {
       partyDefense: this.partyBonus.defense,
       cape: this.cape,
       capeLevel: this.capeLevel,
+      shield: this.shield,
+      shieldLevel: this.shieldLevel,
+      isUniqueShield: this.shieldBonus?.length >= 3,
     });
 
     dmg = defense > dmg ? 0 : dmg - defense;
@@ -1732,6 +1735,7 @@ class Player extends Character {
       capeLevel: this.capeLevel,
       shield: this.shield,
       shieldLevel: this.shieldLevel,
+      isUniqueShield: this.shieldBonus?.length >= 3,
       partyDefense: isInParty ? this.partyBonus.defense : 0,
     });
     var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage({

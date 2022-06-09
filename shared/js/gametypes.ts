@@ -624,6 +624,17 @@ Types.itemUniqueMap = {
   spikearmor: ["Jungle Warcry", 36, 46],
   demonarmor: ["Explorer's Block", 36, 50],
 
+  // name, level, defense
+  shieldwood: ["Liquidity Provider", 2, 3],
+  shieldiron: ["Bearer Token", 4, 4],
+  shieldplate: ["King Louie", 6, 6],
+  shieldred: ["Marstronaut", 8, 8],
+  shieldgolden: ["1 Ban = 1 Ban", 12, 12],
+  shieldblue: ["Cold Storage", 20, 14],
+  shieldhorned: ["Do Klost", 24, 16],
+  shieldfrozen: ["Probably Nothing", 28, 18],
+  shielddiamond: ["Diamond Hands", 38, 20],
+
   cape: ["Cloak of Levitation", 12, 2],
 
   // name, level, defense
@@ -1388,6 +1399,10 @@ Types.getBonusDescriptionMap = [
   "+# Cold damage",
   "+#% Freeze the enemy for # seconds",
   "+#% Reduced chance of being frozen",
+  "+#% Magic resistance",
+  "+#% Flame resistance",
+  "+#% Lightning resistance",
+  "+#% Cold resistance",
 ];
 
 Types.bonusType = [
@@ -1412,6 +1427,10 @@ Types.bonusType = [
   "coldDamage",
   "freezeChance",
   "reduceFrozenChance",
+  "magicResistance",
+  "flameResistance",
+  "lightningResistance",
+  "coldResistance",
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1436,6 +1455,10 @@ Types.getBonus = function (rawBonus, level) {
   const coldDamagePerLevel = [1, 2, 3, 4, 6, 8, 12, 18, 26, 40];
   const freezeChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
   const reduceFrozenChancePerLevel = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+  const magicResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const flameResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1459,6 +1482,10 @@ Types.getBonus = function (rawBonus, level) {
     coldDamagePerLevel,
     freezeChancePerLevel,
     reduceFrozenChancePerLevel,
+    magicResistancePerLevel,
+    flameResistancePerLevel,
+    lightningResistancePerLevel,
+    coldResistancePerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];

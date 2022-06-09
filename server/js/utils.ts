@@ -200,10 +200,11 @@ export const isValidUpgradeItems = items => {
   const isArmor = Types.isArmor(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
+  const isShield = Types.isShield(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
 
-  if ((!isWeapon && !isArmor && !isBelt && !isCape && !isRing && !isAmulet) || parseInt(level) === 10) {
+  if ((!isWeapon && !isArmor && !isBelt && !isCape && !isShield && !isRing && !isAmulet) || parseInt(level) === 10) {
     return false;
   }
 

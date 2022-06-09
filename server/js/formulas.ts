@@ -99,13 +99,16 @@ Formulas.mobDefense = function ({ armorLevel }) {
 Formulas.minMaxAbsorb = function ({
   armor,
   armorLevel,
+  isUniqueArmor,
   playerLevel,
   defense,
   absorbedDamage,
   belt,
   beltLevel,
-  isUniqueArmor,
   isUniqueBelt,
+  shield,
+  shieldLevel,
+  isUniqueShield,
   partyDefense,
   cape,
   capeLevel,
@@ -113,8 +116,9 @@ Formulas.minMaxAbsorb = function ({
   const armorDefense = Types.getArmorDefense(armor, armorLevel, isUniqueArmor);
   const beltDefense = Types.getArmorDefense(belt, beltLevel, isUniqueBelt);
   const capeDefense = Types.getArmorDefense(cape, capeLevel);
+  const shieldDefense = Types.getArmorDefense(shield, shieldLevel, isUniqueShield);
 
-  let min = Math.ceil((armorDefense + beltDefense + capeDefense + defense) * 1.2) + absorbedDamage;
+  let min = Math.ceil((armorDefense + beltDefense + capeDefense + shieldDefense + defense) * 1.2) + absorbedDamage;
   let max = min + Math.ceil(Math.pow(1.075, playerLevel));
 
   if (partyDefense) {
@@ -141,6 +145,9 @@ Formulas.playerDefense = ({
   belt,
   beltLevel,
   isUniqueBelt,
+  shield,
+  shieldLevel,
+  isUniqueShield,
   partyDefense,
   cape,
   capeLevel,
@@ -154,6 +161,9 @@ Formulas.playerDefense = ({
     belt,
     beltLevel,
     isUniqueBelt,
+    shield,
+    shieldLevel,
+    isUniqueShield,
     partyDefense,
     cape,
     capeLevel,
@@ -162,13 +172,14 @@ Formulas.playerDefense = ({
   return randomInt(min, max);
 };
 
-Formulas.hp = function ({ armorLevel, level, playerLevel, beltLevel }) {
+Formulas.hp = function ({ armorLevel, level, playerLevel, beltLevel, shieldLevel }) {
   const baseHp = 80;
   const armorHp = (armorLevel - 1) * 6 + Types.getArmorHealthBonus(level);
   const beltHp = Types.getArmorHealthBonus(beltLevel);
+  const shieldHp = Types.getArmorHealthBonus(shieldLevel);
   const playerLevelHp = playerLevel * 6;
 
-  return baseHp + armorHp + beltHp + playerLevelHp;
+  return baseHp + armorHp + beltHp + shieldHp + playerLevelHp;
 };
 
 // Armor
