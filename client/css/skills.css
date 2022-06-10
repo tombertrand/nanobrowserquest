@@ -1,0 +1,44 @@
+#skill1,
+#skill2 {
+  display: none;
+}
+
+#skill1.disabled,
+#skill2.disabled {
+  filter: grayscale(100%);
+}
+
+.skill-heal {
+  display: block !important;
+}
+
+@media screen and (min-width: 1501px) {
+  #skill1,
+  #skill2 {
+    width: 46px;
+    height: 36px;
+    background: url(../img/3/skills.png);
+    background-repeat: no-repeat;
+  }
+
+  .skill-heal {
+    background-position: 0 0;
+  }
+}
+
+@media screen and (max-width: 1500px), screen and (max-height: 870px) {
+  #skill1,
+  #skill2 {
+    width: 28px;
+    height: 24px;
+    background: url(../img/2/skills.png);
+    background-repeat: no-repeat;
+  }
+
+  .skill-heal {
+    background-position: 0 0;
+  }
+}
+
+@media screen and (max-width: 600px) {
+}

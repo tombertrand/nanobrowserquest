@@ -181,6 +181,7 @@ import auraDrainlife from "../sprites/aura-drainlife.json";
 import auraThunderstorm from "../sprites/aura-thunderstorm.json";
 import auraHighhealth from "../sprites/aura-highhealth.json";
 import auraFreeze from "../sprites/aura-freeze.json";
+import skillHeal from "../sprites/skill-heal.json";
 import villagegirl from "../sprites/villagegirl.json";
 import villager from "../sprites/villager.json";
 import carlosmatos from "../sprites/carlosmatos.json";
@@ -370,6 +371,7 @@ const sprites = {
   "aura-thunderstorm": auraThunderstorm,
   "aura-highhealth": auraHighhealth,
   "aura-freeze": auraFreeze,
+  "skill-heal": skillHeal,
   villagegirl,
   villager,
   carlosmatos,

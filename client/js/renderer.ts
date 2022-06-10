@@ -818,6 +818,32 @@ class Renderer {
         }
       }
 
+      if (entity instanceof Player && entity.skill) {
+        var sprite = this.game.sprites[`skill-${entity.skill}`];
+        var anim = this.game.skillAnimation;
+
+        if (sprite && anim) {
+          var os = this.upscaledRendering ? 1 : this.scale;
+          var ds = this.upscaledRendering ? this.scale : 1;
+          // @ts-ignore
+          var { x: entityX, y: entityY } = entity;
+
+          var frame = anim.currentFrame,
+            s = this.scale,
+            x = frame.x * os,
+            y = frame.y * os,
+            w = sprite.width * os,
+            h = sprite.height * os,
+            ts = 0,
+            dx = entityX * s,
+            dy = entityY * s,
+            dw = w * ds,
+            dh = h * ds;
+
+          this.context.drawImage(sprite.image, x, y, w, h, -8 * this.scale, -14 * this.scale, dw, dh);
+        }
+      }
+
       this.context.restore();
 
       if (entity.isFading) {

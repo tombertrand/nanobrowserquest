@@ -109,6 +109,7 @@ class Game {
   highHealthAnimation: Animation;
   freezeAnimation: Animation;
   anvilAnimation: Animation;
+  skillAnimation: Animation;
   client: any;
   achievements: any;
   spritesets: any;
@@ -192,6 +193,7 @@ class Game {
     this.highHealthAnimation = null;
     this.freezeAnimation = null;
     this.anvilAnimation = null;
+    this.skillAnimation = null;
     this.partyInvites = [];
     this.partyInvitees = [];
 
@@ -259,6 +261,7 @@ class Game {
       "aura-thunderstorm",
       "aura-highhealth",
       "aura-freeze",
+      "skill-heal",
       "talk",
       "sparks",
       "shadow16",
@@ -536,6 +539,9 @@ class Game {
 
     this.anvilAnimation = new Animation("idle_down", 4, 0, 15, 8);
     this.anvilAnimation.setSpeed(80);
+
+    this.skillAnimation = new Animation("idle_down", 8, 0, 32, 32);
+    this.skillAnimation.setSpeed(125);
   }
 
   initHurtSprites() {
@@ -1313,6 +1319,18 @@ class Game {
     }
 
     this.updateStash();
+  }
+
+  useSkill(slot) {
+    console.log("~~~~~~slot", slot);
+
+    const skillSlot = $(`[data-skill-slot="${slot}"]`);
+
+    if (!skillSlot.hasClass("disabled")) {
+      skillSlot.addClass("disabled");
+      this.skillAnimation.reset();
+      this.player.setSkillAnimation("heal", 900);
+    }
   }
 
   initAchievements() {
@@ -3309,9 +3327,6 @@ class Game {
       self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, type }) {
         var player = self.getEntityById(playerId);
         var name = Types.getKindAsString(kind);
-
-        console.log("~~~~~~", playerId, kind, level, bonus, type);
-        // ~~~~~~ 5938 143 1 null shield
 
         if (player) {
           if (type === "armor") {

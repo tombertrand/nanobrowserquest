@@ -1327,12 +1327,10 @@ class World {
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = ["scrolltransmute", "ringgold", "amuletgold"];
-    var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
-    var randomDrop = random(randomDrops.length);
-
-    console.log("~~~~randomDrops[randomDrop]", randomDrops[randomDrop]);
-
-    return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
+    // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
+    // var randomDrop = random(randomDrops.length);
+    // console.log("~~~~randomDrops[randomDrop]", randomDrops[randomDrop]);
+    // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 
     // Potions can be looted by anyone
     const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;

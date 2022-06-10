@@ -12,6 +12,7 @@ import "../css/achievements.css";
 import "../css/store.css";
 import "../css/party.css";
 import "../css/settings.css";
+import "../css/skills.css";
 import "jquery-ui/themes/base/all.css";
 
 import * as Sentry from "@sentry/browser";
@@ -130,6 +131,12 @@ var initApp = function () {
         $("#population").removeClass("visible");
       }
       app.toggleInventory();
+    });
+
+    $("#skill1, #skill2").click(function () {
+      console.log("~~~~~use skill!");
+
+      game.useSkill(1);
     });
 
     $(".clickable").click(function (event) {
@@ -329,6 +336,7 @@ var initGame = function () {
 
   game.onGameStart(function () {
     app.initEquipmentIcons();
+    app.initSkillIcons();
     game.chat_callback({ message: `Welcome ${game.player.name}`, type: "event" });
   });
 
@@ -559,6 +567,9 @@ var initGame = function () {
           game.player.moveDown = false;
           game.player.disableKeyboardNpcTalk = false;
           break;
+        case Types.Keys[1]:
+        case Types.Keys.KEYPAD_1:
+          game.useSkill(1);
         default:
           break;
       }
@@ -612,6 +623,9 @@ var initGame = function () {
         case Types.Keys.KEYPAD_2:
           game.player.moveDown = true;
           break;
+        case Types.Keys[1]:
+        case Types.Keys.KEYPAD_1:
+          game.useSkill(1);
         case Types.Keys.SPACE:
           game.makePlayerAttackNext();
           break;

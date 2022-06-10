@@ -274,6 +274,8 @@ export const Types: any = {
     KEYPAD_6: 102,
     KEYPAD_8: 104,
     KEYPAD_2: 98,
+    KEYPAD_1: 97,
+    1: 49,
   },
 };
 

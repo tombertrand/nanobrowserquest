@@ -5,6 +5,8 @@ import Entity from "./entity";
 import Timer from "./timer";
 import Transition from "./transition";
 
+export type Skills = "heal";
+
 class Character extends Entity {
   nextGridX: number;
   nextGridY: number;
@@ -31,6 +33,8 @@ class Character extends Entity {
   inspecting: any;
   isLevelup: boolean;
   auras: string[];
+  skill: Skills;
+  skillAnimationTimeout: any;
   currentAnimation: any;
   flipSpriteX: any;
   flipSpriteY: any;
@@ -140,6 +144,20 @@ class Character extends Entity {
     setTimeout(() => {
       this.isLevelup = false;
     }, 1500);
+  }
+
+  resetSkillAnimation() {
+    this.skill = null;
+    clearTimeout(this.skillAnimationTimeout);
+  }
+
+  setSkillAnimation(skill, delay = 0) {
+    this.resetSkillAnimation();
+
+    this.skill = skill;
+    this.skillAnimationTimeout = setTimeout(() => {
+      this.skill = null;
+    }, delay);
   }
 
   animate(animation, speed, count = 0, onEndCount?: () => void) {
