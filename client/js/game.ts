@@ -1364,8 +1364,7 @@ class Game {
     // @TODO remove, this is for testing
 
     this.player.shieldSkillTimeout = setTimeout(() => {
-      skillSlot.removeClass("disabled");
-      skillSlot.find(".skill-timeout").attr("class", "skill-timeout");
+      skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout");
       this.player.shieldSkillTimeout = null;
     }, Types.skillDelay[this.player.shieldSkill]);
   }
@@ -2681,6 +2680,10 @@ class Game {
             self.playerdeath_callback();
           }, 1000);
         });
+
+        clearInterval(self.player.shieldSkillTimeout);
+        self.player.shieldSkillTimeout = null;
+        $("#skill-shield").removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout");
 
         self.player.forEachAttacker(function (attacker) {
           attacker.disengage();

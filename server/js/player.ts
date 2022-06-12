@@ -1284,8 +1284,13 @@ class Player extends Character {
 
     if (this.hitPoints <= 0) {
       this.isDead = true;
+      if (this.shieldSkillTimeout) {
+        clearTimeout(this.shieldSkillTimeout);
+        this.shieldSkillTimeout = null;
+      }
       if (this.firefoxpotionTimeout) {
         clearTimeout(this.firefoxpotionTimeout);
+        this.firefoxpotionTimeout = null;
       }
     }
 

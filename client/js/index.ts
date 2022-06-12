@@ -338,7 +338,6 @@ var initGame = function () {
 
   game.onGameStart(function () {
     app.initEquipmentIcons();
-    app.initSkillIcons();
     game.chat_callback({ message: `Welcome ${game.player.name}`, type: "event" });
   });
 
