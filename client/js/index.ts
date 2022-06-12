@@ -133,10 +133,12 @@ var initApp = function () {
       app.toggleInventory();
     });
 
-    $("#skill1, #skill2").click(function () {
-      console.log("~~~~~use skill!");
-
+    $("#skill-offensive").click(function () {
       game.useSkill(1);
+    });
+
+    $("#skill-shield").on("click", () => {
+      game.useSkill(2);
     });
 
     $(".clickable").click(function (event) {
@@ -545,31 +547,32 @@ var initGame = function () {
       switch (key) {
         case Types.Keys.LEFT:
         case Types.Keys.A:
-        case Types.Keys.KEYPAD_4:
           game.player.moveLeft = false;
           game.player.disableKeyboardNpcTalk = false;
           break;
         case Types.Keys.RIGHT:
         case Types.Keys.D:
-        case Types.Keys.KEYPAD_6:
           game.player.moveRight = false;
           game.player.disableKeyboardNpcTalk = false;
           break;
         case Types.Keys.UP:
         case Types.Keys.W:
-        case Types.Keys.KEYPAD_8:
           game.player.moveUp = false;
           game.player.disableKeyboardNpcTalk = false;
           break;
         case Types.Keys.DOWN:
         case Types.Keys.S:
-        case Types.Keys.KEYPAD_2:
           game.player.moveDown = false;
           game.player.disableKeyboardNpcTalk = false;
           break;
         case Types.Keys[1]:
         case Types.Keys.KEYPAD_1:
           game.useSkill(1);
+          break;
+        case Types.Keys[2]:
+        case Types.Keys.KEYPAD_2:
+          game.useSkill(2);
+          break;
         default:
           break;
       }
@@ -605,27 +608,28 @@ var initGame = function () {
           break;
         case Types.Keys.LEFT:
         case Types.Keys.A:
-        case Types.Keys.KEYPAD_4:
           game.player.moveLeft = true;
           break;
         case Types.Keys.RIGHT:
         case Types.Keys.D:
-        case Types.Keys.KEYPAD_6:
           game.player.moveRight = true;
           break;
         case Types.Keys.UP:
         case Types.Keys.W:
-        case Types.Keys.KEYPAD_8:
           game.player.moveUp = true;
           break;
         case Types.Keys.DOWN:
         case Types.Keys.S:
-        case Types.Keys.KEYPAD_2:
           game.player.moveDown = true;
           break;
         case Types.Keys[1]:
         case Types.Keys.KEYPAD_1:
           game.useSkill(1);
+          break;
+        case Types.Keys[2]:
+        case Types.Keys.KEYPAD_2:
+          game.useSkill(2);
+          break;
         case Types.Keys.SPACE:
           game.makePlayerAttackNext();
           break;

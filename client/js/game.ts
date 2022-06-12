@@ -733,6 +733,7 @@ class Game {
         const item = element.attr("data-item");
         const level = element.attr("data-level");
         const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
+        const rawSkill = element.attr("data-skill");
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
 
         self.hoverSlotToDelete = slot;
@@ -763,7 +764,7 @@ class Game {
           description,
           setBonus = [],
           partyBonus = [],
-        } = Types.getItemDetails(item, level, rawBonus, rawSetBonus);
+        } = Types.getItemDetails({ item, level, rawBonus, rawSetBonus, rawSkill });
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
@@ -817,14 +818,16 @@ class Game {
       let itemName;
       let itemLevel;
       let itemBonus;
+      let itemSkill;
       let isItemUnique;
       let isUpgrade = false;
 
-      self.player.upgrade.forEach(({ item, level, slot, bonus, isUnique }) => {
+      self.player.upgrade.forEach(({ item, level, slot, bonus, skill, isUnique }) => {
         if (slot === 0) {
           itemName = item;
           itemLevel = level;
           itemBonus = bonus;
+          itemSkill = skill;
           isItemUnique = isUnique;
         } else if (item.startsWith("scrollupgrade")) {
           isUpgrade = true;
@@ -842,6 +845,8 @@ class Game {
               "data-item": itemName,
               "data-level": itemLevel ? parseInt(itemLevel) + 1 : "",
               "data-bonus": itemBonus,
+              ...(itemBonus ? { "data-bonus": itemBonus } : null),
+              ...(itemSkill ? { "data-skill": itemSkill } : null),
             }),
           );
         }
@@ -879,7 +884,9 @@ class Game {
     const item = fromItemEl.attr("data-item");
     const level = parseInt(fromItemEl.attr("data-level"));
     const rawBonus = fromItemEl.attr("data-bonus");
+    const rawSkill = fromItemEl.attr("data-skill");
     let bonus: number[];
+    let skill: number;
 
     if (rawBonus) {
       try {
@@ -887,6 +894,9 @@ class Game {
       } catch (err) {
         // Silence error
       }
+    }
+    if (rawSkill) {
+      skill = parseInt(rawSkill, 10);
     }
 
     const toItem = toItemEl.attr("data-item");
@@ -928,6 +938,9 @@ class Game {
         this.player.switchArmor(this.sprites[item], level, bonus);
       } else if (toSlot === Types.Slot.CAPE) {
         this.player.switchCape(item, level, bonus);
+      } else if (toSlot === Types.Slot.SHIELD) {
+        this.player.switchShield(item, level, bonus, skill);
+        this.setShieldSkill(skill);
       }
     }
 
@@ -1097,6 +1110,7 @@ class Game {
           "data-item": this.player.shieldName,
           "data-level": this.player.shieldLevel,
           "data-bonus": this.player.shieldBonus,
+          "data-skill": this.player.shieldSkill,
         }),
       );
     }
@@ -1159,7 +1173,7 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-inventory").empty();
 
-    this.player.inventory.forEach(({ item, level, quantity, bonus, requirement, isUnique, slot }) => {
+    this.player.inventory.forEach(({ item, level, quantity, bonus, skill, requirement, isUnique, slot }) => {
       $(`#item-inventory .item-slot:eq(${slot})`).append(
         $("<div />", {
           class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
@@ -1168,9 +1182,10 @@ class Game {
           },
           "data-item": item,
           "data-level": level,
-          "data-quantity": quantity,
-          "data-bonus": bonus,
-          "data-requirement": requirement,
+          ...(quantity ? { "data-quantity": quantity } : null),
+          ...(bonus ? { "data-bonus": bonus } : null),
+          ...(skill ? { "data-skill": skill } : null),
+          ...(requirement ? { "data-requirement": requirement } : null),
         }),
       );
     });
@@ -1190,7 +1205,7 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-stash").empty();
 
-    this.player.stash.forEach(({ item, level, quantity, bonus, requirement, isUnique, slot }) => {
+    this.player.stash.forEach(({ item, level, quantity, bonus, skill, requirement, isUnique, slot }) => {
       $(`#item-stash .item-slot:eq(${slot})`).append(
         $("<div />", {
           class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
@@ -1199,9 +1214,10 @@ class Game {
           },
           "data-item": item,
           "data-level": level,
-          "data-quantity": quantity,
-          "data-bonus": bonus,
-          "data-requirement": requirement,
+          ...(quantity ? { "data-quantity": quantity } : null),
+          ...(bonus ? { "data-bonus": bonus } : null),
+          ...(skill ? { "data-skill": skill } : null),
+          ...(requirement ? { "data-requirement": requirement } : null),
         }),
       );
     });
@@ -1268,7 +1284,7 @@ class Game {
     let itemBonus;
     let actionText = "upgrade";
 
-    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, isUnique }) => {
+    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, skill, isUnique }) => {
       if (slot === 0 && level) {
         itemLevel = level;
         itemName = item;
@@ -1299,8 +1315,9 @@ class Game {
             },
             "data-item": item,
             "data-level": level,
-            "data-quantity": quantity,
-            "data-bonus": bonus,
+            ...(quantity ? { "data-quantity": quantity } : null),
+            ...(bonus ? { "data-bonus": bonus } : null),
+            ...(skill ? { "data-skill": skill } : null),
           }),
         );
     });
@@ -1322,15 +1339,44 @@ class Game {
   }
 
   useSkill(slot) {
-    console.log("~~~~~~slot", slot);
-
     const skillSlot = $(`[data-skill-slot="${slot}"]`);
 
-    if (!skillSlot.hasClass("disabled")) {
-      skillSlot.addClass("disabled");
-      this.skillAnimation.reset();
-      this.player.setSkillAnimation("heal", 900);
+    // Slot 1 (offensive skill) is not set yet!
+    if (skillSlot.hasClass("disabled") || slot === 1) {
+      return;
     }
+
+    // No skill or timeout is not finished
+    if (slot === 2 && (this.player.shieldSkillTimeout || typeof this.player.shieldSkill !== "number")) {
+      return;
+    }
+
+    const skillName = Types.skillTypeAnimationMap[this.player.shieldSkill];
+
+    skillSlot.addClass("disabled");
+    skillSlot.find(".skill-timeout").addClass(`active ${skillName}`);
+    this.skillAnimation.reset();
+    this.player.setSkillAnimation(skillName, 900);
+    this.audioManager.playSound(`skill-${skillName}`);
+
+    this.client.sendSkill(this.player.shieldSkill);
+
+    // @TODO remove, this is for testing
+
+    this.player.shieldSkillTimeout = setTimeout(() => {
+      skillSlot.removeClass("disabled");
+      skillSlot.find(".skill-timeout").attr("class", "skill-timeout");
+      this.player.shieldSkillTimeout = null;
+    }, Types.skillDelay[this.player.shieldSkill]);
+  }
+
+  setShieldSkill(skill) {
+    const skillName = Types.skillTypeAnimationMap[skill] || null;
+
+    console.log("~~~~~setShieldSkill - skill", skill);
+    console.log("~~~~~setShieldSkill - skillName", skillName);
+
+    $("#skill-shield").attr("class", skillName ? `skill-${skillName}` : null);
   }
 
   initAchievements() {
@@ -2283,6 +2329,8 @@ class Game {
 
       var [armor, armorLevel, armorBonus] = armor.split(":");
       var [weapon, weaponLevel, weaponBonus] = weapon.split(":");
+      console.log("~~~~~shield before", shield);
+      var [shield, shieldLevel, shieldBonus, shieldSkill] = (shield || "").split(":");
 
       self.storage.setPlayerName(name);
       self.storage.setPlayerArmor(armor);
@@ -2300,7 +2348,11 @@ class Game {
       self.player.setWeaponBonus(weaponBonus);
       self.player.setBelt(belt);
       self.player.setCape(cape);
-      self.player.setShield(shield);
+      self.player.setShieldName(shield);
+      self.player.setShieldLevel(shieldLevel);
+      self.player.setShieldBonus(shieldBonus);
+      self.player.setShieldSkill(shieldSkill);
+      self.setShieldSkill(shieldSkill);
 
       self.player.setRing1(ring1);
       self.player.setRing2(ring2);
@@ -3324,9 +3376,11 @@ class Game {
         self.player.set = set;
       });
 
-      self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, type }) {
+      self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, skill, type }) {
         var player = self.getEntityById(playerId);
         var name = Types.getKindAsString(kind);
+
+        console.log("~~~~onPlayerEquipItem kind, level, bonus, skill, type", kind, level, bonus, skill, type);
 
         if (player) {
           if (type === "armor") {
@@ -3343,8 +3397,10 @@ class Game {
             if (!kind || !level) {
               player.removeShield();
             } else {
-              player.switchShield(name, level, bonus);
+              player.switchShield(name, level, bonus, skill);
             }
+            console.log("~~~~setShieldSkill", skill);
+            self.setShieldSkill(skill);
           }
         }
       });
@@ -3353,6 +3409,14 @@ class Game {
         var player = self.getEntityById(playerId);
         if (player) {
           player.setAuras(auras);
+        }
+      });
+
+      self.client.onPlayerSkill(function (playerId, skill) {
+        var player = self.getEntityById(playerId);
+        if (player) {
+          //@NOTE Different timings?
+          player.setSkillAnimation(Types.skillTypeAnimationMap[skill], 900);
         }
       });
 

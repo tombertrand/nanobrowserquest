@@ -33,7 +33,7 @@ class Character extends Entity {
   inspecting: any;
   isLevelup: boolean;
   auras: string[];
-  skill: Skills;
+  skillName: Skills;
   skillAnimationTimeout: any;
   currentAnimation: any;
   flipSpriteX: any;
@@ -147,16 +147,16 @@ class Character extends Entity {
   }
 
   resetSkillAnimation() {
-    this.skill = null;
+    this.skillName = null;
     clearTimeout(this.skillAnimationTimeout);
   }
 
-  setSkillAnimation(skill, delay = 0) {
+  setSkillAnimation(skillName, delay = 0) {
     this.resetSkillAnimation();
 
-    this.skill = skill;
+    this.skillName = skillName;
     this.skillAnimationTimeout = setTimeout(() => {
-      this.skill = null;
+      this.skillName = null;
     }, delay);
   }
 

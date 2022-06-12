@@ -1,44 +1,71 @@
-#skill1,
-#skill2 {
-  display: none;
+#skill-offensive::before,
+#skill-shield::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
 }
 
-#skill1.disabled,
-#skill2.disabled {
+#skill-offensive.disabled::before,
+#skill-shield.disabled::before {
   filter: grayscale(100%);
 }
 
-.skill-heal {
-  display: block !important;
-}
-
 @media screen and (min-width: 1501px) {
-  #skill1,
-  #skill2 {
-    width: 46px;
-    height: 36px;
-    background: url(../img/3/skills.png);
-    background-repeat: no-repeat;
+  #skill-offensive,
+  #skill-shield {
+    width: 42px;
+    height: 42px;
+  }
+  #skill-offensive::before,
+  #skill-shield::before {
+    background-position: -100px 0;
+    background-image: url(../img/3/skills.png);
   }
 
-  .skill-heal {
+  #skill-shield.skill-heal::before {
     background-position: 0 0;
   }
 }
 
 @media screen and (max-width: 1500px), screen and (max-height: 870px) {
-  #skill1,
-  #skill2 {
+  #skill-offensive,
+  #skill-shield {
     width: 28px;
-    height: 24px;
-    background: url(../img/2/skills.png);
-    background-repeat: no-repeat;
+    height: 28px;
   }
 
-  .skill-heal {
+  #skill-offensive::before,
+  #skill-shield::before {
+    background-position: -100px 0;
+    background-image: url(../img/2/skills.png);
+  }
+
+  #skill-shield.skill-heal::before {
     background-position: 0 0;
   }
 }
 
 @media screen and (max-width: 600px) {
+}
+
+.skill-timeout {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 0, 0, 0.4);
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.skill-timeout.heal.active {
+  transition: width 60s linear;
+}
+
+.skill-timeout.active {
+  opacity: 1;
+  width: 0%;
 }

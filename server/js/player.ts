@@ -84,6 +84,8 @@ class Player extends Character {
   shield: string;
   shieldLevel: number;
   shieldBonus: number[] | null;
+  shieldSkill: number;
+  shieldSkillTimeout: NodeJS.Timeout;
   firefoxpotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -1008,6 +1010,33 @@ class Player extends Character {
           this.databaseHandler.setSettings(this.name, settings);
           this.broadcast(new Messages.Settings(this, settings), false);
         }
+      } else if (action === Types.Messages.SKILL) {
+        const skill = message[1];
+
+        // @NOTE Hardcode shieldSkill for now..
+        if (skill === this.shieldSkill && !this.shieldSkillTimeout) {
+          this.shieldSkillTimeout = setTimeout(() => {
+            this.shieldSkillTimeout = null;
+          }, Types.skillDelay[this.shieldSkill]);
+
+          if (this.shieldSkill === 0) {
+            if (!self.hasFullHealth()) {
+              const { stats: percent } = Types.getSkill(0, this.shieldLevel);
+
+              let healAmount = Math.round((percent / 100) * this.maxHitPoints);
+              let healthDiff = this.maxHitPoints - this.hitPoints;
+              if (healthDiff < healAmount) {
+                healAmount = healthDiff;
+              }
+
+              self.regenHealthBy(healAmount);
+              self.server.pushToPlayer(self, self.health());
+            }
+          }
+
+          // @NOTE Start timeout!
+          this.broadcast(new Messages.Skill(this, skill), false);
+        }
       } else {
         if (self.message_callback) {
           self.message_callback(message);
@@ -1048,7 +1077,8 @@ class Player extends Character {
     item: string;
     level?: number;
     quantity?: 1;
-    bonus: string;
+    bonus?: number[];
+    skill?: number;
     isUnique?: boolean;
   } {
     let isUnique = false;
@@ -1061,6 +1091,7 @@ class Player extends Character {
       const baseLevel = Types.getBaseLevel(kind);
       const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
       let bonus = null;
+      let skill = null;
 
       if (isUnique) {
         if (Types.isArmor(kind)) {
@@ -1075,14 +1106,14 @@ class Player extends Character {
 
       if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
         const resistanceBonus = [21, 22, 23, 24];
-        const defensiveSkill = [25, 26, 27];
+        const shieldSkill = [0, 1, 2];
         bonus = _.shuffle(resistanceBonus)
           .slice(0, isUnique ? 2 : 1)
-          .concat(_.shuffle(defensiveSkill).slice(0, 1))
           .sort();
+        skill = _.shuffle(shieldSkill).slice(0, 1);
       }
 
-      item = { item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null, isUnique };
+      item = { item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null, skill, isUnique };
     } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isChest(kind)) {
       item = { item: Types.getKindAsString(kind), quantity: 1 };
     } else if (Types.isCape(kind)) {
@@ -1316,8 +1347,20 @@ class Player extends Character {
     this.broadcastzone_callback = callback;
   }
 
-  equip({ kind, level, bonus, type }: { kind: number; level: number; bonus?: number[]; type?: string }) {
-    return new Messages.EquipItem(this, kind, level, bonus, type);
+  equip({
+    kind,
+    level,
+    bonus,
+    skill,
+    type,
+  }: {
+    kind: number;
+    level: number;
+    bonus?: number[];
+    skill?: number;
+    type?: string;
+  }) {
+    return new Messages.EquipItem(this, { kind, level, bonus, skill, type });
   }
 
   addHater(mob) {
@@ -1367,11 +1410,12 @@ class Player extends Character {
     this.capeBonus = bonus ? JSON.parse(bonus) : null;
   }
 
-  equipShield(shield, kind, level, bonus) {
+  equipShield(shield, kind, level, bonus, skill) {
     this.shield = shield;
     this.shieldKind = kind;
     this.shieldLevel = level;
     this.shieldBonus = bonus ? JSON.parse(bonus) : null;
+    this.shieldSkill = skill ? parseInt(skill, 0) : null;
   }
 
   equipRing1(ring, level, bonus) {
@@ -1452,6 +1496,12 @@ class Player extends Character {
               bonus: this.beltBonus,
             }
           : null,
+        this.shieldBonus
+          ? {
+              level: this.shieldLevel,
+              bonus: this.shieldBonus,
+            }
+          : null,
       ].filter(Boolean);
 
       bonusToCalculate.forEach(({ bonus, level }) => {
@@ -1529,6 +1579,11 @@ class Player extends Character {
       coldDamage: 0,
       freezeChance: 0,
       reduceFrozenChance: 0,
+      //@TODO configure resistances (player hurt)
+      magicResistance: 0,
+      flameResistance: 0,
+      lightningResistance: 0,
+      coldResistance: 0,
     };
   }
 
@@ -1544,7 +1599,7 @@ class Player extends Character {
     };
   }
 
-  equipItem({ item, level, bonus, type }) {
+  equipItem({ item, level, bonus, skill, type }) {
     // @NOTE safety...
     if (bonus === "null") {
       bonus = null;
@@ -1569,8 +1624,8 @@ class Player extends Character {
       this.databaseHandler.equipCape(this.name, item, level, bonus);
       this.equipCape(item, kind, level, bonus);
     } else if (type === "shield") {
-      this.databaseHandler.equipShield(this.name, item, level, bonus);
-      this.equipShield(item, Types.getKindFromString(item), level, bonus);
+      this.databaseHandler.equipShield(this.name, item, level, bonus, skill);
+      this.equipShield(item, Types.getKindFromString(item), level, bonus, skill);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
@@ -1845,8 +1900,14 @@ class Player extends Character {
       self.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
     }
     if (shield) {
-      const [playerShield, playerShieldLevel, playerShieldBonus] = shield.split(":");
-      self.equipShield(playerShield, Types.getKindFromString(playerShield), playerShieldLevel, playerShieldBonus);
+      const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSkill] = shield.split(":");
+      self.equipShield(
+        playerShield,
+        Types.getKindFromString(playerShield),
+        playerShieldLevel,
+        playerShieldBonus,
+        playerShieldSkill,
+      );
     }
     if (ring1) {
       const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");

@@ -818,8 +818,8 @@ class Renderer {
         }
       }
 
-      if (entity instanceof Player && entity.skill) {
-        var sprite = this.game.sprites[`skill-${entity.skill}`];
+      if (entity instanceof Player && entity.skillName) {
+        var sprite = this.game.sprites[`skill-${entity.skillName}`];
         var anim = this.game.skillAnimation;
 
         if (sprite && anim) {

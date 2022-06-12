@@ -34,6 +34,7 @@ class GameClient {
   chat_callback: any;
   equip_callback: any;
   auras_callback: any;
+  skill_callback: any;
   drop_callback: any;
   teleport_callback: any;
   dmg_callback: any;
@@ -101,6 +102,7 @@ class GameClient {
     this.handlers[Types.Messages.CHAT] = this.receiveChat;
     this.handlers[Types.Messages.EQUIP] = this.receiveEquipItem;
     this.handlers[Types.Messages.AURAS] = this.receiveAuras;
+    this.handlers[Types.Messages.SKILL] = this.receiveSkill;
     this.handlers[Types.Messages.DROP] = this.receiveDrop;
     this.handlers[Types.Messages.TELEPORT] = this.receiveTeleport;
     this.handlers[Types.Messages.DAMAGE] = this.receiveDamage;
@@ -497,13 +499,10 @@ class GameClient {
 
   receiveEquipItem(data) {
     var id = data[1];
-    var kind = data[2];
-    var level = data[3];
-    var bonus = data[4];
-    var type = data[5];
+    var item = data[2];
 
     if (this.equip_callback) {
-      this.equip_callback({ id, kind, level, bonus, type });
+      this.equip_callback({ id, ...item });
     }
   }
 
@@ -513,6 +512,15 @@ class GameClient {
 
     if (this.auras_callback) {
       this.auras_callback(id, auras);
+    }
+  }
+
+  receiveSkill(data) {
+    var id = data[1];
+    var skill = data[2];
+
+    if (this.skill_callback) {
+      this.skill_callback(id, skill);
     }
   }
 
@@ -852,6 +860,10 @@ class GameClient {
     this.auras_callback = callback;
   }
 
+  onPlayerSkill(callback) {
+    this.skill_callback = callback;
+  }
+
   onPlayerMoveToItem(callback) {
     this.lootmove_callback = callback;
   }
@@ -1159,6 +1171,10 @@ class GameClient {
 
   sendSettings(settings) {
     this.sendMessage([Types.Messages.SETTINGS, settings]);
+  }
+
+  sendSkill(skill) {
+    this.sendMessage([Types.Messages.SKILL, skill]);
   }
 }
 

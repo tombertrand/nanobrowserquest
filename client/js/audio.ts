@@ -65,6 +65,7 @@ class AudioManager {
       "npc-end",
       "raise",
       "portal-open",
+      "skill-heal",
     ];
 
     var loadSoundFiles = function () {

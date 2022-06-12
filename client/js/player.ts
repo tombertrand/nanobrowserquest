@@ -30,7 +30,9 @@ class Player extends Character {
   capeBrightness: number;
   shieldName: null;
   shieldLevel: number | null;
-  shieldBonus: null;
+  shieldBonus: number[] | null;
+  shieldSkill: number | null;
+  shieldSkillTimeout: NodeJS.Timeout;
   inventory: any[];
   stash: any[];
   upgrade: any[];
@@ -333,6 +335,14 @@ class Player extends Character {
     this.shieldBonus = bonus;
   }
 
+  getShieldSkill() {
+    return this.shieldSkill;
+  }
+
+  setShieldSkill(skill) {
+    this.shieldSkill = skill === 0 ? skill : skill ? parseInt(skill) : null;
+  }
+
   setBelt(rawBelt) {
     if (rawBelt) {
       const [belt, level, bonus] = rawBelt.split(":");
@@ -361,19 +371,27 @@ class Player extends Character {
     }
   }
 
-  setShield(rawShield) {
-    if (rawShield) {
-      const [shield, level, bonus] = rawShield.split(":");
+  // setShield(rawShield) {
+  //   if (rawShield) {
+  //     const [shield, level, bonus, skill] = rawShield.split(":");
 
-      this.shieldName = shield;
-      this.shieldLevel = parseInt(level);
-      this.shieldBonus = bonus;
-    } else {
-      this.shieldName = null;
-      this.shieldLevel = null;
-      this.shieldBonus = null;
-    }
-  }
+  //     this.shieldName = shield;
+  //     this.shieldLevel = parseInt(level);
+  //     this.shieldBonus = bonus;
+  //     this.shieldSkill = skill;
+  //   } else {
+  //     this.shieldName = null;
+  //     this.shieldLevel = null;
+  //     this.shieldBonus = null;
+  //     this.shieldSkill = null;
+  //   }
+  // }
+
+  // setSkillDefensive(skill) {
+  //   if (!this.skillDefensiveTimeout) {
+  //     this.skillDefensive = skill;
+  //   }
+  // }
 
   setSettings(settings) {
     if (settings.capeHue) {
@@ -511,7 +529,7 @@ class Player extends Character {
     }
   }
 
-  switchShield(shield, level: number, bonus?: number[]) {
+  switchShield(shield, level: number, bonus?: number[], skill?: number) {
     var isDifferent = false;
 
     if (shield !== this.getShieldName()) {
@@ -525,6 +543,11 @@ class Player extends Character {
     if (bonus !== this.getShieldBonus()) {
       isDifferent = true;
       this.setShieldBonus(bonus);
+    }
+
+    if (skill !== this.getShieldSkill()) {
+      isDifferent = true;
+      this.setShieldSkill(skill);
     }
 
     if (isDifferent && this.switch_callback) {
@@ -545,7 +568,8 @@ class Player extends Character {
   removeShield() {
     this.shieldName = null;
     this.shieldLevel = null;
-    this.capeBonus = null;
+    this.shieldBonus = null;
+    this.shieldSkill = null;
 
     if (this.switch_callback) {
       this.switch_callback();
@@ -556,7 +580,7 @@ class Player extends Character {
     return items
       .map((rawItem, slot) => {
         if (!rawItem) return false;
-        const [item, levelOrQuantity, bonus] = rawItem.split(":");
+        const [item, levelOrQuantity, bonus, skill] = rawItem.split(":");
 
         const isWeapon = kinds[item][1] === "weapon";
         const isArmor = kinds[item][1] === "armor";
@@ -582,6 +606,7 @@ class Player extends Character {
         return {
           item,
           bonus,
+          skill,
           slot,
           requirement,
           isUnique,

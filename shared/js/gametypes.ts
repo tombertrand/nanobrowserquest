@@ -26,6 +26,7 @@ export const Types: any = {
     LOOT: 13,
     EQUIP: 14,
     AURAS: 51,
+    SKILL: 75,
     DROP: 15,
     TELEPORT: 16,
     DAMAGE: 17,
@@ -276,6 +277,7 @@ export const Types: any = {
     KEYPAD_2: 98,
     KEYPAD_1: 97,
     1: 49,
+    2: 50,
   },
 };
 
@@ -1443,11 +1445,6 @@ Types.getPartyBonusDescriptionMap = [
 
 Types.partyBonusType = ["attackDamage", "defense", "exp", "minDamage", "maxDamage", "health", "magicDamage"];
 
-Types.getFrozenTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
-Types.getDefenseSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
-Types.getBlockChanceSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
-Types.getCurseAttackSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
-
 Types.getBonusDescriptionMap = [
   "+# Minimum damage",
   "+# Maximum damage",
@@ -1474,10 +1471,6 @@ Types.getBonusDescriptionMap = [
   "+#% Flame resistance",
   "+#% Lightning resistance",
   "+#% Cold resistance",
-  "+#% Instant health regeneration",
-  "+#% defense for # seconds in exchange of attack damage",
-  "+#% block chances for # seconds",
-  // "-#% Attack damage from your enemies for # seconds",
 ];
 
 Types.bonusType = [
@@ -1506,11 +1499,6 @@ Types.bonusType = [
   "flameResistance", // 22
   "lightningResistance", // 23
   "coldResistance", // 24
-  "regenerateHealthSkill", // 25
-  "defenseSkill", // 26
-  "blockChanceSkill", // 27
-  // "freezeNovaSkill", // 28
-  // "curseAttackSkill", // 29
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1539,11 +1527,6 @@ Types.getBonus = function (rawBonus, level) {
   const flameResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  const defenseSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  const blockChanceSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  // const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  // const freezeNovaSkillPerLevel = [1, 3, 6, 10, 15, 22, 30, 40, 55, 70];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1571,15 +1554,9 @@ Types.getBonus = function (rawBonus, level) {
     flameResistancePerLevel,
     lightningResistancePerLevel,
     coldResistancePerLevel,
-    regenerateHealthSkillPerLevel,
-    defenseSkillPerLevel,
-    blockChanceSkillPerLevel,
-    // curseAttackSkillPerLevel,
-    // freezeNovaSkillPerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];
-  let skill: { type: string; stats: number; description: string } | null = null;
 
   // A glitch in the inventory system allowed for scrolls to be added as rings
   if (!rawBonus || !Array.isArray(rawBonus)) return bonus;
@@ -1587,32 +1564,21 @@ Types.getBonus = function (rawBonus, level) {
   for (let i = 0; i < rawBonus.length; i++) {
     const type = Types.bonusType[rawBonus[i]];
     const stats = bonusPerLevel[rawBonus[i]][level - 1];
-    const isSkill = type.endsWith("Skill");
 
     let description = Types.getBonusDescriptionMap[rawBonus[i]].replace("#", stats);
 
     if (type === "freezeChance") {
       description = description.replace("#", Types.getFrozenTimePerLevel(level) / 1000);
-    } else if (type === "defenseSkill") {
-      description = description.replace("#", Types.getDefenseSkillTimePerLevel(level) / 1000);
-    } else if (type === "curseAttackSkill") {
-      description = description.replace("#", Types.getCurseAttackSkillTimePerLevel(level) / 1000);
-    } else if (type === "blockChanceSkill") {
-      description = description.replace("#", Types.getBlockChanceSkillTimePerLevel(level) / 1000);
     }
 
-    if (isSkill) {
-      skill = { type, stats, description };
-    } else {
-      bonus.push({
-        type,
-        stats,
-        description,
-      });
-    }
+    bonus.push({
+      type,
+      stats,
+      description,
+    });
   }
 
-  return { bonus, skill };
+  return bonus;
 };
 
 Types.getSetBonus = (rawSetBonus: { [key: string]: number }): any[] => {
@@ -1671,6 +1637,69 @@ Types.getPartyBonus = function (rawBonus, level) {
   }
 
   return bonus;
+};
+
+Types.getFrozenTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
+Types.getDefenseSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
+Types.getBlockChanceSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
+Types.getCurseAttackSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
+
+Types.skillTimeout = {
+  regenerateHealthSkill: 30_000,
+};
+
+Types.getSkillDescriptionMap = [
+  "+#% Instant health regeneration",
+  "+#% defense for # seconds in exchange of attack damage",
+  "+#% block chances for # seconds",
+  // "-#% Attack damage from your enemies for # seconds",
+];
+
+Types.skillType = [
+  "regenerateHealthSkill", // 0
+  "defenseSkill", // 1
+  "blockChanceSkill", // 2
+  // "freezeNovaSkill", // 3
+  // "curseAttackSkill", // 4
+];
+
+Types.skillDelay = [60_000, 60_000, 60_000];
+
+Types.skillTypeAnimationMap = ["heal", "defense", "block"];
+
+Types.getSkill = function (rawSkill, level) {
+  const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  const defenseSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  const blockChanceSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  // const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  // const freezeNovaSkillPerLevel = [1, 3, 6, 10, 15, 22, 30, 40, 55, 70];
+
+  const skillPerLevel = [
+    regenerateHealthSkillPerLevel,
+    defenseSkillPerLevel,
+    blockChanceSkillPerLevel,
+    // curseAttackSkillPerLevel,
+    // freezeNovaSkillPerLevel,
+  ];
+
+  let skill: { type: string; stats: number; description: string } | null = null;
+
+  const type = Types.skillType[rawSkill];
+  const stats = skillPerLevel[rawSkill][level - 1];
+
+  let description = Types.getSkillDescriptionMap[rawSkill].replace("#", stats);
+
+  if (type === "defenseSkill") {
+    description = description.replace("#", Types.getDefenseSkillTimePerLevel(level) / 1000);
+  } else if (type === "curseAttackSkill") {
+    description = description.replace("#", Types.getCurseAttackSkillTimePerLevel(level) / 1000);
+  } else if (type === "blockChanceSkill") {
+    description = description.replace("#", Types.getBlockChanceSkillTimePerLevel(level) / 1000);
+  }
+
+  skill = { type, stats, description };
+
+  return skill;
 };
 
 Types.getUpgradeSuccessRates = () => {
@@ -1841,12 +1870,19 @@ Types.isUnique = function (item, bonus) {
   return isUnique;
 };
 
-Types.getItemDetails = function (
-  item: string,
-  level: number,
-  rawBonus: number[],
-  rawSetBonus?: { [key: string]: number },
-) {
+Types.getItemDetails = function ({
+  item,
+  level,
+  rawBonus,
+  rawSetBonus,
+  rawSkill,
+}: {
+  item: string;
+  level: number;
+  rawBonus: number[];
+  rawSetBonus?: { [key: string]: number };
+  rawSkill?: number;
+}) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
   const isRing = Types.isRing(item);
@@ -1880,6 +1916,7 @@ Types.getItemDetails = function (
   } else if (isShield) {
     type = "shield";
     healthBonus = Types.getArmorHealthBonus(level);
+    skill = rawSkill ? Types.getSkill(rawSkill, level) : null;
   } else if (isCape) {
     type = "cape";
   } else if (isRing) {
@@ -1891,7 +1928,7 @@ Types.getItemDetails = function (
     if (isCape) {
       partyBonus = Types.getPartyBonus(rawBonus, level);
     } else {
-      ({ bonus, skill } = Types.getBonus(rawBonus, level));
+      bonus = Types.getBonus(rawBonus, level);
     }
   }
 

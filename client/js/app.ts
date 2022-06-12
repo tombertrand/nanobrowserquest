@@ -897,11 +897,6 @@ class App {
     }
   }
 
-  initSkillIcons() {
-    // $('skill1')
-    console.log("~~~~initSkillIcons");
-  }
-
   hideWindows() {
     if ($("#achievements").hasClass("active")) {
       $("#achievements").removeClass("active");

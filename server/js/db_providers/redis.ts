@@ -600,10 +600,14 @@ class DatabaseHandler {
     }
   }
 
-  equipShield(name, shield, level, bonus) {
+  equipShield(name, shield, level, bonus, skill) {
     if (shield) {
-      console.info("Set Shield: " + name + " " + shield + ":" + level);
-      this.client.hset("u:" + name, "shield", `${shield}:${level}${bonus ? `:${bonus}` : ""}`);
+      console.info(`Set Shield: ${name} ${shield} ${level} ${bonus} ${skill}`);
+      this.client.hset(
+        "u:" + name,
+        "shield",
+        `${shield}:${level}${bonus ? `:${bonus}` : ""}${skill ? `:${skill}` : ""}`,
+      );
     } else {
       console.info("Delete Shield");
       this.client.hdel("u:" + name, "shield");
@@ -763,12 +767,19 @@ class DatabaseHandler {
       let item = null;
       let level = null;
       let bonus = null;
+      let skill = null;
       if (data) {
-        [item, level, bonus] = data.split(":");
+        [item, level, bonus, skill] = data.split(":");
       }
-      player.equipItem({ item, level, type: "shield", bonus });
+      player.equipItem({ item, level, type: "shield", bonus, skill });
       player.broadcast(
-        player.equip({ kind: player.shieldKind, level: player.shieldLevel, bonus: player.shieldBonus, type }),
+        player.equip({
+          kind: player.shieldKind,
+          level: player.shieldLevel,
+          bonus: player.shieldBonus,
+          skill: player.shieldSkill,
+          type,
+        }),
         false,
       );
     } else if (location === "ring1") {
@@ -951,7 +962,7 @@ class DatabaseHandler {
       try {
         let inventory = JSON.parse(reply);
 
-        items.forEach(({ item, level, quantity, bonus }) => {
+        items.forEach(({ item, level, quantity, bonus, skill }) => {
           let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
 
           // Increase the scroll count
@@ -965,7 +976,7 @@ class DatabaseHandler {
           } else if (slotIndex === -1) {
             slotIndex = inventory.indexOf(0);
             if (slotIndex !== -1) {
-              inventory[slotIndex] = [item, level || quantity, bonus].filter(Boolean).join(":");
+              inventory[slotIndex] = [item, level || quantity, bonus, skill].filter(Boolean).join(":");
             } else if (player.hasParty()) {
               // @TODO re-call the lootItems fn with next party member
             }
@@ -990,13 +1001,14 @@ class DatabaseHandler {
         if (filteredUpgrade.length) {
           const items = filteredUpgrade.reduce((acc, rawItem) => {
             if (!rawItem) return acc;
-            const [item, level, bonus] = rawItem.split(":");
+            const [item, level, bonus, skill] = rawItem.split(":");
             const isQuantity = Types.isScroll(item) || Types.isChest(item);
 
             acc.push({
               item,
               [isQuantity ? "quantity" : "level"]: level,
               bonus,
+              skill,
             });
             return acc;
           }, []);
@@ -1040,12 +1052,12 @@ class DatabaseHandler {
         let transmuteRates;
 
         if (isValidUpgradeItems(filteredUpgrade)) {
-          const [item, level, bonus] = filteredUpgrade[0].split(":");
+          const [item, level, bonus, skill] = filteredUpgrade[0].split(":");
           let upgradedItem: number | string = 0;
 
           if (isUpgradeSuccess({ level, isLuckySlot, isBlessed })) {
             const upgradedLevel = parseInt(level) + 1;
-            upgradedItem = [item, parseInt(level) + 1, bonus].filter(Boolean).join(":");
+            upgradedItem = [item, parseInt(level) + 1, bonus, skill].filter(Boolean).join(":");
             isSuccess = true;
 
             if (Types.isBaseHighClassItem(item)) {
@@ -1079,12 +1091,16 @@ class DatabaseHandler {
             (typeof isTransmuteSuccess === "undefined" && isUniqueSuccess)
           ) {
             isSuccess = true;
-            const { item: itemName, bonus } = player.generateItem({
+            const {
+              item: itemName,
+              bonus,
+              skill,
+            } = player.generateItem({
               kind: Types.getKindFromString(item),
               uniqueChances: isUniqueSuccess ? 100 : 0,
             });
 
-            generatedItem = [itemName, level, bonus].filter(Boolean).join(":");
+            generatedItem = [itemName, level, bonus, skill].filter(Boolean).join(":");
           }
 
           upgrade = upgrade.map(() => 0);
@@ -1124,9 +1140,10 @@ class DatabaseHandler {
                 level,
                 quantity,
                 bonus,
+                skill,
               } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
 
-              generatedItem = [itemName, level, quantity, bonus].filter(Boolean).join(":");
+              generatedItem = [itemName, level, quantity, bonus, skill].filter(Boolean).join(":");
             }
           }
 
