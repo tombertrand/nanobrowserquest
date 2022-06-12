@@ -1640,45 +1640,38 @@ Types.getPartyBonus = function (rawBonus, level) {
 };
 
 Types.getFrozenTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
-Types.getDefenseSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
-Types.getBlockChanceSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
-Types.getCurseAttackSkillTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
-
-Types.skillTimeout = {
-  regenerateHealthSkill: 30_000,
-};
+Types.getDefenseSkillTimePerLevel = (itemLevel: number) => itemLevel * 500;
+Types.getCurseAttackSkillTimePerLevel = (itemLevel: number) => itemLevel * 500;
 
 Types.getSkillDescriptionMap = [
   "+#% Instant health regeneration",
-  "+#% defense for # seconds in exchange of attack damage",
-  "+#% block chances for # seconds",
+  "+#% Defense for # seconds",
+  "-#% Attack damage from your attacking enemies",
+  // "+#% block chances for # seconds",
   // "-#% Attack damage from your enemies for # seconds",
 ];
 
 Types.skillType = [
   "regenerateHealthSkill", // 0
   "defenseSkill", // 1
-  "blockChanceSkill", // 2
+  "curseAttackSkill", // 2
   // "freezeNovaSkill", // 3
-  // "curseAttackSkill", // 4
 ];
 
-Types.skillDelay = [60_000, 60_000, 60_000];
+Types.skillDelay = [30_000, 45_000, 60_000];
 
-Types.skillTypeAnimationMap = ["heal", "defense", "block"];
+Types.skillTypeAnimationMap = ["heal", "defense", "curse-attack"];
 
 Types.getSkill = function (rawSkill, level) {
   const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const defenseSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  const blockChanceSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  // const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   // const freezeNovaSkillPerLevel = [1, 3, 6, 10, 15, 22, 30, 40, 55, 70];
 
   const skillPerLevel = [
     regenerateHealthSkillPerLevel,
     defenseSkillPerLevel,
-    blockChanceSkillPerLevel,
-    // curseAttackSkillPerLevel,
+    curseAttackSkillPerLevel,
     // freezeNovaSkillPerLevel,
   ];
 
@@ -1693,8 +1686,6 @@ Types.getSkill = function (rawSkill, level) {
     description = description.replace("#", Types.getDefenseSkillTimePerLevel(level) / 1000);
   } else if (type === "curseAttackSkill") {
     description = description.replace("#", Types.getCurseAttackSkillTimePerLevel(level) / 1000);
-  } else if (type === "blockChanceSkill") {
-    description = description.replace("#", Types.getBlockChanceSkillTimePerLevel(level) / 1000);
   }
 
   skill = { type, stats, description };

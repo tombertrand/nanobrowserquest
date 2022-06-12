@@ -66,6 +66,7 @@ class AudioManager {
       "raise",
       "portal-open",
       "skill-heal",
+      "skill-defense",
     ];
 
     var loadSoundFiles = function () {

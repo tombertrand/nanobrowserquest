@@ -5,7 +5,7 @@ import Entity from "./entity";
 import Timer from "./timer";
 import Transition from "./transition";
 
-export type Skills = "heal";
+export type Skills = "heal" | "defense";
 
 class Character extends Entity {
   nextGridX: number;

@@ -29,6 +29,10 @@
   #skill-shield.skill-heal::before {
     background-position: 0 0;
   }
+
+  #skill-shield.skill-defense::before {
+    background-position: 0 -42px;
+  }
 }
 
 @media screen and (max-width: 1500px), screen and (max-height: 870px) {
@@ -47,6 +51,10 @@
   #skill-shield.skill-heal::before {
     background-position: 0 0;
   }
+
+  #skill-shield.skill-defense::before {
+    background-position: 0 -28px;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -62,6 +70,14 @@
 }
 
 .skill-timeout.heal.active {
+  transition: width 30s linear;
+}
+
+.skill-timeout.defense.active {
+  transition: width 45s linear;
+}
+
+.skill-timeout.curse-attack.active {
   transition: width 60s linear;
 }
 
