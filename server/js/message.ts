@@ -130,9 +130,9 @@ Messages.Settings = class Message {
 };
 
 Messages.EquipItem = class Message {
-  constructor(private player, private kind, private level, private bonus, private type) {}
+  constructor(private player, private item) {}
   serialize() {
-    return [Types.Messages.EQUIP, this.player.id, this.kind, this.level, this.bonus, this.type];
+    return [Types.Messages.EQUIP, this.player.id, this.item];
   }
 };
 
@@ -140,6 +140,13 @@ Messages.Auras = class Message {
   constructor(private player) {}
   serialize() {
     return [Types.Messages.AURAS, this.player.id, this.player.auras];
+  }
+};
+
+Messages.Skill = class Message {
+  constructor(private player, private skill, private level) {}
+  serialize() {
+    return [Types.Messages.SKILL, this.player.id, this.skill, this.level];
   }
 };
 

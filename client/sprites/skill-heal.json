@@ -1,0 +1,13 @@
+{
+  "id": "skill-heal",
+  "width": 32,
+  "height": 32,
+  "animations": {
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    }
+  },
+  "offset_y": -26,
+  "offset_x": -0
+}

@@ -34,6 +34,7 @@ class GameClient {
   chat_callback: any;
   equip_callback: any;
   auras_callback: any;
+  skill_callback: any;
   drop_callback: any;
   teleport_callback: any;
   dmg_callback: any;
@@ -101,6 +102,7 @@ class GameClient {
     this.handlers[Types.Messages.CHAT] = this.receiveChat;
     this.handlers[Types.Messages.EQUIP] = this.receiveEquipItem;
     this.handlers[Types.Messages.AURAS] = this.receiveAuras;
+    this.handlers[Types.Messages.SKILL] = this.receiveSkill;
     this.handlers[Types.Messages.DROP] = this.receiveDrop;
     this.handlers[Types.Messages.TELEPORT] = this.receiveTeleport;
     this.handlers[Types.Messages.DAMAGE] = this.receiveDamage;
@@ -303,25 +305,26 @@ class GameClient {
     var weapon = data[7];
     var belt = data[8];
     var cape = data[9];
-    var ring1 = data[10];
-    var ring2 = data[11];
-    var amulet = data[12];
-    var experience = data[13];
-    var achievement = data[14];
-    var inventory = data[15];
-    var stash = data[16];
-    var hash = data[17];
-    var nanoPotions = data[18];
-    var gems = data[19];
-    var artifact = data[20];
-    var expansion1 = data[21];
-    var waypoints = data[22];
-    var depositAccount = data[23];
-    var auras = data[24];
-    var cowLevelPortalCoords = data[25];
-    var party = data[26];
-    var settings = data[27];
-    var network = data[28];
+    var shield = data[10];
+    var ring1 = data[11];
+    var ring2 = data[12];
+    var amulet = data[13];
+    var experience = data[14];
+    var achievement = data[15];
+    var inventory = data[16];
+    var stash = data[17];
+    var hash = data[18];
+    var nanoPotions = data[19];
+    var gems = data[20];
+    var artifact = data[21];
+    var expansion1 = data[22];
+    var waypoints = data[23];
+    var depositAccount = data[24];
+    var auras = data[25];
+    var cowLevelPortalCoords = data[26];
+    var party = data[27];
+    var settings = data[28];
+    var network = data[29];
 
     if (this.welcome_callback) {
       this.welcome_callback({
@@ -334,6 +337,7 @@ class GameClient {
         weapon,
         belt,
         cape,
+        shield,
         ring1,
         ring2,
         amulet,
@@ -495,13 +499,10 @@ class GameClient {
 
   receiveEquipItem(data) {
     var id = data[1];
-    var kind = data[2];
-    var level = data[3];
-    var bonus = data[4];
-    var type = data[5];
+    var item = data[2];
 
     if (this.equip_callback) {
-      this.equip_callback({ id, kind, level, bonus, type });
+      this.equip_callback({ id, ...item });
     }
   }
 
@@ -511,6 +512,16 @@ class GameClient {
 
     if (this.auras_callback) {
       this.auras_callback(id, auras);
+    }
+  }
+
+  receiveSkill(data) {
+    var id = data[1];
+    var skill = data[2];
+    var level = data[3];
+
+    if (this.skill_callback) {
+      this.skill_callback({ id, skill, level });
     }
   }
 
@@ -850,6 +861,10 @@ class GameClient {
     this.auras_callback = callback;
   }
 
+  onPlayerSkill(callback) {
+    this.skill_callback = callback;
+  }
+
   onPlayerMoveToItem(callback) {
     this.lootmove_callback = callback;
   }
@@ -1157,6 +1172,10 @@ class GameClient {
 
   sendSettings(settings) {
     this.sendMessage([Types.Messages.SETTINGS, settings]);
+  }
+
+  sendSkill(skill) {
+    this.sendMessage([Types.Messages.SKILL, skill]);
   }
 }
 

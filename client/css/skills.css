@@ -1,0 +1,94 @@
+#skill-offensive::before,
+#skill-shield::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+}
+
+#skill-offensive.disabled::before,
+#skill-shield.disabled::before {
+  filter: grayscale(100%);
+}
+
+@media screen and (min-width: 1501px) {
+  #skill-offensive,
+  #skill-shield {
+    width: 42px;
+    height: 42px;
+  }
+  #skill-offensive::before,
+  #skill-shield::before {
+    background-position: 0 -42px;
+    background-image: url(../img/3/skills.png);
+  }
+
+  #skill-shield.skill-heal::before {
+    background-position: 0 0;
+  }
+
+  #skill-shield.skill-defense::before {
+    background-position: -42px 0;
+  }
+  #skill-shield.skill-curse-attack::before {
+    background-position: -84px 0;
+  }
+}
+
+@media screen and (max-width: 1500px), screen and (max-height: 870px) {
+  #skill-offensive,
+  #skill-shield {
+    width: 28px;
+    height: 28px;
+  }
+
+  #skill-offensive::before,
+  #skill-shield::before {
+    background-position: 0 -28px;
+    background-image: url(../img/2/skills.png);
+  }
+
+  #skill-shield.skill-heal::before {
+    background-position: 0 0;
+  }
+
+  #skill-shield.skill-defense::before {
+    background-position: -28px 0;
+  }
+
+  #skill-shield.skill-curse-attack::before {
+    background-position: -56px 0;
+  }
+}
+
+@media screen and (max-width: 600px) {
+}
+
+.skill-timeout {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 0, 0, 0.4);
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.skill-timeout.heal.active {
+  transition: width 30s linear;
+}
+
+.skill-timeout.defense.active {
+  transition: width 45s linear;
+}
+
+.skill-timeout.curse-attack.active {
+  transition: width 60s linear;
+}
+
+.skill-timeout.active {
+  opacity: 1;
+  width: 0%;
+}

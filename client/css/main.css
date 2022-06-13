@@ -264,7 +264,7 @@ footer, header, hgroup, menu, nav, section {
     #instructions, #store, #settings, #party, #completed, #failed {position:absolute;top:50%;left:50%;z-index:1000;font-family:'GraphicPixel';pointer-events:none;opacity:0;-moz-transition:0.25s opacity linear;-webkit-transition:0.4s top ease, 0.4s opacity linear;-o-transition:0.4s top ease, 0.4s opacity linear;-ms-transition:0.4s top ease, 0.4s opacity linear;transition:0.4s top ease, 0.4s opacity linear;}
     #instructions.active, #store.active, #settings.active, #party.active, #achievements.active, #completed.active, #failed.active {opacity:1;pointer-events:auto;}
     
-    #weapon, #armor {image-rendering:-moz-crisp-edges;}
+    #weapon, #armor, #skill-offensive, #skill-shield {image-rendering:-moz-crisp-edges;}
 
     #achievements, #achievements li, .coin, #achievement-notification, #coinsparks, .achievement-sharing a, #previous, #next {background:url('../img/1/achievements.png');image-rendering:-moz-crisp-edges;}
     .item-gem, .item-potion {background-image:url('../img/1/achievements-unlocks.png');image-rendering:-moz-crisp-edges;opacity:0.75;}
@@ -587,7 +587,7 @@ footer, header, hgroup, menu, nav, section {
     #text-window .error { color: #b57979 }
     #text-window span {text-shadow:1px -1px 1px #000, 1px 1px 1px #000,-1px 1px 1px #000}
     #player-account {color: #55a3ff; display: inline-block; white-space: nowrap;overflow: hidden;text-overflow: ellipsis; padding: 0 12px; width:calc(100% - 24px);}
-    #healthbar, #hitpoints, #weapon, #armor { cursor: pointer;}
+    #healthbar, #hitpoints, #weapon, #armor, #skill-offensive, #skill-shield { cursor: pointer;}
 
     #payout {
         margin-left: 50px;
@@ -745,7 +745,8 @@ footer, header, hgroup, menu, nav, section {
         color: #fff;
         margin-top:6px;
     }
-    .item-bonus {
+    .item-bonus,
+    .item-set-bonus {
         color: #35ee35;
         margin-top:6px;
     }
@@ -753,10 +754,9 @@ footer, header, hgroup, menu, nav, section {
         color: #fff;
         margin-top:12px;
     }
-    .item-set-bonus {
-        /* color: #55a3ff; */
-        color: #35ee35;
+    .item-skill {
         margin-top:6px;
+        color: #74b5ff;
     }
     .item-description.requirement {
         color: red;
@@ -804,7 +804,7 @@ footer, header, hgroup, menu, nav, section {
 
     #item-player { width: 100% }
     #item-player > div { display: flex; justify-content: start;}
-    #item-weapon, #item-armor, #item-ring1, #item-ring2, #item-amulet, #item-belt, #item-cape {padding-right: 6px;padding-bottom: 6px;}
+    #item-weapon, #item-armor, #item-ring1, #item-ring2, #item-amulet, #item-belt, #item-cape, #item-shield {padding-right: 6px;padding-bottom: 6px;}
     #item-delete { margin-left: auto; }
     #item-delete > .item-slot { -webkit-box-shadow: inset 0px 0px 10px 6px #9e0000; box-shadow: inset 0px 0px 10px 6px #9e0000; }
     .item-quantity::after {
@@ -821,8 +821,8 @@ footer, header, hgroup, menu, nav, section {
         font-size: 0.75em;
     }
 
-    .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-equip-cape, .item-delete { position: relative; }
-    .item-equip-weapon::before, .item-equip-armor::before, .item-equip-ring::before, .item-equip-amulet::before, .item-equip-belt::before, .item-equip-cape::before, .item-delete::before {
+    .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-equip-cape, .item-equip-shield, .item-delete { position: relative; }
+    .item-equip-weapon::before, .item-equip-armor::before, .item-equip-ring::before, .item-equip-amulet::before, .item-equip-belt::before, .item-equip-shield::before, .item-equip-cape::before, .item-delete::before {
         content: "";
         position: absolute;
         filter: grayscale(100%);
@@ -963,6 +963,7 @@ footer, header, hgroup, menu, nav, section {
         .item-equip-amulet::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -237px;}
         .item-equip-belt::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -192px;}
         .item-equip-cape::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -285px;}
+        .item-equip-shield::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -330px;}
         .item-delete::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -141px;}
         #player-list {max-height: 366px;}
         .btn {font-size:18px;}
@@ -1082,16 +1083,19 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 33px; top: 12px; width: 2px; height: 33px; z-index: 30; }
 
         .item-slot { width:52px; height:52px; }
-        #armor, #weapon, .item-draggable, .item-not-draggable {width:48px;height:48px;background-size:288px;background-position:-96px;}
-        #armor, #weapon {position:absolute;}
+        #armor, #weapon, #skill-offensive, #skill-shield, .item-draggable, .item-not-draggable {width:48px;height:48px;background-size:288px;background-position:-96px;}
+        #armor, #weapon, #skill-offensive, #skill-shield {position:absolute;}
         #weapon {left:312px;top:3px;background-size:288px;}
         #armor {left:363px;top:3px;}
+        #skill-offensive {left:420px;top:6px;}
+        #skill-shield {left:471px;top:6px;}
 
-        #notifications {width:544px;margin-left:-294px;font-size:20px;color:#eee;top:6px;height:45px;}
+
+        #notifications {width: 516px;margin-left: -200px;font-size: 17px;color:#eee;top:6px;height:45px;}
         #notifications div.top {top:-45px;}
         #notifications span {line-height:45px;height:45px;}
 
-        #player-count {font-size:20px;left:1032px;top:18px;width:172px;text-align:center;}
+        #player-count {font-size:20px;left:1042px;top:18px;width:168px;text-align:center;}
         .panel {width:360px;bottom:66px;font-size:20px;line-height:30px;}
         .panel-container {right: calc(5% + 360px);}
         #population {right:105px;}
@@ -1188,6 +1192,7 @@ footer, header, hgroup, menu, nav, section {
         .item-equip-amulet::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -157px;}
         .item-equip-belt::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -126px;}
         .item-equip-cape::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -189px;}
+        .item-equip-shield::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -218px;}
         .item-delete::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -93px;}
         #player-list {max-height: 266px;}
         .btn {font-size:16px;}
@@ -1310,17 +1315,19 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         .item-slot { width:36px; height: 36px; }
-        #armor, #weapon, .item-draggable, .item-not-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
-        #armor, #weapon { position:absolute; }
+        #armor, #weapon, #skill-offensive, #skill-shield, .item-draggable, .item-not-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        #armor, #weapon, #skill-offensive, #skill-shield { position:absolute; }
         #weapon {left:208px;top:2px;}
         #armor {left:242px;top:2px;}
+        #skill-offensive {left:278px;top:4px;}
+        #skill-shield {left:312px;top:4px;}
 
-        #notifications {width:370px;margin-left:-196px;font-size:16px;color:#eee;top:2px;height:30px;}
+        #notifications {width: 330px;margin-left:-134px;font-size:14px;color:#eee;top:2px;height:30px;}
         #notifications div.top {top:-30px;}
         #notifications span {line-height:30px;height:30px;}
         .windows #notifications span {line-height:34px;}
 
-        #player-count {font-size:16px;left:696px;top:10px;width:110px;text-align:center;}
+        #player-count {font-size:16px;left:680px;top:10px;width:125px;text-align:center;}
         .panel {bottom:44px;width:262px;font-size:14px;line-height:20px;}
         .panel-container {right: calc(5% + 262px);}
         #population {right:70px;}
@@ -1526,8 +1533,8 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 11px; top: 4px; width: 1px; height: 11px; z-index: 30; }
 
         .item-slot { width:20px; height: 20px; }
-        #armor, #weapon, .item-draggable, .item-not-draggable {width:16px;height:16px;background-size:96px;background-position:-32px;}
-        #armor, #weapon {position:absolute;}
+        #armor, #weapon, #skill-offensive, #skill-shield, .item-draggable, .item-not-draggable {width:16px;height:16px;background-size:96px;background-position:-32px;}
+        #armor, #weapon, #skill-offensive, #skill-shield {position:absolute;}
         #weapon {left:104px;top:1px;}
         #armor {left:121px;top:1px;}
 
@@ -1733,10 +1740,12 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         .item-slot { width:36px; height:36px; }
-        #armor, #weapon, .item-draggable, .item-not-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
-        #armor, #weapon {position:absolute;}
+        #armor, #weapon, #skill-offensive, #skill-shield, .item-draggable, .item-not-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        #armor, #weapon, #skill-offensive, #skill-shield {position:absolute;}
         #weapon {left:208px;top:2px;}
         #armor {left:242px;top:2px;}
+        #skill-offensive {left:276px;top:2px;}
+        #skill-shield {left:310px;top:2px;}
 
         #notifications {display:none;}
 

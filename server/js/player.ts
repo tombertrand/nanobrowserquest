@@ -81,6 +81,11 @@ class Player extends Character {
   capeSaturate: number;
   capeContrast: number;
   capeBrightness: number;
+  shield: string;
+  shieldLevel: number;
+  shieldBonus: number[] | null;
+  shieldSkill: number;
+  shieldSkillTimeout: NodeJS.Timeout;
   firefoxpotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -89,6 +94,7 @@ class Player extends Character {
   partyBonus: any;
   armorKind: number;
   weaponKind: number;
+  shieldKind: number;
   ring1: string;
   ring1Level: number;
   ring1Bonus: number[];
@@ -115,6 +121,7 @@ class Player extends Character {
   isPasswordValid: boolean;
   network: Network;
   nanoPotions: number;
+  skill: { defense: number; curseAttack: number };
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -150,6 +157,7 @@ class Player extends Character {
     // Item bonuses (Rings, amulet, Uniques?)
     this.resetBonus();
     this.resetPartyBonus();
+    this.resetSkill();
 
     this.inventory = [];
     this.inventoryCount = [];
@@ -405,7 +413,24 @@ class Player extends Character {
         if (mob?.type === "mob" || mob?.type === "player") {
           let isCritical = false;
 
-          const resistances = Types.Resistances[mob.kind] || {};
+          let resistances: {
+            magicDamage?: number;
+            flameDamage?: number;
+            lightningDamage?: number;
+            coldDamage?: number;
+            physicalDamage?: number;
+          } = { magicDamage: 0, flameDamage: 0, lightningDamage: 0, coldDamage: 0, physicalDamage: 0 };
+
+          if (mob.type === "mob") {
+            resistances = Object.assign(resistances, Types.resistances[mob.kind] || {});
+          } else if (mob.type === "player") {
+            resistances = {
+              magicDamage: mob.bonus.magicResistance,
+              flameDamage: mob.bonus.flameResistance,
+              lightningDamage: mob.bonus.lightningResistance,
+              coldDamage: mob.bonus.coldResistance,
+            };
+          }
 
           let dmg = Formulas.dmg({
             weapon: self.weapon,
@@ -413,14 +438,19 @@ class Player extends Character {
             playerLevel: self.level,
             minDamage: self.bonus.minDamage + self.partyBonus.minDamage,
             maxDamage: self.bonus.maxDamage + self.partyBonus.maxDamage,
-            magicDamage: resistances.magicDamage ? 0 : self.bonus.magicDamage + self.partyBonus.magicDamage,
+            magicDamage: Math.round(
+              (self.bonus.magicDamage + self.partyBonus.magicDamage) * (Math.abs(resistances.magicDamage - 100) / 100),
+            ),
             attackDamage: resistances.physicalDamage ? 0 : self.bonus.attackDamage,
             drainLife: self.bonus.drainLife,
-            flameDamage: resistances.flameDamage ? 0 : self.bonus.flameDamage,
-            lightningDamage: resistances.lightningDamage ? 0 : self.bonus.lightningDamage,
-            coldDamage: resistances.coldDamage ? 0 : self.bonus.coldDamage,
+            flameDamage: Math.round(self.bonus.flameDamage * (Math.abs(resistances.flameDamage - 100) / 100)),
+            lightningDamage: Math.round(
+              self.bonus.lightningDamage * (Math.abs(resistances.lightningDamage - 100) / 100),
+            ),
+            coldDamage: Math.round(self.bonus.coldDamage * (Math.abs(resistances.coldDamage - 100) / 100)),
             pierceDamage: self.bonus.pierceDamage,
             partyAttackDamage: resistances.physicalDamage ? 0 : self.partyBonus.attackDamage,
+            magicResistance: resistances.magicDamage,
           });
 
           if (self.bonus.criticalHit) {
@@ -1004,6 +1034,51 @@ class Player extends Character {
           this.databaseHandler.setSettings(this.name, settings);
           this.broadcast(new Messages.Settings(this, settings), false);
         }
+      } else if (action === Types.Messages.SKILL) {
+        const skill = message[1];
+        let isBroadcasted = false;
+        let level: number;
+        let resetCallback = () => {};
+
+        // @NOTE Hardcode shieldSkill for now..
+        if (skill === this.shieldSkill && !this.shieldSkillTimeout) {
+          isBroadcasted = true;
+          level = this.shieldLevel;
+
+          if (this.shieldSkill === 0) {
+            if (!self.hasFullHealth()) {
+              const { stats: percent } = Types.getSkill(0, this.shieldLevel);
+
+              let healAmount = Math.round((percent / 100) * this.maxHitPoints);
+              let healthDiff = this.maxHitPoints - this.hitPoints;
+              if (healthDiff < healAmount) {
+                healAmount = healthDiff;
+              }
+
+              self.regenHealthBy(healAmount);
+              self.server.pushToPlayer(self, self.health());
+            }
+          } else if (this.shieldSkill === 1) {
+            const { stats: percent } = Types.getSkill(0, this.shieldLevel);
+
+            self.skill.defense = percent;
+            self.sendPlayerStats();
+
+            resetCallback = () => {
+              self.skill.defense = 0;
+              self.sendPlayerStats();
+            };
+          }
+
+          this.shieldSkillTimeout = setTimeout(() => {
+            this.shieldSkillTimeout = null;
+            resetCallback();
+          }, Types.skillDelay[this.shieldSkill]);
+
+          if (isBroadcasted) {
+            this.broadcast(new Messages.Skill(this, skill, level), false);
+          }
+        }
       } else {
         if (self.message_callback) {
           self.message_callback(message);
@@ -1044,19 +1119,21 @@ class Player extends Character {
     item: string;
     level?: number;
     quantity?: 1;
-    bonus: string;
+    bonus?: number[];
+    skill?: number;
     isUnique?: boolean;
   } {
     let isUnique = false;
     let item;
 
-    if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind)) {
+    if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind) || Types.isShield(kind)) {
       const randomIsUnique = random(100);
       isUnique = randomIsUnique < uniqueChances;
 
       const baseLevel = Types.getBaseLevel(kind);
       const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
       let bonus = null;
+      let skill = null;
 
       if (isUnique) {
         if (Types.isArmor(kind)) {
@@ -1069,7 +1146,16 @@ class Player extends Character {
         }
       }
 
-      item = { item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null, isUnique };
+      if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
+        const resistanceBonus = [21, 22, 23, 24];
+        const shieldSkill = [0, 1];
+        bonus = _.shuffle(resistanceBonus)
+          .slice(0, isUnique ? 2 : 1)
+          .sort();
+        skill = _.shuffle(shieldSkill).slice(0, 1);
+      }
+
+      item = { item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null, skill, isUnique };
     } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isChest(kind)) {
       item = { item: Types.getKindAsString(kind), quantity: 1 };
     } else if (Types.isCape(kind)) {
@@ -1189,6 +1275,10 @@ class Player extends Character {
       partyDefense: this.partyBonus.defense,
       cape: this.cape,
       capeLevel: this.capeLevel,
+      shield: this.shield,
+      shieldLevel: this.shieldLevel,
+      isUniqueShield: this.shieldBonus?.length >= 3,
+      skillDefense: this.skill.defense,
     });
 
     dmg = defense > dmg ? 0 : dmg - defense;
@@ -1205,7 +1295,7 @@ class Player extends Character {
       }
     }
 
-    if (this.bonus.lightningDamage && !Types.Resistances[mob.kind]?.lightningDamage) {
+    if (this.bonus.lightningDamage && !Types.resistances[mob.kind]?.lightningDamage) {
       lightningDamage = this.bonus.lightningDamage;
 
       if (mob.type === "mob") {
@@ -1237,8 +1327,13 @@ class Player extends Character {
 
     if (this.hitPoints <= 0) {
       this.isDead = true;
+      if (this.shieldSkillTimeout) {
+        clearTimeout(this.shieldSkillTimeout);
+        this.shieldSkillTimeout = null;
+      }
       if (this.firefoxpotionTimeout) {
         clearTimeout(this.firefoxpotionTimeout);
+        this.firefoxpotionTimeout = null;
       }
     }
 
@@ -1300,8 +1395,20 @@ class Player extends Character {
     this.broadcastzone_callback = callback;
   }
 
-  equip({ kind, level, bonus, type }: { kind: number; level: number; bonus?: number[]; type?: string }) {
-    return new Messages.EquipItem(this, kind, level, bonus, type);
+  equip({
+    kind,
+    level,
+    bonus,
+    skill,
+    type,
+  }: {
+    kind: number;
+    level: number;
+    bonus?: number[];
+    skill?: number;
+    type?: string;
+  }) {
+    return new Messages.EquipItem(this, { kind, level, bonus, skill, type });
   }
 
   addHater(mob) {
@@ -1349,6 +1456,14 @@ class Player extends Character {
     this.capeKind = kind;
     this.capeLevel = level;
     this.capeBonus = bonus ? JSON.parse(bonus) : null;
+  }
+
+  equipShield(shield, kind, level, bonus, skill) {
+    this.shield = shield;
+    this.shieldKind = kind;
+    this.shieldLevel = level;
+    this.shieldBonus = bonus ? JSON.parse(bonus) : null;
+    this.shieldSkill = skill ? parseInt(skill, 0) : null;
   }
 
   equipRing1(ring, level, bonus) {
@@ -1429,6 +1544,12 @@ class Player extends Character {
               bonus: this.beltBonus,
             }
           : null,
+        this.shieldBonus
+          ? {
+              level: this.shieldLevel,
+              bonus: this.shieldBonus,
+            }
+          : null,
       ].filter(Boolean);
 
       bonusToCalculate.forEach(({ bonus, level }) => {
@@ -1506,6 +1627,11 @@ class Player extends Character {
       coldDamage: 0,
       freezeChance: 0,
       reduceFrozenChance: 0,
+      //@TODO configure resistances (player hurt)
+      magicResistance: 0,
+      flameResistance: 0,
+      lightningResistance: 0,
+      coldResistance: 0,
     };
   }
 
@@ -1521,7 +1647,14 @@ class Player extends Character {
     };
   }
 
-  equipItem({ item, level, bonus, type }) {
+  resetSkill() {
+    this.skill = {
+      defense: 0,
+      curseAttack: 0,
+    };
+  }
+
+  equipItem({ item, level, bonus, skill, type }) {
     // @NOTE safety...
     if (bonus === "null") {
       bonus = null;
@@ -1545,6 +1678,9 @@ class Player extends Character {
       const kind = Types.getKindFromString(item);
       this.databaseHandler.equipCape(this.name, item, level, bonus);
       this.equipCape(item, kind, level, bonus);
+    } else if (type === "shield") {
+      this.databaseHandler.equipShield(this.name, item, level, bonus, skill);
+      this.equipShield(item, Types.getKindFromString(item), level, bonus, skill);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
@@ -1570,49 +1706,14 @@ class Player extends Character {
     let bonus = null;
     let set = null;
 
-    if (
-      this.belt === "beltminotaur" &&
-      this.weaponKind === Types.Entities.MINOTAURAXE &&
-      [this.ring1, this.ring2].includes("ringminotaur")
-    ) {
-      set = "minotaur";
-      bonus = Types.setBonus.minotaur;
-    } else if (
-      this.armorKind === Types.Entities.DIAMONDARMOR &&
-      this.belt === "beltdiamond" &&
-      this.weaponKind === Types.Entities.DIAMONDSWORD
-    ) {
-      set = "diamond";
-      bonus = Types.setBonus.diamond;
-    } else if (
-      this.armorKind === Types.Entities.FROZENARMOR &&
-      this.weaponKind === Types.Entities.FROZENSWORD &&
-      this.belt === "beltfrozen"
-    ) {
-      set = "sapphire";
-      bonus = Types.setBonus.sapphire;
-    } else if (this.armorKind === Types.Entities.HORNEDARMOR && this.belt === "belthorned") {
-      set = "horned";
-      bonus = Types.setBonus.horned;
-    } else if (
-      this.armorKind === Types.Entities.BLUEARMOR &&
-      [Types.Entities.BLUEAXE, Types.Entities.BLUEMORNINGSTAR].includes(this.weaponKind)
-    ) {
-      set = "frozen";
-      bonus = Types.setBonus.frozen;
-    } else if (this.armorKind === Types.Entities.GOLDENARMOR && this.weaponKind === Types.Entities.GOLDENSWORD) {
-      set = "golden";
-      bonus = Types.setBonus.golden;
-    } else if (this.armorKind === Types.Entities.REDARMOR && this.weaponKind === Types.Entities.REDSWORD) {
-      set = "ruby";
-      bonus = Types.setBonus.ruby;
-    } else if (this.armorKind === Types.Entities.PLATEARMOR && this.belt === "beltplated") {
-      set = "plated";
-      bonus = Types.setBonus.plated;
-    } else if (this.armorKind === Types.Entities.LEATHERARMOR && this.belt === "beltleather") {
-      set = "leather";
-      bonus = Types.setBonus.leather;
-    }
+    ({ set, bonus } = Types.getSet({
+      belt: this.belt,
+      weaponKind: this.weaponKind,
+      armorKind: this.armorKind,
+      shieldKind: this.shieldKind,
+      ring1: this.ring1,
+      ring2: this.ring2,
+    }));
 
     this.set = set;
 
@@ -1650,6 +1751,7 @@ class Player extends Character {
         level: this.armorLevel,
         playerLevel: this.level,
         beltLevel: this.beltLevel,
+        shieldLevel: this.shieldLevel,
       }) +
       this.bonus.health +
       this.bonus.highHealth +
@@ -1711,7 +1813,11 @@ class Player extends Character {
       absorbedDamage: this.bonus.absorbedDamage,
       cape: this.cape,
       capeLevel: this.capeLevel,
+      shield: this.shield,
+      shieldLevel: this.shieldLevel,
+      isUniqueShield: this.shieldBonus?.length >= 3,
       partyDefense: isInParty ? this.partyBonus.defense : 0,
+      skillDefense: this.skill.defense,
     });
     var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage({
       weapon: this.weapon,
@@ -1745,9 +1851,9 @@ class Player extends Character {
   incExp(exp) {
     this.experience = this.experience + exp;
     this.databaseHandler.setExp(this.name, this.experience);
-    var origLevel = this.level;
+    var originalLevel = this.level;
     this.level = Types.getLevel(this.experience);
-    if (origLevel !== this.level) {
+    if (originalLevel !== this.level) {
       this.updateHitPoints(true);
       this.sendPlayerStats();
       this.server.updatePopulation({ levelupPlayer: this.id });
@@ -1799,6 +1905,7 @@ class Player extends Character {
     weapon,
     belt,
     cape,
+    shield,
     ring1,
     ring2,
     amulet,
@@ -1847,6 +1954,16 @@ class Player extends Character {
     if (cape) {
       const [playerCape, playerCapeLevel, playerCapeBonus] = cape.split(":");
       self.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
+    }
+    if (shield) {
+      const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSkill] = shield.split(":");
+      self.equipShield(
+        playerShield,
+        Types.getKindFromString(playerShield),
+        playerShieldLevel,
+        playerShieldBonus,
+        playerShieldSkill,
+      );
     }
     if (ring1) {
       const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
@@ -1905,6 +2022,7 @@ class Player extends Character {
       weapon,
       belt,
       cape,
+      shield,
       ring1,
       ring2,
       amulet,

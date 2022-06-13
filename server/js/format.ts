@@ -25,6 +25,7 @@ class FormatChecker {
       (this.formats[Types.Messages.WAYPOINT] = ["n", "s"]),
       (this.formats[Types.Messages.BOSS_CHECK] = ["b"]),
       (this.formats[Types.Messages.BAN_PLAYER] = ["s"]),
+      (this.formats[Types.Messages.SKILL] = ["n"]),
       (this.formats[Types.Messages.REQUEST_PAYOUT] = ["n"]),
       (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n"]),
       (this.formats[Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY] = []),
@@ -125,6 +126,8 @@ class FormatChecker {
       return message.length === 1 && _.isString(message[0]);
     } else if (type === Types.Messages.SETTINGS) {
       return message.length === 1 && typeof message[0] === "object";
+    } else if (type === Types.Messages.SKILL) {
+      return message.length === 1 && _.isNumber(message[0]);
     } else {
       console.error("Unknown message type: " + type);
       return false;

@@ -290,6 +290,11 @@ class Updater {
     if (anvilAnimation) {
       anvilAnimation.update(t);
     }
+
+    var skillAnimation = this.game.skillAnimation;
+    if (skillAnimation) {
+      skillAnimation.update(t);
+    }
   }
 
   updateAnimatedTiles() {

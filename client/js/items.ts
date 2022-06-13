@@ -205,6 +205,69 @@ var Items = {
     }
   },
 
+  ShieldWood: class ShieldWood extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDWOOD, "shield");
+      this.lootMessage = "You pick up a wood shield";
+    }
+  },
+
+  ShieldIron: class ShieldIron extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDIRON, "shield");
+      this.lootMessage = "You pick up an iron shield";
+    }
+  },
+
+  ShieldPlate: class ShieldPlate extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDPLATE, "shield");
+      this.lootMessage = "You pick up a plate shield";
+    }
+  },
+
+  ShieldRed: class ShieldRed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDRED, "shield");
+      this.lootMessage = "You pick up a red shield";
+    }
+  },
+
+  ShieldGolden: class ShieldGolden extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDGOLDEN, "shield");
+      this.lootMessage = "You pick up a golden shield";
+    }
+  },
+
+  ShieldBlue: class ShieldBlue extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDBLUE, "shield");
+      this.lootMessage = "You pick up a blue shield";
+    }
+  },
+
+  ShieldHorned: class ShieldHorned extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDHORNED, "shield");
+      this.lootMessage = "You pick up a horned shield";
+    }
+  },
+
+  ShieldFrozen: class ShieldFrozen extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDFROZEN, "shield");
+      this.lootMessage = "You pick up a frozen shield";
+    }
+  },
+
+  ShieldDiamond: class ShieldDiamond extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDDIAMOND, "shield");
+      this.lootMessage = "You pick up a diamond shield";
+    }
+  },
+
   Flask: class Flask extends Item {
     constructor(id) {
       super(id, Types.Entities.FLASK, "object");

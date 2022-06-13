@@ -510,6 +510,45 @@ class Renderer {
     }
   }
 
+  drawShield(entity) {
+    if (!entity.shieldName) return;
+
+    var sprite = this.game.sprites[entity.shieldName];
+    var anim = entity.currentAnimation;
+    var spriteImage = sprite.image;
+
+    let isFilterApplied = false;
+
+    if (sprite && anim) {
+      var os = this.upscaledRendering ? 1 : this.scale;
+      var ds = this.upscaledRendering ? this.scale : 1;
+
+      var frame = anim.currentFrame,
+        s = this.scale,
+        x = frame.x * os,
+        y = frame.y * os,
+        w = sprite.width * os,
+        h = sprite.height * os,
+        ox = sprite.offsetX * s,
+        oy = sprite.offsetY * s,
+        dw = w * ds,
+        dh = h * ds;
+
+      if (entity.shieldLevel >= 7) {
+        isFilterApplied = true;
+
+        const brightness = this.calculateBrightnessPerLevel(entity.shieldLevel);
+        this.context.filter = `brightness(${brightness}%)`;
+      }
+
+      this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
+
+      if (isFilterApplied) {
+        this.context.filter = "brightness(100%)";
+      }
+    }
+  }
+
   setDrawEntityName(isDrawEntityName: boolean) {
     this.isDrawEntityName = isDrawEntityName;
   }
@@ -617,12 +656,14 @@ class Renderer {
           if (entity.capeOrientation !== Types.Orientations.UP) {
             this.drawCape(entity);
           }
+          if (entity.capeOrientation === Types.Orientations.UP) {
+            this.drawShield(entity);
+          }
 
           if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
             isFilterApplied = true;
 
             const brightness = this.calculateBrightnessPerLevel(entity.armorLevel);
-
             this.context.filter = `brightness(${brightness}%)`;
           }
 
@@ -647,8 +688,13 @@ class Renderer {
           this.context.filter = "brightness(100%)";
         }
 
-        if (entity instanceof Player && entity.capeOrientation === Types.Orientations.UP) {
-          this.drawCape(entity);
+        if (entity instanceof Player) {
+          if (entity.capeOrientation === Types.Orientations.UP) {
+            this.drawCape(entity);
+          }
+          if (entity.capeOrientation !== Types.Orientations.UP) {
+            this.drawShield(entity);
+          }
         }
 
         if (entity instanceof Item && entity.kind !== Types.Entities.CAKE) {
@@ -769,6 +815,32 @@ class Renderer {
           this.context.translate(0, ts * -ds);
           this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
           this.context.translate(0, ts * ds);
+        }
+      }
+
+      if (entity instanceof Player && entity.skillName) {
+        var sprite = this.game.sprites[`skill-${entity.skillName}`];
+        var anim = this.game.skillAnimation;
+
+        if (sprite && anim) {
+          var os = this.upscaledRendering ? 1 : this.scale;
+          var ds = this.upscaledRendering ? this.scale : 1;
+          // @ts-ignore
+          var { x: entityX, y: entityY } = entity;
+
+          var frame = anim.currentFrame,
+            s = this.scale,
+            x = frame.x * os,
+            y = frame.y * os,
+            w = sprite.width * os,
+            h = sprite.height * os,
+            ts = 0,
+            dx = entityX * s,
+            dy = entityY * s,
+            dw = w * ds,
+            dh = h * ds;
+
+          this.context.drawImage(sprite.image, x, y, w, h, -8 * this.scale, -14 * this.scale, dw, dh);
         }
       }
 
@@ -1102,6 +1174,10 @@ class Renderer {
       ctx.drawImage(capeImage, 0, y, w, h, 2, 2, w, h);
     }
     ctx.drawImage(spriteImage, 0, y, w, h, 2, 2, w, h);
+    if (this.game.player.shieldName) {
+      var shieldImage = this.game.sprites[this.game.player.shieldName].image;
+      ctx.drawImage(shieldImage, 0, y, w, h, 2, 2, w, h);
+    }
     ctx.drawImage(weaponImage, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
 
     return canvas.toDataURL("image/png");

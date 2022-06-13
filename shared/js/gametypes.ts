@@ -26,6 +26,7 @@ export const Types: any = {
     LOOT: 13,
     EQUIP: 14,
     AURAS: 51,
+    SKILL: 75,
     DROP: 15,
     TELEPORT: 16,
     DAMAGE: 17,
@@ -143,6 +144,17 @@ export const Types: any = {
 
     // Capes
     CAPE: 130,
+
+    // Shields
+    SHIELDWOOD: 143,
+    SHIELDIRON: 144,
+    SHIELDPLATE: 145,
+    SHIELDRED: 146,
+    SHIELDGOLDEN: 147,
+    SHIELDBLUE: 148,
+    SHIELDHORNED: 149,
+    SHIELDFROZEN: 150,
+    SHIELDDIAMOND: 151,
 
     // Chests
     CHESTBLUE: 136,
@@ -263,6 +275,9 @@ export const Types: any = {
     KEYPAD_6: 102,
     KEYPAD_8: 104,
     KEYPAD_2: 98,
+    KEYPAD_1: 97,
+    1: 49,
+    2: 50,
   },
 };
 
@@ -325,6 +340,18 @@ Types.Entities.Belts = [
   Types.Entities.BELTFHORNED,
   Types.Entities.BELTDIAMOND,
   Types.Entities.BELTMINOTAUR,
+];
+
+Types.Entities.Shields = [
+  Types.Entities.SHIELDWOOD,
+  Types.Entities.SHIELDIRON,
+  Types.Entities.SHIELDPLATE,
+  Types.Entities.SHIELDRED,
+  Types.Entities.SHIELDGOLDEN,
+  Types.Entities.SHIELDBLUE,
+  Types.Entities.SHIELDHORNED,
+  Types.Entities.SHIELDFROZEN,
+  Types.Entities.SHIELDDIAMOND,
 ];
 
 Types.Entities.Rings = [
@@ -438,6 +465,17 @@ export const kinds = {
   beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 40, 18],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 20, 2],
+
+  // kind, type, level, defense
+  shieldwood: [Types.Entities.SHIELDWOOD, "shield", "Wood Shield", 1, 2],
+  shieldiron: [Types.Entities.SHIELDIRON, "shield", "Iron Shield", 3, 3],
+  shieldplate: [Types.Entities.SHIELDPLATE, "shield", "Plate Shield", 5, 5],
+  shieldred: [Types.Entities.SHIELDRED, "shield", "Red Shield", 7, 7],
+  shieldgolden: [Types.Entities.SHIELDGOLDEN, "shield", "Golden Shield", 10, 10],
+  shieldblue: [Types.Entities.SHIELDBLUE, "shield", "Frozen Shield", 18, 12],
+  shieldhorned: [Types.Entities.SHIELDHORNED, "shield", "Horned Shield", 22, 14],
+  shieldfrozen: [Types.Entities.SHIELDFROZEN, "shield", "Sapphire Shield", 26, 16],
+  shielddiamond: [Types.Entities.SHIELDDIAMOND, "shield", "Diamond Shield", 36, 18],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -590,6 +628,17 @@ Types.itemUniqueMap = {
   spikearmor: ["Jungle Warcry", 36, 46],
   demonarmor: ["Explorer's Block", 36, 50],
 
+  // name, level, defense
+  shieldwood: ["Liquidity Provider", 2, 3],
+  shieldiron: ["Bearer Token", 4, 4],
+  shieldplate: ["King Louie", 6, 6],
+  shieldred: ["Marstronaut", 8, 8],
+  shieldgolden: ["1 Ban = 1 Ban", 12, 12],
+  shieldblue: ["Cold Storage", 20, 14],
+  shieldhorned: ["Do Klost", 24, 16],
+  shieldfrozen: ["Probably Nothing", 28, 18],
+  shielddiamond: ["Diamond Hands", 38, 20],
+
   cape: ["Cloak of Levitation", 12, 2],
 
   // name, level, defense
@@ -659,27 +708,89 @@ Types.setItems = {
   leather: ["leatherarmor", "beltleather"],
 };
 
-Types.Resistances = {
+Types.getSet = ({ belt, weaponKind, armorKind, shieldKind, ring1, ring2 }) => {
+  let set = null;
+  let bonus = null;
+
+  if (belt === "beltminotaur" && weaponKind === Types.Entities.MINOTAURAXE && [ring1, ring2].includes("ringminotaur")) {
+    set = "minotaur";
+    bonus = Types.setBonus.minotaur;
+  } else if (
+    armorKind === Types.Entities.DIAMONDARMOR &&
+    belt === "beltdiamond" &&
+    weaponKind === Types.Entities.DIAMONDSWORD &&
+    shieldKind === Types.Entities.SHIELDDIAMOND
+  ) {
+    set = "diamond";
+    bonus = Types.setBonus.diamond;
+  } else if (
+    armorKind === Types.Entities.FROZENARMOR &&
+    weaponKind === Types.Entities.FROZENSWORD &&
+    shieldKind === Types.Entities.SHIELDFORZEN &&
+    belt === "beltfrozen"
+  ) {
+    set = "sapphire";
+    bonus = Types.setBonus.sapphire;
+  } else if (
+    armorKind === Types.Entities.HORNEDARMOR &&
+    shieldKind === Types.Entities.SHIELDHORNED &&
+    belt === "belthorned"
+  ) {
+    set = "horned";
+    bonus = Types.setBonus.horned;
+  } else if (
+    armorKind === Types.Entities.BLUEARMOR &&
+    shieldKind === Types.Entities.SHIELDBLUE &&
+    [Types.Entities.BLUEAXE, Types.Entities.BLUEMORNINGSTAR].includes(weaponKind)
+  ) {
+    set = "frozen";
+    bonus = Types.setBonus.frozen;
+  } else if (
+    armorKind === Types.Entities.GOLDENARMOR &&
+    shieldKind === Types.Entities.SHIELDGOLDEN &&
+    weaponKind === Types.Entities.GOLDENSWORD
+  ) {
+    set = "golden";
+    bonus = Types.setBonus.golden;
+  } else if (armorKind === Types.Entities.REDARMOR && weaponKind === Types.Entities.REDSWORD) {
+    set = "ruby";
+    bonus = Types.setBonus.ruby;
+  } else if (
+    armorKind === Types.Entities.PLATEARMOR &&
+    shieldKind === Types.Entities.SHIELDPLATE &&
+    belt === "beltplated"
+  ) {
+    set = "plated";
+    bonus = Types.setBonus.plated;
+  } else if (
+    armorKind === Types.Entities.LEATHERARMOR &&
+    shieldKind === Types.Entities.SHIELDWOOD &&
+    belt === "beltleather"
+  ) {
+    set = "leather";
+    bonus = Types.setBonus.leather;
+  }
+
+  return { set, bonus };
+};
+
+Types.resistances = {
   [Types.Entities.COWKING]: {
-    lightningDamage: {
-      percentage: 100,
-      display: "lightning damage",
-    },
+    lightningDamage: 100,
   },
   [Types.Entities.MINOTAUR]: {
-    flameDamage: {
-      percentage: 100,
-      display: "flame damage",
-    },
-    lightningDamage: {
-      percentage: 100,
-      display: "lightning damage",
-    },
-    magicDamage: {
-      percentage: 100,
-      display: "magic damage",
-    },
+    flameDamage: 100,
+    lightningDamage: 100,
+    magicDamage: 80,
   },
+};
+
+Types.resistanceToDisplayMap = {
+  magicDamage: "magic damage",
+  flameDamage: "flame damage",
+  lightningDamage: "lightning damage",
+  coldDamage: "cold damage",
+  physicalDamage: "physical damage",
 };
 
 Types.expForLevel = [
@@ -917,6 +1028,14 @@ Types.isCape = function (kindOrString: number | string) {
   }
 };
 
+Types.isShield = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return kinds.getType(kindOrString) === "shield";
+  } else {
+    return kinds[kindOrString][1] === "shield";
+  }
+};
+
 Types.isBoss = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [
@@ -1079,6 +1198,7 @@ Types.isItem = function (kind: number) {
     Types.isAmulet(kind) ||
     Types.isBelt(kind) ||
     Types.isCape(kind) ||
+    Types.isShield(kind) ||
     Types.isScroll(kind) ||
     Types.isSingle(kind) ||
     Types.isChest(kind) ||
@@ -1094,6 +1214,7 @@ Types.Slot = {
   RING2: 104,
   AMULET: 105,
   CAPE: 106,
+  SHIELD: 107,
 };
 
 Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
@@ -1119,6 +1240,9 @@ Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
     case "cape":
     case Types.Slot.CAPE:
       return Types.isCape(item);
+    case "shield":
+    case Types.Slot.SHIELD:
+      return Types.isShield(item);
   }
   return false;
 };
@@ -1317,8 +1441,6 @@ Types.getPartyBonusDescriptionMap = [
 
 Types.partyBonusType = ["attackDamage", "defense", "exp", "minDamage", "maxDamage", "health", "magicDamage"];
 
-Types.getFrozenTimePerLevel = itemLevel => 1000 + itemLevel * 150;
-
 Types.getBonusDescriptionMap = [
   "+# Minimum damage",
   "+# Maximum damage",
@@ -1341,30 +1463,38 @@ Types.getBonusDescriptionMap = [
   "+# Cold damage",
   "+#% Freeze the enemy for # seconds",
   "+#% Reduced chance of being frozen",
+  "+#% Magic resistance",
+  "+#% Flame resistance",
+  "+#% Lightning resistance",
+  "+#% Cold resistance",
 ];
 
 Types.bonusType = [
-  "minDamage",
-  "maxDamage",
-  "attackDamage",
-  "health",
-  "magicDamage",
-  "defense",
-  "absorbedDamage",
-  "exp",
-  "regenerateHealth",
-  "criticalHit",
-  "blockChance",
-  "magicFind",
-  "attackSpeed",
-  "drainLife",
-  "flameDamage",
-  "lightningDamage",
-  "pierceDamage",
-  "highHealth",
-  "coldDamage",
-  "freezeChance",
-  "reduceFrozenChance",
+  "minDamage", // 0
+  "maxDamage", // 1
+  "attackDamage", // 2
+  "health", // 3
+  "magicDamage", // 4
+  "defense", // 5
+  "absorbedDamage", // 6
+  "exp", // 7
+  "regenerateHealth", // 8
+  "criticalHit", // 9
+  "blockChance", // 10
+  "magicFind", // 11
+  "attackSpeed", // 12
+  "drainLife", // 13
+  "flameDamage", // 14
+  "lightningDamage", // 15
+  "pierceDamage", // 16
+  "highHealth", // 17
+  "coldDamage", // 18
+  "freezeChance", // 19
+  "reduceFrozenChance", // 20
+  "magicResistance", // 21
+  "flameResistance", // 22
+  "lightningResistance", // 23
+  "coldResistance", // 24
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1386,9 +1516,13 @@ Types.getBonus = function (rawBonus, level) {
   const lightningDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const pierceDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
   const highHealthPerLevel = [10, 20, 30, 40, 50, 70, 100, 140, 200, 280];
-  const coldDamagePerLevel = [1, 2, 3, 4, 6, 8, 12, 18, 26, 40];
+  const coldDamagePerLevel = [1, 3, 5, 7, 10, 13, 16, 20, 26, 34];
   const freezeChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
   const reduceFrozenChancePerLevel = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+  const magicResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const flameResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1412,6 +1546,10 @@ Types.getBonus = function (rawBonus, level) {
     coldDamagePerLevel,
     freezeChancePerLevel,
     reduceFrozenChancePerLevel,
+    magicResistancePerLevel,
+    flameResistancePerLevel,
+    lightningResistancePerLevel,
+    coldResistancePerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];
@@ -1422,6 +1560,7 @@ Types.getBonus = function (rawBonus, level) {
   for (let i = 0; i < rawBonus.length; i++) {
     const type = Types.bonusType[rawBonus[i]];
     const stats = bonusPerLevel[rawBonus[i]][level - 1];
+
     let description = Types.getBonusDescriptionMap[rawBonus[i]].replace("#", stats);
 
     if (type === "freezeChance") {
@@ -1496,6 +1635,62 @@ Types.getPartyBonus = function (rawBonus, level) {
   return bonus;
 };
 
+Types.getFrozenTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
+
+Types.skillDurationMap = {
+  0: () => 900,
+  1: (itemLevel: number) => itemLevel * 500,
+  2: (itemLevel: number) => itemLevel * 500,
+};
+
+Types.getSkillDescriptionMap = [
+  "+#% Instant health regeneration",
+  "+#% Defense for # seconds",
+  // "-#% Attack damage from your attacking enemies",
+  // "+#% block chances for # seconds",
+  // "-#% Attack damage from your enemies for # seconds",
+];
+
+Types.skillType = [
+  "regenerateHealthSkill", // 0
+  "defenseSkill", // 1
+  // "curseAttackSkill", // 2
+  // "freezeNovaSkill", // 3
+];
+
+Types.skillDelay = [30_000, 45_000, 60_000];
+
+Types.skillTypeAnimationMap = ["heal", "defense", "curse-attack"];
+
+Types.getSkill = function (rawSkill, level) {
+  const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  const defenseSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  // const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  // const freezeNovaSkillPerLevel = [1, 3, 6, 10, 15, 22, 30, 40, 55, 70];
+
+  const skillPerLevel = [
+    regenerateHealthSkillPerLevel,
+    defenseSkillPerLevel,
+    // curseAttackSkillPerLevel,
+    // freezeNovaSkillPerLevel,
+  ];
+
+  let skill: { type: string; stats: number; description: string } | null = null;
+
+  const type = Types.skillType[rawSkill];
+  const stats = skillPerLevel[rawSkill][level - 1];
+
+  let description = Types.getSkillDescriptionMap[rawSkill].replace("#", stats);
+
+  if (["defenseSkill", "curseAttackSkill"].includes(type)) {
+    description = description.replace("#", Types.skillDurationMap[rawSkill](level) / 1000);
+  }
+
+  skill = { type, stats, description };
+
+  return skill;
+};
+
 Types.getUpgradeSuccessRates = () => {
   return [100, 100, 90, 80, 55, 30, 7, 4, 1];
 };
@@ -1514,10 +1709,12 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
   const isAmulet = Types.isAmulet(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
+  const isShield = Types.isShield(item);
   const isUniqueRing = isRing && isUnique;
   const isUniqueAmulet = isAmulet && isUnique;
   const isUniqueBelt = isBelt && isUnique;
   const isUniqueCape = isCape && isUnique;
+  const isUniqueShield = isShield && isUnique;
 
   const uniqueSuccessRateMap = {
     goldensword: 20,
@@ -1547,7 +1744,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
 
   const transmuteSuccessRate = 75;
 
-  if (isUniqueRing || isUniqueAmulet || isUniqueBelt || isUniqueCape) {
+  if (isUniqueRing || isUniqueAmulet || isUniqueBelt || isUniqueCape || isUniqueShield) {
     return { transmuteSuccessRate, uniqueSuccessRate: 100 };
   } else if (!isUnique && uniqueSuccessRateMap[item]) {
     return {
@@ -1641,6 +1838,7 @@ Types.isUnique = function (item, bonus) {
   const isArmor = kinds[item][1] === "armor";
   const isBelt = kinds[item][1] === "belt";
   const isCape = kinds[item][1] === "cape";
+  const isShield = kinds[item][1] === "shield";
   const isRing = kinds[item][1] === "ring";
   const isAmulet = kinds[item][1] === "amulet";
 
@@ -1652,6 +1850,8 @@ Types.isUnique = function (item, bonus) {
     isUnique = Types.isUniqueAmulet(item, typeof bonus === "string" ? JSON.parse(bonus) : bonus);
   } else if (isCape) {
     isUnique = (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 2;
+  } else if (isShield) {
+    isUnique = !!bonus ? (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 3 : false;
   } else if (isArmor || isWeapon || isBelt) {
     isUnique = !!bonus;
   }
@@ -1659,24 +1859,33 @@ Types.isUnique = function (item, bonus) {
   return isUnique;
 };
 
-Types.getItemDetails = function (
-  item: string,
-  level: number,
-  rawBonus: number[],
-  rawSetBonus?: { [key: string]: number },
-) {
+Types.getItemDetails = function ({
+  item,
+  level,
+  rawBonus,
+  rawSetBonus,
+  rawSkill,
+}: {
+  item: string;
+  level: number;
+  rawBonus: number[];
+  rawSetBonus?: { [key: string]: number };
+  rawSkill?: number;
+}) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
+  const isShield = Types.isShield(item);
   const isUnique = Types.isUnique(item, rawBonus);
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;
   let healthBonus = 0;
   let bonus = [];
+  let skill = null;
   let setBonus = [];
   let partyBonus = [];
 
@@ -1693,6 +1902,10 @@ Types.getItemDetails = function (
   } else if (isBelt) {
     type = "belt";
     healthBonus = Types.getArmorHealthBonus(level);
+  } else if (isShield) {
+    type = "shield";
+    healthBonus = Types.getArmorHealthBonus(level);
+    skill = rawSkill ? Types.getSkill(rawSkill, level) : null;
   } else if (isCape) {
     type = "cape";
   } else if (isRing) {
@@ -1722,7 +1935,7 @@ Types.getItemDetails = function (
     type,
     isUnique,
     itemClass,
-    ...(isArmor || isBelt || isCape ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
+    ...(isArmor || isBelt || isCape || isShield ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
     healthBonus,
     magicDamage,
@@ -1731,6 +1944,7 @@ Types.getItemDetails = function (
     bonus,
     setBonus,
     partyBonus,
+    skill,
   };
 };
 

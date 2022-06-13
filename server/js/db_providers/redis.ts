@@ -90,14 +90,15 @@ class DatabaseHandler {
             .hget(userKey, "amulet") // 15
             .hget(userKey, "belt") // 16
             .hget(userKey, "cape") // 17
-            .hget(userKey, "artifact") // 18
-            .hget(userKey, "expansion1") // 19
-            .hget(userKey, "waypoints") // 20
-            .hget(userKey, "depositAccount") // 21
-            .hget(userKey, "depositAccountIndex") // 22
-            .hget(userKey, "stash") // 23
-            .hget(userKey, "settings") // 24
-            .hget(userKey, "network") // 25
+            .hget(userKey, "shield") // 18
+            .hget(userKey, "artifact") // 19
+            .hget(userKey, "expansion1") // 20
+            .hget(userKey, "waypoints") // 21
+            .hget(userKey, "depositAccount") // 22
+            .hget(userKey, "depositAccountIndex") // 23
+            .hget(userKey, "stash") // 24
+            .hget(userKey, "settings") // 25
+            .hget(userKey, "network") // 26
 
             .exec(async (err, replies) => {
               if (err) {
@@ -119,10 +120,11 @@ class DatabaseHandler {
               var amulet = replies[15];
               var belt = replies[16];
               var cape = replies[17];
-              var expansion1 = !!parseInt(replies[19] || "0");
-              var depositAccount = replies[21];
-              var depositAccountIndex = replies[22];
-              var network = replies[25];
+              var shield = replies[18];
+              var expansion1 = !!parseInt(replies[20] || "0");
+              var depositAccount = replies[22];
+              var depositAccountIndex = replies[23];
+              var network = replies[26];
 
               const [, rawAccount] = account.split("_");
               const [rawNetwork, rawPlayerAccount] = player.account.split("_");
@@ -223,8 +225,8 @@ class DatabaseHandler {
 
               var stash = new Array(STASH_SLOT_COUNT).fill(0);
               try {
-                if (replies[23]) {
-                  stash = JSON.parse(replies[23]);
+                if (replies[24]) {
+                  stash = JSON.parse(replies[24]);
                 } else {
                   this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
                 }
@@ -243,7 +245,7 @@ class DatabaseHandler {
               // 2 - Locked, the player did not purchase the expansion
               let waypoints;
               try {
-                waypoints = JSON.parse(replies[20]);
+                waypoints = JSON.parse(replies[21]);
 
                 if (waypoints && !expansion1) {
                   const classicWaypoint = waypoints.slice(0, 3);
@@ -346,16 +348,16 @@ class DatabaseHandler {
 
               var artifact = new Array(ARTIFACT_COUNT).fill(0);
               try {
-                if (!replies[18]) {
+                if (!replies[19]) {
                   this.client.hset("u:" + player.name, "artifact", JSON.stringify(artifact));
                 } else {
-                  artifact = JSON.parse(replies[18]);
+                  artifact = JSON.parse(replies[19]);
                 }
               } catch (errArtifact) {
                 Sentry.captureException(errArtifact);
               }
 
-              var settings = replies[24];
+              var settings = replies[25];
               try {
                 settings = Object.assign(defaultSettings, JSON.parse(settings || "{}"));
               } catch (_err) {
@@ -377,6 +379,7 @@ class DatabaseHandler {
                 weapon,
                 belt,
                 cape,
+                shield,
                 ring1,
                 ring2,
                 amulet,
@@ -441,6 +444,7 @@ class DatabaseHandler {
           .hset(userKey, "armor", "clotharmor:1")
           .hset(userKey, "belt", null)
           .hset(userKey, "cape", null)
+          .hset(userKey, "shield", null)
           .hset(userKey, "settings", "{}")
           .hset(userKey, "ring1", null)
           .hset(userKey, "ring2", null)
@@ -460,6 +464,7 @@ class DatabaseHandler {
               weapon: "dagger:1",
               belt: null,
               cape: null,
+              shield: null,
               exp: 0,
               createdAt: curTime,
               x: player.x,
@@ -595,6 +600,20 @@ class DatabaseHandler {
     }
   }
 
+  equipShield(name, shield, level, bonus, skill) {
+    if (shield) {
+      console.info(`Set Shield: ${name} ${shield} ${level} ${bonus} ${skill}`);
+      this.client.hset(
+        "u:" + name,
+        "shield",
+        `${shield}:${level}${bonus ? `:${bonus}` : ""}${skill ? `:${skill}` : ""}`,
+      );
+    } else {
+      console.info("Delete Shield");
+      this.client.hdel("u:" + name, "shield");
+    }
+  }
+
   equipCape(name, cape, level, bonus) {
     if (cape) {
       console.info("Set Cape: " + name + " " + cape + ":" + level);
@@ -672,6 +691,8 @@ class DatabaseHandler {
       return ["belt", 0];
     } else if (slot === Types.Slot.CAPE) {
       return ["cape", 0];
+    } else if (slot === Types.Slot.SHIELD) {
+      return ["shield", 0];
     } else if (slot === Types.Slot.RING1) {
       return ["ring1", 0];
     } else if (slot === Types.Slot.RING2) {
@@ -741,6 +762,26 @@ class DatabaseHandler {
         player.equip({ kind: player.capeKind, level: player.capeLevel, bonus: player.capeBonus, type }),
         false,
       );
+    } else if (location === "shield") {
+      const type = "shield";
+      let item = null;
+      let level = null;
+      let bonus = null;
+      let skill = null;
+      if (data) {
+        [item, level, bonus, skill] = data.split(":");
+      }
+      player.equipItem({ item, level, type: "shield", bonus, skill });
+      player.broadcast(
+        player.equip({
+          kind: player.shieldKind,
+          level: player.shieldLevel,
+          bonus: player.shieldBonus,
+          skill: player.shieldSkill,
+          type,
+        }),
+        false,
+      );
     } else if (location === "ring1") {
       let item = null;
       let level = null;
@@ -779,6 +820,8 @@ class DatabaseHandler {
     const [toLocation, toRange] = this.getItemLocation(toSlot);
     const isMultipleFrom = ["inventory", "upgrade", "stash"].includes(fromLocation);
     const isMultipleTo = ["inventory", "upgrade", "stash"].includes(toLocation);
+
+    // @TODO check for race condition that causes fromLocation to not be saved
 
     if (!fromLocation || !toLocation) return;
 
@@ -845,7 +888,10 @@ class DatabaseHandler {
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }
-              } else if (["weapon", "armor", "belt", "cape", "ring1", "ring2", "amulet"].includes(toLocation)) {
+              } else if (
+                ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(toLocation)
+              ) {
+                // @NOTE IMPORTANT fromItem.split is not a function!?
                 const [item, fromLevel] = fromItem.split(":");
                 if (
                   Types.getItemRequirement(item, fromLevel) > player.level ||
@@ -855,7 +901,7 @@ class DatabaseHandler {
                   isToReplyDone = true;
                 }
               } else if (
-                ["weapon", "armor", "belt", "cape", "ring1", "ring2", "amulet"].includes(fromLocation) &&
+                ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(fromLocation) &&
                 toItem
               ) {
                 const [item, toLevel] = toItem.split(":");
@@ -916,7 +962,7 @@ class DatabaseHandler {
       try {
         let inventory = JSON.parse(reply);
 
-        items.forEach(({ item, level, quantity, bonus }) => {
+        items.forEach(({ item, level, quantity, bonus, skill }) => {
           let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
 
           // Increase the scroll count
@@ -930,7 +976,7 @@ class DatabaseHandler {
           } else if (slotIndex === -1) {
             slotIndex = inventory.indexOf(0);
             if (slotIndex !== -1) {
-              inventory[slotIndex] = [item, level || quantity, bonus].filter(Boolean).join(":");
+              inventory[slotIndex] = [item, level || quantity, bonus, skill].filter(Boolean).join(":");
             } else if (player.hasParty()) {
               // @TODO re-call the lootItems fn with next party member
             }
@@ -955,13 +1001,14 @@ class DatabaseHandler {
         if (filteredUpgrade.length) {
           const items = filteredUpgrade.reduce((acc, rawItem) => {
             if (!rawItem) return acc;
-            const [item, level, bonus] = rawItem.split(":");
+            const [item, level, bonus, skill] = rawItem.split(":");
             const isQuantity = Types.isScroll(item) || Types.isChest(item);
 
             acc.push({
               item,
               [isQuantity ? "quantity" : "level"]: level,
               bonus,
+              skill,
             });
             return acc;
           }, []);
@@ -1005,12 +1052,12 @@ class DatabaseHandler {
         let transmuteRates;
 
         if (isValidUpgradeItems(filteredUpgrade)) {
-          const [item, level, bonus] = filteredUpgrade[0].split(":");
+          const [item, level, bonus, skill] = filteredUpgrade[0].split(":");
           let upgradedItem: number | string = 0;
 
           if (isUpgradeSuccess({ level, isLuckySlot, isBlessed })) {
             const upgradedLevel = parseInt(level) + 1;
-            upgradedItem = [item, parseInt(level) + 1, bonus].filter(Boolean).join(":");
+            upgradedItem = [item, parseInt(level) + 1, bonus, skill].filter(Boolean).join(":");
             isSuccess = true;
 
             if (Types.isBaseHighClassItem(item)) {
@@ -1044,12 +1091,16 @@ class DatabaseHandler {
             (typeof isTransmuteSuccess === "undefined" && isUniqueSuccess)
           ) {
             isSuccess = true;
-            const { item: itemName, bonus } = player.generateItem({
+            const {
+              item: itemName,
+              bonus,
+              skill,
+            } = player.generateItem({
               kind: Types.getKindFromString(item),
               uniqueChances: isUniqueSuccess ? 100 : 0,
             });
 
-            generatedItem = [itemName, level, bonus].filter(Boolean).join(":");
+            generatedItem = [itemName, level, bonus, skill].filter(Boolean).join(":");
           }
 
           upgrade = upgrade.map(() => 0);
@@ -1089,9 +1140,10 @@ class DatabaseHandler {
                 level,
                 quantity,
                 bonus,
+                skill,
               } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
 
-              generatedItem = [itemName, level, quantity, bonus].filter(Boolean).join(":");
+              generatedItem = [itemName, level, quantity, bonus, skill].filter(Boolean).join(":");
             }
           }
 

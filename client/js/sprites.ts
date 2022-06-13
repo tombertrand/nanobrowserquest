@@ -42,6 +42,15 @@ import guard from "../sprites/guard.json";
 import hand from "../sprites/hand.json";
 import impact from "../sprites/impact.json";
 import cape from "../sprites/cape.json";
+import shieldwood from "../sprites/shieldwood.json";
+import shieldiron from "../sprites/shieldiron.json";
+import shieldplate from "../sprites/shieldplate.json";
+import shieldred from "../sprites/shieldred.json";
+import shieldgolden from "../sprites/shieldgolden.json";
+import shieldblue from "../sprites/shieldblue.json";
+import shieldhorned from "../sprites/shieldhorned.json";
+import shieldfrozen from "../sprites/shieldfrozen.json";
+import shielddiamond from "../sprites/shielddiamond.json";
 import itemAxe from "../sprites/item-axe.json";
 import itemBlueaxe from "../sprites/item-blueaxe.json";
 import itemBluemorningstar from "../sprites/item-bluemorningstar.json";
@@ -100,6 +109,15 @@ import itemBelthorned from "../sprites/item-belthorned.json";
 import itemBeltdiamond from "../sprites/item-beltdiamond.json";
 import itemBeltminotaur from "../sprites/item-beltminotaur.json";
 import itemCape from "../sprites/item-cape.json";
+import itemShieldwood from "../sprites/item-shieldwood.json";
+import itemShieldiron from "../sprites/item-shieldiron.json";
+import itemShieldplate from "../sprites/item-shieldplate.json";
+import itemShieldred from "../sprites/item-shieldred.json";
+import itemShieldgolden from "../sprites/item-shieldgolden.json";
+import itemShieldblue from "../sprites/item-shieldblue.json";
+import itemShieldhorned from "../sprites/item-shieldhorned.json";
+import itemShieldfrozen from "../sprites/item-shieldfrozen.json";
+import itemShielddiamond from "../sprites/item-shielddiamond.json";
 import itemGoldensword from "../sprites/item-goldensword.json";
 import itemFrozensword from "../sprites/item-frozensword.json";
 import itemDiamondsword from "../sprites/item-diamondsword.json";
@@ -163,6 +181,9 @@ import auraDrainlife from "../sprites/aura-drainlife.json";
 import auraThunderstorm from "../sprites/aura-thunderstorm.json";
 import auraHighhealth from "../sprites/aura-highhealth.json";
 import auraFreeze from "../sprites/aura-freeze.json";
+import skillHeal from "../sprites/skill-heal.json";
+import skillDefense from "../sprites/skill-defense.json";
+import skillCurseAttack from "../sprites/skill-curse-attack.json";
 import villagegirl from "../sprites/villagegirl.json";
 import villager from "../sprites/villager.json";
 import carlosmatos from "../sprites/carlosmatos.json";
@@ -213,6 +234,15 @@ const sprites = {
   hand,
   impact,
   cape,
+  shieldwood,
+  shieldiron,
+  shieldplate,
+  shieldred,
+  shieldgolden,
+  shieldblue,
+  shieldhorned,
+  shieldfrozen,
+  shielddiamond,
   "item-axe": itemAxe,
   "item-blueaxe": itemBlueaxe,
   "item-bluemorningstar": itemBluemorningstar,
@@ -271,6 +301,15 @@ const sprites = {
   "item-beltdiamond": itemBeltdiamond,
   "item-beltminotaur": itemBeltminotaur,
   "item-cape": itemCape,
+  "item-shieldwood": itemShieldwood,
+  "item-shieldiron": itemShieldiron,
+  "item-shieldplate": itemShieldplate,
+  "item-shieldred": itemShieldred,
+  "item-shieldgolden": itemShieldgolden,
+  "item-shieldblue": itemShieldblue,
+  "item-shieldhorned": itemShieldhorned,
+  "item-shieldfrozen": itemShieldfrozen,
+  "item-shielddiamond": itemShielddiamond,
   "item-goldensword": itemGoldensword,
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,
@@ -334,6 +373,9 @@ const sprites = {
   "aura-thunderstorm": auraThunderstorm,
   "aura-highhealth": auraHighhealth,
   "aura-freeze": auraFreeze,
+  "skill-heal": skillHeal,
+  "skill-defense": skillDefense,
+  "skill-curse-attack": skillCurseAttack,
   villagegirl,
   villager,
   carlosmatos,

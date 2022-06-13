@@ -200,10 +200,11 @@ export const isValidUpgradeItems = items => {
   const isArmor = Types.isArmor(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
+  const isShield = Types.isShield(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
 
-  if ((!isWeapon && !isArmor && !isBelt && !isCape && !isRing && !isAmulet) || parseInt(level) === 10) {
+  if ((!isWeapon && !isArmor && !isBelt && !isCape && !isShield && !isRing && !isAmulet) || parseInt(level) === 10) {
     return false;
   }
 
@@ -339,13 +340,17 @@ export const isValidRecipe = items => {
 export const generateBlueChestItem = (): { item: string; uniqueChances?: number } => {
   // 50%
   const items = [
-    { item: "belthorned", uniqueChances: 20 },
+    { item: "hornedarmor", uniqueChances: 40 },
+    { item: "belthorned", uniqueChances: 40 },
+    { item: "shieldhorned", uniqueChances: 30 },
     { item: "frozenarmor", uniqueChances: 40 },
     { item: "beltfrozen", uniqueChances: 40 },
+    { item: "shieldfrozen", uniqueChances: 25 },
     { item: "frozensword", uniqueChances: 40 },
     { item: "diamondsword", uniqueChances: 20 },
     { item: "diamondarmor", uniqueChances: 20 },
     { item: "beltdiamond", uniqueChances: 20 },
+    { item: "shielddiamond", uniqueChances: 15 },
     { item: "beltminotaur", uniqueChances: 10 },
     { item: "minotauraxe", uniqueChances: 10 },
     { item: "cape", uniqueChances: 5 },

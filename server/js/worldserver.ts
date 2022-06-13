@@ -1255,13 +1255,15 @@ class World {
         }
       });
     } else if (mob.kind === Types.Entities.COW) {
-      const diamondRandom = random(720);
+      const diamondRandom = random(800);
       if (diamondRandom === 69) {
         return "diamondsword";
       } else if (diamondRandom === 133) {
         return "diamondarmor";
       } else if (diamondRandom === 420) {
         return "beltdiamond";
+      } else if (diamondRandom === 555) {
+        return "shielddiamond";
       } else if (diamondRandom === 699) {
         return "scrolltransmute";
       }
@@ -1325,6 +1327,7 @@ class World {
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = ["scrolltransmute", "ringgold", "amuletgold"];
+    // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrop = random(randomDrops.length);
     // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 

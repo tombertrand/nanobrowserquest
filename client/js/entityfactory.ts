@@ -256,6 +256,42 @@ EntityFactory.builders[Types.Entities.CAPE] = function (id) {
   return new Items.Cape(id);
 };
 
+EntityFactory.builders[Types.Entities.SHIELDWOOD] = function (id) {
+  return new Items.ShieldWood(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDIRON] = function (id) {
+  return new Items.ShieldIron(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDPLATE] = function (id) {
+  return new Items.ShieldPlate(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDRED] = function (id) {
+  return new Items.ShieldRed(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDGOLDEN] = function (id) {
+  return new Items.ShieldGolden(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDBLUE] = function (id) {
+  return new Items.ShieldBlue(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDHORNED] = function (id) {
+  return new Items.ShieldHorned(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDFROZEN] = function (id) {
+  return new Items.ShieldFrozen(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDDIAMOND] = function (id) {
+  return new Items.ShieldDiamond(id);
+};
+
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {
   return new Items.Flask(id);
 };
