@@ -86,6 +86,7 @@ class Player extends Character {
   shieldBonus: number[] | null;
   shieldSkill: number;
   shieldSkillTimeout: NodeJS.Timeout;
+  shieldSkillDefenseTimeout: NodeJS.Timeout;
   firefoxpotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -1038,7 +1039,6 @@ class Player extends Character {
         const skill = message[1];
         let isBroadcasted = false;
         let level: number;
-        let resetCallback = () => {};
 
         // @NOTE Hardcode shieldSkill for now..
         if (skill === this.shieldSkill && !this.shieldSkillTimeout) {
@@ -1063,20 +1063,19 @@ class Player extends Character {
 
             self.skill.defense = percent;
             self.sendPlayerStats();
-
-            resetCallback = () => {
+            self.shieldSkillDefenseTimeout = setTimeout(() => {
               self.skill.defense = 0;
               self.sendPlayerStats();
-            };
+              self.shieldSkillDefenseTimeout = null;
+            }, Types.skillDurationMap[this.shieldSkill](this.shieldLevel));
           }
 
-          this.shieldSkillTimeout = setTimeout(() => {
-            this.shieldSkillTimeout = null;
-            resetCallback();
+          self.shieldSkillTimeout = setTimeout(() => {
+            self.shieldSkillTimeout = null;
           }, Types.skillDelay[this.shieldSkill]);
 
           if (isBroadcasted) {
-            this.broadcast(new Messages.Skill(this, skill, level), false);
+            self.broadcast(new Messages.Skill(this, skill, level), false);
           }
         }
       } else {
@@ -1327,9 +1326,14 @@ class Player extends Character {
 
     if (this.hitPoints <= 0) {
       this.isDead = true;
+
       if (this.shieldSkillTimeout) {
         clearTimeout(this.shieldSkillTimeout);
         this.shieldSkillTimeout = null;
+      }
+      if (this.shieldSkillDefenseTimeout) {
+        clearTimeout(this.shieldSkillDefenseTimeout);
+        this.shieldSkillDefenseTimeout = null;
       }
       if (this.firefoxpotionTimeout) {
         clearTimeout(this.firefoxpotionTimeout);

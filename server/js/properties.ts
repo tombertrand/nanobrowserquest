@@ -367,9 +367,9 @@ var Properties: any = {
       beltminotaur: 10,
       scrollupgradehigh: 72,
     },
-    hp: 13000,
-    armor: 30,
-    weapon: 35,
+    hp: 12500,
+    armor: 28,
+    weapon: 32,
   },
 };
 

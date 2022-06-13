@@ -149,7 +149,7 @@ Formulas.minMaxAbsorb = function ({
 };
 
 Formulas.dmgFromMob = function ({ weaponLevel }) {
-  return Math.ceil(weaponLevel * randomInt(11, 16));
+  return Math.ceil(weaponLevel * randomInt(12, 16));
 };
 
 Formulas.playerDefense = ({
