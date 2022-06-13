@@ -780,6 +780,7 @@ class Game {
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${description ? `<div class="item-description">${description}</div>` : ""}
+            ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
             ${
               setBonus.length
                 ? `<div class="item-set-description">${_.capitalize(self.player.set)} set bonuses</div>`
@@ -788,7 +789,6 @@ class Game {
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-            ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
           </div>`;
       },

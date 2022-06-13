@@ -698,14 +698,14 @@ Types.setBonus = {
 
 Types.setItems = {
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
-  diamond: ["diamondarmor", "beltdiamond", "diamondsword"],
-  sapphire: ["frozenarmor", "frozensword", "beltfrozen"],
-  horned: ["hornedarmor", "belthorned"],
-  frozen: ["bluearmor", "bluemorningstar", "blueaxe"],
-  golden: ["goldenarmor", "goldensword"],
-  ruby: ["redarmor", "redsword"],
-  plated: ["platearmor", "beltplated"],
-  leather: ["leatherarmor", "beltleather"],
+  diamond: ["diamondarmor", "beltdiamond", "diamondsword", "shielddiamond"],
+  sapphire: ["frozenarmor", "frozensword", "beltfrozen", "shieldfrozen"],
+  horned: ["hornedarmor", "belthorned", "shieldhorned"],
+  frozen: ["bluearmor", "bluemorningstar", "blueaxe", "shieldblue"],
+  golden: ["goldenarmor", "goldensword", "shieldgolden"],
+  ruby: ["redarmor", "redsword", "shieldred"],
+  plated: ["platearmor", "beltplated", "shieldplate"],
+  leather: ["leatherarmor", "beltleather", "shieldwood"],
 };
 
 Types.getSet = ({ belt, weaponKind, armorKind, shieldKind, ring1, ring2 }) => {
@@ -726,7 +726,7 @@ Types.getSet = ({ belt, weaponKind, armorKind, shieldKind, ring1, ring2 }) => {
   } else if (
     armorKind === Types.Entities.FROZENARMOR &&
     weaponKind === Types.Entities.FROZENSWORD &&
-    shieldKind === Types.Entities.SHIELDFORZEN &&
+    shieldKind === Types.Entities.SHIELDFROZEN &&
     belt === "beltfrozen"
   ) {
     set = "sapphire";
@@ -1150,7 +1150,7 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
   }
 
   if (typeof kindOrString === "number") {
-    if ([Types.Entities.AMULETCOW, Types.Entities.AMULETFORZEN].includes(kindOrString)) {
+    if ([Types.Entities.AMULETCOW, Types.Entities.AMULETFROZEN].includes(kindOrString)) {
       return true;
     }
     if (Types.Entities.AMULETSILVER === kindOrString && bonus.length === 3) {

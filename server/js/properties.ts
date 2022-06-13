@@ -368,7 +368,7 @@ var Properties: any = {
       scrollupgradehigh: 72,
     },
     hp: 12500,
-    armor: 28,
+    armor: 29,
     weapon: 32,
   },
 };
