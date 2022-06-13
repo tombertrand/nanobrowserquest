@@ -22,7 +22,7 @@
   }
   #skill-offensive::before,
   #skill-shield::before {
-    background-position: -100px 0;
+    background-position: 0 -42px;
     background-image: url(../img/3/skills.png);
   }
 
@@ -31,7 +31,10 @@
   }
 
   #skill-shield.skill-defense::before {
-    background-position: 0 -42px;
+    background-position: -42px 0;
+  }
+  #skill-shield.skill-curse-attack::before {
+    background-position: -84px 0;
   }
 }
 
@@ -44,7 +47,7 @@
 
   #skill-offensive::before,
   #skill-shield::before {
-    background-position: -100px 0;
+    background-position: 0 -28px;
     background-image: url(../img/2/skills.png);
   }
 
@@ -53,7 +56,11 @@
   }
 
   #skill-shield.skill-defense::before {
-    background-position: 0 -28px;
+    background-position: -28px 0;
+  }
+
+  #skill-shield.skill-curse-attack::before {
+    background-position: -56px 0;
   }
 }
 

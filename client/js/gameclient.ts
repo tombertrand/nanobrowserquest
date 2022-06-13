@@ -518,9 +518,10 @@ class GameClient {
   receiveSkill(data) {
     var id = data[1];
     var skill = data[2];
+    var level = data[3];
 
     if (this.skill_callback) {
-      this.skill_callback(id, skill);
+      this.skill_callback({ id, skill, level });
     }
   }
 

@@ -17,9 +17,14 @@ Formulas.minMaxDamage = function ({
   coldDamage,
   pierceDamage,
   partyAttackDamage,
+  magicResistance,
 }) {
   const isUnique = !!flameDamage;
-  const weaponMagicDamage = isUnique ? 0 : Types.getWeaponMagicDamage(weaponLevel);
+  let weaponMagicDamage = isUnique ? 0 : Types.getWeaponMagicDamage(weaponLevel);
+  if (magicResistance) {
+    weaponMagicDamage = Math.round(weaponMagicDamage * (Math.abs(magicResistance - 100) / 100));
+  }
+
   const baseDamage =
     Math.ceil((Types.getWeaponDamage(weapon, weaponLevel, isUnique) + attackDamage) * 1.2 + playerLevel / 2) +
     weaponMagicDamage +
@@ -62,6 +67,7 @@ Formulas.dmg = function ({
   coldDamage,
   pierceDamage,
   partyAttackDamage,
+  magicResistance,
 }) {
   const { min, max } = Formulas.minMaxDamage({
     weapon,
@@ -77,6 +83,7 @@ Formulas.dmg = function ({
     coldDamage,
     pierceDamage,
     partyAttackDamage,
+    magicResistance,
   });
   const dealt = randomInt(min, max);
 
@@ -112,6 +119,7 @@ Formulas.minMaxAbsorb = function ({
   partyDefense,
   cape,
   capeLevel,
+  skillDefense,
 }) {
   const armorDefense = Types.getArmorDefense(armor, armorLevel, isUniqueArmor);
   const beltDefense = Types.getArmorDefense(belt, beltLevel, isUniqueBelt);
@@ -120,11 +128,19 @@ Formulas.minMaxAbsorb = function ({
 
   let min = Math.ceil((armorDefense + beltDefense + capeDefense + shieldDefense + defense) * 1.2) + absorbedDamage;
   let max = min + Math.ceil(Math.pow(1.075, playerLevel));
+  let maxSkillDefense = 0;
+  let maxParty = 0;
+
+  if (skillDefense) {
+    maxSkillDefense = Math.round((skillDefense / 100) * max);
+  }
 
   if (partyDefense) {
-    min = Math.round((partyDefense / 100) * min) + min;
-    max = Math.round((partyDefense / 100) * max) + max;
+    maxParty = Math.round((partyDefense / 100) * max);
   }
+
+  min = min + maxSkillDefense + maxParty;
+  max = max + maxSkillDefense + maxParty;
 
   return {
     min,
@@ -133,7 +149,7 @@ Formulas.minMaxAbsorb = function ({
 };
 
 Formulas.dmgFromMob = function ({ weaponLevel }) {
-  return Math.ceil(weaponLevel * randomInt(10, 15));
+  return Math.ceil(weaponLevel * randomInt(11, 16));
 };
 
 Formulas.playerDefense = ({
@@ -151,6 +167,7 @@ Formulas.playerDefense = ({
   partyDefense,
   cape,
   capeLevel,
+  skillDefense,
 }) => {
   const { min, max } = Formulas.minMaxAbsorb({
     armor,
@@ -167,6 +184,7 @@ Formulas.playerDefense = ({
     partyDefense,
     cape,
     capeLevel,
+    skillDefense,
   });
 
   return randomInt(min, max);

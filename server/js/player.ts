@@ -121,6 +121,7 @@ class Player extends Character {
   isPasswordValid: boolean;
   network: Network;
   nanoPotions: number;
+  skill: { defense: number; curseAttack: number };
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -156,6 +157,7 @@ class Player extends Character {
     // Item bonuses (Rings, amulet, Uniques?)
     this.resetBonus();
     this.resetPartyBonus();
+    this.resetSkill();
 
     this.inventory = [];
     this.inventoryCount = [];
@@ -411,7 +413,24 @@ class Player extends Character {
         if (mob?.type === "mob" || mob?.type === "player") {
           let isCritical = false;
 
-          const resistances = Types.Resistances[mob.kind] || {};
+          let resistances: {
+            magicDamage?: number;
+            flameDamage?: number;
+            lightningDamage?: number;
+            coldDamage?: number;
+            physicalDamage?: number;
+          } = { magicDamage: 0, flameDamage: 0, lightningDamage: 0, coldDamage: 0, physicalDamage: 0 };
+
+          if (mob.type === "mob") {
+            resistances = Object.assign(resistances, Types.resistances[mob.kind] || {});
+          } else if (mob.type === "player") {
+            resistances = {
+              magicDamage: mob.bonus.magicResistance,
+              flameDamage: mob.bonus.flameResistance,
+              lightningDamage: mob.bonus.lightningResistance,
+              coldDamage: mob.bonus.coldResistance,
+            };
+          }
 
           let dmg = Formulas.dmg({
             weapon: self.weapon,
@@ -419,14 +438,19 @@ class Player extends Character {
             playerLevel: self.level,
             minDamage: self.bonus.minDamage + self.partyBonus.minDamage,
             maxDamage: self.bonus.maxDamage + self.partyBonus.maxDamage,
-            magicDamage: resistances.magicDamage ? 0 : self.bonus.magicDamage + self.partyBonus.magicDamage,
+            magicDamage: Math.round(
+              (self.bonus.magicDamage + self.partyBonus.magicDamage) * (Math.abs(resistances.magicDamage - 100) / 100),
+            ),
             attackDamage: resistances.physicalDamage ? 0 : self.bonus.attackDamage,
             drainLife: self.bonus.drainLife,
-            flameDamage: resistances.flameDamage ? 0 : self.bonus.flameDamage,
-            lightningDamage: resistances.lightningDamage ? 0 : self.bonus.lightningDamage,
-            coldDamage: resistances.coldDamage ? 0 : self.bonus.coldDamage,
+            flameDamage: Math.round(self.bonus.flameDamage * (Math.abs(resistances.flameDamage - 100) / 100)),
+            lightningDamage: Math.round(
+              self.bonus.lightningDamage * (Math.abs(resistances.lightningDamage - 100) / 100),
+            ),
+            coldDamage: Math.round(self.bonus.coldDamage * (Math.abs(resistances.coldDamage - 100) / 100)),
             pierceDamage: self.bonus.pierceDamage,
             partyAttackDamage: resistances.physicalDamage ? 0 : self.partyBonus.attackDamage,
+            magicResistance: resistances.magicDamage,
           });
 
           if (self.bonus.criticalHit) {
@@ -1012,12 +1036,14 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.SKILL) {
         const skill = message[1];
+        let isBroadcasted = false;
+        let level: number;
+        let resetCallback = () => {};
 
         // @NOTE Hardcode shieldSkill for now..
         if (skill === this.shieldSkill && !this.shieldSkillTimeout) {
-          this.shieldSkillTimeout = setTimeout(() => {
-            this.shieldSkillTimeout = null;
-          }, Types.skillDelay[this.shieldSkill]);
+          isBroadcasted = true;
+          level = this.shieldLevel;
 
           if (this.shieldSkill === 0) {
             if (!self.hasFullHealth()) {
@@ -1032,10 +1058,26 @@ class Player extends Character {
               self.regenHealthBy(healAmount);
               self.server.pushToPlayer(self, self.health());
             }
+          } else if (this.shieldSkill === 1) {
+            const { stats: percent } = Types.getSkill(0, this.shieldLevel);
+
+            self.skill.defense = percent;
+            self.sendPlayerStats();
+
+            resetCallback = () => {
+              self.skill.defense = 0;
+              self.sendPlayerStats();
+            };
           }
 
-          // @NOTE Start timeout!
-          this.broadcast(new Messages.Skill(this, skill), false);
+          this.shieldSkillTimeout = setTimeout(() => {
+            this.shieldSkillTimeout = null;
+            resetCallback();
+          }, Types.skillDelay[this.shieldSkill]);
+
+          if (isBroadcasted) {
+            this.broadcast(new Messages.Skill(this, skill, level), false);
+          }
         }
       } else {
         if (self.message_callback) {
@@ -1106,7 +1148,7 @@ class Player extends Character {
 
       if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
         const resistanceBonus = [21, 22, 23, 24];
-        const shieldSkill = [0, 1, 2];
+        const shieldSkill = [0, 1];
         bonus = _.shuffle(resistanceBonus)
           .slice(0, isUnique ? 2 : 1)
           .sort();
@@ -1236,6 +1278,7 @@ class Player extends Character {
       shield: this.shield,
       shieldLevel: this.shieldLevel,
       isUniqueShield: this.shieldBonus?.length >= 3,
+      skillDefense: this.skill.defense,
     });
 
     dmg = defense > dmg ? 0 : dmg - defense;
@@ -1252,7 +1295,7 @@ class Player extends Character {
       }
     }
 
-    if (this.bonus.lightningDamage && !Types.Resistances[mob.kind]?.lightningDamage) {
+    if (this.bonus.lightningDamage && !Types.resistances[mob.kind]?.lightningDamage) {
       lightningDamage = this.bonus.lightningDamage;
 
       if (mob.type === "mob") {
@@ -1604,6 +1647,13 @@ class Player extends Character {
     };
   }
 
+  resetSkill() {
+    this.skill = {
+      defense: 0,
+      curseAttack: 0,
+    };
+  }
+
   equipItem({ item, level, bonus, skill, type }) {
     // @NOTE safety...
     if (bonus === "null") {
@@ -1767,6 +1817,7 @@ class Player extends Character {
       shieldLevel: this.shieldLevel,
       isUniqueShield: this.shieldBonus?.length >= 3,
       partyDefense: isInParty ? this.partyBonus.defense : 0,
+      skillDefense: this.skill.defense,
     });
     var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage({
       weapon: this.weapon,
@@ -1800,9 +1851,9 @@ class Player extends Character {
   incExp(exp) {
     this.experience = this.experience + exp;
     this.databaseHandler.setExp(this.name, this.experience);
-    var origLevel = this.level;
+    var originalLevel = this.level;
     this.level = Types.getLevel(this.experience);
-    if (origLevel !== this.level) {
+    if (originalLevel !== this.level) {
       this.updateHitPoints(true);
       this.sendPlayerStats();
       this.server.updatePopulation({ levelupPlayer: this.id });

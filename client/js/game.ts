@@ -262,6 +262,8 @@ class Game {
       "aura-highhealth",
       "aura-freeze",
       "skill-heal",
+      "skill-defense",
+      "skill-curse-attack",
       "talk",
       "sparks",
       "shadow16",
@@ -1356,7 +1358,7 @@ class Game {
     skillSlot.addClass("disabled");
     skillSlot.find(".skill-timeout").addClass(`active ${skillName}`);
     this.skillAnimation.reset();
-    this.player.setSkillAnimation(skillName, 900);
+    this.player.setSkillAnimation(skillName, Types.skillDurationMap[this.player.shieldSkill](this.player.shieldLevel));
     this.audioManager.playSound(`skill-${skillName}`);
 
     this.client.sendSkill(this.player.shieldSkill);
@@ -1371,10 +1373,6 @@ class Game {
 
   setShieldSkill(skill) {
     const skillName = Types.skillTypeAnimationMap[skill] || null;
-
-    console.log("~~~~~setShieldSkill - skill", skill);
-    console.log("~~~~~setShieldSkill - skillName", skillName);
-
     $("#skill-shield").attr("class", skillName ? `skill-${skillName}` : null);
   }
 
@@ -2328,7 +2326,6 @@ class Game {
 
       var [armor, armorLevel, armorBonus] = armor.split(":");
       var [weapon, weaponLevel, weaponBonus] = weapon.split(":");
-      console.log("~~~~~shield before", shield);
       var [shield, shieldLevel, shieldBonus, shieldSkill] = (shield || "").split(":");
 
       self.storage.setPlayerName(name);
@@ -3383,8 +3380,6 @@ class Game {
         var player = self.getEntityById(playerId);
         var name = Types.getKindAsString(kind);
 
-        console.log("~~~~onPlayerEquipItem kind, level, bonus, skill, type", kind, level, bonus, skill, type);
-
         if (player) {
           if (type === "armor") {
             player.switchArmor(self.sprites[name], level, bonus);
@@ -3402,7 +3397,6 @@ class Game {
             } else {
               player.switchShield(name, level, bonus, skill);
             }
-            console.log("~~~~setShieldSkill", skill);
             self.setShieldSkill(skill);
           }
         }
@@ -3415,11 +3409,10 @@ class Game {
         }
       });
 
-      self.client.onPlayerSkill(function (playerId, skill) {
+      self.client.onPlayerSkill(function ({ id: playerId, skill, level }) {
         var player = self.getEntityById(playerId);
         if (player) {
-          //@NOTE Different timings?
-          player.setSkillAnimation(Types.skillTypeAnimationMap[skill], 900);
+          player.setSkillAnimation(Types.skillTypeAnimationMap[skill], Types.skillDurationMap[skill](level));
         }
       });
 

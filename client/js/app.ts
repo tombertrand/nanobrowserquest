@@ -513,8 +513,9 @@ class App {
       if (target?.resistances) {
         let html = "";
 
-        Object.entries(target.resistances).map(([type, { display, percentage }]: any) => {
+        Object.entries(target.resistances).map(([type, percentage]: any) => {
           const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
+          const display = Types.resistanceToDisplayMap[type];
 
           html += `<div class="${type}">${prefix} ${display}</div>`;
         });

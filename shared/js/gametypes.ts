@@ -774,27 +774,23 @@ Types.getSet = ({ belt, weaponKind, armorKind, shieldKind, ring1, ring2 }) => {
   return { set, bonus };
 };
 
-Types.Resistances = {
+Types.resistances = {
   [Types.Entities.COWKING]: {
-    lightningDamage: {
-      percentage: 100,
-      display: "lightning damage",
-    },
+    lightningDamage: 100,
   },
   [Types.Entities.MINOTAUR]: {
-    flameDamage: {
-      percentage: 100,
-      display: "flame damage",
-    },
-    lightningDamage: {
-      percentage: 100,
-      display: "lightning damage",
-    },
-    magicDamage: {
-      percentage: 100,
-      display: "magic damage",
-    },
+    flameDamage: 100,
+    lightningDamage: 100,
+    magicDamage: 80,
   },
+};
+
+Types.resistanceToDisplayMap = {
+  magicDamage: "magic damage",
+  flameDamage: "flame damage",
+  lightningDamage: "lightning damage",
+  coldDamage: "cold damage",
+  physicalDamage: "physical damage",
 };
 
 Types.expForLevel = [
@@ -1640,13 +1636,17 @@ Types.getPartyBonus = function (rawBonus, level) {
 };
 
 Types.getFrozenTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
-Types.getDefenseSkillTimePerLevel = (itemLevel: number) => itemLevel * 500;
-Types.getCurseAttackSkillTimePerLevel = (itemLevel: number) => itemLevel * 500;
+
+Types.skillDurationMap = {
+  0: () => 900,
+  1: (itemLevel: number) => itemLevel * 500,
+  2: (itemLevel: number) => itemLevel * 500,
+};
 
 Types.getSkillDescriptionMap = [
   "+#% Instant health regeneration",
   "+#% Defense for # seconds",
-  "-#% Attack damage from your attacking enemies",
+  // "-#% Attack damage from your attacking enemies",
   // "+#% block chances for # seconds",
   // "-#% Attack damage from your enemies for # seconds",
 ];
@@ -1654,7 +1654,7 @@ Types.getSkillDescriptionMap = [
 Types.skillType = [
   "regenerateHealthSkill", // 0
   "defenseSkill", // 1
-  "curseAttackSkill", // 2
+  // "curseAttackSkill", // 2
   // "freezeNovaSkill", // 3
 ];
 
@@ -1665,13 +1665,13 @@ Types.skillTypeAnimationMap = ["heal", "defense", "curse-attack"];
 Types.getSkill = function (rawSkill, level) {
   const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const defenseSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  // const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   // const freezeNovaSkillPerLevel = [1, 3, 6, 10, 15, 22, 30, 40, 55, 70];
 
   const skillPerLevel = [
     regenerateHealthSkillPerLevel,
     defenseSkillPerLevel,
-    curseAttackSkillPerLevel,
+    // curseAttackSkillPerLevel,
     // freezeNovaSkillPerLevel,
   ];
 
@@ -1682,10 +1682,8 @@ Types.getSkill = function (rawSkill, level) {
 
   let description = Types.getSkillDescriptionMap[rawSkill].replace("#", stats);
 
-  if (type === "defenseSkill") {
-    description = description.replace("#", Types.getDefenseSkillTimePerLevel(level) / 1000);
-  } else if (type === "curseAttackSkill") {
-    description = description.replace("#", Types.getCurseAttackSkillTimePerLevel(level) / 1000);
+  if (["defenseSkill", "curseAttackSkill"].includes(type)) {
+    description = description.replace("#", Types.skillDurationMap[rawSkill](level) / 1000);
   }
 
   skill = { type, stats, description };
