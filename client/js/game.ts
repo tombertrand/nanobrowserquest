@@ -1105,7 +1105,7 @@ class Game {
     if (this.player.shieldName) {
       $(".item-equip-shield").append(
         $("<div />", {
-          class: `item-draggable ${this.player.shieldBonus ? "item-unique" : ""}`,
+          class: `item-draggable ${this.player.shieldBonus?.length >= 5 ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.shieldName)}")`,
           },

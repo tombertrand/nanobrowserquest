@@ -1851,7 +1851,7 @@ Types.isUnique = function (item, bonus) {
   } else if (isCape) {
     isUnique = (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 2;
   } else if (isShield) {
-    isUnique = !!bonus ? (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 3 : false;
+    isUnique = !!bonus ? (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 2 : false;
   } else if (isArmor || isWeapon || isBelt) {
     isUnique = !!bonus;
   }
