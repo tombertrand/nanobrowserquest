@@ -1550,7 +1550,7 @@ class Game {
       },
       FOXY: {
         id: 22,
-        name: "firefox",
+        name: "Firefox",
         desc: "Find the Firefox costume",
         hidden: true,
         nano: 2 * NANO_PAYOUT_MULTIPLIER,
@@ -3397,7 +3397,9 @@ class Game {
             } else {
               player.switchShield(name, level, bonus, skill);
             }
-            self.setShieldSkill(skill);
+            if (playerId === self.player.id) {
+              self.setShieldSkill(skill);
+            }
           }
         }
       });
