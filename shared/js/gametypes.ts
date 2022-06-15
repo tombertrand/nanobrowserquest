@@ -1717,7 +1717,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
   const isUniqueShield = isShield && isUnique;
 
   const uniqueSuccessRateMap = {
-    goldensword: 20,
+    goldensword: 25,
     blueaxe: 18,
     bluemorningstar: 18,
     frozensword: 15,
@@ -1736,6 +1736,12 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     belthorned: 15,
     beltdiamond: 11,
     beltminotaur: 8,
+
+    shieldgolden: 25,
+    shieldblue: 18,
+    shieldhorned: 18,
+    shieldfrozen: 15,
+    shielddiamond: 11,
 
     cape: 10,
     ringgold: 12,

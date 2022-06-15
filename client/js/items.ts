@@ -243,7 +243,7 @@ var Items = {
   ShieldBlue: class ShieldBlue extends Item {
     constructor(id) {
       super(id, Types.Entities.SHIELDBLUE, "shield");
-      this.lootMessage = "You pick up a blue shield";
+      this.lootMessage = "You pick up a frozen shield";
     }
   },
 
@@ -257,7 +257,7 @@ var Items = {
   ShieldFrozen: class ShieldFrozen extends Item {
     constructor(id) {
       super(id, Types.Entities.SHIELDFROZEN, "shield");
-      this.lootMessage = "You pick up a frozen shield";
+      this.lootMessage = "You pick up a sapphire shield";
     }
   },
 
