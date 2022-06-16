@@ -1276,7 +1276,7 @@ class Player extends Character {
       capeLevel: this.capeLevel,
       shield: this.shield,
       shieldLevel: this.shieldLevel,
-      isUniqueShield: this.shieldBonus?.length >= 3,
+      isUniqueShield: this.shieldBonus?.length >= 2,
       skillDefense: this.skill.defense,
     });
 
@@ -1819,7 +1819,7 @@ class Player extends Character {
       capeLevel: this.capeLevel,
       shield: this.shield,
       shieldLevel: this.shieldLevel,
-      isUniqueShield: this.shieldBonus?.length >= 3,
+      isUniqueShield: this.shieldBonus?.length >= 2,
       partyDefense: isInParty ? this.partyBonus.defense : 0,
       skillDefense: this.skill.defense,
     });
