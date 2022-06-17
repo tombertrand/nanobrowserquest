@@ -1343,6 +1343,8 @@ class Game {
   useSkill(slot) {
     const skillSlot = $(`[data-skill-slot="${slot}"]`);
 
+    if ($("#chatinput").is(":focus")) return;
+
     // Slot 1 (offensive skill) is not set yet!
     if (skillSlot.hasClass("disabled") || slot === 1) {
       return;
