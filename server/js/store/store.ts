@@ -26,7 +26,7 @@ class Store {
       id: Types.Store.SCROLLUPGRADEHIGH,
       nano: 0,
       ban: 0,
-      usd: isDevelopmentAmounts ? 0.10 : 0.5,
+      usd: isDevelopmentAmounts ? 0.1 : 0.5,
       isAvailable: true,
     },
     {
@@ -56,10 +56,11 @@ class Store {
 
     this.storeItems.map(item => {
       item.nano = parseFloat(new BigNumber(item.usd).dividedBy(nanoToUsd).toFormat(3));
-      item.ban = parseInt(new BigNumber(item.usd).dividedBy(banToUsd).toFormat());
+      item.ban = parseInt(`${new BigNumber(item.usd).dividedBy(banToUsd).toNumber()}`, 10);
 
       return item;
     });
+
     return this.storeItems;
   }
 }
