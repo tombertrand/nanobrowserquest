@@ -241,6 +241,7 @@ export const Types: any = {
     FROZENSWORD: 100,
     DIAMONDSWORD: 121,
     MINOTAURAXE: 133,
+    EMERALDSWORD: 152,
   },
 
   Orientations: {
@@ -316,6 +317,7 @@ Types.Entities.Weapons = [
   Types.Entities.FROZENSWORD,
   Types.Entities.DIAMONDSWORD,
   Types.Entities.MINOTAURAXE,
+  Types.Entities.EMERALDSWORD,
 ];
 
 Types.Entities.Armors = [
@@ -440,6 +442,7 @@ export const kinds = {
   frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 26, 30],
   diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 36, 36],
   minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 40, 40],
+  emeraldsword: [Types.Entities.EMERALDSWORD, "weapon", "Emerald Sword", 42, 42],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -612,8 +615,9 @@ Types.itemUniqueMap = {
   blueaxe: ["Feeless Cutter", 14, 26],
   bluemorningstar: ["Saylormoon", 16, 28],
   frozensword: ["Broccolish Fury", 20, 32],
-  diamondsword: ["Inevitable", 28, 40],
+  diamondsword: ["Inevitable", 32, 42],
   minotauraxe: ["PoS4QoS", 34, 44],
+  emeraldsword: ["TBD", 36, 44],
 
   // name, level, defense
   leatherarmor: ["Representative", 2, 5],
@@ -624,7 +628,7 @@ Types.itemUniqueMap = {
   bluearmor: ["Firano's Hide", 14, 26],
   hornedarmor: ["RaiBlocks", 20, 30],
   frozenarmor: ["Wall of Encrypted Energy", 30, 32],
-  diamondarmor: ["Zero-knowledge Proof", 38, 38],
+  diamondarmor: ["Zero-knowledge Proof", 38, 40],
   spikearmor: ["Jungle Warcry", 36, 46],
   demonarmor: ["Explorer's Block", 36, 50],
 
@@ -646,7 +650,7 @@ Types.itemUniqueMap = {
   beltplated: ["Hodler", 9, 6],
   beltfrozen: ["Spam Resistor", 22, 12],
   belthorned: ["Dee-Fye", 28, 14],
-  beltdiamond: ["Election scheduler", 38, 18],
+  beltdiamond: ["Election scheduler", 38, 20],
   beltminotaur: ["TaaC", 40, 22],
 };
 
