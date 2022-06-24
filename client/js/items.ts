@@ -79,6 +79,13 @@ var Items = {
     }
   },
 
+  EmeraldSword: class EmeraldSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.EMERALDSWORD, "weapon");
+      this.lootMessage = "You pick up an emerald sword";
+    }
+  },
+
   LeatherArmor: class LeatherArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.LEATHERARMOR, "armor");

@@ -350,6 +350,7 @@ class Game {
       "frozensword",
       "diamondsword",
       "minotauraxe",
+      "emeraldsword",
       "cape",
       "shieldwood",
       "shieldiron",
@@ -370,6 +371,7 @@ class Game {
       "item-frozensword",
       "item-diamondsword",
       "item-minotauraxe",
+      "item-emeraldsword",
       "item-leatherarmor",
       "item-mailarmor",
       "item-platearmor",
@@ -2954,6 +2956,7 @@ class Game {
             } else {
               currentEntity.setCape(`${entity.cape}:${entity.capeLevel}:${entity.capeBonus}`);
             }
+
             if (!entity.shieldName || !entity.shieldLevel || !entity.shieldBonus) {
               currentEntity.removeShield();
             } else {

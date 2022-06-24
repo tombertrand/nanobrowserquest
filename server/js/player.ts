@@ -1247,6 +1247,7 @@ class Player extends Character {
       this.auras,
       this.partyId,
       [this.cape, this.capeLevel, this.capeBonus].filter(Boolean).join(":"),
+      [this.shield, this.shieldLevel, this.shieldBonus].filter(Boolean).join(":"),
       {
         capeHue: this.capeHue,
         capeSaturate: this.capeSaturate,

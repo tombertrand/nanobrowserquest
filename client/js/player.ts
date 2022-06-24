@@ -371,27 +371,21 @@ class Player extends Character {
     }
   }
 
-  // setShield(rawShield) {
-  //   if (rawShield) {
-  //     const [shield, level, bonus, skill] = rawShield.split(":");
+  setShield(rawShield) {
+    if (rawShield) {
+      const [shield, level, bonus, skill] = rawShield.split(":");
 
-  //     this.shieldName = shield;
-  //     this.shieldLevel = parseInt(level);
-  //     this.shieldBonus = bonus;
-  //     this.shieldSkill = skill;
-  //   } else {
-  //     this.shieldName = null;
-  //     this.shieldLevel = null;
-  //     this.shieldBonus = null;
-  //     this.shieldSkill = null;
-  //   }
-  // }
-
-  // setSkillDefensive(skill) {
-  //   if (!this.skillDefensiveTimeout) {
-  //     this.skillDefensive = skill;
-  //   }
-  // }
+      this.shieldName = shield;
+      this.shieldLevel = parseInt(level);
+      this.shieldBonus = bonus;
+      this.shieldSkill = skill;
+    } else {
+      this.shieldName = null;
+      this.shieldLevel = null;
+      this.shieldBonus = null;
+      this.shieldSkill = null;
+    }
+  }
 
   setSettings(settings) {
     if (settings.capeHue) {

@@ -38,6 +38,7 @@ import goldensword from "../sprites/goldensword.json";
 import frozensword from "../sprites/frozensword.json";
 import diamondsword from "../sprites/diamondsword.json";
 import minotauraxe from "../sprites/minotauraxe.json";
+import emeraldsword from "../sprites/emeraldsword.json";
 import guard from "../sprites/guard.json";
 import hand from "../sprites/hand.json";
 import impact from "../sprites/impact.json";
@@ -122,6 +123,7 @@ import itemGoldensword from "../sprites/item-goldensword.json";
 import itemFrozensword from "../sprites/item-frozensword.json";
 import itemDiamondsword from "../sprites/item-diamondsword.json";
 import itemMinotauraxe from "../sprites/item-minotauraxe.json";
+import itemEmeraldsword from "../sprites/item-emeraldsword.json";
 import itemLeatherarmor from "../sprites/item-leatherarmor.json";
 import itemMailarmor from "../sprites/item-mailarmor.json";
 import itemMorningstar from "../sprites/item-morningstar.json";
@@ -230,6 +232,7 @@ const sprites = {
   frozensword,
   diamondsword,
   minotauraxe,
+  emeraldsword,
   guard,
   hand,
   impact,
@@ -314,6 +317,7 @@ const sprites = {
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,
   "item-minotauraxe": itemMinotauraxe,
+  "item-emeraldsword": itemEmeraldsword,
   "item-leatherarmor": itemLeatherarmor,
   "item-mailarmor": itemMailarmor,
   "item-morningstar": itemMorningstar,

@@ -429,6 +429,7 @@ class GameClient {
         auras,
         partyId,
         cape,
+        shield,
         settings;
 
       orientation = data[5];
@@ -442,7 +443,8 @@ class GameClient {
         auras = data[11];
         partyId = data[12];
         cape = data[13];
-        settings = data[14];
+        shield = data[14];
+        settings = data[15];
       }
 
       var character = EntityFactory.createEntity({ kind, id, name });
@@ -459,6 +461,7 @@ class GameClient {
         character.setAuras(auras);
         character.setPartyId(partyId);
         character.setCape(cape);
+        character.setShield(shield);
         character.setSettings(settings);
       }
 

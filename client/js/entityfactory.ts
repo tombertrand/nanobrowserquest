@@ -180,6 +180,11 @@ EntityFactory.builders[Types.Entities.MINOTAURAXE] = function (id) {
   return new Items.MinotaurAxe(id);
 };
 
+EntityFactory.builders[Types.Entities.EMERALDSWORD] = function (id) {
+  return new Items.EmeraldSword(id);
+};
+
+
 EntityFactory.builders[Types.Entities.MORNINGSTAR] = function (id) {
   return new Items.MorningStar(id);
 };
