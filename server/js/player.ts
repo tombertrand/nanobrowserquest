@@ -1337,6 +1337,7 @@ class Player extends Character {
         this.shieldSkillTimeout = null;
       }
       if (this.shieldSkillDefenseTimeout) {
+        this.skill.defense = 0;
         clearTimeout(this.shieldSkillDefenseTimeout);
         this.shieldSkillDefenseTimeout = null;
       }
