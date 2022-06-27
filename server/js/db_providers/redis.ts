@@ -958,38 +958,47 @@ class DatabaseHandler {
   }
 
   lootItems({ player, items }) {
-    this.client.hget("u:" + player.name, "inventory", (_err, reply) => {
-      try {
-        let inventory = JSON.parse(reply);
+    player.dbWriteQueue.enqueue(
+      () =>
+        new Promise((resolve, _reject) => {
+          this.client.hget("u:" + player.name, "inventory", async (_err, reply) => {
+            try {
+              let inventory = JSON.parse(reply);
 
-        items.forEach(({ item, level, quantity, bonus, skill }) => {
-          let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
+              items.forEach(({ item, level, quantity, bonus, skill }) => {
+                let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
 
-          // Increase the scroll count
-          if (slotIndex > -1) {
-            if (Types.isSingle(item)) {
-              inventory[slotIndex] = `${item}:1`;
-            } else {
-              const [, oldQuantity] = inventory[slotIndex].split(":");
-              inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(quantity)}`;
+                // Increase the scroll count
+                if (slotIndex > -1) {
+                  if (Types.isSingle(item)) {
+                    inventory[slotIndex] = `${item}:1`;
+                  } else {
+                    const [, oldQuantity] = inventory[slotIndex].split(":");
+                    inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(quantity)}`;
+                  }
+                } else if (slotIndex === -1) {
+                  slotIndex = inventory.indexOf(0);
+                  if (slotIndex !== -1) {
+                    inventory[slotIndex] = [item, level || quantity, bonus, skill].filter(Boolean).join(":");
+                  } else if (player.hasParty()) {
+                    // @TODO re-call the lootItems fn with next party member
+                  }
+                }
+              });
+
+              player.send([Types.Messages.INVENTORY, inventory]);
+              await this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
+                console.log("~~~~resolve");
+                resolve(true);
+              });
+            } catch (err) {
+              console.log(err);
+              Sentry.captureException(err);
+              resolve(true);
             }
-          } else if (slotIndex === -1) {
-            slotIndex = inventory.indexOf(0);
-            if (slotIndex !== -1) {
-              inventory[slotIndex] = [item, level || quantity, bonus, skill].filter(Boolean).join(":");
-            } else if (player.hasParty()) {
-              // @TODO re-call the lootItems fn with next party member
-            }
-          }
-        });
-
-        player.send([Types.Messages.INVENTORY, inventory]);
-        this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
-      } catch (err) {
-        console.log(err);
-        Sentry.captureException(err);
-      }
-    });
+          });
+        }),
+    );
   }
 
   moveUpgradeItemsToInventory(player) {

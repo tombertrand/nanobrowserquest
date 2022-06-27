@@ -1,17 +1,29 @@
-class PromiseQueue {
-  queue: any[];
-  isRunning: boolean;
+interface Operation<T> {
+  (): Promise<T>;
+}
+
+interface QueueItem<T> {
+  operation: Operation<T>;
+  resolve: (value: T) => void;
+  reject: (err: Error) => void;
+}
+
+export class PromiseQueue {
+  private readonly queue: QueueItem<unknown>[];
+  private isRunning: boolean;
+  public results: any[];
 
   constructor() {
     this.queue = [];
     this.isRunning = false;
+    this.results = [];
   }
 
-  enqueue(operation) {
-    return new Promise((resolve, reject) => {
+  public enqueue<T>(operation: Operation<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
       this.queue.push({
         operation,
-        resolve,
+        resolve: resolve as Operation<unknown>,
         reject,
       });
 
@@ -19,7 +31,7 @@ class PromiseQueue {
     });
   }
 
-  dequeue() {
+  private dequeue(): void {
     if (this.isRunning) {
       return;
     }
@@ -34,6 +46,7 @@ class PromiseQueue {
     setImmediate(async () => {
       try {
         const value = await operation();
+        this.results.push(value);
         resolve(value);
       } catch (err) {
         reject(err);
@@ -44,5 +57,3 @@ class PromiseQueue {
     });
   }
 }
-
-export { PromiseQueue };

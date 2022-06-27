@@ -8,6 +8,7 @@ import FormatChecker from "./format";
 import Formulas from "./formulas";
 import Messages from "./message";
 import { enqueueSendPayout } from "./payout";
+import { PromiseQueue } from "./promise-queue";
 import Properties from "./properties";
 import { Sentry } from "./sentry";
 import { purchase } from "./store/purchase";
@@ -123,6 +124,7 @@ class Player extends Character {
   network: Network;
   nanoPotions: number;
   skill: { defense: number; curseAttack: number };
+  dbWriteQueue: any;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -170,6 +172,8 @@ class Player extends Character {
 
     this.chatBanEndTime = 0;
     this.hash = null;
+
+    this.dbWriteQueue = new PromiseQueue();
 
     this.connection.listen(async message => {
       const action = parseInt(message[0]);
