@@ -48,6 +48,7 @@ class World {
   cowPossibleCoords: any[];
   cowEntityIds: any[];
   cowPackOrder: number[][];
+  cowKingHornDrop: boolean;
   minotaur: any;
   minotaurLevelClock: any;
   minotaurLevelInterval: any;
@@ -131,6 +132,7 @@ class World {
       [-1, 2],
       [-2, 2],
     ];
+    this.cowKingHornDrop = false;
     this.minotaur = null;
     this.minotaurLevelClock = null;
     this.minotaurLevelInterval = null;
@@ -694,6 +696,7 @@ class World {
   endCowLevel(isCompleted = false) {
     this.cowLevelInterval = null;
     this.cowLevelClock = null;
+    this.cowKingHornDrop = false;
 
     const townPortal = this.npcs[this.cowLevelTownNpcId];
     this.despawn(townPortal);
@@ -1286,6 +1289,8 @@ class World {
       } else {
         return "nanopotion";
       }
+    } else if (mob.kind === Types.Entities.COWKING && this.cowKingHornDrop) {
+      return "cowkinghorn";
     } else {
       for (var itemName in drops) {
         var percentage = drops[itemName];

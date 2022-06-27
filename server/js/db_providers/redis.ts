@@ -988,7 +988,6 @@ class DatabaseHandler {
 
               player.send([Types.Messages.INVENTORY, inventory]);
               await this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
-                console.log("~~~~resolve");
                 resolve(true);
               });
             } catch (err) {
@@ -1130,6 +1129,11 @@ class DatabaseHandler {
                 isWorkingRecipe = true;
                 isRecipe = true;
                 player.server.startCowLevel();
+
+                // Unique  Wirtleg have guaranteed horn drop
+                if (filteredUpgrade.find(item => item.startsWith("wirtleg") && item.endsWith(":[3,14]"))) {
+                  player.server.cowKingHornDrop = true;
+                }
               }
             } else if (recipe === "minotaurLevel") {
               if (!player.server.minotaurLevelClock && !player.server.minotaurSpawnTimeout) {
