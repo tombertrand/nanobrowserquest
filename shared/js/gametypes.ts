@@ -442,7 +442,7 @@ export const kinds = {
   frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 26, 30],
   diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 36, 36],
   minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 40, 40],
-  emeraldsword: [Types.Entities.EMERALDSWORD, "weapon", "Emerald Sword", 42, 42],
+  emeraldsword: [Types.Entities.EMERALDSWORD, "weapon", "Emerald Sword", 38, 38],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -648,7 +648,7 @@ Types.itemUniqueMap = {
   // name, level, defense
   beltleather: ["Proof of Wear", 4, 4],
   beltplated: ["Hodler", 9, 6],
-  beltfrozen: ["Spam Resistor", 22, 12],
+  beltfrozen: ["Spam Resistor", 24, 12],
   belthorned: ["Dee-Fye", 28, 14],
   beltdiamond: ["Election scheduler", 38, 20],
   beltminotaur: ["TaaC", 40, 22],
@@ -1979,5 +1979,5 @@ Types.itemDescription = {
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgradeblessed:
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level. Blessed scrolls gives a higher chance of successful upgrade.",
-  scrolltransmute: `Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.`,
+  scrolltransmute: "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
 };
