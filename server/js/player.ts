@@ -24,6 +24,7 @@ import {
 } from "./utils";
 
 import type Party from "./party";
+import type Trade from "./trade";
 import type { Network } from "./types";
 
 const MIN_LEVEL = 14;
@@ -117,6 +118,7 @@ class Player extends Character {
   stash: any;
   databaseHandler: any;
   partyId?: number;
+  tradeId?: number;
   freezeChanceLevel: number;
   minotaurDamage: number;
   isPasswordRequired: boolean;
@@ -1019,6 +1021,62 @@ class Player extends Character {
         if (isWorldPartyUpdate) {
           self.server.updatePopulation();
         }
+      } else if (action === Types.Messages.TRADE) {
+        if (message[1] === Types.Messages.TRADE_ACTIONS.REQUEST_SEND) {
+          const playerToTradeWith = self.server.getPlayerByName(message[2]);
+
+          if (!playerToTradeWith) {
+            self.send(
+              new Messages.Trade(Types.Messages.TRADE_ACTIONS.ERROR, `${message[2]} is not online`).serialize(),
+            );
+          } else if (playerToTradeWith.hasTrade()) {
+            self.send(
+              new Messages.Trade(
+                Types.Messages.TRADE_ACTIONS.ERROR,
+                `${message[2]} is already trading with another player`,
+              ).serialize(),
+            );
+          } else if (self.hasTrade()) {
+            self.send(
+              new Messages.Trade(
+                Types.Messages.TRADE_ACTIONS.ERROR,
+                `You are already trading with a player`,
+              ).serialize(),
+            );
+          } else {
+            self.send(
+              new Messages.Trade(Types.Messages.TRADE_ACTIONS.INFO, `Trade request sent to ${message[2]}`).serialize(),
+            );
+
+            playerToTradeWith.send(
+              new Messages.Trade(Types.Messages.TRADE_ACTIONS.REQUEST_RECEIVE, self.name).serialize(),
+            );
+          }
+        } else if (message[1] === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
+          const playerToTradeWith = self.server.getPlayerByName(message[2]);
+
+          if (playerToTradeWith) {
+            playerToTradeWith.send(
+              new Messages.Trade(
+                Types.Messages.TRADE_ACTIONS.INFO,
+                `${self.name} declined the trade request`,
+              ).serialize(),
+            );
+          }
+        } else if (message[1] === Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT) {
+          const playerToTradeWith = self.server.getPlayerByName(message[2]);
+
+          if (playerToTradeWith) {
+            playerToTradeWith.send(
+              new Messages.Trade(
+                Types.Messages.TRADE_ACTIONS.INFO,
+                `${self.name} accepted the trade request`,
+              ).serialize(),
+            );
+
+            self.server.tradeCreate(playerToTradeWith.id, self.id);
+          }
+        }
       } else if (action === Types.Messages.SETTINGS) {
         const settings = message[1];
 
@@ -1874,12 +1932,24 @@ class Player extends Character {
     return !!this.partyId;
   }
 
+  hasTrade() {
+    return !!this.tradeId;
+  }
+
   getParty(): Party | undefined {
     return this.partyId ? this.server.parties[this.partyId] : undefined;
   }
 
+  getTrade(): Trade | undefined {
+    return this.tradeId ? this.server.trades[this.tradeId] : undefined;
+  }
+
   setPartyId(partyId) {
     this.partyId = partyId;
+  }
+
+  setTradeId(tradeId) {
+    this.tradeId = tradeId;
   }
 
   checkName(name) {

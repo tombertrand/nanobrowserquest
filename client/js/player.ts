@@ -71,6 +71,8 @@ class Player extends Character {
   level: any;
   x: number;
   y: number;
+  gridX: number;
+  gridY: number;
   moveUp: boolean;
   moveDown: boolean;
   moveLeft: boolean;

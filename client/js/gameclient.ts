@@ -57,6 +57,12 @@ class GameClient {
   partyerror_callback: any;
   partyloot_callback: any;
   partyhealth_callback: any;
+  traderequestsend_callback: any;
+  traderequestreceive_callback: any;
+  tradestart_callback: any;
+  tradeclose_callback: any;
+  tradeinfo_callback: any;
+  tradeerror_callback: any;
   receivenotification_callback: any;
   receiveinventory_callback: any;
   receivestash_callback: any;
@@ -115,6 +121,7 @@ class GameClient {
     this.handlers[Types.Messages.SETTINGS] = this.receiveSettings;
     this.handlers[Types.Messages.BLINK] = this.receiveBlink;
     this.handlers[Types.Messages.PARTY] = this.receiveParty;
+    this.handlers[Types.Messages.TRADE] = this.receiveTrade;
     this.handlers[Types.Messages.PVP] = this.receivePVP;
     this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
     this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
@@ -670,6 +677,22 @@ class GameClient {
     }
   }
 
+  receiveTrade(data) {
+    if (data[1] === Types.Messages.TRADE_ACTIONS.REQUEST_SEND && this.traderequestsend_callback) {
+      this.traderequestsend_callback(data[2]);
+    } else if (data[1] === Types.Messages.TRADE_ACTIONS.REQUEST_RECEIVE && this.traderequestreceive_callback) {
+      this.traderequestreceive_callback(data[2]);
+    } else if (data[1] === Types.Messages.TRADE_ACTIONS.START && this.tradestart_callback) {
+      this.tradestart_callback(data[2]);
+    } else if (data[1] === Types.Messages.TRADE_ACTIONS.CLOSE && this.tradeclose_callback) {
+      this.tradeclose_callback();
+    } else if (data[1] === Types.Messages.TRADE_ACTIONS.INFO && this.tradeinfo_callback) {
+      this.tradeinfo_callback(data[2]);
+    } else if (data[1] === Types.Messages.TRADE_ACTIONS.ERROR && this.tradeerror_callback) {
+      this.tradeerror_callback(data[2]);
+    }
+  }
+
   receiveBossCheck(data) {
     if (this.bosscheck_callback) {
       this.bosscheck_callback(data);
@@ -964,6 +987,30 @@ class GameClient {
     this.partyhealth_callback = callback;
   }
 
+  onTradeRequestSend(callback) {
+    this.traderequestsend_callback = callback;
+  }
+
+  onTradeRequestReceive(callback) {
+    this.traderequestreceive_callback = callback;
+  }
+
+  onTradeStart(callback) {
+    this.tradestart_callback = callback;
+  }
+
+  onTradeClose(callback) {
+    this.tradeclose_callback = callback;
+  }
+
+  onTradeInfo(callback) {
+    this.tradeinfo_callback = callback;
+  }
+
+  onTradeError(callback) {
+    this.tradeerror_callback = callback;
+  }
+
   onBossCheck(callback) {
     this.bosscheck_callback = callback;
   }
@@ -1139,6 +1186,22 @@ class GameClient {
 
   sendPartyDisband() {
     this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.DISBAND]);
+  }
+
+  sendTradeRequest(playerName) {
+    this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.REQUEST_SEND, playerName]);
+  }
+
+  sendTradeRequestAccept(playerName) {
+    this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT, playerName]);
+  }
+
+  sendTradeRequestRefuse(playerName) {
+    this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE, playerName]);
+  }
+
+  sendTradeClose() {
+    this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.CLOSE]);
   }
 
   sendBanPlayer(message) {

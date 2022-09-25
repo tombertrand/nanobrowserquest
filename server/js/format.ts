@@ -100,6 +100,16 @@ class FormatChecker {
       } else if (message[0] === Types.Messages.PARTY_ACTIONS.ERROR) {
         return message.length === 2 && _.isString(message[1]);
       }
+    } else if (type === Types.Messages.TRADE) {
+      if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_SEND) {
+        return message.length === 2 && _.isString(message[1]);
+      } else if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT) {
+        return message.length === 2 && _.isString(message[1]);
+      } else if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
+        return message.length === 2 && _.isString(message[1]);
+      } else if (message[0] === Types.Messages.TRADE_ACTIONS.CLOSE) {
+        return true;
+      }
     } else if (
       type === Types.Messages.ACHIEVEMENT ||
       type === Types.Messages.WAYPOINT ||

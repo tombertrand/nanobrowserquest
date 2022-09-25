@@ -3170,6 +3170,62 @@ class Game {
         self.app.updatePartyHealthBar(member);
       });
 
+      self.client.onTradeRequestSend(function (playerName) {
+        self.chat_callback({ message: `Trade request sent to ${playerName}`, type: "event" });
+      });
+
+      self.client.onTradeRequestReceive(function (playerName) {
+        $("#dialog-trade-request").dialog({
+          dialogClass: "no-close",
+          autoOpen: true,
+          draggable: false,
+          title: "Trade request",
+          text: "hello",
+          classes: {
+            "ui-button": "btn",
+          },
+          buttons: [
+            {
+              text: "Refuse",
+              class: "btn btn-gray",
+              click: function () {
+                self.client.sendTradeRequestRefuse(playerName);
+                $(this).dialog("close");
+              },
+            },
+            {
+              text: "Accept",
+              class: "btn",
+              click: function () {
+                self.client.sendTradeRequestAccept(playerName);
+                $(this).dialog("close");
+              },
+            },
+          ],
+        });
+        $("#dialog-trade-request").text(`${playerName} wants to start trading with you.`);
+        // @ts-ignore
+        $(".ui-button").removeClass("ui-button");
+      });
+
+      self.client.onTradeStart(function (players) {
+        // @TODO open panel
+
+        console.log("~~~~players", players);
+      });
+
+      self.client.onTradeClose(function () {
+        // @TODO close panel
+      });
+
+      self.client.onTradeInfo(function (message) {
+        self.chat_callback({ message, type: "info" });
+      });
+
+      self.client.onTradeError(function (message) {
+        self.chat_callback({ message, type: "error" });
+      });
+
       self.client.onEntityMove(function (id, x, y) {
         var entity = null;
         if (id !== self.playerId) {
@@ -4718,89 +4774,146 @@ class Game {
 
   say(message) {
     const partyRegexp = /^\/party (create|join|invite|leave|remove|disband|leader)(.+)?/;
-    const args = message.match(partyRegexp);
+    const tradeRegexp = /^\/trade (.+)?/;
 
-    if (args) {
-      const action = args[1];
-      const param = (args[2] || "").trim();
+    if (message.startsWith("/party")) {
+      const args = message.match(partyRegexp);
+      if (args) {
+        const action = args[1];
+        const param = (args[2] || "").trim();
 
-      switch (action) {
-        case "create":
-          this.client.sendPartyCreate();
-          break;
-        case "join":
-          if (param) {
-            this.client.sendPartyJoin(parseInt(param, 10));
+        switch (action) {
+          case "create":
+            this.client.sendPartyCreate();
+            break;
+          case "join":
+            if (param) {
+              this.client.sendPartyJoin(parseInt(param, 10));
+            } else {
+              this.chat_callback({ message: "You must specify the party id you want to join", type: "error" });
+            }
+            break;
+          case "invite":
+            if (param) {
+              this.client.sendPartyInvite(param);
+            } else {
+              this.chat_callback({
+                message: "You must specify the player you want to invite to the party",
+                type: "error",
+              });
+            }
+            break;
+          case "leave":
+            if (this.player.partyId) {
+              this.client.sendPartyLeave();
+            } else {
+              this.chat_callback({
+                message: "You are not in a party",
+                type: "error",
+              });
+            }
+            break;
+          case "remove":
+            if (param) {
+              this.client.sendPartyRemove(param);
+            } else {
+              this.chat_callback({
+                message: "You must specify the player name you want to remove from the party",
+                type: "error",
+              });
+            }
+            break;
+          case "disband":
+            if (!this.player.partyLeader?.id) {
+              this.chat_callback({
+                message: "You are not in a party",
+                type: "error",
+              });
+            } else if (this.player.partyLeader?.id === this.player.id) {
+              this.client.sendPartyDisband(param);
+            } else {
+              this.chat_callback({
+                message: "Only the party leader can disband the party",
+                type: "error",
+              });
+            }
+            break;
+          case "leader":
+            if (!this.player.partyLeader?.id) {
+              this.chat_callback({
+                message: "You are not in a party",
+                type: "error",
+              });
+            } else if (this.player.partyLeader?.id === this.player.id) {
+              // @TODO!
+              // this.client.sendPartyLeader(param);
+            } else {
+              this.chat_callback({
+                message: "Only the party leader can assign another player as the party leader",
+                type: "error",
+              });
+            }
+            break;
+          default:
+            this.chat_callback({
+              message: "invalid /party command",
+              type: "error",
+            });
+        }
+
+        return;
+      }
+    } else if (message.startsWith("/trade")) {
+      const args = message.match(tradeRegexp);
+      const playerName = (args?.[1] || "").trim();
+      let isPlayerFound = false;
+
+      if (!playerName || playerName === this.player.name) {
+        this.chat_callback({
+          message: `Type a player name to trade with.`,
+          type: "error",
+        });
+        return;
+      }
+
+      if (this.player.gridY < 195 || this.player.gridY > 250 || this.player.gridX > 90) {
+        this.chat_callback({
+          message: `You can only trade in town.`,
+          type: "error",
+        });
+        return;
+      }
+
+      for (const i in this.entities) {
+        if (this.entities[i].kind !== Types.Entities.WARRIOR) {
+          continue;
+        }
+
+        if (this.entities[i].name === playerName) {
+          isPlayerFound = true;
+          if (
+            Math.abs(this.entities[i].gridX - this.player.gridX) > 3 ||
+            Math.abs(this.entities[i].gridY - this.player.gridY) > 3
+          ) {
+            this.chat_callback({
+              message: `You can only trade with ${playerName} if the player is 3 or less tiles away.`,
+              type: "error",
+            });
           } else {
-            this.chat_callback({ message: "You must specify the party id you want to join", type: "error" });
+            console.log("~~~GOOD! start trade!");
+
+            this.client.sendTradeRequest(playerName);
           }
+
           break;
-        case "invite":
-          if (param) {
-            this.client.sendPartyInvite(param);
-          } else {
-            this.chat_callback({
-              message: "You must specify the player you want to invite to the party",
-              type: "error",
-            });
-          }
-          break;
-        case "leave":
-          if (this.player.partyId) {
-            this.client.sendPartyLeave();
-          } else {
-            this.chat_callback({
-              message: "You are not in a party",
-              type: "error",
-            });
-          }
-          break;
-        case "remove":
-          if (param) {
-            this.client.sendPartyRemove(param);
-          } else {
-            this.chat_callback({
-              message: "You must specify the player name you want to remove from the party",
-              type: "error",
-            });
-          }
-          break;
-        case "disband":
-          if (!this.player.partyLeader?.id) {
-            this.chat_callback({
-              message: "You are not in a party",
-              type: "error",
-            });
-          } else if (this.player.partyLeader?.id === this.player.id) {
-            this.client.sendPartyDisband(param);
-          } else {
-            this.chat_callback({
-              message: "Only the party leader can disband the party",
-              type: "error",
-            });
-          }
-          break;
-        case "leader":
-          if (!this.player.partyLeader?.id) {
-            this.chat_callback({
-              message: "You are not in a party",
-              type: "error",
-            });
-          } else if (this.player.partyLeader?.id === this.player.id) {
-            // @TODO!
-            // this.client.sendPartyLeader(param);
-          } else {
-            this.chat_callback({
-              message: "Only the party leader can assign another player as the party leader",
-              type: "error",
-            });
-          }
-          break;
-        default:
-          this.chat_callback({
-            message: "invalid /party command",
-            type: "error",
-          });
+        }
+      }
+
+      if (playerName && !isPlayerFound) {
+        this.chat_callback({
+          message: `${playerName} is not online.`,
+          type: "error",
+        });
       }
 
       return;

@@ -865,6 +865,16 @@ footer, header, hgroup, menu, nav, section {
         text-shadow: none;
     }
 
+    .btn-gray {
+        color: #2e2e2e;
+        background-color: #dcdcdc;
+        text-shadow: 0 2px 0 #d2d2d2;
+        box-shadow: inset -2px 2px 0 2px #c7c7c7, inset 2px -2px 0 2px #868585, inset -1px 1px 0 4px #dbdada;
+    }
+
+    .btn-gray:hover {
+        box-shadow: inset 2px -2px 0 2px #c7c7c7, inset -2px 2px 0 2px #868585, inset 1px -1px 0 4px #dbdada;
+    }
 
     .arial-font {font-family:arial, sans-serif;}
 
