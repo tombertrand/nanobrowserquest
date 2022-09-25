@@ -2957,10 +2957,12 @@ class Game {
               currentEntity.setCape(`${entity.cape}:${entity.capeLevel}:${entity.capeBonus}`);
             }
 
-            if (!entity.shieldName || !entity.shieldLevel || !entity.shieldBonus) {
+            if (!entity.shieldName || !entity.shieldLevel) {
               currentEntity.removeShield();
             } else {
-              currentEntity.setShield(`${entity.shieldName}:${entity.shieldLevel}:${entity.shieldBonus}`);
+              currentEntity.setShield(
+                `${entity.shieldName}:${entity.shieldLevel}${entity.shieldBonus ? `:${entity.shieldBonus}` : ""}`,
+              );
             }
 
             currentEntity.setSprite(self.sprites[entity.getSpriteName()]);

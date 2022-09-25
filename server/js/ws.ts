@@ -25,7 +25,7 @@ export class Server {
     let cors = null;
 
     if (process.env.NODE_ENV === "development") {
-      cors = { origin: "http://localhost:8010" };
+      cors = { origin: "*" };
     } else {
       const whitelist = [
         "https://nanobrowserquest.com",

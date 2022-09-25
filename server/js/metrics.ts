@@ -1,6 +1,8 @@
 import * as _ from "lodash";
 import redis from "redis";
 
+const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD } = process.env;
+
 class Metrics {
   config: any;
   client: any;
@@ -12,9 +14,9 @@ class Metrics {
 
     this.config = config;
 
-    this.client = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST, {
+    this.client = redis.createClient(REDIS_PORT, REDIS_HOST, {
       socket_nodelay: true,
-      password: process.env.REDIS_PASSWORD,
+      ...(REDIS_PASSWORD ? { password: REDIS_PASSWORD } : null),
     });
 
     this.isReady = false;

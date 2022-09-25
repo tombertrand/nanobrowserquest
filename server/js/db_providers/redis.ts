@@ -30,10 +30,14 @@ const ACHIEVEMENT_COUNT = 44;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
 
+const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, DEPOSIT_SEED } = process.env;
+
 const queue = new PromiseQueue();
 
 const getNewDepositAccountByIndex = async (index: number, network: Network): Promise<string> => {
-  let depositAccount = await NanocurrencyWeb.wallet.legacyAccounts(process.env.DEPOSIT_SEED, index, index)[0].address;
+  let depositAccount = null;
+
+  depositAccount = await NanocurrencyWeb.wallet.legacyAccounts(DEPOSIT_SEED, index, index)[0].address;
 
   if (network === "ban") {
     depositAccount = depositAccount.replace("nano_", "ban_");
@@ -53,9 +57,9 @@ class DatabaseHandler {
   client: any;
 
   constructor() {
-    this.client = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST, {
+    this.client = redis.createClient(REDIS_PORT, REDIS_HOST, {
       socket_nodelay: true,
-      password: process.env.REDIS_PASSWORD,
+      ...(REDIS_PASSWORD ? { password: REDIS_PASSWORD } : null),
     });
 
     this.client.on("connect", () => {
@@ -427,6 +431,11 @@ class DatabaseHandler {
         // Add the player
         const depositAccountIndex = await this.createDepositAccount();
         const depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number, player.network);
+
+        if (typeof depositAccountIndex !== "number" || !depositAccount) {
+          Sentry.captureException(new Error("Invalid deposit account"));
+          return;
+        }
 
         this.client
           .multi()
