@@ -718,6 +718,13 @@ class Game {
     );
   }
 
+  toggleCapeSliders(isEnabled) {
+    $("#cape-hue-slider").slider(isEnabled ? "enable" : "disable");
+    $("#cape-saturate-slider").slider(isEnabled ? "enable" : "disable");
+    $("#cape-contrast-slider").slider(isEnabled ? "enable" : "disable");
+    $("#cape-brightness-slider").slider(isEnabled ? "enable" : "disable");
+  }
+
   initTooltips() {
     var self = this;
 
@@ -2365,6 +2372,7 @@ class Game {
       self.player.setStash(stash);
 
       self.initSettings(settings);
+      self.toggleCapeSliders(!!cape);
       self.updateBars();
       self.updateExpBar();
       self.resetCamera();
@@ -3397,6 +3405,10 @@ class Game {
               player.removeCape();
             } else {
               player.switchCape(name, level, bonus);
+            }
+
+            if (playerId === self.player.id) {
+              self.toggleCapeSliders(kind && level && bonus);
             }
           } else if (type === "shield") {
             if (!kind || !level) {

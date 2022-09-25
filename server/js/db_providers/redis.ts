@@ -363,7 +363,7 @@ class DatabaseHandler {
 
               var settings = replies[25];
               try {
-                settings = Object.assign(defaultSettings, JSON.parse(settings || "{}"));
+                settings = Object.assign({ ...defaultSettings }, JSON.parse(settings || "{}"));
               } catch (_err) {
                 // Silence err
               }
