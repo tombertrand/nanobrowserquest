@@ -36,6 +36,8 @@ class Player extends Character {
   inventory: any[];
   stash: any[];
   upgrade: any[];
+  tradePlayer1: any[];
+  tradePlayer2: any[];
   gems: any;
   artifact: any;
   expansion1: boolean;
@@ -120,6 +122,8 @@ class Player extends Character {
     this.inventory = [];
     this.stash = [];
     this.upgrade = [];
+    this.tradePlayer1 = [];
+    this.tradePlayer2 = [];
     this.gems = [];
     this.artifact = [];
     this.expansion1 = false;

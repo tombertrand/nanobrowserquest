@@ -30,6 +30,7 @@ class FormatChecker {
       (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n"]),
       (this.formats[Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY] = []),
       (this.formats[Types.Messages.UPGRADE_ITEM] = []),
+      (this.formats[Types.Messages.TRADE_ACTIONS.MOVE_ITEM] = []),
       (this.formats[Types.Messages.PURCHASE_CREATE] = ["n", "s"]),
       (this.formats[Types.Messages.PURCHASE_CANCEL] = ["s"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);

@@ -86,6 +86,7 @@ export const Types: any = {
       REQUEST_RECEIVE: 78,
       REQUEST_ACCEPT: 79,
       REQUEST_REFUSE: 80,
+      MOVE_ITEM: 85,
       INFO: 81,
       ERROR: 82,
       START: 83,

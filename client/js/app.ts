@@ -932,6 +932,9 @@ class App {
     if ($("#upgrade").hasClass("visible")) {
       this.toggleUpgrade();
     }
+    if ($("#trade").hasClass("visible")) {
+      this.toggleTrade();
+    }
     if ($("#inventory").hasClass("visible")) {
       this.closeInventory();
     }
@@ -1243,6 +1246,39 @@ class App {
   closeStash() {
     $("#stash").removeClass("visible");
     this.closeInventory();
+  }
+
+  openTrade() {
+    if ($("#trade").hasClass("visible")) return;
+    $("#population").removeClass("visible");
+    this.closeStash();
+    this.toggleTrade();
+  }
+
+  closeTrade() {
+    if (!$("#trade").hasClass("visible")) return;
+
+    this.toggleTrade();
+  }
+
+  toggleTrade() {
+    $("#trade").toggleClass("visible");
+
+    if ($("#trade").hasClass("visible")) {
+      if (!$("#inventory").hasClass("visible")) {
+        this.game.initDraggable();
+      }
+      $("#inventory").addClass("visible trade");
+      $("#player").removeClass("visible");
+    } else {
+      this.game.destroyDraggable();
+      if (this.game.player.upgrade.length) {
+        this.game.client.sendMoveUpgradeItemsToInventory();
+      }
+      $("#inventory").removeClass("visible trade");
+      $("#player1-trade-item .item-slot").empty();
+      $("#player2-trade-item .item-slot").empty();
+    }
   }
 
   openUpgrade() {

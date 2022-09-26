@@ -1267,6 +1267,26 @@ class Game {
     $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
   }
 
+  initTrade() {
+    $("#player1-trade-item").empty();
+    $("#player2-trade-item").empty();
+
+    for (var i = 0; i < 9; i++) {
+      $("#player1-trade-item").append(`<div class="item-slot" data-slot="${400 + i}"></div>`);
+    }
+
+    for (var i = 0; i < 9; i++) {
+      $("#player2-trade-item").append(`<div class="item-slot"></div>`);
+    }
+
+    // $("#upgrade-item")
+    //   .empty()
+    //   .append(
+    //     '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="200"></div>',
+    //   );
+    // $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
+  }
+
   updateUpgrade({ luckySlot, isSuccess }) {
     if ($("#inventory").hasClass("visible")) {
       $("#upgrade .item-draggable.ui-draggable").draggable("destroy");
@@ -2381,6 +2401,7 @@ class Game {
       self.initAchievements();
       self.initInventory();
       self.initUpgrade();
+      self.initTrade();
       self.initStash();
       self.initTooltips();
       self.initSendUpgradeItem();
@@ -4864,6 +4885,8 @@ class Game {
         return;
       }
     } else if (message.startsWith("/trade")) {
+      this.app.openTrade();
+      return;
       const args = message.match(tradeRegexp);
       const playerName = (args?.[1] || "").trim();
       let isPlayerFound = false;
@@ -4900,8 +4923,6 @@ class Game {
               type: "error",
             });
           } else {
-            console.log("~~~GOOD! start trade!");
-
             this.client.sendTradeRequest(playerName);
           }
 
