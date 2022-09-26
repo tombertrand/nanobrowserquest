@@ -852,10 +852,17 @@ class Player extends Character {
         console.info("MOVE ITEM: " + self.name + " " + message[1] + " " + message[2]);
 
         databaseHandler.moveItem({ player: self, fromSlot: message[1], toSlot: message[2] });
-      } else if (action === Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY) {
-        console.info("MOVE UPGRADE ITEMS TO INVENTORY: " + self.name);
+      } else if (action === Types.Messages.MOVE_ITEMS_TO_INVENTORY) {
+        const panel = message[1];
+        console.info(`MOVE ITEMS TO INVENTORY: ${self.name} Panel: ${panel}`);
 
-        databaseHandler.moveUpgradeItemsToInventory(self);
+        if (["upgrade", "trade"].includes(panel)) {
+          databaseHandler.moveItemsToInventory(self, panel);
+        }
+      } else if (action === Types.Messages.MOVE_TRADE_ITEMS_TO_INVENTORY) {
+        console.info("MOVE TRADE ITEMS TO INVENTORY: " + self.name);
+
+        databaseHandler.moveItemsToInventory(self, "trade");
       } else if (action === Types.Messages.UPGRADE_ITEM) {
         console.info("UPGRADE ITEM: " + self.name);
 

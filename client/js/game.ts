@@ -1268,15 +1268,15 @@ class Game {
   }
 
   initTrade() {
-    $("#player1-trade-item").empty();
-    $("#player2-trade-item").empty();
+    $("#trade-player1-item").empty();
+    $("#trade-player2-item").empty();
 
     for (var i = 0; i < 9; i++) {
-      $("#player1-trade-item").append(`<div class="item-slot" data-slot="${400 + i}"></div>`);
+      $("#trade-player1-item").append(`<div class="item-slot" data-slot="${400 + i}"></div>`);
     }
 
     for (var i = 0; i < 9; i++) {
-      $("#player2-trade-item").append(`<div class="item-slot"></div>`);
+      $("#trade-player2-item").append(`<div class="item-slot"></div>`);
     }
 
     // $("#upgrade-item")
@@ -2455,7 +2455,8 @@ class Game {
       }
 
       // @NOTE possibly optimize this? sending request to move items to inventory
-      self.client.sendMoveUpgradeItemsToInventory();
+      self.client.sendMoveItemsToInventory("upgrade");
+      self.client.sendMoveItemsToInventory("trade");
 
       self.player.onStartPathing(function (path) {
         var i = path.length - 1,

@@ -1213,7 +1213,7 @@ class App {
       $("#inventory").removeClass("upgrade");
       $("#player").addClass("visible");
       if (this.game.player.upgrade.length) {
-        this.game.client.sendMoveUpgradeItemsToInventory();
+        this.game.client.sendMoveItemsToInventory("upgrade");
       }
     } else if (!$("#inventory").hasClass("visible")) {
       $("#player").addClass("visible");
@@ -1272,12 +1272,12 @@ class App {
       $("#player").removeClass("visible");
     } else {
       this.game.destroyDraggable();
-      if (this.game.player.upgrade.length) {
-        this.game.client.sendMoveUpgradeItemsToInventory();
+      if (this.game.player.trade.length) {
+        this.game.client.sendMoveItemsToInventory("trade");
       }
       $("#inventory").removeClass("visible trade");
-      $("#player1-trade-item .item-slot").empty();
-      $("#player2-trade-item .item-slot").empty();
+      $("#trade-player1-item .item-slot").empty();
+      $("#trade-player2-item .item-slot").empty();
     }
   }
 
@@ -1306,7 +1306,7 @@ class App {
     } else {
       this.game.destroyDraggable();
       if (this.game.player.upgrade.length) {
-        this.game.client.sendMoveUpgradeItemsToInventory();
+        this.game.client.sendMoveItemsToInventory("upgrade");
       }
       $("#inventory").removeClass("visible upgrade");
       $(".item-scroll").empty();

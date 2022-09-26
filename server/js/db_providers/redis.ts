@@ -26,6 +26,7 @@ const STASH_SLOT_COUNT = 48;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
 const STASH_SLOT_RANGE = 300;
+const TRADE_SLOT_RANGE = 200;
 const ACHIEVEMENT_COUNT = 44;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
@@ -103,6 +104,7 @@ class DatabaseHandler {
             .hget(userKey, "stash") // 24
             .hget(userKey, "settings") // 25
             .hget(userKey, "network") // 26
+            .hget(userKey, "trade") // 27
 
             .exec(async (err, replies) => {
               if (err) {
@@ -332,6 +334,8 @@ class DatabaseHandler {
                   },
                 });
               }
+
+              var trade = replies[27];
 
               var gems = new Array(GEM_COUNT).fill(0);
               try {
@@ -710,6 +714,8 @@ class DatabaseHandler {
       return ["amulet", 0];
     } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + 10) {
       return ["upgrade", UPGRADE_SLOT_RANGE];
+    } else if (slot >= TRADE_SLOT_RANGE && slot <= TRADE_SLOT_RANGE + 17) {
+      return ["trade", TRADE_SLOT_RANGE];
     } else if (slot >= STASH_SLOT_RANGE && slot <= STASH_SLOT_RANGE + STASH_SLOT_COUNT) {
       return ["stash", STASH_SLOT_RANGE];
     }
@@ -1009,8 +1015,8 @@ class DatabaseHandler {
     );
   }
 
-  moveUpgradeItemsToInventory(player) {
-    this.client.hget("u:" + player.name, "upgrade", (_err, reply) => {
+  moveItemsToInventory(player, panel: "upgrade" | "trade" = "upgrade") {
+    this.client.hget("u:" + player.name, panel, (_err, reply) => {
       try {
         let upgrade = JSON.parse(reply);
         const filteredUpgrade = upgrade.filter(Boolean);
@@ -1170,7 +1176,7 @@ class DatabaseHandler {
           }
 
           if (!isWorkingRecipe) {
-            this.moveUpgradeItemsToInventory(player);
+            this.moveItemsToInventory(player, "upgrade");
           } else {
             upgrade = upgrade.map(() => 0);
             upgrade[upgrade.length - 1] = generatedItem;

@@ -1216,8 +1216,8 @@ class GameClient {
     this.sendMessage([Types.Messages.MOVE_ITEM, fromSlot, toSlot]);
   }
 
-  sendMoveUpgradeItemsToInventory() {
-    this.sendMessage([Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY]);
+  sendMoveItemsToInventory(panel) {
+    this.sendMessage([Types.Messages.MOVE_ITEMS_TO_INVENTORY, panel]);
   }
 
   sendUpgradeItem() {

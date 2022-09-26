@@ -794,6 +794,9 @@ footer, header, hgroup, menu, nav, section {
     .panel-header {min-height: 4px;}
     .panel-header.reverse {transform: rotate(180deg);}
     .panel-spaced-row { display: flex; justify-content: space-between; align-items: center; padding: 0 10px}
+    .panel-spaced-row-top { align-items: flex-start; }
+    .trade-player-name { margin-bottom: 3px;}
+    .trade-player-status { margin-top: 6px;}
 
     .waypoint-spaced-row { display: flex; align-items: center;}
     .waypoint-spaced-row:hover:not(.disabled):not(.locked):not(.active) {background: #505050;}
@@ -816,7 +819,7 @@ footer, header, hgroup, menu, nav, section {
         line-height: 1;
         font-size: 0.9em;
     }
-    #upgrade-scroll, #player1-trade-item, #player2-trade-item {display: flex;flex-wrap: wrap;}
+    #upgrade-scroll, #trade-player1-item, #trade-player2-item {display: flex;flex-wrap: wrap;}
     #trade-info,
     #upgrade-info {
         color: #ababa4;
@@ -967,7 +970,7 @@ footer, header, hgroup, menu, nav, section {
         #chatinput { padding: 6px 12px; }
         #completed.boss-check .link { font-size: 34px; }
         .createaccount-instructions { font-size: 25px; }
-        #upgrade-scroll, #player1-trade-item, #player2-trade-item { width: 168px; }
+        #upgrade-scroll, #trade-player1-item, #trade-player2-item { width: 168px; }
         .panel-spaced-row { padding: 0 12px}
         .item-equip-weapon::before {background-image: url('../img/3/inventory-placeholder.png');}
         .item-equip-armor::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -45px;}
@@ -1200,7 +1203,7 @@ footer, header, hgroup, menu, nav, section {
 	@media screen and (max-width: 1500px), screen and (max-height: 870px) {
         .home-logo {margin-left:-200px;margin-top:-20px;transform:scale(0.7);}
         .createaccount-instructions { font-size: 17px; }
-        #upgrade-scroll, #player1-trade-item, #player2-trade-item { width: 120px; }
+        #upgrade-scroll, #trade-player1-item, #trade-player2-item { width: 120px; }
         .item-equip-weapon::before {background-image: url('../img/2/inventory-placeholder.png');}
         .item-equip-armor::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -29px;}
         .item-equip-ring::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -61px;}
@@ -1355,7 +1358,7 @@ footer, header, hgroup, menu, nav, section {
         .panel.panel-large > div {background-position:0 -138px;}
         .panel-large .panel-header {background-position:0 -130px !important;}
 
-        #trade { right: 40px;}
+        #trade { right: 40px; width: 302px}
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:810px;}
         #chatbutton:hover, #chatbutton.blink:hover {background-position:-232px -34px;}
@@ -1444,7 +1447,7 @@ footer, header, hgroup, menu, nav, section {
         #text-window { width: 60%; }
         .world { font-size: 12px;}
         .createaccount-instructions { font-size: 8px; }
-        #upgrade-scroll, #player1-trade-item, #player2-trade-item { width: 120px; }
+        #upgrade-scroll, #trade-player1-item, #trade-player2-item { width: 120px; }
         #player-list {max-height: 266px;}
         #stash {top:45px;}
 
@@ -1654,7 +1657,7 @@ footer, header, hgroup, menu, nav, section {
 	@media screen and (max-width: 800px) {
         #text-window { width: calc(100% - 30px); height: 50vh; }
         .createaccount-instructions { font-size: 8px; }
-        #upgrade-scroll, #player1-trade-item, #player2-trade-item { width: 120px; }
+        #upgrade-scroll, #trade-player1-item, #trade-player2-item { width: 120px; }
         .panel-container {
             flex-direction: row;
             width: auto !important;
