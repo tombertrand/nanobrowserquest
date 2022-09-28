@@ -26,7 +26,9 @@ const STASH_SLOT_COUNT = 48;
 const UPGRADE_SLOT_COUNT = 11;
 const UPGRADE_SLOT_RANGE = 200;
 const STASH_SLOT_RANGE = 300;
-const TRADE_SLOT_RANGE = 200;
+const TRADE_SLOT_RANGE = 400;
+const TRADE_SLOT_COUNT = 9;
+
 const ACHIEVEMENT_COUNT = 44;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
@@ -336,6 +338,22 @@ class DatabaseHandler {
               }
 
               var trade = replies[27];
+              try {
+                // Migrate trade
+                if (!trade) {
+                  trade = new Array(TRADE_SLOT_COUNT).fill(0);
+                  this.client.hset("u:" + player.name, "trade", JSON.stringify(trade));
+                }
+              } catch (errTrade) {
+                Sentry.captureException(errTrade, {
+                  user: {
+                    username: player.name,
+                  },
+                  extra: {
+                    trade,
+                  },
+                });
+              }
 
               var gems = new Array(GEM_COUNT).fill(0);
               try {
@@ -465,6 +483,7 @@ class DatabaseHandler {
           .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
           .hset(userKey, "artifact", JSON.stringify(new Array(ARTIFACT_COUNT).fill(0)))
           .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
+          .hset(userKey, "trade", JSON.stringify(new Array(TRADE_SLOT_COUNT).fill(0)))
           .hset(userKey, "expansion1", 0)
           .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2]))
           .hset(userKey, "depositAccountIndex", depositAccountIndex)
@@ -712,9 +731,9 @@ class DatabaseHandler {
       return ["ring2", 0];
     } else if (slot === Types.Slot.AMULET) {
       return ["amulet", 0];
-    } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + 10) {
+    } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + UPGRADE_SLOT_COUNT - 1) {
       return ["upgrade", UPGRADE_SLOT_RANGE];
-    } else if (slot >= TRADE_SLOT_RANGE && slot <= TRADE_SLOT_RANGE + 17) {
+    } else if (slot >= TRADE_SLOT_RANGE && slot <= TRADE_SLOT_RANGE + TRADE_SLOT_COUNT - 1) {
       return ["trade", TRADE_SLOT_RANGE];
     } else if (slot >= STASH_SLOT_RANGE && slot <= STASH_SLOT_RANGE + STASH_SLOT_COUNT) {
       return ["stash", STASH_SLOT_RANGE];
@@ -825,6 +844,15 @@ class DatabaseHandler {
       player.equipItem({ item, level, bonus, type: "amulet" });
     } else if (location === "upgrade") {
       player.send([Types.Messages.UPGRADE, data]);
+    } else if (location === "trade") {
+      const tradeInstance = player.server.getTrade(player.tradeId);
+
+      if (!tradeInstance?.players.includes(player.id)) {
+        // This should not happen..
+        Sentry.captureException(new Error(`Invalid trade instance or Player ${player.name} not part of it`));
+      } else {
+        tradeInstance.update({ data, player1Id: player.id });
+      }
     }
   }
 
@@ -833,10 +861,8 @@ class DatabaseHandler {
 
     const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
     const [toLocation, toRange] = this.getItemLocation(toSlot);
-    const isMultipleFrom = ["inventory", "upgrade", "stash"].includes(fromLocation);
-    const isMultipleTo = ["inventory", "upgrade", "stash"].includes(toLocation);
-
-    // @TODO check for race condition that causes fromLocation to not be saved
+    const isMultipleFrom = ["inventory", "upgrade", "trade", "stash"].includes(fromLocation);
+    const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
 
     if (!fromLocation || !toLocation) return;
 
@@ -861,8 +887,8 @@ class DatabaseHandler {
             fromReplyParsed[fromSlot - fromRange] = 0;
           }
 
-          this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
           this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
+          this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
         } else {
           this.client.hget("u:" + player.name, toLocation, (_err, toReply) => {
             try {
@@ -878,7 +904,7 @@ class DatabaseHandler {
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
               if (Types.isScroll(fromItem) || Types.isChest(fromItem)) {
                 const [fromScroll, fromQuantity] = fromItem.split(":");
-                if (toLocation === "inventory" || toLocation === "stash") {
+                if (toLocation === "inventory" || toLocation === "stash" || toLocation === "trade") {
                   let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(fromScroll));
 
                   if (toItemIndex === -1) {
@@ -945,15 +971,15 @@ class DatabaseHandler {
                 }
               }
 
-              this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
               if (isMultipleFrom) {
                 this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
               }
-
-              this.sendMoveItem({ player, location: toLocation, data: toReplyParsed });
               if (isMultipleTo) {
                 this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed));
               }
+
+              this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
+              this.sendMoveItem({ player, location: toLocation, data: toReplyParsed });
             } catch (err) {
               console.log(err);
               Sentry.captureException(err);
@@ -1018,8 +1044,8 @@ class DatabaseHandler {
   moveItemsToInventory(player, panel: "upgrade" | "trade" = "upgrade") {
     this.client.hget("u:" + player.name, panel, (_err, reply) => {
       try {
-        let upgrade = JSON.parse(reply);
-        const filteredUpgrade = upgrade.filter(Boolean);
+        let data = JSON.parse(reply);
+        const filteredUpgrade = data.filter(Boolean);
 
         if (filteredUpgrade.length) {
           const items = filteredUpgrade.reduce((acc, rawItem) => {
@@ -1038,11 +1064,15 @@ class DatabaseHandler {
 
           this.lootItems({ player, items });
 
-          upgrade = upgrade.map(() => 0);
+          data = data.map(() => 0);
+          this.client.hset("u:" + player.name, panel, JSON.stringify(data));
 
-          player.send([Types.Messages.UPGRADE, upgrade]);
-
-          this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
+          if (panel === "upgrade") {
+            player.send([Types.Messages.UPGRADE, data]);
+          } else if (panel === "trade") {
+            // player.send([Types.Messages.TRADE.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data]);
+            player.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data).serialize());
+          }
         }
       } catch (err) {
         console.log(err);

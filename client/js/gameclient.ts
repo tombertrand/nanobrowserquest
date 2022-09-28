@@ -63,6 +63,10 @@ class GameClient {
   tradeclose_callback: any;
   tradeinfo_callback: any;
   tradeerror_callback: any;
+  tradeplayer1moveitem_callback: any;
+  tradeplayer2moveitem_callback: any;
+  tradeplayer1status_callback: any;
+  tradeplayer2status_callback: any;
   receivenotification_callback: any;
   receiveinventory_callback: any;
   receivestash_callback: any;
@@ -690,6 +694,14 @@ class GameClient {
       this.tradeinfo_callback(data[2]);
     } else if (data[1] === Types.Messages.TRADE_ACTIONS.ERROR && this.tradeerror_callback) {
       this.tradeerror_callback(data[2]);
+    } else if (data[1] === Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM && this.tradeplayer1moveitem_callback) {
+      this.tradeplayer1moveitem_callback(data[2]);
+    } else if (data[1] === Types.Messages.TRADE_ACTIONS.PLAYER2_MOVE_ITEM && this.tradeplayer2moveitem_callback) {
+      this.tradeplayer2moveitem_callback(data[2]);
+    } else if (data[1] === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS && this.tradeplayer1status_callback) {
+      this.tradeplayer1status_callback(data[2]);
+    } else if (data[1] === Types.Messages.TRADE_ACTIONS.PLAYER2_STATUS && this.tradeplayer2status_callback) {
+      this.tradeplayer2status_callback(data[2]);
     }
   }
 
@@ -1011,6 +1023,22 @@ class GameClient {
     this.tradeerror_callback = callback;
   }
 
+  onPlayer1MoveItem(callback) {
+    this.tradeplayer1moveitem_callback = callback;
+  }
+
+  onPlayer2MoveItem(callback) {
+    this.tradeplayer2moveitem_callback = callback;
+  }
+
+  onPlayer1Status(callback) {
+    this.tradeplayer1status_callback = callback;
+  }
+
+  onPlayer2Status(callback) {
+    this.tradeplayer2status_callback = callback;
+  }
+
   onBossCheck(callback) {
     this.bosscheck_callback = callback;
   }
@@ -1201,7 +1229,12 @@ class GameClient {
   }
 
   sendTradeClose() {
+    // @TODO Finish this flow (one of the 2 player closes the trade window)
     this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.CLOSE]);
+  }
+
+  sendTradePlayer1Status(status) {
+    this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS, status]);
   }
 
   sendBanPlayer(message) {

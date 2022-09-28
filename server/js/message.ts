@@ -257,7 +257,7 @@ Messages.Party = class Message {
 Messages.Trade = class Message {
   constructor(private action, private info) {}
   serialize() {
-    return [Types.Messages.TRADE, this.action].concat(this.info);
+    return [Types.Messages.TRADE, this.action, this.info];
   }
 };
 

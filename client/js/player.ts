@@ -629,6 +629,14 @@ class Player extends Character {
     this.stash = this.prepareRawItems(stash);
   }
 
+  setTradePlayer1(items) {
+    this.tradePlayer1 = this.prepareRawItems(items);
+  }
+
+  setTradePlayer2(items) {
+    this.tradePlayer2 = this.prepareRawItems(items);
+  }
+
   onSwitchItem(callback) {
     this.switch_callback = callback;
   }

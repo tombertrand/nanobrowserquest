@@ -1184,21 +1184,8 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-inventory").empty();
 
-    this.player.inventory.forEach(({ item, level, quantity, bonus, skill, requirement, isUnique, slot }) => {
-      $(`#item-inventory .item-slot:eq(${slot})`).append(
-        $("<div />", {
-          class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(item, level)}")`,
-          },
-          "data-item": item,
-          "data-level": level,
-          ...(quantity ? { "data-quantity": quantity } : null),
-          ...(bonus ? { "data-bonus": bonus } : null),
-          ...(skill ? { "data-skill": skill } : null),
-          ...(requirement ? { "data-requirement": requirement } : null),
-        }),
-      );
+    this.player.inventory.forEach(({ slot, ...item }) => {
+      $(`#item-inventory .item-slot:eq(${slot})`).append(this.createItemDiv(item));
     });
 
     if ($("#inventory").hasClass("visible")) {
@@ -1216,21 +1203,8 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-stash").empty();
 
-    this.player.stash.forEach(({ item, level, quantity, bonus, skill, requirement, isUnique, slot }) => {
-      $(`#item-stash .item-slot:eq(${slot})`).append(
-        $("<div />", {
-          class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(item, level)}")`,
-          },
-          "data-item": item,
-          "data-level": level,
-          ...(quantity ? { "data-quantity": quantity } : null),
-          ...(bonus ? { "data-bonus": bonus } : null),
-          ...(skill ? { "data-skill": skill } : null),
-          ...(requirement ? { "data-requirement": requirement } : null),
-        }),
-      );
+    this.player.stash.forEach(({ slot, ...item }) => {
+      $(`#item-stash .item-slot:eq(${slot})`).append(this.createItemDiv(item));
     });
 
     if ($("#stash").hasClass("visible")) {
@@ -1262,7 +1236,7 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="200"></div>',
+        '<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="200"></div>',
       );
     $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
   }
@@ -1272,19 +1246,80 @@ class Game {
     $("#trade-player2-item").empty();
 
     for (var i = 0; i < 9; i++) {
-      $("#trade-player1-item").append(`<div class="item-slot" data-slot="${400 + i}"></div>`);
+      $("#trade-player1-item").append(
+        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest item-scroll" data-slot="${
+          400 + i
+        }"></div>`,
+      );
+      $("#trade-player2-item").append(`<div class="item-slot item-trade"></div>`);
+    }
+  }
+
+  updateTradePlayer1() {
+    if ($("#trade").hasClass("visible")) {
+      $("#trade-player1-item .item-draggable.ui-draggable").draggable("destroy");
     }
 
-    for (var i = 0; i < 9; i++) {
-      $("#trade-player2-item").append(`<div class="item-slot"></div>`);
+    $("#trade-player1-item .item-trade").empty();
+
+    this.player.tradePlayer1.forEach(({ slot, ...item }) => {
+      $(`#trade-player1-item .item-slot:eq(${slot})`).append(this.createItemDiv(item));
+    });
+
+    if ($("#trade").hasClass("visible")) {
+      this.initDraggable();
     }
 
-    // $("#upgrade-item")
-    //   .empty()
-    //   .append(
-    //     '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="200"></div>',
-    //   );
-    // $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
+    this.updateRequirement();
+  }
+
+  updateTradePlayer2() {
+    $("#trade-player2-item .item-trade").empty();
+
+    console.log("`~~~~~this.player.tradePlayer2", this.player.tradePlayer2);
+
+    this.player.tradePlayer2.forEach(({ slot, ...item }) => {
+      $(`#trade-player2-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, false));
+    });
+
+    this.updateRequirement();
+  }
+
+  createItemDiv(
+    {
+      quantity,
+      isUnique,
+      item,
+      level,
+      bonus,
+      skill,
+      requirement,
+    }: {
+      quantity: number;
+      isUnique: boolean;
+      item: string;
+      level: number;
+      bonus: any;
+      skill: any;
+      requirement?: number;
+    },
+    isDraggable = true,
+  ) {
+    return $("<div />", {
+      class: `${isDraggable ? "item-draggable" : "item-not-draggable"} ${quantity ? "item-quantity" : ""} ${
+        isUnique ? "item-unique" : ""
+      }`,
+      css: {
+        "background-image": `url("${this.getIconPath(item, level)}")`,
+        position: "relative",
+      },
+      "data-item": item,
+      "data-level": level,
+      ...(quantity ? { "data-quantity": quantity } : null),
+      ...(bonus ? { "data-bonus": bonus } : null),
+      ...(skill ? { "data-skill": skill } : null),
+      ...(requirement ? { "data-requirement": requirement } : null),
+    });
   }
 
   updateUpgrade({ luckySlot, isSuccess }) {
@@ -1338,19 +1373,7 @@ class Game {
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")
-        .append(
-          $("<div />", {
-            class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
-            css: {
-              "background-image": `url("${this.getIconPath(item, level)}")`,
-            },
-            "data-item": item,
-            "data-level": level,
-            ...(quantity ? { "data-quantity": quantity } : null),
-            ...(bonus ? { "data-bonus": bonus } : null),
-            ...(skill ? { "data-skill": skill } : null),
-          }),
-        );
+        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill }));
     });
 
     $("#upgrade-info").html(successRate ? `${successRate}% chance of successful ${actionText}` : "&nbsp;");
@@ -3231,13 +3254,21 @@ class Game {
       });
 
       self.client.onTradeStart(function (players) {
-        // @TODO open panel
+        $("#trade-player1-status-button").removeClass("disabled");
 
-        console.log("~~~~players", players);
+        players.forEach(playerId => {
+          if (self.entities[playerId].name === self.player.name) {
+            $("#trade-player1-name").text(self.entities[playerId].name);
+          } else {
+            $("#trade-player2-name").text(self.entities[playerId].name);
+          }
+        });
+
+        self.app.openTrade();
       });
 
       self.client.onTradeClose(function () {
-        // @TODO close panel
+        // @TODO close panel???
       });
 
       self.client.onTradeInfo(function (message) {
@@ -3246,6 +3277,24 @@ class Game {
 
       self.client.onTradeError(function (message) {
         self.chat_callback({ message, type: "error" });
+      });
+
+      self.client.onPlayer1MoveItem(function (items) {
+        self.player.setTradePlayer1(items);
+        self.updateTradePlayer1();
+      });
+
+      self.client.onPlayer2MoveItem(function (items) {
+        self.player.setTradePlayer2(items);
+        self.updateTradePlayer2();
+      });
+
+      self.client.onPlayer1Status(function (isAccepted) {
+        $("#trade-player1-status").find(".btn").toggleClass("disabled", isAccepted);
+      });
+
+      self.client.onPlayer2Status(function (isAccepted) {
+        $("#trade-player2-status").text(isAccepted ? "Accepted" : "Waiting ...");
       });
 
       self.client.onEntityMove(function (id, x, y) {
@@ -4886,8 +4935,8 @@ class Game {
         return;
       }
     } else if (message.startsWith("/trade")) {
-      this.app.openTrade();
-      return;
+      // ;
+      // return;
       const args = message.match(tradeRegexp);
       const playerName = (args?.[1] || "").trim();
       let isPlayerFound = false;

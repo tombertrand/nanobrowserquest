@@ -276,7 +276,7 @@ class Player extends Character {
           // self.account = hash;
           databaseHandler.createPlayer(self);
         } else {
-          console.info("LOGIN: " + self.name);
+          console.info("LOGIN: " + self.name, " ID: " + self.id);
           if (self.server.loggedInPlayer(self.name)) {
             self.connection.sendUTF8("loggedin");
             self.connection.close("Already logged in " + self.name);

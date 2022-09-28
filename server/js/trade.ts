@@ -25,7 +25,8 @@ class Trade {
       const player = this.server.getEntityById(id);
 
       if (player) {
-        this.server.pushToPlayer(player, new Messages.Trade(Types.Messages.TRADE_ACTIONS.START, [this.players]));
+        player.tradeId = this.id;
+        this.server.pushToPlayer(player, new Messages.Trade(Types.Messages.TRADE_ACTIONS.START, this.players));
       }
     });
   }
@@ -33,16 +34,31 @@ class Trade {
   close() {
     // @TODO return item(s) to inventory, like the upgrade hash
 
-    this.forEachPlayer(({ id }) => {
+    this.forEachPlayer(id => {
       const player = this.server.getEntityById(id);
 
       if (player) {
-        this.server.pushToPlayer(player, new Messages.Party(Types.Messages.TRADE_ACTIONS.CLOSE));
+        this.server.pushToPlayer(player, new Messages.Trade(Types.Messages.TRADE_ACTIONS.CLOSE));
         player.setTradeId(undefined);
       }
     });
 
     delete this.server.trades[this.id];
+  }
+
+  update({ data, player1Id }) {
+    this.forEachPlayer(id => {
+      const player = this.server.getEntityById(id);
+
+      if (player) {
+        const messageId =
+          id === player1Id
+            ? Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM
+            : Types.Messages.TRADE_ACTIONS.PLAYER2_MOVE_ITEM;
+
+        this.server.pushToPlayer(player, new Messages.Trade(messageId, data));
+      }
+    });
   }
 
   forEachPlayer(iterator) {

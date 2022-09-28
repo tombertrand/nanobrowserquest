@@ -1099,6 +1099,15 @@ class App {
     $(".item-potion").addClass(this.game.network);
   }
 
+  initTradePlayer1StatusButton() {
+    $("#trade-player1-status-button").on("click", event => {
+      $(event.target).toggleClass("disabled");
+
+      // @TODO Finish the flow, (listen to the message on BE and forward to player2)
+      this.game.client.sendTradePlayer1Status($(event.target).hasClass("disabled"));
+    });
+  }
+
   updateNanoPotions(nanoPotions) {
     for (var i = 0; i < nanoPotions; i++) {
       if (i === 5) break;
@@ -1272,7 +1281,7 @@ class App {
       $("#player").removeClass("visible");
     } else {
       this.game.destroyDraggable();
-      if (this.game.player.trade.length) {
+      if (this.game.player.tradePlayer1.filter(Boolean).length) {
         this.game.client.sendMoveItemsToInventory("trade");
       }
       $("#inventory").removeClass("visible trade");

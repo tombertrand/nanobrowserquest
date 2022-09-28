@@ -30,7 +30,7 @@ class FormatChecker {
       (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n"]),
       (this.formats[Types.Messages.MOVE_ITEMS_TO_INVENTORY] = ["s"]),
       (this.formats[Types.Messages.UPGRADE_ITEM] = []),
-      (this.formats[Types.Messages.TRADE_ACTIONS.MOVE_ITEM] = []),
+      // (this.formats[Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM] = []),
       (this.formats[Types.Messages.PURCHASE_CREATE] = ["n", "s"]),
       (this.formats[Types.Messages.PURCHASE_CANCEL] = ["s"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
@@ -110,6 +110,8 @@ class FormatChecker {
         return message.length === 2 && _.isString(message[1]);
       } else if (message[0] === Types.Messages.TRADE_ACTIONS.CLOSE) {
         return true;
+      } else if (message[0] === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
+        return message.length === 2 && _.isBoolean(message[1]);
       }
     } else if (
       type === Types.Messages.ACHIEVEMENT ||

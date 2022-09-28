@@ -88,6 +88,7 @@ class World {
     this.entities = {};
     this.players = {};
     this.parties = {};
+    this.trades = {};
     this.currentPartyId = 0;
     this.currentTradeId = 0;
     this.mobs = {};
@@ -577,6 +578,10 @@ class World {
     this.trades[this.currentTradeId] = trade;
 
     return trade;
+  }
+
+  getTrade(tradeId: number) {
+    return (tradeId && this.trades[tradeId]) || null;
   }
 
   addPlayer(player: Player) {
