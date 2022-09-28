@@ -1100,10 +1100,14 @@ class App {
   }
 
   initTradePlayer1StatusButton() {
-    $("#trade-player1-status-button").on("click", event => {
-      $(event.target).toggleClass("disabled");
+    $("#trade-player1-status-button").on("click", ({ target }) => {
+      // Both player accepted, do nothing
+      if ($(target).hasClass("disabled") && $("#trade-player2-status").text() === "Accepted") {
+        return;
+      }
 
-      const isAccepted = $(event.target).hasClass("disabled");
+      $(target).toggleClass("disabled");
+      const isAccepted = $(target).hasClass("disabled");
 
       this.game.client.sendTradePlayer1Status(isAccepted);
     });
