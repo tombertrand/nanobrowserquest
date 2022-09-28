@@ -1103,8 +1103,9 @@ class App {
     $("#trade-player1-status-button").on("click", event => {
       $(event.target).toggleClass("disabled");
 
-      // @TODO Finish the flow, (listen to the message on BE and forward to player2)
-      this.game.client.sendTradePlayer1Status($(event.target).hasClass("disabled"));
+      const isAccepted = $(event.target).hasClass("disabled");
+
+      this.game.client.sendTradePlayer1Status(isAccepted);
     });
   }
 
@@ -1265,14 +1266,12 @@ class App {
   }
 
   closeTrade(shouldSend = true) {
-    console.log("~~~~~closeTrade called - shouldSend", shouldSend);
     if (!$("#trade").hasClass("visible")) return;
 
     // When the panel is manually closed the isFromMessage will not be defined.
     // It will be defined when player2 receives the message from player1 so this
     // prevents resending the message.
     if (shouldSend) {
-      console.log("~~~~~~sendTradeClose ");
       this.game.client.sendTradeClose();
     }
 

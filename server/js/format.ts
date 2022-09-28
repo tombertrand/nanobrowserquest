@@ -72,7 +72,7 @@ class FormatChecker {
         })
       );
     } else if (type === Types.Messages.LOGIN) {
-      console.log("~~~~~LOGIN", message);
+      // console.log("~~~~~LOGIN", message);
 
       // @TODO Validate this!?
 

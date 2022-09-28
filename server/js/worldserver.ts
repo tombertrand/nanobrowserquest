@@ -167,7 +167,7 @@ class World {
       console.info(
         player.name +
           "(" +
-          player.connection._connection.handshake.headers["cf-connecting-ip"] +
+          (player.connection._connection.handshake.headers["cf-connecting-ip"] || "Player IP") +
           ") has joined " +
           self.id,
       );

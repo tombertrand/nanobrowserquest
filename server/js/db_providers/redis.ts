@@ -847,7 +847,7 @@ class DatabaseHandler {
     } else if (location === "trade") {
       const tradeInstance = player.server.getTrade(player.tradeId);
 
-      if (!tradeInstance?.players.includes(player.id)) {
+      if (!tradeInstance?.players.find(({ id }) => id === player.id)) {
         // This should not happen..
         Sentry.captureException(new Error(`Invalid trade instance or Player ${player.name} not part of it`));
       } else {
@@ -865,6 +865,14 @@ class DatabaseHandler {
     const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
 
     if (!fromLocation || !toLocation) return;
+
+    if ([fromLocation, toLocation].includes("trade") && player.tradeId) {
+      const tradeInstance = player.server.trades[player.tradeId];
+      if (!tradeInstance || tradeInstance.players.find(({ id, isAccepted }) => player.id === id && isAccepted)) {
+        // @NOTE Maybe bother about sending back the messages to trade and inventory but a player should never end here
+        return;
+      }
+    }
 
     this.client.hget("u:" + player.name, fromLocation, (_err, fromReply) => {
       let fromItem;

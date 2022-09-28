@@ -848,16 +848,12 @@ class Game {
       if (isUpgrade && itemName && itemLevel) {
         if (previewSlot.is(":empty")) {
           previewSlot.append(
-            $("<div />", {
-              class: `item-not-draggable ${isItemUnique ? "item-unique" : ""}`,
-              css: {
-                "background-image": `url("${self.getIconPath(itemName, parseInt(itemLevel) + 1)}")`,
-              },
-              "data-item": itemName,
-              "data-level": itemLevel ? parseInt(itemLevel) + 1 : "",
-              "data-bonus": itemBonus,
-              ...(itemBonus ? { "data-bonus": itemBonus } : null),
-              ...(itemSkill ? { "data-skill": itemSkill } : null),
+            self.createItemDiv({
+              isUnique: isItemUnique,
+              item: itemName,
+              level: parseInt(itemLevel) + 1,
+              bonus: itemBonus,
+              skill: itemSkill,
             }),
           );
         }
@@ -975,7 +971,8 @@ class Game {
   }
 
   destroyDroppable() {
-    $(".item-not-draggable").remove();
+    // @NOTE Why was this there??
+    // $(".item-not-draggable").remove();
     $(".item-droppable").droppable("destroy");
   }
 
@@ -1005,6 +1002,9 @@ class Game {
         } else if (Types.isSingle(item)) {
           $(".item-recipe").addClass("item-droppable");
         }
+
+        // Simpler to remove it after the fact
+        $(".item-not-droppable").removeClass("item-droppable");
 
         self.initDroppable();
       },
@@ -1255,7 +1255,7 @@ class Game {
     }
   }
 
-  updateTradePlayer1() {
+  updateTradePlayer1(isDraggable = true) {
     if ($("#trade").hasClass("visible")) {
       $("#trade-player1-item .item-draggable.ui-draggable").draggable("destroy");
     }
@@ -1263,8 +1263,10 @@ class Game {
     $("#trade-player1-item .item-trade").empty();
 
     this.player.tradePlayer1.forEach(({ slot, ...item }) => {
-      $(`#trade-player1-item .item-slot:eq(${slot})`).append(this.createItemDiv(item));
+      $(`#trade-player1-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, isDraggable));
     });
+
+    $("#trade-player1-item .item-trade").toggleClass("item-not-droppable", !isDraggable);
 
     if ($("#trade").hasClass("visible")) {
       this.initDraggable();
@@ -1275,8 +1277,6 @@ class Game {
 
   updateTradePlayer2() {
     $("#trade-player2-item .item-trade").empty();
-
-    console.log("`~~~~~this.player.tradePlayer2", this.player.tradePlayer2);
 
     this.player.tradePlayer2.forEach(({ slot, ...item }) => {
       $(`#trade-player2-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, false));
@@ -1295,7 +1295,7 @@ class Game {
       skill,
       requirement,
     }: {
-      quantity: number;
+      quantity?: number;
       isUnique: boolean;
       item: string;
       level: number;
@@ -2461,6 +2461,7 @@ class Game {
       self.app.updateArtifact(artifact);
       self.app.initPlayerInfo();
       self.app.initNanoPotions();
+      self.app.initTradePlayer1StatusButton();
 
       self.storage.initPlayer(self.player.name, self.player.account);
       self.storage.savePlayer(self.renderer.getPlayerImage(), self.player.getSpriteName(), self.player.getWeaponName());
@@ -3255,15 +3256,15 @@ class Game {
 
       self.client.onTradeStart(function (players) {
         $("#trade-player1-status-button").removeClass("disabled");
-        if ($("#dialog-trade-request").dialog("isOpen")) {
+        if ($("#dialog-trade-request").dialog("instance")) {
           $("#dialog-trade-request").dialog("close");
         }
 
-        players.forEach(playerId => {
-          if (self.entities[playerId].name === self.player.name) {
-            $("#trade-player1-name").text(self.entities[playerId].name);
+        players.forEach(({ id }) => {
+          if (self.entities[id].name === self.player.name) {
+            $("#trade-player1-name").text(self.entities[id].name);
           } else {
-            $("#trade-player2-name").text(self.entities[playerId].name);
+            $("#trade-player2-name").text(self.entities[id].name);
           }
         });
 
@@ -3301,6 +3302,8 @@ class Game {
 
       self.client.onPlayer1Status(function (isAccepted) {
         $("#trade-player1-status").find(".btn").toggleClass("disabled", isAccepted);
+
+        self.updateTradePlayer1(!isAccepted);
       });
 
       self.client.onPlayer2Status(function (isAccepted) {

@@ -8,12 +8,15 @@ import Messages from "./message";
 import type World from "./worldserver";
 
 class Trade {
-  players: number[] = [];
+  players: { id: number; isAccepted: boolean }[] = [];
   id: number;
   server: World;
 
   constructor(id, player1, player2, server) {
-    this.players = [player1, player2];
+    this.players = [
+      { id: player1, isAccepted: false },
+      { id: player2, isAccepted: false },
+    ];
     this.id = id;
     this.server = server;
 
@@ -21,7 +24,7 @@ class Trade {
   }
 
   start() {
-    this.forEachPlayer(id => {
+    this.forEachPlayer(({ id }) => {
       const player = this.server.getEntityById(id);
 
       if (player) {
@@ -32,7 +35,7 @@ class Trade {
   }
 
   close(playerName) {
-    this.forEachPlayer(id => {
+    this.forEachPlayer(({ id }) => {
       const player = this.server.getEntityById(id);
 
       if (player) {
@@ -44,8 +47,8 @@ class Trade {
     delete this.server.trades[this.id];
   }
 
-  update({ data, player1Id }) {
-    this.forEachPlayer(id => {
+  update({ player1Id, data }) {
+    this.forEachPlayer(({ id }) => {
       const player = this.server.getEntityById(id);
 
       if (player) {
@@ -56,6 +59,27 @@ class Trade {
 
         this.server.pushToPlayer(player, new Messages.Trade(messageId, data));
       }
+    });
+  }
+
+  status({ player1Id, isAccepted }) {
+    this.forEachPlayer(({ id }) => {
+      const player = this.server.getEntityById(id);
+
+      if (player) {
+        const messageId =
+          id === player1Id ? Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS : Types.Messages.TRADE_ACTIONS.PLAYER2_STATUS;
+
+        this.server.pushToPlayer(player, new Messages.Trade(messageId, isAccepted));
+      }
+    });
+
+    // Update the player1 (the player that pushed the accept) change
+    this.players = this.players.map(player => {
+      if (player.id === player1Id) {
+        player.isAccepted = isAccepted;
+      }
+      return player;
     });
   }
 
