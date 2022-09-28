@@ -31,14 +31,12 @@ class Trade {
     });
   }
 
-  close() {
-    // @TODO return item(s) to inventory, like the upgrade hash
-
+  close(playerName) {
     this.forEachPlayer(id => {
       const player = this.server.getEntityById(id);
 
       if (player) {
-        this.server.pushToPlayer(player, new Messages.Trade(Types.Messages.TRADE_ACTIONS.CLOSE));
+        this.server.pushToPlayer(player, new Messages.Trade(Types.Messages.TRADE_ACTIONS.CLOSE, playerName));
         player.setTradeId(undefined);
       }
     });

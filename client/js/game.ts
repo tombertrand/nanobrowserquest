@@ -3255,6 +3255,9 @@ class Game {
 
       self.client.onTradeStart(function (players) {
         $("#trade-player1-status-button").removeClass("disabled");
+        if ($("#dialog-trade-request").dialog("isOpen")) {
+          $("#dialog-trade-request").dialog("close");
+        }
 
         players.forEach(playerId => {
           if (self.entities[playerId].name === self.player.name) {
@@ -3267,8 +3270,15 @@ class Game {
         self.app.openTrade();
       });
 
-      self.client.onTradeClose(function () {
-        // @TODO close panel???
+      self.client.onTradeClose(function (playerName) {
+        if (playerName !== self.player.name) {
+          self.app.closeTrade(false);
+        }
+
+        self.chat_callback({
+          message: `${playerName === self.player.name ? "You" : playerName} closed the trade`,
+          type: "info",
+        });
       });
 
       self.client.onTradeInfo(function (message) {

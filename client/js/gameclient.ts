@@ -689,7 +689,7 @@ class GameClient {
     } else if (data[1] === Types.Messages.TRADE_ACTIONS.START && this.tradestart_callback) {
       this.tradestart_callback(data[2]);
     } else if (data[1] === Types.Messages.TRADE_ACTIONS.CLOSE && this.tradeclose_callback) {
-      this.tradeclose_callback();
+      this.tradeclose_callback(data[2]);
     } else if (data[1] === Types.Messages.TRADE_ACTIONS.INFO && this.tradeinfo_callback) {
       this.tradeinfo_callback(data[2]);
     } else if (data[1] === Types.Messages.TRADE_ACTIONS.ERROR && this.tradeerror_callback) {
@@ -1229,7 +1229,6 @@ class GameClient {
   }
 
   sendTradeClose() {
-    // @TODO Finish this flow (one of the 2 player closes the trade window)
     this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.CLOSE]);
   }
 

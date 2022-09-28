@@ -1083,6 +1083,8 @@ class Player extends Character {
 
             self.server.tradeCreate(playerToTradeWith.id, self.id);
           }
+        } else if (message[1] === Types.Messages.TRADE_ACTIONS.CLOSE) {
+          self.server.trades[self.tradeId]?.close(self.name);
         }
       } else if (action === Types.Messages.SETTINGS) {
         const settings = message[1];

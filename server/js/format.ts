@@ -108,10 +108,10 @@ class FormatChecker {
         return message.length === 2 && _.isString(message[1]);
       } else if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
         return message.length === 2 && _.isString(message[1]);
-      } else if (message[0] === Types.Messages.TRADE_ACTIONS.CLOSE) {
-        return true;
       } else if (message[0] === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
         return message.length === 2 && _.isBoolean(message[1]);
+      } else if (message[0] === Types.Messages.TRADE_ACTIONS.CLOSE) {
+        return true;
       }
     } else if (
       type === Types.Messages.ACHIEVEMENT ||

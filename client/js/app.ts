@@ -933,7 +933,7 @@ class App {
       this.toggleUpgrade();
     }
     if ($("#trade").hasClass("visible")) {
-      this.toggleTrade();
+      this.closeTrade();
     }
     if ($("#inventory").hasClass("visible")) {
       this.closeInventory();
@@ -1264,14 +1264,27 @@ class App {
     this.toggleTrade();
   }
 
-  closeTrade() {
+  closeTrade(shouldSend = true) {
+    console.log("~~~~~closeTrade called - shouldSend", shouldSend);
     if (!$("#trade").hasClass("visible")) return;
 
-    this.toggleTrade();
+    // When the panel is manually closed the isFromMessage will not be defined.
+    // It will be defined when player2 receives the message from player1 so this
+    // prevents resending the message.
+    if (shouldSend) {
+      console.log("~~~~~~sendTradeClose ");
+      this.game.client.sendTradeClose();
+    }
+
+    this.toggleTrade(true);
   }
 
-  toggleTrade() {
-    $("#trade").toggleClass("visible");
+  toggleTrade(forceClose = false) {
+    if (forceClose) {
+      $("#trade").removeClass("visible");
+    } else {
+      $("#trade").toggleClass("visible");
+    }
 
     if ($("#trade").hasClass("visible")) {
       if (!$("#inventory").hasClass("visible")) {
