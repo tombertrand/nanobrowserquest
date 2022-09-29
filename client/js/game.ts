@@ -1266,6 +1266,7 @@ class Game {
       $(`#trade-player1-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, isDraggable));
     });
 
+    // @TODO Validate this class, unable to trade
     $("#trade-player1-item .item-trade").toggleClass("item-not-droppable", !isDraggable);
 
     if ($("#trade").hasClass("visible")) {
@@ -3271,13 +3272,22 @@ class Game {
         self.app.openTrade();
       });
 
-      self.client.onTradeClose(function (playerName) {
-        if (playerName !== self.player.name) {
-          self.app.closeTrade(false);
+      self.client.onTradeClose(function ({ playerName, isCompleted, isInventoryFull }) {
+        let message = "";
+        if (isCompleted) {
+          message = "trade completed";
+        } else if (isInventoryFull) {
+          message = `${playerName === self.player.name ? "Your" : playerName} inventory doesn't have enough space`;
+        } else {
+          message = `${playerName === self.player.name ? "You" : playerName} closed the trade`;
+          if (playerName === self.player.name) {
+          }
         }
 
+        self.app.closeTrade(false);
+
         self.chat_callback({
-          message: `${playerName === self.player.name ? "You" : playerName} closed the trade`,
+          message,
           type: "info",
         });
       });

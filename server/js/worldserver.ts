@@ -239,7 +239,7 @@ class World {
 
         // Cleanup trade sessions
         if (player.hasTrade()) {
-          self.trades[player.tradeId].close(player.name);
+          self.trades[player.tradeId].close({ playerName: player.name });
         }
 
         self.removePlayer(player);

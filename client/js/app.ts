@@ -933,7 +933,7 @@ class App {
       this.toggleUpgrade();
     }
     if ($("#trade").hasClass("visible")) {
-      this.closeTrade();
+      this.closeTrade(true);
     }
     if ($("#inventory").hasClass("visible")) {
       this.closeInventory();
@@ -1269,7 +1269,7 @@ class App {
     this.toggleTrade();
   }
 
-  closeTrade(shouldSend = true) {
+  closeTrade(shouldSend) {
     if (!$("#trade").hasClass("visible")) return;
 
     // When the panel is manually closed the isFromMessage will not be defined.
@@ -1297,12 +1297,12 @@ class App {
       $("#player").removeClass("visible");
     } else {
       this.game.destroyDraggable();
-      if (this.game.player.tradePlayer1.filter(Boolean).length) {
-        this.game.client.sendMoveItemsToInventory("trade");
-      }
       $("#inventory").removeClass("visible trade");
       $("#trade-player1-item .item-slot").empty();
       $("#trade-player2-item .item-slot").empty();
+      $("#trade-player1-item .item-trade").removeClass("item-not-droppable");
+      $("#trade-player1-status").find(".btn").removeClass("disabled");
+      $("#trade-player2-status").text("Waiting ...");
     }
   }
 

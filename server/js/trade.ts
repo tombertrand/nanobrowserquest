@@ -4,20 +4,20 @@ import { Types } from "../../shared/js/gametypes";
 import Messages from "./message";
 import { Sentry } from "./sentry";
 
-// import { Sentry } from "./sentry";
-// import type Player from "./player";
 import type World from "./worldserver";
 
+type PlayerInventory = { inventory: string[]; isValid: boolean };
+
 class Trade {
-  players: { id: number; isAccepted: boolean; name: string }[] = [];
+  players: { id: number; isAccepted: boolean }[] = [];
   id: number;
   server: World;
   isUpdatable: boolean;
 
   constructor(id, player1, player2, server) {
     this.players = [
-      { id: player1, isAccepted: false, name: "" },
-      { id: player2, isAccepted: false, name: "" },
+      { id: player1, isAccepted: false },
+      { id: player2, isAccepted: false },
     ];
     this.id = id;
     this.server = server;
@@ -37,13 +37,36 @@ class Trade {
     });
   }
 
-  close(playerName) {
+  close({
+    playerName,
+    isCompleted,
+    isInventoryFull,
+  }: { playerName?: string; isCompleted?: boolean; isInventoryFull?: boolean } = {}) {
     this.forEachPlayer(({ id }) => {
       const player = this.server.getEntityById(id);
 
+      console.log("~~~~CLOSE Player:", player.name);
+
       if (player) {
-        this.server.pushToPlayer(player, new Messages.Trade(Types.Messages.TRADE_ACTIONS.CLOSE, playerName));
+        this.server.pushToPlayer(
+          player,
+          new Messages.Trade(Types.Messages.TRADE_ACTIONS.CLOSE, { playerName, isCompleted, isInventoryFull }),
+        );
         player.setTradeId(undefined);
+
+        // @NOTE If panels gets closed, the items are returned, if the trade is completed the inventory gets refreshed
+        if (!isCompleted) {
+          this.server.databaseHandler.moveItemsToInventory(player, "trade");
+        } else {
+          this.server.databaseHandler.client.hget("u:" + player.name, "inventory", function (_err, reply) {
+            try {
+              let inventory = JSON.parse(reply);
+              player.send([Types.Messages.INVENTORY, inventory]);
+            } catch (err) {
+              Sentry.captureException(err);
+            }
+          });
+        }
       }
     });
 
@@ -67,6 +90,60 @@ class Trade {
     });
   }
 
+  validatePlayerInventory(playerA, playerB) {
+    return new Promise<PlayerInventory>(resolve => {
+      let playerATrade;
+      let playerAFilteredTrade;
+      let playerBInventory = [];
+      let playerBAvailableInventorySlots;
+      let isValid = true;
+
+      this.server.databaseHandler.client.hget("u:" + playerA.name, "trade", (_err, reply) => {
+        playerATrade = JSON.parse(reply);
+        playerAFilteredTrade = playerATrade.filter(Boolean);
+
+        this.server.databaseHandler.client.hget("u:" + playerB.name, "inventory", (_err, reply) => {
+          playerBInventory = JSON.parse(reply);
+          playerBAvailableInventorySlots = playerBInventory.filter(item => !item).length;
+
+          // Quick skip
+          if (!playerAFilteredTrade.length) {
+            isValid = true;
+          } else if (playerAFilteredTrade.length <= playerBAvailableInventorySlots) {
+            playerAFilteredTrade.forEach(item => {
+              let isQuantityItemFound = false;
+
+              // @NOTE Is it an item with a quantity?
+              if (item.startsWith("scroll") || item.startsWith("chest")) {
+                const [tradeItem, tradeQuantity] = item.split(":");
+                const index = playerBInventory.findIndex(entry => entry?.startsWith?.(tradeItem));
+
+                if (index > -1) {
+                  const [inventoryItem, inventoryQuantity] = playerBInventory[index].split(":");
+
+                  playerBInventory[index] = `${inventoryItem}:${parseInt(inventoryQuantity) + parseInt(tradeQuantity)}`;
+                  isQuantityItemFound = true;
+                }
+              }
+              if (!isQuantityItemFound) {
+                const index = playerBInventory.findIndex(entry => !entry);
+                if (index > -1) {
+                  playerBInventory[index] = item;
+                } else {
+                  isValid = false;
+                }
+              }
+            });
+          } else {
+            isValid = false;
+          }
+
+          resolve({ inventory: playerBInventory, isValid });
+        });
+      });
+    });
+  }
+
   async checkBothPlayersAccepted() {
     if (this.players.some(({ isAccepted }) => !isAccepted)) {
       return;
@@ -80,98 +157,44 @@ class Trade {
         throw new Error("Invalid trade player");
       }
 
-      let player1Trade;
-      let player1FilteredTrade;
-      let player2Inventory;
-      let player2AvailableInventorySlots;
+      const [player2Data, player1Data] = await Promise.all<PromiseLike<PlayerInventory>>([
+        this.validatePlayerInventory(player1, player2),
+        this.validatePlayerInventory(player2, player1),
+      ]);
 
-      player1Trade = JSON.parse(await this.server.databaseHandler.hget("u:" + player1.name, "trade"));
-      player1FilteredTrade = player1Trade.filter(Boolean);
-
-      if (player1FilteredTrade.length) {
-        player2Inventory = JSON.parse(await this.server.databaseHandler.hget("u:" + player2.name, "inventory"));
-        player2AvailableInventorySlots = player2Inventory.filter(item => !!item).length;
-
-        if (player1FilteredTrade.length <= player2AvailableInventorySlots) {
-          this.players[0].name = player1.name;
-        }
-      } else {
-        this.players[0].name = player1.name;
-      }
-
-      if (!this.players[0].name) {
-        // @TODO Tweak the message to say that playerName's inventory do not have enought free slots
-        this.close(player2.name);
+      if (!player1Data.isValid || !player2Data.isValid) {
+        this.close({ playerName: !player1Data.isValid ? player1.name : player2.name, isInventoryFull: true });
         return;
       }
 
-      let player2Trade;
-      let player2FilteredTrade;
-      let player1Inventory;
-      let player1AvailableInventorySlots;
+      await Promise.all([
+        this.writeData(player1, player1Data.inventory),
+        this.writeData(player2, player2Data.inventory),
+      ]);
 
-      player2Trade = JSON.parse(await this.server.databaseHandler.hget("u:" + player2.name, "trade"));
-      player2FilteredTrade = player2Trade.filter(Boolean);
-
-      if (player2FilteredTrade.length) {
-        player1Inventory = JSON.parse(await this.server.databaseHandler.hget("u:" + player1.name, "inventory"));
-        player1AvailableInventorySlots = player1Inventory.filter(item => !!item).length;
-
-        if (player2FilteredTrade.length <= player1AvailableInventorySlots) {
-          this.players[1].name = player2.name;
-        }
-      } else {
-        this.players[1].name = player2.name;
-      }
-
-      if (!this.players[1].name) {
-        // @TODO Tweak the message to say that playerName's inventory do not have enought free slots
-        this.close(player1.name);
-        return;
-      }
-
-      let isValidInsertion = true;
-
-      player1FilteredTrade.forEach(item => {
-        const index = player2Inventory.findIndex(entry => !entry);
-
-        if (index > -1) {
-          player2Inventory[index] = item;
-        } else {
-          isValidInsertion = false;
-        }
-      });
-
-      player2FilteredTrade.forEach(item => {
-        const index = player1Inventory.findIndex(entry => !entry);
-
-        if (index > -1) {
-          player1Inventory[index] = item;
-        } else {
-          isValidInsertion = false;
-        }
-      });
-
-      console.log("~~~~isValidInsertion", isValidInsertion);
-
-      // @TODO Validate response before inserting
-
-      // await this.server.databaseHandler.hset(
-      //   "u:" + this.players[0].name,
-      //   "trade",
-      //   JSON.stringify(player1Trade.map(() => 0)),
-      // );
-      // await this.server.databaseHandler.hset(
-      //   "u:" + this.players[1].name,
-      //   "trade",
-      //   JSON.stringify(player2Trade.map(() => 0)),
-      // );
+      this.close({ isCompleted: true });
     } catch (err) {
       Sentry.captureException(err);
+      this.close();
     }
   }
 
-  // validateInventory
+  writeData(player, inventory) {
+    return new Promise<void>(resolve => {
+      this.server.databaseHandler.client.hmset(
+        "u:" + player.name,
+        "trade",
+        // TRADE_SLOT_COUNT
+        JSON.stringify(new Array(9).fill(0)),
+        "inventory",
+        JSON.stringify(inventory),
+        (_err, _reply) => {
+          player.send([Types.Messages.INVENTORY, inventory]);
+          resolve();
+        },
+      );
+    });
+  }
 
   status({ player1Id, isAccepted }) {
     if (!this.isUpdatable) return;
@@ -196,6 +219,7 @@ class Trade {
     });
 
     if (isAccepted) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.checkBothPlayersAccepted();
     }
   }

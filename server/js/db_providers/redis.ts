@@ -1078,7 +1078,6 @@ class DatabaseHandler {
           if (panel === "upgrade") {
             player.send([Types.Messages.UPGRADE, data]);
           } else if (panel === "trade") {
-            // player.send([Types.Messages.TRADE.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data]);
             player.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data).serialize());
           }
         }

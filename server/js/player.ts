@@ -1084,7 +1084,7 @@ class Player extends Character {
             self.server.tradeCreate(playerToTradeWith.id, self.id);
           }
         } else if (message[1] === Types.Messages.TRADE_ACTIONS.CLOSE) {
-          self.server.trades[self.tradeId]?.close(self.name);
+          self.server.trades[self.tradeId]?.close({ playerName: self.name });
         } else if (message[1] === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
           self.server.trades[self.tradeId]?.status({ player1Id: self.id, isAccepted: message[2] });
         }
