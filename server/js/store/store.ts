@@ -12,7 +12,7 @@ class Store {
       id: Types.Store.EXPANSION1,
       nano: 0,
       ban: 0,
-      usd: isDevelopmentAmounts ? 0.02 : 5,
+      usd: isDevelopmentAmounts ? 0.01 : 0.01,
       isAvailable: true,
     },
     {

@@ -45,8 +45,6 @@ class Trade {
     this.forEachPlayer(({ id }) => {
       const player = this.server.getEntityById(id);
 
-      console.log("~~~~CLOSE Player:", player.name);
-
       if (player) {
         this.server.pushToPlayer(
           player,

@@ -4958,8 +4958,6 @@ class Game {
         return;
       }
     } else if (message.startsWith("/trade")) {
-      // ;
-      // return;
       const args = message.match(tradeRegexp);
       const playerName = (args?.[1] || "").trim();
       let isPlayerFound = false;
