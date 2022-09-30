@@ -1245,6 +1245,10 @@ class App {
   }
 
   closeInventory() {
+    if ($("#trade").hasClass("visible")) {
+      this.closeTrade(true);
+    }
+
     $("#inventory").removeClass("visible");
     $("#player").removeClass("visible");
     this.game.destroyDraggable();
