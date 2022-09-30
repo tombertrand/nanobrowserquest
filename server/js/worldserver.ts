@@ -15,6 +15,7 @@ import Player from "./player";
 import Properties from "./properties";
 import { Sentry } from "./sentry";
 import { purchase } from "./store/purchase";
+import Trade from "./trade";
 import { random, randomRange } from "./utils";
 
 // ======= GAME SERVER ========
@@ -69,7 +70,9 @@ class World {
   attack_callback: any;
   raise_callback: any;
   parties: { [key: number]: Party };
+  trades: { [key: number]: Trade };
   currentPartyId: number;
+  currentTradeId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -85,7 +88,9 @@ class World {
     this.entities = {};
     this.players = {};
     this.parties = {};
+    this.trades = {};
     this.currentPartyId = 0;
+    this.currentTradeId = 0;
     this.mobs = {};
     this.attackers = {};
     this.items = {};
@@ -162,7 +167,7 @@ class World {
       console.info(
         player.name +
           "(" +
-          player.connection._connection.handshake.headers["cf-connecting-ip"] +
+          (player.connection._connection.handshake.headers["cf-connecting-ip"] || "Player IP") +
           ") has joined " +
           self.id,
       );
@@ -231,6 +236,11 @@ class World {
 
         // Cleanup party invitations for the leaving player
         Object.values(self.parties || []).forEach(party => party.deleteInvite(player));
+
+        // Cleanup trade sessions
+        if (player.hasTrade()) {
+          self.trades[player.tradeId].close({ playerName: player.name });
+        }
 
         self.removePlayer(player);
         self.decrementPlayerCount();
@@ -559,6 +569,19 @@ class World {
 
   getParty(partyId: number) {
     return (partyId && this.parties[partyId]) || null;
+  }
+
+  tradeCreate(playerId1: Player, playerId2: Player) {
+    this.currentTradeId += 1;
+
+    const trade = new Trade(this.currentTradeId, playerId1, playerId2, this);
+    this.trades[this.currentTradeId] = trade;
+
+    return trade;
+  }
+
+  getTrade(tradeId: number) {
+    return (tradeId && this.trades[tradeId]) || null;
   }
 
   addPlayer(player: Player) {

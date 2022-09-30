@@ -848,16 +848,12 @@ class Game {
       if (isUpgrade && itemName && itemLevel) {
         if (previewSlot.is(":empty")) {
           previewSlot.append(
-            $("<div />", {
-              class: `item-not-draggable ${isItemUnique ? "item-unique" : ""}`,
-              css: {
-                "background-image": `url("${self.getIconPath(itemName, parseInt(itemLevel) + 1)}")`,
-              },
-              "data-item": itemName,
-              "data-level": itemLevel ? parseInt(itemLevel) + 1 : "",
-              "data-bonus": itemBonus,
-              ...(itemBonus ? { "data-bonus": itemBonus } : null),
-              ...(itemSkill ? { "data-skill": itemSkill } : null),
+            self.createItemDiv({
+              isUnique: isItemUnique,
+              item: itemName,
+              level: parseInt(itemLevel) + 1,
+              bonus: itemBonus,
+              skill: itemSkill,
             }),
           );
         }
@@ -975,7 +971,8 @@ class Game {
   }
 
   destroyDroppable() {
-    $(".item-not-draggable").remove();
+    // @NOTE Why was this there??
+    // $(".item-not-draggable").remove();
     $(".item-droppable").droppable("destroy");
   }
 
@@ -1005,6 +1002,9 @@ class Game {
         } else if (Types.isSingle(item)) {
           $(".item-recipe").addClass("item-droppable");
         }
+
+        // Simpler to remove it after the fact
+        $(".item-not-droppable").removeClass("item-droppable");
 
         self.initDroppable();
       },
@@ -1184,21 +1184,8 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-inventory").empty();
 
-    this.player.inventory.forEach(({ item, level, quantity, bonus, skill, requirement, isUnique, slot }) => {
-      $(`#item-inventory .item-slot:eq(${slot})`).append(
-        $("<div />", {
-          class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(item, level)}")`,
-          },
-          "data-item": item,
-          "data-level": level,
-          ...(quantity ? { "data-quantity": quantity } : null),
-          ...(bonus ? { "data-bonus": bonus } : null),
-          ...(skill ? { "data-skill": skill } : null),
-          ...(requirement ? { "data-requirement": requirement } : null),
-        }),
-      );
+    this.player.inventory.forEach(({ slot, ...item }) => {
+      $(`#item-inventory .item-slot:eq(${slot})`).append(this.createItemDiv(item));
     });
 
     if ($("#inventory").hasClass("visible")) {
@@ -1216,21 +1203,8 @@ class Game {
     // @TODO instead of empty-ing, compare and replace
     $(".item-stash").empty();
 
-    this.player.stash.forEach(({ item, level, quantity, bonus, skill, requirement, isUnique, slot }) => {
-      $(`#item-stash .item-slot:eq(${slot})`).append(
-        $("<div />", {
-          class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(item, level)}")`,
-          },
-          "data-item": item,
-          "data-level": level,
-          ...(quantity ? { "data-quantity": quantity } : null),
-          ...(bonus ? { "data-bonus": bonus } : null),
-          ...(skill ? { "data-skill": skill } : null),
-          ...(requirement ? { "data-requirement": requirement } : null),
-        }),
-      );
+    this.player.stash.forEach(({ slot, ...item }) => {
+      $(`#item-stash .item-slot:eq(${slot})`).append(this.createItemDiv(item));
     });
 
     if ($("#stash").hasClass("visible")) {
@@ -1262,9 +1236,91 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        '<div class="item-slot item-upgrade item-upgrade-weapon item-upgrade-armor item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="200"></div>',
+        '<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="200"></div>',
       );
     $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
+  }
+
+  initTrade() {
+    $("#trade-player1-item").empty();
+    $("#trade-player2-item").empty();
+
+    for (var i = 0; i < 9; i++) {
+      $("#trade-player1-item").append(
+        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest item-scroll" data-slot="${
+          400 + i
+        }"></div>`,
+      );
+      $("#trade-player2-item").append(`<div class="item-slot item-trade"></div>`);
+    }
+  }
+
+  updateTradePlayer1(isDraggable = true) {
+    if ($("#trade").hasClass("visible")) {
+      $("#trade-player1-item .item-draggable.ui-draggable").draggable("destroy");
+    }
+
+    $("#trade-player1-item .item-trade").empty();
+
+    this.player.tradePlayer1.forEach(({ slot, ...item }) => {
+      $(`#trade-player1-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, isDraggable));
+    });
+
+    // @TODO Validate this class, unable to trade
+    $("#trade-player1-item .item-trade").toggleClass("item-not-droppable", !isDraggable);
+
+    if ($("#trade").hasClass("visible")) {
+      this.initDraggable();
+    }
+
+    this.updateRequirement();
+  }
+
+  updateTradePlayer2() {
+    $("#trade-player2-item .item-trade").empty();
+
+    this.player.tradePlayer2.forEach(({ slot, ...item }) => {
+      $(`#trade-player2-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, false));
+    });
+
+    this.updateRequirement();
+  }
+
+  createItemDiv(
+    {
+      quantity,
+      isUnique,
+      item,
+      level,
+      bonus,
+      skill,
+      requirement,
+    }: {
+      quantity?: number;
+      isUnique: boolean;
+      item: string;
+      level: number;
+      bonus: any;
+      skill: any;
+      requirement?: number;
+    },
+    isDraggable = true,
+  ) {
+    return $("<div />", {
+      class: `${isDraggable ? "item-draggable" : "item-not-draggable"} ${quantity ? "item-quantity" : ""} ${
+        isUnique ? "item-unique" : ""
+      }`,
+      css: {
+        "background-image": `url("${this.getIconPath(item, level)}")`,
+        position: "relative",
+      },
+      "data-item": item,
+      "data-level": level,
+      ...(quantity ? { "data-quantity": quantity } : null),
+      ...(bonus ? { "data-bonus": bonus } : null),
+      ...(skill ? { "data-skill": skill } : null),
+      ...(requirement ? { "data-requirement": requirement } : null),
+    });
   }
 
   updateUpgrade({ luckySlot, isSuccess }) {
@@ -1318,19 +1374,7 @@ class Game {
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")
-        .append(
-          $("<div />", {
-            class: `item-draggable ${quantity ? "item-quantity" : ""} ${isUnique ? "item-unique" : ""}`,
-            css: {
-              "background-image": `url("${this.getIconPath(item, level)}")`,
-            },
-            "data-item": item,
-            "data-level": level,
-            ...(quantity ? { "data-quantity": quantity } : null),
-            ...(bonus ? { "data-bonus": bonus } : null),
-            ...(skill ? { "data-skill": skill } : null),
-          }),
-        );
+        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill }));
     });
 
     $("#upgrade-info").html(successRate ? `${successRate}% chance of successful ${actionText}` : "&nbsp;");
@@ -2381,6 +2425,7 @@ class Game {
       self.initAchievements();
       self.initInventory();
       self.initUpgrade();
+      self.initTrade();
       self.initStash();
       self.initTooltips();
       self.initSendUpgradeItem();
@@ -2417,6 +2462,7 @@ class Game {
       self.app.updateArtifact(artifact);
       self.app.initPlayerInfo();
       self.app.initNanoPotions();
+      self.app.initTradePlayer1StatusButton();
 
       self.storage.initPlayer(self.player.name, self.player.account);
       self.storage.savePlayer(self.renderer.getPlayerImage(), self.player.getSpriteName(), self.player.getWeaponName());
@@ -2434,7 +2480,8 @@ class Game {
       }
 
       // @NOTE possibly optimize this? sending request to move items to inventory
-      self.client.sendMoveUpgradeItemsToInventory();
+      self.client.sendMoveItemsToInventory("upgrade");
+      self.client.sendMoveItemsToInventory("trade");
 
       self.player.onStartPathing(function (path) {
         var i = path.length - 1,
@@ -3168,6 +3215,109 @@ class Game {
 
       self.client.onPartyHealth(function (member) {
         self.app.updatePartyHealthBar(member);
+      });
+
+      self.client.onTradeRequestSend(function (playerName) {
+        self.chat_callback({ message: `Trade request sent to ${playerName}`, type: "event" });
+      });
+
+      self.client.onTradeRequestReceive(function (playerName) {
+        $("#dialog-trade-request").dialog({
+          dialogClass: "no-close",
+          autoOpen: true,
+          draggable: false,
+          title: "Trade request",
+          text: "hello",
+          classes: {
+            "ui-button": "btn",
+          },
+          buttons: [
+            {
+              text: "Refuse",
+              class: "btn btn-gray",
+              click: function () {
+                self.client.sendTradeRequestRefuse(playerName);
+                $(this).dialog("close");
+              },
+            },
+            {
+              text: "Accept",
+              class: "btn",
+              click: function () {
+                self.client.sendTradeRequestAccept(playerName);
+                $(this).dialog("close");
+              },
+            },
+          ],
+        });
+        $("#dialog-trade-request").text(`${playerName} wants to start trading with you.`);
+        // @ts-ignore
+        $(".ui-button").removeClass("ui-button");
+      });
+
+      self.client.onTradeStart(function (players) {
+        $("#trade-player1-status-button").removeClass("disabled");
+        if ($("#dialog-trade-request").dialog("instance")) {
+          $("#dialog-trade-request").dialog("close");
+        }
+
+        players.forEach(({ id }) => {
+          if (self.entities[id].name === self.player.name) {
+            $("#trade-player1-name").text(self.entities[id].name);
+          } else {
+            $("#trade-player2-name").text(self.entities[id].name);
+          }
+        });
+
+        self.app.openTrade();
+      });
+
+      self.client.onTradeClose(function ({ playerName, isCompleted, isInventoryFull }) {
+        let message = "";
+        if (isCompleted) {
+          message = "trade completed";
+        } else if (isInventoryFull) {
+          message = `${playerName === self.player.name ? "Your" : playerName} inventory doesn't have enough space`;
+        } else {
+          message = `${playerName === self.player.name ? "You" : playerName} closed the trade`;
+          if (playerName === self.player.name) {
+          }
+        }
+
+        self.app.closeTrade(false);
+
+        self.chat_callback({
+          message,
+          type: "info",
+        });
+      });
+
+      self.client.onTradeInfo(function (message) {
+        self.chat_callback({ message, type: "info" });
+      });
+
+      self.client.onTradeError(function (message) {
+        self.chat_callback({ message, type: "error" });
+      });
+
+      self.client.onPlayer1MoveItem(function (items) {
+        self.player.setTradePlayer1(items);
+        self.updateTradePlayer1();
+      });
+
+      self.client.onPlayer2MoveItem(function (items) {
+        self.player.setTradePlayer2(items);
+        self.updateTradePlayer2();
+      });
+
+      self.client.onPlayer1Status(function (isAccepted) {
+        $("#trade-player1-status").find(".btn").toggleClass("disabled", isAccepted);
+
+        self.updateTradePlayer1(!isAccepted);
+      });
+
+      self.client.onPlayer2Status(function (isAccepted) {
+        $("#trade-player2-status").text(isAccepted ? "Accepted" : "Waiting ...");
       });
 
       self.client.onEntityMove(function (id, x, y) {
@@ -4718,89 +4868,144 @@ class Game {
 
   say(message) {
     const partyRegexp = /^\/party (create|join|invite|leave|remove|disband|leader)(.+)?/;
-    const args = message.match(partyRegexp);
+    const tradeRegexp = /^\/trade (.+)?/;
 
-    if (args) {
-      const action = args[1];
-      const param = (args[2] || "").trim();
+    if (message.startsWith("/party")) {
+      const args = message.match(partyRegexp);
+      if (args) {
+        const action = args[1];
+        const param = (args[2] || "").trim();
 
-      switch (action) {
-        case "create":
-          this.client.sendPartyCreate();
-          break;
-        case "join":
-          if (param) {
-            this.client.sendPartyJoin(parseInt(param, 10));
+        switch (action) {
+          case "create":
+            this.client.sendPartyCreate();
+            break;
+          case "join":
+            if (param) {
+              this.client.sendPartyJoin(parseInt(param, 10));
+            } else {
+              this.chat_callback({ message: "You must specify the party id you want to join", type: "error" });
+            }
+            break;
+          case "invite":
+            if (param) {
+              this.client.sendPartyInvite(param);
+            } else {
+              this.chat_callback({
+                message: "You must specify the player you want to invite to the party",
+                type: "error",
+              });
+            }
+            break;
+          case "leave":
+            if (this.player.partyId) {
+              this.client.sendPartyLeave();
+            } else {
+              this.chat_callback({
+                message: "You are not in a party",
+                type: "error",
+              });
+            }
+            break;
+          case "remove":
+            if (param) {
+              this.client.sendPartyRemove(param);
+            } else {
+              this.chat_callback({
+                message: "You must specify the player name you want to remove from the party",
+                type: "error",
+              });
+            }
+            break;
+          case "disband":
+            if (!this.player.partyLeader?.id) {
+              this.chat_callback({
+                message: "You are not in a party",
+                type: "error",
+              });
+            } else if (this.player.partyLeader?.id === this.player.id) {
+              this.client.sendPartyDisband(param);
+            } else {
+              this.chat_callback({
+                message: "Only the party leader can disband the party",
+                type: "error",
+              });
+            }
+            break;
+          case "leader":
+            if (!this.player.partyLeader?.id) {
+              this.chat_callback({
+                message: "You are not in a party",
+                type: "error",
+              });
+            } else if (this.player.partyLeader?.id === this.player.id) {
+              // @TODO!
+              // this.client.sendPartyLeader(param);
+            } else {
+              this.chat_callback({
+                message: "Only the party leader can assign another player as the party leader",
+                type: "error",
+              });
+            }
+            break;
+          default:
+            this.chat_callback({
+              message: "invalid /party command",
+              type: "error",
+            });
+        }
+
+        return;
+      }
+    } else if (message.startsWith("/trade")) {
+      const args = message.match(tradeRegexp);
+      const playerName = (args?.[1] || "").trim();
+      let isPlayerFound = false;
+
+      if (!playerName || playerName === this.player.name) {
+        this.chat_callback({
+          message: `Type a player name to trade with.`,
+          type: "error",
+        });
+        return;
+      }
+
+      if (this.player.gridY < 195 || this.player.gridY > 250 || this.player.gridX > 90) {
+        this.chat_callback({
+          message: `You can only trade in town.`,
+          type: "error",
+        });
+        return;
+      }
+
+      for (const i in this.entities) {
+        if (this.entities[i].kind !== Types.Entities.WARRIOR) {
+          continue;
+        }
+
+        if (this.entities[i].name === playerName) {
+          isPlayerFound = true;
+          if (
+            Math.abs(this.entities[i].gridX - this.player.gridX) > 3 ||
+            Math.abs(this.entities[i].gridY - this.player.gridY) > 3
+          ) {
+            this.chat_callback({
+              message: `You can only trade with ${playerName} if the player is 3 or less tiles away.`,
+              type: "error",
+            });
           } else {
-            this.chat_callback({ message: "You must specify the party id you want to join", type: "error" });
+            this.client.sendTradeRequest(playerName);
           }
+
           break;
-        case "invite":
-          if (param) {
-            this.client.sendPartyInvite(param);
-          } else {
-            this.chat_callback({
-              message: "You must specify the player you want to invite to the party",
-              type: "error",
-            });
-          }
-          break;
-        case "leave":
-          if (this.player.partyId) {
-            this.client.sendPartyLeave();
-          } else {
-            this.chat_callback({
-              message: "You are not in a party",
-              type: "error",
-            });
-          }
-          break;
-        case "remove":
-          if (param) {
-            this.client.sendPartyRemove(param);
-          } else {
-            this.chat_callback({
-              message: "You must specify the player name you want to remove from the party",
-              type: "error",
-            });
-          }
-          break;
-        case "disband":
-          if (!this.player.partyLeader?.id) {
-            this.chat_callback({
-              message: "You are not in a party",
-              type: "error",
-            });
-          } else if (this.player.partyLeader?.id === this.player.id) {
-            this.client.sendPartyDisband(param);
-          } else {
-            this.chat_callback({
-              message: "Only the party leader can disband the party",
-              type: "error",
-            });
-          }
-          break;
-        case "leader":
-          if (!this.player.partyLeader?.id) {
-            this.chat_callback({
-              message: "You are not in a party",
-              type: "error",
-            });
-          } else if (this.player.partyLeader?.id === this.player.id) {
-            // @TODO!
-            // this.client.sendPartyLeader(param);
-          } else {
-            this.chat_callback({
-              message: "Only the party leader can assign another player as the party leader",
-              type: "error",
-            });
-          }
-          break;
-        default:
-          this.chat_callback({
-            message: "invalid /party command",
-            type: "error",
-          });
+        }
+      }
+
+      if (playerName && !isPlayerFound) {
+        this.chat_callback({
+          message: `${playerName} is not online.`,
+          type: "error",
+        });
       }
 
       return;

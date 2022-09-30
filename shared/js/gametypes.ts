@@ -50,7 +50,7 @@ export const Types: any = {
     STASH: 50,
     UPGRADE: 37,
     MOVE_ITEM: 38,
-    MOVE_UPGRADE_ITEMS_TO_INVENTORY: 39,
+    MOVE_ITEMS_TO_INVENTORY: 39,
     UPGRADE_ITEM: 40,
     ANVIL_UPGRADE: 41,
     ANVIL_RECIPE: 42,
@@ -79,6 +79,21 @@ export const Types: any = {
       ERROR: 66,
       LOOT: 67,
       HEALTH: 68,
+    },
+    TRADE: 76,
+    TRADE_ACTIONS: {
+      REQUEST_SEND: 77,
+      REQUEST_RECEIVE: 78,
+      REQUEST_ACCEPT: 79,
+      REQUEST_REFUSE: 80,
+      INFO: 81,
+      ERROR: 82,
+      START: 83,
+      CLOSE: 84,
+      PLAYER1_MOVE_ITEM: 85,
+      PLAYER2_MOVE_ITEM: 86,
+      PLAYER1_STATUS: 87,
+      PLAYER2_STATUS: 88,
     },
     SETTINGS: 69,
     MINOTAURLEVEL_START: 70,
@@ -1979,5 +1994,6 @@ Types.itemDescription = {
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgradeblessed:
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level. Blessed scrolls gives a higher chance of successful upgrade.",
-  scrolltransmute: "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
+  scrolltransmute:
+    "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
 };

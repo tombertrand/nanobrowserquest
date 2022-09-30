@@ -669,6 +669,25 @@
             <div id="party-player-list"></div>
 
             <div class="panel-container">
+                <div id="trade" class="panel panel-large">
+                    <span class="close"></span>
+                    <div class="panel-header"></div>
+                    <div class="panel-spaced-row panel-spaced-row-top">
+                        <div>
+                            <div id="trade-player2-name" class="trade-player-name">Player 2</div>
+                            <div id="trade-player2-item"></div>
+                            <div id="trade-player2-status" class="trade-player-status">Waiting ...</div>
+                        </div>
+                        <div>
+                            <div id="trade-player1-name" class="trade-player-name">Player 1</div>
+                            <div id="trade-player1-item"></div>
+                            <div id="trade-player1-status" class="trade-player-status">
+                                <button class="btn" id="trade-player1-status-button">Accept</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-header reverse"></div>
+                </div>
                 <div id="upgrade" class="panel">
                     <span class="close"></span>
                     <div class="panel-header"></div>
@@ -773,6 +792,7 @@
     </script>
 
     <div id="dialog-delete-item" title="Dialog Title"></div>
+    <div id="dialog-trade-request" title="Dialog Title"></div>
 </body>
 
 </html>

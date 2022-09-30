@@ -777,9 +777,10 @@ footer, header, hgroup, menu, nav, section {
     }
 
     #waypoint {top: 10%}
+    #trade { bottom: auto;}
     #upgrade { bottom: auto;}
     #inventory { bottom: auto;}
-    #inventory.upgrade .panel-spaced-row { display: none;}
+    #inventory.upgrade .panel-spaced-row, #inventory.trade .panel-spaced-row { display: none;}
     #item-inventory, #item-stash { position: relative; display: flex; flex-wrap: wrap; justify-content: center;}
 
     .ui-droppable-hover { border-color: yellow !important;}
@@ -793,6 +794,9 @@ footer, header, hgroup, menu, nav, section {
     .panel-header {min-height: 4px;}
     .panel-header.reverse {transform: rotate(180deg);}
     .panel-spaced-row { display: flex; justify-content: space-between; align-items: center; padding: 0 10px}
+    .panel-spaced-row-top { align-items: flex-start; }
+    .trade-player-name { margin-bottom: 3px;}
+    .trade-player-status { margin-top: 6px;}
 
     .waypoint-spaced-row { display: flex; align-items: center;}
     .waypoint-spaced-row:hover:not(.disabled):not(.locked):not(.active) {background: #505050;}
@@ -815,7 +819,8 @@ footer, header, hgroup, menu, nav, section {
         line-height: 1;
         font-size: 0.9em;
     }
-    #upgrade-scroll {display: flex;flex-wrap: wrap;}
+    #upgrade-scroll, #trade-player1-item, #trade-player2-item {display: flex;flex-wrap: wrap;}
+    #trade-info,
     #upgrade-info {
         color: #ababa4;
         font-size: 0.75em;
@@ -865,6 +870,16 @@ footer, header, hgroup, menu, nav, section {
         text-shadow: none;
     }
 
+    .btn-gray {
+        color: #2e2e2e;
+        background-color: #dcdcdc;
+        text-shadow: 0 2px 0 #d2d2d2;
+        box-shadow: inset -2px 2px 0 2px #c7c7c7, inset 2px -2px 0 2px #868585, inset -1px 1px 0 4px #dbdada;
+    }
+
+    .btn-gray:hover {
+        box-shadow: inset 2px -2px 0 2px #c7c7c7, inset -2px 2px 0 2px #868585, inset 1px -1px 0 4px #dbdada;
+    }
 
     .arial-font {font-family:arial, sans-serif;}
 
@@ -955,7 +970,7 @@ footer, header, hgroup, menu, nav, section {
         #chatinput { padding: 6px 12px; }
         #completed.boss-check .link { font-size: 34px; }
         .createaccount-instructions { font-size: 25px; }
-        #upgrade-scroll { width: 168px; }
+        #upgrade-scroll, #trade-player1-item, #trade-player2-item { width: 168px; }
         .panel-spaced-row { padding: 0 12px}
         .item-equip-weapon::before {background-image: url('../img/3/inventory-placeholder.png');}
         .item-equip-armor::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -45px;}
@@ -1104,7 +1119,10 @@ footer, header, hgroup, menu, nav, section {
 
         .panel > div {background-size:1440px;background-position:-720px -156px;}
         .panel-header {background-size:1440px; background-position:-720px -144px !important;padding-top: 12px;}
+        .panel.panel-large > div {background-position:0 -207px;}
+        .panel-large .panel-header {background-position:0 -195px !important;}
 
+        #trade { width:416px; right: 56px; }
         .barbutton {background-size:1440px;height:45px;width:42px;}
         #chatbutton {background-position:-306px -51px;top:3px;left:1215px;}
         #chatbutton:hover, #chatbutton.blink:hover {background-position:-348px -51px;}
@@ -1185,7 +1203,7 @@ footer, header, hgroup, menu, nav, section {
 	@media screen and (max-width: 1500px), screen and (max-height: 870px) {
         .home-logo {margin-left:-200px;margin-top:-20px;transform:scale(0.7);}
         .createaccount-instructions { font-size: 17px; }
-        #upgrade-scroll { width: 120px; }
+        #upgrade-scroll, #trade-player1-item, #trade-player2-item { width: 120px; }
         .item-equip-weapon::before {background-image: url('../img/2/inventory-placeholder.png');}
         .item-equip-armor::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -29px;}
         .item-equip-ring::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -61px;}
@@ -1252,15 +1270,15 @@ footer, header, hgroup, menu, nav, section {
         .button.delete:active {background-position:0 -1452px;}
         .validation-error {font-size:16px;}
         
-		#container {width:980px;margin:0 auto;position:absolute;top:50%;margin-top:-252px;left:50%;margin-left:-490px;}
+        #container {width:980px;margin:0 auto;position:absolute;top:50%;margin-top:-252px;left:50%;margin-left:-490px;}
 
-    #canvasborder {padding:10px;background:url('../img/2/border.png') no-repeat;}
-    #expbar{right:10px}
-		#canvas {width:100%;height:448px;}
-		#fade {width:960px;height:448px;top:10px;left:10px;}
+        #canvasborder {padding:10px;background:url('../img/2/border.png') no-repeat;}
+        #expbar{right:10px}
+        #canvas {width:100%;height:448px;}
+        #fade {width:960px;height:448px;top:10px;left:10px;}
 
-		#instructions, #store, #settings, #party, #completed, #failed {height:386px;width:834px;background-position:0 -1136px;margin-left:-416px;margin-top:-210px;color:#373737;}
-		#instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:30px;text-align:center;margin:40px 0 30px;}
+        #instructions, #store, #settings, #party, #completed, #failed {height:386px;width:834px;background-position:0 -1136px;margin-left:-416px;margin-top:-210px;color:#373737;}
+        #instructions h1, #store h1, #settings h1, #party h1, #completed h1, #failed h1 {font-size:30px;text-align:center;margin:40px 0 30px;}
         #party h1 { margin-bottom: 10px; margin-top: 20px; }
         #party .party-panel { height: 300px; }
         #completed h1 { margin-bottom: 0}
@@ -1329,6 +1347,7 @@ footer, header, hgroup, menu, nav, section {
 
         #player-count {font-size:16px;left:680px;top:10px;width:125px;text-align:center;}
         .panel {bottom:44px;width:262px;font-size:14px;line-height:20px;}
+        .panel.panel-large { width: 302px; }
         .panel-container {right: calc(5% + 262px);}
         #population {right:70px;}
         #player {left: 20px;}
@@ -1336,7 +1355,10 @@ footer, header, hgroup, menu, nav, section {
 
         .panel > div {background-size:960px;background-position:-480px -104px;}
         .panel-header {background-position:-480px -96px !important;padding-top: 8px;}
+        .panel.panel-large > div {background-position:0 -138px;}
+        .panel-large .panel-header {background-position:0 -130px !important;}
 
+        #trade { right: 40px; width: 302px}
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:810px;}
         #chatbutton:hover, #chatbutton.blink:hover {background-position:-232px -34px;}
@@ -1425,7 +1447,7 @@ footer, header, hgroup, menu, nav, section {
         #text-window { width: 60%; }
         .world { font-size: 12px;}
         .createaccount-instructions { font-size: 8px; }
-        #upgrade-scroll { width: 120px; }
+        #upgrade-scroll, #trade-player1-item, #trade-player2-item { width: 120px; }
         #player-list {max-height: 266px;}
         #stash {top:45px;}
 
@@ -1552,6 +1574,7 @@ footer, header, hgroup, menu, nav, section {
         #completedbutton.ban.active {background-position:-892px -34px;}
 
         .panel {bottom:22px;width:262px;font-size:14px;line-height:20px;}
+        .panel.panel-large {width:302px;}
         .panel-container {right: calc(5% + 262px);}
         #population {right:70px;}
         #player {left:20px;}
@@ -1559,6 +1582,8 @@ footer, header, hgroup, menu, nav, section {
 
         .panel > div {background-size:960px;background-position:-480px -104px;}
         .panel-header {background-position:-480px -96px !important;padding-top: 8px;}
+        .panel.panel-large > div {background-position:0 -138px;}
+        .panel-large .panel-header {background-position:0 -130px !important;}
 
         .barbutton {background-size:480px;height:15px;width:14px;}
         #chatbutton {background-position:-102px -17px;top:1px;left:405px;}
@@ -1632,7 +1657,7 @@ footer, header, hgroup, menu, nav, section {
 	@media screen and (max-width: 800px) {
         #text-window { width: calc(100% - 30px); height: 50vh; }
         .createaccount-instructions { font-size: 8px; }
-        #upgrade-scroll { width: 120px; }
+        #upgrade-scroll, #trade-player1-item, #trade-player2-item { width: 120px; }
         .panel-container {
             flex-direction: row;
             width: auto !important;
@@ -1644,9 +1669,10 @@ footer, header, hgroup, menu, nav, section {
         .panel#population { bottom: 16px; }
         .panel#player {left: -20px; bottom: 18px;}
         .panel#waypoint {left: -20px;}
+        .panel#trade {position: relative;left: 42px;}
         .panel#upgrade {position: relative;left: 42px;}
         .panel#inventory {bottom:22px;}
-        .panel#inventory.upgrade {bottom:auto}
+        .panel#inventory.trade, .panel#inventory.upgrade {bottom:auto}
         #player-list {max-height: 166px;}
         #stash {top: 0;right: 230px;}
 
@@ -1753,6 +1779,7 @@ footer, header, hgroup, menu, nav, section {
         #player-count span {display:none;}
         #player-count span.count {display:inline;}
         .panel {bottom:34px;width:262px;font-size:14px;line-height:20px;}
+        .panel.panel-large {width:302px;}
         .panel-container {right: 0;}
         #population {right:0px;}
         #player {left:20px;}
@@ -1760,6 +1787,8 @@ footer, header, hgroup, menu, nav, section {
 
         .panel > div {background-size:960px;background-position:-480px -104px;}
         .panel-header {background-position:-480px -96px !important;padding-top: 6px;}
+        .panel.panel-large > div {background-position:0 -138px;}
+        .panel-large .panel-header {background-position:0 -130px !important;}
 
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:360px;}

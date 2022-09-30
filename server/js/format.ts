@@ -28,8 +28,9 @@ class FormatChecker {
       (this.formats[Types.Messages.SKILL] = ["n"]),
       (this.formats[Types.Messages.REQUEST_PAYOUT] = ["n"]),
       (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n"]),
-      (this.formats[Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY] = []),
+      (this.formats[Types.Messages.MOVE_ITEMS_TO_INVENTORY] = ["s"]),
       (this.formats[Types.Messages.UPGRADE_ITEM] = []),
+      // (this.formats[Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM] = []),
       (this.formats[Types.Messages.PURCHASE_CREATE] = ["n", "s"]),
       (this.formats[Types.Messages.PURCHASE_CANCEL] = ["s"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
@@ -71,7 +72,7 @@ class FormatChecker {
         })
       );
     } else if (type === Types.Messages.LOGIN) {
-      console.log("~~~~~LOGIN", message);
+      // console.log("~~~~~LOGIN", message);
 
       // @TODO Validate this!?
 
@@ -100,6 +101,18 @@ class FormatChecker {
       } else if (message[0] === Types.Messages.PARTY_ACTIONS.ERROR) {
         return message.length === 2 && _.isString(message[1]);
       }
+    } else if (type === Types.Messages.TRADE) {
+      if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_SEND) {
+        return message.length === 2 && _.isString(message[1]);
+      } else if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT) {
+        return message.length === 2 && _.isString(message[1]);
+      } else if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
+        return message.length === 2 && _.isString(message[1]);
+      } else if (message[0] === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
+        return message.length === 2 && _.isBoolean(message[1]);
+      } else if (message[0] === Types.Messages.TRADE_ACTIONS.CLOSE) {
+        return true;
+      }
     } else if (
       type === Types.Messages.ACHIEVEMENT ||
       type === Types.Messages.WAYPOINT ||
@@ -110,13 +123,9 @@ class FormatChecker {
       return message.length === 1 && _.isString(message[0]);
     } else if (type === Types.Messages.BOSS_CHECK) {
       return message.length === 1 && _.isString(message[0]);
-    } else if (
-      [
-        Types.Messages.MOVE_UPGRADE_ITEMS_TO_INVENTORY,
-        Types.Messages.UPGRADE_ITEM,
-        Types.Messages.STORE_ITEMS,
-      ].includes(type)
-    ) {
+    } else if (type === Types.Messages.MOVE_ITEMS_TO_INVENTORY) {
+      return message.length === 1 && _.isString(message[0]);
+    } else if ([Types.Messages.UPGRADE_ITEM, Types.Messages.STORE_ITEMS].includes(type)) {
       return message.length === 0;
     } else if (type === Types.Messages.MOVE_ITEM) {
       return message.length === 2 && _.isNumber(message[0]) && _.isNumber(message[1]);
