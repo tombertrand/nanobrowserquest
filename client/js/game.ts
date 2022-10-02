@@ -3285,6 +3285,7 @@ class Game {
         }
 
         self.app.closeTrade(false);
+        self.player.tradePlayer1 = [];
 
         self.chat_callback({
           message,

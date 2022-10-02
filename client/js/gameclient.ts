@@ -1232,8 +1232,8 @@ class GameClient {
     this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.CLOSE]);
   }
 
-  sendTradePlayer1Status(status) {
-    this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS, status]);
+  sendTradePlayer1Status(isAccepted) {
+    this.sendMessage([Types.Messages.TRADE, Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS, isAccepted]);
   }
 
   sendBanPlayer(message) {

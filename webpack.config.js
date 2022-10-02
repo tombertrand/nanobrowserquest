@@ -22,6 +22,13 @@ module.exports = {
     // proxy: {
     //   "/": "http://localhost:8000",
     // },
+
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    },
   },
   optimization: {
     minimize: true,

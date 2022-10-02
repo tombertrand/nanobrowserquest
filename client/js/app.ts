@@ -1100,17 +1100,19 @@ class App {
   }
 
   initTradePlayer1StatusButton() {
-    $("#trade-player1-status-button").on("click", ({ target }) => {
-      // Both player accepted, do nothing
-      if ($(target).hasClass("disabled") && $("#trade-player2-status").text() === "Accepted") {
-        return;
-      }
+    $("#trade-player1-status-button")
+      .off("click")
+      .on("click", ({ target }) => {
+        // Both player accepted, do nothing
+        if ($(target).hasClass("disabled") && $("#trade-player2-status").text() === "Accepted") {
+          return;
+        }
 
-      $(target).toggleClass("disabled");
-      const isAccepted = $(target).hasClass("disabled");
+        $(target).toggleClass("disabled");
+        const isAccepted = $(target).hasClass("disabled");
 
-      this.game.client.sendTradePlayer1Status(isAccepted);
-    });
+        this.game.client.sendTradePlayer1Status(isAccepted);
+      });
   }
 
   updateNanoPotions(nanoPotions) {
@@ -1270,6 +1272,11 @@ class App {
     if ($("#trade").hasClass("visible")) return;
     $("#population").removeClass("visible");
     this.closeStash();
+
+    if ($("#upgrade").hasClass("visible")) {
+      this.toggleUpgrade();
+    }
+
     this.toggleTrade();
   }
 

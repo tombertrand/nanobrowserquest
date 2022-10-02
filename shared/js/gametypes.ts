@@ -771,7 +771,11 @@ Types.getSet = ({ belt, weaponKind, armorKind, shieldKind, ring1, ring2 }) => {
   ) {
     set = "golden";
     bonus = Types.setBonus.golden;
-  } else if (armorKind === Types.Entities.REDARMOR && weaponKind === Types.Entities.REDSWORD) {
+  } else if (
+    armorKind === Types.Entities.REDARMOR &&
+    shieldKind === Types.Entities.SHIELDGOLDEN &&
+    weaponKind === Types.Entities.REDSWORD
+  ) {
     set = "ruby";
     bonus = Types.setBonus.ruby;
   } else if (
