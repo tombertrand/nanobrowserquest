@@ -293,6 +293,12 @@ var initApp = function () {
     //   app.tryStartingGame();
     // });
 
+    // $("#running-coder1 .link").on("click", () => {
+    //   $("#loginnameinput").val("running-coder1").show();
+    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+    //   app.tryStartingGame();
+    // });
+
     $(".play span").click(function () {
       app.tryStartingGame();
     });
@@ -474,7 +480,7 @@ var initGame = function () {
       app.center();
       app.setMouseCoordinates(event);
       if (game) {
-        game.pvpFlag = event.shiftKey;
+        game.pvpFlag = game.player.level >= 9 && event.shiftKey;
         game.click();
       }
       // app.hideWindows();
@@ -529,7 +535,7 @@ var initGame = function () {
   $(document).mousemove(function (event) {
     app.setMouseCoordinates(event);
     if (game.started) {
-      game.pvpFlag = event.shiftKey;
+      game.pvpFlag = game.player.level >= 9 && event.shiftKey;
       game.movecursor();
     }
   });
@@ -589,7 +595,7 @@ var initGame = function () {
         app.showChat();
       }
     } else if (key === 16) {
-      game.pvpFlag = true;
+      game.pvpFlag = game.player.level >= 9;
     }
 
     if (game.started && !$("#chatinput").is(":focus")) {

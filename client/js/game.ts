@@ -4273,8 +4273,8 @@ class Game {
       return null;
     }
 
-    var entities = this.entityGrid[y][x];
-    var entity = null;
+    let entities = this.entityGrid[y][x];
+    let entity = null;
     if (_.size(entities) > 0) {
       if (instance) {
         entity = Object.values(entities).find(entity => entity instanceof instance);
@@ -4288,22 +4288,36 @@ class Game {
     return entity;
   }
 
-  getMobAt(x, y) {
-    var entity = this.getEntityAt(x, y, Mob);
-    if (entity && entity instanceof Mob) {
+  getAllEntitiesAt(x, y, instance = null) {
+    if (this.map.isOutOfBounds(x, y) || !this.entityGrid) {
+      return null;
+    }
+
+    let entities = this.entityGrid[y][x];
+    if (_.size(entities) > 0) {
+      entities = Object.values(entities);
+      if (instance) {
+        entities = entities.filter(entity => entity instanceof instance);
+      }
+    } else {
+      entities = [];
+    }
+
+    return entities;
+  }
+
+  getPlayerAt(x, y) {
+    var entity = this.getEntityAt(x, y, Player);
+    if (entity && entity instanceof Player) {
       return entity;
     }
     return null;
   }
 
-  getPlayerAt(x, y) {
-    var entity = this.getEntityAt(x, y, Player);
-    if (entity && entity instanceof Player && entity !== this.player && this.player.pvpFlag) {
-      // PvP is limited to 20 levels above or below
-      const canPvP = Math.abs(entity.level - this.player.level) <= 20;
-      if (canPvP) {
-        return entity;
-      }
+  getMobAt(x, y) {
+    var entity = this.getEntityAt(x, y, Mob);
+    if (entity && entity instanceof Mob) {
+      return entity;
     }
     return null;
   }
@@ -4562,10 +4576,21 @@ class Game {
         this.removeFromPathingGrid(pos.x, pos.y);
       }
 
-      if (
-        entity instanceof Mob ||
-        (entity instanceof Player && entity !== this.player && this.player.pvpFlag && this.pvpFlag)
-      ) {
+      if (this.pvpFlag) {
+        const entities = this.getAllEntitiesAt(pos.x, pos.y, Player);
+        const originalLength = entities.length;
+        if (!originalLength) return;
+        entity = entities.find(({ level }) => level >= 9 && Math.abs(level - this.player.level) <= 10);
+
+        if (entity) {
+          this.makePlayerAttack(entity);
+        } else {
+          this.chat_callback({
+            message: "You can't attack a player below level 9 or with more than 10 level difference to yours",
+            type: "error",
+          });
+        }
+      } else if (entity instanceof Mob) {
         this.makePlayerAttack(entity);
       } else if (entity instanceof Item) {
         this.makePlayerGoToItem(entity);
