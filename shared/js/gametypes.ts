@@ -1204,6 +1204,7 @@ Types.isStaticChest = function (kind: number) {
 };
 
 Types.isSingle = function (kindOrString: number | string) {
+  if (!kindOrString) return false;
   if (typeof kindOrString === "number") {
     return [Types.Entities.SKELETONKINGCAGE, Types.Entities.NECROMANCERHEART, Types.Entities.COWKINGHORN].includes(
       kindOrString,
