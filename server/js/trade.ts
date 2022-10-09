@@ -112,7 +112,7 @@ class Trade {
               let isQuantityItemFound = false;
 
               // @NOTE Is it an item with a quantity?
-              if (item.startsWith("scroll") || item.startsWith("chest")) {
+              if (Types.isQuantity(item)) {
                 const [tradeItem, tradeQuantity] = item.split(":");
                 const index = playerBInventory.findIndex(entry => entry?.startsWith?.(tradeItem));
 

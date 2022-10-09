@@ -588,11 +588,17 @@ var initGame = function () {
     var key = e.which;
 
     if (key === Types.Keys.ENTER) {
-      if ($(".ui-dialog").is(":visible")) {
-        $("#dialog-delete-item").dialog("close");
-        game.deleteItemFromSlot();
-      } else if (!$("#text-window").is(":visible")) {
-        app.showChat();
+      if (!$(".ui-dialog").is(":visible")) {
+        if ($("#text-window").is(":visible")) {
+          app.hideChat();
+        } else {
+          app.showChat();
+        }
+      } else {
+        if ($("#dialog-delete-item").dialog("isOpen")) {
+          game.deleteItemFromSlot();
+          $("#dialog-delete-item").dialog("close");
+        }
       }
     } else if (key === 16) {
       game.pvpFlag = game.player.level >= 9;

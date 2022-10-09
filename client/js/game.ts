@@ -879,7 +879,7 @@ class Game {
     });
   }
 
-  dropItem(fromSlot, toSlot) {
+  dropItem(fromSlot, toSlot, transferedQuantity = null) {
     if (fromSlot === toSlot || typeof fromSlot !== "number" || typeof toSlot !== "number") {
       return;
     }
@@ -888,13 +888,30 @@ class Game {
     const fromItemEl = fromSlotEl.find(">div");
     const toSlotEl = $(`[data-slot="${toSlot}"]`);
     const toItemEl = toSlotEl.find(">div");
+    const toItem = toItemEl.attr("data-item");
+    const toLevel = toItemEl.attr("data-level");
     const item = fromItemEl.attr("data-item");
     const level = parseInt(fromItemEl.attr("data-level"));
+    const quantity = parseInt(fromItemEl.attr("data-quantity")) || null;
     const rawBonus = fromItemEl.attr("data-bonus");
     const rawSkill = fromItemEl.attr("data-skill");
     let bonus: number[];
     let skill: number;
 
+    // Condition for allowing partial quantity
+    if (Types.isQuantity(item) && quantity > 1 && transferedQuantity === null && !toItem) {
+      // Mandatory inventory from or to interaction
+      if (
+        (fromSlot < 24 || toSlot < 24) &&
+        ((fromSlot >= 300 && fromSlot < 348) ||
+          (toSlot >= 300 && toSlot < 348) ||
+          (fromSlot >= 400 && fromSlot < 409) ||
+          (toSlot >= 400 && toSlot < 409))
+      ) {
+        this.dropItemQuantity(fromSlot, toSlot, quantity);
+        return;
+      }
+    }
     if (rawBonus) {
       try {
         bonus = JSON.parse(rawBonus) as number[];
@@ -905,9 +922,6 @@ class Game {
     if (rawSkill) {
       skill = parseInt(rawSkill, 10);
     }
-
-    const toItem = toItemEl.attr("data-item");
-    const toLevel = toItemEl.attr("data-level");
 
     if (toItem) {
       if (
@@ -936,7 +950,7 @@ class Game {
       }
     }
 
-    this.client.sendMoveItem(fromSlot, toSlot);
+    this.client.sendMoveItem(fromSlot, toSlot, transferedQuantity);
 
     if (typeof level === "number") {
       if (toSlot === Types.Slot.WEAPON) {
@@ -961,6 +975,69 @@ class Game {
     } else if (type === "shield" && $(".item-equip-shield").is(":empty")) {
       this.player.removeShield();
     }
+  }
+
+  dropItemQuantity(fromSlot, toSlot, maxQuantity) {
+    const self = this;
+
+    $("#container").addClass("prevent-click");
+
+    const submit = () => {
+      const quantity = parseInt($("#transfer-quantity").val() as string);
+      if (quantity <= maxQuantity) {
+        self.dropItem(fromSlot, toSlot, quantity);
+      }
+      $("#container").removeClass("prevent-click");
+      $("#dialog-quantity").dialog("close");
+    };
+
+    $("#dialog-quantity").dialog({
+      dialogClass: "no-close",
+      autoOpen: true,
+      draggable: false,
+      title: "Choose quantity to transfer",
+      classes: {
+        "ui-button": "btn",
+      },
+      buttons: [
+        {
+          text: "Cancel",
+          class: "btn btn-gray",
+          click: function () {
+            $(this).dialog("close");
+            $("#container").removeClass("prevent-click");
+          },
+        },
+        {
+          text: "Ok",
+          class: "btn",
+          click: submit,
+        },
+      ],
+    });
+    $("#dialog-quantity").html(
+      `<div style="margin: 24px 0; text-align: center;">
+        <input id="transfer-quantity" type="number" min="1" max="${maxQuantity}" style="width: 50%;font-family: 'GraphicPixel';" />
+      </div>`,
+    );
+
+    $("#transfer-quantity")
+      .on("input", event => {
+        const inputValue = parseInt($(event.target).val() as string);
+        if (inputValue && inputValue > maxQuantity) {
+          $(event.target).val(maxQuantity);
+        }
+      })
+      .on("keyup", function (e) {
+        if (e.which === Types.Keys.ENTER) {
+          submit();
+        }
+      })
+      .val(maxQuantity)
+      .focus();
+
+    // @ts-ignore
+    $(".ui-button").removeClass("ui-button");
   }
 
   deleteItemFromSlot() {
@@ -1396,7 +1473,7 @@ class Game {
   useSkill(slot) {
     const skillSlot = $(`[data-skill-slot="${slot}"]`);
 
-    if ($("#chatinput").is(":focus")) return;
+    if (document.activeElement.tagName === "INPUT") return;
 
     // Slot 1 (offensive skill) is not set yet!
     if (skillSlot.hasClass("disabled") || slot === 1) {
@@ -3222,6 +3299,7 @@ class Game {
       });
 
       self.client.onTradeRequestReceive(function (playerName) {
+        $("#container").addClass("prevent-click");
         $("#dialog-trade-request").dialog({
           dialogClass: "no-close",
           autoOpen: true,
@@ -3238,6 +3316,7 @@ class Game {
               click: function () {
                 self.client.sendTradeRequestRefuse(playerName);
                 $(this).dialog("close");
+                $("#container").removeClass("prevent-click");
               },
             },
             {
@@ -3246,6 +3325,7 @@ class Game {
               click: function () {
                 self.client.sendTradeRequestAccept(playerName);
                 $(this).dialog("close");
+                $("#container").removeClass("prevent-click");
               },
             },
           ],

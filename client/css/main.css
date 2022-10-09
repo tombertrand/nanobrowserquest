@@ -963,6 +963,10 @@ footer, header, hgroup, menu, nav, section {
         justify-content: center;
     }
 
+    .prevent-click {
+        pointer-events: none;
+    }
+
 	@media screen and (min-width: 1501px) {
         .home-logo {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }

@@ -1244,8 +1244,8 @@ class GameClient {
     this.sendMessage([Types.Messages.REQUEST_PAYOUT, kind]);
   }
 
-  sendMoveItem(fromSlot, toSlot) {
-    this.sendMessage([Types.Messages.MOVE_ITEM, fromSlot, toSlot]);
+  sendMoveItem(fromSlot, toSlot, quantity) {
+    this.sendMessage([Types.Messages.MOVE_ITEM, fromSlot, toSlot, quantity]);
   }
 
   sendMoveItemsToInventory(panel) {

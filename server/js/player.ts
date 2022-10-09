@@ -851,7 +851,7 @@ class Player extends Character {
       } else if (action === Types.Messages.MOVE_ITEM) {
         console.info("MOVE ITEM: " + self.name + " " + message[1] + " " + message[2]);
 
-        databaseHandler.moveItem({ player: self, fromSlot: message[1], toSlot: message[2] });
+        databaseHandler.moveItem({ player: self, fromSlot: message[1], toSlot: message[2], quantity: message[3] });
       } else if (action === Types.Messages.MOVE_ITEMS_TO_INVENTORY) {
         const panel = message[1];
         console.info(`MOVE ITEMS TO INVENTORY: ${self.name} Panel: ${panel}`);

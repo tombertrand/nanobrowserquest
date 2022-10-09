@@ -856,7 +856,7 @@ class DatabaseHandler {
     }
   }
 
-  moveItem({ player, fromSlot, toSlot }) {
+  moveItem({ player, fromSlot, toSlot, quantity: movedQuantity = 0 }) {
     if (fromSlot === toSlot) return;
 
     const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
@@ -865,11 +865,11 @@ class DatabaseHandler {
     const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
 
     if (!fromLocation || !toLocation) return;
+    if (movedQuantity && fromLocation !== "inventory" && toLocation !== "inventory") return;
 
     if ([fromLocation, toLocation].includes("trade") && player.tradeId) {
       const tradeInstance = player.server.trades[player.tradeId];
       if (!tradeInstance || tradeInstance.players.find(({ id, isAccepted }) => player.id === id && isAccepted)) {
-        // @NOTE Maybe bother about sending back the messages to trade and inventory but a player should never end here
         return;
       }
     }
@@ -910,20 +910,35 @@ class DatabaseHandler {
               }
 
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
-              if (Types.isScroll(fromItem) || Types.isChest(fromItem)) {
+              if (Types.isQuantity(fromItem)) {
                 const [fromScroll, fromQuantity] = fromItem.split(":");
+
+                // trying to move more than the current quantity
+                if (movedQuantity && movedQuantity > fromQuantity) return;
+
                 if (toLocation === "inventory" || toLocation === "stash" || toLocation === "trade") {
                   let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(fromScroll));
 
                   if (toItemIndex === -1) {
+                    // @note put the quantity, not found in toLocation
                     toItemIndex = toItem ? toReplyParsed.indexOf(0) : toSlot - toRange;
                   }
 
                   if (toItemIndex > -1) {
                     const [, toQuantity = 0] = (toReplyParsed[toItemIndex] || "").split(":");
-                    toReplyParsed[toItemIndex] = `${fromScroll}:${parseInt(toQuantity) + parseInt(fromQuantity)}`;
 
-                    fromReplyParsed[fromSlot - fromRange] = 0;
+                    toReplyParsed[toItemIndex] = `${fromScroll}:${
+                      parseInt(toQuantity) + parseInt(`${movedQuantity || fromQuantity}`)
+                    }`;
+
+                    if (movedQuantity && fromQuantity - movedQuantity > 0) {
+                      fromReplyParsed[fromSlot - fromRange] = `${fromScroll}:${
+                        parseInt(fromQuantity) - parseInt(`${movedQuantity}`)
+                      }`;
+                    } else {
+                      fromReplyParsed[fromSlot - fromRange] = 0;
+                    }
+
                     isFromReplyDone = true;
                     isToReplyDone = true;
                   }
@@ -961,6 +976,15 @@ class DatabaseHandler {
                   isFromReplyDone = true;
                   isToReplyDone = true;
                 }
+              }
+
+              // Prevent trade for single items, each player needs to acquire
+              if (
+                (Types.isSingle(toItem) || Types.isSingle(fromItem)) &&
+                (fromLocation === "trade" || toLocation === "trade")
+              ) {
+                isFromReplyDone = true;
+                isToReplyDone = true;
               }
 
               if (!isToReplyDone) {
@@ -1059,7 +1083,7 @@ class DatabaseHandler {
           const items = filteredUpgrade.reduce((acc, rawItem) => {
             if (!rawItem) return acc;
             const [item, level, bonus, skill] = rawItem.split(":");
-            const isQuantity = Types.isScroll(item) || Types.isChest(item);
+            const isQuantity = Types.isQuantity(item);
 
             acc.push({
               item,

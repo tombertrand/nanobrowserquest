@@ -162,6 +162,7 @@ export class Connection {
   }
 
   close(logError) {
+    // @TODO undefined here sometimes?
     console.info("Closing connection to " + this._connection.remoteAddress + ". Error: " + logError);
     this._connection.disconnect();
   }

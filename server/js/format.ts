@@ -27,7 +27,7 @@ class FormatChecker {
       (this.formats[Types.Messages.BAN_PLAYER] = ["s"]),
       (this.formats[Types.Messages.SKILL] = ["n"]),
       (this.formats[Types.Messages.REQUEST_PAYOUT] = ["n"]),
-      (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n"]),
+      (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n", "a"]),
       (this.formats[Types.Messages.MOVE_ITEMS_TO_INVENTORY] = ["s"]),
       (this.formats[Types.Messages.UPGRADE_ITEM] = []),
       (this.formats[Types.Messages.PURCHASE_CREATE] = ["n", "s"]),
@@ -127,7 +127,11 @@ class FormatChecker {
     } else if ([Types.Messages.UPGRADE_ITEM, Types.Messages.STORE_ITEMS].includes(type)) {
       return message.length === 0;
     } else if (type === Types.Messages.MOVE_ITEM) {
-      return message.length === 2 && _.isNumber(message[0]) && _.isNumber(message[1]);
+      return (
+        message.length === 3 &&
+        _.isNumber(message[0]) &&
+        _.isNumber(message[1] && (message[2] === null || _.isNumber(message[2])))
+      );
     } else if (type === Types.Messages.REQUEST_PAYOUT) {
       return message.length === 1 && _.isNumber(message[0]);
     } else if (type === Types.Messages.PURCHASE_CANCEL) {

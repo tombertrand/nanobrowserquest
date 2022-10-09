@@ -1209,8 +1209,17 @@ Types.isSingle = function (kindOrString: number | string) {
       kindOrString,
     );
   } else {
-    return ["skeletonkingcage", "necromancerheart", "cowkinghorn"].includes(kindOrString);
+    return (
+      ["skeletonkingcage", "necromancerheart", "cowkinghorn"].includes(kindOrString) ||
+      kindOrString.startsWith("skeletonkingcage") ||
+      kindOrString.startsWith("necromancerheart") ||
+      kindOrString.startsWith("cowkinghorn")
+    );
   }
+};
+
+Types.isQuantity = function (kindOrString: number | string) {
+  return Types.isScroll(kindOrString) || Types.isChest(kindOrString);
 };
 
 Types.isItem = function (kind: number) {

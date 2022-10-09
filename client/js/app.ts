@@ -313,7 +313,6 @@ class App {
       ],
     });
     $("#dialog-delete-item").text("Are you sure you want to delete this item?");
-
     $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
 
     $("#reconnecting")
@@ -1258,6 +1257,7 @@ class App {
 
   openStash() {
     this.closeUpgrade();
+    this.closeTrade(true);
     $("#population").removeClass("visible");
     $("#stash").addClass("visible");
     this.openInventory();
