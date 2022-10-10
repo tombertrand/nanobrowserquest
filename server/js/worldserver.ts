@@ -805,12 +805,14 @@ class World {
   /**
    * The mob will no longer be registered as an attacker of its current target.
    */
-  clearMobAggroLink(mob) {
-    var player = null;
+  clearMobAggroLink(mob, player: any = null) {
+    var targetPlayer = null;
     if (mob.target) {
-      player = this.getEntityById(mob.target);
-      if (player) {
-        player.removeAttacker(mob);
+      targetPlayer = this.getEntityById(mob.target);
+      if (targetPlayer) {
+        if (!player || (player && targetPlayer.id === player.id)) {
+          targetPlayer.removeAttacker(mob);
+        }
       }
     }
   }
@@ -890,8 +892,8 @@ class World {
     // @NOTE Make sure the link is cleared
     if (!player) {
       this.clearMobAggroLink(mob);
-    } else if (player && !player.attackers[mob.id]) {
-      this.clearMobAggroLink(mob);
+    } else {
+      this.clearMobAggroLink(mob, player);
 
       player.addAttacker(mob);
       mob.setTarget(player);
