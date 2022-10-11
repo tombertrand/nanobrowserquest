@@ -668,7 +668,7 @@ class Player extends Character {
                 }
 
                 if (Types.isSuperUnique(generatedItem.item)) {
-                  postMessageToDiscordChatChannel(`${player.name} picked up ${kinds[generatedItem.item][2]}`);
+                  postMessageToDiscordChatChannel(`${player.name} picked up ${kinds[generatedItem.item][2]} 💍`);
                 }
 
                 this.databaseHandler.lootItems({

@@ -1512,11 +1512,13 @@ class DatabaseHandler {
     if (isSuccess) {
       try {
         const [itemName, level] = item.split(":");
+        let output = kinds[itemName][2];
+        if (isUnique) {
+          output = Types.itemUniqueMap[itemName]?.[0] || `Unique ${output}`;
+        }
 
         postMessageToDiscordChatChannelAnvilChannel(
-          `${player.name} upgraded a +${level} ${isUnique ? Types.itemUniqueMap[itemName][0] : kinds[itemName][2]}${
-            isLuckySlot ? " with the lucky slot" : ""
-          }`,
+          `${player.name} upgraded a +${level} ${output}${isLuckySlot ? " with the lucky slot" : ""} 🔥`,
         );
       } catch (err) {
         Sentry.captureException(err);

@@ -1353,9 +1353,9 @@ class World {
     const kind = Types.getKindFromString(itemName);
 
     if (mob.kind === Types.Entities.MINOTAUR) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur`);
+      postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur 🥶`);
     } else if (mob.kind === Types.Entities.COWKING) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King`);
+      postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
     }
 
     // var randomDrops = ["ringbronze", "ringsilver", "ringgold", "amuletsilver", "amuletgold"] as any;
