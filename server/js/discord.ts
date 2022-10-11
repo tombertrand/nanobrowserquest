@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 
 import { Sentry } from "./sentry";
 
-const postMessageToDiscord = (content: string) => {
+const postMessageToDiscordChatChannel = (content: string) => {
   if (process.env.NODE_ENV !== "production") return;
 
   try {
@@ -23,4 +23,25 @@ const postMessageToDiscord = (content: string) => {
   }
 };
 
-export { postMessageToDiscord };
+const postMessageToDiscordChatChannelAnvilChannel = (content: string) => {
+  if (process.env.NODE_ENV !== "production") return;
+
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    fetch(
+      "https://discord.com/api/webhooks/1029352905574207519/VWeXf_oqwL3MENHwpkUqTQozlsJ6H_ui_g5m8CJtYRwSQIGQ-fVByJCUQ6q69y-cCki2",
+      {
+        method: "POST",
+        body,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
+
+export { postMessageToDiscordChatChannel, postMessageToDiscordChatChannelAnvilChannel };

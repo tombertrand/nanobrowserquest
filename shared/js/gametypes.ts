@@ -669,6 +669,9 @@ Types.itemUniqueMap = {
   beltminotaur: ["TaaC", 40, 22],
 };
 
+Types.isSuperUnique = (itemName: string) =>
+  ["ringnecromancer", "ringraistone", "ringfountain", "ringminotaur", "amuletcow", "amuletfrozen"].includes(itemName);
+
 Types.setBonus = {
   minotaur: {
     minDamage: 15,

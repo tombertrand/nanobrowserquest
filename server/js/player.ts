@@ -1,9 +1,9 @@
 import * as _ from "lodash";
 
-import { Types } from "../../shared/js/gametypes";
+import { kinds, Types } from "../../shared/js/gametypes";
 import Character from "./character";
 import Chest from "./chest";
-import { postMessageToDiscord } from "./discord";
+import { postMessageToDiscordChatChannel } from "./discord";
 import FormatChecker from "./format";
 import Formulas from "./formulas";
 import Messages from "./message";
@@ -35,6 +35,14 @@ let payoutIndex = 0;
 // const NO_TIMEOUT_ACCOUNT = "3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
 const NO_TIMEOUT_ACCOUNT = "3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6m8epqxmy7anix";
 
+type GeneratedItem = {
+  item: string;
+  level?: number;
+  quantity?: 1;
+  bonus?: number[];
+  skill?: number;
+  isUnique?: boolean;
+};
 class Player extends Character {
   id: number;
   server: any;
@@ -358,7 +366,7 @@ class Player extends Character {
             }
           }
 
-          postMessageToDiscord(`${self.name}: ${msg}`);
+          postMessageToDiscordChatChannel(`${self.name}: ${msg}`);
 
           // Zone chat
           // self.broadcast(new Messages.Chat(self, msg), false);
@@ -556,7 +564,7 @@ class Player extends Character {
             mob.isDead = true;
 
             if (mob?.type) {
-              postMessageToDiscord(`${self.name} killed ${mob.name} 💀`);
+              postMessageToDiscordChatChannel(`${self.name} killed ${mob.name} 💀`);
             }
           }
         }
@@ -640,7 +648,7 @@ class Player extends Character {
                 self.server.pushToPlayer(self, self.health());
               }
             } else {
-              const { isUnique, ...generatedItem } = self.generateItem({ kind }) || {};
+              const { isUnique, ...generatedItem } = (self.generateItem({ kind }) || {}) as GeneratedItem;
 
               if (generatedItem) {
                 let player = self;
@@ -657,6 +665,10 @@ class Player extends Character {
                       { playerName: player.name, kind, isUnique },
                     ]),
                   );
+                }
+
+                if (Types.isSuperUnique(generatedItem.item)) {
+                  postMessageToDiscordChatChannel(`${player.name} picked up ${kinds[generatedItem.item][2]}`);
                 }
 
                 this.databaseHandler.lootItems({
@@ -800,7 +812,7 @@ class Player extends Character {
           if (hash) {
             console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
 
-            postMessageToDiscord(
+            postMessageToDiscordChatChannel(
               `${self.name} killed the Skeleton King and received a payout of ${raiPayoutAmount} ${
                 self.network === "nano" ? "XNO" : "BAN"
               } 🎉`,
@@ -1187,14 +1199,7 @@ class Player extends Character {
       .concat(isUnique ? _.shuffle(uniqueBonus).slice(0, 1) : []);
   }
 
-  generateItem({ kind, uniqueChances = 1 }): {
-    item: string;
-    level?: number;
-    quantity?: 1;
-    bonus?: number[];
-    skill?: number;
-    isUnique?: boolean;
-  } {
+  generateItem({ kind, uniqueChances = 1 }): GeneratedItem {
     let isUnique = false;
     let item;
 

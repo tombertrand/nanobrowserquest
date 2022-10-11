@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import { Types } from "../../shared/js/gametypes";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
+import { postMessageToDiscordChatChannel } from "./discord";
 import Item from "./item";
 import Map from "./map";
 import Messages from "./message";
@@ -1351,6 +1352,12 @@ class World {
     const itemName = this.getDroppedItemName(mob, attacker);
     const kind = Types.getKindFromString(itemName);
 
+    if (mob.kind === Types.Entities.MINOTAUR) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur`);
+    } else if (mob.kind === Types.Entities.COWKING) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King`);
+    }
+
     // var randomDrops = ["ringbronze", "ringsilver", "ringgold", "amuletsilver", "amuletgold"] as any;
     // var randomDrops = ["belthorned", "hornedarmor"] as any;
     // var randomDrops = ["beltfrozen", "blueaxe", "bluemorningstar", "frozensword"] as any;
@@ -1358,6 +1365,7 @@ class World {
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = ["scrolltransmute", "ringgold", "amuletgold"];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
+    // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
     // var randomDrop = random(randomDrops.length);
     // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 

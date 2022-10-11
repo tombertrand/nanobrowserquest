@@ -2,7 +2,8 @@ import bcrypt from "bcrypt";
 import * as NanocurrencyWeb from "nanocurrency-web";
 import redis from "redis";
 
-import { Types } from "../../../shared/js/gametypes";
+import { kinds, Types } from "../../../shared/js/gametypes";
+import { postMessageToDiscordChatChannelAnvilChannel } from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
@@ -1137,6 +1138,7 @@ class DatabaseHandler {
 
         if (isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus, skill] = filteredUpgrade[0].split(":");
+          const isUnique = Types.isUnique(item, bonus);
           let upgradedItem: number | string = 0;
 
           if (isUpgradeSuccess({ level, isLuckySlot, isBlessed })) {
@@ -1152,12 +1154,12 @@ class DatabaseHandler {
               }
             }
 
-            if (upgradedLevel >= 8) {
-              this.logUpgrade({ player, item: upgradedItem, isSuccess });
+            if (upgradedLevel >= 8 || (isUnique && upgradedLevel >= 7)) {
+              this.logUpgrade({ player, item: upgradedItem, isSuccess, isUnique, isLuckySlot });
             }
           } else {
             if (parseInt(level) >= 8) {
-              this.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false });
+              this.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false, isUnique, isLuckySlot });
             }
           }
 
@@ -1504,9 +1506,22 @@ class DatabaseHandler {
     }
   }
 
-  logUpgrade({ player, item, isSuccess }) {
+  logUpgrade({ player, item, isSuccess, isUnique, isLuckySlot }) {
     const now = Date.now();
     this.client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
+    if (isSuccess) {
+      try {
+        const [itemName, level] = item.split(":");
+
+        postMessageToDiscordChatChannelAnvilChannel(
+          `${player.name} upgraded a +${level} ${isUnique ? Types.itemUniqueMap[itemName][0] : kinds[itemName][2]}${
+            isLuckySlot ? " with the lucky slot" : ""
+          }`,
+        );
+      } catch (err) {
+        Sentry.captureException(err);
+      }
+    }
   }
 
   logLoot({ player, item }) {
