@@ -718,21 +718,67 @@ Types.setBonus = {
   },
 };
 
+Types.kindAsStringToSet = {
+  leatherarmor: "leather",
+  beltleather: "leather",
+  shieldwood: "leather",
+  platearmor: "plated",
+  beltplated: "plated",
+  shieldplate: "plated",
+  redsword: "ruby",
+  redarmor: "ruby",
+  shieldred: "ruby",
+  goldensword: "golden",
+  goldenarmor: "golden",
+  shieldgolden: "golden",
+  bluemorningstar: "frozen",
+  bluearmor: "frozen",
+  shieldblue: "frozen",
+  hornedarmor: "horned",
+  belthorned: "horned",
+  shieldhorned: "horned",
+  frozensword: "sapphire",
+  frozenarmor: "sapphire",
+  beltfrozen: "sapphire",
+  shieldfrozen: "sapphire",
+  diamondsword: "diamond",
+  diamondarmor: "diamond",
+  beltdiamond: "diamond",
+  shielddiamond: "diamond",
+  minotauraxe: "minotaur",
+  beltminotaur: "minotaur",
+  ringminotaur: "minotaur",
+};
+
 Types.setItems = {
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
-  diamond: ["diamondarmor", "beltdiamond", "diamondsword", "shielddiamond"],
-  sapphire: ["frozenarmor", "frozensword", "beltfrozen", "shieldfrozen"],
+  diamond: ["diamondsword", "diamondarmor", "beltdiamond", "shielddiamond"],
+  sapphire: ["frozensword", "frozenarmor", "beltfrozen", "shieldfrozen"],
   horned: ["hornedarmor", "belthorned", "shieldhorned"],
-  frozen: ["bluearmor", "bluemorningstar", "blueaxe", "shieldblue"],
-  golden: ["goldenarmor", "goldensword", "shieldgolden"],
-  ruby: ["redarmor", "redsword", "shieldred"],
+  frozen: ["bluemorningstar", "bluearmor", "shieldblue"],
+  golden: ["goldensword", "goldenarmor", "shieldgolden"],
+  ruby: ["redsword", "redarmor", "shieldred"],
   plated: ["platearmor", "beltplated", "shieldplate"],
   leather: ["leatherarmor", "beltleather", "shieldwood"],
+};
+
+Types.setItemsNameMap = {
+  minotaur: ["Axe", "Ring", "Belt"],
+  diamond: ["Sword", "Armor", "Belt", "Shield"],
+  sapphire: ["Sword", "Armor", "Belt", "Shield"],
+  horned: ["Armor", "Belt", "Shield"],
+  frozen: ["Morningstar", "Armor", "Shield"],
+  golden: ["Sword", "Armor", "Shield"],
+  ruby: ["Sword", "Armor", "Shield"],
+  plated: ["Armor", "Belt", "Shield"],
+  leather: ["Armor", "Belt", "Shield"],
 };
 
 Types.getSet = ({ belt, weaponKind, armorKind, shieldKind, ring1, ring2 }) => {
   let set = null;
   let bonus = null;
+
+  // @TODO partial set
 
   if (belt === "beltminotaur" && weaponKind === Types.Entities.MINOTAURAXE && [ring1, ring2].includes("ringminotaur")) {
     set = "minotaur";

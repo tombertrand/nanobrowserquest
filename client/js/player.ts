@@ -252,6 +252,18 @@ class Player extends Character {
     return this.isLootMoving;
   }
 
+  getAllItems() {
+    return [
+      this.weaponName,
+      this.armorName,
+      this.beltName,
+      this.shieldName,
+      this.amuletName,
+      this.ring1Name,
+      this.ring2Name,
+    ];
+  }
+
   getSpriteName() {
     return this.spriteName;
   }
@@ -350,6 +362,7 @@ class Player extends Character {
   }
 
   setBelt(rawBelt) {
+    console.log("~~~~setBelt", rawBelt);
     if (rawBelt) {
       const [belt, level, bonus] = rawBelt.split(":");
 

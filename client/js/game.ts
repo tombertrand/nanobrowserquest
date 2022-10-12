@@ -746,16 +746,33 @@ class Game {
         const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
         const rawSkill = element.attr("data-skill");
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
+        const isEquippedItemSlot = Object.values(Types.Slot).includes(slot);
 
         self.hoverSlotToDelete = slot;
 
+        let setName = null;
+        let setParts = null;
         let rawSetBonus = null;
-        if (
-          self.player.set &&
-          Object.values(Types.Slot).includes(slot) &&
-          Types.setItems[self.player.set]?.includes(item)
-        ) {
-          rawSetBonus = self.player.setBonus;
+        // if (
+        // self.player.set &&
+        // isEquippedItemSlot &&
+        // Types.setItems[self.player.set]?.includes(item)
+        // ) {
+        // rawSetBonus = self.player.setBonus;
+        // }
+
+        if (isEquippedItemSlot) {
+          const currentSet = Types.kindAsStringToSet[item];
+          const playerItems = self.player.getAllItems();
+          console.log("~~~~playerItems", playerItems);
+          if (currentSet) {
+            setName = `* ${_.capitalize(currentSet)} Set *`;
+
+            setParts = Types.setItemsNameMap[currentSet].map((description, index) => ({
+              description,
+              isActive: playerItems.includes(Types.setItems[currentSet][index]),
+            }));
+          }
         }
 
         const {
@@ -796,6 +813,13 @@ class Game {
                 : ""
             }
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+            ${setName ? `<div class="item-set-name">${setName}</div>` : ""}
+            ${setParts
+              ?.map(
+                ({ description, isActive }) =>
+                  `<div class="item-set-part ${isActive ? "active" : ""}">${description}</div>`,
+              )
+              .join("")}
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
@@ -3650,6 +3674,14 @@ class Game {
             if (playerId === self.player.id) {
               self.setShieldSkill(skill);
             }
+          } else if (type === "belt") {
+            player.setBelt([name, level, bonus].join(":"));
+          } else if (type === "ring1") {
+            player.setRing1([name, level, bonus].join(":"));
+          } else if (type === "ring2") {
+            player.setRing2([name, level, bonus].join(":"));
+          } else if (type === "amulet") {
+            player.setAmulet([name, level, bonus].join(":"));
           }
         }
       });

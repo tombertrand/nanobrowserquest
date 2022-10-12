@@ -743,70 +743,54 @@ class DatabaseHandler {
     return ["", 0];
   }
 
+  // @TODO Optimize the broadcast & send
   sendMoveItem({ player, location, data }) {
+    const type = location;
+    const isEquipment = ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(location);
+
+    let item = null;
+    let level = null;
+    let bonus = null;
+    let skill = null;
+    if (isEquipment && data) {
+      [item, level, bonus, skill] = data.split(":");
+    } else if (!data) {
+      if (type === "weapon") {
+        item = "dagger";
+        level = 1;
+      } else if (type === "armor") {
+        item = "clotharmor";
+        level = 1;
+      }
+    }
+
     if (location === "inventory") {
       player.send([Types.Messages.INVENTORY, data]);
     } else if (location === "stash") {
       player.send([Types.Messages.STASH, data]);
     } else if (location === "weapon") {
-      const type = "weapon";
-      let item = "dagger";
-      let level = 1;
-      let bonus = null;
-      if (data) {
-        [item, level, bonus] = data.split(":");
-      }
-
       player.equipItem({ item, level, type, bonus });
       player.broadcast(
         player.equip({ kind: player.weaponKind, level: player.weaponLevel, bonus: player.weaponBonus, type }),
         false,
       );
     } else if (location === "armor") {
-      const type = "armor";
-      let item = "clotharmor";
-      let level = 1;
-      let bonus = null;
-      if (data) {
-        [item, level, bonus] = data.split(":");
-      }
-
       player.equipItem({ item, level, type, bonus });
       player.broadcast(
         player.equip({ kind: player.armorKind, level: player.armorLevel, bonus: player.armorBonus, type }),
         false,
       );
     } else if (location === "belt") {
-      let item = null;
-      let level = null;
-      let bonus = null;
-      if (data) {
-        [item, level, bonus] = data.split(":");
-      }
-      player.equipItem({ item, level, type: "belt", bonus });
+      player.equipItem({ item, level, type, bonus });
+      player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "cape") {
-      const type = "cape";
-      let item = null;
-      let level = null;
-      let bonus = null;
-      if (data) {
-        [item, level, bonus] = data.split(":");
-      }
       player.equipItem({ item, level, type, bonus });
       player.broadcast(
         player.equip({ kind: player.capeKind, level: player.capeLevel, bonus: player.capeBonus, type }),
         false,
       );
     } else if (location === "shield") {
-      const type = "shield";
-      let item = null;
-      let level = null;
-      let bonus = null;
-      let skill = null;
-      if (data) {
-        [item, level, bonus, skill] = data.split(":");
-      }
-      player.equipItem({ item, level, type: "shield", bonus, skill });
+      player.equipItem({ item, level, type, bonus, skill });
       player.broadcast(
         player.equip({
           kind: player.shieldKind,
@@ -818,31 +802,14 @@ class DatabaseHandler {
         false,
       );
     } else if (location === "ring1") {
-      let item = null;
-      let level = null;
-      let bonus = null;
-      if (data) {
-        [item, level, bonus] = data.split(":");
-      }
-      player.equipItem({ item, level, bonus, type: "ring1" });
+      player.equipItem({ item, level, bonus, type });
+      player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "ring2") {
-      let item = null;
-      let level = null;
-      let bonus = null;
-      if (data) {
-        [item, level, bonus] = data.split(":");
-      }
-
-      player.equipItem({ item, level, bonus, type: "ring2" });
+      player.equipItem({ item, level, bonus, type });
+      player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "amulet") {
-      let item = null;
-      let level = null;
-      let bonus = null;
-      if (data) {
-        [item, level, bonus] = data.split(":");
-      }
-
-      player.equipItem({ item, level, bonus, type: "amulet" });
+      player.equipItem({ item, level, bonus, type });
+      player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "upgrade") {
       player.send([Types.Messages.UPGRADE, data]);
     } else if (location === "trade") {
@@ -1514,7 +1481,11 @@ class DatabaseHandler {
         const [itemName, level] = item.split(":");
         let output = kinds[itemName][2];
         if (isUnique) {
-          output = Types.itemUniqueMap[itemName]?.[0] || `Unique ${output}`;
+          output =
+            Types.itemUniqueMap[itemName]?.[0] ||
+            `${
+              ["ringbronze", "ringsilver", "ringgold", "amuletsilver", "amuletgold"].includes(itemName) ? "Unique " : ""
+            }${output}`;
         }
 
         postMessageToDiscordChatChannelAnvilChannel(
