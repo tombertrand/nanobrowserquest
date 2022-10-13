@@ -766,8 +766,6 @@ Types.setItems = {
   leather: ["leatherarmor", "beltleather", "shieldwood"],
 };
 
-// Types.setItems = Object.values(Types.setItems).flatMap(i => i);
-
 Types.setItemsNameMap = {
   minotaur: ["Axe", "Ring", "Belt"],
   diamond: ["Sword", "Armor", "Belt", "Shield"],

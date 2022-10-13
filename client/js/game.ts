@@ -751,7 +751,7 @@ class Game {
         self.hoverSlotToDelete = slot;
 
         let setName = null;
-        let setParts = null;
+        let setParts = [];
         let currentSet = null;
         let setBonus = [];
 

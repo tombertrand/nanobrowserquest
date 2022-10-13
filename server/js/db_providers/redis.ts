@@ -743,7 +743,6 @@ class DatabaseHandler {
     return ["", 0];
   }
 
-  // @TODO Optimize the broadcast & send
   sendMoveItem({ player, location, data }) {
     const type = location;
     const isEquipment = ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(location);
