@@ -752,7 +752,9 @@ class Game {
 
         let setName = null;
         let setParts = null;
-        let rawSetBonus = null;
+        // let rawSetBonus = null;
+        let currentSet = null;
+        let setBonus = [];
         // if (
         // self.player.set &&
         // isEquippedItemSlot &&
@@ -761,17 +763,30 @@ class Game {
         // rawSetBonus = self.player.setBonus;
         // }
 
+        // if (Types.setItems.includes(item)) {
+
+        // }
+
+        // ~~~ @TODO get this from BE message and store on Player object
+        const rawSetBonus = {
+          minotaur: 2,
+          sapphire: 2,
+          diamond: 2,
+        };
+
         if (isEquippedItemSlot) {
-          const currentSet = Types.kindAsStringToSet[item];
+          currentSet = Types.kindAsStringToSet[item];
           const playerItems = self.player.getAllItems();
-          console.log("~~~~playerItems", playerItems);
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
-
             setParts = Types.setItemsNameMap[currentSet].map((description, index) => ({
               description,
               isActive: playerItems.includes(Types.setItems[currentSet][index]),
             }));
+
+            if (rawSetBonus[currentSet]) {
+              setBonus = Types.getSetBonus(currentSet, rawSetBonus[currentSet]);
+            }
           }
         }
 
@@ -790,9 +805,9 @@ class Game {
           skill,
           requirement,
           description,
-          setBonus = [],
+          // setBonus = [],
           partyBonus = [],
-        } = Types.getItemDetails({ item, level, rawBonus, rawSetBonus, rawSkill });
+        } = Types.getItemDetails({ item, level, rawBonus /*, rawSetBonus*/, rawSkill });
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
@@ -808,8 +823,8 @@ class Game {
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
             ${
-              setBonus.length
-                ? `<div class="item-set-description">${_.capitalize(self.player.set)} set bonuses</div>`
+              currentSet && setBonus.length
+                ? `<div class="item-set-description">${_.capitalize(currentSet)} set bonuses</div>`
                 : ""
             }
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}

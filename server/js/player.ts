@@ -1790,14 +1790,16 @@ class Player extends Character {
     let bonus = null;
     let set = null;
 
-    ({ set, bonus } = Types.getSet({
-      belt: this.belt,
-      weaponKind: this.weaponKind,
-      armorKind: this.armorKind,
-      shieldKind: this.shieldKind,
-      ring1: this.ring1,
-      ring2: this.ring2,
-    }));
+    // ~~~~ @TODO Re-calculate new bonus structure
+
+    // ({ set, bonus } = Types.getSet({
+    //   belt: this.belt,
+    //   weaponKind: this.weaponKind,
+    //   armorKind: this.armorKind,
+    //   shieldKind: this.shieldKind,
+    //   ring1: this.ring1,
+    //   ring2: this.ring2,
+    // }));
 
     this.set = set;
 
