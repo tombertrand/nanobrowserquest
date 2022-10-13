@@ -56,7 +56,6 @@ class Player extends Character {
   amuletLevel: number | null;
   amuletBonus: null;
   auras: string[];
-  set?: string;
   setBonus: any;
   isLootMoving: boolean;
   isSwitchingWeapon: boolean;
@@ -142,8 +141,7 @@ class Player extends Character {
     this.amuletLevel = null;
     this.amuletBonus = null;
     this.auras = [];
-    this.set = null;
-    this.setBonus = null;
+    this.setBonus = {};
 
     // modes
     this.isLootMoving = false;
@@ -250,6 +248,18 @@ class Player extends Character {
    */
   isMovingToLoot() {
     return this.isLootMoving;
+  }
+
+  getEquipment() {
+    return [
+      this.weaponName,
+      this.armorName,
+      this.beltName,
+      this.shieldName,
+      this.amuletName,
+      this.ring1Name,
+      this.ring2Name,
+    ];
   }
 
   getSpriteName() {

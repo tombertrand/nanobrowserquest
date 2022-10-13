@@ -746,16 +746,29 @@ class Game {
         const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
         const rawSkill = element.attr("data-skill");
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
+        const isEquippedItemSlot = Object.values(Types.Slot).includes(slot);
 
         self.hoverSlotToDelete = slot;
 
-        let rawSetBonus = null;
-        if (
-          self.player.set &&
-          Object.values(Types.Slot).includes(slot) &&
-          Types.setItems[self.player.set]?.includes(item)
-        ) {
-          rawSetBonus = self.player.setBonus;
+        let setName = null;
+        let setParts = [];
+        let currentSet = null;
+        let setBonus = [];
+
+        if (isEquippedItemSlot) {
+          currentSet = Types.kindAsStringToSet[item];
+          const playerItems = self.player.getEquipment();
+          if (currentSet) {
+            setName = `* ${_.capitalize(currentSet)} Set *`;
+            setParts = Types.setItemsNameMap[currentSet].map((description, index) => ({
+              description,
+              isActive: playerItems.includes(Types.setItems[currentSet][index]),
+            }));
+
+            if (self.player.setBonus[currentSet]) {
+              setBonus = Types.getSetBonus(currentSet, self.player.setBonus[currentSet]);
+            }
+          }
         }
 
         const {
@@ -773,9 +786,8 @@ class Game {
           skill,
           requirement,
           description,
-          setBonus = [],
           partyBonus = [],
-        } = Types.getItemDetails({ item, level, rawBonus, rawSetBonus, rawSkill });
+        } = Types.getItemDetails({ item, level, rawBonus, rawSkill });
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
@@ -791,11 +803,18 @@ class Game {
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
             ${
-              setBonus.length
-                ? `<div class="item-set-description">${_.capitalize(self.player.set)} set bonuses</div>`
+              currentSet && setBonus.length
+                ? `<div class="item-set-description">${_.capitalize(currentSet)} set bonuses</div>`
                 : ""
             }
             ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+            ${setName ? `<div class="item-set-name">${setName}</div>` : ""}
+            ${setParts
+              ?.map(
+                ({ description, isActive }) =>
+                  `<div class="item-set-part ${isActive ? "active" : ""}">${description}</div>`,
+              )
+              .join("")}
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
@@ -3617,9 +3636,8 @@ class Game {
         }
       });
 
-      self.client.onSetBonus(function (bonus, set) {
+      self.client.onSetBonus(function (bonus) {
         self.player.setBonus = bonus;
-        self.player.set = set;
       });
 
       self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, skill, type }) {
@@ -3650,6 +3668,14 @@ class Game {
             if (playerId === self.player.id) {
               self.setShieldSkill(skill);
             }
+          } else if (type === "belt") {
+            player.setBelt([name, level, bonus].filter(Boolean).join(":"));
+          } else if (type === "ring1") {
+            player.setRing1([name, level, bonus].filter(Boolean).join(":"));
+          } else if (type === "ring2") {
+            player.setRing2([name, level, bonus].filter(Boolean).join(":"));
+          } else if (type === "amulet") {
+            player.setAmulet([name, level, bonus].filter(Boolean).join(":"));
           }
         }
       });

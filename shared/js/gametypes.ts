@@ -675,129 +675,107 @@ Types.isSuperUnique = (itemName: string) =>
 Types.setBonus = {
   minotaur: {
     minDamage: 15,
-    defense: 10,
     coldDamage: 15,
     reduceFrozenChance: 25,
   },
   diamond: {
-    exp: 10,
+    health: 100,
+    defense: 10,
     blockChance: 3,
-    health: 60,
+    exp: 10,
   },
   sapphire: {
     minDamage: 10,
+    maxDamage: 10,
+    defense: 10,
     criticalHit: 3,
-    defense: 15,
   },
   horned: {
-    minDamage: 6,
-    maxDamage: 6,
-    attackDamage: 6,
+    minDamage: 10,
+    maxDamage: 10,
+    attackDamage: 10,
   },
   frozen: {
     attackDamage: 10,
-    absorbedDamage: 10,
     coldDamage: 10,
+    absorbedDamage: 10,
   },
   golden: {
     magicDamage: 10,
+    defense: 6,
     criticalHit: 6,
-    defense: 10,
   },
   ruby: {
-    attackDamage: 4,
     health: 30,
+    attackDamage: 6,
+    defense: 6,
   },
   plated: {
+    health: 25,
     attackDamage: 4,
     defense: 4,
   },
   leather: {
+    minDamage: 3,
     maxDamage: 3,
-    health: 10,
+    health: 20,
   },
+};
+
+Types.kindAsStringToSet = {
+  leatherarmor: "leather",
+  beltleather: "leather",
+  shieldwood: "leather",
+  platearmor: "plated",
+  beltplated: "plated",
+  shieldplate: "plated",
+  redsword: "ruby",
+  redarmor: "ruby",
+  shieldred: "ruby",
+  goldensword: "golden",
+  goldenarmor: "golden",
+  shieldgolden: "golden",
+  bluemorningstar: "frozen",
+  bluearmor: "frozen",
+  shieldblue: "frozen",
+  hornedarmor: "horned",
+  belthorned: "horned",
+  shieldhorned: "horned",
+  frozensword: "sapphire",
+  frozenarmor: "sapphire",
+  beltfrozen: "sapphire",
+  shieldfrozen: "sapphire",
+  diamondsword: "diamond",
+  diamondarmor: "diamond",
+  beltdiamond: "diamond",
+  shielddiamond: "diamond",
+  minotauraxe: "minotaur",
+  beltminotaur: "minotaur",
+  ringminotaur: "minotaur",
 };
 
 Types.setItems = {
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
-  diamond: ["diamondarmor", "beltdiamond", "diamondsword", "shielddiamond"],
-  sapphire: ["frozenarmor", "frozensword", "beltfrozen", "shieldfrozen"],
+  diamond: ["diamondsword", "diamondarmor", "beltdiamond", "shielddiamond"],
+  sapphire: ["frozensword", "frozenarmor", "beltfrozen", "shieldfrozen"],
   horned: ["hornedarmor", "belthorned", "shieldhorned"],
-  frozen: ["bluearmor", "bluemorningstar", "blueaxe", "shieldblue"],
-  golden: ["goldenarmor", "goldensword", "shieldgolden"],
-  ruby: ["redarmor", "redsword", "shieldred"],
+  frozen: ["bluemorningstar", "bluearmor", "shieldblue"],
+  golden: ["goldensword", "goldenarmor", "shieldgolden"],
+  ruby: ["redsword", "redarmor", "shieldred"],
   plated: ["platearmor", "beltplated", "shieldplate"],
   leather: ["leatherarmor", "beltleather", "shieldwood"],
 };
 
-Types.getSet = ({ belt, weaponKind, armorKind, shieldKind, ring1, ring2 }) => {
-  let set = null;
-  let bonus = null;
-
-  if (belt === "beltminotaur" && weaponKind === Types.Entities.MINOTAURAXE && [ring1, ring2].includes("ringminotaur")) {
-    set = "minotaur";
-    bonus = Types.setBonus.minotaur;
-  } else if (
-    armorKind === Types.Entities.DIAMONDARMOR &&
-    belt === "beltdiamond" &&
-    weaponKind === Types.Entities.DIAMONDSWORD &&
-    shieldKind === Types.Entities.SHIELDDIAMOND
-  ) {
-    set = "diamond";
-    bonus = Types.setBonus.diamond;
-  } else if (
-    armorKind === Types.Entities.FROZENARMOR &&
-    weaponKind === Types.Entities.FROZENSWORD &&
-    shieldKind === Types.Entities.SHIELDFROZEN &&
-    belt === "beltfrozen"
-  ) {
-    set = "sapphire";
-    bonus = Types.setBonus.sapphire;
-  } else if (
-    armorKind === Types.Entities.HORNEDARMOR &&
-    shieldKind === Types.Entities.SHIELDHORNED &&
-    belt === "belthorned"
-  ) {
-    set = "horned";
-    bonus = Types.setBonus.horned;
-  } else if (
-    armorKind === Types.Entities.BLUEARMOR &&
-    shieldKind === Types.Entities.SHIELDBLUE &&
-    [Types.Entities.BLUEAXE, Types.Entities.BLUEMORNINGSTAR].includes(weaponKind)
-  ) {
-    set = "frozen";
-    bonus = Types.setBonus.frozen;
-  } else if (
-    armorKind === Types.Entities.GOLDENARMOR &&
-    shieldKind === Types.Entities.SHIELDGOLDEN &&
-    weaponKind === Types.Entities.GOLDENSWORD
-  ) {
-    set = "golden";
-    bonus = Types.setBonus.golden;
-  } else if (
-    armorKind === Types.Entities.REDARMOR &&
-    shieldKind === Types.Entities.SHIELDGOLDEN &&
-    weaponKind === Types.Entities.REDSWORD
-  ) {
-    set = "ruby";
-    bonus = Types.setBonus.ruby;
-  } else if (
-    armorKind === Types.Entities.PLATEARMOR &&
-    shieldKind === Types.Entities.SHIELDPLATE &&
-    belt === "beltplated"
-  ) {
-    set = "plated";
-    bonus = Types.setBonus.plated;
-  } else if (
-    armorKind === Types.Entities.LEATHERARMOR &&
-    shieldKind === Types.Entities.SHIELDWOOD &&
-    belt === "beltleather"
-  ) {
-    set = "leather";
-    bonus = Types.setBonus.leather;
-  }
-
-  return { set, bonus };
+Types.setItemsNameMap = {
+  minotaur: ["Axe", "Ring", "Belt"],
+  diamond: ["Sword", "Armor", "Belt", "Shield"],
+  sapphire: ["Sword", "Armor", "Belt", "Shield"],
+  horned: ["Armor", "Belt", "Shield"],
+  frozen: ["Morningstar", "Armor", "Shield"],
+  golden: ["Sword", "Armor", "Shield"],
+  ruby: ["Sword", "Armor", "Shield"],
+  plated: ["Armor", "Belt", "Shield"],
+  leather: ["Armor", "Belt", "Shield"],
 };
 
 Types.resistances = {
@@ -1613,13 +1591,13 @@ Types.getBonus = function (rawBonus, level) {
   return bonus;
 };
 
-Types.getSetBonus = (rawSetBonus: { [key: string]: number }): any[] => {
+Types.getSetBonus = (currentSet: string, count: number = 0): any[] => {
   let setBonus = [];
-  if (!rawSetBonus) return setBonus;
+  if (count < 2) return setBonus;
 
-  Object.entries(rawSetBonus).map(([type, stats]) => {
+  Object.entries(Types.setBonus[currentSet]).map(([type, stats], i) => {
     var index = Types.bonusType.indexOf(type);
-    if (index >= 0) {
+    if (index !== -1 && i <= count - 1) {
       const description = Types.getBonusDescriptionMap[index].replace("#", stats);
 
       setBonus.push({

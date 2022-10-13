@@ -1568,6 +1568,10 @@ class Player extends Character {
     this.amuletBonus = bonus ? JSON.parse(bonus) : null;
   }
 
+  getEquipment() {
+    return [this.weapon, this.armor, this.belt, this.shield, this.ring1, this.ring2, this.amulet];
+  }
+
   calculateBonus() {
     let hasDrainLifeAura = false;
     let hasThunderstormAura = false;
@@ -1587,8 +1591,6 @@ class Player extends Character {
     if (this.bonus.freezeChance) {
       hasFreezeAura = true;
     }
-
-    this.resetBonus();
 
     try {
       const bonusToCalculate = [
@@ -1779,6 +1781,7 @@ class Player extends Character {
       }
     }
 
+    this.resetBonus();
     this.calculateBonus();
     this.calculateSetBonus();
     this.calculatePartyBonus();
@@ -1787,27 +1790,37 @@ class Player extends Character {
   }
 
   calculateSetBonus() {
-    let bonus = null;
-    let set = null;
+    const bonus = {};
+    const setItems = {};
 
-    ({ set, bonus } = Types.getSet({
-      belt: this.belt,
-      weaponKind: this.weaponKind,
-      armorKind: this.armorKind,
-      shieldKind: this.shieldKind,
-      ring1: this.ring1,
-      ring2: this.ring2,
-    }));
+    this.getEquipment().forEach(item => {
+      const set = Types.kindAsStringToSet[item];
+      if (set) {
+        if (typeof setItems[set] !== "number") {
+          setItems[set] = 0;
+        }
+        setItems[set] += 1;
+      }
+    });
 
-    this.set = set;
+    if (Object.keys(setItems).length) {
+      Object.entries(setItems).forEach(([key, value]) => {
+        Types.getSetBonus(key, value).forEach(({ type, stats }) => {
+          if (typeof bonus[type] !== "number") {
+            bonus[type] = 0;
+          }
+          bonus[type] += stats;
+        });
+      });
+    }
 
-    if (bonus) {
+    if (Object.keys(bonus)) {
       Object.entries(bonus).map(([type, stats]) => {
         this.bonus[type] += stats;
       });
     }
 
-    this.send(new Messages.SetBonus(bonus, set).serialize());
+    this.send(new Messages.SetBonus(setItems).serialize());
   }
 
   addAura(aura) {

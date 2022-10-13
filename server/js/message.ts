@@ -116,9 +116,9 @@ Messages.Stats = class Message {
 };
 
 Messages.SetBonus = class Message {
-  constructor(private bonus, private set) {}
+  constructor(private bonus) {}
   serialize() {
-    return [Types.Messages.SETBONUS, this.bonus, this.set];
+    return [Types.Messages.SETBONUS, this.bonus];
   }
 };
 

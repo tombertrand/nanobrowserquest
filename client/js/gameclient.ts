@@ -636,10 +636,9 @@ class GameClient {
 
   receiveSetBonus(data) {
     var bonus = data[1];
-    var set = data[2];
 
     if (this.setbonus_callback) {
-      this.setbonus_callback(bonus, set);
+      this.setbonus_callback(bonus);
     }
   }
 
