@@ -755,9 +755,6 @@ class Game {
         let currentSet = null;
         let setBonus = [];
 
-        self.player.setBonus;
-
-        // ~~~ @TODO Move this into getItemDetails?
         if (isEquippedItemSlot) {
           currentSet = Types.kindAsStringToSet[item];
           const playerItems = self.player.getEquipment();
@@ -790,7 +787,7 @@ class Game {
           requirement,
           description,
           partyBonus = [],
-        } = Types.getItemDetails({ item, level, rawBonus /*, rawSetBonus*/, rawSkill });
+        } = Types.getItemDetails({ item, level, rawBonus, rawSkill });
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
@@ -3672,13 +3669,13 @@ class Game {
               self.setShieldSkill(skill);
             }
           } else if (type === "belt") {
-            player.setBelt([name, level, bonus].join(":"));
+            player.setBelt([name, level, bonus].filter(Boolean).join(":"));
           } else if (type === "ring1") {
-            player.setRing1([name, level, bonus].join(":"));
+            player.setRing1([name, level, bonus].filter(Boolean).join(":"));
           } else if (type === "ring2") {
-            player.setRing2([name, level, bonus].join(":"));
+            player.setRing2([name, level, bonus].filter(Boolean).join(":"));
           } else if (type === "amulet") {
-            player.setAmulet([name, level, bonus].join(":"));
+            player.setAmulet([name, level, bonus].filter(Boolean).join(":"));
           }
         }
       });

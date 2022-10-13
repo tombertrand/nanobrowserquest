@@ -360,7 +360,6 @@ class Player extends Character {
   }
 
   setBelt(rawBelt) {
-    console.log("~~~~setBelt", rawBelt);
     if (rawBelt) {
       const [belt, level, bonus] = rawBelt.split(":");
 

@@ -1820,10 +1820,6 @@ class Player extends Character {
       });
     }
 
-    // ~~~~ @TODO Do more testing on stats
-    console.log("~~~~~bonus", bonus);
-    console.log("~~~~~this.bonus", this.bonus);
-
     this.send(new Messages.SetBonus(setItems).serialize());
   }
 
