@@ -752,31 +752,15 @@ class Game {
 
         let setName = null;
         let setParts = null;
-        // let rawSetBonus = null;
         let currentSet = null;
         let setBonus = [];
-        // if (
-        // self.player.set &&
-        // isEquippedItemSlot &&
-        // Types.setItems[self.player.set]?.includes(item)
-        // ) {
-        // rawSetBonus = self.player.setBonus;
-        // }
 
-        // if (Types.setItems.includes(item)) {
+        self.player.setBonus;
 
-        // }
-
-        // ~~~ @TODO get this from BE message and store on Player object
-        const rawSetBonus = {
-          minotaur: 2,
-          sapphire: 2,
-          diamond: 2,
-        };
-
+        // ~~~ @TODO Move this into getItemDetails?
         if (isEquippedItemSlot) {
           currentSet = Types.kindAsStringToSet[item];
-          const playerItems = self.player.getAllItems();
+          const playerItems = self.player.getEquipment();
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
             setParts = Types.setItemsNameMap[currentSet].map((description, index) => ({
@@ -784,8 +768,8 @@ class Game {
               isActive: playerItems.includes(Types.setItems[currentSet][index]),
             }));
 
-            if (rawSetBonus[currentSet]) {
-              setBonus = Types.getSetBonus(currentSet, rawSetBonus[currentSet]);
+            if (self.player.setBonus[currentSet]) {
+              setBonus = Types.getSetBonus(currentSet, self.player.setBonus[currentSet]);
             }
           }
         }
@@ -805,7 +789,6 @@ class Game {
           skill,
           requirement,
           description,
-          // setBonus = [],
           partyBonus = [],
         } = Types.getItemDetails({ item, level, rawBonus /*, rawSetBonus*/, rawSkill });
 
@@ -3656,9 +3639,8 @@ class Game {
         }
       });
 
-      self.client.onSetBonus(function (bonus, set) {
+      self.client.onSetBonus(function (bonus) {
         self.player.setBonus = bonus;
-        self.player.set = set;
       });
 
       self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, skill, type }) {

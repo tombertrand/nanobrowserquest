@@ -1610,8 +1610,6 @@ Types.getSetBonus = (currentSet: string, count: number = 0): any[] => {
     }
   });
 
-  // Object.entries(rawSetBonus);
-
   return setBonus;
 };
 
