@@ -2037,130 +2037,134 @@ class Player extends Character {
     settings,
     network,
   }) {
-    var self = this;
+    try {
+      // @NOTE: Make sure the player has authenticated if he has the expansion
+      if (this.isPasswordRequired && !this.isPasswordValid) {
+        this.connection.sendUTF8("passwordinvalid");
+        return;
+      }
 
-    // @NOTE: Make sure the player has authenticated if he has the expansion
-    if (self.isPasswordRequired && !self.isPasswordValid) {
-      self.connection.sendUTF8("passwordinvalid");
-      return;
+      // @NOTE: Leave no trace
+      delete this.isPasswordRequired;
+      delete this.isPasswordValid;
+
+      const [playerArmor, playerArmorLevel = 1, playerArmorBonus] = armor.split(":");
+      const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus] = weapon.split(":");
+
+      this.kind = Types.Entities.WARRIOR;
+      this.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel, playerArmorBonus);
+      this.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel, playerWeaponBonus);
+
+      if (belt) {
+        const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
+        this.equipBelt(playerBelt, playerBeltLevel, playerBeltBonus);
+      }
+      if (cape) {
+        const [playerCape, playerCapeLevel, playerCapeBonus] = cape.split(":");
+        this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
+      }
+      if (shield) {
+        const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSkill] = shield.split(":");
+        this.equipShield(
+          playerShield,
+          Types.getKindFromString(playerShield),
+          playerShieldLevel,
+          playerShieldBonus,
+          playerShieldSkill,
+        );
+      }
+      if (ring1) {
+        const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
+        this.equipRing1(playerRing1, playerRing1Level, playerRing1Bonus);
+      }
+      if (ring2) {
+        const [playerRing2, playerRing2Level, playerRing2Bonus] = ring2.split(":");
+        this.equipRing2(playerRing2, playerRing2Level, playerRing2Bonus);
+      }
+      if (amulet) {
+        const [playerAmulet, playerAmuletLevel, playerAmuletBonus] = amulet.split(":");
+        this.equipAmulet(playerAmulet, playerAmuletLevel, playerAmuletBonus);
+      }
+      this.achievement = achievement;
+      this.waypoints = waypoints;
+      this.expansion1 = expansion1;
+      this.depositAccount = depositAccount;
+      this.depositAccountIndex = depositAccountIndex;
+      this.inventory = inventory;
+      this.stash = stash;
+      this.hash = hash;
+      this.hasRequestedBossPayout = !!hash;
+      this.capeHue = settings.capeHue;
+      this.capeSaturate = settings.capeSaturate;
+      this.capeContrast = settings.capeContrast;
+      this.capeBrightness = settings.capeBrightness;
+
+      this.createdAt = createdAt;
+      this.experience = exp;
+      this.level = Types.getLevel(this.experience);
+      this.orientation = randomOrientation();
+      this.network = network;
+      this.nanoPotions = nanoPotions;
+
+      if (!x || !y) {
+        this.updatePosition();
+      } else {
+        this.setPosition(x, y);
+      }
+
+      this.chatBanEndTime = chatBanEndTime;
+
+      this.server.addPlayer(this);
+      this.server.enter_callback(this);
+
+      const { members, partyLeader } = this.getParty() || {};
+
+      this.send([
+        Types.Messages.WELCOME,
+        this.id,
+        this.name,
+        this.x,
+        this.y,
+        this.hitPoints,
+        armor,
+        weapon,
+        belt,
+        cape,
+        shield,
+        ring1,
+        ring2,
+        amulet,
+        this.experience,
+        achievement,
+        inventory,
+        stash,
+        hash,
+        nanoPotions,
+        gems,
+        artifact,
+        expansion1,
+        waypoints,
+        depositAccount,
+        this.auras,
+        this.server.cowLevelCoords,
+        this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
+        settings,
+        network,
+      ]);
+
+      this.resetBonus();
+      this.calculateBonus();
+      this.calculateSetBonus();
+      this.calculatePartyBonus();
+      this.updateHitPoints(true);
+      this.sendPlayerStats();
+
+      this.hasEnteredGame = true;
+      this.isDead = false;
+    } catch (err) {
+      console.log("Error", err);
+      Sentry.captureException(err);
     }
-
-    // @NOTE: Leave no trace
-    delete self.isPasswordRequired;
-    delete self.isPasswordValid;
-
-    const [playerArmor, playerArmorLevel = 1, playerArmorBonus] = armor.split(":");
-    const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus] = weapon.split(":");
-
-    self.kind = Types.Entities.WARRIOR;
-    self.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel, playerArmorBonus);
-    self.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel, playerWeaponBonus);
-
-    if (belt) {
-      const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
-      self.equipBelt(playerBelt, playerBeltLevel, playerBeltBonus);
-    }
-    if (cape) {
-      const [playerCape, playerCapeLevel, playerCapeBonus] = cape.split(":");
-      self.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
-    }
-    if (shield) {
-      const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSkill] = shield.split(":");
-      self.equipShield(
-        playerShield,
-        Types.getKindFromString(playerShield),
-        playerShieldLevel,
-        playerShieldBonus,
-        playerShieldSkill,
-      );
-    }
-    if (ring1) {
-      const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
-      self.equipRing1(playerRing1, playerRing1Level, playerRing1Bonus);
-    }
-    if (ring2) {
-      const [playerRing2, playerRing2Level, playerRing2Bonus] = ring2.split(":");
-      self.equipRing2(playerRing2, playerRing2Level, playerRing2Bonus);
-    }
-    if (amulet) {
-      const [playerAmulet, playerAmuletLevel, playerAmuletBonus] = amulet.split(":");
-      self.equipAmulet(playerAmulet, playerAmuletLevel, playerAmuletBonus);
-    }
-    self.achievement = achievement;
-    self.waypoints = waypoints;
-    self.expansion1 = expansion1;
-    self.depositAccount = depositAccount;
-    self.depositAccountIndex = depositAccountIndex;
-    self.inventory = inventory;
-    self.stash = stash;
-    self.hash = hash;
-    self.hasRequestedBossPayout = !!hash;
-    self.capeHue = settings.capeHue;
-    self.capeSaturate = settings.capeSaturate;
-    self.capeContrast = settings.capeContrast;
-    self.capeBrightness = settings.capeBrightness;
-
-    self.createdAt = createdAt;
-    self.experience = exp;
-    self.level = Types.getLevel(self.experience);
-    self.orientation = randomOrientation();
-    self.network = network;
-    self.nanoPotions = nanoPotions;
-
-    if (!x || !y) {
-      self.updatePosition();
-    } else {
-      self.setPosition(x, y);
-    }
-
-    self.chatBanEndTime = chatBanEndTime;
-
-    self.server.addPlayer(self);
-    self.server.enter_callback(self);
-
-    const { members, partyLeader } = self.getParty() || {};
-
-    self.send([
-      Types.Messages.WELCOME,
-      self.id,
-      self.name,
-      self.x,
-      self.y,
-      self.hitPoints,
-      armor,
-      weapon,
-      belt,
-      cape,
-      shield,
-      ring1,
-      ring2,
-      amulet,
-      self.experience,
-      achievement,
-      inventory,
-      stash,
-      hash,
-      nanoPotions,
-      gems,
-      artifact,
-      expansion1,
-      waypoints,
-      depositAccount,
-      self.auras,
-      self.server.cowLevelCoords,
-      self.hasParty() ? { partyId: self.partyId, members, partyLeader } : null,
-      settings,
-      network,
-    ]);
-
-    self.calculateBonus();
-    self.calculateSetBonus();
-    self.calculatePartyBonus();
-    self.updateHitPoints(true);
-    self.sendPlayerStats();
-
-    self.hasEnteredGame = true;
-    self.isDead = false;
   }
 }
 
