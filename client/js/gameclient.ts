@@ -73,6 +73,7 @@ class GameClient {
   receiveupgrade_callback: any;
   receiveanvilupgrade_callback: any;
   receiveanvilrecipe_callback: any;
+  receiveanvilodds_callback: any;
   receivestoreitems_callback: any;
   receivepurchasecompleted_callback: any;
   receivepurchaseerror_callback: any;
@@ -134,6 +135,7 @@ class GameClient {
     this.handlers[Types.Messages.UPGRADE] = this.receiveUpgrade;
     this.handlers[Types.Messages.ANVIL_UPGRADE] = this.receiveAnvilUpgrade;
     this.handlers[Types.Messages.ANVIL_RECIPE] = this.receiveAnvilRecipe;
+    this.handlers[Types.Messages.ANVIL_ODDS] = this.receiveAnvilOdds;
     this.handlers[Types.Messages.STORE_ITEMS] = this.receiveStoreItems;
     this.handlers[Types.Messages.PURCHASE_COMPLETED] = this.receivePurchaseCompleted;
     this.handlers[Types.Messages.PURCHASE_ERROR] = this.receivePurchaseError;
@@ -757,6 +759,14 @@ class GameClient {
     }
   }
 
+  receiveAnvilOdds(data) {
+    const message = data[1];
+
+    if (this.receiveanvilodds_callback) {
+      this.receiveanvilodds_callback(message);
+    }
+  }
+
   receiveStoreItems(data) {
     const items = data[1];
 
@@ -1064,6 +1074,10 @@ class GameClient {
 
   onReceiveAnvilRecipe(callback) {
     this.receiveanvilrecipe_callback = callback;
+  }
+
+  onReceiveAnvilOdds(callback) {
+    this.receiveanvilodds_callback = callback;
   }
 
   onReceiveStoreItems(callback) {

@@ -31,6 +31,7 @@ class Storage {
         soundVolume: 0.7,
         showEntityName: true,
         showDamageInfo: true,
+        showAnvilOdds: false,
         capeHue: 0,
         capeSaturate: 0,
         capeContrast: 0,
@@ -142,6 +143,11 @@ class Storage {
     this.save();
   }
 
+  setShowAnvilOddsEnabled(enabled) {
+    this.data.settings.showAnvilOdds = enabled;
+    this.save();
+  }
+
   // isAudioEnabled() {
   //   if (typeof this.data.settings.audio !== "boolean" || this.data.settings.audio) {
   //     return true;
@@ -175,6 +181,12 @@ class Storage {
       return true;
     }
     return false;
+  }
+
+  showAnvilOddsEnabled() {
+    if (typeof this.data.settings.showAnvilOdds !== "boolean") return false;
+
+    return this.data.settings.showAnvilOdds;
   }
 
   savePlayer(img, armor, weapon) {

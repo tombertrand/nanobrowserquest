@@ -743,6 +743,10 @@ var initGame = function () {
     app.toggleDamageInfo();
   });
 
+  $("#anvil-odds-checkbox").on("change", function () {
+    app.toggleAnvilOdds();
+  });
+
   $(document).bind("keydown", function (e) {
     var key = e.which;
     var $chat = $("#chatinput");

@@ -258,7 +258,7 @@ export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
 
   console.info(`Random ${random}, Success rate: ${successRate} -> ${random <= successRate ? "SUCCESS" : "FAILURE"}`);
 
-  return random <= successRate;
+  return { isSuccess: random <= successRate, random, successRate };
 };
 
 export const isValidTransmuteItems = items => {
@@ -304,6 +304,9 @@ export const getIsTransmuteSuccess = ({ transmuteSuccessRate = 0, uniqueSuccessR
   );
 
   return {
+    random,
+    transmuteSuccessRate,
+    uniqueSuccessRate,
     ...(transmuteSuccessRate ? { isTransmuteSuccess } : null),
     ...(uniqueSuccessRate ? { isUniqueSuccess } : null),
   };

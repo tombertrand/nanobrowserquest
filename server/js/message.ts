@@ -194,6 +194,13 @@ Messages.AnvilRecipe = class Message {
   }
 };
 
+Messages.AnvilOdds = class Message {
+  constructor(private message) {}
+  serialize() {
+    return [Types.Messages.ANVIL_ODDS, this.message];
+  }
+};
+
 Messages.Damage = class Message {
   constructor(private entity, private dmg, private hp, private maxHitPoints, private isCritical, private isBlocked) {}
   serialize() {

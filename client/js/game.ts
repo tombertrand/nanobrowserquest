@@ -156,6 +156,7 @@ class Game {
   isTeleporting: boolean;
   partyInvites: Partial<WorldPlayer>[];
   partyInvitees: string[];
+  showAnvilOdds: boolean;
 
   constructor(app) {
     this.app = app;
@@ -178,6 +179,7 @@ class Game {
     this.explorer = null;
     this.hoverSlotToDelete = null;
     this.isTeleporting = false;
+    this.showAnvilOdds = false;
 
     this.renderer = null;
     this.updater = null;
@@ -478,6 +480,10 @@ class Game {
     this.bubbleManager = bubbleManager;
   }
 
+  setShowAnvilOdds(enabled) {
+    this.showAnvilOdds = enabled;
+  }
+
   loadMap() {
     var self = this;
 
@@ -625,6 +631,13 @@ class Game {
       $("#damage-info-checkbox").prop("checked", true);
     } else {
       this.infoManager.setShowDamageInfo(false);
+    }
+
+    if (this.storage.showAnvilOddsEnabled()) {
+      this.setShowAnvilOdds(true);
+      $("#anvil-odds-checkbox").prop("checked", true);
+    } else {
+      this.setShowAnvilOdds(false);
     }
 
     this.player.capeHue = settings.capeHue;
@@ -3841,6 +3854,15 @@ class Game {
         }
       });
 
+      self.client.onReceiveAnvilOdds(function (message) {
+        if (self.showAnvilOdds) {
+          self.chat_callback({
+            message,
+            type: "info",
+          });
+        }
+      });
+
       self.client.onReceiveAnvilRecipe(function (recipe) {
         self.setAnvilRecipe();
 
@@ -5097,6 +5119,14 @@ class Game {
       if (!playerName || playerName === this.player.name) {
         this.chat_callback({
           message: `Type a player name to trade with.`,
+          type: "error",
+        });
+        return;
+      }
+
+      if (!this.player.hash) {
+        this.chat_callback({
+          message: `You must kill the skeleton king before you can trade.`,
           type: "error",
         });
         return;

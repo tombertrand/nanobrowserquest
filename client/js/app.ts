@@ -1222,6 +1222,13 @@ class App {
     this.game.infoManager.setShowDamageInfo(isChecked);
   }
 
+  toggleAnvilOdds() {
+    const isChecked = $("#anvil-odds-checkbox").is(":checked");
+
+    this.storage.setShowAnvilOddsEnabled(isChecked);
+    this.game.setShowAnvilOdds(isChecked);
+  }
+
   toggleInventory() {
     if ($("#upgrade").hasClass("visible")) {
       $("#upgrade").removeClass("visible");

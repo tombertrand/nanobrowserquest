@@ -54,6 +54,7 @@ export const Types: any = {
     UPGRADE_ITEM: 40,
     ANVIL_UPGRADE: 41,
     ANVIL_RECIPE: 42,
+    ANVIL_ODDS: 89,
     WAYPOINT: 43,
     WAYPOINTS_UPDATE: 44,
     STORE_ITEMS: 45,

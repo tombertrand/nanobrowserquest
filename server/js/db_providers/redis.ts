@@ -1100,6 +1100,12 @@ class DatabaseHandler {
         const filteredUpgrade = upgrade.filter(Boolean);
         let isSuccess = false;
         let recipe = null;
+        let random = null;
+        let successRate = null;
+        let transmuteSuccessRate = null;
+        let uniqueSuccessRate = null;
+        let isTransmuteSuccess = null;
+        let isUniqueSuccess = null;
         let transmuteRates;
 
         if (isValidUpgradeItems(filteredUpgrade)) {
@@ -1107,7 +1113,17 @@ class DatabaseHandler {
           const isUnique = Types.isUnique(item, bonus);
           let upgradedItem: number | string = 0;
 
-          if (isUpgradeSuccess({ level, isLuckySlot, isBlessed })) {
+          ({ isSuccess, random, successRate } = isUpgradeSuccess({ level, isLuckySlot, isBlessed }));
+
+          player.send(
+            new Messages.AnvilOdds(
+              `You rolled ${random}, the success rate is ${successRate}%. ${
+                random <= successRate ? "Success" : "Failure"
+              }`,
+            ).serialize(),
+          );
+
+          if (isSuccess) {
             const upgradedLevel = parseInt(level) + 1;
             upgradedItem = [item, parseInt(level) + 1, bonus, skill].filter(Boolean).join(":");
             isSuccess = true;
@@ -1136,7 +1152,20 @@ class DatabaseHandler {
           const [item, level] = filteredUpgrade[0].split(":");
           let generatedItem: number | string = 0;
 
-          const { isTransmuteSuccess, isUniqueSuccess } = getIsTransmuteSuccess({ ...transmuteRates, isLuckySlot });
+          ({ random, transmuteSuccessRate, uniqueSuccessRate, isTransmuteSuccess, isUniqueSuccess } =
+            getIsTransmuteSuccess({ ...transmuteRates, isLuckySlot }));
+
+          player.send(
+            new Messages.AnvilOdds(
+              `You rolled ${random}${
+                transmuteSuccessRate ? `, the transmute success rate is ${transmuteSuccessRate}%` : ""
+              }${
+                uniqueSuccessRate && uniqueSuccessRate !== 100
+                  ? `, the unique success rate is ${uniqueSuccessRate}`
+                  : ""
+              }. ${isTransmuteSuccess || isUniqueSuccess ? "Success" : "Failure"}`,
+            ).serialize(),
+          );
 
           if (
             (typeof isTransmuteSuccess === "boolean" && isTransmuteSuccess) ||

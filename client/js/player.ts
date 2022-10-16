@@ -11,6 +11,7 @@ class Player extends Character {
   spriteName: any;
   name: any;
   account: any;
+  hash: string;
   nameOffsetY: number;
   armorName: string;
   armorLevel: number;
