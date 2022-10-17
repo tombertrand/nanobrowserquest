@@ -5126,7 +5126,7 @@ class Game {
 
       if (!this.player.hash) {
         this.chat_callback({
-          message: `You must kill the skeleton king before you can trade.`,
+          message: `You must kill the Skeleton King before you can trade.`,
           type: "error",
         });
         return;

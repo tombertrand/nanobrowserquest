@@ -1048,6 +1048,13 @@ class Player extends Character {
             self.send(
               new Messages.Trade(Types.Messages.TRADE_ACTIONS.ERROR, `${message[2]} is not online`).serialize(),
             );
+          } else if (!playerToTradeWith.hash) {
+            self.send(
+              new Messages.Trade(
+                Types.Messages.TRADE_ACTIONS.ERROR,
+                `${message[2]} has not yet killed the Skeleton King.`,
+              ).serialize(),
+            );
           } else if (playerToTradeWith.hasTrade()) {
             self.send(
               new Messages.Trade(

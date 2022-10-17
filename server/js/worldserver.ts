@@ -1135,7 +1135,7 @@ class World {
               setTimeout(() => {
                 // Return everyone to town, leave 3s to loot any last drop
                 self.endMinotaurLevel();
-              }, 3000);
+              }, 5000);
 
               const time = (random(120) + 60 * 6) * 60 * 1000;
 

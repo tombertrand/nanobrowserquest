@@ -363,6 +363,7 @@ var initGame = function () {
 
   game.onGameCompleted(function ({ hash, fightAgain, show = false }) {
     if (hash) {
+      game.player.hash = hash;
       $("#completed").find("#transaction-hash").attr("href", `https://${game.explorer}.com/block/${hash}`).text(hash);
       $("#container-payout-hash").show();
     }
