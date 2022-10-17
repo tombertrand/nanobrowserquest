@@ -184,6 +184,33 @@ EntityFactory.builders[Types.Entities.EMERALDSWORD] = function (id) {
   return new Items.EmeraldSword(id);
 };
 
+EntityFactory.builders[Types.Entities.MOONPARTISAN] = function (id) {
+  return new Items.MoonPartisan(id);
+};
+
+EntityFactory.builders[Types.Entities.TEMPLARSWORD] = function (id) {
+  return new Items.TemplarSword(id);
+};
+
+EntityFactory.builders[Types.Entities.SPIKEGLAIVE] = function (id) {
+  return new Items.SpikeGlaive(id);
+};
+
+EntityFactory.builders[Types.Entities.ECLYPSEDAGGER] = function (id) {
+  return new Items.EclypseDagger(id);
+};
+
+EntityFactory.builders[Types.Entities.EXECUTIONERSWORD] = function (id) {
+  return new Items.ExecutionerSword(id);
+};
+
+EntityFactory.builders[Types.Entities.MYSTICALSWORD] = function (id) {
+  return new Items.MysticalSword(id);
+};
+
+EntityFactory.builders[Types.Entities.DRAGONSWORD] = function (id) {
+  return new Items.DragonSword(id);
+};
 
 EntityFactory.builders[Types.Entities.MORNINGSTAR] = function (id) {
   return new Items.MorningStar(id);
@@ -295,6 +322,10 @@ EntityFactory.builders[Types.Entities.SHIELDFROZEN] = function (id) {
 
 EntityFactory.builders[Types.Entities.SHIELDDIAMOND] = function (id) {
   return new Items.ShieldDiamond(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDTEMPLAR] = function (id) {
+  return new Items.ShieldTemplar(id);
 };
 
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {

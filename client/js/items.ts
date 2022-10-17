@@ -86,6 +86,55 @@ var Items = {
     }
   },
 
+  MoonPartisan: class MoonPartisan extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MOONPARTISAN, "weapon");
+      this.lootMessage = "You pick up a moon partisan";
+    }
+  },
+
+  TemplarSword: class TemplarSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.TEMPLARSWORD, "weapon");
+      this.lootMessage = "You pick up a templar sword";
+    }
+  },
+
+  SpikeGlaive: class SpikeGlaive extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SPIKEGLAIVE, "weapon");
+      this.lootMessage = "You pick up a spike glaive";
+    }
+  },
+
+  EclypseDagger: class EclypseDagger extends Item {
+    constructor(id) {
+      super(id, Types.Entities.ECLYPSEDAGGER, "weapon");
+      this.lootMessage = "You pick up an eclypse dagger";
+    }
+  },
+
+  ExecutionerSword: class ExecutionerSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.EXECUTIONERSWORD, "weapon");
+      this.lootMessage = "You pick up an executioner sword";
+    }
+  },
+
+  MysticalSword: class MysticalSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MYSTICALSWORD, "weapon");
+      this.lootMessage = "You pick up a mystical sword";
+    }
+  },
+
+  DragonSword: class DragonSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.DRAGONSWORD, "weapon");
+      this.lootMessage = "You pick up a dragon sword";
+    }
+  },
+
   LeatherArmor: class LeatherArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.LEATHERARMOR, "armor");
@@ -272,6 +321,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.SHIELDDIAMOND, "shield");
       this.lootMessage = "You pick up a diamond shield";
+    }
+  },
+
+  ShieldTemplar: class ShieldTemplar extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDTEMPLAR, "shield");
+      this.lootMessage = "You pick up a templar shield";
     }
   },
 

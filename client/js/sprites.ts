@@ -39,6 +39,13 @@ import frozensword from "../sprites/frozensword.json";
 import diamondsword from "../sprites/diamondsword.json";
 import minotauraxe from "../sprites/minotauraxe.json";
 import emeraldsword from "../sprites/emeraldsword.json";
+import moonpartisan from "../sprites/moonpartisan.json";
+import templarsword from "../sprites/templarsword.json";
+import spikeglaive from "../sprites/spikeglaive.json";
+import eclypsedagger from "../sprites/eclypsedagger.json";
+import executionersword from "../sprites/executionersword.json";
+import mysticalsword from "../sprites/mysticalsword.json";
+import dragonsword from "../sprites/dragonsword.json";
 import guard from "../sprites/guard.json";
 import hand from "../sprites/hand.json";
 import impact from "../sprites/impact.json";
@@ -52,6 +59,7 @@ import shieldblue from "../sprites/shieldblue.json";
 import shieldhorned from "../sprites/shieldhorned.json";
 import shieldfrozen from "../sprites/shieldfrozen.json";
 import shielddiamond from "../sprites/shielddiamond.json";
+import shieldtemplar from "../sprites/shieldtemplar.json";
 import itemAxe from "../sprites/item-axe.json";
 import itemBlueaxe from "../sprites/item-blueaxe.json";
 import itemBluemorningstar from "../sprites/item-bluemorningstar.json";
@@ -119,11 +127,19 @@ import itemShieldblue from "../sprites/item-shieldblue.json";
 import itemShieldhorned from "../sprites/item-shieldhorned.json";
 import itemShieldfrozen from "../sprites/item-shieldfrozen.json";
 import itemShielddiamond from "../sprites/item-shielddiamond.json";
+import itemShieldtemplar from "../sprites/item-shieldtemplar.json";
 import itemGoldensword from "../sprites/item-goldensword.json";
 import itemFrozensword from "../sprites/item-frozensword.json";
 import itemDiamondsword from "../sprites/item-diamondsword.json";
 import itemMinotauraxe from "../sprites/item-minotauraxe.json";
 import itemEmeraldsword from "../sprites/item-emeraldsword.json";
+import itemMoonpartisan from "../sprites/item-moonpartisan.json";
+import itemTemplarsword from "../sprites/item-templarsword.json";
+import itemSpikeglaive from "../sprites/item-spikeglaive.json";
+import itemEclypsedagger from "../sprites/item-eclypsedagger.json";
+import itemExecutionersword from "../sprites/item-executionersword.json";
+import itemMysticalsword from "../sprites/item-mysticalsword.json";
+import itemDragonsword from "../sprites/item-dragonsword.json";
 import itemLeatherarmor from "../sprites/item-leatherarmor.json";
 import itemMailarmor from "../sprites/item-mailarmor.json";
 import itemMorningstar from "../sprites/item-morningstar.json";
@@ -233,6 +249,13 @@ const sprites = {
   diamondsword,
   minotauraxe,
   emeraldsword,
+  moonpartisan,
+  templarsword,
+  spikeglaive,
+  eclypsedagger,
+  executionersword,
+  mysticalsword,
+  dragonsword,
   guard,
   hand,
   impact,
@@ -246,6 +269,7 @@ const sprites = {
   shieldhorned,
   shieldfrozen,
   shielddiamond,
+  shieldtemplar,
   "item-axe": itemAxe,
   "item-blueaxe": itemBlueaxe,
   "item-bluemorningstar": itemBluemorningstar,
@@ -313,11 +337,19 @@ const sprites = {
   "item-shieldhorned": itemShieldhorned,
   "item-shieldfrozen": itemShieldfrozen,
   "item-shielddiamond": itemShielddiamond,
+  "item-shieldtemplar": itemShieldtemplar,
   "item-goldensword": itemGoldensword,
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,
   "item-minotauraxe": itemMinotauraxe,
   "item-emeraldsword": itemEmeraldsword,
+  "item-moonpartisan": itemMoonpartisan,
+  "item-templarsword": itemTemplarsword,
+  "item-spikeglaive": itemSpikeglaive,
+  "item-eclypsedagger": itemEclypsedagger,
+  "item-executionersword": itemExecutionersword,
+  "item-mysticalsword": itemMysticalsword,
+  "item-dragonsword": itemDragonsword,
   "item-leatherarmor": itemLeatherarmor,
   "item-mailarmor": itemMailarmor,
   "item-morningstar": itemMorningstar,

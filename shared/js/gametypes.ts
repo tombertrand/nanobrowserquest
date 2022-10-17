@@ -171,6 +171,7 @@ export const Types: any = {
     SHIELDHORNED: 149,
     SHIELDFROZEN: 150,
     SHIELDDIAMOND: 151,
+    SHIELDTEMPLAR: 153,
 
     // Chests
     CHESTBLUE: 136,
@@ -258,6 +259,13 @@ export const Types: any = {
     DIAMONDSWORD: 121,
     MINOTAURAXE: 133,
     EMERALDSWORD: 152,
+    MOONPARTISAN: 154,
+    TEMPLARSWORD: 155,
+    SPIKEGLAIVE: 156,
+    ECLYPSEDAGGER: 157,
+    EXECUTIONERSWORD: 158,
+    MYSTICALSWORD: 159,
+    DRAGONSWORD: 160,
   },
 
   Orientations: {
@@ -334,6 +342,13 @@ Types.Entities.Weapons = [
   Types.Entities.DIAMONDSWORD,
   Types.Entities.MINOTAURAXE,
   Types.Entities.EMERALDSWORD,
+  Types.Entities.MOONPARTISAN,
+  Types.Entities.TEMPLARSWORD,
+  Types.Entities.SPIKEGLAIVE,
+  Types.Entities.ECLYPSEDAGGER,
+  Types.Entities.EXECUTIONERSWORD,
+  Types.Entities.MYSTICALSWORD,
+  Types.Entities.DRAGONSWORD,
 ];
 
 Types.Entities.Armors = [
@@ -370,6 +385,7 @@ Types.Entities.Shields = [
   Types.Entities.SHIELDHORNED,
   Types.Entities.SHIELDFROZEN,
   Types.Entities.SHIELDDIAMOND,
+  Types.Entities.SHIELDTEMPLAR,
 ];
 
 Types.Entities.Rings = [
@@ -459,6 +475,13 @@ export const kinds = {
   diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 36, 36],
   minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 40, 40],
   emeraldsword: [Types.Entities.EMERALDSWORD, "weapon", "Emerald Sword", 38, 38],
+  spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 38, 38],
+  executionersword: [Types.Entities.EXECUTIONERSWORD, "weapon", "Executioner Sword", 38, 38],
+  eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 38, 38],
+  mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 38, 38],
+  templarsword: [Types.Entities.TEMPLARSWORD, "weapon", "Templar Sword", 38, 38],
+  dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 38, 38],
+  moonpartisan: [Types.Entities.MOONPARTISAN, "weapon", "Moon Partisan", 38, 38],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -495,6 +518,7 @@ export const kinds = {
   shieldhorned: [Types.Entities.SHIELDHORNED, "shield", "Horned Shield", 22, 14],
   shieldfrozen: [Types.Entities.SHIELDFROZEN, "shield", "Sapphire Shield", 26, 16],
   shielddiamond: [Types.Entities.SHIELDDIAMOND, "shield", "Diamond Shield", 36, 18],
+  shieldtemplar: [Types.Entities.SHIELDTEMPLAR, "shield", "Templar Shield", 40, 20],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -634,6 +658,13 @@ Types.itemUniqueMap = {
   diamondsword: ["Inevitable", 32, 42],
   minotauraxe: ["PoS4QoS", 34, 44],
   emeraldsword: ["TBD", 36, 44],
+  spikeglaive: ["TBD", 38, 38],
+  executionersword: ["TBD", 38, 38],
+  eclypsedagger: ["TBD", 38, 38],
+  mysticalsword: ["TBD", 38, 38],
+  templarsword: ["TBD", 38, 38],
+  dragonsword: ["TBD", 38, 38],
+  moonpartisan: ["TBD", 38, 38],
 
   // name, level, defense
   leatherarmor: ["Representative", 2, 5],
@@ -658,6 +689,7 @@ Types.itemUniqueMap = {
   shieldhorned: ["Do Klost", 24, 16],
   shieldfrozen: ["Probably Nothing", 28, 18],
   shielddiamond: ["Diamond Hands", 38, 20],
+  shieldtemplar: ["TBD", 42, 22],
 
   cape: ["Cloak of Levitation", 12, 2],
 
