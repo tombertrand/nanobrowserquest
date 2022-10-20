@@ -348,6 +348,10 @@ EntityFactory.builders[Types.Entities.BANANOPOTION] = function (id) {
   return new Items.BananoPotion(id);
 };
 
+EntityFactory.builders[Types.Entities.RUNE.AL] = function (id) {
+  return new Items.RuneAl(id);
+};
+
 EntityFactory.builders[Types.Entities.GEMRUBY] = function (id) {
   return new Items.GemRuby(id);
 };

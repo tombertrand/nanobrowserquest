@@ -72,6 +72,7 @@ import itemRejuvenationpotion from "../sprites/item-rejuvenationpotion.json";
 import itemPoisonpotion from "../sprites/item-poisonpotion.json";
 import itemNanopotion from "../sprites/item-nanopotion.json";
 import itemBananopotion from "../sprites/item-bananopotion.json";
+import itemRuneAl from "../sprites/item-rune.json";
 import itemGemruby from "../sprites/item-gemruby.json";
 import itemGememerald from "../sprites/item-gememerald.json";
 import itemGemamethyst from "../sprites/item-gemamethyst.json";
@@ -187,6 +188,10 @@ import snake from "../sprites/snake.json";
 import snake2 from "../sprites/snake2.json";
 import sorcerer from "../sprites/sorcerer.json";
 import sparks from "../sprites/sparks.json";
+import weaponEffectMagic from "../sprites/weapon-effect-magic.json";
+import weaponEffectFlame from "../sprites/weapon-effect-flame.json";
+import weaponEffectCold from "../sprites/weapon-effect-cold.json";
+import weaponEffectPoison from "../sprites/weapon-effect-poison.json";
 import spectre from "../sprites/spectre.json";
 import attack from "../sprites/attack.json";
 import wirtleg from "../sprites/wirtleg.json";
@@ -282,6 +287,7 @@ const sprites = {
   "item-poisonpotion": itemPoisonpotion,
   "item-nanopotion": itemNanopotion,
   "item-bananopotion": itemBananopotion,
+  "item-rune-al": itemRuneAl,
   "item-gemruby": itemGemruby,
   "item-gememerald": itemGememerald,
   "item-gemamethyst": itemGemamethyst,
@@ -397,6 +403,10 @@ const sprites = {
   snake2,
   sorcerer,
   sparks,
+  "weapon-effect-magic": weaponEffectMagic,
+  "weapon-effect-flame": weaponEffectFlame,
+  "weapon-effect-cold": weaponEffectCold,
+  "weapon-effect-poison": weaponEffectPoison,
   spectre,
   attack,
   wirtleg,

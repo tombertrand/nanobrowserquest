@@ -132,31 +132,6 @@ class Renderer {
     }
   }
 
-  getWeaponImage(entity) {
-    let weaponLevel = entity.getWeaponLevel();
-    let weaponSuffix = "";
-
-    if (!!entity.weaponBonus) {
-      weaponSuffix = "unique";
-      if (weaponLevel >= 7) {
-        weaponSuffix += "7";
-      }
-    } else if (weaponLevel === 7) {
-      weaponSuffix = "7";
-    } else if (weaponLevel > 7) {
-      weaponSuffix = "8";
-    }
-
-    var weapon = this.game.sprites[entity.getWeaponName()];
-
-    // @TODO Why does this happens?
-    if (!weapon[`image${weaponSuffix}`]) {
-      weaponSuffix = "";
-    }
-
-    return { weapon, weaponSuffix, weaponImage: weapon[`image${weaponSuffix}`] };
-  }
-
   createCamera() {
     this.camera = new Camera(this);
     this.camera.rescale();
@@ -642,9 +617,7 @@ class Renderer {
                 dw = w * ds,
                 dh = h * ds;
 
-              this.context.translate(0, ts * -ds);
-              this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
-              this.context.translate(0, ts * ds);
+              this.context.drawImage(sprite.image, x, y, w, h, 0, ts * -ds, dw, dh);
             }
           });
         }
@@ -721,7 +694,7 @@ class Renderer {
       }
 
       if (entity instanceof Player && !entity.isDead && entity.hasWeapon()) {
-        const { weapon, weaponSuffix, weaponImage } = this.getWeaponImage(entity);
+        var weapon = this.game.sprites[entity.getWeaponName()];
 
         if (weapon) {
           var weaponAnimData = weapon.animationData[anim.name];
@@ -732,17 +705,61 @@ class Renderer {
           var wh = weapon.height * os;
 
           let isFilterApplied = false;
-          if (weaponSuffix) {
+          if (entity.weaponLevel >= 7) {
             isFilterApplied = true;
 
             const brightness = this.calculateBrightnessPerLevel(entity.weaponLevel);
             this.context.filter = `brightness(${brightness}%)`;
           }
 
-          this.context.drawImage(weaponImage, wx, wy, ww, wh, weapon.offsetX * s, weapon.offsetY * s, ww * ds, wh * ds);
+          this.context.drawImage(
+            weapon.image,
+            wx,
+            wy,
+            ww,
+            wh,
+            weapon.offsetX * s,
+            weapon.offsetY * s,
+            ww * ds,
+            wh * ds,
+          );
 
           if (isFilterApplied) {
             this.context.filter = "brightness(100%)";
+          }
+
+          if (typeof entity.weaponLevel === "number" && entity.weaponLevel >= 7) {
+            // @TODO configure the weapon element
+            var element = this.game.player.weaponElement || "magic";
+            var sprite = this.game.sprites[`weapon-effect-${element}`];
+            var anim = this.game.weaponEffectAnimation;
+
+            if (sprite && anim) {
+              var frame = anim.currentFrame,
+                s = this.scale,
+                x = frame.x * os,
+                y = frame.y * os,
+                w = sprite.width * os,
+                h = sprite.height * os,
+                ts = 20,
+                dx = -12 * s,
+                dy = -4 * s,
+                dw = w * ds,
+                dh = h * ds;
+
+              if (entity.capeOrientation === Types.Orientations.UP) {
+                (dy = -12 * s), (dx = 10 * s);
+                this.context.scale(1, -1);
+              } else if (entity.capeOrientation === Types.Orientations.LEFT) {
+                dx = 8 * s;
+                (dy = -12 * s), this.context.scale(1, -1);
+              } else if (entity.capeOrientation === Types.Orientations.RIGHT) {
+                dx = 8 * s;
+                (dy = -12 * s), this.context.scale(1, -1);
+              }
+
+              this.context.drawImage(sprite.image, x, y, w, h, dx, dy, dw, dh);
+            }
           }
         }
       }
@@ -1122,7 +1139,7 @@ class Renderer {
   }
 
   getPlayerImage() {
-    const { weapon, weaponImage } = this.getWeaponImage(this.game.player);
+    var weapon = this.game.sprites[this.game.player.getWeaponName()];
 
     var canvas = document.createElement("canvas"),
       ctx = canvas.getContext("2d"),
@@ -1178,7 +1195,7 @@ class Renderer {
       var shieldImage = this.game.sprites[this.game.player.shieldName].image;
       ctx.drawImage(shieldImage, 0, y, w, h, 2, 2, w, h);
     }
-    ctx.drawImage(weaponImage, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
+    ctx.drawImage(weapon.image, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
 
     return canvas.toDataURL("image/png");
   }

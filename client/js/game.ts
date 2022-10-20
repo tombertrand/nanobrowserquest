@@ -110,6 +110,7 @@ class Game {
   freezeAnimation: Animation;
   anvilAnimation: Animation;
   skillAnimation: Animation;
+  weaponEffectAnimation: Animation;
   client: any;
   achievements: any;
   spritesets: any;
@@ -196,6 +197,7 @@ class Game {
     this.freezeAnimation = null;
     this.anvilAnimation = null;
     this.skillAnimation = null;
+    this.weaponEffectAnimation = null;
     this.partyInvites = [];
     this.partyInvitees = [];
 
@@ -268,6 +270,10 @@ class Game {
       "skill-curse-attack",
       "talk",
       "sparks",
+      "weapon-effect-magic",
+      "weapon-effect-flame",
+      "weapon-effect-cold",
+      "weapon-effect-poison",
       "shadow16",
       "rat",
       "rat2",
@@ -422,6 +428,7 @@ class Game {
       "item-poisonpotion",
       "item-nanopotion",
       "item-bananopotion",
+      "item-rune-al",
       "item-gemruby",
       "item-gememerald",
       "item-gemamethyst",
@@ -568,6 +575,9 @@ class Game {
 
     this.skillAnimation = new Animation("idle_down", 8, 0, 32, 32);
     this.skillAnimation.setSpeed(125);
+
+    this.weaponEffectAnimation = new Animation("idle_down", 6, 0, 20, 20);
+    this.weaponEffectAnimation.setSpeed(140);
   }
 
   initHurtSprites() {
@@ -803,6 +813,7 @@ class Game {
         const {
           name,
           isUnique,
+          isRune,
           itemClass,
           defense,
           damage,
@@ -819,7 +830,7 @@ class Game {
         } = Types.getItemDetails({ item, level, rawBonus, rawSkill });
 
         return `<div>
-            <div class="item-title${isUnique ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
+            <div class="item-title${isUnique || isRune ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
             ${itemClass ? `<div class="item-class">(${isUnique ? "Unique " : ""}${itemClass} class item)</div>` : ""}
             ${defense ? `<div class="item-description">Defense: ${defense}</div>` : ""}
             ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}

@@ -25,7 +25,7 @@ import {
 
 import type Party from "./party";
 import type Trade from "./trade";
-import type { Network } from "./types";
+import type { GeneratedItem, Network } from "./types";
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
@@ -34,15 +34,6 @@ let payoutIndex = 0;
 
 // const NO_TIMEOUT_ACCOUNT = "3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
 const NO_TIMEOUT_ACCOUNT = "3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6m8epqxmy7anix";
-
-type GeneratedItem = {
-  item: string;
-  level?: number;
-  quantity?: 1;
-  bonus?: number[];
-  skill?: number;
-  isUnique?: boolean;
-};
 class Player extends Character {
   id: number;
   server: any;
@@ -599,13 +590,12 @@ class Player extends Character {
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());
             self.server.removeEntity(item);
+
             if (Types.Entities.Gems.includes(kind)) {
               let index = Types.Entities.Gems.indexOf(kind);
-
               databaseHandler.foundGem(self.name, index);
             } else if (Types.Entities.Artifact.includes(kind)) {
               let index = Types.Entities.Artifact.indexOf(kind);
-
               databaseHandler.foundArtifact(self.name, index);
             } else if (kind === Types.Entities.FIREFOXPOTION) {
               self.updateHitPoints(true);
@@ -648,33 +638,47 @@ class Player extends Character {
                 self.server.pushToPlayer(self, self.health());
               }
             } else {
-              const { isUnique, ...generatedItem } = (self.generateItem({ kind }) || {}) as GeneratedItem;
+              try {
+                let isUnique = false;
+                let generatedItem = null;
 
-              if (generatedItem) {
-                let player = self;
-
-                // Single items can't be party looted, like potions
-                if (!Types.isSingle(kind) && self.partyId) {
-                  player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+                if (Types.isRune(kind)) {
+                  const runeName = Types.RuneByKind[kind];
+                  if (runeName) {
+                    generatedItem = { item: `rune-${runeName}`, runeKind: Types.runeKind[runeName] };
+                  }
+                } else {
+                  ({ isUnique, ...generatedItem } = self.generateItem({ kind }) || {}) as GeneratedItem;
                 }
 
-                if (self.partyId) {
-                  self.server.pushToParty(
-                    self.getParty(),
-                    new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
-                      { playerName: player.name, kind, isUnique },
-                    ]),
-                  );
-                }
+                if (generatedItem) {
+                  let player = self;
 
-                if (Types.isSuperUnique(generatedItem.item)) {
-                  postMessageToDiscordChatChannel(`${player.name} picked up ${kinds[generatedItem.item][2]} 💍`);
-                }
+                  // Single items can't be party looted, like potions
+                  if (!Types.isSingle(kind) && self.partyId) {
+                    player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+                  }
 
-                this.databaseHandler.lootItems({
-                  player,
-                  items: [generatedItem],
-                });
+                  if (self.partyId) {
+                    self.server.pushToParty(
+                      self.getParty(),
+                      new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
+                        { playerName: player.name, kind, isUnique },
+                      ]),
+                    );
+                  }
+
+                  if (Types.isSuperUnique(generatedItem.item)) {
+                    postMessageToDiscordChatChannel(`${player.name} picked up ${kinds[generatedItem.item][2]} 💍`);
+                  }
+
+                  this.databaseHandler.lootItems({
+                    player,
+                    items: [generatedItem],
+                  });
+                }
+              } catch (err) {
+                Sentry.captureException(err);
               }
             }
           }

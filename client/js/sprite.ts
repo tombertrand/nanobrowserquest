@@ -20,9 +20,7 @@ class Sprite {
   whiteSprite;
   silhouetteSprite;
   image7: any;
-  image8: any;
   imageunique: any;
-  imageunique7: any;
   imagenano: any;
   imageban: any;
 
@@ -52,6 +50,13 @@ class Sprite {
 
     this.image = new Image();
     this.image.crossOrigin = "Anonymous";
+
+    // @TODO
+    // if (this.id === "item-rune") {
+    //   this.id = "item-rune-al";
+    //   console.log("~~~this.name", this.name);
+    // }
+
     this.image.src = "img/" + this.scale + "/" + this.id + ".png";
 
     if (this.name === "guard") {
@@ -62,24 +67,6 @@ class Sprite {
       this.imageban = new Image();
       this.imageban.crossOrigin = "Anonymous";
       this.imageban.src = "img/" + this.scale + "/banguard.png";
-    }
-
-    if (Types.isWeapon(this.name) && this.name !== "dagger") {
-      this.image7 = new Image();
-      this.image7.crossOrigin = "Anonymous";
-      this.image7.src = "img/" + this.scale + "/" + this.id + "7" + ".png";
-
-      this.image8 = new Image();
-      this.image8.crossOrigin = "Anonymous";
-      this.image8.src = "img/" + this.scale + "/" + this.id + "8" + ".png";
-
-      this.imageunique = new Image();
-      this.imageunique.crossOrigin = "Anonymous";
-      this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + ".png";
-
-      this.imageunique7 = new Image();
-      this.imageunique7.crossOrigin = "Anonymous";
-      this.imageunique7.src = "img/" + this.scale + "/" + this.id + "unique7" + ".png";
     } else if (["hornedarmor", "frozenarmor", "diamondarmor", "spikearmor", "demonarmor"].includes(this.name)) {
       this.imageunique = new Image();
       this.imageunique.crossOrigin = "Anonymous";

@@ -251,50 +251,16 @@ class Updater {
       }
     });
 
-    var sparks = this.game.sparksAnimation;
-    if (sparks) {
-      sparks.update(t);
-    }
-
-    var target = this.game.targetAnimation;
-    if (target) {
-      target.update(t);
-    }
-
-    var levelup = this.game.levelupAnimation;
-    if (levelup) {
-      levelup.update(t);
-    }
-
-    var drainLife = this.game.drainLifeAnimation;
-    if (drainLife) {
-      drainLife.update(t);
-    }
-
-    var thunderStorm = this.game.thunderstormAnimation;
-    if (thunderStorm) {
-      thunderStorm.update(t);
-    }
-
-    var highHealth = this.game.highHealthAnimation;
-    if (highHealth) {
-      highHealth.update(t);
-    }
-
-    var freeze = this.game.freezeAnimation;
-    if (freeze) {
-      freeze.update(t);
-    }
-
-    var anvilAnimation = this.game.anvilAnimation;
-    if (anvilAnimation) {
-      anvilAnimation.update(t);
-    }
-
-    var skillAnimation = this.game.skillAnimation;
-    if (skillAnimation) {
-      skillAnimation.update(t);
-    }
+    this.game.sparksAnimation?.update(t);
+    this.game.targetAnimation?.update(t);
+    this.game.levelupAnimation?.update(t);
+    this.game.drainLifeAnimation?.update(t);
+    this.game.thunderstormAnimation?.update(t);
+    this.game.highHealthAnimation?.update(t);
+    this.game.freezeAnimation?.update(t);
+    this.game.anvilAnimation?.update(t);
+    this.game.skillAnimation?.update(t);
+    this.game.weaponEffectAnimation?.update(t);
   }
 
   updateAnimatedTiles() {

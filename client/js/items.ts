@@ -366,6 +366,13 @@ var Items = {
     }
   },
 
+  RuneAl: class RuneAl extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.AL, "object");
+      this.lootMessage = "You pick up an AL Rune";
+    }
+  },
+
   GemRuby: class GemRuby extends Item {
     constructor(id) {
       super(id, Types.Entities.GEMRUBY, "object");

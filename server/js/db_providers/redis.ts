@@ -19,7 +19,7 @@ import {
 } from "../utils";
 
 import type Player from "../player";
-import type { Network } from "../types";
+import type { GeneratedItem, Network } from "../types";
 
 const INVENTORY_SLOT_COUNT = 24;
 const STASH_SLOT_COUNT = 48;
@@ -1005,7 +1005,8 @@ class DatabaseHandler {
             try {
               let inventory = JSON.parse(reply);
 
-              items.forEach(({ item, level, quantity, bonus, skill }) => {
+              items.forEach((rawItem: GeneratedItem) => {
+                const { item, level, quantity, bonus, skill, runeKind } = rawItem;
                 let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
 
                 // Increase the scroll count
@@ -1014,12 +1015,18 @@ class DatabaseHandler {
                     inventory[slotIndex] = `${item}:1`;
                   } else {
                     const [, oldQuantity] = inventory[slotIndex].split(":");
-                    inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(quantity)}`;
+                    inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(String(quantity))}`;
                   }
                 } else if (slotIndex === -1) {
                   slotIndex = inventory.indexOf(0);
                   if (slotIndex !== -1) {
-                    inventory[slotIndex] = [item, level || quantity, bonus, skill].filter(Boolean).join(":");
+                    const levelQuantityRune = level || quantity || runeKind;
+
+                    if (!levelQuantityRune) {
+                      throw new Error(`Invalid item property ${JSON.stringify({})}`);
+                    }
+
+                    inventory[slotIndex] = [item, levelQuantityRune, bonus, skill].filter(Boolean).join(":");
                   } else if (player.hasParty()) {
                     // @TODO re-call the lootItems fn with next party member
                   }

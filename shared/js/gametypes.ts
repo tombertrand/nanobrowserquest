@@ -266,6 +266,11 @@ export const Types: any = {
     EXECUTIONERSWORD: 158,
     MYSTICALSWORD: 159,
     DRAGONSWORD: 160,
+
+    // Runes
+    RUNE: {
+      AL: 161,
+    },
   },
 
   Orientations: {
@@ -564,6 +569,8 @@ export const kinds = {
   skeletonkingcage: [Types.Entities.SKELETONKINGCAGE, "recipe", "Skeleton King's thoracic cage"],
   necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
+
+  "rune-al": [Types.Entities.RUNE.AL, "rune", "AL Rune"],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -1101,6 +1108,14 @@ Types.isScroll = function (kindOrString: number | string) {
   }
 };
 
+Types.isRune = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return Types.RuneByKind[kindOrString];
+  } else {
+    return kindOrString?.startsWith("rune");
+  }
+};
+
 Types.isChest = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [Types.Entities.CHESTBLUE].includes(kindOrString);
@@ -1249,6 +1264,7 @@ Types.isItem = function (kind: number) {
     Types.isScroll(kind) ||
     Types.isSingle(kind) ||
     Types.isChest(kind) ||
+    Types.isRune(kind) ||
     (Types.isObject(kind) && !Types.isStaticChest(kind))
   );
 };
@@ -1308,11 +1324,7 @@ Types.isExpendableItem = function (kind: number) {
   return Types.isHealingItem(kind) || kind === Types.Entities.FIREFOXPOTION || kind === Types.Entities.CAKE;
 };
 
-Types.getKindFromString = function (kind: number) {
-  if (kind in kinds) {
-    return kinds[kind][0];
-  }
-};
+Types.getKindFromString = (kind: string) => kinds[kind]?.[0];
 
 Types.getKindAsString = function (kind: number) {
   if (!kind) return null;
@@ -1321,6 +1333,40 @@ Types.getKindAsString = function (kind: number) {
       return k;
     }
   }
+};
+
+Types.runeKind = {
+  al: 1,
+  mel: 2,
+  urn: 3,
+  wal: 4,
+  mir: 5,
+  nib: 6,
+  do: 7,
+  ban: 8,
+  sol: 9,
+  vie: 10,
+  hax: 11,
+  zal: 12,
+  um: 13,
+  xno: 14,
+  gel: 15,
+  sat: 16,
+  rum: 17,
+  tor: 18,
+  jah: 19,
+  vod: 20,
+};
+
+Types.RuneByKind = Object.entries(Types.Entities.RUNE).reduce((acc, [name, kind]: [string, number]) => {
+  acc[kind] = name.toLowerCase();
+  return acc;
+}, {});
+
+Types.getRuneKindFromItem = (item: string) => {
+  const [, rune] = item.split("-");
+
+  return Types.runeKind[rune];
 };
 
 Types.getAliasFromName = function (name: string) {
@@ -1933,6 +1979,7 @@ Types.getItemDetails = function ({
   const isCape = Types.isCape(item);
   const isShield = Types.isShield(item);
   const isUnique = Types.isUnique(item, rawBonus);
+  const isRune = Types.isRune(item);
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;
@@ -1980,13 +2027,14 @@ Types.getItemDetails = function ({
 
   const itemClass = Types.getItemClass(item, level, isUnique);
   const requirement = Types.getItemRequirement(item, level, isUnique);
-  const description = Types.itemDescription[item];
+  const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
 
   return {
     item,
     name: Types.getDisplayName(item, isUnique),
     type,
     isUnique,
+    isRune,
     itemClass,
     ...(isArmor || isBelt || isCape || isShield ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
@@ -2024,4 +2072,5 @@ Types.itemDescription = {
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level. Blessed scrolls gives a higher chance of successful upgrade.",
   scrolltransmute:
     "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
+  rune: "Can be inserted into a socketed item to enhance it or create runewords",
 };

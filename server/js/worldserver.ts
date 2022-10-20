@@ -1364,18 +1364,20 @@ class World {
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
-      "emeraldsword",
-      "mysticalsword",
-      "dragonsword",
-      "executionersword",
-      "eclypsedagger",
-      "spikeglaive",
-      "templarsword",
-      "moonpartisan",
+      "rune-al",
+      // "emeraldsword",
+      // "mysticalsword",
+      // "dragonsword",
+      // "executionersword",
+      // "eclypsedagger",
+      // "spikeglaive",
+      // "templarsword",
+      // "moonpartisan",
     ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
     var randomDrop = random(randomDrops.length);
+
     return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
 
     // Potions can be looted by anyone
