@@ -51,11 +51,9 @@ class Sprite {
     this.image = new Image();
     this.image.crossOrigin = "Anonymous";
 
-    // @TODO
-    // if (this.id === "item-rune") {
-    //   this.id = "item-rune-al";
-    //   console.log("~~~this.name", this.name);
-    // }
+    if (this.id === "item-rune") {
+      this.id = this.name;
+    }
 
     this.image.src = "img/" + this.scale + "/" + this.id + ".png";
 

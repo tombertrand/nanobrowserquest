@@ -193,6 +193,7 @@ class Player extends Character {
 
   loot(item) {
     if (item) {
+      console.log("~~~~item-type", item);
       if (Types.Entities.Gems.includes(item.kind)) {
         var index = Types.Entities.Gems.indexOf(item.kind);
         if (index > -1 && this.gems[index] !== 0) {
@@ -220,7 +221,7 @@ class Player extends Character {
       } else if (item.partyId && item.partyId !== this.partyId) {
         // @NOTE Allow item to be looted by others if player is alone in the party?
         throw new Exceptions.LootException("Can't loot item, it belongs to a party.");
-      } else if (["armor", "weapon", "belt", "cape", "shield", "ring", "amulet"].includes(item.type)) {
+      } else if (["armor", "weapon", "belt", "cape", "shield", "ring", "amulet", "rune"].includes(item.type)) {
         // @NOTE Check for stack-able items with quantity
         if (this.inventory.length >= 24) {
           throw new Exceptions.LootException("Your inventory is full.");

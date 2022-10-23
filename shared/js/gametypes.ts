@@ -269,7 +269,26 @@ export const Types: any = {
 
     // Runes
     RUNE: {
-      AL: 161,
+      SAT: 161,
+      AL: 162,
+      BUL: 163,
+      NAN: 164,
+      MIR: 165,
+      GEL: 166,
+      DO: 167,
+      BAN: 168,
+      SOL: 169,
+      UM: 170,
+      HEX: 171,
+      ZAL: 172,
+      VIE: 173,
+      XNO: 174,
+      ETH: 175,
+      BTC: 176,
+      BER: 177,
+      TOR: 178,
+      JAH: 179,
+      VOD: 180,
     },
   },
 
@@ -570,7 +589,26 @@ export const kinds = {
   necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
 
+  "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune"],
   "rune-al": [Types.Entities.RUNE.AL, "rune", "AL Rune"],
+  "rune-bul": [Types.Entities.RUNE.BUL, "rune", "BUL Rune"],
+  "rune-nan": [Types.Entities.RUNE.NAN, "rune", "NAN Rune"],
+  "rune-mir": [Types.Entities.RUNE.MIR, "rune", "MIR Rune"],
+  "rune-gel": [Types.Entities.RUNE.GEL, "rune", "GEL Rune"],
+  "rune-do": [Types.Entities.RUNE.DO, "rune", "DO Rune"],
+  "rune-ban": [Types.Entities.RUNE.BAN, "rune", "BAN Rune"],
+  "rune-sol": [Types.Entities.RUNE.SOL, "rune", "SOL Rune"],
+  "rune-um": [Types.Entities.RUNE.UM, "rune", "UM Rune"],
+  "rune-hex": [Types.Entities.RUNE.HEX, "rune", "HEX Rune"],
+  "rune-zal": [Types.Entities.RUNE.ZAL, "rune", "ZAL Rune"],
+  "rune-vie": [Types.Entities.RUNE.VIE, "rune", "VIE Rune"],
+  "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune"],
+  "rune-eth": [Types.Entities.RUNE.ETH, "rune", "ETH Rune"],
+  "rune-btc": [Types.Entities.RUNE.BTC, "rune", "BTC Rune"],
+  "rune-ber": [Types.Entities.RUNE.BER, "rune", "BER Rune"],
+  "rune-tor": [Types.Entities.RUNE.TOR, "rune", "TOR Rune"],
+  "rune-jah": [Types.Entities.RUNE.JAH, "rune", "JAH Rune"],
+  "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune"],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -1336,26 +1374,147 @@ Types.getKindAsString = function (kind: number) {
 };
 
 Types.runeKind = {
-  al: 1,
-  mel: 2,
-  urn: 3,
-  wal: 4,
-  mir: 5,
-  nib: 6,
-  do: 7,
-  ban: 8,
-  sol: 9,
-  vie: 10,
-  hax: 11,
-  zal: 12,
-  um: 13,
-  xno: 14,
-  gel: 15,
-  sat: 16,
-  rum: 17,
-  tor: 18,
-  jah: 19,
-  vod: 20,
+  sat: {
+    id: 1,
+    requirement: 4,
+    attribute: {
+      health: 10,
+    },
+  },
+  al: {
+    id: 2,
+    requirement: 6,
+    attribute: {
+      minDamage: 2,
+    },
+  },
+  bul: {
+    id: 3,
+    requirement: 8,
+    attribute: {
+      maxDamage: 2,
+    },
+  },
+  nan: {
+    id: 4,
+    requirement: 10,
+    attribute: {
+      magicDamage: 2,
+    },
+  },
+  mir: {
+    id: 5,
+    requirement: 12,
+    attribute: {
+      attackDamage: 2,
+    },
+  },
+  gel: {
+    id: 6,
+    requirement: 14,
+    attribute: {
+      absorbedDamage: 2,
+    },
+  },
+  do: {
+    id: 7,
+    requirement: 16,
+    attribute: {
+      defense: 2,
+    },
+  },
+  ban: {
+    id: 8,
+    requirement: 20,
+    attribute: {
+      exp: 2,
+    },
+  },
+  sol: {
+    id: 9,
+    requirement: 24,
+    attribute: {
+      reduceFrozenChance: 2,
+    },
+  },
+  um: {
+    id: 10,
+    requirement: 30,
+    attribute: {
+      flameDamage: 2,
+    },
+  },
+  hex: {
+    id: 11,
+    requirement: 34,
+    attribute: {
+      lightningDamage: 1,
+    },
+  },
+  zal: {
+    id: 12,
+    requirement: 38,
+    attribute: {
+      pierceDamage: 2,
+    },
+  },
+  vie: {
+    id: 13,
+    requirement: 42,
+    attribute: {
+      regenerateHealth: 2,
+    },
+  },
+  xno: {
+    id: 14,
+    requirement: 46,
+    attribute: {
+      attackSpeed: 2,
+    },
+  },
+  eth: {
+    id: 15,
+    requirement: 52,
+    attribute: {
+      poisonDamage: 2,
+    },
+  },
+  btc: {
+    id: 16,
+    requirement: 54,
+    attribute: {
+      flameResistance: 2,
+    },
+  },
+  ber: {
+    id: 17,
+    requirement: 56,
+    attribute: {
+      skillTimeout: 2,
+    },
+  },
+  tor: {
+    id: 18,
+    requirement: 58,
+    attribute: {
+      coldDamage: 2,
+      freezeChance: 2,
+    },
+  },
+  jah: {
+    id: 19,
+    requirement: 60,
+    attribute: {
+      magicFind: 2,
+    },
+  },
+  vod: {
+    id: 20,
+    requirement: 62,
+    attribute: {
+      preventRegenerateHealth: 2,
+    },
+  },
 };
 
 Types.RuneByKind = Object.entries(Types.Entities.RUNE).reduce((acc, [name, kind]: [string, number]) => {
@@ -1366,7 +1525,7 @@ Types.RuneByKind = Object.entries(Types.Entities.RUNE).reduce((acc, [name, kind]
 Types.getRuneKindFromItem = (item: string) => {
   const [, rune] = item.split("-");
 
-  return Types.runeKind[rune];
+  return Types.runeKind[rune].id;
 };
 
 Types.getAliasFromName = function (name: string) {
@@ -1588,6 +1747,10 @@ Types.bonusType = [
   "flameResistance", // 22
   "lightningResistance", // 23
   "coldResistance", // 24
+  "poisonResistance", // 25
+  "preventRegenerateHealth", // 26
+  "poisonDamage", // 27
+  "skillTimeout", // 28
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1616,6 +1779,7 @@ Types.getBonus = function (rawBonus, level) {
   const flameResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const poisonResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1643,6 +1807,7 @@ Types.getBonus = function (rawBonus, level) {
     flameResistancePerLevel,
     lightningResistancePerLevel,
     coldResistancePerLevel,
+    poisonResistancePerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];

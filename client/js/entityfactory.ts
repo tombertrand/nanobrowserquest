@@ -348,10 +348,85 @@ EntityFactory.builders[Types.Entities.BANANOPOTION] = function (id) {
   return new Items.BananoPotion(id);
 };
 
+EntityFactory.builders[Types.Entities.RUNE.SAT] = function (id) {
+  return new Items.RuneSat(id);
+};
+
 EntityFactory.builders[Types.Entities.RUNE.AL] = function (id) {
   return new Items.RuneAl(id);
 };
 
+EntityFactory.builders[Types.Entities.RUNE.BUL] = function (id) {
+  return new Items.RuneBul(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.NAN] = function (id) {
+  return new Items.RuneNan(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.MIR] = function (id) {
+  return new Items.RuneMir(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.GEL] = function (id) {
+  return new Items.RuneGel(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.DO] = function (id) {
+  return new Items.RuneDo(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.BAN] = function (id) {
+  return new Items.RuneBan(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.SOL] = function (id) {
+  return new Items.RuneSol(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.UM] = function (id) {
+  return new Items.RuneUm(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.HEX] = function (id) {
+  return new Items.RuneHex(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.ZAL] = function (id) {
+  return new Items.RuneZal(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.VIE] = function (id) {
+  return new Items.RuneVie(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.XNO] = function (id) {
+  return new Items.RuneXno(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.ETH] = function (id) {
+  return new Items.RuneEth(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.BTC] = function (id) {
+  return new Items.RuneBtc(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.BER] = function (id) {
+  return new Items.RuneBer(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.TOR] = function (id) {
+  return new Items.RuneTor(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.JAH] = function (id) {
+  return new Items.RuneJah(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.VOD] = function (id) {
+  return new Items.RuneVod(id);
+};
 EntityFactory.builders[Types.Entities.GEMRUBY] = function (id) {
   return new Items.GemRuby(id);
 };

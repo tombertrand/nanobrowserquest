@@ -72,7 +72,7 @@ import itemRejuvenationpotion from "../sprites/item-rejuvenationpotion.json";
 import itemPoisonpotion from "../sprites/item-poisonpotion.json";
 import itemNanopotion from "../sprites/item-nanopotion.json";
 import itemBananopotion from "../sprites/item-bananopotion.json";
-import itemRuneAl from "../sprites/item-rune.json";
+import itemRune from "../sprites/item-rune.json";
 import itemGemruby from "../sprites/item-gemruby.json";
 import itemGememerald from "../sprites/item-gememerald.json";
 import itemGemamethyst from "../sprites/item-gemamethyst.json";
@@ -287,7 +287,26 @@ const sprites = {
   "item-poisonpotion": itemPoisonpotion,
   "item-nanopotion": itemNanopotion,
   "item-bananopotion": itemBananopotion,
-  "item-rune-al": itemRuneAl,
+  "item-rune-sat": itemRune,
+  "item-rune-al": itemRune,
+  "item-rune-bul": itemRune,
+  "item-rune-nan": itemRune,
+  "item-rune-mir": itemRune,
+  "item-rune-gel": itemRune,
+  "item-rune-do": itemRune,
+  "item-rune-ban": itemRune,
+  "item-rune-sol": itemRune,
+  "item-rune-um": itemRune,
+  "item-rune-hex": itemRune,
+  "item-rune-zal": itemRune,
+  "item-rune-vie": itemRune,
+  "item-rune-xno": itemRune,
+  "item-rune-eth": itemRune,
+  "item-rune-btc": itemRune,
+  "item-rune-ber": itemRune,
+  "item-rune-tor": itemRune,
+  "item-rune-jah": itemRune,
+  "item-rune-vod": itemRune,
   "item-gemruby": itemGemruby,
   "item-gememerald": itemGememerald,
   "item-gemamethyst": itemGemamethyst,
