@@ -488,7 +488,7 @@ var initGame = function () {
       app.center();
       app.setMouseCoordinates(event);
       if (game) {
-        game.pvpFlag = game.player.level >= 9 && event.shiftKey;
+        game.pvpFlag = game.player?.level >= 9 && event.shiftKey;
         game.click();
       }
       // app.hideWindows();
@@ -543,7 +543,7 @@ var initGame = function () {
   $(document).mousemove(function (event) {
     app.setMouseCoordinates(event);
     if (game.started) {
-      game.pvpFlag = game.player.level >= 9 && event.shiftKey;
+      game.pvpFlag = game.player?.level >= 9 && event.shiftKey;
       game.movecursor();
     }
   });
@@ -609,7 +609,7 @@ var initGame = function () {
         }
       }
     } else if (key === 16) {
-      game.pvpFlag = game.player.level >= 9;
+      game.pvpFlag = game.player?.level >= 9;
     }
 
     if (game.started && !$("#chatinput").is(":focus")) {

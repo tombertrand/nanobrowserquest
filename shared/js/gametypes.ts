@@ -205,7 +205,9 @@ export const Types: any = {
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
     SCROLLUPGRADEHIGH: 76,
+    SCROLLUPGRADELEGENDARY: 185,
     SCROLLUPGRADEBLESSED: 118,
+    SCROLLUPGRADESACRED: 186,
     SCROLLTRANSMUTE: 142,
     RINGBRONZE: 80,
     RINGSILVER: 81,
@@ -285,10 +287,14 @@ export const Types: any = {
       XNO: 174,
       ETH: 175,
       BTC: 176,
-      BER: 177,
-      TOR: 178,
-      JAH: 179,
-      VOD: 180,
+      VAX: 177,
+      POR: 178,
+      LAS: 179,
+      CHAM: 180,
+      BER: 181,
+      TOR: 182,
+      JAH: 183,
+      VOD: 184,
     },
   },
 
@@ -497,15 +503,15 @@ export const kinds = {
   bluemorningstar: [Types.Entities.BLUEMORNINGSTAR, "weapon", "Frozen Morning Star", 20, 26],
   frozensword: [Types.Entities.FROZENSWORD, "weapon", "Sapphire Sword", 26, 30],
   diamondsword: [Types.Entities.DIAMONDSWORD, "weapon", "Diamond Sword", 36, 36],
-  minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 40, 40],
-  emeraldsword: [Types.Entities.EMERALDSWORD, "weapon", "Emerald Sword", 38, 38],
-  spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 38, 38],
-  executionersword: [Types.Entities.EXECUTIONERSWORD, "weapon", "Executioner Sword", 38, 38],
-  eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 38, 38],
-  mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 38, 38],
-  templarsword: [Types.Entities.TEMPLARSWORD, "weapon", "Templar Sword", 38, 38],
-  dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 38, 38],
-  moonpartisan: [Types.Entities.MOONPARTISAN, "weapon", "Moon Partisan", 38, 38],
+  minotauraxe: [Types.Entities.MINOTAURAXE, "weapon", "Minotaur Axe", 38, 38],
+  emeraldsword: [Types.Entities.EMERALDSWORD, "weapon", "Emerald Sword", 40, 40],
+  spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 40, 40],
+  executionersword: [Types.Entities.EXECUTIONERSWORD, "weapon", "Executioner Sword", 40, 40],
+  eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 40, 40],
+  mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 40, 40],
+  templarsword: [Types.Entities.TEMPLARSWORD, "weapon", "Templar Sword", 40, 40],
+  dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 40, 40],
+  moonpartisan: [Types.Entities.MOONPARTISAN, "weapon", "Moon Partisan", 40, 40],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -519,8 +525,8 @@ export const kinds = {
   hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 22, 28],
   frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Sapphire Armor", 26, 30],
   diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 36, 36],
-  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 40, 42],
-  demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 42, 46],
+  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 40, 40],
+  demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 40, 40],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -578,7 +584,9 @@ export const kinds = {
   scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "scroll", "Upgrade scroll", 3],
   scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "scroll", "Upgrade scroll", 6],
   scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "scroll", "Superior upgrade scroll", 15],
+  scrollupgradelegendary: [Types.Entities.SCROLLUPGRADELEGENDARY, "scroll", "Legendary upgrade scroll", 40],
   scrollupgradeblessed: [Types.Entities.SCROLLUPGRADEBLESSED, "scroll", "Blessed upgrade scroll", 15],
+  scrollupgradesacred: [Types.Entities.SCROLLUPGRADESACRED, "scroll", "Sacred upgrade scroll", 40],
   scrolltransmute: [Types.Entities.SCROLLTRANSMUTE, "scroll", "Transmute scroll", 20],
   skeletonkey: [Types.Entities.SKELETONKEY, "object", "Skeleton Key"],
   raiblockstl: [Types.Entities.RAIBLOCKSTL, "object", "Raiblocks artifact"],
@@ -589,26 +597,31 @@ export const kinds = {
   necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
 
-  "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune"],
-  "rune-al": [Types.Entities.RUNE.AL, "rune", "AL Rune"],
-  "rune-bul": [Types.Entities.RUNE.BUL, "rune", "BUL Rune"],
-  "rune-nan": [Types.Entities.RUNE.NAN, "rune", "NAN Rune"],
-  "rune-mir": [Types.Entities.RUNE.MIR, "rune", "MIR Rune"],
-  "rune-gel": [Types.Entities.RUNE.GEL, "rune", "GEL Rune"],
-  "rune-do": [Types.Entities.RUNE.DO, "rune", "DO Rune"],
-  "rune-ban": [Types.Entities.RUNE.BAN, "rune", "BAN Rune"],
-  "rune-sol": [Types.Entities.RUNE.SOL, "rune", "SOL Rune"],
-  "rune-um": [Types.Entities.RUNE.UM, "rune", "UM Rune"],
-  "rune-hex": [Types.Entities.RUNE.HEX, "rune", "HEX Rune"],
-  "rune-zal": [Types.Entities.RUNE.ZAL, "rune", "ZAL Rune"],
-  "rune-vie": [Types.Entities.RUNE.VIE, "rune", "VIE Rune"],
-  "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune"],
-  "rune-eth": [Types.Entities.RUNE.ETH, "rune", "ETH Rune"],
-  "rune-btc": [Types.Entities.RUNE.BTC, "rune", "BTC Rune"],
-  "rune-ber": [Types.Entities.RUNE.BER, "rune", "BER Rune"],
-  "rune-tor": [Types.Entities.RUNE.TOR, "rune", "TOR Rune"],
-  "rune-jah": [Types.Entities.RUNE.JAH, "rune", "JAH Rune"],
-  "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune"],
+  // kind, type, name, level
+  "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 4],
+  "rune-al": [Types.Entities.RUNE.AL, "rune", "AL Rune", 6],
+  "rune-bul": [Types.Entities.RUNE.BUL, "rune", "BUL Rune", 8],
+  "rune-nan": [Types.Entities.RUNE.NAN, "rune", "NAN Rune", 10],
+  "rune-mir": [Types.Entities.RUNE.MIR, "rune", "MIR Rune", 12],
+  "rune-gel": [Types.Entities.RUNE.GEL, "rune", "GEL Rune", 14],
+  "rune-do": [Types.Entities.RUNE.DO, "rune", "DO Rune", 16],
+  "rune-ban": [Types.Entities.RUNE.BAN, "rune", "BAN Rune", 20],
+  "rune-sol": [Types.Entities.RUNE.SOL, "rune", "SOL Rune", 22],
+  "rune-um": [Types.Entities.RUNE.UM, "rune", "UM Rune", 24],
+  "rune-hex": [Types.Entities.RUNE.HEX, "rune", "HEX Rune", 26],
+  "rune-zal": [Types.Entities.RUNE.ZAL, "rune", "ZAL Rune", 28],
+  "rune-vie": [Types.Entities.RUNE.VIE, "rune", "VIE Rune", 30],
+  "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune", 32],
+  "rune-eth": [Types.Entities.RUNE.ETH, "rune", "ETH Rune", 34],
+  "rune-btc": [Types.Entities.RUNE.BTC, "rune", "BTC Rune", 36],
+  "rune-vax": [Types.Entities.RUNE.VAX, "rune", "VAX Rune", 38],
+  "rune-por": [Types.Entities.RUNE.POR, "rune", "POR Rune", 40],
+  "rune-las": [Types.Entities.RUNE.LAS, "rune", "LAS Rune", 44],
+  "rune-cham": [Types.Entities.RUNE.CHAM, "rune", "CHAM Rune", 48],
+  "rune-ber": [Types.Entities.RUNE.BER, "rune", "BER Rune", 52],
+  "rune-tor": [Types.Entities.RUNE.TOR, "rune", "TOR Rune", 56],
+  "rune-jah": [Types.Entities.RUNE.JAH, "rune", "JAH Rune", 60],
+  "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 64],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -1138,7 +1151,9 @@ Types.isScroll = function (kindOrString: number | string) {
       Types.Entities.SCROLLUPGRADELOW,
       Types.Entities.SCROLLUPGRADEMEDIUM,
       Types.Entities.SCROLLUPGRADEHIGH,
+      Types.Entities.SCROLLUPGRADELEGENDARY,
       Types.Entities.SCROLLUPGRADEBLESSED,
+      Types.Entities.SCROLLUPGRADESACRED,
       Types.Entities.SCROLLTRANSMUTE,
     ].includes(kindOrString);
   } else {
@@ -1375,143 +1390,172 @@ Types.getKindAsString = function (kind: number) {
 
 Types.runeKind = {
   sat: {
-    id: 1,
+    rank: 1,
     requirement: 4,
     attribute: {
       health: 10,
     },
   },
   al: {
-    id: 2,
+    rank: 2,
     requirement: 6,
     attribute: {
       minDamage: 2,
     },
   },
   bul: {
-    id: 3,
+    rank: 3,
     requirement: 8,
     attribute: {
       maxDamage: 2,
     },
   },
   nan: {
-    id: 4,
+    rank: 4,
     requirement: 10,
     attribute: {
       magicDamage: 2,
     },
   },
   mir: {
-    id: 5,
+    rank: 5,
     requirement: 12,
     attribute: {
       attackDamage: 2,
     },
   },
   gel: {
-    id: 6,
+    rank: 6,
     requirement: 14,
     attribute: {
       absorbedDamage: 2,
     },
   },
   do: {
-    id: 7,
+    rank: 7,
     requirement: 16,
     attribute: {
       defense: 2,
     },
   },
   ban: {
-    id: 8,
+    rank: 8,
     requirement: 20,
     attribute: {
       exp: 2,
     },
   },
   sol: {
-    id: 9,
-    requirement: 24,
+    rank: 9,
+    requirement: 22,
     attribute: {
       reduceFrozenChance: 2,
     },
   },
   um: {
-    id: 10,
-    requirement: 30,
+    rank: 10,
+    requirement: 24,
     attribute: {
       flameDamage: 2,
     },
   },
   hex: {
-    id: 11,
-    requirement: 34,
+    rank: 11,
+    requirement: 26,
     attribute: {
       lightningDamage: 1,
     },
   },
   zal: {
-    id: 12,
-    requirement: 38,
+    rank: 12,
+    requirement: 28,
     attribute: {
       pierceDamage: 2,
     },
   },
   vie: {
-    id: 13,
-    requirement: 42,
+    rank: 13,
+    requirement: 30,
     attribute: {
       regenerateHealth: 2,
     },
   },
   xno: {
-    id: 14,
-    requirement: 46,
+    rank: 14,
+    requirement: 32,
     attribute: {
       attackSpeed: 2,
     },
   },
   eth: {
-    id: 15,
-    requirement: 52,
+    rank: 15,
+    requirement: 34,
     attribute: {
       poisonDamage: 2,
     },
   },
   btc: {
-    id: 16,
-    requirement: 54,
+    rank: 16,
+    requirement: 36,
     attribute: {
-      flameResistance: 2,
+      magicResistance: 10,
+    },
+  },
+  vax: {
+    rank: 17,
+    requirement: 38,
+    attribute: {
+      flameResistance: 10,
+    },
+  },
+  por: {
+    rank: 18,
+    requirement: 40,
+    attribute: {
+      lightningResistance: 10,
+    },
+  },
+  las: {
+    rank: 19,
+    requirement: 44,
+    attribute: {
+      coldResistance: 10,
+    },
+  },
+  cham: {
+    rank: 20,
+    requirement: 48,
+    attribute: {
+      poisonResistance: 10,
     },
   },
   ber: {
-    id: 17,
-    requirement: 56,
+    rank: 21,
+    requirement: 52,
     attribute: {
       skillTimeout: 2,
     },
   },
   tor: {
-    id: 18,
-    requirement: 58,
+    rank: 22,
+    requirement: 56,
     attribute: {
       coldDamage: 2,
       freezeChance: 2,
     },
   },
   jah: {
-    id: 19,
+    rank: 23,
     requirement: 60,
     attribute: {
       magicFind: 2,
     },
   },
   vod: {
-    id: 20,
-    requirement: 62,
+    rank: 24,
+    requirement: 64,
     attribute: {
+      regenerateHealth: 2,
       preventRegenerateHealth: 2,
     },
   },
@@ -1522,10 +1566,12 @@ Types.RuneByKind = Object.entries(Types.Entities.RUNE).reduce((acc, [name, kind]
   return acc;
 }, {});
 
-Types.getRuneKindFromItem = (item: string) => {
+Types.RuneList = Object.keys(Types.Entities.RUNE);
+
+Types.getRuneFromItem = (item: string) => {
   const [, rune] = item.split("-");
 
-  return Types.runeKind[rune].id;
+  return Types.runeKind[rune];
 };
 
 Types.getAliasFromName = function (name: string) {
@@ -1719,6 +1765,10 @@ Types.getBonusDescriptionMap = [
   "+#% Flame resistance",
   "+#% Lightning resistance",
   "+#% Cold resistance",
+  "+#% Poison resistance",
+  "+#% Prevent enemy health regeneration",
+  "+# Poison damage",
+  "-#% Skill timeout",
 ];
 
 Types.bonusType = [
@@ -1889,6 +1939,21 @@ Types.getPartyBonus = function (rawBonus, level) {
       description,
     });
   }
+
+  return bonus;
+};
+
+Types.getRuneBonus = function (rawRune) {
+  const rune = Types.getRuneFromItem(rawRune);
+  Types.runeKind;
+
+  const bonus: { type: string; stats: number; description: string }[] = Object.entries(rune.attribute).map(
+    ([type, stats]: [string, number]) => ({
+      type,
+      stats,
+      description: Types.getBonusDescriptionMap[Types.bonusType.findIndex(t => t === type)].replace("#", stats),
+    }),
+  );
 
   return bonus;
 };
@@ -2078,8 +2143,13 @@ Types.getItemClass = function (item: string, level: number, isUnique: boolean) {
     } else {
       itemClass = "high";
     }
-  } else if (baseLevel >= 10) {
+  } else if (baseLevel >= 10 && baseLevel < 40) {
     itemClass = "high";
+    if (level >= 8) {
+      itemClass = "legendary";
+    }
+  } else if (baseLevel >= 40) {
+    itemClass = "legendary";
   }
 
   return itemClass;
@@ -2145,6 +2215,7 @@ Types.getItemDetails = function ({
   const isShield = Types.isShield(item);
   const isUnique = Types.isUnique(item, rawBonus);
   const isRune = Types.isRune(item);
+  const rune = isRune ? Types.getRuneFromItem(item) : null;
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;
@@ -2153,6 +2224,8 @@ Types.getItemDetails = function ({
   let skill = null;
   let setBonus = [];
   let partyBonus = [];
+  let runeBonus = [];
+  let runeRank: null | Number = null;
 
   let type = "item";
 
@@ -2191,8 +2264,13 @@ Types.getItemDetails = function ({
   }
 
   const itemClass = Types.getItemClass(item, level, isUnique);
-  const requirement = Types.getItemRequirement(item, level, isUnique);
+  const requirement = isRune ? rune.requirement : Types.getItemRequirement(item, level, isUnique);
   const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
+
+  if (isRune) {
+    runeBonus = Types.getRuneBonus(item);
+    runeRank = rune.rank;
+  }
 
   return {
     item,
@@ -2210,6 +2288,8 @@ Types.getItemDetails = function ({
     bonus,
     setBonus,
     partyBonus,
+    runeBonus,
+    runeRank,
     skill,
   };
 };
@@ -2233,9 +2313,13 @@ Types.itemDescription = {
     "Upgrade medium class items. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgradehigh:
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level.",
+  scrollupgradelegendary:
+    "Upgrade legendary class item. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgradeblessed:
     "Upgrade high class item. The chances for a successful upgrade varies depending on the item's level. Blessed scrolls gives a higher chance of successful upgrade.",
+  scrollupgradesacred:
+    "Upgrade legendary class item. The chances for a successful upgrade varies depending on the item's level. Sacred scrolls gives a higher chance of successful upgrade.",
   scrolltransmute:
     "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
-  rune: "Can be inserted into a socketed item to enhance it or create runewords",
+  rune: "Can be inserted into a socketed item or create runewords",
 };

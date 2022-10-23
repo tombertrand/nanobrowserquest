@@ -14,6 +14,7 @@ import {
   isValidRecipe,
   isValidTransmuteItems,
   isValidUpgradeItems,
+  isValidUpgradeRunes,
   NaN2Zero,
   randomInt,
 } from "../utils";
@@ -910,7 +911,7 @@ class DatabaseHandler {
                     isToReplyDone = true;
                   }
                 } else if (toLocation === "upgrade") {
-                  if (!toReplyParsed.some((a, i) => i !== 0 && a !== 0)) {
+                  if (!toReplyParsed.some((a, i) => i !== 0 && !(a === 0 || a?.startsWith("rune")))) {
                     fromReplyParsed[fromSlot - fromRange] =
                       fromQuantity > 1 ? `${fromScroll}:${parseInt(fromQuantity) - 1}` : 0;
                     toReplyParsed[toSlot - toRange] = `${fromScroll}:1`;
@@ -1095,7 +1096,7 @@ class DatabaseHandler {
         let isBlessed = false;
         const slotIndex = upgrade.findIndex(index => {
           if (index) {
-            if (index.startsWith("scrollupgradeblessed")) {
+            if (index.startsWith("scrollupgradeblessed") || index.startsWith("scrollupgradesacred")) {
               isBlessed = true;
             }
 
@@ -1114,6 +1115,7 @@ class DatabaseHandler {
         let isTransmuteSuccess = null;
         let isUniqueSuccess = null;
         let transmuteRates;
+        let nextRuneRank = null;
 
         if (isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus, skill] = filteredUpgrade[0].split(":");
@@ -1154,6 +1156,10 @@ class DatabaseHandler {
 
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = upgradedItem;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((nextRuneRank = isValidUpgradeRunes(filteredUpgrade))) {
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = `rune-${Types.RuneList[nextRuneRank].toLowerCase()}:${nextRuneRank}`;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((transmuteRates = isValidTransmuteItems(filteredUpgrade))) {
           const [item, level] = filteredUpgrade[0].split(":");

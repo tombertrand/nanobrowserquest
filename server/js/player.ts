@@ -645,7 +645,7 @@ class Player extends Character {
                 if (Types.isRune(kind)) {
                   const runeName = Types.RuneByKind[kind];
                   if (runeName) {
-                    generatedItem = { item: `rune-${runeName}`, runeKind: Types.runeKind[runeName].id };
+                    generatedItem = { item: `rune-${runeName}`, runeKind: Types.runeKind[runeName].rank };
                   }
                 } else {
                   ({ isUnique, ...generatedItem } = self.generateItem({ kind }) || {}) as GeneratedItem;

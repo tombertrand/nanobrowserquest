@@ -1364,6 +1364,8 @@ class World {
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
+      "scrollupgradelegendary",
+      "scrollupgradesacred",
       "rune-sat",
       "rune-al",
       "rune-bul",
@@ -1380,6 +1382,10 @@ class World {
       "rune-xno",
       "rune-eth",
       "rune-btc",
+      "rune-vax",
+      "rune-por",
+      "rune-las",
+      "rune-cham",
       "rune-ber",
       "rune-tor",
       "rune-jah",

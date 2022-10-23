@@ -412,6 +412,22 @@ EntityFactory.builders[Types.Entities.RUNE.BTC] = function (id) {
   return new Items.RuneBtc(id);
 };
 
+EntityFactory.builders[Types.Entities.RUNE.VAX] = function (id) {
+  return new Items.RuneVax(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.POR] = function (id) {
+  return new Items.RunePor(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.LAS] = function (id) {
+  return new Items.RuneLas(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.CHAM] = function (id) {
+  return new Items.RuneCham(id);
+};
+
 EntityFactory.builders[Types.Entities.RUNE.BER] = function (id) {
   return new Items.RuneBer(id);
 };
@@ -427,6 +443,7 @@ EntityFactory.builders[Types.Entities.RUNE.JAH] = function (id) {
 EntityFactory.builders[Types.Entities.RUNE.VOD] = function (id) {
   return new Items.RuneVod(id);
 };
+
 EntityFactory.builders[Types.Entities.GEMRUBY] = function (id) {
   return new Items.GemRuby(id);
 };
@@ -511,8 +528,18 @@ EntityFactory.builders[Types.Entities.SCROLLUPGRADEHIGH] = function (id) {
   return new Items.ScrollUpgradeHigh(id);
 };
 
+
+EntityFactory.builders[Types.Entities.SCROLLUPGRADELEGENDARY] = function (id) {
+  return new Items.ScrollUpgradeLegendary(id);
+};
+
+
 EntityFactory.builders[Types.Entities.SCROLLUPGRADEBLESSED] = function (id) {
   return new Items.ScrollUpgradeBlessed(id);
+};
+
+EntityFactory.builders[Types.Entities.SCROLLUPGRADESACRED] = function (id) {
+  return new Items.ScrollUpgradeSacred(id);
 };
 
 EntityFactory.builders[Types.Entities.SCROLLTRANSMUTE] = function (id) {

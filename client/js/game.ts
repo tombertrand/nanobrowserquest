@@ -444,6 +444,10 @@ class Game {
       "item-rune-xno",
       "item-rune-eth",
       "item-rune-btc",
+      "item-rune-vax",
+      "item-rune-por",
+      "item-rune-las",
+      "item-rune-cham",
       "item-rune-ber",
       "item-rune-tor",
       "item-rune-jah",
@@ -469,7 +473,9 @@ class Game {
       "item-scrollupgradelow",
       "item-scrollupgrademedium",
       "item-scrollupgradehigh",
+      "item-scrollupgradelegendary",
       "item-scrollupgradeblessed",
+      "item-scrollupgradesacred",
       "item-scrolltransmute",
       "item-skeletonkey",
       "item-raiblockstl",
@@ -846,10 +852,14 @@ class Game {
           requirement,
           description,
           partyBonus = [],
+          runeBonus = [],
+          runeRank,
         } = Types.getItemDetails({ item, level, rawBonus, rawSkill });
 
         return `<div>
-            <div class="item-title${isUnique || isRune ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
+            <div class="item-title${isUnique || isRune ? " unique" : ""}">
+              ${name}${level ? ` (+${level})` : ""}${runeRank ? ` (#${runeRank})` : ""}
+            </div>
             ${itemClass ? `<div class="item-class">(${isUnique ? "Unique " : ""}${itemClass} class item)</div>` : ""}
             ${defense ? `<div class="item-description">Defense: ${defense}</div>` : ""}
             ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
@@ -876,6 +886,7 @@ class Game {
               .join("")}
             ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
             ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+            ${runeBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
           </div>`;
       },
@@ -1154,7 +1165,7 @@ class Game {
           $(`.item-${type}`).addClass("item-droppable");
         } else if (Types.isScroll(item)) {
           $(".item-scroll").addClass("item-droppable");
-        } else if (Types.isSingle(item)) {
+        } else if (Types.isSingle(item) || Types.isRune(item)) {
           $(".item-recipe").addClass("item-droppable");
         }
 
@@ -1520,7 +1531,7 @@ class Game {
           actionText = "transmute";
         } else if (!item.startsWith("scrollupgrade")) {
           successRate = null;
-        } else if (itemLevel && item.startsWith("scrollupgradeblessed")) {
+        } else if (itemLevel && (item.startsWith("scrollupgradeblessed") || item.startsWith("scrollupgradesacred"))) {
           const blessedRates = Types.getBlessedSuccessRateBonus();
           const blessedRate = blessedRates[parseInt(itemLevel) - 1];
           successRate += blessedRate;

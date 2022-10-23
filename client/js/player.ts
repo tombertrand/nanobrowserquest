@@ -193,7 +193,6 @@ class Player extends Character {
 
   loot(item) {
     if (item) {
-      console.log("~~~~item-type", item);
       if (Types.Entities.Gems.includes(item.kind)) {
         var index = Types.Entities.Gems.indexOf(item.kind);
         if (index > -1 && this.gems[index] !== 0) {

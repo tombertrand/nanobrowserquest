@@ -42,19 +42,19 @@ class Store {
         requiresInventorySlot: true,
       },
       {
-        id: Types.Store.SCROLLUPGRADEBLESSED,
-        icon: "scrollupgradeblessed",
-        name: "Blessed High class upgrade scrolls",
-        description: "Pack of 5 blessed scrolls giving a higher chance of successful upgrade (4-6%)",
-        confirmedMessage: "5 Blessed High class upgrade scrolls were added to your inventory.",
-        requiresInventorySlot: true,
-      },
-      {
         id: Types.Store.SCROLLUPGRADEHIGH,
         icon: "scrollupgradehigh",
         name: "High class upgrade scrolls",
         description: "Pack of 10 scrolls",
         confirmedMessage: "10 High class upgrade scrolls were added to your inventory.",
+        requiresInventorySlot: true,
+      },
+      {
+        id: Types.Store.SCROLLUPGRADEBLESSED,
+        icon: "scrollupgradeblessed",
+        name: "Blessed High class upgrade scrolls",
+        description: "Pack of 5 blessed scrolls giving a higher chance of successful upgrade (4-6%)",
+        confirmedMessage: "5 Blessed High class upgrade scrolls were added to your inventory.",
         requiresInventorySlot: true,
       },
       // {

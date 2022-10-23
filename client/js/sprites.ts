@@ -91,11 +91,7 @@ import itemAmuletgold from "../sprites/item-amuletgold.json";
 import itemAmuletcow from "../sprites/item-amuletcow.json";
 import itemAmuletfrozen from "../sprites/item-amuletfrozen.json";
 import itemChestblue from "../sprites/item-chestblue.json";
-import itemScrollupgradelow from "../sprites/item-scrollupgradelow.json";
-import itemScrollupgrademedium from "../sprites/item-scrollupgrademedium.json";
-import itemScrollupgradehigh from "../sprites/item-scrollupgradehigh.json";
-import itemScrollupgradeblessed from "../sprites/item-scrollupgradeblessed.json";
-import itemScrolltransmute from "../sprites/item-scrolltransmute.json";
+import itemScroll from "../sprites/item-scroll.json";
 import itemSkeletonkey from "../sprites/item-skeletonkey.json";
 import itemRaiblockstl from "../sprites/item-raiblockstl.json";
 import itemRaiblockstr from "../sprites/item-raiblockstr.json";
@@ -303,6 +299,10 @@ const sprites = {
   "item-rune-xno": itemRune,
   "item-rune-eth": itemRune,
   "item-rune-btc": itemRune,
+  "item-rune-vax": itemRune,
+  "item-rune-por": itemRune,
+  "item-rune-las": itemRune,
+  "item-rune-cham": itemRune,
   "item-rune-ber": itemRune,
   "item-rune-tor": itemRune,
   "item-rune-jah": itemRune,
@@ -325,11 +325,13 @@ const sprites = {
   "item-amuletcow": itemAmuletcow,
   "item-amuletfrozen": itemAmuletfrozen,
   "item-chestblue": itemChestblue,
-  "item-scrollupgradelow": itemScrollupgradelow,
-  "item-scrollupgrademedium": itemScrollupgrademedium,
-  "item-scrollupgradehigh": itemScrollupgradehigh,
-  "item-scrollupgradeblessed": itemScrollupgradeblessed,
-  "item-scrolltransmute": itemScrolltransmute,
+  "item-scrollupgradelow": itemScroll,
+  "item-scrollupgrademedium": itemScroll,
+  "item-scrollupgradehigh": itemScroll,
+  "item-scrollupgradelegendary": itemScroll,
+  "item-scrollupgradeblessed": itemScroll,
+  "item-scrollupgradesacred": itemScroll,
+  "item-scrolltransmute": itemScroll,
   "item-skeletonkey": itemSkeletonkey,
   "item-raiblockstl": itemRaiblockstl,
   "item-raiblockstr": itemRaiblockstr,

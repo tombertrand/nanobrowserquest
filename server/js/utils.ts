@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import forEach from "lodash/forEach";
 import sanitizer from "sanitizer";
 
 import { Types } from "../../shared/js/gametypes";
@@ -208,7 +209,7 @@ export const isValidUpgradeItems = items => {
     return false;
   }
 
-  const [scroll, scrollLevel] = items[1].split(":");
+  const [scroll] = items[1].split(":");
   const isScroll = Types.isScroll(scroll) && scroll.startsWith("scrollupgrade");
 
   if (!isScroll) {
@@ -216,13 +217,51 @@ export const isValidUpgradeItems = items => {
   }
 
   const itemClass = Types.getItemClass(item, parseInt(level));
-  const scrollClass = Types.getItemClass(scroll, parseInt(scrollLevel));
+  const scrollClass = Types.getItemClass(scroll);
 
   if (itemClass !== scrollClass) {
     return false;
   }
 
   return true;
+};
+
+export const isValidUpgradeRunes = items => {
+  if (items.length < 3 || items.length > 4) {
+    return false;
+  }
+
+  let rune = "";
+  let runeRank = 0;
+  let runeQuantity = 0;
+  let runeClass = null;
+  let scrollClass = null;
+
+  forEach(items, item => {
+    const [scrollOrRune] = item.split(":");
+
+    if (!scrollOrRune.startsWith("scrollupgrade") && !scrollOrRune.startsWith("rune")) return false;
+    if (scrollOrRune.startsWith("scrollupgrade")) {
+      if (scrollClass) return false;
+      scrollClass = Types.getItemClass(scrollOrRune);
+    } else {
+      if (!rune) {
+        rune = scrollOrRune;
+        runeRank = Types.getRuneFromItem(scrollOrRune).rank;
+        runeClass = Types.getItemClass(scrollOrRune);
+      } else if (scrollOrRune !== rune) {
+        return false;
+      }
+      runeQuantity += 1;
+    }
+  });
+
+  if (runeClass !== scrollClass || !runeRank) return false;
+  if (runeRank >= 24) return false;
+  if (runeRank < 10 && runeQuantity !== 3) return false;
+  if (runeRank >= 10 && runeQuantity !== 2) return false;
+
+  return runeRank;
 };
 
 export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
