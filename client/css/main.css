@@ -792,7 +792,12 @@ footer, header, hgroup, menu, nav, section {
     #upgrade { bottom: auto;}
     #inventory { bottom: auto;}
     #inventory.upgrade .panel-spaced-row, #inventory.trade .panel-spaced-row { display: none;}
-    #item-inventory, #item-stash { position: relative; display: flex; flex-wrap: wrap; justify-content: center;}
+    #item-inventory, .item-stash-page { position: relative; display: flex; flex-wrap: wrap; justify-content: center;}
+    .item-stash-page { display: none; }
+    .item-stash-page.visible { display: flex; }
+    .stash-pagination { display: flex; justify-content: center; padding-top: 6px; }
+    #current-stash-page { margin: 0 6px; width: 20px; text-align: center; }
+    #item-stash-previous-page, #item-stash-next-page { font-family: arial !important;}
 
     .ui-droppable-hover { border-color: yellow !important;}
     .ui-droppable-origin { border-color: #fff !important;}
@@ -861,7 +866,7 @@ footer, header, hgroup, menu, nav, section {
         font-family:'GraphicPixel';
         font-weight: bold;
         font-size: 15px;
-        padding: 4px 22px 8px;
+        padding: 6px 22px 6px;
         background-color: #C74640;
         -webkit-box-shadow: inset -2px 2px 0 2px #d2726f, inset 2px -2px 0 2px #8c2a25, inset -1px 1px 0 4px #db8f8d;
         -moz-box-shadow: inset -2px 2px 0 2px #d2726f, inset 2px -2px 0 2px #8c2a25, inset -1px 1px 0 4px #db8f8d;
@@ -869,7 +874,7 @@ footer, header, hgroup, menu, nav, section {
         text-decoration: none;
         text-align: center;
     }
-    .btn.small { color: #fff; font-size: 12px; padding: 2px 8px 4px; }
+    .btn.small { color: #fff; font-size: 13px; padding: 4px 8px 4px; }
     .btn:hover {
         -webkit-box-shadow:inset 2px -2px 0 2px #d2726f, inset -2px 2px 0 2px #8c2a25, inset 1px -1px 0 4px #db8f8d;
         -moz-box-shadow: inset 2px -2px 0 2px #d2726f, inset -2px 2px 0 2px #8c2a25, inset 1px -1px 0 4px #db8f8d;
@@ -882,13 +887,13 @@ footer, header, hgroup, menu, nav, section {
     }
 
     .btn-gray {
-        color: #2e2e2e;
+        color: #2e2e2e !important;
         background-color: #dcdcdc;
         text-shadow: 0 2px 0 #d2d2d2;
         box-shadow: inset -2px 2px 0 2px #c7c7c7, inset 2px -2px 0 2px #868585, inset -1px 1px 0 4px #dbdada;
     }
 
-    .btn-gray:hover {
+    .btn-gray:hover:not(.disabled) {
         box-shadow: inset 2px -2px 0 2px #c7c7c7, inset -2px 2px 0 2px #868585, inset 1px -1px 0 4px #dbdada;
     }
 

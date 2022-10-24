@@ -1,5 +1,7 @@
 import * as _ from "lodash";
 
+import { Slot } from "./slots";
+
 export const Types: any = {
   Store: {
     EXPANSION1: 1,
@@ -598,17 +600,17 @@ export const kinds = {
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
 
   // kind, type, name, level
-  "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 4],
-  "rune-al": [Types.Entities.RUNE.AL, "rune", "AL Rune", 6],
-  "rune-bul": [Types.Entities.RUNE.BUL, "rune", "BUL Rune", 8],
-  "rune-nan": [Types.Entities.RUNE.NAN, "rune", "NAN Rune", 10],
-  "rune-mir": [Types.Entities.RUNE.MIR, "rune", "MIR Rune", 12],
-  "rune-gel": [Types.Entities.RUNE.GEL, "rune", "GEL Rune", 14],
-  "rune-do": [Types.Entities.RUNE.DO, "rune", "DO Rune", 16],
-  "rune-ban": [Types.Entities.RUNE.BAN, "rune", "BAN Rune", 20],
-  "rune-sol": [Types.Entities.RUNE.SOL, "rune", "SOL Rune", 22],
-  "rune-um": [Types.Entities.RUNE.UM, "rune", "UM Rune", 24],
-  "rune-hex": [Types.Entities.RUNE.HEX, "rune", "HEX Rune", 26],
+  "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 1],
+  "rune-al": [Types.Entities.RUNE.AL, "rune", "AL Rune", 2],
+  "rune-bul": [Types.Entities.RUNE.BUL, "rune", "BUL Rune", 3],
+  "rune-nan": [Types.Entities.RUNE.NAN, "rune", "NAN Rune", 4],
+  "rune-mir": [Types.Entities.RUNE.MIR, "rune", "MIR Rune", 6],
+  "rune-gel": [Types.Entities.RUNE.GEL, "rune", "GEL Rune", 8],
+  "rune-do": [Types.Entities.RUNE.DO, "rune", "DO Rune", 10],
+  "rune-ban": [Types.Entities.RUNE.BAN, "rune", "BAN Rune", 14],
+  "rune-sol": [Types.Entities.RUNE.SOL, "rune", "SOL Rune", 18],
+  "rune-um": [Types.Entities.RUNE.UM, "rune", "UM Rune", 22],
+  "rune-hex": [Types.Entities.RUNE.HEX, "rune", "HEX Rune", 24],
   "rune-zal": [Types.Entities.RUNE.ZAL, "rune", "ZAL Rune", 28],
   "rune-vie": [Types.Entities.RUNE.VIE, "rune", "VIE Rune", 30],
   "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune", 32],
@@ -1322,42 +1324,31 @@ Types.isItem = function (kind: number) {
   );
 };
 
-Types.Slot = {
-  WEAPON: 100,
-  ARMOR: 101,
-  BELT: 102,
-  RING1: 103,
-  RING2: 104,
-  AMULET: 105,
-  CAPE: 106,
-  SHIELD: 107,
-};
-
 Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
   switch (slot) {
     case "weapon":
-    case Types.Slot.WEAPON:
+    case Slot.WEAPON:
       return Types.isWeapon(item);
     case "armor":
-    case Types.Slot.ARMOR:
+    case Slot.ARMOR:
       return Types.isArmor(item);
     case "ring":
     case "ring1":
     case "ring2":
-    case Types.Slot.RING1:
-    case Types.Slot.RING2:
+    case Slot.RING1:
+    case Slot.RING2:
       return Types.isRing(item);
     case "amulet":
-    case Types.Slot.AMULET:
+    case Slot.AMULET:
       return Types.isAmulet(item);
     case "belt":
-    case Types.Slot.BELT:
+    case Slot.BELT:
       return Types.isBelt(item);
     case "cape":
-    case Types.Slot.CAPE:
+    case Slot.CAPE:
       return Types.isCape(item);
     case "shield":
-    case Types.Slot.SHIELD:
+    case Slot.SHIELD:
       return Types.isShield(item);
   }
   return false;
@@ -1391,77 +1382,77 @@ Types.getKindAsString = function (kind: number) {
 Types.runeKind = {
   sat: {
     rank: 1,
-    requirement: 4,
+    requirement: 1,
     attribute: {
       health: 10,
     },
   },
   al: {
     rank: 2,
-    requirement: 6,
+    requirement: 2,
     attribute: {
       minDamage: 2,
     },
   },
   bul: {
     rank: 3,
-    requirement: 8,
+    requirement: 3,
     attribute: {
       maxDamage: 2,
     },
   },
   nan: {
     rank: 4,
-    requirement: 10,
+    requirement: 4,
     attribute: {
       magicDamage: 2,
     },
   },
   mir: {
     rank: 5,
-    requirement: 12,
+    requirement: 6,
     attribute: {
       attackDamage: 2,
     },
   },
   gel: {
     rank: 6,
-    requirement: 14,
+    requirement: 8,
     attribute: {
       absorbedDamage: 2,
     },
   },
   do: {
     rank: 7,
-    requirement: 16,
+    requirement: 10,
     attribute: {
       defense: 2,
     },
   },
   ban: {
     rank: 8,
-    requirement: 20,
+    requirement: 14,
     attribute: {
       exp: 2,
     },
   },
   sol: {
     rank: 9,
-    requirement: 22,
+    requirement: 18,
     attribute: {
       reduceFrozenChance: 2,
     },
   },
   um: {
     rank: 10,
-    requirement: 24,
+    requirement: 22,
     attribute: {
       flameDamage: 2,
     },
   },
   hex: {
     rank: 11,
-    requirement: 26,
+    requirement: 24,
     attribute: {
       lightningDamage: 1,
     },

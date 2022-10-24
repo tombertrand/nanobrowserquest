@@ -3,6 +3,16 @@ import * as NanocurrencyWeb from "nanocurrency-web";
 import redis from "redis";
 
 import { kinds, Types } from "../../../shared/js/gametypes";
+import {
+  INVENTORY_SLOT_COUNT,
+  Slot,
+  STASH_SLOT_COUNT,
+  STASH_SLOT_RANGE,
+  TRADE_SLOT_COUNT,
+  TRADE_SLOT_RANGE,
+  UPGRADE_SLOT_COUNT,
+  UPGRADE_SLOT_RANGE,
+} from "../../../shared/js/slots";
 import { postMessageToDiscordChatChannelAnvilChannel } from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
@@ -21,15 +31,6 @@ import {
 
 import type Player from "../player";
 import type { GeneratedItem, Network } from "../types";
-
-const INVENTORY_SLOT_COUNT = 24;
-const STASH_SLOT_COUNT = 48;
-// const DELETE_SLOT = -1;
-const UPGRADE_SLOT_COUNT = 11;
-const UPGRADE_SLOT_RANGE = 200;
-const STASH_SLOT_RANGE = 300;
-const TRADE_SLOT_RANGE = 400;
-const TRADE_SLOT_COUNT = 9;
 
 const ACHIEVEMENT_COUNT = 44;
 const GEM_COUNT = 5;
@@ -237,6 +238,12 @@ class DatabaseHandler {
               try {
                 if (replies[24]) {
                   stash = JSON.parse(replies[24]);
+
+                  // Migrate extended stash
+                  if (stash.length < STASH_SLOT_COUNT) {
+                    stash = stash.concat(new Array(STASH_SLOT_COUNT - stash.length).fill(0));
+                    this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
+                  }
                 } else {
                   this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
                 }
@@ -717,21 +724,21 @@ class DatabaseHandler {
   getItemLocation(slot: number): [string, number] {
     if (slot < INVENTORY_SLOT_COUNT) {
       return ["inventory", 0];
-    } else if (slot === Types.Slot.WEAPON) {
+    } else if (slot === Slot.WEAPON) {
       return ["weapon", 0];
-    } else if (slot === Types.Slot.ARMOR) {
+    } else if (slot === Slot.ARMOR) {
       return ["armor", 0];
-    } else if (slot === Types.Slot.BELT) {
+    } else if (slot === Slot.BELT) {
       return ["belt", 0];
-    } else if (slot === Types.Slot.CAPE) {
+    } else if (slot === Slot.CAPE) {
       return ["cape", 0];
-    } else if (slot === Types.Slot.SHIELD) {
+    } else if (slot === Slot.SHIELD) {
       return ["shield", 0];
-    } else if (slot === Types.Slot.RING1) {
+    } else if (slot === Slot.RING1) {
       return ["ring1", 0];
-    } else if (slot === Types.Slot.RING2) {
+    } else if (slot === Slot.RING2) {
       return ["ring2", 0];
-    } else if (slot === Types.Slot.AMULET) {
+    } else if (slot === Slot.AMULET) {
       return ["amulet", 0];
     } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + UPGRADE_SLOT_COUNT - 1) {
       return ["upgrade", UPGRADE_SLOT_RANGE];
@@ -1158,6 +1165,7 @@ class DatabaseHandler {
           upgrade[upgrade.length - 1] = upgradedItem;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((nextRuneRank = isValidUpgradeRunes(filteredUpgrade))) {
+          isSuccess = true;
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = `rune-${Types.RuneList[nextRuneRank].toLowerCase()}:${nextRuneRank}`;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);

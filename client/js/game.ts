@@ -4,6 +4,19 @@ import * as Sentry from "@sentry/browser";
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
+import {
+  DELETE_SLOT,
+  INVENTORY_SLOT_COUNT,
+  Slot,
+  STASH_SLOT_COUNT,
+  STASH_SLOT_PAGES,
+  STASH_SLOT_PER_PAGE,
+  STASH_SLOT_RANGE,
+  TRADE_SLOT_COUNT,
+  TRADE_SLOT_RANGE,
+  UPGRADE_SLOT_COUNT,
+  UPGRADE_SLOT_RANGE,
+} from "../../shared/js/slots";
 import Animation from "./animation";
 import App from "./app";
 import AudioManager from "./audio";
@@ -158,6 +171,7 @@ class Game {
   partyInvites: Partial<WorldPlayer>[];
   partyInvitees: string[];
   showAnvilOdds: boolean;
+  currentStashPage: number;
 
   constructor(app) {
     this.app = app;
@@ -221,6 +235,7 @@ class Game {
     this.mouse = { x: 0, y: 0 };
     this.zoningQueue = [];
     this.previousClickPosition = null;
+    this.currentStashPage = 0;
 
     this.cursorVisible = true;
     this.selectedX = 0;
@@ -810,7 +825,7 @@ class Game {
         const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
         const rawSkill = element.attr("data-skill");
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
-        const isEquippedItemSlot = Object.values(Types.Slot).includes(slot);
+        const isEquippedItemSlot = Object.values(Slot).includes(slot);
 
         self.hoverSlotToDelete = slot;
 
@@ -991,11 +1006,11 @@ class Game {
     if (Types.isQuantity(item) && quantity > 1 && transferedQuantity === null && !toItem) {
       // Mandatory inventory from or to interaction
       if (
-        (fromSlot < 24 || toSlot < 24) &&
-        ((fromSlot >= 300 && fromSlot < 348) ||
-          (toSlot >= 300 && toSlot < 348) ||
-          (fromSlot >= 400 && fromSlot < 409) ||
-          (toSlot >= 400 && toSlot < 409))
+        (fromSlot < INVENTORY_SLOT_COUNT || toSlot < INVENTORY_SLOT_COUNT) &&
+        ((fromSlot >= STASH_SLOT_RANGE && fromSlot < STASH_SLOT_RANGE + STASH_SLOT_COUNT) ||
+          (toSlot >= STASH_SLOT_RANGE && toSlot < STASH_SLOT_RANGE + STASH_SLOT_COUNT) ||
+          (fromSlot >= TRADE_SLOT_RANGE && fromSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT) ||
+          (toSlot >= TRADE_SLOT_RANGE && toSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT))
       ) {
         this.dropItemQuantity(fromSlot, toSlot, quantity);
         return;
@@ -1014,14 +1029,14 @@ class Game {
 
     if (toItem) {
       if (
-        Object.values(Types.Slot).includes(fromSlot) &&
+        Object.values(Slot).includes(fromSlot) &&
         (!toLevel || !Types.isCorrectTypeForSlot(fromSlot, toItem) || toLevel > this.player.level)
       ) {
         return;
       }
     }
 
-    if (Object.values(Types.Slot).includes(toSlot) && Types.getItemRequirement(item, level) > this.player.level) {
+    if (Object.values(Slot).includes(toSlot) && Types.getItemRequirement(item, level) > this.player.level) {
       return;
     }
 
@@ -1042,13 +1057,13 @@ class Game {
     this.client.sendMoveItem(fromSlot, toSlot, transferedQuantity);
 
     if (typeof level === "number") {
-      if (toSlot === Types.Slot.WEAPON) {
+      if (toSlot === Slot.WEAPON) {
         this.player.switchWeapon(item, level, bonus);
-      } else if (toSlot === Types.Slot.ARMOR) {
+      } else if (toSlot === Slot.ARMOR) {
         this.player.switchArmor(this.sprites[item], level, bonus);
-      } else if (toSlot === Types.Slot.CAPE) {
+      } else if (toSlot === Slot.CAPE) {
         this.player.switchCape(item, level, bonus);
-      } else if (toSlot === Types.Slot.SHIELD) {
+      } else if (toSlot === Slot.SHIELD) {
         this.player.switchShield(item, level, bonus, skill);
         this.setShieldSkill(skill);
       }
@@ -1202,25 +1217,33 @@ class Game {
 
   initInventory() {
     $("#item-inventory").empty();
-    for (var i = 0; i < 24; i++) {
+    for (var i = 0; i < INVENTORY_SLOT_COUNT; i++) {
       $("#item-inventory").append(`<div class="item-slot item-inventory item-droppable" data-slot="${i}"></div>`);
     }
 
-    $("#item-weapon").empty().append('<div class="item-slot item-equip-weapon item-weapon" data-slot="100"></div>');
-    $("#item-armor").empty().append('<div class="item-slot item-equip-armor item-armor" data-slot="101"></div>');
-    $("#item-belt").empty().append('<div class="item-slot item-equip-belt item-belt" data-slot="102"></div>');
-    $("#item-cape").empty().append('<div class="item-slot item-equip-cape item-cape" data-slot="106"></div>');
-    $("#item-shield").empty().append('<div class="item-slot item-equip-shield item-shield" data-slot="107"></div>');
+    $("#item-weapon")
+      .empty()
+      .append(`<div class="item-slot item-equip-weapon item-weapon" data-slot="${Slot.WEAPON}"></div>`);
+    $("#item-armor")
+      .empty()
+      .append(`<div class="item-slot item-equip-armor item-armor" data-slot="${Slot.ARMOR}"></div>`);
+    $("#item-belt").empty().append(`<div class="item-slot item-equip-belt item-belt" data-slot="${Slot.BELT}"></div>`);
+    $("#item-cape").empty().append(`<div class="item-slot item-equip-cape item-cape" data-slot="${Slot.CAPE}"></div>`);
+    $("#item-shield")
+      .empty()
+      .append(`<div class="item-slot item-equip-shield item-shield" data-slot="${Slot.SHIELD}"></div>`);
     $("#item-ring1")
       .empty()
-      .append('<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="103"></div>');
+      .append(`<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="${Slot.RING1}"></div>`);
     $("#item-ring2")
       .empty()
-      .append('<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="104"></div>');
+      .append(`<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="${Slot.RING2}"></div>`);
     $("#item-amulet")
       .empty()
-      .append('<div class="item-slot item-equip-amulet item-amulet item-amulet" data-slot="105"></div>');
-    $("#item-delete").empty().append('<div class="item-slot item-droppable item-delete" data-slot="-1"></div>');
+      .append(`<div class="item-slot item-equip-amulet item-amulet item-amulet" data-slot="${Slot.AMULET}"></div>`);
+    $("#item-delete")
+      .empty()
+      .append(`<div class="item-slot item-droppable item-delete" data-slot="${DELETE_SLOT}"></div>`);
 
     if (this.player.weaponName !== "dagger") {
       $(".item-equip-weapon").append(
@@ -1397,14 +1420,18 @@ class Game {
   initUpgrade() {
     $("#upgrade-scroll").empty();
     for (var i = 1; i < 10; i++) {
-      $("#upgrade-scroll").append(`<div class="item-slot item-scroll item-recipe" data-slot="${200 + i}"></div>`);
+      $("#upgrade-scroll").append(
+        `<div class="item-slot item-scroll item-recipe" data-slot="${UPGRADE_SLOT_RANGE + i}"></div>`,
+      );
     }
     $("#upgrade-item")
       .empty()
       .append(
-        '<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="200"></div>',
+        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
       );
-    $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
+    $("#upgrade-result")
+      .empty()
+      .append(`<div class="item-slot item-upgraded" data-slot="${UPGRADE_SLOT_RANGE + UPGRADE_SLOT_COUNT - 1}"></div>`);
   }
 
   initTrade() {
@@ -1414,7 +1441,7 @@ class Game {
     for (var i = 0; i < 9; i++) {
       $("#trade-player1-item").append(
         `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest item-scroll" data-slot="${
-          400 + i
+          TRADE_SLOT_RANGE + i
         }"></div>`,
       );
       $("#trade-player2-item").append(`<div class="item-slot item-trade"></div>`);
@@ -1552,9 +1579,51 @@ class Game {
 
   initStash() {
     $("#item-stash").empty();
-    for (var i = 0; i < 48; i++) {
-      $("#item-stash").append(`<div class="item-slot item-stash item-droppable" data-slot="${i + 300}"></div>`);
+
+    let counter = STASH_SLOT_RANGE;
+
+    for (var i = 0; i < STASH_SLOT_PAGES; i++) {
+      $("#item-stash").append(
+        `<div class="item-stash-page page-${i} ${i === this.currentStashPage ? "visible" : ""}"></div>`,
+      );
+
+      for (var ii = 0; ii < STASH_SLOT_PER_PAGE; ii++) {
+        $(`#item-stash .item-stash-page.page-${i}`).append(
+          `<div class="item-slot item-stash item-droppable" data-slot="${counter}"></div>`,
+        );
+        counter++;
+      }
     }
+
+    const togglePage = () => {
+      $(".item-stash-page").removeClass("visible");
+      $(`.item-stash-page.page-${this.currentStashPage}`).addClass("visible");
+      $("#current-stash-page").text(this.currentStashPage + 1);
+
+      previousButton.toggleClass("disabled btn-gray", this.currentStashPage === 0);
+      nextButton.toggleClass("disabled btn-gray", this.currentStashPage >= STASH_SLOT_PAGES - 1);
+    };
+
+    const previousButton = $("#item-stash-previous-page");
+    const nextButton = $("#item-stash-next-page");
+
+    previousButton.on("click", () => {
+      if (this.currentStashPage > 0) {
+        this.currentStashPage--;
+        togglePage();
+      }
+    });
+
+    nextButton.on("click", () => {
+      if (this.currentStashPage < STASH_SLOT_PAGES - 1) {
+        this.currentStashPage++;
+        togglePage();
+      }
+    });
+
+    togglePage();
+
+    // @TODO Bind prev/next buttons
 
     this.updateStash();
   }

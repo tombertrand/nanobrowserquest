@@ -256,6 +256,11 @@ export const isValidUpgradeRunes = items => {
     }
   });
 
+  console.log("~~~~runeClass", runeClass);
+  console.log("~~~~scrollClass", scrollClass);
+  console.log("~~~~runeRank", runeRank);
+  console.log("~~~~runeQuantity", runeQuantity);
+
   if (runeClass !== scrollClass || !runeRank) return false;
   if (runeRank >= 24) return false;
   if (runeRank < 10 && runeQuantity !== 3) return false;

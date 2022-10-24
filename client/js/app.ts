@@ -296,7 +296,7 @@ class App {
       buttons: [
         {
           text: "Cancel",
-          class: "btn",
+          class: "btn btn-gray",
           click: function () {
             self.game.slotToDelete = null;
             $(this).dialog("close");
