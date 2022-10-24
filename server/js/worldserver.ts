@@ -1230,10 +1230,11 @@ class World {
   }
 
   getDroppedItemName(mob, attacker) {
-    var kind = Types.getKindAsString(mob.kind);
-    var drops = Properties[kind].drops;
-    var v = random(100) + 1;
-    var p = 0;
+    const mobLevel = Types.getMobLevel(mob.kind);
+    const kind = Types.getKindAsString(mob.kind);
+    const drops = Properties[kind].drops;
+    const v = random(100) + 1;
+    let p = 0;
     let itemKind = null;
 
     if (mob.kind === Types.Entities.MINOTAUR) {
@@ -1326,7 +1327,6 @@ class World {
           itemKind = Types.getKindFromString(itemName);
 
           if (itemKind === Types.Entities.SCROLLUPGRADEHIGH) {
-            const mobLevel = Types.getMobLevel(mob.kind);
             if (attacker && attacker.level - 6 > mobLevel) {
               // Reduce scroll drops to prevent crazy farming
               if (random(4) === 1) {
@@ -1358,9 +1358,6 @@ class World {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
     }
 
-    // var randomDrops = ["ringbronze", "ringsilver", "ringgold", "amuletsilver", "amuletgold"] as any;
-    // var randomDrops = ["belthorned", "hornedarmor"] as any;
-    // var randomDrops = ["beltfrozen", "blueaxe", "bluemorningstar", "frozensword"] as any;
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [

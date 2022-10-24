@@ -1224,8 +1224,8 @@ class DatabaseHandler {
                 isRecipe = true;
                 player.server.startCowLevel();
 
-                // Unique  Wirtleg have guaranteed horn drop
-                if (filteredUpgrade.find(item => item.startsWith("wirtleg") && item.endsWith(":[3,14]"))) {
+                // Unique Wirtleg have guaranteed horn drop
+                if (filteredUpgrade.find(item => item.startsWith("wirtleg") && item.includes("[3,14]"))) {
                   player.server.cowKingHornDrop = true;
                 }
               }
