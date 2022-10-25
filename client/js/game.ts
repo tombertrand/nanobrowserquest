@@ -1164,7 +1164,8 @@ class Game {
         }
       })
       .val(maxQuantity)
-      .focus();
+      .trigger("focus")
+      .trigger("select");
 
     // @ts-ignore
     $(".ui-button").removeClass("ui-button");

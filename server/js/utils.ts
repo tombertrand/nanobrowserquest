@@ -269,6 +269,30 @@ export const isValidUpgradeRunes = items => {
   return runeRank;
 };
 
+export const isValidSocketItem = items => {
+  if (items.length !== 2) {
+    return false;
+  }
+
+  const runeIndex = items.findIndex(item => item.startsWith("rune-"));
+  const itemIndex = items.find(item => !item.startsWith("rune-"));
+
+  if (runeIndex === -1 || itemIndex === -1 || !Types.isSocketItem(items[itemIndex])) {
+    return false;
+  }
+
+  const { rank } = Types.getRuneFromItem(items[runeIndex]);
+  const [item, level, bonus, socket, skill] = items[itemIndex].split(":");
+
+  console.log("~~~~rank", rank);
+  console.log("~~~~item", item);
+  console.log("~~~~socket", socket);
+
+  // @TODO HERE merge the rune
+
+  return false;
+};
+
 export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
   // Upgrade success rate
   // +1 -> +2, 100%

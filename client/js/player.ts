@@ -405,11 +405,12 @@ class Player extends Character {
 
   setShield(rawShield) {
     if (rawShield) {
-      const [shield, level, bonus, skill] = rawShield.split(":");
+      const [shield, level, bonus, socket, skill] = rawShield.split(":");
 
       this.shieldName = shield;
       this.shieldLevel = parseInt(level);
       this.shieldBonus = bonus;
+      this.shieldSocket = socket;
       this.shieldSkill = skill;
     } else {
       this.shieldName = null;
@@ -606,7 +607,7 @@ class Player extends Character {
     return items
       .map((rawItem, slot) => {
         if (!rawItem) return false;
-        const [item, levelOrQuantity, bonus, skill, socket] = rawItem.split(":");
+        const [item, levelOrQuantity, bonus, socket, skill] = rawItem.split(":");
 
         const isWeapon = kinds[item][1] === "weapon";
         const isArmor = kinds[item][1] === "armor";

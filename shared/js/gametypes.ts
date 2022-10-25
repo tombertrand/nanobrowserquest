@@ -1328,6 +1328,10 @@ Types.isItem = function (kind: number) {
   );
 };
 
+Types.isSocketItem = function (kind: number) {
+  return Types.isWeapon(kind) || Types.isArmor(kind) || Types.isShield(kind);
+};
+
 Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
   switch (slot) {
     case "weapon":
@@ -1586,7 +1590,6 @@ Types.getHighestSocketRequirement = (rawSocket: number[]) => {
   if (!highestRank) return;
 
   const { requirement } = Object.values<{ rank: number; requirement: number }>(Types.runeKind)[highestRank - 1];
-
   return requirement;
 };
 
@@ -2219,7 +2222,7 @@ Types.isUnique = function (item, bonus) {
   const isAmulet = kinds[item][1] === "amulet";
 
   let isUnique = false;
-  bonus = !Array.isArray(bonus) && typeof bonus === "string" ? JSON.parse(bonus) : bonus;
+  bonus = !Array.isArray(bonus) && typeof bonus === "string" && bonus.length ? JSON.parse(bonus) : bonus;
 
   if (isRing) {
     isUnique = Types.isUniqueRing(item, bonus);

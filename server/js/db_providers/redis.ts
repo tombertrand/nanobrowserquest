@@ -22,6 +22,7 @@ import {
   getIsTransmuteSuccess,
   isUpgradeSuccess,
   isValidRecipe,
+  isValidSocketItem,
   isValidTransmuteItems,
   isValidUpgradeItems,
   isValidUpgradeRunes,
@@ -623,12 +624,16 @@ class DatabaseHandler {
 
   equipWeapon(name, weapon, level, bonus = [], socket = []) {
     console.info("Set Weapon: " + name + " " + weapon + ":" + level);
-    this.client.hset("u:" + name, "weapon", `${weapon}:${level}${`:${bonus}`}${`:${socket}`}`);
+    this.client.hset(
+      "u:" + name,
+      "weapon",
+      `${weapon}:${level}${bonus ? `:${bonus}` : ""}${socket ? `:${socket}` : ""}`,
+    );
   }
 
   equipArmor(name, armor, level, bonus = [], socket = []) {
     console.info("Set Armor: " + name + " " + armor + ":" + level);
-    this.client.hset("u:" + name, "armor", `${armor}:${level}${`:${bonus}`}${`:${socket}`}`);
+    this.client.hset("u:" + name, "armor", `${armor}:${level}${bonus ? `:${bonus}` : ""}${socket ? `:${socket}` : ""}`);
   }
 
   equipBelt(name, belt, level, bonus) {
@@ -647,7 +652,9 @@ class DatabaseHandler {
       this.client.hset(
         "u:" + name,
         "shield",
-        `${shield}:${level}${bonus ? `:${bonus}` : ""}${`:${bonus}`}${`:${socket}`}${skill ? `:${skill}` : ""}`,
+        `${shield}:${level}${bonus ? `:${bonus}` : ""}${bonus ? `:${bonus}` : ""}${socket ? `:${socket}` : ""}${
+          skill ? `:${skill}` : ""
+        }`,
       );
     } else {
       console.info("Delete Shield");
@@ -823,13 +830,13 @@ class DatabaseHandler {
         false,
       );
     } else if (location === "ring1") {
-      player.equipItem({ item, level, bonus, type });
+      player.equipItem({ item, level, type, bonus });
       player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "ring2") {
-      player.equipItem({ item, level, bonus, type });
+      player.equipItem({ item, level, type, bonus });
       player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "amulet") {
-      player.equipItem({ item, level, bonus, type });
+      player.equipItem({ item, level, type, bonus });
       player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "upgrade") {
       player.send([Types.Messages.UPGRADE, data]);
@@ -932,7 +939,13 @@ class DatabaseHandler {
                     isToReplyDone = true;
                   }
                 } else if (toLocation === "upgrade") {
-                  if (!toReplyParsed.some((a, i) => i !== 0 && !(a === 0 || a?.startsWith("rune")))) {
+                  const isScroll = Types.isScroll(fromItem);
+                  const isRune = Types.isRune(fromItem);
+                  const hasScroll = isScroll
+                    ? toReplyParsed.some((a, i) => i !== 0 && a && a.startsWith("scroll"))
+                    : false;
+
+                  if ((isScroll && !hasScroll) || (isRune && !toReplyParsed[toSlot - toRange])) {
                     fromReplyParsed[fromSlot - fromRange] =
                       fromQuantity > 1 ? `${fromScroll}:${parseInt(fromQuantity) - 1}` : 0;
                     toReplyParsed[toSlot - toRange] = `${fromScroll}:1`;
@@ -1085,13 +1098,14 @@ class DatabaseHandler {
         if (filteredUpgrade.length) {
           const items = filteredUpgrade.reduce((acc, rawItem) => {
             if (!rawItem) return acc;
-            const [item, level, bonus, skill] = rawItem.split(":");
+            const [item, level, bonus, socket, skill] = rawItem.split(":");
             const isQuantity = Types.isQuantity(item);
 
             acc.push({
               item,
               [isQuantity ? "quantity" : "level"]: level,
               bonus,
+              socket,
               skill,
             });
             return acc;
@@ -1144,9 +1158,10 @@ class DatabaseHandler {
         let isUniqueSuccess = null;
         let transmuteRates;
         let nextRuneRank = null;
+        let socketItem = null;
 
         if (isValidUpgradeItems(filteredUpgrade)) {
-          const [item, level, bonus, skill] = filteredUpgrade[0].split(":");
+          const [item, level, bonus, socket, skill] = filteredUpgrade[0].split(":");
           const isUnique = Types.isUnique(item, bonus);
           let upgradedItem: number | string = 0;
 
@@ -1162,7 +1177,7 @@ class DatabaseHandler {
 
           if (isSuccess) {
             const upgradedLevel = parseInt(level) + 1;
-            upgradedItem = [item, parseInt(level) + 1, bonus, skill].filter(Boolean).join(":");
+            upgradedItem = [item, parseInt(level) + 1, bonus, socket, skill].filter(Boolean).join(":");
             isSuccess = true;
 
             if (Types.isBaseHighClassItem(item)) {
@@ -1188,7 +1203,12 @@ class DatabaseHandler {
         } else if ((nextRuneRank = isValidUpgradeRunes(filteredUpgrade))) {
           isSuccess = true;
           upgrade = upgrade.map(() => 0);
-          upgrade[upgrade.length - 1] = `rune:${Types.RuneList[nextRuneRank]}`;
+          upgrade[upgrade.length - 1] = `rune-${Types.RuneList[nextRuneRank]}:1`;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((socketItem = isValidSocketItem(filteredUpgrade))) {
+          isSuccess = true;
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = socketItem;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((transmuteRates = isValidTransmuteItems(filteredUpgrade))) {
           const [item, level] = filteredUpgrade[0].split(":");
@@ -1217,13 +1237,14 @@ class DatabaseHandler {
             const {
               item: itemName,
               bonus,
+              socket,
               skill,
             } = player.generateItem({
               kind: Types.getKindFromString(item),
               uniqueChances: isUniqueSuccess ? 100 : 0,
             });
 
-            generatedItem = [itemName, level, bonus, skill].filter(Boolean).join(":");
+            generatedItem = [itemName, level, bonus, socket, skill].filter(Boolean).join(":");
           }
 
           upgrade = upgrade.map(() => 0);
@@ -1268,10 +1289,11 @@ class DatabaseHandler {
                 level,
                 quantity,
                 bonus,
+                socket,
                 skill,
               } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
 
-              generatedItem = [itemName, level, quantity, bonus, skill].filter(Boolean).join(":");
+              generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(":");
             }
           }
 
