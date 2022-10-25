@@ -726,6 +726,14 @@ Types.itemUniqueMap = {
   dragonsword: ["TBD", 38, 38],
   moonpartisan: ["TBD", 38, 38],
 
+  // Etherum Killer
+  // Laser Eyes
+  // The Maximalist
+  // CBDC
+  // Decentralizer
+  // MoonBoy
+  // PermaBear
+
   // name, level, defense
   leatherarmor: ["Representative", 2, 5],
   mailarmor: ["ForeX Guard", 4, 7],
@@ -1279,10 +1287,6 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
   }
 };
 
-Types.isUniqueWeapon = function (bonus: any) {
-  return !!bonus;
-};
-
 Types.isStaticChest = function (kind: number) {
   return kind === Types.Entities.CHEST;
 };
@@ -1304,7 +1308,7 @@ Types.isSingle = function (kindOrString: number | string) {
 };
 
 Types.isQuantity = function (kindOrString: number | string) {
-  return Types.isScroll(kindOrString) || Types.isChest(kindOrString);
+  return Types.isScroll(kindOrString) || Types.isChest(kindOrString) || Types.isRune(kindOrString);
 };
 
 Types.isItem = function (kind: number) {
@@ -1557,12 +1561,33 @@ Types.RuneByKind = Object.entries(Types.Entities.RUNE).reduce((acc, [name, kind]
   return acc;
 }, {});
 
-Types.RuneList = Object.keys(Types.Entities.RUNE);
+Types.RuneList = Object.keys(Types.Entities.RUNE).map(rune => rune.toLowerCase());
 
-Types.getRuneFromItem = (item: string) => {
-  const [, rune] = item.split("-");
+Types.getRuneNameFromItem = (rankOrString: number | string) => {
+  let rune;
+
+  if (typeof rankOrString === "string") {
+    [, rune] = rankOrString.split("-");
+  } else if (typeof rankOrString === "number") {
+    rune = Types.RuneList[rankOrString - 1];
+  }
+
+  return rune;
+};
+
+Types.getRuneFromItem = (rankOrString: number | string) => {
+  const rune = Types.getRuneNameFromItem(rankOrString);
 
   return Types.runeKind[rune];
+};
+
+Types.getHighestSocketRequirement = (rawSocket: number[]) => {
+  const highestRank = [...rawSocket].sort((a, b) => b - a)[0];
+  if (!highestRank) return;
+
+  const { requirement } = Object.values<{ rank: number; requirement: number }>(Types.runeKind)[highestRank - 1];
+
+  return requirement;
 };
 
 Types.getAliasFromName = function (name: string) {
@@ -1934,11 +1959,37 @@ Types.getPartyBonus = function (rawBonus, level) {
   return bonus;
 };
 
-Types.getRuneBonus = function (rawRune) {
-  const rune = Types.getRuneFromItem(rawRune);
-  Types.runeKind;
+Types.getRuneBonus = function (rawRune: string) {
+  if (!rawRune || !Types.RuneList.includes(Types.getRuneNameFromItem(rawRune))) return;
 
+  const rune = Types.getRuneFromItem(rawRune);
   const bonus: { type: string; stats: number; description: string }[] = Object.entries(rune.attribute).map(
+    ([type, stats]: [string, number]) => ({
+      type,
+      stats,
+      description: Types.getBonusDescriptionMap[Types.bonusType.findIndex(t => t === type)].replace("#", stats),
+    }),
+  );
+
+  return bonus;
+};
+
+Types.getRunesBonus = function (runes: number[]) {
+  const attributes = {};
+
+  _.forEach(runes, kind => {
+    if (!kind) return;
+    const rune = Types.getRuneFromItem(kind);
+    Object.entries(rune.attribute).map(([type, stats]: [string, number]) => {
+      if (!attributes[type]) {
+        attributes[type] = 0;
+      }
+
+      attributes[type] += stats;
+    });
+  });
+
+  const bonus: { type: string; stats: number; description: string }[] = Object.entries(attributes).map(
     ([type, stats]: [string, number]) => ({
       type,
       stats,
@@ -2168,17 +2219,16 @@ Types.isUnique = function (item, bonus) {
   const isAmulet = kinds[item][1] === "amulet";
 
   let isUnique = false;
+  bonus = !Array.isArray(bonus) && typeof bonus === "string" ? JSON.parse(bonus) : bonus;
 
   if (isRing) {
-    isUnique = Types.isUniqueRing(item, typeof bonus === "string" ? JSON.parse(bonus) : bonus);
+    isUnique = Types.isUniqueRing(item, bonus);
   } else if (isAmulet) {
-    isUnique = Types.isUniqueAmulet(item, typeof bonus === "string" ? JSON.parse(bonus) : bonus);
-  } else if (isCape) {
-    isUnique = (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 2;
-  } else if (isShield) {
-    isUnique = !!bonus ? (typeof bonus === "string" ? JSON.parse(bonus) : bonus).length >= 2 : false;
-  } else if (isArmor || isWeapon || isBelt) {
-    isUnique = !!bonus;
+    isUnique = Types.isUniqueAmulet(item, bonus);
+  } else if (isCape || isShield || isWeapon) {
+    isUnique = bonus ? bonus.length >= 2 : false;
+  } else if (isBelt || isArmor) {
+    isUnique = bonus ? bonus.length >= 1 : false;
   }
 
   return isUnique;
@@ -2190,12 +2240,14 @@ Types.getItemDetails = function ({
   rawBonus,
   rawSetBonus,
   rawSkill,
+  rawSocket,
 }: {
   item: string;
   level: number;
   rawBonus: number[];
   rawSetBonus?: { [key: string]: number };
   rawSkill?: number;
+  rawSocket: number[];
 }) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
@@ -2207,6 +2259,12 @@ Types.getItemDetails = function ({
   const isUnique = Types.isUnique(item, rawBonus);
   const isRune = Types.isRune(item);
   const rune = isRune ? Types.getRuneFromItem(item) : null;
+  const isSocket = rawSocket?.length;
+  const runeRequirement = isSocket ? Types.getHighestSocketRequirement(rawSocket) : null;
+
+  // console.log("~~~~~item", item);
+  // console.log("~~~~~rawBonus", rawBonus);
+  // console.log("~~~~~isUnique", isUnique);
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;
@@ -2214,6 +2272,7 @@ Types.getItemDetails = function ({
   let bonus = [];
   let skill = null;
   let setBonus = [];
+  let socketBonus = [];
   let partyBonus = [];
   let runeBonus = [];
   let runeRank: null | Number = null;
@@ -2242,6 +2301,11 @@ Types.getItemDetails = function ({
   } else if (isAmulet) {
     type = "amulet";
   }
+
+  const itemClass = Types.getItemClass(item, level, isUnique);
+  let requirement = isRune ? rune.requirement : Types.getItemRequirement(item, level, isUnique);
+  const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
+
   if (rawBonus) {
     if (isCape) {
       partyBonus = Types.getPartyBonus(rawBonus, level);
@@ -2249,14 +2313,17 @@ Types.getItemDetails = function ({
       bonus = Types.getBonus(rawBonus, level);
     }
   }
+  if (isSocket) {
+    socketBonus = Types.getRunesBonus(rawSocket);
+
+    if (runeRequirement > requirement) {
+      requirement = runeRequirement;
+    }
+  }
 
   if (rawSetBonus) {
     setBonus = Types.getSetBonus(rawSetBonus);
   }
-
-  const itemClass = Types.getItemClass(item, level, isUnique);
-  const requirement = isRune ? rune.requirement : Types.getItemRequirement(item, level, isUnique);
-  const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
 
   if (isRune) {
     runeBonus = Types.getRuneBonus(item);
@@ -2277,6 +2344,8 @@ Types.getItemDetails = function ({
     requirement,
     description,
     bonus,
+    socket: rawSocket?.length,
+    socketBonus,
     setBonus,
     partyBonus,
     runeBonus,
@@ -2313,4 +2382,14 @@ Types.itemDescription = {
   scrolltransmute:
     "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
   rune: "Can be inserted into a socketed item or create runewords",
+};
+
+Types.RuneWords = {
+  ethbtcxno: {
+    name: "The Maximalist",
+    bonus: {
+      attackDamage: 10,
+      defense: 10,
+    },
+  },
 };

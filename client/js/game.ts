@@ -810,7 +810,7 @@ class Game {
     $(document).tooltip({
       items: "[data-item]",
       track: true,
-      // hide: 1000000,
+      // hide: 100000,
       position: { my: "left bottom-10", at: "left bottom", collision: "flipfit" },
       close: function () {
         self.hoverSlotToDelete = null;
@@ -824,6 +824,7 @@ class Game {
         const level = element.attr("data-level");
         const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
         const rawSkill = element.attr("data-skill");
+        const rawSocket = element.attr("data-socket") ? JSON.parse(element.attr("data-socket")) : undefined;
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
         const isEquippedItemSlot = Object.values(Slot).includes(slot);
 
@@ -863,19 +864,40 @@ class Game {
           lightningDamage,
           pierceDamage,
           bonus = [],
+          socketBonus = [],
           skill,
           requirement,
           description,
           partyBonus = [],
           runeBonus = [],
           runeRank,
-        } = Types.getItemDetails({ item, level, rawBonus, rawSkill });
+          socket,
+        } = Types.getItemDetails({ item, level, rawBonus, rawSkill, rawSocket });
+
+        // console.log("~~~~socketBonus", socketBonus);
+        // console.log("~~~~rawSocket", rawSocket);
+        // console.log("~~~~socket", socket);
 
         return `<div>
             <div class="item-title${isUnique || isRune ? " unique" : ""}">
-              ${name}${level ? ` (+${level})` : ""}${runeRank ? ` (#${runeRank})` : ""}
+              ${name}${level ? ` (+${level})` : ""}
+              ${runeRank ? ` (#${runeRank})` : ""}
+              ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
             </div>
             ${itemClass ? `<div class="item-class">(${isUnique ? "Unique " : ""}${itemClass} class item)</div>` : ""}
+            ${
+              socket
+                ? `<div class="socket-container">
+                ${_.range(0, socket)
+                  .map(index => {
+                    const rune = Types.getRuneNameFromItem(rawSocket[index]);
+                    const image = rune ? `url(img/2/item-rune-${rune}.png)` : "none";
+
+                    return `<div class="item-rune" style="background-image: ${image}; position: relative;"></div>`;
+                  })
+                  .join("")}</div>`
+                : ""
+            }
             ${defense ? `<div class="item-description">Defense: ${defense}</div>` : ""}
             ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
             ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
@@ -884,6 +906,7 @@ class Game {
             ${pierceDamage ? `<div class="item-bonus">Pierce damage: ${pierceDamage}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
             ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
+            ${socketBonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
             ${
@@ -934,15 +957,17 @@ class Game {
       let itemLevel;
       let itemBonus;
       let itemSkill;
+      let itemSocket;
       let isItemUnique;
       let isUpgrade = false;
 
-      self.player.upgrade.forEach(({ item, level, slot, bonus, skill, isUnique }) => {
+      self.player.upgrade.forEach(({ item, level, slot, bonus, skill, socket, isUnique }) => {
         if (slot === 0) {
           itemName = item;
           itemLevel = level;
           itemBonus = bonus;
           itemSkill = skill;
+          itemSocket = socket;
           isItemUnique = isUnique;
         } else if (item.startsWith("scrollupgrade")) {
           isUpgrade = true;
@@ -958,6 +983,7 @@ class Game {
               level: parseInt(itemLevel) + 1,
               bonus: itemBonus,
               skill: itemSkill,
+              socket: itemSocket,
             }),
           );
         }
@@ -1255,6 +1281,7 @@ class Game {
           "data-item": this.player.weaponName,
           "data-level": this.player.weaponLevel,
           "data-bonus": this.player.weaponBonus,
+          "data-socket": this.player.weaponSocket,
         }),
       );
     }
@@ -1268,6 +1295,7 @@ class Game {
           "data-item": this.player.armorName,
           "data-level": this.player.armorLevel,
           "data-bonus": this.player.armorBonus,
+          "data-socket": this.player.armorSocket,
         }),
       );
     }
@@ -1311,6 +1339,7 @@ class Game {
           "data-level": this.player.shieldLevel,
           "data-bonus": this.player.shieldBonus,
           "data-skill": this.player.shieldSkill,
+          "data-socket": this.player.shieldSocket,
         }),
       );
     }
@@ -1487,18 +1516,27 @@ class Game {
       level,
       bonus,
       skill,
+      socket,
       requirement,
     }: {
       quantity?: number;
       isUnique: boolean;
       item: string;
       level: number;
-      bonus: any;
+      bonus: string;
       skill: any;
+      socket: string;
       requirement?: number;
     },
     isDraggable = true,
   ) {
+    if (socket) {
+      const socketRequirement = Types.getHighestSocketRequirement(JSON.parse(socket));
+      if (socketRequirement > requirement) {
+        requirement = socketRequirement;
+      }
+    }
+
     return $("<div />", {
       class: `${isDraggable ? "item-draggable" : "item-not-draggable"} ${quantity ? "item-quantity" : ""} ${
         isUnique ? "item-unique" : ""
@@ -1512,6 +1550,7 @@ class Game {
       ...(quantity ? { "data-quantity": quantity } : null),
       ...(bonus ? { "data-bonus": bonus } : null),
       ...(skill ? { "data-skill": skill } : null),
+      ...(socket ? { "data-socket": socket } : null),
       ...(requirement ? { "data-requirement": requirement } : null),
     });
   }
@@ -1544,7 +1583,7 @@ class Game {
     let itemBonus;
     let actionText = "upgrade";
 
-    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, skill, isUnique }) => {
+    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, skill, socket, isUnique }) => {
       if (slot === 0 && level) {
         itemLevel = level;
         itemName = item;
@@ -1567,7 +1606,7 @@ class Game {
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")
-        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill }));
+        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill, socket }));
     });
 
     $("#upgrade-info").html(successRate ? `${successRate}% chance of successful ${actionText}` : "&nbsp;");
@@ -2614,9 +2653,9 @@ class Game {
       self.player.name = name;
       self.player.network = network;
 
-      var [armor, armorLevel, armorBonus] = armor.split(":");
-      var [weapon, weaponLevel, weaponBonus] = weapon.split(":");
-      var [shield, shieldLevel, shieldBonus, shieldSkill] = (shield || "").split(":");
+      var [armor, armorLevel, armorBonus, armorSocket] = armor.split(":");
+      var [weapon, weaponLevel, weaponBonus, weaponSocket] = weapon.split(":");
+      var [shield, shieldLevel, shieldBonus, shieldSocket, shieldSkill] = (shield || "").split(":");
 
       self.storage.setPlayerName(name);
       self.storage.setPlayerArmor(armor);
@@ -2628,15 +2667,18 @@ class Game {
       self.player.setArmorName(armor);
       self.player.setArmorLevel(armorLevel);
       self.player.setArmorBonus(armorBonus);
+      self.player.setArmorSocket(armorSocket);
       self.player.setSpriteName(armor);
       self.player.setWeaponName(weapon);
       self.player.setWeaponLevel(weaponLevel);
       self.player.setWeaponBonus(weaponBonus);
+      self.player.setWeaponSocket(weaponSocket);
       self.player.setBelt(belt);
       self.player.setCape(cape);
       self.player.setShieldName(shield);
       self.player.setShieldLevel(shieldLevel);
       self.player.setShieldBonus(shieldBonus);
+      self.player.setShieldSocket(shieldSocket);
       self.player.setShieldSkill(shieldSkill);
       self.setShieldSkill(shieldSkill);
 

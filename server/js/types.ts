@@ -11,5 +11,6 @@ export type GeneratedItem = {
   bonus?: number[];
   skill?: number;
   isUnique?: boolean;
-  runeKind?: number;
+  runeName?: string;
+  socket?: number[];
 };

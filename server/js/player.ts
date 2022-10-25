@@ -16,6 +16,7 @@ import { store } from "./store/store";
 import {
   getClassicMaxPayout,
   getClassicPayout,
+  getRandomSockets,
   random,
   randomInt,
   randomOrientation,
@@ -68,9 +69,11 @@ class Player extends Character {
   weapon: string;
   weaponLevel: number;
   weaponBonus: number[] | null;
+  weaponSocket: number[] | null;
   armor: string;
   armorLevel: number;
   armorBonus: number[] | null;
+  armorSocket: number[] | null;
   belt: string;
   beltLevel: number;
   beltBonus: number[] | null;
@@ -85,6 +88,7 @@ class Player extends Character {
   shield: string;
   shieldLevel: number;
   shieldBonus: number[] | null;
+  shieldSocket: number[] | null;
   shieldSkill: number;
   shieldSkillTimeout: NodeJS.Timeout;
   shieldSkillDefenseTimeout: NodeJS.Timeout;
@@ -645,7 +649,7 @@ class Player extends Character {
                 if (Types.isRune(kind)) {
                   const runeName = Types.RuneByKind[kind];
                   if (runeName) {
-                    generatedItem = { item: `rune-${runeName}`, runeKind: Types.runeKind[runeName].rank };
+                    generatedItem = { item: `rune-${runeName}`, quantity: 1 };
                   }
                 } else {
                   ({ isUnique, ...generatedItem } = self.generateItem({ kind }) || {}) as GeneratedItem;
@@ -1216,11 +1220,12 @@ class Player extends Character {
 
     if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind) || Types.isShield(kind)) {
       const randomIsUnique = random(100);
+
       isUnique = randomIsUnique < uniqueChances;
 
       const baseLevel = Types.getBaseLevel(kind);
       const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
-      let bonus = null;
+      let bonus = [];
       let skill = null;
 
       if (isUnique) {
@@ -1234,16 +1239,25 @@ class Player extends Character {
         }
       }
 
-      if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
-        const resistanceBonus = [21, 22, 23, 24];
-        const shieldSkill = [0, 1];
-        bonus = _.shuffle(resistanceBonus)
-          .slice(0, isUnique ? 2 : 1)
-          .sort();
-        skill = _.shuffle(shieldSkill).slice(0, 1);
+      if (Types.isShield(kind)) {
+        if (kind >= Types.Entities.SHIELDGOLDEN) {
+          const resistanceBonus = [21, 22, 23, 24];
+          const shieldSkill = [0, 1];
+          bonus = _.shuffle(resistanceBonus)
+            .slice(0, isUnique ? 2 : 1)
+            .sort();
+          skill = _.shuffle(shieldSkill).slice(0, 1);
+        }
       }
 
-      item = { item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null, skill, isUnique };
+      item = {
+        item: Types.getKindAsString(kind),
+        level,
+        bonus: bonus ? JSON.stringify(bonus) : null,
+        socket: JSON.stringify(getRandomSockets({ kind, baseLevel })),
+        skill,
+        isUnique,
+      };
     } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isChest(kind)) {
       item = { item: Types.getKindAsString(kind), quantity: 1 };
     } else if (Types.isCape(kind)) {
@@ -1494,16 +1508,18 @@ class Player extends Character {
     kind,
     level,
     bonus,
+    socket,
     skill,
     type,
   }: {
     kind: number;
     level: number;
     bonus?: number[];
+    socket?: number[];
     skill?: number;
     type?: string;
   }) {
-    return new Messages.EquipItem(this, { kind, level, bonus, skill, type });
+    return new Messages.EquipItem(this, { kind, level, bonus, socket, skill, type });
   }
 
   addHater(mob) {
@@ -1526,18 +1542,20 @@ class Player extends Character {
     });
   }
 
-  equipArmor(armor, kind, level, bonus) {
+  equipArmor(armor, kind, level, bonus, socket) {
     this.armor = armor;
     this.armorKind = kind;
     this.armorLevel = level;
     this.armorBonus = bonus ? JSON.parse(bonus) : null;
+    this.armorSocket = socket ? JSON.parse(socket) : null;
   }
 
-  equipWeapon(weapon, kind, level, bonus) {
+  equipWeapon(weapon, kind, level, bonus, socket) {
     this.weapon = weapon;
     this.weaponKind = kind;
     this.weaponLevel = level;
     this.weaponBonus = bonus ? JSON.parse(bonus) : null;
+    this.weaponSocket = socket ? JSON.parse(socket) : null;
   }
 
   equipBelt(belt, level, bonus) {
@@ -1553,11 +1571,12 @@ class Player extends Character {
     this.capeBonus = bonus ? JSON.parse(bonus) : null;
   }
 
-  equipShield(shield, kind, level, bonus, skill) {
+  equipShield(shield, kind, level, bonus, socket, skill) {
     this.shield = shield;
     this.shieldKind = kind;
     this.shieldLevel = level;
     this.shieldBonus = bonus ? JSON.parse(bonus) : null;
+    this.shieldSocket = socket ? JSON.parse(socket) : null;
     this.shieldSkill = skill ? parseInt(skill, 0) : null;
   }
 
@@ -1751,7 +1770,7 @@ class Player extends Character {
     };
   }
 
-  equipItem({ item, level, bonus, skill, type }) {
+  equipItem({ item, level, bonus, socket, skill, type }) {
     // @NOTE safety...
     if (bonus === "null") {
       bonus = null;
@@ -1777,18 +1796,18 @@ class Player extends Character {
       this.equipCape(item, kind, level, bonus);
     } else if (type === "shield") {
       this.databaseHandler.equipShield(this.name, item, level, bonus, skill);
-      this.equipShield(item, Types.getKindFromString(item), level, bonus, skill);
+      this.equipShield(item, Types.getKindFromString(item), level, bonus, socket, skill);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
       console.debug(this.name + " equips " + item);
 
       if (Types.isArmor(kind)) {
-        this.databaseHandler.equipArmor(this.name, item, level, bonus);
-        this.equipArmor(item, kind, level, bonus);
+        this.databaseHandler.equipArmor(this.name, item, level, bonus, socket);
+        this.equipArmor(item, kind, level, bonus, socket);
       } else if (Types.isWeapon(kind)) {
-        this.databaseHandler.equipWeapon(this.name, item, level, bonus);
-        this.equipWeapon(item, kind, level, bonus);
+        this.databaseHandler.equipWeapon(this.name, item, level, bonus, socket);
+        this.equipWeapon(item, kind, level, bonus, socket);
       }
     }
 
@@ -2059,12 +2078,24 @@ class Player extends Character {
       delete this.isPasswordRequired;
       delete this.isPasswordValid;
 
-      const [playerArmor, playerArmorLevel = 1, playerArmorBonus] = armor.split(":");
-      const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus] = weapon.split(":");
+      const [playerArmor, playerArmorLevel = 1, playerArmorBonus, playerArmorSocket] = armor.split(":");
+      const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus, playerWeaponSocket] = weapon.split(":");
 
       this.kind = Types.Entities.WARRIOR;
-      this.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel, playerArmorBonus);
-      this.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel, playerWeaponBonus);
+      this.equipArmor(
+        playerArmor,
+        Types.getKindFromString(playerArmor),
+        playerArmorLevel,
+        playerArmorBonus,
+        playerArmorSocket,
+      );
+      this.equipWeapon(
+        playerWeapon,
+        Types.getKindFromString(playerWeapon),
+        playerWeaponLevel,
+        playerWeaponBonus,
+        playerWeaponSocket,
+      );
 
       if (belt) {
         const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
@@ -2075,12 +2106,14 @@ class Player extends Character {
         this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
       }
       if (shield) {
-        const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSkill] = shield.split(":");
+        const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSocket, playerShieldSkill] =
+          shield.split(":");
         this.equipShield(
           playerShield,
           Types.getKindFromString(playerShield),
           playerShieldLevel,
           playerShieldBonus,
+          playerShieldSocket,
           playerShieldSkill,
         );
       }

@@ -621,14 +621,14 @@ class DatabaseHandler {
     });
   }
 
-  equipWeapon(name, weapon, level, bonus) {
+  equipWeapon(name, weapon, level, bonus = [], socket = []) {
     console.info("Set Weapon: " + name + " " + weapon + ":" + level);
-    this.client.hset("u:" + name, "weapon", `${weapon}:${level}${bonus ? `:${bonus}` : ""}`);
+    this.client.hset("u:" + name, "weapon", `${weapon}:${level}${`:${bonus}`}${`:${socket}`}`);
   }
 
-  equipArmor(name, armor, level, bonus) {
+  equipArmor(name, armor, level, bonus = [], socket = []) {
     console.info("Set Armor: " + name + " " + armor + ":" + level);
-    this.client.hset("u:" + name, "armor", `${armor}:${level}${bonus ? `:${bonus}` : ""}`);
+    this.client.hset("u:" + name, "armor", `${armor}:${level}${`:${bonus}`}${`:${socket}`}`);
   }
 
   equipBelt(name, belt, level, bonus) {
@@ -641,13 +641,13 @@ class DatabaseHandler {
     }
   }
 
-  equipShield(name, shield, level, bonus, skill) {
+  equipShield(name, shield, level, bonus = [], socket = [], skill) {
     if (shield) {
       console.info(`Set Shield: ${name} ${shield} ${level} ${bonus} ${skill}`);
       this.client.hset(
         "u:" + name,
         "shield",
-        `${shield}:${level}${bonus ? `:${bonus}` : ""}${skill ? `:${skill}` : ""}`,
+        `${shield}:${level}${bonus ? `:${bonus}` : ""}${`:${bonus}`}${`:${socket}`}${skill ? `:${skill}` : ""}`,
       );
     } else {
       console.info("Delete Shield");
@@ -758,9 +758,10 @@ class DatabaseHandler {
     let item = null;
     let level = null;
     let bonus = null;
+    let socket = null;
     let skill = null;
     if (isEquipment && data) {
-      [item, level, bonus, skill] = data.split(":");
+      [item, level, bonus, socket, skill] = data.split(":");
     } else if (!data) {
       if (type === "weapon") {
         item = "dagger";
@@ -776,15 +777,27 @@ class DatabaseHandler {
     } else if (location === "stash") {
       player.send([Types.Messages.STASH, data]);
     } else if (location === "weapon") {
-      player.equipItem({ item, level, type, bonus });
+      player.equipItem({ item, level, type, bonus, socket });
       player.broadcast(
-        player.equip({ kind: player.weaponKind, level: player.weaponLevel, bonus: player.weaponBonus, type }),
+        player.equip({
+          kind: player.weaponKind,
+          level: player.weaponLevel,
+          bonus: player.weaponBonus,
+          socket: player.weaponSocket,
+          type,
+        }),
         false,
       );
     } else if (location === "armor") {
-      player.equipItem({ item, level, type, bonus });
+      player.equipItem({ item, level, type, bonus, socket });
       player.broadcast(
-        player.equip({ kind: player.armorKind, level: player.armorLevel, bonus: player.armorBonus, type }),
+        player.equip({
+          kind: player.armorKind,
+          level: player.armorLevel,
+          bonus: player.armorBonus,
+          socket: player.armorSocket,
+          type,
+        }),
         false,
       );
     } else if (location === "belt") {
@@ -797,12 +810,13 @@ class DatabaseHandler {
         false,
       );
     } else if (location === "shield") {
-      player.equipItem({ item, level, type, bonus, skill });
+      player.equipItem({ item, level, type, bonus, socket, skill });
       player.broadcast(
         player.equip({
           kind: player.shieldKind,
           level: player.shieldLevel,
           bonus: player.shieldBonus,
+          socket: player.shieldSocket,
           skill: player.shieldSkill,
           type,
         }),
@@ -1014,7 +1028,7 @@ class DatabaseHandler {
               let inventory = JSON.parse(reply);
 
               items.forEach((rawItem: GeneratedItem) => {
-                const { item, level, quantity, bonus, skill, runeKind } = rawItem;
+                const { item, level, quantity, bonus, skill, socket } = rawItem;
                 let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
 
                 // Increase the scroll count
@@ -1028,13 +1042,20 @@ class DatabaseHandler {
                 } else if (slotIndex === -1) {
                   slotIndex = inventory.indexOf(0);
                   if (slotIndex !== -1) {
-                    const levelQuantityRune = level || quantity || runeKind;
+                    const levelQuantity = level || quantity;
 
-                    if (!levelQuantityRune) {
-                      throw new Error(`Invalid item property ${JSON.stringify({})}`);
+                    if (!levelQuantity) {
+                      throw new Error(`Invalid item property ${JSON.stringify({ rawItem })}`);
                     }
 
-                    inventory[slotIndex] = [item, levelQuantityRune, bonus, skill].filter(Boolean).join(":");
+                    // console.log("~~~~item", item);
+                    // console.log("~~~~levelQuantity", levelQuantity);
+                    // console.log("~~~~bonus", bonus);
+                    // console.log("~~~~skill", skill);
+                    // console.log("~~~~socket", socket);
+                    // console.log("~~~~", [item, levelQuantity, bonus, skill, socket].filter(Boolean).join(":"));
+
+                    inventory[slotIndex] = [item, levelQuantity, bonus, socket, skill].filter(Boolean).join(":");
                   } else if (player.hasParty()) {
                     // @TODO re-call the lootItems fn with next party member
                   }
@@ -1167,7 +1188,7 @@ class DatabaseHandler {
         } else if ((nextRuneRank = isValidUpgradeRunes(filteredUpgrade))) {
           isSuccess = true;
           upgrade = upgrade.map(() => 0);
-          upgrade[upgrade.length - 1] = `rune-${Types.RuneList[nextRuneRank].toLowerCase()}:${nextRuneRank}`;
+          upgrade[upgrade.length - 1] = `rune:${Types.RuneList[nextRuneRank]}`;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((transmuteRates = isValidTransmuteItems(filteredUpgrade))) {
           const [item, level] = filteredUpgrade[0].split(":");

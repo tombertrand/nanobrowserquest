@@ -16,9 +16,11 @@ class Player extends Character {
   armorName: string;
   armorLevel: number;
   armorBonus: null;
+  armorSocket: null;
   weaponName: string;
   weaponLevel: number;
   weaponBonus: null;
+  weaponSocket: null;
   beltName: null;
   beltLevel: number | null;
   beltBonus: null;
@@ -32,6 +34,7 @@ class Player extends Character {
   shieldName: null;
   shieldLevel: number | null;
   shieldBonus: number[] | null;
+  shieldSocket: number[] | null;
   shieldSkill: number | null;
   shieldSkillTimeout: NodeJS.Timeout;
   inventory: any[];
@@ -304,6 +307,10 @@ class Player extends Character {
     this.armorBonus = bonus;
   }
 
+  setArmorSocket(socket) {
+    this.armorSocket = socket;
+  }
+
   getWeaponName() {
     return this.weaponName;
   }
@@ -328,6 +335,10 @@ class Player extends Character {
     this.weaponBonus = bonus;
   }
 
+  setWeaponSocket(socket) {
+    this.weaponSocket = socket;
+  }
+
   getShieldName() {
     return this.shieldName;
   }
@@ -350,6 +361,10 @@ class Player extends Character {
 
   setShieldBonus(bonus) {
     this.shieldBonus = bonus;
+  }
+
+  setShieldSocket(socket) {
+    this.shieldSocket = socket;
   }
 
   getShieldSkill() {
@@ -591,7 +606,7 @@ class Player extends Character {
     return items
       .map((rawItem, slot) => {
         if (!rawItem) return false;
-        const [item, levelOrQuantity, bonus, skill] = rawItem.split(":");
+        const [item, levelOrQuantity, bonus, skill, socket] = rawItem.split(":");
 
         const isWeapon = kinds[item][1] === "weapon";
         const isArmor = kinds[item][1] === "armor";
@@ -610,7 +625,7 @@ class Player extends Character {
         if (isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet) {
           level = levelOrQuantity;
           requirement = Types.getItemRequirement(item, levelOrQuantity);
-        } else if (Types.isScroll(item) || isChest) {
+        } else if (Types.isScroll(item) || isChest || Types.isRune(item)) {
           quantity = levelOrQuantity;
         }
 
@@ -618,6 +633,7 @@ class Player extends Character {
           item,
           bonus,
           skill,
+          socket,
           slot,
           requirement,
           isUnique,

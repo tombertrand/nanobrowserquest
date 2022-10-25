@@ -256,10 +256,10 @@ export const isValidUpgradeRunes = items => {
     }
   });
 
-  console.log("~~~~runeClass", runeClass);
-  console.log("~~~~scrollClass", scrollClass);
-  console.log("~~~~runeRank", runeRank);
-  console.log("~~~~runeQuantity", runeQuantity);
+  // console.log("~~~~runeClass", runeClass);
+  // console.log("~~~~scrollClass", scrollClass);
+  // console.log("~~~~runeRank", runeRank);
+  // console.log("~~~~runeQuantity", runeQuantity);
 
   if (runeClass !== scrollClass || !runeRank) return false;
   if (runeRank >= 24) return false;
@@ -426,4 +426,57 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
   const randomItem = random(category.length);
 
   return category[randomItem];
+};
+
+export const getRandomSockets = ({ kind, baseLevel }) => {
+  let maxSockets = baseLevel < 10 ? 4 : 6;
+  if (Types.isBelt(kind)) {
+    maxSockets = 0;
+  }
+
+  const randomSocket = random(100);
+
+  // 1% -> 6
+  // 3% -> 5
+  // 6% -> 4
+  // 15% -> 3
+  // 20% -> 2
+  // 20% -> 1
+  // 35% -> 0
+  let socketCount = 0;
+  if (maxSockets === 6) {
+    if (randomSocket < 1) {
+      socketCount = 6;
+    } else if (randomSocket < 4) {
+      socketCount = 5;
+    } else if (randomSocket < 10) {
+      socketCount = 4;
+    } else if (randomSocket < 25) {
+      socketCount = 3;
+    } else if (randomSocket < 45) {
+      socketCount = 2;
+    } else if (randomSocket < 65) {
+      socketCount = 1;
+    }
+  } else if (maxSockets === 4) {
+    if (randomSocket < 3) {
+      socketCount = 4;
+    } else if (randomSocket < 10) {
+      socketCount = 3;
+    } else if (randomSocket < 25) {
+      socketCount = 2;
+    } else if (randomSocket < 45) {
+      socketCount = 1;
+    }
+  } else if (maxSockets === 3) {
+    if (randomSocket < 3) {
+      socketCount = 3;
+    } else if (randomSocket < 10) {
+      socketCount = 2;
+    } else if (randomSocket < 25) {
+      socketCount = 1;
+    }
+  }
+
+  return new Array(socketCount).fill(0);
 };
