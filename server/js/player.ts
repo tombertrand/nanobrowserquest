@@ -1795,7 +1795,7 @@ class Player extends Character {
       this.databaseHandler.equipCape(this.name, item, level, bonus);
       this.equipCape(item, kind, level, bonus);
     } else if (type === "shield") {
-      this.databaseHandler.equipShield(this.name, item, level, bonus, skill);
+      this.databaseHandler.equipShield(this.name, item, level, bonus, socket, skill);
       this.equipShield(item, Types.getKindFromString(item), level, bonus, socket, skill);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);

@@ -1571,7 +1571,7 @@ Types.getRuneNameFromItem = (rankOrString: number | string) => {
   let rune;
 
   if (typeof rankOrString === "string") {
-    [, rune] = rankOrString.split("-");
+    [, rune] = rankOrString.split(":")[0].split("-");
   } else if (typeof rankOrString === "number") {
     rune = Types.RuneList[rankOrString - 1];
   }

@@ -648,13 +648,11 @@ class DatabaseHandler {
 
   equipShield(name, shield, level, bonus = [], socket = [], skill) {
     if (shield) {
-      console.info(`Set Shield: ${name} ${shield} ${level} ${bonus} ${skill}`);
+      console.info(`Set Shield: ${name} ${shield} ${level} ${bonus} ${socket} ${skill}`);
       this.client.hset(
         "u:" + name,
         "shield",
-        `${shield}:${level}${bonus ? `:${bonus}` : ""}${bonus ? `:${bonus}` : ""}${socket ? `:${socket}` : ""}${
-          skill ? `:${skill}` : ""
-        }`,
+        `${shield}:${level}${bonus ? `:${bonus}` : ""}${socket ? `:${socket}` : ""}${skill ? `:${skill}` : ""}`,
       );
     } else {
       console.info("Delete Shield");

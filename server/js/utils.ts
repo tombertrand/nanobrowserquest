@@ -275,22 +275,44 @@ export const isValidSocketItem = items => {
   }
 
   const runeIndex = items.findIndex(item => item.startsWith("rune-"));
-  const itemIndex = items.find(item => !item.startsWith("rune-"));
+  const itemIndex = items.findIndex(item => !item.startsWith("rune-"));
 
-  if (runeIndex === -1 || itemIndex === -1 || !Types.isSocketItem(items[itemIndex])) {
+  const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");
+
+  let socket;
+  try {
+    socket = JSON.parse(rawSocket);
+  } catch (err) {
+    return false;
+  }
+
+  if (
+    runeIndex === -1 ||
+    itemIndex === -1 ||
+    !Types.isSocketItem(item) ||
+    !socket?.length ||
+    !socket.filter(slot => slot === 0).length
+  ) {
     return false;
   }
 
   const { rank } = Types.getRuneFromItem(items[runeIndex]);
-  const [item, level, bonus, socket, skill] = items[itemIndex].split(":");
 
-  console.log("~~~~rank", rank);
-  console.log("~~~~item", item);
-  console.log("~~~~socket", socket);
+  if (!rank) {
+    return false;
+  }
 
-  // @TODO HERE merge the rune
+  const socketIndex = socket.findIndex(s => s === 0);
+  socket[socketIndex] = rank;
 
-  return false;
+  const newItem = [item, level, bonus, JSON.stringify(socket), skill].join(":");
+
+  // console.log("~~~~~", newItem);
+  // console.log("~~~~rank", rank);
+  // console.log("~~~~item", item);
+  // console.log("~~~~socket", socket);
+
+  return newItem;
 };
 
 export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
