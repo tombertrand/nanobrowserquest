@@ -226,95 +226,6 @@ export const isValidUpgradeItems = items => {
   return true;
 };
 
-export const isValidUpgradeRunes = items => {
-  if (items.length < 3 || items.length > 4) {
-    return false;
-  }
-
-  let rune = "";
-  let runeRank = 0;
-  let runeQuantity = 0;
-  let runeClass = null;
-  let scrollClass = null;
-
-  forEach(items, item => {
-    const [scrollOrRune] = item.split(":");
-
-    if (!scrollOrRune.startsWith("scrollupgrade") && !scrollOrRune.startsWith("rune")) return false;
-    if (scrollOrRune.startsWith("scrollupgrade")) {
-      if (scrollClass) return false;
-      scrollClass = Types.getItemClass(scrollOrRune);
-    } else {
-      if (!rune) {
-        rune = scrollOrRune;
-        runeRank = Types.getRuneFromItem(scrollOrRune).rank;
-        runeClass = Types.getItemClass(scrollOrRune);
-      } else if (scrollOrRune !== rune) {
-        return false;
-      }
-      runeQuantity += 1;
-    }
-  });
-
-  // console.log("~~~~runeClass", runeClass);
-  // console.log("~~~~scrollClass", scrollClass);
-  // console.log("~~~~runeRank", runeRank);
-  // console.log("~~~~runeQuantity", runeQuantity);
-
-  if (runeClass !== scrollClass || !runeRank) return false;
-  if (runeRank >= 24) return false;
-  if (runeRank < 10 && runeQuantity !== 3) return false;
-  if (runeRank >= 10 && runeQuantity !== 2) return false;
-
-  return runeRank;
-};
-
-export const isValidSocketItem = items => {
-  if (items.length !== 2) {
-    return false;
-  }
-
-  const runeIndex = items.findIndex(item => item.startsWith("rune-"));
-  const itemIndex = items.findIndex(item => !item.startsWith("rune-"));
-
-  const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");
-
-  let socket;
-  try {
-    socket = JSON.parse(rawSocket);
-  } catch (err) {
-    return false;
-  }
-
-  if (
-    runeIndex === -1 ||
-    itemIndex === -1 ||
-    !Types.isSocketItem(item) ||
-    !socket?.length ||
-    !socket.filter(slot => slot === 0).length
-  ) {
-    return false;
-  }
-
-  const { rank } = Types.getRuneFromItem(items[runeIndex]);
-
-  if (!rank) {
-    return false;
-  }
-
-  const socketIndex = socket.findIndex(s => s === 0);
-  socket[socketIndex] = rank;
-
-  const newItem = [item, level, bonus, JSON.stringify(socket), skill].join(":");
-
-  // console.log("~~~~~", newItem);
-  // console.log("~~~~rank", rank);
-  // console.log("~~~~item", item);
-  // console.log("~~~~socket", socket);
-
-  return newItem;
-};
-
 export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
   // Upgrade success rate
   // +1 -> +2, 100%
@@ -525,4 +436,103 @@ export const getRandomSockets = ({ kind, baseLevel }) => {
   }
 
   return new Array(socketCount).fill(0);
+};
+
+export const isValidUpgradeRunes = items => {
+  if (items.length < 3 || items.length > 4) {
+    return false;
+  }
+
+  let rune = "";
+  let runeRank = 0;
+  let runeQuantity = 0;
+  let runeClass = null;
+  let scrollClass = null;
+
+  forEach(items, item => {
+    const [scrollOrRune] = item.split(":");
+
+    if (!scrollOrRune.startsWith("scrollupgrade") && !scrollOrRune.startsWith("rune")) return false;
+    if (scrollOrRune.startsWith("scrollupgrade")) {
+      if (scrollClass) return false;
+      scrollClass = Types.getItemClass(scrollOrRune);
+    } else {
+      if (!rune) {
+        rune = scrollOrRune;
+        runeRank = Types.getRuneFromItem(scrollOrRune).rank;
+        runeClass = Types.getItemClass(scrollOrRune);
+      } else if (scrollOrRune !== rune) {
+        return false;
+      }
+      runeQuantity += 1;
+    }
+  });
+
+  // console.log("~~~~runeClass", runeClass);
+  // console.log("~~~~scrollClass", scrollClass);
+  // console.log("~~~~runeRank", runeRank);
+  // console.log("~~~~runeQuantity", runeQuantity);
+
+  if (runeClass !== scrollClass || !runeRank) return false;
+  if (runeRank >= 24) return false;
+  if (runeRank < 10 && runeQuantity !== 3) return false;
+  if (runeRank >= 10 && runeQuantity !== 2) return false;
+
+  return runeRank;
+};
+
+export const isValidSocketItem = items => {
+  if (items.length !== 2) {
+    return false;
+  }
+
+  const runeIndex = items.findIndex(item => item.startsWith("rune-"));
+  const itemIndex = items.findIndex(item => !item.startsWith("rune-"));
+
+  const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");
+
+  let socket;
+  try {
+    socket = JSON.parse(rawSocket);
+  } catch (err) {
+    return false;
+  }
+
+  if (
+    runeIndex === -1 ||
+    itemIndex === -1 ||
+    !Types.isSocketItem(item) ||
+    !socket?.length ||
+    !socket.filter(slot => slot === 0).length
+  ) {
+    return false;
+  }
+
+  const { rank } = Types.getRuneFromItem(items[runeIndex]);
+
+  if (!rank) {
+    return false;
+  }
+
+  const socketIndex = socket.findIndex(s => s === 0);
+  socket[socketIndex] = rank;
+
+  const newItem = [item, level, bonus, JSON.stringify(socket), skill].join(":");
+
+  // console.log("~~~~~", newItem);
+  // console.log("~~~~rank", rank);
+  // console.log("~~~~item", item);
+  // console.log("~~~~socket", socket);
+
+  return newItem;
+};
+
+export const isValidStoneSocket = items => {
+  if (items.length !== 2) {
+    return false;
+  }
+
+  console.log("~~~~items", items);
+
+  return false;
 };

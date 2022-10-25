@@ -211,6 +211,7 @@ export const Types: any = {
     SCROLLUPGRADEBLESSED: 118,
     SCROLLUPGRADESACRED: 186,
     SCROLLTRANSMUTE: 142,
+    STONESOCKET: 187,
     RINGBRONZE: 80,
     RINGSILVER: 81,
     RINGGOLD: 82,
@@ -589,7 +590,8 @@ export const kinds = {
   scrollupgradelegendary: [Types.Entities.SCROLLUPGRADELEGENDARY, "scroll", "Legendary upgrade scroll", 40],
   scrollupgradeblessed: [Types.Entities.SCROLLUPGRADEBLESSED, "scroll", "Blessed upgrade scroll", 15],
   scrollupgradesacred: [Types.Entities.SCROLLUPGRADESACRED, "scroll", "Sacred upgrade scroll", 40],
-  scrolltransmute: [Types.Entities.SCROLLTRANSMUTE, "scroll", "Transmute scroll", 20],
+  scrolltransmute: [Types.Entities.SCROLLTRANSMUTE, "scroll", "Transmute scroll", 30],
+  stonesocket: [Types.Entities.STONESOCKET, "stone", "Socket Stone", 51],
   skeletonkey: [Types.Entities.SKELETONKEY, "object", "Skeleton Key"],
   raiblockstl: [Types.Entities.RAIBLOCKSTL, "object", "Raiblocks artifact"],
   raiblockstr: [Types.Entities.RAIBLOCKSTR, "object", "Raiblocks artifact"],
@@ -1171,6 +1173,14 @@ Types.isScroll = function (kindOrString: number | string) {
   }
 };
 
+Types.isStone = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return [Types.Entities.STONESOCKET].includes(kindOrString);
+  } else {
+    return kindOrString?.startsWith("stone");
+  }
+};
+
 Types.isRune = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return Types.RuneByKind[kindOrString];
@@ -1308,7 +1318,12 @@ Types.isSingle = function (kindOrString: number | string) {
 };
 
 Types.isQuantity = function (kindOrString: number | string) {
-  return Types.isScroll(kindOrString) || Types.isChest(kindOrString) || Types.isRune(kindOrString);
+  return (
+    Types.isScroll(kindOrString) ||
+    Types.isChest(kindOrString) ||
+    Types.isRune(kindOrString) ||
+    Types.isStone(kindOrString)
+  );
 };
 
 Types.isItem = function (kind: number) {
@@ -1324,6 +1339,7 @@ Types.isItem = function (kind: number) {
     Types.isSingle(kind) ||
     Types.isChest(kind) ||
     Types.isRune(kind) ||
+    Types.isStone(kind) ||
     (Types.isObject(kind) && !Types.isStaticChest(kind))
   );
 };
@@ -2385,6 +2401,8 @@ Types.itemDescription = {
   scrolltransmute:
     "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
   rune: "Can be inserted into a socketed item or create runewords",
+  stonesocket:
+    "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets it will attempt to remove the last item in the socket(s). There is a 50% chance for the item to be burned.",
 };
 
 Types.RuneWords = {

@@ -528,11 +528,9 @@ EntityFactory.builders[Types.Entities.SCROLLUPGRADEHIGH] = function (id) {
   return new Items.ScrollUpgradeHigh(id);
 };
 
-
 EntityFactory.builders[Types.Entities.SCROLLUPGRADELEGENDARY] = function (id) {
   return new Items.ScrollUpgradeLegendary(id);
 };
-
 
 EntityFactory.builders[Types.Entities.SCROLLUPGRADEBLESSED] = function (id) {
   return new Items.ScrollUpgradeBlessed(id);
@@ -544,6 +542,10 @@ EntityFactory.builders[Types.Entities.SCROLLUPGRADESACRED] = function (id) {
 
 EntityFactory.builders[Types.Entities.SCROLLTRANSMUTE] = function (id) {
   return new Items.ScrollTransmute(id);
+};
+
+EntityFactory.builders[Types.Entities.STONESOCKET] = function (id) {
+  return new Items.StoneSocket(id);
 };
 
 EntityFactory.builders[Types.Entities.SKELETONKEY] = function (id) {

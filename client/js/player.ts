@@ -626,7 +626,7 @@ class Player extends Character {
         if (isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet) {
           level = levelOrQuantity;
           requirement = Types.getItemRequirement(item, levelOrQuantity);
-        } else if (Types.isScroll(item) || isChest || Types.isRune(item)) {
+        } else if (Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item)) {
           quantity = levelOrQuantity;
         }
 

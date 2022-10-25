@@ -709,6 +709,13 @@ var Items = {
     }
   },
 
+  StoneSocket: class StoneSocket extends Item {
+    constructor(id) {
+      super(id, Types.Entities.STONESOCKET, "stone");
+      this.lootMessage = "You pick up a socket stone";
+    }
+  },
+
   SkeletonKey: class SkeletonKey extends Item {
     constructor(id) {
       super(id, Types.Entities.SKELETONKEY, "object");

@@ -1258,7 +1258,7 @@ class Player extends Character {
         skill,
         isUnique,
       };
-    } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isChest(kind)) {
+    } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isStone(kind)) {
       item = { item: Types.getKindAsString(kind), quantity: 1 };
     } else if (Types.isCape(kind)) {
       const bonus = this.generateRandomCapeBonus(uniqueChances);

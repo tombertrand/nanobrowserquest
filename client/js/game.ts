@@ -492,6 +492,7 @@ class Game {
       "item-scrollupgradeblessed",
       "item-scrollupgradesacred",
       "item-scrolltransmute",
+      "item-stonesocket",
       "item-skeletonkey",
       "item-raiblockstl",
       "item-raiblockstr",
@@ -1207,7 +1208,7 @@ class Game {
           $(`.item-${type}`).addClass("item-droppable");
         } else if (Types.isScroll(item)) {
           $(".item-scroll").addClass("item-droppable");
-        } else if (Types.isSingle(item) || Types.isRune(item)) {
+        } else if (Types.isSingle(item) || Types.isRune(item) || Types.isStone(item)) {
           $(".item-recipe").addClass("item-droppable");
         }
 

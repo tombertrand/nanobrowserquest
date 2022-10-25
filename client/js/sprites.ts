@@ -332,6 +332,7 @@ const sprites = {
   "item-scrollupgradeblessed": itemScroll,
   "item-scrollupgradesacred": itemScroll,
   "item-scrolltransmute": itemScroll,
+  "item-stonesocket": itemScroll,
   "item-skeletonkey": itemSkeletonkey,
   "item-raiblockstl": itemRaiblockstl,
   "item-raiblockstr": itemRaiblockstr,

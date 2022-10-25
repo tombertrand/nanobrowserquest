@@ -23,6 +23,7 @@ import {
   isUpgradeSuccess,
   isValidRecipe,
   isValidSocketItem,
+  isValidStoneSocket,
   isValidTransmuteItems,
   isValidUpgradeItems,
   isValidUpgradeRunes,
@@ -937,10 +938,10 @@ class DatabaseHandler {
                     isToReplyDone = true;
                   }
                 } else if (toLocation === "upgrade") {
-                  const isScroll = Types.isScroll(fromItem);
+                  const isScroll = Types.isScroll(fromItem) || Types.isStone(fromItem);
                   const isRune = Types.isRune(fromItem);
                   const hasScroll = isScroll
-                    ? toReplyParsed.some((a, i) => i !== 0 && a && a.startsWith("scroll"))
+                    ? toReplyParsed.some((a, i) => i !== 0 && a && (a.startsWith("scroll") || a.startsWith("stone")))
                     : false;
 
                   if ((isScroll && !hasScroll) || (isRune && !toReplyParsed[toSlot - toRange])) {
@@ -1208,6 +1209,12 @@ class DatabaseHandler {
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = socketItem;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((socketItem = isValidStoneSocket(filteredUpgrade))) {
+          // @TODO - do the formula
+          // isSuccess = true;
+          // upgrade = upgrade.map(() => 0);
+          // upgrade[upgrade.length - 1] = socketItem;
+          // player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((transmuteRates = isValidTransmuteItems(filteredUpgrade))) {
           const [item, level] = filteredUpgrade[0].split(":");
           let generatedItem: number | string = 0;
