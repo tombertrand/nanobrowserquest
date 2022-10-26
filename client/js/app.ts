@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-import Storage from "./storage";
+import storage from "./storage";
 import Store from "./store";
 import { isValidAccountAddress, TRANSITIONEND } from "./utils";
 
@@ -16,7 +16,7 @@ class App {
   achievementTimeout: any;
   isParchmentReady: boolean;
   ready: boolean;
-  storage: Storage;
+  storage: any;
   store: Store;
   watchNameInputInterval: NodeJS.Timer;
   frontPage: string;
@@ -51,7 +51,7 @@ class App {
     this.achievementTimeout = null;
     this.isParchmentReady = true;
     this.ready = false;
-    this.storage = new Storage();
+    this.storage = storage;
     this.store = new Store(this);
     this.getUsernameField = () => {};
     this.getPlayButton = () => {};

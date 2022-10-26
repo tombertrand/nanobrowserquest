@@ -34,7 +34,7 @@ import {
 import type Player from "../player";
 import type { GeneratedItem, Network } from "../types";
 
-const ACHIEVEMENT_COUNT = 44;
+const ACHIEVEMENT_COUNT = 64;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
 
