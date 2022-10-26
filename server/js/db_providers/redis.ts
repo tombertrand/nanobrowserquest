@@ -1060,13 +1060,6 @@ class DatabaseHandler {
                       throw new Error(`Invalid item property ${JSON.stringify({ rawItem })}`);
                     }
 
-                    // console.log("~~~~item", item);
-                    // console.log("~~~~levelQuantity", levelQuantity);
-                    // console.log("~~~~bonus", bonus);
-                    // console.log("~~~~skill", skill);
-                    // console.log("~~~~socket", socket);
-                    // console.log("~~~~", [item, levelQuantity, bonus, skill, socket].filter(Boolean).join(":"));
-
                     inventory[slotIndex] = [item, levelQuantity, bonus, socket, skill].filter(Boolean).join(":");
                   } else if (player.hasParty()) {
                     // @TODO re-call the lootItems fn with next party member
@@ -1089,42 +1082,50 @@ class DatabaseHandler {
   }
 
   moveItemsToInventory(player, panel: "upgrade" | "trade" = "upgrade") {
-    this.client.hget("u:" + player.name, panel, (_err, reply) => {
-      try {
-        let data = JSON.parse(reply);
-        const filteredUpgrade = data.filter(Boolean);
+    this.client.hget("u:" + player.name, "inventory", (_err, rawInvetory) => {
+      const availableInventorySlots = JSON.parse(rawInvetory).filter(i => i === 0).length;
 
-        if (filteredUpgrade.length) {
-          const items = filteredUpgrade.reduce((acc, rawItem) => {
-            if (!rawItem) return acc;
-            const [item, level, bonus, socket, skill] = rawItem.split(":");
-            const isQuantity = Types.isQuantity(item);
+      this.client.hget("u:" + player.name, panel, (_err, reply) => {
+        try {
+          let data = JSON.parse(reply);
+          const filteredUpgrade = data.filter(Boolean);
 
-            acc.push({
-              item,
-              [isQuantity ? "quantity" : "level"]: level,
-              bonus,
-              socket,
-              skill,
-            });
-            return acc;
-          }, []);
+          if (filteredUpgrade.length) {
+            const items = filteredUpgrade.reduce((acc, rawItem) => {
+              if (!rawItem) return acc;
+              const [item, level, bonus, socket, skill] = rawItem.split(":");
+              const isQuantity = Types.isQuantity(item);
 
-          this.lootItems({ player, items });
+              acc.push({
+                item,
+                [isQuantity ? "quantity" : "level"]: level,
+                bonus,
+                socket,
+                skill,
+              });
+              return acc;
+            }, []);
 
-          data = data.map(() => 0);
-          this.client.hset("u:" + player.name, panel, JSON.stringify(data));
+            if (panel === "upgrade" && availableInventorySlots < items.length) {
+              throw new Error("not enought inventory slots to move items from upgrade panel");
+            }
 
-          if (panel === "upgrade") {
-            player.send([Types.Messages.UPGRADE, data]);
-          } else if (panel === "trade") {
-            player.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data).serialize());
+            this.lootItems({ player, items });
+
+            data = data.map(() => 0);
+            this.client.hset("u:" + player.name, panel, JSON.stringify(data));
+
+            if (panel === "upgrade") {
+              player.send([Types.Messages.UPGRADE, data]);
+            } else if (panel === "trade") {
+              player.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data).serialize());
+            }
           }
+        } catch (err) {
+          console.log(err);
+          Sentry.captureException(err);
         }
-      } catch (err) {
-        console.log(err);
-        Sentry.captureException(err);
-      }
+      });
     });
   }
 
@@ -1155,9 +1156,10 @@ class DatabaseHandler {
         let uniqueSuccessRate = null;
         let isTransmuteSuccess = null;
         let isUniqueSuccess = null;
-        let transmuteRates;
+        let result;
         let nextRuneRank = null;
         let socketItem = null;
+        let extractedItem = null;
 
         if (isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus, socket, skill] = filteredUpgrade[0].split(":");
@@ -1209,18 +1211,23 @@ class DatabaseHandler {
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = socketItem;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
-        } else if ((socketItem = isValidStoneSocket(filteredUpgrade))) {
-          // @TODO - do the formula
-          // isSuccess = true;
-          // upgrade = upgrade.map(() => 0);
-          // upgrade[upgrade.length - 1] = socketItem;
-          // player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
-        } else if ((transmuteRates = isValidTransmuteItems(filteredUpgrade))) {
+        } else if ((result = isValidStoneSocket(filteredUpgrade, isLuckySlot))) {
+          ({ socketItem, extractedItem } = result);
+
+          if (extractedItem) {
+            this.lootItems({ player, items: [extractedItem] });
+          }
+
+          isSuccess = true;
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = socketItem;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((result = isValidTransmuteItems(filteredUpgrade))) {
           const [item, level] = filteredUpgrade[0].split(":");
           let generatedItem: number | string = 0;
 
           ({ random, transmuteSuccessRate, uniqueSuccessRate, isTransmuteSuccess, isUniqueSuccess } =
-            getIsTransmuteSuccess({ ...transmuteRates, isLuckySlot }));
+            getIsTransmuteSuccess({ ...result, isLuckySlot }));
 
           player.send(
             new Messages.AnvilOdds(
@@ -1247,6 +1254,7 @@ class DatabaseHandler {
             } = player.generateItem({
               kind: Types.getKindFromString(item),
               uniqueChances: isUniqueSuccess ? 100 : 0,
+              isLuckySlot,
             });
 
             generatedItem = [itemName, level, bonus, socket, skill].filter(Boolean).join(":");

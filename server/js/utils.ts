@@ -267,7 +267,8 @@ export const isValidTransmuteItems = items => {
     return false;
   }
 
-  const [item, , bonus] = items[0].split(":");
+  let [item, , bonus] = items[0].split(":");
+
   const transmuteRate = Types.getTransmuteSuccessRate(item, bonus);
   if (!transmuteRate) {
     return false;
@@ -385,7 +386,7 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
   return category[randomItem];
 };
 
-export const getRandomSockets = ({ kind, baseLevel }) => {
+export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
   let maxSockets = baseLevel < 10 ? 4 : 6;
   if (Types.isBelt(kind)) {
     maxSockets = 0;
@@ -415,6 +416,9 @@ export const getRandomSockets = ({ kind, baseLevel }) => {
     } else if (randomSocket < 65) {
       socketCount = 1;
     }
+    if (isLuckySlot && socketCount !== 6) {
+      socketCount++;
+    }
   } else if (maxSockets === 4) {
     if (randomSocket < 3) {
       socketCount = 4;
@@ -425,6 +429,9 @@ export const getRandomSockets = ({ kind, baseLevel }) => {
     } else if (randomSocket < 45) {
       socketCount = 1;
     }
+    if (isLuckySlot && socketCount !== 4) {
+      socketCount++;
+    }
   } else if (maxSockets === 3) {
     if (randomSocket < 3) {
       socketCount = 3;
@@ -432,6 +439,9 @@ export const getRandomSockets = ({ kind, baseLevel }) => {
       socketCount = 2;
     } else if (randomSocket < 25) {
       socketCount = 1;
+    }
+    if (isLuckySlot && socketCount !== 3) {
+      socketCount++;
     }
   }
 
@@ -467,11 +477,6 @@ export const isValidUpgradeRunes = items => {
       runeQuantity += 1;
     }
   });
-
-  // console.log("~~~~runeClass", runeClass);
-  // console.log("~~~~scrollClass", scrollClass);
-  // console.log("~~~~runeRank", runeRank);
-  // console.log("~~~~runeQuantity", runeQuantity);
 
   if (runeClass !== scrollClass || !runeRank) return false;
   if (runeRank >= 24) return false;
@@ -517,22 +522,60 @@ export const isValidSocketItem = items => {
   const socketIndex = socket.findIndex(s => s === 0);
   socket[socketIndex] = rank;
 
-  const newItem = [item, level, bonus, JSON.stringify(socket), skill].join(":");
-
-  // console.log("~~~~~", newItem);
-  // console.log("~~~~rank", rank);
-  // console.log("~~~~item", item);
-  // console.log("~~~~socket", socket);
+  const newItem = [item, level, bonus, JSON.stringify(socket), skill].filter(Boolean).join(":");
 
   return newItem;
 };
 
-export const isValidStoneSocket = items => {
+export const isValidStoneSocket = (items, isLuckySlot) => {
   if (items.length !== 2) {
     return false;
   }
 
-  console.log("~~~~items", items);
+  const stoneIndex = items.findIndex(item => item.startsWith("stone"));
+  const itemIndex = items.findIndex(item => !item.startsWith("stone"));
 
-  return false;
+  const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");
+
+  let socket;
+  let extractedItem;
+  try {
+    socket = JSON.parse(rawSocket);
+  } catch (err) {
+    // no socket, silence error
+  }
+
+  if (
+    stoneIndex === -1 ||
+    itemIndex === -1 ||
+    !Types.isSocketItem(item) ||
+    (socket?.length && !socket.filter(slot => slot !== 0).length)
+  ) {
+    return false;
+  }
+
+  if (!socket?.length) {
+    const kind = Types.getKindFromString(item);
+    const baseLevel = Types.getBaseLevel(kind);
+
+    socket = getRandomSockets({ kind, baseLevel, isLuckySlot });
+  } else {
+    let lastSocketIndex = socket.findIndex(i => i === 0);
+    if (lastSocketIndex === -1) {
+      lastSocketIndex = socket.length;
+    }
+    extractedItem = random(2) ? socket[lastSocketIndex - 1] : null;
+
+    socket[lastSocketIndex - 1] = 0;
+  }
+
+  const socketItem = [item, level, bonus || "[]", JSON.stringify(socket), skill].filter(Boolean).join(":");
+
+  // Convert back to rune
+  if (extractedItem && typeof extractedItem === "number") {
+    const runeName = Types.RuneList[extractedItem - 1];
+    extractedItem = { item: `rune-${runeName}`, quantity: 1 };
+  }
+
+  return { socketItem, extractedItem };
 };

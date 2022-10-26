@@ -1214,7 +1214,7 @@ class Player extends Character {
       .concat(isUnique ? _.shuffle(uniqueBonus).slice(0, 1) : []);
   }
 
-  generateItem({ kind, uniqueChances = 1 }): GeneratedItem {
+  generateItem({ kind, uniqueChances = 1, isLuckySlot = false }): GeneratedItem {
     let isUnique = false;
     let item;
 
@@ -1254,7 +1254,7 @@ class Player extends Character {
         item: Types.getKindAsString(kind),
         level,
         bonus: bonus ? JSON.stringify(bonus) : null,
-        socket: JSON.stringify(getRandomSockets({ kind, baseLevel })),
+        socket: JSON.stringify(getRandomSockets({ kind, baseLevel, isLuckySlot })),
         skill,
         isUnique,
       };

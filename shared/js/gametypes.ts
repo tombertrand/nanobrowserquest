@@ -2094,11 +2094,15 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
   const isShield = Types.isShield(item);
+  const isWeapon = Types.isWeapon(item);
+  const isArmor = Types.isArmor(item);
   const isUniqueRing = isRing && isUnique;
   const isUniqueAmulet = isAmulet && isUnique;
   const isUniqueBelt = isBelt && isUnique;
   const isUniqueCape = isCape && isUnique;
   const isUniqueShield = isShield && isUnique;
+  const isUniqueWeapon = isWeapon && isUnique;
+  const isUniqueArmor = isShield && isUnique;
 
   const uniqueSuccessRateMap = {
     goldensword: 25,
@@ -2107,6 +2111,14 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     frozensword: 15,
     diamondsword: 11,
     minotauraxe: 8,
+    emeraldsword: 4,
+    spikeglaive: 4,
+    executionersword: 4,
+    eclypsedagger: 4,
+    mysticalsword: 4,
+    templarsword: 4,
+    dragonsword: 4,
+    moonpartisan: 4,
 
     goldenarmor: 20,
     bluearmor: 18,
@@ -2132,14 +2144,22 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     amuletgold: 12,
   };
 
-  const transmuteSuccessRate = 75;
+  const transmuteSuccessRate = 80;
 
-  if (isUniqueRing || isUniqueAmulet || isUniqueBelt || isUniqueCape || isUniqueShield) {
+  if (
+    isUniqueRing ||
+    isUniqueAmulet ||
+    isUniqueBelt ||
+    isUniqueCape ||
+    isUniqueShield ||
+    isUniqueWeapon ||
+    isUniqueArmor
+  ) {
     return { transmuteSuccessRate, uniqueSuccessRate: 100 };
   } else if (!isUnique && uniqueSuccessRateMap[item]) {
     return {
       uniqueSuccessRate: uniqueSuccessRateMap[item],
-      ...(isRing || isAmulet || isCape ? { transmuteSuccessRate } : null),
+      ...(isRing || isAmulet || isCape || isShield || isWeapon || isArmor ? { transmuteSuccessRate } : null),
     };
   }
 
@@ -2280,10 +2300,6 @@ Types.getItemDetails = function ({
   const rune = isRune ? Types.getRuneFromItem(item) : null;
   const isSocket = rawSocket?.length;
   const runeRequirement = isSocket ? Types.getHighestSocketRequirement(rawSocket) : null;
-
-  // console.log("~~~~~item", item);
-  // console.log("~~~~~rawBonus", rawBonus);
-  // console.log("~~~~~isUnique", isUnique);
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let magicDamage = 0;

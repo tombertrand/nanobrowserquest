@@ -876,10 +876,6 @@ class Game {
           socket,
         } = Types.getItemDetails({ item, level, rawBonus, rawSkill, rawSocket });
 
-        // console.log("~~~~socketBonus", socketBonus);
-        // console.log("~~~~rawSocket", rawSocket);
-        // console.log("~~~~socket", socket);
-
         return `<div>
             <div class="item-title${isUnique || isRune ? " unique" : ""}">
               ${name}${level ? ` (+${level})` : ""}
