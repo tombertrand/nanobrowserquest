@@ -1,6 +1,4 @@
-import { Types } from "../../shared/js/gametypes";
 import Animation from "./animation";
-import Detect from "./detect";
 import sprites from "./sprites";
 
 class Sprite {
@@ -20,6 +18,8 @@ class Sprite {
   whiteSprite;
   silhouetteSprite;
   image7: any;
+  image8: any;
+  image9: any;
   imageunique: any;
   imagenano: any;
   imageban: any;
@@ -57,7 +57,14 @@ class Sprite {
 
     this.image.src = "img/" + this.scale + "/" + this.id + ".png";
 
-    if (this.name === "guard") {
+    if (this.name.startsWith("weapon-effect")) {
+      this.image8 = new Image();
+      this.image8.crossOrigin = "Anonymous";
+      this.image8.src = "img/" + this.scale + "/" + this.id + "8" + ".png";
+      this.image9 = new Image();
+      this.image9.crossOrigin = "Anonymous";
+      this.image9.src = "img/" + this.scale + "/" + this.id + "9" + ".png";
+    } else if (this.name === "guard") {
       this.imagenano = new Image();
       this.imagenano.crossOrigin = "Anonymous";
       this.imagenano.src = "img/" + this.scale + "/nanoguard.png";

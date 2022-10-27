@@ -30,9 +30,6 @@ class Mob extends Character {
   constructor(id, kind, x, y) {
     super(id, "mob", kind, x, y);
 
-    console.log("~~~mob updateHitPoints~id", id);
-    console.log("~~~~kind", kind);
-
     this.updateHitPoints();
     this.spawningX = x;
     this.spawningY = y;

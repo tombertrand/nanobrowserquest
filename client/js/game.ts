@@ -1747,7 +1747,6 @@ class Game {
   }
 
   initWaypoints(waypoints) {
-    console.log("~~~~waypoints", waypoints);
     $("#waypoint-list").empty();
     var self = this;
 

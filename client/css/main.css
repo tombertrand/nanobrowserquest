@@ -800,7 +800,7 @@ footer, header, hgroup, menu, nav, section {
         position: relative;
     }
 
-    #waypoint {top: 10%}
+    #waypoint {top: 7%}
     #trade { bottom: auto;}
     #upgrade { bottom: auto;}
     #inventory { bottom: auto;}
@@ -1020,11 +1020,12 @@ footer, header, hgroup, menu, nav, section {
         #stash {top: 88px;}
 
         #waypoint {height:466px;}
-        #waypoint .waypoint-icon {width:69px; height: 69px; background-image: url('../img/3/waypoint.png'); transform: scale(0.75);}
+        #waypoint .waypoint-icon {width:69px; height: 69px; background-image: url('../img/3/waypoint.png'); transform: scale(0.75);margin: -5px 0}
         #waypoint .waypoint-text { font-size: 20px; }
         .waypoint-row.active .waypoint-icon {background-position-x: -69px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -138px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 3px #373737;}
+        .waypoint-spaced-row:first-child {border-top: solid 3px #373737;}
         #playerimage { height: 96px; width: 96px; }
         #login-play-button.play.loading img {
             margin-top: -16px;
@@ -1252,11 +1253,12 @@ footer, header, hgroup, menu, nav, section {
         #stash {top:45px;}
 
         #waypoint {height:312px;}
-        #waypoint .waypoint-icon {width:46px; height: 46px; background-image: url('../img/2/waypoint.png'); transform: scale(0.75);}
+        #waypoint .waypoint-icon {width:46px; height: 46px; background-image: url('../img/2/waypoint.png'); transform: scale(0.75); margin: -3px 0}
         #waypoint .waypoint-text { font-size: 16px; }
         .waypoint-row.active .waypoint-icon {background-position-x: -46px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -92px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 2px #373737;}
+        .waypoint-spaced-row:first-child {border-top: solid 2px #373737;}
         #playerimage { height: 64px; width: 64px; }
         .play.loading img {
             margin-top: -12px;
@@ -1492,6 +1494,7 @@ footer, header, hgroup, menu, nav, section {
         .waypoint-row.active .waypoint-icon {background-position-x: -23px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -46px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 2px #373737; padding: 6px 0;}
+        .waypoint-spaced-row:first-child {border-top: solid 2px #373737;}
 
         canvas {image-rendering:optimizeSpeed;}
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}

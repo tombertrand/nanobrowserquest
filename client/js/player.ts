@@ -20,6 +20,7 @@ class Player extends Character {
   weaponName: string;
   weaponLevel: number;
   weaponBonus: null;
+  weaponElement: "magic" | "flame" | "cold" | "poison";
   weaponSocket: null;
   beltName: null;
   beltLevel: number | null;
@@ -110,6 +111,7 @@ class Player extends Character {
     this.weaponName = "dagger";
     this.weaponLevel = 1;
     this.weaponBonus = null;
+    this.weaponElement = null;
     this.beltName = null;
     this.beltLevel = 1;
     this.beltBonus = null;
@@ -334,6 +336,20 @@ class Player extends Character {
   }
 
   setWeaponBonus(bonus) {
+    console.log("~~~~~bonus", bonus);
+    if (typeof bonus === "string") {
+      try {
+        bonus = JSON.parse(bonus);
+      } catch (e) {
+        // silence
+      }
+    }
+    if (bonus?.length === 2) {
+      this.weaponElement = "flame";
+    } else {
+      this.weaponElement = "magic";
+    }
+    console.log("~~~~weaponElement", this.weaponElement);
     this.weaponBonus = bonus;
   }
 

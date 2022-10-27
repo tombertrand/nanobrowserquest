@@ -722,21 +722,18 @@ Types.itemUniqueMap = {
   frozensword: ["Broccolish Fury", 20, 32],
   diamondsword: ["Inevitable", 32, 42],
   minotauraxe: ["PoS4QoS", 34, 44],
-  emeraldsword: ["TBD", 36, 44],
+  emeraldsword: ["Non Fungible Token", 36, 44],
   spikeglaive: ["TBD", 38, 38],
-  executionersword: ["TBD", 38, 38],
-  eclypsedagger: ["TBD", 38, 38],
-  mysticalsword: ["TBD", 38, 38],
+  executionersword: ["The Granfather", 38, 38],
+  eclypsedagger: ["Ethereum Killer", 38, 38],
+  mysticalsword: ["The Maximalist", 38, 38],
   templarsword: ["TBD", 38, 38],
-  dragonsword: ["TBD", 38, 38],
-  moonpartisan: ["TBD", 38, 38],
+  dragonsword: ["Balerion the Black Dread", 38, 38],
+  moonpartisan: ["Moon Boy", 38, 38],
 
-  // Ethereum Killer
   // Laser Eyes
-  // The Maximalist
   // CBDC
   // Decentralizer
-  // MoonBoy
   // PermaBear
 
   // name, level, defense
