@@ -27,7 +27,8 @@
 .scrollupgradeblessed,
 .scrollupgradehigh,
 .scrollupgrademedium,
-.cape, .cape7 {
+.cape,
+.cape7 {
   height: 100%;
 }
 
@@ -138,7 +139,8 @@
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
-  .cape, .cape7 {
+  .cape,
+  .cape7 {
     background-position: 0px -5px;
     background-repeat: no-repeat;
     background-size: 440px;
@@ -156,17 +158,20 @@
     background-image: url(../img/3/item-scrollupgrademedium.png);
   }
 
-  #store .expansion1 {
+  #store .expansion1,
+  #store .expansion2 {
     width: 69px;
     height: 69px;
     background-image: url("../img/3/waypoint.png");
   }
 
-  #store .expansion1.locked {
+  #store .expansion1.locked,
+  #store .expansion2.locked {
     background-position-x: -138px;
   }
 
-  #store .expansion1.unlocked {
+  #store .expansion1.unlocked,
+  #store .expansion2.unlocked {
     background-position-x: -69px;
   }
 
@@ -231,7 +236,8 @@
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
-  .cape, .cape7 {
+  .cape,
+  .cape7 {
     background-position: 0px -3px !important;
     background-size: auto !important;
   }
@@ -248,18 +254,21 @@
     background-image: url(../img/3/item-scrollupgrademedium.png);
   }
 
-  #store .expansion1 {
+  #store .expansion1,
+  #store .expansion2 {
     width: 46px;
     height: 46px;
     background-image: url("../img/2/waypoint.png");
     margin: 0 auto;
   }
 
-  #store .expansion1.locked {
+  #store .expansion1.locked,
+  #store .expansion2.locked {
     background-position-x: -92px;
   }
 
-  #store .expansion1.unlocked {
+  #store .expansion1.unlocked,
+  #store .expansion2.unlocked {
     background-position-x: -46px;
   }
 
@@ -328,7 +337,8 @@
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
-  .cape, .cape7 {
+  .cape,
+  .cape7 {
     background-size: 160px !important;
   }
 
@@ -341,18 +351,21 @@
     display: none;
   }
 
-  #store .expansion1 {
+  #store .expansion1,
+  #store .expansion2 {
     width: 23px;
     height: 23px;
     background-image: url("../img/1/waypoint.png");
     transform: scale(1.3);
   }
 
-  #store .expansion1.locked {
+  #store .expansion1.locked,
+  #store .expansion2.locked {
     background-position-x: -46px;
   }
 
-  #store .expansion1.unlocked {
+  #store .expansion1.unlocked,
+  #store .expansion2.unlocked {
     background-position-x: -23px;
   }
 

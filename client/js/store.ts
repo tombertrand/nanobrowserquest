@@ -42,6 +42,16 @@ class Store {
         requiresInventorySlot: true,
       },
       {
+        id: Types.Store.EXPANSION2,
+        icon: "expansion2",
+        name: "Burning Hell Expansion",
+        description: "Continue the adventure, waypoints will be unlocked.",
+        confirmedMessage: `The Burning Hell Expansion has been unlocked.<br/>
+            You can now access the expansion using the waypoint.<br/>
+            As a thank you bonus you've also received 10 Legendary class upgrade scrolls`.trim(),
+        requiresInventorySlot: true,
+      },
+      {
         id: Types.Store.SCROLLUPGRADEHIGH,
         icon: "scrollupgradehigh",
         name: "High class upgrade scrolls",
@@ -99,8 +109,13 @@ class Store {
     });
 
     this.storeItems.forEach(({ id, icon, name, description, nano, ban, usd, usdRegular, isAvailable }) => {
-      const isLocked = id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1;
-      const isDisabled = !isAvailable || (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1);
+      const isLocked =
+        (id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1) ||
+        (id === Types.Store.EXPANSION2 && !this.app.game.player.expansion2);
+      const isDisabled =
+        !isAvailable ||
+        (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1) ||
+        (id === Types.Store.EXPANSION2 && this.app.game.player.expansion2);
       const price = this.app.game.network === "nano" ? nano : ban;
 
       // ${id === Types.Store.EXPANSION1 ? ' <img src="img/common/50-off.png" width="50" height="31">' : ""}
@@ -231,7 +246,7 @@ class Store {
   purchaseCompleted(payment: any) {
     const item = this.storeItems.find(({ id }) => payment.id === id)!;
     const { id, icon, name, description, confirmedMessage } = item;
-    const isLocked = id !== Types.Store.EXPANSION1;
+    const isLocked = id !== Types.Store.EXPANSION1 || id !== Types.Store.EXPANSION2;
 
     this.app.game.tryUnlockingAchievement("XNO");
 

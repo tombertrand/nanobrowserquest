@@ -129,7 +129,8 @@ class Entity {
         if (
           this.kind === Types.Entities.ANVIL ||
           this.kind === Types.Entities.WAYPOINTX ||
-          this.kind === Types.Entities.WAYPOINTN
+          this.kind === Types.Entities.WAYPOINTN ||
+          this.kind === Types.Entities.WAYPOINTO
         ) {
           this.currentAnimation.setSpeed(150);
         } else if (this.kind === Types.Entities.COWPORTAL || this.kind === Types.Entities.MINOTAURPORTAL) {

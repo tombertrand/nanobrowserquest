@@ -58,6 +58,7 @@ class Player extends Character {
   achievement: any[];
   hasRequestedBossPayout: boolean;
   expansion1: boolean;
+  expansion2: boolean;
   depositAccount: any;
   chatBanEndTime: number;
   hash: string;
@@ -173,6 +174,7 @@ class Player extends Character {
     this.hasRequestedBossPayout = false;
 
     this.expansion1 = false;
+    this.expansion2 = false;
     this.depositAccount = null;
 
     this.chatBanEndTime = 0;
@@ -2061,6 +2063,7 @@ class Player extends Character {
     gems,
     artifact,
     expansion1,
+    expansion2,
     waypoints,
     depositAccount,
     depositAccountIndex,
@@ -2132,6 +2135,7 @@ class Player extends Character {
       this.achievement = achievement;
       this.waypoints = waypoints;
       this.expansion1 = expansion1;
+      this.expansion2 = expansion2;
       this.depositAccount = depositAccount;
       this.depositAccountIndex = depositAccountIndex;
       this.inventory = inventory;
@@ -2187,6 +2191,7 @@ class Player extends Character {
         gems,
         artifact,
         expansion1,
+        expansion2,
         waypoints,
         depositAccount,
         this.auras,

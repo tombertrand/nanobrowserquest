@@ -340,6 +340,7 @@ class Game {
       "anvil-chestblue",
       "waypointx",
       "waypointn",
+      "waypointo",
       "stash",
       "cowportal",
       "minotaurportal",
@@ -1746,6 +1747,7 @@ class Game {
   }
 
   initWaypoints(waypoints) {
+    console.log("~~~~waypoints", waypoints);
     $("#waypoint-list").empty();
     var self = this;
 
@@ -2294,6 +2296,7 @@ class Game {
       gems,
       artifact,
       expansion1,
+      expansion2,
       waypoints,
       depositAccount,
       auras,
@@ -2380,6 +2383,7 @@ class Game {
       self.player.gems = gems;
       self.player.artifact = artifact;
       self.player.expansion1 = expansion1;
+      self.player.expansion2 = expansion2;
       self.player.waypoints = waypoints;
       self.player.skeletonKey = !!achievement[26];
       self.cowLevelPortalCoords = cowLevelPortalCoords;
@@ -3712,6 +3716,8 @@ class Game {
       self.client.onReceivePurchaseCompleted(function (payment) {
         if (payment.id === Types.Store.EXPANSION1) {
           self.player.expansion1 = true;
+        } else if (payment.id === Types.Store.EXPANSION2) {
+          self.player.expansion2 = true;
         }
         self.store.purchaseCompleted(payment);
       });
@@ -4089,7 +4095,11 @@ class Game {
         this.store.openStore();
       } else if (npc.kind === Types.Entities.STASH) {
         this.app.openStash();
-      } else if (npc.kind === Types.Entities.WAYPOINTX || npc.kind === Types.Entities.WAYPOINTN) {
+      } else if (
+        npc.kind === Types.Entities.WAYPOINTX ||
+        npc.kind === Types.Entities.WAYPOINTN ||
+        npc.kind === Types.Entities.WAYPOINTO
+      ) {
         const activeWaypoint = this.getWaypointFromGrid(npc.gridX, npc.gridY);
         this.app.openWaypoint(activeWaypoint);
 

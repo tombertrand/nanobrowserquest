@@ -9,6 +9,7 @@ export const Types: any = {
     SCROLLUPGRADEMEDIUM: 3,
     SCROLLUPGRADEBLESSED: 4,
     CAPE: 5,
+    EXPANSION2: 6,
   },
   Messages: {
     CREATE: 0,
@@ -246,6 +247,7 @@ export const Types: any = {
     SATOSHI: 73,
     WAYPOINTX: 84,
     WAYPOINTN: 93,
+    WAYPOINTO: 188,
     STASH: 114,
     COWPORTAL: 125,
     MINOTAURPORTAL: 135,
@@ -648,6 +650,7 @@ export const kinds = {
   anvil: [Types.Entities.ANVIL, "npc"],
   waypointx: [Types.Entities.WAYPOINTX, "npc"],
   waypointn: [Types.Entities.WAYPOINTN, "npc"],
+  waypointo: [Types.Entities.WAYPOINTO, "npc"],
   stash: [Types.Entities.STASH, "npc"],
   cowportal: [Types.Entities.COWPORTAL, "npc"],
   minotaurportal: [Types.Entities.MINOTAURPORTAL, "npc"],
@@ -728,7 +731,7 @@ Types.itemUniqueMap = {
   dragonsword: ["TBD", 38, 38],
   moonpartisan: ["TBD", 38, 38],
 
-  // Etherum Killer
+  // Ethereum Killer
   // Laser Eyes
   // The Maximalist
   // CBDC
@@ -1682,6 +1685,24 @@ Types.waypoints = [
     name: "Necromancer Lair",
     gridX: 35,
     gridY: 342,
+  },
+  {
+    id: 7,
+    name: "Waypoint1",
+    gridX: 117,
+    gridY: 473,
+  },
+  {
+    id: 8,
+    name: "Waypoint2",
+    gridX: 124,
+    gridY: 473 ,
+  },
+  {
+    id: 9,
+    name: "Waypoint3",
+    gridX: 132,
+    gridY: 473,
   },
 ];
 

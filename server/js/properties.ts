@@ -400,6 +400,8 @@ Properties.getWeaponLevel = function (kind) {
 };
 
 Properties.getHitPoints = function (kind) {
+  console.log("~~~~~~getHitPoints", kind);
+
   return Properties[Types.getKindAsString(kind)].hp;
 };
 Properties.getExp = function (kind) {

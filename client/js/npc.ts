@@ -158,6 +158,7 @@ var NpcTalk = {
 
   waypointx: [""],
   waypointn: [""],
+  waypointo: [""],
   stash: [""],
   cowportal: [
     {

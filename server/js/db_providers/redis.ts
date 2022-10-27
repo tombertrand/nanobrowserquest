@@ -12,6 +12,7 @@ import {
   TRADE_SLOT_RANGE,
   UPGRADE_SLOT_COUNT,
   UPGRADE_SLOT_RANGE,
+  WAYPOINTS_COUNT,
 } from "../../../shared/js/slots";
 import { postMessageToDiscordChatChannelAnvilChannel } from "../discord";
 import Messages from "../message";
@@ -105,13 +106,14 @@ class DatabaseHandler {
             .hget(userKey, "shield") // 18
             .hget(userKey, "artifact") // 19
             .hget(userKey, "expansion1") // 20
-            .hget(userKey, "waypoints") // 21
-            .hget(userKey, "depositAccount") // 22
-            .hget(userKey, "depositAccountIndex") // 23
-            .hget(userKey, "stash") // 24
-            .hget(userKey, "settings") // 25
-            .hget(userKey, "network") // 26
-            .hget(userKey, "trade") // 27
+            .hget(userKey, "expansion2") // 21
+            .hget(userKey, "waypoints") // 22
+            .hget(userKey, "depositAccount") // 23
+            .hget(userKey, "depositAccountIndex") // 24
+            .hget(userKey, "stash") // 25
+            .hget(userKey, "settings") // 26
+            .hget(userKey, "network") // 27
+            .hget(userKey, "trade") // 28
 
             .exec(async (err, replies) => {
               if (err) {
@@ -135,9 +137,10 @@ class DatabaseHandler {
               var cape = replies[17];
               var shield = replies[18];
               var expansion1 = !!parseInt(replies[20] || "0");
-              var depositAccount = replies[22];
-              var depositAccountIndex = replies[23];
-              var network = replies[26];
+              var expansion2 = !!parseInt(replies[21] || "0");
+              var depositAccount = replies[23];
+              var depositAccountIndex = replies[24];
+              var network = replies[27];
 
               const [, rawAccount] = account.split("_");
               const [rawNetwork, rawPlayerAccount] = player.account.split("_");
@@ -238,8 +241,8 @@ class DatabaseHandler {
 
               var stash = new Array(STASH_SLOT_COUNT).fill(0);
               try {
-                if (replies[24]) {
-                  stash = JSON.parse(replies[24]);
+                if (replies[25]) {
+                  stash = JSON.parse(replies[25]);
 
                   // Migrate extended stash
                   if (stash.length < STASH_SLOT_COUNT) {
@@ -264,30 +267,14 @@ class DatabaseHandler {
               // 2 - Locked, the player did not purchase the expansion
               let waypoints;
               try {
-                waypoints = JSON.parse(replies[21]);
+                waypoints = JSON.parse(replies[22]);
 
-                if (waypoints && !expansion1) {
-                  const classicWaypoint = waypoints.slice(0, 3);
-                  const expansion1Waypoint = [2, 2, 2];
-                  waypoints = classicWaypoint.concat(expansion1Waypoint);
+                if (waypoints && waypoints.length < WAYPOINTS_COUNT) {
+                  waypoints = waypoints.concat(new Array(WAYPOINTS_COUNT - waypoints.length).fill(2));
 
                   this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 } else if (!waypoints) {
-                  const classicWaypoint = [1, 0, 0];
-                  const expansion1Waypoint = !!expansion1 ? [0, 0, 0] : [2, 2, 2];
-                  waypoints = classicWaypoint.concat(expansion1Waypoint);
-
-                  this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
-                } else if (expansion1 && waypoints.includes(2)) {
-                  // Unlock expansion waypoints
-                  waypoints = waypoints.map((waypoint, index) => {
-                    if (index === 3) {
-                      waypoint = 1;
-                    } else if (index > 3 && waypoint === 2) {
-                      waypoint = 0;
-                    }
-                    return waypoint;
-                  });
+                  waypoints = [1, 0, 0, 2, 2, 2, 2, 2, 2];
 
                   this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 }
@@ -348,7 +335,7 @@ class DatabaseHandler {
                 });
               }
 
-              var trade = replies[27];
+              var trade = replies[28];
               try {
                 // Migrate trade
                 if (!trade) {
@@ -394,7 +381,7 @@ class DatabaseHandler {
                 Sentry.captureException(errArtifact);
               }
 
-              var settings = replies[25];
+              var settings = replies[26];
               try {
                 settings = Object.assign({ ...defaultSettings }, JSON.parse(settings || "{}"));
               } catch (_err) {
@@ -432,6 +419,7 @@ class DatabaseHandler {
                 gems,
                 artifact,
                 expansion1,
+                expansion2,
                 waypoints,
                 depositAccount,
                 depositAccountIndex,
@@ -496,7 +484,8 @@ class DatabaseHandler {
           .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
           .hset(userKey, "trade", JSON.stringify(new Array(TRADE_SLOT_COUNT).fill(0)))
           .hset(userKey, "expansion1", 0)
-          .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2]))
+          .hset(userKey, "expansion2", 0)
+          .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2, 2, 2, 2]))
           .hset(userKey, "depositAccountIndex", depositAccountIndex)
           .hset(userKey, "depositAccount", depositAccount)
           .hset(userKey, "network", player.network)
@@ -518,7 +507,8 @@ class DatabaseHandler {
               gems: new Array(GEM_COUNT).fill(0),
               artifact: new Array(ARTIFACT_COUNT).fill(0),
               expansion1: false,
-              waypoints: [1, 0, 0, 2, 2, 2],
+              expansion2: false,
+              waypoints: [1, 0, 0, 2, 2, 2, 2, 2, 2],
               stash: new Array(STASH_SLOT_COUNT).fill(0),
               depositAccount,
               depositAccountIndex,
@@ -1366,7 +1356,27 @@ class DatabaseHandler {
     this.client.hget("u:" + player.name, "waypoints", (_err, reply) => {
       try {
         var waypoints = JSON.parse(reply);
-        waypoints = waypoints.slice(0, 3).concat([1, 0, 0]);
+        waypoints[3] = 1;
+        waypoints[4] = 0;
+        waypoints[5] = 0;
+        player.send([Types.Messages.WAYPOINTS_UPDATE, waypoints]);
+        waypoints = JSON.stringify(waypoints);
+        this.client.hset("u:" + player.name, "waypoints", waypoints);
+      } catch (err) {
+        Sentry.captureException(err);
+      }
+    });
+  }
+
+  unlockExpansion2(player) {
+    console.info("Unlock Expansion2: " + player.name);
+    this.client.hset("u:" + player.name, "expansion2", 1);
+    this.client.hget("u:" + player.name, "waypoints", (_err, reply) => {
+      try {
+        var waypoints = JSON.parse(reply);
+        waypoints[6] = 1;
+        waypoints[7] = 0;
+        waypoints[8] = 0;
         player.send([Types.Messages.WAYPOINTS_UPDATE, waypoints]);
         waypoints = JSON.stringify(waypoints);
         this.client.hset("u:" + player.name, "waypoints", waypoints);
@@ -1533,6 +1543,11 @@ class DatabaseHandler {
         player.expansion1 = true;
         this.unlockExpansion1(player);
         this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
+      }
+      if (id === Types.Store.EXPANSION2) {
+        player.expansion2 = true;
+        this.unlockExpansion2(player);
+        this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
       } else if (id === Types.Store.SCROLLUPGRADEBLESSED) {
         this.lootItems({ player, items: [{ item: "scrollupgradeblessed", quantity: 5 }] });
       } else if (id === Types.Store.SCROLLUPGRADEHIGH) {

@@ -45,6 +45,7 @@ class Player extends Character {
   gems: any;
   artifact: any;
   expansion1: boolean;
+  expansion2: boolean;
   waypoints: any[];
   skeletonKey: boolean;
   nanoPotions: number;
@@ -130,6 +131,7 @@ class Player extends Character {
     this.gems = [];
     this.artifact = [];
     this.expansion1 = false;
+    this.expansion2 = false;
     this.waypoints = [];
     this.skeletonKey = false;
     this.nanoPotions = 0;

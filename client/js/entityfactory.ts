@@ -686,6 +686,10 @@ EntityFactory.builders[Types.Entities.WAYPOINTN] = function (id) {
   return new Npcs.Waypointn(id);
 };
 
+EntityFactory.builders[Types.Entities.WAYPOINTO] = function (id) {
+  return new Npcs.Waypointo(id);
+};
+
 EntityFactory.builders[Types.Entities.STASH] = function (id) {
   return new Npcs.Stash(id);
 };

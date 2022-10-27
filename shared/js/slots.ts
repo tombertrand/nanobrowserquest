@@ -1,3 +1,4 @@
+export const WAYPOINTS_COUNT = 9;
 export const INVENTORY_SLOT_COUNT = 24;
 export const STASH_SLOT_PER_PAGE = 48;
 export const STASH_SLOT_PAGES = 6;

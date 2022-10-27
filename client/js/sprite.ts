@@ -51,7 +51,7 @@ class Sprite {
     this.image = new Image();
     this.image.crossOrigin = "Anonymous";
 
-    if (this.id === "item-rune" || this.id === "item-scroll") {
+    if (this.id === "item-rune" || this.id === "item-scroll" || this.id === "waypoint") {
       this.id = this.name;
     }
 

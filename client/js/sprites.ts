@@ -159,8 +159,9 @@ import anvilFail from "../sprites/anvil-fail.json";
 import anvilRecipe from "../sprites/anvil-recipe.json";
 import anvilTransmute from "../sprites/anvil-transmute.json";
 import anvilChestblue from "../sprites/anvil-chestblue.json";
-import waypointx from "../sprites/waypointx.json";
-import waypointn from "../sprites/waypointn.json";
+import waypointx from "../sprites/waypoint.json";
+import waypointn from "../sprites/waypoint.json";
+import waypointo from "../sprites/waypoint.json";
 import stash from "../sprites/stash.json";
 import cowportal from "../sprites/cowportal.json";
 import minotaurportal from "../sprites/minotaurportal.json";
@@ -402,6 +403,7 @@ const sprites = {
   "anvil-chestblue": anvilChestblue,
   waypointx,
   waypointn,
+  waypointo,
   stash,
   cowportal,
   minotaurportal,

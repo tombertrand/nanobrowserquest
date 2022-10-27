@@ -130,6 +130,12 @@ var Npcs = {
     }
   },
 
+  Waypointo: class Waypointo extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.WAYPOINTO);
+    }
+  },
+
   Stash: class Stash extends Npc {
     constructor(id) {
       super(id, Types.Entities.STASH);

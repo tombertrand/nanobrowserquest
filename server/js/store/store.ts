@@ -16,6 +16,13 @@ class Store {
       isAvailable: true,
     },
     {
+      id: Types.Store.EXPANSION2,
+      nano: 0,
+      ban: 0,
+      usd: isDevelopmentAmounts ? 0.01 : 5,
+      isAvailable: true,
+    },
+    {
       id: Types.Store.SCROLLUPGRADEBLESSED,
       nano: 0,
       ban: 0,

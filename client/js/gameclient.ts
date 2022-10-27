@@ -331,13 +331,14 @@ class GameClient {
     var gems = data[20];
     var artifact = data[21];
     var expansion1 = data[22];
-    var waypoints = data[23];
-    var depositAccount = data[24];
-    var auras = data[25];
-    var cowLevelPortalCoords = data[26];
-    var party = data[27];
-    var settings = data[28];
-    var network = data[29];
+    var expansion2 = data[23];
+    var waypoints = data[24];
+    var depositAccount = data[25];
+    var auras = data[26];
+    var cowLevelPortalCoords = data[27];
+    var party = data[28];
+    var settings = data[29];
+    var network = data[30];
 
     if (this.welcome_callback) {
       this.welcome_callback({
@@ -363,6 +364,7 @@ class GameClient {
         gems,
         artifact,
         expansion1,
+        expansion2,
         waypoints,
         depositAccount,
         auras,
