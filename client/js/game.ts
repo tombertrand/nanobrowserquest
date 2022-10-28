@@ -42,6 +42,7 @@ import AnimatedTile from "./tile";
 import Transition from "./transition";
 import Updater from "./updater";
 import { randomRange } from "./utils";
+import { toArray, toString } from "./utils";
 import Warrior from "./warrior";
 
 import type { ChatType } from "../../server/js/types";
@@ -825,9 +826,9 @@ class Game {
         const element = $(this);
         const item = element.attr("data-item");
         const level = element.attr("data-level");
-        const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
+        const rawBonus = toArray(element.attr("data-bonus"));
         const rawSkill = element.attr("data-skill");
-        const rawSocket = element.attr("data-socket") ? JSON.parse(element.attr("data-socket")) : undefined;
+        const rawSocket = toArray(element.attr("data-socket"));
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
         const isEquippedItemSlot = Object.values(Slot).includes(slot);
 
@@ -1042,11 +1043,7 @@ class Game {
       }
     }
     if (rawBonus) {
-      try {
-        bonus = JSON.parse(rawBonus) as number[];
-      } catch (err) {
-        // Silence error
-      }
+      bonus = toArray(rawBonus);
     }
     if (rawSkill) {
       skill = parseInt(rawSkill, 10);
@@ -1280,8 +1277,8 @@ class Game {
           },
           "data-item": this.player.weaponName,
           "data-level": this.player.weaponLevel,
-          "data-bonus": this.player.weaponBonus,
-          "data-socket": this.player.weaponSocket,
+          "data-bonus": toString(this.player.weaponBonus),
+          "data-socket": toString(this.player.weaponSocket),
         }),
       );
     }
@@ -1294,8 +1291,8 @@ class Game {
           },
           "data-item": this.player.armorName,
           "data-level": this.player.armorLevel,
-          "data-bonus": this.player.armorBonus,
-          "data-socket": this.player.armorSocket,
+          "data-bonus": toString(this.player.armorBonus),
+          "data-socket": toString(this.player.armorSocket),
         }),
       );
     }
@@ -1309,7 +1306,7 @@ class Game {
           },
           "data-item": this.player.beltName,
           "data-level": this.player.beltLevel,
-          "data-bonus": this.player.beltBonus,
+          "data-bonus": toString(this.player.beltBonus),
         }),
       );
     }
@@ -1323,7 +1320,7 @@ class Game {
           },
           "data-item": this.player.cape,
           "data-level": this.player.capeLevel,
-          "data-bonus": this.player.capeBonus,
+          "data-bonus": toString(this.player.capeBonus),
         }),
       );
     }
@@ -1337,9 +1334,9 @@ class Game {
           },
           "data-item": this.player.shieldName,
           "data-level": this.player.shieldLevel,
-          "data-bonus": this.player.shieldBonus,
+          "data-bonus": toString(this.player.shieldBonus),
+          "data-socket": toString(this.player.shieldSocket),
           "data-skill": this.player.shieldSkill,
-          "data-socket": this.player.shieldSocket,
         }),
       );
     }
@@ -1355,7 +1352,7 @@ class Game {
           },
           "data-item": this.player.ring1Name,
           "data-level": this.player.ring1Level,
-          "data-bonus": this.player.ring1Bonus,
+          "data-bonus": toString(this.player.ring1Bonus),
         }),
       );
     }
@@ -1371,7 +1368,7 @@ class Game {
           },
           "data-item": this.player.ring2Name,
           "data-level": this.player.ring2Level,
-          "data-bonus": this.player.ring2Bonus,
+          "data-bonus": toString(this.player.ring2Bonus),
         }),
       );
     }
@@ -1385,7 +1382,7 @@ class Game {
           },
           "data-item": this.player.amuletName,
           "data-level": this.player.amuletLevel,
-          "data-bonus": this.player.amuletBonus,
+          "data-bonus": toString(this.player.amuletBonus),
         }),
       );
     }
@@ -1548,9 +1545,9 @@ class Game {
       "data-item": item,
       "data-level": level,
       ...(quantity ? { "data-quantity": quantity } : null),
-      ...(bonus ? { "data-bonus": bonus } : null),
+      ...(bonus ? { "data-bonus": toString(bonus) } : null),
+      ...(socket ? { "data-socket": toString(socket) } : null),
       ...(skill ? { "data-skill": skill } : null),
-      ...(socket ? { "data-socket": socket } : null),
       ...(requirement ? { "data-requirement": requirement } : null),
     });
   }

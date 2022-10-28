@@ -1,6 +1,7 @@
 import { kinds, Types } from "../../shared/js/gametypes";
 import Character from "./character";
 import Exceptions from "./exceptions";
+import { toArray } from "./utils";
 
 interface PartyMember {
   id: number;
@@ -15,16 +16,16 @@ class Player extends Character {
   nameOffsetY: number;
   armorName: string;
   armorLevel: number;
-  armorBonus: null;
-  armorSocket: null;
+  armorBonus: null | number[];
+  armorSocket: null | number[];
   weaponName: string;
   weaponLevel: number;
-  weaponBonus: null;
+  weaponBonus: null | number[];
   weaponElement: "magic" | "flame" | "cold" | "poison";
-  weaponSocket: null;
+  weaponSocket: null | number[];
   beltName: null;
   beltLevel: number | null;
-  beltBonus: null;
+  beltBonus: null | number[];
   cape?: string;
   capeLevel?: number;
   capeBonus: null | number[];
@@ -54,13 +55,13 @@ class Player extends Character {
   absorb: string;
   ring1Name: null;
   ring1Level: number | null;
-  ring1Bonus: null;
+  ring1Bonus: null | number[];
   ring2Name: null;
   ring2Level: number | null;
-  ring2Bonus: null;
+  ring2Bonus: null | number[];
   amuletName: null;
   amuletLevel: number | null;
-  amuletBonus: null;
+  amuletBonus: null | number[];
   auras: string[];
   setBonus: any;
   isLootMoving: boolean;
@@ -308,11 +309,11 @@ class Player extends Character {
   }
 
   setArmorBonus(bonus) {
-    this.armorBonus = bonus;
+    this.armorBonus = toArray(bonus);
   }
 
   setArmorSocket(socket) {
-    this.armorSocket = socket;
+    this.armorSocket = toArray(socket);
   }
 
   getWeaponName() {
@@ -336,25 +337,17 @@ class Player extends Character {
   }
 
   setWeaponBonus(bonus) {
-    console.log("~~~~~bonus", bonus);
-    if (typeof bonus === "string") {
-      try {
-        bonus = JSON.parse(bonus);
-      } catch (e) {
-        // silence
-      }
-    }
-    if (bonus?.length === 2) {
+    this.weaponBonus = toArray(bonus);
+
+    if (this.weaponBonus && this.weaponBonus?.length === 2) {
       this.weaponElement = "flame";
     } else {
       this.weaponElement = "magic";
     }
-    console.log("~~~~weaponElement", this.weaponElement);
-    this.weaponBonus = bonus;
   }
 
   setWeaponSocket(socket) {
-    this.weaponSocket = socket;
+    this.weaponSocket = toArray(socket);
   }
 
   getShieldName() {
@@ -378,11 +371,11 @@ class Player extends Character {
   }
 
   setShieldBonus(bonus) {
-    this.shieldBonus = bonus;
+    this.shieldBonus = toArray(bonus);
   }
 
   setShieldSocket(socket) {
-    this.shieldSocket = socket;
+    this.shieldSocket = toArray(socket);
   }
 
   getShieldSkill() {
@@ -399,7 +392,7 @@ class Player extends Character {
 
       this.beltName = belt;
       this.beltLevel = parseInt(level);
-      this.beltBonus = bonus;
+      this.beltBonus = toArray(bonus);
     } else {
       this.beltName = null;
       this.beltLevel = null;
@@ -413,7 +406,7 @@ class Player extends Character {
 
       this.cape = cape;
       this.capeLevel = parseInt(level);
-      this.capeBonus = bonus;
+      this.capeBonus = toArray(bonus);
     } else {
       this.cape = null;
       this.capeLevel = null;
@@ -427,8 +420,8 @@ class Player extends Character {
 
       this.shieldName = shield;
       this.shieldLevel = parseInt(level);
-      this.shieldBonus = bonus;
-      this.shieldSocket = socket;
+      this.shieldBonus = toArray(bonus);
+      this.shieldSocket = toArray(socket);
       this.shieldSkill = skill;
     } else {
       this.shieldName = null;
@@ -459,7 +452,7 @@ class Player extends Character {
 
       this.ring1Name = name;
       this.ring1Level = parseInt(level);
-      this.ring1Bonus = bonus;
+      this.ring1Bonus = toArray(bonus);
     } else {
       this.ring1Name = null;
       this.ring1Level = null;
@@ -473,7 +466,7 @@ class Player extends Character {
 
       this.ring2Name = name;
       this.ring2Level = parseInt(level);
-      this.ring2Bonus = bonus;
+      this.ring2Bonus = toArray(bonus);
     } else {
       this.ring2Name = null;
       this.ring2Level = null;
@@ -487,7 +480,7 @@ class Player extends Character {
 
       this.amuletName = name;
       this.amuletLevel = parseInt(level);
-      this.amuletBonus = bonus;
+      this.amuletBonus = toArray(bonus);
     } else {
       this.amuletName = null;
       this.amuletLevel = null;

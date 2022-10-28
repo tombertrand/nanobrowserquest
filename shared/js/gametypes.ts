@@ -1693,7 +1693,7 @@ Types.waypoints = [
     id: 8,
     name: "Waypoint2",
     gridX: 124,
-    gridY: 473 ,
+    gridY: 473,
   },
   {
     id: 9,
@@ -2369,6 +2369,9 @@ Types.getItemDetails = function ({
   if (isSocket) {
     socketBonus = Types.getRunesBonus(rawSocket);
 
+    // ~~~~ @TODO Read socket and determine if runeword
+    console.log("~~~~rawSocket", rawSocket);
+
     if (runeRequirement > requirement) {
       requirement = runeRequirement;
     }
@@ -2439,12 +2442,123 @@ Types.itemDescription = {
     "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets it will attempt to remove the last item in the socket(s). There is a 50% chance for the item to be burned.",
 };
 
+// minDamage
+// maxDamage
+// attackDamage
+// health
+// magicDamage
+// defense
+// absorb
+// exp
+// regenerateHealth
+// criticalHit
+// blockChance
+// magicFind
+// attackSpeed
+// drainLife
+// flameDamage
+// lightningDamage
+// pierceDamage
+// highHealth
+// coldDamage
+// freezeChance
+// reduceFrozenChance
+// magicResistance
+// flameResistance
+// lightningResistance
+// coldResistance
+// poisonResistance
+
 Types.RuneWords = {
-  ethbtcxno: {
-    name: "The Maximalist",
-    bonus: {
-      attackDamage: 10,
-      defense: 10,
+  weapon: {
+    "ban-nan-mir-al-btc": {
+      name: "Buy the dip",
+      bonus: {
+        minDamage: 25,
+        attackDamage: 10,
+        magicDamage: 10,
+        magicResistance: 15,
+        exp: 10,
+      },
     },
+    "las-tor-mir": {
+      name: "Cold Wallet",
+      bonus: {
+        attackDamage: 15,
+        coldDamage: 25,
+        freezeChance: 10,
+        coldResistance: 15,
+      },
+    },
+    "bul-mir-zal-um-vax": {
+      name: "Hot Wallet",
+      bonus: {
+        maxDamage: 10,
+        attackDamage: 15,
+        flameDamage: 20,
+        flameResistance: 15,
+        pierceDamage: 10,
+      },
+    },
+    // "": {
+    //   name: "ASIC",
+    //   bonus: {
+    //     pierceDamage: 10,
+    //   },
+    // },
   },
+  armor: {
+    "do-las-sol-vod-jah-por": {
+      name: "Melon Musk",
+      bonus: {
+        defense: 20,
+        magicFind: 15,
+        lightningResistance: 10,
+        regenerateHealth: 20,
+        preventRegenerateHealth: 20,
+        coldResistance: 10,
+        reduceFrozenChance: 20,
+      },
+    },
+    // ethbtcxno: {
+    //   name: "EIP-1559",
+    //   bonus: {},
+    // },
+    // ethbtcxno: {
+    //   name: "SHA-256",
+    //   bonus: {},
+    // },
+    // ethbtcxno: {
+    //   name: "Double Spend",
+    //   bonus: {},
+    // },
+    // ethbtcxno: {
+    //   name: "Echo Chamber",
+    //   bonus: {},
+    // },
+    // ethbtcxno: {
+    //   name: "Know Your Customer",
+    //   bonus: {},
+    // },
+    // ethbtcxno: {
+    //   name: "Growing Seed",
+    //   bonus: {},
+    // },
+    // ethbtcxno: {
+    //   name: "The Validator",
+    //   bonus: {},
+    // },
+    // ethbtcxno: {
+    //   name: "Not Your Key Not Your Crypto",
+    //   bonus: {},
+    // },
+  },
+  shield: {},
 };
+
+// Living Whitepaper
+// Smart contract
+// Open Representative Voting
+// Lightweight Node
+// Sub Second Cormirmation
+// Confirmations Per Second

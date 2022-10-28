@@ -1256,7 +1256,7 @@ class Player extends Character {
         item: Types.getKindAsString(kind),
         level,
         bonus: bonus ? JSON.stringify(bonus) : null,
-        socket: JSON.stringify(getRandomSockets({ kind, baseLevel, isLuckySlot }).socket),
+        socket: JSON.stringify(getRandomSockets({ kind, baseLevel, isLuckySlot })),
         skill,
         isUnique,
       };

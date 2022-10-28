@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import { Types } from "../../shared/js/gametypes";
 import storage from "./storage";
 import Store from "./store";
-import { isValidAccountAddress, TRANSITIONEND } from "./utils";
+import { isValidAccountAddress, toString, TRANSITIONEND } from "./utils";
 
 const networkDividerMap = {
   nano: 100000,
@@ -884,7 +884,7 @@ class App {
       .css("background-image", 'url("' + weaponPath + '")')
       .attr("data-item", weapon)
       .attr("data-level", weaponLevel)
-      .attr("data-bonus", typeof weaponBonus === "string" ? weaponBonus : JSON.stringify(weaponBonus));
+      .attr("data-bonus", toString(weaponBonus));
     $("#player-weapon").text(`${Types.getDisplayName(weapon, !!weaponBonus)} +${weaponLevel}`);
 
     if (armor !== "firefox") {
@@ -892,7 +892,7 @@ class App {
         .css("background-image", 'url("' + armorPath + '")')
         .attr("data-item", armor)
         .attr("data-level", armorLevel)
-        .attr("data-bonus", typeof armorBonus === "string" ? armorBonus : JSON.stringify(armorBonus));
+        .attr("data-bonus", toString(armorBonus));
       $("#player-armor").text(`${Types.getDisplayName(armor, !!armorBonus)} +${armorLevel}`);
     }
   }

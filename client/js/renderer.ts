@@ -731,7 +731,6 @@ class Renderer {
           if (typeof entity.weaponLevel === "number" && entity.weaponLevel >= 7) {
             // @TODO configure the weapon element
             var element = this.game.player.weaponElement || "magic";
-            var effectLevel = 8;
             var sprite = this.game.sprites[`weapon-effect-${element}`];
             var anim = this.game.weaponEffectAnimation;
 
@@ -741,8 +740,6 @@ class Renderer {
             } else if (entity.weaponLevel >= 9) {
               image = "9";
             }
-
-            console.log("~~~~", `weapon-effect-${element}${effectLevel}`);
 
             if (sprite && anim) {
               var frame = anim.currentFrame,
