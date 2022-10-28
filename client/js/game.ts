@@ -17,6 +17,7 @@ import {
   UPGRADE_SLOT_COUNT,
   UPGRADE_SLOT_RANGE,
 } from "../../shared/js/slots";
+import { toArray, toString } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
 import App from "./app";
@@ -42,7 +43,6 @@ import AnimatedTile from "./tile";
 import Transition from "./transition";
 import Updater from "./updater";
 import { randomRange } from "./utils";
-import { toArray, toString } from "./utils";
 import Warrior from "./warrior";
 
 import type { ChatType } from "../../server/js/types";
@@ -1032,6 +1032,7 @@ class Game {
     const level = parseInt(fromItemEl.attr("data-level"));
     const quantity = parseInt(fromItemEl.attr("data-quantity")) || null;
     const rawBonus = fromItemEl.attr("data-bonus");
+    const socket = toArray(fromItemEl.attr("data-socket"));
     const rawSkill = fromItemEl.attr("data-skill");
     let bonus: number[];
     let skill: number;
@@ -1088,7 +1089,7 @@ class Game {
 
     if (typeof level === "number") {
       if (toSlot === Slot.WEAPON) {
-        this.player.switchWeapon(item, level, bonus);
+        this.player.switchWeapon(item, level, bonus, socket);
       } else if (toSlot === Slot.ARMOR) {
         this.player.switchArmor(this.sprites[item], level, bonus);
       } else if (toSlot === Slot.CAPE) {
@@ -2951,6 +2952,7 @@ class Game {
             currentEntity.setWeaponName(entity.weaponName);
             currentEntity.setWeaponLevel(entity.weaponLevel);
             currentEntity.setWeaponBonus(entity.weaponBonus);
+            currentEntity.setWeaponBonus(entity.weaponSocket);
             currentEntity.setSpriteName(entity.armorName);
             currentEntity.setArmorName(entity.armorName);
             currentEntity.setArmorLevel(entity.armorLevel);
@@ -3494,7 +3496,7 @@ class Game {
         self.player.setBonus = bonus;
       });
 
-      self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, skill, type }) {
+      self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, socket, skill, type }) {
         var player = self.getEntityById(playerId);
         var name = Types.getKindAsString(kind);
 
@@ -3502,7 +3504,7 @@ class Game {
           if (type === "armor") {
             player.switchArmor(self.sprites[name], level, bonus);
           } else if (type === "weapon") {
-            player.switchWeapon(name, level, bonus);
+            player.switchWeapon(name, level, bonus, socket);
           } else if (type === "cape") {
             if (!kind || !level || !bonus) {
               player.removeCape();

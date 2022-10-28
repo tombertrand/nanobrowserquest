@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
+import { toString } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
 import { postMessageToDiscordChatChannel } from "./discord";
@@ -1353,7 +1354,9 @@ class Player extends Character {
       this.target,
       this.name,
       `${this.armor}:${this.armorLevel}${this.armorBonus ? `:${this.armorBonus}` : ""}`,
-      `${this.weapon}:${this.weaponLevel}${this.weaponBonus ? `:${this.weaponBonus}` : ""}`,
+      `${this.weapon}:${this.weaponLevel}${this.weaponBonus ? `:${toString(this.weaponBonus)}` : ""}${
+        this.weaponSocket ? `:${toString(this.weaponSocket)}` : ""
+      }`,
       this.level,
       this.auras,
       this.partyId,
@@ -1366,7 +1369,6 @@ class Player extends Character {
         capeBrightness: this.capeBrightness,
       },
     ];
-
     return basestate.concat(state);
   }
 

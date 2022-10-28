@@ -730,8 +730,14 @@ class Renderer {
 
           if (typeof entity.weaponLevel === "number" && entity.weaponLevel >= 7) {
             // @TODO configure the weapon element
-            var element = this.game.player.weaponElement || "magic";
-            var sprite = this.game.sprites[`weapon-effect-${element}`];
+            let effect = "magic";
+            if (entity.isWeaponUnique) {
+              effect = "flame";
+            } else if (entity.weaponRuneword) {
+              effect = "cold";
+            }
+
+            var sprite = this.game.sprites[`weapon-effect-${effect}`];
             var anim = this.game.weaponEffectAnimation;
 
             var image = "";

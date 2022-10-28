@@ -1,9 +1,10 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { toString } from "../../shared/js/utils";
 import storage from "./storage";
 import Store from "./store";
-import { isValidAccountAddress, toString, TRANSITIONEND } from "./utils";
+import { isValidAccountAddress, TRANSITIONEND } from "./utils";
 
 const networkDividerMap = {
   nano: 100000,

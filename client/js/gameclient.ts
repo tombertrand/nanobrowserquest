@@ -437,6 +437,7 @@ class GameClient {
         weapon,
         weaponLevel,
         weaponBonus,
+        weaponSocket,
         armor,
         armorLevel,
         armorBonus,
@@ -453,7 +454,7 @@ class GameClient {
       if (Types.isPlayer(kind)) {
         name = data[7];
         [armor, armorLevel, armorBonus] = data[8].split(":");
-        [weapon, weaponLevel, weaponBonus] = data[9].split(":");
+        [weapon, weaponLevel, weaponBonus, weaponSocket] = data[9].split(":");
         level = data[10];
         auras = data[11];
         partyId = data[12];
@@ -468,6 +469,7 @@ class GameClient {
         character.setWeaponName(weapon);
         character.setWeaponLevel(weaponLevel);
         character.setWeaponBonus(weaponBonus);
+        character.setWeaponSocket(weaponSocket);
         character.spriteName = armor;
         character.setArmorName(armor);
         character.setArmorLevel(armorLevel);

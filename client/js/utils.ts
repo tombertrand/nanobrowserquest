@@ -65,22 +65,3 @@ export function copyToClipboard(text: string) {
 export function randomRange(min: number, max: number) {
   return min + Math.random() * (max - min);
 }
-
-export const toString = (stringOrArray: string | number[]): string => {
-  if (Array.isArray(stringOrArray)) {
-    return JSON.stringify(stringOrArray);
-  }
-
-  return stringOrArray;
-};
-
-export const toArray = (arrayOrString: string | number[]): number[] | undefined => {
-  if (arrayOrString && typeof arrayOrString === "string") {
-    try {
-      return JSON.parse(arrayOrString);
-    } catch (err) {
-      return;
-    }
-  }
-  return arrayOrString as number[];
-};

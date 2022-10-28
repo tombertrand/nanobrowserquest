@@ -2047,6 +2047,26 @@ Types.getRunesBonus = function (runes: number[]) {
   return Types.getAttributesBonus(attributes);
 };
 
+Types.getRunewordBonus = ({
+  isUnique,
+  socket,
+  type,
+}: {
+  isUnique: boolean;
+  socket: number[];
+  type: "weapon" | "armor" | "shield";
+}) => {
+  let runeword;
+  let runewordBonus;
+
+  if (!isUnique && socket?.length && !socket.some(s => s === 0)) {
+    const wordSocket = socket.map(s => Types.RuneList[s - 1]).join("-");
+    ({ name: runeword, bonus: runewordBonus } = Types.Runewords[type]?.[wordSocket] || {});
+  }
+
+  return { runeword, runewordBonus };
+};
+
 Types.getAttributesBonus = function (attributes) {
   const bonus: { type: string; stats: number; description: string }[] = Object.entries(attributes).map(
     ([type, stats]: [string, number]) => ({
@@ -2396,13 +2416,7 @@ Types.getItemDetails = function ({
   }
 
   if (isSocket) {
-    let runeword;
-    let runewordBonus;
-
-    if (!isUnique && rawSocket?.length && !rawSocket.some(s => s === 0)) {
-      const wordSocket = rawSocket.map(s => Types.RuneList[s - 1]).join("-");
-      ({ name: runeword, bonus: runewordBonus } = Types.Runewords[type]?.[wordSocket] || {});
-    }
+    const { runeword, runewordBonus } = Types.getRunewordBonus({ isUnique, socket: rawSocket, type });
 
     if (runeword && runewordBonus) {
       name = runeword;

@@ -1,7 +1,9 @@
+import isEqual from "lodash/isEqual";
+
 import { kinds, Types } from "../../shared/js/gametypes";
+import { toArray } from "../../shared/js/utils";
 import Character from "./character";
 import Exceptions from "./exceptions";
-import { toArray } from "./utils";
 
 interface PartyMember {
   id: number;
@@ -21,8 +23,9 @@ class Player extends Character {
   weaponName: string;
   weaponLevel: number;
   weaponBonus: null | number[];
-  weaponElement: "magic" | "flame" | "cold" | "poison";
   weaponSocket: null | number[];
+  weaponRuneword: null | string;
+  isWeaponUnique: boolean;
   beltName: null;
   beltLevel: number | null;
   beltBonus: null | number[];
@@ -112,7 +115,8 @@ class Player extends Character {
     this.weaponName = "dagger";
     this.weaponLevel = 1;
     this.weaponBonus = null;
-    this.weaponElement = null;
+    this.weaponRuneword = null;
+    this.isWeaponUnique = false;
     this.beltName = null;
     this.beltLevel = 1;
     this.beltBonus = null;
@@ -342,16 +346,18 @@ class Player extends Character {
 
   setWeaponBonus(bonus) {
     this.weaponBonus = toArray(bonus);
-
-    if (this.weaponBonus && this.weaponBonus?.length === 2) {
-      this.weaponElement = "flame";
-    } else {
-      this.weaponElement = "magic";
-    }
+    this.isWeaponUnique = !!(this.weaponBonus && this.weaponBonus?.length === 2);
   }
 
   setWeaponSocket(socket) {
     this.weaponSocket = toArray(socket);
+    this.weaponRuneword = Array.isArray(this.weaponSocket)
+      ? Types.getRunewordBonus({
+          isUnique: this.isWeaponUnique,
+          socket: this.weaponSocket,
+          type: "weapon",
+        }).runeword
+      : null;
   }
 
   getWeaponSocket() {
@@ -512,7 +518,7 @@ class Player extends Character {
     return this.weaponName !== null;
   }
 
-  switchWeapon(weapon, level: number, bonus?: number[]) {
+  switchWeapon(weapon, level: number, bonus?: number[], socket?: number[]) {
     var isDifferent = false;
 
     if (weapon !== this.getWeaponName()) {
@@ -523,9 +529,13 @@ class Player extends Character {
       isDifferent = true;
       this.setWeaponLevel(level);
     }
-    if (bonus !== this.getWeaponBonus()) {
+    if (!isEqual(bonus, this.getWeaponBonus())) {
       isDifferent = true;
       this.setWeaponBonus(bonus);
+    }
+    if (!isEqual(socket, this.getWeaponSocket())) {
+      isDifferent = true;
+      this.setWeaponSocket(socket);
     }
 
     if (isDifferent && this.switch_callback) {
