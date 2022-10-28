@@ -483,6 +483,7 @@ class Game {
       "item-ringraistone",
       "item-ringfountain",
       "item-ringminotaur",
+      "item-ringbalrog",
       "item-amuletsilver",
       "item-amuletgold",
       "item-amuletcow",
@@ -885,7 +886,13 @@ class Game {
               ${runeRank ? ` (#${runeRank})` : ""}
               ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
             </div>
-            ${itemClass ? `<div class="item-class">(${isUnique ? "Unique " : ""}${itemClass} class item)</div>` : ""}
+            ${
+              itemClass
+                ? `<div class="item-class">(${isUnique ? "Unique " : ""}${
+                    isRuneword ? "Runeword " : ""
+                  }${itemClass} class item)</div>`
+                : ""
+            }
             ${
               socket
                 ? `<div class="socket-container">

@@ -873,10 +873,12 @@ class App {
     var weapon = this.game.player.getWeaponName();
     var weaponLevel = this.game.player.getWeaponLevel();
     var weaponBonus = this.game.player.getWeaponBonus();
+    var weaponSocket = this.game.player.getWeaponSocket();
 
     var armor = this.game.player.getArmorName();
     var armorLevel = this.game.player.getArmorLevel();
     var armorBonus = this.game.player.getArmorBonus();
+    var armorSocket = this.game.player.getArmorSocket();
     var weaponPath = getIconPath(weapon);
     var armorPath = getIconPath(armor);
 
@@ -884,7 +886,8 @@ class App {
       .css("background-image", 'url("' + weaponPath + '")')
       .attr("data-item", weapon)
       .attr("data-level", weaponLevel)
-      .attr("data-bonus", toString(weaponBonus));
+      .attr("data-bonus", toString(weaponBonus))
+      .attr("data-socket", toString(weaponSocket));
     $("#player-weapon").text(`${Types.getDisplayName(weapon, !!weaponBonus)} +${weaponLevel}`);
 
     if (armor !== "firefox") {
@@ -892,7 +895,8 @@ class App {
         .css("background-image", 'url("' + armorPath + '")')
         .attr("data-item", armor)
         .attr("data-level", armorLevel)
-        .attr("data-bonus", toString(armorBonus));
+        .attr("data-bonus", toString(armorBonus))
+        .attr("data-socket", toString(armorSocket));
       $("#player-armor").text(`${Types.getDisplayName(armor, !!armorBonus)} +${armorLevel}`);
     }
   }

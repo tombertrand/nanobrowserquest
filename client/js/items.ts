@@ -625,6 +625,13 @@ var Items = {
     }
   },
 
+  RingBalrog: class RingBalrog extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGBALROG, "ring");
+      this.lootMessage = "You pick up the Balrog Ring of Power";
+    }
+  },
+
   AmuletSilver: class AmuletSilver extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETSILVER, "amulet");

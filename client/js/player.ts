@@ -308,6 +308,10 @@ class Player extends Character {
     return this.armorBonus;
   }
 
+  getArmorSocket() {
+    return this.armorSocket;
+  }
+
   setArmorBonus(bonus) {
     this.armorBonus = toArray(bonus);
   }
@@ -350,6 +354,10 @@ class Player extends Character {
     this.weaponSocket = toArray(socket);
   }
 
+  getWeaponSocket() {
+    return this.weaponSocket;
+  }
+
   getShieldName() {
     return this.shieldName;
   }
@@ -376,6 +384,10 @@ class Player extends Character {
 
   setShieldSocket(socket) {
     this.shieldSocket = toArray(socket);
+  }
+
+  getShieldSocket() {
+    return this.shieldSocket;
   }
 
   getShieldSkill() {

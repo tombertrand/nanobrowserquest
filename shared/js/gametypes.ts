@@ -220,6 +220,7 @@ export const Types: any = {
     RINGRAISTONE: 117,
     RINGFOUNTAIN: 126,
     RINGMINOTAUR: 132,
+    RINGBALROG: 189,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
     AMULETCOW: 116,
@@ -431,6 +432,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGRAISTONE,
   Types.Entities.RINGFOUNTAIN,
   Types.Entities.RINGMINOTAUR,
+  Types.Entities.RINGBALROG,
 ];
 
 Types.Entities.Amulets = [
@@ -563,6 +565,7 @@ export const kinds = {
   ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
   ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
   ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Minotaur Hell Freeze", 36],
+  ringbalrog: [Types.Entities.RINGBALROG, "ring", "Balrog Ring of Power", 54],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
@@ -773,7 +776,15 @@ Types.itemUniqueMap = {
 };
 
 Types.isSuperUnique = (itemName: string) =>
-  ["ringnecromancer", "ringraistone", "ringfountain", "ringminotaur", "amuletcow", "amuletfrozen"].includes(itemName);
+  [
+    "ringnecromancer",
+    "ringraistone",
+    "ringfountain",
+    "ringminotaur",
+    "ringbalrog",
+    "amuletcow",
+    "amuletfrozen",
+  ].includes(itemName);
 
 Types.setBonus = {
   minotaur: {
@@ -1238,6 +1249,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         Types.Entities.RINGRAISTONE,
         Types.Entities.RINGFOUNTAIN,
         Types.Entities.RINGMINOTAUR,
+        Types.Entities.RINGBALROG,
       ].includes(kindOrString)
     ) {
       return true;
@@ -1253,7 +1265,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
       return true;
     }
   } else {
-    if (["ringnecromancer", "ringraistone", "ringfountain", "ringminotaur"].includes(kindOrString)) {
+    if (["ringnecromancer", "ringraistone", "ringfountain", "ringminotaur", "ringbalrog"].includes(kindOrString)) {
       return true;
     }
     if ("ringbronze" === kindOrString && bonus.length === 2) {
@@ -1883,6 +1895,9 @@ Types.getBonus = function (rawBonus, level) {
   const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const preventRegenerateHealthPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const poisonDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
+  const skillTimeoutPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1911,6 +1926,9 @@ Types.getBonus = function (rawBonus, level) {
     lightningResistancePerLevel,
     coldResistancePerLevel,
     poisonResistancePerLevel,
+    preventRegenerateHealthPerLevel,
+    poisonDamagePerLevel,
+    skillTimeoutPerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];
@@ -2381,11 +2399,9 @@ Types.getItemDetails = function ({
     let runeword;
     let runewordBonus;
 
-    // ~~~~ @TODO Read socket and determine if runeword
-
     if (!isUnique && rawSocket?.length && !rawSocket.some(s => s === 0)) {
       const wordSocket = rawSocket.map(s => Types.RuneList[s - 1]).join("-");
-      ({ name: runeword, bonus: runewordBonus } = Types.Runewords[type]?.[wordSocket]) || {};
+      ({ name: runeword, bonus: runewordBonus } = Types.Runewords[type]?.[wordSocket] || {});
     }
 
     if (runeword && runewordBonus) {

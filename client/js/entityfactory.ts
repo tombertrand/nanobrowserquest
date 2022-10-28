@@ -496,6 +496,10 @@ EntityFactory.builders[Types.Entities.RINGMINOTAUR] = function (id) {
   return new Items.RingMinotaur(id);
 };
 
+EntityFactory.builders[Types.Entities.RINGBALROG] = function (id) {
+  return new Items.RingBalrog(id);
+};
+
 EntityFactory.builders[Types.Entities.AMULETSILVER] = function (id) {
   return new Items.AmuletSilver(id);
 };

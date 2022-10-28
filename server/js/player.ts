@@ -1318,6 +1318,12 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat([...coldDamageBonus, ...freezeChanceBonus]);
+      } else if (kind === Types.Entities.RINGBALROG) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 4)
+          .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus]).slice(0, 1))
+          .concat(_.shuffle([21, 22, 23, 24, 25]).slice(0, 2))
+          .concat([28]);
       }
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
