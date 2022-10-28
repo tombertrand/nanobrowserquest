@@ -728,8 +728,9 @@ footer, header, hgroup, menu, nav, section {
         color: #d16afa;
         margin-bottom: 6px;
     }
-    .item-title.unique {
-        color: #d3c59c
+    .item-title.unique,
+    .item-title.rune {
+        color: #d3c59c;
     }
     .item-unique {
         /* box-shadow: inset 0px 0px 3px 1px gold; */

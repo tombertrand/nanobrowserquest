@@ -859,6 +859,7 @@ class Game {
           name,
           isUnique,
           isRune,
+          isRuneword,
           itemClass,
           defense,
           damage,
@@ -879,7 +880,7 @@ class Game {
         } = Types.getItemDetails({ item, level, rawBonus, rawSkill, rawSocket });
 
         return `<div>
-            <div class="item-title${isUnique || isRune ? " unique" : ""}">
+            <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
               ${name}${level ? ` (+${level})` : ""}
               ${runeRank ? ` (#${runeRank})` : ""}
               ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}

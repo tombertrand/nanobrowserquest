@@ -2026,6 +2026,10 @@ Types.getRunesBonus = function (runes: number[]) {
     });
   });
 
+  return Types.getAttributesBonus(attributes);
+};
+
+Types.getAttributesBonus = function (attributes) {
   const bonus: { type: string; stats: number; description: string }[] = Object.entries(attributes).map(
     ([type, stats]: [string, number]) => ({
       type,
@@ -2320,6 +2324,7 @@ Types.getItemDetails = function ({
   const runeRequirement = isSocket ? Types.getHighestSocketRequirement(rawSocket) : null;
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
+  let name = Types.getDisplayName(item, isUnique);
   let magicDamage = 0;
   let healthBonus = 0;
   let bonus = [];
@@ -2329,6 +2334,7 @@ Types.getItemDetails = function ({
   let partyBonus = [];
   let runeBonus = [];
   let runeRank: null | Number = null;
+  let isRuneword = false;
 
   let type = "item";
 
@@ -2366,32 +2372,45 @@ Types.getItemDetails = function ({
       bonus = Types.getBonus(rawBonus, level);
     }
   }
-  if (isSocket) {
-    socketBonus = Types.getRunesBonus(rawSocket);
-
-    // ~~~~ @TODO Read socket and determine if runeword
-    console.log("~~~~rawSocket", rawSocket);
-
-    if (runeRequirement > requirement) {
-      requirement = runeRequirement;
-    }
-  }
 
   if (rawSetBonus) {
     setBonus = Types.getSetBonus(rawSetBonus);
   }
 
-  if (isRune) {
+  if (isSocket) {
+    let runeword;
+    let runewordBonus;
+
+    // ~~~~ @TODO Read socket and determine if runeword
+
+    if (!isUnique && rawSocket?.length && !rawSocket.some(s => s === 0)) {
+      const wordSocket = rawSocket.map(s => Types.RuneList[s - 1]).join("-");
+      ({ name: runeword, bonus: runewordBonus } = Types.Runewords[type]?.[wordSocket]) || {};
+    }
+
+    if (runeword && runewordBonus) {
+      name = runeword;
+      socketBonus = Types.getAttributesBonus(runewordBonus);
+      isRuneword = true;
+    } else {
+      socketBonus = Types.getRunesBonus(rawSocket);
+    }
+
+    if (runeRequirement > requirement) {
+      requirement = runeRequirement;
+    }
+  } else if (isRune) {
     runeBonus = Types.getRuneBonus(item);
     runeRank = rune.rank;
   }
 
   return {
     item,
-    name: Types.getDisplayName(item, isUnique),
+    name,
     type,
     isUnique,
     isRune,
+    isRuneword,
     itemClass,
     ...(isArmor || isBelt || isCape || isShield ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
@@ -2469,7 +2488,7 @@ Types.itemDescription = {
 // coldResistance
 // poisonResistance
 
-Types.RuneWords = {
+Types.Runewords = {
   weapon: {
     "ban-nan-mir-al-btc": {
       name: "Buy the dip",
@@ -2509,7 +2528,7 @@ Types.RuneWords = {
   },
   armor: {
     "do-las-sol-vod-jah-por": {
-      name: "Melon Musk",
+      name: "Melon Tusk",
       bonus: {
         defense: 20,
         magicFind: 15,
