@@ -14,7 +14,8 @@ import {
   UPGRADE_SLOT_RANGE,
   WAYPOINTS_COUNT,
 } from "../../../shared/js/slots";
-import { postMessageToDiscordChatChannelAnvilChannel } from "../discord";
+import { toArray } from "../../../shared/js/utils";
+import { postMessageToDiscordAnvilChannel } from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
@@ -1033,7 +1034,7 @@ class DatabaseHandler {
                 const { item, level, quantity, bonus, skill, socket } = rawItem;
                 let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
 
-                // Increase the scroll count
+                // Increase the scroll/rune count
                 if (slotIndex > -1) {
                   if (Types.isSingle(item)) {
                     inventory[slotIndex] = `${item}:1`;
@@ -1053,6 +1054,7 @@ class DatabaseHandler {
                     inventory[slotIndex] = [item, levelQuantity, bonus, socket, skill].filter(Boolean).join(":");
                   } else if (player.hasParty()) {
                     // @TODO re-call the lootItems fn with next party member
+                    // Currently the item does not get saved
                   }
                 }
               });
@@ -1125,6 +1127,13 @@ class DatabaseHandler {
         let isLucky7 = false;
         let isMagic8 = false;
         let upgrade = JSON.parse(reply);
+
+        // Make sure the last slot is cleaned up
+        if (upgrade[upgrade.length - 1] !== 0) {
+          player.send([Types.Messages.UPGRADE, upgrade]);
+          return;
+        }
+
         let isBlessed = false;
         const slotIndex = upgrade.findIndex(index => {
           if (index) {
@@ -1132,7 +1141,7 @@ class DatabaseHandler {
               isBlessed = true;
             }
 
-            return index.startsWith("scroll");
+            return index.startsWith("scroll") || index.startsWith("stone");
           }
         });
         let luckySlot = randomInt(1, 9);
@@ -1150,6 +1159,7 @@ class DatabaseHandler {
         let nextRuneRank = null;
         let socketItem = null;
         let extractedItem = null;
+        let socketCount = null;
 
         if (isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus, socket, skill] = filteredUpgrade[0].split(":");
@@ -1180,11 +1190,11 @@ class DatabaseHandler {
             }
 
             if (upgradedLevel >= 8 || (isUnique && upgradedLevel >= 7)) {
-              this.logUpgrade({ player, item: upgradedItem, isSuccess, isUnique, isLuckySlot });
+              this.logUpgrade({ player, item: upgradedItem, isSuccess, isLuckySlot });
             }
           } else {
             if (parseInt(level) >= 8) {
-              this.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false, isUnique, isLuckySlot });
+              this.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false, isLuckySlot });
             }
           }
 
@@ -1202,13 +1212,14 @@ class DatabaseHandler {
           upgrade[upgrade.length - 1] = socketItem;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((result = isValidStoneSocket(filteredUpgrade, isLuckySlot))) {
-          ({ socketItem, extractedItem } = result);
-
+          isSuccess = true;
+          ({ socketItem, extractedItem, socketCount } = result);
           if (extractedItem) {
             this.lootItems({ player, items: [extractedItem] });
           }
-
-          isSuccess = true;
+          if (socketCount === 6) {
+            this.logUpgrade({ player, item: socketItem, isSuccess, isLuckySlot });
+          }
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = socketItem;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
@@ -1593,13 +1604,28 @@ class DatabaseHandler {
     }
   }
 
-  logUpgrade({ player, item, isSuccess, isUnique, isLuckySlot }) {
+  logUpgrade({
+    player,
+    item,
+    isSuccess,
+    isLuckySlot,
+  }: {
+    player: Player;
+    item: string;
+    isSuccess: boolean;
+    isLuckySlot: boolean;
+  }) {
     const now = Date.now();
     this.client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
+
     if (isSuccess) {
       try {
-        const [itemName, level] = item.split(":");
+        const [itemName, level, bonus, rawSocket] = item.split(":");
+        const socket = toArray(rawSocket);
+        const isUnique = Types.isUnique(itemName, bonus);
+        let message = "";
         let output = kinds[itemName][2];
+
         if (isUnique) {
           output =
             Types.itemUniqueMap[itemName]?.[0] ||
@@ -1608,9 +1634,12 @@ class DatabaseHandler {
             }${output}`;
         }
 
-        postMessageToDiscordChatChannelAnvilChannel(
-          `${player.name} upgraded a +${level} ${output}${isLuckySlot ? " with the lucky slot" : ""} 🔥`,
-        );
+        if (socket?.length === 6) {
+          message = `${player.name} added 6 sockets to a +${level} ${output}`;
+        } else {
+          message = `${player.name} upgraded a +${level} ${output}`;
+        }
+        postMessageToDiscordAnvilChannel(`${message}${isLuckySlot ? " with the lucky slot" : ""} 🔥`);
       } catch (err) {
         Sentry.captureException(err);
       }

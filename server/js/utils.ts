@@ -417,7 +417,7 @@ export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
       socketCount = 1;
     }
     if (isLuckySlot && socketCount !== 6) {
-      socketCount++;
+      socketCount += 1;
     }
   } else if (maxSockets === 4) {
     if (randomSocket < 3) {
@@ -430,7 +430,7 @@ export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
       socketCount = 1;
     }
     if (isLuckySlot && socketCount !== 4) {
-      socketCount++;
+      socketCount += 1;
     }
   } else if (maxSockets === 3) {
     if (randomSocket < 3) {
@@ -441,7 +441,7 @@ export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
       socketCount = 1;
     }
     if (isLuckySlot && socketCount !== 3) {
-      socketCount++;
+      socketCount += 1;
     }
   }
 
@@ -539,6 +539,7 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
 
   let socket;
   let extractedItem;
+  let socketCount;
   try {
     socket = JSON.parse(rawSocket);
   } catch (err) {
@@ -559,6 +560,7 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     const baseLevel = Types.getBaseLevel(kind);
 
     socket = getRandomSockets({ kind, baseLevel, isLuckySlot });
+    socketCount = socket.length;
   } else {
     let lastSocketIndex = socket.findIndex(i => i === 0);
     if (lastSocketIndex === -1) {
@@ -577,5 +579,5 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     extractedItem = { item: `rune-${runeName}`, quantity: 1 };
   }
 
-  return { socketItem, extractedItem };
+  return { socketItem, extractedItem, socketCount };
 };

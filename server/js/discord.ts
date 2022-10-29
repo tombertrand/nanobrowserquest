@@ -23,7 +23,7 @@ const postMessageToDiscordChatChannel = (content: string) => {
   }
 };
 
-const postMessageToDiscordChatChannelAnvilChannel = (content: string) => {
+const postMessageToDiscordAnvilChannel = (content: string) => {
   if (process.env.NODE_ENV !== "production") return;
 
   try {
@@ -44,4 +44,4 @@ const postMessageToDiscordChatChannelAnvilChannel = (content: string) => {
   }
 };
 
-export { postMessageToDiscordChatChannel, postMessageToDiscordChatChannelAnvilChannel };
+export { postMessageToDiscordChatChannel, postMessageToDiscordAnvilChannel };
