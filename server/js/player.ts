@@ -1324,7 +1324,7 @@ class Player extends Character {
           .slice(0, 4)
           .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus]).slice(0, 1))
           .concat(_.shuffle([21, 22, 23, 24, 25]).slice(0, 2))
-          .concat([28]);
+          .concat(_.shuffle([26, 27, 28, 29, 30]).slice(0, 1));
       }
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };

@@ -404,7 +404,7 @@ var Items = {
   RuneSat: class RuneSat extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.SAT, "rune");
-      this.lootMessage = "You pick up an SAT Rune";
+      this.lootMessage = "You pick up a SAT Rune";
     }
   },
 
@@ -418,49 +418,49 @@ var Items = {
   RuneBul: class RuneBul extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.BUL, "rune");
-      this.lootMessage = "You pick up an BUL Rune";
+      this.lootMessage = "You pick up a BUL Rune";
     }
   },
 
   RuneNan: class RuneNan extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.NAN, "rune");
-      this.lootMessage = "You pick up an NAN Rune";
+      this.lootMessage = "You pick up a NAN Rune";
     }
   },
 
   RuneMir: class RuneMir extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.MIR, "rune");
-      this.lootMessage = "You pick up an MIR Rune";
+      this.lootMessage = "You pick up a MIR Rune";
     }
   },
 
   RuneGel: class RuneGel extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.GEL, "rune");
-      this.lootMessage = "You pick up an GEL Rune";
+      this.lootMessage = "You pick up a GEL Rune";
     }
   },
 
   RuneDo: class RuneDo extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.DO, "rune");
-      this.lootMessage = "You pick up an DO Rune";
+      this.lootMessage = "You pick up a DO Rune";
     }
   },
 
   RuneBan: class RuneBan extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.BAN, "rune");
-      this.lootMessage = "You pick up an BAN Rune";
+      this.lootMessage = "You pick up a BAN Rune";
     }
   },
 
   RuneSol: class RuneSol extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.SOL, "rune");
-      this.lootMessage = "You pick up an SOL Rune";
+      this.lootMessage = "You pick up a SOL Rune";
     }
   },
 
@@ -474,28 +474,21 @@ var Items = {
   RuneHex: class RuneHex extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.HEX, "rune");
-      this.lootMessage = "You pick up an HEX Rune";
+      this.lootMessage = "You pick up a HEX Rune";
     }
   },
 
   RuneZal: class RuneZal extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.ZAL, "rune");
-      this.lootMessage = "You pick up an ZAL Rune";
+      this.lootMessage = "You pick up a ZAL Rune";
     }
   },
 
   RuneVie: class RuneVie extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.VIE, "rune");
-      this.lootMessage = "You pick up an VIE Rune";
-    }
-  },
-
-  RuneXno: class RuneXno extends Item {
-    constructor(id) {
-      super(id, Types.Entities.RUNE.XNO, "rune");
-      this.lootMessage = "You pick up an XNO Rune";
+      this.lootMessage = "You pick up a VIE Rune";
     }
   },
 
@@ -509,63 +502,105 @@ var Items = {
   RuneBtc: class RuneBtc extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.BTC, "rune");
-      this.lootMessage = "You pick up an BTC Rune";
+      this.lootMessage = "You pick up a BTC Rune";
     }
   },
 
   RuneVax: class RuneVax extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.VAX, "rune");
-      this.lootMessage = "You pick up an VAX Rune";
+      this.lootMessage = "You pick up a VAX Rune";
     }
   },
 
   RunePor: class RunePor extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.POR, "rune");
-      this.lootMessage = "You pick up an POR Rune";
+      this.lootMessage = "You pick up a POR Rune";
     }
   },
 
   RuneLas: class RuneLas extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.LAS, "rune");
-      this.lootMessage = "You pick up an LAS Rune";
+      this.lootMessage = "You pick up a LAS Rune";
     }
   },
 
   RuneCham: class RuneCham extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.CHAM, "rune");
-      this.lootMessage = "You pick up an CHAM Rune";
+      this.lootMessage = "You pick up a CHAM Rune";
+    }
+  },
+
+  RuneXno: class RuneXno extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.XNO, "rune");
+      this.lootMessage = "You pick up a XNO Rune";
+    }
+  },
+
+  RuneFal: class RuneFal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.FAL, "rune");
+      this.lootMessage = "You pick up a FAL Rune";
+    }
+  },
+
+  RuneKul: class RuneKul extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.KUL, "rune");
+      this.lootMessage = "You pick up a KUL Rune";
+    }
+  },
+
+  RuneMer: class RuneMer extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.MER, "rune");
+      this.lootMessage = "You pick up a MER Rune";
+    }
+  },
+
+  RuneQua: class RuneQua extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.QUA, "rune");
+      this.lootMessage = "You pick up a QUA Rune";
+    }
+  },
+
+  RuneGul: class RuneGul extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.GUL, "rune");
+      this.lootMessage = "You pick up a GUL Rune";
     }
   },
 
   RuneBer: class RuneBer extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.BER, "rune");
-      this.lootMessage = "You pick up an BER Rune";
+      this.lootMessage = "You pick up a BER Rune";
     }
   },
 
   RuneTor: class RuneTor extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.TOR, "rune");
-      this.lootMessage = "You pick up an TOR Rune";
+      this.lootMessage = "You pick up a TOR Rune";
     }
   },
 
   RuneJah: class RuneJah extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.JAH, "rune");
-      this.lootMessage = "You pick up an JAH Rune";
+      this.lootMessage = "You pick up a JAH Rune";
     }
   },
 
   RuneVod: class RuneVod extends Item {
     constructor(id) {
       super(id, Types.Entities.RUNE.VOD, "rune");
-      this.lootMessage = "You pick up an VOD Rune";
+      this.lootMessage = "You pick up a VOD Rune";
     }
   },
 

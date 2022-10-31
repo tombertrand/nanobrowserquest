@@ -302,7 +302,7 @@ export const Types: any = {
       LAS: 178,
       CHAM: 179,
       XNO: 180,
-      FAH: 181,
+      FAL: 181,
       KUL: 182,
       MER: 183,
       QUA: 184,
@@ -1653,7 +1653,7 @@ Types.runeKind = {
   },
 };
 
-Types.RuneByKind = Object.entries(Types.Entities.sRUNE).reduce((acc, [name, kind]: [string, number]) => {
+Types.RuneByKind = Object.entries(Types.Entities.RUNE).reduce((acc, [name, kind]: [string, number]) => {
   acc[kind] = name.toLowerCase();
   return acc;
 }, {});
@@ -1896,6 +1896,11 @@ Types.getBonusDescriptionMap = [
   "+#% Lightning resistance",
   "+#% Cold resistance",
   "+#% Poison resistance",
+  "+#% Magic damage",
+  "+#% Flame damage",
+  "+#% Lightning damage",
+  "+#% Cold damage",
+  "+#% Poison damage",
   "+#% Prevent enemy health regeneration",
   "+# Poison damage",
   "-#% Skill timeout",
@@ -1928,9 +1933,14 @@ Types.bonusType = [
   "lightningResistance", // 23
   "coldResistance", // 24
   "poisonResistance", // 25
-  "preventRegenerateHealth", // 26
-  "poisonDamage", // 27
-  "skillTimeout", // 28
+  "magicDamagePercent", // 26
+  "flameDamagePercent", // 27
+  "lightningDamagePercent", // 28
+  "coldDamagePercent", // 29
+  "poisonDamagePercent", // 30
+  "preventRegenerateHealth", // 31
+  "poisonDamage", // 32
+  "skillTimeout", // 33
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1960,6 +1970,11 @@ Types.getBonus = function (rawBonus, level) {
   const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const magicDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const flameDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const lightningDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const coldDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const poisonDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const preventRegenerateHealthPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const skillTimeoutPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
@@ -1991,6 +2006,11 @@ Types.getBonus = function (rawBonus, level) {
     lightningResistancePerLevel,
     coldResistancePerLevel,
     poisonResistancePerLevel,
+    magicDamagePercentPerLevel,
+    flameDamagePercentPerLevel,
+    lightningDamagePercentPerLevel,
+    coldDamagePercentPerLevel,
+    poisonDamagePercentPerLevel,
     preventRegenerateHealthPerLevel,
     poisonDamagePerLevel,
     skillTimeoutPerLevel,
@@ -2084,11 +2104,13 @@ Types.getRuneBonus = function (rawRune: string) {
 
   const rune = Types.getRuneFromItem(rawRune);
   const bonus: { type: string; stats: number; description: string }[] = Object.entries(rune.attribute).map(
-    ([type, stats]: [string, number]) => ({
-      type,
-      stats,
-      description: Types.getBonusDescriptionMap[Types.bonusType.findIndex(t => t === type)].replace("#", stats),
-    }),
+    ([type, stats]: [string, number]) => {
+      return {
+        type,
+        stats,
+        description: Types.getBonusDescriptionMap[Types.bonusType.findIndex(t => t === type)].replace("#", stats),
+      };
+    },
   );
 
   return bonus;
@@ -2134,11 +2156,13 @@ Types.getRunewordBonus = ({
 
 Types.getAttributesBonus = function (attributes) {
   const bonus: { type: string; stats: number; description: string }[] = Object.entries(attributes).map(
-    ([type, stats]: [string, number]) => ({
-      type,
-      stats,
-      description: Types.getBonusDescriptionMap[Types.bonusType.findIndex(t => t === type)].replace("#", stats),
-    }),
+    ([type, stats]: [string, number]) => {
+      return {
+        type,
+        stats,
+        description: Types.getBonusDescriptionMap[Types.bonusType.findIndex(t => t === type)].replace("#", stats),
+      };
+    },
   );
 
   return bonus;

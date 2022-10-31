@@ -420,10 +420,6 @@ EntityFactory.builders[Types.Entities.RUNE.VIE] = function (id) {
   return new Items.RuneVie(id);
 };
 
-EntityFactory.builders[Types.Entities.RUNE.XNO] = function (id) {
-  return new Items.RuneXno(id);
-};
-
 EntityFactory.builders[Types.Entities.RUNE.ETH] = function (id) {
   return new Items.RuneEth(id);
 };
@@ -446,6 +442,30 @@ EntityFactory.builders[Types.Entities.RUNE.LAS] = function (id) {
 
 EntityFactory.builders[Types.Entities.RUNE.CHAM] = function (id) {
   return new Items.RuneCham(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.XNO] = function (id) {
+  return new Items.RuneXno(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.FAL] = function (id) {
+  return new Items.RuneFal(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.KUL] = function (id) {
+  return new Items.RuneKul(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.MER] = function (id) {
+  return new Items.RuneMer(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.QUA] = function (id) {
+  return new Items.RuneQua(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.GUL] = function (id) {
+  return new Items.RuneGul(id);
 };
 
 EntityFactory.builders[Types.Entities.RUNE.BER] = function (id) {

@@ -476,7 +476,7 @@ class Game {
       "item-rune-las",
       "item-rune-cham",
       "item-rune-xno",
-      "item-rune-fah",
+      "item-rune-fal",
       "item-rune-kul",
       "item-rune-mer",
       "item-rune-qua",
