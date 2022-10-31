@@ -1362,8 +1362,13 @@ class World {
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
       // "shieldexecutioner",
-      "shielddragon",
-      "shielddemon",
+      // "shielddragon",
+      // "shielddemon",
+      "rune-fah",
+      "rune-kul",
+      "rune-mer",
+      "rune-qua",
+      "rune-gul",
       // "shieldemerald",
       // "shieldtemplar",
       // "ringbalrog",

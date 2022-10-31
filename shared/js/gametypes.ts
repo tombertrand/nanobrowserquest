@@ -175,11 +175,11 @@ export const Types: any = {
     SHIELDFROZEN: 150,
     SHIELDDIAMOND: 151,
     SHIELDTEMPLAR: 153,
-    SHIELDEXECUTIONER: 190,
-    SHIELDMYSTICAL: 191,
-    SHIELDDRAGON: 192,
-    SHIELDDEMON: 193,
-    SHIELDEMERALD: 194,
+    SHIELDEXECUTIONER: 195,
+    SHIELDMYSTICAL: 196,
+    SHIELDDRAGON: 197,
+    SHIELDDEMON: 198,
+    SHIELDEMERALD: 199,
 
     // Chests
     CHESTBLUE: 136,
@@ -213,11 +213,11 @@ export const Types: any = {
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
     SCROLLUPGRADEHIGH: 76,
-    SCROLLUPGRADELEGENDARY: 185,
+    SCROLLUPGRADELEGENDARY: 190,
     SCROLLUPGRADEBLESSED: 118,
-    SCROLLUPGRADESACRED: 186,
+    SCROLLUPGRADESACRED: 191,
     SCROLLTRANSMUTE: 142,
-    STONESOCKET: 187,
+    STONESOCKET: 192,
     RINGBRONZE: 80,
     RINGSILVER: 81,
     RINGGOLD: 82,
@@ -225,7 +225,7 @@ export const Types: any = {
     RINGRAISTONE: 117,
     RINGFOUNTAIN: 126,
     RINGMINOTAUR: 132,
-    RINGBALROG: 189,
+    RINGBALROG: 194,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
     AMULETCOW: 116,
@@ -253,7 +253,7 @@ export const Types: any = {
     SATOSHI: 73,
     WAYPOINTX: 84,
     WAYPOINTN: 93,
-    WAYPOINTO: 188,
+    WAYPOINTO: 193,
     STASH: 114,
     COWPORTAL: 125,
     MINOTAURPORTAL: 135,
@@ -295,17 +295,22 @@ export const Types: any = {
       HEX: 171,
       ZAL: 172,
       VIE: 173,
-      XNO: 174,
-      ETH: 175,
-      BTC: 176,
-      VAX: 177,
-      POR: 178,
-      LAS: 179,
-      CHAM: 180,
-      BER: 181,
-      TOR: 182,
-      JAH: 183,
-      VOD: 184,
+      ETH: 174,
+      BTC: 175,
+      VAX: 176,
+      POR: 177,
+      LAS: 178,
+      CHAM: 179,
+      XNO: 180,
+      FAH: 181,
+      KUL: 182,
+      MER: 183,
+      QUA: 184,
+      GUL: 185,
+      BER: 186,
+      TOR: 187,
+      JAH: 188,
+      VOD: 189,
     },
   },
 
@@ -629,23 +634,28 @@ export const kinds = {
   "rune-mir": [Types.Entities.RUNE.MIR, "rune", "MIR Rune", 6],
   "rune-gel": [Types.Entities.RUNE.GEL, "rune", "GEL Rune", 8],
   "rune-do": [Types.Entities.RUNE.DO, "rune", "DO Rune", 10],
-  "rune-ban": [Types.Entities.RUNE.BAN, "rune", "BAN Rune", 14],
-  "rune-sol": [Types.Entities.RUNE.SOL, "rune", "SOL Rune", 18],
-  "rune-um": [Types.Entities.RUNE.UM, "rune", "UM Rune", 22],
-  "rune-hex": [Types.Entities.RUNE.HEX, "rune", "HEX Rune", 24],
-  "rune-zal": [Types.Entities.RUNE.ZAL, "rune", "ZAL Rune", 28],
-  "rune-vie": [Types.Entities.RUNE.VIE, "rune", "VIE Rune", 30],
-  "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune", 32],
-  "rune-eth": [Types.Entities.RUNE.ETH, "rune", "ETH Rune", 34],
-  "rune-btc": [Types.Entities.RUNE.BTC, "rune", "BTC Rune", 36],
-  "rune-vax": [Types.Entities.RUNE.VAX, "rune", "VAX Rune", 38],
-  "rune-por": [Types.Entities.RUNE.POR, "rune", "POR Rune", 40],
-  "rune-las": [Types.Entities.RUNE.LAS, "rune", "LAS Rune", 44],
-  "rune-cham": [Types.Entities.RUNE.CHAM, "rune", "CHAM Rune", 48],
-  "rune-ber": [Types.Entities.RUNE.BER, "rune", "BER Rune", 52],
-  "rune-tor": [Types.Entities.RUNE.TOR, "rune", "TOR Rune", 56],
-  "rune-jah": [Types.Entities.RUNE.JAH, "rune", "JAH Rune", 60],
-  "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 64],
+  "rune-ban": [Types.Entities.RUNE.BAN, "rune", "BAN Rune", 12],
+  "rune-sol": [Types.Entities.RUNE.SOL, "rune", "SOL Rune", 14],
+  "rune-um": [Types.Entities.RUNE.UM, "rune", "UM Rune", 16],
+  "rune-hex": [Types.Entities.RUNE.HEX, "rune", "HEX Rune", 18],
+  "rune-zal": [Types.Entities.RUNE.ZAL, "rune", "ZAL Rune", 20],
+  "rune-vie": [Types.Entities.RUNE.VIE, "rune", "VIE Rune", 22],
+  "rune-eth": [Types.Entities.RUNE.ETH, "rune", "ETH Rune", 24],
+  "rune-btc": [Types.Entities.RUNE.BTC, "rune", "BTC Rune", 27],
+  "rune-vax": [Types.Entities.RUNE.VAX, "rune", "VAX Rune", 30],
+  "rune-por": [Types.Entities.RUNE.POR, "rune", "POR Rune", 33],
+  "rune-las": [Types.Entities.RUNE.LAS, "rune", "LAS Rune", 36],
+  "rune-cham": [Types.Entities.RUNE.CHAM, "rune", "CHAM Rune", 39],
+  "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune", 42],
+  "rune-fal": [Types.Entities.RUNE.FAL, "rune", "FAL Rune", 45],
+  "rune-kul": [Types.Entities.RUNE.KUL, "rune", "KUL Rune", 48],
+  "rune-mer": [Types.Entities.RUNE.MER, "rune", "MER Rune", 51],
+  "rune-qua": [Types.Entities.RUNE.QUA, "rune", "QUA Rune", 54],
+  "rune-gul": [Types.Entities.RUNE.GUL, "rune", "GUL Rune", 57],
+  "rune-ber": [Types.Entities.RUNE.BER, "rune", "BER Rune", 60],
+  "rune-tor": [Types.Entities.RUNE.TOR, "rune", "TOR Rune", 63],
+  "rune-jah": [Types.Entities.RUNE.JAH, "rune", "JAH Rune", 66],
+  "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 69],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -1447,168 +1457,203 @@ Types.runeKind = {
     rank: 2,
     requirement: 2,
     attribute: {
-      minDamage: 2,
+      minDamage: 4,
     },
   },
   bul: {
     rank: 3,
     requirement: 3,
     attribute: {
-      maxDamage: 2,
+      maxDamage: 4,
     },
   },
   nan: {
     rank: 4,
     requirement: 4,
     attribute: {
-      magicDamage: 2,
+      magicDamage: 4,
     },
   },
   mir: {
     rank: 5,
     requirement: 6,
     attribute: {
-      attackDamage: 2,
+      attackDamage: 4,
     },
   },
   gel: {
     rank: 6,
     requirement: 8,
     attribute: {
-      absorbedDamage: 2,
+      absorbedDamage: 4,
     },
   },
   do: {
     rank: 7,
     requirement: 10,
     attribute: {
-      defense: 2,
+      defense: 4,
     },
   },
   ban: {
     rank: 8,
-    requirement: 14,
+    requirement: 12,
     attribute: {
-      exp: 2,
+      exp: 4,
     },
   },
   sol: {
     rank: 9,
-    requirement: 18,
+    requirement: 14,
     attribute: {
-      reduceFrozenChance: 2,
+      reduceFrozenChance: 5,
     },
   },
   um: {
     rank: 10,
-    requirement: 22,
+    requirement: 16,
     attribute: {
-      flameDamage: 2,
+      flameDamage: 10,
     },
   },
   hex: {
     rank: 11,
-    requirement: 24,
+    requirement: 18,
     attribute: {
-      lightningDamage: 1,
+      lightningDamage: 5,
     },
   },
   zal: {
     rank: 12,
-    requirement: 28,
+    requirement: 20,
     attribute: {
-      pierceDamage: 2,
+      pierceDamage: 10,
     },
   },
   vie: {
     rank: 13,
-    requirement: 30,
+    requirement: 22,
     attribute: {
-      regenerateHealth: 2,
-    },
-  },
-  xno: {
-    rank: 14,
-    requirement: 32,
-    attribute: {
-      attackSpeed: 2,
+      regenerateHealth: 10,
     },
   },
   eth: {
-    rank: 15,
-    requirement: 34,
+    rank: 14,
+    requirement: 24,
     attribute: {
-      poisonDamage: 2,
+      poisonDamage: 10,
     },
   },
   btc: {
-    rank: 16,
-    requirement: 36,
+    rank: 15,
+    requirement: 27,
     attribute: {
       magicResistance: 10,
     },
   },
   vax: {
-    rank: 17,
-    requirement: 38,
+    rank: 16,
+    requirement: 30,
     attribute: {
       flameResistance: 10,
     },
   },
   por: {
-    rank: 18,
-    requirement: 40,
+    rank: 17,
+    requirement: 33,
     attribute: {
       lightningResistance: 10,
     },
   },
   las: {
-    rank: 19,
-    requirement: 44,
+    rank: 18,
+    requirement: 36,
     attribute: {
       coldResistance: 10,
     },
   },
   cham: {
-    rank: 20,
-    requirement: 48,
+    rank: 19,
+    requirement: 39,
     attribute: {
       poisonResistance: 10,
     },
   },
-  ber: {
-    rank: 21,
-    requirement: 52,
+  xno: {
+    rank: 20,
+    requirement: 42,
     attribute: {
-      skillTimeout: 2,
+      attackSpeed: 10,
+    },
+  },
+  fal: {
+    rank: 21,
+    requirement: 45,
+    attribute: {
+      magicDamagePercent: 10,
+    },
+  },
+  kul: {
+    rank: 22,
+    requirement: 48,
+    attribute: {
+      lightningDamagePercent: 10,
+    },
+  },
+  mer: {
+    rank: 23,
+    requirement: 51,
+    attribute: {
+      flameDamagePercent: 10,
+    },
+  },
+  qua: {
+    rank: 24,
+    requirement: 54,
+    attribute: {
+      coldDamagePercent: 10,
+    },
+  },
+  gul: {
+    rank: 25,
+    requirement: 57,
+    attribute: {
+      poisonDamagePercent: 10,
+    },
+  },
+  ber: {
+    rank: 26,
+    requirement: 60,
+    attribute: {
+      skillTimeout: 10,
     },
   },
   tor: {
-    rank: 22,
-    requirement: 56,
+    rank: 27,
+    requirement: 63,
     attribute: {
       coldDamage: 2,
-      freezeChance: 2,
+      freezeChance: 5,
     },
   },
   jah: {
-    rank: 23,
-    requirement: 60,
+    rank: 28,
+    requirement: 66,
     attribute: {
-      magicFind: 2,
+      magicFind: 10,
     },
   },
   vod: {
-    rank: 24,
-    requirement: 64,
+    rank: 29,
+    requirement: 69,
     attribute: {
-      regenerateHealth: 2,
-      preventRegenerateHealth: 2,
+      regenerateHealth: 10,
+      preventRegenerateHealth: 10,
     },
   },
 };
 
-Types.RuneByKind = Object.entries(Types.Entities.RUNE).reduce((acc, [name, kind]: [string, number]) => {
+Types.RuneByKind = Object.entries(Types.Entities.sRUNE).reduce((acc, [name, kind]: [string, number]) => {
   acc[kind] = name.toLowerCase();
   return acc;
 }, {});
@@ -2185,7 +2230,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
   const isUniqueArmor = isShield && isUnique;
 
   const uniqueSuccessRateMap = {
-    goldensword: 25,
+    goldensword: 20,
     blueaxe: 18,
     bluemorningstar: 18,
     frozensword: 15,
@@ -2213,7 +2258,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     beltdiamond: 11,
     beltminotaur: 8,
 
-    shieldgolden: 25,
+    shieldgolden: 20,
     shieldblue: 18,
     shieldhorned: 18,
     shieldfrozen: 15,
