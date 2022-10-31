@@ -1,17 +1,12 @@
 /* eslint-disable simple-import-sort/imports */
 import agent from "../sprites/agent.json";
 import arrow from "../sprites/arrow.json";
-import axe from "../sprites/axe.json";
-import blueaxe from "../sprites/blueaxe.json";
-import bluemorningstar from "../sprites/bluemorningstar.json";
 import bat from "../sprites/bat.json";
 import bat2 from "../sprites/bat2.json";
 import beachnpc from "../sprites/beachnpc.json";
-import bluesword from "../sprites/bluesword.json";
 import boss from "../sprites/boss.json";
 import skeletoncommander from "../sprites/skeletoncommander.json";
 import chest from "../sprites/chest.json";
-import clotharmor from "../sprites/clotharmor.json";
 import coder from "../sprites/coder.json";
 import crab from "../sprites/crab.json";
 import death from "../sprites/death.json";
@@ -27,39 +22,58 @@ import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
-import goldenarmor from "../sprites/goldenarmor.json";
-import bluearmor from "../sprites/bluearmor.json";
-import hornedarmor from "../sprites/hornedarmor.json";
-import frozenarmor from "../sprites/frozenarmor.json";
-import diamondarmor from "../sprites/diamondarmor.json";
-import spikearmor from "../sprites/spikearmor.json";
-import demonarmor from "../sprites/demonarmor.json";
-import goldensword from "../sprites/goldensword.json";
-import frozensword from "../sprites/frozensword.json";
-import diamondsword from "../sprites/diamondsword.json";
+import wirtleg from "../sprites/weapon.json";
+import dagger from "../sprites/dagger.json";
+import sword from "../sprites/weapon.json";
+import axe from "../sprites/weapon.json";
+import morningstar from "../sprites/morningstar.json";
+import bluesword from "../sprites/weapon.json";
+import blueaxe from "../sprites/weapon.json";
+import bluemorningstar from "../sprites/bluemorningstar.json";
+import redsword from "../sprites/weapon.json";
+import goldensword from "../sprites/weapon.json";
+import frozensword from "../sprites/weapon.json";
+import diamondsword from "../sprites/weapon.json";
 import minotauraxe from "../sprites/minotauraxe.json";
-import emeraldsword from "../sprites/emeraldsword.json";
-import moonpartisan from "../sprites/moonpartisan.json";
-import templarsword from "../sprites/templarsword.json";
-import spikeglaive from "../sprites/spikeglaive.json";
-import eclypsedagger from "../sprites/eclypsedagger.json";
-import executionersword from "../sprites/executionersword.json";
-import mysticalsword from "../sprites/mysticalsword.json";
-import dragonsword from "../sprites/dragonsword.json";
+import emeraldsword from "../sprites/weapon.json";
+import moonpartisan from "../sprites/weapon.json";
+import templarsword from "../sprites/weapon.json";
+import spikeglaive from "../sprites/weapon.json";
+import eclypsedagger from "../sprites/weapon.json";
+import executionersword from "../sprites/weapon.json";
+import mysticalsword from "../sprites/weapon.json";
+import dragonsword from "../sprites/weapon.json";
+import clotharmor from "../sprites/armor.json";
+import leatherarmor from "../sprites/armor.json";
+import mailarmor from "../sprites/armor.json";
+import platearmor from "../sprites/armor.json";
+import redarmor from "../sprites/armor.json";
+import goldenarmor from "../sprites/armor.json";
+import bluearmor from "../sprites/armor.json";
+import hornedarmor from "../sprites/armor.json";
+import frozenarmor from "../sprites/armor.json";
+import diamondarmor from "../sprites/armor.json";
+import spikearmor from "../sprites/armor.json";
+import demonarmor from "../sprites/armor.json";
 import guard from "../sprites/guard.json";
 import hand from "../sprites/hand.json";
 import impact from "../sprites/impact.json";
 import cape from "../sprites/cape.json";
-import shieldwood from "../sprites/shieldwood.json";
-import shieldiron from "../sprites/shieldiron.json";
-import shieldplate from "../sprites/shieldplate.json";
-import shieldred from "../sprites/shieldred.json";
-import shieldgolden from "../sprites/shieldgolden.json";
-import shieldblue from "../sprites/shieldblue.json";
-import shieldhorned from "../sprites/shieldhorned.json";
-import shieldfrozen from "../sprites/shieldfrozen.json";
-import shielddiamond from "../sprites/shielddiamond.json";
-import shieldtemplar from "../sprites/shieldtemplar.json";
+import shieldwood from "../sprites/shield.json";
+import shieldiron from "../sprites/shield.json";
+import shieldplate from "../sprites/shield.json";
+import shieldred from "../sprites/shield.json";
+import shieldgolden from "../sprites/shield.json";
+import shieldblue from "../sprites/shield.json";
+import shieldhorned from "../sprites/shield.json";
+import shieldfrozen from "../sprites/shield.json";
+import shielddiamond from "../sprites/shield.json";
+import shieldtemplar from "../sprites/shield.json";
+import shieldemerald from "../sprites/shield.json";
+import shieldexecutioner from "../sprites/shield.json";
+import shieldmystical from "../sprites/shield.json";
+import shielddragon from "../sprites/shield.json";
+import shielddemon from "../sprites/shield.json";
 import itemAxe from "../sprites/item.json";
 import itemBlueaxe from "../sprites/item.json";
 import itemBluemorningstar from "../sprites/item.json";
@@ -126,6 +140,11 @@ import itemShieldhorned from "../sprites/item.json";
 import itemShieldfrozen from "../sprites/item.json";
 import itemShielddiamond from "../sprites/item.json";
 import itemShieldtemplar from "../sprites/item.json";
+import itemShieldemerald from "../sprites/item.json";
+import itemShieldexecutioner from "../sprites/item.json";
+import itemShieldmystical from "../sprites/item.json";
+import itemShielddragon from "../sprites/item.json";
+import itemShielddemon from "../sprites/item.json";
 import itemGoldensword from "../sprites/item.json";
 import itemFrozensword from "../sprites/item.json";
 import itemDiamondsword from "../sprites/item.json";
@@ -148,10 +167,7 @@ import itemDagger from "../sprites/item.json";
 import itemSword from "../sprites/item.json";
 import king from "../sprites/king.json";
 import lavanpc from "../sprites/lavanpc.json";
-import leatherarmor from "../sprites/leatherarmor.json";
 import loot from "../sprites/loot.json";
-import mailarmor from "../sprites/mailarmor.json";
-import morningstar from "../sprites/morningstar.json";
 import nyan from "../sprites/nyan.json";
 import octocat from "../sprites/octocat.json";
 import anvil from "../sprites/anvil.json";
@@ -170,12 +186,9 @@ import ogre from "../sprites/ogre.json";
 import yeti from "../sprites/yeti.json";
 import werewolf from "../sprites/werewolf.json";
 import wraith from "../sprites/wraith.json";
-import platearmor from "../sprites/platearmor.json";
 import priest from "../sprites/priest.json";
 import rat from "../sprites/rat.json";
 import rat2 from "../sprites/rat2.json";
-import redarmor from "../sprites/redarmor.json";
-import redsword from "../sprites/redsword.json";
 import rick from "../sprites/rick.json";
 import scientist from "../sprites/scientist.json";
 import shadow16 from "../sprites/shadow16.json";
@@ -192,9 +205,6 @@ import weaponEffectCold from "../sprites/weapon-effect-cold.json";
 import weaponEffectPoison from "../sprites/weapon-effect-poison.json";
 import spectre from "../sprites/spectre.json";
 import attack from "../sprites/attack.json";
-import wirtleg from "../sprites/wirtleg.json";
-import dagger from "../sprites/dagger.json";
-import sword from "../sprites/sword.json";
 import talk from "../sprites/talk.json";
 import target from "../sprites/target.json";
 import levelup from "../sprites/levelup.json";
@@ -273,6 +283,11 @@ const sprites = {
   shieldfrozen,
   shielddiamond,
   shieldtemplar,
+  shieldemerald,
+  shieldexecutioner,
+  shieldmystical,
+  shielddragon,
+  shielddemon,
   "item-axe": itemAxe,
   "item-blueaxe": itemBlueaxe,
   "item-bluemorningstar": itemBluemorningstar,
@@ -369,6 +384,11 @@ const sprites = {
   "item-shieldfrozen": itemShieldfrozen,
   "item-shielddiamond": itemShielddiamond,
   "item-shieldtemplar": itemShieldtemplar,
+  "item-shieldemerald": itemShieldemerald,
+  "item-shieldexecutioner": itemShieldexecutioner,
+  "item-shieldmystical": itemShieldmystical,
+  "item-shielddragon": itemShielddragon,
+  "item-shielddemon": itemShielddemon,
   "item-goldensword": itemGoldensword,
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,

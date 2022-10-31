@@ -328,6 +328,26 @@ EntityFactory.builders[Types.Entities.SHIELDTEMPLAR] = function (id) {
   return new Items.ShieldTemplar(id);
 };
 
+EntityFactory.builders[Types.Entities.SHIELDEMERALD] = function (id) {
+  return new Items.ShieldEmerald(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDEXECUTIONER] = function (id) {
+  return new Items.ShieldExecutioner(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDMYSTICAL] = function (id) {
+  return new Items.ShieldMystical(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDDRAGON] = function (id) {
+  return new Items.ShieldDragon(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDDEMON] = function (id) {
+  return new Items.ShieldDemon(id);
+};
+
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {
   return new Items.Flask(id);
 };

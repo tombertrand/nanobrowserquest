@@ -175,6 +175,11 @@ export const Types: any = {
     SHIELDFROZEN: 150,
     SHIELDDIAMOND: 151,
     SHIELDTEMPLAR: 153,
+    SHIELDEXECUTIONER: 190,
+    SHIELDMYSTICAL: 191,
+    SHIELDDRAGON: 192,
+    SHIELDDEMON: 193,
+    SHIELDEMERALD: 194,
 
     // Chests
     CHESTBLUE: 136,
@@ -422,6 +427,11 @@ Types.Entities.Shields = [
   Types.Entities.SHIELDFROZEN,
   Types.Entities.SHIELDDIAMOND,
   Types.Entities.SHIELDTEMPLAR,
+  Types.Entities.SHIELDEMERALD,
+  Types.Entities.SHIELDEXECUTIONER,
+  Types.Entities.SHIELDMYSTICAL,
+  Types.Entities.SHIELDDRAGON,
+  Types.Entities.SHIELDDEMON,
 ];
 
 Types.Entities.Rings = [
@@ -556,6 +566,11 @@ export const kinds = {
   shieldfrozen: [Types.Entities.SHIELDFROZEN, "shield", "Sapphire Shield", 26, 16],
   shielddiamond: [Types.Entities.SHIELDDIAMOND, "shield", "Diamond Shield", 36, 18],
   shieldtemplar: [Types.Entities.SHIELDTEMPLAR, "shield", "Templar Shield", 40, 20],
+  shieldemerald: [Types.Entities.SHIELDEMERALD, "shield", "Emerald Shield", 40, 20],
+  shieldexecutioner: [Types.Entities.SHIELDEXECUTIONER, "shield", "Executioner Shield", 40, 20],
+  shieldmystical: [Types.Entities.SHIELDMYSTICAL, "shield", "Mystical Shield", 40, 20],
+  shielddragon: [Types.Entities.SHIELDDRAGON, "shield", "Dragon Shield", 40, 20],
+  shielddemon: [Types.Entities.SHIELDDEMON, "shield", "Demon Shield", 40, 20],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -564,8 +579,8 @@ export const kinds = {
   ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 38],
   ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
   ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
-  ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Minotaur Hell Freeze", 36],
-  ringbalrog: [Types.Entities.RINGBALROG, "ring", "Balrog Ring of Power", 54],
+  ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Hell Freeze", 36],
+  ringbalrog: [Types.Entities.RINGBALROG, "ring", "Ring of Power", 54],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
@@ -763,6 +778,11 @@ Types.itemUniqueMap = {
   shieldfrozen: ["Probably Nothing", 28, 18],
   shielddiamond: ["Diamond Hands", 38, 20],
   shieldtemplar: ["TBD", 42, 22],
+  shieldemerald: ["TBD", 42, 22],
+  shieldexecutioner: ["TBD", 42, 22],
+  shieldmystical: ["TBD", 42, 22],
+  shielddragon: ["TBD", 42, 22],
+  shielddemon: ["TBD", 42, 22],
 
   cape: ["Cloak of Levitation", 12, 2],
 

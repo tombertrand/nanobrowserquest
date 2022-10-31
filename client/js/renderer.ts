@@ -760,6 +760,8 @@ class Renderer {
                 dw = w * ds,
                 dh = h * ds;
 
+              this.context.save();
+
               if (entity.capeOrientation === Types.Orientations.UP) {
                 (dy = -12 * s), (dx = 10 * s);
                 this.context.scale(1, -1);
@@ -772,6 +774,7 @@ class Renderer {
               }
 
               this.context.drawImage(sprite[`image${image}`], x, y, w, h, dx, dy, dw, dh);
+              this.context.restore();
             }
           }
         }

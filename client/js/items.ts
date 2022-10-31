@@ -331,6 +331,41 @@ var Items = {
     }
   },
 
+  ShieldEmerald: class ShieldEmerald extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDEMERALD, "shield");
+      this.lootMessage = "You pick up an emerald shield";
+    }
+  },
+
+  ShieldExecutioner: class ShieldExecutioner extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDEXECUTIONER, "shield");
+      this.lootMessage = "You pick up an executioner shield";
+    }
+  },
+
+  ShieldMystical: class ShieldMystical extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDMYSTICAL, "shield");
+      this.lootMessage = "You pick up a mystical shield";
+    }
+  },
+
+  ShieldDragon: class ShieldDragon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDDRAGON, "shield");
+      this.lootMessage = "You pick up a dragon shield";
+    }
+  },
+
+  ShieldDemon: class ShieldDemon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDDEMON, "shield");
+      this.lootMessage = "You pick up a demon shield";
+    }
+  },
+
   Flask: class Flask extends Item {
     constructor(id) {
       super(id, Types.Entities.FLASK, "object");
@@ -628,7 +663,7 @@ var Items = {
   RingBalrog: class RingBalrog extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGBALROG, "ring");
-      this.lootMessage = "You pick up the Balrog Ring of Power";
+      this.lootMessage = "You pick up the Ring of Power";
     }
   },
 

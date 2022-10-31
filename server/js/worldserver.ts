@@ -1361,7 +1361,12 @@ class World {
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
-      "ringbalrog",
+      // "shieldexecutioner",
+      "shielddragon",
+      "shielddemon",
+      // "shieldemerald",
+      // "shieldtemplar",
+      // "ringbalrog",
       // "stonesocket",
       // "scrollupgradelegendary",
       // "scrollupgradesacred",

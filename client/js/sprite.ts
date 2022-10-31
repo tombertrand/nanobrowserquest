@@ -51,7 +51,13 @@ class Sprite {
     this.image = new Image();
     this.image.crossOrigin = "Anonymous";
 
-    if (this.id === "item" || this.id === "waypoint") {
+    if (
+      this.id === "item" ||
+      this.id === "waypoint" ||
+      this.id === "weapon" ||
+      this.id === "armor" ||
+      this.id === "shield"
+    ) {
       this.id = this.name;
     }
 
