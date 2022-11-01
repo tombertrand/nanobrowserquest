@@ -114,7 +114,7 @@ export const runeKind = {
     rank: 12,
     requirement: 20,
     attribute: {
-      pierceDamage: 10,
+      pierceDamage: 8,
     },
   },
   vie: {
@@ -357,23 +357,52 @@ export const getRunewordBonus = ({
 
 export const Runewords = {
   weapon: {
+    "al-sat-mir-nan": {
+      name: "",
+      bonus: {
+        health: 20,
+        minDamage: 8,
+        magicDamage: 6,
+        attackDamage: 6,
+      },
+    },
+    "mir-bul-al-bul-mir": {
+      name: "",
+      bonus: {
+        attackDamage: 12,
+        maxDamage: 12,
+        minDamage: 6,
+      },
+    },
+    "bul-um-al-bul-mir-zal": {
+      name: "",
+      bonus: {
+        attackDamage: 6,
+        flameDamage: 12,
+        pierceDamage: 10,
+        minDamage: 6,
+        maxDamage: 12,
+      },
+    },
     "ban-nan-mir-al-btc": {
       name: "Buy the dip",
       bonus: {
-        minDamage: 25,
+        minDamage: 10,
         attackDamage: 10,
         magicDamage: 10,
         magicResistance: 15,
         exp: 10,
       },
     },
-    "las-tor-mir": {
+    "las-tor-mir-tor-mir-al-vie": {
       name: "Cold Wallet",
       bonus: {
-        attackDamage: 15,
-        coldDamage: 25,
-        freezeChance: 10,
+        minDamage: 10,
+        attackDamage: 20,
+        coldDamage: 30,
+        freezeChance: 15,
         coldResistance: 15,
+        regenerateHealth: 25,
       },
     },
     "bul-mir-zal-um-vax": {
@@ -386,12 +415,37 @@ export const Runewords = {
         pierceDamage: 10,
       },
     },
-    // "": {
-    //   name: "ASIC",
-    //   bonus: {
-    //     pierceDamage: 10,
-    //   },
-    // },
+    "ber-gul-cham-eth-eth": {
+      name: "",
+      bonus: {
+        poisonDamage: 35,
+        poisonResistance: 20,
+        poisonDamagePercent: 20,
+        skillTimeout: 20,
+        pierceDamage: 10,
+      },
+    },
+    "fal-btc-xno-zal-xno-fal": {
+      name: "",
+      bonus: {
+        magicDamagePercent: 30,
+        magicResistance: 20,
+        attackSpeed: 30,
+        pierceDamage: 20,
+      },
+    },
+    "mer-qua-vod-mer-kul-fal": {
+      name: "ASIC",
+      bonus: {
+        magicDamagePercent: 30,
+        lightningDamagePercent: 30,
+        flameDamagePercent: 30,
+        coldDamagePercent: 30,
+        poisonDamagePercent: 30,
+        regenerateHealth: 30,
+        preventRegenerateHealth: 20,
+      },
+    },
   },
   armor: {
     "do-las-sol-vod-jah-por": {
