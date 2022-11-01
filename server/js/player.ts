@@ -1758,6 +1758,12 @@ class Player extends Character {
       flameResistance: 0,
       lightningResistance: 0,
       coldResistance: 0,
+      poisonResistance: 0,
+      magicDamagePercent: 0,
+      flameDamagePercent: 0,
+      lightningDamagePercent: 0,
+      coldDamagePercent: 0,
+      poisonDamagePercent: 0,
     };
   }
 

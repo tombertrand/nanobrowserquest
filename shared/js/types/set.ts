@@ -1,0 +1,105 @@
+export const setBonus = {
+  minotaur: {
+    minDamage: 15,
+    coldDamage: 15,
+    reduceFrozenChance: 25,
+  },
+  diamond: {
+    health: 100,
+    defense: 10,
+    blockChance: 3,
+    exp: 10,
+  },
+  sapphire: {
+    minDamage: 10,
+    maxDamage: 10,
+    defense: 10,
+    criticalHit: 3,
+  },
+  horned: {
+    minDamage: 10,
+    maxDamage: 10,
+    attackDamage: 10,
+  },
+  frozen: {
+    attackDamage: 10,
+    coldDamage: 10,
+    absorbedDamage: 10,
+  },
+  golden: {
+    magicDamage: 10,
+    defense: 6,
+    criticalHit: 6,
+  },
+  ruby: {
+    health: 30,
+    attackDamage: 6,
+    defense: 6,
+  },
+  plated: {
+    health: 25,
+    attackDamage: 4,
+    defense: 4,
+  },
+  leather: {
+    minDamage: 3,
+    maxDamage: 3,
+    health: 20,
+  },
+};
+
+export const kindAsStringToSet = {
+  leatherarmor: "leather",
+  beltleather: "leather",
+  shieldwood: "leather",
+  platearmor: "plated",
+  beltplated: "plated",
+  shieldplate: "plated",
+  redsword: "ruby",
+  redarmor: "ruby",
+  shieldred: "ruby",
+  goldensword: "golden",
+  goldenarmor: "golden",
+  shieldgolden: "golden",
+  bluemorningstar: "frozen",
+  bluearmor: "frozen",
+  shieldblue: "frozen",
+  hornedarmor: "horned",
+  belthorned: "horned",
+  shieldhorned: "horned",
+  frozensword: "sapphire",
+  frozenarmor: "sapphire",
+  beltfrozen: "sapphire",
+  shieldfrozen: "sapphire",
+  diamondsword: "diamond",
+  diamondarmor: "diamond",
+  beltdiamond: "diamond",
+  shielddiamond: "diamond",
+  minotauraxe: "minotaur",
+  beltminotaur: "minotaur",
+  ringminotaur: "minotaur",
+};
+
+export const setItems = {
+  minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
+  diamond: ["diamondsword", "diamondarmor", "beltdiamond", "shielddiamond"],
+  sapphire: ["frozensword", "frozenarmor", "beltfrozen", "shieldfrozen"],
+  horned: ["hornedarmor", "belthorned", "shieldhorned"],
+  frozen: ["bluemorningstar", "bluearmor", "shieldblue"],
+  golden: ["goldensword", "goldenarmor", "shieldgolden"],
+  ruby: ["redsword", "redarmor", "shieldred"],
+  plated: ["platearmor", "beltplated", "shieldplate"],
+  leather: ["leatherarmor", "beltleather", "shieldwood"],
+};
+
+export const setItemsNameMap = {
+  minotaur: ["Axe", "Ring", "Belt"],
+  diamond: ["Sword", "Armor", "Belt", "Shield"],
+  sapphire: ["Sword", "Armor", "Belt", "Shield"],
+  horned: ["Armor", "Belt", "Shield"],
+  frozen: ["Morningstar", "Armor", "Shield"],
+  golden: ["Sword", "Armor", "Shield"],
+  ruby: ["Sword", "Armor", "Shield"],
+  plated: ["Armor", "Belt", "Shield"],
+  leather: ["Armor", "Belt", "Shield"],
+};

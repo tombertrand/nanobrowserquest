@@ -1,6 +1,21 @@
 import * as _ from "lodash";
 
 import { Slot } from "./slots";
+import { expForLevel } from "./types/experience";
+import {
+  getHighestSocketRequirement,
+  getRune,
+  getRuneFromItem,
+  getRuneNameFromItem,
+  getRunesBonus,
+  getRunewordBonus,
+  RUNE,
+  RuneByKind,
+  runeKind,
+  RuneList,
+  Runewords,
+} from "./types/rune";
+import { kindAsStringToSet, setBonus, setItems, setItemsNameMap } from "./types/set";
 
 export const Types: any = {
   Store: {
@@ -281,37 +296,7 @@ export const Types: any = {
     DRAGONSWORD: 160,
 
     // Runes
-    RUNE: {
-      SAT: 161,
-      AL: 162,
-      BUL: 163,
-      NAN: 164,
-      MIR: 165,
-      GEL: 166,
-      DO: 167,
-      BAN: 168,
-      SOL: 169,
-      UM: 170,
-      HEX: 171,
-      ZAL: 172,
-      VIE: 173,
-      ETH: 174,
-      BTC: 175,
-      VAX: 176,
-      POR: 177,
-      LAS: 178,
-      CHAM: 179,
-      XNO: 180,
-      FAL: 181,
-      KUL: 182,
-      MER: 183,
-      QUA: 184,
-      GUL: 185,
-      BER: 186,
-      TOR: 187,
-      JAH: 188,
-      VOD: 189,
-    },
+    RUNE,
   },
 
   Orientations: {
@@ -351,6 +336,23 @@ export const Types: any = {
     2: 50,
   },
 };
+
+Types.expForLevel = expForLevel;
+Types.setBonus = setBonus;
+Types.kindAsStringToSet = kindAsStringToSet;
+Types.setItems = setItems;
+Types.setItemsNameMap = setItemsNameMap;
+
+Types.runeKind = runeKind;
+Types.RuneByKind = RuneByKind;
+Types.RuneList = RuneList;
+Types.getRuneNameFromItem = getRuneNameFromItem;
+Types.getRuneFromItem = getRuneFromItem;
+Types.getHighestSocketRequirement = getHighestSocketRequirement;
+Types.getRunesBonus = getRunesBonus;
+Types.getRune = getRune;
+Types.getRunewordBonus = getRunewordBonus;
+Types.Runewords = Runewords;
 
 Types.Entities.Potion = [
   Types.Entities.FLASK,
@@ -816,112 +818,6 @@ Types.isSuperUnique = (itemName: string) =>
     "amuletfrozen",
   ].includes(itemName);
 
-Types.setBonus = {
-  minotaur: {
-    minDamage: 15,
-    coldDamage: 15,
-    reduceFrozenChance: 25,
-  },
-  diamond: {
-    health: 100,
-    defense: 10,
-    blockChance: 3,
-    exp: 10,
-  },
-  sapphire: {
-    minDamage: 10,
-    maxDamage: 10,
-    defense: 10,
-    criticalHit: 3,
-  },
-  horned: {
-    minDamage: 10,
-    maxDamage: 10,
-    attackDamage: 10,
-  },
-  frozen: {
-    attackDamage: 10,
-    coldDamage: 10,
-    absorbedDamage: 10,
-  },
-  golden: {
-    magicDamage: 10,
-    defense: 6,
-    criticalHit: 6,
-  },
-  ruby: {
-    health: 30,
-    attackDamage: 6,
-    defense: 6,
-  },
-  plated: {
-    health: 25,
-    attackDamage: 4,
-    defense: 4,
-  },
-  leather: {
-    minDamage: 3,
-    maxDamage: 3,
-    health: 20,
-  },
-};
-
-Types.kindAsStringToSet = {
-  leatherarmor: "leather",
-  beltleather: "leather",
-  shieldwood: "leather",
-  platearmor: "plated",
-  beltplated: "plated",
-  shieldplate: "plated",
-  redsword: "ruby",
-  redarmor: "ruby",
-  shieldred: "ruby",
-  goldensword: "golden",
-  goldenarmor: "golden",
-  shieldgolden: "golden",
-  bluemorningstar: "frozen",
-  bluearmor: "frozen",
-  shieldblue: "frozen",
-  hornedarmor: "horned",
-  belthorned: "horned",
-  shieldhorned: "horned",
-  frozensword: "sapphire",
-  frozenarmor: "sapphire",
-  beltfrozen: "sapphire",
-  shieldfrozen: "sapphire",
-  diamondsword: "diamond",
-  diamondarmor: "diamond",
-  beltdiamond: "diamond",
-  shielddiamond: "diamond",
-  minotauraxe: "minotaur",
-  beltminotaur: "minotaur",
-  ringminotaur: "minotaur",
-};
-
-Types.setItems = {
-  minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
-  diamond: ["diamondsword", "diamondarmor", "beltdiamond", "shielddiamond"],
-  sapphire: ["frozensword", "frozenarmor", "beltfrozen", "shieldfrozen"],
-  horned: ["hornedarmor", "belthorned", "shieldhorned"],
-  frozen: ["bluemorningstar", "bluearmor", "shieldblue"],
-  golden: ["goldensword", "goldenarmor", "shieldgolden"],
-  ruby: ["redsword", "redarmor", "shieldred"],
-  plated: ["platearmor", "beltplated", "shieldplate"],
-  leather: ["leatherarmor", "beltleather", "shieldwood"],
-};
-
-Types.setItemsNameMap = {
-  minotaur: ["Axe", "Ring", "Belt"],
-  diamond: ["Sword", "Armor", "Belt", "Shield"],
-  sapphire: ["Sword", "Armor", "Belt", "Shield"],
-  horned: ["Armor", "Belt", "Shield"],
-  frozen: ["Morningstar", "Armor", "Shield"],
-  golden: ["Sword", "Armor", "Shield"],
-  ruby: ["Sword", "Armor", "Shield"],
-  plated: ["Armor", "Belt", "Shield"],
-  leather: ["Armor", "Belt", "Shield"],
-};
-
 Types.resistances = {
   [Types.Entities.COWKING]: {
     lightningDamage: 100,
@@ -940,175 +836,6 @@ Types.resistanceToDisplayMap = {
   coldDamage: "cold damage",
   physicalDamage: "physical damage",
 };
-
-Types.expForLevel = [
-  1,
-  8,
-  18,
-  36,
-  68,
-  100,
-  150,
-  256,
-  410,
-  625, // 10
-
-  915,
-  1296,
-  1785,
-  2401,
-  3164,
-  4096,
-  5220,
-  6561,
-  8145,
-  10000, // 20
-
-  12155,
-  14641,
-  17490,
-  20736,
-  24414,
-  28561,
-  33215,
-  38416,
-  44205,
-  50625, // 30
-
-  57720,
-  65536,
-  74120,
-  83521,
-  93789,
-  104976,
-  117135,
-  130321,
-  144590,
-  160000, // 40
-
-  176610,
-  194481,
-  213675,
-  234256,
-  256289,
-  279841,
-  304980,
-  331776,
-  360300,
-  390625, // 50
-
-  422825,
-  456976,
-  493155,
-  531441,
-  571914,
-  614656,
-  659750,
-  707281,
-  757335,
-  810000, // 60
-
-  865365,
-  923521,
-  984560,
-  1048576,
-  1115664,
-  1185921,
-  1259445,
-  1336336,
-  1416695,
-  1500625, // 70
-
-  1588230,
-  1679616,
-  1774890,
-  1874161,
-  1977539,
-  2085136,
-  2197065,
-  2313441,
-  2434380,
-  2560000, // 80
-
-  2690420,
-  2825761,
-  2966145,
-  3111696,
-  3262539,
-  3418801,
-  3580610,
-  3748096,
-  3921390,
-  4100625, // 90
-
-  4285935,
-  4477456,
-  4675325,
-  4879681,
-  5090664,
-  5318416,
-  5553080,
-  5804801,
-  6083725,
-  6410000, // 100
-
-  6765201,
-  7311616,
-  7890481,
-  8503056,
-  9150625,
-  9834496,
-  10556001,
-  11316496,
-  12117361,
-  12960000, // 110
-
-  13845841,
-  14776336,
-  15752961,
-  16777216,
-  17850625,
-  18974736,
-  20151121,
-  21381376,
-  22667121,
-  24010000, // 120
-
-  25411681,
-  26873856,
-  28398241,
-  29986576,
-  31640625,
-  33362176,
-  35153041,
-  37015056,
-  38950081,
-  40960000, // 130
-
-  43046721,
-  45212176,
-  47458321,
-  49787136,
-  52200625,
-  54700816,
-  57289761,
-  59969536,
-  62742241,
-  65610000, // 140
-
-  68574961,
-  71639296,
-  74805201,
-  78074896,
-  81450625,
-  84934656,
-  88529281,
-  92236816,
-  96059601,
-  100000000, // 150
-
-  108243216,
-];
 
 Types.getLevel = function (exp: number) {
   var i = 1;
@@ -1445,247 +1172,6 @@ Types.getKindAsString = function (kind: number) {
   }
 };
 
-Types.runeKind = {
-  sat: {
-    rank: 1,
-    requirement: 1,
-    attribute: {
-      health: 10,
-    },
-  },
-  al: {
-    rank: 2,
-    requirement: 2,
-    attribute: {
-      minDamage: 4,
-    },
-  },
-  bul: {
-    rank: 3,
-    requirement: 3,
-    attribute: {
-      maxDamage: 4,
-    },
-  },
-  nan: {
-    rank: 4,
-    requirement: 4,
-    attribute: {
-      magicDamage: 4,
-    },
-  },
-  mir: {
-    rank: 5,
-    requirement: 6,
-    attribute: {
-      attackDamage: 4,
-    },
-  },
-  gel: {
-    rank: 6,
-    requirement: 8,
-    attribute: {
-      absorbedDamage: 4,
-    },
-  },
-  do: {
-    rank: 7,
-    requirement: 10,
-    attribute: {
-      defense: 4,
-    },
-  },
-  ban: {
-    rank: 8,
-    requirement: 12,
-    attribute: {
-      exp: 4,
-    },
-  },
-  sol: {
-    rank: 9,
-    requirement: 14,
-    attribute: {
-      reduceFrozenChance: 5,
-    },
-  },
-  um: {
-    rank: 10,
-    requirement: 16,
-    attribute: {
-      flameDamage: 10,
-    },
-  },
-  hex: {
-    rank: 11,
-    requirement: 18,
-    attribute: {
-      lightningDamage: 5,
-    },
-  },
-  zal: {
-    rank: 12,
-    requirement: 20,
-    attribute: {
-      pierceDamage: 10,
-    },
-  },
-  vie: {
-    rank: 13,
-    requirement: 22,
-    attribute: {
-      regenerateHealth: 10,
-    },
-  },
-  eth: {
-    rank: 14,
-    requirement: 24,
-    attribute: {
-      poisonDamage: 10,
-    },
-  },
-  btc: {
-    rank: 15,
-    requirement: 27,
-    attribute: {
-      magicResistance: 10,
-    },
-  },
-  vax: {
-    rank: 16,
-    requirement: 30,
-    attribute: {
-      flameResistance: 10,
-    },
-  },
-  por: {
-    rank: 17,
-    requirement: 33,
-    attribute: {
-      lightningResistance: 10,
-    },
-  },
-  las: {
-    rank: 18,
-    requirement: 36,
-    attribute: {
-      coldResistance: 10,
-    },
-  },
-  cham: {
-    rank: 19,
-    requirement: 39,
-    attribute: {
-      poisonResistance: 10,
-    },
-  },
-  xno: {
-    rank: 20,
-    requirement: 42,
-    attribute: {
-      attackSpeed: 10,
-    },
-  },
-  fal: {
-    rank: 21,
-    requirement: 45,
-    attribute: {
-      magicDamagePercent: 10,
-    },
-  },
-  kul: {
-    rank: 22,
-    requirement: 48,
-    attribute: {
-      lightningDamagePercent: 10,
-    },
-  },
-  mer: {
-    rank: 23,
-    requirement: 51,
-    attribute: {
-      flameDamagePercent: 10,
-    },
-  },
-  qua: {
-    rank: 24,
-    requirement: 54,
-    attribute: {
-      coldDamagePercent: 10,
-    },
-  },
-  gul: {
-    rank: 25,
-    requirement: 57,
-    attribute: {
-      poisonDamagePercent: 10,
-    },
-  },
-  ber: {
-    rank: 26,
-    requirement: 60,
-    attribute: {
-      skillTimeout: 10,
-    },
-  },
-  tor: {
-    rank: 27,
-    requirement: 63,
-    attribute: {
-      coldDamage: 2,
-      freezeChance: 5,
-    },
-  },
-  jah: {
-    rank: 28,
-    requirement: 66,
-    attribute: {
-      magicFind: 10,
-    },
-  },
-  vod: {
-    rank: 29,
-    requirement: 69,
-    attribute: {
-      regenerateHealth: 10,
-      preventRegenerateHealth: 10,
-    },
-  },
-};
-
-Types.RuneByKind = Object.entries(Types.Entities.RUNE).reduce((acc, [name, kind]: [string, number]) => {
-  acc[kind] = name.toLowerCase();
-  return acc;
-}, {});
-
-Types.RuneList = Object.keys(Types.Entities.RUNE).map(rune => rune.toLowerCase());
-
-Types.getRuneNameFromItem = (rankOrString: number | string) => {
-  let rune;
-
-  if (typeof rankOrString === "string") {
-    [, rune] = rankOrString.split(":")[0].split("-");
-  } else if (typeof rankOrString === "number") {
-    rune = Types.RuneList[rankOrString - 1];
-  }
-
-  return rune;
-};
-
-Types.getRuneFromItem = (rankOrString: number | string) => {
-  const rune = Types.getRuneNameFromItem(rankOrString);
-
-  return Types.runeKind[rune];
-};
-
-Types.getHighestSocketRequirement = (rawSocket: number[]) => {
-  const highestRank = [...rawSocket].sort((a, b) => b - a)[0];
-  if (!highestRank) return;
-
-  const { requirement } = Object.values<{ rank: number; requirement: number }>(Types.runeKind)[highestRank - 1];
-  return requirement;
-};
-
 Types.getAliasFromName = function (name: string) {
   if (name === "skeleton2") {
     return "skeleton warrior";
@@ -2016,26 +1502,22 @@ Types.getBonus = function (rawBonus, level) {
     skillTimeoutPerLevel,
   ];
 
-  const bonus: { type: string; stats: number; description: string }[] = [];
+  // const bonus: { type: string; stats: number; description: string }[] = [];
 
   // A glitch in the inventory system allowed for scrolls to be added as rings
-  if (!rawBonus || !Array.isArray(rawBonus)) return bonus;
+  if (!rawBonus || !Array.isArray(rawBonus)) return [];
+
+  const bonus = {};
 
   for (let i = 0; i < rawBonus.length; i++) {
     const type = Types.bonusType[rawBonus[i]];
     const stats = bonusPerLevel[rawBonus[i]][level - 1];
 
-    let description = Types.getBonusDescriptionMap[rawBonus[i]].replace("#", stats);
-
-    if (type === "freezeChance") {
-      description = description.replace("#", Types.getFrozenTimePerLevel(level) / 1000);
+    if (!bonus[type]) {
+      bonus[type] = 0;
     }
 
-    bonus.push({
-      type,
-      stats,
-      description,
-    });
+    bonus[type] += stats;
   }
 
   return bonus;
@@ -2099,71 +1581,20 @@ Types.getPartyBonus = function (rawBonus, level) {
   return bonus;
 };
 
-Types.getRuneBonus = function (rawRune: string) {
-  if (!rawRune || !Types.RuneList.includes(Types.getRuneNameFromItem(rawRune))) return;
+Types.getAttributesBonus = function (attributes, level) {
+  const bonus: { type: string; stats: number }[] = Object.entries(attributes).map(([type, stats]: [string, number]) => {
+    let description = Types.getBonusDescriptionMap[Types.bonusType.findIndex(t => t === type)].replace("#", stats);
 
-  const rune = Types.getRuneFromItem(rawRune);
-  const bonus: { type: string; stats: number; description: string }[] = Object.entries(rune.attribute).map(
-    ([type, stats]: [string, number]) => {
-      return {
-        type,
-        stats,
-        description: Types.getBonusDescriptionMap[Types.bonusType.findIndex(t => t === type)].replace("#", stats),
-      };
-    },
-  );
+    if (type === "freezeChance") {
+      description = description.replace("#", level ? Types.getFrozenTimePerLevel(level) / 1000 : "x");
+    }
 
-  return bonus;
-};
-
-Types.getRunesBonus = function (runes: number[]) {
-  const attributes = {};
-
-  _.forEach(runes, kind => {
-    if (!kind) return;
-    const rune = Types.getRuneFromItem(kind);
-    Object.entries(rune.attribute).map(([type, stats]: [string, number]) => {
-      if (!attributes[type]) {
-        attributes[type] = 0;
-      }
-
-      attributes[type] += stats;
-    });
+    return {
+      type,
+      stats,
+      description,
+    };
   });
-
-  return Types.getAttributesBonus(attributes);
-};
-
-Types.getRunewordBonus = ({
-  isUnique,
-  socket,
-  type,
-}: {
-  isUnique: boolean;
-  socket: number[];
-  type: "weapon" | "armor" | "shield";
-}) => {
-  let runeword;
-  let runewordBonus;
-
-  if (!isUnique && socket?.length && !socket.some(s => s === 0)) {
-    const wordSocket = socket.map(s => Types.RuneList[s - 1]).join("-");
-    ({ name: runeword, bonus: runewordBonus } = Types.Runewords[type]?.[wordSocket] || {});
-  }
-
-  return { runeword, runewordBonus };
-};
-
-Types.getAttributesBonus = function (attributes) {
-  const bonus: { type: string; stats: number; description: string }[] = Object.entries(attributes).map(
-    ([type, stats]: [string, number]) => {
-      return {
-        type,
-        stats,
-        description: Types.getBonusDescriptionMap[Types.bonusType.findIndex(t => t === type)].replace("#", stats),
-      };
-    },
-  );
 
   return bonus;
 };
@@ -2426,14 +1857,12 @@ Types.getItemDetails = function ({
   item,
   level,
   rawBonus,
-  rawSetBonus,
   rawSkill,
   rawSocket,
 }: {
   item: string;
   level: number;
   rawBonus: number[];
-  rawSetBonus?: { [key: string]: number };
   rawSkill?: number;
   rawSocket: number[];
 }) {
@@ -2456,7 +1885,6 @@ Types.getItemDetails = function ({
   let healthBonus = 0;
   let bonus = [];
   let skill = null;
-  let setBonus = [];
   let socketBonus = [];
   let partyBonus = [];
   let runeBonus = [];
@@ -2496,12 +1924,8 @@ Types.getItemDetails = function ({
     if (isCape) {
       partyBonus = Types.getPartyBonus(rawBonus, level);
     } else {
-      bonus = Types.getBonus(rawBonus, level);
+      bonus = Types.getAttributesBonus(Types.getBonus(rawBonus, level), level);
     }
-  }
-
-  if (rawSetBonus) {
-    setBonus = Types.getSetBonus(rawSetBonus);
   }
 
   if (isSocket) {
@@ -2509,17 +1933,17 @@ Types.getItemDetails = function ({
 
     if (runeword && runewordBonus) {
       name = runeword;
-      socketBonus = Types.getAttributesBonus(runewordBonus);
+      socketBonus = Types.getAttributesBonus(runewordBonus, level);
       isRuneword = true;
     } else {
-      socketBonus = Types.getRunesBonus(rawSocket);
+      socketBonus = Types.getAttributesBonus(Types.getRunesBonus(rawSocket), level);
     }
 
     if (runeRequirement > requirement) {
       requirement = runeRequirement;
     }
   } else if (isRune) {
-    runeBonus = Types.getRuneBonus(item);
+    runeBonus = Types.getAttributesBonus(Types.getRune(item).attribute, level);
     runeRank = rune.rank;
   }
 
@@ -2540,7 +1964,6 @@ Types.getItemDetails = function ({
     bonus,
     socket: rawSocket?.length,
     socketBonus,
-    setBonus,
     partyBonus,
     runeBonus,
     runeRank,
@@ -2579,124 +2002,3 @@ Types.itemDescription = {
   stonesocket:
     "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets it will attempt to remove the last item in the socket(s). There is a 50% chance for the item to be burned.",
 };
-
-// minDamage
-// maxDamage
-// attackDamage
-// health
-// magicDamage
-// defense
-// absorb
-// exp
-// regenerateHealth
-// criticalHit
-// blockChance
-// magicFind
-// attackSpeed
-// drainLife
-// flameDamage
-// lightningDamage
-// pierceDamage
-// highHealth
-// coldDamage
-// freezeChance
-// reduceFrozenChance
-// magicResistance
-// flameResistance
-// lightningResistance
-// coldResistance
-// poisonResistance
-
-Types.Runewords = {
-  weapon: {
-    "ban-nan-mir-al-btc": {
-      name: "Buy the dip",
-      bonus: {
-        minDamage: 25,
-        attackDamage: 10,
-        magicDamage: 10,
-        magicResistance: 15,
-        exp: 10,
-      },
-    },
-    "las-tor-mir": {
-      name: "Cold Wallet",
-      bonus: {
-        attackDamage: 15,
-        coldDamage: 25,
-        freezeChance: 10,
-        coldResistance: 15,
-      },
-    },
-    "bul-mir-zal-um-vax": {
-      name: "Hot Wallet",
-      bonus: {
-        maxDamage: 10,
-        attackDamage: 15,
-        flameDamage: 20,
-        flameResistance: 15,
-        pierceDamage: 10,
-      },
-    },
-    // "": {
-    //   name: "ASIC",
-    //   bonus: {
-    //     pierceDamage: 10,
-    //   },
-    // },
-  },
-  armor: {
-    "do-las-sol-vod-jah-por": {
-      name: "Melon Tusk",
-      bonus: {
-        defense: 20,
-        magicFind: 15,
-        lightningResistance: 10,
-        regenerateHealth: 20,
-        preventRegenerateHealth: 20,
-        coldResistance: 10,
-        reduceFrozenChance: 20,
-      },
-    },
-    // ethbtcxno: {
-    //   name: "EIP-1559",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "SHA-256",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Double Spend",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Echo Chamber",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Know Your Customer",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Growing Seed",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "The Validator",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Not Your Key Not Your Crypto",
-    //   bonus: {},
-    // },
-  },
-  shield: {},
-};
-
-// Living Whitepaper
-// Smart contract
-// Open Representative Voting
-// Lightweight Node
-// Sub Second Cormirmation
-// Confirmations Per Second

@@ -56,7 +56,8 @@ class Sprite {
       this.id === "waypoint" ||
       this.id === "weapon" ||
       this.id === "armor" ||
-      this.id === "shield"
+      this.id === "shield" ||
+      this.id === "npc"
     ) {
       this.id = this.name;
     }
