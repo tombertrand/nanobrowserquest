@@ -891,7 +891,6 @@ class Game {
           lightningDamage,
           pierceDamage,
           bonus = [],
-          socketBonus = [],
           skill,
           requirement,
           description,
@@ -934,8 +933,10 @@ class Game {
             ${lightningDamage ? `<div class="item-bonus">Lightning damage: ${lightningDamage}</div>` : ""}
             ${pierceDamage ? `<div class="item-bonus">Pierce damage: ${pierceDamage}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
-            ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
-            ${socketBonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
+            ${
+              Array.isArray(bonus) &&
+              bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")
+            }
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
             ${
@@ -3477,25 +3478,33 @@ class Game {
         }
       });
 
-      self.client.onPlayerChangeStats(function ({ maxHitPoints, damage, defense, absorb }) {
+      self.client.onPlayerChangeStats(function ({ maxHitPoints, ...stats }) {
         if (self.player.maxHitPoints !== maxHitPoints || self.player.invincible) {
           self.player.maxHitPoints = maxHitPoints;
           self.player.hitPoints = maxHitPoints;
 
           self.updateBars();
         }
-        if (self.player.damage !== damage) {
-          self.player.damage = damage;
-          self.updateDamage();
-        }
-        if (self.player.defense !== defense) {
-          self.player.defense = defense;
-          self.updateDefense();
-        }
-        if (self.player.absorb !== absorb) {
-          self.player.absorb = absorb;
-          self.updateAbsorb();
-        }
+
+        console.log("~~~~stats", stats);
+
+        $("#player-damage").text(stats.damage);
+        $("#player-attackDamage").text(stats.attackDamage);
+        $("#player-criticalHit").text(stats.criticalHit);
+        $("#player-magicDamage").text(stats.magicDamage);
+        $("#player-flameDamage").text(stats.flameDamage);
+        $("#player-lightningDamage").text(stats.lightningDamage);
+        $("#player-coldDamage").text(stats.coldDamage);
+        $("#player-poisonDamage").text(stats.poisonDamage);
+        $("#player-pierceDamage").text(stats.pierceDamage);
+        $("#player-defense").text(stats.defense);
+        $("#player-blockChance").text(stats.blockChance);
+        $("#player-absorbedDamage").text(stats.absorbedDamage);
+        $("#player-magicResistance").text(stats.magicResistance);
+        $("#player-flameResistance").text(stats.flameResistance);
+        $("#player-lightningResistance").text(stats.lightningResistance);
+        $("#player-coldResistance").text(stats.coldResistance);
+        $("#player-poisonResistance").text(stats.poisonResistance);
       });
 
       self.client.onPlayerSettings(function ({ playerId, settings }) {
@@ -5190,18 +5199,6 @@ class Game {
       this.playerhp_callback(this.player.hitPoints, this.player.maxHitPoints);
       $("#player-hp").text(this.player.maxHitPoints);
     }
-  }
-
-  updateDamage() {
-    $("#player-damage").text(this.player.damage);
-  }
-
-  updateDefense() {
-    $("#player-defense").text(this.player.defense);
-  }
-
-  updateAbsorb() {
-    $("#player-absorb").text(this.player.absorb);
   }
 
   updateExpBar() {

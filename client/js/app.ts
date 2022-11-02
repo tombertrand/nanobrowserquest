@@ -889,7 +889,6 @@ class App {
       .attr("data-level", weaponLevel)
       .attr("data-bonus", toString(weaponBonus))
       .attr("data-socket", toString(weaponSocket));
-    $("#player-weapon").text(`${Types.getDisplayName(weapon, !!weaponBonus)} +${weaponLevel}`);
 
     if (armor !== "firefox") {
       $("#armor")
@@ -898,7 +897,6 @@ class App {
         .attr("data-level", armorLevel)
         .attr("data-bonus", toString(armorBonus))
         .attr("data-socket", toString(armorSocket));
-      $("#player-armor").text(`${Types.getDisplayName(armor, !!armorBonus)} +${armorLevel}`);
     }
   }
 

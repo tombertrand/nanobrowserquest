@@ -111,7 +111,7 @@ Messages.Frozen = class Message {
 Messages.Stats = class Message {
   constructor(private stats) {}
   serialize() {
-    return [Types.Messages.STATS, this.stats.maxHitPoints, this.stats.damage, this.stats.defense, this.stats.absorb];
+    return [Types.Messages.STATS, this.stats];
   }
 };
 

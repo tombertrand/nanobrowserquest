@@ -1679,12 +1679,14 @@ class Player extends Character {
       ].filter(Boolean);
 
       bonusToCalculate.forEach(({ bonus, level }) => {
-        Types.getBonus(bonus, level).forEach(({ type, stats }) => {
-          if (type === "freezeChance" && level > this.freezeChanceLevel) {
-            this.freezeChanceLevel = level;
-          }
-          this.bonus[type] += stats;
-        });
+        if (bonus) {
+          Object.entries(Types.getBonus(bonus, level)).forEach(([type, stats]) => {
+            if (type === "freezeChance" && level > this.freezeChanceLevel) {
+              this.freezeChanceLevel = level;
+            }
+            this.bonus[type] += stats;
+          });
+        }
       });
 
       if (this.bonus.drainLife) {
@@ -1956,7 +1958,9 @@ class Player extends Character {
           minAbsorb !== maxAbsorb
             ? `${minAbsorb - this.bonus.absorbedDamage}-${maxAbsorb - this.bonus.absorbedDamage}`
             : maxAbsorb - this.bonus.absorbedDamage,
-        absorb: this.bonus.absorbedDamage,
+        // absorb: this.bonus.absorbedDamage,
+        ...this.bonus,
+        ...this.partyBonus,
       }).serialize(),
     );
   }

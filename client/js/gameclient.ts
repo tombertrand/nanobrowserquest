@@ -621,13 +621,10 @@ class GameClient {
   }
 
   receiveStats(data) {
-    var maxHitPoints = data[1];
-    var damage = data[2];
-    var defense = data[3];
-    var absorb = data[4];
+    const stats = data[1];
 
     if (this.stats_callback) {
-      this.stats_callback({ maxHitPoints, damage, defense, absorb });
+      this.stats_callback(stats);
     }
   }
 

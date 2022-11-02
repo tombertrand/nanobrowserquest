@@ -1413,6 +1413,7 @@ Types.getBonusDescriptionMap = [
   "+#% Lightning damage",
   "+#% Cold damage",
   "+#% Poison damage",
+  "+#% All resistances",
   "+#% Prevent enemy health regeneration",
   "+# Poison damage",
   "-#% Skill timeout",
@@ -1488,6 +1489,7 @@ Types.getBonus = function (rawBonus, level) {
   const lightningDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const coldDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const allResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const preventRegenerateHealthPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const skillTimeoutPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
@@ -1524,6 +1526,7 @@ Types.getBonus = function (rawBonus, level) {
     lightningDamagePercentPerLevel,
     coldDamagePercentPerLevel,
     poisonDamagePercentPerLevel,
+    allResistancePerLevel,
     preventRegenerateHealthPerLevel,
     poisonDamagePerLevel,
     skillTimeoutPerLevel,
@@ -1531,10 +1534,10 @@ Types.getBonus = function (rawBonus, level) {
 
   // const bonus: { type: string; stats: number; description: string }[] = [];
 
-  // A glitch in the inventory system allowed for scrolls to be added as rings
-  if (!rawBonus || !Array.isArray(rawBonus)) return [];
+  const bonus: { [key: string]: number } = {};
 
-  const bonus = {};
+  // A glitch in the inventory system allowed for scrolls to be added as rings
+  if (!rawBonus || !Array.isArray(rawBonus)) return {};
 
   for (let i = 0; i < rawBonus.length; i++) {
     const type = Types.bonusType[rawBonus[i]];
@@ -1915,9 +1918,9 @@ Types.getItemDetails = function ({
   let name = Types.getDisplayName(item, isUnique);
   let magicDamage = 0;
   let healthBonus = 0;
-  let bonus = [];
+  let bonus: any = {};
   let skill = null;
-  let socketBonus = [];
+  let socketBonus = {};
   let partyBonus = [];
   let runeBonus = [];
   let runeRank: null | Number = null;
@@ -1956,7 +1959,7 @@ Types.getItemDetails = function ({
     if (isCape) {
       partyBonus = Types.getPartyBonus(rawBonus, level);
     } else {
-      bonus = Types.getAttributesBonus(Types.getBonus(rawBonus, level), level);
+      bonus = Types.getBonus(rawBonus, level);
     }
   }
 
@@ -1965,10 +1968,10 @@ Types.getItemDetails = function ({
 
     if (runeword && runewordBonus) {
       name = runeword;
-      socketBonus = Types.getAttributesBonus(runewordBonus, level);
+      socketBonus = runewordBonus;
       isRuneword = true;
     } else {
-      socketBonus = Types.getAttributesBonus(Types.getRunesBonus(rawSocket), level);
+      socketBonus = Types.getRunesBonus(rawSocket);
     }
 
     if (runeRequirement > requirement) {
@@ -1977,6 +1980,27 @@ Types.getItemDetails = function ({
   } else if (isRune) {
     runeBonus = Types.getAttributesBonus(Types.getRune(item).attribute, level);
     runeRank = rune.rank;
+  }
+
+  if (Object.keys(socketBonus).length) {
+    Object.entries(socketBonus).forEach(([key, value]) => {
+      if (!bonus[key]) {
+        bonus[key] = 0;
+      }
+      bonus[key] += value;
+    });
+  }
+
+  if (Object.keys(bonus).length) {
+    if (healthBonus && bonus.health) {
+      healthBonus += bonus.health;
+      delete bonus.health;
+    }
+    if (magicDamage && bonus.magicDamage) {
+      magicDamage += bonus.magicDamage;
+      delete bonus.magicDamage;
+    }
+    bonus = Types.getAttributesBonus(bonus, level);
   }
 
   return {
@@ -1995,7 +2019,6 @@ Types.getItemDetails = function ({
     description,
     bonus,
     socket: rawSocket?.length,
-    socketBonus,
     partyBonus,
     runeBonus,
     runeRank,
@@ -2032,5 +2055,5 @@ Types.itemDescription = {
     "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
   rune: "Can be inserted into a socketed item or create runewords",
   stonesocket:
-    "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets it will attempt to remove the last item in the socket(s). There is a 50% chance for the item to be burned.",
+    "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets, the stone will attempt to remove the last item from its socket. There is a 50% chance for the item to be burned.",
 };
