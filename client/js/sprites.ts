@@ -124,6 +124,11 @@ import itemBeltfrozen from "../sprites/item.json";
 import itemBelthorned from "../sprites/item.json";
 import itemBeltdiamond from "../sprites/item.json";
 import itemBeltminotaur from "../sprites/item.json";
+import itemBeltemerald from "../sprites/item.json";
+import itemBeltmystical from "../sprites/item.json";
+import itemBelttemplar from "../sprites/item.json";
+import itemBeltdemon from "../sprites/item.json";
+import itemBeltmoon from "../sprites/item.json";
 import itemCape from "../sprites/item.json";
 import itemShieldwood from "../sprites/item.json";
 import itemShieldiron from "../sprites/item.json";
@@ -328,6 +333,7 @@ const sprites = {
   "item-rune-ber": itemRune,
   "item-rune-tor": itemRune,
   "item-rune-jah": itemRune,
+  "item-rune-shi": itemRune,
   "item-rune-vod": itemRune,
   "item-gemruby": itemGemruby,
   "item-gememerald": itemGememerald,
@@ -378,6 +384,11 @@ const sprites = {
   "item-belthorned": itemBelthorned,
   "item-beltdiamond": itemBeltdiamond,
   "item-beltminotaur": itemBeltminotaur,
+  "item-beltemerald": itemBeltemerald,
+  "item-beltmystical": itemBeltmystical,
+  "item-belttemplar": itemBelttemplar,
+  "item-beltdemon": itemBeltdemon,
+  "item-beltmoon": itemBeltmoon,
   "item-cape": itemCape,
   "item-shieldwood": itemShieldwood,
   "item-shieldiron": itemShieldiron,

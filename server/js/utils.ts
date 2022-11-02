@@ -479,9 +479,9 @@ export const isValidUpgradeRunes = items => {
   });
 
   if (runeClass !== scrollClass || !runeRank) return false;
-  if (runeRank >= 24) return false;
-  if (runeRank < 10 && runeQuantity !== 3) return false;
-  if (runeRank >= 10 && runeQuantity !== 2) return false;
+  if (runeRank > 30) return false;
+  if (runeRank < 18 && runeQuantity !== 3) return false;
+  if (runeRank >= 18 && runeQuantity !== 2) return false;
 
   return runeRank;
 };

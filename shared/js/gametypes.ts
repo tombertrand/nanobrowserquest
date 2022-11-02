@@ -175,6 +175,11 @@ export const Types: any = {
     BELTHORNED: 141,
     BELTDIAMOND: 129,
     BELTMINOTAUR: 134,
+    BELTEMERALD: 201,
+    BELTMYSTICAL: 202,
+    BELTTEMPLAR: 203,
+    BELTDEMON: 204,
+    BELTMOON: 205,
 
     // Capes
     CAPE: 130,
@@ -228,7 +233,7 @@ export const Types: any = {
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
     SCROLLUPGRADEHIGH: 76,
-    SCROLLUPGRADELEGENDARY: 190,
+    SCROLLUPGRADELEGENDARY: 200,
     SCROLLUPGRADEBLESSED: 118,
     SCROLLUPGRADESACRED: 191,
     SCROLLTRANSMUTE: 142,
@@ -421,6 +426,11 @@ Types.Entities.Belts = [
   Types.Entities.BELTFHORNED,
   Types.Entities.BELTDIAMOND,
   Types.Entities.BELTMINOTAUR,
+  Types.Entities.BELTEMERALD,
+  Types.Entities.BELTMYSTICAL,
+  Types.Entities.BELTTEMPLAR,
+  Types.Entities.BELTDEMON,
+  Types.Entities.BELTMOON,
 ];
 
 Types.Entities.Shields = [
@@ -559,6 +569,11 @@ export const kinds = {
   belthorned: [Types.Entities.BELTHORNED, "belt", "Horned Belt", 26, 12],
   beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 14],
   beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 40, 18],
+  beltemerald: [Types.Entities.BELTEMERALD, "belt", "Emerald Belt", 40, 18],
+  beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 40, 18],
+  belttemplar: [Types.Entities.BELTTEMPLAR, "belt", "Templar Belt", 40, 18],
+  beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 40, 18],
+  beltmoon: [Types.Entities.BELTMOON, "belt", "Moon Belt", 40, 18],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 20, 2],
 
@@ -643,20 +658,21 @@ export const kinds = {
   "rune-zal": [Types.Entities.RUNE.ZAL, "rune", "ZAL Rune", 20],
   "rune-vie": [Types.Entities.RUNE.VIE, "rune", "VIE Rune", 22],
   "rune-eth": [Types.Entities.RUNE.ETH, "rune", "ETH Rune", 24],
-  "rune-btc": [Types.Entities.RUNE.BTC, "rune", "BTC Rune", 27],
-  "rune-vax": [Types.Entities.RUNE.VAX, "rune", "VAX Rune", 30],
-  "rune-por": [Types.Entities.RUNE.POR, "rune", "POR Rune", 33],
-  "rune-las": [Types.Entities.RUNE.LAS, "rune", "LAS Rune", 36],
-  "rune-cham": [Types.Entities.RUNE.CHAM, "rune", "CHAM Rune", 39],
-  "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune", 42],
-  "rune-fal": [Types.Entities.RUNE.FAL, "rune", "FAL Rune", 45],
-  "rune-kul": [Types.Entities.RUNE.KUL, "rune", "KUL Rune", 48],
-  "rune-mer": [Types.Entities.RUNE.MER, "rune", "MER Rune", 51],
-  "rune-qua": [Types.Entities.RUNE.QUA, "rune", "QUA Rune", 54],
-  "rune-gul": [Types.Entities.RUNE.GUL, "rune", "GUL Rune", 57],
-  "rune-ber": [Types.Entities.RUNE.BER, "rune", "BER Rune", 60],
-  "rune-tor": [Types.Entities.RUNE.TOR, "rune", "TOR Rune", 63],
-  "rune-jah": [Types.Entities.RUNE.JAH, "rune", "JAH Rune", 66],
+  "rune-btc": [Types.Entities.RUNE.BTC, "rune", "BTC Rune", 26],
+  "rune-vax": [Types.Entities.RUNE.VAX, "rune", "VAX Rune", 20],
+  "rune-por": [Types.Entities.RUNE.POR, "rune", "POR Rune", 30],
+  "rune-las": [Types.Entities.RUNE.LAS, "rune", "LAS Rune", 33],
+  "rune-cham": [Types.Entities.RUNE.CHAM, "rune", "CHAM Rune", 36],
+  "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune", 39],
+  "rune-fal": [Types.Entities.RUNE.FAL, "rune", "FAL Rune", 42],
+  "rune-kul": [Types.Entities.RUNE.KUL, "rune", "KUL Rune", 44],
+  "rune-mer": [Types.Entities.RUNE.MER, "rune", "MER Rune", 48],
+  "rune-qua": [Types.Entities.RUNE.QUA, "rune", "QUA Rune", 51],
+  "rune-gul": [Types.Entities.RUNE.GUL, "rune", "GUL Rune", 54],
+  "rune-ber": [Types.Entities.RUNE.BER, "rune", "BER Rune", 57],
+  "rune-tor": [Types.Entities.RUNE.TOR, "rune", "TOR Rune", 60],
+  "rune-jah": [Types.Entities.RUNE.JAH, "rune", "JAH Rune", 63],
+  "rune-shi": [Types.Entities.RUNE.SHI, "rune", "SHI Rune", 66],
   "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 69],
 
   guard: [Types.Entities.GUARD, "npc"],
@@ -736,6 +752,11 @@ Types.rankedBelts = [
   Types.Entities.BELTHORNED,
   Types.Entities.BELTDIAMOND,
   Types.Entities.BELTMINOTAUR,
+  Types.Entities.BELTEMERALD,
+  Types.Entities.BELTMYSTICAL,
+  Types.Entities.BELTTEMPLAR,
+  Types.Entities.BELTDEMON,
+  Types.Entities.BELTMOON,
 ];
 
 Types.itemUniqueMap = {
@@ -805,6 +826,11 @@ Types.itemUniqueMap = {
   belthorned: ["Dee-Fye", 28, 14],
   beltdiamond: ["Election scheduler", 38, 20],
   beltminotaur: ["TaaC", 40, 22],
+  beltemerald: ["TBD", 40, 22],
+  beltmystical: ["TBD", 40, 22],
+  belttemplar: ["TBD", 40, 22],
+  beltdemon: ["TBD", 40, 22],
+  beltmoon: ["TBD", 40, 22],
 };
 
 Types.isSuperUnique = (itemName: string) =>
@@ -1424,9 +1450,10 @@ Types.bonusType = [
   "lightningDamagePercent", // 28
   "coldDamagePercent", // 29
   "poisonDamagePercent", // 30
-  "preventRegenerateHealth", // 31
-  "poisonDamage", // 32
-  "skillTimeout", // 33
+  "allResistance", // 31
+  "preventRegenerateHealth", // 32
+  "poisonDamage", // 33
+  "skillTimeout", // 34
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1564,7 +1591,7 @@ Types.getPartyBonus = function (rawBonus, level) {
 
   const bonus: { type: string; stats: number; description: string }[] = [];
 
-  // A glitch in the inventory system allowed for scrolls to be added as rings
+  // @NOTE: A glitch in the inventory system allowed for scrolls to be added as rings
   if (!rawBonus || !Array.isArray(rawBonus)) return bonus;
   for (let i = 0; i < rawBonus.length; i++) {
     const type = Types.partyBonusType[rawBonus[i]];
@@ -1712,6 +1739,11 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     belthorned: 15,
     beltdiamond: 11,
     beltminotaur: 8,
+    beltemerald: 4,
+    beltmystical: 4,
+    belttemplar: 4,
+    beltdemon: 4,
+    beltmoon: 4,
 
     shieldgolden: 20,
     shieldblue: 18,

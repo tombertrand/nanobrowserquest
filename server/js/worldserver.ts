@@ -1361,6 +1361,11 @@ class World {
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
+      // "beltemerald",
+      // "beltmystical",
+      // "belttemplar",
+      // "beltdemon",
+      // "beltmoon",
       // "shieldexecutioner",
       // "shielddragon",
       // "shielddemon",
@@ -1370,8 +1375,8 @@ class World {
       // "rune-qua",
       // "rune-gul",
       // "shieldemerald",
-      // "shieldtemplar",
-      "ringbalrog",
+      "shieldtemplar",
+      // "ringbalrog",
       // "stonesocket",
       // "scrollupgradelegendary",
       // "scrollupgradesacred",
@@ -1398,13 +1403,14 @@ class World {
       // "rune-ber",
       // "rune-tor",
       // "rune-jah",
+      // "rune-shi",
       // "rune-vod",
       // "emeraldsword",
       // "mysticalsword",
       // "dragonsword",
       // "executionersword",
       // "eclypsedagger",
-      // "spikeglaive",
+      "spikeglaive",
       // "templarsword",
       // "moonpartisan",
     ];

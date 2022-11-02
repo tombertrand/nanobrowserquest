@@ -254,6 +254,41 @@ var Items = {
     }
   },
 
+  BeltEmerald: class BeltEmerald extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTEMERALD, "belt");
+      this.lootMessage = "You pick up an emerald belt";
+    }
+  },
+
+  BeltMystical: class BeltMystical extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTMYSTICAL, "belt");
+      this.lootMessage = "You pick up a mystical belt";
+    }
+  },
+
+  BeltTemplar: class BeltTemplar extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTTEMPLAR, "belt");
+      this.lootMessage = "You pick up a templar belt";
+    }
+  },
+
+  BeltDemon: class BeltDemon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTDEMON, "belt");
+      this.lootMessage = "You pick up a demon belt";
+    }
+  },
+
+  BeltMoon: class BeltMoon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTMOON, "belt");
+      this.lootMessage = "You pick up a moon belt";
+    }
+  },
+
   Cape: class Cape extends Item {
     constructor(id) {
       super(id, Types.Entities.CAPE, "cape");
@@ -594,6 +629,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.RUNE.JAH, "rune");
       this.lootMessage = "You pick up a JAH Rune";
+    }
+  },
+
+  RuneShi: class RuneShi extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.SHI, "rune");
+      this.lootMessage = "You pick up a SHI Rune";
     }
   },
 

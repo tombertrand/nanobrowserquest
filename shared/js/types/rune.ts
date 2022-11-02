@@ -29,7 +29,8 @@ export const RUNE = {
   BER: 186,
   TOR: 187,
   JAH: 188,
-  VOD: 189,
+  SHI: 189,
+  VOD: 190,
 };
 
 export const runeKind = {
@@ -133,91 +134,91 @@ export const runeKind = {
   },
   btc: {
     rank: 15,
-    requirement: 27,
+    requirement: 26,
     attribute: {
       magicResistance: 10,
     },
   },
   vax: {
     rank: 16,
-    requirement: 30,
+    requirement: 28,
     attribute: {
       flameResistance: 10,
     },
   },
   por: {
     rank: 17,
-    requirement: 33,
+    requirement: 30,
     attribute: {
       lightningResistance: 10,
     },
   },
   las: {
     rank: 18,
-    requirement: 36,
+    requirement: 33,
     attribute: {
       coldResistance: 10,
     },
   },
   cham: {
     rank: 19,
-    requirement: 39,
+    requirement: 36,
     attribute: {
       poisonResistance: 10,
     },
   },
   xno: {
     rank: 20,
-    requirement: 42,
+    requirement: 39,
     attribute: {
       attackSpeed: 10,
     },
   },
   fal: {
     rank: 21,
-    requirement: 45,
+    requirement: 42,
     attribute: {
       magicDamagePercent: 10,
     },
   },
   kul: {
     rank: 22,
-    requirement: 48,
+    requirement: 45,
     attribute: {
       lightningDamagePercent: 10,
     },
   },
   mer: {
     rank: 23,
-    requirement: 51,
+    requirement: 48,
     attribute: {
       flameDamagePercent: 10,
     },
   },
   qua: {
     rank: 24,
-    requirement: 54,
+    requirement: 51,
     attribute: {
       coldDamagePercent: 10,
     },
   },
   gul: {
     rank: 25,
-    requirement: 57,
+    requirement: 54,
     attribute: {
       poisonDamagePercent: 10,
     },
   },
   ber: {
     rank: 26,
-    requirement: 60,
+    requirement: 57,
     attribute: {
       skillTimeout: 10,
     },
   },
   tor: {
     rank: 27,
-    requirement: 63,
+    requirement: 60,
     attribute: {
       coldDamage: 2,
       freezeChance: 5,
@@ -225,13 +226,20 @@ export const runeKind = {
   },
   jah: {
     rank: 28,
-    requirement: 66,
+    requirement: 63,
     attribute: {
       magicFind: 10,
     },
   },
-  vod: {
+  shi: {
     rank: 29,
+    requirement: 66,
+    attribute: {
+      allResistance: 10,
+    },
+  },
+  vod: {
+    rank: 30,
     requirement: 69,
     attribute: {
       regenerateHealth: 10,
@@ -328,37 +336,10 @@ export const getRunewordBonus = ({
   return { runeword, runewordBonus };
 };
 
-// minDamage
-// maxDamage
-// attackDamage
-// health
-// magicDamage
-// defense
-// absorb
-// exp
-// regenerateHealth
-// criticalHit
-// blockChance
-// magicFind
-// attackSpeed
-// drainLife
-// flameDamage
-// lightningDamage
-// pierceDamage
-// highHealth
-// coldDamage
-// freezeChance
-// reduceFrozenChance
-// magicResistance
-// flameResistance
-// lightningResistance
-// coldResistance
-// poisonResistance
-
 export const Runewords = {
   weapon: {
     "al-sat-mir-nan": {
-      name: "",
+      name: "Sub Second Cormirmation",
       bonus: {
         health: 20,
         minDamage: 8,
@@ -367,7 +348,7 @@ export const Runewords = {
       },
     },
     "mir-bul-al-bul-mir": {
-      name: "",
+      name: "Smart contract",
       bonus: {
         attackDamage: 12,
         maxDamage: 12,
@@ -375,7 +356,7 @@ export const Runewords = {
       },
     },
     "bul-um-al-bul-mir-zal": {
-      name: "",
+      name: "Lightweight Node",
       bonus: {
         attackDamage: 6,
         flameDamage: 12,
@@ -416,32 +397,31 @@ export const Runewords = {
       },
     },
     "ber-gul-cham-eth-eth": {
-      name: "",
+      name: "Living Whitepaper",
       bonus: {
         poisonDamage: 35,
         poisonResistance: 20,
         poisonDamagePercent: 20,
         skillTimeout: 20,
-        pierceDamage: 10,
+        pierceDamage: 20,
       },
     },
     "fal-btc-xno-zal-xno-fal": {
-      name: "",
+      name: "Can't the devs do something",
       bonus: {
         magicDamagePercent: 30,
         magicResistance: 20,
         attackSpeed: 30,
         pierceDamage: 20,
+        criticalHit: 8,
       },
     },
     "mer-qua-vod-mer-kul-fal": {
       name: "ASIC",
       bonus: {
-        magicDamagePercent: 30,
-        lightningDamagePercent: 30,
-        flameDamagePercent: 30,
-        coldDamagePercent: 30,
-        poisonDamagePercent: 30,
+        attackDamage: 20,
+        allResistances: 30,
+        criticalHit: 8,
         regenerateHealth: 30,
         preventRegenerateHealth: 20,
       },
@@ -496,9 +476,5 @@ export const Runewords = {
   shield: {},
 };
 
-// Living Whitepaper
-// Smart contract
-// Open Representative Voting
-// Lightweight Node
-// Sub Second Cormirmation
 // Confirmations Per Second
+// Open Representative Voting

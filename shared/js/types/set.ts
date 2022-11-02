@@ -1,4 +1,11 @@
 export const setBonus = {
+  templar: {},
+  demon: {},
+  spike: {},
+  mystical: {},
+  executioner: {},
+  moon: {},
+  emerald: {},
   minotaur: {
     minDamage: 15,
     coldDamage: 15,

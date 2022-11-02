@@ -1731,40 +1731,10 @@ class Player extends Character {
   }
 
   resetBonus() {
-    this.bonus = {
-      minDamage: 0,
-      maxDamage: 0,
-      attackDamage: 0,
-      health: 0,
-      magicDamage: 0,
-      defense: 0,
-      absorbedDamage: 0,
-      exp: 0,
-      regenerateHealth: 0,
-      criticalHit: 0,
-      blockChance: 0,
-      magicFind: 0,
-      attackSpeed: 0,
-      drainLife: 0,
-      flameDamage: 0,
-      lightningDamage: 0,
-      pierceDamage: 0,
-      highHealth: 0,
-      coldDamage: 0,
-      freezeChance: 0,
-      reduceFrozenChance: 0,
-      //@TODO configure resistances (player hurt)
-      magicResistance: 0,
-      flameResistance: 0,
-      lightningResistance: 0,
-      coldResistance: 0,
-      poisonResistance: 0,
-      magicDamagePercent: 0,
-      flameDamagePercent: 0,
-      lightningDamagePercent: 0,
-      coldDamagePercent: 0,
-      poisonDamagePercent: 0,
-    };
+    this.bonus = Types.bonusType.reduce((acc, key) => {
+      acc[key] = 0;
+      return acc;
+    }, {});
   }
 
   resetPartyBonus() {
