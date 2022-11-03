@@ -48,7 +48,7 @@ import bluearmor from "../sprites/armor.json";
 import hornedarmor from "../sprites/armor.json";
 import frozenarmor from "../sprites/armor.json";
 import diamondarmor from "../sprites/armor.json";
-import spikearmor from "../sprites/armor.json";
+import emeraldarmor from "../sprites/armor.json";
 import demonarmor from "../sprites/armor.json";
 import guard from "../sprites/npc.json";
 import hand from "../sprites/hand.json";
@@ -117,7 +117,7 @@ import itemBluearmor from "../sprites/item.json";
 import itemHornedarmor from "../sprites/item.json";
 import itemFrozenarmor from "../sprites/item.json";
 import itemDiamondarmor from "../sprites/item.json";
-import itemSpikearmor from "../sprites/item.json";
+import itemEmeraldarmor from "../sprites/item.json";
 import itemDemonarmor from "../sprites/item.json";
 import itemBeltleather from "../sprites/item.json";
 import itemBeltplated from "../sprites/item.json";
@@ -263,7 +263,7 @@ const sprites = {
   hornedarmor,
   frozenarmor,
   diamondarmor,
-  spikearmor,
+  emeraldarmor,
   demonarmor,
   goldensword,
   frozensword,
@@ -381,7 +381,7 @@ const sprites = {
   "item-hornedarmor": itemHornedarmor,
   "item-frozenarmor": itemFrozenarmor,
   "item-diamondarmor": itemDiamondarmor,
-  "item-spikearmor": itemSpikearmor,
+  "item-emeraldarmor": itemEmeraldarmor,
   "item-demonarmor": itemDemonarmor,
   "item-beltleather": itemBeltleather,
   "item-beltplated": itemBeltplated,

@@ -1702,6 +1702,11 @@ class Player extends Character {
         }
       });
 
+      // @NOTE the magic bonus damage on a weapon is by default
+      if (this.weapon !== "dagger" && !this.isWeaponUnique) {
+        this.bonus.magicDamage += Types.getWeaponMagicDamage(this.weaponLevel);
+      }
+
       if (this.bonus.drainLife) {
         this.addAura("drainlife");
       } else if (hasDrainLifeAura && !this.bonus.drainLife) {
@@ -1817,8 +1822,35 @@ class Player extends Character {
     this.calculateSetBonus();
     this.calculateSocketBonus();
     this.calculatePartyBonus();
+    this.calculateGlobalBonus();
     this.updateHitPoints();
     this.sendPlayerStats();
+  }
+
+  calculateGlobalBonus() {
+    if (this.bonus.allResistance) {
+      this.bonus.magicResistance += this.bonus.allResistance;
+      this.bonus.flameResistance += this.bonus.allResistance;
+      this.bonus.lightningResistance += this.bonus.allResistance;
+      this.bonus.coldResistance += this.bonus.allResistance;
+      this.bonus.poisonResistance += this.bonus.allResistance;
+      this.bonus.physicalResistance += this.bonus.allResistance;
+    }
+    if (this.bonus.magicDamagePercent) {
+      this.bonus.magicDamage += Math.round((this.bonus.magicDamagePercent / 100) * this.bonus.magicDamage);
+    }
+    if (this.bonus.flameDamagePercent) {
+      this.bonus.flameDamage += Math.round((this.bonus.flameDamagePercent / 100) * this.bonus.flameDamage);
+    }
+    if (this.bonus.lightningDamagePercent) {
+      this.bonus.lightningDamage += Math.round((this.bonus.lightningDamagePercent / 100) * this.bonus.lightningDamage);
+    }
+    if (this.bonus.coldDamagePercent) {
+      this.bonus.coldDamage += Math.round((this.bonus.coldDamagePercent / 100) * this.bonus.coldDamage);
+    }
+    if (this.bonus.poisonDamagePercent) {
+      this.bonus.poisonDamage += Math.round((this.bonus.poisonDamagePercent / 100) * this.bonus.poisonDamage);
+    }
   }
 
   calculateSetBonus() {
@@ -2007,10 +2039,7 @@ class Player extends Character {
       blockChance: this.bonus.blockChance,
       magicFind: this.bonus.magicFind,
       attackSpeed: this.bonus.attackSpeed,
-      magicDamage:
-        (this.isWeaponUnique || this.weapon === "dagger" ? 0 : Types.getWeaponMagicDamage(this.weaponLevel)) +
-        this.bonus.magicDamage +
-        this.partyBonus.magicDamage,
+      magicDamage: this.bonus.magicDamage + this.partyBonus.magicDamage,
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
       coldDamage: this.bonus.coldDamage,
@@ -2025,7 +2054,7 @@ class Player extends Character {
       skillTimeout: this.bonus.skillTimeout,
     };
 
-    console.log("~~~~SEND stats", stats);
+    // console.log("~~~~SEND stats", stats);
 
     this.send(new Messages.Stats(stats).serialize());
   }
@@ -2259,6 +2288,7 @@ class Player extends Character {
       this.calculateSetBonus();
       this.calculateSocketBonus();
       this.calculatePartyBonus();
+      this.calculateGlobalBonus();
       this.updateHitPoints(true);
       this.sendPlayerStats();
 

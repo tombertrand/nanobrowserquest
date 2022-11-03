@@ -29,8 +29,6 @@ Formulas.minMaxDamage = function ({
   poisonResistance = 0,
   physicalResistance = 0,
 }) {
-  magicDamage += isWeaponUnique || weapon === "dagger" ? 0 : Types.getWeaponMagicDamage(weaponLevel);
-
   let attackDamage = Math.ceil(
     (Types.getWeaponDamage(weapon, weaponLevel, isWeaponUnique) + attackDamageBonus) * 1.2 + playerLevel / 2,
   );

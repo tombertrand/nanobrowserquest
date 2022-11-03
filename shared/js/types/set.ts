@@ -1,9 +1,23 @@
 export const setBonus = {
   emerald: {
+    attackDamage: 15,
+    defense: 10,
     poisonDamage: 20,
     allResistance: 15,
   },
   templar: {
+    minDamage: 15,
+    attackDamage: 10,
+    defense: 10,
+    allRessitance: 20,
+  },
+  executioner: {
+    defense: 10,
+    maxDamage: 40,
+    exp: 10,
+    allRessitance: 25,
+  },
+  dragon: {
     minDamage: 15,
     attackDamage: 10,
     defense: 10,
@@ -15,21 +29,10 @@ export const setBonus = {
     lightningRessitance: 20,
     flameResistance: 20,
   },
-  spike: {
-    health: 150,
-    defense: 20,
-    allRessitance: 10,
-  },
   mystical: {
     magicDamage: 30,
     defense: 20,
     allRessitance: 10,
-  },
-  executioner: {
-    defense: 10,
-    maxDamage: 40,
-    exp: 10,
-    allRessitance: 25,
   },
   moon: {
     defense: 15,
@@ -115,9 +118,19 @@ export const kindAsStringToSet = {
   minotauraxe: "minotaur",
   beltminotaur: "minotaur",
   ringminotaur: "minotaur",
+  emeraldsword: "emerald",
+  emeraldarmor: "emerald",
+  beltemerald: "emerald",
+  shieldemerald: "emerald",
+  templarsword: "templar",
+  templararmor: "templar",
+  belttemplar: "templar",
+  shieldtemplar: "templar",
 };
 
 export const setItems = {
+  templar: ["templarsword", "templararmor", "belttemplar", "shieldtemplar"],
+  emerald: ["emeraldsword", "emeraldarmor", "beltemerald", "shieldemerald"],
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
   diamond: ["diamondsword", "diamondarmor", "beltdiamond", "shielddiamond"],
   sapphire: ["frozensword", "frozenarmor", "beltfrozen", "shieldfrozen"],
@@ -130,6 +143,8 @@ export const setItems = {
 };
 
 export const setItemsNameMap = {
+  templar: ["Sword", "Armor", "Belt", "Shield"],
+  emerald: ["Sword", "Armor", "Belt", "Shield"],
   minotaur: ["Axe", "Ring", "Belt"],
   diamond: ["Sword", "Armor", "Belt", "Shield"],
   sapphire: ["Sword", "Armor", "Belt", "Shield"],

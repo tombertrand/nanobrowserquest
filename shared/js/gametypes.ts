@@ -165,7 +165,7 @@ export const Types: any = {
     HORNEDARMOR: 83,
     FROZENARMOR: 78,
     DIAMONDARMOR: 127,
-    SPIKEARMOR: 128,
+    EMERALDARMOR: 128,
     DEMONARMOR: 140,
 
     // Belts
@@ -418,7 +418,7 @@ Types.Entities.Armors = [
   Types.Entities.HORNEDARMOR,
   Types.Entities.FROZENARMOR,
   Types.Entities.DIAMONDARMOR,
-  Types.Entities.SPIKEARMOR,
+  Types.Entities.EMERALDARMOR,
   Types.Entities.DEMONARMOR,
 ];
 
@@ -564,7 +564,7 @@ export const kinds = {
   hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 22, 28],
   frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Sapphire Armor", 26, 30],
   diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 36, 36],
-  spikearmor: [Types.Entities.SPIKEARMOR, "armor", "Spike Armor", 40, 40],
+  emeraldarmor: [Types.Entities.EMERALDARMOR, "armor", "Spike Armor", 40, 40],
   demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 40, 40],
 
   // kind, type, level, defense
@@ -749,7 +749,7 @@ Types.rankedArmors = [
   Types.Entities.HORNEDARMOR,
   Types.Entities.FROZENARMOR,
   Types.Entities.DIAMONDARMOR,
-  Types.Entities.SPIKEARMOR,
+  Types.Entities.EMERALDARMOR,
   Types.Entities.DEMONARMOR,
 ];
 
@@ -806,7 +806,7 @@ Types.itemUniqueMap = {
   hornedarmor: ["RaiBlocks", 20, 30],
   frozenarmor: ["Wall of Encrypted Energy", 30, 32],
   diamondarmor: ["Zero-knowledge Proof", 38, 40],
-  spikearmor: ["Jungle Warcry", 36, 46],
+  emeraldarmor: ["Jungle Warcry", 36, 46],
   demonarmor: ["Explorer's Block", 36, 50],
 
   // name, level, defense
@@ -1752,7 +1752,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     hornedarmor: 15,
     frozenarmor: 15,
     diamondarmor: 11,
-    spikearmor: 9,
+    emeraldarmor: 9,
     demonarmor: 7,
 
     beltfrozen: 15,

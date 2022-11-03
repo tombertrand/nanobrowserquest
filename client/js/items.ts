@@ -198,9 +198,9 @@ var Items = {
     }
   },
 
-  SpikeArmor: class SpikeArmor extends Item {
+  EmeraldArmor: class EmeraldArmor extends Item {
     constructor(id) {
-      super(id, Types.Entities.SPIKEARMOR, "armor");
+      super(id, Types.Entities.EMERALDARMOR, "armor");
       this.lootMessage = "You pick up a spike armor";
     }
   },

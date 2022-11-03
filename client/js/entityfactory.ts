@@ -252,8 +252,8 @@ EntityFactory.builders[Types.Entities.DIAMONDARMOR] = function (id) {
   return new Items.DiamondArmor(id);
 };
 
-EntityFactory.builders[Types.Entities.SPIKEARMOR] = function (id) {
-  return new Items.SpikeArmor(id);
+EntityFactory.builders[Types.Entities.EMERALDARMOR] = function (id) {
+  return new Items.EmeraldArmor(id);
 };
 
 EntityFactory.builders[Types.Entities.DEMONARMOR] = function (id) {
