@@ -659,21 +659,22 @@ export const kinds = {
   "rune-vie": [Types.Entities.RUNE.VIE, "rune", "VIE Rune", 22],
   "rune-eth": [Types.Entities.RUNE.ETH, "rune", "ETH Rune", 24],
   "rune-btc": [Types.Entities.RUNE.BTC, "rune", "BTC Rune", 26],
-  "rune-vax": [Types.Entities.RUNE.VAX, "rune", "VAX Rune", 20],
+  "rune-vax": [Types.Entities.RUNE.VAX, "rune", "VAX Rune", 28],
   "rune-por": [Types.Entities.RUNE.POR, "rune", "POR Rune", 30],
-  "rune-las": [Types.Entities.RUNE.LAS, "rune", "LAS Rune", 33],
-  "rune-cham": [Types.Entities.RUNE.CHAM, "rune", "CHAM Rune", 36],
+  "rune-las": [Types.Entities.RUNE.LAS, "rune", "LAS Rune", 32],
+  "rune-cham": [Types.Entities.RUNE.CHAM, "rune", "CHAM Rune", 34],
+  "rune-dur": [Types.Entities.RUNE.CHAM, "rune", "DUR Rune", 36],
   "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune", 39],
-  "rune-fal": [Types.Entities.RUNE.FAL, "rune", "FAL Rune", 42],
+  "rune-fal": [Types.Entities.RUNE.FAL, "rune", "FAL Rune", 41],
   "rune-kul": [Types.Entities.RUNE.KUL, "rune", "KUL Rune", 44],
-  "rune-mer": [Types.Entities.RUNE.MER, "rune", "MER Rune", 48],
-  "rune-qua": [Types.Entities.RUNE.QUA, "rune", "QUA Rune", 51],
-  "rune-gul": [Types.Entities.RUNE.GUL, "rune", "GUL Rune", 54],
-  "rune-ber": [Types.Entities.RUNE.BER, "rune", "BER Rune", 57],
-  "rune-tor": [Types.Entities.RUNE.TOR, "rune", "TOR Rune", 60],
-  "rune-jah": [Types.Entities.RUNE.JAH, "rune", "JAH Rune", 63],
-  "rune-shi": [Types.Entities.RUNE.SHI, "rune", "SHI Rune", 66],
-  "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 69],
+  "rune-mer": [Types.Entities.RUNE.MER, "rune", "MER Rune", 47],
+  "rune-qua": [Types.Entities.RUNE.QUA, "rune", "QUA Rune", 50],
+  "rune-gul": [Types.Entities.RUNE.GUL, "rune", "GUL Rune", 53],
+  "rune-ber": [Types.Entities.RUNE.BER, "rune", "BER Rune", 56],
+  "rune-tor": [Types.Entities.RUNE.TOR, "rune", "TOR Rune", 59],
+  "rune-jah": [Types.Entities.RUNE.JAH, "rune", "JAH Rune", 62],
+  "rune-shi": [Types.Entities.RUNE.SHI, "rune", "SHI Rune", 65],
+  "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 68],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -846,21 +847,23 @@ Types.isSuperUnique = (itemName: string) =>
 
 Types.resistances = {
   [Types.Entities.COWKING]: {
-    lightningDamage: 100,
+    lightningResistance: 100,
+    physicaResistance: 20,
   },
   [Types.Entities.MINOTAUR]: {
-    flameDamage: 100,
-    lightningDamage: 100,
-    magicDamage: 80,
+    magicResistance: 80,
+    flameResistance: 100,
+    lightningResistance: 100,
   },
 };
 
 Types.resistanceToDisplayMap = {
-  magicDamage: "magic damage",
-  flameDamage: "flame damage",
-  lightningDamage: "lightning damage",
-  coldDamage: "cold damage",
-  physicalDamage: "physical damage",
+  magicResistance: "magic resistance",
+  flameResistance: "flame resistance",
+  lightningResistance: "lightning resistance",
+  coldResistance: "cold resistance",
+  poisonResistance: "poison resistance",
+  physicaResistance: "physical resistance",
 };
 
 Types.getLevel = function (exp: number) {
@@ -1446,15 +1449,16 @@ Types.bonusType = [
   "lightningResistance", // 23
   "coldResistance", // 24
   "poisonResistance", // 25
-  "magicDamagePercent", // 26
-  "flameDamagePercent", // 27
-  "lightningDamagePercent", // 28
-  "coldDamagePercent", // 29
-  "poisonDamagePercent", // 30
-  "allResistance", // 31
-  "preventRegenerateHealth", // 32
-  "poisonDamage", // 33
-  "skillTimeout", // 34
+  "physicalResistance", // 26
+  "magicDamagePercent", // 27
+  "flameDamagePercent", // 28
+  "lightningDamagePercent", // 29
+  "coldDamagePercent", // 30
+  "poisonDamagePercent", // 31
+  "allResistance", // 32
+  "preventRegenerateHealth", // 33
+  "poisonDamage", // 34
+  "skillTimeout", // 35
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1484,6 +1488,7 @@ Types.getBonus = function (rawBonus, level) {
   const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const physicalResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const magicDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const flameDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const lightningDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
@@ -1521,6 +1526,7 @@ Types.getBonus = function (rawBonus, level) {
     lightningResistancePerLevel,
     coldResistancePerLevel,
     poisonResistancePerLevel,
+    physicalResistancePerLevel,
     magicDamagePercentPerLevel,
     flameDamagePercentPerLevel,
     lightningDamagePercentPerLevel,

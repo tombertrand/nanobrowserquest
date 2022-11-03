@@ -27,7 +27,7 @@ import {
 
 import type Party from "./party";
 import type Trade from "./trade";
-import type { GeneratedItem, Network } from "./types";
+import type { GeneratedItem, Network, Resistances } from "./types";
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
@@ -72,17 +72,21 @@ class Player extends Character {
   weaponLevel: number;
   weaponBonus: number[] | null;
   weaponSocket: number[] | null;
+  isWeaponUnique: boolean;
   armor: string;
   armorLevel: number;
   armorBonus: number[] | null;
   armorSocket: number[] | null;
+  isArmorUnique: boolean;
   belt: string;
   beltLevel: number;
   beltBonus: number[] | null;
+  isBeltUnique: boolean;
   cape: string;
   capeKind: number;
   capeLevel: number;
   capeBonus: number[] | null;
+  isCapeUnique: boolean;
   capeHue: number;
   capeSaturate: number;
   capeContrast: number;
@@ -91,6 +95,7 @@ class Player extends Character {
   shieldLevel: number;
   shieldBonus: number[] | null;
   shieldSocket: number[] | null;
+  isShieldUnique: boolean;
   shieldSkill: number;
   shieldSkillTimeout: NodeJS.Timeout;
   shieldSkillDefenseTimeout: NodeJS.Timeout;
@@ -426,22 +431,25 @@ class Player extends Character {
         if (mob?.type === "mob" || mob?.type === "player") {
           let isCritical = false;
 
-          let resistances: {
-            magicDamage?: number;
-            flameDamage?: number;
-            lightningDamage?: number;
-            coldDamage?: number;
-            physicalDamage?: number;
-          } = { magicDamage: 0, flameDamage: 0, lightningDamage: 0, coldDamage: 0, physicalDamage: 0 };
+          let resistances: Resistances = {
+            magicResistance: 0,
+            flameResistance: 0,
+            lightningResistance: 0,
+            coldResistance: 0,
+            poisonResistance: 0,
+            physicalResistance: 0,
+          };
 
           if (mob.type === "mob") {
             resistances = Object.assign(resistances, Types.resistances[mob.kind] || {});
           } else if (mob.type === "player") {
             resistances = {
-              magicDamage: mob.bonus.magicResistance,
-              flameDamage: mob.bonus.flameResistance,
-              lightningDamage: mob.bonus.lightningResistance,
-              coldDamage: mob.bonus.coldResistance,
+              magicResistance: mob.bonus.magicResistance,
+              flameResistance: mob.bonus.flameResistance,
+              lightningResistance: mob.bonus.lightningResistance,
+              coldResistance: mob.bonus.coldResistance,
+              poisonResistance: mob.bonus.poisonResistance,
+              physicalResistance: mob.bonus.physicalResistance,
             };
           }
 
@@ -451,21 +459,19 @@ class Player extends Character {
             playerLevel: self.level,
             minDamage: self.bonus.minDamage + self.partyBonus.minDamage,
             maxDamage: self.bonus.maxDamage + self.partyBonus.maxDamage,
-            magicDamage: Math.round(
-              (self.bonus.magicDamage + self.partyBonus.magicDamage) * (Math.abs(resistances.magicDamage - 100) / 100),
-            ),
-            attackDamage: resistances.physicalDamage ? 0 : self.bonus.attackDamage,
+            magicDamage: self.bonus.magicDamage + self.partyBonus.magicDamage,
+            attackDamage: self.bonus.attackDamage,
             drainLife: self.bonus.drainLife,
-            flameDamage: Math.round(self.bonus.flameDamage * (Math.abs(resistances.flameDamage - 100) / 100)),
-            lightningDamage: Math.round(
-              self.bonus.lightningDamage * (Math.abs(resistances.lightningDamage - 100) / 100),
-            ),
-            coldDamage: Math.round(self.bonus.coldDamage * (Math.abs(resistances.coldDamage - 100) / 100)),
+            flameDamage: self.bonus.flameDamage,
+            lightningDamage: self.bonus.lightningDamage,
+            coldDamage: self.bonus.coldDamage,
+            poisonDamage: self.bonus.poisonDamage,
             pierceDamage: self.bonus.pierceDamage,
-            partyAttackDamage: resistances.physicalDamage ? 0 : self.partyBonus.attackDamage,
-            magicResistance: resistances.magicDamage,
+            partyAttackDamage: self.partyBonus.attackDamage,
+            ...resistances,
           });
 
+          // @TODO critical hit on physical dmg only and 2X?
           if (self.bonus.criticalHit) {
             isCritical = random(100) < self.bonus.criticalHit;
             if (isCritical) {
@@ -572,6 +578,7 @@ class Player extends Character {
         if (mob && self.hitPoints > 0) {
           let dmg = Formulas.dmgFromMob({
             weaponLevel: mob.weaponLevel,
+            // @TODO New mobs will deal element damage
           });
 
           self.handleHurtDmg(mob, dmg);
@@ -1379,9 +1386,10 @@ class Player extends Character {
     let defense = Formulas.playerDefense({
       armor: this.armor,
       armorLevel: this.armorLevel,
+      isArmorUnique: this.isArmorUnique,
       belt: this.belt,
       beltLevel: this.beltLevel,
-      isUniqueBelt: !!this.beltBonus,
+      isBeltUnique: this.isBeltUnique,
       playerLevel: this.level,
       defense: this.bonus.defense,
       absorbedDamage: this.bonus.absorbedDamage,
@@ -1390,7 +1398,7 @@ class Player extends Character {
       capeLevel: this.capeLevel,
       shield: this.shield,
       shieldLevel: this.shieldLevel,
-      isUniqueShield: this.shieldBonus?.length >= 2,
+      isShieldUnique: this.isShieldUnique,
       skillDefense: this.skill.defense,
     });
 
@@ -1558,6 +1566,7 @@ class Player extends Character {
     this.armorLevel = level;
     this.armorBonus = bonus ? JSON.parse(bonus) : null;
     this.armorSocket = socket ? JSON.parse(socket) : null;
+    this.isArmorUnique = !!this.armorBonus?.length;
   }
 
   equipWeapon(weapon, kind, level, bonus, socket) {
@@ -1566,12 +1575,14 @@ class Player extends Character {
     this.weaponLevel = level;
     this.weaponBonus = bonus ? JSON.parse(bonus) : null;
     this.weaponSocket = socket ? JSON.parse(socket) : null;
+    this.isWeaponUnique = !!this.weaponBonus?.length;
   }
 
   equipBelt(belt, level, bonus) {
     this.belt = belt;
     this.beltLevel = level;
     this.beltBonus = bonus ? JSON.parse(bonus) : null;
+    this.isBeltUnique = !!this.beltBonus?.length;
   }
 
   equipCape(cape, kind, level, bonus) {
@@ -1579,6 +1590,7 @@ class Player extends Character {
     this.capeKind = kind;
     this.capeLevel = level;
     this.capeBonus = bonus ? JSON.parse(bonus) : null;
+    this.isCapeUnique = this.capeBonus?.length >= 2;
   }
 
   equipShield(shield, kind, level, bonus, socket, skill) {
@@ -1587,6 +1599,7 @@ class Player extends Character {
     this.shieldLevel = level;
     this.shieldBonus = bonus ? JSON.parse(bonus) : null;
     this.shieldSocket = socket ? JSON.parse(socket) : null;
+    this.isShieldUnique = this.shieldBonus?.length >= 2;
     this.shieldSkill = skill ? parseInt(skill, 0) : null;
   }
 
@@ -1802,6 +1815,7 @@ class Player extends Character {
     this.resetBonus();
     this.calculateBonus();
     this.calculateSetBonus();
+    this.calculateSocketBonus();
     this.calculatePartyBonus();
     this.updateHitPoints();
     this.sendPlayerStats();
@@ -1839,6 +1853,29 @@ class Player extends Character {
     }
 
     this.send(new Messages.SetBonus(setItems).serialize());
+  }
+
+  calculateSocketBonus() {
+    let bonus = {};
+
+    [
+      [this.armorSocket, this.isArmorUnique, "armor"],
+      [this.weaponSocket, this.isWeaponUnique, "weapon"],
+      [this.shieldSocket, this.isShieldUnique, "shield"],
+    ].forEach(([rawSocket, isUnique, type]) => {
+      const { runewordBonus } = Types.getRunewordBonus({ isUnique, socket: rawSocket, type });
+
+      if (runewordBonus) {
+        bonus = runewordBonus;
+      } else {
+        bonus = Types.getRunesBonus(rawSocket);
+      }
+      if (Object.keys(bonus)) {
+        Object.entries(bonus).map(([type, stats]) => {
+          this.bonus[type] += stats;
+        });
+      }
+    });
   }
 
   addAura(aura) {
@@ -1916,13 +1953,13 @@ class Player extends Character {
   sendPlayerStats() {
     const isInParty = this.getParty()?.members.length >= 2;
 
-    var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb({
+    const { min: minDefense, max: maxDefense } = Formulas.minMaxDefense({
       armor: this.armor,
       armorLevel: this.armorLevel,
-      isUniqueArmor: !!this.armorBonus,
+      isArmorUnique: this.isArmorUnique,
       belt: this.belt,
       beltLevel: this.beltLevel,
-      isUniqueBelt: !!this.beltBonus,
+      isBeltUnique: this.isBeltUnique,
       playerLevel: this.level,
       defense: this.bonus.defense,
       absorbedDamage: this.bonus.absorbedDamage,
@@ -1930,13 +1967,18 @@ class Player extends Character {
       capeLevel: this.capeLevel,
       shield: this.shield,
       shieldLevel: this.shieldLevel,
-      isUniqueShield: this.shieldBonus?.length >= 2,
+      isShieldUnique: this.isShieldUnique,
       partyDefense: isInParty ? this.partyBonus.defense : 0,
       skillDefense: this.skill.defense,
     });
-    var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage({
+    const {
+      min: minDamage,
+      max: maxDamage,
+      attackDamage,
+    } = Formulas.minMaxDamage({
       weapon: this.weapon,
       weaponLevel: this.weaponLevel,
+      isWeaponUnique: this.isWeaponUnique,
       playerLevel: this.level,
       minDamage: this.bonus.minDamage + (isInParty ? this.partyBonus.minDamage : 0),
       maxDamage: this.bonus.maxDamage + (isInParty ? this.partyBonus.maxDamage : 0),
@@ -1946,23 +1988,46 @@ class Player extends Character {
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
       coldDamage: this.bonus.coldDamage,
+      poisonDamage: this.bonus.poisonDamage,
       pierceDamage: this.bonus.pierceDamage,
       partyAttackDamage: isInParty ? this.partyBonus.attackDamage : 0,
     });
 
-    this.send(
-      new Messages.Stats({
-        maxHitPoints: this.maxHitPoints,
-        damage: minDamage !== maxDamage ? `${minDamage}-${maxDamage}` : maxDamage,
-        defense:
-          minAbsorb !== maxAbsorb
-            ? `${minAbsorb - this.bonus.absorbedDamage}-${maxAbsorb - this.bonus.absorbedDamage}`
-            : maxAbsorb - this.bonus.absorbedDamage,
-        // absorb: this.bonus.absorbedDamage,
-        ...this.bonus,
-        ...this.partyBonus,
-      }).serialize(),
-    );
+    const stats = {
+      maxHitPoints: this.maxHitPoints,
+      damage: minDamage !== maxDamage ? `${minDamage}-${maxDamage}` : maxDamage,
+      defense:
+        minDefense !== maxDefense
+          ? `${minDefense - this.bonus.absorbedDamage}-${maxDefense - this.bonus.absorbedDamage}`
+          : maxDefense - this.bonus.absorbedDamage,
+      attackDamage,
+      absorbedDamage: this.bonus.absorbedDamage,
+      exp: this.bonus.exp + this.partyBonus.exp,
+      criticalHit: this.bonus.criticalHit,
+      blockChance: this.bonus.blockChance,
+      magicFind: this.bonus.magicFind,
+      attackSpeed: this.bonus.attackSpeed,
+      magicDamage:
+        this.isWeaponUnique || this.weapon === "dagger"
+          ? 0
+          : Types.getWeaponMagicDamage(this.weaponLevel) + this.bonus.magicDamage + this.partyBonus.magicDamage,
+      flameDamage: this.bonus.flameDamage,
+      lightningDamage: this.bonus.lightningDamage,
+      coldDamage: this.bonus.coldDamage,
+      poisonDamage: this.bonus.poisonDamage,
+      pierceDamage: this.bonus.pierceDamage,
+      magicResistance: this.bonus.magicResistance,
+      flameResistance: this.bonus.flameResistance,
+      lightningResistance: this.bonus.lightningResistance,
+      coldResistance: this.bonus.coldResistance,
+      poisonResistance: this.bonus.poisonResistance,
+      physicalResistance: this.bonus.physicalResistance,
+      skillTimeout: this.bonus.skillTimeout,
+    };
+
+    // console.log("~~~~SEND stats", stats);
+
+    this.send(new Messages.Stats(stats).serialize());
   }
 
   incExp(exp) {
@@ -2192,6 +2257,7 @@ class Player extends Character {
       this.resetBonus();
       this.calculateBonus();
       this.calculateSetBonus();
+      this.calculateSocketBonus();
       this.calculatePartyBonus();
       this.updateHitPoints(true);
       this.sendPlayerStats();

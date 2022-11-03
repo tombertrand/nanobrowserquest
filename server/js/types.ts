@@ -14,3 +14,12 @@ export type GeneratedItem = {
   runeName?: string;
   socket?: number[];
 };
+
+export type Resistances = {
+  magicResistance?: number;
+  flameResistance?: number;
+  lightningResistance?: number;
+  coldResistance?: number;
+  poisonResistance?: number;
+  physicalResistance?: number;
+};

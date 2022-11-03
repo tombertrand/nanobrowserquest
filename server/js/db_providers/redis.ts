@@ -14,7 +14,7 @@ import {
   UPGRADE_SLOT_RANGE,
   WAYPOINTS_COUNT,
 } from "../../../shared/js/slots";
-import { toArray } from "../../../shared/js/utils";
+import { toArray, toString } from "../../../shared/js/utils";
 import { postMessageToDiscordAnvilChannel } from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
@@ -43,6 +43,16 @@ const ARTIFACT_COUNT = 4;
 const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, DEPOSIT_SEED } = process.env;
 
 const queue = new PromiseQueue();
+
+const toDb = (attribute: string | number | number[]) => {
+  if (Array.isArray(attribute)) {
+    return `:${toString(attribute)}`;
+  }
+  if (typeof attribute === "number" || (typeof attribute === "string" && attribute)) {
+    return `:${attribute}`;
+  }
+  return "";
+};
 
 const getNewDepositAccountByIndex = async (index: number, network: Network): Promise<string> => {
   let depositAccount = null;
@@ -616,22 +626,18 @@ class DatabaseHandler {
 
   equipWeapon(name, weapon, level, bonus = [], socket = []) {
     console.info("Set Weapon: " + name + " " + weapon + ":" + level);
-    this.client.hset(
-      "u:" + name,
-      "weapon",
-      `${weapon}:${level}${bonus ? `:${bonus}` : ""}${socket ? `:${socket}` : ""}`,
-    );
+    this.client.hset("u:" + name, "weapon", `${weapon}:${level}${toDb(bonus)}${toDb(socket)}`);
   }
 
   equipArmor(name, armor, level, bonus = [], socket = []) {
     console.info("Set Armor: " + name + " " + armor + ":" + level);
-    this.client.hset("u:" + name, "armor", `${armor}:${level}${bonus ? `:${bonus}` : ""}${socket ? `:${socket}` : ""}`);
+    this.client.hset("u:" + name, "armor", `${armor}:${level}${toDb(bonus)}${toDb(socket)}`);
   }
 
   equipBelt(name, belt, level, bonus) {
     if (belt) {
       console.info("Set Belt: " + name + " " + belt + ":" + level);
-      this.client.hset("u:" + name, "belt", `${belt}:${level}${bonus ? `:${bonus}` : ""}`);
+      this.client.hset("u:" + name, "belt", `${belt}:${level}${toDb(bonus)}`);
     } else {
       console.info("Delete Belt");
       this.client.hdel("u:" + name, "belt");
@@ -641,11 +647,7 @@ class DatabaseHandler {
   equipShield(name, shield, level, bonus = [], socket = [], skill) {
     if (shield) {
       console.info(`Set Shield: ${name} ${shield} ${level} ${bonus} ${socket} ${skill}`);
-      this.client.hset(
-        "u:" + name,
-        "shield",
-        `${shield}:${level}${bonus ? `:${bonus}` : ""}${socket ? `:${socket}` : ""}${skill ? `:${skill}` : ""}`,
-      );
+      this.client.hset("u:" + name, "shield", `${shield}:${level}${toDb(bonus)}${toDb(socket)}${toDb(skill)}`);
     } else {
       console.info("Delete Shield");
       this.client.hdel("u:" + name, "shield");
@@ -655,7 +657,7 @@ class DatabaseHandler {
   equipCape(name, cape, level, bonus) {
     if (cape) {
       console.info("Set Cape: " + name + " " + cape + ":" + level);
-      this.client.hset("u:" + name, "cape", `${cape}:${level}${bonus ? `:${bonus}` : ""}`);
+      this.client.hset("u:" + name, "cape", `${cape}:${level}${toDb(bonus)}`);
     } else {
       console.info("Delete Cape");
       this.client.hdel("u:" + name, "cape");

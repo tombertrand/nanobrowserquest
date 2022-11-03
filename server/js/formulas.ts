@@ -3,37 +3,47 @@ import { randomInt } from "./utils";
 
 const Formulas: any = {};
 
+Formulas.resistanceDamage = (damage: number, resistance: number = 0) =>
+  resistance > 0 ? Math.round(damage * (Math.abs(damage - 100) / 100)) : damage;
+
 Formulas.minMaxDamage = function ({
   weapon,
   weaponLevel,
+  isWeaponUnique,
   playerLevel,
   minDamage,
   maxDamage,
-  magicDamage,
-  attackDamage,
+  attackDamage: attackDamageBonus,
   drainLife,
+  magicDamage,
   flameDamage,
   lightningDamage,
   coldDamage,
+  poisonDamage,
   pierceDamage,
   partyAttackDamage,
-  magicResistance,
+  magicResistance = 0,
+  flameResistance = 0,
+  lightningResistance = 0,
+  coldResistance = 0,
+  poisonResistance = 0,
+  physicalResistance = 0,
 }) {
-  const isUnique = !!flameDamage;
-  let weaponMagicDamage = isUnique ? 0 : Types.getWeaponMagicDamage(weaponLevel);
-  if (magicResistance) {
-    weaponMagicDamage = Math.round(weaponMagicDamage * (Math.abs(magicResistance - 100) / 100));
-  }
+  magicDamage += isWeaponUnique || weapon === "dagger" ? 0 : Types.getWeaponMagicDamage(weaponLevel);
+
+  let attackDamage = Math.ceil(
+    (Types.getWeaponDamage(weapon, weaponLevel, isWeaponUnique) + attackDamageBonus) * 1.2 + playerLevel / 2,
+  );
 
   const baseDamage =
-    Math.ceil((Types.getWeaponDamage(weapon, weaponLevel, isUnique) + attackDamage) * 1.2 + playerLevel / 2) +
-    weaponMagicDamage +
-    magicDamage +
+    attackDamage +
     drainLife +
-    flameDamage +
-    lightningDamage +
-    coldDamage +
-    pierceDamage;
+    Formulas.resistanceDamage(magicDamage, magicResistance) +
+    Formulas.resistanceDamage(flameDamage, flameResistance) +
+    Formulas.resistanceDamage(lightningDamage, lightningResistance) +
+    Formulas.resistanceDamage(coldDamage, coldResistance) +
+    Formulas.resistanceDamage(poisonDamage, poisonResistance) +
+    Formulas.resistanceDamage(pierceDamage, physicalResistance);
 
   let min = baseDamage + minDamage + Math.round(Math.pow(0.7, Math.floor(playerLevel / 10)) * playerLevel);
   let max = baseDamage + maxDamage + Math.round(Math.pow(1.075, Math.floor(playerLevel / 10)) * playerLevel);
@@ -45,49 +55,19 @@ Formulas.minMaxDamage = function ({
   if (partyAttackDamage) {
     min = Math.round((partyAttackDamage / 100) * min) + min;
     max = Math.round((partyAttackDamage / 100) * max) + max;
+    attackDamage = Math.round((partyAttackDamage / 100) * attackDamage) + attackDamage;
   }
 
   return {
     min,
     max,
+    attackDamage,
   };
 };
 
-Formulas.dmg = function ({
-  weapon,
-  weaponLevel,
-  playerLevel,
-  minDamage,
-  maxDamage,
-  magicDamage,
-  attackDamage,
-  drainLife,
-  flameDamage,
-  lightningDamage,
-  coldDamage,
-  pierceDamage,
-  partyAttackDamage,
-  magicResistance,
-}) {
-  const { min, max } = Formulas.minMaxDamage({
-    weapon,
-    weaponLevel,
-    playerLevel,
-    minDamage,
-    maxDamage,
-    magicDamage,
-    attackDamage,
-    drainLife,
-    flameDamage,
-    lightningDamage,
-    coldDamage,
-    pierceDamage,
-    partyAttackDamage,
-    magicResistance,
-  });
-  const dealt = randomInt(min, max);
-
-  const dmg = dealt + pierceDamage;
+Formulas.dmg = function (stats) {
+  const { min, max } = Formulas.minMaxDamage(stats);
+  const dmg = randomInt(min, max);
 
   //console.log("abs: "+absorbed+"   dealt: "+ dealt+"   dmg: "+ (dealt - absorbed));
   if (dmg <= 0) {
@@ -103,28 +83,28 @@ Formulas.mobDefense = function ({ armorLevel }) {
   return defense;
 };
 
-Formulas.minMaxAbsorb = function ({
+Formulas.minMaxDefense = function ({
   armor,
   armorLevel,
-  isUniqueArmor,
+  isArmorUnique,
   playerLevel,
   defense,
   absorbedDamage,
   belt,
   beltLevel,
-  isUniqueBelt,
+  isBeltUnique,
   shield,
   shieldLevel,
-  isUniqueShield,
+  isShieldUnique,
   partyDefense,
   cape,
   capeLevel,
   skillDefense,
 }) {
-  const armorDefense = Types.getArmorDefense(armor, armorLevel, isUniqueArmor);
-  const beltDefense = Types.getArmorDefense(belt, beltLevel, isUniqueBelt);
+  const armorDefense = Types.getArmorDefense(armor, armorLevel, isArmorUnique);
+  const beltDefense = Types.getArmorDefense(belt, beltLevel, isBeltUnique);
   const capeDefense = Types.getArmorDefense(cape, capeLevel);
-  const shieldDefense = Types.getArmorDefense(shield, shieldLevel, isUniqueShield);
+  const shieldDefense = Types.getArmorDefense(shield, shieldLevel, isShieldUnique);
 
   let min = Math.ceil((armorDefense + beltDefense + capeDefense + shieldDefense + defense) * 1.2) + absorbedDamage;
   let max = min + Math.ceil(Math.pow(1.075, playerLevel));
@@ -155,32 +135,34 @@ Formulas.dmgFromMob = function ({ weaponLevel }) {
 Formulas.playerDefense = ({
   armor,
   armorLevel,
+  isArmorUnique,
   playerLevel,
   defense,
   absorbedDamage,
   belt,
   beltLevel,
-  isUniqueBelt,
+  isBeltUnique,
   shield,
   shieldLevel,
-  isUniqueShield,
+  isShieldUnique,
   partyDefense,
   cape,
   capeLevel,
   skillDefense,
 }) => {
-  const { min, max } = Formulas.minMaxAbsorb({
+  const { min, max } = Formulas.minMaxDefense({
     armor,
     armorLevel,
+    isArmorUnique,
     playerLevel,
     defense,
     absorbedDamage,
     belt,
     beltLevel,
-    isUniqueBelt,
+    isBeltUnique,
     shield,
     shieldLevel,
-    isUniqueShield,
+    isShieldUnique,
     partyDefense,
     cape,
     capeLevel,

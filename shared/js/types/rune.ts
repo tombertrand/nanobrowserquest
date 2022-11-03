@@ -155,92 +155,99 @@ export const runeKind = {
   },
   las: {
     rank: 18,
-    requirement: 33,
+    requirement: 32,
     attribute: {
       coldResistance: 10,
     },
   },
   cham: {
     rank: 19,
+    requirement: 34,
+    attribute: {
+      poisonResistance: 10,
+    },
+  },
+  dur: {
+    rank: 20,
     requirement: 36,
     attribute: {
       poisonResistance: 10,
     },
   },
   xno: {
-    rank: 20,
-    requirement: 39,
+    rank: 21,
+    requirement: 38,
     attribute: {
       attackSpeed: 10,
     },
   },
   fal: {
-    rank: 21,
-    requirement: 42,
+    rank: 22,
+    requirement: 41,
     attribute: {
       magicDamagePercent: 10,
     },
   },
   kul: {
-    rank: 22,
-    requirement: 45,
+    rank: 23,
+    requirement: 44,
     attribute: {
       lightningDamagePercent: 10,
     },
   },
   mer: {
-    rank: 23,
-    requirement: 48,
+    rank: 24,
+    requirement: 47,
     attribute: {
       flameDamagePercent: 10,
     },
   },
   qua: {
-    rank: 24,
-    requirement: 51,
+    rank: 25,
+    requirement: 50,
     attribute: {
       coldDamagePercent: 10,
     },
   },
   gul: {
-    rank: 25,
-    requirement: 54,
+    rank: 26,
+    requirement: 53,
     attribute: {
       poisonDamagePercent: 10,
     },
   },
   ber: {
-    rank: 26,
-    requirement: 57,
+    rank: 27,
+    requirement: 56,
     attribute: {
       skillTimeout: 10,
     },
   },
   tor: {
-    rank: 27,
-    requirement: 60,
+    rank: 28,
+    requirement: 59,
     attribute: {
       coldDamage: 2,
       freezeChance: 5,
     },
   },
   jah: {
-    rank: 28,
-    requirement: 63,
+    rank: 29,
+    requirement: 62,
     attribute: {
       magicFind: 10,
     },
   },
   shi: {
-    rank: 29,
-    requirement: 66,
+    rank: 30,
+    requirement: 65,
     attribute: {
       allResistance: 10,
     },
   },
   vod: {
-    rank: 30,
-    requirement: 69,
+    rank: 31,
+    requirement: 68,
     attribute: {
       regenerateHealth: 10,
       preventRegenerateHealth: 10,

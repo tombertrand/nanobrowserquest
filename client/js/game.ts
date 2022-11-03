@@ -480,6 +480,7 @@ class Game {
       "item-rune-por",
       "item-rune-las",
       "item-rune-cham",
+      "item-rune-dur",
       "item-rune-xno",
       "item-rune-fal",
       "item-rune-kul",
@@ -934,8 +935,9 @@ class Game {
             ${pierceDamage ? `<div class="item-bonus">Pierce damage: ${pierceDamage}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
             ${
-              Array.isArray(bonus) &&
-              bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")
+              Array.isArray(bonus)
+                ? bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")
+                : ""
             }
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
@@ -3505,6 +3507,11 @@ class Game {
         $("#player-lightningResistance").text(stats.lightningResistance);
         $("#player-coldResistance").text(stats.coldResistance);
         $("#player-poisonResistance").text(stats.poisonResistance);
+        $("#player-physicalResistance").text(stats.physicalResistance);
+        $("#player-magicFind").text(stats.magicFind);
+        $("#player-attackSpeed").text(stats.attackSpeed);
+        $("#player-exp").text(stats.exp);
+        $("#player-skillTimeout").text(stats.skillTimeout);
       });
 
       self.client.onPlayerSettings(function ({ playerId, settings }) {

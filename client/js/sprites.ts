@@ -324,6 +324,7 @@ const sprites = {
   "item-rune-por": itemRune,
   "item-rune-las": itemRune,
   "item-rune-cham": itemRune,
+  "item-rune-dur": itemRune,
   "item-rune-xno": itemRune,
   "item-rune-fal": itemRune,
   "item-rune-kul": itemRune,
