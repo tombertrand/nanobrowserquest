@@ -69,6 +69,7 @@ import shieldexecutioner from "../sprites/shield.json";
 import shieldmystical from "../sprites/shield.json";
 import shielddragon from "../sprites/shield.json";
 import shielddemon from "../sprites/shield.json";
+import shieldmoon from "../sprites/shield.json";
 import itemAxe from "../sprites/item.json";
 import itemBlueaxe from "../sprites/item.json";
 import itemBluemorningstar from "../sprites/item.json";
@@ -125,6 +126,7 @@ import itemBelthorned from "../sprites/item.json";
 import itemBeltdiamond from "../sprites/item.json";
 import itemBeltminotaur from "../sprites/item.json";
 import itemBeltemerald from "../sprites/item.json";
+import itemBeltexecutioner from "../sprites/item.json";
 import itemBeltmystical from "../sprites/item.json";
 import itemBelttemplar from "../sprites/item.json";
 import itemBeltdemon from "../sprites/item.json";
@@ -145,6 +147,7 @@ import itemShieldexecutioner from "../sprites/item.json";
 import itemShieldmystical from "../sprites/item.json";
 import itemShielddragon from "../sprites/item.json";
 import itemShielddemon from "../sprites/item.json";
+import itemShieldmoon from "../sprites/item.json";
 import itemGoldensword from "../sprites/item.json";
 import itemFrozensword from "../sprites/item.json";
 import itemDiamondsword from "../sprites/item.json";
@@ -293,6 +296,7 @@ const sprites = {
   shieldmystical,
   shielddragon,
   shielddemon,
+  shieldmoon,
   "item-axe": itemAxe,
   "item-blueaxe": itemBlueaxe,
   "item-bluemorningstar": itemBluemorningstar,
@@ -386,6 +390,7 @@ const sprites = {
   "item-beltdiamond": itemBeltdiamond,
   "item-beltminotaur": itemBeltminotaur,
   "item-beltemerald": itemBeltemerald,
+  "item-beltexecutioner": itemBeltexecutioner,
   "item-beltmystical": itemBeltmystical,
   "item-belttemplar": itemBelttemplar,
   "item-beltdemon": itemBeltdemon,
@@ -406,6 +411,7 @@ const sprites = {
   "item-shieldmystical": itemShieldmystical,
   "item-shielddragon": itemShielddragon,
   "item-shielddemon": itemShielddemon,
+  "item-shieldmoon": itemShieldmoon,
   "item-goldensword": itemGoldensword,
   "item-frozensword": itemFrozensword,
   "item-diamondsword": itemDiamondsword,

@@ -1,11 +1,41 @@
 export const setBonus = {
-  templar: {},
-  demon: {},
-  spike: {},
-  mystical: {},
-  executioner: {},
-  moon: {},
-  emerald: {},
+  emerald: {
+    poisonDamage: 20,
+    allResistance: 15,
+  },
+  templar: {
+    minDamage: 15,
+    attackDamage: 10,
+    defense: 10,
+    allRessitance: 20,
+  },
+  demon: {
+    attackDamage: 15,
+    flameDamage: 20,
+    lightningRessitance: 20,
+    flameResistance: 20,
+  },
+  spike: {
+    health: 150,
+    defense: 20,
+    allRessitance: 10,
+  },
+  mystical: {
+    magicDamage: 30,
+    defense: 20,
+    allRessitance: 10,
+  },
+  executioner: {
+    defense: 10,
+    maxDamage: 40,
+    exp: 10,
+    allRessitance: 25,
+  },
+  moon: {
+    defense: 15,
+    allRessitance: 20,
+    preventRegenerateHealth: 10,
+  },
   minotaur: {
     minDamage: 15,
     coldDamage: 15,

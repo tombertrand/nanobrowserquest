@@ -20,17 +20,18 @@ export const RUNE = {
   POR: 177,
   LAS: 178,
   CHAM: 179,
-  XNO: 180,
-  FAL: 181,
-  KUL: 182,
-  MER: 183,
-  QUA: 184,
-  GUL: 185,
-  BER: 186,
-  TOR: 187,
-  JAH: 188,
-  SHI: 189,
-  VOD: 190,
+  DUR: 180,
+  XNO: 181,
+  FAL: 182,
+  KUL: 183,
+  MER: 184,
+  QUA: 185,
+  GUL: 186,
+  BER: 187,
+  TOR: 188,
+  JAH: 189,
+  SHI: 190,
+  VOD: 191,
 };
 
 export const runeKind = {
@@ -171,7 +172,7 @@ export const runeKind = {
     rank: 20,
     requirement: 36,
     attribute: {
-      poisonResistance: 10,
+      physicalResistance: 10,
     },
   },
   xno: {

@@ -728,6 +728,7 @@ footer, header, hgroup, menu, nav, section {
     #player-lightningDamage, #player-lightningResistance { color: #aad9fd; }
     #player-coldDamage, #player-coldResistance { color: #74b5ff; }
     #player-poisonDamage, #player-poisonResistance { color: #35ee35; }
+    .player-section-title { color: #9c9c9c; }
 
     .item-title {
         font-weight: bold;

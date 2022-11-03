@@ -261,6 +261,13 @@ var Items = {
     }
   },
 
+  BeltExecutioner: class BeltExecutioner extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTEXECUTIONER, "belt");
+      this.lootMessage = "You pick up an executioner belt";
+    }
+  },
+
   BeltMystical: class BeltMystical extends Item {
     constructor(id) {
       super(id, Types.Entities.BELTMYSTICAL, "belt");
@@ -398,6 +405,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.SHIELDDEMON, "shield");
       this.lootMessage = "You pick up a demon shield";
+    }
+  },
+
+  ShieldMoon: class ShieldMoon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDMOON, "shield");
+      this.lootMessage = "You pick up a moon shield";
     }
   },
 
@@ -566,6 +580,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.RUNE.CHAM, "rune");
       this.lootMessage = "You pick up a CHAM Rune";
+    }
+  },
+
+  RuneDur: class RuneDur extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.DUR, "rune");
+      this.lootMessage = "You pick up a DUR Rune";
     }
   },
 

@@ -288,6 +288,10 @@ EntityFactory.builders[Types.Entities.BELTEMERALD] = function (id) {
   return new Items.BeltEmerald(id);
 };
 
+EntityFactory.builders[Types.Entities.BELTEXECUTIONER] = function (id) {
+  return new Items.BeltExecutioner(id);
+};
+
 EntityFactory.builders[Types.Entities.BELTMYSTICAL] = function (id) {
   return new Items.BeltMystical(id);
 };
@@ -366,6 +370,10 @@ EntityFactory.builders[Types.Entities.SHIELDDRAGON] = function (id) {
 
 EntityFactory.builders[Types.Entities.SHIELDDEMON] = function (id) {
   return new Items.ShieldDemon(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDMOON] = function (id) {
+  return new Items.ShieldMoon(id);
 };
 
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {
@@ -462,6 +470,10 @@ EntityFactory.builders[Types.Entities.RUNE.LAS] = function (id) {
 
 EntityFactory.builders[Types.Entities.RUNE.CHAM] = function (id) {
   return new Items.RuneCham(id);
+};
+
+EntityFactory.builders[Types.Entities.RUNE.DUR] = function (id) {
+  return new Items.RuneDur(id);
 };
 
 EntityFactory.builders[Types.Entities.RUNE.XNO] = function (id) {

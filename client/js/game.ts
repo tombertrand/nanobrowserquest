@@ -400,6 +400,7 @@ class Game {
       "shieldmystical",
       "shielddragon",
       "shielddemon",
+      "shieldmoon",
       "item-sword",
       "item-axe",
       "item-blueaxe",
@@ -436,6 +437,7 @@ class Game {
       "item-beltdiamond",
       "item-beltminotaur",
       "item-beltemerald",
+      "item-beltexecutioner",
       "item-beltmystical",
       "item-belttemplar",
       "item-beltdemon",
@@ -456,6 +458,7 @@ class Game {
       "item-shieldmystical",
       "item-shielddragon",
       "item-shielddemon",
+      "item-shieldmoon",
       "item-flask",
       "item-rejuvenationpotion",
       "item-poisonpotion",
@@ -3487,8 +3490,6 @@ class Game {
 
           self.updateBars();
         }
-
-        console.log("~~~~stats", stats);
 
         $("#player-damage").text(stats.damage);
         $("#player-attackDamage").text(stats.attackDamage);

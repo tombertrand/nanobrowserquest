@@ -176,6 +176,7 @@ export const Types: any = {
     BELTDIAMOND: 129,
     BELTMINOTAUR: 134,
     BELTEMERALD: 201,
+    BELTEXECUTIONER: 207,
     BELTMYSTICAL: 202,
     BELTTEMPLAR: 203,
     BELTDEMON: 204,
@@ -194,12 +195,14 @@ export const Types: any = {
     SHIELDHORNED: 149,
     SHIELDFROZEN: 150,
     SHIELDDIAMOND: 151,
-    SHIELDTEMPLAR: 153,
+
+    SHIELDEMERALD: 199,
     SHIELDEXECUTIONER: 195,
+    SHIELDTEMPLAR: 153,
     SHIELDMYSTICAL: 196,
     SHIELDDRAGON: 197,
     SHIELDDEMON: 198,
-    SHIELDEMERALD: 199,
+    SHIELDMOON: 208,
 
     // Chests
     CHESTBLUE: 136,
@@ -235,7 +238,7 @@ export const Types: any = {
     SCROLLUPGRADEHIGH: 76,
     SCROLLUPGRADELEGENDARY: 200,
     SCROLLUPGRADEBLESSED: 118,
-    SCROLLUPGRADESACRED: 191,
+    SCROLLUPGRADESACRED: 206,
     SCROLLTRANSMUTE: 142,
     STONESOCKET: 192,
     RINGBRONZE: 80,
@@ -427,6 +430,7 @@ Types.Entities.Belts = [
   Types.Entities.BELTDIAMOND,
   Types.Entities.BELTMINOTAUR,
   Types.Entities.BELTEMERALD,
+  Types.Entities.BELTEXECUTIONER,
   Types.Entities.BELTMYSTICAL,
   Types.Entities.BELTTEMPLAR,
   Types.Entities.BELTDEMON,
@@ -449,6 +453,7 @@ Types.Entities.Shields = [
   Types.Entities.SHIELDMYSTICAL,
   Types.Entities.SHIELDDRAGON,
   Types.Entities.SHIELDDEMON,
+  Types.Entities.SHIELDMOON,
 ];
 
 Types.Entities.Rings = [
@@ -570,6 +575,7 @@ export const kinds = {
   beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 14],
   beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 40, 18],
   beltemerald: [Types.Entities.BELTEMERALD, "belt", "Emerald Belt", 40, 18],
+  beltexecutioner: [Types.Entities.BELTEXECUTIONER, "belt", "Executioner Belt", 40, 18],
   beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 40, 18],
   belttemplar: [Types.Entities.BELTTEMPLAR, "belt", "Templar Belt", 40, 18],
   beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 40, 18],
@@ -593,6 +599,7 @@ export const kinds = {
   shieldmystical: [Types.Entities.SHIELDMYSTICAL, "shield", "Mystical Shield", 40, 20],
   shielddragon: [Types.Entities.SHIELDDRAGON, "shield", "Dragon Shield", 40, 20],
   shielddemon: [Types.Entities.SHIELDDEMON, "shield", "Demon Shield", 40, 20],
+  shieldmoon: [Types.Entities.SHIELDMOON, "shield", "Moon Shield", 40, 20],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -663,7 +670,7 @@ export const kinds = {
   "rune-por": [Types.Entities.RUNE.POR, "rune", "POR Rune", 30],
   "rune-las": [Types.Entities.RUNE.LAS, "rune", "LAS Rune", 32],
   "rune-cham": [Types.Entities.RUNE.CHAM, "rune", "CHAM Rune", 34],
-  "rune-dur": [Types.Entities.RUNE.CHAM, "rune", "DUR Rune", 36],
+  "rune-dur": [Types.Entities.RUNE.DUR, "rune", "DUR Rune", 36],
   "rune-xno": [Types.Entities.RUNE.XNO, "rune", "XNO Rune", 39],
   "rune-fal": [Types.Entities.RUNE.FAL, "rune", "FAL Rune", 41],
   "rune-kul": [Types.Entities.RUNE.KUL, "rune", "KUL Rune", 44],
@@ -754,6 +761,7 @@ Types.rankedBelts = [
   Types.Entities.BELTDIAMOND,
   Types.Entities.BELTMINOTAUR,
   Types.Entities.BELTEMERALD,
+  Types.Entities.BELTEXECUTIONER,
   Types.Entities.BELTMYSTICAL,
   Types.Entities.BELTTEMPLAR,
   Types.Entities.BELTDEMON,
@@ -817,6 +825,7 @@ Types.itemUniqueMap = {
   shieldmystical: ["TBD", 42, 22],
   shielddragon: ["TBD", 42, 22],
   shielddemon: ["TBD", 42, 22],
+  shieldmoon: ["TBD", 42, 22],
 
   cape: ["Cloak of Levitation", 12, 2],
 
@@ -828,6 +837,7 @@ Types.itemUniqueMap = {
   beltdiamond: ["Election scheduler", 38, 20],
   beltminotaur: ["TaaC", 40, 22],
   beltemerald: ["TBD", 40, 22],
+  beltexecutioner: ["TBD", 40, 22],
   beltmystical: ["TBD", 40, 22],
   belttemplar: ["TBD", 40, 22],
   beltdemon: ["TBD", 40, 22],
@@ -1411,6 +1421,7 @@ Types.getBonusDescriptionMap = [
   "+#% Lightning resistance",
   "+#% Cold resistance",
   "+#% Poison resistance",
+  "+#% Physical resistance",
   "+#% Magic damage",
   "+#% Flame damage",
   "+#% Lightning damage",
@@ -1749,6 +1760,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     beltdiamond: 11,
     beltminotaur: 8,
     beltemerald: 4,
+    beltexecutioner: 4,
     beltmystical: 4,
     belttemplar: 4,
     beltdemon: 4,
@@ -1759,6 +1771,12 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     shieldhorned: 18,
     shieldfrozen: 15,
     shielddiamond: 11,
+    shieldemerald: 4,
+    shieldexecutioner: 4,
+    shieldmystical: 4,
+    shielddragon: 4,
+    shielddemon: 4,
+    shieldmoon: 4,
 
     cape: 10,
     ringgold: 12,

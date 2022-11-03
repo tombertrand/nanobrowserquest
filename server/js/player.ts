@@ -2008,9 +2008,9 @@ class Player extends Character {
       magicFind: this.bonus.magicFind,
       attackSpeed: this.bonus.attackSpeed,
       magicDamage:
-        this.isWeaponUnique || this.weapon === "dagger"
-          ? 0
-          : Types.getWeaponMagicDamage(this.weaponLevel) + this.bonus.magicDamage + this.partyBonus.magicDamage,
+        (this.isWeaponUnique || this.weapon === "dagger" ? 0 : Types.getWeaponMagicDamage(this.weaponLevel)) +
+        this.bonus.magicDamage +
+        this.partyBonus.magicDamage,
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
       coldDamage: this.bonus.coldDamage,
@@ -2025,7 +2025,7 @@ class Player extends Character {
       skillTimeout: this.bonus.skillTimeout,
     };
 
-    // console.log("~~~~SEND stats", stats);
+    console.log("~~~~SEND stats", stats);
 
     this.send(new Messages.Stats(stats).serialize());
   }
