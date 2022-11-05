@@ -92,13 +92,18 @@ import itemGold from "../sprites/item.json";
 import itemRingbronze from "../sprites/item.json";
 import itemRingsilver from "../sprites/item.json";
 import itemRinggold from "../sprites/item.json";
+import itemRingplatinum from "../sprites/item.json";
 import itemRingnecromancer from "../sprites/item.json";
 import itemRingraistone from "../sprites/item.json";
 import itemRingfountain from "../sprites/item.json";
 import itemRingminotaur from "../sprites/item.json";
 import itemRingbalrog from "../sprites/item.json";
+import itemRingconqueror from "../sprites/item.json";
+import itemRingheaven from "../sprites/item.json";
+import itemRingwizard from "../sprites/item.json";
 import itemAmuletsilver from "../sprites/item.json";
 import itemAmuletgold from "../sprites/item.json";
+import itemAmuletplatinum from "../sprites/item.json";
 import itemAmuletcow from "../sprites/item.json";
 import itemAmuletfrozen from "../sprites/item.json";
 import itemChestblue from "../sprites/item.json";
@@ -349,6 +354,10 @@ const sprites = {
   "item-ringbronze": itemRingbronze,
   "item-ringsilver": itemRingsilver,
   "item-ringgold": itemRinggold,
+  "item-ringplatinum": itemRingplatinum,
+  "item-ringconqueror": itemRingconqueror,
+  "item-ringheaven": itemRingheaven,
+  "item-ringwizard": itemRingwizard,
   "item-ringnecromancer": itemRingnecromancer,
   "item-ringraistone": itemRingraistone,
   "item-ringfountain": itemRingfountain,
@@ -356,6 +365,7 @@ const sprites = {
   "item-ringbalrog": itemRingbalrog,
   "item-amuletsilver": itemAmuletsilver,
   "item-amuletgold": itemAmuletgold,
+  "item-amuletplatinum": itemAmuletplatinum,
   "item-amuletcow": itemAmuletcow,
   "item-amuletfrozen": itemAmuletfrozen,
   "item-chestblue": itemChestblue,

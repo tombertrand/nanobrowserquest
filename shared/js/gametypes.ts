@@ -244,13 +244,18 @@ export const Types: any = {
     RINGBRONZE: 80,
     RINGSILVER: 81,
     RINGGOLD: 82,
+    RINGPLATINUM: 209,
     RINGNECROMANCER: 115,
     RINGRAISTONE: 117,
     RINGFOUNTAIN: 126,
     RINGMINOTAUR: 132,
     RINGBALROG: 194,
+    RINGCONQUEROR: 210,
+    RINGHEAVEN: 211,
+    RINGWIZARD: 213,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
+    AMULETPLATINUM: 212,
     AMULETCOW: 116,
     AMULETFROZEN: 138,
 
@@ -460,16 +465,21 @@ Types.Entities.Rings = [
   Types.Entities.RINGBRONZE,
   Types.Entities.RINGSILVER,
   Types.Entities.RINGGOLD,
+  Types.Entities.RINGPLATINUM,
   Types.Entities.RINGNECROMANCER,
   Types.Entities.RINGRAISTONE,
   Types.Entities.RINGFOUNTAIN,
   Types.Entities.RINGMINOTAUR,
   Types.Entities.RINGBALROG,
+  Types.Entities.RINGCONQUEROR,
+  Types.Entities.RINGHEAVEN,
+  Types.Entities.RINGWIZARD,
 ];
 
 Types.Entities.Amulets = [
   Types.Entities.AMULETSILVER,
   Types.Entities.AMULETGOLD,
+  Types.Entities.AMULETPLATINUM,
   Types.Entities.AMULETCOW,
   Types.Entities.AMULETFROZEN,
 ];
@@ -605,6 +615,10 @@ export const kinds = {
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
   ringsilver: [Types.Entities.RINGSILVER, "ring", "Silver Ring", 9],
   ringgold: [Types.Entities.RINGGOLD, "ring", "Gold Ring", 16],
+  ringplatinum: [Types.Entities.RINGPLATINUM, "ring", "Platinum Ring", 45],
+  ringconqueror: [Types.Entities.RINGCONQUEROR, "ring", "Conqueror Ring", 50],
+  ringheaven: [Types.Entities.RINGHEAVEN, "ring", "Touch of Heaven Ring", 50],
+  ringwizard: [Types.Entities.RINGWIZARD, "ring", "Wizard Ring", 50],
   ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 38],
   ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
   ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
@@ -613,6 +627,7 @@ export const kinds = {
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
+  amuletplatinum: [Types.Entities.AMULETPLATINUM, "amulet", "Platinum Amulet", 45],
   amuletcow: [Types.Entities.AMULETCOW, "amulet", "Holy Cow King Talisman", 34],
   amuletfrozen: [Types.Entities.AMULETFROZEN, "amulet", "Frozen Heart", 34],
 
@@ -1046,6 +1061,9 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         Types.Entities.RINGFOUNTAIN,
         Types.Entities.RINGMINOTAUR,
         Types.Entities.RINGBALROG,
+        Types.Entities.RINGCONQUEROR,
+        Types.Entities.RINGHEAVEN,
+        Types.Entities.RINGWIZARD,
       ].includes(kindOrString)
     ) {
       return true;
@@ -1060,8 +1078,22 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
     if (Types.Entities.RINGGOLD === kindOrString && bonus.length === 4) {
       return true;
     }
+    if (Types.Entities.RINGPLATINUM === kindOrString && bonus.length === 6) {
+      return true;
+    }
   } else {
-    if (["ringnecromancer", "ringraistone", "ringfountain", "ringminotaur", "ringbalrog"].includes(kindOrString)) {
+    if (
+      [
+        "ringnecromancer",
+        "ringraistone",
+        "ringfountain",
+        "ringminotaur",
+        "ringbalrog",
+        "ringconqueror",
+        "ringheaven",
+        "ringwizard",
+      ].includes(kindOrString)
+    ) {
       return true;
     }
     if ("ringbronze" === kindOrString && bonus.length === 2) {
@@ -1071,6 +1103,9 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
       return true;
     }
     if ("ringgold" === kindOrString && bonus.length === 4) {
+      return true;
+    }
+    if ("ringplatinum" === kindOrString && bonus.length === 6) {
       return true;
     }
   }
@@ -1092,6 +1127,9 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
     if (Types.Entities.AMULETGOLD === kindOrString && bonus.length === 4) {
       return true;
     }
+    if (Types.Entities.AMULETPLATINUM === kindOrString && bonus.length === 6) {
+      return true;
+    }
   } else {
     if (["amuletcow", "amuletfrozen"].includes(kindOrString)) {
       return true;
@@ -1100,6 +1138,9 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
       return true;
     }
     if ("amuletgold" === kindOrString && bonus.length === 4) {
+      return true;
+    }
+    if ("amuletplatinum" === kindOrString && bonus.length === 6) {
       return true;
     }
   }
@@ -1780,7 +1821,9 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
 
     cape: 10,
     ringgold: 12,
+    ringplatinum: 4,
     amuletgold: 12,
+    amuletplatinum: 4,
   };
 
   const transmuteSuccessRate = 80;

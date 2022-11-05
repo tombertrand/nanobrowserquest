@@ -1632,7 +1632,17 @@ class DatabaseHandler {
           output =
             Types.itemUniqueMap[itemName]?.[0] ||
             `${
-              ["ringbronze", "ringsilver", "ringgold", "amuletsilver", "amuletgold"].includes(itemName) ? "Unique " : ""
+              [
+                "ringbronze",
+                "ringsilver",
+                "ringgold",
+                "ringplatinum",
+                "amuletsilver",
+                "amuletgold",
+                "amuletplatinum",
+              ].includes(itemName)
+                ? "Unique "
+                : ""
             }${output}`;
         }
 

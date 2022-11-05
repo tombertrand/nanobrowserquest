@@ -1361,8 +1361,13 @@ class World {
     // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
+      // "ringplatinum",
+      // "ringconqueror",
+      "ringheaven",
+      "ringwizard",
+      // "amuletplatinum",
       // "beltemerald",
-      "beltexecutioner",
+      // "beltexecutioner",
       // "beltmystical",
       // "belttemplar",
       // "beltdemon",
@@ -1370,7 +1375,7 @@ class World {
       // "shieldexecutioner",
       // "shielddragon",
       // "shielddemon",
-      "shieldmoon",
+      // "shieldmoon",
       // "rune-fal",
       // "rune-kul",
       // "rune-mer",

@@ -730,6 +730,13 @@ var Items = {
     }
   },
 
+  RingPlatinum: class RingPlatinum extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGPLATINUM, "ring");
+      this.lootMessage = "You pick up a platinum ring";
+    }
+  },
+
   RingNecromancer: class RingNecromancer extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGNECROMANCER, "ring");
@@ -765,6 +772,27 @@ var Items = {
     }
   },
 
+  RingConqueror: class RingConqueror extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGCONQUEROR, "ring");
+      this.lootMessage = "You pick up a conqueror ring";
+    }
+  },
+
+  RingHeaven: class RingHeaven extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGHEAVEN, "ring");
+      this.lootMessage = "You pick up a touch of heaven ring";
+    }
+  },
+
+  RingWizard: class RingWizard extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGWIZARD, "ring");
+      this.lootMessage = "You pick up a wizard ring";
+    }
+  },
+
   AmuletSilver: class AmuletSilver extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETSILVER, "amulet");
@@ -776,6 +804,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.AMULETGOLD, "amulet");
       this.lootMessage = "You pick up a gold amulet";
+    }
+  },
+
+  AmuletPlatinum: class AmuletPlatinum extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETPLATINUM, "amulet");
+      this.lootMessage = "You pick up a platinum amulet";
     }
   },
 

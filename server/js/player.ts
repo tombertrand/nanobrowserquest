@@ -1290,6 +1290,10 @@ class Player extends Character {
       const coldDamageBonus = [18];
       const freezeChanceBonus = [19];
       const reduceFrozenChanceBonus = [20];
+      const resistances = [21, 22, 23, 24, 25, 26];
+      const elementPercentage = [27, 28, 29, 30, 31];
+      const timeout = [35];
+      const elementDamage = [4, 14, 15, 16, 18, 34];
 
       let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
@@ -1298,10 +1302,19 @@ class Player extends Character {
         bonus = _.shuffle(mediumLevelBonus).slice(0, isUnique ? 3 : 2);
       } else if (kind === Types.Entities.RINGGOLD) {
         bonus = _.shuffle(highLevelBonus).slice(0, isUnique ? 4 : 3);
+      } else if (kind === Types.Entities.RINGPLATINUM) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 4)
+          .concat(_.shuffle(resistances).slice(0, isUnique ? 2 : 1));
       } else if (kind === Types.Entities.AMULETGOLD) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, isUnique ? 3 : 2)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
+      } else if (kind === Types.Entities.AMULETPLATINUM) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(_.shuffle(resistances).slice(0, isUnique ? 2 : 1));
       } else if (kind === Types.Entities.RINGNECROMANCER) {
         bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
       } else if (kind === Types.Entities.AMULETCOW) {
@@ -1330,8 +1343,27 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 4)
           .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus]).slice(0, 1))
-          .concat(_.shuffle([21, 22, 23, 24, 25]).slice(0, 2))
-          .concat(_.shuffle([26, 27, 28, 29, 30]).slice(0, 1));
+          .concat(_.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 1));
+      } else if (kind === Types.Entities.RINGCONQUEROR) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 4)
+          .concat(_.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 1));
+      } else if (kind === Types.Entities.RINGHEAVEN) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 1)
+          .concat(_.shuffle([11, 12]).slice(0, 1))
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(_.shuffle(elementPercentage).slice(0, 2))
+          .concat([32]);
+      } else if (kind === Types.Entities.RINGWIZARD) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 1)
+          .concat(_.shuffle(elementDamage).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 1))
+          .concat(_.shuffle(resistances).slice(0, 2))
+          .concat(timeout);
       }
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };

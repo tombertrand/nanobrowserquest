@@ -556,6 +556,10 @@ EntityFactory.builders[Types.Entities.RINGGOLD] = function (id) {
   return new Items.RingGold(id);
 };
 
+EntityFactory.builders[Types.Entities.RINGPLATINUM] = function (id) {
+  return new Items.RingPlatinum(id);
+};
+
 EntityFactory.builders[Types.Entities.RINGNECROMANCER] = function (id) {
   return new Items.RingNecromancer(id);
 };
@@ -576,12 +580,28 @@ EntityFactory.builders[Types.Entities.RINGBALROG] = function (id) {
   return new Items.RingBalrog(id);
 };
 
+EntityFactory.builders[Types.Entities.RINGCONQUEROR] = function (id) {
+  return new Items.RingConqueror(id);
+};
+
+EntityFactory.builders[Types.Entities.RINGHEAVEN] = function (id) {
+  return new Items.RingHeaven(id);
+};
+
+EntityFactory.builders[Types.Entities.RINGWIZARD] = function (id) {
+  return new Items.RingWizard(id);
+};
+
 EntityFactory.builders[Types.Entities.AMULETSILVER] = function (id) {
   return new Items.AmuletSilver(id);
 };
 
 EntityFactory.builders[Types.Entities.AMULETGOLD] = function (id) {
   return new Items.AmuletGold(id);
+};
+
+EntityFactory.builders[Types.Entities.AMULETPLATINUM] = function (id) {
+  return new Items.AmuletPlatinum(id);
 };
 
 EntityFactory.builders[Types.Entities.AMULETCOW] = function (id) {
