@@ -249,6 +249,7 @@ export const Types: any = {
     RINGRAISTONE: 117,
     RINGFOUNTAIN: 126,
     RINGMINOTAUR: 132,
+    RINGMYSTICAL: 214,
     RINGBALROG: 194,
     RINGCONQUEROR: 210,
     RINGHEAVEN: 211,
@@ -258,6 +259,8 @@ export const Types: any = {
     AMULETPLATINUM: 212,
     AMULETCOW: 116,
     AMULETFROZEN: 138,
+    AMULETDEMON: 215,
+    AMULETMOON: 216,
 
     // NPCs
     GUARD: 40,
@@ -300,7 +303,7 @@ export const Types: any = {
     DIAMONDSWORD: 121,
     MINOTAURAXE: 133,
     EMERALDSWORD: 152,
-    MOONPARTISAN: 154,
+    MOONSWORD: 154,
     TEMPLARSWORD: 155,
     SPIKEGLAIVE: 156,
     ECLYPSEDAGGER: 157,
@@ -403,7 +406,7 @@ Types.Entities.Weapons = [
   Types.Entities.DIAMONDSWORD,
   Types.Entities.MINOTAURAXE,
   Types.Entities.EMERALDSWORD,
-  Types.Entities.MOONPARTISAN,
+  Types.Entities.MOONSWORD,
   Types.Entities.TEMPLARSWORD,
   Types.Entities.SPIKEGLAIVE,
   Types.Entities.ECLYPSEDAGGER,
@@ -470,6 +473,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGRAISTONE,
   Types.Entities.RINGFOUNTAIN,
   Types.Entities.RINGMINOTAUR,
+  Types.Entities.RINGMYSTICAL,
   Types.Entities.RINGBALROG,
   Types.Entities.RINGCONQUEROR,
   Types.Entities.RINGHEAVEN,
@@ -482,6 +486,8 @@ Types.Entities.Amulets = [
   Types.Entities.AMULETPLATINUM,
   Types.Entities.AMULETCOW,
   Types.Entities.AMULETFROZEN,
+  Types.Entities.AMULETDEMON,
+  Types.Entities.AMULETMOON,
 ];
 
 Types.getGemNameFromKind = function (kind: number) {
@@ -560,7 +566,7 @@ export const kinds = {
   mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 40, 40],
   templarsword: [Types.Entities.TEMPLARSWORD, "weapon", "Templar Sword", 40, 40],
   dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 40, 40],
-  moonpartisan: [Types.Entities.MOONPARTISAN, "weapon", "Moon Partisan", 40, 40],
+  moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Partisan", 40, 40],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -623,13 +629,16 @@ export const kinds = {
   ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
   ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
   ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Hell Freeze", 36],
-  ringbalrog: [Types.Entities.RINGBALROG, "ring", "Ring of Power", 54],
+  ringmystical: [Types.Entities.RINGMYSTICAL, "ring", "Oculus", 54],
+  ringbalrog: [Types.Entities.RINGBALROG, "ring", "Ring of Power", 58],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
   amuletplatinum: [Types.Entities.AMULETPLATINUM, "amulet", "Platinum Amulet", 45],
   amuletcow: [Types.Entities.AMULETCOW, "amulet", "Holy Cow King Talisman", 34],
   amuletfrozen: [Types.Entities.AMULETFROZEN, "amulet", "Frozen Heart", 34],
+  amuletdemon: [Types.Entities.AMULETDEMON, "amulet", "Fiend", 55],
+  amuletmoon: [Types.Entities.AMULETMOON, "amulet", "Crescent", 58],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 50],
 
@@ -804,7 +813,7 @@ Types.itemUniqueMap = {
   mysticalsword: ["The Maximalist", 38, 38],
   templarsword: ["TBD", 38, 38],
   dragonsword: ["Balerion the Black Dread", 38, 38],
-  moonpartisan: ["Moon Boy", 38, 38],
+  moonsword: ["Moon Boy", 38, 38],
 
   // Laser Eyes
   // CBDC
@@ -865,9 +874,12 @@ Types.isSuperUnique = (itemName: string) =>
     "ringraistone",
     "ringfountain",
     "ringminotaur",
+    "ringmystical",
     "ringbalrog",
     "amuletcow",
     "amuletfrozen",
+    "amuletdemon",
+    "amuletmoon",
   ].includes(itemName);
 
 Types.resistances = {
@@ -1060,6 +1072,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         Types.Entities.RINGRAISTONE,
         Types.Entities.RINGFOUNTAIN,
         Types.Entities.RINGMINOTAUR,
+        Types.Entities.RINGMYSTICAL,
         Types.Entities.RINGBALROG,
         Types.Entities.RINGCONQUEROR,
         Types.Entities.RINGHEAVEN,
@@ -1088,6 +1101,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         "ringraistone",
         "ringfountain",
         "ringminotaur",
+        "ringmystical",
         "ringbalrog",
         "ringconqueror",
         "ringheaven",
@@ -1118,7 +1132,14 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
   }
 
   if (typeof kindOrString === "number") {
-    if ([Types.Entities.AMULETCOW, Types.Entities.AMULETFROZEN].includes(kindOrString)) {
+    if (
+      [
+        Types.Entities.AMULETCOW,
+        Types.Entities.AMULETFROZEN,
+        Types.Entities.AMULETDEMON,
+        Types.Entities.AMULETMOON,
+      ].includes(kindOrString)
+    ) {
       return true;
     }
     if (Types.Entities.AMULETSILVER === kindOrString && bonus.length === 3) {
@@ -1131,7 +1152,7 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
       return true;
     }
   } else {
-    if (["amuletcow", "amuletfrozen"].includes(kindOrString)) {
+    if (["amuletcow", "amuletfrozen", "amuletdemon", "amuletmoon"].includes(kindOrString)) {
       return true;
     }
     if ("amuletsilver" === kindOrString && bonus.length === 3) {
@@ -1786,7 +1807,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     mysticalsword: 4,
     templarsword: 4,
     dragonsword: 4,
-    moonpartisan: 4,
+    moonsword: 4,
 
     goldenarmor: 20,
     bluearmor: 18,

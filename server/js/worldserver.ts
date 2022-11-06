@@ -1358,13 +1358,15 @@ class World {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
     }
 
-    // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
       // "ringplatinum",
       // "ringconqueror",
-      "ringheaven",
-      "ringwizard",
+      // "amuletdemon",
+      "ringmystical",
+      "amuletmoon",
+      // "ringheaven",
+      // "ringwizard",
       // "amuletplatinum",
       // "beltemerald",
       // "beltexecutioner",
@@ -1420,7 +1422,7 @@ class World {
       // "eclypsedagger",
       // "spikeglaive",
       // "templarsword",
-      // "moonpartisan",
+      // "moonsword",
     ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];

@@ -184,8 +184,8 @@ EntityFactory.builders[Types.Entities.EMERALDSWORD] = function (id) {
   return new Items.EmeraldSword(id);
 };
 
-EntityFactory.builders[Types.Entities.MOONPARTISAN] = function (id) {
-  return new Items.MoonPartisan(id);
+EntityFactory.builders[Types.Entities.MOONSWORD] = function (id) {
+  return new Items.MoonSword(id);
 };
 
 EntityFactory.builders[Types.Entities.TEMPLARSWORD] = function (id) {
@@ -576,6 +576,10 @@ EntityFactory.builders[Types.Entities.RINGMINOTAUR] = function (id) {
   return new Items.RingMinotaur(id);
 };
 
+EntityFactory.builders[Types.Entities.RINGMYSTICAL] = function (id) {
+  return new Items.RingMystical(id);
+};
+
 EntityFactory.builders[Types.Entities.RINGBALROG] = function (id) {
   return new Items.RingBalrog(id);
 };
@@ -610,6 +614,14 @@ EntityFactory.builders[Types.Entities.AMULETCOW] = function (id) {
 
 EntityFactory.builders[Types.Entities.AMULETFROZEN] = function (id) {
   return new Items.AmuletFrozen(id);
+};
+
+EntityFactory.builders[Types.Entities.AMULETDEMON] = function (id) {
+  return new Items.AmuletDemon(id);
+};
+
+EntityFactory.builders[Types.Entities.AMULETMOON] = function (id) {
+  return new Items.AmuletMoon(id);
 };
 
 EntityFactory.builders[Types.Entities.CHESTBLUE] = function (id) {

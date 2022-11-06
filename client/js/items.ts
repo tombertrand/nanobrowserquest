@@ -86,9 +86,9 @@ var Items = {
     }
   },
 
-  MoonPartisan: class MoonPartisan extends Item {
+  MoonSword: class MoonSword extends Item {
     constructor(id) {
-      super(id, Types.Entities.MOONPARTISAN, "weapon");
+      super(id, Types.Entities.MOONSWORD, "weapon");
       this.lootMessage = "You pick up a moon partisan";
     }
   },
@@ -765,6 +765,13 @@ var Items = {
     }
   },
 
+  RingMystical: class RingMystical extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGMYSTICAL, "ring");
+      this.lootMessage = "You pick up the Oculus";
+    }
+  },
+
   RingBalrog: class RingBalrog extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGBALROG, "ring");
@@ -825,6 +832,20 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.AMULETFROZEN, "amulet");
       this.lootMessage = "You pick up the Frozen Heart";
+    }
+  },
+
+  AmuletDemon: class AmuletDemon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETDEMON, "amulet");
+      this.lootMessage = "You pick up the Fiend";
+    }
+  },
+
+  AmuletMoon: class AmuletMoon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETMOON, "amulet");
+      this.lootMessage = "You pick up the Crescent";
     }
   },
 

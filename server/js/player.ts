@@ -1292,6 +1292,7 @@ class Player extends Character {
       const reduceFrozenChanceBonus = [20];
       const resistances = [21, 22, 23, 24, 25, 26];
       const elementPercentage = [27, 28, 29, 30, 31];
+      const allResistances = [32];
       const timeout = [35];
       const elementDamage = [4, 14, 15, 16, 18, 34];
 
@@ -1329,6 +1330,20 @@ class Player extends Character {
           .concat(coldDamageBonus)
           .concat(freezeChanceBonus)
           .concat(reduceFrozenChanceBonus);
+      } else if (kind === Types.Entities.AMULETDEMON) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(fireDamageBonus)
+          .concat(allResistances)
+          .concat(_.shuffle(elementDamage).slice(0, 2));
+      } else if (kind === Types.Entities.AMULETMOON) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 2)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(allResistances)
+          .concat(_.shuffle(elementDamage).slice(0, 3))
+          .concat(_.shuffle(elementPercentage).slice(0, 3));
       } else if (kind === Types.Entities.RINGRAISTONE) {
         bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
       } else if (kind === Types.Entities.RINGFOUNTAIN) {
@@ -1339,12 +1354,18 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat([...coldDamageBonus, ...freezeChanceBonus]);
+      } else if (kind === Types.Entities.RINGMYSTICAL) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.RINGBALROG) {
         bonus = _.shuffle(highLevelBonus)
-          .slice(0, 4)
+          .slice(0, 3)
           .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus]).slice(0, 1))
           .concat(_.shuffle(resistances).slice(0, 2))
-          .concat(_.shuffle(elementPercentage).slice(0, 1));
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.RINGCONQUEROR) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 4)

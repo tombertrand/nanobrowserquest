@@ -377,7 +377,7 @@ class Game {
       "diamondsword",
       "minotauraxe",
       "emeraldsword",
-      "moonpartisan",
+      "moonsword",
       "templarsword",
       "spikeglaive",
       "eclypsedagger",
@@ -412,7 +412,7 @@ class Game {
       "item-diamondsword",
       "item-minotauraxe",
       "item-emeraldsword",
-      "item-moonpartisan",
+      "item-moonsword",
       "item-templarsword",
       "item-spikeglaive",
       "item-eclypsedagger",
@@ -509,6 +509,7 @@ class Game {
       "item-ringraistone",
       "item-ringfountain",
       "item-ringminotaur",
+      "item-ringmystical",
       "item-ringbalrog",
       "item-ringconqueror",
       "item-ringheaven",
@@ -518,6 +519,8 @@ class Game {
       "item-amuletplatinum",
       "item-amuletcow",
       "item-amuletfrozen",
+      "item-amuletdemon",
+      "item-amuletmoon",
       "item-chestblue",
       "item-scrollupgradelow",
       "item-scrollupgrademedium",
@@ -875,6 +878,9 @@ class Game {
           const playerItems = self.player.getEquipment();
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
+
+            console.log("~~~playerItems", playerItems);
+            console.log("~~~currentSet", currentSet);
             setParts = Types.setItemsNameMap[currentSet].map((description, index) => ({
               description,
               isActive: playerItems.includes(Types.setItems[currentSet][index]),

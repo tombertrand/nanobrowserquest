@@ -31,7 +31,7 @@ import frozensword from "../sprites/weapon.json";
 import diamondsword from "../sprites/weapon.json";
 import minotauraxe from "../sprites/minotauraxe.json";
 import emeraldsword from "../sprites/weapon.json";
-import moonpartisan from "../sprites/weapon.json";
+import moonsword from "../sprites/weapon.json";
 import templarsword from "../sprites/weapon.json";
 import spikeglaive from "../sprites/weapon.json";
 import eclypsedagger from "../sprites/weapon.json";
@@ -97,6 +97,7 @@ import itemRingnecromancer from "../sprites/item.json";
 import itemRingraistone from "../sprites/item.json";
 import itemRingfountain from "../sprites/item.json";
 import itemRingminotaur from "../sprites/item.json";
+import itemRingmystical from "../sprites/item.json";
 import itemRingbalrog from "../sprites/item.json";
 import itemRingconqueror from "../sprites/item.json";
 import itemRingheaven from "../sprites/item.json";
@@ -106,6 +107,8 @@ import itemAmuletgold from "../sprites/item.json";
 import itemAmuletplatinum from "../sprites/item.json";
 import itemAmuletcow from "../sprites/item.json";
 import itemAmuletfrozen from "../sprites/item.json";
+import itemAmuletdemon from "../sprites/item.json";
+import itemAmuletmoon from "../sprites/item.json";
 import itemChestblue from "../sprites/item.json";
 import itemScroll from "../sprites/item.json";
 import itemSkeletonkey from "../sprites/item.json";
@@ -158,7 +161,7 @@ import itemFrozensword from "../sprites/item.json";
 import itemDiamondsword from "../sprites/item.json";
 import itemMinotauraxe from "../sprites/item.json";
 import itemEmeraldsword from "../sprites/item.json";
-import itemMoonpartisan from "../sprites/item.json";
+import itemMoonsword from "../sprites/item.json";
 import itemTemplarsword from "../sprites/item.json";
 import itemSpikeglaive from "../sprites/item.json";
 import itemEclypsedagger from "../sprites/item.json";
@@ -275,7 +278,7 @@ const sprites = {
   diamondsword,
   minotauraxe,
   emeraldsword,
-  moonpartisan,
+  moonsword,
   templarsword,
   spikeglaive,
   eclypsedagger,
@@ -355,19 +358,22 @@ const sprites = {
   "item-ringsilver": itemRingsilver,
   "item-ringgold": itemRinggold,
   "item-ringplatinum": itemRingplatinum,
-  "item-ringconqueror": itemRingconqueror,
-  "item-ringheaven": itemRingheaven,
-  "item-ringwizard": itemRingwizard,
   "item-ringnecromancer": itemRingnecromancer,
   "item-ringraistone": itemRingraistone,
   "item-ringfountain": itemRingfountain,
   "item-ringminotaur": itemRingminotaur,
+  "item-ringmystical": itemRingmystical,
   "item-ringbalrog": itemRingbalrog,
+  "item-ringconqueror": itemRingconqueror,
+  "item-ringheaven": itemRingheaven,
+  "item-ringwizard": itemRingwizard,
   "item-amuletsilver": itemAmuletsilver,
   "item-amuletgold": itemAmuletgold,
   "item-amuletplatinum": itemAmuletplatinum,
   "item-amuletcow": itemAmuletcow,
   "item-amuletfrozen": itemAmuletfrozen,
+  "item-amuletdemon": itemAmuletdemon,
+  "item-amuletmoon": itemAmuletmoon,
   "item-chestblue": itemChestblue,
   "item-scrollupgradelow": itemScroll,
   "item-scrollupgrademedium": itemScroll,
@@ -427,7 +433,7 @@ const sprites = {
   "item-diamondsword": itemDiamondsword,
   "item-minotauraxe": itemMinotauraxe,
   "item-emeraldsword": itemEmeraldsword,
-  "item-moonpartisan": itemMoonpartisan,
+  "item-moonsword": itemMoonsword,
   "item-templarsword": itemTemplarsword,
   "item-spikeglaive": itemSpikeglaive,
   "item-eclypsedagger": itemEclypsedagger,
