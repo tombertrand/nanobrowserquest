@@ -138,6 +138,10 @@ EntityFactory.builders[Types.Entities.MINOTAUR] = function (id) {
   return new Mobs.Minotaur(id);
 };
 
+EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id) {
+  return new Mobs.DeathAngel(id);
+};
+
 //===== items ======
 
 EntityFactory.builders[Types.Entities.SWORD] = function (id) {

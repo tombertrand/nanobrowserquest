@@ -349,6 +349,30 @@ export const Mobs = {
       this.setAttackRate(1300);
     }
   },
+
+  DeathAngel: class DeathAngel extends Mob {
+    constructor(id) {
+      super(id, Types.Entities.DEATHANGEL);
+      this.moveSpeed = 150;
+      this.atkSpeed = 100;
+      this.raiseSpeed = 125;
+      this.idleSpeed = 100;
+      this.atkRate = 2000;
+      this.raiseRate = 1000;
+      this.attackCooldown = new Timer(this.atkRate);
+      this.raiseCooldown = new Timer(this.raiseRate);
+      this.aggroRange = 3;
+      this.auras = ["drainlife"];
+    }
+
+    idle(orientation) {
+      if (!this.hasTarget()) {
+        super.idle(Types.Orientations.DOWN);
+      } else {
+        super.idle(orientation);
+      }
+    }
+  },
 };
 
 export default Mobs;

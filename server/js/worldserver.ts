@@ -61,7 +61,8 @@ class World {
   itemCount: number;
   playerCount: number;
   zoneGroupsReady: boolean;
-  raiseInterval: any;
+  raiseNecromancerInterval: any;
+  raiseDeathAngelInterval: any;
   removed_callback: any;
   added_callback: any;
   regen_callback: any;
@@ -152,7 +153,8 @@ class World {
     this.playerCount = 0;
 
     this.zoneGroupsReady = false;
-    this.raiseInterval = null;
+    this.raiseNecromancerInterval = null;
+    this.raiseDeathAngelInterval = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -862,8 +864,12 @@ class World {
       player.addHater(mob);
 
       if (mob.kind === Types.Entities.NECROMANCER) {
-        if (!this.raiseInterval) {
-          this.startRaiseInterval(player, mob);
+        if (!this.raiseNecromancerInterval) {
+          this.startRaiseNecromancerInterval(player, mob);
+        }
+      } else if (mob.kind === Types.Entities.DEATHANGEL) {
+        if (!this.raiseDeathAngelInterval) {
+          this.startRaiseDeathAngelInterval(player, mob);
         }
       }
 
@@ -959,8 +965,8 @@ class World {
     }
   }
 
-  startRaiseInterval(character, mob) {
-    this.stopRaiseInterval();
+  startRaiseNecromancerInterval(character, mob) {
+    this.stopRaiseNecromancerInterval();
 
     const raiseZombies = () => {
       const adjustedDifficulty = this.getPlayersCountInBossRoom({
@@ -997,9 +1003,9 @@ class World {
       }
     };
 
-    this.raiseInterval = setInterval(() => {
+    this.raiseNecromancerInterval = setInterval(() => {
       if (mob && Array.isArray(mob.hateList) && !mob.hateList.length) {
-        this.stopRaiseInterval();
+        this.stopRaiseNecromancerInterval();
         this.despawnZombies();
       } else {
         raiseZombies();
@@ -1009,9 +1015,36 @@ class World {
     raiseZombies();
   }
 
-  stopRaiseInterval() {
-    clearInterval(this.raiseInterval);
-    this.raiseInterval = null;
+  stopRaiseNecromancerInterval() {
+    clearInterval(this.raiseNecromancerInterval);
+    this.raiseNecromancerInterval = null;
+  }
+
+  startRaiseDeathAngelInterval(character, mob) {
+    this.stopRaiseDeathAngelInterval();
+
+    const raiseSkeletonSpell = () => {
+      this.broadcastRaise(character, mob.id);
+
+      // @TODO Spawn 8 entities (skeleton spell) and have them move 4 tiles then explode
+      // if player on the tile, it explodes and deals the elemental dmg to the player
+    };
+
+    this.raiseDeathAngelInterval = setInterval(() => {
+      if (mob && Array.isArray(mob.hateList) && !mob.hateList.length) {
+        this.stopRaiseDeathAngelInterval();
+      } else {
+        raiseSkeletonSpell();
+      }
+    }, 3500);
+
+    // @TODO Remove? or random raise on aggro ~~~
+    raiseSkeletonSpell();
+  }
+
+  stopRaiseDeathAngelInterval() {
+    clearInterval(this.raiseDeathAngelInterval);
+    this.raiseDeathAngelInterval = null;
   }
 
   broadcastRaise(character, mobId) {

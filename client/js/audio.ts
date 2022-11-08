@@ -64,6 +64,8 @@ class AudioManager {
       "npc",
       "npc-end",
       "raise",
+      "deathangel-death",
+      "deathangel-spell",
       "portal-open",
       "skill-heal",
       "skill-defense",

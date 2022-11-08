@@ -122,7 +122,7 @@ class Entity {
 
       if (a) {
         this.currentAnimation = a;
-        if (name.substr(0, 3) === "atk") {
+        if (name.substr(0, 3) === "atk" || name.substr(0, 5) === "raise") {
           this.currentAnimation.reset();
         }
 
@@ -130,10 +130,10 @@ class Entity {
           this.kind === Types.Entities.ANVIL ||
           this.kind === Types.Entities.WAYPOINTX ||
           this.kind === Types.Entities.WAYPOINTN ||
-          this.kind === Types.Entities.WAYPOINTO
+          this.kind === Types.Entities.WAYPOINTO ||
+          this.kind === Types.Entities.COWPORTAL ||
+          this.kind === Types.Entities.MINOTAURPORTAL
         ) {
-          this.currentAnimation.setSpeed(150);
-        } else if (this.kind === Types.Entities.COWPORTAL || this.kind === Types.Entities.MINOTAURPORTAL) {
           this.currentAnimation.setSpeed(150);
         } else {
           this.currentAnimation.setSpeed(speed);
@@ -215,7 +215,7 @@ class Entity {
     return distX > distY ? distX : distY;
   }
 
-  isCloseTo(entity) {
+  isCloseTo(entity, aggroRange) {
     var dx,
       dy,
       close = false;
@@ -223,7 +223,7 @@ class Entity {
       dx = Math.abs(entity.gridX - this.gridX);
       dy = Math.abs(entity.gridY - this.gridY);
 
-      if (dx < 30 && dy < 14) {
+      if (dx < aggroRange && dy < aggroRange) {
         close = true;
       }
     }

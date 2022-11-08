@@ -217,7 +217,7 @@ class Character extends Entity {
   }
 
   moveTo_(x, y) {
-    if (this.kind === Types.Entities.NECROMANCER) {
+    if (this.kind === Types.Entities.NECROMANCER || this.kind === Types.Entities.DEATHANGEL) {
       if (this.isRaising()) {
         this.aggroRange = 10;
         return;
@@ -379,6 +379,11 @@ class Character extends Entity {
     this.raisingModeTimeout = setTimeout(() => {
       this.raisingMode = false;
       this.raisingModeTimeout = null;
+
+      // @NOTE Have the raiser re-engage with target once animation is done
+      if (this.hasTarget() && this.isCloseTo(this.target, this.aggroRange)) {
+        this.engage(this.target);
+      }
     }, this.raiseRate);
   }
 
@@ -651,7 +656,7 @@ class Character extends Entity {
    *
    */
   canAttack(time) {
-    if (this.canReachTarget() && this.attackCooldown.isOver(time) && !this.isFrozen) {
+    if (!this.isRaising() && this.canReachTarget() && this.attackCooldown.isOver(time) && !this.isFrozen) {
       return true;
     }
     return false;

@@ -17,6 +17,7 @@ import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
+import deathangel from "../sprites/deathangel.json";
 import wirtleg from "../sprites/weapon.json";
 import dagger from "../sprites/dagger.json";
 import sword from "../sprites/weapon.json";
@@ -266,6 +267,7 @@ const sprites = {
   cow,
   cowking,
   minotaur,
+  deathangel,
   goldenarmor,
   bluearmor,
   hornedarmor,

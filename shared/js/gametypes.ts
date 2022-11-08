@@ -152,6 +152,7 @@ export const Types: any = {
     COW: 119,
     COWKING: 120,
     MINOTAUR: 131,
+    DEATHANGEL: 217,
 
     // Armors
     FIREFOX: 20,
@@ -544,6 +545,7 @@ export const kinds = {
   cow: [Types.Entities.COW, "mob", 25, 49],
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
   minotaur: [Types.Entities.MINOTAUR, "mob", 500, 52],
+  deathangel: [Types.Entities.DEATHANGEL, "mob", 100, 55],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
@@ -985,9 +987,10 @@ Types.isBoss = function (kindOrString: number | string) {
       Types.Entities.SKELETONCOMMANDER,
       Types.Entities.COWKING,
       Types.Entities.MINOTAUR,
+      Types.Entities.DEATHANGEL,
     ].includes(kindOrString);
   } else {
-    return ["boss", "skeletoncommander", "necromancer", "cowking", "minotaur"].includes(kindOrString);
+    return ["boss", "skeletoncommander", "necromancer", "cowking", "minotaur", "deathangel"].includes(kindOrString);
   }
 };
 

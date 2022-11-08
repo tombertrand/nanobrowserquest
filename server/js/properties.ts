@@ -371,6 +371,15 @@ var Properties: any = {
     armor: 29,
     weapon: 32,
   },
+  deathangel: {
+    drops: {
+      scrollupgradelegendary: 3,
+      scrollupgradesacred: 4,
+    },
+    hp: 1000,
+    armor: 40,
+    weapon: 1,
+  },
 };
 
 Properties.getArmorLevel = function (kind) {

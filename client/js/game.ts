@@ -318,6 +318,7 @@ class Game {
       "cow",
       "cowking",
       "minotaur",
+      "deathangel",
       "wizard",
       "guard",
       "king",
@@ -878,9 +879,6 @@ class Game {
           const playerItems = self.player.getEquipment();
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
-
-            console.log("~~~playerItems", playerItems);
-            console.log("~~~currentSet", currentSet);
             setParts = Types.setItemsNameMap[currentSet].map((description, index) => ({
               description,
               isActive: playerItems.includes(Types.setItems[currentSet][index]),
@@ -2934,8 +2932,17 @@ class Game {
                   }
 
                   entity.isDying = true;
-                  entity.setSprite(self.sprites[entity instanceof Mobs.Rat ? "rat" : "death"]);
-                  entity.animate("death", 120, 1, function () {
+                  let speed = 120;
+
+                  // Custom death animations
+                  if (entity instanceof Mobs.Rat) {
+                  } else if (entity instanceof Mobs.DeathAngel) {
+                    speed = 250;
+                  } else {
+                    entity.setSprite(self.sprites["death"]);
+                  }
+
+                  entity.animate("death", speed, 1, function () {
                     console.info(entity.id + " was removed");
 
                     self.removeEntity(entity);
@@ -2957,7 +2964,11 @@ class Game {
                   self.removeFromPathingGrid(entity.gridX, entity.gridY);
 
                   if (self.camera.isVisible(entity)) {
-                    self.audioManager.playSound("kill" + Math.floor(Math.random() * 2 + 1));
+                    if (entity.kind === Types.Entities.DEATHANGEL) {
+                      self.audioManager.playSound("deathangel-death");
+                    } else {
+                      self.audioManager.playSound("kill" + Math.floor(Math.random() * 2 + 1));
+                    }
                   }
 
                   self.updateCursor();
@@ -3382,7 +3393,11 @@ class Game {
         var mob = self.getEntityById(mobId);
         if (mob) {
           mob.setRaisingMode();
-          self.audioManager.playSound("raise");
+          if (mob.kind === Types.Entities.DEATHANGEL) {
+            self.audioManager.playSound("deathangel-spell");
+          } else if (mob.kind === Types.Entities.NECROMANCER) {
+            self.audioManager.playSound("raise");
+          }
         }
       });
 
@@ -4757,10 +4772,11 @@ class Game {
     }
 
     if (character.isAttacking() && (!character.previousTarget || character.id === this.playerId)) {
-      if (character.kind === Types.Entities.NECROMANCER) {
+      if (character.kind === Types.Entities.NECROMANCER || character.kind === Types.Entities.DEATHANGEL) {
         if (character.isRaising()) {
           if (character.canRaise(time)) {
             character.stop();
+            character.nextStep();
             character.raise();
           }
           return;
@@ -4769,6 +4785,7 @@ class Game {
 
       // Don't let multiple mobs stack on the same tile when attacking a player.
       var isMoving = this.tryMovingToADifferentTile(character);
+
       if (character.canAttack(time)) {
         if (!isMoving) {
           // don't hit target if moving to a different tile.
