@@ -17,7 +17,6 @@ class GameClient {
   fail_callback: any;
   notify_callback: any;
   handlers: any;
-  receiveSpawnBatch: any;
   isListening?: boolean;
   isTimeout?: boolean;
   disconnected_callback: any;
@@ -407,10 +406,15 @@ class GameClient {
 
   receiveRaise(data) {
     var mobId = data[1];
+    var targetId = data[2];
 
     if (this.raise_callback) {
-      this.raise_callback(mobId);
+      this.raise_callback(mobId, targetId);
     }
+  }
+
+  receiveSpawnBatch(datas) {
+    datas.forEach(data => this.receiveSpawn(data));
   }
 
   receiveSpawn(data) {
@@ -418,6 +422,8 @@ class GameClient {
     var kind = data[2];
     var x = data[3];
     var y = data[4];
+    // @TODO send orientation to place the spawn the spell ~~~
+    const orientation = data[5];
 
     if (Types.isSpell(kind)) {
       const spell = EntityFactory.createEntity({ kind, id });
@@ -439,7 +445,6 @@ class GameClient {
       }
     } else {
       var name,
-        orientation,
         target,
         weapon,
         weaponLevel,
@@ -455,7 +460,6 @@ class GameClient {
         shield,
         settings;
 
-      orientation = data[5];
       target = data[6];
 
       if (Types.isPlayer(kind)) {
@@ -1303,6 +1307,10 @@ class GameClient {
 
   sendSkill(skill) {
     this.sendMessage([Types.Messages.SKILL, skill]);
+  }
+
+  sendDeathAngelCast(x, y) {
+    this.sendMessage([Types.Messages.DEATHANGEL_CAST, x, y]);
   }
 }
 

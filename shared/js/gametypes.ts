@@ -31,6 +31,7 @@ export const Types: any = {
     LOGIN: 1,
     WELCOME: 2,
     SPAWN: 3,
+    SPAWN_BATCH: 220,
     DESPAWN: 4,
     MOVE: 5,
     LOOTMOVE: 6,
@@ -84,6 +85,7 @@ export const Types: any = {
     COWLEVEL_START: 53,
     COWLEVEL_INPROGRESS: 54,
     COWLEVEL_END: 55,
+    DEATHANGEL_CAST: 221,
     SETBONUS: 56,
     PARTY: 57,
     PARTY_ACTIONS: {

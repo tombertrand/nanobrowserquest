@@ -78,6 +78,7 @@ class World {
   currentPartyId: number;
   currentTradeId: number;
   deathAngelId: null | number;
+  isCastDeathAngelSpellEnabled: boolean;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -160,6 +161,7 @@ class World {
     this.raiseNecromancerInterval = null;
     this.raiseDeathAngelInterval = null;
     this.deathAngelId = null;
+    this.isCastDeathAngelSpellEnabled = false;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -656,8 +658,8 @@ class World {
     return npc;
   }
 
-  addSpell(kind, x, y) {
-    const spell = new Spell("9" + x + "" + y, kind, x, y);
+  addSpell(kind, x, y, count) {
+    const spell = new Spell(`9${count}${x}${y}`, kind, x, y);
     this.addEntity(spell);
 
     this.spells[spell.id] = spell;
@@ -672,26 +674,44 @@ class World {
     return item;
   }
 
-  castDeathAngelSpell() {
-    const { id, x, y } = this.getEntityById(this.deathAngelId) || {};
-    if (!id) return;
+  castDeathAngelSpell(x, y) {
+    const { id, isDead, x: mobX, y: mobY } = this.getEntityById(this.deathAngelId) || {};
 
-    // let count = 0;
-    const kind = Types.Entities.DEATHANGELSPELL;
-    const spell = this.addSpell(kind, x, y);
-    // spell.onMove(this.onMobMoveCallback.bind(this));
-    // spell.onDestroy(() => {
-    //   // delete this.entities[spell.id];
+    const diffX = Math.abs(x - mobX);
+    const diffY = Math.abs(y - mobY);
 
-    // });
-    // this.addSpell(spell);
+    // Ensure casting is correct
+    if (!id || !this.isCastDeathAngelSpellEnabled || isDead || !x || !y || diffX > 16 || diffY > 16) return;
+    this.isCastDeathAngelSpellEnabled = false;
+
+    const coords = [
+      [0, 1],
+      [1, 1],
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
+    ];
+
+    const spells = [];
+    let spellCount = random(1000);
+
+    coords.forEach(([spellX, spellY]) => {
+      spells.push(this.addSpell(Types.Entities.DEATHANGELSPELL, x + spellX, y + spellY, spellCount));
+      spellCount += 1;
+    });
 
     // @TODO ~~~ cleaner way to get rid of a spell?client/js/spells.ts
-    spell.cast(0, 3000, () => {
-      if (!spell.isDead) {
-        this.despawn(spell);
-      }
-    });
+    // spell.cast(0, 3000, () => {});
+    setTimeout(() => {
+      spells.forEach(spell => {
+        if (!spell.isDead) {
+          this.despawn(spell);
+        }
+      });
+    }, 3000);
   }
 
   startCowLevel() {
@@ -899,14 +919,10 @@ class World {
       mob.increaseHateFor(playerId, hatePoints);
       player.addHater(mob);
 
-      if (mob.kind === Types.Entities.NECROMANCER) {
-        if (!this.raiseNecromancerInterval) {
-          this.startRaiseNecromancerInterval(player, mob);
-        }
-      } else if (mob.kind === Types.Entities.DEATHANGEL) {
-        if (!this.raiseDeathAngelInterval) {
-          this.startRaiseDeathAngelInterval(player, mob);
-        }
+      if (mob.kind === Types.Entities.NECROMANCER && !mob.hasTarget()) {
+        this.startRaiseNecromancerInterval(player, mob);
+      } else if (mob.kind === Types.Entities.DEATHANGEL && !mob.hasTarget()) {
+        this.startRaiseDeathAngelInterval(player, mob);
       }
 
       if (mob.hitPoints > 0) {
@@ -1056,15 +1072,17 @@ class World {
     this.raiseNecromancerInterval = null;
   }
 
-  startRaiseDeathAngelInterval(character, mob) {
+  startRaiseDeathAngelInterval(player, mob) {
     this.stopRaiseDeathAngelInterval();
 
     const raiseSkeletonSpell = () => {
-      this.broadcastRaise(character, mob.id);
+      this.broadcastRaise(player, mob);
 
       // @TODO Spawn 8 entities (skeleton spell) and have them move 4 tiles then explode
       // if player on the tile, it explodes and deals the elemental dmg to the player
-      this.castDeathAngelSpell();
+      // this.castDeathAngelSpell();
+
+      this.isCastDeathAngelSpellEnabled = true;
     };
 
     this.raiseDeathAngelInterval = setInterval(() => {
@@ -1082,11 +1100,12 @@ class World {
   stopRaiseDeathAngelInterval() {
     clearInterval(this.raiseDeathAngelInterval);
     this.raiseDeathAngelInterval = null;
+    this.isCastDeathAngelSpellEnabled = true;
   }
 
-  broadcastRaise(character, mobId) {
-    if (character && mobId) {
-      this.pushToAdjacentGroups(character.group, character.raise(mobId));
+  broadcastRaise(player, mob) {
+    if (player && mob) {
+      this.pushToAdjacentGroups(player.group, mob.raise(player.id));
     }
   }
 
@@ -1167,7 +1186,6 @@ class World {
     }
 
     if (attacker.type === "spell") {
-      console.log("~~~~~REMOVE SPELL ENTITY");
       this.pushToAdjacentGroups(attacker.group, attacker.despawn());
       this.removeEntity(attacker);
     }
@@ -1617,9 +1635,6 @@ class World {
   handleEntityGroupMembership(entity) {
     var hasChangedGroups = false;
 
-    if (entity.kind === Types.Entities.DEATHANGELSPELL) {
-      console.log("~~~~handleEntityGroupMembership entity", entity);
-    }
     if (entity) {
       var groupId = this.map.getGroupIdFromPosition(entity.x, entity.y);
       if (!entity.group || (entity.group && entity.group !== groupId)) {
@@ -1644,13 +1659,27 @@ class World {
       this.map.forEachGroup(function (id) {
         if (self.groups[id].incoming.length > 0) {
           _.each(self.groups[id].incoming, function (entity) {
-            //
             if (entity instanceof Player) {
               self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
             } else {
               self.pushToGroup(id, new Messages.Spawn(entity));
             }
           });
+
+          // const batchEntitySpawns = self.groups[id].incoming
+          //   .map(entity => {
+          //     if (entity instanceof Player) {
+          //       self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
+          //       return;
+          //     }
+          //     return entity;
+          //   })
+          //   .filter(Boolean);
+
+          // if (batchEntitySpawns.length) {
+          //   self.pushToGroup(id, new Messages.SpawnBatch(batchEntitySpawns));
+          // }
+
           self.groups[id].incoming = [];
         }
       });

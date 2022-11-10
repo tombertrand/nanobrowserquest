@@ -29,8 +29,6 @@ class Spell extends Entity {
   destroy() {
     this.isDead = true;
     this.destroyTime = Date.now();
-    // this.clearTarget();
-    // this.resetPosition();
 
     if (this.destroyCallback) {
       this.destroyCallback();
@@ -52,10 +50,6 @@ class Spell extends Entity {
       }, duration);
     }, delay);
   }
-
-  // resetPosition() {
-  //   this.setPosition(this.spawningX, this.spawningY);
-  // }
 
   onDestroy(callback) {
     this.destroyCallback = callback;

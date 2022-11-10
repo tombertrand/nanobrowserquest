@@ -586,11 +586,16 @@ class Player extends Character {
       } else if (action === Types.Messages.HURT_SPELL) {
         console.info("HURT_SPELL: " + self.name + " " + message[1]);
         const spell = self.server.getEntityById(message[1]);
+
         if (spell && self.hitPoints > 0) {
           let dmg = 100;
 
           self.handleHurtSpellDmg(spell, dmg);
         }
+      } else if (action === Types.Messages.DEATHANGEL_CAST) {
+        if (typeof message[1] !== "number" || typeof message[2] !== "number") return;
+
+        self.server.castDeathAngelSpell(message[1], message[2]);
       } else if (action === Types.Messages.LOOT) {
         console.info("LOOT: " + self.name + " " + message[1]);
         var item = self.server.getEntityById(message[1]);

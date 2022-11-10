@@ -73,8 +73,8 @@ class Character extends Entity {
     return new Messages.Attack(this.id, this.target);
   }
 
-  raise(mobId) {
-    return new Messages.Raise(mobId);
+  raise(targetId) {
+    return new Messages.Raise(this.id, this.target || targetId);
   }
 
   health({ isHurt = false } = {}) {

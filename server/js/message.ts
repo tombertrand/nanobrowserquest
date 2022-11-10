@@ -15,6 +15,14 @@ Messages.Spawn = class Message {
   }
 };
 
+Messages.SpawnBatch = class Message {
+  constructor(private entities) {}
+  serialize() {
+    var spawn = [Types.Messages.SPAWN_BATCH];
+    return spawn.concat(this.entities.map(entity => entity.getState()));
+  }
+};
+
 Messages.Despawn = class Message {
   constructor(private entityId) {}
   serialize() {
@@ -44,11 +52,9 @@ Messages.Attack = class Message {
 };
 
 Messages.Raise = class Message {
-  constructor(private mobId) {
-    this.mobId = mobId;
-  }
+  constructor(private mobId, private targetId) {}
   serialize() {
-    return [Types.Messages.RAISE, this.mobId];
+    return [Types.Messages.RAISE, this.mobId, this.targetId];
   }
 };
 

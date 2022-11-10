@@ -3050,6 +3050,11 @@ class Game {
 
         self.addEntity(entity);
 
+        // Spell collision
+        if (self.player.gridX === x && self.player.gridY === y) {
+          self.makePlayerHurtFromSpell(entity);
+        }
+
         entity.onDeath(function () {
           console.info(entity.id + " is dead");
           entity.isDying = true;
@@ -3093,6 +3098,8 @@ class Game {
 
           if (entity instanceof Item) {
             self.removeItem(entity);
+          } else if (entity instanceof Spell) {
+            entity.death_callback?.();
           } else if (entity instanceof Character) {
             entity.forEachAttacker(function (attacker) {
               if (attacker.canReachTarget()) {
@@ -3431,12 +3438,15 @@ class Game {
         }
       });
 
-      self.client.onEntityRaise(function (mobId) {
+      self.client.onEntityRaise(function (mobId, targetId) {
         var mob = self.getEntityById(mobId);
         if (mob) {
           mob.setRaisingMode();
           if (mob.kind === Types.Entities.DEATHANGEL) {
             self.audioManager.playSound("deathangel-spell");
+            if (targetId === self.playerId) {
+              self.client.sendDeathAngelCast(mob.gridX, mob.gridY);
+            }
           } else if (mob.kind === Types.Entities.NECROMANCER) {
             self.audioManager.playSound("raise");
           }
