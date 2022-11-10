@@ -29,6 +29,7 @@ class GameClient {
   spawn_item_callback: any;
   spawn_chest_callback: any;
   spawn_character_callback: any;
+  spawn_spell_callback: any;
   despawn_callback: any;
   health_callback: any;
   chat_callback: any;
@@ -418,7 +419,13 @@ class GameClient {
     var x = data[3];
     var y = data[4];
 
-    if (Types.isItem(kind)) {
+    if (Types.isSpell(kind)) {
+      const spell = EntityFactory.createEntity({ kind, id });
+
+      if (this.spawn_spell_callback) {
+        this.spawn_spell_callback(spell, x, y, orientation);
+      }
+    } else if (Types.isItem(kind)) {
       var item = EntityFactory.createEntity({ kind, id });
 
       if (this.spawn_item_callback) {
@@ -873,6 +880,10 @@ class GameClient {
     this.spawn_character_callback = callback;
   }
 
+  onSpawnSpell(callback) {
+    this.spawn_spell_callback = callback;
+  }
+
   onSpawnItem(callback) {
     this.spawn_item_callback = callback;
   }
@@ -1155,6 +1166,10 @@ class GameClient {
 
   sendHurt(mob) {
     this.sendMessage([Types.Messages.HURT, mob.id]);
+  }
+
+  sendHurtSpell(spell) {
+    this.sendMessage([Types.Messages.HURT_SPELL, spell.id]);
   }
 
   sendChat(text) {

@@ -5,6 +5,7 @@ import Chest from "./chest";
 import Items from "./items";
 import Mobs from "./mobs";
 import Npcs from "./npcs";
+import Spells from "./spells";
 import Warrior from "./warrior";
 
 var EntityFactory: any = {};
@@ -140,6 +141,10 @@ EntityFactory.builders[Types.Entities.MINOTAUR] = function (id) {
 
 EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id) {
   return new Mobs.DeathAngel(id);
+};
+
+EntityFactory.builders[Types.Entities.DEATHANGELSPELL] = function (id) {
+  return new Spells.DeathAngelSpell(id);
 };
 
 //===== items ======

@@ -1,0 +1,37 @@
+{
+  "id": "deathangel-spell",
+  "width": 64,
+  "height": 64,
+  "animations": {
+    "idle_down": {
+      "length": 6,
+      "row": 1
+    },
+    "atk_up": {
+      "length": 6,
+      "row": 0
+    },
+    "atk_right": {
+      "length": 6,
+      "row": 1
+    },
+    "atk_down": {
+      "length": 6,
+      "row": 2
+    },
+    "atk_up_right": {
+      "length": 4,
+      "row": 3
+    },
+    "atk_down_right": {
+      "length": 6,
+      "row": 4
+    },
+    "death": {
+      "length": 6,
+      "row": 5
+    }
+  },
+  "offset_x": -22,
+  "offset_y": -24
+}

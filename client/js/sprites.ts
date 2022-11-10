@@ -18,6 +18,7 @@ import cow from "../sprites/cow.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
 import deathangel from "../sprites/deathangel.json";
+import deathangelSpell from "../sprites/deathangel-spell.json";
 import wirtleg from "../sprites/weapon.json";
 import dagger from "../sprites/dagger.json";
 import sword from "../sprites/weapon.json";
@@ -268,6 +269,7 @@ const sprites = {
   cowking,
   minotaur,
   deathangel,
+  "deathangel-spell": deathangelSpell,
   goldenarmor,
   bluearmor,
   hornedarmor,

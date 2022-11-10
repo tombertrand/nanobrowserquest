@@ -39,6 +39,7 @@ export const Types: any = {
     RAISE: 49,
     HIT: 9,
     HURT: 10,
+    HURT_SPELL: 219,
     HEALTH: 11,
     CHAT: 12,
     LOOT: 13,
@@ -153,6 +154,7 @@ export const Types: any = {
     COWKING: 120,
     MINOTAUR: 131,
     DEATHANGEL: 217,
+    DEATHANGELSPELL: 218,
 
     // Armors
     FIREFOX: 20,
@@ -709,6 +711,8 @@ export const kinds = {
   "rune-shi": [Types.Entities.RUNE.SHI, "rune", "SHI Rune", 65],
   "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 68],
 
+  "deathangel-spell": [Types.Entities.DEATHANGELSPELL, "spell", "Death Spiral", 50],
+
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
   villager: [Types.Entities.VILLAGER, "npc"],
@@ -941,6 +945,10 @@ Types.isMob = function (kind: number) {
 
 Types.isNpc = function (kind: number) {
   return kinds.getType(kind) === "npc";
+};
+
+Types.isSpell = function (kind: number) {
+  return kinds.getType(kind) === "spell";
 };
 
 Types.isCharacter = function (kind: number) {

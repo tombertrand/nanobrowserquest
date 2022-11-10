@@ -38,6 +38,7 @@ import Npc from "./npc";
 import Pathfinder from "./pathfinder";
 import Player from "./player";
 import Renderer from "./renderer";
+import Spell from "./spell";
 import Sprite from "./sprite";
 import AnimatedTile from "./tile";
 import Transition from "./transition";
@@ -319,6 +320,7 @@ class Game {
       "cowking",
       "minotaur",
       "deathangel",
+      "deathangel-spell",
       "wizard",
       "guard",
       "king",
@@ -2130,7 +2132,7 @@ class Game {
     if (entity) {
       if (entity instanceof Character || entity instanceof Chest) {
         this.entityGrid[y][x][entity.id] = entity;
-        if (!(entity instanceof Player)) {
+        if (!(entity instanceof Player) && !(entity instanceof Spell)) {
           this.pathingGrid[y][x] = 1;
         }
       }
@@ -2581,6 +2583,12 @@ class Game {
         if (!self.player.isDead) {
           self.audioManager.updateMusic();
         }
+
+        // Spell collision
+        const spell = self.getSpellAt(self.player.gridX, self.player.gridY);
+        if (spell) {
+          self.makePlayerHurtFromSpell(spell);
+        }
       });
 
       self.player.onStopPathing(function ({ x, y, confirmed, isWaypoint }) {
@@ -2935,10 +2943,12 @@ class Game {
                   let speed = 120;
 
                   // Custom death animations
-                  if (entity instanceof Mobs.Rat) {
-                  } else if (entity instanceof Mobs.DeathAngel) {
+                  const hasCustomDeathAnimation = [Types.Entities.RAT, Types.Entities.DEATHANGEL].includes(entity.kind);
+
+                  if (entity instanceof Mobs.DeathAngel) {
                     speed = 250;
-                  } else {
+                  }
+                  if (!hasCustomDeathAnimation) {
                     entity.setSprite(self.sprites["death"]);
                   }
 
@@ -3029,6 +3039,38 @@ class Game {
             console.debug("Character " + entity.id + " already exists. Don't respawn.");
           }
         }
+      });
+
+      self.client.onSpawnSpell(function (entity, x, y /* orientation*/) {
+        entity.setSprite(self.sprites[entity.getSpriteName()]);
+        entity.setGridPosition(x, y);
+        // entity.setOrientation(orientation);
+
+        entity.idle();
+
+        self.addEntity(entity);
+
+        entity.onDeath(function () {
+          console.info(entity.id + " is dead");
+          entity.isDying = true;
+          let speed = 120;
+
+          // Custom death animations
+          const hasCustomDeathAnimation = [Types.Entities.DEATHANGELSPELL].includes(entity.kind);
+
+          if (!hasCustomDeathAnimation) {
+            entity.setSprite(self.sprites["death"]);
+          }
+
+          entity.animate("death", speed, 1, function () {
+            console.info(entity.id + " was removed");
+
+            self.removeEntity(entity);
+            self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
+          });
+
+          self.removeFromEntityGrid(entity, entity.gridX, entity.gridY);
+        });
       });
 
       self.client.onDespawnEntity(function (entityId) {
@@ -4079,12 +4121,13 @@ class Game {
     }
   }
 
-  /**
-   *
-   */
   makePlayerAttack(mob) {
     this.createAttackLink(this.player, mob);
     this.client.sendAttack(mob);
+  }
+
+  makePlayerHurtFromSpell(spell) {
+    this.client.sendHurtSpell(spell);
   }
 
   resetAnvilAnimation() {
@@ -4371,6 +4414,14 @@ class Game {
     return null;
   }
 
+  getSpellAt(x, y) {
+    var entity = this.getEntityAt(x, y, Spell);
+    if (entity && entity instanceof Spell) {
+      return entity;
+    }
+    return null;
+  }
+
   getChestAt(x, y) {
     var entity = this.getEntityAt(x, y, Chest);
     if (entity && entity instanceof Chest) {
@@ -4436,6 +4487,10 @@ class Game {
 
   isNpcAt(x, y) {
     return !_.isNull(this.getNpcAt(x, y));
+  }
+
+  isSpellAt(x, y) {
+    return !_.isNull(this.getSpellAt(x, y));
   }
 
   isChestAt(x, y) {
@@ -4506,6 +4561,10 @@ class Game {
     this.cursorVisible = true;
 
     if (this.player && !this.renderer.mobile && !this.renderer.tablet) {
+      if (this.isSpellAt(x, y)) {
+        return;
+      }
+
       this.hoveringCollidingTile = this.map.isColliding(x, y);
       this.hoveringPlateauTile = this.player.isOnPlateau ? !this.map.isPlateau(x, y) : this.map.isPlateau(x, y);
       this.hoveringMob = this.isMobAt(x, y);

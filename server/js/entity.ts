@@ -7,7 +7,7 @@ class Entity {
   kind: number;
   x: number;
   y: number;
-  
+
   constructor(id, type, kind, x, y) {
     this.id = parseInt(id, 10);
     this.type = type;

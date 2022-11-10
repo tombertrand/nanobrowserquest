@@ -15,6 +15,7 @@ import Party, { MAX_PARTY_MEMBERS } from "./party";
 import Player from "./player";
 import Properties from "./properties";
 import { Sentry } from "./sentry";
+import Spell from "./spell";
 import { purchase } from "./store/purchase";
 import Trade from "./trade";
 import { random, randomRange } from "./utils";
@@ -31,6 +32,7 @@ class World {
   entities: {};
   players: {};
   mobs: {};
+  spells: {};
   attackers: {};
   items: {};
   equipping: {};
@@ -75,6 +77,7 @@ class World {
   trades: { [key: number]: Trade };
   currentPartyId: number;
   currentTradeId: number;
+  deathAngelId: null | number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -94,6 +97,7 @@ class World {
     this.currentPartyId = 0;
     this.currentTradeId = 0;
     this.mobs = {};
+    this.spells = {};
     this.attackers = {};
     this.items = {};
     this.equipping = {};
@@ -155,6 +159,7 @@ class World {
     this.zoneGroupsReady = false;
     this.raiseNecromancerInterval = null;
     this.raiseDeathAngelInterval = null;
+    this.deathAngelId = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -651,11 +656,42 @@ class World {
     return npc;
   }
 
+  addSpell(kind, x, y) {
+    const spell = new Spell("9" + x + "" + y, kind, x, y);
+    this.addEntity(spell);
+
+    this.spells[spell.id] = spell;
+
+    return spell;
+  }
+
   addItem(item) {
     this.addEntity(item);
     this.items[item.id] = item;
 
     return item;
+  }
+
+  castDeathAngelSpell() {
+    const { id, x, y } = this.getEntityById(this.deathAngelId) || {};
+    if (!id) return;
+
+    // let count = 0;
+    const kind = Types.Entities.DEATHANGELSPELL;
+    const spell = this.addSpell(kind, x, y);
+    // spell.onMove(this.onMobMoveCallback.bind(this));
+    // spell.onDestroy(() => {
+    //   // delete this.entities[spell.id];
+
+    // });
+    // this.addSpell(spell);
+
+    // @TODO ~~~ cleaner way to get rid of a spell?client/js/spells.ts
+    spell.cast(0, 3000, () => {
+      if (!spell.isDead) {
+        this.despawn(spell);
+      }
+    });
   }
 
   startCowLevel() {
@@ -1028,6 +1064,7 @@ class World {
 
       // @TODO Spawn 8 entities (skeleton spell) and have them move 4 tiles then explode
       // if player on the tile, it explodes and deals the elemental dmg to the player
+      this.castDeathAngelSpell();
     };
 
     this.raiseDeathAngelInterval = setInterval(() => {
@@ -1128,6 +1165,12 @@ class World {
 
       this.removeEntity(entity);
     }
+
+    if (attacker.type === "spell") {
+      console.log("~~~~~REMOVE SPELL ENTITY");
+      this.pushToAdjacentGroups(attacker.group, attacker.despawn());
+      this.removeEntity(attacker);
+    }
   }
 
   despawn(entity) {
@@ -1177,6 +1220,8 @@ class World {
                 self.minotaurSpawnTimeout = null;
               }, time);
             });
+          } else if (kind === Types.Entities.DEATHANGEL) {
+            self.deathAngelId = mob.id;
           }
 
           mob.onRespawn(function () {
@@ -1571,6 +1616,10 @@ class World {
 
   handleEntityGroupMembership(entity) {
     var hasChangedGroups = false;
+
+    if (entity.kind === Types.Entities.DEATHANGELSPELL) {
+      console.log("~~~~handleEntityGroupMembership entity", entity);
+    }
     if (entity) {
       var groupId = this.map.getGroupIdFromPosition(entity.x, entity.y);
       if (!entity.group || (entity.group && entity.group !== groupId)) {

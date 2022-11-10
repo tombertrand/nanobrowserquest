@@ -583,6 +583,14 @@ class Player extends Character {
 
           self.handleHurtDmg(mob, dmg);
         }
+      } else if (action === Types.Messages.HURT_SPELL) {
+        console.info("HURT_SPELL: " + self.name + " " + message[1]);
+        const spell = self.server.getEntityById(message[1]);
+        if (spell && self.hitPoints > 0) {
+          let dmg = 100;
+
+          self.handleHurtSpellDmg(spell, dmg);
+        }
       } else if (action === Types.Messages.LOOT) {
         console.info("LOOT: " + self.name + " " + message[1]);
         var item = self.server.getEntityById(message[1]);
@@ -1499,6 +1507,25 @@ class Player extends Character {
     this.hitPoints -= dmg;
     this.server.handleHurtEntity({ entity: this, attacker: mob, isBlocked });
 
+    this.handleHurtDeath();
+
+    return { dmg, isBlocked };
+  }
+
+  handleHurtSpellDmg(spell, dmg: number) {
+    // @TODO ~~~ Check resistances, check freeze
+
+    let isBlocked = false;
+
+    this.hitPoints -= dmg;
+    this.server.handleHurtEntity({ entity: this, attacker: spell, isBlocked });
+
+    this.handleHurtDeath();
+
+    return { dmg, isBlocked };
+  }
+
+  handleHurtDeath() {
     if (this.hitPoints <= 0) {
       this.isDead = true;
 
@@ -1516,8 +1543,6 @@ class Player extends Character {
         this.firefoxpotionTimeout = null;
       }
     }
-
-    return { dmg, isBlocked };
   }
 
   send(message) {
@@ -2106,8 +2131,6 @@ class Player extends Character {
       physicalResistance: this.bonus.physicalResistance,
       skillTimeout: this.bonus.skillTimeout,
     };
-
-    // console.log("~~~~SEND stats", stats);
 
     this.send(new Messages.Stats(stats).serialize());
   }

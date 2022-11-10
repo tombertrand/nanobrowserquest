@@ -62,6 +62,10 @@ class Sprite {
       this.id = this.name;
     }
 
+    if (this.id.startsWith("deathangel-spell")) {
+      this.id = this.name;
+    }
+
     this.image.src = "img/" + this.scale + "/" + this.id + ".png";
 
     if (this.name.startsWith("weapon-effect")) {
