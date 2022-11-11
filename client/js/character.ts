@@ -168,11 +168,11 @@ class Character extends Entity {
       this.flipSpriteX = false;
       this.flipSpriteY = false;
 
+      const orientationAsString = Types.getOrientationAsString(this.orientation);
+
       if (_.indexOf(oriented, animation) >= 0) {
-        animation +=
-          "_" +
-          (this.orientation === Types.Orientations.LEFT ? "right" : Types.getOrientationAsString(this.orientation));
-        this.flipSpriteX = this.orientation === Types.Orientations.LEFT ? true : false;
+        animation += `_${orientationAsString.replace("left", "right")}`;
+        this.flipSpriteX = orientationAsString.includes("left") ? true : false;
       }
 
       if (this.kind === Types.Entities.WARRIOR) {
@@ -301,10 +301,11 @@ class Character extends Entity {
   }
 
   nextStep() {
-    var stop = false,
-      x,
-      y,
-      path;
+    let stop = false;
+    let x;
+    let y;
+    let path;
+    let isSpell = this.type === "spell";
 
     if (this.isMoving()) {
       if (this.before_step_callback) {
@@ -312,7 +313,10 @@ class Character extends Entity {
       }
 
       this.updatePositionOnGrid();
-      this.checkAggro();
+
+      if (!isSpell) {
+        this.checkAggro();
+      }
 
       if (this.interrupted) {
         // if Character.stop() has been called
@@ -327,7 +331,7 @@ class Character extends Entity {
           this.step_callback();
         }
 
-        if (this.hasChangedItsPath()) {
+        if (!isSpell && this.hasChangedItsPath()) {
           x = this.newDestination.x;
           y = this.newDestination.y;
           path = this.requestPathfindingTo(x, y);
@@ -340,7 +344,9 @@ class Character extends Entity {
           }
         } else if (this.hasNextStep()) {
           this.step += 1;
-          this.updateMovement();
+          if (!isSpell) {
+            this.updateMovement();
+          }
         } else {
           stop = true;
         }

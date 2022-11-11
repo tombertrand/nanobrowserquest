@@ -658,8 +658,8 @@ class World {
     return npc;
   }
 
-  addSpell(kind, x, y, count) {
-    const spell = new Spell(`9${count}${x}${y}`, kind, x, y);
+  addSpell(kind, x, y, count, orientation, originX, originY) {
+    const spell = new Spell(`9${count}${x}${y}`, kind, x, y, orientation, originX, originY);
     this.addEntity(spell);
 
     this.spells[spell.id] = spell;
@@ -685,21 +685,23 @@ class World {
     this.isCastDeathAngelSpellEnabled = false;
 
     const coords = [
-      [0, 1],
-      [1, 1],
-      [1, 0],
-      [1, -1],
-      [0, -1],
-      [-1, -1],
-      [-1, 0],
-      [-1, 1],
+      [0, 1, Types.Orientations.DOWN],
+      [1, 1, Types.Orientations.DOWN_RIGHT],
+      [1, 0, Types.Orientations.RIGHT],
+      [1, -1, Types.Orientations.UP_RIGHT],
+      [0, -1, Types.Orientations.UP],
+      [-1, -1, Types.Orientations.UP_LEFT],
+      [-1, 0, Types.Orientations.LEFT],
+      [-1, 1, Types.Orientations.DOWN_LEFT],
     ];
 
     const spells = [];
     let spellCount = random(1000);
 
-    coords.forEach(([spellX, spellY]) => {
-      spells.push(this.addSpell(Types.Entities.DEATHANGELSPELL, x + spellX, y + spellY, spellCount));
+    coords.forEach(([spellX, spellY, orientation]) => {
+      spells.push(
+        this.addSpell(Types.Entities.DEATHANGELSPELL, x + spellX, y + spellY, spellCount, orientation, spellX, spellY),
+      );
       spellCount += 1;
     });
 

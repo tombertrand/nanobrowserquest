@@ -6,8 +6,8 @@ export const Spells = {
   DeathAngelSpell: class DeathAngelSpell extends Spell {
     constructor(id) {
       super(id, Types.Entities.DEATHANGELSPELL);
-      this.moveSpeed = 150;
-      this.atkSpeed = 100;
+      this.moveSpeed = 250;
+      this.atkSpeed = 250;
       this.idleSpeed = 100;
       this.atkRate = 2000;
       this.attackCooldown = new Timer(this.atkRate);

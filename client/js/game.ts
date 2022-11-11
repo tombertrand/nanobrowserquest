@@ -2583,12 +2583,6 @@ class Game {
         if (!self.player.isDead) {
           self.audioManager.updateMusic();
         }
-
-        // Spell collision
-        const spell = self.getSpellAt(self.player.gridX, self.player.gridY);
-        if (spell) {
-          self.makePlayerHurtFromSpell(spell);
-        }
       });
 
       self.player.onStopPathing(function ({ x, y, confirmed, isWaypoint }) {
@@ -3041,10 +3035,10 @@ class Game {
         }
       });
 
-      self.client.onSpawnSpell(function (entity, x, y /* orientation*/) {
+      self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY) {
         entity.setSprite(self.sprites[entity.getSpriteName()]);
         entity.setGridPosition(x, y);
-        // entity.setOrientation(orientation);
+        entity.setOrientation(orientation);
 
         entity.idle();
 
@@ -3069,13 +3063,43 @@ class Game {
 
           entity.animate("death", speed, 1, function () {
             console.info(entity.id + " was removed");
-
-            self.removeEntity(entity);
             self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
           });
-
-          self.removeFromEntityGrid(entity, entity.gridX, entity.gridY);
         });
+
+        entity.onBeforeStep(function () {
+          self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
+        });
+
+        entity.onStep(function () {
+          if (entity.hasNextStep()) {
+            // @TODO ~~~ check if wall is next step and explode
+            self.addToRenderingGrid(entity, entity.gridX, entity.gridY);
+          }
+          if (
+            (entity.gridX === self.player.gridX ||
+              entity.nextGridX === self.player.gridX ||
+              entity.gridX === self.player.nextGridX) &&
+            (entity.gridY === self.player.gridY ||
+              entity.nextGridY === self.player.gridY ||
+              entity.gridY === self.player.nextGridY)
+          ) {
+            self.makePlayerHurtFromSpell(entity);
+          }
+        });
+
+        entity.onStopPathing(function ({ x, y }) {
+          self.addToRenderingGrid(entity, x, y);
+          entity.death_callback();
+        });
+
+        const path = [[x, y]];
+        for (let i = 1; i < 8; i++) {
+          path.push([x + originX * i, y + originY * i]);
+        }
+
+        // @TODO ~~~~ write new function that doesn't register entity position
+        entity.followPath(path);
       });
 
       self.client.onDespawnEntity(function (entityId) {
@@ -4137,6 +4161,7 @@ class Game {
   }
 
   makePlayerHurtFromSpell(spell) {
+    spell.stop();
     this.client.sendHurtSpell(spell);
   }
 

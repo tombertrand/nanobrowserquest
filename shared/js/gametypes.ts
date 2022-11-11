@@ -325,6 +325,10 @@ export const Types: any = {
     DOWN: 2,
     LEFT: 3,
     RIGHT: 4,
+    UP_RIGHT: 5,
+    UP_LEFT: 6,
+    DOWN_RIGHT: 7,
+    DOWN_LEFT: 8,
   },
 
   Keys: {
@@ -1421,16 +1425,20 @@ Types.getOrientationAsString = function (orientation: number) {
   switch (orientation) {
     case Types.Orientations.LEFT:
       return "left";
-      break;
     case Types.Orientations.RIGHT:
       return "right";
-      break;
     case Types.Orientations.UP:
       return "up";
-      break;
     case Types.Orientations.DOWN:
       return "down";
-      break;
+    case Types.Orientations.UP_LEFT:
+      return "up_left";
+    case Types.Orientations.UP_RIGHT:
+      return "up_right";
+    case Types.Orientations.DOWN_LEFT:
+      return "down_left";
+    case Types.Orientations.DOWN_RIGHT:
+      return "down_right";
   }
 };
 

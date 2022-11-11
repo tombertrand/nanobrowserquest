@@ -418,18 +418,21 @@ class GameClient {
   }
 
   receiveSpawn(data) {
-    var id = data[1];
-    var kind = data[2];
-    var x = data[3];
-    var y = data[4];
-    // @TODO send orientation to place the spawn the spell ~~~
+    const id = data[1];
+    const kind = data[2];
+    const x = data[3];
+    const y = data[4];
     const orientation = data[5];
 
     if (Types.isSpell(kind)) {
       const spell = EntityFactory.createEntity({ kind, id });
+      const originX = data[6];
+      const originY = data[7];
+
+      // console.log("~~~~orientation", orientation, originX, originY);
 
       if (this.spawn_spell_callback) {
-        this.spawn_spell_callback(spell, x, y, orientation);
+        this.spawn_spell_callback(spell, x, y, orientation, originX, originY);
       }
     } else if (Types.isItem(kind)) {
       var item = EntityFactory.createEntity({ kind, id });

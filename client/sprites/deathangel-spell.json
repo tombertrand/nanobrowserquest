@@ -3,27 +3,43 @@
   "width": 64,
   "height": 64,
   "animations": {
-    "idle_down": {
-      "length": 6,
-      "row": 1
-    },
-    "atk_up": {
+    "idle_up": {
       "length": 6,
       "row": 0
     },
-    "atk_right": {
+    "idle_right": {
       "length": 6,
       "row": 1
     },
-    "atk_down": {
+    "idle_down": {
       "length": 6,
       "row": 2
     },
-    "atk_up_right": {
+    "idle_up_right": {
       "length": 4,
       "row": 3
     },
-    "atk_down_right": {
+    "idle_down_right": {
+      "length": 6,
+      "row": 4
+    },
+    "walk_up": {
+      "length": 6,
+      "row": 0
+    },
+    "walk_right": {
+      "length": 6,
+      "row": 1
+    },
+    "walk_down": {
+      "length": 6,
+      "row": 2
+    },
+    "walk_up_right": {
+      "length": 4,
+      "row": 3
+    },
+    "walk_down_right": {
       "length": 6,
       "row": 4
     },
@@ -32,6 +48,6 @@
       "row": 5
     }
   },
-  "offset_x": -22,
+  "offset_x": -24,
   "offset_y": -24
 }

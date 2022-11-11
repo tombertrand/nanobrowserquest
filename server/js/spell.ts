@@ -16,14 +16,31 @@ class Spell extends Entity {
   area: MobArea;
   moveCallback: any;
   kind: number;
+  orientation: number;
+  originX: number;
+  originY: number;
 
-  constructor(id, kind, x, y) {
+  constructor(id, kind, x, y, orientation, originX, originY) {
     super(id, "spell", kind, x, y);
 
     this.spawningX = x;
     this.spawningY = y;
     this.isDead = false;
     this.destroyTime = null;
+    this.orientation = orientation;
+    this.originX = originX;
+    this.originY = originY;
+  }
+
+  getState() {
+    var basestate = this._getBaseState();
+    var state = [];
+
+    state.push(this.orientation);
+    state.push(this.originX);
+    state.push(this.originY);
+
+    return basestate.concat(state);
   }
 
   destroy() {
