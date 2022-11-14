@@ -6,6 +6,7 @@ import Character from "./character";
 import Detect from "./detect";
 import Item from "./item";
 import Player from "./player";
+import Spell from "./spell";
 import Timer from "./timer";
 
 class Renderer {
@@ -670,6 +671,10 @@ class Renderer {
           }
         }
 
+        if (entity instanceof Spell) {
+          console.log("~~~~entity.element", entity.element);
+        }
+
         if (entity instanceof Item && entity.kind !== Types.Entities.CAKE) {
           var sparks = this.game.sprites["sparks"],
             anim = this.game.sparksAnimation,
@@ -1190,7 +1195,9 @@ class Renderer {
 
     let spriteImage = sprite.image;
     if (
-      ["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor"].includes(this.game.player.armorName) &&
+      ["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor"].includes(
+        this.game.player.armorName,
+      ) &&
       this.game.player.armorBonus
     ) {
       spriteImage = sprite.imageunique;

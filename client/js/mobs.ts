@@ -353,7 +353,7 @@ export const Mobs = {
   DeathAngel: class DeathAngel extends Mob {
     constructor(id) {
       super(id, Types.Entities.DEATHANGEL);
-      this.moveSpeed = 10050;
+      this.moveSpeed = 15000;
       this.atkSpeed = 100;
       this.raiseSpeed = 125;
       this.idleSpeed = 100;

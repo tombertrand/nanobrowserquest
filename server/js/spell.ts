@@ -2,9 +2,7 @@ import * as _ from "lodash";
 
 // import { Types } from "../../shared/js/gametypes";
 import { MobArea } from "./area";
-// import Character from "./character";
 import Entity from "./entity";
-// import ChestArea from "./chestarea";
 import Messages from "./message";
 
 class Spell extends Entity {
@@ -19,8 +17,9 @@ class Spell extends Entity {
   orientation: number;
   originX: number;
   originY: number;
+  element: "magic" | "flame" | "lightning" | "cold" | "poison" | "physical";
 
-  constructor(id, kind, x, y, orientation, originX, originY) {
+  constructor(id, kind, x, y, orientation, originX, originY, element) {
     super(id, "spell", kind, x, y);
 
     this.spawningX = x;
@@ -30,6 +29,7 @@ class Spell extends Entity {
     this.orientation = orientation;
     this.originX = originX;
     this.originY = originY;
+    this.element = element;
   }
 
   getState() {
@@ -39,6 +39,7 @@ class Spell extends Entity {
     state.push(this.orientation);
     state.push(this.originX);
     state.push(this.originY);
+    state.push(this.element);
 
     return basestate.concat(state);
   }

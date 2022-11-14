@@ -428,11 +428,10 @@ class GameClient {
       const spell = EntityFactory.createEntity({ kind, id });
       const originX = data[6];
       const originY = data[7];
-
-      // console.log("~~~~orientation", orientation, originX, originY);
+      const element = data[8];
 
       if (this.spawn_spell_callback) {
-        this.spawn_spell_callback(spell, x, y, orientation, originX, originY);
+        this.spawn_spell_callback(spell, x, y, orientation, originX, originY, element);
       }
     } else if (Types.isItem(kind)) {
       var item = EntityFactory.createEntity({ kind, id });

@@ -2981,15 +2981,6 @@ class Game {
                 entity.onHasMoved(function (entity) {
                   self.assignBubbleTo(entity); // Make chat bubbles follow moving entities
                 });
-
-                if (entity instanceof Mob) {
-                  if (targetId) {
-                    var player = self.getEntityById(targetId);
-                    if (player) {
-                      self.createAttackLink(entity, player);
-                    }
-                  }
-                }
               }
             }
           } catch (err) {
@@ -3033,13 +3024,22 @@ class Game {
             console.debug("Character " + entity.id + " already exists. Don't respawn.");
           }
         }
+
+        if (entity instanceof Mob) {
+          if (targetId) {
+            var player = self.getEntityById(targetId);
+            if (player) {
+              self.createAttackLink(entity, player);
+            }
+          }
+        }
       });
 
-      self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY) {
+      self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY, element) {
+        entity.setElement(element);
         entity.setSprite(self.sprites[entity.getSpriteName()]);
         entity.setGridPosition(x, y);
         entity.setOrientation(orientation);
-
         entity.idle();
 
         self.addEntity(entity);
@@ -3077,6 +3077,8 @@ class Game {
             self.addToRenderingGrid(entity, entity.gridX, entity.gridY);
           }
           if (
+            entity &&
+            self?.player &&
             (entity.gridX === self.player.gridX ||
               entity.nextGridX === self.player.gridX ||
               entity.gridX === self.player.nextGridX) &&

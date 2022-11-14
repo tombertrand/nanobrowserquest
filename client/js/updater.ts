@@ -208,6 +208,86 @@ class Updater {
           c.y + 16,
           c.moveSpeed,
         );
+      } else if (c.orientation === Types.Orientations.DOWN_LEFT) {
+        c.movement.start(
+          this.game.currentTime,
+          function (x, y) {
+            c.x = x;
+            c.y = y;
+            c.hasMoved();
+          },
+          function () {
+            c.x = c.movement.endValue;
+            c.y = c.movement.endValue1;
+            c.hasMoved();
+            c.nextStep();
+          },
+          c.x - tick,
+          c.x - 16,
+          c.moveSpeed,
+          c.y + tick,
+          c.y + 16,
+        );
+      } else if (c.orientation === Types.Orientations.DOWN_RIGHT) {
+        c.movement.start(
+          this.game.currentTime,
+          function (x, y) {
+            c.x = x;
+            c.y = y;
+            c.hasMoved();
+          },
+          function () {
+            c.x = c.movement.endValue;
+            c.y = c.movement.endValue1;
+            c.hasMoved();
+            c.nextStep();
+          },
+          c.x + tick,
+          c.x + 16,
+          c.moveSpeed,
+          c.y + tick,
+          c.y + 16,
+        );
+      } else if (c.orientation === Types.Orientations.UP_LEFT) {
+        c.movement.start(
+          this.game.currentTime,
+          function (x, y) {
+            c.x = x;
+            c.y = y;
+            c.hasMoved();
+          },
+          function () {
+            c.x = c.movement.endValue;
+            c.y = c.movement.endValue1;
+            c.hasMoved();
+            c.nextStep();
+          },
+          c.x - tick,
+          c.x - 16,
+          c.moveSpeed,
+          c.y - tick,
+          c.y - 16,
+        );
+      } else if (c.orientation === Types.Orientations.UP_RIGHT) {
+        c.movement.start(
+          this.game.currentTime,
+          function (x, y) {
+            c.x = x;
+            c.y = y;
+            c.hasMoved();
+          },
+          function () {
+            c.x = c.movement.endValue;
+            c.y = c.movement.endValue1;
+            c.hasMoved();
+            c.nextStep();
+          },
+          c.x + tick,
+          c.x + 16,
+          c.moveSpeed,
+          c.y - tick,
+          c.y - 16,
+        );
       }
     }
   }

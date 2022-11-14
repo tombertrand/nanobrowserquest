@@ -13,14 +13,6 @@ export const Spells = {
       this.attackCooldown = new Timer(this.atkRate);
       this.aggroRange = 0;
     }
-
-    // idle(orientation) {
-    //   if (!this.hasTarget()) {
-    //     super.idle(Types.Orientations.DOWN);
-    //   } else {
-    //     super.idle(orientation);
-    //   }
-    // }
   },
 };
 
