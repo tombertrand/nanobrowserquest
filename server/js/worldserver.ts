@@ -1090,11 +1090,6 @@ class World {
 
     const raiseSkeletonSpell = () => {
       this.broadcastRaise(player, mob);
-
-      // @TODO Spawn 8 entities (skeleton spell) and have them move 4 tiles then explode
-      // if player on the tile, it explodes and deals the elemental dmg to the player
-      // this.castDeathAngelSpell();
-
       this.isCastDeathAngelSpellEnabled = true;
     };
 
@@ -1472,8 +1467,8 @@ class World {
       // "ringplatinum",
       // "ringconqueror",
       // "amuletdemon",
-      "ringmystical",
-      "amuletmoon",
+      // "ringmystical",
+      // "amuletmoon",
       // "ringheaven",
       // "ringwizard",
       // "amuletplatinum",
@@ -1519,7 +1514,7 @@ class World {
       // "rune-las",
       // "rune-cham",
       // "rune-dur",
-      // "rune-ber",
+      "rune-ber",
       // "rune-tor",
       // "rune-jah",
       // "rune-shi",

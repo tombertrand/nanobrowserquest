@@ -1727,9 +1727,15 @@ class Game {
     }
 
     const skillName = Types.skillTypeAnimationMap[this.player.shieldSkill];
+    const originalTimeout = Math.floor(Types.skillDelay[this.player.shieldSkill]);
+    const timeout = Math.round(originalTimeout - originalTimeout * (this.player.bonus.skillTimeout / 100));
 
-    skillSlot.addClass("disabled");
-    skillSlot.find(".skill-timeout").addClass(`active ${skillName}`);
+    skillSlot
+      .addClass("disabled")
+      .find(".skill-timeout")
+      .addClass(`active ${skillName}`)
+      .attr("style", `transition: width ${timeout / 1000}s linear;`);
+
     this.skillAnimation.reset();
     this.player.setSkillAnimation(skillName, Types.skillDurationMap[this.player.shieldSkill](this.player.shieldLevel));
     this.audioManager.playSound(`skill-${skillName}`);
@@ -1739,9 +1745,9 @@ class Game {
     // @TODO remove, this is for testing
 
     this.player.shieldSkillTimeout = setTimeout(() => {
-      skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout");
+      skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout").attr("style", "");
       this.player.shieldSkillTimeout = null;
-    }, Types.skillDelay[this.player.shieldSkill]);
+    }, timeout);
   }
 
   setShieldSkill(skill) {
@@ -3036,8 +3042,8 @@ class Game {
       });
 
       self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY, element) {
-        entity.setElement(element);
         entity.setSprite(self.sprites[entity.getSpriteName()]);
+        entity.setElement(element);
         entity.setGridPosition(x, y);
         entity.setOrientation(orientation);
         entity.idle();
@@ -3073,9 +3079,14 @@ class Game {
 
         entity.onStep(function () {
           if (entity.hasNextStep()) {
-            // @TODO ~~~ check if wall is next step and explode
             self.addToRenderingGrid(entity, entity.gridX, entity.gridY);
+
+            // Explode if touches something on the grid
+            if (self.pathingGrid[entity.nextGridY][entity.nextGridX]) {
+              entity.stop();
+            }
           }
+
           if (
             entity &&
             self?.player &&
@@ -3587,7 +3598,7 @@ class Game {
         }
       });
 
-      self.client.onPlayerChangeStats(function ({ maxHitPoints, ...stats }) {
+      self.client.onPlayerChangeStats(function ({ maxHitPoints, ...bonus }) {
         if (self.player.maxHitPoints !== maxHitPoints || self.player.invincible) {
           self.player.maxHitPoints = maxHitPoints;
           self.player.hitPoints = maxHitPoints;
@@ -3595,28 +3606,30 @@ class Game {
           self.updateBars();
         }
 
-        $("#player-damage").text(stats.damage);
-        $("#player-attackDamage").text(stats.attackDamage);
-        $("#player-criticalHit").text(stats.criticalHit);
-        $("#player-magicDamage").text(stats.magicDamage);
-        $("#player-flameDamage").text(stats.flameDamage);
-        $("#player-lightningDamage").text(stats.lightningDamage);
-        $("#player-coldDamage").text(stats.coldDamage);
-        $("#player-poisonDamage").text(stats.poisonDamage);
-        $("#player-pierceDamage").text(stats.pierceDamage);
-        $("#player-defense").text(stats.defense);
-        $("#player-blockChance").text(stats.blockChance);
-        $("#player-absorbedDamage").text(stats.absorbedDamage);
-        $("#player-magicResistance").text(stats.magicResistance);
-        $("#player-flameResistance").text(stats.flameResistance);
-        $("#player-lightningResistance").text(stats.lightningResistance);
-        $("#player-coldResistance").text(stats.coldResistance);
-        $("#player-poisonResistance").text(stats.poisonResistance);
-        $("#player-physicalResistance").text(stats.physicalResistance);
-        $("#player-magicFind").text(stats.magicFind);
-        $("#player-attackSpeed").text(stats.attackSpeed);
-        $("#player-exp").text(stats.exp);
-        $("#player-skillTimeout").text(stats.skillTimeout);
+        self.player.bonus = bonus;
+
+        $("#player-damage").text(bonus.damage);
+        $("#player-attackDamage").text(bonus.attackDamage);
+        $("#player-criticalHit").text(bonus.criticalHit);
+        $("#player-magicDamage").text(bonus.magicDamage);
+        $("#player-flameDamage").text(bonus.flameDamage);
+        $("#player-lightningDamage").text(bonus.lightningDamage);
+        $("#player-coldDamage").text(bonus.coldDamage);
+        $("#player-poisonDamage").text(bonus.poisonDamage);
+        $("#player-pierceDamage").text(bonus.pierceDamage);
+        $("#player-defense").text(bonus.defense);
+        $("#player-blockChance").text(bonus.blockChance);
+        $("#player-absorbedDamage").text(bonus.absorbedDamage);
+        $("#player-magicResistance").text(bonus.magicResistance);
+        $("#player-flameResistance").text(bonus.flameResistance);
+        $("#player-lightningResistance").text(bonus.lightningResistance);
+        $("#player-coldResistance").text(bonus.coldResistance);
+        $("#player-poisonResistance").text(bonus.poisonResistance);
+        $("#player-physicalResistance").text(bonus.physicalResistance);
+        $("#player-magicFind").text(bonus.magicFind);
+        $("#player-attackSpeed").text(bonus.attackSpeed);
+        $("#player-exp").text(bonus.exp);
+        $("#player-skillTimeout").text(bonus.skillTimeout);
       });
 
       self.client.onPlayerSettings(function ({ playerId, settings }) {

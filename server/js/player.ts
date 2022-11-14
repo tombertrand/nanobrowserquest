@@ -588,9 +588,7 @@ class Player extends Character {
         const spell = self.server.getEntityById(message[1]);
 
         if (spell && self.hitPoints > 0) {
-          let dmg = 100;
-
-          self.handleHurtSpellDmg(spell, dmg);
+          self.handleHurtSpellDmg(spell);
         }
       } else if (action === Types.Messages.DEATHANGEL_CAST) {
         if (typeof message[1] !== "number" || typeof message[2] !== "number") return;
@@ -1193,9 +1191,12 @@ class Player extends Character {
             }, Types.skillDurationMap[this.shieldSkill](this.shieldLevel));
           }
 
+          const originalTimeout = Math.floor(Types.skillDelay[this.shieldSkill]);
+          const timeout = Math.round(originalTimeout - originalTimeout * (this.bonus.skillTimeout / 100));
+
           self.shieldSkillTimeout = setTimeout(() => {
             self.shieldSkillTimeout = null;
-          }, Types.skillDelay[this.shieldSkill]);
+          }, timeout);
 
           if (isBroadcasted) {
             self.broadcast(new Messages.Skill(this, skill, level), false);
@@ -1517,10 +1518,15 @@ class Player extends Character {
     return { dmg, isBlocked };
   }
 
-  handleHurtSpellDmg(spell, dmg: number) {
+  handleHurtSpellDmg(spell) {
     // @TODO ~~~ Check resistances, check freeze
 
     let isBlocked = false;
+
+    const spellDmg = 200;
+
+    const resistance = this.bonus[`${spell.element}Resistance`];
+    const dmg = Math.round(spellDmg - spellDmg * (resistance / 100));
 
     this.hitPoints -= dmg;
     this.server.handleHurtEntity({ entity: this, attacker: spell, isBlocked });
@@ -1934,6 +1940,14 @@ class Player extends Character {
     if (this.bonus.poisonDamagePercent) {
       this.bonus.poisonDamage += Math.round((this.bonus.poisonDamagePercent / 100) * this.bonus.poisonDamage);
     }
+  }
+
+  validateCappedBonus() {
+    Object.entries(Types.bonusCap).forEach(([bonus, cap]) => {
+      if (this.bonus[bonus] > cap) {
+        this.bonus[bonus] = cap;
+      }
+    });
   }
 
   calculateSetBonus() {
@@ -2370,6 +2384,7 @@ class Player extends Character {
       this.calculateSocketBonus();
       this.calculatePartyBonus();
       this.calculateGlobalBonus();
+      this.validateCappedBonus();
       this.updateHitPoints(true);
       this.sendPlayerStats();
 

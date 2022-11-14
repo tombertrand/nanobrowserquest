@@ -66,6 +66,7 @@ class Player extends Character {
   amuletLevel: number | null;
   amuletBonus: null | number[];
   auras: string[];
+  bonus: any;
   setBonus: any;
   isLootMoving: boolean;
   isSwitchingWeapon: boolean;
@@ -155,6 +156,7 @@ class Player extends Character {
     this.amuletBonus = null;
     this.auras = [];
     this.setBonus = {};
+    this.bonus = {};
 
     // modes
     this.isLootMoving = false;

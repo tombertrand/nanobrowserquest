@@ -9,11 +9,11 @@ export const RUNE = {
   GEL: 166,
   DO: 167,
   BAN: 168,
-  SOL: 169,
+  VIE: 169,
   UM: 170,
   HEX: 171,
   ZAL: 172,
-  VIE: 173,
+  SOL: 173,
   ETH: 174,
   BTC: 175,
   VAX: 176,
@@ -91,11 +91,11 @@ export const runeKind = {
       exp: 4,
     },
   },
-  sol: {
-    rank: 9,
-    requirement: 14,
+  vie: {
+    rank: 13,
+    requirement: 22,
     attribute: {
-      reduceFrozenChance: 5,
+      regenerateHealth: 10,
     },
   },
   um: {
@@ -116,14 +116,14 @@ export const runeKind = {
     rank: 12,
     requirement: 20,
     attribute: {
-      pierceDamage: 8,
+      pierceDamage: 5,
     },
   },
-  vie: {
-    rank: 13,
-    requirement: 22,
+  sol: {
+    rank: 9,
+    requirement: 14,
     attribute: {
-      regenerateHealth: 10,
+      reduceFrozenChance: 5,
     },
   },
   eth: {
@@ -221,7 +221,7 @@ export const runeKind = {
     rank: 27,
     requirement: 56,
     attribute: {
-      skillTimeout: 10,
+      skillTimeout: 8,
     },
   },
   tor: {

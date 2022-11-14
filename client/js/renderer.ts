@@ -671,10 +671,6 @@ class Renderer {
           }
         }
 
-        if (entity instanceof Spell) {
-          console.log("~~~~entity.element", entity.element);
-        }
-
         if (entity instanceof Item && entity.kind !== Types.Entities.CAKE) {
           var sparks = this.game.sprites["sparks"],
             anim = this.game.sparksAnimation,

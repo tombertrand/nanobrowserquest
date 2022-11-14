@@ -1752,7 +1752,21 @@ Types.skillType = [
   // "freezeNovaSkill", // 3
 ];
 
-Types.skillDelay = [30_000, 45_000, 60_000];
+Types.skillDelay = [24_000, 35_000, 60_000];
+Types.skillTimeoutCap = 60;
+
+Types.bonusCap = {
+  magicResistance: 90,
+  flameResistance: 90,
+  lightningResistance: 90,
+  coldResistance: 90,
+  poisonResistance: 90,
+  physicalResistance: 90,
+  freezeChance: 75,
+  attackSpeed: 50,
+  magicFind: 100,
+  skillTimeout: 50,
+};
 
 Types.skillTypeAnimationMap = ["heal", "defense", "curse-attack"];
 
