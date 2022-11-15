@@ -669,6 +669,10 @@ EntityFactory.builders[Types.Entities.STONESOCKET] = function (id) {
   return new Items.StoneSocket(id);
 };
 
+EntityFactory.builders[Types.Entities.JEWELSKULL] = function (id) {
+  return new Items.JewelSkull(id);
+};
+
 EntityFactory.builders[Types.Entities.SKELETONKEY] = function (id) {
   return new Items.SkeletonKey(id);
 };

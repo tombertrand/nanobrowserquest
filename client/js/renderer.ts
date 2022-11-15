@@ -651,10 +651,12 @@ class Renderer {
           spriteImage = sprite[`image${this.game.player.network}`];
         }
 
-        if (entity.isFrozen) {
-          this.context.filter = "sepia(100%) hue-rotate(190deg) saturate(500%)";
-        } else if (entity.isPoisoned) {
-          this.context.filter = "grayscale(100%) sepia(100%) hue-rotate(90deg)";
+        if (!entity.isDead) {
+          if (entity.isFrozen) {
+            this.context.filter = "sepia(100%) hue-rotate(190deg) saturate(500%)";
+          } else if (entity.isPoisoned) {
+            this.context.filter = "grayscale(100%) sepia(100%) hue-rotate(90deg)";
+          }
         }
 
         this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);

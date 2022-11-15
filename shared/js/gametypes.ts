@@ -247,6 +247,7 @@ export const Types: any = {
     SCROLLUPGRADESACRED: 206,
     SCROLLTRANSMUTE: 142,
     STONESOCKET: 192,
+    JEWELSKULL: 219,
     RINGBRONZE: 80,
     RINGSILVER: 81,
     RINGGOLD: 82,
@@ -676,6 +677,7 @@ export const kinds = {
   scrollupgradesacred: [Types.Entities.SCROLLUPGRADESACRED, "scroll", "Sacred upgrade scroll", 40],
   scrolltransmute: [Types.Entities.SCROLLTRANSMUTE, "scroll", "Transmute scroll", 30],
   stonesocket: [Types.Entities.STONESOCKET, "stone", "Socket Stone", 51],
+  jewelskull: [Types.Entities.JEWELSKULL, "jewel", "Skull Jewel", 51],
   skeletonkey: [Types.Entities.SKELETONKEY, "object", "Skeleton Key"],
   raiblockstl: [Types.Entities.RAIBLOCKSTL, "object", "Raiblocks artifact"],
   raiblockstr: [Types.Entities.RAIBLOCKSTR, "object", "Raiblocks artifact"],
@@ -1033,6 +1035,14 @@ Types.isStone = function (kindOrString: number | string) {
   }
 };
 
+Types.isJewel = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return [Types.Entities.JEWELSKULL].includes(kindOrString);
+  } else {
+    return kindOrString?.startsWith("jewel");
+  }
+};
+
 Types.isRune = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return Types.RuneByKind[kindOrString];
@@ -1228,6 +1238,7 @@ Types.isItem = function (kind: number) {
     Types.isChest(kind) ||
     Types.isRune(kind) ||
     Types.isStone(kind) ||
+    Types.isJewel(kind) ||
     (Types.isObject(kind) && !Types.isStaticChest(kind))
   );
 };
@@ -2180,4 +2191,5 @@ Types.itemDescription = {
   rune: "Can be inserted into a socketed item or create runewords",
   stonesocket:
     "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets, the stone will attempt to remove the last item from its socket. There is a 50% chance for the item to be burned.",
+  jewelskull: "Can be inserted in a socket",
 };

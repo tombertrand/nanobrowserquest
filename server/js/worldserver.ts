@@ -1464,6 +1464,7 @@ class World {
 
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
+      "jewelskull",
       // "ringplatinum",
       // "ringconqueror",
       // "amuletdemon",
@@ -1514,7 +1515,7 @@ class World {
       // "rune-las",
       // "rune-cham",
       // "rune-dur",
-      "rune-ber",
+      // "rune-ber",
       // "rune-tor",
       // "rune-jah",
       // "rune-shi",

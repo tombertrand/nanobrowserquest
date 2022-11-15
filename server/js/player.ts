@@ -1302,7 +1302,7 @@ class Player extends Character {
       const bonus = this.generateRandomCapeBonus(uniqueChances);
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
-    } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
+    } else if (Types.isRing(kind) || Types.isAmulet(kind) || Types.isJewel(kind)) {
       const randomIsUnique = random(100);
       isUnique = randomIsUnique < uniqueChances;
 
@@ -1413,6 +1413,10 @@ class Player extends Character {
           .concat(_.shuffle(elementPercentage).slice(0, 1))
           .concat(_.shuffle(resistances).slice(0, 2))
           .concat(timeout);
+      } else if (kind === Types.Entities.JEWELSKULL) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(resistances).slice(0, isUnique ? 2 : 1));
       }
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };

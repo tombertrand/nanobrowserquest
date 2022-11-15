@@ -912,6 +912,13 @@ var Items = {
     }
   },
 
+  JewelSkull: class JewelSkull extends Item {
+    constructor(id) {
+      super(id, Types.Entities.JEWELSKULL, "jewel");
+      this.lootMessage = "You pick up a skull jewel";
+    }
+  },
+
   SkeletonKey: class SkeletonKey extends Item {
     constructor(id) {
       super(id, Types.Entities.SKELETONKEY, "object");
