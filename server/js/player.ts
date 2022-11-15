@@ -137,6 +137,7 @@ class Player extends Character {
   nanoPotions: number;
   skill: { defense: number; curseAttack: number };
   dbWriteQueue: any;
+  poisonedInterval: any;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -453,7 +454,7 @@ class Player extends Character {
             };
           }
 
-          let dmg = Formulas.dmg({
+          let { dmg, attackDamage } = Formulas.dmg({
             weapon: self.weapon,
             weaponLevel: self.weaponLevel,
             playerLevel: self.level,
@@ -471,18 +472,17 @@ class Player extends Character {
             ...resistances,
           });
 
-          // @TODO critical hit on physical dmg only and 2X?
           if (self.bonus.criticalHit) {
             isCritical = random(100) < self.bonus.criticalHit;
             if (isCritical) {
-              dmg = Math.ceil((dmg - self.bonus.drainLife) * 1.5);
+              dmg = attackDamage * 2 + dmg - attackDamage;
             }
           }
 
           if (self.bonus.freezeChance && !Types.isBoss(mob.kind)) {
             const isFrozen = random(100) < self.bonus.freezeChance;
             if (isFrozen) {
-              self.broadcast(new Messages.Frozen(mob.id, self.freezeChanceLevel));
+              self.broadcast(new Messages.Frozen(mob.id, Types.getFrozenTimePerLevel(self.freezeChanceLevel)));
             }
           }
 
@@ -491,6 +491,15 @@ class Player extends Character {
               self.regenHealthBy(self.bonus.drainLife);
               self.server.pushToPlayer(self, self.health());
             }
+          }
+
+          if (self.bonus.poisonDamage) {
+            self.startPoisoned({
+              dmg: self.bonus.poisonDamage,
+              entity: mob,
+              resistance: resistances.poisonResistance,
+              attacker: self,
+            });
           }
 
           // Reduce dmg on boss by 20% per player in boss room
@@ -566,6 +575,11 @@ class Player extends Character {
 
           if (mob.hitPoints <= 0) {
             mob.isDead = true;
+
+            if (mob.poisonedInterval) {
+              clearInterval(mob.poisonedInterval);
+              mob.poisonedInterval = null;
+            }
 
             if (mob?.type) {
               postMessageToDiscordChatChannel(`${self.name} killed ${mob.name} 💀`);
@@ -1505,7 +1519,7 @@ class Player extends Character {
       const isFrozen = random(100) < 20;
       if (isFrozen) {
         if (random(100) > this.bonus.reduceFrozenChance) {
-          this.broadcast(new Messages.Frozen(this.id, 10));
+          this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
         }
       }
     }
@@ -1519,21 +1533,45 @@ class Player extends Character {
   }
 
   handleHurtSpellDmg(spell) {
-    // @TODO ~~~ Check resistances, check freeze
-
-    let isBlocked = false;
-
     const spellDmg = 200;
-
     const resistance = this.bonus[`${spell.element}Resistance`];
     const dmg = Math.round(spellDmg - spellDmg * (resistance / 100));
 
+    if (spell.element === "cold") {
+      if (random(100) > this.bonus.reduceFrozenChance) {
+        this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
+      }
+    } else if (spell.element === "poison") {
+      this.startPoisoned({ dmg: spellDmg, entity: this, resistance: this.bonus.poisonResistance });
+    }
+
     this.hitPoints -= dmg;
-    this.server.handleHurtEntity({ entity: this, attacker: spell, isBlocked });
+    this.server.handleHurtEntity({ entity: this, attacker: spell });
 
     this.handleHurtDeath();
+  }
 
-    return { dmg, isBlocked };
+  startPoisoned({ dmg, entity, resistance, attacker = {} }) {
+    const baseIterations = 6;
+    const tick = 3000;
+    let poisonDmg = Math.round((dmg - dmg * (resistance / 100)) / 6);
+    let iterations = Math.round(baseIterations - baseIterations * (resistance / 100));
+
+    if (!poisonDmg) return;
+
+    this.broadcast(new Messages.Poisoned(entity.id, iterations * tick));
+
+    clearInterval(entity.poisonedInterval);
+    entity.poisonedInterval = setInterval(() => {
+      if (iterations) {
+        entity.hitPoints -= poisonDmg;
+        this.server.handleHurtEntity({ entity, attacker, dmg: poisonDmg });
+
+        iterations--;
+      } else {
+        clearInterval(entity.poisonedInterval);
+      }
+    }, tick);
   }
 
   handleHurtDeath() {
@@ -1552,6 +1590,10 @@ class Player extends Character {
       if (this.firefoxpotionTimeout) {
         clearTimeout(this.firefoxpotionTimeout);
         this.firefoxpotionTimeout = null;
+      }
+      if (this.poisonedInterval) {
+        clearInterval(this.poisonedInterval);
+        this.poisonedInterval = null;
       }
     }
   }

@@ -64,14 +64,15 @@ Formulas.minMaxDamage = function ({
 };
 
 Formulas.dmg = function (stats) {
-  const { min, max } = Formulas.minMaxDamage(stats);
-  const dmg = randomInt(min, max);
+  const { min, max, attackDamage } = Formulas.minMaxDamage(stats);
+  let dmg = randomInt(min, max);
 
   //console.log("abs: "+absorbed+"   dealt: "+ dealt+"   dmg: "+ (dealt - absorbed));
   if (dmg <= 0) {
-    return randomInt(0, 3);
+    dmg = randomInt(0, 3);
+    return { dmg, attackDamage: dmg };
   } else {
-    return dmg;
+    return { dmg, attackDamage };
   }
 };
 

@@ -69,6 +69,8 @@ class Character extends Entity {
   raiseRate: number;
   isFrozen: boolean;
   frozenTimeout: any;
+  isPoisoned: boolean;
+  poisonedTimeout: any;
   resistances: { [key: string]: { display: string; percentage: number } };
   type: "mob" | "player" | "npc" | "spell";
 
@@ -724,13 +726,10 @@ class Character extends Entity {
     this.attackCooldown = new Timer(rate);
   }
 
-  setFrozen(time: number) {
+  setFrozen(duration: number) {
     this.isFrozen = true;
     this.stop();
     this.currentAnimation.pause();
-
-    // this.disengage();
-    // this.nextStep();
 
     clearTimeout(this.frozenTimeout);
 
@@ -738,7 +737,19 @@ class Character extends Entity {
       this.isFrozen = false;
       this.frozenTimeout = null;
       this.currentAnimation.play();
-    }, time);
+    }, duration);
+  }
+
+  setPoisoned(duration: number) {
+    this.isPoisoned = true;
+
+    clearTimeout(this.poisonedTimeout);
+
+    this.poisonedTimeout = setTimeout(() => {
+      this.isPoisoned = false;
+      this.poisonedTimeout = null;
+      // Add 500ms so the last tick happens while being green
+    }, duration + 500);
   }
 }
 

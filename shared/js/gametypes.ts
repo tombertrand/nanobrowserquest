@@ -31,7 +31,7 @@ export const Types: any = {
     LOGIN: 1,
     WELCOME: 2,
     SPAWN: 3,
-    SPAWN_BATCH: 220,
+    SPAWN_BATCH: 92,
     DESPAWN: 4,
     MOVE: 5,
     LOOTMOVE: 6,
@@ -40,7 +40,7 @@ export const Types: any = {
     RAISE: 49,
     HIT: 9,
     HURT: 10,
-    HURT_SPELL: 219,
+    HURT_SPELL: 91,
     HEALTH: 11,
     CHAT: 12,
     LOOT: 13,
@@ -85,7 +85,7 @@ export const Types: any = {
     COWLEVEL_START: 53,
     COWLEVEL_INPROGRESS: 54,
     COWLEVEL_END: 55,
-    DEATHANGEL_CAST: 221,
+    DEATHANGEL_CAST: 93,
     SETBONUS: 56,
     PARTY: 57,
     PARTY_ACTIONS: {
@@ -122,6 +122,7 @@ export const Types: any = {
     MINOTAURLEVEL_INPROGRESS: 71,
     MINOTAURLEVEL_END: 72,
     FROZEN: 73,
+    POISONED: 90,
   },
 
   Entities: {
@@ -1729,7 +1730,7 @@ Types.getAttributesBonus = function (attributes, level) {
   return bonus;
 };
 
-Types.getFrozenTimePerLevel = (itemLevel: number) => 1000 + itemLevel * 150;
+Types.getFrozenTimePerLevel = (itemLevel: number) => itemLevel * 250;
 
 Types.skillDurationMap = {
   0: () => 900,
@@ -1753,9 +1754,9 @@ Types.skillType = [
 ];
 
 Types.skillDelay = [24_000, 35_000, 60_000];
-Types.skillTimeoutCap = 60;
 
 Types.bonusCap = {
+  reduceFrozenChance: 50,
   magicResistance: 90,
   flameResistance: 90,
   lightningResistance: 90,

@@ -31,9 +31,11 @@ export const setBonus = {
     attackSpeed: 20,
   },
   mystical: {
+    minDamage: 15,
     reduceFrozenChance: 25,
     attackDamage: 15,
-    magicDamage: 30,
+    magicDamage: 20,
+    poisonDamage: 20,
     allRessitance: 10,
     magicFind: 20,
   },
@@ -132,7 +134,7 @@ export const kindAsStringToSet = {
   belttemplar: "templar",
   shieldtemplar: "templar",
   mysticalsword: "mystical",
-  mysticalnarmor: "mystical",
+  mysticalarmor: "mystical",
   beltmystical: "mystical",
   shieldmystical: "mystical",
   ringmystical: "mystical",
@@ -157,7 +159,7 @@ export const kindAsStringToSet = {
 
 export const setItems = {
   moon: ["moonsword", "moonarmor", "beltmoon", "shieldmoon", "amuletmoon"],
-  mystical: ["mysticalsword", "mysticalnarmor", "beltmystical", "shieldmystical", "ringmystical"],
+  mystical: ["mysticalsword", "mysticalarmor", "beltmystical", "shieldmystical", "ringmystical"],
   demon: ["demonaxe", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
   dragon: ["dragonsword", "dragonarmor", "shielddragon"],
   executioner: ["executionersword", "executionerarmor", "beltexecutioner", "shieldexecutioner"],

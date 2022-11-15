@@ -9,6 +9,7 @@ class Character extends Entity {
   maxHitPoints: any;
   hitPoints: any;
   id: any;
+  poisonedInterval: any;
 
   constructor(id, type, kind, x, y) {
     super(id, type, kind, x, y);
@@ -16,6 +17,7 @@ class Character extends Entity {
     this.orientation = randomOrientation();
     this.attackers = {};
     this.target = null;
+    this.poisonedInterval = null;
   }
 
   getState() {

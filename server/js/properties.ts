@@ -375,6 +375,11 @@ var Properties: any = {
     drops: {
       scrollupgradelegendary: 3,
       scrollupgradesacred: 4,
+      mysticalsword: 4,
+      mysticalarmor: 4,
+      beltmystical: 4,
+      shieldmystical: 4,
+      ringmystical: 4,
     },
     hp: 1000,
     armor: 40,

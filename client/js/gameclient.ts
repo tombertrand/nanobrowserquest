@@ -85,6 +85,7 @@ class GameClient {
   receiveminotaurlevelinprogress_callback: any;
   receiveminotaurlevelend_callback: any;
   receivefrozen_callback: any;
+  receivepoisoned_callback: any;
   settings_callback: any;
 
   constructor(host, port) {
@@ -147,6 +148,7 @@ class GameClient {
     this.handlers[Types.Messages.MINOTAURLEVEL_INPROGRESS] = this.receiveMinotaurLevelInProgress;
     this.handlers[Types.Messages.MINOTAURLEVEL_END] = this.receiveMinotaurLevelEnd;
     this.handlers[Types.Messages.FROZEN] = this.receiveFrozen;
+    this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
     this.enable();
   }
 
@@ -859,10 +861,19 @@ class GameClient {
 
   receiveFrozen(data) {
     const entityId = data[1];
-    const itemLevel = data[2];
+    const duration = data[2];
 
     if (this.receivefrozen_callback) {
-      this.receivefrozen_callback(entityId, itemLevel);
+      this.receivefrozen_callback(entityId, duration);
+    }
+  }
+
+  receivePoisoned(data) {
+    const entityId = data[1];
+    const duration = data[2];
+
+    if (this.receivepoisoned_callback) {
+      this.receivepoisoned_callback(entityId, duration);
     }
   }
 
@@ -1140,6 +1151,10 @@ class GameClient {
 
   onFrozen(callback) {
     this.receivefrozen_callback = callback;
+  }
+
+  onPoisoned(callback) {
+    this.receivepoisoned_callback = callback;
   }
 
   sendCreate({ name, account }) {

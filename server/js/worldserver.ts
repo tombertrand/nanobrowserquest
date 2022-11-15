@@ -1161,7 +1161,7 @@ class World {
       this.pushToPlayer(entity, entity.health({ isHurt: true }));
     }
 
-    if (attacker.type === "player") {
+    if (attacker?.type === "player") {
       // Let the player know how much damage was inflicted
       this.pushToPlayer(
         attacker,
@@ -1193,7 +1193,7 @@ class World {
       this.removeEntity(entity);
     }
 
-    if (attacker.type === "spell") {
+    if (attacker?.type === "spell") {
       this.pushToAdjacentGroups(attacker.group, attacker.despawn());
       this.removeEntity(attacker);
     }

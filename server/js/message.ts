@@ -108,9 +108,16 @@ Messages.Health = class Message {
 };
 
 Messages.Frozen = class Message {
-  constructor(private entityId, private freezeChanceLevel) {}
+  constructor(private entityId, private duration) {}
   serialize() {
-    return [Types.Messages.FROZEN, this.entityId, this.freezeChanceLevel];
+    return [Types.Messages.FROZEN, this.entityId, this.duration];
+  }
+};
+
+Messages.Poisoned = class Message {
+  constructor(private entityId, private duration) {}
+  serialize() {
+    return [Types.Messages.POISONED, this.entityId, this.duration];
   }
 };
 

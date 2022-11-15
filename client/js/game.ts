@@ -3069,7 +3069,7 @@ class Game {
 
           entity.animate("death", speed, 1, function () {
             console.info(entity.id + " was removed");
-            self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
+            self.removeEntity(entity);
           });
         });
 
@@ -3999,11 +3999,12 @@ class Game {
         }
       });
 
-      self.client.onFrozen(function (entityId, itemLevel) {
-        const time = Types.getFrozenTimePerLevel(itemLevel);
+      self.client.onFrozen(function (entityId, duration) {
+        self.getEntityById(entityId)?.setFrozen(duration);
+      });
 
-        // Entity may not be send to every player
-        self.getEntityById(entityId)?.setFrozen(time);
+      self.client.onPoisoned(function (entityId, duration) {
+        self.getEntityById(entityId)?.setPoisoned(duration);
       });
 
       self.client.onDisconnected(function (message) {
