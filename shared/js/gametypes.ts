@@ -1195,6 +1195,38 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
   }
 };
 
+Types.isUniqueJewel = function (kindOrString: number | string, bonus: number[] = [], level: number) {
+  if (!Types.isJewel(kindOrString)) return false;
+
+  if (level === 1) {
+    return bonus.length === 2;
+  } else if (level === 2) {
+    return bonus.length === 3;
+  } else if (level === 3) {
+    return bonus.length === 4;
+  } else if (level === 4) {
+    return bonus.length === 5;
+  } else if (level === 5) {
+    return bonus.length === 6;
+  }
+};
+
+Types.getJewelRequirement = function (level) {
+  let requirement = 4;
+
+  if (level === 5) {
+    requirement = 60;
+  } else if (level === 4) {
+    requirement = 45;
+  } else if (level === 3) {
+    requirement = 25;
+  } else if (level === 2) {
+    requirement = 8;
+  }
+
+  return requirement;
+};
+
 Types.isStaticChest = function (kind: number) {
   return kind === Types.Entities.CHEST;
 };
@@ -1959,6 +1991,10 @@ Types.isBaseHighClassItem = (item: string) => {
 Types.getItemClass = function (item: string, level: number, isUnique: boolean) {
   const baseLevel = Types.getItemBaseLevel(item, isUnique);
 
+  return Types.getItemClassFromBaseLevel(level, baseLevel);
+};
+
+Types.getItemClassFromBaseLevel = function (level: number, baseLevel: number) {
   let itemClass;
   if (baseLevel < 5) {
     if (!level || level <= 5) {
@@ -2045,9 +2081,11 @@ Types.getItemDetails = function ({
   const isShield = Types.isShield(item);
   const isUnique = Types.isUnique(item, rawBonus);
   const isRune = Types.isRune(item);
+  const isJewel = Types.isJewel(item);
   const rune = isRune ? Types.getRuneFromItem(item) : null;
   const isSocket = rawSocket?.length;
   const runeRequirement = isSocket ? Types.getHighestSocketRequirement(rawSocket) : null;
+  const jewelRequirement = isJewel ? Types.getJewelRequirement(level) : null;
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let name = Types.getDisplayName(item, isUnique);
@@ -2086,8 +2124,18 @@ Types.getItemDetails = function ({
     type = "amulet";
   }
 
-  const itemClass = Types.getItemClass(item, level, isUnique);
-  let requirement = isRune ? rune.requirement : Types.getItemRequirement(item, level, isUnique);
+  const itemClass = isJewel
+    ? Types.getItemClassFromBaseLevel(level, jewelRequirement)
+    : Types.getItemClass(item, level, isUnique);
+
+  let requirement;
+  if (isRune) {
+    requirement = rune.requirement;
+  } else if (isJewel) {
+    requirement = jewelRequirement;
+  } else {
+    Types.getItemRequirement(item, level, isUnique);
+  }
   const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
 
   if (rawBonus) {

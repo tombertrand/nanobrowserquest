@@ -21,6 +21,7 @@ import {
   random,
   randomInt,
   randomOrientation,
+  randomRange,
   rawToRai,
   sanitize,
 } from "./utils";
@@ -1415,11 +1416,32 @@ class Player extends Character {
           .concat(_.shuffle(resistances).slice(0, 2))
           .concat(timeout);
       } else if (kind === Types.Entities.JEWELSKULL) {
-        // @TODO ~~~ Figure bonus per jewel level 1-5
+        jewelLevel = randomInt(1, 5);
 
-        bonus = _.shuffle(highLevelBonus)
-          .slice(0, 3)
-          .concat(_.shuffle(resistances).slice(0, isUnique ? 2 : 1));
+        if (jewelLevel === 1) {
+          bonus = _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
+        } else if (jewelLevel === 2) {
+          bonus = _.shuffle(mediumLevelBonus).slice(0, isUnique ? 3 : 2);
+        } else if (jewelLevel === 3) {
+          bonus = _.shuffle(highLevelBonus)
+            .slice(0, isUnique ? 3 : 2)
+            .concat(_.shuffle(resistances).slice(0, 1));
+        } else if (jewelLevel === 4) {
+          bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(resistances).slice(0, 2));
+
+          if (isUnique) {
+            bonus = bonus.concat(_.shuffle(elementPercentage).slice(0, 1));
+          }
+        } else if (jewelLevel === 5) {
+          bonus = _.shuffle(highLevelBonus)
+            .slice(0, 2)
+            .concat(_.shuffle(elementDamage).slice(0, 1))
+            .concat(_.shuffle(resistances).slice(0, 2));
+
+          if (isUnique) {
+            bonus = bonus.concat(_.shuffle(elementPercentage).slice(0, 1));
+          }
+        }
       }
 
       item = {

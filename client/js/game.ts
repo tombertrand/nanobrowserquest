@@ -863,9 +863,9 @@ class Game {
 
         const element = $(this);
         const item = element.attr("data-item");
-        const level = element.attr("data-level");
+        const level = parseInt(element.attr("data-level") || "1", 10);
         const rawBonus = toArray(element.attr("data-bonus"));
-        const rawSkill = element.attr("data-skill");
+        const rawSkill = parseInt(element.attr("data-skill") || "1", 10);
         const rawSocket = toArray(element.attr("data-socket"));
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
         const isEquippedItemSlot = Object.values(Slot).includes(slot);
@@ -1691,14 +1691,14 @@ class Game {
     const previousButton = $("#item-stash-previous-page");
     const nextButton = $("#item-stash-next-page");
 
-    previousButton.on("click", () => {
+    previousButton.off("click").on("click", () => {
       if (this.currentStashPage > 0) {
         this.currentStashPage--;
         togglePage();
       }
     });
 
-    nextButton.on("click", () => {
+    nextButton.off("click").on("click", () => {
       if (this.currentStashPage < STASH_SLOT_PAGES - 1) {
         this.currentStashPage++;
         togglePage();
