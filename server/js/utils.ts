@@ -3,6 +3,7 @@ import forEach from "lodash/forEach";
 import sanitizer from "sanitizer";
 
 import { Types } from "../../shared/js/gametypes";
+import { RuneList } from "../../shared/js/types/rune";
 import { Recipes } from "./types";
 
 import type { Network } from "./types";
@@ -581,3 +582,96 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
 
   return { socketItem, extractedItem, socketCount };
 };
+
+export const getRandomJewelLevel = (mobLevel: number) => {
+  let maxLevel = 1;
+  if (mobLevel >= 60) {
+    maxLevel = 5;
+  } else if (mobLevel >= 45) {
+    maxLevel = 4;
+  } else if (mobLevel >= 30) {
+    maxLevel = 3;
+  } else if (mobLevel >= 15) {
+    maxLevel = 2;
+  }
+
+  const randomNumber = random(100);
+
+  // 5% -> 5
+  // 45% -> 4
+  // 15% -> 3
+  // 20% -> 2
+  // 20% -> 1
+  // 35% -> 0
+  let level = 1;
+  if (maxLevel === 5) {
+    if (randomNumber < 5) {
+      level = 5;
+    } else if (randomNumber < 55) {
+      level = 4;
+    } else {
+      level = 3;
+    }
+  } else if (maxLevel === 4) {
+    if (randomNumber < 20) {
+      level = 4;
+    } else if (randomNumber < 60) {
+      level = 3;
+    } else {
+      level = 2;
+    }
+  } else if (maxLevel === 3) {
+    if (randomNumber < 40) {
+      level = 3;
+    } else if (randomNumber < 80) {
+      level = 2;
+    } else {
+      level = 1;
+    }
+  } else if (maxLevel === 2) {
+    if (randomNumber < 60) {
+      level = 3;
+    } else {
+      level = 1;
+    }
+  }
+
+  return level;
+};
+
+export const getRandomRuneLevel = (mobLevel: number) => {
+  let maxLevel = Math.floor(mobLevel / 2);
+  let minLevel = 1;
+  if (maxLevel > RuneList.length) {
+    maxLevel = RuneList.length;
+  }
+  if (mobLevel < 20) {
+    maxLevel += 5;
+  }
+
+  minLevel = maxLevel - 15;
+  if (minLevel < 1) {
+    minLevel = 1;
+  }
+
+  const level = Math.floor(randn_bm(minLevel, maxLevel, 2.5));
+
+  return level;
+};
+
+function randn_bm(min, max, skew) {
+  let u = 0,
+    v = 0;
+  while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+  while (v === 0) v = Math.random();
+  let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+
+  num = num / 10.0 + 0.5; // Translate to 0 -> 1
+  if (num > 1 || num < 0) num = randn_bm(min, max, skew); // resample between 0 and 1 if out of range
+  else {
+    num = Math.pow(num, skew); // Skew
+    num *= max - min; // Stretch to fill range
+    num += min; // offset to min
+  }
+  return num;
+}

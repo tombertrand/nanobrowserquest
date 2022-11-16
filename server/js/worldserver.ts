@@ -3,6 +3,7 @@ import "./store/cron";
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { RuneList } from "../../shared/js/types/rune";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
 import { postMessageToDiscordChatChannel } from "./discord";
@@ -18,7 +19,7 @@ import { Sentry } from "./sentry";
 import Spell from "./spell";
 import { purchase } from "./store/purchase";
 import Trade from "./trade";
-import { random, randomRange } from "./utils";
+import { getRandomJewelLevel, getRandomRuneLevel, random, randomRange } from "./utils";
 
 // ======= GAME SERVER ========
 
@@ -841,14 +842,14 @@ class World {
     this.pushBroadcast(new Messages.MinotaurLevelEnd());
   }
 
-  createItem(kind, x, y, partyId?: number) {
+  createItem(kind, x, y, partyId?: number, level?: number) {
     var id = "9" + this.itemCount++,
       item = null;
 
     if (kind === Types.Entities.CHEST) {
       item = new Chest(id, x, y);
     } else {
-      item = new Item(id, kind, x, y, partyId);
+      item = new Item(id, kind, x, y, partyId, level);
     }
     return item;
   }
@@ -1453,7 +1454,7 @@ class World {
   }
 
   getDroppedItem(mob, attacker) {
-    const itemName = this.getDroppedItemName(mob, attacker);
+    let itemName = this.getDroppedItemName(mob, attacker);
     const kind = Types.getKindFromString(itemName);
 
     if (mob.kind === Types.Entities.MINOTAUR) {
@@ -1464,7 +1465,8 @@ class World {
 
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
-      "jewelskull",
+      "rune",
+      // "jewelskull",
       // "ringplatinum",
       // "ringconqueror",
       // "amuletdemon",
@@ -1532,13 +1534,22 @@ class World {
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
     var randomDrop = random(randomDrops.length);
+    itemName = randomDrops[randomDrop];
 
-    return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
+    let itemLevel = null;
+
+    if (itemName === "jewelskull") {
+      itemLevel = getRandomJewelLevel(Types.getMobLevel(mob.kind));
+    } else if (itemName === "rune") {
+      itemName = `rune-${RuneList[getRandomRuneLevel(Types.getMobLevel(mob.kind)) - 1]}`;
+    }
 
     // Potions can be looted by anyone
     const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;
 
-    return itemName ? this.addItem(this.createItem(Types.getKindFromString(itemName), mob.x, mob.y, partyId)) : null;
+    return itemName
+      ? this.addItem(this.createItem(Types.getKindFromString(itemName), mob.x, mob.y, partyId, itemLevel))
+      : null;
   }
 
   onMobMoveCallback(mob) {

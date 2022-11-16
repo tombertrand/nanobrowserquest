@@ -687,7 +687,8 @@ class Player extends Character {
                     generatedItem = { item: `rune-${runeName}`, quantity: 1 };
                   }
                 } else {
-                  ({ isUnique, ...generatedItem } = self.generateItem({ kind }) || {}) as GeneratedItem;
+                  const jewelLevel = Types.isJewel(kind) ? item.level : null;
+                  ({ isUnique, ...generatedItem } = self.generateItem({ kind, jewelLevel }) || {}) as GeneratedItem;
                 }
 
                 if (generatedItem) {
@@ -1252,7 +1253,7 @@ class Player extends Character {
       .concat(isUnique ? _.shuffle(uniqueBonus).slice(0, 1) : []);
   }
 
-  generateItem({ kind, uniqueChances = 1, isLuckySlot = false }): GeneratedItem {
+  generateItem({ kind, uniqueChances = 1, isLuckySlot = false, jewelLevel = 1 }): GeneratedItem {
     let isUnique = false;
     let item;
 
@@ -1414,12 +1415,18 @@ class Player extends Character {
           .concat(_.shuffle(resistances).slice(0, 2))
           .concat(timeout);
       } else if (kind === Types.Entities.JEWELSKULL) {
+        // @TODO ~~~ Figure bonus per jewel level 1-5
+
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(_.shuffle(resistances).slice(0, isUnique ? 2 : 1));
       }
 
-      item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
+      item = {
+        item: Types.getKindAsString(kind),
+        level: jewelLevel,
+        bonus: JSON.stringify(bonus.sort((a, b) => a - b)),
+      };
     }
 
     return item;

@@ -13,6 +13,7 @@ export type GeneratedItem = {
   isUnique?: boolean;
   runeName?: string;
   socket?: number[];
+  jewelLevel?: number;
 };
 
 export type Resistances = {
