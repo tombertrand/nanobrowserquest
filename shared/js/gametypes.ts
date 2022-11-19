@@ -4,11 +4,13 @@ import { Slot } from "./slots";
 import { expForLevel } from "./types/experience";
 import {
   getHighestSocketRequirement,
+  getJewelRequirement,
   getRune,
   getRuneFromItem,
   getRuneNameFromItem,
   getRunesBonus,
   getRunewordBonus,
+  isRune,
   RUNE,
   RuneByKind,
   runeKind,
@@ -376,8 +378,10 @@ Types.RuneList = RuneList;
 Types.getRuneNameFromItem = getRuneNameFromItem;
 Types.getRuneFromItem = getRuneFromItem;
 Types.getHighestSocketRequirement = getHighestSocketRequirement;
+Types.getJewelRequirement = getJewelRequirement;
 Types.getRunesBonus = getRunesBonus;
 Types.getRune = getRune;
+Types.isRune = isRune;
 Types.getRunewordBonus = getRunewordBonus;
 Types.Runewords = Runewords;
 
@@ -1043,14 +1047,6 @@ Types.isJewel = function (kindOrString: number | string) {
   }
 };
 
-Types.isRune = function (kindOrString: number | string) {
-  if (typeof kindOrString === "number") {
-    return Types.RuneByKind[kindOrString];
-  } else {
-    return kindOrString?.startsWith("rune");
-  }
-};
-
 Types.isChest = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [Types.Entities.CHESTBLUE].includes(kindOrString);
@@ -1195,36 +1191,20 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
   }
 };
 
-Types.isUniqueJewel = function (kindOrString: number | string, bonus: number[] = [], level: number) {
+Types.isUniqueJewel = function (kindOrString: number | string, bonus: number[] = []) {
   if (!Types.isJewel(kindOrString)) return false;
 
-  if (level === 1) {
-    return bonus.length === 2;
-  } else if (level === 2) {
-    return bonus.length === 3;
-  } else if (level === 3) {
-    return bonus.length === 4;
-  } else if (level === 4) {
-    return bonus.length === 5;
-  } else if (level === 5) {
-    return bonus.length === 6;
-  }
-};
+  const elementPercentage = [27, 28, 29, 30, 31];
 
-Types.getJewelRequirement = function (level) {
-  let requirement = 4;
-
-  if (level === 5) {
-    requirement = 60;
-  } else if (level === 4) {
-    requirement = 45;
-  } else if (level === 3) {
-    requirement = 25;
-  } else if (level === 2) {
-    requirement = 8;
+  let isUnique = false;
+  for (let i = 0; i < elementPercentage.length; i++) {
+    if (bonus.includes(elementPercentage[i])) {
+      isUnique = true;
+      break;
+    }
   }
 
-  return requirement;
+  return isUnique;
 };
 
 Types.isStaticChest = function (kind: number) {
@@ -2042,6 +2022,7 @@ Types.isUnique = function (item, bonus) {
   const isShield = kinds[item][1] === "shield";
   const isRing = kinds[item][1] === "ring";
   const isAmulet = kinds[item][1] === "amulet";
+  const isJewel = kinds[item][1] === "jewel";
 
   let isUnique = false;
   bonus = !Array.isArray(bonus) && typeof bonus === "string" && bonus.length ? JSON.parse(bonus) : bonus;
@@ -2054,9 +2035,32 @@ Types.isUnique = function (item, bonus) {
     isUnique = bonus ? bonus.length >= 2 : false;
   } else if (isBelt || isArmor) {
     isUnique = bonus ? bonus.length >= 1 : false;
+  } else if (isJewel) {
+    isUnique = Types.isUniqueJewel(item, bonus);
   }
 
   return isUnique;
+};
+
+Types.getJewelBonus = function (rawSockets: string[]) {
+  let combinedBonus = {};
+  rawSockets?.forEach(rawSocket => {
+    if (typeof rawSocket !== "string") return;
+
+    const [item, rawLevel, rawBonus] = rawSocket.split("|");
+    if (!Types.isJewel(item)) return;
+
+    const level = parseInt(rawLevel);
+    const bonus = Types.getBonus(JSON.parse(rawBonus), level);
+
+    Object.entries(bonus).forEach(([key, value]) => {
+      if (!combinedBonus[key]) {
+        combinedBonus[key] = 0;
+      }
+      combinedBonus[key] += value;
+    });
+  });
+  return combinedBonus;
 };
 
 Types.getItemDetails = function ({
@@ -2084,8 +2088,8 @@ Types.getItemDetails = function ({
   const isJewel = Types.isJewel(item);
   const rune = isRune ? Types.getRuneFromItem(item) : null;
   const isSocket = rawSocket?.length;
-  const runeRequirement = isSocket ? Types.getHighestSocketRequirement(rawSocket) : null;
-  const jewelRequirement = isJewel ? Types.getJewelRequirement(level) : null;
+  const socketRequirement = isSocket ? Types.getHighestSocketRequirement(rawSocket) : null;
+  const jewelRequirement = isJewel ? Types.getJewelRequirement(rawBonus) : null;
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let name = Types.getDisplayName(item, isUnique);
@@ -2093,7 +2097,8 @@ Types.getItemDetails = function ({
   let healthBonus = 0;
   let bonus: any = {};
   let skill = null;
-  let socketBonus = {};
+  let socketRuneBonus = {};
+  let socketJewelBonus = {};
   let partyBonus = [];
   let runeBonus = [];
   let runeRank: null | Number = null;
@@ -2134,7 +2139,7 @@ Types.getItemDetails = function ({
   } else if (isJewel) {
     requirement = jewelRequirement;
   } else {
-    Types.getItemRequirement(item, level, isUnique);
+    requirement = Types.getItemRequirement(item, level, isUnique);
   }
   const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
 
@@ -2151,22 +2156,32 @@ Types.getItemDetails = function ({
 
     if (runeword && runewordBonus) {
       name = runeword;
-      socketBonus = runewordBonus;
+      socketRuneBonus = runewordBonus;
       isRuneword = true;
     } else {
-      socketBonus = Types.getRunesBonus(rawSocket);
+      socketRuneBonus = Types.getRunesBonus(rawSocket);
+      socketJewelBonus = Types.getJewelBonus(rawSocket);
     }
 
-    if (runeRequirement > requirement) {
-      requirement = runeRequirement;
+    if (socketRequirement > requirement) {
+      requirement = socketRequirement;
     }
   } else if (isRune) {
     runeBonus = Types.getAttributesBonus(Types.getRune(item).attribute, level);
     runeRank = rune.rank;
   }
 
-  if (Object.keys(socketBonus).length) {
-    Object.entries(socketBonus).forEach(([key, value]) => {
+  if (Object.keys(socketRuneBonus).length) {
+    Object.entries(socketRuneBonus).forEach(([key, value]) => {
+      if (!bonus[key]) {
+        bonus[key] = 0;
+      }
+      bonus[key] += value;
+    });
+  }
+
+  if (Object.keys(socketJewelBonus).length) {
+    Object.entries(socketJewelBonus).forEach(([key, value]) => {
       if (!bonus[key]) {
         bonus[key] = 0;
       }
@@ -2193,6 +2208,7 @@ Types.getItemDetails = function ({
     isUnique,
     isRune,
     isRuneword,
+    isJewel,
     itemClass,
     ...(isArmor || isBelt || isCape || isShield ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),

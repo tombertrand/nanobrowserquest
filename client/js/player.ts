@@ -642,7 +642,8 @@ class Player extends Character {
     return items
       .map((rawItem, slot) => {
         if (!rawItem) return false;
-        const [item, levelOrQuantity, bonus, socket, skill] = rawItem.split(":");
+        const delimiter = Types.isJewel(rawItem) ? "|" : ":";
+        const [item, levelOrQuantity, bonus, socket, skill] = rawItem.split(delimiter);
 
         const isWeapon = kinds[item][1] === "weapon";
         const isArmor = kinds[item][1] === "armor";

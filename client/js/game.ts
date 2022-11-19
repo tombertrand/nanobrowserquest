@@ -898,6 +898,7 @@ class Game {
           isUnique,
           isRune,
           isRuneword,
+          isJewel,
           itemClass,
           defense,
           damage,
@@ -918,7 +919,7 @@ class Game {
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
-              ${name}${level ? ` (+${level})` : ""}
+              ${name}${level && (!isRune && !isJewel) ? ` (+${level})` : ""}
               ${runeRank ? ` (#${runeRank})` : ""}
               ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
             </div>
@@ -934,9 +935,13 @@ class Game {
                 ? `<div class="socket-container">
                 ${_.range(0, socket)
                   .map(index => {
-                    const rune = Types.getRuneNameFromItem(rawSocket[index]);
-                    const image = rune ? `url(img/2/item-rune-${rune}.png)` : "none";
-
+                    let image = "none";
+                    if (typeof rawSocket[index] === "number") {
+                      const rune = Types.getRuneNameFromItem(rawSocket[index]);
+                      image = rune ? `url(img/2/item-rune-${rune}.png)` : "none";
+                    } else if (Types.isJewel(rawSocket[index])) {
+                      image = "url(img/2/item-jewelskull.png)";
+                    }
                     return `<div class="item-rune" style="background-image: ${image}; position: relative;"></div>`;
                   })
                   .join("")}</div>`
@@ -1576,6 +1581,7 @@ class Game {
     isDraggable = true,
   ) {
     if (socket) {
+      console.log("~~~~socket", socket);
       const socketRequirement = Types.getHighestSocketRequirement(JSON.parse(socket));
       if (socketRequirement > requirement) {
         requirement = socketRequirement;
@@ -5361,6 +5367,7 @@ class Game {
   updateTarget(targetId, points, healthPoints, maxHp) {
     if (this.player.hasTarget() && this.updatetarget_callback) {
       var target = this.getEntityById(targetId);
+      if (!target) return;
       if (target.type !== "player") {
         target.name = Types.getAliasFromName(Types.getKindAsString(target.kind));
       }

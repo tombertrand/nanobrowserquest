@@ -1,5 +1,13 @@
 import _ from "lodash";
 
+export const isRune = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return RuneByKind[kindOrString];
+  } else {
+    return kindOrString?.startsWith("rune");
+  }
+};
+
 export const RUNE = {
   SAT: 161,
   AL: 162,
@@ -281,11 +289,39 @@ export const getRuneFromItem = (rankOrString: number | string) => {
   return runeKind[rune];
 };
 
-export const getHighestSocketRequirement = (rawSocket: number[]) => {
-  const highestRank = [...rawSocket].sort((a, b) => b - a)[0];
-  if (!highestRank) return;
+export const getJewelRequirement = function (bonus) {
+  let requirement = 4;
 
-  const { requirement } = Object.values<{ rank: number; requirement: number }>(runeKind)[highestRank - 1];
+  if (bonus.length >= 5) {
+    requirement = 60;
+  } else if (bonus.length === 4) {
+    requirement = 45;
+  } else if (bonus.length === 3) {
+    requirement = 25;
+  } else if (bonus.length === 2) {
+    requirement = 8;
+  }
+
+  return requirement;
+};
+
+export const getHighestSocketRequirement = (rawSocket: any[]) => {
+  let requirement = 1;
+  for (let i = 0; i < rawSocket.length; i++) {
+    if (!rawSocket[i]) continue;
+
+    let rawRequirement = 1;
+    if (typeof rawSocket[i] === "number") {
+      ({ requirement: rawRequirement } = runeKind[RuneList[rawSocket[i] - 1]]);
+    } else if (typeof rawSocket[i] === "string") {
+      const [, , rawBonus] = rawSocket[i].split("|");
+      rawRequirement = getJewelRequirement(rawBonus);
+    }
+
+    if (rawRequirement > requirement) {
+      requirement = rawRequirement;
+    }
+  }
   return requirement;
 };
 
@@ -306,11 +342,12 @@ export const getRune = function (rawRune: string) {
   return rune;
 };
 
-export const getRunesBonus = function (runes: number[]) {
+export const getRunesBonus = function (runes: (number | string)[]) {
   const attributes = {};
 
   _.forEach(runes, kind => {
-    if (!kind) return;
+    if (!kind || typeof kind !== "number") return;
+
     const rune = getRuneFromItem(kind);
     Object.entries(rune.attribute).map(([type, stats]: [string, number]) => {
       if (!attributes[type]) {
@@ -336,7 +373,7 @@ export const getRunewordBonus = ({
   let runeword;
   let runewordBonus;
 
-  if (!isUnique && socket?.length && !socket.some(s => s === 0)) {
+  if (!isUnique && socket?.length && !socket.some(s => s === 0 || typeof s !== "number")) {
     const wordSocket = socket.map(s => RuneList[s - 1]).join("-");
     ({ name: runeword, bonus: runewordBonus } = Runewords[type]?.[wordSocket] || {});
   }

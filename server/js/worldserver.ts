@@ -1500,7 +1500,7 @@ class World {
       // "rune-al",
       // "rune-bul",
       // "rune-nan",
-      // "rune-mir",
+      "rune-mir",
       // "rune-gel",
       // "rune-do",
       // "rune-ban",

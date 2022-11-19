@@ -493,6 +493,7 @@ export const isValidSocketItem = items => {
   }
 
   const runeIndex = items.findIndex(item => item.startsWith("rune-"));
+  const jewelIndex = items.findIndex(item => item.startsWith("jewel"));
   const itemIndex = items.findIndex(item => !item.startsWith("rune-"));
 
   const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");
@@ -505,7 +506,7 @@ export const isValidSocketItem = items => {
   }
 
   if (
-    runeIndex === -1 ||
+    (runeIndex === -1 && jewelIndex === -1) ||
     itemIndex === -1 ||
     !Types.isSocketItem(item) ||
     !socket?.length ||
@@ -514,14 +515,17 @@ export const isValidSocketItem = items => {
     return false;
   }
 
-  const { rank } = Types.getRuneFromItem(items[runeIndex]);
-
-  if (!rank) {
-    return false;
-  }
-
   const socketIndex = socket.findIndex(s => s === 0);
-  socket[socketIndex] = rank;
+
+  if (runeIndex >= 0) {
+    const { rank } = Types.getRuneFromItem(items[runeIndex]);
+    if (!rank) {
+      return false;
+    }
+    socket[socketIndex] = rank;
+  } else if (jewelIndex >= 0) {
+    socket[socketIndex] = items[jewelIndex];
+  }
 
   const newItem = [item, level, bonus, JSON.stringify(socket), skill].filter(Boolean).join(":");
 
