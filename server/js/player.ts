@@ -1872,28 +1872,18 @@ class Player extends Character {
       }
 
       if (this.bonus.drainLife) {
-        this.addAura("drainlife");
-      } else if (hasDrainLifeAura && !this.bonus.drainLife) {
-        this.removeAura("drainlife");
+        this.auras.push("drainlife");
       }
-
       if (this.bonus.lightningDamage) {
-        this.addAura("thunderstorm");
-      } else if (hasThunderstormAura && !this.bonus.lightningDamage) {
-        this.removeAura("thunderstorm");
+        this.auras.push("thunderstorm");
       }
-
       if (this.bonus.highHealth) {
-        this.addAura("highhealth");
-      } else if (hasHighHealth && !this.bonus.highHealth) {
-        this.removeAura("highhealth");
+        this.auras.push("highhealth");
       }
-
       if (this.bonus.freezeChance) {
-        this.addAura("freeze");
-      } else if (hasFreezeAura && !this.bonus.freezeChance) {
-        this.removeAura("freeze");
+        this.auras.push("freeze");
       }
+      this.broadcast(new Messages.Auras(this), false);
     } catch (err) {
       console.log("Error: ", err);
       Sentry.captureException(err, {
@@ -1915,6 +1905,7 @@ class Player extends Character {
   }
 
   resetBonus() {
+    this.auras = [];
     this.bonus = Types.bonusType.reduce((acc, key) => {
       acc[key] = 0;
       return acc;
@@ -2060,7 +2051,8 @@ class Player extends Character {
   }
 
   calculateSocketBonus() {
-    let bonus = {};
+    let socketRuneBonus = {};
+    let socketJewelBonus = {};
 
     [
       [this.armorSocket, this.isArmorUnique, "armor"],
@@ -2070,32 +2062,15 @@ class Player extends Character {
       const { runewordBonus } = Types.getRunewordBonus({ isUnique, socket: rawSocket, type });
 
       if (runewordBonus) {
-        bonus = runewordBonus;
+        socketRuneBonus = runewordBonus;
       } else {
-        bonus = Types.getRunesBonus(rawSocket);
+        socketRuneBonus = Types.getRunesBonus(rawSocket);
+        socketJewelBonus = Types.getJewelBonus(rawSocket);
       }
-      if (Object.keys(bonus)) {
-        Object.entries(bonus).map(([type, stats]) => {
-          this.bonus[type] += stats;
-        });
-      }
+
+      this.bonus = Types.combineBonus(this.bonus, socketRuneBonus);
+      this.bonus = Types.combineBonus(this.bonus, socketJewelBonus);
     });
-  }
-
-  addAura(aura) {
-    const index = this.auras.indexOf(aura);
-    if (index === -1) {
-      this.auras.push(aura);
-      this.broadcast(new Messages.Auras(this), false);
-    }
-  }
-
-  removeAura(aura) {
-    const index = this.auras.indexOf(aura);
-    if (index > -1) {
-      this.auras.splice(index, 1);
-      this.broadcast(new Messages.Auras(this), false);
-    }
   }
 
   updateHitPoints(reset?: boolean) {

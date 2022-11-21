@@ -661,10 +661,10 @@ class Player extends Character {
         let quantity = null;
 
         if (isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet || isJewel) {
-          level = levelOrQuantity;
+          level = parseInt(levelOrQuantity);
           requirement = Types.getItemRequirement(item, levelOrQuantity);
         } else if (Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item)) {
-          quantity = levelOrQuantity;
+          quantity = parseInt(levelOrQuantity);
         }
 
         return {

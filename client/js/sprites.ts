@@ -120,6 +120,9 @@ import auraFreeze from "../sprites/aura-freeze.json";
 import skillHeal from "../sprites/skill-heal.json";
 import skillDefense from "../sprites/skill-defense.json";
 import skillCurseAttack from "../sprites/skill-curse-attack.json";
+import skillLightning from "../sprites/skill-lightning.json";
+import skillFlame from "../sprites/skill-flame.json";
+import skillPoison from "../sprites/skill-poison.json";
 import agent from "../sprites/npc.json";
 import beachnpc from "../sprites/npc.json";
 import coder from "../sprites/npc.json";
@@ -407,6 +410,9 @@ const sprites = {
   "skill-heal": skillHeal,
   "skill-defense": skillDefense,
   "skill-curse-attack": skillCurseAttack,
+  "skill-lightning": skillLightning,
+  "skill-flame": skillFlame,
+  "skill-poison": skillPoison,
   villagegirl,
   villager,
   carlosmatos,

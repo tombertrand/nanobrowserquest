@@ -10,14 +10,14 @@ import {
   getRuneNameFromItem,
   getRunesBonus,
   getRunewordBonus,
-  isRune,
+  isRune as isRuneImport,
   RUNE,
   RuneByKind,
   runeKind,
   RuneList,
   Runewords,
 } from "./types/rune";
-import { kindAsStringToSet, setBonus, setItems, setItemsNameMap } from "./types/set";
+import { kindAsStringToSet, setBonus as setBonusImport, setItems, setItemsNameMap } from "./types/set";
 
 export const Types: any = {
   Store: {
@@ -367,7 +367,7 @@ export const Types: any = {
 };
 
 Types.expForLevel = expForLevel;
-Types.setBonus = setBonus;
+Types.setBonus = setBonusImport;
 Types.kindAsStringToSet = kindAsStringToSet;
 Types.setItems = setItems;
 Types.setItemsNameMap = setItemsNameMap;
@@ -381,7 +381,7 @@ Types.getHighestSocketRequirement = getHighestSocketRequirement;
 Types.getJewelRequirement = getJewelRequirement;
 Types.getRunesBonus = getRunesBonus;
 Types.getRune = getRune;
-Types.isRune = isRune;
+Types.isRune = isRuneImport;
 Types.getRunewordBonus = getRunewordBonus;
 Types.Runewords = Runewords;
 
@@ -2063,6 +2063,17 @@ Types.getJewelBonus = function (rawSockets: string[]) {
   return combinedBonus;
 };
 
+Types.combineBonus = function (bonus1, bonus2) {
+  Object.entries(bonus2).forEach(([key, value]) => {
+    if (!bonus1[key]) {
+      bonus1[key] = 0;
+    }
+    bonus1[key] += value;
+  });
+
+  return bonus1;
+};
+
 Types.getItemDetails = function ({
   item,
   level,
@@ -2163,30 +2174,15 @@ Types.getItemDetails = function ({
       socketJewelBonus = Types.getJewelBonus(rawSocket);
     }
 
+    bonus = Types.combineBonus(bonus, socketRuneBonus);
+    bonus = Types.combineBonus(bonus, socketJewelBonus);
+
     if (socketRequirement > requirement) {
       requirement = socketRequirement;
     }
   } else if (isRune) {
     runeBonus = Types.getAttributesBonus(Types.getRune(item).attribute, level);
     runeRank = rune.rank;
-  }
-
-  if (Object.keys(socketRuneBonus).length) {
-    Object.entries(socketRuneBonus).forEach(([key, value]) => {
-      if (!bonus[key]) {
-        bonus[key] = 0;
-      }
-      bonus[key] += value;
-    });
-  }
-
-  if (Object.keys(socketJewelBonus).length) {
-    Object.entries(socketJewelBonus).forEach(([key, value]) => {
-      if (!bonus[key]) {
-        bonus[key] = 0;
-      }
-      bonus[key] += value;
-    });
   }
 
   if (Object.keys(bonus).length) {

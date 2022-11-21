@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+import { toArray, } from "../utils";
+
 export const isRune = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return RuneByKind[kindOrString];
@@ -315,7 +317,7 @@ export const getHighestSocketRequirement = (rawSocket: any[]) => {
       ({ requirement: rawRequirement } = runeKind[RuneList[rawSocket[i] - 1]]);
     } else if (typeof rawSocket[i] === "string") {
       const [, , rawBonus] = rawSocket[i].split("|");
-      rawRequirement = getJewelRequirement(rawBonus);
+      rawRequirement = getJewelRequirement(toArray(rawBonus));
     }
 
     if (rawRequirement > requirement) {

@@ -6,7 +6,6 @@ import Character from "./character";
 import Detect from "./detect";
 import Item from "./item";
 import Player from "./player";
-import Spell from "./spell";
 import Timer from "./timer";
 
 class Renderer {
@@ -647,9 +646,12 @@ class Renderer {
           ) {
             spriteImage = sprite.imageunique;
           }
-        } else if (entity.kind === Types.Entities.GUARD) {
-          spriteImage = sprite[`image${this.game.player.network}`];
+        } else if (entity.kind === Types.Entities.GUARD && this.game.player.network === "nano") {
+          sprite["image"].src = sprite["image"].src.replace("guard.png", "guardbanano.png");
         }
+        //  else if (entity.kind === Types.Entities.GUARD) {
+        //   spriteImage = sprite[`image${this.game.player.network}`];
+        // }
 
         if (!entity.isDead) {
           if (entity.isFrozen) {
@@ -879,6 +881,40 @@ class Renderer {
             dh = h * ds;
 
           this.context.drawImage(sprite.image, x, y, w, h, -8 * this.scale, -14 * this.scale, dw, dh);
+        }
+      }
+
+      if (entity instanceof Player && false) {
+        var sprite = this.game.sprites[`skill-lightning`];
+        var anim = this.game.skillLightning;
+
+        var sprite = this.game.sprites[`skill-flame`];
+        var anim = this.game.skillFlame;
+
+        var sprite = this.game.sprites[`skill-poison`];
+        var anim = this.game.skillPoison;
+
+        if (sprite && anim) {
+          var os = this.upscaledRendering ? 1 : this.scale;
+          var ds = this.upscaledRendering ? this.scale : 1;
+          // @ts-ignore
+          var { x: entityX, y: entityY } = entity;
+
+          var frame = anim.currentFrame,
+            s = this.scale,
+            x = frame.x * os,
+            y = frame.y * os,
+            w = sprite.width * os,
+            h = sprite.height * os,
+            ts = 16,
+            dx = entityX * s,
+            dy = entityY * s,
+            dw = w * ds,
+            dh = h * ds,
+            ox = sprite.offsetX * s,
+            oy = sprite.offsetY * s;
+
+          this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
         }
       }
 

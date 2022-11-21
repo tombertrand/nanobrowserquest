@@ -70,6 +70,7 @@ class AudioManager {
       "skill-heal",
       "skill-defense",
       "skill-curse-attack",
+      "skill-lightning",
     ];
 
     var loadSoundFiles = function () {

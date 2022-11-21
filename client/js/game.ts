@@ -126,6 +126,9 @@ class Game {
   freezeAnimation: Animation;
   anvilAnimation: Animation;
   skillAnimation: Animation;
+  skillLightning: Animation;
+  skillFlame: Animation;
+  skillPoison: Animation;
   weaponEffectAnimation: Animation;
   client: any;
   achievements: any;
@@ -214,6 +217,9 @@ class Game {
     this.freezeAnimation = null;
     this.anvilAnimation = null;
     this.skillAnimation = null;
+    this.skillLightning = null;
+    this.skillFlame = null;
+    this.skillPoison = null;
     this.weaponEffectAnimation = null;
     this.partyInvites = [];
     this.partyInvitees = [];
@@ -286,6 +292,9 @@ class Game {
       "skill-heal",
       "skill-defense",
       "skill-curse-attack",
+      "skill-lightning",
+      "skill-flame",
+      "skill-poison",
       "talk",
       "sparks",
       "weapon-effect-magic",
@@ -658,6 +667,16 @@ class Game {
     this.skillAnimation = new Animation("idle_down", 8, 0, 32, 32);
     this.skillAnimation.setSpeed(125);
 
+    this.skillLightning = new Animation("idle_down", 8, 0, 28, 50);
+    this.skillLightning.setSpeed(125);
+
+    this.skillFlame = new Animation("idle_down", 12, 0, 34, 58);
+    this.skillFlame.setSpeed(125);
+
+    this.skillPoison = new Animation("idle_down", 8, 0, 24, 60);
+    this.skillPoison.setSpeed(125);
+
+
     this.weaponEffectAnimation = new Animation("idle_down", 6, 0, 20, 20);
     this.weaponEffectAnimation.setSpeed(140);
   }
@@ -919,7 +938,7 @@ class Game {
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
-              ${name}${level && (!isRune && !isJewel) ? ` (+${level})` : ""}
+              ${name}${level && !isRune && !isJewel ? ` (+${level})` : ""}
               ${runeRank ? ` (#${runeRank})` : ""}
               ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
             </div>
@@ -940,7 +959,12 @@ class Game {
                       const rune = Types.getRuneNameFromItem(rawSocket[index]);
                       image = rune ? `url(img/2/item-rune-${rune}.png)` : "none";
                     } else if (Types.isJewel(rawSocket[index])) {
-                      image = "url(img/2/item-jewelskull.png)";
+                      let [, jewelLevel] = (rawSocket[index] as unknown as string).split("|") || [];
+                      let imageIndex: string | number = "";
+                      if (jewelLevel && jewelLevel !== "1") {
+                        imageIndex = parseInt(jewelLevel) - 1;
+                      }
+                      image = `url(img/2/item-jewelskull${imageIndex}.png)`;
                     }
                     return `<div class="item-rune" style="background-image: ${image}; position: relative;"></div>`;
                   })
@@ -1280,12 +1304,14 @@ class Game {
     $(".item-draggable.ui-draggable").draggable("destroy");
   }
 
-  getIconPath(spriteName: string, level?: string | number) {
+  getIconPath(spriteName: string, level?: number) {
     const scale = this.renderer.getScaleFactor();
 
     let suffix = "";
-    if (spriteName === "cape" && parseInt(level as string, 10) >= 7) {
+    if (spriteName === "cape" && level >= 7) {
       suffix = "7";
+    } else if (spriteName === "jewelskull" && level !== 1) {
+      suffix = `${level - 1}`;
     }
 
     return `img/${scale}/item-${spriteName}${suffix}.png`;
@@ -1581,7 +1607,6 @@ class Game {
     isDraggable = true,
   ) {
     if (socket) {
-      console.log("~~~~socket", socket);
       const socketRequirement = Types.getHighestSocketRequirement(JSON.parse(socket));
       if (socketRequirement > requirement) {
         requirement = socketRequirement;
@@ -3633,8 +3658,8 @@ class Game {
         $("#player-coldResistance").text(bonus.coldResistance);
         $("#player-poisonResistance").text(bonus.poisonResistance);
         $("#player-physicalResistance").text(bonus.physicalResistance);
-        $("#player-magicFind").text(bonus.magicFind);
-        $("#player-attackSpeed").text(bonus.attackSpeed);
+        // $("#player-magicFind").text(bonus.magicFind);
+        // $("#player-attackSpeed").text(bonus.attackSpeed);
         $("#player-exp").text(bonus.exp);
         $("#player-skillTimeout").text(bonus.skillTimeout);
       });

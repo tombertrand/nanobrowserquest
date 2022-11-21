@@ -75,15 +75,16 @@ class Sprite {
       this.image9 = new Image();
       this.image9.crossOrigin = "Anonymous";
       this.image9.src = "img/" + this.scale + "/" + this.id + "9" + ".png";
-    } else if (this.name === "guard") {
-      this.imagenano = new Image();
-      this.imagenano.crossOrigin = "Anonymous";
-      this.imagenano.src = "img/" + this.scale + "/nanoguard.png";
+    }
+    //  else if (this.name === "guard") {
+    //   this.imagenano = new Image();
+    //   this.imagenano.crossOrigin = "Anonymous";
+    //   this.imagenano.src = "img/" + this.scale + "/nanoguard.png";
 
-      this.imageban = new Image();
-      this.imageban.crossOrigin = "Anonymous";
-      this.imageban.src = "img/" + this.scale + "/banguard.png";
-    } else if (["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor"].includes(this.name)) {
+    //   this.imageban = new Image();
+    //   this.imageban.crossOrigin = "Anonymous";
+    //   this.imageban.src = "img/" + this.scale + "/banguard.png";
+    else if (["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor"].includes(this.name)) {
       this.imageunique = new Image();
       this.imageunique.crossOrigin = "Anonymous";
       this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + ".png";
