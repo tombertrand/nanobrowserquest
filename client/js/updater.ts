@@ -342,6 +342,7 @@ class Updater {
     this.game.skillAnimation?.update(t);
     this.game.skillLightning?.update(t);
     this.game.skillFlame?.update(t);
+    this.game.skillCold?.update(t);
     this.game.skillPoison?.update(t);
     this.game.weaponEffectAnimation?.update(t);
   }

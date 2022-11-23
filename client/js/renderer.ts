@@ -885,14 +885,17 @@ class Renderer {
       }
 
       if (entity instanceof Player && false) {
-        var sprite = this.game.sprites[`skill-lightning`];
-        var anim = this.game.skillLightning;
+        // var sprite = this.game.sprites[`skill-lightning`];
+        // var anim = this.game.skillLightning;
 
-        var sprite = this.game.sprites[`skill-flame`];
-        var anim = this.game.skillFlame;
+        // var sprite = this.game.sprites[`skill-flame`];
+        // var anim = this.game.skillFlame;
 
-        var sprite = this.game.sprites[`skill-poison`];
-        var anim = this.game.skillPoison;
+        var sprite = this.game.sprites[`skill-cold`];
+        var anim = this.game.skillCold;
+
+        // var sprite = this.game.sprites[`skill-poison`];
+        // var anim = this.game.skillPoison;
 
         if (sprite && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;

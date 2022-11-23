@@ -128,6 +128,7 @@ class Game {
   skillAnimation: Animation;
   skillLightning: Animation;
   skillFlame: Animation;
+  skillCold: Animation;
   skillPoison: Animation;
   weaponEffectAnimation: Animation;
   client: any;
@@ -219,6 +220,7 @@ class Game {
     this.skillAnimation = null;
     this.skillLightning = null;
     this.skillFlame = null;
+    this.skillCold = null;
     this.skillPoison = null;
     this.weaponEffectAnimation = null;
     this.partyInvites = [];
@@ -294,6 +296,7 @@ class Game {
       "skill-curse-attack",
       "skill-lightning",
       "skill-flame",
+      "skill-cold",
       "skill-poison",
       "talk",
       "sparks",
@@ -667,15 +670,17 @@ class Game {
     this.skillAnimation = new Animation("idle_down", 8, 0, 32, 32);
     this.skillAnimation.setSpeed(125);
 
-    this.skillLightning = new Animation("idle_down", 8, 0, 28, 50);
-    this.skillLightning.setSpeed(125);
-
     this.skillFlame = new Animation("idle_down", 12, 0, 34, 58);
     this.skillFlame.setSpeed(125);
 
+    this.skillLightning = new Animation("idle_down", 8, 0, 28, 50);
+    this.skillLightning.setSpeed(125);
+
+    this.skillCold = new Animation("idle_down", 14, 0, 72, 72);
+    this.skillCold.setSpeed(75);
+
     this.skillPoison = new Animation("idle_down", 8, 0, 24, 60);
     this.skillPoison.setSpeed(125);
-
 
     this.weaponEffectAnimation = new Animation("idle_down", 6, 0, 20, 20);
     this.weaponEffectAnimation.setSpeed(140);
@@ -1758,8 +1763,8 @@ class Game {
       return;
     }
 
-    const skillName = Types.skillTypeAnimationMap[this.player.shieldSkill];
-    const originalTimeout = Math.floor(Types.skillDelay[this.player.shieldSkill]);
+    const skillName = Types.defenseSkillTypeAnimationMap[this.player.shieldSkill];
+    const originalTimeout = Math.floor(Types.defenseSkillDelay[this.player.shieldSkill]);
     const timeout = Math.round(originalTimeout - originalTimeout * (this.player.bonus.skillTimeout / 100));
 
     skillSlot
@@ -1769,7 +1774,10 @@ class Game {
       .attr("style", `transition: width ${timeout / 1000}s linear;`);
 
     this.skillAnimation.reset();
-    this.player.setSkillAnimation(skillName, Types.skillDurationMap[this.player.shieldSkill](this.player.shieldLevel));
+    this.player.setSkillAnimation(
+      skillName,
+      Types.defenseSkillDurationMap[this.player.shieldSkill](this.player.shieldLevel),
+    );
     this.audioManager.playSound(`skill-${skillName}`);
 
     this.client.sendSkill(this.player.shieldSkill);
@@ -1783,7 +1791,7 @@ class Game {
   }
 
   setShieldSkill(skill) {
-    const skillName = Types.skillTypeAnimationMap[skill] || null;
+    const skillName = Types.defenseSkillTypeAnimationMap[skill] || null;
     $("#skill-shield").attr("class", skillName ? `skill-${skillName}` : null);
   }
 
@@ -3733,7 +3741,10 @@ class Game {
       self.client.onPlayerSkill(function ({ id: playerId, skill, level }) {
         var player = self.getEntityById(playerId);
         if (player) {
-          player.setSkillAnimation(Types.skillTypeAnimationMap[skill], Types.skillDurationMap[skill](level));
+          player.setSkillAnimation(
+            Types.defenseSkillTypeAnimationMap[skill],
+            Types.defenseSkillDurationMap[skill](level),
+          );
         }
       });
 

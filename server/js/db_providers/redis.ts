@@ -23,6 +23,7 @@ import {
   generateBlueChestItem,
   getIsTransmuteSuccess,
   isUpgradeSuccess,
+  isValidAddWeaponSkill,
   isValidRecipe,
   isValidSocketItem,
   isValidStoneSocket,

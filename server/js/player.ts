@@ -687,7 +687,7 @@ class Player extends Character {
                     generatedItem = { item: `rune-${runeName}`, quantity: 1 };
                   }
                 } else {
-                  const jewelLevel = Types.isJewel(kind) ? item.level : null;
+                  const jewelLevel = Types.isJewel(kind) ? item.level : 1;
                   ({ isUnique, ...generatedItem } = self.generateItem({ kind, jewelLevel }) || {}) as GeneratedItem;
                 }
 
@@ -1183,7 +1183,7 @@ class Player extends Character {
 
           if (this.shieldSkill === 0) {
             if (!self.hasFullHealth()) {
-              const { stats: percent } = Types.getSkill(0, this.shieldLevel);
+              const { stats: percent } = Types.getDefenseSkill(0, this.shieldLevel);
 
               let healAmount = Math.round((percent / 100) * this.maxHitPoints);
               let healthDiff = this.maxHitPoints - this.hitPoints;
@@ -1195,7 +1195,7 @@ class Player extends Character {
               self.server.pushToPlayer(self, self.health());
             }
           } else if (this.shieldSkill === 1) {
-            const { stats: percent } = Types.getSkill(0, this.shieldLevel);
+            const { stats: percent } = Types.getDefenseSkill(0, this.shieldLevel);
 
             self.skill.defense = percent;
             self.sendPlayerStats();
@@ -1203,10 +1203,10 @@ class Player extends Character {
               self.skill.defense = 0;
               self.sendPlayerStats();
               self.shieldSkillDefenseTimeout = null;
-            }, Types.skillDurationMap[this.shieldSkill](this.shieldLevel));
+            }, Types.defenseSkillDurationMap[this.shieldSkill](this.shieldLevel));
           }
 
-          const originalTimeout = Math.floor(Types.skillDelay[this.shieldSkill]);
+          const originalTimeout = Math.floor(Types.defenseSkillDelay[this.shieldSkill]);
           const timeout = Math.round(originalTimeout - originalTimeout * (this.bonus.skillTimeout / 100));
 
           self.shieldSkillTimeout = setTimeout(() => {
@@ -1278,15 +1278,16 @@ class Player extends Character {
         }
       }
 
-      if (Types.isShield(kind)) {
-        if (kind >= Types.Entities.SHIELDGOLDEN) {
-          const resistanceBonus = [21, 22, 23, 24];
-          const shieldSkill = [0, 1];
-          bonus = _.shuffle(resistanceBonus)
-            .slice(0, isUnique ? 2 : 1)
-            .sort();
-          skill = _.shuffle(shieldSkill).slice(0, 1);
-        }
+      if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
+        const resistanceBonus = [21, 22, 23, 24];
+        const shieldSkill = [0, 1];
+        bonus = _.shuffle(resistanceBonus)
+          .slice(0, isUnique ? 2 : 1)
+          .sort();
+        skill = _.shuffle(shieldSkill).slice(0, 1);
+      } else if (Types.isWeapon(kind) && kind >= Types.Entities.GOLDENSWORD) {
+        const weaponSkill = [0, 1, 2, 3];
+        skill = _.shuffle(weaponSkill).slice(0, 1);
       }
 
       item = {

@@ -122,6 +122,7 @@ import skillDefense from "../sprites/skill-defense.json";
 import skillCurseAttack from "../sprites/skill-curse-attack.json";
 import skillLightning from "../sprites/skill-lightning.json";
 import skillFlame from "../sprites/skill-flame.json";
+import skillCold from "../sprites/skill-cold.json";
 import skillPoison from "../sprites/skill-poison.json";
 import agent from "../sprites/npc.json";
 import beachnpc from "../sprites/npc.json";
@@ -412,6 +413,7 @@ const sprites = {
   "skill-curse-attack": skillCurseAttack,
   "skill-lightning": skillLightning,
   "skill-flame": skillFlame,
+  "skill-cold": skillCold,
   "skill-poison": skillPoison,
   villagegirl,
   villager,

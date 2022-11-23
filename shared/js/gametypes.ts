@@ -18,6 +18,15 @@ import {
   Runewords,
 } from "./types/rune";
 import { kindAsStringToSet, setBonus as setBonusImport, setItems, setItemsNameMap } from "./types/set";
+import {
+  attackSkillDelay,
+  attackSkillDurationMap,
+  defenseSkillDelay,
+  defenseSkillDurationMap,
+  defenseSkillTypeAnimationMap,
+  getAttackSkill,
+  getDefenseSkill,
+} from "./types/skill";
 
 export const Types: any = {
   Store: {
@@ -33,98 +42,98 @@ export const Types: any = {
     LOGIN: 1,
     WELCOME: 2,
     SPAWN: 3,
-    SPAWN_BATCH: 92,
-    DESPAWN: 4,
-    MOVE: 5,
-    LOOTMOVE: 6,
-    AGGRO: 7,
-    ATTACK: 8,
-    RAISE: 49,
-    HIT: 9,
-    HURT: 10,
-    HURT_SPELL: 91,
-    HEALTH: 11,
-    CHAT: 12,
-    LOOT: 13,
-    EQUIP: 14,
-    AURAS: 51,
-    SKILL: 75,
-    DROP: 15,
-    TELEPORT: 16,
-    DAMAGE: 17,
-    POPULATION: 18,
-    KILL: 19,
-    LIST: 20,
-    WHO: 21,
-    ZONE: 22,
-    DESTROY: 23,
-    STATS: 24,
-    BLINK: 25,
-    OPEN: 26,
-    CHECK: 27,
-    PVP: 28,
-    ACHIEVEMENT: 31,
-    BOSS_CHECK: 32,
-    BAN_PLAYER: 33,
-    REQUEST_PAYOUT: 34,
-    NOTIFICATION: 35,
-    INVENTORY: 36,
-    STASH: 50,
-    UPGRADE: 37,
-    MOVE_ITEM: 38,
-    MOVE_ITEMS_TO_INVENTORY: 39,
-    UPGRADE_ITEM: 40,
-    ANVIL_UPGRADE: 41,
-    ANVIL_RECIPE: 42,
-    ANVIL_ODDS: 89,
-    WAYPOINT: 43,
-    WAYPOINTS_UPDATE: 44,
-    STORE_ITEMS: 45,
-    PURCHASE_CREATE: 46,
-    PURCHASE_CANCEL: 47,
-    PURCHASE_COMPLETED: 48,
-    PURCHASE_ERROR: 52,
-    COWLEVEL_START: 53,
-    COWLEVEL_INPROGRESS: 54,
-    COWLEVEL_END: 55,
-    DEATHANGEL_CAST: 93,
-    SETBONUS: 56,
-    PARTY: 57,
+    SPAWN_BATCH: 4,
+    DESPAWN: 5,
+    MOVE: 6,
+    LOOTMOVE: 7,
+    AGGRO: 8,
+    ATTACK: 9,
+    RAISE: 10,
+    HIT: 11,
+    HURT: 12,
+    HURT_SPELL: 13,
+    HEALTH: 14,
+    CHAT: 15,
+    LOOT: 16,
+    EQUIP: 17,
+    AURAS: 18,
+    SKILL: 19,
+    DROP: 20,
+    TELEPORT: 21,
+    DAMAGE: 22,
+    POPULATION: 23,
+    KILL: 24,
+    LIST: 25,
+    WHO: 26,
+    ZONE: 27,
+    DESTROY: 28,
+    STATS: 29,
+    BLINK: 30,
+    OPEN: 31,
+    CHECK: 32,
+    PVP: 33,
+    ACHIEVEMENT: 34,
+    BOSS_CHECK: 35,
+    BAN_PLAYER: 36,
+    REQUEST_PAYOUT: 37,
+    NOTIFICATION: 38,
+    INVENTORY: 39,
+    STASH: 40,
+    UPGRADE: 41,
+    MOVE_ITEM: 42,
+    MOVE_ITEMS_TO_INVENTORY: 43,
+    UPGRADE_ITEM: 44,
+    ANVIL_UPGRADE: 45,
+    ANVIL_RECIPE: 46,
+    ANVIL_ODDS: 47,
+    WAYPOINT: 48,
+    WAYPOINTS_UPDATE: 49,
+    STORE_ITEMS: 50,
+    PURCHASE_CREATE: 51,
+    PURCHASE_CANCEL: 52,
+    PURCHASE_COMPLETED: 53,
+    PURCHASE_ERROR: 54,
+    COWLEVEL_START: 55,
+    COWLEVEL_INPROGRESS: 56,
+    COWLEVEL_END: 57,
+    DEATHANGEL_CAST: 58,
+    SETBONUS: 59,
+    PARTY: 60,
     PARTY_ACTIONS: {
-      CREATE: 58,
-      JOIN: 59,
-      REFUSE: 74,
-      INVITE: 60,
-      LEAVE: 61,
-      REMOVE: 62,
-      DISBAND: 63,
-      LEADER: 64,
-      INFO: 65,
-      ERROR: 66,
-      LOOT: 67,
-      HEALTH: 68,
+      CREATE: 61,
+      JOIN: 62,
+      REFUSE: 63,
+      INVITE: 64,
+      LEAVE: 65,
+      REMOVE: 66,
+      DISBAND: 67,
+      LEADER: 68,
+      INFO: 69,
+      ERROR: 70,
+      LOOT: 71,
+      HEALTH: 72,
     },
-    TRADE: 76,
+    TRADE: 73,
     TRADE_ACTIONS: {
-      REQUEST_SEND: 77,
-      REQUEST_RECEIVE: 78,
-      REQUEST_ACCEPT: 79,
-      REQUEST_REFUSE: 80,
-      INFO: 81,
-      ERROR: 82,
-      START: 83,
-      CLOSE: 84,
-      PLAYER1_MOVE_ITEM: 85,
-      PLAYER2_MOVE_ITEM: 86,
-      PLAYER1_STATUS: 87,
-      PLAYER2_STATUS: 88,
+      REQUEST_SEND: 74,
+      REQUEST_RECEIVE: 75,
+      REQUEST_ACCEPT: 76,
+      REQUEST_REFUSE: 77,
+      INFO: 78,
+      ERROR: 79,
+      START: 80,
+      CLOSE: 81,
+      PLAYER1_MOVE_ITEM: 82,
+      PLAYER2_MOVE_ITEM: 83,
+      PLAYER1_STATUS: 84,
+      PLAYER2_STATUS: 85,
     },
-    SETTINGS: 69,
-    MINOTAURLEVEL_START: 70,
-    MINOTAURLEVEL_INPROGRESS: 71,
-    MINOTAURLEVEL_END: 72,
-    FROZEN: 73,
-    POISONED: 90,
+    SETTINGS: 86,
+    MINOTAURLEVEL_START: 87,
+    MINOTAURLEVEL_INPROGRESS: 88,
+    MINOTAURLEVEL_END: 89,
+    FROZEN: 90,
+    POISONED: 91,
   },
 
   Entities: {
@@ -371,7 +380,6 @@ Types.setBonus = setBonusImport;
 Types.kindAsStringToSet = kindAsStringToSet;
 Types.setItems = setItems;
 Types.setItemsNameMap = setItemsNameMap;
-
 Types.runeKind = runeKind;
 Types.RuneByKind = RuneByKind;
 Types.RuneList = RuneList;
@@ -384,6 +392,13 @@ Types.getRune = getRune;
 Types.isRune = isRuneImport;
 Types.getRunewordBonus = getRunewordBonus;
 Types.Runewords = Runewords;
+Types.getDefenseSkill = getDefenseSkill;
+Types.getAttackSkill = getAttackSkill;
+Types.defenseSkillDelay = defenseSkillDelay;
+Types.attackSkillDelay = attackSkillDelay;
+Types.defenseSkillTypeAnimationMap = defenseSkillTypeAnimationMap;
+Types.defenseSkillDurationMap = defenseSkillDurationMap;
+Types.attackSkillDurationMap = attackSkillDurationMap;
 
 Types.Entities.Potion = [
   Types.Entities.FLASK,
@@ -1755,29 +1770,6 @@ Types.getAttributesBonus = function (attributes, level) {
 
 Types.getFrozenTimePerLevel = (itemLevel: number) => itemLevel * 250;
 
-Types.skillDurationMap = {
-  0: () => 900,
-  1: (itemLevel: number) => itemLevel * 500,
-  2: (itemLevel: number) => itemLevel * 500,
-};
-
-Types.getSkillDescriptionMap = [
-  "+#% Instant health regeneration",
-  "+#% Defense for # seconds",
-  // "-#% Attack damage from your attacking enemies",
-  // "+#% block chances for # seconds",
-  // "-#% Attack damage from your enemies for # seconds",
-];
-
-Types.skillType = [
-  "regenerateHealthSkill", // 0
-  "defenseSkill", // 1
-  // "curseAttackSkill", // 2
-  // "freezeNovaSkill", // 3
-];
-
-Types.skillDelay = [24_000, 35_000, 60_000];
-
 Types.bonusCap = {
   reduceFrozenChance: 50,
   magicResistance: 90,
@@ -1790,37 +1782,6 @@ Types.bonusCap = {
   attackSpeed: 50,
   magicFind: 100,
   skillTimeout: 50,
-};
-
-Types.skillTypeAnimationMap = ["heal", "defense", "curse-attack"];
-
-Types.getSkill = function (rawSkill, level) {
-  const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  const defenseSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  // const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  // const freezeNovaSkillPerLevel = [1, 3, 6, 10, 15, 22, 30, 40, 55, 70];
-
-  const skillPerLevel = [
-    regenerateHealthSkillPerLevel,
-    defenseSkillPerLevel,
-    // curseAttackSkillPerLevel,
-    // freezeNovaSkillPerLevel,
-  ];
-
-  let skill: { type: string; stats: number; description: string } | null = null;
-
-  const type = Types.skillType[rawSkill];
-  const stats = skillPerLevel[rawSkill][level - 1];
-
-  let description = Types.getSkillDescriptionMap[rawSkill].replace("#", stats);
-
-  if (["defenseSkill", "curseAttackSkill"].includes(type)) {
-    description = description.replace("#", Types.skillDurationMap[rawSkill](level) / 1000);
-  }
-
-  skill = { type, stats, description };
-
-  return skill;
 };
 
 Types.getUpgradeSuccessRates = () => {
@@ -2078,14 +2039,14 @@ Types.getItemDetails = function ({
   item,
   level,
   rawBonus,
-  rawSkill,
   rawSocket,
+  rawSkill,
 }: {
   item: string;
   level: number;
   rawBonus: number[];
+  rawSocket?: number[];
   rawSkill?: number;
-  rawSocket: number[];
 }) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
@@ -2122,6 +2083,7 @@ Types.getItemDetails = function ({
     if (!isUnique) {
       magicDamage = Types.getWeaponMagicDamage(level);
     }
+    skill = typeof rawSkill === "number" ? Types.getAttackSkill(rawSkill, level) : null;
   } else if (isArmor) {
     type = "armor";
     healthBonus = Types.getArmorHealthBonus(level);
@@ -2131,7 +2093,7 @@ Types.getItemDetails = function ({
   } else if (isShield) {
     type = "shield";
     healthBonus = Types.getArmorHealthBonus(level);
-    skill = rawSkill ? Types.getSkill(rawSkill, level) : null;
+    skill = typeof rawSkill === "number" ? Types.getDefenseSkill(rawSkill, level) : null;
   } else if (isCape) {
     type = "cape";
   } else if (isRing) {
