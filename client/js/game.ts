@@ -889,7 +889,7 @@ class Game {
         const item = element.attr("data-item");
         const level = parseInt(element.attr("data-level") || "1", 10);
         const rawBonus = toArray(element.attr("data-bonus"));
-        const rawSkill = parseInt(element.attr("data-skill") || "1", 10);
+        const rawSkill = element.attr("data-skill") ? parseInt(element.attr("data-skill"), 10) : null;
         const rawSocket = toArray(element.attr("data-socket"));
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
         const isEquippedItemSlot = Object.values(Slot).includes(slot);
@@ -1162,14 +1162,15 @@ class Game {
 
     if (typeof level === "number") {
       if (toSlot === Slot.WEAPON) {
-        this.player.switchWeapon(item, level, bonus, socket);
+        this.player.switchWeapon(item, level, bonus, socket, skill);
+        this.setAttackSkill(skill);
       } else if (toSlot === Slot.ARMOR) {
-        this.player.switchArmor(this.sprites[item], level, bonus);
+        this.player.switchArmor(this.sprites[item], level, bonus, socket);
       } else if (toSlot === Slot.CAPE) {
         this.player.switchCape(item, level, bonus);
       } else if (toSlot === Slot.SHIELD) {
-        this.player.switchShield(item, level, bonus, skill);
-        this.setShieldSkill(skill);
+        this.player.switchShield(item, level, bonus, socket, skill);
+        this.setDefenseSkill(skill);
       }
     }
 
@@ -1420,7 +1421,7 @@ class Game {
           "data-level": this.player.shieldLevel,
           "data-bonus": toString(this.player.shieldBonus),
           "data-socket": toString(this.player.shieldSocket),
-          "data-skill": this.player.shieldSkill,
+          "data-skill": this.player.defenseSkill,
         }),
       );
     }
@@ -1759,12 +1760,12 @@ class Game {
     }
 
     // No skill or timeout is not finished
-    if (slot === 2 && (this.player.shieldSkillTimeout || typeof this.player.shieldSkill !== "number")) {
+    if (slot === 2 && (this.player.defenseSkillTimeout || typeof this.player.defenseSkill !== "number")) {
       return;
     }
 
-    const skillName = Types.defenseSkillTypeAnimationMap[this.player.shieldSkill];
-    const originalTimeout = Math.floor(Types.defenseSkillDelay[this.player.shieldSkill]);
+    const skillName = Types.defenseSkillTypeAnimationMap[this.player.defenseSkill];
+    const originalTimeout = Math.floor(Types.defenseSkillDelay[this.player.defenseSkill]);
     const timeout = Math.round(originalTimeout - originalTimeout * (this.player.bonus.skillTimeout / 100));
 
     skillSlot
@@ -1776,23 +1777,31 @@ class Game {
     this.skillAnimation.reset();
     this.player.setSkillAnimation(
       skillName,
-      Types.defenseSkillDurationMap[this.player.shieldSkill](this.player.shieldLevel),
+      Types.defenseSkillDurationMap[this.player.defenseSkill](this.player.shieldLevel),
     );
     this.audioManager.playSound(`skill-${skillName}`);
 
-    this.client.sendSkill(this.player.shieldSkill);
+    this.client.sendSkill(this.player.defenseSkill);
 
     // @TODO remove, this is for testing
 
-    this.player.shieldSkillTimeout = setTimeout(() => {
+    this.player.defenseSkillTimeout = setTimeout(() => {
       skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout").attr("style", "");
-      this.player.shieldSkillTimeout = null;
+      this.player.defenseSkillTimeout = null;
     }, timeout);
   }
 
-  setShieldSkill(skill) {
+  setDefenseSkill(skill) {
     const skillName = Types.defenseSkillTypeAnimationMap[skill] || null;
-    $("#skill-shield").attr("class", skillName ? `skill-${skillName}` : null);
+    $("#skill-defense").attr("class", skillName ? `skill-${skillName}` : null);
+  }
+
+  setAttackSkill(skill) {
+    console.log("~~~~skill", skill);
+
+    const skillName = Types.attackSkillTypeAnimationMap[skill] || null;
+    console.log("~~~~skillName", skillName);
+    $("#skill-attack").attr("class", skillName ? `skill-${skillName}` : null);
   }
 
   initAchievements() {
@@ -2411,8 +2420,8 @@ class Game {
       self.player.network = network;
 
       var [armor, armorLevel, armorBonus, armorSocket] = armor.split(":");
-      var [weapon, weaponLevel, weaponBonus, weaponSocket] = weapon.split(":");
-      var [shield, shieldLevel, shieldBonus, shieldSocket, shieldSkill] = (shield || "").split(":");
+      var [weapon, weaponLevel, weaponBonus, weaponSocket, attackSkill] = weapon.split(":");
+      var [shield, shieldLevel, shieldBonus, shieldSocket, defenseSkill] = (shield || "").split(":");
 
       self.storage.setPlayerName(name);
       self.storage.setPlayerArmor(armor);
@@ -2436,8 +2445,10 @@ class Game {
       self.player.setShieldLevel(shieldLevel);
       self.player.setShieldBonus(shieldBonus);
       self.player.setShieldSocket(shieldSocket);
-      self.player.setShieldSkill(shieldSkill);
-      self.setShieldSkill(shieldSkill);
+      self.player.setDefenseSkill(defenseSkill);
+      self.setDefenseSkill(defenseSkill);
+      self.player.setAttackSkill(attackSkill);
+      self.setAttackSkill(attackSkill);
 
       self.player.setRing1(ring1);
       self.player.setRing2(ring2);
@@ -2772,9 +2783,9 @@ class Game {
           }, 1000);
         });
 
-        clearInterval(self.player.shieldSkillTimeout);
-        self.player.shieldSkillTimeout = null;
-        $("#skill-shield").removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout");
+        clearInterval(self.player.defenseSkillTimeout);
+        self.player.defenseSkillTimeout = null;
+        $("#skill-defense").removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout");
 
         self.player.forEachAttacker(function (attacker) {
           attacker.disengage();
@@ -3700,6 +3711,9 @@ class Game {
             player.switchArmor(self.sprites[name], level, bonus);
           } else if (type === "weapon") {
             player.switchWeapon(name, level, bonus, socket);
+            if (playerId === self.player.id) {
+              self.setAttackSkill(skill);
+            }
           } else if (type === "cape") {
             if (!kind || !level || !bonus) {
               player.removeCape();
@@ -3717,7 +3731,7 @@ class Game {
               player.switchShield(name, level, bonus, skill);
             }
             if (playerId === self.player.id) {
-              self.setShieldSkill(skill);
+              self.setDefenseSkill(skill);
             }
           } else if (type === "belt") {
             player.setBelt([name, level, bonus].filter(Boolean).join(":"));

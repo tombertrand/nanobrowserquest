@@ -140,11 +140,11 @@ var initApp = function () {
       app.toggleInventory();
     });
 
-    $("#skill-offensive").click(function () {
+    $("#skill-attack").click(function () {
       game.useSkill(1);
     });
 
-    $("#skill-shield").on("click", () => {
+    $("#skill-defense").on("click", () => {
       game.useSkill(2);
     });
 

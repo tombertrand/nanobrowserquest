@@ -888,11 +888,11 @@ class Renderer {
         // var sprite = this.game.sprites[`skill-lightning`];
         // var anim = this.game.skillLightning;
 
-        // var sprite = this.game.sprites[`skill-flame`];
-        // var anim = this.game.skillFlame;
+        var sprite = this.game.sprites[`skill-flame`];
+        var anim = this.game.skillFlame;
 
-        var sprite = this.game.sprites[`skill-cold`];
-        var anim = this.game.skillCold;
+        // var sprite = this.game.sprites[`skill-cold`];
+        // var anim = this.game.skillCold;
 
         // var sprite = this.game.sprites[`skill-poison`];
         // var anim = this.game.skillPoison;

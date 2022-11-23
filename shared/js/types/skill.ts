@@ -10,7 +10,7 @@ const defenseSkillDescriptionMap = [
 ];
 
 const attackSkillDescriptionMap = [
-  "Cast a # damage flame pilliar",
+  "Cast a # damage flame pillar",
   "Cast a # damage lightning strike",
   "Cast a # damage ice spike",
   "Cast a # damage poison curse",
@@ -37,6 +37,7 @@ export const defenseSkillDelay = [24_000, 35_000, 60_000];
 export const attackSkillDelay = [24_000, 35_000, 35_000, 35_000];
 
 export const defenseSkillTypeAnimationMap = ["heal", "defense", "curse-attack"];
+export const attackSkillTypeAnimationMap = ["flame", "lightning", "cold", "poison"];
 
 export const getDefenseSkill = function (rawSkill: number, level: number) {
   const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];

@@ -40,8 +40,9 @@ class Player extends Character {
   shieldLevel: number | null;
   shieldBonus: number[] | null;
   shieldSocket: number[] | null;
-  shieldSkill: number | null;
-  shieldSkillTimeout: NodeJS.Timeout;
+  defenseSkill: number | null;
+  defenseSkillTimeout: NodeJS.Timeout;
+  attackSkill: number | null;
   inventory: any[];
   stash: any[];
   upgrade: any[];
@@ -398,12 +399,20 @@ class Player extends Character {
     return this.shieldSocket;
   }
 
-  getShieldSkill() {
-    return this.shieldSkill;
+  getDefenseSkill() {
+    return this.defenseSkill;
   }
 
-  setShieldSkill(skill) {
-    this.shieldSkill = skill === 0 ? skill : skill ? parseInt(skill) : null;
+  setDefenseSkill(skill) {
+    this.defenseSkill = skill ? parseInt(skill) : null;
+  }
+
+  getAttackSkill() {
+    return this.attackSkill;
+  }
+
+  setAttackSkill(skill) {
+    this.attackSkill = skill ? parseInt(skill) : null;
   }
 
   setBelt(rawBelt) {
@@ -442,12 +451,12 @@ class Player extends Character {
       this.shieldLevel = parseInt(level);
       this.shieldBonus = toArray(bonus);
       this.shieldSocket = toArray(socket);
-      this.shieldSkill = skill;
+      this.defenseSkill = skill;
     } else {
       this.shieldName = null;
       this.shieldLevel = null;
       this.shieldBonus = null;
-      this.shieldSkill = null;
+      this.defenseSkill = null;
     }
   }
 
@@ -520,7 +529,7 @@ class Player extends Character {
     return this.weaponName !== null;
   }
 
-  switchWeapon(weapon, level: number, bonus?: number[], socket?: number[]) {
+  switchWeapon(weapon, level: number, bonus?: number[], socket?: number[], skill?: number) {
     var isDifferent = false;
 
     if (weapon !== this.getWeaponName()) {
@@ -540,12 +549,17 @@ class Player extends Character {
       this.setWeaponSocket(socket);
     }
 
+    if (skill !== this.getAttackSkill()) {
+      isDifferent = true;
+      this.setAttackSkill(skill);
+    }
+
     if (isDifferent && this.switch_callback) {
       this.switch_callback();
     }
   }
 
-  switchArmor(armorSprite, level: number, bonus?: number[]) {
+  switchArmor(armorSprite, level: number, bonus?: number[], socket?: number[]) {
     var isDifferent = false;
 
     if (armorSprite && armorSprite.id !== this.getSpriteName()) {
@@ -563,6 +577,11 @@ class Player extends Character {
     if (bonus !== this.getArmorBonus()) {
       isDifferent = true;
       this.setArmorBonus(bonus);
+    }
+
+    if (socket !== this.getArmorSocket()) {
+      isDifferent = true;
+      this.setArmorSocket(socket);
     }
 
     if (armorSprite.name !== "firefox" && isDifferent && this.switch_callback) {
@@ -591,7 +610,7 @@ class Player extends Character {
     }
   }
 
-  switchShield(shield, level: number, bonus?: number[], skill?: number) {
+  switchShield(shield, level: number, bonus?: number[], socket?: number[], skill?: number) {
     var isDifferent = false;
 
     if (shield !== this.getShieldName()) {
@@ -602,14 +621,18 @@ class Player extends Character {
       isDifferent = true;
       this.setShieldLevel(level);
     }
-    if (bonus !== this.getShieldBonus()) {
+    if (toArray(bonus) !== this.getShieldBonus()) {
       isDifferent = true;
       this.setShieldBonus(bonus);
     }
-
-    if (skill !== this.getShieldSkill()) {
+    if (toArray(socket) !== this.getShieldSocket()) {
       isDifferent = true;
-      this.setShieldSkill(skill);
+      this.setShieldSocket(bonus);
+    }
+
+    if (skill !== this.getDefenseSkill()) {
+      isDifferent = true;
+      this.setDefenseSkill(skill);
     }
 
     if (isDifferent && this.switch_callback) {
@@ -631,7 +654,7 @@ class Player extends Character {
     this.shieldName = null;
     this.shieldLevel = null;
     this.shieldBonus = null;
-    this.shieldSkill = null;
+    this.defenseSkill = null;
 
     if (this.switch_callback) {
       this.switch_callback();

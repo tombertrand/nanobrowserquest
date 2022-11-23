@@ -96,9 +96,10 @@ class Player extends Character {
   shieldBonus: number[] | null;
   shieldSocket: number[] | null;
   isShieldUnique: boolean;
-  shieldSkill: number;
-  shieldSkillTimeout: NodeJS.Timeout;
-  shieldSkillDefenseTimeout: NodeJS.Timeout;
+  defenseSkill: number;
+  defenseSkillTimeout: NodeJS.Timeout;
+  defenseSkillDefenseTimeout: NodeJS.Timeout;
+  attackSkill: number;
   firefoxpotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -1176,12 +1177,12 @@ class Player extends Character {
         let isBroadcasted = false;
         let level: number;
 
-        // @NOTE Hardcode shieldSkill for now..
-        if (skill === this.shieldSkill && !this.shieldSkillTimeout) {
+        // @NOTE Hardcode defenseSkill for now..
+        if (skill === this.defenseSkill && !this.defenseSkillTimeout) {
           isBroadcasted = true;
           level = this.shieldLevel;
 
-          if (this.shieldSkill === 0) {
+          if (this.defenseSkill === 0) {
             if (!self.hasFullHealth()) {
               const { stats: percent } = Types.getDefenseSkill(0, this.shieldLevel);
 
@@ -1194,23 +1195,23 @@ class Player extends Character {
               self.regenHealthBy(healAmount);
               self.server.pushToPlayer(self, self.health());
             }
-          } else if (this.shieldSkill === 1) {
+          } else if (this.defenseSkill === 1) {
             const { stats: percent } = Types.getDefenseSkill(0, this.shieldLevel);
 
             self.skill.defense = percent;
             self.sendPlayerStats();
-            self.shieldSkillDefenseTimeout = setTimeout(() => {
+            self.defenseSkillDefenseTimeout = setTimeout(() => {
               self.skill.defense = 0;
               self.sendPlayerStats();
-              self.shieldSkillDefenseTimeout = null;
-            }, Types.defenseSkillDurationMap[this.shieldSkill](this.shieldLevel));
+              self.defenseSkillDefenseTimeout = null;
+            }, Types.defenseSkillDurationMap[this.defenseSkill](this.shieldLevel));
           }
 
-          const originalTimeout = Math.floor(Types.defenseSkillDelay[this.shieldSkill]);
+          const originalTimeout = Math.floor(Types.defenseSkillDelay[this.defenseSkill]);
           const timeout = Math.round(originalTimeout - originalTimeout * (this.bonus.skillTimeout / 100));
 
-          self.shieldSkillTimeout = setTimeout(() => {
-            self.shieldSkillTimeout = null;
+          self.defenseSkillTimeout = setTimeout(() => {
+            self.defenseSkillTimeout = null;
           }, timeout);
 
           if (isBroadcasted) {
@@ -1280,14 +1281,14 @@ class Player extends Character {
 
       if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
         const resistanceBonus = [21, 22, 23, 24];
-        const shieldSkill = [0, 1];
+        const defenseSkill = [0, 1];
         bonus = _.shuffle(resistanceBonus)
           .slice(0, isUnique ? 2 : 1)
           .sort();
-        skill = _.shuffle(shieldSkill).slice(0, 1);
+        skill = _.shuffle(defenseSkill).slice(0, 1);
       } else if (Types.isWeapon(kind) && kind >= Types.Entities.GOLDENSWORD) {
-        const weaponSkill = [0, 1, 2, 3];
-        skill = _.shuffle(weaponSkill).slice(0, 1);
+        const attackSkill = [0, 1, 2, 3];
+        skill = _.shuffle(attackSkill).slice(0, 1);
       }
 
       item = {
@@ -1612,14 +1613,14 @@ class Player extends Character {
     if (this.hitPoints <= 0) {
       this.isDead = true;
 
-      if (this.shieldSkillTimeout) {
-        clearTimeout(this.shieldSkillTimeout);
-        this.shieldSkillTimeout = null;
+      if (this.defenseSkillTimeout) {
+        clearTimeout(this.defenseSkillTimeout);
+        this.defenseSkillTimeout = null;
       }
-      if (this.shieldSkillDefenseTimeout) {
+      if (this.defenseSkillDefenseTimeout) {
         this.skill.defense = 0;
-        clearTimeout(this.shieldSkillDefenseTimeout);
-        this.shieldSkillDefenseTimeout = null;
+        clearTimeout(this.defenseSkillDefenseTimeout);
+        this.defenseSkillDefenseTimeout = null;
       }
       if (this.firefoxpotionTimeout) {
         clearTimeout(this.firefoxpotionTimeout);
@@ -1702,6 +1703,8 @@ class Player extends Character {
     skill?: number;
     type?: string;
   }) {
+    console.log("~~~~equip~socket", socket);
+    console.log("~~~~equip~skill", skill);
     return new Messages.EquipItem(this, { kind, level, bonus, socket, skill, type });
   }
 
@@ -1734,13 +1737,14 @@ class Player extends Character {
     this.isArmorUnique = !!this.armorBonus?.length;
   }
 
-  equipWeapon(weapon, kind, level, bonus, socket) {
+  equipWeapon(weapon, kind, level, bonus, socket, skill) {
     this.weapon = weapon;
     this.weaponKind = kind;
     this.weaponLevel = level;
     this.weaponBonus = bonus ? JSON.parse(bonus) : null;
     this.weaponSocket = socket ? JSON.parse(socket) : null;
     this.isWeaponUnique = !!this.weaponBonus?.length;
+    this.attackSkill = skill ? parseInt(skill, 0) : null;
   }
 
   equipBelt(belt, level, bonus) {
@@ -1765,7 +1769,7 @@ class Player extends Character {
     this.shieldBonus = bonus ? JSON.parse(bonus) : null;
     this.shieldSocket = socket ? JSON.parse(socket) : null;
     this.isShieldUnique = this.shieldBonus?.length >= 2;
-    this.shieldSkill = skill ? parseInt(skill, 0) : null;
+    this.defenseSkill = skill ? parseInt(skill, 0) : null;
   }
 
   equipRing1(ring, level, bonus) {
@@ -1791,25 +1795,7 @@ class Player extends Character {
   }
 
   calculateBonus() {
-    let hasDrainLifeAura = false;
-    let hasThunderstormAura = false;
-    let hasHighHealth = false;
-    let hasFreezeAura = false;
     this.freezeChanceLevel = 0;
-
-    if (this.bonus.drainLife) {
-      hasDrainLifeAura = true;
-    }
-    if (this.bonus.lightningDamage) {
-      hasThunderstormAura = true;
-    }
-    if (this.bonus.highHealth) {
-      hasHighHealth = true;
-    }
-    if (this.bonus.freezeChance) {
-      hasFreezeAura = true;
-    }
-
     try {
       const bonusToCalculate = [
         this.ring1
@@ -1968,8 +1954,8 @@ class Player extends Character {
         this.databaseHandler.equipArmor(this.name, item, level, bonus, socket);
         this.equipArmor(item, kind, level, bonus, socket);
       } else if (Types.isWeapon(kind)) {
-        this.databaseHandler.equipWeapon(this.name, item, level, bonus, socket);
-        this.equipWeapon(item, kind, level, bonus, socket);
+        this.databaseHandler.equipWeapon(this.name, item, level, bonus, socket, skill);
+        this.equipWeapon(item, kind, level, bonus, socket, skill);
       }
     }
 
@@ -2310,7 +2296,8 @@ class Player extends Character {
       delete this.isPasswordValid;
 
       const [playerArmor, playerArmorLevel = 1, playerArmorBonus, playerArmorSocket] = armor.split(":");
-      const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus, playerWeaponSocket] = weapon.split(":");
+      const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus, playerWeaponSocket, playerWeaponSkill] =
+        weapon.split(":");
 
       this.kind = Types.Entities.WARRIOR;
       this.equipArmor(
@@ -2326,6 +2313,7 @@ class Player extends Character {
         playerWeaponLevel,
         playerWeaponBonus,
         playerWeaponSocket,
+        playerWeaponSkill,
       );
 
       if (belt) {
@@ -2337,7 +2325,7 @@ class Player extends Character {
         this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
       }
       if (shield) {
-        const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSocket, playerShieldSkill] =
+        const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSocket, playerDefenseSkill] =
           shield.split(":");
         this.equipShield(
           playerShield,
@@ -2345,7 +2333,7 @@ class Player extends Character {
           playerShieldLevel,
           playerShieldBonus,
           playerShieldSocket,
-          playerShieldSkill,
+          playerDefenseSkill,
         );
       }
       if (ring1) {

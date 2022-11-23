@@ -23,6 +23,7 @@ import {
   attackSkillDurationMap,
   defenseSkillDelay,
   defenseSkillDurationMap,
+  attackSkillTypeAnimationMap,
   defenseSkillTypeAnimationMap,
   getAttackSkill,
   getDefenseSkill,
@@ -396,6 +397,7 @@ Types.getDefenseSkill = getDefenseSkill;
 Types.getAttackSkill = getAttackSkill;
 Types.defenseSkillDelay = defenseSkillDelay;
 Types.attackSkillDelay = attackSkillDelay;
+Types.attackSkillTypeAnimationMap = attackSkillTypeAnimationMap;
 Types.defenseSkillTypeAnimationMap = defenseSkillTypeAnimationMap;
 Types.defenseSkillDurationMap = defenseSkillDurationMap;
 Types.attackSkillDurationMap = attackSkillDurationMap;

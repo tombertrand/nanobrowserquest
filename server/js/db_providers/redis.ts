@@ -23,7 +23,6 @@ import {
   generateBlueChestItem,
   getIsTransmuteSuccess,
   isUpgradeSuccess,
-  isValidAddWeaponSkill,
   isValidRecipe,
   isValidSocketItem,
   isValidStoneSocket,
@@ -625,9 +624,9 @@ class DatabaseHandler {
     });
   }
 
-  equipWeapon(name, weapon, level, bonus = [], socket = []) {
+  equipWeapon(name, weapon, level, bonus = [], socket = [], skill) {
     console.info("Set Weapon: " + name + " " + weapon + ":" + level);
-    this.client.hset("u:" + name, "weapon", `${weapon}:${level}${toDb(bonus)}${toDb(socket)}`);
+    this.client.hset("u:" + name, "weapon", `${weapon}:${level}${toDb(bonus)}${toDb(socket)}${toDb(skill)}`);
   }
 
   equipArmor(name, armor, level, bonus = [], socket = []) {
@@ -777,13 +776,17 @@ class DatabaseHandler {
     } else if (location === "stash") {
       player.send([Types.Messages.STASH, data]);
     } else if (location === "weapon") {
-      player.equipItem({ item, level, type, bonus, socket });
+      console.log("~~~~sendMoveItem~data??", data);
+      console.log("~~~~sendMoveItem~skill??", skill);
+
+      player.equipItem({ item, level, type, bonus, socket, skill });
       player.broadcast(
         player.equip({
           kind: player.weaponKind,
           level: player.weaponLevel,
           bonus: player.weaponBonus,
           socket: player.weaponSocket,
+          skill: player.attackSkill,
           type,
         }),
         false,
@@ -817,7 +820,7 @@ class DatabaseHandler {
           level: player.shieldLevel,
           bonus: player.shieldBonus,
           socket: player.shieldSocket,
-          skill: player.shieldSkill,
+          skill: player.defenseSkill,
           type,
         }),
         false,
