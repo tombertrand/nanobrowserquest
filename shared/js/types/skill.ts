@@ -1,5 +1,5 @@
 export const defenseSkillDurationMap = [() => 900, (itemLevel: number) => itemLevel * 500];
-export const attackSkillDurationMap = [() => 1536, () => 1000, () => 1050, () => 1000];
+export const attackSkillDurationMap = [() => 1200, () => 1500, () => 1000, () => 1050, () => 1000];
 
 const defenseSkillDescriptionMap = [
   "+#% Instant health regeneration",
@@ -10,13 +10,11 @@ const defenseSkillDescriptionMap = [
 ];
 
 const attackSkillDescriptionMap = [
+  "Cast a # damage magic ball",
   "Cast a # damage flame pillar",
   "Cast a # damage lightning strike",
   "Cast a # damage ice spike",
   "Cast a # damage poison curse",
-  // "-#% Attack damage from your attacking enemies",
-  // "+#% block chances for # seconds",
-  // "-#% Attack damage from your enemies for # seconds",
 ];
 
 const defenseSkillType = [
@@ -26,18 +24,28 @@ const defenseSkillType = [
 ];
 
 const attackSkillType = [
-  "flameSkill", // 0
-  "lightningSkill", // 1
-  "coldSkill", // 2
-  "poisonSkill", // 3
-  // "magicSkill", // 4
+  "magicSkill", // 0
+  "flameSkill", // 1
+  "lightningSkill", // 2
+  "coldSkill", // 3
+  "poisonSkill", // 4
+];
+
+export const skillToNameMap = ["magic", "flame", "lightning", "cold", "poison"];
+export const attackSkillToDamageType = ["magicDamage", "flameDamage", "lightningDamage", "coldDamage", "poisonDamage"];
+export const attackSkillToResistanceType = [
+  "magicResistance",
+  "flameResistance",
+  "lightningResistance",
+  "coldResistance",
+  "poisonResistance",
 ];
 
 export const defenseSkillDelay = [24_000, 35_000, 60_000];
-export const attackSkillDelay = [24_000, 35_000, 35_000, 35_000];
+export const attackSkillDelay = [2_000, 2_000, 2_000, 2_000, 2_000];
 
 export const defenseSkillTypeAnimationMap = ["heal", "defense", "curse-attack"];
-export const attackSkillTypeAnimationMap = ["flame", "lightning", "cold", "poison"];
+export const attackSkillTypeAnimationMap = ["magic", "flame", "lightning", "cold", "poison"];
 
 export const getDefenseSkill = function (rawSkill: number, level: number) {
   const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
@@ -67,6 +75,7 @@ export const getDefenseSkill = function (rawSkill: number, level: number) {
 };
 
 export const getAttackSkill = function (rawSkill, level) {
+  const magicSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const flameSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const lightningSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const coldSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
@@ -74,6 +83,7 @@ export const getAttackSkill = function (rawSkill, level) {
   // const meteorSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
 
   const skillPerLevel = [
+    magicSkillPerLevel,
     flameSkillPerLevel,
     lightningSkillPerLevel,
     coldSkillPerLevel,

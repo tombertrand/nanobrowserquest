@@ -100,6 +100,7 @@ class Player extends Character {
   defenseSkillTimeout: NodeJS.Timeout;
   defenseSkillDefenseTimeout: NodeJS.Timeout;
   attackSkill: number;
+  attackSkillTimeout: NodeJS.Timeout;
   firefoxpotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -433,27 +434,7 @@ class Player extends Character {
         if (mob?.type === "mob" || mob?.type === "player") {
           let isCritical = false;
 
-          let resistances: Resistances = {
-            magicResistance: 0,
-            flameResistance: 0,
-            lightningResistance: 0,
-            coldResistance: 0,
-            poisonResistance: 0,
-            physicalResistance: 0,
-          };
-
-          if (mob.type === "mob") {
-            resistances = Object.assign(resistances, Types.resistances[mob.kind] || {});
-          } else if (mob.type === "player") {
-            resistances = {
-              magicResistance: mob.bonus.magicResistance,
-              flameResistance: mob.bonus.flameResistance,
-              lightningResistance: mob.bonus.lightningResistance,
-              coldResistance: mob.bonus.coldResistance,
-              poisonResistance: mob.bonus.poisonResistance,
-              physicalResistance: mob.bonus.physicalResistance,
-            };
-          }
+          let resistances: Resistances = Types.getResistance(mob);
 
           let { dmg, attackDamage } = Formulas.dmg({
             weapon: self.weapon,
@@ -1173,13 +1154,45 @@ class Player extends Character {
           this.broadcast(new Messages.Settings(this, settings), false);
         }
       } else if (action === Types.Messages.SKILL) {
-        const skill = message[1];
-        let isBroadcasted = false;
+        const slot = message[1];
+        const mobId = message[2];
+        const isAttackSkill = slot === 1;
+
+        const skill = isAttackSkill ? this.attackSkill : this.defenseSkill;
+        let shouldBroadcast = false;
         let level: number;
 
-        // @NOTE Hardcode defenseSkill for now..
-        if (skill === this.defenseSkill && !this.defenseSkillTimeout) {
-          isBroadcasted = true;
+        if (isAttackSkill) {
+          if (typeof this.attackSkill !== "number" || this.attackSkillTimeout) return;
+          const attackedMob = self.server.getEntityById(mobId);
+          if (!attackedMob) return;
+
+          shouldBroadcast = true;
+          const { stats } = Types.getAttackSkill(this.attackSkill, this.weaponLevel);
+          const mobResistance =
+            (attackedMob.type === "mob"
+              ? Types.mobResistance[Types.getKindAsString(attackedMob.kind)]
+              : attackedMob.bonus)?.[Types.attackSkillToResistanceType[this.attackSkill]] || 0;
+
+          const dmg = Math.round(stats - stats * (mobResistance / 100));
+
+          if (attackedMob.type === "mob") {
+            this.server.handleMobHate(attackedMob.id, this.id, dmg);
+            attackedMob.receiveDamage(dmg);
+          } else if (attackedMob.type === "player") {
+            attackedMob.hitPoints -= dmg;
+          }
+          this.server.handleHurtEntity({ entity: attackedMob, attacker: this, dmg });
+
+          const originalTimeout = Math.floor(Types.attackSkillDelay[this.attackSkill]);
+          const timeout = Math.round(originalTimeout - originalTimeout * (this.bonus.skillTimeout / 100));
+
+          this.attackSkillTimeout = setTimeout(() => {
+            this.attackSkillTimeout = null;
+          }, timeout);
+        } else {
+          if (typeof this.defenseSkill !== "number" || !this.defenseSkillTimeout) return;
+          shouldBroadcast = true;
           level = this.shieldLevel;
 
           if (this.defenseSkill === 0) {
@@ -1213,10 +1226,10 @@ class Player extends Character {
           self.defenseSkillTimeout = setTimeout(() => {
             self.defenseSkillTimeout = null;
           }, timeout);
+        }
 
-          if (isBroadcasted) {
-            self.broadcast(new Messages.Skill(this, skill, level), false);
-          }
+        if (shouldBroadcast) {
+          self.broadcast(new Messages.Skill(this, { skill, level, isAttackSkill, mobId }), false);
         }
       } else {
         if (self.message_callback) {
@@ -1417,6 +1430,8 @@ class Player extends Character {
           .concat(_.shuffle(resistances).slice(0, 2))
           .concat(timeout);
       } else if (kind === Types.Entities.JEWELSKULL) {
+        jewelLevel = random(5) + 1;
+
         if (jewelLevel === 1) {
           bonus = _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
         } else if (jewelLevel === 2) {
@@ -1532,15 +1547,21 @@ class Player extends Character {
       }
     }
 
-    if (this.bonus.lightningDamage && !Types.resistances[mob.kind]?.lightningDamage) {
+    if (this.bonus.lightningDamage) {
       lightningDamage = this.bonus.lightningDamage;
 
+      const mobResistance =
+        mob.type === "mob"
+          ? Types.mobResistance[Types.getKindAsString(mob.kind)]?.lightningResistance
+          : mob.bonus.lightningResistance;
+      const receivedLightningDamage = Math.round(lightningDamage - lightningDamage * (mobResistance / 100));
+
       if (mob.type === "mob") {
-        mob.receiveDamage(lightningDamage, this.id);
+        mob.receiveDamage(receivedLightningDamage);
       } else if (mob.type === "player") {
-        mob.hitPoints -= lightningDamage;
+        mob.hitPoints -= receivedLightningDamage;
       }
-      this.server.handleHurtEntity({ entity: mob, attacker: this, dmg: lightningDamage });
+      this.server.handleHurtEntity({ entity: mob, attacker: this, dmg: receivedLightningDamage });
     }
 
     if (mob.kind === Types.isBoss(mob.kind)) {
@@ -1587,7 +1608,7 @@ class Player extends Character {
   }
 
   startPoisoned({ dmg, entity, resistance, attacker = {} }) {
-    const baseIterations = 6;
+    const baseIterations = 5;
     const tick = 3000;
     let poisonDmg = Math.round((dmg - dmg * (resistance / 100)) / 6);
     let iterations = Math.round(baseIterations - baseIterations * (resistance / 100));
@@ -1703,8 +1724,6 @@ class Player extends Character {
     skill?: number;
     type?: string;
   }) {
-    console.log("~~~~equip~socket", socket);
-    console.log("~~~~equip~skill", skill);
     return new Messages.EquipItem(this, { kind, level, bonus, socket, skill, type });
   }
 

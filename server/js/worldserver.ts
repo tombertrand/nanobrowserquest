@@ -1156,18 +1156,18 @@ class World {
   }
 
   // entity is receiver
-  handleHurtEntity({ entity, attacker, dmg, isCritical = false, isBlocked = false }) {
-    if (entity.type === "player") {
-      // A player is only aware of his own hitpoints
-      this.pushToPlayer(entity, entity.health({ isHurt: true }));
-    }
-
+  handleHurtEntity({ attacker, entity, dmg, isCritical = false, isBlocked = false }) {
     if (attacker?.type === "player") {
       // Let the player know how much damage was inflicted
       this.pushToPlayer(
         attacker,
         new Messages.Damage(entity, dmg, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
       );
+    }
+
+    if (entity.type === "player") {
+      // A player is only aware of his own hitpoints
+      this.pushToPlayer(entity, entity.health({ isHurt: true }));
     }
 
     if (entity.hitPoints <= 0) {
@@ -1466,7 +1466,7 @@ class World {
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     var randomDrops = [
       // "rune",
-      // "jewelskull",
+      "jewelskull",
       // "ringplatinum",
       // "ringconqueror",
       // "amuletdemon",
@@ -1522,12 +1522,12 @@ class World {
       // "rune-jah",
       // "rune-shi",
       // "rune-vod",
-      "goldensword",
+      // "goldensword",
       // "emeraldsword",
       // "mysticalsword",
       // "dragonsword",
       // "executionersword",
-      "eclypsedagger",
+      // "eclypsedagger",
       // "spikeglaive",
       // "templarsword",
       // "moonsword",

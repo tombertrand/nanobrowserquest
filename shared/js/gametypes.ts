@@ -2,9 +2,11 @@ import * as _ from "lodash";
 
 import { Slot } from "./slots";
 import { expForLevel } from "./types/experience";
+import { getResistance, mobResistance, resistanceToDisplayMap } from "./types/resistance";
 import {
   getHighestSocketRequirement,
   getJewelRequirement,
+  getJewelSkinIndex,
   getRune,
   getRuneFromItem,
   getRuneNameFromItem,
@@ -21,12 +23,15 @@ import { kindAsStringToSet, setBonus as setBonusImport, setItems, setItemsNameMa
 import {
   attackSkillDelay,
   attackSkillDurationMap,
+  attackSkillToDamageType,
+  attackSkillToResistanceType,
+  attackSkillTypeAnimationMap,
   defenseSkillDelay,
   defenseSkillDurationMap,
-  attackSkillTypeAnimationMap,
   defenseSkillTypeAnimationMap,
   getAttackSkill,
   getDefenseSkill,
+  skillToNameMap,
 } from "./types/skill";
 
 export const Types: any = {
@@ -388,6 +393,7 @@ Types.getRuneNameFromItem = getRuneNameFromItem;
 Types.getRuneFromItem = getRuneFromItem;
 Types.getHighestSocketRequirement = getHighestSocketRequirement;
 Types.getJewelRequirement = getJewelRequirement;
+Types.getJewelSkinIndex = getJewelSkinIndex;
 Types.getRunesBonus = getRunesBonus;
 Types.getRune = getRune;
 Types.isRune = isRuneImport;
@@ -396,11 +402,17 @@ Types.Runewords = Runewords;
 Types.getDefenseSkill = getDefenseSkill;
 Types.getAttackSkill = getAttackSkill;
 Types.defenseSkillDelay = defenseSkillDelay;
+Types.skillToNameMap = skillToNameMap;
 Types.attackSkillDelay = attackSkillDelay;
 Types.attackSkillTypeAnimationMap = attackSkillTypeAnimationMap;
 Types.defenseSkillTypeAnimationMap = defenseSkillTypeAnimationMap;
 Types.defenseSkillDurationMap = defenseSkillDurationMap;
 Types.attackSkillDurationMap = attackSkillDurationMap;
+Types.attackSkillToDamageType = attackSkillToDamageType;
+Types.attackSkillToResistanceType = attackSkillToResistanceType;
+Types.getResistance = getResistance;
+Types.resistanceToDisplayMap = resistanceToDisplayMap;
+Types.mobResistance = mobResistance;
 
 Types.Entities.Potion = [
   Types.Entities.FLASK,
@@ -917,27 +929,6 @@ Types.isSuperUnique = (itemName: string) =>
     "amuletdemon",
     "amuletmoon",
   ].includes(itemName);
-
-Types.resistances = {
-  [Types.Entities.COWKING]: {
-    lightningResistance: 100,
-    physicaResistance: 20,
-  },
-  [Types.Entities.MINOTAUR]: {
-    magicResistance: 80,
-    flameResistance: 100,
-    lightningResistance: 100,
-  },
-};
-
-Types.resistanceToDisplayMap = {
-  magicResistance: "magic resistance",
-  flameResistance: "flame resistance",
-  lightningResistance: "lightning resistance",
-  coldResistance: "cold resistance",
-  poisonResistance: "poison resistance",
-  physicaResistance: "physical resistance",
-};
 
 Types.getLevel = function (exp: number) {
   var i = 1;

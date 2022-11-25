@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import { toArray, } from "../utils";
+import { toArray } from "../utils";
 
 export const isRune = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
@@ -305,6 +305,20 @@ export const getJewelRequirement = function (bonus) {
   }
 
   return requirement;
+};
+
+export const getJewelSkinIndex = function (bonus) {
+  const requirement = getJewelRequirement(bonus);
+  let index = "";
+  if (requirement === 25) {
+    index = "1";
+  } else if (requirement === 45) {
+    index = "2";
+  } else if (requirement === 60) {
+    index = "3";
+  }
+
+  return index;
 };
 
 export const getHighestSocketRequirement = (rawSocket: any[]) => {

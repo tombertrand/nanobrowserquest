@@ -858,9 +858,9 @@ class Renderer {
         }
       }
 
-      if (entity instanceof Player && entity.skillName) {
-        var sprite = this.game.sprites[`skill-${entity.skillName}`];
-        var anim = this.game.skillAnimation;
+      if (entity instanceof Player && entity.defenseSkillName) {
+        var sprite = this.game.sprites[`skill-${entity.defenseSkillName}`];
+        var anim = this.game.defenseSkillAnimation;
 
         if (sprite && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
@@ -884,18 +884,37 @@ class Renderer {
         }
       }
 
-      if (entity instanceof Player && false) {
-        // var sprite = this.game.sprites[`skill-lightning`];
-        // var anim = this.game.skillLightning;
+      if (entity instanceof Player && entity.isCasting) {
+        var sprite = this.game.sprites[`skill-cast`];
+        var anim = this.game.skillCastAnimation;
 
-        var sprite = this.game.sprites[`skill-flame`];
-        var anim = this.game.skillFlame;
+        if (sprite && anim) {
+          var os = this.upscaledRendering ? 1 : this.scale;
+          var ds = this.upscaledRendering ? this.scale : 1;
+          // @ts-ignore
+          var { x: entityX, y: entityY } = entity;
 
-        // var sprite = this.game.sprites[`skill-cold`];
-        // var anim = this.game.skillCold;
+          var frame = anim.currentFrame,
+            s = this.scale,
+            x = frame.x * os,
+            y = frame.y * os,
+            w = sprite.width * os,
+            h = sprite.height * os,
+            ts = 16,
+            dx = entityX * s,
+            dy = entityY * s,
+            dw = w * ds,
+            dh = h * ds,
+            ox = sprite.offsetX * s,
+            oy = sprite.offsetY * s;
 
-        // var sprite = this.game.sprites[`skill-poison`];
-        // var anim = this.game.skillPoison;
+          this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
+        }
+      }
+
+      if (entity instanceof Character && typeof entity.skillAnimation === "number") {
+        var sprite = this.game.sprites[`skill-${Types.skillToNameMap[entity.skillAnimation]}`];
+        var anim = this.game[`skill${_.capitalize(Types.skillToNameMap[entity.skillAnimation])}Animation`];
 
         if (sprite && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;

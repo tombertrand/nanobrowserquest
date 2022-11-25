@@ -157,9 +157,9 @@ Messages.Auras = class Message {
 };
 
 Messages.Skill = class Message {
-  constructor(private player, private skill, private level) {}
+  constructor(private player, private skill) {}
   serialize() {
-    return [Types.Messages.SKILL, this.player.id, this.skill, this.level];
+    return [Types.Messages.SKILL, this.player.id, this.skill];
   }
 };
 

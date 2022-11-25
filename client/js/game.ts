@@ -125,11 +125,14 @@ class Game {
   highHealthAnimation: Animation;
   freezeAnimation: Animation;
   anvilAnimation: Animation;
-  skillAnimation: Animation;
-  skillLightning: Animation;
-  skillFlame: Animation;
-  skillCold: Animation;
-  skillPoison: Animation;
+  defenseSkillAnimation: Animation;
+  attackSkillAnimation: Animation;
+  skillCastAnimation: Animation;
+  skillMagicAnimation: Animation;
+  skillFlameAnimation: Animation;
+  skillLightningAnimation: Animation;
+  skillColdAnimation: Animation;
+  skillPoisonAnimation: Animation;
   weaponEffectAnimation: Animation;
   client: any;
   achievements: any;
@@ -217,11 +220,14 @@ class Game {
     this.highHealthAnimation = null;
     this.freezeAnimation = null;
     this.anvilAnimation = null;
-    this.skillAnimation = null;
-    this.skillLightning = null;
-    this.skillFlame = null;
-    this.skillCold = null;
-    this.skillPoison = null;
+    this.defenseSkillAnimation = null;
+    // this.attackSkillAnimation = null;
+    this.skillCastAnimation = null;
+    this.skillMagicAnimation = null;
+    this.skillFlameAnimation = null;
+    this.skillLightningAnimation = null;
+    this.skillColdAnimation = null;
+    this.skillPoisonAnimation = null;
     this.weaponEffectAnimation = null;
     this.partyInvites = [];
     this.partyInvitees = [];
@@ -294,8 +300,10 @@ class Game {
       "skill-heal",
       "skill-defense",
       "skill-curse-attack",
-      "skill-lightning",
+      "skill-cast",
+      "skill-magic",
       "skill-flame",
+      "skill-lightning",
       "skill-cold",
       "skill-poison",
       "talk",
@@ -667,20 +675,26 @@ class Game {
     this.anvilAnimation = new Animation("idle_down", 4, 0, 15, 8);
     this.anvilAnimation.setSpeed(80);
 
-    this.skillAnimation = new Animation("idle_down", 8, 0, 32, 32);
-    this.skillAnimation.setSpeed(125);
+    this.defenseSkillAnimation = new Animation("idle_down", 8, 0, 32, 32);
+    this.defenseSkillAnimation.setSpeed(125);
 
-    this.skillFlame = new Animation("idle_down", 12, 0, 34, 58);
-    this.skillFlame.setSpeed(125);
+    this.skillCastAnimation = new Animation("idle_down", 17, 0, 48, 48);
+    this.skillCastAnimation.setSpeed(50);
 
-    this.skillLightning = new Animation("idle_down", 8, 0, 28, 50);
-    this.skillLightning.setSpeed(125);
+    this.skillMagicAnimation = new Animation("idle_down", 12, 0, 64, 64);
+    this.skillMagicAnimation.setSpeed(100);
 
-    this.skillCold = new Animation("idle_down", 14, 0, 72, 72);
-    this.skillCold.setSpeed(75);
+    this.skillFlameAnimation = new Animation("idle_down", 12, 0, 34, 58);
+    this.skillFlameAnimation.setSpeed(125);
 
-    this.skillPoison = new Animation("idle_down", 8, 0, 24, 60);
-    this.skillPoison.setSpeed(125);
+    this.skillLightningAnimation = new Animation("idle_down", 8, 0, 28, 50);
+    this.skillLightningAnimation.setSpeed(125);
+
+    this.skillColdAnimation = new Animation("idle_down", 14, 0, 72, 72);
+    this.skillColdAnimation.setSpeed(75);
+
+    this.skillPoisonAnimation = new Animation("idle_down", 8, 0, 24, 60);
+    this.skillPoisonAnimation.setSpeed(125);
 
     this.weaponEffectAnimation = new Animation("idle_down", 6, 0, 20, 20);
     this.weaponEffectAnimation.setSpeed(140);
@@ -964,11 +978,8 @@ class Game {
                       const rune = Types.getRuneNameFromItem(rawSocket[index]);
                       image = rune ? `url(img/2/item-rune-${rune}.png)` : "none";
                     } else if (Types.isJewel(rawSocket[index])) {
-                      let [, jewelLevel] = (rawSocket[index] as unknown as string).split("|") || [];
-                      let imageIndex: string | number = "";
-                      if (jewelLevel && jewelLevel !== "1") {
-                        imageIndex = parseInt(jewelLevel) - 1;
-                      }
+                      const [, , jewelBonus] = (rawSocket[index] as unknown as string).split("|") || [];
+                      const imageIndex = Types.getJewelSkinIndex(toArray(jewelBonus));
                       image = `url(img/2/item-jewelskull${imageIndex}.png)`;
                     }
                     return `<div class="item-rune" style="background-image: ${image}; position: relative;"></div>`;
@@ -1163,7 +1174,6 @@ class Game {
     if (typeof level === "number") {
       if (toSlot === Slot.WEAPON) {
         this.player.switchWeapon(item, level, bonus, socket, skill);
-        this.setAttackSkill(skill);
       } else if (toSlot === Slot.ARMOR) {
         this.player.switchArmor(this.sprites[item], level, bonus, socket);
       } else if (toSlot === Slot.CAPE) {
@@ -1310,14 +1320,14 @@ class Game {
     $(".item-draggable.ui-draggable").draggable("destroy");
   }
 
-  getIconPath(spriteName: string, level?: number) {
+  getIconPath(spriteName: string, level?: number, bonus?: number[]) {
     const scale = this.renderer.getScaleFactor();
 
     let suffix = "";
     if (spriteName === "cape" && level >= 7) {
       suffix = "7";
     } else if (spriteName === "jewelskull" && level !== 1) {
-      suffix = `${level - 1}`;
+      suffix = Types.getJewelSkinIndex(bonus);
     }
 
     return `img/${scale}/item-${spriteName}${suffix}.png`;
@@ -1364,6 +1374,7 @@ class Game {
           "data-level": this.player.weaponLevel,
           "data-bonus": toString(this.player.weaponBonus),
           "data-socket": toString(this.player.weaponSocket),
+          "data-skill": this.player.attackSkill,
         }),
       );
     }
@@ -1624,7 +1635,7 @@ class Game {
         isUnique ? "item-unique" : ""
       }`,
       css: {
-        "background-image": `url("${this.getIconPath(item, level)}")`,
+        "background-image": `url("${this.getIconPath(item, level, toArray(bonus))}")`,
         position: "relative",
       },
       "data-item": item,
@@ -1750,45 +1761,61 @@ class Game {
   }
 
   useSkill(slot) {
-    const skillSlot = $(`[data-skill-slot="${slot}"]`);
-
     if (document.activeElement.tagName === "INPUT") return;
 
-    // Slot 1 (offensive skill) is not set yet!
-    if (skillSlot.hasClass("disabled") || slot === 1) {
+    // No skill / timeout is not finished
+    if (
+      slot === 1 &&
+      (this.player.attackSkillTimeout || typeof this.player.attackSkill !== "number" || !this.lastHovered?.id)
+    )
       return;
+    if (slot === 2 && (this.player.defenseSkillTimeout || typeof this.player.defenseSkill !== "number")) return;
+
+    let mobId = 0;
+    const isAttackSkill = slot === 1;
+    if (isAttackSkill) {
+      if (!this.lastHovered || (!(this.lastHovered instanceof Mob) && !(this.lastHovered instanceof Player))) {
+        return;
+      } else {
+        mobId = this.lastHovered.id;
+      }
     }
 
-    // No skill or timeout is not finished
-    if (slot === 2 && (this.player.defenseSkillTimeout || typeof this.player.defenseSkill !== "number")) {
-      return;
-    }
-
-    const skillName = Types.defenseSkillTypeAnimationMap[this.player.defenseSkill];
-    const originalTimeout = Math.floor(Types.defenseSkillDelay[this.player.defenseSkill]);
+    const skillName = isAttackSkill
+      ? Types.attackSkillTypeAnimationMap[this.player.attackSkill]
+      : Types.defenseSkillTypeAnimationMap[this.player.defenseSkill];
+    const originalTimeout = isAttackSkill
+      ? Math.floor(Types.attackSkillDelay[this.player.attackSkill])
+      : Math.floor(Types.defenseSkillDelay[this.player.defenseSkill]);
     const timeout = Math.round(originalTimeout - originalTimeout * (this.player.bonus.skillTimeout / 100));
 
+    const skillSlot = $(`[data-skill-slot="${slot}"]`);
     skillSlot
       .addClass("disabled")
       .find(".skill-timeout")
       .addClass(`active ${skillName}`)
       .attr("style", `transition: width ${timeout / 1000}s linear;`);
 
-    this.skillAnimation.reset();
-    this.player.setSkillAnimation(
-      skillName,
-      Types.defenseSkillDurationMap[this.player.defenseSkill](this.player.shieldLevel),
-    );
+    if (isAttackSkill) {
+      // this.player.setAttackSkillAnimation(skillName, Types.attackSkillDurationMap[this.player.attackSkill]());
+      this.player.attackSkillTimeout = setTimeout(() => {
+        skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout").attr("style", "");
+        this.player.attackSkillTimeout = null;
+      }, timeout);
+    } else {
+      this.defenseSkillAnimation.reset();
+      this.player.setDefenseSkillAnimation(
+        skillName,
+        Types.defenseSkillDurationMap[this.player.defenseSkill](this.player.shieldLevel),
+      );
+      this.player.defenseSkillTimeout = setTimeout(() => {
+        skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout").attr("style", "");
+        this.player.defenseSkillTimeout = null;
+      }, timeout);
+    }
+
     this.audioManager.playSound(`skill-${skillName}`);
-
-    this.client.sendSkill(this.player.defenseSkill);
-
-    // @TODO remove, this is for testing
-
-    this.player.defenseSkillTimeout = setTimeout(() => {
-      skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout").attr("style", "");
-      this.player.defenseSkillTimeout = null;
-    }, timeout);
+    this.client.sendSkill(slot, mobId);
   }
 
   setDefenseSkill(skill) {
@@ -1797,10 +1824,7 @@ class Game {
   }
 
   setAttackSkill(skill) {
-    console.log("~~~~skill", skill);
-
     const skillName = Types.attackSkillTypeAnimationMap[skill] || null;
-    console.log("~~~~skillName", skillName);
     $("#skill-attack").attr("class", skillName ? `skill-${skillName}` : null);
   }
 
@@ -3708,9 +3732,10 @@ class Game {
 
         if (player) {
           if (type === "armor") {
-            player.switchArmor(self.sprites[name], level, bonus);
+            player.switchArmor(self.sprites[name], level, bonus, socket);
           } else if (type === "weapon") {
-            player.switchWeapon(name, level, bonus, socket);
+            player.switchWeapon(name, level, bonus, socket, skill);
+
             if (playerId === self.player.id) {
               self.setAttackSkill(skill);
             }
@@ -3728,7 +3753,7 @@ class Game {
             if (!kind || !level) {
               player.removeShield();
             } else {
-              player.switchShield(name, level, bonus, skill);
+              player.switchShield(name, level, bonus, socket, skill);
             }
             if (playerId === self.player.id) {
               self.setDefenseSkill(skill);
@@ -3752,13 +3777,24 @@ class Game {
         }
       });
 
-      self.client.onPlayerSkill(function ({ id: playerId, skill, level }) {
-        var player = self.getEntityById(playerId);
+      self.client.onPlayerSkill(function ({ id: playerId, skill: rawSkill }) {
+        const player = self.getEntityById(playerId);
+        const { skill, level, isAttackSkill, mobId } = rawSkill;
         if (player) {
-          player.setSkillAnimation(
-            Types.defenseSkillTypeAnimationMap[skill],
-            Types.defenseSkillDurationMap[skill](level),
-          );
+          if (isAttackSkill) {
+            player.setIsCasting();
+
+            const entity = self.getEntityById(mobId);
+            if (entity) {
+              self[`skill${_.capitalize(Types.skillToNameMap[skill])}Animation`].reset();
+              entity.setSkillAnimation(skill);
+            }
+          } else {
+            player.setDefenseSkillAnimation(
+              Types.defenseSkillTypeAnimationMap[skill],
+              Types.defenseSkillDurationMap[skill](level),
+            );
+          }
         }
       });
 

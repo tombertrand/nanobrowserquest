@@ -553,10 +553,9 @@ class GameClient {
   receiveSkill(data) {
     var id = data[1];
     var skill = data[2];
-    var level = data[3];
 
     if (this.skill_callback) {
-      this.skill_callback({ id, skill, level });
+      this.skill_callback({ id, skill });
     }
   }
 
@@ -1322,8 +1321,8 @@ class GameClient {
     this.sendMessage([Types.Messages.SETTINGS, settings]);
   }
 
-  sendSkill(skill) {
-    this.sendMessage([Types.Messages.SKILL, skill]);
+  sendSkill(slot, mobId) {
+    this.sendMessage([Types.Messages.SKILL, slot, mobId]);
   }
 
   sendDeathAngelCast(x, y) {

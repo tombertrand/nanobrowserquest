@@ -16,3 +16,9 @@ export const toArray = (arrayOrString: string | number[]): number[] | undefined 
   }
   return arrayOrString as number[];
 };
+
+export const toNumber = (stringOrNumber: string | number) => {
+  if (typeof stringOrNumber === "number") return stringOrNumber;
+  if (typeof stringOrNumber === "string") return parseInt(stringOrNumber, 10);
+  return null;
+};

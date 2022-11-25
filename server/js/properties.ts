@@ -8,7 +8,7 @@ var Properties: any = {
       scrollupgradelow: 20,
       ringbronze: 5,
     },
-    hp: 20,
+    hp: 120,
     armor: 0.5,
     weapon: 0.5,
   },

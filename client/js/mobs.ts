@@ -330,7 +330,7 @@ export const Mobs = {
       this.shadowOffsetY = 1;
       this.aggroRange = 3;
       this.auras = ["thunderstorm"];
-      this.resistances = Types.resistances[Types.Entities.COWKING];
+      this.resistances = Types.mobResistance["cowking"];
       this.setAttackRate(1300);
     }
   },
@@ -345,7 +345,7 @@ export const Mobs = {
       this.shadowOffsetY = 1;
       this.aggroRange = 5;
       this.auras = ["freeze"];
-      this.resistances = Types.resistances[Types.Entities.MINOTAUR];
+      this.resistances = Types.mobResistance["minotaur"];
       this.setAttackRate(1300);
     }
   },
@@ -362,7 +362,8 @@ export const Mobs = {
       this.attackCooldown = new Timer(this.atkRate);
       this.raiseCooldown = new Timer(this.raiseRate);
       this.aggroRange = 3;
-      this.auras = ["drainlife"];
+      // @TODO prevent monster heal aura
+      // this.auras = ["drainlife"];
     }
 
     idle(orientation) {

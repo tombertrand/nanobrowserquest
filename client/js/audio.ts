@@ -70,6 +70,7 @@ class AudioManager {
       "skill-heal",
       "skill-defense",
       // "skill-curse-attack",
+      // "skill-magic",
       // "skill-flame",
       "skill-lightning",
       // "skill-cold",

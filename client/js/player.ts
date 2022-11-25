@@ -1,7 +1,7 @@
 import isEqual from "lodash/isEqual";
 
 import { kinds, Types } from "../../shared/js/gametypes";
-import { toArray } from "../../shared/js/utils";
+import { toArray, toNumber } from "../../shared/js/utils";
 import Character from "./character";
 import Exceptions from "./exceptions";
 
@@ -43,6 +43,7 @@ class Player extends Character {
   defenseSkill: number | null;
   defenseSkillTimeout: NodeJS.Timeout;
   attackSkill: number | null;
+  attackSkillTimeout: NodeJS.Timeout;
   inventory: any[];
   stash: any[];
   upgrade: any[];
@@ -308,7 +309,7 @@ class Player extends Character {
   }
 
   setArmorLevel(level) {
-    this.armorLevel = parseInt(level);
+    this.armorLevel = toNumber(level);
   }
 
   getArmorBonus() {
@@ -340,7 +341,7 @@ class Player extends Character {
   }
 
   setWeaponLevel(level) {
-    this.weaponLevel = parseInt(level);
+    this.weaponLevel = toNumber(level);
   }
 
   getWeaponBonus() {
@@ -380,7 +381,7 @@ class Player extends Character {
   }
 
   setShieldLevel(level) {
-    this.shieldLevel = parseInt(level);
+    this.shieldLevel = toNumber(level);
   }
 
   getShieldBonus() {
@@ -404,7 +405,7 @@ class Player extends Character {
   }
 
   setDefenseSkill(skill) {
-    this.defenseSkill = skill ? parseInt(skill) : null;
+    this.defenseSkill = toNumber(skill);
   }
 
   getAttackSkill() {
@@ -412,7 +413,7 @@ class Player extends Character {
   }
 
   setAttackSkill(skill) {
-    this.attackSkill = skill ? parseInt(skill) : null;
+    this.attackSkill = toNumber(skill);
   }
 
   setBelt(rawBelt) {
@@ -420,7 +421,7 @@ class Player extends Character {
       const [belt, level, bonus] = rawBelt.split(":");
 
       this.beltName = belt;
-      this.beltLevel = parseInt(level);
+      this.beltLevel = toNumber(level);
       this.beltBonus = toArray(bonus);
     } else {
       this.beltName = null;
@@ -434,7 +435,7 @@ class Player extends Character {
       const [cape, level, bonus] = rawCape.split(":");
 
       this.cape = cape;
-      this.capeLevel = parseInt(level);
+      this.capeLevel = toNumber(level);
       this.capeBonus = toArray(bonus);
     } else {
       this.cape = null;
@@ -448,7 +449,7 @@ class Player extends Character {
       const [shield, level, bonus, socket, skill] = rawShield.split(":");
 
       this.shieldName = shield;
-      this.shieldLevel = parseInt(level);
+      this.shieldLevel = toNumber(level);
       this.shieldBonus = toArray(bonus);
       this.shieldSocket = toArray(socket);
       this.defenseSkill = skill;
@@ -480,7 +481,7 @@ class Player extends Character {
       const [name, level, bonus] = ring.split(":");
 
       this.ring1Name = name;
-      this.ring1Level = parseInt(level);
+      this.ring1Level = toNumber(level);
       this.ring1Bonus = toArray(bonus);
     } else {
       this.ring1Name = null;
@@ -494,7 +495,7 @@ class Player extends Character {
       const [name, level, bonus] = ring.split(":");
 
       this.ring2Name = name;
-      this.ring2Level = parseInt(level);
+      this.ring2Level = toNumber(level);
       this.ring2Bonus = toArray(bonus);
     } else {
       this.ring2Name = null;
@@ -508,7 +509,7 @@ class Player extends Character {
       const [name, level, bonus] = amulet.split(":");
 
       this.amuletName = name;
-      this.amuletLevel = parseInt(level);
+      this.amuletLevel = toNumber(level);
       this.amuletBonus = toArray(bonus);
     } else {
       this.amuletName = null;
@@ -536,7 +537,7 @@ class Player extends Character {
       isDifferent = true;
       this.setWeaponName(weapon);
     }
-    if (level !== this.getWeaponLevel()) {
+    if (toNumber(level) !== this.getWeaponLevel()) {
       isDifferent = true;
       this.setWeaponLevel(level);
     }
@@ -548,8 +549,7 @@ class Player extends Character {
       isDifferent = true;
       this.setWeaponSocket(socket);
     }
-
-    if (skill !== this.getAttackSkill()) {
+    if (toNumber(skill) !== this.getAttackSkill()) {
       isDifferent = true;
       this.setAttackSkill(skill);
     }

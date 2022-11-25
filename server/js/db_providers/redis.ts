@@ -776,9 +776,6 @@ class DatabaseHandler {
     } else if (location === "stash") {
       player.send([Types.Messages.STASH, data]);
     } else if (location === "weapon") {
-      console.log("~~~~sendMoveItem~data??", data);
-      console.log("~~~~sendMoveItem~skill??", skill);
-
       player.equipItem({ item, level, type, bonus, socket, skill });
       player.broadcast(
         player.equip({

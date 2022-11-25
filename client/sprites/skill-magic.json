@@ -1,0 +1,13 @@
+{
+  "id": "skill-magic",
+  "width": 64,
+  "height": 64,
+  "animations": {
+    "idle_down": {
+      "length": 12,
+      "row": 0
+    }
+  },
+  "offset_y": -30,
+  "offset_x": -25
+}

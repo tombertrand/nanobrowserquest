@@ -32,17 +32,20 @@
   #skill-defense.skill-defense::before {
     background-position: -42px 0;
   }
-  #skill-attack.skill-flame::before {
+  #skill-attack.skill-magic::before {
     background-position: -84px 0;
   }
-  #skill-attack.skill-lightning::before {
+  #skill-attack.skill-flame::before {
     background-position: -126px 0;
   }
-  #skill-attack.skill-cold::before {
+  #skill-attack.skill-lightning::before {
     background-position: -168px 0;
   }
-  #skill-attack.skill-poison::before {
+  #skill-attack.skill-cold::before {
     background-position: -210px 0;
+  }
+  #skill-attack.skill-poison::before {
+    background-position: -252px 0;
   }
 }
 
@@ -65,17 +68,20 @@
   #skill-defense.skill-defense::before {
     background-position: -28px 0;
   }
-  #skill-attack.skill-flame::before {
+  #skill-attack.skill-magic::before {
     background-position: -56px 0;
   }
-  #skill-attack.skill-lightning::before {
+  #skill-attack.skill-flame::before {
     background-position: -84px 0;
   }
-  #skill-attack.skill-cold::before {
+  #skill-attack.skill-lightning::before {
     background-position: -112px 0;
   }
-  #skill-attack.skill-poison::before {
+  #skill-attack.skill-cold::before {
     background-position: -140px 0;
+  }
+  #skill-attack.skill-poison::before {
+    background-position: -168px 0;
   }
 }
 

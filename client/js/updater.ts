@@ -339,11 +339,13 @@ class Updater {
     this.game.highHealthAnimation?.update(t);
     this.game.freezeAnimation?.update(t);
     this.game.anvilAnimation?.update(t);
-    this.game.skillAnimation?.update(t);
-    this.game.skillLightning?.update(t);
-    this.game.skillFlame?.update(t);
-    this.game.skillCold?.update(t);
-    this.game.skillPoison?.update(t);
+    this.game.defenseSkillAnimation?.update(t);
+    this.game.skillCastAnimation?.update(t);
+    this.game.skillMagicAnimation?.update(t);
+    this.game.skillFlameAnimation?.update(t);
+    this.game.skillLightningAnimation?.update(t);
+    this.game.skillColdAnimation?.update(t);
+    this.game.skillPoisonAnimation?.update(t);
     this.game.weaponEffectAnimation?.update(t);
   }
 

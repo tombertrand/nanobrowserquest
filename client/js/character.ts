@@ -5,7 +5,8 @@ import Entity from "./entity";
 import Timer from "./timer";
 import Transition from "./transition";
 
-export type Skills = "heal" | "defense";
+export type DefenseSkills = "heal" | "defense";
+export type AttackSkills = "flame" | "lightning" | "cold" | "poison";
 
 class Character extends Entity {
   nextGridX: number;
@@ -32,9 +33,13 @@ class Character extends Entity {
   followingMode: boolean;
   inspecting: any;
   isLevelup: boolean;
+  isCasting: boolean;
+  skillAnimation: number;
+  skillAnimationTimeout: NodeJS.Timeout;
   auras: string[];
-  skillName: Skills;
-  skillAnimationTimeout: any;
+  defenseSkillName: DefenseSkills;
+  attackSkillName: AttackSkills;
+  defenseSkillAnimationTimeout: any;
   currentAnimation: any;
   flipSpriteX: any;
   flipSpriteY: any;
@@ -148,19 +153,48 @@ class Character extends Entity {
     }, 1500);
   }
 
-  resetSkillAnimation() {
-    this.skillName = null;
-    clearTimeout(this.skillAnimationTimeout);
+  setIsCasting() {
+    this.isCasting = true;
+    setTimeout(() => {
+      this.isCasting = false;
+    }, 850);
   }
 
-  setSkillAnimation(skillName, delay = 0) {
-    this.resetSkillAnimation();
-
-    this.skillName = skillName;
+  setSkillAnimation(skill) {
+    this.skillAnimation = skill;
+    clearTimeout(this.skillAnimationTimeout);
     this.skillAnimationTimeout = setTimeout(() => {
-      this.skillName = null;
+      this.skillAnimation = null;
+    }, Types.attackSkillDurationMap[skill]());
+  }
+
+  resetDefenseSkillAnimation() {
+    this.defenseSkillName = null;
+    clearTimeout(this.defenseSkillAnimationTimeout);
+  }
+
+  // resetAttackSkillAnimation() {
+  //   this.attackSkillName = null;
+  //   clearTimeout(this.attackSkillAnimationTimeout);
+  // }
+
+  setDefenseSkillAnimation(skillName, delay = 0) {
+    this.resetDefenseSkillAnimation();
+
+    this.defenseSkillName = skillName;
+    this.defenseSkillAnimationTimeout = setTimeout(() => {
+      this.defenseSkillName = null;
     }, delay);
   }
+
+  // setAttackSkillAnimation(skillName, delay = 0) {
+  //   this.resetAttackSkillAnimation();
+
+  //   this.attackSkillName = skillName;
+  //   this.attackSkillAnimationTimeout = setTimeout(() => {
+  //     this.attackSkillName = null;
+  //   }, delay);
+  // }
 
   animate(animation, speed, count = 0, onEndCount?: () => void) {
     var oriented = ["atk", "walk", "idle", "raise"];
