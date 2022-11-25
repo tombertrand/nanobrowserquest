@@ -678,22 +678,22 @@ class Game {
     this.defenseSkillAnimation = new Animation("idle_down", 8, 0, 32, 32);
     this.defenseSkillAnimation.setSpeed(125);
 
-    this.skillCastAnimation = new Animation("idle_down", 17, 0, 48, 48);
+    this.skillCastAnimation = new Animation("idle_down", 17 + 1, 0, 48, 48);
     this.skillCastAnimation.setSpeed(50);
 
-    this.skillMagicAnimation = new Animation("idle_down", 12, 0, 64, 64);
+    this.skillMagicAnimation = new Animation("idle_down", 12 + 1, 0, 64, 64);
     this.skillMagicAnimation.setSpeed(100);
 
-    this.skillFlameAnimation = new Animation("idle_down", 12, 0, 34, 58);
+    this.skillFlameAnimation = new Animation("idle_down", 12 + 1, 0, 34, 58);
     this.skillFlameAnimation.setSpeed(125);
 
-    this.skillLightningAnimation = new Animation("idle_down", 8, 0, 28, 50);
+    this.skillLightningAnimation = new Animation("idle_down", 8 + 1, 0, 28, 50);
     this.skillLightningAnimation.setSpeed(125);
 
-    this.skillColdAnimation = new Animation("idle_down", 14, 0, 72, 72);
+    this.skillColdAnimation = new Animation("idle_down", 14 + 1, 0, 72, 72);
     this.skillColdAnimation.setSpeed(75);
 
-    this.skillPoisonAnimation = new Animation("idle_down", 8, 0, 24, 60);
+    this.skillPoisonAnimation = new Animation("idle_down", 8 + 1, 0, 24, 60);
     this.skillPoisonAnimation.setSpeed(125);
 
     this.weaponEffectAnimation = new Animation("idle_down", 6, 0, 20, 20);
@@ -953,7 +953,7 @@ class Game {
           runeBonus = [],
           runeRank,
           socket,
-        } = Types.getItemDetails({ item, level, rawBonus, rawSkill, rawSocket });
+        } = Types.getItemDetails({ item, level, rawBonus, rawSkill, rawSocket, playerBonus: self.player.bonus });
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
@@ -3683,6 +3683,8 @@ class Game {
 
         self.player.bonus = bonus;
 
+        console.log("~~~~bonus", bonus);
+
         $("#player-damage").text(bonus.damage);
         $("#player-attackDamage").text(bonus.attackDamage);
         $("#player-criticalHit").text(bonus.criticalHit);
@@ -3782,6 +3784,7 @@ class Game {
         const { skill, level, isAttackSkill, mobId } = rawSkill;
         if (player) {
           if (isAttackSkill) {
+            self.skillCastAnimation.reset();
             player.setIsCasting();
 
             const entity = self.getEntityById(mobId);
@@ -5450,7 +5453,7 @@ class Game {
     }
   }
 
-  updateTarget(targetId, points, healthPoints, maxHp) {
+  updateTarget(targetId, points, hitPoints, maxHp) {
     if (this.player.hasTarget() && this.updatetarget_callback) {
       var target = this.getEntityById(targetId);
       if (!target) return;
@@ -5458,7 +5461,7 @@ class Game {
         target.name = Types.getAliasFromName(Types.getKindAsString(target.kind));
       }
       target.points = points;
-      target.healthPoints = healthPoints;
+      target.hitPoints = hitPoints;
       target.maxHp = maxHp;
       this.updatetarget_callback(target);
     }

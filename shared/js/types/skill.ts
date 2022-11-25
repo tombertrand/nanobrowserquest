@@ -23,7 +23,7 @@ const defenseSkillType = [
   // "curseAttackSkill", // 2
 ];
 
-const attackSkillType = [
+export const attackSkillType = [
   "magicSkill", // 0
   "flameSkill", // 1
   "lightningSkill", // 2
@@ -74,13 +74,26 @@ export const getDefenseSkill = function (rawSkill: number, level: number) {
   return skill;
 };
 
-export const getAttackSkill = function (rawSkill, level) {
+//getMinMaxSkillDamage
+export const getAttackSkill = function ({
+  skill,
+  level,
+  bonus,
+  resistance = 0,
+}: {
+  skill: number;
+  level: number;
+  bonus?: any;
+  resistance?: number;
+}) {
   const magicSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const flameSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const lightningSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const coldSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const poisonSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   // const meteorSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+
+  const skillMultipliers = [1.4, 1.6, 2.2, 1.4, 1.3];
 
   const skillPerLevel = [
     magicSkillPerLevel,
@@ -91,13 +104,31 @@ export const getAttackSkill = function (rawSkill, level) {
     // meteorSkillPerLevel,
   ];
 
-  let skill: { type: string; stats: number; description: string } | null = null;
+  const skillPlayerBonus = [
+    bonus.magicDamagePercent,
+    bonus.flameDamagePercent,
+    bonus.lightningDamagePercent,
+    bonus.coldDamagePercent,
+    bonus.poisonDamagePercent,
+  ];
 
-  const type = attackSkillType[rawSkill];
-  const stats = skillPerLevel[rawSkill][level - 1];
-  const description = attackSkillDescriptionMap[rawSkill].replace("#", `${stats}`);
+  const type = attackSkillType[skill];
+  const stats = skillPerLevel[skill][level - 1];
+  const multiplier = skillMultipliers[skill];
+  const baseDmg = Math.round(stats + stats * (skillPlayerBonus[skill] / 100));
+  const dmgWithResistance = Math.round(baseDmg - baseDmg * (resistance / 100));
+  const diff = Math.round(dmgWithResistance * multiplier) - dmgWithResistance;
+  const min = Math.abs(baseDmg - diff);
+  const max = baseDmg + diff;
 
-  skill = { type, stats, description };
+  console.log("~~~~baseDmg", baseDmg);
+  console.log("~~~~skill", skill);
+  console.log("~~~~level", level);
+  console.log("~~~~percent", skillPlayerBonus[skill]);
+  console.log("~~~~resistance", resistance);
+  console.log("~~~~diff", diff);
 
-  return skill;
+  const description = attackSkillDescriptionMap[skill].replace("#", `${min}-${max}`);
+
+  return { type, stats, description, min, max };
 };

@@ -4,6 +4,7 @@ import MessageParser from "socket.io-msgpack-parser";
 
 import { Types } from "../../shared/js/gametypes";
 import EntityFactory from "./entityfactory";
+import Mob from "./mob";
 import Player from "./player";
 
 class GameClient {
@@ -424,13 +425,14 @@ class GameClient {
     const kind = data[2];
     const x = data[3];
     const y = data[4];
-    const orientation = data[5];
+    const hitPoints = data[5];
+    const orientation = data[6];
 
     if (Types.isSpell(kind)) {
       const spell = EntityFactory.createEntity({ kind, id });
-      const originX = data[6];
-      const originY = data[7];
-      const element = data[8];
+      const originX = data[7];
+      const originY = data[8];
+      const element = data[9];
 
       if (this.spawn_spell_callback) {
         this.spawn_spell_callback(spell, x, y, orientation, originX, originY, element);
@@ -464,21 +466,25 @@ class GameClient {
         shield,
         settings;
 
-      target = data[6];
+      target = data[7];
 
       if (Types.isPlayer(kind)) {
-        name = data[7];
-        [armor, armorLevel, armorBonus] = data[8].split(":");
-        [weapon, weaponLevel, weaponBonus, weaponSocket] = data[9].split(":");
-        level = data[10];
-        auras = data[11];
-        partyId = data[12];
-        cape = data[13];
-        shield = data[14];
-        settings = data[15];
+        name = data[8];
+        [armor, armorLevel, armorBonus] = data[9].split(":");
+        [weapon, weaponLevel, weaponBonus, weaponSocket] = data[10].split(":");
+        level = data[11];
+        auras = data[12];
+        partyId = data[13];
+        cape = data[14];
+        shield = data[15];
+        settings = data[16];
       }
 
       var character = EntityFactory.createEntity({ kind, id, name });
+
+      if (character instanceof Player || character instanceof Mob) {
+        character.hitPoints = hitPoints;
+      }
 
       if (character instanceof Player) {
         character.setWeaponName(weapon);

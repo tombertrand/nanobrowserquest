@@ -7,7 +7,7 @@
     "map": "cd tools/maps/ && ts-node exportmap.js tmx/map.json",
     "test": "jest",
     "watch:client": "webpack serve --progress --open",
-    "watch:server": "nodemon --watch dist/ --watch server/ -e ts,js --exec \"npm run build:server\"",
+    "watch:server": "nodemon --watch dist/ --watch server/ --watch shared/ -e ts,js --exec \"npm run build:server\"",
     "build:client": "webpack  --progress --color",
     "build:server": "ts-node server/js/index.ts",
     "start": "npm run watch:server"

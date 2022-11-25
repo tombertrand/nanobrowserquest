@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
-import { toString } from "../../shared/js/utils";
+import { toArray, toNumber, toString } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
 import { postMessageToDiscordChatChannel } from "./discord";
@@ -434,7 +434,7 @@ class Player extends Character {
         if (mob?.type === "mob" || mob?.type === "player") {
           let isCritical = false;
 
-          let resistances: Resistances = Types.getResistance(mob);
+          const resistances: Resistances = Types.getResistance(mob);
 
           let { dmg, attackDamage } = Formulas.dmg({
             weapon: self.weapon,
@@ -1168,13 +1168,23 @@ class Player extends Character {
           if (!attackedMob) return;
 
           shouldBroadcast = true;
-          const { stats } = Types.getAttackSkill(this.attackSkill, this.weaponLevel);
+
           const mobResistance =
             (attackedMob.type === "mob"
               ? Types.mobResistance[Types.getKindAsString(attackedMob.kind)]
               : attackedMob.bonus)?.[Types.attackSkillToResistanceType[this.attackSkill]] || 0;
 
-          const dmg = Math.round(stats - stats * (mobResistance / 100));
+          const { min, max } = Types.getAttackSkill({
+            skill: this.attackSkill,
+            level: this.weaponLevel,
+            bonus: this.bonus,
+            resistance: mobResistance,
+          });
+          const dmg = randomInt(min, max);
+
+          console.log("~~~~~min", min);
+          console.log("~~~~~max", max);
+          console.log("~~~~~dmg", dmg);
 
           if (attackedMob.type === "mob") {
             this.server.handleMobHate(attackedMob.id, this.id, dmg);
@@ -1186,6 +1196,10 @@ class Player extends Character {
 
           const originalTimeout = Math.floor(Types.attackSkillDelay[this.attackSkill]);
           const timeout = Math.round(originalTimeout - originalTimeout * (this.bonus.skillTimeout / 100));
+
+          if (Types.skillToNameMap[this.attackSkill] === "poison") {
+            this.startPoisoned({ dmg, entity: attackedMob, resistance: mobResistance, attacker: this });
+          }
 
           this.attackSkillTimeout = setTimeout(() => {
             this.attackSkillTimeout = null;
@@ -1750,63 +1764,63 @@ class Player extends Character {
   equipArmor(armor, kind, level, bonus, socket) {
     this.armor = armor;
     this.armorKind = kind;
-    this.armorLevel = level;
-    this.armorBonus = bonus ? JSON.parse(bonus) : null;
-    this.armorSocket = socket ? JSON.parse(socket) : null;
+    this.armorLevel = toNumber(level);
+    this.armorBonus = toArray(bonus);
+    this.armorSocket = toArray(socket);
     this.isArmorUnique = !!this.armorBonus?.length;
   }
 
   equipWeapon(weapon, kind, level, bonus, socket, skill) {
     this.weapon = weapon;
     this.weaponKind = kind;
-    this.weaponLevel = level;
-    this.weaponBonus = bonus ? JSON.parse(bonus) : null;
-    this.weaponSocket = socket ? JSON.parse(socket) : null;
+    this.weaponLevel = toNumber(level);
+    this.weaponBonus = toArray(bonus);
+    this.weaponSocket = toArray(socket);
     this.isWeaponUnique = !!this.weaponBonus?.length;
-    this.attackSkill = skill ? parseInt(skill, 0) : null;
+    this.attackSkill = toNumber(skill);
   }
 
   equipBelt(belt, level, bonus) {
     this.belt = belt;
-    this.beltLevel = level;
-    this.beltBonus = bonus ? JSON.parse(bonus) : null;
+    this.beltLevel = toNumber(level);
+    this.beltBonus = toArray(bonus);
     this.isBeltUnique = !!this.beltBonus?.length;
   }
 
   equipCape(cape, kind, level, bonus) {
     this.cape = cape;
     this.capeKind = kind;
-    this.capeLevel = level;
-    this.capeBonus = bonus ? JSON.parse(bonus) : null;
+    this.capeLevel = toNumber(level);
+    this.capeBonus = toArray(bonus);
     this.isCapeUnique = this.capeBonus?.length >= 2;
   }
 
   equipShield(shield, kind, level, bonus, socket, skill) {
     this.shield = shield;
     this.shieldKind = kind;
-    this.shieldLevel = level;
-    this.shieldBonus = bonus ? JSON.parse(bonus) : null;
-    this.shieldSocket = socket ? JSON.parse(socket) : null;
+    this.shieldLevel = toNumber(level);
+    this.shieldBonus = toArray(bonus);
+    this.shieldSocket = toArray(socket);
     this.isShieldUnique = this.shieldBonus?.length >= 2;
-    this.defenseSkill = skill ? parseInt(skill, 0) : null;
+    this.defenseSkill = toNumber(skill);
   }
 
   equipRing1(ring, level, bonus) {
     this.ring1 = ring;
-    this.ring1Level = level;
-    this.ring1Bonus = bonus ? JSON.parse(bonus) : null;
+    this.ring1Level = toNumber(level);
+    this.ring1Bonus = toArray(bonus);
   }
 
   equipRing2(ring, level, bonus) {
     this.ring2 = ring;
-    this.ring2Level = level;
-    this.ring2Bonus = bonus ? JSON.parse(bonus) : null;
+    this.ring2Level = toNumber(level);
+    this.ring2Bonus = toArray(bonus);
   }
 
   equipAmulet(amulet, level, bonus) {
     this.amulet = amulet;
-    this.amuletLevel = level;
-    this.amuletBonus = bonus ? JSON.parse(bonus) : null;
+    this.amuletLevel = toNumber(level);
+    this.amuletBonus = toArray(bonus);
   }
 
   getEquipment() {
@@ -2205,6 +2219,11 @@ class Player extends Character {
       poisonResistance: this.bonus.poisonResistance,
       physicalResistance: this.bonus.physicalResistance,
       skillTimeout: this.bonus.skillTimeout,
+      magicDamagePercent: this.bonus.magicDamagePercent,
+      flameDamagePercent: this.bonus.flameDamagePercent,
+      lightningDamagePercent: this.bonus.lightningDamagePercent,
+      coldDamagePercent: this.bonus.coldDamagePercent,
+      poisonDamagePercent: this.bonus.poisonDamagePercent,
     };
 
     this.send(new Messages.Stats(stats).serialize());

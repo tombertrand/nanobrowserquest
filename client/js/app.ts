@@ -497,9 +497,9 @@ class App {
       inspector.find(".name").text(alias);
       inspector.find(".resistances").empty();
 
-      //Show how much Health creature has left. Currently does not work. The reason health doesn't currently go down has to do with the lines below down to initExpBar...
-      if (target.healthPoints) {
-        inspector.find(".health").css("width", Math.round((target.healthPoints / target.maxHp) * 100) + "%");
+      //Show how much Health creature has left. Currently does nost work. The reason health doesn't currently go down has to do with the lines below down to initExpBar...
+      if (target.hitPoints) {
+        inspector.find(".health").css("width", Math.round((target.hitPoints / target.maxHp) * 100) + "%");
       } else {
         inspector.find(".health").css("width", "0%");
       }
@@ -514,24 +514,22 @@ class App {
         let html = "";
 
         Object.entries(target.resistances).map(([type, percentage]: any) => {
+          if (!percentage) return;
           const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
           const display = Types.resistanceToDisplayMap[type];
 
-          html += `<div class="${type}">${prefix} ${display}</div>`;
+          html += `<div class="${display}">${prefix} ${_.capitalize(display)} ${percentage}%</div>`;
         });
-
         inspector.find(".resistances").append(html);
       }
-
       inspector.fadeIn("fast");
-
       self.game.onRemoveTarget();
     });
 
     self.game.onUpdateTarget(function (target) {
-      $("#inspector .health").css("width", Math.round((target.healthPoints / target.maxHp) * 100) + "%");
+      $("#inspector .health").css("width", Math.round((target.hitPoints / target.maxHp) * 100) + "%");
 
-      if (target.healthPoints <= 0) {
+      if (target.hitPoints <= 0) {
         self.game.onRemoveTarget.flush();
       } else {
         self.game.onRemoveTarget();

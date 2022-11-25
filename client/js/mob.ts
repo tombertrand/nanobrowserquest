@@ -1,3 +1,4 @@
+import { Types } from "../../shared/js/gametypes";
 import Character from "./character";
 
 class Mob extends Character {
@@ -10,6 +11,8 @@ class Mob extends Character {
     this.aggroRange = 1;
     this.isAggressive = true;
     this.type = "mob";
+    this.name = Types.getKindAsString(kind);
+    this.resistances = Types.getResistance(this);
   }
 }
 

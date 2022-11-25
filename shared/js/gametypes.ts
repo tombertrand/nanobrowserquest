@@ -25,6 +25,7 @@ import {
   attackSkillDurationMap,
   attackSkillToDamageType,
   attackSkillToResistanceType,
+  attackSkillType,
   attackSkillTypeAnimationMap,
   defenseSkillDelay,
   defenseSkillDurationMap,
@@ -410,6 +411,7 @@ Types.defenseSkillDurationMap = defenseSkillDurationMap;
 Types.attackSkillDurationMap = attackSkillDurationMap;
 Types.attackSkillToDamageType = attackSkillToDamageType;
 Types.attackSkillToResistanceType = attackSkillToResistanceType;
+Types.attackSkillType = attackSkillType;
 Types.getResistance = getResistance;
 Types.resistanceToDisplayMap = resistanceToDisplayMap;
 Types.mobResistance = mobResistance;
@@ -1615,12 +1617,12 @@ Types.getBonus = function (rawBonus, level) {
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const physicalResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const magicDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const flameDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const lightningDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const coldDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const poisonDamagePercentPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const allResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const magicDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const flameDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const lightningDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const coldDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const poisonDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const allResistancePerLevel = [1, 2, 3, 4, 5, 7, 10, 15, 22, 35];
   const preventRegenerateHealthPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const skillTimeoutPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
@@ -2034,12 +2036,14 @@ Types.getItemDetails = function ({
   rawBonus,
   rawSocket,
   rawSkill,
+  playerBonus,
 }: {
   item: string;
   level: number;
   rawBonus: number[];
   rawSocket?: number[];
   rawSkill?: number;
+  playerBonus: any;
 }) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
@@ -2076,7 +2080,7 @@ Types.getItemDetails = function ({
     if (!isUnique) {
       magicDamage = Types.getWeaponMagicDamage(level);
     }
-    skill = typeof rawSkill === "number" ? Types.getAttackSkill(rawSkill, level) : null;
+    skill = typeof rawSkill === "number" ? Types.getAttackSkill({ skill: rawSkill, level, bonus: playerBonus }) : null;
   } else if (isArmor) {
     type = "armor";
     healthBonus = Types.getArmorHealthBonus(level);
@@ -2086,7 +2090,7 @@ Types.getItemDetails = function ({
   } else if (isShield) {
     type = "shield";
     healthBonus = Types.getArmorHealthBonus(level);
-    skill = typeof rawSkill === "number" ? Types.getDefenseSkill(rawSkill, level) : null;
+    skill = typeof rawSkill === "number" ? Types.getDefenseSkill(rawSkill, level, playerBonus) : null;
   } else if (isCape) {
     type = "cape";
   } else if (isRing) {

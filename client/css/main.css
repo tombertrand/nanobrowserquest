@@ -214,22 +214,6 @@ footer, header, hgroup, menu, nav, section {
         text-shadow: 1px -1px 1px #000, 1px 1px 1px #000, -1px 1px 1px #000;
     }
 
-    #inspector .resistances .lightningDamage {
-        color: #bfc2db;
-    }
-    #inspector .resistances .flameDamage {
-        color: orange;
-    }
-    #inspector .resistances .coldDamage {
-        color: #55a3ff;
-    }
-    #inspector .resistances .magicDamage {
-        color: #d16afa;
-    }
-    #inspector .resistances .physicalDamage {
-        color: #fff;
-    }
-
     #dropDialog {
       font-family:'GraphicPixel';
       font-size: 9pt;
@@ -723,12 +707,29 @@ footer, header, hgroup, menu, nav, section {
         display: none;
     }
 
-    #player-magicDamage, #player-magicResistance { color: #d16afa; }
-    #player-flameDamage, #player-flameResistance { color: #fa6a09; }
-    #player-lightningDamage, #player-lightningResistance { color: #aad9fd; }
-    #player-coldDamage, #player-coldResistance { color: #74b5ff; }
-    #player-poisonDamage, #player-poisonResistance { color: #35ee35; }
-    .player-section-title { color: #9c9c9c; }
+    #player-magicDamage, #player-magicResistance, .resistances .magic { color: #d16afa; }
+    #player-flameDamage, #player-flameResistance, .resistances .flame { color: #fa6a09; }
+    #player-lightningDamage, #player-lightningResistance, .resistances .lightning { color: #aad9fd; }
+    #player-coldDamage, #player-coldResistance, .resistances .cold { color: #74b5ff; }
+    #player-poisonDamage, #player-poisonResistance, .resistances .poison { color: #35ee35; }
+    .player-section-title, .resistances .physical { color: #9c9c9c; }
+
+    #inspector .resistances .lightningDamage {
+        color: #bfc2db;
+    }
+    #inspector .resistances .flameDamage {
+        color: orange;
+    }
+    #inspector .resistances .coldDamage {
+        color: #55a3ff;
+    }
+    #inspector .resistances .magicDamage {
+        color: #d16afa;
+    }
+    #inspector .resistances .physicalDamage {
+        color: #fff;
+    }
+
 
     .item-title {
         font-weight: bold;

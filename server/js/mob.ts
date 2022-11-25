@@ -21,11 +21,12 @@ class Mob extends Character {
   tankerlist: any[];
   destroyTime: any;
   destroyCallback: any;
-  hitPoints: any;
+  hitPoints: number;
   area: MobArea;
   respawnCallback: any;
   moveCallback: any;
   kind: number;
+  name: string;
 
   constructor(id, kind, x, y) {
     super(id, "mob", kind, x, y);
@@ -42,6 +43,7 @@ class Mob extends Character {
     this.hateCount = 0;
     this.tankerlist = [];
     this.destroyTime = null;
+    this.name = Types.getKindAsString(kind);
   }
 
   destroy(delay = 30000) {
@@ -202,6 +204,7 @@ class Mob extends Character {
   }
 
   onRespawn(callback) {
+    this.hitPoints = Properties.getHitPoints(this.kind);
     this.respawnCallback = callback;
   }
 

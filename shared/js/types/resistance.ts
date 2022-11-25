@@ -17,15 +17,15 @@ export const mobResistance = {
 };
 
 export const resistanceToDisplayMap = {
-  magicResistance: "magic resistance",
-  flameResistance: "flame resistance",
-  lightningResistance: "lightning resistance",
-  coldResistance: "cold resistance",
-  poisonResistance: "poison resistance",
-  physicaResistance: "physical resistance",
+  magicResistance: "magic",
+  flameResistance: "flame",
+  lightningResistance: "lightning",
+  coldResistance: "cold",
+  poisonResistance: "poison",
+  physicaResistance: "physical",
 };
 
-export const getResistance = (mob: { kind: string; type: string; bonus: Resistances }) => {
+export const getResistance = (mob: { name: string; type: string; bonus: Resistances }) => {
   let resistances: Resistances = {
     magicResistance: 0,
     flameResistance: 0,
@@ -36,7 +36,7 @@ export const getResistance = (mob: { kind: string; type: string; bonus: Resistan
   };
 
   if (mob.type === "mob") {
-    resistances = Object.assign(resistances, resistances[mob.kind] || {});
+    resistances = Object.assign(resistances, mobResistance[mob.name] || {});
   } else if (mob.type === "player") {
     resistances = {
       magicResistance: mob.bonus.magicResistance,
