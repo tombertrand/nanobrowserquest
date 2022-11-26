@@ -3787,6 +3787,8 @@ class Game {
             self.skillCastAnimation.reset();
             player.setIsCasting();
 
+            self.audioManager.playSound(`skill-${Types.skillToNameMap[skill]}`);
+
             const entity = self.getEntityById(mobId);
             if (entity) {
               self[`skill${_.capitalize(Types.skillToNameMap[skill])}Animation`].reset();

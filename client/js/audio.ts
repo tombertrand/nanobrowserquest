@@ -70,11 +70,11 @@ class AudioManager {
       "skill-heal",
       "skill-defense",
       // "skill-curse-attack",
-      // "skill-magic",
-      // "skill-flame",
+      "skill-magic",
+      "skill-flame",
       "skill-lightning",
-      // "skill-cold",
-      // "skill-poison",
+      "skill-cold",
+      "skill-poison",
     ];
 
     var loadSoundFiles = function () {
