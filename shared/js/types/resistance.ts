@@ -1,5 +1,3 @@
-import { Resistances } from "../../../server/js/types";
-
 export const mobResistance = {
   rat: {
     coldResistance: 10,

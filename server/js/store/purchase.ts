@@ -6,8 +6,6 @@ import { Sentry } from "../sentry";
 import { rawToRai } from "../utils";
 import { store } from "./store";
 
-import type { Network } from "../types";
-
 const ERROR_MESSAGES = {
   noSession: "Received payment for an unregistered session account.",
   wrongAmount: "Wrong amount sent to deposit address.",

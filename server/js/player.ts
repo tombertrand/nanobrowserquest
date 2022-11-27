@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
-import { toArray, toNumber, toString } from "../../shared/js/utils";
+import { toArray, toDb, toNumber } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
 import { postMessageToDiscordChatChannel } from "./discord";
@@ -27,7 +27,6 @@ import {
 
 import type Party from "./party";
 import type Trade from "./trade";
-import type { GeneratedItem, Network, Resistances } from "./types";
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
@@ -52,7 +51,7 @@ class Player extends Character {
   experience: number;
   level: number;
   lastWorldChatMinutes: number;
-  auras: string[];
+  auras: Auras[];
   set: null;
   inventory: any[];
   inventoryCount: any[];
@@ -1179,12 +1178,9 @@ class Player extends Character {
             level: this.weaponLevel,
             bonus: this.bonus,
             resistance: mobResistance,
+            itemClass: Types.getItemClass(this.weapon, this.weaponLevel, this.isWeaponUnique),
           });
           const dmg = randomInt(min, max);
-
-          console.log("~~~~~min", min);
-          console.log("~~~~~max", max);
-          console.log("~~~~~dmg", dmg);
 
           if (attackedMob.type === "mob") {
             this.server.handleMobHate(attackedMob.id, this.id, dmg);
@@ -1205,7 +1201,7 @@ class Player extends Character {
             this.attackSkillTimeout = null;
           }, timeout);
         } else {
-          if (typeof this.defenseSkill !== "number" || !this.defenseSkillTimeout) return;
+          if (typeof this.defenseSkill !== "number" || this.defenseSkillTimeout) return;
           shouldBroadcast = true;
           level = this.shieldLevel;
 
@@ -1500,28 +1496,24 @@ class Player extends Character {
   }
 
   getState() {
-    var basestate = this._getBaseState();
-    var state = [
-      this.orientation,
-      this.target,
-      this.name,
-      `${this.armor}:${this.armorLevel}${this.armorBonus ? `:${this.armorBonus}` : ""}`,
-      `${this.weapon}:${this.weaponLevel}${this.weaponBonus ? `:${toString(this.weaponBonus)}` : ""}${
-        this.weaponSocket ? `:${toString(this.weaponSocket)}` : ""
-      }`,
-      this.level,
-      this.auras,
-      this.partyId,
-      [this.cape, this.capeLevel, this.capeBonus].filter(Boolean).join(":"),
-      [this.shield, this.shieldLevel, this.shieldBonus].filter(Boolean).join(":"),
-      {
+    return Object.assign({}, this._getBaseState(), {
+      orientation: this.orientation,
+      targetId: this.targetId,
+      name: this.name,
+      armor: `${this.armor}:${this.armorLevel}${toDb(this.armorBonus)}`,
+      weapon: `${this.weapon}:${this.weaponLevel}${toDb(this.weaponBonus)}${toDb(this.weaponSocket)}`,
+      level: this.level,
+      auras: this.auras,
+      partyId: this.partyId,
+      cape: [this.cape, this.capeLevel, this.capeBonus].filter(Boolean).join(":"),
+      shield: [this.shield, this.shieldLevel, this.shieldBonus].filter(Boolean).join(":"),
+      settings: {
         capeHue: this.capeHue,
         capeSaturate: this.capeSaturate,
         capeContrast: this.capeContrast,
         capeBrightness: this.capeBrightness,
       },
-    ];
-    return basestate.concat(state);
+    });
   }
 
   handleHurtDmg(mob, dmg: number) {
@@ -1564,10 +1556,7 @@ class Player extends Character {
     if (this.bonus.lightningDamage) {
       lightningDamage = this.bonus.lightningDamage;
 
-      const mobResistance =
-        mob.type === "mob"
-          ? Types.mobResistance[Types.getKindAsString(mob.kind)]?.lightningResistance
-          : mob.bonus.lightningResistance;
+      const mobResistance = Types.getResistance(mob).lightningResistance;
       const receivedLightningDamage = Math.round(lightningDamage - lightningDamage * (mobResistance / 100));
 
       if (mob.type === "mob") {
@@ -1575,6 +1564,7 @@ class Player extends Character {
       } else if (mob.type === "player") {
         mob.hitPoints -= receivedLightningDamage;
       }
+
       this.server.handleHurtEntity({ entity: mob, attacker: this, dmg: receivedLightningDamage });
     }
 

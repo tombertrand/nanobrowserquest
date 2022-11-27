@@ -1,4 +1,3 @@
-import { Network } from "./game";
 import storage from "./storage";
 
 const NANO_PAYOUT_MULTIPLIER = 10;

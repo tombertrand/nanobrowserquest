@@ -2,7 +2,7 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 
-import type { Recipes } from "./types";
+// import type { Recipes } from "./types";
 
 var Messages: any = {};
 module.exports = Messages;
@@ -10,8 +10,7 @@ module.exports = Messages;
 Messages.Spawn = class Message {
   constructor(private entity) {}
   serialize() {
-    var spawn = [Types.Messages.SPAWN];
-    return spawn.concat(this.entity.getState());
+    return [Types.Messages.SPAWN, this.entity.getState()];
   }
 };
 

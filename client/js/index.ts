@@ -18,7 +18,6 @@ import "jquery-ui/themes/base/all.css";
 import * as Sentry from "@sentry/browser";
 import * as _ from "lodash";
 
-import { ChatType } from "../../server/js/types";
 import { Types } from "../../shared/js/gametypes";
 import App from "./app";
 import Character from "./character";

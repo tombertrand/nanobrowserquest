@@ -4,9 +4,6 @@ import sanitizer from "sanitizer";
 
 import { Types } from "../../shared/js/gametypes";
 import { RuneList } from "../../shared/js/types/rune";
-import { Recipes } from "./types";
-
-import type { Network } from "./types";
 
 export const sanitize = function (string) {
   // Strip unsafe tags, then escape as html entities.

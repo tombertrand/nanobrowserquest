@@ -20,7 +20,7 @@ class Entity {
   destroy() {}
 
   _getBaseState() {
-    return [this.id, this.kind, this.x, this.y, this.hitPoints];
+    return { id: this.id, kind: this.kind, x: this.x, y: this.y, hitPoints: this.hitPoints };
   }
 
   getState() {

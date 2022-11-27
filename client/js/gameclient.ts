@@ -4,8 +4,6 @@ import MessageParser from "socket.io-msgpack-parser";
 
 import { Types } from "../../shared/js/gametypes";
 import EntityFactory from "./entityfactory";
-import Mob from "./mob";
-import Player from "./player";
 
 class GameClient {
   connection: Socket;
@@ -421,18 +419,11 @@ class GameClient {
   }
 
   receiveSpawn(data) {
-    const id = data[1];
-    const kind = data[2];
-    const x = data[3];
-    const y = data[4];
-    const hitPoints = data[5];
-    const orientation = data[6];
+    const { id, kind, x, y, orientation } = data[1];
 
     if (Types.isSpell(kind)) {
       const spell = EntityFactory.createEntity({ kind, id });
-      const originX = data[7];
-      const originY = data[8];
-      const element = data[9];
+      const { originX, originY, element } = data[1];
 
       if (this.spawn_spell_callback) {
         this.spawn_spell_callback(spell, x, y, orientation, originX, originY, element);
@@ -450,61 +441,8 @@ class GameClient {
         this.spawn_chest_callback(item, x, y);
       }
     } else {
-      var name,
-        target,
-        weapon,
-        weaponLevel,
-        weaponBonus,
-        weaponSocket,
-        armor,
-        armorLevel,
-        armorBonus,
-        level,
-        auras,
-        partyId,
-        cape,
-        shield,
-        settings;
-
-      target = data[7];
-
-      if (Types.isPlayer(kind)) {
-        name = data[8];
-        [armor, armorLevel, armorBonus] = data[9].split(":");
-        [weapon, weaponLevel, weaponBonus, weaponSocket] = data[10].split(":");
-        level = data[11];
-        auras = data[12];
-        partyId = data[13];
-        cape = data[14];
-        shield = data[15];
-        settings = data[16];
-      }
-
-      var character = EntityFactory.createEntity({ kind, id, name });
-
-      if (character instanceof Player || character instanceof Mob) {
-        character.hitPoints = hitPoints;
-      }
-
-      if (character instanceof Player) {
-        character.setWeaponName(weapon);
-        character.setWeaponLevel(weaponLevel);
-        character.setWeaponBonus(weaponBonus);
-        character.setWeaponSocket(weaponSocket);
-        character.spriteName = armor;
-        character.setArmorName(armor);
-        character.setArmorLevel(armorLevel);
-        character.setArmorBonus(armorBonus);
-        character.setLevel(level);
-        character.setAuras(auras);
-        character.setPartyId(partyId);
-        character.setCape(cape);
-        character.setShield(shield);
-        character.setSettings(settings);
-      }
-
       if (this.spawn_character_callback) {
-        this.spawn_character_callback(character, x, y, orientation, target);
+        this.spawn_character_callback(data[1]);
       }
     }
   }

@@ -33,15 +33,12 @@ class Spell extends Entity {
   }
 
   getState() {
-    var basestate = this._getBaseState();
-    var state = [];
-
-    state.push(this.orientation);
-    state.push(this.originX);
-    state.push(this.originY);
-    state.push(this.element);
-
-    return basestate.concat(state);
+    return Object.assign({}, this._getBaseState(), {
+      orientation: this.orientation,
+      originX: this.originX,
+      originY: this.originY,
+      element: this.element,
+    });
   }
 
   destroy() {

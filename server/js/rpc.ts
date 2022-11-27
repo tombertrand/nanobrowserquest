@@ -1,7 +1,5 @@
 import fetch from "node-fetch";
 
-import type { Network } from "./types";
-
 const { NANO_RPC_DOMAIN, BAN_RPC_DOMAIN } = process.env;
 const rpcToDomainMap: { [key in Network]: string } = {
   nano: NANO_RPC_DOMAIN,

@@ -14,7 +14,7 @@ import {
   UPGRADE_SLOT_RANGE,
   WAYPOINTS_COUNT,
 } from "../../../shared/js/slots";
-import { toArray, toString } from "../../../shared/js/utils";
+import { toArray, toDb } from "../../../shared/js/utils";
 import { postMessageToDiscordAnvilChannel } from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
@@ -34,7 +34,6 @@ import {
 } from "../utils";
 
 import type Player from "../player";
-import type { GeneratedItem, Network } from "../types";
 
 const ACHIEVEMENT_COUNT = 64;
 const GEM_COUNT = 5;
@@ -43,16 +42,6 @@ const ARTIFACT_COUNT = 4;
 const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, DEPOSIT_SEED } = process.env;
 
 const queue = new PromiseQueue();
-
-const toDb = (attribute: string | number | number[]) => {
-  if (Array.isArray(attribute)) {
-    return `:${toString(attribute)}`;
-  }
-  if (typeof attribute === "number" || (typeof attribute === "string" && attribute)) {
-    return `:${attribute}`;
-  }
-  return "";
-};
 
 const getNewDepositAccountByIndex = async (index: number, network: Network): Promise<string> => {
   let depositAccount = null;

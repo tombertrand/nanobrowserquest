@@ -46,11 +46,6 @@ import Updater from "./updater";
 import { randomRange } from "./utils";
 import Warrior from "./warrior";
 
-import type { ChatType } from "../../server/js/types";
-
-export type Network = "nano" | "ban";
-export type Explorer = "nanolooker" | "bananolooker";
-
 interface WorldPlayer {
   name: string;
   level: number;
@@ -1366,7 +1361,7 @@ class Game {
     if (this.player.weaponName !== "dagger") {
       $(".item-equip-weapon").append(
         $("<div />", {
-          class: `item-draggable ${this.player.weaponBonus ? "item-unique" : ""}`,
+          class: `item-draggable ${this.player.weaponBonus?.length ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.weaponName)}")`,
           },
@@ -1381,7 +1376,7 @@ class Game {
     if (this.player.armorName !== "clotharmor") {
       $(".item-equip-armor").append(
         $("<div />", {
-          class: `item-draggable ${this.player.armorBonus ? "item-unique" : ""}`,
+          class: `item-draggable ${this.player.armorBonus?.length ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.armorName)}")`,
           },
@@ -2519,7 +2514,6 @@ class Game {
         self.player.setPartyLeader(partyLeader);
         self.player.setPartyMembers(members);
       }
-
       self.addEntity(self.player);
       self.player.dirtyRect = self.renderer.getEntityBoundingRect(self.player);
 
@@ -2873,10 +2867,15 @@ class Game {
         });
       });
 
-      self.client.onSpawnCharacter(function (entity, x, y, orientation, targetId) {
-        if (!self.entityIdExists(entity.id)) {
+      self.client.onSpawnCharacter(function (data) {
+        const { id, kind, name, x, y, targetId, orientation } = data;
+
+        let entity = self.getEntityById(id);
+        if (!entity) {
           try {
-            if (entity.id !== self.playerId) {
+            if (id !== self.playerId) {
+              entity = EntityFactory.createEntity({ kind, id, name });
+
               entity.setSprite(self.sprites[entity.getSpriteName()]);
               entity.setGridPosition(x, y);
               entity.setOrientation(orientation);
@@ -3068,42 +3067,42 @@ class Game {
             console.error(err);
           }
         } else {
-          if (entity instanceof Player) {
-            // @NOTE Manually update locally stored entity to prevent invisible unupdated coords entity
-            // Before this the entities were not updated because they already existed
-            const currentEntity = self.getEntityById(entity.id);
-            self.unregisterEntityPosition(currentEntity);
+          console.debug("Entity " + entity.id + " already exists. Don't respawn.");
+        }
 
-            currentEntity.setWeaponName(entity.weaponName);
-            currentEntity.setWeaponLevel(entity.weaponLevel);
-            currentEntity.setWeaponBonus(entity.weaponBonus);
-            currentEntity.setWeaponBonus(entity.weaponSocket);
-            currentEntity.setSpriteName(entity.armorName);
-            currentEntity.setArmorName(entity.armorName);
-            currentEntity.setArmorLevel(entity.armorLevel);
-            currentEntity.setArmorBonus(entity.armorBonus);
-            currentEntity.setAuras(entity.auras);
-            if (!entity.cape || !entity.capeLevel || !entity.capeBonus) {
-              currentEntity.removeCape();
-            } else {
-              currentEntity.setCape(`${entity.cape}:${entity.capeLevel}:${entity.capeBonus}`);
-            }
+        if (entity instanceof Player || entity instanceof Mob) {
+          entity.hitPoints = data.hitPoints;
+        }
 
-            if (!entity.shieldName || !entity.shieldLevel) {
-              currentEntity.removeShield();
-            } else {
-              currentEntity.setShield(
-                `${entity.shieldName}:${entity.shieldLevel}${entity.shieldBonus ? `:${entity.shieldBonus}` : ""}`,
-              );
-            }
+        if (entity instanceof Player) {
+          // @NOTE Manually update locally stored entity to prevent invisible unupdated coords entity
+          // Before this the entities were not updated because they already existed
+          // const currentEntity = self.getEntityById(entity.id);
+          self.unregisterEntityPosition(entity);
 
-            currentEntity.setSprite(self.sprites[entity.getSpriteName()]);
-            currentEntity.setGridPosition(x, y);
+          const { weapon: rawWeapon, armor: rawArmor, level, auras, partyId, cape, shield, settings } = data;
 
-            self.registerEntityPosition(currentEntity);
-          } else {
-            console.debug("Character " + entity.id + " already exists. Don't respawn.");
-          }
+          const [armor, armorLevel, armorBonus] = rawArmor.split(":");
+          const [weapon, weaponLevel, weaponBonus, weaponSocket] = rawWeapon.split(":");
+
+          entity.setWeaponName(weapon);
+          entity.setWeaponLevel(weaponLevel);
+          entity.setWeaponBonus(weaponBonus);
+          entity.setWeaponSocket(weaponSocket);
+          entity.setSpriteName(armor);
+          entity.setArmorName(armor);
+          entity.setArmorLevel(armorLevel);
+          entity.setArmorBonus(armorBonus);
+          entity.setAuras(auras);
+          entity.setCape(cape);
+          entity.setShield(shield);
+          entity.setSettings(settings);
+          entity.setPartyId(partyId);
+          entity.setLevel(level);
+          entity.setSprite(self.sprites[entity.getSpriteName()]);
+          entity.setGridPosition(x, y);
+
+          self.registerEntityPosition(entity);
         }
 
         if (entity instanceof Mob) {
@@ -3683,8 +3682,6 @@ class Game {
 
         self.player.bonus = bonus;
 
-        console.log("~~~~bonus", bonus);
-
         $("#player-damage").text(bonus.damage);
         $("#player-attackDamage").text(bonus.attackDamage);
         $("#player-criticalHit").text(bonus.criticalHit);
@@ -3785,7 +3782,7 @@ class Game {
         if (player) {
           if (isAttackSkill) {
             self.skillCastAnimation.reset();
-            player.setIsCasting();
+            player.setCastSkill(skill);
 
             self.audioManager.playSound(`skill-${Types.skillToNameMap[skill]}`);
 

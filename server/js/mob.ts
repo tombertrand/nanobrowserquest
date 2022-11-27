@@ -27,6 +27,7 @@ class Mob extends Character {
   moveCallback: any;
   kind: number;
   name: string;
+  resistances: Resistances;
 
   constructor(id, kind, x, y) {
     super(id, "mob", kind, x, y);
@@ -44,6 +45,7 @@ class Mob extends Character {
     this.tankerlist = [];
     this.destroyTime = null;
     this.name = Types.getKindAsString(kind);
+    this.resistances = Types.getResistance(this);
   }
 
   destroy(delay = 30000) {

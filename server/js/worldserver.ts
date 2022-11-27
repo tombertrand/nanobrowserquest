@@ -196,11 +196,11 @@ class World {
         var isPVP = self.map.isPVP(x, y);
         player.flagPVP(isPVP);
         player.forEachAttacker(function (mob) {
-          if (mob.target === null) {
+          if (mob.targetId === null) {
             player.removeAttacker(mob);
             return;
           }
-          var target = self.getEntityById(mob.target);
+          var target = self.getEntityById(mob.targetId);
           if (target) {
             var pos = self.findPositionNextTo(mob, target);
             if (mob.distanceToSpawningPoint(pos.x, pos.y) > 50) {
@@ -268,7 +268,7 @@ class World {
 
     // Called when an entity is attacked by another entity
     this.onEntityAttack(function (attacker) {
-      var target = self.getEntityById(attacker.target);
+      var target = self.getEntityById(attacker.targetId);
       if (target && attacker.type === "mob") {
         var pos = self.findPositionNextTo(attacker, target);
         self.moveEntity(attacker, pos.x, pos.y);
@@ -880,8 +880,8 @@ class World {
    */
   clearMobAggroLink(mob, player: any = null) {
     var targetPlayer = null;
-    if (mob.target) {
-      targetPlayer = this.getEntityById(mob.target);
+    if (mob.targetId) {
+      targetPlayer = this.getEntityById(mob.targetId);
       if (targetPlayer) {
         if (!player || (player && targetPlayer.id === player.id)) {
           targetPlayer.removeAttacker(mob);
@@ -1464,78 +1464,78 @@ class World {
     }
 
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
-    var randomDrops = [
-      // "rune",
-      "jewelskull",
-      // "ringplatinum",
-      // "ringconqueror",
-      // "amuletdemon",
-      // "ringmystical",
-      // "amuletmoon",
-      // "ringheaven",
-      // "ringwizard",
-      // "amuletplatinum",
-      // "beltemerald",
-      // "beltexecutioner",
-      // "beltmystical",
-      // "belttemplar",
-      // "beltdemon",
-      // "beltmoon",
-      // "shieldexecutioner",
-      // "shielddragon",
-      // "shielddemon",
-      // "shieldmoon",
-      // "rune-fal",
-      // "rune-kul",
-      // "rune-mer",
-      // "rune-qua",
-      // "rune-gul",
-      // "shieldemerald",
-      // "shieldtemplar",
-      // "ringbalrog",
-      // "stonesocket",
-      // "scrollupgradelegendary",
-      // "scrollupgradesacred",
-      // "rune-sat",
-      // "rune-al",
-      // "rune-bul",
-      // "rune-nan",
-      // "rune-mir",
-      // "rune-gel",
-      // "rune-do",
-      // "rune-ban",
-      // "rune-sol",
-      // "rune-um",
-      // "rune-hex",
-      // "rune-zal",
-      // "rune-vie",
-      // "rune-xno",
-      // "rune-eth",
-      // "rune-btc",
-      // "rune-vax",
-      // "rune-por",
-      // "rune-las",
-      // "rune-cham",
-      // "rune-dur",
-      // "rune-ber",
-      // "rune-tor",
-      // "rune-jah",
-      // "rune-shi",
-      // "rune-vod",
-      // "goldensword",
-      // "emeraldsword",
-      // "mysticalsword",
-      // "dragonsword",
-      // "executionersword",
-      // "eclypsedagger",
-      // "spikeglaive",
-      // "templarsword",
-      // "moonsword",
-    ];
+    // var randomDrops = [
+    // "rune",
+    // "jewelskull",
+    // "ringplatinum",
+    // "ringconqueror",
+    // "amuletdemon",
+    // "ringmystical",
+    // "amuletmoon",
+    // "ringheaven",
+    // "ringwizard",
+    // "amuletplatinum",
+    // "beltemerald",
+    // "beltexecutioner",
+    // "beltmystical",
+    // "belttemplar",
+    // "beltdemon",
+    // "beltmoon",
+    // "shieldexecutioner",
+    // "shielddragon",
+    // "shielddemon",
+    // "shieldmoon",
+    // "rune-fal",
+    // "rune-kul",
+    // "rune-mer",
+    // "rune-qua",
+    // "rune-gul",
+    // "shieldemerald",
+    // "shieldtemplar",
+    // "ringbalrog",
+    // "stonesocket",
+    // "scrollupgradelegendary",
+    // "scrollupgradesacred",
+    // "rune-sat",
+    // "rune-al",
+    // "rune-bul",
+    // "rune-nan",
+    // "rune-mir",
+    // "rune-gel",
+    // "rune-do",
+    // "rune-ban",
+    // "rune-sol",
+    // "rune-um",
+    // "rune-hex",
+    // "rune-zal",
+    // "rune-vie",
+    // "rune-xno",
+    // "rune-eth",
+    // "rune-btc",
+    // "rune-vax",
+    // "rune-por",
+    // "rune-las",
+    // "rune-cham",
+    // "rune-dur",
+    // "rune-ber",
+    // "rune-tor",
+    // "rune-jah",
+    // "rune-shi",
+    // "rune-vod",
+    // "goldensword",
+    // "emeraldsword",
+    // "mysticalsword",
+    // "dragonsword",
+    // "executionersword",
+    // "eclypsedagger",
+    // "spikeglaive",
+    // "templarsword",
+    // "moonsword",
+    // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    var randomDrop = random(randomDrops.length);
-    itemName = randomDrops[randomDrop];
+    // var randomDrop = random(randomDrops.length);
+    // itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

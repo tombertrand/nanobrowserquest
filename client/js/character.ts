@@ -33,10 +33,10 @@ class Character extends Entity {
   followingMode: boolean;
   inspecting: any;
   isLevelup: boolean;
-  isCasting: boolean;
+  castSkill: number | null;
   skillAnimation: number;
   skillAnimationTimeout: NodeJS.Timeout;
-  auras: string[];
+  auras: Auras[];
   defenseSkillName: DefenseSkills;
   attackSkillName: AttackSkills;
   defenseSkillAnimationTimeout: any;
@@ -119,7 +119,6 @@ class Character extends Entity {
     this.inspecting = null;
     this.isLevelup = false;
     this.auras = [];
-    // this.resistances = {};
   }
 
   clean() {
@@ -153,10 +152,10 @@ class Character extends Entity {
     }, 1500);
   }
 
-  setIsCasting() {
-    this.isCasting = true;
+  setCastSkill(skill) {
+    this.castSkill = skill;
     setTimeout(() => {
-      this.isCasting = false;
+      this.castSkill = null;
     }, 850);
   }
 
@@ -616,7 +615,7 @@ class Character extends Entity {
    * @param {Character} character The target character.
    */
   setTarget(character) {
-    if (this.target !== character) {
+    if (this.target?.id !== character.id) {
       // If it's not already set as the target
       if (this.hasTarget()) {
         this.removeTarget(); // Cleanly remove the previous one

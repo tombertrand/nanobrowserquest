@@ -1,7 +1,5 @@
 import BigNumber from "bignumber.js";
 
-import type { Network } from "./game";
-
 Function.prototype.bind = function (bind) {
   var self = this;
   return function () {

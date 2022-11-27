@@ -5,7 +5,7 @@ import { randomOrientation } from "./utils";
 class Character extends Entity {
   orientation: any;
   attackers: {};
-  target: any;
+  targetId: number;
   maxHitPoints: any;
   hitPoints: any;
   id: any;
@@ -16,18 +16,12 @@ class Character extends Entity {
 
     this.orientation = randomOrientation();
     this.attackers = {};
-    this.target = null;
+    this.targetId = null;
     this.poisonedInterval = null;
   }
 
   getState() {
-    var basestate = this._getBaseState();
-    var state = [];
-
-    state.push(this.orientation);
-    state.push(this.target);
-
-    return basestate.concat(state);
+    return Object.assign({}, this._getBaseState(), { orientation: this.orientation, targetId: this.targetId });
   }
 
   resetHitPoints(maxHitPoints) {
@@ -43,8 +37,8 @@ class Character extends Entity {
   }
 
   regenHealthBy(value) {
-    var hp = this.hitPoints,
-      max = this.maxHitPoints;
+    const hp = this.hitPoints;
+    const max = this.maxHitPoints;
 
     if (hp < max) {
       if (hp + value <= max) {
@@ -60,23 +54,23 @@ class Character extends Entity {
   }
 
   setTarget(entity) {
-    this.target = entity.id;
+    this.targetId = entity.id;
   }
 
   clearTarget() {
-    this.target = null;
+    this.targetId = null;
   }
 
   hasTarget() {
-    return this.target !== null;
+    return this.targetId !== null;
   }
 
   attack() {
-    return new Messages.Attack(this.id, this.target);
+    return new Messages.Attack(this.id, this.targetId);
   }
 
   raise(targetId) {
-    return new Messages.Raise(this.id, this.target || targetId);
+    return new Messages.Raise(this.id, this.targetId || targetId);
   }
 
   health({ isHurt = false } = {}) {

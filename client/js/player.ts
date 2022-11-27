@@ -24,6 +24,7 @@ class Player extends Character {
   weaponLevel: number;
   weaponBonus: null | number[];
   weaponSocket: null | number[];
+  weaponSkill: null | number[];
   weaponRuneword: null | string;
   isWeaponUnique: boolean;
   beltName: null;
@@ -67,7 +68,7 @@ class Player extends Character {
   amuletName: null;
   amuletLevel: number | null;
   amuletBonus: null | number[];
-  auras: string[];
+  auras: Auras[];
   bonus: any;
   setBonus: any;
   isLootMoving: boolean;
@@ -523,7 +524,7 @@ class Player extends Character {
   }
 
   setAuras(auras) {
-    this.auras = auras;
+    this.auras = auras || [];
   }
 
   hasWeapon() {

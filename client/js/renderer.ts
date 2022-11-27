@@ -884,11 +884,17 @@ class Renderer {
         }
       }
 
-      if (entity instanceof Player && entity.isCasting) {
-        var sprite = this.game.sprites[`skill-cast`];
+      if (entity instanceof Player && typeof entity.castSkill === "number") {
+        var sprite = this.game.sprites["skill-cast"];
         var anim = this.game.skillCastAnimation;
 
         if (sprite && anim) {
+          const skillCastMap = ["-magic", "-flame", "", "", "-poison"];
+          sprite.image.src = sprite.image.src.replace(
+            /-?(?:magic|flame|lightning|cold|poison)?.png$/,
+            `${skillCastMap[entity.castSkill]}.png`,
+          );
+
           var os = this.upscaledRendering ? 1 : this.scale;
           var ds = this.upscaledRendering ? this.scale : 1;
           // @ts-ignore

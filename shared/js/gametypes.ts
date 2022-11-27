@@ -1930,7 +1930,7 @@ Types.getItemClass = function (item: string, level: number, isUnique: boolean) {
   return Types.getItemClassFromBaseLevel(level, baseLevel);
 };
 
-Types.getItemClassFromBaseLevel = function (level: number, baseLevel: number) {
+Types.getItemClassFromBaseLevel = function (level: number, baseLevel: number): ItemClass {
   let itemClass;
   if (baseLevel < 5) {
     if (!level || level <= 5) {
@@ -2075,12 +2075,24 @@ Types.getItemDetails = function ({
 
   let type = "item";
 
+  const itemClass = isJewel
+    ? Types.getItemClassFromBaseLevel(level, jewelRequirement)
+    : Types.getItemClass(item, level, isUnique);
+
   if (isWeapon) {
     type = "weapon";
     if (!isUnique) {
       magicDamage = Types.getWeaponMagicDamage(level);
     }
-    skill = typeof rawSkill === "number" ? Types.getAttackSkill({ skill: rawSkill, level, bonus: playerBonus }) : null;
+    skill =
+      typeof rawSkill === "number"
+        ? Types.getAttackSkill({
+            skill: rawSkill,
+            level,
+            bonus: playerBonus,
+            itemClass,
+          })
+        : null;
   } else if (isArmor) {
     type = "armor";
     healthBonus = Types.getArmorHealthBonus(level);
@@ -2098,10 +2110,6 @@ Types.getItemDetails = function ({
   } else if (isAmulet) {
     type = "amulet";
   }
-
-  const itemClass = isJewel
-    ? Types.getItemClassFromBaseLevel(level, jewelRequirement)
-    : Types.getItemClass(item, level, isUnique);
 
   let requirement;
   if (isRune) {
