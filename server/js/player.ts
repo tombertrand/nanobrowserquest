@@ -17,6 +17,7 @@ import { store } from "./store/store";
 import {
   getClassicMaxPayout,
   getClassicPayout,
+  getRandomAttackSkill,
   getRandomSockets,
   random,
   randomInt,
@@ -1310,8 +1311,7 @@ class Player extends Character {
           .sort();
         skill = _.shuffle(defenseSkill).slice(0, 1);
       } else if (Types.isWeapon(kind) && kind >= Types.Entities.GOLDENSWORD) {
-        const attackSkill = [0, 1, 2, 3];
-        skill = _.shuffle(attackSkill).slice(0, 1);
+        skill = getRandomAttackSkill();
       }
 
       item = {

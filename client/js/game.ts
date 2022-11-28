@@ -1021,10 +1021,10 @@ class Game {
   initSendUpgradeItem() {
     var self = this;
     $("#upgrade-btn").on("click", function () {
+      const item1 = self.player.upgrade[0]?.item;
       if (
         self.player.upgrade.length >= 2 ||
-        (self.player.upgrade.length === 1 &&
-          (Types.isChest(self.player.upgrade[0]?.item) || self.player.upgrade[0]?.item === "cowkinghorn"))
+        (self.player.upgrade.length === 1 && (Types.isChest(item1) || item1 === "cowkinghorn" || Types.isWeapon(item1)))
       ) {
         if (!self.isUpgradeItemSent) {
           self.client.sendUpgradeItem();

@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import * as _ from "lodash";
 import forEach from "lodash/forEach";
 import sanitizer from "sanitizer";
 
@@ -187,6 +188,30 @@ const getPayout = (achievements, payouts, network: Network) => {
 
 export const getClassicPayout = (achievements, network: Network) => {
   return getPayout(achievements, Object.values(classicAchievementMap[network]), network);
+};
+
+export const getRandomAttackSkill = () => _.shuffle([0, 1, 2, 3, 4]).slice(0, 1);
+
+export const isValidAddWeaponSkill = items => {
+  if (items.length !== 1) {
+    return false;
+  }
+
+  let [item, level, bonus, socket, skill] = items[0].split(":");
+  if (!Types.isWeapon(item) || Types.getKindFromString(item) < Types.Entities.GOLDENSWORD || skill) {
+    return false;
+  }
+
+  if (!bonus) {
+    bonus = JSON.stringify([]);
+  }
+  if (!socket) {
+    socket = JSON.stringify([]);
+  }
+
+  skill = getRandomAttackSkill();
+
+  return [item, level, bonus, socket, skill].join(":");
 };
 
 export const isValidUpgradeItems = items => {

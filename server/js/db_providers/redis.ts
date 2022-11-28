@@ -31,6 +31,7 @@ import {
   isValidUpgradeRunes,
   NaN2Zero,
   randomInt,
+  isValidAddWeaponSkill,
 } from "../utils";
 
 import type Player from "../player";
@@ -1154,8 +1155,14 @@ class DatabaseHandler {
         let socketItem = null;
         let extractedItem = null;
         let socketCount = null;
+        let weaponWithSkill = null;
 
-        if (isValidUpgradeItems(filteredUpgrade)) {
+        if ((weaponWithSkill = isValidAddWeaponSkill(filteredUpgrade))) {
+          isSuccess = true;
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = weaponWithSkill;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if (isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus, socket, skill] = filteredUpgrade[0].split(":");
           const isUnique = Types.isUnique(item, bonus);
           let upgradedItem: number | string = 0;
