@@ -121,6 +121,7 @@ class Game {
   freezeAnimation: Animation;
   anvilAnimation: Animation;
   defenseSkillAnimation: Animation;
+  skillResistanceAnimation: Animation;
   attackSkillAnimation: Animation;
   skillCastAnimation: Animation;
   skillMagicAnimation: Animation;
@@ -128,6 +129,7 @@ class Game {
   skillLightningAnimation: Animation;
   skillColdAnimation: Animation;
   skillPoisonAnimation: Animation;
+  cursePreventRegenerateHealthAnimation: Animation;
   weaponEffectAnimation: Animation;
   client: any;
   achievements: any;
@@ -216,13 +218,14 @@ class Game {
     this.freezeAnimation = null;
     this.anvilAnimation = null;
     this.defenseSkillAnimation = null;
-    // this.attackSkillAnimation = null;
+    this.skillResistanceAnimation = null;
     this.skillCastAnimation = null;
     this.skillMagicAnimation = null;
     this.skillFlameAnimation = null;
     this.skillLightningAnimation = null;
     this.skillColdAnimation = null;
     this.skillPoisonAnimation = null;
+    this.cursePreventRegenerateHealthAnimation = null;
     this.weaponEffectAnimation = null;
     this.partyInvites = [];
     this.partyInvitees = [];
@@ -294,13 +297,14 @@ class Game {
       "aura-freeze",
       "skill-heal",
       "skill-defense",
-      "skill-curse-attack",
+      "skill-resistances",
       "skill-cast",
       "skill-magic",
       "skill-flame",
       "skill-lightning",
       "skill-cold",
       "skill-poison",
+      "curse-prevent-regenerate-health",
       "talk",
       "sparks",
       "weapon-effect-magic",
@@ -673,6 +677,9 @@ class Game {
     this.defenseSkillAnimation = new Animation("idle_down", 8, 0, 32, 32);
     this.defenseSkillAnimation.setSpeed(125);
 
+    this.skillResistanceAnimation = new Animation("idle_down", 24, 0, 30, 36);
+    this.skillResistanceAnimation.setSpeed(25);
+
     this.skillCastAnimation = new Animation("idle_down", 17 + 1, 0, 48, 48);
     this.skillCastAnimation.setSpeed(50);
 
@@ -693,6 +700,9 @@ class Game {
 
     this.weaponEffectAnimation = new Animation("idle_down", 6, 0, 20, 20);
     this.weaponEffectAnimation.setSpeed(140);
+
+    this.cursePreventRegenerateHealthAnimation = new Animation("idle_down", 17 + 1, 0, 20, 20);
+    this.cursePreventRegenerateHealthAnimation.setSpeed(25);
   }
 
   initHurtSprites() {
@@ -1758,24 +1768,20 @@ class Game {
   useSkill(slot) {
     if (document.activeElement.tagName === "INPUT") return;
 
-    // No skill / timeout is not finished
-    if (
-      slot === 1 &&
-      (this.player.attackSkillTimeout || typeof this.player.attackSkill !== "number" || !this.lastHovered?.id)
-    )
-      return;
-    if (slot === 2 && (this.player.defenseSkillTimeout || typeof this.player.defenseSkill !== "number")) return;
-
     let mobId = 0;
-    const isAttackSkill = slot === 1;
-    if (isAttackSkill) {
-      if (!this.lastHovered || (!(this.lastHovered instanceof Mob) && !(this.lastHovered instanceof Player))) {
-        return;
-      } else {
-        mobId = this.lastHovered.id;
-      }
-    }
 
+    // No skill / timeout is not finished
+    if (slot === 1) {
+      const { x, y } = this.getMouseGridPosition();
+      const entity = this.getEntityAt(x, y);
+      mobId = entity?.id;
+
+      if (this.player.attackSkillTimeout || typeof this.player.attackSkill !== "number" || !mobId) {
+        return;
+      }
+    } else if (slot === 2 && (this.player.defenseSkillTimeout || typeof this.player.defenseSkill !== "number")) return;
+
+    const isAttackSkill = slot === 1;
     const skillName = isAttackSkill
       ? Types.attackSkillTypeAnimationMap[this.player.attackSkill]
       : Types.defenseSkillTypeAnimationMap[this.player.defenseSkill];
@@ -1798,7 +1804,11 @@ class Game {
         this.player.attackSkillTimeout = null;
       }, timeout);
     } else {
-      this.defenseSkillAnimation.reset();
+      if (this.player.defenseSkill === 2) {
+        this.skillResistanceAnimation.reset();
+      } else {
+        this.defenseSkillAnimation.reset();
+      }
       this.player.setDefenseSkillAnimation(
         skillName,
         Types.defenseSkillDurationMap[this.player.defenseSkill](this.player.shieldLevel),
@@ -3774,6 +3784,12 @@ class Game {
         if (player) {
           player.setAuras(auras);
         }
+      });
+
+      self.client.onPlayerCurse(function ({ id: playerId, curse: rawCurse }) {
+        console.log("~~~~curse called");
+        console.log("~~~~playerId", playerId);
+        console.log("~~~~curse", rawCurse);
       });
 
       self.client.onPlayerSkill(function ({ id: playerId, skill: rawSkill }) {

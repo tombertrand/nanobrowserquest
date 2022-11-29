@@ -69,12 +69,13 @@ class AudioManager {
       "portal-open",
       "skill-heal",
       "skill-defense",
-      // "skill-curse-attack",
+      "skill-resistances",
       "skill-magic",
       "skill-flame",
       "skill-lightning",
       "skill-cold",
       "skill-poison",
+      "curse-prevent-regenerate-health",
     ];
 
     var loadSoundFiles = function () {

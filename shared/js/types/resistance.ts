@@ -1,8 +1,10 @@
+export const PLAYER_MAX_RESISTANCES = 90;
+
 export const mobResistance = {
-  rat: {
-    coldResistance: 10,
-    lightningResistance: 50,
-  },
+  // rat: {
+  //   coldResistance: 10,
+  //   lightningResistance: 50,
+  // },
   cowking: {
     lightningResistance: 100,
     physicaResistance: 20,
@@ -22,6 +24,9 @@ export const resistanceToDisplayMap = {
   poisonResistance: "poison",
   physicaResistance: "physical",
 };
+
+export const calculateResistance = (resistance: number) =>
+  resistance > PLAYER_MAX_RESISTANCES ? PLAYER_MAX_RESISTANCES : resistance;
 
 export const getResistance = (mob: { name: string; type: string; bonus: Resistances }) => {
   let resistances: Resistances = {

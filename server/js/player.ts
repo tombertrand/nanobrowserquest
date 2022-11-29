@@ -18,6 +18,7 @@ import {
   getClassicMaxPayout,
   getClassicPayout,
   getRandomAttackSkill,
+  getRandomDefenseSkill,
   getRandomSockets,
   random,
   randomInt,
@@ -99,6 +100,7 @@ class Player extends Character {
   defenseSkill: number;
   defenseSkillTimeout: NodeJS.Timeout;
   defenseSkillDefenseTimeout: NodeJS.Timeout;
+  defenseSkillResistancesTimeout: NodeJS.Timeout;
   attackSkill: number;
   attackSkillTimeout: NodeJS.Timeout;
   firefoxpotionTimeout: any;
@@ -137,7 +139,7 @@ class Player extends Character {
   isPasswordValid: boolean;
   network: Network;
   nanoPotions: number;
-  skill: { defense: number; curseAttack: number };
+  skill: { defense: number; resistances: number };
   dbWriteQueue: any;
   poisonedInterval: any;
 
@@ -1220,7 +1222,7 @@ class Player extends Character {
               self.server.pushToPlayer(self, self.health());
             }
           } else if (this.defenseSkill === 1) {
-            const { stats: percent } = Types.getDefenseSkill(0, this.shieldLevel);
+            const { stats: percent } = Types.getDefenseSkill(1, this.shieldLevel);
 
             self.skill.defense = percent;
             self.sendPlayerStats();
@@ -1228,6 +1230,16 @@ class Player extends Character {
               self.skill.defense = 0;
               self.sendPlayerStats();
               self.defenseSkillDefenseTimeout = null;
+            }, Types.defenseSkillDurationMap[this.defenseSkill](this.shieldLevel));
+          } else if (this.defenseSkill === 2) {
+            const { stats: percent } = Types.getDefenseSkill(2, this.shieldLevel);
+
+            self.skill.resistances = percent;
+            self.sendPlayerStats();
+            self.defenseSkillResistancesTimeout = setTimeout(() => {
+              self.skill.resistances = 0;
+              self.sendPlayerStats();
+              self.defenseSkillResistancesTimeout = null;
             }, Types.defenseSkillDurationMap[this.defenseSkill](this.shieldLevel));
           }
 
@@ -1304,12 +1316,11 @@ class Player extends Character {
       }
 
       if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
-        const resistanceBonus = [21, 22, 23, 24];
-        const defenseSkill = [0, 1];
-        bonus = _.shuffle(resistanceBonus)
+        const resistances = [21, 22, 23, 24, 25, 26];
+        skill = getRandomDefenseSkill();
+        bonus = _.shuffle(resistances)
           .slice(0, isUnique ? 2 : 1)
           .sort();
-        skill = _.shuffle(defenseSkill).slice(0, 1);
       } else if (Types.isWeapon(kind) && kind >= Types.Entities.GOLDENSWORD) {
         skill = getRandomAttackSkill();
       }
@@ -1594,7 +1605,7 @@ class Player extends Character {
 
   handleHurtSpellDmg(spell) {
     const spellDmg = 200;
-    const resistance = this.bonus[`${spell.element}Resistance`];
+    const resistance = Types.calculateResistance(this.bonus[`${spell.element}Resistance`] + this.skill.resistances);
     const dmg = Math.round(spellDmg - spellDmg * (resistance / 100));
 
     if (spell.element === "cold") {
@@ -1614,16 +1625,17 @@ class Player extends Character {
   startPoisoned({ dmg, entity, resistance, attacker = {} }) {
     const baseIterations = 5;
     const tick = 3000;
-    let poisonDmg = Math.round((dmg - dmg * (resistance / 100)) / 6);
     let iterations = Math.round(baseIterations - baseIterations * (resistance / 100));
 
-    if (!poisonDmg) return;
-
     this.broadcast(new Messages.Poisoned(entity.id, iterations * tick));
-
     clearInterval(entity.poisonedInterval);
+
     entity.poisonedInterval = setInterval(() => {
-      if (iterations) {
+      let poisonDmg = Math.round(
+        (dmg - dmg * (Types.calculateResistance(this.bonus.poisonResistance + this.skill.resistances) / 100)) / 5,
+      );
+
+      if (iterations && poisonDmg) {
         entity.hitPoints -= poisonDmg;
         this.server.handleHurtEntity({ entity, attacker, dmg: poisonDmg });
 
@@ -1646,6 +1658,11 @@ class Player extends Character {
         this.skill.defense = 0;
         clearTimeout(this.defenseSkillDefenseTimeout);
         this.defenseSkillDefenseTimeout = null;
+      }
+      if (this.defenseSkillResistancesTimeout) {
+        this.skill.resistances = 0;
+        clearTimeout(this.defenseSkillResistancesTimeout);
+        this.defenseSkillResistancesTimeout = null;
       }
       if (this.firefoxpotionTimeout) {
         clearTimeout(this.firefoxpotionTimeout);
@@ -1937,7 +1954,7 @@ class Player extends Character {
   resetSkill() {
     this.skill = {
       defense: 0,
-      curseAttack: 0,
+      resistances: 0,
     };
   }
 
@@ -2202,12 +2219,12 @@ class Player extends Character {
       coldDamage: this.bonus.coldDamage,
       poisonDamage: this.bonus.poisonDamage,
       pierceDamage: this.bonus.pierceDamage,
-      magicResistance: this.bonus.magicResistance,
-      flameResistance: this.bonus.flameResistance,
-      lightningResistance: this.bonus.lightningResistance,
-      coldResistance: this.bonus.coldResistance,
-      poisonResistance: this.bonus.poisonResistance,
-      physicalResistance: this.bonus.physicalResistance,
+      magicResistance: Types.calculateResistance(this.bonus.magicResistance + this.skill.resistances),
+      flameResistance: Types.calculateResistance(this.bonus.flameResistance + this.skill.resistances),
+      lightningResistance: Types.calculateResistance(this.bonus.lightningResistance + this.skill.resistances),
+      coldResistance: Types.calculateResistance(this.bonus.coldResistance + this.skill.resistances),
+      poisonResistance: Types.calculateResistance(this.bonus.poisonResistance + this.skill.resistances),
+      physicalResistance: Types.calculateResistance(this.bonus.physicalResistance + this.skill.resistances),
       skillTimeout: this.bonus.skillTimeout,
       magicDamagePercent: this.bonus.magicDamagePercent,
       flameDamagePercent: this.bonus.flameDamagePercent,

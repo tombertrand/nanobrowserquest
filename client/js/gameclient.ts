@@ -34,6 +34,7 @@ class GameClient {
   equip_callback: any;
   auras_callback: any;
   skill_callback: any;
+  curse_callback: any;
   drop_callback: any;
   teleport_callback: any;
   dmg_callback: any;
@@ -114,6 +115,7 @@ class GameClient {
     this.handlers[Types.Messages.EQUIP] = this.receiveEquipItem;
     this.handlers[Types.Messages.AURAS] = this.receiveAuras;
     this.handlers[Types.Messages.SKILL] = this.receiveSkill;
+    this.handlers[Types.Messages.CURSE] = this.receiveCurse;
     this.handlers[Types.Messages.DROP] = this.receiveDrop;
     this.handlers[Types.Messages.TELEPORT] = this.receiveTeleport;
     this.handlers[Types.Messages.DAMAGE] = this.receiveDamage;
@@ -503,6 +505,15 @@ class GameClient {
     }
   }
 
+  receiveCurse(data) {
+    var id = data[1];
+    var curse = data[2];
+
+    if (this.curse_callback) {
+      this.curse_callback({ id, curse });
+    }
+  }
+
   receiveDrop(data) {
     var mobId = data[1];
     var id = data[2];
@@ -882,6 +893,10 @@ class GameClient {
 
   onPlayerSkill(callback) {
     this.skill_callback = callback;
+  }
+
+  onPlayerCurse(callback) {
+    this.curse_callback = callback;
   }
 
   onPlayerMoveToItem(callback) {

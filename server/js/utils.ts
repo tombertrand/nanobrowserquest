@@ -190,6 +190,7 @@ export const getClassicPayout = (achievements, network: Network) => {
   return getPayout(achievements, Object.values(classicAchievementMap[network]), network);
 };
 
+export const getRandomDefenseSkill = () => _.shuffle([0, 1, 2]).slice(0, 1);
 export const getRandomAttackSkill = () => _.shuffle([0, 1, 2, 3, 4]).slice(0, 1);
 
 export const isValidAddWeaponSkill = items => {

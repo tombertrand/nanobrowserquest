@@ -7,11 +7,8 @@ export const attackSkillDurationMap = [() => 1200, () => 1500, () => 1000, () =>
 
 const defenseSkillDescriptionMap = [
   "+#% Instant health regeneration",
-  "+#% Defense for # seconds",
+  "+#% Defense for # seconds and clear curses",
   "+#% All resistances for # seconds",
-  // "-#% Attack damage from your attacking enemies",
-  // "+#% block chances for # seconds",
-  // "-#% Attack damage from your enemies for # seconds",
 ];
 
 const attackSkillDescriptionMap = [
@@ -25,7 +22,7 @@ const attackSkillDescriptionMap = [
 const defenseSkillType = [
   "regenerateHealthSkill", // 0
   "defenseSkill", // 1
-  "resistanceSkill", // 2
+  "resistancesSkill", // 2
   // "curseAttackSkill", // 3
 ];
 
@@ -47,10 +44,10 @@ export const attackSkillToResistanceType = [
   "poisonResistance",
 ];
 
-export const defenseSkillDelay = [24_000, 35_000, 60_000];
+export const defenseSkillDelay = [35_000, 35_000, 2_000];
 export const attackSkillDelay = [2_000, 2_000, 2_000, 2_000, 2_000];
 
-export const defenseSkillTypeAnimationMap = ["heal", "defense", "resistance", "curse-attack"];
+export const defenseSkillTypeAnimationMap = ["heal", "defense", "resistances"];
 export const attackSkillTypeAnimationMap = ["magic", "flame", "lightning", "cold", "poison"];
 
 export const getDefenseSkill = function (rawSkill: number, level: number) {
@@ -72,7 +69,7 @@ export const getDefenseSkill = function (rawSkill: number, level: number) {
   const stats = skillPerLevel[rawSkill][level - 1];
   let description = defenseSkillDescriptionMap[rawSkill].replace("#", `${stats}`);
 
-  if (type === "defenseSkill") {
+  if (type === "defenseSkill" || type === "resistancesSkill") {
     // @ts-ignore
     description = description.replace("#", defenseSkillDurationMap[rawSkill](level) / 1000);
   }
@@ -82,7 +79,6 @@ export const getDefenseSkill = function (rawSkill: number, level: number) {
   return skill;
 };
 
-//getMinMaxSkillDamage
 export const getAttackSkill = function ({
   skill,
   level,

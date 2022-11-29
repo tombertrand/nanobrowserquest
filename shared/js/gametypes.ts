@@ -2,7 +2,13 @@ import * as _ from "lodash";
 
 import { Slot } from "./slots";
 import { expForLevel } from "./types/experience";
-import { getResistance, mobResistance, resistanceToDisplayMap } from "./types/resistance";
+import {
+  calculateResistance,
+  getResistance,
+  mobResistance,
+  PLAYER_MAX_RESISTANCES,
+  resistanceToDisplayMap,
+} from "./types/resistance";
 import {
   getHighestSocketRequirement,
   getJewelRequirement,
@@ -65,6 +71,7 @@ export const Types: any = {
     EQUIP: 17,
     AURAS: 18,
     SKILL: 19,
+    CURSE: 92,
     DROP: 20,
     TELEPORT: 21,
     DAMAGE: 22,
@@ -415,6 +422,8 @@ Types.attackSkillType = attackSkillType;
 Types.getResistance = getResistance;
 Types.resistanceToDisplayMap = resistanceToDisplayMap;
 Types.mobResistance = mobResistance;
+Types.PLAYER_MAX_RESISTANCES = PLAYER_MAX_RESISTANCES;
+Types.calculateResistance = calculateResistance;
 
 Types.Entities.Potion = [
   Types.Entities.FLASK,

@@ -1,0 +1,13 @@
+{
+  "id": "skill-resistances",
+  "width": 30,
+  "height": 36,
+  "animations": {
+    "idle_down": {
+      "length": 24,
+      "row": 0
+    }
+  },
+  "offset_y": -18,
+  "offset_x": -7
+}

@@ -119,13 +119,14 @@ import auraHighhealth from "../sprites/aura-highhealth.json";
 import auraFreeze from "../sprites/aura-freeze.json";
 import skillHeal from "../sprites/skill-heal.json";
 import skillDefense from "../sprites/skill-defense.json";
-import skillCurseAttack from "../sprites/skill-curse-attack.json";
+import skillResistances from "../sprites/skill-resistances.json";
 import skillCast from "../sprites/skill-cast.json";
 import skillMagic from "../sprites/skill-magic.json";
 import skillFlame from "../sprites/skill-flame.json";
 import skillLightning from "../sprites/skill-lightning.json";
 import skillCold from "../sprites/skill-cold.json";
 import skillPoison from "../sprites/skill-poison.json";
+import cursePreventRegenerateHealth from "../sprites/curse-prevent-regenerate-health.json";
 import agent from "../sprites/npc.json";
 import beachnpc from "../sprites/npc.json";
 import coder from "../sprites/npc.json";
@@ -412,13 +413,14 @@ const sprites = {
   "aura-freeze": auraFreeze,
   "skill-heal": skillHeal,
   "skill-defense": skillDefense,
-  "skill-curse-attack": skillCurseAttack,
+  "skill-resistances": skillResistances,
   "skill-cast": skillCast,
   "skill-magic": skillMagic,
   "skill-flame": skillFlame,
   "skill-lightning": skillLightning,
   "skill-cold": skillCold,
   "skill-poison": skillPoison,
+  "curse-prevent-regenerate-health": cursePreventRegenerateHealth,
   villagegirl,
   villager,
   carlosmatos,
