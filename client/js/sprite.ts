@@ -62,7 +62,7 @@ class Sprite {
       this.id = this.name;
     }
 
-    if (this.id.startsWith("deathangel-spell")) {
+    if (this.id.startsWith("deathangel-spell") || this.id.startsWith("skill-cast")) {
       this.id = this.name;
     }
 

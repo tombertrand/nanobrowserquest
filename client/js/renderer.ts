@@ -860,7 +860,10 @@ class Renderer {
 
       if (entity instanceof Player && entity.defenseSkillName) {
         var sprite = this.game.sprites[`skill-${entity.defenseSkillName}`];
-        var anim = this.game.skillResistanceAnimation;
+        var anim =
+          entity.defenseSkillName === "resistances"
+            ? this.game.skillResistanceAnimation
+            : this.game.skillDefenseAnimation;
 
         if (sprite && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
@@ -887,16 +890,16 @@ class Renderer {
       }
 
       if (entity instanceof Player && typeof entity.castSkill === "number") {
-        var sprite = this.game.sprites["skill-cast"];
+        const skillName: SkillElement = Types.skillToNameMap[entity.castSkill];
+
+        // Default sprite for lightning & cold cast
+        var sprite =
+          skillName === "cold" || skillName === "lightning"
+            ? this.game.sprites["skill-cast"]
+            : this.game.sprites[`skill-cast-${Types.skillToNameMap[entity.castSkill]}`];
         var anim = this.game.skillCastAnimation;
 
         if (sprite && anim) {
-          const skillCastMap = ["-magic", "-flame", "", "", "-poison"];
-          sprite.image.src = sprite.image.src.replace(
-            /-?(?:magic|flame|lightning|cold|poison)?.png$/,
-            `${skillCastMap[entity.castSkill]}.png`,
-          );
-
           var os = this.upscaledRendering ? 1 : this.scale;
           var ds = this.upscaledRendering ? this.scale : 1;
           // @ts-ignore

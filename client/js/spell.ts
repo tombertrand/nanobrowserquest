@@ -1,7 +1,8 @@
+import { Types } from "../../shared/js/gametypes";
 import Character from "./character";
 
 class Spell extends Character {
-  element: "magic" | "flame" | "lightning" | "cold" | "poison" | "physical";
+  element: Elements;
 
   constructor(id: number, kind: number) {
     super(id, kind);
@@ -9,13 +10,8 @@ class Spell extends Character {
     this.type = "spell";
   }
 
-  setElement(element) {
-    this.element = element;
-
-    this.sprite.image.src = this.sprite.image.src.replace(
-      /-?(?:magic|flame|lightning|cold|poison)?.png$/,
-      element !== "physical" ? `-${element}.png` : ".png",
-    );
+  getSpriteName(element?: Elements) {
+    return `${Types.getKindAsString(this.kind)}${element ? `-${element}` : ""}`;
   }
 
   hasShadow() {

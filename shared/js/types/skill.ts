@@ -1,7 +1,7 @@
 export const defenseSkillDurationMap = [
   () => 900,
-  (itemLevel: number) => itemLevel * 500,
   (itemLevel: number) => itemLevel * 750,
+  (itemLevel: number) => itemLevel * 1000,
 ];
 export const attackSkillDurationMap = [() => 1200, () => 1500, () => 1000, () => 1050, () => 1000];
 
@@ -34,7 +34,7 @@ export const attackSkillType = [
   "poisonSkill", // 4
 ];
 
-export const skillToNameMap = ["magic", "flame", "lightning", "cold", "poison"];
+export const skillToNameMap: SkillElement[] = ["magic", "flame", "lightning", "cold", "poison"];
 export const attackSkillToDamageType = ["magicDamage", "flameDamage", "lightningDamage", "coldDamage", "poisonDamage"];
 export const attackSkillToResistanceType = [
   "magicResistance",
@@ -44,7 +44,7 @@ export const attackSkillToResistanceType = [
   "poisonResistance",
 ];
 
-export const defenseSkillDelay = [35_000, 35_000, 2_000];
+export const defenseSkillDelay = [35_000, 35_000, 35_000];
 export const attackSkillDelay = [2_000, 2_000, 2_000, 2_000, 2_000];
 
 export const defenseSkillTypeAnimationMap = ["heal", "defense", "resistances"];

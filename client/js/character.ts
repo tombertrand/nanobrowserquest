@@ -5,9 +5,6 @@ import Entity from "./entity";
 import Timer from "./timer";
 import Transition from "./transition";
 
-export type DefenseSkills = "heal" | "defense";
-export type AttackSkills = "flame" | "lightning" | "cold" | "poison";
-
 class Character extends Entity {
   nextGridX: number;
   nextGridY: number;

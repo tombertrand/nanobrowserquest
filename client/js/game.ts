@@ -299,6 +299,9 @@ class Game {
       "skill-defense",
       "skill-resistances",
       "skill-cast",
+      "skill-cast-magic",
+      "skill-cast-flame",
+      "skill-cast-poison",
       "skill-magic",
       "skill-flame",
       "skill-lightning",
@@ -340,6 +343,11 @@ class Game {
       "minotaur",
       "deathangel",
       "deathangel-spell",
+      "deathangel-spell-magic",
+      "deathangel-spell-flame",
+      "deathangel-spell-lightning",
+      "deathangel-spell-cold",
+      "deathangel-spell-poison",
       "wizard",
       "guard",
       "king",
@@ -3125,9 +3133,8 @@ class Game {
         }
       });
 
-      self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY, element) {
-        entity.setSprite(self.sprites[entity.getSpriteName()]);
-        entity.setElement(element);
+      self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY, element: Elements) {
+        entity.setSprite(self.sprites[entity.getSpriteName(element === "physical" ? "" : element)]);
         entity.setGridPosition(x, y);
         entity.setOrientation(orientation);
         entity.idle();
@@ -3787,9 +3794,7 @@ class Game {
       });
 
       self.client.onPlayerCurse(function ({ id: playerId, curse: rawCurse }) {
-        console.log("~~~~curse called");
-        console.log("~~~~playerId", playerId);
-        console.log("~~~~curse", rawCurse);
+        // @TODO implement curses
       });
 
       self.client.onPlayerSkill(function ({ id: playerId, skill: rawSkill }) {

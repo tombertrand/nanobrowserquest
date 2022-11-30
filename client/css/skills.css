@@ -39,16 +39,16 @@
     background-position: -0 -42px;
   }
   #skill-attack.skill-flame::before {
-    background-position: -42px 42px;
+    background-position: -42px -42px;
   }
   #skill-attack.skill-lightning::before {
-    background-position: -84px 42px;
+    background-position: -84px -42px;
   }
   #skill-attack.skill-cold::before {
-    background-position: -126px 42px;
+    background-position: -126px -42px;
   }
   #skill-attack.skill-poison::before {
-    background-position: -168px 42px;
+    background-position: -168px -42px;
   }
 }
 
