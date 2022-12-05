@@ -53,7 +53,7 @@ class Renderer {
 
     this.isDrawEntityName = true;
 
-    this.upscaledRendering = true; //this.context.imageSmoothingEnabled !== undefined;
+    this.upscaledRendering = true;
     this.supportsSilhouettes = this.upscaledRendering;
 
     this.rescale();
@@ -124,9 +124,6 @@ class Renderer {
     this.initFont();
     this.initFPS();
 
-    if (!this.upscaledRendering && this.game.map && this.game.map.tilesets) {
-      this.setTileset(this.game.map.tilesets[this.scale - 1]);
-    }
     if (this.game.renderer) {
       this.game.setSpriteScale(this.scale);
     }
@@ -351,29 +348,36 @@ class Renderer {
     var s = this.upscaledRendering ? 1 : this.scale;
     _.each(arguments, function (arg) {
       if (_.isUndefined(arg) || _.isNaN(arg) || _.isNull(arg) || arg < 0) {
-        console.error("x:" + x + " y:" + y + " w:" + w + " h:" + h + " dx:" + dx + " dy:" + dy, true);
+        console.error("x:" + x + " y:" + y + " w:" + w + " h:" + h + " dx:" + dx + " dy:" + dy);
         throw Error("A problem occured when trying to draw on the canvas");
       }
     });
-
     ctx.drawImage(image, x * s, y * s, w * s, h * s, dx * this.scale, dy * this.scale, w * this.scale, h * this.scale);
   }
 
-  drawTile(ctx, tileid, tileset, setW, gridW, cellid) {
+  drawTile(ctx, tileid, cellid) {
     var s = this.upscaledRendering ? 1 : this.scale;
     if (tileid !== -1) {
       // -1 when tile is empty in Tiled. Don't attempt to draw it.
+      const tileset = this.getTileset(tileid);
+
       this.drawScaledImage(
         ctx,
-        tileset,
-        getX(tileid + 1, setW / s) * this.tilesize,
-        Math.floor(tileid / (setW / s)) * this.tilesize,
+        tileset.image,
+        getX(tileid - tileset.firstgid + 2, tileset.columns / s) * this.tilesize,
+        Math.floor((tileid - tileset.firstgid + 1) / (tileset.columns / s)) * this.tilesize,
         this.tilesize,
         this.tilesize,
-        getX(cellid + 1, gridW) * this.tilesize,
-        Math.floor(cellid / gridW) * this.tilesize,
+        getX(cellid + 1, this.game.map.width) * this.tilesize,
+        Math.floor(cellid / this.game.map.width) * this.tilesize,
       );
     }
+  }
+
+  getTileset(tileId) {
+    return this.game.map.tilesets.find(
+      ({ firstgid, tilecount }) => tileId >= firstgid && tileId <= firstgid + tilecount,
+    );
   }
 
   clearTile(ctx, gridW, cellid) {
@@ -1144,33 +1148,25 @@ class Renderer {
   }
 
   drawTerrain() {
-    var self = this;
-    var m = this.game.map;
-    var tilesetWidth = this.tileset.width / m.tilesize;
-
-    this.game.forEachVisibleTile(function (id, index) {
-      if (!m.isHighTile(id) && !m.isAnimatedTile(id)) {
+    this.game.forEachVisibleTile((id, index) => {
+      if (!this.game.map.isHighTile(id) && !this.game.map.isAnimatedTile(id)) {
         // Don't draw unnecessary tiles
-        self.drawTile(self.background, id, self.tileset, tilesetWidth, m.width, index);
+        this.drawTile(this.background, id, index); // self.tileset, tilesetWidth, m.width, index);
       }
     }, 1);
   }
 
   drawAnimatedTiles(dirtyOnly?: boolean) {
-    var self = this,
-      m = this.game.map,
-      tilesetwidth = this.tileset.width / m.tilesize;
-
     this.animatedTileCount = 0;
-    this.game.forEachAnimatedTile(function (tile) {
+    this.game.forEachAnimatedTile(tile => {
       if (dirtyOnly) {
         if (tile.isDirty) {
-          self.drawTile(self.context, tile.id, self.tileset, tilesetwidth, m.width, tile.index);
+          this.drawTile(this.context, tile.id, tile.index);
           tile.isDirty = false;
         }
       } else {
-        self.drawTile(self.context, tile.id, self.tileset, tilesetwidth, m.width, tile.index);
-        self.animatedTileCount += 1;
+        this.drawTile(this.context, tile.id, tile.index);
+        this.animatedTileCount += 1;
       }
     });
   }
@@ -1180,15 +1176,11 @@ class Renderer {
   }
 
   drawHighTiles(ctx) {
-    var self = this,
-      m = this.game.map,
-      tilesetwidth = this.tileset.width / m.tilesize;
-
     this.highTileCount = 0;
-    this.game.forEachVisibleTile(function (id, index) {
-      if (m.isHighTile(id)) {
-        self.drawTile(ctx, id, self.tileset, tilesetwidth, m.width, index);
-        self.highTileCount += 1;
+    this.game.forEachVisibleTile((id, index) => {
+      if (this.game.map.isHighTile(id)) {
+        this.drawTile(ctx, id, index);
+        this.highTileCount += 1;
       }
     }, 1);
   }

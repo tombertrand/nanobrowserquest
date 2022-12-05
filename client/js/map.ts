@@ -11,7 +11,6 @@ class Map {
   data: any[];
   isLoaded: boolean;
   tilesetsLoaded: boolean;
-  mapLoaded: boolean;
   loadMultiTilesheets: any;
   ready_func: any;
   plateauGrid: any;
@@ -35,17 +34,15 @@ class Map {
     this.data = [];
     this.isLoaded = false;
     this.tilesetsLoaded = false;
-    this.mapLoaded = false;
     this.loadMultiTilesheets = loadMultiTilesheets;
 
     var useWorker = !(this.game.renderer.mobile || this.game.renderer.tablet) && !Detect.isSafari;
 
     this._loadMap(useWorker);
-    this._initTilesets();
   }
 
   _checkReady() {
-    if (this.tilesetsLoaded && this.mapLoaded) {
+    if (this.tilesetsLoaded) {
       this.isLoaded = true;
       if (this.ready_func) {
         this.ready_func();
@@ -54,8 +51,7 @@ class Map {
   }
 
   _loadMap(useWorker) {
-    var self = this,
-      filepath = "maps/world_client.json";
+    const filepath = "maps/world_client.json";
 
     if (useWorker) {
       console.info("Loading map with web worker.");
@@ -63,24 +59,27 @@ class Map {
       var worker = new Worker("mapworker.js");
       worker.postMessage(1);
 
-      worker.onmessage = function (event) {
+      worker.onmessage = event => {
         var map = event.data;
-        self._initMap(map);
-        self.grid = map.grid;
-        self.plateauGrid = map.plateauGrid;
-        self.mapLoaded = true;
-        self._checkReady();
+        this._initMap(map);
+        this.grid = map.grid;
+        this.plateauGrid = map.plateauGrid;
+        this.tilesets = map.tilesets;
+        this._initTilesets();
+        this._checkReady();
       };
     } else {
       console.info("Loading map via Ajax.");
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       $.get(
         filepath,
-        function (data) {
-          self._initMap(data);
-          self._generateCollisionGrid();
-          self._generatePlateauGrid();
-          self.mapLoaded = true;
-          self._checkReady();
+        data => {
+          this._initMap(data);
+          this._generateCollisionGrid();
+          this._generatePlateauGrid();
+          this._checkReady();
+          this.tilesets = data.tilesets;
+          this._initTilesets();
         },
         "json",
       );
@@ -88,23 +87,11 @@ class Map {
   }
 
   _initTilesets() {
-    var tileset1, tileset2, tileset3;
-
-    if (!this.loadMultiTilesheets) {
-      this.tilesetCount = 1;
-      tileset1 = this._loadTileset("img/1/tilesheet.png");
-    } else {
-      if (this.game.renderer.mobile || this.game.renderer.tablet) {
-        this.tilesetCount = 1;
-        tileset2 = this._loadTileset("img/2/tilesheet.png");
-      } else {
-        this.tilesetCount = 2;
-        tileset2 = this._loadTileset("img/2/tilesheet.png");
-        tileset3 = this._loadTileset("img/3/tilesheet.png");
-      }
-    }
-
-    this.tilesets = [tileset1, tileset2, tileset3];
+    this.tilesetCount = this.tilesets.length;
+    this.tilesets = this.tilesets.map(({ imageName, ...rest }) => ({
+      image: this._loadTileset(`img/1/${imageName}.png`),
+      ...rest,
+    }));
   }
 
   _initMap(map) {
@@ -161,26 +148,25 @@ class Map {
   }
 
   _loadTileset(filepath) {
-    var self = this,
-      tileset = new Image();
+    const tileset = new Image();
 
     tileset.crossOrigin = "Anonymous";
     tileset.src = filepath;
 
     console.info("Loading tileset: " + filepath);
 
-    tileset.onload = function () {
-      if (tileset.width % self.tilesize > 0) {
-        throw Error("Tileset size should be a multiple of " + self.tilesize);
+    tileset.onload = () => {
+      if (tileset.width % this.tilesize > 0) {
+        throw Error("Tileset size should be a multiple of " + this.tilesize);
       }
       console.info("Map tileset loaded.");
 
-      self.tilesetCount -= 1;
-      if (self.tilesetCount === 0) {
+      this.tilesetCount -= 1;
+      if (this.tilesetCount === 0) {
         console.debug("All map tilesets loaded.");
 
-        self.tilesetsLoaded = true;
-        self._checkReady();
+        this.tilesetsLoaded = true;
+        this._checkReady();
       }
     };
 

@@ -617,16 +617,7 @@ class Game {
   }
 
   loadMap() {
-    var self = this;
-
-    // @ts-ignore
     this.map = new Map(!this.renderer.upscaledRendering, this);
-
-    this.map.ready(function () {
-      console.info("Map loaded.");
-      var tilesetIndex = self.renderer.upscaledRendering ? 0 : self.renderer.scale - 1;
-      self.renderer.setTileset(self.map.tilesets[tilesetIndex]);
-    });
   }
 
   initPlayer() {

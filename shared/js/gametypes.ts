@@ -2,6 +2,7 @@ import * as _ from "lodash";
 
 import { Slot } from "./slots";
 import { expForLevel } from "./types/experience";
+import { terrainToImageMap } from "./types/map";
 import {
   calculateResistance,
   getResistance,
@@ -424,6 +425,7 @@ Types.resistanceToDisplayMap = resistanceToDisplayMap;
 Types.mobResistance = mobResistance;
 Types.PLAYER_MAX_RESISTANCES = PLAYER_MAX_RESISTANCES;
 Types.calculateResistance = calculateResistance;
+Types.terrainToImageMap = terrainToImageMap;
 
 Types.Entities.Potion = [
   Types.Entities.FLASK,
@@ -1409,9 +1411,9 @@ Types.waypoints = [
   },
   {
     id: 7,
-    name: "Waypoint1",
-    gridX: 117,
-    gridY: 473,
+    name: "The Temple Ruins",
+    gridX: 14,
+    gridY: 546,
   },
   {
     id: 8,

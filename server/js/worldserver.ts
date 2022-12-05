@@ -1045,7 +1045,7 @@ class World {
       const minRaise = adjustedDifficulty + 1;
 
       if (minRaise) {
-        this.broadcastRaise(character, mob.id);
+        this.broadcastRaise(character, mob);
 
         let zombieCount = 0;
         const randomZombies = this.shuffle(this.zombies);

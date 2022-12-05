@@ -23,6 +23,7 @@ import {
   generateBlueChestItem,
   getIsTransmuteSuccess,
   isUpgradeSuccess,
+  isValidAddWeaponSkill,
   isValidRecipe,
   isValidSocketItem,
   isValidStoneSocket,
@@ -31,7 +32,6 @@ import {
   isValidUpgradeRunes,
   NaN2Zero,
   randomInt,
-  isValidAddWeaponSkill,
 } from "../utils";
 
 import type Player from "../player";
