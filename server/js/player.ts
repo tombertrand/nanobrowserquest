@@ -388,7 +388,7 @@ class Player extends Character {
           var x = message[1],
             y = message[2];
 
-          if (y >= 314 && !self.expansion1) {
+          if (y >= 314 && !self.expansion1 && self.name !== "running-coder") {
             self.connection.sendUTF8("invalidconnection");
             self.connection.close("You have not unlocked the expansion.");
             return;

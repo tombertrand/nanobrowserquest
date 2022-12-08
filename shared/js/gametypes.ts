@@ -1412,8 +1412,8 @@ Types.waypoints = [
   {
     id: 7,
     name: "The Temple Ruins",
-    gridX: 14,
-    gridY: 546,
+    gridX: 98,
+    gridY: 678,
   },
   {
     id: 8,

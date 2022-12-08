@@ -289,6 +289,10 @@ class Map {
     return this.animated[id + 1].l;
   }
 
+  getTileAnimationSkip(id) {
+    return this.animated[id + 1].s;
+  }
+
   getTileAnimationDelay(id) {
     var animProperties = this.animated[id + 1];
     if (animProperties.d) {

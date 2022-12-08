@@ -66,6 +66,13 @@ module.exports = function processMap(json, options) {
         }
         map.animated[tileId].l = propValue;
       }
+      if (propName === "skip") {
+        if (!map.animated[tileId]) {
+          map.animated[tileId] = {};
+          console.debug("Tile ID [" + tileId + "] has a skip value");
+        }
+        map.animated[tileId].s = propValue;
+      }
       if (propName === "delay") {
         if (!map.animated[tileId]) {
           map.animated[tileId] = {};
@@ -105,9 +112,9 @@ module.exports = function processMap(json, options) {
         });
 
         _.each(tileset.tiles, function ({ id, properties }) {
-          var tileId = parseInt(id, 10) + 1;
+          var tileId = parseInt(id, 10) + firstgid;
 
-          console.info("*** Processing Tile ID " + tileId);
+          console.info("*** Processing Tile ID " + tileId + firstgid);
 
           if (properties) {
             var newProperties = properties.reduce((acc, property) => {
@@ -120,7 +127,7 @@ module.exports = function processMap(json, options) {
             });
           }
         });
-      } else if (tileset.name === "Mobs" && mode === "server") {
+      } else if (tileset.name === "mobs" && mode === "server") {
         console.info("** Processing static entity properties...");
         mobsFirstGid = tileset.firstgid;
 

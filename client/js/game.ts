@@ -2129,7 +2129,13 @@ class Game {
     this.animatedTiles = [];
     this.forEachVisibleTile(function (id, index) {
       if (m.isAnimatedTile(id)) {
-        var tile = new AnimatedTile(id, m.getTileAnimationLength(id), m.getTileAnimationDelay(id), index),
+        var tile = new AnimatedTile(
+            id,
+            m.getTileAnimationLength(id),
+            m.getTileAnimationDelay(id),
+            m.getTileAnimationSkip(id),
+            index,
+          ),
           pos = self.map.tileIndexToGridPosition(tile.index);
 
         tile.x = pos.x;
