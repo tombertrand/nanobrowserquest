@@ -26,6 +26,7 @@ class Renderer {
   realFPS: number;
   isDebugInfoVisible: boolean;
   animatedTileCount: number;
+  highAnimatedTileCount: number;
   highTileCount: number;
   tablet: any;
   fixFlickeringTimer: Timer;
@@ -66,6 +67,7 @@ class Renderer {
     this.isDebugInfoVisible = false;
 
     this.animatedTileCount = 0;
+    this.highAnimatedTileCount = 0;
     this.highTileCount = 0;
 
     this.tablet = Detect.isTablet(window.innerWidth);
@@ -360,6 +362,12 @@ class Renderer {
     if (tileid !== -1) {
       // -1 when tile is empty in Tiled. Don't attempt to draw it.
       const tileset = this.getTileset(tileid);
+
+      if (!tileset) {
+        // @TODO why is sometimes tileset not found?
+        console.log("~~~~tileid", tileid);
+        return;
+      }
 
       this.drawScaledImage(
         ctx,
@@ -1030,12 +1038,15 @@ class Renderer {
       }
     });
 
-    this.game.forEachAnimatedTile(function (tile) {
+    const animatedTileCallback = function (tile) {
       if (tile.isDirty) {
         self.clearDirtyRect(tile.dirtyRect);
         count += 1;
       }
-    });
+    };
+
+    this.game.forEachAnimatedTile(animatedTileCallback);
+    this.game.forEachHighAnimatedTile(animatedTileCallback);
 
     if (this.game.clearTarget && this.lastTargetPos) {
       var last = this.lastTargetPos;
@@ -1175,10 +1186,25 @@ class Renderer {
     this.drawAnimatedTiles(true);
   }
 
+  drawHighAnimatedTiles(dirtyOnly?: boolean) {
+    this.highAnimatedTileCount = 0;
+    this.game.forEachHighAnimatedTile(tile => {
+      if (dirtyOnly) {
+        if (tile.isDirty) {
+          this.drawTile(this.context, tile.id, tile.index);
+          tile.isDirty = false;
+        }
+      } else {
+        this.drawTile(this.context, tile.id, tile.index);
+        this.highAnimatedTileCount += 1;
+      }
+    });
+  }
+
   drawHighTiles(ctx) {
     this.highTileCount = 0;
     this.game.forEachVisibleTile((id, index) => {
-      if (this.game.map.isHighTile(id)) {
+      if (this.game.map.isHighTile(id) && !this.game.map.isAnimatedTile(id)) {
         this.drawTile(ctx, id, index);
         this.highTileCount += 1;
       }
@@ -1352,6 +1378,7 @@ class Renderer {
     this.drawEntities();
     this.drawCombatInfo();
     this.drawHighTiles(this.context);
+    this.drawHighAnimatedTiles();
     this.context.restore();
 
     // Overlay UI elements

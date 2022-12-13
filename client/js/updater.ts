@@ -21,6 +21,7 @@ class Updater {
     this.updateTransitions();
     this.updateAnimations();
     this.updateAnimatedTiles();
+    this.updateHighAnimatedTiles();
     this.updateChatBubbles();
     this.updateInfos();
     this.updateKeyboardMovement();
@@ -351,11 +352,11 @@ class Updater {
     this.game.weaponEffectAnimation?.update(t);
   }
 
-  updateAnimatedTiles() {
-    var self = this,
-      t = this.game.currentTime;
+  updateAnimatedTiles(isHighTile = false) {
+    var self = this;
+    var t = this.game.currentTime;
 
-    this.game.forEachAnimatedTile(function (tile) {
+    const callback = function (tile) {
       if (tile.animate(t)) {
         tile.isDirty = true;
         tile.dirtyRect = self.game.renderer.getTileBoundingRect(tile);
@@ -364,7 +365,17 @@ class Updater {
           self.game.checkOtherDirtyRects(tile.dirtyRect, tile, tile.x, tile.y);
         }
       }
-    });
+    };
+
+    if (isHighTile) {
+      this.game.forEachHighAnimatedTile(callback);
+    } else {
+      this.game.forEachAnimatedTile(callback);
+    }
+  }
+
+  updateHighAnimatedTiles() {
+    this.updateAnimatedTiles(true);
   }
 
   updateChatBubbles() {

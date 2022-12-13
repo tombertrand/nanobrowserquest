@@ -104,7 +104,8 @@ class Game {
   cursors: {};
   sprites: {};
   currentTime: any;
-  animatedTiles: any;
+  animatedTiles: any[] | null;
+  highAnimatedTiles: any[] | null;
   debugPathing: boolean;
   pvpFlag: boolean;
   spriteNames: string[];
@@ -277,6 +278,7 @@ class Game {
 
     // tile animation
     this.animatedTiles = null;
+    this.highAnimatedTiles = null;
 
     // debug
     this.debugPathing = false;
@@ -2127,6 +2129,7 @@ class Game {
       m = this.map;
 
     this.animatedTiles = [];
+    this.highAnimatedTiles = [];
     this.forEachVisibleTile(function (id, index) {
       if (m.isAnimatedTile(id)) {
         var tile = new AnimatedTile(
@@ -2140,7 +2143,12 @@ class Game {
 
         tile.x = pos.x;
         tile.y = pos.y;
-        self.animatedTiles.push(tile);
+
+        if (m.isHighTile(id)) {
+          self.highAnimatedTiles.push(tile);
+        } else {
+          self.animatedTiles.push(tile);
+        }
       }
     }, 1);
     //console.info("Initialized animated tiles.");
@@ -4507,6 +4515,14 @@ class Game {
   forEachAnimatedTile(callback) {
     if (this.animatedTiles) {
       _.each(this.animatedTiles, function (tile) {
+        callback(tile);
+      });
+    }
+  }
+
+  forEachHighAnimatedTile(callback) {
+    if (this.highAnimatedTiles) {
+      _.each(this.highAnimatedTiles, function (tile) {
         callback(tile);
       });
     }
