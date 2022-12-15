@@ -321,6 +321,7 @@ export const Types: any = {
     STASH: 114,
     COWPORTAL: 125,
     MINOTAURPORTAL: 135,
+    MAGICSTONE: 220,
 
     // Weapons
     DAGGER: 60,
@@ -793,6 +794,7 @@ export const kinds = {
   stash: [Types.Entities.STASH, "npc"],
   cowportal: [Types.Entities.COWPORTAL, "npc"],
   minotaurportal: [Types.Entities.MINOTAURPORTAL, "npc"],
+  magicstone: [Types.Entities.MAGICSTONE, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -1368,6 +1370,8 @@ Types.getAliasFromName = function (name: string) {
     return "waypoint";
   } else if (name === "cowportal" || name === "minotaurportal") {
     return "Portal";
+  } else if (name === "magicstone") {
+    return "Magic Stone";
   }
   return name;
 };

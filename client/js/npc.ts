@@ -177,6 +177,7 @@ var NpcTalk = {
       text: ["You need to be lv.53 and above to access the secret level"],
     },
   ],
+  magicstone: [""],
 
   coder: [
     "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",

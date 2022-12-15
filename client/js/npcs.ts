@@ -153,6 +153,12 @@ var Npcs = {
       super(id, Types.Entities.MINOTAURPORTAL);
     }
   },
+
+  MagicStone: class MagicStone extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.MAGICSTONE);
+    }
+  },
 };
 
 export default Npcs;

@@ -377,6 +377,7 @@ class Game {
       "stash",
       "cowportal",
       "minotaurportal",
+      "magicstone",
       "beachnpc",
       "forestnpc",
       "desertnpc",

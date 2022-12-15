@@ -90,6 +90,7 @@ import waypointo from "../sprites/waypoint.json";
 import stash from "../sprites/stash.json";
 import cowportal from "../sprites/cowportal.json";
 import minotaurportal from "../sprites/minotaurportal.json";
+import magicstone from "../sprites/magicstone.json";
 import ogre from "../sprites/ogre.json";
 import yeti from "../sprites/yeti.json";
 import werewolf from "../sprites/werewolf.json";
@@ -380,6 +381,7 @@ const sprites = {
   stash,
   cowportal,
   minotaurportal,
+  magicstone,
   ogre,
   yeti,
   werewolf,

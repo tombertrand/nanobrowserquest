@@ -827,4 +827,8 @@ EntityFactory.builders[Types.Entities.MINOTAURPORTAL] = function (id) {
   return new Npcs.MinotaurPortal(id);
 };
 
+EntityFactory.builders[Types.Entities.MAGICSTONE] = function (id) {
+  return new Npcs.MagicStone(id);
+};
+
 export default EntityFactory;
