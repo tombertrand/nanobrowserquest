@@ -2935,6 +2935,12 @@ class Game {
                 } else {
                   entity.idle();
                 }
+              } else if (entity.kind === Types.Entities.MAGICSTONE) {
+                if (entity.isActive) {
+                  entity.raise();
+                } else {
+                  entity.idle();
+                }
               } else {
                 entity.idle();
               }
@@ -4426,6 +4432,16 @@ class Game {
           } else {
             this.player.stop_pathing_callback({ x: 40, y: 211, isWaypoint: true });
           }
+        }
+      } else if (npc.kind === Types.Entities.MAGICSTONE) {
+        if (!npc.isActive) {
+          // @TODO Active with BE message for other players
+          npc.isActive = true;
+          npc.raise();
+          setTimeout(() => {
+            npc.currentAnimation.reset();
+            npc.walk();
+          }, 1300);
         }
       }
     }

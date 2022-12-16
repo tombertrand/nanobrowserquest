@@ -135,6 +135,8 @@ class Entity {
           this.kind === Types.Entities.MINOTAURPORTAL
         ) {
           this.currentAnimation.setSpeed(150);
+        } else if (this.kind === Types.Entities.MAGICSTONE) {
+          this.currentAnimation.setSpeed(100);
         } else {
           this.currentAnimation.setSpeed(speed);
         }
