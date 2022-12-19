@@ -73,13 +73,14 @@ class World {
   connect_callback: any;
   enter_callback: any;
   attack_callback: any;
-  raise_callback: any;
   parties: { [key: number]: Party };
   trades: { [key: number]: Trade };
   currentPartyId: number;
   currentTradeId: number;
   deathAngelId: null | number;
   isCastDeathAngelSpellEnabled: boolean;
+  magicStones: number[];
+  activatedMagicStones: number[];
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -163,6 +164,8 @@ class World {
     this.raiseDeathAngelInterval = null;
     this.deathAngelId = null;
     this.isCastDeathAngelSpellEnabled = false;
+    this.magicStones = [];
+    this.activatedMagicStones = [];
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -272,13 +275,6 @@ class World {
       if (target && attacker.type === "mob") {
         var pos = self.findPositionNextTo(attacker, target);
         self.moveEntity(attacker, pos.x, pos.y);
-      }
-    });
-
-    this.onEntityRaise(function (attacker) {
-      if (attacker.type === "mob") {
-        // var pos = self.findPositionNextTo(attacker, target);
-        // self.moveEntity(attacker, pos.x, pos.y);
       }
     });
 
@@ -653,6 +649,10 @@ class World {
         this.minotaurLevelNpcId = npc.id;
       }
     } else {
+      if (kind === Types.Entities.MAGICSTONE) {
+        this.magicStones.push(npc.id);
+      }
+
       this.addEntity(npc);
     }
     this.npcs[npc.id] = npc;
@@ -980,10 +980,6 @@ class World {
     this.attack_callback = callback;
   }
 
-  onEntityRaise(callback) {
-    this.raise_callback = callback;
-  }
-
   getEntityById(id) {
     if (id in this.entities) {
       return this.entities[id];
@@ -1110,6 +1106,13 @@ class World {
     clearInterval(this.raiseDeathAngelInterval);
     this.raiseDeathAngelInterval = null;
     this.isCastDeathAngelSpellEnabled = true;
+  }
+
+  activateMagicStone(player, magicStone) {
+    magicStone.activate();
+    this.activatedMagicStones.push(magicStone.id);
+
+    this.broadcastRaise(player, magicStone);
   }
 
   broadcastRaise(player, mob) {

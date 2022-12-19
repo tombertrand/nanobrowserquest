@@ -209,6 +209,7 @@ class Npc extends Character {
   itemKind: any;
   talkIndex: number;
   kind: number;
+  isActivated?: boolean;
 
   constructor(id, kind) {
     super(id, kind);

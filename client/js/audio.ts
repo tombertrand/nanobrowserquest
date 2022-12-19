@@ -76,6 +76,7 @@ class AudioManager {
       "skill-cold",
       "skill-poison",
       "curse-prevent-regenerate-health",
+      "magicstone",
     ];
 
     var loadSoundFiles = function () {

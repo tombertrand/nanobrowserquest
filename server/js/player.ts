@@ -8,6 +8,7 @@ import { postMessageToDiscordChatChannel } from "./discord";
 import FormatChecker from "./format";
 import Formulas from "./formulas";
 import Messages from "./message";
+import Npc from "./npc";
 import { enqueueSendPayout } from "./payout";
 import { PromiseQueue } from "./promise-queue";
 import Properties from "./properties";
@@ -587,6 +588,29 @@ class Player extends Character {
 
         if (spell && self.hitPoints > 0) {
           self.handleHurtSpellDmg(spell);
+        }
+      } else if (action === Types.Messages.MAGICSTONE) {
+        console.info("MAGICSTONE: " + self.name + " " + message[1]);
+
+        const magicStone = self.server.getEntityById(message[1]);
+        if (
+          magicStone &&
+          magicStone instanceof Npc &&
+          !magicStone.isActivated &&
+          self.server.magicStones.includes(magicStone.id) &&
+          !self.server.activatedMagicStones.includes(magicStone.id)
+        ) {
+          self.server.activateMagicStone(self, magicStone);
+
+          if (
+            self.server.magicStones.length === self.server.activatedMagicStones.length &&
+            _.isEqual(self.server.magicStones.sort(), self.server.activatedMagicStones.sort())
+          ) {
+            // open portal
+
+            // @TODO
+            console.log("~~~~OPEN PORTAL!");
+          }
         }
       } else if (action === Types.Messages.DEATHANGEL_CAST) {
         if (typeof message[1] !== "number" || typeof message[2] !== "number") return;

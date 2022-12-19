@@ -180,6 +180,7 @@ class Game {
   partyInvitees: string[];
   showAnvilOdds: boolean;
   currentStashPage: number;
+  activatedMagicStones: number[];
 
   constructor(app) {
     this.app = app;
@@ -265,15 +266,15 @@ class Game {
     this.hoveringItem = false;
     this.hoveringCollidingTile = false;
 
+    this.activatedMagicStones = [];
+
     // combat
     // @ts-ignore
     this.infoManager = new InfoManager(this);
 
     // zoning
     this.currentZoning = null;
-
     this.cursors = {};
-
     this.sprites = {};
 
     // tile animation
@@ -2230,8 +2231,15 @@ class Game {
     if (entity) {
       if (entity instanceof Character || entity instanceof Chest) {
         this.entityGrid[y][x][entity.id] = entity;
+
         if (!(entity instanceof Player) && !(entity instanceof Spell)) {
           this.pathingGrid[y][x] = 1;
+        }
+
+        // @NOTE: MagicStones takes 2 tiles
+        if (entity.kind === Types.Entities.MAGICSTONE) {
+          this.entityGrid[y][x + 1][entity.id] = entity;
+          this.pathingGrid[y][x + 1] = 1;
         }
       }
       if (entity instanceof Item) {
@@ -2892,7 +2900,7 @@ class Game {
       });
 
       self.client.onSpawnCharacter(function (data) {
-        const { id, kind, name, x, y, targetId, orientation } = data;
+        const { id, kind, name, x, y, targetId, orientation, isActivated } = data;
 
         let entity = self.getEntityById(id);
         if (!entity) {
@@ -2936,8 +2944,9 @@ class Game {
                   entity.idle();
                 }
               } else if (entity.kind === Types.Entities.MAGICSTONE) {
-                if (entity.isActive) {
-                  entity.raise();
+                entity.isActivated = isActivated;
+                if (entity.isActivated) {
+                  entity.walk();
                 } else {
                   entity.idle();
                 }
@@ -2958,7 +2967,7 @@ class Game {
               //     entity.gridY,
               // );
 
-              if (entity instanceof Character) {
+              if (entity instanceof Character && !(entity instanceof Npc)) {
                 entity.onBeforeStep(function () {
                   self.unregisterEntityPosition(entity);
                 });
@@ -3581,14 +3590,24 @@ class Game {
       self.client.onEntityRaise(function (mobId, targetId) {
         var mob = self.getEntityById(mobId);
         if (mob) {
-          mob.setRaisingMode();
           if (mob.kind === Types.Entities.DEATHANGEL) {
+            mob.setRaisingMode();
             self.audioManager.playSound("deathangel-spell");
             if (targetId === self.playerId) {
               self.client.sendDeathAngelCast(mob.gridX, mob.gridY);
             }
           } else if (mob.kind === Types.Entities.NECROMANCER) {
+            mob.setRaisingMode();
             self.audioManager.playSound("raise");
+          } else if (mob.kind === Types.Entities.MAGICSTONE) {
+            self.audioManager.playSound("magicstone");
+            self.activatedMagicStones.push(mobId);
+
+            mob.raise();
+            setTimeout(() => {
+              mob.currentAnimation.reset();
+              mob.walk();
+            }, 1300);
           }
         }
       });
@@ -4367,15 +4386,29 @@ class Game {
     if (npc) {
       msg = npc.talk(this);
       this.previousClickPosition = null;
-      if (msg) {
-        this.createBubble(npc.id, msg);
-        this.assignBubbleTo(npc);
-        this.audioManager.playSound("npc");
-      } else {
-        this.destroyBubble(npc.id);
-        this.audioManager.playSound("npc-end");
+
+      if (
+        ![
+          // Types.Entities.ANVIL,
+          // Types.Entities.STASH,
+          // Types.Entities.WAYPOINTX,
+          // Types.Entities.WAYPOINTN,
+          // Types.Entities.WAYPOINTO,
+          // Types.Entities.COWPORTAL,
+          // Types.Entities.MINOTAURPORTAL,
+          Types.Entities.MAGICSTONE,
+        ].includes(npc.kind)
+      ) {
+        if (msg) {
+          this.createBubble(npc.id, msg);
+          this.assignBubbleTo(npc);
+          this.audioManager.playSound("npc");
+        } else {
+          this.destroyBubble(npc.id);
+          this.audioManager.playSound("npc-end");
+        }
+        this.tryUnlockingAchievement("SMALL_TALK");
       }
-      this.tryUnlockingAchievement("SMALL_TALK");
 
       if (npc.kind === Types.Entities.NYAN) {
         this.tryUnlockingAchievement("NYAN");
@@ -4434,14 +4467,8 @@ class Game {
           }
         }
       } else if (npc.kind === Types.Entities.MAGICSTONE) {
-        if (!npc.isActive) {
-          // @TODO Active with BE message for other players
-          npc.isActive = true;
-          npc.raise();
-          setTimeout(() => {
-            npc.currentAnimation.reset();
-            npc.walk();
-          }, 1300);
+        if (!npc.isActivated) {
+          this.client.sendMagicStone(npc.id);
         }
       }
     }

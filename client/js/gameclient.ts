@@ -1287,6 +1287,10 @@ class GameClient {
   sendDeathAngelCast(x, y) {
     this.sendMessage([Types.Messages.DEATHANGEL_CAST, x, y]);
   }
+
+  sendMagicStone(id) {
+    this.sendMessage([Types.Messages.MAGICSTONE, id]);
+  }
 }
 
 export default GameClient;

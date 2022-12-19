@@ -157,6 +157,8 @@ var Npcs = {
   MagicStone: class MagicStone extends Npc {
     constructor(id) {
       super(id, Types.Entities.MAGICSTONE);
+
+      this.raiseRate = 1300;
     }
   },
 };

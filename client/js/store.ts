@@ -44,9 +44,9 @@ class Store {
       {
         id: Types.Store.EXPANSION2,
         icon: "expansion2",
-        name: "Burning Hell Expansion",
+        name: "Lost Temple Expansion",
         description: "Continue the adventure, waypoints will be unlocked.",
-        confirmedMessage: `The Burning Hell Expansion has been unlocked.<br/>
+        confirmedMessage: `The Lost Temple Expansion has been unlocked.<br/>
             You can now access the expansion using the waypoint.<br/>
             As a thank you bonus you've also received 10 Legendary class upgrade scrolls`.trim(),
         requiresInventorySlot: true,

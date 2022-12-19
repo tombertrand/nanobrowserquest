@@ -149,6 +149,7 @@ export const Types: any = {
     MINOTAURLEVEL_END: 89,
     FROZEN: 90,
     POISONED: 91,
+    MAGICSTONE: 93,
   },
 
   Entities: {
