@@ -606,8 +606,6 @@ class Player extends Character {
             self.server.magicStones.length === self.server.activatedMagicStones.length &&
             _.isEqual(self.server.magicStones.sort(), self.server.activatedMagicStones.sort())
           ) {
-            // open portal
-
             // @TODO
             console.log("~~~~OPEN PORTAL!");
           }
@@ -1195,10 +1193,14 @@ class Player extends Character {
 
           shouldBroadcast = true;
 
-          const mobResistance =
+          let mobResistance =
             (attackedMob.type === "mob"
               ? Types.mobResistance[Types.getKindAsString(attackedMob.kind)]
               : attackedMob.bonus)?.[Types.attackSkillToResistanceType[this.attackSkill]] || 0;
+
+          if (attackedMob instanceof Player) {
+            mobResistance = Types.calculateResistance(mobResistance + attackedMob.skill.resistances);
+          }
 
           const { min, max } = Types.getAttackSkill({
             skill: this.attackSkill,
@@ -1215,7 +1217,6 @@ class Player extends Character {
           } else if (attackedMob.type === "player") {
             attackedMob.hitPoints -= dmg;
           }
-          this.server.handleHurtEntity({ entity: attackedMob, attacker: this, dmg });
 
           const originalTimeout = Math.floor(Types.attackSkillDelay[this.attackSkill]);
           const timeout = Math.round(originalTimeout - originalTimeout * (this.bonus.skillTimeout / 100));
@@ -1227,8 +1228,13 @@ class Player extends Character {
           this.attackSkillTimeout = setTimeout(() => {
             this.attackSkillTimeout = null;
           }, timeout);
+
+          this.server.handleHurtEntity({ entity: attackedMob, attacker: this, dmg });
+
+          attackedMob.handleHurtDeath();
         } else {
           if (typeof this.defenseSkill !== "number" || this.defenseSkillTimeout) return;
+
           shouldBroadcast = true;
           level = this.shieldLevel;
 
@@ -1630,10 +1636,12 @@ class Player extends Character {
   handleHurtSpellDmg(spell) {
     const spellDmg = 200;
     const resistance = Types.calculateResistance(this.bonus[`${spell.element}Resistance`] + this.skill.resistances);
+
     const dmg = Math.round(spellDmg - spellDmg * (resistance / 100));
 
     if (spell.element === "cold") {
       if (random(100) > this.bonus.reduceFrozenChance) {
+        // @TODO: use spell level
         this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
       }
     } else if (spell.element === "poison") {
@@ -1674,6 +1682,10 @@ class Player extends Character {
     if (this.hitPoints <= 0) {
       this.isDead = true;
 
+      if (this.attackSkillTimeout) {
+        clearTimeout(this.attackSkillTimeout);
+        this.attackSkillTimeout = null;
+      }
       if (this.defenseSkillTimeout) {
         clearTimeout(this.defenseSkillTimeout);
         this.defenseSkillTimeout = null;
