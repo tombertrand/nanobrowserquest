@@ -565,10 +565,6 @@ class Player extends Character {
               clearInterval(mob.poisonedInterval);
               mob.poisonedInterval = null;
             }
-
-            if (mob?.type) {
-              postMessageToDiscordChatChannel(`${self.name} killed ${mob.name} 💀`);
-            }
           }
         }
       } else if (action === Types.Messages.HURT) {
@@ -686,9 +682,10 @@ class Player extends Character {
               try {
                 let isUnique = false;
                 let generatedItem = null;
+                let runeName = null;
 
                 if (Types.isRune(kind)) {
-                  const runeName = Types.RuneByKind[kind];
+                  runeName = Types.RuneByKind[kind];
                   if (runeName) {
                     generatedItem = { item: `rune-${runeName}`, quantity: 1 };
                   }
@@ -716,6 +713,8 @@ class Player extends Character {
 
                   if (Types.isSuperUnique(generatedItem.item)) {
                     postMessageToDiscordChatChannel(`${player.name} picked up ${kinds[generatedItem.item][2]} 💍`);
+                  } else if (Types.isRune(kind) && Types.RuneList.indexOf(runeName) + 1 >= Types.runeKind.xno.rank) {
+                    postMessageToDiscordChatChannel(`${player.name} picked up ${runeName.toUpperCase()} rune 🪨`);
                   }
 
                   this.databaseHandler.lootItems({

@@ -212,10 +212,10 @@ var Items = {
     }
   },
 
-  BoneArmor: class BoneArmor extends Item {
+  MysticalArmor: class MysticalArmor extends Item {
     constructor(id) {
-      super(id, Types.Entities.BONEARMOR, "armor");
-      this.lootMessage = "You pick up a bone armor";
+      super(id, Types.Entities.MYSTICALARMOR, "armor");
+      this.lootMessage = "You pick up a mystical armor";
     }
   },
 

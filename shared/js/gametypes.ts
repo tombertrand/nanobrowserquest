@@ -200,7 +200,7 @@ export const Types: any = {
     DIAMONDARMOR: 127,
     EMERALDARMOR: 128,
     DEMONARMOR: 140,
-    BONEARMOR: 221,
+    MYSTICALARMOR: 221,
     BLOODARMOR: 222,
 
     // Belts
@@ -489,7 +489,7 @@ Types.Entities.Armors = [
   Types.Entities.DIAMONDARMOR,
   Types.Entities.EMERALDARMOR,
   Types.Entities.DEMONARMOR,
-  Types.Entities.BONEARMOR,
+  Types.Entities.MYSTICALARMOR,
   Types.Entities.BLOODARMOR,
 ];
 
@@ -644,9 +644,9 @@ export const kinds = {
   hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 22, 28],
   frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Sapphire Armor", 26, 30],
   diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 36, 36],
-  emeraldarmor: [Types.Entities.EMERALDARMOR, "armor", "Spike Armor", 40, 40],
+  emeraldarmor: [Types.Entities.EMERALDARMOR, "armor", "Emerald Armor", 40, 40],
   demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 40, 40],
-  bonearmor: [Types.Entities.BONEARMOR, "armor", "Bone Armor", 40, 40],
+  mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 40, 40],
   bloodarmor: [Types.Entities.BLOODARMOR, "armor", "Blood Armor", 40, 40],
 
   // kind, type, level, defense
@@ -845,7 +845,7 @@ Types.rankedArmors = [
   Types.Entities.DIAMONDARMOR,
   Types.Entities.EMERALDARMOR,
   Types.Entities.DEMONARMOR,
-  Types.Entities.BONEARMOR,
+  Types.Entities.MYSTICALARMOR,
   Types.Entities.BLOODARMOR,
 ];
 
@@ -904,7 +904,7 @@ Types.itemUniqueMap = {
   diamondarmor: ["Zero-knowledge Proof", 38, 40],
   emeraldarmor: ["Jungle Warcry", 36, 46],
   demonarmor: ["Explorer's Block", 36, 50],
-  bonearmor: ["TBD", 36, 50],
+  mysticalarmor: ["TBD", 36, 50],
   armorarmor: ["TBD", 36, 50],
 
   // name, level, defense
@@ -1857,7 +1857,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     diamondarmor: 11,
     emeraldarmor: 4,
     demonarmor: 4,
-    bonearmor: 4,
+    mysticalarmor: 4,
     bloodarmor: 4,
 
     beltfrozen: 15,

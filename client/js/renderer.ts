@@ -659,7 +659,7 @@ class Renderer {
               "diamondarmor",
               "emeraldarmor",
               "demonarmor",
-              "bonearmor",
+              "mysticalarmor",
               "bloodarmor",
             ].includes(sprite.name) &&
             entity.armorBonus?.length
@@ -883,7 +883,7 @@ class Renderer {
         var anim =
           entity.defenseSkillName === "resistances"
             ? this.game.skillResistanceAnimation
-            : this.game.skillDefenseAnimation;
+            : this.game.defenseSkillAnimation;
 
         if (sprite && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
@@ -1318,7 +1318,7 @@ class Renderer {
 
     let spriteImage = sprite.image;
     if (
-      ["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor", "bonearmor", "bloodarmor"].includes(
+      ["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor", "mysticalarmor", "bloodarmor"].includes(
         this.game.player.armorName,
       ) &&
       this.game.player.armorBonus?.length

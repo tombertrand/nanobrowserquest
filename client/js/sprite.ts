@@ -85,7 +85,7 @@ class Sprite {
     //   this.imageban.crossOrigin = "Anonymous";
     //   this.imageban.src = "img/" + this.scale + "/banguard.png";
     else if (
-      ["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor", "bonearmor", "bloodarmor"].includes(
+      ["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor", "mysticalarmor", "bloodarmor"].includes(
         this.name,
       )
     ) {

@@ -395,7 +395,7 @@ class Game {
       "diamondarmor",
       "emeraldarmor",
       "demonarmor",
-      "bonearmor",
+      "mysticalarmor",
       "bloodarmor",
       "firefox",
       "death",
@@ -466,7 +466,7 @@ class Game {
       "item-diamondarmor",
       "item-emeraldarmor",
       "item-demonarmor",
-      "item-bonearmor",
+      "item-mysticalarmor",
       "item-bloodarmor",
       "item-beltleather",
       "item-beltplated",
@@ -3071,6 +3071,8 @@ class Game {
 
                   entity.animate("death", speed, 1, function () {
                     console.info(entity.id + " was removed");
+
+                    console.log("~~~~animation done!");
 
                     self.removeEntity(entity);
                     self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
