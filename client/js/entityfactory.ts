@@ -269,6 +269,14 @@ EntityFactory.builders[Types.Entities.DEMONARMOR] = function (id) {
   return new Items.DemonArmor(id);
 };
 
+EntityFactory.builders[Types.Entities.BONEARMOR] = function (id) {
+  return new Items.BoneArmor(id);
+};
+
+EntityFactory.builders[Types.Entities.BLOODARMOR] = function (id) {
+  return new Items.BloodArmor(id);
+};
+
 EntityFactory.builders[Types.Entities.BELTLEATHER] = function (id) {
   return new Items.BeltLeather(id);
 };

@@ -52,6 +52,8 @@ import frozenarmor from "../sprites/armor.json";
 import diamondarmor from "../sprites/armor.json";
 import emeraldarmor from "../sprites/armor.json";
 import demonarmor from "../sprites/armor.json";
+import bonearmor from "../sprites/armor.json";
+import bloodarmor from "../sprites/armor.json";
 import guard from "../sprites/npc.json";
 import hand from "../sprites/hand.json";
 import impact from "../sprites/impact.json";
@@ -185,6 +187,8 @@ const sprites = {
   diamondarmor,
   emeraldarmor,
   demonarmor,
+  bonearmor,
+  bloodarmor,
   goldensword,
   frozensword,
   diamondsword,
@@ -312,6 +316,8 @@ const sprites = {
   "item-diamondarmor": item,
   "item-emeraldarmor": item,
   "item-demonarmor": item,
+  "item-bonearmor": item,
+  "item-bloodarmor": item,
   "item-beltleather": item,
   "item-beltplated": item,
   "item-beltfrozen": item,

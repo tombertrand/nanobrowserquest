@@ -1230,8 +1230,6 @@ class Player extends Character {
           }, timeout);
 
           this.server.handleHurtEntity({ entity: attackedMob, attacker: this, dmg });
-
-          attackedMob.handleHurtDeath();
         } else {
           if (typeof this.defenseSkill !== "number" || this.defenseSkillTimeout) return;
 

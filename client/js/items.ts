@@ -212,6 +212,20 @@ var Items = {
     }
   },
 
+  BoneArmor: class BoneArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BONEARMOR, "armor");
+      this.lootMessage = "You pick up a bone armor";
+    }
+  },
+
+  BloodArmor: class BloodArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BLOODARMOR, "armor");
+      this.lootMessage = "You pick up a blood armor";
+    }
+  },
+
   BeltLeather: class BeltLeather extends Item {
     constructor(id) {
       super(id, Types.Entities.BELTLEATHER, "belt");
