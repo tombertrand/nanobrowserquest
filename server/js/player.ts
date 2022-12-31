@@ -1384,7 +1384,7 @@ class Player extends Character {
       const reduceFrozenChanceBonus = [20];
       const resistances = [21, 22, 23, 24, 25, 26];
       const elementPercentage = [27, 28, 29, 30, 31];
-      const allResistances = [32];
+      const allResistance = [32];
       const timeout = [35];
       const elementDamage = [4, 14, 15, 16, 18, 34];
 
@@ -1427,13 +1427,13 @@ class Player extends Character {
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
           .concat(fireDamageBonus)
-          .concat(allResistances)
+          .concat(allResistance)
           .concat(_.shuffle(elementDamage).slice(0, 2));
       } else if (kind === Types.Entities.AMULETMOON) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 2)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-          .concat(allResistances)
+          .concat(allResistance)
           .concat(_.shuffle(elementDamage).slice(0, 3))
           .concat(_.shuffle(elementPercentage).slice(0, 3));
       } else if (kind === Types.Entities.RINGRAISTONE) {

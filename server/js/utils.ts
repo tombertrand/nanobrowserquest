@@ -568,6 +568,7 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
   let socket;
   let extractedItem;
   let socketCount;
+  let isNewSocketItem = false;
   try {
     socket = JSON.parse(rawSocket);
   } catch (err) {
@@ -589,12 +590,15 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
 
     socket = getRandomSockets({ kind, baseLevel, isLuckySlot });
     socketCount = socket.length;
+    isNewSocketItem = true;
   } else {
     let lastSocketIndex = socket.findIndex(i => i === 0);
     if (lastSocketIndex === -1) {
       lastSocketIndex = socket.length;
     }
-    extractedItem = random(2) ? socket[lastSocketIndex - 1] : null;
+
+    // @NOTE 10% to get back the socketed rune/jewel
+    extractedItem = random(10) === 1 ? socket[lastSocketIndex - 1] : null;
 
     socket[lastSocketIndex - 1] = 0;
   }
@@ -607,7 +611,7 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     extractedItem = { item: `rune-${runeName}`, quantity: 1 };
   }
 
-  return { socketItem, extractedItem, socketCount };
+  return { socketItem, extractedItem, socketCount, isNewSocketItem };
 };
 
 export const getRandomJewelLevel = (mobLevel: number) => {

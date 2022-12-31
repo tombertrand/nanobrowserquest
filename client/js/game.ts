@@ -3754,7 +3754,7 @@ class Game {
         $("#player-coldResistance").text(bonus.coldResistance);
         $("#player-poisonResistance").text(bonus.poisonResistance);
         $("#player-physicalResistance").text(bonus.physicalResistance);
-        // $("#player-magicFind").text(bonus.magicFind);
+        $("#player-magicFind").text(bonus.magicFind);
         // $("#player-attackSpeed").text(bonus.attackSpeed);
         $("#player-exp").text(bonus.exp);
         $("#player-skillTimeout").text(bonus.skillTimeout);

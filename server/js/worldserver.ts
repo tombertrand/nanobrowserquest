@@ -1387,9 +1387,6 @@ class World {
           });
 
           postMessageToDiscordChatChannel(`${player.name} received a Blue Chest <:chestblue:1058504858212249600>`);
-          // <:chestgreen:1058508244202557541>
-          // <:chestpurple:1058508265224413264>
-          // <:chestred:1058508279313072191>
 
           if (party) {
             this.pushToParty(
@@ -1473,9 +1470,11 @@ class World {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur 🥶`);
     } else if (mob.kind === Types.Entities.COWKING) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
-    } else if (mob.kind === Types.Entities.DEATHANGEL) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained the Death Angel 💀`);
     }
+    // @TODO Sort the death by spell bug (because the death angel still has an animation path?, since no bug when death by melee)
+    //  else if (mob.kind === Types.Entities.DEATHANGEL) {
+    //   postMessageToDiscordChatChannel(`${attacker.name} slained the Death Angel 💀`);
+    // }
 
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
@@ -1503,7 +1502,7 @@ class World {
       // "rune-fal",
       // "rune-kul",
       // "rune-mer",
-      "rune-qua",
+      // "rune-qua",
       // "rune-gul",
       // "shieldemerald",
       // "shieldtemplar",
@@ -1517,7 +1516,7 @@ class World {
       // "rune-nan",
       // "rune-mir",
       // "rune-gel",
-      // "rune-do",
+      "rune-do",
       // "rune-ban",
       // "rune-sol",
       // "rune-um",
@@ -1528,7 +1527,7 @@ class World {
       // "rune-eth",
       // "rune-btc",
       // "rune-vax",
-      // "rune-por",
+      "rune-por",
       // "rune-las",
       // "rune-cham",
       // "rune-dur",

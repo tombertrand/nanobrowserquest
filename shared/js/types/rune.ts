@@ -102,7 +102,7 @@ export const runeKind = {
     },
   },
   vie: {
-    rank: 13,
+    rank: 9,
     requirement: 22,
     attribute: {
       regenerateHealth: 10,
@@ -130,7 +130,7 @@ export const runeKind = {
     },
   },
   sol: {
-    rank: 9,
+    rank: 13,
     requirement: 14,
     attribute: {
       reduceFrozenChance: 5,
@@ -253,7 +253,7 @@ export const runeKind = {
     rank: 30,
     requirement: 65,
     attribute: {
-      allResistance: 10,
+      allResistance: 6,
     },
   },
   vod: {
@@ -436,7 +436,7 @@ export const Runewords = {
         exp: 10,
       },
     },
-    "las-tor-mir-tor-mir-al-vie": {
+    "las-tor-mir-tor-al-vie": {
       name: "Cold Wallet",
       bonus: {
         minDamage: 10,
@@ -481,7 +481,7 @@ export const Runewords = {
       name: "ASIC",
       bonus: {
         attackDamage: 20,
-        allResistances: 30,
+        allResistance: 15,
         criticalHit: 8,
         regenerateHealth: 30,
         preventRegenerateHealth: 20,

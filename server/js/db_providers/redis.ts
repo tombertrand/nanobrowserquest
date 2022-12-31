@@ -14,6 +14,7 @@ import {
   UPGRADE_SLOT_RANGE,
   WAYPOINTS_COUNT,
 } from "../../../shared/js/slots";
+import { getRunewordBonus } from "../../../shared/js/types/rune";
 import { toArray, toDb } from "../../../shared/js/utils";
 import { postMessageToDiscordAnvilChannel } from "../discord";
 import Messages from "../message";
@@ -1153,6 +1154,7 @@ class DatabaseHandler {
         let result;
         let nextRuneRank = null;
         let socketItem = null;
+        let isNewSocketItem = false;
         let extractedItem = null;
         let socketCount = null;
         let weaponWithSkill = null;
@@ -1211,14 +1213,17 @@ class DatabaseHandler {
           isSuccess = true;
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = socketItem;
+
+          this.logUpgrade({ player, item: socketItem, isSuccess, isRuneword: true });
+
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((result = isValidStoneSocket(filteredUpgrade, isLuckySlot))) {
           isSuccess = true;
-          ({ socketItem, extractedItem, socketCount } = result);
+          ({ socketItem, extractedItem, socketCount, isNewSocketItem } = result);
           if (extractedItem) {
             this.lootItems({ player, items: [extractedItem] });
           }
-          if (socketCount === 6) {
+          if (socketCount === 6 && isNewSocketItem) {
             this.logUpgrade({ player, item: socketItem, isSuccess, isLuckySlot });
           }
           upgrade = upgrade.map(() => 0);
@@ -1610,11 +1615,13 @@ class DatabaseHandler {
     item,
     isSuccess,
     isLuckySlot,
+    isRuneword,
   }: {
     player: Player;
     item: string;
     isSuccess: boolean;
-    isLuckySlot: boolean;
+    isLuckySlot?: boolean;
+    isRuneword?: boolean;
   }) {
     const now = Date.now();
     this.client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
@@ -1625,7 +1632,31 @@ class DatabaseHandler {
         const socket = toArray(rawSocket);
         const isUnique = Types.isUnique(itemName, bonus);
         let message = "";
+        let runeword = "";
         let output = kinds[itemName][2];
+        let fire = parseInt(level) >= 8 ? "<:firepurple:1058822354672832524>" : "🔥";
+
+        if (!isUnique && isRuneword) {
+          // Invalid runeword
+          if (socket.findIndex((s: number | string) => s === 0 || `${s}`.startsWith("jewel")) !== -1) {
+            return;
+          } else {
+            const isWeapon = Types.isWeapon(itemName);
+            const isArmor = Types.isArmor(itemName);
+            const isShield = Types.isShield(itemName);
+
+            let type = null;
+            if (isWeapon) {
+              type = "weapon";
+            } else if (isArmor) {
+              type = "armor";
+            } else if (isShield) {
+              type = "shield";
+            }
+
+            ({ runeword } = getRunewordBonus({ isUnique, socket, type }));
+          }
+        }
 
         if (isUnique) {
           output =
@@ -1645,12 +1676,15 @@ class DatabaseHandler {
             }${output}`;
         }
 
-        if (socket?.length === 6) {
-          message = `${player.name} added 6 sockets to a +${level} ${output}`;
+        if (runeword) {
+          fire = "<:fireblue:1058822338763817101>";
+          message = `${player.name} forged a **${runeword}** runeword in a +${level} ${output}`;
+        } else if (socket?.length === 6) {
+          message = `${player.name} added **6 sockets** to a +${level} ${output}`;
         } else {
-          message = `${player.name} upgraded a +${level} ${output}`;
+          message = `${player.name} upgraded a **+${level}** ${output}`;
         }
-        postMessageToDiscordAnvilChannel(`${message}${isLuckySlot ? " with the lucky slot" : ""} 🔥`);
+        postMessageToDiscordAnvilChannel(`${message}${isLuckySlot ? " with the lucky slot" : ""} ${fire}`);
       } catch (err) {
         Sentry.captureException(err);
       }
