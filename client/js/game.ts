@@ -66,6 +66,9 @@ class Game {
   isAnvilRecipe: boolean;
   isAnvilTransmute: boolean;
   isAnvilChestblue: boolean;
+  isAnvilChestgreen: boolean;
+  isAnvilChestpurple: boolean;
+  isAnvilChestred: boolean;
   anvilAnimationTimeout: any;
   cowPortalStart: boolean;
   cowLevelPortalCoords: { x: number; y: number } | null;
@@ -194,6 +197,9 @@ class Game {
     this.isAnvilRecipe = false;
     this.isAnvilTransmute = false;
     this.isAnvilChestblue = false;
+    this.isAnvilChestgreen = false;
+    this.isAnvilChestpurple = false;
+    this.isAnvilChestred = false;
     this.anvilAnimationTimeout = null;
     this.cowPortalStart = false;
     this.cowLevelPortalCoords = null;
@@ -560,6 +566,9 @@ class Game {
       "item-amuletdemon",
       "item-amuletmoon",
       "item-chestblue",
+      "item-chestgreen",
+      "item-chestpurple",
+      "item-chestred",
       "item-scrollupgradelow",
       "item-scrollupgrademedium",
       "item-scrollupgradehigh",
@@ -2997,29 +3006,27 @@ class Game {
                 entity.onStopPathing(function () {
                   self.unregisterEntityPosition(entity);
 
-                  if (!entity.isDying) {
-                    if (entity.hasTarget() && entity.isAdjacent(entity.target)) {
-                      entity.lookAtTarget();
-                    }
-
-                    if (entity instanceof Player) {
-                      var gridX = entity.destination.gridX,
-                        gridY = entity.destination.gridY;
-
-                      if (self.map.isDoor(gridX, gridY)) {
-                        var dest = self.map.getDoorDestination(gridX, gridY);
-                        entity.setGridPosition(dest.x, dest.y);
-                      }
-                    }
-
-                    entity.forEachAttacker(function (attacker) {
-                      if (!attacker.isAdjacentNonDiagonal(entity) && attacker.id !== self.playerId) {
-                        attacker.follow(entity);
-                      }
-                    });
-
-                    self.registerEntityPosition(entity);
+                  if (entity.hasTarget() && entity.isAdjacent(entity.target)) {
+                    entity.lookAtTarget();
                   }
+
+                  if (entity instanceof Player) {
+                    var gridX = entity.destination.gridX,
+                      gridY = entity.destination.gridY;
+
+                    if (self.map.isDoor(gridX, gridY)) {
+                      var dest = self.map.getDoorDestination(gridX, gridY);
+                      entity.setGridPosition(dest.x, dest.y);
+                    }
+                  }
+
+                  entity.forEachAttacker(function (attacker) {
+                    if (!attacker.isAdjacentNonDiagonal(entity) && attacker.id !== self.playerId) {
+                      attacker.follow(entity);
+                    }
+                  });
+
+                  self.registerEntityPosition(entity);
                 });
 
                 entity.onRequestPath(function (x, y) {
@@ -3056,7 +3063,11 @@ class Game {
                     };
                   }
 
+                  // Make sure the death animation happens, if the entity is currently pathing reset it
+                  entity.aggroRange = 0;
+                  entity.stop();
                   entity.isDying = true;
+
                   let speed = 120;
 
                   // Custom death animations
@@ -3071,8 +3082,6 @@ class Game {
 
                   entity.animate("death", speed, 1, function () {
                     console.info(entity.id + " was removed");
-
-                    console.log("~~~~animation done!");
 
                     self.removeEntity(entity);
                     self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
@@ -3175,7 +3184,6 @@ class Game {
 
         entity.onDeath(function () {
           console.info(entity.id + " is dead");
-          entity.isDying = true;
           let speed = 120;
 
           // Custom death animations
@@ -3993,13 +4001,23 @@ class Game {
         }
       });
 
-      self.client.onReceiveAnvilUpgrade(function ({ isSuccess, isTransmute, isChestblue }) {
+      self.client.onReceiveAnvilUpgrade(function ({
+        isSuccess,
+        isTransmute,
+        isChestblue,
+        isChestgreen,
+        isChestpurple,
+        // @NOTE perhaps have a different animation for red chests (extra rare, next expansion?)
+        // isChestred,
+      }) {
         if (isSuccess) {
           self.setAnvilSuccess();
-        } else if (isTransmute) {
+        } else if (isTransmute || isChestgreen) {
           self.setAnvilTransmute();
         } else if (isChestblue) {
           self.setAnvilChestblue();
+        } else if (isChestpurple) {
+          self.setAnvilRecipe();
         } else {
           self.setAnvilFail();
         }
@@ -4340,6 +4358,9 @@ class Game {
     this.isAnvilRecipe = false;
     this.isAnvilTransmute = false;
     this.isAnvilChestblue = false;
+    this.isAnvilChestgreen = false;
+    this.isAnvilChestpurple = false;
+    this.isAnvilChestred = false;
     clearTimeout(this.anvilAnimationTimeout);
   }
 

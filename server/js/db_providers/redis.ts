@@ -16,12 +16,15 @@ import {
 } from "../../../shared/js/slots";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
 import { toArray, toDb } from "../../../shared/js/utils";
-import { postMessageToDiscordAnvilChannel } from "../discord";
+import { EmojiMap, postMessageToDiscordAnvilChannel } from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
 import {
   generateBlueChestItem,
+  generateGreenChestItem,
+  generatePurpleChestItem,
+  generateRedChestItem,
   getIsTransmuteSuccess,
   isUpgradeSuccess,
   isValidAddWeaponSkill,
@@ -923,7 +926,7 @@ class DatabaseHandler {
                     isToReplyDone = true;
                   }
                 } else if (toLocation === "upgrade") {
-                  const isScroll = Types.isScroll(fromItem) || Types.isStone(fromItem);
+                  const isScroll = Types.isScroll(fromItem) || Types.isStone(fromItem) || Types.isChest(fromItem);
                   const isRune = Types.isRune(fromItem);
                   const hasScroll = isScroll
                     ? toReplyParsed.some((a, i) => i !== 0 && a && (a.startsWith("scroll") || a.startsWith("stone")))
@@ -1277,6 +1280,9 @@ class DatabaseHandler {
           let generatedItem: number | string = 0;
           let isRecipe = false;
           let isChestblue = false;
+          let isChestgreen = false;
+          let isChestpurple = false;
+          let isChestred = false;
 
           if (recipe) {
             isSuccess = true;
@@ -1297,12 +1303,38 @@ class DatabaseHandler {
                 isRecipe = true;
                 player.server.startMinotaurLevel();
               }
-            } else if (recipe === "chestblue") {
-              const { item, uniqueChances } = generateBlueChestItem();
+            } else if (
+              recipe === "chestblue" ||
+              recipe === "chestgreen" ||
+              recipe === "chestpurple" ||
+              recipe === "chestred"
+            ) {
+              let item;
+              let uniqueChances;
+
+              switch (recipe) {
+                case "chestblue":
+                  isChestblue = true;
+                  ({ item, uniqueChances } = generateBlueChestItem());
+                  break;
+                case "chestgreen":
+                  isChestgreen = true;
+                  ({ item, uniqueChances } = generateGreenChestItem());
+                  break;
+                case "chestpurple":
+                  isChestpurple = true;
+                  ({ item, uniqueChances } = generatePurpleChestItem());
+                  break;
+                case "chestred":
+                  isChestred = true;
+                  ({ item, uniqueChances } = generateRedChestItem());
+                  break;
+              }
+
+              if (!item) return;
 
               luckySlot = null;
               isWorkingRecipe = true;
-              isChestblue = true;
 
               const {
                 item: itemName,
@@ -1313,7 +1345,8 @@ class DatabaseHandler {
                 skill,
               } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
 
-              generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(":");
+              const delimiter = Types.isJewel(item) ? "|" : ":";
+              generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(delimiter);
             }
           }
 
@@ -1324,8 +1357,11 @@ class DatabaseHandler {
             upgrade[upgrade.length - 1] = generatedItem;
             if (isRecipe) {
               player.broadcast(new Messages.AnvilRecipe(recipe), false);
-            } else if (isChestblue) {
-              player.broadcast(new Messages.AnvilUpgrade({ isChestblue }), false);
+            } else if (isChestblue || isChestgreen || isChestpurple || isChestred) {
+              player.broadcast(
+                new Messages.AnvilUpgrade({ isChestblue, isChestgreen, isChestpurple, isChestred }),
+                false,
+              );
             }
           }
         }
@@ -1633,8 +1669,9 @@ class DatabaseHandler {
         const isUnique = Types.isUnique(itemName, bonus);
         let message = "";
         let runeword = "";
+        let wordSocket = "";
         let output = kinds[itemName][2];
-        let fire = parseInt(level) >= 8 ? "<:firepurple:1058822354672832524>" : "🔥";
+        let fire = parseInt(level) >= 8 ? EmojiMap.firepurple : EmojiMap.fire;
 
         if (!isUnique && isRuneword) {
           // Invalid runeword
@@ -1654,7 +1691,7 @@ class DatabaseHandler {
               type = "shield";
             }
 
-            ({ runeword } = getRunewordBonus({ isUnique, socket, type }));
+            ({ runeword, wordSocket } = getRunewordBonus({ isUnique, socket, type }));
           }
         }
 
@@ -1677,8 +1714,13 @@ class DatabaseHandler {
         }
 
         if (runeword) {
-          fire = "<:fireblue:1058822338763817101>";
-          message = `${player.name} forged a **${runeword}** runeword in a +${level} ${output}`;
+          fire = EmojiMap.fireblue;
+          const EmojiRunes = wordSocket
+            .split("-")
+            .map(rune => EmojiMap[`rune-${rune}`])
+            .join("");
+
+          message = `${player.name} forged **${runeword}** runeword (${EmojiRunes}) in a +${level} ${output}`;
         } else if (socket?.length === 6) {
           message = `${player.name} added **6 sockets** to a +${level} ${output}`;
         } else {

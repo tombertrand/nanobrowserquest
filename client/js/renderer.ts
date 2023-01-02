@@ -812,13 +812,13 @@ class Renderer {
         var spriteName = null;
         var anim = this.game.anvilAnimation;
 
-        if (this.game.isAnvilRecipe) {
+        if (this.game.isAnvilRecipe || this.game.isAnvilChestPurple) {
           spriteName = "anvil-recipe";
         } else if (this.game.isAnvilSuccess) {
           spriteName = "anvil-success";
-        } else if (this.game.isAnvilFail) {
+        } else if (this.game.isAnvilFail || this.game.isAnvilChestRed) {
           spriteName = "anvil-fail";
-        } else if (this.game.isAnvilTransmute) {
+        } else if (this.game.isAnvilTransmute || this.game.isAnvilChestGreen) {
           spriteName = "anvil-transmute";
         } else if (this.game.isAnvilChestblue) {
           spriteName = "anvil-chestblue";
@@ -1318,9 +1318,15 @@ class Renderer {
 
     let spriteImage = sprite.image;
     if (
-      ["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor", "mysticalarmor", "bloodarmor"].includes(
-        this.game.player.armorName,
-      ) &&
+      [
+        "hornedarmor",
+        "frozenarmor",
+        "diamondarmor",
+        "emeraldarmor",
+        "demonarmor",
+        "mysticalarmor",
+        "bloodarmor",
+      ].includes(this.game.player.armorName) &&
       this.game.player.armorBonus?.length
     ) {
       spriteImage = sprite.imageunique;

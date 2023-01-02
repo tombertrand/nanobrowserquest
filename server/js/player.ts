@@ -4,7 +4,7 @@ import { kinds, Types } from "../../shared/js/gametypes";
 import { toArray, toDb, toNumber } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
-import { postMessageToDiscordChatChannel } from "./discord";
+import { EmojiMap, postMessageToDiscordChatChannel } from "./discord";
 import FormatChecker from "./format";
 import Formulas from "./formulas";
 import Messages from "./message";
@@ -712,9 +712,15 @@ class Player extends Character {
                   }
 
                   if (Types.isSuperUnique(generatedItem.item)) {
-                    postMessageToDiscordChatChannel(`${player.name} picked up ${kinds[generatedItem.item][2]} 💍`);
+                    postMessageToDiscordChatChannel(
+                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${
+                        EmojiMap[generatedItem.item] || "💍"
+                      } `,
+                    );
                   } else if (Types.isRune(kind) && Types.RuneList.indexOf(runeName) + 1 >= Types.runeKind.xno.rank) {
-                    postMessageToDiscordChatChannel(`${player.name} picked up ${runeName.toUpperCase()} rune 🪨`);
+                    postMessageToDiscordChatChannel(
+                      `${player.name} picked up ${runeName.toUpperCase()} rune ${EmojiMap[`rune-${runeName}`]}`,
+                    );
                   }
 
                   this.databaseHandler.lootItems({

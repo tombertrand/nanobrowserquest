@@ -6,7 +6,7 @@ import { Types } from "../../shared/js/gametypes";
 import { RuneList } from "../../shared/js/types/rune";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
-import { postMessageToDiscordChatChannel } from "./discord";
+import { EmojiMap, postMessageToDiscordChatChannel } from "./discord";
 import Item from "./item";
 import Map from "./map";
 import Messages from "./message";
@@ -1381,18 +1381,22 @@ class World {
             extra: { id },
           });
         } else if (player?.minotaurDamage >= 2000) {
+          const item = player.level >= 56 ? "chestgreen" : "chestblue";
+
           this.databaseHandler.lootItems({
             player,
-            items: [{ item: "chestblue", quantity: 1 }],
+            items: [{ item, quantity: 1 }],
           });
 
-          postMessageToDiscordChatChannel(`${player.name} received a Blue Chest <:chestblue:1058504858212249600>`);
+          postMessageToDiscordChatChannel(
+            `${player.name} received a ${_.capitalize(item.replace("chest", ""))} Chest ${EmojiMap[item]}`,
+          );
 
           if (party) {
             this.pushToParty(
               party,
               new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
-                { playerName: player.name, kind: Types.Entities.CHESTBLUE },
+                { playerName: player.name, kind: Types.Entities[item.toUpperCase()] },
               ]),
             );
           }
@@ -1476,80 +1480,95 @@ class World {
     //   postMessageToDiscordChatChannel(`${attacker.name} slained the Death Angel 💀`);
     // }
 
+    // var randomDrops = [
+    //   "ringnecromancer",
+    //   "ringraistone",
+    //   "ringfountain",
+    //   "ringminotaur",
+    //   "ringmystical",
+    //   "ringbalrog",
+    //   "ringconqueror",
+    //   "ringheaven",
+    //   "ringwizard",
+    //   "amuletcow",
+    //   "amuletfrozen",
+    //   "amuletdemon",
+    //   "amuletmoon",
+    // ];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
-    var randomDrops = [
-      // "rune",
-      // "jewelskull",
-      // "ringplatinum",
-      // "ringconqueror",
-      // "amuletdemon",
-      // "ringmystical",
-      // "amuletmoon",
-      // "ringheaven",
-      // "ringwizard",
-      // "amuletplatinum",
-      // "beltemerald",
-      // "beltexecutioner",
-      // "beltmystical",
-      // "belttemplar",
-      // "beltdemon",
-      // "beltmoon",
-      // "shieldexecutioner",
-      // "shielddragon",
-      // "shielddemon",
-      // "shieldmoon",
-      // "rune-fal",
-      // "rune-kul",
-      // "rune-mer",
-      // "rune-qua",
-      // "rune-gul",
-      // "shieldemerald",
-      // "shieldtemplar",
-      // "ringbalrog",
-      // "stonesocket",
-      // "scrollupgradelegendary",
-      // "scrollupgradesacred",
-      // "rune-sat",
-      // "rune-al",
-      // "rune-bul",
-      // "rune-nan",
-      // "rune-mir",
-      // "rune-gel",
-      "rune-do",
-      // "rune-ban",
-      // "rune-sol",
-      // "rune-um",
-      // "rune-hex",
-      // "rune-zal",
-      // "rune-vie",
-      // "rune-xno",
-      // "rune-eth",
-      // "rune-btc",
-      // "rune-vax",
-      "rune-por",
-      // "rune-las",
-      // "rune-cham",
-      // "rune-dur",
-      // "rune-ber",
-      // "rune-tor",
-      // "rune-jah",
-      // "rune-shi",
-      // "rune-vod",
-      // "goldensword",
-      // "emeraldsword",
-      // "mysticalsword",
-      // "dragonsword",
-      // "executionersword",
-      // "eclypsedagger",
-      // "spikeglaive",
-      // "templarsword",
-      // "moonsword",
-    ];
+    // var randomDrops = [
+    // "rune",
+    // "jewelskull",
+    // "ringplatinum",
+    // "ringconqueror",
+    // "amuletdemon",
+    // "ringmystical",
+    // "amuletmoon",
+    // "ringheaven",
+    // "ringwizard",
+    // "amuletplatinum",
+    // "beltemerald",
+    // "beltexecutioner",
+    // "beltmystical",
+    // "belttemplar",
+    // "beltdemon",
+    // "beltmoon",
+    // "shieldexecutioner",
+    // "shielddragon",
+    // "shielddemon",
+    // "shieldmoon",
+    // "shieldemerald",
+    // "shieldtemplar",
+    // "ringbalrog",
+    // "stonesocket",
+    // "scrollupgradelegendary",
+    // "scrollupgradesacred",
+    // "rune-sat",
+    // "rune-al",
+    // "rune-bul",
+    // "rune-nan",
+    // "rune-mir",
+    // "rune-gel",
+    // "rune-do",
+    // "rune-ban",
+    // "rune-sol",
+    // "rune-um",
+    // "rune-hex",
+    // "rune-zal",
+    // "rune-vie",
+    // "rune-eth",
+    // "rune-btc",
+    // "rune-vax",
+    // "rune-por",
+    // "rune-las",
+    // "rune-cham",
+    // "rune-dur",
+    // "rune-xno",
+    // "rune-fal",
+    // "rune-kul",
+    // "rune-mer",
+    // "rune-qua",
+    // "rune-gul",
+    // "rune-ber",
+    // "rune-tor",
+    // "rune-jah",
+    // "rune-shi",
+    // "rune-vod",
+    // "goldensword",
+    // "emeraldsword",
+    // "mysticalsword",
+    // "dragonsword",
+    // "executionersword",
+    // "eclypsedagger",
+    // "spikeglaive",
+    // "templarsword",
+    // "moonsword",
+    // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    var randomDrop = random(randomDrops.length);
-    itemName = randomDrops[randomDrop];
+    // var randomDrop = random(randomDrops.length);
+    // itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

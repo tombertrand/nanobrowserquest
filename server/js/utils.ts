@@ -343,6 +343,9 @@ export const isValidRecipe = items => {
     cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
     minotaurLevel: ["cowkinghorn"],
     chestblue: ["chestblue"],
+    chestgreen: ["chestgreen"],
+    chestpurple: ["chestpurple"],
+    chestred: ["chestred"],
   };
 
   const result = Object.entries(recipes).find(([_recipe, formulae]) => {
@@ -386,7 +389,13 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
   ];
 
   // 40%
-  const scrolls = [{ item: "scrollupgradehigh" }, { item: "scrollupgradeblessed" }, { item: "scrolltransmute" }];
+  const scrolls = [
+    { item: "scrollupgradehigh" },
+    { item: "scrollupgradeblessed" },
+    { item: "scrolltransmute" },
+    { item: "stonesocket" },
+    { item: "jewelskull" },
+  ];
 
   // 10%
   const ringOrAmulets = [
@@ -408,6 +417,106 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
   const randomItem = random(category.length);
 
   return category[randomItem];
+};
+
+export const generateGreenChestItem = (): { item: string; uniqueChances?: number } => {
+  // 50%
+  const items = [
+    { item: "diamondsword", uniqueChances: 20 },
+    { item: "diamondarmor", uniqueChances: 20 },
+    { item: "beltdiamond", uniqueChances: 20 },
+    { item: "shielddiamond", uniqueChances: 15 },
+    { item: "beltminotaur", uniqueChances: 10 },
+    { item: "minotauraxe", uniqueChances: 10 },
+    { item: "emeraldsword", uniqueChances: 8 },
+    { item: "emeraldarmor", uniqueChances: 8 },
+    { item: "beltemerald", uniqueChances: 8 },
+    { item: "shieldemerald", uniqueChances: 8 },
+    { item: "templarsword", uniqueChances: 6 },
+    // { item: "templararmor", uniqueChances: 6 },
+    { item: "belttemplar", uniqueChances: 6 },
+    { item: "shieldtemplar", uniqueChances: 6 },
+    { item: "cape", uniqueChances: 5 },
+  ];
+
+  // 40%
+  const scrolls = [
+    { item: "scrollupgradelegendary" },
+    { item: "scrollupgradeblessed" },
+    { item: "scrolltransmute" },
+    { item: "stonesocket" },
+    { item: "jewelskull" },
+  ];
+
+  // 10%
+  const ringOrAmulets = [
+    { item: "ringplatinum" },
+    { item: "ringminotaur" },
+    { item: "amuletfrozen" },
+    { item: "ringconqueror" },
+  ];
+
+  const randomCategory = random(100);
+  let category: any = items;
+
+  if (randomCategory < 10) {
+    category = ringOrAmulets;
+  } else if (randomCategory < 50) {
+    category = scrolls;
+  }
+
+  const randomItem = random(category.length);
+
+  return category[randomItem];
+};
+
+export const generatePurpleChestItem = (): { item: string; uniqueChances?: number } => {
+  // 50%
+  const items = [
+    { item: "templarsword", uniqueChances: 6 },
+    // { item: "templararmor", uniqueChances: 6 },
+    { item: "belttemplar", uniqueChances: 6 },
+    { item: "shieldtemplar", uniqueChances: 6 },
+    { item: "cape", uniqueChances: 5 },
+  ];
+
+  // 40%
+  const scrolls = [
+    { item: "scrollupgradelegendary" },
+    { item: "scrollupgradesacred" },
+    { item: "scrolltransmute" },
+    { item: "stonesocket" },
+    { item: "jewelskull" },
+  ];
+
+  // 10%
+  const ringOrAmulets = [
+    { item: "ringplatinum" },
+    { item: "ringconqueror" },
+    // { item: "ringheaven" },
+    { item: "ringwizard" },
+    { item: "ringbalrog" },
+    { item: "ringmystical" },
+    { item: "amuletmoon" },
+  ];
+
+  const randomCategory = random(100);
+  let category: any = items;
+
+  if (randomCategory < 10) {
+    category = ringOrAmulets;
+  } else if (randomCategory < 50) {
+    category = scrolls;
+  }
+
+  const randomItem = random(category.length);
+
+  return category[randomItem];
+};
+
+export const generateRedChestItem = (): { item: string; uniqueChances?: number } => {
+  // @ts-ignore NOT YET IMPLEMENTED
+  return {};
 };
 
 export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {

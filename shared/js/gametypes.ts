@@ -241,6 +241,9 @@ export const Types: any = {
 
     // Chests
     CHESTBLUE: 136,
+    CHESTGREEN: 223,
+    CHESTPURPLE: 224,
+    CHESTRED: 225,
 
     // Objects
     FLASK: 35,
@@ -707,6 +710,9 @@ export const kinds = {
   amuletmoon: [Types.Entities.AMULETMOON, "amulet", "Crescent", 58],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 50],
+  chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
+  chestpurple: [Types.Entities.CHESTPURPLE, "chest", "Purple Chest", 60],
+  chestred: [Types.Entities.CHESTRED, "chest", "Red Chest", 70],
 
   flask: [Types.Entities.FLASK, "object"],
   rejuvenationpotion: [Types.Entities.REJUVENATIONPOTION, "object"],
@@ -950,6 +956,9 @@ Types.isSuperUnique = (itemName: string) =>
     "ringminotaur",
     "ringmystical",
     "ringbalrog",
+    "ringconqueror",
+    "ringheaven",
+    "ringwizard",
     "amuletcow",
     "amuletfrozen",
     "amuletdemon",
@@ -1083,7 +1092,12 @@ Types.isJewel = function (kindOrString: number | string) {
 
 Types.isChest = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
-    return [Types.Entities.CHESTBLUE].includes(kindOrString);
+    return [
+      Types.Entities.CHESTBLUE,
+      Types.Entities.CHESTGREEN,
+      Types.Entities.CHESTPURPLE,
+      Types.Entities.CHESTRED,
+    ].includes(kindOrString);
   } else {
     return kindOrString?.startsWith("chest");
   }
@@ -2229,6 +2243,9 @@ Types.itemDescription = {
   necromancerheart: "The heart of the Necromancer. An unknown magic is still being emitted from the remains.",
   cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
   chestblue: "The chest may contain a very precious item.",
+  chestgreen: "The chest may contain a very precious item.",
+  chestpurple: "The chest may contain a very precious item.",
+  chestred: "The chest may contain a very precious item.",
   scrollupgradelow:
     "Upgrade low class items. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgrademedium:

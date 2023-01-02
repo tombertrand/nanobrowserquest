@@ -388,13 +388,14 @@ export const getRunewordBonus = ({
 }) => {
   let runeword;
   let runewordBonus;
+  let wordSocket;
 
   if (!isUnique && socket?.length && !socket.some(s => s === 0 || typeof s !== "number")) {
-    const wordSocket = socket.map(s => RuneList[s - 1]).join("-");
+    wordSocket = socket.map(s => RuneList[s - 1]).join("-");
     ({ name: runeword, bonus: runewordBonus } = Runewords[type]?.[wordSocket] || {});
   }
 
-  return { runeword, runewordBonus };
+  return { runeword, runewordBonus, wordSocket: runeword ? wordSocket : null };
 };
 
 export const Runewords = {
@@ -539,3 +540,4 @@ export const Runewords = {
 
 // Confirmations Per Second
 // Open Representative Voting
+// fortune favors the brave

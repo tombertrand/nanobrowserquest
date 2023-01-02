@@ -645,6 +645,18 @@ EntityFactory.builders[Types.Entities.CHESTBLUE] = function (id) {
   return new Items.ChestBlue(id);
 };
 
+EntityFactory.builders[Types.Entities.CHESTGREEN] = function (id) {
+  return new Items.ChestGreen(id);
+};
+
+EntityFactory.builders[Types.Entities.CHESTPURPLE] = function (id) {
+  return new Items.ChestPurple(id);
+};
+
+EntityFactory.builders[Types.Entities.CHESTRED] = function (id) {
+  return new Items.ChestRed(id);
+};
+
 EntityFactory.builders[Types.Entities.SCROLLUPGRADELOW] = function (id) {
   return new Items.ScrollUpgradeLow(id);
 };

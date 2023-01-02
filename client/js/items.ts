@@ -870,6 +870,27 @@ var Items = {
     }
   },
 
+  ChestGreen: class ChestGreen extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHESTGREEN, "chest");
+      this.lootMessage = "You pick up a green chest";
+    }
+  },
+
+  ChestPurple: class ChestPurple extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHESTPURPLE, "chest");
+      this.lootMessage = "You pick up a purple chest";
+    }
+  },
+
+  ChestRed: class ChestRed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHESTRED, "chest");
+      this.lootMessage = "You pick up a red chest";
+    }
+  },
+
   ScrollUpgradeLow: class ScrollUpgradeLow extends Item {
     constructor(id) {
       super(id, Types.Entities.SCROLLUPGRADELOW, "scroll");
