@@ -17,6 +17,13 @@ import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
+import troll from "../sprites/skeleton.json";
+import snake3 from "../sprites/skeleton.json";
+import golem from "../sprites/skeleton.json";
+import harpie from "../sprites/skeleton.json";
+import werewolf2 from "../sprites/skeleton.json";
+import skeleton4 from "../sprites/skeleton.json";
+import wraith2 from "../sprites/skeleton.json";
 import deathangel from "../sprites/deathangel.json";
 import deathangelSpell from "../sprites/deathangel-spell.json";
 import wirtleg from "../sprites/weapon.json";
@@ -101,8 +108,8 @@ import rat from "../sprites/rat.json";
 import rat2 from "../sprites/rat2.json";
 import shadow16 from "../sprites/shadow16.json";
 import skeleton from "../sprites/skeleton.json";
-import skeleton2 from "../sprites/skeleton2.json";
-import skeleton3 from "../sprites/skeleton3.json";
+import skeleton2 from "../sprites/skeleton.json";
+import skeleton3 from "../sprites/skeleton.json";
 import snake from "../sprites/snake.json";
 import snake2 from "../sprites/snake2.json";
 import sorcerer from "../sprites/sorcerer.json";
@@ -173,6 +180,13 @@ const sprites = {
   cow,
   cowking,
   minotaur,
+  troll,
+  snake3,
+  golem,
+  harpie,
+  werewolf2,
+  skeleton4,
+  wraith2,
   deathangel,
   "deathangel-spell": deathangelSpell,
   "deathangel-spell-magic": deathangelSpell,

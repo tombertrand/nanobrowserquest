@@ -1427,6 +1427,8 @@ class World {
       }
     }
 
+    // if (mob.kind >= Types.Entities.TROLL) {}
+
     if (!Types.isBoss(mob.kind) && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO/BANANO potion on non-boss monsters
       if (attacker.network === "ban") {
@@ -1474,11 +1476,9 @@ class World {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur 🥶`);
     } else if (mob.kind === Types.Entities.COWKING) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
+    } else if (mob.kind === Types.Entities.DEATHANGEL) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained the Death Angel 💀`);
     }
-    // @TODO Sort the death by spell bug (because the death angel still has an animation path?, since no bug when death by melee)
-    //  else if (mob.kind === Types.Entities.DEATHANGEL) {
-    //   postMessageToDiscordChatChannel(`${attacker.name} slained the Death Angel 💀`);
-    // }
 
     // var randomDrops = [
     //   "ringnecromancer",

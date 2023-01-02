@@ -1722,6 +1722,7 @@ class DatabaseHandler {
 
           message = `${player.name} forged **${runeword}** runeword (${EmojiRunes}) in a +${level} ${output}`;
         } else if (socket?.length === 6) {
+          // ~~~~@TODO Fix message being ent when adding jewel in 6 socket armor
           message = `${player.name} added **6 sockets** to a +${level} ${output}`;
         } else {
           message = `${player.name} upgraded a **+${level}** ${output}`;

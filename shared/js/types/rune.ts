@@ -196,49 +196,49 @@ export const runeKind = {
     rank: 22,
     requirement: 41,
     attribute: {
-      magicDamagePercent: 10,
+      magicDamagePercent: 8,
     },
   },
   kul: {
     rank: 23,
     requirement: 44,
     attribute: {
-      lightningDamagePercent: 10,
+      lightningDamagePercent: 8,
     },
   },
   mer: {
     rank: 24,
     requirement: 47,
     attribute: {
-      flameDamagePercent: 10,
+      flameDamagePercent: 8,
     },
   },
   qua: {
     rank: 25,
     requirement: 50,
     attribute: {
-      coldDamagePercent: 10,
+      coldDamagePercent: 8,
     },
   },
   gul: {
     rank: 26,
     requirement: 53,
     attribute: {
-      poisonDamagePercent: 10,
+      poisonDamagePercent: 8,
     },
   },
   ber: {
     rank: 27,
     requirement: 56,
     attribute: {
-      skillTimeout: 8,
+      skillTimeout: 6,
     },
   },
   tor: {
     rank: 28,
     requirement: 59,
     attribute: {
-      coldDamage: 2,
+      coldDamage: 10,
       freezeChance: 5,
     },
   },
@@ -246,7 +246,7 @@ export const runeKind = {
     rank: 29,
     requirement: 62,
     attribute: {
-      magicFind: 10,
+      magicFind: 6,
     },
   },
   shi: {
@@ -401,7 +401,7 @@ export const getRunewordBonus = ({
 export const Runewords = {
   weapon: {
     "al-sat-mir-nan": {
-      name: "Sub Second Cormirmation",
+      name: "Sub Second Confirmation",
       bonus: {
         health: 20,
         minDamage: 8,
@@ -502,42 +502,163 @@ export const Runewords = {
         reduceFrozenChance: 20,
       },
     },
-    // ethbtcxno: {
-    //   name: "EIP-1559",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "SHA-256",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Double Spend",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Echo Chamber",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Know Your Customer",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Growing Seed",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "The Validator",
-    //   bonus: {},
-    // },
-    // ethbtcxno: {
-    //   name: "Not Your Key Not Your Crypto",
-    //   bonus: {},
-    // },
+    "eth-btc-xno": {
+      name: "EIP-1559",
+      bonus: {
+        defense: 15,
+        absorbedDamage: 20,
+        magicResistance: 30,
+        poisonResistance: 30,
+        poisonDamage: 20,
+      },
+    },
+    "btc-bul-sol-gel-do": {
+      name: "SHA-256",
+      bonus: {
+        defense: 20,
+        absorbedDamage: 5,
+        reduceFrozenChance: 20,
+        coldResistance: 30,
+        maxDamage: 15,
+      },
+    },
+    "vie-do-dur-las-vax-cham": {
+      name: "Double Spend",
+      bonus: {
+        exp: 10,
+        health: 120,
+        defense: 18,
+        allResistance: 20,
+        reduceFrozenChance: 20,
+      },
+    },
+    "nan-btc-fal-ban": {
+      name: "Know Your Customer",
+      bonus: {
+        exp: 10,
+        defense: 20,
+        magicDamage: 20,
+        magicResistance: 30,
+        magicDamagePercent: 20,
+      },
+    },
+    "um-mer-por-um-jah-mer": {
+      name: "The Validator",
+      bonus: {
+        defense: 20,
+        flameDamage: 40,
+        flameResistance: 20,
+        flameDamagePercent: 15,
+        magicFind: 15,
+      },
+    },
+    "ban-por-kul-por-hex-ber": {
+      name: "Jungle Gorilla",
+      bonus: {
+        defense: 15,
+        lightningDamage: 20,
+        lightningResistance: 35,
+        lightningDamagePercent: 20,
+        skillTimeout: 15,
+      },
+    },
+    "qua-ban-tor-qua-las-tor": {
+      name: "Not Your Key Not Your Crypto",
+      bonus: {
+        defense: 20,
+        coldDamage: 40,
+        coldResistance: 30,
+        coldDamagePercent: 15,
+        freezeChance: 20,
+      },
+    },
+    "eth-eth-gul-cham-vie-gul": {
+      name: "Growing Seed",
+      bonus: {
+        regenerateHealth: 25,
+        defense: 30,
+        poisonDamage: 50,
+        poisonResistance: 40,
+        poisonDamagePercent: 25,
+      },
+    },
+    "shi-do-vod-jah-ber-gel": {
+      name: "Fortune Favors The Brave",
+      bonus: {
+        defense: 20,
+        absorbedDamage: 15,
+        allResistance: 18,
+        regenerateHealth: 30,
+        preventRegenerateHealth: 20,
+        magicFind: 20,
+        skillTimeout: 20,
+      },
+    },
   },
-  shield: {},
+  shield: {
+    "gel-bul-al-sat-do": {
+      name: "Confirmations Per Second",
+      bonus: {
+        health: 60,
+        defense: 10,
+        absorbedDamage: 10,
+        attackDamage: 6,
+        minDamage: 6,
+      },
+    },
+    "vie-nan-al-mir-um-ban": {
+      name: "Confirmations Per Second",
+      bonus: {
+        exp: 10,
+        minDamage: 12,
+        attackDamage: 10,
+        flameDamage: 15,
+        regenerateHealth: 20,
+        magicDamage: 10,
+      },
+    },
+    "sol-btc-vie-por-fal-vie": {
+      name: "Open Representative Voting",
+      bonus: {
+        reduceFrozenChance: 20,
+        magicResistance: 20,
+        lightningResistance: 25,
+        regenerateHealth: 40,
+        magicDamagePercent: 20,
+      },
+    },
+    "mer-qua-gul-ber-kul-fal": {
+      name: "Ascending Bootstrap",
+      bonus: {
+        magicDamagePercent: 20,
+        lightningDamagePercent: 20,
+        flameDamagePercent: 20,
+        coldDamagePercent: 20,
+        poisonDamagePercent: 20,
+        skillTimeout: 20,
+      },
+    },
+    "sol-tor-shi-vod-las-fal": {
+      name: "Bucketing System",
+      bonus: {
+        coldDamage: 20,
+        magicDamagePercent: 16,
+        allResistance: 16,
+        freezeChance: 10,
+        coldResistance: 10,
+        coldDamagePercent: 20,
+        reduceFrozenChance: 15,
+      },
+    },
+    "jah-shi-jah-ber-eth-gul": {
+      name: "Echo Chamber",
+      bonus: {
+        poisonDamage: 30,
+        magicFind: 40,
+        skillTimeout: 20,
+        allResistance: 16,
+        poisonDamagePercent: 25,
+      },
+    },
+  },
 };
-
-// Confirmations Per Second
-// Open Representative Voting
-// fortune favors the brave
