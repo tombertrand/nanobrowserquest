@@ -184,6 +184,7 @@ class Game {
   showAnvilOdds: boolean;
   currentStashPage: number;
   activatedMagicStones: number[];
+  activatedBlueFlames: number[];
 
   constructor(app) {
     this.app = app;
@@ -273,6 +274,7 @@ class Game {
     this.hoveringCollidingTile = false;
 
     this.activatedMagicStones = [];
+    this.activatedBlueFlames = [];
 
     // combat
     // @ts-ignore
@@ -357,6 +359,7 @@ class Game {
       "werewolf2",
       "skeleton4",
       "wraith2",
+      "ghost",
       "deathangel",
       "deathangel-spell",
       "deathangel-spell-magic",
@@ -392,6 +395,7 @@ class Game {
       "cowportal",
       "minotaurportal",
       "magicstone",
+      "blueflame",
       "beachnpc",
       "forestnpc",
       "desertnpc",
@@ -572,6 +576,7 @@ class Game {
       "item-amuletfrozen",
       "item-amuletdemon",
       "item-amuletmoon",
+      "item-amuletstar",
       "item-chestblue",
       "item-chestgreen",
       "item-chestpurple",
@@ -1799,6 +1804,17 @@ class Game {
       const entity = this.getEntityAt(x, y);
       mobId = entity?.id;
 
+      // Can't cast on self
+      if (entity.id === this.player.id) return;
+      // Can't cast on other players with many level difference
+      if (mobId && entity instanceof Player && (entity.level < 9 || Math.abs(entity.level - this.player.level) <= 10)) {
+        this.chat_callback({
+          message: "You can't attack a player below level 9 or with more than 10 level difference to yours",
+          type: "error",
+        });
+        return;
+      }
+
       if (this.player.attackSkillTimeout || typeof this.player.attackSkill !== "number" || !mobId) {
         return;
       }
@@ -2970,6 +2986,10 @@ class Game {
                 } else {
                   entity.idle();
                 }
+              } else if (entity.kind === Types.Entities.BLUEFLAME) {
+                entity.isActivated = isActivated;
+                entity.setVisible(isActivated);
+                entity.idle();
               } else {
                 entity.idle();
               }
@@ -3629,6 +3649,11 @@ class Game {
               mob.currentAnimation.reset();
               mob.walk();
             }, 1300);
+          } else if (mob.kind === Types.Entities.BLUEFLAME) {
+            self.activatedBlueFlames.push(mobId);
+
+            mob.idle();
+            mob.setVisible(true);
           }
         }
       });
@@ -4431,6 +4456,7 @@ class Game {
           // Types.Entities.COWPORTAL,
           // Types.Entities.MINOTAURPORTAL,
           Types.Entities.MAGICSTONE,
+          Types.Entities.BLUEFLAME,
         ].includes(npc.kind)
       ) {
         if (msg) {

@@ -81,6 +81,7 @@ class World {
   isCastDeathAngelSpellEnabled: boolean;
   magicStones: number[];
   activatedMagicStones: number[];
+  blueFlames: number[];
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -166,6 +167,7 @@ class World {
     this.isCastDeathAngelSpellEnabled = false;
     this.magicStones = [];
     this.activatedMagicStones = [];
+    this.blueFlames = [];
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -651,6 +653,8 @@ class World {
     } else {
       if (kind === Types.Entities.MAGICSTONE) {
         this.magicStones.push(npc.id);
+      } else if (kind === Types.Entities.BLUEFLAME) {
+        this.blueFlames.push(npc.id);
       }
 
       this.addEntity(npc);
@@ -1110,9 +1114,15 @@ class World {
 
   activateMagicStone(player, magicStone) {
     magicStone.activate();
+
+    const magicStoneIndex = this.magicStones.findIndex(id => id === magicStone.id);
+    const blueflame = this.getEntityById(this.blueFlames[magicStoneIndex]);
+    blueflame.activate();
+
     this.activatedMagicStones.push(magicStone.id);
 
     this.broadcastRaise(player, magicStone);
+    this.pushBroadcast(new Messages.Raise(blueflame.id));
   }
 
   broadcastRaise(player, mob) {
@@ -1194,7 +1204,7 @@ class World {
         this.pushToAdjacentGroups(entity.group, entity.despawn());
 
         if (attacker.type === "player") {
-          postMessageToDiscordChatChannel(`${attacker.name} killed ${entity.name} ⚔️`);
+          postMessageToDiscordChatChannel(`${attacker.name} killed ${entity.name} ${EmojiMap.sword}`);
         }
       }
 
@@ -1427,7 +1437,14 @@ class World {
       }
     }
 
-    // if (mob.kind >= Types.Entities.TROLL) {}
+    if (mob.kind >= Types.Entities.TROLL) {
+      const vv = random(12000);
+      if (vv === 420) {
+        return "amuletmoon";
+      } else if (vv === 6969) {
+        return "amuletstar";
+      }
+    }
 
     if (!Types.isBoss(mob.kind) && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO/BANANO potion on non-boss monsters
@@ -1495,6 +1512,7 @@ class World {
     //   "amuletdemon",
     //   "amuletmoon",
     // ];
+    var randomDrops = ["ringplatinum", "amuletplatinum"];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = [
@@ -1567,8 +1585,8 @@ class World {
     // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    // var randomDrop = random(randomDrops.length);
-    // itemName = randomDrops[randomDrop];
+    var randomDrop = random(randomDrops.length);
+    itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

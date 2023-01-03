@@ -863,6 +863,13 @@ var Items = {
     }
   },
 
+  AmuletStar: class AmuletStar extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETSTAR, "amulet");
+      this.lootMessage = "You pick up the North Star";
+    }
+  },
+
   ChestBlue: class ChestBlue extends Item {
     constructor(id) {
       super(id, Types.Entities.CHESTBLUE, "chest");

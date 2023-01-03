@@ -374,6 +374,7 @@ var Properties: any = {
   troll: {
     drops: {
       rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
       emeraldsword: 3,
       emeraldarmor: 3,
       beltemerald: 3,
@@ -387,6 +388,7 @@ var Properties: any = {
   snake3: {
     drops: {
       rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
       emeraldsword: 3,
       emeraldarmor: 3,
       beltemerald: 3,
@@ -401,6 +403,7 @@ var Properties: any = {
   golem: {
     drops: {
       rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
       templarsword: 3,
       // templararmor: 3,
       belttemplar: 3,
@@ -415,6 +418,7 @@ var Properties: any = {
   harpie: {
     drops: {
       rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
       executionersword: 3,
       // executionerarmor: 3,
       beltexecutioner: 3,
@@ -430,6 +434,7 @@ var Properties: any = {
   werewolf2: {
     drops: {
       rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
       executionersword: 3,
       // executionerarmor: 3,
       beltexecutioner: 3,
@@ -448,6 +453,7 @@ var Properties: any = {
   skeleton4: {
     drops: {
       rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
       dragonsword: 3,
       // dragonarmor: 3,
       shielddragon: 3,
@@ -461,11 +467,26 @@ var Properties: any = {
   wraith2: {
     drops: {
       rejuvenationpotion: 10,
+      scrollupgradelegendary: 4,
       moonsword: 3,
       // moonarmor: 3,
       beltmoon: 3,
       shieldmoon: 3,
-      amuletmoon: 1,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+    },
+    hp: 2320,
+    armor: 28,
+    weapon: 30,
+  },
+  ghost: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 4,
+      moonsword: 3,
+      // moonarmor: 3,
+      beltmoon: 3,
+      shieldmoon: 3,
       ringplatinum: 3,
       amuletplatinum: 3,
     },
@@ -475,8 +496,8 @@ var Properties: any = {
   },
   deathangel: {
     drops: {
-      scrollupgradelegendary: 3,
-      scrollupgradesacred: 4,
+      scrollupgradelegendary: 5,
+      scrollupgradesacred: 1,
       mysticalsword: 4,
       mysticalarmor: 4,
       beltmystical: 4,

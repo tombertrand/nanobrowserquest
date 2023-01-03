@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 
+import { toArray } from "../../shared/js/utils";
 import { Slot } from "./slots";
 import { expForLevel } from "./types/experience";
 import { terrainToImageMap } from "./types/map";
@@ -190,6 +191,7 @@ export const Types: any = {
     WEREWOLF2: 230,
     SKELETON4: 231,
     WRAITH2: 232,
+    GHOST: 235,
     DEATHANGEL: 217,
     DEATHANGELSPELL: 218,
 
@@ -307,6 +309,7 @@ export const Types: any = {
     AMULETFROZEN: 138,
     AMULETDEMON: 215,
     AMULETMOON: 216,
+    AMULETSTAR: 233,
 
     // NPCs
     GUARD: 40,
@@ -335,6 +338,7 @@ export const Types: any = {
     COWPORTAL: 125,
     MINOTAURPORTAL: 135,
     MAGICSTONE: 220,
+    BLUEFLAME: 234,
 
     // Weapons
     DAGGER: 60,
@@ -561,6 +565,7 @@ Types.Entities.Amulets = [
   Types.Entities.AMULETFROZEN,
   Types.Entities.AMULETDEMON,
   Types.Entities.AMULETMOON,
+  Types.Entities.AMULETSTAR,
 ];
 
 Types.getGemNameFromKind = function (kind: number) {
@@ -624,6 +629,7 @@ export const kinds = {
   werewolf2: [Types.Entities.WEREWOLF2, "mob", 100, 52],
   skeleton4: [Types.Entities.SKELETON4, "mob", 100, 52],
   wraith2: [Types.Entities.WRAITH2, "mob", 100, 52],
+  ghost: [Types.Entities.GHOST, "mob", 100, 64],
   deathangel: [Types.Entities.DEATHANGEL, "mob", 100, 55],
 
   // kind, type, level, damage
@@ -722,6 +728,7 @@ export const kinds = {
   amuletfrozen: [Types.Entities.AMULETFROZEN, "amulet", "Frozen Heart", 34],
   amuletdemon: [Types.Entities.AMULETDEMON, "amulet", "Fiend", 55],
   amuletmoon: [Types.Entities.AMULETMOON, "amulet", "Crescent", 58],
+  amuletstar: [Types.Entities.AMULETSTAR, "amulet", "North Star", 60],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 50],
   chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
@@ -822,6 +829,7 @@ export const kinds = {
   cowportal: [Types.Entities.COWPORTAL, "npc"],
   minotaurportal: [Types.Entities.MINOTAURPORTAL, "npc"],
   magicstone: [Types.Entities.MAGICSTONE, "npc"],
+  blueflame: [Types.Entities.BLUEFLAME, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -977,6 +985,7 @@ Types.isSuperUnique = (itemName: string) =>
     "amuletfrozen",
     "amuletdemon",
     "amuletmoon",
+    "amuletstar",
   ].includes(itemName);
 
 Types.getLevel = function (exp: number) {
@@ -1146,11 +1155,6 @@ Types.isObject = function (kind: number) {
 };
 
 Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = []) {
-  // @TODO Think of a unification strategy
-  if (typeof bonus === "string") {
-    bonus = JSON.parse(bonus);
-  }
-
   if (typeof kindOrString === "number") {
     if (
       [
@@ -1177,7 +1181,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
     if (Types.Entities.RINGGOLD === kindOrString && bonus.length === 4) {
       return true;
     }
-    if (Types.Entities.RINGPLATINUM === kindOrString && bonus.length === 6) {
+    if (Types.Entities.RINGPLATINUM === kindOrString && bonus.includes(32)) {
       return true;
     }
   } else {
@@ -1205,7 +1209,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
     if ("ringgold" === kindOrString && bonus.length === 4) {
       return true;
     }
-    if ("ringplatinum" === kindOrString && bonus.length === 6) {
+    if ("ringplatinum" === kindOrString && bonus.includes(32)) {
       return true;
     }
   }
@@ -1224,6 +1228,7 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
         Types.Entities.AMULETFROZEN,
         Types.Entities.AMULETDEMON,
         Types.Entities.AMULETMOON,
+        Types.Entities.AMULETSTAR,
       ].includes(kindOrString)
     ) {
       return true;
@@ -1234,11 +1239,11 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
     if (Types.Entities.AMULETGOLD === kindOrString && bonus.length === 4) {
       return true;
     }
-    if (Types.Entities.AMULETPLATINUM === kindOrString && bonus.length === 6) {
+    if (Types.Entities.AMULETPLATINUM === kindOrString && bonus.includes(32)) {
       return true;
     }
   } else {
-    if (["amuletcow", "amuletfrozen", "amuletdemon", "amuletmoon"].includes(kindOrString)) {
+    if (["amuletcow", "amuletfrozen", "amuletdemon", "amuletmoon", "amuletstar"].includes(kindOrString)) {
       return true;
     }
     if ("amuletsilver" === kindOrString && bonus.length === 3) {
@@ -1247,7 +1252,7 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
     if ("amuletgold" === kindOrString && bonus.length === 4) {
       return true;
     }
-    if ("amuletplatinum" === kindOrString && bonus.length === 6) {
+    if ("amuletplatinum" === kindOrString && bonus.includes(32)) {
       return true;
     }
   }
@@ -1411,6 +1416,8 @@ Types.getAliasFromName = function (name: string) {
     return "Portal";
   } else if (name === "magicstone") {
     return "Magic Stone";
+  } else if (name === "blueflame") {
+    return "Magic Flame";
   }
   return name;
 };
@@ -1467,8 +1474,8 @@ Types.waypoints = [
   {
     id: 9,
     name: "Lost Temple",
-    gridX: 132,
-    gridY: 473,
+    gridX: 39,
+    gridY: 593,
   },
 ];
 
@@ -2026,7 +2033,7 @@ Types.getItemRequirement = function (item: string, level: number, isUnique: bool
   return requirement;
 };
 
-Types.isUnique = function (item, bonus) {
+Types.isUnique = function (item, rawBonus) {
   const isWeapon = kinds[item][1] === "weapon";
   const isArmor = kinds[item][1] === "armor";
   const isBelt = kinds[item][1] === "belt";
@@ -2037,7 +2044,8 @@ Types.isUnique = function (item, bonus) {
   const isJewel = kinds[item][1] === "jewel";
 
   let isUnique = false;
-  bonus = !Array.isArray(bonus) && typeof bonus === "string" && bonus.length ? JSON.parse(bonus) : bonus;
+  // bonus = !Array.isArray(bonus) && typeof bonus === "string" && bonus.length ? JSON.parse(bonus) : bonus;
+  const bonus = toArray(rawBonus);
 
   if (isRing) {
     isUnique = Types.isUniqueRing(item, bonus);

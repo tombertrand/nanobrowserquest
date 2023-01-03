@@ -137,6 +137,8 @@ class Entity {
           this.currentAnimation.setSpeed(150);
         } else if (this.kind === Types.Entities.MAGICSTONE) {
           this.currentAnimation.setSpeed(100);
+        } else if (this.kind === Types.Entities.BLUEFLAME) {
+          this.currentAnimation.setSpeed(75);
         } else {
           this.currentAnimation.setSpeed(speed);
         }

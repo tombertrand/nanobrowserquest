@@ -161,6 +161,17 @@ var Npcs = {
       this.raiseRate = 1300;
     }
   },
+
+  BlueFlame: class BlueFlame extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.BLUEFLAME);
+      this.raiseRate = 1300;
+      // this.visible = false;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
 };
 
 export default Npcs;

@@ -167,6 +167,10 @@ EntityFactory.builders[Types.Entities.WRAITH2] = function (id) {
   return new Mobs.Wraith2(id);
 };
 
+EntityFactory.builders[Types.Entities.GHOST] = function (id) {
+  return new Mobs.Ghost(id);
+};
+
 EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id) {
   return new Mobs.DeathAngel(id);
 };
@@ -669,6 +673,10 @@ EntityFactory.builders[Types.Entities.AMULETMOON] = function (id) {
   return new Items.AmuletMoon(id);
 };
 
+EntityFactory.builders[Types.Entities.AMULETSTAR] = function (id) {
+  return new Items.AmuletStar(id);
+};
+
 EntityFactory.builders[Types.Entities.CHESTBLUE] = function (id) {
   return new Items.ChestBlue(id);
 };
@@ -877,6 +885,10 @@ EntityFactory.builders[Types.Entities.MINOTAURPORTAL] = function (id) {
 
 EntityFactory.builders[Types.Entities.MAGICSTONE] = function (id) {
   return new Npcs.MagicStone(id);
+};
+
+EntityFactory.builders[Types.Entities.BLUEFLAME] = function (id) {
+  return new Npcs.BlueFlame(id);
 };
 
 export default EntityFactory;

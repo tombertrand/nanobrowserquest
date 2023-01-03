@@ -589,6 +589,12 @@ class Player extends Character {
         console.info("MAGICSTONE: " + self.name + " " + message[1]);
 
         const magicStone = self.server.getEntityById(message[1]);
+
+        console.log("~~~~magicStone.gridX", magicStone.gridX);
+        console.log("~~~~magicStone.x", magicStone.x);
+        // console.log("~~~~player.gridX", self.gridX);
+        console.log("~~~~player.x", self.x);
+
         if (
           magicStone &&
           magicStone instanceof Npc &&
@@ -1403,8 +1409,9 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus).slice(0, isUnique ? 4 : 3);
       } else if (kind === Types.Entities.RINGPLATINUM) {
         bonus = _.shuffle(highLevelBonus)
-          .slice(0, 4)
-          .concat(_.shuffle(resistances).slice(0, isUnique ? 2 : 1));
+          .slice(0, 3)
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(isUnique ? allResistance : _.shuffle(resistances).slice(0, 2));
       } else if (kind === Types.Entities.AMULETGOLD) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, isUnique ? 3 : 2)
@@ -1413,7 +1420,8 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-          .concat(_.shuffle(resistances).slice(0, isUnique ? 2 : 1));
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(isUnique ? allResistance : _.shuffle(resistances).slice(0, 2));
       } else if (kind === Types.Entities.RINGNECROMANCER) {
         bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
       } else if (kind === Types.Entities.AMULETCOW) {
@@ -1439,9 +1447,16 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 2)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-          .concat(allResistance)
-          .concat(_.shuffle(elementDamage).slice(0, 3))
-          .concat(_.shuffle(elementPercentage).slice(0, 3));
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementDamage).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
+      } else if (kind === Types.Entities.AMULETSTAR) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 2)
+          .concat(amuletHighLevelBonus)
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 3))
+          .concat(_.shuffle(elementDamage).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.RINGRAISTONE) {
         bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
       } else if (kind === Types.Entities.RINGFOUNTAIN) {

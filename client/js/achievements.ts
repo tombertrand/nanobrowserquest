@@ -330,14 +330,14 @@ export const getAchievements = (network: Network) => ({
   },
   EXPANSION1: {
     id: 45,
-    name: "Title1",
-    desc: "Achievement description1",
+    name: "The adventure continues",
+    desc: "Enter the Woodland",
     hidden: false,
   },
   EXPANSION2: {
     id: 46,
-    name: "Title2",
-    desc: "Achievement description2",
+    name: "Dirty Hands",
+    desc: "Kill 250 Trolls",
     hidden: false,
   },
   EXPANSION3: {
@@ -354,8 +354,8 @@ export const getAchievements = (network: Network) => ({
   },
   EXPANSION5: {
     id: 49,
-    name: "Title5",
-    desc: "Achievement description5",
+    name: "Rock Hard",
+    desc: "Kill 250 Stone Golem",
     hidden: false,
   },
   EXPANSION6: {
@@ -372,14 +372,14 @@ export const getAchievements = (network: Network) => ({
   },
   EXPANSION8: {
     id: 52,
-    name: "Title8",
-    desc: "Achievement description8",
+    name: "Stonehenge",
+    desc: "Activate all magic stones",
     hidden: false,
   },
   EXPANSION9: {
     id: 53,
-    name: "Title9",
-    desc: "Achievement description9",
+    name: "Say Goodbye",
+    desc: "Enter the 3rd dimension",
     hidden: false,
   },
   EXPANSION10: {
@@ -390,20 +390,20 @@ export const getAchievements = (network: Network) => ({
   },
   EXPANSION11: {
     id: 55,
-    name: "Title11",
-    desc: "Achievement description11",
+    name: "Holy Grail",
+    desc: "Find the Holy Grail",
     hidden: false,
   },
   EXPANSION12: {
     id: 56,
-    name: "Title12",
-    desc: "Achievement description12",
+    name: "The Crypt underneat",
+    desc: "Find the hidden Crypt",
     hidden: false,
   },
   EXPANSION13: {
     id: 57,
-    name: "Title13",
-    desc: "Achievement description13",
+    name: "Pharaoh",
+    desc: "Enter the Temple of Light",
     hidden: false,
   },
   EXPANSION14: {
@@ -420,20 +420,20 @@ export const getAchievements = (network: Network) => ({
   },
   EXPANSION16: {
     id: 60,
-    name: "Title16",
-    desc: "Achievement description16",
+    name: "The Reaper",
+    desc: "Kill the Death Angel",
     hidden: false,
   },
-  EXPANSION17: {
+  MAGIC8: {
     id: 61,
-    name: "Title17",
-    desc: "Achievement description17",
+    name: "Magic 8",
+    desc: "Upgrade a legendary item to +8",
     hidden: false,
   },
   EXPANSION18: {
     id: 62,
-    name: "Title18",
-    desc: "Achievement description18",
+    name: "Blacksmith",
+    desc: "Forge a Runeword",
     hidden: false,
   },
   EXPANSION19: {

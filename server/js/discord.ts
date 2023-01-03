@@ -45,13 +45,14 @@ const postMessageToDiscordAnvilChannel = (content: string) => {
 };
 
 const EmojiMap = {
-  fire: "🔥",
+  sword: "<:Sword:975775115105153154>",
+  fire: "<:fireorange:1059946852461580379>",
   fireblue: "<:fireblue:1058822338763817101>",
   firepurple: "<:firepurple:1058822354672832524>",
-  chestblue: "<:chestblue:1058504858212249600>",
-  chestgreen: "<:chestgreen:1058508244202557541>",
-  chestpurple: "<:chestpurple:1058508265224413264>",
-  chestred: "<:chestred:1058508279313072191>",
+  chestblue: "<:chestblue:1059945738026623138>",
+  chestgreen: "<:chestgreen:1059945739821797376>",
+  chestpurple: "<:chestpurple:1059945741285609552>",
+  chestred: "<:chestred:1059945742661329046>",
   "rune-sat": "<:runesat:1059502573624770570>",
   "rune-al": "<:runeal:1059502447879532595>",
   "rune-bul": "<:runebul:1059502031997517984>",
@@ -96,6 +97,7 @@ const EmojiMap = {
   amuletfrozen: "<:amuletfrozen:1059572663099588760>",
   amuletdemon: "<:amuletdemon:1059572662239768727>",
   amuletmoon: "<:amuletmoon:1059572664366280754>",
+  amuletstar: "<:amuletstar:1059877681275076738>",
 };
 
 export { postMessageToDiscordChatChannel, postMessageToDiscordAnvilChannel, EmojiMap };

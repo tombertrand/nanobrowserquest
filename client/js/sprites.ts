@@ -24,6 +24,7 @@ import harpie from "../sprites/skeleton.json";
 import werewolf2 from "../sprites/skeleton.json";
 import skeleton4 from "../sprites/skeleton.json";
 import wraith2 from "../sprites/skeleton.json";
+import ghost from "../sprites/ghost.json";
 import deathangel from "../sprites/deathangel.json";
 import deathangelSpell from "../sprites/deathangel-spell.json";
 import wirtleg from "../sprites/weapon.json";
@@ -100,6 +101,7 @@ import stash from "../sprites/stash.json";
 import cowportal from "../sprites/cowportal.json";
 import minotaurportal from "../sprites/minotaurportal.json";
 import magicstone from "../sprites/magicstone.json";
+import blueflame from "../sprites/blueflame.json";
 import ogre from "../sprites/ogre.json";
 import yeti from "../sprites/yeti.json";
 import werewolf from "../sprites/werewolf.json";
@@ -187,6 +189,7 @@ const sprites = {
   werewolf2,
   skeleton4,
   wraith2,
+  ghost,
   deathangel,
   "deathangel-spell": deathangelSpell,
   "deathangel-spell-magic": deathangelSpell,
@@ -304,6 +307,7 @@ const sprites = {
   "item-amuletfrozen": item,
   "item-amuletdemon": item,
   "item-amuletmoon": item,
+  "item-amuletstar": item,
   "item-chestblue": item,
   "item-chestgreen": item,
   "item-chestpurple": item,
@@ -405,6 +409,7 @@ const sprites = {
   cowportal,
   minotaurportal,
   magicstone,
+  blueflame,
   ogre,
   yeti,
   werewolf,

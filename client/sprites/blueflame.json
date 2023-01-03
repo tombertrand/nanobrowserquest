@@ -1,0 +1,13 @@
+{
+  "id": "blueflame",
+  "width": 16,
+  "height": 16,
+  "animations": {
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    }
+  },
+  "offset_x": 1,
+  "offset_y": -5
+}
