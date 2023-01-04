@@ -6,7 +6,7 @@ import Character from "./character";
 // import ChestArea from "./chestarea";
 import Messages from "./message";
 import Properties from "./properties";
-import { distanceTo, random } from "./utils";
+import { distanceTo, random, randomInt } from "./utils";
 
 class Mob extends Character {
   spawningX: any;
@@ -46,6 +46,29 @@ class Mob extends Character {
     this.destroyTime = null;
     this.name = Types.getKindAsString(kind);
     this.resistances = Types.getResistance(this);
+  }
+
+  assignRandomResistances(count: number) {
+    this.resistances = _.shuffle(Object.keys(Types.mobResistance[Types.getKindAsString(this.kind)]))
+      .slice(0, count)
+      .reduce((acc, resistance, index) => {
+        acc[resistance] = this.resistances[resistance];
+
+        if (this.kind === Types.Entities.DEATHANGEL && index !== 0) {
+          acc[resistance] = randomInt(20, 80);
+        }
+
+        return acc;
+      }, {});
+  }
+
+  // @NOTE Since there is no Mob factory on Server side, have the exceptions stored here
+  handleRandomResistances() {
+    if ([Types.Entities.MAGE, Types.Entities.GHOST, Types.Entities.WRAITH2].includes(this.kind)) {
+      this.assignRandomResistances(2);
+    } else if (this.kind === Types.Entities.DEATHANGEL) {
+      this.assignRandomResistances(3);
+    }
   }
 
   destroy(delay = 30000) {

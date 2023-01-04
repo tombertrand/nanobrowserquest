@@ -518,7 +518,9 @@ class App {
           const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
           const display = Types.resistanceToDisplayMap[type];
 
-          html += `<div class="${display}">${prefix} ${_.capitalize(display)} ${percentage}%</div>`;
+          html += `<div class="${display}">${prefix} ${_.capitalize(display)} ${
+            percentage !== 100 ? `${percentage}%` : ""
+          }</div>`;
         });
         inspector.find(".resistances").append(html);
       }

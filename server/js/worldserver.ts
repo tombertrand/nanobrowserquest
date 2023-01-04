@@ -540,12 +540,7 @@ class World {
 
     var delay = 30000;
     if (entity.kind === Types.Entities.DEATHKNIGHT) {
-      const adjustedDifficulty = this.getPlayersCountInBossRoom({
-        x: 140,
-        y: 48,
-        w: 29,
-        h: 25,
-      });
+      const adjustedDifficulty = this.getPlayersAroundBoss({ x: 155, y: 53 });
 
       // Each additional player removes 10s to DK spawn delay
       delay = delay - (adjustedDifficulty - 1) * 10000;
@@ -1035,12 +1030,7 @@ class World {
     this.stopRaiseNecromancerInterval();
 
     const raiseZombies = () => {
-      const adjustedDifficulty = this.getPlayersCountInBossRoom({
-        x: 140,
-        y: 324,
-        w: 29,
-        h: 25,
-      });
+      const adjustedDifficulty = this.getPlayersAroundBoss(mob);
 
       const minRaise = adjustedDifficulty + 1;
 
@@ -1143,13 +1133,20 @@ class World {
 
     const levelDifference = playerLevel - mobLevel;
 
-    if (levelDifference < 0) {
+    if (Types.isBoss(mob.kind)) {
+      if (levelDifference < 0 && levelDifference >= -EXP_LEVEL_BELOW_MOB) {
+        const multiplier = Math.abs(levelDifference) / 8;
+        exp = Math.ceil(exp * multiplier);
+      } else {
+        exp = 0;
+      }
+    } else if (levelDifference < 0) {
       if (levelDifference < -EXP_LEVEL_BELOW_MOB) {
         exp = 0;
       }
     } else if (levelDifference > 0) {
       // Too high level for mob
-      if (levelDifference > EXP_LEVEL_END_RANGE || (Types.isBoss(mob.kind) && levelDifference >= EXP_LEVEL_END_RANGE)) {
+      if (levelDifference > EXP_LEVEL_END_RANGE) {
         exp = 0;
       } else if (levelDifference > EXP_LEVEL_START_RANGE) {
         // Nerf exp per level
@@ -1275,6 +1272,8 @@ class World {
             if (mob.area && mob.area instanceof ChestArea) {
               mob.area.addToArea(mob);
             }
+
+            mob.handleRandomResistances();
           });
           mob.onMove(self.onMobMoveCallback.bind(self));
 
@@ -1282,6 +1281,7 @@ class World {
             mob.isDead = true;
             self.zombies.push(mob);
           } else {
+            mob.handleRandomResistances();
             self.addMob(mob);
           }
           self.tryAddingMobToChestArea(mob);
@@ -1359,7 +1359,11 @@ class World {
     let p = 0;
     let itemKind = null;
 
-    if (mob.kind === Types.Entities.MINOTAUR) {
+    if (mob.kind === Types.Entities.MINOTAUR || mob.kind === Types.Entities.DEATHANGEL) {
+      const MIN_DAMAGE = {
+        [Types.Entities.MINOTAUR]: 2000,
+        [Types.Entities.DEATHANGEL]: 100,
+      };
       let members = [attacker.id];
       let party = null;
 
@@ -1390,23 +1394,35 @@ class World {
             },
             extra: { id },
           });
-        } else if (player?.minotaurDamage >= 2000) {
-          const item = player.level >= 56 ? "chestgreen" : "chestblue";
+        }
 
+        let chestType: ChestType = null;
+
+        if (mob.kind === Types.Entities.MINOTAUR) {
+          if (player?.minotaurDamage >= MIN_DAMAGE[mob.kind]) {
+            chestType = player.level >= 56 ? "chestgreen" : "chestblue";
+          }
+        } else if (mob.kind === Types.Entities.DEATHANGEL) {
+          if (player?.deathAngelDamage >= MIN_DAMAGE[mob.kind]) {
+            chestType = "chestpurple";
+          }
+        }
+
+        if (chestType) {
           this.databaseHandler.lootItems({
             player,
-            items: [{ item, quantity: 1 }],
+            items: [{ item: chestType, quantity: 1 }],
           });
 
           postMessageToDiscordChatChannel(
-            `${player.name} received a ${_.capitalize(item.replace("chest", ""))} Chest ${EmojiMap[item]}`,
+            `${player.name} received a ${_.capitalize(chestType.replace("chest", ""))} Chest ${EmojiMap[chestType]}`,
           );
 
           if (party) {
             this.pushToParty(
               party,
               new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
-                { playerName: player.name, kind: Types.Entities[item.toUpperCase()] },
+                { playerName: player.name, kind: Types.Entities[chestType.toUpperCase()] },
               ]),
             );
           }
@@ -1828,24 +1844,19 @@ class World {
     });
   }
 
-  getPlayersCountInBossRoom(bossArea) {
+  getPlayersAroundBoss(entity, range: number = 20) {
     let counter = 0;
 
-    function isInsideBossRoom(entity) {
-      if (entity) {
-        return (
-          entity.x >= bossArea.x &&
-          entity.y >= bossArea.y &&
-          entity.x < bossArea.x + bossArea.w &&
-          entity.y < bossArea.y + bossArea.h
-        );
+    function isNearBoss(player) {
+      if (player) {
+        return Math.abs(player.x - entity.x) <= range && Math.abs(player.y - entity.y) <= range;
       } else {
         return false;
       }
     }
 
     for (let id in this.players) {
-      if (isInsideBossRoom(this.players[id])) {
+      if (isNearBoss(this.players[id])) {
         counter += 1;
         // Max difficulty of 6
         if (counter === 6) {
@@ -1853,6 +1864,7 @@ class World {
         }
       }
     }
+
     return counter;
   }
 
@@ -1875,6 +1887,24 @@ class World {
     }
 
     return array;
+  }
+
+  handleBossDmg({ dmg, entity, player }) {
+    // Reduce dmg on boss by 20% per player in boss room
+    const adjustedDifficulty = this.getPlayersAroundBoss(entity);
+
+    const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+    dmg = Math.floor(dmg * percentReduce);
+
+    if (entity.kind === Types.Entities.MINOTAUR) {
+      player.minotaurDamage += dmg;
+      player.unregisterMinotaurDamage();
+    } else if (entity.kind === Types.Entities.DEATHANGEL) {
+      player.deathAngelDamage += dmg;
+      player.unregisterDeathAngelDamage();
+    }
+
+    return dmg;
   }
 }
 

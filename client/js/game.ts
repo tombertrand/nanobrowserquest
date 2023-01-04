@@ -1806,7 +1806,7 @@ class Game {
       mobId = entity?.id;
 
       // Can't cast on self
-      if (entity.id === this.player.id) return;
+      if (!mobId || mobId === this.player.id) return;
       // Can't cast on other players with many level difference
       if (mobId && entity instanceof Player && (entity.level < 9 || Math.abs(entity.level - this.player.level) <= 10)) {
         this.chat_callback({
@@ -2937,13 +2937,13 @@ class Game {
       });
 
       self.client.onSpawnCharacter(function (data) {
-        const { id, kind, name, x, y, targetId, orientation, isActivated } = data;
+        const { id, kind, name, x, y, targetId, orientation, resistances, isActivated } = data;
 
         let entity = self.getEntityById(id);
         if (!entity) {
           try {
             if (id !== self.playerId) {
-              entity = EntityFactory.createEntity({ kind, id, name });
+              entity = EntityFactory.createEntity({ kind, id, name, resistances });
 
               entity.setSprite(self.sprites[entity.getSpriteName()]);
               entity.setGridPosition(x, y);

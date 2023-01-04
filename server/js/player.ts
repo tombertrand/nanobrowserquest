@@ -136,6 +136,7 @@ class Player extends Character {
   tradeId?: number;
   freezeChanceLevel: number;
   minotaurDamage: number;
+  deathAngelDamage: number;
   isPasswordRequired: boolean;
   isPasswordValid: boolean;
   network: Network;
@@ -174,6 +175,7 @@ class Player extends Character {
     this.auras = [];
     this.freezeChanceLevel = 0;
     this.minotaurDamage = 0;
+    this.deathAngelDamage = 0;
 
     // Item bonuses (Rings, amulet, Uniques?)
     this.resetBonus();
@@ -487,54 +489,6 @@ class Player extends Character {
             });
           }
 
-          // Reduce dmg on boss by 20% per player in boss room
-          if (mob.kind === Types.Entities.BOSS) {
-            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-              x: 140,
-              y: 48,
-              w: 29,
-              h: 25,
-            });
-
-            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-            dmg = Math.floor(dmg * percentReduce);
-          } else if (mob.kind === Types.Entities.SKELETONCOMMANDER) {
-            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-              x: 140,
-              y: 360,
-              w: 29,
-              h: 25,
-            });
-
-            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-            dmg = Math.floor(dmg * percentReduce);
-          } else if (mob.kind === Types.Entities.NECROMANCER) {
-            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-              x: 140,
-              y: 324,
-              w: 29,
-              h: 25,
-            });
-
-            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-            dmg = Math.floor(dmg * percentReduce);
-          } else if (mob.kind === Types.Entities.COWKING || mob.kind === Types.Entities.MINOTAUR) {
-            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-              x: 0,
-              y: 464,
-              w: 92,
-              h: 71,
-            });
-
-            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-            dmg = Math.floor(dmg * percentReduce);
-          }
-
-          if (mob.kind === Types.Entities.MINOTAUR) {
-            self.minotaurDamage += dmg;
-            self.unregisterMinotaurDamage();
-          }
-
           let defense = 0;
           let isBlocked = false;
 
@@ -542,6 +496,10 @@ class Player extends Character {
             defense = Formulas.mobDefense({ armorLevel: mob.armorLevel });
 
             dmg = defense > dmg ? 0 : dmg - defense;
+
+            if (Types.isBoss(mob.kind)) {
+              dmg = self.server.handleBossDmg({ dmg, entity: mob, player: self });
+            }
 
             // Minimum Hit dmg (can't be 0)
             if (!dmg) {
@@ -1204,10 +1162,8 @@ class Player extends Character {
 
           shouldBroadcast = true;
 
-          let mobResistance =
-            (attackedMob.type === "mob"
-              ? Types.mobResistance[Types.getKindAsString(attackedMob.kind)]
-              : attackedMob.bonus)?.[Types.attackSkillToResistanceType[this.attackSkill]] || 0;
+          const mobResistances = attackedMob.type === "mob" ? attackedMob.resistances : attackedMob.bonus;
+          let mobResistance = mobResistances?.[Types.attackSkillToResistanceType[this.attackSkill]] || 0;
 
           if (attackedMob instanceof Player) {
             mobResistance = Types.calculateResistance(mobResistance + attackedMob.skill.resistances);
@@ -1220,10 +1176,16 @@ class Player extends Character {
             resistance: mobResistance,
             itemClass: Types.getItemClass(this.weapon, this.weaponLevel, this.isWeaponUnique),
           });
-          const dmg = randomInt(min, max);
+
+          let dmg = randomInt(min, max);
 
           if (attackedMob.type === "mob") {
             this.server.handleMobHate(attackedMob.id, this.id, dmg);
+
+            if (Types.isBoss(attackedMob.kind)) {
+              dmg = this.server.handleBossDmg({ dmg, entity: attackedMob, player: this });
+            }
+
             attackedMob.receiveDamage(dmg);
           } else if (attackedMob.type === "player") {
             attackedMob.hitPoints -= dmg;
@@ -1315,6 +1277,10 @@ class Player extends Character {
 
   unregisterMinotaurDamage = _.debounce(() => {
     this.minotaurDamage = 0;
+  }, 30000);
+
+  unregisterDeathAngelDamage = _.debounce(() => {
+    this.deathAngelDamage = 0;
   }, 30000);
 
   generateRandomCapeBonus(uniqueChances = 1) {

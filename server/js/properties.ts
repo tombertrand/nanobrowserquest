@@ -517,7 +517,7 @@ var Properties: any = {
     },
     hp: 2320,
     armor: 20,
-    weapon: 40,
+    weapon: 32,
   },
   deathangel: {
     drops: {
@@ -531,7 +531,7 @@ var Properties: any = {
     },
     hp: 1000,
     armor: 40,
-    weapon: 1,
+    weapon: 40,
   },
 };
 

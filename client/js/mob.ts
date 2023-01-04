@@ -12,7 +12,7 @@ class Mob extends Character {
     this.isAggressive = true;
     this.type = "mob";
     this.name = Types.getKindAsString(kind);
-    this.resistances = Types.getResistance(this);
+    this.resistances = this.resistances || Types.getResistance(this);
   }
 }
 

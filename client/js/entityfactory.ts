@@ -10,7 +10,7 @@ import Warrior from "./warrior";
 
 var EntityFactory: any = {};
 
-EntityFactory.createEntity = function ({ kind, id, name }) {
+EntityFactory.createEntity = function ({ kind, id, name, resistances }) {
   if (!kind) {
     console.error("kind is undefined", true);
     return;
@@ -20,7 +20,7 @@ EntityFactory.createEntity = function ({ kind, id, name }) {
     throw Error(kind + " is not a valid Entity type");
   }
 
-  return EntityFactory.builders[kind](id, name);
+  return EntityFactory.builders[kind](id, name || resistances);
 };
 
 //===== mobs ======
@@ -163,20 +163,20 @@ EntityFactory.builders[Types.Entities.SKELETON4] = function (id) {
   return new Mobs.Skeleton4(id);
 };
 
-EntityFactory.builders[Types.Entities.WRAITH2] = function (id) {
-  return new Mobs.Wraith2(id);
+EntityFactory.builders[Types.Entities.WRAITH2] = function (id, resistances) {
+  return new Mobs.Wraith2(id, resistances);
 };
 
-EntityFactory.builders[Types.Entities.GHOST] = function (id) {
-  return new Mobs.Ghost(id);
+EntityFactory.builders[Types.Entities.GHOST] = function (id, resistances) {
+  return new Mobs.Ghost(id, resistances);
 };
 
-EntityFactory.builders[Types.Entities.MAGE] = function (id) {
-  return new Mobs.Mage(id);
+EntityFactory.builders[Types.Entities.MAGE] = function (id, resistances) {
+  return new Mobs.Mage(id, resistances);
 };
 
-EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id) {
-  return new Mobs.DeathAngel(id);
+EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id, resistances) {
+  return new Mobs.DeathAngel(id, resistances);
 };
 
 EntityFactory.builders[Types.Entities.DEATHANGELSPELL] = function (id) {

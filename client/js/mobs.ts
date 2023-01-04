@@ -423,7 +423,7 @@ export const Mobs = {
   },
 
   Wraith2: class Wraith2 extends Mob {
-    constructor(id) {
+    constructor(id, resistances) {
       super(id, Types.Entities.WRAITH2);
       this.atkSpeed = 50;
       this.moveSpeed = 220;
@@ -431,11 +431,12 @@ export const Mobs = {
       this.idleSpeed = 450;
       this.setAttackRate(800);
       this.aggroRange = 5;
+      this.resistances = resistances;
     }
   },
 
   Ghost: class Ghost extends Mob {
-    constructor(id) {
+    constructor(id, resistances) {
       super(id, Types.Entities.GHOST);
       this.atkSpeed = 50;
       this.moveSpeed = 220;
@@ -443,11 +444,12 @@ export const Mobs = {
       this.idleSpeed = 450;
       this.setAttackRate(800);
       this.aggroRange = 5;
+      this.resistances = resistances;
     }
   },
 
   Mage: class Mage extends Mob {
-    constructor(id) {
+    constructor(id, resistances) {
       super(id, Types.Entities.MAGE);
       this.atkSpeed = 50;
       this.moveSpeed = 220;
@@ -455,11 +457,12 @@ export const Mobs = {
       this.idleSpeed = 250;
       this.setAttackRate(800);
       this.aggroRange = 5;
+      this.resistances = resistances;
     }
   },
 
   DeathAngel: class DeathAngel extends Mob {
-    constructor(id) {
+    constructor(id, resistances) {
       super(id, Types.Entities.DEATHANGEL);
       this.moveSpeed = 200;
       this.atkSpeed = 100;
@@ -470,6 +473,7 @@ export const Mobs = {
       this.attackCooldown = new Timer(this.atkRate);
       this.raiseCooldown = new Timer(this.raiseRate);
       this.aggroRange = 3;
+      this.resistances = resistances;
       // @TODO prevent monster heal aura
       // this.auras = ["drainlife"];
     }

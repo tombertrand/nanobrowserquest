@@ -619,10 +619,10 @@ export const kinds = {
   snake2: [Types.Entities.SNAKE2, "mob", 120, 38],
   wraith: [Types.Entities.WRAITH, "mob", 120, 40],
   zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
-  necromancer: [Types.Entities.NECROMANCER, "mob", 400, 45],
+  necromancer: [Types.Entities.NECROMANCER, "mob", 400, 51],
   cow: [Types.Entities.COW, "mob", 25, 49],
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
-  minotaur: [Types.Entities.MINOTAUR, "mob", 500, 52],
+  minotaur: [Types.Entities.MINOTAUR, "mob", 500, 58],
   troll: [Types.Entities.TROLL, "mob", 100, 52],
   snake3: [Types.Entities.SNAKE3, "mob", 100, 52],
   golem: [Types.Entities.GOLEM, "mob", 100, 52],
@@ -632,7 +632,7 @@ export const kinds = {
   wraith2: [Types.Entities.WRAITH2, "mob", 100, 52],
   ghost: [Types.Entities.GHOST, "mob", 100, 64],
   mage: [Types.Entities.MAGE, "mob", 100, 64],
-  deathangel: [Types.Entities.DEATHANGEL, "mob", 100, 55],
+  deathangel: [Types.Entities.DEATHANGEL, "mob", 500, 70],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
@@ -1384,6 +1384,8 @@ Types.getKindAsString = function (kind: number) {
 };
 
 Types.getAliasFromName = function (name: string) {
+  console.log("~~~~getAliasFromName", name);
+
   if (name === "skeleton2") {
     return "skeleton warrior";
   } else if (name === "eye") {
@@ -1423,6 +1425,9 @@ Types.getAliasFromName = function (name: string) {
   } else if (name === "wraith2") {
     return "Apocalypse Wraith";
   }
+
+  console.log("~~~~name", name);
+
   return name;
 };
 
