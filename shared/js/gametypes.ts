@@ -1384,8 +1384,6 @@ Types.getKindAsString = function (kind: number) {
 };
 
 Types.getAliasFromName = function (name: string) {
-  console.log("~~~~getAliasFromName", name);
-
   if (name === "skeleton2") {
     return "skeleton warrior";
   } else if (name === "eye") {
@@ -1424,9 +1422,9 @@ Types.getAliasFromName = function (name: string) {
     return "Magic Flame";
   } else if (name === "wraith2") {
     return "Apocalypse Wraith";
+  } else if (name === "deathangel") {
+    return "Death Angel";
   }
-
-  console.log("~~~~name", name);
 
   return name;
 };

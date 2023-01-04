@@ -544,12 +544,12 @@ class GameClient {
     var id = data[1];
     var dmg = data[2];
     var hp = parseInt(data[3]);
-    var maxHp = parseInt(data[4]);
+    var maxHitPoints = parseInt(data[4]);
     var isCritical = data[5];
     var isBlocked = data[6];
 
     if (this.dmg_callback) {
-      this.dmg_callback({ id, dmg, hp, maxHp, isCritical, isBlocked });
+      this.dmg_callback({ id, dmg, hp, maxHitPoints, isCritical, isBlocked });
     }
   }
 

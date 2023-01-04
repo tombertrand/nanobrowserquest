@@ -492,14 +492,14 @@ class App {
       // var x = (sprite.animationData.idle_down.length - 1) * sprite.width;
       // var y = sprite.animationData.idle_down.row * sprite.height;
 
-      var alias = target.name || Types.getAliasFromName(name) || name;
+      const alias = Types.getAliasFromName(Types.getKindAsString(target.kind)) || name;
 
       inspector.find(".name").text(alias);
       inspector.find(".resistances").empty();
 
       //Show how much Health creature has left. Currently does nost work. The reason health doesn't currently go down has to do with the lines below down to initExpBar...
       if (target.hitPoints) {
-        inspector.find(".health").css("width", Math.round((target.hitPoints / target.maxHp) * 100) + "%");
+        inspector.find(".health").css("width", Math.round((target.hitPoints / target.maxHitPoints) * 100) + "%");
       } else {
         inspector.find(".health").css("width", "0%");
       }
@@ -525,17 +525,17 @@ class App {
         inspector.find(".resistances").append(html);
       }
       inspector.fadeIn("fast");
-      self.game.onRemoveTarget();
     });
 
     self.game.onUpdateTarget(function (target) {
-      $("#inspector .health").css("width", Math.round((target.hitPoints / target.maxHp) * 100) + "%");
-
-      if (target.hitPoints <= 0) {
-        self.game.onRemoveTarget.flush();
-      } else {
-        self.game.onRemoveTarget();
+      // Only update the inspector if target is the current inspected target
+      if (self.game.player.inspecting?.id !== target.id) {
+        return;
       }
+
+      $("#inspector .health").css("width", Math.round((target.hitPoints / target.maxHitPoints) * 100) + "%");
+
+      self.game.player.skillTargetId = null;
     });
   }
 
@@ -565,8 +565,8 @@ class App {
     var scale = this.game.renderer.getScaleFactor();
     var healthMaxWidth = $("#healthbar").width()! - 12 * scale;
 
-    this.game.onPlayerHealthChange(function (hp, maxHp) {
-      var barWidth = Math.round((healthMaxWidth / maxHp) * (hp > 0 ? hp : 0));
+    this.game.onPlayerHealthChange(function (hp, maxHitPoints) {
+      var barWidth = Math.round((healthMaxWidth / maxHitPoints) * (hp > 0 ? hp : 0));
       $("#hitpoints").css("width", barWidth + "px");
     });
 

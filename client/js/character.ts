@@ -20,6 +20,7 @@ class Character extends Entity {
   newDestination: any;
   adjacentTiles: {};
   target: any;
+  skillTargetId: number;
   unconfirmedTarget: any;
   attackers: {};
   hitPoints: number;
@@ -627,6 +628,10 @@ class Character extends Entity {
     } else {
       console.debug(character.id + " is already the target of " + this.id);
     }
+  }
+
+  setSkillTargetId(mobId) {
+    this.skillTargetId = mobId;
   }
 
   onSetTarget(callback) {

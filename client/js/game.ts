@@ -1819,6 +1819,8 @@ class Game {
       if (this.player.attackSkillTimeout || typeof this.player.attackSkill !== "number" || !mobId) {
         return;
       }
+
+      this.player.setSkillTargetId(mobId);
     } else if (slot === 2 && (this.player.defenseSkillTimeout || typeof this.player.defenseSkill !== "number")) return;
 
     const isAttackSkill = slot === 1;
@@ -2948,6 +2950,7 @@ class Game {
               entity.setSprite(self.sprites[entity.getSpriteName()]);
               entity.setGridPosition(x, y);
               entity.setOrientation(orientation);
+
               if (entity.kind === Types.Entities.ZOMBIE) {
                 entity.raise();
 
@@ -3158,6 +3161,7 @@ class Game {
 
         if (entity instanceof Player || entity instanceof Mob) {
           entity.hitPoints = data.hitPoints;
+          entity.maxHitPoints = data.maxHitPoints;
         }
 
         if (entity instanceof Player) {
@@ -3663,7 +3667,7 @@ class Game {
         }
       });
 
-      self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHp, isCritical, isBlocked }) {
+      self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHitPoints, isCritical, isBlocked }) {
         var mob = self.getEntityById(id);
 
         if (mob && (dmg || isBlocked)) {
@@ -3676,8 +3680,9 @@ class Game {
             isBlocked,
           });
         }
-        if (self.player.hasTarget()) {
-          self.updateTarget(id, dmg, hp, maxHp);
+
+        if (self.player.hasTarget() || self.player.skillTargetId === id) {
+          self.updateTarget(id, dmg, hp, maxHitPoints);
         }
       });
 
@@ -4891,14 +4896,14 @@ class Game {
     }
   }
 
-  onRemoveTarget = _.debounce(() => {
+  onRemoveTarget = () => {
     $("#inspector").fadeOut("fast");
     $("#inspector .level").text("");
     $("#inspector .health").text("");
     if (this.player) {
       this.player.inspecting = null;
     }
-  }, 2000);
+  };
 
   /**
    * Moves the player one space, if possible
@@ -5595,16 +5600,15 @@ class Game {
     }
   }
 
-  updateTarget(targetId, points, hitPoints, maxHp) {
-    if (this.player.hasTarget() && this.updatetarget_callback) {
-      var target = this.getEntityById(targetId);
+  updateTarget(targetId, dmg, hitPoints, maxHitPoints) {
+    if ((this.player.hasTarget() || this.player.skillTargetId === targetId) && this.updatetarget_callback) {
+      const target = this.getEntityById(targetId);
+
       if (!target) return;
-      if (target.type !== "player") {
-        target.name = Types.getAliasFromName(Types.getKindAsString(target.kind));
-      }
-      target.points = points;
+
+      target.points = dmg;
       target.hitPoints = hitPoints;
-      target.maxHp = maxHp;
+      target.maxHitPoints = maxHitPoints;
       this.updatetarget_callback(target);
     }
   }

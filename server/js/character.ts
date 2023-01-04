@@ -10,7 +10,7 @@ class Character extends Entity {
   hitPoints: any;
   id: any;
   poisonedInterval: any;
-  resistances: Resistances;
+  resistances?: Resistances;
 
   constructor(id, type, kind, x, y) {
     super(id, type, kind, x, y);
@@ -25,7 +25,7 @@ class Character extends Entity {
     return Object.assign({}, this._getBaseState(), {
       orientation: this.orientation,
       targetId: this.targetId,
-      resistances: this.resistances,
+      resistances: this.resistances || null,
     });
   }
 

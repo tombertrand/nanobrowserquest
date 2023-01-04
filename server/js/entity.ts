@@ -8,6 +8,7 @@ class Entity {
   x: number;
   y: number;
   hitPoints: number;
+  maxHitPoints: number;
 
   constructor(id, type, kind, x, y) {
     this.id = parseInt(id, 10);
@@ -26,6 +27,7 @@ class Entity {
       x: this.x,
       y: this.y,
       hitPoints: this.hitPoints,
+      maxHitPoints: this.maxHitPoints,
     };
   }
 

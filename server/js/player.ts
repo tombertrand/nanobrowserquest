@@ -1538,6 +1538,7 @@ class Player extends Character {
         capeContrast: this.capeContrast,
         capeBrightness: this.capeBrightness,
       },
+      resistances: null,
     });
   }
 
