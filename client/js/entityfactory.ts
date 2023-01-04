@@ -171,6 +171,10 @@ EntityFactory.builders[Types.Entities.GHOST] = function (id) {
   return new Mobs.Ghost(id);
 };
 
+EntityFactory.builders[Types.Entities.MAGE] = function (id) {
+  return new Mobs.Mage(id);
+};
+
 EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id) {
   return new Mobs.DeathAngel(id);
 };

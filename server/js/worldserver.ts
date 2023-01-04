@@ -1512,7 +1512,7 @@ class World {
     //   "amuletdemon",
     //   "amuletmoon",
     // ];
-    var randomDrops = ["ringplatinum", "amuletplatinum"];
+    // var randomDrops = ["ringplatinum", "amuletplatinum"];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = [
@@ -1585,8 +1585,8 @@ class World {
     // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    var randomDrop = random(randomDrops.length);
-    itemName = randomDrops[randomDrop];
+    // var randomDrop = random(randomDrops.length);
+    // itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

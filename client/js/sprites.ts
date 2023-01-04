@@ -23,8 +23,9 @@ import golem from "../sprites/skeleton.json";
 import harpie from "../sprites/skeleton.json";
 import werewolf2 from "../sprites/skeleton.json";
 import skeleton4 from "../sprites/skeleton.json";
-import wraith2 from "../sprites/skeleton.json";
+import wraith2 from "../sprites/wraith2.json";
 import ghost from "../sprites/ghost.json";
+import mage from "../sprites/mage.json";
 import deathangel from "../sprites/deathangel.json";
 import deathangelSpell from "../sprites/deathangel-spell.json";
 import wirtleg from "../sprites/weapon.json";
@@ -190,6 +191,7 @@ const sprites = {
   skeleton4,
   wraith2,
   ghost,
+  mage,
   deathangel,
   "deathangel-spell": deathangelSpell,
   "deathangel-spell-magic": deathangelSpell,

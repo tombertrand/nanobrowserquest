@@ -192,6 +192,7 @@ export const Types: any = {
     SKELETON4: 231,
     WRAITH2: 232,
     GHOST: 235,
+    MAGE: 236,
     DEATHANGEL: 217,
     DEATHANGELSPELL: 218,
 
@@ -630,6 +631,7 @@ export const kinds = {
   skeleton4: [Types.Entities.SKELETON4, "mob", 100, 52],
   wraith2: [Types.Entities.WRAITH2, "mob", 100, 52],
   ghost: [Types.Entities.GHOST, "mob", 100, 64],
+  mage: [Types.Entities.MAGE, "mob", 100, 64],
   deathangel: [Types.Entities.DEATHANGEL, "mob", 100, 55],
 
   // kind, type, level, damage
@@ -1418,6 +1420,8 @@ Types.getAliasFromName = function (name: string) {
     return "Magic Stone";
   } else if (name === "blueflame") {
     return "Magic Flame";
+  } else if (name === "wraith2") {
+    return "Apocalypse Wraith";
   }
   return name;
 };

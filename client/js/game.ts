@@ -360,6 +360,7 @@ class Game {
       "skeleton4",
       "wraith2",
       "ghost",
+      "mage",
       "deathangel",
       "deathangel-spell",
       "deathangel-spell-magic",
@@ -3098,7 +3099,11 @@ class Game {
                   let speed = 120;
 
                   // Custom death animations
-                  const hasCustomDeathAnimation = [Types.Entities.RAT, Types.Entities.DEATHANGEL].includes(entity.kind);
+                  const hasCustomDeathAnimation = [
+                    Types.Entities.RAT,
+                    Types.Entities.GHOST,
+                    Types.Entities.DEATHANGEL,
+                  ].includes(entity.kind);
 
                   if (entity instanceof Mobs.DeathAngel) {
                     speed = 250;

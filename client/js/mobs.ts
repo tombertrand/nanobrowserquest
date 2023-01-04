@@ -446,6 +446,18 @@ export const Mobs = {
     }
   },
 
+  Mage: class Mage extends Mob {
+    constructor(id) {
+      super(id, Types.Entities.MAGE);
+      this.atkSpeed = 50;
+      this.moveSpeed = 220;
+      this.walkSpeed = 100;
+      this.idleSpeed = 250;
+      this.setAttackRate(800);
+      this.aggroRange = 5;
+    }
+  },
+
   DeathAngel: class DeathAngel extends Mob {
     constructor(id) {
       super(id, Types.Entities.DEATHANGEL);
