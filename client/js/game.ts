@@ -361,6 +361,12 @@ class Game {
       "wraith2",
       "ghost",
       "mage",
+      "mage-spell",
+      "mage-spell-magic",
+      "mage-spell-flame",
+      "mage-spell-lightning",
+      "mage-spell-cold",
+      "mage-spell-poison",
       "deathangel",
       "deathangel-spell",
       "deathangel-spell-magic",
@@ -1843,7 +1849,9 @@ class Game {
       // this.player.setAttackSkillAnimation(skillName, Types.attackSkillDurationMap[this.player.attackSkill]());
       this.player.attackSkillTimeout = setTimeout(() => {
         skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout").attr("style", "");
-        this.player.attackSkillTimeout = null;
+        if (this.player) {
+          this.player.attackSkillTimeout = null;
+        }
       }, timeout);
     } else {
       if (this.player.defenseSkill === 2) {
@@ -2076,7 +2084,9 @@ class Game {
         !(this.renderer.mobile || this.renderer.tablet) &&
         entity.kind !== Types.Entities.ZOMBIE
       ) {
-        entity.fadeIn(this.currentTime);
+        if (entity.isFading) {
+          entity.fadeIn(this.currentTime);
+        }
       }
 
       if (this.renderer.mobile || this.renderer.tablet) {
@@ -2939,7 +2949,7 @@ class Game {
       });
 
       self.client.onSpawnCharacter(function (data) {
-        const { id, kind, name, x, y, targetId, orientation, resistances, isActivated } = data;
+        const { id, kind, name, x, y, targetId, orientation, resistances, element, isActivated } = data;
 
         let entity = self.getEntityById(id);
         if (!entity) {
@@ -2947,7 +2957,16 @@ class Game {
             if (id !== self.playerId) {
               entity = EntityFactory.createEntity({ kind, id, name, resistances });
 
+              if (element) {
+                entity.element = element;
+              }
+
               entity.setSprite(self.sprites[entity.getSpriteName()]);
+              if (entity.element && element !== "physical") {
+                entity.sprite.image.src = entity.sprite.image.src.replace(/(-[a-z]+?)?\.png/, `-${element}.png`);
+                // @TODO ~~~~ figure out the sprite issue...
+                // entity.sprite.silhouetteSprite = entity.sprite.createSilhouette();
+              }
               entity.setGridPosition(x, y);
               entity.setOrientation(orientation);
 
@@ -3205,9 +3224,19 @@ class Game {
         }
       });
 
-      self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY, element: Elements) {
+      self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY, element: Elements, casterId) {
         entity.setSprite(self.sprites[entity.getSpriteName(element === "physical" ? "" : element)]);
-        entity.setGridPosition(x, y);
+
+        if (entity.kind === Types.Entities.MAGESPELL) {
+          entity.setTarget({ x: self.player.x, y: self.player.y });
+        } else if (entity.kind === Types.Entities.DEATHANGELSPELL) {
+          entity.setTarget({ x: (x + originX * 8) * 16, y: (y + originY * 8) * 16 });
+        }
+
+        const caster = self.getEntityById(casterId);
+        if (!caster) return;
+
+        entity.setGridPosition(caster.gridX, caster.gridY);
         entity.setOrientation(orientation);
         entity.idle();
 
@@ -3215,6 +3244,7 @@ class Game {
 
         // Spell collision
         if (self.player.gridX === x && self.player.gridY === y) {
+          entity.stop();
           self.makePlayerHurtFromSpell(entity);
         }
 
@@ -3223,7 +3253,9 @@ class Game {
           let speed = 120;
 
           // Custom death animations
-          const hasCustomDeathAnimation = [Types.Entities.DEATHANGELSPELL].includes(entity.kind);
+          const hasCustomDeathAnimation = [Types.Entities.DEATHANGELSPELL, Types.Entities.MAGESPELL].includes(
+            entity.kind,
+          );
 
           if (!hasCustomDeathAnimation) {
             entity.setSprite(self.sprites["death"]);
@@ -3234,47 +3266,6 @@ class Game {
             self.removeEntity(entity);
           });
         });
-
-        entity.onBeforeStep(function () {
-          self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
-        });
-
-        entity.onStep(function () {
-          if (entity.hasNextStep()) {
-            self.addToRenderingGrid(entity, entity.gridX, entity.gridY);
-
-            // Explode if touches something on the grid
-            if (self.pathingGrid[entity.nextGridY][entity.nextGridX]) {
-              entity.stop();
-            }
-          }
-
-          if (
-            entity &&
-            self?.player &&
-            (entity.gridX === self.player.gridX ||
-              entity.nextGridX === self.player.gridX ||
-              entity.gridX === self.player.nextGridX) &&
-            (entity.gridY === self.player.gridY ||
-              entity.nextGridY === self.player.gridY ||
-              entity.gridY === self.player.nextGridY)
-          ) {
-            self.makePlayerHurtFromSpell(entity);
-          }
-        });
-
-        entity.onStopPathing(function ({ x, y }) {
-          self.addToRenderingGrid(entity, x, y);
-          entity.death_callback();
-        });
-
-        const path = [[x, y]];
-        for (let i = 1; i < 8; i++) {
-          path.push([x + originX * i, y + originY * i]);
-        }
-
-        // @TODO ~~~~ write new function that doesn't register entity position
-        entity.followPath(path);
       });
 
       self.client.onDespawnEntity(function (entityId) {
@@ -3644,7 +3635,7 @@ class Game {
             mob.setRaisingMode();
             self.audioManager.playSound("deathangel-spell");
             if (targetId === self.playerId) {
-              self.client.sendDeathAngelCast(mob.gridX, mob.gridY);
+              self.client.sendCastSpell(mob.id, mob.gridX, mob.gridY);
             }
           } else if (mob.kind === Types.Entities.NECROMANCER) {
             mob.setRaisingMode();
@@ -4390,7 +4381,6 @@ class Game {
   }
 
   makePlayerHurtFromSpell(spell) {
-    spell.stop();
     this.client.sendHurtSpell(spell);
   }
 
@@ -4855,9 +4845,9 @@ class Game {
     this.cursorVisible = true;
 
     if (this.player && !this.renderer.mobile && !this.renderer.tablet) {
-      if (this.isSpellAt(x, y)) {
-        return;
-      }
+      // if (this.isSpellAt(x, y)) {
+      //   return;
+      // }
 
       this.hoveringCollidingTile = this.map.isColliding(x, y);
       this.hoveringPlateauTile = this.player.isOnPlateau ? !this.map.isPlateau(x, y) : this.map.isPlateau(x, y);
@@ -5106,9 +5096,6 @@ class Game {
     return false;
   }
 
-  /**
-   *
-   */
   onCharacterUpdate(character) {
     var time = this.currentTime;
 
@@ -5125,12 +5112,20 @@ class Game {
     }
 
     if (character.isAttacking() && (!character.previousTarget || character.id === this.playerId)) {
-      if (character.kind === Types.Entities.NECROMANCER || character.kind === Types.Entities.DEATHANGEL) {
+      if (
+        character.kind === Types.Entities.NECROMANCER ||
+        character.kind === Types.Entities.DEATHANGEL ||
+        character.kind === Types.Entities.MAGE
+      ) {
         if (character.isRaising()) {
           if (character.canRaise(time)) {
             character.stop();
             character.nextStep();
             character.raise();
+
+            if (character.kind === Types.Entities.MAGE) {
+              this.client.sendCastSpell(character.id, character.gridX, character.gridY);
+            }
           }
           return;
         }

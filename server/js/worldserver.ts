@@ -82,6 +82,7 @@ class World {
   magicStones: number[];
   activatedMagicStones: number[];
   blueFlames: number[];
+  spellCount: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -101,7 +102,8 @@ class World {
     this.currentPartyId = 0;
     this.currentTradeId = 0;
     this.mobs = {};
-    this.spells = {};
+    // this.spells = {};
+    this.spellCount = 0;
     this.attackers = {};
     this.items = {};
     this.equipping = {};
@@ -658,11 +660,25 @@ class World {
     return npc;
   }
 
-  addSpell(kind, x, y, count, orientation, originX, originY, element) {
-    const spell = new Spell(`9${count}${x}${y}`, kind, x, y, orientation, originX, originY, element);
+  addSpell({ kind, x, y, orientation = Types.Orientations.UP, originX, originY, element, casterId }) {
+    const spell = new Spell({
+      id: `9${this.spellCount}${x}${y}`,
+      kind,
+      x,
+      y,
+      orientation,
+      originX,
+      originY,
+      element,
+      casterId,
+    });
+
+    this.spellCount += 1;
     this.addEntity(spell);
 
-    this.spells[spell.id] = spell;
+    setTimeout(() => {
+      delete this.entities[spell.id];
+    }, 3000);
 
     return spell;
   }
@@ -684,8 +700,6 @@ class World {
     if (!id || !this.isCastDeathAngelSpellEnabled || isDead || !x || !y || diffX > 16 || diffY > 16) return;
     this.isCastDeathAngelSpellEnabled = false;
 
-    const element = _.shuffle(["magic", "flame", "lightning", "cold", "poison", "physical"])[0];
-
     const coords = [
       [0, 1, Types.Orientations.DOWN],
       [1, 1, Types.Orientations.DOWN_RIGHT],
@@ -697,34 +711,20 @@ class World {
       [-1, 1, Types.Orientations.DOWN_LEFT],
     ];
 
-    const spells = [];
-    let spellCount = random(1000);
+    const element = Types.getRandomElement();
 
     coords.forEach(([spellX, spellY, orientation]) => {
-      spells.push(
-        this.addSpell(
-          Types.Entities.DEATHANGELSPELL,
-          x + spellX,
-          y + spellY,
-          spellCount,
-          orientation,
-          spellX,
-          spellY,
-          element,
-        ),
-      );
-      spellCount += 1;
-    });
-
-    // @TODO ~~~ cleaner way to get rid of a spell?client/js/spells.ts
-    // spell.cast(0, 3000, () => {});
-    setTimeout(() => {
-      spells.forEach(spell => {
-        if (!spell.isDead) {
-          this.despawn(spell);
-        }
+      this.addSpell({
+        kind: Types.Entities.DEATHANGELSPELL,
+        x: x + spellX,
+        y: y + spellY,
+        orientation,
+        originX: spellX,
+        originY: spellY,
+        element,
+        casterId: this.deathAngelId,
       });
-    }, 3000);
+    });
   }
 
   startCowLevel() {
@@ -1273,6 +1273,7 @@ class World {
               mob.area.addToArea(mob);
             }
 
+            mob.handleRandomElement();
             mob.handleRandomResistances();
           });
           mob.onMove(self.onMobMoveCallback.bind(self));
@@ -1281,6 +1282,7 @@ class World {
             mob.isDead = true;
             self.zombies.push(mob);
           } else {
+            mob.handleRandomElement();
             mob.handleRandomResistances();
             self.addMob(mob);
           }
@@ -1362,7 +1364,7 @@ class World {
     if (mob.kind === Types.Entities.MINOTAUR || mob.kind === Types.Entities.DEATHANGEL) {
       const MIN_DAMAGE = {
         [Types.Entities.MINOTAUR]: 2000,
-        [Types.Entities.DEATHANGEL]: 100,
+        [Types.Entities.DEATHANGEL]: 3000,
       };
       let members = [attacker.id];
       let party = null;
@@ -1509,7 +1511,7 @@ class World {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur 🥶`);
     } else if (mob.kind === Types.Entities.COWKING) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
-    } else if (mob.kind === Types.Entities.DEATHANGEL) {
+    } else if (false && mob.kind === Types.Entities.DEATHANGEL) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Death Angel 💀`);
     }
 

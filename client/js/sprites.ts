@@ -26,6 +26,7 @@ import skeleton4 from "../sprites/skeleton.json";
 import wraith2 from "../sprites/wraith2.json";
 import ghost from "../sprites/ghost.json";
 import mage from "../sprites/mage.json";
+import mageSpell from "../sprites/mage-spell.json";
 import deathangel from "../sprites/deathangel.json";
 import deathangelSpell from "../sprites/deathangel-spell.json";
 import wirtleg from "../sprites/weapon.json";
@@ -192,6 +193,12 @@ const sprites = {
   wraith2,
   ghost,
   mage,
+  "mage-spell": mageSpell,
+  "mage-spell-magic": mageSpell,
+  "mage-spell-flame": mageSpell,
+  "mage-spell-lightning": mageSpell,
+  "mage-spell-cold": mageSpell,
+  "mage-spell-poison": mageSpell,
   deathangel,
   "deathangel-spell": deathangelSpell,
   "deathangel-spell-magic": deathangelSpell,

@@ -487,12 +487,10 @@ class App {
     // var timeout;
 
     this.game.player?.onSetTarget(function (target, name) {
-      const inspector = $("#inspector");
-      // var sprite = target.sprite;
-      // var x = (sprite.animationData.idle_down.length - 1) * sprite.width;
-      // var y = sprite.animationData.idle_down.row * sprite.height;
+      if (target.id === self.game.player.id) return;
 
-      const alias = Types.getAliasFromName(Types.getKindAsString(target.kind)) || name;
+      const inspector = $("#inspector");
+      const alias = target.name || Types.getAliasFromName(Types.getKindAsString(target.kind)) || name;
 
       inspector.find(".name").text(alias);
       inspector.find(".resistances").empty();

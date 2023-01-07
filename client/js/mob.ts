@@ -4,11 +4,13 @@ import Character from "./character";
 class Mob extends Character {
   aggroRange: number;
   isAggressive: boolean;
+  castRange?: number;
 
   constructor(id: number, kind: number) {
     super(id, kind);
 
     this.aggroRange = 1;
+    this.castRange = null;
     this.isAggressive = true;
     this.type = "mob";
     this.name = Types.getKindAsString(kind);

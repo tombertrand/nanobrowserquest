@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-// import { Types } from "../../shared/js/gametypes";
+import { Types } from "../../shared/js/gametypes";
 import { MobArea } from "./area";
 import Entity from "./entity";
 import Messages from "./message";
@@ -17,9 +17,11 @@ class Spell extends Entity {
   orientation: number;
   originX: number;
   originY: number;
-  element: "magic" | "flame" | "lightning" | "cold" | "poison" | "physical";
+  element: Elements;
+  dmg: number;
+  casterId: number;
 
-  constructor(id, kind, x, y, orientation, originX, originY, element) {
+  constructor({ id, kind, x, y, orientation, originX, originY, element, casterId }) {
     super(id, "spell", kind, x, y);
 
     this.spawningX = x;
@@ -30,6 +32,20 @@ class Spell extends Entity {
     this.originX = originX;
     this.originY = originY;
     this.element = element;
+    this.dmg = this.getDmg();
+    this.casterId = casterId;
+  }
+
+  // @NOTE Since there is no entity class on the server
+  getDmg() {
+    let dmg = 0;
+    if (this.kind === Types.Entities.DEATHANGELSPELL) {
+      dmg = 200;
+    } else if (this.kind === Types.Entities.MAGESPELL) {
+      dmg = 20;
+      // dmg = 120;
+    }
+    return dmg;
   }
 
   getState() {
@@ -38,6 +54,7 @@ class Spell extends Entity {
       originX: this.originX,
       originY: this.originY,
       element: this.element,
+      casterId: this.casterId,
     });
   }
 

@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export const PLAYER_MAX_RESISTANCES = 90;
 
 export const mobResistance = {
@@ -30,12 +32,12 @@ export const mobResistance = {
     physicalResistance: 30,
   },
   mage: {
-    magicResistance: 80,
-    flameResistance: 80,
-    lightningResistance: 80,
-    coldResistance: 80,
-    physicalResistance: 80,
-    poisonResistance: 80,
+    magicResistance: 50,
+    flameResistance: 50,
+    lightningResistance: 50,
+    coldResistance: 50,
+    physicalResistance: 50,
+    poisonResistance: 50,
   },
   deathangel: {
     magicResistance: 100,
@@ -64,6 +66,9 @@ export const resistanceToDisplayMap = {
   poisonResistance: "poison",
   physicalResistance: "physical",
 };
+
+export const getRandomElement = (): Elements =>
+  _.shuffle(["magic", "flame", "lightning", "cold", "poison", "physical"] as Elements[])[0];
 
 export const calculateResistance = (resistance: number) =>
   resistance > PLAYER_MAX_RESISTANCES ? PLAYER_MAX_RESISTANCES : resistance;

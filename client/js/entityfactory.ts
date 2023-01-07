@@ -175,6 +175,10 @@ EntityFactory.builders[Types.Entities.MAGE] = function (id, resistances) {
   return new Mobs.Mage(id, resistances);
 };
 
+EntityFactory.builders[Types.Entities.MAGESPELL] = function (id) {
+  return new Spells.MageSpell(id);
+};
+
 EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id, resistances) {
   return new Mobs.DeathAngel(id, resistances);
 };

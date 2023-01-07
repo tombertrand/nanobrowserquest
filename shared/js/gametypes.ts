@@ -7,6 +7,7 @@ import { terrainToImageMap } from "./types/map";
 import {
   calculateResistance,
   getResistance,
+  getRandomElement,
   mobResistance,
   PLAYER_MAX_RESISTANCES,
   resistanceToDisplayMap,
@@ -112,7 +113,7 @@ export const Types: any = {
     COWLEVEL_START: 55,
     COWLEVEL_INPROGRESS: 56,
     COWLEVEL_END: 57,
-    DEATHANGEL_CAST: 58,
+    CAST_SPELL: 58,
     SETBONUS: 59,
     PARTY: 60,
     PARTY_ACTIONS: {
@@ -193,6 +194,7 @@ export const Types: any = {
     WRAITH2: 232,
     GHOST: 235,
     MAGE: 236,
+    MAGESPELL: 237,
     DEATHANGEL: 217,
     DEATHANGELSPELL: 218,
 
@@ -440,6 +442,7 @@ Types.attackSkillToDamageType = attackSkillToDamageType;
 Types.attackSkillToResistanceType = attackSkillToResistanceType;
 Types.attackSkillType = attackSkillType;
 Types.getResistance = getResistance;
+Types.getRandomElement = getRandomElement;
 Types.resistanceToDisplayMap = resistanceToDisplayMap;
 Types.mobResistance = mobResistance;
 Types.PLAYER_MAX_RESISTANCES = PLAYER_MAX_RESISTANCES;
@@ -803,7 +806,8 @@ export const kinds = {
   "rune-shi": [Types.Entities.RUNE.SHI, "rune", "SHI Rune", 65],
   "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 68],
 
-  "deathangel-spell": [Types.Entities.DEATHANGELSPELL, "spell", "Death Spiral", 50],
+  "deathangel-spell": [Types.Entities.DEATHANGELSPELL, "spell", "Death Spiral", 70],
+  "mage-spell": [Types.Entities.MAGESPELL, "spell", "Death Spiral", 60],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],

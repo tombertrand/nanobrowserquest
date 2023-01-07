@@ -452,11 +452,15 @@ export const Mobs = {
     constructor(id, resistances) {
       super(id, Types.Entities.MAGE);
       this.atkSpeed = 50;
-      this.moveSpeed = 220;
+      this.moveSpeed = 200;
       this.walkSpeed = 100;
       this.idleSpeed = 250;
+      this.raiseSpeed = 150;
+      this.raiseRate = 1000;
       this.setAttackRate(800);
+      this.raiseCooldown = new Timer(this.raiseRate);
       this.aggroRange = 5;
+      this.castRange = 7;
       this.resistances = resistances;
     }
   },
@@ -472,7 +476,7 @@ export const Mobs = {
       this.raiseRate = 1000;
       this.attackCooldown = new Timer(this.atkRate);
       this.raiseCooldown = new Timer(this.raiseRate);
-      this.aggroRange = 3;
+      this.aggroRange = 5;
       this.resistances = resistances;
       // @TODO prevent monster heal aura
       // this.auras = ["drainlife"];

@@ -11,6 +11,7 @@ class Character extends Entity {
   id: any;
   poisonedInterval: any;
   resistances?: Resistances;
+  element?: Elements;
 
   constructor(id, type, kind, x, y) {
     super(id, type, kind, x, y);
@@ -26,6 +27,7 @@ class Character extends Entity {
       orientation: this.orientation,
       targetId: this.targetId,
       resistances: this.resistances || null,
+      element: this.element || null,
     });
   }
 

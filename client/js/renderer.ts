@@ -6,6 +6,7 @@ import Character from "./character";
 import Detect from "./detect";
 import Item from "./item";
 import Player from "./player";
+import Spell from "./spell";
 import Timer from "./timer";
 
 class Renderer {

@@ -4,7 +4,7 @@
   "height": 48,
   "animations": {
     "atk_right": {
-      "length": 3,
+      "length": 4,
       "row": 0
     },
     "walk_right": {
@@ -16,7 +16,7 @@
       "row": 2
     },
     "atk_up": {
-      "length": 3,
+      "length": 4,
       "row": 0
     },
     "walk_up": {
@@ -28,7 +28,7 @@
       "row": 2
     },
     "atk_down": {
-      "length": 3,
+      "length": 4,
       "row": 0
     },
     "walk_down": {
@@ -38,6 +38,18 @@
     "idle_down": {
       "length": 3,
       "row": 2
+    },
+    "raise_right": {
+      "length": 4,
+      "row": 0
+    },
+    "raise_up": {
+      "length": 4,
+      "row": 0
+    },
+    "raise_down": {
+      "length": 4,
+      "row": 0
     }
   },
   "offset_x": -17,

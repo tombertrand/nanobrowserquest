@@ -3,7 +3,6 @@ import * as _ from "lodash";
 import { Types } from "../../shared/js/gametypes";
 import { ChestArea, MobArea } from "./area";
 import Character from "./character";
-// import ChestArea from "./chestarea";
 import Messages from "./message";
 import Properties from "./properties";
 import { distanceTo, random, randomInt } from "./utils";
@@ -28,6 +27,7 @@ class Mob extends Character {
   kind: number;
   name: string;
   resistances: Resistances;
+  element: Elements;
 
   constructor(id, kind, x, y) {
     super(id, "mob", kind, x, y);
@@ -49,17 +49,33 @@ class Mob extends Character {
   }
 
   assignRandomResistances(count: number) {
-    this.resistances = _.shuffle(Object.keys(Types.mobResistance[Types.getKindAsString(this.kind)]))
-      .slice(0, count)
-      .reduce((acc, resistance, index) => {
-        acc[resistance] = this.resistances[resistance];
+    let randomResistances = _.shuffle(Object.keys(Types.mobResistance[Types.getKindAsString(this.kind)]));
+    let immunedResistances = [];
 
-        if (this.kind === Types.Entities.DEATHANGEL && index !== 0) {
-          acc[resistance] = randomInt(20, 80);
-        }
+    if (this.element) {
+      immunedResistances.push(`${this.element}Resistance`);
+      randomResistances = [...immunedResistances, ...randomResistances.filter(r => !immunedResistances.includes(r))];
+    }
 
-        return acc;
-      }, {});
+    this.resistances = randomResistances.slice(0, count).reduce((acc, resistance, index) => {
+      if (immunedResistances.includes(resistance)) {
+        acc[resistance] = 100;
+      } else {
+        acc[resistance] = Types.getResistance(this)[resistance];
+      }
+
+      if (this.kind === Types.Entities.DEATHANGEL && index !== 0) {
+        acc[resistance] = randomInt(2, 8) * 10;
+      }
+
+      return acc;
+    }, {});
+  }
+
+  handleRandomElement() {
+    if ([Types.Entities.MAGE].includes(this.kind)) {
+      this.element = Types.getRandomElement(this);
+    }
   }
 
   // @NOTE Since there is no Mob factory on Server side, have the exceptions stored here

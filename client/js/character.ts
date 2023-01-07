@@ -42,7 +42,8 @@ class Character extends Entity {
   flipSpriteX: any;
   flipSpriteY: any;
   kind: any;
-  aggroRange: any;
+  aggroRange: number;
+  castRange?: number;
   destination: any;
   request_path_callback: any;
   id: any;
@@ -245,12 +246,21 @@ class Character extends Entity {
   }
 
   raise(orientation) {
-    this.setOrientation(orientation);
+    if (orientation) {
+      this.setOrientation(orientation);
+    } else {
+      this.lookAtTarget();
+    }
+
     this.animate("raise", this.raiseSpeed, 1);
   }
 
   moveTo_(x, y) {
-    if (this.kind === Types.Entities.NECROMANCER || this.kind === Types.Entities.DEATHANGEL) {
+    if (
+      this.kind === Types.Entities.NECROMANCER ||
+      this.kind === Types.Entities.DEATHANGEL ||
+      this.kind === Types.Entities.MAGE
+    ) {
       if (this.isRaising()) {
         this.aggroRange = 10;
         return;
@@ -290,21 +300,22 @@ class Character extends Entity {
   }
 
   followPath(path) {
-    if (path.length > 1 && !this.isFrozen) {
-      // Length of 1 means the player has clicked on himself
-      this.path = path;
-      this.step = 0;
+    if (this.raisingMode) return;
+    if (path.length <= 1 || this.isFrozen) return;
 
-      if (this.followingMode) {
-        // following a character
-        path.pop();
-      }
+    // Length of 1 means the player has clicked on himself
+    this.path = path;
+    this.step = 0;
 
-      if (this.start_pathing_callback) {
-        this.start_pathing_callback(path);
-      }
-      this.nextStep();
+    if (this.followingMode) {
+      // following a character
+      path.pop();
     }
+
+    if (this.start_pathing_callback) {
+      this.start_pathing_callback(path);
+    }
+    this.nextStep();
   }
 
   continueTo(x, y) {
@@ -338,7 +349,6 @@ class Character extends Entity {
     let x;
     let y;
     let path;
-    let isSpell = this.type === "spell";
 
     if (this.isMoving()) {
       if (this.before_step_callback) {
@@ -346,10 +356,7 @@ class Character extends Entity {
       }
 
       this.updatePositionOnGrid();
-
-      if (!isSpell) {
-        this.checkAggro();
-      }
+      this.checkAggro();
 
       if (this.interrupted) {
         // if Character.stop() has been called
@@ -364,7 +371,12 @@ class Character extends Entity {
           this.step_callback();
         }
 
-        if (!isSpell && this.hasChangedItsPath()) {
+        if (this.raisingMode || (this.castRange && this.path.length - this.step < this.castRange)) {
+          if (!this.raisingMode) {
+            this.setRaisingMode();
+          }
+          stop = true;
+        } else if (this.hasChangedItsPath()) {
           x = this.newDestination.x;
           y = this.newDestination.y;
           path = this.requestPathfindingTo(x, y);
@@ -377,9 +389,7 @@ class Character extends Entity {
           }
         } else if (this.hasNextStep()) {
           this.step += 1;
-          if (!isSpell) {
-            this.updateMovement();
-          }
+          this.updateMovement();
         } else {
           stop = true;
         }
@@ -420,8 +430,13 @@ class Character extends Entity {
       this.raisingModeTimeout = null;
 
       // @NOTE Have the raiser re-engage with target once animation is done
-      if (this.hasTarget() && this.isCloseTo(this.target, this.aggroRange)) {
-        this.engage(this.target);
+      if (this.hasTarget()) {
+        if (this.castRange && this.isCloseTo(this.target, this.castRange + 1)) {
+          // Keep the position
+          this.setRaisingMode();
+        } else if (this.isCloseTo(this.target, this.aggroRange)) {
+          this.engage(this.target);
+        }
       }
     }, this.raiseRate);
   }
@@ -707,8 +722,6 @@ class Character extends Entity {
 
   canRaise(time) {
     if (this.raiseCooldown.isOver(time)) {
-      // this.isAggressive = true;
-      // this.aggroRange = 3;
       return true;
     }
     return false;
@@ -721,9 +734,6 @@ class Character extends Entity {
     return false;
   }
 
-  /**
-   *
-   */
   die() {
     this.removeTarget();
 

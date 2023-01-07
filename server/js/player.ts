@@ -540,6 +540,8 @@ class Player extends Character {
         console.info("HURT_SPELL: " + self.name + " " + message[1]);
         const spell = self.server.getEntityById(message[1]);
 
+        console.log("~~~~spell", spell.kind);
+
         if (spell && self.hitPoints > 0) {
           self.handleHurtSpellDmg(spell);
         }
@@ -570,10 +572,17 @@ class Player extends Character {
             console.log("~~~~OPEN PORTAL!");
           }
         }
-      } else if (action === Types.Messages.DEATHANGEL_CAST) {
-        if (typeof message[1] !== "number" || typeof message[2] !== "number") return;
+      } else if (action === Types.Messages.CAST_SPELL) {
+        if (typeof message[1] !== "number" || typeof message[2] !== "number" || typeof message[3] !== "number") return;
 
-        self.server.castDeathAngelSpell(message[1], message[2]);
+        const [, mobId, x, y] = message;
+        const entity = self.server.getEntityById(mobId);
+
+        if (entity.kind === Types.Entities.DEATHANGEL) {
+          self.server.castDeathAngelSpell(x, y);
+        } else if (entity.kind === Types.Entities.MAGE) {
+          self.server.addSpell({ kind: Types.Entities.MAGESPELL, x, y, element: entity.element, casterId: mobId });
+        }
       } else if (action === Types.Messages.LOOT) {
         console.info("LOOT: " + self.name + " " + message[1]);
         var item = self.server.getEntityById(message[1]);
@@ -1539,6 +1548,7 @@ class Player extends Character {
         capeBrightness: this.capeBrightness,
       },
       resistances: null,
+      element: null,
     });
   }
 
@@ -1619,10 +1629,9 @@ class Player extends Character {
   }
 
   handleHurtSpellDmg(spell) {
-    const spellDmg = 200;
     const resistance = Types.calculateResistance(this.bonus[`${spell.element}Resistance`] + this.skill.resistances);
 
-    const dmg = Math.round(spellDmg - spellDmg * (resistance / 100));
+    const dmg = Math.round(spell.dmg - spell.dmg * (resistance / 100));
 
     if (spell.element === "cold") {
       if (random(100) > this.bonus.reduceFrozenChance) {
@@ -1630,7 +1639,7 @@ class Player extends Character {
         this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
       }
     } else if (spell.element === "poison") {
-      this.startPoisoned({ dmg: spellDmg, entity: this, resistance: this.bonus.poisonResistance });
+      this.startPoisoned({ dmg: spell.dmg, entity: this, resistance: this.bonus.poisonResistance });
     }
 
     this.hitPoints -= dmg;

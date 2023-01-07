@@ -25,11 +25,13 @@ class Entity {
   blinking: any;
   isDirty: boolean;
   dirty_callback: any;
+  // fadeInWhenAdded: boolean;
 
   constructor(id, kind) {
     this.id = id;
     this.kind = kind;
     this.isDirty = false;
+    // this.fadeInWhenAdded = ty;
 
     // Renderer
     this.sprite = null;
@@ -46,7 +48,7 @@ class Entity {
     this.isLoaded = false;
     this.isHighlighted = false;
     this.visible = true;
-    this.isFading = false;
+    this.isFading = true;
     this.setDirty();
   }
 

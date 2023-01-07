@@ -62,7 +62,11 @@ class Sprite {
       this.id = this.name;
     }
 
-    if (this.id.startsWith("deathangel-spell") || this.id.startsWith("skill-cast")) {
+    if (
+      this.id.startsWith("deathangel-spell") ||
+      this.id.startsWith("mage-spell") ||
+      this.id.startsWith("skill-cast")
+    ) {
       this.id = this.name;
     }
 
@@ -85,9 +89,15 @@ class Sprite {
     //   this.imageban.crossOrigin = "Anonymous";
     //   this.imageban.src = "img/" + this.scale + "/banguard.png";
     else if (
-      ["hornedarmor", "frozenarmor", "diamondarmor", "emeraldarmor", "demonarmor", "mysticalarmor", "bloodarmor"].includes(
-        this.name,
-      )
+      [
+        "hornedarmor",
+        "frozenarmor",
+        "diamondarmor",
+        "emeraldarmor",
+        "demonarmor",
+        "mysticalarmor",
+        "bloodarmor",
+      ].includes(this.name)
     ) {
       this.imageunique = new Image();
       this.imageunique.crossOrigin = "Anonymous";
@@ -236,7 +246,7 @@ class Sprite {
         width: this.width,
         height: this.height,
       };
-    } catch (e) {
+    } catch (err) {
       this.silhouetteSprite = this;
     }
   }

@@ -1,6 +1,7 @@
 import { Types } from "../../shared/js/gametypes";
 import Character from "./character";
 import Game from "./game";
+import Spell from "./spell";
 import Timer from "./timer";
 
 class Updater {
@@ -38,7 +39,9 @@ class Updater {
           self.updateCharacter(entity);
           self.game.onCharacterUpdate(entity);
         }
-        self.updateEntityFading(entity);
+        if (entity.isFading) {
+          self.updateEntityFading(entity);
+        }
       }
     });
   }
@@ -143,6 +146,44 @@ class Updater {
   updateCharacter(c) {
     // Estimate of the movement distance for one update
     var tick = Math.round(16 / Math.round(c.moveSpeed / (1000 / this.game.renderer.FPS)));
+
+    // Handle spell instances separately.
+    // https://github.com/Kaetram/Kaetram-Open/blob/b8b5e156aff5fb7e8b3da780122aa734bb95a8a9/packages/client/src/entity/objects/projectile.ts
+    if (c instanceof Spell && c.target) {
+      let mDistance = c.moveSpeed * c.getTimeDiff(),
+        dx = c.target.x - c.x, // delta x current position to target
+        dy = c.target.y - c.y, // delta y current position to target
+        tDistance = Math.sqrt(dx * dx + dy * dy), // pythagorean theorem uwu
+        amount = mDistance / tDistance;
+
+      if (amount > 1) amount = 1;
+
+      if (!c.isDead) {
+        // Increment the projectile's position.
+        c.x += dx * amount;
+        c.y += dy * amount;
+      }
+
+      if (!c.isDead && this.game.player) {
+        const isPlayerHit = Math.abs(this.game.player.x - c.x) <= 8 && Math.abs(this.game.player.y - c.y) <= 8;
+        const isEntityHit = !isPlayerHit
+          ? this.game.pathingGrid[Math.round(c.y / 16)][Math.round(c.x / 16)] &&
+            // @NOTE This might not be needed if the raise is queued after current step
+            this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id !== c.casterId
+          : false;
+
+        if (isPlayerHit) {
+          this.game.makePlayerHurtFromSpell(c);
+        }
+        if (isPlayerHit || isEntityHit || tDistance < 1) {
+          c.die();
+        }
+      }
+
+      c.lastUpdate = this.game.currentTime;
+
+      return;
+    }
 
     if (c.isMoving() && c.movement.inProgress === false) {
       if (c.orientation === Types.Orientations.LEFT) {
