@@ -166,16 +166,16 @@ class Updater {
 
       if (!c.isDead && this.game.player) {
         const isPlayerHit = Math.abs(this.game.player.x - c.x) <= 8 && Math.abs(this.game.player.y - c.y) <= 8;
-        const isEntityHit = !isPlayerHit
+        const isGridOrAnyPlayerHit = !isPlayerHit
           ? this.game.pathingGrid[Math.round(c.y / 16)][Math.round(c.x / 16)] &&
-            // @NOTE This might not be needed if the raise is queued after current step
-            this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id !== c.casterId
+            // this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id !== c.casterId
+            this.game.isPlayerAt(Math.round(c.x / 16), Math.round(c.y / 16))
           : false;
 
         if (isPlayerHit) {
           this.game.makePlayerHurtFromSpell(c);
         }
-        if (isPlayerHit || isEntityHit || tDistance < 1) {
+        if (isPlayerHit || isGridOrAnyPlayerHit || tDistance < 1) {
           c.die();
         }
       }

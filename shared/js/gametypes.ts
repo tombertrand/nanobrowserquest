@@ -338,8 +338,10 @@ export const Types: any = {
     WAYPOINTN: 93,
     WAYPOINTO: 193,
     STASH: 114,
-    COWPORTAL: 125,
-    MINOTAURPORTAL: 135,
+    PORTALCOW: 125,
+    PORTALMINOTAUR: 135,
+    PORTALTEMPLE: 238,
+    PORTALDEATHANGEL: 239,
     MAGICSTONE: 220,
     BLUEFLAME: 234,
 
@@ -832,8 +834,10 @@ export const kinds = {
   waypointn: [Types.Entities.WAYPOINTN, "npc"],
   waypointo: [Types.Entities.WAYPOINTO, "npc"],
   stash: [Types.Entities.STASH, "npc"],
-  cowportal: [Types.Entities.COWPORTAL, "npc"],
-  minotaurportal: [Types.Entities.MINOTAURPORTAL, "npc"],
+  portalcow: [Types.Entities.PORTALCOW, "npc"],
+  portalminotaur: [Types.Entities.PORTALMINOTAUR, "npc"],
+  portaltemple: [Types.Entities.PORTALTEMPLE, "npc"],
+  portaldeathangel: [Types.Entities.PORTALDEATHANGEL, "npc"],
   magicstone: [Types.Entities.MAGICSTONE, "npc"],
   blueflame: [Types.Entities.BLUEFLAME, "npc"],
 
@@ -1418,7 +1422,7 @@ Types.getAliasFromName = function (name: string) {
     return "cow king";
   } else if (name.startsWith("waypoint")) {
     return "waypoint";
-  } else if (name === "cowportal" || name === "minotaurportal") {
+  } else if (name.startsWith("portal")) {
     return "Portal";
   } else if (name === "magicstone") {
     return "Magic Stone";
@@ -1689,10 +1693,10 @@ Types.getBonus = function (rawBonus, level) {
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const physicalResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const magicDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
-  const flameDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const magicDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
+  const flameDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
   const lightningDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
-  const coldDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const coldDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
   const poisonDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
   const allResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 11, 15, 20];
   const preventRegenerateHealthPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];

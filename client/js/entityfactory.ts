@@ -883,12 +883,20 @@ EntityFactory.builders[Types.Entities.STASH] = function (id) {
   return new Npcs.Stash(id);
 };
 
-EntityFactory.builders[Types.Entities.COWPORTAL] = function (id) {
-  return new Npcs.CowPortal(id);
+EntityFactory.builders[Types.Entities.PORTALCOW] = function (id) {
+  return new Npcs.PortalCow(id);
 };
 
-EntityFactory.builders[Types.Entities.MINOTAURPORTAL] = function (id) {
-  return new Npcs.MinotaurPortal(id);
+EntityFactory.builders[Types.Entities.PORTALMINOTAUR] = function (id) {
+  return new Npcs.PortalMinotaur(id);
+};
+
+EntityFactory.builders[Types.Entities.PORTALTEMPLE] = function (id) {
+  return new Npcs.PortalTemple(id);
+};
+
+EntityFactory.builders[Types.Entities.PORTALDEATHANGEL] = function (id) {
+  return new Npcs.PortalDeathAngel(id);
 };
 
 EntityFactory.builders[Types.Entities.MAGICSTONE] = function (id) {

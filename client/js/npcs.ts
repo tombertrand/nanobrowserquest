@@ -142,15 +142,27 @@ var Npcs = {
     }
   },
 
-  CowPortal: class CowPortal extends Npc {
+  PortalCow: class PortalCow extends Npc {
     constructor(id) {
-      super(id, Types.Entities.COWPORTAL);
+      super(id, Types.Entities.PORTALCOW);
     }
   },
 
-  MinotaurPortal: class MinotaurPortal extends Npc {
+  PortalMinotaur: class PortalMinotaur extends Npc {
     constructor(id) {
-      super(id, Types.Entities.MINOTAURPORTAL);
+      super(id, Types.Entities.PORTALMINOTAUR);
+    }
+  },
+
+  PortalTemple: class PortalTemple extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.PORTALTEMPLE);
+    }
+  },
+
+  PortalDeathAngel: class PortalDeathAngel extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.PORTALDEATHANGEL);
     }
   },
 

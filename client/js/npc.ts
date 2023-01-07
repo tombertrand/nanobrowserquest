@@ -160,7 +160,7 @@ var NpcTalk = {
   waypointn: [""],
   waypointo: [""],
   stash: [""],
-  cowportal: [
+  portalcow: [
     {
       condition(game: any) {
         return game.player.level < 45;
@@ -168,13 +168,28 @@ var NpcTalk = {
       text: ["You need to be lv.45 and above to access the secret level"],
     },
   ],
-
-  minotaurportal: [
+  portalminotaur: [
     {
       condition(game: any) {
         return game.player.level < 53;
       },
-      text: ["You need to be lv.53 and above to access the secret level"],
+      text: ["You need to be lv.53 and above to access the Minotaur portal"],
+    },
+  ],
+  portaltemple: [
+    {
+      condition(game: any) {
+        return game.player.level < 53;
+      },
+      text: ["You need to be lv.53 and above to access the Temple portal"],
+    },
+  ],
+  portaldeathangel: [
+    {
+      condition(game: any) {
+        return game.player.level < 65;
+      },
+      text: ["You need to be lv.65 and above to access the Death Angel portal"],
     },
   ],
   magicstone: [""],

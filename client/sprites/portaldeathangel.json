@@ -1,0 +1,25 @@
+{
+  "id": "portaldeathangel",
+  "width": 150,
+  "height": 110,
+  "animations": {
+    "dead_down": {
+      "length": 8,
+      "row": 0
+    },
+    "raise_down": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 8,
+      "row": 2
+    },
+    "death": {
+      "length": 6,
+      "row": 3
+    }
+  },
+  "offset_x": -8,
+  "offset_y": -28
+}

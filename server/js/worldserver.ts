@@ -631,7 +631,7 @@ class World {
       self.addMob(npc);
     });
 
-    if (kind === Types.Entities.COWPORTAL) {
+    if (kind === Types.Entities.PORTALCOW) {
       npc.isDead = true;
 
       if (x === 43 && y === 211) {
@@ -639,7 +639,7 @@ class World {
       } else {
         this.cowLevelNpcIds.push(npc.id);
       }
-    } else if (kind === Types.Entities.MINOTAURPORTAL) {
+    } else if (kind === Types.Entities.PORTALMINOTAUR) {
       npc.isDead = true;
 
       if (x === 40 && y === 210) {

@@ -100,8 +100,10 @@ import waypointx from "../sprites/waypoint.json";
 import waypointn from "../sprites/waypoint.json";
 import waypointo from "../sprites/waypoint.json";
 import stash from "../sprites/stash.json";
-import cowportal from "../sprites/cowportal.json";
-import minotaurportal from "../sprites/minotaurportal.json";
+import portalcow from "../sprites/portal.json";
+import portalminotaur from "../sprites/portal.json";
+import portaltemple from "../sprites/portal.json";
+import portaldeathangel from "../sprites/portaldeathangel.json";
 import magicstone from "../sprites/magicstone.json";
 import blueflame from "../sprites/blueflame.json";
 import ogre from "../sprites/ogre.json";
@@ -415,8 +417,10 @@ const sprites = {
   waypointn,
   waypointo,
   stash,
-  cowportal,
-  minotaurportal,
+  portalcow,
+  portalminotaur,
+  portaltemple,
+  portaldeathangel,
   magicstone,
   blueflame,
   ogre,

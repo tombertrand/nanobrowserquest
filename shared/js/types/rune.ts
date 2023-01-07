@@ -617,6 +617,16 @@ export const Runewords = {
         magicDamage: 10,
       },
     },
+    "vie-ban-do-vie-ban-do": {
+      name: "King Gorilla",
+      bonus: {
+        minDamage: 10,
+        attackDamage: 10,
+        defense: 20,
+        health: 300,
+        regenerateHealth: 30,
+      },
+    },
     "sol-btc-vie-por-fal-vie": {
       name: "Open Representative Voting",
       bonus: {

@@ -430,7 +430,7 @@ export const Mobs = {
       this.walkSpeed = 100;
       this.idleSpeed = 450;
       this.setAttackRate(800);
-      this.aggroRange = 5;
+      this.aggroRange = 4;
       this.resistances = resistances;
     }
   },
@@ -443,7 +443,7 @@ export const Mobs = {
       this.walkSpeed = 100;
       this.idleSpeed = 450;
       this.setAttackRate(800);
-      this.aggroRange = 5;
+      this.aggroRange = 4;
       this.resistances = resistances;
     }
   },
@@ -459,8 +459,8 @@ export const Mobs = {
       this.raiseRate = 1000;
       this.setAttackRate(800);
       this.raiseCooldown = new Timer(this.raiseRate);
-      this.aggroRange = 5;
-      this.castRange = 7;
+      this.aggroRange = 4;
+      this.castRange = 6;
       this.resistances = resistances;
     }
   },

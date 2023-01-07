@@ -540,8 +540,6 @@ class Player extends Character {
         console.info("HURT_SPELL: " + self.name + " " + message[1]);
         const spell = self.server.getEntityById(message[1]);
 
-        console.log("~~~~spell", spell.kind);
-
         if (spell && self.hitPoints > 0) {
           self.handleHurtSpellDmg(spell);
         }
@@ -549,18 +547,14 @@ class Player extends Character {
         console.info("MAGICSTONE: " + self.name + " " + message[1]);
 
         const magicStone = self.server.getEntityById(message[1]);
-
-        console.log("~~~~magicStone.gridX", magicStone.gridX);
-        console.log("~~~~magicStone.x", magicStone.x);
-        // console.log("~~~~player.gridX", self.gridX);
-        console.log("~~~~player.x", self.x);
-
         if (
           magicStone &&
           magicStone instanceof Npc &&
           !magicStone.isActivated &&
           self.server.magicStones.includes(magicStone.id) &&
-          !self.server.activatedMagicStones.includes(magicStone.id)
+          !self.server.activatedMagicStones.includes(magicStone.id) &&
+          Math.abs(self.x - magicStone.x) < 3 &&
+          Math.abs(self.y - magicStone.y) < 3
         ) {
           self.server.activateMagicStone(self, magicStone);
 

@@ -133,8 +133,10 @@ class Entity {
           this.kind === Types.Entities.WAYPOINTX ||
           this.kind === Types.Entities.WAYPOINTN ||
           this.kind === Types.Entities.WAYPOINTO ||
-          this.kind === Types.Entities.COWPORTAL ||
-          this.kind === Types.Entities.MINOTAURPORTAL
+          this.kind === Types.Entities.PORTALCOW ||
+          this.kind === Types.Entities.PORTALMINOTAUR ||
+          this.kind === Types.Entities.PORTALTEMPLE ||
+          this.kind === Types.Entities.PORTALDEATHANGEL
         ) {
           this.currentAnimation.setSpeed(150);
         } else if (this.kind === Types.Entities.MAGICSTONE) {

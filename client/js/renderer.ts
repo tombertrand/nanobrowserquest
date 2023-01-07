@@ -365,7 +365,7 @@ class Renderer {
       const tileset = this.getTileset(tileid);
 
       if (!tileset) {
-        // @TODO why is sometimes tileset not found?
+        // @TODO why is sometimes tileset not found? (walk up the woodland WP)
         console.log("~~~~tileid", tileid);
         return;
       }

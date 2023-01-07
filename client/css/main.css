@@ -712,7 +712,7 @@ footer, header, hgroup, menu, nav, section {
     #player-lightningDamage, #player-lightningResistance, .resistances .lightning { color: #aad9fd; }
     #player-coldDamage, #player-coldResistance, .resistances .cold { color: #74b5ff; }
     #player-poisonDamage, #player-poisonResistance, .resistances .poison { color: #35ee35; }
-    .player-section-title, .resistances .physical { color: #9c9c9c; }
+    .player-section-title, .resistances .physical { color: #fff; }
 
     #inspector .resistances .lightningDamage {
         color: #bfc2db;

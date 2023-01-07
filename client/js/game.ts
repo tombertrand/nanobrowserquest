@@ -399,8 +399,10 @@ class Game {
       "waypointn",
       "waypointo",
       "stash",
-      "cowportal",
-      "minotaurportal",
+      "portalcow",
+      "portalminotaur",
+      "portaltemple",
+      "portaldeathangel",
       "magicstone",
       "blueflame",
       "beachnpc",
@@ -2963,9 +2965,10 @@ class Game {
 
               entity.setSprite(self.sprites[entity.getSpriteName()]);
               if (entity.element && element !== "physical") {
+                entity.sprite.image.onload = () => {
+                  entity.sprite.createSilhouette();
+                };
                 entity.sprite.image.src = entity.sprite.image.src.replace(/(-[a-z]+?)?\.png/, `-${element}.png`);
-                // @TODO ~~~~ figure out the sprite issue...
-                // entity.sprite.silhouetteSprite = entity.sprite.createSilhouette();
               }
               entity.setGridPosition(x, y);
               entity.setOrientation(orientation);
@@ -2978,7 +2981,7 @@ class Game {
                   entity.aggroRange = 10;
                   entity.isAggressive = true;
                 }, 1000);
-              } else if (entity.kind === Types.Entities.COWPORTAL && entity.gridX === 43 && entity.gridY === 211) {
+              } else if (entity.kind === Types.Entities.PORTALCOW && entity.gridX === 43 && entity.gridY === 211) {
                 if (self.cowPortalStart) {
                   entity.raise();
                   entity.currentAnimation.setSpeed(75);
@@ -2990,7 +2993,7 @@ class Game {
                 } else {
                   entity.idle();
                 }
-              } else if (entity.kind === Types.Entities.MINOTAURPORTAL && entity.gridX === 40 && entity.gridY === 210) {
+              } else if (entity.kind === Types.Entities.PORTALMINOTAUR && entity.gridX === 40 && entity.gridY === 210) {
                 if (self.minotaurPortalStart) {
                   entity.raise();
                   entity.currentAnimation.setSpeed(75);
@@ -3015,6 +3018,10 @@ class Game {
                 entity.idle();
               } else {
                 entity.idle();
+              }
+
+              if (entity.kind === Types.Entities.PORTALTEMPLE || entity.kind === Types.Entities.PORTALDEATHANGEL) {
+                console.log("~~~~~PORTALZ!");
               }
 
               self.addEntity(entity);
@@ -3237,6 +3244,11 @@ class Game {
         if (!caster) return;
 
         entity.setGridPosition(caster.gridX, caster.gridY);
+
+        // @NOTE Adjustment so the spell is correctly aligned
+        if (entity.kind === Types.Entities.MAGESPELL) {
+          entity.y = caster.y - 8;
+        }
         entity.setOrientation(orientation);
         entity.idle();
 
@@ -4453,8 +4465,8 @@ class Game {
           // Types.Entities.WAYPOINTX,
           // Types.Entities.WAYPOINTN,
           // Types.Entities.WAYPOINTO,
-          // Types.Entities.COWPORTAL,
-          // Types.Entities.MINOTAURPORTAL,
+          // Types.Entities.PORTALCOW,
+          // Types.Entities.PORTALMINOTAUR,
           Types.Entities.MAGICSTONE,
           Types.Entities.BLUEFLAME,
         ].includes(npc.kind)
@@ -4496,7 +4508,7 @@ class Game {
         }
       } else if (npc.kind === Types.Entities.SATOSHI) {
         this.tryUnlockingAchievement("SATOSHI");
-      } else if (npc.kind === Types.Entities.COWPORTAL) {
+      } else if (npc.kind === Types.Entities.PORTALCOW) {
         if (this.player.level >= 45) {
           if (npc.gridX === 43 && npc.gridY === 211) {
             if (this.cowLevelPortalCoords) {
@@ -4512,7 +4524,7 @@ class Game {
             this.player.stop_pathing_callback({ x: 43, y: 212, isWaypoint: true });
           }
         }
-      } else if (npc.kind === Types.Entities.MINOTAURPORTAL) {
+      } else if (npc.kind === Types.Entities.PORTALMINOTAUR) {
         if (this.player.level >= 53) {
           if (npc.gridX === 40 && npc.gridY === 210) {
             if (this.minotaurLevelPortalCoords) {
