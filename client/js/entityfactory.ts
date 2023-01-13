@@ -317,6 +317,11 @@ EntityFactory.builders[Types.Entities.BLOODARMOR] = function (id) {
   return new Items.BloodArmor(id);
 };
 
+EntityFactory.builders[Types.Entities.TEMPLARARMOR] = function (id) {
+  return new Items.TemplarArmor(id);
+};
+
+
 EntityFactory.builders[Types.Entities.BELTLEATHER] = function (id) {
   return new Items.BeltLeather(id);
 };
@@ -731,6 +736,14 @@ EntityFactory.builders[Types.Entities.SCROLLTRANSMUTE] = function (id) {
 
 EntityFactory.builders[Types.Entities.STONESOCKET] = function (id) {
   return new Items.StoneSocket(id);
+};
+
+EntityFactory.builders[Types.Entities.STONEDRAGON] = function (id) {
+  return new Items.StoneDragon(id);
+};
+
+EntityFactory.builders[Types.Entities.STONEHERO] = function (id) {
+  return new Items.StoneHero(id);
 };
 
 EntityFactory.builders[Types.Entities.JEWELSKULL] = function (id) {

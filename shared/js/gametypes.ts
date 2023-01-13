@@ -6,8 +6,8 @@ import { expForLevel } from "./types/experience";
 import { terrainToImageMap } from "./types/map";
 import {
   calculateResistance,
-  getResistance,
   getRandomElement,
+  getResistance,
   mobResistance,
   PLAYER_MAX_RESISTANCES,
   resistanceToDisplayMap,
@@ -214,6 +214,7 @@ export const Types: any = {
     DEMONARMOR: 140,
     MYSTICALARMOR: 221,
     BLOODARMOR: 222,
+    TEMPLARARMOR: 242,
 
     // Belts
     BELTLEATHER: 85,
@@ -291,6 +292,8 @@ export const Types: any = {
     SCROLLUPGRADESACRED: 206,
     SCROLLTRANSMUTE: 142,
     STONESOCKET: 192,
+    STONEDRAGON: 240,
+    STONEHERO: 241,
     JEWELSKULL: 219,
     RINGBRONZE: 80,
     RINGSILVER: 81,
@@ -511,6 +514,7 @@ Types.Entities.Armors = [
   Types.Entities.DEMONARMOR,
   Types.Entities.MYSTICALARMOR,
   Types.Entities.BLOODARMOR,
+  Types.Entities.TEMPLARARMOR,
 ];
 
 Types.Entities.Belts = [
@@ -678,6 +682,7 @@ export const kinds = {
   demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 40, 40],
   mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 40, 40],
   bloodarmor: [Types.Entities.BLOODARMOR, "armor", "Blood Armor", 40, 40],
+  templararmor: [Types.Entities.TEMPLARARMOR, "armor", "Templar Armor", 40, 40],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -765,6 +770,8 @@ export const kinds = {
   scrollupgradesacred: [Types.Entities.SCROLLUPGRADESACRED, "scroll", "Sacred upgrade scroll", 40],
   scrolltransmute: [Types.Entities.SCROLLTRANSMUTE, "scroll", "Transmute scroll", 30],
   stonesocket: [Types.Entities.STONESOCKET, "stone", "Socket Stone", 51],
+  stonedragon: [Types.Entities.STONEDRAGON, "stone", "Dragon Stone", 60],
+  stonehero: [Types.Entities.STONEHERO, "stone", "Hero Emblem", 65],
   jewelskull: [Types.Entities.JEWELSKULL, "jewel", "Skull Jewel", 51],
   skeletonkey: [Types.Entities.SKELETONKEY, "object", "Skeleton Key"],
   raiblockstl: [Types.Entities.RAIBLOCKSTL, "object", "Raiblocks artifact"],
@@ -885,6 +892,7 @@ Types.rankedArmors = [
   Types.Entities.DEMONARMOR,
   Types.Entities.MYSTICALARMOR,
   Types.Entities.BLOODARMOR,
+  Types.Entities.TEMPLARARMOR,
 ];
 
 Types.rankedBelts = [
@@ -943,7 +951,8 @@ Types.itemUniqueMap = {
   emeraldarmor: ["Jungle Warcry", 36, 46],
   demonarmor: ["Explorer's Block", 36, 50],
   mysticalarmor: ["TBD", 36, 50],
-  armorarmor: ["TBD", 36, 50],
+  bloodarmor: ["TBD", 36, 50],
+  templararmor: ["TBD", 36, 50],
 
   // name, level, defense
   shieldwood: ["Liquidity Provider", 2, 3],
@@ -1109,7 +1118,7 @@ Types.isScroll = function (kindOrString: number | string) {
 
 Types.isStone = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
-    return [Types.Entities.STONESOCKET].includes(kindOrString);
+    return [Types.Entities.STONESOCKET, Types.Entities.STONEDRAGON, Types.Entities.STONEHERO].includes(kindOrString);
   } else {
     return kindOrString?.startsWith("stone");
   }
@@ -1909,6 +1918,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     demonarmor: 4,
     mysticalarmor: 4,
     bloodarmor: 4,
+    templararmor: 4,
 
     beltfrozen: 15,
     belthorned: 15,
@@ -2134,6 +2144,7 @@ Types.getItemDetails = function ({
   const isUnique = Types.isUnique(item, rawBonus);
   const isRune = Types.isRune(item);
   const isJewel = Types.isJewel(item);
+  const isStone = Types.isStone(item);
   const rune = isRune ? Types.getRuneFromItem(item) : null;
   const isSocket = rawSocket?.length;
   const socketRequirement = isSocket ? Types.getHighestSocketRequirement(rawSocket) : null;
@@ -2251,6 +2262,7 @@ Types.getItemDetails = function ({
     isRune,
     isRuneword,
     isJewel,
+    isStone,
     itemClass,
     ...(isArmor || isBelt || isCape || isShield ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
@@ -2273,6 +2285,11 @@ Types.getDisplayName = function (item: string, isUnique = false) {
   } else {
     return kinds[item][2];
   }
+};
+
+Types.StoneUpgrade = {
+  stonedragon: 5,
+  stonehero: 6,
 };
 
 Types.itemDescription = {
@@ -2301,4 +2318,7 @@ Types.itemDescription = {
   stonesocket:
     "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets, the stone will attempt to remove the last item from its socket. There is a 50% chance for the item to be burned.",
   jewelskull: "Can be inserted in a socket",
+  stonedragon: "Blessed by the fire of the dragon, safely upgrade any item to +5",
+  stonehero:
+    "You've crushed your enemies, saw them driven before you, and heard the lamentation of their women.<br/>Safely upgrade any item to +6",
 };

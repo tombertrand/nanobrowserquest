@@ -405,7 +405,7 @@ var Properties: any = {
       rejuvenationpotion: 10,
       scrollupgradelegendary: 3,
       templarsword: 3,
-      // templararmor: 3,
+      templararmor: 3,
       belttemplar: 3,
       shieldtemplar: 3,
       ringplatinum: 3,

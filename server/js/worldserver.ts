@@ -1396,15 +1396,24 @@ class World {
             },
             extra: { id },
           });
+          return;
         }
 
         let chestType: ChestType = null;
 
         if (mob.kind === Types.Entities.MINOTAUR) {
+          if (player.level < 53) {
+            // @NOTE: Ban player w/ reason
+            // return;
+          }
           if (player?.minotaurDamage >= MIN_DAMAGE[mob.kind]) {
             chestType = player.level >= 56 ? "chestgreen" : "chestblue";
           }
         } else if (mob.kind === Types.Entities.DEATHANGEL) {
+          if (player.level < 65) {
+            // @NOTE: Ban player w/ reason
+            // return;
+          }
           if (player?.deathAngelDamage >= MIN_DAMAGE[mob.kind]) {
             chestType = "chestpurple";
           }
@@ -1511,7 +1520,7 @@ class World {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur 🥶`);
     } else if (mob.kind === Types.Entities.COWKING) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
-    } else if (false && mob.kind === Types.Entities.DEATHANGEL) {
+    } else if (mob.kind === Types.Entities.DEATHANGEL) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Death Angel 💀`);
     }
 
@@ -1531,6 +1540,7 @@ class World {
     //   "amuletmoon",
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
+    var randomDrops = ["stonehero", "stonedragon", "templararmor"];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = [
@@ -1603,8 +1613,8 @@ class World {
     // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    // var randomDrop = random(randomDrops.length);
-    // itemName = randomDrops[randomDrop];
+    var randomDrop = random(randomDrops.length);
+    itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

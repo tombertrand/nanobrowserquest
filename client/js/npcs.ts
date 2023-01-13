@@ -164,6 +164,9 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.PORTALDEATHANGEL);
     }
+    hasShadow() {
+      return false;
+    }
   },
 
   MagicStone: class MagicStone extends Npc {

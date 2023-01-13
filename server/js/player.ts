@@ -377,6 +377,12 @@ class Player extends Character {
             }
           }
 
+          if (msg.startsWith("!link")) {
+            const secret = msg.replace("!link", "").trim();
+            self.databaseHandler.linkPlayerToDiscordUser(self, secret);
+            return;
+          }
+
           postMessageToDiscordChatChannel(`${self.name}: ${msg}`);
 
           // Zone chat

@@ -226,6 +226,13 @@ var Items = {
     }
   },
 
+  TemplarArmor: class TemplarArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.TEMPLARARMOR, "armor");
+      this.lootMessage = "You pick up a templar armor";
+    }
+  },
+
   BeltLeather: class BeltLeather extends Item {
     constructor(id) {
       super(id, Types.Entities.BELTLEATHER, "belt");
@@ -951,6 +958,20 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.STONESOCKET, "stone");
       this.lootMessage = "You pick up a socket stone";
+    }
+  },
+
+  StoneDragon: class StoneDragon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.STONEDRAGON, "stone");
+      this.lootMessage = "You pick up a dragon stone";
+    }
+  },
+
+  StoneHero: class StoneHero extends Item {
+    constructor(id) {
+      super(id, Types.Entities.STONEHERO, "stone");
+      this.lootMessage = "You pick up a hero emblem";
     }
   },
 

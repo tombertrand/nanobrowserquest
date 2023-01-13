@@ -27,6 +27,8 @@ process.on("unhandledRejection", (reason, promise) => {
   Sentry.captureException(new Error("Unhandled promise rejection"), {
     extra: { reason, promise },
   });
+  console.log("Error", reason);
+  fs.writeFileSync("./error.log", JSON.stringify(reason, null, 2));
 });
 
 export { Sentry };

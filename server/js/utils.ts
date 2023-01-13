@@ -233,15 +233,28 @@ export const isValidUpgradeItems = items => {
     return false;
   }
 
-  const [scroll] = items[1].split(":");
-  const isScroll = Types.isScroll(scroll) && scroll.startsWith("scrollupgrade");
+  const [scrollOrStone] = items[1].split(":");
+  if (Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone)) {
+    // @NOTE Make sure the upgrade is valid only for lower level items
+    if (
+      (scrollOrStone === "stonedragon" && parseInt(level) >= Types.StoneUpgrade.stonedragon) ||
+      (scrollOrStone === "stonehero" && parseInt(level) >= Types.StoneUpgrade.stonehero)
+    ) {
+      console.log("~~~~~return false!");
+      return false;
+    }
+    console.log("~~~~~return true!");
+    return true;
+  }
+
+  const isScroll = Types.isScroll(scrollOrStone) && scrollOrStone.startsWith("scrollupgrade");
 
   if (!isScroll) {
     return false;
   }
 
   const itemClass = Types.getItemClass(item, parseInt(level));
-  const scrollClass = Types.getItemClass(scroll);
+  const scrollClass = Types.getItemClass(scrollOrStone);
 
   if (itemClass !== scrollClass) {
     return false;
@@ -250,7 +263,7 @@ export const isValidUpgradeItems = items => {
   return true;
 };
 
-export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
+export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed, isGuaranteedSuccess }) => {
   // Upgrade success rate
   // +1 -> +2, 100%
   // +2 -> +3, 100%
@@ -262,7 +275,7 @@ export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
   // +8 -> +9, 4%
   // +9 -> +10, 1%
   const successRates = Types.getUpgradeSuccessRates();
-  let successRate = successRates[parseInt(level) - 1];
+  let successRate = !isGuaranteedSuccess ? successRates[parseInt(level) - 1] : 100;
   let random = randomInt(1, 100);
 
   console.info(`Base Success rate ${successRate}`);
@@ -279,6 +292,10 @@ export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed }) => {
     const blessedRate = blessedRates[parseInt(level) - 1];
     successRate += blessedRate;
     console.info(`Blessed rate ${blessedRate} granted, new success rate ${successRate}`);
+  }
+
+  if (successRate > 100) {
+    successRate = 100;
   }
 
   console.info(`Random ${random}, Success rate: ${successRate} -> ${random <= successRate ? "SUCCESS" : "FAILURE"}`);
@@ -394,6 +411,8 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
     { item: "scrollupgradeblessed" },
     { item: "scrolltransmute" },
     { item: "stonesocket" },
+    { item: "stonedragon" },
+    { item: "stonehero" },
     { item: "jewelskull" },
   ];
 
@@ -433,7 +452,7 @@ export const generateGreenChestItem = (): { item: string; uniqueChances?: number
     { item: "beltemerald", uniqueChances: 8 },
     { item: "shieldemerald", uniqueChances: 8 },
     { item: "templarsword", uniqueChances: 6 },
-    // { item: "templararmor", uniqueChances: 6 },
+    { item: "templararmor", uniqueChances: 6 },
     { item: "belttemplar", uniqueChances: 6 },
     { item: "shieldtemplar", uniqueChances: 6 },
     { item: "cape", uniqueChances: 5 },
@@ -474,7 +493,7 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
   // 50%
   const items = [
     { item: "templarsword", uniqueChances: 6 },
-    // { item: "templararmor", uniqueChances: 6 },
+    { item: "templararmor", uniqueChances: 6 },
     { item: "belttemplar", uniqueChances: 6 },
     { item: "shieldtemplar", uniqueChances: 6 },
     { item: "cape", uniqueChances: 5 },
@@ -486,6 +505,7 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
     { item: "scrollupgradesacred" },
     { item: "scrolltransmute" },
     { item: "stonesocket" },
+    { item: "stonedragon" },
     { item: "jewelskull" },
   ];
 
@@ -493,7 +513,7 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
   const ringOrAmulets = [
     { item: "ringplatinum" },
     { item: "ringconqueror" },
-    // { item: "ringheaven" },
+    { item: "ringheaven" },
     { item: "ringwizard" },
     { item: "ringbalrog" },
     { item: "ringmystical" },
@@ -669,7 +689,7 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     return false;
   }
 
-  const stoneIndex = items.findIndex(item => item.startsWith("stone"));
+  const stoneIndex = items.findIndex(item => item === "stonesocket");
   const itemIndex = items.findIndex(item => !item.startsWith("stone"));
 
   const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");

@@ -64,6 +64,7 @@ import emeraldarmor from "../sprites/armor.json";
 import demonarmor from "../sprites/armor.json";
 import mysticalarmor from "../sprites/armor.json";
 import bloodarmor from "../sprites/armor.json";
+import templararmor from "../sprites/armor.json";
 import guard from "../sprites/npc.json";
 import hand from "../sprites/hand.json";
 import impact from "../sprites/impact.json";
@@ -217,6 +218,7 @@ const sprites = {
   demonarmor,
   mysticalarmor,
   bloodarmor,
+  templararmor,
   goldensword,
   frozensword,
   diamondsword,
@@ -331,6 +333,8 @@ const sprites = {
   "item-scrollupgradesacred": item,
   "item-scrolltransmute": item,
   "item-stonesocket": item,
+  "item-stonedragon": item,
+  "item-stonehero": item,
   "item-jewelskull": item,
   "item-skeletonkey": item,
   "item-raiblockstl": item,
@@ -350,6 +354,7 @@ const sprites = {
   "item-demonarmor": item,
   "item-mysticalarmor": item,
   "item-bloodarmor": item,
+  "item-templararmor": item,
   "item-beltleather": item,
   "item-beltplated": item,
   "item-beltfrozen": item,

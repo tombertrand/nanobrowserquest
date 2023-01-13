@@ -16,7 +16,7 @@ import {
 } from "../../../shared/js/slots";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
 import { toArray, toDb } from "../../../shared/js/utils";
-import { EmojiMap, postMessageToDiscordAnvilChannel } from "../discord";
+import { discordClient, EmojiMap, postMessageToDiscordAnvilChannel } from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
@@ -1169,10 +1169,21 @@ class DatabaseHandler {
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if (isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus, socket, skill] = filteredUpgrade[0].split(":");
+          const [scrollOrStone] = filteredUpgrade[1].split(":");
           const isUnique = Types.isUnique(item, bonus);
           let upgradedItem: number | string = 0;
+          const isGuaranteedSuccess =
+            Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone);
 
-          ({ isSuccess, random, successRate } = isUpgradeSuccess({ level, isLuckySlot, isBlessed }));
+          console.log("~~~~filteredUpgrade", filteredUpgrade);
+          console.log("~~~~scrollOrStone", scrollOrStone);
+
+          ({ isSuccess, random, successRate } = isUpgradeSuccess({
+            level,
+            isLuckySlot,
+            isBlessed,
+            isGuaranteedSuccess,
+          }));
 
           player.send(
             new Messages.AnvilOdds(
@@ -1183,8 +1194,23 @@ class DatabaseHandler {
           );
 
           if (isSuccess) {
-            const upgradedLevel = parseInt(level) + 1;
-            upgradedItem = [item, parseInt(level) + 1, bonus, socket, skill].filter(Boolean).join(":");
+            let upgradedLevel = parseInt(level) + 1;
+
+            console.log("~~~~isGuaranteedSuccess", isGuaranteedSuccess);
+            console.log("~~~~item", scrollOrStone);
+            console.log("~~~~Types.StoneUpgrade.stonedragon", Types.StoneUpgrade.stonedragon);
+
+            if (isGuaranteedSuccess) {
+              if (scrollOrStone === "stonedragon") {
+                upgradedLevel = Types.StoneUpgrade.stonedragon;
+              } else if (scrollOrStone === "stonehero") {
+                upgradedLevel = Types.StoneUpgrade.stonehero;
+              }
+            }
+
+            console.log("~~~~upgradedLevel", upgradedLevel);
+
+            upgradedItem = [item, upgradedLevel, bonus, socket, skill].filter(Boolean).join(":");
             isSuccess = true;
 
             if (Types.isBaseHighClassItem(item)) {
@@ -1513,6 +1539,32 @@ class DatabaseHandler {
       } catch (err) {
         Sentry.captureException(err);
       }
+    });
+  }
+
+  linkPlayerToDiscordUser(player, secret) {
+    if (secret.length !== 6) return;
+
+    this.client.get(`discord_secret:${secret}`, (err, discordUserId) => {
+      if (!discordUserId) return;
+
+      this.client.get(`discord:${discordUserId}`, (err, playerName) => {
+        if (playerName) return;
+
+        this.client.set(`discord:${discordUserId}`, player.name);
+        this.client.del(`discord_secret:${secret}`);
+
+        player.connection.send({
+          type: Types.Messages.NOTIFICATION,
+          message: "You are now linked with your Discord account!",
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        discordClient.users.fetch(discordUserId).then(user => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          user.send(`You linked ${player.name} to your Discord account!`);
+        });
+      });
     });
   }
 

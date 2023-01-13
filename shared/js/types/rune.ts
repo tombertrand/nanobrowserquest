@@ -31,14 +31,14 @@ export const RUNE = {
   LAS: 178,
   CHAM: 179,
   DUR: 180,
-  XNO: 181,
-  FAL: 182,
-  KUL: 183,
-  MER: 184,
-  QUA: 185,
-  GUL: 186,
-  BER: 187,
-  TOR: 188,
+  FAL: 181,
+  KUL: 182,
+  MER: 183,
+  QUA: 184,
+  GUL: 185,
+  BER: 186,
+  TOR: 187,
+  XNO: 188,
   JAH: 189,
   SHI: 190,
   VOD: 191,
@@ -185,61 +185,61 @@ export const runeKind = {
       physicalResistance: 10,
     },
   },
-  xno: {
-    rank: 21,
-    requirement: 38,
-    attribute: {
-      attackSpeed: 10,
-    },
-  },
   fal: {
-    rank: 22,
+    rank: 21,
     requirement: 41,
     attribute: {
       magicDamagePercent: 8,
     },
   },
   kul: {
-    rank: 23,
+    rank: 22,
     requirement: 44,
     attribute: {
       lightningDamagePercent: 8,
     },
   },
   mer: {
-    rank: 24,
+    rank: 23,
     requirement: 47,
     attribute: {
       flameDamagePercent: 8,
     },
   },
   qua: {
-    rank: 25,
+    rank: 24,
     requirement: 50,
     attribute: {
       coldDamagePercent: 8,
     },
   },
   gul: {
-    rank: 26,
+    rank: 25,
     requirement: 53,
     attribute: {
       poisonDamagePercent: 8,
     },
   },
   ber: {
-    rank: 27,
+    rank: 26,
     requirement: 56,
     attribute: {
       skillTimeout: 6,
     },
   },
   tor: {
-    rank: 28,
+    rank: 27,
     requirement: 59,
     attribute: {
       coldDamage: 10,
       freezeChance: 5,
+    },
+  },
+  xno: {
+    rank: 28,
+    requirement: 38,
+    attribute: {
+      attackSpeed: 10,
     },
   },
   jah: {
@@ -597,7 +597,7 @@ export const Runewords = {
   },
   shield: {
     "gel-bul-al-sat-do": {
-      name: "Confirmations Per Second",
+      name: "Pump and Dump",
       bonus: {
         health: 60,
         defense: 10,
@@ -638,7 +638,7 @@ export const Runewords = {
       },
     },
     "mer-qua-gul-ber-kul-fal": {
-      name: "Ascending Bootstrap",
+      name: "Ascending Bootstrapping",
       bonus: {
         magicDamagePercent: 20,
         lightningDamagePercent: 20,

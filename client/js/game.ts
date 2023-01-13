@@ -423,6 +423,7 @@ class Game {
       "demonarmor",
       "mysticalarmor",
       "bloodarmor",
+      "templararmor",
       "firefox",
       "death",
       "dagger",
@@ -494,6 +495,7 @@ class Game {
       "item-demonarmor",
       "item-mysticalarmor",
       "item-bloodarmor",
+      "item-templararmor",
       "item-beltleather",
       "item-beltplated",
       "item-beltfrozen",
@@ -598,6 +600,8 @@ class Game {
       "item-scrollupgradesacred",
       "item-scrolltransmute",
       "item-stonesocket",
+      "item-stonedragon",
+      "item-stonehero",
       "item-jewelskull",
       "item-skeletonkey",
       "item-raiblockstl",
@@ -979,6 +983,7 @@ class Game {
           isRune,
           isRuneword,
           isJewel,
+          isStone,
           itemClass,
           defense,
           damage,
@@ -999,7 +1004,7 @@ class Game {
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
-              ${name}${level && !isRune && !isJewel ? ` (+${level})` : ""}
+              ${name}${level && !isRune && !isJewel && !isStone ? ` (+${level})` : ""}
               ${runeRank ? ` (#${runeRank})` : ""}
               ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
             </div>
@@ -1814,7 +1819,7 @@ class Game {
       mobId = entity?.id;
 
       // Can't cast on self
-      if (!mobId || mobId === this.player.id) return;
+      if (!mobId || mobId === this.player.id || Types.isNpc(entity.kind)) return;
       // Can't cast on other players with many level difference
       if (mobId && entity instanceof Player && (entity.level < 9 || Math.abs(entity.level - this.player.level) <= 10)) {
         this.chat_callback({
@@ -2287,8 +2292,8 @@ class Game {
           this.pathingGrid[y][x] = 1;
         }
 
-        // @NOTE: MagicStones takes 2 tiles
-        if (entity.kind === Types.Entities.MAGICSTONE) {
+        // @NOTE: MagicStones/PortalDeathAngel takes 2 tiles
+        if (entity.kind === Types.Entities.MAGICSTONE || entity.kind === Types.Entities.PORTALDEATHANGEL) {
           this.entityGrid[y][x + 1][entity.id] = entity;
           this.pathingGrid[y][x + 1] = 1;
         }
