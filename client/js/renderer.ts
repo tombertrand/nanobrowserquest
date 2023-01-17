@@ -668,7 +668,7 @@ class Renderer {
           ) {
             spriteImage = sprite.imageunique;
           }
-        } else if (entity.kind === Types.Entities.GUARD && this.game.player.network === "nano") {
+        } else if (entity.kind === Types.Entities.GUARD && this.game.player?.network === "nano") {
           sprite["image"].src = sprite["image"].src.replace("guard.png", "guardbanano.png");
         }
         //  else if (entity.kind === Types.Entities.GUARD) {
@@ -945,33 +945,33 @@ class Renderer {
         }
       }
 
-      // if (entity instanceof Player && true) {
-      //   var sprite = this.game.sprites["curse-prevent-regenerate-health"];
-      //   var anim = this.game.cursePreventRegenerateHealthAnimation;
+      if (entity instanceof Player && typeof entity.curseId === "number") {
+        var sprite = this.game.sprites["curse-prevent-regenerate-health"];
+        var anim = this.game.cursePreventRegenerateHealthAnimation;
 
-      //   if (sprite && anim) {
-      //     var os = this.upscaledRendering ? 1 : this.scale;
-      //     var ds = this.upscaledRendering ? this.scale : 1;
-      //     // @ts-ignore
-      //     var { x: entityX, y: entityY } = entity;
+        if (sprite && anim) {
+          var os = this.upscaledRendering ? 1 : this.scale;
+          var ds = this.upscaledRendering ? this.scale : 1;
+          // @ts-ignore
+          var { x: entityX, y: entityY } = entity;
 
-      //     var frame = anim.currentFrame,
-      //       s = this.scale,
-      //       x = frame.x * os,
-      //       y = frame.y * os,
-      //       w = sprite.width * os,
-      //       h = sprite.height * os,
-      //       ts = 16,
-      //       dx = entityX * s,
-      //       dy = entityY * s,
-      //       dw = w * ds,
-      //       dh = h * ds,
-      //       ox = sprite.offsetX * s,
-      //       oy = sprite.offsetY * s;
+          var frame = anim.currentFrame,
+            s = this.scale,
+            x = frame.x * os,
+            y = frame.y * os,
+            w = sprite.width * os,
+            h = sprite.height * os,
+            ts = 16,
+            dx = entityX * s,
+            dy = entityY * s,
+            dw = w * ds,
+            dh = h * ds,
+            ox = sprite.offsetX * s,
+            oy = sprite.offsetY * s;
 
-      //     this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
-      //   }
-      // }
+          this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
+        }
+      }
 
       if (entity instanceof Character && typeof entity.skillAnimation === "number") {
         var sprite = this.game.sprites[`skill-${Types.skillToNameMap[entity.skillAnimation]}`];

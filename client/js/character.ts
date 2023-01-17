@@ -72,11 +72,13 @@ class Character extends Entity {
   atkRate: number;
   raiseRate: number;
   isFrozen: boolean;
-  frozenTimeout: any;
+  frozenTimeout: NodeJS.Timeout;
   isPoisoned: boolean;
-  poisonedTimeout: any;
+  poisonedTimeout: NodeJS.Timeout;
   resistances: { [key: string]: { display: string; percentage: number } };
   type: "mob" | "player" | "npc" | "spell";
+  curseId: number;
+  cursedTimeout: NodeJS.Timeout;
 
   constructor(id, kind) {
     super(id, kind);
@@ -795,6 +797,17 @@ class Character extends Entity {
       this.poisonedTimeout = null;
       // Add 500ms so the last tick happens while being green
     }, duration + 500);
+  }
+
+  setCursed(curseId: number, duration: number) {
+    this.curseId = curseId;
+
+    clearTimeout(this.cursedTimeout);
+
+    this.cursedTimeout = setTimeout(() => {
+      this.curseId = null;
+      this.cursedTimeout = null;
+    }, duration);
   }
 }
 

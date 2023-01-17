@@ -74,7 +74,6 @@ export const Types: any = {
     EQUIP: 17,
     AURAS: 18,
     SKILL: 19,
-    CURSE: 92,
     DROP: 20,
     TELEPORT: 21,
     DAMAGE: 22,
@@ -151,6 +150,7 @@ export const Types: any = {
     MINOTAURLEVEL_END: 89,
     FROZEN: 90,
     POISONED: 91,
+    CURSED: 92,
     MAGICSTONE: 93,
   },
 

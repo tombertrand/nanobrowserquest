@@ -3891,10 +3891,6 @@ class Game {
         }
       });
 
-      self.client.onPlayerCurse(function ({ id: playerId, curse: rawCurse }) {
-        // @TODO implement curses
-      });
-
       self.client.onPlayerSkill(function ({ id: playerId, skill: rawSkill }) {
         const player = self.getEntityById(playerId);
         const { skill, level, isAttackSkill, mobId } = rawSkill;
@@ -4229,6 +4225,10 @@ class Game {
 
       self.client.onPoisoned(function (entityId, duration) {
         self.getEntityById(entityId)?.setPoisoned(duration);
+      });
+
+      self.client.onCursed(function (entityId, curseId, duration) {
+        self.getEntityById(entityId)?.setCursed(curseId, duration);
       });
 
       self.client.onDisconnected(function (message) {

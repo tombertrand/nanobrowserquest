@@ -483,7 +483,7 @@ export const Runewords = {
       bonus: {
         attackDamage: 20,
         allResistance: 15,
-        criticalHit: 8,
+        criticalHit: 10,
         regenerateHealth: 30,
         preventRegenerateHealth: 20,
       },

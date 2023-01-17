@@ -290,10 +290,12 @@ class World {
             regenerateHealth += character.bonus.regenerateHealth;
           }
 
-          character.regenHealthBy(regenerateHealth);
+          if (character.curseId !== 0) {
+            character.regenHealthBy(regenerateHealth);
 
-          if (character.type === "player") {
-            self.pushToPlayer(character, character.regen());
+            if (character.type === "player") {
+              self.pushToPlayer(character, character.regen());
+            }
           }
         }
       });

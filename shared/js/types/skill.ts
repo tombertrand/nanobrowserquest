@@ -23,7 +23,6 @@ const defenseSkillType = [
   "regenerateHealthSkill", // 0
   "defenseSkill", // 1
   "resistancesSkill", // 2
-  // "curseAttackSkill", // 3
 ];
 
 export const attackSkillType = [
@@ -54,14 +53,8 @@ export const getDefenseSkill = function (rawSkill: number, level: number) {
   const regenerateHealthSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const defenseSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
   const resistanceSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 90];
-  // const curseAttackSkillPerLevel = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
 
-  const skillPerLevel = [
-    regenerateHealthSkillPerLevel,
-    defenseSkillPerLevel,
-    resistanceSkillPerLevel,
-    // curseAttackSkillPerLevel,
-  ];
+  const skillPerLevel = [regenerateHealthSkillPerLevel, defenseSkillPerLevel, resistanceSkillPerLevel];
 
   let skill: { type: string; stats: number; description: string } | null = null;
 

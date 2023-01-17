@@ -30,6 +30,7 @@ import {
 
 import type Party from "./party";
 import type Trade from "./trade";
+import { curseDurationMap } from "../../shared/js/types/curse";
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
@@ -144,6 +145,8 @@ class Player extends Character {
   skill: { defense: number; resistances: number };
   dbWriteQueue: any;
   poisonedInterval: any;
+  curseId: number;
+  cursedTimeout: NodeJS.Timeout;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -537,8 +540,21 @@ class Player extends Character {
         if (mob && self.hitPoints > 0) {
           let dmg = Formulas.dmgFromMob({
             weaponLevel: mob.weaponLevel,
-            // @TODO New mobs will deal element damage
+            // @TODO ~~~ New mobs will deal element damage
           });
+
+          // @NOTE Curse trigger
+          if (mob.kind === Types.Entities.DEATHANGEL) {
+            self.curseId = 0;
+            const duration = curseDurationMap[self.curseId](10);
+            self.broadcast(new Messages.Cursed(self.id, self.curseId, duration));
+
+            clearTimeout(self.cursedTimeout);
+            self.cursedTimeout = setTimeout(() => {
+              self.curseId = null;
+              self.cursedTimeout = null;
+            }, duration);
+          }
 
           self.handleHurtDmg(mob, dmg);
         }

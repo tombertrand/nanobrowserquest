@@ -86,6 +86,7 @@ class GameClient {
   receiveminotaurlevelend_callback: any;
   receivefrozen_callback: any;
   receivepoisoned_callback: any;
+  receivecursed_callback: any;
   settings_callback: any;
 
   constructor(host, port) {
@@ -115,7 +116,6 @@ class GameClient {
     this.handlers[Types.Messages.EQUIP] = this.receiveEquipItem;
     this.handlers[Types.Messages.AURAS] = this.receiveAuras;
     this.handlers[Types.Messages.SKILL] = this.receiveSkill;
-    this.handlers[Types.Messages.CURSE] = this.receiveCurse;
     this.handlers[Types.Messages.DROP] = this.receiveDrop;
     this.handlers[Types.Messages.TELEPORT] = this.receiveTeleport;
     this.handlers[Types.Messages.DAMAGE] = this.receiveDamage;
@@ -150,6 +150,7 @@ class GameClient {
     this.handlers[Types.Messages.MINOTAURLEVEL_END] = this.receiveMinotaurLevelEnd;
     this.handlers[Types.Messages.FROZEN] = this.receiveFrozen;
     this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
+    this.handlers[Types.Messages.CURSED] = this.receiveCursed;
     this.enable();
   }
 
@@ -507,15 +508,6 @@ class GameClient {
     }
   }
 
-  receiveCurse(data) {
-    var id = data[1];
-    var curse = data[2];
-
-    if (this.curse_callback) {
-      this.curse_callback({ id, curse });
-    }
-  }
-
   receiveDrop(data) {
     var mobId = data[1];
     var id = data[2];
@@ -840,6 +832,16 @@ class GameClient {
     }
   }
 
+  receiveCursed(data) {
+    const entityId = data[1];
+    const curseId = data[2];
+    const duration = data[3];
+
+    if (this.receivecursed_callback) {
+      this.receivecursed_callback(entityId, curseId, duration);
+    }
+  }
+
   onDispatched(callback) {
     this.dispatched_callback = callback;
   }
@@ -1122,6 +1124,10 @@ class GameClient {
 
   onPoisoned(callback) {
     this.receivepoisoned_callback = callback;
+  }
+
+  onCursed(callback) {
+    this.receivecursed_callback = callback;
   }
 
   sendCreate({ name, account }) {

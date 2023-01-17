@@ -120,6 +120,13 @@ Messages.Poisoned = class Message {
   }
 };
 
+Messages.Cursed = class Message {
+  constructor(private entityId, private curseId, private duration) {}
+  serialize() {
+    return [Types.Messages.CURSED, this.entityId, this.curseId, this.duration];
+  }
+};
+
 Messages.Stats = class Message {
   constructor(private stats) {}
   serialize() {
