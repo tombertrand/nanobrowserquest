@@ -163,6 +163,10 @@ EntityFactory.builders[Types.Entities.SKELETON4] = function (id) {
   return new Mobs.Skeleton4(id);
 };
 
+EntityFactory.builders[Types.Entities.WORM] = function (id) {
+  return new Mobs.Worm(id);
+};
+
 EntityFactory.builders[Types.Entities.WRAITH2] = function (id, resistances) {
   return new Mobs.Wraith2(id, resistances);
 };
@@ -320,7 +324,6 @@ EntityFactory.builders[Types.Entities.BLOODARMOR] = function (id) {
 EntityFactory.builders[Types.Entities.TEMPLARARMOR] = function (id) {
   return new Items.TemplarArmor(id);
 };
-
 
 EntityFactory.builders[Types.Entities.BELTLEATHER] = function (id) {
   return new Items.BeltLeather(id);

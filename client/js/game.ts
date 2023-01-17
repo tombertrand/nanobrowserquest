@@ -358,6 +358,7 @@ class Game {
       "harpie",
       "werewolf2",
       "skeleton4",
+      "worm",
       "wraith2",
       "ghost",
       "mage",
@@ -3137,6 +3138,8 @@ class Game {
                     Types.Entities.RAT,
                     Types.Entities.GHOST,
                     Types.Entities.DEATHANGEL,
+                    Types.Entities.SKELETON4,
+                    Types.Entities.WORM,
                   ].includes(entity.kind);
 
                   if (entity instanceof Mobs.DeathAngel) {
@@ -3905,7 +3908,7 @@ class Game {
             const entity = self.getEntityById(mobId);
             if (entity) {
               self[`skill${_.capitalize(Types.skillToNameMap[skill])}Animation`].reset();
-              entity.setSkillAnimation(skill);
+              entity.setSkillAnimation?.(skill);
             }
           } else {
             player.setDefenseSkillAnimation(

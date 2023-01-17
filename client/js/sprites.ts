@@ -22,7 +22,8 @@ import snake3 from "../sprites/skeleton.json";
 import golem from "../sprites/skeleton.json";
 import harpie from "../sprites/skeleton.json";
 import werewolf2 from "../sprites/skeleton.json";
-import skeleton4 from "../sprites/skeleton.json";
+import skeleton4 from "../sprites/skeleton4.json";
+import worm from "../sprites/worm.json";
 import wraith2 from "../sprites/wraith2.json";
 import ghost from "../sprites/ghost.json";
 import mage from "../sprites/mage.json";
@@ -193,6 +194,7 @@ const sprites = {
   harpie,
   werewolf2,
   skeleton4,
+  worm,
   wraith2,
   ghost,
   mage,

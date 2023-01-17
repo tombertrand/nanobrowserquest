@@ -413,12 +413,28 @@ export const Mobs = {
     constructor(id) {
       super(id, Types.Entities.SKELETON4);
       this.moveSpeed = 200;
+      this.atkSpeed = 50;
+      this.idleSpeed = 400;
+      this.walkSpeed = 100;
+      this.shadowOffsetY = 1;
+      this.aggroRange = 4;
+      this.setAttackRate(1300);
+    }
+  },
+
+  Worm: class Worm extends Mob {
+    constructor(id) {
+      super(id, Types.Entities.WORM);
+      this.moveSpeed = 200;
       this.atkSpeed = 100;
       this.idleSpeed = 800;
       this.walkSpeed = 200;
       this.shadowOffsetY = 1;
       this.aggroRange = 4;
       this.setAttackRate(1300);
+    }
+    hasShadow() {
+      return false;
     }
   },
 
