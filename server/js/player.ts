@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
+import { curseDurationMap } from "../../shared/js/types/curse";
 import { toArray, toDb, toNumber } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
@@ -30,15 +31,14 @@ import {
 
 import type Party from "./party";
 import type Trade from "./trade";
-import { curseDurationMap } from "../../shared/js/types/curse";
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
 
 let payoutIndex = 0;
 
-// const NO_TIMEOUT_ACCOUNT = "3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
-const NO_TIMEOUT_ACCOUNT = "3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6m8epqxmy7anix";
+const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas"];
+
 class Player extends Character {
   id: number;
   server: any;
@@ -147,6 +147,7 @@ class Player extends Character {
   poisonedInterval: any;
   curseId: number;
   cursedTimeout: NodeJS.Timeout;
+  attackTimeout: NodeJS.Timeout;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -332,9 +333,7 @@ class Player extends Character {
         if (msg && msg !== "") {
           msg = msg.substr(0, 255); // Enforce maxLength of chat input
 
-          const admins = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas"];
-
-          if (msg.startsWith("/") && admins.includes(self.name)) {
+          if (msg.startsWith("/") && ADMINS.includes(self.name)) {
             if (msg === "/cow" && self.name === "running-coder") {
               if (!self.server.cowLevelClock) {
                 self.server.startCowLevel();
@@ -444,6 +443,22 @@ class Player extends Character {
       } else if (action === Types.Messages.HIT) {
         console.info("HIT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
+
+        if (!mob) return;
+        if (!self.server.isPlayerNearEntity(self, mob, 20)) return;
+        if (self.attackTimeout) {
+          Sentry.captureException(new Error("Player still on attack cooldown"), { extra: { player: self.name } });
+          return;
+        }
+
+        // Allow for 10% latency
+        const attackSpeed = Types.calculateAttackSpeed(self.bonus.attackSpeed + 10);
+        const duration = Math.round(Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (attackSpeed / 100));
+
+        // Prevent FE from sending too many attack messages
+        self.attackTimeout = setTimeout(() => {
+          self.attackTimeout = null;
+        }, duration);
 
         if (mob?.type === "mob" || mob?.type === "player") {
           let isCritical = false;
@@ -1217,7 +1232,9 @@ class Player extends Character {
           }
 
           const originalTimeout = Math.floor(Types.attackSkillDelay[this.attackSkill]);
-          const timeout = Math.round(originalTimeout - originalTimeout * (this.bonus.skillTimeout / 100));
+          const timeout = Math.round(
+            originalTimeout - originalTimeout * (Types.calculateSkillTimeout(this.bonus.skillTimeout) / 100),
+          );
 
           if (Types.skillToNameMap[this.attackSkill] === "poison") {
             this.startPoisoned({ dmg, entity: attackedMob, resistance: mobResistance, attacker: this });
@@ -1270,7 +1287,9 @@ class Player extends Character {
           }
 
           const originalTimeout = Math.floor(Types.defenseSkillDelay[this.defenseSkill]);
-          const timeout = Math.round(originalTimeout - originalTimeout * (this.bonus.skillTimeout / 100));
+          const timeout = Math.round(
+            originalTimeout - originalTimeout * (Types.calculateSkillTimeout(this.bonus.skillTimeout) / 100),
+          );
 
           self.defenseSkillTimeout = setTimeout(() => {
             self.defenseSkillTimeout = null;
@@ -1565,6 +1584,9 @@ class Player extends Character {
       },
       resistances: null,
       element: null,
+      bonus: {
+        attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
+      },
     });
   }
 
@@ -2192,9 +2214,8 @@ class Player extends Character {
 
   resetTimeout() {
     clearTimeout(this.disconnectTimeout);
-    // This account doesn't timeout
-    if (this.account === `${this.network}_${NO_TIMEOUT_ACCOUNT}`) return;
-    this.disconnectTimeout = setTimeout(this.timeout.bind(this), 1000 * 60 * 15); // 15 min.
+    if (ADMINS.includes(this.name)) return;
+    this.disconnectTimeout = setTimeout(this.timeout.bind(this), 1000 * 60 * 30); // 30 min.
   }
 
   timeout() {
@@ -2258,7 +2279,7 @@ class Player extends Character {
       criticalHit: this.bonus.criticalHit,
       blockChance: this.bonus.blockChance,
       magicFind: this.bonus.magicFind,
-      attackSpeed: this.bonus.attackSpeed,
+      attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
       magicDamage: this.bonus.magicDamage + this.partyBonus.magicDamage,
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
@@ -2271,7 +2292,7 @@ class Player extends Character {
       coldResistance: Types.calculateResistance(this.bonus.coldResistance + this.skill.resistances),
       poisonResistance: Types.calculateResistance(this.bonus.poisonResistance + this.skill.resistances),
       physicalResistance: Types.calculateResistance(this.bonus.physicalResistance + this.skill.resistances),
-      skillTimeout: this.bonus.skillTimeout,
+      skillTimeout: Types.calculateSkillTimeout(this.bonus.skillTimeout),
       magicDamagePercent: this.bonus.magicDamagePercent,
       flameDamagePercent: this.bonus.flameDamagePercent,
       lightningDamagePercent: this.bonus.lightningDamagePercent,

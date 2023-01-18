@@ -1844,7 +1844,9 @@ class Game {
     const originalTimeout = isAttackSkill
       ? Math.floor(Types.attackSkillDelay[this.player.attackSkill])
       : Math.floor(Types.defenseSkillDelay[this.player.defenseSkill]);
-    const timeout = Math.round(originalTimeout - originalTimeout * (this.player.bonus.skillTimeout / 100));
+    const timeout = Math.round(
+      originalTimeout - originalTimeout * (Types.calculateSkillTimeout(this.player.bonus.skillTimeout) / 100),
+    );
 
     const skillSlot = $(`[data-skill-slot="${slot}"]`);
     skillSlot
@@ -2957,7 +2959,7 @@ class Game {
       });
 
       self.client.onSpawnCharacter(function (data) {
-        const { id, kind, name, x, y, targetId, orientation, resistances, element, isActivated } = data;
+        const { id, kind, name, x, y, targetId, orientation, resistances, element, isActivated, bonus } = data;
 
         let entity = self.getEntityById(id);
         if (!entity) {
@@ -2967,6 +2969,9 @@ class Game {
 
               if (element) {
                 entity.element = element;
+              }
+              if (bonus?.attackSpeed) {
+                entity.setAttackSpeed(bonus?.attackSpeed);
               }
 
               entity.setSprite(self.sprites[entity.getSpriteName()]);
@@ -3816,9 +3821,11 @@ class Game {
         $("#player-poisonResistance").text(bonus.poisonResistance);
         $("#player-physicalResistance").text(bonus.physicalResistance);
         $("#player-magicFind").text(bonus.magicFind);
-        // $("#player-attackSpeed").text(bonus.attackSpeed);
+        $("#player-attackSpeed").text(bonus.attackSpeed);
         $("#player-exp").text(bonus.exp);
         $("#player-skillTimeout").text(bonus.skillTimeout);
+
+        self.player.setAttackSpeed(bonus.attackSpeed);
       });
 
       self.client.onPlayerSettings(function ({ playerId, settings }) {

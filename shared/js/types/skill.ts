@@ -1,3 +1,5 @@
+export const PLAYER_MAX_SKILL_TIMEOUT = 60;
+
 export const defenseSkillDurationMap = [
   () => 900,
   (itemLevel: number) => itemLevel * 750,
@@ -42,6 +44,9 @@ export const attackSkillToResistanceType = [
   "coldResistance",
   "poisonResistance",
 ];
+
+export const calculateSkillTimeout = (timeout: number) =>
+  timeout > PLAYER_MAX_SKILL_TIMEOUT ? PLAYER_MAX_SKILL_TIMEOUT : timeout;
 
 export const defenseSkillDelay = [35_000, 35_000, 35_000];
 export const attackSkillDelay = [2_000, 2_000, 2_000, 2_000, 2_000];

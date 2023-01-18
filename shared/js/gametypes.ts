@@ -5,7 +5,10 @@ import { Slot } from "./slots";
 import { expForLevel } from "./types/experience";
 import { terrainToImageMap } from "./types/map";
 import {
+  calculateAttackSpeed,
   calculateResistance,
+  DEFAULT_ATTACK_ANIMATION_SPEED,
+  DEFAULT_ATTACK_SPEED,
   getRandomElement,
   getResistance,
   mobResistance,
@@ -36,6 +39,7 @@ import {
   attackSkillToResistanceType,
   attackSkillType,
   attackSkillTypeAnimationMap,
+  calculateSkillTimeout,
   defenseSkillDelay,
   defenseSkillDurationMap,
   defenseSkillTypeAnimationMap,
@@ -441,6 +445,7 @@ Types.defenseSkillDelay = defenseSkillDelay;
 Types.skillToNameMap = skillToNameMap;
 Types.attackSkillDelay = attackSkillDelay;
 Types.attackSkillTypeAnimationMap = attackSkillTypeAnimationMap;
+Types.calculateSkillTimeout = calculateSkillTimeout;
 Types.defenseSkillTypeAnimationMap = defenseSkillTypeAnimationMap;
 Types.defenseSkillDurationMap = defenseSkillDurationMap;
 Types.attackSkillDurationMap = attackSkillDurationMap;
@@ -452,7 +457,10 @@ Types.getRandomElement = getRandomElement;
 Types.resistanceToDisplayMap = resistanceToDisplayMap;
 Types.mobResistance = mobResistance;
 Types.PLAYER_MAX_RESISTANCES = PLAYER_MAX_RESISTANCES;
+Types.DEFAULT_ATTACK_SPEED = DEFAULT_ATTACK_SPEED;
+Types.DEFAULT_ATTACK_ANIMATION_SPEED = DEFAULT_ATTACK_ANIMATION_SPEED;
 Types.calculateResistance = calculateResistance;
+Types.calculateAttackSpeed = calculateAttackSpeed;
 Types.terrainToImageMap = terrainToImageMap;
 
 Types.Entities.Potion = [
@@ -1634,7 +1642,7 @@ Types.getBonusDescriptionMap = [
   "+#% All resistances",
   "+#% Prevent enemy health regeneration",
   "+# Poison damage",
-  "-#% Skill timeout",
+  "#% Faster cast rate",
 ];
 
 Types.bonusType = [
@@ -2318,7 +2326,7 @@ Types.itemDescription = {
     "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
   rune: "Can be inserted into a socketed item or create runewords",
   stonesocket:
-    "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets, the stone will attempt to remove the last item from its socket. There is a 50% chance for the item to be burned.",
+    "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets, the stone will attempt to remove the last item from its socket. There is a 90% chance for the item to be burned.",
   jewelskull: "Can be inserted in a socket",
   stonedragon: "Blessed by the fire of the dragon, safely upgrade any item to +5",
   stonehero:

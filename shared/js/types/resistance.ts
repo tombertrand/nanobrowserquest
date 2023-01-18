@@ -1,6 +1,9 @@
 import _ from "lodash";
 
 export const PLAYER_MAX_RESISTANCES = 90;
+export const PLAYER_MAX_ATTACK_SPEED = 50;
+export const DEFAULT_ATTACK_SPEED = 800;
+export const DEFAULT_ATTACK_ANIMATION_SPEED = 50;
 
 export const mobResistance = {
   rat: {
@@ -72,6 +75,9 @@ export const getRandomElement = (): Elements =>
 
 export const calculateResistance = (resistance: number) =>
   resistance > PLAYER_MAX_RESISTANCES ? PLAYER_MAX_RESISTANCES : resistance;
+
+export const calculateAttackSpeed = (attackSpeed: number) =>
+  attackSpeed > PLAYER_MAX_ATTACK_SPEED ? PLAYER_MAX_ATTACK_SPEED : attackSpeed;
 
 export const getResistance = (mob: { name: string; type: string; bonus: Resistances }) => {
   let resistances = { ...DefaultResistances };

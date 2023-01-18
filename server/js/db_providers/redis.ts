@@ -1175,9 +1175,6 @@ class DatabaseHandler {
           const isGuaranteedSuccess =
             Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone);
 
-          console.log("~~~~filteredUpgrade", filteredUpgrade);
-          console.log("~~~~scrollOrStone", scrollOrStone);
-
           ({ isSuccess, random, successRate } = isUpgradeSuccess({
             level,
             isLuckySlot,
@@ -1196,10 +1193,6 @@ class DatabaseHandler {
           if (isSuccess) {
             let upgradedLevel = parseInt(level) + 1;
 
-            console.log("~~~~isGuaranteedSuccess", isGuaranteedSuccess);
-            console.log("~~~~item", scrollOrStone);
-            console.log("~~~~Types.StoneUpgrade.stonedragon", Types.StoneUpgrade.stonedragon);
-
             if (isGuaranteedSuccess) {
               if (scrollOrStone === "stonedragon") {
                 upgradedLevel = Types.StoneUpgrade.stonedragon;
@@ -1207,8 +1200,6 @@ class DatabaseHandler {
                 upgradedLevel = Types.StoneUpgrade.stonehero;
               }
             }
-
-            console.log("~~~~upgradedLevel", upgradedLevel);
 
             upgradedItem = [item, upgradedLevel, bonus, socket, skill].filter(Boolean).join(":");
             isSuccess = true;

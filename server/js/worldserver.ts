@@ -1858,19 +1858,19 @@ class World {
     });
   }
 
+  isPlayerNearEntity(player, entity, range: number = 20) {
+    if (player) {
+      return Math.abs(player.x - entity.x) <= range && Math.abs(player.y - entity.y) <= range;
+    } else {
+      return false;
+    }
+  }
+
   getPlayersAroundBoss(entity, range: number = 20) {
     let counter = 0;
 
-    function isNearBoss(player) {
-      if (player) {
-        return Math.abs(player.x - entity.x) <= range && Math.abs(player.y - entity.y) <= range;
-      } else {
-        return false;
-      }
-    }
-
     for (let id in this.players) {
-      if (isNearBoss(this.players[id])) {
+      if (this.isPlayerNearEntity(this.players[id], entity, range)) {
         counter += 1;
         // Max difficulty of 6
         if (counter === 6) {

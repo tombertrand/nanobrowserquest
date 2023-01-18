@@ -89,12 +89,12 @@ class Character extends Entity {
     this.orientation = Types.Orientations.DOWN;
 
     // Speeds
-    this.atkSpeed = 50;
+    this.atkSpeed = Types.DEFAULT_ATTACK_ANIMATION_SPEED;
     this.raiseSpeed = null;
     this.moveSpeed = 120;
     this.walkSpeed = 100;
     this.idleSpeed = 450;
-    this.setAttackRate(800);
+    this.setAttackRate(Types.DEFAULT_ATTACK_SPEED);
 
     // Pathing
     this.movement = new Transition();
@@ -767,6 +767,19 @@ class Character extends Entity {
   stopHurting() {
     this.sprite = this.normalSprite;
     clearTimeout(this.hurting);
+  }
+
+  setAttackSpeed(bonus: number) {
+    const animationSpeed = Math.round(
+      Types.DEFAULT_ATTACK_ANIMATION_SPEED -
+        Types.DEFAULT_ATTACK_ANIMATION_SPEED * (Types.calculateAttackSpeed(bonus) / 100),
+    );
+    const attackSpeed = Math.round(
+      Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (Types.calculateAttackSpeed(bonus) / 100),
+    );
+
+    this.atkSpeed = animationSpeed;
+    this.setAttackRate(attackSpeed);
   }
 
   setAttackRate(rate) {

@@ -473,7 +473,7 @@ export const Runewords = {
       bonus: {
         magicDamagePercent: 30,
         magicResistance: 20,
-        attackSpeed: 30,
+        attackSpeed: 24,
         pierceDamage: 20,
         criticalHit: 8,
       },

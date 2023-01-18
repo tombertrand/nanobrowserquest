@@ -240,10 +240,8 @@ export const isValidUpgradeItems = items => {
       (scrollOrStone === "stonedragon" && parseInt(level) >= Types.StoneUpgrade.stonedragon) ||
       (scrollOrStone === "stonehero" && parseInt(level) >= Types.StoneUpgrade.stonehero)
     ) {
-      console.log("~~~~~return false!");
       return false;
     }
-    console.log("~~~~~return true!");
     return true;
   }
 
@@ -689,7 +687,7 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     return false;
   }
 
-  const stoneIndex = items.findIndex(item => item === "stonesocket");
+  const stoneIndex = items.findIndex(item => item.startsWith("stonesocket"));
   const itemIndex = items.findIndex(item => !item.startsWith("stone"));
 
   const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");

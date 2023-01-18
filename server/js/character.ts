@@ -12,6 +12,7 @@ class Character extends Entity {
   poisonedInterval: any;
   resistances?: Resistances;
   element?: Elements;
+  bonus?: any;
 
   constructor(id, type, kind, x, y) {
     super(id, type, kind, x, y);
