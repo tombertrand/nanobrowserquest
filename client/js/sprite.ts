@@ -57,16 +57,12 @@ class Sprite {
       this.id === "weapon" ||
       this.id === "armor" ||
       this.id === "shield" ||
-      this.id === "npc"
-    ) {
-      this.id = this.name;
-    }
-
-    if (
+      this.id === "npc" ||
       this.id.startsWith("deathangel-spell") ||
       this.id.startsWith("mage-spell") ||
       this.id.startsWith("skill-cast") ||
-      this.id.startsWith("portal")
+      this.id.startsWith("portal") ||
+      this.id === "skeleton"
     ) {
       this.id = this.name;
     }

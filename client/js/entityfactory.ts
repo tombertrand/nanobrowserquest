@@ -139,25 +139,25 @@ EntityFactory.builders[Types.Entities.MINOTAUR] = function (id) {
   return new Mobs.Minotaur(id);
 };
 
-EntityFactory.builders[Types.Entities.TROLL] = function (id) {
-  return new Mobs.Troll(id);
-};
+// EntityFactory.builders[Types.Entities.TROLL] = function (id) {
+//   return new Mobs.Troll(id);
+// };
 
-EntityFactory.builders[Types.Entities.SNAKE3] = function (id) {
-  return new Mobs.Snake3(id);
-};
+// EntityFactory.builders[Types.Entities.SNAKE3] = function (id) {
+//   return new Mobs.Snake3(id);
+// };
 
-EntityFactory.builders[Types.Entities.GOLEM] = function (id) {
-  return new Mobs.Golem(id);
-};
+// EntityFactory.builders[Types.Entities.GOLEM] = function (id) {
+//   return new Mobs.Golem(id);
+// };
 
-EntityFactory.builders[Types.Entities.HARPIE] = function (id) {
-  return new Mobs.Harpie(id);
-};
+// EntityFactory.builders[Types.Entities.HARPIE] = function (id) {
+//   return new Mobs.Harpie(id);
+// };
 
-EntityFactory.builders[Types.Entities.WEREWOLF2] = function (id) {
-  return new Mobs.Werewolf2(id);
-};
+// EntityFactory.builders[Types.Entities.WEREWOLF2] = function (id) {
+//   return new Mobs.Werewolf2(id);
+// };
 
 EntityFactory.builders[Types.Entities.SKELETON4] = function (id) {
   return new Mobs.Skeleton4(id);

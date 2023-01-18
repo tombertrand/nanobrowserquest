@@ -328,15 +328,15 @@ export const getAchievements = (network: Network) => ({
     desc: "Kill every monster in the secret level",
     hidden: true,
   },
-  EXPANSION1: {
+  WOODLAND: {
     id: 45,
-    name: "The adventure continues",
+    name: "Woodland",
     desc: "Enter the Woodland",
     hidden: false,
   },
   EXPANSION2: {
     id: 46,
-    name: "Dirty Hands",
+    name: "What's that smell",
     desc: "Kill 250 Trolls",
     hidden: false,
   },
@@ -352,11 +352,14 @@ export const getAchievements = (network: Network) => ({
     desc: "Achievement description4",
     hidden: false,
   },
-  EXPANSION5: {
+  HARDROCK: {
     id: 49,
-    name: "Rock Hard",
+    name: "Hard Rock",
     desc: "Kill 250 Stone Golem",
     hidden: false,
+    isCompleted() {
+      return storage.getCowCount() >= 250;
+    },
   },
   EXPANSION6: {
     id: 50,
@@ -378,26 +381,26 @@ export const getAchievements = (network: Network) => ({
   },
   EXPANSION9: {
     id: 53,
-    name: "Say Goodbye",
-    desc: "Enter the 3rd dimension",
+    name: "Stargate",
+    desc: "Enter the portal",
     hidden: false,
   },
   EXPANSION10: {
     id: 54,
-    name: "Title10",
-    desc: "Achievement description10",
+    name: "Rune Master",
+    desc: "Combine runes to create a higher ranked one",
     hidden: false,
   },
   EXPANSION11: {
     id: 55,
-    name: "Holy Grail",
+    name: "Kingdom of heaven",
     desc: "Find the Holy Grail",
     hidden: false,
   },
   EXPANSION12: {
     id: 56,
-    name: "The Crypt underneat",
-    desc: "Find the hidden Crypt",
+    name: "The Tomb",
+    desc: "Enter the hidden Crypt",
     hidden: false,
   },
   EXPANSION13: {
@@ -408,14 +411,17 @@ export const getAchievements = (network: Network) => ({
   },
   EXPANSION14: {
     id: 58,
-    name: "Title14",
-    desc: "Achievement description14",
+    name: "Archmage",
+    desc: "Kill 250 mages",
     hidden: false,
+    isCompleted() {
+      return storage.getCowCount() >= 250;
+    },
   },
   EXPANSION15: {
     id: 59,
-    name: "Title15",
-    desc: "Achievement description15",
+    name: "Cruisade",
+    desc: "Kill 250 Cruisader Skeletons",
     hidden: false,
   },
   EXPANSION16: {

@@ -348,66 +348,66 @@ export const Mobs = {
     }
   },
 
-  Troll: class Troll extends Mob {
-    constructor(id) {
-      super(id, Types.Entities.TROLL);
-      this.moveSpeed = 200;
-      this.atkSpeed = 100;
-      this.idleSpeed = 800;
-      this.walkSpeed = 200;
-      this.shadowOffsetY = 1;
-      this.aggroRange = 5;
-      this.setAttackRate(1300);
-    }
-  },
+  // Troll: class Troll extends Mob {
+  //   constructor(id) {
+  //     super(id, Types.Entities.TROLL);
+  //     this.moveSpeed = 200;
+  //     this.atkSpeed = 100;
+  //     this.idleSpeed = 800;
+  //     this.walkSpeed = 200;
+  //     this.shadowOffsetY = 1;
+  //     this.aggroRange = 5;
+  //     this.setAttackRate(1300);
+  //   }
+  // },
 
-  Snake3: class Snake3 extends Mob {
-    constructor(id) {
-      super(id, Types.Entities.SNAKE3);
-      this.moveSpeed = 200;
-      this.atkSpeed = 40;
-      this.idleSpeed = 250;
-      this.walkSpeed = 100;
-      this.shadowOffsetY = -4;
-      this.aggroRange = 4;
-    }
-  },
+  // Snake3: class Snake3 extends Mob {
+  //   constructor(id) {
+  //     super(id, Types.Entities.SNAKE3);
+  //     this.moveSpeed = 200;
+  //     this.atkSpeed = 40;
+  //     this.idleSpeed = 250;
+  //     this.walkSpeed = 100;
+  //     this.shadowOffsetY = -4;
+  //     this.aggroRange = 4;
+  //   }
+  // },
 
-  Golem: class Golem extends Mob {
-    constructor(id) {
-      super(id, Types.Entities.GOLEM);
-      this.moveSpeed = 200;
-      this.atkSpeed = 100;
-      this.idleSpeed = 800;
-      this.walkSpeed = 200;
-      this.shadowOffsetY = 1;
-      this.aggroRange = 5;
-      this.setAttackRate(1300);
-    }
-  },
+  // Golem: class Golem extends Mob {
+  //   constructor(id) {
+  //     super(id, Types.Entities.GOLEM);
+  //     this.moveSpeed = 200;
+  //     this.atkSpeed = 100;
+  //     this.idleSpeed = 800;
+  //     this.walkSpeed = 200;
+  //     this.shadowOffsetY = 1;
+  //     this.aggroRange = 5;
+  //     this.setAttackRate(1300);
+  //   }
+  // },
 
-  Harpie: class Harpie extends Mob {
-    constructor(id) {
-      super(id, Types.Entities.HARPIE);
-      this.moveSpeed = 200;
-      this.atkSpeed = 100;
-      this.idleSpeed = 800;
-      this.walkSpeed = 200;
-      this.shadowOffsetY = 1;
-      this.aggroRange = 5;
-      this.setAttackRate(1300);
-    }
-  },
+  // Harpie: class Harpie extends Mob {
+  //   constructor(id) {
+  //     super(id, Types.Entities.HARPIE);
+  //     this.moveSpeed = 200;
+  //     this.atkSpeed = 100;
+  //     this.idleSpeed = 800;
+  //     this.walkSpeed = 200;
+  //     this.shadowOffsetY = 1;
+  //     this.aggroRange = 5;
+  //     this.setAttackRate(1300);
+  //   }
+  // },
 
-  Werewolf2: class Werewolf2 extends Mob {
-    constructor(id) {
-      super(id, Types.Entities.WEREWOLF2);
-      this.moveSpeed = 200;
-      this.atkSpeed = 80;
-      this.idleSpeed = 600;
-      this.aggroRange = 3;
-    }
-  },
+  // Werewolf2: class Werewolf2 extends Mob {
+  //   constructor(id) {
+  //     super(id, Types.Entities.WEREWOLF2);
+  //     this.moveSpeed = 200;
+  //     this.atkSpeed = 80;
+  //     this.idleSpeed = 600;
+  //     this.aggroRange = 3;
+  //   }
+  // },
 
   Skeleton4: class Skeleton4 extends Mob {
     constructor(id) {

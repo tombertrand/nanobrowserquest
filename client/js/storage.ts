@@ -44,8 +44,11 @@ class Storage {
         yetiCount: 0,
         werewolfCount: 0,
         skeleton3Count: 0,
+        skeleton4Count: 0,
         wraithCount: 0,
+        wraith2Count: 0,
         cowCount: 0,
+        mageCount: 0,
         totalKills: 0,
         totalDmg: 0,
         totalRevives: 0,
@@ -302,6 +305,22 @@ class Storage {
     }
   }
 
+  // Cruisader
+  getSkeleton4Count() {
+    return this.data.achievements.skeleton4Count;
+  }
+
+  incrementSkeleton4Count() {
+    if (!this.data.achievements.skeleton4Count) {
+      this.data.achievements.skeleton4Count = 0;
+    }
+
+    if (this.data.achievements.skeleton4Count < 250) {
+      this.data.achievements.skeleton4Count++;
+      this.save();
+    }
+  }
+
   // Ghostbusters
   getWraithCount() {
     return this.data.achievements.wraithCount;
@@ -318,6 +337,22 @@ class Storage {
     }
   }
 
+  // TBD
+  getWraith2Count() {
+    return this.data.achievements.wraith2Count;
+  }
+
+  incrementWraith2Count() {
+    if (!this.data.achievements.wraith2Count) {
+      this.data.achievements.wraith2Count = 0;
+    }
+
+    if (this.data.achievements.wraith2Count < 50) {
+      this.data.achievements.wraith2Count++;
+      this.save();
+    }
+  }
+
   // Meat Fest
   getCowCount() {
     return this.data.achievements.cowCount;
@@ -330,6 +365,22 @@ class Storage {
 
     if (this.data.achievements.cowCount < 500) {
       this.data.achievements.cowCount++;
+      this.save();
+    }
+  }
+
+  // Meat Fest
+  getMageCount() {
+    return this.data.achievements.mageCount;
+  }
+
+  incrementMageCount() {
+    if (!this.data.achievements.mageCount) {
+      this.data.achievements.mageCount = 0;
+    }
+
+    if (this.data.achievements.mageCount < 250) {
+      this.data.achievements.mageCount++;
       this.save();
     }
   }

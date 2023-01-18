@@ -17,12 +17,12 @@ import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
-import troll from "../sprites/skeleton.json";
-import snake3 from "../sprites/skeleton.json";
-import golem from "../sprites/skeleton.json";
-import harpie from "../sprites/skeleton.json";
-import werewolf2 from "../sprites/skeleton.json";
-import skeleton4 from "../sprites/skeleton4.json";
+// import troll from "../sprites/skeleton.json";
+// import snake3 from "../sprites/skeleton.json";
+// import golem from "../sprites/skeleton.json";
+// import harpie from "../sprites/skeleton.json";
+// import werewolf2 from "../sprites/skeleton.json";
+import skeleton4 from "../sprites/skeleton.json";
 import worm from "../sprites/worm.json";
 import wraith2 from "../sprites/wraith2.json";
 import ghost from "../sprites/ghost.json";
@@ -188,11 +188,11 @@ const sprites = {
   cow,
   cowking,
   minotaur,
-  troll,
-  snake3,
-  golem,
-  harpie,
-  werewolf2,
+  // troll,
+  // snake3,
+  // golem,
+  // harpie,
+  // werewolf2,
   skeleton4,
   worm,
   wraith2,
