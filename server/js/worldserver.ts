@@ -1542,7 +1542,8 @@ class World {
     //   "amuletmoon",
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
-    var randomDrops = ["stonehero", "stonedragon", "templararmor"];
+    var randomDrops = ["hellhammer"];
+    // var randomDrops = ["stonehero", "stonedragon", "templararmor"];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = [

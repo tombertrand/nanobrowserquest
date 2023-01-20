@@ -135,6 +135,13 @@ var Items = {
     }
   },
 
+  HellHammer: class HellHammer extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELLHAMMER, "weapon");
+      this.lootMessage = "You pick up a hell hammer";
+    }
+  },
+
   LeatherArmor: class LeatherArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.LEATHERARMOR, "armor");

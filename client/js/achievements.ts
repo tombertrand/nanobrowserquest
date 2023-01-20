@@ -340,10 +340,10 @@ export const getAchievements = (network: Network) => ({
     desc: "Kill 250 Trolls",
     hidden: false,
   },
-  EXPANSION3: {
+  SCROLL: {
     id: 47,
     name: "Title3",
-    desc: "Achievement description3",
+    desc: "Get rewarded with legendary scrolls",
     hidden: false,
   },
   EXPANSION4: {
@@ -367,19 +367,19 @@ export const getAchievements = (network: Network) => ({
     desc: "Achievement description6",
     hidden: false,
   },
-  EXPANSION7: {
+  HELLFORGE: {
     id: 51,
-    name: "Title7",
-    desc: "Achievement description7",
+    name: "Hellforge",
+    desc: "Break the mystical gem on the Altar",
     hidden: false,
   },
-  EXPANSION8: {
+  STONEHENGE: {
     id: 52,
     name: "Stonehenge",
     desc: "Activate all magic stones",
     hidden: false,
   },
-  EXPANSION9: {
+  STARGATE: {
     id: 53,
     name: "Stargate",
     desc: "Enter the portal",
@@ -391,9 +391,9 @@ export const getAchievements = (network: Network) => ({
     desc: "Combine runes to create a higher ranked one",
     hidden: false,
   },
-  EXPANSION11: {
+  KINGDOM: {
     id: 55,
-    name: "Kingdom of heaven",
+    name: "Kingdom of Heaven",
     desc: "Find the Holy Grail",
     hidden: false,
   },
@@ -403,13 +403,13 @@ export const getAchievements = (network: Network) => ({
     desc: "Enter the hidden Crypt",
     hidden: false,
   },
-  EXPANSION13: {
+  PHARAOH: {
     id: 57,
     name: "Pharaoh",
     desc: "Enter the Temple of Light",
     hidden: false,
   },
-  EXPANSION14: {
+  ARCHMAGE: {
     id: 58,
     name: "Archmage",
     desc: "Kill 250 mages",
@@ -418,15 +418,15 @@ export const getAchievements = (network: Network) => ({
       return storage.getCowCount() >= 250;
     },
   },
-  EXPANSION15: {
+  CRUISADE: {
     id: 59,
     name: "Cruisade",
     desc: "Kill 250 Cruisader Skeletons",
     hidden: false,
   },
-  EXPANSION16: {
+  DEATHANGEL: {
     id: 60,
-    name: "The Reaper",
+    name: "Save your Soul",
     desc: "Kill the Death Angel",
     hidden: false,
   },
@@ -436,16 +436,16 @@ export const getAchievements = (network: Network) => ({
     desc: "Upgrade a legendary item to +8",
     hidden: false,
   },
-  EXPANSION18: {
+  BLACKSMITH: {
     id: 62,
     name: "Blacksmith",
     desc: "Forge a Runeword",
     hidden: false,
   },
-  EXPANSION19: {
+  ZELDA: {
     id: 63,
-    name: "Title19",
-    desc: "Achievement description19",
+    name: "ZELDA",
+    desc: "Find the hidden stairs",
     hidden: false,
   },
   EXPANSION20: {

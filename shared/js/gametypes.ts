@@ -374,6 +374,7 @@ export const Types: any = {
     EXECUTIONERSWORD: 158,
     MYSTICALSWORD: 159,
     DRAGONSWORD: 160,
+    HELLHAMMER: 244,
 
     // Runes
     RUNE,
@@ -506,6 +507,7 @@ Types.Entities.Weapons = [
   Types.Entities.EXECUTIONERSWORD,
   Types.Entities.MYSTICALSWORD,
   Types.Entities.DRAGONSWORD,
+  Types.Entities.HELLHAMMER,
 ];
 
 Types.Entities.Armors = [
@@ -674,6 +676,7 @@ export const kinds = {
   mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 40, 40],
   templarsword: [Types.Entities.TEMPLARSWORD, "weapon", "Templar Sword", 40, 40],
   dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 40, 40],
+  hellhammer: [Types.Entities.HELLHAMMER, "weapon", "Hell Hammer", 40, 40],
   moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Partisan", 40, 40],
 
   // kind, type, level, defense
@@ -941,6 +944,7 @@ Types.itemUniqueMap = {
   mysticalsword: ["The Maximalist", 38, 38],
   templarsword: ["TBD", 38, 38],
   dragonsword: ["Balerion the Black Dread", 38, 38],
+  hellhammer: ["Hephasto The Armorer", 38, 38],
   moonsword: ["Moon Boy", 38, 38],
 
   // Laser Eyes
@@ -1919,6 +1923,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     mysticalsword: 4,
     templarsword: 4,
     dragonsword: 4,
+    hellhammer: 4,
     moonsword: 4,
 
     goldenarmor: 20,

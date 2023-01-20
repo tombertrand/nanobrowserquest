@@ -51,6 +51,7 @@ import eclypsedagger from "../sprites/weapon.json";
 import executionersword from "../sprites/weapon.json";
 import mysticalsword from "../sprites/weapon.json";
 import dragonsword from "../sprites/weapon.json";
+import hellhammer from "../sprites/weapon.json";
 import clotharmor from "../sprites/armor.json";
 import leatherarmor from "../sprites/armor.json";
 import mailarmor from "../sprites/armor.json";
@@ -233,6 +234,7 @@ const sprites = {
   executionersword,
   mysticalsword,
   dragonsword,
+  hellhammer,
   guard,
   hand,
   impact,
@@ -398,6 +400,7 @@ const sprites = {
   "item-executionersword": item,
   "item-mysticalsword": item,
   "item-dragonsword": item,
+  "item-hellhammer": item,
   "item-leatherarmor": item,
   "item-mailarmor": item,
   "item-morningstar": item,

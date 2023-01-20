@@ -148,6 +148,7 @@ class Player extends Character {
   curseId: number;
   cursedTimeout: NodeJS.Timeout;
   attackTimeout: NodeJS.Timeout;
+  discordId: number;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -2395,6 +2396,7 @@ class Player extends Character {
     depositAccountIndex,
     settings,
     network,
+    discordId,
   }) {
     try {
       // @NOTE: Make sure the player has authenticated if he has the expansion
@@ -2481,6 +2483,7 @@ class Player extends Character {
       this.orientation = randomOrientation();
       this.network = network;
       this.nanoPotions = nanoPotions;
+      this.discordId = discordId;
 
       if (!x || !y) {
         this.updatePosition();

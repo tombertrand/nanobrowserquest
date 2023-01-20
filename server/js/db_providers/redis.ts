@@ -119,6 +119,7 @@ class DatabaseHandler {
             .hget(userKey, "settings") // 26
             .hget(userKey, "network") // 27
             .hget(userKey, "trade") // 28
+            .hget(userKey, "discordId") // 29
 
             .exec(async (err, replies) => {
               if (err) {
@@ -146,6 +147,7 @@ class DatabaseHandler {
               var depositAccount = replies[23];
               var depositAccountIndex = replies[24];
               var network = replies[27];
+              var discordId = replies[29];
 
               const [, rawAccount] = account.split("_");
               const [rawNetwork, rawPlayerAccount] = player.account.split("_");
@@ -430,6 +432,7 @@ class DatabaseHandler {
                 depositAccountIndex,
                 settings,
                 network,
+                discordId,
               });
             });
           return;
@@ -1544,6 +1547,9 @@ class DatabaseHandler {
 
         this.client.set(`discord:${discordUserId}`, player.name);
         this.client.del(`discord_secret:${secret}`);
+
+        // Also link it on the player so it's easily searchable
+        this.client.hset("u:" + player.name, "discordId", discordUserId);
 
         player.connection.send({
           type: Types.Messages.NOTIFICATION,
