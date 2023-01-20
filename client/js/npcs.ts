@@ -186,6 +186,16 @@ var Npcs = {
       return false;
     }
   },
+
+  AltarChalice: class AltarChalice extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.ALTARCHALICE);
+      this.raiseRate = 1300;
+    }
+    // hasShadow() {
+    //   return false;
+    // }
+  },
 };
 
 export default Npcs;

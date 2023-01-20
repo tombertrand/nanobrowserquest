@@ -83,6 +83,7 @@ class World {
   activatedMagicStones: number[];
   blueFlames: number[];
   spellCount: number;
+  isActivatedAltarChalice: boolean;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -170,6 +171,7 @@ class World {
     this.magicStones = [];
     this.activatedMagicStones = [];
     this.blueFlames = [];
+    this.isActivatedAltarChalice = false;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -1117,6 +1119,12 @@ class World {
     this.pushBroadcast(new Messages.Raise(blueflame.id));
   }
 
+  activateAltarChalice(player, altarChalice) {
+    altarChalice.activate();
+
+    this.broadcastRaise(player, altarChalice);
+  }
+
   broadcastRaise(player, mob) {
     if (player && mob) {
       this.pushToAdjacentGroups(player.group, mob.raise(player.id));
@@ -1542,7 +1550,7 @@ class World {
     //   "amuletmoon",
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
-    var randomDrops = ["hellhammer"];
+    var randomDrops = ["chalice"];
     // var randomDrops = ["stonehero", "stonedragon", "templararmor"];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];

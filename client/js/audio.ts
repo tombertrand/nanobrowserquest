@@ -77,6 +77,7 @@ class AudioManager {
       "skill-poison",
       "curse-prevent-regenerate-health",
       "magicstone",
+      // "altarchalice",
     ];
 
     var loadSoundFiles = function () {

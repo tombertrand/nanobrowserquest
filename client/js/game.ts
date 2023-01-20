@@ -185,6 +185,7 @@ class Game {
   currentStashPage: number;
   activatedMagicStones: number[];
   activatedBlueFlames: number[];
+  isAltarChaliceActivated: boolean;
 
   constructor(app) {
     this.app = app;
@@ -275,6 +276,7 @@ class Game {
 
     this.activatedMagicStones = [];
     this.activatedBlueFlames = [];
+    this.isAltarChaliceActivated = false;
 
     // combat
     // @ts-ignore
@@ -405,6 +407,7 @@ class Game {
       "portaltemple",
       "portaldeathangel",
       "magicstone",
+      "altarchalice",
       "blueflame",
       "beachnpc",
       "forestnpc",
@@ -615,6 +618,7 @@ class Game {
       "item-skeletonkingcage",
       "item-necromancerheart",
       "item-cowkinghorn",
+      "item-chalice",
       "item-cake",
       "item-burger",
       "morningstar",
@@ -2298,9 +2302,17 @@ class Game {
         }
 
         // @NOTE: MagicStones/PortalDeathAngel takes 2 tiles
-        if (entity.kind === Types.Entities.MAGICSTONE || entity.kind === Types.Entities.PORTALDEATHANGEL) {
+        if (
+          entity.kind === Types.Entities.MAGICSTONE ||
+          entity.kind === Types.Entities.PORTALDEATHANGEL ||
+          entity.kind === Types.Entities.ALTARCHALICE
+        ) {
           this.entityGrid[y][x + 1][entity.id] = entity;
           this.pathingGrid[y][x + 1] = 1;
+        }
+        if (entity.kind === Types.Entities.ALTARCHALICE) {
+          this.entityGrid[y][x + 2][entity.id] = entity;
+          this.pathingGrid[y][x + 2] = 1;
         }
       }
       if (entity instanceof Item) {
@@ -3029,6 +3041,13 @@ class Game {
                 entity.isActivated = isActivated;
                 entity.setVisible(isActivated);
                 entity.idle();
+              } else if (entity.kind === Types.Entities.ALTARCHALICE) {
+                entity.isActivated = isActivated;
+                if (entity.isActivated) {
+                  entity.walk();
+                } else {
+                  entity.idle();
+                }
               } else {
                 entity.idle();
               }
@@ -3680,6 +3699,14 @@ class Game {
 
             mob.idle();
             mob.setVisible(true);
+          } else if (mob.kind === Types.Entities.ALTARCHALICE) {
+            self.isAltarChaliceActivated = true;
+
+            mob.walk();
+
+            // Set the stairs visible
+            // @TODO ~~~ play sound
+            // mob.setVisible(true);
           }
         }
       });
@@ -4485,6 +4512,7 @@ class Game {
           // Types.Entities.PORTALMINOTAUR,
           Types.Entities.MAGICSTONE,
           Types.Entities.BLUEFLAME,
+          Types.Entities.ALTARCHALICE,
         ].includes(npc.kind)
       ) {
         if (msg) {
@@ -4557,6 +4585,10 @@ class Game {
       } else if (npc.kind === Types.Entities.MAGICSTONE) {
         if (!npc.isActivated) {
           this.client.sendMagicStone(npc.id);
+        }
+      } else if (npc.kind === Types.Entities.ALTARCHALICE) {
+        if (!npc.isActivated) {
+          this.client.sendAltarChalice(npc.id);
         }
       }
     }

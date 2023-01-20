@@ -1306,6 +1306,10 @@ class GameClient {
   sendMagicStone(id) {
     this.sendMessage([Types.Messages.MAGICSTONE, id]);
   }
+
+  sendAltarChalice(id) {
+    this.sendMessage([Types.Messages.ALTARCHALICE, id]);
+  }
 }
 
 export default GameClient;

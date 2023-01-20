@@ -194,6 +194,7 @@ var NpcTalk = {
   ],
   magicstone: [""],
   blueflame: [""],
+  altarchalice: [""],
 
   coder: [
     "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",

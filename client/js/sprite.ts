@@ -30,6 +30,11 @@ class Sprite {
     this.isLoaded = false;
     this.offsetX = 0;
     this.offsetY = 0;
+
+    if (!sprites[name]) {
+      console.error(`Mising sprite: ${name}`);
+    }
+
     this.loadJSON(sprites[name]);
   }
 

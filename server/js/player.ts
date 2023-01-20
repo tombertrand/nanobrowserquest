@@ -604,6 +604,19 @@ class Player extends Character {
             console.log("~~~~OPEN PORTAL!");
           }
         }
+      } else if (action === Types.Messages.ALTARCHALICE) {
+        console.info("ALTARCHALICE: " + self.name + " " + message[1]);
+
+        const altarChalice = self.server.getEntityById(message[1]);
+        if (
+          altarChalice &&
+          altarChalice instanceof Npc &&
+          !self.server.isActivatedAltarChalice &&
+          !altarChalice.isActivated
+          // @TODO check in inventory if player has the chalice, if yes delete it
+        ) {
+          self.server.activateAltarChalice(self, altarChalice);
+        }
       } else if (action === Types.Messages.CAST_SPELL) {
         if (typeof message[1] !== "number" || typeof message[2] !== "number" || typeof message[3] !== "number") return;
 
@@ -1384,7 +1397,9 @@ class Player extends Character {
         isUnique,
       };
     } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isStone(kind)) {
+      console.log("~~~~is single!!");
       item = { item: Types.getKindAsString(kind), quantity: 1 };
+      console.log("~~~~item", item);
     } else if (Types.isCape(kind)) {
       const bonus = this.generateRandomCapeBonus(uniqueChances);
 

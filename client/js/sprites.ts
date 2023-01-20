@@ -108,6 +108,7 @@ import portalminotaur from "../sprites/portal.json";
 import portaltemple from "../sprites/portal.json";
 import portaldeathangel from "../sprites/portaldeathangel.json";
 import magicstone from "../sprites/magicstone.json";
+import altarchalice from "../sprites/altarchalice.json";
 import blueflame from "../sprites/blueflame.json";
 import ogre from "../sprites/ogre.json";
 import yeti from "../sprites/yeti.json";
@@ -349,6 +350,7 @@ const sprites = {
   "item-skeletonkingcage": item,
   "item-necromancerheart": item,
   "item-cowkinghorn": item,
+  "item-chalice": item,
   "item-goldenarmor": item,
   "item-bluearmor": item,
   "item-hornedarmor": item,
@@ -433,6 +435,7 @@ const sprites = {
   portaldeathangel,
   magicstone,
   blueflame,
+  altarchalice,
   ogre,
   yeti,
   werewolf,

@@ -793,6 +793,10 @@ EntityFactory.builders[Types.Entities.COWKINGHORN] = function (id) {
   return new Items.CowkingHorn(id);
 };
 
+EntityFactory.builders[Types.Entities.CHALICE] = function (id) {
+  return new Items.Chalice(id);
+};
+
 EntityFactory.builders[Types.Entities.FIREFOXPOTION] = function (id) {
   return new Items.Firefoxpotion(id);
 };
@@ -925,6 +929,10 @@ EntityFactory.builders[Types.Entities.MAGICSTONE] = function (id) {
 
 EntityFactory.builders[Types.Entities.BLUEFLAME] = function (id) {
   return new Npcs.BlueFlame(id);
+};
+
+EntityFactory.builders[Types.Entities.ALTARCHALICE] = function (id) {
+  return new Npcs.AltarChalice(id);
 };
 
 export default EntityFactory;

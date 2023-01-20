@@ -1052,6 +1052,13 @@ var Items = {
     }
   },
 
+  Chalice: class Chalice extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHALICE, "object");
+      this.lootMessage = "You pick up the Golden Chalice";
+    }
+  },
+
   Cake: class Cake extends Item {
     constructor(id) {
       super(id, Types.Entities.CAKE, "object");

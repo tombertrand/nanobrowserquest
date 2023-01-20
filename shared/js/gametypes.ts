@@ -156,6 +156,7 @@ export const Types: any = {
     POISONED: 91,
     CURSED: 92,
     MAGICSTONE: 93,
+    ALTARCHALICE: 94,
   },
 
   Entities: {
@@ -287,6 +288,7 @@ export const Types: any = {
     SKELETONKINGCAGE: 123,
     NECROMANCERHEART: 124,
     COWKINGHORN: 137,
+    CHALICE: 245,
 
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
@@ -352,6 +354,7 @@ export const Types: any = {
     PORTALDEATHANGEL: 239,
     MAGICSTONE: 220,
     BLUEFLAME: 234,
+    ALTARCHALICE: 246,
 
     // Weapons
     DAGGER: 60,
@@ -794,6 +797,7 @@ export const kinds = {
   skeletonkingcage: [Types.Entities.SKELETONKINGCAGE, "recipe", "Skeleton King's thoracic cage"],
   necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
+  chalice: [Types.Entities.CHALICE, "recipe", "Golden Chalice"],
 
   // kind, type, name, level
   "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 1],
@@ -860,6 +864,7 @@ export const kinds = {
   portaldeathangel: [Types.Entities.PORTALDEATHANGEL, "npc"],
   magicstone: [Types.Entities.MAGICSTONE, "npc"],
   blueflame: [Types.Entities.BLUEFLAME, "npc"],
+  altarchalice: [Types.Entities.ALTARCHALICE, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -1314,15 +1319,19 @@ Types.isStaticChest = function (kind: number) {
 Types.isSingle = function (kindOrString: number | string) {
   if (!kindOrString) return false;
   if (typeof kindOrString === "number") {
-    return [Types.Entities.SKELETONKINGCAGE, Types.Entities.NECROMANCERHEART, Types.Entities.COWKINGHORN].includes(
-      kindOrString,
-    );
+    return [
+      Types.Entities.SKELETONKINGCAGE,
+      Types.Entities.NECROMANCERHEART,
+      Types.Entities.COWKINGHORN,
+      Types.Entities.CHALICE,
+    ].includes(kindOrString);
   } else {
     return (
-      ["skeletonkingcage", "necromancerheart", "cowkinghorn"].includes(kindOrString) ||
+      ["skeletonkingcage", "necromancerheart", "cowkinghorn", "chalice"].includes(kindOrString) ||
       kindOrString.startsWith("skeletonkingcage") ||
       kindOrString.startsWith("necromancerheart") ||
-      kindOrString.startsWith("cowkinghorn")
+      kindOrString.startsWith("cowkinghorn") ||
+      kindOrString.startsWith("chalice")
     );
   }
 };
@@ -1453,6 +1462,8 @@ Types.getAliasFromName = function (name: string) {
     return "Magic Stone";
   } else if (name === "blueflame") {
     return "Magic Flame";
+  } else if (name === "altarchalice") {
+    return "Holy Altar";
   } else if (name === "wraith2") {
     return "Apocalypse Wraith";
   } else if (name === "deathangel") {
@@ -2313,6 +2324,7 @@ Types.itemDescription = {
   skeletonkingcage: "The thoracic cage of the Skeleton King. An unknown magic is still being emitted from the remains.",
   necromancerheart: "The heart of the Necromancer. An unknown magic is still being emitted from the remains.",
   cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
+  chalice: "The Golden Chalice is a unique artifact, return it where it belongs.",
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",
