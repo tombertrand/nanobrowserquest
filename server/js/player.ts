@@ -1397,9 +1397,7 @@ class Player extends Character {
         isUnique,
       };
     } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isStone(kind)) {
-      console.log("~~~~is single!!");
       item = { item: Types.getKindAsString(kind), quantity: 1 };
-      console.log("~~~~item", item);
     } else if (Types.isCape(kind)) {
       const bonus = this.generateRandomCapeBonus(uniqueChances);
 

@@ -120,6 +120,7 @@ class DatabaseHandler {
             .hget(userKey, "network") // 27
             .hget(userKey, "trade") // 28
             .hget(userKey, "discordId") // 29
+            .hget(userKey, "migrations") // 30
 
             .exec(async (err, replies) => {
               if (err) {
@@ -148,6 +149,7 @@ class DatabaseHandler {
               var depositAccountIndex = replies[24];
               var network = replies[27];
               var discordId = replies[29];
+              var migrations = replies[30] ? JSON.parse(replies[30]) : {};
 
               const [, rawAccount] = account.split("_");
               const [rawNetwork, rawPlayerAccount] = player.account.split("_");
@@ -254,10 +256,19 @@ class DatabaseHandler {
                   // Migrate extended stash
                   if (stash.length < STASH_SLOT_COUNT) {
                     stash = stash.concat(new Array(STASH_SLOT_COUNT - stash.length).fill(0));
-                    this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
+
+                    await new Promise(resolve => {
+                      this.client.hset("u:" + player.name, "stash", JSON.stringify(stash), () => {
+                        resolve(true);
+                      });
+                    });
                   }
                 } else {
-                  this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
+                  await new Promise(resolve => {
+                    this.client.hset("u:" + player.name, "stash", JSON.stringify(stash), () => {
+                      resolve(true);
+                    });
+                  });
                 }
               } catch (errStash) {
                 // invalid json
@@ -301,7 +312,11 @@ class DatabaseHandler {
               try {
                 if (!inventory) {
                   inventory = new Array(INVENTORY_SLOT_COUNT).fill(0);
-                  this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+                  await new Promise(resolve => {
+                    this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
+                      resolve(true);
+                    });
+                  });
                 } else {
                   let hasSword2 = /sword2/.test(replies[6]);
                   inventory = JSON.parse(replies[6].replace(/sword2/g, "sword"));
@@ -310,7 +325,11 @@ class DatabaseHandler {
                   if (inventory.length < INVENTORY_SLOT_COUNT || hasSword2) {
                     inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
 
-                    this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+                    await new Promise(resolve => {
+                      this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
+                        resolve(true);
+                      });
+                    });
                   }
                 }
               } catch (errInventory) {
@@ -347,7 +366,12 @@ class DatabaseHandler {
                 // Migrate trade
                 if (!trade) {
                   trade = new Array(TRADE_SLOT_COUNT).fill(0);
-                  this.client.hset("u:" + player.name, "trade", JSON.stringify(trade));
+
+                  await new Promise(resolve => {
+                    this.client.hset("u:" + player.name, "trade", JSON.stringify(trade), () => {
+                      resolve(true);
+                    });
+                  });
                 }
               } catch (errTrade) {
                 Sentry.captureException(errTrade, {
@@ -357,6 +381,47 @@ class DatabaseHandler {
                   extra: {
                     trade,
                   },
+                });
+              }
+
+              if (!migrations?.shields) {
+                await Promise.all([
+                  new Promise(resolve => {
+                    const [item, level, bonus, skill] = shield.split(":");
+                    shield = [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
+
+                    this.client.hset("u:" + player.name, "shield", shield);
+
+                    resolve(true);
+                  }),
+                  new Promise(resolve => {
+                    stash = stash.map(rawItem => {
+                      if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
+                        const [item, level, bonus, skill] = rawItem.split(":");
+                        return [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
+                      }
+                      return rawItem;
+                    });
+                    this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
+
+                    resolve(true);
+                  }),
+                  new Promise(resolve => {
+                    inventory = inventory.map(rawItem => {
+                      if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
+                        const [item, level, bonus, skill] = rawItem.split(":");
+                        return [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
+                      }
+                      return rawItem;
+                    });
+                    this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+
+                    resolve(true);
+                  }),
+                ]).then(() => {
+                  console.log(`Shield migration completed for ${player.name}`);
+
+                  this.client.hset("u:" + player.name, "migrations", JSON.stringify({ ...migrations, shields: true }));
                 });
               }
 
