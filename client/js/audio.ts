@@ -78,6 +78,7 @@ class AudioManager {
       "curse-prevent-regenerate-health",
       "magicstone",
       // "altarchalice",
+      // "altarinfinitystone",
     ];
 
     var loadSoundFiles = function () {

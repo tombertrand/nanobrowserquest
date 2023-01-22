@@ -157,6 +157,7 @@ export const Types: any = {
     CURSED: 92,
     MAGICSTONE: 93,
     ALTARCHALICE: 94,
+    ALTARINFINITYSTONE: 95,
   },
 
   Entities: {
@@ -184,6 +185,8 @@ export const Types: any = {
     SKELETON3: 102,
     SKELETONCOMMANDER: 103,
     SNAKE2: 104,
+    SNAKE3: 247,
+    SNAKE4: 248,
     WRAITH: 105,
     ZOMBIE: 106,
     NECROMANCER: 108,
@@ -191,7 +194,6 @@ export const Types: any = {
     COWKING: 120,
     MINOTAUR: 131,
     TROLL: 226,
-    SNAKE3: 227,
     GOLEM: 228,
     HARPIE: 229,
     WEREWOLF2: 230,
@@ -289,6 +291,7 @@ export const Types: any = {
     NECROMANCERHEART: 124,
     COWKINGHORN: 137,
     CHALICE: 245,
+    INFINITYSTONE: 249,
 
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
@@ -355,6 +358,8 @@ export const Types: any = {
     MAGICSTONE: 220,
     BLUEFLAME: 234,
     ALTARCHALICE: 246,
+    ALTARINFINITYSTONE: 250,
+    SECRETSTAIRS: 251,
 
     // Weapons
     DAGGER: 60,
@@ -640,6 +645,8 @@ export const kinds = {
   skeleton3: [Types.Entities.SKELETON3, "mob", 120, 34],
   skeletoncommander: [Types.Entities.SKELETONCOMMANDER, "mob", 200, 40],
   snake2: [Types.Entities.SNAKE2, "mob", 120, 38],
+  snake3: [Types.Entities.SNAKE3, "mob", 120, 38],
+  snake4: [Types.Entities.SNAKE4, "mob", 120, 38],
   wraith: [Types.Entities.WRAITH, "mob", 120, 40],
   zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
   necromancer: [Types.Entities.NECROMANCER, "mob", 400, 51],
@@ -647,7 +654,6 @@ export const kinds = {
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
   minotaur: [Types.Entities.MINOTAUR, "mob", 500, 58],
   // troll: [Types.Entities.TROLL, "mob", 100, 52],
-  // snake3: [Types.Entities.SNAKE3, "mob", 100, 52],
   // golem: [Types.Entities.GOLEM, "mob", 100, 52],
   // harpie: [Types.Entities.HARPIE, "mob", 100, 52],
   // werewolf2: [Types.Entities.WEREWOLF2, "mob", 100, 52],
@@ -798,6 +804,7 @@ export const kinds = {
   necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
   chalice: [Types.Entities.CHALICE, "recipe", "Golden Chalice"],
+  infinitystone: [Types.Entities.INFINITYSTONE, "recipe", "Infinity Stone"],
 
   // kind, type, name, level
   "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 1],
@@ -865,6 +872,8 @@ export const kinds = {
   magicstone: [Types.Entities.MAGICSTONE, "npc"],
   blueflame: [Types.Entities.BLUEFLAME, "npc"],
   altarchalice: [Types.Entities.ALTARCHALICE, "npc"],
+  altarinfinitystone: [Types.Entities.ALTARINFINITYSTONE, "npc"],
+  secretstairs: [Types.Entities.SECRETSTAIRS, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -1324,14 +1333,16 @@ Types.isSingle = function (kindOrString: number | string) {
       Types.Entities.NECROMANCERHEART,
       Types.Entities.COWKINGHORN,
       Types.Entities.CHALICE,
+      Types.Entities.INFINITYSTONE,
     ].includes(kindOrString);
   } else {
     return (
-      ["skeletonkingcage", "necromancerheart", "cowkinghorn", "chalice"].includes(kindOrString) ||
+      ["skeletonkingcage", "necromancerheart", "cowkinghorn", "chalice", "infinitystone"].includes(kindOrString) ||
       kindOrString.startsWith("skeletonkingcage") ||
       kindOrString.startsWith("necromancerheart") ||
       kindOrString.startsWith("cowkinghorn") ||
-      kindOrString.startsWith("chalice")
+      kindOrString.startsWith("chalice") ||
+      kindOrString.startsWith("infinitystone")
     );
   }
 };
@@ -1452,6 +1463,10 @@ Types.getAliasFromName = function (name: string) {
     return "undead goblin";
   } else if (name === "snake2") {
     return "sea snake";
+  } else if (name === "snake3") {
+    return "venemous snake";
+  } else if (name === "snake4") {
+    return "damned snake";
   } else if (name === "cowking") {
     return "cow king";
   } else if (name.startsWith("waypoint")) {
@@ -1463,7 +1478,11 @@ Types.getAliasFromName = function (name: string) {
   } else if (name === "blueflame") {
     return "Magic Flame";
   } else if (name === "altarchalice") {
-    return "Holy Altar";
+    return "Altar";
+  } else if (name === "altarinfinitystone") {
+    return "Altar";
+  } else if (name === "secretstairs") {
+    return "Secret Stairs";
   } else if (name === "wraith2") {
     return "Apocalypse Wraith";
   } else if (name === "deathangel") {
@@ -2325,6 +2344,7 @@ Types.itemDescription = {
   necromancerheart: "The heart of the Necromancer. An unknown magic is still being emitted from the remains.",
   cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
   chalice: "The Golden Chalice is a unique artifact, return it where it belongs.",
+  infinitystone: "The infinity stone contains magic items.",
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",

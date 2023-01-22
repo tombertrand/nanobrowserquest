@@ -18,7 +18,6 @@ import cow from "../sprites/cow.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
 // import troll from "../sprites/skeleton.json";
-// import snake3 from "../sprites/skeleton.json";
 // import golem from "../sprites/skeleton.json";
 // import harpie from "../sprites/skeleton.json";
 // import werewolf2 from "../sprites/skeleton.json";
@@ -108,7 +107,9 @@ import portalminotaur from "../sprites/portal.json";
 import portaltemple from "../sprites/portal.json";
 import portaldeathangel from "../sprites/portaldeathangel.json";
 import magicstone from "../sprites/magicstone.json";
-import altarchalice from "../sprites/altarchalice.json";
+import altarchalice from "../sprites/altar.json";
+import secretstairs from "../sprites/secretstairs.json";
+import altarinfinitystone from "../sprites/altar.json";
 import blueflame from "../sprites/blueflame.json";
 import ogre from "../sprites/ogre.json";
 import yeti from "../sprites/yeti.json";
@@ -121,7 +122,9 @@ import skeleton from "../sprites/skeleton.json";
 import skeleton2 from "../sprites/skeleton.json";
 import skeleton3 from "../sprites/skeleton.json";
 import snake from "../sprites/snake.json";
-import snake2 from "../sprites/snake2.json";
+import snake2 from "../sprites/snake.json";
+import snake3 from "../sprites/snake.json";
+import snake4 from "../sprites/snake.json";
 import sorcerer from "../sprites/sorcerer.json";
 import sparks from "../sprites/sparks.json";
 import weaponEffectMagic from "../sprites/weapon-effect-magic.json";
@@ -191,7 +194,6 @@ const sprites = {
   cowking,
   minotaur,
   // troll,
-  // snake3,
   // golem,
   // harpie,
   // werewolf2,
@@ -351,6 +353,7 @@ const sprites = {
   "item-necromancerheart": item,
   "item-cowkinghorn": item,
   "item-chalice": item,
+  "item-infinitystone": item,
   "item-goldenarmor": item,
   "item-bluearmor": item,
   "item-hornedarmor": item,
@@ -436,6 +439,8 @@ const sprites = {
   magicstone,
   blueflame,
   altarchalice,
+  altarinfinitystone,
+  secretstairs,
   ogre,
   yeti,
   werewolf,
@@ -454,6 +459,8 @@ const sprites = {
   skeleton3,
   snake,
   snake2,
+  snake3,
+  snake4,
   sorcerer,
   sparks,
   "weapon-effect-magic": weaponEffectMagic,

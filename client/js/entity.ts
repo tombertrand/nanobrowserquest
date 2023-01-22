@@ -143,6 +143,8 @@ class Entity {
           this.currentAnimation.setSpeed(100);
         } else if (this.kind === Types.Entities.BLUEFLAME) {
           this.currentAnimation.setSpeed(75);
+        } else if (this.kind === Types.Entities.ALTARCHALICE || this.kind === Types.Entities.ALTARINFINITYSTONE) {
+          this.currentAnimation.setSpeed(200);
         } else {
           this.currentAnimation.setSpeed(speed);
         }

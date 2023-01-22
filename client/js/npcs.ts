@@ -192,9 +192,20 @@ var Npcs = {
       super(id, Types.Entities.ALTARCHALICE);
       this.raiseRate = 1300;
     }
-    // hasShadow() {
-    //   return false;
-    // }
+  },
+
+  AltarInfinityStone: class AltarInfinityStone extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.ALTARINFINITYSTONE);
+      this.raiseRate = 1300;
+    }
+  },
+
+  SecretStairs: class SecretStairs extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.SECRETSTAIRS);
+      this.raiseRate = 1300;
+    }
   },
 };
 

@@ -143,10 +143,6 @@ EntityFactory.builders[Types.Entities.MINOTAUR] = function (id) {
 //   return new Mobs.Troll(id);
 // };
 
-// EntityFactory.builders[Types.Entities.SNAKE3] = function (id) {
-//   return new Mobs.Snake3(id);
-// };
-
 // EntityFactory.builders[Types.Entities.GOLEM] = function (id) {
 //   return new Mobs.Golem(id);
 // };
@@ -158,6 +154,14 @@ EntityFactory.builders[Types.Entities.MINOTAUR] = function (id) {
 // EntityFactory.builders[Types.Entities.WEREWOLF2] = function (id) {
 //   return new Mobs.Werewolf2(id);
 // };
+
+EntityFactory.builders[Types.Entities.SNAKE3] = function (id) {
+  return new Mobs.Snake3(id);
+};
+
+EntityFactory.builders[Types.Entities.SNAKE4] = function (id) {
+  return new Mobs.Snake4(id);
+};
 
 EntityFactory.builders[Types.Entities.SKELETON4] = function (id) {
   return new Mobs.Skeleton4(id);
@@ -797,6 +801,10 @@ EntityFactory.builders[Types.Entities.CHALICE] = function (id) {
   return new Items.Chalice(id);
 };
 
+EntityFactory.builders[Types.Entities.INFINITYSTONE] = function (id) {
+  return new Items.InfinityStone(id);
+};
+
 EntityFactory.builders[Types.Entities.FIREFOXPOTION] = function (id) {
   return new Items.Firefoxpotion(id);
 };
@@ -933,6 +941,14 @@ EntityFactory.builders[Types.Entities.BLUEFLAME] = function (id) {
 
 EntityFactory.builders[Types.Entities.ALTARCHALICE] = function (id) {
   return new Npcs.AltarChalice(id);
+};
+
+EntityFactory.builders[Types.Entities.ALTARINFINITYSTONE] = function (id) {
+  return new Npcs.AltarInfinityStone(id);
+};
+
+EntityFactory.builders[Types.Entities.SECRETSTAIRS] = function (id) {
+  return new Npcs.SecretStairs(id);
 };
 
 export default EntityFactory;

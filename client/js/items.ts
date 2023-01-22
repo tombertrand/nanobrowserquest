@@ -1059,6 +1059,13 @@ var Items = {
     }
   },
 
+  InfinityStone: class InfinityStone extends Item {
+    constructor(id) {
+      super(id, Types.Entities.INFINITYSTONE, "object");
+      this.lootMessage = "You pick up the Infinity Stone";
+    }
+  },
+
   Cake: class Cake extends Item {
     constructor(id) {
       super(id, Types.Entities.CAKE, "object");

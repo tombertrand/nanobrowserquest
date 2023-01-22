@@ -67,7 +67,9 @@ class Sprite {
       this.id.startsWith("mage-spell") ||
       this.id.startsWith("skill-cast") ||
       this.id.startsWith("portal") ||
-      this.id === "skeleton"
+      this.id.startsWith("altar") ||
+      this.id === "skeleton" ||
+      this.id === "snake"
     ) {
       this.id = this.name;
     }

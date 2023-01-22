@@ -361,18 +361,6 @@ export const Mobs = {
   //   }
   // },
 
-  // Snake3: class Snake3 extends Mob {
-  //   constructor(id) {
-  //     super(id, Types.Entities.SNAKE3);
-  //     this.moveSpeed = 200;
-  //     this.atkSpeed = 40;
-  //     this.idleSpeed = 250;
-  //     this.walkSpeed = 100;
-  //     this.shadowOffsetY = -4;
-  //     this.aggroRange = 4;
-  //   }
-  // },
-
   // Golem: class Golem extends Mob {
   //   constructor(id) {
   //     super(id, Types.Entities.GOLEM);
@@ -435,6 +423,30 @@ export const Mobs = {
     }
     hasShadow() {
       return false;
+    }
+  },
+
+  Snake3: class Snake3 extends Mob {
+    constructor(id) {
+      super(id, Types.Entities.SNAKE3);
+      this.moveSpeed = 200;
+      this.atkSpeed = 40;
+      this.idleSpeed = 250;
+      this.walkSpeed = 100;
+      this.shadowOffsetY = -4;
+      this.aggroRange = 3;
+    }
+  },
+
+  Snake4: class Snake4 extends Mob {
+    constructor(id) {
+      super(id, Types.Entities.SNAKE4);
+      this.moveSpeed = 200;
+      this.atkSpeed = 40;
+      this.idleSpeed = 250;
+      this.walkSpeed = 100;
+      this.shadowOffsetY = -4;
+      this.aggroRange = 3;
     }
   },
 

@@ -385,21 +385,6 @@ var Properties: any = {
   //   armor: 40,
   //   weapon: 30,
   // },
-  // snake3: {
-  //   drops: {
-  //     rejuvenationpotion: 10,
-  //     scrollupgradelegendary: 3,
-  //     emeraldsword: 3,
-  //     emeraldarmor: 3,
-  //     beltemerald: 3,
-  //     shieldemerald: 3,
-  //     amuletplatinum: 3,
-  //     poisonpotion: 6,
-  //   },
-  //   hp: 2520,
-  //   armor: 22,
-  //   weapon: 36,
-  // },
   // golem: {
   //   drops: {
   //     rejuvenationpotion: 10,
@@ -454,9 +439,6 @@ var Properties: any = {
     drops: {
       rejuvenationpotion: 10,
       scrollupgradelegendary: 3,
-      dragonsword: 3,
-      // dragonarmor: 3,
-      shielddragon: 3,
       ringplatinum: 3,
       amuletplatinum: 3,
     },
@@ -468,15 +450,34 @@ var Properties: any = {
     drops: {
       rejuvenationpotion: 10,
       scrollupgradelegendary: 3,
-      dragonsword: 3,
-      // dragonarmor: 3,
-      shielddragon: 3,
       ringplatinum: 3,
       amuletplatinum: 3,
     },
     hp: 2320,
     armor: 28,
     weapon: 30,
+  },
+  snake3: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+    },
+    hp: 420,
+    armor: 1,
+    weapon: 10,
+  },
+  snake4: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+    },
+    hp: 420,
+    armor: 8,
+    weapon: 10,
   },
   wraith2: {
     drops: {

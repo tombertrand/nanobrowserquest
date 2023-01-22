@@ -1310,6 +1310,10 @@ class GameClient {
   sendAltarChalice(id) {
     this.sendMessage([Types.Messages.ALTARCHALICE, id]);
   }
+
+  sendAltarInfinityStone(id) {
+    this.sendMessage([Types.Messages.ALTARINFINITYSTONE, id]);
+  }
 }
 
 export default GameClient;

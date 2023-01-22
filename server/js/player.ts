@@ -605,7 +605,7 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.ALTARCHALICE) {
-        console.info("ALTARCHALICE: " + self.name + " " + message[1]);
+        console.info("ALTAR - CHALICE: " + self.name + " " + message[1]);
 
         const altarChalice = self.server.getEntityById(message[1]);
         if (
@@ -616,6 +616,19 @@ class Player extends Character {
           // @TODO check in inventory if player has the chalice, if yes delete it
         ) {
           self.server.activateAltarChalice(self, altarChalice);
+        }
+      } else if (action === Types.Messages.ALTARINFINITYSTONE) {
+        console.info("ALTAR - INFINITYSTONE: " + self.name + " " + message[1]);
+
+        const altarInfinityStone = self.server.getEntityById(message[1]);
+        if (
+          altarInfinityStone &&
+          altarInfinityStone instanceof Npc &&
+          !self.server.isActivatedAltarInfinityStone &&
+          !altarInfinityStone.isActivated
+          // @TODO check in inventory if player has the infinity stone, if yes delete it
+        ) {
+          self.server.activateAltarInfinityStone(self, altarInfinityStone);
         }
       } else if (action === Types.Messages.CAST_SPELL) {
         if (typeof message[1] !== "number" || typeof message[2] !== "number" || typeof message[3] !== "number") return;

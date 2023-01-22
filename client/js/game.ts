@@ -186,6 +186,7 @@ class Game {
   activatedMagicStones: number[];
   activatedBlueFlames: number[];
   isAltarChaliceActivated: boolean;
+  isAltarInfinityStoneActivated: boolean;
 
   constructor(app) {
     this.app = app;
@@ -277,6 +278,7 @@ class Game {
     this.activatedMagicStones = [];
     this.activatedBlueFlames = [];
     this.isAltarChaliceActivated = false;
+    this.isAltarInfinityStoneActivated = false;
 
     // combat
     // @ts-ignore
@@ -345,6 +347,8 @@ class Game {
       "crab",
       "snake",
       "snake2",
+      "snake3",
+      "snake4",
       "eye",
       "bat",
       "bat2",
@@ -356,7 +360,6 @@ class Game {
       "cowking",
       "minotaur",
       // "troll",
-      // "snake3",
       // "golem",
       // "harpie",
       // "werewolf2",
@@ -408,6 +411,8 @@ class Game {
       "portaldeathangel",
       "magicstone",
       "altarchalice",
+      "altarinfinitystone",
+      "secretstairs",
       "blueflame",
       "beachnpc",
       "forestnpc",
@@ -619,6 +624,7 @@ class Game {
       "item-necromancerheart",
       "item-cowkinghorn",
       "item-chalice",
+      "item-infinitystone",
       "item-cake",
       "item-burger",
       "morningstar",
@@ -1011,7 +1017,7 @@ class Game {
 
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
-              ${name}${level && !isRune && !isJewel && !isStone ? ` (+${level})` : ""}
+              ${name}${level && !isRune && !isJewel && !isStone && !Types.isSingle(item) ? ` (+${level})` : ""}
               ${runeRank ? ` (#${runeRank})` : ""}
               ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
             </div>
@@ -2305,12 +2311,13 @@ class Game {
         if (
           entity.kind === Types.Entities.MAGICSTONE ||
           entity.kind === Types.Entities.PORTALDEATHANGEL ||
-          entity.kind === Types.Entities.ALTARCHALICE
+          entity.kind === Types.Entities.ALTARCHALICE ||
+          entity.kind === Types.Entities.ALTARINFINITYSTONE
         ) {
           this.entityGrid[y][x + 1][entity.id] = entity;
           this.pathingGrid[y][x + 1] = 1;
         }
-        if (entity.kind === Types.Entities.ALTARCHALICE) {
+        if (entity.kind === Types.Entities.ALTARCHALICE || entity.kind === Types.Entities.ALTARINFINITYSTONE) {
           this.entityGrid[y][x + 2][entity.id] = entity;
           this.pathingGrid[y][x + 2] = 1;
         }
@@ -3041,7 +3048,10 @@ class Game {
                 entity.isActivated = isActivated;
                 entity.setVisible(isActivated);
                 entity.idle();
-              } else if (entity.kind === Types.Entities.ALTARCHALICE) {
+              } else if (
+                entity.kind === Types.Entities.ALTARCHALICE ||
+                entity.kind === Types.Entities.ALTARINFINITYSTONE
+              ) {
                 entity.isActivated = isActivated;
                 if (entity.isActivated) {
                   entity.walk();
@@ -3701,6 +3711,14 @@ class Game {
             mob.setVisible(true);
           } else if (mob.kind === Types.Entities.ALTARCHALICE) {
             self.isAltarChaliceActivated = true;
+
+            mob.walk();
+
+            // Set the stairs visible
+            // @TODO ~~~ play sound
+            // mob.setVisible(true);
+          } else if (mob.kind === Types.Entities.ALTARINFINITYSTONE) {
+            self.isAltarInfinityStoneActivated = true;
 
             mob.walk();
 
@@ -4513,6 +4531,7 @@ class Game {
           Types.Entities.MAGICSTONE,
           Types.Entities.BLUEFLAME,
           Types.Entities.ALTARCHALICE,
+          Types.Entities.ALTARINFINITYSTONE,
         ].includes(npc.kind)
       ) {
         if (msg) {
@@ -4589,6 +4608,16 @@ class Game {
       } else if (npc.kind === Types.Entities.ALTARCHALICE) {
         if (!npc.isActivated) {
           this.client.sendAltarChalice(npc.id);
+        }
+      } else if (npc.kind === Types.Entities.ALTARINFINITYSTONE) {
+        if (!npc.isActivated) {
+          this.client.sendAltarInfinityStone(npc.id);
+        }
+      } else if (npc.kind === Types.Entities.SECRETSTAIRS) {
+        if (npc.gridX === 8 && npc.gridY === 683) {
+          this.player.stop_pathing_callback({ x: 15, y: 678, isWaypoint: true });
+        } else if (npc.gridX === 20 && npc.gridY === 643) {
+          this.player.stop_pathing_callback({ x: 15, y: 642, isWaypoint: true });
         }
       }
     }

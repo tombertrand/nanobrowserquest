@@ -36,6 +36,7 @@ class FormatChecker {
       (this.formats[Types.Messages.PURCHASE_CANCEL] = ["s"]),
       (this.formats[Types.Messages.MAGICSTONE] = ["n"]),
       (this.formats[Types.Messages.ALTARCHALICE] = ["n"]),
+      (this.formats[Types.Messages.ALTARINFINITYSTONE] = ["n"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
   }
 
@@ -140,7 +141,11 @@ class FormatChecker {
       return message.length === 1 && typeof message[0] === "object";
     } else if (type === Types.Messages.SKILL) {
       return message.length === 2 && _.isNumber(message[0]) && _.isNumber(message[1]);
-    } else if (type === Types.Messages.MAGICSTONE || type === Types.Messages.ALTARCHALICE) {
+    } else if (
+      type === Types.Messages.MAGICSTONE ||
+      type === Types.Messages.ALTARCHALICE ||
+      type === Types.Messages.ALTARINFINITYSTONE
+    ) {
       return message.length === 1 && _.isNumber(message[0]);
     } else {
       console.error("Unknown message type: " + type);

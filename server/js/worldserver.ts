@@ -84,6 +84,9 @@ class World {
   blueFlames: number[];
   spellCount: number;
   isActivatedAltarChalice: boolean;
+  isActivatedAltarInfinityStone: boolean;
+  secretStairsChaliceNpcId: number;
+  secretStairsTreeNpcId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -172,6 +175,9 @@ class World {
     this.activatedMagicStones = [];
     this.blueFlames = [];
     this.isActivatedAltarChalice = false;
+    this.isActivatedAltarInfinityStone = false;
+    this.secretStairsChaliceNpcId = null;
+    this.secretStairsTreeNpcId = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -651,6 +657,16 @@ class World {
       } else {
         this.minotaurLevelNpcId = npc.id;
       }
+    } else if (kind === Types.Entities.SECRETSTAIRS) {
+      // @TODO ~~~ start dead
+      // npc.isDead = true;
+      this.addEntity(npc);
+
+      if (x === 8 && y === 683) {
+        this.secretStairsChaliceNpcId = npc.id;
+      } else if (x === 20 && y === 643) {
+        this.secretStairsTreeNpcId = npc.id;
+      }
     } else {
       if (kind === Types.Entities.MAGICSTONE) {
         this.magicStones.push(npc.id);
@@ -1125,6 +1141,12 @@ class World {
     this.broadcastRaise(player, altarChalice);
   }
 
+  activateAltarInfinityStone(player, altarInfinityStone) {
+    altarInfinityStone.activate();
+
+    this.broadcastRaise(player, altarInfinityStone);
+  }
+
   broadcastRaise(player, mob) {
     if (player && mob) {
       this.pushToAdjacentGroups(player.group, mob.raise(player.id));
@@ -1550,7 +1572,7 @@ class World {
     //   "amuletmoon",
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
-    var randomDrops = ["chalice"];
+    var randomDrops = ["chalice", "infinitystone"];
     // var randomDrops = ["stonehero", "stonedragon", "templararmor"];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
