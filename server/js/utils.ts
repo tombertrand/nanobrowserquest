@@ -494,6 +494,7 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
     { item: "templararmor", uniqueChances: 6 },
     { item: "belttemplar", uniqueChances: 6 },
     { item: "shieldtemplar", uniqueChances: 6 },
+    { item: "paladinarmor", uniqueChances: 4 },
     { item: "cape", uniqueChances: 5 },
   ];
 

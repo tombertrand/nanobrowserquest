@@ -226,6 +226,7 @@ export const Types: any = {
     MYSTICALARMOR: 221,
     BLOODARMOR: 222,
     TEMPLARARMOR: 242,
+    PALADINARMOR: 252,
 
     // Belts
     BELTLEATHER: 85,
@@ -537,6 +538,7 @@ Types.Entities.Armors = [
   Types.Entities.MYSTICALARMOR,
   Types.Entities.BLOODARMOR,
   Types.Entities.TEMPLARARMOR,
+  Types.Entities.PALADINARMOR,
 ];
 
 Types.Entities.Belts = [
@@ -708,6 +710,7 @@ export const kinds = {
   mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 40, 40],
   bloodarmor: [Types.Entities.BLOODARMOR, "armor", "Blood Armor", 40, 40],
   templararmor: [Types.Entities.TEMPLARARMOR, "armor", "Templar Armor", 40, 40],
+  paladinarmor: [Types.Entities.PALADINARMOR, "armor", "Paladin Armor", 40, 40],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -923,6 +926,7 @@ Types.rankedArmors = [
   Types.Entities.MYSTICALARMOR,
   Types.Entities.BLOODARMOR,
   Types.Entities.TEMPLARARMOR,
+  Types.Entities.PALADINARMOR,
 ];
 
 Types.rankedBelts = [
@@ -984,6 +988,7 @@ Types.itemUniqueMap = {
   mysticalarmor: ["TBD", 36, 50],
   bloodarmor: ["TBD", 36, 50],
   templararmor: ["TBD", 36, 50],
+  paladinarmor: ["TBD", 36, 50],
 
   // name, level, defense
   shieldwood: ["Liquidity Provider", 2, 3],
@@ -1969,6 +1974,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     mysticalarmor: 4,
     bloodarmor: 4,
     templararmor: 4,
+    paladinarmor: 2,
 
     beltfrozen: 15,
     belthorned: 15,

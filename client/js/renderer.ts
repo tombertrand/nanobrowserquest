@@ -663,6 +663,7 @@ class Renderer {
               "mysticalarmor",
               "bloodarmor",
               "templararmor",
+              "paladinarmor",
             ].includes(sprite.name) &&
             entity.armorBonus?.length
           ) {
@@ -1329,6 +1330,7 @@ class Renderer {
         "mysticalarmor",
         "bloodarmor",
         "templararmor",
+        "paladinarmor",
       ].includes(this.game.player.armorName) &&
       this.game.player.armorBonus?.length
     ) {

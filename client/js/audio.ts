@@ -77,7 +77,8 @@ class AudioManager {
       "skill-poison",
       "curse-prevent-regenerate-health",
       "magicstone",
-      // "altarchalice",
+      "secret-found",
+      "stone-break",
       // "altarinfinitystone",
     ];
 

@@ -1176,22 +1176,29 @@ class World {
   }
 
   async activateAltarChalice(player, force = false) {
-    const altarChalice = this.getEntityById(this.altarChaliceNpcId);
+    const altar = this.getEntityById(this.altarChaliceNpcId);
 
-    if (altarChalice && altarChalice instanceof Npc && !this.isActivatedAltarChalice && !altarChalice.isActivated) {
+    if (altar && altar instanceof Npc && !this.isActivatedAltarChalice && !altar.isActivated) {
       if (force || (await this.databaseHandler.useInventoryItem(player, "chalice"))) {
-        altarChalice.activate();
+        altar.activate();
 
         this.startChaliceLevel();
-        this.broadcastRaise(player, altarChalice);
+        this.broadcastRaise(player, altar);
       }
     }
   }
 
-  activateAltarInfinityStone(player, altarInfinityStone) {
-    altarInfinityStone.activate();
+  async activateAltarInfinityStone(player, force = false) {
+    const altar = this.getEntityById(this.altarInfinityStoneNpcId);
 
-    this.broadcastRaise(player, altarInfinityStone);
+    if (altar && altar instanceof Npc && !this.isActivatedAltarChalice && !altar.isActivated) {
+      if (force || (await this.databaseHandler.useInventoryItem(player, "infinitystone"))) {
+        altar.activate();
+
+        // this.startChaliceLevel();
+        this.broadcastRaise(player, altar);
+      }
+    }
   }
 
   broadcastRaise(player, mob) {
@@ -1619,8 +1626,9 @@ class World {
     //   "amuletmoon",
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
-    var randomDrops = ["chalice", "infinitystone"];
-    // var randomDrops = ["stonehero", "stonedragon", "templararmor"];
+    var randomDrops = ["chalice", "infinitystone", "hellhammer"];
+    // var randomDrops = ["stonehero", "stonedragon"];
+    // var randomDrops = ["paladinarmor"];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = [

@@ -618,15 +618,8 @@ class Player extends Character {
       } else if (action === Types.Messages.ALTARINFINITYSTONE) {
         console.info("ALTAR - INFINITYSTONE: " + self.name + " " + message[1]);
 
-        const altarInfinityStone = self.server.getEntityById(message[1]);
-        if (
-          altarInfinityStone &&
-          altarInfinityStone instanceof Npc &&
-          !self.server.isActivatedAltarInfinityStone &&
-          !altarInfinityStone.isActivated
-          // @TODO check in inventory if player has the infinity stone, if yes delete it
-        ) {
-          self.server.activateAltarInfinityStone(self, altarInfinityStone);
+        if (parseInt(message[1]) === self.server.altarInfinityStoneNpcId) {
+          self.server.activateAltarInfinityStone(self);
         }
       } else if (action === Types.Messages.CAST_SPELL) {
         if (typeof message[1] !== "number" || typeof message[2] !== "number" || typeof message[3] !== "number") return;

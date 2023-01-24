@@ -437,6 +437,7 @@ class Game {
       "mysticalarmor",
       "bloodarmor",
       "templararmor",
+      "paladinarmor",
       "firefox",
       "death",
       "dagger",
@@ -511,6 +512,7 @@ class Game {
       "item-mysticalarmor",
       "item-bloodarmor",
       "item-templararmor",
+      "item-paladinarmor",
       "item-beltleather",
       "item-beltplated",
       "item-beltfrozen",
@@ -3717,9 +3719,7 @@ class Game {
 
             mob.walk();
 
-            // Set the stairs visible
-            // @TODO ~~~ play sound
-            // mob.setVisible(true);
+            self.audioManager.playSound("secret-found");
           } else if (mob.kind === Types.Entities.ALTARINFINITYSTONE) {
             self.isAltarInfinityStoneActivated = true;
 
@@ -3728,6 +3728,8 @@ class Game {
             // Set the stairs visible
             // @TODO ~~~ play sound
             // mob.setVisible(true);
+
+            self.audioManager.playSound("stone-break");
           }
         }
       });
@@ -4338,8 +4340,8 @@ class Game {
         $("#countdown").countdown("remove");
 
         if (self.player.gridY >= 696 && self.player.gridY <= 733 && self.player.gridX <= 29) {
-          const x = Math.round(randomRange(7, 9));
-          const y = Math.round(randomRange(682, 684));
+          const x = Math.floor(randomRange(7, 9));
+          const y = Math.floor(randomRange(682, 684));
 
           self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }

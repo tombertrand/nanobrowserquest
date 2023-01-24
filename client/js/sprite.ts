@@ -102,6 +102,7 @@ class Sprite {
         "mysticalarmor",
         "bloodarmor",
         "templararmor",
+        "paladinarmor",
       ].includes(this.name)
     ) {
       this.imageunique = new Image();

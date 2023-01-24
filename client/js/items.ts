@@ -240,6 +240,13 @@ var Items = {
     }
   },
 
+  PaladinArmor: class PaladinArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PALADINARMOR, "armor");
+      this.lootMessage = "You pick up a paladin armor";
+    }
+  },
+
   BeltLeather: class BeltLeather extends Item {
     constructor(id) {
       super(id, Types.Entities.BELTLEATHER, "belt");

@@ -333,6 +333,10 @@ EntityFactory.builders[Types.Entities.TEMPLARARMOR] = function (id) {
   return new Items.TemplarArmor(id);
 };
 
+EntityFactory.builders[Types.Entities.PALADINARMOR] = function (id) {
+  return new Items.PaladinArmor(id);
+};
+
 EntityFactory.builders[Types.Entities.BELTLEATHER] = function (id) {
   return new Items.BeltLeather(id);
 };
