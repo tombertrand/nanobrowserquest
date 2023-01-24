@@ -45,20 +45,20 @@ class World {
   zombies: any[];
   cowTotal: number;
   cowLevelCoords: {};
-  cowLevelClock: any;
-  cowLevelInterval: any;
-  cowLevelTownNpcId: any;
+  cowLevelClock: number;
+  cowLevelInterval: NodeJS.Timeout;
+  cowLevelTownNpcId: number;
   cowLevelNpcId: any;
-  cowLevelNpcIds: any[];
+  cowLevelNpcIds: number[];
   cowPossibleCoords: any[];
   cowEntityIds: any[];
   cowPackOrder: number[][];
   cowKingHornDrop: boolean;
   minotaur: any;
-  minotaurLevelClock: any;
-  minotaurLevelInterval: any;
-  minotaurLevelTownNpcId: any;
-  minotaurLevelNpcId: any;
+  minotaurLevelClock: number;
+  minotaurLevelInterval: NodeJS.Timeout;
+  minotaurLevelTownNpcId: number;
+  minotaurLevelNpcId: number;
   minotaurSpawnTimeout: any;
   outgoingQueues: any;
   itemCount: number;
@@ -87,6 +87,10 @@ class World {
   isActivatedAltarInfinityStone: boolean;
   secretStairsChaliceNpcId: number;
   secretStairsTreeNpcId: number;
+  chaliceLevelClock: number;
+  chaliceLevelInterval: NodeJS.Timeout;
+  altarChaliceNpcId: number;
+  altarInfinityStoneNpcId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -178,6 +182,10 @@ class World {
     this.isActivatedAltarInfinityStone = false;
     this.secretStairsChaliceNpcId = null;
     this.secretStairsTreeNpcId = null;
+    this.chaliceLevelClock = null;
+    this.chaliceLevelInterval = null;
+    this.altarChaliceNpcId = null;
+    this.altarInfinityStoneNpcId = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -321,13 +329,13 @@ class World {
       self.map.generateCollisionGrid();
 
       // Populate all mob "roaming" areas
-      _.each(self.map.mobAreas, function (a) {
-        var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
-        area.spawnMobs();
-        area.onEmpty(self.handleEmptyMobArea.bind(self, area));
+      // _.each(self.map.mobAreas, function (a) {
+      //   var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
+      //   area.spawnMobs();
+      //   area.onEmpty(self.handleEmptyMobArea.bind(self, area));
 
-        self.mobAreas.push(area);
-      });
+      //   self.mobAreas.push(area);
+      // });
 
       // Create all chest areas
       _.each(self.map.chestAreas, function (a) {
@@ -658,9 +666,7 @@ class World {
         this.minotaurLevelNpcId = npc.id;
       }
     } else if (kind === Types.Entities.SECRETSTAIRS) {
-      // @TODO ~~~ start dead
-      // npc.isDead = true;
-      this.addEntity(npc);
+      npc.isDead = true;
 
       if (x === 8 && y === 683) {
         this.secretStairsChaliceNpcId = npc.id;
@@ -672,6 +678,10 @@ class World {
         this.magicStones.push(npc.id);
       } else if (kind === Types.Entities.BLUEFLAME) {
         this.blueFlames.push(npc.id);
+      } else if (kind === Types.Entities.ALTARCHALICE) {
+        this.altarChaliceNpcId = npc.id;
+      } else if (kind === Types.Entities.ALTARINFINITYSTONE) {
+        this.altarInfinityStoneNpcId = npc.id;
       }
 
       this.addEntity(npc);
@@ -859,6 +869,36 @@ class World {
     this.despawn(minotaurLevelPortal);
 
     this.pushBroadcast(new Messages.MinotaurLevelEnd());
+  }
+
+  startChaliceLevel() {
+    this.chaliceLevelClock = 10; // 5 * 60; // 5 minutes
+
+    const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
+    secretStairs.respawnCallback();
+
+    this.pushBroadcast(new Messages.ChaliceLevelStart());
+
+    this.chaliceLevelInterval = setInterval(() => {
+      this.chaliceLevelClock -= 1;
+      if (this.chaliceLevelClock < 0) {
+        clearInterval(this.chaliceLevelInterval);
+        this.endChaliceLevel();
+      }
+    }, 1000);
+  }
+
+  endChaliceLevel() {
+    this.chaliceLevelInterval = null;
+    this.chaliceLevelClock = null;
+
+    this.isActivatedAltarChalice = false;
+
+    const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
+    this.despawn(secretStairs);
+
+    this.getEntityById(this.altarChaliceNpcId).isActivated = false;
+    this.pushBroadcast(new Messages.ChaliceLevelEnd());
   }
 
   createItem(kind, x, y, partyId?: number, level?: number) {
@@ -1135,10 +1175,17 @@ class World {
     this.pushBroadcast(new Messages.Raise(blueflame.id));
   }
 
-  activateAltarChalice(player, altarChalice) {
-    altarChalice.activate();
+  async activateAltarChalice(player, force = false) {
+    const altarChalice = this.getEntityById(this.altarChaliceNpcId);
 
-    this.broadcastRaise(player, altarChalice);
+    if (altarChalice && altarChalice instanceof Npc && !this.isActivatedAltarChalice && !altarChalice.isActivated) {
+      if (force || (await this.databaseHandler.useInventoryItem(player, "chalice"))) {
+        altarChalice.activate();
+
+        this.startChaliceLevel();
+        this.broadcastRaise(player, altarChalice);
+      }
+    }
   }
 
   activateAltarInfinityStone(player, altarInfinityStone) {

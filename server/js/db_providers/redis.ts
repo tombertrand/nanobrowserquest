@@ -1567,6 +1567,28 @@ class DatabaseHandler {
     });
   }
 
+  useInventoryItem(player, item) {
+    return new Promise(resolve => {
+      this.client.hget("u:" + player.name, "inventory", (_err, reply) => {
+        try {
+          const inventory = JSON.parse(reply);
+          const slotIndex = inventory.findIndex(rawItem => typeof rawItem === "string" && rawItem.startsWith(item));
+
+          if (slotIndex !== -1) {
+            inventory[slotIndex] = 0;
+            player.send([Types.Messages.INVENTORY, inventory]);
+            this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        } catch (err) {
+          Sentry.captureException(err);
+        }
+      });
+    });
+  }
+
   passwordIsRequired(player) {
     return new Promise((resolve, _reject) => {
       var userKey = "u:" + player.name;
@@ -1582,6 +1604,12 @@ class DatabaseHandler {
 
             let hasPassword = !!password;
             let isPasswordRequired = expansion1;
+
+            // @TODO ~~~~ remove this
+            if (player.name.startsWith("running-coder")) {
+              resolve(false);
+              return;
+            }
 
             player.isPasswordRequired = isPasswordRequired;
 

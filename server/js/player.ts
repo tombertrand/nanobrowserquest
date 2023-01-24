@@ -347,6 +347,11 @@ class Player extends Character {
                 self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
               }
               return;
+            } else if (msg === "/chalice" && self.name === "running-coder") {
+              if (!self.server.chaliceLevelClock) {
+                self.server.activateAltarChalice(self, true);
+              }
+              return;
             } else if (msg.startsWith("/ban")) {
               const periods = { 1: 86400, 365: 86400 * 365 };
               const reasons = ["misbehaved"];
@@ -607,15 +612,8 @@ class Player extends Character {
       } else if (action === Types.Messages.ALTARCHALICE) {
         console.info("ALTAR - CHALICE: " + self.name + " " + message[1]);
 
-        const altarChalice = self.server.getEntityById(message[1]);
-        if (
-          altarChalice &&
-          altarChalice instanceof Npc &&
-          !self.server.isActivatedAltarChalice &&
-          !altarChalice.isActivated
-          // @TODO check in inventory if player has the chalice, if yes delete it
-        ) {
-          self.server.activateAltarChalice(self, altarChalice);
+        if (parseInt(message[1]) === self.server.altarChaliceNpcId) {
+          self.server.activateAltarChalice(self);
         }
       } else if (action === Types.Messages.ALTARINFINITYSTONE) {
         console.info("ALTAR - INFINITYSTONE: " + self.name + " " + message[1]);
@@ -785,8 +783,10 @@ class Player extends Character {
 
           if (x === 34 && y === 498) {
             self.send(new Messages.MinotaurLevelInProgress(self.server.minotaurLevelClock).serialize());
-          } else if (y >= 464 && y <= 535) {
+          } else if (y >= 464 && y <= 535 && x <= 534) {
             self.send(new Messages.CowLevelInProgress(self.server.cowLevelClock).serialize());
+          } else if (y >= 696 && y <= 733 && x <= 29) {
+            self.send(new Messages.ChaliceLevelInProgress(self.server.chaliceLevelClock).serialize());
           }
         }
       } else if (action === Types.Messages.BOSS_CHECK) {

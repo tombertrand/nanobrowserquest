@@ -84,6 +84,9 @@ class GameClient {
   receiveminotaurlevelstart_callback: any;
   receiveminotaurlevelinprogress_callback: any;
   receiveminotaurlevelend_callback: any;
+  receivechalicelevelstart_callback: any;
+  receivechalicelevelinprogress_callback: any;
+  receivechalicelevelend_callback: any;
   receivefrozen_callback: any;
   receivepoisoned_callback: any;
   receivecursed_callback: any;
@@ -148,6 +151,9 @@ class GameClient {
     this.handlers[Types.Messages.MINOTAURLEVEL_START] = this.receiveMinotaurLevelStart;
     this.handlers[Types.Messages.MINOTAURLEVEL_INPROGRESS] = this.receiveMinotaurLevelInProgress;
     this.handlers[Types.Messages.MINOTAURLEVEL_END] = this.receiveMinotaurLevelEnd;
+    this.handlers[Types.Messages.CHALICELEVEL_START] = this.receiveChaliceLevelStart;
+    this.handlers[Types.Messages.CHALICELEVEL_INPROGRESS] = this.receiveChaliceLevelInProgress;
+    this.handlers[Types.Messages.CHALICELEVEL_END] = this.receiveChaliceLevelEnd;
     this.handlers[Types.Messages.FROZEN] = this.receiveFrozen;
     this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
     this.handlers[Types.Messages.CURSED] = this.receiveCursed;
@@ -814,6 +820,20 @@ class GameClient {
     }
   }
 
+  receiveChaliceLevelStart() {
+    this.receivechalicelevelstart_callback?.();
+  }
+
+  receiveChaliceLevelInProgress(data) {
+    const levelClock = data[1];
+
+    this.receivechalicelevelinprogress_callback?.(levelClock);
+  }
+
+  receiveChaliceLevelEnd() {
+    this.receivechalicelevelend_callback?.();
+  }
+
   receiveFrozen(data) {
     const entityId = data[1];
     const duration = data[2];
@@ -1116,6 +1136,18 @@ class GameClient {
 
   onReceiveMinotaurLevelEnd(callback) {
     this.receiveminotaurlevelend_callback = callback;
+  }
+
+  onReceiveChaliceLevelStart(callback) {
+    this.receivechalicelevelstart_callback = callback;
+  }
+
+  onReceiveChaliceLevelInProgress(callback) {
+    this.receivechalicelevelinprogress_callback = callback;
+  }
+
+  onReceiveChaliceLevelEnd(callback) {
+    this.receivechalicelevelend_callback = callback;
   }
 
   onFrozen(callback) {

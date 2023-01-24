@@ -187,6 +187,8 @@ class Game {
   activatedBlueFlames: number[];
   isAltarChaliceActivated: boolean;
   isAltarInfinityStoneActivated: boolean;
+  altarChaliceNpcId: number;
+  altarInfinityStoneNpcId: number;
 
   constructor(app) {
     this.app = app;
@@ -279,6 +281,8 @@ class Game {
     this.activatedBlueFlames = [];
     this.isAltarChaliceActivated = false;
     this.isAltarInfinityStoneActivated = false;
+    this.altarChaliceNpcId = null;
+    this.altarInfinityStoneNpcId = null;
 
     // combat
     // @ts-ignore
@@ -3052,6 +3056,12 @@ class Game {
                 entity.kind === Types.Entities.ALTARCHALICE ||
                 entity.kind === Types.Entities.ALTARINFINITYSTONE
               ) {
+                if (entity.kind === Types.Entities.ALTARCHALICE) {
+                  self.altarChaliceNpcId = entity.id;
+                } else if (entity.kind === Types.Entities.ALTARINFINITYSTONE) {
+                  self.altarInfinityStoneNpcId = entity.id;
+                }
+
                 entity.isActivated = isActivated;
                 if (entity.isActivated) {
                   entity.walk();
@@ -3068,87 +3078,80 @@ class Game {
 
               self.addEntity(entity);
 
-              // console.debug(
-              //   "Spawned " +
-              //     Types.getKindAsString(entity.kind) +
-              //     " (" +
-              //     entity.id +
-              //     ") at " +
-              //     entity.gridX +
-              //     ", " +
-              //     entity.gridY,
-              // );
+              // @TODO ~~~~ is it safe to remove?
+              // if (entity instanceof Character && !(entity instanceof Npc)) {
+              if (entity instanceof Character) {
+                if (!(entity instanceof Npc)) {
+                  entity.onBeforeStep(function () {
+                    self.unregisterEntityPosition(entity);
+                  });
 
-              if (entity instanceof Character && !(entity instanceof Npc)) {
-                entity.onBeforeStep(function () {
-                  self.unregisterEntityPosition(entity);
-                });
+                  entity.onStep(function () {
+                    if (!entity.isDying) {
+                      self.registerEntityDualPosition(entity);
 
-                entity.onStep(function () {
-                  if (!entity.isDying) {
-                    self.registerEntityDualPosition(entity);
-
-                    if (self.player && self.player.target === entity) {
-                      self.makeAttackerFollow(self.player);
-                    }
-
-                    entity.forEachAttacker(function (attacker) {
-                      if (attacker.isAdjacent(attacker.target)) {
-                        attacker.lookAtTarget();
-                      } else {
-                        attacker.follow(entity);
+                      if (self.player && self.player.target === entity) {
+                        self.makeAttackerFollow(self.player);
                       }
-                    });
-                  }
-                });
 
-                entity.onStopPathing(function () {
-                  self.unregisterEntityPosition(entity);
-
-                  if (entity.hasTarget() && entity.isAdjacent(entity.target)) {
-                    entity.lookAtTarget();
-                  }
-
-                  if (entity instanceof Player) {
-                    var gridX = entity.destination.gridX,
-                      gridY = entity.destination.gridY;
-
-                    if (self.map.isDoor(gridX, gridY)) {
-                      var dest = self.map.getDoorDestination(gridX, gridY);
-                      entity.setGridPosition(dest.x, dest.y);
-                    }
-                  }
-
-                  entity.forEachAttacker(function (attacker) {
-                    if (!attacker.isAdjacentNonDiagonal(entity) && attacker.id !== self.playerId) {
-                      attacker.follow(entity);
+                      entity.forEachAttacker(function (attacker) {
+                        if (attacker.isAdjacent(attacker.target)) {
+                          attacker.lookAtTarget();
+                        } else {
+                          attacker.follow(entity);
+                        }
+                      });
                     }
                   });
 
-                  self.registerEntityPosition(entity);
-                });
+                  entity.onStopPathing(function () {
+                    self.unregisterEntityPosition(entity);
 
-                entity.onRequestPath(function (x, y) {
-                  var ignored = [entity], // Always ignore self
-                    ignoreTarget = function (target) {
-                      ignored.push(target);
+                    if (entity.hasTarget() && entity.isAdjacent(entity.target)) {
+                      entity.lookAtTarget();
+                    }
 
-                      // also ignore other attackers of the target entity
-                      target.forEachAttacker(function (attacker) {
-                        ignored.push(attacker);
-                      });
-                    };
+                    if (entity instanceof Player) {
+                      var gridX = entity.destination.gridX,
+                        gridY = entity.destination.gridY;
 
-                  if (entity.hasTarget()) {
-                    ignoreTarget(entity.target);
-                  } else if (entity.previousTarget) {
-                    // If repositioning before attacking again, ignore previous target
-                    // See: tryMovingToADifferentTile()
-                    ignoreTarget(entity.previousTarget);
-                  }
+                      if (self.map.isDoor(gridX, gridY)) {
+                        var dest = self.map.getDoorDestination(gridX, gridY);
+                        entity.setGridPosition(dest.x, dest.y);
+                      }
+                    }
 
-                  return self.findPath(entity, x, y, ignored);
-                });
+                    entity.forEachAttacker(function (attacker) {
+                      if (!attacker.isAdjacentNonDiagonal(entity) && attacker.id !== self.playerId) {
+                        attacker.follow(entity);
+                      }
+                    });
+
+                    self.registerEntityPosition(entity);
+                  });
+
+                  entity.onRequestPath(function (x, y) {
+                    var ignored = [entity], // Always ignore self
+                      ignoreTarget = function (target) {
+                        ignored.push(target);
+
+                        // also ignore other attackers of the target entity
+                        target.forEachAttacker(function (attacker) {
+                          ignored.push(attacker);
+                        });
+                      };
+
+                    if (entity.hasTarget()) {
+                      ignoreTarget(entity.target);
+                    } else if (entity.previousTarget) {
+                      // If repositioning before attacking again, ignore previous target
+                      // See: tryMovingToADifferentTile()
+                      ignoreTarget(entity.previousTarget);
+                    }
+
+                    return self.findPath(entity, x, y, ignored);
+                  });
+                }
 
                 entity.onDeath(function () {
                   console.info(entity.id + " is dead");
@@ -4272,6 +4275,82 @@ class Game {
         }
       });
 
+      self.client.onReceiveCowLevelEnd(function (isCompleted) {
+        $("#countdown").countdown(0);
+        $("#countdown").countdown("remove");
+
+        self.cowLevelPortalCoords = null;
+
+        const teleportBackToTown = () => {
+          if (self.player.gridY >= 464 && self.player.gridY <= 535) {
+            const x = Math.ceil(randomRange(40, 45));
+            const y = Math.ceil(randomRange(208, 213));
+
+            self.player.stop_pathing_callback({ x, y, isWaypoint: true });
+
+            if (isCompleted) {
+              self.tryUnlockingAchievement("FARMER");
+            }
+          }
+        };
+
+        if (!self.isZoning()) {
+          teleportBackToTown();
+        } else {
+          self.isTeleporting = true;
+
+          // Prevent teleportation while player is zoning, see updateZoning() for timeout delay
+          setTimeout(() => {
+            teleportBackToTown();
+            self.isTeleporting = false;
+          }, 200);
+        }
+      });
+
+      self.client.onReceiveChaliceLevelStart(function () {
+        // @NOTE TBD?
+      });
+
+      self.client.onReceiveChaliceLevelInProgress(function (levelClock) {
+        var selectedDate = new Date().valueOf() + levelClock * 1000;
+
+        if (!self.player.expansion2) {
+          self.client.sendBanPlayer("Entered Chalice level without expansion2");
+        }
+
+        $("#countdown")
+          .countdown(selectedDate.toString())
+          .on("update.countdown", function (event) {
+            // @ts-ignore
+            $(this).html(event.strftime("%M:%S"));
+          })
+          .on("finish.countdown", function () {
+            $(this).html("The secret level closed.");
+
+            setTimeout(() => {
+              $(this).html("");
+            }, 5000);
+          });
+      });
+
+      self.client.onReceiveChaliceLevelEnd(function () {
+        $("#countdown").countdown(0);
+        $("#countdown").countdown("remove");
+
+        if (self.player.gridY >= 696 && self.player.gridY <= 733 && self.player.gridX <= 29) {
+          const x = Math.round(randomRange(7, 9));
+          const y = Math.round(randomRange(682, 684));
+
+          self.player.stop_pathing_callback({ x, y, isWaypoint: true });
+        }
+
+        const entity = self.altarChaliceNpcId ? self.getEntityById(self.altarChaliceNpcId) : null;
+        if (entity) {
+          entity.isActivated = false;
+          entity.idle();
+        }
+      });
+
       self.client.onFrozen(function (entityId, duration) {
         self.getEntityById(entityId)?.setFrozen(duration);
       });
@@ -4615,8 +4694,10 @@ class Game {
         }
       } else if (npc.kind === Types.Entities.SECRETSTAIRS) {
         if (npc.gridX === 8 && npc.gridY === 683) {
-          this.player.stop_pathing_callback({ x: 15, y: 678, isWaypoint: true });
+          // Chalice
+          this.player.stop_pathing_callback({ x: 6, y: 728, isWaypoint: true });
         } else if (npc.gridX === 20 && npc.gridY === 643) {
+          // Tree
           this.player.stop_pathing_callback({ x: 15, y: 642, isWaypoint: true });
         }
       }

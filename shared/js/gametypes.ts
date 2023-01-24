@@ -158,6 +158,9 @@ export const Types: any = {
     MAGICSTONE: 93,
     ALTARCHALICE: 94,
     ALTARINFINITYSTONE: 95,
+    CHALICELEVEL_START: 96,
+    CHALICELEVEL_INPROGRESS: 97,
+    CHALICELEVEL_END: 98,
   },
 
   Entities: {

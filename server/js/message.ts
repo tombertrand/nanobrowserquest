@@ -99,6 +99,27 @@ Messages.MinotaurLevelEnd = class Message {
   }
 };
 
+Messages.ChaliceLevelStart = class Message {
+  constructor(private coords) {}
+  serialize() {
+    return [Types.Messages.CHALICELEVEL_START];
+  }
+};
+
+Messages.ChaliceLevelInProgress = class Message {
+  constructor(private levelClock) {}
+  serialize() {
+    return [Types.Messages.CHALICELEVEL_INPROGRESS, this.levelClock];
+  }
+};
+
+Messages.ChaliceLevelEnd = class Message {
+  constructor() {}
+  serialize() {
+    return [Types.Messages.CHALICELEVEL_END];
+  }
+};
+
 Messages.Health = class Message {
   constructor(private health) {}
   serialize() {
