@@ -92,6 +92,7 @@ class World {
   altarChaliceNpcId: number;
   altarInfinityStoneNpcId: number;
   isChaliceLeverActivated: boolean;
+  isActivatedTreeLevel: boolean;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -188,6 +189,7 @@ class World {
     this.altarChaliceNpcId = null;
     this.altarInfinityStoneNpcId = null;
     this.isChaliceLeverActivated = false;
+    this.isActivatedTreeLevel = false;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -672,8 +674,11 @@ class World {
 
       if (x === 8 && y === 683) {
         this.secretStairsChaliceNpcId = npc.id;
-      } else if (x === 20 && y === 643) {
+      } else if (x === 19 && y === 642) {
         this.secretStairsTreeNpcId = npc.id;
+
+        // @NOTE Add a tree on top of the stairs
+        this.addNpc(Types.Entities.TREE, x, y + 1);
       }
     } else {
       if (kind === Types.Entities.MAGICSTONE) {
@@ -901,6 +906,22 @@ class World {
 
     this.getEntityById(this.altarChaliceNpcId).isActivated = false;
     this.pushBroadcast(new Messages.ChaliceLevelEnd());
+  }
+
+  startTreeLevel(tree) {
+    this.isActivatedTreeLevel = true;
+
+    this.despawn(tree);
+
+    const secretStairs = this.npcs[this.secretStairsTreeNpcId];
+    secretStairs.respawnCallback();
+
+    setTimeout(() => {
+      this.isActivatedTreeLevel = false;
+
+      tree.respawnCallback();
+      this.despawn(secretStairs);
+    }, 5_000);
   }
 
   createItem(kind, x, y, partyId?: number, level?: number) {

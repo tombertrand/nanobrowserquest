@@ -967,4 +967,12 @@ EntityFactory.builders[Types.Entities.LEVER] = function (id) {
   return new Npcs.Lever(id);
 };
 
+EntityFactory.builders[Types.Entities.GRIMOIRE] = function (id) {
+  return new Npcs.Grimoire(id);
+};
+
+EntityFactory.builders[Types.Entities.TREE] = function (id) {
+  return new Npcs.Tree(id);
+};
+
 export default EntityFactory;

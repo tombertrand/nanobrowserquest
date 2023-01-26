@@ -1116,7 +1116,6 @@ class DatabaseHandler {
                       throw new Error(`Invalid item property ${JSON.stringify({ rawItem })}`);
                     }
 
-                    // @TODO Make a helper? ~~~
                     const delimiter = Types.isJewel(item) ? "|" : ":";
                     inventory[slotIndex] = [item, levelQuantity, bonus, socket, skill].filter(Boolean).join(delimiter);
                   } else if (player.hasParty()) {

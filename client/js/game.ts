@@ -189,6 +189,7 @@ class Game {
   isAltarInfinityStoneActivated: boolean;
   altarChaliceNpcId: number;
   altarInfinityStoneNpcId: number;
+  treeNpcId: number;
 
   constructor(app) {
     this.app = app;
@@ -283,6 +284,7 @@ class Game {
     this.isAltarInfinityStoneActivated = false;
     this.altarChaliceNpcId = null;
     this.altarInfinityStoneNpcId = null;
+    this.treeNpcId = null;
 
     // combat
     // @ts-ignore
@@ -420,6 +422,8 @@ class Game {
       "secretstairsup",
       "deathangeltomb",
       "lever",
+      "grimoire",
+      "tree",
       "blueflame",
       "beachnpc",
       "forestnpc",
@@ -780,6 +784,7 @@ class Game {
     var self = this;
 
     Types.forEachMobOrNpcKind(function (kind, kindName) {
+      if (kind === Types.Entities.TREE) return;
       self.sprites[kindName].createSilhouette();
     });
     self.sprites["chest"].createSilhouette();
@@ -1840,8 +1845,10 @@ class Game {
       const entity = this.getEntityAt(x, y);
       mobId = entity?.id;
 
+      const isTree = mobId ? entity.kind === Types.Entities.TREE && this.player.attackSkill === 1 : false;
+
       // Can't cast on self
-      if (!mobId || mobId === this.player.id || Types.isNpc(entity.kind)) return;
+      if (!mobId || mobId === this.player.id || (Types.isNpc(entity.kind) && !isTree)) return;
       // Can't cast on other players with many level difference
       if (mobId && entity instanceof Player && (entity.level < 9 || Math.abs(entity.level - this.player.level) <= 10)) {
         this.chat_callback({
@@ -2322,7 +2329,8 @@ class Game {
           entity.kind === Types.Entities.PORTALDEATHANGEL ||
           entity.kind === Types.Entities.ALTARCHALICE ||
           entity.kind === Types.Entities.ALTARINFINITYSTONE ||
-          entity.kind === Types.Entities.DEATHANGELTOMB
+          entity.kind === Types.Entities.DEATHANGELTOMB ||
+          entity.kind === Types.Entities.GRIMOIRE
         ) {
           this.entityGrid[y][x + 1][entity.id] = entity;
           this.pathingGrid[y][x + 1] = 1;
@@ -3081,8 +3089,17 @@ class Game {
                 } else {
                   entity.idle();
                 }
+                // } else if (entity.kind === Types.Entities.TREE) {
+                //   self.treeNpcId = entity.id;
+
+                //   entity.isActivated = isActivated;
+                //   entity.idle();
               } else {
                 entity.idle();
+              }
+
+              if (entity.kind === Types.Entities.SECRETSTAIRS) {
+                self.audioManager.playSound("secret-found");
               }
 
               if (entity.kind === Types.Entities.PORTALTEMPLE || entity.kind === Types.Entities.PORTALDEATHANGEL) {
@@ -3738,7 +3755,7 @@ class Game {
 
             mob.walk();
 
-            self.audioManager.playSound("secret-found");
+            // self.audioManager.playSound("secret-found");
           } else if (mob.kind === Types.Entities.ALTARINFINITYSTONE) {
             self.isAltarInfinityStoneActivated = true;
 
@@ -4372,6 +4389,14 @@ class Game {
         }
       });
 
+      // self.client.onReceiveTreeLevelEnd(function () {
+      //   const entity = self.treeNpcId ? self.getEntityById(self.treeNpcId) : null;
+      //   if (entity) {
+      //     entity.isActivated = false;
+      //     entity.idle();
+      //   }
+      // });
+
       self.client.onFrozen(function (entityId, duration) {
         self.getEntityById(entityId)?.setFrozen(duration);
       });
@@ -4619,6 +4644,8 @@ class Game {
       msg = npc.talk(this);
       this.previousClickPosition = null;
 
+      if (npc.kind === Types.Entities.TREE) return;
+
       if (
         ![
           // Types.Entities.ANVIL,
@@ -4721,19 +4748,18 @@ class Game {
       } else if (npc.kind === Types.Entities.SECRETSTAIRS) {
         if (npc.gridX === 8 && npc.gridY === 683) {
           // Chalice
-          this.player.stop_pathing_callback({ x: 6, y: 728, isWaypoint: true });
-        } else if (npc.gridX === 20 && npc.gridY === 643) {
+          this.player.stop_pathing_callback({ x: 7, y: 727, isWaypoint: true });
+        } else if (npc.gridX === 19 && npc.gridY === 642) {
           // Tree
-          this.player.stop_pathing_callback({ x: 15, y: 642, isWaypoint: true });
+          this.player.stop_pathing_callback({ x: 43, y: 728, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.SECRETSTAIRSUP) {
         if (npc.gridX === 5 && npc.gridY === 728) {
           // Chalice
           this.player.stop_pathing_callback({ x: 7, y: 683, isWaypoint: true });
-        } else if (npc.gridX === 20 && npc.gridY === 643) {
+        } else if (npc.gridX === 41 && npc.gridY === 729) {
           // Tree
-          // @TODO ~~~~
-          // this.player.stop_pathing_callback({ x: 15, y: 642, isWaypoint: true });
+          this.player.stop_pathing_callback({ x: 18, y: 642, isWaypoint: true });
         }
       }
     }
@@ -4897,7 +4923,7 @@ class Game {
 
   getNpcAt(x, y) {
     var entity = this.getEntityAt(x, y, Npc);
-    if (entity && entity instanceof Npc) {
+    if (entity && entity instanceof Npc && entity.kind !== Types.Entities.TREE) {
       return entity;
     }
     return null;

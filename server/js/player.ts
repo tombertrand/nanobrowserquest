@@ -352,6 +352,11 @@ class Player extends Character {
                 self.server.activateAltarChalice(self, true);
               }
               return;
+            } else if (msg === "/tree" && self.name === "running-coder") {
+              if (!self.server.isActivatedTreeLevel) {
+                self.server.startTreeLevel();
+              }
+              return;
             } else if (msg.startsWith("/ban")) {
               const periods = { 1: 86400, 365: 86400 * 365 };
               const reasons = ["misbehaved"];
@@ -1236,6 +1241,12 @@ class Player extends Character {
           if (typeof this.attackSkill !== "number" || this.attackSkillTimeout) return;
           const attackedMob = self.server.getEntityById(mobId);
           if (!attackedMob) return;
+          if (attackedMob.kind === Types.Entities.TREE && this.attackSkill === 1) {
+            if (!this.server.isActivatedTreeLevel) {
+              this.server.startTreeLevel(attackedMob);
+            }
+            return;
+          }
 
           shouldBroadcast = true;
 

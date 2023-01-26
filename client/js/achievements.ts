@@ -361,10 +361,10 @@ export const getAchievements = (network: Network) => ({
       return storage.getCowCount() >= 250;
     },
   },
-  EXPANSION6: {
+  GRIMOIRE: {
     id: 50,
-    name: "Title6",
-    desc: "Achievement description6",
+    name: "Grimoire",
+    desc: "Find The Book of Azrael",
     hidden: false,
   },
   HELLFORGE: {

@@ -199,14 +199,20 @@ var NpcTalk = {
   secretstairs: [""],
   secretstairsup: [""],
   deathangeltomb: [
-    "There was a powerful death angel named Azrael who ruled over the souls of the deceased.",
+    "There was a powerful death angel named Azrael<br/>who ruled over the souls of the deceased.",
     "Azrael was feared and respected by all, for it was said that those who<br/>angered him would suffer an eternity of torment in the underworld.",
     "But there was one place that even Azrael dared not enter: the Lost Temple.",
-    "It was said that the temple held ancient secrets and power that could threaten even Azrael's rule.",
+    "It was said that the temple held ancient secrets<br/>and power that could threaten even Azrael's rule.",
     "The temple was hidden deep in a treacherous jungle,<br/>guarded by deadly beasts and cursed by dark magic.",
     "Many brave souls had attempted to find the temple and unlock its secrets,<br/>but none had ever returned...",
   ],
   lever: [""],
+  grimoire: [
+    "The grimoire contains secrets of life and death,<br/>and the power to control the fate of souls.",
+    "It is said that whoever possesses the grimoire<br/>will have the power to control death itself.",
+    "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
+  ],
+  tree: [""],
 
   coder: [
     "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",

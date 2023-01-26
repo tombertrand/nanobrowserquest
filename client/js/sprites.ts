@@ -113,6 +113,8 @@ import secretstairs from "../sprites/secretstairs.json";
 import secretstairsup from "../sprites/secretstairs.json";
 import deathangeltomb from "../sprites/deathangeltomb.json";
 import lever from "../sprites/lever.json";
+import grimoire from "../sprites/grimoire.json";
+import tree from "../sprites/tree.json";
 import altarinfinitystone from "../sprites/altar.json";
 import blueflame from "../sprites/blueflame.json";
 import ogre from "../sprites/ogre.json";
@@ -450,6 +452,8 @@ const sprites = {
   secretstairsup,
   deathangeltomb,
   lever,
+  grimoire,
+  tree,
   ogre,
   yeti,
   werewolf,

@@ -162,6 +162,7 @@ export const Types: any = {
     CHALICELEVEL_INPROGRESS: 97,
     CHALICELEVEL_END: 98,
     LEVER: 99,
+    TREE: 100,
   },
 
   Entities: {
@@ -368,6 +369,8 @@ export const Types: any = {
     SECRETSTAIRSUP: 253,
     DEATHANGELTOMB: 254,
     LEVER: 255,
+    GRIMOIRE: 256,
+    TREE: 257,
 
     // Weapons
     DAGGER: 60,
@@ -887,6 +890,8 @@ export const kinds = {
   secretstairsup: [Types.Entities.SECRETSTAIRSUP, "npc"],
   deathangeltomb: [Types.Entities.DEATHANGELTOMB, "npc"],
   lever: [Types.Entities.LEVER, "npc"],
+  grimoire: [Types.Entities.GRIMOIRE, "npc"],
+  tree: [Types.Entities.TREE, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];

@@ -226,6 +226,18 @@ var Npcs = {
       this.raiseRate = 500;
     }
   },
+
+  Grimoire: class Grimoire extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.GRIMOIRE);
+    }
+  },
+
+  Tree: class Tree extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.TREE);
+    }
+  },
 };
 
 export default Npcs;
