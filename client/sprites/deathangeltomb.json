@@ -1,0 +1,13 @@
+{
+	"id": "deathangeltomb",
+	"width": 72,
+	"height": 84,
+	"animations": {
+		"idle_down": {
+			"length": 1,
+			"row": 0
+		}
+	},
+	"offset_x": -20,
+	"offset_y": -52
+}

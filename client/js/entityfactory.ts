@@ -955,4 +955,16 @@ EntityFactory.builders[Types.Entities.SECRETSTAIRS] = function (id) {
   return new Npcs.SecretStairs(id);
 };
 
+EntityFactory.builders[Types.Entities.SECRETSTAIRSUP] = function (id) {
+  return new Npcs.SecretStairsUp(id);
+};
+
+EntityFactory.builders[Types.Entities.DEATHANGELTOMB] = function (id) {
+  return new Npcs.DeathAngelTomb(id);
+};
+
+EntityFactory.builders[Types.Entities.LEVER] = function (id) {
+  return new Npcs.Lever(id);
+};
+
 export default EntityFactory;

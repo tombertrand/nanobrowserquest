@@ -197,6 +197,16 @@ var NpcTalk = {
   altarchalice: [""],
   altarinfinitystone: [""],
   secretstairs: [""],
+  secretstairsup: [""],
+  deathangeltomb: [
+    "There was a powerful death angel named Azrael who ruled over the souls of the deceased.",
+    "Azrael was feared and respected by all, for it was said that those who<br/>angered him would suffer an eternity of torment in the underworld.",
+    "But there was one place that even Azrael dared not enter: the Lost Temple.",
+    "It was said that the temple held ancient secrets and power that could threaten even Azrael's rule.",
+    "The temple was hidden deep in a treacherous jungle,<br/>guarded by deadly beasts and cursed by dark magic.",
+    "Many brave souls had attempted to find the temple and unlock its secrets,<br/>but none had ever returned...",
+  ],
+  lever: [""],
 
   coder: [
     "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",

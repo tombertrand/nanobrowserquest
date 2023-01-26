@@ -110,6 +110,9 @@ import portaldeathangel from "../sprites/portaldeathangel.json";
 import magicstone from "../sprites/magicstone.json";
 import altarchalice from "../sprites/altar.json";
 import secretstairs from "../sprites/secretstairs.json";
+import secretstairsup from "../sprites/secretstairs.json";
+import deathangeltomb from "../sprites/deathangeltomb.json";
+import lever from "../sprites/lever.json";
 import altarinfinitystone from "../sprites/altar.json";
 import blueflame from "../sprites/blueflame.json";
 import ogre from "../sprites/ogre.json";
@@ -444,6 +447,9 @@ const sprites = {
   altarchalice,
   altarinfinitystone,
   secretstairs,
+  secretstairsup,
+  deathangeltomb,
+  lever,
   ogre,
   yeti,
   werewolf,

@@ -180,7 +180,6 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.BLUEFLAME);
       this.raiseRate = 1300;
-      // this.visible = false;
     }
     hasShadow() {
       return false;
@@ -197,14 +196,34 @@ var Npcs = {
   AltarInfinityStone: class AltarInfinityStone extends Npc {
     constructor(id) {
       super(id, Types.Entities.ALTARINFINITYSTONE);
-      this.raiseRate = 1300;
     }
   },
 
   SecretStairs: class SecretStairs extends Npc {
     constructor(id) {
       super(id, Types.Entities.SECRETSTAIRS);
-      this.raiseRate = 1300;
+    }
+  },
+
+  SecretStairsUp: class SecretStairsUp extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.SECRETSTAIRSUP);
+    }
+  },
+
+  DeathAngelTomb: class DeathAngelTomb extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.DEATHANGELTOMB);
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
+  Lever: class Lever extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.LEVER);
+      this.raiseRate = 500;
     }
   },
 };

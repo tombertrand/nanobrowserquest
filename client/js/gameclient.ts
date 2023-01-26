@@ -1339,6 +1339,10 @@ class GameClient {
     this.sendMessage([Types.Messages.MAGICSTONE, id]);
   }
 
+  sendLever(id) {
+    this.sendMessage([Types.Messages.LEVER, id]);
+  }
+
   sendAltarChalice(id) {
     this.sendMessage([Types.Messages.ALTARCHALICE, id]);
   }

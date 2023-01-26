@@ -91,6 +91,7 @@ class World {
   chaliceLevelInterval: NodeJS.Timeout;
   altarChaliceNpcId: number;
   altarInfinityStoneNpcId: number;
+  isChaliceLeverActivated: boolean;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -186,6 +187,7 @@ class World {
     this.chaliceLevelInterval = null;
     this.altarChaliceNpcId = null;
     this.altarInfinityStoneNpcId = null;
+    this.isChaliceLeverActivated = false;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -872,7 +874,7 @@ class World {
   }
 
   startChaliceLevel() {
-    this.chaliceLevelClock = 10; // 5 * 60; // 5 minutes
+    this.chaliceLevelClock = 5 * 60; // 5 minutes
 
     const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
     secretStairs.respawnCallback();
@@ -1173,6 +1175,17 @@ class World {
 
     this.broadcastRaise(player, magicStone);
     this.pushBroadcast(new Messages.Raise(blueflame.id));
+  }
+
+  activateLever(player, lever) {
+    lever.activate();
+    this.isChaliceLeverActivated = true;
+
+    // @TODO ~~~~ final temple door activate (OPEN)
+    // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death
+
+    this.broadcastRaise(player, lever);
+    this.pushBroadcast(new Messages.Raise(lever.id));
   }
 
   async activateAltarChalice(player, force = false) {
@@ -1625,8 +1638,8 @@ class World {
     //   "amuletdemon",
     //   "amuletmoon",
     // ];
-    // var randomDrops = ["ringplatinum", "amuletplatinum"];
-    var randomDrops = ["chalice", "infinitystone", "hellhammer"];
+    var randomDrops = ["ringplatinum", "amuletplatinum"];
+    // var randomDrops = ["chalice", "infinitystone", "hellhammer"];
     // var randomDrops = ["stonehero", "stonedragon"];
     // var randomDrops = ["paladinarmor"];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];

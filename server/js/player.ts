@@ -609,6 +609,23 @@ class Player extends Character {
             console.log("~~~~OPEN PORTAL!");
           }
         }
+      } else if (action === Types.Messages.LEVER) {
+        console.info("LEVER: " + self.name + " " + message[1]);
+
+        const lever = self.server.getEntityById(message[1]);
+        if (
+          lever &&
+          lever instanceof Npc &&
+          !lever.isActivated &&
+          !self.server.isChaliceLeverActivated &&
+          Math.abs(self.x - lever.x) < 3 &&
+          Math.abs(self.y - lever.y) < 3
+        ) {
+          self.server.activateLever(self, lever);
+
+          // @TODO
+          console.log("~~~~OPEN TEMPLE DOOR!");
+        }
       } else if (action === Types.Messages.ALTARCHALICE) {
         console.info("ALTAR - CHALICE: " + self.name + " " + message[1]);
 

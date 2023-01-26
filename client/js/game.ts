@@ -417,6 +417,9 @@ class Game {
       "altarchalice",
       "altarinfinitystone",
       "secretstairs",
+      "secretstairsup",
+      "deathangeltomb",
+      "lever",
       "blueflame",
       "beachnpc",
       "forestnpc",
@@ -2313,12 +2316,13 @@ class Game {
           this.pathingGrid[y][x] = 1;
         }
 
-        // @NOTE: MagicStones/PortalDeathAngel takes 2 tiles
+        // @NOTE: MagicStones / PortalDeathAngel takes 2 tiles
         if (
           entity.kind === Types.Entities.MAGICSTONE ||
           entity.kind === Types.Entities.PORTALDEATHANGEL ||
           entity.kind === Types.Entities.ALTARCHALICE ||
-          entity.kind === Types.Entities.ALTARINFINITYSTONE
+          entity.kind === Types.Entities.ALTARINFINITYSTONE ||
+          entity.kind === Types.Entities.DEATHANGELTOMB
         ) {
           this.entityGrid[y][x + 1][entity.id] = entity;
           this.pathingGrid[y][x + 1] = 1;
@@ -3050,6 +3054,13 @@ class Game {
                 } else {
                   entity.idle();
                 }
+              } else if (entity.kind === Types.Entities.LEVER) {
+                entity.isActivated = isActivated;
+                if (entity.isActivated) {
+                  entity.walk();
+                } else {
+                  entity.idle();
+                }
               } else if (entity.kind === Types.Entities.BLUEFLAME) {
                 entity.isActivated = isActivated;
                 entity.setVisible(isActivated);
@@ -3709,6 +3720,14 @@ class Game {
               mob.currentAnimation.reset();
               mob.walk();
             }, 1300);
+          } else if (mob.kind === Types.Entities.LEVER) {
+            self.audioManager.playSound("lever");
+
+            mob.raise();
+            setTimeout(() => {
+              mob.currentAnimation.reset();
+              mob.walk();
+            }, 400);
           } else if (mob.kind === Types.Entities.BLUEFLAME) {
             self.activatedBlueFlames.push(mobId);
 
@@ -4613,6 +4632,7 @@ class Game {
           Types.Entities.BLUEFLAME,
           Types.Entities.ALTARCHALICE,
           Types.Entities.ALTARINFINITYSTONE,
+          Types.Entities.LEVER,
         ].includes(npc.kind)
       ) {
         if (msg) {
@@ -4686,6 +4706,10 @@ class Game {
         if (!npc.isActivated) {
           this.client.sendMagicStone(npc.id);
         }
+      } else if (npc.kind === Types.Entities.LEVER) {
+        if (!npc.isActivated) {
+          this.client.sendLever(npc.id);
+        }
       } else if (npc.kind === Types.Entities.ALTARCHALICE) {
         if (!npc.isActivated) {
           this.client.sendAltarChalice(npc.id);
@@ -4701,6 +4725,15 @@ class Game {
         } else if (npc.gridX === 20 && npc.gridY === 643) {
           // Tree
           this.player.stop_pathing_callback({ x: 15, y: 642, isWaypoint: true });
+        }
+      } else if (npc.kind === Types.Entities.SECRETSTAIRSUP) {
+        if (npc.gridX === 5 && npc.gridY === 728) {
+          // Chalice
+          this.player.stop_pathing_callback({ x: 7, y: 683, isWaypoint: true });
+        } else if (npc.gridX === 20 && npc.gridY === 643) {
+          // Tree
+          // @TODO ~~~~
+          // this.player.stop_pathing_callback({ x: 15, y: 642, isWaypoint: true });
         }
       }
     }

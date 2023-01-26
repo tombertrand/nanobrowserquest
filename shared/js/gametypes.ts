@@ -161,6 +161,7 @@ export const Types: any = {
     CHALICELEVEL_START: 96,
     CHALICELEVEL_INPROGRESS: 97,
     CHALICELEVEL_END: 98,
+    LEVER: 99,
   },
 
   Entities: {
@@ -364,6 +365,9 @@ export const Types: any = {
     ALTARCHALICE: 246,
     ALTARINFINITYSTONE: 250,
     SECRETSTAIRS: 251,
+    SECRETSTAIRSUP: 253,
+    DEATHANGELTOMB: 254,
+    LEVER: 255,
 
     // Weapons
     DAGGER: 60,
@@ -880,6 +884,9 @@ export const kinds = {
   altarchalice: [Types.Entities.ALTARCHALICE, "npc"],
   altarinfinitystone: [Types.Entities.ALTARINFINITYSTONE, "npc"],
   secretstairs: [Types.Entities.SECRETSTAIRS, "npc"],
+  secretstairsup: [Types.Entities.SECRETSTAIRSUP, "npc"],
+  deathangeltomb: [Types.Entities.DEATHANGELTOMB, "npc"],
+  lever: [Types.Entities.LEVER, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -1494,7 +1501,9 @@ Types.getAliasFromName = function (name: string) {
   } else if (name === "wraith2") {
     return "Apocalypse Wraith";
   } else if (name === "deathangel") {
-    return "Death Angel";
+    return "Azrael";
+  } else if (name === "deathangeltomb") {
+    return "Azrael's Tomb";
   }
 
   return name;

@@ -79,6 +79,7 @@ class AudioManager {
       "magicstone",
       "secret-found",
       "stone-break",
+      "lever",
       // "altarinfinitystone",
     ];
 
