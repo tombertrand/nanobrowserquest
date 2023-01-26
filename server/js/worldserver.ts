@@ -92,6 +92,7 @@ class World {
   altarChaliceNpcId: number;
   altarInfinityStoneNpcId: number;
   isChaliceLeverActivated: boolean;
+  isPortalLeverActivated: boolean;
   isActivatedTreeLevel: boolean;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
@@ -189,6 +190,7 @@ class World {
     this.altarChaliceNpcId = null;
     this.altarInfinityStoneNpcId = null;
     this.isChaliceLeverActivated = false;
+    this.isPortalLeverActivated = false;
     this.isActivatedTreeLevel = false;
 
     this.onPlayerConnect(function (player) {
@@ -1200,7 +1202,8 @@ class World {
 
   activateLever(player, lever) {
     lever.activate();
-    this.isChaliceLeverActivated = true;
+    // this.isChaliceLeverActivated = true;
+    // this.isPortalLeverActivated = true;
 
     // @TODO ~~~~ final temple door activate (OPEN)
     // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death

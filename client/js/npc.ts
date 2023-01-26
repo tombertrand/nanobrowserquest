@@ -198,7 +198,7 @@ var NpcTalk = {
   altarinfinitystone: [""],
   secretstairs: [""],
   secretstairsup: [""],
-  deathangeltomb: [
+  tombdeathangel: [
     "There was a powerful death angel named Azrael<br/>who ruled over the souls of the deceased.",
     "Azrael was feared and respected by all, for it was said that those who<br/>angered him would suffer an eternity of torment in the underworld.",
     "But there was one place that even Azrael dared not enter: the Lost Temple.",
@@ -206,7 +206,10 @@ var NpcTalk = {
     "The temple was hidden deep in a treacherous jungle,<br/>guarded by deadly beasts and cursed by dark magic.",
     "Many brave souls had attempted to find the temple and unlock its secrets,<br/>but none had ever returned...",
   ],
+  tombangel: ["angel"],
+  tombcross: ["cross"],
   lever: [""],
+  leverwall: [""],
   grimoire: [
     "The grimoire contains secrets of life and death,<br/>and the power to control the fate of souls.",
     "It is said that whoever possesses the grimoire<br/>will have the power to control death itself.",

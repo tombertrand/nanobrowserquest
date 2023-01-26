@@ -622,7 +622,6 @@ class Player extends Character {
           lever &&
           lever instanceof Npc &&
           !lever.isActivated &&
-          !self.server.isChaliceLeverActivated &&
           Math.abs(self.x - lever.x) < 3 &&
           Math.abs(self.y - lever.y) < 3
         ) {

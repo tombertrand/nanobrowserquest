@@ -111,8 +111,11 @@ import magicstone from "../sprites/magicstone.json";
 import altarchalice from "../sprites/altar.json";
 import secretstairs from "../sprites/secretstairs.json";
 import secretstairsup from "../sprites/secretstairs.json";
-import deathangeltomb from "../sprites/deathangeltomb.json";
+import tombdeathangel from "../sprites/tomb.json";
+import tombangel from "../sprites/tomb.json";
+import tombcross from "../sprites/tomb.json";
 import lever from "../sprites/lever.json";
+import leverwall from "../sprites/lever.json";
 import grimoire from "../sprites/grimoire.json";
 import tree from "../sprites/tree.json";
 import altarinfinitystone from "../sprites/altar.json";
@@ -450,8 +453,11 @@ const sprites = {
   altarinfinitystone,
   secretstairs,
   secretstairsup,
-  deathangeltomb,
+  tombdeathangel,
+  tombangel,
+  tombcross,
   lever,
+  leverwall,
   grimoire,
   tree,
   ogre,

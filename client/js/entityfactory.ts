@@ -959,12 +959,24 @@ EntityFactory.builders[Types.Entities.SECRETSTAIRSUP] = function (id) {
   return new Npcs.SecretStairsUp(id);
 };
 
-EntityFactory.builders[Types.Entities.DEATHANGELTOMB] = function (id) {
-  return new Npcs.DeathAngelTomb(id);
+EntityFactory.builders[Types.Entities.TOMBDEATHANGEL] = function (id) {
+  return new Npcs.TombDeathAngel(id);
+};
+
+EntityFactory.builders[Types.Entities.TOMBANGEL] = function (id) {
+  return new Npcs.TombAngel(id);
+};
+
+EntityFactory.builders[Types.Entities.TOMBCROSS] = function (id) {
+  return new Npcs.TombCross(id);
 };
 
 EntityFactory.builders[Types.Entities.LEVER] = function (id) {
   return new Npcs.Lever(id);
+};
+
+EntityFactory.builders[Types.Entities.LEVERWALL] = function (id) {
+  return new Npcs.LeverWall(id);
 };
 
 EntityFactory.builders[Types.Entities.GRIMOIRE] = function (id) {

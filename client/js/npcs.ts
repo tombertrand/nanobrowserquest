@@ -115,30 +115,35 @@ var Npcs = {
   Anvil: class Anvil extends Npc {
     constructor(id) {
       super(id, Types.Entities.ANVIL);
+      this.isFading = false;
     }
   },
 
   Waypointx: class Waypointx extends Npc {
     constructor(id) {
       super(id, Types.Entities.WAYPOINTX);
+      this.isFading = false;
     }
   },
 
   Waypointn: class Waypointn extends Npc {
     constructor(id) {
       super(id, Types.Entities.WAYPOINTN);
+      this.isFading = false;
     }
   },
 
   Waypointo: class Waypointo extends Npc {
     constructor(id) {
       super(id, Types.Entities.WAYPOINTO);
+      this.isFading = false;
     }
   },
 
   Stash: class Stash extends Npc {
     constructor(id) {
       super(id, Types.Entities.STASH);
+      this.isFading = false;
     }
   },
 
@@ -173,6 +178,10 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.MAGICSTONE);
       this.raiseRate = 1300;
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
     }
   },
 
@@ -190,12 +199,17 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.ALTARCHALICE);
       this.raiseRate = 1300;
+      this.isFading = false;
     }
   },
 
   AltarInfinityStone: class AltarInfinityStone extends Npc {
     constructor(id) {
       super(id, Types.Entities.ALTARINFINITYSTONE);
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
     }
   },
 
@@ -203,17 +217,45 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.SECRETSTAIRS);
     }
+    hasShadow() {
+      return false;
+    }
   },
 
   SecretStairsUp: class SecretStairsUp extends Npc {
     constructor(id) {
       super(id, Types.Entities.SECRETSTAIRSUP);
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
     }
   },
 
-  DeathAngelTomb: class DeathAngelTomb extends Npc {
+  TombDeathAngel: class TombDeathAngel extends Npc {
     constructor(id) {
-      super(id, Types.Entities.DEATHANGELTOMB);
+      super(id, Types.Entities.TOMBDEATHANGEL);
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
+  TombAngel: class TombAngel extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.TOMBANGEL);
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
+  TombCross: class TombCross extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.TOMBCROSS);
+      this.isFading = false;
     }
     hasShadow() {
       return false;
@@ -224,6 +266,21 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.LEVER);
       this.raiseRate = 500;
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
+  LeverWall: class LeverWall extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.LEVERWALL);
+      this.raiseRate = 500;
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
     }
   },
 
@@ -231,11 +288,17 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.GRIMOIRE);
     }
+    hasShadow() {
+      return false;
+    }
   },
 
   Tree: class Tree extends Npc {
     constructor(id) {
       super(id, Types.Entities.TREE);
+    }
+    hasShadow() {
+      return false;
     }
   },
 };

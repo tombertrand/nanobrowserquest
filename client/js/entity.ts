@@ -139,7 +139,11 @@ class Entity {
           this.kind === Types.Entities.PORTALDEATHANGEL
         ) {
           this.currentAnimation.setSpeed(150);
-        } else if (this.kind === Types.Entities.MAGICSTONE || this.kind === Types.Entities.LEVER) {
+        } else if (
+          this.kind === Types.Entities.MAGICSTONE ||
+          this.kind === Types.Entities.LEVER ||
+          this.kind === Types.Entities.LEVERWALL
+        ) {
           this.currentAnimation.setSpeed(100);
         } else if (this.kind === Types.Entities.BLUEFLAME) {
           this.currentAnimation.setSpeed(75);

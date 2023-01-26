@@ -367,10 +367,13 @@ export const Types: any = {
     ALTARINFINITYSTONE: 250,
     SECRETSTAIRS: 251,
     SECRETSTAIRSUP: 253,
-    DEATHANGELTOMB: 254,
-    LEVER: 255,
-    GRIMOIRE: 256,
-    TREE: 257,
+    TOMBDEATHANGEL: 254,
+    TOMBANGEL: 255,
+    TOMBCROSS: 256,
+    LEVER: 257,
+    LEVERWALL: 258,
+    GRIMOIRE: 259,
+    TREE: 260,
 
     // Weapons
     DAGGER: 60,
@@ -888,8 +891,11 @@ export const kinds = {
   altarinfinitystone: [Types.Entities.ALTARINFINITYSTONE, "npc"],
   secretstairs: [Types.Entities.SECRETSTAIRS, "npc"],
   secretstairsup: [Types.Entities.SECRETSTAIRSUP, "npc"],
-  deathangeltomb: [Types.Entities.DEATHANGELTOMB, "npc"],
+  tombdeathangel: [Types.Entities.TOMBDEATHANGEL, "npc"],
+  tombangel: [Types.Entities.TOMBANGEL, "npc"],
+  tombcross: [Types.Entities.TOMBCROSS, "npc"],
   lever: [Types.Entities.LEVER, "npc"],
+  leverwall: [Types.Entities.LEVERWALL, "npc"],
   grimoire: [Types.Entities.GRIMOIRE, "npc"],
   tree: [Types.Entities.TREE, "npc"],
 
@@ -1507,8 +1513,12 @@ Types.getAliasFromName = function (name: string) {
     return "Apocalypse Wraith";
   } else if (name === "deathangel") {
     return "Azrael";
-  } else if (name === "deathangeltomb") {
+  } else if (name === "tombdeathangel") {
     return "Azrael's Tomb";
+  } else if (name === "tombangel") {
+    return "Fallen Angel Tomb";
+  } else if (name === "tombcross") {
+    return "Sacred Tomb";
   }
 
   return name;

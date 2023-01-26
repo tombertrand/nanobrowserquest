@@ -420,8 +420,11 @@ class Game {
       "altarinfinitystone",
       "secretstairs",
       "secretstairsup",
-      "deathangeltomb",
+      "tombdeathangel",
+      "tombangel",
+      "tombcross",
       "lever",
+      "leverwall",
       "grimoire",
       "tree",
       "blueflame",
@@ -2329,7 +2332,9 @@ class Game {
           entity.kind === Types.Entities.PORTALDEATHANGEL ||
           entity.kind === Types.Entities.ALTARCHALICE ||
           entity.kind === Types.Entities.ALTARINFINITYSTONE ||
-          entity.kind === Types.Entities.DEATHANGELTOMB ||
+          entity.kind === Types.Entities.TOMBDEATHANGEL ||
+          entity.kind === Types.Entities.TOMBANGEL ||
+          entity.kind === Types.Entities.TOMBCROSS ||
           entity.kind === Types.Entities.GRIMOIRE
         ) {
           this.entityGrid[y][x + 1][entity.id] = entity;
@@ -3062,7 +3067,7 @@ class Game {
                 } else {
                   entity.idle();
                 }
-              } else if (entity.kind === Types.Entities.LEVER) {
+              } else if (entity.kind === Types.Entities.LEVER || entity.kind === Types.Entities.LEVERWALL) {
                 entity.isActivated = isActivated;
                 if (entity.isActivated) {
                   entity.walk();
@@ -3737,7 +3742,7 @@ class Game {
               mob.currentAnimation.reset();
               mob.walk();
             }, 1300);
-          } else if (mob.kind === Types.Entities.LEVER) {
+          } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVERWALL) {
             self.audioManager.playSound("lever");
 
             mob.raise();
@@ -4660,6 +4665,7 @@ class Game {
           Types.Entities.ALTARCHALICE,
           Types.Entities.ALTARINFINITYSTONE,
           Types.Entities.LEVER,
+          Types.Entities.LEVERWALL,
         ].includes(npc.kind)
       ) {
         if (msg) {
@@ -4733,7 +4739,7 @@ class Game {
         if (!npc.isActivated) {
           this.client.sendMagicStone(npc.id);
         }
-      } else if (npc.kind === Types.Entities.LEVER) {
+      } else if (npc.kind === Types.Entities.LEVER || npc.kind === Types.Entities.LEVERWALL) {
         if (!npc.isActivated) {
           this.client.sendLever(npc.id);
         }
@@ -4748,7 +4754,11 @@ class Game {
       } else if (npc.kind === Types.Entities.SECRETSTAIRS) {
         if (npc.gridX === 8 && npc.gridY === 683) {
           // Chalice
-          this.player.stop_pathing_callback({ x: 7, y: 727, isWaypoint: true });
+          // this.player.stop_pathing_callback({ x: 7, y: 727, isWaypoint: true });
+
+          // @TODO ~~~~ finish this
+          // Bone Room
+          this.player.stop_pathing_callback({ x: 69, y: 729, isWaypoint: true });
         } else if (npc.gridX === 19 && npc.gridY === 642) {
           // Tree
           this.player.stop_pathing_callback({ x: 43, y: 728, isWaypoint: true });
