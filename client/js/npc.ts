@@ -176,22 +176,9 @@ var NpcTalk = {
       text: ["You need to be lv.53 and above to access the Minotaur portal"],
     },
   ],
-  portaltemple: [
-    {
-      condition(game: any) {
-        return game.player.level < 53;
-      },
-      text: ["You need to be lv.53 and above to access the Temple portal"],
-    },
-  ],
-  portaldeathangel: [
-    {
-      condition(game: any) {
-        return game.player.level < 65;
-      },
-      text: ["You need to be lv.65 and above to access the Death Angel portal"],
-    },
-  ],
+  portalstone: [""],
+  portalcrypt: [""],
+  portalruins: [""],
   magicstone: [""],
   blueflame: [""],
   altarchalice: [""],
@@ -208,6 +195,10 @@ var NpcTalk = {
   ],
   tombangel: ["angel"],
   tombcross: ["cross"],
+  tombskull: [
+    "There is an ancient legend about a powerful grimoire, a book of magic and spells,<br/>that is said to be hidden beneath a tree deep in the heart of a dark forest.",
+    "According to the legend, the grimoire holds the secrets to powerful magic,<br/>and those who can uncover it will gain immense power and knowledge.",
+  ],
   lever: [""],
   leverwall: [""],
   grimoire: [
@@ -216,6 +207,7 @@ var NpcTalk = {
     "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
   ],
   tree: [""],
+  statue: [""],
 
   coder: [
     "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",

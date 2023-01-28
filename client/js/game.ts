@@ -379,6 +379,8 @@ class Game {
       "mage-spell-lightning",
       "mage-spell-cold",
       "mage-spell-poison",
+      "statue",
+      "statue-spell",
       "deathangel",
       "deathangel-spell",
       "deathangel-spell-magic",
@@ -413,8 +415,9 @@ class Game {
       "stash",
       "portalcow",
       "portalminotaur",
-      "portaltemple",
-      "portaldeathangel",
+      "portalstone",
+      "portalcrypt",
+      "portalruins",
       "magicstone",
       "altarchalice",
       "altarinfinitystone",
@@ -423,6 +426,7 @@ class Game {
       "tombdeathangel",
       "tombangel",
       "tombcross",
+      "tombskull",
       "lever",
       "leverwall",
       "grimoire",
@@ -2326,15 +2330,17 @@ class Game {
           this.pathingGrid[y][x] = 1;
         }
 
-        // @NOTE: MagicStones / PortalDeathAngel takes 2 tiles
+        // @NOTE: A few NPC takes 2 or more tiles
         if (
           entity.kind === Types.Entities.MAGICSTONE ||
-          entity.kind === Types.Entities.PORTALDEATHANGEL ||
+          entity.kind === Types.Entities.PORTALCRYPT ||
+          entity.kind === Types.Entities.PORTALRUINS ||
           entity.kind === Types.Entities.ALTARCHALICE ||
           entity.kind === Types.Entities.ALTARINFINITYSTONE ||
           entity.kind === Types.Entities.TOMBDEATHANGEL ||
           entity.kind === Types.Entities.TOMBANGEL ||
           entity.kind === Types.Entities.TOMBCROSS ||
+          entity.kind === Types.Entities.TOMBSKULL ||
           entity.kind === Types.Entities.GRIMOIRE
         ) {
           this.entityGrid[y][x + 1][entity.id] = entity;
@@ -3107,7 +3113,7 @@ class Game {
                 self.audioManager.playSound("secret-found");
               }
 
-              if (entity.kind === Types.Entities.PORTALTEMPLE || entity.kind === Types.Entities.PORTALDEATHANGEL) {
+              if (entity.kind === Types.Entities.PORTALSTONE || entity.kind === Types.Entities.PORTALCRYPT) {
                 console.log("~~~~~PORTALZ!");
               }
 
@@ -3313,12 +3319,18 @@ class Game {
       });
 
       self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY, element: Elements, casterId) {
-        entity.setSprite(self.sprites[entity.getSpriteName(element === "physical" ? "" : element)]);
+        if ([Types.Entities.MAGESPELL, Types.Entities.DEATHANGELSPELL].includes(entity.kind)) {
+          entity.setSprite(self.sprites[entity.getSpriteName(element === "physical" ? "" : element)]);
+        } else {
+          entity.setSprite(self.sprites[entity.getSpriteName()]);
+        }
 
         if (entity.kind === Types.Entities.MAGESPELL) {
           entity.setTarget({ x: self.player.x, y: self.player.y });
         } else if (entity.kind === Types.Entities.DEATHANGELSPELL) {
           entity.setTarget({ x: (x + originX * 8) * 16, y: (y + originY * 8) * 16 });
+        } else if (entity.kind === Types.Entities.STATUESPELL) {
+          entity.setTarget({ x: x * 16, y: (y + 16) * 16 });
         }
 
         const caster = self.getEntityById(casterId);
@@ -3329,6 +3341,8 @@ class Game {
         // @NOTE Adjustment so the spell is correctly aligned
         if (entity.kind === Types.Entities.MAGESPELL) {
           entity.y = caster.y - 8;
+        } else if (entity.kind === Types.Entities.STATUESPELL) {
+          entity.x = caster.x;
         }
         entity.setOrientation(orientation);
         entity.idle();
@@ -3346,9 +3360,11 @@ class Game {
           let speed = 120;
 
           // Custom death animations
-          const hasCustomDeathAnimation = [Types.Entities.DEATHANGELSPELL, Types.Entities.MAGESPELL].includes(
-            entity.kind,
-          );
+          const hasCustomDeathAnimation = [
+            Types.Entities.DEATHANGELSPELL,
+            Types.Entities.MAGESPELL,
+            Types.Entities.STATUESPELL,
+          ].includes(entity.kind);
 
           if (!hasCustomDeathAnimation) {
             entity.setSprite(self.sprites["death"]);
@@ -3733,6 +3749,8 @@ class Game {
           } else if (mob.kind === Types.Entities.NECROMANCER) {
             mob.setRaisingMode();
             self.audioManager.playSound("raise");
+          } else if (mob.kind === Types.Entities.STATUE) {
+            mob.raise();
           } else if (mob.kind === Types.Entities.MAGICSTONE) {
             self.audioManager.playSound("magicstone");
             self.activatedMagicStones.push(mobId);
@@ -3771,6 +3789,14 @@ class Game {
             // mob.setVisible(true);
 
             self.audioManager.playSound("stone-break");
+          } else if (mob.kind === Types.Entities.STATUE) {
+            // self.audioManager.playSound("lever");
+
+            mob.raise();
+            setTimeout(() => {
+              mob.currentAnimation.reset();
+              mob.walk();
+            }, 400);
           }
         }
       });
@@ -4666,6 +4692,7 @@ class Game {
           Types.Entities.ALTARINFINITYSTONE,
           Types.Entities.LEVER,
           Types.Entities.LEVERWALL,
+          Types.Entities.STATUE,
         ].includes(npc.kind)
       ) {
         if (msg) {
@@ -4771,6 +4798,10 @@ class Game {
           // Tree
           this.player.stop_pathing_callback({ x: 18, y: 642, isWaypoint: true });
         }
+      } else if (npc.kind === Types.Entities.PORTALCRYPT) {
+        this.player.stop_pathing_callback({ x: randomRange(100, 104), y: randomRange(717, 720), isWaypoint: true });
+      } else if (npc.kind === Types.Entities.PORTALRUINS) {
+        this.player.stop_pathing_callback({ x: randomRange(97, 102), y: randomRange(551, 552), isWaypoint: true });
       }
     }
   }

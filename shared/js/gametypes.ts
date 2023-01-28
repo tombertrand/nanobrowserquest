@@ -208,6 +208,8 @@ export const Types: any = {
     GHOST: 235,
     MAGE: 236,
     MAGESPELL: 237,
+    STATUE: 263,
+    STATUESPELL: 264,
     DEATHANGEL: 217,
     DEATHANGELSPELL: 218,
 
@@ -359,8 +361,9 @@ export const Types: any = {
     STASH: 114,
     PORTALCOW: 125,
     PORTALMINOTAUR: 135,
-    PORTALTEMPLE: 238,
-    PORTALDEATHANGEL: 239,
+    PORTALSTONE: 238,
+    PORTALCRYPT: 239,
+    PORTALRUINS: 262,
     MAGICSTONE: 220,
     BLUEFLAME: 234,
     ALTARCHALICE: 246,
@@ -370,10 +373,11 @@ export const Types: any = {
     TOMBDEATHANGEL: 254,
     TOMBANGEL: 255,
     TOMBCROSS: 256,
-    LEVER: 257,
-    LEVERWALL: 258,
-    GRIMOIRE: 259,
-    TREE: 260,
+    TOMBSKULL: 257,
+    LEVER: 258,
+    LEVERWALL: 259,
+    GRIMOIRE: 260,
+    TREE: 261,
 
     // Weapons
     DAGGER: 60,
@@ -677,6 +681,7 @@ export const kinds = {
   wraith2: [Types.Entities.WRAITH2, "mob", 100, 52],
   ghost: [Types.Entities.GHOST, "mob", 100, 64],
   mage: [Types.Entities.MAGE, "mob", 100, 64],
+  statue: [Types.Entities.STATUE, "npc", 100, 64],
   deathangel: [Types.Entities.DEATHANGEL, "mob", 500, 70],
 
   // kind, type, level, damage
@@ -857,6 +862,7 @@ export const kinds = {
 
   "deathangel-spell": [Types.Entities.DEATHANGELSPELL, "spell", "Death Spiral", 70],
   "mage-spell": [Types.Entities.MAGESPELL, "spell", "Death Spiral", 60],
+  "statue-spell": [Types.Entities.STATUESPELL, "spell", "Death Spiral", 60],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -883,8 +889,9 @@ export const kinds = {
   stash: [Types.Entities.STASH, "npc"],
   portalcow: [Types.Entities.PORTALCOW, "npc"],
   portalminotaur: [Types.Entities.PORTALMINOTAUR, "npc"],
-  portaltemple: [Types.Entities.PORTALTEMPLE, "npc"],
-  portaldeathangel: [Types.Entities.PORTALDEATHANGEL, "npc"],
+  portalstone: [Types.Entities.PORTALSTONE, "npc"],
+  portalcrypt: [Types.Entities.PORTALCRYPT, "npc"],
+  portalruins: [Types.Entities.PORTALRUINS, "npc"],
   magicstone: [Types.Entities.MAGICSTONE, "npc"],
   blueflame: [Types.Entities.BLUEFLAME, "npc"],
   altarchalice: [Types.Entities.ALTARCHALICE, "npc"],
@@ -894,6 +901,7 @@ export const kinds = {
   tombdeathangel: [Types.Entities.TOMBDEATHANGEL, "npc"],
   tombangel: [Types.Entities.TOMBANGEL, "npc"],
   tombcross: [Types.Entities.TOMBCROSS, "npc"],
+  tombskull: [Types.Entities.TOMBSKULL, "npc"],
   lever: [Types.Entities.LEVER, "npc"],
   leverwall: [Types.Entities.LEVERWALL, "npc"],
   grimoire: [Types.Entities.GRIMOIRE, "npc"],
@@ -1519,6 +1527,8 @@ Types.getAliasFromName = function (name: string) {
     return "Fallen Angel Tomb";
   } else if (name === "tombcross") {
     return "Sacred Tomb";
+  } else if (name === "tombcross") {
+    return "Skull Tomb";
   }
 
   return name;

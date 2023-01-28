@@ -27,6 +27,8 @@ import wraith2 from "../sprites/wraith2.json";
 import ghost from "../sprites/ghost.json";
 import mage from "../sprites/mage.json";
 import mageSpell from "../sprites/mage-spell.json";
+import statue from "../sprites/statue.json";
+import statueSpell from "../sprites/statue-spell.json";
 import deathangel from "../sprites/deathangel.json";
 import deathangelSpell from "../sprites/deathangel-spell.json";
 import wirtleg from "../sprites/weapon.json";
@@ -105,8 +107,9 @@ import waypointo from "../sprites/waypoint.json";
 import stash from "../sprites/stash.json";
 import portalcow from "../sprites/portal.json";
 import portalminotaur from "../sprites/portal.json";
-import portaltemple from "../sprites/portal.json";
-import portaldeathangel from "../sprites/portaldeathangel.json";
+import portalstone from "../sprites/portal.json";
+import portalcrypt from "../sprites/portalcrypt.json";
+import portalruins from "../sprites/portalruins.json";
 import magicstone from "../sprites/magicstone.json";
 import altarchalice from "../sprites/altar.json";
 import secretstairs from "../sprites/secretstairs.json";
@@ -114,6 +117,7 @@ import secretstairsup from "../sprites/secretstairs.json";
 import tombdeathangel from "../sprites/tomb.json";
 import tombangel from "../sprites/tomb.json";
 import tombcross from "../sprites/tomb.json";
+import tombskull from "../sprites/tomb.json";
 import lever from "../sprites/lever.json";
 import leverwall from "../sprites/lever.json";
 import grimoire from "../sprites/grimoire.json";
@@ -217,6 +221,8 @@ const sprites = {
   "mage-spell-lightning": mageSpell,
   "mage-spell-cold": mageSpell,
   "mage-spell-poison": mageSpell,
+  statue,
+  "statue-spell": statueSpell,
   deathangel,
   "deathangel-spell": deathangelSpell,
   "deathangel-spell-magic": deathangelSpell,
@@ -445,8 +451,9 @@ const sprites = {
   stash,
   portalcow,
   portalminotaur,
-  portaltemple,
-  portaldeathangel,
+  portalstone,
+  portalcrypt,
+  portalruins,
   magicstone,
   blueflame,
   altarchalice,
@@ -456,6 +463,7 @@ const sprites = {
   tombdeathangel,
   tombangel,
   tombcross,
+  tombskull,
   lever,
   leverwall,
   grimoire,

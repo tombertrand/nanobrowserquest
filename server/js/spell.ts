@@ -1,5 +1,3 @@
-import * as _ from "lodash";
-
 import { Types } from "../../shared/js/gametypes";
 import { MobArea } from "./area";
 import Entity from "./entity";
@@ -42,8 +40,9 @@ class Spell extends Entity {
     if (this.kind === Types.Entities.DEATHANGELSPELL) {
       dmg = 200;
     } else if (this.kind === Types.Entities.MAGESPELL) {
-      dmg = 20;
-      // dmg = 120;
+      dmg = 120;
+    } else if (this.kind === Types.Entities.STATUESPELL) {
+      dmg = 300;
     }
     return dmg;
   }

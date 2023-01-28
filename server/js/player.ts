@@ -37,7 +37,7 @@ const MIN_TIME = 1000 * 60 * 15;
 
 let payoutIndex = 0;
 
-const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas"];
+const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "aaa"];
 
 class Player extends Character {
   id: number;
@@ -357,6 +357,10 @@ class Player extends Character {
                 self.server.startTreeLevel();
               }
               return;
+              // @TODO ~~~~ this.... aaa
+            } else if (msg === "/statue" && self.name === "aaa") {
+              self.server.activateStatues();
+              return;
             } else if (msg.startsWith("/ban")) {
               const periods = { 1: 86400, 365: 86400 * 365 };
               const reasons = ["misbehaved"];
@@ -652,6 +656,8 @@ class Player extends Character {
           self.server.castDeathAngelSpell(x, y);
         } else if (entity.kind === Types.Entities.MAGE) {
           self.server.addSpell({ kind: Types.Entities.MAGESPELL, x, y, element: entity.element, casterId: mobId });
+        } else if (entity.kind === Types.Entities.STATUE) {
+          self.server.addSpell({ kind: Types.Entities.STATUESPELL, x, y, element: "flame", casterId: mobId });
         }
       } else if (action === Types.Messages.LOOT) {
         console.info("LOOT: " + self.name + " " + message[1]);

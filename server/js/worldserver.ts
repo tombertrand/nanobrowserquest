@@ -82,6 +82,7 @@ class World {
   magicStones: number[];
   activatedMagicStones: number[];
   blueFlames: number[];
+  statues: number[];
   spellCount: number;
   isActivatedAltarChalice: boolean;
   isActivatedAltarInfinityStone: boolean;
@@ -181,6 +182,7 @@ class World {
     this.magicStones = [];
     this.activatedMagicStones = [];
     this.blueFlames = [];
+    this.statues = [];
     this.isActivatedAltarChalice = false;
     this.isActivatedAltarInfinityStone = false;
     this.secretStairsChaliceNpcId = null;
@@ -335,13 +337,13 @@ class World {
       self.map.generateCollisionGrid();
 
       // Populate all mob "roaming" areas
-      // _.each(self.map.mobAreas, function (a) {
-      //   var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
-      //   area.spawnMobs();
-      //   area.onEmpty(self.handleEmptyMobArea.bind(self, area));
+      _.each(self.map.mobAreas, function (a) {
+        var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
+        area.spawnMobs();
+        area.onEmpty(self.handleEmptyMobArea.bind(self, area));
 
-      //   self.mobAreas.push(area);
-      // });
+        self.mobAreas.push(area);
+      });
 
       // Create all chest areas
       _.each(self.map.chestAreas, function (a) {
@@ -566,7 +568,7 @@ class World {
 
     var delay = 30000;
     if (entity.kind === Types.Entities.DEATHKNIGHT) {
-      const adjustedDifficulty = this.getPlayersAroundBoss({ x: 155, y: 53 });
+      const adjustedDifficulty = this.getPlayersAroundEntity({ x: 155, y: 53 });
 
       // Each additional player removes 10s to DK spawn delay
       delay = delay - (adjustedDifficulty - 1) * 10000;
@@ -687,6 +689,8 @@ class World {
         this.magicStones.push(npc.id);
       } else if (kind === Types.Entities.BLUEFLAME) {
         this.blueFlames.push(npc.id);
+      } else if (kind === Types.Entities.STATUE) {
+        this.statues.push(npc.id);
       } else if (kind === Types.Entities.ALTARCHALICE) {
         this.altarChaliceNpcId = npc.id;
       } else if (kind === Types.Entities.ALTARINFINITYSTONE) {
@@ -1115,7 +1119,7 @@ class World {
     this.stopRaiseNecromancerInterval();
 
     const raiseZombies = () => {
-      const adjustedDifficulty = this.getPlayersAroundBoss(mob);
+      const adjustedDifficulty = this.getPlayersAroundEntity(mob);
 
       const minRaise = adjustedDifficulty + 1;
 
@@ -1211,6 +1215,63 @@ class World {
     this.broadcastRaise(player, lever);
     this.pushBroadcast(new Messages.Raise(lever.id));
   }
+
+  activateStatues() {
+    this.statues.forEach(statueId => {
+      const statue = this.getEntityById(statueId);
+      const player = this.getFirstPlayerNearEntity(statue);
+
+      console.log("~~~~~statue", statue);
+
+      if (player) {
+        this.broadcastRaise(player, statue);
+
+        setTimeout(() => {
+          this.addSpell({
+            kind: Types.Entities.STATUESPELL,
+            x: statue.x,
+            y: statue.y + 1,
+            orientation: Types.Orientations.DOWN,
+            originX: statue.x,
+            originY: statue.y,
+            element: "flame",
+            casterId: statue.id,
+          });
+        }, 300);
+      }
+    });
+  }
+
+  // activateStatue(player, statue) {
+  //   if (statue.isActivated) return;
+
+  //   statue.activatedByPlayerId = player.id;
+  //   statue.activate();
+
+  //   if (this.isPlayerNearEntity(player, statue)) {
+  //     this.broadcastRaise(player, statue);
+  //     this.addSpell({
+  //       kind: Types.Entities.STATUESPELL,
+  //       x: statue.x,
+  //       y: statue.y + 1,
+  //       orientation: Types.Orientations.DOWN,
+  //       originX: statue.x,
+  //       originY: statue.y,
+  //       element: "flame",
+  //       casterId: statue.id,
+  //     });
+  //   }
+
+  //   console.log("~~~~statue", statue);
+  //   console.log("~~~~statue.group", statue.group);
+
+  //   // @TODO check this!? ~~~~
+  //   // this.pushToAdjacentGroups(statue.group, mob.raise(player.id));
+
+  //   setTimeout(() => {
+  //     statue.isActivated = false;
+  //   }, 2000);
+  // }
 
   async activateAltarChalice(player, force = false) {
     const altar = this.getEntityById(this.altarChaliceNpcId);
@@ -1989,7 +2050,17 @@ class World {
     }
   }
 
-  getPlayersAroundBoss(entity, range: number = 20) {
+  getFirstPlayerNearEntity(entity, range: number = 20) {
+    for (let id in this.players) {
+      if (this.isPlayerNearEntity(this.players[id], entity, range)) {
+        return this.players[id];
+      }
+    }
+
+    return null;
+  }
+
+  getPlayersAroundEntity(entity, range: number = 20) {
     let counter = 0;
 
     for (let id in this.players) {
@@ -2028,7 +2099,7 @@ class World {
 
   handleBossDmg({ dmg, entity, player }) {
     // Reduce dmg on boss by 20% per player in boss room
-    const adjustedDifficulty = this.getPlayersAroundBoss(entity);
+    const adjustedDifficulty = this.getPlayersAroundEntity(entity);
 
     const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
     dmg = Math.floor(dmg * percentReduce);

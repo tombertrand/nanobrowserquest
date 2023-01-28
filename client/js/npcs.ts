@@ -159,15 +159,24 @@ var Npcs = {
     }
   },
 
-  PortalTemple: class PortalTemple extends Npc {
+  PortalStone: class PortalStone extends Npc {
     constructor(id) {
-      super(id, Types.Entities.PORTALTEMPLE);
+      super(id, Types.Entities.PORTALSTONE);
     }
   },
 
-  PortalDeathAngel: class PortalDeathAngel extends Npc {
+  PortalCrypt: class PortalCrypt extends Npc {
     constructor(id) {
-      super(id, Types.Entities.PORTALDEATHANGEL);
+      super(id, Types.Entities.PORTALCRYPT);
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
+  PortalRuins: class PortalRuins extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.PORTALRUINS);
     }
     hasShadow() {
       return false;
@@ -262,6 +271,16 @@ var Npcs = {
     }
   },
 
+  TombSkull: class TombSkull extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.TOMBSKULL);
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
   Lever: class Lever extends Npc {
     constructor(id) {
       super(id, Types.Entities.LEVER);
@@ -296,6 +315,14 @@ var Npcs = {
   Tree: class Tree extends Npc {
     constructor(id) {
       super(id, Types.Entities.TREE);
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+  Statue: class Statue extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.STATUE);
     }
     hasShadow() {
       return false;

@@ -135,14 +135,16 @@ class Entity {
           this.kind === Types.Entities.WAYPOINTO ||
           this.kind === Types.Entities.PORTALCOW ||
           this.kind === Types.Entities.PORTALMINOTAUR ||
-          this.kind === Types.Entities.PORTALTEMPLE ||
-          this.kind === Types.Entities.PORTALDEATHANGEL
+          this.kind === Types.Entities.PORTALSTONE ||
+          this.kind === Types.Entities.PORTALCRYPT ||
+          this.kind === Types.Entities.PORTALRUINS
         ) {
           this.currentAnimation.setSpeed(150);
         } else if (
           this.kind === Types.Entities.MAGICSTONE ||
           this.kind === Types.Entities.LEVER ||
-          this.kind === Types.Entities.LEVERWALL
+          this.kind === Types.Entities.LEVERWALL ||
+          this.kind === Types.Entities.STATUE
         ) {
           this.currentAnimation.setSpeed(100);
         } else if (this.kind === Types.Entities.BLUEFLAME) {

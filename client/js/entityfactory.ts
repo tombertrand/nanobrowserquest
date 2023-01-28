@@ -187,6 +187,14 @@ EntityFactory.builders[Types.Entities.MAGESPELL] = function (id) {
   return new Spells.MageSpell(id);
 };
 
+EntityFactory.builders[Types.Entities.STATUE] = function (id) {
+  return new Npcs.Statue(id);
+};
+
+EntityFactory.builders[Types.Entities.STATUESPELL] = function (id) {
+  return new Spells.StatueSpell(id);
+};
+
 EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id, resistances) {
   return new Mobs.DeathAngel(id, resistances);
 };
@@ -927,12 +935,16 @@ EntityFactory.builders[Types.Entities.PORTALMINOTAUR] = function (id) {
   return new Npcs.PortalMinotaur(id);
 };
 
-EntityFactory.builders[Types.Entities.PORTALTEMPLE] = function (id) {
-  return new Npcs.PortalTemple(id);
+EntityFactory.builders[Types.Entities.PORTALSTONE] = function (id) {
+  return new Npcs.PortalStone(id);
 };
 
-EntityFactory.builders[Types.Entities.PORTALDEATHANGEL] = function (id) {
-  return new Npcs.PortalDeathAngel(id);
+EntityFactory.builders[Types.Entities.PORTALCRYPT] = function (id) {
+  return new Npcs.PortalCrypt(id);
+};
+
+EntityFactory.builders[Types.Entities.PORTALRUINS] = function (id) {
+  return new Npcs.PortalRuins(id);
 };
 
 EntityFactory.builders[Types.Entities.MAGICSTONE] = function (id) {
@@ -969,6 +981,10 @@ EntityFactory.builders[Types.Entities.TOMBANGEL] = function (id) {
 
 EntityFactory.builders[Types.Entities.TOMBCROSS] = function (id) {
   return new Npcs.TombCross(id);
+};
+
+EntityFactory.builders[Types.Entities.TOMBSKULL] = function (id) {
+  return new Npcs.TombSkull(id);
 };
 
 EntityFactory.builders[Types.Entities.LEVER] = function (id) {

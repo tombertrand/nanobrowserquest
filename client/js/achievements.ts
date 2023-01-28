@@ -426,8 +426,8 @@ export const getAchievements = (network: Network) => ({
   },
   DEATHANGEL: {
     id: 60,
-    name: "Save your Soul",
-    desc: "Kill the Death Angel",
+    name: "Death Angel",
+    desc: "Kill Azrael",
     hidden: false,
   },
   MAGIC8: {
