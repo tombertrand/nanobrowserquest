@@ -38,11 +38,11 @@ class Spell extends Entity {
   getDmg() {
     let dmg = 0;
     if (this.kind === Types.Entities.DEATHANGELSPELL) {
-      dmg = 200;
+      dmg = 140;
     } else if (this.kind === Types.Entities.MAGESPELL) {
-      dmg = 120;
+      dmg = 10;
     } else if (this.kind === Types.Entities.STATUESPELL) {
-      dmg = 300;
+      dmg = 200;
     }
     return dmg;
   }

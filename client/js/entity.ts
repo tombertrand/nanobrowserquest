@@ -97,8 +97,8 @@ class Entity {
     return this.sprite;
   }
 
-  getSpriteName() {
-    return Types.getKindAsString(this.kind);
+  getSpriteName(element?: Elements) {
+    return `${Types.getKindAsString(this.kind)}${element ? `-${element}` : ""}`;
   }
 
   getAnimationByName(name) {

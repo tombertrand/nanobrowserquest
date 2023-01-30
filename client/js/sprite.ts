@@ -64,6 +64,7 @@ class Sprite {
       this.id === "shield" ||
       this.id === "npc" ||
       this.id.startsWith("deathangel-spell") ||
+      this.id.startsWith("mage") ||
       this.id.startsWith("mage-spell") ||
       this.id.startsWith("skill-cast") ||
       this.id.startsWith("portal") ||

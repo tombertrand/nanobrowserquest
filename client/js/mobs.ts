@@ -361,19 +361,6 @@ export const Mobs = {
   //   }
   // },
 
-  // Golem: class Golem extends Mob {
-  //   constructor(id) {
-  //     super(id, Types.Entities.GOLEM);
-  //     this.moveSpeed = 200;
-  //     this.atkSpeed = 100;
-  //     this.idleSpeed = 800;
-  //     this.walkSpeed = 200;
-  //     this.shadowOffsetY = 1;
-  //     this.aggroRange = 5;
-  //     this.setAttackRate(1300);
-  //   }
-  // },
-
   // Harpie: class Harpie extends Mob {
   //   constructor(id) {
   //     super(id, Types.Entities.HARPIE);
@@ -406,6 +393,19 @@ export const Mobs = {
       this.walkSpeed = 100;
       this.shadowOffsetY = 1;
       this.aggroRange = 4;
+      this.setAttackRate(1300);
+    }
+  },
+
+  Golem: class Golem extends Mob {
+    constructor(id) {
+      super(id, Types.Entities.GOLEM);
+      this.moveSpeed = 200;
+      this.atkSpeed = 100;
+      this.idleSpeed = 800;
+      this.walkSpeed = 200;
+      this.shadowOffsetY = 1;
+      this.aggroRange = 5;
       this.setAttackRate(1300);
     }
   },

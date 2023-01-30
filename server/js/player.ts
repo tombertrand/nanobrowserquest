@@ -37,6 +37,7 @@ const MIN_TIME = 1000 * 60 * 15;
 
 let payoutIndex = 0;
 
+const ACHIEVEMENT_GRIMOIRE_INDEX = 66;
 const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "aaa"];
 
 class Player extends Character {
@@ -150,6 +151,7 @@ class Player extends Character {
   attackTimeout: NodeJS.Timeout;
   discordId: number;
   isHurtByTrap: boolean;
+  hasGrimoire: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -200,6 +202,7 @@ class Player extends Character {
     this.chatBanEndTime = 0;
     this.hash = null;
     this.isHurtByTrap = false;
+    this.hasGrimoire = false;
 
     this.dbWriteQueue = new PromiseQueue();
 
@@ -1023,9 +1026,14 @@ class Player extends Character {
       } else if (action === Types.Messages.ACHIEVEMENT) {
         console.info("ACHIEVEMENT: " + self.name + " " + message[1] + " " + message[2]);
         const index = parseInt(message[1]) - 1;
-        if (message[2] === "found") {
+        if (message[2] === "found" && !self.achievement[index]) {
           self.achievement[index] = 1;
           databaseHandler.foundAchievement(self.name, index);
+
+          if (index === ACHIEVEMENT_GRIMOIRE_INDEX) {
+            self.hasGrimoire = true;
+            self.equipItem({} as any);
+          }
         }
       } else if (action === Types.Messages.WAYPOINT) {
         console.info("WAYPOINT: " + self.name + " " + message[1] + " " + message[2]);
@@ -2175,6 +2183,10 @@ class Player extends Character {
   }
 
   calculateGlobalBonus() {
+    if (this.hasGrimoire) {
+      this.bonus.allResistance += 10;
+    }
+
     if (this.bonus.allResistance) {
       this.bonus.magicResistance += this.bonus.allResistance;
       this.bonus.flameResistance += this.bonus.allResistance;
@@ -2593,6 +2605,10 @@ class Player extends Character {
       this.server.enter_callback(this);
 
       const { members, partyLeader } = this.getParty() || {};
+
+      if (achievement[ACHIEVEMENT_GRIMOIRE_INDEX]) {
+        this.hasGrimoire = true;
+      }
 
       this.send([
         Types.Messages.WELCOME,

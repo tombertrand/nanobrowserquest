@@ -1,3 +1,21 @@
+import {
+  COW_COUNT,
+  DMG_TOTAL,
+  GOLEM_COUNT,
+  KILLS_TOTAL,
+  MAGE_COUNT,
+  RAT_COUNT,
+  RAT3_COUNT,
+  SKELETON_COUNT,
+  SKELETON3_COUNT,
+  SKELETON4_COUNT,
+  SPECTRE_COUNT,
+  WEREWOLF_COUNT,
+  WRAITH_COUNT,
+  WRAITH2_COUNT,
+  YETI_COUNT,
+} from "./achievements";
+
 class Storage {
   data: any;
 
@@ -39,6 +57,7 @@ class Storage {
       },
       achievements: {
         ratCount: 0,
+        rat3Count: 0,
         skeletonCount: 0,
         spectreCount: 0,
         yetiCount: 0,
@@ -49,9 +68,11 @@ class Storage {
         wraith2Count: 0,
         cowCount: 0,
         mageCount: 0,
+        golemCount: 0,
         totalKills: 0,
         totalDmg: 0,
         totalRevives: 0,
+        magicStones: [0, 0, 0, 0, 0, 0],
       },
       achievement: new Array(44).fill(0),
     };
@@ -223,8 +244,20 @@ class Storage {
   }
 
   incrementRatCount() {
-    if (this.data.achievements.ratCount < 10) {
+    if (this.data.achievements.ratCount < RAT_COUNT) {
       this.data.achievements.ratCount++;
+      this.save();
+    }
+  }
+
+  // POISON_RAT
+  getRat3Count() {
+    return this.data.achievements.rat3Count;
+  }
+
+  incrementRat3Count() {
+    if (this.data.achievements.rat3Count < RAT3_COUNT) {
+      this.data.achievements.rat3Count++;
       this.save();
     }
   }
@@ -235,7 +268,7 @@ class Storage {
   }
 
   incrementSkeletonCount() {
-    if (this.data.achievements.skeletonCount < 10) {
+    if (this.data.achievements.skeletonCount < SKELETON_COUNT) {
       this.data.achievements.skeletonCount++;
       this.save();
     }
@@ -251,7 +284,7 @@ class Storage {
       this.data.achievements.spectreCount = 0;
     }
 
-    if (this.data.achievements.spectreCount < 15) {
+    if (this.data.achievements.spectreCount < SPECTRE_COUNT) {
       this.data.achievements.spectreCount++;
       this.save();
     }
@@ -267,7 +300,7 @@ class Storage {
       this.data.achievements.werewolfCount = 0;
     }
 
-    if (this.data.achievements.werewolfCount < 25) {
+    if (this.data.achievements.werewolfCount < WEREWOLF_COUNT) {
       this.data.achievements.werewolfCount++;
       this.save();
     }
@@ -283,7 +316,7 @@ class Storage {
       this.data.achievements.yetiCount = 0;
     }
 
-    if (this.data.achievements.yetiCount < 25) {
+    if (this.data.achievements.yetiCount < YETI_COUNT) {
       this.data.achievements.yetiCount++;
       this.save();
     }
@@ -299,7 +332,7 @@ class Storage {
       this.data.achievements.skeleton3Count = 0;
     }
 
-    if (this.data.achievements.skeleton3Count < 50) {
+    if (this.data.achievements.skeleton3Count < SKELETON3_COUNT) {
       this.data.achievements.skeleton3Count++;
       this.save();
     }
@@ -315,7 +348,7 @@ class Storage {
       this.data.achievements.skeleton4Count = 0;
     }
 
-    if (this.data.achievements.skeleton4Count < 250) {
+    if (this.data.achievements.skeleton4Count < SKELETON4_COUNT) {
       this.data.achievements.skeleton4Count++;
       this.save();
     }
@@ -331,13 +364,13 @@ class Storage {
       this.data.achievements.wraithCount = 0;
     }
 
-    if (this.data.achievements.wraithCount < 50) {
+    if (this.data.achievements.wraithCount < WRAITH_COUNT) {
       this.data.achievements.wraithCount++;
       this.save();
     }
   }
 
-  // TBD
+  // SPECTRAL
   getWraith2Count() {
     return this.data.achievements.wraith2Count;
   }
@@ -347,7 +380,7 @@ class Storage {
       this.data.achievements.wraith2Count = 0;
     }
 
-    if (this.data.achievements.wraith2Count < 50) {
+    if (this.data.achievements.wraith2Count < WRAITH2_COUNT) {
       this.data.achievements.wraith2Count++;
       this.save();
     }
@@ -363,13 +396,13 @@ class Storage {
       this.data.achievements.cowCount = 0;
     }
 
-    if (this.data.achievements.cowCount < 500) {
+    if (this.data.achievements.cowCount < COW_COUNT) {
       this.data.achievements.cowCount++;
       this.save();
     }
   }
 
-  // Meat Fest
+  // ARCHMAGE
   getMageCount() {
     return this.data.achievements.mageCount;
   }
@@ -379,8 +412,24 @@ class Storage {
       this.data.achievements.mageCount = 0;
     }
 
-    if (this.data.achievements.mageCount < 250) {
+    if (this.data.achievements.mageCount < MAGE_COUNT) {
       this.data.achievements.mageCount++;
+      this.save();
+    }
+  }
+
+  // HARDROCK
+  getGolemCount() {
+    return this.data.achievements.golemCount;
+  }
+
+  incrementGolemCount() {
+    if (!this.data.achievements.golemCount) {
+      this.data.achievements.golemCount = 0;
+    }
+
+    if (this.data.achievements.golemCount < GOLEM_COUNT) {
+      this.data.achievements.golemCount++;
       this.save();
     }
   }
@@ -391,7 +440,7 @@ class Storage {
   }
 
   addDamage(damage) {
-    if (this.data.achievements.totalDmg < 5000) {
+    if (this.data.achievements.totalDmg < DMG_TOTAL) {
       this.data.achievements.totalDmg += damage;
       this.save();
     }
@@ -403,7 +452,7 @@ class Storage {
   }
 
   incrementTotalKills() {
-    if (this.data.achievements.totalKills < 50) {
+    if (this.data.achievements.totalKills < KILLS_TOTAL) {
       this.data.achievements.totalKills++;
       this.save();
     }

@@ -385,21 +385,7 @@ var Properties: any = {
   //   armor: 40,
   //   weapon: 30,
   // },
-  // golem: {
-  //   drops: {
-  //     rejuvenationpotion: 10,
-  //     scrollupgradelegendary: 3,
-  //     templarsword: 3,
-  //     templararmor: 3,
-  //     belttemplar: 3,
-  //     shieldtemplar: 3,
-  //     ringplatinum: 3,
-  //     amuletplatinum: 3,
-  //   },
-  //   hp: 1920,
-  //   armor: 38,
-  //   weapon: 30,
-  // },
+
   // harpie: {
   //   drops: {
   //     rejuvenationpotion: 10,
@@ -444,6 +430,21 @@ var Properties: any = {
     },
     hp: 2320,
     armor: 28,
+    weapon: 30,
+  },
+  golem: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      templarsword: 3,
+      templararmor: 3,
+      belttemplar: 3,
+      shieldtemplar: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+    },
+    hp: 1000,
+    armor: 20,
     weapon: 30,
   },
   worm: {

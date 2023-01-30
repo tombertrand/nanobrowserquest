@@ -679,10 +679,10 @@ export const kinds = {
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
   minotaur: [Types.Entities.MINOTAUR, "mob", 500, 58],
   // troll: [Types.Entities.TROLL, "mob", 100, 52],
-  // golem: [Types.Entities.GOLEM, "mob", 100, 52],
   // harpie: [Types.Entities.HARPIE, "mob", 100, 52],
   // werewolf2: [Types.Entities.WEREWOLF2, "mob", 100, 52],
   skeleton4: [Types.Entities.SKELETON4, "mob", 100, 52],
+  golem: [Types.Entities.GOLEM, "mob", 100, 52],
   worm: [Types.Entities.WORM, "mob", 100, 52],
   wraith2: [Types.Entities.WRAITH2, "mob", 100, 52],
   ghost: [Types.Entities.GHOST, "mob", 100, 64],
@@ -1490,6 +1490,8 @@ Types.getAliasFromName = function (name: string) {
     return "skeleton guard";
   } else if (name === "skeleton4") {
     return "skeleton cruisader";
+  } else if (name === "golem") {
+    return "stone golem";
   } else if (name === "skeletoncommander") {
     return "skeleton commander";
   } else if (name === "carlosmatos") {

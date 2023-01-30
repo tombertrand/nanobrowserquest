@@ -178,9 +178,9 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.PORTALRUINS);
     }
-    // hasShadow() {
-    //   return false;
-    // }
+    hasShadow() {
+      return false;
+    }
   },
 
   MagicStone: class MagicStone extends Npc {
@@ -306,6 +306,7 @@ var Npcs = {
   Grimoire: class Grimoire extends Npc {
     constructor(id) {
       super(id, Types.Entities.GRIMOIRE);
+      this.isFading = false;
     }
     hasShadow() {
       return false;
@@ -315,6 +316,7 @@ var Npcs = {
   Tree: class Tree extends Npc {
     constructor(id) {
       super(id, Types.Entities.TREE);
+      this.isFading = false;
     }
     hasShadow() {
       return false;
@@ -324,6 +326,7 @@ var Npcs = {
   Trap: class Trap extends Npc {
     constructor(id) {
       super(id, Types.Entities.TRAP);
+      this.isFading = false;
     }
     hasShadow() {
       return false;
@@ -333,6 +336,7 @@ var Npcs = {
   Trap2: class Trap2 extends Npc {
     constructor(id) {
       super(id, Types.Entities.TRAP2);
+      this.isFading = false;
     }
     hasShadow() {
       return false;
@@ -342,6 +346,7 @@ var Npcs = {
   Trap3: class Trap3 extends Npc {
     constructor(id) {
       super(id, Types.Entities.TRAP3);
+      this.isFading = false;
     }
     hasShadow() {
       return false;
@@ -351,6 +356,7 @@ var Npcs = {
   Statue: class Statue extends Npc {
     constructor(id) {
       super(id, Types.Entities.STATUE);
+      this.isFading = false;
     }
     hasShadow() {
       return false;

@@ -193,8 +193,15 @@ var NpcTalk = {
     "The temple was hidden deep in a treacherous jungle,<br/>guarded by deadly beasts and cursed by dark magic.",
     "Many brave souls had attempted to find the temple and unlock its secrets,<br/>but none had ever returned...",
   ],
-  tombangel: ["angel"],
-  tombcross: ["cross"],
+  tombangel: [
+    "The sun statuette grants the power to see what is hidden to human eye.",
+    "The unique artifact remains firmly in the hands of the blood guardian, protected for all eternity",
+  ],
+
+  tombcross: [
+    "The moon statuette grants the power to travel through space and time.",
+    "The unique artifact remains firmly in the hands of the blood guardian, protected for all eternity",
+  ],
   tombskull: [
     "There is an ancient legend about a powerful grimoire, a book of magic and spells,<br/>that is said to be hidden beneath a tree deep in the heart of a dark forest.",
     "According to the legend, the grimoire holds the secrets to powerful magic,<br/>and those who can uncover it will gain immense power and knowledge.",

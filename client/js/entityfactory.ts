@@ -167,6 +167,10 @@ EntityFactory.builders[Types.Entities.SKELETON4] = function (id) {
   return new Mobs.Skeleton4(id);
 };
 
+EntityFactory.builders[Types.Entities.GOLEM] = function (id) {
+  return new Mobs.Golem(id);
+};
+
 EntityFactory.builders[Types.Entities.WORM] = function (id) {
   return new Mobs.Worm(id);
 };

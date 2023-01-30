@@ -3,6 +3,22 @@ import storage from "./storage";
 const NANO_PAYOUT_MULTIPLIER = 10;
 const BAN_PAYOUT_MULTIPLIER = 10;
 
+export const DMG_TOTAL = 5000;
+export const KILLS_TOTAL = 50;
+export const RAT_COUNT = 10;
+export const SKELETON_COUNT = 10;
+export const SPECTRE_COUNT = 15;
+export const YETI_COUNT = 25;
+export const WEREWOLF_COUNT = 25;
+export const SKELETON3_COUNT = 50;
+export const WRAITH_COUNT = 50;
+export const COW_COUNT = 500;
+export const RAT3_COUNT = 2;
+export const GOLEM_COUNT = 2;
+export const SKELETON4_COUNT = 2;
+export const WRAITH2_COUNT = 2;
+export const MAGE_COUNT = 2;
+
 export const getAchievements = (network: Network) => ({
   A_TRUE_WARRIOR: {
     id: 1,
@@ -21,9 +37,9 @@ export const getAchievements = (network: Network) => ({
   ANGRY_RATS: {
     id: 3,
     name: "Angry Rats",
-    desc: "Kill 10 rats",
+    desc: `Kill ${RAT_COUNT} rats`,
     isCompleted() {
-      return storage.getRatCount() >= 10;
+      return storage.getRatCount() >= RAT_COUNT;
     },
     nano: 5 * NANO_PAYOUT_MULTIPLIER,
     ban: 125 * BAN_PAYOUT_MULTIPLIER,
@@ -73,9 +89,9 @@ export const getAchievements = (network: Network) => ({
   SKULL_COLLECTOR: {
     id: 10,
     name: "Skull Collector",
-    desc: "Kill 10 skeletons",
+    desc: `Kill ${SKELETON_COUNT} skeletons`,
     isCompleted() {
-      return storage.getSkeletonCount() >= 10;
+      return storage.getSkeletonCount() >= SKELETON_COUNT;
     },
     nano: 8 * NANO_PAYOUT_MULTIPLIER,
     ban: 200 * BAN_PAYOUT_MULTIPLIER,
@@ -141,9 +157,9 @@ export const getAchievements = (network: Network) => ({
   SPECTRE_COLLECTOR: {
     id: 18,
     name: "No Fear",
-    desc: "Kill 15 spectres",
+    desc: `Kill ${SPECTRE_COUNT} spectres`,
     isCompleted() {
-      return storage.getSpectreCount() >= 15;
+      return storage.getSpectreCount() >= SPECTRE_COUNT;
     },
     nano: 8 * NANO_PAYOUT_MULTIPLIER,
     ban: 200 * BAN_PAYOUT_MULTIPLIER,
@@ -214,10 +230,10 @@ export const getAchievements = (network: Network) => ({
   BLOODLUST: {
     id: 28,
     name: "Bloodlust",
-    desc: "Defeat 25 Werewolves",
+    desc: `Defeat ${WEREWOLF_COUNT} Werewolves`,
     hidden: false,
     isCompleted() {
-      return storage.getWerewolfCount() >= 25;
+      return storage.getWerewolfCount() >= WEREWOLF_COUNT;
     },
   },
   SATOSHI: {
@@ -241,19 +257,19 @@ export const getAchievements = (network: Network) => ({
   MYTH_OR_REAL: {
     id: 32,
     name: "Myth or Real",
-    desc: "Defeat 25 Yetis",
+    desc: `Defeat ${YETI_COUNT} Yetis`,
     hidden: false,
     isCompleted() {
-      return storage.getYetiCount() >= 25;
+      return storage.getYetiCount() >= YETI_COUNT;
     },
   },
   RIP: {
     id: 33,
     name: "R.I.P.",
-    desc: "Defeat 50 Skeleton Guards",
+    desc: `Defeat ${SKELETON3_COUNT} Skeleton Guards`,
     hidden: false,
     isCompleted() {
-      return storage.getSkeleton3Count() >= 50;
+      return storage.getSkeleton3Count() >= SKELETON3_COUNT;
     },
   },
   DEAD_NEVER_DIE: {
@@ -271,10 +287,10 @@ export const getAchievements = (network: Network) => ({
   GHOSTBUSTERS: {
     id: 36,
     name: "Ghostbusters",
-    desc: "Kill 50 Wraiths",
+    desc: `Kill ${WRAITH_COUNT} Wraiths`,
     hidden: false,
     isCompleted() {
-      return storage.getWraithCount() >= 50;
+      return storage.getWraithCount() >= WRAITH_COUNT;
     },
   },
   BLACK_MAGIC: {
@@ -316,10 +332,10 @@ export const getAchievements = (network: Network) => ({
   FRESH_MEAT: {
     id: 43,
     name: "Fresh Meat",
-    desc: "Kill 500 cows",
+    desc: `Kill ${COW_COUNT} cows`,
     hidden: true,
     isCompleted() {
-      return storage.getCowCount() >= 500;
+      return storage.getCowCount() >= COW_COUNT;
     },
   },
   FARMER: {
@@ -328,136 +344,147 @@ export const getAchievements = (network: Network) => ({
     desc: "Kill every monster in the secret level",
     hidden: true,
   },
-  WOODLAND: {
+  STONE: {
     id: 45,
-    name: "Woodland",
-    desc: "Enter the Woodland",
-    hidden: false,
+    name: "A $1M Stone",
+    desc: "Find the Stone Field",
   },
-  EXPANSION2: {
+  POISON_RAT: {
     id: 46,
-    name: "What's that smell",
-    desc: "Kill 250 Trolls",
-    hidden: false,
+    name: "What's that smell?",
+    desc: `Kill ${RAT3_COUNT} Poison Rats`,
+    isCompleted() {
+      return storage.getCowCount() >= RAT3_COUNT;
+    },
   },
   SCROLL: {
     id: 47,
-    name: "Title3",
-    desc: "Get rewarded with legendary scrolls",
-    hidden: false,
-  },
-  EXPANSION4: {
-    id: 48,
-    name: "Title4",
-    desc: "Achievement description4",
-    hidden: false,
+    name: "Search And Rescue",
+    desc: "Retrieve a figurine for Alkor",
   },
   HARDROCK: {
-    id: 49,
+    id: 48,
     name: "Hard Rock",
-    desc: "Kill 250 Stone Golem",
-    hidden: false,
+    desc: `Kill ${GOLEM_COUNT} Stone Golem`,
     isCompleted() {
-      return storage.getCowCount() >= 250;
+      return storage.getCowCount() >= GOLEM_COUNT;
     },
   },
-  GRIMOIRE: {
+  WAY_OF_WATER: { // done
+    id: 49,
+    name: "Way Of Water",
+    desc: "Get your toes wet",
+  },
+  CRUISADE: {
     id: 50,
-    name: "Grimoire",
-    desc: "Find The Book of Azrael",
-    hidden: false,
+    name: "Cruisade",
+    desc: `Kill ${SKELETON4_COUNT} Cruisader Skeletons`,
+    isCompleted() {
+      return storage.getSkeleton4Count() >= SKELETON4_COUNT;
+    },
   },
   HELLFORGE: {
     id: 51,
     name: "Hellforge",
     desc: "Break the mystical gem on the Altar",
-    hidden: false,
   },
   STONEHENGE: {
     id: 52,
     name: "Stonehenge",
     desc: "Activate all magic stones",
-    hidden: false,
   },
   STARGATE: {
     id: 53,
     name: "Stargate",
     desc: "Enter the portal",
-    hidden: false,
   },
-  EXPANSION10: {
+  PERSONAL_WEAPON: {
     id: 54,
-    name: "Rune Master",
-    desc: "Combine runes to create a higher ranked one",
-    hidden: false,
+    name: "Personal Weapon",
+    desc: "Go on a quest to find a special weapon",
   },
   KINGDOM: {
     id: 55,
     name: "Kingdom of Heaven",
     desc: "Find the Holy Grail",
-    hidden: false,
   },
-  EXPANSION12: {
+  TOMB: {
     id: 56,
     name: "The Tomb",
     desc: "Enter the hidden Crypt",
-    hidden: false,
-  },
-  PHARAOH: {
-    id: 57,
-    name: "Pharaoh",
-    desc: "Enter the Temple of Light",
-    hidden: false,
   },
   ARCHMAGE: {
-    id: 58,
+    id: 57,
     name: "Archmage",
-    desc: "Kill 250 mages",
-    hidden: false,
+    desc: `Kill ${MAGE_COUNT} Mages`,
     isCompleted() {
-      return storage.getCowCount() >= 250;
+      return storage.getMageCount() >= MAGE_COUNT;
     },
   },
-  CRUISADE: {
+  SPECTRAL: {
+    id: 58,
+    name: "Spectral",
+    desc: `Kill ${WRAITH2_COUNT} Spectral Wraiths`,
+    isCompleted() {
+      return storage.getWraith2Count() >= WRAITH2_COUNT;
+    },
+  },
+  PHARAOH: {
     id: 59,
-    name: "Cruisade",
-    desc: "Kill 250 Cruisader Skeletons",
-    hidden: false,
+    name: "Pharaoh",
+    desc: "Enter the Temple of Light",
   },
   DEATHANGEL: {
     id: 60,
     name: "Death Angel",
     desc: "Kill Azrael",
-    hidden: false,
-  },
-  MISSTEP: {
-    id: 64,
-    name: "Misstep",
-    desc: "Die from a trap",
-    hidden: false,
   },
   MAGIC8: {
     id: 61,
     name: "Magic 8",
     desc: "Upgrade a legendary item to +8",
-    hidden: false,
+    hidden: true,
+  },
+  RUNOLOGUE: {
+    id: 62,
+    name: "Runologue",
+    desc: "Find a high level rune",
+    hidden: true,
   },
   BLACKSMITH: {
-    id: 62,
+    id: 63,
     name: "Blacksmith",
     desc: "Forge a Runeword",
-    hidden: false,
+    hidden: true,
+  },
+  RUNE_MASTER: {
+    id: 64,
+    name: "Rune Master",
+    desc: "Combine 2 high rank runes",
+    hidden: true,
+  },
+  MISSTEP: {
+    id: 65,
+    name: "Misstep",
+    desc: "Die from a trap",
+    hidden: true,
   },
   ZELDA: {
-    id: 63,
+    id: 66,
     name: "ZELDA",
     desc: "Find the hidden stairs",
-    hidden: false,
+    hidden: true,
   },
-  // MAGIC8: {
-  //   id: 44,
-  //   name: "Magic 8",
-  //   desc: "Upgrade a high class item to +8",
-  //   hidden: true,
-  // },
+  GRIMOIRE: {
+    id: 67,
+    name: "Grimoire",
+    desc: "Find The Book of Azrael.<br/>Get awarded 10% to all resistances",
+    hidden: true,
+  },
+  TBD: {
+    id: 68,
+    name: "TBD",
+    desc: "TBD",
+    hidden: true,
+  },
 });

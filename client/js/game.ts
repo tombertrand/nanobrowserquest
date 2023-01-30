@@ -345,6 +345,7 @@ class Game {
       "skeleton2",
       "skeleton3",
       "skeleton4",
+      "golem",
       "spectre",
       "boss",
       "skeletoncommander",
@@ -376,6 +377,11 @@ class Game {
       "wraith2",
       "ghost",
       "mage",
+      "mage-magic",
+      "mage-flame",
+      "mage-lightning",
+      "mage-cold",
+      "mage-poison",
       "mage-spell",
       "mage-spell-magic",
       "mage-spell-flame",
@@ -804,7 +810,16 @@ class Game {
         kind === Types.Entities.TRAP3
       )
         return;
+
       self.sprites[kindName].createSilhouette();
+
+      if (kind === Types.Entities.MAGE) {
+        self.sprites["mage-magic"].createSilhouette();
+        self.sprites["mage-flame"].createSilhouette();
+        self.sprites["mage-lightning"].createSilhouette();
+        self.sprites["mage-cold"].createSilhouette();
+        self.sprites["mage-poison"].createSilhouette();
+      }
     });
     self.sprites["chest"].createSilhouette();
     self.sprites["item-cake"].createSilhouette();
@@ -1882,6 +1897,10 @@ class Game {
       }
 
       this.player.setSkillTargetId(mobId);
+
+      if (isTree) {
+        this.tryUnlockingAchievement("ZELDA");
+      }
     } else if (slot === 2 && (this.player.defenseSkillTimeout || typeof this.player.defenseSkill !== "number")) return;
 
     const isAttackSkill = slot === 1;
@@ -2367,7 +2386,8 @@ class Game {
         if (
           entity.kind === Types.Entities.TRAP ||
           entity.kind === Types.Entities.TRAP2 ||
-          entity.kind === Types.Entities.TRAP3
+          entity.kind === Types.Entities.TRAP3 ||
+          entity.kind === Types.Entities.BLUEFLAME
         ) {
           delete this.entityGrid[y][x][entity.id];
           this.pathingGrid[y][x] = 0;
@@ -2785,7 +2805,7 @@ class Game {
         if (statue?.id) {
           const entity = self.getEntityById(statue?.id);
 
-          if (!entity?.isActivated) {
+          if (entity && !entity.isActivated) {
             entity.isActivated = true;
             self.client.sendActivateStatue(statue?.id);
           }
@@ -2837,6 +2857,10 @@ class Game {
 
         if (gridY >= 328 && gridY <= 332 && gridX >= 13 && gridX <= 23) {
           self.tryUnlockingAchievement("WEN");
+        }
+
+        if (gridX >= 77 && gridX <= 83 && gridY >= 680 && gridY <= 684) {
+          self.tryUnlockingAchievement("STONE");
         }
 
         self.updatePlayerCheckpoint();
@@ -2918,7 +2942,10 @@ class Game {
             setTimeout(function () {
               self.tryUnlockingAchievement("COWARD");
             }, 500);
+          } else if (x === 131 && y === 651) {
+            self.tryUnlockingAchievement("WAY_OF_WATER");
           }
+
           self.player.forEachAttacker(function (attacker) {
             attacker.disengage();
             attacker.idle();
@@ -3060,8 +3087,6 @@ class Game {
       self.client.onSpawnCharacter(function (data) {
         const { id, kind, name, x, y, targetId, orientation, resistances, element, isActivated, bonus } = data;
 
-        // @TODO exclude trap from pathGrid ~~~~ for traps!
-
         let entity = self.getEntityById(id);
         if (!entity) {
           try {
@@ -3075,13 +3100,16 @@ class Game {
                 entity.setAttackSpeed(bonus?.attackSpeed);
               }
 
-              entity.setSprite(self.sprites[entity.getSpriteName()]);
-              if (entity.element && element !== "physical") {
-                entity.sprite.image.onload = () => {
-                  entity.sprite.createSilhouette();
-                };
-                entity.sprite.image.src = entity.sprite.image.src.replace(/(-[a-z]+?)?\.png/, `-${element}.png`);
+              if (entity.kind === Types.Entities.MAGE && element !== "physical") {
+                entity.setSprite(self.sprites[entity.getSpriteName(element === "physical" ? "" : element)]);
+
+                // entity.sprite.image.onload = () => {
+                //   entity.sprite.createSilhouette();
+                // };
+              } else {
+                entity.setSprite(self.sprites[entity.getSpriteName()]);
               }
+
               entity.setGridPosition(x, y);
               entity.setOrientation(orientation);
 
@@ -3151,11 +3179,6 @@ class Game {
                 } else {
                   entity.idle();
                 }
-                // } else if (entity.kind === Types.Entities.TREE) {
-                //   self.treeNpcId = entity.id;
-
-                //   entity.isActivated = isActivated;
-                //   entity.idle();
               } else {
                 if (
                   entity.kind === Types.Entities.TRAP ||
@@ -3978,6 +4001,18 @@ class Game {
           self.tryUnlockingAchievement("COW_KING");
         } else if (kind === Types.Entities.MINOTAUR) {
           self.tryUnlockingAchievement("MINOTAUR");
+        } else if (kind === Types.Entities.SKELETON4) {
+          self.storage.incrementSkeleton4Count();
+          self.tryUnlockingAchievement("CRUISADE");
+        } else if (kind === Types.Entities.GOLEM) {
+          self.storage.incrementGolemCount();
+          self.tryUnlockingAchievement("HARDROCK");
+        } else if (kind === Types.Entities.MAGE) {
+          self.storage.incrementMageCount();
+          self.tryUnlockingAchievement("ARCHMAGE");
+        } else if (kind === Types.Entities.WRAITH2) {
+          self.storage.incrementWraith2Count();
+          self.tryUnlockingAchievement("SPECTRAL");
         }
 
         if (Math.floor((self.player.hitPoints * 100) / self.player.maxHitPoints) <= 1 && kind > Types.Entities.RAT2) {
@@ -4873,6 +4908,9 @@ class Game {
         if (!npc.isActivated) {
           this.client.sendMagicStone(npc.id);
         }
+
+        // ~~~~ find strategy
+        // this.tryUnlockingAchievement("MAGICSTONE");
       } else if (npc.kind === Types.Entities.LEVER || npc.kind === Types.Entities.LEVERWALL) {
         if (!npc.isActivated) {
           this.client.sendLever(npc.id);
@@ -4889,6 +4927,7 @@ class Game {
         if (npc.gridX === 8 && npc.gridY === 683) {
           // Chalice
           this.player.stop_pathing_callback({ x: 7, y: 727, isWaypoint: true });
+          this.tryUnlockingAchievement("TOMB");
         } else if (npc.gridX === 19 && npc.gridY === 642) {
           // Tree
           this.player.stop_pathing_callback({ x: 43, y: 728, isWaypoint: true });
@@ -4905,6 +4944,8 @@ class Game {
         this.player.stop_pathing_callback({ x: randomInt(98, 99), y: randomInt(716, 717), isWaypoint: true });
       } else if (npc.kind === Types.Entities.PORTALRUINS) {
         this.player.stop_pathing_callback({ x: randomInt(99, 100), y: randomInt(550, 551), isWaypoint: true });
+      } else if (npc.kind === Types.Entities.GRIMOIRE) {
+        this.tryUnlockingAchievement("GRIMOIRE");
       }
     }
   }

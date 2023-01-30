@@ -40,7 +40,7 @@ import {
 
 import type Player from "../player";
 
-const ACHIEVEMENT_COUNT = 64;
+const ACHIEVEMENT_COUNT = 68;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
 

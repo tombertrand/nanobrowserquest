@@ -18,10 +18,10 @@ import cow from "../sprites/cow.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
 // import troll from "../sprites/skeleton.json";
-// import golem from "../sprites/skeleton.json";
 // import harpie from "../sprites/skeleton.json";
 // import werewolf2 from "../sprites/skeleton.json";
 import skeleton4 from "../sprites/skeleton.json";
+import golem from "../sprites/skeleton.json";
 import worm from "../sprites/worm.json";
 import wraith2 from "../sprites/wraith2.json";
 import ghost from "../sprites/ghost.json";
@@ -210,14 +210,19 @@ const sprites = {
   cowking,
   minotaur,
   // troll,
-  // golem,
   // harpie,
   // werewolf2,
   skeleton4,
+  golem,
   worm,
   wraith2,
   ghost,
   mage,
+  "mage-magic": mage,
+  "mage-flame": mage,
+  "mage-lightning": mage,
+  "mage-cold": mage,
+  "mage-poison": mage,
   "mage-spell": mageSpell,
   "mage-spell-magic": mageSpell,
   "mage-spell-flame": mageSpell,
