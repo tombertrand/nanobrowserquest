@@ -26,7 +26,7 @@ class Npc extends Entity {
     this.isActivated = true;
   }
 
-  reset() {
+  deactivate() {
     this.isActivated = false;
   }
 

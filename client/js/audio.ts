@@ -80,6 +80,8 @@ class AudioManager {
       "secret-found",
       "stone-break",
       "lever",
+      "fireball",
+      "trap",
       // "altarinfinitystone",
     ];
 
@@ -241,11 +243,13 @@ class AudioManager {
     return sound;
   }
 
-  playSound(name) {
+  playSound(name, delay = 0) {
     var sound = this.isSoundEnabled && this.getSound(name);
     if (sound) {
       sound.volume = this.soundVolume;
-      sound.play();
+      setTimeout(() => {
+        sound.play();
+      }, delay);
     }
   }
 

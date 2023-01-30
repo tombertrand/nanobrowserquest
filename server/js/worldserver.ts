@@ -19,7 +19,7 @@ import { Sentry } from "./sentry";
 import Spell from "./spell";
 import { purchase } from "./store/purchase";
 import Trade from "./trade";
-import { getRandomJewelLevel, getRandomRuneLevel, random, randomRange } from "./utils";
+import { getRandomJewelLevel, getRandomRuneLevel, random, randomInt, randomRange } from "./utils";
 
 // ======= GAME SERVER ========
 
@@ -95,6 +95,7 @@ class World {
   isChaliceLeverActivated: boolean;
   isPortalLeverActivated: boolean;
   isActivatedTreeLevel: boolean;
+  trapIds: number[];
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -194,6 +195,7 @@ class World {
     this.isChaliceLeverActivated = false;
     this.isPortalLeverActivated = false;
     this.isActivatedTreeLevel = false;
+    this.trapIds = [];
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -695,6 +697,8 @@ class World {
         this.altarChaliceNpcId = npc.id;
       } else if (kind === Types.Entities.ALTARINFINITYSTONE) {
         this.altarInfinityStoneNpcId = npc.id;
+      } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(kind)) {
+        this.trapIds.push(npc.id);
       }
 
       this.addEntity(npc);
@@ -1218,12 +1222,18 @@ class World {
 
   activateStatues() {
     this.statues.forEach(statueId => {
-      const statue = this.getEntityById(statueId);
-      const player = this.getFirstPlayerNearEntity(statue);
+      this.activateStatue(statueId);
+    });
+  }
 
-      console.log("~~~~~statue", statue);
+  activateStatue(statueId) {
+    const statue = this.getEntityById(statueId);
+    const player = this.getFirstPlayerNearEntity(statue);
 
-      if (player) {
+    if (player) {
+      if (!statue.isActivated) {
+        statue.activate();
+
         this.broadcastRaise(player, statue);
 
         setTimeout(() => {
@@ -1238,40 +1248,16 @@ class World {
             casterId: statue.id,
           });
         }, 300);
+
+        setTimeout(() => {
+          statue.isActivated = false;
+          this.activateStatue(statueId);
+        }, randomInt(2, 3) * 1000);
       }
-    });
+    } else {
+      statue.deactivate();
+    }
   }
-
-  // activateStatue(player, statue) {
-  //   if (statue.isActivated) return;
-
-  //   statue.activatedByPlayerId = player.id;
-  //   statue.activate();
-
-  //   if (this.isPlayerNearEntity(player, statue)) {
-  //     this.broadcastRaise(player, statue);
-  //     this.addSpell({
-  //       kind: Types.Entities.STATUESPELL,
-  //       x: statue.x,
-  //       y: statue.y + 1,
-  //       orientation: Types.Orientations.DOWN,
-  //       originX: statue.x,
-  //       originY: statue.y,
-  //       element: "flame",
-  //       casterId: statue.id,
-  //     });
-  //   }
-
-  //   console.log("~~~~statue", statue);
-  //   console.log("~~~~statue.group", statue.group);
-
-  //   // @TODO check this!? ~~~~
-  //   // this.pushToAdjacentGroups(statue.group, mob.raise(player.id));
-
-  //   setTimeout(() => {
-  //     statue.isActivated = false;
-  //   }, 2000);
-  // }
 
   async activateAltarChalice(player, force = false) {
     const altar = this.getEntityById(this.altarChaliceNpcId);
@@ -1297,6 +1283,18 @@ class World {
         this.broadcastRaise(player, altar);
       }
     }
+  }
+
+  activateTrap(player, trapId) {
+    const trap = this.getEntityById(trapId);
+    if (!trap || trap.isActivated) return;
+
+    trap.activate();
+    this.broadcastRaise(player, trap);
+
+    setTimeout(() => {
+      trap.isActivated = false;
+    }, 3000);
   }
 
   broadcastRaise(player, mob) {
@@ -1723,8 +1721,9 @@ class World {
     //   "amuletdemon",
     //   "amuletmoon",
     // ];
-    var randomDrops = ["ringplatinum", "amuletplatinum"];
+    // var randomDrops = ["ringplatinum", "amuletplatinum"];
     // var randomDrops = ["chalice", "infinitystone", "hellhammer"];
+    var randomDrops = ["chalice"];
     // var randomDrops = ["stonehero", "stonedragon"];
     // var randomDrops = ["paladinarmor"];
     // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];

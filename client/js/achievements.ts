@@ -430,6 +430,12 @@ export const getAchievements = (network: Network) => ({
     desc: "Kill Azrael",
     hidden: false,
   },
+  MISSTEP: {
+    id: 64,
+    name: "Misstep",
+    desc: "Die from a trap",
+    hidden: false,
+  },
   MAGIC8: {
     id: 61,
     name: "Magic 8",
@@ -446,12 +452,6 @@ export const getAchievements = (network: Network) => ({
     id: 63,
     name: "ZELDA",
     desc: "Find the hidden stairs",
-    hidden: false,
-  },
-  EXPANSION20: {
-    id: 64,
-    name: "Title20",
-    desc: "Achievement description20",
     hidden: false,
   },
   // MAGIC8: {

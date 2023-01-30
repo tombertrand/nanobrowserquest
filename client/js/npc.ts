@@ -207,6 +207,9 @@ var NpcTalk = {
     "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
   ],
   tree: [""],
+  trap: [""],
+  trap2: [""],
+  trap3: [""],
   statue: [""],
 
   coder: [

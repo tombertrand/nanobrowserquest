@@ -1198,6 +1198,10 @@ class GameClient {
     this.sendMessage([Types.Messages.HURT_SPELL, spell.id]);
   }
 
+  sendHurtTrap(trap) {
+    this.sendMessage([Types.Messages.HURT_TRAP, trap.id]);
+  }
+
   sendChat(text) {
     this.sendMessage([Types.Messages.CHAT, text]);
   }
@@ -1349,6 +1353,14 @@ class GameClient {
 
   sendAltarInfinityStone(id) {
     this.sendMessage([Types.Messages.ALTARINFINITYSTONE, id]);
+  }
+
+  sendActivateTrap(id) {
+    this.sendMessage([Types.Messages.TRAP, id]);
+  }
+
+  sendActivateStatue(id) {
+    this.sendMessage([Types.Messages.STATUE, id]);
   }
 }
 

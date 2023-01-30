@@ -1013,7 +1013,9 @@ class Renderer {
   drawEntities(dirtyOnly?: boolean) {
     var self = this;
 
-    this.game.forEachVisibleEntityByDepth(function (entity) {
+    const entities = this.game.getForEachVisibleEntityByDepth();
+
+    entities.forEach(entity => {
       if (entity.isLoaded) {
         if (dirtyOnly) {
           if (entity.isDirty) {

@@ -149,6 +149,7 @@ class Player extends Character {
   cursedTimeout: NodeJS.Timeout;
   attackTimeout: NodeJS.Timeout;
   discordId: number;
+  isHurtByTrap: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -198,6 +199,7 @@ class Player extends Character {
 
     this.chatBanEndTime = 0;
     this.hash = null;
+    this.isHurtByTrap = false;
 
     this.dbWriteQueue = new PromiseQueue();
 
@@ -637,14 +639,47 @@ class Player extends Character {
       } else if (action === Types.Messages.ALTARCHALICE) {
         console.info("ALTAR - CHALICE: " + self.name + " " + message[1]);
 
-        if (parseInt(message[1]) === self.server.altarChaliceNpcId) {
+        const altarId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (altarId === self.server.altarChaliceNpcId) {
           self.server.activateAltarChalice(self);
         }
       } else if (action === Types.Messages.ALTARINFINITYSTONE) {
         console.info("ALTAR - INFINITYSTONE: " + self.name + " " + message[1]);
 
-        if (parseInt(message[1]) === self.server.altarInfinityStoneNpcId) {
+        const altarId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (altarId && altarId === self.server.altarInfinityStoneNpcId) {
           self.server.activateAltarInfinityStone(self);
+        }
+      } else if (action === Types.Messages.TRAP) {
+        console.info("TRAP: " + self.name + " " + message[1]);
+
+        const trapId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (trapId) {
+          self.server.activateTrap(self, trapId);
+        }
+      } else if (action === Types.Messages.HURT_TRAP) {
+        console.info("HURT_TRAP: " + self.name + " " + message[1]);
+
+        // Can't be hurt by traps more than once per 3 seconds
+        if (self.isHurtByTrap) return;
+
+        const trapId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (trapId) {
+          const trap = self.server.getEntityById(trapId);
+
+          self.handleHurtTrapDmg(trap);
+
+          self.isHurtByTrap = true;
+          setTimeout(() => {
+            self.isHurtByTrap = false;
+          }, 3000);
+        }
+      } else if (action === Types.Messages.STATUE) {
+        console.info("STATUE: " + self.name + " " + message[1]);
+
+        const statueId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (statueId) {
+          self.server.activateStatue(statueId);
         }
       } else if (action === Types.Messages.CAST_SPELL) {
         if (typeof message[1] !== "number" || typeof message[2] !== "number" || typeof message[3] !== "number") return;
@@ -1735,6 +1770,15 @@ class Player extends Character {
 
     this.hitPoints -= dmg;
     this.server.handleHurtEntity({ entity: this, attacker: spell });
+
+    this.handleHurtDeath();
+  }
+
+  handleHurtTrapDmg(trap) {
+    const dmg = 200;
+
+    this.hitPoints -= dmg;
+    this.server.handleHurtEntity({ entity: this, attacker: trap });
 
     this.handleHurtDeath();
   }

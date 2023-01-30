@@ -1003,4 +1003,16 @@ EntityFactory.builders[Types.Entities.TREE] = function (id) {
   return new Npcs.Tree(id);
 };
 
+EntityFactory.builders[Types.Entities.TRAP] = function (id) {
+  return new Npcs.Trap(id);
+};
+
+EntityFactory.builders[Types.Entities.TRAP2] = function (id) {
+  return new Npcs.Trap2(id);
+};
+
+EntityFactory.builders[Types.Entities.TRAP3] = function (id) {
+  return new Npcs.Trap3(id);
+};
+
 export default EntityFactory;

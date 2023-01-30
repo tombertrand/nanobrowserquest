@@ -72,6 +72,7 @@ export const Types: any = {
     HIT: 11,
     HURT: 12,
     HURT_SPELL: 13,
+    HURT_TRAP: 102,
     HEALTH: 14,
     CHAT: 15,
     LOOT: 16,
@@ -163,6 +164,8 @@ export const Types: any = {
     CHALICELEVEL_END: 98,
     LEVER: 99,
     TREE: 100,
+    TRAP: 101,
+    STATUE: 103,
   },
 
   Entities: {
@@ -378,6 +381,9 @@ export const Types: any = {
     LEVERWALL: 259,
     GRIMOIRE: 260,
     TREE: 261,
+    TRAP: 265,
+    TRAP2: 266,
+    TRAP3: 267,
 
     // Weapons
     DAGGER: 60,
@@ -906,6 +912,9 @@ export const kinds = {
   leverwall: [Types.Entities.LEVERWALL, "npc"],
   grimoire: [Types.Entities.GRIMOIRE, "npc"],
   tree: [Types.Entities.TREE, "npc"],
+  trap: [Types.Entities.TRAP, "npc"],
+  trap2: [Types.Entities.TRAP2, "npc"],
+  trap3: [Types.Entities.TRAP3, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];

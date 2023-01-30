@@ -16,6 +16,7 @@ class FormatChecker {
       (this.formats[Types.Messages.HIT] = ["n"]),
       (this.formats[Types.Messages.HURT] = ["n"]),
       (this.formats[Types.Messages.HURT_SPELL] = ["n"]),
+      (this.formats[Types.Messages.HURT_TRAP] = ["n"]),
       (this.formats[Types.Messages.CAST_SPELL] = ["n", "n", "n"]),
       (this.formats[Types.Messages.CHAT] = ["s"]),
       (this.formats[Types.Messages.LOOT] = ["n"]),
@@ -38,6 +39,8 @@ class FormatChecker {
       (this.formats[Types.Messages.LEVER] = ["n"]),
       (this.formats[Types.Messages.ALTARCHALICE] = ["n"]),
       (this.formats[Types.Messages.ALTARINFINITYSTONE] = ["n"]),
+      (this.formats[Types.Messages.TRAP] = ["n"]),
+      (this.formats[Types.Messages.STATUE] = ["n"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
   }
 

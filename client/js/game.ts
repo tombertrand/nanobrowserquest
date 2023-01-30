@@ -17,7 +17,7 @@ import {
   UPGRADE_SLOT_COUNT,
   UPGRADE_SLOT_RANGE,
 } from "../../shared/js/slots";
-import { toArray, toString } from "../../shared/js/utils";
+import { randomInt, toArray, toString } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
 import App from "./app";
@@ -43,7 +43,6 @@ import Sprite from "./sprite";
 import AnimatedTile from "./tile";
 import Transition from "./transition";
 import Updater from "./updater";
-import { randomRange } from "./utils";
 import Warrior from "./warrior";
 
 interface WorldPlayer {
@@ -190,6 +189,8 @@ class Game {
   altarChaliceNpcId: number;
   altarInfinityStoneNpcId: number;
   treeNpcId: number;
+  traps: { id: number; x: number; y: number }[];
+  statues: { id: number; x: number; y: number }[];
 
   constructor(app) {
     this.app = app;
@@ -285,6 +286,8 @@ class Game {
     this.altarChaliceNpcId = null;
     this.altarInfinityStoneNpcId = null;
     this.treeNpcId = null;
+    this.traps = [];
+    this.statues = [];
 
     // combat
     // @ts-ignore
@@ -431,6 +434,9 @@ class Game {
       "leverwall",
       "grimoire",
       "tree",
+      "trap",
+      "trap2",
+      "trap3",
       "blueflame",
       "beachnpc",
       "forestnpc",
@@ -791,7 +797,13 @@ class Game {
     var self = this;
 
     Types.forEachMobOrNpcKind(function (kind, kindName) {
-      if (kind === Types.Entities.TREE) return;
+      if (
+        kind === Types.Entities.TREE ||
+        kind === Types.Entities.TRAP ||
+        kind === Types.Entities.TRAP2 ||
+        kind === Types.Entities.TRAP3
+      )
+        return;
       self.sprites[kindName].createSilhouette();
     });
     self.sprites["chest"].createSilhouette();
@@ -2350,6 +2362,16 @@ class Game {
           this.entityGrid[y][x + 2][entity.id] = entity;
           this.pathingGrid[y][x + 2] = 1;
         }
+
+        // @NOTE Draw a square to know if the player is standing on a trap & don't fill the pathing grid so player can walk on top
+        if (
+          entity.kind === Types.Entities.TRAP ||
+          entity.kind === Types.Entities.TRAP2 ||
+          entity.kind === Types.Entities.TRAP3
+        ) {
+          delete this.entityGrid[y][x][entity.id];
+          this.pathingGrid[y][x] = 0;
+        }
       }
       if (entity instanceof Item) {
         this.itemGrid[y][x][entity.id] = entity;
@@ -2738,59 +2760,82 @@ class Game {
       });
 
       self.player.onStep(function () {
+        const { gridX, gridY } = self.player;
+
+        const trap = self.getTrap(gridX, gridY);
+        if (trap?.id) {
+          const entity = self.getEntityById(trap?.id);
+
+          if (entity?.isActivated) {
+            if (!self.player.isHurtByTrap) {
+              self.player.isHurtByTrap = true;
+
+              self.client.sendHurtTrap(trap);
+              setTimeout(() => {
+                if (self.player) {
+                  self.player.isHurtByTrap = false;
+                }
+              }, 3000);
+            }
+          } else {
+            self.client.sendActivateTrap(trap?.id);
+          }
+        }
+        const statue = self.getStatue(gridX, gridY);
+        if (statue?.id) {
+          const entity = self.getEntityById(statue?.id);
+
+          if (!entity?.isActivated) {
+            entity.isActivated = true;
+            self.client.sendActivateStatue(statue?.id);
+          }
+        }
+
         if (self.player.hasNextStep()) {
           self.registerEntityDualPosition(self.player);
         }
 
-        if (self.isZoningTile(self.player.gridX, self.player.gridY)) {
+        if (self.isZoningTile(gridX, gridY)) {
           self.isCharacterZoning = true;
-          self.enqueueZoningFrom(self.player.gridX, self.player.gridY);
+          self.enqueueZoningFrom(gridX, gridY);
         }
 
         self.player.forEachAttacker(self.makeAttackerFollow);
 
-        var item = self.getItemAt(self.player.gridX, self.player.gridY);
+        var item = self.getItemAt(gridX, gridY);
         if (item instanceof Item) {
           self.tryLootingItem(item);
         }
 
-        if (
-          (self.player.gridX <= 85 && self.player.gridY <= 179 && self.player.gridY > 178) ||
-          (self.player.gridX <= 85 && self.player.gridY <= 266 && self.player.gridY > 265)
-        ) {
+        if ((gridX <= 85 && gridY <= 179 && gridY > 178) || (gridX <= 85 && gridY <= 266 && gridY > 265)) {
           self.tryUnlockingAchievement("INTO_THE_WILD");
         }
 
-        if (self.player.gridX <= 85 && self.player.gridY <= 293 && self.player.gridY > 292) {
+        if (gridX <= 85 && gridY <= 293 && gridY > 292) {
           self.tryUnlockingAchievement("AT_WORLDS_END");
         }
 
-        if (self.player.gridX <= 85 && self.player.gridY <= 100 && self.player.gridY > 99) {
+        if (gridX <= 85 && gridY <= 100 && gridY > 99) {
           self.tryUnlockingAchievement("NO_MANS_LAND");
         }
 
-        if (self.player.gridX <= 85 && self.player.gridY <= 51 && self.player.gridY > 50) {
+        if (gridX <= 85 && gridY <= 51 && gridY > 50) {
           self.tryUnlockingAchievement("HOT_SPOT");
         }
 
-        if (self.player.gridX <= 27 && self.player.gridY <= 123 && self.player.gridY > 112) {
+        if (gridX <= 27 && gridY <= 123 && gridY > 112) {
           self.tryUnlockingAchievement("TOMB_RAIDER");
         }
 
-        if (self.player.gridY > 444) {
+        if (gridY > 444) {
           self.tryUnlockingAchievement("FREEZING_LANDS");
         }
 
-        if (self.player.gridY >= 350 && self.player.gridY <= 365 && self.player.gridX <= 80) {
+        if (gridY >= 350 && gridY <= 365 && gridX <= 80) {
           self.tryUnlockingAchievement("WALK_ON_WATER");
         }
 
-        if (
-          self.player.gridY >= 328 &&
-          self.player.gridY <= 332 &&
-          self.player.gridX >= 13 &&
-          self.player.gridX <= 23
-        ) {
+        if (gridY >= 328 && gridY <= 332 && gridX >= 13 && gridX <= 23) {
           self.tryUnlockingAchievement("WEN");
         }
 
@@ -2809,6 +2854,10 @@ class Game {
           // Make sure the character is paused / halted when entering a waypoint, else the player goes invisible
           self.player.stop();
           self.player.nextStep();
+
+          // Clear trap coords
+          self.traps = [];
+          self.statues = [];
         }
 
         if (self.player.hasTarget()) {
@@ -3011,6 +3060,8 @@ class Game {
       self.client.onSpawnCharacter(function (data) {
         const { id, kind, name, x, y, targetId, orientation, resistances, element, isActivated, bonus } = data;
 
+        // @TODO exclude trap from pathGrid ~~~~ for traps!
+
         let entity = self.getEntityById(id);
         if (!entity) {
           try {
@@ -3106,6 +3157,20 @@ class Game {
                 //   entity.isActivated = isActivated;
                 //   entity.idle();
               } else {
+                if (
+                  entity.kind === Types.Entities.TRAP ||
+                  entity.kind === Types.Entities.TRAP2 ||
+                  entity.kind === Types.Entities.TRAP3
+                ) {
+                  if (!self.traps.find(trap => trap.id === entity.id)) {
+                    self.traps.push({ id: entity.id, x: entity.gridX, y: entity.gridY });
+                  }
+                } else if (entity.kind === Types.Entities.STATUE) {
+                  if (!self.statues.find(statue => statue.id === entity.id)) {
+                    self.statues.push({ id: entity.id, x: entity.gridX, y: entity.gridY });
+                  }
+                }
+
                 entity.idle();
               }
 
@@ -3351,11 +3416,14 @@ class Game {
 
         // Spell collision
         if (self.player.gridX === x && self.player.gridY === y) {
-          entity.stop();
           self.makePlayerHurtFromSpell(entity);
         }
 
         entity.onDeath(function () {
+          // @NOTE: The spell can not be dead from the other player's point of view
+          // This forces the updater(c) to stop moving the spell
+          entity.isDead = true;
+
           console.info(entity.id + " is dead");
           let speed = 120;
 
@@ -3738,7 +3806,8 @@ class Game {
       });
 
       self.client.onEntityRaise(function (mobId, targetId) {
-        var mob = self.getEntityById(mobId);
+        const mob = self.getEntityById(mobId);
+
         if (mob) {
           if (mob.kind === Types.Entities.DEATHANGEL) {
             mob.setRaisingMode();
@@ -3749,8 +3818,6 @@ class Game {
           } else if (mob.kind === Types.Entities.NECROMANCER) {
             mob.setRaisingMode();
             self.audioManager.playSound("raise");
-          } else if (mob.kind === Types.Entities.STATUE) {
-            mob.raise();
           } else if (mob.kind === Types.Entities.MAGICSTONE) {
             self.audioManager.playSound("magicstone");
             self.activatedMagicStones.push(mobId);
@@ -3790,13 +3857,46 @@ class Game {
 
             self.audioManager.playSound("stone-break");
           } else if (mob.kind === Types.Entities.STATUE) {
-            // self.audioManager.playSound("lever");
-
+            self.audioManager.playSound("fireball", 250);
             mob.raise();
+            mob.isActivated = true;
             setTimeout(() => {
-              mob.currentAnimation.reset();
+              mob.idle();
+            }, 900);
+          } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(mob.kind)) {
+            self.audioManager.playSound("trap");
+            mob.raise();
+            mob.isActivated = true;
+
+            setTimeout(() => {
+              const { gridX, gridY } = self.player;
+
+              const trap = self.getTrap(gridX, gridY);
+              if (trap?.id === mob.id) {
+                if (!self.player.isHurtByTrap) {
+                  self.player.isHurtByTrap = true;
+
+                  self.client.sendHurtTrap(trap);
+                  setTimeout(() => {
+                    if (self.player) {
+                      self.player.isHurtByTrap = false;
+                    }
+                  }, 3000);
+                }
+              }
+            }, 150);
+
+            setTimeout(() => {
               mob.walk();
-            }, 400);
+              setTimeout(() => {
+                mob.currentAnimation.reset();
+                mob.unraise();
+                mob.isActivated = false;
+                setTimeout(() => {
+                  mob.idle();
+                }, 300);
+              }, 750);
+            }, 675);
           }
         }
       });
@@ -4279,8 +4379,8 @@ class Game {
 
         const teleportBackToTown = () => {
           if (self.player.gridY >= 464 && self.player.gridY <= 535) {
-            const x = Math.ceil(randomRange(40, 45));
-            const y = Math.ceil(randomRange(208, 213));
+            const x = randomInt(40, 45);
+            const y = randomInt(208, 213);
 
             self.player.stop_pathing_callback({ x, y, isWaypoint: true });
 
@@ -4337,8 +4437,8 @@ class Game {
         $("#countdown").countdown("remove");
 
         if (self.player.gridY >= 464 && self.player.gridY <= 535) {
-          const x = Math.ceil(randomRange(40, 45));
-          const y = Math.ceil(randomRange(208, 213));
+          const x = randomInt(40, 45);
+          const y = randomInt(208, 213);
 
           self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }
@@ -4352,8 +4452,8 @@ class Game {
 
         const teleportBackToTown = () => {
           if (self.player.gridY >= 464 && self.player.gridY <= 535) {
-            const x = Math.ceil(randomRange(40, 45));
-            const y = Math.ceil(randomRange(208, 213));
+            const x = randomInt(40, 45);
+            const y = randomInt(208, 213);
 
             self.player.stop_pathing_callback({ x, y, isWaypoint: true });
 
@@ -4407,8 +4507,8 @@ class Game {
         $("#countdown").countdown("remove");
 
         if (self.player.gridY >= 696 && self.player.gridY <= 733 && self.player.gridX <= 29) {
-          const x = Math.floor(randomRange(7, 9));
-          const y = Math.floor(randomRange(682, 684));
+          const x = randomInt(7, 9);
+          const y = randomInt(682, 684);
 
           self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }
@@ -4675,7 +4775,14 @@ class Game {
       msg = npc.talk(this);
       this.previousClickPosition = null;
 
-      if (npc.kind === Types.Entities.TREE) return;
+      if (
+        npc.kind === Types.Entities.TREE ||
+        npc.kind === Types.Entities.STATUE ||
+        npc.kind === Types.Entities.TRAP ||
+        npc.kind === Types.Entities.TRAP2 ||
+        npc.kind === Types.Entities.TRAP3
+      )
+        return;
 
       if (
         ![
@@ -4781,11 +4888,7 @@ class Game {
       } else if (npc.kind === Types.Entities.SECRETSTAIRS) {
         if (npc.gridX === 8 && npc.gridY === 683) {
           // Chalice
-          // this.player.stop_pathing_callback({ x: 7, y: 727, isWaypoint: true });
-
-          // @TODO ~~~~ finish this
-          // Bone Room
-          this.player.stop_pathing_callback({ x: 69, y: 729, isWaypoint: true });
+          this.player.stop_pathing_callback({ x: 7, y: 727, isWaypoint: true });
         } else if (npc.gridX === 19 && npc.gridY === 642) {
           // Tree
           this.player.stop_pathing_callback({ x: 43, y: 728, isWaypoint: true });
@@ -4799,9 +4902,9 @@ class Game {
           this.player.stop_pathing_callback({ x: 18, y: 642, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.PORTALCRYPT) {
-        this.player.stop_pathing_callback({ x: randomRange(100, 104), y: randomRange(717, 720), isWaypoint: true });
+        this.player.stop_pathing_callback({ x: randomInt(98, 99), y: randomInt(716, 717), isWaypoint: true });
       } else if (npc.kind === Types.Entities.PORTALRUINS) {
-        this.player.stop_pathing_callback({ x: randomRange(97, 102), y: randomRange(551, 552), isWaypoint: true });
+        this.player.stop_pathing_callback({ x: randomInt(99, 100), y: randomInt(550, 551), isWaypoint: true });
       }
     }
   }
@@ -4853,6 +4956,38 @@ class Game {
       },
       this.renderer.mobile ? 0 : 2,
     );
+  }
+
+  getForEachVisibleEntityByDepth() {
+    var self = this;
+    var m = this.map;
+
+    const entities = [];
+
+    this.camera.forEachVisiblePosition(
+      function (x, y) {
+        if (!m.isOutOfBounds(x, y)) {
+          if (self.renderingGrid[y][x]) {
+            _.each(self.renderingGrid[y][x], function (entity) {
+              // callback(entity);
+
+              if (
+                entity.kind === Types.Entities.TRAP ||
+                entity.kind === Types.Entities.TRAP2 ||
+                entity.kind === Types.Entities.TRAP3
+              ) {
+                entities.unshift(entity);
+              } else {
+                entities.push(entity);
+              }
+            });
+          }
+        }
+      },
+      this.renderer.mobile ? 0 : 2,
+    );
+
+    return entities;
   }
 
   /**
@@ -4964,7 +5099,14 @@ class Game {
 
   getNpcAt(x, y) {
     var entity = this.getEntityAt(x, y, Npc);
-    if (entity && entity instanceof Npc && entity.kind !== Types.Entities.TREE) {
+    if (
+      entity &&
+      entity instanceof Npc &&
+      entity.kind !== Types.Entities.TREE &&
+      entity.kind !== Types.Entities.TRAP &&
+      entity.kind !== Types.Entities.TRAP2 &&
+      entity.kind !== Types.Entities.TRAP3
+    ) {
       return entity;
     }
     return null;
@@ -5266,8 +5408,22 @@ class Game {
         this.makePlayerOpenChest(entity);
       } else {
         this.makePlayerGoTo(pos.x, pos.y);
+
+        // immune character to traps for 3 seconds if hit
       }
     }
+  }
+
+  getTrap(x, y) {
+    if (!this.traps.length) return;
+    // 1 right, 1 top
+    return this.traps.find(trap => (trap.x - x === 0 || trap.x - x === -1) && (trap.y - y === 0 || trap.y - y === 1));
+  }
+
+  getStatue(x, y) {
+    if (!this.statues.length) return;
+    // 8 left, 8 right, 16 bottom
+    return this.statues.find(statue => Math.abs(statue.x - x) <= 8 && y - statue.y >= 0 && y - statue.y <= 16);
   }
 
   isMobOnSameTile(mob, x?: number, y?: number) {

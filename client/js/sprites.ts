@@ -122,6 +122,9 @@ import lever from "../sprites/lever.json";
 import leverwall from "../sprites/lever.json";
 import grimoire from "../sprites/grimoire.json";
 import tree from "../sprites/tree.json";
+import trap from "../sprites/trap.json";
+import trap2 from "../sprites/trap.json";
+import trap3 from "../sprites/trap.json";
 import altarinfinitystone from "../sprites/altar.json";
 import blueflame from "../sprites/blueflame.json";
 import ogre from "../sprites/ogre.json";
@@ -468,6 +471,9 @@ const sprites = {
   leverwall,
   grimoire,
   tree,
+  trap,
+  trap2,
+  trap3,
   ogre,
   yeti,
   werewolf,

@@ -93,6 +93,7 @@ class Player extends Character {
   moveLeft: boolean;
   moveRight: boolean;
   disableKeyboardNpcTalk: boolean;
+  isHurtByTrap: boolean;
 
   partyId?: number;
   partyLeader?: PartyMember;
