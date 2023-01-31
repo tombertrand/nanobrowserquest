@@ -14,6 +14,7 @@ import {
   UPGRADE_SLOT_RANGE,
   WAYPOINTS_COUNT,
 } from "../../../shared/js/slots";
+import { ACHIEVEMENT_COUNT } from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
 import { toArray, toDb } from "../../../shared/js/utils";
 import { discordClient, EmojiMap, postMessageToDiscordAnvilChannel } from "../discord";
@@ -40,7 +41,6 @@ import {
 
 import type Player from "../player";
 
-const ACHIEVEMENT_COUNT = 68;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
 

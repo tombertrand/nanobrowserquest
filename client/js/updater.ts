@@ -169,8 +169,9 @@ class Updater {
         const isGridOrAnyPlayerHit = !isPlayerHit
           ? this.game.pathingGrid[Math.round(c.y / 16)][Math.round(c.x / 16)] &&
             (this.game.isPlayerAt(Math.round(c.x / 16), Math.round(c.y / 16)) ||
-              this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id !== c.casterId)
-          : false;
+              !this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id)
+          : // this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id !== c.casterId
+            false;
 
         if (isPlayerHit) {
           this.game.makePlayerHurtFromSpell(c);

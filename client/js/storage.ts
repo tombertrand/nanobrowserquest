@@ -1,6 +1,10 @@
+import merge from "lodash/merge";
+
+import { ACHIEVEMENT_COUNT } from "../../shared/js/types/achievements";
 import {
   COW_COUNT,
   DMG_TOTAL,
+  GHOST_COUNT,
   GOLEM_COUNT,
   KILLS_TOTAL,
   MAGE_COUNT,
@@ -16,70 +20,67 @@ import {
   YETI_COUNT,
 } from "./achievements";
 
+const defaultData = {
+  hasAlreadyPlayed: false,
+  player: {
+    name: "",
+    weapon: "",
+    armor: "",
+    image: "",
+  },
+  settings: {
+    music: true,
+    musicVolume: 0.7,
+    sound: true,
+    soundVolume: 0.7,
+    showEntityName: true,
+    showDamageInfo: true,
+    showAnvilOdds: false,
+    capeHue: 0,
+    capeSaturate: 0,
+    capeContrast: 0,
+    capeBrightness: 1,
+  },
+  achievements: {
+    ratCount: 0,
+    rat3Count: 0,
+    skeletonCount: 0,
+    spectreCount: 0,
+    yetiCount: 0,
+    werewolfCount: 0,
+    skeleton3Count: 0,
+    skeleton4Count: 0,
+    wraithCount: 0,
+    wraith2Count: 0,
+    cowCount: 0,
+    mageCount: 0,
+    golemCount: 0,
+    totalKills: 0,
+    totalDmg: 0,
+    totalRevives: 0,
+    magicStones: [0, 0, 0, 0, 0, 0],
+  },
+  achievement: new Array(ACHIEVEMENT_COUNT).fill(0),
+};
+
+// @TODO Add periodic checks if the storage is manipulated, if so BAN
+
 class Storage {
   data: any;
 
   constructor() {
-    if (this.hasLocalStorage() && localStorage.data) {
-      this.data = JSON.parse(localStorage.data);
-
-      if (!this.data.settings) {
-        this.resetData();
-      }
+    if (this.hasLocalStorage() && window.localStorage.data) {
+      this.data = merge(defaultData, JSON.parse(window.localStorage.data));
     } else {
-      this.resetData();
+      this.data = defaultData;
     }
-  }
+    console.log("~~~~this.data", this.data);
 
-  // @TODO Add periodic checks if the storage is manipulated, if so BAN
-
-  resetData() {
-    this.data = {
-      hasAlreadyPlayed: false,
-      player: {
-        name: "",
-        weapon: "",
-        armor: "",
-        image: "",
-      },
-      settings: {
-        music: true,
-        musicVolume: 0.7,
-        sound: true,
-        soundVolume: 0.7,
-        showEntityName: true,
-        showDamageInfo: true,
-        showAnvilOdds: false,
-        capeHue: 0,
-        capeSaturate: 0,
-        capeContrast: 0,
-        capeBrightness: 1,
-      },
-      achievements: {
-        ratCount: 0,
-        rat3Count: 0,
-        skeletonCount: 0,
-        spectreCount: 0,
-        yetiCount: 0,
-        werewolfCount: 0,
-        skeleton3Count: 0,
-        skeleton4Count: 0,
-        wraithCount: 0,
-        wraith2Count: 0,
-        cowCount: 0,
-        mageCount: 0,
-        golemCount: 0,
-        totalKills: 0,
-        totalDmg: 0,
-        totalRevives: 0,
-        magicStones: [0, 0, 0, 0, 0, 0],
-      },
-      achievement: new Array(44).fill(0),
-    };
+    this.save();
   }
 
   hasLocalStorage() {
-    return true;
+    return !!window.localStorage;
   }
 
   save() {
@@ -90,8 +91,8 @@ class Storage {
 
   clear() {
     if (this.hasLocalStorage()) {
-      localStorage.data = "";
-      this.resetData();
+      this.data = defaultData;
+      this.save();
     }
   }
 
@@ -402,6 +403,22 @@ class Storage {
     }
   }
 
+  // BOO
+  getGhostCount() {
+    return this.data.achievements.mageCount;
+  }
+
+  incrementGhostCount() {
+    if (!this.data.achievements.ghostCount) {
+      this.data.achievements.ghostCount = 0;
+    }
+
+    if (this.data.achievements.ghostCount < GHOST_COUNT) {
+      this.data.achievements.ghostCount++;
+      this.save();
+    }
+  }
+
   // ARCHMAGE
   getMageCount() {
     return this.data.achievements.mageCount;
@@ -466,6 +483,19 @@ class Storage {
   incrementRevives() {
     if (this.data.achievements.totalRevives < 5) {
       this.data.achievements.totalRevives++;
+      this.save();
+    }
+  }
+
+  // STONEHENGE
+  hasAllMagicStones() {
+    return !this.data.achievements.magicStones.some(x => x === 0);
+  }
+
+  activateMagicStone(x) {
+    if (!this.data.achievements.magicStones.includes(x)) {
+      const index = this.data.achievements.magicStones.findIndex(value => value === 0);
+      this.data.achievements.magicStones[index] = x;
       this.save();
     }
   }

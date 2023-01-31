@@ -1,3 +1,4 @@
+import { Achievement, AchievementName } from "../../shared/js/types/achievements";
 import storage from "./storage";
 
 const NANO_PAYOUT_MULTIPLIER = 10;
@@ -16,10 +17,11 @@ export const COW_COUNT = 500;
 export const RAT3_COUNT = 2;
 export const GOLEM_COUNT = 2;
 export const SKELETON4_COUNT = 2;
-export const WRAITH2_COUNT = 2;
+export const GHOST_COUNT = 2;
 export const MAGE_COUNT = 2;
+export const WRAITH2_COUNT = 2;
 
-export const getAchievements = (network: Network) => ({
+export const getAchievements = (network: Network): { [key in AchievementName]: Achievement } => ({
   A_TRUE_WARRIOR: {
     id: 1,
     name: "A True Warrior",
@@ -357,26 +359,31 @@ export const getAchievements = (network: Network) => ({
       return storage.getCowCount() >= RAT3_COUNT;
     },
   },
-  SCROLL: {
+  STATUETTE: {
     id: 47,
-    name: "Search And Rescue",
-    desc: "Retrieve a figurine for Alkor",
+    name: "Statuette",
+    desc: "Retrieve the figurine Alkor is seeking<br/>and earn 10 legendary upgrade scrolls",
+  },
+  DISCORD: {
+    id: 48,
+    name: "Discord",
+    desc: "Link your account in Discord<br/>and earn 10 legendary upgrade scrolls",
   },
   HARDROCK: {
-    id: 48,
+    id: 49,
     name: "Hard Rock",
     desc: `Kill ${GOLEM_COUNT} Stone Golem`,
     isCompleted() {
       return storage.getCowCount() >= GOLEM_COUNT;
     },
   },
-  WAY_OF_WATER: { // done
-    id: 49,
+  WAY_OF_WATER: {
+    id: 50,
     name: "Way Of Water",
     desc: "Get your toes wet",
   },
   CRUISADE: {
-    id: 50,
+    id: 51,
     name: "Cruisade",
     desc: `Kill ${SKELETON4_COUNT} Cruisader Skeletons`,
     isCompleted() {
@@ -384,27 +391,27 @@ export const getAchievements = (network: Network) => ({
     },
   },
   HELLFORGE: {
-    id: 51,
+    id: 52,
     name: "Hellforge",
     desc: "Break the mystical gem on the Altar",
   },
   STONEHENGE: {
-    id: 52,
+    id: 53,
     name: "Stonehenge",
     desc: "Activate all magic stones",
   },
   STARGATE: {
-    id: 53,
+    id: 54,
     name: "Stargate",
     desc: "Enter the portal",
   },
   PERSONAL_WEAPON: {
-    id: 54,
+    id: 55,
     name: "Personal Weapon",
     desc: "Go on a quest to find a special weapon",
   },
   KINGDOM: {
-    id: 55,
+    id: 56,
     name: "Kingdom of Heaven",
     desc: "Find the Holy Grail",
   },
@@ -413,8 +420,16 @@ export const getAchievements = (network: Network) => ({
     name: "The Tomb",
     desc: "Enter the hidden Crypt",
   },
-  ARCHMAGE: {
+  GHOST: {
     id: 57,
+    name: "Boo",
+    desc: `Kill ${GHOST_COUNT} Ghosts`,
+    isCompleted() {
+      return storage.getGhostCount() >= GHOST_COUNT;
+    },
+  },
+  ARCHMAGE: {
+    id: 58,
     name: "Archmage",
     desc: `Kill ${MAGE_COUNT} Mages`,
     isCompleted() {
@@ -422,7 +437,7 @@ export const getAchievements = (network: Network) => ({
     },
   },
   SPECTRAL: {
-    id: 58,
+    id: 59,
     name: "Spectral",
     desc: `Kill ${WRAITH2_COUNT} Spectral Wraiths`,
     isCompleted() {
@@ -430,61 +445,75 @@ export const getAchievements = (network: Network) => ({
     },
   },
   PHARAOH: {
-    id: 59,
+    id: 60,
     name: "Pharaoh",
     desc: "Enter the Temple of Light",
   },
   DEATHANGEL: {
-    id: 60,
+    id: 61,
     name: "Death Angel",
     desc: "Kill Azrael",
   },
   MAGIC8: {
-    id: 61,
+    id: 62,
     name: "Magic 8",
     desc: "Upgrade a legendary item to +8",
-    hidden: true,
   },
   RUNOLOGUE: {
-    id: 62,
+    id: 63,
     name: "Runologue",
     desc: "Find a high level rune",
-    hidden: true,
   },
   BLACKSMITH: {
-    id: 63,
+    id: 64,
     name: "Blacksmith",
     desc: "Forge a Runeword",
-    hidden: true,
   },
   RUNE_MASTER: {
-    id: 64,
+    id: 65,
     name: "Rune Master",
     desc: "Combine 2 high rank runes",
-    hidden: true,
   },
   MISSTEP: {
-    id: 65,
+    id: 66,
     name: "Misstep",
     desc: "Die from a trap",
     hidden: true,
   },
   ZELDA: {
-    id: 66,
+    id: 67,
     name: "ZELDA",
     desc: "Find the hidden stairs",
     hidden: true,
   },
   GRIMOIRE: {
-    id: 67,
+    id: 68,
     name: "Grimoire",
     desc: "Find The Book of Azrael.<br/>Get awarded 10% to all resistances",
     hidden: true,
   },
-  TBD: {
-    id: 68,
-    name: "TBD",
-    desc: "TBD",
+  TBD1: {
+    id: 69,
+    name: "TBD1",
+    desc: "TBD1",
+    hidden: true,
+  },
+  TBD2: {
+    id: 70,
+    name: "TBD2",
+    desc: "TBD2",
+    hidden: true,
+  },
+  TBD3: {
+    id: 71,
+    name: "TBD3",
+    desc: "TBD3",
+    hidden: true,
+  },
+  TBD4: {
+    id: 72,
+    name: "TBD4",
+    desc: "TBD4",
     hidden: true,
   },
 });

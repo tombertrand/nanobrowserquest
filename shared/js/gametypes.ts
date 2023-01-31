@@ -1591,8 +1591,8 @@ Types.waypoints = [
   {
     id: 8,
     name: "Castle ruins",
-    gridX: 156,
-    gridY: 596,
+    gridX: 129,
+    gridY: 547,
   },
   {
     id: 9,

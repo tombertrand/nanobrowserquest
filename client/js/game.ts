@@ -17,6 +17,7 @@ import {
   UPGRADE_SLOT_COUNT,
   UPGRADE_SLOT_RANGE,
 } from "../../shared/js/slots";
+import { AchievementName } from "../../shared/js/types/achievements";
 import { randomInt, toArray, toString } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
@@ -4000,7 +4001,7 @@ class Game {
         } else if (kind === Types.Entities.COWKING) {
           self.tryUnlockingAchievement("COW_KING");
         } else if (kind === Types.Entities.MINOTAUR) {
-          self.tryUnlockingAchievement("MINOTAUR");
+          // self.tryUnlockingAchievement("MINOTAUR");
         } else if (kind === Types.Entities.SKELETON4) {
           self.storage.incrementSkeleton4Count();
           self.tryUnlockingAchievement("CRUISADE");
@@ -4909,8 +4910,10 @@ class Game {
           this.client.sendMagicStone(npc.id);
         }
 
-        // ~~~~ find strategy
-        // this.tryUnlockingAchievement("MAGICSTONE");
+        this.storage.activateMagicStone(npc.gridX);
+        if (this.storage.hasAllMagicStones()) {
+          this.tryUnlockingAchievement("STONEHENGE");
+        }
       } else if (npc.kind === Types.Entities.LEVER || npc.kind === Types.Entities.LEVERWALL) {
         if (!npc.isActivated) {
           this.client.sendLever(npc.id);
@@ -6092,7 +6095,7 @@ class Game {
     this.unlock_callback = callback;
   }
 
-  tryUnlockingAchievement(name) {
+  tryUnlockingAchievement(name: AchievementName) {
     var achievement = null;
     var self = this;
 
