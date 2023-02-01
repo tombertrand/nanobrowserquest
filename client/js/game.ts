@@ -441,6 +441,7 @@ class Game {
       "leverwall",
       "grimoire",
       "alkor",
+      "olaf",
       "tree",
       "trap",
       "trap2",
@@ -633,6 +634,8 @@ class Game {
       "item-amuletdemon",
       "item-amuletmoon",
       "item-amuletstar",
+      "item-amuletskull",
+      "item-amuletdragon",
       "item-chestblue",
       "item-chestgreen",
       "item-chestpurple",
@@ -2861,9 +2864,9 @@ class Game {
           self.tryUnlockingAchievement("WEN");
         }
 
-        if (gridX >= 77 && gridX <= 83 && gridY >= 680 && gridY <= 684) {
-          self.tryUnlockingAchievement("WOODLAND");
-        }
+        // if (gridX >= 77 && gridX <= 83 && gridY >= 680 && gridY <= 684) {
+        //   self.tryUnlockingAchievement("WOODLAND");
+        // }
 
         self.updatePlayerCheckpoint();
 

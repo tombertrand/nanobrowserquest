@@ -1505,6 +1505,7 @@ class Player extends Character {
       const allResistance = [32];
       const timeout = [35];
       const elementDamage = [4, 14, 15, 16, 18, 34];
+      const lowerResistance = [36, 37, 38, 39, 40];
 
       let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
@@ -1557,6 +1558,21 @@ class Player extends Character {
           .concat(_.shuffle(elementDamage).slice(0, 2))
           .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.AMULETSTAR) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 2)
+          .concat(amuletHighLevelBonus)
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 3))
+          .concat(_.shuffle(elementDamage).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
+      } else if (kind === Types.Entities.AMULETSKULL) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(amuletHighLevelBonus)
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2))
+          .concat(_.shuffle(lowerResistance).slice(0, 1));
+      } else if (kind === Types.Entities.AMULETDRAGON) {
+        // @TODO ~~~~ figure out the bonus for the dragon amulet
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 2)
           .concat(amuletHighLevelBonus)

@@ -122,6 +122,7 @@ import lever from "../sprites/lever.json";
 import leverwall from "../sprites/lever.json";
 import grimoire from "../sprites/grimoire.json";
 import alkor from "../sprites/alkor.json";
+import olaf from "../sprites/olaf.json";
 import tree from "../sprites/tree.json";
 import trap from "../sprites/trap.json";
 import trap2 from "../sprites/trap.json";
@@ -353,6 +354,8 @@ const sprites = {
   "item-amuletdemon": item,
   "item-amuletmoon": item,
   "item-amuletstar": item,
+  "item-amuletskull": item,
+  "item-amuletdragon": item,
   "item-chestblue": item,
   "item-chestgreen": item,
   "item-chestpurple": item,
@@ -477,6 +480,7 @@ const sprites = {
   leverwall,
   grimoire,
   alkor,
+  olaf,
   tree,
   trap,
   trap2,

@@ -717,6 +717,14 @@ EntityFactory.builders[Types.Entities.AMULETSTAR] = function (id) {
   return new Items.AmuletStar(id);
 };
 
+EntityFactory.builders[Types.Entities.AMULETSKULL] = function (id) {
+  return new Items.AmuletSkull(id);
+};
+
+EntityFactory.builders[Types.Entities.AMULETDRAGON] = function (id) {
+  return new Items.AmuletDragon(id);
+};
+
 EntityFactory.builders[Types.Entities.CHESTBLUE] = function (id) {
   return new Items.ChestBlue(id);
 };
@@ -1005,6 +1013,10 @@ EntityFactory.builders[Types.Entities.GRIMOIRE] = function (id) {
 
 EntityFactory.builders[Types.Entities.ALKOR] = function (id) {
   return new Npcs.Alkor(id);
+};
+
+EntityFactory.builders[Types.Entities.OLAF] = function (id) {
+  return new Npcs.Olaf(id);
 };
 
 EntityFactory.builders[Types.Entities.TREE] = function (id) {

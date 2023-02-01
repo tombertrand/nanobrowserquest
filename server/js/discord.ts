@@ -112,6 +112,8 @@ const EmojiMap = {
   amuletdemon: "<:amuletdemon:1059572662239768727>",
   amuletmoon: "<:amuletmoon:1059572664366280754>",
   amuletstar: "<:amuletstar:1059877681275076738>",
+  amuletskull: "<:amuletskull:1070330528726777898>",
+  amuletdragon: "<:amuletdragon:1070330527183274024>",
 };
 
 export { postMessageToDiscordChatChannel, postMessageToDiscordAnvilChannel, EmojiMap };

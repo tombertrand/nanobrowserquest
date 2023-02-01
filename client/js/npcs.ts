@@ -320,6 +320,13 @@ var Npcs = {
     }
   },
 
+  Olaf: class Olaf extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.OLAF);
+      this.isFading = false;
+    }
+  },
+
   Tree: class Tree extends Npc {
     constructor(id) {
       super(id, Types.Entities.TREE);

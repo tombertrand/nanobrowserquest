@@ -217,6 +217,10 @@ var NpcTalk = {
     "I had procured a valuable NFT of a stone for $2.8 million<br/>but unfortunately, it has gone missing.",
     "If you could retrieve it for me, I would be most grateful<br/>and offer a suitable reward as a token of my appreciation.",
   ],
+  olaf: [
+    "These serpents have indulged in the remnants of a fallen dragon.",
+    "If you could obtain a Dragon's Wing for me,<br/>I would be most obliged and offer a recompense as a gesture of gratitude.",
+  ],
   tree: [""],
   trap: [""],
   trap2: [""],

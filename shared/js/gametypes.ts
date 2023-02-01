@@ -337,6 +337,8 @@ export const Types: any = {
     AMULETDEMON: 215,
     AMULETMOON: 216,
     AMULETSTAR: 233,
+    AMULETSKULL: 269,
+    AMULETDRAGON: 270,
 
     // NPCs
     GUARD: 40,
@@ -381,6 +383,7 @@ export const Types: any = {
     LEVERWALL: 259,
     GRIMOIRE: 268,
     ALKOR: 260,
+    OLAF: 271,
     TREE: 261,
     TRAP: 265,
     TRAP2: 266,
@@ -621,6 +624,8 @@ Types.Entities.Amulets = [
   Types.Entities.AMULETDEMON,
   Types.Entities.AMULETMOON,
   Types.Entities.AMULETSTAR,
+  Types.Entities.AMULETSKULL,
+  Types.Entities.AMULETDRAGON,
 ];
 
 Types.getGemNameFromKind = function (kind: number) {
@@ -791,6 +796,8 @@ export const kinds = {
   amuletdemon: [Types.Entities.AMULETDEMON, "amulet", "Fiend", 55],
   amuletmoon: [Types.Entities.AMULETMOON, "amulet", "Crescent", 58],
   amuletstar: [Types.Entities.AMULETSTAR, "amulet", "North Star", 60],
+  amuletskull: [Types.Entities.AMULETSKULL, "amulet", "Bone Crusher", 60],
+  amuletdragon: [Types.Entities.AMULETDRAGON, "amulet", "Dragon Breath", 60],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 50],
   chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
@@ -913,6 +920,7 @@ export const kinds = {
   leverwall: [Types.Entities.LEVERWALL, "npc"],
   grimoire: [Types.Entities.GRIMOIRE, "npc"],
   alkor: [Types.Entities.ALKOR, "npc"],
+  olaf: [Types.Entities.OLAF, "npc"],
   tree: [Types.Entities.TREE, "npc"],
   trap: [Types.Entities.TRAP, "npc"],
   trap2: [Types.Entities.TRAP2, "npc"],
@@ -1078,6 +1086,8 @@ Types.isSuperUnique = (itemName: string) =>
     "amuletdemon",
     "amuletmoon",
     "amuletstar",
+    "amuletskull",
+    "amuletdragon",
   ].includes(itemName);
 
 Types.getLevel = function (exp: number) {
@@ -1321,6 +1331,8 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
         Types.Entities.AMULETDEMON,
         Types.Entities.AMULETMOON,
         Types.Entities.AMULETSTAR,
+        Types.Entities.AMULETSKULL,
+        Types.Entities.AMULETDRAGON,
       ].includes(kindOrString)
     ) {
       return true;
@@ -1335,7 +1347,11 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
       return true;
     }
   } else {
-    if (["amuletcow", "amuletfrozen", "amuletdemon", "amuletmoon", "amuletstar"].includes(kindOrString)) {
+    if (
+      ["amuletcow", "amuletfrozen", "amuletdemon", "amuletmoon", "amuletstar", "amuletskull", "amuletdragon"].includes(
+        kindOrString,
+      )
+    ) {
       return true;
     }
     if ("amuletsilver" === kindOrString && bonus.length === 3) {
@@ -1734,6 +1750,11 @@ Types.getBonusDescriptionMap = [
   "+#% Prevent enemy health regeneration",
   "+# Poison damage",
   "#% Faster cast rate",
+  "-#% Enemy lower Magic resistance",
+  "-#% Enemy lower Flame resistance",
+  "-#% Enemy lower Lightning resistance",
+  "-#% Enemy lower Cold resistance",
+  "-#% Enemy lower Poison resistance",
 ];
 
 Types.bonusType = [
@@ -1773,6 +1794,11 @@ Types.bonusType = [
   "preventRegenerateHealth", // 33
   "poisonDamage", // 34
   "skillTimeout", // 35
+  "lowerMagicResistance", // 36
+  "lowerFlameResistance", // 37
+  "lowerLightningResistance", // 38
+  "lowerColdResistance", // 39
+  "lowerPoisonResistance", // 40
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1812,6 +1838,11 @@ Types.getBonus = function (rawBonus, level) {
   const preventRegenerateHealthPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const skillTimeoutPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
+  const lowerMagicResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
+  const lowerFlameResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
+  const lowerLightningResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
+  const lowerColdResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
+  const lowerPoisonResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1850,6 +1881,11 @@ Types.getBonus = function (rawBonus, level) {
     preventRegenerateHealthPerLevel,
     poisonDamagePerLevel,
     skillTimeoutPerLevel,
+    lowerMagicResistancePerLevel,
+    lowerFlameResistancePerLevel,
+    lowerLightningResistancePerLevel,
+    lowerColdResistancePerLevel,
+    lowerPoisonResistancePerLevel,
   ];
 
   // const bonus: { type: string; stats: number; description: string }[] = [];

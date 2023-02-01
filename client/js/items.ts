@@ -891,6 +891,20 @@ var Items = {
     }
   },
 
+  AmuletSkull: class AmuletSkull extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETSKULL, "amulet");
+      this.lootMessage = "You pick up the Bone Crusher";
+    }
+  },
+
+  AmuletDragon: class AmuletDragon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETDRAGON, "amulet");
+      this.lootMessage = "You pick up the Dragon Breath";
+    }
+  },
+
   ChestBlue: class ChestBlue extends Item {
     constructor(id) {
       super(id, Types.Entities.CHESTBLUE, "chest");

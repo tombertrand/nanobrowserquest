@@ -348,29 +348,24 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   },
   ANTIDOTE: {
     id: 45,
-    name: "Antidote ?",
+    name: "Antidote",
     desc: `Kill ${RAT3_COUNT} Poison Rats`,
     isCompleted() {
       return storage.getCowCount() >= RAT3_COUNT;
     },
   },
-  WOODLAND: {
+  DISCORD: {
     id: 46,
-    name: "Woodland",
-    desc: "Enter the mysterious forest",
+    name: "Discord",
+    desc: "Link your account in Discord<br/><small>Earn 10 legendary upgrade scrolls</small>",
   },
   STATUETTE: {
     id: 47,
     name: "Statuette",
     desc: "Retrieve the NFT Alkor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
   },
-  DISCORD: {
-    id: 48,
-    name: "Discord",
-    desc: "Link your account in Discord<br/><small>Earn 10 legendary upgrade scrolls</small>",
-  },
   HARDROCK: {
-    id: 49,
+    id: 48,
     name: "Hard Rock",
     desc: `Kill ${GOLEM_COUNT} Stone Golem`,
     isCompleted() {
@@ -378,22 +373,32 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     },
   },
   WAY_OF_WATER: {
-    id: 50,
+    id: 49,
     name: "Way Of Water",
     desc: "Get your toes wet",
   },
   CRUISADE: {
-    id: 51,
+    id: 50,
     name: "Cruisade",
     desc: `Kill ${SKELETON4_COUNT} Cruisader Skeletons`,
     isCompleted() {
       return storage.getSkeleton4Count() >= SKELETON4_COUNT;
     },
   },
+  DRAGON: {
+    id: 71,
+    name: "Dragon",
+    desc: "Retrieve the Dragon Wing Olaf is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
+  },
   STONEHENGE: {
-    id: 52,
+    id: 51,
     name: "Stonehenge",
     desc: "Activate all magic stones",
+  },
+  ECLYPSE: {
+    id: 52,
+    name: "Eclypse",
+    desc: "Find the Sun and Moon",
   },
   INFINITY_STONE: {
     id: 53,
@@ -489,7 +494,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   GRIMOIRE: {
     id: 69,
     name: "Grimoire",
-    desc: "Find The Book of Azrael.<br/>Get awarded 10% to all resistances",
+    desc: "Find The Book of Azrael<br/><small>Get awarded 10% to all resistances</small>",
     hidden: true,
   },
   HELLFORGE: {
@@ -506,7 +511,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   GRAND_MASTER: {
     id: 72,
     name: "Grand Master",
-    desc: "Reach lv.70. Your offensive skill now does AOE damage",
+    desc: "Reach lv.70<br/><small>Your offensive skill now does AOE damage</small>",
     hidden: true,
   },
 });
