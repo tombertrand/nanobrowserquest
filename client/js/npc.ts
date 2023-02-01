@@ -213,6 +213,10 @@ var NpcTalk = {
     "It is said that whoever possesses the grimoire<br/>will have the power to control death itself.",
     "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
   ],
+  alkor: [
+    "I had procured a valuable NFT of a stone for $2.8 million<br/>but unfortunately, it has gone missing.",
+    "If you could retrieve it for me, I would be most grateful<br/>and offer a suitable reward as a token of my appreciation.",
+  ],
   tree: [""],
   trap: [""],
   trap2: [""],

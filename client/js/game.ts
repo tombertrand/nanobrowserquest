@@ -440,6 +440,7 @@ class Game {
       "lever",
       "leverwall",
       "grimoire",
+      "alkor",
       "tree",
       "trap",
       "trap2",
@@ -2861,7 +2862,7 @@ class Game {
         }
 
         if (gridX >= 77 && gridX <= 83 && gridY >= 680 && gridY <= 684) {
-          self.tryUnlockingAchievement("STONE");
+          self.tryUnlockingAchievement("WOODLAND");
         }
 
         self.updatePlayerCheckpoint();
@@ -4000,20 +4001,23 @@ class Game {
           self.tryUnlockingAchievement("FRESH_MEAT");
         } else if (kind === Types.Entities.COWKING) {
           self.tryUnlockingAchievement("COW_KING");
-        } else if (kind === Types.Entities.MINOTAUR) {
-          // self.tryUnlockingAchievement("MINOTAUR");
         } else if (kind === Types.Entities.SKELETON4) {
           self.storage.incrementSkeleton4Count();
           self.tryUnlockingAchievement("CRUISADE");
         } else if (kind === Types.Entities.GOLEM) {
           self.storage.incrementGolemCount();
           self.tryUnlockingAchievement("HARDROCK");
+        } else if (kind === Types.Entities.GHOST) {
+          self.storage.incrementGhostCount();
+          self.tryUnlockingAchievement("BOO");
         } else if (kind === Types.Entities.MAGE) {
           self.storage.incrementMageCount();
           self.tryUnlockingAchievement("ARCHMAGE");
         } else if (kind === Types.Entities.WRAITH2) {
           self.storage.incrementWraith2Count();
           self.tryUnlockingAchievement("SPECTRAL");
+        } else if (kind === Types.Entities.DEATHANGEL) {
+          self.tryUnlockingAchievement("DEATHANGEL");
         }
 
         if (Math.floor((self.player.hitPoints * 100) / self.player.maxHitPoints) <= 1 && kind > Types.Entities.RAT2) {

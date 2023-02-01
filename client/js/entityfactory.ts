@@ -1003,6 +1003,10 @@ EntityFactory.builders[Types.Entities.GRIMOIRE] = function (id) {
   return new Npcs.Grimoire(id);
 };
 
+EntityFactory.builders[Types.Entities.ALKOR] = function (id) {
+  return new Npcs.Alkor(id);
+};
+
 EntityFactory.builders[Types.Entities.TREE] = function (id) {
   return new Npcs.Tree(id);
 };

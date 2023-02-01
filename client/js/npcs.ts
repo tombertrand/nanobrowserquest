@@ -313,6 +313,13 @@ var Npcs = {
     }
   },
 
+  Alkor: class Alkor extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.ALKOR);
+      this.isFading = false;
+    }
+  },
+
   Tree: class Tree extends Npc {
     constructor(id) {
       super(id, Types.Entities.TREE);

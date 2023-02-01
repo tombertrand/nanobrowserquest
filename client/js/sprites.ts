@@ -121,6 +121,7 @@ import tombskull from "../sprites/tomb.json";
 import lever from "../sprites/lever.json";
 import leverwall from "../sprites/lever.json";
 import grimoire from "../sprites/grimoire.json";
+import alkor from "../sprites/alkor.json";
 import tree from "../sprites/tree.json";
 import trap from "../sprites/trap.json";
 import trap2 from "../sprites/trap.json";
@@ -475,6 +476,7 @@ const sprites = {
   lever,
   leverwall,
   grimoire,
+  alkor,
   tree,
   trap,
   trap2,

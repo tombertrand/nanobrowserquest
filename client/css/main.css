@@ -1010,6 +1010,10 @@ footer, header, hgroup, menu, nav, section {
     .flex-50 > div { width: 50%; display: flex; justify-content: space-between;}
     .flex-50 > div:nth-child(odd) span:nth-child(2) { margin-right:6px; }
 
+    small {
+        font-size: 0.8em;
+    }
+
 	@media screen and (min-width: 1501px) {
         .home-logo {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }

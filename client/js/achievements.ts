@@ -346,28 +346,28 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     desc: "Kill every monster in the secret level",
     hidden: true,
   },
-  STONE: {
+  ANTIDOTE: {
     id: 45,
-    name: "A $1M Stone",
-    desc: "Find the Stone Field",
-  },
-  POISON_RAT: {
-    id: 46,
-    name: "What's that smell?",
+    name: "Antidote ?",
     desc: `Kill ${RAT3_COUNT} Poison Rats`,
     isCompleted() {
       return storage.getCowCount() >= RAT3_COUNT;
     },
   },
+  WOODLAND: {
+    id: 46,
+    name: "Woodland",
+    desc: "Enter the mysterious forest",
+  },
   STATUETTE: {
     id: 47,
     name: "Statuette",
-    desc: "Retrieve the figurine Alkor is seeking<br/>and earn 10 legendary upgrade scrolls",
+    desc: "Retrieve the NFT Alkor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
   },
   DISCORD: {
     id: 48,
     name: "Discord",
-    desc: "Link your account in Discord<br/>and earn 10 legendary upgrade scrolls",
+    desc: "Link your account in Discord<br/><small>Earn 10 legendary upgrade scrolls</small>",
   },
   HARDROCK: {
     id: 49,
@@ -390,15 +390,15 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
       return storage.getSkeleton4Count() >= SKELETON4_COUNT;
     },
   },
-  HELLFORGE: {
-    id: 52,
-    name: "Hellforge",
-    desc: "Break the mystical gem on the Altar",
-  },
   STONEHENGE: {
-    id: 53,
+    id: 52,
     name: "Stonehenge",
     desc: "Activate all magic stones",
+  },
+  INFINITY_STONE: {
+    id: 53,
+    name: "Infinity Stone",
+    desc: "Find the Infinity Stone",
   },
   STARGATE: {
     id: 54,
@@ -416,12 +416,12 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     desc: "Find the Holy Grail",
   },
   TOMB: {
-    id: 56,
+    id: 57,
     name: "The Tomb",
     desc: "Enter the hidden Crypt",
   },
-  GHOST: {
-    id: 57,
+  BOO: {
+    id: 58,
     name: "Boo",
     desc: `Kill ${GHOST_COUNT} Ghosts`,
     isCompleted() {
@@ -429,7 +429,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     },
   },
   ARCHMAGE: {
-    id: 58,
+    id: 59,
     name: "Archmage",
     desc: `Kill ${MAGE_COUNT} Mages`,
     isCompleted() {
@@ -437,7 +437,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     },
   },
   SPECTRAL: {
-    id: 59,
+    id: 60,
     name: "Spectral",
     desc: `Kill ${WRAITH2_COUNT} Spectral Wraiths`,
     isCompleted() {
@@ -445,75 +445,68 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     },
   },
   PHARAOH: {
-    id: 60,
+    id: 61,
     name: "Pharaoh",
     desc: "Enter the Temple of Light",
   },
   DEATHANGEL: {
-    id: 61,
+    id: 62,
     name: "Death Angel",
     desc: "Kill Azrael",
   },
   MAGIC8: {
-    id: 62,
+    id: 63,
     name: "Magic 8",
     desc: "Upgrade a legendary item to +8",
   },
   RUNOLOGUE: {
-    id: 63,
+    id: 64,
     name: "Runologue",
     desc: "Find a high level rune",
   },
   BLACKSMITH: {
-    id: 64,
+    id: 65,
     name: "Blacksmith",
     desc: "Forge a Runeword",
   },
   RUNE_MASTER: {
-    id: 65,
+    id: 66,
     name: "Rune Master",
     desc: "Combine 2 high rank runes",
   },
   MISSTEP: {
-    id: 66,
+    id: 67,
     name: "Misstep",
     desc: "Die from a trap",
     hidden: true,
   },
   ZELDA: {
-    id: 67,
+    id: 68,
     name: "ZELDA",
     desc: "Find the hidden stairs",
     hidden: true,
   },
   GRIMOIRE: {
-    id: 68,
+    id: 69,
     name: "Grimoire",
     desc: "Find The Book of Azrael.<br/>Get awarded 10% to all resistances",
     hidden: true,
   },
+  HELLFORGE: {
+    id: 70,
+    name: "Hellforge",
+    desc: "Break the mystical gem on the Altar",
+  },
   TBD1: {
-    id: 69,
+    id: 71,
     name: "TBD1",
     desc: "TBD1",
     hidden: true,
   },
-  TBD2: {
-    id: 70,
-    name: "TBD2",
-    desc: "TBD2",
-    hidden: true,
-  },
-  TBD3: {
-    id: 71,
-    name: "TBD3",
-    desc: "TBD3",
-    hidden: true,
-  },
-  TBD4: {
+  GRAND_MASTER: {
     id: 72,
-    name: "TBD4",
-    desc: "TBD4",
+    name: "Grand Master",
+    desc: "Reach lv.70. Your offensive skill now does AOE damage",
     hidden: true,
   },
 });

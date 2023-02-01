@@ -46,20 +46,20 @@ export type AchievementName =
   | "COW_KING"
   | "FRESH_MEAT"
   | "FARMER"
-  | "STONE"
-  | "POISON_RAT"
+  | "ANTIDOTE"
+  | "WOODLAND"
   | "STATUETTE"
   | "DISCORD"
   | "HARDROCK"
   | "WAY_OF_WATER"
   | "CRUISADE"
-  | "HELLFORGE"
   | "STONEHENGE"
+  | "INFINITY_STONE"
   | "STARGATE"
   | "PERSONAL_WEAPON"
   | "KINGDOM"
   | "TOMB"
-  | "GHOST"
+  | "BOO"
   | "ARCHMAGE"
   | "SPECTRAL"
   | "PHARAOH"
@@ -71,10 +71,9 @@ export type AchievementName =
   | "MISSTEP"
   | "ZELDA"
   | "GRIMOIRE"
+  | "HELLFORGE"
   | "TBD1"
-  | "TBD2"
-  | "TBD3"
-  | "TBD4";
+  | "GRAND_MASTER";
 
 export interface Achievement {
   id: number;
