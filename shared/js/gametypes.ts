@@ -304,7 +304,7 @@ export const Types: any = {
     COWKINGHORN: 137,
     CHALICE: 245,
     INFINITYSTONE: 249,
-    STONE: 273,
+    NFT: 273,
     WING: 274,
     CRYSTAL: 275,
 
@@ -847,7 +847,7 @@ export const kinds = {
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
   chalice: [Types.Entities.CHALICE, "item", "Golden Chalice"],
   infinitystone: [Types.Entities.INFINITYSTONE, "item", "Mysterious Gem"],
-  stone: [Types.Entities.STONE, "item", "Stone NFT"],
+  nft: [Types.Entities.NFT, "item", "Stone NFT"],
   wing: [Types.Entities.WING, "item", "Dragon Wing"],
   crystal: [Types.Entities.CRYSTAL, "item", "Crystal"],
 
@@ -1407,7 +1407,7 @@ Types.isSingle = function (kindOrString: number | string) {
       Types.Entities.COWKINGHORN,
       Types.Entities.CHALICE,
       Types.Entities.INFINITYSTONE,
-      Types.Entities.STONE,
+      Types.Entities.NFT,
       Types.Entities.WING,
       Types.Entities.CRYSTAL,
     ].includes(kindOrString);
@@ -1419,7 +1419,7 @@ Types.isSingle = function (kindOrString: number | string) {
         "cowkinghorn",
         "chalice",
         "infinitystone",
-        "stone",
+        "nft",
         "wing",
         "crystal",
       ].includes(kindOrString) ||
@@ -1428,7 +1428,7 @@ Types.isSingle = function (kindOrString: number | string) {
       kindOrString.startsWith("cowkinghorn") ||
       kindOrString.startsWith("chalice") ||
       kindOrString.startsWith("infinitystone") ||
-      kindOrString.startsWith("stone:") ||
+      kindOrString.startsWith("nft") ||
       kindOrString.startsWith("wing") ||
       kindOrString.startsWith("crystal")
     );
@@ -2466,7 +2466,7 @@ Types.itemDescription = {
   cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
   chalice: "Return the Golden Chalice, a one-of-a-kind artifact, to its rightful place.",
   infinitystone: "This Mysterious Gem holds a collection of enchanted objects.",
-  stone: "An exceptional Non-Fungible Token artifact.",
+  nft: "An exceptional Non-Fungible Token artifact.",
   wing: "The remnants of a dragon's wing.",
   crystal: "An ancient and powerful crystal.",
   chestblue: "The chest may contain a very precious item.",

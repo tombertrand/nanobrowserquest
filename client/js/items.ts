@@ -1087,9 +1087,9 @@ var Items = {
     }
   },
 
-  Stone: class Stone extends Item {
+  Nft: class Nft extends Item {
     constructor(id) {
-      super(id, Types.Entities.STONE, "object");
+      super(id, Types.Entities.NFT, "object");
       this.lootMessage = "You pick up the Stone NFT";
     }
   },

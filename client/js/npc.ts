@@ -219,11 +219,11 @@ var NpcTalk = {
   ],
   olaf: [
     "These serpents have indulged in the remnants of a fallen dragon.",
-    "If bring me back a Dragon's Wing,<br/>I would be most obliged and offer a recompense as a gesture of gratitude.",
+    "If you bring me back a Dragon's Wing,<br/>I would be most obliged and offer a recompense as a gesture of gratitude.",
   ],
   victor: [
     "An ancient and powerful crystal, known for its<br/>immense magical power, has been stolen by evil forces.",
-    "The theft was orchestrated by a group of dark wizards, who seek to use the crystal's power to conquer the world and spread their evil reign.",
+    "The theft was orchestrated by a group of dark shamans,<br/>who seek to use the crystal's power to spread their evil reign.",
     "They have taken the crystal deep within a dangerous and treacherous dungeon.",
     "If you retrieve the Crystal for me, I would be greatly<br/>appreciative and provide a reward as a sign of my gratitude.",
   ],

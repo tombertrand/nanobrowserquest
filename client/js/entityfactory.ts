@@ -833,8 +833,8 @@ EntityFactory.builders[Types.Entities.INFINITYSTONE] = function (id) {
   return new Items.InfinityStone(id);
 };
 
-EntityFactory.builders[Types.Entities.STONE] = function (id) {
-  return new Items.Stone(id);
+EntityFactory.builders[Types.Entities.NFT] = function (id) {
+  return new Items.Nft(id);
 };
 
 EntityFactory.builders[Types.Entities.WING] = function (id) {

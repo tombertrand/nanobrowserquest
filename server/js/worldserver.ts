@@ -1723,7 +1723,7 @@ class World {
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
     // var randomDrops = ["chalice", "infinitystone", "hellhammer"];
-    var randomDrops = ["stone", "wing", "crystal"];
+    var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];
     // var randomDrops = ["stonehero", "stonedragon"];

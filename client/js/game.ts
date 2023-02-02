@@ -665,7 +665,7 @@ class Game {
       "item-cowkinghorn",
       "item-chalice",
       "item-infinitystone",
-      "item-stone",
+      "item-nft",
       "item-wing",
       "item-crystal",
       "item-cake",

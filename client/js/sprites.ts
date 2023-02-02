@@ -386,7 +386,7 @@ const sprites = {
   "item-cowkinghorn": item,
   "item-chalice": item,
   "item-infinitystone": item,
-  "item-stone": item,
+  "item-nft": item,
   "item-wing": item,
   "item-crystal": item,
   "item-goldenarmor": item,

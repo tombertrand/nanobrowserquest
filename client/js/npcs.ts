@@ -345,9 +345,9 @@ var Npcs = {
     }
 
     playRandomAnimation() {
-      const animations = ["walk", "idle", "hit", "raise", "unraise"];
+      const animations = ["walk", "idle", "atk", "raise", "unraise"];
 
-      this.animate(_.shuffle(animations)[0], 150, 15);
+      this.animate(_.shuffle(animations)[0], 100, 15);
 
       setTimeout(() => {
         this.playRandomAnimation();
