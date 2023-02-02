@@ -1,4 +1,4 @@
-export const ACHIEVEMENT_COUNT = 72;
+export const ACHIEVEMENT_COUNT = 76;
 
 export type AchievementName =
   | "A_TRUE_WARRIOR"
@@ -47,19 +47,20 @@ export type AchievementName =
   | "FRESH_MEAT"
   | "FARMER"
   | "ANTIDOTE"
-  | "STATUETTE"
+  | "NFT"
   | "DISCORD"
-  | "HARDROCK"
+  | "UNBREAKABLE"
   | "WAY_OF_WATER"
-  | "CRUISADE"
+  | "TEMPLAR"
   | "DRAGON"
   | "STONEHENGE"
   | "INFINITY_STONE"
   | "ECLYPSE"
   | "STARGATE"
   | "PERSONAL_WEAPON"
-  | "KINGDOM"
+  | "CRUISADE"
   | "TOMB"
+  | "MINE"
   | "BOO"
   | "ARCHMAGE"
   | "SPECTRAL"
@@ -69,11 +70,13 @@ export type AchievementName =
   | "RUNOLOGUE"
   | "BLACKSMITH"
   | "RUNE_MASTER"
+  | "TBD1"
+  | "SAURON"
+  | "SACRED"
   | "MISSTEP"
   | "ZELDA"
   | "GRIMOIRE"
   | "HELLFORGE"
-  | "TBD1"
   | "GRAND_MASTER";
 
 export interface Achievement {

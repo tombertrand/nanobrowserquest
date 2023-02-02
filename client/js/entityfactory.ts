@@ -829,6 +829,18 @@ EntityFactory.builders[Types.Entities.INFINITYSTONE] = function (id) {
   return new Items.InfinityStone(id);
 };
 
+EntityFactory.builders[Types.Entities.STONE] = function (id) {
+  return new Items.Stone(id);
+};
+
+EntityFactory.builders[Types.Entities.WING] = function (id) {
+  return new Items.Wing(id);
+};
+
+EntityFactory.builders[Types.Entities.CRYSTAL] = function (id) {
+  return new Items.Crystal(id);
+};
+
 EntityFactory.builders[Types.Entities.FIREFOXPOTION] = function (id) {
   return new Items.Firefoxpotion(id);
 };
@@ -1017,6 +1029,10 @@ EntityFactory.builders[Types.Entities.ALKOR] = function (id) {
 
 EntityFactory.builders[Types.Entities.OLAF] = function (id) {
   return new Npcs.Olaf(id);
+};
+
+EntityFactory.builders[Types.Entities.VICTOR] = function (id) {
+  return new Npcs.Victor(id);
 };
 
 EntityFactory.builders[Types.Entities.TREE] = function (id) {

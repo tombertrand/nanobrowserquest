@@ -359,14 +359,14 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     name: "Discord",
     desc: "Link your account in Discord<br/><small>Earn 10 legendary upgrade scrolls</small>",
   },
-  STATUETTE: {
+  NFT: {
     id: 47,
-    name: "Statuette",
+    name: "NFT",
     desc: "Retrieve the NFT Alkor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
   },
-  HARDROCK: {
+  UNBREAKABLE: {
     id: 48,
-    name: "Hard Rock",
+    name: "Unbreakable",
     desc: `Kill ${GOLEM_COUNT} Stone Golem`,
     isCompleted() {
       return storage.getCowCount() >= GOLEM_COUNT;
@@ -377,56 +377,61 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     name: "Way Of Water",
     desc: "Get your toes wet",
   },
-  CRUISADE: {
+  TEMPLAR: {
     id: 50,
-    name: "Cruisade",
+    name: "Templar",
     desc: `Kill ${SKELETON4_COUNT} Cruisader Skeletons`,
     isCompleted() {
       return storage.getSkeleton4Count() >= SKELETON4_COUNT;
     },
   },
   DRAGON: {
-    id: 71,
+    id: 51,
     name: "Dragon",
     desc: "Retrieve the Dragon Wing Olaf is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
   },
   STONEHENGE: {
-    id: 51,
+    id: 52,
     name: "Stonehenge",
     desc: "Activate all magic stones",
   },
   ECLYPSE: {
-    id: 52,
+    id: 53,
     name: "Eclypse",
     desc: "Find the Sun and Moon",
   },
   INFINITY_STONE: {
-    id: 53,
+    id: 54,
     name: "Infinity Stone",
-    desc: "Find the Infinity Stone",
+    desc: "Find a mysterious gem with great powers",
   },
   STARGATE: {
-    id: 54,
+    id: 55,
     name: "Stargate",
     desc: "Enter the portal",
   },
   PERSONAL_WEAPON: {
-    id: 55,
-    name: "Personal Weapon",
+    id: 56,
+    name: "Beam me up Scotty",
     desc: "Go on a quest to find a special weapon",
   },
-  KINGDOM: {
-    id: 56,
-    name: "Kingdom of Heaven",
+  CRUISADE: {
+    id: 57,
+    name: "Cruisade",
     desc: "Find the Holy Grail",
   },
   TOMB: {
-    id: 57,
+    id: 58,
     name: "The Tomb",
     desc: "Enter the hidden Crypt",
   },
+  MINE: {
+    id: 59,
+    name: "Mine",
+    desc: "Retrieve the Crystal Victor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
+  },
   BOO: {
-    id: 58,
+    id: 60,
     name: "Boo",
     desc: `Kill ${GHOST_COUNT} Ghosts`,
     isCompleted() {
@@ -434,7 +439,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     },
   },
   ARCHMAGE: {
-    id: 59,
+    id: 61,
     name: "Archmage",
     desc: `Kill ${MAGE_COUNT} Mages`,
     isCompleted() {
@@ -442,7 +447,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     },
   },
   SPECTRAL: {
-    id: 60,
+    id: 62,
     name: "Spectral",
     desc: `Kill ${WRAITH2_COUNT} Spectral Wraiths`,
     isCompleted() {
@@ -450,66 +455,79 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     },
   },
   PHARAOH: {
-    id: 61,
+    id: 63,
     name: "Pharaoh",
     desc: "Enter the Temple of Light",
   },
   DEATHANGEL: {
-    id: 62,
+    id: 64,
     name: "Death Angel",
     desc: "Kill Azrael",
   },
   MAGIC8: {
-    id: 63,
+    id: 65,
     name: "Magic 8",
     desc: "Upgrade a legendary item to +8",
   },
   RUNOLOGUE: {
-    id: 64,
+    id: 66,
     name: "Runologue",
     desc: "Find a high level rune",
   },
   BLACKSMITH: {
-    id: 65,
+    id: 67,
     name: "Blacksmith",
     desc: "Forge a Runeword",
   },
   RUNE_MASTER: {
-    id: 66,
+    id: 68,
     name: "Rune Master",
     desc: "Combine 2 high rank runes",
   },
+  TBD1: {
+    id: 69,
+    name: "TBD1",
+    desc: "TBD1",
+    hidden: true,
+  },
+  SAURON: {
+    id: 70,
+    name: "Sauron",
+    desc: "description for what to do...",
+    hidden: true,
+  },
+  SACRED: {
+    id: 71,
+    name: "Sacred",
+    desc: "Do something<br/><small>Get awarded 5 sacred scrolls.</small>",
+    hidden: true,
+  },
   MISSTEP: {
-    id: 67,
+    id: 72,
     name: "Misstep",
     desc: "Die from a trap",
     hidden: true,
   },
   ZELDA: {
-    id: 68,
+    id: 73,
     name: "ZELDA",
     desc: "Find the hidden stairs",
     hidden: true,
   },
   GRIMOIRE: {
-    id: 69,
+    id: 74,
     name: "Grimoire",
     desc: "Find The Book of Azrael<br/><small>Get awarded 10% to all resistances</small>",
     hidden: true,
   },
   HELLFORGE: {
-    id: 70,
+    id: 75,
     name: "Hellforge",
-    desc: "Break the mystical gem on the Altar",
-  },
-  TBD1: {
-    id: 71,
-    name: "TBD1",
-    desc: "TBD1",
+    desc: "Break the Mysterious gem on the Altar",
     hidden: true,
   },
   GRAND_MASTER: {
-    id: 72,
+    id: 76,
     name: "Grand Master",
     desc: "Reach lv.70<br/><small>Your offensive skill now does AOE damage</small>",
     hidden: true,

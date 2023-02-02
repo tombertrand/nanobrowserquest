@@ -303,6 +303,9 @@ export const Types: any = {
     COWKINGHORN: 137,
     CHALICE: 245,
     INFINITYSTONE: 249,
+    STONE: 273,
+    WING: 274,
+    CRYSTAL: 275,
 
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
@@ -384,6 +387,7 @@ export const Types: any = {
     GRIMOIRE: 268,
     ALKOR: 260,
     OLAF: 271,
+    VICTOR: 272,
     TREE: 261,
     TRAP: 265,
     TRAP2: 266,
@@ -838,8 +842,11 @@ export const kinds = {
   skeletonkingcage: [Types.Entities.SKELETONKINGCAGE, "recipe", "Skeleton King's thoracic cage"],
   necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
-  chalice: [Types.Entities.CHALICE, "recipe", "Golden Chalice"],
-  infinitystone: [Types.Entities.INFINITYSTONE, "recipe", "Infinity Stone"],
+  chalice: [Types.Entities.CHALICE, "item", "Golden Chalice"],
+  infinitystone: [Types.Entities.INFINITYSTONE, "item", "Mysterious Gem"],
+  stone: [Types.Entities.STONE, "item", "Stone NFT"],
+  wing: [Types.Entities.WING, "item", "Dragon Wing"],
+  crystal: [Types.Entities.CRYSTAL, "item", "Crystal"],
 
   // kind, type, name, level
   "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 1],
@@ -921,6 +928,7 @@ export const kinds = {
   grimoire: [Types.Entities.GRIMOIRE, "npc"],
   alkor: [Types.Entities.ALKOR, "npc"],
   olaf: [Types.Entities.OLAF, "npc"],
+  victor: [Types.Entities.VICTOR, "npc"],
   tree: [Types.Entities.TREE, "npc"],
   trap: [Types.Entities.TRAP, "npc"],
   trap2: [Types.Entities.TRAP2, "npc"],
@@ -1395,15 +1403,30 @@ Types.isSingle = function (kindOrString: number | string) {
       Types.Entities.COWKINGHORN,
       Types.Entities.CHALICE,
       Types.Entities.INFINITYSTONE,
+      Types.Entities.STONE,
+      Types.Entities.WING,
+      Types.Entities.CRYSTAL,
     ].includes(kindOrString);
   } else {
     return (
-      ["skeletonkingcage", "necromancerheart", "cowkinghorn", "chalice", "infinitystone"].includes(kindOrString) ||
+      [
+        "skeletonkingcage",
+        "necromancerheart",
+        "cowkinghorn",
+        "chalice",
+        "infinitystone",
+        "stone",
+        "wing",
+        "crystal",
+      ].includes(kindOrString) ||
       kindOrString.startsWith("skeletonkingcage") ||
       kindOrString.startsWith("necromancerheart") ||
       kindOrString.startsWith("cowkinghorn") ||
       kindOrString.startsWith("chalice") ||
-      kindOrString.startsWith("infinitystone")
+      kindOrString.startsWith("infinitystone") ||
+      kindOrString.startsWith("stone:") ||
+      kindOrString.startsWith("wing") ||
+      kindOrString.startsWith("crystal")
     );
   }
 };
@@ -2350,6 +2373,8 @@ Types.getItemDetails = function ({
   }
   const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
 
+  console.log("~~~~description", description);
+
   if (rawBonus) {
     if (isCape) {
       partyBonus = Types.getPartyBonus(rawBonus, level);
@@ -2435,8 +2460,11 @@ Types.itemDescription = {
   skeletonkingcage: "The thoracic cage of the Skeleton King. An unknown magic is still being emitted from the remains.",
   necromancerheart: "The heart of the Necromancer. An unknown magic is still being emitted from the remains.",
   cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
-  chalice: "The Golden Chalice is a unique artifact, return it where it belongs.",
-  infinitystone: "The infinity stone contains magic items.",
+  chalice: "Return the Golden Chalice, a one-of-a-kind artifact, to its rightful place.",
+  infinitystone: "This Mysterious Gem holds a collection of enchanted objects.",
+  stone: "An exceptional Non-Fungible Token artifact.",
+  wing: "The remnants of a dragon's wing.",
+  crystal: "An ancient and powerful crystal.",
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",

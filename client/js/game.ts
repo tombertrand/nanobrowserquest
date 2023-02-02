@@ -442,6 +442,7 @@ class Game {
       "grimoire",
       "alkor",
       "olaf",
+      "victor",
       "tree",
       "trap",
       "trap2",
@@ -662,6 +663,9 @@ class Game {
       "item-cowkinghorn",
       "item-chalice",
       "item-infinitystone",
+      "item-stone",
+      "item-wing",
+      "item-crystal",
       "item-cake",
       "item-burger",
       "morningstar",
@@ -2387,6 +2391,13 @@ class Game {
           this.pathingGrid[y][x + 2] = 1;
         }
 
+        if (entity.kind === Types.Entities.GRIMOIRE) {
+          this.entityGrid[y - 1][x][entity.id] = entity;
+          this.entityGrid[y - 1][x + 1][entity.id] = entity;
+          this.pathingGrid[y - 1][x] = 1;
+          this.pathingGrid[y - 1][x + 1] = 1;
+        }
+
         // @NOTE Draw a square to know if the player is standing on a trap & don't fill the pathing grid so player can walk on top
         if (
           entity.kind === Types.Entities.TRAP ||
@@ -4006,10 +4017,10 @@ class Game {
           self.tryUnlockingAchievement("COW_KING");
         } else if (kind === Types.Entities.SKELETON4) {
           self.storage.incrementSkeleton4Count();
-          self.tryUnlockingAchievement("CRUISADE");
+          self.tryUnlockingAchievement("TEMPLAR");
         } else if (kind === Types.Entities.GOLEM) {
           self.storage.incrementGolemCount();
-          self.tryUnlockingAchievement("HARDROCK");
+          self.tryUnlockingAchievement("UNBREAKABLE");
         } else if (kind === Types.Entities.GHOST) {
           self.storage.incrementGhostCount();
           self.tryUnlockingAchievement("BOO");
@@ -4956,6 +4967,7 @@ class Game {
         this.player.stop_pathing_callback({ x: randomInt(99, 100), y: randomInt(550, 551), isWaypoint: true });
       } else if (npc.kind === Types.Entities.GRIMOIRE) {
         this.tryUnlockingAchievement("GRIMOIRE");
+        npc.walk();
       }
     }
   }
@@ -5930,13 +5942,14 @@ class Game {
     var bubble = this.bubbleManager.getBubbleById(character.id);
 
     if (bubble) {
-      var s = this.renderer.scale,
-        t = 16 * s, // tile size
-        x = (character.x - this.camera.x) * s,
-        w = parseInt(bubble.element.css("width")) + 24,
-        offset = w / 2 - t / 2,
-        offsetY,
-        y;
+      var s = this.renderer.scale;
+      var t = 16 * s;
+
+      var x = (character.x - this.camera.x) * s;
+      var w = parseInt(bubble.element.css("width")) + 24;
+      var offsetX = w / 2 - t / 2;
+      var offsetY;
+      var y;
 
       if (character instanceof Npc) {
         offsetY = 0;
@@ -5952,9 +5965,14 @@ class Game {
         }
       }
 
+      if (character.kind === Types.Entities.GRIMOIRE) {
+        offsetX -= 8 * s;
+        offsetY += 22 * s;
+      }
+
       y = (character.y - this.camera.y) * s - t * 2 - offsetY;
 
-      bubble.element.css("left", x - offset + "px");
+      bubble.element.css("left", x - offsetX + "px");
       bubble.element.css("top", y + "px");
     }
   }

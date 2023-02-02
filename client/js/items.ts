@@ -1083,7 +1083,28 @@ var Items = {
   InfinityStone: class InfinityStone extends Item {
     constructor(id) {
       super(id, Types.Entities.INFINITYSTONE, "object");
-      this.lootMessage = "You pick up the Infinity Stone";
+      this.lootMessage = "You pick up a Mysterious Gem";
+    }
+  },
+
+  Stone: class Stone extends Item {
+    constructor(id) {
+      super(id, Types.Entities.STONE, "object");
+      this.lootMessage = "You pick up the Stone NFT";
+    }
+  },
+
+  Wing: class Wing extends Item {
+    constructor(id) {
+      super(id, Types.Entities.WING, "object");
+      this.lootMessage = "You pick up a Dragon Wing";
+    }
+  },
+
+  Crystal: class Crystal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CRYSTAL, "object");
+      this.lootMessage = "You pick up the Crystal";
     }
   },
 

@@ -121,8 +121,9 @@ import tombskull from "../sprites/tomb.json";
 import lever from "../sprites/lever.json";
 import leverwall from "../sprites/lever.json";
 import grimoire from "../sprites/grimoire.json";
-import alkor from "../sprites/alkor.json";
-import olaf from "../sprites/olaf.json";
+import alkor from "../sprites/npc2.json";
+import olaf from "../sprites/npc2.json";
+import victor from "../sprites/npc2.json";
 import tree from "../sprites/tree.json";
 import trap from "../sprites/trap.json";
 import trap2 from "../sprites/trap.json";
@@ -382,6 +383,9 @@ const sprites = {
   "item-cowkinghorn": item,
   "item-chalice": item,
   "item-infinitystone": item,
+  "item-stone": item,
+  "item-wing": item,
+  "item-crystal": item,
   "item-goldenarmor": item,
   "item-bluearmor": item,
   "item-hornedarmor": item,
@@ -481,6 +485,7 @@ const sprites = {
   grimoire,
   alkor,
   olaf,
+  victor,
   tree,
   trap,
   trap2,

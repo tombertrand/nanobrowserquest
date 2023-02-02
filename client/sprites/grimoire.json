@@ -6,6 +6,10 @@
     "idle_down": {
       "length": 1,
       "row": 0
+    },
+    "walk_down": {
+      "length": 1,
+      "row": 1
     }
   },
   "offset_x": 1,

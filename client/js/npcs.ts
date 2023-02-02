@@ -327,6 +327,14 @@ var Npcs = {
     }
   },
 
+
+  Victor: class Victor extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.VICTOR);
+      this.isFading = false;
+    }
+  },
+
   Tree: class Tree extends Npc {
     constructor(id) {
       super(id, Types.Entities.TREE);
