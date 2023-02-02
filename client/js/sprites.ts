@@ -26,6 +26,7 @@ import worm from "../sprites/worm.json";
 import wraith2 from "../sprites/wraith2.json";
 import ghost from "../sprites/ghost.json";
 import mage from "../sprites/mage.json";
+import shaman from "../sprites/shaman.json";
 import mageSpell from "../sprites/mage-spell.json";
 import statue from "../sprites/statue.json";
 import statueSpell from "../sprites/statue-spell.json";
@@ -124,6 +125,7 @@ import grimoire from "../sprites/grimoire.json";
 import alkor from "../sprites/npc2.json";
 import olaf from "../sprites/npc2.json";
 import victor from "../sprites/npc2.json";
+import fox from "../sprites/fox.json";
 import tree from "../sprites/tree.json";
 import trap from "../sprites/trap.json";
 import trap2 from "../sprites/trap.json";
@@ -232,6 +234,7 @@ const sprites = {
   "mage-spell-lightning": mageSpell,
   "mage-spell-cold": mageSpell,
   "mage-spell-poison": mageSpell,
+  shaman,
   statue,
   "statue-spell": statueSpell,
   deathangel,
@@ -486,6 +489,7 @@ const sprites = {
   alkor,
   olaf,
   victor,
+  fox,
   tree,
   trap,
   trap2,

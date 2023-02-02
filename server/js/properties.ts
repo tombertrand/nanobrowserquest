@@ -402,25 +402,18 @@ var Properties: any = {
   //   armor: 28,
   //   weapon: 30,
   // },
-  // werewolf2: {
-  //   drops: {
-  //     rejuvenationpotion: 10,
-  //     scrollupgradelegendary: 3,
-  //     executionersword: 3,
-  //     // executionerarmor: 3,
-  //     beltexecutioner: 3,
-  //     shieldexecutioner: 3,
-  //     dragonsword: 3,
-  //     // dragonarmor: 3,
-  //     shielddragon: 3,
-  //     ringplatinum: 3,
-  //     amuletplatinum: 3,
-  //     poisonpotion: 10,
-  //   },
-  //   hp: 2320,
-  //   armor: 28,
-  //   weapon: 30,
-  // },
+  shaman: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+      poisonpotion: 10,
+    },
+    hp: 200,
+    armor: 28,
+    weapon: 30,
+  },
   skeleton4: {
     drops: {
       rejuvenationpotion: 10,

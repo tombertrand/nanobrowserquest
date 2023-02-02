@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import { Types } from "../../shared/js/gametypes";
 import Npc from "./npc";
 
@@ -327,11 +329,29 @@ var Npcs = {
     }
   },
 
-
   Victor: class Victor extends Npc {
     constructor(id) {
       super(id, Types.Entities.VICTOR);
       this.isFading = false;
+    }
+  },
+
+  Fox: class Fox extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.FOX);
+      this.isFading = false;
+
+      this.playRandomAnimation();
+    }
+
+    playRandomAnimation() {
+      const animations = ["walk", "idle", "hit", "raise", "unraise"];
+
+      this.animate(_.shuffle(animations)[0], 150, 15);
+
+      setTimeout(() => {
+        this.playRandomAnimation();
+      }, 10_000);
     }
   },
 

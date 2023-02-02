@@ -265,7 +265,8 @@ class Character extends Entity {
     if (
       this.kind === Types.Entities.NECROMANCER ||
       this.kind === Types.Entities.DEATHANGEL ||
-      this.kind === Types.Entities.MAGE
+      this.kind === Types.Entities.MAGE ||
+      this.kind === Types.Entities.SHAMAN
     ) {
       if (this.isRaising()) {
         this.aggroRange = 10;

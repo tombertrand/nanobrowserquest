@@ -187,6 +187,10 @@ EntityFactory.builders[Types.Entities.MAGE] = function (id, resistances) {
   return new Mobs.Mage(id, resistances);
 };
 
+EntityFactory.builders[Types.Entities.SHAMAN] = function (id, resistances) {
+  return new Mobs.Shaman(id, resistances);
+};
+
 EntityFactory.builders[Types.Entities.MAGESPELL] = function (id) {
   return new Spells.MageSpell(id);
 };
@@ -1033,6 +1037,10 @@ EntityFactory.builders[Types.Entities.OLAF] = function (id) {
 
 EntityFactory.builders[Types.Entities.VICTOR] = function (id) {
   return new Npcs.Victor(id);
+};
+
+EntityFactory.builders[Types.Entities.FOX] = function (id) {
+  return new Npcs.Fox(id);
 };
 
 EntityFactory.builders[Types.Entities.TREE] = function (id) {

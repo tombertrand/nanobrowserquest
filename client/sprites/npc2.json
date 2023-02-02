@@ -1,13 +1,13 @@
 {
-	"id": "npc2",
-	"width": 24,
-	"height": 30,
-	"animations": {
-		"idle_down": {
-			"length": 2,
-			"row": 0
-		}
-	},
-	"offset_x": -4,
-	"offset_y": -13
+  "id": "npc2",
+  "width": 24,
+  "height": 30,
+  "animations": {
+    "idle_down": {
+      "length": 2,
+      "row": 0
+    }
+  },
+  "offset_x": -4,
+  "offset_y": -13
 }

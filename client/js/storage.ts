@@ -74,8 +74,6 @@ class Storage {
     } else {
       this.data = defaultData;
     }
-    console.log("~~~~this.data", this.data);
-
     this.save();
   }
 

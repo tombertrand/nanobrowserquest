@@ -73,14 +73,16 @@ class Mob extends Character {
   }
 
   handleRandomElement() {
-    if ([Types.Entities.MAGE].includes(this.kind)) {
+    if ([Types.Entities.MAGE, Types.Entities.SHAMAN].includes(this.kind)) {
       this.element = Types.getRandomElement(this);
     }
   }
 
   // @NOTE Since there is no Mob factory on Server side, have the exceptions stored here
   handleRandomResistances() {
-    if ([Types.Entities.MAGE, Types.Entities.GHOST, Types.Entities.WRAITH2].includes(this.kind)) {
+    if (
+      [Types.Entities.MAGE, Types.Entities.SHAMAN, Types.Entities.GHOST, Types.Entities.WRAITH2].includes(this.kind)
+    ) {
       this.assignRandomResistances(2);
     } else if (this.kind === Types.Entities.DEATHANGEL) {
       this.assignRandomResistances(3);

@@ -42,6 +42,14 @@ export const mobResistance = {
     physicalResistance: 50,
     poisonResistance: 50,
   },
+  shaman: {
+    magicResistance: 60,
+    flameResistance: 30,
+    lightningResistance: 30,
+    coldResistance: 30,
+    physicalResistance: 30,
+    poisonResistance: 60,
+  },
   deathangel: {
     magicResistance: 100,
     flameResistance: 100,

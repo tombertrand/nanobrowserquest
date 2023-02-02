@@ -227,6 +227,7 @@ var NpcTalk = {
     "They have taken the crystal deep within a dangerous and treacherous dungeon.",
     "If you retrieve the Crystal for me, I would be greatly<br/>appreciative and provide a reward as a sign of my gratitude.",
   ],
+  fox: ["What did the fox say?"],
   tree: [""],
   trap: [""],
   trap2: [""],

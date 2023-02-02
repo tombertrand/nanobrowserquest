@@ -692,7 +692,7 @@ class Player extends Character {
 
         if (entity.kind === Types.Entities.DEATHANGEL) {
           self.server.castDeathAngelSpell(x, y);
-        } else if (entity.kind === Types.Entities.MAGE) {
+        } else if ((entity.kind === Types.Entities.MAGE, entity.kind === Types.Entities.SHAMAN)) {
           self.server.addSpell({ kind: Types.Entities.MAGESPELL, x, y, element: entity.element, casterId: mobId });
         } else if (entity.kind === Types.Entities.STATUE) {
           self.server.addSpell({ kind: Types.Entities.STATUESPELL, x, y, element: "flame", casterId: mobId });

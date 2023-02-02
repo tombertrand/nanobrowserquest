@@ -389,6 +389,7 @@ class Game {
       "mage-spell-lightning",
       "mage-spell-cold",
       "mage-spell-poison",
+      "shaman",
       "statue",
       "statue-spell",
       "deathangel",
@@ -443,6 +444,7 @@ class Game {
       "alkor",
       "olaf",
       "victor",
+      "fox",
       "tree",
       "trap",
       "trap2",
@@ -3118,10 +3120,6 @@ class Game {
 
               if (entity.kind === Types.Entities.MAGE && element !== "physical") {
                 entity.setSprite(self.sprites[entity.getSpriteName(element === "physical" ? "" : element)]);
-
-                // entity.sprite.image.onload = () => {
-                //   entity.sprite.createSilhouette();
-                // };
               } else {
                 entity.setSprite(self.sprites[entity.getSpriteName()]);
               }
@@ -5606,7 +5604,8 @@ class Game {
       if (
         character.kind === Types.Entities.NECROMANCER ||
         character.kind === Types.Entities.DEATHANGEL ||
-        character.kind === Types.Entities.MAGE
+        character.kind === Types.Entities.MAGE ||
+        character.kind === Types.Entities.SHAMAN
       ) {
         if (character.isRaising()) {
           if (character.canRaise(time)) {
@@ -5614,7 +5613,7 @@ class Game {
             character.nextStep();
             character.raise();
 
-            if (character.kind === Types.Entities.MAGE) {
+            if ([Types.Entities.MAGE, Types.Entities.SHAMAN].includes(character.kind)) {
               this.client.sendCastSpell(character.id, character.gridX, character.gridY);
             }
           }

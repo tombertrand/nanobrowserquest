@@ -1,0 +1,29 @@
+{
+  "id": "fox",
+  "width": 32,
+  "height": 32,
+  "animations": {
+    "walk_down": {
+      "length": 8,
+      "row": 2
+    },
+    "idle_down": {
+      "length": 14,
+      "row": 1
+    },
+    "hit_down": {
+      "length": 5,
+      "row": 0
+    },
+    "raise_down": {
+      "length": 11,
+      "row": 3
+    },
+    "unraise_down": {
+      "length": 6,
+      "row": 5
+    }
+  },
+  "offset_x": -9,
+  "offset_y": -10
+}
