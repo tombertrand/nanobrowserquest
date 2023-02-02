@@ -1646,14 +1646,30 @@ class World {
       }
     }
 
-    if (mob.kind >= Types.Entities.TROLL) {
-      const vv = random(12000);
-      if (vv === 420) {
-        return "amuletmoon";
-      } else if (vv === 6969) {
-        return "amuletstar";
+    if (mob.kind === Types.Entities.GOLEM && !attacker.hasNft) {
+      if (random(100) === 66) {
+        return "nft";
       }
     }
+    if (mob.kind === Types.Entities.SNAKE4 && !attacker.hasWing) {
+      if (random(100) === 66) {
+        return "wing";
+      }
+    }
+    if (mob.kind === Types.Entities.SHAMAN && !attacker.hasCrystal) {
+      if (random(100) === 66) {
+        return "crystal";
+      }
+    }
+    
+    // if (mob.kind >= Types.Entities.TROLL) {
+    //   const vv = random(12000);
+    //   if (vv === 420) {
+    //     return "amuletmoon";
+    //   } else if (vv === 6969) {
+    //     return "amuletstar";
+    //   }
+    // }
 
     if (!Types.isBoss(mob.kind) && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO/BANANO potion on non-boss monsters
@@ -1723,7 +1739,7 @@ class World {
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
     // var randomDrops = ["chalice", "infinitystone", "hellhammer"];
-    var randomDrops = ["nft", "wing", "crystal"];
+    // var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];
     // var randomDrops = ["stonehero", "stonedragon"];
@@ -1800,8 +1816,8 @@ class World {
     // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    var randomDrop = random(randomDrops.length);
-    itemName = randomDrops[randomDrop];
+    // var randomDrop = random(randomDrops.length);
+    // itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

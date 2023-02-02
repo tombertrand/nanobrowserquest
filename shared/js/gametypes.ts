@@ -803,7 +803,7 @@ export const kinds = {
   amuletdemon: [Types.Entities.AMULETDEMON, "amulet", "Fiend", 55],
   amuletmoon: [Types.Entities.AMULETMOON, "amulet", "Crescent", 58],
   amuletstar: [Types.Entities.AMULETSTAR, "amulet", "North Star", 60],
-  amuletskull: [Types.Entities.AMULETSKULL, "amulet", "Bone Crusher", 60],
+  amuletskull: [Types.Entities.AMULETSKULL, "amulet", "White Death", 60],
   amuletdragon: [Types.Entities.AMULETDRAGON, "amulet", "Dragon Breath", 60],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 50],

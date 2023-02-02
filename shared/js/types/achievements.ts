@@ -1,84 +1,85 @@
-export const ACHIEVEMENT_COUNT = 76;
+export const ACHIEVEMENT_NAMES = [
+  "A_TRUE_WARRIOR",
+  "INTO_THE_WILD",
+  "ANGRY_RATS",
+  "SMALL_TALK",
+  "FAT_LOOT",
+  "UNDERGROUND",
+  "AT_WORLDS_END",
+  "COWARD",
+  "TOMB_RAIDER",
+  "SKULL_COLLECTOR",
+  "NINJA_LOOT",
+  "NO_MANS_LAND",
+  "HUNTER",
+  "STILL_ALIVE",
+  "MEATSHIELD",
+  "NYAN",
+  "HOT_SPOT",
+  "SPECTRE_COLLECTOR",
+  "GEM_HUNTER",
+  "NANO_POTIONS",
+  "HERO",
+  "FOXY",
+  "FOR_SCIENCE",
+  "RICKROLLD",
+  "XNO",
+  "FREEZING_LANDS",
+  "SKELETON_KEY",
+  "BLOODLUST",
+  "SATOSHI",
+  "WEN",
+  "INDIANA_JONES",
+  "MYTH_OR_REAL",
+  "RIP",
+  "DEAD_NEVER_DIE",
+  "WALK_ON_WATER",
+  "GHOSTBUSTERS",
+  "BLACK_MAGIC",
+  "LUCKY7",
+  "NOT_SAFU",
+  "TICKLE_FROM_UNDER",
+  "SECRET_LEVEL",
+  "COW_KING",
+  "FRESH_MEAT",
+  "FARMER",
+  "ANTIDOTE",
+  "DISCORD",
+  "NFT",
+  "UNBREAKABLE",
+  "WAY_OF_WATER",
+  "TEMPLAR",
+  "DRAGON",
+  "STONEHENGE",
+  "ECLYPSE",
+  "INFINITY_STONE",
+  "STARGATE",
+  "PERSONAL_WEAPON",
+  "CRUISADE",
+  "TOMB",
+  "MINE",
+  "BOO",
+  "ARCHMAGE",
+  "SPECTRAL",
+  "PHARAOH",
+  "DEATHANGEL",
+  "MAGIC8",
+  "RUNOLOGUE",
+  "BLACKSMITH",
+  "RUNE_MASTER",
+  "TBD1",
+  "SAURON",
+  "SACRED",
+  "MISSTEP",
+  "ZELDA",
+  "GRIMOIRE",
+  "HELLFORGE",
+  "GRAND_MASTER",
+] as const;
 
-export type AchievementName =
-  | "A_TRUE_WARRIOR"
-  | "INTO_THE_WILD"
-  | "ANGRY_RATS"
-  | "SMALL_TALK"
-  | "FAT_LOOT"
-  | "UNDERGROUND"
-  | "AT_WORLDS_END"
-  | "COWARD"
-  | "TOMB_RAIDER"
-  | "SKULL_COLLECTOR"
-  | "NINJA_LOOT"
-  | "NO_MANS_LAND"
-  | "HUNTER"
-  | "MEATSHIELD"
-  | "STILL_ALIVE"
-  | "MEATSHIELD"
-  | "NYAN"
-  | "HOT_SPOT"
-  | "SPECTRE_COLLECTOR"
-  | "GEM_HUNTER"
-  | "NANO_POTIONS"
-  | "HERO"
-  | "FOXY"
-  | "FOR_SCIENCE"
-  | "RICKROLLD"
-  | "XNO"
-  | "FREEZING_LANDS"
-  | "SKELETON_KEY"
-  | "BLOODLUST"
-  | "SATOSHI"
-  | "WEN"
-  | "INDIANA_JONES"
-  | "MYTH_OR_REAL"
-  | "RIP"
-  | "DEAD_NEVER_DIE"
-  | "WALK_ON_WATER"
-  | "GHOSTBUSTERS"
-  | "BLACK_MAGIC"
-  | "LUCKY7"
-  | "NOT_SAFU"
-  | "TICKLE_FROM_UNDER"
-  | "SECRET_LEVEL"
-  | "COW_KING"
-  | "FRESH_MEAT"
-  | "FARMER"
-  | "ANTIDOTE"
-  | "NFT"
-  | "DISCORD"
-  | "UNBREAKABLE"
-  | "WAY_OF_WATER"
-  | "TEMPLAR"
-  | "DRAGON"
-  | "STONEHENGE"
-  | "INFINITY_STONE"
-  | "ECLYPSE"
-  | "STARGATE"
-  | "PERSONAL_WEAPON"
-  | "CRUISADE"
-  | "TOMB"
-  | "MINE"
-  | "BOO"
-  | "ARCHMAGE"
-  | "SPECTRAL"
-  | "PHARAOH"
-  | "DEATHANGEL"
-  | "MAGIC8"
-  | "RUNOLOGUE"
-  | "BLACKSMITH"
-  | "RUNE_MASTER"
-  | "TBD1"
-  | "SAURON"
-  | "SACRED"
-  | "MISSTEP"
-  | "ZELDA"
-  | "GRIMOIRE"
-  | "HELLFORGE"
-  | "GRAND_MASTER";
+export const ACHIEVEMENT_COUNT = ACHIEVEMENT_NAMES.length;
 
+export type AchievementName = typeof ACHIEVEMENT_NAMES[number];
 export interface Achievement {
   id: number;
   name: string;

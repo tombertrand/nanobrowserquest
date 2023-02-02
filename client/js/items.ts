@@ -894,7 +894,7 @@ var Items = {
   AmuletSkull: class AmuletSkull extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETSKULL, "amulet");
-      this.lootMessage = "You pick up the Bone Crusher";
+      this.lootMessage = "You pick up the White Death";
     }
   },
 

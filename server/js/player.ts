@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
+import { ACHIEVEMENT_NAMES } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { toArray, toDb, toNumber } from "../../shared/js/utils";
 import Character from "./character";
@@ -37,7 +38,11 @@ const MIN_TIME = 1000 * 60 * 15;
 
 let payoutIndex = 0;
 
-const ACHIEVEMENT_GRIMOIRE_INDEX = 66;
+const ACHIEVEMENT_GRIMOIRE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "GRIMOIRE");
+const ACHIEVEMENT_NFT_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "NFT");
+const ACHIEVEMENT_WING_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "DRAGON");
+const ACHIEVEMENT_CRYSTAL_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "MINE");
+
 const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "aaa"];
 
 class Player extends Character {
@@ -151,7 +156,11 @@ class Player extends Character {
   attackTimeout: NodeJS.Timeout;
   discordId: number;
   isHurtByTrap: boolean;
+  // Achievement checks
   hasGrimoire: boolean;
+  hasNft: boolean;
+  hasWing: boolean;
+  hasCrystal: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -203,6 +212,9 @@ class Player extends Character {
     this.hash = null;
     this.isHurtByTrap = false;
     this.hasGrimoire = false;
+    this.hasNft = false;
+    this.hasWing = false;
+    this.hasCrystal = false;
 
     this.dbWriteQueue = new PromiseQueue();
 
@@ -1033,6 +1045,8 @@ class Player extends Character {
           if (index === ACHIEVEMENT_GRIMOIRE_INDEX) {
             self.hasGrimoire = true;
             self.equipItem({} as any);
+
+            postMessageToDiscordChatChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]} `);
           }
         }
       } else if (action === Types.Messages.WAYPOINT) {
@@ -2622,9 +2636,10 @@ class Player extends Character {
 
       const { members, partyLeader } = this.getParty() || {};
 
-      if (achievement[ACHIEVEMENT_GRIMOIRE_INDEX]) {
-        this.hasGrimoire = true;
-      }
+      this.hasGrimoire = !!achievement[ACHIEVEMENT_GRIMOIRE_INDEX];
+      this.hasNft = !!achievement[ACHIEVEMENT_NFT_INDEX];
+      this.hasWing = !!achievement[ACHIEVEMENT_WING_INDEX];
+      this.hasCrystal = !!achievement[ACHIEVEMENT_CRYSTAL_INDEX];
 
       this.send([
         Types.Messages.WELCOME,
