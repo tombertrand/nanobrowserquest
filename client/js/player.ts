@@ -1,6 +1,11 @@
 import isEqual from "lodash/isEqual";
 
 import { kinds, Types } from "../../shared/js/gametypes";
+import {
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../shared/js/types/achievements";
 import { toArray, toNumber } from "../../shared/js/utils";
 import Character from "./character";
 import Exceptions from "./exceptions";
@@ -146,6 +151,7 @@ class Player extends Character {
     this.expansion2 = false;
     this.waypoints = [];
     this.skeletonKey = false;
+
     this.nanoPotions = 0;
     this.damage = "0";
     this.absorb = "0";
@@ -209,7 +215,7 @@ class Player extends Character {
     this.capeBrightness = brightness;
   }
 
-  loot(item) {
+  loot(item, achievements) {
     if (item) {
       if (Types.Entities.Gems.includes(item.kind)) {
         var index = Types.Entities.Gems.indexOf(item.kind);
@@ -252,6 +258,14 @@ class Player extends Character {
 
         if (isFound) {
           throw new Exceptions.LootException("You already have this item.");
+        } else if ([Types.Entities.NFT, Types.Entities.WING, Types.Entities.CRYSTAL].includes(item.kind)) {
+          if (item.kind === Types.Entities.NFT && achievements[ACHIEVEMENT_NFT_INDEX]) {
+            throw new Exceptions.LootException("You already completed the NFT achievement.");
+          } else if (item.kind === Types.Entities.WING && achievements[ACHIEVEMENT_WING_INDEX]) {
+            throw new Exceptions.LootException("You already completed the Dragon Wing achievement.");
+          } else if (item.kind === Types.Entities.CRYSTAL && achievements[ACHIEVEMENT_CRYSTAL_INDEX]) {
+            throw new Exceptions.LootException("You already completed the Crystal achievement.");
+          }
         }
       }
 

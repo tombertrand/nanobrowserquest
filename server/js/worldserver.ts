@@ -1646,22 +1646,20 @@ class World {
       }
     }
 
-    if (mob.kind === Types.Entities.GOLEM && !attacker.hasNft) {
-      if (random(100) === 66) {
+    if (mob.kind === Types.Entities.GOLEM) {
+      if (!attacker.hasNft && random(150) === 100) {
         return "nft";
       }
-    }
-    if (mob.kind === Types.Entities.SNAKE4 && !attacker.hasWing) {
-      if (random(100) === 66) {
+    } else if (mob.kind === Types.Entities.SNAKE4) {
+      if (!attacker.hasWing && random(150) === 100) {
         return "wing";
       }
-    }
-    if (mob.kind === Types.Entities.SHAMAN && !attacker.hasCrystal) {
-      if (random(100) === 66) {
+    } else if (mob.kind === Types.Entities.SHAMAN) {
+      if (!attacker.hasCrystal && random(150) === 100) {
         return "crystal";
       }
     }
-    
+
     // if (mob.kind >= Types.Entities.TROLL) {
     //   const vv = random(12000);
     //   if (vv === 420) {
@@ -1739,6 +1737,7 @@ class World {
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
     // var randomDrops = ["chalice", "infinitystone", "hellhammer"];
+    // var randomDrops = ["nft"];
     // var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];

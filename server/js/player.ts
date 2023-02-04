@@ -1,7 +1,12 @@
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
-import { ACHIEVEMENT_NAMES } from "../../shared/js/types/achievements";
+import {
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_GRIMOIRE_INDEX,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { toArray, toDb, toNumber } from "../../shared/js/utils";
 import Character from "./character";
@@ -37,11 +42,6 @@ const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
 
 let payoutIndex = 0;
-
-const ACHIEVEMENT_GRIMOIRE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "GRIMOIRE");
-const ACHIEVEMENT_NFT_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "NFT");
-const ACHIEVEMENT_WING_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "DRAGON");
-const ACHIEVEMENT_CRYSTAL_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "MINE");
 
 const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "aaa"];
 
@@ -704,7 +704,7 @@ class Player extends Character {
 
         if (entity.kind === Types.Entities.DEATHANGEL) {
           self.server.castDeathAngelSpell(x, y);
-        } else if ((entity.kind === Types.Entities.MAGE, entity.kind === Types.Entities.SHAMAN)) {
+        } else if (entity.kind === Types.Entities.MAGE || entity.kind === Types.Entities.SHAMAN) {
           self.server.addSpell({ kind: Types.Entities.MAGESPELL, x, y, element: entity.element, casterId: mobId });
         } else if (entity.kind === Types.Entities.STATUE) {
           self.server.addSpell({ kind: Types.Entities.STATUESPELL, x, y, element: "flame", casterId: mobId });
@@ -1040,7 +1040,16 @@ class Player extends Character {
         const index = parseInt(message[1]) - 1;
         if (message[2] === "found" && !self.achievement[index]) {
           self.achievement[index] = 1;
-          databaseHandler.foundAchievement(self.name, index);
+
+          if (
+            (index === ACHIEVEMENT_NFT_INDEX && !(await databaseHandler.useInventoryItem(self, "nft"))) ||
+            (index === ACHIEVEMENT_WING_INDEX && !(await databaseHandler.useInventoryItem(self, "wing"))) ||
+            (index === ACHIEVEMENT_CRYSTAL_INDEX && !(await databaseHandler.useInventoryItem(self, "crystal")))
+          ) {
+            return;
+          }
+
+          databaseHandler.foundAchievement(self, index);
 
           if (index === ACHIEVEMENT_GRIMOIRE_INDEX) {
             self.hasGrimoire = true;

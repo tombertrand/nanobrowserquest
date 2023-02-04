@@ -67,7 +67,7 @@ export const ACHIEVEMENT_NAMES = [
   "RUNOLOGUE",
   "BLACKSMITH",
   "RUNE_MASTER",
-  "TBD1",
+  "EMBLEM",
   "SAURON",
   "SACRED",
   "MISSTEP",
@@ -78,6 +78,11 @@ export const ACHIEVEMENT_NAMES = [
 ] as const;
 
 export const ACHIEVEMENT_COUNT = ACHIEVEMENT_NAMES.length;
+
+export const ACHIEVEMENT_GRIMOIRE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "GRIMOIRE");
+export const ACHIEVEMENT_NFT_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "NFT");
+export const ACHIEVEMENT_WING_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "DRAGON");
+export const ACHIEVEMENT_CRYSTAL_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "MINE");
 
 export type AchievementName = typeof ACHIEVEMENT_NAMES[number];
 export interface Achievement {

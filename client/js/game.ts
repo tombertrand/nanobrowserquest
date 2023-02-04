@@ -17,6 +17,11 @@ import {
   UPGRADE_SLOT_COUNT,
   UPGRADE_SLOT_RANGE,
 } from "../../shared/js/slots";
+import {
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
 import { randomInt, toArray, toString } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
@@ -4966,6 +4971,24 @@ class Game {
       } else if (npc.kind === Types.Entities.GRIMOIRE) {
         this.tryUnlockingAchievement("GRIMOIRE");
         npc.walk();
+      } else if (npc.kind === Types.Entities.ALKOR) {
+        const isFound = this.player.inventory.some(({ item }) => item === "nft");
+
+        if (isFound && !this.storage.getAchievements()[ACHIEVEMENT_NFT_INDEX]) {
+          this.tryUnlockingAchievement("NFT");
+        }
+      } else if (npc.kind === Types.Entities.OLAF) {
+        const isFound = this.player.inventory.some(({ item }) => item === "wing");
+
+        if (isFound && !this.storage.getAchievements()[ACHIEVEMENT_WING_INDEX]) {
+          this.tryUnlockingAchievement("DRAGON");
+        }
+      } else if (npc.kind === Types.Entities.VICTOR) {
+        const isFound = this.player.inventory.some(({ item }) => item === "crystal");
+
+        if (isFound && !this.storage.getAchievements()[ACHIEVEMENT_CRYSTAL_INDEX]) {
+          this.tryUnlockingAchievement("MINE");
+        }
       }
     }
   }
@@ -6278,7 +6301,7 @@ class Game {
 
   tryLootingItem(item) {
     try {
-      this.player.loot(item);
+      this.player.loot(item, this.storage.getAchievements);
       this.client.sendLoot(item); // Notify the server that this item has been looted
       this.removeItem(item);
 
@@ -6313,6 +6336,8 @@ class Game {
       } else if (item.kind === Types.Entities.SKELETONKEY) {
         this.tryUnlockingAchievement("SKELETON_KEY");
         this.player.skeletonKey = true;
+      } else if (item.kind === Types.Entities.STONEHERO) {
+        this.tryUnlockingAchievement("EMBLEM");
       }
 
       if (Types.isHealingItem(item.kind)) {

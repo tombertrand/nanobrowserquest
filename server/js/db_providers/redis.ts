@@ -14,7 +14,13 @@ import {
   UPGRADE_SLOT_RANGE,
   WAYPOINTS_COUNT,
 } from "../../../shared/js/slots";
-import { ACHIEVEMENT_COUNT } from "../../../shared/js/types/achievements";
+import {
+  ACHIEVEMENT_COUNT,
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_NAMES,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
 import { toArray, toDb } from "../../../shared/js/utils";
 import { discordClient, EmojiMap, postMessageToDiscordAnvilChannel } from "../discord";
@@ -1459,14 +1465,32 @@ class DatabaseHandler {
     });
   }
 
-  foundAchievement(name, index) {
-    console.info("Found Achievement: " + name + " " + index + 1);
-    this.client.hget("u:" + name, "achievement", (_err, reply) => {
+  foundAchievement(player, index) {
+    console.info("Found Achievement: " + player.name + " " + index + 1);
+    this.client.hget("u:" + player.name, "achievement", (_err, reply) => {
       try {
         var achievement = JSON.parse(reply);
+
+        if (achievement[index] === 1) {
+          throw new Error(`Trying to re-unlock achievement. Index: ${index}, Name: ${ACHIEVEMENT_NAMES[index]}`);
+        }
+
         achievement[index] = 1;
         achievement = JSON.stringify(achievement);
-        this.client.hset("u:" + name, "achievement", achievement);
+        this.client.hset("u:" + player.name, "achievement", achievement, (err) => {
+          if (err) return;
+
+          if (index === ACHIEVEMENT_NFT_INDEX) {
+            this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
+            player.hasNft = true;
+          } else if (index === ACHIEVEMENT_WING_INDEX) {
+            this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
+            player.hasWing = true;
+          } else if (index === ACHIEVEMENT_CRYSTAL_INDEX) {
+            this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
+            player.hasCrystal = true;
+          }
+        });
       } catch (err) {
         Sentry.captureException(err);
       }

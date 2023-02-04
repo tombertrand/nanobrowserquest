@@ -357,7 +357,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   DISCORD: {
     id: 46,
     name: "Discord",
-    desc: "Link your account in Discord<br/><small>Earn 10 legendary upgrade scrolls</small>",
+    desc: "Link your account in Discord<br/><small>Earn 5 legendary upgrade scrolls</small>",
   },
   NFT: {
     id: 47,
@@ -484,10 +484,10 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     name: "Rune Master",
     desc: "Combine 2 high rank runes",
   },
-  TBD1: {
+  EMBLEM: {
     id: 69,
-    name: "TBD1",
-    desc: "TBD1",
+    name: "Hero Emblem",
+    desc: "Find a powerful artifact abe to enchant items",
     hidden: true,
   },
   SAURON: {

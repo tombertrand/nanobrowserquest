@@ -2377,8 +2377,6 @@ Types.getItemDetails = function ({
   }
   const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
 
-  console.log("~~~~description", description);
-
   if (rawBonus) {
     if (isCape) {
       partyBonus = Types.getPartyBonus(rawBonus, level);

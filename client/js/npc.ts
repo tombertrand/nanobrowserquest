@@ -1,4 +1,9 @@
 import { Types } from "../../shared/js/gametypes";
+import {
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../shared/js/types/achievements";
 import Character from "./character";
 import Game from "./game";
 
@@ -214,18 +219,62 @@ var NpcTalk = {
     "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
   ],
   alkor: [
-    "I had procured a valuable NFT of a stone for $2.8 million<br/>but unfortunately, it has gone missing.",
-    "If you could retrieve it for me, I would be most grateful<br/>and offer a suitable reward as a token of my appreciation.",
+    {
+      condition(game: any) {
+        return !game.storage.getAchievements()[ACHIEVEMENT_NFT_INDEX];
+      },
+      text: [
+        "I had procured a valuable NFT of a stone for $2.8 million<br/>but unfortunately, it has gone missing.",
+        "If you could retrieve it for me, I would be most grateful<br/>and offer a suitable reward as a token of my appreciation.",
+      ],
+    },
+    {
+      condition(game: any) {
+        return !!game.storage.getAchievements()[ACHIEVEMENT_NFT_INDEX];
+      },
+      text: [
+        "Thought my JPEG was lost forever.",
+        "Do you have an interest in magic?",
+        "Ancient legends describe a tome of magic hidden beneath the woodland.",
+        "That's the extent of my knowledge,<br/>best of luck on your journey.",
+      ],
+    },
   ],
   olaf: [
-    "These serpents have indulged in the remnants of a fallen dragon.",
-    "If you bring me back a Dragon's Wing,<br/>I would be most obliged and offer a recompense as a gesture of gratitude.",
+    {
+      condition(game: any) {
+        return !game.storage.getAchievements()[ACHIEVEMENT_WING_INDEX];
+      },
+      text: [
+        "These serpents have indulged in the remnants of a fallen dragon.",
+        "If you bring me back a Dragon's Wing,<br/>I would be most obliged and offer a recompense as a gesture of gratitude.",
+      ],
+    },
+    {
+      condition(game: any) {
+        return !!game.storage.getAchievements()[ACHIEVEMENT_WING_INDEX];
+      },
+      text: ["Well done warrior, I've granted you your reward!"],
+    },
   ],
   victor: [
-    "An ancient and powerful crystal, known for its<br/>immense magical power, has been stolen by evil forces.",
-    "The theft was orchestrated by a group of dark shamans,<br/>who seek to use the crystal's power to spread their evil reign.",
-    "They have taken the crystal deep within a dangerous and treacherous dungeon.",
-    "If you retrieve the Crystal for me, I would be greatly<br/>appreciative and provide a reward as a sign of my gratitude.",
+    {
+      condition(game: any) {
+        return !game.storage.getAchievements()[ACHIEVEMENT_CRYSTAL_INDEX];
+      },
+      text: [
+        "An ancient and powerful crystal, known for its<br/>immense magical power, has been stolen by evil forces.",
+        "The theft was orchestrated by a group of dark shamans,<br/>who seek to use the crystal's power to spread their evil reign.",
+        "They have taken the crystal deep within a dangerous and treacherous dungeon.",
+        "If you retrieve the Crystal for me, I would be greatly<br/>appreciative and provide a reward as a sign of my gratitude.",
+      ],
+    },
+    {
+      condition(game: any) {
+        return !!game.storage.getAchievements()[ACHIEVEMENT_CRYSTAL_INDEX];
+      },
+      text: ["Well done warrior, I've granted you your reward!"],
+    },
   ],
   fox: ["What did the fox say?"],
   tree: [""],

@@ -233,6 +233,10 @@ class Storage {
     return false;
   }
 
+  getAchievements() {
+    return this.data.achievement;
+  }
+
   getAchievementCount() {
     return this.data.achievement.filter(Boolean).length;
   }
