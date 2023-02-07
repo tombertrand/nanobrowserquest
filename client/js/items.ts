@@ -901,7 +901,7 @@ var Items = {
   AmuletDragon: class AmuletDragon extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETDRAGON, "amulet");
-      this.lootMessage = "You pick up the Dragon Breath";
+      this.lootMessage = "You pick up the Dragon Eye";
     }
   },
 

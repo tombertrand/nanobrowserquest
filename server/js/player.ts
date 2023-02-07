@@ -1829,9 +1829,11 @@ class Player extends Character {
     const dmg = Math.round(spell.dmg - spell.dmg * (resistance / 100));
 
     if (spell.element === "cold") {
-      if (random(100) > this.bonus.reduceFrozenChance) {
-        // @TODO: use spell level
-        this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
+      const isFrozen = random(100) < 20;
+      if (isFrozen) {
+        if (random(100) > this.bonus.reduceFrozenChance) {
+          this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
+        }
       }
     } else if (spell.element === "poison") {
       this.startPoisoned({ dmg: spell.dmg, entity: this, resistance: this.bonus.poisonResistance });

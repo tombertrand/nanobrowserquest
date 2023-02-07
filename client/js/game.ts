@@ -3460,6 +3460,7 @@ class Game {
           entity.y = caster.y - 8;
         } else if (entity.kind === Types.Entities.STATUESPELL || entity.kind === Types.Entities.STATUE2SPELL) {
           entity.x = caster.x;
+          entity.y = caster.y + 8;
         }
         entity.setOrientation(orientation);
         entity.idle();
@@ -3909,8 +3910,11 @@ class Game {
 
             self.audioManager.playSound("stone-break");
           } else if (mob.kind === Types.Entities.STATUE || mob.kind === Types.Entities.STATUE2) {
-            // @TODO add iceball sound
-            self.audioManager.playSound("fireball", 250);
+            if (mob.kind === Types.Entities.STATUE) {
+              self.audioManager.playSound("fireball", 250);
+            } else if (mob.kind === Types.Entities.STATUE2) {
+              self.audioManager.playSound("iceball", 250);
+            }
             mob.raise();
             mob.isActivated = true;
             setTimeout(() => {

@@ -81,6 +81,7 @@ class AudioManager {
       "stone-break",
       "lever",
       "fireball",
+      "iceball",
       "trap",
       // "altarinfinitystone",
     ];
@@ -172,22 +173,6 @@ class AudioManager {
     var sound = document.createElement("audio");
     var self = this;
 
-    // const listener = function () {
-    //   // this.removeEventListener("canplaythrough", arguments.callee, false);
-
-    //   sound
-    //   console.debug(path + " is ready to play.");
-    //   if (loaded_callback) {
-    //     loaded_callback();
-    //   }
-    // }
-
-    // sound.addEventListener(
-    //   "canplaythrough",
-    //   listener,
-    //   false,
-    // );
-
     loaded_callback?.();
 
     sound.addEventListener(
@@ -232,15 +217,8 @@ class AudioManager {
     if (!this.sounds[name]) {
       return null;
     }
-    var sound = _.find(this.sounds[name], function (sound) {
-      return sound.ended || sound.paused;
-    });
-    if (sound && sound.ended) {
-      sound.currentTime = 0;
-    } else {
-      sound = this.sounds[name][0];
-    }
-    return sound;
+
+    return this.sounds[name].find(sound => sound.ended || sound.paused);
   }
 
   playSound(name, delay = 0) {

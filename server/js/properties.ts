@@ -552,22 +552,6 @@ var Properties: any = {
     armor: 20,
     weapon: 32,
   },
-  // statue: {
-  //   drops: {
-  //     rejuvenationpotion: 100,
-  //   },
-  //   hp: 420,
-  //   armor: 8,
-  //   weapon: 10,
-  // },
-  // statue2: {
-  //   drops: {
-  //     rejuvenationpotion: 100,
-  //   },
-  //   hp: 420,
-  //   armor: 8,
-  //   weapon: 10,
-  // },
   deathangel: {
     drops: {
       scrollupgradelegendary: 5,
