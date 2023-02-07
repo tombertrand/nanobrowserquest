@@ -404,6 +404,16 @@ var Npcs = {
       return false;
     }
   },
+
+  Statue2: class Statue2 extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.STATUE2);
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
 };
 
 export default Npcs;

@@ -27,7 +27,6 @@ Formulas.minMaxDamage = function ({
   lightningResistance = 0,
   coldResistance = 0,
   poisonResistance = 0,
-  physicalResistance = 0,
 }) {
   let attackDamage = Math.ceil(
     (Types.getWeaponDamage(weapon, weaponLevel, isWeaponUnique) + attackDamageBonus) * 1.2 + playerLevel / 2,
@@ -36,12 +35,12 @@ Formulas.minMaxDamage = function ({
   const baseDamage =
     attackDamage +
     drainLife +
+    pierceDamage +
     Formulas.resistanceDamage(magicDamage, magicResistance) +
     Formulas.resistanceDamage(flameDamage, flameResistance) +
     Formulas.resistanceDamage(lightningDamage, lightningResistance) +
     Formulas.resistanceDamage(coldDamage, coldResistance) +
-    Formulas.resistanceDamage(poisonDamage, poisonResistance) +
-    Formulas.resistanceDamage(pierceDamage, physicalResistance);
+    Formulas.resistanceDamage(poisonDamage, poisonResistance);
 
   let min = baseDamage + minDamage + Math.round(Math.pow(0.7, Math.floor(playerLevel / 10)) * playerLevel);
   let max = baseDamage + maxDamage + Math.round(Math.pow(1.075, Math.floor(playerLevel / 10)) * playerLevel);

@@ -282,6 +282,7 @@ var NpcTalk = {
   trap2: [""],
   trap3: [""],
   statue: [""],
+  statue2: [""],
 
   coder: [
     "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",

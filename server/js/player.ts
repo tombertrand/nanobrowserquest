@@ -495,7 +495,7 @@ class Player extends Character {
         if (mob?.type === "mob" || mob?.type === "player") {
           let isCritical = false;
 
-          const resistances: Resistances = Types.getResistance(mob);
+          const resistances: Resistances = Types.getResistance(mob, self);
 
           let { dmg, attackDamage } = Formulas.dmg({
             weapon: self.weapon,
@@ -647,9 +647,6 @@ class Player extends Character {
           Math.abs(self.y - lever.y) < 3
         ) {
           self.server.activateLever(self, lever);
-
-          // @TODO
-          console.log("~~~~OPEN TEMPLE DOOR!");
         }
       } else if (action === Types.Messages.ALTARCHALICE) {
         console.info("ALTAR - CHALICE: " + self.name + " " + message[1]);
@@ -708,6 +705,8 @@ class Player extends Character {
           self.server.addSpell({ kind: Types.Entities.MAGESPELL, x, y, element: entity.element, casterId: mobId });
         } else if (entity.kind === Types.Entities.STATUE) {
           self.server.addSpell({ kind: Types.Entities.STATUESPELL, x, y, element: "flame", casterId: mobId });
+        } else if (entity.kind === Types.Entities.STATUE2) {
+          self.server.addSpell({ kind: Types.Entities.STATUE2SPELL, x, y, element: "cold", casterId: mobId });
         }
       } else if (action === Types.Messages.LOOT) {
         console.info("LOOT: " + self.name + " " + message[1]);
@@ -762,6 +761,13 @@ class Player extends Character {
                   break;
                 case Types.Entities.REJUVENATIONPOTION:
                   amount = Math.ceil(self.maxHitPoints / 3);
+                  break;
+                case Types.Entities.POISONPOTION:
+                  amount = -50;
+
+                  const dmg = Math.round(amount - amount * (self.bonus.poisonResistance / 100));
+                  self.startPoisoned({ dmg, entity: self, resistance: self.bonus.poisonResistance });
+
                   break;
               }
 
@@ -1321,8 +1327,13 @@ class Player extends Character {
 
           shouldBroadcast = true;
 
-          const mobResistances = attackedMob.type === "mob" ? attackedMob.resistances : attackedMob.bonus;
+          // const mobResistances = attackedMob.type === "mob" ? attackedMob.resistances : attackedMob.bonus;
+
+          const mobResistances = Types.getResistance(attackedMob, self);
           let mobResistance = mobResistances?.[Types.attackSkillToResistanceType[this.attackSkill]] || 0;
+
+          console.log("~~~mobResistances", mobResistances);
+          console.log("~~~mobResistance", mobResistance);
 
           if (attackedMob instanceof Player) {
             mobResistance = Types.calculateResistance(mobResistance + attackedMob.skill.resistances);
@@ -1484,7 +1495,7 @@ class Player extends Character {
       }
 
       if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
-        const resistances = [21, 22, 23, 24, 25, 26];
+        const resistances = [21, 22, 23, 24, 25];
         skill = getRandomDefenseSkill();
         bonus = _.shuffle(resistances)
           .slice(0, isUnique ? 2 : 1)
@@ -1523,12 +1534,13 @@ class Player extends Character {
       const coldDamageBonus = [18];
       const freezeChanceBonus = [19];
       const reduceFrozenChanceBonus = [20];
-      const resistances = [21, 22, 23, 24, 25, 26];
-      const elementPercentage = [27, 28, 29, 30, 31];
-      const allResistance = [32];
-      const timeout = [35];
-      const elementDamage = [4, 14, 15, 16, 18, 34];
-      const lowerResistance = [36, 37, 38, 39, 40];
+      const resistances = [21, 22, 23, 24, 25];
+      const elementPercentage = [26, 27, 28, 29, 30];
+      const allResistance = [31];
+      const timeout = [34];
+      const elementDamage = [4, 14, 15, 16, 18, 33];
+      const lowerResistance = [35, 36, 37, 38, 39];
+      const lowerAllResistance = [40];
 
       let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
@@ -1553,19 +1565,24 @@ class Player extends Character {
           .concat(_.shuffle(elementDamage).slice(0, 1))
           .concat(isUnique ? allResistance : _.shuffle(resistances).slice(0, 2));
       } else if (kind === Types.Entities.RINGNECROMANCER) {
-        bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(drainLifeBonus)
+          .concat([resistances[4], elementPercentage[4]]);
       } else if (kind === Types.Entities.AMULETCOW) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-          .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceDamageBonus]).slice(0, 1));
+          .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceDamageBonus]).slice(0, 1))
+          .concat(_.shuffle(elementPercentage).slice(0, 1));
       } else if (kind === Types.Entities.AMULETFROZEN) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
           .concat(coldDamageBonus)
           .concat(freezeChanceBonus)
-          .concat(reduceFrozenChanceBonus);
+          .concat(reduceFrozenChanceBonus)
+          .concat(resistances[4]);
       } else if (kind === Types.Entities.AMULETDEMON) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
@@ -1589,29 +1606,33 @@ class Player extends Character {
           .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.AMULETSKULL) {
         bonus = _.shuffle(highLevelBonus)
-          .slice(0, 3)
-          .concat(amuletHighLevelBonus)
+          .slice(0, 2)
+          .concat(amuletHighLevelBonus.slice(0, 1))
           .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
           .concat(_.shuffle(elementPercentage).slice(0, 2))
           .concat(_.shuffle(lowerResistance).slice(0, 1));
       } else if (kind === Types.Entities.AMULETDRAGON) {
-        // @TODO ~~~~ figure out the bonus for the dragon amulet
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 2)
-          .concat(amuletHighLevelBonus)
-          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 3))
-          .concat(_.shuffle(elementDamage).slice(0, 2))
-          .concat(_.shuffle(elementPercentage).slice(0, 2));
+          .concat(amuletHighLevelBonus.slice(0, 1))
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2))
+          .concat(lowerAllResistance);
       } else if (kind === Types.Entities.RINGRAISTONE) {
-        bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(lightningDamageBonus)
+          .concat(_.shuffle([resistances[2], elementPercentage[2]]).slice(0, 1));
       } else if (kind === Types.Entities.RINGFOUNTAIN) {
         bonus = _.shuffle([5, 6])
           .slice(0, 2)
-          .concat([8, ...highHealthBonus]);
+          .concat([8, ...highHealthBonus])
+          .concat(_.shuffle([7, 11, 12]).slice(0, 1))
+          .concat(_.shuffle(resistances).slice(0, 1));
       } else if (kind === Types.Entities.RINGMINOTAUR) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
-          .concat([...coldDamageBonus, ...freezeChanceBonus]);
+          .concat([...coldDamageBonus, ...freezeChanceBonus, resistances[3]]);
       } else if (kind === Types.Entities.RINGMYSTICAL) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
@@ -1635,7 +1656,7 @@ class Player extends Character {
           .concat(_.shuffle([11, 12]).slice(0, 1))
           .concat(_.shuffle(elementDamage).slice(0, 1))
           .concat(_.shuffle(elementPercentage).slice(0, 2))
-          .concat([32]);
+          .concat(allResistance);
       } else if (kind === Types.Entities.RINGWIZARD) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 1)
@@ -1719,6 +1740,7 @@ class Player extends Character {
       },
       resistances: null,
       element: null,
+      enchant: null,
       bonus: {
         attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
       },
@@ -1840,7 +1862,13 @@ class Player extends Character {
 
     entity.poisonedInterval = setInterval(() => {
       let poisonDmg = Math.round(
-        (dmg - dmg * (Types.calculateResistance(this.bonus.poisonResistance + this.skill.resistances) / 100)) / 5,
+        (dmg -
+          dmg *
+            (Types.calculateResistance(
+              Types.getResistance(entity, attacker).poisonResistance + (entity.skill?.resistances || 0),
+            ) /
+              100)) /
+          5,
       );
 
       if (iterations && poisonDmg) {
@@ -2232,7 +2260,6 @@ class Player extends Character {
       this.bonus.lightningResistance += this.bonus.allResistance;
       this.bonus.coldResistance += this.bonus.allResistance;
       this.bonus.poisonResistance += this.bonus.allResistance;
-      this.bonus.physicalResistance += this.bonus.allResistance;
     }
     if (this.bonus.magicDamagePercent) {
       this.bonus.magicDamage += Math.round((this.bonus.magicDamagePercent / 100) * this.bonus.magicDamage);
@@ -2439,13 +2466,18 @@ class Player extends Character {
       lightningResistance: Types.calculateResistance(this.bonus.lightningResistance + this.skill.resistances),
       coldResistance: Types.calculateResistance(this.bonus.coldResistance + this.skill.resistances),
       poisonResistance: Types.calculateResistance(this.bonus.poisonResistance + this.skill.resistances),
-      physicalResistance: Types.calculateResistance(this.bonus.physicalResistance + this.skill.resistances),
       skillTimeout: Types.calculateSkillTimeout(this.bonus.skillTimeout),
       magicDamagePercent: this.bonus.magicDamagePercent,
       flameDamagePercent: this.bonus.flameDamagePercent,
       lightningDamagePercent: this.bonus.lightningDamagePercent,
       coldDamagePercent: this.bonus.coldDamagePercent,
       poisonDamagePercent: this.bonus.poisonDamagePercent,
+      lowerMagicResistance: this.bonus.lowerMagicResistance,
+      lowerFlameResistance: this.bonus.lowerFlameResistance,
+      lowerLightningResistance: this.bonus.lowerLightningResistance,
+      lowerColdResistance: this.bonus.lowerColdResistance,
+      lowerPoisonResistance: this.bonus.lowerPoisonResistance,
+      lowerAllResistance: this.bonus.lowerAllResistance,
     };
 
     this.send(new Messages.Stats(stats).serialize());
@@ -2460,6 +2492,14 @@ class Player extends Character {
       this.updateHitPoints(true);
       this.sendPlayerStats();
       this.server.updatePopulation({ levelupPlayer: this.id });
+
+      if (this.discordId) {
+        // @TODO figure out a way to sync the new level
+      }
+
+      if (this.level >= 60) {
+        postMessageToDiscordChatChannel(`${this.name} is now lv.${this.level}`);
+      }
     }
   }
 

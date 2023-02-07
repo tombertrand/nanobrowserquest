@@ -13,7 +13,7 @@ export const mobResistance = {
   },
   cowking: {
     lightningResistance: 100,
-    physicalResistance: 20,
+    flameResistance: 20,
   },
   minotaur: {
     magicResistance: 80,
@@ -25,37 +25,42 @@ export const mobResistance = {
     flameResistance: 50,
     lightningResistance: 60,
     coldResistance: 30,
-    physicalResistance: 30,
   },
   ghost: {
     magicResistance: 60,
     flameResistance: 20,
     lightningResistance: 30,
     coldResistance: 30,
-    physicalResistance: 30,
   },
   mage: {
     magicResistance: 50,
     flameResistance: 50,
     lightningResistance: 50,
     coldResistance: 50,
-    physicalResistance: 50,
     poisonResistance: 50,
+  },
+  spider: {
+    poisonResistance: 100,
+  },
+  skeletontemplar: {
+    magicResistance: 80,
+    flameResistance: 80,
+    lightningResistance: 80,
+    coldResistance: 80,
+    poisonResistance: 80,
   },
   shaman: {
     magicResistance: 60,
-    flameResistance: 30,
+    flameResistance: 60,
     lightningResistance: 30,
     coldResistance: 30,
-    physicalResistance: 30,
-    poisonResistance: 60,
+    poisonResistance: 30,
   },
   deathangel: {
     magicResistance: 100,
     flameResistance: 100,
     lightningResistance: 100,
     coldResistance: 100,
-    physicalResistance: 100,
     poisonResistance: 100,
   },
 };
@@ -66,7 +71,7 @@ const DefaultResistances: Resistances = {
   lightningResistance: 0,
   coldResistance: 0,
   poisonResistance: 0,
-  physicalResistance: 0,
+  spectralResistance: 0,
 };
 
 export const resistanceToDisplayMap = {
@@ -75,11 +80,20 @@ export const resistanceToDisplayMap = {
   lightningResistance: "lightning",
   coldResistance: "cold",
   poisonResistance: "poison",
-  physicalResistance: "physical",
+  spectralResistance: "spectral",
+};
+
+const resistanceToLowerResistanceMap = {
+  magicResistance: "lowerMagicResistance",
+  flameResistance: "lowerFlameResistance",
+  lightningResistance: "lowerLightningResistance",
+  coldResistance: "lowerColdResistance",
+  poisonResistance: "lowerPoisonResistance",
+  spectralResistance: "lowerSpectralResistance",
 };
 
 export const getRandomElement = (): Elements =>
-  _.shuffle(["magic", "flame", "lightning", "cold", "poison", "physical"] as Elements[])[0];
+  _.shuffle(["magic", "flame", "lightning", "cold", "poison", "spectral"] as Elements[])[0];
 
 export const calculateResistance = (resistance: number) =>
   resistance > PLAYER_MAX_RESISTANCES ? PLAYER_MAX_RESISTANCES : resistance;
@@ -87,11 +101,14 @@ export const calculateResistance = (resistance: number) =>
 export const calculateAttackSpeed = (attackSpeed: number) =>
   attackSpeed > PLAYER_MAX_ATTACK_SPEED ? PLAYER_MAX_ATTACK_SPEED : attackSpeed;
 
-export const getResistance = (mob: { name: string; type: string; bonus: Resistances }) => {
+export const getResistance = (
+  mob: { kind: number; name: string; type: string; bonus: Resistances; resistances: Resistances },
+  attacker,
+) => {
   let resistances = { ...DefaultResistances };
 
   if (mob.type === "mob") {
-    resistances = Object.assign(resistances, mobResistance[mob.name] || {});
+    resistances = Object.assign(resistances, mob.resistances || {});
   } else if (mob.type === "player") {
     resistances = {
       magicResistance: mob.bonus.magicResistance,
@@ -99,9 +116,25 @@ export const getResistance = (mob: { name: string; type: string; bonus: Resistan
       lightningResistance: mob.bonus.lightningResistance,
       coldResistance: mob.bonus.coldResistance,
       poisonResistance: mob.bonus.poisonResistance,
-      physicalResistance: mob.bonus.physicalResistance,
     };
   }
 
+  if (attacker?.type === "player") {
+    resistances = calculateLowerResistances(resistances, attacker.bonus);
+  }
+
   return resistances;
+};
+
+export const calculateLowerResistances = (resistances, bonus) => {
+  return Object.keys(resistances).reduce((acc, resistance) => {
+    acc[resistance] =
+      resistances[resistance] - (bonus[resistanceToLowerResistanceMap[resistance]] || 0) - bonus.lowerAllResistance;
+
+    if (acc[resistance] < 0) {
+      acc[resistance] = 0;
+    }
+
+    return acc;
+  }, {});
 };

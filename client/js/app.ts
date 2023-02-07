@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { calculateLowerResistances } from "../../shared/js/types/resistance";
 import { toString } from "../../shared/js/utils";
 import storage from "./storage";
 import Store from "./store";
@@ -511,15 +512,28 @@ class App {
       if (target?.resistances) {
         let html = "";
 
-        Object.entries(target.resistances).map(([type, percentage]: any) => {
-          if (!percentage) return;
-          const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
-          const display = Types.resistanceToDisplayMap[type];
+        console.log("~~~~target.resistances", target.resistances);
+        console.log("~~~~self.game.player.bonus", self.game.player.bonus);
 
-          html += `<div class="${display}">${prefix} ${_.capitalize(display)} ${
-            percentage !== 100 ? `${percentage}%` : ""
-          }</div>`;
-        });
+        Object.entries(calculateLowerResistances(target.resistances, self.game.player.bonus)).map(
+          ([type, percentage]: any) => {
+            if (!percentage) return;
+
+            const display = Types.resistanceToDisplayMap[type];
+
+            // percentage -=
+            //   self.game.player.bonus[`lower${_.capitalize(display)}Resistance`] +
+            //   self.game.player.bonus.lowerAllResistance;
+
+            // if (percentage <= 0) return;
+
+            const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
+
+            html += `<div class="${display}">${prefix} ${_.capitalize(display)} ${
+              percentage !== 100 ? `${percentage}%` : ""
+            }</div>`;
+          },
+        );
         inspector.find(".resistances").append(html);
       }
       inspector.fadeIn("fast");

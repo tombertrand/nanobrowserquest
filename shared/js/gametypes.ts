@@ -212,8 +212,12 @@ export const Types: any = {
     MAGE: 236,
     MAGESPELL: 237,
     SHAMAN: 277,
+    SKELETONTEMPLAR: 278,
+    SPIDER: 279,
     STATUE: 263,
+    STATUE2: 280,
     STATUESPELL: 264,
+    STATUE2SPELL: 281,
     DEATHANGEL: 217,
     DEATHANGELSPELL: 218,
 
@@ -700,7 +704,10 @@ export const kinds = {
   ghost: [Types.Entities.GHOST, "mob", 100, 64],
   mage: [Types.Entities.MAGE, "mob", 100, 64],
   shaman: [Types.Entities.SHAMAN, "mob", 100, 64],
+  skeletontemplar: [Types.Entities.SKELETONTEMPLAR, "mob", 100, 64],
+  spider: [Types.Entities.SPIDER, "mob", 100, 64],
   statue: [Types.Entities.STATUE, "npc", 100, 64],
+  statue2: [Types.Entities.STATUE2, "npc", 100, 64],
   deathangel: [Types.Entities.DEATHANGEL, "mob", 500, 70],
 
   // kind, type, level, damage
@@ -887,6 +894,7 @@ export const kinds = {
   "deathangel-spell": [Types.Entities.DEATHANGELSPELL, "spell", "Death Spiral", 70],
   "mage-spell": [Types.Entities.MAGESPELL, "spell", "Death Spiral", 60],
   "statue-spell": [Types.Entities.STATUESPELL, "spell", "Death Spiral", 60],
+  "statue2-spell": [Types.Entities.STATUE2SPELL, "spell", "Death Spiral", 60],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
@@ -1767,7 +1775,6 @@ Types.getBonusDescriptionMap = [
   "+#% Lightning resistance",
   "+#% Cold resistance",
   "+#% Poison resistance",
-  "+#% Physical resistance",
   "+#% Magic damage",
   "+#% Flame damage",
   "+#% Lightning damage",
@@ -1782,6 +1789,7 @@ Types.getBonusDescriptionMap = [
   "-#% Enemy lower Lightning resistance",
   "-#% Enemy lower Cold resistance",
   "-#% Enemy lower Poison resistance",
+  "-#% Enemy lower All resistances",
 ];
 
 Types.bonusType = [
@@ -1811,21 +1819,21 @@ Types.bonusType = [
   "lightningResistance", // 23
   "coldResistance", // 24
   "poisonResistance", // 25
-  "physicalResistance", // 26
-  "magicDamagePercent", // 27
-  "flameDamagePercent", // 28
-  "lightningDamagePercent", // 29
-  "coldDamagePercent", // 30
-  "poisonDamagePercent", // 31
-  "allResistance", // 32
-  "preventRegenerateHealth", // 33
-  "poisonDamage", // 34
-  "skillTimeout", // 35
-  "lowerMagicResistance", // 36
-  "lowerFlameResistance", // 37
-  "lowerLightningResistance", // 38
-  "lowerColdResistance", // 39
-  "lowerPoisonResistance", // 40
+  "magicDamagePercent", // 26
+  "flameDamagePercent", // 27
+  "lightningDamagePercent", // 28
+  "coldDamagePercent", // 29
+  "poisonDamagePercent", // 30
+  "allResistance", // 31
+  "preventRegenerateHealth", // 32
+  "poisonDamage", // 33
+  "skillTimeout", // 34
+  "lowerMagicResistance", // 35
+  "lowerFlameResistance", // 36
+  "lowerLightningResistance", // 37
+  "lowerColdResistance", // 38
+  "lowerPoisonResistance", // 39
+  "lowerAllResistance", // 40
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -1855,21 +1863,21 @@ Types.getBonus = function (rawBonus, level) {
   const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
-  const physicalResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const magicDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
   const flameDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
-  const lightningDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
+  const lightningDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
   const coldDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
   const poisonDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
   const allResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 11, 15, 20];
   const preventRegenerateHealthPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const skillTimeoutPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
-  const lowerMagicResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
-  const lowerFlameResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
-  const lowerLightningResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
-  const lowerColdResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
-  const lowerPoisonResistancePerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
+  const lowerMagicResistancePerLevel = [1, 2, 4, 6, 9, 13, 17, 22, 28, 36];
+  const lowerFlameResistancePerLevel = [1, 2, 4, 6, 9, 13, 17, 22, 28, 36];
+  const lowerLightningResistancePerLevel = [1, 2, 4, 6, 9, 13, 17, 22, 28, 36];
+  const lowerColdResistancePerLevel = [1, 2, 4, 6, 9, 13, 17, 22, 28, 36];
+  const lowerPoisonResistancePerLevel = [1, 2, 4, 6, 9, 13, 17, 22, 28, 36];
+  const lowerAllResistancePerLevel = [1, 2, 3, 5, 7, 9, 12, 16, 22, 30];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -1898,7 +1906,6 @@ Types.getBonus = function (rawBonus, level) {
     lightningResistancePerLevel,
     coldResistancePerLevel,
     poisonResistancePerLevel,
-    physicalResistancePerLevel,
     magicDamagePercentPerLevel,
     flameDamagePercentPerLevel,
     lightningDamagePercentPerLevel,
@@ -1913,6 +1920,7 @@ Types.getBonus = function (rawBonus, level) {
     lowerLightningResistancePerLevel,
     lowerColdResistancePerLevel,
     lowerPoisonResistancePerLevel,
+    lowerAllResistancePerLevel,
   ];
 
   // const bonus: { type: string; stats: number; description: string }[] = [];
@@ -2021,7 +2029,6 @@ Types.bonusCap = {
   lightningResistance: 90,
   coldResistance: 90,
   poisonResistance: 90,
-  physicalResistance: 90,
   freezeChance: 75,
   attackSpeed: 50,
   magicFind: 100,

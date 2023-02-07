@@ -28,6 +28,7 @@ class Mob extends Character {
   name: string;
   resistances: Resistances;
   element: Elements;
+  enchant: Elements;
 
   constructor(id, kind, x, y) {
     super(id, "mob", kind, x, y);
@@ -46,10 +47,11 @@ class Mob extends Character {
     this.destroyTime = null;
     this.name = Types.getKindAsString(kind);
     this.resistances = Types.getResistance(this);
+    this.enchant = null;
   }
 
   assignRandomResistances(count: number) {
-    let randomResistances = _.shuffle(Object.keys(Types.mobResistance[Types.getKindAsString(this.kind)]));
+    let randomResistances = _.shuffle(Object.keys(Types.mobResistance[this.name]));
     let immunedResistances = [];
 
     if (this.element) {
@@ -61,7 +63,7 @@ class Mob extends Character {
       if (immunedResistances.includes(resistance)) {
         acc[resistance] = 100;
       } else {
-        acc[resistance] = Types.getResistance(this)[resistance];
+        acc[resistance] = Types.mobResistance[this.name][resistance];
       }
 
       if (this.kind === Types.Entities.DEATHANGEL && index !== 0) {
@@ -78,10 +80,38 @@ class Mob extends Character {
     }
   }
 
+  handleEnchant() {
+    switch (this.kind) {
+      case Types.Entities.GOLEM:
+      case Types.Entities.DEATHANGEL:
+        this.enchant = "spectral";
+        break;
+      case Types.Entities.WRAITH2:
+        this.enchant = "flame";
+        break;
+      case Types.Entities.RAT3:
+      case Types.Entities.SPIDER:
+        this.enchant = "poison";
+        break;
+      case Types.Entities.SKELETON4:
+      case Types.Entities.GHOST:
+        this.enchant = "cold";
+        break;
+    }
+  }
+
   // @NOTE Since there is no Mob factory on Server side, have the exceptions stored here
   handleRandomResistances() {
-    if (
-      [Types.Entities.MAGE, Types.Entities.SHAMAN, Types.Entities.GHOST, Types.Entities.WRAITH2].includes(this.kind)
+    if ([Types.Entities.SPIDER].includes(this.kind)) {
+      this.assignRandomResistances(1);
+    } else if (
+      [
+        Types.Entities.MAGE,
+        Types.Entities.SHAMAN,
+        Types.Entities.GHOST,
+        Types.Entities.WRAITH2,
+        Types.Entities.SKELETONTEMPLAR,
+      ].includes(this.kind)
     ) {
       this.assignRandomResistances(2);
     } else if (this.kind === Types.Entities.DEATHANGEL) {

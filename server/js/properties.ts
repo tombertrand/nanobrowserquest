@@ -414,6 +414,30 @@ var Properties: any = {
     armor: 28,
     weapon: 30,
   },
+  skeletontemplar: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+      poisonpotion: 10,
+    },
+    hp: 200,
+    armor: 28,
+    weapon: 30,
+  },
+  spider: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+      poisonpotion: 10,
+    },
+    hp: 200,
+    armor: 28,
+    weapon: 30,
+  },
   skeleton4: {
     drops: {
       rejuvenationpotion: 10,
@@ -528,14 +552,22 @@ var Properties: any = {
     armor: 20,
     weapon: 32,
   },
-  statue: {
-    drops: {
-      rejuvenationpotion: 100,
-    },
-    hp: 420,
-    armor: 8,
-    weapon: 10,
-  },
+  // statue: {
+  //   drops: {
+  //     rejuvenationpotion: 100,
+  //   },
+  //   hp: 420,
+  //   armor: 8,
+  //   weapon: 10,
+  // },
+  // statue2: {
+  //   drops: {
+  //     rejuvenationpotion: 100,
+  //   },
+  //   hp: 420,
+  //   armor: 8,
+  //   weapon: 10,
+  // },
   deathangel: {
     drops: {
       scrollupgradelegendary: 5,

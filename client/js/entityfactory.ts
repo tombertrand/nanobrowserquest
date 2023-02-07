@@ -191,6 +191,14 @@ EntityFactory.builders[Types.Entities.SHAMAN] = function (id, resistances) {
   return new Mobs.Shaman(id, resistances);
 };
 
+EntityFactory.builders[Types.Entities.SKELETONTEMPLAR] = function (id, resistances) {
+  return new Mobs.SkeletonTemplar(id, resistances);
+};
+
+EntityFactory.builders[Types.Entities.SPIDER] = function (id, resistances) {
+  return new Mobs.Spider(id, resistances);
+};
+
 EntityFactory.builders[Types.Entities.MAGESPELL] = function (id) {
   return new Spells.MageSpell(id);
 };
@@ -199,8 +207,16 @@ EntityFactory.builders[Types.Entities.STATUE] = function (id) {
   return new Npcs.Statue(id);
 };
 
+EntityFactory.builders[Types.Entities.STATUE2] = function (id) {
+  return new Npcs.Statue2(id);
+};
+
 EntityFactory.builders[Types.Entities.STATUESPELL] = function (id) {
   return new Spells.StatueSpell(id);
+};
+
+EntityFactory.builders[Types.Entities.STATUE2SPELL] = function (id) {
+  return new Spells.Statue2Spell(id);
 };
 
 EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id, resistances) {

@@ -6,7 +6,7 @@ type Explorer = "nanolooker" | "bananolooker";
 type Auras = "drainlife" | "thunderstorm" | "highhealth" | "freeze";
 type DefenseSkills = "heal" | "defense" | "resistances";
 type AttackSkills = "flame" | "lightning" | "cold" | "poison";
-type Elements = "magic" | "flame" | "lightning" | "cold" | "poison" | "physical";
+type Elements = "magic" | "flame" | "lightning" | "cold" | "poison" | "spectral";
 type SkillElement = "magic" | "flame" | "lightning" | "cold" | "poison";
 type ChestType = "chestblue" | "chestgreen" | "chestpurple" | "chestred";
 type Orientation = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
@@ -29,5 +29,5 @@ type Resistances = {
   lightningResistance?: number;
   coldResistance?: number;
   poisonResistance?: number;
-  physicalResistance?: number;
+  spectralResistance?: number;
 };

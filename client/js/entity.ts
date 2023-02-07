@@ -144,7 +144,8 @@ class Entity {
           this.kind === Types.Entities.MAGICSTONE ||
           this.kind === Types.Entities.LEVER ||
           this.kind === Types.Entities.LEVERWALL ||
-          this.kind === Types.Entities.STATUE
+          this.kind === Types.Entities.STATUE ||
+          this.kind === Types.Entities.STATUE2
         ) {
           this.currentAnimation.setSpeed(100);
         } else if (

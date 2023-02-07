@@ -1,0 +1,17 @@
+{
+  "id": "statue2",
+  "width": 100,
+  "height": 123,
+  "animations": {
+    "idle_down": {
+      "length": 1,
+      "row": 0
+    },
+    "raise_down": {
+      "length": 9,
+      "row": 1
+    }
+  },
+  "offset_x": -42,
+  "offset_y": -54
+}

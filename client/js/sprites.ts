@@ -27,9 +27,13 @@ import wraith2 from "../sprites/wraith2.json";
 import ghost from "../sprites/ghost.json";
 import mage from "../sprites/mage.json";
 import shaman from "../sprites/shaman.json";
+import skeletontemplar from "../sprites/skeletontemplar.json";
+import spider from "../sprites/spider.json";
 import mageSpell from "../sprites/mage-spell.json";
 import statue from "../sprites/statue.json";
+import statue2 from "../sprites/statue2.json";
 import statueSpell from "../sprites/statue-spell.json";
+import statue2Spell from "../sprites/statue2-spell.json";
 import deathangel from "../sprites/deathangel.json";
 import deathangelSpell from "../sprites/deathangel-spell.json";
 import wirtleg from "../sprites/weapon.json";
@@ -235,8 +239,13 @@ const sprites = {
   "mage-spell-cold": mageSpell,
   "mage-spell-poison": mageSpell,
   shaman,
+  skeletontemplar,
+  "spider": spider,
+  "spider-poison": spider,
   statue,
+  statue2,
   "statue-spell": statueSpell,
+  "statue2-spell": statue2Spell,
   deathangel,
   "deathangel-spell": deathangelSpell,
   "deathangel-spell-magic": deathangelSpell,

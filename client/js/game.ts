@@ -395,8 +395,13 @@ class Game {
       "mage-spell-cold",
       "mage-spell-poison",
       "shaman",
+      "skeletontemplar",
+      "spider",
+      "spider-poison",
       "statue",
       "statue-spell",
+      "statue2",
+      "statue2-spell",
       "deathangel",
       "deathangel-spell",
       "deathangel-spell-magic",
@@ -835,6 +840,8 @@ class Game {
         self.sprites["mage-lightning"].createSilhouette();
         self.sprites["mage-cold"].createSilhouette();
         self.sprites["mage-poison"].createSilhouette();
+      } else if (kind === Types.Entities.SPIDER) {
+        self.sprites["spider-poison"].createSilhouette();
       }
     });
     self.sprites["chest"].createSilhouette();
@@ -1079,9 +1086,12 @@ class Game {
           socket,
         } = Types.getItemDetails({ item, level, rawBonus, rawSkill, rawSocket, playerBonus: self.player.bonus });
 
+        const isLevelVisible =
+          level && !isRune && !isJewel && !isStone && !Types.isSingle(item) && !Types.isScroll(item);
+
         return `<div>
             <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
-              ${name}${level && !isRune && !isJewel && !isStone && !Types.isSingle(item) ? ` (+${level})` : ""}
+              ${name}${isLevelVisible ? ` (+${level})` : ""}
               ${runeRank ? ` (#${runeRank})` : ""}
               ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
             </div>
@@ -3123,8 +3133,8 @@ class Game {
                 entity.setAttackSpeed(bonus?.attackSpeed);
               }
 
-              if (entity.kind === Types.Entities.MAGE && element !== "physical") {
-                entity.setSprite(self.sprites[entity.getSpriteName(element === "physical" ? "" : element)]);
+              if (entity.kind === Types.Entities.MAGE && element !== "spectral") {
+                entity.setSprite(self.sprites[entity.getSpriteName(element === "spectral" ? "" : element)]);
               } else {
                 entity.setSprite(self.sprites[entity.getSpriteName()]);
               }
@@ -3207,7 +3217,7 @@ class Game {
                   if (!self.traps.find(trap => trap.id === entity.id)) {
                     self.traps.push({ id: entity.id, x: entity.gridX, y: entity.gridY });
                   }
-                } else if (entity.kind === Types.Entities.STATUE) {
+                } else if (entity.kind === Types.Entities.STATUE || entity.kind === Types.Entities.STATUE2) {
                   if (!self.statues.find(statue => statue.id === entity.id)) {
                     self.statues.push({ id: entity.id, x: entity.gridX, y: entity.gridY });
                   }
@@ -3427,7 +3437,7 @@ class Game {
 
       self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY, element: Elements, casterId) {
         if ([Types.Entities.MAGESPELL, Types.Entities.DEATHANGELSPELL].includes(entity.kind)) {
-          entity.setSprite(self.sprites[entity.getSpriteName(element === "physical" ? "" : element)]);
+          entity.setSprite(self.sprites[entity.getSpriteName(element === "spectral" ? "" : element)]);
         } else {
           entity.setSprite(self.sprites[entity.getSpriteName()]);
         }
@@ -3436,7 +3446,7 @@ class Game {
           entity.setTarget({ x: self.player.x, y: self.player.y });
         } else if (entity.kind === Types.Entities.DEATHANGELSPELL) {
           entity.setTarget({ x: (x + originX * 8) * 16, y: (y + originY * 8) * 16 });
-        } else if (entity.kind === Types.Entities.STATUESPELL) {
+        } else if (entity.kind === Types.Entities.STATUESPELL || entity.kind === Types.Entities.STATUE2SPELL) {
           entity.setTarget({ x: x * 16, y: (y + 16) * 16 });
         }
 
@@ -3448,7 +3458,7 @@ class Game {
         // @NOTE Adjustment so the spell is correctly aligned
         if (entity.kind === Types.Entities.MAGESPELL) {
           entity.y = caster.y - 8;
-        } else if (entity.kind === Types.Entities.STATUESPELL) {
+        } else if (entity.kind === Types.Entities.STATUESPELL || entity.kind === Types.Entities.STATUE2SPELL) {
           entity.x = caster.x;
         }
         entity.setOrientation(orientation);
@@ -3898,7 +3908,8 @@ class Game {
             // mob.setVisible(true);
 
             self.audioManager.playSound("stone-break");
-          } else if (mob.kind === Types.Entities.STATUE) {
+          } else if (mob.kind === Types.Entities.STATUE || mob.kind === Types.Entities.STATUE2) {
+            // @TODO add iceball sound
             self.audioManager.playSound("fireball", 250);
             mob.raise();
             mob.isActivated = true;
@@ -3939,6 +3950,9 @@ class Game {
                 }, 300);
               }, 750);
             }, 675);
+          } else if (mob.kind === Types.Entities.PORTALCRYPT) {
+            mob.idle();
+            mob.setVisible(true);
           }
         }
       });
@@ -4077,6 +4091,8 @@ class Game {
 
         self.player.bonus = bonus;
 
+        console.log("~~~~self.player.bonus", self.player.bonus);
+
         $("#player-damage").text(bonus.damage);
         $("#player-attackDamage").text(bonus.attackDamage);
         $("#player-criticalHit").text(bonus.criticalHit);
@@ -4094,7 +4110,6 @@ class Game {
         $("#player-lightningResistance").text(bonus.lightningResistance);
         $("#player-coldResistance").text(bonus.coldResistance);
         $("#player-poisonResistance").text(bonus.poisonResistance);
-        $("#player-physicalResistance").text(bonus.physicalResistance);
         $("#player-magicFind").text(bonus.magicFind);
         $("#player-attackSpeed").text(bonus.attackSpeed);
         $("#player-exp").text(bonus.exp);
@@ -4835,6 +4850,7 @@ class Game {
       if (
         npc.kind === Types.Entities.TREE ||
         npc.kind === Types.Entities.STATUE ||
+        npc.kind === Types.Entities.STATUE2 ||
         npc.kind === Types.Entities.TRAP ||
         npc.kind === Types.Entities.TRAP2 ||
         npc.kind === Types.Entities.TRAP3
@@ -4857,6 +4873,7 @@ class Game {
           Types.Entities.LEVER,
           Types.Entities.LEVERWALL,
           Types.Entities.STATUE,
+          Types.Entities.STATUE2,
         ].includes(npc.kind)
       ) {
         if (msg) {

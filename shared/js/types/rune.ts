@@ -182,7 +182,7 @@ export const runeKind = {
     rank: 20,
     requirement: 36,
     attribute: {
-      physicalResistance: 10,
+      allResistance: 4,
     },
   },
   fal: {
@@ -253,7 +253,7 @@ export const runeKind = {
     rank: 30,
     requirement: 65,
     attribute: {
-      allResistance: 6,
+      allResistance: 8,
     },
   },
   vod: {

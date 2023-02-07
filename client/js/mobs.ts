@@ -510,6 +510,32 @@ export const Mobs = {
     }
   },
 
+  SkeletonTemplar: class SkeletonTemplar extends Mob {
+    constructor(id, resistances) {
+      super(id, Types.Entities.SKELETONTEMPLAR);
+      this.atkSpeed = 50;
+      this.moveSpeed = 200;
+      this.walkSpeed = 100;
+      this.idleSpeed = 150;
+      this.setAttackRate(3000);
+      this.aggroRange = 4;
+      this.resistances = resistances;
+    }
+  },
+
+  Spider: class Spider extends Mob {
+    constructor(id, resistances) {
+      super(id, Types.Entities.SPIDER);
+      this.atkSpeed = 50;
+      this.moveSpeed = 200;
+      this.walkSpeed = 100;
+      this.idleSpeed = 150;
+      this.setAttackRate(1200);
+      this.aggroRange = 3;
+      this.resistances = resistances;
+    }
+  },
+
   DeathAngel: class DeathAngel extends Mob {
     constructor(id, resistances) {
       super(id, Types.Entities.DEATHANGEL);

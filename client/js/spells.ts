@@ -27,6 +27,18 @@ export const Spells = {
     }
   },
 
+  Statue2Spell: class Statue2Spell extends Spell {
+    constructor(id) {
+      super(id, Types.Entities.STATUE2SPELL);
+      this.moveSpeed = 130;
+      this.atkSpeed = 250;
+      this.idleSpeed = 100;
+      this.atkRate = 2000;
+      this.attackCooldown = new Timer(this.atkRate);
+      this.aggroRange = 0;
+    }
+  },
+
   DeathAngelSpell: class DeathAngelSpell extends Spell {
     constructor(id) {
       super(id, Types.Entities.DEATHANGELSPELL);

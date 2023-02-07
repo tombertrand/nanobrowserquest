@@ -92,10 +92,13 @@ class World {
   chaliceLevelInterval: NodeJS.Timeout;
   altarChaliceNpcId: number;
   altarInfinityStoneNpcId: number;
-  isChaliceLeverActivated: boolean;
-  isPortalLeverActivated: boolean;
   isActivatedTreeLevel: boolean;
   trapIds: number[];
+  portalCryptNpcId: number;
+  portalRuinsNpcId: number;
+  leverChaliceNpcId: number;
+  leverLeftCryptNpcId: number;
+  leverRightCryptNpcId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -192,10 +195,11 @@ class World {
     this.chaliceLevelInterval = null;
     this.altarChaliceNpcId = null;
     this.altarInfinityStoneNpcId = null;
-    this.isChaliceLeverActivated = false;
-    this.isPortalLeverActivated = false;
     this.isActivatedTreeLevel = false;
     this.trapIds = [];
+    this.leverChaliceNpcId = null;
+    this.leverLeftCryptNpcId = null;
+    this.leverRightCryptNpcId = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -686,12 +690,18 @@ class World {
         // @NOTE Add a tree on top of the stairs
         this.addNpc(Types.Entities.TREE, x, y + 1);
       }
+    } else if (kind === Types.Entities.PORTALCRYPT) {
+      npc.isDead = true;
+      this.portalCryptNpcId = npc.id;
+    } else if (kind === Types.Entities.PORTALRUINS) {
+      npc.isDead = true;
+      this.portalRuinsNpcId = npc.id;
     } else {
       if (kind === Types.Entities.MAGICSTONE) {
         this.magicStones.push(npc.id);
       } else if (kind === Types.Entities.BLUEFLAME) {
         this.blueFlames.push(npc.id);
-      } else if (kind === Types.Entities.STATUE) {
+      } else if (kind === Types.Entities.STATUE || kind === Types.Entities.STATUE2) {
         this.statues.push(npc.id);
       } else if (kind === Types.Entities.ALTARCHALICE) {
         this.altarChaliceNpcId = npc.id;
@@ -699,6 +709,14 @@ class World {
         this.altarInfinityStoneNpcId = npc.id;
       } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(kind)) {
         this.trapIds.push(npc.id);
+      } else if (kind === Types.Entities.LEVER) {
+        if (npc.x === 10 && npc.y === 703) {
+          this.leverChaliceNpcId = npc.id;
+        } else if (npc.x === 80 && npc.y === 703) {
+          this.leverLeftCryptNpcId = npc.id;
+        } else if (npc.x === 67 && npc.y === 722) {
+          this.leverRightCryptNpcId = npc.id;
+        }
       }
 
       this.addEntity(npc);
@@ -1210,10 +1228,17 @@ class World {
 
   activateLever(player, lever) {
     lever.activate();
-    // this.isChaliceLeverActivated = true;
-    // this.isPortalLeverActivated = true;
 
-    // @TODO ~~~~ final temple door activate (OPEN)
+    if (lever.id === this.leverChaliceNpcId) {
+      // @TODO ~~~~ final temple door activate (OPEN)
+    } else if (lever.id === this.leverLeftCryptNpcId) {
+      // @TODO ~~~~ left guardian door opens (OPEN)
+      // Guardian of Faith
+    } else if (lever.id === this.leverRightCryptNpcId) {
+      // @TODO ~~~~ right guardian door opens (OPEN)
+      // Guardian of Blood
+    }
+
     // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death
 
     this.broadcastRaise(player, lever);
@@ -1236,15 +1261,22 @@ class World {
 
         this.broadcastRaise(player, statue);
 
+        let kind = Types.Entities.STATUESPELL;
+        let element = "flame";
+        if (statue.kind === Types.Entities.STATUE2) {
+          kind = Types.Entities.STATUE2SPELL;
+          element = "cold";
+        }
+
         setTimeout(() => {
           this.addSpell({
-            kind: Types.Entities.STATUESPELL,
+            kind,
             x: statue.x,
             y: statue.y + 1,
             orientation: Types.Orientations.DOWN,
             originX: statue.x,
             originY: statue.y,
-            element: "flame",
+            element,
             casterId: statue.id,
           });
         }, 300);
@@ -1283,6 +1315,14 @@ class World {
         this.broadcastRaise(player, altar);
       }
     }
+  }
+
+  activatePortalCrypt() {
+    const portalCryptNpcId = this.npcs[this.portalCryptNpcId];
+    portalCryptNpcId.respawnCallback();
+
+    // this.broadcastRaise(player, magicStone);
+    this.pushBroadcast(new Messages.Raise(this.portalCryptNpcId));
   }
 
   activateTrap(player, trapId) {
@@ -1739,7 +1779,7 @@ class World {
     // var randomDrops = ["chalice", "infinitystone", "hellhammer"];
     // var randomDrops = ["nft"];
     // var randomDrops = ["nft", "wing", "crystal"];
-    // var randomDrops = ["amuletdragon", "amuletskull"];
+    var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];
     // var randomDrops = ["stonehero", "stonedragon"];
     // var randomDrops = ["paladinarmor"];
@@ -1815,8 +1855,8 @@ class World {
     // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    // var randomDrop = random(randomDrops.length);
-    // itemName = randomDrops[randomDrop];
+    var randomDrop = random(randomDrops.length);
+    itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 
