@@ -891,10 +891,10 @@ export const kinds = {
   "rune-shi": [Types.Entities.RUNE.SHI, "rune", "SHI Rune", 65],
   "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 68],
 
-  "deathangel-spell": [Types.Entities.DEATHANGELSPELL, "spell", "Death Spiral", 70],
-  "mage-spell": [Types.Entities.MAGESPELL, "spell", "Death Spiral", 60],
-  "statue-spell": [Types.Entities.STATUESPELL, "spell", "Death Spiral", 60],
-  "statue2-spell": [Types.Entities.STATUE2SPELL, "spell", "Death Spiral", 60],
+  "deathangel-spell": [Types.Entities.DEATHANGELSPELL, "spell", "Bone Spirith", 70],
+  "mage-spell": [Types.Entities.MAGESPELL, "spell", "Mage Spell", 60],
+  "statue-spell": [Types.Entities.STATUESPELL, "spell", "Fire Ball", 60],
+  "statue2-spell": [Types.Entities.STATUE2SPELL, "spell", "Ice Ball", 60],
 
   guard: [Types.Entities.GUARD, "npc"],
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],

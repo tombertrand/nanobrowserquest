@@ -2834,14 +2834,17 @@ class Game {
             self.client.sendActivateTrap(trap?.id);
           }
         }
-        const statue = self.getStatue(gridX, gridY);
-        if (statue?.id) {
-          const entity = self.getEntityById(statue?.id);
+        const statues = self.getStatues(gridX, gridY);
 
-          if (entity && !entity.isActivated) {
-            entity.isActivated = true;
-            self.client.sendActivateStatue(statue?.id);
-          }
+        if (statues?.length) {
+          statues.forEach(({ id }) => {
+            const entity = self.getEntityById(id);
+
+            if (entity && !entity.isActivated) {
+              entity.isActivated = true;
+              self.client.sendActivateStatue(id);
+            }
+          });
         }
 
         if (self.player.hasNextStep()) {
@@ -3485,6 +3488,7 @@ class Game {
             Types.Entities.DEATHANGELSPELL,
             Types.Entities.MAGESPELL,
             Types.Entities.STATUESPELL,
+            Types.Entities.STATUE2SPELL,
           ].includes(entity.kind);
 
           if (!hasCustomDeathAnimation) {
@@ -3492,7 +3496,7 @@ class Game {
           }
 
           entity.animate("death", speed, 1, function () {
-            console.info(entity.id + " was removed");
+            console.info(`${Types.getKindAsString(entity.kind)} (${entity.id}) was removed`);
             self.removeEntity(entity);
           });
         });
@@ -5525,10 +5529,11 @@ class Game {
     return this.traps.find(trap => (trap.x - x === 0 || trap.x - x === -1) && (trap.y - y === 0 || trap.y - y === 1));
   }
 
-  getStatue(x, y) {
+  getStatues(x, y) {
     if (!this.statues.length) return;
+
     // 8 left, 8 right, 16 bottom
-    return this.statues.find(statue => Math.abs(statue.x - x) <= 8 && y - statue.y >= 0 && y - statue.y <= 16);
+    return this.statues.filter(statue => Math.abs(statue.x - x) <= 8 && y - statue.y >= 0 && y - statue.y <= 16);
   }
 
   isMobOnSameTile(mob, x?: number, y?: number) {

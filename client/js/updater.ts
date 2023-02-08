@@ -162,6 +162,13 @@ class Updater {
         // Increment the projectile's position.
         c.x += dx * amount;
         c.y += dy * amount;
+
+        // unregister and register to new grid position
+        if (Math.ceil(c.y / 16) !== c.gridY) {
+          this.game.removeFromRenderingGrid(c, c.gridX, c.gridY);
+          c.gridY = Math.ceil(c.y / 16);
+          this.game.addToRenderingGrid(c, c.gridX, c.gridY);
+        }
       }
 
       if (!c.isDead && this.game.player) {
