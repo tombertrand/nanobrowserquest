@@ -233,6 +233,15 @@ var Npcs = {
     }
   },
 
+  SecretStairs2: class SecretStairs2 extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.SECRETSTAIRS2);
+    }
+    // hasShadow() {
+    //   return false;
+    // }
+  },
+
   SecretStairsUp: class SecretStairsUp extends Npc {
     constructor(id) {
       super(id, Types.Entities.SECRETSTAIRSUP);
@@ -294,9 +303,9 @@ var Npcs = {
     }
   },
 
-  LeverWall: class LeverWall extends Npc {
+  Lever2: class Lever2 extends Npc {
     constructor(id) {
-      super(id, Types.Entities.LEVERWALL);
+      super(id, Types.Entities.LEVER2);
       this.raiseRate = 500;
       this.isFading = false;
     }

@@ -88,6 +88,8 @@ class World {
   isActivatedAltarInfinityStone: boolean;
   secretStairsChaliceNpcId: number;
   secretStairsTreeNpcId: number;
+  secretStairsLeftTemplar: number;
+  secretStairsRightTemplar: number;
   chaliceLevelClock: number;
   chaliceLevelInterval: NodeJS.Timeout;
   altarChaliceNpcId: number;
@@ -191,6 +193,8 @@ class World {
     this.isActivatedAltarInfinityStone = false;
     this.secretStairsChaliceNpcId = null;
     this.secretStairsTreeNpcId = null;
+    this.secretStairsLeftTemplar = null;
+    this.secretStairsRightTemplar = null;
     this.chaliceLevelClock = null;
     this.chaliceLevelInterval = null;
     this.altarChaliceNpcId = null;
@@ -690,6 +694,14 @@ class World {
         // @NOTE Add a tree on top of the stairs
         this.addNpc(Types.Entities.TREE, x, y + 1);
       }
+    } else if (kind === Types.Entities.SECRETSTAIRS2) {
+      npc.isDead = true;
+
+      if (x === 149 && y === 548) {
+        this.secretStairsLeftTemplar = npc.id;
+      } else if (x === 162 && y === 548) {
+        this.secretStairsRightTemplar = npc.id;
+      }
     } else if (kind === Types.Entities.PORTALCRYPT) {
       npc.isDead = true;
       this.portalCryptNpcId = npc.id;
@@ -709,7 +721,7 @@ class World {
         this.altarInfinityStoneNpcId = npc.id;
       } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(kind)) {
         this.trapIds.push(npc.id);
-      } else if (kind === Types.Entities.LEVER) {
+      } else if (kind === Types.Entities.LEVER || kind === Types.Entities.LEVER2) {
         if (npc.x === 10 && npc.y === 703) {
           this.leverChaliceNpcId = npc.id;
         } else if (npc.x === 80 && npc.y === 703) {
@@ -1233,10 +1245,21 @@ class World {
       // @TODO ~~~~ final temple door activate (OPEN)
     } else if (lever.id === this.leverLeftCryptNpcId) {
       // @TODO ~~~~ left guardian door opens (OPEN)
+      console.log("~~~~activate - secretStairsLeftTemplar", this.secretStairsLeftTemplar);
+
+      const secretStairs = this.npcs[this.secretStairsLeftTemplar];
+      secretStairs.respawnCallback();
+
+      // @TODO when the templar dies, reset the lever and reset the secretstairs
+
       // Guardian of Faith
     } else if (lever.id === this.leverRightCryptNpcId) {
       // @TODO ~~~~ right guardian door opens (OPEN)
+      console.log("~~~~activate - secretStairsLeftTemplar", this.secretStairsRightTemplar);
       // Guardian of Blood
+
+      const secretStairs = this.npcs[this.secretStairsRightTemplar];
+      secretStairs.respawnCallback();
     }
 
     // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death

@@ -118,13 +118,14 @@ import portalruins from "../sprites/portalruins.json";
 import magicstone from "../sprites/magicstone.json";
 import altarchalice from "../sprites/altar.json";
 import secretstairs from "../sprites/secretstairs.json";
+import secretstairs2 from "../sprites/secretstairs2.json";
 import secretstairsup from "../sprites/secretstairs.json";
 import tombdeathangel from "../sprites/tomb.json";
 import tombangel from "../sprites/tomb.json";
 import tombcross from "../sprites/tomb.json";
 import tombskull from "../sprites/tomb.json";
 import lever from "../sprites/lever.json";
-import leverwall from "../sprites/lever.json";
+import lever2 from "../sprites/lever.json";
 import grimoire from "../sprites/grimoire.json";
 import alkor from "../sprites/npc2.json";
 import olaf from "../sprites/npc2.json";
@@ -240,7 +241,7 @@ const sprites = {
   "mage-spell-poison": mageSpell,
   shaman,
   skeletontemplar,
-  "spider": spider,
+  spider: spider,
   "spider-poison": spider,
   statue,
   statue2,
@@ -487,13 +488,14 @@ const sprites = {
   altarchalice,
   altarinfinitystone,
   secretstairs,
+  secretstairs2,
   secretstairsup,
   tombdeathangel,
   tombangel,
   tombcross,
   tombskull,
   lever,
-  leverwall,
+  lever2,
   grimoire,
   alkor,
   olaf,

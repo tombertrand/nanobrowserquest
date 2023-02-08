@@ -143,7 +143,7 @@ class Entity {
         } else if (
           this.kind === Types.Entities.MAGICSTONE ||
           this.kind === Types.Entities.LEVER ||
-          this.kind === Types.Entities.LEVERWALL ||
+          this.kind === Types.Entities.LEVER2 ||
           this.kind === Types.Entities.STATUE ||
           this.kind === Types.Entities.STATUE2
         ) {

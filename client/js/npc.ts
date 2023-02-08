@@ -189,6 +189,7 @@ var NpcTalk = {
   altarchalice: [""],
   altarinfinitystone: [""],
   secretstairs: [""],
+  secretstairs2: [""],
   secretstairsup: [""],
   tombdeathangel: [
     "There was a powerful death angel named Azrael<br/>who ruled over the souls of the deceased.",
@@ -212,7 +213,7 @@ var NpcTalk = {
     "According to the legend, the grimoire holds the secrets to powerful magic,<br/>and those who can uncover it will gain immense power and knowledge.",
   ],
   lever: [""],
-  leverwall: [""],
+  lever2: [""],
   grimoire: [
     "The grimoire contains secrets of life and death,<br/>and the power to control the fate of souls.",
     "It is said that whoever possesses the grimoire<br/>will have the power to control death itself.",

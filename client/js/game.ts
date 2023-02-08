@@ -443,13 +443,14 @@ class Game {
       "altarchalice",
       "altarinfinitystone",
       "secretstairs",
+      "secretstairs2",
       "secretstairsup",
       "tombdeathangel",
       "tombangel",
       "tombcross",
       "tombskull",
       "lever",
-      "leverwall",
+      "lever2",
       "grimoire",
       "alkor",
       "olaf",
@@ -2906,7 +2907,7 @@ class Game {
         }
       });
 
-      self.player.onStopPathing(function ({ x, y, confirmed, isWaypoint }) {
+      self.player.onStopPathing(function ({ x, y, orientation = Types.Orientations.DOWN, confirmed, isWaypoint }) {
         // Start by unregistering the entity at its previous coords
         self.unregisterEntityPosition(self.player);
 
@@ -2936,7 +2937,7 @@ class Game {
           // Close all when teleporting
           self.app.hideWindows();
 
-          var dest = isWaypoint ? { x, y, orientation: Types.Orientations.DOWN } : self.map.getDoorDestination(x, y);
+          var dest = isWaypoint ? { x, y, orientation } : self.map.getDoorDestination(x, y);
           if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
             self.client.sendBossCheck(false);
             return;
@@ -3123,6 +3124,9 @@ class Game {
       self.client.onSpawnCharacter(function (data) {
         const { id, kind, name, x, y, targetId, orientation, resistances, element, isActivated, bonus } = data;
 
+// @TODO if secretstairs2, remove the pathingGrid 1 underneat? find a way to access the npc more easily
+
+
         let entity = self.getEntityById(id);
         if (!entity) {
           try {
@@ -3184,7 +3188,7 @@ class Game {
                 } else {
                   entity.idle();
                 }
-              } else if (entity.kind === Types.Entities.LEVER || entity.kind === Types.Entities.LEVERWALL) {
+              } else if (entity.kind === Types.Entities.LEVER || entity.kind === Types.Entities.LEVER2) {
                 entity.isActivated = isActivated;
                 if (entity.isActivated) {
                   entity.walk();
@@ -3884,7 +3888,7 @@ class Game {
               mob.currentAnimation.reset();
               mob.walk();
             }, 1300);
-          } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVERWALL) {
+          } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVER2) {
             self.audioManager.playSound("lever");
 
             mob.raise();
@@ -4879,7 +4883,7 @@ class Game {
           Types.Entities.ALTARCHALICE,
           Types.Entities.ALTARINFINITYSTONE,
           Types.Entities.LEVER,
-          Types.Entities.LEVERWALL,
+          Types.Entities.LEVER2,
           Types.Entities.STATUE,
           Types.Entities.STATUE2,
         ].includes(npc.kind)
@@ -4960,7 +4964,7 @@ class Game {
         if (this.storage.hasAllMagicStones()) {
           this.tryUnlockingAchievement("STONEHENGE");
         }
-      } else if (npc.kind === Types.Entities.LEVER || npc.kind === Types.Entities.LEVERWALL) {
+      } else if (npc.kind === Types.Entities.LEVER || npc.kind === Types.Entities.LEVER2) {
         if (!npc.isActivated) {
           this.client.sendLever(npc.id);
         }
@@ -4980,6 +4984,16 @@ class Game {
         } else if (npc.gridX === 19 && npc.gridY === 642) {
           // Tree
           this.player.stop_pathing_callback({ x: 43, y: 728, isWaypoint: true });
+        }
+      } else if (npc.kind === Types.Entities.SECRETSTAIRS2) {
+        console.log("~~~~ICI??", npc.gridX, npc.gridY);
+
+        if (npc.gridX === 149 && npc.gridY === 548) {
+          // Left Templar
+          this.player.stop_pathing_callback({ x: 127, y: 731, orientation: Types.Orientations.UP, isWaypoint: true });
+        } else if (npc.gridX === 162 && npc.gridY === 548) {
+          // Right Templar
+          this.player.stop_pathing_callback({ x: 155, y: 731, orientation: Types.Orientations.UP, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.SECRETSTAIRSUP) {
         if (npc.gridX === 5 && npc.gridY === 728) {

@@ -1011,6 +1011,10 @@ EntityFactory.builders[Types.Entities.SECRETSTAIRS] = function (id) {
   return new Npcs.SecretStairs(id);
 };
 
+EntityFactory.builders[Types.Entities.SECRETSTAIRS2] = function (id) {
+  return new Npcs.SecretStairs2(id);
+};
+
 EntityFactory.builders[Types.Entities.SECRETSTAIRSUP] = function (id) {
   return new Npcs.SecretStairsUp(id);
 };
@@ -1035,8 +1039,8 @@ EntityFactory.builders[Types.Entities.LEVER] = function (id) {
   return new Npcs.Lever(id);
 };
 
-EntityFactory.builders[Types.Entities.LEVERWALL] = function (id) {
-  return new Npcs.LeverWall(id);
+EntityFactory.builders[Types.Entities.LEVER2] = function (id) {
+  return new Npcs.Lever2(id);
 };
 
 EntityFactory.builders[Types.Entities.GRIMOIRE] = function (id) {

@@ -382,13 +382,14 @@ export const Types: any = {
     ALTARCHALICE: 246,
     ALTARINFINITYSTONE: 250,
     SECRETSTAIRS: 251,
+    SECRETSTAIRS2: 282,
     SECRETSTAIRSUP: 253,
     TOMBDEATHANGEL: 254,
     TOMBANGEL: 255,
     TOMBCROSS: 256,
     TOMBSKULL: 257,
     LEVER: 258,
-    LEVERWALL: 259,
+    LEVER2: 259,
     GRIMOIRE: 268,
     ALKOR: 260,
     OLAF: 271,
@@ -929,13 +930,14 @@ export const kinds = {
   altarchalice: [Types.Entities.ALTARCHALICE, "npc"],
   altarinfinitystone: [Types.Entities.ALTARINFINITYSTONE, "npc"],
   secretstairs: [Types.Entities.SECRETSTAIRS, "npc"],
+  secretstairs2: [Types.Entities.SECRETSTAIRS2, "npc"],
   secretstairsup: [Types.Entities.SECRETSTAIRSUP, "npc"],
   tombdeathangel: [Types.Entities.TOMBDEATHANGEL, "npc"],
   tombangel: [Types.Entities.TOMBANGEL, "npc"],
   tombcross: [Types.Entities.TOMBCROSS, "npc"],
   tombskull: [Types.Entities.TOMBSKULL, "npc"],
   lever: [Types.Entities.LEVER, "npc"],
-  leverwall: [Types.Entities.LEVERWALL, "npc"],
+  lever2: [Types.Entities.LEVER2, "npc"],
   grimoire: [Types.Entities.GRIMOIRE, "npc"],
   alkor: [Types.Entities.ALKOR, "npc"],
   olaf: [Types.Entities.OLAF, "npc"],
@@ -1579,7 +1581,7 @@ Types.getAliasFromName = function (name: string) {
     return "Altar";
   } else if (name === "altarinfinitystone") {
     return "Altar";
-  } else if (name === "secretstairs") {
+  } else if (name.startsWith("secretstairs")) {
     return "Secret Stairs";
   } else if (name === "wraith2") {
     return "Apocalypse Wraith";
