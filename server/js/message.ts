@@ -57,6 +57,13 @@ Messages.Raise = class Message {
   }
 };
 
+Messages.Unraise = class Message {
+  constructor(private mobId, private targetId) {}
+  serialize() {
+    return [Types.Messages.UNRAISE, this.mobId];
+  }
+};
+
 Messages.CowLevelStart = class Message {
   constructor(private coords) {}
   serialize() {

@@ -24,6 +24,7 @@ class GameClient {
   lootmove_callback: any;
   attack_callback: any;
   raise_callback: any;
+  unraise_callback: any;
   spawn_item_callback: any;
   spawn_chest_callback: any;
   spawn_character_callback: any;
@@ -111,6 +112,7 @@ class GameClient {
     this.handlers[Types.Messages.LOOTMOVE] = this.receiveLootMove;
     this.handlers[Types.Messages.ATTACK] = this.receiveAttack;
     this.handlers[Types.Messages.RAISE] = this.receiveRaise;
+    this.handlers[Types.Messages.UNRAISE] = this.receiveUnraise;
     this.handlers[Types.Messages.SPAWN] = this.receiveSpawn;
     this.handlers[Types.Messages.DESPAWN] = this.receiveDespawn;
     this.handlers[Types.Messages.SPAWN_BATCH] = this.receiveSpawnBatch;
@@ -420,6 +422,14 @@ class GameClient {
 
     if (this.raise_callback) {
       this.raise_callback(mobId, targetId);
+    }
+  }
+
+  receiveUnraise(data) {
+    var mobId = data[1];
+
+    if (this.unraise_callback) {
+      this.unraise_callback(mobId);
     }
   }
 
@@ -908,6 +918,10 @@ class GameClient {
 
   onEntityRaise(callback) {
     this.raise_callback = callback;
+  }
+
+  onEntityUnraise(callback) {
+    this.unraise_callback = callback;
   }
 
   onPlayerChangeHealth(callback) {

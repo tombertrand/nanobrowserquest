@@ -88,8 +88,8 @@ class World {
   isActivatedAltarInfinityStone: boolean;
   secretStairsChaliceNpcId: number;
   secretStairsTreeNpcId: number;
-  secretStairsLeftTemplar: number;
-  secretStairsRightTemplar: number;
+  secretStairsLeftTemplarNpcId: number;
+  secretStairsRightTemplarNpcId: number;
   chaliceLevelClock: number;
   chaliceLevelInterval: NodeJS.Timeout;
   altarChaliceNpcId: number;
@@ -101,6 +101,8 @@ class World {
   leverChaliceNpcId: number;
   leverLeftCryptNpcId: number;
   leverRightCryptNpcId: number;
+  leftTemplarId: number;
+  rightTemplarId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -193,8 +195,10 @@ class World {
     this.isActivatedAltarInfinityStone = false;
     this.secretStairsChaliceNpcId = null;
     this.secretStairsTreeNpcId = null;
-    this.secretStairsLeftTemplar = null;
-    this.secretStairsRightTemplar = null;
+    this.secretStairsLeftTemplarNpcId = null;
+    this.secretStairsRightTemplarNpcId = null;
+    this.leftTemplarId = null;
+    this.rightTemplarId = null;
     this.chaliceLevelClock = null;
     this.chaliceLevelInterval = null;
     this.altarChaliceNpcId = null;
@@ -346,14 +350,15 @@ class World {
 
       self.map.generateCollisionGrid();
 
+      // @TODO ~~~~ uncomment this once skeleton templar is set
       // Populate all mob "roaming" areas
-      _.each(self.map.mobAreas, function (a) {
-        var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
-        area.spawnMobs();
-        area.onEmpty(self.handleEmptyMobArea.bind(self, area));
+      // _.each(self.map.mobAreas, function (a) {
+      //   var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
+      //   area.spawnMobs();
+      //   area.onEmpty(self.handleEmptyMobArea.bind(self, area));
 
-        self.mobAreas.push(area);
-      });
+      //   self.mobAreas.push(area);
+      // });
 
       // Create all chest areas
       _.each(self.map.chestAreas, function (a) {
@@ -698,9 +703,9 @@ class World {
       npc.isDead = true;
 
       if (x === 149 && y === 548) {
-        this.secretStairsLeftTemplar = npc.id;
+        this.secretStairsLeftTemplarNpcId = npc.id;
       } else if (x === 162 && y === 548) {
-        this.secretStairsRightTemplar = npc.id;
+        this.secretStairsRightTemplarNpcId = npc.id;
       }
     } else if (kind === Types.Entities.PORTALCRYPT) {
       npc.isDead = true;
@@ -1243,29 +1248,17 @@ class World {
 
     if (lever.id === this.leverChaliceNpcId) {
       // @TODO ~~~~ final temple door activate (OPEN)
+      // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death
     } else if (lever.id === this.leverLeftCryptNpcId) {
-      // @TODO ~~~~ left guardian door opens (OPEN)
-      console.log("~~~~activate - secretStairsLeftTemplar", this.secretStairsLeftTemplar);
-
-      const secretStairs = this.npcs[this.secretStairsLeftTemplar];
+      const secretStairs = this.npcs[this.secretStairsLeftTemplarNpcId];
       secretStairs.respawnCallback();
-
-      // @TODO when the templar dies, reset the lever and reset the secretstairs
-
-      // Guardian of Faith
     } else if (lever.id === this.leverRightCryptNpcId) {
-      // @TODO ~~~~ right guardian door opens (OPEN)
-      console.log("~~~~activate - secretStairsLeftTemplar", this.secretStairsRightTemplar);
-      // Guardian of Blood
-
-      const secretStairs = this.npcs[this.secretStairsRightTemplar];
+      const secretStairs = this.npcs[this.secretStairsRightTemplarNpcId];
       secretStairs.respawnCallback();
     }
 
-    // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death
-
     this.broadcastRaise(player, lever);
-    this.pushBroadcast(new Messages.Raise(lever.id));
+    // this.pushBroadcast(new Messages.Raise(lever.id));
   }
 
   activateStatues() {
@@ -1487,6 +1480,9 @@ class World {
         if (kind === Types.Entities.COW) {
           self.cowPossibleCoords.push({ x: pos.x + 1, y: pos.y });
         } else {
+          // @TODO remove this once done ~~~~~
+          if (kind === Types.Entities.SPIDER || kind === Types.Entities.GHOST) return;
+
           const id = `7${kind}${count++}`;
           const mob = new Mob(id, kind, pos.x + 1, pos.y);
 
@@ -1508,6 +1504,25 @@ class World {
             });
           } else if (kind === Types.Entities.DEATHANGEL) {
             self.deathAngelId = mob.id;
+          } else if (kind === Types.Entities.SKELETONTEMPLAR) {
+            const isLeftTemplar = mob.x === 126;
+            const isRightTemplar = mob.x === 154;
+
+            if (isLeftTemplar) {
+              self.leftTemplarId = mob.id;
+            } else if (isRightTemplar) {
+              self.rightTemplarId = mob.id;
+            }
+
+            mob.onDestroy(() => {
+              const lever = self.npcs[isLeftTemplar ? self.leverLeftCryptNpcId : self.leverRightCryptNpcId];
+              const secretStairs =
+                self.npcs[isLeftTemplar ? self.secretStairsLeftTemplarNpcId : self.secretStairsRightTemplarNpcId];
+
+              self.despawn(secretStairs);
+              lever.deactivate();
+              self.pushBroadcast(new Messages.Unraise(lever.id));
+            });
           }
 
           mob.onRespawn(function () {

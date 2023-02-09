@@ -14,6 +14,10 @@
     "walk_down": {
       "length": 1,
       "row": 2
+    },
+    "unraise_down": {
+      "length": 4,
+      "row": 3
     }
   },
   "offset_x": -7,

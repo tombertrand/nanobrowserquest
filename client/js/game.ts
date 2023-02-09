@@ -3124,8 +3124,7 @@ class Game {
       self.client.onSpawnCharacter(function (data) {
         const { id, kind, name, x, y, targetId, orientation, resistances, element, isActivated, bonus } = data;
 
-// @TODO if secretstairs2, remove the pathingGrid 1 underneat? find a way to access the npc more easily
-
+        // @TODO ~~~~~ if secretstairs2, remove the pathingGrid 1 underneat? find a way to access the npc more easily
 
         let entity = self.getEntityById(id);
         if (!entity) {
@@ -3965,6 +3964,35 @@ class Game {
           } else if (mob.kind === Types.Entities.PORTALCRYPT) {
             mob.idle();
             mob.setVisible(true);
+          }
+        }
+      });
+
+      self.client.onEntityUnraise(function (mobId) {
+        const mob = self.getEntityById(mobId);
+
+        if (mob) {
+          if (mob.kind === Types.Entities.MAGICSTONE) {
+            self.activatedMagicStones = [];
+            mob.idle();
+          } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVER2) {
+            self.audioManager.playSound("lever");
+
+            mob.unraise();
+            setTimeout(() => {
+              mob.currentAnimation.reset();
+              mob.idle();
+            }, 400);
+          } else if (mob.kind === Types.Entities.BLUEFLAME) {
+            self.activatedBlueFlames = [];
+            mob.setVisible(false);
+          } else if (mob.kind === Types.Entities.ALTARCHALICE) {
+            self.isAltarChaliceActivated = false;
+            mob.idle();
+          } else if (mob.kind === Types.Entities.ALTARINFINITYSTONE) {
+            self.isAltarInfinityStoneActivated = false;
+            mob.idle();
+            self.audioManager.playSound("stone-break");
           }
         }
       });
@@ -4986,8 +5014,6 @@ class Game {
           this.player.stop_pathing_callback({ x: 43, y: 728, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.SECRETSTAIRS2) {
-        console.log("~~~~ICI??", npc.gridX, npc.gridY);
-
         if (npc.gridX === 149 && npc.gridY === 548) {
           // Left Templar
           this.player.stop_pathing_callback({ x: 127, y: 731, orientation: Types.Orientations.UP, isWaypoint: true });

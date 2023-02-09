@@ -69,6 +69,7 @@ export const Types: any = {
     AGGRO: 8,
     ATTACK: 9,
     RAISE: 10,
+    UNRAISE: 104,
     HIT: 11,
     HURT: 12,
     HURT_SPELL: 13,
