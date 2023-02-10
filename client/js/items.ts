@@ -1108,6 +1108,48 @@ var Items = {
     }
   },
 
+  PowderBlack: class PowderBlack extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERBLACK, "object");
+      this.lootMessage = "You pick up the Soul powder";
+    }
+  },
+
+  PowderBlue: class PowderBlue extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERBLUE, "object");
+      this.lootMessage = "You pick up the Illusion powder";
+    }
+  },
+
+  PowderGold: class PowderGold extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERGOLD, "object");
+      this.lootMessage = "You pick up the BTC maxi powder";
+    }
+  },
+
+  PowderGreen: class PowderGreen extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERGREEN, "object");
+      this.lootMessage = "You pick up the Poison powder";
+    }
+  },
+
+  PowderRed: class PowderRed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERRED, "object");
+      this.lootMessage = "You pick up the Blood powder";
+    }
+  },
+
+  PowderQuantum: class PowderQuantum extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERQUANTUM, "object");
+      this.lootMessage = "You pick up the Quantum powder";
+    }
+  },
+
   Cake: class Cake extends Item {
     constructor(id) {
       super(id, Types.Entities.CAKE, "object");

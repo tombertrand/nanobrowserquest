@@ -101,11 +101,7 @@ import loot from "../sprites/loot.json";
 import nyan from "../sprites/nyan.json";
 import octocat from "../sprites/octocat.json";
 import anvil from "../sprites/anvil.json";
-import anvilSuccess from "../sprites/anvil-success.json";
-import anvilFail from "../sprites/anvil-fail.json";
-import anvilRecipe from "../sprites/anvil-recipe.json";
-import anvilTransmute from "../sprites/anvil-transmute.json";
-import anvilChestblue from "../sprites/anvil-chestblue.json";
+import anvilAnimation from "../sprites/anvil-animation.json";
 import waypointx from "../sprites/waypoint.json";
 import waypointn from "../sprites/waypoint.json";
 import waypointo from "../sprites/waypoint.json";
@@ -127,6 +123,8 @@ import tombskull from "../sprites/tomb.json";
 import lever from "../sprites/lever.json";
 import lever2 from "../sprites/lever.json";
 import grimoire from "../sprites/grimoire.json";
+import fossil from "../sprites/fossil.json";
+import hands from "../sprites/hands.json";
 import alkor from "../sprites/npc2.json";
 import olaf from "../sprites/npc2.json";
 import victor from "../sprites/npc2.json";
@@ -399,6 +397,12 @@ const sprites = {
   "item-nft": item,
   "item-wing": item,
   "item-crystal": item,
+  "item-powderblack": item,
+  "item-powderblue": item,
+  "item-powdergold": item,
+  "item-powdergreen": item,
+  "item-powderred": item,
+  "item-powderquantum": item,
   "item-goldenarmor": item,
   "item-bluearmor": item,
   "item-hornedarmor": item,
@@ -469,11 +473,12 @@ const sprites = {
   nyan,
   octocat,
   anvil,
-  "anvil-success": anvilSuccess,
-  "anvil-fail": anvilFail,
-  "anvil-recipe": anvilRecipe,
-  "anvil-transmute": anvilTransmute,
-  "anvil-chestblue": anvilChestblue,
+  "anvil-success": anvilAnimation,
+  "anvil-fail": anvilAnimation,
+  "anvil-recipe": anvilAnimation,
+  "anvil-powder": anvilAnimation,
+  "anvil-transmute": anvilAnimation,
+  "anvil-chestblue": anvilAnimation,
   waypointx,
   waypointn,
   waypointo,
@@ -497,6 +502,8 @@ const sprites = {
   lever,
   lever2,
   grimoire,
+  fossil,
+  hands,
   alkor,
   olaf,
   victor,

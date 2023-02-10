@@ -86,6 +86,7 @@ class World {
   spellCount: number;
   isActivatedAltarChalice: boolean;
   isActivatedAltarInfinityStone: boolean;
+  isActivatedHands: boolean;
   secretStairsChaliceNpcId: number;
   secretStairsTreeNpcId: number;
   secretStairsLeftTemplarNpcId: number;
@@ -94,6 +95,7 @@ class World {
   chaliceLevelInterval: NodeJS.Timeout;
   altarChaliceNpcId: number;
   altarInfinityStoneNpcId: number;
+  handsNpcId: number;
   isActivatedTreeLevel: boolean;
   trapIds: number[];
   portalCryptNpcId: number;
@@ -193,6 +195,7 @@ class World {
     this.statues = [];
     this.isActivatedAltarChalice = false;
     this.isActivatedAltarInfinityStone = false;
+    this.isActivatedHands = false;
     this.secretStairsChaliceNpcId = null;
     this.secretStairsTreeNpcId = null;
     this.secretStairsLeftTemplarNpcId = null;
@@ -203,6 +206,7 @@ class World {
     this.chaliceLevelInterval = null;
     this.altarChaliceNpcId = null;
     this.altarInfinityStoneNpcId = null;
+    this.handsNpcId = null;
     this.isActivatedTreeLevel = false;
     this.trapIds = [];
     this.leverChaliceNpcId = null;
@@ -350,15 +354,14 @@ class World {
 
       self.map.generateCollisionGrid();
 
-      // @TODO ~~~~ uncomment this once skeleton templar is set
       // Populate all mob "roaming" areas
-      // _.each(self.map.mobAreas, function (a) {
-      //   var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
-      //   area.spawnMobs();
-      //   area.onEmpty(self.handleEmptyMobArea.bind(self, area));
+      _.each(self.map.mobAreas, function (a) {
+        var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
+        area.spawnMobs();
+        area.onEmpty(self.handleEmptyMobArea.bind(self, area));
 
-      //   self.mobAreas.push(area);
-      // });
+        self.mobAreas.push(area);
+      });
 
       // Create all chest areas
       _.each(self.map.chestAreas, function (a) {
@@ -724,6 +727,8 @@ class World {
         this.altarChaliceNpcId = npc.id;
       } else if (kind === Types.Entities.ALTARINFINITYSTONE) {
         this.altarInfinityStoneNpcId = npc.id;
+      } else if (kind === Types.Entities.HANDS) {
+        this.handsNpcId = npc.id;
       } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(kind)) {
         this.trapIds.push(npc.id);
       } else if (kind === Types.Entities.LEVER || kind === Types.Entities.LEVER2) {
@@ -1327,18 +1332,29 @@ class World {
       if (force || (await this.databaseHandler.useInventoryItem(player, "infinitystone"))) {
         altar.activate();
 
-        // this.startChaliceLevel();
         this.broadcastRaise(player, altar);
       }
     }
   }
 
-  activatePortalCrypt() {
-    const portalCryptNpcId = this.npcs[this.portalCryptNpcId];
-    portalCryptNpcId.respawnCallback();
+  async activateHands(player, force = false) {
+    const hands = this.getEntityById(this.handsNpcId);
 
-    // this.broadcastRaise(player, magicStone);
-    this.pushBroadcast(new Messages.Raise(this.portalCryptNpcId));
+    if (hands && hands instanceof Npc && !this.isActivatedHands && !hands.isActivated) {
+      if (force || (await this.databaseHandler.useInventoryItem(player, "powderquantum"))) {
+        hands.activate();
+
+        this.startCryptLevel(player);
+        this.broadcastRaise(player, hands);
+      }
+    }
+  }
+
+  startCryptLevel(player) {
+    const portal = this.npcs[this.portalCryptNpcId];
+    portal.respawnCallback();
+
+    this.broadcastRaise(player, portal);
   }
 
   activateTrap(player, trapId) {
@@ -1480,9 +1496,6 @@ class World {
         if (kind === Types.Entities.COW) {
           self.cowPossibleCoords.push({ x: pos.x + 1, y: pos.y });
         } else {
-          // @TODO remove this once done ~~~~~
-          if (kind === Types.Entities.SPIDER || kind === Types.Entities.GHOST) return;
-
           const id = `7${kind}${count++}`;
           const mob = new Mob(id, kind, pos.x + 1, pos.y);
 
@@ -1817,7 +1830,8 @@ class World {
     // var randomDrops = ["chalice", "infinitystone", "hellhammer"];
     // var randomDrops = ["nft"];
     // var randomDrops = ["nft", "wing", "crystal"];
-    var randomDrops = ["amuletdragon", "amuletskull"];
+    var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
+    // var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];
     // var randomDrops = ["stonehero", "stonedragon"];
     // var randomDrops = ["paladinarmor"];

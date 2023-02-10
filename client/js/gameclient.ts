@@ -716,10 +716,10 @@ class GameClient {
 
   receiveUpgrade(data) {
     var upgrade = data[1];
-    const { luckySlot, isLucky7, isMagic8, isSuccess } = data[2] || {};
+    const { luckySlot, isLucky7, isMagic8, isSuccess, recipe } = data[2] || {};
 
     if (this.receiveupgrade_callback) {
-      this.receiveupgrade_callback(upgrade, { luckySlot, isLucky7, isMagic8, isSuccess });
+      this.receiveupgrade_callback(upgrade, { luckySlot, isLucky7, isMagic8, isSuccess, recipe });
     }
   }
 
@@ -1367,6 +1367,10 @@ class GameClient {
 
   sendAltarInfinityStone(id) {
     this.sendMessage([Types.Messages.ALTARINFINITYSTONE, id]);
+  }
+
+  sendHands(id) {
+    this.sendMessage([Types.Messages.HANDS, id]);
   }
 
   sendActivateTrap(id) {

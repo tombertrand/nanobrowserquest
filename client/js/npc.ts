@@ -219,6 +219,8 @@ var NpcTalk = {
     "It is said that whoever possesses the grimoire<br/>will have the power to control death itself.",
     "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
   ],
+  fossil: ["Here lies the remains of a fallen Bitcoin maximalist.<br/>It shall not rise again."],
+  hands: ["The mechanism of the Gateway requires a specific powder to initiate."],
   alkor: [
     {
       condition(game: any) {

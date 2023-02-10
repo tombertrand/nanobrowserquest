@@ -361,6 +361,7 @@ export const isValidRecipe = items => {
     chestgreen: ["chestgreen"],
     chestpurple: ["chestpurple"],
     chestred: ["chestred"],
+    powderquantum: ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred"],
   };
 
   const result = Object.entries(recipes).find(([_recipe, formulae]) => {

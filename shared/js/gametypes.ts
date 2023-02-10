@@ -167,6 +167,7 @@ export const Types: any = {
     TREE: 100,
     TRAP: 101,
     STATUE: 103,
+    HANDS: 105,
   },
 
   Entities: {
@@ -311,7 +312,13 @@ export const Types: any = {
     INFINITYSTONE: 249,
     NFT: 273,
     WING: 274,
-    CRYSTAL: 275,
+    CRYSTAL: 285,
+    POWDERBLACK: 286,
+    POWDERBLUE: 287,
+    POWDERGOLD: 288,
+    POWDERGREEN: 289,
+    POWDERRED: 290,
+    POWDERQUANTUM: 291,
 
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
@@ -392,6 +399,8 @@ export const Types: any = {
     LEVER: 258,
     LEVER2: 259,
     GRIMOIRE: 268,
+    FOSSIL: 283,
+    HANDS: 284,
     ALKOR: 260,
     OLAF: 271,
     VICTOR: 272,
@@ -761,7 +770,7 @@ export const kinds = {
   beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Sapphire Belt", 24, 10],
   belthorned: [Types.Entities.BELTHORNED, "belt", "Horned Belt", 26, 12],
   beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 14],
-  beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 40, 18],
+  beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 38, 18],
   beltemerald: [Types.Entities.BELTEMERALD, "belt", "Emerald Belt", 40, 18],
   beltexecutioner: [Types.Entities.BELTEXECUTIONER, "belt", "Executioner Belt", 40, 18],
   beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 40, 18],
@@ -859,6 +868,12 @@ export const kinds = {
   nft: [Types.Entities.NFT, "item", "Stone NFT"],
   wing: [Types.Entities.WING, "item", "Dragon Wing"],
   crystal: [Types.Entities.CRYSTAL, "item", "Crystal"],
+  powderblack: [Types.Entities.POWDERBLACK, "item", "Soul Powder"],
+  powderblue: [Types.Entities.POWDERBLUE, "item", "Illusion Powder"],
+  powdergold: [Types.Entities.POWDERGOLD, "item", "BTC maxi Powder"],
+  powdergreen: [Types.Entities.POWDERGREEN, "item", "Poison Powder"],
+  powderred: [Types.Entities.POWDERRED, "item", "Blood Powder"],
+  powderquantum: [Types.Entities.POWDERQUANTUM, "item", "Quantum Powder"],
 
   // kind, type, name, level
   "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 1],
@@ -940,6 +955,8 @@ export const kinds = {
   lever: [Types.Entities.LEVER, "npc"],
   lever2: [Types.Entities.LEVER2, "npc"],
   grimoire: [Types.Entities.GRIMOIRE, "npc"],
+  fossil: [Types.Entities.FOSSIL, "npc"],
+  hands: [Types.Entities.HANDS, "npc"],
   alkor: [Types.Entities.ALKOR, "npc"],
   olaf: [Types.Entities.OLAF, "npc"],
   victor: [Types.Entities.VICTOR, "npc"],
@@ -1421,6 +1438,12 @@ Types.isSingle = function (kindOrString: number | string) {
       Types.Entities.NFT,
       Types.Entities.WING,
       Types.Entities.CRYSTAL,
+      Types.Entities.POWDERBLACK,
+      Types.Entities.POWDERBLUE,
+      Types.Entities.POWDERGOLD,
+      Types.Entities.POWDERGREEN,
+      Types.Entities.POWDERRED,
+      Types.Entities.POWDERQUANTUM,
     ].includes(kindOrString);
   } else {
     return (
@@ -1433,6 +1456,12 @@ Types.isSingle = function (kindOrString: number | string) {
         "nft",
         "wing",
         "crystal",
+        "powderblack",
+        "powderblue",
+        "powdergold",
+        "powdergreen",
+        "powderred",
+        "powderquantum",
       ].includes(kindOrString) ||
       kindOrString.startsWith("skeletonkingcage") ||
       kindOrString.startsWith("necromancerheart") ||
@@ -1441,7 +1470,8 @@ Types.isSingle = function (kindOrString: number | string) {
       kindOrString.startsWith("infinitystone") ||
       kindOrString.startsWith("nft") ||
       kindOrString.startsWith("wing") ||
-      kindOrString.startsWith("crystal")
+      kindOrString.startsWith("crystal") ||
+      kindOrString.startsWith("powder")
     );
   }
 };
@@ -1647,11 +1677,17 @@ Types.waypoints = [
   {
     id: 8,
     name: "Castle ruins",
-    gridX: 129,
-    gridY: 547,
+    gridX: 98,
+    gridY: 606,
   },
   {
     id: 9,
+    name: "Gateway",
+    gridX: 128,
+    gridY: 546,
+  },
+  {
+    id: 10,
     name: "Lost Temple",
     gridX: 39,
     gridY: 593,
@@ -1822,21 +1858,22 @@ Types.bonusType = [
   "lightningResistance", // 23
   "coldResistance", // 24
   "poisonResistance", // 25
-  "magicDamagePercent", // 26
-  "flameDamagePercent", // 27
-  "lightningDamagePercent", // 28
-  "coldDamagePercent", // 29
-  "poisonDamagePercent", // 30
-  "allResistance", // 31
-  "preventRegenerateHealth", // 32
-  "poisonDamage", // 33
-  "skillTimeout", // 34
-  "lowerMagicResistance", // 35
-  "lowerFlameResistance", // 36
-  "lowerLightningResistance", // 37
-  "lowerColdResistance", // 38
-  "lowerPoisonResistance", // 39
-  "lowerAllResistance", // 40
+  "spectralResistance", // 26
+  "magicDamagePercent", // 27
+  "flameDamagePercent", // 28
+  "lightningDamagePercent", // 29
+  "coldDamagePercent", // 30
+  "poisonDamagePercent", // 31
+  "allResistance", // 32
+  "preventRegenerateHealth", // 33
+  "poisonDamage", // 34
+  "skillTimeout", // 35
+  "lowerMagicResistance", // 36
+  "lowerFlameResistance", // 37
+  "lowerLightningResistance", // 38
+  "lowerColdResistance", // 39
+  "lowerPoisonResistance", // 40
+  "lowerAllResistance", // 41
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -2188,6 +2225,12 @@ Types.isBaseHighClassItem = (item: string) => {
   return baseLevel >= 10;
 };
 
+Types.isBaseLegendaryClassItem = (item: string) => {
+  const baseLevel = kinds[item][3];
+
+  return baseLevel >= 40;
+};
+
 Types.getItemClass = function (item: string, level: number, isUnique: boolean) {
   const baseLevel = Types.getItemBaseLevel(item, isUnique);
 
@@ -2477,6 +2520,12 @@ Types.itemDescription = {
   nft: "An exceptional Non-Fungible Token artifact.",
   wing: "The remnants of a dragon's wing.",
   crystal: "An ancient and powerful crystal.",
+  powderblack: "A special kind of powder.",
+  powderblue: "A special kind of powder.",
+  powdergold: "A special kind of powder.",
+  powdergreen: "A special kind of powder.",
+  powderred: "A special kind of powder.",
+  powderquantum: "The ultimate powder that powers the Gateway.",
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",

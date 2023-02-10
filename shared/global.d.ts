@@ -1,4 +1,4 @@
-type Recipes = "cowLevel" | "minotaurLevel" | ChestType;
+type Recipes = "cowLevel" | "minotaurLevel" | ChestType | "powderquantum";
 type ChatType = "world" | "zone" | "party" | "event" | "info" | "loot";
 type Network = "nano" | "ban";
 type ItemClass = "low" | "medium" | "high" | "legendary";

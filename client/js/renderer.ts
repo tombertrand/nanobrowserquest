@@ -6,11 +6,12 @@ import Character from "./character";
 import Detect from "./detect";
 import Item from "./item";
 import Player from "./player";
-import Spell from "./spell";
 import Timer from "./timer";
 
+import type Game from "./game";
+
 class Renderer {
-  game: any;
+  game: Game;
   context: any;
   background: any;
   foreground: any;
@@ -702,6 +703,7 @@ class Renderer {
 
         if (entity instanceof Item && entity.kind !== Types.Entities.CAKE) {
           var sparks = this.game.sprites["sparks"],
+            // @ts-ignore
             anim = this.game.sparksAnimation,
             frame = anim.currentFrame,
             sx = sparks.width * frame.index * os,
@@ -768,6 +770,7 @@ class Renderer {
             }
 
             var sprite = this.game.sprites[`weapon-effect-${effect}`];
+            // @ts-ignore
             var anim = this.game.weaponEffectAnimation;
 
             var image = "";
@@ -813,15 +816,20 @@ class Renderer {
       if (entity instanceof Character && entity.sprite.name === "anvil") {
         var sprite = null;
         var spriteName = null;
+        // @ts-ignore
         var anim = this.game.anvilAnimation;
 
-        if (this.game.isAnvilRecipe || this.game.isAnvilChestPurple) {
-          spriteName = "anvil-recipe";
+        if (this.game.anvilRecipe || this.game.isAnvilChestpurple) {
+          if (this.game.anvilRecipe === "powderquantum") {
+            spriteName = "anvil-powder";
+          } else {
+            spriteName = "anvil-recipe";
+          }
         } else if (this.game.isAnvilSuccess) {
           spriteName = "anvil-success";
-        } else if (this.game.isAnvilFail || this.game.isAnvilChestRed) {
+        } else if (this.game.isAnvilFail || this.game.isAnvilChestred) {
           spriteName = "anvil-fail";
-        } else if (this.game.isAnvilTransmute || this.game.isAnvilChestGreen) {
+        } else if (this.game.isAnvilTransmute || this.game.isAnvilChestgreen) {
           spriteName = "anvil-transmute";
         } else if (this.game.isAnvilChestblue) {
           spriteName = "anvil-chestblue";
@@ -856,6 +864,7 @@ class Renderer {
 
       if (entity instanceof Character && entity.isLevelup) {
         var sprite = this.game.sprites["levelup"];
+        // @ts-ignore
         var anim = this.game.levelupAnimation;
 
         if (sprite && anim) {
@@ -883,6 +892,7 @@ class Renderer {
 
       if (entity instanceof Player && entity.defenseSkillName) {
         var sprite = this.game.sprites[`skill-${entity.defenseSkillName}`];
+        // @ts-ignore
         var anim =
           entity.defenseSkillName === "resistances"
             ? this.game.skillResistanceAnimation
@@ -920,6 +930,7 @@ class Renderer {
           skillName === "cold" || skillName === "lightning"
             ? this.game.sprites["skill-cast"]
             : this.game.sprites[`skill-cast-${Types.skillToNameMap[entity.castSkill]}`];
+        // @ts-ignore
         var anim = this.game.skillCastAnimation;
 
         if (sprite && anim) {
@@ -948,6 +959,7 @@ class Renderer {
 
       if (entity instanceof Player && typeof entity.curseId === "number") {
         var sprite = this.game.sprites["curse-prevent-regenerate-health"];
+        // @ts-ignore
         var anim = this.game.cursePreventRegenerateHealthAnimation;
 
         if (sprite && anim) {

@@ -395,10 +395,10 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     name: "Stonehenge",
     desc: "Activate all magic stones",
   },
-  ECLYPSE: {
+  ALCHEMIST: {
     id: 53,
-    name: "Eclypse",
-    desc: "Find the Sun and Moon",
+    name: "Alchemist",
+    desc: "Create the quantum powder",
   },
   INFINITY_STONE: {
     id: 54,

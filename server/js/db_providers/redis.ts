@@ -298,7 +298,7 @@ class DatabaseHandler {
 
                   this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 } else if (!waypoints) {
-                  waypoints = [1, 0, 0, 2, 2, 2, 2, 2, 2];
+                  waypoints = [1, 0, 0, 2, 2, 2, 2, 2, 2, 2];
 
                   this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 }
@@ -564,7 +564,7 @@ class DatabaseHandler {
           .hset(userKey, "trade", JSON.stringify(new Array(TRADE_SLOT_COUNT).fill(0)))
           .hset(userKey, "expansion1", 0)
           .hset(userKey, "expansion2", 0)
-          .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2, 2, 2, 2]))
+          .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2, 2, 2, 2, 2]))
           .hset(userKey, "depositAccountIndex", depositAccountIndex)
           .hset(userKey, "depositAccount", depositAccount)
           .hset(userKey, "network", player.network)
@@ -587,7 +587,7 @@ class DatabaseHandler {
               artifact: new Array(ARTIFACT_COUNT).fill(0),
               expansion1: false,
               expansion2: false,
-              waypoints: [1, 0, 0, 2, 2, 2, 2, 2, 2],
+              waypoints: [1, 0, 0, 2, 2, 2, 2, 2, 2, 2],
               stash: new Array(STASH_SLOT_COUNT).fill(0),
               depositAccount,
               depositAccountIndex,
@@ -1277,12 +1277,12 @@ class DatabaseHandler {
             upgradedItem = [item, upgradedLevel, bonus, socket, skill].filter(Boolean).join(":");
             isSuccess = true;
 
-            if (Types.isBaseHighClassItem(item)) {
-              if (upgradedLevel === 7) {
-                isLucky7 = true;
-              } else if (upgradedLevel === 8) {
-                isMagic8 = true;
-              }
+            if (Types.isBaseHighClassItem(item) && upgradedLevel === 7) {
+              isLucky7 = true;
+            }
+
+            if (Types.isBaseLegendaryClassItem(item) && upgradedLevel === 8) {
+              isMagic8 = true;
             }
 
             if (upgradedLevel >= 8 || (isUnique && upgradedLevel >= 7)) {
@@ -1437,6 +1437,11 @@ class DatabaseHandler {
 
               const delimiter = Types.isJewel(item) ? "|" : ":";
               generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(delimiter);
+            } else if (recipe === "powderquantum") {
+              isWorkingRecipe = true;
+              isRecipe = true;
+
+              generatedItem = "powderquantum:1";
             }
           }
 
@@ -1477,7 +1482,7 @@ class DatabaseHandler {
 
         achievement[index] = 1;
         achievement = JSON.stringify(achievement);
-        this.client.hset("u:" + player.name, "achievement", achievement, (err) => {
+        this.client.hset("u:" + player.name, "achievement", achievement, err => {
           if (err) return;
 
           if (index === ACHIEVEMENT_NFT_INDEX) {
@@ -1538,6 +1543,7 @@ class DatabaseHandler {
         waypoints[6] = 1;
         waypoints[7] = 0;
         waypoints[8] = 0;
+        waypoints[9] = 0;
         player.send([Types.Messages.WAYPOINTS_UPDATE, waypoints]);
         waypoints = JSON.stringify(waypoints);
         this.client.hset("u:" + player.name, "waypoints", waypoints);
@@ -1629,10 +1635,8 @@ class DatabaseHandler {
             let isPasswordRequired = expansion1;
 
             // @TODO ~~~~ remove this
-            if (player.name.startsWith("running-coder")) {
-              resolve(false);
-              return;
-            }
+            resolve(false);
+            return;
 
             player.isPasswordRequired = isPasswordRequired;
 

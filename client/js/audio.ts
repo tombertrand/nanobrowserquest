@@ -83,6 +83,7 @@ class AudioManager {
       "fireball",
       "iceball",
       "trap",
+      "powder",
       // "altarinfinitystone",
     ];
 

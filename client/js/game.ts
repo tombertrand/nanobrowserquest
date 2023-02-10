@@ -66,9 +66,9 @@ class Game {
   isLoaded: boolean;
   hasNeverStarted: boolean;
   isUpgradeItemSent: boolean;
+  anvilRecipe: Recipes;
   isAnvilSuccess: boolean;
   isAnvilFail: boolean;
-  isAnvilRecipe: boolean;
   isAnvilTransmute: boolean;
   isAnvilChestblue: boolean;
   isAnvilChestgreen: boolean;
@@ -92,7 +92,7 @@ class Game {
   pathingGrid: any;
   renderingGrid: any;
   itemGrid: any;
-  currentCursor: null;
+  currentCursor: any;
   mouse: { x: number; y: number };
   zoningQueue: any[];
   previousClickPosition: { x: number; y: number };
@@ -110,7 +110,7 @@ class Game {
   infoManager: InfoManager;
   currentZoning: Transition | null;
   cursors: {};
-  sprites: {};
+  sprites: any;
   currentTime: any;
   animatedTiles: any[] | null;
   highAnimatedTiles: any[] | null;
@@ -205,9 +205,9 @@ class Game {
     this.isLoaded = false;
     this.hasNeverStarted = true;
     this.isUpgradeItemSent = false;
+    this.anvilRecipe = null;
     this.isAnvilSuccess = false;
     this.isAnvilFail = false;
-    this.isAnvilRecipe = false;
     this.isAnvilTransmute = false;
     this.isAnvilChestblue = false;
     this.isAnvilChestgreen = false;
@@ -428,6 +428,7 @@ class Game {
       "anvil-success",
       "anvil-fail",
       "anvil-recipe",
+      "anvil-powder",
       "anvil-transmute",
       "anvil-chestblue",
       "waypointx",
@@ -452,6 +453,8 @@ class Game {
       "lever",
       "lever2",
       "grimoire",
+      "fossil",
+      "hands",
       "alkor",
       "olaf",
       "victor",
@@ -679,6 +682,12 @@ class Game {
       "item-nft",
       "item-wing",
       "item-crystal",
+      "item-powderblack",
+      "item-powderblue",
+      "item-powdergold",
+      "item-powdergreen",
+      "item-powderred",
+      "item-powderquantum",
       "item-cake",
       "item-burger",
       "morningstar",
@@ -3124,8 +3133,6 @@ class Game {
       self.client.onSpawnCharacter(function (data) {
         const { id, kind, name, x, y, targetId, orientation, resistances, element, isActivated, bonus } = data;
 
-        // @TODO ~~~~~ if secretstairs2, remove the pathingGrid 1 underneat? find a way to access the npc more easily
-
         let entity = self.getEntityById(id);
         if (!entity) {
           try {
@@ -3200,7 +3207,8 @@ class Game {
                 entity.idle();
               } else if (
                 entity.kind === Types.Entities.ALTARCHALICE ||
-                entity.kind === Types.Entities.ALTARINFINITYSTONE
+                entity.kind === Types.Entities.ALTARINFINITYSTONE ||
+                entity.kind === Types.Entities.HANDS
               ) {
                 if (entity.kind === Types.Entities.ALTARCHALICE) {
                   self.altarChaliceNpcId = entity.id;
@@ -3916,6 +3924,10 @@ class Game {
             // mob.setVisible(true);
 
             self.audioManager.playSound("stone-break");
+          } else if (mob.kind === Types.Entities.HANDS) {
+            // self.isHandsActivated = true;
+            mob.walk();
+            self.audioManager.playSound("powder");
           } else if (mob.kind === Types.Entities.STATUE || mob.kind === Types.Entities.STATUE2) {
             if (mob.kind === Types.Entities.STATUE) {
               self.audioManager.playSound("fireball", 250);
@@ -3993,6 +4005,8 @@ class Game {
             self.isAltarInfinityStoneActivated = false;
             mob.idle();
             self.audioManager.playSound("stone-break");
+          } else if (mob.kind === Types.Entities.HANDS) {
+            mob.idle();
           }
         }
       });
@@ -4130,8 +4144,6 @@ class Game {
         }
 
         self.player.bonus = bonus;
-
-        console.log("~~~~self.player.bonus", self.player.bonus);
 
         $("#player-damage").text(bonus.damage);
         $("#player-attackDamage").text(bonus.attackDamage);
@@ -4372,8 +4384,11 @@ class Game {
         self.updateStash();
       });
 
-      self.client.onReceiveUpgrade(function (data, meta) {
-        const { luckySlot, isLucky7, isMagic8, isSuccess } = meta || {};
+      self.client.onReceiveUpgrade(function (
+        data,
+        meta: { luckySlot: number; isLucky7: boolean; isMagic8: boolean; isSuccess: boolean; recipe: Recipes },
+      ) {
+        const { luckySlot, isLucky7, isMagic8, isSuccess, recipe } = meta || {};
 
         self.isUpgradeItemSent = false;
         self.player.setUpgrade(data);
@@ -4382,8 +4397,9 @@ class Game {
         if (isLucky7) {
           self.tryUnlockingAchievement("LUCKY7");
         } else if (isMagic8) {
-          // @NOTE Note ready yet, maybe later
-          // self.tryUnlockingAchievement("MAGIC8");
+          self.tryUnlockingAchievement("MAGIC8");
+        } else if (recipe === "powderquantum") {
+          self.tryUnlockingAchievement("ALCHEMIST");
         }
       });
 
@@ -4403,7 +4419,7 @@ class Game {
         } else if (isChestblue) {
           self.setAnvilChestblue();
         } else if (isChestpurple) {
-          self.setAnvilRecipe();
+          self.setAnvilRecipe("chestpurple");
         } else {
           self.setAnvilFail();
         }
@@ -4418,12 +4434,14 @@ class Game {
         }
       });
 
-      self.client.onReceiveAnvilRecipe(function (recipe) {
-        self.setAnvilRecipe();
+      self.client.onReceiveAnvilRecipe(function (recipe: Recipes) {
+        self.setAnvilRecipe(recipe);
 
         if (recipe === "cowLevel" || recipe === "minotaurLevel") {
           self.app.closeUpgrade();
           self.audioManager.playSound("portal-open");
+        } else if (recipe === "powderquantum") {
+          self.audioManager.playSound("powder");
         }
       });
 
@@ -4826,9 +4844,9 @@ class Game {
   }
 
   resetAnvilAnimation() {
+    this.anvilRecipe = null;
     this.isAnvilFail = false;
     this.isAnvilSuccess = false;
-    this.isAnvilRecipe = false;
     this.isAnvilTransmute = false;
     this.isAnvilChestblue = false;
     this.isAnvilChestgreen = false;
@@ -4853,11 +4871,11 @@ class Game {
     }, 3000);
   }
 
-  setAnvilRecipe() {
+  setAnvilRecipe(recipe: Recipes) {
     this.resetAnvilAnimation();
-    this.isAnvilRecipe = true;
+    this.anvilRecipe = recipe;
     this.anvilAnimationTimeout = setTimeout(() => {
-      this.isAnvilRecipe = false;
+      this.anvilRecipe = null;
     }, 3000);
   }
 
@@ -5004,6 +5022,10 @@ class Game {
         if (!npc.isActivated) {
           this.client.sendAltarInfinityStone(npc.id);
         }
+      } else if (npc.kind === Types.Entities.HANDS) {
+        if (!npc.isActivated) {
+          this.client.sendHands(npc.id);
+        }
       } else if (npc.kind === Types.Entities.SECRETSTAIRS) {
         if (npc.gridX === 8 && npc.gridY === 683) {
           // Chalice
@@ -5118,12 +5140,11 @@ class Game {
         if (!m.isOutOfBounds(x, y)) {
           if (self.renderingGrid[y][x]) {
             _.each(self.renderingGrid[y][x], function (entity) {
-              // callback(entity);
-
               if (
                 entity.kind === Types.Entities.TRAP ||
                 entity.kind === Types.Entities.TRAP2 ||
-                entity.kind === Types.Entities.TRAP3
+                entity.kind === Types.Entities.TRAP3 ||
+                entity.kind === Types.Entities.FOSSIL
               ) {
                 entities.unshift(entity);
               } else {

@@ -73,6 +73,7 @@ class Sprite {
       this.id.startsWith("lever") ||
       this.id.startsWith("tomb") ||
       this.id.startsWith("trap") ||
+      this.id.startsWith("anvil-") ||
       this.id === "skeleton" ||
       this.id === "snake" ||
       this.id === "secretstairs" ||

@@ -39,6 +39,7 @@ class FormatChecker {
       (this.formats[Types.Messages.LEVER] = ["n"]),
       (this.formats[Types.Messages.ALTARCHALICE] = ["n"]),
       (this.formats[Types.Messages.ALTARINFINITYSTONE] = ["n"]),
+      (this.formats[Types.Messages.HANDS] = ["n"]),
       (this.formats[Types.Messages.TRAP] = ["n"]),
       (this.formats[Types.Messages.STATUE] = ["n"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
@@ -149,7 +150,8 @@ class FormatChecker {
       type === Types.Messages.MAGICSTONE ||
       type === Types.Messages.LEVER ||
       type === Types.Messages.ALTARCHALICE ||
-      type === Types.Messages.ALTARINFINITYSTONE
+      type === Types.Messages.ALTARINFINITYSTONE ||
+      type === Types.Messages.HANDS
     ) {
       return message.length === 1 && _.isNumber(message[0]);
     } else {

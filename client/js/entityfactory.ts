@@ -861,6 +861,30 @@ EntityFactory.builders[Types.Entities.CRYSTAL] = function (id) {
   return new Items.Crystal(id);
 };
 
+EntityFactory.builders[Types.Entities.POWDERBLACK] = function (id) {
+  return new Items.PowderBlack(id);
+};
+
+EntityFactory.builders[Types.Entities.POWDERBLUE] = function (id) {
+  return new Items.PowderBlue(id);
+};
+
+EntityFactory.builders[Types.Entities.POWDERGOLD] = function (id) {
+  return new Items.PowderGold(id);
+};
+
+EntityFactory.builders[Types.Entities.POWDERGREEN] = function (id) {
+  return new Items.PowderGreen(id);
+};
+
+EntityFactory.builders[Types.Entities.POWDERRED] = function (id) {
+  return new Items.PowderRed(id);
+};
+
+EntityFactory.builders[Types.Entities.POWDERQUANTUM] = function (id) {
+  return new Items.PowderQuantum(id);
+};
+
 EntityFactory.builders[Types.Entities.FIREFOXPOTION] = function (id) {
   return new Items.Firefoxpotion(id);
 };
@@ -1045,6 +1069,14 @@ EntityFactory.builders[Types.Entities.LEVER2] = function (id) {
 
 EntityFactory.builders[Types.Entities.GRIMOIRE] = function (id) {
   return new Npcs.Grimoire(id);
+};
+
+EntityFactory.builders[Types.Entities.FOSSIL] = function (id) {
+  return new Npcs.Fossil(id);
+};
+
+EntityFactory.builders[Types.Entities.HANDS] = function (id) {
+  return new Npcs.Hands(id);
 };
 
 EntityFactory.builders[Types.Entities.ALKOR] = function (id) {

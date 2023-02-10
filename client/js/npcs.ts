@@ -324,6 +324,26 @@ var Npcs = {
     }
   },
 
+  Fossil: class Fossil extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.FOSSIL);
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
+  Hands: class Hands extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.HANDS);
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
   Alkor: class Alkor extends Npc {
     constructor(id) {
       super(id, Types.Entities.ALKOR);

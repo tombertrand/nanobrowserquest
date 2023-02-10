@@ -152,7 +152,8 @@ class Entity {
           this.kind === Types.Entities.BLUEFLAME ||
           this.kind === Types.Entities.TRAP ||
           this.kind === Types.Entities.TRAP2 ||
-          this.kind === Types.Entities.TRAP3
+          this.kind === Types.Entities.TRAP3 ||
+          this.kind === Types.Entities.HANDS
         ) {
           this.currentAnimation.setSpeed(75);
         } else if (this.kind === Types.Entities.ALTARCHALICE || this.kind === Types.Entities.ALTARINFINITYSTONE) {

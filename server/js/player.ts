@@ -374,9 +374,10 @@ class Player extends Character {
                 self.server.startTreeLevel();
               }
               return;
-              // @TODO ~~~~ this.... aaa
-            } else if (msg === "/statue" && self.name === "aaa") {
-              self.server.activateStatues();
+            } else if (msg === "/hands" && self.name === "running-coder") {
+              if (!self.server.isActivatedHands) {
+                self.server.activateHands(self, true);
+              }
               return;
             } else if (msg.startsWith("/ban")) {
               const periods = { 1: 86400, 365: 86400 * 365 };
@@ -661,6 +662,13 @@ class Player extends Character {
         const altarId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
         if (altarId && altarId === self.server.altarInfinityStoneNpcId) {
           self.server.activateAltarInfinityStone(self);
+        }
+      } else if (action === Types.Messages.HANDS) {
+        console.info("HANDS: " + self.name + " " + message[1]);
+
+        const handsId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (handsId && handsId === self.server.handsNpcId && !self.server.isActivatedHands) {
+          self.server.activateHands(self);
         }
       } else if (action === Types.Messages.TRAP) {
         console.info("TRAP: " + self.name + " " + message[1]);
@@ -1327,13 +1335,8 @@ class Player extends Character {
 
           shouldBroadcast = true;
 
-          // const mobResistances = attackedMob.type === "mob" ? attackedMob.resistances : attackedMob.bonus;
-
           const mobResistances = Types.getResistance(attackedMob, self);
           let mobResistance = mobResistances?.[Types.attackSkillToResistanceType[this.attackSkill]] || 0;
-
-          console.log("~~~mobResistances", mobResistances);
-          console.log("~~~mobResistance", mobResistance);
 
           if (attackedMob instanceof Player) {
             mobResistance = Types.calculateResistance(mobResistance + attackedMob.skill.resistances);
@@ -1535,12 +1538,12 @@ class Player extends Character {
       const freezeChanceBonus = [19];
       const reduceFrozenChanceBonus = [20];
       const resistances = [21, 22, 23, 24, 25];
-      const elementPercentage = [26, 27, 28, 29, 30];
-      const allResistance = [31];
-      const timeout = [34];
-      const elementDamage = [4, 14, 15, 16, 18, 33];
-      const lowerResistance = [35, 36, 37, 38, 39];
-      const lowerAllResistance = [40];
+      const elementPercentage = [27, 28, 29, 30, 31];
+      const allResistance = [32];
+      const timeout = [35];
+      const elementDamage = [4, 14, 15, 16, 18, 34];
+      const lowerResistance = [36, 37, 38, 39, 40];
+      const lowerAllResistance = [41];
 
       let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
@@ -2179,6 +2182,9 @@ class Player extends Character {
       acc[key] = 0;
       return acc;
     }, {});
+
+    // Not part of the attributes
+    this.bonus.resistanceSpectral = 0;
   }
 
   resetPartyBonus() {

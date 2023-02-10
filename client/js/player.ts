@@ -251,6 +251,7 @@ class Player extends Character {
         }
       } else if (Types.isSingle(item.kind)) {
         const { itemKind } = item;
+
         const isFound = this.inventory
           .concat(this.upgrade)
           .concat(this.stash)
