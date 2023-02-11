@@ -128,6 +128,7 @@ class Game {
   thunderstormAnimation: Animation;
   highHealthAnimation: Animation;
   freezeAnimation: Animation;
+  resistanceAnimation: Animation;
   anvilAnimation: Animation;
   defenseSkillAnimation: Animation;
   skillResistanceAnimation: Animation;
@@ -237,6 +238,7 @@ class Game {
     this.thunderstormAnimation = null;
     this.highHealthAnimation = null;
     this.freezeAnimation = null;
+    this.resistanceAnimation = null;
     this.anvilAnimation = null;
     this.defenseSkillAnimation = null;
     this.skillResistanceAnimation = null;
@@ -325,6 +327,7 @@ class Game {
       "aura-thunderstorm",
       "aura-highhealth",
       "aura-freeze",
+      "aura-resistance",
       "skill-heal",
       "skill-defense",
       "skill-resistances",
@@ -398,6 +401,7 @@ class Game {
       "skeletontemplar",
       "spider",
       "spider-poison",
+      "oculothorax",
       "statue",
       "statue-spell",
       "statue2",
@@ -787,6 +791,9 @@ class Game {
 
     this.freezeAnimation = new Animation("idle_down", 8, 0, 16, 8);
     this.freezeAnimation.setSpeed(140);
+
+    this.resistanceAnimation = new Animation("idle_down", 7, 0, 16, 8);
+    this.resistanceAnimation.setSpeed(140);
 
     this.anvilAnimation = new Animation("idle_down", 4, 0, 15, 8);
     this.anvilAnimation.setSpeed(80);
@@ -3350,6 +3357,7 @@ class Game {
                     Types.Entities.GHOST,
                     Types.Entities.DEATHANGEL,
                     Types.Entities.WORM,
+                    Types.Entities.OCULOTHORAX,
                   ].includes(entity.kind);
 
                   if (entity instanceof Mobs.DeathAngel) {

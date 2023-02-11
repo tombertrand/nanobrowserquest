@@ -41,6 +41,12 @@ export const mobResistance = {
   },
   spider: {
     poisonResistance: 100,
+    magicResistance: 100,
+  },
+  oculothorax: {
+    flameResistance: 100,
+    lightningResistance: 100,
+    coldResistance: 40,
   },
   skeletontemplar: {
     magicResistance: 80,

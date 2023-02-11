@@ -388,6 +388,7 @@ class Updater {
     this.game.thunderstormAnimation?.update(t);
     this.game.highHealthAnimation?.update(t);
     this.game.freezeAnimation?.update(t);
+    this.game.resistanceAnimation?.update(t);
     this.game.anvilAnimation?.update(t);
     this.game.defenseSkillAnimation?.update(t);
     this.game.skillResistanceAnimation?.update(t);

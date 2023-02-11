@@ -1,0 +1,49 @@
+{
+  "id": "oculothorax",
+  "width": 55,
+  "height": 50,
+  "animations": {
+    "atk_right": {
+      "length": 8,
+      "row": 2
+    },
+    "walk_right": {
+      "length": 4,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 4,
+      "row": 0
+    },
+    "atk_up": {
+      "length": 8,
+      "row": 2
+    },
+    "walk_up": {
+      "length": 4,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 4,
+      "row": 0
+    },
+    "atk_down": {
+      "length": 8,
+      "row": 2
+    },
+    "walk_down": {
+      "length": 4,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 4,
+      "row": 0
+    },
+    "death": {
+      "length": 8,
+      "row": 3
+    }
+  },
+  "offset_x": -20,
+  "offset_y": -28
+}

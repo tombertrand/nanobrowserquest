@@ -599,6 +599,10 @@ class Renderer {
           );
         }
 
+        if (entity.name === "running-coder") {
+          entity.auras = ["resistance"];
+        }
+
         // @NOTE Drawing auras first (under the character)
         if (entity instanceof Character && entity.auras.length) {
           entity.auras.forEach(aura => {
@@ -616,6 +620,9 @@ class Renderer {
             } else if (aura === "freeze") {
               sprite = this.game.sprites["aura-freeze"];
               anim = this.game.freezeAnimation;
+            } else if (aura === "resistance") {
+              sprite = this.game.sprites["aura-resistance"];
+              anim = this.game.resistanceAnimation;
             }
 
             if (sprite && anim) {

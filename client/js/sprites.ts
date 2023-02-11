@@ -30,6 +30,7 @@ import shaman from "../sprites/shaman.json";
 import skeletontemplar from "../sprites/skeletontemplar.json";
 import spider from "../sprites/spider.json";
 import mageSpell from "../sprites/mage-spell.json";
+import oculothorax from "../sprites/oculothorax.json";
 import statue from "../sprites/statue.json";
 import statue2 from "../sprites/statue2.json";
 import statueSpell from "../sprites/statue-spell.json";
@@ -164,6 +165,7 @@ import auraDrainlife from "../sprites/aura-drainlife.json";
 import auraThunderstorm from "../sprites/aura-thunderstorm.json";
 import auraHighhealth from "../sprites/aura-highhealth.json";
 import auraFreeze from "../sprites/aura-freeze.json";
+import auraResistance from "../sprites/aura-resistance.json";
 import skillHeal from "../sprites/skill-heal.json";
 import skillDefense from "../sprites/skill-defense.json";
 import skillResistances from "../sprites/skill-resistances.json";
@@ -239,8 +241,9 @@ const sprites = {
   "mage-spell-poison": mageSpell,
   shaman,
   skeletontemplar,
-  spider: spider,
+  spider,
   "spider-poison": spider,
+  oculothorax,
   statue,
   statue2,
   "statue-spell": statueSpell,
@@ -550,6 +553,7 @@ const sprites = {
   "aura-thunderstorm": auraThunderstorm,
   "aura-highhealth": auraHighhealth,
   "aura-freeze": auraFreeze,
+  "aura-resistance": auraResistance,
   "skill-heal": skillHeal,
   "skill-defense": skillDefense,
   "skill-resistances": skillResistances,

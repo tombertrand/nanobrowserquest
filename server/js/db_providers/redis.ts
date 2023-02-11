@@ -396,15 +396,18 @@ class DatabaseHandler {
                     const [item, level, bonus, skill] = shield.split(":");
                     shield = [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
 
-                    this.client.hset("u:" + player.name, "shield", shield);
-
+                    if (skill.length <= 1) {
+                      this.client.hset("u:" + player.name, "shield", shield);
+                    }
                     resolve(true);
                   }),
                   new Promise(resolve => {
                     stash = stash.map(rawItem => {
                       if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
                         const [item, level, bonus, skill] = rawItem.split(":");
-                        return [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
+                        return skill.length <= 1
+                          ? [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":")
+                          : rawItem;
                       }
                       return rawItem;
                     });
@@ -416,7 +419,9 @@ class DatabaseHandler {
                     inventory = inventory.map(rawItem => {
                       if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
                         const [item, level, bonus, skill] = rawItem.split(":");
-                        return [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
+                        return skill.length <= 1
+                          ? [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":")
+                          : rawItem;
                       }
                       return rawItem;
                     });

@@ -199,6 +199,10 @@ EntityFactory.builders[Types.Entities.SPIDER] = function (id, resistances) {
   return new Mobs.Spider(id, resistances);
 };
 
+EntityFactory.builders[Types.Entities.OCULOTHORAX] = function (id, resistances) {
+  return new Mobs.Oculothorax(id, resistances);
+};
+
 EntityFactory.builders[Types.Entities.MAGESPELL] = function (id) {
   return new Spells.MageSpell(id);
 };
