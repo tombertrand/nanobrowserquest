@@ -1751,7 +1751,7 @@ class World {
       }
     }
 
-    // if (mob.kind >= Types.Entities.TROLL) {
+    // if (mob.kind >= Types.Entities.GOLEM) {
     //   const vv = random(12000);
     //   if (vv === 420) {
     //     return "amuletmoon";

@@ -17,11 +17,8 @@ import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
-// import troll from "../sprites/skeleton.json";
-// import harpie from "../sprites/skeleton.json";
-// import werewolf2 from "../sprites/skeleton.json";
 import skeleton4 from "../sprites/skeleton.json";
-import golem from "../sprites/skeleton.json";
+import golem from "../sprites/golem.json";
 import worm from "../sprites/worm.json";
 import wraith2 from "../sprites/wraith2.json";
 import ghost from "../sprites/ghost.json";
@@ -31,6 +28,7 @@ import skeletontemplar from "../sprites/skeletontemplar.json";
 import spider from "../sprites/spider.json";
 import mageSpell from "../sprites/mage-spell.json";
 import oculothorax from "../sprites/oculothorax.json";
+import skeletonberserker from "../sprites/skeletonberserker.json";
 import statue from "../sprites/statue.json";
 import statue2 from "../sprites/statue2.json";
 import statueSpell from "../sprites/statue-spell.json";
@@ -165,7 +163,7 @@ import auraDrainlife from "../sprites/aura-drainlife.json";
 import auraThunderstorm from "../sprites/aura-thunderstorm.json";
 import auraHighhealth from "../sprites/aura-highhealth.json";
 import auraFreeze from "../sprites/aura-freeze.json";
-import auraResistance from "../sprites/aura-resistance.json";
+import auraLowerResistance from "../sprites/aura-lowerresistance.json";
 import skillHeal from "../sprites/skill-heal.json";
 import skillDefense from "../sprites/skill-defense.json";
 import skillResistances from "../sprites/skill-resistances.json";
@@ -219,9 +217,6 @@ const sprites = {
   cow,
   cowking,
   minotaur,
-  // troll,
-  // harpie,
-  // werewolf2,
   skeleton4,
   golem,
   worm,
@@ -244,6 +239,7 @@ const sprites = {
   spider,
   "spider-poison": spider,
   oculothorax,
+  skeletonberserker,
   statue,
   statue2,
   "statue-spell": statueSpell,
@@ -553,7 +549,7 @@ const sprites = {
   "aura-thunderstorm": auraThunderstorm,
   "aura-highhealth": auraHighhealth,
   "aura-freeze": auraFreeze,
-  "aura-resistance": auraResistance,
+  "aura-lowerresistance": auraLowerResistance,
   "skill-heal": skillHeal,
   "skill-defense": skillDefense,
   "skill-resistances": skillResistances,

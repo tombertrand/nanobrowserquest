@@ -371,37 +371,6 @@ var Properties: any = {
     armor: 29,
     weapon: 32,
   },
-  // troll: {
-  //   drops: {
-  //     rejuvenationpotion: 10,
-  //     scrollupgradelegendary: 3,
-  //     emeraldsword: 3,
-  //     emeraldarmor: 3,
-  //     beltemerald: 3,
-  //     shieldemerald: 3,
-  //     ringplatinum: 3,
-  //   },
-  //   hp: 2820,
-  //   armor: 40,
-  //   weapon: 30,
-  // },
-
-  // harpie: {
-  //   drops: {
-  //     rejuvenationpotion: 10,
-  //     scrollupgradelegendary: 3,
-  //     executionersword: 3,
-  //     // executionerarmor: 3,
-  //     beltexecutioner: 3,
-  //     shieldexecutioner: 3,
-  //     ringplatinum: 3,
-  //     amuletplatinum: 3,
-  //     poisonpotion: 10,
-  //   },
-  //   hp: 2320,
-  //   armor: 28,
-  //   weapon: 30,
-  // },
   shaman: {
     drops: {
       rejuvenationpotion: 10,
@@ -450,6 +419,18 @@ var Properties: any = {
     armor: 28,
     weapon: 30,
   },
+  skeletonberserker: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+      poisonpotion: 10,
+    },
+    hp: 200,
+    armor: 28,
+    weapon: 30,
+  },
   skeleton4: {
     drops: {
       rejuvenationpotion: 10,
@@ -473,9 +454,9 @@ var Properties: any = {
       ringplatinum: 3,
       amuletplatinum: 3,
     },
-    hp: 1000,
+    hp: 300,
     armor: 20,
-    weapon: 30,
+    weapon: 10,
   },
   worm: {
     drops: {
@@ -577,7 +558,7 @@ var Properties: any = {
     },
     hp: 1000,
     armor: 40,
-    weapon: 40,
+    weapon: 10,
   },
 };
 

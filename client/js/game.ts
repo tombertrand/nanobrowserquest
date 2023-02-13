@@ -327,7 +327,7 @@ class Game {
       "aura-thunderstorm",
       "aura-highhealth",
       "aura-freeze",
-      "aura-resistance",
+      "aura-lowerresistance",
       "skill-heal",
       "skill-defense",
       "skill-resistances",
@@ -378,10 +378,6 @@ class Game {
       "cow",
       "cowking",
       "minotaur",
-      // "troll",
-      // "golem",
-      // "harpie",
-      // "werewolf2",
       "worm",
       "wraith2",
       "ghost",
@@ -402,6 +398,7 @@ class Game {
       "spider",
       "spider-poison",
       "oculothorax",
+      "skeletonberserker",
       "statue",
       "statue-spell",
       "statue2",
@@ -3358,6 +3355,7 @@ class Game {
                     Types.Entities.DEATHANGEL,
                     Types.Entities.WORM,
                     Types.Entities.OCULOTHORAX,
+                    Types.Entities.SKELETONBERSERKER,
                   ].includes(entity.kind);
 
                   if (entity instanceof Mobs.DeathAngel) {
@@ -5766,7 +5764,9 @@ class Game {
             !this.player.invincible &&
             character.type !== "player"
           ) {
-            this.client.sendHurt(character);
+            setTimeout(() => {
+              this.client.sendHurt(character);
+            }, character.hurtDelay);
           }
         }
       } else {

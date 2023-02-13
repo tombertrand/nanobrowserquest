@@ -1,0 +1,49 @@
+{
+  "id": "golem",
+  "width": 168,
+  "height": 144,
+  "animations": {
+    "atk_right": {
+      "length": 17,
+      "row": 2
+    },
+    "walk_right": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_up": {
+      "length": 17,
+      "row": 2
+    },
+    "walk_up": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_down": {
+      "length": 17,
+      "row": 2
+    },
+    "walk_down": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    },
+    "death": {
+      "length": 13,
+      "row": 4
+    }
+  },
+  "offset_x": -75,
+  "offset_y": -78
+}

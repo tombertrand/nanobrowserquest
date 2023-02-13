@@ -620,8 +620,8 @@ class Renderer {
             } else if (aura === "freeze") {
               sprite = this.game.sprites["aura-freeze"];
               anim = this.game.freezeAnimation;
-            } else if (aura === "resistance") {
-              sprite = this.game.sprites["aura-resistance"];
+            } else if (aura === "lowerresistance") {
+              sprite = this.game.sprites["aura-lowerresistance"];
               anim = this.game.resistanceAnimation;
             }
 

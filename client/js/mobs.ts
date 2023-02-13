@@ -348,42 +348,6 @@ export const Mobs = {
     }
   },
 
-  // Troll: class Troll extends Mob {
-  //   constructor(id) {
-  //     super(id, Types.Entities.TROLL);
-  //     this.moveSpeed = 200;
-  //     this.atkSpeed = 100;
-  //     this.idleSpeed = 800;
-  //     this.walkSpeed = 200;
-  //     this.shadowOffsetY = 1;
-  //     this.aggroRange = 5;
-  //     this.setAttackRate(1300);
-  //   }
-  // },
-
-  // Harpie: class Harpie extends Mob {
-  //   constructor(id) {
-  //     super(id, Types.Entities.HARPIE);
-  //     this.moveSpeed = 200;
-  //     this.atkSpeed = 100;
-  //     this.idleSpeed = 800;
-  //     this.walkSpeed = 200;
-  //     this.shadowOffsetY = 1;
-  //     this.aggroRange = 5;
-  //     this.setAttackRate(1300);
-  //   }
-  // },
-
-  // Werewolf2: class Werewolf2 extends Mob {
-  //   constructor(id) {
-  //     super(id, Types.Entities.WEREWOLF2);
-  //     this.moveSpeed = 200;
-  //     this.atkSpeed = 80;
-  //     this.idleSpeed = 600;
-  //     this.aggroRange = 3;
-  //   }
-  // },
-
   Skeleton4: class Skeleton4 extends Mob {
     constructor(id) {
       super(id, Types.Entities.SKELETON4);
@@ -401,12 +365,13 @@ export const Mobs = {
     constructor(id) {
       super(id, Types.Entities.GOLEM);
       this.moveSpeed = 200;
-      this.atkSpeed = 100;
+      this.atkSpeed = 75;
       this.idleSpeed = 800;
       this.walkSpeed = 200;
       this.shadowOffsetY = 1;
       this.aggroRange = 5;
-      this.setAttackRate(1300);
+      this.hurtDelay = 500;
+      this.setAttackRate(1600);
     }
   },
 
@@ -549,6 +514,19 @@ export const Mobs = {
     }
   },
 
+  SkeletonBerserker: class SkeletonBerserker extends Mob {
+    constructor(id, resistances) {
+      super(id, Types.Entities.SKELETONBERSERKER);
+      this.atkSpeed = 50;
+      this.moveSpeed = 200;
+      this.walkSpeed = 100;
+      this.idleSpeed = 150;
+      this.setAttackRate(1200);
+      this.aggroRange = 3;
+      this.resistances = resistances;
+    }
+  },
+
   DeathAngel: class DeathAngel extends Mob {
     constructor(id, resistances) {
       super(id, Types.Entities.DEATHANGEL);
@@ -561,9 +539,10 @@ export const Mobs = {
       this.attackCooldown = new Timer(this.atkRate);
       this.raiseCooldown = new Timer(this.raiseRate);
       this.aggroRange = 5;
+      this.hurtDelay = 200;
       this.resistances = resistances;
       // @TODO prevent monster heal aura
-      // this.auras = ["drainlife"];
+      // this.auras = ["drainlife", "lowerresistance"];
     }
 
     idle(orientation) {

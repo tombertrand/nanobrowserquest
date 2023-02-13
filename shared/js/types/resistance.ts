@@ -48,6 +48,11 @@ export const mobResistance = {
     lightningResistance: 100,
     coldResistance: 40,
   },
+  skeletonberserker: {
+    lightningResistance: 50,
+    coldResistance: 100,
+    poisonResistance: 50,
+  },
   skeletontemplar: {
     magicResistance: 80,
     flameResistance: 80,
