@@ -427,9 +427,9 @@ var Properties: any = {
       amuletplatinum: 3,
       poisonpotion: 10,
     },
-    hp: 200,
+    hp: 6200,
     armor: 28,
-    weapon: 30,
+    weapon: 1,
   },
   skeleton4: {
     drops: {

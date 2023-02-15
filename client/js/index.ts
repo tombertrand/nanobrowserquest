@@ -9,6 +9,7 @@ import "jquery.qrcode";
 import "jquery-ui-touch-punch";
 import "../css/main.css";
 import "../css/achievements.css";
+import "../css/inspector.css";
 import "../css/store.css";
 import "../css/party.css";
 import "../css/settings.css";

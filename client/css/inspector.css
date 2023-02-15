@@ -1,0 +1,85 @@
+#inspector {
+  font-family: "GraphicPixel";
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  margin-left: 0;
+  padding: 0;
+  /* display: ; */
+  display: none;
+  justify-content: center;
+  text-align: center;
+}
+
+#inspector .name-wrapper {
+  background-color: rgba(0, 0, 0, 0.43);
+  min-width: 200px;
+  height: 26px;
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#inspector .name {
+  color: #e3e3e3;
+  text-transform: capitalize;
+  z-index: 2;
+  position: relative;
+  padding: 0 10px;
+  margin-top: -2px;
+}
+
+#inspector .name.is-boss {
+  color: #d3c59c;
+}
+
+#inspector .level {
+  z-index: 2;
+  position: relative;
+  color: #e3e3e3;
+}
+
+#inspector .health {
+  height: 100%;
+  width: 100%;
+  background: rgba(132, 0, 0, 0.75);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+#inspector .resistances {
+  margin-top: 3px;
+  font-size: 11px;
+  text-shadow: 1px -1px 1px #000, 1px 1px 1px #000, -1px 1px 1px #000;
+}
+
+#inspector .resistances span {
+  padding: 0 3px;
+}
+
+#inspector .resistances .lightningDamage {
+  color: #bfc2db;
+}
+#inspector .resistances .flameDamage {
+  color: orange;
+}
+#inspector .resistances .coldDamage {
+  color: #55a3ff;
+}
+#inspector .resistances .magicDamage {
+  color: #d16afa;
+}
+
+@media screen and (min-width: 1501px) {
+  #inspector {
+    top: 20px;
+  }
+
+  #inspector .resistances {
+    font-size: 13px;
+  }
+}

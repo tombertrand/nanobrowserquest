@@ -491,9 +491,10 @@ class App {
       if (target.id === self.game.player.id) return;
 
       const inspector = $("#inspector");
-      const alias = target.name || Types.getAliasFromName(Types.getKindAsString(target.kind)) || name;
+      const alias = Types.getAliasFromName(Types.getKindAsString(target.kind)) || target.name || name;
 
       inspector.find(".name").text(alias);
+      inspector.find(".name").toggleClass("is-boss", Types.isBoss(target.kind));
       inspector.find(".resistances").empty();
 
       //Show how much Health creature has left. Currently does nost work. The reason health doesn't currently go down has to do with the lines below down to initExpBar...
@@ -504,7 +505,7 @@ class App {
       }
       var level = Types.getMobLevel(Types.getKindFromString(name));
       if (level !== undefined) {
-        inspector.find(".level").text("Level " + level);
+        inspector.find(".level").text("lv. " + level);
       } else {
         inspector.find(".level").text("");
       }
@@ -529,9 +530,9 @@ class App {
 
             const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
 
-            html += `<div class="${display}">${prefix} ${_.capitalize(display)} ${
+            html += `<span class="${display}">${prefix} ${_.capitalize(display)} ${
               percentage !== 100 ? `${percentage}%` : ""
-            }</div>`;
+            }</span>`;
           },
         );
         inspector.find(".resistances").append(html);

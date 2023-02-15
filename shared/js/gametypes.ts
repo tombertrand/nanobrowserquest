@@ -1214,6 +1214,7 @@ Types.isBoss = function (kindOrString: number | string) {
       Types.Entities.SKELETONCOMMANDER,
       Types.Entities.COWKING,
       Types.Entities.MINOTAUR,
+      // @TODO ~~~ Add crypt bosses
       Types.Entities.DEATHANGEL,
     ].includes(kindOrString);
   } else {
@@ -1624,6 +1625,8 @@ Types.getAliasFromName = function (name: string) {
     return "Sacred Tomb";
   } else if (name === "tombcross") {
     return "Skull Tomb";
+  } else if (name === "skeletonberserker") {
+    return "Skeleton Berserker";
   }
 
   return name;

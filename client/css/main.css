@@ -173,47 +173,6 @@ footer, header, hgroup, menu, nav, section {
       width: 100%;
     }
 
-    #inspector {
-      font-family:'GraphicPixel';
-      color:#e3e3e3;
-      background-color:rgba(0, 0, 0, 0.43);
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      width: 200px;
-      margin-left: 0px;
-      padding: 4px;
-      display: none;
-      pointer-events: none;
-      /* border-radius: 0 0 6px 0; */
-    }
-    #inspector .details {
-      margin-bottom: 8px;
-      text-transform: capitalize;
-    }
-     #inspector .name {
-      margin-bottom: 8px;
-      text-transform: capitalize;
-    }
-
-    #inspector .level {
-      margin-bottom: 8px;
-      text-transform: capitalize;
-    }
-
-    #inspector .health {
-      height: 10px;
-      width: 100%;
-      background: red;
-      clear: left;
-      margin-top: 8px;
-    }
-
-    #inspector .resistances {
-        font-size: 11px;
-        text-shadow: 1px -1px 1px #000, 1px 1px 1px #000, -1px 1px 1px #000;
-    }
-
     #dropDialog {
       font-family:'GraphicPixel';
       font-size: 9pt;
@@ -713,20 +672,6 @@ footer, header, hgroup, menu, nav, section {
     #player-coldDamage, #player-coldResistance, .resistances .cold { color: #74b5ff; }
     #player-poisonDamage, #player-poisonResistance, .resistances .poison { color: #35ee35; }
 
-    #inspector .resistances .lightningDamage {
-        color: #bfc2db;
-    }
-    #inspector .resistances .flameDamage {
-        color: orange;
-    }
-    #inspector .resistances .coldDamage {
-        color: #55a3ff;
-    }
-    #inspector .resistances .magicDamage {
-        color: #d16afa;
-    }
-
-
     .item-title {
         font-weight: bold;
         color: #d16afa;
@@ -1048,7 +993,6 @@ footer, header, hgroup, menu, nav, section {
             width: 32px;
         }
         .setting {font-size:20px;}
-        #inspector .resistances { font-size: 13px; }
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .discord, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
