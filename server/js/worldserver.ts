@@ -1555,8 +1555,6 @@ class World {
             mob.isDead = true;
             self.zombies.push(mob);
           } else {
-            mob.handleRandomElement();
-            mob.handleRandomResistances();
             self.addMob(mob);
           }
           self.tryAddingMobToChestArea(mob);

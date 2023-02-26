@@ -350,6 +350,7 @@ class Game {
       "shadow16",
       "rat",
       "rat2",
+      "rat3",
       "skeleton",
       "skeleton2",
       "skeleton3",
@@ -3356,6 +3357,7 @@ class Game {
                     Types.Entities.WORM,
                     Types.Entities.OCULOTHORAX,
                     Types.Entities.SKELETONBERSERKER,
+                    Types.Entities.GOLEM,
                   ].includes(entity.kind);
 
                   if (entity instanceof Mobs.DeathAngel) {

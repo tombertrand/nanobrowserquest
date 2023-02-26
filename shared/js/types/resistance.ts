@@ -5,12 +5,13 @@ export const PLAYER_MAX_ATTACK_SPEED = 50;
 export const DEFAULT_ATTACK_SPEED = 800;
 export const DEFAULT_ATTACK_ANIMATION_SPEED = 50;
 
-export const mobResistance = {
-  rat: {
-    magicResistance: 25,
-    coldResistance: 10,
-    lightningResistance: 50,
+export const mobEnchant = {
+  rat3: {
+    poison: 50,
   },
+};
+
+export const mobResistance = {
   cowking: {
     lightningResistance: 100,
     flameResistance: 20,
@@ -19,6 +20,9 @@ export const mobResistance = {
     magicResistance: 80,
     flameResistance: 100,
     lightningResistance: 100,
+  },
+  rat3: {
+    poisonResistance: 100,
   },
   wraith2: {
     magicResistance: 30,
@@ -31,6 +35,10 @@ export const mobResistance = {
     flameResistance: 20,
     lightningResistance: 30,
     coldResistance: 30,
+  },
+  skeleton4: {
+    lightningResistance: 65,
+    coldResistance: 45,
   },
   mage: {
     magicResistance: 50,

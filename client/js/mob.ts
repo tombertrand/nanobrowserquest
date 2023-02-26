@@ -7,7 +7,7 @@ class Mob extends Character {
   castRange?: number;
   hurtDelay: number;
 
-  constructor(id: number, kind: number) {
+  constructor(id: number, kind: number, props) {
     super(id, kind);
 
     this.aggroRange = 1;
@@ -16,7 +16,12 @@ class Mob extends Character {
     this.isAggressive = true;
     this.type = "mob";
     this.name = Types.getKindAsString(kind);
-    this.resistances = this.resistances || Types.getResistance(this);
+
+    Object.keys(props).forEach(prop => {
+      this[prop] = props[prop];
+    });
+
+    // this.resistances = this.resistances || Types.getResistance(this);
   }
 }
 

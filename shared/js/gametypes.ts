@@ -203,6 +203,7 @@ export const Types: any = {
     COW: 119,
     COWKING: 120,
     MINOTAUR: 131,
+    RAT3: 294,
     GOLEM: 228,
     SKELETON4: 243,
     WORM: 231,
@@ -704,6 +705,7 @@ export const kinds = {
   cow: [Types.Entities.COW, "mob", 25, 49],
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
   minotaur: [Types.Entities.MINOTAUR, "mob", 500, 58],
+  rat3: [Types.Entities.RAT3, "mob", 100, 52],
   skeleton4: [Types.Entities.SKELETON4, "mob", 100, 52],
   golem: [Types.Entities.GOLEM, "mob", 100, 52],
   worm: [Types.Entities.WORM, "mob", 100, 52],
@@ -1587,6 +1589,8 @@ Types.getAliasFromName = function (name: string) {
     return "satoshi nakamoto";
   } else if (name === "rat2") {
     return "undead rat";
+  } else if (name === "rat3") {
+    return "poison rat";
   } else if (name === "bat2") {
     return "vampire bat";
   } else if (name === "goblin2") {

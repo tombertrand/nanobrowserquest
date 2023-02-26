@@ -371,6 +371,17 @@ var Properties: any = {
     armor: 29,
     weapon: 32,
   },
+  rat3: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 2,
+      ringplatinum: 2,
+      poisonpotion: 30,
+    },
+    hp: 800,
+    armor: 15,
+    weapon: 12,
+  },
   shaman: {
     drops: {
       rejuvenationpotion: 10,
@@ -427,7 +438,7 @@ var Properties: any = {
       amuletplatinum: 3,
       poisonpotion: 10,
     },
-    hp: 6200,
+    hp: 2200,
     armor: 28,
     weapon: 1,
   },
@@ -438,10 +449,9 @@ var Properties: any = {
       ringplatinum: 3,
       amuletplatinum: 3,
     },
-    hp: 1,
-    // hp: 2320,
-    armor: 28,
-    weapon: 30,
+    hp: 2020,
+    armor: 24,
+    weapon: 21,
   },
   golem: {
     drops: {

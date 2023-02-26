@@ -139,7 +139,8 @@ import yeti from "../sprites/yeti.json";
 import werewolf from "../sprites/werewolf.json";
 import wraith from "../sprites/wraith.json";
 import rat from "../sprites/rat.json";
-import rat2 from "../sprites/rat2.json";
+import rat2 from "../sprites/rat.json";
+import rat3 from "../sprites/rat.json";
 import shadow16 from "../sprites/shadow16.json";
 import skeleton from "../sprites/skeleton.json";
 import skeleton2 from "../sprites/skeleton.json";
@@ -519,6 +520,7 @@ const sprites = {
   priest,
   rat,
   rat2,
+  rat3,
   redarmor,
   redsword,
   rick,

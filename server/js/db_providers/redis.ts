@@ -1446,6 +1446,8 @@ class DatabaseHandler {
               isWorkingRecipe = true;
               isRecipe = true;
 
+              postMessageToDiscordAnvilChannel(`${player.name} assembled the Quantum Powder ${EmojiMap.powderquantum}`);
+
               generatedItem = "powderquantum:1";
             }
           }

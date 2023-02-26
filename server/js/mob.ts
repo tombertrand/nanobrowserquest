@@ -48,6 +48,9 @@ class Mob extends Character {
     this.name = Types.getKindAsString(kind);
     this.resistances = Types.getResistance(this);
     this.enchant = null;
+
+    this.handleRandomElement();
+    this.handleRandomResistances();
   }
 
   assignRandomResistances(count: number) {
@@ -102,7 +105,7 @@ class Mob extends Character {
 
   // @NOTE Since there is no Mob factory on Server side, have the exceptions stored here
   handleRandomResistances() {
-    if ([Types.Entities.SPIDER].includes(this.kind)) {
+    if ([Types.Entities.SPIDER, Types.Entities.RAT3].includes(this.kind)) {
       this.assignRandomResistances(1);
     } else if (
       [
@@ -114,7 +117,7 @@ class Mob extends Character {
       ].includes(this.kind)
     ) {
       this.assignRandomResistances(2);
-    } else if (this.kind === Types.Entities.DEATHANGEL) {
+    } else if ([Types.Entities.SKELETON4, Types.Entities.DEATHANGEL].includes(this.kind)) {
       this.assignRandomResistances(3);
     }
   }

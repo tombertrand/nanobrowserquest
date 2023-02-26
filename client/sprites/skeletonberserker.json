@@ -1,6 +1,6 @@
 {
   "id": "skeletonberserker",
-  "width": 64,
+  "width": 68,
   "height": 64,
   "animations": {
     "atk_right": {

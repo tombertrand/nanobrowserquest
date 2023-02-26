@@ -10,7 +10,7 @@ import Warrior from "./warrior";
 
 var EntityFactory: any = {};
 
-EntityFactory.createEntity = function ({ kind, id, name, resistances }) {
+EntityFactory.createEntity = function ({ kind, id, ...rest }) {
   if (!kind) {
     console.error("kind is undefined", true);
     return;
@@ -20,175 +20,183 @@ EntityFactory.createEntity = function ({ kind, id, name, resistances }) {
     throw Error(kind + " is not a valid Entity type");
   }
 
-  return EntityFactory.builders[kind](id, name || resistances);
+  return EntityFactory.builders[kind](id, rest);
 };
 
 //===== mobs ======
 
 EntityFactory.builders = [];
 
-EntityFactory.builders[Types.Entities.WARRIOR] = function (id, name) {
-  return new Warrior(id, name);
+EntityFactory.builders[Types.Entities.WARRIOR] = function (id, props) {
+  return new Warrior(id, props);
 };
 
-EntityFactory.builders[Types.Entities.RAT] = function (id) {
-  return new Mobs.Rat(id);
+EntityFactory.builders[Types.Entities.RAT] = function (id, props) {
+  return new Mobs.Rat(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SKELETON] = function (id) {
-  return new Mobs.Skeleton(id);
+EntityFactory.builders[Types.Entities.SKELETON] = function (id, props) {
+  return new Mobs.Skeleton(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SKELETON2] = function (id) {
-  return new Mobs.Skeleton2(id);
+EntityFactory.builders[Types.Entities.SKELETON2] = function (id, props) {
+  return new Mobs.Skeleton2(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SPECTRE] = function (id) {
-  return new Mobs.Spectre(id);
+EntityFactory.builders[Types.Entities.SPECTRE] = function (id, props) {
+  return new Mobs.Spectre(id, props);
 };
 
-EntityFactory.builders[Types.Entities.DEATHKNIGHT] = function (id) {
-  return new Mobs.Deathknight(id);
+EntityFactory.builders[Types.Entities.DEATHKNIGHT] = function (id, props) {
+  return new Mobs.Deathknight(id, props);
 };
 
-EntityFactory.builders[Types.Entities.GOBLIN] = function (id) {
-  return new Mobs.Goblin(id);
+EntityFactory.builders[Types.Entities.GOBLIN] = function (id, props) {
+  return new Mobs.Goblin(id, props);
 };
 
-EntityFactory.builders[Types.Entities.OGRE] = function (id) {
-  return new Mobs.Ogre(id);
+EntityFactory.builders[Types.Entities.OGRE] = function (id, props) {
+  return new Mobs.Ogre(id, props);
 };
 
-EntityFactory.builders[Types.Entities.CRAB] = function (id) {
-  return new Mobs.Crab(id);
+EntityFactory.builders[Types.Entities.CRAB] = function (id, props) {
+  return new Mobs.Crab(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SNAKE] = function (id) {
-  return new Mobs.Snake(id);
+EntityFactory.builders[Types.Entities.SNAKE] = function (id, props) {
+  return new Mobs.Snake(id, props);
 };
 
-EntityFactory.builders[Types.Entities.EYE] = function (id) {
-  return new Mobs.Eye(id);
+EntityFactory.builders[Types.Entities.EYE] = function (id, props) {
+  return new Mobs.Eye(id, props);
 };
 
-EntityFactory.builders[Types.Entities.BAT] = function (id) {
-  return new Mobs.Bat(id);
+EntityFactory.builders[Types.Entities.BAT] = function (id, props) {
+  return new Mobs.Bat(id, props);
 };
 
-EntityFactory.builders[Types.Entities.WIZARD] = function (id) {
-  return new Mobs.Wizard(id);
+EntityFactory.builders[Types.Entities.WIZARD] = function (id, props) {
+  return new Mobs.Wizard(id, props);
 };
 
-EntityFactory.builders[Types.Entities.BOSS] = function (id) {
-  return new Mobs.Boss(id);
+EntityFactory.builders[Types.Entities.BOSS] = function (id, props) {
+  return new Mobs.Boss(id, props);
 };
 
-EntityFactory.builders[Types.Entities.RAT2] = function (id) {
-  return new Mobs.Rat2(id);
+EntityFactory.builders[Types.Entities.RAT2] = function (id, props) {
+  return new Mobs.Rat2(id, props);
 };
 
-EntityFactory.builders[Types.Entities.BAT2] = function (id) {
-  return new Mobs.Bat2(id);
+EntityFactory.builders[Types.Entities.BAT2] = function (id, props) {
+  return new Mobs.Bat2(id, props);
 };
 
-EntityFactory.builders[Types.Entities.GOBLIN2] = function (id) {
-  return new Mobs.Goblin2(id);
+EntityFactory.builders[Types.Entities.GOBLIN2] = function (id, props) {
+  return new Mobs.Goblin2(id, props);
 };
 
-EntityFactory.builders[Types.Entities.YETI] = function (id) {
-  return new Mobs.Yeti(id);
+EntityFactory.builders[Types.Entities.YETI] = function (id, props) {
+  return new Mobs.Yeti(id, props);
 };
 
-EntityFactory.builders[Types.Entities.WEREWOLF] = function (id) {
-  return new Mobs.Werewolf(id);
+EntityFactory.builders[Types.Entities.WEREWOLF] = function (id, props) {
+  return new Mobs.Werewolf(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SKELETON3] = function (id) {
-  return new Mobs.Skeleton3(id);
+EntityFactory.builders[Types.Entities.SKELETON3] = function (id, props) {
+  return new Mobs.Skeleton3(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SKELETONCOMMANDER] = function (id) {
-  return new Mobs.SkeletonCommander(id);
+EntityFactory.builders[Types.Entities.SKELETONCOMMANDER] = function (id, props) {
+  return new Mobs.SkeletonCommander(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SNAKE2] = function (id) {
-  return new Mobs.Snake2(id);
+EntityFactory.builders[Types.Entities.SNAKE2] = function (id, props) {
+  return new Mobs.Snake2(id, props);
 };
 
-EntityFactory.builders[Types.Entities.WRAITH] = function (id) {
-  return new Mobs.Wraith(id);
+EntityFactory.builders[Types.Entities.WRAITH] = function (id, props) {
+  return new Mobs.Wraith(id, props);
 };
 
-EntityFactory.builders[Types.Entities.ZOMBIE] = function (id) {
-  return new Mobs.Zombie(id);
+EntityFactory.builders[Types.Entities.ZOMBIE] = function (id, props) {
+  return new Mobs.Zombie(id, props);
 };
 
-EntityFactory.builders[Types.Entities.NECROMANCER] = function (id) {
-  return new Mobs.Necromancer(id);
+EntityFactory.builders[Types.Entities.NECROMANCER] = function (id, props) {
+  return new Mobs.Necromancer(id, props);
 };
 
-EntityFactory.builders[Types.Entities.COW] = function (id) {
-  return new Mobs.Cow(id);
+EntityFactory.builders[Types.Entities.COW] = function (id, props) {
+  return new Mobs.Cow(id, props);
 };
 
-EntityFactory.builders[Types.Entities.COWKING] = function (id) {
-  return new Mobs.CowKing(id);
+EntityFactory.builders[Types.Entities.COWKING] = function (id, props) {
+  return new Mobs.CowKing(id, props);
 };
 
-EntityFactory.builders[Types.Entities.MINOTAUR] = function (id) {
-  return new Mobs.Minotaur(id);
+EntityFactory.builders[Types.Entities.MINOTAUR] = function (id, props) {
+  return new Mobs.Minotaur(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SNAKE3] = function (id) {
-  return new Mobs.Snake3(id);
+EntityFactory.builders[Types.Entities.RAT3] = function (id, props) {
+  return new Mobs.Rat3(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SNAKE4] = function (id) {
-  return new Mobs.Snake4(id);
+EntityFactory.builders[Types.Entities.SNAKE3] = function (id, props) {
+  return new Mobs.Snake3(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SKELETON4] = function (id) {
-  return new Mobs.Skeleton4(id);
+EntityFactory.builders[Types.Entities.SNAKE4] = function (id, props) {
+  return new Mobs.Snake4(id, props);
 };
 
-EntityFactory.builders[Types.Entities.GOLEM] = function (id) {
-  return new Mobs.Golem(id);
+EntityFactory.builders[Types.Entities.SKELETON4] = function (id, props) {
+  return new Mobs.Skeleton4(id, props);
 };
 
-EntityFactory.builders[Types.Entities.WORM] = function (id) {
-  return new Mobs.Worm(id);
+EntityFactory.builders[Types.Entities.GOLEM] = function (id, props) {
+  return new Mobs.Golem(id, props);
 };
 
-EntityFactory.builders[Types.Entities.WRAITH2] = function (id, resistances) {
-  return new Mobs.Wraith2(id, resistances);
+EntityFactory.builders[Types.Entities.WORM] = function (id, props) {
+  return new Mobs.Worm(id, props);
 };
 
-EntityFactory.builders[Types.Entities.GHOST] = function (id, resistances) {
-  return new Mobs.Ghost(id, resistances);
+EntityFactory.builders[Types.Entities.WRAITH2] = function (id, props) {
+  return new Mobs.Wraith2(id, props);
 };
 
-EntityFactory.builders[Types.Entities.MAGE] = function (id, resistances) {
-  return new Mobs.Mage(id, resistances);
+EntityFactory.builders[Types.Entities.GHOST] = function (id, props) {
+  return new Mobs.Ghost(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SHAMAN] = function (id, resistances) {
-  return new Mobs.Shaman(id, resistances);
+EntityFactory.builders[Types.Entities.MAGE] = function (id, props) {
+  return new Mobs.Mage(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SKELETONTEMPLAR] = function (id, resistances) {
-  return new Mobs.SkeletonTemplar(id, resistances);
+EntityFactory.builders[Types.Entities.SHAMAN] = function (id, props) {
+  return new Mobs.Shaman(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SPIDER] = function (id, resistances) {
-  return new Mobs.Spider(id, resistances);
+EntityFactory.builders[Types.Entities.SKELETONTEMPLAR] = function (id, props) {
+  return new Mobs.SkeletonTemplar(id, props);
 };
 
-EntityFactory.builders[Types.Entities.OCULOTHORAX] = function (id, resistances) {
-  return new Mobs.Oculothorax(id, resistances);
+EntityFactory.builders[Types.Entities.SPIDER] = function (id, props) {
+  return new Mobs.Spider(id, props);
 };
 
-EntityFactory.builders[Types.Entities.SKELETONBERSERKER] = function (id, resistances) {
-  return new Mobs.SkeletonBerserker(id, resistances);
+EntityFactory.builders[Types.Entities.OCULOTHORAX] = function (id, props) {
+  return new Mobs.Oculothorax(id, props);
+};
+
+EntityFactory.builders[Types.Entities.SKELETONBERSERKER] = function (id, props) {
+  return new Mobs.SkeletonBerserker(id, props);
+};
+
+EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id, props) {
+  return new Mobs.DeathAngel(id, props);
 };
 
 EntityFactory.builders[Types.Entities.MAGESPELL] = function (id) {
@@ -209,10 +217,6 @@ EntityFactory.builders[Types.Entities.STATUESPELL] = function (id) {
 
 EntityFactory.builders[Types.Entities.STATUE2SPELL] = function (id) {
   return new Spells.Statue2Spell(id);
-};
-
-EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id, resistances) {
-  return new Mobs.DeathAngel(id, resistances);
 };
 
 EntityFactory.builders[Types.Entities.DEATHANGELSPELL] = function (id) {
