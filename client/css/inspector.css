@@ -6,7 +6,6 @@
   right: 0;
   margin-left: 0;
   padding: 0;
-  /* display: ; */
   display: none;
   justify-content: center;
   text-align: center;
@@ -51,13 +50,22 @@
   z-index: 1;
 }
 
+#inspector .enchants,
 #inspector .resistances {
   margin-top: 3px;
   font-size: 11px;
   text-shadow: 1px -1px 1px #000, 1px 1px 1px #000, -1px 1px 1px #000;
+  color: #fff;
+}
+
+#inspector .enchants span {
+  display: inline-block;
+  text-transform: capitalize;
+  color: #f3e5bb;
 }
 
 #inspector .resistances span {
+  display: inline-block;
   padding: 0 3px;
 }
 
@@ -79,6 +87,7 @@
     top: 20px;
   }
 
+  #inspector .enchants,
   #inspector .resistances {
     font-size: 13px;
   }

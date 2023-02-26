@@ -666,11 +666,13 @@ footer, header, hgroup, menu, nav, section {
         display: none;
     }
 
+    .resistances  span { color: #fff }
     #player-magicDamage, #player-magicResistance, .resistances .magic { color: #d16afa; }
     #player-flameDamage, #player-flameResistance, .resistances .flame { color: #fa6a09; }
     #player-lightningDamage, #player-lightningResistance, .resistances .lightning { color: #aad9fd; }
     #player-coldDamage, #player-coldResistance, .resistances .cold { color: #74b5ff; }
     #player-poisonDamage, #player-poisonResistance, .resistances .poison { color: #35ee35; }
+    #player-spectralDamage, #player-spectralResistance, .resistances .spectral { color: #fff; }
 
     .item-title {
         font-weight: bold;

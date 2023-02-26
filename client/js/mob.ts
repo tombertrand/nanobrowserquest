@@ -20,8 +20,6 @@ class Mob extends Character {
     Object.keys(props).forEach(prop => {
       this[prop] = props[prop];
     });
-
-    // this.resistances = this.resistances || Types.getResistance(this);
   }
 }
 

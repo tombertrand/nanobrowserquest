@@ -28,7 +28,7 @@ class Mob extends Character {
   name: string;
   resistances: Resistances;
   element: Elements;
-  enchant: Elements;
+  enchants: Enchant[];
 
   constructor(id, kind, x, y) {
     super(id, "mob", kind, x, y);
@@ -47,10 +47,11 @@ class Mob extends Character {
     this.destroyTime = null;
     this.name = Types.getKindAsString(kind);
     this.resistances = Types.getResistance(this);
-    this.enchant = null;
+    this.enchants = null;
 
     this.handleRandomElement();
     this.handleRandomResistances();
+    this.handleEnchant();
   }
 
   assignRandomResistances(count: number) {
@@ -84,28 +85,44 @@ class Mob extends Character {
   }
 
   handleEnchant() {
-    switch (this.kind) {
-      case Types.Entities.GOLEM:
-      case Types.Entities.DEATHANGEL:
-        this.enchant = "spectral";
-        break;
-      case Types.Entities.WRAITH2:
-        this.enchant = "flame";
-        break;
-      case Types.Entities.RAT3:
-      case Types.Entities.SPIDER:
-        this.enchant = "poison";
-        break;
-      case Types.Entities.SKELETON4:
-      case Types.Entities.GHOST:
-        this.enchant = "cold";
-        break;
+    if (this.kind === Types.Entities.SKELETONTEMPLAR) {
+      const isLeftTemplar = this.x === 126;
+      const isRightTemplar = this.x === 154;
+      if (isLeftTemplar) {
+        this.enchants = ["cold", "lightning"];
+      } else if (isRightTemplar) {
+        this.enchants = ["flame", "physical"];
+      }
+    } else {
+      this.enchants = Types.mobEnchant[this.name] || null;
+
+      if (this.kind === Types.Entities.DEATHANGEL) {
+        // Add 2 random extra enchants
+        const extraEnchants = _.shuffle([
+          "magic",
+          "flame",
+          "lightning",
+          "cold",
+          "poison",
+          "physical",
+        ] as Enchant[]).slice(0, 2);
+
+        this.enchants = this.enchants.concat(extraEnchants);
+      }
     }
   }
 
   // @NOTE Since there is no Mob factory on Server side, have the exceptions stored here
   handleRandomResistances() {
-    if ([Types.Entities.SPIDER, Types.Entities.RAT3].includes(this.kind)) {
+    if (
+      [
+        Types.Entities.RAT3,
+        Types.Entities.SNAKE3,
+        Types.Entities.SNAKE4,
+        Types.Entities.SPIDER,
+        Types.Entities.SPIDER2,
+      ].includes(this.kind)
+    ) {
       this.assignRandomResistances(1);
     } else if (
       [

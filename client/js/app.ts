@@ -510,11 +510,19 @@ class App {
         inspector.find(".level").text("");
       }
 
-      if (target?.resistances) {
-        let html = "";
+      let htmlEnchants = [];
+      if (target?.enchants) {
+        target?.enchants.map((enchant: Enchant) => {
+          const display = Types.enchantToDisplayMap[enchant];
+          htmlEnchants.push(`<span class="${enchant}">${display}</span>`);
+        });
+      }
+      inspector.find(".enchants").html(htmlEnchants.join("<span>&bull;</span>"));
 
+      let htmlResistances = [];
+      if (target?.resistances) {
         console.log("~~~~target.resistances", target.resistances);
-        console.log("~~~~self.game.player.bonus", self.game.player.bonus);
+        // console.log("~~~~self.game.player.bonus", self.game.player.bonus);
 
         Object.entries(calculateLowerResistances(target.resistances, self.game.player.bonus)).map(
           ([type, percentage]: any) => {
@@ -530,13 +538,16 @@ class App {
 
             const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
 
-            html += `<span class="${display}">${prefix} ${_.capitalize(display)} ${
-              percentage !== 100 ? `${percentage}%` : ""
-            }</span>`;
+            htmlResistances.push(
+              `<span class="${display}">${prefix} ${_.capitalize(display)} ${
+                percentage !== 100 ? `${percentage}%` : ""
+              }</span>`,
+            );
           },
         );
-        inspector.find(".resistances").append(html);
       }
+      inspector.find(".resistances").html(htmlResistances.join("<span>&bull;</span>"));
+
       inspector.fadeIn("fast");
     });
 

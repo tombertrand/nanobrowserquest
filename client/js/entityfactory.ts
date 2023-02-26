@@ -187,6 +187,10 @@ EntityFactory.builders[Types.Entities.SPIDER] = function (id, props) {
   return new Mobs.Spider(id, props);
 };
 
+EntityFactory.builders[Types.Entities.SPIDER2] = function (id, props) {
+  return new Mobs.Spider2(id, props);
+};
+
 EntityFactory.builders[Types.Entities.OCULOTHORAX] = function (id, props) {
   return new Mobs.Oculothorax(id, props);
 };

@@ -26,6 +26,7 @@ import mage from "../sprites/mage.json";
 import shaman from "../sprites/shaman.json";
 import skeletontemplar from "../sprites/skeletontemplar.json";
 import spider from "../sprites/spider.json";
+import spider2 from "../sprites/spider.json";
 import mageSpell from "../sprites/mage-spell.json";
 import oculothorax from "../sprites/oculothorax.json";
 import skeletonberserker from "../sprites/skeletonberserker.json";
@@ -238,7 +239,7 @@ const sprites = {
   shaman,
   skeletontemplar,
   spider,
-  "spider-poison": spider,
+  "spider2": spider,
   oculothorax,
   skeletonberserker,
   statue,

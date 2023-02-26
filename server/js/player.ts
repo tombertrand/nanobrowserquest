@@ -1743,7 +1743,7 @@ class Player extends Character {
       },
       resistances: null,
       element: null,
-      enchant: null,
+      enchants: null,
       bonus: {
         attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
       },

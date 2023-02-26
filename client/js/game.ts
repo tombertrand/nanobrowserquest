@@ -397,7 +397,7 @@ class Game {
       "shaman",
       "skeletontemplar",
       "spider",
-      "spider-poison",
+      "spider2",
       "oculothorax",
       "skeletonberserker",
       "statue",
@@ -855,8 +855,6 @@ class Game {
         self.sprites["mage-lightning"].createSilhouette();
         self.sprites["mage-cold"].createSilhouette();
         self.sprites["mage-poison"].createSilhouette();
-      } else if (kind === Types.Entities.SPIDER) {
-        self.sprites["spider-poison"].createSilhouette();
       }
     });
     self.sprites["chest"].createSilhouette();
@@ -3136,7 +3134,8 @@ class Game {
       });
 
       self.client.onSpawnCharacter(function (data) {
-        const { id, kind, name, x, y, targetId, orientation, resistances, element, isActivated, bonus } = data;
+        const { id, kind, name, x, y, targetId, orientation, resistances, element, enchants, isActivated, bonus } =
+          data;
 
         let entity = self.getEntityById(id);
         if (!entity) {
@@ -3146,6 +3145,9 @@ class Game {
 
               if (element) {
                 entity.element = element;
+              }
+              if (enchants) {
+                entity.enchants = enchants;
               }
               if (bonus?.attackSpeed) {
                 entity.setAttackSpeed(bonus?.attackSpeed);

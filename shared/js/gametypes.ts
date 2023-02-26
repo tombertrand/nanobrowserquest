@@ -9,8 +9,10 @@ import {
   calculateResistance,
   DEFAULT_ATTACK_ANIMATION_SPEED,
   DEFAULT_ATTACK_SPEED,
+  enchantToDisplayMap,
   getRandomElement,
   getResistance,
+  mobEnchant,
   mobResistance,
   PLAYER_MAX_RESISTANCES,
   resistanceToDisplayMap,
@@ -214,6 +216,7 @@ export const Types: any = {
     SHAMAN: 277,
     SKELETONTEMPLAR: 278,
     SPIDER: 279,
+    SPIDER2: 295,
     OCULOTHORAX: 292,
     SKELETONBERSERKER: 293,
     STATUE: 263,
@@ -513,7 +516,9 @@ Types.attackSkillType = attackSkillType;
 Types.getResistance = getResistance;
 Types.getRandomElement = getRandomElement;
 Types.resistanceToDisplayMap = resistanceToDisplayMap;
+Types.enchantToDisplayMap = enchantToDisplayMap;
 Types.mobResistance = mobResistance;
+Types.mobEnchant = mobEnchant;
 Types.PLAYER_MAX_RESISTANCES = PLAYER_MAX_RESISTANCES;
 Types.DEFAULT_ATTACK_SPEED = DEFAULT_ATTACK_SPEED;
 Types.DEFAULT_ATTACK_ANIMATION_SPEED = DEFAULT_ATTACK_ANIMATION_SPEED;
@@ -715,6 +720,7 @@ export const kinds = {
   shaman: [Types.Entities.SHAMAN, "mob", 100, 64],
   skeletontemplar: [Types.Entities.SKELETONTEMPLAR, "mob", 100, 64],
   spider: [Types.Entities.SPIDER, "mob", 100, 64],
+  spider2: [Types.Entities.SPIDER2, "mob", 100, 64],
   oculothorax: [Types.Entities.OCULOTHORAX, "mob", 100, 64],
   skeletonberserker: [Types.Entities.SKELETONBERSERKER, "mob", 100, 64],
   statue: [Types.Entities.STATUE, "npc", 100, 64],

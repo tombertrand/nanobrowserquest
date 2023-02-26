@@ -5,10 +5,22 @@ export const PLAYER_MAX_ATTACK_SPEED = 50;
 export const DEFAULT_ATTACK_SPEED = 800;
 export const DEFAULT_ATTACK_ANIMATION_SPEED = 50;
 
-export const mobEnchant = {
-  rat3: {
-    poison: 50,
-  },
+export const mobEnchant: { [key: string]: Enchant[] } = {
+  cowking: ["lightning"],
+  minotaur: ["cold"],
+  rat3: ["poison"],
+  golem: ["physical"],
+  snake3: ["poison"],
+  snake4: ["flame"],
+  spider: ["poison"],
+  spider2: ["magic"],
+  // oculothorax: [],
+  skeletontemplar: ["flame", "cold"],
+  ghost: ["cold"],
+  skeleton4: ["cold"],
+  wraith2: ["spectral"],
+  skeletonberserker: ["physical"],
+  deathangel: ["spectral"],
 };
 
 export const mobResistance = {
@@ -49,7 +61,15 @@ export const mobResistance = {
   },
   spider: {
     poisonResistance: 100,
+  },
+  spider2: {
     magicResistance: 100,
+  },
+  snake3: {
+    poisonResistance: 100,
+  },
+  snake4: {
+    flameResistance: 100,
   },
   oculothorax: {
     flameResistance: 100,
@@ -100,6 +120,16 @@ export const resistanceToDisplayMap = {
   coldResistance: "cold",
   poisonResistance: "poison",
   spectralResistance: "spectral",
+};
+
+export const enchantToDisplayMap = {
+  magic: "magic enchanted",
+  flame: "flame enchanted",
+  lightning: "lightning enchanted",
+  cold: "cold enchanted",
+  poison: "poison enchanted",
+  spectral: "spectral hit",
+  physical: "extra strong",
 };
 
 const resistanceToLowerResistanceMap = {

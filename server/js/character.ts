@@ -12,7 +12,7 @@ class Character extends Entity {
   poisonedInterval: any;
   resistances?: Resistances;
   element?: Elements;
-  enchant?: Elements;
+  enchants?: Enchant[];
   bonus?: any;
 
   constructor(id, type, kind, x, y) {
@@ -30,7 +30,7 @@ class Character extends Entity {
       targetId: this.targetId,
       resistances: this.resistances || null,
       element: this.element || null,
-      enchant: this.enchant || null,
+      enchants: this.enchants || null,
     });
   }
 
