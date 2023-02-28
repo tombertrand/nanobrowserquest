@@ -406,6 +406,18 @@ var Properties: any = {
     armor: 28,
     weapon: 30,
   },
+  skeletontemplar2: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+      poisonpotion: 10,
+    },
+    hp: 200,
+    armor: 28,
+    weapon: 30,
+  },
   spider: {
     drops: {
       rejuvenationpotion: 10,

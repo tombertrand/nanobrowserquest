@@ -215,6 +215,7 @@ export const Types: any = {
     MAGESPELL: 237,
     SHAMAN: 277,
     SKELETONTEMPLAR: 278,
+    SKELETONTEMPLAR2: 296,
     SPIDER: 279,
     SPIDER2: 295,
     OCULOTHORAX: 292,
@@ -719,6 +720,7 @@ export const kinds = {
   mage: [Types.Entities.MAGE, "mob", 100, 64],
   shaman: [Types.Entities.SHAMAN, "mob", 100, 64],
   skeletontemplar: [Types.Entities.SKELETONTEMPLAR, "mob", 100, 64],
+  skeletontemplar2: [Types.Entities.SKELETONTEMPLAR2, "mob", 100, 64],
   spider: [Types.Entities.SPIDER, "mob", 100, 64],
   spider2: [Types.Entities.SPIDER2, "mob", 100, 64],
   oculothorax: [Types.Entities.OCULOTHORAX, "mob", 100, 64],
@@ -1223,6 +1225,9 @@ Types.isBoss = function (kindOrString: number | string) {
       Types.Entities.COWKING,
       Types.Entities.MINOTAUR,
       // @TODO ~~~ Add crypt bosses
+      Types.Entities.SKELETONTEMPLAR,
+      Types.Entities.SKELETONTEMPLAR2,
+      Types.Entities.SHAMAN,
       Types.Entities.DEATHANGEL,
     ].includes(kindOrString);
   } else {
@@ -1637,6 +1642,16 @@ Types.getAliasFromName = function (name: string) {
     return "Skull Tomb";
   } else if (name === "skeletonberserker") {
     return "Skeleton Berserker";
+  } else if (name === "skeletontemplar") {
+    return "Boneshard";
+  } else if (name === "skeletontemplar2") {
+    return "Bonecrusader";
+  } else if (name === "shaman") {
+    return "Zul'Gurak";
+  } else if (name === "spider") {
+    return "Venomweaver Spider";
+  } else if (name === "spider2") {
+    return "Spellweaver Spider";
   }
 
   return name;

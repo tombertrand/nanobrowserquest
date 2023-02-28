@@ -85,30 +85,15 @@ class Mob extends Character {
   }
 
   handleEnchant() {
-    if (this.kind === Types.Entities.SKELETONTEMPLAR) {
-      const isLeftTemplar = this.x === 126;
-      const isRightTemplar = this.x === 154;
-      if (isLeftTemplar) {
-        this.enchants = ["cold", "lightning"];
-      } else if (isRightTemplar) {
-        this.enchants = ["flame", "physical"];
-      }
-    } else {
-      this.enchants = Types.mobEnchant[this.name] || null;
+    this.enchants = Types.mobEnchant[this.name] || null;
 
-      if (this.kind === Types.Entities.DEATHANGEL) {
-        // Add 2 random extra enchants
-        const extraEnchants = _.shuffle([
-          "magic",
-          "flame",
-          "lightning",
-          "cold",
-          "poison",
-          "physical",
-        ] as Enchant[]).slice(0, 2);
+    if (this.kind === Types.Entities.DEATHANGEL) {
+      const enchants: Enchant[] = ["magic", "flame", "lightning", "cold", "poison", "physical"];
 
-        this.enchants = this.enchants.concat(extraEnchants);
-      }
+      // Add 2 random extra enchants on top of Spectral
+      const extraEnchants = _.shuffle(enchants).slice(0, 2);
+
+      this.enchants = this.enchants.concat(extraEnchants);
     }
   }
 
@@ -121,6 +106,7 @@ class Mob extends Character {
         Types.Entities.SNAKE4,
         Types.Entities.SPIDER,
         Types.Entities.SPIDER2,
+        Types.Entities.SKELETONBERSERKER,
       ].includes(this.kind)
     ) {
       this.assignRandomResistances(1);
@@ -131,6 +117,7 @@ class Mob extends Character {
         Types.Entities.GHOST,
         Types.Entities.WRAITH2,
         Types.Entities.SKELETONTEMPLAR,
+        Types.Entities.SKELETONTEMPLAR2,
       ].includes(this.kind)
     ) {
       this.assignRandomResistances(2);

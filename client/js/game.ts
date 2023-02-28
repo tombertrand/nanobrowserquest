@@ -396,6 +396,7 @@ class Game {
       "mage-spell-poison",
       "shaman",
       "skeletontemplar",
+      "skeletontemplar2",
       "spider",
       "spider2",
       "oculothorax",

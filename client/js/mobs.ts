@@ -489,7 +489,19 @@ export const Mobs = {
       this.walkSpeed = 100;
       this.idleSpeed = 150;
       this.setAttackRate(3000);
-      this.aggroRange = 4;
+      this.aggroRange = 5;
+    }
+  },
+
+  SkeletonTemplar2: class SkeletonTemplar2 extends Mob {
+    constructor(id, props) {
+      super(id, Types.Entities.SKELETONTEMPLAR2, props);
+      this.atkSpeed = 50;
+      this.moveSpeed = 200;
+      this.walkSpeed = 100;
+      this.idleSpeed = 150;
+      this.setAttackRate(3000);
+      this.aggroRange = 5;
     }
   },
 

@@ -183,6 +183,10 @@ EntityFactory.builders[Types.Entities.SKELETONTEMPLAR] = function (id, props) {
   return new Mobs.SkeletonTemplar(id, props);
 };
 
+EntityFactory.builders[Types.Entities.SKELETONTEMPLAR2] = function (id, props) {
+  return new Mobs.SkeletonTemplar2(id, props);
+};
+
 EntityFactory.builders[Types.Entities.SPIDER] = function (id, props) {
   return new Mobs.Spider(id, props);
 };

@@ -103,8 +103,8 @@ class World {
   leverChaliceNpcId: number;
   leverLeftCryptNpcId: number;
   leverRightCryptNpcId: number;
-  leftTemplarId: number;
-  rightTemplarId: number;
+  poisonTemplarId: number;
+  magicTemplarId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -200,8 +200,8 @@ class World {
     this.secretStairsTreeNpcId = null;
     this.secretStairsLeftTemplarNpcId = null;
     this.secretStairsRightTemplarNpcId = null;
-    this.leftTemplarId = null;
-    this.rightTemplarId = null;
+    this.poisonTemplarId = null;
+    this.magicTemplarId = null;
     this.chaliceLevelClock = null;
     this.chaliceLevelInterval = null;
     this.altarChaliceNpcId = null;
@@ -1517,20 +1517,20 @@ class World {
             });
           } else if (kind === Types.Entities.DEATHANGEL) {
             self.deathAngelId = mob.id;
-          } else if (kind === Types.Entities.SKELETONTEMPLAR) {
-            const isLeftTemplar = mob.x === 126;
-            const isRightTemplar = mob.x === 154;
+          } else if (kind === Types.Entities.SKELETONTEMPLAR || kind === Types.Entities.SKELETONTEMPLAR2) {
+            const isPoisonTemplar = kind === Types.Entities.SKELETONTEMPLAR;
+            const isMagicTemplar = kind === Types.Entities.SKELETONTEMPLAR2;
 
-            if (isLeftTemplar) {
-              self.leftTemplarId = mob.id;
-            } else if (isRightTemplar) {
-              self.rightTemplarId = mob.id;
+            if (isPoisonTemplar) {
+              self.poisonTemplarId = mob.id;
+            } else if (isMagicTemplar) {
+              self.magicTemplarId = mob.id;
             }
 
             mob.onDestroy(() => {
-              const lever = self.npcs[isLeftTemplar ? self.leverLeftCryptNpcId : self.leverRightCryptNpcId];
+              const lever = self.npcs[isPoisonTemplar ? self.leverLeftCryptNpcId : self.leverRightCryptNpcId];
               const secretStairs =
-                self.npcs[isLeftTemplar ? self.secretStairsLeftTemplarNpcId : self.secretStairsRightTemplarNpcId];
+                self.npcs[isPoisonTemplar ? self.secretStairsLeftTemplarNpcId : self.secretStairsRightTemplarNpcId];
 
               self.despawn(secretStairs);
               lever.deactivate();
