@@ -1547,6 +1547,7 @@ class World {
             }
 
             mob.handleRandomElement();
+            mob.handleEnchant();
             mob.handleRandomResistances();
           });
           mob.onMove(self.onMobMoveCallback.bind(self));

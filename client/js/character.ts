@@ -15,6 +15,10 @@ class Character extends Entity {
   moveSpeed: number;
   walkSpeed: number;
   idleSpeed: number;
+  originalAtkSpeed: number;
+  originalMoveSpeed: number;
+  originalWalkSpeed: number;
+  originalIdleSpeed: number;
   movement: Transition;
   path: any;
   newDestination: any;
@@ -73,6 +77,8 @@ class Character extends Entity {
   raiseRate: number;
   isFrozen: boolean;
   frozenTimeout: NodeJS.Timeout;
+  isSlowed: boolean;
+  slowedTimeout: NodeJS.Timeout;
   isPoisoned: boolean;
   poisonedTimeout: NodeJS.Timeout;
   resistances: { [key: string]: { display: string; percentage: number } };
@@ -721,7 +727,12 @@ class Character extends Entity {
    *
    */
   canAttack(time) {
-    if (!this.isRaising() && this.canReachTarget() && this.attackCooldown.isOver(time) && !this.isFrozen) {
+    if (
+      !this.isRaising() &&
+      this.canReachTarget() &&
+      this.attackCooldown.isOver(time, this.isSlowed) &&
+      !this.isFrozen
+    ) {
       return true;
     }
     return false;
@@ -802,6 +813,40 @@ class Character extends Entity {
       this.isFrozen = false;
       this.frozenTimeout = null;
       this.currentAnimation.play();
+    }, duration);
+  }
+
+  setSlowed(duration: number) {
+    this.isSlowed = true;
+
+    // if it's defined it means the character is already slowed
+    if (!this.originalAtkSpeed) {
+      this.originalAtkSpeed = this.atkSpeed;
+      this.originalMoveSpeed = this.moveSpeed;
+      this.originalWalkSpeed = this.walkSpeed;
+      this.originalIdleSpeed = this.idleSpeed;
+
+      this.atkSpeed = this.atkSpeed * 3;
+      this.moveSpeed = this.moveSpeed * 3;
+      this.walkSpeed = this.walkSpeed * 3;
+      this.idleSpeed = this.idleSpeed * 3;
+    }
+
+    clearTimeout(this.slowedTimeout);
+
+    this.slowedTimeout = setTimeout(() => {
+      this.isSlowed = false;
+      this.slowedTimeout = null;
+
+      this.atkSpeed = this.originalAtkSpeed;
+      this.moveSpeed = this.originalMoveSpeed;
+      this.walkSpeed = this.originalWalkSpeed;
+      this.idleSpeed = this.originalIdleSpeed;
+
+      this.originalAtkSpeed = null;
+      this.originalMoveSpeed = null;
+      this.originalWalkSpeed = null;
+      this.originalIdleSpeed = null;
     }, duration);
   }
 

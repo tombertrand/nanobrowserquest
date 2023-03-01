@@ -479,10 +479,11 @@ class Player extends Character {
 
         if (!mob) return;
         if (!self.server.isPlayerNearEntity(self, mob, 20)) return;
-        if (self.attackTimeout) {
-          Sentry.captureException(new Error("Player still on attack cooldown"), { extra: { player: self.name } });
-          return;
-        }
+        // @TODO Think of a better strategy
+        // if (self.attackTimeout) {
+        //   Sentry.captureException(new Error("Player still on attack cooldown"), { extra: { player: self.name } });
+        //   return;
+        // }
 
         // Allow for 10% latency
         const attackSpeed = Types.calculateAttackSpeed(self.bonus.attackSpeed + 10);
@@ -515,6 +516,8 @@ class Player extends Character {
             partyAttackDamage: self.partyBonus.attackDamage,
             ...resistances,
           });
+
+          // @TODO ~~~~ CALCULATE STONE SKIN
 
           if (self.bonus.criticalHit) {
             isCritical = random(100) < self.bonus.criticalHit;
@@ -588,7 +591,6 @@ class Player extends Character {
         if (mob && self.hitPoints > 0) {
           let dmg = Formulas.dmgFromMob({
             weaponLevel: mob.weaponLevel,
-            // @TODO ~~~ New mobs will deal element damage
           });
 
           // @NOTE Curse trigger
@@ -1750,7 +1752,7 @@ class Player extends Character {
     });
   }
 
-  handleHurtDmg(mob, dmg: number) {
+  handleHurtDmg(mob, rawDmg: number) {
     let isBlocked = false;
     let lightningDamage = 0;
 
@@ -1773,11 +1775,23 @@ class Player extends Character {
       skillDefense: this.skill.defense,
     });
 
-    dmg = defense > dmg ? 0 : dmg - defense;
+    let dmg = defense > rawDmg ? 0 : rawDmg - defense;
 
     // Minimum Hurt dmg (can't be 0)
     if (!dmg) {
       dmg = randomInt(3, 5);
+    }
+
+    // @TODO ~~~~ CALCULATE EXTRA STRONG
+
+    if (mob.type === "mob" && mob.enchants?.length) {
+      mob.enchants.forEach(enchant => {
+        if (!Types.elements.includes(enchant)) return;
+
+        // 15% of base dmg are elemental dmgs
+        const enchantDmg = this.calculateElementDamage({ element: enchant, dmg: Math.floor(rawDmg * 0.15) });
+        dmg += enchantDmg;
+      });
     }
 
     if (this.bonus.blockChance) {
@@ -1826,21 +1840,27 @@ class Player extends Character {
     return { dmg, isBlocked };
   }
 
-  handleHurtSpellDmg(spell) {
+  calculateElementDamage(spell) {
     const resistance = Types.calculateResistance(this.bonus[`${spell.element}Resistance`] + this.skill.resistances);
 
     const dmg = Math.round(spell.dmg - spell.dmg * (resistance / 100));
 
     if (spell.element === "cold") {
-      const isFrozen = random(100) < 20;
-      if (isFrozen) {
+      const isSlowed = random(100) < resistance;
+      if (isSlowed) {
         if (random(100) > this.bonus.reduceFrozenChance) {
-          this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
+          this.broadcast(new Messages.Slowed(this.id, Types.getFrozenTimePerLevel(10)));
         }
       }
     } else if (spell.element === "poison") {
       this.startPoisoned({ dmg: spell.dmg, entity: this, resistance: this.bonus.poisonResistance });
     }
+
+    return dmg;
+  }
+
+  handleHurtSpellDmg(spell) {
+    const dmg = this.calculateElementDamage(spell);
 
     this.hitPoints -= dmg;
     this.server.handleHurtEntity({ entity: this, attacker: spell });
@@ -1849,6 +1869,7 @@ class Player extends Character {
   }
 
   handleHurtTrapDmg(trap) {
+    // @TODO check based on defense?
     const dmg = 200;
 
     this.hitPoints -= dmg;

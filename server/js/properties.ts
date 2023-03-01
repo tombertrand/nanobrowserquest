@@ -558,7 +558,7 @@ var Properties: any = {
     },
     hp: 2320,
     armor: 28,
-    weapon: 30,
+    weapon: 5,
   },
   mage: {
     drops: {

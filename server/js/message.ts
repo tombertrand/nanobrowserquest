@@ -141,6 +141,13 @@ Messages.Frozen = class Message {
   }
 };
 
+Messages.Slowed = class Message {
+  constructor(private entityId, private duration) {}
+  serialize() {
+    return [Types.Messages.SLOWED, this.entityId, this.duration];
+  }
+};
+
 Messages.Poisoned = class Message {
   constructor(private entityId, private duration) {}
   serialize() {

@@ -73,7 +73,6 @@ class Player extends Character {
   amuletName: null;
   amuletLevel: number | null;
   amuletBonus: null | number[];
-  auras: Auras[];
   bonus: any;
   setBonus: any;
   isLootMoving: boolean;

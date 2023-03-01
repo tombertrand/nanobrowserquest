@@ -495,6 +495,7 @@ class App {
 
       inspector.find(".name").text(alias);
       inspector.find(".name").toggleClass("is-boss", Types.isBoss(target.kind));
+      inspector.find(".health").toggleClass("is-mini-boss", Types.isMiniBoss(target));
       inspector.find(".resistances").empty();
 
       //Show how much Health creature has left. Currently does nost work. The reason health doesn't currently go down has to do with the lines below down to initExpBar...
@@ -521,9 +522,6 @@ class App {
 
       let htmlResistances = [];
       if (target?.resistances) {
-        console.log("~~~~target.resistances", target.resistances);
-        // console.log("~~~~self.game.player.bonus", self.game.player.bonus);
-
         Object.entries(calculateLowerResistances(target.resistances, self.game.player.bonus)).map(
           ([type, percentage]: any) => {
             if (!percentage) return;

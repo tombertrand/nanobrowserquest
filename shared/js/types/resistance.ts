@@ -9,19 +9,20 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
   cowking: ["lightning"],
   minotaur: ["cold"],
   rat3: ["poison"],
-  golem: ["physical"],
+  golem: ["physical", "stoneskin"],
   snake3: ["poison"],
   snake4: ["flame"],
   spider: ["poison"],
   spider2: ["magic"],
   worm: ["physical"],
-  oculothorax: ["magic", "flame"],
+  oculothorax: [],
   skeletontemplar: ["poison", "cold"],
   skeletontemplar2: ["magic", "flame"],
-  ghost: ["cold"],
-  skeleton4: ["cold"],
+  ghost: [],
+  skeleton4: [],
   wraith2: ["spectral"],
   skeletonberserker: ["physical"],
+  shaman: [],
   deathangel: ["spectral"],
 };
 
@@ -74,6 +75,7 @@ export const mobResistance = {
     flameResistance: 100,
   },
   oculothorax: {
+    magicResistance: 40,
     flameResistance: 100,
     lightningResistance: 100,
     coldResistance: 40,
@@ -141,6 +143,7 @@ export const enchantToDisplayMap = {
   poison: "poison enchanted",
   spectral: "spectral hit",
   physical: "extra strong",
+  stoneskin: "stone skin",
 };
 
 const resistanceToLowerResistanceMap = {
@@ -152,8 +155,9 @@ const resistanceToLowerResistanceMap = {
   spectralResistance: "lowerSpectralResistance",
 };
 
-export const getRandomElement = (): Elements =>
-  _.shuffle(["magic", "flame", "lightning", "cold", "poison", "spectral"] as Elements[])[0];
+export const elements: Elements[] = ["magic", "flame", "lightning", "cold", "poison", "spectral"];
+
+export const getRandomElement = (): Elements => _.shuffle(elements)[0];
 
 export const calculateResistance = (resistance: number) =>
   resistance > PLAYER_MAX_RESISTANCES ? PLAYER_MAX_RESISTANCES : resistance;

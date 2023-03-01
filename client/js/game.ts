@@ -3149,6 +3149,17 @@ class Game {
               }
               if (enchants) {
                 entity.enchants = enchants;
+
+                if (enchants.includes("lightning")) {
+                  if (!entity.auras.includes("thunderstorm")) {
+                    entity.auras.push("thunderstorm");
+                  }
+                }
+                if (enchants.includes("cold")) {
+                  if (!entity.auras.includes("freeze")) {
+                    entity.auras.push("freeze");
+                  }
+                }
               }
               if (bonus?.attackSpeed) {
                 entity.setAttackSpeed(bonus?.attackSpeed);
@@ -4671,6 +4682,10 @@ class Game {
 
       self.client.onFrozen(function (entityId, duration) {
         self.getEntityById(entityId)?.setFrozen(duration);
+      });
+
+      self.client.onSlowed(function (entityId, duration) {
+        self.getEntityById(entityId)?.setSlowed(duration);
       });
 
       self.client.onPoisoned(function (entityId, duration) {

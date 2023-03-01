@@ -76,6 +76,8 @@ class Mob extends Character {
 
       return acc;
     }, {});
+
+    this.resistances = _.fromPairs(_.sortBy(_.toPairs(this.resistances), 1).reverse());
   }
 
   handleRandomElement() {
@@ -85,15 +87,53 @@ class Mob extends Character {
   }
 
   handleEnchant() {
-    this.enchants = Types.mobEnchant[this.name] || null;
+    this.enchants = [...(Types.mobEnchant[this.name] || [])];
+
+    const enchants: Enchant[] = ["magic", "flame", "lightning", "cold", "poison", "spectral", "physical", "stoneskin"];
 
     if (this.kind === Types.Entities.DEATHANGEL) {
-      const enchants: Enchant[] = ["magic", "flame", "lightning", "cold", "poison", "physical"];
-
       // Add 2 random extra enchants on top of Spectral
-      const extraEnchants = _.shuffle(enchants).slice(0, 2);
-
+      const extraEnchants = _.shuffle(enchants.filter(enchant => !this.enchants.includes(enchant))).slice(0, 2);
       this.enchants = this.enchants.concat(extraEnchants);
+    }
+
+    if (this.kind > Types.Entities.ZOMBIE && !this.enchants.length) {
+      if (Types.isBoss(this.kind)) {
+        this.enchants = _.shuffle(enchants).slice(0, this.kind === Types.Entities.NECROMANCER ? 1 : 2);
+      } else {
+        this.enchants = _.shuffle(enchants).slice(0, 1);
+      }
+    }
+
+    if (!Types.isBoss(this.kind)) {
+      const isMiniBoss = random(this.kind === Types.Entities.COW ? 40 : 15) === 1;
+      if (!isMiniBoss) return;
+
+      let enchantCount = 0;
+      if (this.kind <= Types.Entities.DEATHKNIGHT) {
+        enchantCount = 1;
+      } else if (this.kind <= Types.Entities.COW) {
+        enchantCount = 2;
+      } else if (this.kind >= Types.Entities.RAT3) {
+        enchantCount = 3;
+      }
+
+      enchantCount = enchantCount - this.enchants.length;
+      this.enchants = this.enchants.concat(
+        _.shuffle(enchants.filter(enchant => !this.enchants.includes(enchant))).slice(0, enchantCount),
+      );
+    }
+
+    // 50% of bosses inherits stone skin
+    if (Types.isBoss(this.kind) && !this.enchants.includes("stoneskin")) {
+      const hasStoneSkin = random(2);
+      if (hasStoneSkin) {
+        if (this.enchants.length >= 3) {
+          this.enchants[this.enchants.length - 1] = "stoneskin";
+        } else {
+          this.enchants.push("stoneskin");
+        }
+      }
     }
   }
 
@@ -112,12 +152,13 @@ class Mob extends Character {
       this.assignRandomResistances(1);
     } else if (
       [
-        Types.Entities.MAGE,
-        Types.Entities.SHAMAN,
         Types.Entities.GHOST,
-        Types.Entities.WRAITH2,
+        Types.Entities.OCULOTHORAX,
         Types.Entities.SKELETONTEMPLAR,
         Types.Entities.SKELETONTEMPLAR2,
+        Types.Entities.MAGE,
+        Types.Entities.SHAMAN,
+        Types.Entities.WRAITH2,
       ].includes(this.kind)
     ) {
       this.assignRandomResistances(2);

@@ -9,6 +9,7 @@ import {
   calculateResistance,
   DEFAULT_ATTACK_ANIMATION_SPEED,
   DEFAULT_ATTACK_SPEED,
+  elements,
   enchantToDisplayMap,
   getRandomElement,
   getResistance,
@@ -157,6 +158,7 @@ export const Types: any = {
     MINOTAURLEVEL_INPROGRESS: 88,
     MINOTAURLEVEL_END: 89,
     FROZEN: 90,
+    SLOWED: 106,
     POISONED: 91,
     CURSED: 92,
     MAGICSTONE: 93,
@@ -197,34 +199,34 @@ export const Types: any = {
     SKELETON3: 102,
     SKELETONCOMMANDER: 103,
     SNAKE2: 104,
-    SNAKE3: 247,
-    SNAKE4: 248,
     WRAITH: 105,
     ZOMBIE: 106,
     NECROMANCER: 108,
     COW: 119,
     COWKING: 120,
     MINOTAUR: 131,
-    RAT3: 294,
-    GOLEM: 228,
+    RAT3: 217,
+    GOLEM: 232,
     SKELETON4: 243,
     WORM: 231,
-    WRAITH2: 232,
+    OCULOTHORAX: 292,
+    SNAKE3: 247,
+    SNAKE4: 248,
     GHOST: 235,
-    MAGE: 236,
-    MAGESPELL: 237,
-    SHAMAN: 277,
-    SKELETONTEMPLAR: 278,
-    SKELETONTEMPLAR2: 296,
     SPIDER: 279,
     SPIDER2: 295,
-    OCULOTHORAX: 292,
+    SKELETONTEMPLAR: 278,
+    SKELETONTEMPLAR2: 228,
+    WRAITH2: 277,
     SKELETONBERSERKER: 293,
+    MAGE: 236,
+    MAGESPELL: 237,
+    SHAMAN: 294,
     STATUE: 263,
     STATUE2: 280,
     STATUESPELL: 264,
     STATUE2SPELL: 281,
-    DEATHANGEL: 217,
+    DEATHANGEL: 296,
     DEATHANGELSPELL: 218,
 
     // Armors
@@ -519,6 +521,7 @@ Types.getRandomElement = getRandomElement;
 Types.resistanceToDisplayMap = resistanceToDisplayMap;
 Types.enchantToDisplayMap = enchantToDisplayMap;
 Types.mobResistance = mobResistance;
+Types.elements = elements;
 Types.mobEnchant = mobEnchant;
 Types.PLAYER_MAX_RESISTANCES = PLAYER_MAX_RESISTANCES;
 Types.DEFAULT_ATTACK_SPEED = DEFAULT_ATTACK_SPEED;
@@ -1224,7 +1227,6 @@ Types.isBoss = function (kindOrString: number | string) {
       Types.Entities.SKELETONCOMMANDER,
       Types.Entities.COWKING,
       Types.Entities.MINOTAUR,
-      // @TODO ~~~ Add crypt bosses
       Types.Entities.SKELETONTEMPLAR,
       Types.Entities.SKELETONTEMPLAR2,
       Types.Entities.SHAMAN,
@@ -1233,6 +1235,15 @@ Types.isBoss = function (kindOrString: number | string) {
   } else {
     return ["boss", "skeletoncommander", "necromancer", "cowking", "minotaur", "deathangel"].includes(kindOrString);
   }
+};
+
+Types.isMiniBoss = function ({ kind, enchants = [] }: { kind: number; enchants: Enchant[] }) {
+  return (
+    !Types.isBoss(kind) &&
+    ((kind <= Types.Entities.DEATHKNIGHT && enchants.length === 1) ||
+      (kind <= Types.Entities.COW && enchants.length === 2) ||
+      (kind >= Types.Entities.RAT3 && enchants.length === 3))
+  );
 };
 
 Types.isScroll = function (kindOrString: number | string) {

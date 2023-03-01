@@ -89,6 +89,7 @@ class GameClient {
   receivechalicelevelinprogress_callback: any;
   receivechalicelevelend_callback: any;
   receivefrozen_callback: any;
+  receiveslowed_callback: any;
   receivepoisoned_callback: any;
   receivecursed_callback: any;
   settings_callback: any;
@@ -157,6 +158,7 @@ class GameClient {
     this.handlers[Types.Messages.CHALICELEVEL_INPROGRESS] = this.receiveChaliceLevelInProgress;
     this.handlers[Types.Messages.CHALICELEVEL_END] = this.receiveChaliceLevelEnd;
     this.handlers[Types.Messages.FROZEN] = this.receiveFrozen;
+    this.handlers[Types.Messages.SLOWED] = this.receiveSlowed;
     this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
     this.handlers[Types.Messages.CURSED] = this.receiveCursed;
     this.enable();
@@ -848,18 +850,21 @@ class GameClient {
     const entityId = data[1];
     const duration = data[2];
 
-    if (this.receivefrozen_callback) {
-      this.receivefrozen_callback(entityId, duration);
-    }
+    this.receivefrozen_callback?.(entityId, duration);
+  }
+
+  receiveSlowed(data) {
+    const entityId = data[1];
+    const duration = data[2];
+
+    this.receiveslowed_callback?.(entityId, duration);
   }
 
   receivePoisoned(data) {
     const entityId = data[1];
     const duration = data[2];
 
-    if (this.receivepoisoned_callback) {
-      this.receivepoisoned_callback(entityId, duration);
-    }
+    this.receivepoisoned_callback?.(entityId, duration);
   }
 
   receiveCursed(data) {
@@ -867,9 +872,7 @@ class GameClient {
     const curseId = data[2];
     const duration = data[3];
 
-    if (this.receivecursed_callback) {
-      this.receivecursed_callback(entityId, curseId, duration);
-    }
+    this.receivecursed_callback?.(entityId, curseId, duration);
   }
 
   onDispatched(callback) {
@@ -1166,6 +1169,10 @@ class GameClient {
 
   onFrozen(callback) {
     this.receivefrozen_callback = callback;
+  }
+
+  onSlowed(callback) {
+    this.receiveslowed_callback = callback;
   }
 
   onPoisoned(callback) {
