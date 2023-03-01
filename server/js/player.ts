@@ -517,7 +517,10 @@ class Player extends Character {
             ...resistances,
           });
 
-          // @TODO ~~~~ CALCULATE STONE SKIN
+          if (mob.type === "mob" && mob.enchants.includes("stoneskin")) {
+            dmg = Math.round(attackDamage * 0.8) + dmg - attackDamage;
+            attackDamage = Math.round(attackDamage * 0.8);
+          }
 
           if (self.bonus.criticalHit) {
             isCritical = random(100) < self.bonus.criticalHit;
@@ -1775,14 +1778,18 @@ class Player extends Character {
       skillDefense: this.skill.defense,
     });
 
+    if (mob.type === "mob" && mob.enchants?.length) {
+      if (mob.enchants.includes("physical")) {
+        rawDmg = Math.round(rawDmg * 1.2);
+      }
+    }
+
     let dmg = defense > rawDmg ? 0 : rawDmg - defense;
 
     // Minimum Hurt dmg (can't be 0)
     if (!dmg) {
       dmg = randomInt(3, 5);
     }
-
-    // @TODO ~~~~ CALCULATE EXTRA STRONG
 
     if (mob.type === "mob" && mob.enchants?.length) {
       mob.enchants.forEach(enchant => {

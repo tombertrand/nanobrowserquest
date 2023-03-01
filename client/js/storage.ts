@@ -341,7 +341,7 @@ class Storage {
     }
   }
 
-  // Cruisader
+  // Crusader
   getSkeleton4Count() {
     return this.data.achievements.skeleton4Count;
   }

@@ -380,7 +380,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   TEMPLAR: {
     id: 50,
     name: "Templar",
-    desc: `Kill ${SKELETON4_COUNT} Cruisader Skeletons`,
+    desc: `Kill ${SKELETON4_COUNT} Crusader Skeletons`,
     isCompleted() {
       return storage.getSkeleton4Count() >= SKELETON4_COUNT;
     },

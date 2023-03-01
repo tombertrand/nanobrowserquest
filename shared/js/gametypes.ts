@@ -1598,7 +1598,7 @@ Types.getAliasFromName = function (name: string) {
   } else if (name === "skeleton3") {
     return "skeleton guard";
   } else if (name === "skeleton4") {
-    return "skeleton cruisader";
+    return "skeleton crusader";
   } else if (name === "golem") {
     return "stone golem";
   } else if (name === "skeletoncommander") {

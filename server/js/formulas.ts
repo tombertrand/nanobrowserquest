@@ -4,7 +4,9 @@ import { randomInt } from "./utils";
 const Formulas: any = {};
 
 Formulas.resistanceDamage = (damage: number, resistance: number = 0) =>
-  resistance > 0 ? Math.round(damage * (Math.abs(damage - 100) / 100)) : damage;
+  // @NOTE no concept of negative resistance yet
+  resistance > 0 ? damage - Math.round((damage * resistance) / 100) : damage;
+// resistance > 0 ? Math.round(damage * (Math.abs(damage - 100) / 100)) : damage;
 
 Formulas.minMaxDamage = function ({
   weapon,

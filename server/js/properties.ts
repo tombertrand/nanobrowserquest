@@ -452,7 +452,7 @@ var Properties: any = {
     },
     hp: 200,
     armor: 28,
-    weapon: 30,
+    weapon: 22,
   },
   skeletonberserker: {
     drops: {
