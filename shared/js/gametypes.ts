@@ -215,6 +215,7 @@ export const Types: any = {
     GHOST: 235,
     SPIDER: 279,
     SPIDER2: 295,
+    SPIDERQUEEN: 297,
     SKELETONTEMPLAR: 278,
     SKELETONTEMPLAR2: 228,
     WRAITH2: 277,
@@ -726,6 +727,7 @@ export const kinds = {
   skeletontemplar2: [Types.Entities.SKELETONTEMPLAR2, "mob", 100, 64],
   spider: [Types.Entities.SPIDER, "mob", 100, 64],
   spider2: [Types.Entities.SPIDER2, "mob", 100, 64],
+  spiderqueen: [Types.Entities.SPIDERQUEEN, "mob", 100, 64],
   oculothorax: [Types.Entities.OCULOTHORAX, "mob", 100, 64],
   skeletonberserker: [Types.Entities.SKELETONBERSERKER, "mob", 100, 64],
   statue: [Types.Entities.STATUE, "npc", 100, 64],
@@ -1229,6 +1231,7 @@ Types.isBoss = function (kindOrString: number | string) {
       Types.Entities.MINOTAUR,
       Types.Entities.SKELETONTEMPLAR,
       Types.Entities.SKELETONTEMPLAR2,
+      Types.Entities.SPIDERQUEEN,
       Types.Entities.SHAMAN,
       Types.Entities.DEATHANGEL,
     ].includes(kindOrString);
@@ -1663,6 +1666,8 @@ Types.getAliasFromName = function (name: string) {
     return "Venomweaver Spider";
   } else if (name === "spider2") {
     return "Spellweaver Spider";
+  } else if (name === "spiderqueen") {
+    return "Vexxara";
   }
 
   return name;

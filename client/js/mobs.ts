@@ -529,6 +529,18 @@ export const Mobs = {
     }
   },
 
+  SpiderQueen: class SpiderQueen extends Mob {
+    constructor(id, props) {
+      super(id, Types.Entities.SPIDERQUEEN, props);
+      this.atkSpeed = 75;
+      this.moveSpeed = 200;
+      this.walkSpeed = 100;
+      this.idleSpeed = 150;
+      this.setAttackRate(1500);
+      this.aggroRange = 3;
+    }
+  },
+
   Oculothorax: class Oculothorax extends Mob {
     constructor(id, props) {
       super(id, Types.Entities.OCULOTHORAX, props);

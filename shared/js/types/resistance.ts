@@ -14,6 +14,7 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
   snake4: ["flame"],
   spider: ["poison"],
   spider2: ["magic"],
+  spiderqueen: ["poison"],
   worm: ["physical"],
   oculothorax: [],
   skeletontemplar: ["poison", "cold"],
@@ -67,6 +68,13 @@ export const mobResistance = {
   },
   spider2: {
     magicResistance: 100,
+  },
+  spiderqueen: {
+    magicResistance: 50,
+    flameResistance: 60,
+    lightningResistance: 70,
+    coldResistance: 25,
+    poisonResistance: 100,
   },
   snake3: {
     poisonResistance: 100,

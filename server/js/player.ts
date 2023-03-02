@@ -1893,6 +1893,7 @@ class Player extends Character {
     this.broadcast(new Messages.Poisoned(entity.id, iterations * tick));
     clearInterval(entity.poisonedInterval);
 
+    // @TODO ~~~ make sure the poison interval is cleared on disconnect
     entity.poisonedInterval = setInterval(() => {
       let poisonDmg = Math.round(
         (dmg -

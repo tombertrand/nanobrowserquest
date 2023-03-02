@@ -50,6 +50,10 @@
     "raise_down": {
       "length": 6,
       "row": 2
+    },
+    "death": {
+      "length": 13,
+      "row": 7
     }
   },
   "offset_x": -104,

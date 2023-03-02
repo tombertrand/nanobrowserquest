@@ -399,6 +399,7 @@ class Game {
       "skeletontemplar2",
       "spider",
       "spider2",
+      "spiderqueen",
       "oculothorax",
       "skeletonberserker",
       "statue",
@@ -3366,15 +3367,19 @@ class Game {
                   // Custom death animations
                   const hasCustomDeathAnimation = [
                     Types.Entities.RAT,
+                    Types.Entities.RAT2,
+                    Types.Entities.RAT3,
+                    Types.Entities.GOLEM,
                     Types.Entities.GHOST,
-                    Types.Entities.DEATHANGEL,
                     Types.Entities.WORM,
                     Types.Entities.OCULOTHORAX,
                     Types.Entities.SKELETONBERSERKER,
-                    Types.Entities.GOLEM,
+                    Types.Entities.SPIDERQUEEN,
+                    Types.Entities.SHAMAN,
+                    Types.Entities.DEATHANGEL,
                   ].includes(entity.kind);
 
-                  if (entity instanceof Mobs.DeathAngel) {
+                  if ([Types.Entities.SPIDERQUEEN, Types.Entities.DEATHANGEL].includes(entity.kind)) {
                     speed = 250;
                   }
                   if (!hasCustomDeathAnimation) {

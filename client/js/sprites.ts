@@ -28,6 +28,7 @@ import skeletontemplar from "../sprites/skeletontemplar.json";
 import skeletontemplar2 from "../sprites/skeletontemplar.json";
 import spider from "../sprites/spider.json";
 import spider2 from "../sprites/spider.json";
+import spiderqueen from "../sprites/spiderqueen.json";
 import mageSpell from "../sprites/mage-spell.json";
 import oculothorax from "../sprites/oculothorax.json";
 import skeletonberserker from "../sprites/skeletonberserker.json";
@@ -242,6 +243,7 @@ const sprites = {
   skeletontemplar2,
   spider,
   spider2,
+  spiderqueen,
   oculothorax,
   skeletonberserker,
   statue,

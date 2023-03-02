@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { randomInt } from "../../shared/js/utils";
 import Entity from "./entity";
 import Timer from "./timer";
 import Transition from "./transition";
@@ -203,7 +204,7 @@ class Character extends Entity {
   // }
 
   animate(animation, speed, count = 0, onEndCount?: () => void) {
-    var oriented = ["atk", "walk", "idle", "raise", "unraise"];
+    var oriented = ["atk", "atk2", "walk", "idle", "raise", "unraise"];
 
     if (!(this.currentAnimation && this.currentAnimation.name === "death")) {
       // don't change animation if the character is dying
@@ -245,7 +246,14 @@ class Character extends Entity {
 
   hit(orientation) {
     this.setOrientation(orientation);
-    this.animate("atk", this.atkSpeed, 1);
+
+    // @NOTE Some characters has 2 attack animations
+    let atkAnimation = "";
+    if (this.kind === Types.Entities.SPIDERQUEEN) {
+      atkAnimation = randomInt(0, 1) ? "2" : "";
+    }
+
+    this.animate(`atk${atkAnimation}`, this.atkSpeed, 1);
   }
 
   walk(orientation) {
