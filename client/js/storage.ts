@@ -8,11 +8,14 @@ import {
   GOLEM_COUNT,
   KILLS_TOTAL,
   MAGE_COUNT,
+  MINI_BOSS_COUNT,
+  OCULOTHORAX_COUNT,
   RAT_COUNT,
   RAT3_COUNT,
   SKELETON_COUNT,
   SKELETON3_COUNT,
   SKELETON4_COUNT,
+  SKELETONBERSERKER_COUNT,
   SPECTRE_COUNT,
   WEREWOLF_COUNT,
   WRAITH_COUNT,
@@ -49,12 +52,15 @@ const defaultData = {
     yetiCount: 0,
     werewolfCount: 0,
     skeleton3Count: 0,
-    skeleton4Count: 0,
     wraithCount: 0,
-    wraith2Count: 0,
     cowCount: 0,
     mageCount: 0,
     golemCount: 0,
+    oculothoraxCount: 0,
+    skeleton4Count: 0,
+    skeletonBerserkerCount: 0,
+    wraith2Count: 0,
+    miniBossCount: 0,
     totalKills: 0,
     totalDmg: 0,
     totalRevives: 0,
@@ -253,18 +259,6 @@ class Storage {
     }
   }
 
-  // POISON_RAT
-  getRat3Count() {
-    return this.data.achievements.rat3Count;
-  }
-
-  incrementRat3Count() {
-    if (this.data.achievements.rat3Count < RAT3_COUNT) {
-      this.data.achievements.rat3Count++;
-      this.save();
-    }
-  }
-
   // Skull Collector
   getSkeletonCount() {
     return this.data.achievements.skeletonCount;
@@ -341,23 +335,7 @@ class Storage {
     }
   }
 
-  // Crusader
-  getSkeleton4Count() {
-    return this.data.achievements.skeleton4Count;
-  }
-
-  incrementSkeleton4Count() {
-    if (!this.data.achievements.skeleton4Count) {
-      this.data.achievements.skeleton4Count = 0;
-    }
-
-    if (this.data.achievements.skeleton4Count < SKELETON4_COUNT) {
-      this.data.achievements.skeleton4Count++;
-      this.save();
-    }
-  }
-
-  // Ghostbusters
+  // GHOSTBUSTER
   getWraithCount() {
     return this.data.achievements.wraithCount;
   }
@@ -369,22 +347,6 @@ class Storage {
 
     if (this.data.achievements.wraithCount < WRAITH_COUNT) {
       this.data.achievements.wraithCount++;
-      this.save();
-    }
-  }
-
-  // SPECTRAL
-  getWraith2Count() {
-    return this.data.achievements.wraith2Count;
-  }
-
-  incrementWraith2Count() {
-    if (!this.data.achievements.wraith2Count) {
-      this.data.achievements.wraith2Count = 0;
-    }
-
-    if (this.data.achievements.wraith2Count < WRAITH2_COUNT) {
-      this.data.achievements.wraith2Count++;
       this.save();
     }
   }
@@ -405,9 +367,85 @@ class Storage {
     }
   }
 
+  // ANTIDOTE
+  getRat3Count() {
+    return this.data.achievements.rat3Count;
+  }
+
+  incrementRat3Count() {
+    if (this.data.achievements.rat3Count < RAT3_COUNT) {
+      this.data.achievements.rat3Count++;
+      this.save();
+    }
+  }
+
+  // UNBREAKABLE
+  getGolemCount() {
+    return this.data.achievements.golemCount;
+  }
+
+  incrementGolemCount() {
+    if (!this.data.achievements.golemCount) {
+      this.data.achievements.golemCount = 0;
+    }
+
+    if (this.data.achievements.golemCount < GOLEM_COUNT) {
+      this.data.achievements.golemCount++;
+      this.save();
+    }
+  }
+
+  // CYCLOP
+  getOculothoraxCount() {
+    return this.data.achievements.oculothoraxCount;
+  }
+
+  incrementOculothoraxCount() {
+    if (!this.data.achievements.oculothoraxCount) {
+      this.data.achievements.oculothoraxCount = 0;
+    }
+
+    if (this.data.achievements.oculothoraxCount < OCULOTHORAX_COUNT) {
+      this.data.achievements.oculothoraxCount++;
+      this.save();
+    }
+  }
+
+  // CRUSADER
+  getSkeleton4Count() {
+    return this.data.achievements.skeleton4Count;
+  }
+
+  incrementSkeleton4Count() {
+    if (!this.data.achievements.skeleton4Count) {
+      this.data.achievements.skeleton4Count = 0;
+    }
+
+    if (this.data.achievements.skeleton4Count < SKELETON4_COUNT) {
+      this.data.achievements.skeleton4Count++;
+      this.save();
+    }
+  }
+
+  // BERSERKER
+  getSkeletonBerserkerCount() {
+    return this.data.achievements.skeletonBerserkerCount;
+  }
+
+  incrementSkeletonBerserkerCount() {
+    if (!this.data.achievements.skeletonBerserkerCount) {
+      this.data.achievements.skeletonBerserkerCount = 0;
+    }
+
+    if (this.data.achievements.skeletonBerserkerCount < SKELETONBERSERKER_COUNT) {
+      this.data.achievements.skeletonBerserkerCount++;
+      this.save();
+    }
+  }
+
   // BOO
   getGhostCount() {
-    return this.data.achievements.mageCount;
+    return this.data.achievements.ghostCount;
   }
 
   incrementGhostCount() {
@@ -417,6 +455,22 @@ class Storage {
 
     if (this.data.achievements.ghostCount < GHOST_COUNT) {
       this.data.achievements.ghostCount++;
+      this.save();
+    }
+  }
+
+  // SPECTRAL
+  getWraith2Count() {
+    return this.data.achievements.wraith2Count;
+  }
+
+  incrementWraith2Count() {
+    if (!this.data.achievements.wraith2Count) {
+      this.data.achievements.wraith2Count = 0;
+    }
+
+    if (this.data.achievements.wraith2Count < WRAITH2_COUNT) {
+      this.data.achievements.wraith2Count++;
       this.save();
     }
   }
@@ -437,18 +491,18 @@ class Storage {
     }
   }
 
-  // HARDROCK
-  getGolemCount() {
-    return this.data.achievements.golemCount;
+  // MINI_BOSS
+  getMiniBossCount() {
+    return this.data.achievements.miniBossCount;
   }
 
-  incrementGolemCount() {
-    if (!this.data.achievements.golemCount) {
-      this.data.achievements.golemCount = 0;
+  incrementMiniBossCount() {
+    if (!this.data.achievements.miniBossCount) {
+      this.data.achievements.miniBossCount = 0;
     }
 
-    if (this.data.achievements.golemCount < GOLEM_COUNT) {
-      this.data.achievements.golemCount++;
+    if (this.data.achievements.miniBossCount < MINI_BOSS_COUNT) {
+      this.data.achievements.miniBossCount++;
       this.save();
     }
   }

@@ -20,6 +20,15 @@ import {
   ACHIEVEMENT_NAMES,
   ACHIEVEMENT_NFT_INDEX,
   ACHIEVEMENT_WING_INDEX,
+  ACHIEVEMENT_ANTIDOTE_INDEX,
+  ACHIEVEMENT_UNBREAKABLE_INDEX,
+  ACHIEVEMENT_CYCLOP_INDEX,
+  ACHIEVEMENT_TEMPLAR_INDEX,
+  ACHIEVEMENT_BOO_INDEX,
+  ACHIEVEMENT_ARCHMAGE_INDEX,
+  ACHIEVEMENT_SPECTRAL_INDEX,
+  ACHIEVEMENT_BERSERKER_INDEX,
+  ACHIEVEMENT_MINI_BOSS_INDEX,
 } from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
 import { toArray, toDb } from "../../../shared/js/utils";
@@ -1492,15 +1501,31 @@ class DatabaseHandler {
         this.client.hset("u:" + player.name, "achievement", achievement, err => {
           if (err) return;
 
-          if (index === ACHIEVEMENT_NFT_INDEX) {
+          if (
+            [
+              ACHIEVEMENT_NFT_INDEX,
+              ACHIEVEMENT_WING_INDEX,
+              ACHIEVEMENT_ANTIDOTE_INDEX,
+              ACHIEVEMENT_UNBREAKABLE_INDEX,
+              ACHIEVEMENT_CYCLOP_INDEX,
+              ACHIEVEMENT_TEMPLAR_INDEX,
+              ACHIEVEMENT_BOO_INDEX,
+              ACHIEVEMENT_ARCHMAGE_INDEX,
+              ACHIEVEMENT_SPECTRAL_INDEX,
+              ACHIEVEMENT_BERSERKER_INDEX,
+            ].includes(index)
+          ) {
+            if (index === ACHIEVEMENT_NFT_INDEX) {
+              player.hasNft = true;
+            } else if (index === ACHIEVEMENT_WING_INDEX) {
+              player.hasWing = true;
+            } else if (index === ACHIEVEMENT_CRYSTAL_INDEX) {
+              player.hasCrystal = true;
+            }
+
             this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
-            player.hasNft = true;
-          } else if (index === ACHIEVEMENT_WING_INDEX) {
-            this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
-            player.hasWing = true;
-          } else if (index === ACHIEVEMENT_CRYSTAL_INDEX) {
-            this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
-            player.hasCrystal = true;
+          } else if (index === ACHIEVEMENT_MINI_BOSS_INDEX) {
+            this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
           }
         });
       } catch (err) {

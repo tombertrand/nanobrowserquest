@@ -48,25 +48,29 @@ export const ACHIEVEMENT_NAMES = [
   "NFT",
   "UNBREAKABLE",
   "WAY_OF_WATER",
+  "CYCLOP",
   "TEMPLAR",
   "DRAGON",
   "STONEHENGE",
+  "CRUISADE",
+  "TOMB",
   "ALCHEMIST",
   "INFINITY_STONE",
   "STARGATE",
   "PERSONAL_WEAPON",
-  "CRUISADE",
-  "TOMB",
-  "MINE",
   "BOO",
+  "SPIDER_QUEEN",
   "ARCHMAGE",
   "SPECTRAL",
+  "BERSERKER",
+  "MINE",
+  "SHAMAN",
   "PHARAOH",
   "DEATHANGEL",
   "MAGIC8",
   "RUNOLOGUE",
   "BLACKSMITH",
-  "RUNE_MASTER",
+  "MINI_BOSS",
   "EMBLEM",
   "SAURON",
   "SACRED",
@@ -83,6 +87,15 @@ export const ACHIEVEMENT_GRIMOIRE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a ===
 export const ACHIEVEMENT_NFT_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "NFT");
 export const ACHIEVEMENT_WING_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "DRAGON");
 export const ACHIEVEMENT_CRYSTAL_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "MINE");
+export const ACHIEVEMENT_ANTIDOTE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "ANTIDOTE");
+export const ACHIEVEMENT_UNBREAKABLE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "UNBREAKABLE");
+export const ACHIEVEMENT_CYCLOP_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "CYCLOP");
+export const ACHIEVEMENT_TEMPLAR_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "TEMPLAR");
+export const ACHIEVEMENT_BOO_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BOO");
+export const ACHIEVEMENT_ARCHMAGE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "ARCHMAGE");
+export const ACHIEVEMENT_SPECTRAL_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "SPECTRAL");
+export const ACHIEVEMENT_BERSERKER_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BERSERKER");
+export const ACHIEVEMENT_MINI_BOSS_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "MINI_BOSS");
 
 export type AchievementName = typeof ACHIEVEMENT_NAMES[number];
 export interface Achievement {

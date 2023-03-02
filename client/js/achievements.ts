@@ -16,10 +16,13 @@ export const WRAITH_COUNT = 50;
 export const COW_COUNT = 500;
 export const RAT3_COUNT = 250;
 export const GOLEM_COUNT = 250;
-export const SKELETON4_COUNT = 2;
-export const GHOST_COUNT = 2;
-export const MAGE_COUNT = 2;
-export const WRAITH2_COUNT = 2;
+export const OCULOTHORAX_COUNT = 250;
+export const SKELETON4_COUNT = 250;
+export const GHOST_COUNT = 250;
+export const SKELETONBERSERKER_COUNT = 250;
+export const MAGE_COUNT = 250;
+export const WRAITH2_COUNT = 250;
+export const MINI_BOSS_COUNT = 250;
 
 export const getAchievements = (network: Network): { [key in AchievementName]: Achievement } => ({
   A_TRUE_WARRIOR: {
@@ -349,9 +352,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   ANTIDOTE: {
     id: 45,
     name: "Antidote",
-    desc: `Kill ${RAT3_COUNT} Poison Rats`,
+    desc: `Kill ${RAT3_COUNT} Poison Rats<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
-      return storage.getCowCount() >= RAT3_COUNT;
+      return storage.getRat3Count() >= RAT3_COUNT;
     },
   },
   DISCORD: {
@@ -367,9 +370,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   UNBREAKABLE: {
     id: 48,
     name: "Unbreakable",
-    desc: `Kill ${GOLEM_COUNT} Stone Golem`,
+    desc: `Kill ${GOLEM_COUNT} Stone Golem<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
-      return storage.getCowCount() >= GOLEM_COUNT;
+      return storage.getGolemCount() >= GOLEM_COUNT;
     },
   },
   WAY_OF_WATER: {
@@ -377,159 +380,188 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     name: "Way Of Water",
     desc: "Get your toes wet",
   },
-  TEMPLAR: {
+  CYCLOP: {
     id: 50,
+    name: "Cyclop",
+    desc: `kill ${OCULOTHORAX_COUNT} Oculothorax<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    isCompleted() {
+      return storage.getOculothoraxCount() >= OCULOTHORAX_COUNT;
+    },
+  },
+  TEMPLAR: {
+    id: 51,
     name: "Templar",
-    desc: `Kill ${SKELETON4_COUNT} Crusader Skeletons`,
+    desc: `Kill ${SKELETON4_COUNT} Crusader Skeletons<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getSkeleton4Count() >= SKELETON4_COUNT;
     },
   },
   DRAGON: {
-    id: 51,
+    id: 52,
     name: "Dragon",
     desc: "Retrieve the Dragon Wing Olaf is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
   },
   STONEHENGE: {
-    id: 52,
+    id: 53,
     name: "Stonehenge",
     desc: "Activate all magic stones",
   },
-  ALCHEMIST: {
-    id: 53,
-    name: "Alchemist",
-    desc: "Create the quantum powder",
-  },
-  INFINITY_STONE: {
-    id: 54,
-    name: "Infinity Stone",
-    desc: "Find a mysterious gem with great powers",
-  },
-  STARGATE: {
-    id: 55,
-    name: "Stargate",
-    desc: "Enter the portal",
-  },
-  PERSONAL_WEAPON: {
-    id: 56,
-    name: "Beam me up Scotty",
-    desc: "Go on a quest to find a special weapon",
-  },
   CRUISADE: {
-    id: 57,
+    id: 54,
     name: "Cruisade",
     desc: "Find the Holy Grail",
   },
   TOMB: {
-    id: 58,
+    id: 55,
     name: "The Tomb",
     desc: "Enter the hidden Crypt",
   },
-  MINE: {
+  ALCHEMIST: {
+    id: 56,
+    name: "Alchemist",
+    desc: "Create the quantum powder",
+  },
+  INFINITY_STONE: {
+    id: 57,
+    name: "Infinity Stone",
+    desc: "Find a mysterious gem with great powers",
+  },
+  STARGATE: {
+    id: 58,
+    name: "Stargate",
+    desc: "Enter the portal",
+  },
+  PERSONAL_WEAPON: {
     id: 59,
-    name: "Mine",
-    desc: "Retrieve the Crystal Victor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
+    name: "Beam me up Scotty",
+    desc: "Go on a quest to find a special weapon",
   },
   BOO: {
     id: 60,
     name: "Boo",
-    desc: `Kill ${GHOST_COUNT} Ghosts`,
+    desc: `Kill ${GHOST_COUNT} Ghosts<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getGhostCount() >= GHOST_COUNT;
     },
   },
-  ARCHMAGE: {
+  SPIDER_QUEEN: {
     id: 61,
+    name: "Spider Queen",
+    desc: "Defeat Vexxara",
+  },
+  ARCHMAGE: {
+    id: 62,
     name: "Archmage",
-    desc: `Kill ${MAGE_COUNT} Mages`,
+    desc: `Kill ${MAGE_COUNT} Mages<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getMageCount() >= MAGE_COUNT;
     },
   },
   SPECTRAL: {
-    id: 62,
+    id: 63,
     name: "Spectral",
-    desc: `Kill ${WRAITH2_COUNT} Spectral Wraiths`,
+    desc: `Kill ${WRAITH2_COUNT} Spectral Wraiths<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getWraith2Count() >= WRAITH2_COUNT;
     },
   },
+  BERSERKER: {
+    id: 64,
+    name: "Berserker",
+    desc: `Kill ${SKELETONBERSERKER_COUNT} Skeleton Berserker<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    isCompleted() {
+      return storage.getSkeletonBerserkerCount() >= SKELETONBERSERKER_COUNT;
+    },
+  },
+  MINE: {
+    id: 65,
+    name: "Mine",
+    desc: "Retrieve the Crystal Victor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
+  },
+  SHAMAN: {
+    id: 66,
+    name: "Shamanic Ritual",
+    desc: "Defeat Zul'Gurak",
+  },
   PHARAOH: {
-    id: 63,
+    id: 67,
     name: "Pharaoh",
     desc: "Enter the Temple of Light",
   },
   DEATHANGEL: {
-    id: 64,
+    id: 68,
     name: "Death Angel",
     desc: "Kill Azrael",
   },
   MAGIC8: {
-    id: 65,
+    id: 69,
     name: "Magic 8",
     desc: "Upgrade a legendary item to +8",
   },
   RUNOLOGUE: {
-    id: 66,
+    id: 70,
     name: "Runologue",
     desc: "Find a high level rune",
   },
   BLACKSMITH: {
-    id: 67,
+    id: 71,
     name: "Blacksmith",
     desc: "Forge a Runeword",
   },
-  RUNE_MASTER: {
-    id: 68,
-    name: "Rune Master",
-    desc: "Combine 2 high rank runes",
+  MINI_BOSS: {
+    id: 72,
+    name: "Mini-Boss",
+    desc: `Kill ${MINI_BOSS_COUNT} enchanted mini-bosses<br/><small>Get awarded 10 legendary scrolls.</small>`,
+    isCompleted() {
+      return storage.getMiniBossCount() >= MINI_BOSS_COUNT;
+    },
   },
   EMBLEM: {
-    id: 69,
+    id: 73,
     name: "Hero Emblem",
     desc: "Find a powerful artifact abe to enchant items",
     hidden: true,
   },
   SAURON: {
-    id: 70,
+    id: 74,
     name: "Sauron",
     desc: "description for what to do...",
     hidden: true,
   },
   SACRED: {
-    id: 71,
+    id: 75,
     name: "Sacred",
     desc: "Do something<br/><small>Get awarded 5 sacred scrolls.</small>",
     hidden: true,
   },
   MISSTEP: {
-    id: 72,
+    id: 76,
     name: "Misstep",
     desc: "Die from a trap",
     hidden: true,
   },
   ZELDA: {
-    id: 73,
+    id: 77,
     name: "ZELDA",
     desc: "Find the hidden stairs",
     hidden: true,
   },
   GRIMOIRE: {
-    id: 74,
+    id: 78,
     name: "Grimoire",
     desc: "Find The Book of Azrael<br/><small>Get awarded 10% to all resistances</small>",
     hidden: true,
   },
   HELLFORGE: {
-    id: 75,
+    id: 79,
     name: "Hellforge",
     desc: "Break the Mysterious gem on the Altar",
     hidden: true,
   },
   GRAND_MASTER: {
-    id: 76,
+    id: 80,
     name: "Grand Master",
-    desc: "Reach lv.70<br/><small>Your offensive skill now does AOE damage</small>",
+    desc: "Reach lv.71<br/><small>Your offensive skill now does AOE damage</small>",
     hidden: true,
   },
 });

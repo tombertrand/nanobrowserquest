@@ -4057,7 +4057,9 @@ class Game {
         }
       });
 
-      self.client.onPlayerKillMob(function (kind, level, playerExp, exp) {
+      self.client.onPlayerKillMob(function (data) {
+        const { kind, level, playerExp, exp, isMiniBoss } = data;
+
         self.player.experience = playerExp;
 
         if (self.player.level !== level) {
@@ -4113,23 +4115,41 @@ class Game {
           self.tryUnlockingAchievement("FRESH_MEAT");
         } else if (kind === Types.Entities.COWKING) {
           self.tryUnlockingAchievement("COW_KING");
-        } else if (kind === Types.Entities.SKELETON4) {
-          self.storage.incrementSkeleton4Count();
-          self.tryUnlockingAchievement("TEMPLAR");
+        } else if (kind === Types.Entities.RAT3) {
+          self.storage.incrementRat3Count();
+          self.tryUnlockingAchievement("ANTIDOTE");
         } else if (kind === Types.Entities.GOLEM) {
           self.storage.incrementGolemCount();
           self.tryUnlockingAchievement("UNBREAKABLE");
+        } else if (kind === Types.Entities.OCULOTHORAX) {
+          self.storage.incrementOculothoraxCount();
+          self.tryUnlockingAchievement("CYCLOP");
+        } else if (kind === Types.Entities.SKELETON4) {
+          self.storage.incrementSkeleton4Count();
+          self.tryUnlockingAchievement("TEMPLAR");
         } else if (kind === Types.Entities.GHOST) {
           self.storage.incrementGhostCount();
           self.tryUnlockingAchievement("BOO");
+        } else if (kind === Types.Entities.SKELETONBERSERKER) {
+          self.storage.incrementSkeletonBerserkerCount();
+          self.tryUnlockingAchievement("BERSERKER");
+        } else if (kind === Types.Entities.SPIDERQUEEN) {
+          self.tryUnlockingAchievement("SPIDER_QUEEN");
         } else if (kind === Types.Entities.MAGE) {
           self.storage.incrementMageCount();
           self.tryUnlockingAchievement("ARCHMAGE");
         } else if (kind === Types.Entities.WRAITH2) {
           self.storage.incrementWraith2Count();
           self.tryUnlockingAchievement("SPECTRAL");
+        } else if (kind === Types.Entities.SHAMAN) {
+          self.tryUnlockingAchievement("SHAMAN");
         } else if (kind === Types.Entities.DEATHANGEL) {
           self.tryUnlockingAchievement("DEATHANGEL");
+        }
+
+        if (kind >= Types.Entities.RAT3 && isMiniBoss) {
+          self.storage.incrementMiniBossCount();
+          self.tryUnlockingAchievement("MINI_BOSS");
         }
 
         if (Math.floor((self.player.hitPoints * 100) / self.player.maxHitPoints) <= 1 && kind > Types.Entities.RAT2) {

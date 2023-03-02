@@ -280,7 +280,16 @@ Messages.Population = class Message {
 Messages.Kill = class Message {
   constructor(private mob, private level, private playerExp, private exp) {}
   serialize() {
-    return [Types.Messages.KILL, this.mob.kind, this.level, this.playerExp, this.exp];
+    return [
+      Types.Messages.KILL,
+      {
+        kind: this.mob.kind,
+        level: this.level,
+        playerExp: this.playerExp,
+        exp: this.exp,
+        isMiniBoss: !!(this.mob.enchants?.length >= 3) && !Types.isBoss(this.mob.kind),
+      },
+    ];
   }
 };
 

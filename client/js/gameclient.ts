@@ -575,13 +575,8 @@ class GameClient {
   }
 
   receiveKill(data) {
-    var mobKind = data[1];
-    var level = data[2];
-    var playerExp = data[3];
-    var exp = data[4];
-
     if (this.kill_callback) {
-      this.kill_callback(mobKind, level, playerExp, exp);
+      this.kill_callback(data[1]);
     }
   }
 
