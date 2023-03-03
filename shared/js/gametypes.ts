@@ -1057,19 +1057,17 @@ Types.itemUniqueMap = {
   diamondsword: ["Inevitable", 32, 42],
   minotauraxe: ["PoS4QoS", 34, 44],
   emeraldsword: ["Non Fungible Token", 36, 44],
-  spikeglaive: ["TBD", 38, 38],
   executionersword: ["The Granfather", 38, 38],
-  eclypsedagger: ["Ethereum Killer", 38, 38],
   mysticalsword: ["The Maximalist", 38, 38],
   templarsword: ["TBD", 38, 38],
   dragonsword: ["Balerion the Black Dread", 38, 38],
-  hellhammer: ["Hephasto The Armorer", 38, 38],
   moonsword: ["Moon Boy", 38, 38],
+  eclypsedagger: ["Ethereum Killer", 38, 38],
+  spikeglaive: ["TBD", 38, 38],
+  hellhammer: ["Hephasto", 38, 38],
 
   // Laser Eyes
-  // CBDC
   // Decentralizer
-  // PermaBear
 
   // name, level, defense
   leatherarmor: ["Representative", 2, 5],
@@ -1098,13 +1096,13 @@ Types.itemUniqueMap = {
   shieldhorned: ["Do Klost", 24, 16],
   shieldfrozen: ["Probably Nothing", 28, 18],
   shielddiamond: ["Diamond Hands", 38, 20],
+  shieldemerald: ["PermaBear", 42, 22],
   shieldtemplar: ["TBD", 42, 22],
-  shieldemerald: ["TBD", 42, 22],
   shieldexecutioner: ["TBD", 42, 22],
   shieldmystical: ["TBD", 42, 22],
   shielddragon: ["TBD", 42, 22],
-  shielddemon: ["TBD", 42, 22],
   shieldmoon: ["TBD", 42, 22],
+  shielddemon: ["TBD", 42, 22],
 
   cape: ["Cloak of Levitation", 12, 2],
 
@@ -1115,7 +1113,7 @@ Types.itemUniqueMap = {
   belthorned: ["Dee-Fye", 28, 14],
   beltdiamond: ["Election scheduler", 38, 20],
   beltminotaur: ["TaaC", 40, 22],
-  beltemerald: ["TBD", 40, 22],
+  beltemerald: ["CBDC", 40, 22],
   beltexecutioner: ["TBD", 40, 22],
   beltmystical: ["TBD", 40, 22],
   belttemplar: ["TBD", 40, 22],

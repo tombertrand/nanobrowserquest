@@ -220,7 +220,23 @@ var NpcTalk = {
     "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
   ],
   fossil: ["Here lies the remains of a fallen Bitcoin maximalist.<br/>It shall not rise again."],
-  hands: ["The mechanism of the Gateway requires a specific powder to initiate."],
+  hands: [
+    {
+      condition(_game, isActivated) {
+        return !isActivated;
+      },
+      text: [
+        "These hands appear to be linked with the gateway,<br/>as if an inseparable part of its ancient structure.",
+        "The mechanism of the Gateway requires<br/>a specific powder to initiate.",
+      ],
+    },
+    {
+      condition(_game, isActivated) {
+        return isActivated;
+      },
+      text: ["The gateway is opened"],
+    },
+  ],
   alkor: [
     {
       condition(game: any) {
@@ -339,7 +355,7 @@ class Npc extends Character {
     if (this.discourse != -1) {
       var found = false;
       for (var i = 1; !found && i < NpcTalk[this.itemKind].length; i++) {
-        if (NpcTalk[this.itemKind][i]["condition"](game)) {
+        if (NpcTalk[this.itemKind][i]["condition"](game, this.isActivated)) {
           if (this.discourse != i) {
             change = true;
             this.discourse = i;

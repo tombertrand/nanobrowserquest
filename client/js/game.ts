@@ -2993,7 +2993,8 @@ class Game {
             setTimeout(function () {
               self.tryUnlockingAchievement("COWARD");
             }, 500);
-          } else if (x === 131 && y === 651) {
+          }
+          if (x === 131 && y === 651) {
             self.tryUnlockingAchievement("WAY_OF_WATER");
           }
 
@@ -5119,13 +5120,13 @@ class Game {
         const isFound = this.player.inventory.some(({ item }) => item === "wing");
 
         if (isFound && !this.storage.getAchievements()[ACHIEVEMENT_WING_INDEX]) {
-          this.tryUnlockingAchievement("DRAGON");
+          this.tryUnlockingAchievement("WING");
         }
       } else if (npc.kind === Types.Entities.VICTOR) {
         const isFound = this.player.inventory.some(({ item }) => item === "crystal");
 
         if (isFound && !this.storage.getAchievements()[ACHIEVEMENT_CRYSTAL_INDEX]) {
-          this.tryUnlockingAchievement("MINE");
+          this.tryUnlockingAchievement("CRYSTAL");
         }
       }
     }
@@ -6441,7 +6442,7 @@ class Game {
 
   tryLootingItem(item) {
     try {
-      this.player.loot(item, this.storage.getAchievements);
+      this.player.loot(item, this.storage.getAchievements());
       this.client.sendLoot(item); // Notify the server that this item has been looted
       this.removeItem(item);
 

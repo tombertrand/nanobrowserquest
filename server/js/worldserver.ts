@@ -1828,8 +1828,8 @@ class World {
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
     // var randomDrops = ["chalice", "infinitystone", "hellhammer"];
     // var randomDrops = ["nft"];
-    // var randomDrops = ["nft", "wing", "crystal"];
-    var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
+    var randomDrops = ["nft", "wing", "crystal"];
+    // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
     // var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];
     // var randomDrops = ["stonehero", "stonedragon"];

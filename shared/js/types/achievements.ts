@@ -50,7 +50,7 @@ export const ACHIEVEMENT_NAMES = [
   "WAY_OF_WATER",
   "CYCLOP",
   "TEMPLAR",
-  "DRAGON",
+  "WING",
   "STONEHENGE",
   "CRUISADE",
   "TOMB",
@@ -63,7 +63,7 @@ export const ACHIEVEMENT_NAMES = [
   "ARCHMAGE",
   "SPECTRAL",
   "BERSERKER",
-  "MINE",
+  "CRYSTAL",
   "SHAMAN",
   "PHARAOH",
   "DEATHANGEL",
@@ -85,8 +85,8 @@ export const ACHIEVEMENT_COUNT = ACHIEVEMENT_NAMES.length;
 
 export const ACHIEVEMENT_GRIMOIRE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "GRIMOIRE");
 export const ACHIEVEMENT_NFT_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "NFT");
-export const ACHIEVEMENT_WING_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "DRAGON");
-export const ACHIEVEMENT_CRYSTAL_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "MINE");
+export const ACHIEVEMENT_WING_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "WING");
+export const ACHIEVEMENT_CRYSTAL_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "CRYSTAL");
 export const ACHIEVEMENT_ANTIDOTE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "ANTIDOTE");
 export const ACHIEVEMENT_UNBREAKABLE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "UNBREAKABLE");
 export const ACHIEVEMENT_CYCLOP_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "CYCLOP");

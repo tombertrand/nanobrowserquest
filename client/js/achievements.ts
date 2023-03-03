@@ -396,7 +396,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
       return storage.getSkeleton4Count() >= SKELETON4_COUNT;
     },
   },
-  DRAGON: {
+  WING: {
     id: 52,
     name: "Dragon",
     desc: "Retrieve the Dragon Wing Olaf is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
@@ -473,9 +473,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
       return storage.getSkeletonBerserkerCount() >= SKELETONBERSERKER_COUNT;
     },
   },
-  MINE: {
+  CRYSTAL: {
     id: 65,
-    name: "Mine",
+    name: "Crystal",
     desc: "Retrieve the Crystal Victor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
   },
   SHAMAN: {
@@ -525,7 +525,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   SAURON: {
     id: 74,
     name: "Sauron",
-    desc: "description for what to do...",
+    desc: "Drink from the fountain of the ethernal life<br/><small>Get 40 base health</small>",
     hidden: true,
   },
   SACRED: {
@@ -549,7 +549,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   GRIMOIRE: {
     id: 78,
     name: "Grimoire",
-    desc: "Find The Book of Azrael<br/><small>Get awarded 10% to all resistances</small>",
+    desc: "Find The Book of Azrael<br/><small>Get 10% to all resistances</small>",
     hidden: true,
   },
   HELLFORGE: {
