@@ -88,6 +88,9 @@ class GameClient {
   receivechalicelevelstart_callback: any;
   receivechalicelevelinprogress_callback: any;
   receivechalicelevelend_callback: any;
+  receivestonelevelstart_callback: any;
+  receivestonelevelinprogress_callback: any;
+  receivestonelevelend_callback: any;
   receivefrozen_callback: any;
   receiveslowed_callback: any;
   receivepoisoned_callback: any;
@@ -157,6 +160,9 @@ class GameClient {
     this.handlers[Types.Messages.CHALICELEVEL_START] = this.receiveChaliceLevelStart;
     this.handlers[Types.Messages.CHALICELEVEL_INPROGRESS] = this.receiveChaliceLevelInProgress;
     this.handlers[Types.Messages.CHALICELEVEL_END] = this.receiveChaliceLevelEnd;
+    this.handlers[Types.Messages.STONELEVEL_START] = this.receiveStoneLevelStart;
+    this.handlers[Types.Messages.STONELEVEL_INPROGRESS] = this.receiveStoneLevelInProgress;
+    this.handlers[Types.Messages.STONELEVEL_END] = this.receiveStoneLevelEnd;
     this.handlers[Types.Messages.FROZEN] = this.receiveFrozen;
     this.handlers[Types.Messages.SLOWED] = this.receiveSlowed;
     this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
@@ -754,77 +760,57 @@ class GameClient {
   receiveStoreItems(data) {
     const items = data[1];
 
-    if (this.receivestoreitems_callback) {
-      this.receivestoreitems_callback(items);
-    }
+    this.receivestoreitems_callback?.(items);
   }
 
   receivePurchaseCompleted(data) {
     const payment = data[1];
 
-    if (this.receivepurchasecompleted_callback) {
-      this.receivepurchasecompleted_callback(payment);
-    }
+    this.receivepurchasecompleted_callback?.(payment);
   }
 
   receivePurchaseError(data) {
     const error = data[1];
 
-    if (this.receivepurchaseerror_callback) {
-      this.receivepurchaseerror_callback(error);
-    }
+    this.receivepurchaseerror_callback?.(error);
   }
 
   receiveWaypointsUpdate(data) {
     const waypoints = data[1];
 
-    if (this.receivewaypointsupdate_callback) {
-      this.receivewaypointsupdate_callback(waypoints);
-    }
+    this.receivewaypointsupdate_callback?.(waypoints);
   }
 
   receiveCowLevelStart(data) {
     const x = data[1];
     const y = data[2];
-    if (this.receivecowlevelstart_callback) {
-      this.receivecowlevelstart_callback({ x, y });
-    }
+    this.receivecowlevelstart_callback?.({ x, y });
   }
 
   receiveCowLevelInProgress(data) {
-    const cowLevelClock = data[1];
+    const clock = data[1];
 
-    if (this.receivecowlevelinprogress_callback) {
-      this.receivecowlevelinprogress_callback(cowLevelClock);
-    }
+    this.receivecowlevelinprogress_callback(clock);
   }
 
   receiveCowLevelEnd(data) {
     const isCompleted = data[1];
 
-    if (this.receivecowlevelend_callback) {
-      this.receivecowlevelend_callback(isCompleted);
-    }
+    this.receivecowlevelend_callback?.(isCompleted);
   }
 
   receiveMinotaurLevelStart() {
-    if (this.receiveminotaurlevelstart_callback) {
-      this.receiveminotaurlevelstart_callback();
-    }
+    this.receiveminotaurlevelstart_callback?.();
   }
 
   receiveMinotaurLevelInProgress(data) {
-    const minotaurLevelClock = data[1];
+    const clock = data[1];
 
-    if (this.receiveminotaurlevelinprogress_callback) {
-      this.receiveminotaurlevelinprogress_callback(minotaurLevelClock);
-    }
+    this.receiveminotaurlevelinprogress_callback?.(clock);
   }
 
   receiveMinotaurLevelEnd() {
-    if (this.receiveminotaurlevelend_callback) {
-      this.receiveminotaurlevelend_callback();
-    }
+    this.receiveminotaurlevelend_callback?.();
   }
 
   receiveChaliceLevelStart() {
@@ -839,6 +825,20 @@ class GameClient {
 
   receiveChaliceLevelEnd() {
     this.receivechalicelevelend_callback?.();
+  }
+
+  receiveStoneLevelStart() {
+    this.receivestonelevelstart_callback?.();
+  }
+
+  receiveStoneLevelInProgress(data) {
+    const clock = data[1];
+
+    this.receivestonelevelinprogress_callback?.(clock);
+  }
+
+  receiveStoneLevelEnd() {
+    this.receivestonelevelend_callback?.();
   }
 
   receiveFrozen(data) {
@@ -1160,6 +1160,18 @@ class GameClient {
 
   onReceiveChaliceLevelEnd(callback) {
     this.receivechalicelevelend_callback = callback;
+  }
+
+  onReceiveStoneLevelStart(callback) {
+    this.receivestonelevelstart_callback = callback;
+  }
+
+  onReceiveStoneLevelInProgress(callback) {
+    this.receivestonelevelinprogress_callback = callback;
+  }
+
+  onReceiveStoneLevelEnd(callback) {
+    this.receivestonelevelend_callback = callback;
   }
 
   onFrozen(callback) {

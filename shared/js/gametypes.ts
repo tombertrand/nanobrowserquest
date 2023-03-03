@@ -172,6 +172,9 @@ export const Types: any = {
     TRAP: 101,
     STATUE: 103,
     HANDS: 105,
+    STONELEVEL_START: 107,
+    STONELEVEL_INPROGRESS: 108,
+    STONELEVEL_END: 109,
   },
 
   Entities: {
@@ -1068,6 +1071,12 @@ Types.itemUniqueMap = {
 
   // Laser Eyes
   // Decentralizer
+  // rug pulled
+  // shit coin
+  // clownbase
+  // not your keys not your crypto
+  // web3
+  // imagine dragon everybody wants to be my enemy
 
   // name, level, defense
   leatherarmor: ["Representative", 2, 5],

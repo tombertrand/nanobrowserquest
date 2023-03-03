@@ -100,6 +100,10 @@ class World {
   trapIds: number[];
   portalCryptNpcId: number;
   portalRuinsNpcId: number;
+  portalStoneNpcId: number;
+  portalStoneBloodNpcId: number;
+  stoneLevelClock: number;
+  stoneLevelInterval: NodeJS.Timeout;
   leverChaliceNpcId: number;
   leverLeftCryptNpcId: number;
   leverRightCryptNpcId: number;
@@ -212,6 +216,10 @@ class World {
     this.leverChaliceNpcId = null;
     this.leverLeftCryptNpcId = null;
     this.leverRightCryptNpcId = null;
+    this.portalStoneNpcId = null;
+    this.portalStoneBloodNpcId = null;
+    this.stoneLevelClock = null;
+    this.stoneLevelInterval = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -716,6 +724,14 @@ class World {
     } else if (kind === Types.Entities.PORTALRUINS) {
       npc.isDead = true;
       this.portalRuinsNpcId = npc.id;
+    } else if (kind === Types.Entities.PORTALSTONE) {
+      npc.isDead = true;
+
+      if (x === 71 && y === 643) {
+        this.portalStoneNpcId = npc.id;
+      } else {
+        this.portalStoneBloodNpcId = npc.id;
+      }
     } else {
       if (kind === Types.Entities.MAGICSTONE) {
         this.magicStones.push(npc.id);
@@ -898,8 +914,8 @@ class World {
   startMinotaurLevel() {
     this.minotaurLevelClock = 15 * 60; // 15 minutes
 
-    const townPortal = this.npcs[this.minotaurLevelTownNpcId];
-    townPortal.respawnCallback();
+    const portal = this.npcs[this.minotaurLevelTownNpcId];
+    portal.respawnCallback();
 
     const minotaurLevelPortal = this.npcs[this.minotaurLevelNpcId];
     minotaurLevelPortal.respawnCallback();
@@ -919,8 +935,8 @@ class World {
     this.minotaurLevelInterval = null;
     this.minotaurLevelClock = null;
 
-    const townPortal = this.npcs[this.minotaurLevelTownNpcId];
-    this.despawn(townPortal);
+    const portal = this.npcs[this.minotaurLevelTownNpcId];
+    this.despawn(portal);
 
     const minotaurLevelPortal = this.npcs[this.minotaurLevelNpcId];
     this.despawn(minotaurLevelPortal);
@@ -956,6 +972,37 @@ class World {
 
     this.getEntityById(this.altarChaliceNpcId).isActivated = false;
     this.pushBroadcast(new Messages.ChaliceLevelEnd());
+  }
+
+  startStoneLevel() {
+    this.stoneLevelClock = 15 * 60; // 15 minutes
+
+    const stonePortal = this.npcs[this.portalStoneNpcId];
+    stonePortal.respawnCallback();
+
+    const bloodPortal = this.npcs[this.portalStoneBloodNpcId];
+    bloodPortal.respawnCallback();
+
+    this.pushBroadcast(new Messages.StoneLevelStart());
+
+    this.stoneLevelInterval = setInterval(() => {
+      this.stoneLevelClock -= 1;
+      if (this.stoneLevelClock < 0) {
+        clearInterval(this.stoneLevelInterval);
+        this.endStoneLevel();
+      }
+    }, 1000);
+  }
+
+  endStoneLevel() {
+    this.stoneLevelInterval = null;
+    this.stoneLevelClock = null;
+    const stonePortal = this.npcs[this.portalStoneNpcId];
+    this.despawn(stonePortal);
+    const bloodPortal = this.npcs[this.portalStoneBloodNpcId];
+    this.despawn(bloodPortal);
+    this.pushBroadcast(new Messages.StoneLevelEnd());
+    this.deactivateMagicStones();
   }
 
   startTreeLevel(tree) {
@@ -1246,6 +1293,23 @@ class World {
 
     this.broadcastRaise(player, magicStone);
     this.pushBroadcast(new Messages.Raise(blueflame.id));
+
+    if (this.magicStones.length === this.activatedMagicStones.length) {
+      this.startStoneLevel();
+    }
+  }
+
+  deactivateMagicStones() {
+    this.blueFlames.forEach(id => {
+      this.getEntityById(id).deactivate();
+      this.pushBroadcast(new Messages.Unraise(id));
+    });
+    this.magicStones.forEach(id => {
+      this.getEntityById(id).deactivate();
+      this.pushBroadcast(new Messages.Unraise(id));
+    });
+
+    this.activatedMagicStones = [];
   }
 
   activateLever(player, lever) {
@@ -1504,7 +1568,7 @@ class World {
             mob.onDestroy(() => {
               clearInterval(self.minotaurLevelInterval);
               setTimeout(() => {
-                // Return everyone to town, leave 3s to loot any last drop
+                // Return everyone to town, leave 5s to loot any last drop
                 self.endMinotaurLevel();
               }, 5000);
 
@@ -1514,6 +1578,15 @@ class World {
                 mob.handleRespawn(0);
                 self.minotaurSpawnTimeout = null;
               }, time);
+            });
+          } else if (kind === Types.Entities.SPIDERQUEEN) {
+            // @TODO THIS WILL BE THE BUTCHER, not the SPIDER_QUEEN
+            mob.onDestroy(() => {
+              clearInterval(self.stoneLevelInterval);
+              setTimeout(() => {
+                // Return everyone to stones, leave 5s to loot any last drop
+                self.endStoneLevel();
+              }, 5000);
             });
           } else if (kind === Types.Entities.DEATHANGEL) {
             self.deathAngelId = mob.id;

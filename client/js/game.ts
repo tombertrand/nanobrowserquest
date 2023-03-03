@@ -79,6 +79,8 @@ class Game {
   cowLevelPortalCoords: { x: number; y: number } | null;
   minotaurPortalStart: boolean;
   minotaurLevelPortalCoords: { x: number; y: number };
+  stonePortalStart: boolean;
+  stoneLevelPortalCoords: { x: number; y: number };
   renderer: Renderer;
   updater: Updater;
   pathfinder: Pathfinder;
@@ -129,6 +131,7 @@ class Game {
   highHealthAnimation: Animation;
   freezeAnimation: Animation;
   resistanceAnimation: Animation;
+  arcaneAnimation: Animation;
   anvilAnimation: Animation;
   defenseSkillAnimation: Animation;
   skillResistanceAnimation: Animation;
@@ -219,6 +222,8 @@ class Game {
     this.cowLevelPortalCoords = null;
     this.minotaurPortalStart = false;
     this.minotaurLevelPortalCoords = { x: 34, y: 498 };
+    this.stonePortalStart = false;
+    this.stoneLevelPortalCoords = { x: 15, y: 777 };
     this.network = null;
     this.explorer = null;
     this.hoverSlotToDelete = null;
@@ -239,6 +244,7 @@ class Game {
     this.highHealthAnimation = null;
     this.freezeAnimation = null;
     this.resistanceAnimation = null;
+    this.arcaneAnimation = null;
     this.anvilAnimation = null;
     this.defenseSkillAnimation = null;
     this.skillResistanceAnimation = null;
@@ -328,6 +334,7 @@ class Game {
       "aura-highhealth",
       "aura-freeze",
       "aura-lowerresistance",
+      "aura-arcane",
       "skill-heal",
       "skill-defense",
       "skill-resistances",
@@ -794,6 +801,9 @@ class Game {
 
     this.resistanceAnimation = new Animation("idle_down", 7, 0, 16, 8);
     this.resistanceAnimation.setSpeed(140);
+
+    this.arcaneAnimation = new Animation("idle_down", 4, 0, 36, 15);
+    this.arcaneAnimation.setSpeed(140);
 
     this.anvilAnimation = new Animation("idle_down", 4, 0, 15, 8);
     this.anvilAnimation.setSpeed(80);
@@ -3188,6 +3198,7 @@ class Game {
                 if (self.cowPortalStart) {
                   entity.raise();
                   entity.currentAnimation.setSpeed(75);
+                  self.audioManager.playSound("portal-open");
 
                   setTimeout(() => {
                     entity.idle();
@@ -3200,6 +3211,20 @@ class Game {
                 if (self.minotaurPortalStart) {
                   entity.raise();
                   entity.currentAnimation.setSpeed(75);
+                  self.audioManager.playSound("portal-open");
+
+                  setTimeout(() => {
+                    entity.idle();
+                    entity.currentAnimation.setSpeed(150);
+                  }, 1200);
+                } else {
+                  entity.idle();
+                }
+              } else if (entity.kind === Types.Entities.PORTALSTONE && entity.gridX === 71 && entity.gridY === 643) {
+                if (self.stonePortalStart) {
+                  entity.raise();
+                  entity.currentAnimation.setSpeed(75);
+                  self.audioManager.playSound("portal-open");
 
                   setTimeout(() => {
                     entity.idle();
@@ -4487,7 +4512,6 @@ class Game {
 
         if (recipe === "cowLevel" || recipe === "minotaurLevel") {
           self.app.closeUpgrade();
-          self.audioManager.playSound("portal-open");
         } else if (recipe === "powderquantum") {
           self.audioManager.playSound("powder");
         }
@@ -4695,6 +4719,47 @@ class Game {
         if (entity) {
           entity.isActivated = false;
           entity.idle();
+        }
+      });
+
+      self.client.onReceiveStoneLevelStart(function () {
+        self.stonePortalStart = true;
+        setTimeout(() => {
+          self.stonePortalStart = false;
+        }, 1200);
+      });
+
+      self.client.onReceiveStoneLevelInProgress(function (levelClock) {
+        var selectedDate = new Date().valueOf() + levelClock * 1000;
+
+        if (!self.player.expansion2) {
+          self.client.sendBanPlayer("Entered Stone level without expansion2");
+        }
+
+        $("#countdown")
+          .countdown(selectedDate.toString())
+          .on("update.countdown", function (event) {
+            // @ts-ignore
+            $(this).html(event.strftime("%M:%S"));
+          })
+          .on("finish.countdown", function () {
+            $(this).html("The stone level closed.");
+
+            setTimeout(() => {
+              $(this).html("");
+            }, 5000);
+          });
+      });
+
+      self.client.onReceiveStoneLevelEnd(function () {
+        $("#countdown").countdown(0);
+        $("#countdown").countdown("remove");
+
+        if (self.player.gridY >= 756 && self.player.gridY <= 781 && self.player.gridX <= 29) {
+          const x = randomInt(66, 76);
+          const y = randomInt(638, 647);
+
+          self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }
       });
 
@@ -5052,6 +5117,18 @@ class Game {
           } else {
             this.player.stop_pathing_callback({ x: 40, y: 211, isWaypoint: true });
           }
+        }
+      } else if (npc.kind === Types.Entities.PORTALSTONE) {
+        if (npc.gridX === 71 && npc.gridY === 643) {
+          if (this.stoneLevelPortalCoords) {
+            this.player.stop_pathing_callback({
+              x: this.stoneLevelPortalCoords.x,
+              y: this.stoneLevelPortalCoords.y,
+              isWaypoint: true,
+            });
+          }
+        } else {
+          this.player.stop_pathing_callback({ x: 71, y: 643, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.MAGICSTONE) {
         if (!npc.isActivated) {

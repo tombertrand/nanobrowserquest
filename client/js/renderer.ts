@@ -623,6 +623,9 @@ class Renderer {
             } else if (aura === "lowerresistance") {
               sprite = this.game.sprites["aura-lowerresistance"];
               anim = this.game.resistanceAnimation;
+            } else if (aura === "arcane") {
+              sprite = this.game.sprites["aura-arcane"];
+              anim = this.game.arcaneAnimation;
             }
 
             if (sprite && anim) {
@@ -634,11 +637,12 @@ class Renderer {
                 y = frame.y * os,
                 w = sprite.width * os,
                 h = sprite.height * os,
-                ts = -12,
                 dw = w * ds,
-                dh = h * ds;
+                dh = h * ds,
+                ox = sprite.offsetX * s,
+                oy = sprite.offsetY * s;
 
-              this.context.drawImage(sprite.image, x, y, w, h, 0, ts * -ds, dw, dh);
+              this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
             }
           });
         }

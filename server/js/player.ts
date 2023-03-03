@@ -369,6 +369,14 @@ class Player extends Character {
                 self.server.activateAltarChalice(self, true);
               }
               return;
+            } else if (msg === "/stone" && self.name === "running-coder") {
+              if (!self.server.stoneLevelClock) {
+                self.server.magicStones.forEach(id => {
+                  const magicStone = self.server.getEntityById(id);
+                  self.server.activateMagicStone(self, magicStone);
+                });
+              }
+              return;
             } else if (msg === "/tree" && self.name === "running-coder") {
               if (!self.server.isActivatedTreeLevel) {
                 self.server.startTreeLevel();
@@ -876,6 +884,8 @@ class Player extends Character {
             self.send(new Messages.CowLevelInProgress(self.server.cowLevelClock).serialize());
           } else if (y >= 696 && y <= 733 && x <= 29) {
             self.send(new Messages.ChaliceLevelInProgress(self.server.chaliceLevelClock).serialize());
+          } else if (y >= 756 && y <= 781 && x <= 29) {
+            self.send(new Messages.StoneLevelInProgress(self.server.stoneLevelClock).serialize());
           }
         }
       } else if (action === Types.Messages.BOSS_CHECK) {

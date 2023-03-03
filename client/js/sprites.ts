@@ -168,6 +168,7 @@ import auraThunderstorm from "../sprites/aura-thunderstorm.json";
 import auraHighhealth from "../sprites/aura-highhealth.json";
 import auraFreeze from "../sprites/aura-freeze.json";
 import auraLowerResistance from "../sprites/aura-lowerresistance.json";
+import auraArcane from "../sprites/aura-arcane.json";
 import skillHeal from "../sprites/skill-heal.json";
 import skillDefense from "../sprites/skill-defense.json";
 import skillResistances from "../sprites/skill-resistances.json";
@@ -557,6 +558,7 @@ const sprites = {
   "aura-highhealth": auraHighhealth,
   "aura-freeze": auraFreeze,
   "aura-lowerresistance": auraLowerResistance,
+  "aura-arcane": auraArcane,
   "skill-heal": skillHeal,
   "skill-defense": skillDefense,
   "skill-resistances": skillResistances,

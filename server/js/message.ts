@@ -127,6 +127,27 @@ Messages.ChaliceLevelEnd = class Message {
   }
 };
 
+Messages.StoneLevelStart = class Message {
+  constructor(private coords) {}
+  serialize() {
+    return [Types.Messages.STONELEVEL_START];
+  }
+};
+
+Messages.StoneLevelInProgress = class Message {
+  constructor(private stoneLevelClock) {}
+  serialize() {
+    return [Types.Messages.STONELEVEL_INPROGRESS, this.stoneLevelClock];
+  }
+};
+
+Messages.StoneLevelEnd = class Message {
+  constructor(private isCompleted) {}
+  serialize() {
+    return [Types.Messages.STONELEVEL_END];
+  }
+};
+
 Messages.Health = class Message {
   constructor(private health) {}
   serialize() {
