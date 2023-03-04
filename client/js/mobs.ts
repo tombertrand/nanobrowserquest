@@ -541,6 +541,18 @@ export const Mobs = {
     }
   },
 
+  Butcher: class Butcher extends Mob {
+    constructor(id, props) {
+      super(id, Types.Entities.BUTCHER, props);
+      this.atkSpeed = 75;
+      this.moveSpeed = 200;
+      this.walkSpeed = 100;
+      this.idleSpeed = 150;
+      this.setAttackRate(1500);
+      this.aggroRange = 3;
+    }
+  },
+
   Oculothorax: class Oculothorax extends Mob {
     constructor(id, props) {
       super(id, Types.Entities.OCULOTHORAX, props);

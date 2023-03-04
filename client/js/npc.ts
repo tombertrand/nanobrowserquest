@@ -187,7 +187,7 @@ var NpcTalk = {
   magicstone: [""],
   blueflame: [""],
   altarchalice: [""],
-  altarinfinitystone: [""],
+  altarsoulstone: [""],
   secretstairs: [""],
   secretstairs2: [""],
   secretstairsup: [""],

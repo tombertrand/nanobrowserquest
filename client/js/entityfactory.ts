@@ -199,6 +199,11 @@ EntityFactory.builders[Types.Entities.SPIDERQUEEN] = function (id, props) {
   return new Mobs.SpiderQueen(id, props);
 };
 
+
+EntityFactory.builders[Types.Entities.BUTCHER] = function (id, props) {
+  return new Mobs.Butcher(id, props);
+};
+
 EntityFactory.builders[Types.Entities.OCULOTHORAX] = function (id, props) {
   return new Mobs.Oculothorax(id, props);
 };
@@ -853,8 +858,8 @@ EntityFactory.builders[Types.Entities.CHALICE] = function (id) {
   return new Items.Chalice(id);
 };
 
-EntityFactory.builders[Types.Entities.INFINITYSTONE] = function (id) {
-  return new Items.InfinityStone(id);
+EntityFactory.builders[Types.Entities.SOULSTONE] = function (id) {
+  return new Items.SoulStone(id);
 };
 
 EntityFactory.builders[Types.Entities.NFT] = function (id) {
@@ -1035,8 +1040,8 @@ EntityFactory.builders[Types.Entities.ALTARCHALICE] = function (id) {
   return new Npcs.AltarChalice(id);
 };
 
-EntityFactory.builders[Types.Entities.ALTARINFINITYSTONE] = function (id) {
-  return new Npcs.AltarInfinityStone(id);
+EntityFactory.builders[Types.Entities.ALTARSOULSTONE] = function (id) {
+  return new Npcs.AltarSoulStone(id);
 };
 
 EntityFactory.builders[Types.Entities.SECRETSTAIRS] = function (id) {

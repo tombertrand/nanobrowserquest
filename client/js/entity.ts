@@ -156,7 +156,7 @@ class Entity {
           this.kind === Types.Entities.HANDS
         ) {
           this.currentAnimation.setSpeed(75);
-        } else if (this.kind === Types.Entities.ALTARCHALICE || this.kind === Types.Entities.ALTARINFINITYSTONE) {
+        } else if (this.kind === Types.Entities.ALTARCHALICE || this.kind === Types.Entities.ALTARSOULSTONE) {
           this.currentAnimation.setSpeed(200);
         } else {
           this.currentAnimation.setSpeed(speed);

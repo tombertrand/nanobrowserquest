@@ -195,9 +195,9 @@ class Game {
   activatedMagicStones: number[];
   activatedBlueFlames: number[];
   isAltarChaliceActivated: boolean;
-  isAltarInfinityStoneActivated: boolean;
+  isAltarSoulStoneActivated: boolean;
   altarChaliceNpcId: number;
-  altarInfinityStoneNpcId: number;
+  altarSoulStoneNpcId: number;
   treeNpcId: number;
   traps: { id: number; x: number; y: number }[];
   statues: { id: number; x: number; y: number }[];
@@ -296,9 +296,9 @@ class Game {
     this.activatedMagicStones = [];
     this.activatedBlueFlames = [];
     this.isAltarChaliceActivated = false;
-    this.isAltarInfinityStoneActivated = false;
+    this.isAltarSoulStoneActivated = false;
     this.altarChaliceNpcId = null;
-    this.altarInfinityStoneNpcId = null;
+    this.altarSoulStoneNpcId = null;
     this.treeNpcId = null;
     this.traps = [];
     this.statues = [];
@@ -407,6 +407,7 @@ class Game {
       "spider",
       "spider2",
       "spiderqueen",
+      "butcher",
       "oculothorax",
       "skeletonberserker",
       "statue",
@@ -453,7 +454,7 @@ class Game {
       "portalruins",
       "magicstone",
       "altarchalice",
-      "altarinfinitystone",
+      "altarsoulstone",
       "secretstairs",
       "secretstairs2",
       "secretstairsup",
@@ -689,7 +690,7 @@ class Game {
       "item-necromancerheart",
       "item-cowkinghorn",
       "item-chalice",
-      "item-infinitystone",
+      "item-soulstone",
       "item-nft",
       "item-wing",
       "item-crystal",
@@ -2418,7 +2419,7 @@ class Game {
           entity.kind === Types.Entities.PORTALCRYPT ||
           entity.kind === Types.Entities.PORTALRUINS ||
           entity.kind === Types.Entities.ALTARCHALICE ||
-          entity.kind === Types.Entities.ALTARINFINITYSTONE ||
+          entity.kind === Types.Entities.ALTARSOULSTONE ||
           entity.kind === Types.Entities.TOMBDEATHANGEL ||
           entity.kind === Types.Entities.TOMBANGEL ||
           entity.kind === Types.Entities.TOMBCROSS ||
@@ -2428,7 +2429,7 @@ class Game {
           this.entityGrid[y][x + 1][entity.id] = entity;
           this.pathingGrid[y][x + 1] = 1;
         }
-        if (entity.kind === Types.Entities.ALTARCHALICE || entity.kind === Types.Entities.ALTARINFINITYSTONE) {
+        if (entity.kind === Types.Entities.ALTARCHALICE || entity.kind === Types.Entities.ALTARSOULSTONE) {
           this.entityGrid[y][x + 2][entity.id] = entity;
           this.pathingGrid[y][x + 2] = 1;
         }
@@ -3253,13 +3254,13 @@ class Game {
                 entity.idle();
               } else if (
                 entity.kind === Types.Entities.ALTARCHALICE ||
-                entity.kind === Types.Entities.ALTARINFINITYSTONE ||
+                entity.kind === Types.Entities.ALTARSOULSTONE ||
                 entity.kind === Types.Entities.HANDS
               ) {
                 if (entity.kind === Types.Entities.ALTARCHALICE) {
                   self.altarChaliceNpcId = entity.id;
-                } else if (entity.kind === Types.Entities.ALTARINFINITYSTONE) {
-                  self.altarInfinityStoneNpcId = entity.id;
+                } else if (entity.kind === Types.Entities.ALTARSOULSTONE) {
+                  self.altarSoulStoneNpcId = entity.id;
                 }
 
                 entity.isActivated = isActivated;
@@ -3401,6 +3402,7 @@ class Game {
                     Types.Entities.OCULOTHORAX,
                     Types.Entities.SKELETONBERSERKER,
                     Types.Entities.SPIDERQUEEN,
+                    Types.Entities.BUTCHER,
                     Types.Entities.SHAMAN,
                     Types.Entities.DEATHANGEL,
                   ].includes(entity.kind);
@@ -3967,8 +3969,8 @@ class Game {
             mob.walk();
 
             // self.audioManager.playSound("secret-found");
-          } else if (mob.kind === Types.Entities.ALTARINFINITYSTONE) {
-            self.isAltarInfinityStoneActivated = true;
+          } else if (mob.kind === Types.Entities.ALTARSOULSTONE) {
+            self.isAltarSoulStoneActivated = true;
 
             mob.walk();
 
@@ -4054,8 +4056,8 @@ class Game {
           } else if (mob.kind === Types.Entities.ALTARCHALICE) {
             self.isAltarChaliceActivated = false;
             mob.idle();
-          } else if (mob.kind === Types.Entities.ALTARINFINITYSTONE) {
-            self.isAltarInfinityStoneActivated = false;
+          } else if (mob.kind === Types.Entities.ALTARSOULSTONE) {
+            self.isAltarSoulStoneActivated = false;
             mob.idle();
             self.audioManager.playSound("stone-break");
           } else if (mob.kind === Types.Entities.HANDS) {
@@ -4160,7 +4162,9 @@ class Game {
           self.storage.incrementSkeletonBerserkerCount();
           self.tryUnlockingAchievement("BERSERKER");
         } else if (kind === Types.Entities.SPIDERQUEEN) {
-          self.tryUnlockingAchievement("SPIDER_QUEEN");
+          self.tryUnlockingAchievement("SPIDERQUEEN");
+        } else if (kind === Types.Entities.BUTCHER) {
+          self.tryUnlockingAchievement("BUTCHER");
         } else if (kind === Types.Entities.MAGE) {
           self.storage.incrementMageCount();
           self.tryUnlockingAchievement("ARCHMAGE");
@@ -5044,7 +5048,7 @@ class Game {
           Types.Entities.MAGICSTONE,
           Types.Entities.BLUEFLAME,
           Types.Entities.ALTARCHALICE,
-          Types.Entities.ALTARINFINITYSTONE,
+          Types.Entities.ALTARSOULSTONE,
           Types.Entities.LEVER,
           Types.Entities.LEVER2,
           Types.Entities.STATUE,
@@ -5147,9 +5151,9 @@ class Game {
         if (!npc.isActivated) {
           this.client.sendAltarChalice(npc.id);
         }
-      } else if (npc.kind === Types.Entities.ALTARINFINITYSTONE) {
+      } else if (npc.kind === Types.Entities.ALTARSOULSTONE) {
         if (!npc.isActivated) {
-          this.client.sendAltarInfinityStone(npc.id);
+          this.client.sendAltarSoulStone(npc.id);
         }
       } else if (npc.kind === Types.Entities.HANDS) {
         if (!npc.isActivated) {

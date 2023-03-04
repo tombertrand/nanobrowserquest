@@ -163,7 +163,7 @@ export const Types: any = {
     CURSED: 92,
     MAGICSTONE: 93,
     ALTARCHALICE: 94,
-    ALTARINFINITYSTONE: 95,
+    ALTARSOULSTONE: 95,
     CHALICELEVEL_START: 96,
     CHALICELEVEL_INPROGRESS: 97,
     CHALICELEVEL_END: 98,
@@ -219,6 +219,7 @@ export const Types: any = {
     SPIDER: 279,
     SPIDER2: 295,
     SPIDERQUEEN: 297,
+    BUTCHER: 298,
     SKELETONTEMPLAR: 278,
     SKELETONTEMPLAR2: 228,
     WRAITH2: 277,
@@ -319,7 +320,7 @@ export const Types: any = {
     NECROMANCERHEART: 124,
     COWKINGHORN: 137,
     CHALICE: 245,
-    INFINITYSTONE: 249,
+    SOULSTONE: 249,
     NFT: 273,
     WING: 274,
     CRYSTAL: 285,
@@ -398,7 +399,7 @@ export const Types: any = {
     MAGICSTONE: 220,
     BLUEFLAME: 234,
     ALTARCHALICE: 246,
-    ALTARINFINITYSTONE: 250,
+    ALTARSOULSTONE: 250,
     SECRETSTAIRS: 251,
     SECRETSTAIRS2: 282,
     SECRETSTAIRSUP: 253,
@@ -731,6 +732,7 @@ export const kinds = {
   spider: [Types.Entities.SPIDER, "mob", 100, 64],
   spider2: [Types.Entities.SPIDER2, "mob", 100, 64],
   spiderqueen: [Types.Entities.SPIDERQUEEN, "mob", 100, 64],
+  butcher: [Types.Entities.BUTCHER, "mob", 100, 64],
   oculothorax: [Types.Entities.OCULOTHORAX, "mob", 100, 64],
   skeletonberserker: [Types.Entities.SKELETONBERSERKER, "mob", 100, 64],
   statue: [Types.Entities.STATUE, "npc", 100, 64],
@@ -880,7 +882,7 @@ export const kinds = {
   necromancerheart: [Types.Entities.NECROMANCERHEART, "recipe", "Necromancer's heart"],
   cowkinghorn: [Types.Entities.COWKINGHORN, "recipe", "Cow King's horn"],
   chalice: [Types.Entities.CHALICE, "item", "Golden Chalice"],
-  infinitystone: [Types.Entities.INFINITYSTONE, "item", "Mysterious Gem"],
+  soulstone: [Types.Entities.SOULSTONE, "item", "Mysterious Gem"],
   nft: [Types.Entities.NFT, "item", "Stone NFT"],
   wing: [Types.Entities.WING, "item", "Dragon Wing"],
   crystal: [Types.Entities.CRYSTAL, "item", "Crystal"],
@@ -960,7 +962,7 @@ export const kinds = {
   magicstone: [Types.Entities.MAGICSTONE, "npc"],
   blueflame: [Types.Entities.BLUEFLAME, "npc"],
   altarchalice: [Types.Entities.ALTARCHALICE, "npc"],
-  altarinfinitystone: [Types.Entities.ALTARINFINITYSTONE, "npc"],
+  altarsoulstone: [Types.Entities.ALTARSOULSTONE, "npc"],
   secretstairs: [Types.Entities.SECRETSTAIRS, "npc"],
   secretstairs2: [Types.Entities.SECRETSTAIRS2, "npc"],
   secretstairsup: [Types.Entities.SECRETSTAIRSUP, "npc"],
@@ -1239,11 +1241,22 @@ Types.isBoss = function (kindOrString: number | string) {
       Types.Entities.SKELETONTEMPLAR,
       Types.Entities.SKELETONTEMPLAR2,
       Types.Entities.SPIDERQUEEN,
+      Types.Entities.BUTCHER,
       Types.Entities.SHAMAN,
       Types.Entities.DEATHANGEL,
     ].includes(kindOrString);
   } else {
-    return ["boss", "skeletoncommander", "necromancer", "cowking", "minotaur", "deathangel"].includes(kindOrString);
+    return [
+      "boss",
+      "skeletoncommander",
+      "necromancer",
+      "cowking",
+      "minotaur",
+      "spiderqueen",
+      "butcher",
+      "shaman",
+      "deathangel",
+    ].includes(kindOrString);
   }
 };
 
@@ -1467,7 +1480,7 @@ Types.isSingle = function (kindOrString: number | string) {
       Types.Entities.NECROMANCERHEART,
       Types.Entities.COWKINGHORN,
       Types.Entities.CHALICE,
-      Types.Entities.INFINITYSTONE,
+      Types.Entities.SOULSTONE,
       Types.Entities.NFT,
       Types.Entities.WING,
       Types.Entities.CRYSTAL,
@@ -1485,7 +1498,7 @@ Types.isSingle = function (kindOrString: number | string) {
         "necromancerheart",
         "cowkinghorn",
         "chalice",
-        "infinitystone",
+        "soulstone",
         "nft",
         "wing",
         "crystal",
@@ -1500,7 +1513,7 @@ Types.isSingle = function (kindOrString: number | string) {
       kindOrString.startsWith("necromancerheart") ||
       kindOrString.startsWith("cowkinghorn") ||
       kindOrString.startsWith("chalice") ||
-      kindOrString.startsWith("infinitystone") ||
+      kindOrString.startsWith("soulstone") ||
       kindOrString.startsWith("nft") ||
       kindOrString.startsWith("wing") ||
       kindOrString.startsWith("crystal") ||
@@ -1645,7 +1658,7 @@ Types.getAliasFromName = function (name: string) {
     return "Magic Flame";
   } else if (name === "altarchalice") {
     return "Altar";
-  } else if (name === "altarinfinitystone") {
+  } else if (name === "altarsoulstone") {
     return "Altar";
   } else if (name.startsWith("secretstairs")) {
     return "Secret Stairs";
@@ -1674,7 +1687,9 @@ Types.getAliasFromName = function (name: string) {
   } else if (name === "spider2") {
     return "Spellweaver Spider";
   } else if (name === "spiderqueen") {
-    return "Vexxara";
+    return "Arachneia the Queen of Webs";
+  } else if (name === "butcher") {
+    return "Gorefiend the Butcher";
   }
 
   return name;
@@ -2565,7 +2580,7 @@ Types.itemDescription = {
   necromancerheart: "The heart of the Necromancer. An unknown magic is still being emitted from the remains.",
   cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
   chalice: "Return the Golden Chalice, a one-of-a-kind artifact, to its rightful place.",
-  infinitystone: "This Mysterious Gem holds a collection of enchanted objects.",
+  soulstone: "This Mysterious Gem holds a collection of enchanted objects.",
   nft: "An exceptional Non-Fungible Token artifact.",
   wing: "The remnants of a dragon's wing.",
   crystal: "An ancient and powerful crystal.",

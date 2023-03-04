@@ -214,9 +214,9 @@ var Npcs = {
     }
   },
 
-  AltarInfinityStone: class AltarInfinityStone extends Npc {
+  AltarSoulStone: class AltarSoulStone extends Npc {
     constructor(id) {
-      super(id, Types.Entities.ALTARINFINITYSTONE);
+      super(id, Types.Entities.ALTARSOULSTONE);
       this.isFading = false;
     }
     hasShadow() {

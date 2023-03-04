@@ -669,12 +669,12 @@ class Player extends Character {
         if (altarId === self.server.altarChaliceNpcId) {
           self.server.activateAltarChalice(self);
         }
-      } else if (action === Types.Messages.ALTARINFINITYSTONE) {
-        console.info("ALTAR - INFINITYSTONE: " + self.name + " " + message[1]);
+      } else if (action === Types.Messages.ALTARSOULSTONE) {
+        console.info("ALTAR - SOULSTONE: " + self.name + " " + message[1]);
 
         const altarId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
-        if (altarId && altarId === self.server.altarInfinityStoneNpcId) {
-          self.server.activateAltarInfinityStone(self);
+        if (altarId && altarId === self.server.altarSoulStoneNpcId) {
+          self.server.activateAltarSoulStone(self);
         }
       } else if (action === Types.Messages.HANDS) {
         console.info("HANDS: " + self.name + " " + message[1]);

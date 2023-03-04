@@ -85,7 +85,7 @@ class World {
   statues: number[];
   spellCount: number;
   isActivatedAltarChalice: boolean;
-  isActivatedAltarInfinityStone: boolean;
+  isActivatedAltarSoulStone: boolean;
   isActivatedHands: boolean;
   secretStairsChaliceNpcId: number;
   secretStairsTreeNpcId: number;
@@ -94,7 +94,7 @@ class World {
   chaliceLevelClock: number;
   chaliceLevelInterval: NodeJS.Timeout;
   altarChaliceNpcId: number;
-  altarInfinityStoneNpcId: number;
+  altarSoulStoneNpcId: number;
   handsNpcId: number;
   isActivatedTreeLevel: boolean;
   trapIds: number[];
@@ -198,7 +198,7 @@ class World {
     this.blueFlames = [];
     this.statues = [];
     this.isActivatedAltarChalice = false;
-    this.isActivatedAltarInfinityStone = false;
+    this.isActivatedAltarSoulStone = false;
     this.isActivatedHands = false;
     this.secretStairsChaliceNpcId = null;
     this.secretStairsTreeNpcId = null;
@@ -209,7 +209,7 @@ class World {
     this.chaliceLevelClock = null;
     this.chaliceLevelInterval = null;
     this.altarChaliceNpcId = null;
-    this.altarInfinityStoneNpcId = null;
+    this.altarSoulStoneNpcId = null;
     this.handsNpcId = null;
     this.isActivatedTreeLevel = false;
     this.trapIds = [];
@@ -741,8 +741,8 @@ class World {
         this.statues.push(npc.id);
       } else if (kind === Types.Entities.ALTARCHALICE) {
         this.altarChaliceNpcId = npc.id;
-      } else if (kind === Types.Entities.ALTARINFINITYSTONE) {
-        this.altarInfinityStoneNpcId = npc.id;
+      } else if (kind === Types.Entities.ALTARSOULSTONE) {
+        this.altarSoulStoneNpcId = npc.id;
       } else if (kind === Types.Entities.HANDS) {
         this.handsNpcId = npc.id;
       } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(kind)) {
@@ -975,7 +975,7 @@ class World {
   }
 
   startStoneLevel() {
-    this.stoneLevelClock = 15 * 60; // 15 minutes
+    this.stoneLevelClock = 5 * 60; // 5 minutes
 
     const stonePortal = this.npcs[this.portalStoneNpcId];
     stonePortal.respawnCallback();
@@ -1389,11 +1389,11 @@ class World {
     }
   }
 
-  async activateAltarInfinityStone(player, force = false) {
-    const altar = this.getEntityById(this.altarInfinityStoneNpcId);
+  async activateAltarSoulStone(player, force = false) {
+    const altar = this.getEntityById(this.altarSoulStoneNpcId);
 
     if (altar && altar instanceof Npc && !this.isActivatedAltarChalice && !altar.isActivated) {
-      if (force || (await this.databaseHandler.useInventoryItem(player, "infinitystone"))) {
+      if (force || (await this.databaseHandler.useInventoryItem(player, "soulstone"))) {
         altar.activate();
 
         this.broadcastRaise(player, altar);
@@ -1579,14 +1579,17 @@ class World {
                 self.minotaurSpawnTimeout = null;
               }, time);
             });
-          } else if (kind === Types.Entities.SPIDERQUEEN) {
-            // @TODO THIS WILL BE THE BUTCHER, not the SPIDER_QUEEN
+          } else if (kind === Types.Entities.BUTCHER) {
             mob.onDestroy(() => {
               clearInterval(self.stoneLevelInterval);
               setTimeout(() => {
                 // Return everyone to stones, leave 5s to loot any last drop
                 self.endStoneLevel();
               }, 5000);
+            });
+          } else if (kind === Types.Entities.SPIDERQUEEN) {
+            mob.onDestroy(() => {
+              // @TODO End crypt level?
             });
           } else if (kind === Types.Entities.DEATHANGEL) {
             self.deathAngelId = mob.id;
@@ -1899,7 +1902,7 @@ class World {
     //   "amuletmoon",
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
-    // var randomDrops = ["chalice", "infinitystone", "hellhammer"];
+    // var randomDrops = ["chalice", "soulstone", "hellhammer"];
     // var randomDrops = ["nft"];
     var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];

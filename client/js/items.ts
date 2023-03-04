@@ -1080,9 +1080,9 @@ var Items = {
     }
   },
 
-  InfinityStone: class InfinityStone extends Item {
+  SoulStone: class SoulStone extends Item {
     constructor(id) {
-      super(id, Types.Entities.INFINITYSTONE, "object");
+      super(id, Types.Entities.SOULSTONE, "object");
       this.lootMessage = "You pick up a Mysterious Gem";
     }
   },

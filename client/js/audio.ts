@@ -84,7 +84,7 @@ class AudioManager {
       "iceball",
       "trap",
       "powder",
-      // "altarinfinitystone",
+      // "altarsoulstone",
     ];
 
     var loadSoundFiles = function () {

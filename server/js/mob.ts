@@ -91,7 +91,11 @@ class Mob extends Character {
 
     const enchants: Enchant[] = ["magic", "flame", "lightning", "cold", "poison", "spectral", "physical", "stoneskin"];
 
-    if ([Types.Entities.SPIDERQUEEN, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(this.kind)) {
+    if (
+      [Types.Entities.SPIDERQUEEN, Types.Entities.BUTCHER, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(
+        this.kind,
+      )
+    ) {
       // Add 2 random extra enchants on top of Spectral
       const extraEnchants = _.shuffle(enchants.filter(enchant => !this.enchants.includes(enchant))).slice(0, 2);
       this.enchants = this.enchants.concat(extraEnchants);
@@ -162,7 +166,11 @@ class Mob extends Character {
       ].includes(this.kind)
     ) {
       this.assignRandomResistances(2);
-    } else if ([Types.Entities.SPIDERQUEEN, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(this.kind)) {
+    } else if (
+      [Types.Entities.SPIDERQUEEN, Types.Entities.BUTCHER, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(
+        this.kind,
+      )
+    ) {
       this.assignRandomResistances(3);
     }
   }

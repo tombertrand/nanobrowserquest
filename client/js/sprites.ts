@@ -29,6 +29,7 @@ import skeletontemplar2 from "../sprites/skeletontemplar.json";
 import spider from "../sprites/spider.json";
 import spider2 from "../sprites/spider.json";
 import spiderqueen from "../sprites/spiderqueen.json";
+import butcher from "../sprites/butcher.json";
 import mageSpell from "../sprites/mage-spell.json";
 import oculothorax from "../sprites/oculothorax.json";
 import skeletonberserker from "../sprites/skeletonberserker.json";
@@ -135,7 +136,7 @@ import tree from "../sprites/tree.json";
 import trap from "../sprites/trap.json";
 import trap2 from "../sprites/trap.json";
 import trap3 from "../sprites/trap.json";
-import altarinfinitystone from "../sprites/altar.json";
+import altarsoulstone from "../sprites/altar.json";
 import blueflame from "../sprites/blueflame.json";
 import ogre from "../sprites/ogre.json";
 import yeti from "../sprites/yeti.json";
@@ -245,6 +246,7 @@ const sprites = {
   spider,
   spider2,
   spiderqueen,
+  butcher,
   oculothorax,
   skeletonberserker,
   statue,
@@ -399,7 +401,7 @@ const sprites = {
   "item-necromancerheart": item,
   "item-cowkinghorn": item,
   "item-chalice": item,
-  "item-infinitystone": item,
+  "item-soulstone": item,
   "item-nft": item,
   "item-wing": item,
   "item-crystal": item,
@@ -497,7 +499,7 @@ const sprites = {
   magicstone,
   blueflame,
   altarchalice,
-  altarinfinitystone,
+  altarsoulstone,
   secretstairs,
   secretstairs2,
   secretstairsup,

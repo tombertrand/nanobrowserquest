@@ -1379,8 +1379,8 @@ class GameClient {
     this.sendMessage([Types.Messages.ALTARCHALICE, id]);
   }
 
-  sendAltarInfinityStone(id) {
-    this.sendMessage([Types.Messages.ALTARINFINITYSTONE, id]);
+  sendAltarSoulStone(id) {
+    this.sendMessage([Types.Messages.ALTARSOULSTONE, id]);
   }
 
   sendHands(id) {

@@ -1,0 +1,49 @@
+{
+  "id": "butcher",
+  "width": 220,
+  "height": 96,
+  "animations": {
+    "atk_right": {
+      "length": 9,
+      "row": 3
+    },
+    "walk_right": {
+      "length": 6,
+      "row": 2
+    },
+    "idle_right": {
+      "length": 7,
+      "row": 0
+    },
+    "atk_up": {
+      "length": 9,
+      "row": 3
+    },
+    "walk_up": {
+      "length": 6,
+      "row": 2
+    },
+    "idle_up": {
+      "length": 7,
+      "row": 0
+    },
+    "atk_down": {
+      "length": 9,
+      "row": 3
+    },
+    "walk_down": {
+      "length": 6,
+      "row": 2
+    },
+    "idle_down": {
+      "length": 7,
+      "row": 0
+    },
+    "death": {
+      "length": 12,
+      "row": 7
+    }
+  },
+  "offset_x": -103,
+  "offset_y": -61
+}

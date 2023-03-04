@@ -406,55 +406,55 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     name: "Stonehenge",
     desc: "Activate all magic stones",
   },
-  CRUISADE: {
+  SPIDERQUEEN: {
     id: 54,
+    name: "Spider Queen",
+    desc: "Defeat Arachneia",
+  },
+  CRUISADE: {
+    id: 55,
     name: "Cruisade",
     desc: "Find the Holy Grail",
   },
   TOMB: {
-    id: 55,
+    id: 56,
     name: "The Tomb",
     desc: "Enter the hidden Crypt",
   },
   ALCHEMIST: {
-    id: 56,
+    id: 57,
     name: "Alchemist",
     desc: "Create the quantum powder",
-  },
-  INFINITY_STONE: {
-    id: 57,
-    name: "Infinity Stone",
-    desc: "Find a mysterious gem with great powers",
   },
   STARGATE: {
     id: 58,
     name: "Stargate",
     desc: "Enter the portal",
   },
-  PERSONAL_WEAPON: {
+  SOULSTONE: {
     id: 59,
-    name: "Beam me up Scotty",
-    desc: "Go on a quest to find a special weapon",
+    name: "Soul Stone",
+    desc: "Find a mysterious gem with great powers",
+  },
+  BUTCHER: {
+    id: 60,
+    name: "Butcher",
+    desc: "Defeat the Butcher and release the souls he keeps captive",
   },
   BOO: {
-    id: 60,
+    id: 61,
     name: "Boo",
     desc: `Kill ${GHOST_COUNT} Ghosts<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getGhostCount() >= GHOST_COUNT;
     },
   },
-  SPIDER_QUEEN: {
-    id: 61,
-    name: "Spider Queen",
-    desc: "Defeat Vexxara",
-  },
-  ARCHMAGE: {
+  BERSERKER: {
     id: 62,
-    name: "Archmage",
-    desc: `Kill ${MAGE_COUNT} Mages<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    name: "Berserker",
+    desc: `Kill ${SKELETONBERSERKER_COUNT} Skeleton Berserker<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
-      return storage.getMageCount() >= MAGE_COUNT;
+      return storage.getSkeletonBerserkerCount() >= SKELETONBERSERKER_COUNT;
     },
   },
   SPECTRAL: {
@@ -465,12 +465,12 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
       return storage.getWraith2Count() >= WRAITH2_COUNT;
     },
   },
-  BERSERKER: {
+  ARCHMAGE: {
     id: 64,
-    name: "Berserker",
-    desc: `Kill ${SKELETONBERSERKER_COUNT} Skeleton Berserker<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    name: "Archmage",
+    desc: `Kill ${MAGE_COUNT} Mages<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
-      return storage.getSkeletonBerserkerCount() >= SKELETONBERSERKER_COUNT;
+      return storage.getMageCount() >= MAGE_COUNT;
     },
   },
   CRYSTAL: {
