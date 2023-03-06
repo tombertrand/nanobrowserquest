@@ -13,7 +13,7 @@ class Warrior extends Player {
   isOnPlateau: any;
   lastCheckpoint: any;
 
-  constructor(id, name) {
+  constructor(id, { name }) {
     super(id, name, "", Types.Entities.WARRIOR);
   }
 }

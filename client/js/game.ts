@@ -39,7 +39,6 @@ import InfoManager from "./infomanager";
 import Item from "./item";
 import Map from "./map";
 import Mob from "./mob";
-import Mobs from "./mobs";
 import Npc from "./npc";
 import Pathfinder from "./pathfinder";
 import Player from "./player";
@@ -260,7 +259,7 @@ class Game {
     this.partyInvitees = [];
 
     // Player
-    this.player = new Warrior("player", "");
+    this.player = new Warrior("player", { name: "" });
     this.worldPlayers = [];
     // this.player.moveUp = false;
     // this.player.moveDown = false;
@@ -4140,7 +4139,7 @@ class Game {
           self.tryUnlockingAchievement("BLACK_MAGIC");
         } else if (kind === Types.Entities.COW) {
           self.storage.incrementCowCount();
-          self.tryUnlockingAchievement("FRESH_MEAT");
+          self.tryUnlockingAchievement("HAMBURGER");
         } else if (kind === Types.Entities.COWKING) {
           self.tryUnlockingAchievement("COW_KING");
         } else if (kind === Types.Entities.RAT3) {
@@ -4759,7 +4758,7 @@ class Game {
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
-        if (self.player.gridY >= 756 && self.player.gridY <= 781 && self.player.gridX <= 29) {
+        if (self.player.gridY >= 744 && self.player.gridY <= 781 && self.player.gridX <= 29) {
           const x = randomInt(66, 76);
           const y = randomInt(638, 647);
 
@@ -6560,6 +6559,8 @@ class Game {
         this.player.skeletonKey = true;
       } else if (item.kind === Types.Entities.STONEHERO) {
         this.tryUnlockingAchievement("EMBLEM");
+      } else if (item.kind === Types.Entities.SOULSTONE) {
+        this.tryUnlockingAchievement("SOULSTONE");
       }
 
       if (Types.isHealingItem(item.kind)) {

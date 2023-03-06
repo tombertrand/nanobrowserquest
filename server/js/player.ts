@@ -143,6 +143,7 @@ class Player extends Character {
   tradeId?: number;
   freezeChanceLevel: number;
   minotaurDamage: number;
+  butcherDamage: number;
   deathAngelDamage: number;
   isPasswordRequired: boolean;
   isPasswordValid: boolean;
@@ -192,6 +193,7 @@ class Player extends Character {
     this.auras = [];
     this.freezeChanceLevel = 0;
     this.minotaurDamage = 0;
+    this.butcherDamage = 0;
     this.deathAngelDamage = 0;
 
     // Item bonuses (Rings, amulet, Uniques?)
@@ -884,7 +886,7 @@ class Player extends Character {
             self.send(new Messages.CowLevelInProgress(self.server.cowLevelClock).serialize());
           } else if (y >= 696 && y <= 733 && x <= 29) {
             self.send(new Messages.ChaliceLevelInProgress(self.server.chaliceLevelClock).serialize());
-          } else if (y >= 756 && y <= 781 && x <= 29) {
+          } else if (y >= 744 && y <= 781 && x <= 29) {
             self.send(new Messages.StoneLevelInProgress(self.server.stoneLevelClock).serialize());
           }
         }
@@ -1469,6 +1471,10 @@ class Player extends Character {
 
   unregisterMinotaurDamage = _.debounce(() => {
     this.minotaurDamage = 0;
+  }, 30000);
+
+  unregisterButcherDamage = _.debounce(() => {
+    this.butcherDamage = 0;
   }, 30000);
 
   unregisterDeathAngelDamage = _.debounce(() => {

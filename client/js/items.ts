@@ -1083,7 +1083,7 @@ var Items = {
   SoulStone: class SoulStone extends Item {
     constructor(id) {
       super(id, Types.Entities.SOULSTONE, "object");
-      this.lootMessage = "You pick up a Mysterious Gem";
+      this.lootMessage = "You pick up the Soul Stone";
     }
   },
 

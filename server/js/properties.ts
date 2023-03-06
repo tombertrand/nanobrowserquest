@@ -456,11 +456,7 @@ var Properties: any = {
   },
   butcher: {
     drops: {
-      rejuvenationpotion: 10,
-      scrollupgradelegendary: 3,
-      ringplatinum: 3,
-      amuletplatinum: 3,
-      poisonpotion: 10,
+      soulstone: 100,
     },
     hp: 1200,
     armor: 28,
@@ -499,7 +495,7 @@ var Properties: any = {
     },
     hp: 2020,
     armor: 24,
-    weapon: 21,
+    weapon: 10,
   },
   golem: {
     drops: {

@@ -975,7 +975,7 @@ class World {
   }
 
   startStoneLevel() {
-    this.stoneLevelClock = 5 * 60; // 5 minutes
+    this.stoneLevelClock = 15 * 60; // 15 minutes
 
     const stonePortal = this.npcs[this.portalStoneNpcId];
     stonePortal.respawnCallback();
@@ -1709,9 +1709,14 @@ class World {
     let p = 0;
     let itemKind = null;
 
-    if (mob.kind === Types.Entities.MINOTAUR || mob.kind === Types.Entities.DEATHANGEL) {
+    if (
+      mob.kind === Types.Entities.MINOTAUR ||
+      mob.kind === Types.Entities.BUTCHER ||
+      mob.kind === Types.Entities.DEATHANGEL
+    ) {
       const MIN_DAMAGE = {
         [Types.Entities.MINOTAUR]: 2000,
+        [Types.Entities.BUTCHER]: 100,
         [Types.Entities.DEATHANGEL]: 3000,
       };
       let members = [attacker.id];
@@ -1757,11 +1762,11 @@ class World {
           if (player?.minotaurDamage >= MIN_DAMAGE[mob.kind]) {
             chestType = player.level >= 56 ? "chestgreen" : "chestblue";
           }
-        } else if (mob.kind === Types.Entities.DEATHANGEL) {
-          if (player.level < 65) {
-            // @NOTE: Ban player w/ reason
-            // return;
+        } else if (mob.kind === Types.Entities.BUTCHER) {
+          if (player?.butcherDamage >= MIN_DAMAGE[mob.kind]) {
+            chestType = "chestred";
           }
+        } else if (mob.kind === Types.Entities.DEATHANGEL) {
           if (player?.deathAngelDamage >= MIN_DAMAGE[mob.kind]) {
             chestType = "chestpurple";
           }
@@ -1882,6 +1887,10 @@ class World {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur 🥶`);
     } else if (mob.kind === Types.Entities.COWKING) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
+    } else if (mob.kind === Types.Entities.SPIDERQUEEN) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained the Spider Queen 🕷️`);
+    } else if (mob.kind === Types.Entities.BUTCHER) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained the Butcher 🩸`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Death Angel 💀`);
     }
@@ -1904,7 +1913,7 @@ class World {
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
     // var randomDrops = ["chalice", "soulstone", "hellhammer"];
     // var randomDrops = ["nft"];
-    var randomDrops = ["nft", "wing", "crystal"];
+    // var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
     // var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];
@@ -1982,8 +1991,8 @@ class World {
     // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    var randomDrop = random(randomDrops.length);
-    itemName = randomDrops[randomDrop];
+    // var randomDrop = random(randomDrops.length);
+    // itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 
@@ -2290,6 +2299,10 @@ class World {
     if (entity.kind === Types.Entities.MINOTAUR) {
       player.minotaurDamage += dmg;
       player.unregisterMinotaurDamage();
+    } else if (entity.kind === Types.Entities.BUTCHER) {
+      console.log("~~~~~increase BUTCHER dmg", dmg);
+      player.butcherDamage += dmg;
+      player.unregisterButcherDamage();
     } else if (entity.kind === Types.Entities.DEATHANGEL) {
       player.deathAngelDamage += dmg;
       player.unregisterDeathAngelDamage();

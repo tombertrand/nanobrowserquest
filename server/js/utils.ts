@@ -323,29 +323,29 @@ export const isValidTransmuteItems = items => {
 };
 
 export const getIsTransmuteSuccess = ({ transmuteSuccessRate = 0, uniqueSuccessRate = 0, isLuckySlot }) => {
-  let random = randomInt(1, 100);
+  let randomNum = randomInt(1, 100);
 
   if (isLuckySlot) {
     transmuteSuccessRate = Math.ceil(transmuteSuccessRate * 1.25);
     uniqueSuccessRate = Math.ceil(uniqueSuccessRate * 1.25);
   }
 
-  const isTransmuteSuccess = random <= transmuteSuccessRate;
-  const isUniqueSuccess = random <= uniqueSuccessRate;
+  const isTransmuteSuccess = randomNum <= transmuteSuccessRate;
+  const isUniqueSuccess = randomNum <= uniqueSuccessRate;
 
   console.info(
-    `Random ${random}, Transmute success rate: ${transmuteSuccessRate} -> ${
-      random <= transmuteSuccessRate ? "SUCCESS" : "FAILURE"
+    `Random ${randomNum}, Transmute success rate: ${transmuteSuccessRate} -> ${
+      randomNum <= transmuteSuccessRate ? "SUCCESS" : "FAILURE"
     }`,
   );
   console.info(
-    `Random ${random}, Unique Transmute success rate: ${uniqueSuccessRate} -> ${
-      random <= uniqueSuccessRate ? "SUCCESS" : "FAILURE"
+    `Random ${randomNum}, Unique Transmute success rate: ${uniqueSuccessRate} -> ${
+      randomNum <= uniqueSuccessRate ? "SUCCESS" : "FAILURE"
     }`,
   );
 
   return {
-    random,
+    random: randomNum,
     transmuteSuccessRate,
     uniqueSuccessRate,
     ...(transmuteSuccessRate ? { isTransmuteSuccess } : null),
@@ -446,14 +446,14 @@ export const generateGreenChestItem = (): { item: string; uniqueChances?: number
     { item: "shielddiamond", uniqueChances: 15 },
     { item: "beltminotaur", uniqueChances: 10 },
     { item: "minotauraxe", uniqueChances: 10 },
-    { item: "emeraldsword", uniqueChances: 8 },
-    { item: "emeraldarmor", uniqueChances: 8 },
-    { item: "beltemerald", uniqueChances: 8 },
-    { item: "shieldemerald", uniqueChances: 8 },
-    { item: "templarsword", uniqueChances: 6 },
-    { item: "templararmor", uniqueChances: 6 },
-    { item: "belttemplar", uniqueChances: 6 },
-    { item: "shieldtemplar", uniqueChances: 6 },
+    { item: "emeraldsword", uniqueChances: 10 },
+    { item: "emeraldarmor", uniqueChances: 10 },
+    { item: "beltemerald", uniqueChances: 10 },
+    { item: "shieldemerald", uniqueChances: 10 },
+    { item: "templarsword", uniqueChances: 10 },
+    { item: "templararmor", uniqueChances: 10 },
+    { item: "belttemplar", uniqueChances: 10 },
+    { item: "shieldtemplar", uniqueChances: 10 },
     { item: "cape", uniqueChances: 5 },
   ];
 
@@ -480,6 +480,48 @@ export const generateGreenChestItem = (): { item: string; uniqueChances?: number
   if (randomCategory < 10) {
     category = ringOrAmulets;
   } else if (randomCategory < 50) {
+    category = scrolls;
+  }
+
+  const randomItem = random(category.length);
+
+  return category[randomItem];
+};
+
+export const generateRedChestItem = (): { item: string; uniqueChances?: number } => {
+  // 70%
+  const items = [
+    { item: "beltdemon", uniqueChances: 12 },
+    { item: "shielddemon", uniqueChances: 12 },
+    { item: "demonaxe", uniqueChances: 12 },
+    { item: "demonarmor", uniqueChances: 12 },
+    { item: "demonaxe", uniqueChances: 12 },
+    { item: "cape", uniqueChances: 5 },
+  ];
+
+  // 20%
+  const scrolls = [
+    { item: "scrollupgradelegendary" },
+    { item: "scrollupgradesacred" },
+    { item: "stonesocket" },
+    { item: "jewelskull" },
+  ];
+
+  // 10%
+  const ringOrAmulets = [
+    { item: "ringbalrog" },
+    { item: "ringheaven" },
+    { item: "ringwizard" },
+    { item: "ringconqueror" },
+    { item: "amuletdemon" },
+  ];
+
+  const randomCategory = random(100);
+  let category: any = items;
+
+  if (randomCategory < 10) {
+    category = ringOrAmulets;
+  } else if (randomCategory < 30) {
     category = scrolls;
   }
 
@@ -532,11 +574,6 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
   const randomItem = random(category.length);
 
   return category[randomItem];
-};
-
-export const generateRedChestItem = (): { item: string; uniqueChances?: number } => {
-  // @ts-ignore NOT YET IMPLEMENTED
-  return {};
 };
 
 export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {

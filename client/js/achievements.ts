@@ -334,9 +334,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     desc: "Defeat the Cow King",
     hidden: true,
   },
-  FRESH_MEAT: {
+  HAMBURGER: {
     id: 43,
-    name: "Fresh Meat",
+    name: "Hamburger",
     desc: `Kill ${COW_COUNT} cows`,
     hidden: true,
     isCompleted() {
@@ -438,7 +438,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   },
   BUTCHER: {
     id: 60,
-    name: "Butcher",
+    name: "Fresh Meat",
     desc: "Defeat the Butcher and release the souls he keeps captive",
   },
   BOO: {
@@ -555,7 +555,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   HELLFORGE: {
     id: 79,
     name: "Hellforge",
-    desc: "Break the Mysterious gem on the Altar",
+    desc: "Break the Soul Stone on the Altar",
     hidden: true,
   },
   GRAND_MASTER: {
