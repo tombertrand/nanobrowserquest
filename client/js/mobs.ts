@@ -551,7 +551,7 @@ export const Mobs = {
       this.setAttackRate(1500);
       this.aggroRange = 3;
       this.hurtDelay = 100;
-      this.taunt = "fresh_meat";
+      this.taunt = "fresh-meat";
     }
   },
 

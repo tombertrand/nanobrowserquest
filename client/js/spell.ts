@@ -5,6 +5,7 @@ class Spell extends Character {
   element: Elements;
   lastUpdate: number;
   casterId: number;
+  targetId?: number;
   angle: number;
   angled: boolean;
 

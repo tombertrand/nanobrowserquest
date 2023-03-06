@@ -194,7 +194,6 @@ class Game {
   activatedMagicStones: number[];
   activatedBlueFlames: number[];
   isAltarChaliceActivated: boolean;
-  isAltarSoulStoneActivated: boolean;
   altarChaliceNpcId: number;
   altarSoulStoneNpcId: number;
   treeNpcId: number;
@@ -295,7 +294,6 @@ class Game {
     this.activatedMagicStones = [];
     this.activatedBlueFlames = [];
     this.isAltarChaliceActivated = false;
-    this.isAltarSoulStoneActivated = false;
     this.altarChaliceNpcId = null;
     this.altarSoulStoneNpcId = null;
     this.treeNpcId = null;
@@ -3297,10 +3295,6 @@ class Game {
                 self.audioManager.playSound("secret-found");
               }
 
-              if (entity.kind === Types.Entities.PORTALSTONE || entity.kind === Types.Entities.PORTALCRYPT) {
-                console.log("~~~~~PORTALZ!");
-              }
-
               self.addEntity(entity);
 
               // @TODO ~~~~ is it safe to remove?
@@ -3511,7 +3505,17 @@ class Game {
         }
       });
 
-      self.client.onSpawnSpell(function (entity, x, y, orientation, originX, originY, element: Elements, casterId) {
+      self.client.onSpawnSpell(function (
+        entity,
+        x,
+        y,
+        orientation,
+        originX,
+        originY,
+        element: Elements,
+        casterId,
+        targetId,
+      ) {
         const caster = self.getEntityById(casterId);
         if (!caster) return;
 
@@ -3542,13 +3546,9 @@ class Game {
         entity.setOrientation(orientation);
         entity.idle();
 
-        // @TODO ~~~~ TARGET MUST BE COMING FROM THE BE, not SELF!
-
-        if (entity.kind === Types.Entities.MAGESPELL) {
-          entity.setTarget({ x: self.player.x, y: self.player.y });
-        } else if (entity.kind === Types.Entities.ARROW) {
-          // @NOTE ~~~~ Continue the arrow!
-          entity.setTarget({ x: self.player.x, y: self.player.y });
+        if ([Types.Entities.MAGESPELL, Types.Entities.ARROW].includes(entity.kind)) {
+          const target = self.getEntityById(targetId) || self.player;
+          entity.setTarget({ x: target.x, y: target.y });
         } else if (entity.kind === Types.Entities.DEATHANGELSPELL) {
           entity.setTarget({ x: (x + originX * 8) * 16, y: (y + originY * 8) * 16 });
         } else if (entity.kind === Types.Entities.STATUESPELL || entity.kind === Types.Entities.STATUE2SPELL) {
@@ -3966,19 +3966,12 @@ class Game {
             self.audioManager.playSound("magicstone");
             self.activatedMagicStones.push(mobId);
 
-            mob.raise();
-            setTimeout(() => {
-              mob.currentAnimation.reset();
-              mob.walk();
-            }, 1300);
+            // mob.currentAnimation.reset();
+            mob.animate("raise", mob.raiseSpeed, 1, () => mob.walk());
           } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVER2) {
             self.audioManager.playSound("lever");
 
-            mob.raise();
-            setTimeout(() => {
-              mob.currentAnimation.reset();
-              mob.walk();
-            }, 400);
+            mob.animate("raise", mob.raiseSpeed, 1, () => mob.walk());
           } else if (mob.kind === Types.Entities.BLUEFLAME) {
             self.activatedBlueFlames.push(mobId);
 
@@ -3991,15 +3984,12 @@ class Game {
 
             // self.audioManager.playSound("secret-found");
           } else if (mob.kind === Types.Entities.ALTARSOULSTONE) {
-            self.isAltarSoulStoneActivated = true;
+            self.audioManager.playSound("magic-blast");
+            setTimeout(() => {
+              self.audioManager.playSound("stone-break");
+            }, 400);
 
-            mob.walk();
-
-            // Set the stairs visible
-            // @TODO ~~~ play sound
-            // mob.setVisible(true);
-
-            self.audioManager.playSound("stone-break");
+            mob.animate("walk", 100, 1, () => mob.idle());
           } else if (mob.kind === Types.Entities.HANDS) {
             // self.isHandsActivated = true;
             mob.walk();
@@ -4010,11 +4000,9 @@ class Game {
             } else if (mob.kind === Types.Entities.STATUE2) {
               self.audioManager.playSound("iceball", 250);
             }
-            mob.raise();
+
             mob.isActivated = true;
-            setTimeout(() => {
-              mob.idle();
-            }, 900);
+            mob.animate("raise", mob.raiseSpeed, 1, () => mob.idle());
           } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(mob.kind)) {
             self.audioManager.playSound("trap");
             mob.raise();
@@ -4066,21 +4054,13 @@ class Game {
           } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVER2) {
             self.audioManager.playSound("lever");
 
-            mob.unraise();
-            setTimeout(() => {
-              mob.currentAnimation.reset();
-              mob.idle();
-            }, 400);
+            mob.animate("unraise", mob.raiseSpeed, 1, () => mob.idle());
           } else if (mob.kind === Types.Entities.BLUEFLAME) {
             self.activatedBlueFlames = [];
             mob.setVisible(false);
           } else if (mob.kind === Types.Entities.ALTARCHALICE) {
             self.isAltarChaliceActivated = false;
             mob.idle();
-          } else if (mob.kind === Types.Entities.ALTARSOULSTONE) {
-            self.isAltarSoulStoneActivated = false;
-            mob.idle();
-            self.audioManager.playSound("stone-break");
           } else if (mob.kind === Types.Entities.HANDS) {
             mob.idle();
           }
@@ -4182,6 +4162,9 @@ class Game {
         } else if (kind === Types.Entities.SKELETONBERSERKER) {
           self.storage.incrementSkeletonBerserkerCount();
           self.tryUnlockingAchievement("BERSERKER");
+        } else if (kind === Types.Entities.SKELETONARCHER) {
+          self.storage.incrementSkeletonArcherCount();
+          self.tryUnlockingAchievement("BULLSEYE");
         } else if (kind === Types.Entities.SPIDERQUEEN) {
           self.tryUnlockingAchievement("SPIDERQUEEN");
         } else if (kind === Types.Entities.BUTCHER) {
@@ -4495,7 +4478,7 @@ class Game {
         if (isLucky7) {
           self.tryUnlockingAchievement("LUCKY7");
         } else if (isMagic8) {
-          self.tryUnlockingAchievement("MAGIC8");
+          // self.tryUnlockingAchievement("MAGIC8");
         } else if (recipe === "powderquantum") {
           self.tryUnlockingAchievement("ALCHEMIST");
         }
@@ -5886,8 +5869,13 @@ class Game {
             character.nextStep();
             character.raise();
 
-            if ([Types.Entities.MAGE, Types.Entities.SKELETONARCHER, Types.Entities.SHAMAN].includes(character.kind)) {
-              this.client.sendCastSpell(character.id, character.gridX, character.gridY);
+            if (
+              [Types.Entities.MAGE, Types.Entities.SKELETONARCHER, Types.Entities.SHAMAN].includes(character.kind) &&
+              character &&
+              character.target &&
+              character.target.id === this.player.id
+            ) {
+              this.client.sendCastSpell(character.id, character.gridX, character.gridY, character.target.id);
             }
           }
           return;

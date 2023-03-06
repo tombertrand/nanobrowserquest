@@ -61,23 +61,23 @@ export const ACHIEVEMENT_NAMES = [
   "BUTCHER",
   "BOO",
   "BERSERKER",
+  "BULLSEYE",
   "SPECTRAL",
   "ARCHMAGE",
+  "MINI_BOSS",
   "CRYSTAL",
   "SHAMAN",
   "PHARAOH",
   "DEATHANGEL",
-  "MAGIC8",
   "RUNOLOGUE",
   "BLACKSMITH",
-  "MINI_BOSS",
+  "SACRED",
   "EMBLEM",
   "SAURON",
-  "SACRED",
   "MISSTEP",
   "ZELDA",
   "GRIMOIRE",
-  "HELLFORGE",
+  "ZAP",
   "GRAND_MASTER",
 ] as const;
 
@@ -95,6 +95,8 @@ export const ACHIEVEMENT_BOO_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BOO
 export const ACHIEVEMENT_ARCHMAGE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "ARCHMAGE");
 export const ACHIEVEMENT_SPECTRAL_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "SPECTRAL");
 export const ACHIEVEMENT_BERSERKER_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BERSERKER");
+export const ACHIEVEMENT_BULLSEYE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BULLSEYE");
+export const ACHIEVEMENT_SACRED_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "SACRED");
 export const ACHIEVEMENT_MINI_BOSS_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "MINI_BOSS");
 
 export type AchievementName = typeof ACHIEVEMENT_NAMES[number];

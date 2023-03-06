@@ -17,7 +17,7 @@ class FormatChecker {
       (this.formats[Types.Messages.HURT] = ["n"]),
       (this.formats[Types.Messages.HURT_SPELL] = ["n"]),
       (this.formats[Types.Messages.HURT_TRAP] = ["n"]),
-      (this.formats[Types.Messages.CAST_SPELL] = ["n", "n", "n"]),
+      (this.formats[Types.Messages.CAST_SPELL] = ["n", "n", "n", "n"]),
       (this.formats[Types.Messages.CHAT] = ["s"]),
       (this.formats[Types.Messages.LOOT] = ["n"]),
       (this.formats[Types.Messages.TELEPORT] = ["n", "n"]),

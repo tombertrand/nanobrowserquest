@@ -452,12 +452,13 @@ class GameClient {
 
     if (Types.isSpell(kind)) {
       const spell = EntityFactory.createEntity({ kind, id });
-      const { originX, originY, element, casterId } = data[1];
+      const { originX, originY, element, casterId, targetId } = data[1];
 
       spell.casterId = casterId;
+      spell.targetId = targetId;
 
       if (this.spawn_spell_callback) {
-        this.spawn_spell_callback(spell, x, y, orientation, originX, originY, element, casterId);
+        this.spawn_spell_callback(spell, x, y, orientation, originX, originY, element, casterId, targetId);
       }
     } else if (Types.isItem(kind)) {
       var item = EntityFactory.createEntity({ kind, id });
@@ -872,13 +873,11 @@ class GameClient {
     this.receivecursed_callback?.(entityId, curseId, duration);
   }
 
-
   receiveTaunt(data) {
     const entityId = data[1];
 
     this.receivetaunt_callback?.(entityId);
   }
-
 
   onDispatched(callback) {
     this.dispatched_callback = callback;
@@ -1377,8 +1376,8 @@ class GameClient {
     this.sendMessage([Types.Messages.SKILL, slot, mobId]);
   }
 
-  sendCastSpell(mobId, x, y) {
-    this.sendMessage([Types.Messages.CAST_SPELL, mobId, x, y]);
+  sendCastSpell(mobId, x, y, targetId = 0) {
+    this.sendMessage([Types.Messages.CAST_SPELL, mobId, x, y, targetId]);
   }
 
   sendMagicStone(id) {

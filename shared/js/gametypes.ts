@@ -1667,6 +1667,8 @@ Types.getAliasFromName = function (name: string) {
     return "Altar";
   } else if (name.startsWith("secretstairs")) {
     return "Secret Stairs";
+  } else if (name.startsWith("lever")) {
+    return "Lever";
   } else if (name === "wraith2") {
     return "Apocalypse Wraith";
   } else if (name === "deathangel") {

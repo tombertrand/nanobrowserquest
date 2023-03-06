@@ -763,7 +763,7 @@ class World {
     return npc;
   }
 
-  addSpell({ kind, x, y, orientation = Types.Orientations.UP, originX, originY, element, casterId }) {
+  addSpell({ kind, x, y, orientation = Types.Orientations.UP, originX, originY, element, casterId, targetId }) {
     const spell = new Spell({
       id: `9${this.spellCount}${x}${y}`,
       kind,
@@ -774,6 +774,7 @@ class World {
       originY,
       element,
       casterId,
+      targetId,
     });
 
     this.spellCount += 1;
@@ -1400,6 +1401,10 @@ class World {
         altar.activate();
 
         this.broadcastRaise(player, altar);
+
+        setTimeout(() => {
+          altar.deactivate();
+        }, 1000);
       }
     }
   }
@@ -1914,7 +1919,7 @@ class World {
     //   "amuletmoon",
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
-    // var randomDrops = ["chalice", "soulstone", "hellhammer"];
+    var randomDrops = ["soulstone"];
     // var randomDrops = ["nft"];
     // var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
@@ -1994,8 +1999,8 @@ class World {
     // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    // var randomDrop = random(randomDrops.length);
-    // itemName = randomDrops[randomDrop];
+    var randomDrop = random(randomDrops.length);
+    itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

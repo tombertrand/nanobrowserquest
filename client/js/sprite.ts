@@ -70,7 +70,6 @@ class Sprite {
       this.id.startsWith("arrow") ||
       this.id.startsWith("skill-cast") ||
       this.id.startsWith("portal") ||
-      this.id.startsWith("altar") ||
       this.id.startsWith("lever") ||
       this.id.startsWith("tomb") ||
       this.id.startsWith("trap") ||

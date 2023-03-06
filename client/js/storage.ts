@@ -15,6 +15,7 @@ import {
   SKELETON_COUNT,
   SKELETON3_COUNT,
   SKELETON4_COUNT,
+  SKELETONARCHER_COUNT,
   SKELETONBERSERKER_COUNT,
   SPECTRE_COUNT,
   WEREWOLF_COUNT,
@@ -59,6 +60,7 @@ const defaultData = {
     oculothoraxCount: 0,
     skeleton4Count: 0,
     skeletonBerserkerCount: 0,
+    skeletonArcherCount: 0,
     wraith2Count: 0,
     miniBossCount: 0,
     totalKills: 0,
@@ -439,6 +441,22 @@ class Storage {
 
     if (this.data.achievements.skeletonBerserkerCount < SKELETONBERSERKER_COUNT) {
       this.data.achievements.skeletonBerserkerCount++;
+      this.save();
+    }
+  }
+
+  // BERSERKER
+  getSkeletonArcherCount() {
+    return this.data.achievements.skeletonArcherCount;
+  }
+
+  incrementSkeletonArcherCount() {
+    if (!this.data.achievements.skeletonArcherCount) {
+      this.data.achievements.skeletonArcherCount = 0;
+    }
+
+    if (this.data.achievements.skeletonArcherCount < SKELETONARCHER_COUNT) {
+      this.data.achievements.skeletonArcherCount++;
       this.save();
     }
   }

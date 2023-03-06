@@ -732,13 +732,28 @@ class Player extends Character {
 
         // @NOTE Entity might have just died
         if (!entity) return;
+        const targetId = message[4] || undefined;
 
         if (entity.kind === Types.Entities.DEATHANGEL) {
           self.server.castDeathAngelSpell(x, y);
         } else if (entity.kind === Types.Entities.MAGE || entity.kind === Types.Entities.SHAMAN) {
-          self.server.addSpell({ kind: Types.Entities.MAGESPELL, x, y, element: entity.element, casterId: mobId });
+          self.server.addSpell({
+            kind: Types.Entities.MAGESPELL,
+            x,
+            y,
+            element: entity.element,
+            casterId: mobId,
+            targetId,
+          });
         } else if (entity.kind === Types.Entities.SKELETONARCHER) {
-          self.server.addSpell({ kind: Types.Entities.ARROW, x, y, element: entity.element, casterId: mobId });
+          self.server.addSpell({
+            kind: Types.Entities.ARROW,
+            x,
+            y,
+            element: entity.element,
+            casterId: mobId,
+            targetId,
+          });
         } else if (entity.kind === Types.Entities.STATUE) {
           self.server.addSpell({ kind: Types.Entities.STATUESPELL, x, y, element: "flame", casterId: mobId });
         } else if (entity.kind === Types.Entities.STATUE2) {

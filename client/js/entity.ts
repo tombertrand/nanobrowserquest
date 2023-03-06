@@ -145,7 +145,8 @@ class Entity {
           this.kind === Types.Entities.LEVER ||
           this.kind === Types.Entities.LEVER2 ||
           this.kind === Types.Entities.STATUE ||
-          this.kind === Types.Entities.STATUE2
+          this.kind === Types.Entities.STATUE2 ||
+          this.kind === Types.Entities.ALTARSOULSTONE
         ) {
           this.currentAnimation.setSpeed(100);
         } else if (
@@ -156,7 +157,7 @@ class Entity {
           this.kind === Types.Entities.HANDS
         ) {
           this.currentAnimation.setSpeed(75);
-        } else if (this.kind === Types.Entities.ALTARCHALICE || this.kind === Types.Entities.ALTARSOULSTONE) {
+        } else if (this.kind === Types.Entities.ALTARCHALICE) {
           this.currentAnimation.setSpeed(200);
         } else {
           this.currentAnimation.setSpeed(speed);

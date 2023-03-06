@@ -18,8 +18,9 @@ class Spell extends Entity {
   element: Elements;
   dmg: number;
   casterId: number;
+  targetId?: number;
 
-  constructor({ id, kind, x, y, orientation, originX, originY, element, casterId }) {
+  constructor({ id, kind, x, y, orientation, originX, originY, element, casterId, targetId }) {
     super(id, "spell", kind, x, y);
 
     this.spawningX = x;
@@ -32,6 +33,7 @@ class Spell extends Entity {
     this.element = element;
     this.dmg = this.getDmg();
     this.casterId = casterId;
+    this.targetId = targetId;
   }
 
   // @NOTE Since there is no entity class on the server
@@ -56,6 +58,7 @@ class Spell extends Entity {
       originY: this.originY,
       element: this.element,
       casterId: this.casterId,
+      targetId: this.targetId,
     });
   }
 

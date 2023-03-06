@@ -20,6 +20,7 @@ export const OCULOTHORAX_COUNT = 250;
 export const SKELETON4_COUNT = 250;
 export const GHOST_COUNT = 250;
 export const SKELETONBERSERKER_COUNT = 250;
+export const SKELETONARCHER_COUNT = 2;
 export const MAGE_COUNT = 250;
 export const WRAITH2_COUNT = 250;
 export const MINI_BOSS_COUNT = 250;
@@ -452,13 +453,21 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   BERSERKER: {
     id: 62,
     name: "Berserker",
-    desc: `Kill ${SKELETONBERSERKER_COUNT} Skeleton Berserker<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `Kill ${SKELETONBERSERKER_COUNT} Skeleton Berserkers<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getSkeletonBerserkerCount() >= SKELETONBERSERKER_COUNT;
     },
   },
-  SPECTRAL: {
+  BULLSEYE: {
     id: 63,
+    name: "Bullseye",
+    desc: `Kill ${SKELETONARCHER_COUNT} Skeleton Archers<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    isCompleted() {
+      return storage.getSkeletonArcherCount() >= SKELETONARCHER_COUNT;
+    },
+  },
+  SPECTRAL: {
+    id: 64,
     name: "Spectral",
     desc: `Kill ${WRAITH2_COUNT} Spectral Wraiths<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
@@ -466,72 +475,67 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     },
   },
   ARCHMAGE: {
-    id: 64,
+    id: 65,
     name: "Archmage",
     desc: `Kill ${MAGE_COUNT} Mages<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getMageCount() >= MAGE_COUNT;
     },
   },
-  CRYSTAL: {
-    id: 65,
-    name: "Crystal",
-    desc: "Retrieve the Crystal Victor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
-  },
-  SHAMAN: {
-    id: 66,
-    name: "Shamanic Ritual",
-    desc: "Defeat Zul'Gurak",
-  },
-  PHARAOH: {
-    id: 67,
-    name: "Pharaoh",
-    desc: "Enter the Temple of Light",
-  },
-  DEATHANGEL: {
-    id: 68,
-    name: "Death Angel",
-    desc: "Kill Azrael",
-  },
-  MAGIC8: {
-    id: 69,
-    name: "Magic 8",
-    desc: "Upgrade a legendary item to +8",
-  },
-  RUNOLOGUE: {
-    id: 70,
-    name: "Runologue",
-    desc: "Find a high level rune",
-  },
-  BLACKSMITH: {
-    id: 71,
-    name: "Blacksmith",
-    desc: "Forge a Runeword",
-  },
   MINI_BOSS: {
-    id: 72,
+    id: 66,
     name: "Mini-Boss",
-    desc: `Kill ${MINI_BOSS_COUNT} enchanted mini-bosses<br/><small>Get awarded 10 legendary scrolls.</small>`,
+    desc: `Kill ${MINI_BOSS_COUNT} enchanted mini-bosses<br/><small>Get awarded 5 sacred scrolls.</small>`,
     isCompleted() {
       return storage.getMiniBossCount() >= MINI_BOSS_COUNT;
     },
   },
-  EMBLEM: {
+  CRYSTAL: {
+    id: 67,
+    name: "Crystal",
+    desc: "Retrieve the Crystal Victor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
+  },
+  SHAMAN: {
+    id: 68,
+    name: "Shamanic Ritual",
+    desc: "Defeat Zul'Gurak",
+  },
+  PHARAOH: {
+    id: 69,
+    name: "Pharaoh",
+    desc: "Enter the Temple of Light",
+  },
+  DEATHANGEL: {
+    id: 70,
+    name: "Death Angel",
+    desc: "Kill Azrael",
+  },
+  RUNOLOGUE: {
+    id: 72,
+    name: "Runologue",
+    desc: "Find a high level rune",
+  },
+  BLACKSMITH: {
     id: 73,
+    name: "Blacksmith",
+    desc: "Forge a Runeword",
+  },
+  SACRED: {
+    id: 71,
+    name: "Sacred",
+    desc: "Retrieve the Crystal Victor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
+    hidden: true,
+  },
+  EMBLEM: {
+    id: 74,
     name: "Hero Emblem",
     desc: "Find a powerful artifact abe to enchant items",
     hidden: true,
   },
   SAURON: {
-    id: 74,
+    id: 75,
     name: "Sauron",
     desc: "Drink from the fountain of the ethernal life<br/><small>Get 40 base health</small>",
-    hidden: true,
-  },
-  SACRED: {
-    id: 75,
-    name: "Sacred",
-    desc: "Do something<br/><small>Get awarded 5 sacred scrolls.</small>",
     hidden: true,
   },
   MISSTEP: {
@@ -552,9 +556,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     desc: "Find The Book of Azrael<br/><small>Get 10% to all resistances</small>",
     hidden: true,
   },
-  HELLFORGE: {
+  ZAP: {
     id: 79,
-    name: "Hellforge",
+    name: "Zap",
     desc: "Break the Soul Stone on the Altar",
     hidden: true,
   },

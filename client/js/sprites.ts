@@ -116,7 +116,7 @@ import portalstone from "../sprites/portal.json";
 import portalcrypt from "../sprites/portalcrypt.json";
 import portalruins from "../sprites/portalruins.json";
 import magicstone from "../sprites/magicstone.json";
-import altarchalice from "../sprites/altar.json";
+
 import secretstairs from "../sprites/secretstairs.json";
 import secretstairs2 from "../sprites/secretstairs2.json";
 import secretstairsup from "../sprites/secretstairs.json";
@@ -137,7 +137,8 @@ import tree from "../sprites/tree.json";
 import trap from "../sprites/trap.json";
 import trap2 from "../sprites/trap.json";
 import trap3 from "../sprites/trap.json";
-import altarsoulstone from "../sprites/altar.json";
+import altarchalice from "../sprites/altarchalice.json";
+import altarsoulstone from "../sprites/altarsoulstone.json";
 import blueflame from "../sprites/blueflame.json";
 import ogre from "../sprites/ogre.json";
 import yeti from "../sprites/yeti.json";

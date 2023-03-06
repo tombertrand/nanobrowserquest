@@ -19,12 +19,14 @@ import {
   ACHIEVEMENT_ARCHMAGE_INDEX,
   ACHIEVEMENT_BERSERKER_INDEX,
   ACHIEVEMENT_BOO_INDEX,
+  ACHIEVEMENT_BULLSEYE_INDEX,
   ACHIEVEMENT_COUNT,
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_CYCLOP_INDEX,
   ACHIEVEMENT_MINI_BOSS_INDEX,
   ACHIEVEMENT_NAMES,
   ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_SACRED_INDEX,
   ACHIEVEMENT_SPECTRAL_INDEX,
   ACHIEVEMENT_TEMPLAR_INDEX,
   ACHIEVEMENT_UNBREAKABLE_INDEX,
@@ -1514,6 +1516,7 @@ class DatabaseHandler {
               ACHIEVEMENT_ARCHMAGE_INDEX,
               ACHIEVEMENT_SPECTRAL_INDEX,
               ACHIEVEMENT_BERSERKER_INDEX,
+              ACHIEVEMENT_BULLSEYE_INDEX,
             ].includes(index)
           ) {
             if (index === ACHIEVEMENT_NFT_INDEX) {
@@ -1525,8 +1528,8 @@ class DatabaseHandler {
             }
 
             this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
-          } else if (index === ACHIEVEMENT_MINI_BOSS_INDEX) {
-            this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+          } else if ([ACHIEVEMENT_MINI_BOSS_INDEX, ACHIEVEMENT_SACRED_INDEX].includes(index)) {
+            this.lootItems({ player, items: [{ item: "scrollupgradesacred", quantity: 5 }] });
           }
         });
       } catch (err) {

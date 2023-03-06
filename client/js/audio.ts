@@ -84,7 +84,8 @@ class AudioManager {
       "iceball",
       "trap",
       "powder",
-      "fresh_meat",
+      "fresh-meat",
+      "magic-blast",
       // "altarsoulstone",
     ];
 
