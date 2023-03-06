@@ -15,6 +15,18 @@ export const Spells = {
     }
   },
 
+  Arrow: class Arrow extends Spell {
+    constructor(id) {
+      super(id, Types.Entities.ARROW);
+      this.moveSpeed = 130;
+      this.atkSpeed = 250;
+      this.idleSpeed = 100;
+      this.atkRate = 2000;
+      this.attackCooldown = new Timer(this.atkRate);
+      this.aggroRange = 0;
+    }
+  },
+
   StatueSpell: class StatueSpell extends Spell {
     constructor(id) {
       super(id, Types.Entities.STATUESPELL);

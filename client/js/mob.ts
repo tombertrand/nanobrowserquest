@@ -6,6 +6,7 @@ class Mob extends Character {
   isAggressive: boolean;
   castRange?: number;
   hurtDelay: number;
+  taunt?: string;
 
   constructor(id: number, kind: number, props) {
     super(id, kind);

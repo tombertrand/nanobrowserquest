@@ -175,6 +175,7 @@ export const Types: any = {
     STONELEVEL_START: 107,
     STONELEVEL_INPROGRESS: 108,
     STONELEVEL_END: 109,
+    TAUNT: 110,
   },
 
   Entities: {
@@ -224,6 +225,8 @@ export const Types: any = {
     SKELETONTEMPLAR2: 228,
     WRAITH2: 277,
     SKELETONBERSERKER: 293,
+    SKELETONARCHER: 299,
+    ARROW: 300,
     MAGE: 236,
     MAGESPELL: 237,
     SHAMAN: 294,
@@ -735,6 +738,7 @@ export const kinds = {
   butcher: [Types.Entities.BUTCHER, "mob", 100, 64],
   oculothorax: [Types.Entities.OCULOTHORAX, "mob", 100, 64],
   skeletonberserker: [Types.Entities.SKELETONBERSERKER, "mob", 100, 64],
+  skeletonarcher: [Types.Entities.SKELETONARCHER, "mob", 100, 64],
   statue: [Types.Entities.STATUE, "npc", 100, 64],
   statue2: [Types.Entities.STATUE2, "npc", 100, 64],
   deathangel: [Types.Entities.DEATHANGEL, "mob", 500, 70],
@@ -928,6 +932,7 @@ export const kinds = {
 
   "deathangel-spell": [Types.Entities.DEATHANGELSPELL, "spell", "Bone Spirith", 70],
   "mage-spell": [Types.Entities.MAGESPELL, "spell", "Mage Spell", 60],
+  arrow: [Types.Entities.ARROW, "spell", "Arrow", 60],
   "statue-spell": [Types.Entities.STATUESPELL, "spell", "Fire Ball", 60],
   "statue2-spell": [Types.Entities.STATUE2SPELL, "spell", "Ice Ball", 60],
 
@@ -1676,6 +1681,8 @@ Types.getAliasFromName = function (name: string) {
     return "Skull Tomb";
   } else if (name === "skeletonberserker") {
     return "Skeleton Berserker";
+  } else if (name === "skeletonarcher") {
+    return "Skeleton Archer";
   } else if (name === "skeletontemplar") {
     return "Boneshard";
   } else if (name === "skeletontemplar2") {

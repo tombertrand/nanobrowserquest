@@ -29,6 +29,7 @@ class Mob extends Character {
   resistances: Resistances;
   element: Elements;
   enchants: Enchant[];
+  hasTaunted: boolean;
 
   constructor(id, kind, x, y) {
     super(id, "mob", kind, x, y);
@@ -48,6 +49,7 @@ class Mob extends Character {
     this.name = Types.getKindAsString(kind);
     this.resistances = Types.getResistance(this);
     this.enchants = null;
+    this.hasTaunted = false;
 
     this.handleRandomElement();
     this.handleRandomResistances();
@@ -81,8 +83,13 @@ class Mob extends Character {
   }
 
   handleRandomElement() {
-    if ([Types.Entities.MAGE, Types.Entities.SHAMAN].includes(this.kind)) {
-      this.element = Types.getRandomElement(this);
+    if ([Types.Entities.MAGE, Types.Entities.SKELETONARCHER, Types.Entities.SHAMAN].includes(this.kind)) {
+      this.element = Types.getRandomElement();
+
+      if (this.kind === Types.Entities.SKELETONARCHER && this.element === "spectral") {
+        // @ts-ignore No spectral arrow, revert back to a normal arrow
+        this.element = undefined;
+      }
     }
   }
 
@@ -96,7 +103,7 @@ class Mob extends Character {
         this.kind,
       )
     ) {
-      // Add 2 random extra enchants on top of Spectral
+      // Add 2 random extra enchant
       const extraEnchants = _.shuffle(enchants.filter(enchant => !this.enchants.includes(enchant))).slice(0, 2);
       this.enchants = this.enchants.concat(extraEnchants);
     }
@@ -105,7 +112,7 @@ class Mob extends Character {
       if (Types.isBoss(this.kind)) {
         this.enchants = _.shuffle(enchants).slice(0, this.kind === Types.Entities.NECROMANCER ? 1 : 2);
       } else {
-        this.enchants = _.shuffle(enchants).slice(0, 1);
+        this.enchants = this.element ? [this.element] : _.shuffle(enchants).slice(0, 1);
       }
     }
 
@@ -151,6 +158,7 @@ class Mob extends Character {
         Types.Entities.SPIDER,
         Types.Entities.SPIDER2,
         Types.Entities.SKELETONBERSERKER,
+        Types.Entities.SKELETONARCHER,
       ].includes(this.kind)
     ) {
       this.assignRandomResistances(1);
@@ -177,6 +185,7 @@ class Mob extends Character {
 
   destroy(delay = 30000) {
     this.isDead = true;
+    this.hasTaunted = false;
     this.destroyTime = Date.now();
     this.hateList = [];
     this.tankerlist = [];

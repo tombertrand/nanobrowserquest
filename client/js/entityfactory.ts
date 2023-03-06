@@ -212,12 +212,20 @@ EntityFactory.builders[Types.Entities.SKELETONBERSERKER] = function (id, props) 
   return new Mobs.SkeletonBerserker(id, props);
 };
 
+EntityFactory.builders[Types.Entities.SKELETONARCHER] = function (id, props) {
+  return new Mobs.SkeletonArcher(id, props);
+};
+
 EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id, props) {
   return new Mobs.DeathAngel(id, props);
 };
 
 EntityFactory.builders[Types.Entities.MAGESPELL] = function (id) {
   return new Spells.MageSpell(id);
+};
+
+EntityFactory.builders[Types.Entities.ARROW] = function (id) {
+  return new Spells.Arrow(id);
 };
 
 EntityFactory.builders[Types.Entities.STATUE] = function (id) {

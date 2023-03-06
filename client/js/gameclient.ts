@@ -95,6 +95,7 @@ class GameClient {
   receiveslowed_callback: any;
   receivepoisoned_callback: any;
   receivecursed_callback: any;
+  receivetaunt_callback: any;
   settings_callback: any;
 
   constructor(host, port) {
@@ -167,6 +168,7 @@ class GameClient {
     this.handlers[Types.Messages.SLOWED] = this.receiveSlowed;
     this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
     this.handlers[Types.Messages.CURSED] = this.receiveCursed;
+    this.handlers[Types.Messages.TAUNT] = this.receiveTaunt;
     this.enable();
   }
 
@@ -870,6 +872,14 @@ class GameClient {
     this.receivecursed_callback?.(entityId, curseId, duration);
   }
 
+
+  receiveTaunt(data) {
+    const entityId = data[1];
+
+    this.receivetaunt_callback?.(entityId);
+  }
+
+
   onDispatched(callback) {
     this.dispatched_callback = callback;
   }
@@ -1188,6 +1198,10 @@ class GameClient {
 
   onCursed(callback) {
     this.receivecursed_callback = callback;
+  }
+
+  onTaunt(callback) {
+    this.receivetaunt_callback = callback;
   }
 
   sendCreate({ name, account }) {

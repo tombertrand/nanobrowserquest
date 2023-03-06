@@ -64,6 +64,13 @@ Messages.Unraise = class Message {
   }
 };
 
+Messages.Taunt = class Message {
+  constructor(private mobId) {}
+  serialize() {
+    return [Types.Messages.TAUNT, this.mobId];
+  }
+};
+
 Messages.CowLevelStart = class Message {
   constructor(private coords) {}
   serialize() {

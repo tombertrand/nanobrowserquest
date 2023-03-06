@@ -15,7 +15,7 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
   spider: ["poison"],
   spider2: ["magic"],
   spiderqueen: ["poison"],
-  butcher: ["stoneskin"],
+  butcher: ["physical"],
   worm: ["physical"],
   oculothorax: [],
   skeletontemplar: ["poison", "cold"],
@@ -24,6 +24,7 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
   skeleton4: [],
   wraith2: ["spectral"],
   skeletonberserker: ["physical"],
+  skeletonarcher: [],
   shaman: [],
   deathangel: ["spectral"],
 };
@@ -97,6 +98,13 @@ export const mobResistance = {
     coldResistance: 40,
   },
   skeletonberserker: {
+    magicResistance: 40,
+    flameResistance: 45,
+    lightningResistance: 50,
+    coldResistance: 55,
+    poisonResistance: 40,
+  },
+  skeletonarcher: {
     magicResistance: 40,
     flameResistance: 45,
     lightningResistance: 50,

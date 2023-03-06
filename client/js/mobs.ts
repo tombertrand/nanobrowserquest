@@ -550,6 +550,8 @@ export const Mobs = {
       this.idleSpeed = 150;
       this.setAttackRate(1500);
       this.aggroRange = 3;
+      this.hurtDelay = 100;
+      this.taunt = "fresh_meat";
     }
   },
 
@@ -574,6 +576,22 @@ export const Mobs = {
       this.idleSpeed = 150;
       this.setAttackRate(1200);
       this.aggroRange = 3;
+    }
+  },
+
+  SkeletonArcher: class SkeletonArcher extends Mob {
+    constructor(id, props) {
+      super(id, Types.Entities.SKELETONARCHER, props);
+      this.atkSpeed = 50;
+      this.moveSpeed = 200;
+      this.walkSpeed = 100;
+      this.idleSpeed = 250;
+      this.raiseSpeed = 150;
+      this.raiseRate = 1000;
+      this.setAttackRate(800);
+      this.raiseCooldown = new Timer(this.raiseRate);
+      this.aggroRange = 4;
+      this.castRange = 6;
     }
   },
 

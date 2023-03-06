@@ -626,7 +626,15 @@ class Player extends Character {
         const spell = self.server.getEntityById(message[1]);
 
         if (spell && self.hitPoints > 0) {
-          self.handleHurtSpellDmg(spell);
+          const caster = self.server.getEntityById(spell.casterId);
+
+          if (!spell.element) {
+            if (caster) {
+              self.handleHurtDmg(caster, spell.dmg);
+            }
+          } else {
+            self.handleHurtSpellDmg(spell);
+          }
         }
       } else if (action === Types.Messages.MAGICSTONE) {
         console.info("MAGICSTONE: " + self.name + " " + message[1]);
@@ -722,10 +730,15 @@ class Player extends Character {
         const [, mobId, x, y] = message;
         const entity = self.server.getEntityById(mobId);
 
+        // @NOTE Entity might have just died
+        if (!entity) return;
+
         if (entity.kind === Types.Entities.DEATHANGEL) {
           self.server.castDeathAngelSpell(x, y);
         } else if (entity.kind === Types.Entities.MAGE || entity.kind === Types.Entities.SHAMAN) {
           self.server.addSpell({ kind: Types.Entities.MAGESPELL, x, y, element: entity.element, casterId: mobId });
+        } else if (entity.kind === Types.Entities.SKELETONARCHER) {
+          self.server.addSpell({ kind: Types.Entities.ARROW, x, y, element: entity.element, casterId: mobId });
         } else if (entity.kind === Types.Entities.STATUE) {
           self.server.addSpell({ kind: Types.Entities.STATUESPELL, x, y, element: "flame", casterId: mobId });
         } else if (entity.kind === Types.Entities.STATUE2) {

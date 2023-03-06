@@ -1,5 +1,4 @@
 /* eslint-disable simple-import-sort/imports */
-import arrow from "../sprites/arrow.json";
 import bat from "../sprites/bat.json";
 import bat2 from "../sprites/bat2.json";
 import boss from "../sprites/boss.json";
@@ -31,8 +30,10 @@ import spider2 from "../sprites/spider.json";
 import spiderqueen from "../sprites/spiderqueen.json";
 import butcher from "../sprites/butcher.json";
 import mageSpell from "../sprites/mage-spell.json";
+import arrow from "../sprites/arrow.json";
 import oculothorax from "../sprites/oculothorax.json";
 import skeletonberserker from "../sprites/skeletonberserker.json";
+import skeletonarcher from "../sprites/skeletonarcher.json";
 import statue from "../sprites/statue.json";
 import statue2 from "../sprites/statue2.json";
 import statueSpell from "../sprites/statue-spell.json";
@@ -196,7 +197,6 @@ import wizard from "../sprites/wizard.json";
 
 const sprites = {
   agent,
-  arrow,
   axe,
   blueaxe,
   bluemorningstar,
@@ -240,6 +240,12 @@ const sprites = {
   "mage-spell-lightning": mageSpell,
   "mage-spell-cold": mageSpell,
   "mage-spell-poison": mageSpell,
+  arrow,
+  "arrow-magic": arrow,
+  "arrow-flame": arrow,
+  "arrow-lightning": arrow,
+  "arrow-cold": arrow,
+  "arrow-poison": arrow,
   shaman,
   skeletontemplar,
   skeletontemplar2,
@@ -249,6 +255,7 @@ const sprites = {
   butcher,
   oculothorax,
   skeletonberserker,
+  skeletonarcher,
   statue,
   statue2,
   "statue-spell": statueSpell,

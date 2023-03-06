@@ -1116,6 +1116,9 @@ class World {
         this.startRaiseNecromancerInterval(player, mob);
       } else if (mob.kind === Types.Entities.DEATHANGEL && !mob.hasTarget()) {
         this.startRaiseDeathAngelInterval(player, mob);
+      } else if (mob.kind === Types.Entities.BUTCHER && !mob.hasTaunted) {
+        mob.hasTaunted = true;
+        this.pushBroadcast(new Messages.Taunt(mob.id));
       }
 
       if (mob.hitPoints > 0) {
@@ -2300,7 +2303,6 @@ class World {
       player.minotaurDamage += dmg;
       player.unregisterMinotaurDamage();
     } else if (entity.kind === Types.Entities.BUTCHER) {
-      console.log("~~~~~increase BUTCHER dmg", dmg);
       player.butcherDamage += dmg;
       player.unregisterButcherDamage();
     } else if (entity.kind === Types.Entities.DEATHANGEL) {

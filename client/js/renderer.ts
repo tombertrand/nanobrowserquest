@@ -584,6 +584,12 @@ class Renderer {
         this.context.translate(dx, dy);
       }
 
+      // Rotate using the entity's angle.
+      if (entity.angled) {
+        this.context.translate(8, 8);
+        this.context.rotate(entity.getAngle());
+      }
+
       if (entity.isVisible()) {
         if (entity.hasShadow()) {
           this.context.drawImage(

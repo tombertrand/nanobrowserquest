@@ -67,6 +67,7 @@ class Sprite {
       this.id.startsWith("deathangel-spell") ||
       this.id.startsWith("mage") ||
       this.id.startsWith("mage-spell") ||
+      this.id.startsWith("arrow") ||
       this.id.startsWith("skill-cast") ||
       this.id.startsWith("portal") ||
       this.id.startsWith("altar") ||
