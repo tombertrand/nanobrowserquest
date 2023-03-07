@@ -533,11 +533,15 @@ export const generateRedChestItem = (): { item: string; uniqueChances?: number }
 export const generatePurpleChestItem = (): { item: string; uniqueChances?: number } => {
   // 50%
   const items = [
-    { item: "templarsword", uniqueChances: 6 },
-    { item: "templararmor", uniqueChances: 6 },
-    { item: "belttemplar", uniqueChances: 6 },
-    { item: "shieldtemplar", uniqueChances: 6 },
-    { item: "paladinarmor", uniqueChances: 4 },
+    { item: "moonsword", uniqueChances: 10 },
+    { item: "moonarmor", uniqueChances: 10 },
+    { item: "beltmoon", uniqueChances: 10 },
+    { item: "shieldmoon", uniqueChances: 10 },
+    { item: "mysticalsword", uniqueChances: 10 },
+    { item: "mysticalarmor", uniqueChances: 10 },
+    { item: "beltmystical", uniqueChances: 10 },
+    { item: "shieldmystical", uniqueChances: 10 },
+    { item: "paladinarmor", uniqueChances: 10 },
     { item: "cape", uniqueChances: 5 },
   ];
 
@@ -851,7 +855,7 @@ export const getRandomRuneLevel = (mobLevel: number) => {
     minLevel = 1;
   }
 
-  const level = Math.floor(randn_bm(minLevel, maxLevel, 2.5));
+  const level = Math.floor(randn_bm(minLevel, maxLevel, 2));
 
   return level;
 };
@@ -872,3 +876,21 @@ function randn_bm(min, max, skew) {
   }
   return num;
 }
+
+export const generateSoulStoneItem = () => {
+  const items = [
+    { item: "paladinarmor", uniqueChances: 10 },
+    { item: "eclypsedagger", uniqueChances: 10 },
+    { item: "spikeglaive", uniqueChances: 10 },
+  ];
+
+  const randomCategory = random(100);
+
+  if (randomCategory < 10) {
+    return _.shuffle(items)[0];
+  } else {
+    const runeLevel = getRandomRuneLevel(70);
+
+    return { item: `rune-${RuneList[runeLevel - 1]}`, quantity: 1 };
+  }
+};

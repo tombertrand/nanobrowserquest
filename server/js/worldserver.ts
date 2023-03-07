@@ -19,7 +19,14 @@ import { Sentry } from "./sentry";
 import Spell from "./spell";
 import { purchase } from "./store/purchase";
 import Trade from "./trade";
-import { getRandomJewelLevel, getRandomRuneLevel, random, randomInt, randomRange } from "./utils";
+import {
+  generateSoulStoneItem,
+  getRandomJewelLevel,
+  getRandomRuneLevel,
+  random,
+  randomInt,
+  randomRange,
+} from "./utils";
 
 // ======= GAME SERVER ========
 
@@ -1398,6 +1405,20 @@ class World {
 
     if (altar && altar instanceof Npc && !this.isActivatedAltarChalice && !altar.isActivated) {
       if (force || (await this.databaseHandler.useInventoryItem(player, "soulstone"))) {
+        let generatedItem = generateSoulStoneItem();
+        if (!generatedItem.item.startsWith("rune")) {
+          generatedItem = player.generateItem({
+            kind: Types.getKindFromString(generatedItem.item),
+            // @ts-ignore
+            uniqueChances: generatedItem.uniqueChances,
+          });
+        }
+
+        this.databaseHandler.lootItems({
+          player,
+          items: [generatedItem],
+        });
+
         altar.activate();
 
         this.broadcastRaise(player, altar);

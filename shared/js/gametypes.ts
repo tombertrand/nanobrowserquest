@@ -2204,7 +2204,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     mysticalarmor: 4,
     bloodarmor: 4,
     templararmor: 4,
-    paladinarmor: 2,
+    paladinarmor: 4,
 
     beltfrozen: 15,
     belthorned: 15,
