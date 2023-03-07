@@ -167,18 +167,9 @@ var Npcs = {
     }
   },
 
-  PortalCrypt: class PortalCrypt extends Npc {
+  PortalGateway: class PortalGateway extends Npc {
     constructor(id) {
-      super(id, Types.Entities.PORTALCRYPT);
-    }
-    hasShadow() {
-      return false;
-    }
-  },
-
-  PortalRuins: class PortalRuins extends Npc {
-    constructor(id) {
-      super(id, Types.Entities.PORTALRUINS);
+      super(id, Types.Entities.PORTALGATEWAY);
     }
     hasShadow() {
       return false;

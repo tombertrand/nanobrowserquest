@@ -155,6 +155,27 @@ Messages.StoneLevelEnd = class Message {
   }
 };
 
+Messages.GatewayLevelStart = class Message {
+  constructor(private coords) {}
+  serialize() {
+    return [Types.Messages.GATEWAYLEVEL_START];
+  }
+};
+
+Messages.GatewayLevelInProgress = class Message {
+  constructor(private clock) {}
+  serialize() {
+    return [Types.Messages.GATEWAYLEVEL_INPROGRESS, this.clock];
+  }
+};
+
+Messages.GatewayLevelEnd = class Message {
+  constructor(private isCompleted) {}
+  serialize() {
+    return [Types.Messages.GATEWAYLEVEL_END];
+  }
+};
+
 Messages.Health = class Message {
   constructor(private health) {}
   serialize() {

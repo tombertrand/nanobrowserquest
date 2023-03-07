@@ -93,7 +93,6 @@ class World {
   spellCount: number;
   isActivatedAltarChalice: boolean;
   isActivatedAltarSoulStone: boolean;
-  isActivatedHands: boolean;
   secretStairsChaliceNpcId: number;
   secretStairsTreeNpcId: number;
   secretStairsLeftTemplarNpcId: number;
@@ -105,12 +104,14 @@ class World {
   handsNpcId: number;
   isActivatedTreeLevel: boolean;
   trapIds: number[];
-  portalCryptNpcId: number;
-  portalRuinsNpcId: number;
   portalStoneNpcId: number;
   portalStoneBloodNpcId: number;
+  portalGatewayNpcId: number;
+  portalGatewayInnerNpcId: number;
   stoneLevelClock: number;
   stoneLevelInterval: NodeJS.Timeout;
+  gatewayLevelClock: number;
+  gatewayLevelInterval: NodeJS.Timeout;
   leverChaliceNpcId: number;
   leverLeftCryptNpcId: number;
   leverRightCryptNpcId: number;
@@ -206,7 +207,6 @@ class World {
     this.statues = [];
     this.isActivatedAltarChalice = false;
     this.isActivatedAltarSoulStone = false;
-    this.isActivatedHands = false;
     this.secretStairsChaliceNpcId = null;
     this.secretStairsTreeNpcId = null;
     this.secretStairsLeftTemplarNpcId = null;
@@ -725,12 +725,6 @@ class World {
       } else if (x === 162 && y === 548) {
         this.secretStairsRightTemplarNpcId = npc.id;
       }
-    } else if (kind === Types.Entities.PORTALCRYPT) {
-      npc.isDead = true;
-      this.portalCryptNpcId = npc.id;
-    } else if (kind === Types.Entities.PORTALRUINS) {
-      npc.isDead = true;
-      this.portalRuinsNpcId = npc.id;
     } else if (kind === Types.Entities.PORTALSTONE) {
       npc.isDead = true;
 
@@ -738,6 +732,15 @@ class World {
         this.portalStoneNpcId = npc.id;
       } else {
         this.portalStoneBloodNpcId = npc.id;
+      }
+    } else if (kind === Types.Entities.PORTALGATEWAY) {
+      npc.isDead = true;
+
+      // ~~~~ SET THIS UP
+      if (x === 97 && y === 546) {
+        this.portalGatewayNpcId = npc.id;
+      } else {
+        this.portalGatewayInnerNpcId = npc.id;
       }
     } else {
       if (kind === Types.Entities.MAGICSTONE) {
@@ -770,7 +773,17 @@ class World {
     return npc;
   }
 
-  addSpell({ kind, x, y, orientation = Types.Orientations.UP, originX, originY, element, casterId, targetId }) {
+  addSpell({
+    kind,
+    x,
+    y,
+    orientation = Types.Orientations.UP,
+    originX,
+    originY,
+    element,
+    casterId,
+    targetId = undefined,
+  }) {
     const spell = new Spell({
       id: `9${this.spellCount}${x}${y}`,
       kind,
@@ -1011,6 +1024,37 @@ class World {
     this.despawn(bloodPortal);
     this.pushBroadcast(new Messages.StoneLevelEnd());
     this.deactivateMagicStones();
+  }
+
+  startGatewayLevel() {
+    this.gatewayLevelClock = 15 * 60; // 15 minutes
+
+    const gatewayPortal = this.npcs[this.portalGatewayNpcId];
+    gatewayPortal.respawnCallback();
+
+    const gatewayInnerPortal = this.npcs[this.portalGatewayInnerNpcId];
+    gatewayInnerPortal.respawnCallback();
+
+    this.pushBroadcast(new Messages.GatewayLevelStart());
+
+    this.gatewayLevelInterval = setInterval(() => {
+      this.gatewayLevelClock -= 1;
+      if (this.gatewayLevelClock < 0) {
+        clearInterval(this.gatewayLevelInterval);
+        this.endGatewayLevel();
+      }
+    }, 1000);
+  }
+
+  endGatewayLevel() {
+    this.gatewayLevelInterval = null;
+    this.gatewayLevelClock = null;
+    const gatewayPortal = this.npcs[this.portalGatewayNpcId];
+    this.despawn(gatewayPortal);
+    const gatewayInnerPortal = this.npcs[this.portalGatewayInnerNpcId];
+    this.despawn(gatewayInnerPortal);
+    this.pushBroadcast(new Messages.GatewayLevelEnd());
+    this.deactivateHands();
   }
 
   startTreeLevel(tree) {
@@ -1433,21 +1477,23 @@ class World {
   async activateHands(player, force = false) {
     const hands = this.getEntityById(this.handsNpcId);
 
-    if (hands && hands instanceof Npc && !this.isActivatedHands && !hands.isActivated) {
+    if (hands && hands instanceof Npc && !hands.isActivated) {
       if (force || (await this.databaseHandler.useInventoryItem(player, "powderquantum"))) {
         hands.activate();
 
-        this.startCryptLevel(player);
+        this.startGatewayLevel();
         this.broadcastRaise(player, hands);
       }
     }
   }
 
-  startCryptLevel(player) {
-    const portal = this.npcs[this.portalCryptNpcId];
-    portal.respawnCallback();
+  deactivateHands() {
+    const hands = this.getEntityById(this.handsNpcId);
 
-    this.broadcastRaise(player, portal);
+    if (hands && hands instanceof Npc && !hands.isActivated) {
+      hands.deactivate();
+      this.pushBroadcast(new Messages.Unraise(hands.id));
+    }
   }
 
   activateTrap(player, trapId) {

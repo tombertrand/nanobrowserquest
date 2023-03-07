@@ -80,6 +80,8 @@ class Game {
   minotaurLevelPortalCoords: { x: number; y: number };
   stonePortalStart: boolean;
   stoneLevelPortalCoords: { x: number; y: number };
+  gatewayPortalStart: boolean;
+  gatewayLevelPortalCoords: { x: number; y: number };
   renderer: Renderer;
   updater: Updater;
   pathfinder: Pathfinder;
@@ -222,6 +224,8 @@ class Game {
     this.minotaurLevelPortalCoords = { x: 34, y: 498 };
     this.stonePortalStart = false;
     this.stoneLevelPortalCoords = { x: 15, y: 777 };
+    this.gatewayPortalStart = false;
+    this.gatewayLevelPortalCoords = { x: 97, y: 728 };
     this.network = null;
     this.explorer = null;
     this.hoverSlotToDelete = null;
@@ -454,8 +458,7 @@ class Game {
       "portalcow",
       "portalminotaur",
       "portalstone",
-      "portalcrypt",
-      "portalruins",
+      "portalgateway",
       "magicstone",
       "altarchalice",
       "altarsoulstone",
@@ -2420,8 +2423,7 @@ class Game {
         // @NOTE: A few NPC takes 2 or more tiles
         if (
           entity.kind === Types.Entities.MAGICSTONE ||
-          entity.kind === Types.Entities.PORTALCRYPT ||
-          entity.kind === Types.Entities.PORTALRUINS ||
+          entity.kind === Types.Entities.PORTALGATEWAY ||
           entity.kind === Types.Entities.ALTARCHALICE ||
           entity.kind === Types.Entities.ALTARSOULSTONE ||
           entity.kind === Types.Entities.TOMBDEATHANGEL ||
@@ -3201,40 +3203,45 @@ class Game {
                 }, 1000);
               } else if (entity.kind === Types.Entities.PORTALCOW && entity.gridX === 43 && entity.gridY === 211) {
                 if (self.cowPortalStart) {
-                  entity.raise();
-                  entity.currentAnimation.setSpeed(75);
                   self.audioManager.playSound("portal-open");
 
-                  setTimeout(() => {
+                  entity.animate("raise", 75, 1, () => {
                     entity.idle();
                     entity.currentAnimation.setSpeed(150);
-                  }, 1200);
+                  });
                 } else {
                   entity.idle();
                 }
               } else if (entity.kind === Types.Entities.PORTALMINOTAUR && entity.gridX === 40 && entity.gridY === 210) {
                 if (self.minotaurPortalStart) {
-                  entity.raise();
-                  entity.currentAnimation.setSpeed(75);
                   self.audioManager.playSound("portal-open");
 
-                  setTimeout(() => {
+                  entity.animate("raise", 75, 1, () => {
                     entity.idle();
                     entity.currentAnimation.setSpeed(150);
-                  }, 1200);
+                  });
                 } else {
                   entity.idle();
                 }
               } else if (entity.kind === Types.Entities.PORTALSTONE && entity.gridX === 71 && entity.gridY === 643) {
                 if (self.stonePortalStart) {
-                  entity.raise();
-                  entity.currentAnimation.setSpeed(75);
                   self.audioManager.playSound("portal-open");
 
-                  setTimeout(() => {
+                  entity.animate("raise", 75, 1, () => {
                     entity.idle();
                     entity.currentAnimation.setSpeed(150);
-                  }, 1200);
+                  });
+                } else {
+                  entity.idle();
+                }
+              } else if (entity.kind === Types.Entities.PORTALGATEWAY && entity.gridX === 71 && entity.gridY === 643) {
+                if (self.gatewayPortalStart) {
+                  self.audioManager.playSound("portal-open");
+
+                  entity.animate("raise", 75, 1, () => {
+                    entity.idle();
+                    entity.currentAnimation.setSpeed(150);
+                  });
                 } else {
                   entity.idle();
                 }
@@ -4037,9 +4044,6 @@ class Game {
                 }, 300);
               }, 750);
             }, 675);
-          } else if (mob.kind === Types.Entities.PORTALCRYPT) {
-            mob.idle();
-            mob.setVisible(true);
           }
         }
       });
@@ -4771,6 +4775,52 @@ class Game {
         }
       });
 
+      self.client.onReceiveGatewayLevelStart(function () {
+        self.gatewayPortalStart = true;
+        setTimeout(() => {
+          self.gatewayPortalStart = false;
+        }, 1200);
+      });
+
+      self.client.onReceiveGatewayLevelInProgress(function (levelClock) {
+        var selectedDate = new Date().valueOf() + levelClock * 1000;
+
+        if (!self.player.expansion2) {
+          self.client.sendBanPlayer("Entered Gateway level without expansion2");
+        }
+
+        $("#countdown")
+          .countdown(selectedDate.toString())
+          .on("update.countdown", function (event) {
+            // @ts-ignore
+            $(this).html(event.strftime("%M:%S"));
+          })
+          .on("finish.countdown", function () {
+            $(this).html("The gateway level closed.");
+
+            setTimeout(() => {
+              $(this).html("");
+            }, 5000);
+          });
+      });
+
+      self.client.onReceiveGatewayLevelEnd(function () {
+        $("#countdown").countdown(0);
+        $("#countdown").countdown("remove");
+
+        if (
+          self.player.gridY >= 696 &&
+          self.player.gridY <= 733 &&
+          self.player.gridX >= 85 &&
+          self.player.gridX <= 112
+        ) {
+          const x = randomInt(95, 100);
+          const y = randomInt(543, 548);
+
+          self.player.stop_pathing_callback({ x, y, isWaypoint: true });
+        }
+      });
+
       // self.client.onReceiveTreeLevelEnd(function () {
       //   const entity = self.treeNpcId ? self.getEntityById(self.treeNpcId) : null;
       //   if (entity) {
@@ -5146,6 +5196,18 @@ class Game {
         } else {
           this.player.stop_pathing_callback({ x: 71, y: 643, isWaypoint: true });
         }
+      } else if (npc.kind === Types.Entities.PORTALGATEWAY) {
+        if (npc.gridX === 97 && npc.gridY === 546) {
+          if (this.gatewayLevelPortalCoords) {
+            this.player.stop_pathing_callback({
+              x: this.gatewayLevelPortalCoords.x,
+              y: this.gatewayLevelPortalCoords.y,
+              isWaypoint: true,
+            });
+          }
+        } else {
+          this.player.stop_pathing_callback({ x: 97, y: 546, isWaypoint: true });
+        }
       } else if (npc.kind === Types.Entities.MAGICSTONE) {
         if (!npc.isActivated) {
           this.client.sendMagicStone(npc.id);
@@ -5196,10 +5258,6 @@ class Game {
           // Tree
           this.player.stop_pathing_callback({ x: 18, y: 642, isWaypoint: true });
         }
-      } else if (npc.kind === Types.Entities.PORTALCRYPT) {
-        this.player.stop_pathing_callback({ x: randomInt(98, 99), y: randomInt(716, 717), isWaypoint: true });
-      } else if (npc.kind === Types.Entities.PORTALRUINS) {
-        this.player.stop_pathing_callback({ x: randomInt(99, 100), y: randomInt(550, 551), isWaypoint: true });
       } else if (npc.kind === Types.Entities.GRIMOIRE) {
         this.tryUnlockingAchievement("GRIMOIRE");
         npc.walk();

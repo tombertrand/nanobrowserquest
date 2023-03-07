@@ -91,6 +91,9 @@ class GameClient {
   receivestonelevelstart_callback: any;
   receivestonelevelinprogress_callback: any;
   receivestonelevelend_callback: any;
+  receivegatewaylevelstart_callback: any;
+  receivegatewaylevelinprogress_callback: any;
+  receivegatewaylevelend_callback: any;
   receivefrozen_callback: any;
   receiveslowed_callback: any;
   receivepoisoned_callback: any;
@@ -164,6 +167,9 @@ class GameClient {
     this.handlers[Types.Messages.STONELEVEL_START] = this.receiveStoneLevelStart;
     this.handlers[Types.Messages.STONELEVEL_INPROGRESS] = this.receiveStoneLevelInProgress;
     this.handlers[Types.Messages.STONELEVEL_END] = this.receiveStoneLevelEnd;
+    this.handlers[Types.Messages.GATEWAYLEVEL_START] = this.receiveGatewayLevelStart;
+    this.handlers[Types.Messages.GATEWAYLEVEL_INPROGRESS] = this.receiveGatewayLevelInProgress;
+    this.handlers[Types.Messages.GATEWAYLEVEL_END] = this.receiveGatewayLevelEnd;
     this.handlers[Types.Messages.FROZEN] = this.receiveFrozen;
     this.handlers[Types.Messages.SLOWED] = this.receiveSlowed;
     this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
@@ -844,6 +850,20 @@ class GameClient {
     this.receivestonelevelend_callback?.();
   }
 
+  receiveGatewayLevelStart() {
+    this.receivegatewaylevelstart_callback?.();
+  }
+
+  receiveGatewayLevelInProgress(data) {
+    const clock = data[1];
+
+    this.receivegatewaylevelinprogress_callback?.(clock);
+  }
+
+  receiveGatewayLevelEnd() {
+    this.receivegatewaylevelend_callback?.();
+  }
+
   receiveFrozen(data) {
     const entityId = data[1];
     const duration = data[2];
@@ -1181,6 +1201,18 @@ class GameClient {
 
   onReceiveStoneLevelEnd(callback) {
     this.receivestonelevelend_callback = callback;
+  }
+
+  onReceiveGatewayLevelStart(callback) {
+    this.receivegatewaylevelstart_callback = callback;
+  }
+
+  onReceiveGatewayLevelInProgress(callback) {
+    this.receivegatewaylevelinprogress_callback = callback;
+  }
+
+  onReceiveGatewayLevelEnd(callback) {
+    this.receivegatewaylevelend_callback = callback;
   }
 
   onFrozen(callback) {

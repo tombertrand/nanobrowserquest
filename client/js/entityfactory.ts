@@ -1028,12 +1028,8 @@ EntityFactory.builders[Types.Entities.PORTALSTONE] = function (id) {
   return new Npcs.PortalStone(id);
 };
 
-EntityFactory.builders[Types.Entities.PORTALCRYPT] = function (id) {
-  return new Npcs.PortalCrypt(id);
-};
-
-EntityFactory.builders[Types.Entities.PORTALRUINS] = function (id) {
-  return new Npcs.PortalRuins(id);
+EntityFactory.builders[Types.Entities.PORTALGATEWAY] = function (id) {
+  return new Npcs.PortalGateway(id);
 };
 
 EntityFactory.builders[Types.Entities.MAGICSTONE] = function (id) {

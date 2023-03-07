@@ -384,10 +384,8 @@ class Player extends Character {
                 self.server.startTreeLevel();
               }
               return;
-            } else if (msg === "/hands" && self.name === "running-coder") {
-              if (!self.server.isActivatedHands) {
-                self.server.activateHands(self, true);
-              }
+            } else if (msg === "/gateway" && self.name === "running-coder") {
+              self.server.activateHands(self, true);
               return;
             } else if (msg.startsWith("/ban")) {
               const periods = { 1: 86400, 365: 86400 * 365 };
@@ -690,7 +688,7 @@ class Player extends Character {
         console.info("HANDS: " + self.name + " " + message[1]);
 
         const handsId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
-        if (handsId && handsId === self.server.handsNpcId && !self.server.isActivatedHands) {
+        if (handsId && handsId === self.server.handsNpcId) {
           self.server.activateHands(self);
         }
       } else if (action === Types.Messages.TRAP) {

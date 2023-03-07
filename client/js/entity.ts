@@ -136,8 +136,7 @@ class Entity {
           this.kind === Types.Entities.PORTALCOW ||
           this.kind === Types.Entities.PORTALMINOTAUR ||
           this.kind === Types.Entities.PORTALSTONE ||
-          this.kind === Types.Entities.PORTALCRYPT ||
-          this.kind === Types.Entities.PORTALRUINS
+          this.kind === Types.Entities.PORTALGATEWAY
         ) {
           this.currentAnimation.setSpeed(150);
         } else if (
