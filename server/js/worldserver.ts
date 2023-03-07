@@ -105,7 +105,7 @@ class World {
   isActivatedTreeLevel: boolean;
   trapIds: number[];
   portalStoneNpcId: number;
-  portalStoneBloodNpcId: number;
+  portalStoneInnerNpcId: number;
   portalGatewayNpcId: number;
   portalGatewayInnerNpcId: number;
   stoneLevelClock: number;
@@ -224,7 +224,7 @@ class World {
     this.leverLeftCryptNpcId = null;
     this.leverRightCryptNpcId = null;
     this.portalStoneNpcId = null;
-    this.portalStoneBloodNpcId = null;
+    this.portalStoneInnerNpcId = null;
     this.stoneLevelClock = null;
     this.stoneLevelInterval = null;
 
@@ -731,13 +731,13 @@ class World {
       if (x === 71 && y === 643) {
         this.portalStoneNpcId = npc.id;
       } else {
-        this.portalStoneBloodNpcId = npc.id;
+        this.portalStoneInnerNpcId = npc.id;
       }
     } else if (kind === Types.Entities.PORTALGATEWAY) {
       npc.isDead = true;
 
       // ~~~~ SET THIS UP
-      if (x === 97 && y === 546) {
+      if (x === 97 && y === 545) {
         this.portalGatewayNpcId = npc.id;
       } else {
         this.portalGatewayInnerNpcId = npc.id;
@@ -1001,7 +1001,7 @@ class World {
     const stonePortal = this.npcs[this.portalStoneNpcId];
     stonePortal.respawnCallback();
 
-    const bloodPortal = this.npcs[this.portalStoneBloodNpcId];
+    const bloodPortal = this.npcs[this.portalStoneInnerNpcId];
     bloodPortal.respawnCallback();
 
     this.pushBroadcast(new Messages.StoneLevelStart());
@@ -1020,7 +1020,7 @@ class World {
     this.stoneLevelClock = null;
     const stonePortal = this.npcs[this.portalStoneNpcId];
     this.despawn(stonePortal);
-    const bloodPortal = this.npcs[this.portalStoneBloodNpcId];
+    const bloodPortal = this.npcs[this.portalStoneInnerNpcId];
     this.despawn(bloodPortal);
     this.pushBroadcast(new Messages.StoneLevelEnd());
     this.deactivateMagicStones();
@@ -1490,8 +1490,9 @@ class World {
   deactivateHands() {
     const hands = this.getEntityById(this.handsNpcId);
 
-    if (hands && hands instanceof Npc && !hands.isActivated) {
+    if (hands && hands instanceof Npc && hands.isActivated) {
       hands.deactivate();
+
       this.pushBroadcast(new Messages.Unraise(hands.id));
     }
   }
@@ -1656,15 +1657,19 @@ class World {
             });
           } else if (kind === Types.Entities.BUTCHER) {
             mob.onDestroy(() => {
+              clearInterval(self.gatewayLevelInterval);
+              setTimeout(() => {
+                // Return everyone to gateway, leave 5s to loot any last drop
+                self.endGatewayLevel();
+              }, 5000);
+            });
+          } else if (kind === Types.Entities.SPIDERQUEEN) {
+            mob.onDestroy(() => {
               clearInterval(self.stoneLevelInterval);
               setTimeout(() => {
                 // Return everyone to stones, leave 5s to loot any last drop
                 self.endStoneLevel();
               }, 5000);
-            });
-          } else if (kind === Types.Entities.SPIDERQUEEN) {
-            mob.onDestroy(() => {
-              // @TODO End crypt level?
             });
           } else if (kind === Types.Entities.DEATHANGEL) {
             self.deathAngelId = mob.id;
@@ -1791,7 +1796,7 @@ class World {
     ) {
       const MIN_DAMAGE = {
         [Types.Entities.MINOTAUR]: 2000,
-        [Types.Entities.BUTCHER]: 100,
+        [Types.Entities.BUTCHER]: 2500,
         [Types.Entities.DEATHANGEL]: 3000,
       };
       let members = [attacker.id];

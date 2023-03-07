@@ -912,8 +912,10 @@ class Player extends Character {
             self.send(new Messages.CowLevelInProgress(self.server.cowLevelClock).serialize());
           } else if (y >= 696 && y <= 733 && x <= 29) {
             self.send(new Messages.ChaliceLevelInProgress(self.server.chaliceLevelClock).serialize());
-          } else if (y >= 744 && y <= 781 && x <= 29) {
+          } else if (y >= 696 && y <= 733 && x >= 85 && x <= 112) {
             self.send(new Messages.StoneLevelInProgress(self.server.stoneLevelClock).serialize());
+          } else if (y >= 744 && y <= 781 && x <= 29) {
+            self.send(new Messages.GatewayLevelInProgress(self.server.gatewayLevelClock).serialize());
           }
         }
       } else if (action === Types.Messages.BOSS_CHECK) {

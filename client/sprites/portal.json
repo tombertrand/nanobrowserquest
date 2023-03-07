@@ -1,7 +1,7 @@
 {
   "id": "portal",
   "width": 32,
-  "height": 42,
+  "height": 44,
   "animations": {
     "raise_down": {
       "length": 16,

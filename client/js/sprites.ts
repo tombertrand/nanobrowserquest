@@ -113,7 +113,7 @@ import stash from "../sprites/stash.json";
 import portalcow from "../sprites/portal.json";
 import portalminotaur from "../sprites/portal.json";
 import portalstone from "../sprites/portal.json";
-import portalgateway from "../sprites/portal.json";
+import portalgateway from "../sprites/portalgateway.json";
 import magicstone from "../sprites/magicstone.json";
 import secretstairs from "../sprites/secretstairs.json";
 import secretstairs2 from "../sprites/secretstairs2.json";

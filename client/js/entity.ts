@@ -124,7 +124,11 @@ class Entity {
 
       if (a) {
         this.currentAnimation = a;
-        if (name.substr(0, 3) === "atk" || name.substr(0, 5) === "raise") {
+        const isAtk = name.substr(0, 3) === "atk";
+        const isRaise = name.substr(0, 5) === "raise";
+        const isUnraise = name.substr(0, 7) === "unraise";
+
+        if (isAtk || isRaise || isUnraise) {
           this.currentAnimation.reset();
         }
 
@@ -133,10 +137,13 @@ class Entity {
           this.kind === Types.Entities.WAYPOINTX ||
           this.kind === Types.Entities.WAYPOINTN ||
           this.kind === Types.Entities.WAYPOINTO ||
-          this.kind === Types.Entities.PORTALCOW ||
-          this.kind === Types.Entities.PORTALMINOTAUR ||
-          this.kind === Types.Entities.PORTALSTONE ||
-          this.kind === Types.Entities.PORTALGATEWAY
+          (!isRaise &&
+            [
+              Types.Entities.PORTALCOW,
+              Types.Entities.PORTALMINOTAUR,
+              Types.Entities.PORTALSTONE,
+              Types.Entities.PORTALGATEWAY,
+            ].includes(this.kind))
         ) {
           this.currentAnimation.setSpeed(150);
         } else if (

@@ -223,9 +223,9 @@ class Game {
     this.minotaurPortalStart = false;
     this.minotaurLevelPortalCoords = { x: 34, y: 498 };
     this.stonePortalStart = false;
-    this.stoneLevelPortalCoords = { x: 15, y: 777 };
+    this.stoneLevelPortalCoords = { x: 97, y: 728 };
     this.gatewayPortalStart = false;
-    this.gatewayLevelPortalCoords = { x: 97, y: 728 };
+    this.gatewayLevelPortalCoords = { x: 15, y: 777 };
     this.network = null;
     this.explorer = null;
     this.hoverSlotToDelete = null;
@@ -3227,6 +3227,7 @@ class Game {
                 if (self.stonePortalStart) {
                   self.audioManager.playSound("portal-open");
 
+                  // console.log("~~~~RAISE!!!");
                   entity.animate("raise", 75, 1, () => {
                     entity.idle();
                     entity.currentAnimation.setSpeed(150);
@@ -3234,7 +3235,7 @@ class Game {
                 } else {
                   entity.idle();
                 }
-              } else if (entity.kind === Types.Entities.PORTALGATEWAY && entity.gridX === 71 && entity.gridY === 643) {
+              } else if (entity.kind === Types.Entities.PORTALGATEWAY && entity.gridX === 97 && entity.gridY === 545) {
                 if (self.gatewayPortalStart) {
                   self.audioManager.playSound("portal-open");
 
@@ -3973,7 +3974,6 @@ class Game {
             self.audioManager.playSound("magicstone");
             self.activatedMagicStones.push(mobId);
 
-            // mob.currentAnimation.reset();
             mob.animate("raise", mob.raiseSpeed, 1, () => mob.walk());
           } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVER2) {
             self.audioManager.playSound("lever");
@@ -4036,7 +4036,6 @@ class Game {
             setTimeout(() => {
               mob.walk();
               setTimeout(() => {
-                mob.currentAnimation.reset();
                 mob.unraise();
                 mob.isActivated = false;
                 setTimeout(() => {
@@ -4767,9 +4766,14 @@ class Game {
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
-        if (self.player.gridY >= 744 && self.player.gridY <= 781 && self.player.gridX <= 29) {
+        if (
+          self.player.gridY >= 696 &&
+          self.player.gridY <= 733 &&
+          self.player.gridX >= 85 &&
+          self.player.gridX <= 112
+        ) {
           const x = randomInt(66, 76);
-          const y = randomInt(638, 647);
+          const y = randomInt(638, 645);
 
           self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }
@@ -4808,12 +4812,7 @@ class Game {
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
-        if (
-          self.player.gridY >= 696 &&
-          self.player.gridY <= 733 &&
-          self.player.gridX >= 85 &&
-          self.player.gridX <= 112
-        ) {
+        if (self.player.gridY >= 744 && self.player.gridY <= 781 && self.player.gridX <= 29) {
           const x = randomInt(95, 100);
           const y = randomInt(543, 548);
 
@@ -5197,7 +5196,7 @@ class Game {
           this.player.stop_pathing_callback({ x: 71, y: 643, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.PORTALGATEWAY) {
-        if (npc.gridX === 97 && npc.gridY === 546) {
+        if (npc.gridX === 97 && npc.gridY === 545) {
           if (this.gatewayLevelPortalCoords) {
             this.player.stop_pathing_callback({
               x: this.gatewayLevelPortalCoords.x,

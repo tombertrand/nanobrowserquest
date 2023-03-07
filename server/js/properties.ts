@@ -444,11 +444,7 @@ var Properties: any = {
   },
   spiderqueen: {
     drops: {
-      rejuvenationpotion: 10,
-      scrollupgradelegendary: 3,
-      ringplatinum: 3,
-      amuletplatinum: 3,
-      poisonpotion: 10,
+      chalice: 100,
     },
     hp: 1200,
     armor: 28,
