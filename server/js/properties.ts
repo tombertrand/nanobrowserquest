@@ -373,6 +373,7 @@ var Properties: any = {
   },
   rat3: {
     drops: {
+      powdergreen: 5,
       rejuvenationpotion: 10,
       scrollupgradelegendary: 2,
       ringplatinum: 2,
@@ -396,6 +397,7 @@ var Properties: any = {
   },
   skeletontemplar: {
     drops: {
+      powderblack: 20,
       rejuvenationpotion: 10,
       scrollupgradelegendary: 3,
       ringplatinum: 3,
@@ -408,6 +410,7 @@ var Properties: any = {
   },
   skeletontemplar2: {
     drops: {
+      powderblue: 20,
       rejuvenationpotion: 10,
       scrollupgradelegendary: 3,
       ringplatinum: 3,
@@ -428,7 +431,7 @@ var Properties: any = {
     },
     hp: 200,
     armor: 28,
-    weapon: 30,
+    weapon: 10,
   },
   spider2: {
     drops: {
@@ -440,11 +443,15 @@ var Properties: any = {
     },
     hp: 200,
     armor: 28,
-    weapon: 30,
+    weapon: 10,
   },
   spiderqueen: {
     drops: {
-      chalice: 100,
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+      poisonpotion: 10,
     },
     hp: 1200,
     armor: 28,

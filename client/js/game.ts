@@ -225,7 +225,7 @@ class Game {
     this.stonePortalStart = false;
     this.stoneLevelPortalCoords = { x: 97, y: 728 };
     this.gatewayPortalStart = false;
-    this.gatewayLevelPortalCoords = { x: 15, y: 777 };
+    this.gatewayLevelPortalCoords = { x: 13, y: 777 };
     this.network = null;
     this.explorer = null;
     this.hoverSlotToDelete = null;
@@ -3207,7 +3207,6 @@ class Game {
 
                   entity.animate("raise", 75, 1, () => {
                     entity.idle();
-                    entity.currentAnimation.setSpeed(150);
                   });
                 } else {
                   entity.idle();
@@ -3218,7 +3217,6 @@ class Game {
 
                   entity.animate("raise", 75, 1, () => {
                     entity.idle();
-                    entity.currentAnimation.setSpeed(150);
                   });
                 } else {
                   entity.idle();
@@ -3227,10 +3225,8 @@ class Game {
                 if (self.stonePortalStart) {
                   self.audioManager.playSound("portal-open");
 
-                  // console.log("~~~~RAISE!!!");
                   entity.animate("raise", 75, 1, () => {
                     entity.idle();
-                    entity.currentAnimation.setSpeed(150);
                   });
                 } else {
                   entity.idle();
@@ -3241,7 +3237,6 @@ class Game {
 
                   entity.animate("raise", 75, 1, () => {
                     entity.idle();
-                    entity.currentAnimation.setSpeed(150);
                   });
                 } else {
                   entity.idle();

@@ -1597,6 +1597,7 @@ Types.isHealingItem = function (kind: number) {
     Types.Entities.NANOPOTION,
     Types.Entities.BANANOPOTION,
     Types.Entities.REJUVENATIONPOTION,
+    Types.Entities.POISONPOTION,
   ].includes(kind);
 };
 

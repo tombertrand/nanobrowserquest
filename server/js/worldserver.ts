@@ -58,8 +58,8 @@ class World {
   cowLevelNpcId: any;
   cowLevelNpcIds: number[];
   cowPossibleCoords: any[];
-  cowEntityIds: any[];
-  cowPackOrder: number[][];
+  cowEntityIds: string[];
+  packOrder: number[][];
   cowKingHornDrop: boolean;
   minotaur: any;
   minotaurLevelClock: number;
@@ -117,6 +117,12 @@ class World {
   leverRightCryptNpcId: number;
   poisonTemplarId: number;
   magicTemplarId: number;
+  powderSpiderId: number;
+  chaliceSpiderId: number;
+  spiderEntityIds: string[];
+  spiderPossibleCoords: { x: number; y: number }[];
+  archerEntityIds: string[];
+  archerPossibleCoords: { x: number; y: number }[];
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -156,7 +162,7 @@ class World {
     this.cowLevelNpcIds = [];
     this.cowPossibleCoords = [];
     this.cowEntityIds = [];
-    this.cowPackOrder = [
+    this.packOrder = [
       [0, 0],
       [-1, 0],
       [-1, -1],
@@ -227,6 +233,12 @@ class World {
     this.portalStoneInnerNpcId = null;
     this.stoneLevelClock = null;
     this.stoneLevelInterval = null;
+    this.powderSpiderId = null;
+    this.chaliceSpiderId = null;
+    this.spiderEntityIds = [];
+    this.spiderPossibleCoords = [];
+    this.archerEntityIds = [];
+    this.archerPossibleCoords = [];
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -877,7 +889,7 @@ class World {
         // Cow king is possibly at the center of 1 of the 30 shuffled packs
         const kind = coordsIndex === 0 && i === 0 ? Types.Entities.COWKING : Types.Entities.COW;
         const id = `7${kind}${count++}`;
-        const mob = new Mob(id, kind, x + this.cowPackOrder[i][0], y + this.cowPackOrder[i][1]);
+        const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
         mob.onMove(this.onMobMoveCallback.bind(this));
         mob.onDestroy(() => {
           this.cowTotal--;
@@ -997,6 +1009,8 @@ class World {
 
   startStoneLevel() {
     this.stoneLevelClock = 15 * 60; // 15 minutes
+    this.powderSpiderId = null;
+    this.chaliceSpiderId = null;
 
     const stonePortal = this.npcs[this.portalStoneNpcId];
     stonePortal.respawnCallback();
@@ -1005,6 +1019,25 @@ class World {
     bloodPortal.respawnCallback();
 
     this.pushBroadcast(new Messages.StoneLevelStart());
+
+    let count = 0;
+    _.shuffle(this.spiderPossibleCoords).map(({ x, y }, coordsIndex) => {
+      const kind = coordsIndex % 2 ? Types.Entities.SPIDER : Types.Entities.SPIDER2;
+      const id = `7${kind}${count++}`;
+
+      const mob = new Mob(id, kind, x, y);
+      mob.onMove(this.onMobMoveCallback.bind(this));
+      mob.onDestroy(() => {});
+
+      this.addMob(mob);
+      this.spiderEntityIds.push(id);
+
+      if (coordsIndex === 0) {
+        this.powderSpiderId = mob.id;
+      } else if (coordsIndex === 4) {
+        this.chaliceSpiderId = mob.id;
+      }
+    });
 
     this.stoneLevelInterval = setInterval(() => {
       this.stoneLevelClock -= 1;
@@ -1024,6 +1057,12 @@ class World {
     this.despawn(bloodPortal);
     this.pushBroadcast(new Messages.StoneLevelEnd());
     this.deactivateMagicStones();
+
+    // Despawn all spiders
+    this.spiderEntityIds.map(entityId => {
+      delete this.entities[entityId];
+      delete this.mobs[entityId];
+    });
   }
 
   startGatewayLevel() {
@@ -1036,6 +1075,22 @@ class World {
     gatewayInnerPortal.respawnCallback();
 
     this.pushBroadcast(new Messages.GatewayLevelStart());
+
+    let count = 0;
+    this.archerPossibleCoords.map(({ x, y }) => {
+      const archerCount = Math.ceil(randomRange(1, 3));
+
+      for (let i = 0; i < archerCount; i++) {
+        const kind = Types.Entities.SKELETONARCHER;
+        const id = `7${kind}${count++}`;
+        const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
+        mob.onMove(this.onMobMoveCallback.bind(this));
+        mob.onDestroy(() => {});
+
+        this.addMob(mob);
+        this.archerEntityIds.push(id);
+      }
+    });
 
     this.gatewayLevelInterval = setInterval(() => {
       this.gatewayLevelClock -= 1;
@@ -1055,6 +1110,12 @@ class World {
     this.despawn(gatewayInnerPortal);
     this.pushBroadcast(new Messages.GatewayLevelEnd());
     this.deactivateHands();
+
+    // Despawn all archers
+    this.archerEntityIds.map(entityId => {
+      delete this.entities[entityId];
+      delete this.mobs[entityId];
+    });
   }
 
   startTreeLevel(tree) {
@@ -1635,6 +1696,10 @@ class World {
       } else if (Types.isMob(kind)) {
         if (kind === Types.Entities.COW) {
           self.cowPossibleCoords.push({ x: pos.x + 1, y: pos.y });
+        } else if ([Types.Entities.SPIDER, Types.Entities.SPIDER2].includes(kind)) {
+          self.spiderPossibleCoords.push({ x: pos.x + 1, y: pos.y });
+        } else if (kind === Types.Entities.SKELETONARCHER && pos.x < 29 && pos.y >= 744 && pos.y <= 781) {
+          self.archerPossibleCoords.push({ x: pos.x + 1, y: pos.y });
         } else {
           const id = `7${kind}${count++}`;
           const mob = new Mob(id, kind, pos.x + 1, pos.y);
@@ -1911,6 +1976,14 @@ class World {
       }
     }
 
+    if ([Types.Entities.SPIDER, Types.Entities.SPIDER2].includes(mob.kind)) {
+      if (mob.id === this.powderSpiderId) {
+        return "powderred";
+      } else if (mob.id === this.chaliceSpiderId) {
+        return "chalice";
+      }
+    }
+
     // if (mob.kind >= Types.Entities.GOLEM) {
     //   const vv = random(12000);
     //   if (vv === 420) {
@@ -1991,7 +2064,7 @@ class World {
     //   "amuletmoon",
     // ];
     // var randomDrops = ["ringplatinum", "amuletplatinum"];
-    var randomDrops = ["soulstone"];
+    // var randomDrops = ["soulstone"];
     // var randomDrops = ["nft"];
     // var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
@@ -2071,8 +2144,8 @@ class World {
     // ];
     // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
     // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    var randomDrop = random(randomDrops.length);
-    itemName = randomDrops[randomDrop];
+    // var randomDrop = random(randomDrops.length);
+    // itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

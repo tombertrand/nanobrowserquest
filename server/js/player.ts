@@ -796,7 +796,7 @@ class Player extends Character {
               }, 10000);
               self.sendPlayerStats();
             } else if (Types.isHealingItem(kind)) {
-              var amount;
+              let amount;
               switch (kind) {
                 case Types.Entities.FLASK:
                   amount = 40;
@@ -812,11 +812,7 @@ class Player extends Character {
                   amount = Math.ceil(self.maxHitPoints / 3);
                   break;
                 case Types.Entities.POISONPOTION:
-                  amount = -50;
-
-                  const dmg = Math.round(amount - amount * (self.bonus.poisonResistance / 100));
-                  self.startPoisoned({ dmg, entity: self, resistance: self.bonus.poisonResistance });
-
+                  self.handleHurtSpellDmg({ element: "poison", dmg: 200 });
                   break;
               }
 
@@ -828,7 +824,7 @@ class Player extends Character {
                 databaseHandler.foundNanoPotion(self.name);
               }
 
-              if (!self.hasFullHealth()) {
+              if (amount && !self.hasFullHealth()) {
                 self.regenHealthBy(amount);
                 self.server.pushToPlayer(self, self.health());
               }
@@ -1891,7 +1887,7 @@ class Player extends Character {
     return { dmg, isBlocked };
   }
 
-  calculateElementDamage(spell) {
+  calculateElementDamage(spell: { element: Elements; dmg: number }) {
     const resistance = Types.calculateResistance(this.bonus[`${spell.element}Resistance`] + this.skill.resistances);
 
     const dmg = Math.round(spell.dmg - spell.dmg * (resistance / 100));
