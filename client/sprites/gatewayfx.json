@@ -1,0 +1,17 @@
+{
+  "id": "gatewayfx",
+  "width": 192,
+  "height": 160,
+  "animations": {
+    "idle_down": {
+      "length": 1,
+      "row": 0
+    },
+    "raise_down": {
+      "length": 15,
+      "row": 1
+    }
+  },
+  "offset_x": -32,
+  "offset_y": -132
+}

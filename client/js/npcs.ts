@@ -176,6 +176,18 @@ var Npcs = {
     }
   },
 
+  GatewayFx: class GatewayFx extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.GATEWAYFX);
+
+      this.raiseSpeed = 125;
+      this.idleSpeed = 250;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
   MagicStone: class MagicStone extends Npc {
     constructor(id) {
       super(id, Types.Entities.MAGICSTONE);

@@ -201,6 +201,7 @@ class Game {
   treeNpcId: number;
   traps: { id: number; x: number; y: number }[];
   statues: { id: number; x: number; y: number }[];
+  gatewayFxNpcId: number;
 
   constructor(app) {
     this.app = app;
@@ -303,6 +304,7 @@ class Game {
     this.treeNpcId = null;
     this.traps = [];
     this.statues = [];
+    this.gatewayFxNpcId = null;
 
     // combat
     // @ts-ignore
@@ -459,6 +461,7 @@ class Game {
       "portalminotaur",
       "portalstone",
       "portalgateway",
+      "gatewayfx",
       "magicstone",
       "altarchalice",
       "altarsoulstone",
@@ -3157,6 +3160,10 @@ class Game {
         const { id, kind, name, x, y, targetId, orientation, resistances, element, enchants, isActivated, bonus } =
           data;
 
+        if (kind === Types.Entities.GATEWAYFX) {
+          self.gatewayFxNpcId = id;
+        }
+
         let entity = self.getEntityById(id);
         if (!entity) {
           try {
@@ -3233,11 +3240,12 @@ class Game {
                 }
               } else if (entity.kind === Types.Entities.PORTALGATEWAY && entity.gridX === 97 && entity.gridY === 545) {
                 if (self.gatewayPortalStart) {
-                  self.audioManager.playSound("portal-open");
-
-                  entity.animate("raise", 75, 1, () => {
-                    entity.idle();
-                  });
+                  setTimeout(() => {
+                    self.audioManager.playSound("portal-open");
+                    entity.animate("raise", 75, 1, () => {
+                      entity.idle();
+                    });
+                  }, 1500);
                 } else {
                   entity.idle();
                 }
@@ -3983,7 +3991,6 @@ class Game {
             self.isAltarChaliceActivated = true;
 
             mob.walk();
-
             // self.audioManager.playSound("secret-found");
           } else if (mob.kind === Types.Entities.ALTARSOULSTONE) {
             self.audioManager.playSound("magic-blast");
@@ -3993,9 +4000,19 @@ class Game {
 
             mob.animate("walk", 100, 1, () => mob.idle());
           } else if (mob.kind === Types.Entities.HANDS) {
-            // self.isHandsActivated = true;
             mob.walk();
-            self.audioManager.playSound("powder");
+
+            if (self.gatewayFxNpcId) {
+              const gatewayFx = self.getEntityById(self.gatewayFxNpcId);
+              if (gatewayFx) {
+                self.audioManager.playSound("powder", 0, 0.25);
+                self.audioManager.playSound("static", 250);
+
+                gatewayFx.animate("raise", gatewayFx.raiseSpeed, 1, () => {
+                  gatewayFx.idle();
+                });
+              }
+            }
           } else if (mob.kind === Types.Entities.STATUE || mob.kind === Types.Entities.STATUE2) {
             if (mob.kind === Types.Entities.STATUE) {
               self.audioManager.playSound("fireball", 250);

@@ -86,7 +86,7 @@ class AudioManager {
       "powder",
       "fresh-meat",
       "magic-blast",
-      // "altarsoulstone",
+      "static",
     ];
 
     var loadSoundFiles = function () {
@@ -224,10 +224,10 @@ class AudioManager {
     return this.sounds[name].find(sound => sound.ended || sound.paused);
   }
 
-  playSound(name, delay = 0) {
+  playSound(name, delay = 0, volume?: number) {
     var sound = this.isSoundEnabled && this.getSound(name);
     if (sound) {
-      sound.volume = this.soundVolume;
+      sound.volume = this.soundVolume ? volume || this.soundVolume : 0;
       setTimeout(() => {
         sound.play();
       }, delay);

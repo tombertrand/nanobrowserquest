@@ -1032,6 +1032,10 @@ EntityFactory.builders[Types.Entities.PORTALGATEWAY] = function (id) {
   return new Npcs.PortalGateway(id);
 };
 
+EntityFactory.builders[Types.Entities.GATEWAYFX] = function (id) {
+  return new Npcs.GatewayFx(id);
+};
+
 EntityFactory.builders[Types.Entities.MAGICSTONE] = function (id) {
   return new Npcs.MagicStone(id);
 };

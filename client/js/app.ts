@@ -488,7 +488,13 @@ class App {
     // var timeout;
 
     this.game.player?.onSetTarget(function (target, name) {
-      if (target.id === self.game.player.id || target.kind === Types.Entities.TREE) return;
+      if (
+        target.id === self.game.player.id ||
+        target.kind === Types.Entities.TREE ||
+        target.kind === Types.Entities.GATEWAYFX
+      ) {
+        return;
+      }
 
       const inspector = $("#inspector");
       const alias = Types.getAliasFromName(Types.getKindAsString(target.kind)) || target.name || name;
