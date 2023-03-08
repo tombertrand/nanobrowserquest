@@ -611,9 +611,9 @@ var Properties: any = {
       shieldmystical: 1,
       ringmystical: 1,
     },
-    hp: 2320,
+    hp: 100,
     armor: 20,
-    weapon: 32,
+    weapon: 5,
   },
   deathangel: {
     drops: {

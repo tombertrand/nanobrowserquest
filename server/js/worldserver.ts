@@ -91,8 +91,6 @@ class World {
   blueFlames: number[];
   statues: number[];
   spellCount: number;
-  isActivatedAltarChalice: boolean;
-  isActivatedAltarSoulStone: boolean;
   secretStairsChaliceNpcId: number;
   secretStairsTreeNpcId: number;
   secretStairsLeftTemplarNpcId: number;
@@ -123,6 +121,10 @@ class World {
   spiderPossibleCoords: { x: number; y: number }[];
   archerEntityIds: string[];
   archerPossibleCoords: { x: number; y: number }[];
+  shamanCoords: { x: number; y: number };
+  mageTotal: number;
+  mageEntityIds: string[];
+  magePossibleCoords: { x: number; y: number }[];
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -211,8 +213,6 @@ class World {
     this.activatedMagicStones = [];
     this.blueFlames = [];
     this.statues = [];
-    this.isActivatedAltarChalice = false;
-    this.isActivatedAltarSoulStone = false;
     this.secretStairsChaliceNpcId = null;
     this.secretStairsTreeNpcId = null;
     this.secretStairsLeftTemplarNpcId = null;
@@ -239,6 +239,10 @@ class World {
     this.spiderPossibleCoords = [];
     this.archerEntityIds = [];
     this.archerPossibleCoords = [];
+    this.shamanCoords = null;
+    this.mageTotal = 0;
+    this.mageEntityIds = [];
+    this.magePossibleCoords = [];
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -813,6 +817,7 @@ class World {
     this.addEntity(spell);
 
     setTimeout(() => {
+      this.removeFromGroups(spell);
       delete this.entities[spell.id];
     }, 3000);
 
@@ -899,7 +904,7 @@ class World {
               // Return everyone to town, leave 3s to loot any last drop
               this.endCowLevel(true);
 
-              // When the cow level is cleared, 20% chance of spawning the Minotaur
+              // When the cow level is cleared, 25% chance of spawning the Minotaur
               if (this.minotaurSpawnTimeout && this.minotaur.isDead && random(4) === 0) {
                 this.minotaur.handleRespawn(0);
 
@@ -978,12 +983,41 @@ class World {
   }
 
   startChaliceLevel() {
-    this.chaliceLevelClock = 5 * 60; // 5 minutes
+    this.chaliceLevelClock = 15 * 60; // 15 minutes
+    this.mageTotal = 0;
 
     const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
     secretStairs.respawnCallback();
 
     this.pushBroadcast(new Messages.ChaliceLevelStart());
+
+    let count = 0;
+
+    const mageCoords = this.magePossibleCoords.concat([this.shamanCoords]);
+
+    mageCoords.map(({ x, y }) => {
+      const isShaman = x === this.shamanCoords.x && y === this.shamanCoords.y;
+      const mageCount = isShaman ? 1 : Math.ceil(randomRange(1, 3));
+
+      this.mageTotal += mageCount;
+
+      for (let i = 0; i < mageCount; i++) {
+        const kind = isShaman ? Types.Entities.SHAMAN : Types.Entities.MAGE;
+        const id = `7${kind}${count++}`;
+        const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
+        mob.onMove(this.onMobMoveCallback.bind(this));
+        mob.onDestroy(() => {
+          this.mageTotal--;
+          if (this.mageTotal === 0) {
+            // @TODO ~~~~ spawn a portal to the temple!
+            console.log("~~~~~ ALL MAGES DEAD!");
+          }
+        });
+
+        this.addMob(mob);
+        this.mageEntityIds.push(id);
+      }
+    });
 
     this.chaliceLevelInterval = setInterval(() => {
       this.chaliceLevelClock -= 1;
@@ -998,13 +1032,17 @@ class World {
     this.chaliceLevelInterval = null;
     this.chaliceLevelClock = null;
 
-    this.isActivatedAltarChalice = false;
-
     const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
     this.despawn(secretStairs);
 
-    this.getEntityById(this.altarChaliceNpcId).isActivated = false;
+    this.getEntityById(this.altarChaliceNpcId)?.deactivate();
     this.pushBroadcast(new Messages.ChaliceLevelEnd());
+
+    // Despawn all mages
+    this.mageEntityIds.map(entityId => {
+      delete this.entities[entityId];
+      delete this.mobs[entityId];
+    });
   }
 
   startStoneLevel() {
@@ -1495,7 +1533,7 @@ class World {
   async activateAltarChalice(player, force = false) {
     const altar = this.getEntityById(this.altarChaliceNpcId);
 
-    if (altar && altar instanceof Npc && !this.isActivatedAltarChalice && !altar.isActivated) {
+    if (altar && altar instanceof Npc && !altar.isActivated) {
       if (force || (await this.databaseHandler.useInventoryItem(player, "chalice"))) {
         altar.activate();
 
@@ -1508,7 +1546,7 @@ class World {
   async activateAltarSoulStone(player, force = false) {
     const altar = this.getEntityById(this.altarSoulStoneNpcId);
 
-    if (altar && altar instanceof Npc && !this.isActivatedAltarChalice && !altar.isActivated) {
+    if (altar && altar instanceof Npc && !altar.isActivated) {
       if (force || (await this.databaseHandler.useInventoryItem(player, "soulstone"))) {
         let generatedItem = generateSoulStoneItem();
         if (!generatedItem.item.startsWith("rune")) {
@@ -1700,6 +1738,10 @@ class World {
           self.spiderPossibleCoords.push({ x: pos.x + 1, y: pos.y });
         } else if (kind === Types.Entities.SKELETONARCHER && pos.x < 29 && pos.y >= 744 && pos.y <= 781) {
           self.archerPossibleCoords.push({ x: pos.x + 1, y: pos.y });
+        } else if (kind === Types.Entities.MAGE && pos.x < 29 && pos.y >= 696 && pos.y <= 734) {
+          self.magePossibleCoords.push({ x: pos.x + 1, y: pos.y });
+        } else if (kind === Types.Entities.SHAMAN && pos.x < 29 && pos.y >= 696 && pos.y <= 734) {
+          self.shamanCoords = { x: pos.x + 1, y: pos.y };
         } else {
           const id = `7${kind}${count++}`;
           const mob = new Mob(id, kind, pos.x + 1, pos.y);
@@ -1970,11 +2012,12 @@ class World {
       if (!attacker.hasWing && random(150) === 100) {
         return "wing";
       }
-    } else if (mob.kind === Types.Entities.SHAMAN) {
-      if (!attacker.hasCrystal && random(150) === 100) {
-        return "crystal";
-      }
     }
+    //  else if (mob.kind === Types.Entities.SHAMAN) {
+    //   if (!attacker.hasCrystal && random(150) === 100) {
+    //     return "crystal";
+    //   }
+    // }
 
     if ([Types.Entities.SPIDER, Types.Entities.SPIDER2].includes(mob.kind)) {
       if (mob.id === this.powderSpiderId) {
