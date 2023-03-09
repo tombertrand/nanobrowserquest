@@ -125,6 +125,7 @@ class World {
   mageTotal: number;
   mageEntityIds: string[];
   magePossibleCoords: { x: number; y: number }[];
+  gateNpcId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -243,6 +244,7 @@ class World {
     this.mageTotal = 0;
     this.mageEntityIds = [];
     this.magePossibleCoords = [];
+    this.gateNpcId = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -752,7 +754,6 @@ class World {
     } else if (kind === Types.Entities.PORTALGATEWAY) {
       npc.isDead = true;
 
-      // ~~~~ SET THIS UP
       if (x === 97 && y === 545) {
         this.portalGatewayNpcId = npc.id;
       } else {
@@ -781,6 +782,9 @@ class World {
         } else if (npc.x === 67 && npc.y === 722) {
           this.leverRightCryptNpcId = npc.id;
         }
+      } else if (kind === Types.Entities.GATE) {
+        this.gateNpcId = npc.id;
+        npc.activate();
       }
 
       this.addEntity(npc);
@@ -1003,6 +1007,7 @@ class World {
 
       for (let i = 0; i < mageCount; i++) {
         const kind = isShaman ? Types.Entities.SHAMAN : Types.Entities.MAGE;
+
         const id = `7${kind}${count++}`;
         const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
         mob.onMove(this.onMobMoveCallback.bind(this));
@@ -1470,8 +1475,11 @@ class World {
     lever.activate();
 
     if (lever.id === this.leverChaliceNpcId) {
-      // @TODO ~~~~ final temple door activate (OPEN)
       // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death
+      // @TODO Beta ends here, the gate will not open for now
+      // const gate = this.npcs[this.gateNpcId];
+      // gate.deactivate();
+      // this.despawn(gate);
     } else if (lever.id === this.leverLeftCryptNpcId) {
       const secretStairs = this.npcs[this.secretStairsLeftTemplarNpcId];
       secretStairs.respawnCallback();
@@ -2084,11 +2092,13 @@ class World {
     } else if (mob.kind === Types.Entities.COWKING) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
     } else if (mob.kind === Types.Entities.SPIDERQUEEN) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained the Spider Queen 🕷️`);
+      postMessageToDiscordChatChannel(`${attacker.name} slained Arachneia the Spider Queen 🕷️`);
     } else if (mob.kind === Types.Entities.BUTCHER) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained the Butcher 🩸`);
+      postMessageToDiscordChatChannel(`${attacker.name} slained Gorefiend the Butcher 🩸`);
+    } else if (mob.kind === Types.Entities.SHAMAN) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained Zul'Gurak 🧙`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained the Death Angel 💀`);
+      postMessageToDiscordChatChannel(`${attacker.name} slained Azrael 💀`);
     }
 
     // var randomDrops = [

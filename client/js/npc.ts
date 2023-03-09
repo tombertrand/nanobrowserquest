@@ -184,6 +184,7 @@ var NpcTalk = {
   portalstone: [""],
   portalgateway: [""],
   gatewayfx: [""],
+  gate: [""],
   magicstone: [""],
   blueflame: [""],
   altarchalice: [""],

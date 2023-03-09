@@ -508,7 +508,7 @@ var Properties: any = {
       ringplatinum: 3,
       amuletplatinum: 3,
     },
-    hp: 2020,
+    hp: 100,
     armor: 24,
     weapon: 10,
   },

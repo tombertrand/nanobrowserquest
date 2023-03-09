@@ -491,7 +491,8 @@ class App {
       if (
         target.id === self.game.player.id ||
         target.kind === Types.Entities.TREE ||
-        target.kind === Types.Entities.GATEWAYFX
+        target.kind === Types.Entities.GATEWAYFX ||
+        target.kind === Types.Entities.GATE
       ) {
         return;
       }

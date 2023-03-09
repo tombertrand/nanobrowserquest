@@ -462,6 +462,7 @@ class Game {
       "portalstone",
       "portalgateway",
       "gatewayfx",
+      "gate",
       "magicstone",
       "altarchalice",
       "altarsoulstone",

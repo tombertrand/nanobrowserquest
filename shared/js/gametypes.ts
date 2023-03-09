@@ -402,6 +402,7 @@ export const Types: any = {
     PORTALSTONE: 238,
     PORTALGATEWAY: 239,
     GATEWAYFX: 301,
+    GATE: 302,
     MAGICSTONE: 220,
     BLUEFLAME: 234,
     ALTARCHALICE: 246,
@@ -967,6 +968,7 @@ export const kinds = {
   portalstone: [Types.Entities.PORTALSTONE, "npc"],
   portalgateway: [Types.Entities.PORTALGATEWAY, "npc"],
   gatewayfx: [Types.Entities.GATEWAYFX, "npc"],
+  gate: [Types.Entities.GATE, "npc"],
   magicstone: [Types.Entities.MAGICSTONE, "npc"],
   blueflame: [Types.Entities.BLUEFLAME, "npc"],
   altarchalice: [Types.Entities.ALTARCHALICE, "npc"],
@@ -1675,8 +1677,6 @@ Types.getAliasFromName = function (name: string) {
     return "Lever";
   } else if (name === "wraith2") {
     return "Apocalypse Wraith";
-  } else if (name === "deathangel") {
-    return "Azrael";
   } else if (name === "tombdeathangel") {
     return "Azrael's Tomb";
   } else if (name === "tombangel") {
@@ -1693,16 +1693,18 @@ Types.getAliasFromName = function (name: string) {
     return "Boneshard";
   } else if (name === "skeletontemplar2") {
     return "Bonecrusader";
-  } else if (name === "shaman") {
-    return "Zul'Gurak";
   } else if (name === "spider") {
     return "Venomweaver Spider";
   } else if (name === "spider2") {
     return "Spellweaver Spider";
   } else if (name === "spiderqueen") {
-    return "Arachneia the Queen of Webs";
+    return "Arachneia the Spider Queen";
   } else if (name === "butcher") {
     return "Gorefiend the Butcher";
+  } else if (name === "shaman") {
+    return "Zul'Gurak";
+  } else if (name === "deathangel") {
+    return "Azrael";
   }
 
   return name;

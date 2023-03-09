@@ -115,6 +115,7 @@ import portalminotaur from "../sprites/portal.json";
 import portalstone from "../sprites/portal.json";
 import portalgateway from "../sprites/portalgateway.json";
 import gatewayfx from "../sprites/gatewayfx.json";
+import gate from "../sprites/gate.json";
 import magicstone from "../sprites/magicstone.json";
 import secretstairs from "../sprites/secretstairs.json";
 import secretstairs2 from "../sprites/secretstairs2.json";
@@ -503,6 +504,7 @@ const sprites = {
   portalstone,
   portalgateway,
   gatewayfx,
+  gate,
   magicstone,
   blueflame,
   altarchalice,

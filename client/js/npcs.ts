@@ -188,6 +188,16 @@ var Npcs = {
     }
   },
 
+  Gate: class Gate extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.GATE);
+      this.idleSpeed = 250;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
   MagicStone: class MagicStone extends Npc {
     constructor(id) {
       super(id, Types.Entities.MAGICSTONE);

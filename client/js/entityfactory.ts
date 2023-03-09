@@ -199,7 +199,6 @@ EntityFactory.builders[Types.Entities.SPIDERQUEEN] = function (id, props) {
   return new Mobs.SpiderQueen(id, props);
 };
 
-
 EntityFactory.builders[Types.Entities.BUTCHER] = function (id, props) {
   return new Mobs.Butcher(id, props);
 };
@@ -1034,6 +1033,10 @@ EntityFactory.builders[Types.Entities.PORTALGATEWAY] = function (id) {
 
 EntityFactory.builders[Types.Entities.GATEWAYFX] = function (id) {
   return new Npcs.GatewayFx(id);
+};
+
+EntityFactory.builders[Types.Entities.GATE] = function (id) {
+  return new Npcs.Gate(id);
 };
 
 EntityFactory.builders[Types.Entities.MAGICSTONE] = function (id) {
