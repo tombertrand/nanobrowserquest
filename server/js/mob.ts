@@ -117,7 +117,7 @@ class Mob extends Character {
     }
 
     if (!Types.isBoss(this.kind)) {
-      const isMiniBoss = random(this.kind === Types.Entities.COW ? 40 : 2) === 1;
+      const isMiniBoss = random(this.kind === Types.Entities.COW ? 50 : 20) === 1;
       if (!isMiniBoss) return;
 
       let enchantCount = 0;
@@ -155,6 +155,8 @@ class Mob extends Character {
         Types.Entities.RAT3,
         Types.Entities.SNAKE3,
         Types.Entities.SNAKE4,
+        Types.Entities.OCULOTHORAX,
+        Types.Entities.KOBOLD,
         Types.Entities.SPIDER,
         Types.Entities.SPIDER2,
         Types.Entities.SKELETONBERSERKER,
@@ -165,7 +167,6 @@ class Mob extends Character {
     } else if (
       [
         Types.Entities.GHOST,
-        Types.Entities.OCULOTHORAX,
         Types.Entities.SKELETONTEMPLAR,
         Types.Entities.SKELETONTEMPLAR2,
         Types.Entities.MAGE,

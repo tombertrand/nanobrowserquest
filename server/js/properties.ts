@@ -477,6 +477,18 @@ var Properties: any = {
     armor: 28,
     weapon: 22,
   },
+  kobold: {
+    drops: {
+      rejuvenationpotion: 10,
+      scrollupgradelegendary: 3,
+      ringplatinum: 3,
+      amuletplatinum: 3,
+      poisonpotion: 10,
+    },
+    hp: 200,
+    armor: 28,
+    weapon: 12,
+  },
   skeletonberserker: {
     drops: {
       rejuvenationpotion: 10,
@@ -571,9 +583,9 @@ var Properties: any = {
       ringplatinum: 3,
       amuletplatinum: 3,
     },
-    hp: 2320,
+    hp: 100,
     armor: 28,
-    weapon: 30,
+    weapon: 10,
   },
   ghost: {
     drops: {

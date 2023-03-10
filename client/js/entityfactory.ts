@@ -207,6 +207,10 @@ EntityFactory.builders[Types.Entities.OCULOTHORAX] = function (id, props) {
   return new Mobs.Oculothorax(id, props);
 };
 
+EntityFactory.builders[Types.Entities.KOBOLD] = function (id, props) {
+  return new Mobs.Kobold(id, props);
+};
+
 EntityFactory.builders[Types.Entities.SKELETONBERSERKER] = function (id, props) {
   return new Mobs.SkeletonBerserker(id, props);
 };

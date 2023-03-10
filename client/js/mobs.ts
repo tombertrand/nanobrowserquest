@@ -379,7 +379,7 @@ export const Mobs = {
       this.idleSpeed = 800;
       this.walkSpeed = 200;
       this.shadowOffsetY = 1;
-      this.aggroRange = 5;
+      this.aggroRange = 2;
       this.hurtDelay = 500;
       this.setAttackRate(1600);
     }
@@ -409,7 +409,7 @@ export const Mobs = {
       this.idleSpeed = 250;
       this.walkSpeed = 100;
       this.shadowOffsetY = -4;
-      this.aggroRange = 3;
+      this.aggroRange = 2;
     }
   },
 
@@ -421,7 +421,7 @@ export const Mobs = {
       this.idleSpeed = 250;
       this.walkSpeed = 100;
       this.shadowOffsetY = -4;
-      this.aggroRange = 3;
+      this.aggroRange = 2;
     }
   },
 
@@ -433,7 +433,7 @@ export const Mobs = {
       this.walkSpeed = 100;
       this.idleSpeed = 450;
       this.setAttackRate(800);
-      this.aggroRange = 4;
+      this.aggroRange = 2;
     }
   },
 
@@ -476,7 +476,7 @@ export const Mobs = {
       this.raiseRate = 1000;
       this.setAttackRate(800);
       this.raiseCooldown = new Timer(this.raiseRate);
-      this.aggroRange = 4;
+      this.aggroRange = 5;
       this.castRange = 6;
     }
   },
@@ -537,7 +537,7 @@ export const Mobs = {
       this.walkSpeed = 100;
       this.idleSpeed = 150;
       this.setAttackRate(1500);
-      this.aggroRange = 3;
+      this.aggroRange = 5;
     }
   },
 
@@ -549,7 +549,7 @@ export const Mobs = {
       this.walkSpeed = 100;
       this.idleSpeed = 150;
       this.setAttackRate(1500);
-      this.aggroRange = 3;
+      this.aggroRange = 5;
       this.hurtDelay = 100;
       this.taunt = "fresh-meat";
     }
@@ -558,6 +558,18 @@ export const Mobs = {
   Oculothorax: class Oculothorax extends Mob {
     constructor(id, props) {
       super(id, Types.Entities.OCULOTHORAX, props);
+      this.atkSpeed = 50;
+      this.moveSpeed = 200;
+      this.walkSpeed = 100;
+      this.idleSpeed = 150;
+      this.setAttackRate(1200);
+      this.aggroRange = 2;
+    }
+  },
+
+  Kobold: class Kobold extends Mob {
+    constructor(id, props) {
+      super(id, Types.Entities.KOBOLD, props);
       this.atkSpeed = 50;
       this.moveSpeed = 200;
       this.walkSpeed = 100;

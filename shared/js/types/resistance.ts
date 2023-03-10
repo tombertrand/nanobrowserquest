@@ -18,6 +18,7 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
   butcher: ["physical"],
   worm: ["physical"],
   oculothorax: [],
+  kobold: [],
   skeletontemplar: ["poison", "cold"],
   skeletontemplar2: ["magic", "flame"],
   ghost: [],
@@ -94,8 +95,14 @@ export const mobResistance = {
   oculothorax: {
     magicResistance: 40,
     flameResistance: 100,
-    lightningResistance: 100,
+    lightningResistance: 80,
     coldResistance: 40,
+  },
+  kobold: {
+    magicResistance: 40,
+    flameResistance: 60,
+    lightningResistance: 80,
+    coldResistance: 20,
   },
   skeletonberserker: {
     magicResistance: 40,

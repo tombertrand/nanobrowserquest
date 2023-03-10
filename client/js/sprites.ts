@@ -32,6 +32,7 @@ import butcher from "../sprites/butcher.json";
 import mageSpell from "../sprites/mage-spell.json";
 import arrow from "../sprites/arrow.json";
 import oculothorax from "../sprites/oculothorax.json";
+import kobold from "../sprites/kobold.json";
 import skeletonberserker from "../sprites/skeletonberserker.json";
 import skeletonarcher from "../sprites/skeletonarcher.json";
 import statue from "../sprites/statue.json";
@@ -255,6 +256,7 @@ const sprites = {
   spiderqueen,
   butcher,
   oculothorax,
+  kobold,
   skeletonberserker,
   skeletonarcher,
   statue,

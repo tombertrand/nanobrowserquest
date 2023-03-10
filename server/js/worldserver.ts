@@ -125,7 +125,8 @@ class World {
   mageTotal: number;
   mageEntityIds: string[];
   magePossibleCoords: { x: number; y: number }[];
-  gateNpcId: number;
+  gateTempleNpcId: number;
+  gateSubTempleNpcId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -244,7 +245,8 @@ class World {
     this.mageTotal = 0;
     this.mageEntityIds = [];
     this.magePossibleCoords = [];
-    this.gateNpcId = null;
+    this.gateTempleNpcId = null;
+    this.gateSubTempleNpcId = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -783,7 +785,11 @@ class World {
           this.leverRightCryptNpcId = npc.id;
         }
       } else if (kind === Types.Entities.GATE) {
-        this.gateNpcId = npc.id;
+        if (npc.x === 43 && npc.y === 579) {
+          this.gateTempleNpcId = npc.id;
+        } else if (npc.x === 71 && npc.y === 548) {
+          this.gateSubTempleNpcId = npc.id;
+        }
         npc.activate();
       }
 
@@ -1005,8 +1011,10 @@ class World {
 
       this.mageTotal += mageCount;
 
+      const mobType = _.shuffle([Types.Entities.MAGE, Types.Entities.GHOST])[0];
+
       for (let i = 0; i < mageCount; i++) {
-        const kind = isShaman ? Types.Entities.SHAMAN : Types.Entities.MAGE;
+        const kind = isShaman ? Types.Entities.SHAMAN : mobType;
 
         const id = `7${kind}${count++}`;
         const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
@@ -1014,7 +1022,7 @@ class World {
         mob.onDestroy(() => {
           this.mageTotal--;
           if (this.mageTotal === 0) {
-            // @TODO ~~~~ spawn a portal to the temple!
+            // @TODO ~~~~ spawn a portal to the temple?
             console.log("~~~~~ ALL MAGES DEAD!");
           }
         });
@@ -1477,7 +1485,7 @@ class World {
     if (lever.id === this.leverChaliceNpcId) {
       // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death
       // @TODO Beta ends here, the gate will not open for now
-      // const gate = this.npcs[this.gateNpcId];
+      // const gate = this.npcs[this.gateTempleNpcId];
       // gate.deactivate();
       // this.despawn(gate);
     } else if (lever.id === this.leverLeftCryptNpcId) {
@@ -1489,7 +1497,6 @@ class World {
     }
 
     this.broadcastRaise(player, lever);
-    // this.pushBroadcast(new Messages.Raise(lever.id));
   }
 
   activateStatues() {

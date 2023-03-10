@@ -418,6 +418,7 @@ class Game {
       "spiderqueen",
       "butcher",
       "oculothorax",
+      "kobold",
       "skeletonberserker",
       "skeletonarcher",
       "statue",
