@@ -3,7 +3,6 @@ import "./store/cron";
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-import { RuneList } from "../../shared/js/types/rune";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
 import { EmojiMap, postMessageToDiscordChatChannel } from "./discord";
@@ -19,14 +18,7 @@ import { Sentry } from "./sentry";
 import Spell from "./spell";
 import { purchase } from "./store/purchase";
 import Trade from "./trade";
-import {
-  generateSoulStoneItem,
-  getRandomJewelLevel,
-  getRandomRuneLevel,
-  random,
-  randomInt,
-  randomRange,
-} from "./utils";
+import { generateSoulStoneItem, getRandomJewelLevel, getRandomRune, random, randomInt, randomRange } from "./utils";
 
 // ======= GAME SERVER ========
 
@@ -2145,8 +2137,25 @@ class World {
     // var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];
     // var randomDrops = ["stonehero", "stonedragon"];
-    // var randomDrops = ["paladinarmor"];
-    var randomDrops = ["bloodarmor", "paladinarmor", "demonarmor"];
+    // var randomDrops = [
+    // "ringnecromancer",
+    // "ringraistone",
+    // "ringfountain",
+    // "ringminotaur",
+    // "ringmystical",
+    // "ringbalrog",
+    // "ringconqueror",
+    // "ringheaven",
+    // "ringwizard",
+    // "amuletcow",
+    // "amuletfrozen",
+    // "amuletdemon",
+    // "amuletmoon",
+    // "amuletstar",
+    // "amuletskull",
+    // "amuletdragon",
+    // ];
+    // var randomDrops = ["bloodarmor", "paladinarmor", "demonarmor"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = [
     // "rune",
@@ -2216,15 +2225,15 @@ class World {
     // "templarsword",
     // "moonsword",
     // ];
-    var randomDrop = random(randomDrops.length);
-    itemName = randomDrops[randomDrop];
+    // var randomDrop = random(randomDrops.length);
+    // itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 
     if (itemName === "jewelskull") {
       itemLevel = getRandomJewelLevel(Types.getMobLevel(mob.kind));
     } else if (itemName === "rune") {
-      itemName = `rune-${RuneList[getRandomRuneLevel(Types.getMobLevel(mob.kind)) - 1]}`;
+      itemName = `rune-${getRandomRune(Types.getMobLevel(mob.kind))}`;
     }
 
     // Potions can be looted by anyone

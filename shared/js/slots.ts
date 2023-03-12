@@ -1,7 +1,7 @@
 export const WAYPOINTS_COUNT = 10;
 export const INVENTORY_SLOT_COUNT = 24;
 export const STASH_SLOT_PER_PAGE = 48;
-export const STASH_SLOT_PAGES = 6;
+export const STASH_SLOT_PAGES = 9;
 export const STASH_SLOT_COUNT = STASH_SLOT_PER_PAGE * STASH_SLOT_PAGES;
 export const UPGRADE_SLOT_COUNT = 11;
 export const UPGRADE_SLOT_RANGE = 200;

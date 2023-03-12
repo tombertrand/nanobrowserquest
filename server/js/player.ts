@@ -1625,7 +1625,7 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(drainLifeBonus)
-          .concat([resistances[4], elementPercentage[4]]);
+          .concat(_.shuffle([resistances[4], elementPercentage[4]]).slice(0, 1));
       } else if (kind === Types.Entities.AMULETCOW) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
@@ -1639,7 +1639,7 @@ class Player extends Character {
           .concat(coldDamageBonus)
           .concat(freezeChanceBonus)
           .concat(reduceFrozenChanceBonus)
-          .concat(resistances[4]);
+          .concat(_.shuffle([resistances[3], elementPercentage[3]]).slice(0, 1));
       } else if (kind === Types.Entities.AMULETDEMON) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
@@ -1673,8 +1673,7 @@ class Player extends Character {
           .slice(0, 2)
           .concat(amuletHighLevelBonus.slice(0, 1))
           .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
-          .concat(_.shuffle(elementPercentage).slice(0, 2))
-          .concat(lowerAllResistance);
+          .concat([elementPercentage[1], lowerResistance[1]]);
       } else if (kind === Types.Entities.RINGRAISTONE) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
@@ -1689,7 +1688,8 @@ class Player extends Character {
       } else if (kind === Types.Entities.RINGMINOTAUR) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
-          .concat([...coldDamageBonus, ...freezeChanceBonus, resistances[3]]);
+          .concat([...coldDamageBonus, ...freezeChanceBonus])
+          .concat(_.shuffle([resistances[3], elementPercentage[3]]).slice(0, 1));
       } else if (kind === Types.Entities.RINGMYSTICAL) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)

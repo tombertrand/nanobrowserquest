@@ -4,7 +4,6 @@ import forEach from "lodash/forEach";
 import sanitizer from "sanitizer";
 
 import { Types } from "../../shared/js/gametypes";
-import { RuneList } from "../../shared/js/types/rune";
 
 export const sanitize = function (string) {
   // Strip unsafe tags, then escape as html entities.
@@ -840,57 +839,136 @@ export const getRandomJewelLevel = (mobLevel: number) => {
   return level;
 };
 
-export const getRandomRuneLevel = (mobLevel: number) => {
-  let maxLevel = Math.floor(mobLevel / 2);
-  let minLevel = 1;
-  if (maxLevel > RuneList.length) {
-    maxLevel = RuneList.length;
+export const getRandomRune = (mobLevel: number, minLevel?: number) => {
+  const runeOdds = {
+    sat: 4,
+    al: 8,
+    bul: 8,
+    nan: 12,
+    mir: 12,
+    gel: 20,
+    do: 30,
+    ban: 30,
+    vie: 30,
+    um: 50,
+    hex: 100,
+    zal: 200,
+    sol: 300,
+    eth: 400,
+    btc: 500,
+    vax: 1000,
+    por: 2_000,
+    las: 3_000,
+    dur: 4_000,
+    fal: 5_000,
+    kul: 6_000,
+    mer: 12_000,
+    qua: 14_000,
+    gul: 16_000,
+    ber: 20_000,
+    cham: 26_000,
+    tor: 32_000,
+    xno: 40_000,
+    jah: 48_000,
+    shi: 60_000,
+    vod: 80_000,
+  };
+  const runeList = Object.keys(runeOdds);
+
+  if (mobLevel % 2) {
+    mobLevel += 1;
   }
-  if (mobLevel < 20) {
-    maxLevel += 5;
+  if (mobLevel > runeList.length * 2) {
+    mobLevel = runeList.length * 2;
   }
 
-  minLevel = maxLevel - 15;
-  if (minLevel < 1) {
-    minLevel = 1;
+  const maxRuneIndex = mobLevel / 2 - 1;
+  let minRuneIndex = minLevel || Math.floor(maxRuneIndex / 2) - 6;
+  if (minRuneIndex < 0) {
+    minRuneIndex = 0;
   }
 
-  const level = Math.floor(randn_bm(minLevel, maxLevel, 2));
+  let rune = "";
+  let runeIndex = maxRuneIndex;
 
-  return level;
+  while (!rune) {
+    const possibleRune = runeList[runeIndex];
+    const odds = runeOdds[possibleRune];
+
+    let needsToHit = 1;
+    if (odds > 133) {
+      needsToHit = 133;
+    }
+
+    const randomRoll = random(odds);
+
+    if (randomRoll === needsToHit) {
+      console.log("~~~~thats a hit!", randomRoll, needsToHit);
+      console.log("~~~~minRuneIndex", minRuneIndex);
+      console.log("~~~~maxRuneIndex", maxRuneIndex);
+      console.log("~~~~odds", odds);
+
+      rune = possibleRune;
+    } else {
+      runeIndex -= 1;
+      // Rolled through possibilities and didn't hit? restart for more fun!
+      if (runeIndex < minRuneIndex) {
+        runeIndex = maxRuneIndex;
+      }
+    }
+  }
+
+  return rune;
 };
 
-function randn_bm(min, max, skew) {
-  let u = 0,
-    v = 0;
-  while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
-  while (v === 0) v = Math.random();
-  let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-
-  num = num / 10.0 + 0.5; // Translate to 0 -> 1
-  if (num > 1 || num < 0) num = randn_bm(min, max, skew); // resample between 0 and 1 if out of range
-  else {
-    num = Math.pow(num, skew); // Skew
-    num *= max - min; // Stretch to fill range
-    num += min; // offset to min
-  }
-  return num;
-}
-
 export const generateSoulStoneItem = () => {
+  // 65%
   const items = [
+    { item: "moonsword", uniqueChances: 10 },
+    { item: "moonarmor", uniqueChances: 10 },
+    { item: "beltmoon", uniqueChances: 10 },
+    { item: "shieldmoon", uniqueChances: 10 },
+    { item: "amuletmoon" },
+    { item: "shieldmoon", uniqueChances: 10 },
+    // { item: "demonaxe", uniqueChances: 10 },
+    { item: "demonarmor", uniqueChances: 10 },
+    { item: "beltdemon", uniqueChances: 10 },
+    { item: "shielddemon", uniqueChances: 10 },
+    { item: "amuletdemon" },
     { item: "paladinarmor", uniqueChances: 10 },
     { item: "eclypsedagger", uniqueChances: 10 },
     { item: "spikeglaive", uniqueChances: 10 },
   ];
 
+  // 15%
+  const scrolls = [{ item: "scrollupgradelegendary" }, { item: "scrollupgradesacred" }, { item: "stonedragon" }];
+
+  // 10%
+  const ringOrAmulets = [
+    { item: "amuletmoon" },
+    { item: "amuletdemon" },
+    { item: "ringbalrog" },
+    { item: "ringconqueror" },
+    { item: "ringheaven" },
+    { item: "ringwizard" },
+    { item: "amuletstar" },
+    { item: "amuletskull" },
+    { item: "amuletdragon" },
+  ];
+
+  // Rune 10%
+
   const randomCategory = random(100);
 
   if (randomCategory < 10) {
-    return _.shuffle(items)[0];
-  } else {
-    const runeLevel = getRandomRuneLevel(70);
+    const rune = getRandomRune(70, 13);
 
-    return { item: `rune-${RuneList[runeLevel - 1]}`, quantity: 1 };
+    return { item: `rune-${rune}`, quantity: 1 };
+  } else if (randomCategory < 25) {
+    return _.shuffle(scrolls)[0];
+  } else if (randomCategory < 35) {
+    return _.shuffle(ringOrAmulets)[0];
+  } else {
+    return _.shuffle(items)[0];
   }
 };

@@ -721,34 +721,32 @@ export const kinds = {
   skeleton3: [Types.Entities.SKELETON3, "mob", 120, 34],
   skeletoncommander: [Types.Entities.SKELETONCOMMANDER, "mob", 200, 40],
   snake2: [Types.Entities.SNAKE2, "mob", 120, 38],
-  snake3: [Types.Entities.SNAKE3, "mob", 120, 38],
-  snake4: [Types.Entities.SNAKE4, "mob", 120, 38],
   wraith: [Types.Entities.WRAITH, "mob", 120, 40],
   zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
   necromancer: [Types.Entities.NECROMANCER, "mob", 400, 51],
   cow: [Types.Entities.COW, "mob", 25, 49],
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
   minotaur: [Types.Entities.MINOTAUR, "mob", 500, 58],
-  rat3: [Types.Entities.RAT3, "mob", 100, 52],
-  skeleton4: [Types.Entities.SKELETON4, "mob", 100, 52],
+  rat3: [Types.Entities.RAT3, "mob", 100, 50],
   golem: [Types.Entities.GOLEM, "mob", 100, 52],
   worm: [Types.Entities.WORM, "mob", 100, 52],
-  wraith2: [Types.Entities.WRAITH2, "mob", 100, 52],
-  ghost: [Types.Entities.GHOST, "mob", 100, 64],
-  mage: [Types.Entities.MAGE, "mob", 100, 64],
-  shaman: [Types.Entities.SHAMAN, "mob", 100, 64],
+  oculothorax: [Types.Entities.OCULOTHORAX, "mob", 100, 56],
+  kobold: [Types.Entities.KOBOLD, "mob", 100, 56],
+  snake3: [Types.Entities.SNAKE3, "mob", 120, 58],
+  snake4: [Types.Entities.SNAKE4, "mob", 120, 58],
+  skeleton4: [Types.Entities.SKELETON4, "mob", 100, 58],
+  ghost: [Types.Entities.GHOST, "mob", 100, 58],
   skeletontemplar: [Types.Entities.SKELETONTEMPLAR, "mob", 100, 64],
   skeletontemplar2: [Types.Entities.SKELETONTEMPLAR2, "mob", 100, 64],
-  spider: [Types.Entities.SPIDER, "mob", 100, 64],
-  spider2: [Types.Entities.SPIDER2, "mob", 100, 64],
-  spiderqueen: [Types.Entities.SPIDERQUEEN, "mob", 100, 64],
-  butcher: [Types.Entities.BUTCHER, "mob", 100, 64],
-  oculothorax: [Types.Entities.OCULOTHORAX, "mob", 100, 64],
-  kobold: [Types.Entities.KOBOLD, "mob", 100, 64],
-  skeletonberserker: [Types.Entities.SKELETONBERSERKER, "mob", 100, 64],
+  spider: [Types.Entities.SPIDER, "mob", 100, 60],
+  spider2: [Types.Entities.SPIDER2, "mob", 100, 60],
+  spiderqueen: [Types.Entities.SPIDERQUEEN, "mob", 100, 66],
+  butcher: [Types.Entities.BUTCHER, "mob", 100, 66],
+  skeletonberserker: [Types.Entities.SKELETONBERSERKER, "mob", 100, 62],
   skeletonarcher: [Types.Entities.SKELETONARCHER, "mob", 100, 64],
-  statue: [Types.Entities.STATUE, "npc", 100, 64],
-  statue2: [Types.Entities.STATUE2, "npc", 100, 64],
+  shaman: [Types.Entities.SHAMAN, "mob", 100, 68],
+  wraith2: [Types.Entities.WRAITH2, "mob", 100, 62],
+  mage: [Types.Entities.MAGE, "mob", 100, 64],
   deathangel: [Types.Entities.DEATHANGEL, "mob", 500, 70],
 
   // kind, type, level, damage
@@ -998,6 +996,8 @@ export const kinds = {
   trap: [Types.Entities.TRAP, "npc"],
   trap2: [Types.Entities.TRAP2, "npc"],
   trap3: [Types.Entities.TRAP3, "npc"],
+  statue: [Types.Entities.STATUE, "npc"],
+  statue2: [Types.Entities.STATUE2, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -1083,7 +1083,7 @@ Types.itemUniqueMap = {
   dragonsword: ["Balerion the Black Dread", 56, 62],
   mysticalsword: ["The Maximalist", 58, 66],
   moonsword: ["Moon Boy", 61, 68],
-  spikeglaive: ["TBD", 62, 68],
+  spikeglaive: ["WAGMI", 62, 68],
   eclypsedagger: ["Ethereum Killer", 62, 68],
   hellhammer: ["Hephasto", 38, 38],
 
@@ -1865,47 +1865,48 @@ Types.getPartyBonusDescriptionMap = [
 Types.partyBonusType = ["attackDamage", "defense", "exp", "minDamage", "maxDamage", "health", "magicDamage"];
 
 Types.getBonusDescriptionMap = [
-  "+# Minimum damage",
-  "+# Maximum damage",
-  "+# Attack",
-  "+# Health",
-  "+# Magic damage",
-  "+# Defense",
-  "+# Absorbed damage",
-  "+#% Experience",
-  "+# health regeneration per second",
-  "+#% Critical hit",
-  "+#% Block enemy attack",
-  "+#% Magic find",
-  "+#% Attack speed",
-  "+# Drain life",
-  "+# Flame damage",
-  "+# Lightning damage",
-  "+# Pierce armor attack",
-  "+# Health",
-  "+# Cold damage",
-  "+#% Freeze the enemy for # seconds",
-  "-#% Chance of being frozen",
-  "+#% Magic resistance",
-  "+#% Flame resistance",
-  "+#% Lightning resistance",
-  "+#% Cold resistance",
-  "+#% Poison resistance",
-  "+#% Magic damage",
-  "+#% Flame damage",
-  "+#% Lightning damage",
-  "+#% Cold damage",
-  "+#% Poison damage",
-  "+#% All resistances",
-  "+#% Prevent enemy health regeneration",
-  "+# Poison damage",
-  "#% Faster cast rate",
-  "-#% Enemy lower Magic resistance",
-  "-#% Enemy lower Flame resistance",
-  "-#% Enemy lower Lightning resistance",
-  "-#% Enemy lower Cold resistance",
-  "-#% Enemy lower Poison resistance",
-  "-#% Enemy lower All resistances",
+  "+# Minimum damage", // 0
+  "+# Maximum damage", // 1
+  "+# Attack", // 2
+  "+# Health", // 3
+  "+# Magic damage", // 4
+  "+# Defense", // 5
+  "+# Absorbed damage", // 6
+  "+#% Experience", // 7
+  "+# health regeneration per second", // 8
+  "+#% Critical hit", // 9
+  "+#% Block enemy attack", // 10
+  "+#% Magic find", // 11
+  "+#% Attack speed", // 12
+  "+# Drain life", // 13
+  "+# Flame damage", //14
+  "+# Lightning damage", // 15
+  "+# Pierce armor attack", // 16
+  "+# Health", // 17
+  "+# Cold damage", // 18
+  "+#% Freeze the enemy for # seconds", // 19
+  "-#% Chance of being frozen", // 20
+  "+#% Magic resistance", // 21
+  "+#% Flame resistance", // 22
+  "+#% Lightning resistance", // 23
+  "+#% Cold resistance", // 24
+  "+#% Poison resistance", // 25
+  "+#% Spectral resistance", // 26
+  "+#% Magic damage", // 27
+  "+#% Flame damage", // 28
+  "+#% Lightning damage", // 29
+  "+#% Cold damage", // 30
+  "+#% Poison damage", // 31
+  "+#% All resistances", // 32
+  "+#% Prevent enemy health regeneration", // 33
+  "+# Poison damage", // 34
+  "#% Faster cast rate", // 35
+  "-#% Enemy lower Magic resistance", // 36
+  "-#% Enemy lower Flame resistance", // 37
+  "-#% Enemy lower Lightning resistance", // 38
+  "-#% Enemy lower Cold resistance", // 39
+  "-#% Enemy lower Poison resistance", // 40
+  "-#% Enemy lower All resistances", // 41
 ];
 
 Types.bonusType = [
@@ -1980,6 +1981,7 @@ Types.getBonus = function (rawBonus, level) {
   const lightningResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const coldResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
+  const spectralResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const magicDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
   const flameDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
   const lightningDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
@@ -2023,6 +2025,7 @@ Types.getBonus = function (rawBonus, level) {
     lightningResistancePerLevel,
     coldResistancePerLevel,
     poisonResistancePerLevel,
+    spectralResistancePerLevel,
     magicDamagePercentPerLevel,
     flameDamagePercentPerLevel,
     lightningDamagePercentPerLevel,
