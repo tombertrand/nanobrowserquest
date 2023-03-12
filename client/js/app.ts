@@ -1262,6 +1262,13 @@ class App {
     this.game.setShowAnvilOdds(isChecked);
   }
 
+  toggleHealthAboveBars() {
+    const isChecked = $("#health-above-bars-checkbox").is(":checked");
+
+    this.storage.setShowHealthAboveBarsEnabled(isChecked);
+    this.game.setShowHealthAboveBars(isChecked);
+  }
+
   toggleInventory() {
     if ($("#upgrade").hasClass("visible")) {
       $("#upgrade").removeClass("visible");

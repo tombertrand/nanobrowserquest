@@ -17,7 +17,6 @@ import {
 import {
   ACHIEVEMENT_ANTIDOTE_INDEX,
   ACHIEVEMENT_ARCHMAGE_INDEX,
-  ACHIEVEMENT_BERSERKER_INDEX,
   ACHIEVEMENT_BOO_INDEX,
   ACHIEVEMENT_BULLSEYE_INDEX,
   ACHIEVEMENT_COUNT,
@@ -30,6 +29,7 @@ import {
   ACHIEVEMENT_SPECTRAL_INDEX,
   ACHIEVEMENT_TEMPLAR_INDEX,
   ACHIEVEMENT_UNBREAKABLE_INDEX,
+  ACHIEVEMENT_VIKING_INDEX,
   ACHIEVEMENT_WING_INDEX,
 } from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
@@ -1264,20 +1264,21 @@ class DatabaseHandler {
           const isGuaranteedSuccess =
             Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone);
 
-          ({ isSuccess, random, successRate } = isUpgradeSuccess({
+          ({ isSuccess, random /*, successRate*/ } = isUpgradeSuccess({
             level,
             isLuckySlot,
             isBlessed,
             isGuaranteedSuccess,
           }));
 
-          player.send(
-            new Messages.AnvilOdds(
-              `You rolled ${random}, the success rate is ${successRate}%. ${
-                random <= successRate ? "Success" : "Failure"
-              }`,
-            ).serialize(),
-          );
+          // Disable for now as it is exploitable
+          // player.send(
+          //   new Messages.AnvilOdds(
+          //     `You rolled ${random}, the success rate is ${successRate}%. ${
+          //       random <= successRate ? "Success" : "Failure"
+          //     }`,
+          //   ).serialize(),
+          // );
 
           if (isSuccess) {
             let upgradedLevel = parseInt(level) + 1;
@@ -1515,7 +1516,7 @@ class DatabaseHandler {
               ACHIEVEMENT_BOO_INDEX,
               ACHIEVEMENT_ARCHMAGE_INDEX,
               ACHIEVEMENT_SPECTRAL_INDEX,
-              ACHIEVEMENT_BERSERKER_INDEX,
+              ACHIEVEMENT_VIKING_INDEX,
               ACHIEVEMENT_BULLSEYE_INDEX,
             ].includes(index)
           ) {

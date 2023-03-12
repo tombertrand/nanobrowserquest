@@ -40,6 +40,7 @@ const defaultData = {
     showEntityName: true,
     showDamageInfo: true,
     showAnvilOdds: false,
+    showHealthAboveBars: false,
     capeHue: 0,
     capeSaturate: 0,
     capeContrast: 0,
@@ -179,6 +180,11 @@ class Storage {
     this.save();
   }
 
+  setShowHealthAboveBarsEnabled(enabled) {
+    this.data.settings.showHealthAboveBars = enabled;
+    this.save();
+  }
+
   // isAudioEnabled() {
   //   if (typeof this.data.settings.audio !== "boolean" || this.data.settings.audio) {
   //     return true;
@@ -218,6 +224,12 @@ class Storage {
     if (typeof this.data.settings.showAnvilOdds !== "boolean") return false;
 
     return this.data.settings.showAnvilOdds;
+  }
+
+  showHealthAboveBarsEnabled() {
+    if (typeof this.data.settings.showHealthAboveBars !== "boolean") return false;
+
+    return this.data.settings.showHealthAboveBars;
   }
 
   savePlayer(img, armor, weapon) {
@@ -429,7 +441,7 @@ class Storage {
     }
   }
 
-  // BERSERKER
+  // VIKING
   getSkeletonBerserkerCount() {
     return this.data.achievements.skeletonBerserkerCount;
   }
@@ -445,7 +457,7 @@ class Storage {
     }
   }
 
-  // BERSERKER
+  // BULLSEYE
   getSkeletonArcherCount() {
     return this.data.achievements.skeletonArcherCount;
   }

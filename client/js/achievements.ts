@@ -481,11 +481,11 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
       return storage.getGhostCount() >= GHOST_COUNT;
     },
   },
-  BERSERKER: {
+  VIKING: {
     id: 62,
-    name: "Berserker",
+    name: "Viking",
     desc: `Kill <small>${
-      storage.data.achievement[9] ? SKELETON_COUNT : storage.getSkeletonBerserkerCount()
+      storage.data.achievement[9] ? SKELETONBERSERKER_COUNT : storage.getSkeletonBerserkerCount()
     }/</small>${SKELETONBERSERKER_COUNT} Skeleton Berserkers<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getSkeletonBerserkerCount() >= SKELETONBERSERKER_COUNT;

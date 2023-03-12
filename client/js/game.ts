@@ -193,6 +193,7 @@ class Game {
   partyInvites: Partial<WorldPlayer>[];
   partyInvitees: string[];
   showAnvilOdds: boolean;
+  showHealthAboveBars: boolean;
   currentStashPage: number;
   activatedMagicStones: number[];
   activatedBlueFlames: number[];
@@ -234,6 +235,7 @@ class Game {
     this.hoverSlotToDelete = null;
     this.isTeleporting = false;
     this.showAnvilOdds = false;
+    this.showHealthAboveBars = false;
 
     this.renderer = null;
     this.updater = null;
@@ -762,6 +764,10 @@ class Game {
     this.showAnvilOdds = enabled;
   }
 
+  setShowHealthAboveBars(enabled) {
+    this.showHealthAboveBars = enabled;
+  }
+
   loadMap() {
     this.map = new Map(!this.renderer.upscaledRendering, this);
   }
@@ -954,6 +960,13 @@ class Game {
     if (this.storage.showAnvilOddsEnabled()) {
       this.setShowAnvilOdds(true);
       $("#anvil-odds-checkbox").prop("checked", true);
+    } else {
+      this.setShowAnvilOdds(false);
+    }
+
+    if (this.storage.showHealthAboveBarsEnabled()) {
+      this.setShowAnvilOdds(true);
+      $("#health-above-bars-checkbox").prop("checked", true);
     } else {
       this.setShowAnvilOdds(false);
     }
@@ -4209,7 +4222,7 @@ class Game {
           self.tryUnlockingAchievement("BOO");
         } else if (kind === Types.Entities.SKELETONBERSERKER) {
           self.storage.incrementSkeletonBerserkerCount();
-          self.tryUnlockingAchievement("BERSERKER");
+          self.tryUnlockingAchievement("VIKING");
         } else if (kind === Types.Entities.SKELETONARCHER) {
           self.storage.incrementSkeletonArcherCount();
           self.tryUnlockingAchievement("BULLSEYE");

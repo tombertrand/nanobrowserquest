@@ -60,7 +60,7 @@ export const ACHIEVEMENT_NAMES = [
   "SOULSTONE",
   "BUTCHER",
   "BOO",
-  "BERSERKER",
+  "VIKING",
   "BULLSEYE",
   "SPECTRAL",
   "ARCHMAGE",
@@ -94,7 +94,7 @@ export const ACHIEVEMENT_TEMPLAR_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === 
 export const ACHIEVEMENT_BOO_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BOO");
 export const ACHIEVEMENT_ARCHMAGE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "ARCHMAGE");
 export const ACHIEVEMENT_SPECTRAL_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "SPECTRAL");
-export const ACHIEVEMENT_BERSERKER_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BERSERKER");
+export const ACHIEVEMENT_VIKING_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "VIKING");
 export const ACHIEVEMENT_BULLSEYE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BULLSEYE");
 export const ACHIEVEMENT_SACRED_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "SACRED");
 export const ACHIEVEMENT_MINI_BOSS_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "MINI_BOSS");
