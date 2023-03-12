@@ -373,6 +373,14 @@ EntityFactory.builders[Types.Entities.EMERALDARMOR] = function (id) {
   return new Items.EmeraldArmor(id);
 };
 
+EntityFactory.builders[Types.Entities.TEMPLARARMOR] = function (id) {
+  return new Items.TemplarArmor(id);
+};
+
+EntityFactory.builders[Types.Entities.DRAGONARMOR] = function (id) {
+  return new Items.DragonArmor(id);
+};
+
 EntityFactory.builders[Types.Entities.DEMONARMOR] = function (id) {
   return new Items.DemonArmor(id);
 };
@@ -383,10 +391,6 @@ EntityFactory.builders[Types.Entities.MYSTICALARMOR] = function (id) {
 
 EntityFactory.builders[Types.Entities.BLOODARMOR] = function (id) {
   return new Items.BloodArmor(id);
-};
-
-EntityFactory.builders[Types.Entities.TEMPLARARMOR] = function (id) {
-  return new Items.TemplarArmor(id);
 };
 
 EntityFactory.builders[Types.Entities.PALADINARMOR] = function (id) {

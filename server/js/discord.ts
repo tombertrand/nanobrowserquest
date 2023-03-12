@@ -27,7 +27,6 @@ export const discordClient = new Client({
 discordClient.login(BOT_TOKEN);
 
 const postMessageToDiscordChatChannel = (content: string) => {
-  // return;
   try {
     const body = JSON.stringify({
       content,

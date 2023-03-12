@@ -677,10 +677,11 @@ class Renderer {
               "frozenarmor",
               "diamondarmor",
               "emeraldarmor",
+              "templararmor",
+              "dragonarmor",
               "demonarmor",
               "mysticalarmor",
               "bloodarmor",
-              "templararmor",
               "paladinarmor",
             ].includes(sprite.name) &&
             entity.armorBonus?.length
@@ -848,7 +849,7 @@ class Renderer {
           spriteName = "anvil-fail";
         } else if (this.game.isAnvilTransmute || this.game.isAnvilChestgreen) {
           spriteName = "anvil-transmute";
-        } else if (this.game.isAnvilChestblue) {
+        } else if (this.game.isAnvilChestblue || this.game.isAnvilRuneword) {
           spriteName = "anvil-chestblue";
         }
 
@@ -1357,10 +1358,11 @@ class Renderer {
         "frozenarmor",
         "diamondarmor",
         "emeraldarmor",
+        "templararmor",
+        "dragonarmor",
         "demonarmor",
         "mysticalarmor",
         "bloodarmor",
-        "templararmor",
         "paladinarmor",
       ].includes(this.game.player.armorName) &&
       this.game.player.armorBonus?.length

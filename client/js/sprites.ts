@@ -74,10 +74,11 @@ import hornedarmor from "../sprites/armor.json";
 import frozenarmor from "../sprites/armor.json";
 import diamondarmor from "../sprites/armor.json";
 import emeraldarmor from "../sprites/armor.json";
+import templararmor from "../sprites/armor.json";
+import dragonarmor from "../sprites/armor.json";
 import demonarmor from "../sprites/armor.json";
 import mysticalarmor from "../sprites/armor.json";
 import bloodarmor from "../sprites/armor.json";
-import templararmor from "../sprites/armor.json";
 import paladinarmor from "../sprites/armor.json";
 import guard from "../sprites/npc.json";
 import hand from "../sprites/hand.json";
@@ -276,10 +277,11 @@ const sprites = {
   frozenarmor,
   diamondarmor,
   emeraldarmor,
+  templararmor,
+  dragonarmor,
   demonarmor,
   mysticalarmor,
   bloodarmor,
-  templararmor,
   paladinarmor,
   goldensword,
   frozensword,
@@ -427,10 +429,11 @@ const sprites = {
   "item-frozenarmor": item,
   "item-diamondarmor": item,
   "item-emeraldarmor": item,
+  "item-templararmor": item,
+  "item-dragonarmor": item,
   "item-demonarmor": item,
   "item-mysticalarmor": item,
   "item-bloodarmor": item,
-  "item-templararmor": item,
   "item-paladinarmor": item,
   "item-beltleather": item,
   "item-beltplated": item,

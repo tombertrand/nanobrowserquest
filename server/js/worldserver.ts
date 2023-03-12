@@ -1941,6 +1941,8 @@ class World {
       // Safety check?
       members = _.uniq(members);
 
+      const playersToReceiveChests: { [key: string]: string[] } = {};
+
       members.forEach(id => {
         const player = this.getEntityById(id);
 
@@ -1980,9 +1982,11 @@ class World {
             items: [{ item: chestType, quantity: 1 }],
           });
 
-          postMessageToDiscordChatChannel(
-            `${player.name} received a ${_.capitalize(chestType.replace("chest", ""))} Chest ${EmojiMap[chestType]}`,
-          );
+          if (!playersToReceiveChests[chestType]) {
+            playersToReceiveChests[chestType] = [];
+          }
+
+          playersToReceiveChests[chestType].push(player.name);
 
           if (party) {
             this.pushToParty(
@@ -1994,6 +1998,16 @@ class World {
           }
         }
       });
+
+      if (Object.keys(playersToReceiveChests).length) {
+        Object.entries(playersToReceiveChests).map(([chestType, players]) => {
+          postMessageToDiscordChatChannel(
+            `${players.join(", ")} received a ${_.capitalize(chestType.replace("chest", ""))} Chest ${
+              EmojiMap[chestType]
+            }`,
+          );
+        });
+      }
     } else if (mob.kind === Types.Entities.COW) {
       const diamondRandom = random(800);
       if (diamondRandom === 69) {
@@ -2123,7 +2137,7 @@ class World {
     //   "amuletdemon",
     //   "amuletmoon",
     // ];
-    // var randomDrops = ["ringplatinum", "amuletplatinum"];
+    // var randomDrops = ["dragonsword", "dragonarmor", "shielddragon"];
     // var randomDrops = ["soulstone"];
     // var randomDrops = ["nft"];
     // var randomDrops = ["nft", "wing", "crystal"];
@@ -2132,7 +2146,7 @@ class World {
     // var randomDrops = ["chalice"];
     // var randomDrops = ["stonehero", "stonedragon"];
     // var randomDrops = ["paladinarmor"];
-    // var randomDrops = ["mysticalarmor", "bloodarmor", "ringbalrog"];
+    var randomDrops = ["bloodarmor", "paladinarmor", "demonarmor"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = [
     // "rune",
@@ -2169,26 +2183,26 @@ class World {
     // "rune-gel",
     // "rune-do",
     // "rune-ban",
-    // "rune-sol",
+    // "rune-vie",
     // "rune-um",
     // "rune-hex",
     // "rune-zal",
-    // "rune-vie",
+    // "rune-sol",
     // "rune-eth",
     // "rune-btc",
     // "rune-vax",
     // "rune-por",
     // "rune-las",
-    // "rune-cham",
     // "rune-dur",
-    // "rune-xno",
     // "rune-fal",
     // "rune-kul",
     // "rune-mer",
     // "rune-qua",
     // "rune-gul",
     // "rune-ber",
+    // "rune-cham",
     // "rune-tor",
+    // "rune-xno",
     // "rune-jah",
     // "rune-shi",
     // "rune-vod",
@@ -2202,10 +2216,8 @@ class World {
     // "templarsword",
     // "moonsword",
     // ];
-    // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
-    // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
-    // var randomDrop = random(randomDrops.length);
-    // itemName = randomDrops[randomDrop];
+    var randomDrop = random(randomDrops.length);
+    itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

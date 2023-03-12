@@ -100,10 +100,11 @@ class Sprite {
         "frozenarmor",
         "diamondarmor",
         "emeraldarmor",
+        "templararmor",
+        "dragonarmor",
         "demonarmor",
         "mysticalarmor",
         "bloodarmor",
-        "templararmor",
         "paladinarmor",
       ].includes(this.name)
     ) {

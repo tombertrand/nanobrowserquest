@@ -24,7 +24,7 @@ export const setBonus = {
     minDamage: 15,
     attackDamage: 15,
     defense: 30,
-    fireResistance: 50,
+    flameResistance: 50,
   },
   executioner: {
     attackDamage: 20,
@@ -137,7 +137,7 @@ export const kindAsStringToSet = {
   shieldexecutioner: "executioner",
   dragonsword: "dragon",
   dragonarmor: "dragon",
-  dragonshield: "dragon",
+  shielddragon: "dragon",
   mysticalsword: "mystical",
   mysticalarmor: "mystical",
   beltmystical: "mystical",

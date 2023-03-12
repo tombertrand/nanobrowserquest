@@ -29,14 +29,14 @@ export const RUNE = {
   VAX: 176,
   POR: 177,
   LAS: 178,
-  CHAM: 179,
-  DUR: 180,
-  FAL: 181,
-  KUL: 182,
-  MER: 183,
-  QUA: 184,
-  GUL: 185,
-  BER: 186,
+  DUR: 179,
+  FAL: 180,
+  KUL: 181,
+  MER: 182,
+  QUA: 183,
+  GUL: 184,
+  BER: 185,
+  CHAM: 186,
   TOR: 187,
   XNO: 188,
   JAH: 189,
@@ -171,60 +171,60 @@ export const runeKind = {
       coldResistance: 10,
     },
   },
-  cham: {
-    rank: 19,
-    requirement: 34,
-    attribute: {
-      poisonResistance: 10,
-    },
-  },
   dur: {
-    rank: 20,
+    rank: 19,
     requirement: 36,
     attribute: {
       allResistance: 4,
     },
   },
   fal: {
-    rank: 21,
+    rank: 20,
     requirement: 41,
     attribute: {
       magicDamagePercent: 8,
     },
   },
   kul: {
-    rank: 22,
+    rank: 21,
     requirement: 44,
     attribute: {
       lightningDamagePercent: 8,
     },
   },
   mer: {
-    rank: 23,
+    rank: 22,
     requirement: 47,
     attribute: {
       flameDamagePercent: 8,
     },
   },
   qua: {
-    rank: 24,
+    rank: 23,
     requirement: 50,
     attribute: {
       coldDamagePercent: 8,
     },
   },
   gul: {
-    rank: 25,
+    rank: 24,
     requirement: 53,
     attribute: {
       poisonDamagePercent: 8,
     },
   },
   ber: {
-    rank: 26,
+    rank: 25,
     requirement: 56,
     attribute: {
       skillTimeout: 6,
+    },
+  },
+  cham: {
+    rank: 26,
+    requirement: 34,
+    attribute: {
+      poisonResistance: 10,
     },
   },
   tor: {
@@ -409,6 +409,14 @@ export const Runewords = {
         attackDamage: 6,
       },
     },
+    "mir-do-bul": {
+      name: "Decentralizer",
+      bonus: {
+        maxDamage: 12,
+        magicDamage: 10,
+        attackDamage: 4,
+      },
+    },
     "mir-bul-al-bul-mir": {
       name: "Smart contract",
       bonus: {
@@ -435,6 +443,17 @@ export const Runewords = {
         magicDamage: 10,
         magicResistance: 15,
         exp: 10,
+      },
+    },
+    "do-um-hex-do-zal-mer": {
+      name: "Block blade",
+      bonus: {
+        defense: 18,
+        attackDamage: 13,
+        flameDamage: 20,
+        flameDamagePercent: 15,
+        flameResistance: 35,
+        regenerateHealth: 25,
       },
     },
     "las-tor-mir-tor-al-vie": {
@@ -532,14 +551,33 @@ export const Runewords = {
         reduceFrozenChance: 20,
       },
     },
-    "nan-btc-fal-ban": {
-      name: "Know Your Customer",
+    "eth-sol-zal-hex": {
+      name: "Web3",
       bonus: {
         exp: 10,
         defense: 20,
         magicDamage: 20,
         magicResistance: 30,
         magicDamagePercent: 20,
+      },
+    },
+    "nan-btc-fal-ban": {
+      name: "Know Your Customer",
+      bonus: {
+        exp: 15,
+        defense: 20,
+        magicDamage: 20,
+        magicResistance: 30,
+        magicDamagePercent: 20,
+      },
+    },
+    "btc-btc-btc-btc-btc-btc": {
+      name: "The Maxi",
+      bonus: {
+        maxDamage: 15,
+        health: 100,
+        defense: 30,
+        allResistance: 20,
       },
     },
     "um-mer-por-um-jah-mer": {
@@ -637,6 +675,16 @@ export const Runewords = {
         magicDamagePercent: 20,
       },
     },
+    "sol-btc-um-las-sat": {
+      name: "Ordinals",
+      bonus: {
+        defense: 30,
+        lightningResistance: 25,
+        coldResistance: 25,
+        regenerateHealth: 25,
+        flameDamagePercent: 18,
+      },
+    },
     "mer-qua-gul-ber-kul-fal": {
       name: "Ascending Bootstrapping",
       bonus: {
@@ -663,7 +711,8 @@ export const Runewords = {
     "jah-shi-jah-ber-eth-gul": {
       name: "Echo Chamber",
       bonus: {
-        poisonDamage: 30,
+        poisonDamage: 40,
+        coldDamage: 25,
         magicFind: 40,
         skillTimeout: 20,
         allResistance: 16,

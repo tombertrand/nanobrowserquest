@@ -867,7 +867,7 @@ class Player extends Character {
                         EmojiMap[generatedItem.item] || "💍"
                       } `,
                     );
-                  } else if (Types.isRune(kind) && Types.RuneList.indexOf(runeName) + 1 >= Types.runeKind.xno.rank) {
+                  } else if (Types.isRune(kind) && Types.RuneList.indexOf(runeName) + 1 >= Types.runeKind.mer.rank) {
                     postMessageToDiscordChatChannel(
                       `${player.name} picked up ${runeName.toUpperCase()} rune ${EmojiMap[`rune-${runeName}`]}`,
                     );
@@ -889,6 +889,15 @@ class Player extends Character {
 
         var x = message[1];
         var y = message[2];
+
+        // @NOTE Handle the /town command
+        if (x >= 33 && x <= 39 && y >= 208 && y <= 211) {
+          // The message should have been blocked by the FE
+          if (self.hasTarget() || Object.keys(self.attackers).length || (self.y >= 195 && self.y <= 259)) {
+            self.server.disconnectPlayer(self.name);
+            return;
+          }
+        }
 
         if (self.server.isValidPosition(x, y)) {
           self.setPosition(x, y);
@@ -1575,7 +1584,7 @@ class Player extends Character {
       const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
       const amuletHighLevelBonus = [9, 10];
       const drainLifeBonus = [13];
-      const fireDamageBonus = [14];
+      const flameDamageBonus = [14];
       const lightningDamageBonus = [15];
       const pierceDamageBonus = [16];
       const highHealthBonus = [17];
@@ -1621,7 +1630,7 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-          .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceDamageBonus]).slice(0, 1))
+          .concat(_.shuffle([...flameDamageBonus, ...lightningDamageBonus, ...pierceDamageBonus]).slice(0, 1))
           .concat(_.shuffle(elementPercentage).slice(0, 1));
       } else if (kind === Types.Entities.AMULETFROZEN) {
         bonus = _.shuffle(highLevelBonus)
@@ -1635,7 +1644,7 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-          .concat(fireDamageBonus)
+          .concat(flameDamageBonus)
           .concat(allResistance)
           .concat(_.shuffle(elementDamage).slice(0, 2));
       } else if (kind === Types.Entities.AMULETMOON) {
@@ -1690,7 +1699,7 @@ class Player extends Character {
       } else if (kind === Types.Entities.RINGBALROG) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
-          .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus]).slice(0, 1))
+          .concat(_.shuffle([...flameDamageBonus, ...lightningDamageBonus]).slice(0, 1))
           .concat(_.shuffle(resistances).slice(0, 2))
           .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.RINGCONQUEROR) {
@@ -2379,6 +2388,11 @@ class Player extends Character {
 
     if (Object.keys(setItems).length) {
       Object.entries(setItems).forEach(([key, value]) => {
+        // Give all set bonus if all items are equipped
+        if (Types.setItems[key].length === value) {
+          value = Object.keys(Types.setBonus[key]).length;
+        }
+
         Types.getSetBonus(key, value).forEach(({ type, stats }) => {
           if (typeof bonus[type] !== "number") {
             bonus[type] = 0;

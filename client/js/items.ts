@@ -208,7 +208,21 @@ var Items = {
   EmeraldArmor: class EmeraldArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.EMERALDARMOR, "armor");
-      this.lootMessage = "You pick up a spike armor";
+      this.lootMessage = "You pick up an emerald armor";
+    }
+  },
+
+  TemplarArmor: class TemplarArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.TEMPLARARMOR, "armor");
+      this.lootMessage = "You pick up a templar armor";
+    }
+  },
+
+  DragonArmor: class DragonArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.DRAGONARMOR, "armor");
+      this.lootMessage = "You pick up a dragon armor";
     }
   },
 
@@ -230,13 +244,6 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.BLOODARMOR, "armor");
       this.lootMessage = "You pick up a blood armor";
-    }
-  },
-
-  TemplarArmor: class TemplarArmor extends Item {
-    constructor(id) {
-      super(id, Types.Entities.TEMPLARARMOR, "armor");
-      this.lootMessage = "You pick up a templar armor";
     }
   },
 

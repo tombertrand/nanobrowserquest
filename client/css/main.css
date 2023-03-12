@@ -628,6 +628,8 @@ footer, header, hgroup, menu, nav, section {
 
     .ui-tooltip {
         min-width:220px;
+        width: auto !important;
+        max-width: 600px !important;
         text-align: center;
         padding: 10px 10px 15px;
         border: none !important;
@@ -674,6 +676,21 @@ footer, header, hgroup, menu, nav, section {
     #player-poisonDamage, #player-poisonResistance, .resistances .poison { color: #35ee35; }
     #player-spectralDamage, #player-spectralResistance, .resistances .spectral { color: #fff; }
 
+    .item-tooltip-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        max-height: 440px;
+        max-width: 600px !important;
+        align-content: flex-start;
+    }
+    .item-tooltip-wrapper.extended {
+        width: 600px !important;
+    }
+
+    .item-tooltip-wrapper > div {
+        width: 300px;
+    }
     .item-title {
         font-weight: bold;
         color: #d16afa;

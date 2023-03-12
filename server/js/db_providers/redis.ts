@@ -1325,7 +1325,7 @@ class DatabaseHandler {
 
           this.logUpgrade({ player, item: socketItem, isSuccess, isRuneword: true });
 
-          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+          player.broadcast(new Messages.AnvilUpgrade({ isRuneword: isSuccess }), false);
         } else if ((result = isValidStoneSocket(filteredUpgrade, isLuckySlot))) {
           isSuccess = true;
           ({ socketItem, extractedItem, socketCount, isNewSocketItem } = result);

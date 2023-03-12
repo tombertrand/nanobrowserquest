@@ -69,6 +69,7 @@ class Game {
   isAnvilSuccess: boolean;
   isAnvilFail: boolean;
   isAnvilTransmute: boolean;
+  isAnvilRuneword: boolean;
   isAnvilChestblue: boolean;
   isAnvilChestgreen: boolean;
   isAnvilChestpurple: boolean;
@@ -214,6 +215,7 @@ class Game {
     this.isAnvilSuccess = false;
     this.isAnvilFail = false;
     this.isAnvilTransmute = false;
+    this.isAnvilRuneword = false;
     this.isAnvilChestblue = false;
     this.isAnvilChestgreen = false;
     this.isAnvilChestpurple = false;
@@ -503,10 +505,11 @@ class Game {
       "frozenarmor",
       "diamondarmor",
       "emeraldarmor",
-      "demonarmor",
-      "mysticalarmor",
-      "bloodarmor",
       "templararmor",
+      "dragonarmor",
+      "mysticalarmor",
+      "demonarmor",
+      "bloodarmor",
       "paladinarmor",
       "firefox",
       "death",
@@ -578,10 +581,11 @@ class Game {
       "item-frozenarmor",
       "item-diamondarmor",
       "item-emeraldarmor",
-      "item-demonarmor",
-      "item-mysticalarmor",
-      "item-bloodarmor",
       "item-templararmor",
+      "item-dragonarmor",
+      "item-mysticalarmor",
+      "item-demonarmor",
+      "item-bloodarmor",
       "item-paladinarmor",
       "item-beltleather",
       "item-beltplated",
@@ -1094,7 +1098,12 @@ class Game {
             }));
 
             if (self.player.setBonus[currentSet]) {
-              setBonus = Types.getSetBonus(currentSet, self.player.setBonus[currentSet]);
+              let setPartCount = self.player.setBonus[currentSet];
+              if (setPartCount === Types.setItems[currentSet].length) {
+                setPartCount = Object.keys(Types.setBonus[currentSet]).length;
+              }
+
+              setBonus = Types.getSetBonus(currentSet, setPartCount);
             }
           }
         }
@@ -1127,7 +1136,9 @@ class Game {
         const isLevelVisible =
           level && !isRune && !isJewel && !isStone && !Types.isSingle(item) && !Types.isScroll(item);
 
-        return `<div>
+        return `<div class="item-tooltip-wrapper ${
+          bonus.length >= 8 && currentSet && setBonus.length ? "extended" : ""
+        }">
             <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
               ${name}${isLevelVisible ? ` (+${level})` : ""}
               ${runeRank ? ` (#${runeRank})` : ""}
@@ -1173,24 +1184,43 @@ class Game {
             }
             ${description ? `<div class="item-description">${description}</div>` : ""}
             ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
+            ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
             ${
               currentSet && setBonus.length
-                ? `<div class="item-set-description">${_.capitalize(currentSet)} set bonuses</div>`
+                ? `<div>
+                ${
+                  currentSet && setBonus.length
+                    ? `<div class="item-set-description">${_.capitalize(currentSet)} set bonuses</div>`
+                    : ""
+                }
+                ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+                ${setName ? `<div class="item-set-name">${setName}</div>` : ""}
+                ${setParts
+                  ?.map(
+                    ({ description, isActive }) =>
+                      `<div class="item-set-part ${isActive ? "active" : ""}">${description}</div>`,
+                  )
+                  .join("")}
+              </div>`
                 : ""
             }
-            ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-            ${setName ? `<div class="item-set-name">${setName}</div>` : ""}
-            ${setParts
-              ?.map(
-                ({ description, isActive }) =>
-                  `<div class="item-set-part ${isActive ? "active" : ""}">${description}</div>`,
-              )
-              .join("")}
-            ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
-            ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-            ${runeBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-            ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
-          </div>`;
+
+            ${
+              partyBonus.length
+                ? `<div>
+                ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
+                ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+              </div>`
+                : ""
+            }
+            ${
+              runeBonus.length
+                ? `<div>
+                ${runeBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+              </div>`
+                : ""
+            }
+        </div>`;
       },
     });
   }
@@ -2985,10 +3015,13 @@ class Game {
           // if (self.renderer.mobile) {
           //push them off the door spot so they can use the
           //arrow keys and mouse to walk back in or out
-          if (dest.orientation === Types.Orientations.UP) {
-            desty--;
-          } else if (dest.orientation === Types.Orientations.DOWN) {
-            desty++;
+
+          if (!isWaypoint) {
+            if (dest.orientation === Types.Orientations.UP) {
+              desty--;
+            } else if (dest.orientation === Types.Orientations.DOWN) {
+              desty++;
+            }
           }
           // }
 
@@ -3310,8 +3343,6 @@ class Game {
 
               self.addEntity(entity);
 
-              // @TODO ~~~~ is it safe to remove?
-              // if (entity instanceof Character && !(entity instanceof Npc)) {
               if (entity instanceof Character) {
                 if (!(entity instanceof Npc)) {
                   entity.onBeforeStep(function () {
@@ -4504,6 +4535,7 @@ class Game {
       self.client.onReceiveAnvilUpgrade(function ({
         isSuccess,
         isTransmute,
+        isRuneword,
         isChestblue,
         isChestgreen,
         isChestpurple,
@@ -4514,6 +4546,8 @@ class Game {
           self.setAnvilSuccess();
         } else if (isTransmute || isChestgreen) {
           self.setAnvilTransmute();
+        } else if (isRuneword) {
+          self.setAnvilRuneword();
         } else if (isChestblue) {
           self.setAnvilChestblue();
         } else if (isChestpurple) {
@@ -5044,6 +5078,7 @@ class Game {
     this.isAnvilFail = false;
     this.isAnvilSuccess = false;
     this.isAnvilTransmute = false;
+    this.isAnvilRuneword = false;
     this.isAnvilChestblue = false;
     this.isAnvilChestgreen = false;
     this.isAnvilChestpurple = false;
@@ -5080,6 +5115,14 @@ class Game {
     this.isAnvilTransmute = true;
     this.anvilAnimationTimeout = setTimeout(() => {
       this.isAnvilTransmute = false;
+    }, 3000);
+  }
+
+  setAnvilRuneword() {
+    this.resetAnvilAnimation();
+    this.isAnvilRuneword = true;
+    this.anvilAnimationTimeout = setTimeout(() => {
+      this.isAnvilRuneword = false;
     }, 3000);
   }
 
@@ -6257,6 +6300,21 @@ class Game {
         });
       }
 
+      return;
+    } else if (message.startsWith("/town")) {
+      // Prevent sending the message to teleport back to town
+      if (
+        this.player.hasTarget() ||
+        Object.keys(this.player.attackers).length ||
+        (this.player.gridY >= 195 && this.player.gridY <= 259)
+      ) {
+        return;
+      }
+
+      const x = randomInt(33, 39);
+      const y = randomInt(208, 211);
+
+      this.player.stop_pathing_callback({ x, y, isWaypoint: true });
       return;
     }
 
