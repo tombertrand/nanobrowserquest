@@ -866,6 +866,8 @@ class App {
         $achievements.unbind(TRANSITIONEND);
       });
     }
+
+    this.game.initAchievements();
   }
 
   updatePopulationList() {
@@ -1023,7 +1025,6 @@ class App {
     this.displayUnlockedAchievement(id);
 
     var nb = parseInt($("#unlocked-achievements").text());
-    // @ts
     const totalPayout = parseInt(
       `${parseFloat($("#unlocked-payout-achievements").text()) * networkDividerMap[this.game.network]}`,
       10,

@@ -4,15 +4,18 @@ import storage from "./storage";
 const NANO_PAYOUT_MULTIPLIER = 10;
 const BAN_PAYOUT_MULTIPLIER = 10;
 
-export const DMG_TOTAL = 5000;
+export const DMG_TOTAL = 5_000;
 export const KILLS_TOTAL = 50;
-export const RAT_COUNT = 10;
-export const SKELETON_COUNT = 10;
-export const SPECTRE_COUNT = 15;
-export const YETI_COUNT = 25;
-export const WEREWOLF_COUNT = 25;
-export const SKELETON3_COUNT = 50;
-export const WRAITH_COUNT = 50;
+export const RAT_COUNT = 15;
+export const SKELETON_COUNT = 20;
+export const ENEMY_COUNT = 75;
+export const REVIVES_COUNT = 5;
+export const DAMAGE_COUNT = 5_000;
+export const SPECTRE_COUNT = 20;
+export const WEREWOLF_COUNT = 50;
+export const YETI_COUNT = 75;
+export const SKELETON3_COUNT = 100;
+export const WRAITH_COUNT = 100;
 export const COW_COUNT = 500;
 export const RAT3_COUNT = 250;
 export const GOLEM_COUNT = 250;
@@ -20,7 +23,7 @@ export const OCULOTHORAX_COUNT = 250;
 export const SKELETON4_COUNT = 250;
 export const GHOST_COUNT = 250;
 export const SKELETONBERSERKER_COUNT = 250;
-export const SKELETONARCHER_COUNT = 2;
+export const SKELETONARCHER_COUNT = 250;
 export const MAGE_COUNT = 250;
 export const WRAITH2_COUNT = 250;
 export const MINI_BOSS_COUNT = 250;
@@ -43,7 +46,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   ANGRY_RATS: {
     id: 3,
     name: "Angry Rats",
-    desc: `Kill ${RAT_COUNT} rats`,
+    desc: `Kill <small>${storage.data.achievement[2] ? RAT_COUNT : storage.getRatCount()}/</small>${RAT_COUNT} rats`,
     isCompleted() {
       return storage.getRatCount() >= RAT_COUNT;
     },
@@ -95,7 +98,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   SKULL_COLLECTOR: {
     id: 10,
     name: "Skull Collector",
-    desc: `Kill ${SKELETON_COUNT} skeletons`,
+    desc: `Kill <small>${
+      storage.data.achievement[9] ? SKELETON_COUNT : storage.getSkeletonCount()
+    }/</small>${SKELETON_COUNT} skeletons`,
     isCompleted() {
       return storage.getSkeletonCount() >= SKELETON_COUNT;
     },
@@ -119,9 +124,11 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   HUNTER: {
     id: 13,
     name: "Hunter",
-    desc: "Kill 50 enemies",
+    desc: `Kill <small>${
+      storage.data.achievement[12] ? ENEMY_COUNT : storage.getTotalKills()
+    }/</small>${ENEMY_COUNT} enemies`,
     isCompleted() {
-      return storage.getTotalKills() >= 50;
+      return storage.getTotalKills() >= ENEMY_COUNT;
     },
     nano: 4 * NANO_PAYOUT_MULTIPLIER,
     ban: 100 * BAN_PAYOUT_MULTIPLIER,
@@ -129,9 +136,11 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   STILL_ALIVE: {
     id: 14,
     name: "Still Alive",
-    desc: "Revive your character five times",
+    desc: `Revive your character <small>${
+      storage.data.achievement[13] ? REVIVES_COUNT : storage.getTotalRevives()
+    }/</small>5 times`,
     isCompleted() {
-      return storage.getTotalRevives() >= 5;
+      return storage.getTotalRevives() >= REVIVES_COUNT;
     },
     nano: 5 * NANO_PAYOUT_MULTIPLIER,
     ban: 125 * BAN_PAYOUT_MULTIPLIER,
@@ -139,9 +148,11 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   MEATSHIELD: {
     id: 15,
     name: "Meatshield",
-    desc: "Take 5,000 points of damage",
+    desc: `Take <small>${
+      storage.data.achievement[14] ? DAMAGE_COUNT : storage.getTotalDamageTaken()
+    }/</small>${DAMAGE_COUNT} points of damage`,
     isCompleted() {
-      return storage.getTotalDamageTaken() >= 5000;
+      return storage.getTotalDamageTaken() >= DAMAGE_COUNT;
     },
     nano: 7 * NANO_PAYOUT_MULTIPLIER,
     ban: 175 * BAN_PAYOUT_MULTIPLIER,
@@ -163,7 +174,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   SPECTRE_COLLECTOR: {
     id: 18,
     name: "No Fear",
-    desc: `Kill ${SPECTRE_COUNT} spectres`,
+    desc: `Kill <small>${
+      storage.data.achievement[17] ? SPECTRE_COUNT : storage.getSpectreCount()
+    }/</small>${SPECTRE_COUNT} spectres`,
     isCompleted() {
       return storage.getSpectreCount() >= SPECTRE_COUNT;
     },
@@ -236,7 +249,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   BLOODLUST: {
     id: 28,
     name: "Bloodlust",
-    desc: `Defeat ${WEREWOLF_COUNT} Werewolves`,
+    desc: `Defeat <small>${
+      storage.data.achievement[17] ? WEREWOLF_COUNT : storage.getWerewolfCount()
+    }/</small>${WEREWOLF_COUNT} Werewolves`,
     hidden: false,
     isCompleted() {
       return storage.getWerewolfCount() >= WEREWOLF_COUNT;
@@ -263,7 +278,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   MYTH_OR_REAL: {
     id: 32,
     name: "Myth or Real",
-    desc: `Defeat ${YETI_COUNT} Yetis`,
+    desc: `Defeat <small>${
+      storage.data.achievement[31] ? YETI_COUNT : storage.getYetiCount()
+    }/</small>${YETI_COUNT} Yetis`,
     hidden: false,
     isCompleted() {
       return storage.getYetiCount() >= YETI_COUNT;
@@ -272,7 +289,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   RIP: {
     id: 33,
     name: "R.I.P.",
-    desc: `Defeat ${SKELETON3_COUNT} Skeleton Guards`,
+    desc: `Defeat <small>${
+      storage.data.achievement[32] ? SKELETON3_COUNT : storage.getSkeleton3Count()
+    }/</small>${SKELETON3_COUNT} Skeleton Guards`,
     hidden: false,
     isCompleted() {
       return storage.getSkeleton3Count() >= SKELETON3_COUNT;
@@ -293,7 +312,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   GHOSTBUSTERS: {
     id: 36,
     name: "Ghostbusters",
-    desc: `Kill ${WRAITH_COUNT} Wraiths`,
+    desc: `Kill <small>${
+      storage.data.achievement[35] ? WRAITH_COUNT : storage.getWraithCount()
+    }/</small>${WRAITH_COUNT} Wraiths`,
     hidden: false,
     isCompleted() {
       return storage.getWraithCount() >= WRAITH_COUNT;
@@ -338,7 +359,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   HAMBURGER: {
     id: 43,
     name: "Hamburger",
-    desc: `Kill ${COW_COUNT} cows`,
+    desc: `Kill <small>${storage.data.achievement[42] ? COW_COUNT : storage.getCowCount()}/</small>${COW_COUNT} cows`,
     hidden: true,
     isCompleted() {
       return storage.getCowCount() >= COW_COUNT;
@@ -353,7 +374,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   ANTIDOTE: {
     id: 45,
     name: "Antidote",
-    desc: `Kill ${RAT3_COUNT} Poison Rats<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `Kill <small>${
+      storage.data.achievement[44] ? RAT3_COUNT : storage.getRat3Count()
+    }/</small>${RAT3_COUNT} Poison Rats<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getRat3Count() >= RAT3_COUNT;
     },
@@ -371,7 +394,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   UNBREAKABLE: {
     id: 48,
     name: "Unbreakable",
-    desc: `Kill ${GOLEM_COUNT} Stone Golem<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `Kill <small>${
+      storage.data.achievement[47] ? GOLEM_COUNT : storage.getGolemCount()
+    }/</small>${GOLEM_COUNT} Stone Golem<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getGolemCount() >= GOLEM_COUNT;
     },
@@ -384,7 +409,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   CYCLOP: {
     id: 50,
     name: "Cyclop",
-    desc: `kill ${OCULOTHORAX_COUNT} Oculothorax<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `kill <small>${
+      storage.data.achievement[49] ? OCULOTHORAX_COUNT : storage.getOculothoraxCount()
+    }/</small>${OCULOTHORAX_COUNT} Oculothorax<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getOculothoraxCount() >= OCULOTHORAX_COUNT;
     },
@@ -392,7 +419,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   TEMPLAR: {
     id: 51,
     name: "Templar",
-    desc: `Kill ${SKELETON4_COUNT} Crusader Skeletons<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `Kill <small>${
+      storage.data.achievement[50] ? SKELETON4_COUNT : storage.getSkeleton4Count()
+    }/</small>${SKELETON4_COUNT} Crusader Skeletons<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getSkeleton4Count() >= SKELETON4_COUNT;
     },
@@ -445,7 +474,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   BOO: {
     id: 61,
     name: "Boo",
-    desc: `Kill ${GHOST_COUNT} Ghosts<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `Kill <small>${
+      storage.data.achievement[60] ? GHOST_COUNT : storage.getGhostCount()
+    }/</small>${GHOST_COUNT} Ghosts<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getGhostCount() >= GHOST_COUNT;
     },
@@ -453,7 +484,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   BERSERKER: {
     id: 62,
     name: "Berserker",
-    desc: `Kill ${SKELETONBERSERKER_COUNT} Skeleton Berserkers<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `Kill <small>${
+      storage.data.achievement[9] ? SKELETON_COUNT : storage.getSkeletonBerserkerCount()
+    }/</small>${SKELETONBERSERKER_COUNT} Skeleton Berserkers<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getSkeletonBerserkerCount() >= SKELETONBERSERKER_COUNT;
     },
@@ -461,7 +494,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   BULLSEYE: {
     id: 63,
     name: "Bullseye",
-    desc: `Kill ${SKELETONARCHER_COUNT} Skeleton Archers<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `Kill <small>${
+      storage.data.achievement[62] ? SKELETONARCHER_COUNT : storage.getSkeletonArcherCount()
+    }/</small>${SKELETONARCHER_COUNT} Skeleton Archers<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getSkeletonArcherCount() >= SKELETONARCHER_COUNT;
     },
@@ -469,7 +504,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   SPECTRAL: {
     id: 64,
     name: "Spectral",
-    desc: `Kill ${WRAITH2_COUNT} Spectral Wraiths<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `Kill <small>${
+      storage.data.achievement[63] ? WRAITH2_COUNT : storage.getWraith2Count()
+    }/</small>${WRAITH2_COUNT} Spectral Wraiths<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getWraith2Count() >= WRAITH2_COUNT;
     },
@@ -477,7 +514,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   ARCHMAGE: {
     id: 65,
     name: "Archmage",
-    desc: `Kill ${MAGE_COUNT} Mages<br/><small>Get awarded 5 legendary scrolls.</small>`,
+    desc: `Kill <small>${
+      storage.data.achievement[64] ? MAGE_COUNT : storage.getMageCount()
+    }/</small>${MAGE_COUNT} Mages<br/><small>Get awarded 5 legendary scrolls.</small>`,
     isCompleted() {
       return storage.getMageCount() >= MAGE_COUNT;
     },
@@ -485,7 +524,9 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   MINI_BOSS: {
     id: 66,
     name: "Mini-Boss",
-    desc: `Kill ${MINI_BOSS_COUNT} enchanted mini-bosses<br/><small>Get awarded 5 sacred scrolls.</small>`,
+    desc: `Kill <small>${
+      storage.data.achievement[65] ? MINI_BOSS_COUNT : storage.getMiniBossCount()
+    }/</small>${MINI_BOSS_COUNT} enchanted mini-bosses<br/><small>Get awarded 5 sacred scrolls.</small>`,
     isCompleted() {
       return storage.getMiniBossCount() >= MINI_BOSS_COUNT;
     },

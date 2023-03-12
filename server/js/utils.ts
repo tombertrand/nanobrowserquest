@@ -903,11 +903,6 @@ export const getRandomRune = (mobLevel: number, minLevel?: number) => {
     const randomRoll = random(odds);
 
     if (randomRoll === needsToHit) {
-      console.log("~~~~thats a hit!", randomRoll, needsToHit);
-      console.log("~~~~minRuneIndex", minRuneIndex);
-      console.log("~~~~maxRuneIndex", maxRuneIndex);
-      console.log("~~~~odds", odds);
-
       rune = possibleRune;
     } else {
       runeIndex -= 1;
@@ -922,7 +917,7 @@ export const getRandomRune = (mobLevel: number, minLevel?: number) => {
 };
 
 export const generateSoulStoneItem = () => {
-  // 65%
+  // 50%
   const items = [
     { item: "moonsword", uniqueChances: 10 },
     { item: "moonarmor", uniqueChances: 10 },
@@ -956,7 +951,7 @@ export const generateSoulStoneItem = () => {
     { item: "amuletdragon" },
   ];
 
-  // Rune 10%
+  // Rune 25%
 
   const randomCategory = random(100);
 
