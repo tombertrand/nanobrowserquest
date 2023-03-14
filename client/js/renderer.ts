@@ -605,10 +605,6 @@ class Renderer {
           );
         }
 
-        if (entity.name === "running-coder") {
-          entity.auras = ["resistance"];
-        }
-
         // @NOTE Drawing auras first (under the character)
         if (entity instanceof Character && entity.auras.length) {
           entity.auras.forEach(aura => {

@@ -150,7 +150,7 @@ var NpcTalk = {
 
   octocat: [
     "Welcome to Nano BrowserQuest!",
-    'Want to report an issue? Check out <a target="_blank" href="https://github.com/running-coder/NanoBrowserQuest">NanoBrowserQuest repository on GitHub</a>',
+    'Want to report an issue? Log into Discord and report it in the #bug channel',
     'Want to see the source code? Check out <a target="_blank" href="https://github.com/browserquest/BrowserQuest">BrowserQuest repository on GitHub</a>',
   ],
 
