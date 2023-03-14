@@ -12,14 +12,14 @@ class Store {
       id: Types.Store.EXPANSION1,
       nano: 0,
       ban: 0,
-      usd: isDevelopmentAmounts ? 0.01 : 0.01,
+      usd: isDevelopmentAmounts ? 0.01 : 0.001,
       isAvailable: true,
     },
     {
       id: Types.Store.EXPANSION2,
       nano: 0,
       ban: 0,
-      usd: isDevelopmentAmounts ? 0.01 : 5,
+      usd: isDevelopmentAmounts ? 0.01 : 0.001,
       isAvailable: true,
     },
     {

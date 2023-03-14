@@ -60,6 +60,7 @@ const defaultData = {
     golemCount: 0,
     oculothoraxCount: 0,
     skeleton4Count: 0,
+    ghostCount: 0,
     skeletonBerserkerCount: 0,
     skeletonArcherCount: 0,
     wraith2Count: 0,
