@@ -1,9 +1,9 @@
-name: Deploy Master
+name: Deploy Beta
 
 on:
   push:
     branches:
-      - master
+      - expansion2
 
   workflow_dispatch:
     inputs:
@@ -35,7 +35,7 @@ jobs:
         with:
           switches: -avzr --delete --exclude=".env" --exclude="/tools" --exclude="/client/"
           path: "."
-          remote_path: /var/www/www.nanobrowserquest.com
+          remote_path: /var/www/beta.nanobrowserquest.com
           remote_host: ${{ secrets.DO_HOST }}
           remote_user: ${{ secrets.DO_USERNAME }}
           remote_key: ${{ secrets.DO_SSHKEY }}

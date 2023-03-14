@@ -199,7 +199,7 @@ class App {
 
       let config = { host: "localhost", port: 8000 };
       if (process.env.NODE_ENV !== "development") {
-        config = { host: "", port: 8000 };
+        config = { host: "", port: 8020 };
 
         if (window.location.host.endsWith("bananobrowserquest.com")) {
           config.host = window.location.host.replace("ba", "");

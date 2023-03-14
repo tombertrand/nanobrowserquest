@@ -61,7 +61,7 @@ import type Player from "../player";
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
 
-const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, DEPOSIT_SEED } = process.env;
+const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, REDIS_DB_INDEX, DEPOSIT_SEED, NODE_ENV } = process.env;
 
 const queue = new PromiseQueue();
 
@@ -94,10 +94,11 @@ class DatabaseHandler {
     });
 
     this.client.on("connect", () => {
+      if (REDIS_DB_INDEX) {
+        this.client.select(REDIS_DB_INDEX);
+      }
       this.setDepositAccount();
     });
-
-    // client.auth(process.env.REDIS_PASSWORD || "");
   }
 
   loadPlayer(player) {
@@ -1671,9 +1672,10 @@ class DatabaseHandler {
             let hasPassword = !!password;
             let isPasswordRequired = expansion1;
 
-            // @TODO ~~~~ remove this
-            resolve(false);
-            return;
+            if (NODE_ENV === "development") {
+              resolve(false);
+              return;
+            }
 
             player.isPasswordRequired = isPasswordRequired;
 
