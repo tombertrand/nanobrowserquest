@@ -98,6 +98,7 @@ export const ACHIEVEMENT_VIKING_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "
 export const ACHIEVEMENT_BULLSEYE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BULLSEYE");
 export const ACHIEVEMENT_SACRED_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "SACRED");
 export const ACHIEVEMENT_MINI_BOSS_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "MINI_BOSS");
+export const ACHIEVEMENT_DISCORD_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "DISCORD");
 
 export type AchievementName = typeof ACHIEVEMENT_NAMES[number];
 export interface Achievement {

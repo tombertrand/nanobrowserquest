@@ -22,6 +22,7 @@ import {
   ACHIEVEMENT_COUNT,
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_CYCLOP_INDEX,
+  ACHIEVEMENT_DISCORD_INDEX,
   ACHIEVEMENT_MINI_BOSS_INDEX,
   ACHIEVEMENT_NAMES,
   ACHIEVEMENT_NFT_INDEX,
@@ -1239,7 +1240,7 @@ class DatabaseHandler {
         let isSuccess = false;
         let recipe = null;
         let random = null;
-        let successRate = null;
+        // let successRate = null;
         let transmuteSuccessRate = null;
         let uniqueSuccessRate = null;
         let isTransmuteSuccess = null;
@@ -1497,13 +1498,25 @@ class DatabaseHandler {
         var achievement = JSON.parse(reply);
 
         if (achievement[index] === 1) {
-          throw new Error(`Trying to re-unlock achievement. Index: ${index}, Name: ${ACHIEVEMENT_NAMES[index]}`);
+          // throw new Error(`Trying to re-unlock achievement. Index: ${index}, Name: ${ACHIEVEMENT_NAMES[index]}`);
+          return;
         }
 
         achievement[index] = 1;
         achievement = JSON.stringify(achievement);
         this.client.hset("u:" + player.name, "achievement", achievement, err => {
           if (err) return;
+
+          if (index === ACHIEVEMENT_DISCORD_INDEX) {
+            let item = "scrollupgrademedium";
+            if (player.expansion2) {
+              item = "scrollupgradelegendary";
+            } else if (player.expansion1) {
+              item = "scrollupgradehigh";
+            }
+            this.lootItems({ player, items: [{ item, quantity: 5 }] });
+            return;
+          }
 
           if (
             [
@@ -1710,8 +1723,11 @@ class DatabaseHandler {
         // Also link it on the player so it's easily searchable
         this.client.hset("u:" + player.name, "discordId", discordUserId);
 
+        this.foundAchievement(player, ACHIEVEMENT_DISCORD_INDEX);
+
         player.connection.send({
           type: Types.Messages.NOTIFICATION,
+          achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_DISCORD_INDEX],
           message: "You are now linked with your Discord account!",
         });
 
@@ -1822,6 +1838,18 @@ class DatabaseHandler {
           player,
           items: [{ item: "cape", level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) }],
         });
+      } else if (id === Types.Store.SCROLLUPGRADELEGENDARY) {
+        this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+      } else if (id === Types.Store.SCROLLUPGRADESACRED) {
+        this.lootItems({ player, items: [{ item: "scrollupgradesacred", quantity: 5 }] });
+      } else if (id === Types.Store.SCROLLTRANSMUTE) {
+        this.lootItems({ player, items: [{ item: "scrolltransmute", quantity: 10 }] });
+      } else if (id === Types.Store.STONESOCKET) {
+        this.lootItems({ player, items: [{ item: "stonesocket", quantity: 10 }] });
+      } else if (id === Types.Store.STONEDRAGON) {
+        this.lootItems({ player, items: [{ item: "stonedragon", quantity: 1 }] });
+      } else if (id === Types.Store.STONEHERO) {
+        this.lootItems({ player, items: [{ item: "stonehero", quantity: 1 }] });
       } else {
         throw new Error("Invalid purchase id");
       }

@@ -48,8 +48,8 @@ export const attackSkillToResistanceType = [
 export const calculateSkillTimeout = (timeout: number) =>
   timeout > PLAYER_MAX_SKILL_TIMEOUT ? PLAYER_MAX_SKILL_TIMEOUT : timeout;
 
-export const defenseSkillDelay = [35_000, 35_000, 35_000];
-export const attackSkillDelay = [2_000, 2_000, 2_000, 2_000, 2_000];
+export const defenseSkillDelay = [20_000, 20_000, 20_000];
+export const attackSkillDelay = [5_000, 5_000, 5_000, 5_000, 5_000];
 
 export const defenseSkillTypeAnimationMap = ["heal", "defense", "resistances"];
 export const attackSkillTypeAnimationMap = ["magic", "flame", "lightning", "cold", "poison"];
@@ -100,7 +100,7 @@ export const getAttackSkill = function ({
   const skillMultipliers = [
     [1.3, 1.4],
     [1.1, 1.6],
-    [0.3, 2.5],
+    [0.3, 2.8],
     [1.2, 1.5],
     [1.2, 1.8],
   ];

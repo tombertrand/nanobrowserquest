@@ -67,20 +67,68 @@ class Store {
         confirmedMessage: "5 Blessed High class upgrade scrolls were added to your inventory.",
         requiresInventorySlot: true,
       },
-      // {
-      //   id: Types.Store.SCROLLUPGRADEMEDIUM,
-      //   icon: "scrollupgrademedium",
-      //   name: "Medium class upgrade scrolls",
-      //   description: "Pack of 10 scrolls",
-      //   confirmedMessage: "10 Medium class upgrade scrolls were added to your inventory.",
-      //   requiresInventorySlot: true,
-      // },
+      {
+        id: Types.Store.SCROLLUPGRADEMEDIUM,
+        icon: "scrollupgrademedium",
+        name: "Medium class upgrade scrolls",
+        description: "Pack of 10 scrolls",
+        confirmedMessage: "10 Medium class upgrade scrolls were added to your inventory.",
+        requiresInventorySlot: true,
+      },
       {
         id: Types.Store.CAPE,
         icon: "cape",
         name: "Cape",
         description: "A cape adds a random bonus (attack, defense or exp) when your character is in a party.",
         confirmedMessage: "A cape was added to your inventory.",
+        requiresInventorySlot: true,
+      },
+      {
+        id: Types.Store.SCROLLUPGRADELEGENDARY,
+        icon: "scrollupgradelegendary",
+        name: "Legendary class upgrade scrolls",
+        description: "Pack of 10 scrolls",
+        confirmedMessage: "10 Legendary class upgrade scrolls were added to your inventory.",
+        requiresInventorySlot: true,
+      },
+      {
+        id: Types.Store.SCROLLUPGRADESACRED,
+        icon: "scrollupgradesacred",
+        name: "Sacred Legendary class upgrade scrolls",
+        description: "Pack of 5 sacred scrolls giving a higher chance of successful upgrade (4-6%)",
+        confirmedMessage: "5 Sacred Legendary class upgrade scrolls were added to your inventory.",
+        requiresInventorySlot: true,
+      },
+      {
+        id: Types.Store.SCROLLTRANSMUTE,
+        icon: "scrolltransmute",
+        name: "Transmute upgrade scrolls",
+        description: "Pack of 10 Transmute scrolls",
+        confirmedMessage: "10 Transmute upgrade scrolls were added to your inventory.",
+        requiresInventorySlot: true,
+      },
+      {
+        id: Types.Store.STONESOCKET,
+        icon: "stonesocket",
+        name: "Socket Stone",
+        description: "Pack of 10 Socket Stones",
+        confirmedMessage: "10 Socket Stones were added to your inventory.",
+        requiresInventorySlot: true,
+      },
+      {
+        id: Types.Store.STONEDRAGON,
+        icon: "stonedragon",
+        name: "Dragon Stone",
+        description: "1 Dragon Stone",
+        confirmedMessage: "1 Dragon Stone was added to your inventory.",
+        requiresInventorySlot: true,
+      },
+      {
+        id: Types.Store.STONEHERO,
+        icon: "stonehero",
+        name: "Hero Emblem",
+        description: "1 Hero Emblem",
+        confirmedMessage: "1 Hero Emblem was added to your inventory.",
         requiresInventorySlot: true,
       },
     ];
@@ -96,17 +144,23 @@ class Store {
   }
 
   addStoreItems(items: BackendStoreItem[]) {
-    this.storeItems = this.storeItems.map(item => {
-      const { nano, ban, usd, usdRegular, isAvailable } = items.find(({ id }) => item.id === id);
+    this.storeItems = this.storeItems
+      .map(item => {
+        const matchedItem = items.find(({ id }) => item.id === id);
 
-      item.nano = nano;
-      item.ban = ban;
-      item.usd = usd;
-      item.usdRegular = usdRegular;
-      item.isAvailable = isAvailable;
+        if (!matchedItem) return;
 
-      return item;
-    });
+        const { nano, ban, usd, usdRegular, isAvailable } = matchedItem;
+
+        item.nano = nano;
+        item.ban = ban;
+        item.usd = usd;
+        item.usdRegular = usdRegular;
+        item.isAvailable = isAvailable;
+
+        return item;
+      })
+      .filter(Boolean);
 
     this.storeItems.forEach(({ id, icon, name, description, nano, ban, usd, usdRegular, isAvailable }) => {
       const isLocked =

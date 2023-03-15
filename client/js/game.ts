@@ -4504,11 +4504,19 @@ class Game {
         }
       });
 
-      self.client.onReceiveNotification(function (data) {
-        const { message, hash } = data;
+      self.client.onReceiveNotification(function (data: {
+        message: string;
+        hash?: string;
+        achievement?: AchievementName;
+      }) {
+        const { message, hash, achievement } = data;
 
         if (hash) {
           self.gamecompleted_callback({ hash });
+        }
+
+        if (achievement) {
+          self.tryUnlockingAchievement(achievement, false);
         }
 
         setTimeout(() => {
@@ -6524,7 +6532,7 @@ class Game {
     this.unlock_callback = callback;
   }
 
-  tryUnlockingAchievement(name: AchievementName) {
+  tryUnlockingAchievement(name: AchievementName, send = true) {
     var achievement = null;
     var self = this;
 
@@ -6534,7 +6542,9 @@ class Game {
 
         if (achievement.isCompleted() && self.storage.unlockAchievement(achievement.id)) {
           if (self.unlock_callback) {
-            self.client.sendAchievement(achievement.id);
+            if (send) {
+              self.client.sendAchievement(achievement.id);
+            }
             self.unlock_callback(achievement.id, achievement.name, achievement[self.network]);
             self.audioManager.playSound("achievement");
             resolve();

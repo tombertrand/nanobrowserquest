@@ -59,6 +59,12 @@ export const Types: any = {
     SCROLLUPGRADEBLESSED: 4,
     CAPE: 5,
     EXPANSION2: 6,
+    SCROLLUPGRADELEGENDARY: 7,
+    SCROLLUPGRADESACRED: 8,
+    SCROLLTRANSMUTE: 9,
+    STONESOCKET: 10,
+    STONEDRAGON: 11,
+    STONEHERO: 12,
   },
   Messages: {
     CREATE: 0,
@@ -2340,9 +2346,6 @@ Types.getItemClassFromBaseLevel = function (level: number, baseLevel: number): I
   } else if (baseLevel >= 40) {
     itemClass = "legendary";
   }
-
-  console.log("~~~~level", level);
-  console.log("~~~~baseLevel", baseLevel);
 
   return itemClass;
 };
