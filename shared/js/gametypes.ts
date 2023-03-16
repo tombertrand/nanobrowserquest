@@ -745,13 +745,13 @@ export const kinds = {
   spider: [Types.Entities.SPIDER, "mob", 100, 60],
   spider2: [Types.Entities.SPIDER2, "mob", 100, 60],
   spiderqueen: [Types.Entities.SPIDERQUEEN, "mob", 100, 66],
-  butcher: [Types.Entities.BUTCHER, "mob", 100, 66],
+  butcher: [Types.Entities.BUTCHER, "mob", 100, 68],
   skeletonberserker: [Types.Entities.SKELETONBERSERKER, "mob", 100, 62],
-  skeletonarcher: [Types.Entities.SKELETONARCHER, "mob", 100, 64],
+  skeletonarcher: [Types.Entities.SKELETONARCHER, "mob", 100, 65],
   shaman: [Types.Entities.SHAMAN, "mob", 100, 68],
-  wraith2: [Types.Entities.WRAITH2, "mob", 100, 62],
-  mage: [Types.Entities.MAGE, "mob", 100, 64],
-  deathangel: [Types.Entities.DEATHANGEL, "mob", 500, 70],
+  wraith2: [Types.Entities.WRAITH2, "mob", 100, 63],
+  mage: [Types.Entities.MAGE, "mob", 100, 65],
+  deathangel: [Types.Entities.DEATHANGEL, "mob", 500, 71],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
