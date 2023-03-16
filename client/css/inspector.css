@@ -23,11 +23,15 @@
 
 #inspector .name {
   color: #e3e3e3;
-  text-transform: capitalize;
+
   z-index: 2;
   position: relative;
   padding: 0 10px;
   margin-top: -2px;
+}
+
+#inspector .name.mob {
+  text-transform: capitalize;
 }
 
 #inspector .name.is-boss {

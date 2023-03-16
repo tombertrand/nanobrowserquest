@@ -498,9 +498,14 @@ class App {
       }
 
       const inspector = $("#inspector");
-      const alias = Types.getAliasFromName(Types.getKindAsString(target.kind)) || target.name || name;
 
-      inspector.find(".name").text(alias);
+      const isPlayer = target.kind === Types.Entities.WARRIOR;
+
+      const alias = isPlayer
+        ? target.name
+        : Types.getAliasFromName(Types.getKindAsString(target.kind)) || target.name || name;
+
+      inspector.find(".name").toggleClass("mob", !isPlayer).text(alias);
       inspector.find(".name").toggleClass("is-boss", Types.isBoss(target.kind));
       inspector.find(".health").toggleClass("is-mini-boss", Types.isMiniBoss(target));
       inspector.find(".resistances").empty();

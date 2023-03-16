@@ -6008,6 +6008,7 @@ class Game {
               [Types.Entities.MAGE, Types.Entities.SKELETONARCHER, Types.Entities.SHAMAN].includes(character.kind) &&
               character &&
               character.target &&
+              this.player &&
               character.target.id === this.player.id
             ) {
               this.client.sendCastSpell(character.id, character.gridX, character.gridY, character.target.id);
