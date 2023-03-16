@@ -2010,8 +2010,6 @@ class World {
         return "beltdiamond";
       } else if (diamondRandom === 555) {
         return "shielddiamond";
-      } else if (diamondRandom === 699) {
-        return "scrolltransmute";
       }
     }
     if (mob.kind >= Types.Entities.EYE) {
@@ -2034,6 +2032,7 @@ class World {
         return "wing";
       }
     }
+    // @TODO Bind the CRYSTAL quest!
     //  else if (mob.kind === Types.Entities.SHAMAN) {
     //   if (!attacker.hasCrystal && random(150) === 100) {
     //     return "crystal";
@@ -2048,14 +2047,85 @@ class World {
       }
     }
 
-    // if (mob.kind >= Types.Entities.GOLEM) {
-    //   const vv = random(12000);
-    //   if (vv === 420) {
-    //     return "amuletmoon";
-    //   } else if (vv === 6969) {
-    //     return "amuletstar";
-    //   }
-    // }
+    if (mob.kind >= Types.Entities.OCULOTHORAX) {
+      const superUniqueRandom = random(12000);
+
+      if ([Types.Entities.MAGE, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(mob.kind)) {
+        if (superUniqueRandom === 666) {
+          return "ringwizard";
+        } else if (superUniqueRandom === 777) {
+          return "ringmystical";
+        }
+      }
+
+      if (mob.kind >= Types.Entities.WRAITH2) {
+        if (superUniqueRandom === 133) {
+          return "amuletmoon";
+        } else if (superUniqueRandom === 420) {
+          return "amuletdragon";
+        } else if (superUniqueRandom === 555) {
+          return "ringheaven";
+        }
+      } else if (mob.kind >= Types.Entities.SPIDERQUEEN) {
+        if (superUniqueRandom === 333) {
+          return "amuletdragon";
+        }
+      }
+
+      if (superUniqueRandom === 111) {
+        return "ringbalrog";
+      } else if (superUniqueRandom === 222) {
+        return "ringconqueror";
+      } else if (superUniqueRandom === 444) {
+        return "ringheaven";
+      } else if (superUniqueRandom === 6969) {
+        return "amuletstar";
+      }
+
+      const stoneDragonRandom = random(25_000);
+      if (stoneDragonRandom === 133) {
+        return "stonedragon";
+      }
+
+      const stoneHeroRandom = random(100_000);
+      if (stoneHeroRandom === 133) {
+        return "stonehero";
+      }
+    }
+
+    if (mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
+      const demonRandom = random(800);
+      if (demonRandom === 69) {
+        return "demonaxe";
+      } else if (demonRandom === 133) {
+        return "demonarmor";
+      } else if (demonRandom === 420) {
+        return "beltdemon";
+      } else if (demonRandom === 555) {
+        return "shielddemon";
+      } else if (demonRandom === 699) {
+        return "amuletdemon";
+      }
+    }
+
+    if (!Types.isBoss(mob.kind)) {
+      const runeRandom = random(250);
+      if (runeRandom === 133) {
+        return `rune-${getRandomRune(Types.getMobLevel(mob.kind))}`;
+      }
+
+      const socketStoneRandom = random(400);
+      if (socketStoneRandom === 133) {
+        return `socketstone`;
+      }
+
+      if (mob.kind >= Types.Entities.WRAITH) {
+        const transmuteRandom = random(800);
+        if (transmuteRandom === 133) {
+          return "scrolltransmute";
+        }
+      }
+    }
 
     if (!Types.isBoss(mob.kind) && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO/BANANO potion on non-boss monsters
@@ -2114,21 +2184,6 @@ class World {
       postMessageToDiscordChatChannel(`${attacker.name} slained Azrael 💀`);
     }
 
-    // var randomDrops = [
-    //   "ringnecromancer",
-    //   "ringraistone",
-    //   "ringfountain",
-    //   "ringminotaur",
-    //   "ringmystical",
-    //   "ringbalrog",
-    //   "ringconqueror",
-    //   "ringheaven",
-    //   "ringwizard",
-    //   "amuletcow",
-    //   "amuletfrozen",
-    //   "amuletdemon",
-    //   "amuletmoon",
-    // ];
     // var randomDrops = ["dragonsword", "dragonarmor", "shielddragon"];
     // var randomDrops = ["soulstone"];
     // var randomDrops = ["nft"];
@@ -2136,7 +2191,7 @@ class World {
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
     // var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];
-    // var randomDrops = ["stonehero", "stonedragon"];
+    // var randomDrops = ["stonehero", "stonedragon", "soulstone"];
     // var randomDrops = [
     // "ringnecromancer",
     // "ringraistone",

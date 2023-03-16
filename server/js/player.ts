@@ -873,6 +873,12 @@ class Player extends Character {
                     );
                   }
 
+                  // else if (kind === Types.Entities.STONEDRAGON) {
+                  //   postMessageToDiscordChatChannel(
+                  //     `${player.name} picked up a dragon stone ${EmojiMap[`rune-${runeName}`]}`,
+                  //   );
+                  // }
+
                   this.databaseHandler.lootItems({
                     player,
                     items: [generatedItem],
@@ -1113,14 +1119,14 @@ class Player extends Character {
             return;
           }
 
-          databaseHandler.foundAchievement(self, index);
+          databaseHandler.foundAchievement(self, index).then(() => {
+            if (index === ACHIEVEMENT_GRIMOIRE_INDEX) {
+              self.hasGrimoire = true;
+              self.equipItem({} as any);
 
-          if (index === ACHIEVEMENT_GRIMOIRE_INDEX) {
-            self.hasGrimoire = true;
-            self.equipItem({} as any);
-
-            postMessageToDiscordChatChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]} `);
-          }
+              postMessageToDiscordChatChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]} `);
+            }
+          });
         }
       } else if (action === Types.Messages.WAYPOINT) {
         console.info("WAYPOINT: " + self.name + " " + message[1] + " " + message[2]);
@@ -1829,7 +1835,7 @@ class Player extends Character {
 
     if (mob.type === "mob" && mob.enchants?.length) {
       if (mob.enchants.includes("physical")) {
-        rawDmg = Math.round(rawDmg * 1.2);
+        rawDmg = Math.round(rawDmg * 1.35);
       }
     }
 
@@ -1845,7 +1851,7 @@ class Player extends Character {
         if (!Types.elements.includes(enchant)) return;
 
         // 15% of base dmg are elemental dmgs
-        const enchantDmg = this.calculateElementDamage({ element: enchant, dmg: Math.floor(rawDmg * 0.15) });
+        const enchantDmg = this.calculateElementDamage({ element: enchant, dmg: Math.floor(rawDmg * 0.35) });
         dmg += enchantDmg;
       });
     }

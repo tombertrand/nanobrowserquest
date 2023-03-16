@@ -1493,63 +1493,73 @@ class DatabaseHandler {
 
   foundAchievement(player, index) {
     console.info("Found Achievement: " + player.name + " " + index + 1);
-    this.client.hget("u:" + player.name, "achievement", (_err, reply) => {
-      try {
-        var achievement = JSON.parse(reply);
 
-        if (achievement[index] === 1) {
-          // throw new Error(`Trying to re-unlock achievement. Index: ${index}, Name: ${ACHIEVEMENT_NAMES[index]}`);
-          return;
-        }
+    return new Promise(resolve => {
+      this.client.hget("u:" + player.name, "achievement", (_err, reply) => {
+        try {
+          var achievement = JSON.parse(reply);
 
-        achievement[index] = 1;
-        achievement = JSON.stringify(achievement);
-        this.client.hset("u:" + player.name, "achievement", achievement, err => {
-          if (err) return;
-
-          if (index === ACHIEVEMENT_DISCORD_INDEX) {
-            let item = "scrollupgrademedium";
-            if (player.expansion2) {
-              item = "scrollupgradelegendary";
-            } else if (player.expansion1) {
-              item = "scrollupgradehigh";
-            }
-            this.lootItems({ player, items: [{ item, quantity: 5 }] });
+          if (achievement[index] === 1) {
+            // throw new Error(`Trying to re-unlock achievement. Index: ${index}, Name: ${ACHIEVEMENT_NAMES[index]}`);
             return;
           }
 
-          if (
-            [
-              ACHIEVEMENT_NFT_INDEX,
-              ACHIEVEMENT_WING_INDEX,
-              ACHIEVEMENT_CRYSTAL_INDEX,
-              ACHIEVEMENT_ANTIDOTE_INDEX,
-              ACHIEVEMENT_UNBREAKABLE_INDEX,
-              ACHIEVEMENT_CYCLOP_INDEX,
-              ACHIEVEMENT_TEMPLAR_INDEX,
-              ACHIEVEMENT_BOO_INDEX,
-              ACHIEVEMENT_ARCHMAGE_INDEX,
-              ACHIEVEMENT_SPECTRAL_INDEX,
-              ACHIEVEMENT_VIKING_INDEX,
-              ACHIEVEMENT_BULLSEYE_INDEX,
-            ].includes(index)
-          ) {
-            if (index === ACHIEVEMENT_NFT_INDEX) {
-              player.hasNft = true;
-            } else if (index === ACHIEVEMENT_WING_INDEX) {
-              player.hasWing = true;
-            } else if (index === ACHIEVEMENT_CRYSTAL_INDEX) {
-              player.hasCrystal = true;
+          achievement[index] = 1;
+          achievement = JSON.stringify(achievement);
+          this.client.hset("u:" + player.name, "achievement", achievement, err => {
+            if (err) {
+              resolve(true);
+              return;
             }
 
-            this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
-          } else if ([ACHIEVEMENT_MINI_BOSS_INDEX, ACHIEVEMENT_SACRED_INDEX].includes(index)) {
-            this.lootItems({ player, items: [{ item: "scrollupgradesacred", quantity: 5 }] });
-          }
-        });
-      } catch (err) {
-        Sentry.captureException(err);
-      }
+            if (index === ACHIEVEMENT_DISCORD_INDEX) {
+              let item = "scrollupgrademedium";
+              if (player.expansion2) {
+                item = "scrollupgradelegendary";
+              } else if (player.expansion1) {
+                item = "scrollupgradehigh";
+              }
+              this.lootItems({ player, items: [{ item, quantity: 5 }] });
+              resolve(true);
+              return;
+            }
+
+            if (
+              [
+                ACHIEVEMENT_NFT_INDEX,
+                ACHIEVEMENT_WING_INDEX,
+                ACHIEVEMENT_CRYSTAL_INDEX,
+                ACHIEVEMENT_ANTIDOTE_INDEX,
+                ACHIEVEMENT_UNBREAKABLE_INDEX,
+                ACHIEVEMENT_CYCLOP_INDEX,
+                ACHIEVEMENT_TEMPLAR_INDEX,
+                ACHIEVEMENT_BOO_INDEX,
+                ACHIEVEMENT_ARCHMAGE_INDEX,
+                ACHIEVEMENT_SPECTRAL_INDEX,
+                ACHIEVEMENT_VIKING_INDEX,
+                ACHIEVEMENT_BULLSEYE_INDEX,
+              ].includes(index)
+            ) {
+              if (index === ACHIEVEMENT_NFT_INDEX) {
+                player.hasNft = true;
+              } else if (index === ACHIEVEMENT_WING_INDEX) {
+                player.hasWing = true;
+              } else if (index === ACHIEVEMENT_CRYSTAL_INDEX) {
+                player.hasCrystal = true;
+              }
+
+              this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
+            } else if ([ACHIEVEMENT_MINI_BOSS_INDEX, ACHIEVEMENT_SACRED_INDEX].includes(index)) {
+              this.lootItems({ player, items: [{ item: "scrollupgradesacred", quantity: 5 }] });
+            }
+
+            resolve(true);
+          });
+        } catch (err) {
+          Sentry.captureException(err);
+          resolve(false);
+        }
+      });
     });
   }
 

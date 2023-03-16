@@ -116,6 +116,9 @@ const EmojiMap = {
   amuletdragon: "<:amuletdragon:1070330527183274024>",
   grimoire: "<:grimoire:1070767593536901200>",
   powderquantum: "<:quantumpowder:1079106312295694406>",
+  soulstone: "<:soulstone:1085735393594462280>",
+  stonedragon: "<:stonedragon:1085735395372847194>",
+  stonehero: "<:stonehero:1085735396715020319>",
 };
 
 export { postMessageToDiscordChatChannel, postMessageToDiscordAnvilChannel, EmojiMap };
