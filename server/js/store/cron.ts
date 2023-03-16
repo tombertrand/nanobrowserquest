@@ -1,13 +1,23 @@
 import cron from "node-cron";
-import fetch from "node-fetch";
 
+// import fetch from "node-fetch";
 import { Sentry } from "../sentry";
 import { nodeCache } from "./cache";
 
 const getNetworkUsdPrice = async () => {
   try {
-    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=nano,banano&vs_currencies=usd`);
-    const json = await res.json();
+    // const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=nano,banano&vs_currencies=usd`);
+    // const json = await res.json();
+
+    // @TODO fix this
+    const json = {
+      banano: {
+        usd: 0.00542178,
+      },
+      nano: {
+        usd: 0.813791,
+      },
+    };
 
     const {
       nano: { usd: nanoToUsd },
