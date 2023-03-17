@@ -374,7 +374,7 @@ var Properties: any = {
   rat3: {
     drops: {
       powdergreen: 5,
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 25,
       poisonpotion: 25,
       scrollupgradelegendary: 22,
       amuletplatinum: 2,
@@ -390,7 +390,7 @@ var Properties: any = {
   },
   oculothorax: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 25,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -409,7 +409,7 @@ var Properties: any = {
   },
   kobold: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 25,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -424,7 +424,7 @@ var Properties: any = {
   },
   golem: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 25,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -443,7 +443,7 @@ var Properties: any = {
   },
   worm: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 25,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -454,7 +454,7 @@ var Properties: any = {
   },
   snake3: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 25,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -469,7 +469,7 @@ var Properties: any = {
   },
   snake4: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 25,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -487,7 +487,7 @@ var Properties: any = {
   },
   skeleton4: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 25,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -516,7 +516,7 @@ var Properties: any = {
   },
   skeletonberserker: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 25,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -561,7 +561,7 @@ var Properties: any = {
   },
   spider: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 20,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -576,7 +576,7 @@ var Properties: any = {
   },
   spider2: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 20,
       scrollupgradelegendary: 23,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -605,14 +605,14 @@ var Properties: any = {
   },
   skeletonarcher: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 20,
       scrollupgradelegendary: 23,
       ringplatinum: 3,
       amuletplatinum: 3,
     },
     hp: 1040,
     armor: 20,
-    weapon: 26,
+    weapon: 24,
   },
   butcher: {
     drops: {
@@ -624,7 +624,7 @@ var Properties: any = {
   },
   wraith2: {
     drops: {
-      rejuvenationpotion: 15,
+      rejuvenationpotion: 20,
       scrollupgradelegendary: 24,
       ringplatinum: 3,
       amuletplatinum: 3,
@@ -635,7 +635,7 @@ var Properties: any = {
     },
     hp: 1620,
     armor: 28,
-    weapon: 30,
+    weapon: 26,
   },
   mage: {
     drops: {
@@ -650,7 +650,7 @@ var Properties: any = {
     },
     hp: 1210,
     armor: 20,
-    weapon: 30,
+    weapon: 26,
   },
   shaman: {
     drops: {

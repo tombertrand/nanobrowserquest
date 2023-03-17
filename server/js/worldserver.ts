@@ -2112,6 +2112,10 @@ class World {
       const runeRandom = random(250);
       if (runeRandom === 133) {
         return `rune-${getRandomRune(Types.getMobLevel(mob.kind))}`;
+      } else if (runeRandom === 42) {
+        return "stonesocket";
+      } else if (runeRandom === 69) {
+        return "jewelskull";
       }
 
       const socketStoneRandom = random(400);

@@ -693,10 +693,12 @@ class Renderer {
 
         if (entity.isFrozen || entity.isSlowed) {
           this.context.filter = "sepia(100%) hue-rotate(190deg) saturate(500%)";
-        } else if (entity.isPoisoned) {
-          this.context.filter = "grayscale(100%) sepia(100%) hue-rotate(90deg)";
-        } else if (entity.type === "mob" && Types.isMiniBoss(entity)) {
-          this.context.filter = "grayscale(100%) sepia(100%) saturate(150%) hue-rotate(260deg)";
+        } else {
+          if (entity.type === "mob" && Types.isMiniBoss(entity)) {
+            this.context.filter = "grayscale(100%) sepia(100%) saturate(150%) hue-rotate(260deg)";
+          } else if (entity.isPoisoned && !Types.isBoss(entity.kind)) {
+            this.context.filter = "grayscale(100%) sepia(100%) hue-rotate(90deg)";
+          }
         }
 
         this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);

@@ -406,11 +406,13 @@ class DatabaseHandler {
               if (!migrations?.shields) {
                 await Promise.all([
                   new Promise(resolve => {
-                    const [item, level, bonus, skill] = shield.split(":");
-                    shield = [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
+                    if (shield) {
+                      const [item, level, bonus, skill] = shield.split(":");
+                      shield = [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
 
-                    if (skill && skill.length <= 1) {
-                      this.client.hset("u:" + player.name, "shield", shield);
+                      if (skill && skill.length <= 1) {
+                        this.client.hset("u:" + player.name, "shield", shield);
+                      }
                     }
                     resolve(true);
                   }),
