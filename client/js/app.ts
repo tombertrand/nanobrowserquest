@@ -505,7 +505,7 @@ class App {
         ? target.name
         : Types.getAliasFromName(Types.getKindAsString(target.kind)) || target.name || name;
 
-      inspector.find(".name").toggleClass("mob", !isPlayer).text(alias);
+      inspector.find(".name").toggleClass("mob", !isPlayer).text(`${alias}`);
       inspector.find(".name").toggleClass("is-boss", Types.isBoss(target.kind));
       inspector.find(".health").toggleClass("is-mini-boss", Types.isMiniBoss(target));
       inspector.find(".resistances").empty();
@@ -516,12 +516,6 @@ class App {
       } else {
         inspector.find(".health").css("width", "0%");
       }
-      var level = Types.getMobLevel(Types.getKindFromString(name));
-      if (level !== undefined) {
-        inspector.find(".level").text("lv. " + level);
-      } else {
-        inspector.find(".level").text("");
-      }
 
       let htmlEnchants = [];
       if (target?.enchants) {
@@ -530,6 +524,9 @@ class App {
           htmlEnchants.push(`<span class="${enchant}">${display}</span>`);
         });
       }
+      const level = !isPlayer ? Types.getMobLevel(target.kind) : target.level;
+      htmlEnchants.push(`<span class="">lv.${level}</span>`);
+
       inspector.find(".enchants").html(htmlEnchants.join("<span>&bull;</span>"));
 
       let htmlResistances = [];

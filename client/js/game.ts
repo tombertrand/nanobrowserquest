@@ -1611,7 +1611,7 @@ class Game {
     if (this.player.beltName) {
       $(".item-equip-belt").append(
         $("<div />", {
-          class: `item-draggable ${this.player.beltBonus ? "item-unique" : ""}`,
+          class: `item-draggable ${this.player.beltBonus?.length ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.beltName)}")`,
           },
