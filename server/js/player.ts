@@ -648,14 +648,6 @@ class Player extends Character {
           Math.abs(self.y - magicStone.y) < 3
         ) {
           self.server.activateMagicStone(self, magicStone);
-
-          if (
-            self.server.magicStones.length === self.server.activatedMagicStones.length &&
-            _.isEqual(self.server.magicStones.sort(), self.server.activatedMagicStones.sort())
-          ) {
-            // @TODO
-            console.log("~~~~OPEN PORTAL!");
-          }
         }
       } else if (action === Types.Messages.LEVER) {
         console.info("LEVER: " + self.name + " " + message[1]);

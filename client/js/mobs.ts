@@ -537,7 +537,7 @@ export const Mobs = {
       this.walkSpeed = 100;
       this.idleSpeed = 150;
       this.setAttackRate(1500);
-      this.aggroRange = 5;
+      this.aggroRange = 4;
     }
   },
 

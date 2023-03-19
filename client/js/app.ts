@@ -525,7 +525,9 @@ class App {
         });
       }
       const level = !isPlayer ? Types.getMobLevel(target.kind) : target.level;
-      htmlEnchants.push(`<span class="">lv.${level}</span>`);
+      if (level) {
+        htmlEnchants.push(`<span class="">lv.${level}</span>`);
+      }
 
       inspector.find(".enchants").html(htmlEnchants.join("<span>&bull;</span>"));
 

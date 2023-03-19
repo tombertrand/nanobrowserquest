@@ -106,6 +106,9 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.LAVANPC);
     }
+    hasShadow() {
+      return false;
+    }
   },
 
   Octocat: class Octocat extends Npc {

@@ -109,6 +109,7 @@ class World {
   magicTemplarId: number;
   powderSpiderId: number;
   chaliceSpiderId: number;
+  spiderTotal: number;
   spiderEntityIds: string[];
   spiderPossibleCoords: { x: number; y: number }[];
   archerEntityIds: string[];
@@ -229,6 +230,7 @@ class World {
     this.stoneLevelInterval = null;
     this.powderSpiderId = null;
     this.chaliceSpiderId = null;
+    this.spiderTotal = 0;
     this.spiderEntityIds = [];
     this.spiderPossibleCoords = [];
     this.archerEntityIds = [];
@@ -1054,12 +1056,13 @@ class World {
     this.stoneLevelClock = 15 * 60; // 15 minutes
     this.powderSpiderId = null;
     this.chaliceSpiderId = null;
+    this.spiderTotal = 0;
 
     const stonePortal = this.npcs[this.portalStoneNpcId];
     stonePortal.respawnCallback();
 
-    const bloodPortal = this.npcs[this.portalStoneInnerNpcId];
-    bloodPortal.respawnCallback();
+    const stoneInnerPortal = this.npcs[this.portalStoneInnerNpcId];
+    stoneInnerPortal.respawnCallback();
 
     this.pushBroadcast(new Messages.StoneLevelStart());
 
@@ -1068,9 +1071,20 @@ class World {
       const kind = coordsIndex % 2 ? Types.Entities.SPIDER : Types.Entities.SPIDER2;
       const id = `7${kind}${count++}`;
 
+      this.spiderTotal += 1;
+
       const mob = new Mob(id, kind, x, y);
       mob.onMove(this.onMobMoveCallback.bind(this));
-      mob.onDestroy(() => {});
+      mob.onDestroy(() => {
+        this.spiderTotal--;
+        if (this.spiderTotal === 0) {
+          clearInterval(this.stoneLevelInterval);
+          setTimeout(() => {
+            // Return everyone to stones, leave 5s to loot any last drop
+            this.endStoneLevel();
+          }, 5000);
+        }
+      });
 
       this.addMob(mob);
       this.spiderEntityIds.push(id);
@@ -1778,13 +1792,6 @@ class World {
               }, 5000);
             });
           } else if (kind === Types.Entities.SPIDERQUEEN) {
-            mob.onDestroy(() => {
-              clearInterval(self.stoneLevelInterval);
-              setTimeout(() => {
-                // Return everyone to stones, leave 5s to loot any last drop
-                self.endStoneLevel();
-              }, 5000);
-            });
           } else if (kind === Types.Entities.DEATHANGEL) {
             self.deathAngelId = mob.id;
           } else if (kind === Types.Entities.SKELETONTEMPLAR || kind === Types.Entities.SKELETONTEMPLAR2) {

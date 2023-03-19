@@ -17,6 +17,7 @@ import {
 import {
   ACHIEVEMENT_ANTIDOTE_INDEX,
   ACHIEVEMENT_ARCHMAGE_INDEX,
+  ACHIEVEMENT_BLACKSMITH_INDEX,
   ACHIEVEMENT_BOO_INDEX,
   ACHIEVEMENT_BULLSEYE_INDEX,
   ACHIEVEMENT_COUNT,
@@ -1503,6 +1504,7 @@ class DatabaseHandler {
 
           if (achievement[index] === 1) {
             // throw new Error(`Trying to re-unlock achievement. Index: ${index}, Name: ${ACHIEVEMENT_NAMES[index]}`);
+            resolve(false);
             return;
           }
 
@@ -1510,6 +1512,11 @@ class DatabaseHandler {
           achievement = JSON.stringify(achievement);
           this.client.hset("u:" + player.name, "achievement", achievement, err => {
             if (err) {
+              resolve(false);
+              return;
+            }
+
+            if (index === ACHIEVEMENT_BLACKSMITH_INDEX) {
               resolve(true);
               return;
             }
@@ -1735,18 +1742,23 @@ class DatabaseHandler {
         // Also link it on the player so it's easily searchable
         this.client.hset("u:" + player.name, "discordId", discordUserId);
 
-        this.foundAchievement(player, ACHIEVEMENT_DISCORD_INDEX);
-
-        player.connection.send({
-          type: Types.Messages.NOTIFICATION,
-          achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_DISCORD_INDEX],
-          message: "You are now linked with your Discord account!",
-        });
-
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        discordClient.users.fetch(discordUserId).then(user => {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          user.send(`You linked ${player.name} to your Discord account!`);
+        this.foundAchievement(player, ACHIEVEMENT_DISCORD_INDEX).then(() => {
+          player.connection.send({
+            type: Types.Messages.NOTIFICATION,
+            achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_DISCORD_INDEX],
+            message: "You are now linked with your Discord account!",
+          });
+
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            discordClient.users.fetch(discordUserId).then(user => {
+              // eslint-disable-next-line @typescript-eslint/no-floating-promises
+              user.send(`You linked ${player.name} to your Discord account!`);
+            });
+          } catch (errDiscord) {
+            Sentry.captureException(err);
+          }
         });
       });
     });
@@ -1973,6 +1985,15 @@ class DatabaseHandler {
             .join("");
 
           message = `${player.name} forged **${runeword}** runeword (${EmojiRunes}) in a +${level} ${output}`;
+
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          this.foundAchievement(player, ACHIEVEMENT_BLACKSMITH_INDEX).then(() => {
+            player.connection.send({
+              type: Types.Messages.NOTIFICATION,
+              achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_BLACKSMITH_INDEX],
+              message: "You've forged a runeword!",
+            });
+          });
         } else if (socket?.length === 6) {
           message = `${player.name} added **6 sockets** to a +${level} ${output}`;
         } else {

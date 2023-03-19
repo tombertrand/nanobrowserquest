@@ -306,6 +306,12 @@ var initApp = function () {
     //   app.tryStartingGame();
     // });
 
+    // $("#oldschooler .link").on("click", () => {
+    //   $("#loginnameinput").val("oldschooler").show();
+    //   $("#loginaccountinput").val("nano_18en1tq8foa8fan8ief5595t7bogpzywn66n7f4mar6hhcuihbe8i9g5mx1s").show();
+    //   app.tryStartingGame();
+    // });
+
     $(".play span").click(function () {
       app.tryStartingGame();
     });

@@ -552,17 +552,17 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     desc: "Kill Azrael",
   },
   RUNOLOGUE: {
-    id: 72,
+    id: 71,
     name: "Runologue",
     desc: "Find a high level rune",
   },
   BLACKSMITH: {
-    id: 73,
+    id: 72,
     name: "Blacksmith",
     desc: "Forge a Runeword",
   },
   SACRED: {
-    id: 71,
+    id: 73,
     name: "Sacred",
     desc: "Retrieve the Crystal Victor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
     hidden: true,

@@ -1511,8 +1511,10 @@ class Game {
           $(`.item-${type}`).addClass("item-droppable");
         } else if (Types.isScroll(item)) {
           $(".item-scroll").addClass("item-droppable");
-        } else if (Types.isSingle(item) || Types.isRune(item) || Types.isStone(item) || Types.isJewel(item)) {
+        } else if (Types.isRune(item) || Types.isStone(item) || Types.isJewel(item)) {
           $(".item-recipe").addClass("item-droppable");
+        } else if (Types.isSingle(item)) {
+          $(".item-single").addClass("item-droppable");
         }
 
         // Simpler to remove it after the fact
@@ -1758,7 +1760,7 @@ class Game {
     $("#upgrade-scroll").empty();
     for (var i = 1; i < 10; i++) {
       $("#upgrade-scroll").append(
-        `<div class="item-slot item-scroll item-recipe" data-slot="${UPGRADE_SLOT_RANGE + i}"></div>`,
+        `<div class="item-slot item-scroll item-recipe item-single" data-slot="${UPGRADE_SLOT_RANGE + i}"></div>`,
       );
     }
     $("#upgrade-item")
@@ -1777,7 +1779,7 @@ class Game {
 
     for (var i = 0; i < 9; i++) {
       $("#trade-player1-item").append(
-        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest item-scroll" data-slot="${
+        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest item-scroll item-recipe" data-slot="${
           TRADE_SLOT_RANGE + i
         }"></div>`,
       );
@@ -4726,38 +4728,6 @@ class Game {
         }
       });
 
-      self.client.onReceiveCowLevelEnd(function (isCompleted) {
-        $("#countdown").countdown(0);
-        $("#countdown").countdown("remove");
-
-        self.cowLevelPortalCoords = null;
-
-        const teleportBackToTown = () => {
-          if (self.player.gridY >= 464 && self.player.gridY <= 535) {
-            const x = randomInt(40, 45);
-            const y = randomInt(208, 213);
-
-            self.player.stop_pathing_callback({ x, y, isWaypoint: true });
-
-            if (isCompleted) {
-              self.tryUnlockingAchievement("FARMER");
-            }
-          }
-        };
-
-        if (!self.isZoning()) {
-          teleportBackToTown();
-        } else {
-          self.isTeleporting = true;
-
-          // Prevent teleportation while player is zoning, see updateZoning() for timeout delay
-          setTimeout(() => {
-            teleportBackToTown();
-            self.isTeleporting = false;
-          }, 200);
-        }
-      });
-
       self.client.onReceiveChaliceLevelStart(function () {
         // @NOTE TBD?
       });
@@ -6733,6 +6703,11 @@ class Game {
         this.tryUnlockingAchievement("EMBLEM");
       } else if (item.kind === Types.Entities.SOULSTONE) {
         this.tryUnlockingAchievement("SOULSTONE");
+      } else if (Types.isRune(item.kind)) {
+        const rune = Types.getRuneFromItem(item.itemKind);
+        if (rune.rank >= 25) {
+          this.tryUnlockingAchievement("RUNOLOGUE");
+        }
       }
 
       if (Types.isHealingItem(item.kind)) {

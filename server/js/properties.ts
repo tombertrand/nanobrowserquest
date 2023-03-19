@@ -173,8 +173,8 @@ var Properties: any = {
   },
   boss: {
     drops: {
-      goldensword: 80,
-      skeletonkingcage: 20,
+      goldensword: 70,
+      skeletonkingcage: 30,
     },
     hp: 1200,
     armor: 6,
@@ -315,7 +315,7 @@ var Properties: any = {
   },
   necromancer: {
     drops: {
-      necromancerheart: 20,
+      necromancerheart: 40,
       scrollupgradehigh: 3,
       ringgold: 4,
       amuletgold: 4,
@@ -498,7 +498,7 @@ var Properties: any = {
     },
     hp: 1100,
     armor: 21,
-    weapon: 21,
+    weapon: 22,
   },
   ghost: {
     drops: {
@@ -542,7 +542,7 @@ var Properties: any = {
     },
     hp: 4500,
     armor: 30,
-    weapon: 24,
+    weapon: 25,
   },
   skeletontemplar2: {
     drops: {
@@ -557,7 +557,7 @@ var Properties: any = {
     },
     hp: 4500,
     armor: 30,
-    weapon: 24,
+    weapon: 25,
   },
   spider: {
     drops: {
