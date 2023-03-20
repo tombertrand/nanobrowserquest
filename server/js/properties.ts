@@ -531,14 +531,7 @@ var Properties: any = {
   },
   skeletontemplar: {
     drops: {
-      powderblack: 33,
-      scrollupgradelegendary: 23,
-      ringplatinum: 3,
-      amuletplatinum: 3,
-      templarsword: 3,
-      templararmor: 3,
-      belttemplar: 3,
-      shieldtemplar: 3,
+      powderblack: 100,
     },
     hp: 4500,
     armor: 30,
@@ -546,14 +539,7 @@ var Properties: any = {
   },
   skeletontemplar2: {
     drops: {
-      powderblue: 33,
-      scrollupgradelegendary: 23,
-      ringplatinum: 3,
-      amuletplatinum: 3,
-      templarsword: 3,
-      templararmor: 3,
-      belttemplar: 3,
-      shieldtemplar: 3,
+      powderblue: 100,
     },
     hp: 4500,
     armor: 30,

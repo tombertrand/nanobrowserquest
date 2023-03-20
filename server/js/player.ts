@@ -43,7 +43,8 @@ const MIN_TIME = 1000 * 60 * 15;
 
 let payoutIndex = 0;
 
-const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "aaa"];
+const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas"];
+const SUPER_ADMINS = ["running-coder"];
 
 class Player extends Character {
   id: number;
@@ -354,40 +355,48 @@ class Player extends Character {
           msg = msg.substr(0, 255); // Enforce maxLength of chat input
 
           if (msg.startsWith("/") && ADMINS.includes(self.name)) {
-            if (msg === "/cow" && self.name === "running-coder") {
-              if (!self.server.cowLevelClock) {
-                self.server.startCowLevel();
-                self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
+            if (SUPER_ADMINS.includes(self.name)) {
+              if (msg === "/cow") {
+                if (!self.server.cowLevelClock) {
+                  self.server.startCowLevel();
+                  self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
+                }
+                return;
+              } else if (msg === "/minotaur") {
+                if (!self.server.minotaurLevelClock && !self.server.minotaurSpawnTimeout) {
+                  self.server.startMinotaurLevel();
+                  self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
+                }
+                return;
+              } else if (msg === "/chalice") {
+                if (!self.server.chaliceLevelClock) {
+                  self.server.activateAltarChalice(self, true);
+                }
+                return;
+              } else if (msg === "/stone") {
+                if (!self.server.stoneLevelClock) {
+                  self.server.magicStones.forEach(id => {
+                    const magicStone = self.server.getEntityById(id);
+                    self.server.activateMagicStone(self, magicStone);
+                  });
+                }
+                return;
+              } else if (msg === "/tree") {
+                if (!self.server.isActivatedTreeLevel) {
+                  self.server.startTreeLevel();
+                }
+                return;
+              } else if (msg === "/gateway") {
+                self.server.activateHands(self, true);
+                return;
+              } else if (msg === "/temple") {
+                const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
+                self.server.activateLever(self, lever);
+                return;
               }
-              return;
-            } else if (msg === "/minotaur" && self.name === "running-coder") {
-              if (!self.server.minotaurLevelClock && !self.server.minotaurSpawnTimeout) {
-                self.server.startMinotaurLevel();
-                self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
-              }
-              return;
-            } else if (msg === "/chalice" && self.name === "running-coder") {
-              if (!self.server.chaliceLevelClock) {
-                self.server.activateAltarChalice(self, true);
-              }
-              return;
-            } else if (msg === "/stone" && self.name === "running-coder") {
-              if (!self.server.stoneLevelClock) {
-                self.server.magicStones.forEach(id => {
-                  const magicStone = self.server.getEntityById(id);
-                  self.server.activateMagicStone(self, magicStone);
-                });
-              }
-              return;
-            } else if (msg === "/tree" && self.name === "running-coder") {
-              if (!self.server.isActivatedTreeLevel) {
-                self.server.startTreeLevel();
-              }
-              return;
-            } else if (msg === "/gateway" && self.name === "running-coder") {
-              self.server.activateHands(self, true);
-              return;
-            } else if (msg.startsWith("/ban")) {
+            }
+
+            if (msg.startsWith("/ban")) {
               const periods = { 1: 86400, 365: 86400 * 365 };
               const reasons = ["misbehaved"];
 

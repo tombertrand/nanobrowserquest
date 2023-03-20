@@ -1490,10 +1490,12 @@ class World {
 
     if (lever.id === this.leverChaliceNpcId) {
       // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death
-      // @TODO Beta ends here, the gate will not open for now
-      // const gate = this.npcs[this.gateTempleNpcId];
-      // gate.deactivate();
-      // this.despawn(gate);
+
+      if (player.name === "running-coder") {
+        const gate = this.npcs[this.gateTempleNpcId];
+        gate.deactivate();
+        this.despawn(gate);
+      }
     } else if (lever.id === this.leverLeftCryptNpcId) {
       const secretStairs = this.npcs[this.secretStairsLeftTemplarNpcId];
       secretStairs.respawnCallback();

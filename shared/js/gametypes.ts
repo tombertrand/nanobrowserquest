@@ -1682,7 +1682,7 @@ Types.getAliasFromName = function (name: string) {
   } else if (name.startsWith("lever")) {
     return "Lever";
   } else if (name === "wraith2") {
-    return "Apocalypse Wraith";
+    return "Spectral Wraith";
   } else if (name === "tombdeathangel") {
     return "Azrael's Tomb";
   } else if (name === "tombangel") {
