@@ -3,6 +3,7 @@ import "./store/cron";
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
 import { EmojiMap, postMessageToDiscordChatChannel } from "./discord";
@@ -1588,6 +1589,8 @@ class World {
         altar.activate();
 
         this.broadcastRaise(player, altar);
+
+        this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX);
 
         setTimeout(() => {
           altar.deactivate();

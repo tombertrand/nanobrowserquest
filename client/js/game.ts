@@ -6703,6 +6703,8 @@ class Game {
         this.tryUnlockingAchievement("EMBLEM");
       } else if (item.kind === Types.Entities.SOULSTONE) {
         this.tryUnlockingAchievement("SOULSTONE");
+      } else if (item.kind === Types.Entities.CHALICE) {
+        this.tryUnlockingAchievement("CRUISADE");
       } else if (Types.isRune(item.kind)) {
         const rune = Types.getRuneFromItem(item.itemKind);
         if (rune.rank >= 25) {
