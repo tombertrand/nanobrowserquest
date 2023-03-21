@@ -497,8 +497,8 @@ var Properties: any = {
       shieldtemplar: 2,
     },
     hp: 1100,
-    armor: 21,
-    weapon: 22,
+    armor: 23,
+    weapon: 23,
   },
   ghost: {
     drops: {
