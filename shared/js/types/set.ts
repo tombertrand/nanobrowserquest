@@ -156,12 +156,12 @@ export const kindAsStringToSet = {
 };
 
 export const setItems = {
-  demon: ["demonaxe", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
   mystical: ["mysticalsword", "mysticalarmor", "beltmystical", "shieldmystical", "ringmystical"],
+  demon: ["demonaxe", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
   moon: ["moonsword", "moonarmor", "beltmoon", "shieldmoon", "amuletmoon"],
   dragon: ["dragonsword", "dragonarmor", "shielddragon"],
-  executioner: ["executionersword", "executionerarmor", "beltexecutioner", "shieldexecutioner"],
   templar: ["templarsword", "templararmor", "belttemplar", "shieldtemplar"],
+  executioner: ["executionersword", "executionerarmor", "beltexecutioner", "shieldexecutioner"],
   emerald: ["emeraldsword", "emeraldarmor", "beltemerald", "shieldemerald"],
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
   diamond: ["diamondsword", "diamondarmor", "beltdiamond", "shielddiamond"],
