@@ -376,7 +376,7 @@ var Properties: any = {
       powdergreen: 5,
       rejuvenationpotion: 25,
       poisonpotion: 25,
-      scrollupgradelegendary: 22,
+      scrollupgradelegendary: 3,
       amuletplatinum: 2,
       ringplatinum: 2,
       emeraldsword: 2,
@@ -391,7 +391,7 @@ var Properties: any = {
   oculothorax: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       executionersword: 1,
@@ -410,7 +410,7 @@ var Properties: any = {
   kobold: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       executionersword: 2,
@@ -425,7 +425,7 @@ var Properties: any = {
   golem: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       executionersword: 1,
@@ -455,7 +455,7 @@ var Properties: any = {
   snake3: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       executionersword: 2,
@@ -470,7 +470,7 @@ var Properties: any = {
   snake4: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       executionersword: 1,
@@ -488,7 +488,7 @@ var Properties: any = {
   skeleton4: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       templarsword: 2,
@@ -503,7 +503,7 @@ var Properties: any = {
   ghost: {
     drops: {
       rejuvenationpotion: 15,
-      scrollupgradelegendary: 24,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       dragonsword: 2,
@@ -517,7 +517,7 @@ var Properties: any = {
   skeletonberserker: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       templarsword: 2,
@@ -548,7 +548,7 @@ var Properties: any = {
   spider: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       poisonpotion: 10,
@@ -563,7 +563,7 @@ var Properties: any = {
   spider2: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       poisonpotion: 10,
@@ -577,7 +577,7 @@ var Properties: any = {
   },
   spiderqueen: {
     drops: {
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 10,
       ringplatinum: 5,
       amuletplatinum: 5,
       poisonpotion: 33,
@@ -592,7 +592,7 @@ var Properties: any = {
   skeletonarcher: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 23,
+      scrollupgradelegendary: 4,
       ringplatinum: 3,
       amuletplatinum: 3,
     },
@@ -611,7 +611,7 @@ var Properties: any = {
   wraith2: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 24,
+      scrollupgradelegendary: 4,
       ringplatinum: 3,
       amuletplatinum: 3,
       moonsword: 3,
@@ -626,7 +626,7 @@ var Properties: any = {
   mage: {
     drops: {
       rejuvenationpotion: 15,
-      scrollupgradelegendary: 24,
+      scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
       moonsword: 2,
@@ -640,7 +640,7 @@ var Properties: any = {
   },
   shaman: {
     drops: {
-      scrollupgradelegendary: 28,
+      scrollupgradelegendary: 5,
       ringplatinum: 3,
       amuletplatinum: 3,
       moonsword: 5,
@@ -654,7 +654,7 @@ var Properties: any = {
   },
   deathangel: {
     drops: {
-      scrollupgradelegendary: 28,
+      scrollupgradelegendary: 10,
       scrollupgradesacred: 1,
       mysticalsword: 5,
       mysticalarmor: 5,
