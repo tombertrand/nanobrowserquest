@@ -83,6 +83,7 @@ export const ACHIEVEMENT_NAMES = [
 
 export const ACHIEVEMENT_COUNT = ACHIEVEMENT_NAMES.length;
 
+export const ACHIEVEMENT_HERO_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "HERO");
 export const ACHIEVEMENT_GRIMOIRE_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "GRIMOIRE");
 export const ACHIEVEMENT_NFT_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "NFT");
 export const ACHIEVEMENT_WING_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "WING");

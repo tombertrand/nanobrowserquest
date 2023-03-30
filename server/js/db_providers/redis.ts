@@ -24,6 +24,7 @@ import {
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_CYCLOP_INDEX,
   ACHIEVEMENT_DISCORD_INDEX,
+  ACHIEVEMENT_HERO_INDEX,
   ACHIEVEMENT_MINI_BOSS_INDEX,
   ACHIEVEMENT_NAMES,
   ACHIEVEMENT_NFT_INDEX,
@@ -1516,6 +1517,10 @@ class DatabaseHandler {
               return;
             }
 
+            if (index === ACHIEVEMENT_HERO_INDEX) {
+              this.unlockExpansion1(player);
+            }
+
             if (index === ACHIEVEMENT_BLACKSMITH_INDEX) {
               resolve(true);
               return;
@@ -1587,6 +1592,8 @@ class DatabaseHandler {
   }
 
   unlockExpansion1(player) {
+    player.expansion1 = true;
+
     console.info("Unlock Expansion1: " + player.name);
     this.client.hset("u:" + player.name, "expansion1", 1);
     this.client.hget("u:" + player.name, "waypoints", (_err, reply) => {
@@ -1605,6 +1612,8 @@ class DatabaseHandler {
   }
 
   unlockExpansion2(player) {
+    player.expansion2 = true;
+
     console.info("Unlock Expansion2: " + player.name);
     this.client.hset("u:" + player.name, "expansion2", 1);
     this.client.hget("u:" + player.name, "waypoints", (_err, reply) => {
@@ -1841,12 +1850,10 @@ class DatabaseHandler {
   settlePurchase({ player, account, amount, hash, id }) {
     try {
       if (id === Types.Store.EXPANSION1) {
-        player.expansion1 = true;
         this.unlockExpansion1(player);
         this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
       }
       if (id === Types.Store.EXPANSION2) {
-        player.expansion2 = true;
         this.unlockExpansion2(player);
         this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
       } else if (id === Types.Store.SCROLLUPGRADEBLESSED) {
