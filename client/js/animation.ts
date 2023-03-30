@@ -55,7 +55,7 @@ class Animation {
   }
 
   update(time) {
-    if (this.lastTime === 0 && this.name.substr(0, 3) === "atk") {
+    if (this.lastTime === 0 && (this.name.substr(0, 3) === "atk" || this.name.substr(0, 5) === "raise")) {
       this.lastTime = time;
     }
 

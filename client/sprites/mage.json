@@ -1,0 +1,57 @@
+{
+  "id": "mage",
+  "width": 50,
+  "height": 48,
+  "animations": {
+    "atk_right": {
+      "length": 4,
+      "row": 0
+    },
+    "walk_right": {
+      "length": 6,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 3,
+      "row": 2
+    },
+    "atk_up": {
+      "length": 4,
+      "row": 0
+    },
+    "walk_up": {
+      "length": 6,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 3,
+      "row": 2
+    },
+    "atk_down": {
+      "length": 4,
+      "row": 0
+    },
+    "walk_down": {
+      "length": 6,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 3,
+      "row": 2
+    },
+    "raise_right": {
+      "length": 4,
+      "row": 0
+    },
+    "raise_up": {
+      "length": 4,
+      "row": 0
+    },
+    "raise_down": {
+      "length": 4,
+      "row": 0
+    }
+  },
+  "offset_x": -17,
+  "offset_y": -28
+}

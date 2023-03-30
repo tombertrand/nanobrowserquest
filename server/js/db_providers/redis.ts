@@ -3,38 +3,68 @@ import * as NanocurrencyWeb from "nanocurrency-web";
 import redis from "redis";
 
 import { kinds, Types } from "../../../shared/js/gametypes";
-import { postMessageToDiscordChatChannelAnvilChannel } from "../discord";
+import {
+  INVENTORY_SLOT_COUNT,
+  Slot,
+  STASH_SLOT_COUNT,
+  STASH_SLOT_RANGE,
+  TRADE_SLOT_COUNT,
+  TRADE_SLOT_RANGE,
+  UPGRADE_SLOT_COUNT,
+  UPGRADE_SLOT_RANGE,
+  WAYPOINTS_COUNT,
+} from "../../../shared/js/slots";
+import {
+  ACHIEVEMENT_ANTIDOTE_INDEX,
+  ACHIEVEMENT_ARCHMAGE_INDEX,
+  ACHIEVEMENT_BLACKSMITH_INDEX,
+  ACHIEVEMENT_BOO_INDEX,
+  ACHIEVEMENT_BULLSEYE_INDEX,
+  ACHIEVEMENT_COUNT,
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_CYCLOP_INDEX,
+  ACHIEVEMENT_DISCORD_INDEX,
+  ACHIEVEMENT_HERO_INDEX,
+  ACHIEVEMENT_MINI_BOSS_INDEX,
+  ACHIEVEMENT_NAMES,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_SACRED_INDEX,
+  ACHIEVEMENT_SPECTRAL_INDEX,
+  ACHIEVEMENT_TEMPLAR_INDEX,
+  ACHIEVEMENT_UNBREAKABLE_INDEX,
+  ACHIEVEMENT_VIKING_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../../shared/js/types/achievements";
+import { getRunewordBonus } from "../../../shared/js/types/rune";
+import { toArray, toDb } from "../../../shared/js/utils";
+import { discordClient, EmojiMap, postMessageToDiscordAnvilChannel } from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
 import {
   generateBlueChestItem,
+  generateGreenChestItem,
+  generatePurpleChestItem,
+  generateRedChestItem,
   getIsTransmuteSuccess,
   isUpgradeSuccess,
+  isValidAddWeaponSkill,
   isValidRecipe,
+  isValidSocketItem,
+  isValidStoneSocket,
   isValidTransmuteItems,
   isValidUpgradeItems,
+  isValidUpgradeRunes,
   NaN2Zero,
   randomInt,
 } from "../utils";
 
 import type Player from "../player";
-import type { Network } from "../types";
 
-const INVENTORY_SLOT_COUNT = 24;
-const STASH_SLOT_COUNT = 48;
-// const DELETE_SLOT = -1;
-const UPGRADE_SLOT_COUNT = 11;
-const UPGRADE_SLOT_RANGE = 200;
-const STASH_SLOT_RANGE = 300;
-const TRADE_SLOT_RANGE = 400;
-const TRADE_SLOT_COUNT = 9;
-
-const ACHIEVEMENT_COUNT = 44;
 const GEM_COUNT = 5;
 const ARTIFACT_COUNT = 4;
 
-const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, DEPOSIT_SEED } = process.env;
+const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, REDIS_DB_INDEX, DEPOSIT_SEED, NODE_ENV } = process.env;
 
 const queue = new PromiseQueue();
 
@@ -67,10 +97,11 @@ class DatabaseHandler {
     });
 
     this.client.on("connect", () => {
+      if (REDIS_DB_INDEX) {
+        this.client.select(REDIS_DB_INDEX);
+      }
       this.setDepositAccount();
     });
-
-    // client.auth(process.env.REDIS_PASSWORD || "");
   }
 
   loadPlayer(player) {
@@ -101,13 +132,16 @@ class DatabaseHandler {
             .hget(userKey, "shield") // 18
             .hget(userKey, "artifact") // 19
             .hget(userKey, "expansion1") // 20
-            .hget(userKey, "waypoints") // 21
-            .hget(userKey, "depositAccount") // 22
-            .hget(userKey, "depositAccountIndex") // 23
-            .hget(userKey, "stash") // 24
-            .hget(userKey, "settings") // 25
-            .hget(userKey, "network") // 26
-            .hget(userKey, "trade") // 27
+            .hget(userKey, "expansion2") // 21
+            .hget(userKey, "waypoints") // 22
+            .hget(userKey, "depositAccount") // 23
+            .hget(userKey, "depositAccountIndex") // 24
+            .hget(userKey, "stash") // 25
+            .hget(userKey, "settings") // 26
+            .hget(userKey, "network") // 27
+            .hget(userKey, "trade") // 28
+            .hget(userKey, "discordId") // 29
+            .hget(userKey, "migrations") // 30
 
             .exec(async (err, replies) => {
               if (err) {
@@ -131,9 +165,12 @@ class DatabaseHandler {
               var cape = replies[17];
               var shield = replies[18];
               var expansion1 = !!parseInt(replies[20] || "0");
-              var depositAccount = replies[22];
-              var depositAccountIndex = replies[23];
-              var network = replies[26];
+              var expansion2 = !!parseInt(replies[21] || "0");
+              var depositAccount = replies[23];
+              var depositAccountIndex = replies[24];
+              var network = replies[27];
+              var discordId = replies[29];
+              var migrations = replies[30] ? JSON.parse(replies[30]) : {};
 
               const [, rawAccount] = account.split("_");
               const [rawNetwork, rawPlayerAccount] = player.account.split("_");
@@ -234,10 +271,25 @@ class DatabaseHandler {
 
               var stash = new Array(STASH_SLOT_COUNT).fill(0);
               try {
-                if (replies[24]) {
-                  stash = JSON.parse(replies[24]);
+                if (replies[25]) {
+                  stash = JSON.parse(replies[25]);
+
+                  // Migrate extended stash
+                  if (stash.length < STASH_SLOT_COUNT) {
+                    stash = stash.concat(new Array(STASH_SLOT_COUNT - stash.length).fill(0));
+
+                    await new Promise(resolve => {
+                      this.client.hset("u:" + player.name, "stash", JSON.stringify(stash), () => {
+                        resolve(true);
+                      });
+                    });
+                  }
                 } else {
-                  this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
+                  await new Promise(resolve => {
+                    this.client.hset("u:" + player.name, "stash", JSON.stringify(stash), () => {
+                      resolve(true);
+                    });
+                  });
                 }
               } catch (errStash) {
                 // invalid json
@@ -254,30 +306,14 @@ class DatabaseHandler {
               // 2 - Locked, the player did not purchase the expansion
               let waypoints;
               try {
-                waypoints = JSON.parse(replies[21]);
+                waypoints = JSON.parse(replies[22]);
 
-                if (waypoints && !expansion1) {
-                  const classicWaypoint = waypoints.slice(0, 3);
-                  const expansion1Waypoint = [2, 2, 2];
-                  waypoints = classicWaypoint.concat(expansion1Waypoint);
+                if (waypoints && waypoints.length < WAYPOINTS_COUNT) {
+                  waypoints = waypoints.concat(new Array(WAYPOINTS_COUNT - waypoints.length).fill(2));
 
                   this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 } else if (!waypoints) {
-                  const classicWaypoint = [1, 0, 0];
-                  const expansion1Waypoint = !!expansion1 ? [0, 0, 0] : [2, 2, 2];
-                  waypoints = classicWaypoint.concat(expansion1Waypoint);
-
-                  this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
-                } else if (expansion1 && waypoints.includes(2)) {
-                  // Unlock expansion waypoints
-                  waypoints = waypoints.map((waypoint, index) => {
-                    if (index === 3) {
-                      waypoint = 1;
-                    } else if (index > 3 && waypoint === 2) {
-                      waypoint = 0;
-                    }
-                    return waypoint;
-                  });
+                  waypoints = [1, 0, 0, 2, 2, 2, 2, 2, 2, 2];
 
                   this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
                 }
@@ -297,7 +333,11 @@ class DatabaseHandler {
               try {
                 if (!inventory) {
                   inventory = new Array(INVENTORY_SLOT_COUNT).fill(0);
-                  this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+                  await new Promise(resolve => {
+                    this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
+                      resolve(true);
+                    });
+                  });
                 } else {
                   let hasSword2 = /sword2/.test(replies[6]);
                   inventory = JSON.parse(replies[6].replace(/sword2/g, "sword"));
@@ -306,7 +346,11 @@ class DatabaseHandler {
                   if (inventory.length < INVENTORY_SLOT_COUNT || hasSword2) {
                     inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
 
-                    this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+                    await new Promise(resolve => {
+                      this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
+                        resolve(true);
+                      });
+                    });
                   }
                 }
               } catch (errInventory) {
@@ -338,12 +382,17 @@ class DatabaseHandler {
                 });
               }
 
-              var trade = replies[27];
+              var trade = replies[28];
               try {
                 // Migrate trade
                 if (!trade) {
                   trade = new Array(TRADE_SLOT_COUNT).fill(0);
-                  this.client.hset("u:" + player.name, "trade", JSON.stringify(trade));
+
+                  await new Promise(resolve => {
+                    this.client.hset("u:" + player.name, "trade", JSON.stringify(trade), () => {
+                      resolve(true);
+                    });
+                  });
                 }
               } catch (errTrade) {
                 Sentry.captureException(errTrade, {
@@ -353,6 +402,54 @@ class DatabaseHandler {
                   extra: {
                     trade,
                   },
+                });
+              }
+
+              if (!migrations?.shields) {
+                await Promise.all([
+                  new Promise(resolve => {
+                    if (shield) {
+                      const [item, level, bonus, skill] = shield.split(":");
+                      shield = [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
+
+                      if (skill && skill.length <= 1) {
+                        this.client.hset("u:" + player.name, "shield", shield);
+                      }
+                    }
+                    resolve(true);
+                  }),
+                  new Promise(resolve => {
+                    stash = stash.map(rawItem => {
+                      if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
+                        const [item, level, bonus, skill] = rawItem.split(":");
+                        return skill && skill.length <= 1
+                          ? [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":")
+                          : rawItem;
+                      }
+                      return rawItem;
+                    });
+                    this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
+
+                    resolve(true);
+                  }),
+                  new Promise(resolve => {
+                    inventory = inventory.map(rawItem => {
+                      if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
+                        const [item, level, bonus, skill] = rawItem.split(":");
+                        return skill && skill.length <= 1
+                          ? [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":")
+                          : rawItem;
+                      }
+                      return rawItem;
+                    });
+                    this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+
+                    resolve(true);
+                  }),
+                ]).then(() => {
+                  console.log(`Shield migration completed for ${player.name}`);
+
+                  this.client.hset("u:" + player.name, "migrations", JSON.stringify({ ...migrations, shields: true }));
                 });
               }
 
@@ -384,7 +481,7 @@ class DatabaseHandler {
                 Sentry.captureException(errArtifact);
               }
 
-              var settings = replies[25];
+              var settings = replies[26];
               try {
                 settings = Object.assign({ ...defaultSettings }, JSON.parse(settings || "{}"));
               } catch (_err) {
@@ -422,11 +519,13 @@ class DatabaseHandler {
                 gems,
                 artifact,
                 expansion1,
+                expansion2,
                 waypoints,
                 depositAccount,
                 depositAccountIndex,
                 settings,
                 network,
+                discordId,
               });
             });
           return;
@@ -486,7 +585,8 @@ class DatabaseHandler {
           .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
           .hset(userKey, "trade", JSON.stringify(new Array(TRADE_SLOT_COUNT).fill(0)))
           .hset(userKey, "expansion1", 0)
-          .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2]))
+          .hset(userKey, "expansion2", 0)
+          .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2, 2, 2, 2, 2]))
           .hset(userKey, "depositAccountIndex", depositAccountIndex)
           .hset(userKey, "depositAccount", depositAccount)
           .hset(userKey, "network", player.network)
@@ -508,7 +608,8 @@ class DatabaseHandler {
               gems: new Array(GEM_COUNT).fill(0),
               artifact: new Array(ARTIFACT_COUNT).fill(0),
               expansion1: false,
-              waypoints: [1, 0, 0, 2, 2, 2],
+              expansion2: false,
+              waypoints: [1, 0, 0, 2, 2, 2, 2, 2, 2, 2],
               stash: new Array(STASH_SLOT_COUNT).fill(0),
               depositAccount,
               depositAccountIndex,
@@ -613,34 +714,30 @@ class DatabaseHandler {
     });
   }
 
-  equipWeapon(name, weapon, level, bonus) {
+  equipWeapon(name, weapon, level, bonus = [], socket = [], skill) {
     console.info("Set Weapon: " + name + " " + weapon + ":" + level);
-    this.client.hset("u:" + name, "weapon", `${weapon}:${level}${bonus ? `:${bonus}` : ""}`);
+    this.client.hset("u:" + name, "weapon", `${weapon}:${level}${toDb(bonus)}${toDb(socket)}${toDb(skill)}`);
   }
 
-  equipArmor(name, armor, level, bonus) {
+  equipArmor(name, armor, level, bonus = [], socket = []) {
     console.info("Set Armor: " + name + " " + armor + ":" + level);
-    this.client.hset("u:" + name, "armor", `${armor}:${level}${bonus ? `:${bonus}` : ""}`);
+    this.client.hset("u:" + name, "armor", `${armor}:${level}${toDb(bonus)}${toDb(socket)}`);
   }
 
   equipBelt(name, belt, level, bonus) {
     if (belt) {
       console.info("Set Belt: " + name + " " + belt + ":" + level);
-      this.client.hset("u:" + name, "belt", `${belt}:${level}${bonus ? `:${bonus}` : ""}`);
+      this.client.hset("u:" + name, "belt", `${belt}:${level}${toDb(bonus)}`);
     } else {
       console.info("Delete Belt");
       this.client.hdel("u:" + name, "belt");
     }
   }
 
-  equipShield(name, shield, level, bonus, skill) {
+  equipShield(name, shield, level, bonus = [], socket = [], skill) {
     if (shield) {
-      console.info(`Set Shield: ${name} ${shield} ${level} ${bonus} ${skill}`);
-      this.client.hset(
-        "u:" + name,
-        "shield",
-        `${shield}:${level}${bonus ? `:${bonus}` : ""}${skill ? `:${skill}` : ""}`,
-      );
+      console.info(`Set Shield: ${name} ${shield} ${level} ${bonus} ${socket} ${skill}`);
+      this.client.hset("u:" + name, "shield", `${shield}:${level}${toDb(bonus)}${toDb(socket)}${toDb(skill)}`);
     } else {
       console.info("Delete Shield");
       this.client.hdel("u:" + name, "shield");
@@ -650,7 +747,7 @@ class DatabaseHandler {
   equipCape(name, cape, level, bonus) {
     if (cape) {
       console.info("Set Cape: " + name + " " + cape + ":" + level);
-      this.client.hset("u:" + name, "cape", `${cape}:${level}${bonus ? `:${bonus}` : ""}`);
+      this.client.hset("u:" + name, "cape", `${cape}:${level}${toDb(bonus)}`);
     } else {
       console.info("Delete Cape");
       this.client.hdel("u:" + name, "cape");
@@ -716,21 +813,21 @@ class DatabaseHandler {
   getItemLocation(slot: number): [string, number] {
     if (slot < INVENTORY_SLOT_COUNT) {
       return ["inventory", 0];
-    } else if (slot === Types.Slot.WEAPON) {
+    } else if (slot === Slot.WEAPON) {
       return ["weapon", 0];
-    } else if (slot === Types.Slot.ARMOR) {
+    } else if (slot === Slot.ARMOR) {
       return ["armor", 0];
-    } else if (slot === Types.Slot.BELT) {
+    } else if (slot === Slot.BELT) {
       return ["belt", 0];
-    } else if (slot === Types.Slot.CAPE) {
+    } else if (slot === Slot.CAPE) {
       return ["cape", 0];
-    } else if (slot === Types.Slot.SHIELD) {
+    } else if (slot === Slot.SHIELD) {
       return ["shield", 0];
-    } else if (slot === Types.Slot.RING1) {
+    } else if (slot === Slot.RING1) {
       return ["ring1", 0];
-    } else if (slot === Types.Slot.RING2) {
+    } else if (slot === Slot.RING2) {
       return ["ring2", 0];
-    } else if (slot === Types.Slot.AMULET) {
+    } else if (slot === Slot.AMULET) {
       return ["amulet", 0];
     } else if (slot >= UPGRADE_SLOT_RANGE && slot <= UPGRADE_SLOT_RANGE + UPGRADE_SLOT_COUNT - 1) {
       return ["upgrade", UPGRADE_SLOT_RANGE];
@@ -750,9 +847,10 @@ class DatabaseHandler {
     let item = null;
     let level = null;
     let bonus = null;
+    let socket = null;
     let skill = null;
     if (isEquipment && data) {
-      [item, level, bonus, skill] = data.split(":");
+      [item, level, bonus, socket, skill] = data.split(":");
     } else if (!data) {
       if (type === "weapon") {
         item = "dagger";
@@ -768,15 +866,28 @@ class DatabaseHandler {
     } else if (location === "stash") {
       player.send([Types.Messages.STASH, data]);
     } else if (location === "weapon") {
-      player.equipItem({ item, level, type, bonus });
+      player.equipItem({ item, level, type, bonus, socket, skill });
       player.broadcast(
-        player.equip({ kind: player.weaponKind, level: player.weaponLevel, bonus: player.weaponBonus, type }),
+        player.equip({
+          kind: player.weaponKind,
+          level: player.weaponLevel,
+          bonus: player.weaponBonus,
+          socket: player.weaponSocket,
+          skill: player.attackSkill,
+          type,
+        }),
         false,
       );
     } else if (location === "armor") {
-      player.equipItem({ item, level, type, bonus });
+      player.equipItem({ item, level, type, bonus, socket });
       player.broadcast(
-        player.equip({ kind: player.armorKind, level: player.armorLevel, bonus: player.armorBonus, type }),
+        player.equip({
+          kind: player.armorKind,
+          level: player.armorLevel,
+          bonus: player.armorBonus,
+          socket: player.armorSocket,
+          type,
+        }),
         false,
       );
     } else if (location === "belt") {
@@ -789,25 +900,26 @@ class DatabaseHandler {
         false,
       );
     } else if (location === "shield") {
-      player.equipItem({ item, level, type, bonus, skill });
+      player.equipItem({ item, level, type, bonus, socket, skill });
       player.broadcast(
         player.equip({
           kind: player.shieldKind,
           level: player.shieldLevel,
           bonus: player.shieldBonus,
-          skill: player.shieldSkill,
+          socket: player.shieldSocket,
+          skill: player.defenseSkill,
           type,
         }),
         false,
       );
     } else if (location === "ring1") {
-      player.equipItem({ item, level, bonus, type });
+      player.equipItem({ item, level, type, bonus });
       player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "ring2") {
-      player.equipItem({ item, level, bonus, type });
+      player.equipItem({ item, level, type, bonus });
       player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "amulet") {
-      player.equipItem({ item, level, bonus, type });
+      player.equipItem({ item, level, type, bonus });
       player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
     } else if (location === "upgrade") {
       player.send([Types.Messages.UPGRADE, data]);
@@ -910,7 +1022,13 @@ class DatabaseHandler {
                     isToReplyDone = true;
                   }
                 } else if (toLocation === "upgrade") {
-                  if (!toReplyParsed.some((a, i) => i !== 0 && a !== 0)) {
+                  const isScroll = Types.isScroll(fromItem) || Types.isStone(fromItem) || Types.isChest(fromItem);
+                  const isRune = Types.isRune(fromItem);
+                  const hasScroll = isScroll
+                    ? toReplyParsed.some((a, i) => i !== 0 && a && (a.startsWith("scroll") || a.startsWith("stone")))
+                    : false;
+
+                  if ((isScroll && !hasScroll) || (isRune && !toReplyParsed[toSlot - toRange])) {
                     fromReplyParsed[fromSlot - fromRange] =
                       fromQuantity > 1 ? `${fromScroll}:${parseInt(fromQuantity) - 1}` : 0;
                     toReplyParsed[toSlot - toRange] = `${fromScroll}:1`;
@@ -1005,23 +1123,32 @@ class DatabaseHandler {
             try {
               let inventory = JSON.parse(reply);
 
-              items.forEach(({ item, level, quantity, bonus, skill }) => {
+              items.forEach((rawItem: GeneratedItem) => {
+                const { item, level, quantity, bonus, skill, socket } = rawItem;
                 let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
 
-                // Increase the scroll count
+                // Increase the scroll/rune count
                 if (slotIndex > -1) {
                   if (Types.isSingle(item)) {
                     inventory[slotIndex] = `${item}:1`;
                   } else {
                     const [, oldQuantity] = inventory[slotIndex].split(":");
-                    inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(quantity)}`;
+                    inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(String(quantity))}`;
                   }
                 } else if (slotIndex === -1) {
                   slotIndex = inventory.indexOf(0);
                   if (slotIndex !== -1) {
-                    inventory[slotIndex] = [item, level || quantity, bonus, skill].filter(Boolean).join(":");
+                    const levelQuantity = level || quantity;
+
+                    if (!levelQuantity) {
+                      throw new Error(`Invalid item property ${JSON.stringify({ rawItem })}`);
+                    }
+
+                    const delimiter = Types.isJewel(item) ? "|" : ":";
+                    inventory[slotIndex] = [item, levelQuantity, bonus, socket, skill].filter(Boolean).join(delimiter);
                   } else if (player.hasParty()) {
                     // @TODO re-call the lootItems fn with next party member
+                    // Currently the item does not get saved
                   }
                 }
               });
@@ -1041,41 +1168,50 @@ class DatabaseHandler {
   }
 
   moveItemsToInventory(player, panel: "upgrade" | "trade" = "upgrade") {
-    this.client.hget("u:" + player.name, panel, (_err, reply) => {
-      try {
-        let data = JSON.parse(reply);
-        const filteredUpgrade = data.filter(Boolean);
+    this.client.hget("u:" + player.name, "inventory", (_err, rawInvetory) => {
+      const availableInventorySlots = JSON.parse(rawInvetory).filter(i => i === 0).length;
 
-        if (filteredUpgrade.length) {
-          const items = filteredUpgrade.reduce((acc, rawItem) => {
-            if (!rawItem) return acc;
-            const [item, level, bonus, skill] = rawItem.split(":");
-            const isQuantity = Types.isQuantity(item);
+      this.client.hget("u:" + player.name, panel, (_err, reply) => {
+        try {
+          let data = JSON.parse(reply);
+          const filteredUpgrade = data.filter(Boolean);
 
-            acc.push({
-              item,
-              [isQuantity ? "quantity" : "level"]: level,
-              bonus,
-              skill,
-            });
-            return acc;
-          }, []);
+          if (filteredUpgrade.length) {
+            const items = filteredUpgrade.reduce((acc, rawItem) => {
+              if (!rawItem) return acc;
+              const [item, level, bonus, socket, skill] = rawItem.split(":");
+              const isQuantity = Types.isQuantity(item);
 
-          this.lootItems({ player, items });
+              acc.push({
+                item,
+                [isQuantity ? "quantity" : "level"]: level,
+                bonus,
+                socket,
+                skill,
+              });
+              return acc;
+            }, []);
 
-          data = data.map(() => 0);
-          this.client.hset("u:" + player.name, panel, JSON.stringify(data));
+            if (panel === "upgrade" && availableInventorySlots < items.length) {
+              throw new Error("not enought inventory slots to move items from upgrade panel");
+            }
 
-          if (panel === "upgrade") {
-            player.send([Types.Messages.UPGRADE, data]);
-          } else if (panel === "trade") {
-            player.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data).serialize());
+            this.lootItems({ player, items });
+
+            data = data.map(() => 0);
+            this.client.hset("u:" + player.name, panel, JSON.stringify(data));
+
+            if (panel === "upgrade") {
+              player.send([Types.Messages.UPGRADE, data]);
+            } else if (panel === "trade") {
+              player.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data).serialize());
+            }
           }
+        } catch (err) {
+          console.log(err);
+          Sentry.captureException(err);
         }
-      } catch (err) {
-        console.log(err);
-        Sentry.captureException(err);
-      }
+      });
     });
   }
 
@@ -1085,14 +1221,21 @@ class DatabaseHandler {
         let isLucky7 = false;
         let isMagic8 = false;
         let upgrade = JSON.parse(reply);
+
+        // Make sure the last slot is cleaned up
+        if (upgrade[upgrade.length - 1] !== 0) {
+          player.send([Types.Messages.UPGRADE, upgrade]);
+          return;
+        }
+
         let isBlessed = false;
         const slotIndex = upgrade.findIndex(index => {
           if (index) {
-            if (index.startsWith("scrollupgradeblessed")) {
+            if (index.startsWith("scrollupgradeblessed") || index.startsWith("scrollupgradesacred")) {
               isBlessed = true;
             }
 
-            return index.startsWith("scroll");
+            return index.startsWith("scroll") || index.startsWith("stone");
           }
         });
         let luckySlot = randomInt(1, 9);
@@ -1101,59 +1244,113 @@ class DatabaseHandler {
         let isSuccess = false;
         let recipe = null;
         let random = null;
-        let successRate = null;
+        // let successRate = null;
         let transmuteSuccessRate = null;
         let uniqueSuccessRate = null;
         let isTransmuteSuccess = null;
         let isUniqueSuccess = null;
-        let transmuteRates;
+        let result;
+        let nextRuneRank = null;
+        let socketItem = null;
+        let isNewSocketItem = false;
+        let extractedItem = null;
+        let socketCount = null;
+        let weaponWithSkill = null;
 
-        if (isValidUpgradeItems(filteredUpgrade)) {
-          const [item, level, bonus, skill] = filteredUpgrade[0].split(":");
+        if ((weaponWithSkill = isValidAddWeaponSkill(filteredUpgrade))) {
+          isSuccess = true;
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = weaponWithSkill;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if (isValidUpgradeItems(filteredUpgrade)) {
+          const [item, level, bonus, socket, skill] = filteredUpgrade[0].split(":");
+          const [scrollOrStone] = filteredUpgrade[1].split(":");
           const isUnique = Types.isUnique(item, bonus);
           let upgradedItem: number | string = 0;
+          const isGuaranteedSuccess =
+            Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone);
 
-          ({ isSuccess, random, successRate } = isUpgradeSuccess({ level, isLuckySlot, isBlessed }));
+          ({ isSuccess, random /*, successRate*/ } = isUpgradeSuccess({
+            level,
+            isLuckySlot,
+            isBlessed,
+            isGuaranteedSuccess,
+          }));
 
-          player.send(
-            new Messages.AnvilOdds(
-              `You rolled ${random}, the success rate is ${successRate}%. ${
-                random <= successRate ? "Success" : "Failure"
-              }`,
-            ).serialize(),
-          );
+          // Disable for now as it is exploitable
+          // player.send(
+          //   new Messages.AnvilOdds(
+          //     `You rolled ${random}, the success rate is ${successRate}%. ${
+          //       random <= successRate ? "Success" : "Failure"
+          //     }`,
+          //   ).serialize(),
+          // );
 
           if (isSuccess) {
-            const upgradedLevel = parseInt(level) + 1;
-            upgradedItem = [item, parseInt(level) + 1, bonus, skill].filter(Boolean).join(":");
-            isSuccess = true;
+            let upgradedLevel = parseInt(level) + 1;
 
-            if (Types.isBaseHighClassItem(item)) {
-              if (upgradedLevel === 7) {
-                isLucky7 = true;
-              } else if (upgradedLevel === 8) {
-                isMagic8 = true;
+            if (isGuaranteedSuccess) {
+              if (scrollOrStone === "stonedragon") {
+                upgradedLevel = Types.StoneUpgrade.stonedragon;
+              } else if (scrollOrStone === "stonehero") {
+                upgradedLevel = Types.StoneUpgrade.stonehero;
               }
             }
 
+            upgradedItem = [item, upgradedLevel, bonus, socket, skill].filter(Boolean).join(":");
+            isSuccess = true;
+
+            if (Types.isBaseHighClassItem(item) && upgradedLevel === 7) {
+              isLucky7 = true;
+            }
+
+            if (Types.isBaseLegendaryClassItem(item) && upgradedLevel === 8) {
+              isMagic8 = true;
+            }
+
             if (upgradedLevel >= 8 || (isUnique && upgradedLevel >= 7)) {
-              this.logUpgrade({ player, item: upgradedItem, isSuccess, isUnique, isLuckySlot });
+              this.logUpgrade({ player, item: upgradedItem, isSuccess, isLuckySlot });
             }
           } else {
             if (parseInt(level) >= 8) {
-              this.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false, isUnique, isLuckySlot });
+              this.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false, isLuckySlot });
             }
           }
 
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = upgradedItem;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
-        } else if ((transmuteRates = isValidTransmuteItems(filteredUpgrade))) {
+        } else if ((nextRuneRank = isValidUpgradeRunes(filteredUpgrade))) {
+          isSuccess = true;
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = `rune-${Types.RuneList[nextRuneRank]}:1`;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((socketItem = isValidSocketItem(filteredUpgrade))) {
+          isSuccess = true;
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = socketItem;
+
+          this.logUpgrade({ player, item: socketItem, isSuccess, isRuneword: true });
+
+          player.broadcast(new Messages.AnvilUpgrade({ isRuneword: isSuccess }), false);
+        } else if ((result = isValidStoneSocket(filteredUpgrade, isLuckySlot))) {
+          isSuccess = true;
+          ({ socketItem, extractedItem, socketCount, isNewSocketItem } = result);
+          if (extractedItem) {
+            this.lootItems({ player, items: [extractedItem] });
+          }
+          if (socketCount === 6 && isNewSocketItem) {
+            this.logUpgrade({ player, item: socketItem, isSuccess, isLuckySlot });
+          }
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = socketItem;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((result = isValidTransmuteItems(filteredUpgrade))) {
           const [item, level] = filteredUpgrade[0].split(":");
           let generatedItem: number | string = 0;
 
           ({ random, transmuteSuccessRate, uniqueSuccessRate, isTransmuteSuccess, isUniqueSuccess } =
-            getIsTransmuteSuccess({ ...transmuteRates, isLuckySlot }));
+            getIsTransmuteSuccess({ ...result, isLuckySlot }));
 
           player.send(
             new Messages.AnvilOdds(
@@ -1175,13 +1372,15 @@ class DatabaseHandler {
             const {
               item: itemName,
               bonus,
+              socket,
               skill,
             } = player.generateItem({
               kind: Types.getKindFromString(item),
               uniqueChances: isUniqueSuccess ? 100 : 0,
+              isLuckySlot,
             });
 
-            generatedItem = [itemName, level, bonus, skill].filter(Boolean).join(":");
+            generatedItem = [itemName, level, bonus, socket, skill].filter(Boolean).join(":");
           }
 
           upgrade = upgrade.map(() => 0);
@@ -1194,6 +1393,9 @@ class DatabaseHandler {
           let generatedItem: number | string = 0;
           let isRecipe = false;
           let isChestblue = false;
+          let isChestgreen = false;
+          let isChestpurple = false;
+          let isChestred = false;
 
           if (recipe) {
             isSuccess = true;
@@ -1203,8 +1405,8 @@ class DatabaseHandler {
                 isRecipe = true;
                 player.server.startCowLevel();
 
-                // Unique  Wirtleg have guaranteed horn drop
-                if (filteredUpgrade.find(item => item.startsWith("wirtleg") && item.endsWith(":[3,14]"))) {
+                // Unique Wirtleg have guaranteed horn drop
+                if (filteredUpgrade.find(item => item.startsWith("wirtleg") && item.includes("[3,14]"))) {
                   player.server.cowKingHornDrop = true;
                 }
               }
@@ -1214,22 +1416,57 @@ class DatabaseHandler {
                 isRecipe = true;
                 player.server.startMinotaurLevel();
               }
-            } else if (recipe === "chestblue") {
-              const { item, uniqueChances } = generateBlueChestItem();
+            } else if (
+              recipe === "chestblue" ||
+              recipe === "chestgreen" ||
+              recipe === "chestpurple" ||
+              recipe === "chestred"
+            ) {
+              let item;
+              let uniqueChances;
+
+              switch (recipe) {
+                case "chestblue":
+                  isChestblue = true;
+                  ({ item, uniqueChances } = generateBlueChestItem());
+                  break;
+                case "chestgreen":
+                  isChestgreen = true;
+                  ({ item, uniqueChances } = generateGreenChestItem());
+                  break;
+                case "chestpurple":
+                  isChestpurple = true;
+                  ({ item, uniqueChances } = generatePurpleChestItem());
+                  break;
+                case "chestred":
+                  isChestred = true;
+                  ({ item, uniqueChances } = generateRedChestItem());
+                  break;
+              }
+
+              if (!item) return;
 
               luckySlot = null;
               isWorkingRecipe = true;
-              isChestblue = true;
 
               const {
                 item: itemName,
                 level,
                 quantity,
                 bonus,
+                socket,
                 skill,
               } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
 
-              generatedItem = [itemName, level, quantity, bonus, skill].filter(Boolean).join(":");
+              const delimiter = Types.isJewel(item) ? "|" : ":";
+              generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(delimiter);
+            } else if (recipe === "powderquantum") {
+              isWorkingRecipe = true;
+              isRecipe = true;
+
+              postMessageToDiscordAnvilChannel(`${player.name} crafted the Quantum Powder ${EmojiMap.powderquantum}`);
+
+              generatedItem = "powderquantum:1";
             }
           }
 
@@ -1240,8 +1477,11 @@ class DatabaseHandler {
             upgrade[upgrade.length - 1] = generatedItem;
             if (isRecipe) {
               player.broadcast(new Messages.AnvilRecipe(recipe), false);
-            } else if (isChestblue) {
-              player.broadcast(new Messages.AnvilUpgrade({ isChestblue }), false);
+            } else if (isChestblue || isChestgreen || isChestpurple || isChestred) {
+              player.broadcast(
+                new Messages.AnvilUpgrade({ isChestblue, isChestgreen, isChestpurple, isChestred }),
+                false,
+              );
             }
           }
         }
@@ -1255,17 +1495,85 @@ class DatabaseHandler {
     });
   }
 
-  foundAchievement(name, index) {
-    console.info("Found Achievement: " + name + " " + index + 1);
-    this.client.hget("u:" + name, "achievement", (_err, reply) => {
-      try {
-        var achievement = JSON.parse(reply);
-        achievement[index] = 1;
-        achievement = JSON.stringify(achievement);
-        this.client.hset("u:" + name, "achievement", achievement);
-      } catch (err) {
-        Sentry.captureException(err);
-      }
+  foundAchievement(player, index) {
+    console.info("Found Achievement: " + player.name + " " + index + 1);
+
+    return new Promise(resolve => {
+      this.client.hget("u:" + player.name, "achievement", (_err, reply) => {
+        try {
+          var achievement = JSON.parse(reply);
+
+          if (achievement[index] === 1) {
+            // throw new Error(`Trying to re-unlock achievement. Index: ${index}, Name: ${ACHIEVEMENT_NAMES[index]}`);
+            resolve(false);
+            return;
+          }
+
+          achievement[index] = 1;
+          achievement = JSON.stringify(achievement);
+          this.client.hset("u:" + player.name, "achievement", achievement, err => {
+            if (err) {
+              resolve(false);
+              return;
+            }
+
+            if (index === ACHIEVEMENT_HERO_INDEX) {
+              this.unlockExpansion1(player);
+            }
+
+            if (index === ACHIEVEMENT_BLACKSMITH_INDEX) {
+              resolve(true);
+              return;
+            }
+
+            if (index === ACHIEVEMENT_DISCORD_INDEX) {
+              let item = "scrollupgrademedium";
+              if (player.expansion2) {
+                item = "scrollupgradelegendary";
+              } else if (player.expansion1) {
+                item = "scrollupgradehigh";
+              }
+              this.lootItems({ player, items: [{ item, quantity: 5 }] });
+              resolve(true);
+              return;
+            }
+
+            if (
+              [
+                ACHIEVEMENT_NFT_INDEX,
+                ACHIEVEMENT_WING_INDEX,
+                ACHIEVEMENT_CRYSTAL_INDEX,
+                ACHIEVEMENT_ANTIDOTE_INDEX,
+                ACHIEVEMENT_UNBREAKABLE_INDEX,
+                ACHIEVEMENT_CYCLOP_INDEX,
+                ACHIEVEMENT_TEMPLAR_INDEX,
+                ACHIEVEMENT_BOO_INDEX,
+                ACHIEVEMENT_ARCHMAGE_INDEX,
+                ACHIEVEMENT_SPECTRAL_INDEX,
+                ACHIEVEMENT_VIKING_INDEX,
+                ACHIEVEMENT_BULLSEYE_INDEX,
+              ].includes(index)
+            ) {
+              if (index === ACHIEVEMENT_NFT_INDEX) {
+                player.hasNft = true;
+              } else if (index === ACHIEVEMENT_WING_INDEX) {
+                player.hasWing = true;
+              } else if (index === ACHIEVEMENT_CRYSTAL_INDEX) {
+                player.hasCrystal = true;
+              }
+
+              this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 5 }] });
+            } else if ([ACHIEVEMENT_MINI_BOSS_INDEX, ACHIEVEMENT_SACRED_INDEX].includes(index)) {
+              this.lootItems({ player, items: [{ item: "scrollupgradesacred", quantity: 5 }] });
+            }
+
+            resolve(true);
+          });
+        } catch (err) {
+          Sentry.captureException(err);
+          resolve(false);
+        }
+      });
     });
   }
 
@@ -1284,12 +1592,37 @@ class DatabaseHandler {
   }
 
   unlockExpansion1(player) {
+    player.expansion1 = true;
+
     console.info("Unlock Expansion1: " + player.name);
     this.client.hset("u:" + player.name, "expansion1", 1);
     this.client.hget("u:" + player.name, "waypoints", (_err, reply) => {
       try {
         var waypoints = JSON.parse(reply);
-        waypoints = waypoints.slice(0, 3).concat([1, 0, 0]);
+        waypoints[3] = 1;
+        waypoints[4] = 0;
+        waypoints[5] = 0;
+        player.send([Types.Messages.WAYPOINTS_UPDATE, waypoints]);
+        waypoints = JSON.stringify(waypoints);
+        this.client.hset("u:" + player.name, "waypoints", waypoints);
+      } catch (err) {
+        Sentry.captureException(err);
+      }
+    });
+  }
+
+  unlockExpansion2(player) {
+    player.expansion2 = true;
+
+    console.info("Unlock Expansion2: " + player.name);
+    this.client.hset("u:" + player.name, "expansion2", 1);
+    this.client.hget("u:" + player.name, "waypoints", (_err, reply) => {
+      try {
+        var waypoints = JSON.parse(reply);
+        waypoints[6] = 1;
+        waypoints[7] = 0;
+        waypoints[8] = 0;
+        waypoints[9] = 0;
         player.send([Types.Messages.WAYPOINTS_UPDATE, waypoints]);
         waypoints = JSON.stringify(waypoints);
         this.client.hset("u:" + player.name, "waypoints", waypoints);
@@ -1342,6 +1675,28 @@ class DatabaseHandler {
     });
   }
 
+  useInventoryItem(player, item) {
+    return new Promise(resolve => {
+      this.client.hget("u:" + player.name, "inventory", (_err, reply) => {
+        try {
+          const inventory = JSON.parse(reply);
+          const slotIndex = inventory.findIndex(rawItem => typeof rawItem === "string" && rawItem.startsWith(item));
+
+          if (slotIndex !== -1) {
+            inventory[slotIndex] = 0;
+            player.send([Types.Messages.INVENTORY, inventory]);
+            this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        } catch (err) {
+          Sentry.captureException(err);
+        }
+      });
+    });
+  }
+
   passwordIsRequired(player) {
     return new Promise((resolve, _reject) => {
       var userKey = "u:" + player.name;
@@ -1358,6 +1713,11 @@ class DatabaseHandler {
             let hasPassword = !!password;
             let isPasswordRequired = expansion1;
 
+            if (NODE_ENV === "development") {
+              resolve(false);
+              return;
+            }
+
             player.isPasswordRequired = isPasswordRequired;
 
             if (isPasswordRequired) {
@@ -1373,6 +1733,43 @@ class DatabaseHandler {
       } catch (err) {
         Sentry.captureException(err);
       }
+    });
+  }
+
+  linkPlayerToDiscordUser(player, secret) {
+    if (secret.length !== 6) return;
+
+    this.client.get(`discord_secret:${secret}`, (err, discordUserId) => {
+      if (!discordUserId) return;
+
+      this.client.get(`discord:${discordUserId}`, (err, playerName) => {
+        if (playerName) return;
+
+        this.client.set(`discord:${discordUserId}`, player.name);
+        this.client.del(`discord_secret:${secret}`);
+
+        // Also link it on the player so it's easily searchable
+        this.client.hset("u:" + player.name, "discordId", discordUserId);
+
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        this.foundAchievement(player, ACHIEVEMENT_DISCORD_INDEX).then(() => {
+          player.connection.send({
+            type: Types.Messages.NOTIFICATION,
+            achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_DISCORD_INDEX],
+            message: "You are now linked with your Discord account!",
+          });
+
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            discordClient.users.fetch(discordUserId).then(user => {
+              // eslint-disable-next-line @typescript-eslint/no-floating-promises
+              user.send(`You linked ${player.name} to your Discord account!`);
+            });
+          } catch (errDiscord) {
+            Sentry.captureException(err);
+          }
+        });
+      });
     });
   }
 
@@ -1453,9 +1850,12 @@ class DatabaseHandler {
   settlePurchase({ player, account, amount, hash, id }) {
     try {
       if (id === Types.Store.EXPANSION1) {
-        player.expansion1 = true;
         this.unlockExpansion1(player);
         this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
+      }
+      if (id === Types.Store.EXPANSION2) {
+        this.unlockExpansion2(player);
+        this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
       } else if (id === Types.Store.SCROLLUPGRADEBLESSED) {
         this.lootItems({ player, items: [{ item: "scrollupgradeblessed", quantity: 5 }] });
       } else if (id === Types.Store.SCROLLUPGRADEHIGH) {
@@ -1469,6 +1869,18 @@ class DatabaseHandler {
           player,
           items: [{ item: "cape", level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) }],
         });
+      } else if (id === Types.Store.SCROLLUPGRADELEGENDARY) {
+        this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+      } else if (id === Types.Store.SCROLLUPGRADESACRED) {
+        this.lootItems({ player, items: [{ item: "scrollupgradesacred", quantity: 5 }] });
+      } else if (id === Types.Store.SCROLLTRANSMUTE) {
+        this.lootItems({ player, items: [{ item: "scrolltransmute", quantity: 10 }] });
+      } else if (id === Types.Store.STONESOCKET) {
+        this.lootItems({ player, items: [{ item: "stonesocket", quantity: 10 }] });
+      } else if (id === Types.Store.STONEDRAGON) {
+        this.lootItems({ player, items: [{ item: "stonedragon", quantity: 1 }] });
+      } else if (id === Types.Store.STONEHERO) {
+        this.lootItems({ player, items: [{ item: "stonehero", quantity: 1 }] });
       } else {
         throw new Error("Invalid purchase id");
       }
@@ -1501,24 +1913,100 @@ class DatabaseHandler {
     }
   }
 
-  logUpgrade({ player, item, isSuccess, isUnique, isLuckySlot }) {
+  logUpgrade({
+    player,
+    item,
+    isSuccess,
+    isLuckySlot,
+    isRuneword,
+  }: {
+    player: Player;
+    item: string;
+    isSuccess: boolean;
+    isLuckySlot?: boolean;
+    isRuneword?: boolean;
+  }) {
     const now = Date.now();
     this.client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
+
     if (isSuccess) {
       try {
-        const [itemName, level] = item.split(":");
+        const [itemName, level, bonus, rawSocket] = item.split(":");
+        const socket = toArray(rawSocket);
+        const isUnique = Types.isUnique(itemName, bonus);
+        let message = "";
+        let runeword = "";
+        let wordSocket = "";
         let output = kinds[itemName][2];
+        let fire = parseInt(level) >= 8 ? EmojiMap.firepurple : EmojiMap.fire;
+
+        if (!isUnique && isRuneword) {
+          // Invalid runeword
+          if (socket.findIndex((s: number | string) => s === 0 || `${s}`.startsWith("jewel")) !== -1) {
+            return;
+          } else {
+            const isWeapon = Types.isWeapon(itemName);
+            const isArmor = Types.isArmor(itemName);
+            const isShield = Types.isShield(itemName);
+
+            let type = null;
+            if (isWeapon) {
+              type = "weapon";
+            } else if (isArmor) {
+              type = "armor";
+            } else if (isShield) {
+              type = "shield";
+            }
+
+            ({ runeword, wordSocket } = getRunewordBonus({ isUnique, socket, type }));
+          }
+        }
+
         if (isUnique) {
           output =
             Types.itemUniqueMap[itemName]?.[0] ||
             `${
-              ["ringbronze", "ringsilver", "ringgold", "amuletsilver", "amuletgold"].includes(itemName) ? "Unique " : ""
+              [
+                "ringbronze",
+                "ringsilver",
+                "ringgold",
+                "ringplatinum",
+                "amuletsilver",
+                "amuletgold",
+                "amuletplatinum",
+              ].includes(itemName)
+                ? "Unique "
+                : ""
             }${output}`;
         }
 
-        postMessageToDiscordChatChannelAnvilChannel(
-          `${player.name} upgraded a +${level} ${output}${isLuckySlot ? " with the lucky slot" : ""} 🔥`,
-        );
+        if (isRuneword && !runeword) {
+          return;
+        }
+
+        if (runeword) {
+          fire = EmojiMap.fireblue;
+          const EmojiRunes = wordSocket
+            .split("-")
+            .map(rune => EmojiMap[`rune-${rune}`])
+            .join("");
+
+          message = `${player.name} forged **${runeword}** runeword (${EmojiRunes}) in a +${level} ${output}`;
+
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          this.foundAchievement(player, ACHIEVEMENT_BLACKSMITH_INDEX).then(() => {
+            player.connection.send({
+              type: Types.Messages.NOTIFICATION,
+              achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_BLACKSMITH_INDEX],
+              message: "You've forged a runeword!",
+            });
+          });
+        } else if (socket?.length === 6) {
+          message = `${player.name} added **6 sockets** to a +${level} ${output}`;
+        } else {
+          message = `${player.name} upgraded a **+${level}** ${output}`;
+        }
+        postMessageToDiscordAnvilChannel(`${message}${isLuckySlot ? " with the lucky slot" : ""} ${fire}`);
       } catch (err) {
         Sentry.captureException(err);
       }

@@ -1,0 +1,49 @@
+{
+  "id": "worm",
+  "width": 128,
+  "height": 128,
+  "animations": {
+    "atk_right": {
+      "length": 8,
+      "row": 1
+    },
+    "walk_right": {
+      "length": 8,
+      "row": 0
+    },
+    "idle_right": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_up": {
+      "length": 8,
+      "row": 1
+    },
+    "walk_up": {
+      "length": 8,
+      "row": 0
+    },
+    "idle_up": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_down": {
+      "length": 8,
+      "row": 1
+    },
+    "walk_down": {
+      "length": 8,
+      "row": 0
+    },
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    },
+    "death": {
+      "length": 10,
+      "row": 5
+    }
+  },
+  "offset_x": -56,
+  "offset_y": -76
+}

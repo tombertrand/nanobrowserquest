@@ -10,7 +10,7 @@ class Bubble {
   constructor(id, element, time) {
     this.id = id;
     this.element = element;
-    this.timer = new Timer(5000, time);
+    this.timer = new Timer(6000, time);
   }
 
   isOver(time) {

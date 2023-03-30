@@ -1,0 +1,17 @@
+{
+  "id": "altarchalice",
+  "width": 58,
+  "height": 55,
+  "animations": {
+    "idle_down": {
+      "length": 1,
+      "row": 0
+    },
+    "walk_down": {
+      "length": 8,
+      "row": 1
+    }
+  },
+  "offset_x": -6,
+  "offset_y": -30
+}

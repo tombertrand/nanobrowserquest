@@ -1,7 +1,9 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-import Storage from "./storage";
+import { calculateLowerResistances } from "../../shared/js/types/resistance";
+import { toString } from "../../shared/js/utils";
+import storage from "./storage";
 import Store from "./store";
 import { isValidAccountAddress, TRANSITIONEND } from "./utils";
 
@@ -16,7 +18,7 @@ class App {
   achievementTimeout: any;
   isParchmentReady: boolean;
   ready: boolean;
-  storage: Storage;
+  storage: any;
   store: Store;
   watchNameInputInterval: NodeJS.Timer;
   frontPage: string;
@@ -51,7 +53,7 @@ class App {
     this.achievementTimeout = null;
     this.isParchmentReady = true;
     this.ready = false;
-    this.storage = new Storage();
+    this.storage = storage;
     this.store = new Store(this);
     this.getUsernameField = () => {};
     this.getPlayButton = () => {};
@@ -197,7 +199,7 @@ class App {
 
       let config = { host: "localhost", port: 8000 };
       if (process.env.NODE_ENV !== "development") {
-        config = { host: "", port: 8000 };
+        config = { host: "", port: 8020 };
 
         if (window.location.host.endsWith("bananobrowserquest.com")) {
           config.host = window.location.host.replace("ba", "");
@@ -296,7 +298,7 @@ class App {
       buttons: [
         {
           text: "Cancel",
-          class: "btn",
+          class: "btn btn-gray",
           click: function () {
             self.game.slotToDelete = null;
             $(this).dialog("close");
@@ -486,55 +488,87 @@ class App {
     // var timeout;
 
     this.game.player?.onSetTarget(function (target, name) {
+      if (
+        target.id === self.game.player.id ||
+        target.kind === Types.Entities.TREE ||
+        target.kind === Types.Entities.GATEWAYFX ||
+        target.kind === Types.Entities.GATE
+      ) {
+        return;
+      }
+
       const inspector = $("#inspector");
-      // var sprite = target.sprite;
-      // var x = (sprite.animationData.idle_down.length - 1) * sprite.width;
-      // var y = sprite.animationData.idle_down.row * sprite.height;
 
-      var alias = target.name || Types.getAliasFromName(name) || name;
+      const isPlayer = target.kind === Types.Entities.WARRIOR;
 
-      inspector.find(".name").text(alias);
+      const alias = isPlayer
+        ? target.name
+        : Types.getAliasFromName(Types.getKindAsString(target.kind)) || target.name || name;
+
+      inspector.find(".name").toggleClass("mob", !isPlayer).text(`${alias}`);
+      inspector.find(".name").toggleClass("is-boss", Types.isBoss(target.kind));
+      inspector.find(".health").toggleClass("is-mini-boss", Types.isMiniBoss(target));
       inspector.find(".resistances").empty();
 
-      //Show how much Health creature has left. Currently does not work. The reason health doesn't currently go down has to do with the lines below down to initExpBar...
-      if (target.healthPoints) {
-        inspector.find(".health").css("width", Math.round((target.healthPoints / target.maxHp) * 100) + "%");
+      //Show how much Health creature has left. Currently does nost work. The reason health doesn't currently go down has to do with the lines below down to initExpBar...
+      if (target.hitPoints) {
+        inspector.find(".health").css("width", Math.round((target.hitPoints / target.maxHitPoints) * 100) + "%");
       } else {
         inspector.find(".health").css("width", "0%");
       }
-      var level = Types.getMobLevel(Types.getKindFromString(name));
-      if (level !== undefined) {
-        inspector.find(".level").text("Level " + level);
-      } else {
-        inspector.find(".level").text("");
-      }
 
-      if (target?.resistances) {
-        let html = "";
-
-        Object.entries(target.resistances).map(([type, percentage]: any) => {
-          const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
-          const display = Types.resistanceToDisplayMap[type];
-
-          html += `<div class="${type}">${prefix} ${display}</div>`;
+      let htmlEnchants = [];
+      if (target?.enchants) {
+        target?.enchants.map((enchant: Enchant) => {
+          const display = Types.enchantToDisplayMap[enchant];
+          htmlEnchants.push(`<span class="${enchant}">${display}</span>`);
         });
-
-        inspector.find(".resistances").append(html);
       }
+      const level = !isPlayer ? Types.getMobLevel(target.kind) : target.level;
+      if (level) {
+        htmlEnchants.push(`<span class="">lv.${level}</span>`);
+      }
+
+      inspector.find(".enchants").html(htmlEnchants.join("<span>&bull;</span>"));
+
+      let htmlResistances = [];
+      if (target?.resistances) {
+        Object.entries(calculateLowerResistances(target.resistances, self.game.player.bonus)).map(
+          ([type, percentage]: any) => {
+            if (!percentage) return;
+
+            const display = Types.resistanceToDisplayMap[type];
+
+            // percentage -=
+            //   self.game.player.bonus[`lower${_.capitalize(display)}Resistance`] +
+            //   self.game.player.bonus.lowerAllResistance;
+
+            // if (percentage <= 0) return;
+
+            const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
+
+            htmlResistances.push(
+              `<span class="${display}">${prefix} ${_.capitalize(display)} ${
+                percentage !== 100 ? `${percentage}%` : ""
+              }</span>`,
+            );
+          },
+        );
+      }
+      inspector.find(".resistances").html(htmlResistances.join("<span>&bull;</span>"));
 
       inspector.fadeIn("fast");
-
-      self.game.onRemoveTarget();
     });
 
     self.game.onUpdateTarget(function (target) {
-      $("#inspector .health").css("width", Math.round((target.healthPoints / target.maxHp) * 100) + "%");
-
-      if (target.healthPoints <= 0) {
-        self.game.onRemoveTarget.flush();
-      } else {
-        self.game.onRemoveTarget();
+      // Only update the inspector if target is the current inspected target
+      if (self.game.player.inspecting?.id !== target.id) {
+        return;
       }
+
+      $("#inspector .health").css("width", Math.round((target.hitPoints / target.maxHitPoints) * 100) + "%");
+
+      self.game.player.skillTargetId = null;
     });
   }
 
@@ -564,8 +598,8 @@ class App {
     var scale = this.game.renderer.getScaleFactor();
     var healthMaxWidth = $("#healthbar").width()! - 12 * scale;
 
-    this.game.onPlayerHealthChange(function (hp, maxHp) {
-      var barWidth = Math.round((healthMaxWidth / maxHp) * (hp > 0 ? hp : 0));
+    this.game.onPlayerHealthChange(function (hp, maxHitPoints) {
+      var barWidth = Math.round((healthMaxWidth / maxHitPoints) * (hp > 0 ? hp : 0));
       $("#hitpoints").css("width", barWidth + "px");
     });
 
@@ -836,6 +870,8 @@ class App {
         $achievements.unbind(TRANSITIONEND);
       });
     }
+
+    this.game.initAchievements();
   }
 
   updatePopulationList() {
@@ -873,10 +909,12 @@ class App {
     var weapon = this.game.player.getWeaponName();
     var weaponLevel = this.game.player.getWeaponLevel();
     var weaponBonus = this.game.player.getWeaponBonus();
+    var weaponSocket = this.game.player.getWeaponSocket();
 
     var armor = this.game.player.getArmorName();
     var armorLevel = this.game.player.getArmorLevel();
     var armorBonus = this.game.player.getArmorBonus();
+    var armorSocket = this.game.player.getArmorSocket();
     var weaponPath = getIconPath(weapon);
     var armorPath = getIconPath(armor);
 
@@ -884,16 +922,16 @@ class App {
       .css("background-image", 'url("' + weaponPath + '")')
       .attr("data-item", weapon)
       .attr("data-level", weaponLevel)
-      .attr("data-bonus", typeof weaponBonus === "string" ? weaponBonus : JSON.stringify(weaponBonus));
-    $("#player-weapon").text(`${Types.getDisplayName(weapon, !!weaponBonus)} +${weaponLevel}`);
+      .attr("data-bonus", toString(weaponBonus))
+      .attr("data-socket", toString(weaponSocket));
 
     if (armor !== "firefox") {
       $("#armor")
         .css("background-image", 'url("' + armorPath + '")')
         .attr("data-item", armor)
         .attr("data-level", armorLevel)
-        .attr("data-bonus", typeof armorBonus === "string" ? armorBonus : JSON.stringify(armorBonus));
-      $("#player-armor").text(`${Types.getDisplayName(armor, !!armorBonus)} +${armorLevel}`);
+        .attr("data-bonus", toString(armorBonus))
+        .attr("data-socket", toString(armorSocket));
     }
   }
 
@@ -991,7 +1029,6 @@ class App {
     this.displayUnlockedAchievement(id);
 
     var nb = parseInt($("#unlocked-achievements").text());
-    // @ts
     const totalPayout = parseInt(
       `${parseFloat($("#unlocked-payout-achievements").text()) * networkDividerMap[this.game.network]}`,
       10,
@@ -1227,6 +1264,13 @@ class App {
 
     this.storage.setShowAnvilOddsEnabled(isChecked);
     this.game.setShowAnvilOdds(isChecked);
+  }
+
+  toggleHealthAboveBars() {
+    const isChecked = $("#health-above-bars-checkbox").is(":checked");
+
+    this.storage.setShowHealthAboveBarsEnabled(isChecked);
+    this.game.setShowHealthAboveBars(isChecked);
   }
 
   toggleInventory() {

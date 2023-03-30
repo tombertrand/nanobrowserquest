@@ -3,9 +3,10 @@ import "./store/cron";
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
-import { postMessageToDiscordChatChannel } from "./discord";
+import { EmojiMap, postMessageToDiscordChatChannel } from "./discord";
 import Item from "./item";
 import Map from "./map";
 import Messages from "./message";
@@ -15,9 +16,10 @@ import Party, { MAX_PARTY_MEMBERS } from "./party";
 import Player from "./player";
 import Properties from "./properties";
 import { Sentry } from "./sentry";
+import Spell from "./spell";
 import { purchase } from "./store/purchase";
 import Trade from "./trade";
-import { random, randomRange } from "./utils";
+import { generateSoulStoneItem, getRandomJewelLevel, getRandomRune, random, randomInt, randomRange } from "./utils";
 
 // ======= GAME SERVER ========
 
@@ -31,6 +33,7 @@ class World {
   entities: {};
   players: {};
   mobs: {};
+  spells: {};
   attackers: {};
   items: {};
   equipping: {};
@@ -42,26 +45,27 @@ class World {
   zombies: any[];
   cowTotal: number;
   cowLevelCoords: {};
-  cowLevelClock: any;
-  cowLevelInterval: any;
-  cowLevelTownNpcId: any;
+  cowLevelClock: number;
+  cowLevelInterval: NodeJS.Timeout;
+  cowLevelTownNpcId: number;
   cowLevelNpcId: any;
-  cowLevelNpcIds: any[];
+  cowLevelNpcIds: number[];
   cowPossibleCoords: any[];
-  cowEntityIds: any[];
-  cowPackOrder: number[][];
+  cowEntityIds: string[];
+  packOrder: number[][];
   cowKingHornDrop: boolean;
   minotaur: any;
-  minotaurLevelClock: any;
-  minotaurLevelInterval: any;
-  minotaurLevelTownNpcId: any;
-  minotaurLevelNpcId: any;
+  minotaurLevelClock: number;
+  minotaurLevelInterval: NodeJS.Timeout;
+  minotaurLevelTownNpcId: number;
+  minotaurLevelNpcId: number;
   minotaurSpawnTimeout: any;
   outgoingQueues: any;
   itemCount: number;
   playerCount: number;
   zoneGroupsReady: boolean;
-  raiseInterval: any;
+  raiseNecromancerInterval: any;
+  raiseDeathAngelInterval: any;
   removed_callback: any;
   added_callback: any;
   regen_callback: any;
@@ -69,11 +73,54 @@ class World {
   connect_callback: any;
   enter_callback: any;
   attack_callback: any;
-  raise_callback: any;
   parties: { [key: number]: Party };
   trades: { [key: number]: Trade };
   currentPartyId: number;
   currentTradeId: number;
+  deathAngelId: null | number;
+  isCastDeathAngelSpellEnabled: boolean;
+  magicStones: number[];
+  activatedMagicStones: number[];
+  blueFlames: number[];
+  statues: number[];
+  spellCount: number;
+  secretStairsChaliceNpcId: number;
+  secretStairsTreeNpcId: number;
+  secretStairsLeftTemplarNpcId: number;
+  secretStairsRightTemplarNpcId: number;
+  chaliceLevelClock: number;
+  chaliceLevelInterval: NodeJS.Timeout;
+  altarChaliceNpcId: number;
+  altarSoulStoneNpcId: number;
+  handsNpcId: number;
+  isActivatedTreeLevel: boolean;
+  trapIds: number[];
+  portalStoneNpcId: number;
+  portalStoneInnerNpcId: number;
+  portalGatewayNpcId: number;
+  portalGatewayInnerNpcId: number;
+  stoneLevelClock: number;
+  stoneLevelInterval: NodeJS.Timeout;
+  gatewayLevelClock: number;
+  gatewayLevelInterval: NodeJS.Timeout;
+  leverChaliceNpcId: number;
+  leverLeftCryptNpcId: number;
+  leverRightCryptNpcId: number;
+  poisonTemplarId: number;
+  magicTemplarId: number;
+  powderSpiderId: number;
+  chaliceSpiderId: number;
+  spiderTotal: number;
+  spiderEntityIds: string[];
+  spiderPossibleCoords: { x: number; y: number }[];
+  archerEntityIds: string[];
+  archerPossibleCoords: { x: number; y: number }[];
+  shamanCoords: { x: number; y: number };
+  mageTotal: number;
+  mageEntityIds: string[];
+  magePossibleCoords: { x: number; y: number }[];
+  gateTempleNpcId: number;
+  gateSubTempleNpcId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -93,6 +140,8 @@ class World {
     this.currentPartyId = 0;
     this.currentTradeId = 0;
     this.mobs = {};
+    // this.spells = {};
+    this.spellCount = 0;
     this.attackers = {};
     this.items = {};
     this.equipping = {};
@@ -111,7 +160,7 @@ class World {
     this.cowLevelNpcIds = [];
     this.cowPossibleCoords = [];
     this.cowEntityIds = [];
-    this.cowPackOrder = [
+    this.packOrder = [
       [0, 0],
       [-1, 0],
       [-1, -1],
@@ -152,7 +201,47 @@ class World {
     this.playerCount = 0;
 
     this.zoneGroupsReady = false;
-    this.raiseInterval = null;
+    this.raiseNecromancerInterval = null;
+    this.raiseDeathAngelInterval = null;
+    this.deathAngelId = null;
+    this.isCastDeathAngelSpellEnabled = false;
+    this.magicStones = [];
+    this.activatedMagicStones = [];
+    this.blueFlames = [];
+    this.statues = [];
+    this.secretStairsChaliceNpcId = null;
+    this.secretStairsTreeNpcId = null;
+    this.secretStairsLeftTemplarNpcId = null;
+    this.secretStairsRightTemplarNpcId = null;
+    this.poisonTemplarId = null;
+    this.magicTemplarId = null;
+    this.chaliceLevelClock = null;
+    this.chaliceLevelInterval = null;
+    this.altarChaliceNpcId = null;
+    this.altarSoulStoneNpcId = null;
+    this.handsNpcId = null;
+    this.isActivatedTreeLevel = false;
+    this.trapIds = [];
+    this.leverChaliceNpcId = null;
+    this.leverLeftCryptNpcId = null;
+    this.leverRightCryptNpcId = null;
+    this.portalStoneNpcId = null;
+    this.portalStoneInnerNpcId = null;
+    this.stoneLevelClock = null;
+    this.stoneLevelInterval = null;
+    this.powderSpiderId = null;
+    this.chaliceSpiderId = null;
+    this.spiderTotal = 0;
+    this.spiderEntityIds = [];
+    this.spiderPossibleCoords = [];
+    this.archerEntityIds = [];
+    this.archerPossibleCoords = [];
+    this.shamanCoords = null;
+    this.mageTotal = 0;
+    this.mageEntityIds = [];
+    this.magePossibleCoords = [];
+    this.gateTempleNpcId = null;
+    this.gateSubTempleNpcId = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -186,11 +275,11 @@ class World {
         var isPVP = self.map.isPVP(x, y);
         player.flagPVP(isPVP);
         player.forEachAttacker(function (mob) {
-          if (mob.target === null) {
+          if (mob.targetId === null) {
             player.removeAttacker(mob);
             return;
           }
-          var target = self.getEntityById(mob.target);
+          var target = self.getEntityById(mob.targetId);
           if (target) {
             var pos = self.findPositionNextTo(mob, target);
             if (mob.distanceToSpawningPoint(pos.x, pos.y) > 50) {
@@ -258,17 +347,10 @@ class World {
 
     // Called when an entity is attacked by another entity
     this.onEntityAttack(function (attacker) {
-      var target = self.getEntityById(attacker.target);
+      var target = self.getEntityById(attacker.targetId);
       if (target && attacker.type === "mob") {
         var pos = self.findPositionNextTo(attacker, target);
         self.moveEntity(attacker, pos.x, pos.y);
-      }
-    });
-
-    this.onEntityRaise(function (attacker) {
-      if (attacker.type === "mob") {
-        // var pos = self.findPositionNextTo(attacker, target);
-        // self.moveEntity(attacker, pos.x, pos.y);
       }
     });
 
@@ -280,10 +362,12 @@ class World {
             regenerateHealth += character.bonus.regenerateHealth;
           }
 
-          character.regenHealthBy(regenerateHealth);
+          if (character.curseId !== 0) {
+            character.regenHealthBy(regenerateHealth);
 
-          if (character.type === "player") {
-            self.pushToPlayer(character, character.regen());
+            if (character.type === "player") {
+              self.pushToPlayer(character, character.regen());
+            }
           }
         }
       });
@@ -532,12 +616,7 @@ class World {
 
     var delay = 30000;
     if (entity.kind === Types.Entities.DEATHKNIGHT) {
-      const adjustedDifficulty = this.getPlayersCountInBossRoom({
-        x: 140,
-        y: 48,
-        w: 29,
-        h: 25,
-      });
+      const adjustedDifficulty = this.getPlayersAroundEntity({ x: 155, y: 53 });
 
       // Each additional player removes 10s to DK spawn delay
       delay = delay - (adjustedDifficulty - 1) * 10000;
@@ -626,7 +705,7 @@ class World {
       self.addMob(npc);
     });
 
-    if (kind === Types.Entities.COWPORTAL) {
+    if (kind === Types.Entities.PORTALCOW) {
       npc.isDead = true;
 
       if (x === 43 && y === 211) {
@@ -634,7 +713,7 @@ class World {
       } else {
         this.cowLevelNpcIds.push(npc.id);
       }
-    } else if (kind === Types.Entities.MINOTAURPORTAL) {
+    } else if (kind === Types.Entities.PORTALMINOTAUR) {
       npc.isDead = true;
 
       if (x === 40 && y === 210) {
@@ -642,11 +721,112 @@ class World {
       } else {
         this.minotaurLevelNpcId = npc.id;
       }
+    } else if (kind === Types.Entities.SECRETSTAIRS) {
+      npc.isDead = true;
+
+      if (x === 8 && y === 683) {
+        this.secretStairsChaliceNpcId = npc.id;
+      } else if (x === 19 && y === 642) {
+        this.secretStairsTreeNpcId = npc.id;
+
+        // @NOTE Add a tree on top of the stairs
+        this.addNpc(Types.Entities.TREE, x, y + 1);
+      }
+    } else if (kind === Types.Entities.SECRETSTAIRS2) {
+      npc.isDead = true;
+
+      if (x === 149 && y === 548) {
+        this.secretStairsLeftTemplarNpcId = npc.id;
+      } else if (x === 162 && y === 548) {
+        this.secretStairsRightTemplarNpcId = npc.id;
+      }
+    } else if (kind === Types.Entities.PORTALSTONE) {
+      npc.isDead = true;
+
+      if (x === 71 && y === 643) {
+        this.portalStoneNpcId = npc.id;
+      } else {
+        this.portalStoneInnerNpcId = npc.id;
+      }
+    } else if (kind === Types.Entities.PORTALGATEWAY) {
+      npc.isDead = true;
+
+      if (x === 97 && y === 545) {
+        this.portalGatewayNpcId = npc.id;
+      } else {
+        this.portalGatewayInnerNpcId = npc.id;
+      }
     } else {
+      if (kind === Types.Entities.MAGICSTONE) {
+        this.magicStones.push(npc.id);
+      } else if (kind === Types.Entities.BLUEFLAME) {
+        this.blueFlames.push(npc.id);
+      } else if (kind === Types.Entities.STATUE || kind === Types.Entities.STATUE2) {
+        this.statues.push(npc.id);
+      } else if (kind === Types.Entities.ALTARCHALICE) {
+        this.altarChaliceNpcId = npc.id;
+      } else if (kind === Types.Entities.ALTARSOULSTONE) {
+        this.altarSoulStoneNpcId = npc.id;
+      } else if (kind === Types.Entities.HANDS) {
+        this.handsNpcId = npc.id;
+      } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(kind)) {
+        this.trapIds.push(npc.id);
+      } else if (kind === Types.Entities.LEVER || kind === Types.Entities.LEVER2) {
+        if (npc.x === 10 && npc.y === 703) {
+          this.leverChaliceNpcId = npc.id;
+        } else if (npc.x === 80 && npc.y === 703) {
+          this.leverLeftCryptNpcId = npc.id;
+        } else if (npc.x === 67 && npc.y === 722) {
+          this.leverRightCryptNpcId = npc.id;
+        }
+      } else if (kind === Types.Entities.GATE) {
+        if (npc.x === 43 && npc.y === 579) {
+          this.gateTempleNpcId = npc.id;
+        } else if (npc.x === 71 && npc.y === 548) {
+          this.gateSubTempleNpcId = npc.id;
+        }
+        npc.activate();
+      }
+
       this.addEntity(npc);
     }
     this.npcs[npc.id] = npc;
     return npc;
+  }
+
+  addSpell({
+    kind,
+    x,
+    y,
+    orientation = Types.Orientations.UP,
+    originX,
+    originY,
+    element,
+    casterId,
+    targetId = undefined,
+  }) {
+    const spell = new Spell({
+      id: `9${this.spellCount}${x}${y}`,
+      kind,
+      x,
+      y,
+      orientation,
+      originX,
+      originY,
+      element,
+      casterId,
+      targetId,
+    });
+
+    this.spellCount += 1;
+    this.addEntity(spell);
+
+    setTimeout(() => {
+      this.removeFromGroups(spell);
+      delete this.entities[spell.id];
+    }, 3000);
+
+    return spell;
   }
 
   addItem(item) {
@@ -654,6 +834,43 @@ class World {
     this.items[item.id] = item;
 
     return item;
+  }
+
+  castDeathAngelSpell(x, y) {
+    const { id, isDead, x: mobX, y: mobY } = this.getEntityById(this.deathAngelId) || {};
+
+    const diffX = Math.abs(x - mobX);
+    const diffY = Math.abs(y - mobY);
+
+    // Ensure casting is correct
+    if (!id || !this.isCastDeathAngelSpellEnabled || isDead || !x || !y || diffX > 16 || diffY > 16) return;
+    this.isCastDeathAngelSpellEnabled = false;
+
+    const coords = [
+      [0, 1, Types.Orientations.DOWN],
+      [1, 1, Types.Orientations.DOWN_RIGHT],
+      [1, 0, Types.Orientations.RIGHT],
+      [1, -1, Types.Orientations.UP_RIGHT],
+      [0, -1, Types.Orientations.UP],
+      [-1, -1, Types.Orientations.UP_LEFT],
+      [-1, 0, Types.Orientations.LEFT],
+      [-1, 1, Types.Orientations.DOWN_LEFT],
+    ];
+
+    const element = Types.getRandomElement();
+
+    coords.forEach(([spellX, spellY, orientation]) => {
+      this.addSpell({
+        kind: Types.Entities.DEATHANGELSPELL,
+        x: x + spellX,
+        y: y + spellY,
+        orientation,
+        originX: spellX,
+        originY: spellY,
+        element,
+        casterId: this.deathAngelId,
+      });
+    });
   }
 
   startCowLevel() {
@@ -682,7 +899,7 @@ class World {
         // Cow king is possibly at the center of 1 of the 30 shuffled packs
         const kind = coordsIndex === 0 && i === 0 ? Types.Entities.COWKING : Types.Entities.COW;
         const id = `7${kind}${count++}`;
-        const mob = new Mob(id, kind, x + this.cowPackOrder[i][0], y + this.cowPackOrder[i][1]);
+        const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
         mob.onMove(this.onMobMoveCallback.bind(this));
         mob.onDestroy(() => {
           this.cowTotal--;
@@ -692,7 +909,7 @@ class World {
               // Return everyone to town, leave 3s to loot any last drop
               this.endCowLevel(true);
 
-              // When the cow level is cleared, 20% chance of spawning the Minotaur
+              // When the cow level is cleared, 25% chance of spawning the Minotaur
               if (this.minotaurSpawnTimeout && this.minotaur.isDead && random(4) === 0) {
                 this.minotaur.handleRespawn(0);
 
@@ -740,8 +957,8 @@ class World {
   startMinotaurLevel() {
     this.minotaurLevelClock = 15 * 60; // 15 minutes
 
-    const townPortal = this.npcs[this.minotaurLevelTownNpcId];
-    townPortal.respawnCallback();
+    const portal = this.npcs[this.minotaurLevelTownNpcId];
+    portal.respawnCallback();
 
     const minotaurLevelPortal = this.npcs[this.minotaurLevelNpcId];
     minotaurLevelPortal.respawnCallback();
@@ -761,8 +978,8 @@ class World {
     this.minotaurLevelInterval = null;
     this.minotaurLevelClock = null;
 
-    const townPortal = this.npcs[this.minotaurLevelTownNpcId];
-    this.despawn(townPortal);
+    const portal = this.npcs[this.minotaurLevelTownNpcId];
+    this.despawn(portal);
 
     const minotaurLevelPortal = this.npcs[this.minotaurLevelNpcId];
     this.despawn(minotaurLevelPortal);
@@ -770,14 +987,219 @@ class World {
     this.pushBroadcast(new Messages.MinotaurLevelEnd());
   }
 
-  createItem(kind, x, y, partyId?: number) {
+  startChaliceLevel() {
+    this.chaliceLevelClock = 15 * 60; // 15 minutes
+    this.mageTotal = 0;
+
+    const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
+    secretStairs.respawnCallback();
+
+    this.pushBroadcast(new Messages.ChaliceLevelStart());
+
+    let count = 0;
+
+    const mageCoords = this.magePossibleCoords.concat([this.shamanCoords]);
+
+    mageCoords.map(({ x, y }) => {
+      const isShaman = x === this.shamanCoords.x && y === this.shamanCoords.y;
+      const mageCount = isShaman ? 1 : Math.ceil(randomRange(1, 3));
+
+      this.mageTotal += mageCount;
+
+      const mobType = _.shuffle([Types.Entities.MAGE, Types.Entities.GHOST])[0];
+
+      for (let i = 0; i < mageCount; i++) {
+        const kind = isShaman ? Types.Entities.SHAMAN : mobType;
+
+        const id = `7${kind}${count++}`;
+        const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
+        mob.onMove(this.onMobMoveCallback.bind(this));
+        mob.onDestroy(() => {
+          this.mageTotal--;
+          if (this.mageTotal === 0) {
+            // @TODO ~~~~ spawn a portal to the temple?
+            console.log("~~~~~ ALL MAGES DEAD!");
+          }
+        });
+
+        this.addMob(mob);
+        this.mageEntityIds.push(id);
+      }
+    });
+
+    this.chaliceLevelInterval = setInterval(() => {
+      this.chaliceLevelClock -= 1;
+      if (this.chaliceLevelClock < 0) {
+        clearInterval(this.chaliceLevelInterval);
+        this.endChaliceLevel();
+      }
+    }, 1000);
+  }
+
+  endChaliceLevel() {
+    this.chaliceLevelInterval = null;
+    this.chaliceLevelClock = null;
+
+    const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
+    this.despawn(secretStairs);
+
+    this.getEntityById(this.altarChaliceNpcId)?.deactivate();
+    this.pushBroadcast(new Messages.ChaliceLevelEnd());
+
+    // Despawn all mages
+    this.mageEntityIds.map(entityId => {
+      delete this.entities[entityId];
+      delete this.mobs[entityId];
+    });
+  }
+
+  startStoneLevel() {
+    this.stoneLevelClock = 15 * 60; // 15 minutes
+    this.powderSpiderId = null;
+    this.chaliceSpiderId = null;
+    this.spiderTotal = 0;
+
+    const stonePortal = this.npcs[this.portalStoneNpcId];
+    stonePortal.respawnCallback();
+
+    const stoneInnerPortal = this.npcs[this.portalStoneInnerNpcId];
+    stoneInnerPortal.respawnCallback();
+
+    this.pushBroadcast(new Messages.StoneLevelStart());
+
+    let count = 0;
+    _.shuffle(this.spiderPossibleCoords).map(({ x, y }, coordsIndex) => {
+      const kind = coordsIndex % 2 ? Types.Entities.SPIDER : Types.Entities.SPIDER2;
+      const id = `7${kind}${count++}`;
+
+      this.spiderTotal += 1;
+
+      const mob = new Mob(id, kind, x, y);
+      mob.onMove(this.onMobMoveCallback.bind(this));
+      mob.onDestroy(() => {
+        this.spiderTotal--;
+        if (this.spiderTotal === 0) {
+          clearInterval(this.stoneLevelInterval);
+          setTimeout(() => {
+            // Return everyone to stones, leave 5s to loot any last drop
+            this.endStoneLevel();
+          }, 5000);
+        }
+      });
+
+      this.addMob(mob);
+      this.spiderEntityIds.push(id);
+
+      if (coordsIndex === 0) {
+        this.powderSpiderId = mob.id;
+      } else if (coordsIndex === 4) {
+        this.chaliceSpiderId = mob.id;
+      }
+    });
+
+    this.stoneLevelInterval = setInterval(() => {
+      this.stoneLevelClock -= 1;
+      if (this.stoneLevelClock < 0) {
+        clearInterval(this.stoneLevelInterval);
+        this.endStoneLevel();
+      }
+    }, 1000);
+  }
+
+  endStoneLevel() {
+    this.stoneLevelInterval = null;
+    this.stoneLevelClock = null;
+    const stonePortal = this.npcs[this.portalStoneNpcId];
+    this.despawn(stonePortal);
+    const bloodPortal = this.npcs[this.portalStoneInnerNpcId];
+    this.despawn(bloodPortal);
+    this.pushBroadcast(new Messages.StoneLevelEnd());
+    this.deactivateMagicStones();
+
+    // Despawn all spiders
+    this.spiderEntityIds.map(entityId => {
+      delete this.entities[entityId];
+      delete this.mobs[entityId];
+    });
+  }
+
+  startGatewayLevel() {
+    this.gatewayLevelClock = 15 * 60; // 15 minutes
+
+    const gatewayPortal = this.npcs[this.portalGatewayNpcId];
+    gatewayPortal.respawnCallback();
+
+    const gatewayInnerPortal = this.npcs[this.portalGatewayInnerNpcId];
+    gatewayInnerPortal.respawnCallback();
+
+    this.pushBroadcast(new Messages.GatewayLevelStart());
+
+    let count = 0;
+    this.archerPossibleCoords.map(({ x, y }) => {
+      const archerCount = Math.ceil(randomRange(1, 3));
+
+      for (let i = 0; i < archerCount; i++) {
+        const kind = Types.Entities.SKELETONARCHER;
+        const id = `7${kind}${count++}`;
+        const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
+        mob.onMove(this.onMobMoveCallback.bind(this));
+        mob.onDestroy(() => {});
+
+        this.addMob(mob);
+        this.archerEntityIds.push(id);
+      }
+    });
+
+    this.gatewayLevelInterval = setInterval(() => {
+      this.gatewayLevelClock -= 1;
+      if (this.gatewayLevelClock < 0) {
+        clearInterval(this.gatewayLevelInterval);
+        this.endGatewayLevel();
+      }
+    }, 1000);
+  }
+
+  endGatewayLevel() {
+    this.gatewayLevelInterval = null;
+    this.gatewayLevelClock = null;
+    const gatewayPortal = this.npcs[this.portalGatewayNpcId];
+    this.despawn(gatewayPortal);
+    const gatewayInnerPortal = this.npcs[this.portalGatewayInnerNpcId];
+    this.despawn(gatewayInnerPortal);
+    this.pushBroadcast(new Messages.GatewayLevelEnd());
+    this.deactivateHands();
+
+    // Despawn all archers
+    this.archerEntityIds.map(entityId => {
+      delete this.entities[entityId];
+      delete this.mobs[entityId];
+    });
+  }
+
+  startTreeLevel(tree) {
+    this.isActivatedTreeLevel = true;
+
+    this.despawn(tree);
+
+    const secretStairs = this.npcs[this.secretStairsTreeNpcId];
+    secretStairs.respawnCallback();
+
+    setTimeout(() => {
+      this.isActivatedTreeLevel = false;
+
+      tree.respawnCallback();
+      this.despawn(secretStairs);
+    }, 5_000);
+  }
+
+  createItem(kind, x, y, partyId?: number, level?: number) {
     var id = "9" + this.itemCount++,
       item = null;
 
     if (kind === Types.Entities.CHEST) {
       item = new Chest(id, x, y);
     } else {
-      item = new Item(id, kind, x, y, partyId);
+      item = new Item(id, kind, x, y, partyId, level);
     }
     return item;
   }
@@ -808,8 +1230,8 @@ class World {
    */
   clearMobAggroLink(mob, player: any = null) {
     var targetPlayer = null;
-    if (mob.target) {
-      targetPlayer = this.getEntityById(mob.target);
+    if (mob.targetId) {
+      targetPlayer = this.getEntityById(mob.targetId);
       if (targetPlayer) {
         if (!player || (player && targetPlayer.id === player.id)) {
           targetPlayer.removeAttacker(mob);
@@ -861,10 +1283,13 @@ class World {
       mob.increaseHateFor(playerId, hatePoints);
       player.addHater(mob);
 
-      if (mob.kind === Types.Entities.NECROMANCER) {
-        if (!this.raiseInterval) {
-          this.startRaiseInterval(player, mob);
-        }
+      if (mob.kind === Types.Entities.NECROMANCER && !mob.hasTarget()) {
+        this.startRaiseNecromancerInterval(player, mob);
+      } else if (mob.kind === Types.Entities.DEATHANGEL && !mob.hasTarget()) {
+        this.startRaiseDeathAngelInterval(player, mob);
+      } else if (mob.kind === Types.Entities.BUTCHER && !mob.hasTaunted) {
+        mob.hasTaunted = true;
+        this.pushBroadcast(new Messages.Taunt(mob.id));
       }
 
       if (mob.hitPoints > 0) {
@@ -906,10 +1331,6 @@ class World {
 
   onEntityAttack(callback) {
     this.attack_callback = callback;
-  }
-
-  onEntityRaise(callback) {
-    this.raise_callback = callback;
   }
 
   getEntityById(id) {
@@ -959,21 +1380,16 @@ class World {
     }
   }
 
-  startRaiseInterval(character, mob) {
-    this.stopRaiseInterval();
+  startRaiseNecromancerInterval(character, mob) {
+    this.stopRaiseNecromancerInterval();
 
     const raiseZombies = () => {
-      const adjustedDifficulty = this.getPlayersCountInBossRoom({
-        x: 140,
-        y: 324,
-        w: 29,
-        h: 25,
-      });
+      const adjustedDifficulty = this.getPlayersAroundEntity(mob);
 
       const minRaise = adjustedDifficulty + 1;
 
       if (minRaise) {
-        this.broadcastRaise(character, mob.id);
+        this.broadcastRaise(character, mob);
 
         let zombieCount = 0;
         const randomZombies = this.shuffle(this.zombies);
@@ -997,9 +1413,9 @@ class World {
       }
     };
 
-    this.raiseInterval = setInterval(() => {
+    this.raiseNecromancerInterval = setInterval(() => {
       if (mob && Array.isArray(mob.hateList) && !mob.hateList.length) {
-        this.stopRaiseInterval();
+        this.stopRaiseNecromancerInterval();
         this.despawnZombies();
       } else {
         raiseZombies();
@@ -1009,14 +1425,218 @@ class World {
     raiseZombies();
   }
 
-  stopRaiseInterval() {
-    clearInterval(this.raiseInterval);
-    this.raiseInterval = null;
+  stopRaiseNecromancerInterval() {
+    clearInterval(this.raiseNecromancerInterval);
+    this.raiseNecromancerInterval = null;
   }
 
-  broadcastRaise(character, mobId) {
-    if (character && mobId) {
-      this.pushToAdjacentGroups(character.group, character.raise(mobId));
+  startRaiseDeathAngelInterval(player, mob) {
+    this.stopRaiseDeathAngelInterval();
+
+    const raiseSkeletonSpell = () => {
+      this.broadcastRaise(player, mob);
+      this.isCastDeathAngelSpellEnabled = true;
+    };
+
+    this.raiseDeathAngelInterval = setInterval(() => {
+      if (mob && Array.isArray(mob.hateList) && !mob.hateList.length) {
+        this.stopRaiseDeathAngelInterval();
+      } else {
+        raiseSkeletonSpell();
+      }
+    }, 3500);
+
+    // @TODO Remove? or random raise on aggro ~~~
+    raiseSkeletonSpell();
+  }
+
+  stopRaiseDeathAngelInterval() {
+    clearInterval(this.raiseDeathAngelInterval);
+    this.raiseDeathAngelInterval = null;
+    this.isCastDeathAngelSpellEnabled = true;
+  }
+
+  activateMagicStone(player, magicStone) {
+    magicStone.activate();
+
+    const magicStoneIndex = this.magicStones.findIndex(id => id === magicStone.id);
+    const blueflame = this.getEntityById(this.blueFlames[magicStoneIndex]);
+    blueflame.activate();
+
+    this.activatedMagicStones.push(magicStone.id);
+
+    this.broadcastRaise(player, magicStone);
+    this.pushBroadcast(new Messages.Raise(blueflame.id));
+
+    if (this.magicStones.length === this.activatedMagicStones.length) {
+      this.startStoneLevel();
+    }
+  }
+
+  deactivateMagicStones() {
+    this.blueFlames.forEach(id => {
+      this.getEntityById(id).deactivate();
+      this.pushBroadcast(new Messages.Unraise(id));
+    });
+    this.magicStones.forEach(id => {
+      this.getEntityById(id).deactivate();
+      this.pushBroadcast(new Messages.Unraise(id));
+    });
+
+    this.activatedMagicStones = [];
+  }
+
+  activateLever(player, lever) {
+    lever.activate();
+
+    if (lever.id === this.leverChaliceNpcId) {
+      // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death
+
+      if (player.name === "running-coder") {
+        const gate = this.npcs[this.gateTempleNpcId];
+        gate.deactivate();
+        this.despawn(gate);
+      }
+    } else if (lever.id === this.leverLeftCryptNpcId) {
+      const secretStairs = this.npcs[this.secretStairsLeftTemplarNpcId];
+      secretStairs.respawnCallback();
+    } else if (lever.id === this.leverRightCryptNpcId) {
+      const secretStairs = this.npcs[this.secretStairsRightTemplarNpcId];
+      secretStairs.respawnCallback();
+    }
+
+    this.broadcastRaise(player, lever);
+  }
+
+  activateStatues() {
+    this.statues.forEach(statueId => {
+      this.activateStatue(statueId);
+    });
+  }
+
+  activateStatue(statueId) {
+    const statue = this.getEntityById(statueId);
+    const player = this.getFirstPlayerNearEntity(statue);
+
+    if (player) {
+      if (!statue.isActivated) {
+        statue.activate();
+
+        this.broadcastRaise(player, statue);
+
+        let kind = Types.Entities.STATUESPELL;
+        let element = "flame";
+        if (statue.kind === Types.Entities.STATUE2) {
+          kind = Types.Entities.STATUE2SPELL;
+          element = "cold";
+        }
+
+        setTimeout(() => {
+          this.addSpell({
+            kind,
+            x: statue.x,
+            y: statue.y + 1,
+            orientation: Types.Orientations.DOWN,
+            originX: statue.x,
+            originY: statue.y,
+            element,
+            casterId: statue.id,
+          });
+        }, 300);
+
+        setTimeout(() => {
+          statue.isActivated = false;
+          this.activateStatue(statueId);
+        }, randomInt(2, 3) * 1000);
+      }
+    } else {
+      statue.deactivate();
+    }
+  }
+
+  async activateAltarChalice(player, force = false) {
+    const altar = this.getEntityById(this.altarChaliceNpcId);
+
+    if (altar && altar instanceof Npc && !altar.isActivated) {
+      if (force || (await this.databaseHandler.useInventoryItem(player, "chalice"))) {
+        altar.activate();
+
+        this.startChaliceLevel();
+        this.broadcastRaise(player, altar);
+      }
+    }
+  }
+
+  async activateAltarSoulStone(player, force = false) {
+    const altar = this.getEntityById(this.altarSoulStoneNpcId);
+
+    if (altar && altar instanceof Npc && !altar.isActivated) {
+      if (force || (await this.databaseHandler.useInventoryItem(player, "soulstone"))) {
+        let generatedItem = generateSoulStoneItem();
+        if (!generatedItem.item.startsWith("rune")) {
+          generatedItem = player.generateItem({
+            kind: Types.getKindFromString(generatedItem.item),
+            // @ts-ignore
+            uniqueChances: generatedItem.uniqueChances,
+          });
+        }
+
+        this.databaseHandler.lootItems({
+          player,
+          items: [generatedItem],
+        });
+
+        altar.activate();
+
+        this.broadcastRaise(player, altar);
+
+        this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX);
+
+        setTimeout(() => {
+          altar.deactivate();
+        }, 1000);
+      }
+    }
+  }
+
+  async activateHands(player, force = false) {
+    const hands = this.getEntityById(this.handsNpcId);
+
+    if (hands && hands instanceof Npc && !hands.isActivated) {
+      if (force || (await this.databaseHandler.useInventoryItem(player, "powderquantum"))) {
+        hands.activate();
+
+        this.startGatewayLevel();
+        this.broadcastRaise(player, hands);
+      }
+    }
+  }
+
+  deactivateHands() {
+    const hands = this.getEntityById(this.handsNpcId);
+
+    if (hands && hands instanceof Npc && hands.isActivated) {
+      hands.deactivate();
+
+      this.pushBroadcast(new Messages.Unraise(hands.id));
+    }
+  }
+
+  activateTrap(player, trapId) {
+    const trap = this.getEntityById(trapId);
+    if (!trap || trap.isActivated) return;
+
+    trap.activate();
+    this.broadcastRaise(player, trap);
+
+    setTimeout(() => {
+      trap.isActivated = false;
+    }, 3000);
+  }
+
+  broadcastRaise(player, mob) {
+    if (player && mob) {
+      this.pushToAdjacentGroups(player.group, mob.raise(player.id));
     }
   }
 
@@ -1032,13 +1652,20 @@ class World {
 
     const levelDifference = playerLevel - mobLevel;
 
-    if (levelDifference < 0) {
+    if (Types.isBoss(mob.kind)) {
+      if (levelDifference < 0 && levelDifference >= -EXP_LEVEL_BELOW_MOB) {
+        const multiplier = Math.abs(levelDifference) / 8;
+        exp = Math.ceil(exp * multiplier);
+      } else {
+        exp = 0;
+      }
+    } else if (levelDifference < 0) {
       if (levelDifference < -EXP_LEVEL_BELOW_MOB) {
         exp = 0;
       }
     } else if (levelDifference > 0) {
       // Too high level for mob
-      if (levelDifference > EXP_LEVEL_END_RANGE || (Types.isBoss(mob.kind) && levelDifference >= EXP_LEVEL_END_RANGE)) {
+      if (levelDifference > EXP_LEVEL_END_RANGE) {
         exp = 0;
       } else if (levelDifference > EXP_LEVEL_START_RANGE) {
         // Nerf exp per level
@@ -1058,18 +1685,18 @@ class World {
   }
 
   // entity is receiver
-  handleHurtEntity({ entity, attacker, dmg, isCritical = false, isBlocked = false }) {
-    if (entity.type === "player") {
-      // A player is only aware of his own hitpoints
-      this.pushToPlayer(entity, entity.health({ isHurt: true }));
-    }
-
-    if (attacker.type === "player") {
+  handleHurtEntity({ attacker, entity, dmg, isCritical = false, isBlocked = false }) {
+    if (attacker?.type === "player") {
       // Let the player know how much damage was inflicted
       this.pushToPlayer(
         attacker,
         new Messages.Damage(entity, dmg, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
       );
+    }
+
+    if (entity.type === "player") {
+      // A player is only aware of his own hitpoints
+      this.pushToPlayer(entity, entity.health({ isHurt: true }));
     }
 
     if (entity.hitPoints <= 0) {
@@ -1091,9 +1718,18 @@ class World {
       } else if (entity.type === "player") {
         this.handlePlayerVanish(entity);
         this.pushToAdjacentGroups(entity.group, entity.despawn());
+
+        if (attacker.type === "player") {
+          postMessageToDiscordChatChannel(`${attacker.name} killed ${entity.name} ${EmojiMap.sword}`);
+        }
       }
 
       this.removeEntity(entity);
+    }
+
+    if (attacker?.type === "spell") {
+      this.pushToAdjacentGroups(attacker.group, attacker.despawn());
+      this.removeEntity(attacker);
     }
   }
 
@@ -1124,6 +1760,14 @@ class World {
       } else if (Types.isMob(kind)) {
         if (kind === Types.Entities.COW) {
           self.cowPossibleCoords.push({ x: pos.x + 1, y: pos.y });
+        } else if ([Types.Entities.SPIDER, Types.Entities.SPIDER2].includes(kind)) {
+          self.spiderPossibleCoords.push({ x: pos.x + 1, y: pos.y });
+        } else if (kind === Types.Entities.SKELETONARCHER && pos.x < 29 && pos.y >= 744 && pos.y <= 781) {
+          self.archerPossibleCoords.push({ x: pos.x + 1, y: pos.y });
+        } else if (kind === Types.Entities.MAGE && pos.x < 29 && pos.y >= 696 && pos.y <= 734) {
+          self.magePossibleCoords.push({ x: pos.x + 1, y: pos.y });
+        } else if (kind === Types.Entities.SHAMAN && pos.x < 29 && pos.y >= 696 && pos.y <= 734) {
+          self.shamanCoords = { x: pos.x + 1, y: pos.y };
         } else {
           const id = `7${kind}${count++}`;
           const mob = new Mob(id, kind, pos.x + 1, pos.y);
@@ -1133,7 +1777,7 @@ class World {
             mob.onDestroy(() => {
               clearInterval(self.minotaurLevelInterval);
               setTimeout(() => {
-                // Return everyone to town, leave 3s to loot any last drop
+                // Return everyone to town, leave 5s to loot any last drop
                 self.endMinotaurLevel();
               }, 5000);
 
@@ -1144,6 +1788,36 @@ class World {
                 self.minotaurSpawnTimeout = null;
               }, time);
             });
+          } else if (kind === Types.Entities.BUTCHER) {
+            mob.onDestroy(() => {
+              clearInterval(self.gatewayLevelInterval);
+              setTimeout(() => {
+                // Return everyone to gateway, leave 5s to loot any last drop
+                self.endGatewayLevel();
+              }, 5000);
+            });
+          } else if (kind === Types.Entities.SPIDERQUEEN) {
+          } else if (kind === Types.Entities.DEATHANGEL) {
+            self.deathAngelId = mob.id;
+          } else if (kind === Types.Entities.SKELETONTEMPLAR || kind === Types.Entities.SKELETONTEMPLAR2) {
+            const isPoisonTemplar = kind === Types.Entities.SKELETONTEMPLAR;
+            const isMagicTemplar = kind === Types.Entities.SKELETONTEMPLAR2;
+
+            if (isPoisonTemplar) {
+              self.poisonTemplarId = mob.id;
+            } else if (isMagicTemplar) {
+              self.magicTemplarId = mob.id;
+            }
+
+            mob.onDestroy(() => {
+              const lever = self.npcs[isPoisonTemplar ? self.leverLeftCryptNpcId : self.leverRightCryptNpcId];
+              const secretStairs =
+                self.npcs[isPoisonTemplar ? self.secretStairsLeftTemplarNpcId : self.secretStairsRightTemplarNpcId];
+
+              self.despawn(secretStairs);
+              lever.deactivate();
+              self.pushBroadcast(new Messages.Unraise(lever.id));
+            });
           }
 
           mob.onRespawn(function () {
@@ -1153,6 +1827,10 @@ class World {
             if (mob.area && mob.area instanceof ChestArea) {
               mob.area.addToArea(mob);
             }
+
+            mob.handleRandomElement();
+            mob.handleEnchant();
+            mob.handleRandomResistances();
           });
           mob.onMove(self.onMobMoveCallback.bind(self));
 
@@ -1230,13 +1908,23 @@ class World {
   }
 
   getDroppedItemName(mob, attacker) {
-    var kind = Types.getKindAsString(mob.kind);
-    var drops = Properties[kind].drops;
-    var v = random(100) + 1;
-    var p = 0;
+    const mobLevel = Types.getMobLevel(mob.kind);
+    const kind = Types.getKindAsString(mob.kind);
+    const drops = Properties[kind].drops;
+    const v = random(100) + 1;
+    let p = 0;
     let itemKind = null;
 
-    if (mob.kind === Types.Entities.MINOTAUR) {
+    if (
+      mob.kind === Types.Entities.MINOTAUR ||
+      mob.kind === Types.Entities.BUTCHER ||
+      mob.kind === Types.Entities.DEATHANGEL
+    ) {
+      const MIN_DAMAGE = {
+        [Types.Entities.MINOTAUR]: 2000,
+        [Types.Entities.BUTCHER]: 2500,
+        [Types.Entities.DEATHANGEL]: 3000,
+      };
       let members = [attacker.id];
       let party = null;
 
@@ -1257,6 +1945,8 @@ class World {
       // Safety check?
       members = _.uniq(members);
 
+      const playersToReceiveChests: { [key: string]: string[] } = {};
+
       members.forEach(id => {
         const player = this.getEntityById(id);
 
@@ -1267,22 +1957,61 @@ class World {
             },
             extra: { id },
           });
-        } else if (player?.minotaurDamage >= 2000) {
+          return;
+        }
+
+        let chestType: ChestType = null;
+
+        if (mob.kind === Types.Entities.MINOTAUR) {
+          if (player.level < 53) {
+            // @NOTE: Ban player w/ reason
+            // return;
+          }
+          if (player?.minotaurDamage >= MIN_DAMAGE[mob.kind]) {
+            chestType = player.level >= 56 ? "chestgreen" : "chestblue";
+          }
+        } else if (mob.kind === Types.Entities.BUTCHER) {
+          if (player?.butcherDamage >= MIN_DAMAGE[mob.kind]) {
+            chestType = "chestred";
+          }
+        } else if (mob.kind === Types.Entities.DEATHANGEL) {
+          if (player?.deathAngelDamage >= MIN_DAMAGE[mob.kind]) {
+            chestType = "chestpurple";
+          }
+        }
+
+        if (chestType) {
           this.databaseHandler.lootItems({
             player,
-            items: [{ item: "chestblue", quantity: 1 }],
+            items: [{ item: chestType, quantity: 1 }],
           });
+
+          if (!playersToReceiveChests[chestType]) {
+            playersToReceiveChests[chestType] = [];
+          }
+
+          playersToReceiveChests[chestType].push(player.name);
 
           if (party) {
             this.pushToParty(
               party,
               new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
-                { playerName: player.name, kind: Types.Entities.CHESTBLUE },
+                { playerName: player.name, kind: Types.Entities[chestType.toUpperCase()] },
               ]),
             );
           }
         }
       });
+
+      if (Object.keys(playersToReceiveChests).length) {
+        Object.entries(playersToReceiveChests).map(([chestType, players]) => {
+          postMessageToDiscordChatChannel(
+            `${players.join(", ")} received a ${_.capitalize(chestType.replace("chest", ""))} Chest ${
+              EmojiMap[chestType]
+            }`,
+          );
+        });
+      }
     } else if (mob.kind === Types.Entities.COW) {
       const diamondRandom = random(800);
       if (diamondRandom === 69) {
@@ -1293,8 +2022,6 @@ class World {
         return "beltdiamond";
       } else if (diamondRandom === 555) {
         return "shielddiamond";
-      } else if (diamondRandom === 699) {
-        return "scrolltransmute";
       }
     }
     if (mob.kind >= Types.Entities.EYE) {
@@ -1305,6 +2032,114 @@ class World {
         return "ringfountain";
       } else if (mob.kind >= Types.Entities.COW && vv === 133) {
         return "amuletfrozen";
+      }
+    }
+
+    if (mob.kind === Types.Entities.GOLEM) {
+      if (!attacker.hasNft && random(150) === 100) {
+        return "nft";
+      }
+    } else if (mob.kind === Types.Entities.SNAKE4) {
+      if (!attacker.hasWing && random(150) === 100) {
+        return "wing";
+      }
+    }
+    // @TODO Bind the CRYSTAL quest!
+    //  else if (mob.kind === Types.Entities.SHAMAN) {
+    //   if (!attacker.hasCrystal && random(150) === 100) {
+    //     return "crystal";
+    //   }
+    // }
+
+    if ([Types.Entities.SPIDER, Types.Entities.SPIDER2].includes(mob.kind)) {
+      if (mob.id === this.powderSpiderId) {
+        return "powderred";
+      } else if (mob.id === this.chaliceSpiderId) {
+        return "chalice";
+      }
+    }
+
+    if (mob.kind >= Types.Entities.OCULOTHORAX) {
+      const superUniqueRandom = random(12000);
+
+      if ([Types.Entities.MAGE, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(mob.kind)) {
+        if (superUniqueRandom === 666) {
+          return "ringwizard";
+        } else if (superUniqueRandom === 777) {
+          return "ringmystical";
+        }
+      }
+
+      if (mob.kind >= Types.Entities.WRAITH2) {
+        if (superUniqueRandom === 133) {
+          return "amuletmoon";
+        } else if (superUniqueRandom === 420) {
+          return "amuletdragon";
+        } else if (superUniqueRandom === 555) {
+          return "ringheaven";
+        }
+      } else if (mob.kind >= Types.Entities.SPIDERQUEEN) {
+        if (superUniqueRandom === 333) {
+          return "amuletdragon";
+        }
+      }
+
+      if (superUniqueRandom === 111) {
+        return "ringbalrog";
+      } else if (superUniqueRandom === 222) {
+        return "ringconqueror";
+      } else if (superUniqueRandom === 444) {
+        return "ringheaven";
+      } else if (superUniqueRandom === 6969) {
+        return "amuletstar";
+      }
+
+      const stoneDragonRandom = random(25_000);
+      if (stoneDragonRandom === 133) {
+        return "stonedragon";
+      }
+
+      const stoneHeroRandom = random(100_000);
+      if (stoneHeroRandom === 133) {
+        return "stonehero";
+      }
+    }
+
+    if (mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
+      const demonRandom = random(800);
+      if (demonRandom === 69) {
+        return "demonaxe";
+      } else if (demonRandom === 133) {
+        return "demonarmor";
+      } else if (demonRandom === 420) {
+        return "beltdemon";
+      } else if (demonRandom === 555) {
+        return "shielddemon";
+      } else if (demonRandom === 699) {
+        return "amuletdemon";
+      }
+    }
+
+    if (!Types.isBoss(mob.kind)) {
+      const runeRandom = random(250);
+      if (runeRandom === 133) {
+        return `rune-${getRandomRune(Types.getMobLevel(mob.kind))}`;
+      } else if (runeRandom === 42) {
+        return "stonesocket";
+      } else if (runeRandom === 69) {
+        return "jewelskull";
+      }
+
+      const socketStoneRandom = random(400);
+      if (socketStoneRandom === 133) {
+        return `socketstone`;
+      }
+
+      if (mob.kind >= Types.Entities.WRAITH) {
+        const transmuteRandom = random(800);
+        if (transmuteRandom === 133) {
+          return "scrolltransmute";
+        }
       }
     }
 
@@ -1326,7 +2161,6 @@ class World {
           itemKind = Types.getKindFromString(itemName);
 
           if (itemKind === Types.Entities.SCROLLUPGRADEHIGH) {
-            const mobLevel = Types.getMobLevel(mob.kind);
             if (attacker && attacker.level - 6 > mobLevel) {
               // Reduce scroll drops to prevent crazy farming
               if (random(4) === 1) {
@@ -1349,30 +2183,136 @@ class World {
   }
 
   getDroppedItem(mob, attacker) {
-    const itemName = this.getDroppedItemName(mob, attacker);
+    let itemName = this.getDroppedItemName(mob, attacker);
     const kind = Types.getKindFromString(itemName);
 
     if (mob.kind === Types.Entities.MINOTAUR) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur 🥶`);
     } else if (mob.kind === Types.Entities.COWKING) {
       postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
+    } else if (mob.kind === Types.Entities.SPIDERQUEEN) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained Arachneia the Spider Queen 🕷️`);
+    } else if (mob.kind === Types.Entities.BUTCHER) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained Gorefiend the Butcher 🩸`);
+    } else if (mob.kind === Types.Entities.SHAMAN) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained Zul'Gurak 🧙`);
+    } else if (mob.kind === Types.Entities.DEATHANGEL) {
+      postMessageToDiscordChatChannel(`${attacker.name} slained Azrael 💀`);
     }
 
-    // var randomDrops = ["ringbronze", "ringsilver", "ringgold", "amuletsilver", "amuletgold"] as any;
-    // var randomDrops = ["belthorned", "hornedarmor"] as any;
-    // var randomDrops = ["beltfrozen", "blueaxe", "bluemorningstar", "frozensword"] as any;
-    // var randomDrops = ["chestblue", "cowkinghorn", "ringminotaur"] as any;
+    // var randomDrops = ["dragonsword", "dragonarmor", "shielddragon"];
+    // var randomDrops = ["soulstone"];
+    // var randomDrops = ["nft"];
+    // var randomDrops = ["nft", "wing", "crystal"];
+    // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
+    // var randomDrops = ["amuletdragon", "amuletskull"];
+    // var randomDrops = ["chalice"];
+    // var randomDrops = ["stonehero", "stonedragon", "soulstone"];
+    // var randomDrops = [
+    // "ringnecromancer",
+    // "ringraistone",
+    // "ringfountain",
+    // "ringminotaur",
+    // "ringmystical",
+    // "ringbalrog",
+    // "ringconqueror",
+    // "ringheaven",
+    // "ringwizard",
+    // "amuletcow",
+    // "amuletfrozen",
+    // "amuletdemon",
+    // "amuletmoon",
+    // "amuletstar",
+    // "amuletskull",
+    // "amuletdragon",
+    // ];
+    // var randomDrops = ["bloodarmor", "paladinarmor", "demonarmor"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
-    // var randomDrops = ["scrolltransmute", "ringgold", "amuletgold"];
-    // var randomDrops = ["shieldgolden", "shieldblue", "shieldhorned", "shieldfrozen", "shielddiamond"];
-    // var randomDrops = ["ringraistone", "amuletcow", "amuletfrozen", "ringfountain", "ringnecromancer"];
+    // var randomDrops = [
+    // "rune",
+    // "jewelskull",
+    // "ringplatinum",
+    // "ringconqueror",
+    // "amuletdemon",
+    // "ringmystical",
+    // "amuletmoon",
+    // "ringheaven",
+    // "ringwizard",
+    // "amuletplatinum",
+    // "beltemerald",
+    // "beltexecutioner",
+    // "beltmystical",
+    // "belttemplar",
+    // "beltdemon",
+    // "beltmoon",
+    // "shieldexecutioner",
+    // "shielddragon",
+    // "shielddemon",
+    // "shieldmoon",
+    // "shieldemerald",
+    // "shieldtemplar",
+    // "ringbalrog",
+    // "stonesocket",
+    // "scrollupgradelegendary",
+    // "scrollupgradesacred",
+    // "rune-sat",
+    // "rune-al",
+    // "rune-bul",
+    // "rune-nan",
+    // "rune-mir",
+    // "rune-gel",
+    // "rune-do",
+    // "rune-ban",
+    // "rune-vie",
+    // "rune-um",
+    // "rune-hex",
+    // "rune-zal",
+    // "rune-sol",
+    // "rune-eth",
+    // "rune-btc",
+    // "rune-vax",
+    // "rune-por",
+    // "rune-las",
+    // "rune-dur",
+    // "rune-fal",
+    // "rune-kul",
+    // "rune-mer",
+    // "rune-qua",
+    // "rune-gul",
+    // "rune-ber",
+    // "rune-cham",
+    // "rune-tor",
+    // "rune-xno",
+    // "rune-jah",
+    // "rune-shi",
+    // "rune-vod",
+    // "goldensword",
+    // "emeraldsword",
+    // "mysticalsword",
+    // "dragonsword",
+    // "executionersword",
+    // "eclypsedagger",
+    // "spikeglaive",
+    // "templarsword",
+    // "moonsword",
+    // ];
     // var randomDrop = random(randomDrops.length);
-    // return this.addItem(this.createItem(Types.getKindFromString(randomDrops[randomDrop]), mob.x, mob.y));
+    // itemName = randomDrops[randomDrop];
+
+    let itemLevel = null;
+
+    if (itemName === "jewelskull") {
+      itemLevel = getRandomJewelLevel(Types.getMobLevel(mob.kind));
+    } else if (itemName === "rune") {
+      itemName = `rune-${getRandomRune(Types.getMobLevel(mob.kind))}`;
+    }
 
     // Potions can be looted by anyone
     const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;
 
-    return itemName ? this.addItem(this.createItem(Types.getKindFromString(itemName), mob.x, mob.y, partyId)) : null;
+    return itemName
+      ? this.addItem(this.createItem(Types.getKindFromString(itemName), mob.x, mob.y, partyId, itemLevel))
+      : null;
   }
 
   onMobMoveCallback(mob) {
@@ -1477,6 +2417,7 @@ class World {
 
   handleEntityGroupMembership(entity) {
     var hasChangedGroups = false;
+
     if (entity) {
       var groupId = this.map.getGroupIdFromPosition(entity.x, entity.y);
       if (!entity.group || (entity.group && entity.group !== groupId)) {
@@ -1501,13 +2442,27 @@ class World {
       this.map.forEachGroup(function (id) {
         if (self.groups[id].incoming.length > 0) {
           _.each(self.groups[id].incoming, function (entity) {
-            //
             if (entity instanceof Player) {
               self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
             } else {
               self.pushToGroup(id, new Messages.Spawn(entity));
             }
           });
+
+          // const batchEntitySpawns = self.groups[id].incoming
+          //   .map(entity => {
+          //     if (entity instanceof Player) {
+          //       self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
+          //       return;
+          //     }
+          //     return entity;
+          //   })
+          //   .filter(Boolean);
+
+          // if (batchEntitySpawns.length) {
+          //   self.pushToGroup(id, new Messages.SpawnBatch(batchEntitySpawns));
+          // }
+
           self.groups[id].incoming = [];
         }
       });
@@ -1584,24 +2539,29 @@ class World {
     });
   }
 
-  getPlayersCountInBossRoom(bossArea) {
-    let counter = 0;
+  isPlayerNearEntity(player, entity, range: number = 20) {
+    if (player) {
+      return Math.abs(player.x - entity.x) <= range && Math.abs(player.y - entity.y) <= range;
+    } else {
+      return false;
+    }
+  }
 
-    function isInsideBossRoom(entity) {
-      if (entity) {
-        return (
-          entity.x >= bossArea.x &&
-          entity.y >= bossArea.y &&
-          entity.x < bossArea.x + bossArea.w &&
-          entity.y < bossArea.y + bossArea.h
-        );
-      } else {
-        return false;
+  getFirstPlayerNearEntity(entity, range: number = 20) {
+    for (let id in this.players) {
+      if (this.isPlayerNearEntity(this.players[id], entity, range)) {
+        return this.players[id];
       }
     }
 
+    return null;
+  }
+
+  getPlayersAroundEntity(entity, range: number = 20) {
+    let counter = 0;
+
     for (let id in this.players) {
-      if (isInsideBossRoom(this.players[id])) {
+      if (this.isPlayerNearEntity(this.players[id], entity, range)) {
         counter += 1;
         // Max difficulty of 6
         if (counter === 6) {
@@ -1609,6 +2569,7 @@ class World {
         }
       }
     }
+
     return counter;
   }
 
@@ -1631,6 +2592,27 @@ class World {
     }
 
     return array;
+  }
+
+  handleBossDmg({ dmg, entity, player }) {
+    // Reduce dmg on boss by 20% per player in boss room
+    const adjustedDifficulty = this.getPlayersAroundEntity(entity);
+
+    const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
+    dmg = Math.floor(dmg * percentReduce);
+
+    if (entity.kind === Types.Entities.MINOTAUR) {
+      player.minotaurDamage += dmg;
+      player.unregisterMinotaurDamage();
+    } else if (entity.kind === Types.Entities.BUTCHER) {
+      player.butcherDamage += dmg;
+      player.unregisterButcherDamage();
+    } else if (entity.kind === Types.Entities.DEATHANGEL) {
+      player.deathAngelDamage += dmg;
+      player.unregisterDeathAngelDamage();
+    }
+
+    return dmg;
   }
 }
 

@@ -3,10 +3,9 @@ import * as _ from "lodash";
 import { Types } from "../../shared/js/gametypes";
 import { ChestArea, MobArea } from "./area";
 import Character from "./character";
-// import ChestArea from "./chestarea";
 import Messages from "./message";
 import Properties from "./properties";
-import { distanceTo, random } from "./utils";
+import { distanceTo, random, randomInt } from "./utils";
 
 class Mob extends Character {
   spawningX: any;
@@ -21,11 +20,16 @@ class Mob extends Character {
   tankerlist: any[];
   destroyTime: any;
   destroyCallback: any;
-  hitPoints: any;
+  hitPoints: number;
   area: MobArea;
   respawnCallback: any;
   moveCallback: any;
   kind: number;
+  name: string;
+  resistances: Resistances;
+  element: Elements;
+  enchants: Enchant[];
+  hasTaunted: boolean;
 
   constructor(id, kind, x, y) {
     super(id, "mob", kind, x, y);
@@ -42,10 +46,147 @@ class Mob extends Character {
     this.hateCount = 0;
     this.tankerlist = [];
     this.destroyTime = null;
+    this.name = Types.getKindAsString(kind);
+    this.resistances = Types.getResistance(this);
+    this.enchants = null;
+    this.hasTaunted = false;
+
+    this.handleRandomElement();
+    this.handleRandomResistances();
+    this.handleEnchant();
+  }
+
+  assignRandomResistances(count: number) {
+    let randomResistances = _.shuffle(Object.keys(Types.mobResistance[this.name]));
+    let immunedResistances = [];
+
+    if (this.element) {
+      immunedResistances.push(`${this.element}Resistance`);
+      randomResistances = [...immunedResistances, ...randomResistances.filter(r => !immunedResistances.includes(r))];
+    }
+
+    this.resistances = randomResistances.slice(0, count).reduce((acc, resistance, index) => {
+      if (immunedResistances.includes(resistance)) {
+        acc[resistance] = 100;
+      } else {
+        acc[resistance] = Types.mobResistance[this.name][resistance];
+      }
+
+      if (this.kind === Types.Entities.DEATHANGEL && index !== 0) {
+        acc[resistance] = randomInt(2, 8) * 10;
+      }
+
+      return acc;
+    }, {});
+
+    this.resistances = _.fromPairs(_.sortBy(_.toPairs(this.resistances), 1).reverse());
+  }
+
+  handleRandomElement() {
+    if ([Types.Entities.MAGE, Types.Entities.SKELETONARCHER, Types.Entities.SHAMAN].includes(this.kind)) {
+      this.element = Types.getRandomElement();
+
+      if (this.kind === Types.Entities.SKELETONARCHER && this.element === "spectral") {
+        // @ts-ignore No spectral arrow, revert back to a normal arrow
+        this.element = undefined;
+      }
+    }
+  }
+
+  handleEnchant() {
+    this.enchants = [...(Types.mobEnchant[this.name] || [])];
+
+    const enchants: Enchant[] = ["magic", "flame", "lightning", "cold", "poison", "spectral", "physical", "stoneskin"];
+
+    if (
+      [Types.Entities.SPIDERQUEEN, Types.Entities.BUTCHER, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(
+        this.kind,
+      )
+    ) {
+      // Add 2 random extra enchant
+      const extraEnchants = _.shuffle(enchants.filter(enchant => !this.enchants.includes(enchant))).slice(0, 2);
+      this.enchants = this.enchants.concat(extraEnchants);
+    }
+
+    if (this.kind > Types.Entities.ZOMBIE && !this.enchants.length) {
+      if (Types.isBoss(this.kind)) {
+        this.enchants = _.shuffle(enchants).slice(0, this.kind === Types.Entities.NECROMANCER ? 1 : 2);
+      } else {
+        this.enchants = this.element ? [this.element] : _.shuffle(enchants).slice(0, 1);
+      }
+    }
+
+    if (!Types.isBoss(this.kind)) {
+      const isMiniBoss = random(this.kind === Types.Entities.COW ? 50 : 20) === 1;
+      if (!isMiniBoss) return;
+
+      let enchantCount = 0;
+      if (this.kind <= Types.Entities.DEATHKNIGHT) {
+        enchantCount = 1;
+      } else if (this.kind <= Types.Entities.COW) {
+        enchantCount = 2;
+      } else if (this.kind >= Types.Entities.RAT3) {
+        enchantCount = 3;
+      }
+
+      enchantCount = enchantCount - this.enchants.length;
+      this.enchants = this.enchants.concat(
+        _.shuffle(enchants.filter(enchant => !this.enchants.includes(enchant))).slice(0, enchantCount),
+      );
+    }
+
+    // 50% of bosses inherits stone skin
+    if (Types.isBoss(this.kind) && !this.enchants.includes("stoneskin")) {
+      const hasStoneSkin = random(2);
+      if (hasStoneSkin) {
+        if (this.enchants.length >= 3) {
+          this.enchants[this.enchants.length - 1] = "stoneskin";
+        } else {
+          this.enchants.push("stoneskin");
+        }
+      }
+    }
+  }
+
+  // @NOTE Since there is no Mob factory on Server side, have the exceptions stored here
+  handleRandomResistances() {
+    if (
+      [
+        Types.Entities.RAT3,
+        Types.Entities.SNAKE3,
+        Types.Entities.SNAKE4,
+        Types.Entities.OCULOTHORAX,
+        Types.Entities.KOBOLD,
+        Types.Entities.SPIDER,
+        Types.Entities.SPIDER2,
+        Types.Entities.SKELETONBERSERKER,
+        Types.Entities.SKELETONARCHER,
+      ].includes(this.kind)
+    ) {
+      this.assignRandomResistances(1);
+    } else if (
+      [
+        Types.Entities.GHOST,
+        Types.Entities.SKELETONTEMPLAR,
+        Types.Entities.SKELETONTEMPLAR2,
+        Types.Entities.MAGE,
+        Types.Entities.SHAMAN,
+        Types.Entities.WRAITH2,
+      ].includes(this.kind)
+    ) {
+      this.assignRandomResistances(2);
+    } else if (
+      [Types.Entities.SPIDERQUEEN, Types.Entities.BUTCHER, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(
+        this.kind,
+      )
+    ) {
+      this.assignRandomResistances(3);
+    }
   }
 
   destroy(delay = 30000) {
     this.isDead = true;
+    this.hasTaunted = false;
     this.destroyTime = Date.now();
     this.hateList = [];
     this.tankerlist = [];
@@ -202,6 +343,7 @@ class Mob extends Character {
   }
 
   onRespawn(callback) {
+    this.hitPoints = Properties.getHitPoints(this.kind);
     this.respawnCallback = callback;
   }
 

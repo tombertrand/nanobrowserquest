@@ -1,0 +1,61 @@
+{
+  "id": "shaman",
+  "width": 220,
+  "height": 220,
+  "animations": {
+    "atk_right": {
+      "length": 6,
+      "row": 2
+    },
+    "walk_right": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_up": {
+      "length": 6,
+      "row": 2
+    },
+    "walk_up": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_down": {
+      "length": 6,
+      "row": 2
+    },
+    "walk_down": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    },
+    "raise_right": {
+      "length": 6,
+      "row": 2
+    },
+    "raise_up": {
+      "length": 6,
+      "row": 2
+    },
+    "raise_down": {
+      "length": 6,
+      "row": 2
+    },
+    "death": {
+      "length": 13,
+      "row": 7
+    }
+  },
+  "offset_x": -104,
+  "offset_y": -134
+}

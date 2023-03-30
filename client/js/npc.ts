@@ -1,4 +1,9 @@
 import { Types } from "../../shared/js/gametypes";
+import {
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../shared/js/types/achievements";
 import Character from "./character";
 import Game from "./game";
 
@@ -145,7 +150,7 @@ var NpcTalk = {
 
   octocat: [
     "Welcome to Nano BrowserQuest!",
-    'Want to report an issue? Check out <a target="_blank" href="https://github.com/running-coder/NanoBrowserQuest">NanoBrowserQuest repository on GitHub</a>',
+    'Want to report an issue? Log into Discord and report it in the #bug channel',
     'Want to see the source code? Check out <a target="_blank" href="https://github.com/browserquest/BrowserQuest">BrowserQuest repository on GitHub</a>',
   ],
 
@@ -158,8 +163,9 @@ var NpcTalk = {
 
   waypointx: [""],
   waypointn: [""],
+  waypointo: [""],
   stash: [""],
-  cowportal: [
+  portalcow: [
     {
       condition(game: any) {
         return game.player.level < 45;
@@ -167,15 +173,136 @@ var NpcTalk = {
       text: ["You need to be lv.45 and above to access the secret level"],
     },
   ],
-
-  minotaurportal: [
+  portalminotaur: [
     {
       condition(game: any) {
         return game.player.level < 53;
       },
-      text: ["You need to be lv.53 and above to access the secret level"],
+      text: ["You need to be lv.53 and above to access the Minotaur portal"],
     },
   ],
+  portalstone: [""],
+  portalgateway: [""],
+  gatewayfx: [""],
+  gate: [""],
+  magicstone: [""],
+  blueflame: [""],
+  altarchalice: [""],
+  altarsoulstone: [""],
+  secretstairs: [""],
+  secretstairs2: [""],
+  secretstairsup: [""],
+  tombdeathangel: [
+    "There was a powerful death angel named Azrael<br/>who ruled over the souls of the deceased.",
+    "Azrael was feared and respected by all, for it was said that those who<br/>angered him would suffer an eternity of torment in the underworld.",
+    "But there was one place that even Azrael dared not enter: the Lost Temple.",
+    "It was said that the temple held ancient secrets<br/>and power that could threaten even Azrael's rule.",
+    "The temple was hidden deep in a treacherous jungle,<br/>guarded by deadly beasts and cursed by dark magic.",
+    "Many brave souls had attempted to find the temple and unlock its secrets,<br/>but none had ever returned...",
+  ],
+  tombangel: [
+    "The sun statuette grants the power to see what is hidden to human eye.",
+    "The unique artifact remains firmly in the hands of the blood guardian, protected for all eternity",
+  ],
+
+  tombcross: [
+    "The moon statuette grants the power to travel through space and time.",
+    "The unique artifact remains firmly in the hands of the blood guardian, protected for all eternity",
+  ],
+  tombskull: [
+    "There is an ancient legend about a powerful grimoire, a book of magic and spells,<br/>that is said to be hidden beneath a tree deep in the heart of a dark forest.",
+    "According to the legend, the grimoire holds the secrets to powerful magic,<br/>and those who can uncover it will gain immense power and knowledge.",
+  ],
+  lever: [""],
+  lever2: [""],
+  grimoire: [
+    "The grimoire contains secrets of life and death,<br/>and the power to control the fate of souls.",
+    "It is said that whoever possesses the grimoire<br/>will have the power to control death itself.",
+    "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
+  ],
+  fossil: ["Here lies the remains of a fallen Bitcoin maximalist.<br/>It shall not rise again."],
+  hands: [
+    {
+      condition(_game, isActivated) {
+        return !isActivated;
+      },
+      text: [
+        "These hands appear to be linked with the gateway,<br/>as if an inseparable part of its ancient structure.",
+        "The mechanism of the Gateway requires<br/>a specific powder to initiate.",
+      ],
+    },
+    {
+      condition(_game, isActivated) {
+        return isActivated;
+      },
+      text: ["The gateway is opened"],
+    },
+  ],
+  alkor: [
+    {
+      condition(game: any) {
+        return !game.storage.getAchievements()[ACHIEVEMENT_NFT_INDEX];
+      },
+      text: [
+        "I had procured a valuable NFT of a stone for $2.8 million<br/>but unfortunately, it has gone missing.",
+        "If you could retrieve it for me, I would be most grateful<br/>and offer a suitable reward as a token of my appreciation.",
+      ],
+    },
+    {
+      condition(game: any) {
+        return !!game.storage.getAchievements()[ACHIEVEMENT_NFT_INDEX];
+      },
+      text: [
+        "Thought my JPEG was lost forever.",
+        "Do you have an interest in magic?",
+        "Ancient legends describe a tome of magic hidden beneath the woodland.",
+        "That's the extent of my knowledge,<br/>best of luck on your journey.",
+      ],
+    },
+  ],
+  olaf: [
+    {
+      condition(game: any) {
+        return !game.storage.getAchievements()[ACHIEVEMENT_WING_INDEX];
+      },
+      text: [
+        "These serpents have indulged in the remnants of a fallen dragon.",
+        "If you bring me back a Dragon's Wing,<br/>I would be most obliged and offer a recompense as a gesture of gratitude.",
+      ],
+    },
+    {
+      condition(game: any) {
+        return !!game.storage.getAchievements()[ACHIEVEMENT_WING_INDEX];
+      },
+      text: ["Well done warrior, I've granted you your reward!"],
+    },
+  ],
+  victor: [
+    {
+      condition(game: any) {
+        return !game.storage.getAchievements()[ACHIEVEMENT_CRYSTAL_INDEX];
+      },
+      text: [
+        "An ancient and powerful crystal, known for its<br/>immense magical power, has been stolen by evil forces.",
+        "The theft was orchestrated by a group of dark shamans,<br/>who seek to use the crystal's power to spread their evil reign.",
+        "They have taken the crystal deep within a dangerous and treacherous dungeon.",
+        "If you retrieve the Crystal for me, I would be greatly<br/>appreciative and provide a reward as a sign of my gratitude.",
+      ],
+    },
+    {
+      condition(game: any) {
+        return !!game.storage.getAchievements()[ACHIEVEMENT_CRYSTAL_INDEX];
+      },
+      text: ["Well done warrior, I've granted you your reward!"],
+    },
+  ],
+  fox: ["What did the fox say?"],
+  tree: [""],
+  trap: [""],
+  trap2: [""],
+  trap3: [""],
+  statue: [""],
+  statue2: [""],
 
   coder: [
     "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",
@@ -207,6 +334,7 @@ class Npc extends Character {
   itemKind: any;
   talkIndex: number;
   kind: number;
+  isActivated?: boolean;
 
   constructor(id, kind) {
     super(id, kind);
@@ -228,7 +356,7 @@ class Npc extends Character {
     if (this.discourse != -1) {
       var found = false;
       for (var i = 1; !found && i < NpcTalk[this.itemKind].length; i++) {
-        if (NpcTalk[this.itemKind][i]["condition"](game)) {
+        if (NpcTalk[this.itemKind][i]["condition"](game, this.isActivated)) {
           if (this.discourse != i) {
             change = true;
             this.discourse = i;

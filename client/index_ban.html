@@ -398,10 +398,14 @@ ______                              ______                                 _____
                             <input type="checkbox" id="damage-info-checkbox">
                             <label for="damage-info-checkbox">Show damage info</label>
                         </div>
-                        <div class="setting">
+                        <!-- <div class="setting">
+                            <input type="checkbox" id="health-above-bars-checkbox">
+                            <label for="health-above-bars-checkbox">Show health above bars</label>
+                        </div> -->
+                        <!-- <div class="setting">
                             <input type="checkbox" id="anvil-odds-checkbox">
                             <label for="anvil-odds-checkbox">Show anvil upgrade odds</label>
-                        </div>
+                        </div> -->
                     </div>
                     <div>
                         <div>
@@ -550,14 +554,12 @@ ______                              ______                                 _____
                 </form>
             </div>
             <div id="inspector">
-                <div class="headshot">
-                    <div> </div>
-                </div>
-                <div class="details">
-                    <div class="name"></div>
-                    <div class="level"></div>
+                <div class="name-wrapper">
+                    <span class="name"></span>
+                    <!-- <span class="level"></span> -->
                     <div class="health"></div>
                 </div>
+                <div class="enchants"></div>
                 <div class="resistances"></div>
             </div>
             <div id="achievement-notification">
@@ -576,10 +578,10 @@ ______                              ______                                 _____
                 </div>
                 <div id="weapon"></div>
                 <div id="armor"></div>
-                <div id="skill-offensive" data-skill-slot="1">
+                <div id="skill-attack" data-skill-slot="1">
                     <div class="skill-timeout"></div>
                 </div>
-                <div id="skill-shield" data-skill-slot="2">
+                <div id="skill-defense" data-skill-slot="2">
                     <div class="skill-timeout"></div>
                 </div>
                 <div id="notifications">
@@ -624,24 +626,95 @@ ______                              ______                                 _____
                         <span id="player-hp"></span>
                     </div>
                     <div>
-                        <span>Weapon</span>
-                        <span id="player-weapon"></span>
-                    </div>
-                    <div>
-                        <span>Damage</span>
+                        <span>Total Damage</span>
                         <span id="player-damage"></span>
                     </div>
                     <div>
-                        <span>Armor</span>
-                        <span id="player-armor"></span>
+                        <span>Attack (Critical <var id="player-criticalHit"></var>%)</span>
+                        <span id="player-attackDamage"></span>
                     </div>
                     <div>
-                        <span>Defense</span>
+                        <span>Defense (Block <var id="player-blockChance"></var>%)</span>
                         <span id="player-defense"></span>
                     </div>
                     <div>
                         <span>Absorbed Damage</span>
-                        <span id="player-absorb"></span>
+                        <span id="player-absorbedDamage"></span>
+                    </div>
+                    <div class="player-section-title">
+                        Damage
+                    </div>
+                    <div class="flex-50">
+                        <div>
+                            <span>Magic</span>
+                            <span id="player-magicDamage"></span>
+                        </div>
+                        <div>
+                            <span>Flame</span>
+                            <span id="player-flameDamage"></span>
+                        </div>
+                        <div>
+                            <span>Lightning</span>
+                            <span id="player-lightningDamage"></span>
+                        </div>
+                        <div>
+                            <span>Cold</span>
+                            <span id="player-coldDamage"></span>
+                        </div>
+                        <div>
+                            <span>Poison</span>
+                            <span id="player-poisonDamage"></span>
+                        </div>
+                        <div>
+                            <span>Pierce</span>
+                            <span id="player-pierceDamage"></span>
+                        </div>
+                    </div>
+                    <div class="player-section-title">
+                        Resistances
+                    </div>
+                    <div class="flex-50">
+                        <div>
+                            <span>Magic</span>
+                            <span id="player-magicResistance"></span>
+                        </div>
+                        <div>
+                            <span>Flame</span>
+                            <span id="player-flameResistance"></span>
+                        </div>
+                        <div>
+                            <span>Lightning</span>
+                            <span id="player-lightningResistance"></span>
+                        </div>
+                        <div>
+                            <span>Cold</span>
+                            <span id="player-coldResistance"></span>
+                        </div>
+                        <div>
+                            <span>Poison</span>
+                            <span id="player-poisonResistance"></span>
+                        </div>
+                    </div>
+                    <div class="player-section-title">
+                        Misc %
+                    </div>
+                    <div class="flex-50">
+                        <div>
+                            <span>Magic Find</span>
+                            <span id="player-magicFind"></span>
+                        </div>
+                        <div>
+                            <span>Attack Speed</span>
+                            <span id="player-attackSpeed"></span>
+                        </div>
+                        <div>
+                            <span>Exp</span>
+                            <span id="player-exp"></span>
+                        </div>
+                        <div>
+                            <span>Cast rate</span>
+                            <span id="player-skillTimeout"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -711,6 +784,11 @@ ______                              ______                                 _____
                     <span class="close"></span>
                     <div class="panel-header"></div>
                     <div id="item-stash"></div>
+                    <div class="stash-pagination">
+                        <button id="item-stash-previous-page" class="btn small">◄</button>
+                        <div id="current-stash-page"></div>
+                        <button id="item-stash-next-page" class="btn small">►</button>
+                    </div>
                     <div class="panel-header reverse"></div>
                 </div>
             </div>

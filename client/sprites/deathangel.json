@@ -1,0 +1,61 @@
+{
+  "id": "deathangel",
+  "width": 142,
+  "height": 130,
+  "animations": {
+    "atk_right": {
+      "length": 7,
+      "row": 0
+    },
+    "walk_right": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 8,
+      "row": 2
+    },
+    "atk_up": {
+      "length": 7,
+      "row": 0
+    },
+    "walk_up": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 8,
+      "row": 2
+    },
+    "atk_down": {
+      "length": 7,
+      "row": 0
+    },
+    "walk_down": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 8,
+      "row": 2
+    },
+    "raise_right": {
+      "length": 8,
+      "row": 3
+    },
+    "raise_up": {
+      "length": 8,
+      "row": 3
+    },
+    "raise_down": {
+      "length": 8,
+      "row": 3
+    },
+    "death": {
+      "length": 8,
+      "row": 4
+    }
+  },
+  "offset_x": -75,
+  "offset_y": -105
+}

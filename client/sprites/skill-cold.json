@@ -1,0 +1,13 @@
+{
+  "id": "skill-cold",
+  "width": 72,
+  "height": 72,
+  "animations": {
+    "idle_down": {
+      "length": 14,
+      "row": 0
+    }
+  },
+  "offset_y": -46,
+  "offset_x": -28
+}

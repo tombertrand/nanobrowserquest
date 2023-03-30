@@ -1,0 +1,41 @@
+name: Deploy Beta
+
+on:
+  push:
+    branches:
+      - expansion2
+
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Build static assets
+        run: |
+          npm install && npm run build:client
+
+      - name: Rsync deployment
+        uses: burnett01/rsync-deployments@4.0
+        with:
+          switches: -avzr --delete --exclude=".env" --exclude="/tools" --exclude="/client/"
+          path: "."
+          remote_path: /var/www/beta.nanobrowserquest.com
+          remote_host: ${{ secrets.DO_HOST }}
+          remote_user: ${{ secrets.DO_USERNAME }}
+          remote_key: ${{ secrets.DO_SSHKEY }}

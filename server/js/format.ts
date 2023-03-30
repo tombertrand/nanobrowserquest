@@ -15,6 +15,9 @@ class FormatChecker {
       (this.formats[Types.Messages.ATTACK] = ["n"]),
       (this.formats[Types.Messages.HIT] = ["n"]),
       (this.formats[Types.Messages.HURT] = ["n"]),
+      (this.formats[Types.Messages.HURT_SPELL] = ["n"]),
+      (this.formats[Types.Messages.HURT_TRAP] = ["n"]),
+      (this.formats[Types.Messages.CAST_SPELL] = ["n", "n", "n", "n"]),
       (this.formats[Types.Messages.CHAT] = ["s"]),
       (this.formats[Types.Messages.LOOT] = ["n"]),
       (this.formats[Types.Messages.TELEPORT] = ["n", "n"]),
@@ -25,13 +28,20 @@ class FormatChecker {
       (this.formats[Types.Messages.WAYPOINT] = ["n", "s"]),
       (this.formats[Types.Messages.BOSS_CHECK] = ["b"]),
       (this.formats[Types.Messages.BAN_PLAYER] = ["s"]),
-      (this.formats[Types.Messages.SKILL] = ["n"]),
+      (this.formats[Types.Messages.SKILL] = ["n", "n"]),
       (this.formats[Types.Messages.REQUEST_PAYOUT] = ["n"]),
       (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n", "a"]),
       (this.formats[Types.Messages.MOVE_ITEMS_TO_INVENTORY] = ["s"]),
       (this.formats[Types.Messages.UPGRADE_ITEM] = []),
       (this.formats[Types.Messages.PURCHASE_CREATE] = ["n", "s"]),
       (this.formats[Types.Messages.PURCHASE_CANCEL] = ["s"]),
+      (this.formats[Types.Messages.MAGICSTONE] = ["n"]),
+      (this.formats[Types.Messages.LEVER] = ["n"]),
+      (this.formats[Types.Messages.ALTARCHALICE] = ["n"]),
+      (this.formats[Types.Messages.ALTARSOULSTONE] = ["n"]),
+      (this.formats[Types.Messages.HANDS] = ["n"]),
+      (this.formats[Types.Messages.TRAP] = ["n"]),
+      (this.formats[Types.Messages.STATUE] = ["n"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
   }
 
@@ -71,10 +81,6 @@ class FormatChecker {
         })
       );
     } else if (type === Types.Messages.LOGIN) {
-      // console.log("~~~~~LOGIN", message);
-
-      // @TODO Validate this!?
-
       return (
         _.isString(message[0]) &&
         _.isString(message[1]) &&
@@ -139,6 +145,14 @@ class FormatChecker {
     } else if (type === Types.Messages.SETTINGS) {
       return message.length === 1 && typeof message[0] === "object";
     } else if (type === Types.Messages.SKILL) {
+      return message.length === 2 && _.isNumber(message[0]) && _.isNumber(message[1]);
+    } else if (
+      type === Types.Messages.MAGICSTONE ||
+      type === Types.Messages.LEVER ||
+      type === Types.Messages.ALTARCHALICE ||
+      type === Types.Messages.ALTARSOULSTONE ||
+      type === Types.Messages.HANDS
+    ) {
       return message.length === 1 && _.isNumber(message[0]);
     } else {
       console.error("Unknown message type: " + type);

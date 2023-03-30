@@ -1,0 +1,13 @@
+{
+  "id": "skill-poison",
+  "width": 24,
+  "height": 60,
+  "animations": {
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    }
+  },
+  "offset_y": -36,
+  "offset_x": -4
+}

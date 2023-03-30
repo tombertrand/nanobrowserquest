@@ -2,7 +2,7 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 
-import type { Recipes } from "./types";
+// import type { Recipes } from "./types";
 
 var Messages: any = {};
 module.exports = Messages;
@@ -10,8 +10,15 @@ module.exports = Messages;
 Messages.Spawn = class Message {
   constructor(private entity) {}
   serialize() {
-    var spawn = [Types.Messages.SPAWN];
-    return spawn.concat(this.entity.getState());
+    return [Types.Messages.SPAWN, this.entity.getState()];
+  }
+};
+
+Messages.SpawnBatch = class Message {
+  constructor(private entities) {}
+  serialize() {
+    var spawn = [Types.Messages.SPAWN_BATCH];
+    return spawn.concat(this.entities.map(entity => entity.getState()));
   }
 };
 
@@ -44,11 +51,23 @@ Messages.Attack = class Message {
 };
 
 Messages.Raise = class Message {
-  constructor(private mobId) {
-    this.mobId = mobId;
-  }
+  constructor(private mobId, private targetId) {}
   serialize() {
-    return [Types.Messages.RAISE, this.mobId];
+    return [Types.Messages.RAISE, this.mobId, this.targetId];
+  }
+};
+
+Messages.Unraise = class Message {
+  constructor(private mobId, private targetId) {}
+  serialize() {
+    return [Types.Messages.UNRAISE, this.mobId];
+  }
+};
+
+Messages.Taunt = class Message {
+  constructor(private mobId) {}
+  serialize() {
+    return [Types.Messages.TAUNT, this.mobId];
   }
 };
 
@@ -94,6 +113,69 @@ Messages.MinotaurLevelEnd = class Message {
   }
 };
 
+Messages.ChaliceLevelStart = class Message {
+  constructor(private coords) {}
+  serialize() {
+    return [Types.Messages.CHALICELEVEL_START];
+  }
+};
+
+Messages.ChaliceLevelInProgress = class Message {
+  constructor(private levelClock) {}
+  serialize() {
+    return [Types.Messages.CHALICELEVEL_INPROGRESS, this.levelClock];
+  }
+};
+
+Messages.ChaliceLevelEnd = class Message {
+  constructor() {}
+  serialize() {
+    return [Types.Messages.CHALICELEVEL_END];
+  }
+};
+
+Messages.StoneLevelStart = class Message {
+  constructor(private coords) {}
+  serialize() {
+    return [Types.Messages.STONELEVEL_START];
+  }
+};
+
+Messages.StoneLevelInProgress = class Message {
+  constructor(private stoneLevelClock) {}
+  serialize() {
+    return [Types.Messages.STONELEVEL_INPROGRESS, this.stoneLevelClock];
+  }
+};
+
+Messages.StoneLevelEnd = class Message {
+  constructor(private isCompleted) {}
+  serialize() {
+    return [Types.Messages.STONELEVEL_END];
+  }
+};
+
+Messages.GatewayLevelStart = class Message {
+  constructor(private coords) {}
+  serialize() {
+    return [Types.Messages.GATEWAYLEVEL_START];
+  }
+};
+
+Messages.GatewayLevelInProgress = class Message {
+  constructor(private clock) {}
+  serialize() {
+    return [Types.Messages.GATEWAYLEVEL_INPROGRESS, this.clock];
+  }
+};
+
+Messages.GatewayLevelEnd = class Message {
+  constructor(private isCompleted) {}
+  serialize() {
+    return [Types.Messages.GATEWAYLEVEL_END];
+  }
+};
+
 Messages.Health = class Message {
   constructor(private health) {}
   serialize() {
@@ -102,16 +184,37 @@ Messages.Health = class Message {
 };
 
 Messages.Frozen = class Message {
-  constructor(private entityId, private freezeChanceLevel) {}
+  constructor(private entityId, private duration) {}
   serialize() {
-    return [Types.Messages.FROZEN, this.entityId, this.freezeChanceLevel];
+    return [Types.Messages.FROZEN, this.entityId, this.duration];
+  }
+};
+
+Messages.Slowed = class Message {
+  constructor(private entityId, private duration) {}
+  serialize() {
+    return [Types.Messages.SLOWED, this.entityId, this.duration];
+  }
+};
+
+Messages.Poisoned = class Message {
+  constructor(private entityId, private duration) {}
+  serialize() {
+    return [Types.Messages.POISONED, this.entityId, this.duration];
+  }
+};
+
+Messages.Cursed = class Message {
+  constructor(private entityId, private curseId, private duration) {}
+  serialize() {
+    return [Types.Messages.CURSED, this.entityId, this.curseId, this.duration];
   }
 };
 
 Messages.Stats = class Message {
   constructor(private stats) {}
   serialize() {
-    return [Types.Messages.STATS, this.stats.maxHitPoints, this.stats.damage, this.stats.defense, this.stats.absorb];
+    return [Types.Messages.STATS, this.stats];
   }
 };
 
@@ -144,9 +247,9 @@ Messages.Auras = class Message {
 };
 
 Messages.Skill = class Message {
-  constructor(private player, private skill, private level) {}
+  constructor(private player, private skill) {}
   serialize() {
-    return [Types.Messages.SKILL, this.player.id, this.skill, this.level];
+    return [Types.Messages.SKILL, this.player.id, this.skill];
   }
 };
 
@@ -226,7 +329,16 @@ Messages.Population = class Message {
 Messages.Kill = class Message {
   constructor(private mob, private level, private playerExp, private exp) {}
   serialize() {
-    return [Types.Messages.KILL, this.mob.kind, this.level, this.playerExp, this.exp];
+    return [
+      Types.Messages.KILL,
+      {
+        kind: this.mob.kind,
+        level: this.level,
+        playerExp: this.playerExp,
+        exp: this.exp,
+        isMiniBoss: !!(this.mob.enchants?.length >= 3) && !Types.isBoss(this.mob.kind),
+      },
+    ];
   }
 };
 

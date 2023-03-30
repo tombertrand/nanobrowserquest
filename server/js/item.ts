@@ -7,12 +7,14 @@ class Item extends Entity {
   despawnTimeout: NodeJS.Timeout;
   respawnCallback: any;
   partyId?: number;
+  level?: number;
 
-  constructor(id, kind, x, y, partyId?: number) {
+  constructor(id, kind, x, y, partyId?: number, level?: number) {
     super(id, "item", kind, x, y);
     this.isStatic = false;
     this.isFromChest = false;
     this.partyId = partyId;
+    this.level = level;
   }
 
   handleDespawn(params) {

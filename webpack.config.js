@@ -19,10 +19,6 @@ module.exports = {
     },
     compress: true,
     port: 8010,
-    // proxy: {
-    //   "/": "http://localhost:8000",
-    // },
-
     client: {
       overlay: {
         errors: true,

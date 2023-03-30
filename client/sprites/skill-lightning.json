@@ -1,0 +1,13 @@
+{
+  "id": "skill-lightning",
+  "width": 28,
+  "height": 56,
+  "animations": {
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    }
+  },
+  "offset_y": -30,
+  "offset_x": -6
+}

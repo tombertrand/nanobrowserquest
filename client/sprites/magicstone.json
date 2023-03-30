@@ -1,0 +1,21 @@
+{
+  "id": "magicstone",
+  "width": 46,
+  "height": 67,
+  "animations": {
+    "idle_down": {
+      "length": 1,
+      "row": 0
+    },
+    "raise_down": {
+      "length": 13,
+      "row": 1
+    },
+    "walk_down": {
+      "length": 8,
+      "row": 2
+    }
+  },
+  "offset_x": -6,
+  "offset_y": -48
+}

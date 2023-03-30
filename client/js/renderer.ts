@@ -8,8 +8,10 @@ import Item from "./item";
 import Player from "./player";
 import Timer from "./timer";
 
+import type Game from "./game";
+
 class Renderer {
-  game: any;
+  game: Game;
   context: any;
   background: any;
   foreground: any;
@@ -26,6 +28,7 @@ class Renderer {
   realFPS: number;
   isDebugInfoVisible: boolean;
   animatedTileCount: number;
+  highAnimatedTileCount: number;
   highTileCount: number;
   tablet: any;
   fixFlickeringTimer: Timer;
@@ -53,7 +56,7 @@ class Renderer {
 
     this.isDrawEntityName = true;
 
-    this.upscaledRendering = true; //this.context.imageSmoothingEnabled !== undefined;
+    this.upscaledRendering = true;
     this.supportsSilhouettes = this.upscaledRendering;
 
     this.rescale();
@@ -66,6 +69,7 @@ class Renderer {
     this.isDebugInfoVisible = false;
 
     this.animatedTileCount = 0;
+    this.highAnimatedTileCount = 0;
     this.highTileCount = 0;
 
     this.tablet = Detect.isTablet(window.innerWidth);
@@ -124,37 +128,9 @@ class Renderer {
     this.initFont();
     this.initFPS();
 
-    if (!this.upscaledRendering && this.game.map && this.game.map.tilesets) {
-      this.setTileset(this.game.map.tilesets[this.scale - 1]);
-    }
     if (this.game.renderer) {
       this.game.setSpriteScale(this.scale);
     }
-  }
-
-  getWeaponImage(entity) {
-    let weaponLevel = entity.getWeaponLevel();
-    let weaponSuffix = "";
-
-    if (!!entity.weaponBonus) {
-      weaponSuffix = "unique";
-      if (weaponLevel >= 7) {
-        weaponSuffix += "7";
-      }
-    } else if (weaponLevel === 7) {
-      weaponSuffix = "7";
-    } else if (weaponLevel > 7) {
-      weaponSuffix = "8";
-    }
-
-    var weapon = this.game.sprites[entity.getWeaponName()];
-
-    // @TODO Why does this happens?
-    if (!weapon[`image${weaponSuffix}`]) {
-      weaponSuffix = "";
-    }
-
-    return { weapon, weaponSuffix, weaponImage: weapon[`image${weaponSuffix}`] };
   }
 
   createCamera() {
@@ -376,29 +352,42 @@ class Renderer {
     var s = this.upscaledRendering ? 1 : this.scale;
     _.each(arguments, function (arg) {
       if (_.isUndefined(arg) || _.isNaN(arg) || _.isNull(arg) || arg < 0) {
-        console.error("x:" + x + " y:" + y + " w:" + w + " h:" + h + " dx:" + dx + " dy:" + dy, true);
+        console.error("x:" + x + " y:" + y + " w:" + w + " h:" + h + " dx:" + dx + " dy:" + dy);
         throw Error("A problem occured when trying to draw on the canvas");
       }
     });
-
     ctx.drawImage(image, x * s, y * s, w * s, h * s, dx * this.scale, dy * this.scale, w * this.scale, h * this.scale);
   }
 
-  drawTile(ctx, tileid, tileset, setW, gridW, cellid) {
+  drawTile(ctx, tileid, cellid) {
     var s = this.upscaledRendering ? 1 : this.scale;
     if (tileid !== -1) {
       // -1 when tile is empty in Tiled. Don't attempt to draw it.
+      const tileset = this.getTileset(tileid);
+
+      if (!tileset) {
+        // @TODO why is sometimes tileset not found? (walk up the woodland WP)
+        console.log("~~~~tileid", tileid);
+        return;
+      }
+
       this.drawScaledImage(
         ctx,
-        tileset,
-        getX(tileid + 1, setW / s) * this.tilesize,
-        Math.floor(tileid / (setW / s)) * this.tilesize,
+        tileset.image,
+        getX(tileid - tileset.firstgid + 2, tileset.columns / s) * this.tilesize,
+        Math.floor((tileid - tileset.firstgid + 1) / (tileset.columns / s)) * this.tilesize,
         this.tilesize,
         this.tilesize,
-        getX(cellid + 1, gridW) * this.tilesize,
-        Math.floor(cellid / gridW) * this.tilesize,
+        getX(cellid + 1, this.game.map.width) * this.tilesize,
+        Math.floor(cellid / this.game.map.width) * this.tilesize,
       );
     }
+  }
+
+  getTileset(tileId) {
+    return this.game.map.tilesets.find(
+      ({ firstgid, tilecount }) => tileId >= firstgid && tileId <= firstgid + tilecount,
+    );
   }
 
   clearTile(ctx, gridW, cellid) {
@@ -595,6 +584,12 @@ class Renderer {
         this.context.translate(dx, dy);
       }
 
+      // Rotate using the entity's angle.
+      if (entity.angled) {
+        this.context.translate(8, 8);
+        this.context.rotate(entity.getAngle());
+      }
+
       if (entity.isVisible()) {
         if (entity.hasShadow()) {
           this.context.drawImage(
@@ -627,6 +622,12 @@ class Renderer {
             } else if (aura === "freeze") {
               sprite = this.game.sprites["aura-freeze"];
               anim = this.game.freezeAnimation;
+            } else if (aura === "lowerresistance") {
+              sprite = this.game.sprites["aura-lowerresistance"];
+              anim = this.game.resistanceAnimation;
+            } else if (aura === "arcane") {
+              sprite = this.game.sprites["aura-arcane"];
+              anim = this.game.arcaneAnimation;
             }
 
             if (sprite && anim) {
@@ -638,13 +639,12 @@ class Renderer {
                 y = frame.y * os,
                 w = sprite.width * os,
                 h = sprite.height * os,
-                ts = -12,
                 dw = w * ds,
-                dh = h * ds;
+                dh = h * ds,
+                ox = sprite.offsetX * s,
+                oy = sprite.offsetY * s;
 
-              this.context.translate(0, ts * -ds);
-              this.context.drawImage(sprite.image, x, y, w, h, 0, 0, dw, dh);
-              this.context.translate(0, ts * ds);
+              this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
             }
           });
         }
@@ -668,17 +668,37 @@ class Renderer {
           }
 
           if (
-            ["hornedarmor", "frozenarmor", "diamondarmor", "spikearmor", "demonarmor"].includes(sprite.name) &&
-            entity.armorBonus
+            [
+              "hornedarmor",
+              "frozenarmor",
+              "diamondarmor",
+              "emeraldarmor",
+              "templararmor",
+              "dragonarmor",
+              "demonarmor",
+              "mysticalarmor",
+              "bloodarmor",
+              "paladinarmor",
+            ].includes(sprite.name) &&
+            entity.armorBonus?.length
           ) {
             spriteImage = sprite.imageunique;
           }
-        } else if (entity.kind === Types.Entities.GUARD) {
-          spriteImage = sprite[`image${this.game.player.network}`];
+        } else if (entity.kind === Types.Entities.GUARD && this.game.player?.network === "nano") {
+          sprite["image"].src = sprite["image"].src.replace("guard.png", "guardbanano.png");
         }
+        //  else if (entity.kind === Types.Entities.GUARD) {
+        //   spriteImage = sprite[`image${this.game.player.network}`];
+        // }
 
-        if (entity.isFrozen) {
+        if (entity.isFrozen || entity.isSlowed) {
           this.context.filter = "sepia(100%) hue-rotate(190deg) saturate(500%)";
+        } else {
+          if (entity.type === "mob" && Types.isMiniBoss(entity)) {
+            this.context.filter = "grayscale(100%) sepia(100%) saturate(150%) hue-rotate(260deg)";
+          } else if (entity.isPoisoned && !Types.isBoss(entity.kind)) {
+            this.context.filter = "grayscale(100%) sepia(100%) hue-rotate(90deg)";
+          }
         }
 
         this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
@@ -699,6 +719,7 @@ class Renderer {
 
         if (entity instanceof Item && entity.kind !== Types.Entities.CAKE) {
           var sparks = this.game.sprites["sparks"],
+            // @ts-ignore
             anim = this.game.sparksAnimation,
             frame = anim.currentFrame,
             sx = sparks.width * frame.index * os,
@@ -721,7 +742,7 @@ class Renderer {
       }
 
       if (entity instanceof Player && !entity.isDead && entity.hasWeapon()) {
-        const { weapon, weaponSuffix, weaponImage } = this.getWeaponImage(entity);
+        var weapon = this.game.sprites[entity.getWeaponName()];
 
         if (weapon) {
           var weaponAnimData = weapon.animationData[anim.name];
@@ -732,17 +753,78 @@ class Renderer {
           var wh = weapon.height * os;
 
           let isFilterApplied = false;
-          if (weaponSuffix) {
+          if (entity.weaponLevel >= 7) {
             isFilterApplied = true;
 
             const brightness = this.calculateBrightnessPerLevel(entity.weaponLevel);
             this.context.filter = `brightness(${brightness}%)`;
           }
 
-          this.context.drawImage(weaponImage, wx, wy, ww, wh, weapon.offsetX * s, weapon.offsetY * s, ww * ds, wh * ds);
+          this.context.drawImage(
+            weapon.image,
+            wx,
+            wy,
+            ww,
+            wh,
+            weapon.offsetX * s,
+            weapon.offsetY * s,
+            ww * ds,
+            wh * ds,
+          );
 
           if (isFilterApplied) {
             this.context.filter = "brightness(100%)";
+          }
+
+          if (typeof entity.weaponLevel === "number" && entity.weaponLevel >= 7) {
+            // @TODO configure the weapon element
+            let effect = "magic";
+            if (entity.isWeaponUnique) {
+              effect = "flame";
+            } else if (entity.weaponRuneword) {
+              effect = "cold";
+            }
+
+            var sprite = this.game.sprites[`weapon-effect-${effect}`];
+            // @ts-ignore
+            var anim = this.game.weaponEffectAnimation;
+
+            var image = "";
+            if (entity.weaponLevel === 8) {
+              image = "8";
+            } else if (entity.weaponLevel >= 9) {
+              image = "9";
+            }
+
+            if (sprite && anim) {
+              var frame = anim.currentFrame,
+                s = this.scale,
+                x = frame.x * os,
+                y = frame.y * os,
+                w = sprite.width * os,
+                h = sprite.height * os,
+                ts = 20,
+                dx = -12 * s,
+                dy = -4 * s,
+                dw = w * ds,
+                dh = h * ds;
+
+              this.context.save();
+
+              if (entity.capeOrientation === Types.Orientations.UP) {
+                (dy = -12 * s), (dx = 10 * s);
+                this.context.scale(1, -1);
+              } else if (entity.capeOrientation === Types.Orientations.LEFT) {
+                dx = 8 * s;
+                (dy = -12 * s), this.context.scale(1, -1);
+              } else if (entity.capeOrientation === Types.Orientations.RIGHT) {
+                dx = 8 * s;
+                (dy = -12 * s), this.context.scale(1, -1);
+              }
+
+              this.context.drawImage(sprite[`image${image}`], x, y, w, h, dx, dy, dw, dh);
+              this.context.restore();
+            }
           }
         }
       }
@@ -750,17 +832,22 @@ class Renderer {
       if (entity instanceof Character && entity.sprite.name === "anvil") {
         var sprite = null;
         var spriteName = null;
+        // @ts-ignore
         var anim = this.game.anvilAnimation;
 
-        if (this.game.isAnvilRecipe) {
-          spriteName = "anvil-recipe";
+        if (this.game.anvilRecipe || this.game.isAnvilChestpurple) {
+          if (this.game.anvilRecipe === "powderquantum") {
+            spriteName = "anvil-powder";
+          } else {
+            spriteName = "anvil-recipe";
+          }
         } else if (this.game.isAnvilSuccess) {
           spriteName = "anvil-success";
-        } else if (this.game.isAnvilFail) {
+        } else if (this.game.isAnvilFail || this.game.isAnvilChestred) {
           spriteName = "anvil-fail";
-        } else if (this.game.isAnvilTransmute) {
+        } else if (this.game.isAnvilTransmute || this.game.isAnvilChestgreen) {
           spriteName = "anvil-transmute";
-        } else if (this.game.isAnvilChestblue) {
+        } else if (this.game.isAnvilChestblue || this.game.isAnvilRuneword) {
           spriteName = "anvil-chestblue";
         }
 
@@ -793,6 +880,7 @@ class Renderer {
 
       if (entity instanceof Character && entity.isLevelup) {
         var sprite = this.game.sprites["levelup"];
+        // @ts-ignore
         var anim = this.game.levelupAnimation;
 
         if (sprite && anim) {
@@ -818,9 +906,13 @@ class Renderer {
         }
       }
 
-      if (entity instanceof Player && entity.skillName) {
-        var sprite = this.game.sprites[`skill-${entity.skillName}`];
-        var anim = this.game.skillAnimation;
+      if (entity instanceof Player && entity.defenseSkillName) {
+        var sprite = this.game.sprites[`skill-${entity.defenseSkillName}`];
+        // @ts-ignore
+        var anim =
+          entity.defenseSkillName === "resistances"
+            ? this.game.skillResistanceAnimation
+            : this.game.defenseSkillAnimation;
 
         if (sprite && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
@@ -834,13 +926,107 @@ class Renderer {
             y = frame.y * os,
             w = sprite.width * os,
             h = sprite.height * os,
-            ts = 0,
+            ts = 16,
             dx = entityX * s,
             dy = entityY * s,
             dw = w * ds,
-            dh = h * ds;
+            dh = h * ds,
+            ox = sprite.offsetX * s,
+            oy = sprite.offsetY * s;
 
-          this.context.drawImage(sprite.image, x, y, w, h, -8 * this.scale, -14 * this.scale, dw, dh);
+          this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
+        }
+      }
+
+      if (entity instanceof Player && typeof entity.castSkill === "number") {
+        const skillName: SkillElement = Types.skillToNameMap[entity.castSkill];
+
+        // Default sprite for lightning & cold cast
+        var sprite =
+          skillName === "cold" || skillName === "lightning"
+            ? this.game.sprites["skill-cast"]
+            : this.game.sprites[`skill-cast-${Types.skillToNameMap[entity.castSkill]}`];
+        // @ts-ignore
+        var anim = this.game.skillCastAnimation;
+
+        if (sprite && anim) {
+          var os = this.upscaledRendering ? 1 : this.scale;
+          var ds = this.upscaledRendering ? this.scale : 1;
+          // @ts-ignore
+          var { x: entityX, y: entityY } = entity;
+
+          var frame = anim.currentFrame,
+            s = this.scale,
+            x = frame.x * os,
+            y = frame.y * os,
+            w = sprite.width * os,
+            h = sprite.height * os,
+            ts = 16,
+            dx = entityX * s,
+            dy = entityY * s,
+            dw = w * ds,
+            dh = h * ds,
+            ox = sprite.offsetX * s,
+            oy = sprite.offsetY * s;
+
+          this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
+        }
+      }
+
+      if (entity instanceof Player && typeof entity.curseId === "number") {
+        var sprite = this.game.sprites["curse-prevent-regenerate-health"];
+        // @ts-ignore
+        var anim = this.game.cursePreventRegenerateHealthAnimation;
+
+        if (sprite && anim) {
+          var os = this.upscaledRendering ? 1 : this.scale;
+          var ds = this.upscaledRendering ? this.scale : 1;
+          // @ts-ignore
+          var { x: entityX, y: entityY } = entity;
+
+          var frame = anim.currentFrame,
+            s = this.scale,
+            x = frame.x * os,
+            y = frame.y * os,
+            w = sprite.width * os,
+            h = sprite.height * os,
+            ts = 16,
+            dx = entityX * s,
+            dy = entityY * s,
+            dw = w * ds,
+            dh = h * ds,
+            ox = sprite.offsetX * s,
+            oy = sprite.offsetY * s;
+
+          this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
+        }
+      }
+
+      if (entity instanceof Character && typeof entity.skillAnimation === "number") {
+        var sprite = this.game.sprites[`skill-${Types.skillToNameMap[entity.skillAnimation]}`];
+        var anim = this.game[`skill${_.capitalize(Types.skillToNameMap[entity.skillAnimation])}Animation`];
+
+        if (sprite && anim) {
+          var os = this.upscaledRendering ? 1 : this.scale;
+          var ds = this.upscaledRendering ? this.scale : 1;
+          // @ts-ignore
+          var { x: entityX, y: entityY } = entity;
+
+          var frame = anim.currentFrame,
+            s = this.scale,
+            x = frame.x * os,
+            y = frame.y * os,
+            w = sprite.width * os,
+            h = sprite.height * os,
+            ts = 16,
+            dx = entityX * s,
+            dy = entityY * s,
+            dw = w * ds,
+            dh = h * ds,
+            ox = sprite.offsetX * s,
+            oy = sprite.offsetY * s;
+
+          this.context.drawImage(sprite.image, x, y, w, h, ox, oy, dw, dh);
         }
       }
 
@@ -855,7 +1041,9 @@ class Renderer {
   drawEntities(dirtyOnly?: boolean) {
     var self = this;
 
-    this.game.forEachVisibleEntityByDepth(function (entity) {
+    const entities = this.game.getForEachVisibleEntityByDepth();
+
+    entities.forEach(entity => {
       if (entity.isLoaded) {
         if (dirtyOnly) {
           if (entity.isDirty) {
@@ -891,12 +1079,15 @@ class Renderer {
       }
     });
 
-    this.game.forEachAnimatedTile(function (tile) {
+    const animatedTileCallback = function (tile) {
       if (tile.isDirty) {
         self.clearDirtyRect(tile.dirtyRect);
         count += 1;
       }
-    });
+    };
+
+    this.game.forEachAnimatedTile(animatedTileCallback);
+    this.game.forEachHighAnimatedTile(animatedTileCallback);
 
     if (this.game.clearTarget && this.lastTargetPos) {
       var last = this.lastTargetPos;
@@ -1009,33 +1200,25 @@ class Renderer {
   }
 
   drawTerrain() {
-    var self = this;
-    var m = this.game.map;
-    var tilesetWidth = this.tileset.width / m.tilesize;
-
-    this.game.forEachVisibleTile(function (id, index) {
-      if (!m.isHighTile(id) && !m.isAnimatedTile(id)) {
+    this.game.forEachVisibleTile((id, index) => {
+      if (!this.game.map.isHighTile(id) && !this.game.map.isAnimatedTile(id)) {
         // Don't draw unnecessary tiles
-        self.drawTile(self.background, id, self.tileset, tilesetWidth, m.width, index);
+        this.drawTile(this.background, id, index); // self.tileset, tilesetWidth, m.width, index);
       }
     }, 1);
   }
 
   drawAnimatedTiles(dirtyOnly?: boolean) {
-    var self = this,
-      m = this.game.map,
-      tilesetwidth = this.tileset.width / m.tilesize;
-
     this.animatedTileCount = 0;
-    this.game.forEachAnimatedTile(function (tile) {
+    this.game.forEachAnimatedTile(tile => {
       if (dirtyOnly) {
         if (tile.isDirty) {
-          self.drawTile(self.context, tile.id, self.tileset, tilesetwidth, m.width, tile.index);
+          this.drawTile(this.context, tile.id, tile.index);
           tile.isDirty = false;
         }
       } else {
-        self.drawTile(self.context, tile.id, self.tileset, tilesetwidth, m.width, tile.index);
-        self.animatedTileCount += 1;
+        this.drawTile(this.context, tile.id, tile.index);
+        this.animatedTileCount += 1;
       }
     });
   }
@@ -1044,16 +1227,27 @@ class Renderer {
     this.drawAnimatedTiles(true);
   }
 
-  drawHighTiles(ctx) {
-    var self = this,
-      m = this.game.map,
-      tilesetwidth = this.tileset.width / m.tilesize;
+  drawHighAnimatedTiles(dirtyOnly?: boolean) {
+    this.highAnimatedTileCount = 0;
+    this.game.forEachHighAnimatedTile(tile => {
+      if (dirtyOnly) {
+        if (tile.isDirty) {
+          this.drawTile(this.context, tile.id, tile.index);
+          tile.isDirty = false;
+        }
+      } else {
+        this.drawTile(this.context, tile.id, tile.index);
+        this.highAnimatedTileCount += 1;
+      }
+    });
+  }
 
+  drawHighTiles(ctx) {
     this.highTileCount = 0;
-    this.game.forEachVisibleTile(function (id, index) {
-      if (m.isHighTile(id)) {
-        self.drawTile(ctx, id, self.tileset, tilesetwidth, m.width, index);
-        self.highTileCount += 1;
+    this.game.forEachVisibleTile((id, index) => {
+      if (this.game.map.isHighTile(id) && !this.game.map.isAnimatedTile(id)) {
+        this.drawTile(ctx, id, index);
+        this.highTileCount += 1;
       }
     }, 1);
   }
@@ -1122,7 +1316,7 @@ class Renderer {
   }
 
   getPlayerImage() {
-    const { weapon, weaponImage } = this.getWeaponImage(this.game.player);
+    var weapon = this.game.sprites[this.game.player.getWeaponName()];
 
     var canvas = document.createElement("canvas"),
       ctx = canvas.getContext("2d"),
@@ -1157,8 +1351,19 @@ class Renderer {
 
     let spriteImage = sprite.image;
     if (
-      ["hornedarmor", "frozenarmor", "diamondarmor", "spikearmor", "demonarmor"].includes(this.game.player.armorName) &&
-      this.game.player.armorBonus
+      [
+        "hornedarmor",
+        "frozenarmor",
+        "diamondarmor",
+        "emeraldarmor",
+        "templararmor",
+        "dragonarmor",
+        "demonarmor",
+        "mysticalarmor",
+        "bloodarmor",
+        "paladinarmor",
+      ].includes(this.game.player.armorName) &&
+      this.game.player.armorBonus?.length
     ) {
       spriteImage = sprite.imageunique;
     }
@@ -1178,7 +1383,7 @@ class Renderer {
       var shieldImage = this.game.sprites[this.game.player.shieldName].image;
       ctx.drawImage(shieldImage, 0, y, w, h, 2, 2, w, h);
     }
-    ctx.drawImage(weaponImage, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
+    ctx.drawImage(weapon.image, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
 
     return canvas.toDataURL("image/png");
   }
@@ -1223,6 +1428,7 @@ class Renderer {
     this.drawEntities();
     this.drawCombatInfo();
     this.drawHighTiles(this.context);
+    this.drawHighAnimatedTiles();
     this.context.restore();
 
     // Overlay UI elements

@@ -1,12 +1,21 @@
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
+import {
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_GRIMOIRE_INDEX,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../shared/js/types/achievements";
+import { curseDurationMap } from "../../shared/js/types/curse";
+import { toArray, toDb, toNumber } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
-import { postMessageToDiscordChatChannel } from "./discord";
+import { EmojiMap, postMessageToDiscordChatChannel } from "./discord";
 import FormatChecker from "./format";
 import Formulas from "./formulas";
 import Messages from "./message";
+import Npc from "./npc";
 import { enqueueSendPayout } from "./payout";
 import { PromiseQueue } from "./promise-queue";
 import Properties from "./properties";
@@ -16,6 +25,9 @@ import { store } from "./store/store";
 import {
   getClassicMaxPayout,
   getClassicPayout,
+  getRandomAttackSkill,
+  getRandomDefenseSkill,
+  getRandomSockets,
   random,
   randomInt,
   randomOrientation,
@@ -25,24 +37,15 @@ import {
 
 import type Party from "./party";
 import type Trade from "./trade";
-import type { Network } from "./types";
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
 
 let payoutIndex = 0;
 
-// const NO_TIMEOUT_ACCOUNT = "3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3";
-const NO_TIMEOUT_ACCOUNT = "3h3krxiab9zbn7ygg6zafzpfq7e6qp5i13od1esdjauogo6m8epqxmy7anix";
+const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas"];
+const SUPER_ADMINS = ["running-coder"];
 
-type GeneratedItem = {
-  item: string;
-  level?: number;
-  quantity?: 1;
-  bonus?: number[];
-  skill?: number;
-  isUnique?: boolean;
-};
 class Player extends Character {
   id: number;
   server: any;
@@ -59,13 +62,14 @@ class Player extends Character {
   experience: number;
   level: number;
   lastWorldChatMinutes: number;
-  auras: string[];
+  auras: Auras[];
   set: null;
   inventory: any[];
   inventoryCount: any[];
   achievement: any[];
   hasRequestedBossPayout: boolean;
   expansion1: boolean;
+  expansion2: boolean;
   depositAccount: any;
   chatBanEndTime: number;
   hash: string;
@@ -77,16 +81,22 @@ class Player extends Character {
   weapon: string;
   weaponLevel: number;
   weaponBonus: number[] | null;
+  weaponSocket: number[] | null;
+  isWeaponUnique: boolean;
   armor: string;
   armorLevel: number;
   armorBonus: number[] | null;
+  armorSocket: number[] | null;
+  isArmorUnique: boolean;
   belt: string;
   beltLevel: number;
   beltBonus: number[] | null;
+  isBeltUnique: boolean;
   cape: string;
   capeKind: number;
   capeLevel: number;
   capeBonus: number[] | null;
+  isCapeUnique: boolean;
   capeHue: number;
   capeSaturate: number;
   capeContrast: number;
@@ -94,9 +104,14 @@ class Player extends Character {
   shield: string;
   shieldLevel: number;
   shieldBonus: number[] | null;
-  shieldSkill: number;
-  shieldSkillTimeout: NodeJS.Timeout;
-  shieldSkillDefenseTimeout: NodeJS.Timeout;
+  shieldSocket: number[] | null;
+  isShieldUnique: boolean;
+  defenseSkill: number;
+  defenseSkillTimeout: NodeJS.Timeout;
+  defenseSkillDefenseTimeout: NodeJS.Timeout;
+  defenseSkillResistancesTimeout: NodeJS.Timeout;
+  attackSkill: number;
+  attackSkillTimeout: NodeJS.Timeout;
   firefoxpotionTimeout: any;
   createdAt: number;
   waypoints: any;
@@ -129,12 +144,25 @@ class Player extends Character {
   tradeId?: number;
   freezeChanceLevel: number;
   minotaurDamage: number;
+  butcherDamage: number;
+  deathAngelDamage: number;
   isPasswordRequired: boolean;
   isPasswordValid: boolean;
   network: Network;
   nanoPotions: number;
-  skill: { defense: number; curseAttack: number };
+  skill: { defense: number; resistances: number };
   dbWriteQueue: any;
+  poisonedInterval: any;
+  curseId: number;
+  cursedTimeout: NodeJS.Timeout;
+  attackTimeout: NodeJS.Timeout;
+  discordId: number;
+  isHurtByTrap: boolean;
+  // Achievement checks
+  hasGrimoire: boolean;
+  hasNft: boolean;
+  hasWing: boolean;
+  hasCrystal: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -166,6 +194,8 @@ class Player extends Character {
     this.auras = [];
     this.freezeChanceLevel = 0;
     this.minotaurDamage = 0;
+    this.butcherDamage = 0;
+    this.deathAngelDamage = 0;
 
     // Item bonuses (Rings, amulet, Uniques?)
     this.resetBonus();
@@ -178,10 +208,16 @@ class Player extends Character {
     this.hasRequestedBossPayout = false;
 
     this.expansion1 = false;
+    this.expansion2 = false;
     this.depositAccount = null;
 
     this.chatBanEndTime = 0;
     this.hash = null;
+    this.isHurtByTrap = false;
+    this.hasGrimoire = false;
+    this.hasNft = false;
+    this.hasWing = false;
+    this.hasCrystal = false;
 
     this.dbWriteQueue = new PromiseQueue();
 
@@ -318,22 +354,49 @@ class Player extends Character {
         if (msg && msg !== "") {
           msg = msg.substr(0, 255); // Enforce maxLength of chat input
 
-          const admins = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas"];
+          if (msg.startsWith("/") && ADMINS.includes(self.name)) {
+            if (SUPER_ADMINS.includes(self.name)) {
+              if (msg === "/cow") {
+                if (!self.server.cowLevelClock) {
+                  self.server.startCowLevel();
+                  self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
+                }
+                return;
+              } else if (msg === "/minotaur") {
+                if (!self.server.minotaurLevelClock && !self.server.minotaurSpawnTimeout) {
+                  self.server.startMinotaurLevel();
+                  self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
+                }
+                return;
+              } else if (msg === "/chalice") {
+                if (!self.server.chaliceLevelClock) {
+                  self.server.activateAltarChalice(self, true);
+                }
+                return;
+              } else if (msg === "/stone") {
+                if (!self.server.stoneLevelClock) {
+                  self.server.magicStones.forEach(id => {
+                    const magicStone = self.server.getEntityById(id);
+                    self.server.activateMagicStone(self, magicStone);
+                  });
+                }
+                return;
+              } else if (msg === "/tree") {
+                if (!self.server.isActivatedTreeLevel) {
+                  self.server.startTreeLevel();
+                }
+                return;
+              } else if (msg === "/gateway") {
+                self.server.activateHands(self, true);
+                return;
+              } else if (msg === "/temple") {
+                const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
+                self.server.activateLever(self, lever);
+                return;
+              }
+            }
 
-          if (msg.startsWith("/") && admins.includes(self.name)) {
-            if (msg === "/cow" && self.name === "running-coder") {
-              if (!self.server.cowLevelClock) {
-                self.server.startCowLevel();
-                self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
-              }
-              return;
-            } else if (msg === "/minotaur" && self.name === "running-coder") {
-              if (!self.server.minotaurLevelClock && !self.server.minotaurSpawnTimeout) {
-                self.server.startMinotaurLevel();
-                self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
-              }
-              return;
-            } else if (msg.startsWith("/ban")) {
+            if (msg.startsWith("/ban")) {
               const periods = { 1: 86400, 365: 86400 * 365 };
               const reasons = ["misbehaved"];
 
@@ -366,6 +429,12 @@ class Player extends Character {
             }
           }
 
+          if (msg.startsWith("!link")) {
+            const secret = msg.replace("!link", "").trim();
+            self.databaseHandler.linkPlayerToDiscordUser(self, secret);
+            return;
+          }
+
           postMessageToDiscordChatChannel(`${self.name}: ${msg}`);
 
           // Zone chat
@@ -380,7 +449,7 @@ class Player extends Character {
           var x = message[1],
             y = message[2];
 
-          if (y >= 314 && !self.expansion1) {
+          if (y >= 314 && !self.expansion1 && self.name !== "running-coder") {
             self.connection.sendUTF8("invalidconnection");
             self.connection.close("You have not unlocked the expansion.");
             return;
@@ -425,60 +494,62 @@ class Player extends Character {
         console.info("HIT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
 
+        if (!mob) return;
+        if (!self.server.isPlayerNearEntity(self, mob, 20)) return;
+        // @TODO Think of a better strategy
+        // if (self.attackTimeout) {
+        //   Sentry.captureException(new Error("Player still on attack cooldown"), { extra: { player: self.name } });
+        //   return;
+        // }
+
+        // Allow for 10% latency
+        const attackSpeed = Types.calculateAttackSpeed(self.bonus.attackSpeed + 10);
+        const duration = Math.round(Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (attackSpeed / 100));
+
+        // Prevent FE from sending too many attack messages
+        self.attackTimeout = setTimeout(() => {
+          self.attackTimeout = null;
+        }, duration);
+
         if (mob?.type === "mob" || mob?.type === "player") {
           let isCritical = false;
 
-          let resistances: {
-            magicDamage?: number;
-            flameDamage?: number;
-            lightningDamage?: number;
-            coldDamage?: number;
-            physicalDamage?: number;
-          } = { magicDamage: 0, flameDamage: 0, lightningDamage: 0, coldDamage: 0, physicalDamage: 0 };
+          const resistances: Resistances = Types.getResistance(mob, self);
 
-          if (mob.type === "mob") {
-            resistances = Object.assign(resistances, Types.resistances[mob.kind] || {});
-          } else if (mob.type === "player") {
-            resistances = {
-              magicDamage: mob.bonus.magicResistance,
-              flameDamage: mob.bonus.flameResistance,
-              lightningDamage: mob.bonus.lightningResistance,
-              coldDamage: mob.bonus.coldResistance,
-            };
-          }
-
-          let dmg = Formulas.dmg({
+          let { dmg, attackDamage } = Formulas.dmg({
             weapon: self.weapon,
             weaponLevel: self.weaponLevel,
             playerLevel: self.level,
             minDamage: self.bonus.minDamage + self.partyBonus.minDamage,
             maxDamage: self.bonus.maxDamage + self.partyBonus.maxDamage,
-            magicDamage: Math.round(
-              (self.bonus.magicDamage + self.partyBonus.magicDamage) * (Math.abs(resistances.magicDamage - 100) / 100),
-            ),
-            attackDamage: resistances.physicalDamage ? 0 : self.bonus.attackDamage,
+            magicDamage: self.bonus.magicDamage + self.partyBonus.magicDamage,
+            attackDamage: self.bonus.attackDamage,
             drainLife: self.bonus.drainLife,
-            flameDamage: Math.round(self.bonus.flameDamage * (Math.abs(resistances.flameDamage - 100) / 100)),
-            lightningDamage: Math.round(
-              self.bonus.lightningDamage * (Math.abs(resistances.lightningDamage - 100) / 100),
-            ),
-            coldDamage: Math.round(self.bonus.coldDamage * (Math.abs(resistances.coldDamage - 100) / 100)),
+            flameDamage: self.bonus.flameDamage,
+            lightningDamage: self.bonus.lightningDamage,
+            coldDamage: self.bonus.coldDamage,
+            poisonDamage: self.bonus.poisonDamage,
             pierceDamage: self.bonus.pierceDamage,
-            partyAttackDamage: resistances.physicalDamage ? 0 : self.partyBonus.attackDamage,
-            magicResistance: resistances.magicDamage,
+            partyAttackDamage: self.partyBonus.attackDamage,
+            ...resistances,
           });
+
+          if (mob.type === "mob" && mob.enchants.includes("stoneskin")) {
+            dmg = Math.round(attackDamage * 0.8) + dmg - attackDamage;
+            attackDamage = Math.round(attackDamage * 0.8);
+          }
 
           if (self.bonus.criticalHit) {
             isCritical = random(100) < self.bonus.criticalHit;
             if (isCritical) {
-              dmg = Math.ceil((dmg - self.bonus.drainLife) * 1.5);
+              dmg = attackDamage * 2 + dmg - attackDamage;
             }
           }
 
           if (self.bonus.freezeChance && !Types.isBoss(mob.kind)) {
             const isFrozen = random(100) < self.bonus.freezeChance;
             if (isFrozen) {
-              self.broadcast(new Messages.Frozen(mob.id, self.freezeChanceLevel));
+              self.broadcast(new Messages.Frozen(mob.id, Types.getFrozenTimePerLevel(self.freezeChanceLevel)));
             }
           }
 
@@ -489,52 +560,13 @@ class Player extends Character {
             }
           }
 
-          // Reduce dmg on boss by 20% per player in boss room
-          if (mob.kind === Types.Entities.BOSS) {
-            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-              x: 140,
-              y: 48,
-              w: 29,
-              h: 25,
+          if (self.bonus.poisonDamage) {
+            self.startPoisoned({
+              dmg: self.bonus.poisonDamage,
+              entity: mob,
+              resistance: resistances.poisonResistance,
+              attacker: self,
             });
-
-            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-            dmg = Math.floor(dmg * percentReduce);
-          } else if (mob.kind === Types.Entities.SKELETONCOMMANDER) {
-            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-              x: 140,
-              y: 360,
-              w: 29,
-              h: 25,
-            });
-
-            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-            dmg = Math.floor(dmg * percentReduce);
-          } else if (mob.kind === Types.Entities.NECROMANCER) {
-            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-              x: 140,
-              y: 324,
-              w: 29,
-              h: 25,
-            });
-
-            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-            dmg = Math.floor(dmg * percentReduce);
-          } else if (mob.kind === Types.Entities.COWKING || mob.kind === Types.Entities.MINOTAUR) {
-            const adjustedDifficulty = self.server.getPlayersCountInBossRoom({
-              x: 0,
-              y: 464,
-              w: 92,
-              h: 71,
-            });
-
-            const percentReduce = Math.pow(0.8, adjustedDifficulty - 1);
-            dmg = Math.floor(dmg * percentReduce);
-          }
-
-          if (mob.kind === Types.Entities.MINOTAUR) {
-            self.minotaurDamage += dmg;
-            self.unregisterMinotaurDamage();
           }
 
           let defense = 0;
@@ -544,6 +576,10 @@ class Player extends Character {
             defense = Formulas.mobDefense({ armorLevel: mob.armorLevel });
 
             dmg = defense > dmg ? 0 : dmg - defense;
+
+            if (Types.isBoss(mob.kind)) {
+              dmg = self.server.handleBossDmg({ dmg, entity: mob, player: self });
+            }
 
             // Minimum Hit dmg (can't be 0)
             if (!dmg) {
@@ -563,8 +599,9 @@ class Player extends Character {
           if (mob.hitPoints <= 0) {
             mob.isDead = true;
 
-            if (mob?.type) {
-              postMessageToDiscordChatChannel(`${self.name} killed ${mob.name} 💀`);
+            if (mob.poisonedInterval) {
+              clearInterval(mob.poisonedInterval);
+              mob.poisonedInterval = null;
             }
           }
         }
@@ -576,7 +613,150 @@ class Player extends Character {
             weaponLevel: mob.weaponLevel,
           });
 
+          // @NOTE Curse trigger
+          if (mob.kind === Types.Entities.DEATHANGEL) {
+            self.curseId = 0;
+            const duration = curseDurationMap[self.curseId](10);
+            self.broadcast(new Messages.Cursed(self.id, self.curseId, duration));
+
+            clearTimeout(self.cursedTimeout);
+            self.cursedTimeout = setTimeout(() => {
+              self.curseId = null;
+              self.cursedTimeout = null;
+            }, duration);
+          }
+
           self.handleHurtDmg(mob, dmg);
+        }
+      } else if (action === Types.Messages.HURT_SPELL) {
+        console.info("HURT_SPELL: " + self.name + " " + message[1]);
+        const spell = self.server.getEntityById(message[1]);
+
+        if (spell && self.hitPoints > 0) {
+          const caster = self.server.getEntityById(spell.casterId);
+
+          if (!spell.element) {
+            if (caster) {
+              self.handleHurtDmg(caster, spell.dmg);
+            }
+          } else {
+            self.handleHurtSpellDmg(spell);
+          }
+        }
+      } else if (action === Types.Messages.MAGICSTONE) {
+        console.info("MAGICSTONE: " + self.name + " " + message[1]);
+
+        const magicStone = self.server.getEntityById(message[1]);
+        if (
+          magicStone &&
+          magicStone instanceof Npc &&
+          !magicStone.isActivated &&
+          self.server.magicStones.includes(magicStone.id) &&
+          !self.server.activatedMagicStones.includes(magicStone.id) &&
+          Math.abs(self.x - magicStone.x) < 3 &&
+          Math.abs(self.y - magicStone.y) < 3
+        ) {
+          self.server.activateMagicStone(self, magicStone);
+        }
+      } else if (action === Types.Messages.LEVER) {
+        console.info("LEVER: " + self.name + " " + message[1]);
+
+        const lever = self.server.getEntityById(message[1]);
+        if (
+          lever &&
+          lever instanceof Npc &&
+          !lever.isActivated &&
+          Math.abs(self.x - lever.x) < 3 &&
+          Math.abs(self.y - lever.y) < 3
+        ) {
+          self.server.activateLever(self, lever);
+        }
+      } else if (action === Types.Messages.ALTARCHALICE) {
+        console.info("ALTAR - CHALICE: " + self.name + " " + message[1]);
+
+        const altarId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (altarId === self.server.altarChaliceNpcId) {
+          self.server.activateAltarChalice(self);
+        }
+      } else if (action === Types.Messages.ALTARSOULSTONE) {
+        console.info("ALTAR - SOULSTONE: " + self.name + " " + message[1]);
+
+        const altarId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (altarId && altarId === self.server.altarSoulStoneNpcId) {
+          self.server.activateAltarSoulStone(self);
+        }
+      } else if (action === Types.Messages.HANDS) {
+        console.info("HANDS: " + self.name + " " + message[1]);
+
+        const handsId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (handsId && handsId === self.server.handsNpcId) {
+          self.server.activateHands(self);
+        }
+      } else if (action === Types.Messages.TRAP) {
+        console.info("TRAP: " + self.name + " " + message[1]);
+
+        const trapId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (trapId) {
+          self.server.activateTrap(self, trapId);
+        }
+      } else if (action === Types.Messages.HURT_TRAP) {
+        console.info("HURT_TRAP: " + self.name + " " + message[1]);
+
+        // Can't be hurt by traps more than once per 3 seconds
+        if (self.isHurtByTrap) return;
+
+        const trapId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (trapId) {
+          const trap = self.server.getEntityById(trapId);
+
+          self.handleHurtTrapDmg(trap);
+
+          self.isHurtByTrap = true;
+          setTimeout(() => {
+            self.isHurtByTrap = false;
+          }, 3000);
+        }
+      } else if (action === Types.Messages.STATUE) {
+        console.info("STATUE: " + self.name + " " + message[1]);
+
+        const statueId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        if (statueId) {
+          self.server.activateStatue(statueId);
+        }
+      } else if (action === Types.Messages.CAST_SPELL) {
+        if (typeof message[1] !== "number" || typeof message[2] !== "number" || typeof message[3] !== "number") return;
+
+        const [, mobId, x, y] = message;
+        const entity = self.server.getEntityById(mobId);
+
+        // @NOTE Entity might have just died
+        if (!entity) return;
+        const targetId = message[4] || undefined;
+
+        if (entity.kind === Types.Entities.DEATHANGEL) {
+          self.server.castDeathAngelSpell(x, y);
+        } else if (entity.kind === Types.Entities.MAGE || entity.kind === Types.Entities.SHAMAN) {
+          self.server.addSpell({
+            kind: Types.Entities.MAGESPELL,
+            x,
+            y,
+            element: entity.element,
+            casterId: mobId,
+            targetId,
+          });
+        } else if (entity.kind === Types.Entities.SKELETONARCHER) {
+          self.server.addSpell({
+            kind: Types.Entities.ARROW,
+            x,
+            y,
+            element: entity.element,
+            casterId: mobId,
+            targetId,
+          });
+        } else if (entity.kind === Types.Entities.STATUE) {
+          self.server.addSpell({ kind: Types.Entities.STATUESPELL, x, y, element: "flame", casterId: mobId });
+        } else if (entity.kind === Types.Entities.STATUE2) {
+          self.server.addSpell({ kind: Types.Entities.STATUE2SPELL, x, y, element: "cold", casterId: mobId });
         }
       } else if (action === Types.Messages.LOOT) {
         console.info("LOOT: " + self.name + " " + message[1]);
@@ -599,13 +779,12 @@ class Player extends Character {
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());
             self.server.removeEntity(item);
+
             if (Types.Entities.Gems.includes(kind)) {
               let index = Types.Entities.Gems.indexOf(kind);
-
               databaseHandler.foundGem(self.name, index);
             } else if (Types.Entities.Artifact.includes(kind)) {
               let index = Types.Entities.Artifact.indexOf(kind);
-
               databaseHandler.foundArtifact(self.name, index);
             } else if (kind === Types.Entities.FIREFOXPOTION) {
               self.updateHitPoints(true);
@@ -618,7 +797,7 @@ class Player extends Character {
               }, 10000);
               self.sendPlayerStats();
             } else if (Types.isHealingItem(kind)) {
-              var amount;
+              let amount;
               switch (kind) {
                 case Types.Entities.FLASK:
                   amount = 40;
@@ -633,6 +812,9 @@ class Player extends Character {
                 case Types.Entities.REJUVENATIONPOTION:
                   amount = Math.ceil(self.maxHitPoints / 3);
                   break;
+                case Types.Entities.POISONPOTION:
+                  self.handleHurtSpellDmg({ element: "poison", dmg: 200 });
+                  break;
               }
 
               if (
@@ -643,38 +825,68 @@ class Player extends Character {
                 databaseHandler.foundNanoPotion(self.name);
               }
 
-              if (!self.hasFullHealth()) {
+              if (amount && !self.hasFullHealth()) {
                 self.regenHealthBy(amount);
                 self.server.pushToPlayer(self, self.health());
               }
             } else {
-              const { isUnique, ...generatedItem } = (self.generateItem({ kind }) || {}) as GeneratedItem;
+              try {
+                let isUnique = false;
+                let generatedItem = null;
+                let runeName = null;
 
-              if (generatedItem) {
-                let player = self;
-
-                // Single items can't be party looted, like potions
-                if (!Types.isSingle(kind) && self.partyId) {
-                  player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+                if (Types.isRune(kind)) {
+                  runeName = Types.RuneByKind[kind];
+                  if (runeName) {
+                    generatedItem = { item: `rune-${runeName}`, quantity: 1 };
+                  }
+                } else {
+                  const jewelLevel = Types.isJewel(kind) ? item.level : 1;
+                  ({ isUnique, ...generatedItem } = self.generateItem({ kind, jewelLevel }) || {}) as GeneratedItem;
                 }
 
-                if (self.partyId) {
-                  self.server.pushToParty(
-                    self.getParty(),
-                    new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
-                      { playerName: player.name, kind, isUnique },
-                    ]),
-                  );
-                }
+                if (generatedItem) {
+                  let player = self;
 
-                if (Types.isSuperUnique(generatedItem.item)) {
-                  postMessageToDiscordChatChannel(`${player.name} picked up ${kinds[generatedItem.item][2]} 💍`);
-                }
+                  // Single items can't be party looted, like potions
+                  if (!Types.isSingle(kind) && self.partyId) {
+                    player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+                  }
 
-                this.databaseHandler.lootItems({
-                  player,
-                  items: [generatedItem],
-                });
+                  if (self.partyId) {
+                    self.server.pushToParty(
+                      self.getParty(),
+                      new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
+                        { playerName: player.name, kind, isUnique },
+                      ]),
+                    );
+                  }
+
+                  if (Types.isSuperUnique(generatedItem.item)) {
+                    postMessageToDiscordChatChannel(
+                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${
+                        EmojiMap[generatedItem.item] || "💍"
+                      } `,
+                    );
+                  } else if (Types.isRune(kind) && Types.RuneList.indexOf(runeName) + 1 >= Types.runeKind.mer.rank) {
+                    postMessageToDiscordChatChannel(
+                      `${player.name} picked up ${runeName.toUpperCase()} rune ${EmojiMap[`rune-${runeName}`]}`,
+                    );
+                  }
+
+                  // else if (kind === Types.Entities.STONEDRAGON) {
+                  //   postMessageToDiscordChatChannel(
+                  //     `${player.name} picked up a dragon stone ${EmojiMap[`rune-${runeName}`]}`,
+                  //   );
+                  // }
+
+                  this.databaseHandler.lootItems({
+                    player,
+                    items: [generatedItem],
+                  });
+                }
+              } catch (err) {
+                Sentry.captureException(err);
               }
             }
           }
@@ -684,6 +896,15 @@ class Player extends Character {
 
         var x = message[1];
         var y = message[2];
+
+        // @NOTE Handle the /town command
+        if (x >= 33 && x <= 39 && y >= 208 && y <= 211) {
+          // The message should have been blocked by the FE
+          if (self.hasTarget() || Object.keys(self.attackers).length || (self.y >= 195 && self.y <= 259)) {
+            self.server.disconnectPlayer(self.name);
+            return;
+          }
+        }
 
         if (self.server.isValidPosition(x, y)) {
           self.setPosition(x, y);
@@ -699,8 +920,14 @@ class Player extends Character {
 
           if (x === 34 && y === 498) {
             self.send(new Messages.MinotaurLevelInProgress(self.server.minotaurLevelClock).serialize());
-          } else if (y >= 464 && y <= 535) {
+          } else if (y >= 464 && y <= 535 && x <= 534) {
             self.send(new Messages.CowLevelInProgress(self.server.cowLevelClock).serialize());
+          } else if (y >= 696 && y <= 733 && x <= 29) {
+            self.send(new Messages.ChaliceLevelInProgress(self.server.chaliceLevelClock).serialize());
+          } else if (y >= 696 && y <= 733 && x >= 85 && x <= 112) {
+            self.send(new Messages.StoneLevelInProgress(self.server.stoneLevelClock).serialize());
+          } else if (y >= 744 && y <= 781 && x <= 29) {
+            self.send(new Messages.GatewayLevelInProgress(self.server.gatewayLevelClock).serialize());
           }
         }
       } else if (action === Types.Messages.BOSS_CHECK) {
@@ -882,9 +1109,25 @@ class Player extends Character {
       } else if (action === Types.Messages.ACHIEVEMENT) {
         console.info("ACHIEVEMENT: " + self.name + " " + message[1] + " " + message[2]);
         const index = parseInt(message[1]) - 1;
-        if (message[2] === "found") {
+        if (message[2] === "found" && !self.achievement[index]) {
           self.achievement[index] = 1;
-          databaseHandler.foundAchievement(self.name, index);
+
+          if (
+            (index === ACHIEVEMENT_NFT_INDEX && !(await databaseHandler.useInventoryItem(self, "nft"))) ||
+            (index === ACHIEVEMENT_WING_INDEX && !(await databaseHandler.useInventoryItem(self, "wing"))) ||
+            (index === ACHIEVEMENT_CRYSTAL_INDEX && !(await databaseHandler.useInventoryItem(self, "crystal")))
+          ) {
+            return;
+          }
+
+          databaseHandler.foundAchievement(self, index).then(() => {
+            if (index === ACHIEVEMENT_GRIMOIRE_INDEX) {
+              self.hasGrimoire = true;
+              self.equipItem({} as any);
+
+              postMessageToDiscordChatChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]} `);
+            }
+          });
         }
       } else if (action === Types.Messages.WAYPOINT) {
         console.info("WAYPOINT: " + self.name + " " + message[1] + " " + message[2]);
@@ -1128,18 +1371,79 @@ class Player extends Character {
           this.broadcast(new Messages.Settings(this, settings), false);
         }
       } else if (action === Types.Messages.SKILL) {
-        const skill = message[1];
-        let isBroadcasted = false;
+        const slot = message[1];
+        const mobId = message[2];
+        const isAttackSkill = slot === 1;
+
+        const skill = isAttackSkill ? this.attackSkill : this.defenseSkill;
+        let shouldBroadcast = false;
         let level: number;
 
-        // @NOTE Hardcode shieldSkill for now..
-        if (skill === this.shieldSkill && !this.shieldSkillTimeout) {
-          isBroadcasted = true;
+        if (isAttackSkill) {
+          if (typeof this.attackSkill !== "number" || this.attackSkillTimeout) return;
+          const attackedMob = self.server.getEntityById(mobId);
+          if (!attackedMob) return;
+          if (attackedMob.kind === Types.Entities.TREE && this.attackSkill === 1) {
+            if (!this.server.isActivatedTreeLevel) {
+              this.server.startTreeLevel(attackedMob);
+            }
+            return;
+          }
+
+          shouldBroadcast = true;
+
+          const mobResistances = Types.getResistance(attackedMob, self);
+          let mobResistance = mobResistances?.[Types.attackSkillToResistanceType[this.attackSkill]] || 0;
+
+          if (attackedMob instanceof Player) {
+            mobResistance = Types.calculateResistance(mobResistance + attackedMob.skill.resistances);
+          }
+
+          const { min, max } = Types.getAttackSkill({
+            skill: this.attackSkill,
+            level: this.weaponLevel,
+            bonus: this.bonus,
+            resistance: mobResistance,
+            itemClass: Types.getItemClass(this.weapon, this.weaponLevel, this.isWeaponUnique),
+          });
+
+          let dmg = randomInt(min, max);
+
+          if (attackedMob.type === "mob") {
+            this.server.handleMobHate(attackedMob.id, this.id, dmg);
+
+            if (Types.isBoss(attackedMob.kind)) {
+              dmg = this.server.handleBossDmg({ dmg, entity: attackedMob, player: this });
+            }
+
+            attackedMob.receiveDamage(dmg);
+          } else if (attackedMob.type === "player") {
+            attackedMob.hitPoints -= dmg;
+          }
+
+          const originalTimeout = Math.floor(Types.attackSkillDelay[this.attackSkill]);
+          const timeout = Math.round(
+            originalTimeout - originalTimeout * (Types.calculateSkillTimeout(this.bonus.skillTimeout) / 100),
+          );
+
+          if (Types.skillToNameMap[this.attackSkill] === "poison") {
+            this.startPoisoned({ dmg, entity: attackedMob, resistance: mobResistance, attacker: this });
+          }
+
+          this.attackSkillTimeout = setTimeout(() => {
+            this.attackSkillTimeout = null;
+          }, timeout);
+
+          this.server.handleHurtEntity({ entity: attackedMob, attacker: this, dmg });
+        } else {
+          if (typeof this.defenseSkill !== "number" || this.defenseSkillTimeout) return;
+
+          shouldBroadcast = true;
           level = this.shieldLevel;
 
-          if (this.shieldSkill === 0) {
+          if (this.defenseSkill === 0) {
             if (!self.hasFullHealth()) {
-              const { stats: percent } = Types.getSkill(0, this.shieldLevel);
+              const { stats: percent } = Types.getDefenseSkill(0, this.shieldLevel);
 
               let healAmount = Math.round((percent / 100) * this.maxHitPoints);
               let healthDiff = this.maxHitPoints - this.hitPoints;
@@ -1150,25 +1454,40 @@ class Player extends Character {
               self.regenHealthBy(healAmount);
               self.server.pushToPlayer(self, self.health());
             }
-          } else if (this.shieldSkill === 1) {
-            const { stats: percent } = Types.getSkill(0, this.shieldLevel);
+          } else if (this.defenseSkill === 1) {
+            const { stats: percent } = Types.getDefenseSkill(1, this.shieldLevel);
 
             self.skill.defense = percent;
             self.sendPlayerStats();
-            self.shieldSkillDefenseTimeout = setTimeout(() => {
+            self.defenseSkillDefenseTimeout = setTimeout(() => {
               self.skill.defense = 0;
               self.sendPlayerStats();
-              self.shieldSkillDefenseTimeout = null;
-            }, Types.skillDurationMap[this.shieldSkill](this.shieldLevel));
+              self.defenseSkillDefenseTimeout = null;
+            }, Types.defenseSkillDurationMap[this.defenseSkill](this.shieldLevel));
+          } else if (this.defenseSkill === 2) {
+            const { stats: percent } = Types.getDefenseSkill(2, this.shieldLevel);
+
+            self.skill.resistances = percent;
+            self.sendPlayerStats();
+            self.defenseSkillResistancesTimeout = setTimeout(() => {
+              self.skill.resistances = 0;
+              self.sendPlayerStats();
+              self.defenseSkillResistancesTimeout = null;
+            }, Types.defenseSkillDurationMap[this.defenseSkill](this.shieldLevel));
           }
 
-          self.shieldSkillTimeout = setTimeout(() => {
-            self.shieldSkillTimeout = null;
-          }, Types.skillDelay[this.shieldSkill]);
+          const originalTimeout = Math.floor(Types.defenseSkillDelay[this.defenseSkill]);
+          const timeout = Math.round(
+            originalTimeout - originalTimeout * (Types.calculateSkillTimeout(this.bonus.skillTimeout) / 100),
+          );
 
-          if (isBroadcasted) {
-            self.broadcast(new Messages.Skill(this, skill, level), false);
-          }
+          self.defenseSkillTimeout = setTimeout(() => {
+            self.defenseSkillTimeout = null;
+          }, timeout);
+        }
+
+        if (shouldBroadcast) {
+          self.broadcast(new Messages.Skill(this, { skill, level, isAttackSkill, mobId }), false);
         }
       } else {
         if (self.message_callback) {
@@ -1194,6 +1513,14 @@ class Player extends Character {
     this.minotaurDamage = 0;
   }, 30000);
 
+  unregisterButcherDamage = _.debounce(() => {
+    this.butcherDamage = 0;
+  }, 30000);
+
+  unregisterDeathAngelDamage = _.debounce(() => {
+    this.deathAngelDamage = 0;
+  }, 30000);
+
   generateRandomCapeBonus(uniqueChances = 1) {
     const randomIsUnique = random(100);
     const isUnique = randomIsUnique < uniqueChances;
@@ -1206,17 +1533,18 @@ class Player extends Character {
       .concat(isUnique ? _.shuffle(uniqueBonus).slice(0, 1) : []);
   }
 
-  generateItem({ kind, uniqueChances = 1 }): GeneratedItem {
+  generateItem({ kind, uniqueChances = 1, isLuckySlot = false, jewelLevel = 1 }): GeneratedItem {
     let isUnique = false;
     let item;
 
     if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind) || Types.isShield(kind)) {
       const randomIsUnique = random(100);
+
       isUnique = randomIsUnique < uniqueChances;
 
       const baseLevel = Types.getBaseLevel(kind);
       const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
-      let bonus = null;
+      let bonus = [];
       let skill = null;
 
       if (isUnique) {
@@ -1231,22 +1559,30 @@ class Player extends Character {
       }
 
       if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
-        const resistanceBonus = [21, 22, 23, 24];
-        const shieldSkill = [0, 1];
-        bonus = _.shuffle(resistanceBonus)
+        const resistances = [21, 22, 23, 24, 25];
+        skill = getRandomDefenseSkill();
+        bonus = _.shuffle(resistances)
           .slice(0, isUnique ? 2 : 1)
           .sort();
-        skill = _.shuffle(shieldSkill).slice(0, 1);
+      } else if (Types.isWeapon(kind) && kind >= Types.Entities.GOLDENSWORD) {
+        skill = getRandomAttackSkill();
       }
 
-      item = { item: Types.getKindAsString(kind), level, bonus: bonus ? JSON.stringify(bonus) : null, skill, isUnique };
-    } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isChest(kind)) {
+      item = {
+        item: Types.getKindAsString(kind),
+        level,
+        bonus: bonus ? JSON.stringify(bonus) : null,
+        socket: JSON.stringify(getRandomSockets({ kind, baseLevel, isLuckySlot })),
+        skill,
+        isUnique,
+      };
+    } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isStone(kind)) {
       item = { item: Types.getKindAsString(kind), quantity: 1 };
     } else if (Types.isCape(kind)) {
       const bonus = this.generateRandomCapeBonus(uniqueChances);
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
-    } else if (Types.isRing(kind) || Types.isAmulet(kind)) {
+    } else if (Types.isRing(kind) || Types.isAmulet(kind) || Types.isJewel(kind)) {
       const randomIsUnique = random(100);
       isUnique = randomIsUnique < uniqueChances;
 
@@ -1255,13 +1591,20 @@ class Player extends Character {
       const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
       const amuletHighLevelBonus = [9, 10];
       const drainLifeBonus = [13];
-      const fireDamageBonus = [14];
+      const flameDamageBonus = [14];
       const lightningDamageBonus = [15];
       const pierceDamageBonus = [16];
       const highHealthBonus = [17];
       const coldDamageBonus = [18];
       const freezeChanceBonus = [19];
       const reduceFrozenChanceBonus = [20];
+      const resistances = [21, 22, 23, 24, 25];
+      const elementPercentage = [27, 28, 29, 30, 31];
+      const allResistance = [32];
+      const timeout = [35];
+      const elementDamage = [4, 14, 15, 16, 18, 34];
+      const lowerResistance = [36, 37, 38, 39, 40];
+      const lowerAllResistance = [41];
 
       let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
@@ -1270,37 +1613,158 @@ class Player extends Character {
         bonus = _.shuffle(mediumLevelBonus).slice(0, isUnique ? 3 : 2);
       } else if (kind === Types.Entities.RINGGOLD) {
         bonus = _.shuffle(highLevelBonus).slice(0, isUnique ? 4 : 3);
+      } else if (kind === Types.Entities.RINGPLATINUM) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(isUnique ? allResistance : _.shuffle(resistances).slice(0, 2));
       } else if (kind === Types.Entities.AMULETGOLD) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, isUnique ? 3 : 2)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1));
+      } else if (kind === Types.Entities.AMULETPLATINUM) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(isUnique ? allResistance : _.shuffle(resistances).slice(0, 2));
       } else if (kind === Types.Entities.RINGNECROMANCER) {
-        bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(drainLifeBonus);
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(drainLifeBonus)
+          .concat(_.shuffle([resistances[4], elementPercentage[4]]).slice(0, 1));
       } else if (kind === Types.Entities.AMULETCOW) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
-          .concat(_.shuffle([...fireDamageBonus, ...lightningDamageBonus, ...pierceDamageBonus]).slice(0, 1));
+          .concat(_.shuffle([...flameDamageBonus, ...lightningDamageBonus, ...pierceDamageBonus]).slice(0, 1))
+          .concat(_.shuffle(elementPercentage).slice(0, 1));
       } else if (kind === Types.Entities.AMULETFROZEN) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
           .concat(coldDamageBonus)
           .concat(freezeChanceBonus)
-          .concat(reduceFrozenChanceBonus);
+          .concat(reduceFrozenChanceBonus)
+          .concat(_.shuffle([resistances[3], elementPercentage[3]]).slice(0, 1));
+      } else if (kind === Types.Entities.AMULETDEMON) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(flameDamageBonus)
+          .concat(allResistance)
+          .concat(_.shuffle(elementDamage).slice(0, 2));
+      } else if (kind === Types.Entities.AMULETMOON) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 2)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementDamage).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
+      } else if (kind === Types.Entities.AMULETSTAR) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 2)
+          .concat(amuletHighLevelBonus)
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 3))
+          .concat(_.shuffle(elementDamage).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
+      } else if (kind === Types.Entities.AMULETSKULL) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 2)
+          .concat(amuletHighLevelBonus.slice(0, 1))
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2))
+          .concat(_.shuffle(lowerResistance).slice(0, 1));
+      } else if (kind === Types.Entities.AMULETDRAGON) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 2)
+          .concat(amuletHighLevelBonus.slice(0, 1))
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
+          .concat([elementPercentage[1], lowerResistance[1]]);
       } else if (kind === Types.Entities.RINGRAISTONE) {
-        bonus = _.shuffle(highLevelBonus).slice(0, 3).concat(lightningDamageBonus);
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(lightningDamageBonus)
+          .concat(_.shuffle([resistances[2], elementPercentage[2]]).slice(0, 1));
       } else if (kind === Types.Entities.RINGFOUNTAIN) {
         bonus = _.shuffle([5, 6])
           .slice(0, 2)
-          .concat([8, ...highHealthBonus]);
+          .concat([8, ...highHealthBonus])
+          .concat(_.shuffle([7, 11, 12]).slice(0, 1))
+          .concat(_.shuffle(resistances).slice(0, 1));
       } else if (kind === Types.Entities.RINGMINOTAUR) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
-          .concat([...coldDamageBonus, ...freezeChanceBonus]);
+          .concat([...coldDamageBonus, ...freezeChanceBonus])
+          .concat(_.shuffle([resistances[3], elementPercentage[3]]).slice(0, 1));
+      } else if (kind === Types.Entities.RINGMYSTICAL) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
+      } else if (kind === Types.Entities.RINGBALROG) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle([...flameDamageBonus, ...lightningDamageBonus]).slice(0, 1))
+          .concat(_.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
+      } else if (kind === Types.Entities.RINGCONQUEROR) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 4)
+          .concat(_.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 1));
+      } else if (kind === Types.Entities.RINGHEAVEN) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 1)
+          .concat(_.shuffle([11, 12]).slice(0, 1))
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(_.shuffle(elementPercentage).slice(0, 2))
+          .concat(allResistance);
+      } else if (kind === Types.Entities.RINGWIZARD) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 1)
+          .concat(_.shuffle(elementDamage).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 1))
+          .concat(_.shuffle(resistances).slice(0, 2))
+          .concat(timeout);
+      } else if (kind === Types.Entities.JEWELSKULL) {
+        jewelLevel = random(5) + 1;
+
+        if (jewelLevel === 1) {
+          bonus = _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
+        } else if (jewelLevel === 2) {
+          bonus = _.shuffle(mediumLevelBonus).slice(0, isUnique ? 3 : 2);
+        } else if (jewelLevel === 3) {
+          jewelLevel = 2;
+          bonus = _.shuffle(highLevelBonus)
+            .slice(0, isUnique ? 3 : 2)
+            .concat(_.shuffle(resistances).slice(0, 1));
+        } else if (jewelLevel === 4) {
+          jewelLevel = 3;
+          bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(resistances).slice(0, 2));
+
+          if (isUnique) {
+            bonus = bonus.concat(_.shuffle(elementPercentage).slice(0, 1));
+          }
+        } else if (jewelLevel === 5) {
+          jewelLevel = 3;
+          bonus = _.shuffle(highLevelBonus)
+            .slice(0, 2)
+            .concat(_.shuffle(elementDamage).slice(0, 1))
+            .concat(_.shuffle(resistances).slice(0, 2));
+
+          if (isUnique) {
+            bonus = bonus.concat(_.shuffle(elementPercentage).slice(0, 1));
+          }
+        }
       }
 
-      item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
+      item = {
+        item: Types.getKindAsString(kind),
+        level: jewelLevel,
+        bonus: JSON.stringify(bonus.sort((a, b) => a - b)),
+      };
     }
 
     return item;
@@ -1321,39 +1785,43 @@ class Player extends Character {
   }
 
   getState() {
-    var basestate = this._getBaseState();
-    var state = [
-      this.orientation,
-      this.target,
-      this.name,
-      `${this.armor}:${this.armorLevel}${this.armorBonus ? `:${this.armorBonus}` : ""}`,
-      `${this.weapon}:${this.weaponLevel}${this.weaponBonus ? `:${this.weaponBonus}` : ""}`,
-      this.level,
-      this.auras,
-      this.partyId,
-      [this.cape, this.capeLevel, this.capeBonus].filter(Boolean).join(":"),
-      [this.shield, this.shieldLevel, this.shieldBonus].filter(Boolean).join(":"),
-      {
+    return Object.assign({}, this._getBaseState(), {
+      orientation: this.orientation,
+      targetId: this.targetId,
+      name: this.name,
+      armor: `${this.armor}:${this.armorLevel}${toDb(this.armorBonus)}`,
+      weapon: `${this.weapon}:${this.weaponLevel}${toDb(this.weaponBonus)}${toDb(this.weaponSocket)}`,
+      level: this.level,
+      auras: this.auras,
+      partyId: this.partyId,
+      cape: [this.cape, this.capeLevel, this.capeBonus].filter(Boolean).join(":"),
+      shield: [this.shield, this.shieldLevel, this.shieldBonus].filter(Boolean).join(":"),
+      settings: {
         capeHue: this.capeHue,
         capeSaturate: this.capeSaturate,
         capeContrast: this.capeContrast,
         capeBrightness: this.capeBrightness,
       },
-    ];
-
-    return basestate.concat(state);
+      resistances: null,
+      element: null,
+      enchants: null,
+      bonus: {
+        attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
+      },
+    });
   }
 
-  handleHurtDmg(mob, dmg: number) {
+  handleHurtDmg(mob, rawDmg: number) {
     let isBlocked = false;
     let lightningDamage = 0;
 
     let defense = Formulas.playerDefense({
       armor: this.armor,
       armorLevel: this.armorLevel,
+      isArmorUnique: this.isArmorUnique,
       belt: this.belt,
       beltLevel: this.beltLevel,
-      isUniqueBelt: !!this.beltBonus,
+      isBeltUnique: this.isBeltUnique,
       playerLevel: this.level,
       defense: this.bonus.defense,
       absorbedDamage: this.bonus.absorbedDamage,
@@ -1362,15 +1830,31 @@ class Player extends Character {
       capeLevel: this.capeLevel,
       shield: this.shield,
       shieldLevel: this.shieldLevel,
-      isUniqueShield: this.shieldBonus?.length >= 2,
+      isShieldUnique: this.isShieldUnique,
       skillDefense: this.skill.defense,
     });
 
-    dmg = defense > dmg ? 0 : dmg - defense;
+    if (mob.type === "mob" && mob.enchants?.length) {
+      if (mob.enchants.includes("physical")) {
+        rawDmg = Math.round(rawDmg * 1.35);
+      }
+    }
+
+    let dmg = defense > rawDmg ? 0 : rawDmg - defense;
 
     // Minimum Hurt dmg (can't be 0)
     if (!dmg) {
       dmg = randomInt(3, 5);
+    }
+
+    if (mob.type === "mob" && mob.enchants?.length) {
+      mob.enchants.forEach(enchant => {
+        if (!Types.elements.includes(enchant)) return;
+
+        // 15% of base dmg are elemental dmgs
+        const enchantDmg = this.calculateElementDamage({ element: enchant, dmg: Math.floor(rawDmg * 0.35) });
+        dmg += enchantDmg;
+      });
     }
 
     if (this.bonus.blockChance) {
@@ -1380,15 +1864,19 @@ class Player extends Character {
       }
     }
 
-    if (this.bonus.lightningDamage && !Types.resistances[mob.kind]?.lightningDamage) {
+    if (this.bonus.lightningDamage) {
       lightningDamage = this.bonus.lightningDamage;
 
+      const mobResistance = Types.getResistance(mob).lightningResistance;
+      const receivedLightningDamage = Math.round(lightningDamage - lightningDamage * (mobResistance / 100));
+
       if (mob.type === "mob") {
-        mob.receiveDamage(lightningDamage, this.id);
+        mob.receiveDamage(receivedLightningDamage);
       } else if (mob.type === "player") {
-        mob.hitPoints -= lightningDamage;
+        mob.hitPoints -= receivedLightningDamage;
       }
-      this.server.handleHurtEntity({ entity: mob, attacker: this, dmg: lightningDamage });
+
+      this.server.handleHurtEntity({ entity: mob, attacker: this, dmg: receivedLightningDamage });
     }
 
     if (mob.kind === Types.isBoss(mob.kind)) {
@@ -1402,7 +1890,7 @@ class Player extends Character {
       const isFrozen = random(100) < 20;
       if (isFrozen) {
         if (random(100) > this.bonus.reduceFrozenChance) {
-          this.broadcast(new Messages.Frozen(this.id, 10));
+          this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
         }
       }
     }
@@ -1410,25 +1898,111 @@ class Player extends Character {
     this.hitPoints -= dmg;
     this.server.handleHurtEntity({ entity: this, attacker: mob, isBlocked });
 
+    this.handleHurtDeath();
+
+    return { dmg, isBlocked };
+  }
+
+  calculateElementDamage(spell: { element: Elements; dmg: number }) {
+    const resistance = Types.calculateResistance(this.bonus[`${spell.element}Resistance`] + this.skill.resistances);
+
+    const dmg = Math.round(spell.dmg - spell.dmg * (resistance / 100));
+
+    if (spell.element === "cold") {
+      const isSlowed = random(100) < resistance;
+      if (isSlowed) {
+        if (random(100) > this.bonus.reduceFrozenChance) {
+          this.broadcast(new Messages.Slowed(this.id, Types.getFrozenTimePerLevel(10)));
+        }
+      }
+    } else if (spell.element === "poison") {
+      this.startPoisoned({ dmg: spell.dmg, entity: this, resistance: this.bonus.poisonResistance });
+    }
+
+    return dmg;
+  }
+
+  handleHurtSpellDmg(spell) {
+    const dmg = this.calculateElementDamage(spell);
+
+    this.hitPoints -= dmg;
+    this.server.handleHurtEntity({ entity: this, attacker: spell });
+
+    this.handleHurtDeath();
+  }
+
+  handleHurtTrapDmg(trap) {
+    // @TODO check based on defense?
+    const dmg = 200;
+
+    this.hitPoints -= dmg;
+    this.server.handleHurtEntity({ entity: this, attacker: trap });
+
+    this.handleHurtDeath();
+  }
+
+  startPoisoned({ dmg, entity, resistance, attacker = {} }) {
+    const baseIterations = 5;
+    const tick = 3000;
+    let iterations = Math.round(baseIterations - baseIterations * (resistance / 100));
+
+    this.broadcast(new Messages.Poisoned(entity.id, iterations * tick));
+    clearInterval(entity.poisonedInterval);
+
+    // @TODO ~~~ make sure the poison interval is cleared on disconnect
+    entity.poisonedInterval = setInterval(() => {
+      let poisonDmg = Math.round(
+        (dmg -
+          dmg *
+            (Types.calculateResistance(
+              Types.getResistance(entity, attacker).poisonResistance + (entity.skill?.resistances || 0),
+            ) /
+              100)) /
+          5,
+      );
+
+      if (iterations && poisonDmg) {
+        entity.hitPoints -= poisonDmg;
+        this.server.handleHurtEntity({ entity, attacker, dmg: poisonDmg });
+
+        iterations--;
+      } else {
+        clearInterval(entity.poisonedInterval);
+      }
+    }, tick);
+  }
+
+  handleHurtDeath() {
     if (this.hitPoints <= 0) {
       this.isDead = true;
 
-      if (this.shieldSkillTimeout) {
-        clearTimeout(this.shieldSkillTimeout);
-        this.shieldSkillTimeout = null;
+      if (this.attackSkillTimeout) {
+        clearTimeout(this.attackSkillTimeout);
+        this.attackSkillTimeout = null;
       }
-      if (this.shieldSkillDefenseTimeout) {
+      if (this.defenseSkillTimeout) {
+        clearTimeout(this.defenseSkillTimeout);
+        this.defenseSkillTimeout = null;
+      }
+      if (this.defenseSkillDefenseTimeout) {
         this.skill.defense = 0;
-        clearTimeout(this.shieldSkillDefenseTimeout);
-        this.shieldSkillDefenseTimeout = null;
+        clearTimeout(this.defenseSkillDefenseTimeout);
+        this.defenseSkillDefenseTimeout = null;
+      }
+      if (this.defenseSkillResistancesTimeout) {
+        this.skill.resistances = 0;
+        clearTimeout(this.defenseSkillResistancesTimeout);
+        this.defenseSkillResistancesTimeout = null;
       }
       if (this.firefoxpotionTimeout) {
         clearTimeout(this.firefoxpotionTimeout);
         this.firefoxpotionTimeout = null;
       }
+      if (this.poisonedInterval) {
+        clearInterval(this.poisonedInterval);
+        this.poisonedInterval = null;
+      }
     }
-
-    return { dmg, isBlocked };
   }
 
   send(message) {
@@ -1490,16 +2064,18 @@ class Player extends Character {
     kind,
     level,
     bonus,
+    socket,
     skill,
     type,
   }: {
     kind: number;
     level: number;
     bonus?: number[];
+    socket?: number[];
     skill?: number;
     type?: string;
   }) {
-    return new Messages.EquipItem(this, { kind, level, bonus, skill, type });
+    return new Messages.EquipItem(this, { kind, level, bonus, socket, skill, type });
   }
 
   addHater(mob) {
@@ -1522,57 +2098,66 @@ class Player extends Character {
     });
   }
 
-  equipArmor(armor, kind, level, bonus) {
+  equipArmor(armor, kind, level, bonus, socket) {
     this.armor = armor;
     this.armorKind = kind;
-    this.armorLevel = level;
-    this.armorBonus = bonus ? JSON.parse(bonus) : null;
+    this.armorLevel = toNumber(level);
+    this.armorBonus = toArray(bonus);
+    this.armorSocket = toArray(socket);
+    this.isArmorUnique = !!this.armorBonus?.length;
   }
 
-  equipWeapon(weapon, kind, level, bonus) {
+  equipWeapon(weapon, kind, level, bonus, socket, skill) {
     this.weapon = weapon;
     this.weaponKind = kind;
-    this.weaponLevel = level;
-    this.weaponBonus = bonus ? JSON.parse(bonus) : null;
+    this.weaponLevel = toNumber(level);
+    this.weaponBonus = toArray(bonus);
+    this.weaponSocket = toArray(socket);
+    this.isWeaponUnique = !!this.weaponBonus?.length;
+    this.attackSkill = toNumber(skill);
   }
 
   equipBelt(belt, level, bonus) {
     this.belt = belt;
-    this.beltLevel = level;
-    this.beltBonus = bonus ? JSON.parse(bonus) : null;
+    this.beltLevel = toNumber(level);
+    this.beltBonus = toArray(bonus);
+    this.isBeltUnique = !!this.beltBonus?.length;
   }
 
   equipCape(cape, kind, level, bonus) {
     this.cape = cape;
     this.capeKind = kind;
-    this.capeLevel = level;
-    this.capeBonus = bonus ? JSON.parse(bonus) : null;
+    this.capeLevel = toNumber(level);
+    this.capeBonus = toArray(bonus);
+    this.isCapeUnique = this.capeBonus?.length >= 2;
   }
 
-  equipShield(shield, kind, level, bonus, skill) {
+  equipShield(shield, kind, level, bonus, socket, skill) {
     this.shield = shield;
     this.shieldKind = kind;
-    this.shieldLevel = level;
-    this.shieldBonus = bonus ? JSON.parse(bonus) : null;
-    this.shieldSkill = skill ? parseInt(skill, 0) : null;
+    this.shieldLevel = toNumber(level);
+    this.shieldBonus = toArray(bonus);
+    this.shieldSocket = toArray(socket);
+    this.isShieldUnique = this.shieldBonus?.length >= 2;
+    this.defenseSkill = toNumber(skill);
   }
 
   equipRing1(ring, level, bonus) {
     this.ring1 = ring;
-    this.ring1Level = level;
-    this.ring1Bonus = bonus ? JSON.parse(bonus) : null;
+    this.ring1Level = toNumber(level);
+    this.ring1Bonus = toArray(bonus);
   }
 
   equipRing2(ring, level, bonus) {
     this.ring2 = ring;
-    this.ring2Level = level;
-    this.ring2Bonus = bonus ? JSON.parse(bonus) : null;
+    this.ring2Level = toNumber(level);
+    this.ring2Bonus = toArray(bonus);
   }
 
   equipAmulet(amulet, level, bonus) {
     this.amulet = amulet;
-    this.amuletLevel = level;
-    this.amuletBonus = bonus ? JSON.parse(bonus) : null;
+    this.amuletLevel = toNumber(level);
+    this.amuletBonus = toArray(bonus);
   }
 
   getEquipment() {
@@ -1580,25 +2165,7 @@ class Player extends Character {
   }
 
   calculateBonus() {
-    let hasDrainLifeAura = false;
-    let hasThunderstormAura = false;
-    let hasHighHealth = false;
-    let hasFreezeAura = false;
     this.freezeChanceLevel = 0;
-
-    if (this.bonus.drainLife) {
-      hasDrainLifeAura = true;
-    }
-    if (this.bonus.lightningDamage) {
-      hasThunderstormAura = true;
-    }
-    if (this.bonus.highHealth) {
-      hasHighHealth = true;
-    }
-    if (this.bonus.freezeChance) {
-      hasFreezeAura = true;
-    }
-
     try {
       const bonusToCalculate = [
         this.ring1
@@ -1646,37 +2213,34 @@ class Player extends Character {
       ].filter(Boolean);
 
       bonusToCalculate.forEach(({ bonus, level }) => {
-        Types.getBonus(bonus, level).forEach(({ type, stats }) => {
-          if (type === "freezeChance" && level > this.freezeChanceLevel) {
-            this.freezeChanceLevel = level;
-          }
-          this.bonus[type] += stats;
-        });
+        if (bonus) {
+          Object.entries(Types.getBonus(bonus, level)).forEach(([type, stats]) => {
+            if (type === "freezeChance" && level > this.freezeChanceLevel) {
+              this.freezeChanceLevel = level;
+            }
+            this.bonus[type] += stats;
+          });
+        }
       });
 
+      // @NOTE the magic bonus damage on a weapon is by default
+      if (this.weapon !== "dagger" && !this.isWeaponUnique) {
+        this.bonus.magicDamage += Types.getWeaponMagicDamage(this.weaponLevel);
+      }
+
       if (this.bonus.drainLife) {
-        this.addAura("drainlife");
-      } else if (hasDrainLifeAura && !this.bonus.drainLife) {
-        this.removeAura("drainlife");
+        this.auras.push("drainlife");
       }
-
       if (this.bonus.lightningDamage) {
-        this.addAura("thunderstorm");
-      } else if (hasThunderstormAura && !this.bonus.lightningDamage) {
-        this.removeAura("thunderstorm");
+        this.auras.push("thunderstorm");
       }
-
       if (this.bonus.highHealth) {
-        this.addAura("highhealth");
-      } else if (hasHighHealth && !this.bonus.highHealth) {
-        this.removeAura("highhealth");
+        this.auras.push("highhealth");
       }
-
       if (this.bonus.freezeChance) {
-        this.addAura("freeze");
-      } else if (hasFreezeAura && !this.bonus.freezeChance) {
-        this.removeAura("freeze");
+        this.auras.push("freeze");
       }
+      this.broadcast(new Messages.Auras(this), false);
     } catch (err) {
       console.log("Error: ", err);
       Sentry.captureException(err, {
@@ -1698,34 +2262,14 @@ class Player extends Character {
   }
 
   resetBonus() {
-    this.bonus = {
-      minDamage: 0,
-      maxDamage: 0,
-      attackDamage: 0,
-      health: 0,
-      magicDamage: 0,
-      defense: 0,
-      absorbedDamage: 0,
-      exp: 0,
-      regenerateHealth: 0,
-      criticalHit: 0,
-      blockChance: 0,
-      magicFind: 0,
-      attackSpeed: 0,
-      drainLife: 0,
-      flameDamage: 0,
-      lightningDamage: 0,
-      pierceDamage: 0,
-      highHealth: 0,
-      coldDamage: 0,
-      freezeChance: 0,
-      reduceFrozenChance: 0,
-      //@TODO configure resistances (player hurt)
-      magicResistance: 0,
-      flameResistance: 0,
-      lightningResistance: 0,
-      coldResistance: 0,
-    };
+    this.auras = [];
+    this.bonus = Types.bonusType.reduce((acc, key) => {
+      acc[key] = 0;
+      return acc;
+    }, {});
+
+    // Not part of the attributes
+    this.bonus.resistanceSpectral = 0;
   }
 
   resetPartyBonus() {
@@ -1743,11 +2287,11 @@ class Player extends Character {
   resetSkill() {
     this.skill = {
       defense: 0,
-      curseAttack: 0,
+      resistances: 0,
     };
   }
 
-  equipItem({ item, level, bonus, skill, type }) {
+  equipItem({ item, level, bonus, socket, skill, type }) {
     // @NOTE safety...
     if (bonus === "null") {
       bonus = null;
@@ -1772,28 +2316,67 @@ class Player extends Character {
       this.databaseHandler.equipCape(this.name, item, level, bonus);
       this.equipCape(item, kind, level, bonus);
     } else if (type === "shield") {
-      this.databaseHandler.equipShield(this.name, item, level, bonus, skill);
-      this.equipShield(item, Types.getKindFromString(item), level, bonus, skill);
+      this.databaseHandler.equipShield(this.name, item, level, bonus, socket, skill);
+      this.equipShield(item, Types.getKindFromString(item), level, bonus, socket, skill);
     } else if (item && level) {
       const kind = Types.getKindFromString(item);
 
       console.debug(this.name + " equips " + item);
 
       if (Types.isArmor(kind)) {
-        this.databaseHandler.equipArmor(this.name, item, level, bonus);
-        this.equipArmor(item, kind, level, bonus);
+        this.databaseHandler.equipArmor(this.name, item, level, bonus, socket);
+        this.equipArmor(item, kind, level, bonus, socket);
       } else if (Types.isWeapon(kind)) {
-        this.databaseHandler.equipWeapon(this.name, item, level, bonus);
-        this.equipWeapon(item, kind, level, bonus);
+        this.databaseHandler.equipWeapon(this.name, item, level, bonus, socket, skill);
+        this.equipWeapon(item, kind, level, bonus, socket, skill);
       }
     }
 
     this.resetBonus();
     this.calculateBonus();
     this.calculateSetBonus();
+    this.calculateSocketBonus();
     this.calculatePartyBonus();
+    this.calculateGlobalBonus();
     this.updateHitPoints();
     this.sendPlayerStats();
+  }
+
+  calculateGlobalBonus() {
+    if (this.hasGrimoire) {
+      this.bonus.allResistance += 10;
+    }
+
+    if (this.bonus.allResistance) {
+      this.bonus.magicResistance += this.bonus.allResistance;
+      this.bonus.flameResistance += this.bonus.allResistance;
+      this.bonus.lightningResistance += this.bonus.allResistance;
+      this.bonus.coldResistance += this.bonus.allResistance;
+      this.bonus.poisonResistance += this.bonus.allResistance;
+    }
+    if (this.bonus.magicDamagePercent) {
+      this.bonus.magicDamage += Math.round((this.bonus.magicDamagePercent / 100) * this.bonus.magicDamage);
+    }
+    if (this.bonus.flameDamagePercent) {
+      this.bonus.flameDamage += Math.round((this.bonus.flameDamagePercent / 100) * this.bonus.flameDamage);
+    }
+    if (this.bonus.lightningDamagePercent) {
+      this.bonus.lightningDamage += Math.round((this.bonus.lightningDamagePercent / 100) * this.bonus.lightningDamage);
+    }
+    if (this.bonus.coldDamagePercent) {
+      this.bonus.coldDamage += Math.round((this.bonus.coldDamagePercent / 100) * this.bonus.coldDamage);
+    }
+    if (this.bonus.poisonDamagePercent) {
+      this.bonus.poisonDamage += Math.round((this.bonus.poisonDamagePercent / 100) * this.bonus.poisonDamage);
+    }
+  }
+
+  validateCappedBonus() {
+    Object.entries(Types.bonusCap).forEach(([bonus, cap]) => {
+      if (this.bonus[bonus] > cap) {
+        this.bonus[bonus] = cap;
+      }
+    });
   }
 
   calculateSetBonus() {
@@ -1812,6 +2395,11 @@ class Player extends Character {
 
     if (Object.keys(setItems).length) {
       Object.entries(setItems).forEach(([key, value]) => {
+        // Give all set bonus if all items are equipped
+        if (Types.setItems[key].length === value) {
+          value = Object.keys(Types.setBonus[key]).length;
+        }
+
         Types.getSetBonus(key, value).forEach(({ type, stats }) => {
           if (typeof bonus[type] !== "number") {
             bonus[type] = 0;
@@ -1830,20 +2418,27 @@ class Player extends Character {
     this.send(new Messages.SetBonus(setItems).serialize());
   }
 
-  addAura(aura) {
-    const index = this.auras.indexOf(aura);
-    if (index === -1) {
-      this.auras.push(aura);
-      this.broadcast(new Messages.Auras(this), false);
-    }
-  }
+  calculateSocketBonus() {
+    let socketRuneBonus = {};
+    let socketJewelBonus = {};
 
-  removeAura(aura) {
-    const index = this.auras.indexOf(aura);
-    if (index > -1) {
-      this.auras.splice(index, 1);
-      this.broadcast(new Messages.Auras(this), false);
-    }
+    [
+      [this.armorSocket, this.isArmorUnique, "armor"],
+      [this.weaponSocket, this.isWeaponUnique, "weapon"],
+      [this.shieldSocket, this.isShieldUnique, "shield"],
+    ].forEach(([rawSocket, isUnique, type]) => {
+      const { runewordBonus } = Types.getRunewordBonus({ isUnique, socket: rawSocket, type });
+
+      if (runewordBonus) {
+        socketRuneBonus = runewordBonus;
+      } else {
+        socketRuneBonus = Types.getRunesBonus(rawSocket);
+        socketJewelBonus = Types.getJewelBonus(rawSocket);
+      }
+
+      this.bonus = Types.combineBonus(this.bonus, socketRuneBonus);
+      this.bonus = Types.combineBonus(this.bonus, socketJewelBonus);
+    });
   }
 
   updateHitPoints(reset?: boolean) {
@@ -1892,9 +2487,8 @@ class Player extends Character {
 
   resetTimeout() {
     clearTimeout(this.disconnectTimeout);
-    // This account doesn't timeout
-    if (this.account === `${this.network}_${NO_TIMEOUT_ACCOUNT}`) return;
-    this.disconnectTimeout = setTimeout(this.timeout.bind(this), 1000 * 60 * 15); // 15 min.
+    if (ADMINS.includes(this.name)) return;
+    this.disconnectTimeout = setTimeout(this.timeout.bind(this), 1000 * 60 * 30); // 30 min.
   }
 
   timeout() {
@@ -1905,13 +2499,13 @@ class Player extends Character {
   sendPlayerStats() {
     const isInParty = this.getParty()?.members.length >= 2;
 
-    var { min: minAbsorb, max: maxAbsorb } = Formulas.minMaxAbsorb({
+    const { min: minDefense, max: maxDefense } = Formulas.minMaxDefense({
       armor: this.armor,
       armorLevel: this.armorLevel,
-      isUniqueArmor: !!this.armorBonus,
+      isArmorUnique: this.isArmorUnique,
       belt: this.belt,
       beltLevel: this.beltLevel,
-      isUniqueBelt: !!this.beltBonus,
+      isBeltUnique: this.isBeltUnique,
       playerLevel: this.level,
       defense: this.bonus.defense,
       absorbedDamage: this.bonus.absorbedDamage,
@@ -1919,13 +2513,18 @@ class Player extends Character {
       capeLevel: this.capeLevel,
       shield: this.shield,
       shieldLevel: this.shieldLevel,
-      isUniqueShield: this.shieldBonus?.length >= 2,
+      isShieldUnique: this.isShieldUnique,
       partyDefense: isInParty ? this.partyBonus.defense : 0,
       skillDefense: this.skill.defense,
     });
-    var { min: minDamage, max: maxDamage } = Formulas.minMaxDamage({
+    const {
+      min: minDamage,
+      max: maxDamage,
+      attackDamage,
+    } = Formulas.minMaxDamage({
       weapon: this.weapon,
       weaponLevel: this.weaponLevel,
+      isWeaponUnique: this.isWeaponUnique,
       playerLevel: this.level,
       minDamage: this.bonus.minDamage + (isInParty ? this.partyBonus.minDamage : 0),
       maxDamage: this.bonus.maxDamage + (isInParty ? this.partyBonus.maxDamage : 0),
@@ -1935,21 +2534,51 @@ class Player extends Character {
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,
       coldDamage: this.bonus.coldDamage,
+      poisonDamage: this.bonus.poisonDamage,
       pierceDamage: this.bonus.pierceDamage,
       partyAttackDamage: isInParty ? this.partyBonus.attackDamage : 0,
     });
 
-    this.send(
-      new Messages.Stats({
-        maxHitPoints: this.maxHitPoints,
-        damage: minDamage !== maxDamage ? `${minDamage}-${maxDamage}` : maxDamage,
-        defense:
-          minAbsorb !== maxAbsorb
-            ? `${minAbsorb - this.bonus.absorbedDamage}-${maxAbsorb - this.bonus.absorbedDamage}`
-            : maxAbsorb - this.bonus.absorbedDamage,
-        absorb: this.bonus.absorbedDamage,
-      }).serialize(),
-    );
+    const stats = {
+      maxHitPoints: this.maxHitPoints,
+      damage: minDamage !== maxDamage ? `${minDamage}-${maxDamage}` : maxDamage,
+      defense:
+        minDefense !== maxDefense
+          ? `${minDefense - this.bonus.absorbedDamage}-${maxDefense - this.bonus.absorbedDamage}`
+          : maxDefense - this.bonus.absorbedDamage,
+      attackDamage,
+      absorbedDamage: this.bonus.absorbedDamage,
+      exp: this.bonus.exp + this.partyBonus.exp,
+      criticalHit: this.bonus.criticalHit,
+      blockChance: this.bonus.blockChance,
+      magicFind: this.bonus.magicFind,
+      attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
+      magicDamage: this.bonus.magicDamage + this.partyBonus.magicDamage,
+      flameDamage: this.bonus.flameDamage,
+      lightningDamage: this.bonus.lightningDamage,
+      coldDamage: this.bonus.coldDamage,
+      poisonDamage: this.bonus.poisonDamage,
+      pierceDamage: this.bonus.pierceDamage,
+      magicResistance: Types.calculateResistance(this.bonus.magicResistance + this.skill.resistances),
+      flameResistance: Types.calculateResistance(this.bonus.flameResistance + this.skill.resistances),
+      lightningResistance: Types.calculateResistance(this.bonus.lightningResistance + this.skill.resistances),
+      coldResistance: Types.calculateResistance(this.bonus.coldResistance + this.skill.resistances),
+      poisonResistance: Types.calculateResistance(this.bonus.poisonResistance + this.skill.resistances),
+      skillTimeout: Types.calculateSkillTimeout(this.bonus.skillTimeout),
+      magicDamagePercent: this.bonus.magicDamagePercent,
+      flameDamagePercent: this.bonus.flameDamagePercent,
+      lightningDamagePercent: this.bonus.lightningDamagePercent,
+      coldDamagePercent: this.bonus.coldDamagePercent,
+      poisonDamagePercent: this.bonus.poisonDamagePercent,
+      lowerMagicResistance: this.bonus.lowerMagicResistance,
+      lowerFlameResistance: this.bonus.lowerFlameResistance,
+      lowerLightningResistance: this.bonus.lowerLightningResistance,
+      lowerColdResistance: this.bonus.lowerColdResistance,
+      lowerPoisonResistance: this.bonus.lowerPoisonResistance,
+      lowerAllResistance: this.bonus.lowerAllResistance,
+    };
+
+    this.send(new Messages.Stats(stats).serialize());
   }
 
   incExp(exp) {
@@ -1961,6 +2590,14 @@ class Player extends Character {
       this.updateHitPoints(true);
       this.sendPlayerStats();
       this.server.updatePopulation({ levelupPlayer: this.id });
+
+      if (this.discordId) {
+        // @TODO figure out a way to sync the new level
+      }
+
+      if (this.level >= 60) {
+        postMessageToDiscordChatChannel(`${this.name} is now lv.${this.level}`);
+      }
     }
   }
 
@@ -2038,11 +2675,13 @@ class Player extends Character {
     gems,
     artifact,
     expansion1,
+    expansion2,
     waypoints,
     depositAccount,
     depositAccountIndex,
     settings,
     network,
+    discordId,
   }) {
     try {
       // @NOTE: Make sure the player has authenticated if he has the expansion
@@ -2055,12 +2694,26 @@ class Player extends Character {
       delete this.isPasswordRequired;
       delete this.isPasswordValid;
 
-      const [playerArmor, playerArmorLevel = 1, playerArmorBonus] = armor.split(":");
-      const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus] = weapon.split(":");
+      const [playerArmor, playerArmorLevel = 1, playerArmorBonus, playerArmorSocket] = armor.split(":");
+      const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus, playerWeaponSocket, playerWeaponSkill] =
+        weapon.split(":");
 
       this.kind = Types.Entities.WARRIOR;
-      this.equipArmor(playerArmor, Types.getKindFromString(playerArmor), playerArmorLevel, playerArmorBonus);
-      this.equipWeapon(playerWeapon, Types.getKindFromString(playerWeapon), playerWeaponLevel, playerWeaponBonus);
+      this.equipArmor(
+        playerArmor,
+        Types.getKindFromString(playerArmor),
+        playerArmorLevel,
+        playerArmorBonus,
+        playerArmorSocket,
+      );
+      this.equipWeapon(
+        playerWeapon,
+        Types.getKindFromString(playerWeapon),
+        playerWeaponLevel,
+        playerWeaponBonus,
+        playerWeaponSocket,
+        playerWeaponSkill,
+      );
 
       if (belt) {
         const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
@@ -2071,13 +2724,15 @@ class Player extends Character {
         this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
       }
       if (shield) {
-        const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSkill] = shield.split(":");
+        const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSocket, playerDefenseSkill] =
+          shield.split(":");
         this.equipShield(
           playerShield,
           Types.getKindFromString(playerShield),
           playerShieldLevel,
           playerShieldBonus,
-          playerShieldSkill,
+          playerShieldSocket,
+          playerDefenseSkill,
         );
       }
       if (ring1) {
@@ -2095,6 +2750,7 @@ class Player extends Character {
       this.achievement = achievement;
       this.waypoints = waypoints;
       this.expansion1 = expansion1;
+      this.expansion2 = expansion2;
       this.depositAccount = depositAccount;
       this.depositAccountIndex = depositAccountIndex;
       this.inventory = inventory;
@@ -2112,6 +2768,7 @@ class Player extends Character {
       this.orientation = randomOrientation();
       this.network = network;
       this.nanoPotions = nanoPotions;
+      this.discordId = discordId;
 
       if (!x || !y) {
         this.updatePosition();
@@ -2125,6 +2782,11 @@ class Player extends Character {
       this.server.enter_callback(this);
 
       const { members, partyLeader } = this.getParty() || {};
+
+      this.hasGrimoire = !!achievement[ACHIEVEMENT_GRIMOIRE_INDEX];
+      this.hasNft = !!achievement[ACHIEVEMENT_NFT_INDEX];
+      this.hasWing = !!achievement[ACHIEVEMENT_WING_INDEX];
+      this.hasCrystal = !!achievement[ACHIEVEMENT_CRYSTAL_INDEX];
 
       this.send([
         Types.Messages.WELCOME,
@@ -2150,6 +2812,7 @@ class Player extends Character {
         gems,
         artifact,
         expansion1,
+        expansion2,
         waypoints,
         depositAccount,
         this.auras,
@@ -2162,7 +2825,10 @@ class Player extends Character {
       this.resetBonus();
       this.calculateBonus();
       this.calculateSetBonus();
+      this.calculateSocketBonus();
       this.calculatePartyBonus();
+      this.calculateGlobalBonus();
+      this.validateCappedBonus();
       this.updateHitPoints(true);
       this.sendPlayerStats();
 

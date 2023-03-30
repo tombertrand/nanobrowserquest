@@ -1,6 +1,7 @@
 import { Types } from "../../shared/js/gametypes";
 import Character from "./character";
 import Game from "./game";
+import Spell from "./spell";
 import Timer from "./timer";
 
 class Updater {
@@ -21,6 +22,7 @@ class Updater {
     this.updateTransitions();
     this.updateAnimations();
     this.updateAnimatedTiles();
+    this.updateHighAnimatedTiles();
     this.updateChatBubbles();
     this.updateInfos();
     this.updateKeyboardMovement();
@@ -37,7 +39,9 @@ class Updater {
           self.updateCharacter(entity);
           self.game.onCharacterUpdate(entity);
         }
-        self.updateEntityFading(entity);
+        if (entity.isFading) {
+          self.updateEntityFading(entity);
+        }
       }
     });
   }
@@ -143,6 +147,52 @@ class Updater {
     // Estimate of the movement distance for one update
     var tick = Math.round(16 / Math.round(c.moveSpeed / (1000 / this.game.renderer.FPS)));
 
+    // Handle spell instances separately.
+    // https://github.com/Kaetram/Kaetram-Open/blob/b8b5e156aff5fb7e8b3da780122aa734bb95a8a9/packages/client/src/entity/objects/projectile.ts
+    if (c instanceof Spell && c.target) {
+      let mDistance = c.moveSpeed * c.getTimeDiff(),
+        dx = c.target.x - c.x, // delta x current position to target
+        dy = c.target.y - c.y, // delta y current position to target
+        tDistance = Math.sqrt(dx * dx + dy * dy), // pythagorean theorem uwu
+        amount = mDistance / tDistance;
+
+      if (amount > 1) amount = 1;
+
+      if (!c.isDead) {
+        // Increment the projectile's position.
+        c.x += dx * amount;
+        c.y += dy * amount;
+
+        // unregister and register to new grid position
+        if (Math.floor(c.y / 16) !== c.gridY) {
+          this.game.removeFromRenderingGrid(c, c.gridX, c.gridY);
+          c.gridY = Math.floor(c.y / 16);
+          this.game.addToRenderingGrid(c, c.gridX, c.gridY);
+        }
+      }
+
+      if (!c.isDead && this.game.player) {
+        const isPlayerHit = Math.abs(this.game.player.x - c.x) <= 8 && Math.abs(this.game.player.y - c.y) <= 8;
+        const isGridOrAnyPlayerHit = !isPlayerHit
+          ? this.game.pathingGrid[Math.round(c.y / 16)][Math.round(c.x / 16)] &&
+            (this.game.isPlayerAt(Math.round(c.x / 16), Math.round(c.y / 16)) ||
+              !this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id)
+          : // this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id !== c.casterId
+            false;
+
+        if (isPlayerHit) {
+          this.game.makePlayerHurtFromSpell(c);
+        }
+        if (isPlayerHit || isGridOrAnyPlayerHit || tDistance < 1) {
+          c.die();
+        }
+      }
+
+      c.lastUpdate = this.game.currentTime;
+
+      return;
+    }
+
     if (c.isMoving() && c.movement.inProgress === false) {
       if (c.orientation === Types.Orientations.LEFT) {
         c.movement.start(
@@ -208,6 +258,86 @@ class Updater {
           c.y + 16,
           c.moveSpeed,
         );
+      } else if (c.orientation === Types.Orientations.DOWN_LEFT) {
+        c.movement.start(
+          this.game.currentTime,
+          function (x, y) {
+            c.x = x;
+            c.y = y;
+            c.hasMoved();
+          },
+          function () {
+            c.x = c.movement.endValue;
+            c.y = c.movement.endValue1;
+            c.hasMoved();
+            c.nextStep();
+          },
+          c.x - tick,
+          c.x - 16,
+          c.moveSpeed,
+          c.y + tick,
+          c.y + 16,
+        );
+      } else if (c.orientation === Types.Orientations.DOWN_RIGHT) {
+        c.movement.start(
+          this.game.currentTime,
+          function (x, y) {
+            c.x = x;
+            c.y = y;
+            c.hasMoved();
+          },
+          function () {
+            c.x = c.movement.endValue;
+            c.y = c.movement.endValue1;
+            c.hasMoved();
+            c.nextStep();
+          },
+          c.x + tick,
+          c.x + 16,
+          c.moveSpeed,
+          c.y + tick,
+          c.y + 16,
+        );
+      } else if (c.orientation === Types.Orientations.UP_LEFT) {
+        c.movement.start(
+          this.game.currentTime,
+          function (x, y) {
+            c.x = x;
+            c.y = y;
+            c.hasMoved();
+          },
+          function () {
+            c.x = c.movement.endValue;
+            c.y = c.movement.endValue1;
+            c.hasMoved();
+            c.nextStep();
+          },
+          c.x - tick,
+          c.x - 16,
+          c.moveSpeed,
+          c.y - tick,
+          c.y - 16,
+        );
+      } else if (c.orientation === Types.Orientations.UP_RIGHT) {
+        c.movement.start(
+          this.game.currentTime,
+          function (x, y) {
+            c.x = x;
+            c.y = y;
+            c.hasMoved();
+          },
+          function () {
+            c.x = c.movement.endValue;
+            c.y = c.movement.endValue1;
+            c.hasMoved();
+            c.nextStep();
+          },
+          c.x + tick,
+          c.x + 16,
+          c.moveSpeed,
+          c.y - tick,
+          c.y - 16,
+        );
       }
     }
   }
@@ -251,57 +381,33 @@ class Updater {
       }
     });
 
-    var sparks = this.game.sparksAnimation;
-    if (sparks) {
-      sparks.update(t);
-    }
-
-    var target = this.game.targetAnimation;
-    if (target) {
-      target.update(t);
-    }
-
-    var levelup = this.game.levelupAnimation;
-    if (levelup) {
-      levelup.update(t);
-    }
-
-    var drainLife = this.game.drainLifeAnimation;
-    if (drainLife) {
-      drainLife.update(t);
-    }
-
-    var thunderStorm = this.game.thunderstormAnimation;
-    if (thunderStorm) {
-      thunderStorm.update(t);
-    }
-
-    var highHealth = this.game.highHealthAnimation;
-    if (highHealth) {
-      highHealth.update(t);
-    }
-
-    var freeze = this.game.freezeAnimation;
-    if (freeze) {
-      freeze.update(t);
-    }
-
-    var anvilAnimation = this.game.anvilAnimation;
-    if (anvilAnimation) {
-      anvilAnimation.update(t);
-    }
-
-    var skillAnimation = this.game.skillAnimation;
-    if (skillAnimation) {
-      skillAnimation.update(t);
-    }
+    this.game.sparksAnimation?.update(t);
+    this.game.targetAnimation?.update(t);
+    this.game.levelupAnimation?.update(t);
+    this.game.drainLifeAnimation?.update(t);
+    this.game.thunderstormAnimation?.update(t);
+    this.game.highHealthAnimation?.update(t);
+    this.game.freezeAnimation?.update(t);
+    this.game.resistanceAnimation?.update(t);
+    this.game.arcaneAnimation?.update(t);
+    this.game.anvilAnimation?.update(t);
+    this.game.defenseSkillAnimation?.update(t);
+    this.game.skillResistanceAnimation?.update(t);
+    this.game.skillCastAnimation?.update(t);
+    this.game.skillMagicAnimation?.update(t);
+    this.game.skillFlameAnimation?.update(t);
+    this.game.skillLightningAnimation?.update(t);
+    this.game.skillColdAnimation?.update(t);
+    this.game.skillPoisonAnimation?.update(t);
+    this.game.cursePreventRegenerateHealthAnimation?.update(t);
+    this.game.weaponEffectAnimation?.update(t);
   }
 
-  updateAnimatedTiles() {
-    var self = this,
-      t = this.game.currentTime;
+  updateAnimatedTiles(isHighTile = false) {
+    var self = this;
+    var t = this.game.currentTime;
 
-    this.game.forEachAnimatedTile(function (tile) {
+    const callback = function (tile) {
       if (tile.animate(t)) {
         tile.isDirty = true;
         tile.dirtyRect = self.game.renderer.getTileBoundingRect(tile);
@@ -310,7 +416,17 @@ class Updater {
           self.game.checkOtherDirtyRects(tile.dirtyRect, tile, tile.x, tile.y);
         }
       }
-    });
+    };
+
+    if (isHighTile) {
+      this.game.forEachHighAnimatedTile(callback);
+    } else {
+      this.game.forEachAnimatedTile(callback);
+    }
+  }
+
+  updateHighAnimatedTiles() {
+    this.updateAnimatedTiles(true);
   }
 
   updateChatBubbles() {

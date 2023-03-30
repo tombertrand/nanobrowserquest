@@ -1,0 +1,49 @@
+{
+  "id": "ghost",
+  "width": 70,
+  "height": 47,
+  "animations": {
+    "atk_right": {
+      "length": 5,
+      "row": 0
+    },
+    "walk_right": {
+      "length": 3,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 3,
+      "row": 2
+    },
+    "atk_up": {
+      "length": 5,
+      "row": 0
+    },
+    "walk_up": {
+      "length": 3,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 3,
+      "row": 2
+    },
+    "atk_down": {
+      "length": 5,
+      "row": 0
+    },
+    "walk_down": {
+      "length": 3,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 3,
+      "row": 2
+    },
+    "death": {
+      "length": 4,
+      "row": 3
+    }
+  },
+  "offset_x": -24,
+  "offset_y": -24
+}

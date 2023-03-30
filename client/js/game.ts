@@ -4,6 +4,27 @@ import * as Sentry from "@sentry/browser";
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
+import {
+  DELETE_SLOT,
+  INVENTORY_SLOT_COUNT,
+  Slot,
+  STASH_SLOT_COUNT,
+  STASH_SLOT_PAGES,
+  STASH_SLOT_PER_PAGE,
+  STASH_SLOT_RANGE,
+  TRADE_SLOT_COUNT,
+  TRADE_SLOT_RANGE,
+  UPGRADE_SLOT_COUNT,
+  UPGRADE_SLOT_RANGE,
+} from "../../shared/js/slots";
+import {
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../shared/js/types/achievements";
+import { AchievementName } from "../../shared/js/types/achievements";
+import { randomInt, toArray, toString } from "../../shared/js/utils";
+import { getAchievements } from "./achievements";
 import Animation from "./animation";
 import App from "./app";
 import AudioManager from "./audio";
@@ -18,22 +39,16 @@ import InfoManager from "./infomanager";
 import Item from "./item";
 import Map from "./map";
 import Mob from "./mob";
-import Mobs from "./mobs";
 import Npc from "./npc";
 import Pathfinder from "./pathfinder";
 import Player from "./player";
 import Renderer from "./renderer";
+import Spell from "./spell";
 import Sprite from "./sprite";
 import AnimatedTile from "./tile";
 import Transition from "./transition";
 import Updater from "./updater";
-import { randomRange } from "./utils";
 import Warrior from "./warrior";
-
-import type { ChatType } from "../../server/js/types";
-
-export type Network = "nano" | "ban";
-export type Explorer = "nanolooker" | "bananolooker";
 
 interface WorldPlayer {
   name: string;
@@ -50,16 +65,24 @@ class Game {
   isLoaded: boolean;
   hasNeverStarted: boolean;
   isUpgradeItemSent: boolean;
+  anvilRecipe: Recipes;
   isAnvilSuccess: boolean;
   isAnvilFail: boolean;
-  isAnvilRecipe: boolean;
   isAnvilTransmute: boolean;
+  isAnvilRuneword: boolean;
   isAnvilChestblue: boolean;
+  isAnvilChestgreen: boolean;
+  isAnvilChestpurple: boolean;
+  isAnvilChestred: boolean;
   anvilAnimationTimeout: any;
   cowPortalStart: boolean;
   cowLevelPortalCoords: { x: number; y: number } | null;
   minotaurPortalStart: boolean;
   minotaurLevelPortalCoords: { x: number; y: number };
+  stonePortalStart: boolean;
+  stoneLevelPortalCoords: { x: number; y: number };
+  gatewayPortalStart: boolean;
+  gatewayLevelPortalCoords: { x: number; y: number };
   renderer: Renderer;
   updater: Updater;
   pathfinder: Pathfinder;
@@ -73,7 +96,7 @@ class Game {
   pathingGrid: any;
   renderingGrid: any;
   itemGrid: any;
-  currentCursor: null;
+  currentCursor: any;
   mouse: { x: number; y: number };
   zoningQueue: any[];
   previousClickPosition: { x: number; y: number };
@@ -91,9 +114,10 @@ class Game {
   infoManager: InfoManager;
   currentZoning: Transition | null;
   cursors: {};
-  sprites: {};
+  sprites: any;
   currentTime: any;
-  animatedTiles: any;
+  animatedTiles: any[] | null;
+  highAnimatedTiles: any[] | null;
   debugPathing: boolean;
   pvpFlag: boolean;
   spriteNames: string[];
@@ -108,8 +132,20 @@ class Game {
   thunderstormAnimation: Animation;
   highHealthAnimation: Animation;
   freezeAnimation: Animation;
+  resistanceAnimation: Animation;
+  arcaneAnimation: Animation;
   anvilAnimation: Animation;
-  skillAnimation: Animation;
+  defenseSkillAnimation: Animation;
+  skillResistanceAnimation: Animation;
+  attackSkillAnimation: Animation;
+  skillCastAnimation: Animation;
+  skillMagicAnimation: Animation;
+  skillFlameAnimation: Animation;
+  skillLightningAnimation: Animation;
+  skillColdAnimation: Animation;
+  skillPoisonAnimation: Animation;
+  cursePreventRegenerateHealthAnimation: Animation;
+  weaponEffectAnimation: Animation;
   client: any;
   achievements: any;
   spritesets: any;
@@ -157,6 +193,17 @@ class Game {
   partyInvites: Partial<WorldPlayer>[];
   partyInvitees: string[];
   showAnvilOdds: boolean;
+  showHealthAboveBars: boolean;
+  currentStashPage: number;
+  activatedMagicStones: number[];
+  activatedBlueFlames: number[];
+  isAltarChaliceActivated: boolean;
+  altarChaliceNpcId: number;
+  altarSoulStoneNpcId: number;
+  treeNpcId: number;
+  traps: { id: number; x: number; y: number }[];
+  statues: { id: number; x: number; y: number }[];
+  gatewayFxNpcId: number;
 
   constructor(app) {
     this.app = app;
@@ -165,21 +212,30 @@ class Game {
     this.isLoaded = false;
     this.hasNeverStarted = true;
     this.isUpgradeItemSent = false;
+    this.anvilRecipe = null;
     this.isAnvilSuccess = false;
     this.isAnvilFail = false;
-    this.isAnvilRecipe = false;
     this.isAnvilTransmute = false;
+    this.isAnvilRuneword = false;
     this.isAnvilChestblue = false;
+    this.isAnvilChestgreen = false;
+    this.isAnvilChestpurple = false;
+    this.isAnvilChestred = false;
     this.anvilAnimationTimeout = null;
     this.cowPortalStart = false;
     this.cowLevelPortalCoords = null;
     this.minotaurPortalStart = false;
     this.minotaurLevelPortalCoords = { x: 34, y: 498 };
+    this.stonePortalStart = false;
+    this.stoneLevelPortalCoords = { x: 97, y: 728 };
+    this.gatewayPortalStart = false;
+    this.gatewayLevelPortalCoords = { x: 13, y: 777 };
     this.network = null;
     this.explorer = null;
     this.hoverSlotToDelete = null;
     this.isTeleporting = false;
     this.showAnvilOdds = false;
+    this.showHealthAboveBars = false;
 
     this.renderer = null;
     this.updater = null;
@@ -194,13 +250,24 @@ class Game {
     this.thunderstormAnimation = null;
     this.highHealthAnimation = null;
     this.freezeAnimation = null;
+    this.resistanceAnimation = null;
+    this.arcaneAnimation = null;
     this.anvilAnimation = null;
-    this.skillAnimation = null;
+    this.defenseSkillAnimation = null;
+    this.skillResistanceAnimation = null;
+    this.skillCastAnimation = null;
+    this.skillMagicAnimation = null;
+    this.skillFlameAnimation = null;
+    this.skillLightningAnimation = null;
+    this.skillColdAnimation = null;
+    this.skillPoisonAnimation = null;
+    this.cursePreventRegenerateHealthAnimation = null;
+    this.weaponEffectAnimation = null;
     this.partyInvites = [];
     this.partyInvitees = [];
 
     // Player
-    this.player = new Warrior("player", "");
+    this.player = new Warrior("player", { name: "" });
     this.worldPlayers = [];
     // this.player.moveUp = false;
     // this.player.moveDown = false;
@@ -219,6 +286,7 @@ class Game {
     this.mouse = { x: 0, y: 0 };
     this.zoningQueue = [];
     this.previousClickPosition = null;
+    this.currentStashPage = 0;
 
     this.cursorVisible = true;
     this.selectedX = 0;
@@ -232,19 +300,28 @@ class Game {
     this.hoveringItem = false;
     this.hoveringCollidingTile = false;
 
+    this.activatedMagicStones = [];
+    this.activatedBlueFlames = [];
+    this.isAltarChaliceActivated = false;
+    this.altarChaliceNpcId = null;
+    this.altarSoulStoneNpcId = null;
+    this.treeNpcId = null;
+    this.traps = [];
+    this.statues = [];
+    this.gatewayFxNpcId = null;
+
     // combat
     // @ts-ignore
     this.infoManager = new InfoManager(this);
 
     // zoning
     this.currentZoning = null;
-
     this.cursors = {};
-
     this.sprites = {};
 
     // tile animation
     this.animatedTiles = null;
+    this.highAnimatedTiles = null;
 
     // debug
     this.debugPathing = false;
@@ -263,17 +340,36 @@ class Game {
       "aura-thunderstorm",
       "aura-highhealth",
       "aura-freeze",
+      "aura-lowerresistance",
+      "aura-arcane",
       "skill-heal",
       "skill-defense",
-      "skill-curse-attack",
+      "skill-resistances",
+      "skill-cast",
+      "skill-cast-magic",
+      "skill-cast-flame",
+      "skill-cast-poison",
+      "skill-magic",
+      "skill-flame",
+      "skill-lightning",
+      "skill-cold",
+      "skill-poison",
+      "curse-prevent-regenerate-health",
       "talk",
       "sparks",
+      "weapon-effect-magic",
+      "weapon-effect-flame",
+      "weapon-effect-cold",
+      "weapon-effect-poison",
       "shadow16",
       "rat",
       "rat2",
+      "rat3",
       "skeleton",
       "skeleton2",
       "skeleton3",
+      "skeleton4",
+      "golem",
       "spectre",
       "boss",
       "skeletoncommander",
@@ -285,6 +381,8 @@ class Game {
       "crab",
       "snake",
       "snake2",
+      "snake3",
+      "snake4",
       "eye",
       "bat",
       "bat2",
@@ -295,6 +393,49 @@ class Game {
       "cow",
       "cowking",
       "minotaur",
+      "worm",
+      "wraith2",
+      "ghost",
+      "mage",
+      "mage-magic",
+      "mage-flame",
+      "mage-lightning",
+      "mage-cold",
+      "mage-poison",
+      "mage-spell",
+      "mage-spell-magic",
+      "mage-spell-flame",
+      "mage-spell-lightning",
+      "mage-spell-cold",
+      "mage-spell-poison",
+      "arrow",
+      "arrow-magic",
+      "arrow-flame",
+      "arrow-lightning",
+      "arrow-cold",
+      "arrow-poison",
+      "shaman",
+      "skeletontemplar",
+      "skeletontemplar2",
+      "spider",
+      "spider2",
+      "spiderqueen",
+      "butcher",
+      "oculothorax",
+      "kobold",
+      "skeletonberserker",
+      "skeletonarcher",
+      "statue",
+      "statue-spell",
+      "statue2",
+      "statue2-spell",
+      "deathangel",
+      "deathangel-spell",
+      "deathangel-spell-magic",
+      "deathangel-spell-flame",
+      "deathangel-spell-lightning",
+      "deathangel-spell-cold",
+      "deathangel-spell-poison",
       "wizard",
       "guard",
       "king",
@@ -314,13 +455,43 @@ class Game {
       "anvil-success",
       "anvil-fail",
       "anvil-recipe",
+      "anvil-powder",
       "anvil-transmute",
       "anvil-chestblue",
       "waypointx",
       "waypointn",
+      "waypointo",
       "stash",
-      "cowportal",
-      "minotaurportal",
+      "portalcow",
+      "portalminotaur",
+      "portalstone",
+      "portalgateway",
+      "gatewayfx",
+      "gate",
+      "magicstone",
+      "altarchalice",
+      "altarsoulstone",
+      "secretstairs",
+      "secretstairs2",
+      "secretstairsup",
+      "tombdeathangel",
+      "tombangel",
+      "tombcross",
+      "tombskull",
+      "lever",
+      "lever2",
+      "grimoire",
+      "fossil",
+      "hands",
+      "alkor",
+      "olaf",
+      "victor",
+      "fox",
+      "tree",
+      "trap",
+      "trap2",
+      "trap3",
+      "blueflame",
       "beachnpc",
       "forestnpc",
       "desertnpc",
@@ -335,8 +506,13 @@ class Game {
       "hornedarmor",
       "frozenarmor",
       "diamondarmor",
-      "spikearmor",
+      "emeraldarmor",
+      "templararmor",
+      "dragonarmor",
+      "mysticalarmor",
       "demonarmor",
+      "bloodarmor",
+      "paladinarmor",
       "firefox",
       "death",
       "dagger",
@@ -353,6 +529,14 @@ class Game {
       "diamondsword",
       "minotauraxe",
       "emeraldsword",
+      "moonsword",
+      "templarsword",
+      "spikeglaive",
+      "eclypsedagger",
+      "executionersword",
+      "mysticalsword",
+      "dragonsword",
+      "hellhammer",
       "cape",
       "shieldwood",
       "shieldiron",
@@ -363,6 +547,13 @@ class Game {
       "shieldhorned",
       "shieldfrozen",
       "shielddiamond",
+      "shieldtemplar",
+      "shieldemerald",
+      "shieldexecutioner",
+      "shieldmystical",
+      "shielddragon",
+      "shielddemon",
+      "shieldmoon",
       "item-sword",
       "item-axe",
       "item-blueaxe",
@@ -374,6 +565,14 @@ class Game {
       "item-diamondsword",
       "item-minotauraxe",
       "item-emeraldsword",
+      "item-moonsword",
+      "item-templarsword",
+      "item-spikeglaive",
+      "item-eclypsedagger",
+      "item-executionersword",
+      "item-mysticalsword",
+      "item-dragonsword",
+      "item-hellhammer",
       "item-leatherarmor",
       "item-mailarmor",
       "item-platearmor",
@@ -383,14 +582,25 @@ class Game {
       "item-hornedarmor",
       "item-frozenarmor",
       "item-diamondarmor",
-      "item-spikearmor",
+      "item-emeraldarmor",
+      "item-templararmor",
+      "item-dragonarmor",
+      "item-mysticalarmor",
       "item-demonarmor",
+      "item-bloodarmor",
+      "item-paladinarmor",
       "item-beltleather",
       "item-beltplated",
       "item-beltfrozen",
       "item-belthorned",
       "item-beltdiamond",
       "item-beltminotaur",
+      "item-beltemerald",
+      "item-beltexecutioner",
+      "item-beltmystical",
+      "item-belttemplar",
+      "item-beltdemon",
+      "item-beltmoon",
       "item-cape",
       "item-shieldwood",
       "item-shieldiron",
@@ -401,11 +611,49 @@ class Game {
       "item-shieldhorned",
       "item-shieldfrozen",
       "item-shielddiamond",
+      "item-shieldtemplar",
+      "item-shieldemerald",
+      "item-shieldexecutioner",
+      "item-shieldmystical",
+      "item-shielddragon",
+      "item-shielddemon",
+      "item-shieldmoon",
       "item-flask",
       "item-rejuvenationpotion",
       "item-poisonpotion",
       "item-nanopotion",
       "item-bananopotion",
+      "item-rune-sat",
+      "item-rune-al",
+      "item-rune-bul",
+      "item-rune-nan",
+      "item-rune-mir",
+      "item-rune-gel",
+      "item-rune-do",
+      "item-rune-ban",
+      "item-rune-sol",
+      "item-rune-um",
+      "item-rune-hex",
+      "item-rune-zal",
+      "item-rune-vie",
+      "item-rune-eth",
+      "item-rune-btc",
+      "item-rune-vax",
+      "item-rune-por",
+      "item-rune-las",
+      "item-rune-cham",
+      "item-rune-dur",
+      "item-rune-xno",
+      "item-rune-fal",
+      "item-rune-kul",
+      "item-rune-mer",
+      "item-rune-qua",
+      "item-rune-gul",
+      "item-rune-ber",
+      "item-rune-tor",
+      "item-rune-jah",
+      "item-rune-shi",
+      "item-rune-vod",
       "item-gemruby",
       "item-gememerald",
       "item-gemamethyst",
@@ -415,20 +663,41 @@ class Game {
       "item-ringbronze",
       "item-ringsilver",
       "item-ringgold",
+      "item-ringplatinum",
       "item-ringnecromancer",
       "item-ringraistone",
       "item-ringfountain",
       "item-ringminotaur",
+      "item-ringmystical",
+      "item-ringbalrog",
+      "item-ringconqueror",
+      "item-ringheaven",
+      "item-ringwizard",
       "item-amuletsilver",
       "item-amuletgold",
+      "item-amuletplatinum",
       "item-amuletcow",
       "item-amuletfrozen",
+      "item-amuletdemon",
+      "item-amuletmoon",
+      "item-amuletstar",
+      "item-amuletskull",
+      "item-amuletdragon",
       "item-chestblue",
+      "item-chestgreen",
+      "item-chestpurple",
+      "item-chestred",
       "item-scrollupgradelow",
       "item-scrollupgrademedium",
       "item-scrollupgradehigh",
+      "item-scrollupgradelegendary",
       "item-scrollupgradeblessed",
+      "item-scrollupgradesacred",
       "item-scrolltransmute",
+      "item-stonesocket",
+      "item-stonedragon",
+      "item-stonehero",
+      "item-jewelskull",
       "item-skeletonkey",
       "item-raiblockstl",
       "item-raiblockstr",
@@ -438,6 +707,17 @@ class Game {
       "item-skeletonkingcage",
       "item-necromancerheart",
       "item-cowkinghorn",
+      "item-chalice",
+      "item-soulstone",
+      "item-nft",
+      "item-wing",
+      "item-crystal",
+      "item-powderblack",
+      "item-powderblue",
+      "item-powdergold",
+      "item-powdergreen",
+      "item-powderred",
+      "item-powderquantum",
       "item-cake",
       "item-burger",
       "morningstar",
@@ -484,17 +764,12 @@ class Game {
     this.showAnvilOdds = enabled;
   }
 
+  setShowHealthAboveBars(enabled) {
+    this.showHealthAboveBars = enabled;
+  }
+
   loadMap() {
-    var self = this;
-
-    // @ts-ignore
     this.map = new Map(!this.renderer.upscaledRendering, this);
-
-    this.map.ready(function () {
-      console.info("Map loaded.");
-      var tilesetIndex = self.renderer.upscaledRendering ? 0 : self.renderer.scale - 1;
-      self.renderer.setTileset(self.map.tilesets[tilesetIndex]);
-    });
   }
 
   initPlayer() {
@@ -547,11 +822,44 @@ class Game {
     this.freezeAnimation = new Animation("idle_down", 8, 0, 16, 8);
     this.freezeAnimation.setSpeed(140);
 
+    this.resistanceAnimation = new Animation("idle_down", 7, 0, 16, 8);
+    this.resistanceAnimation.setSpeed(140);
+
+    this.arcaneAnimation = new Animation("idle_down", 4, 0, 36, 15);
+    this.arcaneAnimation.setSpeed(140);
+
     this.anvilAnimation = new Animation("idle_down", 4, 0, 15, 8);
     this.anvilAnimation.setSpeed(80);
 
-    this.skillAnimation = new Animation("idle_down", 8, 0, 32, 32);
-    this.skillAnimation.setSpeed(125);
+    this.defenseSkillAnimation = new Animation("idle_down", 8, 0, 32, 32);
+    this.defenseSkillAnimation.setSpeed(125);
+
+    this.skillResistanceAnimation = new Animation("idle_down", 24, 0, 30, 36);
+    this.skillResistanceAnimation.setSpeed(25);
+
+    this.skillCastAnimation = new Animation("idle_down", 17 + 1, 0, 48, 48);
+    this.skillCastAnimation.setSpeed(50);
+
+    this.skillMagicAnimation = new Animation("idle_down", 12 + 1, 0, 64, 64);
+    this.skillMagicAnimation.setSpeed(100);
+
+    this.skillFlameAnimation = new Animation("idle_down", 12 + 1, 0, 34, 58);
+    this.skillFlameAnimation.setSpeed(125);
+
+    this.skillLightningAnimation = new Animation("idle_down", 8 + 1, 0, 28, 50);
+    this.skillLightningAnimation.setSpeed(125);
+
+    this.skillColdAnimation = new Animation("idle_down", 14 + 1, 0, 72, 72);
+    this.skillColdAnimation.setSpeed(75);
+
+    this.skillPoisonAnimation = new Animation("idle_down", 8 + 1, 0, 24, 60);
+    this.skillPoisonAnimation.setSpeed(125);
+
+    this.weaponEffectAnimation = new Animation("idle_down", 6, 0, 20, 20);
+    this.weaponEffectAnimation.setSpeed(140);
+
+    this.cursePreventRegenerateHealthAnimation = new Animation("idle_down", 17 + 1, 0, 20, 20);
+    this.cursePreventRegenerateHealthAnimation.setSpeed(25);
   }
 
   initHurtSprites() {
@@ -566,7 +874,23 @@ class Game {
     var self = this;
 
     Types.forEachMobOrNpcKind(function (kind, kindName) {
+      if (
+        kind === Types.Entities.TREE ||
+        kind === Types.Entities.TRAP ||
+        kind === Types.Entities.TRAP2 ||
+        kind === Types.Entities.TRAP3
+      )
+        return;
+
       self.sprites[kindName].createSilhouette();
+
+      if (kind === Types.Entities.MAGE) {
+        self.sprites["mage-magic"].createSilhouette();
+        self.sprites["mage-flame"].createSilhouette();
+        self.sprites["mage-lightning"].createSilhouette();
+        self.sprites["mage-cold"].createSilhouette();
+        self.sprites["mage-poison"].createSilhouette();
+      }
     });
     self.sprites["chest"].createSilhouette();
     self.sprites["item-cake"].createSilhouette();
@@ -636,6 +960,13 @@ class Game {
     if (this.storage.showAnvilOddsEnabled()) {
       this.setShowAnvilOdds(true);
       $("#anvil-odds-checkbox").prop("checked", true);
+    } else {
+      this.setShowAnvilOdds(false);
+    }
+
+    if (this.storage.showHealthAboveBarsEnabled()) {
+      this.setShowAnvilOdds(true);
+      $("#health-above-bars-checkbox").prop("checked", true);
     } else {
       this.setShowAnvilOdds(false);
     }
@@ -744,7 +1075,7 @@ class Game {
     $(document).tooltip({
       items: "[data-item]",
       track: true,
-      // hide: 1000000,
+      // hide: 100000,
       position: { my: "left bottom-10", at: "left bottom", collision: "flipfit" },
       close: function () {
         self.hoverSlotToDelete = null;
@@ -755,11 +1086,12 @@ class Game {
 
         const element = $(this);
         const item = element.attr("data-item");
-        const level = element.attr("data-level");
-        const rawBonus = element.attr("data-bonus") ? JSON.parse(element.attr("data-bonus")) : undefined;
-        const rawSkill = element.attr("data-skill");
+        const level = parseInt(element.attr("data-level") || "1", 10);
+        const rawBonus = toArray(element.attr("data-bonus"));
+        const rawSkill = element.attr("data-skill") ? parseInt(element.attr("data-skill"), 10) : null;
+        const rawSocket = toArray(element.attr("data-socket"));
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
-        const isEquippedItemSlot = Object.values(Types.Slot).includes(slot);
+        const isEquippedItemSlot = Object.values(Slot).includes(slot);
 
         self.hoverSlotToDelete = slot;
 
@@ -779,7 +1111,12 @@ class Game {
             }));
 
             if (self.player.setBonus[currentSet]) {
-              setBonus = Types.getSetBonus(currentSet, self.player.setBonus[currentSet]);
+              let setPartCount = self.player.setBonus[currentSet];
+              if (setPartCount === Types.setItems[currentSet].length) {
+                setPartCount = Object.keys(Types.setBonus[currentSet]).length;
+              }
+
+              setBonus = Types.getSetBonus(currentSet, setPartCount);
             }
           }
         }
@@ -787,6 +1124,10 @@ class Game {
         const {
           name,
           isUnique,
+          isRune,
+          isRuneword,
+          isJewel,
+          isStone,
           itemClass,
           defense,
           damage,
@@ -800,11 +1141,48 @@ class Game {
           requirement,
           description,
           partyBonus = [],
-        } = Types.getItemDetails({ item, level, rawBonus, rawSkill });
+          runeBonus = [],
+          runeRank,
+          socket,
+        } = Types.getItemDetails({ item, level, rawBonus, rawSkill, rawSocket, playerBonus: self.player.bonus });
 
-        return `<div>
-            <div class="item-title${isUnique ? " unique" : ""}">${name}${level ? `(+${level})` : ""} </div>
-            ${itemClass ? `<div class="item-class">(${isUnique ? "Unique " : ""}${itemClass} class item)</div>` : ""}
+        const isLevelVisible =
+          level && !isRune && !isJewel && !isStone && !Types.isSingle(item) && !Types.isScroll(item);
+
+        return `<div class="item-tooltip-wrapper ${
+          bonus.length >= 8 && currentSet && setBonus.length ? "extended" : ""
+        }">
+            <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
+              ${name}${isLevelVisible ? ` (+${level})` : ""}
+              ${runeRank ? ` (#${runeRank})` : ""}
+              ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
+            </div>
+            ${
+              itemClass
+                ? `<div class="item-class">(${isUnique ? "Unique " : ""}${
+                    isRuneword ? "Runeword " : ""
+                  }${itemClass} class item)</div>`
+                : ""
+            }
+            ${
+              socket
+                ? `<div class="socket-container">
+                ${_.range(0, socket)
+                  .map(index => {
+                    let image = "none";
+                    if (typeof rawSocket[index] === "number") {
+                      const rune = Types.getRuneNameFromItem(rawSocket[index]);
+                      image = rune ? `url(img/2/item-rune-${rune}.png)` : "none";
+                    } else if (Types.isJewel(rawSocket[index])) {
+                      const [, , jewelBonus] = (rawSocket[index] as unknown as string).split("|") || [];
+                      const imageIndex = Types.getJewelSkinIndex(toArray(jewelBonus));
+                      image = `url(img/2/item-jewelskull${imageIndex}.png)`;
+                    }
+                    return `<div class="item-rune" style="background-image: ${image}; position: relative;"></div>`;
+                  })
+                  .join("")}</div>`
+                : ""
+            }
             ${defense ? `<div class="item-description">Defense: ${defense}</div>` : ""}
             ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
             ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
@@ -812,26 +1190,50 @@ class Game {
             ${lightningDamage ? `<div class="item-bonus">Lightning damage: ${lightningDamage}</div>` : ""}
             ${pierceDamage ? `<div class="item-bonus">Pierce damage: ${pierceDamage}</div>` : ""}
             ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
-            ${bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")}
-            ${description ? `<div class="item-description">${description}</div>` : ""}
-            ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
             ${
-              currentSet && setBonus.length
-                ? `<div class="item-set-description">${_.capitalize(currentSet)} set bonuses</div>`
+              Array.isArray(bonus)
+                ? bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")
                 : ""
             }
-            ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-            ${setName ? `<div class="item-set-name">${setName}</div>` : ""}
-            ${setParts
-              ?.map(
-                ({ description, isActive }) =>
-                  `<div class="item-set-part ${isActive ? "active" : ""}">${description}</div>`,
-              )
-              .join("")}
-            ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
-            ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+            ${description ? `<div class="item-description">${description}</div>` : ""}
+            ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
             ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
-          </div>`;
+            ${
+              currentSet && setBonus.length
+                ? `<div>
+                ${
+                  currentSet && setBonus.length
+                    ? `<div class="item-set-description">${_.capitalize(currentSet)} set bonuses</div>`
+                    : ""
+                }
+                ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+                ${setName ? `<div class="item-set-name">${setName}</div>` : ""}
+                ${setParts
+                  ?.map(
+                    ({ description, isActive }) =>
+                      `<div class="item-set-part ${isActive ? "active" : ""}">${description}</div>`,
+                  )
+                  .join("")}
+              </div>`
+                : ""
+            }
+
+            ${
+              partyBonus.length
+                ? `<div>
+                ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
+                ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+              </div>`
+                : ""
+            }
+            ${
+              runeBonus.length
+                ? `<div>
+                ${runeBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+              </div>`
+                : ""
+            }
+        </div>`;
       },
     });
   }
@@ -839,10 +1241,10 @@ class Game {
   initSendUpgradeItem() {
     var self = this;
     $("#upgrade-btn").on("click", function () {
+      const item1 = self.player.upgrade[0]?.item;
       if (
         self.player.upgrade.length >= 2 ||
-        (self.player.upgrade.length === 1 &&
-          (Types.isChest(self.player.upgrade[0]?.item) || self.player.upgrade[0]?.item === "cowkinghorn"))
+        (self.player.upgrade.length === 1 && (Types.isChest(item1) || item1 === "cowkinghorn" || Types.isWeapon(item1)))
       ) {
         if (!self.isUpgradeItemSent) {
           self.client.sendUpgradeItem();
@@ -862,15 +1264,17 @@ class Game {
       let itemLevel;
       let itemBonus;
       let itemSkill;
+      let itemSocket;
       let isItemUnique;
       let isUpgrade = false;
 
-      self.player.upgrade.forEach(({ item, level, slot, bonus, skill, isUnique }) => {
+      self.player.upgrade.forEach(({ item, level, slot, bonus, skill, socket, isUnique }) => {
         if (slot === 0) {
           itemName = item;
           itemLevel = level;
           itemBonus = bonus;
           itemSkill = skill;
+          itemSocket = socket;
           isItemUnique = isUnique;
         } else if (item.startsWith("scrollupgrade")) {
           isUpgrade = true;
@@ -886,6 +1290,7 @@ class Game {
               level: parseInt(itemLevel) + 1,
               bonus: itemBonus,
               skill: itemSkill,
+              socket: itemSocket,
             }),
           );
         }
@@ -926,6 +1331,7 @@ class Game {
     const level = parseInt(fromItemEl.attr("data-level"));
     const quantity = parseInt(fromItemEl.attr("data-quantity")) || null;
     const rawBonus = fromItemEl.attr("data-bonus");
+    const socket = toArray(fromItemEl.attr("data-socket"));
     const rawSkill = fromItemEl.attr("data-skill");
     let bonus: number[];
     let skill: number;
@@ -934,22 +1340,18 @@ class Game {
     if (Types.isQuantity(item) && quantity > 1 && transferedQuantity === null && !toItem) {
       // Mandatory inventory from or to interaction
       if (
-        (fromSlot < 24 || toSlot < 24) &&
-        ((fromSlot >= 300 && fromSlot < 348) ||
-          (toSlot >= 300 && toSlot < 348) ||
-          (fromSlot >= 400 && fromSlot < 409) ||
-          (toSlot >= 400 && toSlot < 409))
+        (fromSlot < INVENTORY_SLOT_COUNT || toSlot < INVENTORY_SLOT_COUNT) &&
+        ((fromSlot >= STASH_SLOT_RANGE && fromSlot < STASH_SLOT_RANGE + STASH_SLOT_COUNT) ||
+          (toSlot >= STASH_SLOT_RANGE && toSlot < STASH_SLOT_RANGE + STASH_SLOT_COUNT) ||
+          (fromSlot >= TRADE_SLOT_RANGE && fromSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT) ||
+          (toSlot >= TRADE_SLOT_RANGE && toSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT))
       ) {
         this.dropItemQuantity(fromSlot, toSlot, quantity);
         return;
       }
     }
     if (rawBonus) {
-      try {
-        bonus = JSON.parse(rawBonus) as number[];
-      } catch (err) {
-        // Silence error
-      }
+      bonus = toArray(rawBonus);
     }
     if (rawSkill) {
       skill = parseInt(rawSkill, 10);
@@ -957,14 +1359,14 @@ class Game {
 
     if (toItem) {
       if (
-        Object.values(Types.Slot).includes(fromSlot) &&
+        Object.values(Slot).includes(fromSlot) &&
         (!toLevel || !Types.isCorrectTypeForSlot(fromSlot, toItem) || toLevel > this.player.level)
       ) {
         return;
       }
     }
 
-    if (Object.values(Types.Slot).includes(toSlot) && Types.getItemRequirement(item, level) > this.player.level) {
+    if (Object.values(Slot).includes(toSlot) && Types.getItemRequirement(item, level) > this.player.level) {
       return;
     }
 
@@ -985,15 +1387,15 @@ class Game {
     this.client.sendMoveItem(fromSlot, toSlot, transferedQuantity);
 
     if (typeof level === "number") {
-      if (toSlot === Types.Slot.WEAPON) {
-        this.player.switchWeapon(item, level, bonus);
-      } else if (toSlot === Types.Slot.ARMOR) {
-        this.player.switchArmor(this.sprites[item], level, bonus);
-      } else if (toSlot === Types.Slot.CAPE) {
+      if (toSlot === Slot.WEAPON) {
+        this.player.switchWeapon(item, level, bonus, socket, skill);
+      } else if (toSlot === Slot.ARMOR) {
+        this.player.switchArmor(this.sprites[item], level, bonus, socket);
+      } else if (toSlot === Slot.CAPE) {
         this.player.switchCape(item, level, bonus);
-      } else if (toSlot === Types.Slot.SHIELD) {
-        this.player.switchShield(item, level, bonus, skill);
-        this.setShieldSkill(skill);
+      } else if (toSlot === Slot.SHIELD) {
+        this.player.switchShield(item, level, bonus, socket, skill);
+        this.setDefenseSkill(skill);
       }
     }
 
@@ -1066,7 +1468,8 @@ class Game {
         }
       })
       .val(maxQuantity)
-      .focus();
+      .trigger("focus")
+      .trigger("select");
 
     // @ts-ignore
     $(".ui-button").removeClass("ui-button");
@@ -1108,8 +1511,10 @@ class Game {
           $(`.item-${type}`).addClass("item-droppable");
         } else if (Types.isScroll(item)) {
           $(".item-scroll").addClass("item-droppable");
-        } else if (Types.isSingle(item)) {
+        } else if (Types.isRune(item) || Types.isStone(item) || Types.isJewel(item)) {
           $(".item-recipe").addClass("item-droppable");
+        } else if (Types.isSingle(item)) {
+          $(".item-single").addClass("item-droppable");
         }
 
         // Simpler to remove it after the fact
@@ -1132,12 +1537,14 @@ class Game {
     $(".item-draggable.ui-draggable").draggable("destroy");
   }
 
-  getIconPath(spriteName: string, level?: string | number) {
+  getIconPath(spriteName: string, level?: number, bonus?: number[]) {
     const scale = this.renderer.getScaleFactor();
 
     let suffix = "";
-    if (spriteName === "cape" && parseInt(level as string, 10) >= 7) {
+    if (spriteName === "cape" && level >= 7) {
       suffix = "7";
+    } else if (spriteName === "jewelskull" && level !== 1) {
+      suffix = Types.getJewelSkinIndex(bonus);
     }
 
     return `img/${scale}/item-${spriteName}${suffix}.png`;
@@ -1145,49 +1552,60 @@ class Game {
 
   initInventory() {
     $("#item-inventory").empty();
-    for (var i = 0; i < 24; i++) {
+    for (var i = 0; i < INVENTORY_SLOT_COUNT; i++) {
       $("#item-inventory").append(`<div class="item-slot item-inventory item-droppable" data-slot="${i}"></div>`);
     }
 
-    $("#item-weapon").empty().append('<div class="item-slot item-equip-weapon item-weapon" data-slot="100"></div>');
-    $("#item-armor").empty().append('<div class="item-slot item-equip-armor item-armor" data-slot="101"></div>');
-    $("#item-belt").empty().append('<div class="item-slot item-equip-belt item-belt" data-slot="102"></div>');
-    $("#item-cape").empty().append('<div class="item-slot item-equip-cape item-cape" data-slot="106"></div>');
-    $("#item-shield").empty().append('<div class="item-slot item-equip-shield item-shield" data-slot="107"></div>');
+    $("#item-weapon")
+      .empty()
+      .append(`<div class="item-slot item-equip-weapon item-weapon" data-slot="${Slot.WEAPON}"></div>`);
+    $("#item-armor")
+      .empty()
+      .append(`<div class="item-slot item-equip-armor item-armor" data-slot="${Slot.ARMOR}"></div>`);
+    $("#item-belt").empty().append(`<div class="item-slot item-equip-belt item-belt" data-slot="${Slot.BELT}"></div>`);
+    $("#item-cape").empty().append(`<div class="item-slot item-equip-cape item-cape" data-slot="${Slot.CAPE}"></div>`);
+    $("#item-shield")
+      .empty()
+      .append(`<div class="item-slot item-equip-shield item-shield" data-slot="${Slot.SHIELD}"></div>`);
     $("#item-ring1")
       .empty()
-      .append('<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="103"></div>');
+      .append(`<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="${Slot.RING1}"></div>`);
     $("#item-ring2")
       .empty()
-      .append('<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="104"></div>');
+      .append(`<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="${Slot.RING2}"></div>`);
     $("#item-amulet")
       .empty()
-      .append('<div class="item-slot item-equip-amulet item-amulet item-amulet" data-slot="105"></div>');
-    $("#item-delete").empty().append('<div class="item-slot item-droppable item-delete" data-slot="-1"></div>');
+      .append(`<div class="item-slot item-equip-amulet item-amulet item-amulet" data-slot="${Slot.AMULET}"></div>`);
+    $("#item-delete")
+      .empty()
+      .append(`<div class="item-slot item-droppable item-delete" data-slot="${DELETE_SLOT}"></div>`);
 
     if (this.player.weaponName !== "dagger") {
       $(".item-equip-weapon").append(
         $("<div />", {
-          class: `item-draggable ${this.player.weaponBonus ? "item-unique" : ""}`,
+          class: `item-draggable ${this.player.weaponBonus?.length ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.weaponName)}")`,
           },
           "data-item": this.player.weaponName,
           "data-level": this.player.weaponLevel,
-          "data-bonus": this.player.weaponBonus,
+          "data-bonus": toString(this.player.weaponBonus),
+          "data-socket": toString(this.player.weaponSocket),
+          "data-skill": this.player.attackSkill,
         }),
       );
     }
     if (this.player.armorName !== "clotharmor") {
       $(".item-equip-armor").append(
         $("<div />", {
-          class: `item-draggable ${this.player.armorBonus ? "item-unique" : ""}`,
+          class: `item-draggable ${this.player.armorBonus?.length ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.armorName)}")`,
           },
           "data-item": this.player.armorName,
           "data-level": this.player.armorLevel,
-          "data-bonus": this.player.armorBonus,
+          "data-bonus": toString(this.player.armorBonus),
+          "data-socket": toString(this.player.armorSocket),
         }),
       );
     }
@@ -1195,13 +1613,13 @@ class Game {
     if (this.player.beltName) {
       $(".item-equip-belt").append(
         $("<div />", {
-          class: `item-draggable ${this.player.beltBonus ? "item-unique" : ""}`,
+          class: `item-draggable ${this.player.beltBonus?.length ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.beltName)}")`,
           },
           "data-item": this.player.beltName,
           "data-level": this.player.beltLevel,
-          "data-bonus": this.player.beltBonus,
+          "data-bonus": toString(this.player.beltBonus),
         }),
       );
     }
@@ -1215,7 +1633,7 @@ class Game {
           },
           "data-item": this.player.cape,
           "data-level": this.player.capeLevel,
-          "data-bonus": this.player.capeBonus,
+          "data-bonus": toString(this.player.capeBonus),
         }),
       );
     }
@@ -1229,8 +1647,9 @@ class Game {
           },
           "data-item": this.player.shieldName,
           "data-level": this.player.shieldLevel,
-          "data-bonus": this.player.shieldBonus,
-          "data-skill": this.player.shieldSkill,
+          "data-bonus": toString(this.player.shieldBonus),
+          "data-socket": toString(this.player.shieldSocket),
+          "data-skill": this.player.defenseSkill,
         }),
       );
     }
@@ -1246,7 +1665,7 @@ class Game {
           },
           "data-item": this.player.ring1Name,
           "data-level": this.player.ring1Level,
-          "data-bonus": this.player.ring1Bonus,
+          "data-bonus": toString(this.player.ring1Bonus),
         }),
       );
     }
@@ -1262,7 +1681,7 @@ class Game {
           },
           "data-item": this.player.ring2Name,
           "data-level": this.player.ring2Level,
-          "data-bonus": this.player.ring2Bonus,
+          "data-bonus": toString(this.player.ring2Bonus),
         }),
       );
     }
@@ -1276,7 +1695,7 @@ class Game {
           },
           "data-item": this.player.amuletName,
           "data-level": this.player.amuletLevel,
-          "data-bonus": this.player.amuletBonus,
+          "data-bonus": toString(this.player.amuletBonus),
         }),
       );
     }
@@ -1340,14 +1759,18 @@ class Game {
   initUpgrade() {
     $("#upgrade-scroll").empty();
     for (var i = 1; i < 10; i++) {
-      $("#upgrade-scroll").append(`<div class="item-slot item-scroll item-recipe" data-slot="${200 + i}"></div>`);
+      $("#upgrade-scroll").append(
+        `<div class="item-slot item-scroll item-recipe item-single" data-slot="${UPGRADE_SLOT_RANGE + i}"></div>`,
+      );
     }
     $("#upgrade-item")
       .empty()
       .append(
-        '<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="200"></div>',
+        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
       );
-    $("#upgrade-result").empty().append('<div class="item-slot item-upgraded" data-slot="210"></div>');
+    $("#upgrade-result")
+      .empty()
+      .append(`<div class="item-slot item-upgraded" data-slot="${UPGRADE_SLOT_RANGE + UPGRADE_SLOT_COUNT - 1}"></div>`);
   }
 
   initTrade() {
@@ -1356,8 +1779,8 @@ class Game {
 
     for (var i = 0; i < 9; i++) {
       $("#trade-player1-item").append(
-        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest item-scroll" data-slot="${
-          400 + i
+        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest item-scroll item-recipe" data-slot="${
+          TRADE_SLOT_RANGE + i
         }"></div>`,
       );
       $("#trade-player2-item").append(`<div class="item-slot item-trade"></div>`);
@@ -1403,30 +1826,40 @@ class Game {
       level,
       bonus,
       skill,
+      socket,
       requirement,
     }: {
       quantity?: number;
       isUnique: boolean;
       item: string;
       level: number;
-      bonus: any;
+      bonus: string;
       skill: any;
+      socket: string;
       requirement?: number;
     },
     isDraggable = true,
   ) {
+    if (socket) {
+      const socketRequirement = Types.getHighestSocketRequirement(JSON.parse(socket));
+      if (socketRequirement > requirement) {
+        requirement = socketRequirement;
+      }
+    }
+
     return $("<div />", {
       class: `${isDraggable ? "item-draggable" : "item-not-draggable"} ${quantity ? "item-quantity" : ""} ${
         isUnique ? "item-unique" : ""
       }`,
       css: {
-        "background-image": `url("${this.getIconPath(item, level)}")`,
+        "background-image": `url("${this.getIconPath(item, level, toArray(bonus))}")`,
         position: "relative",
       },
       "data-item": item,
       "data-level": level,
       ...(quantity ? { "data-quantity": quantity } : null),
-      ...(bonus ? { "data-bonus": bonus } : null),
+      ...(bonus ? { "data-bonus": toString(bonus) } : null),
+      ...(socket ? { "data-socket": toString(socket) } : null),
       ...(skill ? { "data-skill": skill } : null),
       ...(requirement ? { "data-requirement": requirement } : null),
     });
@@ -1460,7 +1893,7 @@ class Game {
     let itemBonus;
     let actionText = "upgrade";
 
-    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, skill, isUnique }) => {
+    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, skill, socket, isUnique }) => {
       if (slot === 0 && level) {
         itemLevel = level;
         itemName = item;
@@ -1474,7 +1907,7 @@ class Game {
           actionText = "transmute";
         } else if (!item.startsWith("scrollupgrade")) {
           successRate = null;
-        } else if (itemLevel && item.startsWith("scrollupgradeblessed")) {
+        } else if (itemLevel && (item.startsWith("scrollupgradeblessed") || item.startsWith("scrollupgradesacred"))) {
           const blessedRates = Types.getBlessedSuccessRateBonus();
           const blessedRate = blessedRates[parseInt(itemLevel) - 1];
           successRate += blessedRate;
@@ -1483,7 +1916,7 @@ class Game {
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")
-        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill }));
+        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill, socket }));
     });
 
     $("#upgrade-info").html(successRate ? `${successRate}% chance of successful ${actionText}` : "&nbsp;");
@@ -1495,389 +1928,150 @@ class Game {
 
   initStash() {
     $("#item-stash").empty();
-    for (var i = 0; i < 48; i++) {
-      $("#item-stash").append(`<div class="item-slot item-stash item-droppable" data-slot="${i + 300}"></div>`);
+
+    let counter = STASH_SLOT_RANGE;
+
+    for (var i = 0; i < STASH_SLOT_PAGES; i++) {
+      $("#item-stash").append(
+        `<div class="item-stash-page page-${i} ${i === this.currentStashPage ? "visible" : ""}"></div>`,
+      );
+
+      for (var ii = 0; ii < STASH_SLOT_PER_PAGE; ii++) {
+        $(`#item-stash .item-stash-page.page-${i}`).append(
+          `<div class="item-slot item-stash item-droppable" data-slot="${counter}"></div>`,
+        );
+        counter++;
+      }
     }
+
+    const togglePage = () => {
+      $(".item-stash-page").removeClass("visible");
+      $(`.item-stash-page.page-${this.currentStashPage}`).addClass("visible");
+      $("#current-stash-page").text(this.currentStashPage + 1);
+
+      previousButton.toggleClass("disabled btn-gray", this.currentStashPage === 0);
+      nextButton.toggleClass("disabled btn-gray", this.currentStashPage >= STASH_SLOT_PAGES - 1);
+    };
+
+    const previousButton = $("#item-stash-previous-page");
+    const nextButton = $("#item-stash-next-page");
+
+    previousButton.off("click").on("click", () => {
+      if (this.currentStashPage > 0) {
+        this.currentStashPage--;
+        togglePage();
+      }
+    });
+
+    nextButton.off("click").on("click", () => {
+      if (this.currentStashPage < STASH_SLOT_PAGES - 1) {
+        this.currentStashPage++;
+        togglePage();
+      }
+    });
+
+    togglePage();
+
+    // @TODO Bind prev/next buttons
 
     this.updateStash();
   }
 
   useSkill(slot) {
-    const skillSlot = $(`[data-skill-slot="${slot}"]`);
-
     if (document.activeElement.tagName === "INPUT") return;
 
-    // Slot 1 (offensive skill) is not set yet!
-    if (skillSlot.hasClass("disabled") || slot === 1) {
-      return;
+    let mobId = 0;
+
+    // No skill / timeout is not finished
+    if (slot === 1) {
+      const { x, y } = this.getMouseGridPosition();
+      const entity = this.getEntityAt(x, y);
+      mobId = entity?.id;
+
+      const isTree = mobId ? entity.kind === Types.Entities.TREE && this.player.attackSkill === 1 : false;
+
+      // Can't cast on self
+      if (!mobId || mobId === this.player.id || (Types.isNpc(entity.kind) && !isTree)) return;
+      // Can't cast on other players with many level difference
+      if (mobId && entity instanceof Player && (entity.level < 9 || Math.abs(entity.level - this.player.level) <= 10)) {
+        this.chat_callback({
+          message: "You can't attack a player below level 9 or with more than 10 level difference to yours",
+          type: "error",
+        });
+        return;
+      }
+
+      if (this.player.attackSkillTimeout || typeof this.player.attackSkill !== "number" || !mobId) {
+        return;
+      }
+
+      this.player.setSkillTargetId(mobId);
+
+      if (isTree) {
+        this.tryUnlockingAchievement("ZELDA");
+      }
+    } else if (slot === 2 && (this.player.defenseSkillTimeout || typeof this.player.defenseSkill !== "number")) return;
+
+    const isAttackSkill = slot === 1;
+    const skillName = isAttackSkill
+      ? Types.attackSkillTypeAnimationMap[this.player.attackSkill]
+      : Types.defenseSkillTypeAnimationMap[this.player.defenseSkill];
+    const originalTimeout = isAttackSkill
+      ? Math.floor(Types.attackSkillDelay[this.player.attackSkill])
+      : Math.floor(Types.defenseSkillDelay[this.player.defenseSkill]);
+    const timeout = Math.round(
+      originalTimeout - originalTimeout * (Types.calculateSkillTimeout(this.player.bonus.skillTimeout) / 100),
+    );
+
+    const skillSlot = $(`[data-skill-slot="${slot}"]`);
+    skillSlot
+      .addClass("disabled")
+      .find(".skill-timeout")
+      .addClass(`active ${skillName}`)
+      .attr("style", `transition: width ${timeout / 1000}s linear;`);
+
+    if (isAttackSkill) {
+      // this.player.setAttackSkillAnimation(skillName, Types.attackSkillDurationMap[this.player.attackSkill]());
+      this.player.attackSkillTimeout = setTimeout(() => {
+        skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout").attr("style", "");
+        if (this.player) {
+          this.player.attackSkillTimeout = null;
+        }
+      }, timeout);
+    } else {
+      if (this.player.defenseSkill === 2) {
+        this.skillResistanceAnimation.reset();
+      } else {
+        this.defenseSkillAnimation.reset();
+      }
+      this.player.setDefenseSkillAnimation(
+        skillName,
+        Types.defenseSkillDurationMap[this.player.defenseSkill](this.player.shieldLevel),
+      );
+      this.player.defenseSkillTimeout = setTimeout(() => {
+        skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout").attr("style", "");
+        this.player.defenseSkillTimeout = null;
+      }, timeout);
     }
 
-    // No skill or timeout is not finished
-    if (slot === 2 && (this.player.shieldSkillTimeout || typeof this.player.shieldSkill !== "number")) {
-      return;
-    }
-
-    const skillName = Types.skillTypeAnimationMap[this.player.shieldSkill];
-
-    skillSlot.addClass("disabled");
-    skillSlot.find(".skill-timeout").addClass(`active ${skillName}`);
-    this.skillAnimation.reset();
-    this.player.setSkillAnimation(skillName, Types.skillDurationMap[this.player.shieldSkill](this.player.shieldLevel));
     this.audioManager.playSound(`skill-${skillName}`);
-
-    this.client.sendSkill(this.player.shieldSkill);
-
-    // @TODO remove, this is for testing
-
-    this.player.shieldSkillTimeout = setTimeout(() => {
-      skillSlot.removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout");
-      this.player.shieldSkillTimeout = null;
-    }, Types.skillDelay[this.player.shieldSkill]);
+    this.client.sendSkill(slot, mobId);
   }
 
-  setShieldSkill(skill) {
-    const skillName = Types.skillTypeAnimationMap[skill] || null;
-    $("#skill-shield").attr("class", skillName ? `skill-${skillName}` : null);
+  setDefenseSkill(skill) {
+    const skillName = Types.defenseSkillTypeAnimationMap[skill] || null;
+    $("#skill-defense").attr("class", skillName ? `skill-${skillName}` : null);
+  }
+
+  setAttackSkill(skill) {
+    const skillName = Types.attackSkillTypeAnimationMap[skill] || null;
+    $("#skill-attack").attr("class", skillName ? `skill-${skillName}` : null);
   }
 
   initAchievements() {
     var self = this;
 
-    const NANO_PAYOUT_MULTIPLIER = 10;
-    const BAN_PAYOUT_MULTIPLIER = 10;
-
-    this.achievements = {
-      A_TRUE_WARRIOR: {
-        id: 1,
-        name: "A True Warrior",
-        desc: "Find a new weapon",
-        nano: 3 * NANO_PAYOUT_MULTIPLIER,
-        ban: 75 * BAN_PAYOUT_MULTIPLIER,
-      },
-      INTO_THE_WILD: {
-        id: 2,
-        name: "Into the Wild",
-        desc: "Venture outside the village",
-        nano: 2 * NANO_PAYOUT_MULTIPLIER,
-        ban: 50 * BAN_PAYOUT_MULTIPLIER,
-      },
-      ANGRY_RATS: {
-        id: 3,
-        name: "Angry Rats",
-        desc: "Kill 10 rats",
-        isCompleted() {
-          return self.storage.getRatCount() >= 10;
-        },
-        nano: 5 * NANO_PAYOUT_MULTIPLIER,
-        ban: 125 * BAN_PAYOUT_MULTIPLIER,
-      },
-      SMALL_TALK: {
-        id: 4,
-        name: "Small Talk",
-        desc: "Talk to a non-player character",
-        nano: 3 * NANO_PAYOUT_MULTIPLIER,
-        ban: 75 * BAN_PAYOUT_MULTIPLIER,
-      },
-      FAT_LOOT: {
-        id: 5,
-        name: "Fat Loot",
-        desc: "Get a new armor set",
-        nano: 5 * NANO_PAYOUT_MULTIPLIER,
-        ban: 125 * BAN_PAYOUT_MULTIPLIER,
-      },
-      UNDERGROUND: {
-        id: 6,
-        name: "Underground",
-        desc: "Explore at least one cave",
-        nano: 3 * NANO_PAYOUT_MULTIPLIER,
-        ban: 75 * BAN_PAYOUT_MULTIPLIER,
-      },
-      AT_WORLDS_END: {
-        id: 7,
-        name: "At World's End",
-        desc: "Reach the south shore",
-        nano: 5 * NANO_PAYOUT_MULTIPLIER,
-        ban: 125 * BAN_PAYOUT_MULTIPLIER,
-      },
-      COWARD: {
-        id: 8,
-        name: "Coward",
-        desc: "Successfully escape an enemy",
-        nano: 4 * NANO_PAYOUT_MULTIPLIER,
-        ban: 100 * BAN_PAYOUT_MULTIPLIER,
-      },
-      TOMB_RAIDER: {
-        id: 9,
-        name: "Tomb Raider",
-        desc: "Find the graveyard",
-        nano: 5 * NANO_PAYOUT_MULTIPLIER,
-        ban: 125 * BAN_PAYOUT_MULTIPLIER,
-      },
-      SKULL_COLLECTOR: {
-        id: 10,
-        name: "Skull Collector",
-        desc: "Kill 10 skeletons",
-        isCompleted() {
-          return self.storage.getSkeletonCount() >= 10;
-        },
-        nano: 8 * NANO_PAYOUT_MULTIPLIER,
-        ban: 200 * BAN_PAYOUT_MULTIPLIER,
-      },
-      NINJA_LOOT: {
-        id: 11,
-        name: "Ninja Loot",
-        desc: "Get an item you didn't fight for",
-        nano: 4 * NANO_PAYOUT_MULTIPLIER,
-        ban: 100 * BAN_PAYOUT_MULTIPLIER,
-      },
-      NO_MANS_LAND: {
-        id: 12,
-        name: "No Man's Land",
-        desc: "Travel through the desert",
-        nano: 3 * NANO_PAYOUT_MULTIPLIER,
-        ban: 75 * BAN_PAYOUT_MULTIPLIER,
-      },
-      HUNTER: {
-        id: 13,
-        name: "Hunter",
-        desc: "Kill 50 enemies",
-        isCompleted() {
-          return self.storage.getTotalKills() >= 50;
-        },
-        nano: 4 * NANO_PAYOUT_MULTIPLIER,
-        ban: 100 * BAN_PAYOUT_MULTIPLIER,
-      },
-      STILL_ALIVE: {
-        id: 14,
-        name: "Still Alive",
-        desc: "Revive your character five times",
-        isCompleted() {
-          return self.storage.getTotalRevives() >= 5;
-        },
-        nano: 5 * NANO_PAYOUT_MULTIPLIER,
-        ban: 125 * BAN_PAYOUT_MULTIPLIER,
-      },
-      MEATSHIELD: {
-        id: 15,
-        name: "Meatshield",
-        desc: "Take 5,000 points of damage",
-        isCompleted() {
-          return self.storage.getTotalDamageTaken() >= 5000;
-        },
-        nano: 7 * NANO_PAYOUT_MULTIPLIER,
-        ban: 175 * BAN_PAYOUT_MULTIPLIER,
-      },
-      NYAN: {
-        id: 16,
-        name: "Nyan Cat",
-        desc: "Find the Nyan cat",
-        nano: 3 * NANO_PAYOUT_MULTIPLIER,
-        ban: 75 * BAN_PAYOUT_MULTIPLIER,
-      },
-      HOT_SPOT: {
-        id: 17,
-        name: "Hot Spot",
-        desc: "Enter the volcanic mountains",
-        nano: 3 * NANO_PAYOUT_MULTIPLIER,
-        ban: 75 * BAN_PAYOUT_MULTIPLIER,
-      },
-      SPECTRE_COLLECTOR: {
-        id: 18,
-        name: "No Fear",
-        desc: "Kill 15 spectres",
-        isCompleted() {
-          return self.storage.getSpectreCount() >= 15;
-        },
-        nano: 8 * NANO_PAYOUT_MULTIPLIER,
-        ban: 200 * BAN_PAYOUT_MULTIPLIER,
-      },
-      GEM_HUNTER: {
-        id: 19,
-        name: "Gem Hunter",
-        desc: "Collect all the hidden gems",
-        nano: 8 * NANO_PAYOUT_MULTIPLIER,
-        ban: 200 * BAN_PAYOUT_MULTIPLIER,
-      },
-      NANO_POTIONS: {
-        id: 20,
-        name: "Lucky Find",
-        desc: self.network === "ban" ? "Collect 5 BANANO potions" : "Collect 5 NANO potions",
-        nano: 8 * NANO_PAYOUT_MULTIPLIER,
-        ban: 200 * BAN_PAYOUT_MULTIPLIER,
-      },
-      HERO: {
-        id: 21,
-        name: "Hero",
-        desc: "Defeat the Skeleton King",
-        nano: 25 * NANO_PAYOUT_MULTIPLIER,
-        ban: 625 * BAN_PAYOUT_MULTIPLIER,
-      },
-      FOXY: {
-        id: 22,
-        name: "Firefox",
-        desc: "Find the Firefox costume",
-        hidden: true,
-        nano: 2 * NANO_PAYOUT_MULTIPLIER,
-        ban: 50 * BAN_PAYOUT_MULTIPLIER,
-      },
-      FOR_SCIENCE: {
-        id: 23,
-        name: "For Science",
-        desc: "Enter into a portal",
-        hidden: true,
-        nano: 4 * NANO_PAYOUT_MULTIPLIER,
-        ban: 100 * BAN_PAYOUT_MULTIPLIER,
-      },
-      RICKROLLD: {
-        id: 24,
-        name: "Rickroll'd",
-        desc: "Take some singing lessons",
-        hidden: true,
-        nano: 6 * NANO_PAYOUT_MULTIPLIER,
-        ban: 150 * BAN_PAYOUT_MULTIPLIER,
-      },
-      XNO: {
-        id: 25,
-        name: self.network === "ban" ? "BAN" : "XNO",
-        desc: "Complete your first purchase!",
-        hidden: false,
-      },
-      FREEZING_LANDS: {
-        id: 26,
-        name: "BrrRRrr",
-        desc: "Enter the freezing lands",
-        hidden: false,
-      },
-      SKELETON_KEY: {
-        id: 27,
-        name: "Unique Key",
-        desc: "Find the skeleton key",
-        hidden: false,
-      },
-      BLOODLUST: {
-        id: 28,
-        name: "Bloodlust",
-        desc: "Defeat 25 Werewolves",
-        hidden: false,
-        isCompleted() {
-          return self.storage.getWerewolfCount() >= 25;
-        },
-      },
-      SATOSHI: {
-        id: 29,
-        name: "Satoshi",
-        desc: "Have a chat with Satoshi Nakamoto",
-        hidden: false,
-      },
-      WEN: {
-        id: 30,
-        name: "WEN?",
-        desc: "Find a very very large announcement",
-        hidden: false,
-      },
-      INDIANA_JONES: {
-        id: 31,
-        name: "Indiana Jones",
-        desc: "Reassemble the lost artifact",
-        hidden: false,
-      },
-      MYTH_OR_REAL: {
-        id: 32,
-        name: "Myth or Real",
-        desc: "Defeat 25 Yetis",
-        hidden: false,
-        isCompleted() {
-          return self.storage.getYetiCount() >= 25;
-        },
-      },
-      RIP: {
-        id: 33,
-        name: "R.I.P.",
-        desc: "Defeat 50 Skeleton Guards",
-        hidden: false,
-        isCompleted() {
-          return self.storage.getSkeleton3Count() >= 50;
-        },
-      },
-      DEAD_NEVER_DIE: {
-        id: 34,
-        name: "What is dead may never die",
-        desc: "Defeat the Skeleton Commander",
-        hidden: false,
-      },
-      WALK_ON_WATER: {
-        id: 35,
-        name: "Walk on Water",
-        desc: "Make your way through the floating ice",
-        hidden: false,
-      },
-      GHOSTBUSTERS: {
-        id: 36,
-        name: "Ghostbusters",
-        desc: "Kill 50 Wraiths",
-        hidden: false,
-        isCompleted() {
-          return self.storage.getWraithCount() >= 50;
-        },
-      },
-      BLACK_MAGIC: {
-        id: 37,
-        name: "Black Magic",
-        desc: "Defeat the Necromancer",
-        hidden: false,
-      },
-      LUCKY7: {
-        id: 38,
-        name: "Lucky 7",
-        desc: "Upgrade a high class item to +7",
-        hidden: true,
-      },
-      NOT_SAFU: {
-        id: 39,
-        name: "Not Safu",
-        desc: "Kill a monster with less than 1% HP left",
-        hidden: true,
-      },
-      TICKLE_FROM_UNDER: {
-        id: 40,
-        name: "Tickle from Under",
-        desc: "Be surrounded by 15 zombies",
-        hidden: true,
-      },
-      SECRET_LEVEL: {
-        id: 41,
-        name: "Leap of faith",
-        desc: "Jump into the void",
-        hidden: false,
-      },
-      COW_KING: {
-        id: 42,
-        name: "I'm the Butcher",
-        desc: "Defeat the Cow King",
-        hidden: true,
-      },
-      FRESH_MEAT: {
-        id: 43,
-        name: "Fresh Meat",
-        desc: "Kill 500 cows",
-        hidden: true,
-        isCompleted() {
-          return self.storage.getCowCount() >= 500;
-        },
-      },
-      FARMER: {
-        id: 44,
-        name: "Pro Farmer",
-        desc: "Kill every monster in the secret level",
-        hidden: true,
-      },
-      // MAGIC8: {
-      //   id: 44,
-      //   name: "Magic 8",
-      //   desc: "Upgrade a high class item to +8",
-      //   hidden: true,
-      // },
-    };
+    this.achievements = getAchievements(self.network);
 
     _.each(this.achievements, function (obj) {
       if (!obj.isCompleted) {
@@ -2075,7 +2269,9 @@ class Game {
         !(this.renderer.mobile || this.renderer.tablet) &&
         entity.kind !== Types.Entities.ZOMBIE
       ) {
-        entity.fadeIn(this.currentTime);
+        if (entity.isFading) {
+          entity.fadeIn(this.currentTime);
+        }
       }
 
       if (this.renderer.mobile || this.renderer.tablet) {
@@ -2169,14 +2365,26 @@ class Game {
       m = this.map;
 
     this.animatedTiles = [];
+    this.highAnimatedTiles = [];
     this.forEachVisibleTile(function (id, index) {
       if (m.isAnimatedTile(id)) {
-        var tile = new AnimatedTile(id, m.getTileAnimationLength(id), m.getTileAnimationDelay(id), index),
+        var tile = new AnimatedTile(
+            id,
+            m.getTileAnimationLength(id),
+            m.getTileAnimationDelay(id),
+            m.getTileAnimationSkip(id),
+            index,
+          ),
           pos = self.map.tileIndexToGridPosition(tile.index);
 
         tile.x = pos.x;
         tile.y = pos.y;
-        self.animatedTiles.push(tile);
+
+        if (m.isHighTile(id)) {
+          self.highAnimatedTiles.push(tile);
+        } else {
+          self.animatedTiles.push(tile);
+        }
       }
     }, 1);
     //console.info("Initialized animated tiles.");
@@ -2257,8 +2465,47 @@ class Game {
     if (entity) {
       if (entity instanceof Character || entity instanceof Chest) {
         this.entityGrid[y][x][entity.id] = entity;
-        if (!(entity instanceof Player)) {
+
+        if (!(entity instanceof Player) && !(entity instanceof Spell)) {
           this.pathingGrid[y][x] = 1;
+        }
+
+        // @NOTE: A few NPC takes 2 or more tiles
+        if (
+          entity.kind === Types.Entities.MAGICSTONE ||
+          entity.kind === Types.Entities.PORTALGATEWAY ||
+          entity.kind === Types.Entities.ALTARCHALICE ||
+          entity.kind === Types.Entities.ALTARSOULSTONE ||
+          entity.kind === Types.Entities.TOMBDEATHANGEL ||
+          entity.kind === Types.Entities.TOMBANGEL ||
+          entity.kind === Types.Entities.TOMBCROSS ||
+          entity.kind === Types.Entities.TOMBSKULL ||
+          entity.kind === Types.Entities.GRIMOIRE
+        ) {
+          this.entityGrid[y][x + 1][entity.id] = entity;
+          this.pathingGrid[y][x + 1] = 1;
+        }
+        if (entity.kind === Types.Entities.ALTARCHALICE || entity.kind === Types.Entities.ALTARSOULSTONE) {
+          this.entityGrid[y][x + 2][entity.id] = entity;
+          this.pathingGrid[y][x + 2] = 1;
+        }
+
+        if (entity.kind === Types.Entities.GRIMOIRE) {
+          this.entityGrid[y - 1][x][entity.id] = entity;
+          this.entityGrid[y - 1][x + 1][entity.id] = entity;
+          this.pathingGrid[y - 1][x] = 1;
+          this.pathingGrid[y - 1][x + 1] = 1;
+        }
+
+        // @NOTE Draw a square to know if the player is standing on a trap & don't fill the pathing grid so player can walk on top
+        if (
+          entity.kind === Types.Entities.TRAP ||
+          entity.kind === Types.Entities.TRAP2 ||
+          entity.kind === Types.Entities.TRAP3 ||
+          entity.kind === Types.Entities.BLUEFLAME
+        ) {
+          delete this.entityGrid[y][x][entity.id];
+          this.pathingGrid[y][x] = 0;
         }
       }
       if (entity instanceof Item) {
@@ -2464,6 +2711,7 @@ class Game {
       gems,
       artifact,
       expansion1,
+      expansion2,
       waypoints,
       depositAccount,
       auras,
@@ -2488,9 +2736,9 @@ class Game {
       self.player.name = name;
       self.player.network = network;
 
-      var [armor, armorLevel, armorBonus] = armor.split(":");
-      var [weapon, weaponLevel, weaponBonus] = weapon.split(":");
-      var [shield, shieldLevel, shieldBonus, shieldSkill] = (shield || "").split(":");
+      var [armor, armorLevel, armorBonus, armorSocket] = armor.split(":");
+      var [weapon, weaponLevel, weaponBonus, weaponSocket, attackSkill] = weapon.split(":");
+      var [shield, shieldLevel, shieldBonus, shieldSocket, defenseSkill] = (shield || "").split(":");
 
       self.storage.setPlayerName(name);
       self.storage.setPlayerArmor(armor);
@@ -2502,17 +2750,22 @@ class Game {
       self.player.setArmorName(armor);
       self.player.setArmorLevel(armorLevel);
       self.player.setArmorBonus(armorBonus);
+      self.player.setArmorSocket(armorSocket);
       self.player.setSpriteName(armor);
       self.player.setWeaponName(weapon);
       self.player.setWeaponLevel(weaponLevel);
       self.player.setWeaponBonus(weaponBonus);
+      self.player.setWeaponSocket(weaponSocket);
       self.player.setBelt(belt);
       self.player.setCape(cape);
       self.player.setShieldName(shield);
       self.player.setShieldLevel(shieldLevel);
       self.player.setShieldBonus(shieldBonus);
-      self.player.setShieldSkill(shieldSkill);
-      self.setShieldSkill(shieldSkill);
+      self.player.setShieldSocket(shieldSocket);
+      self.player.setDefenseSkill(defenseSkill);
+      self.setDefenseSkill(defenseSkill);
+      self.player.setAttackSkill(attackSkill);
+      self.setAttackSkill(attackSkill);
 
       self.player.setRing1(ring1);
       self.player.setRing2(ring2);
@@ -2547,6 +2800,7 @@ class Game {
       self.player.gems = gems;
       self.player.artifact = artifact;
       self.player.expansion1 = expansion1;
+      self.player.expansion2 = expansion2;
       self.player.waypoints = waypoints;
       self.player.skeletonKey = !!achievement[26];
       self.cowLevelPortalCoords = cowLevelPortalCoords;
@@ -2558,7 +2812,6 @@ class Game {
         self.player.setPartyLeader(partyLeader);
         self.player.setPartyMembers(members);
       }
-
       self.addEntity(self.player);
       self.player.dirtyRect = self.renderer.getEntityBoundingRect(self.player);
 
@@ -2642,61 +2895,91 @@ class Game {
       });
 
       self.player.onStep(function () {
+        const { gridX, gridY } = self.player;
+
+        const trap = self.getTrap(gridX, gridY);
+        if (trap?.id) {
+          const entity = self.getEntityById(trap?.id);
+
+          if (entity?.isActivated) {
+            if (!self.player.isHurtByTrap) {
+              self.player.isHurtByTrap = true;
+
+              self.client.sendHurtTrap(trap);
+              setTimeout(() => {
+                if (self.player) {
+                  self.player.isHurtByTrap = false;
+                }
+              }, 3000);
+            }
+          } else {
+            self.client.sendActivateTrap(trap?.id);
+          }
+        }
+        const statues = self.getStatues(gridX, gridY);
+
+        if (statues?.length) {
+          statues.forEach(({ id }) => {
+            const entity = self.getEntityById(id);
+
+            if (entity && !entity.isActivated) {
+              entity.isActivated = true;
+              self.client.sendActivateStatue(id);
+            }
+          });
+        }
+
         if (self.player.hasNextStep()) {
           self.registerEntityDualPosition(self.player);
         }
 
-        if (self.isZoningTile(self.player.gridX, self.player.gridY)) {
+        if (self.isZoningTile(gridX, gridY)) {
           self.isCharacterZoning = true;
-          self.enqueueZoningFrom(self.player.gridX, self.player.gridY);
+          self.enqueueZoningFrom(gridX, gridY);
         }
 
         self.player.forEachAttacker(self.makeAttackerFollow);
 
-        var item = self.getItemAt(self.player.gridX, self.player.gridY);
+        var item = self.getItemAt(gridX, gridY);
         if (item instanceof Item) {
           self.tryLootingItem(item);
         }
 
-        if (
-          (self.player.gridX <= 85 && self.player.gridY <= 179 && self.player.gridY > 178) ||
-          (self.player.gridX <= 85 && self.player.gridY <= 266 && self.player.gridY > 265)
-        ) {
+        if ((gridX <= 85 && gridY <= 179 && gridY > 178) || (gridX <= 85 && gridY <= 266 && gridY > 265)) {
           self.tryUnlockingAchievement("INTO_THE_WILD");
         }
 
-        if (self.player.gridX <= 85 && self.player.gridY <= 293 && self.player.gridY > 292) {
+        if (gridX <= 85 && gridY <= 293 && gridY > 292) {
           self.tryUnlockingAchievement("AT_WORLDS_END");
         }
 
-        if (self.player.gridX <= 85 && self.player.gridY <= 100 && self.player.gridY > 99) {
+        if (gridX <= 85 && gridY <= 100 && gridY > 99) {
           self.tryUnlockingAchievement("NO_MANS_LAND");
         }
 
-        if (self.player.gridX <= 85 && self.player.gridY <= 51 && self.player.gridY > 50) {
+        if (gridX <= 85 && gridY <= 51 && gridY > 50) {
           self.tryUnlockingAchievement("HOT_SPOT");
         }
 
-        if (self.player.gridX <= 27 && self.player.gridY <= 123 && self.player.gridY > 112) {
+        if (gridX <= 27 && gridY <= 123 && gridY > 112) {
           self.tryUnlockingAchievement("TOMB_RAIDER");
         }
 
-        if (self.player.gridY > 444) {
+        if (gridY > 444) {
           self.tryUnlockingAchievement("FREEZING_LANDS");
         }
 
-        if (self.player.gridY >= 350 && self.player.gridY <= 365 && self.player.gridX <= 80) {
+        if (gridY >= 350 && gridY <= 365 && gridX <= 80) {
           self.tryUnlockingAchievement("WALK_ON_WATER");
         }
 
-        if (
-          self.player.gridY >= 328 &&
-          self.player.gridY <= 332 &&
-          self.player.gridX >= 13 &&
-          self.player.gridX <= 23
-        ) {
+        if (gridY >= 328 && gridY <= 332 && gridX >= 13 && gridX <= 23) {
           self.tryUnlockingAchievement("WEN");
         }
+
+        // if (gridX >= 77 && gridX <= 83 && gridY >= 680 && gridY <= 684) {
+        //   self.tryUnlockingAchievement("WOODLAND");
+        // }
 
         self.updatePlayerCheckpoint();
 
@@ -2705,7 +2988,7 @@ class Game {
         }
       });
 
-      self.player.onStopPathing(function ({ x, y, confirmed, isWaypoint }) {
+      self.player.onStopPathing(function ({ x, y, orientation = Types.Orientations.DOWN, confirmed, isWaypoint }) {
         // Start by unregistering the entity at its previous coords
         self.unregisterEntityPosition(self.player);
 
@@ -2713,6 +2996,10 @@ class Game {
           // Make sure the character is paused / halted when entering a waypoint, else the player goes invisible
           self.player.stop();
           self.player.nextStep();
+
+          // Clear trap coords
+          self.traps = [];
+          self.statues = [];
         }
 
         if (self.player.hasTarget()) {
@@ -2731,7 +3018,7 @@ class Game {
           // Close all when teleporting
           self.app.hideWindows();
 
-          var dest = isWaypoint ? { x, y, orientation: Types.Orientations.DOWN } : self.map.getDoorDestination(x, y);
+          var dest = isWaypoint ? { x, y, orientation } : self.map.getDoorDestination(x, y);
           if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
             self.client.sendBossCheck(false);
             return;
@@ -2743,10 +3030,13 @@ class Game {
           // if (self.renderer.mobile) {
           //push them off the door spot so they can use the
           //arrow keys and mouse to walk back in or out
-          if (dest.orientation === Types.Orientations.UP) {
-            desty--;
-          } else if (dest.orientation === Types.Orientations.DOWN) {
-            desty++;
+
+          if (!isWaypoint) {
+            if (dest.orientation === Types.Orientations.UP) {
+              desty--;
+            } else if (dest.orientation === Types.Orientations.DOWN) {
+              desty++;
+            }
           }
           // }
 
@@ -2774,6 +3064,10 @@ class Game {
               self.tryUnlockingAchievement("COWARD");
             }, 500);
           }
+          if (x === 131 && y === 651) {
+            self.tryUnlockingAchievement("WAY_OF_WATER");
+          }
+
           self.player.forEachAttacker(function (attacker) {
             attacker.disengage();
             attacker.idle();
@@ -2846,9 +3140,9 @@ class Game {
           }, 1000);
         });
 
-        clearInterval(self.player.shieldSkillTimeout);
-        self.player.shieldSkillTimeout = null;
-        $("#skill-shield").removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout");
+        clearInterval(self.player.defenseSkillTimeout);
+        self.player.defenseSkillTimeout = null;
+        $("#skill-defense").removeClass("disabled").find(".skill-timeout").attr("class", "skill-timeout");
 
         self.player.forEachAttacker(function (attacker) {
           attacker.disengage();
@@ -2912,13 +3206,50 @@ class Game {
         });
       });
 
-      self.client.onSpawnCharacter(function (entity, x, y, orientation, targetId) {
-        if (!self.entityIdExists(entity.id)) {
+      self.client.onSpawnCharacter(function (data) {
+        const { id, kind, name, x, y, targetId, orientation, resistances, element, enchants, isActivated, bonus } =
+          data;
+
+        if (kind === Types.Entities.GATEWAYFX) {
+          self.gatewayFxNpcId = id;
+        }
+
+        let entity = self.getEntityById(id);
+        if (!entity) {
           try {
-            if (entity.id !== self.playerId) {
-              entity.setSprite(self.sprites[entity.getSpriteName()]);
+            if (id !== self.playerId) {
+              entity = EntityFactory.createEntity({ kind, id, name, resistances });
+
+              if (element) {
+                entity.element = element;
+              }
+              if (enchants) {
+                entity.enchants = enchants;
+
+                if (enchants.includes("lightning")) {
+                  if (!entity.auras.includes("thunderstorm")) {
+                    entity.auras.push("thunderstorm");
+                  }
+                }
+                if (enchants.includes("cold")) {
+                  if (!entity.auras.includes("freeze")) {
+                    entity.auras.push("freeze");
+                  }
+                }
+              }
+              if (bonus?.attackSpeed) {
+                entity.setAttackSpeed(bonus?.attackSpeed);
+              }
+
+              if (entity.kind === Types.Entities.MAGE && element !== "spectral") {
+                entity.setSprite(self.sprites[entity.getSpriteName(element === "spectral" ? "" : element)]);
+              } else {
+                entity.setSprite(self.sprites[entity.getSpriteName()]);
+              }
+
               entity.setGridPosition(x, y);
               entity.setOrientation(orientation);
+
               if (entity.kind === Types.Entities.ZOMBIE) {
                 entity.raise();
 
@@ -2927,74 +3258,133 @@ class Game {
                   entity.aggroRange = 10;
                   entity.isAggressive = true;
                 }, 1000);
-              } else if (entity.kind === Types.Entities.COWPORTAL && entity.gridX === 43 && entity.gridY === 211) {
+              } else if (entity.kind === Types.Entities.PORTALCOW && entity.gridX === 43 && entity.gridY === 211) {
                 if (self.cowPortalStart) {
-                  entity.raise();
-                  entity.currentAnimation.setSpeed(75);
+                  self.audioManager.playSound("portal-open");
 
-                  setTimeout(() => {
+                  entity.animate("raise", 75, 1, () => {
                     entity.idle();
-                    entity.currentAnimation.setSpeed(150);
-                  }, 1200);
+                  });
                 } else {
                   entity.idle();
                 }
-              } else if (entity.kind === Types.Entities.MINOTAURPORTAL && entity.gridX === 40 && entity.gridY === 210) {
+              } else if (entity.kind === Types.Entities.PORTALMINOTAUR && entity.gridX === 40 && entity.gridY === 210) {
                 if (self.minotaurPortalStart) {
-                  entity.raise();
-                  entity.currentAnimation.setSpeed(75);
+                  self.audioManager.playSound("portal-open");
 
-                  setTimeout(() => {
+                  entity.animate("raise", 75, 1, () => {
                     entity.idle();
-                    entity.currentAnimation.setSpeed(150);
-                  }, 1200);
+                  });
+                } else {
+                  entity.idle();
+                }
+              } else if (entity.kind === Types.Entities.PORTALSTONE && entity.gridX === 71 && entity.gridY === 643) {
+                if (self.stonePortalStart) {
+                  self.audioManager.playSound("portal-open");
+
+                  entity.animate("raise", 75, 1, () => {
+                    entity.idle();
+                  });
+                } else {
+                  entity.idle();
+                }
+              } else if (entity.kind === Types.Entities.PORTALGATEWAY && entity.gridX === 97 && entity.gridY === 545) {
+                if (self.gatewayPortalStart) {
+                  setTimeout(() => {
+                    self.audioManager.playSound("portal-open");
+                    entity.animate("raise", 75, 1, () => {
+                      entity.idle();
+                    });
+                  }, 1500);
+                } else {
+                  entity.idle();
+                }
+              } else if (entity.kind === Types.Entities.MAGICSTONE) {
+                entity.isActivated = isActivated;
+                if (entity.isActivated) {
+                  entity.walk();
+                } else {
+                  entity.idle();
+                }
+              } else if (entity.kind === Types.Entities.LEVER || entity.kind === Types.Entities.LEVER2) {
+                entity.isActivated = isActivated;
+                if (entity.isActivated) {
+                  entity.walk();
+                } else {
+                  entity.idle();
+                }
+              } else if (entity.kind === Types.Entities.BLUEFLAME) {
+                entity.isActivated = isActivated;
+                entity.setVisible(isActivated);
+                entity.idle();
+              } else if (
+                entity.kind === Types.Entities.ALTARCHALICE ||
+                entity.kind === Types.Entities.ALTARSOULSTONE ||
+                entity.kind === Types.Entities.HANDS
+              ) {
+                if (entity.kind === Types.Entities.ALTARCHALICE) {
+                  self.altarChaliceNpcId = entity.id;
+                } else if (entity.kind === Types.Entities.ALTARSOULSTONE) {
+                  self.altarSoulStoneNpcId = entity.id;
+                }
+
+                entity.isActivated = isActivated;
+                if (entity.isActivated) {
+                  entity.walk();
                 } else {
                   entity.idle();
                 }
               } else {
+                if (
+                  entity.kind === Types.Entities.TRAP ||
+                  entity.kind === Types.Entities.TRAP2 ||
+                  entity.kind === Types.Entities.TRAP3
+                ) {
+                  if (!self.traps.find(trap => trap.id === entity.id)) {
+                    self.traps.push({ id: entity.id, x: entity.gridX, y: entity.gridY });
+                  }
+                } else if (entity.kind === Types.Entities.STATUE || entity.kind === Types.Entities.STATUE2) {
+                  if (!self.statues.find(statue => statue.id === entity.id)) {
+                    self.statues.push({ id: entity.id, x: entity.gridX, y: entity.gridY });
+                  }
+                }
+
                 entity.idle();
+              }
+
+              if (entity.kind === Types.Entities.SECRETSTAIRS) {
+                self.audioManager.playSound("secret-found");
               }
 
               self.addEntity(entity);
 
-              // console.debug(
-              //   "Spawned " +
-              //     Types.getKindAsString(entity.kind) +
-              //     " (" +
-              //     entity.id +
-              //     ") at " +
-              //     entity.gridX +
-              //     ", " +
-              //     entity.gridY,
-              // );
-
               if (entity instanceof Character) {
-                entity.onBeforeStep(function () {
-                  self.unregisterEntityPosition(entity);
-                });
+                if (!(entity instanceof Npc)) {
+                  entity.onBeforeStep(function () {
+                    self.unregisterEntityPosition(entity);
+                  });
 
-                entity.onStep(function () {
-                  if (!entity.isDying) {
-                    self.registerEntityDualPosition(entity);
+                  entity.onStep(function () {
+                    if (!entity.isDying) {
+                      self.registerEntityDualPosition(entity);
 
-                    if (self.player && self.player.target === entity) {
-                      self.makeAttackerFollow(self.player);
-                    }
-
-                    entity.forEachAttacker(function (attacker) {
-                      if (attacker.isAdjacent(attacker.target)) {
-                        attacker.lookAtTarget();
-                      } else {
-                        attacker.follow(entity);
+                      if (self.player && self.player.target === entity) {
+                        self.makeAttackerFollow(self.player);
                       }
-                    });
-                  }
-                });
 
-                entity.onStopPathing(function () {
-                  self.unregisterEntityPosition(entity);
+                      entity.forEachAttacker(function (attacker) {
+                        if (attacker.isAdjacent(attacker.target)) {
+                          attacker.lookAtTarget();
+                        } else {
+                          attacker.follow(entity);
+                        }
+                      });
+                    }
+                  });
 
-                  if (!entity.isDying) {
+                  entity.onStopPathing(function () {
+                    self.unregisterEntityPosition(entity);
+
                     if (entity.hasTarget() && entity.isAdjacent(entity.target)) {
                       entity.lookAtTarget();
                     }
@@ -3016,30 +3406,30 @@ class Game {
                     });
 
                     self.registerEntityPosition(entity);
-                  }
-                });
+                  });
 
-                entity.onRequestPath(function (x, y) {
-                  var ignored = [entity], // Always ignore self
-                    ignoreTarget = function (target) {
-                      ignored.push(target);
+                  entity.onRequestPath(function (x, y) {
+                    var ignored = [entity], // Always ignore self
+                      ignoreTarget = function (target) {
+                        ignored.push(target);
 
-                      // also ignore other attackers of the target entity
-                      target.forEachAttacker(function (attacker) {
-                        ignored.push(attacker);
-                      });
-                    };
+                        // also ignore other attackers of the target entity
+                        target.forEachAttacker(function (attacker) {
+                          ignored.push(attacker);
+                        });
+                      };
 
-                  if (entity.hasTarget()) {
-                    ignoreTarget(entity.target);
-                  } else if (entity.previousTarget) {
-                    // If repositioning before attacking again, ignore previous target
-                    // See: tryMovingToADifferentTile()
-                    ignoreTarget(entity.previousTarget);
-                  }
+                    if (entity.hasTarget()) {
+                      ignoreTarget(entity.target);
+                    } else if (entity.previousTarget) {
+                      // If repositioning before attacking again, ignore previous target
+                      // See: tryMovingToADifferentTile()
+                      ignoreTarget(entity.previousTarget);
+                    }
 
-                  return self.findPath(entity, x, y, ignored);
-                });
+                    return self.findPath(entity, x, y, ignored);
+                  });
+                }
 
                 entity.onDeath(function () {
                   console.info(entity.id + " is dead");
@@ -3053,9 +3443,38 @@ class Game {
                     };
                   }
 
+                  // Make sure the death animation happens, if the entity is currently pathing reset it
+                  entity.aggroRange = 0;
+                  entity.stop();
                   entity.isDying = true;
-                  entity.setSprite(self.sprites[entity instanceof Mobs.Rat ? "rat" : "death"]);
-                  entity.animate("death", 120, 1, function () {
+
+                  let speed = 120;
+
+                  // Custom death animations
+                  const hasCustomDeathAnimation = [
+                    Types.Entities.RAT,
+                    Types.Entities.RAT2,
+                    Types.Entities.RAT3,
+                    Types.Entities.GOLEM,
+                    Types.Entities.GHOST,
+                    Types.Entities.WORM,
+                    Types.Entities.OCULOTHORAX,
+                    Types.Entities.SKELETONBERSERKER,
+                    Types.Entities.SKELETONARCHER,
+                    Types.Entities.SPIDERQUEEN,
+                    Types.Entities.BUTCHER,
+                    Types.Entities.SHAMAN,
+                    Types.Entities.DEATHANGEL,
+                  ].includes(entity.kind);
+
+                  if ([Types.Entities.SPIDERQUEEN, Types.Entities.DEATHANGEL].includes(entity.kind)) {
+                    speed = 250;
+                  }
+                  if (!hasCustomDeathAnimation) {
+                    entity.setSprite(self.sprites["death"]);
+                  }
+
+                  entity.animate("death", speed, 1, function () {
                     console.info(entity.id + " was removed");
 
                     self.removeEntity(entity);
@@ -3077,7 +3496,11 @@ class Game {
                   self.removeFromPathingGrid(entity.gridX, entity.gridY);
 
                   if (self.camera.isVisible(entity)) {
-                    self.audioManager.playSound("kill" + Math.floor(Math.random() * 2 + 1));
+                    if (entity.kind === Types.Entities.DEATHANGEL) {
+                      self.audioManager.playSound("deathangel-death");
+                    } else {
+                      self.audioManager.playSound("kill" + Math.floor(Math.random() * 2 + 1));
+                    }
                   }
 
                   self.updateCursor();
@@ -3086,57 +3509,143 @@ class Game {
                 entity.onHasMoved(function (entity) {
                   self.assignBubbleTo(entity); // Make chat bubbles follow moving entities
                 });
-
-                if (entity instanceof Mob) {
-                  if (targetId) {
-                    var player = self.getEntityById(targetId);
-                    if (player) {
-                      self.createAttackLink(entity, player);
-                    }
-                  }
-                }
               }
             }
           } catch (err) {
             console.error(err);
           }
         } else {
-          if (entity instanceof Player) {
-            // @NOTE Manually update locally stored entity to prevent invisible unupdated coords entity
-            // Before this the entities were not updated because they already existed
-            const currentEntity = self.getEntityById(entity.id);
-            self.unregisterEntityPosition(currentEntity);
+          console.debug("Entity " + entity.id + " already exists. Don't respawn.");
+        }
 
-            currentEntity.setWeaponName(entity.weaponName);
-            currentEntity.setWeaponLevel(entity.weaponLevel);
-            currentEntity.setWeaponBonus(entity.weaponBonus);
-            currentEntity.setSpriteName(entity.armorName);
-            currentEntity.setArmorName(entity.armorName);
-            currentEntity.setArmorLevel(entity.armorLevel);
-            currentEntity.setArmorBonus(entity.armorBonus);
-            currentEntity.setAuras(entity.auras);
-            if (!entity.cape || !entity.capeLevel || !entity.capeBonus) {
-              currentEntity.removeCape();
-            } else {
-              currentEntity.setCape(`${entity.cape}:${entity.capeLevel}:${entity.capeBonus}`);
+        if (entity instanceof Player || entity instanceof Mob) {
+          entity.hitPoints = data.hitPoints;
+          entity.maxHitPoints = data.maxHitPoints;
+        }
+
+        if (entity instanceof Player) {
+          // @NOTE Manually update locally stored entity to prevent invisible unupdated coords entity
+          // Before this the entities were not updated because they already existed
+          // const currentEntity = self.getEntityById(entity.id);
+          self.unregisterEntityPosition(entity);
+
+          const { weapon: rawWeapon, armor: rawArmor, level, auras, partyId, cape, shield, settings } = data;
+
+          const [armor, armorLevel, armorBonus] = rawArmor.split(":");
+          const [weapon, weaponLevel, weaponBonus, weaponSocket] = rawWeapon.split(":");
+
+          entity.setWeaponName(weapon);
+          entity.setWeaponLevel(weaponLevel);
+          entity.setWeaponBonus(weaponBonus);
+          entity.setWeaponSocket(weaponSocket);
+          entity.setSpriteName(armor);
+          entity.setArmorName(armor);
+          entity.setArmorLevel(armorLevel);
+          entity.setArmorBonus(armorBonus);
+          entity.setAuras(auras);
+          entity.setCape(cape);
+          entity.setShield(shield);
+          entity.setSettings(settings);
+          entity.setPartyId(partyId);
+          entity.setLevel(level);
+          entity.setSprite(self.sprites[entity.getSpriteName()]);
+          entity.setGridPosition(x, y);
+
+          self.registerEntityPosition(entity);
+        }
+
+        if (entity instanceof Mob) {
+          if (targetId) {
+            var player = self.getEntityById(targetId);
+            if (player) {
+              self.createAttackLink(entity, player);
             }
-
-            if (!entity.shieldName || !entity.shieldLevel) {
-              currentEntity.removeShield();
-            } else {
-              currentEntity.setShield(
-                `${entity.shieldName}:${entity.shieldLevel}${entity.shieldBonus ? `:${entity.shieldBonus}` : ""}`,
-              );
-            }
-
-            currentEntity.setSprite(self.sprites[entity.getSpriteName()]);
-            currentEntity.setGridPosition(x, y);
-
-            self.registerEntityPosition(currentEntity);
-          } else {
-            console.debug("Character " + entity.id + " already exists. Don't respawn.");
           }
         }
+      });
+
+      self.client.onSpawnSpell(function (
+        entity,
+        x,
+        y,
+        orientation,
+        originX,
+        originY,
+        element: Elements,
+        casterId,
+        targetId,
+      ) {
+        const caster = self.getEntityById(casterId);
+        if (!caster) return;
+
+        if ([Types.Entities.MAGESPELL, Types.Entities.ARROW, Types.Entities.DEATHANGELSPELL].includes(entity.kind)) {
+          entity.setSprite(
+            self.sprites[entity.getSpriteName(!element || ["spectral"].includes(element) ? "" : element)],
+          );
+        } else {
+          entity.setSprite(self.sprites[entity.getSpriteName()]);
+        }
+
+        entity.setGridPosition(caster.gridX, caster.gridY);
+
+        // @NOTE Adjustment so the spell is correctly aligned
+        if (entity.kind === Types.Entities.MAGESPELL) {
+          entity.y = caster.y - 8;
+        } else if (entity.kind === Types.Entities.STATUESPELL || entity.kind === Types.Entities.STATUE2SPELL) {
+          entity.x = caster.x;
+          entity.y = caster.y + 8;
+        } else if (entity.kind === Types.Entities.ARROW) {
+          entity.y = caster.y - 12;
+          if (entity.x < self.player.x) {
+            entity.x = caster.x + 16;
+          } else if (entity.x > self.player.x) {
+            entity.x = caster.x - 8;
+          }
+        }
+        entity.setOrientation(orientation);
+        entity.idle();
+
+        if ([Types.Entities.MAGESPELL, Types.Entities.ARROW].includes(entity.kind)) {
+          const target = self.getEntityById(targetId) || self.player;
+          entity.setTarget({ x: target.x, y: target.y });
+        } else if (entity.kind === Types.Entities.DEATHANGELSPELL) {
+          entity.setTarget({ x: (x + originX * 8) * 16, y: (y + originY * 8) * 16 });
+        } else if (entity.kind === Types.Entities.STATUESPELL || entity.kind === Types.Entities.STATUE2SPELL) {
+          entity.setTarget({ x: x * 16, y: (y + 16) * 16 });
+        }
+
+        self.addEntity(entity);
+
+        // Spell collision
+        if (self.player.gridX === x && self.player.gridY === y) {
+          self.makePlayerHurtFromSpell(entity);
+        }
+
+        entity.onDeath(function () {
+          // @NOTE: The spell can not be dead from the other player's point of view
+          // This forces the updater(c) to stop moving the spell
+          entity.isDead = true;
+
+          console.info(entity.id + " is dead");
+          let speed = 120;
+
+          // Custom death animations
+          const hasCustomDeathAnimation = [
+            Types.Entities.DEATHANGELSPELL,
+            Types.Entities.MAGESPELL,
+            Types.Entities.STATUESPELL,
+            Types.Entities.STATUE2SPELL,
+          ].includes(entity.kind);
+
+          if (!hasCustomDeathAnimation) {
+            entity.setSprite(self.sprites["death"]);
+          }
+
+          entity.animate("death", speed, 1, function () {
+            console.info(`${Types.getKindAsString(entity.kind)} (${entity.id}) was removed`);
+            self.removeEntity(entity);
+          });
+        });
       });
 
       self.client.onDespawnEntity(function (entityId) {
@@ -3159,6 +3668,8 @@ class Game {
 
           if (entity instanceof Item) {
             self.removeItem(entity);
+          } else if (entity instanceof Spell) {
+            entity.death_callback?.();
           } else if (entity instanceof Character) {
             entity.forEachAttacker(function (attacker) {
               if (attacker.canReachTarget()) {
@@ -3497,15 +4008,129 @@ class Game {
         }
       });
 
-      self.client.onEntityRaise(function (mobId) {
-        var mob = self.getEntityById(mobId);
+      self.client.onEntityRaise(function (mobId, targetId) {
+        const mob = self.getEntityById(mobId);
+
         if (mob) {
-          mob.setRaisingMode();
-          self.audioManager.playSound("raise");
+          if (mob.kind === Types.Entities.DEATHANGEL) {
+            mob.setRaisingMode();
+            self.audioManager.playSound("deathangel-spell");
+            if (targetId === self.playerId) {
+              self.client.sendCastSpell(mob.id, mob.gridX, mob.gridY);
+            }
+          } else if (mob.kind === Types.Entities.NECROMANCER) {
+            mob.setRaisingMode();
+            self.audioManager.playSound("raise");
+          } else if (mob.kind === Types.Entities.MAGICSTONE) {
+            self.audioManager.playSound("magicstone");
+            self.activatedMagicStones.push(mobId);
+
+            mob.animate("raise", mob.raiseSpeed, 1, () => mob.walk());
+          } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVER2) {
+            self.audioManager.playSound("lever");
+
+            mob.animate("raise", mob.raiseSpeed, 1, () => mob.walk());
+          } else if (mob.kind === Types.Entities.BLUEFLAME) {
+            self.activatedBlueFlames.push(mobId);
+
+            mob.idle();
+            mob.setVisible(true);
+          } else if (mob.kind === Types.Entities.ALTARCHALICE) {
+            self.isAltarChaliceActivated = true;
+
+            mob.walk();
+            // self.audioManager.playSound("secret-found");
+          } else if (mob.kind === Types.Entities.ALTARSOULSTONE) {
+            self.audioManager.playSound("magic-blast");
+            setTimeout(() => {
+              self.audioManager.playSound("stone-break");
+            }, 400);
+
+            mob.animate("walk", 100, 1, () => mob.idle());
+          } else if (mob.kind === Types.Entities.HANDS) {
+            mob.walk();
+
+            if (self.gatewayFxNpcId) {
+              const gatewayFx = self.getEntityById(self.gatewayFxNpcId);
+              if (gatewayFx) {
+                self.audioManager.playSound("powder", 0, 0.25);
+                self.audioManager.playSound("static", 250);
+
+                gatewayFx.animate("raise", gatewayFx.raiseSpeed, 1, () => {
+                  gatewayFx.idle();
+                });
+              }
+            }
+          } else if (mob.kind === Types.Entities.STATUE || mob.kind === Types.Entities.STATUE2) {
+            if (mob.kind === Types.Entities.STATUE) {
+              self.audioManager.playSound("fireball", 250);
+            } else if (mob.kind === Types.Entities.STATUE2) {
+              self.audioManager.playSound("iceball", 250);
+            }
+
+            mob.isActivated = true;
+            mob.animate("raise", mob.raiseSpeed, 1, () => mob.idle());
+          } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(mob.kind)) {
+            self.audioManager.playSound("trap");
+            mob.raise();
+            mob.isActivated = true;
+
+            setTimeout(() => {
+              const { gridX, gridY } = self.player;
+
+              const trap = self.getTrap(gridX, gridY);
+              if (trap?.id === mob.id) {
+                if (!self.player.isHurtByTrap) {
+                  self.player.isHurtByTrap = true;
+
+                  self.client.sendHurtTrap(trap);
+                  setTimeout(() => {
+                    if (self.player) {
+                      self.player.isHurtByTrap = false;
+                    }
+                  }, 3000);
+                }
+              }
+            }, 150);
+
+            setTimeout(() => {
+              mob.walk();
+              setTimeout(() => {
+                mob.unraise();
+                mob.isActivated = false;
+                setTimeout(() => {
+                  mob.idle();
+                }, 300);
+              }, 750);
+            }, 675);
+          }
         }
       });
 
-      self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHp, isCritical, isBlocked }) {
+      self.client.onEntityUnraise(function (mobId) {
+        const mob = self.getEntityById(mobId);
+
+        if (mob) {
+          if (mob.kind === Types.Entities.MAGICSTONE) {
+            self.activatedMagicStones = [];
+            mob.idle();
+          } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVER2) {
+            self.audioManager.playSound("lever");
+
+            mob.animate("unraise", mob.raiseSpeed, 1, () => mob.idle());
+          } else if (mob.kind === Types.Entities.BLUEFLAME) {
+            self.activatedBlueFlames = [];
+            mob.setVisible(false);
+          } else if (mob.kind === Types.Entities.ALTARCHALICE) {
+            self.isAltarChaliceActivated = false;
+            mob.idle();
+          } else if (mob.kind === Types.Entities.HANDS) {
+            mob.idle();
+          }
+        }
+      });
+
+      self.client.onPlayerDamageMob(function ({ id, dmg, hp, maxHitPoints, isCritical, isBlocked }) {
         var mob = self.getEntityById(id);
 
         if (mob && (dmg || isBlocked)) {
@@ -3518,12 +4143,15 @@ class Game {
             isBlocked,
           });
         }
-        if (self.player.hasTarget()) {
-          self.updateTarget(id, dmg, hp, maxHp);
+
+        if (self.player.hasTarget() || self.player.skillTargetId === id) {
+          self.updateTarget(id, dmg, hp, maxHitPoints);
         }
       });
 
-      self.client.onPlayerKillMob(function (kind, level, playerExp, exp) {
+      self.client.onPlayerKillMob(function (data) {
+        const { kind, level, playerExp, exp, isMiniBoss } = data;
+
         self.player.experience = playerExp;
 
         if (self.player.level !== level) {
@@ -3576,11 +4204,49 @@ class Game {
           self.tryUnlockingAchievement("BLACK_MAGIC");
         } else if (kind === Types.Entities.COW) {
           self.storage.incrementCowCount();
-          self.tryUnlockingAchievement("FRESH_MEAT");
+          self.tryUnlockingAchievement("HAMBURGER");
         } else if (kind === Types.Entities.COWKING) {
           self.tryUnlockingAchievement("COW_KING");
-        } else if (kind === Types.Entities.MINOTAUR) {
-          self.tryUnlockingAchievement("MINOTAUR");
+        } else if (kind === Types.Entities.RAT3) {
+          self.storage.incrementRat3Count();
+          self.tryUnlockingAchievement("ANTIDOTE");
+        } else if (kind === Types.Entities.GOLEM) {
+          self.storage.incrementGolemCount();
+          self.tryUnlockingAchievement("UNBREAKABLE");
+        } else if (kind === Types.Entities.OCULOTHORAX) {
+          self.storage.incrementOculothoraxCount();
+          self.tryUnlockingAchievement("CYCLOP");
+        } else if (kind === Types.Entities.SKELETON4) {
+          self.storage.incrementSkeleton4Count();
+          self.tryUnlockingAchievement("TEMPLAR");
+        } else if (kind === Types.Entities.GHOST) {
+          self.storage.incrementGhostCount();
+          self.tryUnlockingAchievement("BOO");
+        } else if (kind === Types.Entities.SKELETONBERSERKER) {
+          self.storage.incrementSkeletonBerserkerCount();
+          self.tryUnlockingAchievement("VIKING");
+        } else if (kind === Types.Entities.SKELETONARCHER) {
+          self.storage.incrementSkeletonArcherCount();
+          self.tryUnlockingAchievement("BULLSEYE");
+        } else if (kind === Types.Entities.SPIDERQUEEN) {
+          self.tryUnlockingAchievement("SPIDERQUEEN");
+        } else if (kind === Types.Entities.BUTCHER) {
+          self.tryUnlockingAchievement("BUTCHER");
+        } else if (kind === Types.Entities.MAGE) {
+          self.storage.incrementMageCount();
+          self.tryUnlockingAchievement("ARCHMAGE");
+        } else if (kind === Types.Entities.WRAITH2) {
+          self.storage.incrementWraith2Count();
+          self.tryUnlockingAchievement("SPECTRAL");
+        } else if (kind === Types.Entities.SHAMAN) {
+          self.tryUnlockingAchievement("SHAMAN");
+        } else if (kind === Types.Entities.DEATHANGEL) {
+          self.tryUnlockingAchievement("DEATHANGEL");
+        }
+
+        if (kind >= Types.Entities.RAT3 && isMiniBoss) {
+          self.storage.incrementMiniBossCount();
+          self.tryUnlockingAchievement("MINI_BOSS");
         }
 
         if (Math.floor((self.player.hitPoints * 100) / self.player.maxHitPoints) <= 1 && kind > Types.Entities.RAT2) {
@@ -3613,25 +4279,39 @@ class Game {
         }
       });
 
-      self.client.onPlayerChangeStats(function ({ maxHitPoints, damage, defense, absorb }) {
+      self.client.onPlayerChangeStats(function ({ maxHitPoints, ...bonus }) {
         if (self.player.maxHitPoints !== maxHitPoints || self.player.invincible) {
           self.player.maxHitPoints = maxHitPoints;
           self.player.hitPoints = maxHitPoints;
 
           self.updateBars();
         }
-        if (self.player.damage !== damage) {
-          self.player.damage = damage;
-          self.updateDamage();
-        }
-        if (self.player.defense !== defense) {
-          self.player.defense = defense;
-          self.updateDefense();
-        }
-        if (self.player.absorb !== absorb) {
-          self.player.absorb = absorb;
-          self.updateAbsorb();
-        }
+
+        self.player.bonus = bonus;
+
+        $("#player-damage").text(bonus.damage);
+        $("#player-attackDamage").text(bonus.attackDamage);
+        $("#player-criticalHit").text(bonus.criticalHit);
+        $("#player-magicDamage").text(bonus.magicDamage);
+        $("#player-flameDamage").text(bonus.flameDamage);
+        $("#player-lightningDamage").text(bonus.lightningDamage);
+        $("#player-coldDamage").text(bonus.coldDamage);
+        $("#player-poisonDamage").text(bonus.poisonDamage);
+        $("#player-pierceDamage").text(bonus.pierceDamage);
+        $("#player-defense").text(bonus.defense);
+        $("#player-blockChance").text(bonus.blockChance);
+        $("#player-absorbedDamage").text(bonus.absorbedDamage);
+        $("#player-magicResistance").text(bonus.magicResistance);
+        $("#player-flameResistance").text(bonus.flameResistance);
+        $("#player-lightningResistance").text(bonus.lightningResistance);
+        $("#player-coldResistance").text(bonus.coldResistance);
+        $("#player-poisonResistance").text(bonus.poisonResistance);
+        $("#player-magicFind").text(bonus.magicFind);
+        $("#player-attackSpeed").text(bonus.attackSpeed);
+        $("#player-exp").text(bonus.exp);
+        $("#player-skillTimeout").text(bonus.skillTimeout);
+
+        self.player.setAttackSpeed(bonus.attackSpeed);
       });
 
       self.client.onPlayerSettings(function ({ playerId, settings }) {
@@ -3653,15 +4333,19 @@ class Game {
         self.player.setBonus = bonus;
       });
 
-      self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, skill, type }) {
+      self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, socket, skill, type }) {
         var player = self.getEntityById(playerId);
         var name = Types.getKindAsString(kind);
 
         if (player) {
           if (type === "armor") {
-            player.switchArmor(self.sprites[name], level, bonus);
+            player.switchArmor(self.sprites[name], level, bonus, socket);
           } else if (type === "weapon") {
-            player.switchWeapon(name, level, bonus);
+            player.switchWeapon(name, level, bonus, socket, skill);
+
+            if (playerId === self.player.id) {
+              self.setAttackSkill(skill);
+            }
           } else if (type === "cape") {
             if (!kind || !level || !bonus) {
               player.removeCape();
@@ -3676,10 +4360,10 @@ class Game {
             if (!kind || !level) {
               player.removeShield();
             } else {
-              player.switchShield(name, level, bonus, skill);
+              player.switchShield(name, level, bonus, socket, skill);
             }
             if (playerId === self.player.id) {
-              self.setShieldSkill(skill);
+              self.setDefenseSkill(skill);
             }
           } else if (type === "belt") {
             player.setBelt([name, level, bonus].filter(Boolean).join(":"));
@@ -3700,10 +4384,27 @@ class Game {
         }
       });
 
-      self.client.onPlayerSkill(function ({ id: playerId, skill, level }) {
-        var player = self.getEntityById(playerId);
+      self.client.onPlayerSkill(function ({ id: playerId, skill: rawSkill }) {
+        const player = self.getEntityById(playerId);
+        const { skill, level, isAttackSkill, mobId } = rawSkill;
         if (player) {
-          player.setSkillAnimation(Types.skillTypeAnimationMap[skill], Types.skillDurationMap[skill](level));
+          if (isAttackSkill) {
+            self.skillCastAnimation.reset();
+            player.setCastSkill(skill);
+
+            self.audioManager.playSound(`skill-${Types.skillToNameMap[skill]}`);
+
+            const entity = self.getEntityById(mobId);
+            if (entity) {
+              self[`skill${_.capitalize(Types.skillToNameMap[skill])}Animation`].reset();
+              entity.setSkillAnimation?.(skill);
+            }
+          } else {
+            player.setDefenseSkillAnimation(
+              Types.defenseSkillTypeAnimationMap[skill],
+              Types.defenseSkillDurationMap[skill](level),
+            );
+          }
         }
       });
 
@@ -3805,11 +4506,19 @@ class Game {
         }
       });
 
-      self.client.onReceiveNotification(function (data) {
-        const { message, hash } = data;
+      self.client.onReceiveNotification(function (data: {
+        message: string;
+        hash?: string;
+        achievement?: AchievementName;
+      }) {
+        const { message, hash, achievement } = data;
 
         if (hash) {
           self.gamecompleted_callback({ hash });
+        }
+
+        if (achievement) {
+          self.tryUnlockingAchievement(achievement, false);
         }
 
         setTimeout(() => {
@@ -3827,8 +4536,11 @@ class Game {
         self.updateStash();
       });
 
-      self.client.onReceiveUpgrade(function (data, meta) {
-        const { luckySlot, isLucky7, isMagic8, isSuccess } = meta || {};
+      self.client.onReceiveUpgrade(function (
+        data,
+        meta: { luckySlot: number; isLucky7: boolean; isMagic8: boolean; isSuccess: boolean; recipe: Recipes },
+      ) {
+        const { luckySlot, isLucky7, isMagic8, isSuccess, recipe } = meta || {};
 
         self.isUpgradeItemSent = false;
         self.player.setUpgrade(data);
@@ -3837,18 +4549,32 @@ class Game {
         if (isLucky7) {
           self.tryUnlockingAchievement("LUCKY7");
         } else if (isMagic8) {
-          // @NOTE Note ready yet, maybe later
           // self.tryUnlockingAchievement("MAGIC8");
+        } else if (recipe === "powderquantum") {
+          self.tryUnlockingAchievement("ALCHEMIST");
         }
       });
 
-      self.client.onReceiveAnvilUpgrade(function ({ isSuccess, isTransmute, isChestblue }) {
+      self.client.onReceiveAnvilUpgrade(function ({
+        isSuccess,
+        isTransmute,
+        isRuneword,
+        isChestblue,
+        isChestgreen,
+        isChestpurple,
+        // @NOTE perhaps have a different animation for red chests (extra rare, next expansion?)
+        // isChestred,
+      }) {
         if (isSuccess) {
           self.setAnvilSuccess();
-        } else if (isTransmute) {
+        } else if (isTransmute || isChestgreen) {
           self.setAnvilTransmute();
+        } else if (isRuneword) {
+          self.setAnvilRuneword();
         } else if (isChestblue) {
           self.setAnvilChestblue();
+        } else if (isChestpurple) {
+          self.setAnvilRecipe("chestpurple");
         } else {
           self.setAnvilFail();
         }
@@ -3863,12 +4589,13 @@ class Game {
         }
       });
 
-      self.client.onReceiveAnvilRecipe(function (recipe) {
-        self.setAnvilRecipe();
+      self.client.onReceiveAnvilRecipe(function (recipe: Recipes) {
+        self.setAnvilRecipe(recipe);
 
         if (recipe === "cowLevel" || recipe === "minotaurLevel") {
           self.app.closeUpgrade();
-          self.audioManager.playSound("portal-open");
+        } else if (recipe === "powderquantum") {
+          self.audioManager.playSound("powder");
         }
       });
 
@@ -3879,6 +4606,8 @@ class Game {
       self.client.onReceivePurchaseCompleted(function (payment) {
         if (payment.id === Types.Store.EXPANSION1) {
           self.player.expansion1 = true;
+        } else if (payment.id === Types.Store.EXPANSION2) {
+          self.player.expansion2 = true;
         }
         self.store.purchaseCompleted(payment);
       });
@@ -3934,8 +4663,8 @@ class Game {
 
         const teleportBackToTown = () => {
           if (self.player.gridY >= 464 && self.player.gridY <= 535) {
-            const x = Math.ceil(randomRange(40, 45));
-            const y = Math.ceil(randomRange(208, 213));
+            const x = randomInt(40, 45);
+            const y = randomInt(208, 213);
 
             self.player.stop_pathing_callback({ x, y, isWaypoint: true });
 
@@ -3992,18 +4721,174 @@ class Game {
         $("#countdown").countdown("remove");
 
         if (self.player.gridY >= 464 && self.player.gridY <= 535) {
-          const x = Math.ceil(randomRange(40, 45));
-          const y = Math.ceil(randomRange(208, 213));
+          const x = randomInt(40, 45);
+          const y = randomInt(208, 213);
 
           self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }
       });
 
-      self.client.onFrozen(function (entityId, itemLevel) {
-        const time = Types.getFrozenTimePerLevel(itemLevel);
+      self.client.onReceiveChaliceLevelStart(function () {
+        // @NOTE TBD?
+      });
 
-        // Entity may not be send to every player
-        self.getEntityById(entityId)?.setFrozen(time);
+      self.client.onReceiveChaliceLevelInProgress(function (levelClock) {
+        var selectedDate = new Date().valueOf() + levelClock * 1000;
+
+        if (!self.player.expansion2) {
+          self.client.sendBanPlayer("Entered Chalice level without expansion2");
+        }
+
+        $("#countdown")
+          .countdown(selectedDate.toString())
+          .on("update.countdown", function (event) {
+            // @ts-ignore
+            $(this).html(event.strftime("%M:%S"));
+          })
+          .on("finish.countdown", function () {
+            $(this).html("The secret level closed.");
+
+            setTimeout(() => {
+              $(this).html("");
+            }, 5000);
+          });
+      });
+
+      self.client.onReceiveChaliceLevelEnd(function () {
+        $("#countdown").countdown(0);
+        $("#countdown").countdown("remove");
+
+        if (self.player.gridY >= 696 && self.player.gridY <= 733 && self.player.gridX <= 29) {
+          const x = randomInt(7, 9);
+          const y = randomInt(682, 684);
+
+          self.player.stop_pathing_callback({ x, y, isWaypoint: true });
+        }
+
+        const entity = self.altarChaliceNpcId ? self.getEntityById(self.altarChaliceNpcId) : null;
+        if (entity) {
+          entity.isActivated = false;
+          entity.idle();
+        }
+      });
+
+      self.client.onReceiveStoneLevelStart(function () {
+        self.stonePortalStart = true;
+        setTimeout(() => {
+          self.stonePortalStart = false;
+        }, 1200);
+      });
+
+      self.client.onReceiveStoneLevelInProgress(function (levelClock) {
+        var selectedDate = new Date().valueOf() + levelClock * 1000;
+
+        if (!self.player.expansion2) {
+          self.client.sendBanPlayer("Entered Stone level without expansion2");
+        }
+
+        $("#countdown")
+          .countdown(selectedDate.toString())
+          .on("update.countdown", function (event) {
+            // @ts-ignore
+            $(this).html(event.strftime("%M:%S"));
+          })
+          .on("finish.countdown", function () {
+            $(this).html("The stone level closed.");
+
+            setTimeout(() => {
+              $(this).html("");
+            }, 5000);
+          });
+      });
+
+      self.client.onReceiveStoneLevelEnd(function () {
+        $("#countdown").countdown(0);
+        $("#countdown").countdown("remove");
+
+        if (
+          self.player.gridY >= 696 &&
+          self.player.gridY <= 733 &&
+          self.player.gridX >= 85 &&
+          self.player.gridX <= 112
+        ) {
+          const x = randomInt(66, 76);
+          const y = randomInt(638, 645);
+
+          self.player.stop_pathing_callback({ x, y, isWaypoint: true });
+        }
+      });
+
+      self.client.onReceiveGatewayLevelStart(function () {
+        self.gatewayPortalStart = true;
+        setTimeout(() => {
+          self.gatewayPortalStart = false;
+        }, 1200);
+      });
+
+      self.client.onReceiveGatewayLevelInProgress(function (levelClock) {
+        var selectedDate = new Date().valueOf() + levelClock * 1000;
+
+        if (!self.player.expansion2) {
+          self.client.sendBanPlayer("Entered Gateway level without expansion2");
+        }
+
+        $("#countdown")
+          .countdown(selectedDate.toString())
+          .on("update.countdown", function (event) {
+            // @ts-ignore
+            $(this).html(event.strftime("%M:%S"));
+          })
+          .on("finish.countdown", function () {
+            $(this).html("The gateway level closed.");
+
+            setTimeout(() => {
+              $(this).html("");
+            }, 5000);
+          });
+      });
+
+      self.client.onReceiveGatewayLevelEnd(function () {
+        $("#countdown").countdown(0);
+        $("#countdown").countdown("remove");
+
+        if (self.player.gridY >= 744 && self.player.gridY <= 781 && self.player.gridX <= 29) {
+          const x = randomInt(95, 100);
+          const y = randomInt(543, 548);
+
+          self.player.stop_pathing_callback({ x, y, isWaypoint: true });
+        }
+      });
+
+      // self.client.onReceiveTreeLevelEnd(function () {
+      //   const entity = self.treeNpcId ? self.getEntityById(self.treeNpcId) : null;
+      //   if (entity) {
+      //     entity.isActivated = false;
+      //     entity.idle();
+      //   }
+      // });
+
+      self.client.onFrozen(function (entityId, duration) {
+        self.getEntityById(entityId)?.setFrozen(duration);
+      });
+
+      self.client.onSlowed(function (entityId, duration) {
+        self.getEntityById(entityId)?.setSlowed(duration);
+      });
+
+      self.client.onPoisoned(function (entityId, duration) {
+        self.getEntityById(entityId)?.setPoisoned(duration);
+      });
+
+      self.client.onCursed(function (entityId, curseId, duration) {
+        self.getEntityById(entityId)?.setCursed(curseId, duration);
+      });
+
+      self.client.onTaunt(function (entityId) {
+        const taunt = self.getEntityById(entityId)?.taunt;
+
+        if (taunt) {
+          self.audioManager.playSound(taunt);
+        }
       });
 
       self.client.onDisconnected(function (message) {
@@ -4170,20 +5055,25 @@ class Game {
     }
   }
 
-  /**
-   *
-   */
   makePlayerAttack(mob) {
     this.createAttackLink(this.player, mob);
     this.client.sendAttack(mob);
   }
 
+  makePlayerHurtFromSpell(spell) {
+    this.client.sendHurtSpell(spell);
+  }
+
   resetAnvilAnimation() {
+    this.anvilRecipe = null;
     this.isAnvilFail = false;
     this.isAnvilSuccess = false;
-    this.isAnvilRecipe = false;
     this.isAnvilTransmute = false;
+    this.isAnvilRuneword = false;
     this.isAnvilChestblue = false;
+    this.isAnvilChestgreen = false;
+    this.isAnvilChestpurple = false;
+    this.isAnvilChestred = false;
     clearTimeout(this.anvilAnimationTimeout);
   }
 
@@ -4203,11 +5093,11 @@ class Game {
     }, 3000);
   }
 
-  setAnvilRecipe() {
+  setAnvilRecipe(recipe: Recipes) {
     this.resetAnvilAnimation();
-    this.isAnvilRecipe = true;
+    this.anvilRecipe = recipe;
     this.anvilAnimationTimeout = setTimeout(() => {
-      this.isAnvilRecipe = false;
+      this.anvilRecipe = null;
     }, 3000);
   }
 
@@ -4216,6 +5106,14 @@ class Game {
     this.isAnvilTransmute = true;
     this.anvilAnimationTimeout = setTimeout(() => {
       this.isAnvilTransmute = false;
+    }, 3000);
+  }
+
+  setAnvilRuneword() {
+    this.resetAnvilAnimation();
+    this.isAnvilRuneword = true;
+    this.anvilAnimationTimeout = setTimeout(() => {
+      this.isAnvilRuneword = false;
     }, 3000);
   }
 
@@ -4236,15 +5134,46 @@ class Game {
     if (npc) {
       msg = npc.talk(this);
       this.previousClickPosition = null;
-      if (msg) {
-        this.createBubble(npc.id, msg);
-        this.assignBubbleTo(npc);
-        this.audioManager.playSound("npc");
-      } else {
-        this.destroyBubble(npc.id);
-        this.audioManager.playSound("npc-end");
+
+      if (
+        npc.kind === Types.Entities.TREE ||
+        npc.kind === Types.Entities.STATUE ||
+        npc.kind === Types.Entities.STATUE2 ||
+        npc.kind === Types.Entities.TRAP ||
+        npc.kind === Types.Entities.TRAP2 ||
+        npc.kind === Types.Entities.TRAP3
+      )
+        return;
+
+      if (
+        ![
+          // Types.Entities.ANVIL,
+          // Types.Entities.STASH,
+          // Types.Entities.WAYPOINTX,
+          // Types.Entities.WAYPOINTN,
+          // Types.Entities.WAYPOINTO,
+          // Types.Entities.PORTALCOW,
+          // Types.Entities.PORTALMINOTAUR,
+          Types.Entities.MAGICSTONE,
+          Types.Entities.BLUEFLAME,
+          Types.Entities.ALTARCHALICE,
+          Types.Entities.ALTARSOULSTONE,
+          Types.Entities.LEVER,
+          Types.Entities.LEVER2,
+          Types.Entities.STATUE,
+          Types.Entities.STATUE2,
+        ].includes(npc.kind)
+      ) {
+        if (msg) {
+          this.createBubble(npc.id, msg);
+          this.assignBubbleTo(npc);
+          this.audioManager.playSound("npc");
+        } else {
+          this.destroyBubble(npc.id);
+          this.audioManager.playSound("npc-end");
+        }
+        this.tryUnlockingAchievement("SMALL_TALK");
       }
-      this.tryUnlockingAchievement("SMALL_TALK");
 
       if (npc.kind === Types.Entities.NYAN) {
         this.tryUnlockingAchievement("NYAN");
@@ -4256,7 +5185,11 @@ class Game {
         this.store.openStore();
       } else if (npc.kind === Types.Entities.STASH) {
         this.app.openStash();
-      } else if (npc.kind === Types.Entities.WAYPOINTX || npc.kind === Types.Entities.WAYPOINTN) {
+      } else if (
+        npc.kind === Types.Entities.WAYPOINTX ||
+        npc.kind === Types.Entities.WAYPOINTN ||
+        npc.kind === Types.Entities.WAYPOINTO
+      ) {
         const activeWaypoint = this.getWaypointFromGrid(npc.gridX, npc.gridY);
         this.app.openWaypoint(activeWaypoint);
 
@@ -4268,7 +5201,7 @@ class Game {
         }
       } else if (npc.kind === Types.Entities.SATOSHI) {
         this.tryUnlockingAchievement("SATOSHI");
-      } else if (npc.kind === Types.Entities.COWPORTAL) {
+      } else if (npc.kind === Types.Entities.PORTALCOW) {
         if (this.player.level >= 45) {
           if (npc.gridX === 43 && npc.gridY === 211) {
             if (this.cowLevelPortalCoords) {
@@ -4284,7 +5217,7 @@ class Game {
             this.player.stop_pathing_callback({ x: 43, y: 212, isWaypoint: true });
           }
         }
-      } else if (npc.kind === Types.Entities.MINOTAURPORTAL) {
+      } else if (npc.kind === Types.Entities.PORTALMINOTAUR) {
         if (this.player.level >= 53) {
           if (npc.gridX === 40 && npc.gridY === 210) {
             if (this.minotaurLevelPortalCoords) {
@@ -4297,6 +5230,101 @@ class Game {
           } else {
             this.player.stop_pathing_callback({ x: 40, y: 211, isWaypoint: true });
           }
+        }
+      } else if (npc.kind === Types.Entities.PORTALSTONE) {
+        if (npc.gridX === 71 && npc.gridY === 643) {
+          if (this.stoneLevelPortalCoords) {
+            this.player.stop_pathing_callback({
+              x: this.stoneLevelPortalCoords.x,
+              y: this.stoneLevelPortalCoords.y,
+              isWaypoint: true,
+            });
+          }
+        } else {
+          this.player.stop_pathing_callback({ x: 71, y: 643, isWaypoint: true });
+        }
+      } else if (npc.kind === Types.Entities.PORTALGATEWAY) {
+        if (npc.gridX === 97 && npc.gridY === 545) {
+          if (this.gatewayLevelPortalCoords) {
+            this.player.stop_pathing_callback({
+              x: this.gatewayLevelPortalCoords.x,
+              y: this.gatewayLevelPortalCoords.y,
+              isWaypoint: true,
+            });
+          }
+        } else {
+          this.player.stop_pathing_callback({ x: 97, y: 546, isWaypoint: true });
+        }
+      } else if (npc.kind === Types.Entities.MAGICSTONE) {
+        if (!npc.isActivated) {
+          this.client.sendMagicStone(npc.id);
+        }
+
+        this.storage.activateMagicStone(npc.gridX);
+        if (this.storage.hasAllMagicStones()) {
+          this.tryUnlockingAchievement("STONEHENGE");
+        }
+      } else if (npc.kind === Types.Entities.LEVER || npc.kind === Types.Entities.LEVER2) {
+        if (!npc.isActivated) {
+          this.client.sendLever(npc.id);
+        }
+      } else if (npc.kind === Types.Entities.ALTARCHALICE) {
+        if (!npc.isActivated) {
+          this.client.sendAltarChalice(npc.id);
+        }
+      } else if (npc.kind === Types.Entities.ALTARSOULSTONE) {
+        if (!npc.isActivated) {
+          this.client.sendAltarSoulStone(npc.id);
+        }
+      } else if (npc.kind === Types.Entities.HANDS) {
+        if (!npc.isActivated) {
+          this.client.sendHands(npc.id);
+        }
+      } else if (npc.kind === Types.Entities.SECRETSTAIRS) {
+        if (npc.gridX === 8 && npc.gridY === 683) {
+          // Chalice
+          this.player.stop_pathing_callback({ x: 7, y: 727, isWaypoint: true });
+          this.tryUnlockingAchievement("TOMB");
+        } else if (npc.gridX === 19 && npc.gridY === 642) {
+          // Tree
+          this.player.stop_pathing_callback({ x: 43, y: 728, isWaypoint: true });
+        }
+      } else if (npc.kind === Types.Entities.SECRETSTAIRS2) {
+        if (npc.gridX === 149 && npc.gridY === 548) {
+          // Left Templar
+          this.player.stop_pathing_callback({ x: 127, y: 731, orientation: Types.Orientations.UP, isWaypoint: true });
+        } else if (npc.gridX === 162 && npc.gridY === 548) {
+          // Right Templar
+          this.player.stop_pathing_callback({ x: 155, y: 731, orientation: Types.Orientations.UP, isWaypoint: true });
+        }
+      } else if (npc.kind === Types.Entities.SECRETSTAIRSUP) {
+        if (npc.gridX === 5 && npc.gridY === 728) {
+          // Chalice
+          this.player.stop_pathing_callback({ x: 7, y: 683, isWaypoint: true });
+        } else if (npc.gridX === 41 && npc.gridY === 729) {
+          // Tree
+          this.player.stop_pathing_callback({ x: 18, y: 642, isWaypoint: true });
+        }
+      } else if (npc.kind === Types.Entities.GRIMOIRE) {
+        this.tryUnlockingAchievement("GRIMOIRE");
+        npc.walk();
+      } else if (npc.kind === Types.Entities.ALKOR) {
+        const isFound = this.player.inventory.some(({ item }) => item === "nft");
+
+        if (isFound && !this.storage.getAchievements()[ACHIEVEMENT_NFT_INDEX]) {
+          this.tryUnlockingAchievement("NFT");
+        }
+      } else if (npc.kind === Types.Entities.OLAF) {
+        const isFound = this.player.inventory.some(({ item }) => item === "wing");
+
+        if (isFound && !this.storage.getAchievements()[ACHIEVEMENT_WING_INDEX]) {
+          this.tryUnlockingAchievement("WING");
+        }
+      } else if (npc.kind === Types.Entities.VICTOR) {
+        const isFound = this.player.inventory.some(({ item }) => item === "crystal");
+
+        if (isFound && !this.storage.getAchievements()[ACHIEVEMENT_CRYSTAL_INDEX]) {
+          this.tryUnlockingAchievement("CRYSTAL");
         }
       }
     }
@@ -4351,6 +5379,37 @@ class Game {
     );
   }
 
+  getForEachVisibleEntityByDepth() {
+    var self = this;
+    var m = this.map;
+
+    const entities = [];
+
+    this.camera.forEachVisiblePosition(
+      function (x, y) {
+        if (!m.isOutOfBounds(x, y)) {
+          if (self.renderingGrid[y][x]) {
+            _.each(self.renderingGrid[y][x], function (entity) {
+              if (
+                entity.kind === Types.Entities.TRAP ||
+                entity.kind === Types.Entities.TRAP2 ||
+                entity.kind === Types.Entities.TRAP3 ||
+                entity.kind === Types.Entities.FOSSIL
+              ) {
+                entities.unshift(entity);
+              } else {
+                entities.push(entity);
+              }
+            });
+          }
+        }
+      },
+      this.renderer.mobile ? 0 : 2,
+    );
+
+    return entities;
+  }
+
   /**
    *
    */
@@ -4387,6 +5446,14 @@ class Game {
   forEachAnimatedTile(callback) {
     if (this.animatedTiles) {
       _.each(this.animatedTiles, function (tile) {
+        callback(tile);
+      });
+    }
+  }
+
+  forEachHighAnimatedTile(callback) {
+    if (this.highAnimatedTiles) {
+      _.each(this.highAnimatedTiles, function (tile) {
         callback(tile);
       });
     }
@@ -4452,7 +5519,22 @@ class Game {
 
   getNpcAt(x, y) {
     var entity = this.getEntityAt(x, y, Npc);
-    if (entity && entity instanceof Npc) {
+    if (
+      entity &&
+      entity instanceof Npc &&
+      entity.kind !== Types.Entities.TREE &&
+      entity.kind !== Types.Entities.TRAP &&
+      entity.kind !== Types.Entities.TRAP2 &&
+      entity.kind !== Types.Entities.TRAP3
+    ) {
+      return entity;
+    }
+    return null;
+  }
+
+  getSpellAt(x, y) {
+    var entity = this.getEntityAt(x, y, Spell);
+    if (entity && entity instanceof Spell) {
       return entity;
     }
     return null;
@@ -4525,6 +5607,10 @@ class Game {
     return !_.isNull(this.getNpcAt(x, y));
   }
 
+  isSpellAt(x, y) {
+    return !_.isNull(this.getSpellAt(x, y));
+  }
+
   isChestAt(x, y) {
     return !_.isNull(this.getChestAt(x, y));
   }
@@ -4593,6 +5679,10 @@ class Game {
     this.cursorVisible = true;
 
     if (this.player && !this.renderer.mobile && !this.renderer.tablet) {
+      // if (this.isSpellAt(x, y)) {
+      //   return;
+      // }
+
       this.hoveringCollidingTile = this.map.isColliding(x, y);
       this.hoveringPlateauTile = this.player.isOnPlateau ? !this.map.isPlateau(x, y) : this.map.isPlateau(x, y);
       this.hoveringMob = this.isMobAt(x, y);
@@ -4630,14 +5720,14 @@ class Game {
     }
   }
 
-  onRemoveTarget = _.debounce(() => {
+  onRemoveTarget = () => {
     $("#inspector").fadeOut("fast");
     $("#inspector .level").text("");
     $("#inspector .health").text("");
     if (this.player) {
       this.player.inspecting = null;
     }
-  }, 2000);
+  };
 
   /**
    * Moves the player one space, if possible
@@ -4738,8 +5828,23 @@ class Game {
         this.makePlayerOpenChest(entity);
       } else {
         this.makePlayerGoTo(pos.x, pos.y);
+
+        // immune character to traps for 3 seconds if hit
       }
     }
+  }
+
+  getTrap(x, y) {
+    if (!this.traps.length) return;
+    // 1 right, 1 top
+    return this.traps.find(trap => (trap.x - x === 0 || trap.x - x === -1) && (trap.y - y === 0 || trap.y - y === 1));
+  }
+
+  getStatues(x, y) {
+    if (!this.statues.length) return;
+
+    // 8 left, 8 right, 16 bottom
+    return this.statues.filter(statue => Math.abs(statue.x - x) <= 8 && y - statue.y >= 0 && y - statue.y <= 16);
   }
 
   isMobOnSameTile(mob, x?: number, y?: number) {
@@ -4840,9 +5945,6 @@ class Game {
     return false;
   }
 
-  /**
-   *
-   */
   onCharacterUpdate(character) {
     var time = this.currentTime;
 
@@ -4859,11 +5961,28 @@ class Game {
     }
 
     if (character.isAttacking() && (!character.previousTarget || character.id === this.playerId)) {
-      if (character.kind === Types.Entities.NECROMANCER) {
+      if (
+        character.kind === Types.Entities.NECROMANCER ||
+        character.kind === Types.Entities.DEATHANGEL ||
+        character.kind === Types.Entities.MAGE ||
+        character.kind === Types.Entities.SKELETONARCHER ||
+        character.kind === Types.Entities.SHAMAN
+      ) {
         if (character.isRaising()) {
           if (character.canRaise(time)) {
             character.stop();
+            character.nextStep();
             character.raise();
+
+            if (
+              [Types.Entities.MAGE, Types.Entities.SKELETONARCHER, Types.Entities.SHAMAN].includes(character.kind) &&
+              character &&
+              character.target &&
+              this.player &&
+              character.target.id === this.player.id
+            ) {
+              this.client.sendCastSpell(character.id, character.gridX, character.gridY, character.target.id);
+            }
           }
           return;
         }
@@ -4871,6 +5990,7 @@ class Game {
 
       // Don't let multiple mobs stack on the same tile when attacking a player.
       var isMoving = this.tryMovingToADifferentTile(character);
+
       if (character.canAttack(time)) {
         if (!isMoving) {
           // don't hit target if moving to a different tile.
@@ -4895,7 +6015,9 @@ class Game {
             !this.player.invincible &&
             character.type !== "player"
           ) {
-            this.client.sendHurt(character);
+            setTimeout(() => {
+              this.client.sendHurt(character);
+            }, character.hurtDelay);
           }
         }
       } else {
@@ -5171,6 +6293,21 @@ class Game {
       }
 
       return;
+    } else if (message.startsWith("/town")) {
+      // Prevent sending the message to teleport back to town
+      if (
+        this.player.hasTarget() ||
+        Object.keys(this.player.attackers).length ||
+        (this.player.gridY >= 195 && this.player.gridY <= 259)
+      ) {
+        return;
+      }
+
+      const x = randomInt(33, 39);
+      const y = randomInt(208, 211);
+
+      this.player.stop_pathing_callback({ x, y, isWaypoint: true });
+      return;
     }
 
     this.client.sendChat(message);
@@ -5188,13 +6325,14 @@ class Game {
     var bubble = this.bubbleManager.getBubbleById(character.id);
 
     if (bubble) {
-      var s = this.renderer.scale,
-        t = 16 * s, // tile size
-        x = (character.x - this.camera.x) * s,
-        w = parseInt(bubble.element.css("width")) + 24,
-        offset = w / 2 - t / 2,
-        offsetY,
-        y;
+      var s = this.renderer.scale;
+      var t = 16 * s;
+
+      var x = (character.x - this.camera.x) * s;
+      var w = parseInt(bubble.element.css("width")) + 24;
+      var offsetX = w / 2 - t / 2;
+      var offsetY;
+      var y;
 
       if (character instanceof Npc) {
         offsetY = 0;
@@ -5210,9 +6348,14 @@ class Game {
         }
       }
 
+      if (character.kind === Types.Entities.GRIMOIRE) {
+        offsetX -= 8 * s;
+        offsetY += 22 * s;
+      }
+
       y = (character.y - this.camera.y) * s - t * 2 - offsetY;
 
-      bubble.element.css("left", x - offset + "px");
+      bubble.element.css("left", x - offsetX + "px");
       bubble.element.css("top", y + "px");
     }
   }
@@ -5322,18 +6465,6 @@ class Game {
     }
   }
 
-  updateDamage() {
-    $("#player-damage").text(this.player.damage);
-  }
-
-  updateDefense() {
-    $("#player-defense").text(this.player.defense);
-  }
-
-  updateAbsorb() {
-    $("#player-absorb").text(this.player.absorb);
-  }
-
   updateExpBar() {
     if (this.player && this.playerexp_callback) {
       var expInThisLevel = this.player.experience - Types.expForLevel[this.player.level - 1];
@@ -5344,15 +6475,15 @@ class Game {
     }
   }
 
-  updateTarget(targetId, points, healthPoints, maxHp) {
-    if (this.player.hasTarget() && this.updatetarget_callback) {
-      var target = this.getEntityById(targetId);
-      if (target.type !== "player") {
-        target.name = Types.getAliasFromName(Types.getKindAsString(target.kind));
-      }
-      target.points = points;
-      target.healthPoints = healthPoints;
-      target.maxHp = maxHp;
+  updateTarget(targetId, dmg, hitPoints, maxHitPoints) {
+    if ((this.player.hasTarget() || this.player.skillTargetId === targetId) && this.updatetarget_callback) {
+      const target = this.getEntityById(targetId);
+
+      if (!target) return;
+
+      target.points = dmg;
+      target.hitPoints = hitPoints;
+      target.maxHitPoints = maxHitPoints;
       this.updatetarget_callback(target);
     }
   }
@@ -5372,7 +6503,7 @@ class Game {
     this.unlock_callback = callback;
   }
 
-  tryUnlockingAchievement(name) {
+  tryUnlockingAchievement(name: AchievementName, send = true) {
     var achievement = null;
     var self = this;
 
@@ -5382,7 +6513,9 @@ class Game {
 
         if (achievement.isCompleted() && self.storage.unlockAchievement(achievement.id)) {
           if (self.unlock_callback) {
-            self.client.sendAchievement(achievement.id);
+            if (send) {
+              self.client.sendAchievement(achievement.id);
+            }
             self.unlock_callback(achievement.id, achievement.name, achievement[self.network]);
             self.audioManager.playSound("achievement");
             resolve();
@@ -5531,7 +6664,7 @@ class Game {
 
   tryLootingItem(item) {
     try {
-      this.player.loot(item);
+      this.player.loot(item, this.storage.getAchievements());
       this.client.sendLoot(item); // Notify the server that this item has been looted
       this.removeItem(item);
 
@@ -5566,6 +6699,17 @@ class Game {
       } else if (item.kind === Types.Entities.SKELETONKEY) {
         this.tryUnlockingAchievement("SKELETON_KEY");
         this.player.skeletonKey = true;
+      } else if (item.kind === Types.Entities.STONEHERO) {
+        this.tryUnlockingAchievement("EMBLEM");
+      } else if (item.kind === Types.Entities.SOULSTONE) {
+        this.tryUnlockingAchievement("SOULSTONE");
+      } else if (item.kind === Types.Entities.CHALICE) {
+        this.tryUnlockingAchievement("CRUISADE");
+      } else if (Types.isRune(item.kind)) {
+        const rune = Types.getRuneFromItem(item.itemKind);
+        if (rune.rank >= 25) {
+          this.tryUnlockingAchievement("RUNOLOGUE");
+        }
       }
 
       if (Types.isHealingItem(item.kind)) {

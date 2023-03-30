@@ -1,0 +1,17 @@
+{
+  "id": "statue2-spell",
+  "width": 50,
+  "height": 50,
+  "animations": {
+    "idle_down": {
+      "length": 12,
+      "row": 0
+    },
+    "death": {
+      "length": 7,
+      "row": 1
+    }
+  },
+  "offset_x": -16,
+  "offset_y": -24
+}

@@ -86,6 +86,62 @@ var Items = {
     }
   },
 
+  MoonSword: class MoonSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MOONSWORD, "weapon");
+      this.lootMessage = "You pick up a moon partisan";
+    }
+  },
+
+  TemplarSword: class TemplarSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.TEMPLARSWORD, "weapon");
+      this.lootMessage = "You pick up a templar sword";
+    }
+  },
+
+  SpikeGlaive: class SpikeGlaive extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SPIKEGLAIVE, "weapon");
+      this.lootMessage = "You pick up a spike glaive";
+    }
+  },
+
+  EclypseDagger: class EclypseDagger extends Item {
+    constructor(id) {
+      super(id, Types.Entities.ECLYPSEDAGGER, "weapon");
+      this.lootMessage = "You pick up an eclypse dagger";
+    }
+  },
+
+  ExecutionerSword: class ExecutionerSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.EXECUTIONERSWORD, "weapon");
+      this.lootMessage = "You pick up an executioner sword";
+    }
+  },
+
+  MysticalSword: class MysticalSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MYSTICALSWORD, "weapon");
+      this.lootMessage = "You pick up a mystical sword";
+    }
+  },
+
+  DragonSword: class DragonSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.DRAGONSWORD, "weapon");
+      this.lootMessage = "You pick up a dragon sword";
+    }
+  },
+
+  HellHammer: class HellHammer extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELLHAMMER, "weapon");
+      this.lootMessage = "You pick up a hell hammer";
+    }
+  },
+
   LeatherArmor: class LeatherArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.LEATHERARMOR, "armor");
@@ -149,10 +205,24 @@ var Items = {
     }
   },
 
-  SpikeArmor: class SpikeArmor extends Item {
+  EmeraldArmor: class EmeraldArmor extends Item {
     constructor(id) {
-      super(id, Types.Entities.SPIKEARMOR, "armor");
-      this.lootMessage = "You pick up a spike armor";
+      super(id, Types.Entities.EMERALDARMOR, "armor");
+      this.lootMessage = "You pick up an emerald armor";
+    }
+  },
+
+  TemplarArmor: class TemplarArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.TEMPLARARMOR, "armor");
+      this.lootMessage = "You pick up a templar armor";
+    }
+  },
+
+  DragonArmor: class DragonArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.DRAGONARMOR, "armor");
+      this.lootMessage = "You pick up a dragon armor";
     }
   },
 
@@ -160,6 +230,27 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.DEMONARMOR, "armor");
       this.lootMessage = "You pick up a demon armor";
+    }
+  },
+
+  MysticalArmor: class MysticalArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MYSTICALARMOR, "armor");
+      this.lootMessage = "You pick up a mystical armor";
+    }
+  },
+
+  BloodArmor: class BloodArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BLOODARMOR, "armor");
+      this.lootMessage = "You pick up a blood armor";
+    }
+  },
+
+  PaladinArmor: class PaladinArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PALADINARMOR, "armor");
+      this.lootMessage = "You pick up a paladin armor";
     }
   },
 
@@ -202,6 +293,48 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.BELTMINOTAUR, "belt");
       this.lootMessage = "You pick up a minotaur belt";
+    }
+  },
+
+  BeltEmerald: class BeltEmerald extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTEMERALD, "belt");
+      this.lootMessage = "You pick up an emerald belt";
+    }
+  },
+
+  BeltExecutioner: class BeltExecutioner extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTEXECUTIONER, "belt");
+      this.lootMessage = "You pick up an executioner belt";
+    }
+  },
+
+  BeltMystical: class BeltMystical extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTMYSTICAL, "belt");
+      this.lootMessage = "You pick up a mystical belt";
+    }
+  },
+
+  BeltTemplar: class BeltTemplar extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTTEMPLAR, "belt");
+      this.lootMessage = "You pick up a templar belt";
+    }
+  },
+
+  BeltDemon: class BeltDemon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTDEMON, "belt");
+      this.lootMessage = "You pick up a demon belt";
+    }
+  },
+
+  BeltMoon: class BeltMoon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTMOON, "belt");
+      this.lootMessage = "You pick up a moon belt";
     }
   },
 
@@ -275,6 +408,55 @@ var Items = {
     }
   },
 
+  ShieldTemplar: class ShieldTemplar extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDTEMPLAR, "shield");
+      this.lootMessage = "You pick up a templar shield";
+    }
+  },
+
+  ShieldEmerald: class ShieldEmerald extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDEMERALD, "shield");
+      this.lootMessage = "You pick up an emerald shield";
+    }
+  },
+
+  ShieldExecutioner: class ShieldExecutioner extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDEXECUTIONER, "shield");
+      this.lootMessage = "You pick up an executioner shield";
+    }
+  },
+
+  ShieldMystical: class ShieldMystical extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDMYSTICAL, "shield");
+      this.lootMessage = "You pick up a mystical shield";
+    }
+  },
+
+  ShieldDragon: class ShieldDragon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDDRAGON, "shield");
+      this.lootMessage = "You pick up a dragon shield";
+    }
+  },
+
+  ShieldDemon: class ShieldDemon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDDEMON, "shield");
+      this.lootMessage = "You pick up a demon shield";
+    }
+  },
+
+  ShieldMoon: class ShieldMoon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDMOON, "shield");
+      this.lootMessage = "You pick up a moon shield";
+    }
+  },
+
   Flask: class Flask extends Item {
     constructor(id) {
       super(id, Types.Entities.FLASK, "object");
@@ -307,6 +489,223 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.BANANOPOTION, "object");
       this.lootMessage = "You drink a BANANO potion";
+    }
+  },
+
+  RuneSat: class RuneSat extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.SAT, "rune");
+      this.lootMessage = "You pick up a SAT Rune";
+    }
+  },
+
+  RuneAl: class RuneAl extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.AL, "rune");
+      this.lootMessage = "You pick up an AL Rune";
+    }
+  },
+
+  RuneBul: class RuneBul extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.BUL, "rune");
+      this.lootMessage = "You pick up a BUL Rune";
+    }
+  },
+
+  RuneNan: class RuneNan extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.NAN, "rune");
+      this.lootMessage = "You pick up a NAN Rune";
+    }
+  },
+
+  RuneMir: class RuneMir extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.MIR, "rune");
+      this.lootMessage = "You pick up a MIR Rune";
+    }
+  },
+
+  RuneGel: class RuneGel extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.GEL, "rune");
+      this.lootMessage = "You pick up a GEL Rune";
+    }
+  },
+
+  RuneDo: class RuneDo extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.DO, "rune");
+      this.lootMessage = "You pick up a DO Rune";
+    }
+  },
+
+  RuneBan: class RuneBan extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.BAN, "rune");
+      this.lootMessage = "You pick up a BAN Rune";
+    }
+  },
+
+  RuneSol: class RuneSol extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.SOL, "rune");
+      this.lootMessage = "You pick up a SOL Rune";
+    }
+  },
+
+  RuneUm: class RuneUm extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.UM, "rune");
+      this.lootMessage = "You pick up an UM Rune";
+    }
+  },
+
+  RuneHex: class RuneHex extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.HEX, "rune");
+      this.lootMessage = "You pick up a HEX Rune";
+    }
+  },
+
+  RuneZal: class RuneZal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.ZAL, "rune");
+      this.lootMessage = "You pick up a ZAL Rune";
+    }
+  },
+
+  RuneVie: class RuneVie extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.VIE, "rune");
+      this.lootMessage = "You pick up a VIE Rune";
+    }
+  },
+
+  RuneEth: class RuneEth extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.ETH, "rune");
+      this.lootMessage = "You pick up an ETH Rune";
+    }
+  },
+
+  RuneBtc: class RuneBtc extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.BTC, "rune");
+      this.lootMessage = "You pick up a BTC Rune";
+    }
+  },
+
+  RuneVax: class RuneVax extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.VAX, "rune");
+      this.lootMessage = "You pick up a VAX Rune";
+    }
+  },
+
+  RunePor: class RunePor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.POR, "rune");
+      this.lootMessage = "You pick up a POR Rune";
+    }
+  },
+
+  RuneLas: class RuneLas extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.LAS, "rune");
+      this.lootMessage = "You pick up a LAS Rune";
+    }
+  },
+
+  RuneCham: class RuneCham extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.CHAM, "rune");
+      this.lootMessage = "You pick up a CHAM Rune";
+    }
+  },
+
+  RuneDur: class RuneDur extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.DUR, "rune");
+      this.lootMessage = "You pick up a DUR Rune";
+    }
+  },
+
+  RuneXno: class RuneXno extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.XNO, "rune");
+      this.lootMessage = "You pick up a XNO Rune";
+    }
+  },
+
+  RuneFal: class RuneFal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.FAL, "rune");
+      this.lootMessage = "You pick up a FAL Rune";
+    }
+  },
+
+  RuneKul: class RuneKul extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.KUL, "rune");
+      this.lootMessage = "You pick up a KUL Rune";
+    }
+  },
+
+  RuneMer: class RuneMer extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.MER, "rune");
+      this.lootMessage = "You pick up a MER Rune";
+    }
+  },
+
+  RuneQua: class RuneQua extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.QUA, "rune");
+      this.lootMessage = "You pick up a QUA Rune";
+    }
+  },
+
+  RuneGul: class RuneGul extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.GUL, "rune");
+      this.lootMessage = "You pick up a GUL Rune";
+    }
+  },
+
+  RuneBer: class RuneBer extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.BER, "rune");
+      this.lootMessage = "You pick up a BER Rune";
+    }
+  },
+
+  RuneTor: class RuneTor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.TOR, "rune");
+      this.lootMessage = "You pick up a TOR Rune";
+    }
+  },
+
+  RuneJah: class RuneJah extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.JAH, "rune");
+      this.lootMessage = "You pick up a JAH Rune";
+    }
+  },
+
+  RuneShi: class RuneShi extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.SHI, "rune");
+      this.lootMessage = "You pick up a SHI Rune";
+    }
+  },
+
+  RuneVod: class RuneVod extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RUNE.VOD, "rune");
+      this.lootMessage = "You pick up a VOD Rune";
     }
   },
 
@@ -373,6 +772,13 @@ var Items = {
     }
   },
 
+  RingPlatinum: class RingPlatinum extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGPLATINUM, "ring");
+      this.lootMessage = "You pick up a platinum ring";
+    }
+  },
+
   RingNecromancer: class RingNecromancer extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGNECROMANCER, "ring");
@@ -401,6 +807,41 @@ var Items = {
     }
   },
 
+  RingMystical: class RingMystical extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGMYSTICAL, "ring");
+      this.lootMessage = "You pick up the Oculus";
+    }
+  },
+
+  RingBalrog: class RingBalrog extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGBALROG, "ring");
+      this.lootMessage = "You pick up the Ring of Power";
+    }
+  },
+
+  RingConqueror: class RingConqueror extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGCONQUEROR, "ring");
+      this.lootMessage = "You pick up a conqueror ring";
+    }
+  },
+
+  RingHeaven: class RingHeaven extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGHEAVEN, "ring");
+      this.lootMessage = "You pick up a touch of heaven ring";
+    }
+  },
+
+  RingWizard: class RingWizard extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGWIZARD, "ring");
+      this.lootMessage = "You pick up a wizard ring";
+    }
+  },
+
   AmuletSilver: class AmuletSilver extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETSILVER, "amulet");
@@ -412,6 +853,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.AMULETGOLD, "amulet");
       this.lootMessage = "You pick up a gold amulet";
+    }
+  },
+
+  AmuletPlatinum: class AmuletPlatinum extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETPLATINUM, "amulet");
+      this.lootMessage = "You pick up a platinum amulet";
     }
   },
 
@@ -429,10 +877,66 @@ var Items = {
     }
   },
 
+  AmuletDemon: class AmuletDemon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETDEMON, "amulet");
+      this.lootMessage = "You pick up the Fiend";
+    }
+  },
+
+  AmuletMoon: class AmuletMoon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETMOON, "amulet");
+      this.lootMessage = "You pick up the Crescent";
+    }
+  },
+
+  AmuletStar: class AmuletStar extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETSTAR, "amulet");
+      this.lootMessage = "You pick up the North Star";
+    }
+  },
+
+  AmuletSkull: class AmuletSkull extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETSKULL, "amulet");
+      this.lootMessage = "You pick up the White Death";
+    }
+  },
+
+  AmuletDragon: class AmuletDragon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETDRAGON, "amulet");
+      this.lootMessage = "You pick up the Dragon Eye";
+    }
+  },
+
   ChestBlue: class ChestBlue extends Item {
     constructor(id) {
       super(id, Types.Entities.CHESTBLUE, "chest");
       this.lootMessage = "You pick up a blue chest";
+    }
+  },
+
+  ChestGreen: class ChestGreen extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHESTGREEN, "chest");
+      this.lootMessage = "You pick up a green chest";
+    }
+  },
+
+  ChestPurple: class ChestPurple extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHESTPURPLE, "chest");
+      this.lootMessage = "You pick up a purple chest";
+    }
+  },
+
+  ChestRed: class ChestRed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHESTRED, "chest");
+      this.lootMessage = "You pick up a red chest";
     }
   },
 
@@ -457,6 +961,13 @@ var Items = {
     }
   },
 
+  ScrollUpgradeLegendary: class ScrollUpgradeLegendary extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLUPGRADELEGENDARY, "scroll");
+      this.lootMessage = "You pick up a legendary class upgrade scroll";
+    }
+  },
+
   ScrollUpgradeBlessed: class ScrollUpgradeBlessed extends Item {
     constructor(id) {
       super(id, Types.Entities.SCROLLUPGRADEBLESSED, "scroll");
@@ -464,10 +975,45 @@ var Items = {
     }
   },
 
+  ScrollUpgradeSacred: class ScrollUpgradeSacred extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLUPGRADESACRED, "scroll");
+      this.lootMessage = "You pick up a sacred legendary class upgrade scroll";
+    }
+  },
+
   ScrollTransmute: class ScrollTransmute extends Item {
     constructor(id) {
       super(id, Types.Entities.SCROLLTRANSMUTE, "scroll");
       this.lootMessage = "You pick up a transmute scroll";
+    }
+  },
+
+  StoneSocket: class StoneSocket extends Item {
+    constructor(id) {
+      super(id, Types.Entities.STONESOCKET, "stone");
+      this.lootMessage = "You pick up a socket stone";
+    }
+  },
+
+  StoneDragon: class StoneDragon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.STONEDRAGON, "stone");
+      this.lootMessage = "You pick up a dragon stone";
+    }
+  },
+
+  StoneHero: class StoneHero extends Item {
+    constructor(id) {
+      super(id, Types.Entities.STONEHERO, "stone");
+      this.lootMessage = "You pick up a hero emblem";
+    }
+  },
+
+  JewelSkull: class JewelSkull extends Item {
+    constructor(id) {
+      super(id, Types.Entities.JEWELSKULL, "jewel");
+      this.lootMessage = "You pick up a skull jewel";
     }
   },
 
@@ -531,6 +1077,83 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.COWKINGHORN, "object");
       this.lootMessage = "You pick up the Cow King's horn";
+    }
+  },
+
+  Chalice: class Chalice extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHALICE, "object");
+      this.lootMessage = "You pick up the Golden Chalice";
+    }
+  },
+
+  SoulStone: class SoulStone extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SOULSTONE, "object");
+      this.lootMessage = "You pick up the Soul Stone";
+    }
+  },
+
+  Nft: class Nft extends Item {
+    constructor(id) {
+      super(id, Types.Entities.NFT, "object");
+      this.lootMessage = "You pick up the Stone NFT";
+    }
+  },
+
+  Wing: class Wing extends Item {
+    constructor(id) {
+      super(id, Types.Entities.WING, "object");
+      this.lootMessage = "You pick up a Dragon Wing";
+    }
+  },
+
+  Crystal: class Crystal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CRYSTAL, "object");
+      this.lootMessage = "You pick up the Crystal";
+    }
+  },
+
+  PowderBlack: class PowderBlack extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERBLACK, "object");
+      this.lootMessage = "You pick up the Soul powder";
+    }
+  },
+
+  PowderBlue: class PowderBlue extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERBLUE, "object");
+      this.lootMessage = "You pick up the Illusion powder";
+    }
+  },
+
+  PowderGold: class PowderGold extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERGOLD, "object");
+      this.lootMessage = "You pick up the BTC maxi powder";
+    }
+  },
+
+  PowderGreen: class PowderGreen extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERGREEN, "object");
+      this.lootMessage = "You pick up the Poison powder";
+    }
+  },
+
+  PowderRed: class PowderRed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERRED, "object");
+      this.lootMessage = "You pick up the Blood powder";
+    }
+  },
+
+  PowderQuantum: class PowderQuantum extends Item {
+    constructor(id) {
+      super(id, Types.Entities.POWDERQUANTUM, "object");
+      this.lootMessage = "You pick up the Quantum powder";
     }
   },
 

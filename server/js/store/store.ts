@@ -8,22 +8,29 @@ const isDevelopmentAmounts = NODE_ENV === "development";
 
 class Store {
   storeItems = [
+    // {
+    //   id: Types.Store.EXPANSION1,
+    //   nano: 0,
+    //   ban: 0,
+    //   usd: isDevelopmentAmounts ? 0.01 : 0.001,
+    //   isAvailable: true,
+    // },
     {
-      id: Types.Store.EXPANSION1,
+      id: Types.Store.EXPANSION2,
       nano: 0,
       ban: 0,
-      usd: isDevelopmentAmounts ? 0.01 : 0.01,
+      usd: isDevelopmentAmounts ? 0.01 : 5,
       isAvailable: true,
     },
     {
-      id: Types.Store.SCROLLUPGRADEBLESSED,
+      id: Types.Store.SCROLLUPGRADESACRED,
       nano: 0,
       ban: 0,
       usd: isDevelopmentAmounts ? 0.05 : 1.5,
       isAvailable: true,
     },
     {
-      id: Types.Store.SCROLLUPGRADEHIGH,
+      id: Types.Store.SCROLLUPGRADELEGENDARY,
       nano: 0,
       ban: 0,
       usd: isDevelopmentAmounts ? 0.1 : 0.5,

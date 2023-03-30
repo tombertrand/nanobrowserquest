@@ -1,0 +1,13 @@
+{
+  "id": "tomb",
+  "width": 72,
+  "height": 74,
+  "animations": {
+    "idle_down": {
+      "length": 1,
+      "row": 0
+    }
+  },
+  "offset_x": -20,
+  "offset_y": -42
+}

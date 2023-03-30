@@ -5,24 +5,26 @@ class AnimatedTile extends Tile {
   id: any;
   length: any;
   speed: any;
+  skip?: number;
   index: any;
   lastTime: number;
   x: number;
   y: number;
 
-  constructor(id, length, speed, index) {
+  constructor(id, length, speed, skip = 1, index) {
     super();
     this.startId = id;
     this.id = id;
     this.length = length;
     this.speed = speed;
+    this.skip = skip;
     this.index = index;
     this.lastTime = 0;
   }
 
   tick() {
-    if (this.id - this.startId < this.length - 1) {
-      this.id += 1;
+    if (this.id - this.startId < this.length * this.skip - this.skip) {
+      this.id += this.skip;
     } else {
       this.id = this.startId;
     }

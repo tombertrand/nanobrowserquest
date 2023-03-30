@@ -1,0 +1,13 @@
+{
+  "id": "skill-cast",
+  "width": 48,
+  "height": 48,
+  "animations": {
+    "idle_down": {
+      "length": 17,
+      "row": 0
+    }
+  },
+  "offset_y": -22,
+  "offset_x": -16
+}

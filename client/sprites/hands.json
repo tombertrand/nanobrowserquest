@@ -1,0 +1,17 @@
+{
+  "id": "hands",
+  "width": 37,
+  "height": 40,
+  "animations": {
+    "idle_down": {
+      "length": 1,
+      "row": 0
+    },
+    "walk_down": {
+      "length": 8,
+      "row": 1
+    }
+  },
+  "offset_x": -10,
+  "offset_y": -24
+}

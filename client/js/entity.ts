@@ -25,11 +25,13 @@ class Entity {
   blinking: any;
   isDirty: boolean;
   dirty_callback: any;
+  // fadeInWhenAdded: boolean;
 
   constructor(id, kind) {
     this.id = id;
     this.kind = kind;
     this.isDirty = false;
+    // this.fadeInWhenAdded = ty;
 
     // Renderer
     this.sprite = null;
@@ -46,7 +48,7 @@ class Entity {
     this.isLoaded = false;
     this.isHighlighted = false;
     this.visible = true;
-    this.isFading = false;
+    this.isFading = true;
     this.setDirty();
   }
 
@@ -95,8 +97,8 @@ class Entity {
     return this.sprite;
   }
 
-  getSpriteName() {
-    return Types.getKindAsString(this.kind);
+  getSpriteName(element?: Elements) {
+    return `${Types.getKindAsString(this.kind)}${element ? `-${element}` : ""}`;
   }
 
   getAnimationByName(name) {
@@ -122,18 +124,47 @@ class Entity {
 
       if (a) {
         this.currentAnimation = a;
-        if (name.substr(0, 3) === "atk") {
+        const isAtk = name.substr(0, 3) === "atk";
+        const isRaise = name.substr(0, 5) === "raise";
+        const isUnraise = name.substr(0, 7) === "unraise";
+
+        if (isAtk || isRaise || isUnraise) {
           this.currentAnimation.reset();
         }
 
         if (
           this.kind === Types.Entities.ANVIL ||
           this.kind === Types.Entities.WAYPOINTX ||
-          this.kind === Types.Entities.WAYPOINTN
+          this.kind === Types.Entities.WAYPOINTN ||
+          this.kind === Types.Entities.WAYPOINTO ||
+          (!isRaise &&
+            [
+              Types.Entities.PORTALCOW,
+              Types.Entities.PORTALMINOTAUR,
+              Types.Entities.PORTALSTONE,
+              Types.Entities.PORTALGATEWAY,
+            ].includes(this.kind))
         ) {
           this.currentAnimation.setSpeed(150);
-        } else if (this.kind === Types.Entities.COWPORTAL || this.kind === Types.Entities.MINOTAURPORTAL) {
-          this.currentAnimation.setSpeed(150);
+        } else if (
+          this.kind === Types.Entities.MAGICSTONE ||
+          this.kind === Types.Entities.LEVER ||
+          this.kind === Types.Entities.LEVER2 ||
+          this.kind === Types.Entities.STATUE ||
+          this.kind === Types.Entities.STATUE2 ||
+          this.kind === Types.Entities.ALTARSOULSTONE
+        ) {
+          this.currentAnimation.setSpeed(100);
+        } else if (
+          this.kind === Types.Entities.BLUEFLAME ||
+          this.kind === Types.Entities.TRAP ||
+          this.kind === Types.Entities.TRAP2 ||
+          this.kind === Types.Entities.TRAP3 ||
+          this.kind === Types.Entities.HANDS
+        ) {
+          this.currentAnimation.setSpeed(75);
+        } else if (this.kind === Types.Entities.ALTARCHALICE) {
+          this.currentAnimation.setSpeed(200);
         } else {
           this.currentAnimation.setSpeed(speed);
         }
@@ -214,7 +245,7 @@ class Entity {
     return distX > distY ? distX : distY;
   }
 
-  isCloseTo(entity) {
+  isCloseTo(entity, aggroRange) {
     var dx,
       dy,
       close = false;
@@ -222,7 +253,7 @@ class Entity {
       dx = Math.abs(entity.gridX - this.gridX);
       dy = Math.abs(entity.gridY - this.gridY);
 
-      if (dx < 30 && dy < 14) {
+      if (dx < aggroRange && dy < aggroRange) {
         close = true;
       }
     }

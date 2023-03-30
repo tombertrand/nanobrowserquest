@@ -9,6 +9,7 @@ import "jquery.qrcode";
 import "jquery-ui-touch-punch";
 import "../css/main.css";
 import "../css/achievements.css";
+import "../css/inspector.css";
 import "../css/store.css";
 import "../css/party.css";
 import "../css/settings.css";
@@ -18,7 +19,6 @@ import "jquery-ui/themes/base/all.css";
 import * as Sentry from "@sentry/browser";
 import * as _ from "lodash";
 
-import { ChatType } from "../../server/js/types";
 import { Types } from "../../shared/js/gametypes";
 import App from "./app";
 import Character from "./character";
@@ -31,7 +31,14 @@ var game: Game;
 
 var initApp = function () {
   Sentry.init({
-    dsn: process.env.NODE_ENV !== "development" ? process.env.SENTRY_DNS : "",
+    dsn: process.env.SENTRY_DNS,
+    beforeSend: (event, hint) => {
+      if (process.env.NODE_ENV === "development") {
+        console.error(hint.originalException || hint.syntheticException);
+        return null;
+      }
+      return event;
+    },
   });
 
   $(document).ready(function () {
@@ -133,11 +140,11 @@ var initApp = function () {
       app.toggleInventory();
     });
 
-    $("#skill-offensive").click(function () {
+    $("#skill-attack").click(function () {
       game.useSkill(1);
     });
 
-    $("#skill-shield").on("click", () => {
+    $("#skill-defense").on("click", () => {
       game.useSkill(2);
     });
 
@@ -296,6 +303,12 @@ var initApp = function () {
     // $("#running-coder1 .link").on("click", () => {
     //   $("#loginnameinput").val("running-coder1").show();
     //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+    //   app.tryStartingGame();
+    // });
+
+    // $("#oldschooler .link").on("click", () => {
+    //   $("#loginnameinput").val("oldschooler").show();
+    //   $("#loginaccountinput").val("nano_18en1tq8foa8fan8ief5595t7bogpzywn66n7f4mar6hhcuihbe8i9g5mx1s").show();
     //   app.tryStartingGame();
     // });
 
@@ -481,7 +494,7 @@ var initGame = function () {
       app.center();
       app.setMouseCoordinates(event);
       if (game) {
-        game.pvpFlag = game.player.level >= 9 && event.shiftKey;
+        game.pvpFlag = game.player?.level >= 9 && event.shiftKey;
         game.click();
       }
       // app.hideWindows();
@@ -536,7 +549,7 @@ var initGame = function () {
   $(document).mousemove(function (event) {
     app.setMouseCoordinates(event);
     if (game.started) {
-      game.pvpFlag = game.player.level >= 9 && event.shiftKey;
+      game.pvpFlag = game.player?.level >= 9 && event.shiftKey;
       game.movecursor();
     }
   });
@@ -602,7 +615,7 @@ var initGame = function () {
         }
       }
     } else if (key === 16) {
-      game.pvpFlag = game.player.level >= 9;
+      game.pvpFlag = game.player?.level >= 9;
     }
 
     if (game.started && !$("#chatinput").is(":focus")) {

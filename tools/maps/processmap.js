@@ -11,10 +11,10 @@ var isNumber = function (o) {
 };
 
 module.exports = function processMap(json, options) {
-  var self = this,
-    TiledJSON = json;
-  var layerIndex = 0,
-    tileIndex = 0;
+  const self = this;
+  const TiledJSON = json;
+  let layerIndex = 0;
+  let tileIndex = 0;
 
   map = {
     width: 0,
@@ -22,6 +22,7 @@ module.exports = function processMap(json, options) {
     collisions: [],
     doors: [],
     checkpoints: [],
+    tilesets: [],
   };
   mode = options.mode;
 
@@ -65,6 +66,13 @@ module.exports = function processMap(json, options) {
         }
         map.animated[tileId].l = propValue;
       }
+      if (propName === "skip") {
+        if (!map.animated[tileId]) {
+          map.animated[tileId] = {};
+          console.debug("Tile ID [" + tileId + "] has a skip value");
+        }
+        map.animated[tileId].s = propValue;
+      }
       if (propName === "delay") {
         if (!map.animated[tileId]) {
           map.animated[tileId] = {};
@@ -78,9 +86,7 @@ module.exports = function processMap(json, options) {
   console.info("* Phase 1 Tileset Processing");
   if (TiledJSON.tilesets instanceof Array) {
     _.each(TiledJSON.tilesets, function (tileset) {
-      var tileSetName = tileset.name.toLowerCase();
-
-      if (tileSetName === "tilesheet") {
+      if (tileset.name === "tilesheet" || Object.keys(Types.terrainToImageMap).includes(tileset.name)) {
         console.info("** Processing map tileset properties...");
 
         // iterate through tileset tile properties
@@ -94,21 +100,34 @@ module.exports = function processMap(json, options) {
         //     });
         // });
 
-        _.each(tileset.tiles, function ({ id, properties }) {
-          var tileId = parseInt(id, 10) + 1;
-
-          console.info("*** Processing Tile ID " + tileId);
-
-          var newProperties = properties.reduce((acc, property) => {
-            acc[property.name] = property.value;
-            return acc;
-          }, {});
-
-          _.each(newProperties, function (value, name) {
-            handleTileProp(name, isNumber(parseInt(value, 10)) ? parseInt(value, 10) : value, tileId);
-          });
+        const { columns, firstgid, imageheight, imagewidth, name, tilecount } = tileset;
+        map.tilesets.push({
+          columns,
+          firstgid,
+          imageheight,
+          imagewidth,
+          name,
+          imageName: Types.terrainToImageMap[name] || name,
+          tilecount,
         });
-      } else if (tileSetName === "mobs" && mode === "server") {
+
+        _.each(tileset.tiles, function ({ id, properties }) {
+          var tileId = parseInt(id, 10) + firstgid;
+
+          console.info("*** Processing Tile ID " + tileId + firstgid);
+
+          if (properties) {
+            var newProperties = properties.reduce((acc, property) => {
+              acc[property.name] = property.value;
+              return acc;
+            }, {});
+
+            _.each(newProperties, function (value, name) {
+              handleTileProp(name, isNumber(parseInt(value, 10)) ? parseInt(value, 10) : value, tileId);
+            });
+          }
+        });
+      } else if (tileset.name === "mobs" && mode === "server") {
         console.info("** Processing static entity properties...");
         mobsFirstGid = tileset.firstgid;
 
@@ -303,7 +322,7 @@ module.exports = function processMap(json, options) {
   return map;
 };
 
-var processLayer = function (layer) {
+const processLayer = function (layer) {
   var layerName = layer.name.toLowerCase();
   var layerType = layer.type;
   console.info("** Processing layer: " + layerName);

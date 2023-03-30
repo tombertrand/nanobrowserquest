@@ -1,0 +1,45 @@
+{
+  "id": "kobold",
+  "width": 86,
+  "height": 69,
+  "animations": {
+    "atk_right": {
+      "length": 5,
+      "row": 2
+    },
+    "walk_right": {
+      "length": 12,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_up": {
+      "length": 5,
+      "row": 2
+    },
+    "walk_up": {
+      "length": 12,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_down": {
+      "length": 5,
+      "row": 2
+    },
+    "walk_down": {
+      "length": 12,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    }
+  },
+  "offset_x": -29,
+  "offset_y": -47
+}

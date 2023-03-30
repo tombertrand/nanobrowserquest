@@ -1,6 +1,4 @@
-import { Types } from "../../shared/js/gametypes";
 import Animation from "./animation";
-import Detect from "./detect";
 import sprites from "./sprites";
 
 class Sprite {
@@ -21,8 +19,8 @@ class Sprite {
   silhouetteSprite;
   image7: any;
   image8: any;
+  image9: any;
   imageunique: any;
-  imageunique7: any;
   imagenano: any;
   imageban: any;
 
@@ -32,6 +30,11 @@ class Sprite {
     this.isLoaded = false;
     this.offsetX = 0;
     this.offsetY = 0;
+
+    if (!sprites[name]) {
+      console.error(`Mising sprite: ${name}`);
+    }
+
     this.loadJSON(sprites[name]);
   }
 
@@ -52,35 +55,59 @@ class Sprite {
 
     this.image = new Image();
     this.image.crossOrigin = "Anonymous";
-    this.image.src = "img/" + this.scale + "/" + this.id + ".png";
 
-    if (this.name === "guard") {
-      this.imagenano = new Image();
-      this.imagenano.crossOrigin = "Anonymous";
-      this.imagenano.src = "img/" + this.scale + "/nanoguard.png";
-
-      this.imageban = new Image();
-      this.imageban.crossOrigin = "Anonymous";
-      this.imageban.src = "img/" + this.scale + "/banguard.png";
+    if (
+      this.id === "item" ||
+      this.id === "waypoint" ||
+      this.id === "weapon" ||
+      this.id === "armor" ||
+      this.id === "shield" ||
+      this.id === "npc" ||
+      this.id === "npc2" ||
+      this.id.startsWith("deathangel-spell") ||
+      this.id.startsWith("mage") ||
+      this.id.startsWith("mage-spell") ||
+      this.id.startsWith("arrow") ||
+      this.id.startsWith("skill-cast") ||
+      this.id.startsWith("portal") ||
+      this.id.startsWith("lever") ||
+      this.id.startsWith("tomb") ||
+      this.id.startsWith("trap") ||
+      this.id.startsWith("anvil-") ||
+      this.id.startsWith("rat") ||
+      this.id.startsWith("spider") ||
+      this.id.startsWith("skeletontemplar") ||
+      this.id === "skeleton" ||
+      this.id === "snake" ||
+      this.id === "secretstairs" ||
+      this.id === "secretstairup"
+    ) {
+      this.id = this.name;
     }
 
-    if (Types.isWeapon(this.name) && this.name !== "dagger") {
-      this.image7 = new Image();
-      this.image7.crossOrigin = "Anonymous";
-      this.image7.src = "img/" + this.scale + "/" + this.id + "7" + ".png";
+    this.image.src = "img/" + this.scale + "/" + this.id + ".png";
 
+    if (this.name.startsWith("weapon-effect")) {
       this.image8 = new Image();
       this.image8.crossOrigin = "Anonymous";
       this.image8.src = "img/" + this.scale + "/" + this.id + "8" + ".png";
-
-      this.imageunique = new Image();
-      this.imageunique.crossOrigin = "Anonymous";
-      this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + ".png";
-
-      this.imageunique7 = new Image();
-      this.imageunique7.crossOrigin = "Anonymous";
-      this.imageunique7.src = "img/" + this.scale + "/" + this.id + "unique7" + ".png";
-    } else if (["hornedarmor", "frozenarmor", "diamondarmor", "spikearmor", "demonarmor"].includes(this.name)) {
+      this.image9 = new Image();
+      this.image9.crossOrigin = "Anonymous";
+      this.image9.src = "img/" + this.scale + "/" + this.id + "9" + ".png";
+    } else if (
+      [
+        "hornedarmor",
+        "frozenarmor",
+        "diamondarmor",
+        "emeraldarmor",
+        "templararmor",
+        "dragonarmor",
+        "demonarmor",
+        "mysticalarmor",
+        "bloodarmor",
+        "paladinarmor",
+      ].includes(this.name)
+    ) {
       this.imageunique = new Image();
       this.imageunique.crossOrigin = "Anonymous";
       this.imageunique.src = "img/" + this.scale + "/" + this.id + "unique" + ".png";
@@ -228,7 +255,7 @@ class Sprite {
         width: this.width,
         height: this.height,
       };
-    } catch (e) {
+    } catch (err) {
       this.silhouetteSprite = this;
     }
   }

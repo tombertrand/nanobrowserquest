@@ -1,11 +1,10 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { randomInt } from "../../shared/js/utils";
 import Entity from "./entity";
 import Timer from "./timer";
 import Transition from "./transition";
-
-export type Skills = "heal" | "defense";
 
 class Character extends Entity {
   nextGridX: number;
@@ -17,11 +16,16 @@ class Character extends Entity {
   moveSpeed: number;
   walkSpeed: number;
   idleSpeed: number;
+  originalAtkSpeed: number;
+  originalMoveSpeed: number;
+  originalWalkSpeed: number;
+  originalIdleSpeed: number;
   movement: Transition;
   path: any;
   newDestination: any;
   adjacentTiles: {};
   target: any;
+  skillTargetId: number;
   unconfirmedTarget: any;
   attackers: {};
   hitPoints: number;
@@ -32,14 +36,19 @@ class Character extends Entity {
   followingMode: boolean;
   inspecting: any;
   isLevelup: boolean;
-  auras: string[];
-  skillName: Skills;
-  skillAnimationTimeout: any;
+  castSkill: number | null;
+  skillAnimation: number;
+  skillAnimationTimeout: NodeJS.Timeout;
+  auras: Auras[];
+  defenseSkillName: DefenseSkills;
+  attackSkillName: AttackSkills;
+  defenseSkillAnimationTimeout: any;
   currentAnimation: any;
   flipSpriteX: any;
   flipSpriteY: any;
   kind: any;
-  aggroRange: any;
+  aggroRange: number;
+  castRange?: number;
   destination: any;
   request_path_callback: any;
   id: any;
@@ -68,9 +77,15 @@ class Character extends Entity {
   atkRate: number;
   raiseRate: number;
   isFrozen: boolean;
-  frozenTimeout: any;
+  frozenTimeout: NodeJS.Timeout;
+  isSlowed: boolean;
+  slowedTimeout: NodeJS.Timeout;
+  isPoisoned: boolean;
+  poisonedTimeout: NodeJS.Timeout;
   resistances: { [key: string]: { display: string; percentage: number } };
-  type: "mob" | "player" | "npc";
+  type: "mob" | "player" | "npc" | "spell";
+  curseId: number;
+  cursedTimeout: NodeJS.Timeout;
 
   constructor(id, kind) {
     super(id, kind);
@@ -81,12 +96,12 @@ class Character extends Entity {
     this.orientation = Types.Orientations.DOWN;
 
     // Speeds
-    this.atkSpeed = 50;
+    this.atkSpeed = Types.DEFAULT_ATTACK_ANIMATION_SPEED;
     this.raiseSpeed = null;
     this.moveSpeed = 120;
     this.walkSpeed = 100;
     this.idleSpeed = 450;
-    this.setAttackRate(800);
+    this.setAttackRate(Types.DEFAULT_ATTACK_SPEED);
 
     // Pathing
     this.movement = new Transition();
@@ -112,7 +127,6 @@ class Character extends Entity {
     this.inspecting = null;
     this.isLevelup = false;
     this.auras = [];
-    // this.resistances = {};
   }
 
   clean() {
@@ -146,33 +160,62 @@ class Character extends Entity {
     }, 1500);
   }
 
-  resetSkillAnimation() {
-    this.skillName = null;
-    clearTimeout(this.skillAnimationTimeout);
+  setCastSkill(skill) {
+    this.castSkill = skill;
+    setTimeout(() => {
+      this.castSkill = null;
+    }, 850);
   }
 
-  setSkillAnimation(skillName, delay = 0) {
-    this.resetSkillAnimation();
-
-    this.skillName = skillName;
+  setSkillAnimation(skill) {
+    this.skillAnimation = skill;
+    clearTimeout(this.skillAnimationTimeout);
     this.skillAnimationTimeout = setTimeout(() => {
-      this.skillName = null;
+      this.skillAnimation = null;
+    }, Types.attackSkillDurationMap[skill]());
+  }
+
+  resetDefenseSkillAnimation() {
+    this.defenseSkillName = null;
+    clearTimeout(this.defenseSkillAnimationTimeout);
+  }
+
+  // resetAttackSkillAnimation() {
+  //   this.attackSkillName = null;
+  //   clearTimeout(this.attackSkillAnimationTimeout);
+  // }
+
+  setDefenseSkillAnimation(skillName, delay = 0) {
+    this.resetDefenseSkillAnimation();
+
+    this.defenseSkillName = skillName;
+    this.defenseSkillAnimationTimeout = setTimeout(() => {
+      this.defenseSkillName = null;
     }, delay);
   }
 
+  // setAttackSkillAnimation(skillName, delay = 0) {
+  //   this.resetAttackSkillAnimation();
+
+  //   this.attackSkillName = skillName;
+  //   this.attackSkillAnimationTimeout = setTimeout(() => {
+  //     this.attackSkillName = null;
+  //   }, delay);
+  // }
+
   animate(animation, speed, count = 0, onEndCount?: () => void) {
-    var oriented = ["atk", "walk", "idle", "raise"];
+    var oriented = ["atk", "atk2", "walk", "idle", "raise", "unraise"];
 
     if (!(this.currentAnimation && this.currentAnimation.name === "death")) {
       // don't change animation if the character is dying
       this.flipSpriteX = false;
       this.flipSpriteY = false;
 
+      const orientationAsString = Types.getOrientationAsString(this.orientation);
+
       if (_.indexOf(oriented, animation) >= 0) {
-        animation +=
-          "_" +
-          (this.orientation === Types.Orientations.LEFT ? "right" : Types.getOrientationAsString(this.orientation));
-        this.flipSpriteX = this.orientation === Types.Orientations.LEFT ? true : false;
+        animation += `_${orientationAsString.replace("left", "right")}`;
+        this.flipSpriteX = orientationAsString.includes("left") ? true : false;
       }
 
       if (this.kind === Types.Entities.WARRIOR) {
@@ -203,7 +246,14 @@ class Character extends Entity {
 
   hit(orientation) {
     this.setOrientation(orientation);
-    this.animate("atk", this.atkSpeed, 1);
+
+    // @NOTE Some characters has 2 attack animations
+    let atkAnimation = "";
+    if (this.kind === Types.Entities.SPIDERQUEEN) {
+      atkAnimation = randomInt(0, 1) ? "2" : "";
+    }
+
+    this.animate(`atk${atkAnimation}`, this.atkSpeed, 1);
   }
 
   walk(orientation) {
@@ -212,12 +262,26 @@ class Character extends Entity {
   }
 
   raise(orientation) {
-    this.setOrientation(orientation);
+    if (orientation) {
+      this.setOrientation(orientation);
+    } else {
+      this.lookAtTarget();
+    }
+
     this.animate("raise", this.raiseSpeed, 1);
   }
 
+  unraise() {
+    this.animate("unraise", this.raiseSpeed, 1);
+  }
+
   moveTo_(x, y) {
-    if (this.kind === Types.Entities.NECROMANCER) {
+    if (
+      this.kind === Types.Entities.NECROMANCER ||
+      this.kind === Types.Entities.DEATHANGEL ||
+      this.kind === Types.Entities.MAGE ||
+      this.kind === Types.Entities.SHAMAN
+    ) {
       if (this.isRaising()) {
         this.aggroRange = 10;
         return;
@@ -257,21 +321,22 @@ class Character extends Entity {
   }
 
   followPath(path) {
-    if (path.length > 1 && !this.isFrozen) {
-      // Length of 1 means the player has clicked on himself
-      this.path = path;
-      this.step = 0;
+    if (this.raisingMode) return;
+    if (path.length <= 1 || this.isFrozen) return;
 
-      if (this.followingMode) {
-        // following a character
-        path.pop();
-      }
+    // Length of 1 means the player has clicked on himself
+    this.path = path;
+    this.step = 0;
 
-      if (this.start_pathing_callback) {
-        this.start_pathing_callback(path);
-      }
-      this.nextStep();
+    if (this.followingMode) {
+      // following a character
+      path.pop();
     }
+
+    if (this.start_pathing_callback) {
+      this.start_pathing_callback(path);
+    }
+    this.nextStep();
   }
 
   continueTo(x, y) {
@@ -301,10 +366,10 @@ class Character extends Entity {
   }
 
   nextStep() {
-    var stop = false,
-      x,
-      y,
-      path;
+    let stop = false;
+    let x;
+    let y;
+    let path;
 
     if (this.isMoving()) {
       if (this.before_step_callback) {
@@ -327,7 +392,12 @@ class Character extends Entity {
           this.step_callback();
         }
 
-        if (this.hasChangedItsPath()) {
+        if (this.raisingMode || (this.castRange && this.path.length - this.step < this.castRange)) {
+          if (!this.raisingMode) {
+            this.setRaisingMode();
+          }
+          stop = true;
+        } else if (this.hasChangedItsPath()) {
           x = this.newDestination.x;
           y = this.newDestination.y;
           path = this.requestPathfindingTo(x, y);
@@ -379,6 +449,16 @@ class Character extends Entity {
     this.raisingModeTimeout = setTimeout(() => {
       this.raisingMode = false;
       this.raisingModeTimeout = null;
+
+      // @NOTE Have the raiser re-engage with target once animation is done
+      if (this.hasTarget()) {
+        if (this.castRange && this.isCloseTo(this.target, this.castRange + 1)) {
+          // Keep the position
+          this.setRaisingMode();
+        } else if (this.isCloseTo(this.target, this.aggroRange)) {
+          this.engage(this.target);
+        }
+      }
     }, this.raiseRate);
   }
 
@@ -569,7 +649,7 @@ class Character extends Entity {
    * @param {Character} character The target character.
    */
   setTarget(character) {
-    if (this.target !== character) {
+    if (this.target?.id !== character.id) {
       // If it's not already set as the target
       if (this.hasTarget()) {
         this.removeTarget(); // Cleanly remove the previous one
@@ -584,6 +664,10 @@ class Character extends Entity {
     } else {
       console.debug(character.id + " is already the target of " + this.id);
     }
+  }
+
+  setSkillTargetId(mobId) {
+    this.skillTargetId = mobId;
   }
 
   onSetTarget(callback) {
@@ -651,7 +735,12 @@ class Character extends Entity {
    *
    */
   canAttack(time) {
-    if (this.canReachTarget() && this.attackCooldown.isOver(time) && !this.isFrozen) {
+    if (
+      !this.isRaising() &&
+      this.canReachTarget() &&
+      this.attackCooldown.isOver(time, this.isSlowed) &&
+      !this.isFrozen
+    ) {
       return true;
     }
     return false;
@@ -659,8 +748,6 @@ class Character extends Entity {
 
   canRaise(time) {
     if (this.raiseCooldown.isOver(time)) {
-      // this.isAggressive = true;
-      // this.aggroRange = 3;
       return true;
     }
     return false;
@@ -673,9 +760,6 @@ class Character extends Entity {
     return false;
   }
 
-  /**
-   *
-   */
   die() {
     this.removeTarget();
 
@@ -709,17 +793,27 @@ class Character extends Entity {
     clearTimeout(this.hurting);
   }
 
+  setAttackSpeed(bonus: number) {
+    const animationSpeed = Math.round(
+      Types.DEFAULT_ATTACK_ANIMATION_SPEED -
+        Types.DEFAULT_ATTACK_ANIMATION_SPEED * (Types.calculateAttackSpeed(bonus) / 100),
+    );
+    const attackSpeed = Math.round(
+      Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (Types.calculateAttackSpeed(bonus) / 100),
+    );
+
+    this.atkSpeed = animationSpeed;
+    this.setAttackRate(attackSpeed);
+  }
+
   setAttackRate(rate) {
     this.attackCooldown = new Timer(rate);
   }
 
-  setFrozen(time: number) {
+  setFrozen(duration: number) {
     this.isFrozen = true;
     this.stop();
     this.currentAnimation.pause();
-
-    // this.disengage();
-    // this.nextStep();
 
     clearTimeout(this.frozenTimeout);
 
@@ -727,7 +821,64 @@ class Character extends Entity {
       this.isFrozen = false;
       this.frozenTimeout = null;
       this.currentAnimation.play();
-    }, time);
+    }, duration);
+  }
+
+  setSlowed(duration: number) {
+    this.isSlowed = true;
+
+    // if it's defined it means the character is already slowed
+    if (!this.originalAtkSpeed) {
+      this.originalAtkSpeed = this.atkSpeed;
+      this.originalMoveSpeed = this.moveSpeed;
+      this.originalWalkSpeed = this.walkSpeed;
+      this.originalIdleSpeed = this.idleSpeed;
+
+      this.atkSpeed = this.atkSpeed * 3;
+      this.moveSpeed = this.moveSpeed * 3;
+      this.walkSpeed = this.walkSpeed * 3;
+      this.idleSpeed = this.idleSpeed * 3;
+    }
+
+    clearTimeout(this.slowedTimeout);
+
+    this.slowedTimeout = setTimeout(() => {
+      this.isSlowed = false;
+      this.slowedTimeout = null;
+
+      this.atkSpeed = this.originalAtkSpeed;
+      this.moveSpeed = this.originalMoveSpeed;
+      this.walkSpeed = this.originalWalkSpeed;
+      this.idleSpeed = this.originalIdleSpeed;
+
+      this.originalAtkSpeed = null;
+      this.originalMoveSpeed = null;
+      this.originalWalkSpeed = null;
+      this.originalIdleSpeed = null;
+    }, duration);
+  }
+
+  setPoisoned(duration: number) {
+    this.isPoisoned = true;
+
+    clearTimeout(this.poisonedTimeout);
+
+    this.poisonedTimeout = setTimeout(() => {
+      this.isPoisoned = false;
+      this.poisonedTimeout = null;
+      // Add 500ms so the last tick happens while being green
+    }, duration + 500);
+  }
+
+  setCursed(curseId: number, duration: number) {
+    this.curseId = curseId;
+
+    clearTimeout(this.cursedTimeout);
+
+    this.cursedTimeout = setTimeout(() => {
+      this.curseId = null;
+      this.cursedTimeout = null;
+    }, duration);
   }
 }
 

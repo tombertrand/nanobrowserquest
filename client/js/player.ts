@@ -1,4 +1,12 @@
+import isEqual from "lodash/isEqual";
+
 import { kinds, Types } from "../../shared/js/gametypes";
+import {
+  ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_WING_INDEX,
+} from "../../shared/js/types/achievements";
+import { toArray, toNumber } from "../../shared/js/utils";
 import Character from "./character";
 import Exceptions from "./exceptions";
 
@@ -15,13 +23,18 @@ class Player extends Character {
   nameOffsetY: number;
   armorName: string;
   armorLevel: number;
-  armorBonus: null;
+  armorBonus: null | number[];
+  armorSocket: null | number[];
   weaponName: string;
   weaponLevel: number;
-  weaponBonus: null;
+  weaponBonus: null | number[];
+  weaponSocket: null | number[];
+  weaponSkill: null | number[];
+  weaponRuneword: null | string;
+  isWeaponUnique: boolean;
   beltName: null;
   beltLevel: number | null;
-  beltBonus: null;
+  beltBonus: null | number[];
   cape?: string;
   capeLevel?: number;
   capeBonus: null | number[];
@@ -32,8 +45,11 @@ class Player extends Character {
   shieldName: null;
   shieldLevel: number | null;
   shieldBonus: number[] | null;
-  shieldSkill: number | null;
-  shieldSkillTimeout: NodeJS.Timeout;
+  shieldSocket: number[] | null;
+  defenseSkill: number | null;
+  defenseSkillTimeout: NodeJS.Timeout;
+  attackSkill: number | null;
+  attackSkillTimeout: NodeJS.Timeout;
   inventory: any[];
   stash: any[];
   upgrade: any[];
@@ -42,6 +58,7 @@ class Player extends Character {
   gems: any;
   artifact: any;
   expansion1: boolean;
+  expansion2: boolean;
   waypoints: any[];
   skeletonKey: boolean;
   nanoPotions: number;
@@ -49,14 +66,14 @@ class Player extends Character {
   absorb: string;
   ring1Name: null;
   ring1Level: number | null;
-  ring1Bonus: null;
+  ring1Bonus: null | number[];
   ring2Name: null;
   ring2Level: number | null;
-  ring2Bonus: null;
+  ring2Bonus: null | number[];
   amuletName: null;
   amuletLevel: number | null;
-  amuletBonus: null;
-  auras: string[];
+  amuletBonus: null | number[];
+  bonus: any;
   setBonus: any;
   isLootMoving: boolean;
   isSwitchingWeapon: boolean;
@@ -80,6 +97,7 @@ class Player extends Character {
   moveLeft: boolean;
   moveRight: boolean;
   disableKeyboardNpcTalk: boolean;
+  isHurtByTrap: boolean;
 
   partyId?: number;
   partyLeader?: PartyMember;
@@ -106,6 +124,8 @@ class Player extends Character {
     this.weaponName = "dagger";
     this.weaponLevel = 1;
     this.weaponBonus = null;
+    this.weaponRuneword = null;
+    this.isWeaponUnique = false;
     this.beltName = null;
     this.beltLevel = 1;
     this.beltBonus = null;
@@ -127,8 +147,10 @@ class Player extends Character {
     this.gems = [];
     this.artifact = [];
     this.expansion1 = false;
+    this.expansion2 = false;
     this.waypoints = [];
     this.skeletonKey = false;
+
     this.nanoPotions = 0;
     this.damage = "0";
     this.absorb = "0";
@@ -143,6 +165,7 @@ class Player extends Character {
     this.amuletBonus = null;
     this.auras = [];
     this.setBonus = {};
+    this.bonus = {};
 
     // modes
     this.isLootMoving = false;
@@ -191,7 +214,7 @@ class Player extends Character {
     this.capeBrightness = brightness;
   }
 
-  loot(item) {
+  loot(item, achievements) {
     if (item) {
       if (Types.Entities.Gems.includes(item.kind)) {
         var index = Types.Entities.Gems.indexOf(item.kind);
@@ -220,13 +243,14 @@ class Player extends Character {
       } else if (item.partyId && item.partyId !== this.partyId) {
         // @NOTE Allow item to be looted by others if player is alone in the party?
         throw new Exceptions.LootException("Can't loot item, it belongs to a party.");
-      } else if (["armor", "weapon", "belt", "cape", "shield", "ring", "amulet"].includes(item.type)) {
+      } else if (["armor", "weapon", "belt", "cape", "shield", "ring", "amulet", "rune"].includes(item.type)) {
         // @NOTE Check for stack-able items with quantity
         if (this.inventory.length >= 24) {
           throw new Exceptions.LootException("Your inventory is full.");
         }
       } else if (Types.isSingle(item.kind)) {
         const { itemKind } = item;
+
         const isFound = this.inventory
           .concat(this.upgrade)
           .concat(this.stash)
@@ -234,6 +258,14 @@ class Player extends Character {
 
         if (isFound) {
           throw new Exceptions.LootException("You already have this item.");
+        } else if ([Types.Entities.NFT, Types.Entities.WING, Types.Entities.CRYSTAL].includes(item.kind)) {
+          if (item.kind === Types.Entities.NFT && achievements[ACHIEVEMENT_NFT_INDEX]) {
+            throw new Exceptions.LootException("You already completed the NFT achievement.");
+          } else if (item.kind === Types.Entities.WING && achievements[ACHIEVEMENT_WING_INDEX]) {
+            throw new Exceptions.LootException("You already completed the Dragon Wing achievement.");
+          } else if (item.kind === Types.Entities.CRYSTAL && achievements[ACHIEVEMENT_CRYSTAL_INDEX]) {
+            throw new Exceptions.LootException("You already completed the Crystal achievement.");
+          }
         }
       }
 
@@ -293,15 +325,23 @@ class Player extends Character {
   }
 
   setArmorLevel(level) {
-    this.armorLevel = parseInt(level);
+    this.armorLevel = toNumber(level);
   }
 
   getArmorBonus() {
     return this.armorBonus;
   }
 
+  getArmorSocket() {
+    return this.armorSocket;
+  }
+
   setArmorBonus(bonus) {
-    this.armorBonus = bonus;
+    this.armorBonus = toArray(bonus);
+  }
+
+  setArmorSocket(socket) {
+    this.armorSocket = toArray(socket);
   }
 
   getWeaponName() {
@@ -317,7 +357,7 @@ class Player extends Character {
   }
 
   setWeaponLevel(level) {
-    this.weaponLevel = parseInt(level);
+    this.weaponLevel = toNumber(level);
   }
 
   getWeaponBonus() {
@@ -325,7 +365,23 @@ class Player extends Character {
   }
 
   setWeaponBonus(bonus) {
-    this.weaponBonus = bonus;
+    this.weaponBonus = toArray(bonus);
+    this.isWeaponUnique = !!(this.weaponBonus && this.weaponBonus?.length === 2);
+  }
+
+  setWeaponSocket(socket) {
+    this.weaponSocket = toArray(socket);
+    this.weaponRuneword = Array.isArray(this.weaponSocket)
+      ? Types.getRunewordBonus({
+          isUnique: this.isWeaponUnique,
+          socket: this.weaponSocket,
+          type: "weapon",
+        }).runeword
+      : null;
+  }
+
+  getWeaponSocket() {
+    return this.weaponSocket;
   }
 
   getShieldName() {
@@ -341,7 +397,7 @@ class Player extends Character {
   }
 
   setShieldLevel(level) {
-    this.shieldLevel = parseInt(level);
+    this.shieldLevel = toNumber(level);
   }
 
   getShieldBonus() {
@@ -349,15 +405,31 @@ class Player extends Character {
   }
 
   setShieldBonus(bonus) {
-    this.shieldBonus = bonus;
+    this.shieldBonus = toArray(bonus);
   }
 
-  getShieldSkill() {
-    return this.shieldSkill;
+  setShieldSocket(socket) {
+    this.shieldSocket = toArray(socket);
   }
 
-  setShieldSkill(skill) {
-    this.shieldSkill = skill === 0 ? skill : skill ? parseInt(skill) : null;
+  getShieldSocket() {
+    return this.shieldSocket;
+  }
+
+  getDefenseSkill() {
+    return this.defenseSkill;
+  }
+
+  setDefenseSkill(skill) {
+    this.defenseSkill = toNumber(skill);
+  }
+
+  getAttackSkill() {
+    return this.attackSkill;
+  }
+
+  setAttackSkill(skill) {
+    this.attackSkill = toNumber(skill);
   }
 
   setBelt(rawBelt) {
@@ -365,8 +437,8 @@ class Player extends Character {
       const [belt, level, bonus] = rawBelt.split(":");
 
       this.beltName = belt;
-      this.beltLevel = parseInt(level);
-      this.beltBonus = bonus;
+      this.beltLevel = toNumber(level);
+      this.beltBonus = toArray(bonus);
     } else {
       this.beltName = null;
       this.beltLevel = null;
@@ -379,8 +451,8 @@ class Player extends Character {
       const [cape, level, bonus] = rawCape.split(":");
 
       this.cape = cape;
-      this.capeLevel = parseInt(level);
-      this.capeBonus = bonus;
+      this.capeLevel = toNumber(level);
+      this.capeBonus = toArray(bonus);
     } else {
       this.cape = null;
       this.capeLevel = null;
@@ -390,17 +462,18 @@ class Player extends Character {
 
   setShield(rawShield) {
     if (rawShield) {
-      const [shield, level, bonus, skill] = rawShield.split(":");
+      const [shield, level, bonus, socket, skill] = rawShield.split(":");
 
       this.shieldName = shield;
-      this.shieldLevel = parseInt(level);
-      this.shieldBonus = bonus;
-      this.shieldSkill = skill;
+      this.shieldLevel = toNumber(level);
+      this.shieldBonus = toArray(bonus);
+      this.shieldSocket = toArray(socket);
+      this.defenseSkill = skill;
     } else {
       this.shieldName = null;
       this.shieldLevel = null;
       this.shieldBonus = null;
-      this.shieldSkill = null;
+      this.defenseSkill = null;
     }
   }
 
@@ -424,8 +497,8 @@ class Player extends Character {
       const [name, level, bonus] = ring.split(":");
 
       this.ring1Name = name;
-      this.ring1Level = parseInt(level);
-      this.ring1Bonus = bonus;
+      this.ring1Level = toNumber(level);
+      this.ring1Bonus = toArray(bonus);
     } else {
       this.ring1Name = null;
       this.ring1Level = null;
@@ -438,8 +511,8 @@ class Player extends Character {
       const [name, level, bonus] = ring.split(":");
 
       this.ring2Name = name;
-      this.ring2Level = parseInt(level);
-      this.ring2Bonus = bonus;
+      this.ring2Level = toNumber(level);
+      this.ring2Bonus = toArray(bonus);
     } else {
       this.ring2Name = null;
       this.ring2Level = null;
@@ -452,8 +525,8 @@ class Player extends Character {
       const [name, level, bonus] = amulet.split(":");
 
       this.amuletName = name;
-      this.amuletLevel = parseInt(level);
-      this.amuletBonus = bonus;
+      this.amuletLevel = toNumber(level);
+      this.amuletBonus = toArray(bonus);
     } else {
       this.amuletName = null;
       this.amuletLevel = null;
@@ -466,27 +539,35 @@ class Player extends Character {
   }
 
   setAuras(auras) {
-    this.auras = auras;
+    this.auras = auras || [];
   }
 
   hasWeapon() {
     return this.weaponName !== null;
   }
 
-  switchWeapon(weapon, level: number, bonus?: number[]) {
+  switchWeapon(weapon, level: number, bonus?: number[], socket?: number[], skill?: number) {
     var isDifferent = false;
 
     if (weapon !== this.getWeaponName()) {
       isDifferent = true;
       this.setWeaponName(weapon);
     }
-    if (level !== this.getWeaponLevel()) {
+    if (toNumber(level) !== this.getWeaponLevel()) {
       isDifferent = true;
       this.setWeaponLevel(level);
     }
-    if (bonus !== this.getWeaponBonus()) {
+    if (!isEqual(bonus, this.getWeaponBonus())) {
       isDifferent = true;
       this.setWeaponBonus(bonus);
+    }
+    if (!isEqual(socket, this.getWeaponSocket())) {
+      isDifferent = true;
+      this.setWeaponSocket(socket);
+    }
+    if (toNumber(skill) !== this.getAttackSkill()) {
+      isDifferent = true;
+      this.setAttackSkill(skill);
     }
 
     if (isDifferent && this.switch_callback) {
@@ -494,7 +575,7 @@ class Player extends Character {
     }
   }
 
-  switchArmor(armorSprite, level: number, bonus?: number[]) {
+  switchArmor(armorSprite, level: number, bonus?: number[], socket?: number[]) {
     var isDifferent = false;
 
     if (armorSprite && armorSprite.id !== this.getSpriteName()) {
@@ -512,6 +593,11 @@ class Player extends Character {
     if (bonus !== this.getArmorBonus()) {
       isDifferent = true;
       this.setArmorBonus(bonus);
+    }
+
+    if (socket !== this.getArmorSocket()) {
+      isDifferent = true;
+      this.setArmorSocket(socket);
     }
 
     if (armorSprite.name !== "firefox" && isDifferent && this.switch_callback) {
@@ -540,7 +626,7 @@ class Player extends Character {
     }
   }
 
-  switchShield(shield, level: number, bonus?: number[], skill?: number) {
+  switchShield(shield, level: number, bonus?: number[], socket?: number[], skill?: number) {
     var isDifferent = false;
 
     if (shield !== this.getShieldName()) {
@@ -551,14 +637,18 @@ class Player extends Character {
       isDifferent = true;
       this.setShieldLevel(level);
     }
-    if (bonus !== this.getShieldBonus()) {
+    if (toArray(bonus) !== this.getShieldBonus()) {
       isDifferent = true;
       this.setShieldBonus(bonus);
     }
-
-    if (skill !== this.getShieldSkill()) {
+    if (toArray(socket) !== this.getShieldSocket()) {
       isDifferent = true;
-      this.setShieldSkill(skill);
+      this.setShieldSocket(bonus);
+    }
+
+    if (skill !== this.getDefenseSkill()) {
+      isDifferent = true;
+      this.setDefenseSkill(skill);
     }
 
     if (isDifferent && this.switch_callback) {
@@ -580,7 +670,7 @@ class Player extends Character {
     this.shieldName = null;
     this.shieldLevel = null;
     this.shieldBonus = null;
-    this.shieldSkill = null;
+    this.defenseSkill = null;
 
     if (this.switch_callback) {
       this.switch_callback();
@@ -591,7 +681,8 @@ class Player extends Character {
     return items
       .map((rawItem, slot) => {
         if (!rawItem) return false;
-        const [item, levelOrQuantity, bonus, skill] = rawItem.split(":");
+        const delimiter = Types.isJewel(rawItem) ? "|" : ":";
+        const [item, levelOrQuantity, bonus, socket, skill] = rawItem.split(delimiter);
 
         const isWeapon = kinds[item][1] === "weapon";
         const isArmor = kinds[item][1] === "armor";
@@ -601,23 +692,25 @@ class Player extends Character {
         const isRing = kinds[item][1] === "ring";
         const isAmulet = kinds[item][1] === "amulet";
         const isChest = kinds[item][1] === "chest";
+        const isJewel = kinds[item][1] === "jewel";
         const isUnique = Types.isUnique(item, bonus);
 
         let requirement = null;
         let level = null;
         let quantity = null;
 
-        if (isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet) {
-          level = levelOrQuantity;
+        if (isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet || isJewel) {
+          level = parseInt(levelOrQuantity);
           requirement = Types.getItemRequirement(item, levelOrQuantity);
-        } else if (Types.isScroll(item) || isChest) {
-          quantity = levelOrQuantity;
+        } else if (Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item)) {
+          quantity = parseInt(levelOrQuantity);
         }
 
         return {
           item,
           bonus,
           skill,
+          socket,
           slot,
           requirement,
           isUnique,

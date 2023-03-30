@@ -173,63 +173,6 @@ footer, header, hgroup, menu, nav, section {
       width: 100%;
     }
 
-    #inspector {
-      font-family:'GraphicPixel';
-      color:#e3e3e3;
-      background-color:rgba(0, 0, 0, 0.43);
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      width: 200px;
-      margin-left: 0px;
-      padding: 4px;
-      display: none;
-      pointer-events: none;
-      /* border-radius: 0 0 6px 0; */
-    }
-    #inspector .details {
-      margin-bottom: 8px;
-      text-transform: capitalize;
-    }
-     #inspector .name {
-      margin-bottom: 8px;
-      text-transform: capitalize;
-    }
-
-    #inspector .level {
-      margin-bottom: 8px;
-      text-transform: capitalize;
-    }
-
-    #inspector .health {
-      height: 10px;
-      width: 100%;
-      background: red;
-      clear: left;
-      margin-top: 8px;
-    }
-
-    #inspector .resistances {
-        font-size: 11px;
-        text-shadow: 1px -1px 1px #000, 1px 1px 1px #000, -1px 1px 1px #000;
-    }
-
-    #inspector .resistances .lightningDamage {
-        color: #bfc2db;
-    }
-    #inspector .resistances .flameDamage {
-        color: orange;
-    }
-    #inspector .resistances .coldDamage {
-        color: #55a3ff;
-    }
-    #inspector .resistances .magicDamage {
-        color: #d16afa;
-    }
-    #inspector .resistances .physicalDamage {
-        color: #fff;
-    }
-
     #dropDialog {
       font-family:'GraphicPixel';
       font-size: 9pt;
@@ -264,7 +207,7 @@ footer, header, hgroup, menu, nav, section {
     #instructions, #store, #settings, #party, #completed, #failed {position:absolute;top:50%;left:50%;z-index:1000;font-family:'GraphicPixel';pointer-events:none;opacity:0;-moz-transition:0.25s opacity linear;-webkit-transition:0.4s top ease, 0.4s opacity linear;-o-transition:0.4s top ease, 0.4s opacity linear;-ms-transition:0.4s top ease, 0.4s opacity linear;transition:0.4s top ease, 0.4s opacity linear;}
     #instructions.active, #store.active, #settings.active, #party.active, #achievements.active, #completed.active, #failed.active {opacity:1;pointer-events:auto;}
     
-    #weapon, #armor, #skill-offensive, #skill-shield {image-rendering:-moz-crisp-edges;}
+    #weapon, #armor, #skill-attack, #skill-defense {image-rendering:-moz-crisp-edges;}
 
     #achievements, #achievements li, .coin, #achievement-notification, #coinsparks, .achievement-sharing a, #previous, #next {background:url('../img/1/achievements.png');image-rendering:-moz-crisp-edges;}
     .item-gem, .item-potion {background-image:url('../img/1/achievements-unlocks.png');image-rendering:-moz-crisp-edges;opacity:0.75;}
@@ -587,7 +530,7 @@ footer, header, hgroup, menu, nav, section {
     #text-window .error { color: #b57979 }
     #text-window span {text-shadow:1px -1px 1px #000, 1px 1px 1px #000,-1px 1px 1px #000}
     #player-account {color: #55a3ff; display: inline-block; white-space: nowrap;overflow: hidden;text-overflow: ellipsis; padding: 0 12px; width:calc(100% - 24px);}
-    #healthbar, #hitpoints, #weapon, #armor, #skill-offensive, #skill-shield { cursor: pointer;}
+    #healthbar, #hitpoints, #weapon, #armor, #skill-attack, #skill-defense { cursor: pointer;}
 
     #payout {
         margin-left: 50px;
@@ -685,6 +628,8 @@ footer, header, hgroup, menu, nav, section {
 
     .ui-tooltip {
         min-width:220px;
+        width: auto !important;
+        max-width: 600px !important;
         text-align: center;
         padding: 10px 10px 15px;
         border: none !important;
@@ -723,13 +668,37 @@ footer, header, hgroup, menu, nav, section {
         display: none;
     }
 
+    .resistances  span { color: #fff }
+    #player-magicDamage, #player-magicResistance, .resistances .magic { color: #d16afa; }
+    #player-flameDamage, #player-flameResistance, .resistances .flame { color: #fa6a09; }
+    #player-lightningDamage, #player-lightningResistance, .resistances .lightning { color: #aad9fd; }
+    #player-coldDamage, #player-coldResistance, .resistances .cold { color: #74b5ff; }
+    #player-poisonDamage, #player-poisonResistance, .resistances .poison { color: #35ee35; }
+    #player-spectralDamage, #player-spectralResistance, .resistances .spectral { color: #fff; }
+
+    .item-tooltip-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        max-height: 440px;
+        max-width: 600px !important;
+        align-content: flex-start;
+    }
+    .item-tooltip-wrapper.extended {
+        width: 600px !important;
+    }
+
+    .item-tooltip-wrapper > div {
+        width: 300px;
+    }
     .item-title {
         font-weight: bold;
         color: #d16afa;
         margin-bottom: 6px;
     }
-    .item-title.unique {
-        color: #d3c59c
+    .item-title.unique,
+    .item-title.rune {
+        color: #d3c59c;
     }
     .item-unique {
         /* box-shadow: inset 0px 0px 3px 1px gold; */
@@ -769,8 +738,21 @@ footer, header, hgroup, menu, nav, section {
         margin-top:6px;
         color: #74b5ff;
     }
+    .item-socket {
+        color: #74b5ff;
+    }
     .item-description.requirement {
         color: red;
+    }
+
+    .socket-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .socket-container div {
+        margin: 0 3px;
+        border: solid 1px #74b5ff;
     }
 
     .panel-container {
@@ -787,18 +769,23 @@ footer, header, hgroup, menu, nav, section {
         position: relative;
     }
 
-    #waypoint {top: 10%}
+    #waypoint {top: 7%}
     #trade { bottom: auto;}
     #upgrade { bottom: auto;}
     #inventory { bottom: auto;}
     #inventory.upgrade .panel-spaced-row, #inventory.trade .panel-spaced-row { display: none;}
-    #item-inventory, #item-stash { position: relative; display: flex; flex-wrap: wrap; justify-content: center;}
+    #item-inventory, .item-stash-page { position: relative; display: flex; flex-wrap: wrap; justify-content: center;}
+    .item-stash-page { display: none; }
+    .item-stash-page.visible { display: flex; }
+    .stash-pagination { display: flex; justify-content: center; padding-top: 6px; }
+    #current-stash-page { margin: 0 6px; width: 20px; text-align: center; }
+    #item-stash-previous-page, #item-stash-next-page { font-family: arial !important;}
 
     .ui-droppable-hover { border-color: yellow !important;}
     .ui-droppable-origin { border-color: #fff !important;}
 
     .item-slot { padding: 1px; border: solid 1px #2d2b29; background: #171717; }
-    .item-draggable, .item-not-draggable {background-color: transparent; z-index:2; border-radius: 4px; border: solid 2px #928f8c; background: #171717;}
+    .item-draggable, .item-not-draggable, .item-rune {background-color: transparent; z-index:2; border-radius: 4px; border: solid 2px #928f8c; background: #171717;}
     .ui-draggable-dragging { cursor: url(../img/2/loot.png) 2 5, move; }
 
     .panel, label, input[type=checkbox], #settings, #store { cursor: url(../img/2/hand.png) 2 5, move; }
@@ -861,7 +848,7 @@ footer, header, hgroup, menu, nav, section {
         font-family:'GraphicPixel';
         font-weight: bold;
         font-size: 15px;
-        padding: 4px 22px 8px;
+        padding: 6px 22px 6px;
         background-color: #C74640;
         -webkit-box-shadow: inset -2px 2px 0 2px #d2726f, inset 2px -2px 0 2px #8c2a25, inset -1px 1px 0 4px #db8f8d;
         -moz-box-shadow: inset -2px 2px 0 2px #d2726f, inset 2px -2px 0 2px #8c2a25, inset -1px 1px 0 4px #db8f8d;
@@ -869,7 +856,7 @@ footer, header, hgroup, menu, nav, section {
         text-decoration: none;
         text-align: center;
     }
-    .btn.small { color: #fff; font-size: 12px; padding: 2px 8px 4px; }
+    .btn.small { color: #fff; font-size: 13px; padding: 4px 8px 4px; }
     .btn:hover {
         -webkit-box-shadow:inset 2px -2px 0 2px #d2726f, inset -2px 2px 0 2px #8c2a25, inset 1px -1px 0 4px #db8f8d;
         -moz-box-shadow: inset 2px -2px 0 2px #d2726f, inset -2px 2px 0 2px #8c2a25, inset 1px -1px 0 4px #db8f8d;
@@ -882,13 +869,13 @@ footer, header, hgroup, menu, nav, section {
     }
 
     .btn-gray {
-        color: #2e2e2e;
+        color: #2e2e2e !important;
         background-color: #dcdcdc;
         text-shadow: 0 2px 0 #d2d2d2;
         box-shadow: inset -2px 2px 0 2px #c7c7c7, inset 2px -2px 0 2px #868585, inset -1px 1px 0 4px #dbdada;
     }
 
-    .btn-gray:hover {
+    .btn-gray:hover:not(.disabled) {
         box-shadow: inset 2px -2px 0 2px #c7c7c7, inset -2px 2px 0 2px #868585, inset 1px -1px 0 4px #dbdada;
     }
 
@@ -978,6 +965,15 @@ footer, header, hgroup, menu, nav, section {
         pointer-events: none;
     }
 
+    .hidden { display: none; }
+    .flex-50 {display: flex; flex-wrap: wrap; }
+    .flex-50 > div { width: 50%; display: flex; justify-content: space-between;}
+    .flex-50 > div:nth-child(odd) span:nth-child(2) { margin-right:6px; }
+
+    small {
+        font-size: 0.8em;
+    }
+
 	@media screen and (min-width: 1501px) {
         .home-logo {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }
@@ -1002,11 +998,12 @@ footer, header, hgroup, menu, nav, section {
         #stash {top: 88px;}
 
         #waypoint {height:466px;}
-        #waypoint .waypoint-icon {width:69px; height: 69px; background-image: url('../img/3/waypoint.png'); transform: scale(0.75);}
+        #waypoint .waypoint-icon {width:69px; height: 69px; background-image: url('../img/3/waypoint.png'); transform: scale(0.65);margin: -8px 0}
         #waypoint .waypoint-text { font-size: 20px; }
         .waypoint-row.active .waypoint-icon {background-position-x: -69px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -138px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 3px #373737;}
+        .waypoint-spaced-row:first-child {border-top: solid 3px #373737;}
         #playerimage { height: 96px; width: 96px; }
         #login-play-button.play.loading img {
             margin-top: -16px;
@@ -1015,7 +1012,6 @@ footer, header, hgroup, menu, nav, section {
             width: 32px;
         }
         .setting {font-size:20px;}
-        #inspector .resistances { font-size: 13px; }
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .discord, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
@@ -1113,12 +1109,13 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 33px; top: 12px; width: 2px; height: 33px; z-index: 30; }
 
         .item-slot { width:52px; height:52px; }
-        #armor, #weapon, #skill-offensive, #skill-shield, .item-draggable, .item-not-draggable {width:48px;height:48px;background-size:288px;background-position:-96px;}
-        #armor, #weapon, #skill-offensive, #skill-shield {position:absolute;}
+        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:48px;height:48px;background-size:288px;background-position:-96px;}
+        .item-rune { width: 46px; height: 46px; border-radius: 23px; }
+        #armor, #weapon, #skill-attack, #skill-defense {position:absolute;}
         #weapon {left:312px;top:3px;background-size:288px;}
         #armor {left:363px;top:3px;}
-        #skill-offensive {left:420px;top:6px;}
-        #skill-shield {left:471px;top:6px;}
+        #skill-attack {left:420px;top:6px;}
+        #skill-defense {left:471px;top:6px;}
 
 
         #notifications {width: 516px;margin-left: -200px;font-size: 17px;color:#eee;top:6px;height:45px;}
@@ -1233,11 +1230,12 @@ footer, header, hgroup, menu, nav, section {
         #stash {top:45px;}
 
         #waypoint {height:312px;}
-        #waypoint .waypoint-icon {width:46px; height: 46px; background-image: url('../img/2/waypoint.png'); transform: scale(0.75);}
+        #waypoint .waypoint-icon {width:46px; height: 46px; background-image: url('../img/2/waypoint.png'); transform: scale(0.65); margin: -5px 0}
         #waypoint .waypoint-text { font-size: 16px; }
         .waypoint-row.active .waypoint-icon {background-position-x: -46px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -92px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 2px #373737;}
+        .waypoint-spaced-row:first-child {border-top: solid 2px #373737;}
         #playerimage { height: 64px; width: 64px; }
         .play.loading img {
             margin-top: -12px;
@@ -1348,12 +1346,13 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         .item-slot { width:36px; height: 36px; }
-        #armor, #weapon, #skill-offensive, #skill-shield, .item-draggable, .item-not-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
-        #armor, #weapon, #skill-offensive, #skill-shield { position:absolute; }
+        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        .item-rune { width: 30px; height: 30px; border-radius: 15px; }
+        #armor, #weapon, #skill-attack, #skill-defense { position:absolute; }
         #weapon {left:208px;top:2px;}
         #armor {left:242px;top:2px;}
-        #skill-offensive {left:278px;top:4px;}
-        #skill-shield {left:312px;top:4px;}
+        #skill-attack {left:278px;top:4px;}
+        #skill-defense {left:312px;top:4px;}
 
         #notifications {width: 330px;margin-left:-134px;font-size:14px;color:#eee;top:2px;height:30px;}
         #notifications div.top {top:-30px;}
@@ -1472,6 +1471,7 @@ footer, header, hgroup, menu, nav, section {
         .waypoint-row.active .waypoint-icon {background-position-x: -23px;}
         .waypoint-row.locked .waypoint-icon {background-position-x: -46px;}
         .waypoint-spaced-row {margin: 0 10px; border-bottom: solid 2px #373737; padding: 6px 0;}
+        .waypoint-spaced-row:first-child {border-top: solid 2px #373737;}
 
         canvas {image-rendering:optimizeSpeed;}
         body {background:-moz-radial-gradient(rgba(0,0,0,0) 40%,rgba(0,0,0,1) 125%), url('../img/1/wood.png') repeat, #000; background-size:auto, 128px;}
@@ -1570,8 +1570,9 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 11px; top: 4px; width: 1px; height: 11px; z-index: 30; }
 
         .item-slot { width:20px; height: 20px; }
-        #armor, #weapon, #skill-offensive, #skill-shield, .item-draggable, .item-not-draggable {width:16px;height:16px;background-size:96px;background-position:-32px;}
-        #armor, #weapon, #skill-offensive, #skill-shield {position:absolute;}
+        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:16px;height:16px;background-size:96px;background-position:-32px;}
+        .item-rune { width: 16px; height: 16px; border-radius: 8px; }
+        #armor, #weapon, #skill-attack, #skill-defense {position:absolute;}
         #weapon {left:104px;top:1px;}
         #armor {left:121px;top:1px;}
 
@@ -1781,12 +1782,13 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         .item-slot { width:36px; height:36px; }
-        #armor, #weapon, #skill-offensive, #skill-shield, .item-draggable, .item-not-draggable {width:32px;height:32px;background-size:192px;background-position:-64px;}
-        #armor, #weapon, #skill-offensive, #skill-shield {position:absolute;}
+        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        .item-rune { width: 30px; height: 30px; border-radius: 15px; }
+        #armor, #weapon, #skill-attack, #skill-defense {position:absolute;}
         #weapon {left:208px;top:2px;}
         #armor {left:242px;top:2px;}
-        #skill-offensive {left:276px;top:2px;}
-        #skill-shield {left:310px;top:2px;}
+        #skill-attack {left:276px;top:2px;}
+        #skill-defense {left:310px;top:2px;}
 
         #notifications {display:none;}
 

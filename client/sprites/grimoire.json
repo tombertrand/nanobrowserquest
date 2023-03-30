@@ -1,0 +1,17 @@
+{
+  "id": "grimoire",
+  "width": 32,
+  "height": 32,
+  "animations": {
+    "idle_down": {
+      "length": 1,
+      "row": 0
+    },
+    "walk_down": {
+      "length": 1,
+      "row": 1
+    }
+  },
+  "offset_x": 1,
+  "offset_y": -32
+}

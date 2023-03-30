@@ -1,0 +1,61 @@
+{
+  "id": "skeletonarcher",
+  "width": 100,
+  "height": 65,
+  "animations": {
+    "idle_right": {
+      "length": 3,
+      "row": 0
+    },
+    "walk_right": {
+      "length": 6,
+      "row": 1
+    },
+    "atk_right": {
+      "length": 6,
+      "row": 3
+    },
+    "raise_right": {
+      "length": 6,
+      "row": 3
+    },
+    "idle_up": {
+      "length": 3,
+      "row": 0
+    },
+    "walk_up": {
+      "length": 6,
+      "row": 1
+    },
+    "atk_up": {
+      "length": 6,
+      "row": 2
+    },
+    "raise_up": {
+      "length": 6,
+      "row": 2
+    },
+    "idle_down": {
+      "length": 3,
+      "row": 0
+    },
+    "walk_down": {
+      "length": 6,
+      "row": 1
+    },
+    "atk_down": {
+      "length": 6,
+      "row": 4
+    },
+    "raise_down": {
+      "length": 6,
+      "row": 4
+    },
+    "death": {
+      "length": 6,
+      "row": 5
+    }
+  },
+  "offset_x": -42,
+  "offset_y": -38
+}

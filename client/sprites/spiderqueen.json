@@ -1,0 +1,61 @@
+{
+  "id": "spiderqueen",
+  "width": 132,
+  "height": 96,
+  "animations": {
+    "atk_right": {
+      "length": 7,
+      "row": 2
+    },
+    "atk2_right": {
+      "length": 7,
+      "row": 3
+    },
+    "walk_right": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_up": {
+      "length": 7,
+      "row": 2
+    },
+    "atk2_up": {
+      "length": 7,
+      "row": 3
+    },
+    "walk_up": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_down": {
+      "length": 7,
+      "row": 2
+    },
+    "atk2_down": {
+      "length": 7,
+      "row": 3
+    },
+    "walk_down": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    },
+    "death": {
+      "length": 7,
+      "row": 4
+    }
+  },
+  "offset_x": -60,
+  "offset_y": -70
+}

@@ -1,0 +1,17 @@
+{
+  "id": "portal",
+  "width": 32,
+  "height": 44,
+  "animations": {
+    "raise_down": {
+      "length": 16,
+      "row": 0
+    },
+    "idle_down": {
+      "length": 4,
+      "row": 1
+    }
+  },
+  "offset_x": -8,
+  "offset_y": -28
+}

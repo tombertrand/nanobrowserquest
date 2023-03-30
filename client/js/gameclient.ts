@@ -4,7 +4,6 @@ import MessageParser from "socket.io-msgpack-parser";
 
 import { Types } from "../../shared/js/gametypes";
 import EntityFactory from "./entityfactory";
-import Player from "./player";
 
 class GameClient {
   connection: Socket;
@@ -17,7 +16,6 @@ class GameClient {
   fail_callback: any;
   notify_callback: any;
   handlers: any;
-  receiveSpawnBatch: any;
   isListening?: boolean;
   isTimeout?: boolean;
   disconnected_callback: any;
@@ -26,15 +24,18 @@ class GameClient {
   lootmove_callback: any;
   attack_callback: any;
   raise_callback: any;
+  unraise_callback: any;
   spawn_item_callback: any;
   spawn_chest_callback: any;
   spawn_character_callback: any;
+  spawn_spell_callback: any;
   despawn_callback: any;
   health_callback: any;
   chat_callback: any;
   equip_callback: any;
   auras_callback: any;
   skill_callback: any;
+  curse_callback: any;
   drop_callback: any;
   teleport_callback: any;
   dmg_callback: any;
@@ -84,7 +85,20 @@ class GameClient {
   receiveminotaurlevelstart_callback: any;
   receiveminotaurlevelinprogress_callback: any;
   receiveminotaurlevelend_callback: any;
+  receivechalicelevelstart_callback: any;
+  receivechalicelevelinprogress_callback: any;
+  receivechalicelevelend_callback: any;
+  receivestonelevelstart_callback: any;
+  receivestonelevelinprogress_callback: any;
+  receivestonelevelend_callback: any;
+  receivegatewaylevelstart_callback: any;
+  receivegatewaylevelinprogress_callback: any;
+  receivegatewaylevelend_callback: any;
   receivefrozen_callback: any;
+  receiveslowed_callback: any;
+  receivepoisoned_callback: any;
+  receivecursed_callback: any;
+  receivetaunt_callback: any;
   settings_callback: any;
 
   constructor(host, port) {
@@ -106,6 +120,7 @@ class GameClient {
     this.handlers[Types.Messages.LOOTMOVE] = this.receiveLootMove;
     this.handlers[Types.Messages.ATTACK] = this.receiveAttack;
     this.handlers[Types.Messages.RAISE] = this.receiveRaise;
+    this.handlers[Types.Messages.UNRAISE] = this.receiveUnraise;
     this.handlers[Types.Messages.SPAWN] = this.receiveSpawn;
     this.handlers[Types.Messages.DESPAWN] = this.receiveDespawn;
     this.handlers[Types.Messages.SPAWN_BATCH] = this.receiveSpawnBatch;
@@ -146,7 +161,20 @@ class GameClient {
     this.handlers[Types.Messages.MINOTAURLEVEL_START] = this.receiveMinotaurLevelStart;
     this.handlers[Types.Messages.MINOTAURLEVEL_INPROGRESS] = this.receiveMinotaurLevelInProgress;
     this.handlers[Types.Messages.MINOTAURLEVEL_END] = this.receiveMinotaurLevelEnd;
+    this.handlers[Types.Messages.CHALICELEVEL_START] = this.receiveChaliceLevelStart;
+    this.handlers[Types.Messages.CHALICELEVEL_INPROGRESS] = this.receiveChaliceLevelInProgress;
+    this.handlers[Types.Messages.CHALICELEVEL_END] = this.receiveChaliceLevelEnd;
+    this.handlers[Types.Messages.STONELEVEL_START] = this.receiveStoneLevelStart;
+    this.handlers[Types.Messages.STONELEVEL_INPROGRESS] = this.receiveStoneLevelInProgress;
+    this.handlers[Types.Messages.STONELEVEL_END] = this.receiveStoneLevelEnd;
+    this.handlers[Types.Messages.GATEWAYLEVEL_START] = this.receiveGatewayLevelStart;
+    this.handlers[Types.Messages.GATEWAYLEVEL_INPROGRESS] = this.receiveGatewayLevelInProgress;
+    this.handlers[Types.Messages.GATEWAYLEVEL_END] = this.receiveGatewayLevelEnd;
     this.handlers[Types.Messages.FROZEN] = this.receiveFrozen;
+    this.handlers[Types.Messages.SLOWED] = this.receiveSlowed;
+    this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
+    this.handlers[Types.Messages.CURSED] = this.receiveCursed;
+    this.handlers[Types.Messages.TAUNT] = this.receiveTaunt;
     this.enable();
   }
 
@@ -160,7 +188,7 @@ class GameClient {
 
   connect(dispatcherMode) {
     var protocol = window.location.hostname === "localhost" ? "ws" : "wss";
-    var port = window.location.hostname === "localhost" ? ":8000" : "";
+    var port = window.location.hostname === "localhost" ? ":8020" : "";
     var url = protocol + "://" + this.host + port + "/";
 
     console.info("Trying to connect to server : " + url);
@@ -331,13 +359,14 @@ class GameClient {
     var gems = data[20];
     var artifact = data[21];
     var expansion1 = data[22];
-    var waypoints = data[23];
-    var depositAccount = data[24];
-    var auras = data[25];
-    var cowLevelPortalCoords = data[26];
-    var party = data[27];
-    var settings = data[28];
-    var network = data[29];
+    var expansion2 = data[23];
+    var waypoints = data[24];
+    var depositAccount = data[25];
+    var auras = data[26];
+    var cowLevelPortalCoords = data[27];
+    var party = data[28];
+    var settings = data[29];
+    var network = data[30];
 
     if (this.welcome_callback) {
       this.welcome_callback({
@@ -363,6 +392,7 @@ class GameClient {
         gems,
         artifact,
         expansion1,
+        expansion2,
         waypoints,
         depositAccount,
         auras,
@@ -404,19 +434,39 @@ class GameClient {
 
   receiveRaise(data) {
     var mobId = data[1];
+    var targetId = data[2];
 
     if (this.raise_callback) {
-      this.raise_callback(mobId);
+      this.raise_callback(mobId, targetId);
     }
   }
 
-  receiveSpawn(data) {
-    var id = data[1];
-    var kind = data[2];
-    var x = data[3];
-    var y = data[4];
+  receiveUnraise(data) {
+    var mobId = data[1];
 
-    if (Types.isItem(kind)) {
+    if (this.unraise_callback) {
+      this.unraise_callback(mobId);
+    }
+  }
+
+  receiveSpawnBatch(datas) {
+    datas.forEach(data => this.receiveSpawn(data));
+  }
+
+  receiveSpawn(data) {
+    const { id, kind, x, y, orientation } = data[1];
+
+    if (Types.isSpell(kind)) {
+      const spell = EntityFactory.createEntity({ kind, id });
+      const { originX, originY, element, casterId, targetId } = data[1];
+
+      spell.casterId = casterId;
+      spell.targetId = targetId;
+
+      if (this.spawn_spell_callback) {
+        this.spawn_spell_callback(spell, x, y, orientation, originX, originY, element, casterId, targetId);
+      }
+    } else if (Types.isItem(kind)) {
       var item = EntityFactory.createEntity({ kind, id });
 
       if (this.spawn_item_callback) {
@@ -429,57 +479,8 @@ class GameClient {
         this.spawn_chest_callback(item, x, y);
       }
     } else {
-      var name,
-        orientation,
-        target,
-        weapon,
-        weaponLevel,
-        weaponBonus,
-        armor,
-        armorLevel,
-        armorBonus,
-        level,
-        auras,
-        partyId,
-        cape,
-        shield,
-        settings;
-
-      orientation = data[5];
-      target = data[6];
-
-      if (Types.isPlayer(kind)) {
-        name = data[7];
-        [armor, armorLevel, armorBonus] = data[8].split(":");
-        [weapon, weaponLevel, weaponBonus] = data[9].split(":");
-        level = data[10];
-        auras = data[11];
-        partyId = data[12];
-        cape = data[13];
-        shield = data[14];
-        settings = data[15];
-      }
-
-      var character = EntityFactory.createEntity({ kind, id, name });
-
-      if (character instanceof Player) {
-        character.setWeaponName(weapon);
-        character.setWeaponLevel(weaponLevel);
-        character.setWeaponBonus(weaponBonus);
-        character.spriteName = armor;
-        character.setArmorName(armor);
-        character.setArmorLevel(armorLevel);
-        character.setArmorBonus(armorBonus);
-        character.setLevel(level);
-        character.setAuras(auras);
-        character.setPartyId(partyId);
-        character.setCape(cape);
-        character.setShield(shield);
-        character.setSettings(settings);
-      }
-
       if (this.spawn_character_callback) {
-        this.spawn_character_callback(character, x, y, orientation, target);
+        this.spawn_character_callback(data[1]);
       }
     }
   }
@@ -534,10 +535,9 @@ class GameClient {
   receiveSkill(data) {
     var id = data[1];
     var skill = data[2];
-    var level = data[3];
 
     if (this.skill_callback) {
-      this.skill_callback({ id, skill, level });
+      this.skill_callback({ id, skill });
     }
   }
 
@@ -571,12 +571,12 @@ class GameClient {
     var id = data[1];
     var dmg = data[2];
     var hp = parseInt(data[3]);
-    var maxHp = parseInt(data[4]);
+    var maxHitPoints = parseInt(data[4]);
     var isCritical = data[5];
     var isBlocked = data[6];
 
     if (this.dmg_callback) {
-      this.dmg_callback({ id, dmg, hp, maxHp, isCritical, isBlocked });
+      this.dmg_callback({ id, dmg, hp, maxHitPoints, isCritical, isBlocked });
     }
   }
 
@@ -590,13 +590,8 @@ class GameClient {
   }
 
   receiveKill(data) {
-    var mobKind = data[1];
-    var level = data[2];
-    var playerExp = data[3];
-    var exp = data[4];
-
     if (this.kill_callback) {
-      this.kill_callback(mobKind, level, playerExp, exp);
+      this.kill_callback(data[1]);
     }
   }
 
@@ -617,13 +612,10 @@ class GameClient {
   }
 
   receiveStats(data) {
-    var maxHitPoints = data[1];
-    var damage = data[2];
-    var defense = data[3];
-    var absorb = data[4];
+    const stats = data[1];
 
     if (this.stats_callback) {
-      this.stats_callback({ maxHitPoints, damage, defense, absorb });
+      this.stats_callback(stats);
     }
   }
 
@@ -736,18 +728,26 @@ class GameClient {
 
   receiveUpgrade(data) {
     var upgrade = data[1];
-    const { luckySlot, isLucky7, isMagic8, isSuccess } = data[2] || {};
+    const { luckySlot, isLucky7, isMagic8, isSuccess, recipe } = data[2] || {};
 
     if (this.receiveupgrade_callback) {
-      this.receiveupgrade_callback(upgrade, { luckySlot, isLucky7, isMagic8, isSuccess });
+      this.receiveupgrade_callback(upgrade, { luckySlot, isLucky7, isMagic8, isSuccess, recipe });
     }
   }
 
   receiveAnvilUpgrade(data) {
-    const { isSuccess, isTransmute, isChestblue } = data[1];
+    const { isSuccess, isTransmute, isRuneword, isChestblue, isChestgreen, isChestpurple, isChestred } = data[1];
 
     if (this.receiveanvilupgrade_callback) {
-      this.receiveanvilupgrade_callback({ isSuccess, isTransmute, isChestblue });
+      this.receiveanvilupgrade_callback({
+        isSuccess,
+        isTransmute,
+        isRuneword,
+        isChestblue,
+        isChestgreen,
+        isChestpurple,
+        isChestred,
+      });
     }
   }
 
@@ -770,86 +770,134 @@ class GameClient {
   receiveStoreItems(data) {
     const items = data[1];
 
-    if (this.receivestoreitems_callback) {
-      this.receivestoreitems_callback(items);
-    }
+    this.receivestoreitems_callback?.(items);
   }
 
   receivePurchaseCompleted(data) {
     const payment = data[1];
 
-    if (this.receivepurchasecompleted_callback) {
-      this.receivepurchasecompleted_callback(payment);
-    }
+    this.receivepurchasecompleted_callback?.(payment);
   }
 
   receivePurchaseError(data) {
     const error = data[1];
 
-    if (this.receivepurchaseerror_callback) {
-      this.receivepurchaseerror_callback(error);
-    }
+    this.receivepurchaseerror_callback?.(error);
   }
 
   receiveWaypointsUpdate(data) {
     const waypoints = data[1];
 
-    if (this.receivewaypointsupdate_callback) {
-      this.receivewaypointsupdate_callback(waypoints);
-    }
+    this.receivewaypointsupdate_callback?.(waypoints);
   }
 
   receiveCowLevelStart(data) {
     const x = data[1];
     const y = data[2];
-    if (this.receivecowlevelstart_callback) {
-      this.receivecowlevelstart_callback({ x, y });
-    }
+    this.receivecowlevelstart_callback?.({ x, y });
   }
 
   receiveCowLevelInProgress(data) {
-    const cowLevelClock = data[1];
+    const clock = data[1];
 
-    if (this.receivecowlevelinprogress_callback) {
-      this.receivecowlevelinprogress_callback(cowLevelClock);
-    }
+    this.receivecowlevelinprogress_callback(clock);
   }
 
   receiveCowLevelEnd(data) {
     const isCompleted = data[1];
 
-    if (this.receivecowlevelend_callback) {
-      this.receivecowlevelend_callback(isCompleted);
-    }
+    this.receivecowlevelend_callback?.(isCompleted);
   }
 
   receiveMinotaurLevelStart() {
-    if (this.receiveminotaurlevelstart_callback) {
-      this.receiveminotaurlevelstart_callback();
-    }
+    this.receiveminotaurlevelstart_callback?.();
   }
 
   receiveMinotaurLevelInProgress(data) {
-    const minotaurLevelClock = data[1];
+    const clock = data[1];
 
-    if (this.receiveminotaurlevelinprogress_callback) {
-      this.receiveminotaurlevelinprogress_callback(minotaurLevelClock);
-    }
+    this.receiveminotaurlevelinprogress_callback?.(clock);
   }
 
   receiveMinotaurLevelEnd() {
-    if (this.receiveminotaurlevelend_callback) {
-      this.receiveminotaurlevelend_callback();
-    }
+    this.receiveminotaurlevelend_callback?.();
+  }
+
+  receiveChaliceLevelStart() {
+    this.receivechalicelevelstart_callback?.();
+  }
+
+  receiveChaliceLevelInProgress(data) {
+    const levelClock = data[1];
+
+    this.receivechalicelevelinprogress_callback?.(levelClock);
+  }
+
+  receiveChaliceLevelEnd() {
+    this.receivechalicelevelend_callback?.();
+  }
+
+  receiveStoneLevelStart() {
+    this.receivestonelevelstart_callback?.();
+  }
+
+  receiveStoneLevelInProgress(data) {
+    const clock = data[1];
+
+    this.receivestonelevelinprogress_callback?.(clock);
+  }
+
+  receiveStoneLevelEnd() {
+    this.receivestonelevelend_callback?.();
+  }
+
+  receiveGatewayLevelStart() {
+    this.receivegatewaylevelstart_callback?.();
+  }
+
+  receiveGatewayLevelInProgress(data) {
+    const clock = data[1];
+
+    this.receivegatewaylevelinprogress_callback?.(clock);
+  }
+
+  receiveGatewayLevelEnd() {
+    this.receivegatewaylevelend_callback?.();
   }
 
   receiveFrozen(data) {
     const entityId = data[1];
-    const itemLevel = data[2];
+    const duration = data[2];
 
-    if (this.receivefrozen_callback) {
-      this.receivefrozen_callback(entityId, itemLevel);
-    }
+    this.receivefrozen_callback?.(entityId, duration);
+  }
+
+  receiveSlowed(data) {
+    const entityId = data[1];
+    const duration = data[2];
+
+    this.receiveslowed_callback?.(entityId, duration);
+  }
+
+  receivePoisoned(data) {
+    const entityId = data[1];
+    const duration = data[2];
+
+    this.receivepoisoned_callback?.(entityId, duration);
+  }
+
+  receiveCursed(data) {
+    const entityId = data[1];
+    const curseId = data[2];
+    const duration = data[3];
+
+    this.receivecursed_callback?.(entityId, curseId, duration);
+  }
+
+  receiveTaunt(data) {
+    const entityId = data[1];
+
+    this.receivetaunt_callback?.(entityId);
   }
 
   onDispatched(callback) {
@@ -870,6 +918,10 @@ class GameClient {
 
   onSpawnCharacter(callback) {
     this.spawn_character_callback = callback;
+  }
+
+  onSpawnSpell(callback) {
+    this.spawn_spell_callback = callback;
   }
 
   onSpawnItem(callback) {
@@ -896,6 +948,10 @@ class GameClient {
     this.raise_callback = callback;
   }
 
+  onEntityUnraise(callback) {
+    this.unraise_callback = callback;
+  }
+
   onPlayerChangeHealth(callback) {
     this.health_callback = callback;
   }
@@ -910,6 +966,10 @@ class GameClient {
 
   onPlayerSkill(callback) {
     this.skill_callback = callback;
+  }
+
+  onPlayerCurse(callback) {
+    this.curse_callback = callback;
   }
 
   onPlayerMoveToItem(callback) {
@@ -1120,8 +1180,60 @@ class GameClient {
     this.receiveminotaurlevelend_callback = callback;
   }
 
+  onReceiveChaliceLevelStart(callback) {
+    this.receivechalicelevelstart_callback = callback;
+  }
+
+  onReceiveChaliceLevelInProgress(callback) {
+    this.receivechalicelevelinprogress_callback = callback;
+  }
+
+  onReceiveChaliceLevelEnd(callback) {
+    this.receivechalicelevelend_callback = callback;
+  }
+
+  onReceiveStoneLevelStart(callback) {
+    this.receivestonelevelstart_callback = callback;
+  }
+
+  onReceiveStoneLevelInProgress(callback) {
+    this.receivestonelevelinprogress_callback = callback;
+  }
+
+  onReceiveStoneLevelEnd(callback) {
+    this.receivestonelevelend_callback = callback;
+  }
+
+  onReceiveGatewayLevelStart(callback) {
+    this.receivegatewaylevelstart_callback = callback;
+  }
+
+  onReceiveGatewayLevelInProgress(callback) {
+    this.receivegatewaylevelinprogress_callback = callback;
+  }
+
+  onReceiveGatewayLevelEnd(callback) {
+    this.receivegatewaylevelend_callback = callback;
+  }
+
   onFrozen(callback) {
     this.receivefrozen_callback = callback;
+  }
+
+  onSlowed(callback) {
+    this.receiveslowed_callback = callback;
+  }
+
+  onPoisoned(callback) {
+    this.receivepoisoned_callback = callback;
+  }
+
+  onCursed(callback) {
+    this.receivecursed_callback = callback;
+  }
+
+  onTaunt(callback) {
+    this.receivetaunt_callback = callback;
   }
 
   sendCreate({ name, account }) {
@@ -1154,6 +1266,14 @@ class GameClient {
 
   sendHurt(mob) {
     this.sendMessage([Types.Messages.HURT, mob.id]);
+  }
+
+  sendHurtSpell(spell) {
+    this.sendMessage([Types.Messages.HURT_SPELL, spell.id]);
+  }
+
+  sendHurtTrap(trap) {
+    this.sendMessage([Types.Messages.HURT_TRAP, trap.id]);
   }
 
   sendChat(text) {
@@ -1285,8 +1405,40 @@ class GameClient {
     this.sendMessage([Types.Messages.SETTINGS, settings]);
   }
 
-  sendSkill(skill) {
-    this.sendMessage([Types.Messages.SKILL, skill]);
+  sendSkill(slot, mobId) {
+    this.sendMessage([Types.Messages.SKILL, slot, mobId]);
+  }
+
+  sendCastSpell(mobId, x, y, targetId = 0) {
+    this.sendMessage([Types.Messages.CAST_SPELL, mobId, x, y, targetId]);
+  }
+
+  sendMagicStone(id) {
+    this.sendMessage([Types.Messages.MAGICSTONE, id]);
+  }
+
+  sendLever(id) {
+    this.sendMessage([Types.Messages.LEVER, id]);
+  }
+
+  sendAltarChalice(id) {
+    this.sendMessage([Types.Messages.ALTARCHALICE, id]);
+  }
+
+  sendAltarSoulStone(id) {
+    this.sendMessage([Types.Messages.ALTARSOULSTONE, id]);
+  }
+
+  sendHands(id) {
+    this.sendMessage([Types.Messages.HANDS, id]);
+  }
+
+  sendActivateTrap(id) {
+    this.sendMessage([Types.Messages.TRAP, id]);
+  }
+
+  sendActivateStatue(id) {
+    this.sendMessage([Types.Messages.STATUE, id]);
   }
 }
 

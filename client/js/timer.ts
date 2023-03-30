@@ -7,10 +7,10 @@ class Timer {
     this.duration = duration;
   }
 
-  isOver(time) {
+  isOver(time, isSlowed = false) {
     var over = false;
 
-    if (time - this.lastTime > this.duration) {
+    if (time - this.lastTime > this.duration * (isSlowed ? 2 : 1)) {
       over = true;
       this.lastTime = time;
     }

@@ -2,7 +2,14 @@ import * as Sentry from "@sentry/node";
 import fs from "fs";
 
 Sentry.init({
-  dsn: process.env.NODE_ENV !== "development" ? process.env.SENTRY_DNS : "",
+  dsn: process.env.SENTRY_DNS,
+  beforeSend: (event, hint) => {
+    if (process.env.NODE_ENV === "development") {
+      console.error(hint.originalException || hint.syntheticException);
+      return null;
+    }
+    return event;
+  },
 });
 
 process.on("uncaughtException", err => {
@@ -20,6 +27,8 @@ process.on("unhandledRejection", (reason, promise) => {
   Sentry.captureException(new Error("Unhandled promise rejection"), {
     extra: { reason, promise },
   });
+  console.log("Error", reason);
+  fs.writeFileSync("./error.log", JSON.stringify(reason, null, 2));
 });
 
 export { Sentry };

@@ -7,7 +7,9 @@ class Entity {
   kind: number;
   x: number;
   y: number;
-  
+  hitPoints: number;
+  maxHitPoints: number;
+
   constructor(id, type, kind, x, y) {
     this.id = parseInt(id, 10);
     this.type = type;
@@ -19,7 +21,14 @@ class Entity {
   destroy() {}
 
   _getBaseState() {
-    return [this.id, this.kind, this.x, this.y];
+    return {
+      id: this.id,
+      kind: this.kind,
+      x: this.x,
+      y: this.y,
+      hitPoints: this.hitPoints,
+      maxHitPoints: this.maxHitPoints,
+    };
   }
 
   getState() {

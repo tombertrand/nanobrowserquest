@@ -1,0 +1,49 @@
+{
+  "id": "skeletonberserker",
+  "width": 68,
+  "height": 64,
+  "animations": {
+    "atk_right": {
+      "length": 13,
+      "row": 0
+    },
+    "walk_right": {
+      "length": 12,
+      "row": 2
+    },
+    "idle_right": {
+      "length": 4,
+      "row": 3
+    },
+    "atk_up": {
+      "length": 12,
+      "row": 0
+    },
+    "walk_up": {
+      "length": 12,
+      "row": 2
+    },
+    "idle_up": {
+      "length": 4,
+      "row": 3
+    },
+    "atk_down": {
+      "length": 12,
+      "row": 0
+    },
+    "walk_down": {
+      "length": 12,
+      "row": 2
+    },
+    "idle_down": {
+      "length": 4,
+      "row": 3
+    },
+    "death": {
+      "length": 13,
+      "row": 1
+    }
+  },
+  "offset_x": -20,
+  "offset_y": -34
+}

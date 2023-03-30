@@ -1,0 +1,13 @@
+{
+  "id": "aura-arcane",
+  "width": 36,
+  "height": 15,
+  "animations": {
+    "idle_down": {
+      "length": 4,
+      "row": 0
+    }
+  },
+  "offset_x": -10,
+  "offset_y": 8
+}
