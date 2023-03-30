@@ -19,6 +19,9 @@ const getNetworkUsdPrice = async () => {
   } catch (err) {
     console.log("Error", err);
     Sentry.captureException(err);
+
+    nodeCache.set("PRICE_NANO_USD", 0.881344);
+    nodeCache.set("PRICE_BAN_USD", 0.00548182);
   }
 };
 
