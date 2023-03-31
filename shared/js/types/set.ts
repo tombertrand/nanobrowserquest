@@ -48,10 +48,12 @@ export const setBonus = {
     minDamage: 15,
     coldDamage: 15,
     reduceFrozenChance: 25,
+    coldResistance: 50,
   },
   diamond: {
     health: 100,
-    defense: 10,
+    attack: 12,
+    defense: 25,
     blockChance: 3,
     exp: 10,
   },

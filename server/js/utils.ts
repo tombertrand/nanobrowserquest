@@ -439,10 +439,6 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
 export const generateGreenChestItem = (): { item: string; uniqueChances?: number } => {
   // 50%
   const items = [
-    { item: "diamondsword", uniqueChances: 20 },
-    { item: "diamondarmor", uniqueChances: 20 },
-    { item: "beltdiamond", uniqueChances: 20 },
-    { item: "shielddiamond", uniqueChances: 15 },
     { item: "beltminotaur", uniqueChances: 10 },
     { item: "minotauraxe", uniqueChances: 10 },
     { item: "emeraldsword", uniqueChances: 10 },

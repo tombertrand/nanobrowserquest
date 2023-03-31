@@ -1136,7 +1136,7 @@ class World {
 
     let count = 0;
     this.archerPossibleCoords.map(({ x, y }) => {
-      const archerCount = Math.ceil(randomRange(1, 3));
+      const archerCount = Math.ceil(randomRange(1, 5));
 
       for (let i = 0; i < archerCount; i++) {
         const kind = Types.Entities.SKELETONARCHER;

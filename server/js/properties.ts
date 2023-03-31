@@ -403,7 +403,7 @@ var Properties: any = {
       beltemerald: 1,
       shieldemerald: 1,
     },
-    hp: 800,
+    hp: 1100,
     armor: 22,
     weapon: 24,
   },
@@ -418,16 +418,16 @@ var Properties: any = {
       beltexecutioner: 2,
       shieldexecutioner: 2,
     },
-    hp: 1000,
-    armor: 22,
-    weapon: 26,
+    hp: 1300,
+    armor: 24,
+    weapon: 28,
   },
   golem: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 4,
-      ringplatinum: 2,
-      amuletplatinum: 2,
+      scrollupgradelegendary: 5,
+      ringplatinum: 3,
+      amuletplatinum: 3,
       executionersword: 1,
       executionerarmor: 1,
       beltexecutioner: 1,
@@ -437,9 +437,9 @@ var Properties: any = {
       beltemerald: 1,
       shieldemerald: 1,
     },
-    hp: 1000,
+    hp: 1600,
     armor: 25,
-    weapon: 25,
+    weapon: 23,
   },
   worm: {
     drops: {
@@ -463,9 +463,9 @@ var Properties: any = {
       beltexecutioner: 2,
       shieldexecutioner: 2,
     },
-    hp: 750,
-    armor: 20,
-    weapon: 24,
+    hp: 950,
+    armor: 21,
+    weapon: 25,
   },
   snake4: {
     drops: {
@@ -481,9 +481,9 @@ var Properties: any = {
       dragonarmor: 1,
       shielddragon: 1,
     },
-    hp: 420,
-    armor: 22,
-    weapon: 26,
+    hp: 950,
+    armor: 21,
+    weapon: 25,
   },
   skeleton4: {
     drops: {
@@ -498,7 +498,7 @@ var Properties: any = {
     },
     hp: 1100,
     armor: 23,
-    weapon: 23,
+    weapon: 24,
   },
   ghost: {
     drops: {
@@ -510,8 +510,8 @@ var Properties: any = {
       dragonarmor: 2,
       shielddragon: 2,
     },
-    hp: 900,
-    armor: 22,
+    hp: 1400,
+    armor: 24,
     weapon: 26,
   },
   skeletonberserker: {
@@ -525,7 +525,7 @@ var Properties: any = {
       belttemplar: 2,
       shieldtemplar: 2,
     },
-    hp: 1100,
+    hp: 1200,
     armor: 22,
     weapon: 24,
   },
@@ -556,9 +556,9 @@ var Properties: any = {
       dragonarmor: 2,
       shielddragon: 2,
     },
-    hp: 1240,
+    hp: 1440,
     armor: 24,
-    weapon: 24,
+    weapon: 26,
   },
   spider2: {
     drops: {
@@ -571,9 +571,9 @@ var Properties: any = {
       dragonarmor: 2,
       shielddragon: 2,
     },
-    hp: 1240,
+    hp: 1440,
     armor: 24,
-    weapon: 24,
+    weapon: 26,
   },
   spiderqueen: {
     drops: {
@@ -596,9 +596,9 @@ var Properties: any = {
       ringplatinum: 3,
       amuletplatinum: 3,
     },
-    hp: 1040,
+    hp: 1140,
     armor: 20,
-    weapon: 24,
+    weapon: 28,
   },
   butcher: {
     drops: {
@@ -606,7 +606,7 @@ var Properties: any = {
     },
     hp: 10_000,
     armor: 36,
-    weapon: 30,
+    weapon: 33,
   },
   wraith2: {
     drops: {
@@ -635,7 +635,7 @@ var Properties: any = {
       shieldmoon: 2,
     },
     hp: 1210,
-    armor: 20,
+    armor: 22,
     weapon: 26,
   },
   shaman: {
