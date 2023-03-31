@@ -390,7 +390,7 @@ var Properties: any = {
   },
   oculothorax: {
     drops: {
-      rejuvenationpotion: 25,
+      rejuvenationpotion: 30,
       scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -405,11 +405,11 @@ var Properties: any = {
     },
     hp: 1100,
     armor: 22,
-    weapon: 24,
+    weapon: 23,
   },
   kobold: {
     drops: {
-      rejuvenationpotion: 25,
+      rejuvenationpotion: 30,
       scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -420,11 +420,11 @@ var Properties: any = {
     },
     hp: 1300,
     armor: 24,
-    weapon: 28,
+    weapon: 26,
   },
   golem: {
     drops: {
-      rejuvenationpotion: 25,
+      rejuvenationpotion: 30,
       scrollupgradelegendary: 5,
       ringplatinum: 3,
       amuletplatinum: 3,
@@ -454,7 +454,7 @@ var Properties: any = {
   },
   snake3: {
     drops: {
-      rejuvenationpotion: 25,
+      rejuvenationpotion: 20,
       scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
@@ -469,7 +469,7 @@ var Properties: any = {
   },
   snake4: {
     drops: {
-      rejuvenationpotion: 25,
+      rejuvenationpotion: 20,
       scrollupgradelegendary: 4,
       ringplatinum: 2,
       amuletplatinum: 2,
