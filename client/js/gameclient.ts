@@ -188,7 +188,7 @@ class GameClient {
 
   connect(dispatcherMode) {
     var protocol = window.location.hostname === "localhost" ? "ws" : "wss";
-    var port = window.location.hostname === "localhost" ? ":8020" : "";
+    var port = window.location.hostname === "localhost" ? ":8000" : "";
     var url = protocol + "://" + this.host + port + "/";
 
     console.info("Trying to connect to server : " + url);

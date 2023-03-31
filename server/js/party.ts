@@ -125,7 +125,7 @@ class Party {
 
   shareExp(mob) {
     const baseExp = Types.getMobExp(mob.kind);
-    const expPerPlayer = (baseExp * expPerPlayerMap[this.members.length]) / 100;
+    const expPerPlayer = (baseExp * expPerPlayerMap[this.members.length - 1]) / 100;
 
     this.forEachMember(({ id }) => {
       const player = this.server.getEntityById(id);

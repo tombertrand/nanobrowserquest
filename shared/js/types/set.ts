@@ -52,7 +52,7 @@ export const setBonus = {
   },
   diamond: {
     health: 100,
-    attack: 12,
+    attackDamage: 12,
     defense: 25,
     blockChance: 3,
     exp: 10,

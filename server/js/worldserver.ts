@@ -1650,6 +1650,10 @@ class World {
     const EXP_LEVEL_END_RANGE = 6;
     let exp = expOverride || Types.getMobExp(mob.kind);
 
+    if (Types.isMiniBoss(mob)) {
+      exp = exp * 1.5;
+    }
+
     const levelDifference = playerLevel - mobLevel;
 
     if (Types.isBoss(mob.kind)) {
@@ -2173,6 +2177,21 @@ class World {
 
               if (blessedScroll === 21) {
                 itemKind = Types.Entities.SCROLLUPGRADEBLESSED;
+              }
+            }
+          } else if (itemKind === Types.Entities.SCROLLUPGRADELEGENDARY) {
+            if (attacker && attacker.level - 6 > mobLevel) {
+              // Reduce scroll drops to prevent crazy farming
+              if (random(4) === 1) {
+                break;
+              }
+            }
+
+            if (mob.kind >= Types.Entities.GOLEM) {
+              const sacredScroll = random(30);
+
+              if (sacredScroll === 21) {
+                itemKind = Types.Entities.SCROLLUPGRADESACRED;
               }
             }
           }

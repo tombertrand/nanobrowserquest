@@ -24,6 +24,8 @@
   position: relative;
 }
 
+.scrollupgradesacred,
+.scrollupgradelegendary,
 .scrollupgradeblessed,
 .scrollupgradehigh,
 .scrollupgrademedium,
@@ -136,6 +138,8 @@
     height: 360px;
   }
 
+  .scrollupgradesacred,
+  .scrollupgradelegendary,
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
@@ -144,6 +148,14 @@
     background-position: 0px -5px;
     background-repeat: no-repeat;
     background-size: 440px;
+  }
+
+  .scrollupgradesacred {
+    background-image: url(../img/3/item-scrollupgradesacred.png);
+  }
+
+  .scrollupgradelegendary {
+    background-image: url(../img/3/item-scrollupgradelegendary.png);
   }
 
   .scrollupgradeblessed {
@@ -233,6 +245,8 @@
     height: 46px;
   }
 
+  .scrollupgradesacred,
+  .scrollupgradelegendary,
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
@@ -240,6 +254,14 @@
   .cape7 {
     background-position: 0px -3px !important;
     background-size: auto !important;
+  }
+
+  .scrollupgradesacred {
+    background-image: url(../img/3/item-scrollupgradesacred.png);
+  }
+
+  .scrollupgradelegendary {
+    background-image: url(../img/3/item-scrollupgradelegendary.png);
   }
 
   .scrollupgradeblessed {
@@ -334,6 +356,8 @@
     height: 23px;
   }
 
+  .scrollupgradesacred,
+  .scrollupgradelegendary,
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,

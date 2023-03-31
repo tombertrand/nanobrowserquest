@@ -1870,9 +1870,9 @@ class DatabaseHandler {
           items: [{ item: "cape", level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) }],
         });
       } else if (id === Types.Store.SCROLLUPGRADELEGENDARY) {
-        this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+        this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 20 }] });
       } else if (id === Types.Store.SCROLLUPGRADESACRED) {
-        this.lootItems({ player, items: [{ item: "scrollupgradesacred", quantity: 5 }] });
+        this.lootItems({ player, items: [{ item: "scrollupgradesacred", quantity: 10 }] });
       } else if (id === Types.Store.SCROLLTRANSMUTE) {
         this.lootItems({ player, items: [{ item: "scrolltransmute", quantity: 10 }] });
       } else if (id === Types.Store.STONESOCKET) {
