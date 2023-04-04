@@ -77,7 +77,7 @@ class World {
   trades: { [key: number]: Trade };
   currentPartyId: number;
   currentTradeId: number;
-  deathAngelId: null | number;
+  deathAngel: any;
   isCastDeathAngelSpellEnabled: boolean;
   magicStones: number[];
   activatedMagicStones: number[];
@@ -110,9 +110,11 @@ class World {
   magicTemplarId: number;
   powderSpiderId: number;
   chaliceSpiderId: number;
+  spiderQueen: any;
   spiderTotal: number;
   spiderEntityIds: string[];
   spiderPossibleCoords: { x: number; y: number }[];
+  butcher: any;
   archerEntityIds: string[];
   archerPossibleCoords: { x: number; y: number }[];
   shamanCoords: { x: number; y: number };
@@ -203,7 +205,6 @@ class World {
     this.zoneGroupsReady = false;
     this.raiseNecromancerInterval = null;
     this.raiseDeathAngelInterval = null;
-    this.deathAngelId = null;
     this.isCastDeathAngelSpellEnabled = false;
     this.magicStones = [];
     this.activatedMagicStones = [];
@@ -231,6 +232,7 @@ class World {
     this.stoneLevelInterval = null;
     this.powderSpiderId = null;
     this.chaliceSpiderId = null;
+    this.spiderQueen = null;
     this.spiderTotal = 0;
     this.spiderEntityIds = [];
     this.spiderPossibleCoords = [];
@@ -839,7 +841,7 @@ class World {
   }
 
   castDeathAngelSpell(x, y) {
-    const { id, isDead, x: mobX, y: mobY } = this.getEntityById(this.deathAngelId) || {};
+    const { id, isDead, x: mobX, y: mobY } = this.deathAngel;
 
     const diffX = Math.abs(x - mobX);
     const diffY = Math.abs(y - mobY);
@@ -870,7 +872,7 @@ class World {
         originX: spellX,
         originY: spellY,
         element,
-        casterId: this.deathAngelId,
+        casterId: this.deathAngel.id,
         casterKind: Types.Entities.DEATHANGEL,
       });
     });
@@ -1060,13 +1062,17 @@ class World {
     this.stoneLevelClock = 15 * 60; // 15 minutes
     this.powderSpiderId = null;
     this.chaliceSpiderId = null;
-    this.spiderTotal = 0;
+    this.spiderTotal = 1; // count the Queen
 
     const stonePortal = this.npcs[this.portalStoneNpcId];
     stonePortal.respawnCallback();
 
     const stoneInnerPortal = this.npcs[this.portalStoneInnerNpcId];
     stoneInnerPortal.respawnCallback();
+
+    if (this.spiderQueen.isDead) {
+      this.spiderQueen.handleRespawn(0);
+    }
 
     this.pushBroadcast(new Messages.StoneLevelStart());
 
@@ -1136,6 +1142,10 @@ class World {
     gatewayInnerPortal.respawnCallback();
 
     this.pushBroadcast(new Messages.GatewayLevelStart());
+
+    if (this.butcher.isDead) {
+      this.butcher.handleRespawn(0);
+    }
 
     let count = 0;
     this.archerPossibleCoords.map(({ x, y }) => {
@@ -1797,6 +1807,7 @@ class World {
               }, time);
             });
           } else if (kind === Types.Entities.BUTCHER) {
+            self.butcher = mob;
             mob.onDestroy(() => {
               clearInterval(self.gatewayLevelInterval);
               setTimeout(() => {
@@ -1805,8 +1816,19 @@ class World {
               }, 5000);
             });
           } else if (kind === Types.Entities.SPIDERQUEEN) {
+            self.spiderQueen = mob;
+            mob.onDestroy(() => {
+              self.spiderTotal--;
+              if (self.spiderTotal === 0) {
+                clearInterval(self.stoneLevelInterval);
+                setTimeout(() => {
+                  // Return everyone to stones, leave 5s to loot any last drop
+                  self.endStoneLevel();
+                }, 5000);
+              }
+            });
           } else if (kind === Types.Entities.DEATHANGEL) {
-            self.deathAngelId = mob.id;
+            self.deathAngel = mob;
           } else if (kind === Types.Entities.SKELETONTEMPLAR || kind === Types.Entities.SKELETONTEMPLAR2) {
             const isPoisonTemplar = kind === Types.Entities.SKELETONTEMPLAR;
             const isMagicTemplar = kind === Types.Entities.SKELETONTEMPLAR2;
@@ -1842,9 +1864,9 @@ class World {
           });
           mob.onMove(self.onMobMoveCallback.bind(self));
 
-          if (kind === Types.Entities.ZOMBIE) {
+          if ([Types.Entities.ZOMBIE].includes(kind)) {
             mob.isDead = true;
-            self.zombies.push(mob);
+            self.zombies.push(mob); 
           } else {
             self.addMob(mob);
           }

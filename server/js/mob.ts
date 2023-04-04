@@ -197,7 +197,15 @@ class Mob extends Character {
     this.updateHitPoints();
     this.resetPosition();
 
-    if (this.kind !== Types.Entities.ZOMBIE && this.kind !== Types.Entities.MINOTAUR) {
+    if (
+      ![
+        Types.Entities.ZOMBIE,
+        Types.Entities.MINOTAUR,
+        Types.Entities.SPIDERQUEEN,
+        Types.Entities.BUTCHER,
+        Types.Entities.DEATHANGEL,
+      ].includes(this.kind)
+    ) {
       this.handleRespawn(delay);
     }
 
@@ -337,10 +345,8 @@ class Mob extends Character {
       if (this.area && this.area instanceof ChestArea) {
         this.area.removeFromArea(this);
       }
-      this.respawnTimeout = setTimeout(function () {
-        if (self.respawnCallback) {
-          self.respawnCallback();
-        }
+      this.respawnTimeout = setTimeout(() => {
+        self.respawnCallback?.();
       }, delay);
     }
   }
