@@ -1179,7 +1179,9 @@ class DatabaseHandler {
           if (filteredUpgrade.length) {
             const items = filteredUpgrade.reduce((acc, rawItem) => {
               if (!rawItem) return acc;
-              const [item, level, bonus, socket, skill] = rawItem.split(":");
+
+              const delimiter = Types.isJewel(rawItem) ? "|" : ":";
+              const [item, level, bonus, socket, skill] = rawItem.split(delimiter);
               const isQuantity = Types.isQuantity(item);
 
               acc.push({

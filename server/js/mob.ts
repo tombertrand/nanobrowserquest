@@ -135,7 +135,7 @@ class Mob extends Character {
       );
 
       // double hitpoints for minibosses
-      this.hitPoints = Properties.getHitPoints(this.kind) * 2;
+      // this.hitPoints = Properties.getHitPoints(this.kind) * 2;
     }
 
     // 50% of bosses inherits stone skin

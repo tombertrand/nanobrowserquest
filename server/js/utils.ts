@@ -4,6 +4,7 @@ import forEach from "lodash/forEach";
 import sanitizer from "sanitizer";
 
 import { Types } from "../../shared/js/gametypes";
+import { toArray } from "../../shared/js/utils";
 
 export const sanitize = function (string) {
   // Strip unsafe tags, then escape as html entities.
@@ -305,7 +306,13 @@ export const isValidTransmuteItems = items => {
     return false;
   }
 
-  let [item, , bonus] = items[0].split(":");
+  let [item, , bonus, socket] = items[0].split(":");
+
+  socket = toArray(socket);
+  // Socketed item can't be transmuted
+  if (socket?.length && socket.filter(s => s !== 0)?.length) {
+    return false;
+  }
 
   const transmuteRate = Types.getTransmuteSuccessRate(item, bonus);
   if (!transmuteRate) {
