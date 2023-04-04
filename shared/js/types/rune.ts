@@ -103,7 +103,7 @@ export const runeKind = {
   },
   vie: {
     rank: 9,
-    requirement: 22,
+    requirement: 14,
     attribute: {
       regenerateHealth: 10,
     },
@@ -131,7 +131,7 @@ export const runeKind = {
   },
   sol: {
     rank: 13,
-    requirement: 14,
+    requirement: 22,
     attribute: {
       reduceFrozenChance: 5,
     },
@@ -173,63 +173,63 @@ export const runeKind = {
   },
   dur: {
     rank: 19,
-    requirement: 36,
+    requirement: 34,
     attribute: {
       allResistance: 4,
     },
   },
   fal: {
     rank: 20,
-    requirement: 41,
+    requirement: 36,
     attribute: {
       magicDamagePercent: 8,
     },
   },
   kul: {
     rank: 21,
-    requirement: 44,
+    requirement: 38,
     attribute: {
       lightningDamagePercent: 8,
     },
   },
   mer: {
     rank: 22,
-    requirement: 47,
+    requirement: 41,
     attribute: {
       flameDamagePercent: 8,
     },
   },
   qua: {
     rank: 23,
-    requirement: 50,
+    requirement: 44,
     attribute: {
       coldDamagePercent: 8,
     },
   },
   gul: {
     rank: 24,
-    requirement: 53,
+    requirement: 47,
     attribute: {
       poisonDamagePercent: 8,
     },
   },
   ber: {
     rank: 25,
-    requirement: 56,
+    requirement: 50,
     attribute: {
       skillTimeout: 6,
     },
   },
   cham: {
     rank: 26,
-    requirement: 34,
+    requirement: 53,
     attribute: {
       poisonResistance: 10,
     },
   },
   tor: {
     rank: 27,
-    requirement: 59,
+    requirement: 56,
     attribute: {
       coldDamage: 10,
       freezeChance: 5,
@@ -237,7 +237,7 @@ export const runeKind = {
   },
   xno: {
     rank: 28,
-    requirement: 38,
+    requirement: 59,
     attribute: {
       attackSpeed: 10,
     },
@@ -721,3 +721,7 @@ export const Runewords = {
     },
   },
 };
+
+// Announcement of an Announcement
+// What if Price Goes Below 2K
+// Let that sink in for a Second

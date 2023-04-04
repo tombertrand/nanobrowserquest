@@ -490,7 +490,6 @@ export const generateRedChestItem = (): { item: string; uniqueChances?: number }
     { item: "shielddemon", uniqueChances: 12 },
     { item: "demonaxe", uniqueChances: 12 },
     { item: "demonarmor", uniqueChances: 12 },
-    { item: "demonaxe", uniqueChances: 12 },
     { item: "cape", uniqueChances: 5 },
   ];
 
@@ -763,7 +762,7 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     }
 
     // @NOTE 10% to get back the socketed rune/jewel
-    extractedItem = random(10) === 1 ? socket[lastSocketIndex - 1] : null;
+    extractedItem = random(2) === 1 ? socket[lastSocketIndex - 1] : null;
 
     socket[lastSocketIndex - 1] = 0;
   }
@@ -920,13 +919,15 @@ export const generateSoulStoneItem = () => {
     { item: "beltmoon", uniqueChances: 10 },
     { item: "shieldmoon", uniqueChances: 10 },
     { item: "shieldmoon", uniqueChances: 10 },
-    // { item: "demonaxe", uniqueChances: 10 },
+    { item: "demonaxe", uniqueChances: 10 },
     { item: "demonarmor", uniqueChances: 10 },
     { item: "beltdemon", uniqueChances: 10 },
     { item: "shielddemon", uniqueChances: 10 },
     { item: "paladinarmor", uniqueChances: 10 },
-    { item: "eclypsedagger", uniqueChances: 10 },
+    { item: "paladinaxe", uniqueChances: 10 },
     { item: "spikeglaive", uniqueChances: 10 },
+    { item: "eclypsedagger", uniqueChances: 10 },
+    { item: "immortalsword", uniqueChances: 10 },
   ];
 
   // 15%

@@ -698,10 +698,19 @@ class Player extends Character {
         let requirement = null;
         let level = null;
         let quantity = null;
+        let runeword = null;
 
         if (isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet || isJewel) {
           level = parseInt(levelOrQuantity);
           requirement = Types.getItemRequirement(item, levelOrQuantity);
+
+          if (isWeapon || isArmor || isShield) {
+            ({ runeword } = Types.getRunewordBonus({
+              isUnique,
+              socket: toArray(socket),
+              type: kinds[item][1],
+            }));
+          }
         } else if (Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item)) {
           quantity = parseInt(levelOrQuantity);
         }
@@ -714,6 +723,7 @@ class Player extends Character {
           slot,
           requirement,
           isUnique,
+          runeword,
           ...{ level },
           ...{ quantity },
         };

@@ -441,17 +441,6 @@ var Properties: any = {
     armor: 25,
     weapon: 23,
   },
-  worm: {
-    drops: {
-      rejuvenationpotion: 25,
-      scrollupgradelegendary: 23,
-      ringplatinum: 2,
-      amuletplatinum: 2,
-    },
-    hp: 2320,
-    armor: 28,
-    weapon: 30,
-  },
   snake3: {
     drops: {
       rejuvenationpotion: 20,
@@ -585,9 +574,9 @@ var Properties: any = {
       dragonarmor: 5,
       shielddragon: 5,
     },
-    hp: 7500,
+    hp: 8500,
     armor: 34,
-    weapon: 26,
+    weapon: 28,
   },
   skeletonarcher: {
     drops: {
@@ -621,7 +610,7 @@ var Properties: any = {
     },
     hp: 1620,
     armor: 28,
-    weapon: 26,
+    weapon: 28,
   },
   mage: {
     drops: {
@@ -652,15 +641,28 @@ var Properties: any = {
     armor: 32,
     weapon: 30,
   },
-  deathangel: {
+  worm: {
     drops: {
-      scrollupgradelegendary: 10,
-      scrollupgradesacred: 1,
+      scrollupgradelegendary: 78,
       mysticalsword: 5,
       mysticalarmor: 5,
       beltmystical: 5,
       shieldmystical: 5,
       ringmystical: 2,
+    },
+    hp: 15_000,
+    armor: 32,
+    weapon: 35,
+  },
+  deathangel: {
+    drops: {
+      scrollupgradelegendary: 75,
+      scrollupgradesacred: 1,
+      mysticalsword: 5,
+      mysticalarmor: 5,
+      beltmystical: 5,
+      shieldmystical: 5,
+      ringmystical: 4,
     },
     hp: 20_000,
     armor: 34,

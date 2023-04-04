@@ -554,7 +554,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   RUNOLOGUE: {
     id: 71,
     name: "Runologue",
-    desc: "Find a high level rune",
+    desc: "Find a rare rune (rank 25 or higher)",
   },
   BLACKSMITH: {
     id: 72,

@@ -533,6 +533,9 @@ class Game {
       "templarsword",
       "spikeglaive",
       "eclypsedagger",
+      "demonaxe",
+      "paladinaxe",
+      "immortalsword",
       "executionersword",
       "mysticalsword",
       "dragonsword",
@@ -569,6 +572,9 @@ class Game {
       "item-templarsword",
       "item-spikeglaive",
       "item-eclypsedagger",
+      "item-demonaxe",
+      "item-paladinaxe",
+      "item-immortalsword",
       "item-executionersword",
       "item-mysticalsword",
       "item-dragonsword",
@@ -1581,9 +1587,16 @@ class Game {
       .append(`<div class="item-slot item-droppable item-delete" data-slot="${DELETE_SLOT}"></div>`);
 
     if (this.player.weaponName !== "dagger") {
+      const isUnique = Types.isUnique(this.player.weaponName, this.player.weaponBonus);
+      const { runeword } = Types.getRunewordBonus({
+        isUnique,
+        socket: this.player.weaponSocket,
+        type: "weapon",
+      });
+
       $(".item-equip-weapon").append(
         $("<div />", {
-          class: `item-draggable ${this.player.weaponBonus?.length ? "item-unique" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.weaponName)}")`,
           },
@@ -1596,9 +1609,16 @@ class Game {
       );
     }
     if (this.player.armorName !== "clotharmor") {
+      const isUnique = Types.isUnique(this.player.armorName, this.player.armorBonus);
+      const { runeword } = Types.getRunewordBonus({
+        isUnique,
+        socket: this.player.weaponSocket,
+        type: "armor",
+      });
+
       $(".item-equip-armor").append(
         $("<div />", {
-          class: `item-draggable ${this.player.armorBonus?.length ? "item-unique" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.armorName)}")`,
           },
@@ -1613,7 +1633,7 @@ class Game {
     if (this.player.beltName) {
       $(".item-equip-belt").append(
         $("<div />", {
-          class: `item-draggable ${this.player.beltBonus?.length ? "item-unique" : ""}`,
+          class: `item-draggable ${Types.isUnique(this.player.beltName, this.player.beltBonus) ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.beltName)}")`,
           },
@@ -1627,7 +1647,7 @@ class Game {
     if (this.player.cape) {
       $(".item-equip-cape").append(
         $("<div />", {
-          class: `item-draggable ${this.player.capeBonus.length >= 5 ? "item-unique" : ""}`,
+          class: `item-draggable ${Types.isUnique(this.player.cape, this.player.capeBonus) ? "item-unique" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.cape, this.player.capeLevel)}")`,
           },
@@ -1639,9 +1659,16 @@ class Game {
     }
 
     if (this.player.shieldName) {
+      const isUnique = Types.isUnique(this.player.shieldName, this.player.shieldBonus);
+      const { runeword } = Types.getRunewordBonus({
+        isUnique,
+        socket: this.player.weaponSocket,
+        type: "shield",
+      });
+
       $(".item-equip-shield").append(
         $("<div />", {
-          class: `item-draggable ${this.player.shieldBonus?.length >= 5 ? "item-unique" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(this.player.shieldName)}")`,
           },
@@ -1828,6 +1855,7 @@ class Game {
       skill,
       socket,
       requirement,
+      runeword,
     }: {
       quantity?: number;
       isUnique: boolean;
@@ -1837,6 +1865,7 @@ class Game {
       skill: any;
       socket: string;
       requirement?: number;
+      runeword?: string;
     },
     isDraggable = true,
   ) {
@@ -1850,7 +1879,7 @@ class Game {
     return $("<div />", {
       class: `${isDraggable ? "item-draggable" : "item-not-draggable"} ${quantity ? "item-quantity" : ""} ${
         isUnique ? "item-unique" : ""
-      }`,
+      } ${runeword ? "item-runeword" : ""}`,
       css: {
         "background-image": `url("${this.getIconPath(item, level, toArray(bonus))}")`,
         position: "relative",

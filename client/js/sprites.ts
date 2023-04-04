@@ -59,6 +59,9 @@ import moonsword from "../sprites/weapon.json";
 import templarsword from "../sprites/weapon.json";
 import spikeglaive from "../sprites/weapon.json";
 import eclypsedagger from "../sprites/weapon.json";
+import demonaxe from "../sprites/weapon.json";
+import paladinaxe from "../sprites/weapon.json";
+import immortalsword from "../sprites/weapon.json";
 import executionersword from "../sprites/weapon.json";
 import mysticalsword from "../sprites/weapon.json";
 import dragonsword from "../sprites/weapon.json";
@@ -292,6 +295,9 @@ const sprites = {
   templarsword,
   spikeglaive,
   eclypsedagger,
+  demonaxe,
+  paladinaxe,
+  immortalsword,
   executionersword,
   mysticalsword,
   dragonsword,
@@ -473,6 +479,9 @@ const sprites = {
   "item-templarsword": item,
   "item-spikeglaive": item,
   "item-eclypsedagger": item,
+  "item-demonaxe": item,
+  "item-paladinaxe": item,
+  "item-immortalsword": item,
   "item-executionersword": item,
   "item-mysticalsword": item,
   "item-dragonsword": item,

@@ -313,6 +313,18 @@ EntityFactory.builders[Types.Entities.ECLYPSEDAGGER] = function (id) {
   return new Items.EclypseDagger(id);
 };
 
+EntityFactory.builders[Types.Entities.DEMONAXE] = function (id) {
+  return new Items.DemonAxe(id);
+};
+
+EntityFactory.builders[Types.Entities.PALADINAXE] = function (id) {
+  return new Items.PaladinAxe(id);
+};
+
+EntityFactory.builders[Types.Entities.IMMORTALSWORD] = function (id) {
+  return new Items.ImmortalSword(id);
+};
+
 EntityFactory.builders[Types.Entities.EXECUTIONERSWORD] = function (id) {
   return new Items.ExecutionerSword(id);
 };

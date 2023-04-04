@@ -701,8 +701,10 @@ footer, header, hgroup, menu, nav, section {
         color: #d3c59c;
     }
     .item-unique {
-        /* box-shadow: inset 0px 0px 3px 1px gold; */
         border-color: #d3c59c !important;
+    }
+    .item-runeword {
+        border-color: #74b5ff !important;
     }
     .item-class {
         color: #fff;

@@ -133,6 +133,9 @@ class Mob extends Character {
       this.enchants = this.enchants.concat(
         _.shuffle(enchants.filter(enchant => !this.enchants.includes(enchant))).slice(0, enchantCount),
       );
+
+      // double hitpoints for minibosses
+      this.hitPoints = Properties.getHitPoints(this.kind) * 2;
     }
 
     // 50% of bosses inherits stone skin

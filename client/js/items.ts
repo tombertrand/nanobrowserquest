@@ -114,6 +114,27 @@ var Items = {
     }
   },
 
+  DemonAxe: class DemonAxe extends Item {
+    constructor(id) {
+      super(id, Types.Entities.DEMONAXE, "weapon");
+      this.lootMessage = "You pick up a demon axe";
+    }
+  },
+
+  PaladinAxe: class PaladinAxe extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PALADINAXE, "weapon");
+      this.lootMessage = "You pick up a paladin axe";
+    }
+  },
+
+  ImmortalSword: class ImmortalSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.IMMORTALSWORD, "weapon");
+      this.lootMessage = "You pick up an immortal sword";
+    }
+  },
+
   ExecutionerSword: class ExecutionerSword extends Item {
     constructor(id) {
       super(id, Types.Entities.EXECUTIONERSWORD, "weapon");

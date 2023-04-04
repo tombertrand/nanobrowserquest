@@ -2,8 +2,8 @@ export const setBonus = {
   demon: {
     flameDamage: 30,
     drainLife: 20,
-    lightningResistance: 20,
-    flameResistance: 20,
+    lightningResistance: 30,
+    flameResistance: 50,
     attackSpeed: 20,
   },
   mystical: {
@@ -22,8 +22,8 @@ export const setBonus = {
   },
   dragon: {
     minDamage: 15,
-    attackDamage: 15,
-    defense: 30,
+    attackDamage: 25,
+    defense: 20,
     flameResistance: 50,
   },
   executioner: {
@@ -34,8 +34,8 @@ export const setBonus = {
   },
   templar: {
     minDamage: 15,
-    attackDamage: 10,
-    defense: 10,
+    attackDamage: 5,
+    defense: 25,
     allResistance: 15,
   },
   emerald: {
@@ -134,7 +134,7 @@ export const kindAsStringToSet = {
   belttemplar: "templar",
   shieldtemplar: "templar",
   executionersword: "executioner",
-  executionerarmor: "executioner",
+  // executionerarmor: "executioner",
   beltexecutioner: "executioner",
   shieldexecutioner: "executioner",
   dragonsword: "dragon",
@@ -146,7 +146,7 @@ export const kindAsStringToSet = {
   shieldmystical: "mystical",
   ringmystical: "mystical",
   moonsword: "moon",
-  moonarmor: "moon",
+  // moonarmor: "moon",
   beltmoon: "moon",
   shieldmoon: "moon",
   amuletmoon: "moon",
@@ -160,10 +160,10 @@ export const kindAsStringToSet = {
 export const setItems = {
   mystical: ["mysticalsword", "mysticalarmor", "beltmystical", "shieldmystical", "ringmystical"],
   demon: ["demonaxe", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
-  moon: ["moonsword", "moonarmor", "beltmoon", "shieldmoon", "amuletmoon"],
+  moon: ["moonsword" /*, "moonarmor"*/, "beltmoon", "shieldmoon", "amuletmoon"],
   dragon: ["dragonsword", "dragonarmor", "shielddragon"],
   templar: ["templarsword", "templararmor", "belttemplar", "shieldtemplar"],
-  executioner: ["executionersword", "executionerarmor", "beltexecutioner", "shieldexecutioner"],
+  executioner: ["executionersword", /*"executionerarmor",*/ "beltexecutioner", "shieldexecutioner"],
   emerald: ["emeraldsword", "emeraldarmor", "beltemerald", "shieldemerald"],
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
   diamond: ["diamondsword", "diamondarmor", "beltdiamond", "shielddiamond"],
@@ -177,11 +177,11 @@ export const setItems = {
 };
 
 export const setItemsNameMap = {
-  moon: ["Sword", "Armor", "Belt", "Shield", "Amulet"],
+  moon: ["Sword", /*"Armor",*/ "Belt", "Shield", "Amulet"],
   mystical: ["Sword", "Armor", "Belt", "Shield", "Ring"],
   demon: ["Axe", "Armor", "Belt", "Shield", "Amulet"],
   dragon: ["Sword", "Armor", "Shield"],
-  executioner: ["Sword", "Armor", "Belt", "Shield"],
+  executioner: ["Sword", /*"Armor",*/ "Belt", "Shield"],
   templar: ["Sword", "Armor", "Belt", "Shield"],
   emerald: ["Sword", "Armor", "Belt", "Shield"],
   minotaur: ["Axe", "Ring", "Belt"],

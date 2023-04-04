@@ -11,7 +11,7 @@ import { curseDurationMap } from "../../shared/js/types/curse";
 import { toArray, toDb, toNumber } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
-import { EmojiMap, postMessageToDiscordChatChannel } from "./discord";
+import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
 import FormatChecker from "./format";
 import Formulas from "./formulas";
 import Messages from "./message";
@@ -742,6 +742,7 @@ class Player extends Character {
             y,
             element: entity.element,
             casterId: mobId,
+            casterKind: entity.kind,
             targetId,
           });
         } else if (entity.kind === Types.Entities.SKELETONARCHER) {
@@ -751,12 +752,27 @@ class Player extends Character {
             y,
             element: entity.element,
             casterId: mobId,
+            casterKind: entity.kind,
             targetId,
           });
         } else if (entity.kind === Types.Entities.STATUE) {
-          self.server.addSpell({ kind: Types.Entities.STATUESPELL, x, y, element: "flame", casterId: mobId });
+          self.server.addSpell({
+            kind: Types.Entities.STATUESPELL,
+            x,
+            y,
+            element: "flame",
+            casterId: mobId,
+            casterKind: entity.kind,
+          });
         } else if (entity.kind === Types.Entities.STATUE2) {
-          self.server.addSpell({ kind: Types.Entities.STATUE2SPELL, x, y, element: "cold", casterId: mobId });
+          self.server.addSpell({
+            kind: Types.Entities.STATUE2SPELL,
+            x,
+            y,
+            element: "cold",
+            casterId: mobId,
+            casterKind: entity.kind,
+          });
         }
       } else if (action === Types.Messages.LOOT) {
         console.info("LOOT: " + self.name + " " + message[1]);
@@ -863,22 +879,20 @@ class Player extends Character {
                   }
 
                   if (Types.isSuperUnique(generatedItem.item)) {
-                    postMessageToDiscordChatChannel(
+                    postMessageToDiscordEventChannel(
                       `${player.name} picked up ${kinds[generatedItem.item][2]} ${
                         EmojiMap[generatedItem.item] || "💍"
                       } `,
                     );
                   } else if (Types.isRune(kind) && Types.RuneList.indexOf(runeName) + 1 >= Types.runeKind.mer.rank) {
-                    postMessageToDiscordChatChannel(
+                    postMessageToDiscordEventChannel(
                       `${player.name} picked up ${runeName.toUpperCase()} rune ${EmojiMap[`rune-${runeName}`]}`,
                     );
+                  } else if (kind === Types.Entities.STONEDRAGON) {
+                    postMessageToDiscordEventChannel(`${player.name} picked up a dragon stone ${EmojiMap.stonedragon}`);
+                  } else if (kind === Types.Entities.STONEHERO) {
+                    postMessageToDiscordEventChannel(`${player.name} picked up a hero emblem ${EmojiMap.stonehero}`);
                   }
-
-                  // else if (kind === Types.Entities.STONEDRAGON) {
-                  //   postMessageToDiscordChatChannel(
-                  //     `${player.name} picked up a dragon stone ${EmojiMap[`rune-${runeName}`]}`,
-                  //   );
-                  // }
 
                   this.databaseHandler.lootItems({
                     player,
@@ -1039,7 +1053,7 @@ class Player extends Character {
           if (hash) {
             console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
 
-            postMessageToDiscordChatChannel(
+            postMessageToDiscordEventChannel(
               `${self.name} killed the Skeleton King and received a payout of ${raiPayoutAmount} ${
                 self.network === "nano" ? "XNO" : "BAN"
               } 🎉`,
@@ -1125,7 +1139,7 @@ class Player extends Character {
               self.hasGrimoire = true;
               self.equipItem({} as any);
 
-              postMessageToDiscordChatChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]} `);
+              postMessageToDiscordEventChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]} `);
             }
           });
         }
@@ -2596,7 +2610,7 @@ class Player extends Character {
       }
 
       if (this.level >= 60) {
-        postMessageToDiscordChatChannel(`${this.name} is now lv.${this.level}`);
+        postMessageToDiscordEventChannel(`${this.name} is now lv.${this.level}`);
       }
     }
   }

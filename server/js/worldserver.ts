@@ -6,7 +6,7 @@ import { Types } from "../../shared/js/gametypes";
 import { ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
-import { EmojiMap, postMessageToDiscordChatChannel } from "./discord";
+import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
 import Item from "./item";
 import Map from "./map";
 import Messages from "./message";
@@ -803,6 +803,7 @@ class World {
     originY,
     element,
     casterId,
+    casterKind,
     targetId = undefined,
   }) {
     const spell = new Spell({
@@ -815,6 +816,7 @@ class World {
       originY,
       element,
       casterId,
+      casterKind,
       targetId,
     });
 
@@ -869,6 +871,7 @@ class World {
         originY: spellY,
         element,
         casterId: this.deathAngelId,
+        casterKind: Types.Entities.DEATHANGEL,
       });
     });
   }
@@ -1002,7 +1005,7 @@ class World {
 
     mageCoords.map(({ x, y }) => {
       const isShaman = x === this.shamanCoords.x && y === this.shamanCoords.y;
-      const mageCount = isShaman ? 1 : Math.ceil(randomRange(1, 3));
+      const mageCount = isShaman ? 1 : Math.ceil(randomRange(1, 4));
 
       this.mageTotal += mageCount;
 
@@ -1541,6 +1544,7 @@ class World {
             originY: statue.y,
             element,
             casterId: statue.id,
+            casterKind: statue.kind,
           });
         }, 300);
 
@@ -1651,7 +1655,7 @@ class World {
     let exp = expOverride || Types.getMobExp(mob.kind);
 
     if (Types.isMiniBoss(mob)) {
-      exp = exp * 1.5;
+      exp = Math.floor(exp * 1.75);
     }
 
     const levelDifference = playerLevel - mobLevel;
@@ -2009,7 +2013,7 @@ class World {
 
       if (Object.keys(playersToReceiveChests).length) {
         Object.entries(playersToReceiveChests).map(([chestType, players]) => {
-          postMessageToDiscordChatChannel(
+          postMessageToDiscordEventChannel(
             `${players.join(", ")} received a ${_.capitalize(chestType.replace("chest", ""))} Chest ${
               EmojiMap[chestType]
             }`,
@@ -2206,20 +2210,21 @@ class World {
     const kind = Types.getKindFromString(itemName);
 
     if (mob.kind === Types.Entities.MINOTAUR) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained the Minotaur 🥶`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained the Minotaur 🥶`);
     } else if (mob.kind === Types.Entities.COWKING) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained the Cow King 🐮`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained the Cow King 🐮`);
     } else if (mob.kind === Types.Entities.SPIDERQUEEN) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained Arachneia the Spider Queen 🕷️`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Arachneia the Spider Queen 🕷️`);
     } else if (mob.kind === Types.Entities.BUTCHER) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained Gorefiend the Butcher 🩸`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Gorefiend the Butcher 🩸`);
     } else if (mob.kind === Types.Entities.SHAMAN) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained Zul'Gurak 🧙`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Zul'Gurak 🧙`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
-      postMessageToDiscordChatChannel(`${attacker.name} slained Azrael 💀`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Azrael 💀`);
     }
 
     // var randomDrops = ["dragonsword", "dragonarmor", "shielddragon"];
+    // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
     // var randomDrops = ["soulstone"];
     // var randomDrops = ["nft"];
     // var randomDrops = ["nft", "wing", "crystal"];

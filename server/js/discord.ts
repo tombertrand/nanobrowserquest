@@ -5,6 +5,9 @@ import { Sentry } from "./sentry";
 
 const { BOT_TOKEN } = process.env;
 
+const EventChannel =
+  "https://discord.com/api/webhooks/1092217096324268082/Rctr0jWNAaeAleyGOwXvH05hYJcTSeTrqGcUVVH7mnYZLeoFPeX9qbjVw2A9jvkuP_4w";
+
 const ChatChannel =
   "https://discord.com/api/webhooks/979056276589908008/yeov0D7OSvqNp7o6G6Kb6qbm7hB1EnegcnwKRRmr9y-zpe9O_YRb77jS6Fe0URRaJ3NC";
 
@@ -22,7 +25,23 @@ export const discordClient = new Client({
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 discordClient.login(BOT_TOKEN);
 
-const postMessageToDiscordChatChannel = (content: string) => {
+export const postMessageToDiscordEventChannel = (content: string) => {
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    fetch(EventChannel, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
+
+export const postMessageToDiscordChatChannel = (content: string) => {
   try {
     const body = JSON.stringify({
       content,
@@ -38,7 +57,7 @@ const postMessageToDiscordChatChannel = (content: string) => {
   }
 };
 
-const postMessageToDiscordAnvilChannel = (content: string) => {
+export const postMessageToDiscordAnvilChannel = (content: string) => {
   try {
     const body = JSON.stringify({
       content,
@@ -54,7 +73,7 @@ const postMessageToDiscordAnvilChannel = (content: string) => {
   }
 };
 
-const EmojiMap = {
+export const EmojiMap = {
   sword: "<:Sword:975775115105153154>",
   fire: "<:fireorange:1059946852461580379>",
   fireblue: "<:fireblue:1058822338763817101>",
@@ -95,7 +114,7 @@ const EmojiMap = {
   "rune-shi": "<:runeshi:1059496855794368583>",
   "rune-vod": "<:runevod:1059496817152241834>",
   ringnecromancer: "<:ringnecromancer:1059571078051151912>",
-  ringraistone: "<:ringraistone:1059571079242338304>",
+  ringraistone: "<:ringraistone:1092216603929739385>",
   ringfountain: "<:ringfountain:1059571073785536512>",
   ringminotaur: "<:ringminotaur:1059571075857522803>",
   ringmystical: "<:ringmystical:1059571076608311327>",
@@ -116,5 +135,3 @@ const EmojiMap = {
   stonedragon: "<:stonedragon:1085735395372847194>",
   stonehero: "<:stonehero:1085735396715020319>",
 };
-
-export { postMessageToDiscordChatChannel, postMessageToDiscordAnvilChannel, EmojiMap };

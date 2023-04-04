@@ -18,9 +18,10 @@ class Spell extends Entity {
   element: Elements;
   dmg: number;
   casterId: number;
+  casterKind: number;
   targetId?: number;
 
-  constructor({ id, kind, x, y, orientation, originX, originY, element, casterId, targetId }) {
+  constructor({ id, kind, x, y, orientation, originX, originY, element, casterId, casterKind, targetId }) {
     super(id, "spell", kind, x, y);
 
     this.spawningX = x;
@@ -33,6 +34,7 @@ class Spell extends Entity {
     this.element = element;
     this.dmg = this.getDmg();
     this.casterId = casterId;
+    this.casterKind = casterKind;
     this.targetId = targetId;
   }
 
@@ -40,13 +42,17 @@ class Spell extends Entity {
   getDmg() {
     let dmg = 0;
     if (this.kind === Types.Entities.DEATHANGELSPELL) {
-      dmg = 140;
+      dmg = 360;
     } else if (this.kind === Types.Entities.MAGESPELL) {
-      dmg = 200;
+      if (this.casterKind === Types.Entities.SHAMAN) {
+        dmg = 320;
+      } else {
+        dmg = 240;
+      }
     } else if (this.kind === Types.Entities.ARROW) {
-      dmg = 140;
+      dmg = 220;
     } else if (this.kind === Types.Entities.STATUESPELL || this.kind === Types.Entities.STATUE2SPELL) {
-      dmg = 200;
+      dmg = 300;
     }
     return dmg;
   }
