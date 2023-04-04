@@ -485,7 +485,7 @@ var Properties: any = {
       belttemplar: 2,
       shieldtemplar: 2,
     },
-    hp: 1100,
+    hp: 1150,
     armor: 23,
     weapon: 24,
   },
@@ -547,7 +547,7 @@ var Properties: any = {
     },
     hp: 1440,
     armor: 24,
-    weapon: 26,
+    weapon: 24,
   },
   spider2: {
     drops: {
@@ -562,7 +562,7 @@ var Properties: any = {
     },
     hp: 1440,
     armor: 24,
-    weapon: 26,
+    weapon: 24,
   },
   spiderqueen: {
     drops: {
@@ -575,8 +575,8 @@ var Properties: any = {
       shielddragon: 5,
     },
     hp: 8500,
-    armor: 34,
-    weapon: 28,
+    armor: 32,
+    weapon: 26,
   },
   skeletonarcher: {
     drops: {
@@ -595,7 +595,7 @@ var Properties: any = {
     },
     hp: 10_000,
     armor: 36,
-    weapon: 33,
+    weapon: 32,
   },
   wraith2: {
     drops: {
@@ -610,7 +610,7 @@ var Properties: any = {
     },
     hp: 1620,
     armor: 28,
-    weapon: 28,
+    weapon: 26,
   },
   mage: {
     drops: {
