@@ -83,13 +83,15 @@ class Mob extends Character {
   }
 
   handleRandomElement() {
-    if ([Types.Entities.MAGE, Types.Entities.SKELETONARCHER, Types.Entities.SHAMAN].includes(this.kind)) {
+    if ([Types.Entities.MAGE, Types.Entities.SKELETONARCHER].includes(this.kind)) {
       this.element = Types.getRandomElement();
 
       if (this.kind === Types.Entities.SKELETONARCHER && this.element === "spectral") {
         // @ts-ignore No spectral arrow, revert back to a normal arrow
         this.element = undefined;
       }
+    } else if (this.kind === Types.Entities.SHAMAN) {
+      this.element = _.shuffle(["magic", "flame", "lightning", "cold", "poison"] as Elements[])[0];
     }
   }
 

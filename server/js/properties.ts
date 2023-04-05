@@ -629,13 +629,14 @@ var Properties: any = {
   },
   shaman: {
     drops: {
-      scrollupgradelegendary: 5,
+      scrollupgradelegendary: 70,
       ringplatinum: 3,
       amuletplatinum: 3,
       moonsword: 5,
       moonarmor: 5,
       beltmoon: 5,
       shieldmoon: 5,
+      immortalsword: 1,
     },
     hp: 12_000,
     armor: 32,

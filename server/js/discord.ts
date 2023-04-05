@@ -134,4 +134,5 @@ export const EmojiMap = {
   soulstone: "<:soulstone:1085735393594462280>",
   stonedragon: "<:stonedragon:1085735395372847194>",
   stonehero: "<:stonehero:1085735396715020319>",
+  chalice: "<:chalice:1092862164643094591>",
 };

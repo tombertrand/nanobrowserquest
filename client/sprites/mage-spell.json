@@ -7,6 +7,14 @@
       "length": 5,
       "row": 0
     },
+    "idle_right": {
+      "length": 5,
+      "row": 0
+    },
+    "idle_down": {
+      "length": 5,
+      "row": 0
+    },
     "walk_up": {
       "length": 5,
       "row": 0

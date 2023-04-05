@@ -807,6 +807,7 @@ class World {
     casterId,
     casterKind,
     targetId = undefined,
+    isRaise2 = false,
   }) {
     const spell = new Spell({
       id: `9${this.spellCount}${x}${y}`,
@@ -820,6 +821,7 @@ class World {
       casterId,
       casterKind,
       targetId,
+      isRaise2,
     });
 
     this.spellCount += 1;
@@ -876,6 +878,53 @@ class World {
         casterKind: Types.Entities.DEATHANGEL,
       });
     });
+  }
+
+  castShamanSpell(x, y, entity, targetId, isRaise2) {
+    const { id, isDead, x: mobX, y: mobY } = entity;
+
+    const diffX = Math.abs(x - mobX);
+    const diffY = Math.abs(y - mobY);
+
+    // Ensure casting is correct
+    if (!id || isDead || !x || !y || diffX > 16 || diffY > 16) return;
+
+    if (isRaise2) {
+      const coords = [
+        [0, 1, Types.Orientations.DOWN],
+        [1, 0, Types.Orientations.RIGHT],
+        [0, -1, Types.Orientations.UP],
+        [-1, 0, Types.Orientations.LEFT],
+      ];
+
+      coords.forEach(([spellX, spellY, orientation]) => {
+        this.addSpell({
+          kind: Types.Entities.MAGESPELL,
+          x: x + spellX,
+          y: y + spellY,
+          orientation,
+          originX: spellX,
+          originY: spellY,
+          element: entity.element,
+          casterId: entity.id,
+          casterKind: Types.Entities.SHAMAN,
+          isRaise2,
+        });
+      });
+    } else {
+      this.addSpell({
+        kind: Types.Entities.MAGESPELL,
+        x,
+        y,
+        orientation: Types.Orientations.DOWN,
+        originX: x,
+        originY: y,
+        element: entity.element,
+        casterId: entity.id,
+        casterKind: Types.Entities.SHAMAN,
+        targetId,
+      });
+    }
   }
 
   startCowLevel() {
@@ -1022,8 +1071,14 @@ class World {
         mob.onDestroy(() => {
           this.mageTotal--;
           if (this.mageTotal === 0) {
-            // @TODO ~~~~ spawn a portal to the temple?
-            console.log("~~~~~ ALL MAGES DEAD!");
+            clearInterval(this.chaliceLevelInterval);
+            setTimeout(() => {
+              // @TODO ~~~~ spawn a portal to the temple?
+              console.log("~~~~~ ALL MAGES DEAD!");
+
+              // Return everyone to altar, leave 10s to loot any last drop / activate lever
+              this.endChaliceLevel();
+            }, 10000);
           }
         });
 
@@ -1866,7 +1921,7 @@ class World {
 
           if ([Types.Entities.ZOMBIE].includes(kind)) {
             mob.isDead = true;
-            self.zombies.push(mob); 
+            self.zombies.push(mob);
           } else {
             self.addMob(mob);
           }

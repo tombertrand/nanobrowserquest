@@ -51,6 +51,18 @@
       "length": 6,
       "row": 2
     },
+    "raise2_right": {
+      "length": 16,
+      "row": 5
+    },
+    "raise2_up": {
+      "length": 16,
+      "row": 5
+    },
+    "raise2_down": {
+      "length": 16,
+      "row": 5
+    },
     "death": {
       "length": 13,
       "row": 7

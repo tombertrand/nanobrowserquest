@@ -13,15 +13,16 @@ class Spell extends Entity {
   moveCallback: any;
   kind: number;
   orientation: number;
-  originX: number;
-  originY: number;
+  originX?: number;
+  originY?: number;
   element: Elements;
   dmg: number;
   casterId: number;
   casterKind: number;
   targetId?: number;
+  isRaise2?: boolean;
 
-  constructor({ id, kind, x, y, orientation, originX, originY, element, casterId, casterKind, targetId }) {
+  constructor({ id, kind, x, y, orientation, originX, originY, element, casterId, casterKind, targetId, isRaise2 }) {
     super(id, "spell", kind, x, y);
 
     this.spawningX = x;
@@ -32,10 +33,13 @@ class Spell extends Entity {
     this.originX = originX;
     this.originY = originY;
     this.element = element;
-    this.dmg = this.getDmg();
     this.casterId = casterId;
     this.casterKind = casterKind;
     this.targetId = targetId;
+    this.isRaise2 = isRaise2;
+
+    // set last because it depends on casterKind
+    this.dmg = this.getDmg();
   }
 
   // @NOTE Since there is no entity class on the server
@@ -45,7 +49,7 @@ class Spell extends Entity {
       dmg = 360;
     } else if (this.kind === Types.Entities.MAGESPELL) {
       if (this.casterKind === Types.Entities.SHAMAN) {
-        dmg = 320;
+        dmg = 300;
       } else {
         dmg = 240;
       }
@@ -65,6 +69,7 @@ class Spell extends Entity {
       element: this.element,
       casterId: this.casterId,
       targetId: this.targetId,
+      isRaise2: this.isRaise2,
     });
   }
 

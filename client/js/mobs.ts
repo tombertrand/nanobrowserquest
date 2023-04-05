@@ -473,7 +473,8 @@ export const Mobs = {
       this.walkSpeed = 100;
       this.idleSpeed = 150;
       this.raiseSpeed = 75;
-      this.raiseRate = 1000;
+      this.raise2Speed = 35;
+      this.raiseRate = 1800;
       this.setAttackRate(800);
       this.raiseCooldown = new Timer(this.raiseRate);
       this.aggroRange = 5;

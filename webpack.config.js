@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const WebpackObfuscator = require("webpack-obfuscator");
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -116,5 +117,11 @@ module.exports = {
       filename: "index_ban.html",
       template: "./client/index_ban.html",
     }),
+    new WebpackObfuscator(
+      {
+        rotateStringArray: true,
+      },
+      ["excluded_bundle_name.js"],
+    ),
   ],
 };

@@ -724,7 +724,13 @@ class Player extends Character {
           self.server.activateStatue(statueId);
         }
       } else if (action === Types.Messages.CAST_SPELL) {
-        if (typeof message[1] !== "number" || typeof message[2] !== "number" || typeof message[3] !== "number") return;
+        if (
+          typeof message[1] !== "number" ||
+          typeof message[2] !== "number" ||
+          typeof message[3] !== "number" ||
+          typeof message[5] !== "boolean"
+        )
+          return;
 
         const [, mobId, x, y] = message;
         const entity = self.server.getEntityById(mobId);
@@ -735,7 +741,9 @@ class Player extends Character {
 
         if (entity.kind === Types.Entities.DEATHANGEL) {
           self.server.castDeathAngelSpell(x, y);
-        } else if (entity.kind === Types.Entities.MAGE || entity.kind === Types.Entities.SHAMAN) {
+        } else if (entity.kind === Types.Entities.SHAMAN) {
+          self.server.castShamanSpell(x, y, entity, targetId, message[5]);
+        } else if (entity.kind === Types.Entities.MAGE) {
           self.server.addSpell({
             kind: Types.Entities.MAGESPELL,
             x,
@@ -892,6 +900,8 @@ class Player extends Character {
                     postMessageToDiscordEventChannel(`${player.name} picked up a dragon stone ${EmojiMap.stonedragon}`);
                   } else if (kind === Types.Entities.STONEHERO) {
                     postMessageToDiscordEventChannel(`${player.name} picked up a hero emblem ${EmojiMap.stonehero}`);
+                  } else if (kind === Types.Entities.CHALICE) {
+                    postMessageToDiscordEventChannel(`${player.name} picked up the chalice ${EmojiMap.chalice}`);
                   }
 
                   this.databaseHandler.lootItems({
@@ -1139,7 +1149,9 @@ class Player extends Character {
               self.hasGrimoire = true;
               self.equipItem({} as any);
 
-              postMessageToDiscordEventChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]} `);
+              postMessageToDiscordEventChannel(
+                `${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]} `,
+              );
             }
           });
         }

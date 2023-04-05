@@ -3603,6 +3603,7 @@ class Game {
         element: Elements,
         casterId,
         targetId,
+        isRaise2 = false,
       ) {
         const caster = self.getEntityById(casterId);
         if (!caster) return;
@@ -3618,7 +3619,7 @@ class Game {
         entity.setGridPosition(caster.gridX, caster.gridY);
 
         // @NOTE Adjustment so the spell is correctly aligned
-        if (entity.kind === Types.Entities.MAGESPELL) {
+        if (entity.kind === Types.Entities.MAGESPELL && !isRaise2) {
           entity.y = caster.y - 8;
         } else if (entity.kind === Types.Entities.STATUESPELL || entity.kind === Types.Entities.STATUE2SPELL) {
           entity.x = caster.x;
@@ -3634,11 +3635,11 @@ class Game {
         entity.setOrientation(orientation);
         entity.idle();
 
-        if ([Types.Entities.MAGESPELL, Types.Entities.ARROW].includes(entity.kind)) {
+        if (entity.kind === Types.Entities.DEATHANGELSPELL || (entity.kind === Types.Entities.MAGESPELL && isRaise2)) {
+          entity.setTarget({ x: (x + originX * 8) * 16, y: (y + originY * 8) * 16 });
+        } else if ([Types.Entities.MAGESPELL, Types.Entities.ARROW].includes(entity.kind)) {
           const target = self.getEntityById(targetId) || self.player;
           entity.setTarget({ x: target.x, y: target.y });
-        } else if (entity.kind === Types.Entities.DEATHANGELSPELL) {
-          entity.setTarget({ x: (x + originX * 8) * 16, y: (y + originY * 8) * 16 });
         } else if (entity.kind === Types.Entities.STATUESPELL || entity.kind === Types.Entities.STATUE2SPELL) {
           entity.setTarget({ x: x * 16, y: (y + 16) * 16 });
         }
@@ -6001,7 +6002,14 @@ class Game {
           if (character.canRaise(time)) {
             character.stop();
             character.nextStep();
-            character.raise();
+
+            let isRaise2 = false;
+            if (character.kind === Types.Entities.SHAMAN && randomInt(1, 3) === 3) {
+              character.raise2();
+              isRaise2 = true;
+            } else {
+              character.raise();
+            }
 
             if (
               [Types.Entities.MAGE, Types.Entities.SKELETONARCHER, Types.Entities.SHAMAN].includes(character.kind) &&
@@ -6010,7 +6018,7 @@ class Game {
               this.player &&
               character.target.id === this.player.id
             ) {
-              this.client.sendCastSpell(character.id, character.gridX, character.gridY, character.target.id);
+              this.client.sendCastSpell(character.id, character.gridX, character.gridY, character.target.id, isRaise2);
             }
           }
           return;
