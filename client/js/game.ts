@@ -878,32 +878,6 @@ class Game {
     });
   }
 
-  initSilhouettes() {
-    var self = this;
-
-    Types.forEachMobOrNpcKind(function (kind, kindName) {
-      if (
-        kind === Types.Entities.TREE ||
-        kind === Types.Entities.TRAP ||
-        kind === Types.Entities.TRAP2 ||
-        kind === Types.Entities.TRAP3
-      )
-        return;
-
-      self.sprites[kindName].createSilhouette();
-
-      if (kind === Types.Entities.MAGE) {
-        self.sprites["mage-magic"].createSilhouette();
-        self.sprites["mage-flame"].createSilhouette();
-        self.sprites["mage-lightning"].createSilhouette();
-        self.sprites["mage-cold"].createSilhouette();
-        self.sprites["mage-poison"].createSilhouette();
-      }
-    });
-    self.sprites["chest"].createSilhouette();
-    self.sprites["item-cake"].createSilhouette();
-  }
-
   initSettings(settings) {
     const { musicVolume = 0.6, soundVolume = 0.6 } = this.storage.data.settings;
 
@@ -2602,10 +2576,6 @@ class Game {
           self.initShadows();
           self.initHurtSprites();
 
-          if (!self.renderer.mobile && !self.renderer.tablet && self.renderer.upscaledRendering) {
-            self.initSilhouettes();
-          }
-
           self.initEntityGrid();
           self.initItemGrid();
           self.initPathingGrid();
@@ -2616,6 +2586,7 @@ class Game {
 
           clearInterval(wait);
           self.isLoaded = true;
+
           resolve(true);
         }
       }, 100);

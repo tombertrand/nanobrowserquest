@@ -17,14 +17,15 @@ import "../css/skills.css";
 import "jquery-ui/themes/base/all.css";
 
 import * as Sentry from "@sentry/browser";
-import * as _ from "lodash";
+import each from "lodash/each";
 
 import { Types } from "../../shared/js/gametypes";
 import App from "./app";
-import Character from "./character";
 import Detect from "./detect";
 import Game from "./game";
 import { TRANSITIONEND } from "./utils";
+
+import type Character from "./character";
 
 var app: App;
 var game: Game;
@@ -783,7 +784,7 @@ var initGame = function () {
       if (key === 27) {
         // ESC
         app.hideWindows();
-        _.each(game.player.attackers, function (attacker: Character) {
+        each(game.player.attackers, function (attacker: Character) {
           attacker.stop();
         });
         return false;

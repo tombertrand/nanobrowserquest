@@ -41,6 +41,13 @@ module.exports = {
     // "no-restricted-imports": [
     //   "error",
     //   {
+    //     name: "lodash",
+    //     message: "Don't use default import for lodash, use \"import { module } from 'lodash/module'\" instead",
+    //   },
+    // ],
+    // "no-restricted-imports": [
+    //   "error",
+    //   {
     //     patterns: [
     //       {
     //         group: ["../../*"],

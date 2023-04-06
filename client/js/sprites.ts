@@ -14,6 +14,7 @@ import goblin2 from "../sprites/goblin2.json";
 import zombie from "../sprites/zombie.json";
 import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
+import cake from "../sprites/item-cake.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
 import skeleton4 from "../sprites/skeleton.json";
@@ -327,8 +328,8 @@ const sprites = {
   "item-blueaxe": item,
   "item-bluemorningstar": item,
   "item-bluesword": item,
+  "item-cake": cake,
   "item-burger": item,
-  "item-cake": item,
   "item-firefoxpotion": item,
   "item-flask": item,
   "item-rejuvenationpotion": item,

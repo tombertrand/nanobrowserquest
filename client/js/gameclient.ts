@@ -1,9 +1,11 @@
 import * as _ from "lodash";
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import MessageParser from "socket.io-msgpack-parser";
 
 import { Types } from "../../shared/js/gametypes";
 import EntityFactory from "./entityfactory";
+
+import type { Socket } from "socket.io-client";
 
 class GameClient {
   connection: Socket;

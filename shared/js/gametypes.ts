@@ -2381,6 +2381,13 @@ Types.getItemClassFromBaseLevel = function (level: number, baseLevel: number): I
   return itemClass;
 };
 
+Types.itemClassRank = {
+  low: 0,
+  medium: 1,
+  high: 2,
+  legendary: 3,
+};
+
 Types.getItemBaseLevel = function (item: string, isUnique: boolean) {
   return isUnique && Types.itemUniqueMap[item] ? Types.itemUniqueMap[item][1] : kinds[item][3];
 };

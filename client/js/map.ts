@@ -1,4 +1,5 @@
-import * as _ from "lodash";
+import each from "lodash/each";
+import indexOf from "lodash/indexOf";
 
 import { Types } from "../../shared/js/gametypes";
 import Area from "./area";
@@ -115,7 +116,7 @@ class Map {
     var doors = {},
       self = this;
 
-    _.each(map.doors, function (door) {
+    each(map.doors, function (door) {
       var o;
 
       switch (door.to) {
@@ -225,12 +226,12 @@ class Map {
       }
     }
 
-    _.each(this.collisions, function (tileIndex) {
+    each(this.collisions, function (tileIndex) {
       var pos = self.tileIndexToGridPosition(tileIndex + 1);
       self.grid[pos.y][pos.x] = 1;
     });
 
-    _.each(this.blocking, function (tileIndex) {
+    each(this.blocking, function (tileIndex) {
       var pos = self.tileIndexToGridPosition(tileIndex + 1);
       if (self.grid[pos.y] !== undefined) {
         self.grid[pos.y][pos.x] = 1;
@@ -246,7 +247,7 @@ class Map {
     for (var j, i = 0; i < this.height; i++) {
       this.plateauGrid[i] = [];
       for (j = 0; j < this.width; j++) {
-        if (_.includes(this.plateau, tileIndex)) {
+        if (this.plateau.includes(tileIndex)) {
           this.plateauGrid[i][j] = 1;
         } else {
           this.plateauGrid[i][j] = 0;
@@ -275,7 +276,7 @@ class Map {
    * @see Renderer.drawHighTiles
    */
   isHighTile(id) {
-    return _.indexOf(this.high, id + 1) >= 0;
+    return indexOf(this.high, id + 1) >= 0;
   }
 
   /**
@@ -313,7 +314,7 @@ class Map {
 
   _getCheckpoints(map) {
     var checkpoints = [];
-    _.each(map.checkpoints, function (cp) {
+    each(map.checkpoints, function (cp) {
       var area = new Area(cp.x, cp.y, cp.w, cp.h);
       area.id = cp.id;
       checkpoints.push(area);
@@ -322,7 +323,7 @@ class Map {
   }
 
   getCurrentCheckpoint(entity) {
-    return _.find(this.checkpoints, function (checkpoint) {
+    return this.checkpoints.find(function (checkpoint) {
       return checkpoint.contains(entity);
     });
   }

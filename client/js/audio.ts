@@ -90,7 +90,7 @@ class AudioManager {
       "static",
     ];
 
-    var loadSoundFiles = function () {
+    const loadSoundFiles = () => {
       var counter = _.size(self.soundNames);
       console.info("Loading sound files...");
       _.each(self.soundNames, function (name) {

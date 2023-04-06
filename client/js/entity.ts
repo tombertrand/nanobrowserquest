@@ -213,7 +213,13 @@ class Entity {
       return;
     }
 
-    if (value === true) {
+    if (
+      value === true &&
+      ![Types.Entities.TREE, Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(this.kind)
+    ) {
+      if (!this.sprite.silhouetteSprite) {
+        this.sprite.createSilhouette();
+      }
       this.sprite = this.sprite?.silhouetteSprite;
     } else {
       this.sprite = this.normalSprite;

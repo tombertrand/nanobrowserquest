@@ -253,8 +253,10 @@ export const isValidUpgradeItems = items => {
 
   const itemClass = Types.getItemClass(item, parseInt(level));
   const scrollClass = Types.getItemClass(scrollOrStone);
+  const itemClassRank = Types.itemClassRank[itemClass];
+  const scrollClassRank = Types.itemClassRank[scrollClass];
 
-  if (itemClass !== scrollClass) {
+  if (scrollClassRank < itemClassRank) {
     return false;
   }
 

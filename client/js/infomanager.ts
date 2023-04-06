@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import each from "lodash/each";
 
 import type Game from "./game";
 
@@ -58,7 +58,7 @@ class InfoManager {
   }
 
   forEachInfo(callback) {
-    _.each(this.infos, function (info) {
+    each(this.infos, function (info) {
       callback(info);
     });
   }
@@ -70,7 +70,7 @@ class InfoManager {
       info.update(time);
     });
 
-    _.each(this.destroyQueue, function (id) {
+    each(this.destroyQueue, function (id) {
       delete self.infos[id];
     });
     this.destroyQueue = [];
