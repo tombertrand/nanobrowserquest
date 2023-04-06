@@ -26,7 +26,6 @@ import { AchievementName } from "../../shared/js/types/achievements";
 import { randomInt, toArray, toString } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
-import App from "./app";
 import AudioManager from "./audio";
 import BubbleManager from "./bubble";
 import Character from "./character";
@@ -49,6 +48,8 @@ import AnimatedTile from "./tile";
 import Transition from "./transition";
 import Updater from "./updater";
 import Warrior from "./warrior";
+
+import type App from "./app";
 
 interface WorldPlayer {
   name: string;

@@ -2,7 +2,8 @@ import * as _ from "lodash";
 
 import Area from "./area";
 import Detect from "./detect";
-import Game from "./game";
+
+import type Game from "./game";
 
 class AudioManager {
   isMusicEnabled: boolean;

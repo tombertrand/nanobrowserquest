@@ -3,8 +3,9 @@ import * as _ from "lodash";
 import { Types } from "../../shared/js/gametypes";
 import Area from "./area";
 import Detect from "./detect";
-import Game from "./game";
 import { isInt } from "./utils";
+
+import type Game from "./game";
 
 class Map {
   game: Game;

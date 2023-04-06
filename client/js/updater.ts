@@ -1,8 +1,9 @@
 import { Types } from "../../shared/js/gametypes";
 import Character from "./character";
-import Game from "./game";
 import Spell from "./spell";
 import Timer from "./timer";
+
+import type Game from "./game";
 
 class Updater {
   game: Game;

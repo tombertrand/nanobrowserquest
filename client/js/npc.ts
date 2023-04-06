@@ -5,7 +5,8 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../shared/js/types/achievements";
 import Character from "./character";
-import Game from "./game";
+
+import type  Game from "./game";
 
 var NpcTalk = {
   guard: [

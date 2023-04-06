@@ -127,9 +127,10 @@ module.exports = {
       filename: "index_ban.html",
       template: "./client/index_ban.html",
     }),
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV !== "development"
       ? new WebpackObfuscator(
           {
+            ignoreImports: true,
             rotateStringArray: true,
           },
           ["*vendor*.js"],
