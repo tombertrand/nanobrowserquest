@@ -952,6 +952,8 @@ class Player extends Character {
             self.send(new Messages.StoneLevelInProgress(self.server.stoneLevelClock).serialize());
           } else if (y >= 744 && y <= 781 && x <= 29) {
             self.send(new Messages.GatewayLevelInProgress(self.server.gatewayLevelClock).serialize());
+          } else if (y >= 744 && x >= 84) {
+            self.send(new Messages.TempleLevelInProgress(self.server.templeLevelClock).serialize());
           }
         }
       } else if (action === Types.Messages.BOSS_CHECK) {
@@ -2800,8 +2802,8 @@ class Player extends Character {
         this.updatePosition();
       } else {
         if (x >= 84 && y >= 744 && !this.server.templeLevelClock) {
-          x = 43;
-          y = 583;
+          x = randomInt(40, 46);
+          y = randomInt(581, 585);
         }
         this.setPosition(x, y);
       }

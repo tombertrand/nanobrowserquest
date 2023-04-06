@@ -752,23 +752,24 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     return false;
   }
 
-  if (!socket?.length || socket?.length < 3) {
+  const maxRerollSocket = Types.isUnique(item, bonus) ? 4 : 3;
+
+  if (socket?.length && socket.filter(slot => slot !== 0).length) {
+    let lastSocketIndex = socket.findIndex(i => i === 0);
+    if (lastSocketIndex === -1) {
+      lastSocketIndex = socket.length;
+    }
+
+    // @NOTE 50% to get back the socketed rune/jewel
+    extractedItem = random(2) === 1 ? socket[lastSocketIndex - 1] : null;
+    socket[lastSocketIndex - 1] = 0;
+  } else if (!socket?.length || socket?.length < maxRerollSocket) {
     const kind = Types.getKindFromString(item);
     const baseLevel = Types.getBaseLevel(kind);
 
     socket = getRandomSockets({ kind, baseLevel, isLuckySlot });
     socketCount = socket.length;
     isNewSocketItem = true;
-  } else if (socket?.length && socket.filter(slot => slot !== 0).length) {
-    let lastSocketIndex = socket.findIndex(i => i === 0);
-    if (lastSocketIndex === -1) {
-      lastSocketIndex = socket.length;
-    }
-
-    // @NOTE 10% to get back the socketed rune/jewel
-    extractedItem = random(2) === 1 ? socket[lastSocketIndex - 1] : null;
-
-    socket[lastSocketIndex - 1] = 0;
   } else {
     return false;
   }

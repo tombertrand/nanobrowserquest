@@ -127,11 +127,13 @@ module.exports = {
       filename: "index_ban.html",
       template: "./client/index_ban.html",
     }),
-    new WebpackObfuscator(
-      {
-        rotateStringArray: true,
-      },
-      ["*vendor*.js"],
-    ),
+    process.env.NODE_ENV === "production"
+      ? new WebpackObfuscator(
+          {
+            rotateStringArray: true,
+          },
+          ["*vendor*.js"],
+        )
+      : undefined,
   ].filter(Boolean),
 };

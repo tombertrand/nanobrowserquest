@@ -4812,10 +4812,6 @@ class Game {
       self.client.onReceiveTempleLevelInProgress(function (levelClock) {
         var selectedDate = new Date().valueOf() + levelClock * 1000;
 
-        if (self.player.level < 65) {
-          self.player.die();
-        }
-
         $("#countdown")
           .countdown(selectedDate.toString())
           .on("update.countdown", function (event) {

@@ -2249,7 +2249,7 @@ class World {
         }
       }
 
-      if (mob.kind >= Types.Entities.WRAITH2) {
+      if (mob.kind >= Types.Entities.SPIDERQUEEN) {
         if (superUniqueRandom === 133) {
           return "amuletmoon";
         } else if (superUniqueRandom === 420) {
@@ -2257,18 +2257,12 @@ class World {
         } else if (superUniqueRandom === 555) {
           return "ringheaven";
         }
-      } else if (mob.kind >= Types.Entities.SPIDERQUEEN) {
-        if (superUniqueRandom === 333) {
-          return "amuletdragon";
-        }
       }
 
       if (superUniqueRandom === 111) {
         return "ringbalrog";
       } else if (superUniqueRandom === 222) {
         return "ringconqueror";
-      } else if (superUniqueRandom === 444) {
-        return "ringheaven";
       } else if (superUniqueRandom === 6969) {
         return "amuletstar";
       }
