@@ -627,6 +627,17 @@ var Properties: any = {
     armor: 22,
     weapon: 26,
   },
+  templeMob: {
+    drops: {
+      rejuvenationpotion: 15,
+      scrollupgradelegendary: 4,
+      mysticalsword: 2,
+      mysticalarmor: 2,
+      beltmystical: 2,
+      shieldmystical: 2,
+      ringmystical: 1,
+    },
+  },
   shaman: {
     drops: {
       scrollupgradelegendary: 70,
@@ -644,21 +655,15 @@ var Properties: any = {
   },
   worm: {
     drops: {
-      scrollupgradelegendary: 78,
-      mysticalsword: 5,
-      mysticalarmor: 5,
-      beltmystical: 5,
-      shieldmystical: 5,
-      ringmystical: 2,
+      powdergold: 100,
     },
     hp: 15_000,
     armor: 32,
-    weapon: 35,
+    weapon: 32,
   },
   deathangel: {
     drops: {
-      scrollupgradelegendary: 75,
-      scrollupgradesacred: 1,
+      scrollupgradelegendary: 76,
       mysticalsword: 5,
       mysticalarmor: 5,
       beltmystical: 5,

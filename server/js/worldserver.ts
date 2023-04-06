@@ -90,6 +90,8 @@ class World {
   secretStairsRightTemplarNpcId: number;
   chaliceLevelClock: number;
   chaliceLevelInterval: NodeJS.Timeout;
+  templeLevelClock: number;
+  templeLevelInterval: NodeJS.Timeout;
   altarChaliceNpcId: number;
   altarSoulStoneNpcId: number;
   handsNpcId: number;
@@ -121,6 +123,10 @@ class World {
   mageTotal: number;
   mageEntityIds: string[];
   magePossibleCoords: { x: number; y: number }[];
+  worm: any;
+  mageTempleTotal: number;
+  mageTempleEntityIds: string[];
+  mageTemplePossibleCoords: { x: number; y: number }[];
   gateTempleNpcId: number;
   gateSubTempleNpcId: number;
 
@@ -242,6 +248,10 @@ class World {
     this.mageTotal = 0;
     this.mageEntityIds = [];
     this.magePossibleCoords = [];
+    this.worm = null;
+    this.mageTempleTotal = 0;
+    this.mageTempleEntityIds = [];
+    this.mageTemplePossibleCoords = [];
     this.gateTempleNpcId = null;
     this.gateSubTempleNpcId = null;
 
@@ -1056,7 +1066,7 @@ class World {
 
     mageCoords.map(({ x, y }) => {
       const isShaman = x === this.shamanCoords.x && y === this.shamanCoords.y;
-      const mageCount = isShaman ? 1 : Math.ceil(randomRange(1, 4));
+      const mageCount = isShaman ? 1 : Math.ceil(randomRange(2, 4));
 
       this.mageTotal += mageCount;
 
@@ -1108,6 +1118,81 @@ class World {
 
     // Despawn all mages
     this.mageEntityIds.map(entityId => {
+      delete this.entities[entityId];
+      delete this.mobs[entityId];
+    });
+  }
+
+  startTempleLevel() {
+    this.templeLevelClock = 15 * 60; // 15 minutes
+    this.mageTempleTotal = 1; // count the Worm
+
+    const gate = this.npcs[this.gateTempleNpcId];
+    gate.deactivate();
+    this.despawn(gate);
+
+    this.pushBroadcast(new Messages.TempleLevelStart());
+
+    if (this.worm.isDead) {
+      this.worm.handleRespawn(0);
+    }
+
+    let count = 0;
+    this.mageTemplePossibleCoords.map(({ x, y }) => {
+      const mageCount = Math.ceil(randomRange(2, 4));
+
+      this.mageTempleTotal += mageCount;
+
+      const kind = _.shuffle([Types.Entities.MAGE, Types.Entities.SKELETONARCHER])[0];
+
+      for (let i = 0; i < mageCount; i++) {
+        const id = `7${kind}${count++}`;
+        const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
+        mob.isInsideTemple = true;
+        mob.onMove(this.onMobMoveCallback.bind(this));
+        mob.onDestroy(() => {
+          this.mageTempleTotal--;
+          if (this.mageTempleTotal === 0) {
+            clearInterval(this.templeLevelInterval);
+            setTimeout(() => {
+              // @TODO ~~~~ only return when the DeathAngel dies
+              // Return everyone outside the temple, leave 5s to loot any last drop
+              this.endTempleLevel();
+            }, 5000);
+          }
+        });
+
+        this.addMob(mob);
+        this.mageTempleEntityIds.push(id);
+      }
+    });
+
+    this.templeLevelInterval = setInterval(() => {
+      this.templeLevelClock -= 1;
+      if (this.templeLevelClock < 0) {
+        clearInterval(this.templeLevelInterval);
+        this.endTempleLevel();
+      }
+    }, 1000);
+  }
+
+  endTempleLevel() {
+    this.templeLevelInterval = null;
+    this.templeLevelClock = null;
+
+    // respawn gate!!
+    // const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
+    // this.despawn(secretStairs);
+
+    const gate = this.npcs[this.gateTempleNpcId];
+    gate.activate();
+    // gate.handleRespawn(0);
+    gate.respawnCallback();
+
+    this.pushBroadcast(new Messages.TempleLevelEnd());
+
+    // Despawn all mages
+    this.mageTempleEntityIds.map(entityId => {
       delete this.entities[entityId];
       delete this.mobs[entityId];
     });
@@ -1558,13 +1643,7 @@ class World {
     lever.activate();
 
     if (lever.id === this.leverChaliceNpcId) {
-      // @TODO ~~~~ de-activate lever and shut down the temple door on DeathAngel death
-
-      if (player.name === "running-coder") {
-        const gate = this.npcs[this.gateTempleNpcId];
-        gate.deactivate();
-        this.despawn(gate);
-      }
+      this.startTempleLevel();
     } else if (lever.id === this.leverLeftCryptNpcId) {
       const secretStairs = this.npcs[this.secretStairsLeftTemplarNpcId];
       secretStairs.respawnCallback();
@@ -1839,6 +1918,8 @@ class World {
           self.archerPossibleCoords.push({ x: pos.x + 1, y: pos.y });
         } else if (kind === Types.Entities.MAGE && pos.x < 29 && pos.y >= 696 && pos.y <= 734) {
           self.magePossibleCoords.push({ x: pos.x + 1, y: pos.y });
+        } else if (kind === Types.Entities.MAGE && pos.x > 112 && pos.y >= 744) {
+          self.mageTemplePossibleCoords.push({ x: pos.x + 1, y: pos.y });
         } else if (kind === Types.Entities.SHAMAN && pos.x < 29 && pos.y >= 696 && pos.y <= 734) {
           self.shamanCoords = { x: pos.x + 1, y: pos.y };
         } else {
@@ -1879,6 +1960,18 @@ class World {
                 setTimeout(() => {
                   // Return everyone to stones, leave 5s to loot any last drop
                   self.endStoneLevel();
+                }, 5000);
+              }
+            });
+          } else if (kind === Types.Entities.WORM) {
+            self.worm = mob;
+            mob.onDestroy(() => {
+              self.mageTempleTotal--;
+              if (self.mageTempleTotal === 0) {
+                clearInterval(self.templeLevelInterval);
+                setTimeout(() => {
+                  // Return everyone to temple entrance, leave 5s to loot any last drop
+                  self.endTempleLevel();
                 }, 5000);
               }
             });
@@ -1995,7 +2088,8 @@ class World {
   getDroppedItemName(mob, attacker) {
     const mobLevel = Types.getMobLevel(mob.kind);
     const kind = Types.getKindAsString(mob.kind);
-    const drops = Properties[kind].drops;
+    const drops = mob.isInsideTemple ? Properties.templeMob.drops : Properties[kind].drops;
+
     const v = random(100) + 1;
     let p = 0;
     let itemKind = null;
@@ -2296,6 +2390,8 @@ class World {
       postMessageToDiscordEventChannel(`${attacker.name} slained Gorefiend the Butcher 🩸`);
     } else if (mob.kind === Types.Entities.SHAMAN) {
       postMessageToDiscordEventChannel(`${attacker.name} slained Zul'Gurak 🧙`);
+    } else if (mob.kind === Types.Entities.WORM) {
+      postMessageToDiscordEventChannel(`${attacker.name} slained Shai-Hulud 🪱`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
       postMessageToDiscordEventChannel(`${attacker.name} slained Azrael 💀`);
     }

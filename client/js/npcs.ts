@@ -253,9 +253,9 @@ var Npcs = {
     constructor(id) {
       super(id, Types.Entities.SECRETSTAIRS2);
     }
-    // hasShadow() {
-    //   return false;
-    // }
+    hasShadow() {
+      return false;
+    }
   },
 
   SecretStairsUp: class SecretStairsUp extends Npc {
@@ -433,6 +433,16 @@ var Npcs = {
   Trap3: class Trap3 extends Npc {
     constructor(id) {
       super(id, Types.Entities.TRAP3);
+      this.isFading = false;
+    }
+    hasShadow() {
+      return false;
+    }
+  },
+
+  DoorDeathAngel: class DoorDeathAngel extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.DOORDEATHANGEL);
       this.isFading = false;
     }
     hasShadow() {

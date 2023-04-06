@@ -37,6 +37,16 @@ module.exports = {
         },
       }),
     ],
+    runtimeChunk: "single",
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          // chunks: "all",
+        },
+      },
+    },
   },
   module: {
     rules: [
@@ -121,7 +131,7 @@ module.exports = {
       {
         rotateStringArray: true,
       },
-      ["excluded_bundle_name.js"],
+      ["*vendor*.js"],
     ),
-  ],
+  ].filter(Boolean),
 };

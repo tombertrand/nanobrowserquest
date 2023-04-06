@@ -491,6 +491,7 @@ class Game {
       "trap",
       "trap2",
       "trap3",
+      "doordeathangel",
       "blueflame",
       "beachnpc",
       "forestnpc",
@@ -2509,7 +2510,8 @@ class Game {
           entity.kind === Types.Entities.TOMBANGEL ||
           entity.kind === Types.Entities.TOMBCROSS ||
           entity.kind === Types.Entities.TOMBSKULL ||
-          entity.kind === Types.Entities.GRIMOIRE
+          entity.kind === Types.Entities.GRIMOIRE ||
+          entity.kind === Types.Entities.DOORDEATHANGEL
         ) {
           this.entityGrid[y][x + 1][entity.id] = entity;
           this.pathingGrid[y][x + 1] = 1;
@@ -2519,7 +2521,7 @@ class Game {
           this.pathingGrid[y][x + 2] = 1;
         }
 
-        if (entity.kind === Types.Entities.GRIMOIRE) {
+        if (entity.kind === Types.Entities.GRIMOIRE || entity.kind === Types.Entities.DOORDEATHANGEL) {
           this.entityGrid[y - 1][x][entity.id] = entity;
           this.entityGrid[y - 1][x + 1][entity.id] = entity;
           this.pathingGrid[y - 1][x] = 1;
@@ -3493,6 +3495,7 @@ class Game {
                     Types.Entities.SPIDERQUEEN,
                     Types.Entities.BUTCHER,
                     Types.Entities.SHAMAN,
+                    Types.Entities.WORM,
                     Types.Entities.DEATHANGEL,
                   ].includes(entity.kind);
 
@@ -4802,6 +4805,50 @@ class Game {
         }
       });
 
+      self.client.onReceiveTempleLevelStart(function () {
+        // @NOTE TBD?
+      });
+
+      self.client.onReceiveTempleLevelInProgress(function (levelClock) {
+        var selectedDate = new Date().valueOf() + levelClock * 1000;
+
+        if (self.player.level < 65) {
+          self.player.die();
+        }
+
+        $("#countdown")
+          .countdown(selectedDate.toString())
+          .on("update.countdown", function (event) {
+            // @ts-ignore
+            $(this).html(event.strftime("%M:%S"));
+          })
+          .on("finish.countdown", function () {
+            $(this).html("The secret level closed.");
+
+            setTimeout(() => {
+              $(this).html("");
+            }, 5000);
+          });
+      });
+
+      self.client.onReceiveTempleLevelEnd(function () {
+        $("#countdown").countdown(0);
+        $("#countdown").countdown("remove");
+
+        if (self.player.gridY >= 744 && self.player.gridX >= 84) {
+          const x = randomInt(40, 46);
+          const y = randomInt(581, 585);
+
+          self.player.stop_pathing_callback({ x, y, isWaypoint: true });
+        }
+
+        // const entity = self.altarChaliceNpcId ? self.getEntityById(self.altarChaliceNpcId) : null;
+        // if (entity) {
+        //   entity.isActivated = false;
+        //   entity.idle();
+        // }
+      });
+
       self.client.onReceiveStoneLevelStart(function () {
         self.stonePortalStart = true;
         setTimeout(() => {
@@ -5334,6 +5381,9 @@ class Game {
         } else if (npc.gridX === 41 && npc.gridY === 729) {
           // Tree
           this.player.stop_pathing_callback({ x: 18, y: 642, isWaypoint: true });
+        } else if (npc.gridX === 159 && npc.gridY === 778) {
+          // Temple
+          this.player.stop_pathing_callback({ x: 43, y: 582, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.GRIMOIRE) {
         this.tryUnlockingAchievement("GRIMOIRE");

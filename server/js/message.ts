@@ -134,6 +134,27 @@ Messages.ChaliceLevelEnd = class Message {
   }
 };
 
+Messages.TempleLevelStart = class Message {
+  constructor(private coords) {}
+  serialize() {
+    return [Types.Messages.TEMPLELEVEL_START];
+  }
+};
+
+Messages.TempleLevelInProgress = class Message {
+  constructor(private levelClock) {}
+  serialize() {
+    return [Types.Messages.TEMPLELEVEL_INPROGRESS, this.levelClock];
+  }
+};
+
+Messages.TempleLevelEnd = class Message {
+  constructor() {}
+  serialize() {
+    return [Types.Messages.TEMPLELEVEL_END];
+  }
+};
+
 Messages.StoneLevelStart = class Message {
   constructor(private coords) {}
   serialize() {

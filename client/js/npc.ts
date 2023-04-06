@@ -301,6 +301,7 @@ var NpcTalk = {
   trap: [""],
   trap2: [""],
   trap3: [""],
+  doordeathangel: [""],
   statue: [""],
   statue2: [""],
 

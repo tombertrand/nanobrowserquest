@@ -173,6 +173,9 @@ export const Types: any = {
     CHALICELEVEL_START: 96,
     CHALICELEVEL_INPROGRESS: 97,
     CHALICELEVEL_END: 98,
+    TEMPLELEVEL_START: 114,
+    TEMPLELEVEL_INPROGRESS: 115,
+    TEMPLELEVEL_END: 116,
     LEVER: 99,
     TREE: 100,
     TRAP: 101,
@@ -222,24 +225,24 @@ export const Types: any = {
     OCULOTHORAX: 218,
     KOBOLD: 228,
     GOLEM: 231,
-    WORM: 232,
-    SNAKE3: 235,
-    SNAKE4: 236,
-    SKELETON4: 237,
-    GHOST: 243,
-    SKELETONBERSERKER: 247,
-    SKELETONTEMPLAR: 248,
-    SKELETONTEMPLAR2: 263,
-    SPIDER: 264,
-    SPIDER2: 277,
-    SPIDERQUEEN: 278,
-    SKELETONARCHER: 279,
-    ARROW: 280,
-    BUTCHER: 281,
-    WRAITH2: 292,
-    MAGE: 293,
-    MAGESPELL: 294,
-    SHAMAN: 295,
+    SNAKE3: 232,
+    SNAKE4: 235,
+    SKELETON4: 236,
+    GHOST: 237,
+    SKELETONBERSERKER: 243,
+    SKELETONTEMPLAR: 247,
+    SKELETONTEMPLAR2: 248,
+    SPIDER: 263,
+    SPIDER2: 264,
+    SPIDERQUEEN: 277,
+    SKELETONARCHER: 278,
+    ARROW: 279,
+    BUTCHER: 280,
+    WRAITH2: 281,
+    MAGE: 292,
+    MAGESPELL: 293,
+    SHAMAN: 294,
+    WORM: 295,
     STATUE: 296,
     STATUE2: 297,
     STATUESPELL: 298,
@@ -433,6 +436,7 @@ export const Types: any = {
     TRAP: 265,
     TRAP2: 266,
     TRAP3: 267,
+    DOORDEATHANGEL: 308,
 
     // Weapons
     DAGGER: 60,
@@ -1012,6 +1016,7 @@ export const kinds = {
   trap3: [Types.Entities.TRAP3, "npc"],
   statue: [Types.Entities.STATUE, "npc"],
   statue2: [Types.Entities.STATUE2, "npc"],
+  doordeathangel: [Types.Entities.DOORDEATHANGEL, "npc"],
 
   getType: function (kind) {
     return kinds[Types.getKindAsString(kind)][1];
@@ -1095,8 +1100,8 @@ Types.itemUniqueMap = {
   executionersword: ["The Granfather", 52, 60],
   templarsword: ["Panic Sell", 54, 62],
   dragonsword: ["Balerion the Black Dread", 56, 62],
-  mysticalsword: ["The Maximalist", 58, 66],
   moonsword: ["Moon Boy", 61, 68],
+  mysticalsword: ["The Maximalist", 58, 66],
   spikeglaive: ["WAGMI", 62, 68],
   eclypsedagger: ["Ethereum Killer", 62, 68],
   demonaxe: ["Trustable", 62, 68],
@@ -1136,9 +1141,9 @@ Types.itemUniqueMap = {
   shieldexecutioner: ["Clownbase", 54, 44],
   shieldtemplar: ["NanoStrategy", 56, 48],
   shielddragon: ["Airdrop", 56, 48],
-  shielddemon: ["ORV > POW", 58, 50],
   shieldmoon: ["Fear Uncertainty Doubt", 58, 50],
-  shieldmystical: ["", 58, 50],
+  shielddemon: ["ORV > POW", 58, 50],
+  shieldmystical: ["Developer Fund", 58, 50],
 
   cape: ["Cloak of Levitation", 12, 2],
 
@@ -1271,6 +1276,7 @@ Types.isBoss = function (kindOrString: number | string) {
       Types.Entities.SPIDERQUEEN,
       Types.Entities.BUTCHER,
       Types.Entities.SHAMAN,
+      Types.Entities.WORM,
       Types.Entities.DEATHANGEL,
     ].includes(kindOrString);
   } else {
@@ -1283,6 +1289,7 @@ Types.isBoss = function (kindOrString: number | string) {
       "spiderqueen",
       "butcher",
       "shaman",
+      "worm",
       "deathangel",
     ].includes(kindOrString);
   }
@@ -1721,6 +1728,10 @@ Types.getAliasFromName = function (name: string) {
     return "Gorefiend the Butcher";
   } else if (name === "shaman") {
     return "Zul'Gurak";
+  } else if (name === "worm") {
+    return "Shai-Hulud";
+  } else if (name === "doordeathangel") {
+    return "The Gates of Azrael";
   } else if (name === "deathangel") {
     return "Azrael";
   }

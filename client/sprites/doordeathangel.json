@@ -1,0 +1,21 @@
+{
+  "id": "doordeathangel",
+  "width": 97,
+  "height": 90,
+  "animations": {
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    },
+    "raise_down": {
+      "length": 18,
+      "row": 1
+    },
+    "walk_down": {
+      "length": 1,
+      "row": 2
+    }
+  },
+  "offset_x": -33,
+  "offset_y": -45
+}

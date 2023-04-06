@@ -30,6 +30,7 @@ class Mob extends Character {
   element: Elements;
   enchants: Enchant[];
   hasTaunted: boolean;
+  isInsideTemple: boolean;
 
   constructor(id, kind, x, y) {
     super(id, "mob", kind, x, y);
@@ -50,6 +51,7 @@ class Mob extends Character {
     this.resistances = Types.getResistance(this);
     this.enchants = null;
     this.hasTaunted = false;
+    this.isInsideTemple = false;
 
     this.handleRandomElement();
     this.handleRandomResistances();
@@ -101,9 +103,13 @@ class Mob extends Character {
     const enchants: Enchant[] = ["magic", "flame", "lightning", "cold", "poison", "spectral", "physical", "stoneskin"];
 
     if (
-      [Types.Entities.SPIDERQUEEN, Types.Entities.BUTCHER, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(
-        this.kind,
-      )
+      [
+        Types.Entities.SPIDERQUEEN,
+        Types.Entities.BUTCHER,
+        Types.Entities.SHAMAN,
+        Types.Entities.WORM,
+        Types.Entities.DEATHANGEL,
+      ].includes(this.kind)
     ) {
       // Add 2 random extra enchant
       const extraEnchants = _.shuffle(enchants.filter(enchant => !this.enchants.includes(enchant))).slice(0, 2);
@@ -175,15 +181,18 @@ class Mob extends Character {
         Types.Entities.SKELETONTEMPLAR,
         Types.Entities.SKELETONTEMPLAR2,
         Types.Entities.MAGE,
-        Types.Entities.SHAMAN,
         Types.Entities.WRAITH2,
       ].includes(this.kind)
     ) {
       this.assignRandomResistances(2);
     } else if (
-      [Types.Entities.SPIDERQUEEN, Types.Entities.BUTCHER, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(
-        this.kind,
-      )
+      [
+        Types.Entities.SPIDERQUEEN,
+        Types.Entities.BUTCHER,
+        Types.Entities.SHAMAN,
+        Types.Entities.WORM,
+        Types.Entities.DEATHANGEL,
+      ].includes(this.kind)
     ) {
       this.assignRandomResistances(3);
     }
@@ -205,6 +214,7 @@ class Mob extends Character {
         Types.Entities.MINOTAUR,
         Types.Entities.SPIDERQUEEN,
         Types.Entities.BUTCHER,
+        Types.Entities.WORM,
         Types.Entities.DEATHANGEL,
       ].includes(this.kind)
     ) {

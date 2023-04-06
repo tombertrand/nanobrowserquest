@@ -2799,6 +2799,10 @@ class Player extends Character {
       if (!x || !y) {
         this.updatePosition();
       } else {
+        if (x >= 84 && y >= 744 && !this.server.templeLevelClock) {
+          x = 43;
+          y = 583;
+        }
         this.setPosition(x, y);
       }
 

@@ -88,6 +88,9 @@ class GameClient {
   receivechalicelevelstart_callback: any;
   receivechalicelevelinprogress_callback: any;
   receivechalicelevelend_callback: any;
+  receivetemplelevelstart_callback: any;
+  receivetemplelevelinprogress_callback: any;
+  receivetemplelevelend_callback: any;
   receivestonelevelstart_callback: any;
   receivestonelevelinprogress_callback: any;
   receivestonelevelend_callback: any;
@@ -164,6 +167,9 @@ class GameClient {
     this.handlers[Types.Messages.CHALICELEVEL_START] = this.receiveChaliceLevelStart;
     this.handlers[Types.Messages.CHALICELEVEL_INPROGRESS] = this.receiveChaliceLevelInProgress;
     this.handlers[Types.Messages.CHALICELEVEL_END] = this.receiveChaliceLevelEnd;
+    this.handlers[Types.Messages.TEMPLELEVEL_START] = this.receiveTempleLevelStart;
+    this.handlers[Types.Messages.TEMPLELEVEL_INPROGRESS] = this.receiveTempleLevelInProgress;
+    this.handlers[Types.Messages.TEMPLELEVEL_END] = this.receiveTempleLevelEnd;
     this.handlers[Types.Messages.STONELEVEL_START] = this.receiveStoneLevelStart;
     this.handlers[Types.Messages.STONELEVEL_INPROGRESS] = this.receiveStoneLevelInProgress;
     this.handlers[Types.Messages.STONELEVEL_END] = this.receiveStoneLevelEnd;
@@ -837,6 +843,20 @@ class GameClient {
     this.receivechalicelevelend_callback?.();
   }
 
+  receiveTempleLevelStart() {
+    this.receivetemplelevelstart_callback?.();
+  }
+
+  receiveTempleLevelInProgress(data) {
+    const levelClock = data[1];
+
+    this.receivetemplelevelinprogress_callback?.(levelClock);
+  }
+
+  receiveTempleLevelEnd() {
+    this.receivetemplelevelend_callback?.();
+  }
+
   receiveStoneLevelStart() {
     this.receivestonelevelstart_callback?.();
   }
@@ -1191,6 +1211,19 @@ class GameClient {
   onReceiveChaliceLevelEnd(callback) {
     this.receivechalicelevelend_callback = callback;
   }
+
+  onReceiveTempleLevelStart(callback) {
+    this.receivetemplelevelstart_callback = callback;
+  }
+
+  onReceiveTempleLevelInProgress(callback) {
+    this.receivetemplelevelinprogress_callback = callback;
+  }
+
+  onReceiveTempleLevelEnd(callback) {
+    this.receivetemplelevelend_callback = callback;
+  }
+
 
   onReceiveStoneLevelStart(callback) {
     this.receivestonelevelstart_callback = callback;

@@ -139,6 +139,13 @@ export const mobResistance = {
     coldResistance: 30,
     poisonResistance: 30,
   },
+  worm: {
+    magicResistance: 70,
+    flameResistance: 55,
+    lightningResistance: 60,
+    coldResistance: 60,
+    poisonResistance: 40,
+  },
   deathangel: {
     magicResistance: 100,
     flameResistance: 100,

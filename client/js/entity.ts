@@ -152,7 +152,8 @@ class Entity {
           this.kind === Types.Entities.LEVER2 ||
           this.kind === Types.Entities.STATUE ||
           this.kind === Types.Entities.STATUE2 ||
-          this.kind === Types.Entities.ALTARSOULSTONE
+          this.kind === Types.Entities.ALTARSOULSTONE ||
+          this.kind === Types.Entities.DOORDEATHANGEL
         ) {
           this.currentAnimation.setSpeed(100);
         } else if (

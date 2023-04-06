@@ -142,6 +142,7 @@ import tree from "../sprites/tree.json";
 import trap from "../sprites/trap.json";
 import trap2 from "../sprites/trap.json";
 import trap3 from "../sprites/trap.json";
+import doordeathangel from "../sprites/doordeathangel.json";
 import altarchalice from "../sprites/altarchalice.json";
 import altarsoulstone from "../sprites/altarsoulstone.json";
 import blueflame from "../sprites/blueflame.json";
@@ -543,6 +544,7 @@ const sprites = {
   trap,
   trap2,
   trap3,
+  doordeathangel,
   ogre,
   yeti,
   werewolf,

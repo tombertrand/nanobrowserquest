@@ -531,7 +531,7 @@ export const generateRedChestItem = (): { item: string; uniqueChances?: number }
   return category[randomItem];
 };
 
-export const generatePurpleChestItem = (): { item: string; uniqueChances?: number } => {
+export const generatePurpleChestItem = (): { item: string; uniqueChances?: number; quantity?: number } => {
   // 50%
   const items = [
     { item: "moonsword", uniqueChances: 10 },
@@ -543,14 +543,15 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
     { item: "beltmystical", uniqueChances: 10 },
     { item: "shieldmystical", uniqueChances: 10 },
     { item: "paladinarmor", uniqueChances: 10 },
-    { item: "cape", uniqueChances: 5 },
+    { item: "paladinaxe", uniqueChances: 10 },
+    { item: "immortalsword", uniqueChances: 10 },
+    { item: "cape", uniqueChances: 10 },
   ];
 
-  // 40%
+  // 20%
   const scrolls = [
     { item: "scrollupgradelegendary" },
     { item: "scrollupgradesacred" },
-    { item: "scrolltransmute" },
     { item: "stonesocket" },
     { item: "stonedragon" },
     { item: "jewelskull" },
@@ -558,7 +559,6 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
 
   // 10%
   const ringOrAmulets = [
-    { item: "ringplatinum" },
     { item: "ringconqueror" },
     { item: "ringheaven" },
     { item: "ringwizard" },
@@ -567,18 +567,20 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
     { item: "amuletmoon" },
   ];
 
+  // Rune 20%
+
   const randomCategory = random(100);
-  let category: any = items;
 
-  if (randomCategory < 10) {
-    category = ringOrAmulets;
+  if (randomCategory < 20) {
+    const rune = getRandomRune(70, 13);
+
+    return { item: `rune-${rune}`, quantity: 1 };
+  } else if (randomCategory < 30) {
+    return _.shuffle(ringOrAmulets)[0];
   } else if (randomCategory < 50) {
-    category = scrolls;
+    return _.shuffle(scrolls)[0];
   }
-
-  const randomItem = random(category.length);
-
-  return category[randomItem];
+  return _.shuffle(items)[0];
 };
 
 export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
@@ -746,23 +748,18 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     // no socket, silence error
   }
 
-  if (
-    stoneIndex === -1 ||
-    itemIndex === -1 ||
-    !Types.isSocketItem(item) ||
-    (socket?.length && !socket.filter(slot => slot !== 0).length)
-  ) {
+  if (stoneIndex === -1 || itemIndex === -1 || !Types.isSocketItem(item)) {
     return false;
   }
 
-  if (!socket?.length) {
+  if (!socket?.length || socket?.length < 3) {
     const kind = Types.getKindFromString(item);
     const baseLevel = Types.getBaseLevel(kind);
 
     socket = getRandomSockets({ kind, baseLevel, isLuckySlot });
     socketCount = socket.length;
     isNewSocketItem = true;
-  } else {
+  } else if (socket?.length && socket.filter(slot => slot !== 0).length) {
     let lastSocketIndex = socket.findIndex(i => i === 0);
     if (lastSocketIndex === -1) {
       lastSocketIndex = socket.length;
@@ -772,6 +769,8 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     extractedItem = random(2) === 1 ? socket[lastSocketIndex - 1] : null;
 
     socket[lastSocketIndex - 1] = 0;
+  } else {
+    return false;
   }
 
   const socketItem = [item, level, bonus || "[]", JSON.stringify(socket), skill].filter(Boolean).join(":");
@@ -934,7 +933,6 @@ export const generateSoulStoneItem = () => {
     { item: "paladinaxe", uniqueChances: 10 },
     { item: "spikeglaive", uniqueChances: 10 },
     { item: "eclypsedagger", uniqueChances: 10 },
-    { item: "immortalsword", uniqueChances: 10 },
   ];
 
   // 15%
@@ -957,7 +955,7 @@ export const generateSoulStoneItem = () => {
 
   const randomCategory = random(100);
 
-  if (randomCategory < 10) {
+  if (randomCategory < 20) {
     const rune = getRandomRune(70, 13);
 
     return { item: `rune-${rune}`, quantity: 1 };

@@ -1155,4 +1155,8 @@ EntityFactory.builders[Types.Entities.TRAP3] = function (id) {
   return new Npcs.Trap3(id);
 };
 
+EntityFactory.builders[Types.Entities.DOORDEATHANGEL] = function (id) {
+  return new Npcs.DoorDeathAngel(id);
+};
+
 export default EntityFactory;
