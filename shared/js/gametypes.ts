@@ -170,6 +170,7 @@ export const Types: any = {
     MAGICSTONE: 93,
     ALTARCHALICE: 94,
     ALTARSOULSTONE: 95,
+    SOULSTONE: 117,
     CHALICELEVEL_START: 96,
     CHALICELEVEL_INPROGRESS: 97,
     CHALICELEVEL_END: 98,
@@ -354,6 +355,7 @@ export const Types: any = {
     SCROLLUPGRADEBLESSED: 118,
     SCROLLUPGRADESACRED: 206,
     SCROLLTRANSMUTE: 142,
+    SCROLLTRANSMUTEBLESSED: 309,
     STONESOCKET: 192,
     STONEDRAGON: 240,
     STONEHERO: 241,
@@ -898,6 +900,7 @@ export const kinds = {
   scrollupgradeblessed: [Types.Entities.SCROLLUPGRADEBLESSED, "scroll", "Blessed upgrade scroll", 15],
   scrollupgradesacred: [Types.Entities.SCROLLUPGRADESACRED, "scroll", "Sacred upgrade scroll", 40],
   scrolltransmute: [Types.Entities.SCROLLTRANSMUTE, "scroll", "Transmute scroll", 30],
+  scrolltransmuteblessed: [Types.Entities.SCROLLTRANSMUTEBLESSED, "scroll", "Blesed transmute scroll", 60],
   stonesocket: [Types.Entities.STONESOCKET, "stone", "Socket Stone", 51],
   stonedragon: [Types.Entities.STONEDRAGON, "stone", "Dragon Stone", 60],
   stonehero: [Types.Entities.STONEHERO, "stone", "Hero Emblem", 65],
@@ -1314,6 +1317,7 @@ Types.isScroll = function (kindOrString: number | string) {
       Types.Entities.SCROLLUPGRADEBLESSED,
       Types.Entities.SCROLLUPGRADESACRED,
       Types.Entities.SCROLLTRANSMUTE,
+      Types.Entities.SCROLLTRANSMUTEBLESSED,
     ].includes(kindOrString);
   } else {
     return kindOrString?.startsWith("scroll");
@@ -2198,7 +2202,7 @@ Types.getBlessedSuccessRateBonus = () => {
   return [0, 0, 10, 8, 6, 5, 3, 2, 1];
 };
 
-Types.getTransmuteSuccessRate = (item, bonus) => {
+Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
   const isUnique = Types.isUnique(item, bonus);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
@@ -2213,7 +2217,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
   const isUniqueCape = isCape && isUnique;
   const isUniqueShield = isShield && isUnique;
   const isUniqueWeapon = isWeapon && isUnique;
-  const isUniqueArmor = isShield && isUnique;
+  const isUniqueArmor = isArmor && isUnique;
 
   const uniqueSuccessRateMap = {
     goldensword: 20,
@@ -2279,7 +2283,7 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     amuletplatinum: 6,
   };
 
-  const transmuteSuccessRate = 80;
+  const transmuteSuccessRate = isBlessed ? 99 : 80;
 
   if (
     isUniqueRing ||
@@ -2293,8 +2297,8 @@ Types.getTransmuteSuccessRate = (item, bonus) => {
     return { transmuteSuccessRate, uniqueSuccessRate: 100 };
   } else if (!isUnique && uniqueSuccessRateMap[item]) {
     return {
-      uniqueSuccessRate: uniqueSuccessRateMap[item],
-      ...(isRing || isAmulet || isCape || isShield || isWeapon || isArmor || isBelt ? { transmuteSuccessRate } : null),
+      uniqueSuccessRate: uniqueSuccessRateMap[item] + (isBlessed ? 2 : 0),
+      ...(isRing || isAmulet || isCape || isShield || isWeapon || isArmor ? { transmuteSuccessRate } : null),
     };
   }
 
@@ -2666,7 +2670,9 @@ Types.itemDescription = {
   scrollupgradesacred:
     "Upgrade legendary class item. The chances for a successful upgrade varies depending on the item's level. Sacred scrolls gives a higher chance of successful upgrade.",
   scrolltransmute:
-    "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies.",
+    "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies. There is a 20% chance your item will be burned during the transmutation.",
+  scrolltransmuteblessed:
+    "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies. There is a 1% chance your item will be burned during the transmutation.",
   rune: "Can be inserted into a socketed item or create runewords",
   stonesocket:
     "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets, the stone will attempt to remove the last item from its socket. There is a 50% chance for the item to be burned.",

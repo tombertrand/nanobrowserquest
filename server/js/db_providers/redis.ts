@@ -996,7 +996,7 @@ class DatabaseHandler {
                 if (movedQuantity && movedQuantity > fromQuantity) return;
 
                 if (toLocation === "inventory" || toLocation === "stash" || toLocation === "trade") {
-                  let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(fromScroll));
+                  let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(`${fromScroll}:`));
 
                   if (toItemIndex === -1) {
                     // @note put the quantity, not found in toLocation
@@ -1125,7 +1125,7 @@ class DatabaseHandler {
 
               items.forEach((rawItem: GeneratedItem) => {
                 const { item, level, quantity, bonus, skill, socket } = rawItem;
-                let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(item)) : -1;
+                let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(`${item}:`)) : -1;
 
                 // Increase the scroll/rune count
                 if (slotIndex > -1) {

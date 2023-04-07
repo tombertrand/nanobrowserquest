@@ -12,7 +12,7 @@ var EntityFactory: any = {};
 
 EntityFactory.createEntity = function ({ kind, id, ...rest }) {
   if (!kind) {
-    console.error("kind is undefined", true);
+    console.error("kind is undefined");
     return;
   }
 
@@ -827,6 +827,10 @@ EntityFactory.builders[Types.Entities.SCROLLUPGRADESACRED] = function (id) {
 
 EntityFactory.builders[Types.Entities.SCROLLTRANSMUTE] = function (id) {
   return new Items.ScrollTransmute(id);
+};
+
+EntityFactory.builders[Types.Entities.SCROLLTRANSMUTEBLESSED] = function (id) {
+  return new Items.ScrollTransmuteBlessed(id);
 };
 
 EntityFactory.builders[Types.Entities.STONESOCKET] = function (id) {

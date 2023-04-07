@@ -316,14 +316,15 @@ export const isValidTransmuteItems = items => {
     return false;
   }
 
-  const transmuteRate = Types.getTransmuteSuccessRate(item, bonus);
-  if (!transmuteRate) {
+  const [scroll] = items[1].split(":");
+  const isScroll = ["scrolltransmute", "scrolltransmuteblessed"].includes(scroll);
+  if (!isScroll) {
     return false;
   }
 
-  const [scroll] = items[1].split(":");
-  const isScroll = scroll === "scrolltransmute";
-  if (!isScroll) {
+  const isBlessed = scroll === "scrolltransmuteblessed";
+  const transmuteRate = Types.getTransmuteSuccessRate(item, bonus, isBlessed);
+  if (!transmuteRate) {
     return false;
   }
 
@@ -506,6 +507,7 @@ export const generateRedChestItem = (): { item: string; uniqueChances?: number }
   const scrolls = [
     { item: "scrollupgradelegendary" },
     { item: "scrollupgradesacred" },
+    { item: "scrolluptransmuteblessed" },
     { item: "stonesocket" },
     { item: "jewelskull" },
   ];
@@ -537,7 +539,7 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
   // 50%
   const items = [
     { item: "moonsword", uniqueChances: 10 },
-    { item: "moonarmor", uniqueChances: 10 },
+    // { item: "moonarmor", uniqueChances: 10 },
     { item: "beltmoon", uniqueChances: 10 },
     { item: "shieldmoon", uniqueChances: 10 },
     { item: "mysticalsword", uniqueChances: 10 },
@@ -554,6 +556,7 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
   const scrolls = [
     { item: "scrollupgradelegendary" },
     { item: "scrollupgradesacred" },
+    { item: "scrolluptransmuteblessed" },
     { item: "stonesocket" },
     { item: "stonedragon" },
     { item: "jewelskull" },
@@ -661,7 +664,7 @@ export const isValidUpgradeRunes = items => {
   forEach(items, item => {
     const [scrollOrRune] = item.split(":");
 
-    if (!scrollOrRune.startsWith("scrollupgrade") && !scrollOrRune.startsWith("rune")) return false;
+    if (!scrollOrRune.startsWith("scrollupgrade") && !Types.isRune(scrollOrRune)) return false;
     if (scrollOrRune.startsWith("scrollupgrade")) {
       if (scrollClass) return false;
       scrollClass = Types.getItemClass(scrollOrRune);
@@ -677,7 +680,8 @@ export const isValidUpgradeRunes = items => {
     }
   });
 
-  if (runeClass !== scrollClass || !runeRank) return false;
+  if (!runeClass || !scrollClass || !runeRank) return false;
+  if (Types.itemClassRank(scrollClass) < Types.itemClassRank(runeClass)) return false;
   if (runeRank > 30) return false;
   if (runeRank < 18 && runeQuantity !== 3) return false;
   if (runeRank >= 18 && runeQuantity !== 2) return false;
@@ -920,13 +924,12 @@ export const getRandomRune = (mobLevel: number, minLevel?: number) => {
   return rune;
 };
 
-export const generateSoulStoneItem = () => {
+export const generateSoulStoneItem = (): { item: string; quantity?: number; uniqueChances?: number } => {
   // 50%
   const items = [
     { item: "moonsword", uniqueChances: 10 },
-    { item: "moonarmor", uniqueChances: 10 },
+    // { item: "moonarmor", uniqueChances: 10 },
     { item: "beltmoon", uniqueChances: 10 },
-    { item: "shieldmoon", uniqueChances: 10 },
     { item: "shieldmoon", uniqueChances: 10 },
     { item: "demonaxe", uniqueChances: 10 },
     { item: "demonarmor", uniqueChances: 10 },
@@ -939,7 +942,12 @@ export const generateSoulStoneItem = () => {
   ];
 
   // 15%
-  const scrolls = [{ item: "scrollupgradelegendary" }, { item: "scrollupgradesacred" }, { item: "stonedragon" }];
+  const scrolls = [
+    { item: "scrollupgradelegendary" },
+    { item: "scrollupgradesacred" },
+    { item: "scrolluptransmuteblessed" },
+    { item: "stonedragon" },
+  ];
 
   // 10%
   const ringOrAmulets = [

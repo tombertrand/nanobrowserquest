@@ -702,6 +702,7 @@ class Game {
       "item-scrollupgradeblessed",
       "item-scrollupgradesacred",
       "item-scrolltransmute",
+      "item-scrolltransmuteblessed",
       "item-stonesocket",
       "item-stonedragon",
       "item-stonehero",
@@ -1897,6 +1898,7 @@ class Game {
     let itemName;
     let itemBonus;
     let actionText = "upgrade";
+    let uniqueText = "";
 
     this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, skill, socket, isUnique }) => {
       if (slot === 0 && level) {
@@ -1907,9 +1909,13 @@ class Game {
         successRate = successRates[parseInt(level) - 1];
       } else if (slot) {
         if (itemName && item.startsWith("scrolltransmute")) {
-          const { transmuteSuccessRate, uniqueSuccessRate } = Types.getTransmuteSuccessRate(itemName, itemBonus) || {};
+          const isBlessed = item.startsWith("scrolltransmuteblessed");
+          const { transmuteSuccessRate, uniqueSuccessRate } =
+            Types.getTransmuteSuccessRate(itemName, itemBonus, isBlessed) || {};
           successRate = transmuteSuccessRate || uniqueSuccessRate;
           actionText = "transmute";
+
+          uniqueText = uniqueSuccessRate === 100 ? "" : uniqueSuccessRate;
         } else if (!item.startsWith("scrollupgrade")) {
           successRate = null;
         } else if (itemLevel && (item.startsWith("scrollupgradeblessed") || item.startsWith("scrollupgradesacred"))) {
@@ -1924,7 +1930,11 @@ class Game {
         .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill, socket }));
     });
 
-    $("#upgrade-info").html(successRate ? `${successRate}% chance of successful ${actionText}` : "&nbsp;");
+    $("#upgrade-info").html(
+      successRate
+        ? `${successRate}% chance of successful ${actionText}${uniqueText ? `<br />${uniqueText}% chance to be unique` : ""}`
+        : "&nbsp;",
+    );
 
     if ($("#upgrade").hasClass("visible")) {
       this.initDraggable();
@@ -3840,6 +3850,18 @@ class Game {
 
       self.client.onPartyHealth(function (member) {
         self.app.updatePartyHealthBar(member);
+      });
+
+      self.client.onSoulStone(function ({ kind, isUnique }) {
+        let message = "";
+        if (isUnique) {
+          message = `${Types.itemUniqueMap[Types.getKindAsString(kind)][0]}`;
+        } else {
+          message = `${EntityFactory.builders[kind]().getLootMessage().replace("You pick up", "")}`;
+        }
+        message += " resided within the Soul Stone";
+
+        self.chat_callback({ message, type: "loot" });
       });
 
       self.client.onTradeRequestSend(function (playerName) {

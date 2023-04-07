@@ -824,6 +824,11 @@ footer, header, hgroup, menu, nav, section {
     #upgrade-info {
         color: #ababa4;
         font-size: 0.75em;
+        height: 2.2em;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-equip-cape, .item-equip-shield, .item-delete { position: relative; }

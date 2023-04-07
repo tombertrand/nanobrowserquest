@@ -1719,30 +1719,37 @@ class World {
     const altar = this.getEntityById(this.altarSoulStoneNpcId);
 
     if (altar && altar instanceof Npc && !altar.isActivated) {
+      altar.activate();
+      setTimeout(() => {
+        altar.deactivate();
+      }, 1000);
+
       if (force || (await this.databaseHandler.useInventoryItem(player, "soulstone"))) {
-        let generatedItem = generateSoulStoneItem();
-        if (!generatedItem.item.startsWith("rune")) {
-          generatedItem = player.generateItem({
-            kind: Types.getKindFromString(generatedItem.item),
-            // @ts-ignore
-            uniqueChances: generatedItem.uniqueChances,
+        let kind;
+        let soulStoneItem = generateSoulStoneItem();
+        let item;
+
+        if (!Types.isRune(soulStoneItem.item)) {
+          kind = Types.getKindFromString(soulStoneItem.item);
+          item = player.generateItem({
+            kind,
+            uniqueChances: soulStoneItem.uniqueChances,
           });
+        } else {
+          item = soulStoneItem;
+          kind = Types.getKindFromString(soulStoneItem.item);
         }
 
         this.databaseHandler.lootItems({
           player,
-          items: [generatedItem],
+          items: [item],
         });
 
-        altar.activate();
+        player.send(new Messages.SoulStone({ kind, isUnique: item.isUnique }).serialize());
 
         this.broadcastRaise(player, altar);
 
         this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX);
-
-        setTimeout(() => {
-          altar.deactivate();
-        }, 1000);
       }
     }
   }
@@ -2314,6 +2321,13 @@ class World {
           return "scrolltransmute";
         }
       }
+
+      if (mob.kind >= Types.Entities.OCULOTHORAX) {
+        const transmuteRandom = random(10_000);
+        if (transmuteRandom === 133) {
+          return "scrolltransmuteblessed";
+        }
+      }
     }
 
     if (!Types.isBoss(mob.kind) && [23, 42, 69].includes(v)) {
@@ -2390,7 +2404,7 @@ class World {
       postMessageToDiscordEventChannel(`${attacker.name} slained Azrael 💀`);
     }
 
-    // var randomDrops = ["dragonsword", "dragonarmor", "shielddragon"];
+    // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
     // var randomDrops = ["soulstone"];
     // var randomDrops = ["nft"];

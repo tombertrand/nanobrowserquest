@@ -373,6 +373,9 @@ class Player extends Character {
                   self.server.activateAltarChalice(self, true);
                 }
                 return;
+              } else if (msg === "/soulstone") {
+                self.server.activateAltarSoulStone(self, true);
+                return;
               } else if (msg === "/stone") {
                 if (!self.server.stoneLevelClock) {
                   self.server.magicStones.forEach(id => {
@@ -902,6 +905,14 @@ class Player extends Character {
                     postMessageToDiscordEventChannel(`${player.name} picked up a hero emblem ${EmojiMap.stonehero}`);
                   } else if (kind === Types.Entities.CHALICE) {
                     postMessageToDiscordEventChannel(`${player.name} picked up the chalice ${EmojiMap.chalice}`);
+                  } else if (kind === Types.Entities.SCROLLTRANSMUTEBLESSED) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up a blessed transmute ${EmojiMap.scrolltransmuteblessed}`,
+                    );
+                  } else if (kind === Types.Entities.SCROLLUPGRADESACRED) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up a sacred upgrade ${EmojiMap.scrollupgradesacred}`,
+                    );
                   }
 
                   this.databaseHandler.lootItems({
@@ -1680,8 +1691,9 @@ class Player extends Character {
           .slice(0, 3)
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
           .concat(flameDamageBonus)
-          .concat(allResistance)
-          .concat(_.shuffle(elementDamage).slice(0, 2));
+          .concat(flameDamageBonus)
+          .concat(elementPercentage[1])
+          .concat(allResistance);
       } else if (kind === Types.Entities.AMULETMOON) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 2)
@@ -1690,24 +1702,28 @@ class Player extends Character {
           .concat(_.shuffle(elementDamage).slice(0, 2))
           .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.AMULETSTAR) {
+        const isAllResistances = random(2);
         bonus = _.shuffle(highLevelBonus)
+          .slice(0, isAllResistances ? 2 : 3)
           .slice(0, 2)
           .concat(amuletHighLevelBonus)
-          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 3))
+          .concat(isAllResistances ? allResistance : _.shuffle(resistances).slice(0, 3))
           .concat(_.shuffle(elementDamage).slice(0, 2))
           .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.AMULETSKULL) {
+        const isAllResistances = random(2);
         bonus = _.shuffle(highLevelBonus)
-          .slice(0, 2)
+          .slice(0, isAllResistances ? 2 : 4)
           .concat(amuletHighLevelBonus.slice(0, 1))
-          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
+          .concat(isAllResistances ? allResistance : _.shuffle(resistances).slice(0, 2))
           .concat(_.shuffle(elementPercentage).slice(0, 2))
           .concat(_.shuffle(lowerResistance).slice(0, 1));
       } else if (kind === Types.Entities.AMULETDRAGON) {
+        const isAllResistances = random(2);
         bonus = _.shuffle(highLevelBonus)
-          .slice(0, 2)
+          .slice(0, isAllResistances ? 2 : 4)
           .concat(amuletHighLevelBonus.slice(0, 1))
-          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
+          .concat(isAllResistances ? allResistance : _.shuffle(resistances).slice(0, 2))
           .concat([elementPercentage[1], lowerResistance[1]]);
       } else if (kind === Types.Entities.RINGRAISTONE) {
         bonus = _.shuffle(highLevelBonus)
@@ -1738,10 +1754,7 @@ class Player extends Character {
           .concat(_.shuffle(resistances).slice(0, 2))
           .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.RINGCONQUEROR) {
-        bonus = _.shuffle(highLevelBonus)
-          .slice(0, 4)
-          .concat(_.shuffle(resistances).slice(0, 2))
-          .concat(_.shuffle(elementPercentage).slice(0, 1));
+        bonus = [0, 1, 2].concat(_.shuffle([3, 5, 6, 7, 8]).slice(0, 3)).concat(_.shuffle(resistances).slice(0, 3));
       } else if (kind === Types.Entities.RINGHEAVEN) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 1)
@@ -1753,8 +1766,8 @@ class Player extends Character {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 1)
           .concat(_.shuffle(elementDamage).slice(0, 2))
-          .concat(_.shuffle(elementPercentage).slice(0, 1))
-          .concat(_.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 2))
+          .concat(_.shuffle(allResistance).slice(0, 2))
           .concat(timeout);
       } else if (kind === Types.Entities.JEWELSKULL) {
         jewelLevel = random(5) + 1;

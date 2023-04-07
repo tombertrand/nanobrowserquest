@@ -135,4 +135,6 @@ export const EmojiMap = {
   stonedragon: "<:stonedragon:1085735395372847194>",
   stonehero: "<:stonehero:1085735396715020319>",
   chalice: "<:chalice:1092862164643094591>",
+  scrolltransmuteblessed: "<:scrolltransmuteblessed:1093911575590609056>",
+  scrollupgradesacred: "<:scrollupgradesacred:1093912423024566273>",
 };

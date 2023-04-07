@@ -394,6 +394,13 @@ Messages.Party = class Message {
   }
 };
 
+Messages.SoulStone = class Message {
+  constructor(private item) {}
+  serialize() {
+    return [Types.Messages.SOULSTONE, this.item];
+  }
+};
+
 Messages.Trade = class Message {
   constructor(private action, private info) {}
   serialize() {

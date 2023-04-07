@@ -1010,6 +1010,13 @@ var Items = {
     }
   },
 
+  ScrollTransmuteBlessed: class ScrollTransmute extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLTRANSMUTEBLESSED, "scroll");
+      this.lootMessage = "You pick up a blessed transmute scroll";
+    }
+  },
+
   StoneSocket: class StoneSocket extends Item {
     constructor(id) {
       super(id, Types.Entities.STONESOCKET, "stone");

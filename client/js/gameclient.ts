@@ -60,6 +60,7 @@ class GameClient {
   partyerror_callback: any;
   partyloot_callback: any;
   partyhealth_callback: any;
+  soulstone_callback: any;
   traderequestsend_callback: any;
   traderequestreceive_callback: any;
   tradestart_callback: any;
@@ -146,6 +147,7 @@ class GameClient {
     this.handlers[Types.Messages.SETTINGS] = this.receiveSettings;
     this.handlers[Types.Messages.BLINK] = this.receiveBlink;
     this.handlers[Types.Messages.PARTY] = this.receiveParty;
+    this.handlers[Types.Messages.SOULSTONE] = this.receiveSoulStone;
     this.handlers[Types.Messages.TRADE] = this.receiveTrade;
     this.handlers[Types.Messages.PVP] = this.receivePVP;
     this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
@@ -682,6 +684,10 @@ class GameClient {
     }
   }
 
+  receiveSoulStone(data) {
+    this.soulstone_callback?.(data[1]);
+  }
+
   receiveTrade(data) {
     if (data[1] === Types.Messages.TRADE_ACTIONS.REQUEST_SEND && this.traderequestsend_callback) {
       this.traderequestsend_callback(data[2]);
@@ -707,31 +713,21 @@ class GameClient {
   }
 
   receiveBossCheck(data) {
-    if (this.bosscheck_callback) {
-      this.bosscheck_callback(data);
-    }
+    this.bosscheck_callback?.(data);
   }
 
   receiveNotification(data) {
-    if (this.receivenotification_callback) {
-      this.receivenotification_callback(data);
-    }
+    this.receivenotification_callback?.(data);
   }
 
   receiveInventory(data) {
     var inventory = data[1];
-
-    if (this.receiveinventory_callback) {
-      this.receiveinventory_callback(inventory);
-    }
+    this.receiveinventory_callback?.(inventory);
   }
 
   receiveStash(data) {
     var stash = data[1];
-
-    if (this.receivestash_callback) {
-      this.receivestash_callback(stash);
-    }
+    this.receivestash_callback?.(stash);
   }
 
   receiveUpgrade(data) {
@@ -1090,6 +1086,10 @@ class GameClient {
     this.partyhealth_callback = callback;
   }
 
+  onSoulStone(callback) {
+    this.soulstone_callback = callback;
+  }
+
   onTradeRequestSend(callback) {
     this.traderequestsend_callback = callback;
   }
@@ -1225,7 +1225,6 @@ class GameClient {
   onReceiveTempleLevelEnd(callback) {
     this.receivetemplelevelend_callback = callback;
   }
-
 
   onReceiveStoneLevelStart(callback) {
     this.receivestonelevelstart_callback = callback;
