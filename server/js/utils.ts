@@ -815,21 +815,21 @@ export const getRandomJewelLevel = (mobLevel: number) => {
   if (maxLevel === 5) {
     if (randomNumber < 5) {
       level = 5;
-    } else if (randomNumber < 55) {
+    } else if (randomNumber < 30) {
       level = 4;
     } else {
       level = 3;
     }
   } else if (maxLevel === 4) {
-    if (randomNumber < 20) {
+    if (randomNumber < 10) {
       level = 4;
-    } else if (randomNumber < 60) {
+    } else if (randomNumber < 40) {
       level = 3;
     } else {
       level = 2;
     }
   } else if (maxLevel === 3) {
-    if (randomNumber < 40) {
+    if (randomNumber < 30) {
       level = 3;
     } else if (randomNumber < 80) {
       level = 2;
@@ -837,8 +837,8 @@ export const getRandomJewelLevel = (mobLevel: number) => {
       level = 1;
     }
   } else if (maxLevel === 2) {
-    if (randomNumber < 60) {
-      level = 3;
+    if (randomNumber < 40) {
+      level = 2;
     } else {
       level = 1;
     }

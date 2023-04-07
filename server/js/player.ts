@@ -907,11 +907,11 @@ class Player extends Character {
                     postMessageToDiscordEventChannel(`${player.name} picked up the chalice ${EmojiMap.chalice}`);
                   } else if (kind === Types.Entities.SCROLLTRANSMUTEBLESSED) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a blessed transmute ${EmojiMap.scrolltransmuteblessed}`,
+                      `${player.name} picked up a blessed transmute scroll ${EmojiMap.scrolltransmuteblessed}`,
                     );
                   } else if (kind === Types.Entities.SCROLLUPGRADESACRED) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a sacred upgrade ${EmojiMap.scrollupgradesacred}`,
+                      `${player.name} picked up a sacred upgrade scroll ${EmojiMap.scrollupgradesacred}`,
                     );
                   }
 
@@ -1770,8 +1770,6 @@ class Player extends Character {
           .concat(_.shuffle(allResistance).slice(0, 2))
           .concat(timeout);
       } else if (kind === Types.Entities.JEWELSKULL) {
-        jewelLevel = random(5) + 1;
-
         if (jewelLevel === 1) {
           bonus = _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
         } else if (jewelLevel === 2) {
@@ -1782,7 +1780,7 @@ class Player extends Character {
             .slice(0, isUnique ? 3 : 2)
             .concat(_.shuffle(resistances).slice(0, 1));
         } else if (jewelLevel === 4) {
-          jewelLevel = 3;
+          jewelLevel = 2;
           bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(resistances).slice(0, 2));
 
           if (isUnique) {
@@ -1798,6 +1796,10 @@ class Player extends Character {
           if (isUnique) {
             bonus = bonus.concat(_.shuffle(elementPercentage).slice(0, 1));
           }
+
+          postMessageToDiscordEventChannel(
+            `${this.name} picked up a ${isUnique ? "**unique** " : ""}lv.5 Skull Jewel ${EmojiMap.jewelskull}`,
+          );
         }
       }
 

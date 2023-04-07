@@ -137,4 +137,5 @@ export const EmojiMap = {
   chalice: "<:chalice:1092862164643094591>",
   scrolltransmuteblessed: "<:scrolltransmuteblessed:1093911575590609056>",
   scrollupgradesacred: "<:scrollupgradesacred:1093912423024566273>",
+  jewelskull: "<:jewelskull:1093959293394485398>",
 };

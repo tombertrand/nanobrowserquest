@@ -2407,7 +2407,7 @@ class World {
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
     // var randomDrops = ["soulstone"];
-    // var randomDrops = ["nft"];
+    // var randomDrops = ["jewelskull"];
     // var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
     // var randomDrops = ["amuletdragon", "amuletskull"];
