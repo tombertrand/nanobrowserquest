@@ -459,7 +459,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   STARGATE: {
     id: 58,
     name: "Stargate",
-    desc: "Enter the portal",
+    desc: "Enter the gateway portal",
   },
   SOULSTONE: {
     id: 59,

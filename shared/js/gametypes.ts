@@ -783,13 +783,13 @@ export const kinds = {
   executionersword: [Types.Entities.EXECUTIONERSWORD, "weapon", "Executioner Sword", 50, 56],
   templarsword: [Types.Entities.TEMPLARSWORD, "weapon", "Templar Sword", 52, 58],
   dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 54, 58],
+  moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Partisan", 59, 60],
+  demonaxe: [Types.Entities.DEMONAXE, "weapon", "Demon Axe", 60, 62],
   mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 56, 62],
-  moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Partisan", 59, 64],
-  spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 60, 64],
-  eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 60, 64],
-  demonaxe: [Types.Entities.DEMONAXE, "weapon", "Demon Axe", 60, 64],
   paladinaxe: [Types.Entities.PALADINAXE, "weapon", "Paladin Axe", 60, 66],
-  immortalsword: [Types.Entities.IMMORTALSWORD, "weapon", "Immortal Sword", 60, 68],
+  immortalsword: [Types.Entities.IMMORTALSWORD, "weapon", "Immortal Sword", 60, 66],
+  spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 60, 68],
+  eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 60, 68],
   hellhammer: [Types.Entities.HELLHAMMER, "weapon", "Hell Hammer", 60, 60],
 
   // kind, type, level, defense

@@ -1932,7 +1932,9 @@ class Game {
 
     $("#upgrade-info").html(
       successRate
-        ? `${successRate}% chance of successful ${actionText}${uniqueText ? `<br />${uniqueText}% chance to be unique` : ""}`
+        ? `${successRate}% chance of successful ${actionText}${
+            uniqueText ? `<br />${uniqueText}% chance to be unique` : ""
+          }`
         : "&nbsp;",
     );
 
@@ -3079,6 +3081,8 @@ class Game {
           }
           if (x === 131 && y === 651) {
             self.tryUnlockingAchievement("WAY_OF_WATER");
+          } else if (x === 43 && y === 579) {
+            self.tryUnlockingAchievement("PHARAOH");
           }
 
           self.player.forEachAttacker(function (attacker) {
@@ -5313,6 +5317,8 @@ class Game {
       } else if (npc.kind === Types.Entities.PORTALGATEWAY) {
         if (npc.gridX === 97 && npc.gridY === 545) {
           if (this.gatewayLevelPortalCoords) {
+            this.tryUnlockingAchievement("STARGATE");
+
             this.player.stop_pathing_callback({
               x: this.gatewayLevelPortalCoords.x,
               y: this.gatewayLevelPortalCoords.y,
