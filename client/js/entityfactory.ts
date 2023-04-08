@@ -401,8 +401,8 @@ EntityFactory.builders[Types.Entities.MYSTICALARMOR] = function (id) {
   return new Items.MysticalArmor(id);
 };
 
-EntityFactory.builders[Types.Entities.BLOODARMOR] = function (id) {
-  return new Items.BloodArmor(id);
+EntityFactory.builders[Types.Entities.IMMORTALARMOR] = function (id) {
+  return new Items.ImmortalArmor(id);
 };
 
 EntityFactory.builders[Types.Entities.PALADINARMOR] = function (id) {

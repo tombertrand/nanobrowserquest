@@ -677,7 +677,7 @@ class Renderer {
               "dragonarmor",
               "demonarmor",
               "mysticalarmor",
-              "bloodarmor",
+              "immortalarmor",
               "paladinarmor",
             ].includes(sprite.name) &&
             entity.armorBonus?.length
@@ -1360,7 +1360,7 @@ class Renderer {
         "dragonarmor",
         "demonarmor",
         "mysticalarmor",
-        "bloodarmor",
+        "immortalarmor",
         "paladinarmor",
       ].includes(this.game.player.armorName) &&
       this.game.player.armorBonus?.length

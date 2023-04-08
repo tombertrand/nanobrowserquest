@@ -2431,7 +2431,7 @@ class World {
     // "amuletskull",
     // "amuletdragon",
     // ];
-    // var randomDrops = ["bloodarmor", "paladinarmor", "demonarmor"];
+    // var randomDrops = ["immortalarmor", "paladinarmor", "demonarmor"];
     // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
     // var randomDrops = [
     // "rune",

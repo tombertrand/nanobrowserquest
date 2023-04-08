@@ -1,10 +1,18 @@
 export const setBonus = {
-  demon: {
-    flameDamage: 30,
-    drainLife: 20,
-    lightningResistance: 30,
-    flameResistance: 50,
-    attackSpeed: 20,
+  immortal: {
+    health: 110,
+    minDamage: 35,
+    maxDamage: 15,
+    attackDamage: 15,
+    pierceDamage: 25,
+    allResistance: 15,
+  },
+  paladin: {
+    health: 150,
+    defense: 25,
+    absorbedDamage: 20,
+    preventRegenerateHealth: 10,
+    allResistance: 15,
   },
   mystical: {
     attackDamage: 15,
@@ -12,6 +20,13 @@ export const setBonus = {
     poisonDamage: 20,
     allResistance: 10,
     magicFind: 20,
+  },
+  demon: {
+    flameDamage: 30,
+    drainLife: 20,
+    lightningResistance: 30,
+    flameResistance: 50,
+    attackSpeed: 20,
   },
   moon: {
     pierceDamage: 20,
@@ -26,17 +41,17 @@ export const setBonus = {
     defense: 20,
     flameResistance: 50,
   },
-  executioner: {
-    attackDamage: 20,
-    maxDamage: 40,
-    exp: 15,
-    allResistance: 10,
-  },
   templar: {
     minDamage: 15,
     attackDamage: 5,
     defense: 25,
     allResistance: 15,
+  },
+  executioner: {
+    attackDamage: 20,
+    maxDamage: 40,
+    exp: 15,
+    allResistance: 10,
   },
   emerald: {
     attackDamage: 15,
@@ -140,11 +155,6 @@ export const kindAsStringToSet = {
   dragonsword: "dragon",
   dragonarmor: "dragon",
   shielddragon: "dragon",
-  mysticalsword: "mystical",
-  mysticalarmor: "mystical",
-  beltmystical: "mystical",
-  shieldmystical: "mystical",
-  ringmystical: "mystical",
   moonsword: "moon",
   // moonarmor: "moon",
   beltmoon: "moon",
@@ -155,9 +165,25 @@ export const kindAsStringToSet = {
   beltdemon: "demon",
   shielddemon: "demon",
   amuletdemon: "demon",
+  mysticalsword: "mystical",
+  mysticalarmor: "mystical",
+  beltmystical: "mystical",
+  shieldmystical: "mystical",
+  ringmystical: "mystical",
+  paladinaxe: "paladin",
+  paladinarmor: "paladin",
+  shieldpaladin: "paladin",
+  beltpaladin: "paladin",
+  beltimmortal: "immortal",
+  immortalsword: "immortal",
+  immortalarmor: "immortal",
+  immortalring: "immortal",
+  shieldimmortal: "immortal",
 };
 
 export const setItems = {
+  immortal: ["immortalsword", "immortalarmor", "immortalring", "shieldimmortal", "beltimmortal"],
+  paladin: ["paladinaxe", "paladinarmor", "shieldpaladin", "beltpaladin"],
   mystical: ["mysticalsword", "mysticalarmor", "beltmystical", "shieldmystical", "ringmystical"],
   demon: ["demonaxe", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
   moon: ["moonsword" /*, "moonarmor"*/, "beltmoon", "shieldmoon", "amuletmoon"],
@@ -177,12 +203,14 @@ export const setItems = {
 };
 
 export const setItemsNameMap = {
-  moon: ["Sword", /*"Armor",*/ "Belt", "Shield", "Amulet"],
+  immortal: ["Sword", "Armor", "Belt", "Shield", "Ring"],
+  paladin: ["Axe", "Armor", "Belt", "Shield"],
   mystical: ["Sword", "Armor", "Belt", "Shield", "Ring"],
   demon: ["Axe", "Armor", "Belt", "Shield", "Amulet"],
+  moon: ["Sword", /*"Armor",*/ "Belt", "Shield", "Amulet"],
   dragon: ["Sword", "Armor", "Shield"],
-  executioner: ["Sword", /*"Armor",*/ "Belt", "Shield"],
   templar: ["Sword", "Armor", "Belt", "Shield"],
+  executioner: ["Sword", /*"Armor",*/ "Belt", "Shield"],
   emerald: ["Sword", "Armor", "Belt", "Shield"],
   minotaur: ["Axe", "Ring", "Belt"],
   diamond: ["Sword", "Armor", "Belt", "Shield"],

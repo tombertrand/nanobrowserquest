@@ -261,10 +261,10 @@ var Items = {
     }
   },
 
-  BloodArmor: class BloodArmor extends Item {
+  ImmortalArmor: class ImmortalArmor extends Item {
     constructor(id) {
-      super(id, Types.Entities.BLOODARMOR, "armor");
-      this.lootMessage = "You pick up a blood armor";
+      super(id, Types.Entities.IMMORTALARMOR, "armor");
+      this.lootMessage = "You pick up an immortal armor";
     }
   },
 

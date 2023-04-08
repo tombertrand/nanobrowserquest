@@ -268,7 +268,7 @@ export const Types: any = {
     DRAGONARMOR: 221,
     DEMONARMOR: 222,
     MYSTICALARMOR: 242,
-    BLOODARMOR: 252,
+    IMMORTALARMOR: 252,
     PALADINARMOR: 304,
 
     // Belts
@@ -622,8 +622,8 @@ Types.Entities.Armors = [
   Types.Entities.DRAGONARMOR,
   Types.Entities.DEMONARMOR,
   Types.Entities.MYSTICALARMOR,
-  Types.Entities.BLOODARMOR,
   Types.Entities.PALADINARMOR,
+  Types.Entities.IMMORTALARMOR,
 ];
 
 Types.Entities.Belts = [
@@ -809,8 +809,8 @@ export const kinds = {
   dragonarmor: [Types.Entities.DRAGONARMOR, "armor", "Dragon Armor", 50, 54],
   demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 52, 56],
   mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 54, 58],
-  bloodarmor: [Types.Entities.BLOODARMOR, "armor", "Blood Armor", 58, 62],
   paladinarmor: [Types.Entities.PALADINARMOR, "armor", "Paladin Armor", 58, 62],
+  immortalarmor: [Types.Entities.IMMORTALARMOR, "armor", "Blood Armor", 58, 62],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -1066,8 +1066,8 @@ Types.rankedArmors = [
   Types.Entities.DRAGONARMOR,
   Types.Entities.DEMONARMOR,
   Types.Entities.MYSTICALARMOR,
-  Types.Entities.BLOODARMOR,
   Types.Entities.PALADINARMOR,
+  Types.Entities.IMMORTALARMOR,
 ];
 
 Types.rankedBelts = [
@@ -1127,8 +1127,8 @@ Types.itemUniqueMap = {
   dragonarmor: ["BlackRock", 54, 58],
   demonarmor: ["Explorer's Block", 56, 60],
   mysticalarmor: ["Rug Pull", 56, 60],
-  bloodarmor: ["Deploying More Capital", 60, 64],
   paladinarmor: ["TBD", 60, 64],
+  immortalarmor: ["Deploying More Capital", 60, 64],
 
   // name, level, defense
   shieldwood: ["Liquidity Provider", 2, 3],
@@ -2022,7 +2022,7 @@ Types.getBonus = function (rawBonus, level) {
   const lightningDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
   const coldDamagePercentPerLevel = [1, 2, 3, 5, 7, 10, 15, 19, 26, 35];
   const poisonDamagePercentPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
-  const allResistancePerLevel = [1, 2, 3, 4, 5, 6, 8, 11, 15, 20];
+  const allResistancePerLevel = [1, 2, 3, 4, 5, 7, 10, 15, 20, 28];
   const preventRegenerateHealthPerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const poisonDamagePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const skillTimeoutPerLevel = [1, 2, 4, 6, 8, 10, 13, 17, 24, 30];
@@ -2235,8 +2235,8 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     spikeglaive: 6,
     eclypsedagger: 6,
     demonaxe: 6,
-    paladinaxe: 6,
-    immortalsword: 6,
+    paladinaxe: 4,
+    immortalsword: 4,
     hellhammer: 6,
 
     goldenarmor: 20,
@@ -2249,8 +2249,8 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     dragonarmor: 8,
     demonarmor: 6,
     mysticalarmor: 6,
-    bloodarmor: 6,
-    paladinarmor: 6,
+    paladinarmor: 4,
+    immortalarmor: 4,
 
     beltfrozen: 15,
     belthorned: 15,

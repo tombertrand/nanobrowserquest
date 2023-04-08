@@ -546,9 +546,10 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
     { item: "mysticalarmor", uniqueChances: 10 },
     { item: "beltmystical", uniqueChances: 10 },
     { item: "shieldmystical", uniqueChances: 10 },
-    { item: "paladinarmor", uniqueChances: 10 },
-    { item: "paladinaxe", uniqueChances: 10 },
-    { item: "immortalsword", uniqueChances: 10 },
+    { item: "paladinaxe", uniqueChances: 6 },
+    { item: "paladinarmor", uniqueChances: 6 },
+    { item: "immortalsword", uniqueChances: 6 },
+    { item: "immortalarmor", uniqueChances: 6 },
     { item: "cape", uniqueChances: 10 },
   ];
 
@@ -927,18 +928,18 @@ export const getRandomRune = (mobLevel: number, minLevel?: number) => {
 export const generateSoulStoneItem = (): { item: string; quantity?: number; uniqueChances?: number } => {
   // 50%
   const items = [
-    { item: "moonsword", uniqueChances: 10 },
+    { item: "moonsword", uniqueChances: 18 },
     // { item: "moonarmor", uniqueChances: 10 },
-    { item: "beltmoon", uniqueChances: 10 },
-    { item: "shieldmoon", uniqueChances: 10 },
-    { item: "demonaxe", uniqueChances: 10 },
-    { item: "demonarmor", uniqueChances: 10 },
-    { item: "beltdemon", uniqueChances: 10 },
-    { item: "shielddemon", uniqueChances: 10 },
-    { item: "paladinarmor", uniqueChances: 10 },
-    { item: "paladinaxe", uniqueChances: 10 },
-    { item: "spikeglaive", uniqueChances: 10 },
-    { item: "eclypsedagger", uniqueChances: 10 },
+    { item: "beltmoon", uniqueChances: 18 },
+    { item: "shieldmoon", uniqueChances: 18 },
+    { item: "demonaxe", uniqueChances: 12 },
+    { item: "demonarmor", uniqueChances: 12 },
+    { item: "beltdemon", uniqueChances: 12 },
+    { item: "shielddemon", uniqueChances: 12 },
+    { item: "paladinaxe", uniqueChances: 6 },
+    { item: "immortalsword", uniqueChances: 6 },
+    { item: "spikeglaive", uniqueChances: 6 },
+    { item: "eclypsedagger", uniqueChances: 6 },
   ];
 
   // 15%
