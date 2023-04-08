@@ -1180,16 +1180,15 @@ class World {
     this.templeLevelInterval = null;
     this.templeLevelClock = null;
 
-    // respawn gate!!
-    // const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
-    // this.despawn(secretStairs);
-
     const gate = this.npcs[this.gateTempleNpcId];
     gate.activate();
-    // gate.handleRespawn(0);
     gate.respawnCallback();
 
     this.pushBroadcast(new Messages.TempleLevelEnd());
+
+    const lever = this.npcs[this.leverChaliceNpcId];
+    lever.deactivate();
+    this.pushBroadcast(new Messages.Unraise(lever.id));
 
     // Despawn all mages
     this.mageTempleEntityIds.map(entityId => {
