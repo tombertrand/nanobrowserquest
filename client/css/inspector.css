@@ -9,6 +9,7 @@
   display: none;
   justify-content: center;
   text-align: center;
+  pointer-events: none;
 }
 
 #inspector .name-wrapper {

@@ -1693,6 +1693,8 @@ Types.getAliasFromName = function (name: string) {
     return "waypoint";
   } else if (name.startsWith("portal")) {
     return "Portal";
+  } else if (name === "stash") {
+    return "Personal Stash";
   } else if (name === "magicstone") {
     return "Magic Stone";
   } else if (name === "blueflame") {
