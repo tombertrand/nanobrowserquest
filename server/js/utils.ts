@@ -539,7 +539,7 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
   // 50%
   const items = [
     { item: "moonsword", uniqueChances: 10 },
-    // { item: "moonarmor", uniqueChances: 10 },
+    { item: "moonarmor", uniqueChances: 10 },
     { item: "beltmoon", uniqueChances: 10 },
     { item: "shieldmoon", uniqueChances: 10 },
     { item: "mysticalsword", uniqueChances: 10 },

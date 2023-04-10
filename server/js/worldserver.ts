@@ -88,6 +88,7 @@ class World {
   secretStairsTreeNpcId: number;
   secretStairsLeftTemplarNpcId: number;
   secretStairsRightTemplarNpcId: number;
+  secretStairsPickaxeNpcId: number;
   chaliceLevelClock: number;
   chaliceLevelInterval: NodeJS.Timeout;
   templeLevelClock: number;
@@ -220,6 +221,7 @@ class World {
     this.secretStairsTreeNpcId = null;
     this.secretStairsLeftTemplarNpcId = null;
     this.secretStairsRightTemplarNpcId = null;
+    this.secretStairsPickaxeNpcId = null;
     this.poisonTemplarId = null;
     this.magicTemplarId = null;
     this.chaliceLevelClock = null;
@@ -744,6 +746,8 @@ class World {
 
         // @NOTE Add a tree on top of the stairs
         this.addNpc(Types.Entities.TREE, x, y + 1);
+      } else if (x === 160 && y === 596) {
+        this.secretStairsPickaxeNpcId = npc.id;
       }
     } else if (kind === Types.Entities.SECRETSTAIRS2) {
       npc.isDead = true;
@@ -1345,6 +1349,18 @@ class World {
     }, 5_000);
   }
 
+  async activateFossil(player, force = false) {
+    if (force || (await this.databaseHandler.useWeaponItem(player))) {
+      const secretStairs = this.npcs[this.secretStairsPickaxeNpcId];
+      secretStairs.respawnCallback();
+
+      setTimeout(() => {
+        this.isActivatedTreeLevel = false;
+        this.despawn(secretStairs);
+      }, 5_000);
+    }
+  }
+
   createItem(kind, x, y, partyId?: number, level?: number) {
     var id = "9" + this.itemCount++,
       item = null;
@@ -1852,7 +1868,9 @@ class World {
         new Messages.Damage(entity, dmg, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
       );
 
-      this.pushToAdjacentGroups(attacker.group, entity.healthEntity(), [attacker.id, entity.id]);
+      if (entity?.healthEntity) {
+        this.pushToAdjacentGroups(attacker.group, entity.healthEntity(), [attacker.id, entity.id]);
+      }
     }
 
     if (entity.type === "player") {
@@ -2409,6 +2427,7 @@ class World {
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
     // var randomDrops = ["soulstone"];
+    // var randomDrops = ["pickaxe"];
     // var randomDrops = ["jewelskull"];
     // var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];

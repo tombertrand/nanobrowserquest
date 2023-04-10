@@ -1699,6 +1699,18 @@ class DatabaseHandler {
     });
   }
 
+  useWeaponItem(player) {
+    // ~~~~@TODO this...
+    // Slot.DELETE_SLOT
+    // return new Promise(resolve => {
+    //   this.client.hset("u:" + player.name, "weapon", "dagger:1", () => {
+    //     player.equipItem({ item: 'dagger', level: 1, type: 'weapon'})
+    //     resolve(true);
+    //   });
+    //   this.moveItem({ player, fromSlot: Types.Slot.WEAPON, toSlot: -1 });
+    // });
+  }
+
   passwordIsRequired(player) {
     return new Promise((resolve, _reject) => {
       var userKey = "u:" + player.name;

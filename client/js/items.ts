@@ -247,6 +247,13 @@ var Items = {
     }
   },
 
+  MoonArmor: class MoonArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MOONARMOR, "armor");
+      this.lootMessage = "You pick up a moon armor";
+    }
+  },
+
   DemonArmor: class DemonArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.DEMONARMOR, "armor");
@@ -1182,6 +1189,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.POWDERQUANTUM, "object");
       this.lootMessage = "You pick up the Quantum powder";
+    }
+  },
+
+  Pickaxe: class Pickaxe extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PICKAXE, "object");
+      this.lootMessage = "You pick up a Pickaxe";
     }
   },
 

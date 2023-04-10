@@ -171,6 +171,7 @@ export const Types: any = {
     MAGICSTONE: 93,
     ALTARCHALICE: 94,
     ALTARSOULSTONE: 95,
+    FOSSIL: 119,
     SOULSTONE: 117,
     CHALICELEVEL_START: 96,
     CHALICELEVEL_INPROGRESS: 97,
@@ -267,6 +268,7 @@ export const Types: any = {
     EMERALDARMOR: 128,
     TEMPLARARMOR: 140,
     DRAGONARMOR: 221,
+    MOONARMOR: 311,
     DEMONARMOR: 222,
     MYSTICALARMOR: 242,
     IMMORTALARMOR: 252,
@@ -348,6 +350,7 @@ export const Types: any = {
     POWDERGREEN: 289,
     POWDERRED: 290,
     POWDERQUANTUM: 291,
+    PICKAXE: 310,
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
@@ -557,6 +560,7 @@ Types.DEFAULT_ATTACK_ANIMATION_SPEED = DEFAULT_ATTACK_ANIMATION_SPEED;
 Types.calculateResistance = calculateResistance;
 Types.calculateAttackSpeed = calculateAttackSpeed;
 Types.terrainToImageMap = terrainToImageMap;
+Types.Slot = Slot;
 
 Types.Entities.Potion = [
   Types.Entities.FLASK,
@@ -621,6 +625,7 @@ Types.Entities.Armors = [
   Types.Entities.EMERALDARMOR,
   Types.Entities.TEMPLARARMOR,
   Types.Entities.DRAGONARMOR,
+  Types.Entities.MOONARMOR,
   Types.Entities.DEMONARMOR,
   Types.Entities.MYSTICALARMOR,
   Types.Entities.PALADINARMOR,
@@ -769,6 +774,7 @@ export const kinds = {
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
   wirtleg: [Types.Entities.WIRTLEG, "weapon", "Wirt's leg", 1, 2],
+  pickaxe: [Types.Entities.PICKAXE, "weapon", "Pickaxe", 52, 30],
   sword: [Types.Entities.SWORD, "weapon", "Sword", 1, 3],
   axe: [Types.Entities.AXE, "weapon", "Axe", 2, 5],
   morningstar: [Types.Entities.MORNINGSTAR, "weapon", "Morning Star", 3, 7],
@@ -808,10 +814,11 @@ export const kinds = {
   emeraldarmor: [Types.Entities.EMERALDARMOR, "armor", "Emerald Armor", 48, 52],
   templararmor: [Types.Entities.TEMPLARARMOR, "armor", "Templar Armor", 50, 54],
   dragonarmor: [Types.Entities.DRAGONARMOR, "armor", "Dragon Armor", 50, 54],
-  demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 52, 56],
-  mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 54, 58],
-  paladinarmor: [Types.Entities.PALADINARMOR, "armor", "Paladin Armor", 58, 62],
-  immortalarmor: [Types.Entities.IMMORTALARMOR, "armor", "Blood Armor", 58, 62],
+  moonarmor: [Types.Entities.MOONARMOR, "armor", "Moon Armor", 54, 56],
+  demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 52, 58],
+  mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 54, 60],
+  paladinarmor: [Types.Entities.PALADINARMOR, "armor", "Paladin Armor", 58, 66],
+  immortalarmor: [Types.Entities.IMMORTALARMOR, "armor", "Blood Armor", 58, 66],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -1065,6 +1072,7 @@ Types.rankedArmors = [
   Types.Entities.EMERALDARMOR,
   Types.Entities.TEMPLARARMOR,
   Types.Entities.DRAGONARMOR,
+  Types.Entities.MOONARMOR,
   Types.Entities.DEMONARMOR,
   Types.Entities.MYSTICALARMOR,
   Types.Entities.PALADINARMOR,
@@ -1089,6 +1097,7 @@ Types.rankedBelts = [
 Types.itemUniqueMap = {
   // name, level, attack
   wirtleg: ["Bored Ape Yacht Club", 1, 5],
+  pickaxe: ["Extinction", 54, 34],
   sword: ["Faketoshi", 1, 5],
   axe: ["NonDisclosure Agreement", 2, 8],
   morningstar: ["Block Latte", 3, 10],
@@ -1126,10 +1135,11 @@ Types.itemUniqueMap = {
   emeraldarmor: ["Jungle Warcry", 52, 56],
   templararmor: ["133 Club", 54, 58],
   dragonarmor: ["BlackRock", 54, 58],
-  demonarmor: ["Explorer's Block", 56, 60],
-  mysticalarmor: ["Rug Pull", 56, 60],
-  paladinarmor: ["TBD", 60, 64],
-  immortalarmor: ["Deploying More Capital", 60, 64],
+  moonarmor: ["To The <strike>Moon</strike> Mars", 56, 60],
+  demonarmor: ["Explorer's Block", 56, 62],
+  mysticalarmor: ["Rug Pull", 56, 64],
+  paladinarmor: ["TBD", 60, 70],
+  immortalarmor: ["Deploying More Capital", 60, 70],
 
   // name, level, defense
   shieldwood: ["Liquidity Provider", 2, 3],
@@ -1530,6 +1540,7 @@ Types.isSingle = function (kindOrString: number | string) {
       Types.Entities.POWDERGREEN,
       Types.Entities.POWDERRED,
       Types.Entities.POWDERQUANTUM,
+      Types.Entities.PICKAXE,
     ].includes(kindOrString);
   } else {
     return (
@@ -1548,6 +1559,7 @@ Types.isSingle = function (kindOrString: number | string) {
         "powdergreen",
         "powderred",
         "powderquantum",
+        "pickaxe",
       ].includes(kindOrString) ||
       kindOrString.startsWith("skeletonkingcage") ||
       kindOrString.startsWith("necromancerheart") ||
@@ -1557,7 +1569,8 @@ Types.isSingle = function (kindOrString: number | string) {
       kindOrString.startsWith("nft") ||
       kindOrString.startsWith("wing") ||
       kindOrString.startsWith("crystal") ||
-      kindOrString.startsWith("powder")
+      kindOrString.startsWith("powder") ||
+      kindOrString.startsWith("pickaxe")
     );
   }
 };
@@ -2250,6 +2263,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     emeraldarmor: 10,
     templararmor: 8,
     dragonarmor: 8,
+    moonarmor: 8,
     demonarmor: 6,
     mysticalarmor: 6,
     paladinarmor: 4,
@@ -2656,6 +2670,7 @@ Types.itemDescription = {
   powdergreen: "A special kind of powder.",
   powderred: "A special kind of powder.",
   powderquantum: "The ultimate powder that powers the Gateway.",
+  pickaxe: "This tool is used for digging.",
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",

@@ -393,6 +393,10 @@ EntityFactory.builders[Types.Entities.DRAGONARMOR] = function (id) {
   return new Items.DragonArmor(id);
 };
 
+EntityFactory.builders[Types.Entities.MOONARMOR] = function (id) {
+  return new Items.MoonArmor(id);
+};
+
 EntityFactory.builders[Types.Entities.DEMONARMOR] = function (id) {
   return new Items.DemonArmor(id);
 };
@@ -927,6 +931,10 @@ EntityFactory.builders[Types.Entities.POWDERRED] = function (id) {
 
 EntityFactory.builders[Types.Entities.POWDERQUANTUM] = function (id) {
   return new Items.PowderQuantum(id);
+};
+
+EntityFactory.builders[Types.Entities.PICKAXE] = function (id) {
+  return new Items.Pickaxe(id);
 };
 
 EntityFactory.builders[Types.Entities.FIREFOXPOTION] = function (id) {

@@ -1467,6 +1467,10 @@ class GameClient {
     this.sendMessage([Types.Messages.ALTARSOULSTONE, id]);
   }
 
+  sendFossil() {
+    this.sendMessage([Types.Messages.FOSSIL]);
+  }
+
   sendHands(id) {
     this.sendMessage([Types.Messages.HANDS, id]);
   }

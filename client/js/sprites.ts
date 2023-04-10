@@ -42,6 +42,7 @@ import statue2Spell from "../sprites/statue2-spell.json";
 import deathangel from "../sprites/deathangel.json";
 import deathangelSpell from "../sprites/deathangel-spell.json";
 import wirtleg from "../sprites/weapon.json";
+import pickaxe from "../sprites/weapon.json";
 import dagger from "../sprites/dagger.json";
 import sword from "../sprites/weapon.json";
 import axe from "../sprites/weapon.json";
@@ -79,6 +80,7 @@ import diamondarmor from "../sprites/armor.json";
 import emeraldarmor from "../sprites/armor.json";
 import templararmor from "../sprites/armor.json";
 import dragonarmor from "../sprites/armor.json";
+import moonarmor from "../sprites/armor.json";
 import demonarmor from "../sprites/armor.json";
 import mysticalarmor from "../sprites/armor.json";
 import immortalarmor from "../sprites/armor.json";
@@ -284,6 +286,7 @@ const sprites = {
   emeraldarmor,
   templararmor,
   dragonarmor,
+  moonarmor,
   demonarmor,
   mysticalarmor,
   immortalarmor,
@@ -418,6 +421,7 @@ const sprites = {
   "item-raiblocksbl": item,
   "item-raiblocksbr": item,
   "item-wirtleg": item,
+  "item-pickaxe": item,
   "item-skeletonkingcage": item,
   "item-necromancerheart": item,
   "item-cowkinghorn": item,
@@ -440,6 +444,7 @@ const sprites = {
   "item-emeraldarmor": item,
   "item-templararmor": item,
   "item-dragonarmor": item,
+  "item-moonarmor": item,
   "item-demonarmor": item,
   "item-mysticalarmor": item,
   "item-immortalarmor": item,
@@ -577,6 +582,7 @@ const sprites = {
   spectre,
   attack,
   wirtleg,
+  pickaxe,
   dagger,
   sword,
   talk,

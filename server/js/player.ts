@@ -376,6 +376,9 @@ class Player extends Character {
               } else if (msg === "/soulstone") {
                 self.server.activateAltarSoulStone(self, true);
                 return;
+              } else if (msg === "/fossil") {
+                self.server.activateFossil(self, true);
+                return;
               } else if (msg === "/stone") {
                 if (!self.server.stoneLevelClock) {
                   self.server.magicStones.forEach(id => {
@@ -688,6 +691,13 @@ class Player extends Character {
         if (altarId && altarId === self.server.altarSoulStoneNpcId) {
           self.server.activateAltarSoulStone(self);
         }
+      } else if (action === Types.Messages.FOSSIL) {
+        console.info("FOSSIL: " + self.name);
+
+        console.log("~~~~self.weapon", self.weapon);
+        if (self.weapon !== "pickaxe") return;
+
+        self.server.activateFossil(self);
       } else if (action === Types.Messages.HANDS) {
         console.info("HANDS: " + self.name + " " + message[1]);
 

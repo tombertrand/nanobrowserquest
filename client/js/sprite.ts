@@ -103,6 +103,7 @@ class Sprite {
         "emeraldarmor",
         "templararmor",
         "dragonarmor",
+        "moonarmor",
         "demonarmor",
         "mysticalarmor",
         "immortalarmor",

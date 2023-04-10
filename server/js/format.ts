@@ -42,6 +42,7 @@ class FormatChecker {
       (this.formats[Types.Messages.HANDS] = ["n"]),
       (this.formats[Types.Messages.TRAP] = ["n"]),
       (this.formats[Types.Messages.STATUE] = ["n"]),
+      (this.formats[Types.Messages.FOSSIL] = []),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
   }
 

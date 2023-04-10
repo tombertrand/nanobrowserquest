@@ -510,6 +510,7 @@ class Game {
       "emeraldarmor",
       "templararmor",
       "dragonarmor",
+      "moonarmor",
       "mysticalarmor",
       "demonarmor",
       "immortalarmor",
@@ -522,6 +523,7 @@ class Game {
       "bluemorningstar",
       "chest",
       "wirtleg",
+      "pickaxe",
       "sword",
       "redsword",
       "bluesword",
@@ -592,6 +594,7 @@ class Game {
       "item-emeraldarmor",
       "item-templararmor",
       "item-dragonarmor",
+      "item-moonarmor",
       "item-mysticalarmor",
       "item-demonarmor",
       "item-immortalarmor",
@@ -726,6 +729,7 @@ class Game {
       "item-powdergreen",
       "item-powderred",
       "item-powderquantum",
+      "item-pickaxe",
       "item-cake",
       "item-burger",
       "morningstar",
@@ -5361,6 +5365,10 @@ class Game {
         if (!npc.isActivated) {
           this.client.sendAltarSoulStone(npc.id);
         }
+      } else if (npc.kind === Types.Entities.FOSSIL) {
+        if (!npc.isActivated && this.player.weaponName === "pickaxe") {
+          this.client.sendFossil(npc.id);
+        }
       } else if (npc.kind === Types.Entities.HANDS) {
         if (!npc.isActivated) {
           this.client.sendHands(npc.id);
@@ -5373,6 +5381,9 @@ class Game {
         } else if (npc.gridX === 19 && npc.gridY === 642) {
           // Tree
           this.player.stop_pathing_callback({ x: 43, y: 728, isWaypoint: true });
+        } else if (npc.gridX === 160 && npc.gridY === 596) {
+          // Fossil
+          this.player.stop_pathing_callback({ x: 134, y: 752, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.SECRETSTAIRS2) {
         if (npc.gridX === 149 && npc.gridY === 548) {
@@ -5392,6 +5403,12 @@ class Game {
         } else if (npc.gridX === 159 && npc.gridY === 778) {
           // Temple
           this.player.stop_pathing_callback({ x: 43, y: 582, isWaypoint: true });
+        } else if (npc.gridX === 116 && npc.gridY === 747) {
+          // Passage Left
+          this.player.stop_pathing_callback({ x: 43, y: 545, isWaypoint: true });
+        } else if (npc.gridX === 136 && npc.gridY === 752) {
+          // Passage Right
+          this.player.stop_pathing_callback({ x: 160, y: 597, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.GRIMOIRE) {
         this.tryUnlockingAchievement("GRIMOIRE");
