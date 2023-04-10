@@ -33,6 +33,7 @@ class GameClient {
   spawn_spell_callback: any;
   despawn_callback: any;
   health_callback: any;
+  healthentity_callback: any;
   chat_callback: any;
   equip_callback: any;
   auras_callback: any;
@@ -131,6 +132,7 @@ class GameClient {
     this.handlers[Types.Messages.DESPAWN] = this.receiveDespawn;
     this.handlers[Types.Messages.SPAWN_BATCH] = this.receiveSpawnBatch;
     this.handlers[Types.Messages.HEALTH] = this.receiveHealth;
+    this.handlers[Types.Messages.HEALTH_ENTITY] = this.receiveHealthEntity;
     this.handlers[Types.Messages.CHAT] = this.receiveChat;
     this.handlers[Types.Messages.EQUIP] = this.receiveEquipItem;
     this.handlers[Types.Messages.AURAS] = this.receiveAuras;
@@ -504,13 +506,11 @@ class GameClient {
   }
 
   receiveHealth(data) {
-    var health = data[1];
-    var isRegen = data[2];
-    var isHurt = data[3];
+    this.health_callback?.(data[1]);
+  }
 
-    if (this.health_callback) {
-      this.health_callback({ health, isRegen, isHurt });
-    }
+  receiveHealthEntity(data) {
+    this.healthentity_callback?.(data[1]);
   }
 
   receiveChat(data) {
@@ -972,6 +972,10 @@ class GameClient {
 
   onPlayerChangeHealth(callback) {
     this.health_callback = callback;
+  }
+
+  onEntityChangeHealth(callback) {
+    this.healthentity_callback = callback;
   }
 
   onPlayerEquipItem(callback) {

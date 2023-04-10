@@ -548,10 +548,11 @@ class World {
   pushToGroup(groupId, message, ignoredPlayer?: number) {
     var self = this;
     var group = this.groups[groupId];
+    var ignoredPlayerIds = Array.isArray(ignoredPlayer) ? ignoredPlayer : [ignoredPlayer];
 
     if (group) {
       _.each(group.players, function (playerId) {
-        if (playerId != ignoredPlayer) {
+        if (![ignoredPlayerIds].includes(playerId)) {
           self.pushToPlayer(self.getEntityById(playerId), message);
         }
       });
@@ -1850,6 +1851,8 @@ class World {
         attacker,
         new Messages.Damage(entity, dmg, entity.hitPoints, entity.maxHitPoints, isCritical, isBlocked),
       );
+
+      this.pushToAdjacentGroups(attacker.group, entity.healthEntity(), [attacker.id, entity.id]);
     }
 
     if (entity.type === "player") {
@@ -2322,7 +2325,7 @@ class World {
       }
 
       if (mob.kind >= Types.Entities.OCULOTHORAX) {
-        const transmuteRandom = random(10_000);
+        const transmuteRandom = random(5_000);
         if (transmuteRandom === 133) {
           return "scrolltransmuteblessed";
         }

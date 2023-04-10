@@ -84,6 +84,7 @@ export const Types: any = {
     HURT_SPELL: 13,
     HURT_TRAP: 102,
     HEALTH: 14,
+    HEALTH_ENTITY: 118,
     CHAT: 15,
     LOOT: 16,
     EQUIP: 17,

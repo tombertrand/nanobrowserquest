@@ -6,7 +6,7 @@ import {
 } from "../../shared/js/types/achievements";
 import Character from "./character";
 
-import type  Game from "./game";
+import type Game from "./game";
 
 var NpcTalk = {
   guard: [
@@ -151,7 +151,7 @@ var NpcTalk = {
 
   octocat: [
     "Welcome to Nano BrowserQuest!",
-    'Want to report an issue? Log into Discord and report it in the #bug channel',
+    "Want to report an issue? Log into Discord and report it in the #bug channel",
     'Want to see the source code? Check out <a target="_blank" href="https://github.com/browserquest/BrowserQuest">BrowserQuest repository on GitHub</a>',
   ],
 
@@ -202,17 +202,14 @@ var NpcTalk = {
     "Many brave souls had attempted to find the temple and unlock its secrets,<br/>but none had ever returned...",
   ],
   tombangel: [
-    "The sun statuette grants the power to see what is hidden to human eye.",
-    "The unique artifact remains firmly in the hands of the blood guardian, protected for all eternity",
+    "The quantum powder can be crafted from the remains of valourous enemies.",
+    "It grants the power to travel through space and time",
   ],
-
-  tombcross: [
-    "The moon statuette grants the power to travel through space and time.",
-    "The unique artifact remains firmly in the hands of the blood guardian, protected for all eternity",
-  ],
+  tombcross: ["This tomb is linked to the blood guardians,<br/>activating the mechanism will reveal the entrance."],
   tombskull: [
     "There is an ancient legend about a powerful grimoire, a book of magic and spells,<br/>that is said to be hidden beneath a tree deep in the heart of a dark forest.",
     "According to the legend, the grimoire holds the secrets to powerful magic,<br/>and those who can uncover it will gain immense power and knowledge.",
+    "Only a raging blaze will let the worthy pass through the entrance in search of the lost grimoire",
   ],
   lever: [""],
   lever2: [""],

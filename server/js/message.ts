@@ -200,7 +200,14 @@ Messages.GatewayLevelEnd = class Message {
 Messages.Health = class Message {
   constructor(private health) {}
   serialize() {
-    return [Types.Messages.HEALTH, this.health.points, this.health.isRegen, this.health.isHurt];
+    return [Types.Messages.HEALTH, this.health];
+  }
+};
+
+Messages.HealthEntity = class Message {
+  constructor(private health) {}
+  serialize() {
+    return [Types.Messages.HEALTH_ENTITY, this.health];
   }
 };
 

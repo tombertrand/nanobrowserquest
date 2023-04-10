@@ -56,7 +56,7 @@ export const setBonus = {
   emerald: {
     attackDamage: 15,
     defense: 10,
-    poisonDamage: 20,
+    poisonDamage: 35,
     allResistance: 15,
   },
   minotaur: {

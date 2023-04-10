@@ -178,7 +178,6 @@ class Game {
   hoveringPlateauTile: any;
   hoveringOtherPlayer: any;
   lastHovered: any;
-  timeout: any;
   zoningOrientation: any;
   updatetarget_callback: any;
   playerexp_callback: any;
@@ -4285,13 +4284,13 @@ class Game {
         }
       });
 
-      self.client.onPlayerChangeHealth(function ({ health, isRegen, isHurt }) {
+      self.client.onPlayerChangeHealth(function ({ points, isRegen, isHurt }) {
         var player = self.player;
         var diff;
 
         if (player && !player.isDead && !player.invincible) {
-          diff = health - player.hitPoints;
-          player.hitPoints = health;
+          diff = points - player.hitPoints;
+          player.hitPoints = points;
 
           if (player.hitPoints <= 0) {
             player.die();
@@ -4307,6 +4306,17 @@ class Game {
             self.infoManager.addDamageInfo({ value: "+" + diff, x: player.x, y: player.y - 15, type: "healed" });
           }
           self.updateBars();
+        }
+      });
+
+      self.client.onEntityChangeHealth(function ({ points, id }) {
+        const entity = self.getEntityById(id);
+
+        if (entity) {
+          entity.hitPoints = points;
+          if (self.lastHovered?.id === entity.id) {
+            self.updateHoveredTarget(entity);
+          }
         }
       });
 
@@ -5773,9 +5783,13 @@ class Game {
         this.hoveringPlayer ||
         this.hoveringNpc ||
         this.hoveringChest ||
-        this.hoveringOtherPlayer
+        this.hoveringOtherPlayer ||
+        this.player.target
       ) {
-        var entity = this.getEntityAt(x, y);
+        var entity =
+          this.hoveringMob || this.hoveringPlayer || this.hoveringNpc || this.hoveringChest || this.hoveringOtherPlayer
+            ? this.getEntityAt(x, y)
+            : this.player.target;
 
         this.player.showTarget(entity);
         // supportsSilhouettes hides the players (render bug I'd guess)
@@ -5786,11 +5800,10 @@ class Game {
           entity.setHighlight(true);
         }
         this.lastHovered = entity;
-      } else if (this.lastHovered) {
-        this.lastHovered.setHighlight(null);
-        if (this.timeout === undefined && !this.player.hasTarget()) {
-          this.onRemoveTarget();
-        }
+      } else if (this.player.inspecting || this.lastHovered) {
+        this.lastHovered?.setHighlight(null);
+
+        this.onRemoveTarget();
         this.lastHovered = null;
       }
     }
@@ -6569,6 +6582,10 @@ class Game {
       target.maxHitPoints = maxHitPoints;
       this.updatetarget_callback(target);
     }
+  }
+
+  updateHoveredTarget(target) {
+    this.updatetarget_callback(target);
   }
 
   getDeadMobPosition(mobId) {

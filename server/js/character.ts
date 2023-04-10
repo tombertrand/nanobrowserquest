@@ -87,6 +87,10 @@ class Character extends Entity {
     return new Messages.Health({ points: this.hitPoints, isRegen: false, isHurt });
   }
 
+  healthEntity() {
+    return new Messages.HealthEntity({ points: this.hitPoints, id: this.id });
+  }
+
   regen() {
     return new Messages.Health({ points: this.hitPoints, isRegen: true });
   }
