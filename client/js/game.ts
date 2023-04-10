@@ -2027,7 +2027,6 @@ class Game {
         this.tryUnlockingAchievement("ZELDA");
       }
     } else if (slot === 2 && (this.player.defenseSkillTimeout || typeof this.player.defenseSkill !== "number")) return;
-
     const isAttackSkill = slot === 1;
     const skillName = isAttackSkill
       ? Types.attackSkillTypeAnimationMap[this.player.attackSkill]
@@ -3104,6 +3103,9 @@ class Game {
           if (!self.player.isDead) {
             self.audioManager.updateMusic();
           }
+
+          self.player.removeTarget();
+          self.updateCursor();
         }
 
         if (self.player.target instanceof Npc && !isWaypoint) {
@@ -3540,7 +3542,7 @@ class Game {
           entity.maxHitPoints = data.maxHitPoints;
         }
 
-        if (entity instanceof Player) {
+        if (entity instanceof Player && entity.id !== self.player.id) {
           // @NOTE Manually update locally stored entity to prevent invisible unupdated coords entity
           // Before this the entities were not updated because they already existed
           // const currentEntity = self.getEntityById(entity.id);

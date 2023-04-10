@@ -468,7 +468,7 @@ class Player extends Character {
       this.shieldLevel = toNumber(level);
       this.shieldBonus = toArray(bonus);
       this.shieldSocket = toArray(socket);
-      this.defenseSkill = skill;
+      this.defenseSkill = toNumber(skill);
     } else {
       this.shieldName = null;
       this.shieldLevel = null;
