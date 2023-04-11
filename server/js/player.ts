@@ -8,6 +8,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
+import { expForLevel } from "../../shared/js/types/experience";
 import { toArray, toDb, toNumber } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
@@ -40,6 +41,7 @@ import type Trade from "./trade";
 
 const MIN_LEVEL = 14;
 const MIN_TIME = 1000 * 60 * 15;
+const MAX_EXP = expForLevel[expForLevel.length - 1];
 
 let payoutIndex = 0;
 
@@ -693,8 +695,6 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.FOSSIL) {
         console.info("FOSSIL: " + self.name);
-
-        console.log("~~~~self.weapon", self.weapon);
         if (self.weapon !== "pickaxe") return;
 
         self.server.activateFossil(self);
@@ -973,7 +973,7 @@ class Player extends Character {
             self.send(new Messages.StoneLevelInProgress(self.server.stoneLevelClock).serialize());
           } else if (y >= 744 && y <= 781 && x <= 29) {
             self.send(new Messages.GatewayLevelInProgress(self.server.gatewayLevelClock).serialize());
-          } else if (y >= 744 && x >= 84) {
+          } else if (y >= 744 && x >= 84 && self.server.templeLevelClock) {
             self.send(new Messages.TempleLevelInProgress(self.server.templeLevelClock).serialize());
           }
         }
@@ -1785,19 +1785,16 @@ class Player extends Character {
         } else if (jewelLevel === 2) {
           bonus = _.shuffle(mediumLevelBonus).slice(0, isUnique ? 3 : 2);
         } else if (jewelLevel === 3) {
-          jewelLevel = 2;
           bonus = _.shuffle(highLevelBonus)
             .slice(0, isUnique ? 3 : 2)
             .concat(_.shuffle(resistances).slice(0, 1));
         } else if (jewelLevel === 4) {
-          jewelLevel = 2;
           bonus = _.shuffle(highLevelBonus).slice(0, 2).concat(_.shuffle(resistances).slice(0, 2));
 
           if (isUnique) {
             bonus = bonus.concat(_.shuffle(elementPercentage).slice(0, 1));
           }
         } else if (jewelLevel === 5) {
-          jewelLevel = 3;
           bonus = _.shuffle(highLevelBonus)
             .slice(0, 2)
             .concat(_.shuffle(elementDamage).slice(0, 1))
@@ -2635,7 +2632,15 @@ class Player extends Character {
   }
 
   incExp(exp) {
+    if (this.experience >= MAX_EXP) {
+      return;
+    }
+
     this.experience = this.experience + exp;
+    if (this.experience > MAX_EXP) {
+      this.experience = MAX_EXP;
+    }
+
     this.databaseHandler.setExp(this.name, this.experience);
     var originalLevel = this.level;
     this.level = Types.getLevel(this.experience);

@@ -20,6 +20,9 @@ export const randomRange = function (min, max) {
 };
 
 export const randomInt = function (min, max) {
+  if (max < min) {
+    return min;
+  }
   return min + Math.floor(Math.random() * (max - min + 1));
 };
 
@@ -682,7 +685,7 @@ export const isValidUpgradeRunes = items => {
   });
 
   if (!runeClass || !scrollClass || !runeRank) return false;
-  if (Types.itemClassRank(scrollClass) < Types.itemClassRank(runeClass)) return false;
+  if (Types.itemClassRank[scrollClass] < Types.itemClassRank[runeClass]) return false;
   if (runeRank > 30) return false;
   if (runeRank < 18 && runeQuantity !== 3) return false;
   if (runeRank >= 18 && runeQuantity !== 2) return false;
@@ -806,17 +809,14 @@ export const getRandomJewelLevel = (mobLevel: number) => {
 
   const randomNumber = random(100);
 
-  // 5% -> 5
-  // 45% -> 4
-  // 15% -> 3
-  // 20% -> 2
-  // 20% -> 1
-  // 35% -> 0
+  // 10% -> 5
+  // 25% -> 4
+  // 65% -> 3
   let level = 1;
   if (maxLevel === 5) {
-    if (randomNumber < 5) {
+    if (randomNumber < 10) {
       level = 5;
-    } else if (randomNumber < 30) {
+    } else if (randomNumber < 35) {
       level = 4;
     } else {
       level = 3;
@@ -892,7 +892,7 @@ export const getRandomRune = (mobLevel: number, minLevel?: number) => {
   }
 
   const maxRuneIndex = mobLevel / 2 - 1;
-  let minRuneIndex = minLevel || Math.floor(maxRuneIndex / 2) - 6;
+  let minRuneIndex = minLevel || randomInt(0, Math.floor(maxRuneIndex / 2) - 4);
   if (minRuneIndex < 0) {
     minRuneIndex = 0;
   }

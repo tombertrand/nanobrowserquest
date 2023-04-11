@@ -1038,9 +1038,9 @@ class DatabaseHandler {
                   isToReplyDone = true;
                 }
               } else if (
-                ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(toLocation)
+                ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(toLocation) &&
+                fromItem
               ) {
-                // @NOTE IMPORTANT fromItem.split is not a function!?
                 const [item, fromLevel] = fromItem.split(":");
                 if (
                   Types.getItemRequirement(item, fromLevel) > player.level ||
@@ -1700,15 +1700,12 @@ class DatabaseHandler {
   }
 
   useWeaponItem(player) {
-    // ~~~~@TODO this...
-    // Slot.DELETE_SLOT
-    // return new Promise(resolve => {
-    //   this.client.hset("u:" + player.name, "weapon", "dagger:1", () => {
-    //     player.equipItem({ item: 'dagger', level: 1, type: 'weapon'})
-    //     resolve(true);
-    //   });
-    //   this.moveItem({ player, fromSlot: Types.Slot.WEAPON, toSlot: -1 });
-    // });
+    return new Promise(resolve => {
+      this.client.hset("u:" + player.name, "weapon", "dagger:1", () => {
+        this.sendMoveItem({ player, location: "weapon", data: "dagger:1" });
+        resolve(true);
+      });
+    });
   }
 
   passwordIsRequired(player) {

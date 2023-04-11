@@ -90,8 +90,6 @@ class Spell extends Entity {
 
   cast(delay = 0, duration, endCallback) {
     setTimeout(() => {
-      console.log("~~~CAST!");
-
       setTimeout(() => {
         endCallback();
       }, duration);

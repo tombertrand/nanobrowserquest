@@ -1119,7 +1119,7 @@ Types.itemUniqueMap = {
   eclypsedagger: ["Ethereum Killer", 62, 68],
   demonaxe: ["Trustable", 62, 68],
   paladinaxe: ["Peer to Peer", 62, 70],
-  immortalsword: ["TBD", 62, 72],
+  immortalsword: ["Least Error & Latency will Win", 62, 72],
   hellhammer: ["Hephasto", 62, 62],
 
   // name, level, defense
@@ -1201,12 +1201,12 @@ Types.isSuperUnique = (itemName: string) =>
 
 Types.getLevel = function (exp: number) {
   var i = 1;
-  for (i = 1; i < 135; i++) {
+  for (i = 1; i < Types.expForLevel.length; i++) {
     if (exp < Types.expForLevel[i]) {
       return i;
     }
   }
-  return 135;
+  return i;
 };
 Types.getWeaponRank = function (weaponKind: number) {
   return Types.rankedWeapons.indexOf(weaponKind);
@@ -1502,20 +1502,16 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
   }
 };
 
-Types.isUniqueJewel = function (kindOrString: number | string, bonus: number[] = []) {
+Types.isUniqueJewel = function (kindOrString: number | string, bonus: number[] = [], level: number) {
   if (!Types.isJewel(kindOrString)) return false;
 
-  const elementPercentage = [27, 28, 29, 30, 31];
-
-  let isUnique = false;
-  for (let i = 0; i < elementPercentage.length; i++) {
-    if (bonus.includes(elementPercentage[i])) {
-      isUnique = true;
-      break;
-    }
-  }
-
-  return isUnique;
+  return (
+    (level === 1 && bonus.length === 2) ||
+    (level === 2 && bonus.length === 3) ||
+    (level === 3 && bonus.length === 4) ||
+    (level === 4 && bonus.length === 5) ||
+    (level === 5 && bonus.length === 6)
+  );
 };
 
 Types.isStaticChest = function (kind: number) {
@@ -2300,7 +2296,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     amuletplatinum: 6,
   };
 
-  const transmuteSuccessRate = isBlessed ? 99 : 80;
+  const transmuteSuccessRate = isBlessed ? 99 : 75;
 
   if (
     isUniqueRing ||
@@ -2421,7 +2417,7 @@ Types.getItemRequirement = function (item: string, level: number, isUnique: bool
   return requirement;
 };
 
-Types.isUnique = function (item, rawBonus) {
+Types.isUnique = function (item, rawBonus, level?: number) {
   const isWeapon = kinds[item][1] === "weapon";
   const isArmor = kinds[item][1] === "armor";
   const isBelt = kinds[item][1] === "belt";
@@ -2444,7 +2440,7 @@ Types.isUnique = function (item, rawBonus) {
   } else if (isBelt || isArmor) {
     isUnique = bonus ? bonus.length >= 1 : false;
   } else if (isJewel) {
-    isUnique = Types.isUniqueJewel(item, bonus);
+    isUnique = Types.isUniqueJewel(item, bonus, level);
   }
 
   return isUnique;
@@ -2504,7 +2500,7 @@ Types.getItemDetails = function ({
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
   const isShield = Types.isShield(item);
-  const isUnique = Types.isUnique(item, rawBonus);
+  const isUnique = Types.isUnique(item, rawBonus, level);
   const isRune = Types.isRune(item);
   const isJewel = Types.isJewel(item);
   const isStone = Types.isStone(item);
@@ -2688,7 +2684,7 @@ Types.itemDescription = {
   scrollupgradesacred:
     "Upgrade legendary class item. The chances for a successful upgrade varies depending on the item's level. Sacred scrolls gives a higher chance of successful upgrade.",
   scrolltransmute:
-    "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies. There is a 20% chance your item will be burned during the transmutation.",
+    "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies. There is a 25% chance your item will be burned during the transmutation.",
   scrolltransmuteblessed:
     "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies. There is a 1% chance your item will be burned during the transmutation.",
   rune: "Can be inserted into a socketed item or create runewords",

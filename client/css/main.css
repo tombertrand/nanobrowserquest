@@ -829,6 +829,7 @@ footer, header, hgroup, menu, nav, section {
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 0 10px;
     }
 
     .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-equip-cape, .item-equip-shield, .item-delete { position: relative; }

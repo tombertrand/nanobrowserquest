@@ -746,7 +746,7 @@ class World {
 
         // @NOTE Add a tree on top of the stairs
         this.addNpc(Types.Entities.TREE, x, y + 1);
-      } else if (x === 160 && y === 596) {
+      } else if (x === 159 && y === 597) {
         this.secretStairsPickaxeNpcId = npc.id;
       }
     } else if (kind === Types.Entities.SECRETSTAIRS2) {
@@ -1089,8 +1089,6 @@ class World {
             clearInterval(this.chaliceLevelInterval);
             setTimeout(() => {
               // @TODO ~~~~ spawn a portal to the temple?
-              console.log("~~~~~ ALL MAGES DEAD!");
-
               // Return everyone to altar, leave 10s to loot any last drop / activate lever
               this.endChaliceLevel();
             }, 10000);
@@ -2343,7 +2341,7 @@ class World {
       }
 
       if (mob.kind >= Types.Entities.OCULOTHORAX) {
-        const transmuteRandom = random(5_000);
+        const transmuteRandom = random(7_500);
         if (transmuteRandom === 133) {
           return "scrolltransmuteblessed";
         }

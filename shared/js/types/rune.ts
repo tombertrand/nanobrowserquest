@@ -307,14 +307,13 @@ export const getJewelRequirement = function (bonus) {
   return requirement;
 };
 
-export const getJewelSkinIndex = function (bonus) {
-  const requirement = getJewelRequirement(bonus);
+export const getJewelSkinIndex = function (level) {
   let index = "";
-  if (requirement === 25) {
+  if (level === 3) {
     index = "1";
-  } else if (requirement === 45) {
+  } else if (level === 4) {
     index = "2";
-  } else if (requirement === 60) {
+  } else if (level === 5) {
     index = "3";
   }
 

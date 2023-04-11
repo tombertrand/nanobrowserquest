@@ -570,8 +570,8 @@ class Player extends Character {
       this.setAttackSkill(skill);
     }
 
-    if (isDifferent && this.switch_callback) {
-      this.switch_callback();
+    if (isDifferent) {
+      this.switch_callback?.();
     }
   }
 
@@ -600,8 +600,8 @@ class Player extends Character {
       this.setArmorSocket(socket);
     }
 
-    if (armorSprite.name !== "firefox" && isDifferent && this.switch_callback) {
-      this.switch_callback();
+    if (armorSprite.name !== "firefox" && isDifferent) {
+      this.switch_callback?.();
     }
   }
 
@@ -621,8 +621,8 @@ class Player extends Character {
       this.capeBonus = bonus;
     }
 
-    if (isDifferent && this.switch_callback) {
-      this.switch_callback();
+    if (isDifferent) {
+      this.switch_callback?.();
     }
   }
 
@@ -651,8 +651,8 @@ class Player extends Character {
       this.setDefenseSkill(skill);
     }
 
-    if (isDifferent && this.switch_callback) {
-      this.switch_callback();
+    if (isDifferent) {
+      this.switch_callback?.();
     }
   }
 
@@ -661,9 +661,7 @@ class Player extends Character {
     this.capeLevel = null;
     this.capeBonus = null;
 
-    if (this.switch_callback) {
-      this.switch_callback();
-    }
+    this.switch_callback?.();
   }
 
   removeShield() {
@@ -672,9 +670,7 @@ class Player extends Character {
     this.shieldBonus = null;
     this.defenseSkill = null;
 
-    if (this.switch_callback) {
-      this.switch_callback();
-    }
+    this.switch_callback?.();
   }
 
   prepareRawItems(items) {
@@ -693,15 +689,15 @@ class Player extends Character {
         const isAmulet = kinds[item][1] === "amulet";
         const isChest = kinds[item][1] === "chest";
         const isJewel = kinds[item][1] === "jewel";
-        const isUnique = Types.isUnique(item, bonus);
+        const hasLevel = isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet || isJewel;
+        const level = hasLevel ? parseInt(levelOrQuantity) : null;
+        const isUnique = Types.isUnique(item, bonus, isJewel ? level : undefined);
 
         let requirement = null;
-        let level = null;
         let quantity = null;
         let runeword = null;
 
-        if (isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet || isJewel) {
-          level = parseInt(levelOrQuantity);
+        if (hasLevel) {
           requirement = Types.getItemRequirement(item, levelOrQuantity);
 
           if (isWeapon || isArmor || isShield) {

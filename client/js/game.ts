@@ -1139,7 +1139,7 @@ class Game {
           bonus.length >= 8 && currentSet && setBonus.length ? "extended" : ""
         }">
             <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
-              ${name}${isLevelVisible ? ` (+${level})` : ""}
+              ${name}${isLevelVisible ? ` (+${level})` : ""}${isJewel ? ` lv.${level}` : ""}
               ${runeRank ? ` (#${runeRank})` : ""}
               ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
             </div>
@@ -1160,8 +1160,8 @@ class Game {
                       const rune = Types.getRuneNameFromItem(rawSocket[index]);
                       image = rune ? `url(img/2/item-rune-${rune}.png)` : "none";
                     } else if (Types.isJewel(rawSocket[index])) {
-                      const [, , jewelBonus] = (rawSocket[index] as unknown as string).split("|") || [];
-                      const imageIndex = Types.getJewelSkinIndex(toArray(jewelBonus));
+                      const [, jewelLevel] = (rawSocket[index] as unknown as string).split("|") || [];
+                      const imageIndex = Types.getJewelSkinIndex(parseInt(jewelLevel));
                       image = `url(img/2/item-jewelskull${imageIndex}.png)`;
                     }
                     return `<div class="item-rune" style="background-image: ${image}; position: relative;"></div>`;
@@ -1523,14 +1523,14 @@ class Game {
     $(".item-draggable.ui-draggable").draggable("destroy");
   }
 
-  getIconPath(spriteName: string, level?: number, bonus?: number[]) {
+  getIconPath(spriteName: string, level?: number) {
     const scale = this.renderer.getScaleFactor();
 
     let suffix = "";
     if (spriteName === "cape" && level >= 7) {
       suffix = "7";
-    } else if (spriteName === "jewelskull" && level !== 1) {
-      suffix = Types.getJewelSkinIndex(bonus);
+    } else if (spriteName === "jewelskull" && level > 2) {
+      suffix = Types.getJewelSkinIndex(level);
     }
 
     return `img/${scale}/item-${spriteName}${suffix}.png`;
@@ -1861,7 +1861,7 @@ class Game {
         isUnique ? "item-unique" : ""
       } ${runeword ? "item-runeword" : ""}`,
       css: {
-        "background-image": `url("${this.getIconPath(item, level, toArray(bonus))}")`,
+        "background-image": `url("${this.getIconPath(item, level)}")`,
         position: "relative",
       },
       "data-item": item,
@@ -1902,6 +1902,8 @@ class Game {
     let itemBonus;
     let actionText = "upgrade";
     let uniqueText = "";
+    let runeUpgrade = "";
+    let rune = "";
 
     this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, skill, socket, isUnique }) => {
       if (slot === 0 && level) {
@@ -1919,12 +1921,18 @@ class Game {
           actionText = "transmute";
 
           uniqueText = uniqueSuccessRate === 100 ? "" : uniqueSuccessRate;
-        } else if (!item.startsWith("scrollupgrade")) {
-          successRate = null;
         } else if (itemLevel && (item.startsWith("scrollupgradeblessed") || item.startsWith("scrollupgradesacred"))) {
           const blessedRates = Types.getBlessedSuccessRateBonus();
           const blessedRate = blessedRates[parseInt(itemLevel) - 1];
           successRate += blessedRate;
+        } else if (!itemName && Types.isRune(item)) {
+          if (rune === "") {
+            rune = item;
+          } else if (rune !== item && !item.startsWith("scrollupgrade")) {
+            rune = null;
+          }
+        } else if (!item.startsWith("scrollupgrade")) {
+          successRate = null;
         }
       }
 
@@ -1933,12 +1941,24 @@ class Game {
         .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill, socket }));
     });
 
+    if (rune) {
+      const runeName = Types.getRuneNameFromItem(rune);
+      const runeRank = Types.runeKind[runeName].rank;
+      const runeClass = Types.getItemClass(rune);
+      const nextRune = Types.RuneList[runeRank];
+      if (nextRune) {
+        runeUpgrade = `Combine ${runeRank < 18 ? 3 : 2} ${runeName.toUpperCase()} runes with a ${_.capitalize(
+          runeClass,
+        )} Upgrade Scroll to forge 1 ${nextRune.toUpperCase()} rune`;
+      }
+    }
+
     $("#upgrade-info").html(
       successRate
         ? `${successRate}% chance of successful ${actionText}${
             uniqueText ? `<br />${uniqueText}% chance to be unique` : ""
           }`
-        : "&nbsp;",
+        : runeUpgrade || "&nbsp;",
     );
 
     if ($("#upgrade").hasClass("visible")) {
@@ -3192,9 +3212,7 @@ class Game {
           self.player.getArmorName(),
           self.player.getWeaponName(),
         );
-        if (self.equipment_callback) {
-          self.equipment_callback();
-        }
+        self.equipment_callback?.();
       });
 
       self.player.onInvincibleStart(function () {
@@ -4390,6 +4408,11 @@ class Game {
           } else if (type === "weapon") {
             player.switchWeapon(name, level, bonus, socket, skill);
 
+            // Clear weapon when it's used as a quest item
+            if (name === "dagger") {
+              $(".item-equip-weapon").empty();
+            }
+
             if (playerId === self.player.id) {
               self.setAttackSkill(skill);
             }
@@ -5381,9 +5404,9 @@ class Game {
         } else if (npc.gridX === 19 && npc.gridY === 642) {
           // Tree
           this.player.stop_pathing_callback({ x: 43, y: 728, isWaypoint: true });
-        } else if (npc.gridX === 160 && npc.gridY === 596) {
+        } else if (npc.gridX === 159 && npc.gridY === 597) {
           // Fossil
-          this.player.stop_pathing_callback({ x: 134, y: 752, isWaypoint: true });
+          this.player.stop_pathing_callback({ x: 136, y: 750, isWaypoint: true });
         }
       } else if (npc.kind === Types.Entities.SECRETSTAIRS2) {
         if (npc.gridX === 149 && npc.gridY === 548) {
@@ -5403,10 +5426,10 @@ class Game {
         } else if (npc.gridX === 159 && npc.gridY === 778) {
           // Temple
           this.player.stop_pathing_callback({ x: 43, y: 582, isWaypoint: true });
-        } else if (npc.gridX === 116 && npc.gridY === 747) {
+        } else if (npc.gridX === 116 && npc.gridY === 751) {
           // Passage Left
           this.player.stop_pathing_callback({ x: 43, y: 545, isWaypoint: true });
-        } else if (npc.gridX === 136 && npc.gridY === 752) {
+        } else if (npc.gridX === 137 && npc.gridY === 751) {
           // Passage Right
           this.player.stop_pathing_callback({ x: 160, y: 597, isWaypoint: true });
         }
