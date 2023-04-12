@@ -350,6 +350,14 @@ var Npcs = {
     }
   },
 
+  Obelisk: class Obelisk extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.OBELISK);
+      this.isFading = false;
+      this.idleSpeed = 100;
+    }
+  },
+
   Hands: class Hands extends Npc {
     constructor(id) {
       super(id, Types.Entities.HANDS);

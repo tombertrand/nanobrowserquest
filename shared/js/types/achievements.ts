@@ -73,7 +73,7 @@ export const ACHIEVEMENT_NAMES = [
   "BLACKSMITH",
   "SACRED",
   "EMBLEM",
-  "SAURON",
+  "OBELISK",
   "MISSTEP",
   "ZELDA",
   "GRIMOIRE",
@@ -102,6 +102,7 @@ export const ACHIEVEMENT_MINI_BOSS_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a ==
 export const ACHIEVEMENT_DISCORD_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "DISCORD");
 export const ACHIEVEMENT_BLACKSMITH_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "BLACKSMITH");
 export const ACHIEVEMENT_ZAP_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "ZAP");
+export const ACHIEVEMENT_OBELISK_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "OBELISK");
 
 export type AchievementName = typeof ACHIEVEMENT_NAMES[number];
 export interface Achievement {

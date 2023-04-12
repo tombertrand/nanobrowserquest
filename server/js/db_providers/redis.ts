@@ -1702,7 +1702,7 @@ class DatabaseHandler {
   useWeaponItem(player) {
     return new Promise(resolve => {
       this.client.hset("u:" + player.name, "weapon", "dagger:1", () => {
-        this.sendMoveItem({ player, location: "weapon", data: "dagger:1" });
+        this.sendMoveItem({ player, location: "weapon", data: "" });
         resolve(true);
       });
     });

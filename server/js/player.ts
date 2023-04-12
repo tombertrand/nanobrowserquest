@@ -5,6 +5,7 @@ import {
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_GRIMOIRE_INDEX,
   ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_OBELISK_INDEX,
   ACHIEVEMENT_WING_INDEX,
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
@@ -162,6 +163,7 @@ class Player extends Character {
   isHurtByTrap: boolean;
   // Achievement checks
   hasGrimoire: boolean;
+  hasObelisk: boolean;
   hasNft: boolean;
   hasWing: boolean;
   hasCrystal: boolean;
@@ -217,6 +219,7 @@ class Player extends Character {
     this.hash = null;
     this.isHurtByTrap = false;
     this.hasGrimoire = false;
+    this.hasObelisk = false;
     this.hasNft = false;
     this.hasWing = false;
     this.hasCrystal = false;
@@ -1172,9 +1175,12 @@ class Player extends Character {
               self.hasGrimoire = true;
               self.equipItem({} as any);
 
-              postMessageToDiscordEventChannel(
-                `${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]} `,
-              );
+              postMessageToDiscordEventChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]}`);
+            } else if (index === ACHIEVEMENT_OBELISK_INDEX) {
+              self.hasObelisk = true;
+              self.equipItem({} as any);
+
+              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life`);
             }
           });
         }
@@ -2396,6 +2402,9 @@ class Player extends Character {
     if (this.hasGrimoire) {
       this.bonus.allResistance += 10;
     }
+    if (this.hasObelisk) {
+      this.bonus.health += 50;
+    }
 
     if (this.bonus.allResistance) {
       this.bonus.magicResistance += this.bonus.allResistance;
@@ -2846,6 +2855,7 @@ class Player extends Character {
       const { members, partyLeader } = this.getParty() || {};
 
       this.hasGrimoire = !!achievement[ACHIEVEMENT_GRIMOIRE_INDEX];
+      this.hasObelisk = !!achievement[ACHIEVEMENT_OBELISK_INDEX];
       this.hasNft = !!achievement[ACHIEVEMENT_NFT_INDEX];
       this.hasWing = !!achievement[ACHIEVEMENT_WING_INDEX];
       this.hasCrystal = !!achievement[ACHIEVEMENT_CRYSTAL_INDEX];

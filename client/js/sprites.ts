@@ -135,6 +135,7 @@ import lever from "../sprites/lever.json";
 import lever2 from "../sprites/lever.json";
 import grimoire from "../sprites/grimoire.json";
 import fossil from "../sprites/fossil.json";
+import obelisk from "../sprites/obelisk.json";
 import hands from "../sprites/hands.json";
 import alkor from "../sprites/npc2.json";
 import olaf from "../sprites/npc2.json";
@@ -542,6 +543,7 @@ const sprites = {
   lever2,
   grimoire,
   fossil,
+  obelisk,
   hands,
   alkor,
   olaf,

@@ -1,0 +1,13 @@
+{
+  "id": "obelisk",
+  "width": 70,
+  "height": 150,
+  "animations": {
+    "idle_down": {
+      "length": 16,
+      "row": 0
+    }
+  },
+  "offset_x": -28,
+  "offset_y": -120
+}

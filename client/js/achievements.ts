@@ -564,7 +564,7 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
   SACRED: {
     id: 73,
     name: "Sacred",
-    desc: "Retrieve the Crystal Victor is seeking<br/><small>Earn 5 legendary upgrade scrolls</small>",
+    desc: "Complete the Uber Cow level<br/><small>Earn 5 sacred upgrade scrolls</small>",
     hidden: true,
   },
   EMBLEM: {
@@ -573,10 +573,10 @@ export const getAchievements = (network: Network): { [key in AchievementName]: A
     desc: "Find a powerful artifact abe to enchant items",
     hidden: true,
   },
-  SAURON: {
+  OBELISK: {
     id: 75,
-    name: "Sauron",
-    desc: "Drink from the fountain of the ethernal life<br/><small>Get 40 base health</small>",
+    name: "Obelisk",
+    desc: "Find the Obelisk of Eternal Life<br/><small>Get 50 base health</small>",
     hidden: true,
   },
   MISSTEP: {

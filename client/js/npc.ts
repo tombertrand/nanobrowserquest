@@ -219,6 +219,10 @@ var NpcTalk = {
     "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
   ],
   fossil: ["Here lies the remains of a fallen Bitcoin maximalist.<br/>It shall not rise again."],
+  obelisk: [
+    "Legend says that the obelisk holds the secret to immortality.",
+    "The runes on the obelisk contain the key to unlocking this secret",
+  ],
   hands: [
     {
       condition(_game, isActivated) {

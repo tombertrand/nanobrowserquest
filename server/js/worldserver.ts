@@ -1355,7 +1355,7 @@ class World {
       setTimeout(() => {
         this.isActivatedTreeLevel = false;
         this.despawn(secretStairs);
-      }, 5_000);
+      }, 10_000);
     }
   }
 
@@ -2345,6 +2345,13 @@ class World {
         if (transmuteRandom === 133) {
           return "scrolltransmuteblessed";
         }
+      }
+    }
+
+    if (mob.kind === Types.Entities.SKELETON4 && !attacker.hasObelisk) {
+      const pickaxeRandom = random(1000);
+      if (pickaxeRandom === 133) {
+        return "pickaxe";
       }
     }
 

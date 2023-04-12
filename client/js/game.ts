@@ -482,6 +482,7 @@ class Game {
       "lever2",
       "grimoire",
       "fossil",
+      "obelisk",
       "hands",
       "alkor",
       "olaf",
@@ -5392,6 +5393,8 @@ class Game {
         if (!npc.isActivated && this.player.weaponName === "pickaxe") {
           this.client.sendFossil(npc.id);
         }
+      } else if (npc.kind === Types.Entities.OBELISK) {
+        this.tryUnlockingAchievement("OBELISK");
       } else if (npc.kind === Types.Entities.HANDS) {
         if (!npc.isActivated) {
           this.client.sendHands(npc.id);

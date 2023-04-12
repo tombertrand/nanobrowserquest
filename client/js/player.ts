@@ -4,6 +4,7 @@ import { kinds, Types } from "../../shared/js/gametypes";
 import {
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_NFT_INDEX,
+  ACHIEVEMENT_OBELISK_INDEX,
   ACHIEVEMENT_WING_INDEX,
 } from "../../shared/js/types/achievements";
 import { toArray, toNumber } from "../../shared/js/utils";
@@ -250,22 +251,22 @@ class Player extends Character {
         }
       } else if (Types.isSingle(item.kind)) {
         const { itemKind } = item;
-
         const isFound = this.inventory
           .concat(this.upgrade)
           .concat(this.stash)
+          .concat([{ item: this.weaponName }])
           .some(({ item }) => item === itemKind);
 
         if (isFound) {
           throw new Exceptions.LootException("You already have this item.");
-        } else if ([Types.Entities.NFT, Types.Entities.WING, Types.Entities.CRYSTAL].includes(item.kind)) {
-          if (item.kind === Types.Entities.NFT && achievements[ACHIEVEMENT_NFT_INDEX]) {
-            throw new Exceptions.LootException("You already completed the NFT achievement.");
-          } else if (item.kind === Types.Entities.WING && achievements[ACHIEVEMENT_WING_INDEX]) {
-            throw new Exceptions.LootException("You already completed the Dragon Wing achievement.");
-          } else if (item.kind === Types.Entities.CRYSTAL && achievements[ACHIEVEMENT_CRYSTAL_INDEX]) {
-            throw new Exceptions.LootException("You already completed the Crystal achievement.");
-          }
+        } else if (item.kind === Types.Entities.NFT && achievements[ACHIEVEMENT_NFT_INDEX]) {
+          throw new Exceptions.LootException("You already completed the NFT achievement.");
+        } else if (item.kind === Types.Entities.WING && achievements[ACHIEVEMENT_WING_INDEX]) {
+          throw new Exceptions.LootException("You already completed the Dragon Wing achievement.");
+        } else if (item.kind === Types.Entities.CRYSTAL && achievements[ACHIEVEMENT_CRYSTAL_INDEX]) {
+          throw new Exceptions.LootException("You already completed the Crystal achievement.");
+        } else if (item.kind === Types.Entities.PICKAXE && achievements[ACHIEVEMENT_OBELISK_INDEX]) {
+          throw new Exceptions.LootException("You already completed the Obelisk achievement.");
         }
       }
 

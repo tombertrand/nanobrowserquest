@@ -1131,6 +1131,10 @@ EntityFactory.builders[Types.Entities.FOSSIL] = function (id) {
   return new Npcs.Fossil(id);
 };
 
+EntityFactory.builders[Types.Entities.OBELISK] = function (id) {
+  return new Npcs.Obelisk(id);
+};
+
 EntityFactory.builders[Types.Entities.HANDS] = function (id) {
   return new Npcs.Hands(id);
 };
