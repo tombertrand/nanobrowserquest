@@ -2341,7 +2341,7 @@ class World {
       }
 
       if (mob.kind >= Types.Entities.OCULOTHORAX) {
-        const transmuteRandom = random(7_500);
+        const transmuteRandom = random(7_000);
         if (transmuteRandom === 133) {
           return "scrolltransmuteblessed";
         }
@@ -2349,7 +2349,7 @@ class World {
     }
 
     if (mob.kind === Types.Entities.SKELETON4 && !attacker.hasObelisk) {
-      const pickaxeRandom = random(1000);
+      const pickaxeRandom = random(500);
       if (pickaxeRandom === 133) {
         return "pickaxe";
       }
