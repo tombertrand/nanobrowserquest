@@ -7,6 +7,7 @@ import "jquery-ui/ui/widgets/slider";
 import "jquery-countdown";
 import "jquery.qrcode";
 import "jquery-ui-touch-punch";
+import "jquery-contextmenu";
 import "../css/main.css";
 import "../css/achievements.css";
 import "../css/inspector.css";
@@ -15,6 +16,8 @@ import "../css/party.css";
 import "../css/settings.css";
 import "../css/skills.css";
 import "jquery-ui/themes/base/all.css";
+import "jquery-contextmenu/dist/jquery.contextMenu.css";
+import "../css/contextmenu.css";
 
 import * as Sentry from "@sentry/browser";
 import each from "lodash/each";

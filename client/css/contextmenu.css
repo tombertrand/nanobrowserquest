@@ -1,0 +1,28 @@
+.context-menu-list {
+  font-family: "GraphicPixel";
+  background-color: rgba(64, 64, 64, 0.75);
+  width: auto !important;
+}
+
+.context-menu-list .context-menu-item:first-child {
+  color: #fcda5c;
+  text-align: center;
+  padding: 0px 10px 4px;
+}
+
+.context-menu-item {
+  background-color: transparent;
+  color: #fff;
+  padding: 4px 10px 6px;
+}
+
+.context-menu-item.context-menu-hover {
+  cursor: url(../img/2/hand.png) 2 5, move;
+  background-color: rgba(64, 64, 64, 0.75);
+}
+
+.context-menu-item.context-menu-disabled {
+  cursor: url(../img/2/hand.png) 2 5, move;
+  color: #bbb;
+  background-color: transparent;
+}

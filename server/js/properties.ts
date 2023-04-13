@@ -184,7 +184,7 @@ var Properties: any = {
     drops: {
       rejuvenationpotion: 80,
       bluearmor: 5,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 5,
       shieldblue: 3,
     },
     hp: 240,
@@ -196,7 +196,7 @@ var Properties: any = {
       rejuvenationpotion: 70,
       blueaxe: 5,
       beltfrozen: 3,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       shieldblue: 3,
     },
     hp: 280,
@@ -208,7 +208,7 @@ var Properties: any = {
       rejuvenationpotion: 80,
       blueaxe: 5,
       beltfrozen: 5,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       amuletgold: 1,
       shieldblue: 3,
     },
@@ -260,7 +260,7 @@ var Properties: any = {
   },
   skeletoncommander: {
     drops: {
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 5,
       belthorned: 1,
       hornedarmor: 5,
       ringgold: 4,
@@ -316,10 +316,10 @@ var Properties: any = {
   necromancer: {
     drops: {
       necromancerheart: 40,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 4,
       ringgold: 4,
       amuletgold: 4,
-      shieldfrozen: 3,
+      shieldfrozen: 4,
       ringnecromancer: 1,
     },
     hp: 3000,

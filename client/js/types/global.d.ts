@@ -19,5 +19,10 @@ declare global {
     resizable(arg: any): JQuery;
     dialog(arg: any): JQuery;
     slider(arg: any): JQuery;
+    contextMenu(arg: any): JQuery;
+  }
+
+  interface JQueryStatic {
+    contextMenu(arg: any): JQuery;
   }
 }

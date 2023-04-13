@@ -37,7 +37,12 @@ import {
 } from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
 import { toArray, toDb } from "../../../shared/js/utils";
-import { discordClient, EmojiMap, postMessageToDiscordAnvilChannel } from "../discord";
+import {
+  discordClient,
+  EmojiMap,
+  postMessageToDiscordAnvilChannel,
+  postMessageToDiscordEventChannel,
+} from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
@@ -558,6 +563,12 @@ class DatabaseHandler {
           Sentry.captureException(new Error("Invalid deposit account"));
           return;
         }
+
+        postMessageToDiscordEventChannel(
+          `A new adventurer has just arrived in our realm. **${player.name}** has joined the ranks of ${
+            player.network === "nano" ? "Nano" : "Banano"
+          } 🎉`,
+        );
 
         this.client
           .multi()

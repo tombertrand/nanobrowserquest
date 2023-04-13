@@ -3327,6 +3327,7 @@ class Game {
         if (partyLeader.name === self.player.name) {
           self.partyInvitees = self.partyInvitees.filter(invitee => invitee !== data.playerName);
         }
+
         self.player.setPartyId(partyId);
         self.player.setPartyLeader(partyLeader);
         self.player.setPartyMembers(members);

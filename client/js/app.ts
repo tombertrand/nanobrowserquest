@@ -97,6 +97,7 @@ class App {
 
     document.getElementById("parchment")!.className = this.frontPage;
     this.initFormFields();
+    this.initContextMenu();
   }
 
   setGame(game) {
@@ -106,6 +107,47 @@ class App {
     this.isDesktop = !(this.isMobile || this.isTablet);
     this.supportsWorkers = !!window.Worker;
     this.ready = true;
+  }
+
+  initContextMenu() {
+    $.contextMenu({
+      selector: "#canvas",
+      animation: { duration: 25, show: "fadeIn", hide: "fadeOut" },
+      build: () => {
+        const { x, y } = this.game.getMouseGridPosition();
+        const player = this.game.getPlayerAt(x, y);
+        const isInParty = !!player.partyId;
+
+        return player && player.id !== this.game.player.id
+          ? {
+              callback: function () {},
+              items: {
+                player: {
+                  name: player.name,
+                  disabled: true,
+                },
+                trade: {
+                  name: `Trade`,
+                  callback: () => {
+                    this.game.say(`/trade ${player.name}`);
+                  },
+                },
+                party: {
+                  name: isInParty ? `In a party` : `Party `,
+                  callback: () => {
+                    if (!this.game.player.partyId) {
+                      this.game.say(`/party create`);
+                    }
+                    this.game.say(`/party invite ${player.name}`);
+                  },
+                  disabled: isInParty,
+                },
+                equipment: { name: `View equipment`, disabled: true },
+              },
+            }
+          : null;
+      },
+    });
   }
 
   initFormFields() {
