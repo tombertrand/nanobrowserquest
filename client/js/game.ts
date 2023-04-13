@@ -121,7 +121,6 @@ class Game {
   highAnimatedTiles: any[] | null;
   debugPathing: boolean;
   pvpFlag: boolean;
-  spriteNames: string[];
   storage: any;
   store: any;
   map: Map;
@@ -328,415 +327,6 @@ class Game {
 
     // pvp
     this.pvpFlag = false;
-
-    // sprites
-    this.spriteNames = [
-      "hand",
-      "attack",
-      "loot",
-      "target",
-      "levelup",
-      "aura-drainlife",
-      "aura-thunderstorm",
-      "aura-highhealth",
-      "aura-freeze",
-      "aura-lowerresistance",
-      "aura-arcane",
-      "skill-heal",
-      "skill-defense",
-      "skill-resistances",
-      "skill-cast",
-      "skill-cast-magic",
-      "skill-cast-flame",
-      "skill-cast-poison",
-      "skill-magic",
-      "skill-flame",
-      "skill-lightning",
-      "skill-cold",
-      "skill-poison",
-      "curse-prevent-regenerate-health",
-      "talk",
-      "sparks",
-      "weapon-effect-magic",
-      "weapon-effect-flame",
-      "weapon-effect-cold",
-      "weapon-effect-poison",
-      "shadow16",
-      "rat",
-      "rat2",
-      "rat3",
-      "skeleton",
-      "skeleton2",
-      "skeleton3",
-      "skeleton4",
-      "golem",
-      "spectre",
-      "boss",
-      "skeletoncommander",
-      "deathknight",
-      "ogre",
-      "yeti",
-      "werewolf",
-      "wraith",
-      "crab",
-      "snake",
-      "snake2",
-      "snake3",
-      "snake4",
-      "eye",
-      "bat",
-      "bat2",
-      "goblin",
-      "goblin2",
-      "zombie",
-      "necromancer",
-      "cow",
-      "cowking",
-      "minotaur",
-      "worm",
-      "wraith2",
-      "ghost",
-      "mage",
-      "mage-magic",
-      "mage-flame",
-      "mage-lightning",
-      "mage-cold",
-      "mage-poison",
-      "mage-spell",
-      "mage-spell-magic",
-      "mage-spell-flame",
-      "mage-spell-lightning",
-      "mage-spell-cold",
-      "mage-spell-poison",
-      "arrow",
-      "arrow-magic",
-      "arrow-flame",
-      "arrow-lightning",
-      "arrow-cold",
-      "arrow-poison",
-      "shaman",
-      "skeletontemplar",
-      "skeletontemplar2",
-      "spider",
-      "spider2",
-      "spiderqueen",
-      "butcher",
-      "oculothorax",
-      "kobold",
-      "skeletonberserker",
-      "skeletonarcher",
-      "statue",
-      "statue-spell",
-      "statue2",
-      "statue2-spell",
-      "deathangel",
-      "deathangel-spell",
-      "deathangel-spell-magic",
-      "deathangel-spell-flame",
-      "deathangel-spell-lightning",
-      "deathangel-spell-cold",
-      "deathangel-spell-poison",
-      "wizard",
-      "guard",
-      "king",
-      "villagegirl",
-      "villager",
-      "carlosmatos",
-      "satoshi",
-      "coder",
-      "agent",
-      "rick",
-      "scientist",
-      "nyan",
-      "priest",
-      "sorcerer",
-      "octocat",
-      "anvil",
-      "anvil-success",
-      "anvil-fail",
-      "anvil-recipe",
-      "anvil-powder",
-      "anvil-transmute",
-      "anvil-chestblue",
-      "waypointx",
-      "waypointn",
-      "waypointo",
-      "stash",
-      "portalcow",
-      "portalminotaur",
-      "portalstone",
-      "portalgateway",
-      "gatewayfx",
-      "gate",
-      "magicstone",
-      "altarchalice",
-      "altarsoulstone",
-      "secretstairs",
-      "secretstairs2",
-      "secretstairsup",
-      "tombdeathangel",
-      "tombangel",
-      "tombcross",
-      "tombskull",
-      "lever",
-      "lever2",
-      "grimoire",
-      "fossil",
-      "obelisk",
-      "hands",
-      "alkor",
-      "olaf",
-      "victor",
-      "fox",
-      "tree",
-      "trap",
-      "trap2",
-      "trap3",
-      "doordeathangel",
-      "blueflame",
-      "beachnpc",
-      "forestnpc",
-      "desertnpc",
-      "lavanpc",
-      "clotharmor",
-      "leatherarmor",
-      "mailarmor",
-      "platearmor",
-      "redarmor",
-      "goldenarmor",
-      "bluearmor",
-      "hornedarmor",
-      "frozenarmor",
-      "diamondarmor",
-      "emeraldarmor",
-      "templararmor",
-      "dragonarmor",
-      "moonarmor",
-      "mysticalarmor",
-      "demonarmor",
-      "immortalarmor",
-      "paladinarmor",
-      "firefox",
-      "death",
-      "dagger",
-      "axe",
-      "blueaxe",
-      "bluemorningstar",
-      "chest",
-      "wirtleg",
-      "pickaxe",
-      "sword",
-      "redsword",
-      "bluesword",
-      "goldensword",
-      "frozensword",
-      "diamondsword",
-      "minotauraxe",
-      "emeraldsword",
-      "moonsword",
-      "templarsword",
-      "spikeglaive",
-      "eclypsedagger",
-      "demonaxe",
-      "paladinaxe",
-      "immortalsword",
-      "executionersword",
-      "mysticalsword",
-      "dragonsword",
-      "hellhammer",
-      "cape",
-      "shieldwood",
-      "shieldiron",
-      "shieldplate",
-      "shieldred",
-      "shieldgolden",
-      "shieldblue",
-      "shieldhorned",
-      "shieldfrozen",
-      "shielddiamond",
-      "shieldtemplar",
-      "shieldemerald",
-      "shieldexecutioner",
-      "shieldmystical",
-      "shielddragon",
-      "shielddemon",
-      "shieldmoon",
-      "item-sword",
-      "item-axe",
-      "item-blueaxe",
-      "item-bluemorningstar",
-      "item-redsword",
-      "item-bluesword",
-      "item-goldensword",
-      "item-frozensword",
-      "item-diamondsword",
-      "item-minotauraxe",
-      "item-emeraldsword",
-      "item-moonsword",
-      "item-templarsword",
-      "item-spikeglaive",
-      "item-eclypsedagger",
-      "item-demonaxe",
-      "item-paladinaxe",
-      "item-immortalsword",
-      "item-executionersword",
-      "item-mysticalsword",
-      "item-dragonsword",
-      "item-hellhammer",
-      "item-leatherarmor",
-      "item-mailarmor",
-      "item-platearmor",
-      "item-redarmor",
-      "item-goldenarmor",
-      "item-bluearmor",
-      "item-hornedarmor",
-      "item-frozenarmor",
-      "item-diamondarmor",
-      "item-emeraldarmor",
-      "item-templararmor",
-      "item-dragonarmor",
-      "item-moonarmor",
-      "item-mysticalarmor",
-      "item-demonarmor",
-      "item-immortalarmor",
-      "item-paladinarmor",
-      "item-beltleather",
-      "item-beltplated",
-      "item-beltfrozen",
-      "item-belthorned",
-      "item-beltdiamond",
-      "item-beltminotaur",
-      "item-beltemerald",
-      "item-beltexecutioner",
-      "item-beltmystical",
-      "item-belttemplar",
-      "item-beltdemon",
-      "item-beltmoon",
-      "item-cape",
-      "item-shieldwood",
-      "item-shieldiron",
-      "item-shieldplate",
-      "item-shieldred",
-      "item-shieldgolden",
-      "item-shieldblue",
-      "item-shieldhorned",
-      "item-shieldfrozen",
-      "item-shielddiamond",
-      "item-shieldtemplar",
-      "item-shieldemerald",
-      "item-shieldexecutioner",
-      "item-shieldmystical",
-      "item-shielddragon",
-      "item-shielddemon",
-      "item-shieldmoon",
-      "item-flask",
-      "item-rejuvenationpotion",
-      "item-poisonpotion",
-      "item-nanopotion",
-      "item-bananopotion",
-      "item-rune-sat",
-      "item-rune-al",
-      "item-rune-bul",
-      "item-rune-nan",
-      "item-rune-mir",
-      "item-rune-gel",
-      "item-rune-do",
-      "item-rune-ban",
-      "item-rune-sol",
-      "item-rune-um",
-      "item-rune-hex",
-      "item-rune-zal",
-      "item-rune-vie",
-      "item-rune-eth",
-      "item-rune-btc",
-      "item-rune-vax",
-      "item-rune-por",
-      "item-rune-las",
-      "item-rune-cham",
-      "item-rune-dur",
-      "item-rune-xno",
-      "item-rune-fal",
-      "item-rune-kul",
-      "item-rune-mer",
-      "item-rune-qua",
-      "item-rune-gul",
-      "item-rune-ber",
-      "item-rune-tor",
-      "item-rune-jah",
-      "item-rune-shi",
-      "item-rune-vod",
-      "item-gemruby",
-      "item-gememerald",
-      "item-gemamethyst",
-      "item-gemtopaz",
-      "item-gemsapphire",
-      "item-gold",
-      "item-ringbronze",
-      "item-ringsilver",
-      "item-ringgold",
-      "item-ringplatinum",
-      "item-ringnecromancer",
-      "item-ringraistone",
-      "item-ringfountain",
-      "item-ringminotaur",
-      "item-ringmystical",
-      "item-ringbalrog",
-      "item-ringconqueror",
-      "item-ringheaven",
-      "item-ringwizard",
-      "item-amuletsilver",
-      "item-amuletgold",
-      "item-amuletplatinum",
-      "item-amuletcow",
-      "item-amuletfrozen",
-      "item-amuletdemon",
-      "item-amuletmoon",
-      "item-amuletstar",
-      "item-amuletskull",
-      "item-amuletdragon",
-      "item-chestblue",
-      "item-chestgreen",
-      "item-chestpurple",
-      "item-chestred",
-      "item-scrollupgradelow",
-      "item-scrollupgrademedium",
-      "item-scrollupgradehigh",
-      "item-scrollupgradelegendary",
-      "item-scrollupgradeblessed",
-      "item-scrollupgradesacred",
-      "item-scrolltransmute",
-      "item-scrolltransmuteblessed",
-      "item-stonesocket",
-      "item-stonedragon",
-      "item-stonehero",
-      "item-jewelskull",
-      "item-skeletonkey",
-      "item-raiblockstl",
-      "item-raiblockstr",
-      "item-raiblocksbl",
-      "item-raiblocksbr",
-      "item-wirtleg",
-      "item-skeletonkingcage",
-      "item-necromancerheart",
-      "item-cowkinghorn",
-      "item-chalice",
-      "item-soulstone",
-      "item-nft",
-      "item-wing",
-      "item-crystal",
-      "item-powderblack",
-      "item-powderblue",
-      "item-powdergold",
-      "item-powdergreen",
-      "item-powderred",
-      "item-powderquantum",
-      "item-pickaxe",
-      "item-cake",
-      "item-burger",
-      "morningstar",
-      "item-morningstar",
-      "item-firefoxpotion",
-    ];
   }
 
   setup($bubbleContainer, canvas, background, foreground, input) {
@@ -792,7 +382,7 @@ class Game {
         this.player.setWeaponName(this.storage.data.player.weapon);
       }
     }
-    this.player.setSprite(this.sprites[this.player.getSpriteName()]);
+    this.player.setSprite(this.getSprite(this.player.getSpriteName()));
     this.player.idle();
 
     console.debug("Finished initPlayer");
@@ -800,17 +390,17 @@ class Game {
 
   initShadows() {
     this.shadows = {};
-    this.shadows["small"] = this.sprites["shadow16"];
+    this.shadows["small"] = this.getSprite("shadow16");
   }
 
   initCursors() {
-    this.cursors["hand"] = this.sprites["hand"];
-    this.cursors["attack"] = this.sprites["attack"];
-    this.cursors["loot"] = this.sprites["loot"];
-    this.cursors["target"] = this.sprites["target"];
-    this.cursors["arrow"] = this.sprites["arrow"];
-    this.cursors["talk"] = this.sprites["talk"];
-    this.cursors["join"] = this.sprites["talk"];
+    this.cursors["hand"] = this.getSprite("hand");
+    this.cursors["attack"] = this.getSprite("attack");
+    this.cursors["loot"] = this.getSprite("loot");
+    this.cursors["target"] = this.getSprite("target");
+    this.cursors["arrow"] = this.getSprite("arrow");
+    this.cursors["talk"] = this.getSprite("talk");
+    this.cursors["join"] = this.getSprite("talk");
   }
 
   initAnimations() {
@@ -873,14 +463,6 @@ class Game {
 
     this.cursePreventRegenerateHealthAnimation = new Animation("idle_down", 17 + 1, 0, 20, 20);
     this.cursePreventRegenerateHealthAnimation.setSpeed(25);
-  }
-
-  initHurtSprites() {
-    var self = this;
-
-    Types.forEachArmorKind(function (kind, kindName) {
-      self.sprites[kindName].createHurtSprite();
-    });
   }
 
   initSettings(settings) {
@@ -1377,7 +959,7 @@ class Game {
       if (toSlot === Slot.WEAPON) {
         this.player.switchWeapon(item, level, bonus, socket, skill);
       } else if (toSlot === Slot.ARMOR) {
-        this.player.switchArmor(this.sprites[item], level, bonus, socket);
+        this.player.switchArmor(this.getSprite(item), level, bonus, socket);
       } else if (toSlot === Slot.CAPE) {
         this.player.switchCape(item, level, bonus);
       } else if (toSlot === Slot.SHIELD) {
@@ -1388,7 +970,7 @@ class Game {
 
     const type = kinds[item][1];
     if (type === "armor" && $(".item-equip-armor").is(":empty")) {
-      this.player.switchArmor(this.sprites["clotharmor"], 1);
+      this.player.switchArmor(this.getSprite("clotharmor"), 1);
     } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
       this.player.switchWeapon("dagger", 1);
     } else if (type === "cape" && $(".item-equip-cape").is(":empty")) {
@@ -2201,6 +1783,19 @@ class Game {
     $(`#waypoint-${id}`).removeClass("disabled locked").addClass("active");
   }
 
+  getSprite(name) {
+    if (!this.sprites[name]) {
+      this.loadSprite(name);
+      this.sprites[name].onload_func = () => {
+        if (name.endsWith("armor")) {
+          this.sprites[name].createHurtSprite();
+        }
+      };
+    }
+
+    return this.sprites[name];
+  }
+
   loadSprite(name) {
     if (this.renderer.upscaledRendering) {
       this.spritesets[0][name] = new Sprite(name, 1);
@@ -2213,18 +1808,15 @@ class Game {
   }
 
   setSpriteScale(scale) {
-    var self = this;
-
     if (this.renderer.upscaledRendering) {
       this.sprites = this.spritesets[0];
     } else {
       this.sprites = this.spritesets[scale - 1];
 
-      _.each(this.entities, function (entity: Entity) {
+      _.each(this.entities, (entity: Entity) => {
         entity.sprite = null;
-        entity.setSprite(self.sprites[entity.getSpriteName()]);
+        entity.setSprite(this.getSprite(entity.getSpriteName()));
       });
-      this.initHurtSprites();
       this.initShadows();
       this.initCursors();
     }
@@ -2236,18 +1828,6 @@ class Game {
     this.spritesets[0] = {};
     this.spritesets[1] = {};
     this.spritesets[2] = {};
-    _.map(this.spriteNames, this.loadSprite.bind(this));
-  }
-
-  spritesLoaded() {
-    if (
-      _.some(this.sprites, function (sprite: any) {
-        return !sprite.isLoaded;
-      })
-    ) {
-      return false;
-    }
-    return true;
   }
 
   setCursor(name, orientation = Types.Orientations.DOWN) {
@@ -2337,7 +1917,7 @@ class Game {
   }
 
   addItem(item, x, y) {
-    item.setSprite(this.sprites[item.getSpriteName()]);
+    item.setSprite(this.getSprite(item.getSpriteName()));
     item.setGridPosition(x, y);
     item.setAnimation("idle", 150);
     this.addEntity(item);
@@ -2592,16 +2172,16 @@ class Game {
       }
 
       this.loadSprites();
-      // @ts-ignore
+
       this.setUpdater(new Updater(this));
       this.camera = this.renderer.camera;
 
       this.setSpriteScale(this.renderer.scale);
 
       var wait = setInterval(function () {
-        if (self.map.isLoaded && self.spritesLoaded()) {
+        if (self.map.isLoaded /* && self.spritesLoaded()*/) {
           self.ready = true;
-          console.debug("All sprites loaded.");
+          console.debug("Map loaded.");
 
           self.loadAudio();
 
@@ -2609,7 +2189,6 @@ class Game {
           self.initCursors();
           self.initAnimations();
           self.initShadows();
-          self.initHurtSprites();
 
           self.initEntityGrid();
           self.initItemGrid();
@@ -2865,7 +2444,7 @@ class Game {
       self.app.initTradePlayer1StatusButton();
 
       self.storage.initPlayer(self.player.name, self.player.account);
-      self.storage.savePlayer(self.renderer.getPlayerImage(), self.player.getSpriteName(), self.player.getWeaponName());
+      self.renderer.loadPlayerImage();
 
       if (!self.storage.hasAlreadyPlayed() || self.player.level === 1) {
         self.showNotification(`Welcome to ${network === "nano" ? "Nano" : "Banano"} BrowserQuest!`);
@@ -3168,7 +2747,7 @@ class Game {
         console.info(self.playerId + " is dead");
 
         self.player.stopBlinking();
-        self.player.setSprite(self.sprites["death"]);
+        self.player.setSprite(self.getSprite("death"));
         self.player.animate("death", 120, 1, () => {
           console.info(self.playerId + " was removed");
 
@@ -3207,18 +2786,14 @@ class Game {
         }
       });
 
-      self.player.onSwitchItem(function () {
-        self.storage.savePlayer(
-          self.renderer.getPlayerImage(),
-          self.player.getArmorName(),
-          self.player.getWeaponName(),
-        );
+      self.player.onSwitchItem(() => {
+        self.renderer.loadPlayerImage();
         self.equipment_callback?.();
       });
 
       self.player.onInvincibleStart(function () {
         self.invinciblestart_callback();
-        self.player.switchArmor(self.sprites["firefox"], 1);
+        self.player.switchArmor(self.getSprite("firefox"), 1);
       });
 
       self.player.onInvincibleStop(function () {
@@ -3230,14 +2805,14 @@ class Game {
       });
 
       self.client.onSpawnChest(function (chest, x, y) {
-        chest.setSprite(self.sprites[chest.getSpriteName()]);
+        chest.setSprite(self.getSprite(chest.getSpriteName()));
         chest.setGridPosition(x, y);
         chest.setAnimation("idle_down", 150);
         self.addEntity(chest);
 
         chest.onOpen(function () {
           chest.stopBlinking();
-          chest.setSprite(self.sprites["death"]);
+          chest.setSprite(self.getSprite("death"));
           chest.setAnimation("death", 120, 1, function () {
             console.info(chest.id + " was removed");
             self.removeEntity(chest);
@@ -3283,9 +2858,9 @@ class Game {
               }
 
               if (entity.kind === Types.Entities.MAGE && element !== "spectral") {
-                entity.setSprite(self.sprites[entity.getSpriteName(element === "spectral" ? "" : element)]);
+                entity.setSprite(self.getSprite(entity.getSpriteName(element === "spectral" ? "" : element)));
               } else {
-                entity.setSprite(self.sprites[entity.getSpriteName()]);
+                entity.setSprite(self.getSprite(entity.getSpriteName()));
               }
 
               entity.setGridPosition(x, y);
@@ -3513,7 +3088,7 @@ class Game {
                     speed = 250;
                   }
                   if (!hasCustomDeathAnimation) {
-                    entity.setSprite(self.sprites["death"]);
+                    entity.setSprite(self.getSprite("death"));
                   }
 
                   entity.animate("death", speed, 1, function () {
@@ -3590,7 +3165,7 @@ class Game {
           entity.setSettings(settings);
           entity.setPartyId(partyId);
           entity.setLevel(level);
-          entity.setSprite(self.sprites[entity.getSpriteName()]);
+          entity.setSprite(self.getSprite(entity.getSpriteName()));
           entity.setGridPosition(x, y);
 
           self.registerEntityPosition(entity);
@@ -3623,10 +3198,10 @@ class Game {
 
         if ([Types.Entities.MAGESPELL, Types.Entities.ARROW, Types.Entities.DEATHANGELSPELL].includes(entity.kind)) {
           entity.setSprite(
-            self.sprites[entity.getSpriteName(!element || ["spectral"].includes(element) ? "" : element)],
+            self.getSprite(entity.getSpriteName(!element || ["spectral"].includes(element) ? "" : element)),
           );
         } else {
-          entity.setSprite(self.sprites[entity.getSpriteName()]);
+          entity.setSprite(self.getSprite(entity.getSpriteName()));
         }
 
         entity.setGridPosition(caster.gridX, caster.gridY);
@@ -3681,7 +3256,7 @@ class Game {
           ].includes(entity.kind);
 
           if (!hasCustomDeathAnimation) {
-            entity.setSprite(self.sprites["death"]);
+            entity.setSprite(self.getSprite("death"));
           }
 
           entity.animate("death", speed, 1, function () {
@@ -4405,7 +3980,7 @@ class Game {
 
         if (player) {
           if (type === "armor") {
-            player.switchArmor(self.sprites[name], level, bonus, socket);
+            player.switchArmor(self.getSprite(name), level, bonus, socket);
           } else if (type === "weapon") {
             player.switchWeapon(name, level, bonus, socket, skill);
 
@@ -5557,21 +5132,19 @@ class Game {
   forEachVisibleTile(callback, extra) {
     var m = this.map;
 
-    if (m.isLoaded) {
-      this.forEachVisibleTileIndex(function (tileIndex) {
-        if (_.isArray(m.data[tileIndex])) {
-          _.each(m.data[tileIndex], function (id) {
-            callback(id - 1, tileIndex);
-          });
+    this.forEachVisibleTileIndex(function (tileIndex) {
+      if (_.isArray(m.data[tileIndex])) {
+        _.each(m.data[tileIndex], function (id) {
+          callback(id - 1, tileIndex);
+        });
+      } else {
+        if (_.isNaN(m.data[tileIndex] - 1)) {
+          //throw Error("Tile number for index:"+tileIndex+" is NaN");
         } else {
-          if (_.isNaN(m.data[tileIndex] - 1)) {
-            //throw Error("Tile number for index:"+tileIndex+" is NaN");
-          } else {
-            callback(m.data[tileIndex] - 1, tileIndex);
-          }
+          callback(m.data[tileIndex] - 1, tileIndex);
         }
-      }, extra);
-    }
+      }
+    }, extra);
   }
 
   forEachAnimatedTile(callback) {

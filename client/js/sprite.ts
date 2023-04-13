@@ -121,10 +121,7 @@ class Sprite {
 
     this.image.onload = function () {
       self.isLoaded = true;
-
-      if (self.onload_func) {
-        self.onload_func();
-      }
+      self.onload_func?.();
     };
   }
 

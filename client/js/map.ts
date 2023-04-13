@@ -44,12 +44,8 @@ class Map {
   }
 
   _checkReady() {
-    if (this.tilesetsLoaded) {
-      this.isLoaded = true;
-      if (this.ready_func) {
-        this.ready_func();
-      }
-    }
+    this.isLoaded = true;
+    this.ready_func?.();
   }
 
   _loadMap(useWorker) {
@@ -67,7 +63,6 @@ class Map {
         this.grid = map.grid;
         this.plateauGrid = map.plateauGrid;
         this.tilesets = map.tilesets;
-        this._initTilesets();
         this._checkReady();
       };
     } else {
@@ -91,7 +86,6 @@ class Map {
   _initTilesets() {
     this.tilesetCount = this.tilesets.length;
     this.tilesets = this.tilesets.map(({ imageName, ...rest }) => ({
-      image: this._loadTileset(`img/1/${imageName}.png`),
       ...rest,
     }));
   }
@@ -150,29 +144,24 @@ class Map {
   }
 
   _loadTileset(filepath) {
-    const tileset = new Image();
+    const img = new Image();
 
-    tileset.crossOrigin = "Anonymous";
-    tileset.src = filepath;
+    img.crossOrigin = "Anonymous";
+    img.src = filepath;
 
     console.info("Loading tileset: " + filepath);
 
-    tileset.onload = () => {
-      if (tileset.width % this.tilesize > 0) {
+    img.onload = () => {
+      if (img.width % this.tilesize > 0) {
         throw Error("Tileset size should be a multiple of " + this.tilesize);
       }
       console.info("Map tileset loaded.");
 
-      this.tilesetCount -= 1;
-      if (this.tilesetCount === 0) {
-        console.debug("All map tilesets loaded.");
-
-        this.tilesetsLoaded = true;
-        this._checkReady();
-      }
+      // Force a redraw when the map finishes loading
+      this.game.renderer.renderStaticCanvases();
     };
 
-    return tileset;
+    return img;
   }
 
   ready(f) {

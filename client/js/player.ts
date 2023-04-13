@@ -306,7 +306,7 @@ class Player extends Character {
 
   getArmorSprite() {
     if (this.invincible) {
-      return this.normalSprite; //this.currentArmorSprite;
+      return this.normalSprite;
     } else {
       return this.sprite;
     }

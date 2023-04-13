@@ -233,10 +233,8 @@ class Storage {
     return this.data.settings.showHealthAboveBars;
   }
 
-  savePlayer(img, armor, weapon) {
+  savePlayer(img) {
     this.setPlayerImage(img);
-    this.setPlayerArmor(armor);
-    this.setPlayerWeapon(weapon);
   }
 
   // Achievements

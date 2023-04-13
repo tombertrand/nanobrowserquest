@@ -307,7 +307,7 @@ class Renderer {
           this.game.drawTarget = false;
         }
       } else {
-        if (sprite && anim) {
+        if (sprite?.width && anim) {
           var frame = anim.currentFrame,
             s = this.scale,
             x = frame.x * os,
@@ -371,16 +371,20 @@ class Renderer {
         return;
       }
 
-      this.drawScaledImage(
-        ctx,
-        tileset.image,
-        getX(tileid - tileset.firstgid + 2, tileset.columns / s) * this.tilesize,
-        Math.floor((tileid - tileset.firstgid + 1) / (tileset.columns / s)) * this.tilesize,
-        this.tilesize,
-        this.tilesize,
-        getX(cellid + 1, this.game.map.width) * this.tilesize,
-        Math.floor(cellid / this.game.map.width) * this.tilesize,
-      );
+      if (!tileset.image) {
+        tileset.image = this.game.map._loadTileset(`img/1/${tileset.name}.png`);
+      } else {
+        this.drawScaledImage(
+          ctx,
+          tileset.image,
+          getX(tileid - tileset.firstgid + 2, tileset.columns / s) * this.tilesize,
+          Math.floor((tileid - tileset.firstgid + 1) / (tileset.columns / s)) * this.tilesize,
+          this.tilesize,
+          this.tilesize,
+          getX(cellid + 1, this.game.map.width) * this.tilesize,
+          Math.floor(cellid / this.game.map.width) * this.tilesize,
+        );
+      }
     }
   }
 
@@ -452,7 +456,7 @@ class Renderer {
   drawCape(entity) {
     if (!entity.cape) return;
 
-    var sprite = this.game.sprites["cape"];
+    var sprite = this.game.getSprite("cape");
     var anim = entity.currentAnimation;
 
     var spriteImage = sprite.image;
@@ -460,7 +464,7 @@ class Renderer {
       spriteImage = sprite.image7;
     }
 
-    if (sprite && anim) {
+    if (sprite?.width && anim) {
       var os = this.upscaledRendering ? 1 : this.scale;
       var ds = this.upscaledRendering ? this.scale : 1;
 
@@ -502,13 +506,13 @@ class Renderer {
   drawShield(entity) {
     if (!entity.shieldName) return;
 
-    var sprite = this.game.sprites[entity.shieldName];
+    var sprite = this.game.getSprite(entity.shieldName);
     var anim = entity.currentAnimation;
     var spriteImage = sprite.image;
 
     let isFilterApplied = false;
 
-    if (sprite && anim) {
+    if (sprite?.width && anim) {
       var os = this.upscaledRendering ? 1 : this.scale;
       var ds = this.upscaledRendering ? this.scale : 1;
 
@@ -549,7 +553,7 @@ class Renderer {
       os = this.upscaledRendering ? 1 : this.scale,
       ds = this.upscaledRendering ? this.scale : 1;
 
-    if (anim && sprite) {
+    if (anim && sprite?.width) {
       var frame = anim.currentFrame,
         s = this.scale,
         x = frame.x * os,
@@ -611,26 +615,26 @@ class Renderer {
             var sprite = null;
             var anim = null;
             if (aura === "drainlife") {
-              sprite = this.game.sprites["aura-drainlife"];
+              sprite = this.game.getSprite("aura-drainlife");
               anim = this.game.drainLifeAnimation;
             } else if (aura === "thunderstorm") {
-              sprite = this.game.sprites["aura-thunderstorm"];
+              sprite = this.game.getSprite("aura-thunderstorm");
               anim = this.game.thunderstormAnimation;
             } else if (aura === "highhealth") {
-              sprite = this.game.sprites["aura-highhealth"];
+              sprite = this.game.getSprite("aura-highhealth");
               anim = this.game.highHealthAnimation;
             } else if (aura === "freeze") {
-              sprite = this.game.sprites["aura-freeze"];
+              sprite = this.game.getSprite("aura-freeze");
               anim = this.game.freezeAnimation;
             } else if (aura === "lowerresistance") {
-              sprite = this.game.sprites["aura-lowerresistance"];
+              sprite = this.game.getSprite("aura-lowerresistance");
               anim = this.game.resistanceAnimation;
             } else if (aura === "arcane") {
-              sprite = this.game.sprites["aura-arcane"];
+              sprite = this.game.getSprite("aura-arcane");
               anim = this.game.arcaneAnimation;
             }
 
-            if (sprite && anim) {
+            if (sprite?.width && anim) {
               var os = this.upscaledRendering ? 1 : this.scale;
               var ds = this.upscaledRendering ? this.scale : 1;
 
@@ -685,9 +689,11 @@ class Renderer {
           ) {
             spriteImage = sprite.imageunique;
           }
-        } else if (entity.kind === Types.Entities.GUARD && this.game.player?.network === "nano") {
-          sprite["image"].src = sprite["image"].src.replace("guard.png", "guardbanano.png");
         }
+
+        // else if (entity.kind === Types.Entities.GUARD && this.game.player?.network === "nano") {
+        //   sprite["image"].src = sprite["image"].src.replace("guard.png", "guardbanano.png");
+        // }
         //  else if (entity.kind === Types.Entities.GUARD) {
         //   spriteImage = sprite[`image${this.game.player.network}`];
         // }
@@ -719,7 +725,7 @@ class Renderer {
         }
 
         if (entity instanceof Item && entity.kind !== Types.Entities.CAKE) {
-          var sparks = this.game.sprites["sparks"],
+          var sparks = this.game.getSprite("sparks"),
             // @ts-ignore
             anim = this.game.sparksAnimation,
             frame = anim.currentFrame,
@@ -743,9 +749,9 @@ class Renderer {
       }
 
       if (entity instanceof Player && !entity.isDead && entity.hasWeapon()) {
-        var weapon = this.game.sprites[entity.getWeaponName()];
+        var weapon = this.game.getSprite(entity.getWeaponName());
 
-        if (weapon) {
+        if (weapon?.width) {
           var weaponAnimData = weapon.animationData[anim.name];
           var index = frame.index < weaponAnimData.length ? frame.index : frame.index % weaponAnimData.length;
           var wx = weapon.width * index * os;
@@ -786,7 +792,7 @@ class Renderer {
               effect = "cold";
             }
 
-            var sprite = this.game.sprites[`weapon-effect-${effect}`];
+            var sprite = this.game.getSprite(`weapon-effect-${effect}`);
             // @ts-ignore
             var anim = this.game.weaponEffectAnimation;
 
@@ -797,7 +803,7 @@ class Renderer {
               image = "9";
             }
 
-            if (sprite && anim) {
+            if (sprite?.width && anim) {
               var frame = anim.currentFrame,
                 s = this.scale,
                 x = frame.x * os,
@@ -853,10 +859,10 @@ class Renderer {
         }
 
         if (spriteName) {
-          sprite = this.game.sprites[spriteName];
+          sprite = this.game.getSprite(spriteName);
         }
 
-        if (sprite && anim) {
+        if (sprite?.width && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
           var ds = this.upscaledRendering ? this.scale : 1;
 
@@ -880,11 +886,11 @@ class Renderer {
       }
 
       if (entity instanceof Character && entity.isLevelup) {
-        var sprite = this.game.sprites["levelup"];
+        var sprite = this.game.getSprite("levelup");
         // @ts-ignore
         var anim = this.game.levelupAnimation;
 
-        if (sprite && anim) {
+        if (sprite?.width && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
           var ds = this.upscaledRendering ? this.scale : 1;
           var { x: entityX, y: entityY } = entity;
@@ -908,14 +914,14 @@ class Renderer {
       }
 
       if (entity instanceof Player && entity.defenseSkillName) {
-        var sprite = this.game.sprites[`skill-${entity.defenseSkillName}`];
+        var sprite = this.game.getSprite(`skill-${entity.defenseSkillName}`);
         // @ts-ignore
         var anim =
           entity.defenseSkillName === "resistances"
             ? this.game.skillResistanceAnimation
             : this.game.defenseSkillAnimation;
 
-        if (sprite && anim) {
+        if (sprite?.width && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
           var ds = this.upscaledRendering ? this.scale : 1;
           // @ts-ignore
@@ -945,12 +951,12 @@ class Renderer {
         // Default sprite for lightning & cold cast
         var sprite =
           skillName === "cold" || skillName === "lightning"
-            ? this.game.sprites["skill-cast"]
-            : this.game.sprites[`skill-cast-${Types.skillToNameMap[entity.castSkill]}`];
+            ? this.game.getSprite("skill-cast")
+            : this.game.getSprite(`skill-cast-${Types.skillToNameMap[entity.castSkill]}`);
         // @ts-ignore
         var anim = this.game.skillCastAnimation;
 
-        if (sprite && anim) {
+        if (sprite?.width && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
           var ds = this.upscaledRendering ? this.scale : 1;
           // @ts-ignore
@@ -975,11 +981,11 @@ class Renderer {
       }
 
       if (entity instanceof Player && typeof entity.curseId === "number") {
-        var sprite = this.game.sprites["curse-prevent-regenerate-health"];
+        var sprite = this.game.getSprite("curse-prevent-regenerate-health");
         // @ts-ignore
         var anim = this.game.cursePreventRegenerateHealthAnimation;
 
-        if (sprite && anim) {
+        if (sprite?.width && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
           var ds = this.upscaledRendering ? this.scale : 1;
           // @ts-ignore
@@ -1004,10 +1010,10 @@ class Renderer {
       }
 
       if (entity instanceof Character && typeof entity.skillAnimation === "number") {
-        var sprite = this.game.sprites[`skill-${Types.skillToNameMap[entity.skillAnimation]}`];
+        var sprite = this.game.getSprite(`skill-${Types.skillToNameMap[entity.skillAnimation]}`);
         var anim = this.game[`skill${_.capitalize(Types.skillToNameMap[entity.skillAnimation])}Animation`];
 
-        if (sprite && anim) {
+        if (sprite?.width && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;
           var ds = this.upscaledRendering ? this.scale : 1;
           // @ts-ignore
@@ -1110,7 +1116,7 @@ class Renderer {
       spr;
 
     if (entity instanceof Player && entity.hasWeapon()) {
-      var weapon = this.game.sprites[entity.getWeaponName()];
+      var weapon = this.game.getSprite(entity.getWeaponName());
       spr = weapon;
     } else {
       spr = entity.sprite;
@@ -1316,41 +1322,78 @@ class Renderer {
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  getPlayerImage() {
-    var weapon = this.game.sprites[this.game.player.getWeaponName()];
+  loadPlayerImage() {
+    const hasShield = this.game.player.shieldName;
+    const hasCape = this.game.player.cape;
+    const totalCount = 2 + (hasShield ? 1 : 0) + (hasCape ? 1 : 0);
+    let currentCount = 0;
 
+    const weaponSprite = this.game.getSprite(this.game.player.getWeaponName());
+    const armorSprite = this.game.player.getArmorSprite();
+
+    let shieldSprite;
+    let capeSprite;
+
+    if (this.game.player.shieldName) {
+      shieldSprite = this.game.getSprite(this.game.player.shieldName);
+    }
+    if (this.game.player.cape) {
+      capeSprite = this.game.getSprite("cape");
+    }
+
+    if (weaponSprite?.image?.width) {
+      currentCount += 1;
+    }
+    if (armorSprite?.image?.width) {
+      currentCount += 1;
+    }
+    if (hasShield && shieldSprite?.image?.width) {
+      currentCount += 1;
+    }
+    if (hasCape && capeSprite?.image?.width) {
+      currentCount += 1;
+    }
+
+    if (totalCount === currentCount) {
+      this.getPlayerImage({ weaponSprite, armorSprite, shieldSprite, capeSprite });
+    } else {
+      setTimeout(() => this.loadPlayerImage(), 250);
+    }
+  }
+
+  getPlayerImage({ weaponSprite, armorSprite, shieldSprite, capeSprite }) {
     var canvas = document.createElement("canvas"),
       ctx = canvas.getContext("2d"),
       os = this.upscaledRendering ? 1 : this.scale,
-      sprite = this.game.player.getArmorSprite(),
-      spriteAnim = sprite.animationData["idle_down"],
+      // sprite = this.game.player.getArmorSprite(),
+      spriteAnim = armorSprite.animationData["idle_down"],
       // character
       row = spriteAnim.row,
-      w = sprite.width * os,
-      h = sprite.height * os,
+      w = armorSprite.width * os,
+      h = armorSprite.height * os,
       y = row * h,
       // cape
       row = spriteAnim.row,
-      w = sprite.width * os,
-      h = sprite.height * os,
+      w = armorSprite.width * os,
+      h = armorSprite.height * os,
       y = row * h,
       // weapon
-      ww = weapon.width * os,
-      wh = weapon.height * os,
+      ww = weaponSprite.width * os,
+      wh = weaponSprite.height * os,
       wy = wh * row,
-      offsetX = (weapon.offsetX - sprite.offsetX) * os + 2,
-      offsetY = (weapon.offsetY - sprite.offsetY) * os + 2,
+      offsetX = (weaponSprite.offsetX - armorSprite.offsetX) * os + 2,
+      offsetY = (weaponSprite.offsetY - armorSprite.offsetY) * os + 2,
       // shadow
       shadow = this.game.shadows["small"],
       sw = shadow.width * os,
       sh = shadow.height * os,
-      ox = -sprite.offsetX * os + 2,
-      oy = -sprite.offsetY * os + 4;
+      ox = -armorSprite.offsetX * os + 2,
+      oy = -armorSprite.offsetY * os + 4;
 
     canvas.width = w;
     canvas.height = h;
 
-    let spriteImage = sprite.image;
+    let armorImage = armorSprite.image;
     if (
       [
         "hornedarmor",
@@ -1367,27 +1410,26 @@ class Renderer {
       ].includes(this.game.player.armorName) &&
       this.game.player.armorBonus?.length
     ) {
-      spriteImage = sprite.imageunique;
+      armorImage = armorSprite.imageunique;
     }
 
     ctx.clearRect(0, 0, w, h);
     ctx.drawImage(shadow.image, 0, 0, sw, sh, ox, oy, sw, sh);
     if (this.game.player.cape) {
-      var sprite = this.game.sprites["cape"];
-      var capeImage = sprite.image;
+      // var sprite = this.game.getSprite("cape");
+      var capeImage = capeSprite.image;
       if (this.game.player.capeLevel >= 7) {
-        capeImage = sprite.image7;
+        capeImage = capeSprite.image7;
       }
       ctx.drawImage(capeImage, 0, y, w, h, 2, 2, w, h);
     }
-    ctx.drawImage(spriteImage, 0, y, w, h, 2, 2, w, h);
+    ctx.drawImage(armorImage, 0, y, w, h, 2, 2, w, h);
     if (this.game.player.shieldName) {
-      var shieldImage = this.game.sprites[this.game.player.shieldName].image;
-      ctx.drawImage(shieldImage, 0, y, w, h, 2, 2, w, h);
+      ctx.drawImage(shieldSprite.image, 0, y, w, h, 2, 2, w, h);
     }
-    ctx.drawImage(weapon.image, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
+    ctx.drawImage(weaponSprite.image, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
 
-    return canvas.toDataURL("image/png");
+    this.game.storage.savePlayer(canvas.toDataURL("image/png"));
   }
 
   renderStaticCanvases() {
