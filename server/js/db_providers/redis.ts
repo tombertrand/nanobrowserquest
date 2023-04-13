@@ -1426,23 +1426,24 @@ class DatabaseHandler {
             ) {
               let item;
               let uniqueChances;
+              let jewelLevel;
 
               switch (recipe) {
                 case "chestblue":
                   isChestblue = true;
-                  ({ item, uniqueChances } = generateBlueChestItem());
+                  ({ item, uniqueChances, jewelLevel } = generateBlueChestItem());
                   break;
                 case "chestgreen":
                   isChestgreen = true;
-                  ({ item, uniqueChances } = generateGreenChestItem());
+                  ({ item, uniqueChances, jewelLevel } = generateGreenChestItem());
                   break;
                 case "chestpurple":
                   isChestpurple = true;
-                  ({ item, uniqueChances } = generatePurpleChestItem());
+                  ({ item, uniqueChances, jewelLevel } = generatePurpleChestItem());
                   break;
                 case "chestred":
                   isChestred = true;
-                  ({ item, uniqueChances } = generateRedChestItem());
+                  ({ item, uniqueChances, jewelLevel } = generateRedChestItem());
                   break;
               }
 
@@ -1458,7 +1459,7 @@ class DatabaseHandler {
                 bonus,
                 socket,
                 skill,
-              } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances });
+              } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances, jewelLevel });
 
               const delimiter = Types.isJewel(item) ? "|" : ":";
               generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(delimiter);

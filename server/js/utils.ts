@@ -397,7 +397,7 @@ export const isValidRecipe = items => {
   }
 };
 
-export const generateBlueChestItem = (): { item: string; uniqueChances?: number } => {
+export const generateBlueChestItem = (): { item: string; uniqueChances?: number; jewelLevel?: number } => {
   // 50%
   const items = [
     { item: "hornedarmor", uniqueChances: 40 },
@@ -424,7 +424,7 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
     { item: "stonesocket" },
     { item: "stonedragon" },
     { item: "stonehero" },
-    { item: "jewelskull" },
+    { item: "jewelskull", jewelLevel: randomInt(3, 4) },
   ];
 
   // 10%
@@ -449,7 +449,7 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number 
   return category[randomItem];
 };
 
-export const generateGreenChestItem = (): { item: string; uniqueChances?: number } => {
+export const generateGreenChestItem = (): { item: string; uniqueChances?: number; jewelLevel?: number } => {
   // 50%
   const items = [
     { item: "beltminotaur", uniqueChances: 10 },
@@ -471,7 +471,7 @@ export const generateGreenChestItem = (): { item: string; uniqueChances?: number
     { item: "scrollupgradeblessed" },
     { item: "scrolltransmute" },
     { item: "stonesocket" },
-    { item: "jewelskull" },
+    { item: "jewelskull", jewelLevel: randomInt(3, 4) },
   ];
 
   // 10%
@@ -496,7 +496,7 @@ export const generateGreenChestItem = (): { item: string; uniqueChances?: number
   return category[randomItem];
 };
 
-export const generateRedChestItem = (): { item: string; uniqueChances?: number } => {
+export const generateRedChestItem = (): { item: string; uniqueChances?: number; jewelLevel?: number } => {
   // 70%
   const items = [
     { item: "beltdemon", uniqueChances: 12 },
@@ -512,7 +512,7 @@ export const generateRedChestItem = (): { item: string; uniqueChances?: number }
     { item: "scrollupgradesacred" },
     { item: "scrolluptransmuteblessed" },
     { item: "stonesocket" },
-    { item: "jewelskull" },
+    { item: "jewelskull", jewelLevel: randomInt(4, 5) },
   ];
 
   // 10%
@@ -538,7 +538,12 @@ export const generateRedChestItem = (): { item: string; uniqueChances?: number }
   return category[randomItem];
 };
 
-export const generatePurpleChestItem = (): { item: string; uniqueChances?: number; quantity?: number } => {
+export const generatePurpleChestItem = (): {
+  item: string;
+  uniqueChances?: number;
+  quantity?: number;
+  jewelLevel?: number;
+} => {
   // 50%
   const items = [
     { item: "moonsword", uniqueChances: 10 },
@@ -563,7 +568,7 @@ export const generatePurpleChestItem = (): { item: string; uniqueChances?: numbe
     { item: "scrolluptransmuteblessed" },
     { item: "stonesocket" },
     { item: "stonedragon" },
-    { item: "jewelskull" },
+    { item: "jewelskull", jewelLevel: 5 },
   ];
 
   // 10%
@@ -928,10 +933,6 @@ export const getRandomRune = (mobLevel: number, minLevel?: number) => {
 export const generateSoulStoneItem = (): { item: string; quantity?: number; uniqueChances?: number } => {
   // 50%
   const items = [
-    { item: "moonsword", uniqueChances: 18 },
-    // { item: "moonarmor", uniqueChances: 10 },
-    { item: "beltmoon", uniqueChances: 18 },
-    { item: "shieldmoon", uniqueChances: 18 },
     { item: "demonaxe", uniqueChances: 12 },
     { item: "demonarmor", uniqueChances: 12 },
     { item: "beltdemon", uniqueChances: 12 },

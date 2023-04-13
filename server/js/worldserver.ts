@@ -2349,7 +2349,7 @@ class World {
     }
 
     if (mob.kind === Types.Entities.SKELETON4 && !attacker.hasObelisk) {
-      const pickaxeRandom = random(500);
+      const pickaxeRandom = random(250);
       if (pickaxeRandom === 133) {
         return "pickaxe";
       }
