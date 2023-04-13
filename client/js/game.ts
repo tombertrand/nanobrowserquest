@@ -3985,7 +3985,7 @@ class Game {
             player.switchWeapon(name, level, bonus, socket, skill);
 
             // Clear weapon when it's used as a quest item
-            if (name === "dagger") {
+            if (playerId === self.player?.id && name === "dagger") {
               $(".item-equip-weapon").empty();
             }
 
