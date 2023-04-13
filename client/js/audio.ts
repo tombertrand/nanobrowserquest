@@ -91,33 +91,10 @@ class AudioManager {
     ];
 
     const loadSoundFiles = () => {
-      var counter = _.size(self.soundNames);
       console.info("Loading sound files...");
       _.each(self.soundNames, function (name) {
-        self.loadSound(name, function () {
-          counter -= 1;
-          if (counter === 0) {
-            if (!Detect.isSafari()) {
-              // Disable music on Safari - See bug 738008
-              loadMusicFiles();
-            }
-          }
-        });
+        self.loadSound(name, () => {});
       });
-    };
-
-    var loadMusicFiles = function () {
-      if (!self.game.renderer.mobile) {
-        // disable music on mobile devices
-        console.info("Loading music files...");
-        // Load the village music first, as players always start here
-        self.loadMusic(self.musicNames.shift(), function () {
-          // Then, load all the other music files
-          _.each(self.musicNames, function (name) {
-            self.loadMusic(name);
-          });
-        });
-      }
     };
 
     if (!(Detect.isSafari() && Detect.isWindows())) {
@@ -175,15 +152,14 @@ class AudioManager {
   load(basePath, name, loaded_callback, channels) {
     var path = basePath + name + "." + this.extension;
     var sound = document.createElement("audio");
-    var self = this;
 
     loaded_callback?.();
 
     sound.addEventListener(
       "error",
-      function () {
+      () => {
         console.error("Error: " + path + " could not be loaded.");
-        self.sounds[name] = null;
+        this.sounds[name] = null;
       },
       false,
     );
@@ -194,8 +170,8 @@ class AudioManager {
     sound.load();
 
     this.sounds[name] = [sound];
-    _.times(channels - 1, function () {
-      self.sounds[name].push(sound.cloneNode(true));
+    _.times(channels - 1, () => {
+      this.sounds[name].push(sound.cloneNode(true));
     });
   }
 
@@ -248,7 +224,11 @@ class AudioManager {
     });
 
     if (area) {
-      music = { sound: this.getSound(area.musicName), name: area.musicName };
+      if (!this.sounds[area.musicName]) {
+        this.loadMusic(area.musicName);
+      } else {
+        music = { sound: this.getSound(area.musicName), name: area.musicName };
+      }
     }
     return music;
   }
