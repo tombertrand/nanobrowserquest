@@ -207,12 +207,6 @@ class Entity {
   setHighlight(value) {
     this.isHighlighted = !!value;
 
-    // @NOTE Unable to set highlight silhouette for guards due to nano/ban
-    if (this.kind === Types.Entities.GUARD) {
-      this.sprite = this.normalSprite;
-      return;
-    }
-
     if (
       value === true &&
       ![Types.Entities.TREE, Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(this.kind)

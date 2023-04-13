@@ -1416,7 +1416,6 @@ class Renderer {
     ctx.clearRect(0, 0, w, h);
     ctx.drawImage(shadow.image, 0, 0, sw, sh, ox, oy, sw, sh);
     if (this.game.player.cape) {
-      // var sprite = this.game.getSprite("cape");
       var capeImage = capeSprite.image;
       if (this.game.player.capeLevel >= 7) {
         capeImage = capeSprite.image7;

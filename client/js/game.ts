@@ -1798,11 +1798,11 @@ class Game {
 
   loadSprite(name) {
     if (this.renderer.upscaledRendering) {
-      this.spritesets[0][name] = new Sprite(name, 1);
+      this.spritesets[0][name] = new Sprite(name, 1, this.network);
     } else {
-      this.spritesets[1][name] = new Sprite(name, 2);
+      this.spritesets[1][name] = new Sprite(name, 2, this.network);
       if (!this.renderer.mobile && !this.renderer.tablet) {
-        this.spritesets[2][name] = new Sprite(name, 3);
+        this.spritesets[2][name] = new Sprite(name, 3, this.network);
       }
     }
   }

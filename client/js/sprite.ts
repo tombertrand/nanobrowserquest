@@ -5,6 +5,7 @@ class Sprite {
   id;
   name;
   scale;
+  network;
   filepath;
   animationData;
   width;
@@ -24,9 +25,10 @@ class Sprite {
   imagenano: any;
   imageban: any;
 
-  constructor(name, scale) {
+  constructor(name, scale, network = "nano") {
     this.name = name;
     this.scale = scale;
+    this.network = network;
     this.isLoaded = false;
     this.offsetX = 0;
     this.offsetY = 0;
@@ -84,6 +86,10 @@ class Sprite {
       this.id === "secretstairup"
     ) {
       this.id = this.name;
+    }
+
+    if (this.id === "guard" && this.network === "ban") {
+      this.id = "guardbanano";
     }
 
     this.image.src = "img/" + this.scale + "/" + this.id + ".png";
