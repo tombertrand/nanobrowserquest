@@ -777,6 +777,7 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
 
     // @NOTE 50% to get back the socketed rune/jewel
     extractedItem = random(2) === 1 ? socket[lastSocketIndex - 1] : null;
+
     socket[lastSocketIndex - 1] = 0;
   } else if (!socket?.length || socket?.length < maxRerollSocket) {
     const kind = Types.getKindFromString(item);
@@ -792,9 +793,19 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
   const socketItem = [item, level, bonus || "[]", JSON.stringify(socket), skill].filter(Boolean).join(":");
 
   // Convert back to rune
-  if (extractedItem && typeof extractedItem === "number") {
-    const runeName = Types.RuneList[extractedItem - 1];
-    extractedItem = { item: `rune-${runeName}`, quantity: 1 };
+  if (extractedItem) {
+    if (typeof extractedItem === "number") {
+      const runeName = Types.RuneList[extractedItem - 1];
+      extractedItem = { item: `rune-${runeName}`, quantity: 1 };
+    } else {
+      const [itemJewel, levelJewel, bonusJewel] = extractedItem.split("|");
+
+      extractedItem = {
+        item: itemJewel,
+        level: levelJewel,
+        bonus: bonusJewel,
+      };
+    }
   }
 
   return { socketItem, extractedItem, socketCount, isNewSocketItem };

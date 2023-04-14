@@ -565,9 +565,9 @@ class DatabaseHandler {
         }
 
         postMessageToDiscordEventChannel(
-          `A new adventurer has just arrived in our realm. **${player.name}** has joined the ranks of ${
+          `A new adventurer has just arrived in our realm. **${player.name}** has joined the ranks of **${
             player.network === "nano" ? "Nano" : "Banano"
-          } 🎉`,
+          }** 🎉`,
         );
 
         this.client

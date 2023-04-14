@@ -773,7 +773,7 @@ export const kinds = {
   deathangel: [Types.Entities.DEATHANGEL, "mob", 800, 71],
 
   // kind, type, level, damage
-  dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 1],
+  dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 2],
   wirtleg: [Types.Entities.WIRTLEG, "weapon", "Wirt's leg", 1, 2],
   pickaxe: [Types.Entities.PICKAXE, "weapon", "Pickaxe", 52, 30],
   sword: [Types.Entities.SWORD, "weapon", "Sword", 1, 3],
@@ -831,9 +831,9 @@ export const kinds = {
   beltemerald: [Types.Entities.BELTEMERALD, "belt", "Emerald Belt", 50, 26],
   beltexecutioner: [Types.Entities.BELTEXECUTIONER, "belt", "Executioner Belt", 50, 28],
   belttemplar: [Types.Entities.BELTTEMPLAR, "belt", "Templar Belt", 52, 28],
-  beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 54, 30],
+  beltmoon: [Types.Entities.BELTMOON, "belt", "Moon Belt", 54, 30],
+  beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 54, 32],
   beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 54, 32],
-  beltmoon: [Types.Entities.BELTMOON, "belt", "Moon Belt", 54, 32],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 20, 2],
 
@@ -1169,7 +1169,7 @@ Types.itemUniqueMap = {
   beltfrozen: ["Spam Resistor", 24, 12],
   belthorned: ["Dee-Fye", 28, 14],
   beltdiamond: ["Election scheduler", 38, 20],
-  beltminotaur: ["TaaC", 40, 22],
+  beltminotaur: ["TaaC", 40, 24],
   beltemerald: ["CBDC", 54, 28],
   beltexecutioner: ["Attack Vector", 54, 30],
   belttemplar: ["99 on Huobi", 56, 30],
@@ -1339,9 +1339,14 @@ Types.isScroll = function (kindOrString: number | string) {
 
 Types.isStone = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
-    return [Types.Entities.STONESOCKET, Types.Entities.STONEDRAGON, Types.Entities.STONEHERO].includes(kindOrString);
+    return [
+      Types.Entities.STONESOCKET,
+      Types.Entities.STONEDRAGON,
+      Types.Entities.STONEHERO,
+      Types.Entities.SOULSTONE,
+    ].includes(kindOrString);
   } else {
-    return kindOrString?.startsWith("stone");
+    return kindOrString?.startsWith("stone") || kindOrString === "soulstone";
   }
 };
 
@@ -1528,7 +1533,6 @@ Types.isSingle = function (kindOrString: number | string) {
       Types.Entities.NECROMANCERHEART,
       Types.Entities.COWKINGHORN,
       Types.Entities.CHALICE,
-      Types.Entities.SOULSTONE,
       Types.Entities.NFT,
       Types.Entities.WING,
       Types.Entities.CRYSTAL,
@@ -1547,7 +1551,6 @@ Types.isSingle = function (kindOrString: number | string) {
         "necromancerheart",
         "cowkinghorn",
         "chalice",
-        "soulstone",
         "nft",
         "wing",
         "crystal",
@@ -1563,7 +1566,6 @@ Types.isSingle = function (kindOrString: number | string) {
       kindOrString.startsWith("necromancerheart") ||
       kindOrString.startsWith("cowkinghorn") ||
       kindOrString.startsWith("chalice") ||
-      kindOrString.startsWith("soulstone") ||
       kindOrString.startsWith("nft") ||
       kindOrString.startsWith("wing") ||
       kindOrString.startsWith("crystal") ||
