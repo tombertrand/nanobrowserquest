@@ -903,7 +903,7 @@ class DatabaseHandler {
       );
     } else if (location === "belt") {
       player.equipItem({ item, level, type, bonus });
-      player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
+      player.broadcast(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }), false);
     } else if (location === "cape") {
       player.equipItem({ item, level, type, bonus });
       player.broadcast(
@@ -925,13 +925,13 @@ class DatabaseHandler {
       );
     } else if (location === "ring1") {
       player.equipItem({ item, level, type, bonus });
-      player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
+      player.broadcast(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }), false);
     } else if (location === "ring2") {
       player.equipItem({ item, level, type, bonus });
-      player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
+      player.broadcast(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }), false);
     } else if (location === "amulet") {
       player.equipItem({ item, level, type, bonus });
-      player.send(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }).serialize());
+      player.broadcast(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }), false);
     } else if (location === "upgrade") {
       player.send([Types.Messages.UPGRADE, data]);
     } else if (location === "trade") {

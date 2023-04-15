@@ -142,7 +142,13 @@ class App {
                   },
                   disabled: isInParty,
                 },
-                equipment: { name: `View equipment`, disabled: true },
+                equipment: {
+                  name: `View equipment`,
+                  callback: () => {
+                    $("#otherplayer-name").html(`Equipment of <var>${player.name}</var>`);
+                    this.openOtherPlayerEquipment(player);
+                  },
+                },
               },
             }
           : null;
@@ -1026,6 +1032,9 @@ class App {
     if ($("#store").hasClass("active")) {
       this.store.closeStore();
     }
+    if ($("#otherplayer-equipment").hasClass("visible")) {
+      $("#otherplayer-equipment").removeClass("visible");
+    }
     if ($("#settings").hasClass("active")) {
       $("#settings").removeClass("active");
       $("#settings-button").removeClass("active");
@@ -1316,6 +1325,8 @@ class App {
   }
 
   toggleInventory() {
+    this.closeOtherPlayerEquipment();
+
     if ($("#upgrade").hasClass("visible")) {
       $("#upgrade").removeClass("visible");
       $("#inventory").removeClass("upgrade");
@@ -1338,6 +1349,17 @@ class App {
     }
   }
 
+  openOtherPlayerEquipment(player) {
+    this.hideWindows();
+
+    this.game.initOtherPlayerEquipmentSlots(player);
+    $("#otherplayer-equipment").addClass("visible");
+  }
+
+  closeOtherPlayerEquipment() {
+    $("#otherplayer-equipment").removeClass("visible");
+  }
+
   closeInventory() {
     if ($("#trade").hasClass("visible")) {
       this.closeTrade(true);
@@ -1349,6 +1371,7 @@ class App {
   }
 
   openStash() {
+    this.closeOtherPlayerEquipment();
     this.closeUpgrade();
     this.closeTrade(true);
     $("#population").removeClass("visible");
@@ -1365,6 +1388,7 @@ class App {
     if ($("#trade").hasClass("visible")) return;
     $("#population").removeClass("visible");
     this.closeStash();
+    this.closeOtherPlayerEquipment();
 
     if ($("#upgrade").hasClass("visible")) {
       this.toggleUpgrade();
@@ -1387,6 +1411,8 @@ class App {
   }
 
   toggleTrade(forceClose = false) {
+    this.closeOtherPlayerEquipment();
+
     if (forceClose) {
       $("#trade").removeClass("visible");
     } else {
@@ -1413,6 +1439,7 @@ class App {
   openUpgrade() {
     if ($("#upgrade").hasClass("visible")) return;
     $("#population").removeClass("visible");
+    this.closeOtherPlayerEquipment();
     this.closeStash();
     this.toggleUpgrade();
   }
@@ -1424,6 +1451,8 @@ class App {
   }
 
   toggleUpgrade() {
+    this.closeOtherPlayerEquipment();
+
     $("#upgrade").toggleClass("visible");
 
     if ($("#upgrade").hasClass("visible")) {

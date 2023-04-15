@@ -647,7 +647,6 @@ var Properties: any = {
       moonarmor: 5,
       beltmoon: 5,
       shieldmoon: 5,
-      // immortalsword: 1,
       ringwizard: 1,
       ringmystical: 1,
     },

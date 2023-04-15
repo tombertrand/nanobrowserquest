@@ -1119,176 +1119,200 @@ class Game {
     return `img/${scale}/item-${spriteName}${suffix}.png`;
   }
 
+  initOtherPlayerEquipmentSlots(player) {
+    const container = $("#item-otherplayer");
+
+    container.find(".item-weapon-slot").html(`<div class="item-slot item-equip-weapon item-weapon"></div>`);
+    container.find(".item-armor-slot").html(`<div class="item-slot item-equip-armor item-armor"></div>`);
+    container.find(".item-belt-slot").html(`<div class="item-slot item-equip-belt item-belt"></div>`);
+    container.find(".item-cape-slot").html(`<div class="item-slot item-equip-cape item-cape"></div>`);
+    container.find(".item-shield-slot").html(`<div class="item-slot item-equip-shield item-shield"></div>`);
+    container.find(".item-ring1-slot").html(`<div class="item-slot item-equip-ring item-ring item-ring1"></div>`);
+    container.find(".item-ring2-slot").html(`<div class="item-slot item-equip-ring item-ring item-ring2"></div>`);
+    container.find(".item-amulet-slot").html(`<div class="item-slot item-equip-amulet item-amulet"></div>`);
+
+    this.populateEquipmentInSlots(player, container);
+  }
+
+  initPlayerEquipmentSlots() {
+    const container = $("#item-player");
+
+    container
+      .find(".item-weapon-slot")
+      .html(`<div class="item-slot item-equip-weapon item-weapon" data-slot="${Slot.WEAPON}"></div>`);
+    container
+      .find(".item-armor-slot")
+      .html(`<div class="item-slot item-equip-armor item-armor" data-slot="${Slot.ARMOR}"></div>`);
+    container
+      .find(".item-belt-slot")
+      .html(`<div class="item-slot item-equip-belt item-belt" data-slot="${Slot.BELT}"></div>`);
+    container
+      .find(".item-cape-slot")
+      .html(`<div class="item-slot item-equip-cape item-cape" data-slot="${Slot.CAPE}"></div>`);
+    container
+      .find(".item-shield-slot")
+      .html(`<div class="item-slot item-equip-shield item-shield" data-slot="${Slot.SHIELD}"></div>`);
+    container
+      .find(".item-ring1-slot")
+      .html(`<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="${Slot.RING1}"></div>`);
+    container
+      .find(".item-ring2-slot")
+      .html(`<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="${Slot.RING2}"></div>`);
+    container
+      .find(".item-amulet-slot")
+      .html(`<div class="item-slot item-equip-amulet item-amulet" data-slot="${Slot.AMULET}"></div>`);
+    container
+      .find(".item-delete")
+      .html(`<div class="item-slot item-droppable item-delete" data-slot="${DELETE_SLOT}"></div>`);
+
+    this.populateEquipmentInSlots(this.player, container);
+  }
+
+  populateEquipmentInSlots(player, container) {
+    if (player.weaponName !== "dagger") {
+      const isUnique = Types.isUnique(player.weaponName, player.weaponBonus);
+      const { runeword } = Types.getRunewordBonus({
+        isUnique,
+        socket: player.weaponSocket,
+        type: "weapon",
+      });
+
+      container.find(".item-equip-weapon").html(
+        $("<div />", {
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.weaponName)}")`,
+          },
+          "data-item": player.weaponName,
+          "data-level": player.weaponLevel,
+          "data-bonus": toString(player.weaponBonus),
+          "data-socket": toString(player.weaponSocket),
+          "data-skill": player.attackSkill,
+        }),
+      );
+    }
+    if (player.armorName !== "clotharmor") {
+      const isUnique = Types.isUnique(player.armorName, player.armorBonus);
+      const { runeword } = Types.getRunewordBonus({
+        isUnique,
+        socket: player.weaponSocket,
+        type: "armor",
+      });
+
+      container.find(".item-equip-armor").html(
+        $("<div />", {
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.armorName)}")`,
+          },
+          "data-item": player.armorName,
+          "data-level": player.armorLevel,
+          "data-bonus": toString(player.armorBonus),
+          "data-socket": toString(player.armorSocket),
+        }),
+      );
+    }
+
+    if (player.beltName) {
+      container.find(".item-equip-belt").html(
+        $("<div />", {
+          class: `item-draggable ${Types.isUnique(player.beltName, player.beltBonus) ? "item-unique" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.beltName)}")`,
+          },
+          "data-item": player.beltName,
+          "data-level": player.beltLevel,
+          "data-bonus": toString(player.beltBonus),
+        }),
+      );
+    }
+
+    if (player.cape) {
+      container.find(".item-equip-cape").html(
+        $("<div />", {
+          class: `item-draggable ${Types.isUnique(player.cape, player.capeBonus) ? "item-unique" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.cape, player.capeLevel)}")`,
+          },
+          "data-item": player.cape,
+          "data-level": player.capeLevel,
+          "data-bonus": toString(player.capeBonus),
+        }),
+      );
+    }
+
+    if (player.shieldName) {
+      const isUnique = Types.isUnique(player.shieldName, player.shieldBonus);
+      const { runeword } = Types.getRunewordBonus({
+        isUnique,
+        socket: player.weaponSocket,
+        type: "shield",
+      });
+
+      container.find(".item-equip-shield").html(
+        $("<div />", {
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.shieldName)}")`,
+          },
+          "data-item": player.shieldName,
+          "data-level": player.shieldLevel,
+          "data-bonus": toString(player.shieldBonus),
+          "data-socket": toString(player.shieldSocket),
+          "data-skill": player.defenseSkill,
+        }),
+      );
+    }
+
+    if (player.ring1Name) {
+      container.find(".item-ring1").html(
+        $("<div />", {
+          class: `item-draggable ${Types.isUniqueRing(player.ring1Name, player.ring1Bonus) ? "item-unique" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.ring1Name)}")`,
+          },
+          "data-item": player.ring1Name,
+          "data-level": player.ring1Level,
+          "data-bonus": toString(player.ring1Bonus),
+        }),
+      );
+    }
+
+    if (player.ring2Name) {
+      container.find(".item-ring2").html(
+        $("<div />", {
+          class: `item-draggable ${Types.isUniqueRing(player.ring2Name, player.ring2Bonus) ? "item-unique" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.ring2Name)}")`,
+          },
+          "data-item": player.ring2Name,
+          "data-level": player.ring2Level,
+          "data-bonus": toString(player.ring2Bonus),
+        }),
+      );
+    }
+
+    if (player.amuletName) {
+      container.find(".item-equip-amulet").html(
+        $("<div />", {
+          class: `item-draggable ${Types.isUniqueAmulet(player.amuletName) ? "item-unique" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.amuletName)}")`,
+          },
+          "data-item": player.amuletName,
+          "data-level": player.amuletLevel,
+          "data-bonus": toString(player.amuletBonus),
+        }),
+      );
+    }
+  }
+
   initInventory() {
     $("#item-inventory").empty();
     for (var i = 0; i < INVENTORY_SLOT_COUNT; i++) {
       $("#item-inventory").append(`<div class="item-slot item-inventory item-droppable" data-slot="${i}"></div>`);
     }
-
-    $("#item-weapon")
-      .empty()
-      .append(`<div class="item-slot item-equip-weapon item-weapon" data-slot="${Slot.WEAPON}"></div>`);
-    $("#item-armor")
-      .empty()
-      .append(`<div class="item-slot item-equip-armor item-armor" data-slot="${Slot.ARMOR}"></div>`);
-    $("#item-belt").empty().append(`<div class="item-slot item-equip-belt item-belt" data-slot="${Slot.BELT}"></div>`);
-    $("#item-cape").empty().append(`<div class="item-slot item-equip-cape item-cape" data-slot="${Slot.CAPE}"></div>`);
-    $("#item-shield")
-      .empty()
-      .append(`<div class="item-slot item-equip-shield item-shield" data-slot="${Slot.SHIELD}"></div>`);
-    $("#item-ring1")
-      .empty()
-      .append(`<div class="item-slot item-equip-ring item-ring item-ring1" data-slot="${Slot.RING1}"></div>`);
-    $("#item-ring2")
-      .empty()
-      .append(`<div class="item-slot item-equip-ring item-ring item-ring2" data-slot="${Slot.RING2}"></div>`);
-    $("#item-amulet")
-      .empty()
-      .append(`<div class="item-slot item-equip-amulet item-amulet item-amulet" data-slot="${Slot.AMULET}"></div>`);
-    $("#item-delete")
-      .empty()
-      .append(`<div class="item-slot item-droppable item-delete" data-slot="${DELETE_SLOT}"></div>`);
-
-    if (this.player.weaponName !== "dagger") {
-      const isUnique = Types.isUnique(this.player.weaponName, this.player.weaponBonus);
-      const { runeword } = Types.getRunewordBonus({
-        isUnique,
-        socket: this.player.weaponSocket,
-        type: "weapon",
-      });
-
-      $(".item-equip-weapon").append(
-        $("<div />", {
-          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(this.player.weaponName)}")`,
-          },
-          "data-item": this.player.weaponName,
-          "data-level": this.player.weaponLevel,
-          "data-bonus": toString(this.player.weaponBonus),
-          "data-socket": toString(this.player.weaponSocket),
-          "data-skill": this.player.attackSkill,
-        }),
-      );
-    }
-    if (this.player.armorName !== "clotharmor") {
-      const isUnique = Types.isUnique(this.player.armorName, this.player.armorBonus);
-      const { runeword } = Types.getRunewordBonus({
-        isUnique,
-        socket: this.player.weaponSocket,
-        type: "armor",
-      });
-
-      $(".item-equip-armor").append(
-        $("<div />", {
-          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(this.player.armorName)}")`,
-          },
-          "data-item": this.player.armorName,
-          "data-level": this.player.armorLevel,
-          "data-bonus": toString(this.player.armorBonus),
-          "data-socket": toString(this.player.armorSocket),
-        }),
-      );
-    }
-
-    if (this.player.beltName) {
-      $(".item-equip-belt").append(
-        $("<div />", {
-          class: `item-draggable ${Types.isUnique(this.player.beltName, this.player.beltBonus) ? "item-unique" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(this.player.beltName)}")`,
-          },
-          "data-item": this.player.beltName,
-          "data-level": this.player.beltLevel,
-          "data-bonus": toString(this.player.beltBonus),
-        }),
-      );
-    }
-
-    if (this.player.cape) {
-      $(".item-equip-cape").append(
-        $("<div />", {
-          class: `item-draggable ${Types.isUnique(this.player.cape, this.player.capeBonus) ? "item-unique" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(this.player.cape, this.player.capeLevel)}")`,
-          },
-          "data-item": this.player.cape,
-          "data-level": this.player.capeLevel,
-          "data-bonus": toString(this.player.capeBonus),
-        }),
-      );
-    }
-
-    if (this.player.shieldName) {
-      const isUnique = Types.isUnique(this.player.shieldName, this.player.shieldBonus);
-      const { runeword } = Types.getRunewordBonus({
-        isUnique,
-        socket: this.player.weaponSocket,
-        type: "shield",
-      });
-
-      $(".item-equip-shield").append(
-        $("<div />", {
-          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(this.player.shieldName)}")`,
-          },
-          "data-item": this.player.shieldName,
-          "data-level": this.player.shieldLevel,
-          "data-bonus": toString(this.player.shieldBonus),
-          "data-socket": toString(this.player.shieldSocket),
-          "data-skill": this.player.defenseSkill,
-        }),
-      );
-    }
-
-    if (this.player.ring1Name) {
-      $(".item-ring1").append(
-        $("<div />", {
-          class: `item-draggable ${
-            Types.isUniqueRing(this.player.ring1Name, this.player.ring1Bonus) ? "item-unique" : ""
-          }`,
-          css: {
-            "background-image": `url("${this.getIconPath(this.player.ring1Name)}")`,
-          },
-          "data-item": this.player.ring1Name,
-          "data-level": this.player.ring1Level,
-          "data-bonus": toString(this.player.ring1Bonus),
-        }),
-      );
-    }
-
-    if (this.player.ring2Name) {
-      $(".item-ring2").append(
-        $("<div />", {
-          class: `item-draggable ${
-            Types.isUniqueRing(this.player.ring2Name, this.player.ring2Bonus) ? "item-unique" : ""
-          }`,
-          css: {
-            "background-image": `url("${this.getIconPath(this.player.ring2Name)}")`,
-          },
-          "data-item": this.player.ring2Name,
-          "data-level": this.player.ring2Level,
-          "data-bonus": toString(this.player.ring2Bonus),
-        }),
-      );
-    }
-
-    if (this.player.amuletName) {
-      $(".item-amulet").append(
-        $("<div />", {
-          class: `item-draggable ${Types.isUniqueAmulet(this.player.amuletName) ? "item-unique" : ""}`,
-          css: {
-            "background-image": `url("${this.getIconPath(this.player.amuletName)}")`,
-          },
-          "data-item": this.player.amuletName,
-          "data-level": this.player.amuletLevel,
-          "data-bonus": toString(this.player.amuletBonus),
-        }),
-      );
-    }
+    this.initPlayerEquipmentSlots();
 
     this.updateInventory();
     this.updateRequirement();
@@ -3146,9 +3170,22 @@ class Game {
           // const currentEntity = self.getEntityById(entity.id);
           self.unregisterEntityPosition(entity);
 
-          const { weapon: rawWeapon, armor: rawArmor, level, auras, partyId, cape, shield, settings } = data;
+          const {
+            weapon: rawWeapon,
+            armor: rawArmor,
+            amulet,
+            ring1,
+            ring2,
+            belt,
+            level,
+            auras,
+            partyId,
+            cape,
+            shield,
+            settings,
+          } = data;
 
-          const [armor, armorLevel, armorBonus] = rawArmor.split(":");
+          const [armor, armorLevel, armorBonus, armorSocket] = rawArmor.split(":");
           const [weapon, weaponLevel, weaponBonus, weaponSocket] = rawWeapon.split(":");
 
           entity.setWeaponName(weapon);
@@ -3159,6 +3196,11 @@ class Game {
           entity.setArmorName(armor);
           entity.setArmorLevel(armorLevel);
           entity.setArmorBonus(armorBonus);
+          entity.setArmorSocket(armorSocket);
+          entity.setBelt(belt);
+          entity.setAmulet(amulet);
+          entity.setRing1(ring1);
+          entity.setRing2(ring2);
           entity.setAuras(auras);
           entity.setCape(cape);
           entity.setShield(shield);

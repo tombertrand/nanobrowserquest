@@ -806,11 +806,12 @@ footer, header, hgroup, menu, nav, section {
     .waypoint-row.disabled { color: #616161;}
     .waypoint-row.locked { color: #616161;}
 
-    #item-player { width: 100% }
-    #item-player > div { display: flex; justify-content: start;}
-    #item-weapon, #item-armor, #item-ring1, #item-ring2, #item-amulet, #item-belt, #item-cape, #item-shield {padding-right: 6px;padding-bottom: 6px;}
-    #item-delete { margin-left: auto; }
-    #item-delete > .item-slot { -webkit-box-shadow: inset 0px 0px 10px 6px #9e0000; box-shadow: inset 0px 0px 10px 6px #9e0000; }
+    #item-player, #item-otherplayer { width: 100% }
+    #item-player > div, #item-otherplayer > div { display: flex; justify-content: start;}
+    #item-otherplayer .item-slot > div { position: relative; z-index: 2;}
+    .item-weapon-slot, .item-armor-slot, .item-ring1-slot, .item-ring2-slot, .item-amulet-slot, .item-belt-slot, .item-cape-slot, .item-shield-slot {padding-right: 6px;padding-bottom: 6px;}
+    .item-delete-slot { margin-left: auto; }
+    .item-delete-slot > .item-slot { -webkit-box-shadow: inset 0px 0px 10px 6px #9e0000; box-shadow: inset 0px 0px 10px 6px #9e0000; }
     .item-quantity::after {
         content: attr(data-quantity);
         position: absolute;

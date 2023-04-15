@@ -1897,7 +1897,7 @@ class World {
         this.pushToAdjacentGroups(entity.group, entity.despawn());
 
         if (attacker.type === "player") {
-          postMessageToDiscordChatChannel(`${attacker.name} killed ${entity.name} ${EmojiMap.sword}`);
+          postMessageToDiscordChatChannel(`${attacker.name} killed ${entity.name} 💀`);
         }
       }
 
@@ -2290,6 +2290,8 @@ class World {
         return "ringconqueror";
       } else if (superUniqueRandom === 6969) {
         return "amuletstar";
+      } else if (superUniqueRandom === 555) {
+        return "amuletskull";
       }
 
       const stoneDragonRandom = random(25_000);

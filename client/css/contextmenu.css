@@ -26,3 +26,13 @@
   color: #bbb;
   background-color: transparent;
 }
+
+#otherplayer-name {
+  font-size: 14px;
+  padding-bottom: 6px;
+}
+
+#otherplayer-name var {
+  color: #fcda5c;
+  font-size: 16px;
+}
