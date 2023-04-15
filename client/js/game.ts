@@ -1162,7 +1162,7 @@ class Game {
       .find(".item-amulet-slot")
       .html(`<div class="item-slot item-equip-amulet item-amulet" data-slot="${Slot.AMULET}"></div>`);
     container
-      .find(".item-delete")
+      .find(".item-delete-slot")
       .html(`<div class="item-slot item-droppable item-delete" data-slot="${DELETE_SLOT}"></div>`);
 
     this.populateEquipmentInSlots(this.player, container);
