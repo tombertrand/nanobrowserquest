@@ -116,7 +116,7 @@ class App {
       build: () => {
         const { x, y } = this.game.getMouseGridPosition();
         const player = this.game.getPlayerAt(x, y);
-        const isInParty = !!player.partyId;
+        const isInParty = !!player?.partyId;
 
         return player && player.id !== this.game.player.id
           ? {

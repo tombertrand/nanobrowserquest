@@ -34,6 +34,15 @@ class Item extends Entity {
     }
   }
 
+  getState() {
+    return Object.assign({}, this._getBaseState(), {
+      partyId: this.partyId,
+      level: this.level,
+      mobKind: this.mobKind,
+      amount: this.amount,
+    });
+  }
+
   handleDespawn(params) {
     var self = this;
 

@@ -405,6 +405,22 @@ class GameClient {
     datas.forEach(data => this.receiveSpawn(data));
   }
 
+  receiveDrop(data) {
+    const { mobId, itemId, kind, mobHateList, partyId, amount } = data[1];
+
+    var item = EntityFactory.createEntity({ kind, id: itemId });
+
+    // @TODO unify this with the receiveSpawn
+    item.wasDropped = true;
+    item.playersInvolved = mobHateList;
+    item.partyId = partyId;
+    if ([Types.Entities.GOLD, Types.Entities.NANOCOIN, Types.Entities.BANANOCOIN].includes(item.kind)) {
+      item.amount = amount;
+    }
+
+    this.drop_callback?.(item, mobId);
+  }
+
   receiveSpawn(data) {
     const { id, kind, x, y, orientation } = data[1];
 
@@ -419,11 +435,19 @@ class GameClient {
         this.spawn_spell_callback(spell, x, y, orientation, originX, originY, element, casterId, targetId, isRaise2);
       }
     } else if (Types.isItem(kind)) {
-      var item = EntityFactory.createEntity({ kind, id });
+      const { mobHateList, partyId, amount } = data[1];
 
-      if (this.spawn_item_callback) {
-        this.spawn_item_callback(item, x, y);
+      const item = EntityFactory.createEntity({ kind, id });
+
+      // @TODO unify this with the receiveDrop
+      item.wasDropped = false;
+      item.playersInvolved = mobHateList;
+      item.partyId = partyId;
+      if ([Types.Entities.GOLD, Types.Entities.NANOCOIN, Types.Entities.BANANOCOIN].includes(item.kind)) {
+        item.amount = amount;
       }
+
+      this.spawn_item_callback?.(item, x, y);
     } else if (Types.isStaticChest(kind)) {
       var item = EntityFactory.createEntity({ kind, id });
 
@@ -489,22 +513,6 @@ class GameClient {
     if (this.skill_callback) {
       this.skill_callback({ id, skill });
     }
-  }
-
-  receiveDrop(data) {
-    const { mobId, itemId, kind, mobHateList, partyId, amount } = data[1];
-
-    var item = EntityFactory.createEntity({ kind, id: itemId });
-
-    item.wasDropped = true;
-    item.playersInvolved = mobHateList;
-    item.partyId = partyId;
-    if (item.kind === Types.Entities.GOLD) {
-      item.amount = amount;
-    }
-    // @TODO ~~~~ amount for xno / ban
-
-    this.drop_callback?.(item, mobId);
   }
 
   receiveTeleport(data) {

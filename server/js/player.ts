@@ -2921,7 +2921,7 @@ class Player extends Character {
           cowLevelPortalCoords: this.server.cowLevelCoords,
           settings,
           network,
-          partyId: this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
+          party: this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
         },
       ]);
 

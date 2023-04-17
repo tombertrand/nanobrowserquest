@@ -224,6 +224,7 @@ class Character extends Entity {
         this.capeOrientation = this.orientation;
       }
 
+      // @TODO Fox not ready for animation...
       this.setAnimation(animation, speed, count, onEndCount);
     }
   }

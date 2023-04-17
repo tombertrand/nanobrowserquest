@@ -198,7 +198,7 @@ import coder from "../sprites/npc.json";
 import desertnpc from "../sprites/npc.json";
 import forestnpc from "../sprites/npc.json";
 import priest from "../sprites/npc.json";
-import rick from "../sprites/npc.json";
+import rick from "../sprites/rick.json";
 import scientist from "../sprites/npc.json";
 import villagegirl from "../sprites/npc.json";
 import villager from "../sprites/npc.json";
