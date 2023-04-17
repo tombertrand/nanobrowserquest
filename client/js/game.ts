@@ -4094,7 +4094,8 @@ class Game {
       self.client.onPlayerSkill(function ({ id: playerId, skill: rawSkill }) {
         const player = self.getEntityById(playerId);
         const { skill, level, isAttackSkill, mobId } = rawSkill;
-        if (player) {
+
+        if (player && (player.name === self.player.name || self.player.isNear(player, 16))) {
           if (isAttackSkill) {
             self.skillCastAnimation.reset();
             player.setCastSkill(skill);

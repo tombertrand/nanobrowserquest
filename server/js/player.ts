@@ -1866,14 +1866,14 @@ class Player extends Character {
       name: this.name,
       armor: `${this.armor}:${this.armorLevel}${toDb(this.armorBonus)}${toDb(this.armorSocket)}`,
       weapon: `${this.weapon}:${this.weaponLevel}${toDb(this.weaponBonus)}${toDb(this.weaponSocket)}`,
-      amulet: `${this.amulet}:${this.amuletLevel}${toDb(this.amuletBonus)}`,
-      ring1: `${this.ring1}:${this.ring1Level}${toDb(this.ring1Bonus)}`,
-      ring2: `${this.ring2}:${this.ring2Level}${toDb(this.ring2Bonus)}`,
-      belt: `${this.belt}:${this.beltLevel}${toDb(this.beltBonus)}`,
+      amulet: this.amulet ? `${this.amulet}:${this.amuletLevel}${toDb(this.amuletBonus)}` : null,
+      ring1: this.ring1 ? `${this.ring1}:${this.ring1Level}${toDb(this.ring1Bonus)}` : null,
+      ring2: this.ring2 ? `${this.ring2}:${this.ring2Level}${toDb(this.ring2Bonus)}` : null,
+      belt: this.belt ? `${this.belt}:${this.beltLevel}${toDb(this.beltBonus)}` : null,
       level: this.level,
       auras: this.auras,
       partyId: this.partyId,
-      cape: this.cape ? `${this.cape}:${toDb(this.capeLevel)}${toDb(this.capeBonus)}` : null,
+      cape: this.cape ? `${this.cape}${toDb(this.capeLevel)}${toDb(this.capeBonus)}` : null,
       shield: this.shield
         ? `${this.shield}:${this.shieldLevel}${toDb(this.shieldBonus)}${toDb(this.shieldSocket)}`
         : null,
@@ -2924,6 +2924,10 @@ class Player extends Character {
           party: this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
         },
       ]);
+
+      if (this.y >= 744 && this.x >= 84 && this.server.templeLevelClock) {
+        this.send(new Messages.TempleLevelInProgress(this.server.templeLevelClock).serialize());
+      }
 
       this.resetBonus();
       this.calculateBonus();

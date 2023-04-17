@@ -1145,7 +1145,7 @@ class World {
 
     let count = 0;
     this.mageTemplePossibleCoords.map(({ x, y }) => {
-      const mageCount = Math.ceil(randomRange(2, 4));
+      const mageCount = Math.ceil(randomRange(2, 5));
 
       this.mageTempleTotal += mageCount;
 
@@ -1158,6 +1158,7 @@ class World {
         mob.onMove(this.onMobMoveCallback.bind(this));
         mob.onDestroy(() => {
           this.mageTempleTotal--;
+
           if (this.mageTempleTotal === 0) {
             clearInterval(this.templeLevelInterval);
             setTimeout(() => {
@@ -1995,6 +1996,7 @@ class World {
             self.worm = mob;
             mob.onDestroy(() => {
               self.mageTempleTotal--;
+
               if (self.mageTempleTotal === 0) {
                 clearInterval(self.templeLevelInterval);
                 setTimeout(() => {

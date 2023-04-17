@@ -408,7 +408,7 @@ class GameClient {
   receiveDrop(data) {
     const { mobId, itemId, kind, mobHateList, partyId, amount } = data[1];
 
-    var item = EntityFactory.createEntity({ kind, id: itemId });
+    const item = EntityFactory.createEntity({ kind, id: itemId });
 
     // @TODO unify this with the receiveSpawn
     item.wasDropped = true;
