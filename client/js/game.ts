@@ -1941,7 +1941,20 @@ class Game {
   }
 
   addItem(item, x, y) {
-    item.setSprite(this.getSprite(item.getSpriteName()));
+    let sprite;
+    if (item.kind === Types.Entities.GOLD) {
+      let suffix = "1";
+      if (item.amount >= 100) {
+        suffix = "3";
+      } else if (item.amount >= 25) {
+        suffix = "2";
+      }
+      sprite = this.getSprite(item.getSpriteName(suffix));
+    } else {
+      sprite = this.getSprite(item.getSpriteName());
+    }
+
+    item.setSprite(sprite);
     item.setGridPosition(x, y);
     item.setAnimation("idle", 150);
     this.addEntity(item);
@@ -2344,6 +2357,8 @@ class Game {
       ring2,
       amulet,
       experience,
+      gold,
+      coin,
       achievement,
       inventory,
       stash,
@@ -2417,6 +2432,9 @@ class Game {
       self.player.level = Types.getLevel(experience);
       self.player.setInventory(inventory);
       self.player.setStash(stash);
+
+      self.setGold(gold);
+      self.setCoin(coin);
 
       self.initSettings(settings);
       self.toggleCapeSliders(!!cape);
@@ -4620,6 +4638,14 @@ class Game {
         }
       });
 
+      self.client.onReceiveGold(function (gold) {
+        self.setGold(gold);
+      });
+
+      self.client.onReceiveCoin(function (coin) {
+        self.setCoin(coin);
+      });
+
       self.client.onDisconnected(function (message) {
         if (self.player) {
           self.player.die();
@@ -4636,6 +4662,16 @@ class Game {
         started_callback({ success: true });
       }
     });
+  }
+
+  setGold(gold) {
+    this.player.setGold(gold);
+    $("#gold-amount").text(gold);
+  }
+
+  setCoin(coin) {
+    this.player.setCoin(coin);
+    // $("#gold-amount").val(gold);
   }
 
   /**

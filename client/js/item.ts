@@ -7,6 +7,7 @@ class Item extends Entity {
   type: any;
   wasDropped: boolean;
   lootMessage: any;
+  amount?: number;
 
   constructor(id, kind, type) {
     super(id, kind);
@@ -20,11 +21,15 @@ class Item extends Entity {
     return true;
   }
 
-  getSpriteName() {
-    return "item-" + this.itemKind;
+  getSpriteName(suffix = "") {
+    return `item-${this.itemKind}${suffix}`;
   }
 
   getLootMessage() {
+    if ([Types.Entities.GOLD, Types.Entities.NANOCOIN, Types.Entities.BANANOCOIN].includes(this.kind)) {
+      return this.lootMessage.replace("amount", this.amount);
+    }
+
     return this.lootMessage;
   }
 }

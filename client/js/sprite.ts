@@ -34,7 +34,7 @@ class Sprite {
     this.offsetY = 0;
 
     if (!sprites[name]) {
-      console.error(`Mising sprite: ${name}`);
+      console.error(`Missing sprite: ${name}`);
     }
 
     this.loadJSON(sprites[name]);

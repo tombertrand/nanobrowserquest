@@ -697,6 +697,14 @@ EntityFactory.builders[Types.Entities.GOLD] = function (id) {
   return new Items.Gold(id);
 };
 
+EntityFactory.builders[Types.Entities.NANOCOIN] = function (id) {
+  return new Items.NanoCoin(id);
+};
+
+EntityFactory.builders[Types.Entities.BANANOCOIN] = function (id) {
+  return new Items.BananoCoin(id);
+};
+
 EntityFactory.builders[Types.Entities.RINGBRONZE] = function (id) {
   return new Items.RingBronze(id);
 };

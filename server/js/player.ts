@@ -869,6 +869,25 @@ class Player extends Character {
                 self.regenHealthBy(amount);
                 self.server.pushToPlayer(self, self.health());
               }
+            } else if (kind === Types.Entities.GOLD) {
+              console.info("LOOT GOLD: " + self.name + " " + item.amount);
+
+              if (!item.amount || isNaN(item.amount)) return;
+
+              // @TODO ~~~~ configure split for party loots
+              self.databaseHandler.lootGold({ player: self, amount: item.amount });
+            } else if (Types.Entities.NANOCOIN === kind) {
+              console.info(`LOOT NANO: ${self.name}, ${self.network}, ${item.amount}`);
+              if (!item.amount || isNaN(item.amount) || self.network !== "nano") {
+                return;
+              }
+              self.databaseHandler.lootCoin({ player: self, amount: item.amount });
+            } else if (Types.Entities.BANANOCOIN === kind) {
+              console.info(`LOOT NANO: ${self.name}, ${self.network}, ${item.amount}`);
+              if (!item.amount || isNaN(item.amount) || self.network !== "nano") {
+                return;
+              }
+              self.databaseHandler.lootCoin({ player: self, amount: item.amount });
             } else {
               try {
                 let isUnique = false;
@@ -1854,8 +1873,10 @@ class Player extends Character {
       level: this.level,
       auras: this.auras,
       partyId: this.partyId,
-      cape: `${this.cape}:${this.capeLevel}${toDb(this.capeBonus)}`,
-      shield: `${this.shield}:${this.shieldLevel}${toDb(this.shieldBonus)}${toDb(this.shieldSocket)}`,
+      cape: this.cape ? `${this.cape}:${toDb(this.capeLevel)}${toDb(this.capeBonus)}` : null,
+      shield: this.shield
+        ? `${this.shield}:${this.shieldLevel}${toDb(this.shieldBonus)}${toDb(this.shieldSocket)}`
+        : null,
       settings: {
         capeHue: this.capeHue,
         capeSaturate: this.capeSaturate,
@@ -2734,6 +2755,8 @@ class Player extends Character {
     ring2,
     amulet,
     exp,
+    gold,
+    coin,
     createdAt,
     x,
     y,
@@ -2866,36 +2889,40 @@ class Player extends Character {
 
       this.send([
         Types.Messages.WELCOME,
-        this.id,
-        this.name,
-        this.x,
-        this.y,
-        this.hitPoints,
-        armor,
-        weapon,
-        belt,
-        cape,
-        shield,
-        ring1,
-        ring2,
-        amulet,
-        this.experience,
-        achievement,
-        inventory,
-        stash,
-        hash,
-        nanoPotions,
-        gems,
-        artifact,
-        expansion1,
-        expansion2,
-        waypoints,
-        depositAccount,
-        this.auras,
-        this.server.cowLevelCoords,
-        this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
-        settings,
-        network,
+        {
+          id: this.id,
+          name: this.name,
+          x: this.x,
+          y: this.y,
+          hitpoints: this.hitPoints,
+          armor,
+          weapon,
+          belt,
+          cape,
+          shield,
+          ring1,
+          ring2,
+          amulet,
+          experience: this.experience,
+          gold,
+          coin,
+          achievement,
+          inventory,
+          stash,
+          hash,
+          nanoPotions,
+          gems,
+          artifact,
+          expansion1,
+          expansion2,
+          waypoints,
+          depositAccount,
+          auras: this.auras,
+          cowLevelPortalCoords: this.server.cowLevelCoords,
+          settings,
+          network,
+          partyId: this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
+        },
       ]);
 
       this.resetBonus();

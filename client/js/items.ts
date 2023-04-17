@@ -775,7 +775,21 @@ var Items = {
   Gold: class Gold extends Item {
     constructor(id) {
       super(id, Types.Entities.GOLD, "object");
-      this.lootMessage = "You pick up some gold";
+      this.lootMessage = "You pick up amount gold";
+    }
+  },
+
+  NanoCoin: class NanoCoin extends Item {
+    constructor(id) {
+      super(id, Types.Entities.NANOCOIN, "object");
+      this.lootMessage = "You pick up amount XNO";
+    }
+  },
+
+  BananoCoin: class BananoCoin extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BANANOCOIN, "object");
+      this.lootMessage = "You pick up amount BAN";
     }
   },
 

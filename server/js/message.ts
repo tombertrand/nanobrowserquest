@@ -286,11 +286,14 @@ Messages.Drop = class Message {
   serialize() {
     var drop = [
       Types.Messages.DROP,
-      this.mob.id,
-      this.item.id,
-      this.item.kind,
-      _.map(this.mob.hateList, "id"),
-      this.item.partyId,
+      {
+        mobId: this.mob.id,
+        itemId: this.item.id,
+        kind: this.item.kind,
+        mobHateList: _.map(this.mob.hateList, "id"),
+        partyId: this.item.partyId,
+        ...(this.item.amount ? { amount: this.item.amount } : null),
+      },
     ];
 
     return drop;

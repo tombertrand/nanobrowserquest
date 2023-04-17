@@ -138,4 +138,6 @@ export const EmojiMap = {
   scrolltransmuteblessed: "<:scrolltransmuteblessed:1093911575590609056>",
   scrollupgradesacred: "<:scrollupgradesacred:1093912423024566273>",
   jewelskull: "<:jewelskull:1093959293394485398>",
+  nanocoins: "<:nanocoins:1097314083029663744>",
+  bananocoins: "<:bananocoins:1097314050947432479>",
 };

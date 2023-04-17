@@ -6,6 +6,7 @@
     "lint:fix": "eslint 'client/**/*.ts' --fix",
     "map": "cd tools/maps/ && ts-node exportmap.js tmx/map.json",
     "test": "jest",
+    "typecheck": "tsc",
     "watch:client": "webpack serve --progress --open",
     "watch:server": "nodemon --watch dist/ --watch server/ --watch shared/ -e ts,js --exec \"npm run build:server\"",
     "build:client": "webpack  --progress --color",

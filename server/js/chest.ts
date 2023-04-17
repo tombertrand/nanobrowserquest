@@ -6,9 +6,9 @@ import { random } from "./utils";
 
 class Chest extends Item {
   items: any;
-  
+
   constructor(id, x, y) {
-    super(id, Types.Entities.CHEST, x, y);
+    super({ id, kind: Types.Entities.CHEST, x, y });
   }
 
   setItems(items) {

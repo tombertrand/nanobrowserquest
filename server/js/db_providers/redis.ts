@@ -145,8 +145,10 @@ class DatabaseHandler {
             .hget(userKey, "settings") // 26
             .hget(userKey, "network") // 27
             .hget(userKey, "trade") // 28
-            .hget(userKey, "discordId") // 29
-            .hget(userKey, "migrations") // 30
+            .hget(userKey, "gold") // 29
+            .hget(userKey, "coin") // 30
+            .hget(userKey, "discordId") // 31
+            .hget(userKey, "migrations") // 32
 
             .exec(async (err, replies) => {
               if (err) {
@@ -174,8 +176,10 @@ class DatabaseHandler {
               var depositAccount = replies[23];
               var depositAccountIndex = replies[24];
               var network = replies[27];
-              var discordId = replies[29];
-              var migrations = replies[30] ? JSON.parse(replies[30]) : {};
+              var gold = parseInt(replies[29] || "0");
+              var coin = parseInt(replies[30] || "0");
+              var discordId = replies[31];
+              var migrations = replies[32] ? JSON.parse(replies[32]) : {};
 
               const [, rawAccount] = account.split("_");
               const [rawNetwork, rawPlayerAccount] = player.account.split("_");
@@ -513,6 +517,8 @@ class DatabaseHandler {
                 ring2,
                 amulet,
                 exp,
+                gold,
+                coin,
                 createdAt,
                 x,
                 y,
@@ -576,6 +582,8 @@ class DatabaseHandler {
           .hset(userKey, "account", player.account)
           .hset(userKey, "armor", "clotharmor:1")
           .hset(userKey, "exp", 0)
+          .hset(userKey, "gold", 0)
+          .hset(userKey, "coin", 0)
           .hset(userKey, "ip", player.ip || "")
           .hset(userKey, "createdAt", curTime)
           .hset(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
@@ -610,6 +618,8 @@ class DatabaseHandler {
               cape: null,
               shield: null,
               exp: 0,
+              gold: 0,
+              coin: 0,
               createdAt: curTime,
               x: player.x,
               y: player.y,
@@ -1123,6 +1133,50 @@ class DatabaseHandler {
           },
         });
       }
+    });
+  }
+
+  lootGold({ player, amount }) {
+    this.client.hget("u:" + player.name, "gold", (err, currentGold) => {
+      if (err) {
+        Sentry.captureException(err);
+        return;
+      }
+
+      if (currentGold === null) {
+        currentGold = 0;
+      } else if (!/\d+/.test(currentGold)) {
+        Sentry.captureException(new Error(`${player.name} gold hash corrupted?`));
+        return;
+      }
+
+      const gold = Number(amount) + Number(currentGold);
+
+      this.client.hset("u:" + player.name, "gold", gold, () => {
+        player.send([Types.Messages.GOLD, gold]);
+      });
+    });
+  }
+
+  lootCoin({ player, amount }) {
+    this.client.hget("u:" + player.name, "coin", (err, currentCoin) => {
+      if (err) {
+        Sentry.captureException(err);
+        return;
+      }
+
+      if (currentCoin === null) {
+        currentCoin = 0;
+      } else if (!/\d+/.test(currentCoin)) {
+        Sentry.captureException(new Error(`${player.name} coin hash corrupted?`));
+        return;
+      }
+
+      const coin = Number(amount) + Number(currentCoin);
+
+      this.client.hset("u:" + player.name, "coin", coin, () => {
+        player.send([Types.Messages.COIN, coin]);
+      });
     });
   }
 

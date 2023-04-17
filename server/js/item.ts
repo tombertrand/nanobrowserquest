@@ -1,5 +1,15 @@
 import Entity from "./entity";
 
+export interface ItemProps {
+  kind: number;
+  x: number;
+  y: number;
+  partyId?: number;
+  level?: number;
+  mobKind?: number;
+  amount?: number;
+}
+
 class Item extends Entity {
   isStatic: boolean;
   isFromChest: boolean;
@@ -8,13 +18,20 @@ class Item extends Entity {
   respawnCallback: any;
   partyId?: number;
   level?: number;
+  mobKind?: number;
+  amount?: number;
 
-  constructor(id, kind, x, y, partyId?: number, level?: number) {
+  constructor({ id, kind, x, y, partyId, level, mobKind, amount }: ItemProps & { id: string }) {
     super(id, "item", kind, x, y);
     this.isStatic = false;
     this.isFromChest = false;
     this.partyId = partyId;
     this.level = level;
+    this.mobKind = mobKind;
+
+    if (amount) {
+      this.amount = amount;
+    }
   }
 
   handleDespawn(params) {

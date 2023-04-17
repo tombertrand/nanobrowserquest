@@ -7,6 +7,7 @@ import { ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
 import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
+import { generateRandomGoldAmount } from "./gold";
 import Item from "./item";
 import Map from "./map";
 import Messages from "./message";
@@ -20,6 +21,8 @@ import Spell from "./spell";
 import { purchase } from "./store/purchase";
 import Trade from "./trade";
 import { generateSoulStoneItem, getRandomJewelLevel, getRandomRune, random, randomInt, randomRange } from "./utils";
+
+import type { ItemProps } from "./item";
 
 // ======= GAME SERVER ========
 
@@ -1359,20 +1362,20 @@ class World {
     }
   }
 
-  createItem(kind, x, y, partyId?: number, level?: number) {
+  createItem({ kind, x, y, partyId, level, mobKind, amount }: ItemProps) {
     var id = "9" + this.itemCount++,
       item = null;
 
     if (kind === Types.Entities.CHEST) {
       item = new Chest(id, x, y);
     } else {
-      item = new Item(id, kind, x, y, partyId, level);
+      item = new Item({ id, kind, x, y, partyId, level, mobKind, amount });
     }
     return item;
   }
 
   createChest(x, y, items) {
-    var chest = this.createItem(Types.Entities.CHEST, x, y);
+    var chest = this.createItem({ kind: Types.Entities.CHEST, x, y });
     chest.setItems(items);
 
     return chest;
@@ -1386,7 +1389,7 @@ class World {
   }
 
   addItemFromChest(kind, x, y) {
-    var item = this.createItem(kind, x, y);
+    var item = this.createItem({ kind, x, y });
     item.isFromChest = true;
 
     return this.addItem(item);
@@ -2048,7 +2051,7 @@ class World {
       }
 
       if (Types.isItem(kind)) {
-        self.addStaticItem(self.createItem(kind, pos.x + 1, pos.y));
+        self.addStaticItem(self.createItem({ kind, x: pos.x + 1, y: pos.y }));
       }
     });
   }
@@ -2413,7 +2416,6 @@ class World {
 
   getDroppedItem(mob, attacker) {
     let itemName = this.getDroppedItemName(mob, attacker);
-    const kind = Types.getKindFromString(itemName);
 
     if (mob.kind === Types.Entities.MINOTAUR) {
       postMessageToDiscordEventChannel(`${attacker.name} slained the Minotaur 🥶`);
@@ -2434,7 +2436,7 @@ class World {
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
     // var randomDrops = ["soulstone"];
-    // var randomDrops = ["pickaxe"];
+    // var randomDrops = ["gold"];
     // var randomDrops = ["jewelskull"];
     // var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
@@ -2541,10 +2543,32 @@ class World {
     }
 
     // Potions can be looted by anyone
+    const kind = Types.getKindFromString(itemName);
     const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;
+    let amount = undefined;
+
+    if (Types.Entities.GOLD === kind) {
+      amount = generateRandomGoldAmount(mob.name, Types.isMiniBoss(mob));
+    } else if (Types.Entities.NANOCOIN === kind) {
+      // ~~~~@TODO
+      // amount = generateRandomNanoAmount(attacker.network);
+    } else if (Types.Entities.BANANOCOIN === kind) {
+      // ~~~~@TODO
+      // amount = generateRandomBananoAmount(attacker.network);
+    }
 
     return itemName
-      ? this.addItem(this.createItem(Types.getKindFromString(itemName), mob.x, mob.y, partyId, itemLevel))
+      ? this.addItem(
+          this.createItem({
+            kind: Types.getKindFromString(itemName),
+            x: mob.x,
+            y: mob.y,
+            partyId,
+            level: itemLevel,
+            mobKind: mob.kind,
+            ...(amount ? { amount } : null),
+          }),
+        )
       : null;
   }
 

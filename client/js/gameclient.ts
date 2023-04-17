@@ -106,6 +106,8 @@ class GameClient {
   receivepoisoned_callback: any;
   receivecursed_callback: any;
   receivetaunt_callback: any;
+  receivegold_callback: any;
+  receivecoin_callback: any;
   settings_callback: any;
 
   constructor(host, port) {
@@ -187,6 +189,8 @@ class GameClient {
     this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
     this.handlers[Types.Messages.CURSED] = this.receiveCursed;
     this.handlers[Types.Messages.TAUNT] = this.receiveTaunt;
+    this.handlers[Types.Messages.GOLD] = this.receiveGold;
+    this.handlers[Types.Messages.COIN] = this.receiveCoin;
     this.enable();
   }
 
@@ -349,71 +353,7 @@ class GameClient {
   }
 
   receiveWelcome(data) {
-    var id = data[1];
-    var name = data[2];
-    var x = data[3];
-    var y = data[4];
-    var hp = data[5];
-    var armor = data[6];
-    var weapon = data[7];
-    var belt = data[8];
-    var cape = data[9];
-    var shield = data[10];
-    var ring1 = data[11];
-    var ring2 = data[12];
-    var amulet = data[13];
-    var experience = data[14];
-    var achievement = data[15];
-    var inventory = data[16];
-    var stash = data[17];
-    var hash = data[18];
-    var nanoPotions = data[19];
-    var gems = data[20];
-    var artifact = data[21];
-    var expansion1 = data[22];
-    var expansion2 = data[23];
-    var waypoints = data[24];
-    var depositAccount = data[25];
-    var auras = data[26];
-    var cowLevelPortalCoords = data[27];
-    var party = data[28];
-    var settings = data[29];
-    var network = data[30];
-
-    if (this.welcome_callback) {
-      this.welcome_callback({
-        id,
-        name,
-        x,
-        y,
-        hp,
-        armor,
-        weapon,
-        belt,
-        cape,
-        shield,
-        ring1,
-        ring2,
-        amulet,
-        experience,
-        achievement,
-        inventory,
-        stash,
-        hash,
-        nanoPotions,
-        gems,
-        artifact,
-        expansion1,
-        expansion2,
-        waypoints,
-        depositAccount,
-        auras,
-        cowLevelPortalCoords,
-        party,
-        settings,
-        network,
-      });
-    }
+    this.welcome_callback?.(data[1]);
   }
 
   receiveMove(data) {
@@ -552,19 +492,19 @@ class GameClient {
   }
 
   receiveDrop(data) {
-    var mobId = data[1];
-    var id = data[2];
-    var kind = data[3];
+    const { mobId, itemId, kind, mobHateList, partyId, amount } = data[1];
 
-    var item = EntityFactory.createEntity({ kind, id });
+    var item = EntityFactory.createEntity({ kind, id: itemId });
 
     item.wasDropped = true;
-    item.playersInvolved = data[4];
-    item.partyId = data[5];
-
-    if (this.drop_callback) {
-      this.drop_callback(item, mobId);
+    item.playersInvolved = mobHateList;
+    item.partyId = partyId;
+    if (item.kind === Types.Entities.GOLD) {
+      item.amount = amount;
     }
+    // @TODO ~~~~ amount for xno / ban
+
+    this.drop_callback?.(item, mobId);
   }
 
   receiveTeleport(data) {
@@ -916,6 +856,14 @@ class GameClient {
     const entityId = data[1];
 
     this.receivetaunt_callback?.(entityId);
+  }
+
+  receiveGold(data) {
+    this.receivegold_callback?.(data[1]);
+  }
+
+  receiveCoin(data) {
+    this.receivecoin_callback?.(data[1]);
   }
 
   onDispatched(callback) {
@@ -1272,6 +1220,14 @@ class GameClient {
 
   onTaunt(callback) {
     this.receivetaunt_callback = callback;
+  }
+
+  onReceiveGold(callback) {
+    this.receivegold_callback = callback;
+  }
+
+  onReceiveCoin(callback) {
+    this.receivecoin_callback = callback;
   }
 
   sendCreate({ name, account }) {

@@ -56,6 +56,9 @@ class Player extends Character {
   upgrade: any[];
   tradePlayer1: any[];
   tradePlayer2: any[];
+  experience: number;
+  gold: number;
+  coin: number;
   gems: any;
   artifact: any;
   expansion1: boolean;
@@ -268,6 +271,10 @@ class Player extends Character {
         } else if (item.kind === Types.Entities.PICKAXE && achievements[ACHIEVEMENT_OBELISK_INDEX]) {
           throw new Exceptions.LootException("You already completed the Obelisk achievement.");
         }
+      } else if (item.kind === Types.Entities.NANOCOIN && this.network !== "nano") {
+        throw new Exceptions.LootException("You can't loot XNO coins.");
+      } else if (item.kind === Types.Entities.BANANOCOIN && this.network !== "ban") {
+        throw new Exceptions.LootException("You can't loot BAN coins.");
       }
 
       console.info("Player " + this.id + " has looted " + item.id);
@@ -738,6 +745,14 @@ class Player extends Character {
 
   setStash(stash) {
     this.stash = this.prepareRawItems(stash);
+  }
+
+  setGold(gold) {
+    this.gold = gold;
+  }
+
+  setCoin(coin) {
+    this.coin = coin;
   }
 
   setTradePlayer1(items) {
