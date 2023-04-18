@@ -832,15 +832,6 @@ footer, header, hgroup, menu, nav, section {
         justify-content: center;
         padding: 0 10px;
     }
-    #item-gold {
-        display: flex;
-        align-items: center;
-        padding: 0 12px 6px 12px;
-    }
-
-    #gold-amount {
-        padding-left: 6px;
-    }
 
     .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-equip-cape, .item-equip-shield, .item-delete { position: relative; }
     .item-equip-weapon::before, .item-equip-armor::before, .item-equip-ring::before, .item-equip-amulet::before, .item-equip-belt::before, .item-equip-shield::before, .item-equip-cape::before, .item-delete::before {
@@ -1030,12 +1021,6 @@ footer, header, hgroup, menu, nav, section {
             width: 32px;
         }
         .setting {font-size:20px;}
-        #item-gold .gold-icon {
-            width: 32px;
-            height: 32px;
-            background-image: url('../img/2/item-gold3.png');
-            background-position-y: -2px;
-        }
 
 	    .upscaled #logo, .upscaled #logosparks, .upscaled .left-ornament, .upscaled .right-ornament, .upscaled #character, .upscaled #character div, .upscaled .button, .upscaled .button div, .upscaled #respawn, .upscaled #scroll, .upscaled #instructions, .upscaled #store, .upscaled #settings, .upscaled #party, .upscaled #completed, .upscaled #failed, .upscaled .icon, .upscaled #tilt, .upscaled .parchment-left, .upscaled .parchment-middle, .upscaled .parchment-right, .upscaled .avatar, .upscaled .facebook, .upscaled .twitter, .upscaled .discord, .upscaled .close, .upscaled .ribbon .top, .upscaled .ribbon .bottom, .upscaled #about .img, .upscaled .ext-link {background-image:url('../img/3/spritesheet.png');}
 	    
@@ -1252,15 +1237,6 @@ footer, header, hgroup, menu, nav, section {
         .btn {font-size:16px;}
         #completed.boss-check p {line-height:1.35em;}
         #stash {top:45px;}
-        #item-gold .gold-icon {
-            width: 16px;
-            height: 16px;
-            background-image: url('../img/1/item-gold3.png');
-            background-position-y: 0px;
-        }
-        #gold-amount {
-            padding-left: 4px;
-        }
 
         #waypoint {height:312px;}
         #waypoint .waypoint-icon {width:46px; height: 46px; background-image: url('../img/2/waypoint.png'); transform: scale(0.65); margin: -5px 0}

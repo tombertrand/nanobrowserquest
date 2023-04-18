@@ -107,6 +107,7 @@ class GameClient {
   receivecursed_callback: any;
   receivetaunt_callback: any;
   receivegold_callback: any;
+  receivegoldstash_callback: any;
   receivecoin_callback: any;
   settings_callback: any;
 
@@ -189,7 +190,8 @@ class GameClient {
     this.handlers[Types.Messages.POISONED] = this.receivePoisoned;
     this.handlers[Types.Messages.CURSED] = this.receiveCursed;
     this.handlers[Types.Messages.TAUNT] = this.receiveTaunt;
-    this.handlers[Types.Messages.GOLD] = this.receiveGold;
+    this.handlers[Types.Messages.GOLD.INVENTORY] = this.receiveGold;
+    this.handlers[Types.Messages.GOLD.STASH] = this.receiveGoldStash;
     this.handlers[Types.Messages.COIN] = this.receiveCoin;
     this.enable();
   }
@@ -870,6 +872,10 @@ class GameClient {
     this.receivegold_callback?.(data[1]);
   }
 
+  receiveGoldStash(data) {
+    this.receivegoldstash_callback?.(data[1]);
+  }
+
   receiveCoin(data) {
     this.receivecoin_callback?.(data[1]);
   }
@@ -1234,6 +1240,10 @@ class GameClient {
     this.receivegold_callback = callback;
   }
 
+  onReceiveGoldStash(callback) {
+    this.receivegoldstash_callback = callback;
+  }
+
   onReceiveCoin(callback) {
     this.receivecoin_callback = callback;
   }
@@ -1445,6 +1455,10 @@ class GameClient {
 
   sendActivateStatue(id) {
     this.sendMessage([Types.Messages.STATUE, id]);
+  }
+
+  sendMoveGold(amount, from, to) {
+    this.sendMessage([Types.Messages.GOLD.MOVE, amount, from, to]);
   }
 }
 

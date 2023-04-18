@@ -64,6 +64,8 @@ class Player extends Character {
   banUseTime: number;
   experience: number;
   level: number;
+  gold: number;
+  goldStash: number;
   lastWorldChatMinutes: number;
   auras: Auras[];
   set: null;
@@ -1171,6 +1173,18 @@ class Player extends Character {
         console.info("MOVE TRADE ITEMS TO INVENTORY: " + self.name);
 
         databaseHandler.moveItemsToInventory(self, "trade");
+      } else if (action === Types.Messages.GOLD.MOVE) {
+        const amount = message[1];
+        const from = message[2];
+        const to = message[3];
+
+        console.info(`MOVE GOLD: ${self.name}, AMOUNT: ${amount}, FROM: ${from}, TO: ${to}`);
+
+        if (isNaN(amount) || !from || !to) return;
+        if (from === "inventory" && amount > self.gold) return;
+        if (from === "stash" && amount > self.goldStash) return;
+
+        databaseHandler.moveGold({ player: self, from, to, amount });
       } else if (action === Types.Messages.UPGRADE_ITEM) {
         console.info("UPGRADE ITEM: " + self.name);
 
@@ -2756,6 +2770,7 @@ class Player extends Character {
     amulet,
     exp,
     gold,
+    goldStash,
     coin,
     createdAt,
     x,
@@ -2863,6 +2878,8 @@ class Player extends Character {
       this.network = network;
       this.nanoPotions = nanoPotions;
       this.discordId = discordId;
+      this.gold = gold;
+      this.goldStash = goldStash;
 
       if (!x || !y) {
         this.updatePosition();
@@ -2905,6 +2922,7 @@ class Player extends Character {
           amulet,
           experience: this.experience,
           gold,
+          goldStash,
           coin,
           achievement,
           inventory,

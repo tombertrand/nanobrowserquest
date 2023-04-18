@@ -915,7 +915,10 @@ class Game {
           (fromSlot >= TRADE_SLOT_RANGE && fromSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT) ||
           (toSlot >= TRADE_SLOT_RANGE && toSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT))
       ) {
-        this.dropItemQuantity(fromSlot, toSlot, quantity);
+        this.openQuantityModal(quantity, selectedQuantity => {
+          this.dropItem(fromSlot, toSlot, selectedQuantity);
+        });
+
         return;
       }
     }
@@ -940,7 +943,7 @@ class Game {
     }
 
     if (toSlot === -1) {
-      if (!level || level !== 1 || Types.isUnique(item, rawBonus)) {
+      if (!level || level !== 1 || Types.isUnique(item, rawBonus) || (socket && socket.length >= 4)) {
         $("#dialog-delete-item").dialog("open");
         this.slotToDelete = fromSlot;
         return;
@@ -980,15 +983,13 @@ class Game {
     }
   }
 
-  dropItemQuantity(fromSlot, toSlot, maxQuantity) {
-    const self = this;
-
+  openQuantityModal(maxQuantity, submit) {
     $("#container").addClass("prevent-click");
 
-    const submit = () => {
+    const prepareSubmit = () => {
       const quantity = parseInt($("#transfer-quantity").val() as string);
       if (quantity <= maxQuantity) {
-        self.dropItem(fromSlot, toSlot, quantity);
+        submit(quantity);
       }
       $("#container").removeClass("prevent-click");
       $("#dialog-quantity").dialog("close");
@@ -1014,7 +1015,7 @@ class Game {
         {
           text: "Ok",
           class: "btn",
-          click: submit,
+          click: prepareSubmit,
         },
       ],
     });
@@ -1033,7 +1034,7 @@ class Game {
       })
       .on("keyup", function (e) {
         if (e.which === Types.Keys.ENTER) {
-          submit();
+          prepareSubmit();
         }
       })
       .val(maxQuantity)
@@ -1714,6 +1715,31 @@ class Game {
     $("#skill-attack").attr("class", skillName ? `skill-${skillName}` : null);
   }
 
+  initTransferGold() {
+    $("#gold-stash").on("click", () => {
+      const isStashTransfer = $("#stash").hasClass("visible");
+      if (!isStashTransfer || !this.player.goldStash) return;
+
+      this.openQuantityModal(this.player.goldStash, gold => {
+        this.client.sendMoveGold(gold, "stash", "inventory");
+      });
+    });
+
+    $("#gold-inventory").on("click", () => {
+      const isStashTransfer = $("#stash").hasClass("visible");
+      const isTradeTransfer = $("#trade").hasClass("visible");
+      if ((!isStashTransfer && !isTradeTransfer) || !this.player.gold) return;
+
+      this.openQuantityModal(this.player.gold, gold => {
+        if (isStashTransfer) {
+          this.client.sendMoveGold(gold, "inventory", "stash");
+        }
+
+        // @TODO do the trade transfer
+      });
+    });
+  }
+
   initAchievements() {
     var self = this;
 
@@ -2358,6 +2384,7 @@ class Game {
       amulet,
       experience,
       gold,
+      goldStash,
       coin,
       achievement,
       inventory,
@@ -2434,6 +2461,7 @@ class Game {
       self.player.setStash(stash);
 
       self.setGold(gold);
+      self.setGoldStash(goldStash);
       self.setCoin(coin);
 
       self.initSettings(settings);
@@ -2452,6 +2480,7 @@ class Game {
       self.initSendUpgradeItem();
       self.initUpgradeItemPreview();
       self.initWaypoints(waypoints);
+      self.initTransferGold();
 
       self.store.depositAccount = depositAccount;
 
@@ -4643,6 +4672,10 @@ class Game {
         self.setGold(gold);
       });
 
+      self.client.onReceiveGoldStash(function (gold) {
+        self.setGoldStash(gold);
+      });
+
       self.client.onReceiveCoin(function (coin) {
         self.setCoin(coin);
       });
@@ -4667,12 +4700,16 @@ class Game {
 
   setGold(gold) {
     this.player.setGold(gold);
-    $("#gold-amount").text(gold);
+    $("#gold-inventory-amount").text(gold);
+  }
+
+  setGoldStash(gold) {
+    this.player.setGoldStash(gold);
+    $("#gold-stash-amount").text(gold);
   }
 
   setCoin(coin) {
     this.player.setCoin(coin);
-    // $("#gold-amount").val(gold);
   }
 
   /**

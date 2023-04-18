@@ -790,18 +790,20 @@
                                 <div class="item-weapon-slot"></div>
                                 <div class="item-armor-slot"></div>
                                 <div class="item-shield-slot"></div>
+                                <div class="item-delete-slot"></div>
                             </div>
                             <div>
                                 <div class="item-ring1-slot"></div>
                                 <div class="item-belt-slot"></div>
                                 <div class="item-ring2-slot"></div>
-                                <div class="item-delete-slot"></div>
+                                <div class="gold-wrapper">
+                                    <div id="gold-inventory" class="item-gold">
+                                        <span class="gold-icon"></span>
+                                        <var id="gold-inventory-amount">0</var>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="item-gold">
-                        <span class="gold-icon"></span>
-                        <var id="gold-amount">0</var>
                     </div>
                     <div id="item-inventory"></div>
                     <div class="panel-header reverse"></div>
@@ -833,6 +835,12 @@
                 <div id="stash" class="panel">
                     <span class="close"></span>
                     <div class="panel-header"></div>
+                    <div class="gold-wrapper">
+                        <div id="gold-stash" class="item-gold">
+                            <span class="gold-icon"></span>
+                            <var id="gold-stash-amount">0</var>
+                        </div>
+                    </div>
                     <div id="item-stash"></div>
                     <div class="stash-pagination">
                         <button id="item-stash-previous-page" class="btn small">◄</button>

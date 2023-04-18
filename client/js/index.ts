@@ -18,6 +18,7 @@ import "../css/skills.css";
 import "jquery-ui/themes/base/all.css";
 import "jquery-contextmenu/dist/jquery.contextMenu.css";
 import "../css/contextmenu.css";
+import "../css/gold.css";
 
 import * as Sentry from "@sentry/browser";
 import each from "lodash/each";

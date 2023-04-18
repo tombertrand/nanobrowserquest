@@ -58,6 +58,7 @@ class Player extends Character {
   tradePlayer2: any[];
   experience: number;
   gold: number;
+  goldStash: number;
   coin: number;
   gems: any;
   artifact: any;
@@ -749,6 +750,10 @@ class Player extends Character {
 
   setGold(gold) {
     this.gold = gold;
+  }
+
+  setGoldStash(gold) {
+    this.goldStash = gold;
   }
 
   setCoin(coin) {

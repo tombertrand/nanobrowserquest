@@ -191,8 +191,12 @@ export const Types: any = {
     GATEWAYLEVEL_START: 111,
     GATEWAYLEVEL_INPROGRESS: 112,
     GATEWAYLEVEL_END: 113,
-    GOLD: 120,
-    COIN: 121,
+    GOLD: {
+      INVENTORY: 120,
+      STASH: 121,
+      MOVE: 122,
+    },
+    COIN: 123,
   },
 
   Entities: {

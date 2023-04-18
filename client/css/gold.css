@@ -1,0 +1,47 @@
+.item-gold {
+  display: flex;
+  align-items: center;
+  background: #171717;
+  padding: 0 0 2px 2px;
+  border-radius: 3px;
+}
+
+#inventory .gold-wrapper {
+  align-self: end;
+  flex-grow: 1;
+  margin-bottom: 6px;
+}
+
+#stash .gold-wrapper {
+  padding: 0 11px 8px;
+}
+
+#stash .item-gold {
+  max-width: 50%;
+}
+
+.gold-icon {
+  margin-right: 6px;
+}
+
+@media screen and (min-width: 1501px) {
+  .item-gold .gold-icon {
+    width: 32px;
+    height: 32px;
+    background-image: url("../img/2/item-gold3.png");
+    background-position-y: -2px;
+  }
+}
+
+@media screen and (max-width: 1500px), screen and (max-height: 870px) {
+  .item-gold .gold-icon {
+    width: 16px;
+    height: 16px;
+    background-image: url("../img/1/item-gold3.png");
+    background-position-y: 0px;
+  }
+
+  .gold-icon {
+    margin-right: 4px;
+  }
+}

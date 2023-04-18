@@ -146,9 +146,10 @@ class DatabaseHandler {
             .hget(userKey, "network") // 27
             .hget(userKey, "trade") // 28
             .hget(userKey, "gold") // 29
-            .hget(userKey, "coin") // 30
-            .hget(userKey, "discordId") // 31
-            .hget(userKey, "migrations") // 32
+            .hget(userKey, "goldStash") // 30
+            .hget(userKey, "coin") // 31
+            .hget(userKey, "discordId") // 32
+            .hget(userKey, "migrations") // 33
 
             .exec(async (err, replies) => {
               if (err) {
@@ -177,9 +178,10 @@ class DatabaseHandler {
               var depositAccountIndex = replies[24];
               var network = replies[27];
               var gold = parseInt(replies[29] || "0");
-              var coin = parseInt(replies[30] || "0");
-              var discordId = replies[31];
-              var migrations = replies[32] ? JSON.parse(replies[32]) : {};
+              var goldStash = parseInt(replies[30] || "0");
+              var coin = parseInt(replies[31] || "0");
+              var discordId = replies[32];
+              var migrations = replies[33] ? JSON.parse(replies[33]) : {};
 
               const [, rawAccount] = account.split("_");
               const [rawNetwork, rawPlayerAccount] = player.account.split("_");
@@ -518,6 +520,7 @@ class DatabaseHandler {
                 amulet,
                 exp,
                 gold,
+                goldStash,
                 coin,
                 createdAt,
                 x,
@@ -583,6 +586,7 @@ class DatabaseHandler {
           .hset(userKey, "armor", "clotharmor:1")
           .hset(userKey, "exp", 0)
           .hset(userKey, "gold", 0)
+          .hset(userKey, "goldStash", 0)
           .hset(userKey, "coin", 0)
           .hset(userKey, "ip", player.ip || "")
           .hset(userKey, "createdAt", curTime)
@@ -619,6 +623,7 @@ class DatabaseHandler {
               shield: null,
               exp: 0,
               gold: 0,
+              goldStash: 0,
               coin: 0,
               createdAt: curTime,
               x: player.x,
@@ -1150,10 +1155,79 @@ class DatabaseHandler {
         return;
       }
 
-      const gold = Number(amount) + Number(currentGold);
+      const gold = parseInt(amount) + parseInt(currentGold);
 
       this.client.hset("u:" + player.name, "gold", gold, () => {
-        player.send([Types.Messages.GOLD, gold]);
+        player.send([Types.Messages.GOLD.INVENTORY, gold]);
+        player.gold = gold;
+      });
+    });
+  }
+
+  moveGold({ player, amount, from, to }) {
+    const locationMap = {
+      inventory: "gold",
+      stash: "goldStash",
+    };
+
+    const fromLocation = locationMap[from];
+    const toLocation = locationMap[to];
+
+    if (fromLocation === toLocation || isNaN(amount)) return;
+
+    this.client.hget("u:" + player.name, fromLocation, (err, rawFromGold) => {
+      if (err) {
+        Sentry.captureException(err);
+        return;
+      }
+      if (!rawFromGold || rawFromGold === "0" || !/\d+/.test(rawFromGold)) return;
+
+      const fromGold = parseInt(rawFromGold);
+
+      if (amount > fromGold) {
+        Sentry.captureException(new Error(`Player ${player.name} tried to transfer invalid gold amount. `), {
+          extra: {
+            amount,
+            rawFromGold,
+            from,
+            to,
+          },
+        });
+        return;
+      }
+
+      const newFromGold = fromGold - amount;
+      if (newFromGold < 0) return;
+
+      this.client.hget("u:" + player.name, toLocation, (err, rawToGold) => {
+        if (err) {
+          Sentry.captureException(err);
+          return;
+        }
+        if (!rawToGold || !/\d+/.test(rawToGold)) return;
+
+        const toGold = parseInt(rawToGold);
+
+        this.client.hset("u:" + player.name, fromLocation, newFromGold, () => {
+          player.send([Types.Messages.GOLD[from.toUpperCase()], newFromGold]);
+          player[fromLocation] = newFromGold;
+
+          const newToGold = toGold + amount;
+
+          this.client.hset("u:" + player.name, toLocation, newToGold, () => {
+            player.send([Types.Messages.GOLD[to.toUpperCase()], newToGold]);
+            player[toLocation] = newToGold;
+
+            console.log("COMPLETED GOLD MOVE", {
+              player: player.name,
+              amount,
+              from,
+              to,
+              newFromGold,
+              newToGold,
+            });
+          });
+        });
       });
     });
   }

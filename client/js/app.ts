@@ -96,6 +96,7 @@ class App {
     }
 
     document.getElementById("parchment")!.className = this.frontPage;
+
     this.initFormFields();
     this.initContextMenu();
   }
