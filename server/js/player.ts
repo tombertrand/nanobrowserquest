@@ -66,6 +66,7 @@ class Player extends Character {
   level: number;
   gold: number;
   goldStash: number;
+  goldTrade: number;
   lastWorldChatMinutes: number;
   auras: Auras[];
   set: null;
@@ -1183,8 +1184,19 @@ class Player extends Character {
         if (isNaN(amount) || !from || !to) return;
         if (from === "inventory" && amount > self.gold) return;
         if (from === "stash" && amount > self.goldStash) return;
+        if (from === "trade" && amount > self.goldTrade) return;
 
-        databaseHandler.moveGold({ player: self, from, to, amount });
+        if (from === "trade" || to === "trade") {
+          const tradeInstance = self.server.getTrade(self.tradeId);
+          if (!tradeInstance?.players.find(({ id }) => id === self.id)) {
+            // This should not happen..
+            Sentry.captureException(new Error(`Invalid trade instance or Player ${self.name} not part of it`));
+            return;
+          }
+          tradeInstance.updateGold({ player1Id: self.id, from, to, amount });
+        } else {
+          databaseHandler.moveGold({ player: self, from, to, amount });
+        }
       } else if (action === Types.Messages.UPGRADE_ITEM) {
         console.info("UPGRADE ITEM: " + self.name);
 
@@ -2069,6 +2081,8 @@ class Player extends Character {
 
   handleHurtDeath() {
     if (this.hitPoints <= 0) {
+      this.clearTarget();
+
       this.isDead = true;
 
       if (this.attackSkillTimeout) {

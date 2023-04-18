@@ -195,8 +195,10 @@ export const Types: any = {
       INVENTORY: 120,
       STASH: 121,
       MOVE: 122,
+      TRADE: 123,
+      TRADE2: 124,
     },
-    COIN: 123,
+    COIN: 125,
   },
 
   Entities: {

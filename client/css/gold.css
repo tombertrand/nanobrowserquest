@@ -10,10 +10,15 @@
   align-self: end;
   flex-grow: 1;
   margin-bottom: 6px;
+  max-width: 120px;
 }
 
 #stash .gold-wrapper {
   padding: 0 11px 8px;
+}
+
+#trade .gold-wrapper {
+  padding-top: 6px;
 }
 
 #stash .item-gold {
@@ -24,12 +29,20 @@
   margin-right: 6px;
 }
 
+#inventory.trade .panel-spaced-row div:not(:last-child) {
+  display: none;
+}
+
 @media screen and (min-width: 1501px) {
   .item-gold .gold-icon {
     width: 32px;
     height: 32px;
     background-image: url("../img/2/item-gold3.png");
     background-position-y: -2px;
+  }
+
+  #inventory .gold-wrapper {
+    max-width: 168px;
   }
 }
 

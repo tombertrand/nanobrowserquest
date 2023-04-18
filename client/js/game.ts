@@ -1733,9 +1733,18 @@ class Game {
       this.openQuantityModal(this.player.gold, gold => {
         if (isStashTransfer) {
           this.client.sendMoveGold(gold, "inventory", "stash");
+        } else if (isTradeTransfer) {
+          this.client.sendMoveGold(gold, "inventory", "trade");
         }
+      });
+    });
 
-        // @TODO do the trade transfer
+    $("#gold-player1").on("click", () => {
+      const isTradeTransfer = $("#trade").hasClass("visible");
+      if (!isTradeTransfer || !this.player.goldTrade || $("#trade-player1-status-button").hasClass("disabled")) return;
+
+      this.openQuantityModal(this.player.goldTrade, gold => {
+        this.client.sendMoveGold(gold, "trade", "inventory");
       });
     });
   }
@@ -2156,7 +2165,6 @@ class Game {
         // @NOTE: A few NPC takes 2 or more tiles
         if (
           entity.kind === Types.Entities.MAGICSTONE ||
-          entity.kind === Types.Entities.PORTALGATEWAY ||
           entity.kind === Types.Entities.ALTARCHALICE ||
           entity.kind === Types.Entities.ALTARSOULSTONE ||
           entity.kind === Types.Entities.TOMBDEATHANGEL ||
@@ -2462,6 +2470,7 @@ class Game {
 
       self.setGold(gold);
       self.setGoldStash(goldStash);
+      self.setGoldTrade(0);
       self.setCoin(coin);
 
       self.initSettings(settings);
@@ -4676,6 +4685,14 @@ class Game {
         self.setGoldStash(gold);
       });
 
+      self.client.onReceiveGoldTrade(function (gold) {
+        self.setGoldTrade(gold);
+      });
+
+      self.client.onReceiveGoldTrade2(function (gold) {
+        self.setGoldTrade2(gold);
+      });
+
       self.client.onReceiveCoin(function (coin) {
         self.setCoin(coin);
       });
@@ -4706,6 +4723,15 @@ class Game {
   setGoldStash(gold) {
     this.player.setGoldStash(gold);
     $("#gold-stash-amount").text(gold);
+  }
+
+  setGoldTrade(gold) {
+    this.player.setGoldTrade(gold);
+    $("#gold-player1-amount").text(gold);
+  }
+
+  setGoldTrade2(gold) {
+    $("#gold-player2-amount").text(gold);
   }
 
   setCoin(coin) {

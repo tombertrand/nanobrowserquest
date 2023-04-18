@@ -108,6 +108,8 @@ class GameClient {
   receivetaunt_callback: any;
   receivegold_callback: any;
   receivegoldstash_callback: any;
+  receivegoldtrade_callback: any;
+  receivegoldtrade2_callback: any;
   receivecoin_callback: any;
   settings_callback: any;
 
@@ -192,6 +194,8 @@ class GameClient {
     this.handlers[Types.Messages.TAUNT] = this.receiveTaunt;
     this.handlers[Types.Messages.GOLD.INVENTORY] = this.receiveGold;
     this.handlers[Types.Messages.GOLD.STASH] = this.receiveGoldStash;
+    this.handlers[Types.Messages.GOLD.TRADE] = this.receiveGoldTrade;
+    this.handlers[Types.Messages.GOLD.TRADE2] = this.receiveGoldTrade2;
     this.handlers[Types.Messages.COIN] = this.receiveCoin;
     this.enable();
   }
@@ -465,10 +469,7 @@ class GameClient {
 
   receiveDespawn(data) {
     var id = data[1];
-
-    if (this.despawn_callback) {
-      this.despawn_callback(id);
-    }
+    this.despawn_callback?.(id);
   }
 
   receiveHealth(data) {
@@ -876,6 +877,14 @@ class GameClient {
     this.receivegoldstash_callback?.(data[1]);
   }
 
+  receiveGoldTrade(data) {
+    this.receivegoldtrade_callback?.(data[1]);
+  }
+
+  receiveGoldTrade2(data) {
+    this.receivegoldtrade2_callback?.(data[1]);
+  }
+
   receiveCoin(data) {
     this.receivecoin_callback?.(data[1]);
   }
@@ -1242,6 +1251,14 @@ class GameClient {
 
   onReceiveGoldStash(callback) {
     this.receivegoldstash_callback = callback;
+  }
+
+  onReceiveGoldTrade(callback) {
+    this.receivegoldtrade_callback = callback;
+  }
+
+  onReceiveGoldTrade2(callback) {
+    this.receivegoldtrade2_callback = callback;
   }
 
   onReceiveCoin(callback) {

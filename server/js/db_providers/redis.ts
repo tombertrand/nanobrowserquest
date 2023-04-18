@@ -147,9 +147,10 @@ class DatabaseHandler {
             .hget(userKey, "trade") // 28
             .hget(userKey, "gold") // 29
             .hget(userKey, "goldStash") // 30
-            .hget(userKey, "coin") // 31
-            .hget(userKey, "discordId") // 32
-            .hget(userKey, "migrations") // 33
+            .hget(userKey, "goldTrade") // 31
+            .hget(userKey, "coin") // 32
+            .hget(userKey, "discordId") // 33
+            .hget(userKey, "migrations") // 34
 
             .exec(async (err, replies) => {
               if (err) {
@@ -179,9 +180,10 @@ class DatabaseHandler {
               var network = replies[27];
               var gold = parseInt(replies[29] || "0");
               var goldStash = parseInt(replies[30] || "0");
-              var coin = parseInt(replies[31] || "0");
-              var discordId = replies[32];
-              var migrations = replies[33] ? JSON.parse(replies[33]) : {};
+              var goldTrade = parseInt(replies[31] || "0");
+              var coin = parseInt(replies[32] || "0");
+              var discordId = replies[33];
+              var migrations = replies[34] ? JSON.parse(replies[34]) : {};
 
               const [, rawAccount] = account.split("_");
               const [rawNetwork, rawPlayerAccount] = player.account.split("_");
@@ -497,6 +499,14 @@ class DatabaseHandler {
                 settings = Object.assign({ ...defaultSettings }, JSON.parse(settings || "{}"));
               } catch (_err) {
                 // Silence err
+              }
+
+              // Restore the trade gold in the main inventory gold
+              if (goldTrade) {
+                gold = gold + goldTrade;
+                goldTrade = 0;
+
+                this.client.hmset("u:" + player.name, "gold", gold, "goldTrade", 0);
               }
 
               var x = NaN2Zero(replies[7]);
@@ -1169,77 +1179,94 @@ class DatabaseHandler {
   }
 
   moveGold({ player, amount, from, to }) {
-    const locationMap = {
-      inventory: "gold",
-      stash: "goldStash",
-    };
+    return new Promise((resolve, reject) => {
+      const locationMap = {
+        inventory: "gold",
+        stash: "goldStash",
+        trade: "goldTrade",
+      };
 
-    const fromLocation = locationMap[from];
-    const toLocation = locationMap[to];
+      const fromLocation = locationMap[from];
+      const toLocation = locationMap[to];
 
-    if (fromLocation === toLocation || isNaN(amount)) return;
-
-    this.client.hget("u:" + player.name, fromLocation, (err, rawFromGold) => {
-      if (err) {
-        Sentry.captureException(err);
-        return;
-      }
-      if (!rawFromGold || rawFromGold === "0" || !/\d+/.test(rawFromGold)) return;
-
-      const fromGold = parseInt(rawFromGold);
-
-      if (amount > fromGold) {
-        Sentry.captureException(new Error(`Player ${player.name} tried to transfer invalid gold amount.`), {
-          extra: {
-            amount,
-            rawFromGold,
-            from,
-            to,
-          },
-        });
-        return;
-      }
-
-      const newFromGold = fromGold - amount;
-      if (newFromGold < 0) return;
-
-      this.client.hget("u:" + player.name, toLocation, (err, rawToGold) => {
+      if (fromLocation === toLocation || isNaN(amount)) return;
+      this.client.hget("u:" + player.name, fromLocation, (err, rawFromGold) => {
         if (err) {
           Sentry.captureException(err);
+          reject();
           return;
         }
 
-        if (rawToGold === null) {
-          rawToGold = 0;
-        } else if (!/\d+/.test(rawToGold)) {
-          Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
+        if (!rawFromGold || rawFromGold === "0" || !/\d+/.test(rawFromGold)) return;
+        const fromGold = parseInt(rawFromGold);
+
+        if (amount > fromGold) {
+          Sentry.captureException(new Error(`Player ${player.name} tried to transfer invalid gold amount.`), {
             extra: {
-              toLocation,
-              rawToGold,
-            },
-          });
-          return;
-        }
-
-        const toGold = parseInt(rawToGold || "0");
-
-        this.client.hset("u:" + player.name, fromLocation, newFromGold, () => {
-          player.send([Types.Messages.GOLD[from.toUpperCase()], newFromGold]);
-          player[fromLocation] = newFromGold;
-
-          const newToGold = toGold + amount;
-
-          this.client.hset("u:" + player.name, toLocation, newToGold, () => {
-            player.send([Types.Messages.GOLD[to.toUpperCase()], newToGold]);
-            player[toLocation] = newToGold;
-
-            console.log("COMPLETED GOLD MOVE", {
-              player: player.name,
               amount,
+              rawFromGold,
               from,
               to,
-              newFromGold,
-              newToGold,
+            },
+          });
+          reject();
+          return;
+        }
+
+        const newFromGold = fromGold - amount;
+        if (newFromGold < 0) return;
+
+        this.client.hget("u:" + player.name, toLocation, (err, rawToGold) => {
+          if (err) {
+            Sentry.captureException(err);
+            reject();
+            return;
+          }
+
+          if (rawToGold === null) {
+            rawToGold = 0;
+          } else if (!/\d+/.test(rawToGold)) {
+            Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
+              extra: {
+                toLocation,
+                rawToGold,
+              },
+            });
+            reject();
+            return;
+          }
+          const toGold = parseInt(rawToGold || "0");
+          this.client.hset("u:" + player.name, fromLocation, newFromGold, () => {
+            player.send([Types.Messages.GOLD[from.toUpperCase()], newFromGold]);
+            player[fromLocation] = newFromGold;
+
+            const newToGold = toGold + amount;
+
+            this.client.hset("u:" + player.name, toLocation, newToGold, () => {
+              player.send([Types.Messages.GOLD[to.toUpperCase()], newToGold]);
+              player[toLocation] = newToGold;
+
+              console.log("COMPLETED GOLD MOVE", {
+                player: player.name,
+                amount,
+                from,
+                to,
+                newFromGold,
+                newToGold,
+              });
+
+              let resolvedAmount = 0;
+              if (from === "trade") {
+                resolvedAmount = newFromGold;
+              } else if (to === "trade") {
+                resolvedAmount = newToGold;
+              }
+
+              player[fromLocation] = newFromGold;
+              player[toLocation] = newToGold;
+
+              // @NOTE Resolved amount is only used for trading
+              resolve(resolvedAmount);
             });
           });
         });

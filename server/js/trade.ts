@@ -6,13 +6,12 @@ import { Sentry } from "./sentry";
 
 import type World from "./worldserver";
 
-type PlayerInventory = { inventory: string[]; isValid: boolean };
+type PlayerInventory = { inventory: string[]; gold: number; isValid: boolean };
 
 class Trade {
   players: { id: number; isAccepted: boolean }[] = [];
   id: number;
   server: World;
-  isUpdatable: boolean;
 
   constructor(id, player1, player2, server) {
     this.players = [
@@ -21,7 +20,6 @@ class Trade {
     ];
     this.id = id;
     this.server = server;
-    this.isUpdatable = true;
 
     this.start();
   }
@@ -55,11 +53,23 @@ class Trade {
         // @NOTE If panels gets closed, the items are returned, if the trade is completed the inventory gets refreshed
         if (!isCompleted) {
           this.server.databaseHandler.moveItemsToInventory(player, "trade");
+          this.server.databaseHandler.client.hget("u:" + player.name, "goldTrade", (err, rawGoldTrade) => {
+            if (rawGoldTrade && rawGoldTrade !== "0" && /\d+/.test(rawGoldTrade)) {
+              this.server.databaseHandler.moveGold({
+                player,
+                from: "trade",
+                to: "inventory",
+                amount: parseInt(rawGoldTrade),
+              });
+            }
+          });
         } else {
-          this.server.databaseHandler.client.hget("u:" + player.name, "inventory", function (_err, reply) {
+          this.server.databaseHandler.client.hmget("u:" + player.name, "inventory", "gold", function (_err, reply) {
             try {
-              let inventory = JSON.parse(reply);
+              let inventory = JSON.parse(reply[0]);
+              let gold = parseInt(reply[1] || "0");
               player.send([Types.Messages.INVENTORY, inventory]);
+              player.send([Types.Messages.GOLD.INVENTORY, gold]);
             } catch (err) {
               Sentry.captureException(err);
             }
@@ -72,37 +82,83 @@ class Trade {
   }
 
   update({ player1Id, data }) {
-    if (!this.isUpdatable) return;
+    this.resetAccept();
 
     this.forEachPlayer(({ id }) => {
       const player = this.server.getEntityById(id);
+      if (!player) return;
 
-      if (player) {
-        const messageId =
-          id === player1Id
-            ? Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM
-            : Types.Messages.TRADE_ACTIONS.PLAYER2_MOVE_ITEM;
+      const messageId =
+        id === player1Id
+          ? Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM
+          : Types.Messages.TRADE_ACTIONS.PLAYER2_MOVE_ITEM;
 
-        this.server.pushToPlayer(player, new Messages.Trade(messageId, data));
-      }
+      this.server.pushToPlayer(player, new Messages.Trade(messageId, data));
     });
+  }
+
+  // If a trade update happens, un-accept to prevent being scammed
+  // Scenario:
+  // - Player 1 and Player 2 each drop items
+  // - Player 1 accepts
+  // - Player 2 quicly remove the item and accept
+  resetAccept() {
+    // No player accepted yet, no need to reset
+    if (!this.players.some(({ isAccepted }) => isAccepted)) return;
+
+    this.players = this.players.map(player => {
+      player.isAccepted = false;
+      return player;
+    });
+
+    this.forEachPlayer(({ id }) => {
+      const player = this.server.getEntityById(id);
+      this.server.pushToPlayer(player, new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS, false));
+      this.server.pushToPlayer(player, new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER2_STATUS, false));
+    });
+  }
+
+  updateGold({ player1Id, from, to, amount }) {
+    this.resetAccept();
+
+    const tradePlayer1 = this.players.find(({ id }) => id === player1Id);
+    const tradePlayer2 = this.players.find(({ id }) => id !== player1Id);
+
+    if (!tradePlayer1 || !tradePlayer2) return;
+    const player1 = this.server.getEntityById(tradePlayer1.id);
+    const player2 = this.server.getEntityById(tradePlayer2.id);
+
+    // safety first
+    if (!player1 || !player2) return;
+    this.server.databaseHandler
+      .moveGold({ player: player1, from, to, amount })
+      .then(newAmount => {
+        player2.send([Types.Messages.GOLD.TRADE2, newAmount]);
+      })
+      .catch(err => {
+        Sentry.captureException(err);
+      });
   }
 
   validatePlayerInventory(playerA, playerB) {
     return new Promise<PlayerInventory>(resolve => {
       let playerATrade;
+      let playerAGoldTrade;
       let playerAFilteredTrade;
       let playerBInventory = [];
+      let playerBGold;
       let playerBAvailableInventorySlots;
       let isValid = true;
 
-      this.server.databaseHandler.client.hget("u:" + playerA.name, "trade", (_err, reply) => {
-        playerATrade = JSON.parse(reply);
+      this.server.databaseHandler.client.hmget("u:" + playerA.name, "trade", "goldTrade", (_err, reply) => {
+        playerATrade = JSON.parse(reply[0]);
         playerAFilteredTrade = playerATrade.filter(Boolean);
+        playerAGoldTrade = parseInt(reply[1] || "0");
 
-        this.server.databaseHandler.client.hget("u:" + playerB.name, "inventory", (_err, reply) => {
-          playerBInventory = JSON.parse(reply);
+        this.server.databaseHandler.client.hmget("u:" + playerB.name, "inventory", "gold", (_err, reply) => {
+          playerBInventory = JSON.parse(reply[0]);
           playerBAvailableInventorySlots = playerBInventory.filter(item => !item).length;
+          playerBGold = parseInt(reply[1] || "0");
 
           // Quick skip
           if (!playerAFilteredTrade.length) {
@@ -136,7 +192,7 @@ class Trade {
             isValid = false;
           }
 
-          resolve({ inventory: playerBInventory, isValid });
+          resolve({ inventory: playerBInventory, isValid, gold: playerAGoldTrade + playerBGold });
         });
       });
     });
@@ -166,8 +222,8 @@ class Trade {
       }
 
       await Promise.all([
-        this.writeData(player1, player1Data.inventory),
-        this.writeData(player2, player2Data.inventory),
+        this.writeData(player1, player1Data.inventory, player1Data.gold),
+        this.writeData(player2, player2Data.inventory, player2Data.gold),
       ]);
 
       this.close({ isCompleted: true });
@@ -177,7 +233,7 @@ class Trade {
     }
   }
 
-  writeData(player, inventory) {
+  writeData(player, inventory, gold) {
     return new Promise<void>(resolve => {
       this.server.databaseHandler.client.hmset(
         "u:" + player.name,
@@ -186,7 +242,14 @@ class Trade {
         JSON.stringify(new Array(9).fill(0)),
         "inventory",
         JSON.stringify(inventory),
+        "gold",
+        gold,
+        "goldTrade",
+        0,
         (_err, _reply) => {
+          player.gold = gold;
+          player.goldTrade = 0;
+
           player.send([Types.Messages.INVENTORY, inventory]);
           resolve();
         },
@@ -195,7 +258,13 @@ class Trade {
   }
 
   status({ player1Id, isAccepted }) {
-    if (!this.isUpdatable) return;
+    // Update the player1 (the player that pushed the accept) change
+    this.players = this.players.map(player => {
+      if (player.id === player1Id) {
+        player.isAccepted = isAccepted;
+      }
+      return player;
+    });
 
     this.forEachPlayer(({ id }) => {
       const player = this.server.getEntityById(id);
@@ -206,14 +275,6 @@ class Trade {
 
         this.server.pushToPlayer(player, new Messages.Trade(messageId, isAccepted));
       }
-    });
-
-    // Update the player1 (the player that pushed the accept) change
-    this.players = this.players.map(player => {
-      if (player.id === player1Id) {
-        player.isAccepted = isAccepted;
-      }
-      return player;
     });
 
     if (isAccepted) {

@@ -1321,10 +1321,13 @@ class World {
   endGatewayLevel() {
     this.gatewayLevelInterval = null;
     this.gatewayLevelClock = null;
+
     const gatewayPortal = this.npcs[this.portalGatewayNpcId];
     this.despawn(gatewayPortal);
+
     const gatewayInnerPortal = this.npcs[this.portalGatewayInnerNpcId];
     this.despawn(gatewayInnerPortal);
+
     this.pushBroadcast(new Messages.GatewayLevelEnd());
     this.deactivateHands();
 

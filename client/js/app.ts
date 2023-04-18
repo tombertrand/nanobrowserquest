@@ -1401,6 +1401,9 @@ class App {
   closeTrade(shouldSend) {
     if (!$("#trade").hasClass("visible")) return;
 
+    $("#gold-player1-amount").text("0");
+    $("#gold-player2-amount").text("0");
+
     // When the panel is manually closed the isFromMessage will not be defined.
     // It will be defined when player2 receives the message from player1 so this
     // prevents resending the message.
