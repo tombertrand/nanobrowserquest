@@ -1151,7 +1151,11 @@ class DatabaseHandler {
       if (currentGold === null) {
         currentGold = 0;
       } else if (!/\d+/.test(currentGold)) {
-        Sentry.captureException(new Error(`${player.name} gold hash corrupted?`));
+        Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
+          extra: {
+            currentGold,
+          },
+        });
         return;
       }
 
@@ -1185,7 +1189,7 @@ class DatabaseHandler {
       const fromGold = parseInt(rawFromGold);
 
       if (amount > fromGold) {
-        Sentry.captureException(new Error(`Player ${player.name} tried to transfer invalid gold amount. `), {
+        Sentry.captureException(new Error(`Player ${player.name} tried to transfer invalid gold amount.`), {
           extra: {
             amount,
             rawFromGold,
@@ -1204,9 +1208,20 @@ class DatabaseHandler {
           Sentry.captureException(err);
           return;
         }
-        if (!rawToGold || !/\d+/.test(rawToGold)) return;
 
-        const toGold = parseInt(rawToGold);
+        if (rawToGold === null) {
+          rawToGold = 0;
+        } else if (!/\d+/.test(rawToGold)) {
+          Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
+            extra: {
+              toLocation,
+              rawToGold,
+            },
+          });
+          return;
+        }
+
+        const toGold = parseInt(rawToGold || "0");
 
         this.client.hset("u:" + player.name, fromLocation, newFromGold, () => {
           player.send([Types.Messages.GOLD[from.toUpperCase()], newFromGold]);
