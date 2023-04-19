@@ -46,7 +46,7 @@ const MAX_EXP = expForLevel[expForLevel.length - 1];
 
 let payoutIndex = 0;
 
-const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas"];
+const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "HeroOfNano"];
 const SUPER_ADMINS = ["running-coder"];
 
 class Player extends Character {
@@ -412,7 +412,7 @@ class Player extends Character {
 
             if (msg.startsWith("/ban")) {
               const periods = { 1: 86400, 365: 86400 * 365 };
-              const reasons = ["misbehaved"];
+              const reasons = ["misbehaved", "spamming", "inappropriate_language"];
 
               const [, period, reason, playerName] = msg.match(/\s(\w+)\s(\w+)\s(.+)/);
 
@@ -2111,6 +2111,8 @@ class Player extends Character {
         clearInterval(this.poisonedInterval);
         this.poisonedInterval = null;
       }
+
+      this.databaseHandler.deductGold(this);
     }
   }
 

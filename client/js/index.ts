@@ -362,7 +362,10 @@ var initGame = function () {
 
   game.onGameStart(function () {
     app.initEquipmentIcons();
-    game.chat_callback({ message: `Welcome ${game.player.name}`, type: "event" });
+
+    if (game.hasNeverStarted) {
+      game.chat_callback({ message: `Welcome ${game.player.name}`, type: "event" });
+    }
   });
 
   game.onDisconnect(function (message) {

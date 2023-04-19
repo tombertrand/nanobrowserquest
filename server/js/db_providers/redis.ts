@@ -1169,7 +1169,7 @@ class DatabaseHandler {
         return;
       }
 
-      const gold = parseInt(amount) + parseInt(currentGold);
+      const gold = parseInt(currentGold) + parseInt(amount);
 
       this.client.hset("u:" + player.name, "gold", gold, () => {
         player.send([Types.Messages.GOLD.INVENTORY, gold]);
@@ -1270,6 +1270,51 @@ class DatabaseHandler {
             });
           });
         });
+      });
+    });
+  }
+
+  deductGold(player) {
+    // penalties only start at lv.16
+    if (player.level <= 15) return;
+
+    let penalty = 10;
+    if (player.level >= 50) {
+      penalty = 50;
+    } else if (player.level >= 25) {
+      penalty = 25;
+    }
+
+    this.client.hget("u:" + player.name, "gold", (err, currentGold) => {
+      if (err) {
+        Sentry.captureException(err);
+        return;
+      }
+
+      if (currentGold === null) {
+        currentGold = 0;
+      } else if (!/\d+/.test(currentGold)) {
+        Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
+          extra: {
+            currentGold,
+          },
+        });
+        return;
+      }
+
+      const gold = parseInt(currentGold);
+      // No gold? no deduction
+      if (gold === 0) return;
+
+      const deductedGold = Math.ceil((gold * penalty) / 100);
+      const newGold = gold - deductedGold;
+
+      this.client.hset("u:" + player.name, "gold", newGold, () => {
+        player.send([Types.Messages.GOLD.INVENTORY, gold]);
+        player.gold = gold;
+
+        player.send(new Messages.Chat({}, `You lost ${deductedGold} from your death.`, "event").serialize());
+        this.client.incrby("goldBank", deductedGold);
       });
     });
   }

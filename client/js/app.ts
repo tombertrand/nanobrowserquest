@@ -637,9 +637,12 @@ class App {
       var expPercentThisLevel = (100 * expInThisLevel) / expForLevelUp;
       var expPercentAsString = `${expPercentThisLevel * 100}`;
 
-      self.game.showNotification(
-        `You are level ${self.game.player.level}. ${parseInt(expPercentAsString, 10) / 100} % of this level done.`,
-      );
+      let message = `You are level ${self.game.player.level}.`;
+      if (!isNaN(expForLevelUp)) {
+        message += ` ${parseInt(expPercentAsString, 10) / 100} % of this level done.`;
+      }
+
+      self.game.showNotification(message);
     });
   }
 
