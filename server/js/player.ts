@@ -1197,6 +1197,8 @@ class Player extends Character {
         } else {
           databaseHandler.moveGold({ player: self, from, to, amount });
         }
+      } else if (action === Types.Messages.GOLD.BANK) {
+        self.send([Types.Messages.GOLD.BANK, self.server.goldBank]);
       } else if (action === Types.Messages.UPGRADE_ITEM) {
         console.info("UPGRADE ITEM: " + self.name);
 
@@ -2111,8 +2113,6 @@ class Player extends Character {
         clearInterval(this.poisonedInterval);
         this.poisonedInterval = null;
       }
-
-      this.databaseHandler.deductGold(this);
     }
   }
 

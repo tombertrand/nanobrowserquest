@@ -197,8 +197,9 @@ export const Types: any = {
       MOVE: 122,
       TRADE: 123,
       TRADE2: 124,
+      BANK: 125,
     },
-    COIN: 125,
+    COIN: 126,
   },
 
   Entities: {
@@ -415,6 +416,7 @@ export const Types: any = {
     LAVANPC: 54,
     CODER: 55,
     CARLOSMATOS: 109,
+    JANETYELEN: 315,
     SATOSHI: 73,
     WAYPOINTX: 84,
     WAYPOINTN: 93,
@@ -990,6 +992,7 @@ export const kinds = {
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
   villager: [Types.Entities.VILLAGER, "npc"],
   carlosmatos: [Types.Entities.CARLOSMATOS, "npc"],
+  janetyelen: [Types.Entities.JANETYELEN, "npc"],
   satoshi: [Types.Entities.SATOSHI, "npc"],
   coder: [Types.Entities.CODER, "npc"],
   scientist: [Types.Entities.SCIENTIST, "npc"],
@@ -1695,6 +1698,8 @@ Types.getAliasFromName = function (name: string) {
     return "skeleton commander";
   } else if (name === "carlosmatos") {
     return "carlos matos";
+  } else if (name === "janetyelen") {
+    return "janet yelen";
   } else if (name === "lavanpc") {
     return "Wirt";
   } else if (name === "satoshi") {

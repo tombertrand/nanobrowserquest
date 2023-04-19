@@ -23,7 +23,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
-import { randomInt, toArray, toString } from "../../shared/js/utils";
+import { getGoldDeathPenaltyPercent, randomInt, toArray, toString } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
 import AudioManager from "./audio";
@@ -203,6 +203,7 @@ class Game {
   traps: { id: number; x: number; y: number }[];
   statues: { id: number; x: number; y: number }[];
   gatewayFxNpcId: number;
+  goldBank: number;
 
   constructor(app) {
     this.app = app;
@@ -308,6 +309,7 @@ class Game {
     this.traps = [];
     this.statues = [];
     this.gatewayFxNpcId = null;
+    this.goldBank = 0;
 
     // combat
     // @ts-ignore
@@ -2823,8 +2825,11 @@ class Game {
         return self.findPath(self.player, x, y, ignored);
       });
 
-      self.player.onDeath(function () {
+      self.player.onDeath(function (displayGold = false) {
         console.info(self.playerId + " is dead");
+
+        const penalty = displayGold ? getGoldDeathPenaltyPercent(self.player.level) : false;
+        const deductedGold = penalty ? Math.ceil((gold * penalty) / 100) : 0;
 
         self.player.stopBlinking();
         self.player.setSprite(self.getSprite("death"));
@@ -2838,7 +2843,7 @@ class Game {
           self.client.disable();
 
           setTimeout(function () {
-            self.playerdeath_callback();
+            self.playerdeath_callback(deductedGold);
           }, 1000);
         });
 
@@ -3983,7 +3988,7 @@ class Game {
         }
       });
 
-      self.client.onPlayerChangeHealth(function ({ points, isRegen, isHurt }) {
+      self.client.onPlayerChangeHealth(function ({ points, isRegen, isHurt, attacker }) {
         var player = self.player;
         var diff;
 
@@ -3992,7 +3997,7 @@ class Game {
           player.hitPoints = points;
 
           if (player.hitPoints <= 0) {
-            player.die();
+            player.die(attacker);
           }
           if (isHurt) {
             player.hurt();
@@ -4443,8 +4448,8 @@ class Game {
       self.client.onReceiveMinotaurLevelInProgress(function (minotaurLevelClock) {
         var selectedDate = new Date().valueOf() + minotaurLevelClock * 1000;
 
-        if (!self.player.expansion1 || self.player.level < 53) {
-          self.client.sendBanPlayer("Entered MinotaurLevel without expansion or lower than lv.53");
+        if (!self.player.expansion1 || self.player.level < 50) {
+          self.client.sendBanPlayer("Entered MinotaurLevel without expansion or lower than lv.50");
         }
 
         $("#countdown")
@@ -4693,6 +4698,13 @@ class Game {
         self.setGoldTrade2(gold);
       });
 
+      self.client.onReceiveGoldBank(function (gold) {
+        self.setGoldBank(gold);
+
+        const npc = self.getNpcAt(32, 208);
+        self.makeNpcTalk(npc, true);
+      });
+
       self.client.onReceiveCoin(function (coin) {
         self.setCoin(coin);
       });
@@ -4701,9 +4713,7 @@ class Game {
         if (self.player) {
           self.player.die();
         }
-        if (self.disconnect_callback) {
-          self.disconnect_callback(message);
-        }
+        self.disconnect_callback?.(message);
       });
 
       self.gamestart_callback();
@@ -4715,23 +4725,28 @@ class Game {
     });
   }
 
+  formatGold(gold) {
+    return new Intl.NumberFormat("en-EN", {}).format(gold);
+  }
+
   setGold(gold) {
     this.player.setGold(gold);
-    $("#gold-inventory-amount").text(gold);
+
+    $("#gold-inventory-amount").text(this.formatGold(gold));
   }
 
   setGoldStash(gold) {
     this.player.setGoldStash(gold);
-    $("#gold-stash-amount").text(gold);
+    $("#gold-stash-amount").text(this.formatGold(gold));
   }
 
   setGoldTrade(gold) {
     this.player.setGoldTrade(gold);
-    $("#gold-player1-amount").text(gold);
+    $("#gold-player1-amount").text(this.formatGold(gold));
   }
 
   setGoldTrade2(gold) {
-    $("#gold-player2-amount").text(gold);
+    $("#gold-player2-amount").text(this.formatGold(gold));
   }
 
   setCoin(coin) {
@@ -4954,14 +4969,17 @@ class Game {
     }, 3000);
   }
 
+  setGoldBank(gold) {
+    this.goldBank = gold;
+  }
+
   /**
    *
    */
-  makeNpcTalk(npc) {
+  makeNpcTalk(npc, byPass = false) {
     var msg;
 
     if (npc) {
-      msg = npc.talk(this);
       this.previousClickPosition = null;
 
       if (
@@ -4993,6 +5011,17 @@ class Game {
           Types.Entities.STATUE2,
         ].includes(npc.kind)
       ) {
+        if (npc.kind === Types.Entities.JANETYELEN) {
+          if (byPass) {
+            msg = npc.talk(this).replace("{{gold}}", this.formatGold(this.goldBank));
+          } else {
+            this.client.sendGoldBank();
+            return;
+          }
+        } else {
+          msg = npc.talk(this);
+        }
+
         if (msg) {
           this.createBubble(npc.id, msg);
           this.assignBubbleTo(npc);
@@ -5047,7 +5076,7 @@ class Game {
           }
         }
       } else if (npc.kind === Types.Entities.PORTALMINOTAUR) {
-        if (this.player.level >= 53) {
+        if (this.player.level >= 50) {
           if (npc.gridX === 40 && npc.gridY === 210) {
             if (this.minotaurLevelPortalCoords) {
               this.player.stop_pathing_callback({

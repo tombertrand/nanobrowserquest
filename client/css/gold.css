@@ -6,6 +6,18 @@
   border-radius: 3px;
 }
 
+#gold-death-wrapper {
+  display: none;
+}
+
+#gold-death-wrapper.visible {
+  display: block;
+}
+
+#gold-death {
+  font-weight: bold;
+}
+
 #inventory .gold-wrapper {
   align-self: end;
   flex-grow: 1;

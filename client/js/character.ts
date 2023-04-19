@@ -772,14 +772,12 @@ class Character extends Entity {
     return false;
   }
 
-  die() {
+  die(attacker: { type: "mob" | "player" } = { type: null }) {
     this.removeTarget();
 
     this.isDead = true;
 
-    if (this.death_callback) {
-      this.death_callback();
-    }
+    this.death_callback?.(attacker?.type === "mob");
   }
 
   onHasMoved(callback) {

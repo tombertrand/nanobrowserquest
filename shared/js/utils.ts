@@ -36,3 +36,18 @@ export const toDb = (attribute: string | number | number[]) => {
 export const randomInt = function (min, max) {
   return min + Math.floor(Math.random() * (max - min + 1));
 };
+
+export const getGoldDeathPenaltyPercent = (level: number): number => {
+  // penalties only start at lv.16
+  if (level < 16) return 0;
+  if (level < 25) {
+    return 10;
+  }
+  if (level < 45) {
+    return 25;
+  }
+  if (level < 55) {
+    return 35;
+  }
+  return 50;
+};

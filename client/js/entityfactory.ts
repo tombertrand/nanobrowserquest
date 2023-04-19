@@ -983,6 +983,10 @@ EntityFactory.builders[Types.Entities.CARLOSMATOS] = function (id) {
   return new Npcs.CarlosMatos(id);
 };
 
+EntityFactory.builders[Types.Entities.JANETYELEN] = function (id) {
+  return new Npcs.JanetYelen(id);
+};
+
 EntityFactory.builders[Types.Entities.SATOSHI] = function (id) {
   return new Npcs.Satoshi(id);
 };

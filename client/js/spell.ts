@@ -51,12 +51,10 @@ class Spell extends Character {
     return (this.angle * Math.PI) / 180;
   }
 
-  die(hurtPlayer = false) {
+  die() {
     this.isDead = true;
 
-    if (this.death_callback) {
-      this.death_callback(hurtPlayer);
-    }
+    this.death_callback?.();
   }
 }
 

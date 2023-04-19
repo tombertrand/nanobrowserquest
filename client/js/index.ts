@@ -369,17 +369,22 @@ var initGame = function () {
   });
 
   game.onDisconnect(function (message) {
+    $("#gold-death-wrapper").hide();
     $("#death")
       .find("p")
+      .first()
       .html(message + "<em>Please reload the page.</em>");
     $("#respawn").hide();
   });
 
-  game.onPlayerDeath(function () {
+  game.onPlayerDeath(function (gold) {
     if ($("body").hasClass("credits")) {
       $("body").removeClass("credits");
     }
     $("body").addClass("death");
+
+    $("#gold-death-wrapper").toggleClass("visible", !!gold);
+    $("#gold-death").text(game.formatGold(gold));
   });
 
   game.onGameCompleted(function ({ hash, fightAgain, show = false }) {

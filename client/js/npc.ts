@@ -50,6 +50,8 @@ var NpcTalk = {
     "Let me tell you, I love, BITCONNEEeeeEECT!",
   ],
 
+  janetyelen: ["The bank is now hodling <strong>{{gold}}</string> gold!"],
+
   satoshi: [
     "This is not what I have envisionned for Bitcoin when I created it",
     "It was supposed to be the solution of a broken banking system",
@@ -177,9 +179,9 @@ var NpcTalk = {
   portalminotaur: [
     {
       condition(game: any) {
-        return game.player.level < 53;
+        return game.player.level < 50;
       },
-      text: ["You need to be lv.53 and above to access the Minotaur portal"],
+      text: ["You need to be lv.50 and above to access the Minotaur portal"],
     },
   ],
   portalstone: [""],

@@ -110,6 +110,7 @@ class GameClient {
   receivegoldstash_callback: any;
   receivegoldtrade_callback: any;
   receivegoldtrade2_callback: any;
+  receivegoldbank_callback: any;
   receivecoin_callback: any;
   settings_callback: any;
 
@@ -196,6 +197,7 @@ class GameClient {
     this.handlers[Types.Messages.GOLD.STASH] = this.receiveGoldStash;
     this.handlers[Types.Messages.GOLD.TRADE] = this.receiveGoldTrade;
     this.handlers[Types.Messages.GOLD.TRADE2] = this.receiveGoldTrade2;
+    this.handlers[Types.Messages.GOLD.BANK] = this.receiveGoldBank;
     this.handlers[Types.Messages.COIN] = this.receiveCoin;
     this.enable();
   }
@@ -885,6 +887,10 @@ class GameClient {
     this.receivegoldtrade2_callback?.(data[1]);
   }
 
+  receiveGoldBank(data) {
+    this.receivegoldbank_callback?.(data[1]);
+  }
+
   receiveCoin(data) {
     this.receivecoin_callback?.(data[1]);
   }
@@ -1261,6 +1267,10 @@ class GameClient {
     this.receivegoldtrade2_callback = callback;
   }
 
+  onReceiveGoldBank(callback) {
+    this.receivegoldbank_callback = callback;
+  }
+
   onReceiveCoin(callback) {
     this.receivecoin_callback = callback;
   }
@@ -1476,6 +1486,10 @@ class GameClient {
 
   sendMoveGold(amount, from, to) {
     this.sendMessage([Types.Messages.GOLD.MOVE, amount, from, to]);
+  }
+
+  sendGoldBank() {
+    this.sendMessage([Types.Messages.GOLD.BANK]);
   }
 }
 

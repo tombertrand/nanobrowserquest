@@ -106,7 +106,7 @@ import shielddragon from "../sprites/shield.json";
 import shielddemon from "../sprites/shield.json";
 import shieldmoon from "../sprites/shield.json";
 import item from "../sprites/item.json";
-import king from "../sprites/npc.json";
+import king from "../sprites/king.json";
 import lavanpc from "../sprites/npc.json";
 import loot from "../sprites/loot.json";
 import nyan from "../sprites/nyan.json";
@@ -203,6 +203,7 @@ import scientist from "../sprites/npc.json";
 import villagegirl from "../sprites/npc.json";
 import villager from "../sprites/npc.json";
 import carlosmatos from "../sprites/npc.json";
+import janetyelen from "../sprites/npc.json";
 import satoshi from "../sprites/npc.json";
 import wizard from "../sprites/wizard.json";
 
@@ -616,6 +617,7 @@ const sprites = {
   villagegirl,
   villager,
   carlosmatos,
+  janetyelen,
   satoshi,
   wizard,
 };

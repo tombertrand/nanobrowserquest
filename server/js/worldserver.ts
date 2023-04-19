@@ -133,6 +133,8 @@ class World {
   mageTemplePossibleCoords: { x: number; y: number }[];
   gateTempleNpcId: number;
   gateSubTempleNpcId: number;
+  goldBank: number;
+  janetYelenNpcId: number;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -259,6 +261,8 @@ class World {
     this.mageTemplePossibleCoords = [];
     this.gateTempleNpcId = null;
     this.gateSubTempleNpcId = null;
+    this.goldBank = 0;
+    this.janetYelenNpcId = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -449,6 +453,10 @@ class World {
     }, 1000 / this.ups);
 
     console.info("" + this.id + " created (capacity: " + this.maxPlayers + " players).");
+
+    this.databaseHandler.getGoldBank().then(goldBank => {
+      this.goldBank = goldBank;
+    });
   }
 
   setUpdatesPerSecond(ups) {
@@ -806,6 +814,8 @@ class World {
           this.gateSubTempleNpcId = npc.id;
         }
         npc.activate();
+      } else if (kind === Types.Entities.JANETYELEN) {
+        this.janetYelenNpcId = npc.id;
       }
 
       this.addEntity(npc);
@@ -1880,7 +1890,7 @@ class World {
 
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
-      this.pushToPlayer(entity, entity.health({ isHurt: true }));
+      this.pushToPlayer(entity, entity.health({ isHurt: true, attacker: { type: attacker.type } }));
     }
 
     if (entity.hitPoints <= 0) {
@@ -1902,6 +1912,12 @@ class World {
       } else if (entity.type === "player") {
         this.handlePlayerVanish(entity);
         this.pushToAdjacentGroups(entity.group, entity.despawn());
+
+        if (attacker.type === "mob" || attacker.casterKind) {
+          this.databaseHandler.deductGold(entity).then(goldBank => {
+            this.goldBank = goldBank;
+          });
+        }
 
         if (attacker.type === "player") {
           postMessageToDiscordChatChannel(`${attacker.name} killed ${entity.name} 💀`);
@@ -2175,7 +2191,7 @@ class World {
         let chestType: ChestType = null;
 
         if (mob.kind === Types.Entities.MINOTAUR) {
-          if (player.level < 53) {
+          if (player.level < 50) {
             // @NOTE: Ban player w/ reason
             // return;
           }

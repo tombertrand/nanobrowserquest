@@ -321,6 +321,7 @@ footer, header, hgroup, menu, nav, section {
 
     #resize-check {position:absolute;height:0;top:0;left:0;-moz-transition:0.001s height ease;-webkit-transition:0.001s height ease;-o-transition:0.001s height ease;-ms-transition:0.001s height ease;transition:0.001s height ease;}
 
+    #death p {display:block; width: 70%; margin: 0 auto;}
     #death p em {display:block;font-style:normal;}
     
     #legal p {width:75%;font-size:25px;line-height:35px;}
@@ -1099,7 +1100,8 @@ footer, header, hgroup, menu, nav, section {
         #loadcharacter .ribbon {right:148px;top:-13px;}
         
         /*Death & Respawn*/
-        #death p {font-size:30px;margin-top:140px;}
+        #death p {font-size:30px;}
+        #death > p {margin-top:140px;}
         #death p em {margin-top:50px;}
 		#respawn {width:375px;height:153px;margin:60px auto 0 auto;background-position: 0 -896px;}
 		#respawn:active {background-position:-375px -896px;}
@@ -1331,7 +1333,8 @@ footer, header, hgroup, menu, nav, section {
         #close-legal {font-size:14px;margin-top:30px;}
         
         /*Death & Respawn*/
-        #death p {font-size:20px;margin-top:90px;}
+        #death p {font-size:20px;}
+        #death > p {margin-top:90px;}
         #death p em {margin-top:30px;}
 		/* #respawn {width:250px;height:102px;margin:40px auto 0 auto;background-position: 0 -598px;} */
         #respawn {
@@ -1561,7 +1564,8 @@ footer, header, hgroup, menu, nav, section {
         #close-legal {font-size:10px;margin-top:10px;}
         
         /*Death & Respawn*/
-        #death p {font-size:10px;margin-top:45px;}
+        #death p {font-size:10px;}
+        #death > p {margin-top:45px;}
         #death p em {margin-top:0px;}
 		#respawn {width:125px;height:51px;margin:21px auto 0 auto;background-position: 0 -300px;}
 		#respawn:active {background-position:-125px -476px;}
@@ -1849,7 +1853,8 @@ footer, header, hgroup, menu, nav, section {
 		.game.death #parchment {background:url('../img/1/spritesheet.png') 0 -355px;height:202px;width:422px;position:absolute;top:50%;left:50%;margin-top:-116px;margin-left:-211px;}
         .game.death .parchment-middle {width:100%;position:relative;top:0;left:0;margin-left:0;margin-top:0;}
         .game.death #death { position:relative;top:0;left:0;margin-top:0;margin-left:0;width:100%;}
-        .game.death #death p {padding-top:30px;color:#373737;font-size:20px;margin-top:0;width:80%;margin:0 auto;}
+        .game.death #death p {color:#373737;font-size:20px;margin-top:0;width:80%;margin:0 auto;}
+        .game.death #death > p {padding-top:30px;}
         .game.death #death p em {display:block;margin-top:15px;font-style:normal;}
 
         #instructions, #completed, #failed, #achievements, #lists, #about {-webkit-transition:none;-moz-transition:none;-o-transition:none;-ms-transition:none;transition:none;}

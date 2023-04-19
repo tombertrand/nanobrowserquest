@@ -36,7 +36,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
-import { toArray, toDb } from "../../../shared/js/utils";
+import { getGoldDeathPenaltyPercent, toArray, toDb } from "../../../shared/js/utils";
 import {
   discordClient,
   EmojiMap,
@@ -1275,46 +1275,51 @@ class DatabaseHandler {
   }
 
   deductGold(player) {
-    // penalties only start at lv.16
-    if (player.level <= 15) return;
+    return new Promise(resolve => {
+      const penalty = getGoldDeathPenaltyPercent(player.level);
+      if (!penalty) return;
 
-    let penalty = 10;
-    if (player.level >= 50) {
-      penalty = 50;
-    } else if (player.level >= 25) {
-      penalty = 25;
-    }
+      this.client.hget("u:" + player.name, "gold", (err, currentGold) => {
+        if (err) {
+          Sentry.captureException(err);
+          return;
+        }
 
-    this.client.hget("u:" + player.name, "gold", (err, currentGold) => {
-      if (err) {
-        Sentry.captureException(err);
-        return;
-      }
+        if (currentGold === null) {
+          currentGold = 0;
+        } else if (!/\d+/.test(currentGold)) {
+          Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
+            extra: {
+              currentGold,
+            },
+          });
+          return;
+        }
 
-      if (currentGold === null) {
-        currentGold = 0;
-      } else if (!/\d+/.test(currentGold)) {
-        Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
-          extra: {
-            currentGold,
-          },
+        const gold = parseInt(currentGold);
+        // No gold? no deduction
+        if (gold === 0) return;
+
+        const deductedGold = Math.ceil((gold * penalty) / 100);
+        const newGold = gold - deductedGold;
+
+        this.client.hset("u:" + player.name, "gold", newGold, () => {
+          player.send([Types.Messages.GOLD.INVENTORY, gold]);
+          player.gold = gold;
+
+          player.send(new Messages.Chat({}, `You lost ${deductedGold} gold from your death.`, "event").serialize());
+          this.client.incrby("goldBank", deductedGold, (_err, reply) => {
+            resolve(reply);
+          });
         });
-        return;
-      }
+      });
+    });
+  }
 
-      const gold = parseInt(currentGold);
-      // No gold? no deduction
-      if (gold === 0) return;
-
-      const deductedGold = Math.ceil((gold * penalty) / 100);
-      const newGold = gold - deductedGold;
-
-      this.client.hset("u:" + player.name, "gold", newGold, () => {
-        player.send([Types.Messages.GOLD.INVENTORY, gold]);
-        player.gold = gold;
-
-        player.send(new Messages.Chat({}, `You lost ${deductedGold} from your death.`, "event").serialize());
-        this.client.incrby("goldBank", deductedGold);
+  getGoldBank() {
+    return new Promise(resolve => {
+      this.client.get("goldBank", (err, gold) => {
+        resolve(gold);
       });
     });
   }

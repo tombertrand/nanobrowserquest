@@ -5,6 +5,7 @@ class Npc extends Entity {
   respawnCallback: any;
   isDead: boolean;
   isActivated: boolean;
+  goldBank?: number;
 
   constructor(id, kind, x, y) {
     super(id, "npc", kind, x, y);
