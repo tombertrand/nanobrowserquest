@@ -3,7 +3,8 @@ import fetch from "node-fetch";
 
 import { Sentry } from "./sentry";
 
-const { BOT_TOKEN } = process.env;
+const { BOT_TOKEN, NODE_ENV } = process.env;
+const isProduction = NODE_ENV !== "production";
 
 const EventChannel =
   "https://discord.com/api/webhooks/1092217096324268082/Rctr0jWNAaeAleyGOwXvH05hYJcTSeTrqGcUVVH7mnYZLeoFPeX9qbjVw2A9jvkuP_4w";
@@ -26,6 +27,7 @@ export const discordClient = new Client({
 discordClient.login(BOT_TOKEN);
 
 export const postMessageToDiscordEventChannel = (content: string) => {
+  if (isProduction) return;
   try {
     const body = JSON.stringify({
       content,
@@ -42,6 +44,7 @@ export const postMessageToDiscordEventChannel = (content: string) => {
 };
 
 export const postMessageToDiscordChatChannel = (content: string) => {
+  if (isProduction) return;
   try {
     const body = JSON.stringify({
       content,
@@ -58,6 +61,7 @@ export const postMessageToDiscordChatChannel = (content: string) => {
 };
 
 export const postMessageToDiscordAnvilChannel = (content: string) => {
+  if (isProduction) return;
   try {
     const body = JSON.stringify({
       content,

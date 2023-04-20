@@ -500,18 +500,23 @@ export const Types: any = {
   },
 
   Keys: {
-    ENTER: 13,
     BACKSPACE: 8,
-    DELETE: 46,
-    UP: 38,
-    DOWN: 40,
+    TAB: 9,
+    ENTER: 13,
+    SHIFT: 16,
+    CTRL: 17,
+    ALT: 18,
+    ESC: 27,
+    SPACE: 32,
     LEFT: 37,
+    UP: 38,
     RIGHT: 39,
+    DOWN: 40,
+    DELETE: 46,
     W: 87,
     A: 65,
     S: 83,
     D: 68,
-    SPACE: 32,
     Q: 81,
     C: 67,
     U: 85,
@@ -1156,7 +1161,7 @@ Types.itemUniqueMap = {
   moonarmor: ["To The <strike>Moon</strike> Mars", 56, 60],
   demonarmor: ["Explorer's Block", 54, 62],
   mysticalarmor: ["Rug Pull", 56, 64],
-  paladinarmor: ["TBD", 58, 70],
+  paladinarmor: ["Fear Of Missing Out (FOMO)", 58, 70],
   immortalarmor: ["Deploying More Capital", 60, 70],
 
   // name, level, defense
@@ -1173,7 +1178,7 @@ Types.itemUniqueMap = {
   shieldexecutioner: ["Clownbase", 50, 36],
   shieldtemplar: ["NanoStrategy", 52, 38],
   shielddragon: ["Airdrop", 52, 38],
-  shieldmoon: ["Fear Uncertainty Doubt", 54, 40],
+  shieldmoon: ["Fear Uncertainty Doubt (FUD)", 54, 40],
   shielddemon: ["ORV > POW", 56, 42],
   shieldmystical: ["Developer Fund", 56, 42],
 
@@ -2383,7 +2388,7 @@ Types.isBaseHighClassItem = (item: string) => {
 Types.isBaseLegendaryClassItem = (item: string) => {
   const baseLevel = kinds[item][3];
 
-  return baseLevel >= 40;
+  return baseLevel >= 48;
 };
 
 Types.getItemClass = function (item: string, level: number, isUnique: boolean) {
@@ -2408,12 +2413,12 @@ Types.getItemClassFromBaseLevel = function (level: number, baseLevel: number): I
     } else {
       itemClass = "high";
     }
-  } else if (baseLevel >= 10 && baseLevel < 40) {
+  } else if (baseLevel >= 10 && baseLevel < 48) {
     itemClass = "high";
     if (level >= 8) {
       itemClass = "legendary";
     }
-  } else if (baseLevel >= 40) {
+  } else if (baseLevel >= 48) {
     itemClass = "legendary";
   }
 

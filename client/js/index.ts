@@ -84,7 +84,7 @@ var initApp = function () {
       $(this).toggleClass("active");
     });
 
-    $("#chatbutton").click(function () {
+    $("#chatbutton").on("click", () => {
       if ($("#chatbutton").hasClass("active")) {
         app.showChat();
       } else {
@@ -299,21 +299,9 @@ var initApp = function () {
     //   app.tryStartingGame();
     // });
 
-    // $("#aaa .link").on("click", () => {
-    //   $("#loginnameinput").val("aaa").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
-
     // $("#running-coder1 .link").on("click", () => {
     //   $("#loginnameinput").val("running-coder1").show();
     //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
-
-    // $("#oldschooler .link").on("click", () => {
-    //   $("#loginnameinput").val("oldschooler").show();
-    //   $("#loginaccountinput").val("nano_18en1tq8foa8fan8ief5595t7bogpzywn66n7f4mar6hhcuihbe8i9g5mx1s").show();
     //   app.tryStartingGame();
     // });
 
@@ -332,12 +320,6 @@ var initApp = function () {
     });
 
     console.info("App initialized.");
-
-    $("#chatinput").on("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      $(this).focus();
-    });
 
     initGame();
   });
@@ -434,7 +416,7 @@ var initGame = function () {
 
     const textList = $("#text-list");
     let scrollToBottom = false;
-    if (textList[0].scrollHeight - textList.scrollTop() - Math.floor(textList.outerHeight()) <= 10) {
+    if (textList[0].scrollHeight - textList.scrollTop() - Math.floor(textList.outerHeight()) <= 100) {
       scrollToBottom = true;
     }
 
@@ -449,12 +431,12 @@ var initGame = function () {
     }).appendTo("#text-list");
 
     const messages = $("#text-list > div");
-    if (messages.length > 50) {
+    if (messages.length > 100) {
       messages.first().remove();
     }
 
     if (scrollToBottom) {
-      textList.scrollTop(textList[0].scrollHeight);
+      app.scrollChatToBottom();
     }
   });
 
@@ -611,33 +593,29 @@ var initGame = function () {
     }
   });
 
-  $(document).keydown(function (e) {
-    var key = e.which;
+  $(document).on("keydown", e => {
+    if ($("#chatinput").is(":focus")) return;
 
-    if (key === Types.Keys.ENTER) {
-      if (!$(".ui-dialog").is(":visible")) {
-        if ($("#text-window").is(":visible")) {
-          app.hideChat();
-        } else {
-          app.showChat();
-        }
-      } else {
+    if (e.keyCode === Types.Keys.ENTER) {
+      if ($(".ui-dialog").is(":visible")) {
         if ($("#dialog-delete-item").dialog("isOpen")) {
           game.deleteItemFromSlot();
           $("#dialog-delete-item").dialog("close");
         }
+      } else if (!$("#text-window").is(":visible")) {
+        app.showChat();
       }
-    } else if (key === 16) {
+    } else if (e.keyCode === Types.Keys.SHIFT) {
       game.pvpFlag = game.player?.level >= 9;
     }
 
-    if (game.started && !$("#chatinput").is(":focus")) {
+    if (game.started) {
       if (!game.player || game.player.isDead) {
         // Return if player is dead
         return;
       }
 
-      switch (key) {
+      switch (e.keyCode) {
         case Types.Keys.DELETE:
         case Types.Keys.BACKSPACE:
           if (typeof game.hoverSlotToDelete === "number") {
@@ -687,7 +665,6 @@ var initGame = function () {
           $("#settings-button").click();
           break;
         case Types.Keys.P:
-          // $("#player-count").click();
           $("#party-button").trigger("click");
           break;
         default:
@@ -696,41 +673,26 @@ var initGame = function () {
     }
   });
 
-  $(document).keyup(function (e) {
-    var key = e.which;
-
-    if (key === 16) game.pvpFlag = false;
+  $(document).on("keyup", e => {
+    if (e.keyCode === Types.Keys.SHIFT) game.pvpFlag = false;
   });
-  $("#chatinput").keydown(function (e) {
-    var key = e.which,
-      $chat = $("#chatinput");
 
-    //   if (!(e.shiftKey && e.keyCode === 16) && e.keyCode !== 9) {
-    //        if ($(this).val() === placeholder) {
-    //           $(this).val('');
-    //            $(this).removeAttr('placeholder');
-    //            $(this).removeClass('placeholder');
-    //        }
-    //    }
+  $("#chatinput").on("keydown", e => {
+    const $chat = $("#chatinput");
 
-    if (key === 13) {
+    if (e.keyCode === Types.Keys.ENTER) {
       if ($chat.val() !== "") {
         if (game.player) {
           game.say($chat.val());
         }
         $chat.val("");
-        // app.hideChat();
-        $("#foreground").focus();
-        return false;
       } else {
+        e.stopPropagation();
         app.hideChat();
-        return false;
       }
-    }
-
-    if (key === 27) {
+    } else if (e.keyCode === Types.Keys.ESC) {
       app.hideChat();
-      return false;
+      $chat.val("");
     }
   });
 
@@ -774,80 +736,26 @@ var initGame = function () {
     app.toggleAnvilOdds();
   });
 
-  $(document).bind("keydown", function (e) {
-    var key = e.which;
-    var $chat = $("#chatinput");
-
-    if (key === 13) {
-      // Enter
-      if (game.started) {
-        $chat.focus();
-        return false;
-      } else {
-        if (app.loginFormActive() || app.createNewCharacterFormActive()) {
-          $("input").blur(); // exit keyboard on mobile
-          app.tryStartingGame();
-          return false; // prevent form submit
-        }
+  $(document).on("keydown.loginform", function (e) {
+    if (e.keyCode === Types.Keys.ENTER) {
+      if (!game.started && (app.loginFormActive() || app.createNewCharacterFormActive())) {
+        $("input").blur(); // exit keyboard on mobile
+        app.tryStartingGame();
+        return false; // prevent form submit
       }
     }
 
-    if ($("#chatinput:focus").length == 0 && $("#nameinput:focus").length == 0) {
-      if (key === 27) {
-        // ESC
-        app.hideWindows();
-        each(game.player.attackers, function (attacker: Character) {
-          attacker.stop();
-        });
-        return false;
-      }
-
-      // The following may be uncommented for debugging purposes.
-      //
-      // if(key === 32 && game.started) { // Space
-      //     game.togglePathingGrid();
-      //     return false;
-      // }
-      // if(key === 70 && game.started) { // F
-      //     game.toggleDebugInfo();
-      //     return false;
-      // }
-    }
+    // The following may be uncommented for debugging purposes.
+    //
+    // if(key === Types.Keys.SPACE && game.started) { // Space
+    //     game.togglePathingGrid();
+    //     return false;
+    // }
+    // if(key === 70 && game.started) { // F
+    //     game.toggleDebugInfo();
+    //     return false;
+    // }
   });
-
-  // $("#healthbar").click(function (e) {
-  //   var hb = $("#healthbar");
-  //   var hp = $("#hitpoints");
-  //   var hpg = $("#hpguide");
-
-  //   var hbp = hb.position();
-  //   var hpp = hp.position();
-
-  //   if (e.offsetX >= hpp.left && e.offsetX < hb.width()) {
-  //     if (hpg.css("display") === "none") {
-  //       hpg.css("display", "block");
-
-  //       setInterval(function () {
-  //         if (
-  //           game.player.hitPoints / game.player.maxHitPoints <= game.hpGuide &&
-  //           game.healShortCut >= 0 &&
-  //           Types.isHealingItem(game.player.inventory[game.healShortCut]) &&
-  //           game.player.inventoryCount[game.healShortCut] > 0
-  //         ) {
-  //           game.eat(game.healShortCut);
-  //         }
-  //       }, 100);
-  //     }
-  //     hpg.css("left", e.offsetX + "px");
-
-  //     game.hpGuide = (e.offsetX - hpp.left) / (hb.width() - hpp.left);
-  //   }
-
-  //   return false;
-  // });
-  // if (game.renderer.tablet) {
-  //   $("body").addClass("tablet");
-  // }
 };
 
 initApp();

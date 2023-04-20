@@ -659,7 +659,8 @@ class World {
       this.despawnZombies();
     }
 
-    entity.destroy(delay);
+    entity.destroy?.(delay);
+
     this.removeFromGroups(entity);
     console.debug("Removed " + Types.getKindAsString(entity.kind) + " : " + entity.id);
   }
@@ -1031,9 +1032,13 @@ class World {
 
     // Despawn all cows
     this.cowEntityIds.map(entityId => {
-      delete this.entities[entityId];
-      delete this.mobs[entityId];
+      const entity = this.getEntityById(entityId);
+      if (entity) {
+        this.removeEntity(entity);
+      }
     });
+
+    this.cowEntityIds = [];
   }
 
   startMinotaurLevel() {
@@ -1134,9 +1139,12 @@ class World {
 
     // Despawn all mages
     this.mageEntityIds.map(entityId => {
-      delete this.entities[entityId];
-      delete this.mobs[entityId];
+      const entity = this.getEntityById(entityId);
+      if (entity) {
+        this.removeEntity(entity);
+      }
     });
+    this.mageEntityIds = [];
   }
 
   startTempleLevel() {
@@ -1209,9 +1217,12 @@ class World {
 
     // Despawn all mages
     this.mageTempleEntityIds.map(entityId => {
-      delete this.entities[entityId];
-      delete this.mobs[entityId];
+      const entity = this.getEntityById(entityId);
+      if (entity) {
+        this.removeEntity(entity);
+      }
     });
+    this.mageTempleEntityIds = [];
   }
 
   startStoneLevel() {
@@ -1283,9 +1294,12 @@ class World {
 
     // Despawn all spiders
     this.spiderEntityIds.map(entityId => {
-      delete this.entities[entityId];
-      delete this.mobs[entityId];
+      const entity = this.getEntityById(entityId);
+      if (entity) {
+        this.removeEntity(entity);
+      }
     });
+    this.spiderEntityIds = [];
   }
 
   startGatewayLevel() {
@@ -1305,7 +1319,7 @@ class World {
 
     let count = 0;
     this.archerPossibleCoords.map(({ x, y }) => {
-      const archerCount = Math.ceil(randomRange(1, 5));
+      const archerCount = Math.ceil(randomRange(3, 5));
 
       for (let i = 0; i < archerCount; i++) {
         const kind = Types.Entities.SKELETONARCHER;
@@ -1343,9 +1357,12 @@ class World {
 
     // Despawn all archers
     this.archerEntityIds.map(entityId => {
-      delete this.entities[entityId];
-      delete this.mobs[entityId];
+      const entity = this.getEntityById(entityId);
+      if (entity) {
+        this.removeEntity(entity);
+      }
     });
+    this.archerEntityIds = [];
   }
 
   startTreeLevel(tree) {

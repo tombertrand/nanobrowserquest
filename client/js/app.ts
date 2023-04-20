@@ -366,6 +366,11 @@ class App {
     $("#dialog-delete-item").text("Are you sure you want to delete this item?");
     $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
 
+    // Cleanup the login form events
+    $(document).off(".loginform");
+
+
+    // @TODO connection cleanup ~~~
     $("#reconnecting")
       .off("click")
       .on("click", () => {
@@ -696,21 +701,27 @@ class App {
     }, 500);
   }
 
+  scrollChatToBottom() {
+    const chatBox = document.getElementById("text-list");
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
   showChat() {
-    if (this.game.started) {
-      $("#chatbutton").addClass("active").removeClass("blink");
-      $("#text-window").show();
-      $("#chatinput").focus();
-    }
+    if (!this.game.started) return;
+
+    $("#chatbutton").addClass("active").removeClass("blink");
+    $("#text-window").show();
+
+    this.scrollChatToBottom();
+    $("#chatinput").trigger("focus");
   }
 
   hideChat() {
-    if (this.game.started) {
-      // $("#chatbox").removeClass("active");
-      $("#chatinput").blur();
-      $("#chatbutton").removeClass("active");
-      $("#text-window").hide();
-    }
+    if (!this.game.started) return;
+
+    $("#chatinput").trigger("blur");
+    $("#chatbutton").removeClass("active");
+    $("#text-window").hide();
   }
 
   toggleInstructions() {
