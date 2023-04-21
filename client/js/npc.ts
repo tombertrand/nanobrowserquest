@@ -51,6 +51,7 @@ var NpcTalk = {
   ],
 
   janetyelen: ["The bank is now hodling <strong>{{gold}}</string> gold!"],
+  merchant: ["Hi there, adventurer! Looking for a trade?"],
 
   satoshi: [
     "This is not what I have envisionned for Bitcoin when I created it",

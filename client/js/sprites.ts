@@ -204,6 +204,7 @@ import villagegirl from "../sprites/npc.json";
 import villager from "../sprites/npc.json";
 import carlosmatos from "../sprites/npc.json";
 import janetyelen from "../sprites/npc.json";
+import merchant from "../sprites/merchant.json";
 import satoshi from "../sprites/npc.json";
 import wizard from "../sprites/wizard.json";
 
@@ -618,6 +619,7 @@ const sprites = {
   villager,
   carlosmatos,
   janetyelen,
+  merchant,
   satoshi,
   wizard,
 };

@@ -987,6 +987,10 @@ EntityFactory.builders[Types.Entities.JANETYELEN] = function (id) {
   return new Npcs.JanetYelen(id);
 };
 
+EntityFactory.builders[Types.Entities.MERCHANT] = function (id) {
+  return new Npcs.Merchant(id);
+};
+
 EntityFactory.builders[Types.Entities.SATOSHI] = function (id) {
   return new Npcs.Satoshi(id);
 };

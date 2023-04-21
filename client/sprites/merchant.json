@@ -1,0 +1,13 @@
+{
+  "id": "merchant",
+  "width": 65,
+  "height": 65,
+  "animations": {
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    }
+  },
+  "offset_x": -28,
+  "offset_y": -34
+}

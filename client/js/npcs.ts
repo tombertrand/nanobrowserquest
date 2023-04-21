@@ -52,6 +52,12 @@ var Npcs = {
     }
   },
 
+  Merchant: class Merchant extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.MERCHANT);
+    }
+  },
+
   Satoshi: class Satoshi extends Npc {
     constructor(id) {
       super(id, Types.Entities.SATOSHI);
