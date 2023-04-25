@@ -22,6 +22,7 @@
   align-self: end;
   flex-grow: 1;
   margin-bottom: 6px;
+  margin-left: 2px;
   max-width: 120px;
 }
 
@@ -41,8 +42,18 @@
   margin-right: 6px;
 }
 
-#inventory.trade .panel-spaced-row div:not(:last-child) {
+#inventory.trade .panel-spaced-row div:not(:last-child),
+#inventory.merchant .panel-spaced-row div:not(:last-child) {
   display: none;
+}
+
+.gold-amount {
+  margin-top: 10px;
+  color: #eed058;
+}
+
+.gold-amount.none {
+  color: red;
 }
 
 @media screen and (min-width: 1501px) {

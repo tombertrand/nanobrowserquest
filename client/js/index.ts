@@ -30,6 +30,7 @@ import Game from "./game";
 import { TRANSITIONEND } from "./utils";
 
 import type Character from "./character";
+import { MERCHANT_SLOT_RANGE } from "../../shared/js/slots";
 
 var app: App;
 var game: Game;
@@ -138,11 +139,8 @@ var initApp = function () {
       app.togglePlayerInfo();
     });
 
-    $("#weapon, #armor").click(function () {
-      if ($("#population").hasClass("visible")) {
-        $("#population").removeClass("visible");
-      }
-      app.toggleInventory();
+    $("#weapon, #armor").on("click", () => {
+      app.toggleInventory(true);
     });
 
     $("#skill-attack").click(function () {
@@ -301,6 +299,12 @@ var initApp = function () {
 
     // $("#running-coder1 .link").on("click", () => {
     //   $("#loginnameinput").val("running-coder1").show();
+    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+    //   app.tryStartingGame();
+    // });
+
+    // $("#hello .link").on("click", () => {
+    //   $("#loginnameinput").val("hello").show();
     //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
     //   app.tryStartingGame();
     // });
@@ -601,6 +605,11 @@ var initGame = function () {
         if ($("#dialog-delete-item").dialog("isOpen")) {
           game.deleteItemFromSlot();
           $("#dialog-delete-item").dialog("close");
+        } else if ($("#dialog-merchant-item").dialog("isOpen")) {
+          const { fromSlot, toSlot, transferedQuantity, confirmed } = game.confirmedSoldItemToMerchant;
+          game.dropItem(fromSlot, toSlot, transferedQuantity, confirmed);
+          game.confirmedSoldItemToMerchant = null;
+          $("#dialog-merchant-item").dialog("close");
         }
       } else if (!$("#text-window").is(":visible")) {
         app.showChat();
@@ -619,7 +628,11 @@ var initGame = function () {
         case Types.Keys.DELETE:
         case Types.Keys.BACKSPACE:
           if (typeof game.hoverSlotToDelete === "number") {
-            game.dropItem(game.hoverSlotToDelete, -1);
+            if ($("#merchant").hasClass("visible")) {
+              game.dropItem(game.hoverSlotToDelete, MERCHANT_SLOT_RANGE);
+            } else {
+              game.dropItem(game.hoverSlotToDelete, -1);
+            }
           }
           break;
         case Types.Keys.LEFT:
@@ -650,7 +663,7 @@ var initGame = function () {
           game.makePlayerAttackNext();
           break;
         case Types.Keys.I:
-          $("#weapon").click();
+          app.toggleInventory(true);
           break;
         case Types.Keys.C:
           app.togglePlayerInfo();

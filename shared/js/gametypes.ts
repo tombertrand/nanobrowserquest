@@ -1,11 +1,13 @@
 import * as _ from "lodash";
 
+import { getGoldAmountFromSoldItem } from "../../shared/js/gold";
 import { toArray } from "../../shared/js/utils";
 import { Slot } from "./slots";
 import { expForLevel } from "./types/experience";
 import { terrainToImageMap } from "./types/map";
 import {
   calculateAttackSpeed,
+  calculateExtraGold,
   calculateResistance,
   DEFAULT_ATTACK_ANIMATION_SPEED,
   DEFAULT_ATTACK_SPEED,
@@ -199,7 +201,12 @@ export const Types: any = {
       TRADE2: 124,
       BANK: 125,
     },
-    COIN: 126,
+    MERCHANT: {
+      SELL: 126,
+      BUY: 127,
+      LOG: 128,
+    },
+    COIN: 129,
   },
 
   Entities: {
@@ -386,6 +393,7 @@ export const Types: any = {
     RINGCONQUEROR: 210,
     RINGHEAVEN: 211,
     RINGWIZARD: 213,
+    RINGGREED: 321,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
     AMULETPLATINUM: 212,
@@ -396,6 +404,8 @@ export const Types: any = {
     AMULETSTAR: 233,
     AMULETSKULL: 269,
     AMULETDRAGON: 270,
+    AMULETEYE: 320,
+    AMULETGREED: 322,
 
     // NPCs
     GUARD: 40,
@@ -484,6 +494,10 @@ export const Types: any = {
 
     NANOCOIN: 313,
     BANANOCOIN: 314,
+    BARBRONZE: 317,
+    BARSILVER: 318,
+    BARGOLD: 319,
+    BARPLATINUM: 323,
 
     // Runes
     RUNE,
@@ -579,6 +593,7 @@ Types.DEFAULT_ATTACK_SPEED = DEFAULT_ATTACK_SPEED;
 Types.DEFAULT_ATTACK_ANIMATION_SPEED = DEFAULT_ATTACK_ANIMATION_SPEED;
 Types.calculateResistance = calculateResistance;
 Types.calculateAttackSpeed = calculateAttackSpeed;
+Types.calculateExtraGold = calculateExtraGold;
 Types.terrainToImageMap = terrainToImageMap;
 Types.Slot = Slot;
 
@@ -700,6 +715,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGCONQUEROR,
   Types.Entities.RINGHEAVEN,
   Types.Entities.RINGWIZARD,
+  Types.Entities.RINGGREED,
 ];
 
 Types.Entities.Amulets = [
@@ -713,6 +729,8 @@ Types.Entities.Amulets = [
   Types.Entities.AMULETSTAR,
   Types.Entities.AMULETSKULL,
   Types.Entities.AMULETDRAGON,
+  Types.Entities.AMULETEYE,
+  Types.Entities.AMULETGREED,
 ];
 
 Types.getGemNameFromKind = function (kind: number) {
@@ -766,7 +784,7 @@ export const kinds = {
   wraith: [Types.Entities.WRAITH, "mob", 120, 40],
   zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
   necromancer: [Types.Entities.NECROMANCER, "mob", 400, 51],
-  cow: [Types.Entities.COW, "mob", 25, 49],
+  cow: [Types.Entities.COW, "mob", 55, 49],
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
   minotaur: [Types.Entities.MINOTAUR, "mob", 500, 58],
   rat3: [Types.Entities.RAT3, "mob", 120, 50],
@@ -889,6 +907,7 @@ export const kinds = {
   ringheaven: [Types.Entities.RINGHEAVEN, "ring", "Touch of Heaven Ring", 50],
   ringwizard: [Types.Entities.RINGWIZARD, "ring", "Wizard Ring", 50],
   ringmystical: [Types.Entities.RINGMYSTICAL, "ring", "Oculus", 54],
+  ringgreed: [Types.Entities.RINGGREED, "ring", "Ring of Greed", 45],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
@@ -899,7 +918,9 @@ export const kinds = {
   amuletdemon: [Types.Entities.AMULETDEMON, "amulet", "Fiend", 55],
   amuletstar: [Types.Entities.AMULETSTAR, "amulet", "North Star", 58],
   amuletskull: [Types.Entities.AMULETSKULL, "amulet", "White Death", 58],
-  amuletdragon: [Types.Entities.AMULETDRAGON, "amulet", "Dragon Eye", 58],
+  amuletdragon: [Types.Entities.AMULETDRAGON, "amulet", "Dragon Eye", 56],
+  amuleteye: [Types.Entities.AMULETEYE, "amulet", "All-Seeing Eye", 58],
+  amuletgreed: [Types.Entities.AMULETGREED, "amulet", "Amulet of Greed", 45],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 45],
   chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
@@ -923,6 +944,10 @@ export const kinds = {
   gold: [Types.Entities.GOLD, "object"],
   nanocoin: [Types.Entities.NANOCOIN, "object"],
   bananocoin: [Types.Entities.BANANOCOIN, "object"],
+  barbronze: [Types.Entities.BARBRONZE, "bar", "Bronze Bar"],
+  barsilver: [Types.Entities.BARSILVER, "bar", "Silver Bar"],
+  bargold: [Types.Entities.BARGOLD, "bar", "Gold Bar"],
+  barplatinum: [Types.Entities.BARPLATINUM, "bar", "Platinum Bar"],
   scrollupgradelow: [Types.Entities.SCROLLUPGRADELOW, "scroll", "Upgrade scroll", 3],
   scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "scroll", "Upgrade scroll", 6],
   scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "scroll", "Superior upgrade scroll", 15],
@@ -1055,6 +1080,7 @@ export const kinds = {
   doordeathangel: [Types.Entities.DOORDEATHANGEL, "npc"],
 
   getType: function (kind) {
+    // @NOTE maybe add ?.[1]
     return kinds[Types.getKindAsString(kind)][1];
   },
   getMobExp: function (kind) {
@@ -1135,7 +1161,7 @@ Types.itemUniqueMap = {
   diamondsword: ["Inevitable", 44, 42],
   minotauraxe: ["PoS4QoS", 46, 48],
   emeraldsword: ["Non Fungible Token", 50, 60],
-  executionersword: ["The Granfather", 52, 60],
+  executionersword: ["The Grandfather", 52, 60],
   templarsword: ["Panic Sell", 54, 62],
   dragonsword: ["Balerion the Black Dread", 56, 62],
   moonsword: ["Moon Boy", 61, 64],
@@ -1143,7 +1169,7 @@ Types.itemUniqueMap = {
   mysticalsword: ["The Maximalist", 58, 66],
   spikeglaive: ["WAGMI", 62, 72],
   eclypsedagger: ["Ethereum Killer", 62, 72],
-  paladinaxe: ["Peer to Peer", 62, 70],
+  paladinaxe: ["Peer to Peer Digital Cash", 62, 70],
   immortalsword: ["Least Error & Latency will Win", 62, 70],
   hellhammer: ["Hephasto", 62, 62],
 
@@ -1212,6 +1238,7 @@ Types.isSuperUnique = (itemName: string) =>
     "ringconqueror",
     "ringheaven",
     "ringwizard",
+    "ringgreed",
     "amuletcow",
     "amuletfrozen",
     "amuletdemon",
@@ -1219,6 +1246,8 @@ Types.isSuperUnique = (itemName: string) =>
     "amuletstar",
     "amuletskull",
     "amuletdragon",
+    "amuleteye",
+    "amuletgreed",
     "stonedragon",
     "stonehero",
     "soulstone",
@@ -1369,7 +1398,25 @@ Types.isStone = function (kindOrString: number | string) {
       Types.Entities.SOULSTONE,
     ].includes(kindOrString);
   } else {
-    return kindOrString?.startsWith("stone") || kindOrString === "soulstone";
+    return kindOrString?.startsWith("stone") || kindOrString?.startsWith("soulstone");
+  }
+};
+
+Types.isBar = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return [
+      Types.Entities.BARBRONZE,
+      Types.Entities.BARSILVER,
+      Types.Entities.BARGOLD,
+      Types.Entities.BARPLATINUM,
+    ].includes(kindOrString);
+  } else {
+    return (
+      kindOrString?.startsWith("barbronze") ||
+      kindOrString?.startsWith("barsilver") ||
+      kindOrString?.startsWith("bargold") ||
+      kindOrString?.startsWith("barplatinum")
+    );
   }
 };
 
@@ -1435,6 +1482,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         Types.Entities.RINGCONQUEROR,
         Types.Entities.RINGHEAVEN,
         Types.Entities.RINGWIZARD,
+        Types.Entities.RINGRGEED,
       ].includes(kindOrString)
     ) {
       return true;
@@ -1464,6 +1512,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         "ringconqueror",
         "ringheaven",
         "ringwizard",
+        "ringgreed",
       ].includes(kindOrString)
     ) {
       return true;
@@ -1499,6 +1548,8 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
         Types.Entities.AMULETSTAR,
         Types.Entities.AMULETSKULL,
         Types.Entities.AMULETDRAGON,
+        Types.Entities.AMULETEYE,
+        Types.Entities.AMULETGREED,
       ].includes(kindOrString)
     ) {
       return true;
@@ -1514,9 +1565,17 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
     }
   } else {
     if (
-      ["amuletcow", "amuletfrozen", "amuletdemon", "amuletmoon", "amuletstar", "amuletskull", "amuletdragon"].includes(
-        kindOrString,
-      )
+      [
+        "amuletcow",
+        "amuletfrozen",
+        "amuletdemon",
+        "amuletmoon",
+        "amuletstar",
+        "amuletskull",
+        "amuletdragon",
+        "amuleteye",
+        "amuletgreed",
+      ].includes(kindOrString)
     ) {
       return true;
     }
@@ -1603,7 +1662,8 @@ Types.isQuantity = function (kindOrString: number | string) {
     Types.isScroll(kindOrString) ||
     Types.isChest(kindOrString) ||
     Types.isRune(kindOrString) ||
-    Types.isStone(kindOrString)
+    Types.isStone(kindOrString) ||
+    Types.isBar(kindOrString)
   );
 };
 
@@ -1621,6 +1681,7 @@ Types.isItem = function (kind: number) {
     Types.isChest(kind) ||
     Types.isRune(kind) ||
     Types.isStone(kind) ||
+    Types.isBar(kind) ||
     Types.isJewel(kind) ||
     (Types.isObject(kind) && !Types.isStaticChest(kind))
   );
@@ -1936,9 +1997,21 @@ Types.getPartyBonusDescriptionMap = [
   "+# Maximum damage",
   "+# Health",
   "+# Magic damage",
+  "+#% All resistances",
+  "+#% Extra gold from enemies",
 ];
 
-Types.partyBonusType = ["attackDamage", "defense", "exp", "minDamage", "maxDamage", "health", "magicDamage"];
+Types.partyBonusType = [
+  "attackDamage",
+  "defense",
+  "exp",
+  "minDamage",
+  "maxDamage",
+  "health",
+  "magicDamage",
+  "allResistance",
+  "extraGold",
+];
 
 Types.getBonusDescriptionMap = [
   "+# Minimum damage", // 0
@@ -1982,7 +2055,8 @@ Types.getBonusDescriptionMap = [
   "-#% Enemy lower Lightning resistance", // 38
   "-#% Enemy lower Cold resistance", // 39
   "-#% Enemy lower Poison resistance", // 40
-  "-#% Enemy lower All resistances", // 41
+  "-#% Enemy lower resistances", // 41
+  "+#% Extra gold from enemies", // 42
 ];
 
 Types.bonusType = [
@@ -2028,6 +2102,7 @@ Types.bonusType = [
   "lowerColdResistance", // 39
   "lowerPoisonResistance", // 40
   "lowerAllResistance", // 41
+  "extraGold", // 42
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -2042,7 +2117,7 @@ Types.getBonus = function (rawBonus, level) {
   const regenerateHealthPerLevel = [1, 2, 3, 6, 9, 12, 15, 20, 25, 40];
   const criticalHitPerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
   const blockChancePerLevel = [1, 1, 2, 3, 4, 6, 8, 11, 15, 20];
-  const magicFindPerLevel = [1, 1, 2, 2, 3, 3, 4, 5, 7, 10];
+  const magicFindPerLevel = [1, 2, 3, 5, 7, 9, 12, 16, 22, 30];
   const attackSpeedPerLevel = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30];
   const drainLifePerLevel = [1, 3, 6, 9, 12, 16, 20, 25, 32, 45];
   const flameDamagePerLevel = [3, 6, 9, 12, 15, 20, 28, 35, 45, 60];
@@ -2073,6 +2148,7 @@ Types.getBonus = function (rawBonus, level) {
   const lowerColdResistancePerLevel = [1, 2, 4, 6, 9, 13, 17, 22, 28, 36];
   const lowerPoisonResistancePerLevel = [1, 2, 4, 6, 9, 13, 17, 22, 28, 36];
   const lowerAllResistancePerLevel = [1, 2, 3, 5, 7, 9, 12, 16, 22, 30];
+  const extraGoldPerLevel = [1, 2, 4, 7, 12, 15, 18, 22, 30, 40];
 
   const bonusPerLevel = [
     minDamagePerLevel,
@@ -2117,6 +2193,7 @@ Types.getBonus = function (rawBonus, level) {
     lowerColdResistancePerLevel,
     lowerPoisonResistancePerLevel,
     lowerAllResistancePerLevel,
+    extraGoldPerLevel,
   ];
 
   // const bonus: { type: string; stats: number; description: string }[] = [];
@@ -2168,6 +2245,8 @@ Types.getPartyBonus = function (rawBonus, level) {
   const maxDamagePerLevel = [1, 2, 3, 4, 5, 6, 8, 12, 18, 30];
   const healthPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
   const magicDamagePerLevel = [1, 2, 3, 4, 6, 8, 12, 18, 26, 40];
+  const allResistancePerLevel = [1, 2, 3, 4, 6, 8, 11, 14, 19, 25, 32];
+  const extraGoldPerLevel = [1, 2, 3, 4, 6, 8, 11, 14, 19, 25, 32];
 
   const bonusPerLevel = [
     attackDamagePerLevel,
@@ -2177,6 +2256,8 @@ Types.getPartyBonus = function (rawBonus, level) {
     maxDamagePerLevel,
     healthPerLevel,
     magicDamagePerLevel,
+    allResistancePerLevel,
+    extraGoldPerLevel,
   ];
 
   const bonus: { type: string; stats: number; description: string }[] = [];
@@ -2229,6 +2310,7 @@ Types.bonusCap = {
   attackSpeed: 50,
   magicFind: 100,
   skillTimeout: 50,
+  extraGold: 50,
 };
 
 Types.getUpgradeSuccessRates = () => {
@@ -2514,6 +2596,7 @@ Types.getItemDetails = function ({
   rawSocket,
   rawSkill,
   playerBonus,
+  amount,
 }: {
   item: string;
   level: number;
@@ -2521,6 +2604,7 @@ Types.getItemDetails = function ({
   rawSocket?: number[];
   rawSkill?: number;
   playerBonus: any;
+  amount?: number;
 }) {
   const isWeapon = Types.isWeapon(item);
   const isArmor = Types.isArmor(item);
@@ -2537,6 +2621,7 @@ Types.getItemDetails = function ({
   const isSocket = rawSocket?.length;
   const socketRequirement = isSocket ? Types.getHighestSocketRequirement(rawSocket) : null;
   const jewelRequirement = isJewel ? Types.getJewelRequirement(rawBonus) : null;
+  const goldAmount = amount || getGoldAmountFromSoldItem({ item, level, socket: rawSocket });
 
   // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
   let name = Types.getDisplayName(item, isUnique);
@@ -2594,7 +2679,7 @@ Types.getItemDetails = function ({
     requirement = rune.requirement;
   } else if (isJewel) {
     requirement = jewelRequirement;
-  } else {
+  } else if (!Types.isScroll(item) && !Types.isStone(item) && !Types.isChest(item) && !Types.isSingle(item)) {
     requirement = Types.getItemRequirement(item, level, isUnique);
   }
   const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
@@ -2664,6 +2749,7 @@ Types.getItemDetails = function ({
     runeBonus,
     runeRank,
     skill,
+    goldAmount,
   };
 };
 
@@ -2700,6 +2786,10 @@ Types.itemDescription = {
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",
   chestred: "The chest may contain a very precious item.",
+  barbronze: "Common metal.",
+  barsilver: "Rare metal.",
+  bargold: "Precious metal.",
+  barplatinum: "Priceless metal.",
   scrollupgradelow:
     "Upgrade low class items. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgrademedium:

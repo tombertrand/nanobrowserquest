@@ -49,12 +49,12 @@ class Spell extends Entity {
       dmg = 360;
     } else if (this.kind === Types.Entities.MAGESPELL) {
       if (this.casterKind === Types.Entities.SHAMAN) {
-        dmg = 300;
+        dmg = 320;
       } else {
         dmg = 240;
       }
     } else if (this.kind === Types.Entities.ARROW) {
-      dmg = 220;
+      dmg = 240;
     } else if (this.kind === Types.Entities.STATUESPELL || this.kind === Types.Entities.STATUE2SPELL) {
       dmg = 300;
     }

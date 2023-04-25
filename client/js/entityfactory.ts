@@ -705,6 +705,22 @@ EntityFactory.builders[Types.Entities.BANANOCOIN] = function (id) {
   return new Items.BananoCoin(id);
 };
 
+EntityFactory.builders[Types.Entities.BARBRONZE] = function (id) {
+  return new Items.BarBronze(id);
+};
+
+EntityFactory.builders[Types.Entities.BARSILVER] = function (id) {
+  return new Items.BarSilver(id);
+};
+
+EntityFactory.builders[Types.Entities.BARGOLD] = function (id) {
+  return new Items.BarGold(id);
+};
+
+EntityFactory.builders[Types.Entities.BARPLATINUM] = function (id) {
+  return new Items.BarPlatinum(id);
+};
+
 EntityFactory.builders[Types.Entities.RINGBRONZE] = function (id) {
   return new Items.RingBronze(id);
 };
@@ -757,6 +773,10 @@ EntityFactory.builders[Types.Entities.RINGWIZARD] = function (id) {
   return new Items.RingWizard(id);
 };
 
+EntityFactory.builders[Types.Entities.RINGGREED] = function (id) {
+  return new Items.RingGreed(id);
+};
+
 EntityFactory.builders[Types.Entities.AMULETSILVER] = function (id) {
   return new Items.AmuletSilver(id);
 };
@@ -795,6 +815,14 @@ EntityFactory.builders[Types.Entities.AMULETSKULL] = function (id) {
 
 EntityFactory.builders[Types.Entities.AMULETDRAGON] = function (id) {
   return new Items.AmuletDragon(id);
+};
+
+EntityFactory.builders[Types.Entities.AMULETEYE] = function (id) {
+  return new Items.AmuletEye(id);
+};
+
+EntityFactory.builders[Types.Entities.AMULETGREED] = function (id) {
+  return new Items.AmuletGreed(id);
 };
 
 EntityFactory.builders[Types.Entities.CHESTBLUE] = function (id) {

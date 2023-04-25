@@ -793,6 +793,34 @@ var Items = {
     }
   },
 
+  BarBronze: class BarBronze extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BARBRONZE, "object");
+      this.lootMessage = "You pick up a Bronze Bar";
+    }
+  },
+
+  BarSilver: class BarSilver extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BARSILVER, "object");
+      this.lootMessage = "You pick up a Silver Bar";
+    }
+  },
+
+  BarGold: class BarGold extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BARGOLD, "object");
+      this.lootMessage = "You pick up a Gold Bar";
+    }
+  },
+
+  BarPlatinum: class BarPlatinum extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BARPLATINUM, "object");
+      this.lootMessage = "You pick up a Platinum Bar";
+    }
+  },
+
   RingBronze: class RingBronze extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGBRONZE, "ring");
@@ -884,6 +912,13 @@ var Items = {
     }
   },
 
+  RingGreed: class RingGreed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGGREED, "ring");
+      this.lootMessage = "You pick up a ring of greed";
+    }
+  },
+
   AmuletSilver: class AmuletSilver extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETSILVER, "amulet");
@@ -951,6 +986,20 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.AMULETDRAGON, "amulet");
       this.lootMessage = "You pick up the Dragon Eye";
+    }
+  },
+
+  AmuletEye: class AmuletEye extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETEYE, "amulet");
+      this.lootMessage = "You pick up the All-Seeing Eye";
+    }
+  },
+
+  AmuletGreed: class AmuletGreed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETGREED, "amulet");
+      this.lootMessage = "You pick up the amulet of Greed";
     }
   },
 

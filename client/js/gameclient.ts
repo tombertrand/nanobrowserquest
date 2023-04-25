@@ -74,6 +74,8 @@ class GameClient {
   tradeplayer2status_callback: any;
   receivenotification_callback: any;
   receiveinventory_callback: any;
+  receivemerchantsell_callback: any;
+  receivemerchantlog_callback: any;
   receivestash_callback: any;
   receiveupgrade_callback: any;
   receiveanvilupgrade_callback: any;
@@ -198,6 +200,8 @@ class GameClient {
     this.handlers[Types.Messages.GOLD.TRADE] = this.receiveGoldTrade;
     this.handlers[Types.Messages.GOLD.TRADE2] = this.receiveGoldTrade2;
     this.handlers[Types.Messages.GOLD.BANK] = this.receiveGoldBank;
+    this.handlers[Types.Messages.MERCHANT.SELL] = this.receiveMerchantSell;
+    this.handlers[Types.Messages.MERCHANT.LOG] = this.receiveMerchantLog;
     this.handlers[Types.Messages.COIN] = this.receiveCoin;
     this.enable();
   }
@@ -678,6 +682,15 @@ class GameClient {
     this.receiveinventory_callback?.(inventory);
   }
 
+  receiveMerchantSell() {
+    this.receivemerchantsell_callback?.();
+  }
+
+  receiveMerchantLog(data) {
+    const log = data[1];
+    this.receivemerchantlog_callback?.(log);
+  }
+
   receiveStash(data) {
     var stash = data[1];
     this.receivestash_callback?.(stash);
@@ -1123,6 +1136,14 @@ class GameClient {
     this.receiveinventory_callback = callback;
   }
 
+  onReceiveMerchantSell(callback) {
+    this.receivemerchantsell_callback = callback;
+  }
+
+  onReceiveMerchantLog(callback) {
+    this.receivemerchantlog_callback = callback;
+  }
+
   onReceiveStash(callback) {
     this.receivestash_callback = callback;
   }
@@ -1490,6 +1511,10 @@ class GameClient {
 
   sendGoldBank() {
     this.sendMessage([Types.Messages.GOLD.BANK]);
+  }
+
+  sendBuyFromMerchant(fromSlot, toSlot, quantity) {
+    this.sendMessage([Types.Messages.MERCHANT.BUY, fromSlot, toSlot, quantity]);
   }
 }
 

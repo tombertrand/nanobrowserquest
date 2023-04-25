@@ -16,11 +16,11 @@ type GeneratedItem = {
   item: string;
   level?: number;
   quantity?: number;
-  bonus?: number[];
+  bonus?: string;
   skill?: number;
   isUnique?: boolean;
   runeName?: string;
-  socket?: number[];
+  socket?: string;
   jewelLevel?: number;
 };
 

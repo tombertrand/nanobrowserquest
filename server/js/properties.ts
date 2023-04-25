@@ -192,7 +192,7 @@ var Properties: any = {
     drops: {
       rejuvenationpotion: 70,
       bluearmor: 5,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       shieldblue: 3,
       gold: 10,
     },
@@ -205,7 +205,7 @@ var Properties: any = {
       rejuvenationpotion: 60,
       blueaxe: 5,
       beltfrozen: 3,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       shieldblue: 3,
       gold: 10,
     },
@@ -218,7 +218,7 @@ var Properties: any = {
       rejuvenationpotion: 70,
       blueaxe: 5,
       beltfrozen: 5,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       amuletgold: 1,
       shieldblue: 3,
       gold: 10,
@@ -230,7 +230,7 @@ var Properties: any = {
   werewolf: {
     drops: {
       rejuvenationpotion: 65,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       bluearmor: 3,
       bluemorningstar: 3,
       beltfrozen: 3,
@@ -248,7 +248,7 @@ var Properties: any = {
       rejuvenationpotion: 70,
       bluearmor: 3,
       bluemorningstar: 3,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       ringgold: 3,
       shieldhorned: 2,
       gold: 10,
@@ -260,7 +260,7 @@ var Properties: any = {
   skeleton3: {
     drops: {
       rejuvenationpotion: 70,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       hornedarmor: 3,
       belthorned: 1,
       ringgold: 2,
@@ -274,7 +274,7 @@ var Properties: any = {
   },
   skeletoncommander: {
     drops: {
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       belthorned: 1,
       hornedarmor: 5,
       ringgold: 4,
@@ -290,7 +290,7 @@ var Properties: any = {
       rejuvenationpotion: 65,
       beltfrozen: 1,
       belthorned: 3,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       ringgold: 3,
       amuletgold: 2,
       shieldhorned: 2,
@@ -308,7 +308,7 @@ var Properties: any = {
       belthorned: 1,
       shieldhorned: 1,
       shieldfrozen: 2,
-      scrollupgradehigh: 5,
+      scrollupgradehigh: 4,
       ringgold: 3,
       amuletgold: 2,
       gold: 10,
@@ -320,7 +320,7 @@ var Properties: any = {
   zombie: {
     drops: {
       rejuvenationpotion: 60,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 2,
       ringgold: 2,
       amuletgold: 2,
       shieldfrozen: 1,
@@ -333,7 +333,7 @@ var Properties: any = {
   necromancer: {
     drops: {
       necromancerheart: 40,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 3,
       ringgold: 4,
       amuletgold: 4,
       shieldfrozen: 4,
@@ -371,7 +371,7 @@ var Properties: any = {
       amuletcow: 5,
       scrolltransmute: 5,
       cowkinghorn: 20,
-      scrollupgradehigh: 37,
+      scrollupgradehigh: 20,
     },
     hp: 6_500,
     armor: 22,
@@ -383,7 +383,7 @@ var Properties: any = {
       scrolltransmute: 5,
       minotauraxe: 10,
       beltminotaur: 10,
-      scrollupgradehigh: 69,
+      scrollupgradehigh: 40,
     },
     hp: 12_500,
     armor: 29,
@@ -394,7 +394,7 @@ var Properties: any = {
       powdergreen: 5,
       rejuvenationpotion: 25,
       poisonpotion: 25,
-      scrollupgradelegendary: 3,
+      scrollupgradelegendary: 2,
       amuletplatinum: 2,
       ringplatinum: 2,
       emeraldsword: 2,
@@ -410,7 +410,7 @@ var Properties: any = {
   oculothorax: {
     drops: {
       rejuvenationpotion: 30,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       executionersword: 1,
@@ -430,7 +430,7 @@ var Properties: any = {
   kobold: {
     drops: {
       rejuvenationpotion: 30,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       executionersword: 2,
@@ -446,7 +446,7 @@ var Properties: any = {
   golem: {
     drops: {
       rejuvenationpotion: 30,
-      scrollupgradelegendary: 5,
+      scrollupgradelegendary: 4,
       ringplatinum: 3,
       amuletplatinum: 3,
       executionersword: 1,
@@ -466,7 +466,7 @@ var Properties: any = {
   snake3: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       executionersword: 2,
@@ -482,7 +482,7 @@ var Properties: any = {
   snake4: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       executionersword: 1,
@@ -501,7 +501,7 @@ var Properties: any = {
   skeleton4: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       templarsword: 2,
@@ -517,7 +517,7 @@ var Properties: any = {
   ghost: {
     drops: {
       rejuvenationpotion: 15,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       dragonsword: 2,
@@ -532,7 +532,7 @@ var Properties: any = {
   skeletonberserker: {
     drops: {
       rejuvenationpotion: 25,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       templarsword: 2,
@@ -564,7 +564,7 @@ var Properties: any = {
   spider: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       poisonpotion: 10,
@@ -580,7 +580,7 @@ var Properties: any = {
   spider2: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       poisonpotion: 10,
@@ -595,7 +595,7 @@ var Properties: any = {
   },
   spiderqueen: {
     drops: {
-      scrollupgradelegendary: 10,
+      scrollupgradelegendary: 8,
       ringplatinum: 5,
       amuletplatinum: 5,
       poisonpotion: 33,
@@ -610,7 +610,7 @@ var Properties: any = {
   skeletonarcher: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 3,
       amuletplatinum: 3,
       gold: 12,
@@ -630,7 +630,7 @@ var Properties: any = {
   wraith2: {
     drops: {
       rejuvenationpotion: 20,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 3,
       amuletplatinum: 3,
       moonsword: 3,
@@ -646,7 +646,7 @@ var Properties: any = {
   mage: {
     drops: {
       rejuvenationpotion: 15,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
       moonsword: 3,
@@ -662,7 +662,7 @@ var Properties: any = {
   templeMob: {
     drops: {
       rejuvenationpotion: 15,
-      scrollupgradelegendary: 4,
+      scrollupgradelegendary: 3,
       mysticalsword: 2,
       mysticalarmor: 2,
       beltmystical: 2,
@@ -697,7 +697,8 @@ var Properties: any = {
   },
   deathangel: {
     drops: {
-      scrollupgradelegendary: 76,
+      scrollupgradelegendary: 40,
+      scrollupgradesacred: 2,
       mysticalsword: 5,
       mysticalarmor: 5,
       beltmystical: 5,

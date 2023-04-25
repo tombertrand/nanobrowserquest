@@ -422,8 +422,6 @@ export const generateBlueChestItem = (): { item: string; uniqueChances?: number;
     { item: "scrollupgradeblessed" },
     { item: "scrolltransmute" },
     { item: "stonesocket" },
-    { item: "stonedragon" },
-    { item: "stonehero" },
     { item: "jewelskull", jewelLevel: randomInt(3, 4) },
   ];
 
@@ -496,27 +494,35 @@ export const generateGreenChestItem = (): { item: string; uniqueChances?: number
   return category[randomItem];
 };
 
-export const generateRedChestItem = (): { item: string; uniqueChances?: number; jewelLevel?: number } => {
-  // 70%
+export const generateRedChestItem = (): {
+  item: string;
+  uniqueChances?: number;
+  jewelLevel?: number;
+  quantity?: number;
+} => {
+  // 60%
   const items = [
-    { item: "beltdemon", uniqueChances: 12 },
-    { item: "shielddemon", uniqueChances: 12 },
-    { item: "demonaxe", uniqueChances: 12 },
-    { item: "demonarmor", uniqueChances: 12 },
+    { item: "beltdemon", uniqueChances: 10 },
+    { item: "shielddemon", uniqueChances: 10 },
+    { item: "demonaxe", uniqueChances: 10 },
+    { item: "demonarmor", uniqueChances: 10 },
     { item: "cape", uniqueChances: 5 },
   ];
 
   // 20%
   const scrolls = [
+    { item: "scrolltransmute" },
     { item: "scrollupgradelegendary" },
     { item: "scrollupgradesacred" },
-    { item: "scrolluptransmuteblessed" },
     { item: "stonesocket" },
     { item: "jewelskull", jewelLevel: randomInt(4, 5) },
   ];
 
   // 10%
   const ringOrAmulets = [
+    { item: "ringraistone" },
+    { item: "ringfountain" },
+    { item: "ringbalrog" },
     { item: "ringbalrog" },
     { item: "ringheaven" },
     { item: "ringwizard" },
@@ -524,12 +530,18 @@ export const generateRedChestItem = (): { item: string; uniqueChances?: number; 
     { item: "amuletdemon" },
   ];
 
+  // 10% Rune
+
   const randomCategory = random(100);
   let category: any = items;
 
   if (randomCategory < 10) {
+    const rune = getRandomRune(70, 12);
+
+    return { item: `rune-${rune}`, quantity: 1 };
+  } else if (randomCategory < 20) {
     category = ringOrAmulets;
-  } else if (randomCategory < 30) {
+  } else if (randomCategory < 40) {
     category = scrolls;
   }
 
@@ -657,6 +669,30 @@ export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
   }
 
   return new Array(socketCount).fill(0);
+};
+
+export const isValidDowngradeRune = items => {
+  if (items.length !== 2) {
+    return false;
+  }
+
+  const runeIndex = items.findIndex(item => item.startsWith("rune-"));
+  const scrollIndex = items.findIndex(item => item.startsWith("scrollupgrade"));
+
+  if (runeIndex === -1 || scrollIndex === -1) return;
+
+  const [rune] = items[runeIndex].split(":");
+  const [scroll] = items[scrollIndex].split(":");
+
+  const runeClass = Types.getItemClass(rune);
+  const scrollClass = Types.getItemClass(scroll);
+
+  if (Types.itemClassRank[scrollClass] < Types.itemClassRank[runeClass]) return false;
+
+  const runeRank = Types.getRuneFromItem(rune).rank;
+  if (runeRank === 1) return;
+
+  return runeRank - 1;
 };
 
 export const isValidUpgradeRunes = items => {
@@ -889,14 +925,14 @@ export const getRandomRune = (mobLevel: number, minLevel?: number) => {
     kul: 6_000,
     mer: 8_000,
     qua: 10_000,
-    gul: 12_000,
-    ber: 14_000,
+    gul: 14_000,
+    ber: 16_000,
     cham: 18_000,
     tor: 22_000,
     xno: 26_000,
-    jah: 30_000,
-    shi: 34_000,
-    vod: 40_000,
+    jah: 36_000,
+    shi: 40_000,
+    vod: 50_000,
   };
   const runeList = Object.keys(runeOdds);
 
@@ -944,10 +980,10 @@ export const getRandomRune = (mobLevel: number, minLevel?: number) => {
 export const generateSoulStoneItem = (): { item: string; quantity?: number; uniqueChances?: number } => {
   // 50%
   const items = [
-    { item: "demonaxe", uniqueChances: 12 },
-    { item: "demonarmor", uniqueChances: 12 },
-    { item: "beltdemon", uniqueChances: 12 },
-    { item: "shielddemon", uniqueChances: 12 },
+    { item: "demonaxe", uniqueChances: 10 },
+    { item: "demonarmor", uniqueChances: 10 },
+    { item: "beltdemon", uniqueChances: 10 },
+    { item: "shielddemon", uniqueChances: 10 },
     { item: "paladinaxe", uniqueChances: 6 },
     { item: "immortalsword", uniqueChances: 6 },
     { item: "spikeglaive", uniqueChances: 6 },
@@ -970,9 +1006,12 @@ export const generateSoulStoneItem = (): { item: string; quantity?: number; uniq
     { item: "ringconqueror" },
     { item: "ringheaven" },
     { item: "ringwizard" },
+    { item: "ringgreed" },
     { item: "amuletstar" },
     { item: "amuletskull" },
     { item: "amuletdragon" },
+    { item: "amuletgreed" },
+    { item: "amuleteye" },
   ];
 
   // Rune 25%

@@ -4,9 +4,12 @@ import * as Sentry from "@sentry/browser";
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
+import { merchantItems } from "../../shared/js/gold";
 import {
   DELETE_SLOT,
   INVENTORY_SLOT_COUNT,
+  MERCHANT_SLOT_COUNT,
+  MERCHANT_SLOT_RANGE,
   Slot,
   STASH_SLOT_COUNT,
   STASH_SLOT_PAGES,
@@ -184,6 +187,12 @@ class Game {
   notification_callback: any;
   unlock_callback: any;
   slotToDelete?: number;
+  confirmedSoldItemToMerchant: {
+    fromSlot: number;
+    toSlot: number;
+    transferedQuantity?: number;
+    confirmed: boolean;
+  } | null;
   worldPlayers: WorldPlayer[];
   network: Network;
   explorer: Explorer;
@@ -236,6 +245,7 @@ class Game {
     this.isTeleporting = false;
     this.showAnvilOdds = false;
     this.showHealthAboveBars = false;
+    this.confirmedSoldItemToMerchant = null;
 
     this.renderer = null;
     this.updater = null;
@@ -663,6 +673,7 @@ class Game {
         const rawSocket = toArray(element.attr("data-socket"));
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
         const isEquippedItemSlot = Object.values(Slot).includes(slot);
+        const amount = parseInt(element.attr("data-amount") || "0", 10);
 
         self.hoverSlotToDelete = slot;
 
@@ -676,10 +687,20 @@ class Game {
           const playerItems = self.player.getEquipment();
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
-            setParts = Types.setItemsNameMap[currentSet].map((description, index) => ({
-              description,
-              isActive: playerItems.includes(Types.setItems[currentSet][index]),
-            }));
+            setParts = Types.setItemsNameMap[currentSet].map((description, index) => {
+              let setPart = Types.setItems[currentSet][index];
+              let isActive = false;
+              if (typeof setPart === "string") {
+                isActive = playerItems.includes(Types.setItems[currentSet][index]);
+              } else if (Array.isArray(setPart)) {
+                isActive = setPart.some(part => playerItems.includes(part));
+              }
+
+              return {
+                description,
+                isActive,
+              };
+            });
 
             if (self.player.setBonus[currentSet]) {
               let setPartCount = self.player.setBonus[currentSet];
@@ -715,10 +736,28 @@ class Game {
           runeBonus = [],
           runeRank,
           socket,
-        } = Types.getItemDetails({ item, level, rawBonus, rawSkill, rawSocket, playerBonus: self.player.bonus });
+          goldAmount,
+        } = Types.getItemDetails({
+          item,
+          level,
+          rawBonus,
+          rawSkill,
+          rawSocket,
+          playerBonus: self.player.bonus,
+          amount,
+        });
 
-        const isLevelVisible =
-          level && !isRune && !isJewel && !isStone && !Types.isSingle(item) && !Types.isScroll(item);
+        const isQuantity = Types.isQuantity(item);
+        const isLevelVisible = level && !isRune && !isJewel && !isStone && !Types.isSingle(item) && !isQuantity;
+        const isMerchantVisible = $("#merchant").hasClass("visible");
+        let buyOrSell = "";
+        if (isMerchantVisible) {
+          if (element.closest("#inventory")[0]) {
+            buyOrSell = "Sell";
+          } else if (element.closest("#merchant")[0]) {
+            buyOrSell = "Buy";
+          }
+        }
 
         return `<div class="item-tooltip-wrapper ${
           bonus.length >= 8 && currentSet && setBonus.length ? "extended" : ""
@@ -804,6 +843,15 @@ class Game {
               </div>`
                 : ""
             }
+            ${
+              isMerchantVisible
+                ? `<div class="gold-amount ${!goldAmount ? "none" : ""}">${
+                    goldAmount
+                      ? `${buyOrSell} for ${self.formatGold(goldAmount)} gold${isQuantity ? " each" : ""}`
+                      : "Cannot be sold to merchant"
+                  }</div>`
+                : ""
+            }
         </div>`;
       },
     });
@@ -887,7 +935,7 @@ class Game {
     });
   }
 
-  dropItem(fromSlot, toSlot, transferedQuantity = null) {
+  dropItem(fromSlot, toSlot, transferedQuantity = null, confirmed = false) {
     if (fromSlot === toSlot || typeof fromSlot !== "number" || typeof toSlot !== "number") {
       return;
     }
@@ -915,15 +963,39 @@ class Game {
         ((fromSlot >= STASH_SLOT_RANGE && fromSlot < STASH_SLOT_RANGE + STASH_SLOT_COUNT) ||
           (toSlot >= STASH_SLOT_RANGE && toSlot < STASH_SLOT_RANGE + STASH_SLOT_COUNT) ||
           (fromSlot >= TRADE_SLOT_RANGE && fromSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT) ||
-          (toSlot >= TRADE_SLOT_RANGE && toSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT))
+          (toSlot >= TRADE_SLOT_RANGE && toSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT) ||
+          (toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT))
       ) {
-        this.openQuantityModal(quantity, selectedQuantity => {
+        const title =
+          toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT
+            ? "Choose quantity to sell"
+            : null;
+
+        this.openQuantityModal({ maxQuantity: quantity, title }, selectedQuantity => {
           this.dropItem(fromSlot, toSlot, selectedQuantity);
         });
 
         return;
       }
     }
+
+    if (
+      fromSlot >= MERCHANT_SLOT_RANGE &&
+      fromSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT &&
+      toSlot < INVENTORY_SLOT_COUNT
+    ) {
+      const { amount } = merchantItems[fromSlot - MERCHANT_SLOT_RANGE] || {};
+      if (amount) {
+        const maxQuantity = Math.floor(this.player.gold / amount);
+        if (maxQuantity) {
+          this.openQuantityModal({ maxQuantity, quantity: 1, title: "Choose quantity to buy" }, selectedQuantity => {
+            this.client.sendBuyFromMerchant(fromSlot, toSlot, selectedQuantity);
+          });
+        }
+      }
+      return;
+    }
+
     if (rawBonus) {
       bonus = toArray(rawBonus);
     }
@@ -951,6 +1023,12 @@ class Game {
         return;
       }
       fromItemEl.remove();
+    } else if (toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT && !confirmed) {
+      if (!level || level !== 1 || Types.isUnique(item, rawBonus) || (socket && socket.length >= 4)) {
+        this.confirmedSoldItemToMerchant = { fromSlot, toSlot, transferedQuantity, confirmed: true };
+        $("#dialog-merchant-item").dialog("open");
+        return;
+      }
     } else {
       toSlotEl.append(fromItemEl.detach());
       if (toItemEl.length) {
@@ -985,7 +1063,10 @@ class Game {
     }
   }
 
-  openQuantityModal(maxQuantity, submit) {
+  openQuantityModal(
+    { maxQuantity, quantity, title }: { maxQuantity: number; quantity?: number; title?: string },
+    submit,
+  ) {
     $("#container").addClass("prevent-click");
 
     const prepareSubmit = () => {
@@ -1001,7 +1082,7 @@ class Game {
       dialogClass: "no-close",
       autoOpen: true,
       draggable: false,
-      title: "Choose quantity to transfer",
+      title: title || "Choose quantity to transfer",
       classes: {
         "ui-button": "btn",
       },
@@ -1035,11 +1116,11 @@ class Game {
         }
       })
       .on("keyup", function (e) {
-        if (e.which === Types.Keys.ENTER) {
+        if (e.keyCode === Types.Keys.ENTER) {
           prepareSubmit();
         }
       })
-      .val(maxQuantity)
+      .val(quantity || maxQuantity)
       .trigger("focus")
       .trigger("select");
 
@@ -1085,8 +1166,14 @@ class Game {
           $(".item-scroll").addClass("item-droppable");
         } else if (Types.isRune(item) || Types.isStone(item) || Types.isJewel(item)) {
           $(".item-recipe").addClass("item-droppable");
+        } else if (Types.isBar(item)) {
+          $(".item-trade").addClass("item-droppable");
         } else if (Types.isSingle(item)) {
           $(".item-single").addClass("item-droppable");
+        }
+
+        if ($("#merchant").hasClass("visible") && $(this).closest("#inventory")[0]) {
+          $(".item-merchant-empty").addClass("item-droppable");
         }
 
         // Simpler to remove it after the fact
@@ -1340,6 +1427,21 @@ class Game {
     this.updateRequirement();
   }
 
+  updateMerchant() {
+    if ($("#merchant").hasClass("visible")) {
+      $("#merchant .item-draggable.ui-draggable").draggable("destroy");
+    }
+
+    // @TODO instead of empty-ing, compare and replace
+    $("#item-merchant").empty();
+
+    this.initMerchant();
+
+    if ($("#merchant").hasClass("visible")) {
+      this.initDraggable();
+    }
+  }
+
   updateStash() {
     if ($("#stash").hasClass("visible")) {
       $("#stash .item-draggable.ui-draggable").draggable("destroy");
@@ -1404,6 +1506,20 @@ class Game {
     }
   }
 
+  initMerchant() {
+    for (var i = 0; i < MERCHANT_SLOT_COUNT; i++) {
+      $("#item-merchant").append(
+        `<div class="item-slot item-merchant ${!merchantItems[i] ? "item-merchant-empty" : ""}" data-slot="${
+          MERCHANT_SLOT_RANGE + i
+        }"></div>`,
+      );
+
+      if (merchantItems[i]?.item) {
+        $(`#item-merchant .item-slot:eq(${i})`).append(this.createItemDiv(merchantItems[i]));
+      }
+    }
+  }
+
   updateTradePlayer1(isDraggable = true) {
     if ($("#trade").hasClass("visible")) {
       $("#trade-player1-item .item-draggable.ui-draggable").draggable("destroy");
@@ -1446,16 +1562,18 @@ class Game {
       socket,
       requirement,
       runeword,
+      amount,
     }: {
-      quantity?: number;
-      isUnique: boolean;
       item: string;
-      level: number;
-      bonus: string;
-      skill: any;
-      socket: string;
+      quantity?: number;
+      isUnique?: boolean;
+      level?: number;
+      bonus?: string;
+      skill?: any;
+      socket?: string;
       requirement?: number;
       runeword?: string;
+      amount?: number;
     },
     isDraggable = true,
   ) {
@@ -1481,6 +1599,7 @@ class Game {
       ...(socket ? { "data-socket": toString(socket) } : null),
       ...(skill ? { "data-skill": skill } : null),
       ...(requirement ? { "data-requirement": requirement } : null),
+      ...(amount ? { "data-amount": amount } : null),
     });
   }
 
@@ -1722,7 +1841,7 @@ class Game {
       const isStashTransfer = $("#stash").hasClass("visible");
       if (!isStashTransfer || !this.player.goldStash) return;
 
-      this.openQuantityModal(this.player.goldStash, gold => {
+      this.openQuantityModal({ maxQuantity: this.player.goldStash }, gold => {
         this.client.sendMoveGold(gold, "stash", "inventory");
       });
     });
@@ -1732,7 +1851,7 @@ class Game {
       const isTradeTransfer = $("#trade").hasClass("visible");
       if ((!isStashTransfer && !isTradeTransfer) || !this.player.gold) return;
 
-      this.openQuantityModal(this.player.gold, gold => {
+      this.openQuantityModal({ maxQuantity: this.player.gold }, gold => {
         if (isStashTransfer) {
           this.client.sendMoveGold(gold, "inventory", "stash");
         } else if (isTradeTransfer) {
@@ -1745,7 +1864,7 @@ class Game {
       const isTradeTransfer = $("#trade").hasClass("visible");
       if (!isTradeTransfer || !this.player.goldTrade || $("#trade-player1-status-button").hasClass("disabled")) return;
 
-      this.openQuantityModal(this.player.goldTrade, gold => {
+      this.openQuantityModal({ maxQuantity: this.player.goldTrade }, gold => {
         this.client.sendMoveGold(gold, "trade", "inventory");
       });
     });
@@ -2486,6 +2605,7 @@ class Game {
       self.initInventory();
       self.initUpgrade();
       self.initTrade();
+      self.initMerchant();
       self.initStash();
       self.initTooltips();
       self.initSendUpgradeItem();
@@ -2718,7 +2838,7 @@ class Game {
           self.app.hideWindows();
 
           var dest = isWaypoint ? { x, y, orientation } : self.map.getDoorDestination(x, y);
-          if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96) {
+          if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96 && self.player.level <= 24) {
             self.client.sendBossCheck(false);
             return;
           }
@@ -3641,7 +3761,7 @@ class Game {
           }
         }
 
-        self.app.closeTrade(false);
+        self.app.closeTrade(isCompleted);
         self.player.tradePlayer1 = [];
 
         self.chat_callback({
@@ -4055,6 +4175,7 @@ class Game {
         $("#player-attackSpeed").text(bonus.attackSpeed);
         $("#player-exp").text(bonus.exp);
         $("#player-skillTimeout").text(bonus.skillTimeout);
+        $("#player-extraGold").text(bonus.extraGold);
 
         self.player.setAttackSpeed(bonus.attackSpeed);
       });
@@ -4280,6 +4401,24 @@ class Game {
       self.client.onReceiveInventory(function (data) {
         self.player.setInventory(data);
         self.updateInventory();
+      });
+
+      self.client.onReceiveMerchantSell(function () {
+        self.updateMerchant();
+      });
+
+      self.client.onReceiveMerchantLog(function ({ item: rawItem, quantity, amount, type }) {
+        const verb = type === "buy" ? "bought" : "sold";
+
+        const delimiter = Types.isJewel(rawItem) ? "|" : ":";
+        const [item] = rawItem.split(delimiter);
+
+        let itemName = Types.getDisplayName(item);
+        let message = itemName
+          ? `You ${verb} ${quantity} ${itemName} for ${self.formatGold(amount)} gold`
+          : `You ${verb} to merchant for ${self.formatGold(amount)} gold`;
+
+        self.chat_callback({ message, type: "loot" });
       });
 
       self.client.onReceiveStash(function (data) {
@@ -5039,6 +5178,8 @@ class Game {
         this.tryUnlockingAchievement("RICKROLLD");
       } else if (npc.kind === Types.Entities.ANVIL) {
         this.app.openUpgrade();
+      } else if (npc.kind === Types.Entities.MERCHANT) {
+        this.app.openMerchant();
       } else if (npc.kind === Types.Entities.SORCERER) {
         this.store.openStore();
       } else if (npc.kind === Types.Entities.STASH) {
@@ -5134,7 +5275,14 @@ class Game {
         }
       } else if (npc.kind === Types.Entities.ALTARSOULSTONE) {
         if (!npc.isActivated) {
-          this.client.sendAltarSoulStone(npc.id);
+          if (this.player.inventory.some(({ item }) => typeof item === "string" && item.startsWith("soulstone"))) {
+            if (this.player.inventory.length >= 24) {
+              this.showNotification("Your inventory is full.");
+              this.audioManager.playSound("noloot");
+            } else {
+              this.client.sendAltarSoulStone(npc.id);
+            }
+          }
         }
       } else if (npc.kind === Types.Entities.FOSSIL) {
         if (!npc.isActivated && this.player.weaponName === "pickaxe") {
@@ -6182,7 +6330,7 @@ class Game {
     } else if (message.startsWith("/town")) {
       // Prevent sending the message to teleport back to town
       if (
-        this.player.hasTarget() ||
+        (this.player.hasTarget() && !Types.isNpc(this.player.target.kind)) ||
         Object.keys(this.player.attackers).length ||
         (this.player.gridY >= 195 && this.player.gridY <= 259)
       ) {
@@ -6559,7 +6707,14 @@ class Game {
       this.removeItem(item);
 
       if (!this.player.partyId) {
-        this.showNotification(item.getLootMessage());
+        const params: { amount?: number } = {};
+        if (item.kind === Types.Entities.GOLD) {
+          if (this.player?.bonus?.extraGold) {
+            params.amount = Math.floor((this.player.bonus.extraGold / 100) * item.amount + item.amount);
+          }
+        }
+
+        this.showNotification(item.getLootMessage(params));
       }
 
       if (item.type === "armor") {

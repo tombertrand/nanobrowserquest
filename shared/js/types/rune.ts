@@ -736,3 +736,5 @@ export const Runewords = {
 // Announcement of an Announcement
 // What if Price Goes Below 2K
 // Let that sink in for a Second
+// Fear and Greed index
+// Satoshi's Original Vision

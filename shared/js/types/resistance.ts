@@ -4,6 +4,7 @@ export const PLAYER_MAX_RESISTANCES = 90;
 export const PLAYER_MAX_ATTACK_SPEED = 50;
 export const DEFAULT_ATTACK_SPEED = 800;
 export const DEFAULT_ATTACK_ANIMATION_SPEED = 50;
+export const PLAYER_MAX_EXTRA_GOLD = 50;
 
 export const mobEnchant: { [key: string]: Enchant[] } = {
   cowking: ["lightning"],
@@ -202,6 +203,9 @@ export const calculateResistance = (resistance: number) =>
 
 export const calculateAttackSpeed = (attackSpeed: number) =>
   attackSpeed > PLAYER_MAX_ATTACK_SPEED ? PLAYER_MAX_ATTACK_SPEED : attackSpeed;
+
+export const calculateExtraGold = (extraGold: number) =>
+  extraGold > PLAYER_MAX_EXTRA_GOLD ? PLAYER_MAX_EXTRA_GOLD : extraGold;
 
 export const getResistance = (
   mob: { kind: number; name: string; type: string; bonus: Resistances; resistances: Resistances },

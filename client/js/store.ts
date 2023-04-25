@@ -79,7 +79,7 @@ class Store {
         id: Types.Store.CAPE,
         icon: "cape",
         name: "Cape",
-        description: "A cape adds a random bonus (attack, defense or exp) when your character is in a party.",
+        description: "A cape adds a random bonus (attack, defense, exp, all resistance or extra gold) when your character is in a party.",
         confirmedMessage: "A cape was added to your inventory.",
         requiresInventorySlot: true,
       },

@@ -717,7 +717,7 @@ class Player extends Character {
               type: kinds[item][1],
             }));
           }
-        } else if (Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item)) {
+        } else if (Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item) || Types.isBar(item)) {
           quantity = parseInt(levelOrQuantity);
         }
 

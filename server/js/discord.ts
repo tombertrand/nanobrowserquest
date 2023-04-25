@@ -126,6 +126,7 @@ export const EmojiMap = {
   ringconqueror: "<:ringconqueror:1059571072766328852>",
   ringheaven: "<:ringheaven:1059571075056418896>",
   ringwizard: "<:ringwizard:1059571142899273728>",
+  ringgreed: "<:ringgreed:1099738702462320700>",
   amuletcow: "<:amuletcow:1059572661354778774>",
   amuletfrozen: "<:amuletfrozen:1059572663099588760>",
   amuletdemon: "<:amuletdemon:1059572662239768727>",
@@ -133,6 +134,8 @@ export const EmojiMap = {
   amuletstar: "<:amuletstar:1059877681275076738>",
   amuletskull: "<:amuletskull:1070330528726777898>",
   amuletdragon: "<:amuletdragon:1070330527183274024>",
+  amuleteye: "<:amuleteye:1099772443968667708>",
+  amuletgreed: "<:amuletgreed:1099738654982807552>",
   grimoire: "<:grimoire:1070767593536901200>",
   powderquantum: "<:quantumpowder:1079106312295694406>",
   soulstone: "<:soulstone:1085735393594462280>",
@@ -144,4 +147,5 @@ export const EmojiMap = {
   jewelskull: "<:jewelskull:1093959293394485398>",
   nanocoins: "<:nanocoins:1097314083029663744>",
   bananocoins: "<:bananocoins:1097314050947432479>",
+  bargold: "<:bargold:1099083224413655040>",
 };

@@ -4,6 +4,7 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 import { ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
+import { getGoldDeathPenaltyPercent } from "../../shared/js/utils";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
 import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
@@ -1145,6 +1146,11 @@ class World {
       }
     });
     this.mageEntityIds = [];
+
+    // @TODO despawn shaman?
+    // if (!this.shaman.isDead) {
+    //   this.removeEntity(this.shaman);
+    // }
   }
 
   startTempleLevel() {
@@ -1223,6 +1229,10 @@ class World {
       }
     });
     this.mageTempleEntityIds = [];
+
+    if (!this.worm.isDead) {
+      this.removeEntity(this.worm);
+    }
   }
 
   startStoneLevel() {
@@ -1300,6 +1310,10 @@ class World {
       }
     });
     this.spiderEntityIds = [];
+
+    if (!this.spiderQueen.isDead) {
+      this.removeEntity(this.spiderQueen);
+    }
   }
 
   startGatewayLevel() {
@@ -1363,6 +1377,10 @@ class World {
       }
     });
     this.archerEntityIds = [];
+
+    if (!this.butcher.isDead) {
+      this.removeEntity(this.butcher);
+    }
   }
 
   startTreeLevel(tree) {
@@ -1796,7 +1814,6 @@ class World {
         player.send(new Messages.SoulStone({ kind, isUnique: item.isUnique }).serialize());
 
         this.broadcastRaise(player, altar);
-
         this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX);
       }
     }
@@ -1931,9 +1948,17 @@ class World {
         this.pushToAdjacentGroups(entity.group, entity.despawn());
 
         if (attacker.type === "mob" || attacker.casterKind) {
-          this.databaseHandler.deductGold(entity).then(goldBank => {
-            this.goldBank = goldBank;
-          });
+          const penalty = getGoldDeathPenaltyPercent(entity.level);
+          if (!penalty) return;
+
+          this.databaseHandler
+            .deductGold(entity, { penalty })
+            .then(goldBank => {
+              this.goldBank = goldBank;
+            })
+            .catch(err => {
+              Sentry.captureException(err);
+            });
         }
 
         if (attacker.type === "player") {
@@ -2155,6 +2180,7 @@ class World {
     const mobLevel = Types.getMobLevel(mob.kind);
     const kind = Types.getKindAsString(mob.kind);
     const drops = mob.isInsideTemple ? Properties.templeMob.drops : Properties[kind].drops;
+    const isBoss = Types.isBoss(mob.kind);
 
     const v = random(100) + 1;
     let p = 0;
@@ -2257,7 +2283,9 @@ class World {
           );
         });
       }
-    } else if (mob.kind === Types.Entities.COW) {
+    }
+
+    if (mob.kind === Types.Entities.COW) {
       const diamondRandom = random(800);
       if (diamondRandom === 69) {
         return "diamondsword";
@@ -2269,6 +2297,7 @@ class World {
         return "shielddiamond";
       }
     }
+
     if (mob.kind >= Types.Entities.EYE) {
       const vv = random(12000);
       if (vv === 420) {
@@ -2305,7 +2334,7 @@ class World {
     }
 
     if (mob.kind >= Types.Entities.OCULOTHORAX) {
-      const superUniqueRandom = random(12000);
+      const superUniqueRandom = random(13_000);
 
       if ([Types.Entities.MAGE, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(mob.kind)) {
         if (superUniqueRandom === 666) {
@@ -2322,6 +2351,8 @@ class World {
           return "amuletdragon";
         } else if (superUniqueRandom === 555) {
           return "ringheaven";
+        } else if (superUniqueRandom === 1111) {
+          return "amuleteye";
         }
       }
 
@@ -2331,8 +2362,14 @@ class World {
         return "ringconqueror";
       } else if (superUniqueRandom === 6969) {
         return "amuletstar";
-      } else if (superUniqueRandom === 555) {
+      } else if (superUniqueRandom === 5555) {
         return "amuletskull";
+      } else if (superUniqueRandom === 4242) {
+        return "ringgreed";
+      } else if (superUniqueRandom === 5757) {
+        return "amuletgreed";
+      } else if (superUniqueRandom === 6666) {
+        return "amuletgreed";
       }
 
       const stoneDragonRandom = random(25_000);
@@ -2346,22 +2383,7 @@ class World {
       }
     }
 
-    if (mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
-      const demonRandom = random(800);
-      if (demonRandom === 69) {
-        return "demonaxe";
-      } else if (demonRandom === 133) {
-        return "demonarmor";
-      } else if (demonRandom === 420) {
-        return "beltdemon";
-      } else if (demonRandom === 555) {
-        return "shielddemon";
-      } else if (demonRandom === 699) {
-        return "amuletdemon";
-      }
-    }
-
-    if (!Types.isBoss(mob.kind)) {
+    if (!isBoss) {
       const runeRandom = random(250);
       if (runeRandom === 133) {
         return `rune-${getRandomRune(Types.getMobLevel(mob.kind))}`;
@@ -2391,6 +2413,21 @@ class World {
       }
     }
 
+    if (mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
+      const demonRandom = random(800);
+      if (demonRandom === 69) {
+        return "demonaxe";
+      } else if (demonRandom === 133) {
+        return "demonarmor";
+      } else if (demonRandom === 420) {
+        return "beltdemon";
+      } else if (demonRandom === 555) {
+        return "shielddemon";
+      } else if (demonRandom === 699) {
+        return "amuletdemon";
+      }
+    }
+
     if (mob.kind === Types.Entities.SKELETON4 && !attacker.hasObelisk) {
       const pickaxeRandom = random(250);
       if (pickaxeRandom === 133) {
@@ -2398,7 +2435,29 @@ class World {
       }
     }
 
-    if (!Types.isBoss(mob.kind) && [23, 42, 69].includes(v)) {
+    if (!isBoss) {
+      if (mob.kind >= Types.Entities.RAT && mob.kind <= Types.Entities.ZOMBIE) {
+        const barRandom = random(5_000);
+        if (barRandom === 133) {
+          return "barbronze";
+        }
+      }
+      if (mob.kind >= Types.Entities.RAT2) {
+        const barRandom = random(17_500);
+        if (barRandom === 133) {
+          return "barsilver";
+        }
+      }
+
+      if (mob.kind >= Types.Entities.RAT3) {
+        const barRandom = random(200_000);
+        if (barRandom === 133) {
+          return "bargold";
+        }
+      }
+    }
+
+    if (!isBoss && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO/BANANO potion on non-boss monsters
       if (attacker.network === "ban") {
         return "bananopotion";
@@ -2415,14 +2474,27 @@ class World {
         if (v <= p) {
           itemKind = Types.getKindFromString(itemName);
 
-          if (itemKind === Types.Entities.SCROLLUPGRADEHIGH) {
-            if (attacker && attacker.level - 6 > mobLevel) {
+          if ([Types.Entities.SCROLLUPGRADEHIGH, Types.Entities.SCROLLUPGRADELEGENDARY].includes(itemKind)) {
+            const lvlDifference = attacker.level - mobLevel;
+
+            if (lvlDifference >= 6) {
+              let reduction = 1;
+              if (lvlDifference >= 10 && lvlDifference < 14) {
+                reduction = 2;
+              } else if (lvlDifference >= 14) {
+                reduction = 3;
+              }
+
+              const randomscroll = random(4);
+
               // Reduce scroll drops to prevent crazy farming
-              if (random(4) === 1) {
+              if (randomscroll < reduction) {
                 break;
               }
             }
+          }
 
+          if (itemKind === Types.Entities.SCROLLUPGRADEHIGH) {
             if (mob.kind >= Types.Entities.YETI) {
               var blessedScroll = random(25);
 
@@ -2431,13 +2503,6 @@ class World {
               }
             }
           } else if (itemKind === Types.Entities.SCROLLUPGRADELEGENDARY) {
-            if (attacker && attacker.level - 6 > mobLevel) {
-              // Reduce scroll drops to prevent crazy farming
-              if (random(4) === 1) {
-                break;
-              }
-            }
-
             if (mob.kind >= Types.Entities.GOLEM) {
               const sacredScroll = random(30);
 
@@ -2475,6 +2540,8 @@ class World {
     // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
     // var randomDrops = ["soulstone"];
     // var randomDrops = ["gold"];
+    // var randomDrops = ["barbronze", "barsilver", "bargold", "barplatinum"];
+    // var randomDrops = ["ringgreed", "amuletgreed", "amuleteye"];
     // var randomDrops = ["jewelskull"];
     // var randomDrops = ["nft", "wing", "crystal"];
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];

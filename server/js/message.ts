@@ -418,6 +418,13 @@ Messages.Trade = class Message {
   }
 };
 
+Messages.MerchantLog = class Message {
+  constructor(private log) {}
+  serialize() {
+    return [Types.Messages.MERCHANT.LOG, this.log];
+  }
+};
+
 Messages.PVP = class Message {
   constructor(private isPVP) {}
   serialize() {

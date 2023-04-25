@@ -6,7 +6,9 @@ export const STASH_SLOT_COUNT = STASH_SLOT_PER_PAGE * STASH_SLOT_PAGES;
 export const UPGRADE_SLOT_COUNT = 11;
 export const UPGRADE_SLOT_RANGE = 200;
 export const TRADE_SLOT_RANGE = 300;
-export const STASH_SLOT_RANGE = 400;
+export const MERCHANT_SLOT_COUNT = 21;
+export const MERCHANT_SLOT_RANGE = 400;
+export const STASH_SLOT_RANGE = 500;
 export const TRADE_SLOT_COUNT = 9;
 export const DELETE_SLOT = -1;
 

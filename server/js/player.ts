@@ -856,7 +856,7 @@ class Player extends Character {
                   amount = Math.ceil(self.maxHitPoints / 3);
                   break;
                 case Types.Entities.POISONPOTION:
-                  self.handleHurtSpellDmg({ element: "poison", dmg: 200 });
+                  self.handleHurtSpellDmg({ element: "poison", dmg: 240 });
                   break;
               }
 
@@ -877,8 +877,15 @@ class Player extends Character {
 
               if (!item.amount || isNaN(item.amount)) return;
 
+              let { amount } = item;
+              if (self.bonus.extraGold || self.partyBonus.extraGold) {
+                amount = Math.floor(
+                  (Types.calculateExtraGold(self.bonus.extraGold + self.partyBonus.extraGold) / 100) * amount + amount,
+                );
+              }
+
               // @TODO ~~~~ configure split for party loots
-              self.databaseHandler.lootGold({ player: self, amount: item.amount });
+              self.databaseHandler.lootGold({ player: self, amount });
             } else if (Types.Entities.NANOCOIN === kind) {
               console.info(`LOOT NANO: ${self.name}, ${self.network}, ${item.amount}`);
               if (!item.amount || isNaN(item.amount) || self.network !== "nano") {
@@ -894,7 +901,7 @@ class Player extends Character {
             } else {
               try {
                 let isUnique = false;
-                let generatedItem = null;
+                let generatedItem: GeneratedItem = null;
                 let runeName = null;
 
                 if (Types.isRune(kind)) {
@@ -904,7 +911,7 @@ class Player extends Character {
                   }
                 } else {
                   const jewelLevel = Types.isJewel(kind) ? item.level : 1;
-                  ({ isUnique, ...generatedItem } = self.generateItem({ kind, jewelLevel }) || {}) as GeneratedItem;
+                  ({ isUnique, ...generatedItem } = self.generateItem({ kind, jewelLevel }) || ({} as GeneratedItem));
                 }
 
                 if (generatedItem) {
@@ -935,18 +942,26 @@ class Player extends Character {
                       `${player.name} picked up ${runeName.toUpperCase()} rune ${EmojiMap[`rune-${runeName}`]}`,
                     );
                   } else if (kind === Types.Entities.STONEDRAGON) {
-                    postMessageToDiscordEventChannel(`${player.name} picked up a dragon stone ${EmojiMap.stonedragon}`);
+                    postMessageToDiscordEventChannel(`${player.name} picked up a Dragon Stone ${EmojiMap.stonedragon}`);
                   } else if (kind === Types.Entities.STONEHERO) {
-                    postMessageToDiscordEventChannel(`${player.name} picked up a hero emblem ${EmojiMap.stonehero}`);
+                    postMessageToDiscordEventChannel(`${player.name} picked up a Hero Emblem ${EmojiMap.stonehero}`);
                   } else if (kind === Types.Entities.CHALICE) {
-                    postMessageToDiscordEventChannel(`${player.name} picked up the chalice ${EmojiMap.chalice}`);
+                    postMessageToDiscordEventChannel(`${player.name} picked up the Chalice ${EmojiMap.chalice}`);
                   } else if (kind === Types.Entities.SCROLLTRANSMUTEBLESSED) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a blessed transmute scroll ${EmojiMap.scrolltransmuteblessed}`,
+                      `${player.name} picked up a Blessed Transmute Scroll ${EmojiMap.scrolltransmuteblessed}`,
                     );
                   } else if (kind === Types.Entities.SCROLLUPGRADESACRED) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a sacred upgrade scroll ${EmojiMap.scrollupgradesacred}`,
+                      `${player.name} picked up a Sacred Upgrade Scroll ${EmojiMap.scrollupgradesacred}`,
+                    );
+                  } else if (kind === Types.Entities.BARGOLD) {
+                    postMessageToDiscordEventChannel(`${player.name} picked up a Gold Bar ${EmojiMap.bargold}`);
+                  } else if (kind === Types.Entities.JEWELSKULL && generatedItem.level === 5) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up a ${isUnique ? "**unique** " : ""}lv.5 Skull Jewel ${
+                        EmojiMap.jewelskull
+                      }`,
                     );
                   }
 
@@ -1452,6 +1467,12 @@ class Player extends Character {
         } else if (message[1] === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
           self.server.trades[self.tradeId]?.status({ player1Id: self.id, isAccepted: message[2] });
         }
+      } else if (action === Types.Messages.MERCHANT.BUY) {
+        const fromSlot = message[1];
+        const toSlot = message[2];
+        const quantity = message[3];
+
+        self.databaseHandler.buyFromMerchant({ player: self, fromSlot, toSlot, quantity });
       } else if (action === Types.Messages.SETTINGS) {
         const settings = message[1];
 
@@ -1627,7 +1648,7 @@ class Player extends Character {
     const randomIsUnique = random(100);
     const isUnique = randomIsUnique < uniqueChances;
 
-    const baseBonus = [0, 1, 2];
+    const baseBonus = [0, 1, 2, 7, 8];
     const uniqueBonus = [3, 4, 5, 6];
 
     return _.shuffle(baseBonus)
@@ -1678,7 +1699,7 @@ class Player extends Character {
         skill,
         isUnique,
       };
-    } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isStone(kind)) {
+    } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isStone(kind) || Types.isBar(kind)) {
       item = { item: Types.getKindAsString(kind), quantity: 1 };
     } else if (Types.isCape(kind)) {
       const bonus = this.generateRandomCapeBonus(uniqueChances);
@@ -1707,6 +1728,8 @@ class Player extends Character {
       const elementDamage = [4, 14, 15, 16, 18, 34];
       const lowerResistance = [36, 37, 38, 39, 40];
       const lowerAllResistance = [41];
+      const extraGold = [42];
+      const magicFind = [11];
 
       let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
@@ -1788,6 +1811,15 @@ class Player extends Character {
           .concat(amuletHighLevelBonus.slice(0, 1))
           .concat(isAllResistances ? allResistance : _.shuffle(resistances).slice(0, 2))
           .concat([elementPercentage[1], lowerResistance[1]]);
+      } else if (kind === Types.Entities.AMULETEYE) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(allResistance)
+          .concat(_.shuffle(elementPercentage).slice(0, 1))
+          .concat(timeout)
+          .concat(lowerAllResistance);
+      } else if (kind === Types.Entities.AMULETGREED) {
+        bonus = _.shuffle(highLevelBonus).slice(0, 5).concat(magicFind).concat(extraGold);
       } else if (kind === Types.Entities.RINGRAISTONE) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
@@ -1830,8 +1862,10 @@ class Player extends Character {
           .slice(0, 1)
           .concat(_.shuffle(elementDamage).slice(0, 2))
           .concat(_.shuffle(elementPercentage).slice(0, 2))
-          .concat(_.shuffle(allResistance).slice(0, 2))
+          .concat(_.shuffle(resistances).slice(0, 2))
           .concat(timeout);
+      } else if (kind === Types.Entities.RINGGREED) {
+        bonus = _.shuffle(highLevelBonus).slice(0, 4).concat(magicFind).concat(extraGold);
       } else if (kind === Types.Entities.JEWELSKULL) {
         if (jewelLevel === 1) {
           bonus = _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
@@ -1856,10 +1890,6 @@ class Player extends Character {
           if (isUnique) {
             bonus = bonus.concat(_.shuffle(elementPercentage).slice(0, 1));
           }
-
-          postMessageToDiscordEventChannel(
-            `${this.name} picked up a ${isUnique ? "**unique** " : ""}lv.5 Skull Jewel ${EmojiMap.jewelskull}`,
-          );
         }
       }
 
@@ -2042,7 +2072,7 @@ class Player extends Character {
 
   handleHurtTrapDmg(trap) {
     // @TODO check based on defense?
-    const dmg = 200;
+    const dmg = 300;
 
     this.hitPoints -= dmg;
     this.server.handleHurtEntity({ entity: this, attacker: trap });
@@ -2370,6 +2400,8 @@ class Player extends Character {
         this.partyBonus[type] += stats;
       });
     }
+
+    console.log(this.partyBonus);
   }
 
   resetBonus() {
@@ -2392,6 +2424,8 @@ class Player extends Character {
       maxDamage: 0,
       health: 0,
       magicDamage: 0,
+      allResistance: 0,
+      extraGold: 0,
     };
   }
 
@@ -2461,12 +2495,22 @@ class Player extends Character {
       this.bonus.health += 50;
     }
 
-    if (this.bonus.allResistance) {
-      this.bonus.magicResistance += this.bonus.allResistance;
-      this.bonus.flameResistance += this.bonus.allResistance;
-      this.bonus.lightningResistance += this.bonus.allResistance;
-      this.bonus.coldResistance += this.bonus.allResistance;
-      this.bonus.poisonResistance += this.bonus.allResistance;
+    if (this.bonus.allResistance || this.partyBonus.allResistance) {
+      this.bonus.magicResistance = Types.calculateResistance(
+        this.bonus.magicResistance + this.bonus.allResistance + this.partyBonus.allResistance,
+      );
+      this.bonus.flameResistance = Types.calculateResistance(
+        this.bonus.flameResistance + this.bonus.allResistance + this.partyBonus.allResistance,
+      );
+      this.bonus.lightningResistance = Types.calculateResistance(
+        this.bonus.lightningResistance + this.bonus.allResistance + this.partyBonus.allResistance,
+      );
+      this.bonus.coldResistance = Types.calculateResistance(
+        this.bonus.coldResistance + this.bonus.allResistance + this.partyBonus.allResistance,
+      );
+      this.bonus.poisonResistance = Types.calculateResistance(
+        this.bonus.poisonResistance + this.bonus.allResistance + this.partyBonus.allResistance,
+      );
     }
     if (this.bonus.magicDamagePercent) {
       this.bonus.magicDamage += Math.round((this.bonus.magicDamagePercent / 100) * this.bonus.magicDamage);
@@ -2666,6 +2710,7 @@ class Player extends Character {
       criticalHit: this.bonus.criticalHit,
       blockChance: this.bonus.blockChance,
       magicFind: this.bonus.magicFind,
+      extraGold: Types.calculateExtraGold(this.bonus.extraGold + this.partyBonus.extraGold),
       attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
       magicDamage: this.bonus.magicDamage + this.partyBonus.magicDamage,
       flameDamage: this.bonus.flameDamage,

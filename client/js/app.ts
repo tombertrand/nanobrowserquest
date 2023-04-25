@@ -364,11 +364,38 @@ class App {
       ],
     });
     $("#dialog-delete-item").text("Are you sure you want to delete this item?");
+
+    $("#dialog-merchant-item").dialog({
+      dialogClass: "no-close",
+      autoOpen: false,
+      draggable: false,
+      title: "Sell item to merchant",
+      buttons: [
+        {
+          text: "Cancel",
+          class: "btn btn-gray",
+          click: function () {
+            self.game.confirmedSoldItemToMerchant = null;
+            $(this).dialog("close");
+          },
+        },
+        {
+          text: "Ok",
+          class: "btn",
+          click: function () {
+            const { fromSlot, toSlot, transferedQuantity, confirmed } = self.game.confirmedSoldItemToMerchant;
+            self.game.dropItem(fromSlot, toSlot, transferedQuantity, confirmed);
+            self.game.confirmedSoldItemToMerchant = null;
+            $(this).dialog("close");
+          },
+        },
+      ],
+    });
+    $("#dialog-merchant-item").text("Are you sure you want to sell this item to the merchant?");
     $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
 
     // Cleanup the login form events
     $(document).off(".loginform");
-
 
     // @TODO connection cleanup ~~~
     $("#reconnecting")
@@ -1003,6 +1030,9 @@ class App {
       $("#achievements").removeClass("active");
       $("#achievementsbutton").removeClass("active");
     }
+
+    $("#player").removeClass("visible");
+
     if ($("#instructions").hasClass("active")) {
       this.toggleInstructions();
     }
@@ -1030,10 +1060,13 @@ class App {
       $("#population").removeClass("visible");
     }
     if ($("#upgrade").hasClass("visible")) {
-      this.toggleUpgrade();
+      this.closeUpgrade();
     }
     if ($("#trade").hasClass("visible")) {
-      this.closeTrade(true);
+      this.closeTrade();
+    }
+    if ($("#merchant").hasClass("visible")) {
+      this.closeMerchant();
     }
     if ($("#inventory").hasClass("visible")) {
       this.closeInventory();
@@ -1058,6 +1091,8 @@ class App {
       $("#party").removeClass("active");
       $("#party-button").removeClass("active");
     }
+
+    this.closeOtherPlayerEquipment();
   }
 
   showAchievementNotification(id, name) {
@@ -1339,28 +1374,55 @@ class App {
     this.game.setShowHealthAboveBars(isChecked);
   }
 
-  toggleInventory() {
-    this.closeOtherPlayerEquipment();
+  openInventory(onlyInventory = false) {
+    if ($("#inventory").hasClass("visible")) return;
+
+    if (onlyInventory) {
+      this.hideWindows();
+      $("#player").addClass("visible");
+      $("#inventory .close").addClass("visible");
+    }
+
+    $("#inventory").addClass("visible");
 
     if ($("#upgrade").hasClass("visible")) {
-      $("#upgrade").removeClass("visible");
-      $("#inventory").removeClass("upgrade");
-      $("#player").addClass("visible");
-      if (this.game.player.upgrade.length) {
-        this.game.client.sendMoveItemsToInventory("upgrade");
-      }
-    } else if (!$("#inventory").hasClass("visible")) {
-      $("#player").addClass("visible");
-      this.openInventory();
-    } else {
-      this.closeInventory();
+      $("#inventory").addClass("upgrade");
+    } else if ($("#trade").hasClass("visible")) {
+      $("#inventory").addClass("trade");
+    } else if ($("#merchant").hasClass("visible")) {
+      $("#inventory").addClass("merchant");
     }
+
+    this.game.initDraggable();
   }
 
-  openInventory() {
-    if (!$("#inventory").hasClass("visible")) {
-      $("#inventory").addClass("visible");
-      this.game.initDraggable();
+  closeInventory() {
+    if (!$("#inventory").hasClass("visible")) return;
+
+    $("#inventory").removeClass("visible upgrade trade merchant");
+    $("#inventory .close").removeClass("visible");
+    $("#player").removeClass("visible");
+
+    this.hideWindows();
+    this.game.destroyDraggable();
+  }
+
+  toggleInventory(onlyInventory = false) {
+    if (
+      $("#inventory").hasClass("visible") &&
+      ($("#inventory").hasClass("upgrade") ||
+        $("#inventory").hasClass("trade") ||
+        $("#inventory").hasClass("merchant") ||
+        $("#stash").hasClass("visible"))
+    ) {
+      this.hideWindows();
+      this.openInventory(onlyInventory);
+    } else {
+      if (!$("#inventory").hasClass("visible")) {
+        this.openInventory(onlyInventory);
+      } else {
+        this.closeInventory();
+      }
     }
   }
 
@@ -1375,21 +1437,9 @@ class App {
     $("#otherplayer-equipment").removeClass("visible");
   }
 
-  closeInventory() {
-    if ($("#trade").hasClass("visible")) {
-      this.closeTrade(true);
-    }
-
-    $("#inventory").removeClass("visible");
-    $("#player").removeClass("visible");
-    this.game.destroyDraggable();
-  }
-
   openStash() {
-    this.closeOtherPlayerEquipment();
-    this.closeUpgrade();
-    this.closeTrade(true);
-    $("#population").removeClass("visible");
+    this.hideWindows();
+
     $("#stash").addClass("visible");
     this.openInventory();
   }
@@ -1401,93 +1451,74 @@ class App {
 
   openTrade() {
     if ($("#trade").hasClass("visible")) return;
-    $("#population").removeClass("visible");
-    this.closeStash();
-    this.closeOtherPlayerEquipment();
+    this.hideWindows();
 
-    if ($("#upgrade").hasClass("visible")) {
-      this.toggleUpgrade();
-    }
-
-    this.toggleTrade();
+    $("#trade").addClass("visible");
+    this.openInventory();
   }
 
-  closeTrade(shouldSend) {
+  // @NOTE Do not re-send trade if both players accepted
+  closeTrade(isCompleted = false) {
     if (!$("#trade").hasClass("visible")) return;
+
+    $("#trade").removeClass("visible");
+    this.closeInventory();
 
     $("#gold-player1-amount").text("0");
     $("#gold-player2-amount").text("0");
 
-    // When the panel is manually closed the isFromMessage will not be defined.
-    // It will be defined when player2 receives the message from player1 so this
-    // prevents resending the message.
-    if (shouldSend) {
+    if (!isCompleted) {
       this.game.client.sendTradeClose();
     }
 
-    this.toggleTrade(true);
+    $("#trade-player1-item .item-slot").empty();
+    $("#trade-player2-item .item-slot").empty();
+    $("#trade-player1-item .item-trade").removeClass("item-not-droppable");
+    $("#trade-player1-status").find(".btn").removeClass("disabled");
+    $("#trade-player2-status").text("Waiting ...");
   }
 
-  toggleTrade(forceClose = false) {
-    this.closeOtherPlayerEquipment();
+  openMerchant() {
+    if ($("#merchant").hasClass("visible")) return;
 
-    if (forceClose) {
-      $("#trade").removeClass("visible");
-    } else {
-      $("#trade").toggleClass("visible");
-    }
+    this.hideWindows();
+    this.toggleMerchant();
+    this.openInventory();
+  }
 
-    if ($("#trade").hasClass("visible")) {
-      if (!$("#inventory").hasClass("visible")) {
-        this.game.initDraggable();
-      }
-      $("#inventory").addClass("visible trade");
-      $("#player").removeClass("visible");
-    } else {
-      this.game.destroyDraggable();
-      $("#inventory").removeClass("visible trade");
-      $("#trade-player1-item .item-slot").empty();
-      $("#trade-player2-item .item-slot").empty();
-      $("#trade-player1-item .item-trade").removeClass("item-not-droppable");
-      $("#trade-player1-status").find(".btn").removeClass("disabled");
-      $("#trade-player2-status").text("Waiting ...");
-    }
+  closeMerchant() {
+    if (!$("#merchant").hasClass("visible")) return;
+
+    this.toggleMerchant();
+    this.closeInventory();
+  }
+
+  toggleMerchant() {
+    this.game.confirmedSoldItemToMerchant = null;
+
+    $("#merchant").toggleClass("visible");
   }
 
   openUpgrade() {
     if ($("#upgrade").hasClass("visible")) return;
-    $("#population").removeClass("visible");
-    this.closeOtherPlayerEquipment();
-    this.closeStash();
-    this.toggleUpgrade();
+
+    this.hideWindows();
+
+    $("#upgrade").addClass("visible");
+    this.openInventory();
   }
 
   closeUpgrade() {
     if (!$("#upgrade").hasClass("visible")) return;
 
-    this.toggleUpgrade();
-  }
+    this.closeInventory();
 
-  toggleUpgrade() {
-    this.closeOtherPlayerEquipment();
-
-    $("#upgrade").toggleClass("visible");
-
-    if ($("#upgrade").hasClass("visible")) {
-      if (!$("#inventory").hasClass("visible")) {
-        this.game.initDraggable();
-      }
-      $("#inventory").addClass("visible upgrade");
-      $("#player").removeClass("visible");
-    } else {
-      this.game.destroyDraggable();
-      if (this.game.player.upgrade.length) {
-        this.game.client.sendMoveItemsToInventory("upgrade");
-      }
-      $("#inventory").removeClass("visible upgrade");
-      $(".item-scroll").empty();
-      $("#upgrade .item-slot").removeClass("item-upgrade-success-slot item-upgrade-fail-slot");
+    $("#upgrade").removeClass("visible");
+    if (this.game.player.upgrade.length) {
+      this.game.client.sendMoveItemsToInventory("upgrade");
     }
+    $(".item-scroll").empty();
+    $("#upgrade .item-slot").removeClass("item-upgrade-success-slot item-upgrade-fail-slot");
   }
 
   openWaypoint(activeWaypoint) {

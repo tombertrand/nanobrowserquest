@@ -3,8 +3,11 @@ import * as NanocurrencyWeb from "nanocurrency-web";
 import redis from "redis";
 
 import { kinds, Types } from "../../../shared/js/gametypes";
+import { getGoldAmountFromSoldItem, merchantItems } from "../../../shared/js/gold";
 import {
   INVENTORY_SLOT_COUNT,
+  MERCHANT_SLOT_COUNT,
+  MERCHANT_SLOT_RANGE,
   Slot,
   STASH_SLOT_COUNT,
   STASH_SLOT_RANGE,
@@ -36,7 +39,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
-import { getGoldDeathPenaltyPercent, toArray, toDb } from "../../../shared/js/utils";
+import { toArray, toDb } from "../../../shared/js/utils";
 import {
   discordClient,
   EmojiMap,
@@ -54,6 +57,7 @@ import {
   getIsTransmuteSuccess,
   isUpgradeSuccess,
   isValidAddWeaponSkill,
+  isValidDowngradeRune,
   isValidRecipe,
   isValidSocketItem,
   isValidStoneSocket,
@@ -869,6 +873,8 @@ class DatabaseHandler {
       return ["upgrade", UPGRADE_SLOT_RANGE];
     } else if (slot >= TRADE_SLOT_RANGE && slot <= TRADE_SLOT_RANGE + TRADE_SLOT_COUNT - 1) {
       return ["trade", TRADE_SLOT_RANGE];
+    } else if (slot >= MERCHANT_SLOT_RANGE && slot <= MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT - 1) {
+      return ["merchant", MERCHANT_SLOT_RANGE];
     } else if (slot >= STASH_SLOT_RANGE && slot <= STASH_SLOT_RANGE + STASH_SLOT_COUNT) {
       return ["stash", STASH_SLOT_RANGE];
     }
@@ -968,6 +974,8 @@ class DatabaseHandler {
       } else {
         tradeInstance.update({ data, player1Id: player.id });
       }
+    } else if (location === "merchant") {
+      player.send([Types.Messages.MERCHANT.SELL]);
     }
   }
 
@@ -994,7 +1002,7 @@ class DatabaseHandler {
       let toItem;
       try {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
-        fromItem = isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed;
+        fromItem = (isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed) || 0;
 
         // Should never happen but who knows
         if (["dagger:1", "clotharmor:1"].includes(fromItem) && toSlot !== -1) return;
@@ -1035,7 +1043,7 @@ class DatabaseHandler {
                   let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(`${fromScroll}:`));
 
                   if (toItemIndex === -1) {
-                    // @note put the quantity, not found in toLocation
+                    // @Note put the quantity, not found in first available index of toLocation
                     toItemIndex = toItem ? toReplyParsed.indexOf(0) : toSlot - toRange;
                   }
 
@@ -1072,7 +1080,58 @@ class DatabaseHandler {
 
                   isFromReplyDone = true;
                   isToReplyDone = true;
+                } else if (toLocation === "merchant") {
+                  const amount = getGoldAmountFromSoldItem({ item: fromItem, quantity: movedQuantity || 1 });
+
+                  if (amount) {
+                    if (movedQuantity && fromQuantity - movedQuantity > 0) {
+                      fromReplyParsed[fromSlot - fromRange] = `${fromScroll}:${
+                        parseInt(fromQuantity) - parseInt(`${movedQuantity}`)
+                      }`;
+                    } else {
+                      fromReplyParsed[fromSlot - fromRange] = 0;
+                    }
+
+                    this.lootGold({
+                      player,
+                      amount,
+                    });
+
+                    player.send(
+                      new Messages.MerchantLog({
+                        item: fromItem,
+                        quantity: movedQuantity || 1,
+                        amount,
+                        type: "sell",
+                      }).serialize(),
+                    );
+                  }
+
+                  isFromReplyDone = true;
+                  isToReplyDone = true;
                 }
+              } else if (toLocation === "merchant") {
+                this.lootGold({ player, amount: getGoldAmountFromSoldItem({ item: fromItem }) });
+
+                const amount = getGoldAmountFromSoldItem({ item: fromItem });
+                if (amount) {
+                  this.lootGold({
+                    player,
+                    amount,
+                  });
+
+                  player.send(
+                    new Messages.MerchantLog({
+                      item: fromItem,
+                      quantity: 1,
+                      amount,
+                      type: "sell",
+                    }).serialize(),
+                  );
+                } else {
+                }
+
+                isToReplyDone = true;
               } else if (
                 ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(toLocation) &&
                 fromItem
@@ -1179,109 +1238,113 @@ class DatabaseHandler {
   }
 
   moveGold({ player, amount, from, to }) {
-    return new Promise((resolve, reject) => {
-      const locationMap = {
-        inventory: "gold",
-        stash: "goldStash",
-        trade: "goldTrade",
-      };
+    return player.dbWriteQueue.enqueue(
+      () =>
+        new Promise((resolve, reject) => {
+          const locationMap = {
+            inventory: "gold",
+            stash: "goldStash",
+            trade: "goldTrade",
+          };
 
-      const fromLocation = locationMap[from];
-      const toLocation = locationMap[to];
+          const fromLocation = locationMap[from];
+          const toLocation = locationMap[to];
 
-      if (fromLocation === toLocation || isNaN(amount)) return;
-      this.client.hget("u:" + player.name, fromLocation, (err, rawFromGold) => {
-        if (err) {
-          Sentry.captureException(err);
-          reject();
-          return;
-        }
+          if (fromLocation === toLocation || isNaN(amount)) return;
+          this.client.hget("u:" + player.name, fromLocation, (err, rawFromGold) => {
+            if (err) {
+              Sentry.captureException(err);
+              reject();
+              return;
+            }
 
-        if (!rawFromGold || rawFromGold === "0" || !/\d+/.test(rawFromGold)) return;
-        const fromGold = parseInt(rawFromGold);
+            if (!rawFromGold || rawFromGold === "0" || !/\d+/.test(rawFromGold)) return;
+            const fromGold = parseInt(rawFromGold);
 
-        if (amount > fromGold) {
-          Sentry.captureException(new Error(`Player ${player.name} tried to transfer invalid gold amount.`), {
-            extra: {
-              amount,
-              rawFromGold,
-              from,
-              to,
-            },
-          });
-          reject();
-          return;
-        }
-
-        const newFromGold = fromGold - amount;
-        if (newFromGold < 0) return;
-
-        this.client.hget("u:" + player.name, toLocation, (err, rawToGold) => {
-          if (err) {
-            Sentry.captureException(err);
-            reject();
-            return;
-          }
-
-          if (rawToGold === null) {
-            rawToGold = 0;
-          } else if (!/\d+/.test(rawToGold)) {
-            Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
-              extra: {
-                toLocation,
-                rawToGold,
-              },
-            });
-            reject();
-            return;
-          }
-          const toGold = parseInt(rawToGold || "0");
-          this.client.hset("u:" + player.name, fromLocation, newFromGold, () => {
-            player.send([Types.Messages.GOLD[from.toUpperCase()], newFromGold]);
-            player[fromLocation] = newFromGold;
-
-            const newToGold = toGold + amount;
-
-            this.client.hset("u:" + player.name, toLocation, newToGold, () => {
-              player.send([Types.Messages.GOLD[to.toUpperCase()], newToGold]);
-              player[toLocation] = newToGold;
-
-              console.log("COMPLETED GOLD MOVE", {
-                player: player.name,
-                amount,
-                from,
-                to,
-                newFromGold,
-                newToGold,
+            if (amount > fromGold) {
+              Sentry.captureException(new Error(`Player ${player.name} tried to transfer invalid gold amount.`), {
+                extra: {
+                  amount,
+                  rawFromGold,
+                  from,
+                  to,
+                },
               });
+              reject();
+              return;
+            }
 
-              let resolvedAmount = 0;
-              if (from === "trade") {
-                resolvedAmount = newFromGold;
-              } else if (to === "trade") {
-                resolvedAmount = newToGold;
+            const newFromGold = fromGold - amount;
+            if (newFromGold < 0) return;
+
+            this.client.hget("u:" + player.name, toLocation, (err, rawToGold) => {
+              if (err) {
+                Sentry.captureException(err);
+                reject();
+                return;
               }
 
-              player[fromLocation] = newFromGold;
-              player[toLocation] = newToGold;
+              if (rawToGold === null) {
+                rawToGold = 0;
+              } else if (!/\d+/.test(rawToGold)) {
+                Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
+                  extra: {
+                    toLocation,
+                    rawToGold,
+                  },
+                });
+                reject();
+                return;
+              }
+              const toGold = parseInt(rawToGold || "0");
+              this.client.hset("u:" + player.name, fromLocation, newFromGold, () => {
+                player.send([Types.Messages.GOLD[from.toUpperCase()], newFromGold]);
+                player[fromLocation] = newFromGold;
 
-              // @NOTE Resolved amount is only used for trading
-              resolve(resolvedAmount);
+                const newToGold = toGold + amount;
+
+                this.client.hset("u:" + player.name, toLocation, newToGold, () => {
+                  player.send([Types.Messages.GOLD[to.toUpperCase()], newToGold]);
+                  player[toLocation] = newToGold;
+
+                  console.log("COMPLETED GOLD MOVE", {
+                    player: player.name,
+                    amount,
+                    from,
+                    to,
+                    newFromGold,
+                    newToGold,
+                  });
+
+                  let resolvedAmount = 0;
+                  if (from === "trade") {
+                    resolvedAmount = newFromGold;
+                  } else if (to === "trade") {
+                    resolvedAmount = newToGold;
+                  }
+
+                  player[fromLocation] = newFromGold;
+                  player[toLocation] = newToGold;
+
+                  // @NOTE Resolved amount is only used for trading
+                  resolve(resolvedAmount);
+                });
+              });
             });
           });
-        });
-      });
-    });
+        }),
+    );
   }
 
-  deductGold(player) {
-    return new Promise(resolve => {
-      const penalty = getGoldDeathPenaltyPercent(player.level);
-      if (!penalty) return;
+  deductGold(player, { penalty, amount }: { penalty?: number; amount?: number }) {
+    return new Promise((resolve, reject) => {
+      if (!amount && !penalty) {
+        return;
+      }
 
       this.client.hget("u:" + player.name, "gold", (err, currentGold) => {
         if (err) {
-          Sentry.captureException(err);
+          reject(err);
           return;
         }
 
@@ -1297,20 +1360,39 @@ class DatabaseHandler {
         }
 
         const gold = parseInt(currentGold);
+
         // No gold? no deduction
         if (gold === 0) return;
+        let deductedGold = amount;
+        if (amount && gold < amount) {
+          return;
+        }
 
-        const deductedGold = Math.ceil((gold * penalty) / 100);
+        if (penalty) {
+          deductedGold = Math.ceil((gold * penalty) / 100);
+        }
+        if (!deductedGold) return;
+
         const newGold = gold - deductedGold;
+        if (newGold < 0) return;
 
-        this.client.hset("u:" + player.name, "gold", newGold, () => {
-          player.send([Types.Messages.GOLD.INVENTORY, gold]);
-          player.gold = gold;
+        this.client.hset("u:" + player.name, "gold", newGold, err => {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-          player.send(new Messages.Chat({}, `You lost ${deductedGold} gold from your death.`, "event").serialize());
-          this.client.incrby("goldBank", deductedGold, (_err, reply) => {
-            resolve(reply);
-          });
+          player.send([Types.Messages.GOLD.INVENTORY, newGold]);
+          player.gold = newGold;
+
+          if (amount) {
+            resolve(newGold);
+          } else if (penalty) {
+            player.send(new Messages.Chat({}, `You lost ${deductedGold} gold from your death.`, "event").serialize());
+            this.client.incrby("goldBank", deductedGold, (_err, reply) => {
+              resolve(reply);
+            });
+          }
         });
       });
     });
@@ -1318,7 +1400,7 @@ class DatabaseHandler {
 
   getGoldBank() {
     return new Promise(resolve => {
-      this.client.get("goldBank", (err, gold) => {
+      this.client.get("goldBank", (_err, gold) => {
         resolve(gold);
       });
     });
@@ -1346,7 +1428,28 @@ class DatabaseHandler {
     });
   }
 
-  lootItems({ player, items }) {
+  buyFromMerchant({ player, fromSlot, toSlot, quantity = 1 }) {
+    const { amount, item } = merchantItems[fromSlot - MERCHANT_SLOT_RANGE] || {};
+    if (!amount || !item || toSlot > INVENTORY_SLOT_COUNT - 1) return;
+    const maxQuantity = Math.floor(player.gold / amount);
+    if (quantity > maxQuantity) {
+      return;
+    }
+
+    const totalAmount = amount * quantity;
+
+    this.deductGold(player, { amount: totalAmount })
+      .then(() => {
+        this.lootItems({ player, items: [{ item, quantity }], toSlot });
+
+        player.send(new Messages.MerchantLog({ item, quantity, amount: totalAmount, type: "buy" }).serialize());
+      })
+      .catch(err => {
+        Sentry.captureException(err);
+      });
+  }
+
+  lootItems({ player, items, toSlot }: { player: any; items: GeneratedItem[]; toSlot?: number }) {
     player.dbWriteQueue.enqueue(
       () =>
         new Promise((resolve, _reject) => {
@@ -1367,7 +1470,13 @@ class DatabaseHandler {
                     inventory[slotIndex] = `${item}:${parseInt(oldQuantity) + parseInt(String(quantity))}`;
                   }
                 } else if (slotIndex === -1) {
-                  slotIndex = inventory.indexOf(0);
+                  // Used for placing bought item from merchant in desired slot
+                  if (typeof toSlot === "number" && inventory[toSlot] === 0) {
+                    slotIndex = toSlot;
+                  } else {
+                    slotIndex = inventory.indexOf(0);
+                  }
+
                   if (slotIndex !== -1) {
                     const levelQuantity = level || quantity;
 
@@ -1484,6 +1593,7 @@ class DatabaseHandler {
         let isUniqueSuccess = null;
         let result;
         let nextRuneRank = null;
+        let previousRuneRank = null;
         let socketItem = null;
         let isNewSocketItem = false;
         let extractedItem = null;
@@ -1557,6 +1667,11 @@ class DatabaseHandler {
           isSuccess = true;
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = `rune-${Types.RuneList[nextRuneRank]}:1`;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((previousRuneRank = isValidDowngradeRune(filteredUpgrade))) {
+          isSuccess = true;
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = `rune-${Types.RuneList[previousRuneRank - 1]}:1`;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((socketItem = isValidSocketItem(filteredUpgrade))) {
           isSuccess = true;
@@ -1917,7 +2032,15 @@ class DatabaseHandler {
           const slotIndex = inventory.findIndex(rawItem => typeof rawItem === "string" && rawItem.startsWith(item));
 
           if (slotIndex !== -1) {
-            inventory[slotIndex] = 0;
+            const [, rawQuantity] = (inventory[slotIndex] || "").split(":");
+
+            const quantity = parseInt(rawQuantity);
+            if (quantity > 1) {
+              inventory[slotIndex] = `${item}:${quantity - 1}`;
+            } else {
+              inventory[slotIndex] = 0;
+            }
+
             player.send([Types.Messages.INVENTORY, inventory]);
             this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
             resolve(true);

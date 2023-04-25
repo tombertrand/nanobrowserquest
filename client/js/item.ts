@@ -25,9 +25,9 @@ class Item extends Entity {
     return `item-${this.itemKind}${suffix}`;
   }
 
-  getLootMessage() {
+  getLootMessage({ amount }: { amount?: number } = {}) {
     if ([Types.Entities.GOLD, Types.Entities.NANOCOIN, Types.Entities.BANANOCOIN].includes(this.kind)) {
-      return this.lootMessage.replace("amount", this.amount);
+      return this.lootMessage.replace("amount", amount || this.amount);
     }
 
     return this.lootMessage;

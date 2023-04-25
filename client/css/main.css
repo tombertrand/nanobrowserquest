@@ -773,11 +773,14 @@ footer, header, hgroup, menu, nav, section {
     }
 
     #waypoint {top: 7%}
-    #trade { bottom: auto;}
+    #trade, #merchant { bottom: auto;}
     #upgrade { bottom: auto;}
     #inventory { bottom: auto;}
+
+    #inventory .close { display: none; }
+    #inventory .close.visible { display: block; }
     #inventory.upgrade .panel-spaced-row { display: none;}
-    #item-inventory, .item-stash-page { position: relative; display: flex; flex-wrap: wrap; justify-content: center;}
+    #item-inventory, .item-stash-page, #item-merchant { position: relative; display: flex; flex-wrap: wrap; justify-content: center;}
     .item-stash-page { display: none; }
     .item-stash-page.visible { display: flex; }
     .stash-pagination { display: flex; justify-content: center; padding-top: 6px; }
@@ -821,7 +824,7 @@ footer, header, hgroup, menu, nav, section {
         line-height: 1;
         font-size: 0.9em;
     }
-    #upgrade-scroll, #trade-player1-item, #trade-player2-item {display: flex;flex-wrap: wrap;}
+    #upgrade-scroll, #trade-player1-item, #trade-player2-item {display: flex; flex-wrap: wrap;}
     #trade-info,
     #upgrade-info {
         color: #ababa4;
@@ -992,7 +995,8 @@ footer, header, hgroup, menu, nav, section {
         #completed.boss-check .link { font-size: 34px; }
         .createaccount-instructions { font-size: 25px; }
         #upgrade-scroll, #trade-player1-item, #trade-player2-item { width: 168px; }
-        .panel-spaced-row { padding: 0 12px}
+        .panel-spaced-row { padding: 0 10px}
+        #upgrade .panel-spaced-row { padding: 0 14px}
         .item-equip-weapon::before {background-image: url('../img/3/inventory-placeholder.png');}
         .item-equip-armor::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -45px;}
         .item-equip-ring::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -93px;}
@@ -1120,7 +1124,7 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 33px; top: 12px; width: 2px; height: 33px; z-index: 30; }
 
         .item-slot { width:52px; height:52px; }
-        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:48px;height:48px;background-size:288px;background-position:-96px;}
+        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:48px;height:48px;background-size:288px;background-position:-48px;}
         .item-rune { width: 46px; height: 46px; border-radius: 23px; }
         #armor, #weapon, #skill-attack, #skill-defense {position:absolute;}
         #weapon {left:312px;top:3px;background-size:288px;}
@@ -1145,7 +1149,7 @@ footer, header, hgroup, menu, nav, section {
         .panel.panel-large > div {background-position:0 -207px;}
         .panel-large .panel-header {background-position:0 -195px !important;}
 
-        #trade { width:416px; right: 56px; }
+        #trade, #merchant { width:416px; right: 56px; }
         .barbutton {background-size:1440px;height:45px;width:42px;}
         #chatbutton {background-position:-306px -51px;top:3px;left:1215px;}
         #chatbutton:hover, #chatbutton.blink:hover {background-position:-348px -51px;}
@@ -1358,7 +1362,7 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         .item-slot { width:36px; height: 36px; }
-        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:32px;height:32px;background-size:192px;background-position:-32px;}
         .item-rune { width: 30px; height: 30px; border-radius: 15px; }
         #armor, #weapon, #skill-attack, #skill-defense { position:absolute; }
         #weapon {left:208px;top:2px;}
@@ -1384,7 +1388,7 @@ footer, header, hgroup, menu, nav, section {
         .panel.panel-large > div {background-position:0 -138px;}
         .panel-large .panel-header {background-position:0 -130px !important;}
 
-        #trade { right: 40px; width: 302px}
+        #trade, #merchant { right: 40px; width: 302px}
         .barbutton {background-size:960px;height:30px;width:28px;}
         #chatbutton {background-position:-204px -34px;top:2px;left:810px;}
         #chatbutton:hover, #chatbutton.blink:hover {background-position:-232px -34px;}
@@ -1698,10 +1702,10 @@ footer, header, hgroup, menu, nav, section {
         .panel#population { bottom: 16px; }
         .panel#player {left: -20px; bottom: 18px;}
         .panel#waypoint {left: -20px;}
-        .panel#trade {position: relative;left: 42px;}
+        .panel#trade, .panel#merchant {position: relative;left: 42px;}
         .panel#upgrade {position: relative;left: 42px;}
         .panel#inventory {bottom:22px;}
-        .panel#inventory.trade, .panel#inventory.upgrade {bottom:auto}
+        .panel#inventory.trade, .panel#inventory.merchant, .panel#inventory.upgrade {bottom:auto}
         #player-list {max-height: 166px;}
         #stash {top: 0;right: 230px;}
 
@@ -1795,7 +1799,7 @@ footer, header, hgroup, menu, nav, section {
 		#hpguide {left: 22px; top: 8px; width: 2px; height: 22px; z-index: 30; }
 
         .item-slot { width:36px; height:36px; }
-        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:32px;height:32px;background-size:192px;background-position:-64px;}
+        #armor, #weapon, #skill-attack, #skill-defense, .item-draggable, .item-not-draggable, .item-rune {width:32px;height:32px;background-size:192px;background-position:-32px;}
         .item-rune { width: 30px; height: 30px; border-radius: 15px; }
         #armor, #weapon, #skill-attack, #skill-defense {position:absolute;}
         #weapon {left:208px;top:2px;}

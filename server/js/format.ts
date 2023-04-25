@@ -45,6 +45,7 @@ class FormatChecker {
       (this.formats[Types.Messages.FOSSIL] = []),
       (this.formats[Types.Messages.GOLD.MOVE] = ["n", "s", "s"]),
       (this.formats[Types.Messages.GOLD.BANK] = []),
+      (this.formats[Types.Messages.MERCHANT.BUY] = ["n", "n", "n"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
   }
 
