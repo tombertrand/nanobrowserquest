@@ -1011,7 +1011,7 @@ export const generateSoulStoneItem = (): { item: string; quantity?: number; uniq
     { item: "amuletskull" },
     { item: "amuletdragon" },
     { item: "amuletgreed" },
-    { item: "amuleteye" },
+    // { item: "amuleteye" },
   ];
 
   // Rune 25%

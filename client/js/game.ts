@@ -4,7 +4,7 @@ import * as Sentry from "@sentry/browser";
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
-import { merchantItems } from "../../shared/js/gold";
+import { itemGoldMap, merchantItems } from "../../shared/js/gold";
 import {
   DELETE_SLOT,
   INVENTORY_SLOT_COUNT,
@@ -1173,7 +1173,9 @@ class Game {
         }
 
         if ($("#merchant").hasClass("visible") && $(this).closest("#inventory")[0]) {
-          $(".item-merchant-empty").addClass("item-droppable");
+          if (itemGoldMap[item]) {
+            $(".item-merchant-empty").addClass("item-droppable");
+          }
         }
 
         // Simpler to remove it after the fact

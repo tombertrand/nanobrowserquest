@@ -13,7 +13,7 @@ export const merchantItems: { item: string; amount: number }[] = [
   { item: "barsilver", amount: 11_000 },
   { item: "bargold", amount: 110_000 },
   { item: "barplatinum", amount: 1_100_000 },
-  { item: "stonesocket", amount: 2500 },
+  { item: "stonesocket", amount: 1_500 },
 ];
 
 export const itemGoldMap = {
@@ -35,6 +35,11 @@ export const itemGoldMap = {
   stonesocket: 250,
   stonedragon: 10_000,
   stonehero: 25_000,
+
+  ringbronze: 5,
+  ringsilver: 15,
+  ringgold: 35,
+  ringplatinum: 65,
 
   amuletsilver: 15,
   amuletgold: 35,
@@ -131,7 +136,7 @@ export const getGoldAmountFromSoldItem = ({
   let amountPerItem = itemGoldMap[item];
 
   if (!amountPerItem) {
-    return;
+    return 0;
   }
 
   let factor = 100;
