@@ -966,14 +966,16 @@ class Game {
           (toSlot >= TRADE_SLOT_RANGE && toSlot < TRADE_SLOT_RANGE + TRADE_SLOT_COUNT) ||
           (toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT))
       ) {
-        const title =
-          toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT
-            ? "Choose quantity to sell"
-            : null;
+        const isMerchantToSlot = toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT;
 
-        this.openQuantityModal({ maxQuantity: quantity, title }, selectedQuantity => {
-          this.dropItem(fromSlot, toSlot, selectedQuantity);
-        });
+        const title = isMerchantToSlot ? "Choose quantity to sell" : null;
+
+        this.openQuantityModal(
+          { maxQuantity: quantity, quantity: isMerchantToSlot ? 1 : quantity, title },
+          selectedQuantity => {
+            this.dropItem(fromSlot, toSlot, selectedQuantity);
+          },
+        );
 
         return;
       }
@@ -1034,6 +1036,13 @@ class Game {
       if (toItemEl.length) {
         fromSlotEl.append(toItemEl.detach());
       }
+    }
+
+    if (toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT) {
+      if (fromSlot < INVENTORY_SLOT_COUNT) {
+        this.client.sendSellToMerchant(fromSlot, transferedQuantity);
+      }
+      return;
     }
 
     this.client.sendMoveItem(fromSlot, toSlot, transferedQuantity);
@@ -1762,7 +1771,9 @@ class Game {
       const isTree = mobId ? entity.kind === Types.Entities.TREE && this.player.attackSkill === 1 : false;
 
       // Can't cast on self
-      if (!mobId || mobId === this.player.id || (Types.isNpc(entity.kind) && !isTree)) return;
+      if (!mobId || mobId === this.player.id || (Types.isNpc(entity.kind) && !isTree) || !(entity instanceof Mob))
+        return;
+
       // Can't cast on other players with many level difference
       if (mobId && entity instanceof Player && (entity.level < 9 || Math.abs(entity.level - this.player.level) <= 10)) {
         this.chat_callback({
@@ -4412,6 +4423,10 @@ class Game {
       self.client.onReceiveMerchantLog(function ({ item: rawItem, quantity, amount, type }) {
         const verb = type === "buy" ? "bought" : "sold";
 
+        if (type === "sell") {
+          self.updateMerchant();
+        }
+
         const delimiter = Types.isJewel(rawItem) ? "|" : ":";
         const [item] = rawItem.split(delimiter);
 
@@ -4525,12 +4540,8 @@ class Game {
         }, 1200);
       });
 
-      self.client.onReceiveCowLevelInProgress(function (cowLevelClock) {
-        var selectedDate = new Date().valueOf() + cowLevelClock * 1000;
-
-        if (!self.player.expansion1 || self.player.level < 45) {
-          self.client.sendBanPlayer("Entered CowLevel without expansion or lower than lv.45");
-        }
+      self.client.onReceiveLevelInProgress(function (levelClock) {
+        const selectedDate = new Date().valueOf() + levelClock * 1000;
 
         $("#countdown")
           .countdown(selectedDate.toString())
@@ -4539,7 +4550,7 @@ class Game {
             $(this).html(event.strftime("%M:%S"));
           })
           .on("finish.countdown", function () {
-            $(this).html("Portal to the secret level closed.");
+            $(this).html("Level closed.");
 
             setTimeout(() => {
               $(this).html("");
@@ -4586,28 +4597,6 @@ class Game {
         }, 1200);
       });
 
-      self.client.onReceiveMinotaurLevelInProgress(function (minotaurLevelClock) {
-        var selectedDate = new Date().valueOf() + minotaurLevelClock * 1000;
-
-        if (!self.player.expansion1 || self.player.level < 50) {
-          self.client.sendBanPlayer("Entered MinotaurLevel without expansion or lower than lv.50");
-        }
-
-        $("#countdown")
-          .countdown(selectedDate.toString())
-          .on("update.countdown", function (event) {
-            // @ts-ignore
-            $(this).html(event.strftime("%M:%S"));
-          })
-          .on("finish.countdown", function () {
-            $(this).html("Portal to the secret level closed.");
-
-            setTimeout(() => {
-              $(this).html("");
-            }, 5000);
-          });
-      });
-
       self.client.onReceiveMinotaurLevelEnd(function () {
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
@@ -4622,28 +4611,6 @@ class Game {
 
       self.client.onReceiveChaliceLevelStart(function () {
         // @NOTE TBD?
-      });
-
-      self.client.onReceiveChaliceLevelInProgress(function (levelClock) {
-        var selectedDate = new Date().valueOf() + levelClock * 1000;
-
-        if (!self.player.expansion2) {
-          self.client.sendBanPlayer("Entered Chalice level without expansion2");
-        }
-
-        $("#countdown")
-          .countdown(selectedDate.toString())
-          .on("update.countdown", function (event) {
-            // @ts-ignore
-            $(this).html(event.strftime("%M:%S"));
-          })
-          .on("finish.countdown", function () {
-            $(this).html("The secret level closed.");
-
-            setTimeout(() => {
-              $(this).html("");
-            }, 5000);
-          });
       });
 
       self.client.onReceiveChaliceLevelEnd(function () {
@@ -4666,24 +4633,6 @@ class Game {
 
       self.client.onReceiveTempleLevelStart(function () {
         // @NOTE TBD?
-      });
-
-      self.client.onReceiveTempleLevelInProgress(function (levelClock) {
-        var selectedDate = new Date().valueOf() + levelClock * 1000;
-
-        $("#countdown")
-          .countdown(selectedDate.toString())
-          .on("update.countdown", function (event) {
-            // @ts-ignore
-            $(this).html(event.strftime("%M:%S"));
-          })
-          .on("finish.countdown", function () {
-            $(this).html("The secret level closed.");
-
-            setTimeout(() => {
-              $(this).html("");
-            }, 5000);
-          });
       });
 
       self.client.onReceiveTempleLevelEnd(function () {
@@ -4711,28 +4660,6 @@ class Game {
         }, 1200);
       });
 
-      self.client.onReceiveStoneLevelInProgress(function (levelClock) {
-        var selectedDate = new Date().valueOf() + levelClock * 1000;
-
-        if (!self.player.expansion2) {
-          self.client.sendBanPlayer("Entered Stone level without expansion2");
-        }
-
-        $("#countdown")
-          .countdown(selectedDate.toString())
-          .on("update.countdown", function (event) {
-            // @ts-ignore
-            $(this).html(event.strftime("%M:%S"));
-          })
-          .on("finish.countdown", function () {
-            $(this).html("The stone level closed.");
-
-            setTimeout(() => {
-              $(this).html("");
-            }, 5000);
-          });
-      });
-
       self.client.onReceiveStoneLevelEnd(function () {
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
@@ -4755,28 +4682,6 @@ class Game {
         setTimeout(() => {
           self.gatewayPortalStart = false;
         }, 1200);
-      });
-
-      self.client.onReceiveGatewayLevelInProgress(function (levelClock) {
-        var selectedDate = new Date().valueOf() + levelClock * 1000;
-
-        if (!self.player.expansion2) {
-          self.client.sendBanPlayer("Entered Gateway level without expansion2");
-        }
-
-        $("#countdown")
-          .countdown(selectedDate.toString())
-          .on("update.countdown", function (event) {
-            // @ts-ignore
-            $(this).html(event.strftime("%M:%S"));
-          })
-          .on("finish.countdown", function () {
-            $(this).html("The gateway level closed.");
-
-            setTimeout(() => {
-              $(this).html("");
-            }, 5000);
-          });
       });
 
       self.client.onReceiveGatewayLevelEnd(function () {
@@ -6331,11 +6236,7 @@ class Game {
       return;
     } else if (message.startsWith("/town")) {
       // Prevent sending the message to teleport back to town
-      if (
-        (this.player.hasTarget() && !Types.isNpc(this.player.target.kind)) ||
-        Object.keys(this.player.attackers).length ||
-        (this.player.gridY >= 195 && this.player.gridY <= 259)
-      ) {
+      if (Object.keys(this.player.attackers).length || (this.player.gridY >= 195 && this.player.gridY <= 259)) {
         return;
       }
 

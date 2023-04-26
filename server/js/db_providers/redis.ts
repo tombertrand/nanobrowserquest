@@ -873,8 +873,6 @@ class DatabaseHandler {
       return ["upgrade", UPGRADE_SLOT_RANGE];
     } else if (slot >= TRADE_SLOT_RANGE && slot <= TRADE_SLOT_RANGE + TRADE_SLOT_COUNT - 1) {
       return ["trade", TRADE_SLOT_RANGE];
-    } else if (slot >= MERCHANT_SLOT_RANGE && slot <= MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT - 1) {
-      return ["merchant", MERCHANT_SLOT_RANGE];
     } else if (slot >= STASH_SLOT_RANGE && slot <= STASH_SLOT_RANGE + STASH_SLOT_COUNT) {
       return ["stash", STASH_SLOT_RANGE];
     }
@@ -974,8 +972,6 @@ class DatabaseHandler {
       } else {
         tradeInstance.update({ data, player1Id: player.id });
       }
-    } else if (location === "merchant") {
-      player.send([Types.Messages.MERCHANT.SELL]);
     }
   }
 
@@ -988,7 +984,8 @@ class DatabaseHandler {
     const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
 
     if (!fromLocation || !toLocation) return;
-    if (movedQuantity && fromLocation !== "inventory" && toLocation !== "inventory") return;
+    if (isNaN(movedQuantity)) return;
+    if (fromLocation !== "inventory" && toLocation !== "inventory") return;
 
     if ([fromLocation, toLocation].includes("trade") && player.tradeId) {
       const tradeInstance = player.server.trades[player.tradeId];
@@ -1034,10 +1031,11 @@ class DatabaseHandler {
 
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
               if (Types.isQuantity(fromItem)) {
-                const [fromScroll, fromQuantity] = fromItem.split(":");
+                const [fromScroll, rawFromQuantity] = fromItem.split(":");
+                const fromQuantity = Number(rawFromQuantity);
 
                 // trying to move more than the current quantity
-                if (movedQuantity && movedQuantity > fromQuantity) return;
+                if (movedQuantity > fromQuantity) return;
 
                 if (toLocation === "inventory" || toLocation === "stash" || toLocation === "trade") {
                   let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(`${fromScroll}:`));
@@ -1055,9 +1053,7 @@ class DatabaseHandler {
                     }`;
 
                     if (movedQuantity && fromQuantity - movedQuantity > 0) {
-                      fromReplyParsed[fromSlot - fromRange] = `${fromScroll}:${
-                        parseInt(fromQuantity) - parseInt(`${movedQuantity}`)
-                      }`;
+                      fromReplyParsed[fromSlot - fromRange] = `${fromScroll}:${fromQuantity - movedQuantity}`;
                     } else {
                       fromReplyParsed[fromSlot - fromRange] = 0;
                     }
@@ -1073,65 +1069,13 @@ class DatabaseHandler {
                     : false;
 
                   if ((isScroll && !hasScroll) || (isRune && !toReplyParsed[toSlot - toRange])) {
-                    fromReplyParsed[fromSlot - fromRange] =
-                      fromQuantity > 1 ? `${fromScroll}:${parseInt(fromQuantity) - 1}` : 0;
+                    fromReplyParsed[fromSlot - fromRange] = fromQuantity > 1 ? `${fromScroll}:${fromQuantity - 1}` : 0;
                     toReplyParsed[toSlot - toRange] = `${fromScroll}:1`;
                   }
 
                   isFromReplyDone = true;
                   isToReplyDone = true;
-                } else if (toLocation === "merchant") {
-                  const amount = getGoldAmountFromSoldItem({ item: fromItem, quantity: movedQuantity || 1 });
-
-                  if (amount) {
-                    if (movedQuantity && fromQuantity - movedQuantity > 0) {
-                      fromReplyParsed[fromSlot - fromRange] = `${fromScroll}:${
-                        parseInt(fromQuantity) - parseInt(`${movedQuantity}`)
-                      }`;
-                    } else {
-                      fromReplyParsed[fromSlot - fromRange] = 0;
-                    }
-
-                    this.lootGold({
-                      player,
-                      amount,
-                    });
-
-                    player.send(
-                      new Messages.MerchantLog({
-                        item: fromItem,
-                        quantity: movedQuantity || 1,
-                        amount,
-                        type: "sell",
-                      }).serialize(),
-                    );
-                  }
-
-                  isFromReplyDone = true;
-                  isToReplyDone = true;
                 }
-              } else if (toLocation === "merchant") {
-                this.lootGold({ player, amount: getGoldAmountFromSoldItem({ item: fromItem }) });
-
-                const amount = getGoldAmountFromSoldItem({ item: fromItem });
-                if (amount) {
-                  this.lootGold({
-                    player,
-                    amount,
-                  });
-
-                  player.send(
-                    new Messages.MerchantLog({
-                      item: fromItem,
-                      quantity: 1,
-                      amount,
-                      type: "sell",
-                    }).serialize(),
-                  );
-                } else {
-                }
-
-                isToReplyDone = true;
               } else if (
                 ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(toLocation) &&
                 fromItem
@@ -1250,7 +1194,8 @@ class DatabaseHandler {
           const fromLocation = locationMap[from];
           const toLocation = locationMap[to];
 
-          if (fromLocation === toLocation || isNaN(amount)) return;
+          if (fromLocation === toLocation || isNaN(amount) || !fromLocation || !toLocation) return;
+
           this.client.hget("u:" + player.name, fromLocation, (err, rawFromGold) => {
             if (err) {
               Sentry.captureException(err);
@@ -1447,6 +1392,63 @@ class DatabaseHandler {
       .catch(err => {
         Sentry.captureException(err);
       });
+  }
+
+  sellToMerchant({ player, fromSlot, quantity: soldQuantity = 1 }) {
+    if (!fromSlot || fromSlot >= INVENTORY_SLOT_COUNT || isNaN(soldQuantity)) return;
+
+    this.client.hget("u:" + player.name, "inventory", (_err, fromReply) => {
+      let fromItem;
+
+      try {
+        let fromReplyParsed = JSON.parse(fromReply);
+        fromItem = fromReplyParsed[fromSlot];
+        if (!fromItem) return;
+
+        const amount = getGoldAmountFromSoldItem({ item: fromItem, quantity: soldQuantity });
+        if (!amount) return;
+
+        let isFromReplyDone = false;
+
+        // Quantity
+        if (Types.isQuantity(fromItem)) {
+          const [fromScroll, rawQuantity] = fromItem.split(":");
+          const fromQuantity = Number(rawQuantity);
+
+          // trying to sell more than the current quantity
+          if (soldQuantity > fromQuantity) return;
+          if (fromQuantity - soldQuantity > 0) {
+            fromReplyParsed[fromSlot] = `${fromScroll}:${fromQuantity - soldQuantity}`;
+            isFromReplyDone = true;
+          }
+        } else {
+          if (soldQuantity > 1) return;
+        }
+
+        if (!isFromReplyDone) {
+          fromReplyParsed[fromSlot] = 0;
+        }
+
+        this.client.hset("u:" + player.name, "inventory", JSON.stringify(fromReplyParsed), () => {
+          this.lootGold({
+            player,
+            amount,
+          });
+          player.send(
+            new Messages.MerchantLog({
+              item: fromItem,
+              quantity: soldQuantity,
+              amount,
+              type: "sell",
+            }).serialize(),
+          );
+        });
+        this.sendMoveItem({ player, location: "inventory", data: fromReplyParsed });
+      } catch (err) {
+        console.log(err);
+        Sentry.captureException(err);
+      }
+    });
   }
 
   lootItems({ player, items, toSlot }: { player: any; items: GeneratedItem[]; toSlot?: number }) {

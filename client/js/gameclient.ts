@@ -86,23 +86,18 @@ class GameClient {
   receivepurchaseerror_callback: any;
   receivewaypointsupdate_callback: any;
   receivecowlevelstart_callback: any;
-  receivecowlevelinprogress_callback: any;
   receivecowlevelend_callback: any;
   receiveminotaurlevelstart_callback: any;
-  receiveminotaurlevelinprogress_callback: any;
   receiveminotaurlevelend_callback: any;
   receivechalicelevelstart_callback: any;
-  receivechalicelevelinprogress_callback: any;
   receivechalicelevelend_callback: any;
   receivetemplelevelstart_callback: any;
-  receivetemplelevelinprogress_callback: any;
   receivetemplelevelend_callback: any;
   receivestonelevelstart_callback: any;
-  receivestonelevelinprogress_callback: any;
   receivestonelevelend_callback: any;
   receivegatewaylevelstart_callback: any;
-  receivegatewaylevelinprogress_callback: any;
   receivegatewaylevelend_callback: any;
+  receivelevelinprogress_callback: any;
   receivefrozen_callback: any;
   receiveslowed_callback: any;
   receivepoisoned_callback: any;
@@ -172,23 +167,18 @@ class GameClient {
     this.handlers[Types.Messages.PURCHASE_COMPLETED] = this.receivePurchaseCompleted;
     this.handlers[Types.Messages.PURCHASE_ERROR] = this.receivePurchaseError;
     this.handlers[Types.Messages.WAYPOINTS_UPDATE] = this.receiveWaypointsUpdate;
+    this.handlers[Types.Messages.LEVEL_INPROGRESS] = this.receiveLevelInProgress;
     this.handlers[Types.Messages.COWLEVEL_START] = this.receiveCowLevelStart;
-    this.handlers[Types.Messages.COWLEVEL_INPROGRESS] = this.receiveCowLevelInProgress;
     this.handlers[Types.Messages.COWLEVEL_END] = this.receiveCowLevelEnd;
     this.handlers[Types.Messages.MINOTAURLEVEL_START] = this.receiveMinotaurLevelStart;
-    this.handlers[Types.Messages.MINOTAURLEVEL_INPROGRESS] = this.receiveMinotaurLevelInProgress;
     this.handlers[Types.Messages.MINOTAURLEVEL_END] = this.receiveMinotaurLevelEnd;
     this.handlers[Types.Messages.CHALICELEVEL_START] = this.receiveChaliceLevelStart;
-    this.handlers[Types.Messages.CHALICELEVEL_INPROGRESS] = this.receiveChaliceLevelInProgress;
     this.handlers[Types.Messages.CHALICELEVEL_END] = this.receiveChaliceLevelEnd;
     this.handlers[Types.Messages.TEMPLELEVEL_START] = this.receiveTempleLevelStart;
-    this.handlers[Types.Messages.TEMPLELEVEL_INPROGRESS] = this.receiveTempleLevelInProgress;
     this.handlers[Types.Messages.TEMPLELEVEL_END] = this.receiveTempleLevelEnd;
     this.handlers[Types.Messages.STONELEVEL_START] = this.receiveStoneLevelStart;
-    this.handlers[Types.Messages.STONELEVEL_INPROGRESS] = this.receiveStoneLevelInProgress;
     this.handlers[Types.Messages.STONELEVEL_END] = this.receiveStoneLevelEnd;
     this.handlers[Types.Messages.GATEWAYLEVEL_START] = this.receiveGatewayLevelStart;
-    this.handlers[Types.Messages.GATEWAYLEVEL_INPROGRESS] = this.receiveGatewayLevelInProgress;
     this.handlers[Types.Messages.GATEWAYLEVEL_END] = this.receiveGatewayLevelEnd;
     this.handlers[Types.Messages.FROZEN] = this.receiveFrozen;
     this.handlers[Types.Messages.SLOWED] = this.receiveSlowed;
@@ -767,26 +757,13 @@ class GameClient {
     this.receivecowlevelstart_callback?.({ x, y });
   }
 
-  receiveCowLevelInProgress(data) {
-    const clock = data[1];
-
-    this.receivecowlevelinprogress_callback(clock);
-  }
-
   receiveCowLevelEnd(data) {
     const isCompleted = data[1];
-
     this.receivecowlevelend_callback?.(isCompleted);
   }
 
   receiveMinotaurLevelStart() {
     this.receiveminotaurlevelstart_callback?.();
-  }
-
-  receiveMinotaurLevelInProgress(data) {
-    const clock = data[1];
-
-    this.receiveminotaurlevelinprogress_callback?.(clock);
   }
 
   receiveMinotaurLevelEnd() {
@@ -797,24 +774,12 @@ class GameClient {
     this.receivechalicelevelstart_callback?.();
   }
 
-  receiveChaliceLevelInProgress(data) {
-    const levelClock = data[1];
-
-    this.receivechalicelevelinprogress_callback?.(levelClock);
-  }
-
   receiveChaliceLevelEnd() {
     this.receivechalicelevelend_callback?.();
   }
 
   receiveTempleLevelStart() {
     this.receivetemplelevelstart_callback?.();
-  }
-
-  receiveTempleLevelInProgress(data) {
-    const levelClock = data[1];
-
-    this.receivetemplelevelinprogress_callback?.(levelClock);
   }
 
   receiveTempleLevelEnd() {
@@ -825,12 +790,6 @@ class GameClient {
     this.receivestonelevelstart_callback?.();
   }
 
-  receiveStoneLevelInProgress(data) {
-    const clock = data[1];
-
-    this.receivestonelevelinprogress_callback?.(clock);
-  }
-
   receiveStoneLevelEnd() {
     this.receivestonelevelend_callback?.();
   }
@@ -839,14 +798,13 @@ class GameClient {
     this.receivegatewaylevelstart_callback?.();
   }
 
-  receiveGatewayLevelInProgress(data) {
-    const clock = data[1];
-
-    this.receivegatewaylevelinprogress_callback?.(clock);
-  }
-
   receiveGatewayLevelEnd() {
     this.receivegatewaylevelend_callback?.();
+  }
+
+  receiveLevelInProgress(data) {
+    const clock = data[1];
+    this.receivelevelinprogress_callback(clock);
   }
 
   receiveFrozen(data) {
@@ -1184,20 +1142,12 @@ class GameClient {
     this.receivecowlevelstart_callback = callback;
   }
 
-  onReceiveCowLevelInProgress(callback) {
-    this.receivecowlevelinprogress_callback = callback;
-  }
-
   onReceiveCowLevelEnd(callback) {
     this.receivecowlevelend_callback = callback;
   }
 
   onReceiveMinotaurLevelStart(callback) {
     this.receiveminotaurlevelstart_callback = callback;
-  }
-
-  onReceiveMinotaurLevelInProgress(callback) {
-    this.receiveminotaurlevelinprogress_callback = callback;
   }
 
   onReceiveMinotaurLevelEnd(callback) {
@@ -1208,20 +1158,12 @@ class GameClient {
     this.receivechalicelevelstart_callback = callback;
   }
 
-  onReceiveChaliceLevelInProgress(callback) {
-    this.receivechalicelevelinprogress_callback = callback;
-  }
-
   onReceiveChaliceLevelEnd(callback) {
     this.receivechalicelevelend_callback = callback;
   }
 
   onReceiveTempleLevelStart(callback) {
     this.receivetemplelevelstart_callback = callback;
-  }
-
-  onReceiveTempleLevelInProgress(callback) {
-    this.receivetemplelevelinprogress_callback = callback;
   }
 
   onReceiveTempleLevelEnd(callback) {
@@ -1232,10 +1174,6 @@ class GameClient {
     this.receivestonelevelstart_callback = callback;
   }
 
-  onReceiveStoneLevelInProgress(callback) {
-    this.receivestonelevelinprogress_callback = callback;
-  }
-
   onReceiveStoneLevelEnd(callback) {
     this.receivestonelevelend_callback = callback;
   }
@@ -1244,12 +1182,12 @@ class GameClient {
     this.receivegatewaylevelstart_callback = callback;
   }
 
-  onReceiveGatewayLevelInProgress(callback) {
-    this.receivegatewaylevelinprogress_callback = callback;
-  }
-
   onReceiveGatewayLevelEnd(callback) {
     this.receivegatewaylevelend_callback = callback;
+  }
+
+  onReceiveLevelInProgress(callback) {
+    this.receivelevelinprogress_callback = callback;
   }
 
   onFrozen(callback) {
@@ -1515,6 +1453,10 @@ class GameClient {
 
   sendBuyFromMerchant(fromSlot, toSlot, quantity) {
     this.sendMessage([Types.Messages.MERCHANT.BUY, fromSlot, toSlot, quantity]);
+  }
+
+  sendSellToMerchant(fromSlot, quantity = 1) {
+    this.sendMessage([Types.Messages.MERCHANT.SELL, fromSlot, quantity]);
   }
 }
 

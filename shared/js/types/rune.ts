@@ -696,45 +696,85 @@ export const Runewords = {
         flameDamagePercent: 18,
       },
     },
-    "mer-qua-gul-ber-kul-fal": {
-      name: "Ascending Bootstrapping",
-      bonus: {
-        magicDamagePercent: 20,
-        lightningDamagePercent: 20,
-        flameDamagePercent: 20,
-        coldDamagePercent: 20,
-        poisonDamagePercent: 20,
-        skillTimeout: 20,
-      },
-    },
     "sol-tor-shi-vod-las-fal": {
       name: "Bucketing System",
       bonus: {
-        coldDamage: 20,
-        magicDamagePercent: 16,
-        allResistance: 16,
-        freezeChance: 10,
-        coldResistance: 10,
-        coldDamagePercent: 20,
-        reduceFrozenChance: 15,
+        health: 120,
+        defense: 20,
+        magicDamage: 25,
+        magicDamagePercent: 20,
+        allResistance: 15,
+        freezeChance: 15,
+        magicResistance: 25,
+        lowerMagicResistance: 15,
       },
     },
-    "jah-shi-jah-ber-eth-gul": {
+    "mer-qua-gul-ber-kul-fal": {
+      name: "Ascending Bootstrapping",
+      bonus: {
+        health: 100,
+        defense: 25,
+        flameDamage: 25,
+        flameDamagePercent: 20,
+        allResistance: 15,
+        flameResistance: 25,
+        lowerFlameResistance: 15,
+      },
+    },
+    // "": {
+    //   name: "Announcement of an Announcement",
+    //   bonus: {
+    //     health: 60,
+    //     defense: 20,
+    //     lightningDamage: 25,
+    //     lightningDamagePercent: 20,
+    //     allResistance: 15,
+    //     lightningResistance: 25,
+    //     lowerLightningResistance: 15,
+    //   },
+    // },
+    // "": {
+    //   name: "What if Price Goes Below 2K",
+    //   bonus: {
+    //     defense: 20,
+    //     coldDamage: 25,
+    //     coldDamagePercent: 20,
+    //     allResistance: 15,
+    //     coldResistance: 25,
+    //     lowerColdResistance: 15,
+    //     freezeChance: 15,
+    //     reduceFrozenChance: 15,
+    //   },
+    // },
+    // "": {
+    //   name: "Let that sink in for a Second",
+    //   bonus: {
+    //     health: 120,
+    //     defense: 25,
+    //     poisonDamage: 25,
+    //     poisonDamagePercent: 20,
+    //     allResistance: 15,
+    //     poisonResistance: 25,
+    //     lowerPoisonResistance: 15,
+    //   },
+    // },
+    "jah-shi-xno-ber-vod-gul": {
       name: "Echo Chamber",
       bonus: {
-        poisonDamage: 40,
-        coldDamage: 25,
-        magicFind: 40,
+        health: 200,
+        defense: 35,
+        magicDamage: 15,
+        flameDamage: 15,
+        lightningDamage: 15,
+        coldDamage: 15,
+        poisonDamage: 15,
+        magicFind: 25,
         skillTimeout: 20,
-        allResistance: 16,
-        poisonDamagePercent: 25,
+        allResistance: 25,
       },
     },
   },
 };
 
-// Announcement of an Announcement
-// What if Price Goes Below 2K
-// Let that sink in for a Second
 // Fear and Greed index
 // Satoshi's Original Vision

@@ -412,7 +412,7 @@ class Player extends Character {
 
             if (msg.startsWith("/ban")) {
               const periods = { 1: 86400, 365: 86400 * 365 };
-              const reasons = ["misbehaved", "spamming", "inappropriate_language"];
+              const reasons = ["misbehaved", "cheating", "spamming", "inappropriate_language"];
 
               const [, period, reason, playerName] = msg.match(/\s(\w+)\s(\w+)\s(.+)/);
 
@@ -985,8 +985,7 @@ class Player extends Character {
         // @NOTE Handle the /town command
         if (x >= 33 && x <= 39 && y >= 208 && y <= 211) {
           // The message should have been blocked by the FE
-          if (self.hasTarget() || Object.keys(self.attackers).length || (self.y >= 195 && self.y <= 259)) {
-            self.server.disconnectPlayer(self.name);
+          if (Object.keys(self.attackers).length || (self.y >= 195 && self.y <= 259)) {
             return;
           }
         }
@@ -1003,19 +1002,7 @@ class Player extends Character {
           self.server.handlePlayerVanish(self);
           // self.server.pushRelevantEntityListTo(self);
 
-          if (x === 34 && y === 498) {
-            self.send(new Messages.MinotaurLevelInProgress(self.server.minotaurLevelClock).serialize());
-          } else if (y >= 464 && y <= 535 && x <= 534) {
-            self.send(new Messages.CowLevelInProgress(self.server.cowLevelClock).serialize());
-          } else if (y >= 696 && y <= 733 && x <= 29) {
-            self.send(new Messages.ChaliceLevelInProgress(self.server.chaliceLevelClock).serialize());
-          } else if (y >= 696 && y <= 733 && x >= 85 && x <= 112) {
-            self.send(new Messages.StoneLevelInProgress(self.server.stoneLevelClock).serialize());
-          } else if (y >= 744 && y <= 781 && x <= 29) {
-            self.send(new Messages.GatewayLevelInProgress(self.server.gatewayLevelClock).serialize());
-          } else if (y >= 744 && x >= 84 && self.server.templeLevelClock) {
-            self.send(new Messages.TempleLevelInProgress(self.server.templeLevelClock).serialize());
-          }
+          self.sendLevelInProgress();
         }
       } else if (action === Types.Messages.BOSS_CHECK) {
         if (self.hash && !message[1]) {
@@ -1473,6 +1460,11 @@ class Player extends Character {
         const quantity = message[3];
 
         self.databaseHandler.buyFromMerchant({ player: self, fromSlot, toSlot, quantity });
+      } else if (action === Types.Messages.MERCHANT.SELL) {
+        const fromSlot = message[1];
+        const quantity = message[2];
+
+        self.databaseHandler.sellToMerchant({ player: self, fromSlot, quantity });
       } else if (action === Types.Messages.SETTINGS) {
         const settings = message[1];
 
@@ -2654,6 +2646,24 @@ class Player extends Character {
     this.connection.close("Player was idle for too long");
   }
 
+  sendLevelInProgress() {
+    const { x, y } = this;
+
+    if (x === 34 && y === 498 && this.server.minotaurLevelClock) {
+      this.send(new Messages.LevelInProgress(this.server.minotaurLevelClock).serialize());
+    } else if (y >= 464 && y <= 535 && x <= 534 && this.server.cowLevelClock) {
+      this.send(new Messages.LevelInProgress(this.server.cowLevelClock).serialize());
+    } else if (y >= 696 && y <= 733 && x <= 29 && this.server.chaliceLevelClock) {
+      this.send(new Messages.LevelInProgress(this.server.chaliceLevelClock).serialize());
+    } else if (y >= 696 && y <= 733 && x >= 85 && x <= 112 && this.server.stoneLevelClock) {
+      this.send(new Messages.LevelInProgress(this.server.stoneLevelClock).serialize());
+    } else if (y >= 744 && y <= 781 && x <= 29 && this.server.gatewayLevelClock) {
+      this.send(new Messages.LevelInProgress(this.server.gatewayLevelClock).serialize());
+    } else if (y >= 744 && x >= 84 && this.server.templeLevelClock) {
+      this.send(new Messages.LevelInProgress(this.server.templeLevelClock).serialize());
+    }
+  }
+
   sendPlayerStats() {
     const isInParty = this.getParty()?.members.length >= 2;
 
@@ -3004,9 +3014,7 @@ class Player extends Character {
         },
       ]);
 
-      if (this.y >= 744 && this.x >= 84 && this.server.templeLevelClock) {
-        this.send(new Messages.TempleLevelInProgress(this.server.templeLevelClock).serialize());
-      }
+      this.sendLevelInProgress();
 
       this.resetBonus();
       this.calculateBonus();

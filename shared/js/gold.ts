@@ -9,10 +9,10 @@ export const merchantItems: { item: string; amount: number }[] = [
   { item: "scrolltransmute", amount: 1500 },
   undefined,
   undefined,
-  { item: "barbronze", amount: 1100 },
-  { item: "barsilver", amount: 11_000 },
-  { item: "bargold", amount: 110_000 },
-  { item: "barplatinum", amount: 1_100_000 },
+  { item: "barbronze", amount: 1050 },
+  { item: "barsilver", amount: 10_500 },
+  { item: "bargold", amount: 105_000 },
+  { item: "barplatinum", amount: 1_050_000 },
   { item: "stonesocket", amount: 1_500 },
 ];
 

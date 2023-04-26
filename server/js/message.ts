@@ -78,13 +78,6 @@ Messages.CowLevelStart = class Message {
   }
 };
 
-Messages.CowLevelInProgress = class Message {
-  constructor(private cowLevelClock) {}
-  serialize() {
-    return [Types.Messages.COWLEVEL_INPROGRESS, this.cowLevelClock];
-  }
-};
-
 Messages.CowLevelEnd = class Message {
   constructor(private isCompleted) {}
   serialize() {
@@ -96,13 +89,6 @@ Messages.MinotaurLevelStart = class Message {
   constructor(private coords) {}
   serialize() {
     return [Types.Messages.MINOTAURLEVEL_START];
-  }
-};
-
-Messages.MinotaurLevelInProgress = class Message {
-  constructor(private minotaurLevelClock) {}
-  serialize() {
-    return [Types.Messages.MINOTAURLEVEL_INPROGRESS, this.minotaurLevelClock];
   }
 };
 
@@ -120,13 +106,6 @@ Messages.ChaliceLevelStart = class Message {
   }
 };
 
-Messages.ChaliceLevelInProgress = class Message {
-  constructor(private levelClock) {}
-  serialize() {
-    return [Types.Messages.CHALICELEVEL_INPROGRESS, this.levelClock];
-  }
-};
-
 Messages.ChaliceLevelEnd = class Message {
   constructor() {}
   serialize() {
@@ -138,13 +117,6 @@ Messages.TempleLevelStart = class Message {
   constructor(private coords) {}
   serialize() {
     return [Types.Messages.TEMPLELEVEL_START];
-  }
-};
-
-Messages.TempleLevelInProgress = class Message {
-  constructor(private levelClock) {}
-  serialize() {
-    return [Types.Messages.TEMPLELEVEL_INPROGRESS, this.levelClock];
   }
 };
 
@@ -162,13 +134,6 @@ Messages.StoneLevelStart = class Message {
   }
 };
 
-Messages.StoneLevelInProgress = class Message {
-  constructor(private stoneLevelClock) {}
-  serialize() {
-    return [Types.Messages.STONELEVEL_INPROGRESS, this.stoneLevelClock];
-  }
-};
-
 Messages.StoneLevelEnd = class Message {
   constructor(private isCompleted) {}
   serialize() {
@@ -183,17 +148,17 @@ Messages.GatewayLevelStart = class Message {
   }
 };
 
-Messages.GatewayLevelInProgress = class Message {
-  constructor(private clock) {}
-  serialize() {
-    return [Types.Messages.GATEWAYLEVEL_INPROGRESS, this.clock];
-  }
-};
-
 Messages.GatewayLevelEnd = class Message {
   constructor(private isCompleted) {}
   serialize() {
     return [Types.Messages.GATEWAYLEVEL_END];
+  }
+};
+
+Messages.LevelInProgress = class Message {
+  constructor(private levelClock) {}
+  serialize() {
+    return [Types.Messages.LEVEL_INPROGRESS, this.levelClock];
   }
 };
 
