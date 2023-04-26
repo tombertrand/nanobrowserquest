@@ -1040,7 +1040,7 @@ class Game {
 
     if (toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT) {
       if (fromSlot < INVENTORY_SLOT_COUNT) {
-        this.client.sendSellToMerchant(fromSlot, transferedQuantity);
+        this.client.sendSellToMerchant(fromSlot, transferedQuantity || 1);
       }
       return;
     }

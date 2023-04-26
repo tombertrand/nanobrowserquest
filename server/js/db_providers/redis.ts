@@ -1395,7 +1395,7 @@ class DatabaseHandler {
   }
 
   sellToMerchant({ player, fromSlot, quantity: soldQuantity = 1 }) {
-    if (!fromSlot || fromSlot >= INVENTORY_SLOT_COUNT || isNaN(soldQuantity)) return;
+    if (isNaN(fromSlot) || fromSlot >= INVENTORY_SLOT_COUNT || isNaN(soldQuantity)) return;
 
     this.client.hget("u:" + player.name, "inventory", (_err, fromReply) => {
       let fromItem;

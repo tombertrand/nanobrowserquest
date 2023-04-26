@@ -1455,7 +1455,7 @@ class GameClient {
     this.sendMessage([Types.Messages.MERCHANT.BUY, fromSlot, toSlot, quantity]);
   }
 
-  sendSellToMerchant(fromSlot, quantity = 1) {
+  sendSellToMerchant(fromSlot, quantity) {
     this.sendMessage([Types.Messages.MERCHANT.SELL, fromSlot, quantity]);
   }
 }
