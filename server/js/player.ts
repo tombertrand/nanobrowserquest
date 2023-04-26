@@ -817,7 +817,8 @@ class Player extends Character {
             }
           }
 
-          var kind = item.kind;
+          const { kind } = item;
+          if (Types.Entities.CAKE === kind) return;
 
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());

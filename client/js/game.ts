@@ -1443,9 +1443,6 @@ class Game {
       $("#merchant .item-draggable.ui-draggable").draggable("destroy");
     }
 
-    // @TODO instead of empty-ing, compare and replace
-    $("#item-merchant").empty();
-
     this.initMerchant();
 
     if ($("#merchant").hasClass("visible")) {
@@ -1518,6 +1515,8 @@ class Game {
   }
 
   initMerchant() {
+    $("#item-merchant").empty();
+
     for (var i = 0; i < MERCHANT_SLOT_COUNT; i++) {
       $("#item-merchant").append(
         `<div class="item-slot item-merchant ${!merchantItems[i] ? "item-merchant-empty" : ""}" data-slot="${

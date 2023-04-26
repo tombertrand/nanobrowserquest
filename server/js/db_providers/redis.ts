@@ -984,7 +984,6 @@ class DatabaseHandler {
     const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
 
     if (!fromLocation || !toLocation) return;
-    if (isNaN(movedQuantity)) return;
     if (fromLocation !== "inventory" && toLocation !== "inventory") return;
 
     if ([fromLocation, toLocation].includes("trade") && player.tradeId) {
@@ -1035,7 +1034,7 @@ class DatabaseHandler {
                 const fromQuantity = Number(rawFromQuantity);
 
                 // trying to move more than the current quantity
-                if (movedQuantity > fromQuantity) return;
+                if (movedQuantity && movedQuantity > fromQuantity) return;
 
                 if (toLocation === "inventory" || toLocation === "stash" || toLocation === "trade") {
                   let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(`${fromScroll}:`));
@@ -1776,41 +1775,51 @@ class DatabaseHandler {
               let uniqueChances;
               let jewelLevel;
 
-              switch (recipe) {
-                case "chestblue":
-                  isChestblue = true;
-                  ({ item, uniqueChances, jewelLevel } = generateBlueChestItem());
-                  break;
-                case "chestgreen":
-                  isChestgreen = true;
-                  ({ item, uniqueChances, jewelLevel } = generateGreenChestItem());
-                  break;
-                case "chestpurple":
-                  isChestpurple = true;
-                  ({ item, uniqueChances, jewelLevel } = generatePurpleChestItem());
-                  break;
-                case "chestred":
-                  isChestred = true;
-                  ({ item, uniqueChances, jewelLevel } = generateRedChestItem());
-                  break;
+              try {
+                switch (recipe) {
+                  case "chestblue":
+                    isChestblue = true;
+                    ({ item, uniqueChances, jewelLevel } = generateBlueChestItem());
+                    break;
+                  case "chestgreen":
+                    isChestgreen = true;
+                    ({ item, uniqueChances, jewelLevel } = generateGreenChestItem());
+                    break;
+                  case "chestpurple":
+                    isChestpurple = true;
+                    ({ item, uniqueChances, jewelLevel } = generatePurpleChestItem());
+                    break;
+                  case "chestred":
+                    isChestred = true;
+                    ({ item, uniqueChances, jewelLevel } = generateRedChestItem());
+                    break;
+                }
+
+                if (!item) return;
+
+                luckySlot = null;
+                isWorkingRecipe = true;
+
+                const {
+                  item: itemName,
+                  level,
+                  quantity,
+                  bonus,
+                  socket,
+                  skill,
+                } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances, jewelLevel });
+
+                const delimiter = Types.isJewel(item) ? "|" : ":";
+                generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(delimiter);
+              } catch (err) {
+                Sentry.captureException(err, {
+                  extra: {
+                    player: player.name,
+                    recipe,
+                    item,
+                  },
+                });
               }
-
-              if (!item) return;
-
-              luckySlot = null;
-              isWorkingRecipe = true;
-
-              const {
-                item: itemName,
-                level,
-                quantity,
-                bonus,
-                socket,
-                skill,
-              } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances, jewelLevel });
-
-              const delimiter = Types.isJewel(item) ? "|" : ":";
-              generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(delimiter);
             } else if (recipe === "powderquantum") {
               isWorkingRecipe = true;
               isRecipe = true;
