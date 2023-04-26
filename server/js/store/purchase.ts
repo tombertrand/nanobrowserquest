@@ -248,8 +248,8 @@ const purchase: { [key in Network]: Purchase } = {
 };
 
 const websocket: { [key in Network]: Websocket | null } = {
-  nano: null, //new Websocket("nano"),
-  ban: null, //new Websocket("ban"),
+  nano: new Websocket("nano"),
+  ban: new Websocket("ban"),
 };
 
 export { purchase };

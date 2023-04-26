@@ -984,7 +984,7 @@ class DatabaseHandler {
     const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
 
     if (!fromLocation || !toLocation) return;
-    if (fromLocation !== "inventory" && toLocation !== "inventory") return;
+    if (movedQuantity && fromLocation !== "inventory" && toLocation !== "inventory") return;
 
     if ([fromLocation, toLocation].includes("trade") && player.tradeId) {
       const tradeInstance = player.server.trades[player.tradeId];
