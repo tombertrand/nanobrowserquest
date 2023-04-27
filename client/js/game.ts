@@ -1770,7 +1770,11 @@ class Game {
       const isTree = mobId ? entity.kind === Types.Entities.TREE && this.player.attackSkill === 1 : false;
 
       // Can't cast on self
-      if (!mobId || mobId === this.player.id || (Types.isNpc(entity.kind) && !isTree) || !(entity instanceof Mob))
+      if (
+        !mobId ||
+        mobId === this.player.id ||
+        ((Types.isNpc(entity.kind) || !(entity instanceof Character)) && !isTree)
+      )
         return;
 
       // Can't cast on other players with many level difference

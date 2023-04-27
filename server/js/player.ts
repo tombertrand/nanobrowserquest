@@ -832,6 +832,8 @@ class Player extends Character {
                   type: Types.Messages.NOTIFICATION,
                   message: "You received the Soul Stone",
                 });
+
+                postMessageToDiscordEventChannel(`${soulStonePlayer.name} picked up Soul Stone ${EmojiMap.soulstone} `);
                 return;
               }
             }
@@ -955,7 +957,7 @@ class Player extends Character {
                         EmojiMap[generatedItem.item] || "💍"
                       } `,
                     );
-                  } else if (Types.isRune(kind) && Types.RuneList.indexOf(runeName) + 1 >= Types.runeKind.mer.rank) {
+                  } else if (Types.isRune(kind) && Types.RuneList.indexOf(runeName) + 1 >= 20) {
                     postMessageToDiscordEventChannel(
                       `${player.name} picked up ${runeName.toUpperCase()} rune ${EmojiMap[`rune-${runeName}`]}`,
                     );

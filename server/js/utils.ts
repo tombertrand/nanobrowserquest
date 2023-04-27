@@ -577,7 +577,7 @@ export const generatePurpleChestItem = (): {
   const scrolls = [
     { item: "scrollupgradelegendary" },
     { item: "scrollupgradesacred" },
-    { item: "scrolluptransmuteblessed" },
+    { item: "scrolltransmuteblessed" },
     { item: "stonesocket" },
     { item: "stonedragon" },
     { item: "jewelskull", jewelLevel: 5 },
@@ -994,7 +994,7 @@ export const generateSoulStoneItem = (): { item: string; quantity?: number; uniq
   const scrolls = [
     { item: "scrollupgradelegendary" },
     { item: "scrollupgradesacred" },
-    { item: "scrolluptransmuteblessed" },
+    { item: "scrolltransmuteblessed" },
     { item: "stonedragon" },
   ];
 

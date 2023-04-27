@@ -1792,29 +1792,51 @@ class World {
 
       if (force || (await this.databaseHandler.useInventoryItem(player, "soulstone"))) {
         let kind;
-        let soulStoneItem = generateSoulStoneItem();
         let item;
+        try {
+          let soulStoneItem = generateSoulStoneItem();
 
-        if (!Types.isRune(soulStoneItem.item)) {
-          kind = Types.getKindFromString(soulStoneItem.item);
-          item = player.generateItem({
-            kind,
-            uniqueChances: soulStoneItem.uniqueChances,
+          const isRune = Types.isRune(soulStoneItem.item);
+
+          if (!isRune) {
+            kind = Types.getKindFromString(soulStoneItem.item);
+            item = player.generateItem({
+              kind,
+              uniqueChances: soulStoneItem.uniqueChances,
+            });
+          } else {
+            item = soulStoneItem;
+            kind = Types.getKindFromString(soulStoneItem.item);
+
+            const runeName = item.item;
+            const rune = Types.getRuneFromItem(runeName);
+
+            if (rune.rank >= 20) {
+              postMessageToDiscordEventChannel(
+                `${player.name} obtained ${Types.RuneList[rune.rank - 1].toUpperCase()} rune ${
+                  EmojiMap[runeName]
+                } from the Soul Stone`,
+              );
+            }
+          }
+
+          this.databaseHandler.lootItems({
+            player,
+            items: [item],
           });
-        } else {
-          item = soulStoneItem;
-          kind = Types.getKindFromString(soulStoneItem.item);
+
+          player.send(new Messages.SoulStone({ kind, isUnique: item.isUnique }).serialize());
+
+          this.broadcastRaise(player, altar);
+          this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX);
+        } catch (err) {
+          Sentry.captureException(err, {
+            extra: {
+              player: player.name,
+              item,
+            },
+          });
         }
-
-        this.databaseHandler.lootItems({
-          player,
-          items: [item],
-        });
-
-        player.send(new Messages.SoulStone({ kind, isUnique: item.isUnique }).serialize());
-
-        this.broadcastRaise(player, altar);
-        this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX);
       }
     }
   }
