@@ -818,32 +818,32 @@ class Player extends Character {
           }
 
           const { kind } = item;
-          if (Types.Entities.CAKE === kind) return;
-          if (Types.Entities.SOULSTONE === kind) {
-            if (self.server.soulStonePlayerName) {
-              const soulStonePlayer = self.server.getPlayerByName(self.server.soulStonePlayerName);
-              if (soulStonePlayer) {
-                self.databaseHandler.lootItems({
-                  player: soulStonePlayer,
-                  items: [{ item: "soulstone", quantity: 1 }],
-                });
-
-                soulStonePlayer.send({
-                  type: Types.Messages.NOTIFICATION,
-                  message: "You received the Soul Stone",
-                });
-
-                postMessageToDiscordEventChannel(`${soulStonePlayer.name} picked up Soul Stone ${EmojiMap.soulstone} `);
-                return;
-              }
-            }
-          }
 
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());
             self.server.removeEntity(item);
 
-            if (Types.Entities.Gems.includes(kind)) {
+            if (Types.Entities.CAKE === kind) return;
+            if (Types.Entities.SOULSTONE === kind) {
+              if (self.server.soulStonePlayerName) {
+                const soulStonePlayer = self.server.getPlayerByName(self.server.soulStonePlayerName);
+                if (soulStonePlayer) {
+                  self.databaseHandler.lootItems({
+                    player: soulStonePlayer,
+                    items: [{ item: "soulstone", quantity: 1 }],
+                  });
+
+                  soulStonePlayer.send({
+                    type: Types.Messages.NOTIFICATION,
+                    message: "You received the Soul Stone",
+                  });
+
+                  postMessageToDiscordEventChannel(
+                    `${soulStonePlayer.name} picked up Soul Stone ${EmojiMap.soulstone} `,
+                  );
+                }
+              }
+            } else if (Types.Entities.Gems.includes(kind)) {
               let index = Types.Entities.Gems.indexOf(kind);
               databaseHandler.foundGem(self.name, index);
             } else if (Types.Entities.Artifact.includes(kind)) {
