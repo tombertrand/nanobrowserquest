@@ -6616,7 +6616,9 @@ class Game {
           }
         }
 
-        this.showNotification(item.getLootMessage(params));
+        if (item.kind !== Types.Entities.SOULSTONE) {
+          this.showNotification(item.getLootMessage(params));
+        }
       }
 
       if (item.type === "armor") {

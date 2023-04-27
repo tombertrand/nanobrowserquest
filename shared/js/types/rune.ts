@@ -458,11 +458,12 @@ export const Runewords = {
     "las-tor-mir-tor-al-vie": {
       name: "Cold Wallet",
       bonus: {
-        minDamage: 10,
+        health: 80,
+        minDamage: 25,
         attackDamage: 20,
-        coldDamage: 30,
+        coldDamage: 40,
         freezeChance: 15,
-        coldResistance: 15,
+        coldResistance: 35,
         regenerateHealth: 25,
       },
     },
@@ -479,6 +480,7 @@ export const Runewords = {
     "ber-gul-cham-eth-eth": {
       name: "Living Whitepaper",
       bonus: {
+        attackDamage: 15,
         poisonDamage: 35,
         poisonResistance: 20,
         poisonDamagePercent: 20,
@@ -489,9 +491,11 @@ export const Runewords = {
     "fal-btc-xno-zal-xno-fal": {
       name: "Can't the devs do something",
       bonus: {
+        minDamage: 10,
+        attackDamage: 15,
         magicDamagePercent: 30,
-        magicResistance: 20,
-        attackSpeed: 24,
+        allResistance: 20,
+        attackSpeed: 18,
         pierceDamage: 20,
         criticalHit: 8,
       },
@@ -500,9 +504,11 @@ export const Runewords = {
       name: "ASIC",
       bonus: {
         attackDamage: 20,
-        allResistance: 15,
+        coldDamage: 20,
+        coldDamagePercent: 15,
         criticalHit: 10,
         regenerateHealth: 30,
+        allResistance: 15,
         preventRegenerateHealth: 20,
       },
     },
@@ -643,6 +649,67 @@ export const Runewords = {
         skillTimeout: 20,
       },
     },
+    "btc-fal-dur-nan-shi-sat": {
+      name: "Bucketing System",
+      bonus: {
+        health: 120,
+        defense: 20,
+        magicDamage: 25,
+        magicDamagePercent: 20,
+        allResistance: 15,
+        magicResistance: 25,
+        lowerMagicResistance: 15,
+      },
+    },
+    "um-shi-dur-mer-vax-sat": {
+      name: "Ascending Bootstrapping",
+      bonus: {
+        health: 100,
+        defense: 25,
+        flameDamage: 25,
+        flameDamagePercent: 20,
+        allResistance: 15,
+        flameResistance: 25,
+        lowerFlameResistance: 15,
+      },
+    },
+    "kul-shi-hex-por-sat-kul": {
+      name: "Announcement of an Announcement",
+      bonus: {
+        health: 60,
+        defense: 20,
+        lightningDamage: 30,
+        lightningDamagePercent: 20,
+        allResistance: 15,
+        lightningResistance: 25,
+        lowerLightningResistance: 15,
+      },
+    },
+    "sol-las-qua-las-qua-shi": {
+      name: "What if Price Goes Below 2K",
+      bonus: {
+        defense: 20,
+        coldDamage: 25,
+        coldDamagePercent: 20,
+        allResistance: 15,
+        coldResistance: 35,
+        lowerColdResistance: 15,
+        freezeChance: 15,
+        reduceFrozenChance: 35,
+      },
+    },
+    "eth-shi-gul-eth-sat-gul": {
+      name: "Let that sink in for a Second",
+      bonus: {
+        health: 120,
+        defense: 25,
+        poisonDamage: 25,
+        poisonDamagePercent: 20,
+        allResistance: 15,
+        poisonResistance: 25,
+        lowerPoisonResistance: 25,
+      },
+    },
   },
   shield: {
     "gel-bul-al-sat-do": {
@@ -669,10 +736,10 @@ export const Runewords = {
     "vie-ban-do-vie-ban-do": {
       name: "King Gorilla",
       bonus: {
-        minDamage: 10,
+        minDamage: 8,
         attackDamage: 10,
-        defense: 20,
-        health: 300,
+        defense: 25,
+        health: 180,
         regenerateHealth: 30,
       },
     },
@@ -696,72 +763,29 @@ export const Runewords = {
         flameDamagePercent: 18,
       },
     },
-    "sol-tor-shi-vod-las-fal": {
-      name: "Bucketing System",
+    "zal-hex-fal-btc-eth-bul": {
+      name: "Fear and Greed index",
       bonus: {
-        health: 120,
+        health: 60,
         defense: 20,
-        magicDamage: 25,
-        magicDamagePercent: 20,
-        allResistance: 15,
-        freezeChance: 15,
-        magicResistance: 25,
-        lowerMagicResistance: 15,
+        absorbedDamage: 15,
+        attackDamage: 10,
+        minDamage: 15,
       },
     },
-    "mer-qua-gul-ber-kul-fal": {
-      name: "Ascending Bootstrapping",
+    "dur-sat-do-dur-las-gul": {
+      name: "Satoshi's Original Vision",
       bonus: {
-        health: 100,
-        defense: 25,
-        flameDamage: 25,
-        flameDamagePercent: 20,
-        allResistance: 15,
-        flameResistance: 25,
-        lowerFlameResistance: 15,
+        health: 180,
+        defense: 30,
+        allResistance: 20,
+        regenerateHealth: 25,
       },
     },
-    // "": {
-    //   name: "Announcement of an Announcement",
-    //   bonus: {
-    //     health: 60,
-    //     defense: 20,
-    //     lightningDamage: 25,
-    //     lightningDamagePercent: 20,
-    //     allResistance: 15,
-    //     lightningResistance: 25,
-    //     lowerLightningResistance: 15,
-    //   },
-    // },
-    // "": {
-    //   name: "What if Price Goes Below 2K",
-    //   bonus: {
-    //     defense: 20,
-    //     coldDamage: 25,
-    //     coldDamagePercent: 20,
-    //     allResistance: 15,
-    //     coldResistance: 25,
-    //     lowerColdResistance: 15,
-    //     freezeChance: 15,
-    //     reduceFrozenChance: 15,
-    //   },
-    // },
-    // "": {
-    //   name: "Let that sink in for a Second",
-    //   bonus: {
-    //     health: 120,
-    //     defense: 25,
-    //     poisonDamage: 25,
-    //     poisonDamagePercent: 20,
-    //     allResistance: 15,
-    //     poisonResistance: 25,
-    //     lowerPoisonResistance: 15,
-    //   },
-    // },
     "jah-shi-xno-ber-vod-gul": {
       name: "Echo Chamber",
       bonus: {
-        health: 200,
+        health: 160,
         defense: 35,
         magicDamage: 15,
         flameDamage: 15,
@@ -769,12 +793,9 @@ export const Runewords = {
         coldDamage: 15,
         poisonDamage: 15,
         magicFind: 25,
-        skillTimeout: 20,
-        allResistance: 25,
+        skillTimeout: 10,
+        allResistance: 20,
       },
     },
   },
 };
-
-// Fear and Greed index
-// Satoshi's Original Vision

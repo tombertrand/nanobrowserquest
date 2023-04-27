@@ -819,6 +819,23 @@ class Player extends Character {
 
           const { kind } = item;
           if (Types.Entities.CAKE === kind) return;
+          if (Types.Entities.SOULSTONE === kind) {
+            if (self.server.soulStonePlayerName) {
+              const soulStonePlayer = self.server.getPlayerByName(self.server.soulStonePlayerName);
+              if (soulStonePlayer) {
+                self.databaseHandler.lootItems({
+                  player: soulStonePlayer,
+                  items: [{ item: "soulstone", quantity: 1 }],
+                });
+
+                soulStonePlayer.send({
+                  type: Types.Messages.NOTIFICATION,
+                  message: "You received the Soul Stone",
+                });
+                return;
+              }
+            }
+          }
 
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());
@@ -966,7 +983,7 @@ class Player extends Character {
                     );
                   }
 
-                  this.databaseHandler.lootItems({
+                  self.databaseHandler.lootItems({
                     player,
                     items: [generatedItem],
                   });

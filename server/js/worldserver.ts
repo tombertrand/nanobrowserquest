@@ -136,6 +136,7 @@ class World {
   gateSubTempleNpcId: number;
   goldBank: number;
   janetYelenNpcId: number;
+  soulStonePlayerName: string;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -1107,7 +1108,6 @@ class World {
           if (this.mageTotal === 0) {
             clearInterval(this.chaliceLevelInterval);
             setTimeout(() => {
-              // @TODO ~~~~ spawn a portal to the temple?
               // Return everyone to altar, leave 10s to loot any last drop / activate lever
               this.endChaliceLevel();
             }, 10000);
@@ -1822,6 +1822,8 @@ class World {
   async activateHands(player, force = false) {
     const hands = this.getEntityById(this.handsNpcId);
 
+    this.soulStonePlayerName = player.name;
+
     if (hands && hands instanceof Npc && !hands.isActivated) {
       if (force || (await this.databaseHandler.useInventoryItem(player, "powderquantum"))) {
         hands.activate();
@@ -1834,6 +1836,8 @@ class World {
 
   deactivateHands() {
     const hands = this.getEntityById(this.handsNpcId);
+
+    this.soulStonePlayerName = null;
 
     if (hands && hands instanceof Npc && hands.isActivated) {
       hands.deactivate();

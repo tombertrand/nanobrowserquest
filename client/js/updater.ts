@@ -176,10 +176,11 @@ class Updater {
         const isPlayerHit = Math.abs(this.game.player.x - c.x) <= 8 && Math.abs(this.game.player.y - c.y) <= 8;
         const isGridOrAnyPlayerHit = !isPlayerHit
           ? this.game.pathingGrid[Math.round(c.y / 16)][Math.round(c.x / 16)] &&
-            (this.game.isPlayerAt(Math.round(c.x / 16), Math.round(c.y / 16)) ||
-              !this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id)
-          : // this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id !== c.casterId
-            false;
+            this.game.isPlayerAt(Math.round(c.x / 16), Math.round(c.y / 16))
+          : false;
+
+        // || !this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id)
+        // this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id !== c.casterId
 
         if (isPlayerHit) {
           this.game.makePlayerHurtFromSpell(c);
