@@ -6,7 +6,6 @@ import { kinds, Types } from "../../../shared/js/gametypes";
 import { getGoldAmountFromSoldItem, merchantItems } from "../../../shared/js/gold";
 import {
   INVENTORY_SLOT_COUNT,
-  MERCHANT_SLOT_COUNT,
   MERCHANT_SLOT_RANGE,
   Slot,
   STASH_SLOT_COUNT,
@@ -976,7 +975,6 @@ class DatabaseHandler {
   }
 
   moveItem({ player, fromSlot, toSlot, quantity: movedQuantity = 0 }) {
-    // if (fromSlot === toSlot) return;
     if (fromSlot === toSlot) return;
     if (player.moveItemLock) {
       Sentry.captureException(new Error("Calling moveItem while still locked"), {
@@ -1146,7 +1144,6 @@ class DatabaseHandler {
               if (isMultipleFrom) {
                 this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
               }
-
               if (isMultipleTo) {
                 this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed));
               }

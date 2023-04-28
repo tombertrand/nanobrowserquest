@@ -2202,16 +2202,7 @@ class World {
     }
   }
 
-  getDroppedItemName(mob, attacker) {
-    const mobLevel = Types.getMobLevel(mob.kind);
-    const kind = Types.getKindAsString(mob.kind);
-    const drops = mob.isInsideTemple ? Properties.templeMob.drops : Properties[kind].drops;
-    const isBoss = Types.isBoss(mob.kind);
-
-    const v = random(100) + 1;
-    let p = 0;
-    let itemKind = null;
-
+  lootChests(mob, attacker) {
     if (
       mob.kind === Types.Entities.MINOTAUR ||
       mob.kind === Types.Entities.BUTCHER ||
@@ -2310,6 +2301,17 @@ class World {
         });
       }
     }
+  }
+
+  getDroppedItemName(mob, attacker) {
+    const mobLevel = Types.getMobLevel(mob.kind);
+    const kind = Types.getKindAsString(mob.kind);
+    const drops = mob.isInsideTemple ? Properties.templeMob.drops : Properties[kind].drops;
+    const isBoss = Types.isBoss(mob.kind);
+
+    const v = random(100) + 1;
+    let p = 0;
+    let itemKind = null;
 
     if (mob.kind === Types.Entities.COW) {
       const diamondRandom = random(800);
@@ -2545,6 +2547,12 @@ class World {
 
   getDroppedItem(mob, attacker) {
     let itemName = this.getDroppedItemName(mob, attacker);
+    if (attacker.bonus.magicFind && !itemName) {
+      const rerollRandom = random(100);
+      if (rerollRandom < attacker.bonus.magicFind) {
+        itemName = this.getDroppedItemName(mob, attacker);
+      }
+    }
 
     if (mob.kind === Types.Entities.MINOTAUR) {
       postMessageToDiscordEventChannel(`${attacker.name} slained the Minotaur 🥶`);
@@ -2560,6 +2568,10 @@ class World {
       postMessageToDiscordEventChannel(`${attacker.name} slained Shai-Hulud 🪱`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
       postMessageToDiscordEventChannel(`${attacker.name} slained Azrael 💀`);
+    }
+
+    if ([Types.Entities.MINOTAUR, Types.Entities.BUTCHER, Types.Entities.DEATHANGEL].includes(mob.kind)) {
+      this.lootChests(mob, attacker);
     }
 
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];

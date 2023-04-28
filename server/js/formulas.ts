@@ -29,6 +29,11 @@ Formulas.minMaxDamage = function ({
   lightningResistance = 0,
   coldResistance = 0,
   poisonResistance = 0,
+  // lowerMagicResistance = 0,
+  // lowerFlameResistance = 0,
+  // lowerLightningResistance = 0,
+  // lowerColdResistance = 0,
+  // lowerPoisonResistance = 0,
 }) {
   let attackDamage = Math.ceil(
     (Types.getWeaponDamage(weapon, weaponLevel, isWeaponUnique) + attackDamageBonus) * 1.2 + playerLevel / 2,

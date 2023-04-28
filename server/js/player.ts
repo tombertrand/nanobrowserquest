@@ -561,7 +561,12 @@ class Player extends Character {
           }
 
           if (self.bonus.freezeChance && !Types.isBoss(mob.kind)) {
-            const isFrozen = random(100) < self.bonus.freezeChance;
+            let freezeChance = self.bonus.freezeChance;
+            if (mob.type === "player") {
+              freezeChance = freezeChance - mob.bonus.reduceFrozenChance;
+            }
+
+            const isFrozen = random(100) < freezeChance;
             if (isFrozen) {
               self.broadcast(new Messages.Frozen(mob.id, Types.getFrozenTimePerLevel(self.freezeChanceLevel)));
             }
@@ -2038,11 +2043,9 @@ class Player extends Character {
     }
 
     if (!isBlocked && mob.kind === Types.Entities.MINOTAUR) {
-      const isFrozen = random(100) < 20;
+      const isFrozen = random(100) < 30 - this.bonus.reduceFrozenChance;
       if (isFrozen) {
-        if (random(100) > this.bonus.reduceFrozenChance) {
-          this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
-        }
+        this.broadcast(new Messages.Frozen(this.id, Types.getFrozenTimePerLevel(10)));
       }
     }
 
@@ -2060,11 +2063,10 @@ class Player extends Character {
     const dmg = Math.round(spell.dmg - spell.dmg * (resistance / 100));
 
     if (spell.element === "cold") {
-      const isSlowed = random(100) < resistance;
+      const isSlowedRandom = random(100);
+      const isSlowed = isSlowedRandom > Math.floor(resistance / 2) + this.bonus.reduceFrozenChance;
       if (isSlowed) {
-        if (random(100) > this.bonus.reduceFrozenChance) {
-          this.broadcast(new Messages.Slowed(this.id, Types.getFrozenTimePerLevel(10)));
-        }
+        this.broadcast(new Messages.Slowed(this.id, Types.getFrozenTimePerLevel(10)));
       }
     } else if (spell.element === "poison") {
       this.startPoisoned({ dmg: spell.dmg, entity: this, resistance: this.bonus.poisonResistance });
