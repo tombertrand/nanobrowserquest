@@ -2077,10 +2077,19 @@ class Player extends Character {
   }
 
   handleHurtSpellDmg(spell) {
-    const dmg = this.calculateElementDamage(spell);
+    let dmg = this.calculateElementDamage(spell);
+
+    let isBlocked = false;
+    if (spell.casterKind === Types.Entities.SKELETONARCHER && this.bonus.blockChance) {
+      const blockRandom = random(100);
+      isBlocked = blockRandom < this.bonus.blockChance;
+      if (isBlocked) {
+        dmg = 0;
+      }
+    }
 
     this.hitPoints -= dmg;
-    this.server.handleHurtEntity({ entity: this, attacker: spell });
+    this.server.handleHurtEntity({ entity: this, attacker: spell, isBlocked });
 
     this.handleHurtDeath();
   }
