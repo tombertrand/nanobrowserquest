@@ -8,6 +8,7 @@ import { terrainToImageMap } from "./types/map";
 import {
   calculateAttackSpeed,
   calculateExtraGold,
+  calculateMagicFind,
   calculateResistance,
   DEFAULT_ATTACK_ANIMATION_SPEED,
   DEFAULT_ATTACK_SPEED,
@@ -589,6 +590,7 @@ Types.DEFAULT_ATTACK_ANIMATION_SPEED = DEFAULT_ATTACK_ANIMATION_SPEED;
 Types.calculateResistance = calculateResistance;
 Types.calculateAttackSpeed = calculateAttackSpeed;
 Types.calculateExtraGold = calculateExtraGold;
+Types.calculateMagicFind = calculateMagicFind;
 Types.terrainToImageMap = terrainToImageMap;
 Types.Slot = Slot;
 

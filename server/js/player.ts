@@ -2741,7 +2741,7 @@ class Player extends Character {
       exp: this.bonus.exp + this.partyBonus.exp,
       criticalHit: this.bonus.criticalHit,
       blockChance: this.bonus.blockChance,
-      magicFind: this.bonus.magicFind,
+      magicFind: Types.calculateMagicFind(this.bonus.magicFind),
       extraGold: Types.calculateExtraGold(this.bonus.extraGold + this.partyBonus.extraGold),
       attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
       magicDamage: this.bonus.magicDamage + this.partyBonus.magicDamage,
