@@ -1510,10 +1510,10 @@ class App {
 
   closeUpgrade() {
     if (!$("#upgrade").hasClass("visible")) return;
+    $("#upgrade").removeClass("visible");
 
     this.closeInventory();
 
-    $("#upgrade").removeClass("visible");
     if (this.game.player.upgrade.length) {
       this.game.client.sendMoveItemsToInventory("upgrade");
     }
