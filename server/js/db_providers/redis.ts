@@ -1832,17 +1832,22 @@ class DatabaseHandler {
                 luckySlot = null;
                 isWorkingRecipe = true;
 
-                const {
-                  item: itemName,
-                  level,
-                  quantity,
-                  bonus,
-                  socket,
-                  skill,
-                } = player.generateItem({ kind: Types.getKindFromString(item), uniqueChances, jewelLevel });
+                const kind = Types.getKindFromString(item);
+                if (Types.isRune(kind)) {
+                  generatedItem = [item, 1].filter(Boolean).join(":");
+                } else {
+                  const {
+                    item: itemName,
+                    level,
+                    quantity,
+                    bonus,
+                    socket,
+                    skill,
+                  } = player.generateItem({ kind, uniqueChances, jewelLevel });
 
-                const delimiter = Types.isJewel(item) ? "|" : ":";
-                generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(delimiter);
+                  const delimiter = Types.isJewel(item) ? "|" : ":";
+                  generatedItem = [itemName, level, quantity, bonus, socket, skill].filter(Boolean).join(delimiter);
+                }
               } catch (err) {
                 Sentry.captureException(err, {
                   extra: {
