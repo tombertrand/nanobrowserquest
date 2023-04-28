@@ -743,6 +743,8 @@ export const isValidSocketItem = items => {
   const jewelIndex = items.findIndex(item => item.startsWith("jewel"));
   const itemIndex = items.findIndex(item => !item.startsWith("rune-"));
 
+  if ((runeIndex === -1 && jewelIndex === -1) || itemIndex === -1) return false;
+
   const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");
 
   let socket;

@@ -2014,7 +2014,8 @@ class Player extends Character {
     }
 
     if (this.bonus.blockChance) {
-      isBlocked = random(100) < this.bonus.blockChance;
+      const blockRandom = random(100);
+      isBlocked = blockRandom < this.bonus.blockChance;
       if (isBlocked) {
         dmg = 0;
       }

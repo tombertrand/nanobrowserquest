@@ -1950,7 +1950,7 @@ class World {
 
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
-      this.pushToPlayer(entity, entity.health({ isHurt: true, attacker: { type: attacker.type } }));
+      this.pushToPlayer(entity, entity.health({ isHurt: true, isBlocked, attacker: { type: attacker.type } }));
     }
 
     if (entity.hitPoints <= 0) {

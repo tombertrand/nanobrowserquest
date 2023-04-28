@@ -4124,7 +4124,7 @@ class Game {
         }
       });
 
-      self.client.onPlayerChangeHealth(function ({ points, isRegen, isHurt, attacker }) {
+      self.client.onPlayerChangeHealth(function ({ points, isRegen, isHurt, isBlocked, attacker }) {
         var player = self.player;
         var diff;
 
@@ -4136,12 +4136,15 @@ class Game {
             player.die(attacker);
           }
           if (isHurt) {
-            player.hurt();
-            self.infoManager.addDamageInfo({ value: diff, x: player.x, y: player.y - 15, type: "received" });
-            self.audioManager.playSound("hurt");
-            self.storage.addDamage(-diff);
-            self.tryUnlockingAchievement("MEATSHIELD");
-            self?.playerhurt_callback();
+            self.infoManager.addDamageInfo({ value: diff, x: player.x, y: player.y - 15, type: "received", isBlocked });
+
+            if (!isBlocked) {
+              player.hurt();
+              self.audioManager.playSound("hurt");
+              self.storage.addDamage(-diff);
+              self.tryUnlockingAchievement("MEATSHIELD");
+              self?.playerhurt_callback();
+            }
           } else if (!isRegen) {
             self.infoManager.addDamageInfo({ value: "+" + diff, x: player.x, y: player.y - 15, type: "healed" });
           }

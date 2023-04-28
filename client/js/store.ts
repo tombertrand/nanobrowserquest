@@ -79,7 +79,8 @@ class Store {
         id: Types.Store.CAPE,
         icon: "cape",
         name: "Cape",
-        description: "A cape adds a random bonus (attack, defense, exp, all resistance or extra gold) when your character is in a party.",
+        description:
+          "A cape adds a random bonus (attack, defense, exp, all resistance or extra gold) when your character is in a party.",
         confirmedMessage: "A cape was added to your inventory.",
         requiresInventorySlot: true,
       },
@@ -139,7 +140,6 @@ class Store {
     this.app.game.client.sendStoreItems();
 
     $("#store, #store-item-list").addClass("active");
-
     return;
   }
 
@@ -161,6 +161,8 @@ class Store {
         return item;
       })
       .filter(Boolean);
+
+    $("#store-item-list").empty();
 
     this.storeItems.forEach(({ id, icon, name, description, nano, ban, usd, usdRegular, isAvailable }) => {
       const isLocked =
