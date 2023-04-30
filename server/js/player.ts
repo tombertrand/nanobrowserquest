@@ -1208,7 +1208,7 @@ class Player extends Character {
 
         console.info(`MOVE GOLD: ${self.name}, AMOUNT: ${amount}, FROM: ${from}, TO: ${to}`);
 
-        if (isNaN(amount) || !from || !to) return;
+        if (isNaN(amount) || amount < 0 || !Number.isInteger(amount) || !from || !to) return;
         if (from === "inventory" && amount > self.gold) return;
         if (from === "stash" && amount > self.goldStash) return;
         if (from === "trade" && amount > self.goldTrade) return;

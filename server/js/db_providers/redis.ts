@@ -1199,6 +1199,9 @@ class DatabaseHandler {
   }
 
   moveGold({ player, amount, from, to }) {
+    // Only positive number can be submitted
+    if (isNaN(amount) || amount <= 0) return;
+
     return player.dbWriteQueue.enqueue(
       () =>
         new Promise((resolve, reject) => {
@@ -1211,7 +1214,7 @@ class DatabaseHandler {
           const fromLocation = locationMap[from];
           const toLocation = locationMap[to];
 
-          if (fromLocation === toLocation || isNaN(amount) || !fromLocation || !toLocation) return;
+          if (fromLocation === toLocation || !fromLocation || !toLocation) return;
 
           this.client.hget("u:" + player.name, fromLocation, (err, rawFromGold) => {
             if (err) {
@@ -1259,6 +1262,8 @@ class DatabaseHandler {
                 return;
               }
               const toGold = parseInt(rawToGold || "0");
+              if (toGold + amount < 0) return;
+
               this.client.hset("u:" + player.name, fromLocation, newFromGold, () => {
                 player.send([Types.Messages.GOLD[from.toUpperCase()], newFromGold]);
                 player[fromLocation] = newFromGold;
