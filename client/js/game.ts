@@ -26,7 +26,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
-import { getGoldDeathPenaltyPercent, randomInt, toArray, toString } from "../../shared/js/utils";
+import { getGoldDeathPenaltyPercent, randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
 import AudioManager from "./audio";
@@ -1080,9 +1080,10 @@ class Game {
 
     const prepareSubmit = () => {
       const quantity = parseInt($("#transfer-quantity").val() as string);
-      if (quantity <= maxQuantity) {
+      if (validateQuantity(quantity) && quantity <= maxQuantity) {
         submit(quantity);
       }
+
       $("#container").removeClass("prevent-click");
       $("#dialog-quantity").dialog("close");
     };
@@ -1197,7 +1198,7 @@ class Game {
 
         $(".ui-droppable-origin").removeClass("ui-droppable-origin");
         $(
-          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-shield, .item-cape, .item-chest, .item-scroll",
+          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-shield, .item-cape, .item-chest, .item-scroll, .item-merchant",
         ).removeClass("item-droppable");
       },
     });

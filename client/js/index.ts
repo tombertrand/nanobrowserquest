@@ -598,91 +598,93 @@ var initGame = function () {
   });
 
   $(document).on("keydown", e => {
+    if (!game.started) return;
     if ($("#chatinput").is(":focus")) return;
 
-    if (e.keyCode === Types.Keys.ENTER) {
-      if ($(".ui-dialog").is(":visible")) {
-        if ($("#dialog-delete-item").dialog("isOpen")) {
-          game.deleteItemFromSlot();
-          $("#dialog-delete-item").dialog("close");
-        } else if ($("#dialog-merchant-item").dialog("isOpen")) {
-          const { fromSlot, toSlot, transferedQuantity, confirmed } = game.confirmedSoldItemToMerchant;
-          game.dropItem(fromSlot, toSlot, transferedQuantity, confirmed);
-          game.confirmedSoldItemToMerchant = null;
-          $("#dialog-merchant-item").dialog("close");
-        }
-      } else if (!$("#text-window").is(":visible")) {
-        app.showChat();
-      }
-    } else if (e.keyCode === Types.Keys.SHIFT) {
-      game.pvpFlag = game.player?.level >= 9;
+    if (!game.player || game.player.isDead) {
+      // Return if player is dead
+      return;
     }
 
-    if (game.started) {
-      if (!game.player || game.player.isDead) {
-        // Return if player is dead
-        return;
-      }
-
-      switch (e.keyCode) {
-        case Types.Keys.DELETE:
-        case Types.Keys.BACKSPACE:
-          if (typeof game.hoverSlotToDelete === "number") {
-            if ($("#merchant").hasClass("visible")) {
-              game.dropItem(game.hoverSlotToDelete, MERCHANT_SLOT_RANGE);
-            } else {
-              game.dropItem(game.hoverSlotToDelete, -1);
-            }
+    switch (e.keyCode) {
+      case Types.Keys.ESC:
+        app.hideWindows();
+        break;
+      case Types.Keys.ENTER:
+        if ($(".ui-dialog").is(":visible")) {
+          if ($("#dialog-delete-item").dialog("isOpen")) {
+            game.deleteItemFromSlot();
+            $("#dialog-delete-item").dialog("close");
+          } else if ($("#dialog-merchant-item").dialog("isOpen")) {
+            const { fromSlot, toSlot, transferedQuantity, confirmed } = game.confirmedSoldItemToMerchant;
+            game.dropItem(fromSlot, toSlot, transferedQuantity, confirmed);
+            game.confirmedSoldItemToMerchant = null;
+            $("#dialog-merchant-item").dialog("close");
           }
-          break;
-        case Types.Keys.LEFT:
-        case Types.Keys.A:
-          game.player.moveLeft = true;
-          break;
-        case Types.Keys.RIGHT:
-        case Types.Keys.D:
-          game.player.moveRight = true;
-          break;
-        case Types.Keys.UP:
-        case Types.Keys.W:
-          game.player.moveUp = true;
-          break;
-        case Types.Keys.DOWN:
-        case Types.Keys.S:
-          game.player.moveDown = true;
-          break;
-        case Types.Keys[1]:
-        case Types.Keys.KEYPAD_1:
-          game.useSkill(1);
-          break;
-        case Types.Keys[2]:
-        case Types.Keys.KEYPAD_2:
-          game.useSkill(2);
-          break;
-        case Types.Keys.SPACE:
-          game.makePlayerAttackNext();
-          break;
-        case Types.Keys.I:
-          app.toggleInventory(true);
-          break;
-        case Types.Keys.C:
-          app.togglePlayerInfo();
-          break;
-        case Types.Keys.Q:
-          $("#achievementsbutton").click();
-          break;
-        case Types.Keys.H:
-          $("#completedbutton").click();
-          break;
-        case Types.Keys.O:
-          $("#settings-button").click();
-          break;
-        case Types.Keys.P:
-          $("#party-button").trigger("click");
-          break;
-        default:
-          break;
-      }
+        } else if (!$("#text-window").is(":visible")) {
+          app.showChat();
+        }
+        break;
+      case Types.Keys.SHIFT:
+        game.pvpFlag = game.player?.level >= 9;
+        break;
+      case Types.Keys.DELETE:
+      case Types.Keys.BACKSPACE:
+        if (typeof game.hoverSlotToDelete === "number") {
+          if ($("#merchant").hasClass("visible")) {
+            game.dropItem(game.hoverSlotToDelete, MERCHANT_SLOT_RANGE);
+          } else {
+            game.dropItem(game.hoverSlotToDelete, -1);
+          }
+        }
+        break;
+      case Types.Keys.LEFT:
+      case Types.Keys.A:
+        game.player.moveLeft = true;
+        break;
+      case Types.Keys.RIGHT:
+      case Types.Keys.D:
+        game.player.moveRight = true;
+        break;
+      case Types.Keys.UP:
+      case Types.Keys.W:
+        game.player.moveUp = true;
+        break;
+      case Types.Keys.DOWN:
+      case Types.Keys.S:
+        game.player.moveDown = true;
+        break;
+      case Types.Keys[1]:
+      case Types.Keys.KEYPAD_1:
+        game.useSkill(1);
+        break;
+      case Types.Keys[2]:
+      case Types.Keys.KEYPAD_2:
+        game.useSkill(2);
+        break;
+      case Types.Keys.SPACE:
+        game.makePlayerAttackNext();
+        break;
+      case Types.Keys.I:
+        app.toggleInventory(true);
+        break;
+      case Types.Keys.C:
+        app.togglePlayerInfo();
+        break;
+      case Types.Keys.Q:
+        $("#achievementsbutton").click();
+        break;
+      case Types.Keys.H:
+        $("#completedbutton").click();
+        break;
+      case Types.Keys.O:
+        $("#settings-button").click();
+        break;
+      case Types.Keys.P:
+        $("#party-button").trigger("click");
+        break;
+      default:
+        break;
     }
   });
 

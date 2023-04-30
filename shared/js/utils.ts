@@ -50,3 +50,10 @@ export const getGoldDeathPenaltyPercent = (level: number): number => {
   }
   return 50;
 };
+
+export const validateQuantity = quantity => {
+  if (!quantity || isNaN(quantity) || quantity < 0 || !Number.isInteger(quantity)) {
+    return false;
+  }
+  return true;
+};

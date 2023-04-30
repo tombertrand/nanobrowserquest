@@ -10,7 +10,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
-import { toArray, toDb, toNumber } from "../../shared/js/utils";
+import { toArray, toDb, toNumber, validateQuantity } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
 import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
@@ -1189,7 +1189,12 @@ class Player extends Character {
       } else if (action === Types.Messages.MOVE_ITEM) {
         console.info("MOVE ITEM: " + self.name + " " + message[1] + " " + message[2]);
 
-        databaseHandler.moveItem({ player: self, fromSlot: message[1], toSlot: message[2], quantity: message[3] });
+        const quantity = message[3];
+        if (quantity && !validateQuantity(quantity)) {
+          return;
+        }
+
+        databaseHandler.moveItem({ player: self, fromSlot: message[1], toSlot: message[2], quantity });
       } else if (action === Types.Messages.MOVE_ITEMS_TO_INVENTORY) {
         const panel = message[1];
         console.info(`MOVE ITEMS TO INVENTORY: ${self.name} Panel: ${panel}`);
@@ -1208,7 +1213,10 @@ class Player extends Character {
 
         console.info(`MOVE GOLD: ${self.name}, AMOUNT: ${amount}, FROM: ${from}, TO: ${to}`);
 
-        if (isNaN(amount) || amount < 0 || !Number.isInteger(amount) || !from || !to) return;
+        if (!validateQuantity(amount)) {
+          return;
+        }
+        if (!from || !to) return;
         if (from === "inventory" && amount > self.gold) return;
         if (from === "stash" && amount > self.goldStash) return;
         if (from === "trade" && amount > self.goldTrade) return;
@@ -1484,10 +1492,18 @@ class Player extends Character {
         const toSlot = message[2];
         const quantity = message[3];
 
+        if (!validateQuantity(quantity)) {
+          return;
+        }
+
         self.databaseHandler.buyFromMerchant({ player: self, fromSlot, toSlot, quantity });
       } else if (action === Types.Messages.MERCHANT.SELL) {
         const fromSlot = message[1];
         const quantity = message[2];
+
+        if (!validateQuantity(quantity)) {
+          return;
+        }
 
         self.databaseHandler.sellToMerchant({ player: self, fromSlot, quantity });
       } else if (action === Types.Messages.SETTINGS) {

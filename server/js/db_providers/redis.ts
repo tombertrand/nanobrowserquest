@@ -38,7 +38,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
-import { toArray, toDb } from "../../../shared/js/utils";
+import { toArray, toDb, validateQuantity } from "../../../shared/js/utils";
 import {
   discordClient,
   EmojiMap,
@@ -975,6 +975,7 @@ class DatabaseHandler {
   }
 
   moveItem({ player, fromSlot, toSlot, quantity: movedQuantity = 0 }) {
+    if (movedQuantity && !validateQuantity(movedQuantity)) return;
     if (fromSlot === toSlot) return;
     if (player.moveItemLock) {
       Sentry.captureException(new Error("Calling moveItem while still locked"), {
@@ -1398,6 +1399,7 @@ class DatabaseHandler {
   buyFromMerchant({ player, fromSlot, toSlot, quantity = 1 }) {
     const { amount, item } = merchantItems[fromSlot - MERCHANT_SLOT_RANGE] || {};
     if (!amount || !item || toSlot > INVENTORY_SLOT_COUNT - 1) return;
+    if (!validateQuantity(quantity)) return;
     const maxQuantity = Math.floor(player.gold / amount);
     if (quantity > maxQuantity) {
       return;
@@ -1417,7 +1419,8 @@ class DatabaseHandler {
   }
 
   sellToMerchant({ player, fromSlot, quantity: soldQuantity = 1 }) {
-    if (isNaN(fromSlot) || fromSlot >= INVENTORY_SLOT_COUNT || isNaN(soldQuantity)) return;
+    if (isNaN(fromSlot) || fromSlot >= INVENTORY_SLOT_COUNT) return;
+    if (!validateQuantity(soldQuantity)) return;
 
     this.client.hget("u:" + player.name, "inventory", (_err, fromReply) => {
       let fromItem;
