@@ -622,6 +622,11 @@ class World {
   }
 
   removeEntity(entity) {
+    if (entity.poisonedInterval) {
+      clearInterval(entity.poisonedInterval);
+      entity.poisonedInterval = null;
+    }
+
     if (entity.id in this.entities) {
       // Don't remove player in case they are in a party
       if (entity.type === "player") {
@@ -1264,6 +1269,7 @@ class World {
       mob.onMove(this.onMobMoveCallback.bind(this));
       mob.onDestroy(() => {
         this.spiderTotal--;
+
         if (this.spiderTotal === 0) {
           clearInterval(this.stoneLevelInterval);
           setTimeout(() => {
@@ -1287,6 +1293,7 @@ class World {
       this.stoneLevelClock -= 1;
       if (this.stoneLevelClock < 0) {
         clearInterval(this.stoneLevelInterval);
+
         this.endStoneLevel();
       }
     }, 1000);
@@ -2071,6 +2078,7 @@ class World {
             self.spiderQueen = mob;
             mob.onDestroy(() => {
               self.spiderTotal--;
+
               if (self.spiderTotal === 0) {
                 clearInterval(self.stoneLevelInterval);
                 setTimeout(() => {

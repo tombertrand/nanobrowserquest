@@ -4547,10 +4547,12 @@ class Game {
         }, 1200);
       });
 
-      self.client.onReceiveLevelInProgress(function (levelClock) {
+      self.client.onReceiveLevelInProgress(function (levelClock, level: TimedLevel) {
         const selectedDate = new Date().valueOf() + levelClock * 1000;
 
         $("#countdown")
+          .removeClass()
+          .addClass(level)
           .countdown(selectedDate.toString())
           .on("update.countdown", function (event) {
             // @ts-ignore
@@ -4566,6 +4568,9 @@ class Game {
       });
 
       self.client.onReceiveCowLevelEnd(function (isCompleted) {
+        if (!$("#countdown").hasClass("cow")) return;
+
+        $("#countdown").removeClass();
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
@@ -4605,6 +4610,8 @@ class Game {
       });
 
       self.client.onReceiveMinotaurLevelEnd(function () {
+        if (!$("#countdown").hasClass("minotaur")) return;
+
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
@@ -4621,6 +4628,8 @@ class Game {
       });
 
       self.client.onReceiveChaliceLevelEnd(function () {
+        if (!$("#countdown").hasClass("chalice")) return;
+
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
@@ -4643,6 +4652,8 @@ class Game {
       });
 
       self.client.onReceiveTempleLevelEnd(function () {
+        if (!$("#countdown").hasClass("temple")) return;
+
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
@@ -4668,6 +4679,8 @@ class Game {
       });
 
       self.client.onReceiveStoneLevelEnd(function () {
+        if (!$("#countdown").hasClass("stone")) return;
+
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
@@ -4692,6 +4705,8 @@ class Game {
       });
 
       self.client.onReceiveGatewayLevelEnd(function () {
+        if (!$("#countdown").hasClass("gateway")) return;
+
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 

@@ -804,7 +804,8 @@ class GameClient {
 
   receiveLevelInProgress(data) {
     const clock = data[1];
-    this.receivelevelinprogress_callback(clock);
+    const level = data[2];
+    this.receivelevelinprogress_callback(clock, level);
   }
 
   receiveFrozen(data) {

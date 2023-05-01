@@ -2140,10 +2140,9 @@ class Player extends Character {
           5,
       );
 
-      if (iterations && poisonDmg) {
+      if (iterations && poisonDmg && entity.hitPoints > 0) {
         entity.hitPoints -= poisonDmg;
         this.server.handleHurtEntity({ entity, attacker, dmg: poisonDmg });
-
         iterations--;
       } else {
         clearInterval(entity.poisonedInterval);
@@ -2698,17 +2697,17 @@ class Player extends Character {
     const { x, y } = this;
 
     if (x === 34 && y === 498 && this.server.minotaurLevelClock) {
-      this.send(new Messages.LevelInProgress(this.server.minotaurLevelClock).serialize());
+      this.send(new Messages.LevelInProgress(this.server.minotaurLevelClock, "minotaur").serialize());
     } else if (y >= 464 && y <= 535 && x <= 534 && this.server.cowLevelClock) {
-      this.send(new Messages.LevelInProgress(this.server.cowLevelClock).serialize());
+      this.send(new Messages.LevelInProgress(this.server.cowLevelClock, "cow").serialize());
     } else if (y >= 696 && y <= 733 && x <= 29 && this.server.chaliceLevelClock) {
-      this.send(new Messages.LevelInProgress(this.server.chaliceLevelClock).serialize());
+      this.send(new Messages.LevelInProgress(this.server.chaliceLevelClock, "chalice").serialize());
     } else if (y >= 696 && y <= 733 && x >= 85 && x <= 112 && this.server.stoneLevelClock) {
-      this.send(new Messages.LevelInProgress(this.server.stoneLevelClock).serialize());
+      this.send(new Messages.LevelInProgress(this.server.stoneLevelClock, "stone").serialize());
     } else if (y >= 744 && y <= 781 && x <= 29 && this.server.gatewayLevelClock) {
-      this.send(new Messages.LevelInProgress(this.server.gatewayLevelClock).serialize());
+      this.send(new Messages.LevelInProgress(this.server.gatewayLevelClock, "gateway").serialize());
     } else if (y >= 744 && x >= 84 && this.server.templeLevelClock) {
-      this.send(new Messages.LevelInProgress(this.server.templeLevelClock).serialize());
+      this.send(new Messages.LevelInProgress(this.server.templeLevelClock, "temple").serialize());
     }
   }
 

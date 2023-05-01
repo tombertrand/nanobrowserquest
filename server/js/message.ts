@@ -156,9 +156,9 @@ Messages.GatewayLevelEnd = class Message {
 };
 
 Messages.LevelInProgress = class Message {
-  constructor(private levelClock) {}
+  constructor(private levelClock, private level: TimedLevel) {}
   serialize() {
-    return [Types.Messages.LEVEL_INPROGRESS, this.levelClock];
+    return [Types.Messages.LEVEL_INPROGRESS, this.levelClock, this.level];
   }
 };
 

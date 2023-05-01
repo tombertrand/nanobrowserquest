@@ -11,6 +11,7 @@ type Enchant = Elements | "physical" | "stoneskin";
 type SkillElement = "magic" | "flame" | "lightning" | "cold" | "poison";
 type ChestType = "chestblue" | "chestgreen" | "chestpurple" | "chestred";
 type Orientation = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type TimedLevel = "cow" | "minotaur" | "stone" | "chalice" | "gateway" | "temple";
 
 type GeneratedItem = {
   item: string;

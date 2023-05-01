@@ -221,9 +221,7 @@ class Mob extends Character {
       this.handleRespawn(delay);
     }
 
-    if (this.destroyCallback) {
-      this.destroyCallback();
-    }
+    this.destroyCallback?.();
   }
 
   receiveDamage(points) {
