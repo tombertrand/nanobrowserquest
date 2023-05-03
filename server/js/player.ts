@@ -40,7 +40,7 @@ import {
 import type Party from "./party";
 import type Trade from "./trade";
 
-const MIN_LEVEL = 14;
+const MIN_LEVEL = 16;
 const MIN_TIME = 1000 * 60 * 15;
 const MAX_EXP = expForLevel[expForLevel.length - 1];
 
@@ -275,7 +275,7 @@ class Player extends Character {
         let reason;
         var name = sanitize(message[1]);
         var account = sanitize(message[2]);
-        var [network]: [Network] = account.split("_");
+        var [network]: [Network] = (account || "").split("_");
         var password;
 
         ({ timestamp, reason } = await databaseHandler.checkIsBannedByIP(self));
@@ -296,16 +296,15 @@ class Player extends Character {
           return;
         }
 
-        if (!["nano", "ban"].includes(network)) {
+        if (network && !["nano", "ban"].includes(network)) {
           self.connection.sendUTF8("invalidconnection");
           self.connection.close("Bad network.");
           return;
         }
-        // var network: Network = sanitize(message[3]) === "ban" ? "ban" : "nano";
 
-        if (action === Types.Messages.LOGIN) {
-          password = sanitize(message[3]);
-        }
+        // if (action === Types.Messages.LOGIN || ) {
+        password = sanitize(message[3]);
+        // }
 
         // Always ensure that the name is not longer than a maximum length.
         // (also enforced by the maxlength attribute of the name input element).
@@ -326,7 +325,12 @@ class Player extends Character {
         if (action === Types.Messages.CREATE) {
           console.info("CREATE: " + self.name);
           // self.account = hash;
-          databaseHandler.createPlayer(self);
+
+          console.log("~~~1");
+          if (await databaseHandler.isPlayerExist(self)) {
+            console.log("~~~2");
+            return;
+          }
         } else {
           console.info("LOGIN: " + self.name, " ID: " + self.id);
           if (self.server.loggedInPlayer(self.name)) {
@@ -334,17 +338,24 @@ class Player extends Character {
             self.connection.close("Already logged in " + self.name);
             return;
           }
+        }
 
-          if (!password) {
-            if (await databaseHandler.passwordIsRequired(self)) {
-              return;
-            }
-          } else {
-            if (!(await databaseHandler.passwordLoginOrCreate(self, password))) {
-              return;
-            }
+        console.log("~~~3");
+
+        if (!password) {
+          if (await databaseHandler.passwordIsRequired(self)) {
+            return;
           }
+        } else {
+          if (!(await databaseHandler.passwordLoginOrCreate(self, password))) {
+            return;
+          }
+        }
 
+        if (action === Types.Messages.CREATE) {
+          console.log("~~~4");
+          databaseHandler.createPlayer(self);
+        } else {
           databaseHandler.loadPlayer(self);
         }
       } else if (action === Types.Messages.WHO) {
@@ -1046,10 +1057,14 @@ class Player extends Character {
             self.connection.send({
               type: Types.Messages.BOSS_CHECK,
               status: "failed",
-              message:
-                "You may not fight the end boss at the moment, you are too low level. Keep killing monsters and gaining experience!",
+              message: MIN_LEVEL,
             });
             return;
+          } else if (!self.account && !message[1]) {
+            self.connection.send({
+              type: Types.Messages.BOSS_CHECK,
+              status: "missing-account",
+            });
           }
         }
 

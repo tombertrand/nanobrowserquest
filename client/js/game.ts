@@ -173,6 +173,7 @@ class Game {
   gamestart_callback: any;
   playerdeath_callback: any;
   gamecompleted_callback: any;
+  missingaccount_callback: any;
   bosscheckfailed_callback: any;
   chat_callback: any;
   invinciblestart_callback: any;
@@ -2670,7 +2671,6 @@ class Game {
         self.app.toggleInstructions();
       } else {
         self.showNotification("Welcome Back. You are level " + self.player.level + ".");
-        // self.storage.setPlayerName(name);
       }
 
       if (hash) {
@@ -4393,6 +4393,8 @@ class Game {
           }
         } else if (status === "failed") {
           self.bosscheckfailed_callback(message);
+        }  else if (status === "missing-account") {
+          self.missingaccount_callback();
         } else if (status === "completed") {
           self.gamecompleted_callback({ hash, fightAgain: true, show: true });
         }
@@ -6360,6 +6362,10 @@ class Game {
 
   onGameCompleted(callback) {
     this.gamecompleted_callback = callback;
+  }
+
+  onMissingAccount(callback) {
+    this.missingaccount_callback = callback;
   }
 
   onBossCheckFailed(callback) {

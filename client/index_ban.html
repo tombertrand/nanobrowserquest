@@ -613,7 +613,6 @@ ______                              ______                                 _____
             <div id="player" class="panel">
                 <div class="panel-header">
                     <div id="player-username" class="active"></div>
-                    <a id="player-account" href="" target="_blank"></a>
                 </div>
                 <div id="player-info">
                     <div>
@@ -740,11 +739,23 @@ ______                              ______                                 _____
                         <div>
                             <div id="trade-player2-name" class="trade-player-name">Player 2</div>
                             <div id="trade-player2-item"></div>
+                            <div class="gold-wrapper">
+                                <div id="gold-player2" class="item-gold">
+                                    <span class="gold-icon"></span>
+                                    <var id="gold-player2-amount">0</var>
+                                </div>
+                            </div>
                             <div id="trade-player2-status" class="trade-player-status">Waiting ...</div>
                         </div>
                         <div>
                             <div id="trade-player1-name" class="trade-player-name">Player 1</div>
                             <div id="trade-player1-item"></div>
+                            <div class="gold-wrapper">
+                                <div id="gold-player1" class="item-gold">
+                                    <span class="gold-icon"></span>
+                                    <var id="gold-player1-amount">0</var>
+                                </div>
+                            </div>
                             <div id="trade-player1-status" class="trade-player-status">
                                 <button class="btn" id="trade-player1-status-button">Accept</button>
                             </div>
@@ -787,17 +798,13 @@ ______                              ______                                 _____
                                 <div class="item-belt-slot"></div>
                                 <div class="item-ring2-slot"></div>
                                 <div class="gold-wrapper">
-                                     <div id="gold-inventory" class="item-gold">
-                                         <span class="gold-icon"></span>
-                                         <var id="gold-inventory-amount">0</var>
-                                     </div>
-                                 </div>
+                                    <span id="gold-inventory" class="item-gold">
+                                        <span class="gold-icon"></span>
+                                        <var id="gold-inventory-amount">0</var>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="item-gold">
-                        <span class="gold-icon"></span>
-                        <var id="gold-amount">0</var>
                     </div>
                     <div id="item-inventory"></div>
                     <div class="panel-header reverse"></div>

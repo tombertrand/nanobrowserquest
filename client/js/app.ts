@@ -494,8 +494,8 @@ class App {
       return false;
     }
 
-    if (!isValidAccountAddress(account)) {
-      this.addValidationError(this.getAccountField(), `Enter a valid ${$("#loginnetworkinput").val()}_ account.`);
+    if (account && !isValidAccountAddress(account)) {
+      this.addValidationError(this.getAccountField(), `Enter a valid ${$("#loginnetworkinput").val()}_ account or leave the field empty.`);
       return false;
     }
 
@@ -694,8 +694,18 @@ class App {
     const { name, account } = this.game.player;
 
     $("#player-username").text(name);
-    $("#player-account").attr("href", `https://${this.game.explorer}.com/account/${account}`).text(account);
     $("#completedbutton").addClass(this.game.network);
+
+    if (account) {
+      $("#player-account-input").val(account).attr("disabled", "disabled");
+      $("#player-account-link")
+        .attr("href", `https://${this.game.explorer}.com/account/${account}`)
+        .text("Go to Explorer");
+    } else {
+      // $("#player-account").attr("href", `https://${this.game.explorer}.com/account/${account}`).text(account);
+
+      $("#player-account-link").hide();
+    }
   }
 
   blinkHealthBar() {
@@ -1048,6 +1058,9 @@ class App {
     if ($("#completed").hasClass("active")) {
       this.toggleCompleted();
       $("#completedbutton").removeClass("active");
+    }
+    if ($("#missing-account").hasClass("active")) {
+      $("#missing-account").removeClass("active");
     }
     if ($("#about").hasClass("active")) {
       this.toggleAbout();

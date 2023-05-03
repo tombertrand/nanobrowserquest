@@ -21,16 +21,13 @@ import "../css/contextmenu.css";
 import "../css/gold.css";
 
 import * as Sentry from "@sentry/browser";
-import each from "lodash/each";
 
 import { Types } from "../../shared/js/gametypes";
+import { MERCHANT_SLOT_RANGE } from "../../shared/js/slots";
 import App from "./app";
 import Detect from "./detect";
 import Game from "./game";
 import { TRANSITIONEND } from "./utils";
-
-import type Character from "./character";
-import { MERCHANT_SLOT_RANGE } from "../../shared/js/slots";
 
 var app: App;
 var game: Game;
@@ -390,15 +387,29 @@ var initGame = function () {
     if (fightAgain) {
       $("#completed").addClass("boss-check");
 
-      $("#fight-again").click(function () {
-        game.client.sendBossCheck(true);
-        app.hideWindows();
-      });
+      $("#fight-again")
+        .off("click")
+        .on("click", function () {
+          game.client.sendBossCheck(true);
+          app.hideWindows();
+        });
     }
   });
 
+  game.onMissingAccount(function () {
+    $("#missing-account").addClass("active");
+
+    $("#missing-account-btn")
+      .off("click")
+      .on("click", function () {
+        game.client.sendBossCheck(true);
+        app.hideWindows();
+      });
+  });
+
   game.onBossCheckFailed(function (message) {
-    $("#failed").addClass("active").find("p").text(message);
+    $("#min-level").text(message);
+    $("#failed").addClass("active");
   });
 
   game.onPlayerEquipmentChange(function () {

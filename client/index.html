@@ -84,7 +84,7 @@
                     <form action="none" method="get" accept-charset="utf-8">
                         <input type="text" id="nameinput" class="stroke" name="player-name" placeholder="Character Name"
                             maxlength="16" autocomplete="off">
-                        <textarea id="accountinput" class="stroke" name="player-account" placeholder="nano_ Account"
+                        <textarea id="accountinput" class="stroke" name="player-account" placeholder="nano_ Account (Optional)"
                             maxlength="65" rows="3" spellcheck="false" autocomplete="off"></textarea>
                     </form>
                     <div class="play">
@@ -157,7 +157,7 @@
                         <input type="text" id="loginnameinput" class="stroke" name="player-name"
                             placeholder="Character Name" maxlength="16" autofocus autocomplete="off" />
                         <textarea id="loginaccountinput" class="stroke" name="player-loginaccount"
-                            placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"
+                            placeholder="nano_ Account (Optional)" maxlength="65" rows="2" spellcheck="false"
                             autocomplete="off"></textarea>
                         <input type="hidden" id="loginnetworkinput" value="nano" />
                         <input type="password" id="loginpasswordinput" class="stroke password-login password-create"
@@ -274,17 +274,18 @@
                         You need to accept the following terms of usage<span class="right-ornament"></span><br />
                         before creating a new character.
                     </h1>
-                    <br />
-                    You'll be collecting <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a> by
+                    If you choose to connect your nano_ address,<br/>you'll be collecting <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a> by
                     completing the game achievements.<br />
-                    Your cumulated Nano payout will be sent once you kill the skeleton king<br /> by getting the last
-                    hit!<br />
-
-                    You can complete the game as many time as you like.<br />
-                    Play with your friends and introduce them to Nano!<br /><br />
-
-                    <strong>No cheating. No begging. No harassing other players. You will get banned.</strong><br />
-                    The game is funded entirely by NanoLooker donations, keep it friendly.<br /><br />
+                    Your cumulated Nano payout will be sent once you kill the skeleton king<br /> by getting the last hit!
+                    <br />
+                    You can complete the game as many time as you like<br/> and play with your friends.
+                    <br />
+                    <br />
+                    Join the <a href="https://discord.gg/GerkX8BfYy" target="_blank">Discord server</a> to connect with other players.
+                    <br />
+                    <br />
+                    No cheating. No begging. No harassing other players. You will get banned.<br />
+                    Keep it friendly.<br /><br />
 
                     <div id="continue">
                         <span class="link">Continue</span>
@@ -337,7 +338,7 @@
                         Nano BrowserQuest is a multiplayer game inviting you to explore a
                         world of adventure from your Web browser.
                         <br /><br />
-                        You'll be collecting <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a>
+                        If you choose to connect your nano_ address, you'll be collecting <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a>
                         by completing the game achievements.<br />
                         Your cumulated Nano payout will be sent once you kill the skeleton king!<br />
                         You can complete the game as many time as you like.<br /><br />
@@ -385,8 +386,8 @@
                 <div class="panel-notice">
                     * Items are credited instantly.
                     If you don't receive your items, reach out to running-coder#8584 on the <a
-                        href="https://discord.gg/GerkX8BfYy">NanoBrowserQuest Discord</a> server
-                    or to <a href="https://www.reddit.com/user/Opposite_Objective34/">u/Opposite_Objective34</a> on
+                        href="https://discord.gg/GerkX8BfYy" target="_blank">NanoBrowserQuest Discord</a> server
+                    or to <a href="https://www.reddit.com/user/Opposite_Objective34/" target="_blank">u/Opposite_Objective34</a> on
                     Reddit.
                 </div>
             </article>
@@ -430,6 +431,8 @@
                             <label for="anvil-odds-checkbox">Show anvil upgrade odds</label>
                         </div> -->
                     </div>
+
+                   
                     <div>
                         <div>
                             <div class="item-icon">
@@ -455,6 +458,11 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="account-container">
+                    <input type="text" id="player-account-input" class="stroke" name="" placeholder="nano_ Account" maxlength="65" autocomplete="off">
+                    <br/>
+                    <a id="player-account-link" href="" target="_blank"></a>
                 </div>
             </article>
             <article id="party" class="clickable">
@@ -550,6 +558,26 @@
                     <button class="btn" id="fight-again">Fight Again!</button>
                 </div>
             </article>
+            <article id="missing-account" class="clickable">
+                <div class="close"></div>
+                <h1>
+                    <span class="left-ornament"></span>
+                    Register an account
+                    <span class="right-ornament"></span>
+                </h1>
+                <div id="container-payout-hash">
+                    <p>
+                        Register your nano_ account in the Settings panel (press "O")<br/>to received a Nano payout for killing the Skeleton King.
+                    </p>
+                    <div>
+                        <p>Registering an account is optional,<br/>you'll still be able to progress through the game if you choose not to.</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 10px;">
+                    <button class="btn" id="missing-account-btn">Ok!</button>
+                </div>
+            </article>
             <article id="failed" class="clickable">
                 <div class="close"></div>
                 <h1>
@@ -557,7 +585,9 @@
                     Not yet!
                     <span class="right-ornament"></span>
                 </h1>
-                <p></p>
+                <p>You may not fight the end boss at the moment,<br/>you need to be at least level <var id="min-level"></var>.</p>
+                <br/>
+                <p>Keep killing monsters and gaining experience!</p>
             </article>
             <div id="canvas">
                 <canvas id="background"></canvas>
@@ -631,7 +661,6 @@
             <div id="player" class="panel">
                 <div class="panel-header">
                     <div id="player-username" class="active"></div>
-                    <a id="player-account" href="" target="_blank"></a>
                 </div>
                 <div id="player-info">
                     <div>
