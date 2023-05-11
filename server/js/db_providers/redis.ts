@@ -253,11 +253,14 @@ class DatabaseHandler {
                 }
               }
 
-              if (rawAccount && rawPlayerAccount != rawAccount) {
-                player.connection.sendUTF8("invalidlogin");
-                player.connection.close("Wrong Account: " + player.name);
-                return;
-              }
+              console.log("~~~rawAccount", rawAccount);
+              console.log("~~~rawPlayerAccount", rawPlayerAccount);
+
+              // if (rawAccount && rawPlayerAccount != rawAccount) {
+              //   player.connection.sendUTF8("invalidlogin");
+              //   player.connection.close("Wrong Account: " + player.name);
+              //   return;
+              // }
 
               // @NOTE: Change the player network and depositAccount according to the login account so
               // nano players can be on bananobrowserquest and ban players can be on nanobrowserquest
@@ -560,6 +563,7 @@ class DatabaseHandler {
               console.info("Experience: " + exp);
 
               player.sendWelcome({
+                account,
                 armor,
                 weapon,
                 belt,
@@ -600,24 +604,6 @@ class DatabaseHandler {
       player.connection.sendUTF8("invalidlogin");
       player.connection.close("User does not exist: " + player.name);
       return;
-    });
-  }
-
-  isPlayerExist(player) {
-    console.log("~~~1.1");
-    return new Promise((resolve, reject) => {
-      this.client.sismember("usr", player.name, async (err, reply) => {
-        console.log("~~~1.2", reply);
-        if (reply === 1) {
-          console.log("~~~1.3");
-          player.connection.sendUTF8("userexists");
-          player.connection.close("Username not available: " + player.name);
-          reject();
-        } else {
-          console.log("~~~1.4");
-          resolve(true);
-        }
-      });
     });
   }
 
@@ -2179,27 +2165,22 @@ class DatabaseHandler {
       var userKey = "u:" + player.name;
 
       try {
-        this.client
-          .multi()
-          .hget(userKey, "password")
-          .exec((_err, replies) => {
-            const password = replies[0];
+        this.client.hget(userKey, "password", (_err, reply) => {
+          let hasPassword = !!reply;
 
-            let hasPassword = !!password;
+          // if (NODE_ENV === "development") {
+          //   resolve(false);
+          //   return;
+          // }
 
-            if (NODE_ENV === "development") {
-              resolve(false);
-              return;
-            }
+          if (hasPassword) {
+            player.connection.sendUTF8("passwordlogin");
+          } else {
+            player.connection.sendUTF8("passwordcreate");
+          }
 
-            if (hasPassword) {
-              player.connection.sendUTF8("passwordlogin");
-            } else {
-              player.connection.sendUTF8("passwordcreate");
-            }
-
-            resolve(true);
-          });
+          resolve(true);
+        });
       } catch (err) {
         Sentry.captureException(err);
       }
@@ -2243,12 +2224,30 @@ class DatabaseHandler {
     });
   }
 
+  isPlayerExist(player) {
+    console.log("~~~1.1");
+    return new Promise(resolve => {
+      this.client.sismember("usr", player.name, async (err, reply) => {
+        console.log("~~~1.2", reply);
+        if (reply === 1) {
+          console.log("~~~1.3");
+          player.connection.sendUTF8("userexists");
+          player.connection.close("Username not available: " + player.name);
+          resolve(true);
+        } else {
+          console.log("~~~1.4");
+          resolve(false);
+        }
+      });
+    });
+  }
+
   passwordLoginOrCreate(player, loginPassword) {
     return new Promise((resolve, _reject) => {
       const userKey = "u:" + player.name;
 
       try {
-        this.client.hget(userKey, "password").exec(async (err, reply) => {
+        this.client.hget(userKey, "password", async (err, reply) => {
           const password = reply;
           let isValid = false;
 

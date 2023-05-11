@@ -2486,8 +2486,10 @@ class Game {
       self.player.network = self.network;
       self.started = true;
 
+      console.log("~~~~action", action);
+
       if (action === "create") {
-        self.client.sendCreate({ name: self.username, account: self.account });
+        self.client.sendCreate({ name: self.username, account: self.account, password: self.password });
       } else {
         self.client.sendLogin({
           name: self.username,
@@ -2518,6 +2520,7 @@ class Game {
     this.client.onWelcome(function ({
       id,
       name,
+      account,
       x,
       y,
       hp,
@@ -2564,6 +2567,7 @@ class Game {
       // Always accept name received from the server which will
       // sanitize and shorten names exceeding the allowed length.
       self.player.name = name;
+      self.player.account = account;
       self.player.network = network;
 
       var [armor, armorLevel, armorBonus, armorSocket] = armor.split(":");
@@ -2663,7 +2667,7 @@ class Game {
       self.app.initNanoPotions();
       self.app.initTradePlayer1StatusButton();
 
-      self.storage.initPlayer(self.player.name, self.player.account);
+      self.storage.initPlayer(name, account);
       self.renderer.loadPlayerImage();
 
       if (!self.storage.hasAlreadyPlayed() || self.player.level === 1) {
@@ -4393,7 +4397,7 @@ class Game {
           }
         } else if (status === "failed") {
           self.bosscheckfailed_callback(message);
-        }  else if (status === "missing-account") {
+        } else if (status === "missing-account") {
           self.missingaccount_callback();
         } else if (status === "completed") {
           self.gamecompleted_callback({ hash, fightAgain: true, show: true });
@@ -6485,7 +6489,7 @@ class Game {
             if (send) {
               self.client.sendAchievement(achievement.id);
             }
-            self.unlock_callback(achievement.id, achievement.name, achievement[self.network]);
+            self.unlock_callback(achievement.id, achievement.name, achievement[self.network || "nano"]);
             self.audioManager.playSound("achievement");
             resolve();
           }

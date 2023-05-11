@@ -57,3 +57,14 @@ export const validateQuantity = quantity => {
   }
   return true;
 };
+
+// 02LV are not present in addresses
+const ACCOUNT_REGEX = /^((nano|ban)_)[13][13-9a-km-uw-z]{59}$/;
+export const isValidAccountAddress = (address: string) =>
+  new RegExp(`^${ACCOUNT_REGEX.toString().replace(/\//g, "")}$`, "i").test(address);
+
+export const getAccountAddressFromText = (text: string) => {
+  const [, address] =
+    text.match(new RegExp(`[^sS]*?(${ACCOUNT_REGEX.toString().replace(/\//g, "")})[^sS]*?`, "i")) || [];
+  return address;
+};

@@ -190,7 +190,9 @@ var initApp = function () {
       app.animateParchment("confirmation", "loadcharacter");
     });
 
-    $("#back-to-login span").click(function () {
+    $("#back-to-login .link").on("click", function () {
+      $("#nameinput").val("");
+      $("#accountinput").val("");
       app.animateParchment("createcharacter", "loadcharacter");
     });
 
@@ -252,31 +254,52 @@ var initApp = function () {
     });
 
     const { data } = app.storage;
-    if (data.hasAlreadyPlayed) {
-      if (data?.player?.name && data?.player?.image) {
-        $("#loginnameinput").hide();
-        $("#loginaccountinput").hide();
-        $("#login-play-link").hide();
-        $("#no-playername").hide();
+    const { name: playerName, image: playerImage } = data?.player || {};
+    const parchmentClass = $("#parchment").attr("class");
+    const parchment = $(`article#${parchmentClass}`);
 
-        $("#login-play-button").show();
-        $("#forget-player").show();
-        $("#playername").html(data.player.name).show();
-        $("#playerimage").attr("src", data.player.image).show();
-      }
+    // if (data.hasAlreadyPlayed) {
+    if (playerName) {
+      parchment.find(".playername").text(playerName).show();
+      parchment.find(".no-playername").hide();
+      $("#loginnameinput").hide();
+      $("#loginaccountinput").hide();
+      // parchment.find(".login-play-link").hide();
+      parchment.find(".login-play-button").show();
+    } else {
+      parchment.find(".playername").hide();
+      parchment.find(".no-playername").show();
+      // parchment.find(".login-play-link").show();
+      // parchment.find(".login-play-button").hide();
     }
 
-    $("#forget-player .link").on("click", () => {
-      app.storage.clear();
+    console.log("~~~playerImage", playerImage);
 
-      $("#no-playername").show();
+    if (playerImage) {
+      $(".playerimage").attr("src", playerImage);
+      // parchment.find(".playerimage").attr("src", playerImage).show();
+    } else {
+      $(".playerimage").hide();
+    }
+    // }
+
+    $("#forget-player .link").on("click", () => {
+      $(".playerimage").hide();
+
+      const clickedParchmentClass = $("#parchment").attr("class");
+      const clickedParchment = $(`article#${clickedParchmentClass}`);
+
+      console.log("~~~~clickedParchment", clickedParchment);
+      console.log("~~~~clickedParchmentClass", clickedParchmentClass);
+
+      clickedParchment.find(".no-playername").show();
       $("#loginnameinput").val("").show();
       $("#loginaccountinput").val("").show();
-      $("#login-play-link").show();
+      // clickedParchment.find(".login-play-link").show();
 
-      $("#playername").hide();
-      $("#playerimage").hide();
-      $("#login-play-button").hide();
+      clickedParchment.find(".playername").hide();
+      clickedParchment.find(".playerimage").hide();
+      clickedParchment.find(".login-play-button").show();
       $("#forget-player").hide();
 
       app.animateParchment("loadcharacter", "loadcharacter");
@@ -722,18 +745,6 @@ var initGame = function () {
     }
   });
 
-  $("#nameinput").focusin(function () {
-    $("#name-tooltip").addClass("visible");
-  });
-
-  $("#nameinput").focusout(function () {
-    $("#name-tooltip").removeClass("visible");
-  });
-
-  $("#nameinput").keypress(function () {
-    $("#name-tooltip").removeClass("visible");
-  });
-
   $("#settings-button").on("click", () => {
     app.toggleSettings();
   });
@@ -764,10 +775,18 @@ var initGame = function () {
 
   $(document).on("keydown.loginform", function (e) {
     if (e.keyCode === Types.Keys.ENTER) {
-      if (!game.started && (app.loginFormActive() || app.createNewCharacterFormActive())) {
-        $("input").blur(); // exit keyboard on mobile
+      if (
+        !game.started &&
+        (app.loginFormActive() ||
+          app.createNewCharacterFormActive() ||
+          app.createPasswordFormActive() ||
+          app.enterPasswordFormActive())
+      ) {
+        if (document.activeElement.tagName === "INPUT") {
+          $(document.activeElement).trigger("blur"); // exit keyboard on mobile
+        }
         app.tryStartingGame();
-        return false; // prevent form submit
+        return false;
       }
     }
 

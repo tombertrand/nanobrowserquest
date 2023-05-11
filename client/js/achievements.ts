@@ -28,7 +28,7 @@ export const MAGE_COUNT = 250;
 export const WRAITH2_COUNT = 250;
 export const MINI_BOSS_COUNT = 250;
 
-export const getAchievements = (network: Network): { [key in AchievementName]: Achievement } => ({
+export const getAchievements = (network: Network = "nano"): { [key in AchievementName]: Achievement } => ({
   A_TRUE_WARRIOR: {
     id: 1,
     name: "A True Warrior",

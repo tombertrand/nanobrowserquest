@@ -336,7 +336,9 @@ class World {
       });
 
       player.onExit(function () {
-        purchase[player.network].cancel(player.depositAccount);
+        if (player.network) {
+          purchase[player.network].cancel(player.depositAccount);
+        }
 
         console.info(player.name + " has left the game.");
         if (player.hasParty()) {
@@ -2334,6 +2336,13 @@ class World {
       }
     }
 
+    if (mob.isInsideTemple) {
+      const templeMobRandom = random(800);
+      if (templeMobRandom === 133) {
+        return "ringmystical";
+      }
+    }
+
     if (mob.kind >= Types.Entities.EYE) {
       const vv = random(12000);
       if (vv === 420) {
@@ -2370,7 +2379,7 @@ class World {
     }
 
     if (mob.kind >= Types.Entities.OCULOTHORAX) {
-      const superUniqueRandom = random(13_000);
+      const superUniqueRandom = random(15_000);
 
       if ([Types.Entities.MAGE, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(mob.kind)) {
         if (superUniqueRandom === 666) {

@@ -291,7 +291,7 @@ class GameClient {
       });
 
       this.connection.io.on("reconnect", () => {
-        $("#reconnecting").removeClass("visible");
+        // @TODO ~~~ better handle reconnection?
       });
 
       this.connection.on("disconnect", reason => {
@@ -302,8 +302,6 @@ class GameClient {
           disconnectMessage = "The connection to Nano BrowserQuest has been lost";
         } else if (this.isTimeout) {
           disconnectMessage = "You have been disconnected for being inactive for too long";
-        } else {
-          $("#reconnecting").addClass("visible");
         }
 
         if (disconnectMessage) {
@@ -1235,11 +1233,11 @@ class GameClient {
     this.receivecoin_callback = callback;
   }
 
-  sendCreate({ name, account }) {
-    this.sendMessage([Types.Messages.CREATE, name, account]);
+  sendCreate({ name, account = "", password = "" }) {
+    this.sendMessage([Types.Messages.CREATE, name, account, password]);
   }
 
-  sendLogin({ name, account, password = "" }) {
+  sendLogin({ name, account = "", password = "" }) {
     this.sendMessage([Types.Messages.LOGIN, name, account, password]);
   }
 
