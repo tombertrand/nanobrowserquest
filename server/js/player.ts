@@ -341,11 +341,6 @@ class Player extends Character {
           }
         }
 
-        console.log("~~~~password", password);
-        console.log("~~~~self.name", self.name);
-        console.log("~~~~self.network", self.network);
-        console.log("~~~~self.account", self.account);
-
         if (!password) {
           if (await databaseHandler.passwordIsRequired(self)) {
             return;
@@ -357,7 +352,6 @@ class Player extends Character {
         }
 
         if (action === Types.Messages.CREATE) {
-          console.log("~~~4");
           databaseHandler.createPlayer(self);
         } else {
           databaseHandler.loadPlayer(self);
@@ -1305,8 +1299,6 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.PURCHASE_CREATE) {
         console.info("PURCHASE_CREATE: " + self.name + " " + message[1] + " " + message[2]);
-
-        console.log("`~~~network", self.network);
 
         if (message[2] === self.depositAccount) {
           purchase[self.network].create({ player: self, account: self.depositAccount, id: message[1] });

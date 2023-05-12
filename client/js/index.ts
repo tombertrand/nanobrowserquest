@@ -262,7 +262,6 @@ var initApp = function () {
       parchment.find(".playername").text(playerName).show();
       parchment.find(".no-playername").hide();
       $("#loginnameinput").hide();
-      $("#loginaccountinput").hide();
       parchment.find(".login-play-button").show();
     } else {
       parchment.find(".playername").hide();
@@ -283,7 +282,6 @@ var initApp = function () {
 
       clickedParchment.find(".no-playername").show();
       $("#loginnameinput").val("").show();
-      $("#loginaccountinput").val("").show();
 
       clickedParchment.find(".playername").hide();
       clickedParchment.find(".playerimage").hide();

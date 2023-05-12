@@ -195,11 +195,16 @@ class App {
       }
 
       return this.$loginNameInput;
-
-      // return this.createNewCharacterFormActive() ? this.$nameInput : this.$loginNameInput;
     };
     this.getAccountField = () => {
-      return this.createNewCharacterFormActive() ? this.$accountInput : this.$loginAccountInput;
+      if (this.$accountInput.val()) {
+        return this.$accountInput;
+      }
+      if (this.$loginAccountInput.val()) {
+        return this.$loginAccountInput;
+      }
+
+      return this.$accountInput;
     };
     this.getPasswordField = () => {
       if (this.$loginPasswordInput.is(":visible")) {

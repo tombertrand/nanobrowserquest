@@ -2362,6 +2362,7 @@ class Game {
     if (username) {
       this.username = username;
     }
+
     this.account = account;
     this.network = network;
     this.explorer = network === "nano" ? "nanolooker" : "bananolooker";
@@ -2579,8 +2580,12 @@ class Game {
       // Always accept name received from the server which will
       // sanitize and shorten names exceeding the allowed length.
       self.player.name = name;
-      self.account = account;
-      self.network = network;
+      if (account) {
+        self.account = account;
+      }
+      if (network) {
+        self.network = network;
+      }
 
       var [armor, armorLevel, armorBonus, armorSocket] = armor.split(":");
       var [weapon, weaponLevel, weaponBonus, weaponSocket, attackSkill] = weapon.split(":");

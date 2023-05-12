@@ -670,6 +670,7 @@ class DatabaseHandler {
       .exec((_err, _replies) => {
         console.info("New User: " + player.name);
         player.sendWelcome({
+          account: player.account,
           armor: "clotharmor:1",
           weapon: "dagger:1",
           belt: null,
@@ -2183,8 +2184,8 @@ class DatabaseHandler {
           let hasPassword = !!reply;
 
           if (NODE_ENV === "development") {
-            resolve(false);
-            return;
+            // resolve(false);
+            // return;
           }
 
           if (hasPassword) {
