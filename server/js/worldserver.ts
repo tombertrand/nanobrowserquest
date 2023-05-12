@@ -1582,11 +1582,11 @@ class World {
   getPlayerPopulation() {
     let players = _.sortBy(
       // @ts-ignore
-      Object.values(this.players).reduce((acc: any[], { name, level, hash, network, partyId }) => {
+      Object.values(this.players).reduce((acc: any[], { name, level, hash, account, network, partyId }) => {
         acc.push({
           name,
           level,
-          network,
+          network: account ? network : null,
           hash: !!hash,
           partyId,
         });
@@ -2396,9 +2396,10 @@ class World {
           return "amuletdragon";
         } else if (superUniqueRandom === 555) {
           return "ringheaven";
-        } else if (superUniqueRandom === 1111) {
-          return "amuleteye";
         }
+        //  else if (superUniqueRandom === 1111) {
+        //   return "amuleteye";
+        // }
       }
 
       if (superUniqueRandom === 111) {

@@ -174,6 +174,7 @@ class Game {
   playerdeath_callback: any;
   gamecompleted_callback: any;
   missingaccount_callback: any;
+  account_callback: any;
   bosscheckfailed_callback: any;
   chat_callback: any;
   invinciblestart_callback: any;
@@ -1100,7 +1101,7 @@ class Game {
       buttons: [
         {
           text: "Cancel",
-          class: "btn btn-gray",
+          class: "btn btn-default",
           click: function () {
             $(this).dialog("close");
             $("#container").removeClass("prevent-click");
@@ -1730,8 +1731,8 @@ class Game {
       $(`.item-stash-page.page-${this.currentStashPage}`).addClass("visible");
       $("#current-stash-page").text(this.currentStashPage + 1);
 
-      previousButton.toggleClass("disabled btn-gray", this.currentStashPage === 0);
-      nextButton.toggleClass("disabled btn-gray", this.currentStashPage >= STASH_SLOT_PAGES - 1);
+      previousButton.toggleClass("disabled btn-default", this.currentStashPage === 0);
+      nextButton.toggleClass("disabled btn-default", this.currentStashPage >= STASH_SLOT_PAGES - 1);
     };
 
     const previousButton = $("#item-stash-previous-page");
@@ -2347,12 +2348,27 @@ class Game {
     }
   }
 
-  setPlayerAccount(username, account, network, password) {
-    this.username = username;
+  setPlayerAccount({
+    username,
+    account,
+    network,
+    password,
+  }: {
+    username?: string;
+    account: string;
+    network: Network;
+    password?: string;
+  }) {
+    if (username) {
+      this.username = username;
+    }
     this.account = account;
     this.network = network;
     this.explorer = network === "nano" ? "nanolooker" : "bananolooker";
-    this.password = password;
+
+    if (password) {
+      this.password = password;
+    }
   }
 
   setServerOptions(host, port) {
@@ -2482,11 +2498,7 @@ class Game {
       console.info("Starting client/server handshake");
 
       self.player.name = self.username;
-      self.player.account = self.account;
-      self.player.network = self.network;
       self.started = true;
-
-      console.log("~~~~action", action);
 
       if (action === "create") {
         self.client.sendCreate({ name: self.username, account: self.account, password: self.password });
@@ -2567,8 +2579,8 @@ class Game {
       // Always accept name received from the server which will
       // sanitize and shorten names exceeding the allowed length.
       self.player.name = name;
-      self.player.account = account;
-      self.player.network = network;
+      self.account = account;
+      self.network = network;
 
       var [armor, armorLevel, armorBonus, armorSocket] = armor.split(":");
       var [weapon, weaponLevel, weaponBonus, weaponSocket, attackSkill] = weapon.split(":");
@@ -2683,7 +2695,17 @@ class Game {
 
       // @NOTE possibly optimize this? sending request to move items to inventory
       self.client.sendMoveItemsToInventory("upgrade");
-      self.client.sendMoveItemsToInventory("trade");
+      // Inventory might be locked
+      setTimeout(() => {
+        self.client.sendMoveItemsToInventory("trade");
+      }, 250);
+
+      self.client.onAccount(function ({ account, network, depositAccount }) {
+        self.store.depositAccount = depositAccount;
+        self.setPlayerAccount({ account, network });
+
+        self.app.initPlayerInfo();
+      });
 
       self.player.onStartPathing(function (path) {
         var i = path.length - 1,
@@ -3730,7 +3752,7 @@ class Game {
           buttons: [
             {
               text: "Refuse",
-              class: "btn btn-gray",
+              class: "btn btn-default",
               click: function () {
                 self.client.sendTradeRequestRefuse(playerName);
                 $(this).dialog("close");
@@ -6370,6 +6392,10 @@ class Game {
 
   onMissingAccount(callback) {
     this.missingaccount_callback = callback;
+  }
+
+  onAccount(callback) {
+    this.account_callback = callback;
   }
 
   onBossCheckFailed(callback) {

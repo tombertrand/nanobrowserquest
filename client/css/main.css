@@ -134,7 +134,7 @@ footer, header, hgroup, menu, nav, section {
     #parchment, #parchment input, #parchment textarea, #store, .account-container input, #player-account-link {font-family:'GraphicPixel';}
 
     #parchment input, #parchment textarea, #store input, .account-container input { width:60%;background:rgba(0,0,0,0.05);text-align:center; }
-    #parchment input, #parchment textarea, #store input, .account-container input:not(:disabled) {-moz-animation:glow 0.5s linear infinite alternate;-webkit-animation:glow 0.5s linear infinite alternate;-o-animation:glow 0.5s linear infinite alternate;-ms-animation:glow 0.5s linear infinite alternate;color:#eee;}
+    #parchment input, #parchment textarea, #store input, .account-container input:not(:readonly) {-moz-animation:glow 0.5s linear infinite alternate;-webkit-animation:glow 0.5s linear infinite alternate;-o-animation:glow 0.5s linear infinite alternate;-ms-animation:glow 0.5s linear infinite alternate;color:#eee;}
     /* .account-container input, .account-container textarea { width: 60%; } */
     #parchment input:focus, #parchment textarea:focus, #store input:focus, .account-container input:focus {-moz-animation:none;-webkit-animation:none;-o-animation:none;-ms-animation:none;animation:none;color:#fff;background:rgba(0,0,0,0.1);border-color:rgba(0,0,0,0.3);}
     #parchment input.field-error, #parchment textarea.field-error, .account-container input.field-error {background:rgba(255,0,0,0.1);border-color:#f84444;}
@@ -885,14 +885,14 @@ footer, header, hgroup, menu, nav, section {
         text-shadow: none;
     }
 
-    .btn-gray {
+    .btn-default {
         color: #2e2e2e !important;
         background-color: #dcdcdc;
         text-shadow: 0 2px 0 #d2d2d2;
         box-shadow: inset -2px 2px 0 2px #c7c7c7, inset 2px -2px 0 2px #868585, inset -1px 1px 0 4px #dbdada;
     }
 
-    .btn-gray:hover:not(.disabled) {
+    .btn-default:hover:not(.disabled) {
         box-shadow: inset 2px -2px 0 2px #c7c7c7, inset -2px 2px 0 2px #868585, inset 1px -1px 0 4px #dbdada;
     }
 
@@ -995,8 +995,16 @@ footer, header, hgroup, menu, nav, section {
         flex-direction: column;
     }
 
+    .account-input-wrapper {
+        display: flex;
+        justify-content: center;
+    }
 
-	@media screen and (min-width: 1501px) {
+    .account-input-wrapper .btn {
+        margin-left: 10px;
+    }
+
+    @media screen and (min-width: 1501px) {
         .home-logo {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }
         #text-list > div { padding: 0 12px; }

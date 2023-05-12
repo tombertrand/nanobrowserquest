@@ -25,10 +25,12 @@ class Store {
   depositAccount: null | string;
   storeItems: Partial<StoreItem>[];
   app: any;
+  isPurchaseSessionCreated: boolean;
 
   constructor(app) {
     this.app = app;
     this.depositAccount = null;
+    this.isPurchaseSessionCreated = false;
 
     this.storeItems = [
       {
@@ -209,6 +211,11 @@ class Store {
   closeStore() {
     $("#store, #store-item-list, #store-item-purchase").removeClass("active");
     $("#store-item-list").empty();
+
+    if (this.isPurchaseSessionCreated) {
+      this.app.game.client.sendPurchaseCancel();
+      this.isPurchaseSessionCreated = false;
+    }
   }
 
   selectStoreItemPurchase(id: number) {
@@ -221,25 +228,30 @@ class Store {
     const { icon, name, description, requiresInventorySlot } = item;
     const price = item[this.app.game.network];
 
-    this.app.game.client.sendPurchaseCreate(id, this.depositAccount);
-
-    $(".close")
-      .off(".purchase-cancel")
-      .on("click.purchase-cancel", () => {
-        this.app.game.client.sendPurchaseCancel(this.depositAccount);
-        $(".close").off(".purchase-cancel");
-      });
+    if (this.depositAccount) {
+      this.app.game.client.sendPurchaseCreate(id, this.depositAccount);
+      this.isPurchaseSessionCreated = true;
+    }
 
     $("<div/>", {
-      class: "item-wrapper purchased-item",
+      class: "item-wrapper",
       html: `
-            <div class="item-icon">
-              <div class="${icon} locked"></div>
-            </div>
-            <p class="name">${name}</p>
-            ${description ? `<p class="description">${description}</p>` : ""}
-          `,
+          <div class="item-icon">
+            <div class="${icon} locked"></div>
+          </div>
+          <p class="name">${name}</p>
+          ${description ? `<p class="description">${description}</p>` : ""}
+        `,
     }).appendTo("#store-item-purchase");
+
+    if (!this.depositAccount) {
+      $("<div/>", {
+        class: "item-wrapper item-wrapper-large",
+        html: `
+              <p class="name">You need to enter your ${this.app.game.network}_ address<br/> in the Settings panel before being able to purchase an item from the store</p>
+            `,
+      }).appendTo("#store-item-purchase");
+    }
 
     if (requiresInventorySlot && this.app.game.player.inventory.length >= 24) {
       $("<div/>", {

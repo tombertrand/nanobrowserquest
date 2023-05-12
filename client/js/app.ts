@@ -246,12 +246,12 @@ class App {
       ? this.getPasswordConfirmField().val()
       : undefined;
     var [network] = account?.split("_") || [];
-
-    console.log("~~~~username", username);
-    console.log("~~~~account", account);
-    console.log("~~~~password", password);
-    console.log("~~~~passwordConfirm", passwordConfirm);
-    console.log("~~~~network", network);
+    if (!network) {
+      network = "nano";
+      if (window.location.hostname === "bananobrowserquest.com") {
+        network = "ban";
+      }
+    }
 
     if (!this.validateFormFields({ username, account, password, passwordConfirm })) return;
 
@@ -273,7 +273,7 @@ class App {
   startGame(action, username, account, network, password) {
     var self = this;
     if (username && !this.game.started) {
-      this.game.setPlayerAccount(username, account, network, password);
+      this.game.setPlayerAccount({ username, account, network, password });
 
       let config = { host: "localhost", port: 8000 };
       if (process.env.NODE_ENV !== "development") {
@@ -297,8 +297,6 @@ class App {
 
       this.game.connect(action, function (result) {
         if (result.reason) {
-          console.log("~~~~result.reason", result.reason);
-
           switch (result.reason) {
             case "invalidlogin":
               // Login information was not correct (either username or password)
@@ -378,7 +376,7 @@ class App {
       buttons: [
         {
           text: "Cancel",
-          class: "btn btn-gray",
+          class: "btn btn-default",
           click: function () {
             self.game.slotToDelete = null;
             $(this).dialog("close");
@@ -404,7 +402,7 @@ class App {
       buttons: [
         {
           text: "Cancel",
-          class: "btn btn-gray",
+          class: "btn btn-default",
           click: function () {
             self.game.confirmedSoldItemToMerchant = null;
             $(this).dialog("close");
@@ -428,10 +426,6 @@ class App {
 
   setPlayButtonState(enabled) {
     var $playButton = this.getPlayButton();
-
-    console.log("~~~~$playButton", $playButton);
-    console.log("~~~~enabled", enabled);
-
     if (!$playButton) return;
 
     if ($playButton.find(".link").text() !== "Loading...") {
@@ -528,7 +522,10 @@ class App {
     }
 
     if (account && !isValidAccountAddress(account)) {
-      this.addValidationError(this.getAccountField(), `Enter a valid address starting with "nano_" or leave the field empty.`);
+      this.addValidationError(
+        this.getAccountField(),
+        `Enter a valid address starting with "nano_" or leave the field empty.`,
+      );
       return false;
     }
 
@@ -555,7 +552,9 @@ class App {
     }).appendTo(validationSummary);
 
     if (field) {
-      field.addClass("field-error").select();
+      if (!this.game.started) {
+        field.addClass("field-error").select();
+      }
       field.on("keypress.validation", () => {
         field.removeClass("field-error").off(".validation");
         $(".validation-error").remove();
@@ -726,28 +725,51 @@ class App {
 
   initPlayerInfo() {
     const self = this;
-    const { name, account } = this.game.player;
+    const { account, network } = this.game;
+    const { name } = this.game.player;
 
     $("#player-username").text(name);
-    $("#completedbutton").addClass(this.game.network);
+    $("#completedbutton").addClass(network);
+
+    const input = $("#player-account-input");
+    const confirmBtn = $("#player-account-confirm");
+    const linkBtn = $("#player-account-link");
 
     if (account) {
-      $("#player-account-input").val(account).attr("disabled", "disabled");
-      $("#player-account-link").attr("href", `https://${this.game.explorer}.com/account/${account}`).text("View");
+      linkBtn.show();
+      confirmBtn.hide();
+      input.val(account).attr("readonly", "readonly");
+      linkBtn.off(".open").on("click.open", () => {
+        window.open(`https://${this.game.explorer}.com/account/${account}`, "_blank");
+      });
     } else {
-      // $("#player-account").attr("href", `https://${this.game.explorer}.com/account/${account}`).text(account);
-      $("#player-account-confirm")
-        .show()
-        .off(".confirm")
-        .on("click.confirm", function (e) {
-          e.preventDefault();
-          const newAccount = $(this).val() as string;
+      confirmBtn.attr("disabled", "disabled").addClass("disabled btn-default");
+      linkBtn.hide();
+      input.off(".validate").on("input.validate", () => {
+        const value = input.val() as string;
+        const isValid = isValidAccountAddress(value);
 
-          if (!isValidAccountAddress(newAccount)) {
-            self.addValidationError($("#player-account-input"), `Enter a valid address starting with "nano_"`);
-          }
-        });
-      // $("#player-account-link").hide();
+        input.removeClass("field-error");
+        $(".validation-error").remove();
+
+        if (!isValid) {
+          confirmBtn.attr("disabled", "disabled").addClass("disabled btn-default");
+          self.addValidationError($("#player-account-input"), `Enter a valid address starting with "nano_"`);
+        } else {
+          confirmBtn.removeAttr("disabled").removeClass("disabled btn-default");
+        }
+      });
+
+      confirmBtn.off(".confirm").on("click.confirm", function (e) {
+        e.preventDefault();
+        const value = input.val() as string;
+
+        if (!isValidAccountAddress(value)) {
+          self.addValidationError($("#player-account-input"), `Enter a valid address starting with "nano_"`);
+        } else {
+          self.game.client.sendAccount(value);
+        }
+      });
     }
   }
 
@@ -830,6 +852,16 @@ class App {
     const isActive = $("#settings").hasClass("active");
     this.hideWindows();
     $("#settings").toggleClass("active", !isActive);
+
+    const input = $("#player-account-input");
+    const inputIsReadonly = !!input.attr("readonly");
+
+    if (!isActive) {
+      if (!inputIsReadonly) {
+        input.val("").removeClass("field-error");
+        $(".validation-error").remove();
+      }
+    }
   }
 
   toggleParty() {
@@ -1151,6 +1183,10 @@ class App {
     $("#container").removeClass("prevent-click");
 
     this.closeOtherPlayerEquipment();
+
+    // if ($("#store").hasClass('visible')) {
+    //   // this.game.client.sendPurchaseCancel(this.game.depositAccount);
+    // }
   }
 
   showAchievementNotification(id, name) {
@@ -1357,9 +1393,10 @@ class App {
     }
   }
 
-  closeInGameScroll(content) {
+  closeInGameScroll(content: string) {
     $("body").removeClass(content);
     $("#parchment").removeClass(content);
+
     if (!this.game.player) {
       $("body").addClass("death");
     }
@@ -1657,8 +1694,6 @@ class App {
           self.setPlayButtonState(true);
 
           self.setFocus();
-
-          console.log("~~~~document.activeElement", document.activeElement);
         }, duration * 1000);
 
         setTimeout(function () {

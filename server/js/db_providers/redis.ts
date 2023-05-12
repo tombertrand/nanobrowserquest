@@ -112,7 +112,7 @@ class DatabaseHandler {
     });
   }
 
-  assignNewDepositAccount(player, network: Network) {
+  assignNewDepositAccount(player, network: Network): Promise<{ depositAccount: string; depositAccountIndex: number }> {
     return new Promise((resolve, reject) => {
       // Make sure the player doesn't have a valid deposit account, once it's set it can't be changed
       if (!player || player.depositAccount || player.depositAccountIndex || !network) return;
@@ -130,7 +130,7 @@ class DatabaseHandler {
         if (depositAccount || depositAccountIndex) return;
 
         depositAccountIndex = await this.createDepositAccount();
-        depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number, player.network);
+        depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number, network);
 
         if (typeof depositAccountIndex !== "number" || !depositAccount) {
           Sentry.captureException(new Error("Invalid deposit account when creating player"), {
@@ -157,9 +157,9 @@ class DatabaseHandler {
 
             player.depositAccountIndex = depositAccountIndex;
             player.depositAccount = depositAccount;
-            // player.network = network;
+            player.network = network;
 
-            resolve(true);
+            resolve({ depositAccount, depositAccountIndex });
           },
         );
       });
@@ -208,7 +208,6 @@ class DatabaseHandler {
             .hget(userKey, "coin") // 32
             .hget(userKey, "discordId") // 33
             .hget(userKey, "migrations") // 34
-
             .exec(async (err, replies) => {
               if (err) {
                 Sentry.captureException(err, {
@@ -242,19 +241,13 @@ class DatabaseHandler {
               var discordId = replies[33];
               var migrations = replies[34] ? JSON.parse(replies[34]) : {};
 
-              const [, rawAccount] = account.split("_");
-              const [rawNetwork, rawPlayerAccount] = player.account.split("_");
-
-              if (account && !depositAccount && ["nano", "ban"].includes(rawNetwork)) {
+              if (account && !depositAccount && ["nano", "ban"].includes(network)) {
                 try {
-                  await this.assignNewDepositAccount(player, rawNetwork);
+                  ({ depositAccount, depositAccountIndex } = await this.assignNewDepositAccount(player, network));
                 } catch (_errAccount) {
                   return;
                 }
               }
-
-              console.log("~~~rawAccount", rawAccount);
-              console.log("~~~rawPlayerAccount", rawPlayerAccount);
 
               // if (rawAccount && rawPlayerAccount != rawAccount) {
               //   player.connection.sendUTF8("invalidlogin");
@@ -264,10 +257,15 @@ class DatabaseHandler {
 
               // @NOTE: Change the player network and depositAccount according to the login account so
               // nano players can be on bananobrowserquest and ban players can be on nanobrowserquest
-              network = rawNetwork;
-              if (network && depositAccount && !depositAccount.startsWith(network)) {
+              const loggedInNetwork = player.network;
+              if (
+                loggedInNetwork &&
+                ["nano", "ban"].includes(loggedInNetwork) &&
+                depositAccount &&
+                !depositAccount.startsWith(loggedInNetwork)
+              ) {
                 const [, rawDepositAccount] = depositAccount.split("_");
-                depositAccount = `${network}_${rawDepositAccount}`;
+                depositAccount = `${loggedInNetwork}_${rawDepositAccount}`;
               }
 
               if (!armor) {
@@ -614,7 +612,7 @@ class DatabaseHandler {
     let depositAccountIndex = null;
     let depositAccount = null;
 
-    if (player.network) {
+    if (player.account && player.network) {
       depositAccountIndex = await this.createDepositAccount();
       depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number, player.network);
 
@@ -844,6 +842,22 @@ class DatabaseHandler {
       } catch (err) {
         Sentry.captureException(err);
       }
+    });
+  }
+
+  async setAccount(player, account, network) {
+    return new Promise(resolve => {
+      this.client.hmset("u:" + player.name, "account", account, "network", network, async () => {
+        try {
+          const { depositAccount } = await this.assignNewDepositAccount(player, network);
+          player.account = account;
+          player.send([Types.Messages.ACCOUNT, { account, network, depositAccount }]);
+        } catch (err) {
+          Sentry.captureException(new Error("Unable to assign deposit account"));
+        }
+
+        resolve(true);
+      });
     });
   }
 
@@ -2168,10 +2182,10 @@ class DatabaseHandler {
         this.client.hget(userKey, "password", (_err, reply) => {
           let hasPassword = !!reply;
 
-          // if (NODE_ENV === "development") {
-          //   resolve(false);
-          //   return;
-          // }
+          if (NODE_ENV === "development") {
+            resolve(false);
+            return;
+          }
 
           if (hasPassword) {
             player.connection.sendUTF8("passwordlogin");
@@ -2225,17 +2239,13 @@ class DatabaseHandler {
   }
 
   isPlayerExist(player) {
-    console.log("~~~1.1");
     return new Promise(resolve => {
       this.client.sismember("usr", player.name, async (err, reply) => {
-        console.log("~~~1.2", reply);
         if (reply === 1) {
-          console.log("~~~1.3");
           player.connection.sendUTF8("userexists");
           player.connection.close("Username not available: " + player.name);
           resolve(true);
         } else {
-          console.log("~~~1.4");
           resolve(false);
         }
       });

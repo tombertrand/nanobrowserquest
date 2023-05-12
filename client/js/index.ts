@@ -258,30 +258,22 @@ var initApp = function () {
     const parchmentClass = $("#parchment").attr("class");
     const parchment = $(`article#${parchmentClass}`);
 
-    // if (data.hasAlreadyPlayed) {
     if (playerName) {
       parchment.find(".playername").text(playerName).show();
       parchment.find(".no-playername").hide();
       $("#loginnameinput").hide();
       $("#loginaccountinput").hide();
-      // parchment.find(".login-play-link").hide();
       parchment.find(".login-play-button").show();
     } else {
       parchment.find(".playername").hide();
       parchment.find(".no-playername").show();
-      // parchment.find(".login-play-link").show();
-      // parchment.find(".login-play-button").hide();
     }
-
-    console.log("~~~playerImage", playerImage);
 
     if (playerImage) {
       $(".playerimage").attr("src", playerImage);
-      // parchment.find(".playerimage").attr("src", playerImage).show();
     } else {
       $(".playerimage").hide();
     }
-    // }
 
     $("#forget-player .link").on("click", () => {
       $(".playerimage").hide();
@@ -289,13 +281,9 @@ var initApp = function () {
       const clickedParchmentClass = $("#parchment").attr("class");
       const clickedParchment = $(`article#${clickedParchmentClass}`);
 
-      console.log("~~~~clickedParchment", clickedParchment);
-      console.log("~~~~clickedParchmentClass", clickedParchmentClass);
-
       clickedParchment.find(".no-playername").show();
       $("#loginnameinput").val("").show();
       $("#loginaccountinput").val("").show();
-      // clickedParchment.find(".login-play-link").show();
 
       clickedParchment.find(".playername").hide();
       clickedParchment.find(".playerimage").hide();
@@ -305,29 +293,29 @@ var initApp = function () {
       app.animateParchment("loadcharacter", "loadcharacter");
     });
 
-    // $("#running-coder .link").on("click", () => {
-    //   $("#loginnameinput").val("running-coder").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#running-coder .link").on("click", () => {
+      $("#loginnameinput").val("running-coder").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
-    // $("#banano .link").on("click", () => {
-    //   $("#loginnameinput").val("banano").show();
-    //   $("#loginaccountinput").val("ban_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay").show();
-    //   app.tryStartingGame();
-    // });
+    $("#banano .link").on("click", () => {
+      $("#loginnameinput").val("banano").show();
+      $("#loginaccountinput").val("ban_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay").show();
+      app.tryStartingGame();
+    });
 
-    // $("#running-coder1 .link").on("click", () => {
-    //   $("#loginnameinput").val("running-coder1").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#running-coder1 .link").on("click", () => {
+      $("#loginnameinput").val("running-coder1").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
-    // $("#hello .link").on("click", () => {
-    //   $("#loginnameinput").val("hello").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#hello .link").on("click", () => {
+      $("#loginnameinput").val("hello").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
     $(".play span").click(function () {
       app.tryStartingGame();
@@ -384,12 +372,12 @@ var initGame = function () {
   });
 
   game.onPlayerDeath(function (gold) {
-    if ($("body").hasClass("credits")) {
-      $("body").removeClass("credits");
-    }
+    app.toggleScrollContent("death");
     $("body").addClass("death");
 
     $("#gold-death-wrapper").toggleClass("visible", !!gold);
+
+    // @TODO: possible death cause gold de-sync?
     $("#gold-death").text(game.formatGold(gold));
   });
 
@@ -573,7 +561,7 @@ var initGame = function () {
       }
     });
 
-  $("#respawn").click(function () {
+  $("#respawn").on("click", function () {
     game.audioManager.playSound("revive");
     game.respawn();
     $("body").removeClass("death");
@@ -634,6 +622,7 @@ var initGame = function () {
   $(document).on("keydown", e => {
     if (!game.started) return;
     if ($("#chatinput").is(":focus")) return;
+    if ($("#player-account-input").is(":focus")) return;
 
     if (!game.player || game.player.isDead) {
       // Return if player is dead

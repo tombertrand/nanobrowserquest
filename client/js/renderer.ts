@@ -691,11 +691,11 @@ class Renderer {
           }
         }
 
-        // else if (entity.kind === Types.Entities.GUARD && this.game.player?.network === "nano") {
+        // else if (entity.kind === Types.Entities.GUARD && this.game?.network === "nano") {
         //   sprite["image"].src = sprite["image"].src.replace("guard.png", "guardbanano.png");
         // }
         //  else if (entity.kind === Types.Entities.GUARD) {
-        //   spriteImage = sprite[`image${this.game.player.network}`];
+        //   spriteImage = sprite[`image${this.game.network}`];
         // }
 
         if (entity.isFrozen || entity.isSlowed) {

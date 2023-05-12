@@ -19,6 +19,7 @@ class FormatChecker {
       (this.formats[Types.Messages.HURT_TRAP] = ["n"]),
       (this.formats[Types.Messages.CAST_SPELL] = ["n", "n", "n", "n", "b"]),
       (this.formats[Types.Messages.CHAT] = ["s"]),
+      (this.formats[Types.Messages.ACCOUNT] = ["s"]),
       (this.formats[Types.Messages.LOOT] = ["n"]),
       (this.formats[Types.Messages.TELEPORT] = ["n", "n"]),
       (this.formats[Types.Messages.ZONE] = []),
@@ -34,7 +35,7 @@ class FormatChecker {
       (this.formats[Types.Messages.MOVE_ITEMS_TO_INVENTORY] = ["s"]),
       (this.formats[Types.Messages.UPGRADE_ITEM] = []),
       (this.formats[Types.Messages.PURCHASE_CREATE] = ["n", "s"]),
-      (this.formats[Types.Messages.PURCHASE_CANCEL] = ["s"]),
+      (this.formats[Types.Messages.PURCHASE_CANCEL] = []),
       (this.formats[Types.Messages.MAGICSTONE] = ["n"]),
       (this.formats[Types.Messages.LEVER] = ["n"]),
       (this.formats[Types.Messages.ALTARCHALICE] = ["n"]),
@@ -145,8 +146,6 @@ class FormatChecker {
       );
     } else if (type === Types.Messages.REQUEST_PAYOUT) {
       return message.length === 1 && _.isNumber(message[0]);
-    } else if (type === Types.Messages.PURCHASE_CANCEL) {
-      return message.length === 1 && _.isString(message[0]);
     } else if (type === Types.Messages.SETTINGS) {
       return message.length === 1 && typeof message[0] === "object";
     } else if (type === Types.Messages.SKILL) {

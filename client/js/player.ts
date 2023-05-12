@@ -109,7 +109,7 @@ class Player extends Character {
   partyLeader?: PartyMember;
   partyMembers: PartyMember[];
 
-  network: "nano" | "ban";
+  network: Network;
 
   constructor(id, name, account, kind) {
     super(id, kind);
@@ -188,8 +188,6 @@ class Player extends Character {
     this.partyId = null;
     this.partyLeader = null;
     this.partyMembers = null;
-
-    this.network = null;
   }
 
   setPartyId(partyId) {

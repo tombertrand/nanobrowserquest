@@ -72,6 +72,7 @@ export const Types: any = {
   Messages: {
     CREATE: 0,
     LOGIN: 1,
+    ACCOUNT: 130,
     WELCOME: 2,
     SPAWN: 3,
     SPAWN_BATCH: 4,

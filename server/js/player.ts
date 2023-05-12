@@ -329,9 +329,7 @@ class Player extends Character {
           console.info("CREATE: " + self.name);
           // self.account = hash;
 
-          console.log("~~~1");
           if (await databaseHandler.isPlayerExist(self)) {
-            console.log("~~~2");
             return;
           }
         } else {
@@ -364,6 +362,15 @@ class Player extends Character {
           databaseHandler.createPlayer(self);
         } else {
           databaseHandler.loadPlayer(self);
+        }
+      } else if (action === Types.Messages.ACCOUNT) {
+        const newAccount = message[1];
+        if (isValidAccountAddress(newAccount)) {
+          const [newNetwork] = newAccount.split("_");
+          await self.databaseHandler.setAccount(self, newAccount, newNetwork);
+
+          // Update the player's Nano/Ban logo
+          self.server.updatePopulation();
         }
       } else if (action === Types.Messages.WHO) {
         console.info("WHO: " + self.name);
@@ -1298,13 +1305,15 @@ class Player extends Character {
       } else if (action === Types.Messages.PURCHASE_CREATE) {
         console.info("PURCHASE_CREATE: " + self.name + " " + message[1] + " " + message[2]);
 
+        console.log("`~~~network", self.network);
+
         if (message[2] === self.depositAccount) {
           purchase[self.network].create({ player: self, account: self.depositAccount, id: message[1] });
         }
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
-        console.info("PURCHASE_CANCEL: " + self.name + " " + message[1]);
+        console.info("PURCHASE_CANCEL: " + self.name + " " + self.depositAccount);
 
-        purchase[self.network].cancel(message[1]);
+        purchase[self.network].cancel(self.depositAccount);
       } else if (action === Types.Messages.STORE_ITEMS) {
         console.info("STORE_ITEMS");
 
