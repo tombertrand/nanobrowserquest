@@ -341,7 +341,6 @@ class Player extends Character {
           }
         }
 
-        console.log("~~~3");
         console.log("~~~~password", password);
         console.log("~~~~self.name", self.name);
         console.log("~~~~self.network", self.network);
@@ -1078,6 +1077,7 @@ class Player extends Character {
               type: Types.Messages.BOSS_CHECK,
               status: "missing-account",
             });
+            return;
           }
         }
 
@@ -1156,6 +1156,7 @@ class Player extends Character {
         payoutIndex += 1;
         const response =
           (await enqueueSendPayout({
+            playerName: self.name,
             account: self.account,
             amount,
             payoutIndex,
