@@ -266,7 +266,7 @@ export const isValidUpgradeItems = items => {
   return true;
 };
 
-export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed, isGuaranteedSuccess }) => {
+export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed, isGuaranteedSuccess, isCursed }) => {
   // Upgrade success rate
   // +1 -> +2, 100%
   // +2 -> +3, 100%
@@ -280,6 +280,11 @@ export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed, isGuaranteedSu
   const successRates = Types.getUpgradeSuccessRates();
   let successRate = !isGuaranteedSuccess ? successRates[parseInt(level) - 1] : 100;
   let random = randomInt(1, 100);
+
+  // @TODO Remove this after a while
+  if (successRate <= 60 && isCursed) {
+    successRate = successRate - 8;
+  }
 
   console.info(`Base Success rate ${successRate}`);
 

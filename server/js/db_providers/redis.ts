@@ -1710,11 +1710,17 @@ class DatabaseHandler {
           const isGuaranteedSuccess =
             Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone);
 
+          let isCursed = false;
+          if (player.name.toLowerCase().startsWith("kabal")) {
+            isCursed = true;
+          }
+
           ({ isSuccess, random /*, successRate*/ } = isUpgradeSuccess({
             level,
             isLuckySlot,
             isBlessed,
             isGuaranteedSuccess,
+            isCursed,
           }));
 
           // Disable for now as it is exploitable
