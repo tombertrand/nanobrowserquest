@@ -735,6 +735,15 @@ class Player extends Character {
         }
 
         if (lever && lever instanceof Npc && !lever.isActivated) {
+          if (lever.id === self.server.leverChaliceNpcId && !self.server.chaliceLevelClock) {
+            databaseHandler.banPlayerByIP({
+              player: self,
+              reason: "cheating",
+              message: "Activated chalice lever without the level being opened",
+            });
+            return;
+          }
+
           self.server.activateLever(self, lever);
         }
       } else if (action === Types.Messages.ALTARCHALICE) {
