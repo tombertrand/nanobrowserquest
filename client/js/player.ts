@@ -254,11 +254,14 @@ class Player extends Character {
         }
       } else if (Types.isSingle(item.kind)) {
         const { itemKind } = item;
-        const isFound = this.inventory
+        const allItems = this.inventory
           .concat(this.upgrade)
           .concat(this.stash)
-          .concat([{ item: this.weaponName }])
-          .some(({ item }) => item === itemKind);
+          .concat([{ item: this.weaponName }]);
+        let isFound = allItems.some(({ item: inventoryItem }) => inventoryItem === itemKind);
+        if (!isFound && itemKind.startsWith("powder")) {
+          isFound = allItems.some(({ item: inventoryItem }) => inventoryItem === "powderquantum");
+        }
 
         if (isFound) {
           throw new Exceptions.LootException("You already have this item.");

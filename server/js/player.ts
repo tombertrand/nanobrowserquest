@@ -170,6 +170,7 @@ class Player extends Character {
   hasNft: boolean;
   hasWing: boolean;
   hasCrystal: boolean;
+  attackTimeoutWarning: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -226,6 +227,7 @@ class Player extends Character {
     this.hasNft = false;
     this.hasWing = false;
     this.hasCrystal = false;
+    this.attackTimeoutWarning = false;
 
     this.dbWriteQueue = new PromiseQueue();
 
@@ -358,7 +360,7 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.ACCOUNT) {
         const newAccount = message[1];
-        if (isValidAccountAddress(newAccount)) {
+        if (!self.account && isValidAccountAddress(newAccount)) {
           const [newNetwork] = newAccount.split("_");
           await self.databaseHandler.setAccount(self, newAccount, newNetwork);
 
@@ -435,12 +437,12 @@ class Player extends Character {
               const [, period, reason, playerName] = msg.match(/\s(\w+)\s(\w+)\s(.+)/);
 
               if (periods[period] && reasons.includes(reason) && playerName) {
-                self.databaseHandler.banPlayerForReason(playerName, period, reason);
-                self.databaseHandler.banPlayerByIP(
-                  self.server.getPlayerByName(playerName),
+                databaseHandler.banPlayerByIP({
+                  player: self.server.getPlayerByName(playerName),
                   reason,
-                  "Misbehaved towards others",
-                );
+                  message: "Admin ban, misbehaved towards others",
+                  days: period,
+                });
 
                 self.server.disconnectPlayer(playerName);
                 self.send(
@@ -527,16 +529,32 @@ class Player extends Character {
         var mob = self.server.getEntityById(message[1]);
 
         if (!mob) return;
-        if (!self.server.isPlayerNearEntity(self, mob, 10)) return;
+        if (!self.server.isPlayerNearEntity(self, mob, 10)) {
+          databaseHandler.banPlayerByIP({
+            player: self,
+            reason: "cheating",
+            message: "enemy was not near and received an attack",
+          });
+          return;
+        }
         // Prevent FE from sending too many attack messages
-        if (self.attackTimeout) return;
+        if (self.attackTimeout) {
+          if (self.attackTimeoutWarning) {
+            databaseHandler.banPlayerByIP({
+              player: self,
+              reason: "cheating",
+              message: "too many attacks sent",
+            });
+            return;
+          }
+          self.attackTimeoutWarning = true;
+          return;
+        }
+
+        self.attackTimeoutWarning = false;
 
         const attackSpeed = Types.calculateAttackSpeed(self.bonus.attackSpeed + 10);
         const duration = Math.round(Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (attackSpeed / 100));
-
-        console.log("~~~~attackSpeed", attackSpeed);
-        console.log("~~~~Types.DEFAULT_ATTACK_SPEED", Types.DEFAULT_ATTACK_SPEED);
-        console.log("~~~~duration", duration);
 
         self.attackTimeout = setTimeout(() => {
           self.attackTimeout = null;
@@ -683,14 +701,22 @@ class Player extends Character {
         console.info("MAGICSTONE: " + self.name + " " + message[1]);
 
         const magicStone = self.server.getEntityById(message[1]);
+
+        if (Math.abs(self.x - magicStone.x) >= 3 && Math.abs(self.y - magicStone.y) >= 3) {
+          databaseHandler.banPlayerByIP({
+            player: self,
+            reason: "cheating",
+            message: `activated magicStone from a distance: ${self.x}-${magicStone.x}, ${self.y}-${magicStone.y}`,
+          });
+          return;
+        }
+
         if (
           magicStone &&
           magicStone instanceof Npc &&
           !magicStone.isActivated &&
           self.server.magicStones.includes(magicStone.id) &&
-          !self.server.activatedMagicStones.includes(magicStone.id) &&
-          Math.abs(self.x - magicStone.x) < 3 &&
-          Math.abs(self.y - magicStone.y) < 3
+          !self.server.activatedMagicStones.includes(magicStone.id)
         ) {
           self.server.activateMagicStone(self, magicStone);
         }
@@ -698,13 +724,17 @@ class Player extends Character {
         console.info("LEVER: " + self.name + " " + message[1]);
 
         const lever = self.server.getEntityById(message[1]);
-        if (
-          lever &&
-          lever instanceof Npc &&
-          !lever.isActivated &&
-          Math.abs(self.x - lever.x) < 3 &&
-          Math.abs(self.y - lever.y) < 3
-        ) {
+
+        if (Math.abs(self.x - lever.x) >= 3 && Math.abs(self.y - lever.y) >= 3) {
+          databaseHandler.banPlayerByIP({
+            player: self,
+            reason: "cheating",
+            message: `activated lever from a distance: ${self.x}-${lever.x}, ${self.y}-${lever.y}`,
+          });
+          return;
+        }
+
+        if (lever && lever instanceof Npc && !lever.isActivated) {
           self.server.activateLever(self, lever);
         }
       } else if (action === Types.Messages.ALTARCHALICE) {
@@ -1104,21 +1134,26 @@ class Player extends Character {
             !self.achievement[16] || // -> HOT_SPOT
             !self.achievement[20]) // -> HERO
         ) {
-          let reason;
+          let banMessage;
           if (self.hash) {
-            reason = `Already have hash ${self.hash}`;
+            banMessage = `Already have hash ${self.hash}`;
           } else if (self.hasRequestedBossPayout) {
-            reason = `Has already requested payout for Classic`;
+            banMessage = `Has already requested payout for Classic`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
-            reason = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
+            banMessage = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
           } else if (self.level < MIN_LEVEL) {
-            reason = `Min level not obtained, player is level ${self.level}`;
+            banMessage = `Min level not obtained, player is level ${self.level}`;
           } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[16] || !self.achievement[20]) {
-            reason = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}, ${self.achievement[20]}`;
+            banMessage = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}, ${self.achievement[20]}`;
           }
 
-          console.info(`Reason: ${reason}`);
-          databaseHandler.banPlayerByIP(self, "cheating", reason);
+          console.info(`Reason: ${banMessage}`);
+
+          databaseHandler.banPlayerByIP({
+            player: self,
+            reason: "cheating",
+            message: banMessage,
+          });
           return;
         }
 
@@ -1138,11 +1173,11 @@ class Player extends Character {
         const raiPayoutAmount = rawToRai(amount, self.network);
 
         if (raiPayoutAmount > maxAmount) {
-          databaseHandler.banPlayerByIP(
-            self,
-            "cheating",
-            `Tried to withdraw ${raiPayoutAmount} but max is ${maxAmount} for quest of kind: ${message[1]}`,
-          );
+          databaseHandler.banPlayerByIP({
+            player: self,
+            reason: "cheating",
+            message: `Tried to withdraw ${raiPayoutAmount} but max is ${maxAmount} for quest of kind: ${message[1]}`,
+          });
           return;
         }
 
@@ -1195,7 +1230,11 @@ class Player extends Character {
         self.server.updatePopulation();
       } else if (action === Types.Messages.BAN_PLAYER) {
         // Just don't...
-        databaseHandler.banPlayerByIP(self, "cheating", message[1]);
+        databaseHandler.banPlayerByIP({
+          player: self,
+          reason: "cheating",
+          message: message[1],
+        });
       } else if (action === Types.Messages.OPEN) {
         console.info("OPEN: " + self.name + " " + message[1]);
         var chest = self.server.getEntityById(message[1]);

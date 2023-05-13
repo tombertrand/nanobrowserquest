@@ -728,41 +728,42 @@ class DatabaseHandler {
     });
   }
 
-  banPlayerByIP(banPlayer, reason, message) {
-    if (!banPlayer?.connection?._connection?.handshake?.headers?.["cf-connecting-ip"]) return;
+  banPlayerByIP({
+    player,
+    reason,
+    message,
+    days = 365,
+  }: {
+    player: any;
+    reason: string;
+    message: string;
+    days: number;
+  }) {
+    this.banPlayerForReason({ player, reason, message, days });
 
-    // 24h
-    let days = 1;
-    this.client.hget(
-      "ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
+    player.connection.sendUTF8(`banned-${reason}-${days}`);
+    player.connection.close(`You are banned, ${reason}.`);
+
+    if (!player?.connection?._connection?.handshake?.headers?.["cf-connecting-ip"]) return;
+
+    const until = days * 24 * 60 * 60 * 1000 + Date.now();
+    this.client.hmset(
+      "ipban:" + player.connection._connection.handshake.headers["cf-connecting-ip"],
       "timestamp",
-      (err, reply) => {
-        if (reply) {
-          days = 365;
-        }
-        const until = days * 24 * 60 * 60 * 1000 + Date.now();
-        this.client.hset(
-          "ipban:" + banPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
-          "timestamp",
-          until,
-          "reason",
-          reason || "",
-          "message",
-          message || "",
-        );
-
-        banPlayer.connection.sendUTF8(`banned-${reason}-${days}`);
-        banPlayer.connection.close(`You are banned, ${reason}.`);
-      },
+      until,
+      "reason",
+      reason || "",
+      "message",
+      message || "",
     );
 
     return;
   }
 
-  banPlayerForReason(playerName, period, reason) {
-    const until = parseInt(period) * 24 * 60 * 60 * 1000 + Date.now();
+  banPlayerForReason({ player, reason, message, days = 365 }) {
+    const until = parseInt(`${days}`) * 24 * 60 * 60 * 1000 + Date.now();
 
-    this.client.hmset("ban:" + playerName, "timestamp", until, "reason", reason);
+    this.client.hmset("ban:" + player.name, "timestamp", until, "reason", reason, "message", message);
     return;
   }
 

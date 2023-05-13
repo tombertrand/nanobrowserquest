@@ -2600,6 +2600,7 @@ class World {
     // var randomDrops = ["ringgreed", "amuletgreed", "amuleteye"];
     // var randomDrops = ["jewelskull"];
     // var randomDrops = ["nft", "wing", "crystal"];
+    // var randomDrops = ["powdergreen"];
     // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
     // var randomDrops = ["amuletdragon", "amuletskull"];
     // var randomDrops = ["chalice"];
