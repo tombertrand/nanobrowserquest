@@ -2,10 +2,10 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 import { calculateLowerResistances } from "../../shared/js/types/resistance";
-import { toString } from "../../shared/js/utils";
+import { isValidAccountAddress, toString } from "../../shared/js/utils";
 import storage from "./storage";
 import Store from "./store";
-import { isValidAccountAddress, TRANSITIONEND } from "./utils";
+import { TRANSITIONEND } from "./utils";
 
 const networkDividerMap = {
   nano: 100000,
@@ -31,7 +31,8 @@ class App {
   $loginNameInput: JQuery<HTMLElement> | null;
   $loginAccountInput: JQuery<HTMLElement> | null;
   $loginPasswordInput: JQuery<HTMLElement> | null;
-  $loginPasswordConfirmInput: JQuery<HTMLElement> | null;
+  $createPasswordInput: JQuery<HTMLElement> | null;
+  $createPasswordConfirmInput: JQuery<HTMLElement> | null;
   loginFormFields: any[];
   $nameInput: JQuery<HTMLElement> | null;
   $accountInput: JQuery<HTMLElement> | null;
@@ -66,7 +67,8 @@ class App {
     this.$loginNameInput = null;
     this.$loginAccountInput = null;
     this.$loginPasswordInput = null;
-    this.$loginPasswordConfirmInput = null;
+    this.$createPasswordInput = null;
+    this.$createPasswordConfirmInput = null;
     this.$nameInput = null;
     this.$accountInput = null;
     this.loginFormFields = [];
@@ -75,30 +77,22 @@ class App {
     this.playButtonRestoreText = "";
     this.partyBlinkInterval = null;
 
-    if (
-      this.storage &&
-      this.storage.data &&
-      this.storage.data.player &&
-      this.storage.data.player.name &&
-      this.storage.data.player.account
-    ) {
+    const { name: playerName, account } = this.storage?.data?.player || {};
+
+    if (playerName) {
       this.frontPage = "loadcharacter";
 
-      $("#loginnameinput").val(this.storage.data.player.name);
-      $("#loginaccountinput").val(this.storage.data.player.account);
+      $("#loginnameinput").val(playerName);
+      if (account) {
+        $("#loginaccountinput").val(account);
+      }
     } else {
       this.frontPage = "createcharacter";
-
-      // const account = getAccountAddressFromText(window.location.search);
-      // if (account) {
-      //   $("#accountinput").val(account);
-      // }
     }
 
     document.getElementById("parchment")!.className = this.frontPage;
 
     this.initFormFields();
-    this.initContextMenu();
   }
 
   setGame(game) {
@@ -161,7 +155,8 @@ class App {
     // Play button
     this.$play = $(".play");
     this.getPlayButton = function () {
-      return this.getActiveForm().find(".play span, .play.button div");
+      const activeForm = this.getActiveForm();
+      return activeForm ? activeForm.find(".play span, .play.button div") : null;
     };
     this.setPlayButtonState(true);
 
@@ -169,33 +164,67 @@ class App {
     this.$loginNameInput = $("#loginnameinput");
     this.$loginAccountInput = $("#loginaccountinput");
     this.$loginPasswordInput = $("#loginpasswordinput");
-    this.$loginPasswordConfirmInput = $("#loginpasswordconfirminput");
+    this.$createPasswordInput = $("#createpasswordinput");
+    this.$createPasswordConfirmInput = $("#createpasswordconfirminput");
     this.loginFormFields = [
       this.$loginNameInput,
       this.$loginAccountInput,
       this.$loginPasswordInput,
-      this.$loginPasswordConfirmInput,
+      this.$createPasswordInput,
+      this.$createPasswordConfirmInput,
     ];
 
     // Create new character form fields
     this.$nameInput = $("#nameinput");
     this.$accountInput = $("#accountinput");
-    this.createNewCharacterFormFields = [this.$nameInput, this.$accountInput, this.$accountInput];
+    this.createNewCharacterFormFields = [this.$nameInput, this.$accountInput, this.$createPasswordInput];
 
     // Functions to return the proper username / account fields to use, depending on which form
     // (login or create new character) is currently active.
-    this.getUsernameField = function () {
-      return this.createNewCharacterFormActive() ? this.$nameInput : this.$loginNameInput;
+    this.getUsernameField = () => {
+      if (this.$nameInput.is(":visible")) {
+        return this.$nameInput;
+      }
+
+      if (this.$loginNameInput.is(":visible")) {
+        return this.$loginNameInput;
+      }
+
+      if (this.$nameInput.val()) {
+        return this.$nameInput;
+      }
+
+      return this.$loginNameInput;
     };
-    this.getAccountField = function () {
-      return this.createNewCharacterFormActive() ? this.$accountInput : this.$loginAccountInput;
+    this.getAccountField = () => {
+      if (this.$accountInput.val()) {
+        return this.$accountInput;
+      }
+      if (this.$loginAccountInput.val()) {
+        return this.$loginAccountInput;
+      }
+
+      return this.$accountInput;
     };
-    this.getPasswordField = function () {
-      return this.$loginPasswordInput;
+    this.getPasswordField = () => {
+      if (this.$loginPasswordInput.is(":visible")) {
+        return this.$loginPasswordInput;
+      }
+      if (this.$createPasswordInput.is(":visible")) {
+        return this.$createPasswordInput;
+      }
+      return undefined;
     };
-    this.getPasswordConfirmField = function () {
-      return this.$loginPasswordConfirmInput;
+    this.getPasswordConfirmField = () => {
+      return this.$createPasswordConfirmInput;
     };
+
+    $("#have-account").on("click", () => {
+      $("#accountinput").addClass("visible");
+      $("#have-account").removeClass("visible");
+    });
+
+    this.setFocus();
   }
 
   center() {
@@ -214,15 +243,20 @@ class App {
     if (this.starting) return; // Already loading
 
     var self = this;
-    var action = this.createNewCharacterFormActive() ? "create" : "login";
+    var action = this.$nameInput.val() ? "create" : "login";
     var username = this.getUsernameField().val();
     var account = this.getAccountField().val();
-    var password = this.getPasswordField().is(":visible") ? this.getPasswordField().val() : undefined;
+    var password = this.getPasswordField() ? this.getPasswordField().val() : undefined;
     var passwordConfirm = this.getPasswordConfirmField().is(":visible")
       ? this.getPasswordConfirmField().val()
       : undefined;
-
-    var [network] = account.split("_");
+    var [network] = account?.split("_") || [];
+    if (!network) {
+      network = "nano";
+      if (window.location.hostname === "bananobrowserquest.com") {
+        network = "ban";
+      }
+    }
 
     if (!this.validateFormFields({ username, account, password, passwordConfirm })) return;
 
@@ -244,7 +278,7 @@ class App {
   startGame(action, username, account, network, password) {
     var self = this;
     if (username && !this.game.started) {
-      this.game.setPlayerAccount(username, account, network, password);
+      this.game.setPlayerAccount({ username, account, network, password });
 
       let config = { host: "localhost", port: 8000 };
       if (process.env.NODE_ENV !== "development") {
@@ -268,21 +302,22 @@ class App {
 
       this.game.connect(action, function (result) {
         if (result.reason) {
-          self.setPlayButtonState(true);
-
           switch (result.reason) {
             case "invalidlogin":
               // Login information was not correct (either username or password)
               self.addValidationError(null, "The username or address you entered is incorrect.");
               self.getUsernameField().focus();
+              self.setPlayButtonState(true);
               break;
             case "userexists":
               // Attempted to create a new user, but the username was taken
               self.addValidationError(self.getUsernameField(), "The username you entered is not available.");
+              self.setPlayButtonState(true);
               break;
             case "invalidusername":
               // The username contains characters that are not allowed (rejected by the sanitizer)
               self.addValidationError(self.getUsernameField(), "The username you entered contains invalid characters.");
+              self.setPlayButtonState(true);
               break;
             case "loggedin":
               // Attempted to log in with the same user multiple times simultaneously
@@ -290,6 +325,7 @@ class App {
                 self.getUsernameField(),
                 "A player with the specified username is already logged in.",
               );
+              self.setPlayButtonState(true);
               break;
             case "banned-cheating-1":
             case "banned-cheating-365":
@@ -302,32 +338,21 @@ class App {
               self.animateParchment("loadcharacter", "invalidconnection");
               break;
             case "passwordcreate":
-              $("#playerimage").hide();
-              $("#loginnameinput").hide();
-              $("#loginaccountinput").hide();
-              $("#create-new").hide();
-              $(".password-login").hide();
-              $(".login-options").hide();
-              $(".password-create").show();
-              $("#loginpasswordinput").focus();
+              self.animateParchment("createcharacter", "createpassword");
               break;
             case "passwordlogin":
-              $("#loginnameinput").hide();
-              $("#loginaccountinput").hide();
-              $("#create-new").hide();
-              $(".password-create").hide();
-              $(".login-options").hide();
-              $(".password-login").show();
-              $("#loginpasswordinput").focus();
+              self.animateParchment("loadcharacter", "enterpassword");
               break;
             case "passwordinvalid":
               self.addValidationError(null, "The password is incorrect.");
+              self.setPlayButtonState(true);
               break;
             default:
               self.addValidationError(
                 null,
                 "Failed to launch the game: " + (result.reason ? result.reason : "(reason unknown)"),
               );
+              self.setPlayButtonState(true);
               break;
           }
         }
@@ -336,9 +361,18 @@ class App {
   }
 
   start() {
-    var self = this;
     this.hideIntro();
     $("body").addClass("started");
+
+    // Cleanup the login form events
+    $(document).off(".loginform");
+
+    this.initDialog();
+    this.initContextMenu();
+  }
+
+  initDialog() {
+    const self = this;
     $("#dialog-delete-item").dialog({
       dialogClass: "no-close",
       autoOpen: false,
@@ -347,7 +381,7 @@ class App {
       buttons: [
         {
           text: "Cancel",
-          class: "btn btn-gray",
+          class: "btn btn-default",
           click: function () {
             self.game.slotToDelete = null;
             $(this).dialog("close");
@@ -373,7 +407,7 @@ class App {
       buttons: [
         {
           text: "Cancel",
-          class: "btn btn-gray",
+          class: "btn btn-default",
           click: function () {
             self.game.confirmedSoldItemToMerchant = null;
             $(this).dialog("close");
@@ -393,23 +427,11 @@ class App {
     });
     $("#dialog-merchant-item").text("Are you sure you want to sell this item to the merchant?");
     $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
-
-    // Cleanup the login form events
-    $(document).off(".loginform");
-
-    // @TODO connection cleanup ~~~
-    $("#reconnecting")
-      .off("click")
-      .on("click", () => {
-        if (this.game.client.connection.connected) {
-          $("#reconnecting").removeClass("visible");
-        }
-      });
   }
 
   setPlayButtonState(enabled) {
-    var self = this;
     var $playButton = this.getPlayButton();
+    if (!$playButton) return;
 
     if ($playButton.find(".link").text() !== "Loading...") {
       this.playButtonRestoreText = $playButton.find(".link").text();
@@ -418,8 +440,8 @@ class App {
     if (enabled) {
       this.starting = false;
       this.$play!.removeClass("loading");
-      $playButton.click(function () {
-        self.tryStartingGame();
+      $playButton.off("click").on("click", () => {
+        this.tryStartingGame();
       });
       if (!$playButton.hasClass("button")) {
         $playButton.find(".link").text(this.playButtonRestoreText);
@@ -470,6 +492,8 @@ class App {
   getActiveForm() {
     if (this.loginFormActive()) return $("#loadcharacter");
     else if (this.createNewCharacterFormActive()) return $("#createcharacter");
+    else if (this.createPasswordFormActive()) return $("#createpassword");
+    else if (this.enterPasswordFormActive()) return $("#enterpassword");
     else return null;
   }
 
@@ -479,6 +503,14 @@ class App {
 
   createNewCharacterFormActive() {
     return $("#parchment").hasClass("createcharacter");
+  }
+
+  createPasswordFormActive() {
+    return $("#parchment").hasClass("createpassword");
+  }
+
+  enterPasswordFormActive() {
+    return $("#parchment").hasClass("enterpassword");
   }
 
   /**
@@ -494,8 +526,11 @@ class App {
       return false;
     }
 
-    if (!isValidAccountAddress(account)) {
-      this.addValidationError(this.getAccountField(), `Enter a valid ${$("#loginnetworkinput").val()}_ account.`);
+    if (account && !isValidAccountAddress(account)) {
+      this.addValidationError(
+        this.getAccountField(),
+        `Enter a valid address starting with "nano_" or leave the field empty.`,
+      );
       return false;
     }
 
@@ -514,17 +549,20 @@ class App {
   }
 
   addValidationError(field, errorText) {
+    const validationSummary = $(".validation-summary:visible");
+
     $("<span/>", {
       class: "validation-error blink",
       text: errorText,
-    }).appendTo(".validation-summary");
+    }).appendTo(validationSummary);
 
     if (field) {
-      field.addClass("field-error").select();
-      field.bind("keypress", function (event) {
-        field.removeClass("field-error");
+      if (!this.game.started) {
+        field.addClass("field-error").select();
+      }
+      field.on("keypress.validation", () => {
+        field.removeClass("field-error").off(".validation");
         $(".validation-error").remove();
-        $(this).unbind(event);
       });
     }
   }
@@ -691,11 +729,53 @@ class App {
   }
 
   initPlayerInfo() {
-    const { name, account } = this.game.player;
+    const self = this;
+    const { account, network } = this.game;
+    const { name } = this.game.player;
 
     $("#player-username").text(name);
-    $("#player-account").attr("href", `https://${this.game.explorer}.com/account/${account}`).text(account);
-    $("#completedbutton").addClass(this.game.network);
+    $("#completedbutton").addClass(network);
+
+    const input = $("#player-account-input");
+    const confirmBtn = $("#player-account-confirm");
+    const linkBtn = $("#player-account-link");
+
+    if (account) {
+      linkBtn.show();
+      confirmBtn.hide();
+      input.val(account).attr("readonly", "readonly");
+      linkBtn.off(".open").on("click.open", () => {
+        window.open(`https://${this.game.explorer}.com/account/${account}`, "_blank");
+      });
+    } else {
+      confirmBtn.attr("disabled", "disabled").addClass("disabled btn-default");
+      linkBtn.hide();
+      input.off(".validate").on("input.validate", () => {
+        const value = input.val() as string;
+        const isValid = isValidAccountAddress(value);
+
+        input.removeClass("field-error");
+        $(".validation-error").remove();
+
+        if (!isValid) {
+          confirmBtn.attr("disabled", "disabled").addClass("disabled btn-default");
+          self.addValidationError($("#player-account-input"), `Enter a valid address starting with "nano_"`);
+        } else {
+          confirmBtn.removeAttr("disabled").removeClass("disabled btn-default");
+        }
+      });
+
+      confirmBtn.off(".confirm").on("click.confirm", function (e) {
+        e.preventDefault();
+        const value = input.val() as string;
+
+        if (!isValidAccountAddress(value)) {
+          self.addValidationError($("#player-account-input"), `Enter a valid address starting with "nano_"`);
+        } else {
+          self.game.client.sendAccount(value);
+        }
+      });
+    }
   }
 
   blinkHealthBar() {
@@ -777,6 +857,16 @@ class App {
     const isActive = $("#settings").hasClass("active");
     this.hideWindows();
     $("#settings").toggleClass("active", !isActive);
+
+    const input = $("#player-account-input");
+    const inputIsReadonly = !!input.attr("readonly");
+
+    if (!isActive) {
+      if (!inputIsReadonly) {
+        input.val("").removeClass("field-error");
+        $(".validation-error").remove();
+      }
+    }
   }
 
   toggleParty() {
@@ -1049,6 +1139,9 @@ class App {
       this.toggleCompleted();
       $("#completedbutton").removeClass("active");
     }
+    if ($("#missing-account").hasClass("active")) {
+      $("#missing-account").removeClass("active");
+    }
     if ($("#about").hasClass("active")) {
       this.toggleAbout();
       $("#completedbutton").removeClass("active");
@@ -1092,7 +1185,13 @@ class App {
       $("#party-button").removeClass("active");
     }
 
+    $("#container").removeClass("prevent-click");
+
     this.closeOtherPlayerEquipment();
+
+    // if ($("#store").hasClass('visible')) {
+    //   // this.game.client.sendPurchaseCancel(this.game.depositAccount);
+    // }
   }
 
   showAchievementNotification(id, name) {
@@ -1299,9 +1398,10 @@ class App {
     }
   }
 
-  closeInGameScroll(content) {
+  closeInGameScroll(content: string) {
     $("body").removeClass(content);
     $("#parchment").removeClass(content);
+
     if (!this.game.player) {
       $("body").addClass("death");
     }
@@ -1570,9 +1670,8 @@ class App {
       "name",
       "height=" + popupHeight + ",width=" + popupWidth + ",top=" + top + ",left=" + left,
     );
-    if (newWindow?.focus) {
-      newWindow.focus();
-    }
+
+    newWindow?.focus();
   }
 
   animateParchment(origin, destination) {
@@ -1591,18 +1690,33 @@ class App {
         }
         this.isParchmentReady = !this.isParchmentReady;
 
+        $parchment.removeClass();
         $parchment.toggleClass("animate");
-        $parchment.removeClass(origin);
 
         setTimeout(function () {
           $("#parchment").toggleClass("animate");
           $parchment.addClass(destination);
+          self.setPlayButtonState(true);
+
+          self.setFocus();
         }, duration * 1000);
 
         setTimeout(function () {
           self.isParchmentReady = !self.isParchmentReady;
         }, duration * 1000);
       }
+    }
+  }
+
+  setFocus() {
+    if ($("#nameinput").is(":visible")) {
+      $("#nameinput").trigger("focus");
+    } else if ($("#loginnameinput").is(":visible")) {
+      $("#loginnameinput").trigger("focus");
+    } else if ($("#loginpasswordinput").is(":visible")) {
+      $("#loginpasswordinput").trigger("focus");
+    } else if ($("#createpasswordinput").is(":visible")) {
+      $("#createpasswordinput").trigger("focus");
     }
   }
 

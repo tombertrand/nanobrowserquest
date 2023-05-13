@@ -21,16 +21,13 @@ import "../css/contextmenu.css";
 import "../css/gold.css";
 
 import * as Sentry from "@sentry/browser";
-import each from "lodash/each";
 
 import { Types } from "../../shared/js/gametypes";
+import { MERCHANT_SLOT_RANGE } from "../../shared/js/slots";
 import App from "./app";
 import Detect from "./detect";
 import Game from "./game";
 import { TRANSITIONEND } from "./utils";
-
-import type Character from "./character";
-import { MERCHANT_SLOT_RANGE } from "../../shared/js/slots";
 
 var app: App;
 var game: Game;
@@ -193,7 +190,9 @@ var initApp = function () {
       app.animateParchment("confirmation", "loadcharacter");
     });
 
-    $("#back-to-login span").click(function () {
+    $("#back-to-login .link").on("click", function () {
+      $("#nameinput").val("");
+      $("#accountinput").val("");
       app.animateParchment("createcharacter", "loadcharacter");
     });
 
@@ -255,31 +254,38 @@ var initApp = function () {
     });
 
     const { data } = app.storage;
-    if (data.hasAlreadyPlayed) {
-      if (data?.player?.name && data?.player?.image) {
-        $("#loginnameinput").hide();
-        $("#loginaccountinput").hide();
-        $("#login-play-link").hide();
-        $("#no-playername").hide();
+    const { name: playerName, image: playerImage } = data?.player || {};
+    const parchmentClass = $("#parchment").attr("class");
+    const parchment = $(`article#${parchmentClass}`);
 
-        $("#login-play-button").show();
-        $("#forget-player").show();
-        $("#playername").html(data.player.name).show();
-        $("#playerimage").attr("src", data.player.image).show();
-      }
+    if (playerName) {
+      parchment.find(".playername").text(playerName).show();
+      parchment.find(".no-playername").hide();
+      $("#loginnameinput").hide();
+      parchment.find(".login-play-button").show();
+    } else {
+      parchment.find(".playername").hide();
+      parchment.find(".no-playername").show();
+    }
+
+    if (playerImage) {
+      $(".playerimage").attr("src", playerImage);
+    } else {
+      $(".playerimage").hide();
     }
 
     $("#forget-player .link").on("click", () => {
-      app.storage.clear();
+      $(".playerimage").hide();
 
-      $("#no-playername").show();
+      const clickedParchmentClass = $("#parchment").attr("class");
+      const clickedParchment = $(`article#${clickedParchmentClass}`);
+
+      clickedParchment.find(".no-playername").show();
       $("#loginnameinput").val("").show();
-      $("#loginaccountinput").val("").show();
-      $("#login-play-link").show();
 
-      $("#playername").hide();
-      $("#playerimage").hide();
-      $("#login-play-button").hide();
+      clickedParchment.find(".playername").hide();
+      clickedParchment.find(".playerimage").hide();
+      clickedParchment.find(".login-play-button").show();
       $("#forget-player").hide();
 
       app.animateParchment("loadcharacter", "loadcharacter");
@@ -364,12 +370,12 @@ var initGame = function () {
   });
 
   game.onPlayerDeath(function (gold) {
-    if ($("body").hasClass("credits")) {
-      $("body").removeClass("credits");
-    }
+    app.toggleScrollContent("death");
     $("body").addClass("death");
 
     $("#gold-death-wrapper").toggleClass("visible", !!gold);
+
+    // @TODO: possible death cause gold de-sync?
     $("#gold-death").text(game.formatGold(gold));
   });
 
@@ -390,15 +396,29 @@ var initGame = function () {
     if (fightAgain) {
       $("#completed").addClass("boss-check");
 
-      $("#fight-again").click(function () {
-        game.client.sendBossCheck(true);
-        app.hideWindows();
-      });
+      $("#fight-again")
+        .off("click")
+        .on("click", function () {
+          game.client.sendBossCheck(true);
+          app.hideWindows();
+        });
     }
   });
 
+  game.onMissingAccount(function () {
+    $("#missing-account").addClass("active");
+
+    $("#missing-account-btn")
+      .off("click")
+      .on("click", function () {
+        game.client.sendBossCheck(true);
+        app.hideWindows();
+      });
+  });
+
   game.onBossCheckFailed(function (message) {
-    $("#failed").addClass("active").find("p").text(message);
+    $("#min-level").text(message);
+    $("#failed").addClass("active");
   });
 
   game.onPlayerEquipmentChange(function () {
@@ -539,7 +559,7 @@ var initGame = function () {
       }
     });
 
-  $("#respawn").click(function () {
+  $("#respawn").on("click", function () {
     game.audioManager.playSound("revive");
     game.respawn();
     $("body").removeClass("death");
@@ -600,6 +620,7 @@ var initGame = function () {
   $(document).on("keydown", e => {
     if (!game.started) return;
     if ($("#chatinput").is(":focus")) return;
+    if ($("#player-account-input").is(":focus") && e.keyCode !== Types.Keys.ESC) return;
 
     if (!game.player || game.player.isDead) {
       // Return if player is dead
@@ -711,18 +732,6 @@ var initGame = function () {
     }
   });
 
-  $("#nameinput").focusin(function () {
-    $("#name-tooltip").addClass("visible");
-  });
-
-  $("#nameinput").focusout(function () {
-    $("#name-tooltip").removeClass("visible");
-  });
-
-  $("#nameinput").keypress(function () {
-    $("#name-tooltip").removeClass("visible");
-  });
-
   $("#settings-button").on("click", () => {
     app.toggleSettings();
   });
@@ -753,10 +762,18 @@ var initGame = function () {
 
   $(document).on("keydown.loginform", function (e) {
     if (e.keyCode === Types.Keys.ENTER) {
-      if (!game.started && (app.loginFormActive() || app.createNewCharacterFormActive())) {
-        $("input").blur(); // exit keyboard on mobile
+      if (
+        !game.started &&
+        (app.loginFormActive() ||
+          app.createNewCharacterFormActive() ||
+          app.createPasswordFormActive() ||
+          app.enterPasswordFormActive())
+      ) {
+        if (document.activeElement.tagName === "INPUT") {
+          $(document.activeElement).trigger("blur"); // exit keyboard on mobile
+        }
         app.tryStartingGame();
-        return false; // prevent form submit
+        return false;
       }
     }
 

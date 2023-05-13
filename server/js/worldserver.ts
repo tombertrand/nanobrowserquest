@@ -336,7 +336,9 @@ class World {
       });
 
       player.onExit(function () {
-        purchase[player.network].cancel(player.depositAccount);
+        if (player.network) {
+          purchase[player.network].cancel(player.depositAccount);
+        }
 
         console.info(player.name + " has left the game.");
         if (player.hasParty()) {
@@ -1580,11 +1582,11 @@ class World {
   getPlayerPopulation() {
     let players = _.sortBy(
       // @ts-ignore
-      Object.values(this.players).reduce((acc: any[], { name, level, hash, network, partyId }) => {
+      Object.values(this.players).reduce((acc: any[], { name, level, hash, account, network, partyId }) => {
         acc.push({
           name,
           level,
-          network,
+          network: account ? network : null,
           hash: !!hash,
           partyId,
         });
@@ -2334,6 +2336,13 @@ class World {
       }
     }
 
+    if (mob.isInsideTemple) {
+      const templeMobRandom = random(800);
+      if (templeMobRandom === 133) {
+        return "ringmystical";
+      }
+    }
+
     if (mob.kind >= Types.Entities.EYE) {
       const vv = random(12000);
       if (vv === 420) {
@@ -2370,7 +2379,7 @@ class World {
     }
 
     if (mob.kind >= Types.Entities.OCULOTHORAX) {
-      const superUniqueRandom = random(13_000);
+      const superUniqueRandom = random(15_000);
 
       if ([Types.Entities.MAGE, Types.Entities.SHAMAN, Types.Entities.DEATHANGEL].includes(mob.kind)) {
         if (superUniqueRandom === 666) {
@@ -2387,9 +2396,10 @@ class World {
           return "amuletdragon";
         } else if (superUniqueRandom === 555) {
           return "ringheaven";
-        } else if (superUniqueRandom === 1111) {
-          return "amuleteye";
         }
+        //  else if (superUniqueRandom === 1111) {
+        //   return "amuleteye";
+        // }
       }
 
       if (superUniqueRandom === 111) {

@@ -623,8 +623,8 @@ var Properties: any = {
     drops: {
       soulstone: 100,
     },
-    hp: 10_000,
-    armor: 36,
+    hp: 12_500,
+    armor: 38,
     weapon: 32,
   },
   wraith2: {
@@ -667,7 +667,6 @@ var Properties: any = {
       mysticalarmor: 2,
       beltmystical: 2,
       shieldmystical: 2,
-      ringmystical: 1,
       gold: 12,
     },
   },
@@ -683,7 +682,7 @@ var Properties: any = {
       ringwizard: 1,
       ringmystical: 1,
     },
-    hp: 12_000,
+    hp: 14_000,
     armor: 32,
     weapon: 30,
   },

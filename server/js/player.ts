@@ -10,7 +10,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
-import { toArray, toDb, toNumber, validateQuantity } from "../../shared/js/utils";
+import { isValidAccountAddress, toArray, toDb, toNumber, validateQuantity } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
 import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
@@ -40,7 +40,7 @@ import {
 import type Party from "./party";
 import type Trade from "./trade";
 
-const MIN_LEVEL = 14;
+const MIN_LEVEL = 16;
 const MIN_TIME = 1000 * 60 * 15;
 const MAX_EXP = expForLevel[expForLevel.length - 1];
 
@@ -275,8 +275,8 @@ class Player extends Character {
         let reason;
         var name = sanitize(message[1]);
         var account = sanitize(message[2]);
-        var [network]: [Network] = account.split("_");
-        var password;
+        var password = sanitize(message[3]);
+        var [network]: [Network] = (account || "").split("_") || null;
 
         ({ timestamp, reason } = await databaseHandler.checkIsBannedByIP(self));
         if (timestamp && reason) {
@@ -296,15 +296,16 @@ class Player extends Character {
           return;
         }
 
-        if (!["nano", "ban"].includes(network)) {
+        if (account && !isValidAccountAddress(account)) {
           self.connection.sendUTF8("invalidconnection");
-          self.connection.close("Bad network.");
+          self.connection.close("Invalid Account.");
           return;
         }
-        // var network: Network = sanitize(message[3]) === "ban" ? "ban" : "nano";
 
-        if (action === Types.Messages.LOGIN) {
-          password = sanitize(message[3]);
+        if (network && !["nano", "ban"].includes(network)) {
+          self.connection.sendUTF8("invalidconnection");
+          self.connection.close("Invalid Network.");
+          return;
         }
 
         // Always ensure that the name is not longer than a maximum length.
@@ -319,14 +320,18 @@ class Player extends Character {
           self.connection.close("Invalid name " + self.name);
           return;
         }
-        self.account = account.substr(0, 65);
+
+        self.account = account;
         self.network = network;
 
         // @TODO rate-limit player creation
         if (action === Types.Messages.CREATE) {
           console.info("CREATE: " + self.name);
           // self.account = hash;
-          databaseHandler.createPlayer(self);
+
+          if (await databaseHandler.isPlayerExist(self)) {
+            return;
+          }
         } else {
           console.info("LOGIN: " + self.name, " ID: " + self.id);
           if (self.server.loggedInPlayer(self.name)) {
@@ -334,18 +339,31 @@ class Player extends Character {
             self.connection.close("Already logged in " + self.name);
             return;
           }
+        }
 
-          if (!password) {
-            if (await databaseHandler.passwordIsRequired(self)) {
-              return;
-            }
-          } else {
-            if (!(await databaseHandler.passwordLoginOrCreate(self, password))) {
-              return;
-            }
+        if (!password) {
+          if (await databaseHandler.passwordIsRequired(self)) {
+            return;
           }
+        } else {
+          if (!(await databaseHandler.passwordLoginOrCreate(self, password))) {
+            return;
+          }
+        }
 
+        if (action === Types.Messages.CREATE) {
+          databaseHandler.createPlayer(self);
+        } else {
           databaseHandler.loadPlayer(self);
+        }
+      } else if (action === Types.Messages.ACCOUNT) {
+        const newAccount = message[1];
+        if (isValidAccountAddress(newAccount)) {
+          const [newNetwork] = newAccount.split("_");
+          await self.databaseHandler.setAccount(self, newAccount, newNetwork);
+
+          // Update the player's Nano/Ban logo
+          self.server.updatePopulation();
         }
       } else if (action === Types.Messages.WHO) {
         console.info("WHO: " + self.name);
@@ -509,18 +527,17 @@ class Player extends Character {
         var mob = self.server.getEntityById(message[1]);
 
         if (!mob) return;
-        if (!self.server.isPlayerNearEntity(self, mob, 20)) return;
-        // @TODO Think of a better strategy
-        // if (self.attackTimeout) {
-        //   Sentry.captureException(new Error("Player still on attack cooldown"), { extra: { player: self.name } });
-        //   return;
-        // }
+        if (!self.server.isPlayerNearEntity(self, mob, 10)) return;
+        // Prevent FE from sending too many attack messages
+        if (self.attackTimeout) return;
 
-        // Allow for 10% latency
         const attackSpeed = Types.calculateAttackSpeed(self.bonus.attackSpeed + 10);
         const duration = Math.round(Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (attackSpeed / 100));
 
-        // Prevent FE from sending too many attack messages
+        console.log("~~~~attackSpeed", attackSpeed);
+        console.log("~~~~Types.DEFAULT_ATTACK_SPEED", Types.DEFAULT_ATTACK_SPEED);
+        console.log("~~~~duration", duration);
+
         self.attackTimeout = setTimeout(() => {
           self.attackTimeout = null;
         }, duration);
@@ -1046,8 +1063,13 @@ class Player extends Character {
             self.connection.send({
               type: Types.Messages.BOSS_CHECK,
               status: "failed",
-              message:
-                "You may not fight the end boss at the moment, you are too low level. Keep killing monsters and gaining experience!",
+              message: MIN_LEVEL,
+            });
+            return;
+          } else if (!self.account && !message[1]) {
+            self.connection.send({
+              type: Types.Messages.BOSS_CHECK,
+              status: "missing-account",
             });
             return;
           }
@@ -1088,7 +1110,7 @@ class Player extends Character {
           } else if (self.hasRequestedBossPayout) {
             reason = `Has already requested payout for Classic`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
-            reason = `Less then 8 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
+            reason = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
           } else if (self.level < MIN_LEVEL) {
             reason = `Min level not obtained, player is level ${self.level}`;
           } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[16] || !self.achievement[20]) {
@@ -1097,79 +1119,80 @@ class Player extends Character {
 
           console.info(`Reason: ${reason}`);
           databaseHandler.banPlayerByIP(self, "cheating", reason);
+          return;
         }
-        {
-          self.connection.send({
-            type: Types.Messages.NOTIFICATION,
-            message: "Payout is being sent!",
-          });
 
-          let amount;
-          let maxAmount;
+        self.connection.send({
+          type: Types.Messages.NOTIFICATION,
+          message: "Payout is being sent!",
+        });
+
+        let amount;
+        let maxAmount;
+        if (isClassicPayout) {
+          self.hasRequestedBossPayout = true;
+          amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
+          maxAmount = getClassicMaxPayout(self.network);
+        }
+
+        const raiPayoutAmount = rawToRai(amount, self.network);
+
+        if (raiPayoutAmount > maxAmount) {
+          databaseHandler.banPlayerByIP(
+            self,
+            "cheating",
+            `Tried to withdraw ${raiPayoutAmount} but max is ${maxAmount} for quest of kind: ${message[1]}`,
+          );
+          return;
+        }
+
+        console.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + raiPayoutAmount);
+        payoutIndex += 1;
+        const response =
+          (await enqueueSendPayout({
+            playerName: self.name,
+            account: self.account,
+            amount,
+            payoutIndex,
+            network: self.network,
+          })) || {};
+        const { err, message: msg, hash } = response as any;
+
+        // If payout succeeds there will be a hash in the response!
+        if (hash) {
+          console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
+
+          postMessageToDiscordEventChannel(
+            `${self.name} killed the Skeleton King and received a payout of ${raiPayoutAmount} ${
+              self.network === "nano" ? "XNO" : "BAN"
+            } 🎉`,
+          );
+
           if (isClassicPayout) {
-            self.hasRequestedBossPayout = true;
-            amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
-            maxAmount = getClassicMaxPayout(self.network);
+            self.hash = hash;
+            databaseHandler.setHash(self.name, hash);
           }
-
-          const raiPayoutAmount = rawToRai(amount, self.network);
-
-          if (raiPayoutAmount > maxAmount) {
-            databaseHandler.banPlayerByIP(
-              self,
-              "cheating",
-              `Tried to withdraw ${raiPayoutAmount} but max is ${maxAmount} for quest of kind: ${message[1]}`,
-            );
-            return;
-          }
-
-          console.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + raiPayoutAmount);
-          payoutIndex += 1;
-          const response =
-            (await enqueueSendPayout({
+        } else {
+          console.info("PAYOUT FAILED: " + self.name + " " + self.account);
+          Sentry.captureException(err, {
+            user: {
+              username: self.name,
+            },
+            tags: {
+              player: self.name,
               account: self.account,
-              amount,
-              payoutIndex,
-              network: self.network,
-            })) || {};
-          const { err, message: msg, hash } = response as any;
-
-          // If payout succeeds there will be a hash in the response!
-          if (hash) {
-            console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
-
-            postMessageToDiscordEventChannel(
-              `${self.name} killed the Skeleton King and received a payout of ${raiPayoutAmount} ${
-                self.network === "nano" ? "XNO" : "BAN"
-              } 🎉`,
-            );
-
-            if (isClassicPayout) {
-              self.hash = hash;
-              databaseHandler.setHash(self.name, hash);
-            }
-          } else {
-            console.info("PAYOUT FAILED: " + self.name + " " + self.account);
-            Sentry.captureException(err, {
-              user: {
-                username: self.name,
-              },
-              tags: {
-                player: self.name,
-                account: self.account,
-              },
-              extra: { status: "PAYOUT FAILED" },
-            });
-          }
-
-          self.connection.send({
-            type: Types.Messages.NOTIFICATION,
-            message: msg,
-            hash: self.hash,
+            },
+            extra: { status: "PAYOUT FAILED" },
           });
-
-          self.server.updatePopulation();
         }
+
+        self.connection.send({
+          type: Types.Messages.NOTIFICATION,
+          message: msg,
+          hash: self.hash,
+        });
+
+        self.server.updatePopulation();
       } else if (action === Types.Messages.BAN_PLAYER) {
         // Just don't...
         databaseHandler.banPlayerByIP(self, "cheating", message[1]);
@@ -1281,9 +1304,9 @@ class Player extends Character {
           purchase[self.network].create({ player: self, account: self.depositAccount, id: message[1] });
         }
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
-        console.info("PURCHASE_CANCEL: " + self.name + " " + message[1]);
+        console.info("PURCHASE_CANCEL: " + self.name + " " + self.depositAccount);
 
-        purchase[self.network].cancel(message[1]);
+        purchase[self.network].cancel(self.depositAccount);
       } else if (action === Types.Messages.STORE_ITEMS) {
         console.info("STORE_ITEMS");
 
@@ -2878,6 +2901,7 @@ class Player extends Character {
   }
 
   sendWelcome({
+    account,
     armor,
     weapon,
     belt,
@@ -2916,6 +2940,8 @@ class Player extends Character {
         this.connection.sendUTF8("passwordinvalid");
         return;
       }
+
+      this.account = account;
 
       // @NOTE: Leave no trace
       delete this.isPasswordRequired;
@@ -3027,6 +3053,7 @@ class Player extends Character {
         {
           id: this.id,
           name: this.name,
+          account,
           x: this.x,
           y: this.y,
           hitpoints: this.hitPoints,

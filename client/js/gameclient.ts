@@ -22,6 +22,7 @@ class GameClient {
   isTimeout?: boolean;
   disconnected_callback: any;
   welcome_callback: any;
+  account_callback: any;
   move_callback: any;
   lootmove_callback: any;
   attack_callback: any;
@@ -126,6 +127,7 @@ class GameClient {
 
     this.handlers = [];
     this.handlers[Types.Messages.WELCOME] = this.receiveWelcome;
+    this.handlers[Types.Messages.ACCOUNT] = this.receiveAccount;
     this.handlers[Types.Messages.MOVE] = this.receiveMove;
     this.handlers[Types.Messages.LOOTMOVE] = this.receiveLootMove;
     this.handlers[Types.Messages.ATTACK] = this.receiveAttack;
@@ -291,19 +293,17 @@ class GameClient {
       });
 
       this.connection.io.on("reconnect", () => {
-        $("#reconnecting").removeClass("visible");
+        // @TODO ~~~ better handle reconnection?
       });
 
       this.connection.on("disconnect", reason => {
         console.info(`Connection closed, ${reason}`);
 
-        let disconnectMessage;
+        let disconnectMessage = "An error occured";
         if (reason === "transport close") {
           disconnectMessage = "The connection to Nano BrowserQuest has been lost";
         } else if (this.isTimeout) {
           disconnectMessage = "You have been disconnected for being inactive for too long";
-        } else {
-          $("#reconnecting").addClass("visible");
         }
 
         if (disconnectMessage) {
@@ -356,6 +356,10 @@ class GameClient {
 
   receiveWelcome(data) {
     this.welcome_callback?.(data[1]);
+  }
+
+  receiveAccount(data) {
+    this.account_callback?.(data[1]);
   }
 
   receiveMove(data) {
@@ -883,6 +887,10 @@ class GameClient {
     this.welcome_callback = callback;
   }
 
+  onAccount(callback) {
+    this.account_callback = callback;
+  }
+
   onSpawnCharacter(callback) {
     this.spawn_character_callback = callback;
   }
@@ -1235,12 +1243,16 @@ class GameClient {
     this.receivecoin_callback = callback;
   }
 
-  sendCreate({ name, account }) {
-    this.sendMessage([Types.Messages.CREATE, name, account]);
+  sendCreate({ name, account = "", password = "" }) {
+    this.sendMessage([Types.Messages.CREATE, name, account, password]);
   }
 
-  sendLogin({ name, account, password = "" }) {
+  sendLogin({ name, account = "", password = "" }) {
     this.sendMessage([Types.Messages.LOGIN, name, account, password]);
+  }
+
+  sendAccount(account) {
+    this.sendMessage([Types.Messages.ACCOUNT, account]);
   }
 
   sendMove(x, y) {
@@ -1396,8 +1408,8 @@ class GameClient {
     this.sendMessage([Types.Messages.PURCHASE_CREATE, id, account]);
   }
 
-  sendPurchaseCancel(account) {
-    this.sendMessage([Types.Messages.PURCHASE_CANCEL, account]);
+  sendPurchaseCancel() {
+    this.sendMessage([Types.Messages.PURCHASE_CANCEL]);
   }
 
   sendSettings(settings) {

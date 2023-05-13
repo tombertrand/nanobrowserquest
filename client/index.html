@@ -8,929 +8,1065 @@
 \_| \_/\__,_|_| |_|\___/\____/|_|  \___/ \_/\_/ |___/\___|_|   \_/\_\\__,_|\___||___/\__|
  -->
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="img/common/favicon.png" />
+    <meta property="og:title" content="Nano BrowserQuest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nanobrowserquest.com/" />
+    <meta property="og:image" content="https://nanobrowserquest.com/img/common/nanobrowserquest.jpg" />
+    <meta property="og:site_name" content="Nano BrowserQuest" />
+    <meta
+      property="og:description"
+      content="Play Nano BrowserQuest, a remake of the popular BrowserQuest HTML5 massively multiplayer game with Nano payout for killing the skeleton king!"
+    />
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="img/common/favicon.png">
-    <meta property="og:title" content="Nano BrowserQuest">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://nanobrowserquest.com/">
-    <meta property="og:image" content="https://nanobrowserquest.com/img/common/nanobrowserquest.jpg">
-    <meta property="og:site_name" content="Nano BrowserQuest">
-    <meta property="og:description"
-        content="Play Nano BrowserQuest, a remake of the popular BrowserQuest HTML5 massively multiplayer game with Nano payout for killing the skeleton king!">
+    <link href="img/common/apple-touch-icon-57x57.png" rel="apple-touch-icon-precomposed" sizes="57x57" />
+    <link href="img/common/apple-touch-icon-72x72.png" rel="apple-touch-icon-precomposed" sizes="72x72" />
+    <link href="img/common/apple-touch-icon-114x114.png" rel="apple-touch-icon-precomposed" sizes="114x114" />
+    <link href="img/common/apple-touch-icon-144x144.png" rel="apple-touch-icon-precomposed" sizes="144x144" />
 
-    <link href="img/common/apple-touch-icon-57x57.png" rel="apple-touch-icon-precomposed" sizes="57x57">
-    <link href="img/common/apple-touch-icon-72x72.png" rel="apple-touch-icon-precomposed" sizes="72x72">
-    <link href="img/common/apple-touch-icon-114x114.png" rel="apple-touch-icon-precomposed" sizes="114x114">
-    <link href="img/common/apple-touch-icon-144x144.png" rel="apple-touch-icon-precomposed" sizes="144x144">
-
-    <link href="img/common/apple-touch-startup-image-320x460.png" rel="apple-touch-startup-image"
-        media="(device-width: 320px)">
-    <link href="img/common/apple-touch-startup-image-640x920.png" rel="apple-touch-startup-image"
-        media="(device-width: 320px) and (-webkit-device-pixel-ratio: 2)">
-    <link href="img/common/apple-touch-startup-image-768x1004.png" rel="apple-touch-startup-image"
-        media="(device-width: 768px) and (orientation: portrait)">
-    <link href="img/common/apple-touch-startup-image-748x1024.png" rel="apple-touch-startup-image"
-        media="(device-width: 768px) and (orientation: landscape)">
-    <link href="img/common/apple-touch-startup-image-1536x2008.png" rel="apple-touch-startup-image"
-        media="(device-width: 1536px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)">
-    <link href="img/common/apple-touch-startup-image-1496x2048.png" rel="apple-touch-startup-image"
-        media="(device-width: 1536px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)">
+    <link
+      href="img/common/apple-touch-startup-image-320x460.png"
+      rel="apple-touch-startup-image"
+      media="(device-width: 320px)"
+    />
+    <link
+      href="img/common/apple-touch-startup-image-640x920.png"
+      rel="apple-touch-startup-image"
+      media="(device-width: 320px) and (-webkit-device-pixel-ratio: 2)"
+    />
+    <link
+      href="img/common/apple-touch-startup-image-768x1004.png"
+      rel="apple-touch-startup-image"
+      media="(device-width: 768px) and (orientation: portrait)"
+    />
+    <link
+      href="img/common/apple-touch-startup-image-748x1024.png"
+      rel="apple-touch-startup-image"
+      media="(device-width: 768px) and (orientation: landscape)"
+    />
+    <link
+      href="img/common/apple-touch-startup-image-1536x2008.png"
+      rel="apple-touch-startup-image"
+      media="(device-width: 1536px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)"
+    />
+    <link
+      href="img/common/apple-touch-startup-image-1496x2048.png"
+      rel="apple-touch-startup-image"
+      media="(device-width: 1536px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)"
+    />
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-V98K4M6T34"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-V98K4M6T34');
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-V98K4M6T34");
     </script>
     <title>Nano BrowserQuest</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2641261794144402"
-        crossorigin="anonymous"></script>
-</head>
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2641261794144402"
+      crossorigin="anonymous"
+    ></script>
+  </head>
 
-<body class="intro">
+  <body class="intro">
     <noscript>
-        <div class="alert">
-            You need to enable JavaScript to play Nano BrowserQuest.
-        </div>
+      <div class="alert">You need to enable JavaScript to play Nano BrowserQuest.</div>
     </noscript>
     <div id="intro">
-        <span id="logo">
-            <span id="logosparks"></span>
-            <span class="home-logo nano">
-                <span class="home-logo-sparks nano"></span>
-            </span>
+      <span id="logo">
+        <span id="logosparks"></span>
+        <span class="home-logo nano">
+          <span class="home-logo-sparks nano"></span>
         </span>
-        <article id="portrait">
-            <p>
-                Please rotate your device to landscape mode
-            </p>
-            <div id="tilt"></div>
-        </article>
-        <section id="parchment" class="createcharacter">
-            <div class="parchment-left"></div>
-            <div class="parchment-middle">
-                <article id="createcharacter">
-                    <h1>
-                        <span class="left-ornament"></span>
-                        Create New Character
-                        <span class="right-ornament"></span>
-                    </h1>
-                    <form action="none" method="get" accept-charset="utf-8">
-                        <input type="text" id="nameinput" class="stroke" name="player-name" placeholder="Character Name"
-                            maxlength="16" autocomplete="off">
-                        <textarea id="accountinput" class="stroke" name="player-account" placeholder="nano_ Account"
-                            maxlength="65" rows="3" spellcheck="false" autocomplete="off"></textarea>
-                    </form>
-                    <div class="play">
-                        <span class="link">Create Character</span>
-                        <img src="img/common/spinner2.gif">
-                    </div>
-                    <div class="validation-summary"></div>
-
-                    <div id="create-new-account">
-                        <span class="link">What is a Nano account?</span>
-                    </div>
-
-                    <div id="back-to-login" style="margin-top:6px;">
-                        <span class="link">Already have an account?</span>
-                    </div>
-                </article>
-                <article id="createaccount">
-                    <div style="width: 75%; margin: 0 auto;">
-                        <h1>
-                            <span class="left-ornament"></span>
-                            Create a Nano Account
-                            <span class="right-ornament"></span>
-                        </h1>
-                        <br />
-                        <div class="createaccount-instructions">
-                            Nano is a feeless, instant, secure and green cryptocurrency,
-                            <a href="https://nanolooker.com/what-is-nano" target="_blank">learn more</a>.
-                            You will be earning a small payout for completing the game!
-                            You can create a free wallet by downloading a mobile wallet such as Natrium
-                            (<a href="https://itunes.apple.com/us/app/natrium/id1451425707?ls=1&mt=8"
-                                target="_blank">iOS</a> and
-                            <a href="https://play.google.com/store/apps/details?id=co.banano.natriumwallet"
-                                target="_blank">Android</a>) or
-                            Nalli (<a href="https://apps.apple.com/app/id1515601975" target="_blank">iOS</a> and
-                            <a href="https://play.google.com/store/apps/details?id=fi.heimo.nalli"
-                                target="_blank">Android</a>)
-                            or by using <a href="https://nault.cc" target="_blank">Nault</a> (web-based).
-                            <br />
-                            <br />
-                            Once your wallet is created, you'll get a your public address starting with "nano_", this
-                            address can be shared as a way to receive funds.
-                            <br />
-                            <br />
-                            You'll also get a Nano seed / Nano mnemonic phrase.
-                            <strong>Create a backup and NEVER share your seed / mnemonic phrase with anyone, they are
-                                the keys to your funds.</strong>
-                            If they are lost you will lose access to your funds forever.
-                        </div>
-                        <br />
-                        <div id="create-new-account-ok">
-                            <span class="link">Ok</span>
-                        </div>
-                    </div>
-                </article>
-                <article id="loadcharacter">
-                    <h1>
-                        <span class="left-ornament"></span>
-                        <span id="no-playername">Nano BrowserQuest</span>
-                        <span id="playername" class="stroke"></span>
-                        <span class="right-ornament"></span>
-                    </h1>
-
-                    <img id="playerimage" src="">
-
-                    <div class="password-create" style="display: none">To secure your account,<br />enter a password
-                        between 4 and 24 characters.<br />Make sure to remember it!</div>
-                    <div class="password-login" style="display: none">Enter your account password</div>
-
-                    <form action="none" method="get" accept-charset="utf-8">
-                        <input type="text" id="loginnameinput" class="stroke" name="player-name"
-                            placeholder="Character Name" maxlength="16" autofocus autocomplete="off" />
-                        <textarea id="loginaccountinput" class="stroke" name="player-loginaccount"
-                            placeholder="nano_ Account" maxlength="65" rows="2" spellcheck="false"
-                            autocomplete="off"></textarea>
-                        <input type="hidden" id="loginnetworkinput" value="nano" />
-                        <input type="password" id="loginpasswordinput" class="stroke password-login password-create"
-                            name="player-password" placeholder="Password" maxlength="24" style="display: none" />
-                        <input type="password" id="loginpasswordconfirminput" class="stroke password-create"
-                            name="player-password-confirm" placeholder="Confirm Password" maxlength="24"
-                            style="display: none" />
-                    </form>
-                    <div id="login-play-link" class="play">
-                        <span class="link">Login</span>
-                        <img src="img/common/spinner2.gif">
-                    </div>
-                    <div class="validation-summary"> </div>
-                    <div id="login-play-button" class="play button">
-                        <div></div>
-                        <img src="img/common/spinner.gif" alt="">
-                    </div>
-                    <!-- <div id="running-coder">
-                        <span class="link">running-coder</span>
-                    </div>
-                    <div id="banano">
-                        <span class="link">banano</span>
-                    </div>
-                    <div id="running-coder1">
-                        <span class="link">running-coder1</span>
-                    </div>
-                    <div id="hello">
-                        <span class="link">hello</span>
-                    </div> -->
-                    <div class="login-options">
-                        <div id="forget-player">
-                            <span class="link">Change Player</span>
-                        </div>
-                        <div id="create-new">
-                            <span class="link">Create New Character</span>
-                        </div>
-                    </div>
-                </article>
-                <article id="banned">
-                    <h1>
-                        <span class="left-ornament"></span>
-                        Nano BrowserQuest
-                        <span class="right-ornament"></span>
-                    </h1>
-                    <br />
-                    <br />
-                    <div class="banned-misbehaved-1">
-                        You are banned for 24h for misbehaving.
-                        <br />
-                        <br />
-                        You kept spamming the chat, said bad words,<br />
-                        insulted or misbehaved towards another player or begged<br />
-                        which are is tolerated.
-                        <br />
-                        <br />
-                        Nano BrowserQuest is a place for everyone to have fun,
-                        <br />
-                        keep it this way else this will be a better place without you.
-                    </div>
-                    <div class="banned-misbehaved-365">
-                        You are banned forever.
-                        <br />
-                        <br />
-                        You kept spamming the chat, said bad words,<br />
-                        insulted or misbehaved towards another player or begged<br />
-                        which are is tolerated.
-                        <br />
-                        <br />
-                        Nano BrowserQuest is a place for everyone to have fun,
-                        <br />
-                        bye bye.
-                    </div>
-                    <div class="banned-cheating-1">
-                        You are banned for 24h, no cheating.
-                        <br />
-                        <br />
-                        You were detected exploiting the game which is not permitted.
-                        <br />
-                        <br />
-                        This is going to be your <strong>last warning</strong> before a permanent ban.
-                        <br />
-                        <br />
-                        Nano BrowserQuest is a place for everyone to have fun,
-                        <br />
-                        keep it this way else this will be a better place without you.
-                    </div>
-                    <div class="banned-cheating-365">
-                        You are banned forever, no cheating.
-                        <br />
-                        <br />
-                        You were detected exploiting the game a second time.
-                        <br />
-                        <br />
-                        Nano BrowserQuest is a place for everyone to have fun,
-                        <br />
-                        bye bye.
-                    </div>
-                </article>
-                <article id="invalidconnection">
-                    <h1>
-                        <span class="left-ornament"></span>
-                        Nano BrowserQuest
-                        <span class="right-ornament"></span>
-                    </h1>
-                    <br />
-                    <br />
-                    <div>
-                        Unable to connect.
-                    </div>
-                </article>
-                <article id="confirmation">
-                    <h1>
-                        <span class="left-ornament"></span>
-                        You need to accept the following terms of usage<span class="right-ornament"></span><br />
-                        before creating a new character.
-                    </h1>
-                    <br />
-                    You'll be collecting <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a> by
-                    completing the game achievements.<br />
-                    Your cumulated Nano payout will be sent once you kill the skeleton king<br /> by getting the last
-                    hit!<br />
-
-                    You can complete the game as many time as you like.<br />
-                    Play with your friends and introduce them to Nano!<br /><br />
-
-                    <strong>No cheating. No begging. No harassing other players. You will get banned.</strong><br />
-                    The game is funded entirely by NanoLooker donations, keep it friendly.<br /><br />
-
-                    <div id="continue">
-                        <span class="link">Continue</span>
-                    </div>
-                </article>
-                <article id="credits">
-                    <h1>
-                        <span class="left-ornament"></span>
-                        <span class="title">
-                            Made for Mozilla by <a target="_blank" class="stroke clickable"
-                                href="http://www.littleworkshop.fr/">Little Workshop</a>
-                        </span>
-                        <span class="right-ornament"></span>
-                    </h1>
-                    <div id="authors">
-                        <div id="guillaume">
-                            <div class="avatar"></div>
-                            Pixels by
-                            <a class="stroke clickable" target="_blank" href="http://twitter.com/glecollinet">Guillaume
-                                Lecollinet</a>
-                        </div>
-                        <div id="franck">
-                            <div class="avatar"></div>
-                            Code by
-                            <a class="stroke clickable" target="_blank" href="http://twitter.com/whatthefranck">Franck
-                                Lecollinet</a>
-                        </div>
-                    </div>
-                    <div id="seb">
-                        <span id="note"></span>
-                        Music by <a class="clickable" target="_blank" href="http://soundcloud.com/gyrowolf">Terrel
-                            O'Brien</a>, <a class="clickable" target="_blank" href="http://blog.dayjo.org">Joel Day</a>,
-                        <a class="clickable" target="_blank" href="http://www.dantilden.com">Dan Tilden</a>, &amp; <a
-                            target="_blank" class="clickable" href="https://soundcloud.com/aaron-anderson-11">Aaron
-                            Krogh</a>
-                    </div>
-                    <div id="close-credits">
-                        <span>- click anywhere to close -</span>
-                    </div>
-                </article>
-                <article id="about">
-                    <h1>
-                        <span class="left-ornament"></span>
-                        <span class="title">
-                            Welcome to Nano BrowserQuest
-                        </span>
-                        <span class="right-ornament"></span>
-                    </h1>
-                    <p id="game-desc">
-                        Nano BrowserQuest is a multiplayer game inviting you to explore a
-                        world of adventure from your Web browser.
-                        <br /><br />
-                        You'll be collecting <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a>
-                        by completing the game achievements.<br />
-                        Your cumulated Nano payout will be sent once you kill the skeleton king!<br />
-                        You can complete the game as many time as you like.<br /><br />
-                        Play with your friends and introduce them to Nano!
-                    </p>
-                </article>
-                <article id="death">
-                    <p>You are dead...</p>
-                    <div id="gold-death-wrapper">
-                        <p class="">You've lost <var id="gold-death"></var> gold.</p>
-                        <p>Be sure to safeguard your gold by storing it in your stash to prevent any potential losses!</p>
-                    </div>
-                    <div id="respawn" class="button"></div>
-                </article>
-                <article id="error">
-                    <h1>
-                        <span class="left-ornament"></span>
-                        Your browser cannot run Nano BrowserQuest!
-                        <span class="right-ornament"></span>
-                    </h1>
-                    <p>
-                        We're sorry, but your browser does not support WebSockets.<br>
-                        In order to play, we recommend using the latest version of Firefox, Chrome or Safari.
-                    </p>
-                </article>
+      </span>
+      <article id="portrait">
+        <p>Please rotate your device to landscape mode</p>
+        <div id="tilt"></div>
+      </article>
+      <section id="parchment" class="createcharacter">
+        <div class="parchment-left"></div>
+        <div class="parchment-middle">
+          <article id="createpassword">
+            <h1>
+              <span class="left-ornament"></span>
+              Create Your Password
+              <span class="right-ornament"></span>
+            </h1>
+            <div>
+              To secure your account,<br />enter a password between 4 and 24 characters.<br />Make sure to remember it!
             </div>
-            <div class="parchment-right"></div>
-        </section>
+
+            <input
+              type="password"
+              id="createpasswordinput"
+              class="stroke"
+              name="player-password"
+              placeholder="Password"
+              maxlength="24"
+            />
+            <input
+              type="password"
+              id="createpasswordconfirminput"
+              class="stroke"
+              name="player-password-confirm"
+              placeholder="Confirm Password"
+              maxlength="24"
+            />
+            <div class="login-play-link play">
+              <span class="link">Create Character</span>
+              <img src="img/common/spinner2.gif" />
+            </div>
+            <div class="validation-summary"></div>
+          </article>
+          <article id="enterpassword">
+            <h1>
+              <span class="left-ornament"></span>
+              <span class="no-playername">Nano BrowserQuest</span>
+              <span class="playername stroke"></span>
+              <span class="right-ornament"></span>
+            </h1>
+
+            <div>
+              <img class="playerimage" src="" />
+              <div>Enter your account password</div>
+
+              <input
+                type="password"
+                id="loginpasswordinput"
+                class="stroke"
+                name="player-password"
+                placeholder="Password"
+                maxlength="24"
+              />
+              <div class="validation-summary"></div>
+            </div>
+
+            <div class="bottom-links">
+              <div class="login-play-button play button">
+                <div></div>
+                <img src="img/common/spinner.gif" alt="" />
+              </div>
+            </div>
+          </article>
+          <article id="createcharacter">
+            <h1>
+              <span class="left-ornament"></span>
+              Create New Character
+              <span class="right-ornament"></span>
+            </h1>
+
+            <div>
+              <input
+                type="text"
+                id="nameinput"
+                class="stroke"
+                name="player-name"
+                placeholder="Character Name"
+                maxlength="16"
+                autocomplete="off"
+              />
+
+              <textarea
+                id="accountinput"
+                class="stroke"
+                name="player-account"
+                placeholder="nano_ address (optional)"
+                maxlength="65"
+                rows="3"
+                spellcheck="false"
+                autocomplete="off"
+              ></textarea>
+
+              <div class="play">
+                <span class="link">Create Character</span>
+                <img src="img/common/spinner2.gif" />
+              </div>
+              <div class="validation-summary"></div>
+            </div>
+
+            <div class="bottom-links">
+              <div id="have-account" class="visible">
+                <span class="link">Have a nano_ address?</span>
+              </div>
+
+              <div id="create-new-account">
+                <span class="link">What is a nano_ address?</span>
+              </div>
+
+              <div id="back-to-login" style="margin-top: 6px">
+                <span class="link">Already have a NanoBrowserQuest account?</span>
+              </div>
+            </div>
+          </article>
+          <article id="createaccount">
+            <div style="width: 75%; margin: 0 auto">
+              <h1>
+                <span class="left-ornament"></span>
+                Nano Address
+                <span class="right-ornament"></span>
+              </h1>
+              <br />
+              <div class="createaccount-instructions">
+                Nano is a feeless, instant, secure and green cryptocurrency,
+                <a href="https://nanolooker.com/what-is-nano" target="_blank">learn more</a>. You will be earning a
+                small payout for completing the game! You can create a free wallet by downloading a mobile wallet such
+                as Natrium (<a href="https://itunes.apple.com/us/app/natrium/id1451425707?ls=1&mt=8" target="_blank"
+                  >iOS</a
+                >
+                and
+                <a href="https://play.google.com/store/apps/details?id=co.banano.natriumwallet" target="_blank"
+                  >Android</a
+                >) or Nautilus (<a href="https://apps.apple.com/app/id1615775960" target="_blank">iOS</a>
+                and
+                <a href="https://play.google.com/store/apps/details?id=co.perish.nautiluswallet" target="_blank"
+                  >Android</a
+                >) or by using <a href="https://nault.cc" target="_blank">Nault</a> (web-based).
+                <br />
+                <br />
+                Once your wallet is created, you'll get a your public address starting with "nano_", this address can be
+                shared as a way to receive funds.
+                <br />
+                <br />
+                You'll also get a Nano seed / Nano mnemonic phrase. Create a backup and NEVER share your seed / mnemonic
+                phrase with anyone, they are the keys to your funds. If the key is lost you will lose access to your
+                funds forever!
+              </div>
+              <br />
+              <div id="create-new-account-ok">
+                <span class="link">Ok</span>
+              </div>
+            </div>
+          </article>
+          <article id="loadcharacter">
+            <h1>
+              <span class="left-ornament"></span>
+              <span class="no-playername">Nano BrowserQuest</span>
+              <span class="playername stroke"></span>
+              <span class="right-ornament"></span>
+            </h1>
+
+            <div>
+              <img class="playerimage" src="" />
+
+              <div>
+                <input
+                  type="text"
+                  id="loginnameinput"
+                  class="stroke"
+                  name="player-name"
+                  placeholder="Character Name"
+                  maxlength="16"
+                  autocomplete="off"
+                />
+              </div>
+
+              <!-- <div class="login-play-link play">
+                <span class="link">Login</span>
+                <img src="img/common/spinner2.gif" />
+              </div> -->
+
+              <div class="validation-summary"></div>
+              <div class="login-play-button play button">
+                <div></div>
+                <img src="img/common/spinner.gif" alt="" />
+              </div>
+            </div>
+            <!-- <div id="running-coder">
+              <span class="link">running-coder</span>
+            </div>
+            <div id="banano">
+              <span class="link">banano</span>
+            </div>
+            <div id="running-coder1">
+              <span class="link">running-coder1</span>
+            </div>
+            <div id="hello">
+              <span class="link">hello</span>
+            </div> -->
+            <div class="login-options bottom-links">
+              <div id="forget-player">
+                <span class="link">Change Player</span>
+              </div>
+              <div id="create-new">
+                <span class="link">Create New Character</span>
+              </div>
+            </div>
+          </article>
+          <article id="banned">
+            <h1>
+              <span class="left-ornament"></span>
+              Nano BrowserQuest
+              <span class="right-ornament"></span>
+            </h1>
+            <br />
+            <br />
+            <div class="banned-misbehaved-1">
+              You are banned for 24h for misbehaving.
+              <br />
+              <br />
+              You kept spamming the chat, said bad words,<br />
+              insulted or misbehaved towards another player or begged<br />
+              which are is tolerated.
+              <br />
+              <br />
+              Nano BrowserQuest is a place for everyone to have fun,
+              <br />
+              keep it this way else this will be a better place without you.
+            </div>
+            <div class="banned-misbehaved-365">
+              You are banned forever.
+              <br />
+              <br />
+              You kept spamming the chat, said bad words,<br />
+              insulted or misbehaved towards another player or begged<br />
+              which are is tolerated.
+              <br />
+              <br />
+              Nano BrowserQuest is a place for everyone to have fun,
+              <br />
+              bye bye.
+            </div>
+            <div class="banned-cheating-1">
+              You are banned for 24h, no cheating.
+              <br />
+              <br />
+              You were detected exploiting the game which is not permitted.
+              <br />
+              <br />
+              This is going to be your <strong>last warning</strong> before a permanent ban.
+              <br />
+              <br />
+              Nano BrowserQuest is a place for everyone to have fun,
+              <br />
+              keep it this way else this will be a better place without you.
+            </div>
+            <div class="banned-cheating-365">
+              You are banned forever, no cheating.
+              <br />
+              <br />
+              You were detected exploiting the game a second time.
+              <br />
+              <br />
+              Nano BrowserQuest is a place for everyone to have fun,
+              <br />
+              bye bye.
+            </div>
+          </article>
+          <article id="invalidconnection">
+            <h1>
+              <span class="left-ornament"></span>
+              Nano BrowserQuest
+              <span class="right-ornament"></span>
+            </h1>
+            <br />
+            <br />
+            <div>Unable to connect.</div>
+          </article>
+          <article id="confirmation">
+            <h1>
+              <span class="left-ornament"></span>
+              You need to accept the following terms of usage<span class="right-ornament"></span><br />
+              before creating a new character.
+            </h1>
+            If you choose to connect your nano_ address,<br />you'll be collecting
+            <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a> by completing the game
+            achievements.<br />
+            Your cumulated Nano payout will be sent once you kill the skeleton king<br />
+            by getting the last hit!
+            <br />
+            You can complete the game as many time as you like<br />
+            and play with your friends.
+            <br />
+            <br />
+            Join the <a href="https://discord.gg/GerkX8BfYy" target="_blank">Discord server</a> to connect with other
+            players.
+            <br />
+            <br />
+            No cheating. No begging. No harassing other players. You will get banned.<br />
+            Keep it friendly.<br /><br />
+
+            <div id="continue">
+              <span class="link">Continue</span>
+            </div>
+          </article>
+          <article id="credits">
+            <h1>
+              <span class="left-ornament"></span>
+              <span class="title">
+                Made for Mozilla by
+                <a target="_blank" class="stroke clickable" href="http://www.littleworkshop.fr/">Little Workshop</a>
+              </span>
+              <span class="right-ornament"></span>
+            </h1>
+            <div id="authors">
+              <div id="guillaume">
+                <div class="avatar"></div>
+                Pixels by
+                <a class="stroke clickable" target="_blank" href="http://twitter.com/glecollinet"
+                  >Guillaume Lecollinet</a
+                >
+              </div>
+              <div id="franck">
+                <div class="avatar"></div>
+                Code by
+                <a class="stroke clickable" target="_blank" href="http://twitter.com/whatthefranck"
+                  >Franck Lecollinet</a
+                >
+              </div>
+            </div>
+            <div id="seb">
+              <span id="note"></span>
+              Music by <a class="clickable" target="_blank" href="http://soundcloud.com/gyrowolf">Terrel O'Brien</a>,
+              <a class="clickable" target="_blank" href="http://blog.dayjo.org">Joel Day</a>,
+              <a class="clickable" target="_blank" href="http://www.dantilden.com">Dan Tilden</a>, &amp;
+              <a target="_blank" class="clickable" href="https://soundcloud.com/aaron-anderson-11">Aaron Krogh</a>
+            </div>
+            <div id="close-credits">
+              <span>- click anywhere to close -</span>
+            </div>
+          </article>
+          <article id="about">
+            <h1>
+              <span class="left-ornament"></span>
+              <span class="title"> Welcome to Nano BrowserQuest </span>
+              <span class="right-ornament"></span>
+            </h1>
+            <p id="game-desc">
+              Nano BrowserQuest is a multiplayer game inviting you to explore a world of adventure from your Web
+              browser.
+              <br /><br />
+              If you choose to connect your nano_ address, you'll be collecting
+              <a href="https://www.nanolooker.com/what-is-nano/" target="_blank">Nano</a> by completing the game
+              achievements.<br />
+              Your cumulated Nano payout will be sent once you kill the skeleton king!<br />
+              You can complete the game as many time as you like.<br /><br />
+              Play with your friends and introduce them to Nano!
+            </p>
+          </article>
+          <article id="death">
+            <p>You are dead...</p>
+            <div id="gold-death-wrapper">
+              <p class="">You've lost <var id="gold-death"></var> gold.</p>
+              <p>Be sure to safeguard your gold by storing it in your stash to prevent any potential losses!</p>
+            </div>
+            <div id="respawn" class="button"></div>
+          </article>
+          <article id="error">
+            <h1>
+              <span class="left-ornament"></span>
+              Your browser cannot run Nano BrowserQuest!
+              <span class="right-ornament"></span>
+            </h1>
+            <p>
+              We're sorry, but your browser does not support WebSockets.<br />
+              In order to play, we recommend using the latest version of Firefox, Chrome or Safari.
+            </p>
+          </article>
+        </div>
+        <div class="parchment-right"></div>
+      </section>
     </div>
 
     <div id="container">
-        <div id="reconnecting">Reconnecting ...</div>
-        <div id="canvasborder">
-            <article id="store" class="clickable">
-                <div class="close"></div>
-                <h1>
-                    <span class="left-ornament"></span>
-                    Store
-                    <span class="right-ornament"></span>
-                </h1>
-                <div class="store-wrapper">
-                    <div id="store-item-list"></div>
-                    <div id="store-item-purchase"></div>
+      <div id="canvasborder">
+        <article id="store" class="clickable">
+          <div class="close"></div>
+          <h1>
+            <span class="left-ornament"></span>
+            Store
+            <span class="right-ornament"></span>
+          </h1>
+          <div class="store-wrapper">
+            <div id="store-item-list"></div>
+            <div id="store-item-purchase"></div>
+          </div>
+          <div class="panel-notice">
+            * Items are credited instantly. If you don't receive your items, reach out to running-coder#8584 on the
+            <a href="https://discord.gg/GerkX8BfYy" target="_blank">NanoBrowserQuest Discord</a> server or to
+            <a href="https://www.reddit.com/user/Opposite_Objective34/" target="_blank">u/Opposite_Objective34</a> on
+            Reddit.
+          </div>
+        </article>
+        <article id="settings" class="clickable">
+          <div class="close"></div>
+          <h1>
+            <span class="left-ornament"></span>
+            Settings
+            <span class="right-ornament"></span>
+          </h1>
+          <div class="account-container">
+            <div class="account-input-wrapper">
+              <input
+                type="text"
+                id="player-account-input"
+                class="stroke"
+                name=""
+                placeholder="nano_ address"
+                maxlength="65"
+                autocomplete="off"
+              />
+              <button class="btn small" id="player-account-confirm" type="button">Save</button>
+              <!-- <button class="btn small" id="player-account-link" type="button">View</button> -->
+            </div>
+            <div class="validation-summary"></div>
+          </div>
+          <div class="settings-panel">
+            <div>
+              <div class="setting">
+                <input type="checkbox" id="mute-music-checkbox" />
+                <label for="mute-music-checkbox">Music</label>
+                <div id="music-slider">
+                  <div id="music-handle" class="ui-slider-handle"></div>
                 </div>
-                <div class="panel-notice">
-                    * Items are credited instantly.
-                    If you don't receive your items, reach out to running-coder#8584 on the <a
-                        href="https://discord.gg/GerkX8BfYy">NanoBrowserQuest Discord</a> server
-                    or to <a href="https://www.reddit.com/user/Opposite_Objective34/">u/Opposite_Objective34</a> on
-                    Reddit.
+              </div>
+              <div class="setting">
+                <input type="checkbox" id="mute-sound-checkbox" />
+                <label for="mute-sound-checkbox">Sounds</label>
+                <div id="sound-slider">
+                  <div id="sound-handle" class="ui-slider-handle"></div>
                 </div>
-            </article>
-            <article id="settings" class="clickable">
-                <div class="close"></div>
-                <h1>
-                    <span class="left-ornament"></span>
-                    Settings
-                    <span class="right-ornament"></span>
-                </h1>
-                <div class="settings-panel">
-                    <div>
-                        <div class="setting">
-                            <input type="checkbox" id="mute-music-checkbox">
-                            <label for="mute-music-checkbox">Music</label>
-                            <div id="music-slider">
-                                <div id="music-handle" class="ui-slider-handle"></div>
-                            </div>
-                        </div>
-                        <div class="setting">
-                            <input type="checkbox" id="mute-sound-checkbox">
-                            <label for="mute-sound-checkbox">Sounds</label>
-                            <div id="sound-slider">
-                                <div id="sound-handle" class="ui-slider-handle"></div>
-                            </div>
-                        </div>
-                        <div class="setting">
-                            <input type="checkbox" id="entity-name-checkbox">
-                            <label for="entity-name-checkbox">Show player names</label>
-                        </div>
-                        <div class="setting">
-                            <input type="checkbox" id="damage-info-checkbox">
-                            <label for="damage-info-checkbox">Show damage info</label>
-                        </div>
-                        <!-- <div class="setting">
+              </div>
+              <div class="setting">
+                <input type="checkbox" id="entity-name-checkbox" />
+                <label for="entity-name-checkbox">Show player names</label>
+              </div>
+              <div class="setting">
+                <input type="checkbox" id="damage-info-checkbox" />
+                <label for="damage-info-checkbox">Show damage info</label>
+              </div>
+              <!-- <div class="setting">
                             <input type="checkbox" id="health-above-bars-checkbox">
                             <label for="health-above-bars-checkbox">Show health above bars</label>
                         </div> -->
-                        <!-- <div class="setting">
+              <!-- <div class="setting">
                             <input type="checkbox" id="anvil-odds-checkbox">
                             <label for="anvil-odds-checkbox">Show anvil upgrade odds</label>
                         </div> -->
-                    </div>
-                    <div>
-                        <div>
-                            <div class="item-icon">
-                                <div id="settings-cape-preview" class="cape7"></div>
-                            </div>
-                        </div>
-                        <div class="setting">
-                            Hue
-                            <div id="cape-hue-slider">
-                                <div id="cape-hue-handle" class="ui-slider-handle"></div>
-                            </div>
-                            Saturate
-                            <div id="cape-saturate-slider">
-                                <div id="cape-saturate-handle" class="ui-slider-handle"></div>
-                            </div>
-                            Contrast
-                            <div id="cape-contrast-slider">
-                                <div id="cape-contrast-handle" class="ui-slider-handle"></div>
-                            </div>
-                            Brightness
-                            <div id="cape-brightness-slider">
-                                <div id="cape-brightness-handle" class="ui-slider-handle"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </article>
-            <article id="party" class="clickable">
-                <div class="close"></div>
-                <h1>
-                    <span class="left-ornament"></span>
-                    Party
-                    <span class="right-ornament"></span>
-                </h1>
-                <div class="party-panel">
-                    <div id="party-players"></div>
-                    <div class="party-separator"></div>
-                    <div id="other-players"></div>
-                </div>
-            </article>
-            <article id="instructions" class="clickable">
-                <div class="close"></div>
-                <h1>
-                    <span class="left-ornament"></span>
-                    How to play
-                    <span class="right-ornament"></span>
-                </h1>
-                <ul>
-                    <li><span class="icon"></span>Left click or tap to move, attack and pick up items.</li>
-                    <li><span class="icon"></span>Press ENTER to chat with other players.</li>
-                    <li><span class="icon"></span>Your character is automatically saved as you play.</li>
-                    <li><span class="icon"></span>Upgrade your items at the Anvil in town.</li>
-                </ul>
-            </article>
-            <article id="achievements" class="page1 clickable">
-                <div class="close"></div>
-                <div id="achievements-wrapper">
-                    <div id="lists"></div>
-                </div>
-
-                <div id="achievements-count" class="stroke">
-                    <div id="achievements-unlocks-count" class="stroke">
-                        <div id="gem-ruby" class="item-gem"></div>
-                        <div id="gem-emerald" class="item-gem"></div>
-                        <div id="gem-amethyst" class="item-gem"></div>
-                        <div id="gem-topaz" class="item-gem"></div>
-                        <div id="gem-sapphire" class="item-gem"></div>
-                    </div>
-                    <div>
-                        Completed
-                        <span id="unlocked-achievements">0</span>
-                        /
-                        <span id="total-achievements"></span>
-                    </div>
-                </div>
-
-                <div id="achievements-potion-count" class="stroke">
-                    <div id="potion-count" class="stroke">
-                        <div class="item-potion"></div>
-                        <div class="item-potion"></div>
-                        <div class="item-potion"></div>
-                        <div class="item-potion"></div>
-                        <div class="item-potion"></div>
-                    </div>
-                    <div>
-                        <span id="unlocked-payout-achievements">0</span>
-                        /
-                        <span id="total-payout-achievements"></span>
-                    </div>
-                </div>
-
-                <nav class="clickable">
-                    <div id="previous"></div>
-                    <div id="next"></div>
-                </nav>
-            </article>
-            <article id="completed" class="clickable">
-                <div class="close"></div>
-                <h1>
-                    <span class="left-ornament"></span>
-                    Game Payouts
-                    <span class="right-ornament"></span>
-                </h1>
-                <div id="container-payout-hash">
-                    <p>
-                        You killed the Skeleton King and received a Nano payout.
-                    </p>
-                    <p id="payout" class="overflow-text">
-                        <a href="https://nanolooker.com/block" target="_blank" id="transaction-hash"></a>
-                    </p>
-                    <div>
-                        <p>If you wish too continue the adventure,<br /> you can use the waypoint in town to enter the Freezing Lands expansion</p>
-                        <p>You can play again with your friends and receive another payout<br />by creating a newcharacter!</p>
-                    </div>
-                </div>
-
-                <div class="fight-again" style="text-align: center; margin-top: 10px;">
-                    <button class="btn" id="fight-again">Fight Again!</button>
-                </div>
-            </article>
-            <article id="failed" class="clickable">
-                <div class="close"></div>
-                <h1>
-                    <span class="left-ornament"></span>
-                    Not yet!
-                    <span class="right-ornament"></span>
-                </h1>
-                <p></p>
-            </article>
-            <div id="canvas">
-                <canvas id="background"></canvas>
-                <canvas id="entities"></canvas>
-                <canvas id="foreground" class="clickable"></canvas>
-            </div>
-            <div id="bubbles"></div>
-            <div id="expbar"></div>
-            <div id="text-window">
-                <div id="minimize"></div>
-                <div id="text-list"></div>
-                <input id="chatinput" class="gp" type="text" maxlength="250" autocomplete="off">
-            </div>
-            <div id="inspector">
-                <div class="name-wrapper">
-                    <span class="name"></span>
-                    <div class="health"></div>
-                </div>
-                <div class="enchants"></div>
-                <div class="resistances"></div>
-            </div>
-            <div id="achievement-notification">
-                <div class="coin">
-                    <div id="coinsparks"></div>
-                </div>
-                <div id="achievement-info">
-                    <div class="title">New Achievement Unlocked!</div>
-                    <div class="name"></div>
-                </div>
-            </div>
-            <div id="bar-container">
-                <div id="healthbar">
-                </div>
-                <div id="hitpoints">
-                </div>
-                <div id="weapon"></div>
-                <div id="armor"></div>
-                <div id="skill-attack" data-skill-slot="1">
-                    <div class="skill-timeout"></div>
-                </div>
-                <div id="skill-defense" data-skill-slot="2">
-                    <div class="skill-timeout"></div>
-                </div>
-                <div id="notifications">
-                    <div>
-                        <span id="message1"></span>
-                        <span id="message2"></span>
-                    </div>
-                </div>
-                <div id="player-count" class="clickable">
-                    <span class="count">0</span> <span>players</span>
-                </div>
-                <div id="barbuttons">
-                    <div id="chatbutton" class="barbutton clickable"></div>
-                    <div id="achievementsbutton" class="barbutton clickable"></div>
-                    <div id="completedbutton" class="barbutton clickable"></div>
-                    <div id="party-button" class="barbutton clickable"></div>
-                    <div id="settings-button" class="barbutton clickable"></div>
-                </div>
             </div>
 
-            <div id="countdown"></div>
-
-            <div id="waypoint" class="panel">
-                <span class="close"></span>
-                <div class="panel-header"></div>
-                <div id="waypoint-list"></div>
-                <div class="panel-header reverse"></div>
+            <div>
+              <div>
+                <div class="item-icon">
+                  <div id="settings-cape-preview" class="cape7"></div>
+                </div>
+              </div>
+              <div class="setting">
+                Hue
+                <div id="cape-hue-slider">
+                  <div id="cape-hue-handle" class="ui-slider-handle"></div>
+                </div>
+                Saturate
+                <div id="cape-saturate-slider">
+                  <div id="cape-saturate-handle" class="ui-slider-handle"></div>
+                </div>
+                Contrast
+                <div id="cape-contrast-slider">
+                  <div id="cape-contrast-handle" class="ui-slider-handle"></div>
+                </div>
+                Brightness
+                <div id="cape-brightness-slider">
+                  <div id="cape-brightness-handle" class="ui-slider-handle"></div>
+                </div>
+              </div>
             </div>
+          </div>
+        </article>
+        <article id="party" class="clickable">
+          <div class="close"></div>
+          <h1>
+            <span class="left-ornament"></span>
+            Party
+            <span class="right-ornament"></span>
+          </h1>
+          <div class="party-panel">
+            <div id="party-players"></div>
+            <div class="party-separator"></div>
+            <div id="other-players"></div>
+          </div>
+        </article>
+        <article id="instructions" class="clickable">
+          <div class="close"></div>
+          <h1>
+            <span class="left-ornament"></span>
+            How to play
+            <span class="right-ornament"></span>
+          </h1>
+          <ul>
+            <li><span class="icon"></span>Left click or tap to move, attack and pick up items.</li>
+            <li><span class="icon"></span>Press ENTER to chat with other players.</li>
+            <li><span class="icon"></span>Your character is automatically saved as you play.</li>
+            <li><span class="icon"></span>Upgrade your items at the Anvil in town.</li>
+          </ul>
+        </article>
+        <article id="achievements" class="page1 clickable">
+          <div class="close"></div>
+          <div id="achievements-wrapper">
+            <div id="lists"></div>
+          </div>
 
-            <div id="player" class="panel">
-                <div class="panel-header">
-                    <div id="player-username" class="active"></div>
-                    <a id="player-account" href="" target="_blank"></a>
-                </div>
-                <div id="player-info">
-                    <div>
-                        <span>Level</span>
-                        <span id="player-level"></span>
-                    </div>
-                    <div>
-                        <span>Max HP</span>
-                        <span id="player-hp"></span>
-                    </div>
-                    <div>
-                        <span>Total Damage</span>
-                        <span id="player-damage"></span>
-                    </div>
-                    <div>
-                        <span>Attack (Critical <var id="player-criticalHit"></var>%)</span>
-                        <span id="player-attackDamage"></span>
-                    </div>
-                    <div>
-                        <span>Defense (Block <var id="player-blockChance"></var>%)</span>
-                        <span id="player-defense"></span>
-                    </div>
-                    <div>
-                        <span>Absorbed Damage</span>
-                        <span id="player-absorbedDamage"></span>
-                    </div>
-                    <div class="player-section-title">
-                        Damage
-                    </div>
-                    <div class="flex-50">
-                        <div>
-                            <span>Magic</span>
-                            <span id="player-magicDamage"></span>
-                        </div>
-                        <div>
-                            <span>Flame</span>
-                            <span id="player-flameDamage"></span>
-                        </div>
-                        <div>
-                            <span>Lightning</span>
-                            <span id="player-lightningDamage"></span>
-                        </div>
-                        <div>
-                            <span>Cold</span>
-                            <span id="player-coldDamage"></span>
-                        </div>
-                        <div>
-                            <span>Poison</span>
-                            <span id="player-poisonDamage"></span>
-                        </div>
-                        <div>
-                            <span>Pierce</span>
-                            <span id="player-pierceDamage"></span>
-                        </div>
-                    </div>
-                    <div class="player-section-title">
-                        Resistances
-                    </div>
-                    <div class="flex-50">
-                        <div>
-                            <span>Magic</span>
-                            <span id="player-magicResistance"></span>
-                        </div>
-                        <div>
-                            <span>Flame</span>
-                            <span id="player-flameResistance"></span>
-                        </div>
-                        <div>
-                            <span>Lightning</span>
-                            <span id="player-lightningResistance"></span>
-                        </div>
-                        <div>
-                            <span>Cold</span>
-                            <span id="player-coldResistance"></span>
-                        </div>
-                        <div>
-                            <span>Poison</span>
-                            <span id="player-poisonResistance"></span>
-                        </div>
-                    </div>
-                    <div class="player-section-title">
-                        Misc %
-                    </div>
-                    <div class="flex-50">
-                        <div>
-                            <span>Magic Find</span>
-                            <span id="player-magicFind"></span>
-                        </div>
-                        <div>
-                            <span>Attack Speed</span>
-                            <span id="player-attackSpeed"></span>
-                        </div>
-                        <div>
-                            <span>Exp</span>
-                            <span id="player-exp"></span>
-                        </div>
-                        <div>
-                            <span>Cast rate</span>
-                            <span id="player-skillTimeout"></span>
-                        </div>
-                        <div>
-                            <span>Extra Gold</span>
-                            <span id="player-extraGold"></span>
-                        </div>
-                    </div>
-                </div>
+          <div id="achievements-count" class="stroke">
+            <div id="achievements-unlocks-count" class="stroke">
+              <div id="gem-ruby" class="item-gem"></div>
+              <div id="gem-emerald" class="item-gem"></div>
+              <div id="gem-amethyst" class="item-gem"></div>
+              <div id="gem-topaz" class="item-gem"></div>
+              <div id="gem-sapphire" class="item-gem"></div>
             </div>
-
-            <div id="party-player-list"></div>
-
-            <div class="panel-container">
-                <div id="merchant" class="panel panel-large">
-                    <span class="close"></span>
-                    <div class="panel-header"></div>
-                    <div class="panel-spaced-row panel-spaced-row-top">
-                        <div id="item-merchant"></div>
-                    </div>
-                    <div class="panel-header reverse"></div>
-                </div>
-                <div id="trade" class="panel panel-large">
-                    <span class="close"></span>
-                    <div class="panel-header"></div>
-                    <div class="panel-spaced-row panel-spaced-row-top">
-                        <div>
-                            <div id="trade-player2-name" class="trade-player-name">Player 2</div>
-                            <div id="trade-player2-item"></div>
-                            <div class="gold-wrapper">
-                                <div id="gold-player2" class="item-gold">
-                                    <span class="gold-icon"></span>
-                                    <var id="gold-player2-amount">0</var>
-                                </div>
-                            </div>
-                            <div id="trade-player2-status" class="trade-player-status">Waiting ...</div>
-                        </div>
-                        <div>
-                            <div id="trade-player1-name" class="trade-player-name">Player 1</div>
-                            <div id="trade-player1-item"></div>
-                            <div class="gold-wrapper">
-                                <div id="gold-player1" class="item-gold">
-                                    <span class="gold-icon"></span>
-                                    <var id="gold-player1-amount">0</var>
-                                </div>
-                            </div>
-                            <div id="trade-player1-status" class="trade-player-status">
-                                <button class="btn" id="trade-player1-status-button">Accept</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-header reverse"></div>
-                </div>
-                <div id="upgrade" class="panel">
-                    <span class="close"></span>
-                    <div class="panel-header"></div>
-                    <div class="panel-spaced-row">
-                        <div id="upgrade-item"></div>
-                        <div id="upgrade-scroll"></div>
-                        <div id="upgrade-result"></div>
-                    </div>
-                    <div id="upgrade-info">&nbsp;</div>
-                    <div class="panel-spaced-row">
-                        <button class="btn" id="upgrade-btn">Upgrade</button>
-                        <button class="btn" id="upgrade-preview-btn">Preview</button>
-                    </div>
-                    <div class="panel-header reverse"></div>
-                </div>
-                <div id="inventory" class="panel">
-                    <span class="close"></span>
-                    <div class="panel-header"></div>
-                    <div class="panel-spaced-row">
-                        <div id="item-player">
-                            <div>
-                                <div class="item-amulet-slot"></div>
-                                <div class="item-cape-slot"></div>
-                            </div>
-                            <div>
-                                <div class="item-weapon-slot"></div>
-                                <div class="item-armor-slot"></div>
-                                <div class="item-shield-slot"></div>
-                                <div class="item-delete-slot"></div>
-                            </div>
-                            <div>
-                                <div class="item-ring1-slot"></div>
-                                <div class="item-belt-slot"></div>
-                                <div class="item-ring2-slot"></div>
-                                <div class="gold-wrapper">
-                                    <span id="gold-inventory" class="item-gold">
-                                        <span class="gold-icon"></span>
-                                        <var id="gold-inventory-amount">0</var>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="item-inventory"></div>
-                    <div class="panel-header reverse"></div>
-                </div>
-                <div id="otherplayer-equipment" class="panel">
-                    <span class="close"></span>
-                    <div class="panel-header"></div>
-                    <div id="otherplayer-name"></div>
-                    <div class="panel-spaced-row">
-                        <div id="item-otherplayer">
-                            <div>
-                                <div class="item-amulet-slot"></div>
-                                <div class="item-cape-slot"></div>
-                            </div>
-                            <div>
-                                <div class="item-weapon-slot"></div>
-                                <div class="item-armor-slot"></div>
-                                <div class="item-shield-slot"></div>
-                            </div>
-                            <div>
-                                <div class="item-ring1-slot"></div>
-                                <div class="item-belt-slot"></div>
-                                <div class="item-ring2-slot"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-header reverse"></div>
-                </div>
-                <div id="stash" class="panel">
-                    <span class="close"></span>
-                    <div class="panel-header"></div>
-                    <div class="gold-wrapper">
-                        <div id="gold-stash" class="item-gold">
-                            <span class="gold-icon"></span>
-                            <var id="gold-stash-amount">0</var>
-                        </div>
-                    </div>
-                    <div id="item-stash"></div>
-                    <div class="stash-pagination">
-                        <button id="item-stash-previous-page" class="btn small">◄</button>
-                        <div id="current-stash-page"></div>
-                        <button id="item-stash-next-page" class="btn small">►</button>
-                    </div>
-                    <div class="panel-header reverse"></div>
-                </div>
+            <div>
+              Completed
+              <span id="unlocked-achievements">0</span>
+              /
+              <span id="total-achievements"></span>
             </div>
+          </div>
 
-            <div id="population" class="panel">
-                <div id="instance-population" class="panel-header">
-                    <span class="active">0</span> <span>players</span> online
-                </div>
-                <div id="player-list"></div>
+          <div id="achievements-potion-count" class="stroke">
+            <div id="potion-count" class="stroke">
+              <div class="item-potion"></div>
+              <div class="item-potion"></div>
+              <div class="item-potion"></div>
+              <div class="item-potion"></div>
+              <div class="item-potion"></div>
             </div>
+            <div>
+              <span id="unlocked-payout-achievements">0</span>
+              /
+              <span id="total-payout-achievements"></span>
+            </div>
+          </div>
+
+          <nav class="clickable">
+            <div id="previous"></div>
+            <div id="next"></div>
+          </nav>
+        </article>
+        <article id="completed" class="clickable">
+          <div class="close"></div>
+          <h1>
+            <span class="left-ornament"></span>
+            Game Payouts
+            <span class="right-ornament"></span>
+          </h1>
+          <div id="container-payout-hash">
+            <p>You killed the Skeleton King and received a Nano payout.</p>
+            <p id="payout" class="overflow-text">
+              <a href="https://nanolooker.com/block" target="_blank" id="transaction-hash"></a>
+            </p>
+            <div>
+              <p>
+                If you wish too continue the adventure,<br />
+                you can use the waypoint in town to enter the Freezing Lands expansion
+              </p>
+              <p>You can play again with your friends and receive another payout<br />by creating a newcharacter!</p>
+            </div>
+          </div>
+
+          <div class="fight-again" style="text-align: center; margin-top: 10px">
+            <button class="btn" id="fight-again">Fight Again!</button>
+          </div>
+        </article>
+        <article id="missing-account" class="clickable">
+          <div class="close"></div>
+          <h1>
+            <span class="left-ornament"></span>
+            Register an account
+            <span class="right-ornament"></span>
+          </h1>
+
+          <p>
+            Register your nano_ address in the Settings panel (press "O")<br />to received a Nano payout for killing the
+            Skeleton King.
+          </p>
+          <div>
+            <p>
+              Registering an account is optional,<br />you'll still be able to progress through the game if you choose
+              not to.
+            </p>
+          </div>
+
+          <div style="text-align: center; margin-top: 10px">
+            <button class="btn" id="missing-account-btn">Ok!</button>
+          </div>
+        </article>
+        <article id="failed" class="clickable">
+          <div class="close"></div>
+          <h1>
+            <span class="left-ornament"></span>
+            Not yet!
+            <span class="right-ornament"></span>
+          </h1>
+          <p>
+            You may not fight the end boss at the moment,<br />you need to be at least level <var id="min-level"></var>.
+          </p>
+          <br />
+          <p>Keep killing monsters and gaining experience!</p>
+        </article>
+        <div id="canvas">
+          <canvas id="background"></canvas>
+          <canvas id="entities"></canvas>
+          <canvas id="foreground" class="clickable"></canvas>
         </div>
+        <div id="bubbles"></div>
+        <div id="expbar"></div>
+        <div id="text-window">
+          <div id="minimize"></div>
+          <div id="text-list"></div>
+          <input id="chatinput" class="gp" type="text" maxlength="250" autocomplete="off" />
+        </div>
+        <div id="inspector">
+          <div class="name-wrapper">
+            <span class="name"></span>
+            <div class="health"></div>
+          </div>
+          <div class="enchants"></div>
+          <div class="resistances"></div>
+        </div>
+        <div id="achievement-notification">
+          <div class="coin">
+            <div id="coinsparks"></div>
+          </div>
+          <div id="achievement-info">
+            <div class="title">New Achievement Unlocked!</div>
+            <div class="name"></div>
+          </div>
+        </div>
+        <div id="bar-container">
+          <div id="healthbar"></div>
+          <div id="hitpoints"></div>
+          <div id="weapon"></div>
+          <div id="armor"></div>
+          <div id="skill-attack" data-skill-slot="1">
+            <div class="skill-timeout"></div>
+          </div>
+          <div id="skill-defense" data-skill-slot="2">
+            <div class="skill-timeout"></div>
+          </div>
+          <div id="notifications">
+            <div>
+              <span id="message1"></span>
+              <span id="message2"></span>
+            </div>
+          </div>
+          <div id="player-count" class="clickable"><span class="count">0</span> <span>players</span></div>
+          <div id="barbuttons">
+            <div id="chatbutton" class="barbutton clickable"></div>
+            <div id="achievementsbutton" class="barbutton clickable"></div>
+            <div id="completedbutton" class="barbutton clickable"></div>
+            <div id="party-button" class="barbutton clickable"></div>
+            <div id="settings-button" class="barbutton clickable"></div>
+          </div>
+        </div>
+
+        <div id="countdown"></div>
+
+        <div id="waypoint" class="panel">
+          <span class="close"></span>
+          <div class="panel-header"></div>
+          <div id="waypoint-list"></div>
+          <div class="panel-header reverse"></div>
+        </div>
+
+        <div id="player" class="panel">
+          <div class="panel-header">
+            <div id="player-username" class="active"></div>
+          </div>
+          <div id="player-info">
+            <div>
+              <span>Level</span>
+              <span id="player-level"></span>
+            </div>
+            <div>
+              <span>Max HP</span>
+              <span id="player-hp"></span>
+            </div>
+            <div>
+              <span>Total Damage</span>
+              <span id="player-damage"></span>
+            </div>
+            <div>
+              <span>Attack (Critical <var id="player-criticalHit"></var>%)</span>
+              <span id="player-attackDamage"></span>
+            </div>
+            <div>
+              <span>Defense (Block <var id="player-blockChance"></var>%)</span>
+              <span id="player-defense"></span>
+            </div>
+            <div>
+              <span>Absorbed Damage</span>
+              <span id="player-absorbedDamage"></span>
+            </div>
+            <div class="player-section-title">Damage</div>
+            <div class="flex-50">
+              <div>
+                <span>Magic</span>
+                <span id="player-magicDamage"></span>
+              </div>
+              <div>
+                <span>Flame</span>
+                <span id="player-flameDamage"></span>
+              </div>
+              <div>
+                <span>Lightning</span>
+                <span id="player-lightningDamage"></span>
+              </div>
+              <div>
+                <span>Cold</span>
+                <span id="player-coldDamage"></span>
+              </div>
+              <div>
+                <span>Poison</span>
+                <span id="player-poisonDamage"></span>
+              </div>
+              <div>
+                <span>Pierce</span>
+                <span id="player-pierceDamage"></span>
+              </div>
+            </div>
+            <div class="player-section-title">Resistances</div>
+            <div class="flex-50">
+              <div>
+                <span>Magic</span>
+                <span id="player-magicResistance"></span>
+              </div>
+              <div>
+                <span>Flame</span>
+                <span id="player-flameResistance"></span>
+              </div>
+              <div>
+                <span>Lightning</span>
+                <span id="player-lightningResistance"></span>
+              </div>
+              <div>
+                <span>Cold</span>
+                <span id="player-coldResistance"></span>
+              </div>
+              <div>
+                <span>Poison</span>
+                <span id="player-poisonResistance"></span>
+              </div>
+            </div>
+            <div class="player-section-title">Misc %</div>
+            <div class="flex-50">
+              <div>
+                <span>Magic Find</span>
+                <span id="player-magicFind"></span>
+              </div>
+              <div>
+                <span>Attack Speed</span>
+                <span id="player-attackSpeed"></span>
+              </div>
+              <div>
+                <span>Exp</span>
+                <span id="player-exp"></span>
+              </div>
+              <div>
+                <span>Cast rate</span>
+                <span id="player-skillTimeout"></span>
+              </div>
+              <div>
+                <span>Extra Gold</span>
+                <span id="player-extraGold"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="party-player-list"></div>
+
+        <div class="panel-container">
+          <div id="merchant" class="panel panel-large">
+            <span class="close"></span>
+            <div class="panel-header"></div>
+            <div class="panel-spaced-row panel-spaced-row-top">
+              <div id="item-merchant"></div>
+            </div>
+            <div class="panel-header reverse"></div>
+          </div>
+          <div id="trade" class="panel panel-large">
+            <span class="close"></span>
+            <div class="panel-header"></div>
+            <div class="panel-spaced-row panel-spaced-row-top">
+              <div>
+                <div id="trade-player2-name" class="trade-player-name">Player 2</div>
+                <div id="trade-player2-item"></div>
+                <div class="gold-wrapper">
+                  <div id="gold-player2" class="item-gold">
+                    <span class="gold-icon"></span>
+                    <var id="gold-player2-amount">0</var>
+                  </div>
+                </div>
+                <div id="trade-player2-status" class="trade-player-status">Waiting ...</div>
+              </div>
+              <div>
+                <div id="trade-player1-name" class="trade-player-name">Player 1</div>
+                <div id="trade-player1-item"></div>
+                <div class="gold-wrapper">
+                  <div id="gold-player1" class="item-gold">
+                    <span class="gold-icon"></span>
+                    <var id="gold-player1-amount">0</var>
+                  </div>
+                </div>
+                <div id="trade-player1-status" class="trade-player-status">
+                  <button class="btn" id="trade-player1-status-button">Accept</button>
+                </div>
+              </div>
+            </div>
+            <div class="panel-header reverse"></div>
+          </div>
+          <div id="upgrade" class="panel">
+            <span class="close"></span>
+            <div class="panel-header"></div>
+            <div class="panel-spaced-row">
+              <div id="upgrade-item"></div>
+              <div id="upgrade-scroll"></div>
+              <div id="upgrade-result"></div>
+            </div>
+            <div id="upgrade-info">&nbsp;</div>
+            <div class="panel-spaced-row">
+              <button class="btn" id="upgrade-btn">Upgrade</button>
+              <button class="btn" id="upgrade-preview-btn">Preview</button>
+            </div>
+            <div class="panel-header reverse"></div>
+          </div>
+          <div id="inventory" class="panel">
+            <span class="close"></span>
+            <div class="panel-header"></div>
+            <div class="panel-spaced-row">
+              <div id="item-player">
+                <div>
+                  <div class="item-amulet-slot"></div>
+                  <div class="item-cape-slot"></div>
+                </div>
+                <div>
+                  <div class="item-weapon-slot"></div>
+                  <div class="item-armor-slot"></div>
+                  <div class="item-shield-slot"></div>
+                  <div class="item-delete-slot"></div>
+                </div>
+                <div>
+                  <div class="item-ring1-slot"></div>
+                  <div class="item-belt-slot"></div>
+                  <div class="item-ring2-slot"></div>
+                  <div class="gold-wrapper">
+                    <span id="gold-inventory" class="item-gold">
+                      <span class="gold-icon"></span>
+                      <var id="gold-inventory-amount">0</var>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="item-inventory"></div>
+            <div class="panel-header reverse"></div>
+          </div>
+          <div id="otherplayer-equipment" class="panel">
+            <span class="close"></span>
+            <div class="panel-header"></div>
+            <div id="otherplayer-name"></div>
+            <div class="panel-spaced-row">
+              <div id="item-otherplayer">
+                <div>
+                  <div class="item-amulet-slot"></div>
+                  <div class="item-cape-slot"></div>
+                </div>
+                <div>
+                  <div class="item-weapon-slot"></div>
+                  <div class="item-armor-slot"></div>
+                  <div class="item-shield-slot"></div>
+                </div>
+                <div>
+                  <div class="item-ring1-slot"></div>
+                  <div class="item-belt-slot"></div>
+                  <div class="item-ring2-slot"></div>
+                </div>
+              </div>
+            </div>
+            <div class="panel-header reverse"></div>
+          </div>
+          <div id="stash" class="panel">
+            <span class="close"></span>
+            <div class="panel-header"></div>
+            <div class="gold-wrapper">
+              <div id="gold-stash" class="item-gold">
+                <span class="gold-icon"></span>
+                <var id="gold-stash-amount">0</var>
+              </div>
+            </div>
+            <div id="item-stash"></div>
+            <div class="stash-pagination">
+              <button id="item-stash-previous-page" class="btn small">◄</button>
+              <div id="current-stash-page"></div>
+              <button id="item-stash-next-page" class="btn small">►</button>
+            </div>
+            <div class="panel-header reverse"></div>
+          </div>
+        </div>
+
+        <div id="population" class="panel">
+          <div id="instance-population" class="panel-header">
+            <span class="active">0</span> <span>players</span> online
+          </div>
+          <div id="player-list"></div>
+        </div>
+      </div>
     </div>
     <footer>
-        <div id="sharing" class="clickable">
-            Share this on
-            <a href="https://twitter.com/share?url=https%3A%2F%2Fnanobrowserquest.com&amp;text=Play%20NanoBrowserQuest:%20A%20massively%20multiplayer%20adventure%20featuring%20$xno%20payout%20for%20completing%20the%20game%20%23BrowserQuest%20%23cryptocurrency%20%23pixelart%20%23rpg%20%23indiegame%20%23indiegames%20%23gaming"
-                class="twitter"></a>
-            <a href="https://www.facebook.com/share.php?u=https://nanobrowserquest.com/" class="facebook"></a>
-        </div>
-        <div id="nano-link" class="clickable">
-            <span class="dash">&ndash;</span>
-            <a href="https://discord.gg/GerkX8BfYy" target="_blank">
-                <span class="discord"></span>Join Discord
-            </a>
-            </span>
-        </div>
-        <div id="nano-link" class="clickable">
-            <span class="dash">&ndash;</span> <a href="https://nanolooker.com/nanobrowserquest" target="_blank">How to
-                play</a>
-        </div>
-        <div id="nano-link" class="clickable">
-            <span class="dash">&ndash;</span> <a href="https://nanolooker.com/what-is-nano" target="_blank">What is
-                Nano?</a>
-            </span>
-        </div>
+      <div id="sharing" class="clickable">
+        Share this on
+        <a
+          href="https://twitter.com/share?url=https%3A%2F%2Fnanobrowserquest.com&amp;text=Play%20NanoBrowserQuest:%20A%20massively%20multiplayer%20adventure%20featuring%20$xno%20payout%20for%20completing%20the%20game%20%23BrowserQuest%20%23cryptocurrency%20%23pixelart%20%23rpg%20%23indiegame%20%23indiegames%20%23gaming"
+          class="twitter"
+        ></a>
+        <a href="https://www.facebook.com/share.php?u=https://nanobrowserquest.com/" class="facebook"></a>
+      </div>
+      <div id="nano-link" class="clickable">
+        <span class="dash">&ndash;</span>
+        <a href="https://discord.gg/GerkX8BfYy" target="_blank"> <span class="discord"></span>Join Discord </a>
+      </div>
+      <div id="nano-link" class="clickable">
+        <span class="dash">&ndash;</span>
+        <a href="https://nanolooker.com/nanobrowserquest" target="_blank">How to play</a>
+      </div>
+      <div id="nano-link" class="clickable">
+        <span class="dash">&ndash;</span>
+        <a href="https://nanolooker.com/what-is-nano" target="_blank"> What is Nano? </a>
+      </div>
     </footer>
 
-    <ul id="page-tmpl" class="clickable" style="display:none">
-    </ul>
+    <ul id="page-tmpl" class="clickable" style="display: none"></ul>
     <ul>
-        <li id="achievement-tmpl" style="display:none">
-            <div class="coin"></div>
-            <span class="achievement-name">???</span>
-            <span class="achievement-description">???</span>
-            <div class="achievement-payout"></div>
-            <div class="achievement-sharing">
-                <a href="" class="twitter" target="_blank"></a>
-            </div>
-        </li>
+      <li id="achievement-tmpl" style="display: none">
+        <div class="coin"></div>
+        <span class="achievement-name">???</span>
+        <span class="achievement-description">???</span>
+        <div class="achievement-payout"></div>
+        <div class="achievement-sharing">
+          <a href="" class="twitter" target="_blank"></a>
+        </div>
+      </li>
     </ul>
 
     <div id="resize-check"></div>
 
     <script type="text/javascript">
-        var ctx = document.querySelector('canvas').getContext('2d');
-        var parchment = document.getElementById("parchment");
+      var ctx = document.querySelector("canvas").getContext("2d");
+      var parchment = document.getElementById("parchment");
 
-        document.querySelector('body').className += ' upscaled';
+      document.querySelector("body").className += " upscaled";
     </script>
 
     <div id="dialog-delete-item" title="Dialog Title"></div>
     <div id="dialog-trade-request" title="Dialog Title"></div>
     <div id="dialog-quantity" title="Dialog Title"></div>
     <div id="dialog-merchant-item" title="Dialog Title"></div>
-</body>
-
+  </body>
 </html>

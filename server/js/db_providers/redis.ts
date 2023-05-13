@@ -112,6 +112,60 @@ class DatabaseHandler {
     });
   }
 
+  assignNewDepositAccount(player, network: Network): Promise<{ depositAccount: string; depositAccountIndex: number }> {
+    return new Promise((resolve, reject) => {
+      // Make sure the player doesn't have a valid deposit account, once it's set it can't be changed
+      if (!player || player.depositAccount || player.depositAccountIndex || !network) return;
+
+      const userKey = "u:" + player.name;
+
+      this.client.hmget(userKey, "depositAccount", "depositAccountIndex", async (errGet, reply) => {
+        if (errGet) {
+          Sentry.captureException(new Error("Unable to get deposit account"), { extra: { player: player.name } });
+          reject();
+          return;
+        }
+
+        let [depositAccount, depositAccountIndex] = reply;
+        if (depositAccount || depositAccountIndex) return;
+
+        depositAccountIndex = await this.createDepositAccount();
+        depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number, network);
+
+        if (typeof depositAccountIndex !== "number" || !depositAccount) {
+          Sentry.captureException(new Error("Invalid deposit account when creating player"), {
+            extra: { depositAccountIndex, depositAccount, player: player.name },
+          });
+          reject();
+          return;
+        }
+
+        this.client.hmset(
+          userKey,
+          "depositAccount",
+          depositAccount,
+          "depositAccountIndex",
+          depositAccountIndex,
+          async errSet => {
+            if (errSet) {
+              Sentry.captureException(new Error("Unable to set new deposit account"), {
+                extra: { player: player.name },
+              });
+              reject();
+              return;
+            }
+
+            player.depositAccountIndex = depositAccountIndex;
+            player.depositAccount = depositAccount;
+            player.network = network;
+
+            resolve({ depositAccount, depositAccountIndex });
+          },
+        );
+      });
+    });
+  }
+
   loadPlayer(player) {
     var userKey = "u:" + player.name;
     this.client.smembers("usr", (_err, replies) => {
@@ -154,7 +208,6 @@ class DatabaseHandler {
             .hget(userKey, "coin") // 32
             .hget(userKey, "discordId") // 33
             .hget(userKey, "migrations") // 34
-
             .exec(async (err, replies) => {
               if (err) {
                 Sentry.captureException(err, {
@@ -165,7 +218,7 @@ class DatabaseHandler {
                 return;
               }
 
-              var account = replies[0];
+              var account = replies[0] || "";
               var armor = replies[1];
               var weapon = replies[2];
               var exp = NaN2Zero(replies[3]);
@@ -188,46 +241,31 @@ class DatabaseHandler {
               var discordId = replies[33];
               var migrations = replies[34] ? JSON.parse(replies[34]) : {};
 
-              const [, rawAccount] = account.split("_");
-              const [rawNetwork, rawPlayerAccount] = player.account.split("_");
-
-              if (rawPlayerAccount != rawAccount) {
-                player.connection.sendUTF8("invalidlogin");
-                player.connection.close("Wrong Account: " + player.name);
-                return;
-              }
-
-              try {
-                if (!depositAccount) {
-                  depositAccountIndex = await this.createDepositAccount();
-                  depositAccount = await getNewDepositAccountByIndex(depositAccountIndex, network);
-                  this.client.hmset(
-                    "u:" + player.name,
-                    "depositAccount",
-                    depositAccount,
-                    "depositAccountIndex",
-                    depositAccountIndex,
-                  );
+              if (account && !depositAccount && ["nano", "ban"].includes(network)) {
+                try {
+                  ({ depositAccount, depositAccountIndex } = await this.assignNewDepositAccount(player, network));
+                } catch (_errAccount) {
+                  return;
                 }
-              } catch (errDepositAccount) {
-                Sentry.captureException(errDepositAccount, {
-                  user: {
-                    username: player.name,
-                  },
-                  extra: {
-                    depositAccountIndex,
-                    depositAccount,
-                  },
-                });
-                return;
               }
+
+              // if (rawAccount && rawPlayerAccount != rawAccount) {
+              //   player.connection.sendUTF8("invalidlogin");
+              //   player.connection.close("Wrong Account: " + player.name);
+              //   return;
+              // }
 
               // @NOTE: Change the player network and depositAccount according to the login account so
               // nano players can be on bananobrowserquest and ban players can be on nanobrowserquest
-              network = rawNetwork;
-              if (!depositAccount.startsWith(network)) {
+              const loggedInNetwork = player.network;
+              if (
+                loggedInNetwork &&
+                ["nano", "ban"].includes(loggedInNetwork) &&
+                depositAccount &&
+                !depositAccount.startsWith(loggedInNetwork)
+              ) {
                 const [, rawDepositAccount] = depositAccount.split("_");
-                depositAccount = `${network}_${rawDepositAccount}`;
+                depositAccount = `${loggedInNetwork}_${rawDepositAccount}`;
               }
 
               if (!armor) {
@@ -523,6 +561,7 @@ class DatabaseHandler {
               console.info("Experience: " + exp);
 
               player.sendWelcome({
+                account,
                 armor,
                 weapon,
                 belt,
@@ -566,98 +605,99 @@ class DatabaseHandler {
     });
   }
 
-  createPlayer(player) {
+  async createPlayer(player) {
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
 
-    // Check if username is taken
-    this.client.sismember("usr", player.name, async (err, reply) => {
-      if (reply === 1) {
-        player.connection.sendUTF8("userexists");
-        player.connection.close("Username not available: " + player.name);
+    let depositAccountIndex = null;
+    let depositAccount = null;
+
+    if (player.account && player.network) {
+      depositAccountIndex = await this.createDepositAccount();
+      depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number, player.network);
+
+      if (typeof depositAccountIndex !== "number" || !depositAccount) {
+        Sentry.captureException(new Error("Invalid deposit account when creating player"));
         return;
-      } else {
-        // Add the player
-        const depositAccountIndex = await this.createDepositAccount();
-        const depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number, player.network);
-
-        if (typeof depositAccountIndex !== "number" || !depositAccount) {
-          Sentry.captureException(new Error("Invalid deposit account"));
-          return;
-        }
-
-        postMessageToDiscordEventChannel(
-          `A new adventurer has just arrived in our realm. **${player.name}** has joined the ranks of **${
-            player.network === "nano" ? "Nano" : "Banano"
-          }** 🎉`,
-        );
-
-        this.client
-          .multi()
-          .sadd("usr", player.name)
-          .hset(userKey, "account", player.account)
-          .hset(userKey, "armor", "clotharmor:1")
-          .hset(userKey, "exp", 0)
-          .hset(userKey, "gold", 0)
-          .hset(userKey, "goldStash", 0)
-          .hset(userKey, "coin", 0)
-          .hset(userKey, "ip", player.ip || "")
-          .hset(userKey, "createdAt", curTime)
-          .hset(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
-          .hset(userKey, "inventory", JSON.stringify(new Array(INVENTORY_SLOT_COUNT).fill(0)))
-          .hset(userKey, "stash", JSON.stringify(new Array(STASH_SLOT_COUNT).fill(0)))
-          .hset(userKey, "nanoPotions", 0)
-          .hset(userKey, "weapon", "dagger:1")
-          .hset(userKey, "armor", "clotharmor:1")
-          .hset(userKey, "belt", null)
-          .hset(userKey, "cape", null)
-          .hset(userKey, "shield", null)
-          .hset(userKey, "settings", "{}")
-          .hset(userKey, "ring1", null)
-          .hset(userKey, "ring2", null)
-          .hset(userKey, "amulet", null)
-          .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
-          .hset(userKey, "artifact", JSON.stringify(new Array(ARTIFACT_COUNT).fill(0)))
-          .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
-          .hset(userKey, "trade", JSON.stringify(new Array(TRADE_SLOT_COUNT).fill(0)))
-          .hset(userKey, "expansion1", 0)
-          .hset(userKey, "expansion2", 0)
-          .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2, 2, 2, 2, 2]))
-          .hset(userKey, "depositAccountIndex", depositAccountIndex)
-          .hset(userKey, "depositAccount", depositAccount)
-          .hset(userKey, "network", player.network)
-          .exec((_err, _replies) => {
-            console.info("New User: " + player.name);
-            player.sendWelcome({
-              armor: "clotharmor:1",
-              weapon: "dagger:1",
-              belt: null,
-              cape: null,
-              shield: null,
-              exp: 0,
-              gold: 0,
-              goldStash: 0,
-              coin: 0,
-              createdAt: curTime,
-              x: player.x,
-              y: player.y,
-              achievement: new Array(ACHIEVEMENT_COUNT).fill(0),
-              inventory: [],
-              nanoPotions: 0,
-              gems: new Array(GEM_COUNT).fill(0),
-              artifact: new Array(ARTIFACT_COUNT).fill(0),
-              expansion1: false,
-              expansion2: false,
-              waypoints: [1, 0, 0, 2, 2, 2, 2, 2, 2, 2],
-              stash: new Array(STASH_SLOT_COUNT).fill(0),
-              depositAccount,
-              depositAccountIndex,
-              settings: defaultSettings,
-              network: player.network,
-            });
-          });
       }
-    });
+    }
+
+    let rankMessage = "";
+    if (!player.network) {
+      `**${player.name}** not yet joined the rank of a network`;
+    } else {
+      rankMessage = `**${player.name}** has joined the ranks of **${
+        player.network === "nano" ? "Nano" : "Banano"
+      }** 🎉`;
+    }
+
+    postMessageToDiscordEventChannel(`A new adventurer has just arrived in our realm. ${rankMessage}`);
+
+    this.client
+      .multi()
+      .sadd("usr", player.name)
+      .hset(userKey, "account", player.account)
+      .hset(userKey, "armor", "clotharmor:1")
+      .hset(userKey, "exp", 0)
+      .hset(userKey, "gold", 0)
+      .hset(userKey, "goldStash", 0)
+      .hset(userKey, "coin", 0)
+      .hset(userKey, "ip", player.ip || "")
+      .hset(userKey, "createdAt", curTime)
+      .hset(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
+      .hset(userKey, "inventory", JSON.stringify(new Array(INVENTORY_SLOT_COUNT).fill(0)))
+      .hset(userKey, "stash", JSON.stringify(new Array(STASH_SLOT_COUNT).fill(0)))
+      .hset(userKey, "nanoPotions", 0)
+      .hset(userKey, "weapon", "dagger:1")
+      .hset(userKey, "armor", "clotharmor:1")
+      .hset(userKey, "belt", null)
+      .hset(userKey, "cape", null)
+      .hset(userKey, "shield", null)
+      .hset(userKey, "settings", "{}")
+      .hset(userKey, "ring1", null)
+      .hset(userKey, "ring2", null)
+      .hset(userKey, "amulet", null)
+      .hset(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
+      .hset(userKey, "artifact", JSON.stringify(new Array(ARTIFACT_COUNT).fill(0)))
+      .hset(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
+      .hset(userKey, "trade", JSON.stringify(new Array(TRADE_SLOT_COUNT).fill(0)))
+      .hset(userKey, "expansion1", 0)
+      .hset(userKey, "expansion2", 0)
+      .hset(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2, 2, 2, 2, 2]))
+      .hset(userKey, "depositAccountIndex", depositAccountIndex)
+      .hset(userKey, "depositAccount", depositAccount)
+      .hset(userKey, "network", player.network)
+      .exec((_err, _replies) => {
+        console.info("New User: " + player.name);
+        player.sendWelcome({
+          account: player.account,
+          armor: "clotharmor:1",
+          weapon: "dagger:1",
+          belt: null,
+          cape: null,
+          shield: null,
+          exp: 0,
+          gold: 0,
+          goldStash: 0,
+          coin: 0,
+          createdAt: curTime,
+          x: player.x,
+          y: player.y,
+          achievement: new Array(ACHIEVEMENT_COUNT).fill(0),
+          inventory: [],
+          nanoPotions: 0,
+          gems: new Array(GEM_COUNT).fill(0),
+          artifact: new Array(ARTIFACT_COUNT).fill(0),
+          expansion1: false,
+          expansion2: false,
+          waypoints: [1, 0, 0, 2, 2, 2, 2, 2, 2, 2],
+          stash: new Array(STASH_SLOT_COUNT).fill(0),
+          depositAccount,
+          depositAccountIndex,
+          settings: defaultSettings,
+          network: player.network,
+        });
+      });
   }
 
   async checkIsBannedByIP(player) {
@@ -803,6 +843,22 @@ class DatabaseHandler {
       } catch (err) {
         Sentry.captureException(err);
       }
+    });
+  }
+
+  async setAccount(player, account, network) {
+    return new Promise(resolve => {
+      this.client.hmset("u:" + player.name, "account", account, "network", network, async () => {
+        try {
+          const { depositAccount } = await this.assignNewDepositAccount(player, network);
+          player.account = account;
+          player.send([Types.Messages.ACCOUNT, { account, network, depositAccount }]);
+        } catch (err) {
+          Sentry.captureException(new Error("Unable to assign deposit account"));
+        }
+
+        resolve(true);
+      });
     });
   }
 
@@ -1654,11 +1710,17 @@ class DatabaseHandler {
           const isGuaranteedSuccess =
             Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone);
 
+          let isCursed = false;
+          if (player.name.toLowerCase().startsWith("kabal")) {
+            isCursed = true;
+          }
+
           ({ isSuccess, random /*, successRate*/ } = isUpgradeSuccess({
             level,
             isLuckySlot,
             isBlessed,
             isGuaranteedSuccess,
+            isCursed,
           }));
 
           // Disable for now as it is exploitable
@@ -2124,34 +2186,22 @@ class DatabaseHandler {
       var userKey = "u:" + player.name;
 
       try {
-        this.client
-          .multi()
-          .hget(userKey, "password")
-          .hget(userKey, "expansion1")
-          .exec((err, replies) => {
-            const password = replies[0];
-            const expansion1 = !!parseInt(replies[1] || "0");
+        this.client.hget(userKey, "password", (_err, reply) => {
+          let hasPassword = !!reply;
 
-            let hasPassword = !!password;
-            let isPasswordRequired = expansion1;
+          if (NODE_ENV === "development") {
+            // resolve(false);
+            // return;
+          }
 
-            if (NODE_ENV === "development") {
-              resolve(false);
-              return;
-            }
+          if (hasPassword) {
+            player.connection.sendUTF8("passwordlogin");
+          } else {
+            player.connection.sendUTF8("passwordcreate");
+          }
 
-            player.isPasswordRequired = isPasswordRequired;
-
-            if (isPasswordRequired) {
-              if (hasPassword) {
-                player.connection.sendUTF8("passwordlogin");
-              } else {
-                player.connection.sendUTF8("passwordcreate");
-              }
-            }
-
-            resolve(isPasswordRequired);
-          });
+          resolve(true);
+        });
       } catch (err) {
         Sentry.captureException(err);
       }
@@ -2195,43 +2245,46 @@ class DatabaseHandler {
     });
   }
 
+  isPlayerExist(player) {
+    return new Promise(resolve => {
+      this.client.sismember("usr", player.name, async (err, reply) => {
+        if (reply === 1) {
+          player.connection.sendUTF8("userexists");
+          player.connection.close("Username not available: " + player.name);
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    });
+  }
+
   passwordLoginOrCreate(player, loginPassword) {
     return new Promise((resolve, _reject) => {
-      var userKey = "u:" + player.name;
-      var self = this;
+      const userKey = "u:" + player.name;
 
       try {
-        this.client
-          .multi()
-          .hget(userKey, "account")
-          .hget(userKey, "password")
-          .exec(async (err, replies) => {
-            const account = replies[0];
-            const password = replies[1];
-            let isValid = false;
+        this.client.hget(userKey, "password", async (err, reply) => {
+          const password = reply;
+          let isValid = false;
 
-            const [, rawAccount] = account.split("_");
-            const [, rawPlayerAccount] = player.account.split("_");
+          if (!password) {
+            const salt = await bcrypt.genSalt(10);
+            const passwordHash = await bcrypt.hash(loginPassword, salt);
 
-            if (rawPlayerAccount == rawAccount) {
-              if (!password) {
-                const salt = await bcrypt.genSalt(10);
-                const passwordHash = await bcrypt.hash(loginPassword, salt);
+            this.client.hset(userKey, "password", passwordHash);
 
-                self.client.hset(userKey, "password", passwordHash);
+            isValid = true;
+            player.isPasswordValid = isValid;
+          } else {
+            isValid = await bcrypt.compare(loginPassword, password);
+          }
 
-                isValid = true;
-                player.isPasswordValid = isValid;
-              } else {
-                isValid = await bcrypt.compare(loginPassword, password);
-              }
-            }
-
-            if (!isValid) {
-              player.connection.sendUTF8("passwordinvalid");
-            }
-            resolve(isValid);
-          });
+          if (!isValid) {
+            player.connection.sendUTF8("passwordinvalid");
+          }
+          resolve(isValid);
+        });
       } catch (err) {
         Sentry.captureException(err);
       }
