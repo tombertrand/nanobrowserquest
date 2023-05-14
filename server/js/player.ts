@@ -529,14 +529,14 @@ class Player extends Character {
         var mob = self.server.getEntityById(message[1]);
 
         if (!mob) return;
-        if (!self.server.isPlayerNearEntity(self, mob, 10)) {
-          databaseHandler.banPlayerByIP({
-            player: self,
-            reason: "cheating",
-            message: "enemy was not near and received an attack",
-          });
-          return;
-        }
+        // if (!self.server.isPlayerNearEntity(self, mob, 10)) {
+        //   databaseHandler.banPlayerByIP({
+        //     player: self,
+        //     reason: "cheating",
+        //     message: "enemy was not near and received an attack",
+        //   });
+        //   return;
+        // }
         // Prevent FE from sending too many attack messages
         if (self.attackTimeout) {
           if (self.attackTimeoutWarning) {
