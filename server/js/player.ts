@@ -170,7 +170,7 @@ class Player extends Character {
   hasNft: boolean;
   hasWing: boolean;
   hasCrystal: boolean;
-  attackTimeoutWarning: boolean;
+  // attackTimeoutWarning: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -227,12 +227,21 @@ class Player extends Character {
     this.hasNft = false;
     this.hasWing = false;
     this.hasCrystal = false;
-    this.attackTimeoutWarning = false;
+    // this.attackTimeoutWarning = false;
 
     this.dbWriteQueue = new PromiseQueue();
 
     this.connection.listen(async message => {
       const action = parseInt(message[0]);
+
+      if (action === Types.Messages.BAN_PLAYER) {
+        databaseHandler.banPlayerByIP({
+          player: self,
+          reason: "cheating",
+          message: "invalid websocket message",
+        });
+        return;
+      }
 
       console.debug("Received: " + message);
       if (!this.formatChecker.check(message)) {
@@ -495,6 +504,13 @@ class Player extends Character {
 
             self.broadcast(new Messages.Move(self));
             self.move_callback(self.x, self.y);
+          } else {
+            databaseHandler.banPlayerByIP({
+              player: self,
+              reason: "cheating",
+              message: `invalid position x:${x}, y:${y}`,
+            });
+            return;
           }
         }
       } else if (action === Types.Messages.LOOTMOVE) {
@@ -539,15 +555,15 @@ class Player extends Character {
         // }
         // Prevent FE from sending too many attack messages
         if (self.attackTimeout) {
-          if (self.attackTimeoutWarning) {
-            databaseHandler.banPlayerByIP({
-              player: self,
-              reason: "cheating",
-              message: "too many attacks sent",
-            });
-            return;
-          }
-          self.attackTimeoutWarning = true;
+          // if (self.attackTimeoutWarning) {
+          // databaseHandler.banPlayerByIP({
+          //   player: self,
+          //   reason: "cheating",
+          //   message: "too many attacks sent",
+          // });
+          // return;
+          // }
+          // self.attackTimeoutWarning = true;
           return;
         }
 
@@ -556,7 +572,7 @@ class Player extends Character {
 
         self.attackTimeout = setTimeout(() => {
           self.attackTimeout = null;
-          self.attackTimeoutWarning = false;
+          // self.attackTimeoutWarning = false;
         }, duration);
 
         if (mob?.type === "mob" || mob?.type === "player") {

@@ -1,8 +1,9 @@
+
 import * as _ from "lodash";
 import { io } from "socket.io-client";
-import MessageParser from "socket.io-msgpack-parser";
 
 import { Types } from "../../shared/js/gametypes";
+import CustomParser from "../../shared/js/parser";
 import EntityFactory from "./entityfactory";
 
 import type { Socket } from "socket.io-client";
@@ -213,6 +214,8 @@ class GameClient {
 
     console.info("Trying to connect to server : " + url);
 
+
+
     this.connection = null;
     this.connection = io(url, {
       // forceNew: true,
@@ -220,7 +223,7 @@ class GameClient {
       reconnectionDelay: 1000,
       reconnectionDelayMax: 3000,
       reconnectionAttempts: 5,
-      parser: MessageParser,
+      parser: CustomParser,
     });
 
     if (dispatcherMode) {

@@ -51,7 +51,14 @@ function main(config) {
   });
 
   server.onError(function () {
-    console.error(Array.prototype.join.call(arguments, ", "));
+    const details = Array.prototype.join.call(arguments, ", ");
+    console.error(details);
+
+    Sentry.captureException(new Error("server error"), {
+      extra: {
+        details,
+      },
+    });
   });
 
   var onPopulationChange = function () {

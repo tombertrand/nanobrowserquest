@@ -624,7 +624,7 @@ class DatabaseHandler {
 
     let rankMessage = "";
     if (!player.network) {
-      `**${player.name}** not yet joined the rank of a network`;
+      rankMessage = `**${player.name}** not yet joined the rank of a network`;
     } else {
       rankMessage = `**${player.name}** has joined the ranks of **${
         player.network === "nano" ? "Nano" : "Banano"
@@ -854,6 +854,10 @@ class DatabaseHandler {
           const { depositAccount } = await this.assignNewDepositAccount(player, network);
           player.account = account;
           player.send([Types.Messages.ACCOUNT, { account, network, depositAccount }]);
+
+          postMessageToDiscordEventChannel(
+            `**${player.name}** has joined the ranks of **${player.network === "nano" ? "Nano" : "Banano"}**`,
+          );
         } catch (err) {
           Sentry.captureException(new Error("Unable to assign deposit account"));
         }

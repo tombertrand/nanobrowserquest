@@ -332,7 +332,7 @@ class App {
             case "banned-misbehaved-1":
             case "banned-misbehaved-365":
               $("." + result.reason).show();
-              self.animateParchment("loadcharacter", "banned");
+              self.toggleScrollContent("banned");
               break;
             case "invalidconnection":
               self.animateParchment("loadcharacter", "invalidconnection");

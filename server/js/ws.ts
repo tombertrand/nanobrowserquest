@@ -3,8 +3,8 @@ import { createServer } from "http";
 import * as _ from "lodash";
 import path from "path";
 import { Server as SocketServer } from "socket.io";
-import MessageParser from "socket.io-msgpack-parser";
 
+import CustomParser from "../../shared/js/parser";
 import { random } from "./utils";
 
 export class Server {
@@ -44,7 +44,7 @@ export class Server {
       };
     }
 
-    this.io = new SocketServer(server, { parser: MessageParser, cors });
+    this.io = new SocketServer(server, { parser: CustomParser, cors });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
