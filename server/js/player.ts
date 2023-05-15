@@ -551,13 +551,12 @@ class Player extends Character {
           return;
         }
 
-        self.attackTimeoutWarning = false;
-
         const attackSpeed = Types.calculateAttackSpeed(self.bonus.attackSpeed + 10);
         const duration = Math.round(Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (attackSpeed / 100));
 
         self.attackTimeout = setTimeout(() => {
           self.attackTimeout = null;
+          self.attackTimeoutWarning = false;
         }, duration);
 
         if (mob?.type === "mob" || mob?.type === "player") {
