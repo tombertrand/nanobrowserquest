@@ -622,16 +622,15 @@ class DatabaseHandler {
       }
     }
 
-    let rankMessage = "";
     if (!player.network) {
-      rankMessage = `**${player.name}** not yet joined the rank of a network`;
+      postMessageToDiscordEventChannel(`A new adventurer **${player.name}** has just arrived in our realm 🎉`);
     } else {
-      rankMessage = `**${player.name}** has joined the ranks of **${
-        player.network === "nano" ? "Nano" : "Banano"
-      }** 🎉`;
+      postMessageToDiscordEventChannel(
+        `A new adventurer has just arrived in our realm. **${player.name}** has joined the ranks of **${
+          player.network === "nano" ? "Nano" : "Banano"
+        }** 🎉`,
+      );
     }
-
-    postMessageToDiscordEventChannel(`A new adventurer has just arrived in our realm. ${rankMessage}`);
 
     this.client
       .multi()
