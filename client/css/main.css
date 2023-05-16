@@ -817,7 +817,7 @@ footer, header, hgroup, menu, nav, section {
     #item-player, #item-otherplayer { width: 100% }
     #item-player > div, #item-otherplayer > div { display: flex; justify-content: start;}
     #item-otherplayer .item-slot > div { position: relative; z-index: 2;}
-    .item-weapon-slot, .item-armor-slot, .item-ring1-slot, .item-ring2-slot, .item-amulet-slot, .item-belt-slot, .item-cape-slot, .item-shield-slot {padding-right: 6px;padding-bottom: 6px;}
+    .item-weapon-slot, .item-armor-slot, .item-ring1-slot, .item-ring2-slot, .item-amulet-slot, .item-belt-slot, .item-helm-slot, .item-cape-slot, .item-shield-slot {padding-right: 6px;padding-bottom: 6px;}
     .item-delete-slot { margin-left: auto; }
     .item-delete-slot > .item-slot { -webkit-box-shadow: inset 0px 0px 10px 6px #9e0000; box-shadow: inset 0px 0px 10px 6px #9e0000; }
     .item-quantity::after {

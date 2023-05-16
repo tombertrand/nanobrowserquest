@@ -1202,7 +1202,7 @@ class Game {
 
         $(".ui-droppable-origin").removeClass("ui-droppable-origin");
         $(
-          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-shield, .item-cape, .item-chest, .item-scroll, .item-merchant",
+          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-shield, .item-helm, .item-cape, .item-chest, .item-scroll, .item-merchant",
         ).removeClass("item-droppable");
       },
     });
@@ -1231,6 +1231,7 @@ class Game {
     container.find(".item-weapon-slot").html(`<div class="item-slot item-equip-weapon item-weapon"></div>`);
     container.find(".item-armor-slot").html(`<div class="item-slot item-equip-armor item-armor"></div>`);
     container.find(".item-belt-slot").html(`<div class="item-slot item-equip-belt item-belt"></div>`);
+    container.find(".item-helm-slot").html(`<div class="item-slot item-equip-helm item-helm"></div>`);
     container.find(".item-cape-slot").html(`<div class="item-slot item-equip-cape item-cape"></div>`);
     container.find(".item-shield-slot").html(`<div class="item-slot item-equip-shield item-shield"></div>`);
     container.find(".item-ring1-slot").html(`<div class="item-slot item-equip-ring item-ring item-ring1"></div>`);
@@ -1252,6 +1253,9 @@ class Game {
     container
       .find(".item-belt-slot")
       .html(`<div class="item-slot item-equip-belt item-belt" data-slot="${Slot.BELT}"></div>`);
+    container
+      .find(".item-helm-slot")
+      .html(`<div class="item-slot item-equip-helm item-helm" data-slot="${Slot.HELM}"></div>`);
     container
       .find(".item-cape-slot")
       .html(`<div class="item-slot item-equip-cape item-cape" data-slot="${Slot.CAPE}"></div>`);
@@ -1498,7 +1502,7 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
+        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
       );
     $("#upgrade-result")
       .empty()
@@ -1511,7 +1515,7 @@ class Game {
 
     for (var i = 0; i < 9; i++) {
       $("#trade-player1-item").append(
-        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest item-scroll item-recipe" data-slot="${
+        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-shield item-chest item-scroll item-recipe" data-slot="${
           TRADE_SLOT_RANGE + i
         }"></div>`,
       );
