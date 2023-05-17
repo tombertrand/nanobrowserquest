@@ -2202,8 +2202,8 @@ class DatabaseHandler {
           let hasPassword = !!reply;
 
           if (NODE_ENV === "development") {
-            // resolve(false);
-            // return;
+            resolve(false);
+            return;
           }
 
           if (hasPassword) {

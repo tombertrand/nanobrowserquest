@@ -1262,6 +1262,14 @@ var Items = {
     }
   },
 
+  Mushrooms: class Mushrooms extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MUSHROOMS, "object");
+      this.lootMessage = "You pick up some Mushrooms";
+    }
+  },
+
+
   Cake: class Cake extends Item {
     constructor(id) {
       super(id, Types.Entities.CAKE, "object");

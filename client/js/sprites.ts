@@ -436,6 +436,7 @@ const sprites = {
   "item-raiblocksbr": item,
   "item-wirtleg": item,
   "item-pickaxe": item,
+  "item-mushrooms": item,
   "item-skeletonkingcage": item,
   "item-necromancerheart": item,
   "item-cowkinghorn": item,

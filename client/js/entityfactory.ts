@@ -973,6 +973,10 @@ EntityFactory.builders[Types.Entities.PICKAXE] = function (id) {
   return new Items.Pickaxe(id);
 };
 
+EntityFactory.builders[Types.Entities.MUSHROOMS] = function (id) {
+  return new Items.Mushrooms(id);
+};
+
 EntityFactory.builders[Types.Entities.FIREFOXPOTION] = function (id) {
   return new Items.Firefoxpotion(id);
 };

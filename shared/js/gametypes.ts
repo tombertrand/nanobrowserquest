@@ -230,6 +230,7 @@ export const Types: any = {
     POWDERRED: 290,
     POWDERQUANTUM: 291,
     PICKAXE: 310,
+    MUSHROOMS: 324,
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
@@ -843,6 +844,7 @@ export const kinds = {
   powdergreen: [Types.Entities.POWDERGREEN, "item", "Poison Powder"],
   powderred: [Types.Entities.POWDERRED, "item", "Blood Powder"],
   powderquantum: [Types.Entities.POWDERQUANTUM, "item", "Quantum Powder"],
+  mushrooms: [Types.Entities.MUSHROOMS, "item", "Mushrooms"],
 
   // kind, type, name, level
   "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 1],
@@ -1489,6 +1491,7 @@ Types.isSingle = function (kindOrString: number | string) {
       Types.Entities.POWDERRED,
       Types.Entities.POWDERQUANTUM,
       Types.Entities.PICKAXE,
+      Types.Entities.MUSHROOMS,
     ].includes(kindOrString);
   } else {
     return (
@@ -1507,6 +1510,7 @@ Types.isSingle = function (kindOrString: number | string) {
         "powderred",
         "powderquantum",
         "pickaxe",
+        "mushrooms",
       ].includes(kindOrString) ||
       kindOrString.startsWith("skeletonkingcage") ||
       kindOrString.startsWith("necromancerheart") ||
@@ -1516,7 +1520,8 @@ Types.isSingle = function (kindOrString: number | string) {
       kindOrString.startsWith("wing") ||
       kindOrString.startsWith("crystal") ||
       kindOrString.startsWith("powder") ||
-      kindOrString.startsWith("pickaxe")
+      kindOrString.startsWith("pickaxe") ||
+      kindOrString.startsWith("mushrooms")
     );
   }
 };
@@ -2646,6 +2651,7 @@ Types.itemDescription = {
   powderred: "A special kind of powder.",
   powderquantum: "The ultimate powder that powers the Gateway.",
   pickaxe: "This tool is used for digging.",
+  mushrooms: "Mushrooms have the power to distort reality and summon otherworldly creatures.",
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",
