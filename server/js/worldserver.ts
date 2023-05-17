@@ -1111,14 +1111,13 @@ class World {
         const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
         mob.onMove(this.onMobMoveCallback.bind(this));
         mob.onDestroy(() => {
-          this.mageTotal--;
+          if (!this.chaliceLevelClock) return;
 
-          console.log("~~~MAGE LEFT", this.mageTotal);
+          this.mageTotal--;
 
           if (this.mageTotal === 0) {
             clearInterval(this.chaliceLevelInterval);
             setTimeout(() => {
-              console.log("~~~MOB ALL DEAD");
               // Return everyone to altar, leave 10s to loot any last drop / activate lever
               this.endChaliceLevel();
             }, 10000);
@@ -1130,15 +1129,11 @@ class World {
       }
     });
 
-    console.log("~~~TOTAL MAGES", this.mageTotal);
-
     this.chaliceLevelInterval = setInterval(() => {
       this.chaliceLevelClock -= 1;
-      console.log("~~~DECREASE CHALICE CLOCK", this.chaliceLevelClock);
       if (this.chaliceLevelClock < 0) {
         clearInterval(this.chaliceLevelInterval);
 
-        console.log("~~~CLOCK OVER");
         this.endChaliceLevel();
       }
     }, 1000);
