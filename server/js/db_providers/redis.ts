@@ -241,11 +241,18 @@ class DatabaseHandler {
               var discordId = replies[33];
               var migrations = replies[34] ? JSON.parse(replies[34]) : {};
 
-              if (account && !depositAccount && ["nano", "ban"].includes(network)) {
-                try {
-                  ({ depositAccount, depositAccountIndex } = await this.assignNewDepositAccount(player, network));
-                } catch (_errAccount) {
-                  return;
+              if (account) {
+                if (!network) {
+                  [network] = account.split("_");
+                  this.client.hset("u:" + player.name, "network", network);
+                }
+
+                if (!depositAccount && ["nano", "ban"].includes(network)) {
+                  try {
+                    ({ depositAccount, depositAccountIndex } = await this.assignNewDepositAccount(player, network));
+                  } catch (_errAccount) {
+                    return;
+                  }
                 }
               }
 

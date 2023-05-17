@@ -1112,9 +1112,13 @@ class World {
         mob.onMove(this.onMobMoveCallback.bind(this));
         mob.onDestroy(() => {
           this.mageTotal--;
+
+          console.log("~~~MAGE LEFT", this.mageTotal);
+
           if (this.mageTotal === 0) {
             clearInterval(this.chaliceLevelInterval);
             setTimeout(() => {
+              console.log("~~~MOB ALL DEAD");
               // Return everyone to altar, leave 10s to loot any last drop / activate lever
               this.endChaliceLevel();
             }, 10000);
@@ -1126,10 +1130,15 @@ class World {
       }
     });
 
+    console.log("~~~TOTAL MAGES", this.mageTotal);
+
     this.chaliceLevelInterval = setInterval(() => {
       this.chaliceLevelClock -= 1;
+      console.log("~~~DECREASE CHALICE CLOCK", this.chaliceLevelClock);
       if (this.chaliceLevelClock < 0) {
         clearInterval(this.chaliceLevelInterval);
+
+        console.log("~~~CLOCK OVER");
         this.endChaliceLevel();
       }
     }, 1000);
@@ -1138,6 +1147,8 @@ class World {
   endChaliceLevel() {
     this.chaliceLevelInterval = null;
     this.chaliceLevelClock = null;
+
+    console.log("~~~END CHALICE LEVEL");
 
     const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
     this.despawn(secretStairs);
