@@ -17,7 +17,11 @@ interface PartyMember {
 }
 
 class Player extends Character {
-  spriteName: any;
+  spriteName: string;
+  helmName: string;
+  helmLevel: number;
+  helmBonus: null | number[];
+  helmSocket: null | number[];
   name: any;
   account: any;
   hash: string;
@@ -124,6 +128,9 @@ class Player extends Character {
 
     // sprites
     this.spriteName = "clotharmor";
+    this.helmName = "helmcloth";
+    this.helmLevel = 1;
+    this.helmBonus = null;
     this.armorName = "clotharmor";
     this.armorLevel = 1;
     this.armorBonus = null;
@@ -353,6 +360,48 @@ class Player extends Character {
 
   setArmorSocket(socket) {
     this.armorSocket = toArray(socket);
+  }
+
+  getHelmSprite() {
+    if (this.invincible) {
+      return this.normalSprite;
+    } else {
+      // @TODO ~~~~
+      // return this.sprite;
+    }
+  }
+
+  getHelmName() {
+    var sprite = this.getHelmSprite();
+    return sprite.id;
+  }
+
+  setHelmName(name) {
+    this.helmName = name;
+  }
+
+  getHelmLevel() {
+    return this.helmLevel;
+  }
+
+  setHelmLevel(level) {
+    this.helmLevel = toNumber(level);
+  }
+
+  getHelmBonus() {
+    return this.helmBonus;
+  }
+
+  getHelmSocket() {
+    return this.helmSocket;
+  }
+
+  setHelmBonus(bonus) {
+    this.helmBonus = toArray(bonus);
+  }
+
+  setHelmSocket(socket) {
+    this.helmSocket = toArray(socket);
   }
 
   getWeaponName() {
@@ -586,6 +635,31 @@ class Player extends Character {
     }
   }
 
+  switchHelm(helm, level: number, bonus?: number[], socket?: number[]) {
+    var isDifferent = false;
+
+    if (helm !== this.getHelmName()) {
+      isDifferent = true;
+      this.setHelmName(helm);
+    }
+    if (toNumber(level) !== this.getHelmLevel()) {
+      isDifferent = true;
+      this.setHelmLevel(level);
+    }
+    if (!isEqual(bonus, this.getHelmBonus())) {
+      isDifferent = true;
+      this.setHelmBonus(bonus);
+    }
+    if (!isEqual(socket, this.getHelmSocket())) {
+      isDifferent = true;
+      this.setHelmSocket(socket);
+    }
+
+    if (isDifferent) {
+      this.switch_callback?.();
+    }
+  }
+
   switchArmor(armorSprite, level: number, bonus?: number[], socket?: number[]) {
     var isDifferent = false;
 
@@ -692,6 +766,7 @@ class Player extends Character {
         const [item, levelOrQuantity, bonus, socket, skill] = rawItem.split(delimiter);
 
         const isWeapon = kinds[item][1] === "weapon";
+        const isHelm = kinds[item][1] === "helm";
         const isArmor = kinds[item][1] === "armor";
         const isBelt = kinds[item][1] === "belt";
         const isCape = kinds[item][1] === "cape";
@@ -700,7 +775,7 @@ class Player extends Character {
         const isAmulet = kinds[item][1] === "amulet";
         const isChest = kinds[item][1] === "chest";
         const isJewel = kinds[item][1] === "jewel";
-        const hasLevel = isWeapon || isArmor || isBelt || isCape || isShield || isRing || isAmulet || isJewel;
+        const hasLevel = isWeapon || isHelm || isArmor || isBelt || isCape || isShield || isRing || isAmulet || isJewel;
         const level = hasLevel ? parseInt(levelOrQuantity) : null;
         const isUnique = Types.isUnique(item, bonus, isJewel ? level : undefined);
 
@@ -711,7 +786,7 @@ class Player extends Character {
         if (hasLevel) {
           requirement = Types.getItemRequirement(item, levelOrQuantity);
 
-          if (isWeapon || isArmor || isShield) {
+          if (isWeapon || isHelm || isHelm || isArmor || isShield) {
             ({ runeword } = Types.getRunewordBonus({
               isUnique,
               socket: toArray(socket),

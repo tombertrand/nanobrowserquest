@@ -20,7 +20,6 @@ import Messages from "./message";
 import Npc from "./npc";
 import { enqueueSendPayout } from "./payout";
 import { PromiseQueue } from "./promise-queue";
-import Properties from "./properties";
 import { Sentry } from "./sentry";
 import { purchase } from "./store/purchase";
 import { store } from "./store/store";
@@ -85,11 +84,19 @@ class Player extends Character {
   move_callback: any;
   lootmove_callback: any;
   weapon: string;
+  weaponKind: number;
   weaponLevel: number;
   weaponBonus: number[] | null;
   weaponSocket: number[] | null;
   isWeaponUnique: boolean;
+  helm: string;
+  helmKind: number;
+  helmLevel: number;
+  helmBonus: number[] | null;
+  helmSocket: number[] | null;
+  isHelmUnique: boolean;
   armor: string;
+  armorKind: number;
   armorLevel: number;
   armorBonus: number[] | null;
   armorSocket: number[] | null;
@@ -108,6 +115,7 @@ class Player extends Character {
   capeContrast: number;
   capeBrightness: number;
   shield: string;
+  shieldKind: number;
   shieldLevel: number;
   shieldBonus: number[] | null;
   shieldSocket: number[] | null;
@@ -124,9 +132,6 @@ class Player extends Character {
   group: any;
   bonus: any;
   partyBonus: any;
-  armorKind: number;
-  weaponKind: number;
-  shieldKind: number;
   ring1: string;
   ring1Level: number;
   ring1Bonus: number[];
@@ -1786,7 +1791,13 @@ class Player extends Character {
       Sentry.captureException(err, { extra: { kind } });
     }
 
-    if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind) || Types.isShield(kind)) {
+    if (
+      Types.isArmor(kind) ||
+      Types.isHelm(kind) ||
+      Types.isWeapon(kind) ||
+      Types.isBelt(kind) ||
+      Types.isShield(kind)
+    ) {
       const randomIsUnique = random(100);
 
       isUnique = randomIsUnique < uniqueChances;
@@ -1797,7 +1808,7 @@ class Player extends Character {
       let skill = null;
 
       if (isUnique) {
-        if (Types.isArmor(kind)) {
+        if (Types.isHelm(kind) || Types.isArmor(kind)) {
           bonus = [6];
         } else if (Types.isWeapon(kind)) {
           bonus = [3, 14];
@@ -2081,6 +2092,9 @@ class Player extends Character {
     let lightningDamage = 0;
 
     let defense = Formulas.playerDefense({
+      helm: this.helm,
+      helmLevel: this.helmLevel,
+      isHelmUnique: this.isHelmUnique,
       armor: this.armor,
       armorLevel: this.armorLevel,
       isArmorUnique: this.isArmorUnique,
@@ -2371,6 +2385,15 @@ class Player extends Character {
     });
   }
 
+  equipHelm(helm, kind, level, bonus, socket) {
+    this.helm = helm;
+    this.helmKind = kind;
+    this.helmLevel = toNumber(level);
+    this.helmBonus = toArray(bonus);
+    this.helmSocket = toArray(socket);
+    this.isHelmUnique = !!this.helmBonus?.length;
+  }
+
   equipArmor(armor, kind, level, bonus, socket) {
     this.armor = armor;
     this.armorKind = kind;
@@ -2600,6 +2623,9 @@ class Player extends Character {
       if (Types.isArmor(kind)) {
         this.databaseHandler.equipArmor(this.name, item, level, bonus, socket);
         this.equipArmor(item, kind, level, bonus, socket);
+      } else if (Types.isHelm(kind)) {
+        this.databaseHandler.equipHelm(this.name, item, level, bonus, socket);
+        this.equipHelm(item, kind, level, bonus, socket);
       } else if (Types.isWeapon(kind)) {
         this.databaseHandler.equipWeapon(this.name, item, level, bonus, socket, skill);
         this.equipWeapon(item, kind, level, bonus, socket, skill);
@@ -2710,6 +2736,7 @@ class Player extends Character {
     let socketJewelBonus = {};
 
     [
+      [this.helmSocket, this.isHelmUnique, "helm"],
       [this.armorSocket, this.isArmorUnique, "armor"],
       [this.weaponSocket, this.isWeaponUnique, "weapon"],
       [this.shieldSocket, this.isShieldUnique, "shield"],
@@ -2733,8 +2760,8 @@ class Player extends Character {
 
     const maxHitPoints =
       Formulas.hp({
-        armorLevel: Properties.getArmorLevel(this.armorKind),
-        level: this.armorLevel,
+        helmLevel: this.helmLevel,
+        armorLevel: this.armorLevel,
         playerLevel: this.level,
         beltLevel: this.beltLevel,
         shieldLevel: this.shieldLevel,
@@ -2805,6 +2832,9 @@ class Player extends Character {
     const isInParty = this.getParty()?.members.length >= 2;
 
     const { min: minDefense, max: maxDefense } = Formulas.minMaxDefense({
+      helm: this.helm,
+      helmLevel: this.helmLevel,
+      isHelmUnique: this.isHelmUnique,
       armor: this.armor,
       armorLevel: this.armorLevel,
       isArmorUnique: this.isArmorUnique,
@@ -2969,6 +2999,7 @@ class Player extends Character {
 
   sendWelcome({
     account,
+    helm,
     armor,
     weapon,
     belt,
@@ -3014,11 +3045,19 @@ class Player extends Character {
       delete this.isPasswordRequired;
       delete this.isPasswordValid;
 
+      const [playerHelm, playerHelmLevel = 1, playerHelmBonus, playerHelmSocket] = helm.split(":");
       const [playerArmor, playerArmorLevel = 1, playerArmorBonus, playerArmorSocket] = armor.split(":");
       const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus, playerWeaponSocket, playerWeaponSkill] =
         weapon.split(":");
 
       this.kind = Types.Entities.WARRIOR;
+      this.equipHelm(
+        playerHelm,
+        Types.getKindFromString(playerHelm),
+        playerHelmLevel,
+        playerHelmBonus,
+        playerHelmSocket,
+      );
       this.equipArmor(
         playerArmor,
         Types.getKindFromString(playerArmor),

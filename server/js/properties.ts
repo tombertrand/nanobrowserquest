@@ -710,6 +710,15 @@ var Properties: any = {
   },
 };
 
+Properties.getHelmLevel = function (kind) {
+  try {
+    return Types.getHelmRank(kind) + 1;
+  } catch (err) {
+    console.error("No level found for armor: " + Types.getKindAsString(kind));
+    console.error("Error stack: " + err.stack);
+  }
+};
+
 Properties.getArmorLevel = function (kind) {
   try {
     if (Types.isMob(kind)) {

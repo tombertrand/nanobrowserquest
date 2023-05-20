@@ -89,6 +89,9 @@ Formulas.mobDefense = function ({ armorLevel }) {
 };
 
 Formulas.minMaxDefense = function ({
+  helm,
+  helmLevel,
+  isHelmUnique,
   armor,
   armorLevel,
   isArmorUnique,
@@ -106,12 +109,15 @@ Formulas.minMaxDefense = function ({
   capeLevel,
   skillDefense,
 }) {
+  const helmDefense = Types.getArmorDefense(helm, helmLevel, isHelmUnique);
   const armorDefense = Types.getArmorDefense(armor, armorLevel, isArmorUnique);
   const beltDefense = Types.getArmorDefense(belt, beltLevel, isBeltUnique);
   const capeDefense = Types.getArmorDefense(cape, capeLevel);
   const shieldDefense = Types.getArmorDefense(shield, shieldLevel, isShieldUnique);
 
-  let min = Math.ceil((armorDefense + beltDefense + capeDefense + shieldDefense + defense) * 1.2) + absorbedDamage;
+  let min =
+    Math.ceil((helmDefense + armorDefense + beltDefense + capeDefense + shieldDefense + defense) * 1.2) +
+    absorbedDamage;
   let max = min + Math.ceil(Math.pow(1.075, playerLevel));
   let maxSkillDefense = 0;
   let maxParty = 0;
@@ -138,6 +144,9 @@ Formulas.dmgFromMob = function ({ weaponLevel }) {
 };
 
 Formulas.playerDefense = ({
+  helm,
+  helmLevel,
+  isHelmUnique,
   armor,
   armorLevel,
   isArmorUnique,
@@ -156,6 +165,9 @@ Formulas.playerDefense = ({
   skillDefense,
 }) => {
   const { min, max } = Formulas.minMaxDefense({
+    helm,
+    helmLevel,
+    isHelmUnique,
     armor,
     armorLevel,
     isArmorUnique,
@@ -177,14 +189,15 @@ Formulas.playerDefense = ({
   return randomInt(min, max);
 };
 
-Formulas.hp = function ({ armorLevel, level, playerLevel, beltLevel, shieldLevel }) {
+Formulas.hp = function ({ helmLevel, armorLevel, playerLevel, beltLevel, shieldLevel }) {
   const baseHp = 80;
-  const armorHp = (armorLevel - 1) * 6 + Types.getArmorHealthBonus(level);
+  const helmHp = Types.getArmorHealthBonus(helmLevel);
+  const armorHp = Types.getArmorHealthBonus(armorLevel);
   const beltHp = Types.getArmorHealthBonus(beltLevel);
   const shieldHp = Types.getArmorHealthBonus(shieldLevel);
   const playerLevelHp = playerLevel * 6;
 
-  return baseHp + armorHp + beltHp + shieldHp + playerLevelHp;
+  return baseHp + helmHp + armorHp + beltHp + shieldHp + playerLevelHp;
 };
 
 // Armor

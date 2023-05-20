@@ -345,12 +345,16 @@ EntityFactory.builders[Types.Entities.MORNINGSTAR] = function (id) {
   return new Items.MorningStar(id);
 };
 
-EntityFactory.builders[Types.Entities.MAILARMOR] = function (id) {
-  return new Items.MailArmor(id);
+EntityFactory.builders[Types.Entities.HELMLEATHER] = function (id) {
+  return new Items.HelmLeather(id);
 };
 
 EntityFactory.builders[Types.Entities.LEATHERARMOR] = function (id) {
   return new Items.LeatherArmor(id);
+};
+
+EntityFactory.builders[Types.Entities.MAILARMOR] = function (id) {
+  return new Items.MailArmor(id);
 };
 
 EntityFactory.builders[Types.Entities.PLATEARMOR] = function (id) {

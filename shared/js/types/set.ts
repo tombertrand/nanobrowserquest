@@ -123,6 +123,7 @@ export const setBonus = {
 };
 
 export const kindAsStringToSet = {
+  helmleather: "leather",
   leatherarmor: "leather",
   beltleather: "leather",
   shieldwood: "leather",
@@ -211,7 +212,7 @@ export const setItems = {
   golden: ["goldensword", "goldenarmor", "shieldgolden"],
   ruby: ["redsword", "redarmor", "shieldred"],
   plated: ["platearmor", "beltplated", "shieldplate"],
-  leather: ["leatherarmor", "beltleather", "shieldwood"],
+  leather: ["helmleather", "leatherarmor", "beltleather", "shieldwood"],
 };
 
 export const setItemsNameMap = {

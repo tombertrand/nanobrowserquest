@@ -163,6 +163,13 @@ var Items = {
     }
   },
 
+  HelmLeather: class HelmLeather extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMLEATHER, "helm");
+      this.lootMessage = "You pick up a leather helm";
+    }
+  },
+
   LeatherArmor: class LeatherArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.LEATHERARMOR, "armor");
@@ -1268,7 +1275,6 @@ var Items = {
       this.lootMessage = "You pick up some Mushrooms";
     }
   },
-
 
   Cake: class Cake extends Item {
     constructor(id) {

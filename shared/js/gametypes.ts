@@ -132,6 +132,10 @@ export const Types: any = {
     DEATHANGEL: 300,
     DEATHANGELSPELL: 303,
 
+    // Helms
+    HELMCLOTH: 325,
+    HELMLEATHER: 326,
+
     // Armors
     FIREFOX: 20,
     CLOTHARMOR: 21,
@@ -511,6 +515,8 @@ Types.Entities.Weapons = [
   Types.Entities.HELLHAMMER,
 ];
 
+Types.Entities.Helms = [Types.Entities.HELMCLOTH, Types.Entities.HELMLEATHER];
+
 Types.Entities.Armors = [
   Types.Entities.CLOTHARMOR,
   Types.Entities.LEATHERARMOR,
@@ -701,6 +707,10 @@ export const kinds = {
   spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 60, 68],
   eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 60, 68],
   hellhammer: [Types.Entities.HELLHAMMER, "weapon", "Hell Hammer", 60, 60],
+
+  // kind, type, level, defense
+  helmcloth: [Types.Entities.HELMCLOTH, "helm", "Cloth Helm", 1, 1],
+  helmleather: [Types.Entities.HELMLEATHER, "helm", "Leather Helm", 1, 2],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -975,6 +985,8 @@ Types.rankedWeapons = [
   Types.Entities.MINOTAURAXE,
 ];
 
+Types.rankedHelms = [Types.Entities.HELMCLOTH, Types.Entities.HELMLEATHER];
+
 Types.rankedArmors = [
   Types.Entities.CLOTHARMOR,
   Types.Entities.LEATHERARMOR,
@@ -1038,6 +1050,9 @@ Types.itemUniqueMap = {
   paladinaxe: ["Peer to Peer Digital Cash", 62, 70],
   immortalsword: ["Least Error & Latency will Win", 62, 70],
   hellhammer: ["Hephasto", 62, 62],
+
+  // name, level, defense
+  helmleather: ["Live to Fight another day", 2, 3],
 
   // name, level, defense
   leatherarmor: ["Representative", 2, 5],
@@ -1163,6 +1178,14 @@ Types.isSpell = function (kind: number) {
 
 Types.isCharacter = function (kind: number) {
   return Types.isMob(kind) || Types.isNpc(kind) || Types.isPlayer(kind);
+};
+
+Types.isHelm = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return kinds.getType(kindOrString) === "helm";
+  } else {
+    return kinds[kindOrString][1] === "helm";
+  }
 };
 
 Types.isArmor = function (kindOrString: number | string) {
@@ -1539,6 +1562,7 @@ Types.isQuantity = function (kindOrString: number | string) {
 Types.isItem = function (kind: number) {
   return (
     Types.isWeapon(kind) ||
+    Types.isHelm(kind) ||
     Types.isArmor(kind) ||
     Types.isRing(kind) ||
     Types.isAmulet(kind) ||
@@ -1557,7 +1581,7 @@ Types.isItem = function (kind: number) {
 };
 
 Types.isSocketItem = function (kind: number) {
-  return Types.isWeapon(kind) || Types.isArmor(kind) || Types.isShield(kind);
+  return Types.isWeapon(kind) || Types.isHelm(kind) || Types.isArmor(kind) || Types.isShield(kind);
 };
 
 Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
@@ -1565,6 +1589,9 @@ Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
     case "weapon":
     case Slot.WEAPON:
       return Types.isWeapon(item);
+    case "helm":
+    case Slot.HELM:
+      return Types.isHelm(item);
     case "armor":
     case Slot.ARMOR:
       return Types.isArmor(item);
@@ -1777,43 +1804,6 @@ Types.waypoints = [
   },
 ];
 
-Types.forEachKind = function (callback: any) {
-  for (var k in kinds) {
-    callback(kinds[k][0], k);
-  }
-};
-
-Types.forEachArmor = function (callback) {
-  Types.forEachKind(function (kind, kindName) {
-    if (kind && Types.isArmor(kind)) {
-      callback(kind, kindName);
-    }
-  });
-};
-
-Types.forEachMobOrNpcKind = function (callback) {
-  Types.forEachKind(function (kind, kindName) {
-    if (kind && (Types.isMob(kind) || Types.isNpc(kind))) {
-      callback(kind, kindName);
-    }
-  });
-};
-
-Types.forEachArmorKind = function (callback) {
-  Types.forEachKind(function (kind, kindName) {
-    if (kind && Types.isArmor(kind)) {
-      callback(kind, kindName);
-    }
-  });
-};
-Types.forEachWeaponKind = function (callback) {
-  Types.forEachKind(function (kind, kindName) {
-    if (kind && Types.isWeapon(kind)) {
-      callback(kind, kindName);
-    }
-  });
-};
-
 Types.getOrientationAsString = function (orientation: number) {
   switch (orientation) {
     case Types.Orientations.LEFT:
@@ -1837,7 +1827,7 @@ Types.getOrientationAsString = function (orientation: number) {
 
 Types.getRandomItemKind = function () {
   var all = _.union(this.rankedWeapons, this.rankedArmors),
-    forbidden = [Types.Entities.DAGGER, Types.Entities.CLOTHARMOR],
+    forbidden = [Types.Entities.DAGGER, Types.Entities.CLOTHARMOR, Types.Entities.HELMCLOTH],
     itemKinds = _.difference(all, forbidden),
     i = Math.floor(Math.random() * _.size(itemKinds));
 
@@ -2202,6 +2192,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
   const isCape = Types.isCape(item);
   const isShield = Types.isShield(item);
   const isWeapon = Types.isWeapon(item);
+  const isHelm = Types.isHelm(item);
   const isArmor = Types.isArmor(item);
   const isUniqueRing = isRing && isUnique;
   const isUniqueAmulet = isAmulet && isUnique;
@@ -2210,6 +2201,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
   const isUniqueShield = isShield && isUnique;
   const isUniqueWeapon = isWeapon && isUnique;
   const isUniqueArmor = isArmor && isUnique;
+  const isUniqueHelm = isHelm && isUnique;
 
   const uniqueSuccessRateMap = {
     goldensword: 20,
@@ -2285,13 +2277,14 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     isUniqueCape ||
     isUniqueShield ||
     isUniqueWeapon ||
-    isUniqueArmor
+    isUniqueArmor ||
+    isUniqueHelm
   ) {
     return { transmuteSuccessRate, uniqueSuccessRate: 100 };
   } else if (!isUnique && uniqueSuccessRateMap[item]) {
     return {
       uniqueSuccessRate: uniqueSuccessRateMap[item] + (isBlessed ? 2 : 0),
-      ...(isRing || isAmulet || isCape || isShield || isWeapon || isArmor ? { transmuteSuccessRate } : null),
+      ...(isRing || isAmulet || isCape || isShield || isWeapon || isHelm || isArmor ? { transmuteSuccessRate } : null),
     };
   }
 
@@ -2313,7 +2306,7 @@ Types.getArmorDefense = function (armor: string, level: number, isUnique: boolea
 Types.getArmorHealthBonus = function (level: number) {
   if (!level) return 0;
 
-  const healthBonusPerLevel = [2, 4, 8, 14, 20, 30, 42, 60, 80, 110];
+  const healthBonusPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
 
   return healthBonusPerLevel[level - 1];
 };
@@ -2399,6 +2392,7 @@ Types.getItemRequirement = function (item: string, level: number, isUnique: bool
 
 Types.isUnique = function (item, rawBonus, level?: number) {
   const isWeapon = kinds[item][1] === "weapon";
+  const isHelm = kinds[item][1] === "helm";
   const isArmor = kinds[item][1] === "armor";
   const isBelt = kinds[item][1] === "belt";
   const isCape = kinds[item][1] === "cape";
@@ -2417,7 +2411,7 @@ Types.isUnique = function (item, rawBonus, level?: number) {
     isUnique = Types.isUniqueAmulet(item, bonus);
   } else if (isCape || isShield || isWeapon) {
     isUnique = bonus ? bonus.length >= 2 : false;
-  } else if (isBelt || isArmor) {
+  } else if (isBelt || isArmor || isHelm) {
     isUnique = bonus ? bonus.length >= 1 : false;
   } else if (isJewel) {
     isUnique = Types.isUniqueJewel(item, bonus, level);
@@ -2476,6 +2470,7 @@ Types.getItemDetails = function ({
   amount?: number;
 }) {
   const isWeapon = Types.isWeapon(item);
+  const isHelm = Types.isHelm(item);
   const isArmor = Types.isArmor(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
@@ -2492,7 +2487,7 @@ Types.getItemDetails = function ({
   const jewelRequirement = isJewel ? Types.getJewelRequirement(rawBonus) : null;
   const goldAmount = amount || getGoldAmountFromSoldItem({ item, level, socket: rawSocket });
 
-  // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
+  // const isEquipment = isWeapon || isHelm || isArmor || isBelt || isRing || isAmulet;
   let name = Types.getDisplayName(item, isUnique);
   let magicDamage = 0;
   let healthBonus = 0;
@@ -2525,6 +2520,9 @@ Types.getItemDetails = function ({
             itemClass,
           })
         : null;
+  } else if (isHelm) {
+    type = "helm";
+    healthBonus = Types.getArmorHealthBonus(level);
   } else if (isArmor) {
     type = "armor";
     healthBonus = Types.getArmorHealthBonus(level);
@@ -2606,7 +2604,9 @@ Types.getItemDetails = function ({
     isJewel,
     isStone,
     itemClass,
-    ...(isArmor || isBelt || isCape || isShield ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
+    ...(isHelm || isArmor || isBelt || isCape || isShield
+      ? { defense: Types.getArmorDefense(item, level, isUnique) }
+      : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
     healthBonus,
     magicDamage,

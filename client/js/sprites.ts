@@ -67,6 +67,8 @@ import executionersword from "../sprites/weapon.json";
 import mysticalsword from "../sprites/weapon.json";
 import dragonsword from "../sprites/weapon.json";
 import hellhammer from "../sprites/weapon.json";
+import helmcloth from "../sprites/armor.json";
+import helmleather from "../sprites/armor.json";
 import clotharmor from "../sprites/armor.json";
 import leatherarmor from "../sprites/armor.json";
 import mailarmor from "../sprites/armor.json";
@@ -220,7 +222,6 @@ const sprites = {
   boss,
   skeletoncommander,
   chest,
-  clotharmor,
   coder,
   crab,
   death,
@@ -509,6 +510,7 @@ const sprites = {
   "item-mysticalsword": item,
   "item-dragonsword": item,
   "item-hellhammer": item,
+  "item-helmleather": item,
   "item-leatherarmor": item,
   "item-mailarmor": item,
   "item-morningstar": item,
@@ -519,6 +521,9 @@ const sprites = {
   "item-sword": item,
   king,
   lavanpc,
+  helmcloth,
+  helmleather,
+  clotharmor,
   leatherarmor,
   loot,
   mailarmor,

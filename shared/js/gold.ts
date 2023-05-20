@@ -69,6 +69,8 @@ export const itemGoldMap = {
   paladinaxe: 250,
   immortalsword: 250,
 
+  helmleather: 1,
+
   leatherarmor: 2,
   mailarmor: 3,
   platearmor: 4,

@@ -1056,6 +1056,8 @@ class Game {
         this.player.switchWeapon(item, level, bonus, socket, skill);
       } else if (toSlot === Slot.ARMOR) {
         this.player.switchArmor(this.getSprite(item), level, bonus, socket);
+      } else if (toSlot === Slot.HELM) {
+        this.player.switchHelm(item, level, bonus, socket);
       } else if (toSlot === Slot.CAPE) {
         this.player.switchCape(item, level, bonus);
       } else if (toSlot === Slot.SHIELD) {
@@ -1065,7 +1067,9 @@ class Game {
     }
 
     const type = kinds[item][1];
-    if (type === "armor" && $(".item-equip-armor").is(":empty")) {
+    if (type === "helm" && $(".item-equip-helm").is(":empty")) {
+      this.player.switchHelm(this.getSprite("helmcloth"), 1);
+    } else if (type === "armor" && $(".item-equip-armor").is(":empty")) {
       this.player.switchArmor(this.getSprite("clotharmor"), 1);
     } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
       this.player.switchWeapon("dagger", 1);
@@ -1301,11 +1305,33 @@ class Game {
         }),
       );
     }
+    if (player.helmName !== "helmcloth") {
+      const isUnique = Types.isUnique(player.helmName, player.helmBonus);
+      const { runeword } = Types.getRunewordBonus({
+        isUnique,
+        socket: player.helmSocket,
+        type: "helm",
+      });
+
+      container.find(".item-equip-helm").html(
+        $("<div />", {
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.helmName)}")`,
+          },
+          "data-item": player.helmName,
+          "data-level": player.helmLevel,
+          "data-bonus": toString(player.helmBonus),
+          "data-socket": toString(player.helmSocket),
+        }),
+      );
+    }
+
     if (player.armorName !== "clotharmor") {
       const isUnique = Types.isUnique(player.armorName, player.armorBonus);
       const { runeword } = Types.getRunewordBonus({
         isUnique,
-        socket: player.weaponSocket,
+        socket: player.armorSocket,
         type: "armor",
       });
 

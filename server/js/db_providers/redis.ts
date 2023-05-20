@@ -208,6 +208,7 @@ class DatabaseHandler {
             .hget(userKey, "coin") // 32
             .hget(userKey, "discordId") // 33
             .hget(userKey, "migrations") // 34
+            .hget(userKey, "helm") // 35
             .exec(async (err, replies) => {
               if (err) {
                 Sentry.captureException(err, {
@@ -240,6 +241,7 @@ class DatabaseHandler {
               var coin = parseInt(replies[32] || "0");
               var discordId = replies[33];
               var migrations = replies[34] ? JSON.parse(replies[34]) : {};
+              var helm = replies[35];
 
               if (account) {
                 if (!network) {
@@ -273,6 +275,17 @@ class DatabaseHandler {
               ) {
                 const [, rawDepositAccount] = depositAccount.split("_");
                 depositAccount = `${loggedInNetwork}_${rawDepositAccount}`;
+              }
+
+              if (!helm) {
+                helm = `helmcloth:1`;
+                this.client.hset("u:" + player.name, "helm", helm);
+              } else {
+                var [playerHelm, helmLevel] = armor.split(":");
+                if (isNaN(helmLevel)) {
+                  helm = `${playerHelm}:1`;
+                  this.client.hset("u:" + player.name, "helm", helm);
+                }
               }
 
               if (!armor) {
@@ -643,7 +656,6 @@ class DatabaseHandler {
       .multi()
       .sadd("usr", player.name)
       .hset(userKey, "account", player.account)
-      .hset(userKey, "armor", "clotharmor:1")
       .hset(userKey, "exp", 0)
       .hset(userKey, "gold", 0)
       .hset(userKey, "goldStash", 0)
@@ -656,6 +668,7 @@ class DatabaseHandler {
       .hset(userKey, "nanoPotions", 0)
       .hset(userKey, "weapon", "dagger:1")
       .hset(userKey, "armor", "clotharmor:1")
+      .hset(userKey, "helm", "helmcloth:1")
       .hset(userKey, "belt", null)
       .hset(userKey, "cape", null)
       .hset(userKey, "shield", null)
@@ -677,6 +690,7 @@ class DatabaseHandler {
         console.info("New User: " + player.name);
         player.sendWelcome({
           account: player.account,
+          helm: "helmcloth:1",
           armor: "clotharmor:1",
           weapon: "dagger:1",
           belt: null,
@@ -803,6 +817,11 @@ class DatabaseHandler {
   equipWeapon(name, weapon, level, bonus = [], socket = [], skill) {
     console.info("Set Weapon: " + name + " " + weapon + ":" + level);
     this.client.hset("u:" + name, "weapon", `${weapon}:${level}${toDb(bonus)}${toDb(socket)}${toDb(skill)}`);
+  }
+
+  equipHelm(name, helm, level, bonus = [], socket = []) {
+    console.info("Set Helm: " + name + " " + helm + ":" + level);
+    this.client.hset("u:" + name, "helm", `${helm}:${level}${toDb(bonus)}${toDb(socket)}`);
   }
 
   equipArmor(name, armor, level, bonus = [], socket = []) {
@@ -964,6 +983,9 @@ class DatabaseHandler {
       } else if (type === "armor") {
         item = "clotharmor";
         level = 1;
+      } else if (type === "helm") {
+        item = "helmcloth";
+        level = 1;
       }
     }
 
@@ -1076,7 +1098,7 @@ class DatabaseHandler {
         fromItem = (isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed) || 0;
 
         // Should never happen but who knows
-        if (["dagger:1", "clotharmor:1"].includes(fromItem) && toSlot !== -1) {
+        if (["dagger:1", "clotharmor:1", "helmcloth:1"].includes(fromItem) && toSlot !== -1) {
           player.moveItemLock = false;
           return;
         }
@@ -1104,7 +1126,7 @@ class DatabaseHandler {
               let toReplyParsed = isMultipleTo ? JSON.parse(toReply) : toReply;
               toItem = isMultipleTo ? toReplyParsed[toSlot - toRange] : toReplyParsed;
 
-              if (["dagger:1", "clotharmor:1"].includes(toItem)) {
+              if (["dagger:1", "clotharmor:1", "helmcloth:1"].includes(toItem)) {
                 toItem = 0;
               }
 
@@ -2433,12 +2455,15 @@ class DatabaseHandler {
             return;
           } else {
             const isWeapon = Types.isWeapon(itemName);
+            const isHelm = Types.isHelm(itemName);
             const isArmor = Types.isArmor(itemName);
             const isShield = Types.isShield(itemName);
 
             let type = null;
             if (isWeapon) {
               type = "weapon";
+            } else if (isHelm) {
+              type = "helm";
             } else if (isArmor) {
               type = "armor";
             } else if (isShield) {
