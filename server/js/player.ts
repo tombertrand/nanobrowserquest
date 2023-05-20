@@ -3051,6 +3051,7 @@ class Player extends Character {
         weapon.split(":");
 
       this.kind = Types.Entities.WARRIOR;
+
       this.equipHelm(
         playerHelm,
         Types.getKindFromString(playerHelm),
@@ -3163,6 +3164,7 @@ class Player extends Character {
           x: this.x,
           y: this.y,
           hitpoints: this.hitPoints,
+          helm,
           armor,
           weapon,
           belt,

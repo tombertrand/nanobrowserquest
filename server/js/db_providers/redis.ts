@@ -278,10 +278,10 @@ class DatabaseHandler {
               }
 
               if (!helm) {
-                helm = `helmcloth:1`;
+                helm = "helmcloth:1";
                 this.client.hset("u:" + player.name, "helm", helm);
               } else {
-                var [playerHelm, helmLevel] = armor.split(":");
+                var [playerHelm, helmLevel] = helm.split(":");
                 if (isNaN(helmLevel)) {
                   helm = `${playerHelm}:1`;
                   this.client.hset("u:" + player.name, "helm", helm);
@@ -582,6 +582,7 @@ class DatabaseHandler {
 
               player.sendWelcome({
                 account,
+                helm,
                 armor,
                 weapon,
                 belt,
@@ -667,8 +668,8 @@ class DatabaseHandler {
       .hset(userKey, "stash", JSON.stringify(new Array(STASH_SLOT_COUNT).fill(0)))
       .hset(userKey, "nanoPotions", 0)
       .hset(userKey, "weapon", "dagger:1")
-      .hset(userKey, "armor", "clotharmor:1")
       .hset(userKey, "helm", "helmcloth:1")
+      .hset(userKey, "armor", "clotharmor:1")
       .hset(userKey, "belt", null)
       .hset(userKey, "cape", null)
       .hset(userKey, "shield", null)
@@ -940,6 +941,8 @@ class DatabaseHandler {
       return ["inventory", 0];
     } else if (slot === Slot.WEAPON) {
       return ["weapon", 0];
+    } else if (slot === Slot.HELM) {
+      return ["helm", 0];
     } else if (slot === Slot.ARMOR) {
       return ["armor", 0];
     } else if (slot === Slot.BELT) {
@@ -967,7 +970,9 @@ class DatabaseHandler {
 
   sendMoveItem({ player, location, data }) {
     const type = location;
-    const isEquipment = ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(location);
+    const isEquipment = ["weapon", "helm", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(
+      location,
+    );
 
     let item = null;
     let level = null;
@@ -1002,6 +1007,18 @@ class DatabaseHandler {
           bonus: player.weaponBonus,
           socket: player.weaponSocket,
           skill: player.attackSkill,
+          type,
+        }),
+        false,
+      );
+    } else if (location === "helm") {
+      player.equipItem({ item, level, type, bonus, socket });
+      player.broadcast(
+        player.equip({
+          kind: player.helmKind,
+          level: player.helmLevel,
+          bonus: player.helmBonus,
+          socket: player.helmSocket,
           type,
         }),
         false,
@@ -1181,7 +1198,9 @@ class DatabaseHandler {
                   isToReplyDone = true;
                 }
               } else if (
-                ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(toLocation) &&
+                ["weapon", "helm", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(
+                  toLocation,
+                ) &&
                 fromItem
               ) {
                 const [item, fromLevel] = fromItem.split(":");
@@ -1193,7 +1212,9 @@ class DatabaseHandler {
                   isToReplyDone = true;
                 }
               } else if (
-                ["weapon", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(fromLocation) &&
+                ["weapon", "helm", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(
+                  fromLocation,
+                ) &&
                 toItem
               ) {
                 const [item, toLevel] = toItem.split(":");

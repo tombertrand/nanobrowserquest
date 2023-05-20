@@ -372,8 +372,9 @@ class Player extends Character {
   }
 
   getHelmName() {
-    var sprite = this.getHelmSprite();
-    return sprite.id;
+    return this.helmName;
+    // var sprite = this.getHelmSprite();
+    // return sprite.id;
   }
 
   setHelmName(name) {
