@@ -1369,8 +1369,6 @@ class Player extends Character {
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
         console.info("PURCHASE_CANCEL: " + self.name + " " + self.depositAccount);
 
-        if (!self.network) return;
-
         purchase[self.network].cancel(self.depositAccount);
       } else if (action === Types.Messages.STORE_ITEMS) {
         console.info("STORE_ITEMS");
@@ -2517,7 +2515,6 @@ class Player extends Character {
       }
       this.broadcast(new Messages.Auras(this), false);
     } catch (err) {
-      console.log("Error: ", err);
       Sentry.captureException(err, {
         user: {
           username: this.name,
@@ -2534,8 +2531,6 @@ class Player extends Character {
         this.partyBonus[type] += stats;
       });
     }
-
-    console.log(this.partyBonus);
   }
 
   resetBonus() {
@@ -3175,8 +3170,7 @@ class Player extends Character {
       this.hasEnteredGame = true;
       this.isDead = false;
     } catch (err) {
-      console.log("Error", err);
-      Sentry.captureException(err);
+      Sentry.captureException(err, { extra: { player: this.name } });
     }
   }
 }

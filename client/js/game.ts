@@ -6376,6 +6376,8 @@ class Game {
       this.renderer.clearScreen(this.renderer.context);
     }
 
+    $("#respawn").removeClass("disabled");
+
     console.debug("Finished respawn");
   }
 
