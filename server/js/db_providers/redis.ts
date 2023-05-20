@@ -1656,8 +1656,9 @@ class DatabaseHandler {
             player.moveItemsToInventoryLock = false;
           }
         } catch (err) {
-          console.log(err);
-          Sentry.captureException(err);
+          Sentry.captureException(err, {
+            extra: { player: player.name },
+          });
 
           player.moveItemsToInventoryLock = false;
         }

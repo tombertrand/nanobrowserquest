@@ -1141,7 +1141,7 @@ class Player extends Character {
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
         const isClassicPayout = message[1] && message[1] === Types.Entities.BOSS;
 
-        if (isClassicPayout && self.hasRequestedBossPayout) {
+        if ((isClassicPayout && self.hasRequestedBossPayout) || !self.network) {
           return;
         }
 
@@ -1368,6 +1368,8 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
         console.info("PURCHASE_CANCEL: " + self.name + " " + self.depositAccount);
+
+        if (!self.network) return;
 
         purchase[self.network].cancel(self.depositAccount);
       } else if (action === Types.Messages.STORE_ITEMS) {
@@ -1778,6 +1780,13 @@ class Player extends Character {
   generateItem({ kind, uniqueChances = 1, isLuckySlot = false, jewelLevel = 1 }): GeneratedItem {
     let isUnique = false;
     let item;
+
+    // @TODO ~~~ remove once found why it errors out
+    try {
+      Types.isArmor(kind);
+    } catch (err) {
+      Sentry.captureException(err, { extra: { kind } });
+    }
 
     if (Types.isArmor(kind) || Types.isWeapon(kind) || Types.isBelt(kind) || Types.isShield(kind)) {
       const randomIsUnique = random(100);
