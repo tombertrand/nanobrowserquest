@@ -560,12 +560,12 @@ var initGame = function () {
     });
 
   $("#respawn").on("click", function () {
-    if ($(this).hasClass("disabled")) return;
+    if ($("#respawn").hasClass("disabled")) return;
 
     game.audioManager.playSound("revive");
     game.respawn();
     $("body").removeClass("death");
-    $(this).addClass("disabled");
+    $("#respawn").addClass("disabled");
   });
 
   $(document).mousemove(function (event) {

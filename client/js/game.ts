@@ -399,6 +399,8 @@ class Game {
     this.player.setSprite(this.getSprite(this.player.getSpriteName()));
     this.player.idle();
 
+    $("#respawn").removeClass("disabled");
+
     console.debug("Finished initPlayer");
   }
 
@@ -6375,8 +6377,6 @@ class Game {
     if (this.renderer.mobile || this.renderer.tablet) {
       this.renderer.clearScreen(this.renderer.context);
     }
-
-    $("#respawn").removeClass("disabled");
 
     console.debug("Finished respawn");
   }
