@@ -2457,7 +2457,7 @@ class Player extends Character {
   }
 
   getEquipment() {
-    return [this.weapon, this.armor, this.belt, this.shield, this.ring1, this.ring2, this.amulet];
+    return [this.weapon, this.helm, this.armor, this.belt, this.shield, this.ring1, this.ring2, this.amulet];
   }
 
   calculateBonus() {

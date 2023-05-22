@@ -304,6 +304,7 @@ class Player extends Character {
   getEquipment() {
     return [
       this.weaponName,
+      this.helmName,
       this.armorName,
       this.beltName,
       this.shieldName,

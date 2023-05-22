@@ -758,8 +758,8 @@ class Renderer {
             this.drawCape(entity);
           }
           if (entity.capeOrientation !== Types.Orientations.UP) {
-            this.drawShield(entity);
             this.drawHelm(entity);
+            this.drawShield(entity);
           }
         }
 
@@ -1463,11 +1463,11 @@ class Renderer {
       ctx.drawImage(capeImage, 0, y, w, h, 2, 2, w, h);
     }
     ctx.drawImage(armorImage, 0, y, w, h, 2, 2, w, h);
+    ctx.drawImage(helmSprite.image, 0, y, w, h, 2, 2, w, h);
     if (this.game.player.shieldName) {
       ctx.drawImage(shieldSprite.image, 0, y, w, h, 2, 2, w, h);
     }
     ctx.drawImage(weaponSprite.image, 0, wy, ww, wh, offsetX, offsetY, ww, wh);
-    ctx.drawImage(helmSprite.image, 0, y, w, h, 2, 2, w, h);
 
     this.game.storage.savePlayer(canvas.toDataURL("image/png"));
   }

@@ -69,7 +69,7 @@ import dragonsword from "../sprites/weapon.json";
 import hellhammer from "../sprites/weapon.json";
 import helmcloth from "../sprites/armor.json";
 import helmleather from "../sprites/armor.json";
-import helmlmail from "../sprites/armor.json";
+import helmmail from "../sprites/armor.json";
 import helmplate from "../sprites/armor.json";
 import helmred from "../sprites/armor.json";
 import helmgolden from "../sprites/armor.json";
@@ -525,7 +525,7 @@ const sprites = {
   "item-dragonsword": item,
   "item-hellhammer": item,
   "item-helmleather": item,
-  "item-helmlmail": item,
+  "item-helmmail": item,
   "item-helmplate": item,
   "item-helmred": item,
   "item-helmgolden": item,
@@ -551,7 +551,7 @@ const sprites = {
   lavanpc,
   helmcloth,
   helmleather,
-  helmlmail,
+  helmmail,
   helmplate,
   helmred,
   helmgolden,

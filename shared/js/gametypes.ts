@@ -1114,7 +1114,7 @@ Types.itemUniqueMap = {
   hellhammer: ["Hephasto", 62, 62],
 
   // name, level, defense
-  helmleather: ["Live to Fight another day", 2, 3],
+  helmleather: ["", 2, 3],
   helmmail: ["", 3, 4],
   helmplate: ["", 5, 6],
   helmred: ["", 7, 9],
