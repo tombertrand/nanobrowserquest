@@ -170,6 +170,104 @@ var Items = {
     }
   },
 
+  HelmMail: class HelmMail extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMMAIL, "helm");
+      this.lootMessage = "You pick up a mail helm";
+    }
+  },
+
+  HelmPlate: class HelmPlate extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMPLATE, "helm");
+      this.lootMessage = "You pick up a plate helm";
+    }
+  },
+
+  HelmRed: class HelmRed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMRED, "helm");
+      this.lootMessage = "You pick up a ruby helm";
+    }
+  },
+
+  HelmGolden: class HelmGolden extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMGOLDEN, "helm");
+      this.lootMessage = "You pick up a golden helm";
+    }
+  },
+
+  HelmBlue: class HelmBlue extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMBLUE, "helm");
+      this.lootMessage = "You pick up a frozen helm";
+    }
+  },
+
+  HelmHorned: class HelmHorned extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMHORNED, "helm");
+      this.lootMessage = "You pick up a horned helm";
+    }
+  },
+
+  HelmFrozen: class HelmFrozen extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMFROZEN, "helm");
+      this.lootMessage = "You pick up a sapphire helm";
+    }
+  },
+
+  HelmDiamond: class HelmDiamond extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMDIAMOND, "helm");
+      this.lootMessage = "You pick up a diamond helm";
+    }
+  },
+
+  HelmEmerald: class HelmEmerald extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMEMERALD, "helm");
+      this.lootMessage = "You pick up an emerald helm";
+    }
+  },
+
+  HelmTemplar: class HelmTemplar extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMTEMPLAR, "helm");
+      this.lootMessage = "You pick up a templar helm";
+    }
+  },
+
+  HelmDragon: class HelmDragon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMDRAGON, "helm");
+      this.lootMessage = "You pick up a dragon helm";
+    }
+  },
+
+  HelmMoon: class HelmMoon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMMOON, "helm");
+      this.lootMessage = "You pick up a moon helm";
+    }
+  },
+
+  HelmDemon: class HelmDemon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMDEMON, "helm");
+      this.lootMessage = "You pick up a demon helm";
+    }
+  },
+
+  HelmMystical: class HelmMystical extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMMYSTICAL, "helm");
+      this.lootMessage = "You pick up a mystical helm";
+    }
+  },
+
   LeatherArmor: class LeatherArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.LEATHERARMOR, "armor");

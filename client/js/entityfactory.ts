@@ -349,6 +349,62 @@ EntityFactory.builders[Types.Entities.HELMLEATHER] = function (id) {
   return new Items.HelmLeather(id);
 };
 
+EntityFactory.builders[Types.Entities.HELMMAIL] = function (id) {
+  return new Items.HelmMail(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMPLATE] = function (id) {
+  return new Items.HelmPlate(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMRED] = function (id) {
+  return new Items.HelmRed(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMGOLDEN] = function (id) {
+  return new Items.HelmGolden(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMBLUE] = function (id) {
+  return new Items.HelmBlue(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMHORNED] = function (id) {
+  return new Items.HelmHorned(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMFROZEN] = function (id) {
+  return new Items.HelmFrozen(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMDIAMOND] = function (id) {
+  return new Items.HelmDiamond(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMEMERALD] = function (id) {
+  return new Items.HelmEmerald(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMTEMPLAR] = function (id) {
+  return new Items.HelmTemplar(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMDRAGON] = function (id) {
+  return new Items.HelmDragon(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMMOON] = function (id) {
+  return new Items.HelmMoon(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMDEMON] = function (id) {
+  return new Items.HelmDemon(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMMYSTICAL] = function (id) {
+  return new Items.HelmMystical(id);
+};
+
 EntityFactory.builders[Types.Entities.LEATHERARMOR] = function (id) {
   return new Items.LeatherArmor(id);
 };

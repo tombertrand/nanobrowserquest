@@ -69,6 +69,20 @@ import dragonsword from "../sprites/weapon.json";
 import hellhammer from "../sprites/weapon.json";
 import helmcloth from "../sprites/armor.json";
 import helmleather from "../sprites/armor.json";
+import helmlmail from "../sprites/armor.json";
+import helmplate from "../sprites/armor.json";
+import helmred from "../sprites/armor.json";
+import helmgolden from "../sprites/armor.json";
+import helmblue from "../sprites/armor.json";
+import helmhorned from "../sprites/armor.json";
+import helmfrozen from "../sprites/armor.json";
+import helmdiamond from "../sprites/armor.json";
+import helmemerald from "../sprites/armor.json";
+import helmtemplar from "../sprites/armor.json";
+import helmdragon from "../sprites/armor.json";
+import helmmoon from "../sprites/armor.json";
+import helmdemon from "../sprites/armor.json";
+import helmmystical from "../sprites/armor.json";
 import clotharmor from "../sprites/armor.json";
 import leatherarmor from "../sprites/armor.json";
 import mailarmor from "../sprites/armor.json";
@@ -511,6 +525,20 @@ const sprites = {
   "item-dragonsword": item,
   "item-hellhammer": item,
   "item-helmleather": item,
+  "item-helmlmail": item,
+  "item-helmplate": item,
+  "item-helmred": item,
+  "item-helmgolden": item,
+  "item-helmblue": item,
+  "item-helmhorned": item,
+  "item-helmfrozen": item,
+  "item-helmdiamond": item,
+  "item-helmemerald": item,
+  "item-helmtemplar": item,
+  "item-helmdragon": item,
+  "item-helmmoon": item,
+  "item-helmdemon": item,
+  "item-helmmystical": item,
   "item-leatherarmor": item,
   "item-mailarmor": item,
   "item-morningstar": item,
@@ -523,6 +551,20 @@ const sprites = {
   lavanpc,
   helmcloth,
   helmleather,
+  helmlmail,
+  helmplate,
+  helmred,
+  helmgolden,
+  helmblue,
+  helmhorned,
+  helmfrozen,
+  helmdiamond,
+  helmemerald,
+  helmtemplar,
+  helmdragon,
+  helmmoon,
+  helmdemon,
+  helmmystical,
   clotharmor,
   leatherarmor,
   loot,

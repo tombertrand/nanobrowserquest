@@ -135,6 +135,20 @@ export const Types: any = {
     // Helms
     HELMCLOTH: 325,
     HELMLEATHER: 326,
+    HELMMAIL: 327,
+    HELMPLATE: 328,
+    HELMRED: 329,
+    HELMGOLDEN: 330,
+    HELMBLUE: 331,
+    HELMHORNED: 332,
+    HELMFROZEN: 333,
+    HELMDIAMOND: 334,
+    HELMEMERALD: 335,
+    HELMTEMPLAR: 336,
+    HELMDRAGON: 337,
+    HELMMOON: 338,
+    HELMDEMON: 339,
+    HELMMYSTICAL: 340,
 
     // Armors
     FIREFOX: 20,
@@ -515,7 +529,24 @@ Types.Entities.Weapons = [
   Types.Entities.HELLHAMMER,
 ];
 
-Types.Entities.Helms = [Types.Entities.HELMCLOTH, Types.Entities.HELMLEATHER];
+Types.Entities.Helms = [
+  Types.Entities.HELMCLOTH,
+  Types.Entities.HELMLEATHER,
+  Types.Entities.HELMMAIL,
+  Types.Entities.HELMPLATE,
+  Types.Entities.HELMRED,
+  Types.Entities.HELMGOLDEN,
+  Types.Entities.HELMBLUE,
+  Types.Entities.HELMHORNED,
+  Types.Entities.HELMFROZEN,
+  Types.Entities.HELMDIAMOND,
+  Types.Entities.HELMEMERALD,
+  Types.Entities.HELMTEMPLAR,
+  Types.Entities.HELMDRAGON,
+  Types.Entities.HELMMOON,
+  Types.Entities.HELMDEMON,
+  Types.Entities.HELMMYSTICAL,
+];
 
 Types.Entities.Armors = [
   Types.Entities.CLOTHARMOR,
@@ -711,6 +742,20 @@ export const kinds = {
   // kind, type, level, defense
   helmcloth: [Types.Entities.HELMCLOTH, "helm", "Cloth Helm", 1, 1],
   helmleather: [Types.Entities.HELMLEATHER, "helm", "Leather Helm", 1, 2],
+  helmmail: [Types.Entities.HELMMAIL, "helm", "Mail Helm", 2, 3],
+  helmplate: [Types.Entities.HELMPLATE, "helm", "Plate Helm", 4, 5],
+  helmred: [Types.Entities.HELMRED, "helm", "Red Helm", 6, 7],
+  helmgolden: [Types.Entities.HELMGOLDEN, "helm", "Golden Helm", 8, 10],
+  helmblue: [Types.Entities.HELMBLUE, "helm", "Frozen Helm", 16, 12],
+  helmhorned: [Types.Entities.HELMHORNED, "helm", "Horned Helm", 20, 14],
+  helmfrozen: [Types.Entities.HELMFROZEN, "helm", "Sapphire Helm", 24, 15],
+  helmdiamond: [Types.Entities.HELMDIAMOND, "helm", "Diamond Helm", 34, 19],
+  helmemerald: [Types.Entities.HELMEMERALD, "helm", "Emerald Helm", 46, 26],
+  helmtemplar: [Types.Entities.HELMTEMPLAR, "helm", "Templar Helm", 48, 27],
+  helmdragon: [Types.Entities.HELMDRAGON, "helm", "Dragon Helm", 48, 27],
+  helmmoon: [Types.Entities.HELMMOON, "helm", "Moon Helm", 50, 28],
+  helmdemon: [Types.Entities.HELMDEMON, "helm", "Demon Helm", 50, 29],
+  helmmystical: [Types.Entities.HELMMYSTICAL, "helm", "Mystical Helm", 52, 30],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -985,7 +1030,24 @@ Types.rankedWeapons = [
   Types.Entities.MINOTAURAXE,
 ];
 
-Types.rankedHelms = [Types.Entities.HELMCLOTH, Types.Entities.HELMLEATHER];
+Types.rankedHelms = [
+  Types.Entities.HELMCLOTH,
+  Types.Entities.HELMLEATHER,
+  Types.Entities.HELMMAIL,
+  Types.Entities.HELMPLATE,
+  Types.Entities.HELMRED,
+  Types.Entities.HELMGOLDEN,
+  Types.Entities.HELMBLUE,
+  Types.Entities.HELMHORNED,
+  Types.Entities.HELMFROZEN,
+  Types.Entities.HELMDIAMOND,
+  Types.Entities.HELMEMERALD,
+  Types.Entities.HELMTEMPLAR,
+  Types.Entities.HELMDRAGON,
+  Types.Entities.HELMMOON,
+  Types.Entities.HELMDEMON,
+  Types.Entities.HELMMYSTICAL,
+];
 
 Types.rankedArmors = [
   Types.Entities.CLOTHARMOR,
@@ -1053,6 +1115,20 @@ Types.itemUniqueMap = {
 
   // name, level, defense
   helmleather: ["Live to Fight another day", 2, 3],
+  helmmail: ["", 3, 4],
+  helmplate: ["", 5, 6],
+  helmred: ["", 7, 9],
+  helmgolden: ["", 9, 12],
+  helmblue: ["", 17, 14],
+  helmhorned: ["", 21, 16],
+  helmfrozen: ["", 25, 17],
+  helmdiamond: ["", 35, 21],
+  helmemerald: ["", 47, 28],
+  helmtemplar: ["", 49, 29],
+  helmdragon: ["", 49, 29],
+  helmmoon: ["", 51, 30],
+  helmdemon: ["", 51, 31],
+  helmmystical: ["", 53, 32],
 
   // name, level, defense
   leatherarmor: ["Representative", 2, 5],
