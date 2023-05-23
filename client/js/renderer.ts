@@ -571,6 +571,25 @@ class Renderer {
         this.context.filter = `brightness(${brightness}%)`;
       }
 
+      if (
+        [
+          "helmhorned",
+          "helmfrozen",
+          "helmdiamond",
+          "helmemerald",
+          "helmtemplar",
+          "helmdragon",
+          "helmmoon",
+          "helmdemon",
+          "helmmystical",
+          "helmimmortal",
+          "helmpaladin",
+        ].includes(sprite.name) &&
+        entity.helmBonus?.length
+      ) {
+        spriteImage = sprite.imageunique;
+      }
+
       this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
 
       if (isFilterApplied) {
@@ -707,25 +726,6 @@ class Renderer {
 
             const brightness = this.calculateBrightnessPerLevel(entity.armorLevel);
             this.context.filter = `brightness(${brightness}%)`;
-          }
-
-          if (
-            [
-              "hornedarmor",
-              "frozenarmor",
-              "diamondarmor",
-              "emeraldarmor",
-              "templararmor",
-              "dragonarmor",
-              "moonarmor",
-              "demonarmor",
-              "mysticalarmor",
-              "paladinarmor",
-              "immortalarmor",
-            ].includes(sprite.name) &&
-            entity.armorBonus?.length
-          ) {
-            spriteImage = sprite.imageunique;
           }
         }
 
@@ -1433,24 +1433,24 @@ class Renderer {
     canvas.width = w;
     canvas.height = h;
 
-    let armorImage = armorSprite.image;
+    let helmImage = helmSprite.image;
     if (
       [
-        "hornedarmor",
-        "frozenarmor",
-        "diamondarmor",
-        "emeraldarmor",
-        "templararmor",
-        "dragonarmor",
-        "moonarmor",
-        "demonarmor",
-        "mysticalarmor",
-        "immortalarmor",
-        "paladinarmor",
-      ].includes(this.game.player.armorName) &&
-      this.game.player.armorBonus?.length
+        "helmhorned",
+        "helmfrozen",
+        "helmdiamond",
+        "helmemerald",
+        "helmtemplar",
+        "helmdragon",
+        "helmmoon",
+        "helmdemon",
+        "helmmystical",
+        "helmimmortal",
+        "helmpaladin",
+      ].includes(this.game.player.helmName) &&
+      this.game.player.helmBonus?.length
     ) {
-      armorImage = armorSprite.imageunique;
+      helmImage = helmSprite.imageunique;
     }
 
     ctx.clearRect(0, 0, w, h);
@@ -1462,8 +1462,8 @@ class Renderer {
       }
       ctx.drawImage(capeImage, 0, y, w, h, 2, 2, w, h);
     }
-    ctx.drawImage(armorImage, 0, y, w, h, 2, 2, w, h);
-    ctx.drawImage(helmSprite.image, 0, y, w, h, 2, 2, w, h);
+    ctx.drawImage(armorSprite.image, 0, y, w, h, 2, 2, w, h);
+    ctx.drawImage(helmImage, 0, y, w, h, 2, 2, w, h);
     if (this.game.player.shieldName) {
       ctx.drawImage(shieldSprite.image, 0, y, w, h, 2, 2, w, h);
     }

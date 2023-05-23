@@ -103,17 +103,17 @@ class Sprite {
       this.image9.src = "img/" + this.scale + "/" + this.id + "9" + ".png";
     } else if (
       [
-        "hornedarmor",
-        "frozenarmor",
-        "diamondarmor",
-        "emeraldarmor",
-        "templararmor",
-        "dragonarmor",
-        "moonarmor",
-        "demonarmor",
-        "mysticalarmor",
-        "immortalarmor",
-        "paladinarmor",
+        "helmhorned",
+        "helmfrozen",
+        "helmdiamond",
+        "helmemerald",
+        "helmtemplar",
+        "helmdragon",
+        "helmmoon",
+        "helmdemon",
+        "helmmystical",
+        "helmimmortal",
+        "helmpaladin",
       ].includes(this.name)
     ) {
       this.imageunique = new Image();

@@ -409,14 +409,17 @@ export const isValidRecipe = items => {
 export const generateBlueChestItem = (): { item: string; uniqueChances?: number; jewelLevel?: number } => {
   // 50%
   const items = [
+    { item: "helmhorned", uniqueChances: 40 },
     { item: "hornedarmor", uniqueChances: 40 },
     { item: "belthorned", uniqueChances: 40 },
     { item: "shieldhorned", uniqueChances: 30 },
     { item: "frozenarmor", uniqueChances: 40 },
+    { item: "helmfrozen", uniqueChances: 40 },
     { item: "beltfrozen", uniqueChances: 40 },
     { item: "shieldfrozen", uniqueChances: 25 },
     { item: "frozensword", uniqueChances: 40 },
     { item: "diamondsword", uniqueChances: 20 },
+    { item: "helmdiamond", uniqueChances: 20 },
     { item: "diamondarmor", uniqueChances: 20 },
     { item: "beltdiamond", uniqueChances: 20 },
     { item: "shielddiamond", uniqueChances: 15 },
@@ -462,10 +465,12 @@ export const generateGreenChestItem = (): { item: string; uniqueChances?: number
     { item: "beltminotaur", uniqueChances: 10 },
     { item: "minotauraxe", uniqueChances: 10 },
     { item: "emeraldsword", uniqueChances: 10 },
+    { item: "helmemerald", uniqueChances: 10 },
     { item: "emeraldarmor", uniqueChances: 10 },
     { item: "beltemerald", uniqueChances: 10 },
     { item: "shieldemerald", uniqueChances: 10 },
     { item: "templarsword", uniqueChances: 10 },
+    { item: "helmtemplar", uniqueChances: 10 },
     { item: "templararmor", uniqueChances: 10 },
     { item: "belttemplar", uniqueChances: 10 },
     { item: "shieldtemplar", uniqueChances: 10 },
@@ -511,6 +516,7 @@ export const generateRedChestItem = (): {
 } => {
   // 60%
   const items = [
+    { item: "helmdemon", uniqueChances: 10 },
     { item: "beltdemon", uniqueChances: 10 },
     { item: "shielddemon", uniqueChances: 10 },
     { item: "demonaxe", uniqueChances: 10 },
@@ -568,10 +574,12 @@ export const generatePurpleChestItem = (): {
   // 50%
   const items = [
     { item: "moonsword", uniqueChances: 10 },
+    { item: "helmmoon", uniqueChances: 10 },
     { item: "moonarmor", uniqueChances: 10 },
     { item: "beltmoon", uniqueChances: 10 },
     { item: "shieldmoon", uniqueChances: 10 },
     { item: "mysticalsword", uniqueChances: 10 },
+    { item: "helmmystical", uniqueChances: 10 },
     { item: "mysticalarmor", uniqueChances: 10 },
     { item: "beltmystical", uniqueChances: 10 },
     { item: "shieldmystical", uniqueChances: 10 },
@@ -622,6 +630,8 @@ export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
   let maxSockets = baseLevel < 10 ? 4 : 6;
   if (Types.isBelt(kind)) {
     maxSockets = 0;
+  } else if (Types.isHelm(kind)) {
+    maxSockets = 3;
   }
 
   const randomSocket = random(100);
@@ -992,6 +1002,7 @@ export const generateSoulStoneItem = (): { item: string; quantity?: number; uniq
   // 50%
   const items = [
     { item: "demonaxe", uniqueChances: 10 },
+    { item: "helmdemon", uniqueChances: 10 },
     { item: "demonarmor", uniqueChances: 10 },
     { item: "beltdemon", uniqueChances: 10 },
     { item: "shielddemon", uniqueChances: 10 },
