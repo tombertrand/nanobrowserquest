@@ -144,11 +144,13 @@ export const Types: any = {
     HELMFROZEN: 333,
     HELMDIAMOND: 334,
     HELMEMERALD: 335,
-    HELMTEMPLAR: 336,
-    HELMDRAGON: 337,
-    HELMMOON: 338,
-    HELMDEMON: 339,
-    HELMMYSTICAL: 340,
+    HELMEXECUTIONER: 336,
+    HELMTEMPLAR: 337,
+    HELMDRAGON: 338,
+    HELMMOON: 339,
+    HELMDEMON: 340,
+    HELMMYSTICAL: 341,
+    HELMIMMORTAL: 342,
 
     // Armors
     FIREFOX: 20,
@@ -541,11 +543,13 @@ Types.Entities.Helms = [
   Types.Entities.HELMFROZEN,
   Types.Entities.HELMDIAMOND,
   Types.Entities.HELMEMERALD,
+  Types.Entities.HELMEXECUTIONER,
   Types.Entities.HELMTEMPLAR,
   Types.Entities.HELMDRAGON,
   Types.Entities.HELMMOON,
   Types.Entities.HELMDEMON,
   Types.Entities.HELMMYSTICAL,
+  Types.Entities.HELMIMMORTAL,
 ];
 
 Types.Entities.Armors = [
@@ -751,11 +755,13 @@ export const kinds = {
   helmfrozen: [Types.Entities.HELMFROZEN, "helm", "Sapphire Helm", 24, 15],
   helmdiamond: [Types.Entities.HELMDIAMOND, "helm", "Diamond Helm", 34, 19],
   helmemerald: [Types.Entities.HELMEMERALD, "helm", "Emerald Helm", 46, 26],
+  helmexecutioner: [Types.Entities.HELMEXECUTIONER, "helm", "Executioner Helm", 48, 27],
   helmtemplar: [Types.Entities.HELMTEMPLAR, "helm", "Templar Helm", 48, 27],
   helmdragon: [Types.Entities.HELMDRAGON, "helm", "Dragon Helm", 48, 27],
   helmmoon: [Types.Entities.HELMMOON, "helm", "Moon Helm", 50, 28],
   helmdemon: [Types.Entities.HELMDEMON, "helm", "Demon Helm", 50, 29],
   helmmystical: [Types.Entities.HELMMYSTICAL, "helm", "Mystical Helm", 52, 30],
+  helmimmortal: [Types.Entities.HELMIMMORTAL, "helm", "Immortal Helm", 54, 34],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -1042,11 +1048,13 @@ Types.rankedHelms = [
   Types.Entities.HELMFROZEN,
   Types.Entities.HELMDIAMOND,
   Types.Entities.HELMEMERALD,
+  Types.Entities.HELMEXECUTIONER,
   Types.Entities.HELMTEMPLAR,
   Types.Entities.HELMDRAGON,
   Types.Entities.HELMMOON,
   Types.Entities.HELMDEMON,
   Types.Entities.HELMMYSTICAL,
+  Types.Entities.HELMIMMORTAL,
 ];
 
 Types.rankedArmors = [
@@ -1124,11 +1132,13 @@ Types.itemUniqueMap = {
   helmfrozen: ["", 25, 17],
   helmdiamond: ["", 35, 21],
   helmemerald: ["", 47, 28],
+  helmexecutioner: ["", 49, 29],
   helmtemplar: ["", 49, 29],
   helmdragon: ["", 49, 29],
   helmmoon: ["", 51, 30],
   helmdemon: ["", 51, 31],
   helmmystical: ["", 53, 32],
+  helmimmortal: ["", 55, 36],
 
   // name, level, defense
   leatherarmor: ["Representative", 2, 5],

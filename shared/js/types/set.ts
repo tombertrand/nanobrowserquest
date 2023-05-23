@@ -192,6 +192,7 @@ export const kindAsStringToSet = {
   templararmor: "templar",
   belttemplar: "templar",
   shieldtemplar: "templar",
+  helmexecutioner: "executioner",
   executionersword: "executioner",
   beltexecutioner: "executioner",
   shieldexecutioner: "executioner",
@@ -223,20 +224,21 @@ export const kindAsStringToSet = {
   beltpaladin: "paladin",
   beltimmortal: "immortal",
   immortalsword: "immortal",
+  helmimmortal: "immortal",
   immortalarmor: "immortal",
   immortalring: "immortal",
   shieldimmortal: "immortal",
 };
 
 export const setItems = {
-  immortal: ["immortalsword", "immortalarmor", "immortalring", "shieldimmortal", "beltimmortal"],
+  immortal: ["immortalsword", "helmimmortal", "immortalarmor", "immortalring", "shieldimmortal", "beltimmortal"],
   paladin: ["paladinaxe", "paladinarmor", "shieldpaladin", "beltpaladin"],
   mystical: ["mysticalsword", "helmmystical", "mysticalarmor", "beltmystical", "shieldmystical", "ringmystical"],
   demon: ["demonaxe", "helmdemon", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
   moon: ["moonsword", "helmmoon", "moonarmor", "beltmoon", "shieldmoon", "amuletmoon"],
   dragon: ["dragonsword", "helmdragon", "dragonarmor", "shielddragon"],
   templar: ["templarsword", "helmtemplar", "templararmor", "belttemplar", "shieldtemplar"],
-  executioner: ["executionersword", "beltexecutioner", "shieldexecutioner"],
+  executioner: ["helmexecutioner", "executionersword", "beltexecutioner", "shieldexecutioner"],
   emerald: ["emeraldsword", "helmemerald", "emeraldarmor", "beltemerald", "shieldemerald"],
   minotaur: ["minotauraxe", "ringminotaur", "beltminotaur"],
   diamond: ["diamondsword", "helmdiamond", "diamondarmor", "beltdiamond", "shielddiamond"],
@@ -251,14 +253,14 @@ export const setItems = {
 };
 
 export const setItemsNameMap = {
-  immortal: ["Sword", "Armor", "Belt", "Shield", "Ring"],
+  immortal: ["Sword", "helm", "Armor", "Belt", "Shield", "Ring"],
   paladin: ["Axe", "Armor", "Belt", "Shield"],
   mystical: ["Sword", "Helm", "Armor", "Belt", "Shield", "Ring"],
   demon: ["Axe", "Helm", "Armor", "Belt", "Shield", "Amulet"],
   moon: ["Sword", "Helm", "Armor", "Belt", "Shield", "Amulet"],
   dragon: ["Sword", "Helm", "Armor", "Shield"],
   templar: ["Sword", "Helm", "Armor", "Belt", "Shield"],
-  executioner: ["Sword", "Belt", "Shield"],
+  executioner: ["helm", "Sword", "Belt", "Shield"],
   emerald: ["Sword", "Helm", "Armor", "Belt", "Shield"],
   minotaur: ["Axe", "Ring", "Belt"],
   diamond: ["Sword", "Helm", "Armor", "Belt", "Shield"],

@@ -233,6 +233,13 @@ var Items = {
     }
   },
 
+  HelmExecutioner: class HelmExecutioner extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMEXECUTIONER, "helm");
+      this.lootMessage = "You pick up an executioner helm";
+    }
+  },
+
   HelmTemplar: class HelmTemplar extends Item {
     constructor(id) {
       super(id, Types.Entities.HELMTEMPLAR, "helm");
@@ -265,6 +272,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.HELMMYSTICAL, "helm");
       this.lootMessage = "You pick up a mystical helm";
+    }
+  },
+
+  HelmImmortal: class HelmImmortal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMIMMORTAL, "helm");
+      this.lootMessage = "You pick up an immortal helm";
     }
   },
 

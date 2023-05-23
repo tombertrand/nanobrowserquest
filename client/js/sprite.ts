@@ -107,13 +107,14 @@ class Sprite {
         "helmfrozen",
         "helmdiamond",
         "helmemerald",
+        "helmexecutioner",
         "helmtemplar",
         "helmdragon",
         "helmmoon",
         "helmdemon",
         "helmmystical",
         "helmimmortal",
-        "helmpaladin",
+        // "helmpaladin",
       ].includes(this.name)
     ) {
       this.imageunique = new Image();

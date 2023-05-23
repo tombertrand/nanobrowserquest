@@ -385,6 +385,10 @@ EntityFactory.builders[Types.Entities.HELMEMERALD] = function (id) {
   return new Items.HelmEmerald(id);
 };
 
+EntityFactory.builders[Types.Entities.HELMEXECUTIONER] = function (id) {
+  return new Items.HelmExecutioner(id);
+};
+
 EntityFactory.builders[Types.Entities.HELMTEMPLAR] = function (id) {
   return new Items.HelmTemplar(id);
 };
@@ -403,6 +407,10 @@ EntityFactory.builders[Types.Entities.HELMDEMON] = function (id) {
 
 EntityFactory.builders[Types.Entities.HELMMYSTICAL] = function (id) {
   return new Items.HelmMystical(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMIMMORTAL] = function (id) {
+  return new Items.HelmImmortal(id);
 };
 
 EntityFactory.builders[Types.Entities.LEATHERARMOR] = function (id) {
