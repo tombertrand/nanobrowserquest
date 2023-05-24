@@ -2059,6 +2059,7 @@ class Player extends Character {
       orientation: this.orientation,
       targetId: this.targetId,
       name: this.name,
+      helm: `${this.helm}:${this.helmLevel}${toDb(this.helmBonus)}${toDb(this.helmSocket)}`,
       armor: `${this.armor}:${this.armorLevel}${toDb(this.armorBonus)}${toDb(this.armorSocket)}`,
       weapon: `${this.weapon}:${this.weaponLevel}${toDb(this.weaponBonus)}${toDb(this.weaponSocket)}`,
       amulet: this.amulet ? `${this.amulet}:${this.amuletLevel}${toDb(this.amuletBonus)}` : null,
