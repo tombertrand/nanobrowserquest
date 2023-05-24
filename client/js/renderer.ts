@@ -547,8 +547,6 @@ class Renderer {
     var anim = entity.currentAnimation;
     var spriteImage = sprite.image;
 
-    let isFilterApplied = false;
-
     if (sprite?.width && anim) {
       var os = this.upscaledRendering ? 1 : this.scale;
       var ds = this.upscaledRendering ? this.scale : 1;
@@ -564,11 +562,20 @@ class Renderer {
         dw = w * ds,
         dh = h * ds;
 
+      this.context.filter = "";
       if (entity.helmLevel >= 7) {
-        isFilterApplied = true;
-
         const brightness = this.calculateBrightnessPerLevel(entity.helmLevel);
-        this.context.filter = `brightness(${brightness}%)`;
+        this.context.filter += `brightness(${brightness}%) `;
+      }
+
+      if (entity.isFrozen || entity.isSlowed) {
+        this.context.filter = "sepia(100%) hue-rotate(190deg) saturate(500%)";
+      } else {
+        if (entity.type === "mob" && Types.isMiniBoss(entity)) {
+          this.context.filter = "grayscale(100%) sepia(100%) saturate(150%) hue-rotate(260deg)";
+        } else if (entity.isPoisoned && !Types.isBoss(entity.kind)) {
+          this.context.filter = "grayscale(100%) sepia(100%) hue-rotate(90deg)";
+        }
       }
 
       if (
@@ -592,10 +599,7 @@ class Renderer {
       }
 
       this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
-
-      if (isFilterApplied) {
-        this.context.filter = "brightness(100%)";
-      }
+      this.context.filter = "none";
     }
   }
 

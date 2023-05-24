@@ -24,6 +24,7 @@ import {
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_NFT_INDEX,
   ACHIEVEMENT_WING_INDEX,
+  ACHIEVEMENT_HERO_INDEX,
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
 import { getGoldDeathPenaltyPercent, randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
@@ -6288,7 +6289,7 @@ class Game {
         return;
       }
 
-      if (!this.player.hash) {
+      if (!this.storage.getAchievements()[ACHIEVEMENT_HERO_INDEX]) {
         this.chat_callback({
           message: `You must kill the Skeleton King before you can trade.`,
           type: "error",

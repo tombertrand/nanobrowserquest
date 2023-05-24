@@ -7,6 +7,7 @@ import {
   ACHIEVEMENT_NFT_INDEX,
   ACHIEVEMENT_OBELISK_INDEX,
   ACHIEVEMENT_WING_INDEX,
+  ACHIEVEMENT_HERO_INDEX,
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
@@ -1519,7 +1520,7 @@ class Player extends Character {
             self.send(
               new Messages.Trade(Types.Messages.TRADE_ACTIONS.ERROR, `${message[2]} is not online`).serialize(),
             );
-          } else if (!playerToTradeWith.hash) {
+          } else if (!playerToTradeWith.achievement[ACHIEVEMENT_HERO_INDEX]) {
             self.send(
               new Messages.Trade(
                 Types.Messages.TRADE_ACTIONS.ERROR,

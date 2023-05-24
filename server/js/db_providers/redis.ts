@@ -2011,8 +2011,12 @@ class DatabaseHandler {
         player.send([Types.Messages.UPGRADE, upgrade, { luckySlot, isLucky7, isMagic8, isSuccess, recipe }]);
         this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
       } catch (err1) {
-        console.log(err1);
-        Sentry.captureException(err1);
+        Sentry.captureException(err1, {
+          extra: {
+            player: player.name,
+            reply,
+          },
+        });
       }
     });
   }
