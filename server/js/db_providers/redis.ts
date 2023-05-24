@@ -1766,9 +1766,9 @@ class DatabaseHandler {
             Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone);
 
           let isCursed = false;
-          if (player.name.toLowerCase().startsWith("kabal")) {
-            isCursed = true;
-          }
+          // if (player.name.toLowerCase().startsWith("kabal")) {
+          //   isCursed = true;
+          // }
 
           ({ isSuccess, random /*, successRate*/ } = isUpgradeSuccess({
             level,
