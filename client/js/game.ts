@@ -1056,6 +1056,8 @@ class Game {
         this.player.switchWeapon(item, level, bonus, socket, skill);
       } else if (toSlot === Slot.ARMOR) {
         this.player.switchArmor(this.getSprite(item), level, bonus, socket);
+      } else if (toSlot === Slot.HELM) {
+        this.player.switchHelm(item, level, bonus, socket);
       } else if (toSlot === Slot.CAPE) {
         this.player.switchCape(item, level, bonus);
       } else if (toSlot === Slot.SHIELD) {
@@ -1065,7 +1067,9 @@ class Game {
     }
 
     const type = kinds[item][1];
-    if (type === "armor" && $(".item-equip-armor").is(":empty")) {
+    if (type === "helm" && $(".item-equip-helm").is(":empty")) {
+      this.player.switchHelm("helmcloth", 1);
+    } else if (type === "armor" && $(".item-equip-armor").is(":empty")) {
       this.player.switchArmor(this.getSprite("clotharmor"), 1);
     } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
       this.player.switchWeapon("dagger", 1);
@@ -1172,7 +1176,7 @@ class Game {
         const type = kinds[item][1];
 
         if (
-          ["weapon", "armor", "belt", "cape", "shield", "chest", "ring", "amulet"].includes(type) &&
+          ["weapon", "helm", "armor", "belt", "cape", "shield", "chest", "ring", "amulet"].includes(type) &&
           $(`.item-${type}`).is(":empty")
         ) {
           $(`.item-${type}`).addClass("item-droppable");
@@ -1202,7 +1206,7 @@ class Game {
 
         $(".ui-droppable-origin").removeClass("ui-droppable-origin");
         $(
-          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-shield, .item-cape, .item-chest, .item-scroll, .item-merchant",
+          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-shield, .item-helm, .item-cape, .item-chest, .item-scroll, .item-merchant",
         ).removeClass("item-droppable");
       },
     });
@@ -1229,6 +1233,7 @@ class Game {
     const container = $("#item-otherplayer");
 
     container.find(".item-weapon-slot").html(`<div class="item-slot item-equip-weapon item-weapon"></div>`);
+    container.find(".item-helm-slot").html(`<div class="item-slot item-equip-helm item-helm"></div>`);
     container.find(".item-armor-slot").html(`<div class="item-slot item-equip-armor item-armor"></div>`);
     container.find(".item-belt-slot").html(`<div class="item-slot item-equip-belt item-belt"></div>`);
     container.find(".item-cape-slot").html(`<div class="item-slot item-equip-cape item-cape"></div>`);
@@ -1246,6 +1251,9 @@ class Game {
     container
       .find(".item-weapon-slot")
       .html(`<div class="item-slot item-equip-weapon item-weapon" data-slot="${Slot.WEAPON}"></div>`);
+    container
+      .find(".item-helm-slot")
+      .html(`<div class="item-slot item-equip-helm item-helm" data-slot="${Slot.HELM}"></div>`);
     container
       .find(".item-armor-slot")
       .html(`<div class="item-slot item-equip-armor item-armor" data-slot="${Slot.ARMOR}"></div>`);
@@ -1297,11 +1305,33 @@ class Game {
         }),
       );
     }
+    if (player.helmName !== "helmcloth") {
+      const isUnique = Types.isUnique(player.helmName, player.helmBonus);
+      const { runeword } = Types.getRunewordBonus({
+        isUnique,
+        socket: player.helmSocket,
+        type: "helm",
+      });
+
+      container.find(".item-equip-helm").html(
+        $("<div />", {
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.helmName)}")`,
+          },
+          "data-item": player.helmName,
+          "data-level": player.helmLevel,
+          "data-bonus": toString(player.helmBonus),
+          "data-socket": toString(player.helmSocket),
+        }),
+      );
+    }
+
     if (player.armorName !== "clotharmor") {
       const isUnique = Types.isUnique(player.armorName, player.armorBonus);
       const { runeword } = Types.getRunewordBonus({
         isUnique,
-        socket: player.weaponSocket,
+        socket: player.armorSocket,
         type: "armor",
       });
 
@@ -1498,7 +1528,7 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
+        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
       );
     $("#upgrade-result")
       .empty()
@@ -1511,7 +1541,7 @@ class Game {
 
     for (var i = 0; i < 9; i++) {
       $("#trade-player1-item").append(
-        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-cape item-shield item-chest item-scroll item-recipe" data-slot="${
+        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-shield item-chest item-scroll item-recipe" data-slot="${
           TRADE_SLOT_RANGE + i
         }"></div>`,
       );
@@ -2539,6 +2569,7 @@ class Game {
       x,
       y,
       hp,
+      helm,
       armor,
       weapon,
       belt,
@@ -2589,6 +2620,7 @@ class Game {
         self.network = network;
       }
 
+      var [helm, helmLevel, helmBonus, helmSocket] = helm.split(":");
       var [armor, armorLevel, armorBonus, armorSocket] = armor.split(":");
       var [weapon, weaponLevel, weaponBonus, weaponSocket, attackSkill] = weapon.split(":");
       var [shield, shieldLevel, shieldBonus, shieldSocket, defenseSkill] = (shield || "").split(":");
@@ -2600,6 +2632,10 @@ class Game {
 
       self.player.setGridPosition(x, y);
       self.player.setMaxHitPoints(hp);
+      self.player.setHelmName(helm);
+      self.player.setHelmLevel(helmLevel);
+      self.player.setHelmBonus(helmBonus);
+      self.player.setHelmSocket(helmSocket);
       self.player.setArmorName(armor);
       self.player.setArmorLevel(armorLevel);
       self.player.setArmorBonus(armorBonus);
@@ -3403,6 +3439,7 @@ class Game {
 
           const {
             weapon: rawWeapon,
+            helm: rawHelm,
             armor: rawArmor,
             amulet,
             ring1,
@@ -3416,6 +3453,7 @@ class Game {
             settings,
           } = data;
 
+          const [helm, helmLevel, helmBonus, helmSocket] = rawHelm.split(":");
           const [armor, armorLevel, armorBonus, armorSocket] = rawArmor.split(":");
           const [weapon, weaponLevel, weaponBonus, weaponSocket] = rawWeapon.split(":");
 
@@ -3428,6 +3466,10 @@ class Game {
           entity.setArmorLevel(armorLevel);
           entity.setArmorBonus(armorBonus);
           entity.setArmorSocket(armorSocket);
+          entity.setHelmName(helm);
+          entity.setHelmLevel(helmLevel);
+          entity.setHelmBonus(helmBonus);
+          entity.setHelmSocket(helmSocket);
           entity.setBelt(belt);
           entity.setAmulet(amulet);
           entity.setRing1(ring1);
@@ -4257,7 +4299,9 @@ class Game {
         var name = Types.getKindAsString(kind);
 
         if (player) {
-          if (type === "armor") {
+          if (type === "helm") {
+            player.switchHelm(name, level, bonus, socket);
+          } else if (type === "armor") {
             player.switchArmor(self.getSprite(name), level, bonus, socket);
           } else if (type === "weapon") {
             player.switchWeapon(name, level, bonus, socket, skill);

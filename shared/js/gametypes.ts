@@ -132,6 +132,26 @@ export const Types: any = {
     DEATHANGEL: 300,
     DEATHANGELSPELL: 303,
 
+    // Helms
+    HELMCLOTH: 325,
+    HELMLEATHER: 326,
+    HELMMAIL: 327,
+    HELMPLATE: 328,
+    HELMRED: 329,
+    HELMGOLDEN: 330,
+    HELMBLUE: 331,
+    HELMHORNED: 332,
+    HELMFROZEN: 333,
+    HELMDIAMOND: 334,
+    HELMEMERALD: 335,
+    HELMEXECUTIONER: 336,
+    HELMTEMPLAR: 337,
+    HELMDRAGON: 338,
+    HELMMOON: 339,
+    HELMDEMON: 340,
+    HELMMYSTICAL: 341,
+    HELMIMMORTAL: 342,
+
     // Armors
     FIREFOX: 20,
     CLOTHARMOR: 21,
@@ -230,6 +250,7 @@ export const Types: any = {
     POWDERRED: 290,
     POWDERQUANTUM: 291,
     PICKAXE: 310,
+    MUSHROOMS: 324,
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
@@ -510,6 +531,27 @@ Types.Entities.Weapons = [
   Types.Entities.HELLHAMMER,
 ];
 
+Types.Entities.Helms = [
+  Types.Entities.HELMCLOTH,
+  Types.Entities.HELMLEATHER,
+  Types.Entities.HELMMAIL,
+  Types.Entities.HELMPLATE,
+  Types.Entities.HELMRED,
+  Types.Entities.HELMGOLDEN,
+  Types.Entities.HELMBLUE,
+  Types.Entities.HELMHORNED,
+  Types.Entities.HELMFROZEN,
+  Types.Entities.HELMDIAMOND,
+  Types.Entities.HELMEMERALD,
+  Types.Entities.HELMEXECUTIONER,
+  Types.Entities.HELMTEMPLAR,
+  Types.Entities.HELMDRAGON,
+  Types.Entities.HELMMOON,
+  Types.Entities.HELMDEMON,
+  Types.Entities.HELMMYSTICAL,
+  Types.Entities.HELMIMMORTAL,
+];
+
 Types.Entities.Armors = [
   Types.Entities.CLOTHARMOR,
   Types.Entities.LEATHERARMOR,
@@ -677,6 +719,8 @@ export const kinds = {
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 2],
   wirtleg: [Types.Entities.WIRTLEG, "weapon", "Wirt's leg", 1, 2],
   pickaxe: [Types.Entities.PICKAXE, "weapon", "Pickaxe", 52, 30],
+
+  // kind, type, level, damage
   sword: [Types.Entities.SWORD, "weapon", "Sword", 1, 3],
   axe: [Types.Entities.AXE, "weapon", "Axe", 2, 5],
   morningstar: [Types.Entities.MORNINGSTAR, "weapon", "Morning Star", 3, 7],
@@ -702,6 +746,26 @@ export const kinds = {
   hellhammer: [Types.Entities.HELLHAMMER, "weapon", "Hell Hammer", 60, 60],
 
   // kind, type, level, defense
+  helmcloth: [Types.Entities.HELMCLOTH, "helm", "Cloth Helm", 1, 1],
+  helmleather: [Types.Entities.HELMLEATHER, "helm", "Leather Helm", 1, 2],
+  helmmail: [Types.Entities.HELMMAIL, "helm", "Mail Helm", 2, 3],
+  helmplate: [Types.Entities.HELMPLATE, "helm", "Plate Helm", 4, 5],
+  helmred: [Types.Entities.HELMRED, "helm", "Red Helm", 6, 7],
+  helmgolden: [Types.Entities.HELMGOLDEN, "helm", "Golden Helm", 8, 10],
+  helmblue: [Types.Entities.HELMBLUE, "helm", "Frozen Helm", 16, 12],
+  helmhorned: [Types.Entities.HELMHORNED, "helm", "Horned Helm", 20, 14],
+  helmfrozen: [Types.Entities.HELMFROZEN, "helm", "Sapphire Helm", 24, 16],
+  helmdiamond: [Types.Entities.HELMDIAMOND, "helm", "Diamond Helm", 34, 18],
+  helmemerald: [Types.Entities.HELMEMERALD, "helm", "Emerald Helm", 46, 20],
+  helmexecutioner: [Types.Entities.HELMEXECUTIONER, "helm", "Executioner Helm", 48, 20],
+  helmtemplar: [Types.Entities.HELMTEMPLAR, "helm", "Templar Helm", 48, 20],
+  helmdragon: [Types.Entities.HELMDRAGON, "helm", "Dragon Helm", 48, 20],
+  helmmoon: [Types.Entities.HELMMOON, "helm", "Moon Helm", 50, 20],
+  helmdemon: [Types.Entities.HELMDEMON, "helm", "Demon Helm", 50, 22],
+  helmmystical: [Types.Entities.HELMMYSTICAL, "helm", "Mystical Helm", 52, 22],
+  helmimmortal: [Types.Entities.HELMIMMORTAL, "helm", "Immortal Helm", 54, 24],
+
+  // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
   clotharmor: [Types.Entities.CLOTHARMOR, "armor", "Cloth Armor", 1, 1],
   leatherarmor: [Types.Entities.LEATHERARMOR, "armor", "Leather Armor", 1, 3],
@@ -712,29 +776,29 @@ export const kinds = {
   bluearmor: [Types.Entities.BLUEARMOR, "armor", "Frozen Armor", 18, 24],
   hornedarmor: [Types.Entities.HORNEDARMOR, "armor", "Horned Armor", 22, 28],
   frozenarmor: [Types.Entities.FROZENARMOR, "armor", "Sapphire Armor", 26, 30],
-  diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 36, 38],
-  emeraldarmor: [Types.Entities.EMERALDARMOR, "armor", "Emerald Armor", 48, 52],
-  templararmor: [Types.Entities.TEMPLARARMOR, "armor", "Templar Armor", 50, 54],
-  dragonarmor: [Types.Entities.DRAGONARMOR, "armor", "Dragon Armor", 50, 54],
-  moonarmor: [Types.Entities.MOONARMOR, "armor", "Moon Armor", 54, 56],
-  demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 52, 58],
-  mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 54, 60],
-  paladinarmor: [Types.Entities.PALADINARMOR, "armor", "Paladin Armor", 58, 66],
-  immortalarmor: [Types.Entities.IMMORTALARMOR, "armor", "Blood Armor", 58, 66],
+  diamondarmor: [Types.Entities.DIAMONDARMOR, "armor", "Diamond Armor", 36, 36],
+  emeraldarmor: [Types.Entities.EMERALDARMOR, "armor", "Emerald Armor", 48, 42],
+  templararmor: [Types.Entities.TEMPLARARMOR, "armor", "Templar Armor", 50, 44],
+  dragonarmor: [Types.Entities.DRAGONARMOR, "armor", "Dragon Armor", 50, 44],
+  moonarmor: [Types.Entities.MOONARMOR, "armor", "Moon Armor", 54, 44],
+  demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 52, 46],
+  mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 54, 48],
+  paladinarmor: [Types.Entities.PALADINARMOR, "armor", "Paladin Armor", 58, 50],
+  immortalarmor: [Types.Entities.IMMORTALARMOR, "armor", "Blood Armor", 58, 50],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
   beltplated: [Types.Entities.BELTPLATED, "belt", "Plated Belt", 9, 4],
-  beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Sapphire Belt", 24, 10],
+  beltfrozen: [Types.Entities.BELTFROZEN, "belt", "Sapphire Belt", 24, 12],
   belthorned: [Types.Entities.BELTHORNED, "belt", "Horned Belt", 26, 12],
-  beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 16],
-  beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 38, 22],
-  beltemerald: [Types.Entities.BELTEMERALD, "belt", "Emerald Belt", 50, 26],
-  beltexecutioner: [Types.Entities.BELTEXECUTIONER, "belt", "Executioner Belt", 50, 28],
-  belttemplar: [Types.Entities.BELTTEMPLAR, "belt", "Templar Belt", 52, 28],
-  beltmoon: [Types.Entities.BELTMOON, "belt", "Moon Belt", 54, 30],
-  beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 54, 32],
-  beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 54, 32],
+  beltdiamond: [Types.Entities.BELTDIAMOND, "belt", "Diamond Belt", 34, 14],
+  beltminotaur: [Types.Entities.BELTMINOTAUR, "belt", "Minotaur Belt", 38, 20],
+  beltemerald: [Types.Entities.BELTEMERALD, "belt", "Emerald Belt", 50, 16],
+  beltexecutioner: [Types.Entities.BELTEXECUTIONER, "belt", "Executioner Belt", 50, 18],
+  belttemplar: [Types.Entities.BELTTEMPLAR, "belt", "Templar Belt", 52, 18],
+  beltmoon: [Types.Entities.BELTMOON, "belt", "Moon Belt", 54, 18],
+  beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 54, 20],
+  beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 54, 20],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 20, 2],
 
@@ -747,14 +811,14 @@ export const kinds = {
   shieldblue: [Types.Entities.SHIELDBLUE, "shield", "Frozen Shield", 18, 12],
   shieldhorned: [Types.Entities.SHIELDHORNED, "shield", "Horned Shield", 22, 14],
   shieldfrozen: [Types.Entities.SHIELDFROZEN, "shield", "Sapphire Shield", 26, 16],
-  shielddiamond: [Types.Entities.SHIELDDIAMOND, "shield", "Diamond Shield", 36, 18],
-  shieldemerald: [Types.Entities.SHIELDEMERALD, "shield", "Emerald Shield", 48, 34],
-  shieldexecutioner: [Types.Entities.SHIELDEXECUTIONER, "shield", "Executioner Shield", 48, 34],
-  shieldtemplar: [Types.Entities.SHIELDTEMPLAR, "shield", "Templar Shield", 50, 36],
-  shielddragon: [Types.Entities.SHIELDDRAGON, "shield", "Dragon Shield", 50, 36],
-  shieldmoon: [Types.Entities.SHIELDMOON, "shield", "Moon Shield", 52, 38],
-  shielddemon: [Types.Entities.SHIELDDEMON, "shield", "Demon Shield", 54, 40],
-  shieldmystical: [Types.Entities.SHIELDMYSTICAL, "shield", "Mystical Shield", 54, 40],
+  shielddiamond: [Types.Entities.SHIELDDIAMOND, "shield", "Diamond Shield", 36, 22],
+  shieldemerald: [Types.Entities.SHIELDEMERALD, "shield", "Emerald Shield", 48, 26],
+  shieldexecutioner: [Types.Entities.SHIELDEXECUTIONER, "shield", "Executioner Shield", 48, 28],
+  shieldtemplar: [Types.Entities.SHIELDTEMPLAR, "shield", "Templar Shield", 50, 28],
+  shielddragon: [Types.Entities.SHIELDDRAGON, "shield", "Dragon Shield", 50, 28],
+  shieldmoon: [Types.Entities.SHIELDMOON, "shield", "Moon Shield", 52, 30],
+  shielddemon: [Types.Entities.SHIELDDEMON, "shield", "Demon Shield", 54, 32],
+  shieldmystical: [Types.Entities.SHIELDMYSTICAL, "shield", "Mystical Shield", 54, 32],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -843,6 +907,7 @@ export const kinds = {
   powdergreen: [Types.Entities.POWDERGREEN, "item", "Poison Powder"],
   powderred: [Types.Entities.POWDERRED, "item", "Blood Powder"],
   powderquantum: [Types.Entities.POWDERQUANTUM, "item", "Quantum Powder"],
+  mushrooms: [Types.Entities.MUSHROOMS, "item", "Mushrooms"],
 
   // kind, type, name, level
   "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 1],
@@ -973,6 +1038,27 @@ Types.rankedWeapons = [
   Types.Entities.MINOTAURAXE,
 ];
 
+Types.rankedHelms = [
+  Types.Entities.HELMCLOTH,
+  Types.Entities.HELMLEATHER,
+  Types.Entities.HELMMAIL,
+  Types.Entities.HELMPLATE,
+  Types.Entities.HELMRED,
+  Types.Entities.HELMGOLDEN,
+  Types.Entities.HELMBLUE,
+  Types.Entities.HELMHORNED,
+  Types.Entities.HELMFROZEN,
+  Types.Entities.HELMDIAMOND,
+  Types.Entities.HELMEMERALD,
+  Types.Entities.HELMEXECUTIONER,
+  Types.Entities.HELMTEMPLAR,
+  Types.Entities.HELMDRAGON,
+  Types.Entities.HELMMOON,
+  Types.Entities.HELMDEMON,
+  Types.Entities.HELMMYSTICAL,
+  Types.Entities.HELMIMMORTAL,
+];
+
 Types.rankedArmors = [
   Types.Entities.CLOTHARMOR,
   Types.Entities.LEATHERARMOR,
@@ -1010,85 +1096,104 @@ Types.rankedBelts = [
 ];
 
 Types.itemUniqueMap = {
-  // name, level, attack
-  wirtleg: ["Bored Ape Yacht Club", 1, 5],
-  pickaxe: ["Extinction", 54, 34],
-  sword: ["Faketoshi", 1, 5],
-  axe: ["NonDisclosure Agreement", 2, 8],
-  morningstar: ["Block Latte", 3, 10],
-  bluesword: ["Acyclic Graph", 5, 15],
-  redsword: ["Volcanic Miner", 7, 18],
-  goldensword: ["Satoshi's Nephew", 12, 24],
-  blueaxe: ["Feeless Cutter", 14, 28],
-  bluemorningstar: ["Saylormoon", 16, 30],
-  frozensword: ["Broccolish Fury", 28, 34],
-  diamondsword: ["Inevitable", 44, 42],
-  minotauraxe: ["PoS4QoS", 46, 48],
-  emeraldsword: ["Non Fungible Token", 50, 60],
-  executionersword: ["The Grandfather", 52, 60],
-  templarsword: ["Panic Sell", 54, 62],
-  dragonsword: ["Balerion the Black Dread", 56, 62],
-  moonsword: ["Moon Boy", 61, 64],
-  demonaxe: ["Trustable", 62, 68],
-  mysticalsword: ["The Maximalist", 58, 66],
-  spikeglaive: ["WAGMI", 62, 72],
-  eclypsedagger: ["Ethereum Killer", 62, 72],
-  paladinaxe: ["Peer to Peer Digital Cash", 62, 70],
-  immortalsword: ["Least Error & Latency will Win", 62, 70],
-  hellhammer: ["Hephasto", 62, 62],
+  // Quest items
+  wirtleg: ["Bored Ape Yacht Club"],
+  pickaxe: ["Extinction"],
+  hellhammer: ["Hephasto"],
+
+  sword: ["Faketoshi"],
+  axe: ["NonDisclosure Agreement"],
+  morningstar: ["Block Latte"],
+  bluesword: ["Acyclic Graph"],
+  redsword: ["Volcanic Miner"],
+  goldensword: ["Satoshi's Nephew"],
+  blueaxe: ["Feeless Cutter"],
+  bluemorningstar: ["Saylormoon"],
+  frozensword: ["Broccolish Fury"],
+  diamondsword: ["Inevitable"],
+  minotauraxe: ["PoS4QoS"],
+  emeraldsword: ["Non Fungible Token"],
+  executionersword: ["The Grandfather"],
+  templarsword: ["Panic Sell"],
+  dragonsword: ["Balerion the Black Dread"],
+  moonsword: ["Moon Boy"],
+  demonaxe: ["Trustable"],
+  mysticalsword: ["The Maximalist"],
+  spikeglaive: ["WAGMI"],
+  eclypsedagger: ["Ethereum Killer"],
+  paladinaxe: ["Peer to Peer Digital Cash"],
+  immortalsword: ["Least Error & Latency will Win"],
+
+  helmleather: ["Point of Sale"],
+  helmmail: ["Bull Run"],
+  helmplate: ["Roadmap"],
+  helmred: ["Community"],
+  helmgolden: ["IOU"],
+  helmblue: ["This is Huge"],
+  helmhorned: ["Only Up From Here"],
+  helmfrozen: ["Human Psychology"],
+  helmdiamond: ["New Listing"],
+  helmemerald: ["Code Proposal"],
+  helmexecutioner: ["10 Cents on the Dollar"],
+  helmtemplar: ["Captcha Distribution"],
+  helmdragon: ["Debt Ceiling"],
+  helmmoon: ["Return on Investment"],
+  helmdemon: ["Chapter 9"],
+  helmmystical: ["Crystal Ball"],
+  helmimmortal: [""],
 
   // name, level, defense
-  leatherarmor: ["Representative", 2, 5],
-  mailarmor: ["ForeX Guard", 4, 7],
-  platearmor: ["Green Alternative", 6, 12],
-  redarmor: ["Appia's Road", 8, 17],
-  goldenarmor: ["Store of Value", 12, 22],
-  bluearmor: ["Firano's Hide", 14, 26],
-  hornedarmor: ["RaiBlocks", 24, 30],
-  frozenarmor: ["Wall of Encrypted Energy", 28, 32],
-  diamondarmor: ["Zero-knowledge Proof", 38, 40],
-  emeraldarmor: ["Jungle Warcry", 50, 56],
-  templararmor: ["133 Club", 52, 58],
-  dragonarmor: ["BlackRock", 52, 58],
-  moonarmor: ["To The <strike>Moon</strike> Mars", 56, 60],
-  demonarmor: ["Explorer's Block", 54, 62],
-  mysticalarmor: ["Rug Pull", 56, 64],
-  paladinarmor: ["Fear Of Missing Out (FOMO)", 58, 70],
-  immortalarmor: ["Deploying More Capital", 60, 70],
+  leatherarmor: ["Representative"],
+  mailarmor: ["ForeX Guard"],
+  platearmor: ["Green Alternative"],
+  redarmor: ["Appia's Road"],
+  goldenarmor: ["Store of Value"],
+  bluearmor: ["Firano's Hide"],
+  hornedarmor: ["RaiBlocks"],
+  frozenarmor: ["Wall of Encrypted Energy"],
+  diamondarmor: ["Zero-knowledge Proof"],
+  emeraldarmor: ["Jungle Warcry"],
+  templararmor: ["133 Club"],
+  dragonarmor: ["BlackRock"],
+  moonarmor: ["To The <strike>Moon</strike> Mars"],
+  demonarmor: ["Explorer's Block"],
+  mysticalarmor: ["Rug Pull"],
+  paladinarmor: ["Fear Of Missing Out (FOMO)"],
+  immortalarmor: ["Deploying More Capital"],
 
   // name, level, defense
-  shieldwood: ["Liquidity Provider", 2, 3],
-  shieldiron: ["Bearer Token", 4, 4],
-  shieldplate: ["King Louie", 6, 6],
-  shieldred: ["Marstronaut", 8, 8],
-  shieldgolden: ["1 Ban = 1 Ban", 12, 12],
-  shieldblue: ["Cold Storage", 20, 14],
-  shieldhorned: ["Do Klost", 24, 16],
-  shieldfrozen: ["Probably Nothing", 28, 18],
-  shielddiamond: ["Diamond Hands", 38, 20],
-  shieldemerald: ["PermaBear", 50, 36],
-  shieldexecutioner: ["Clownbase", 50, 36],
-  shieldtemplar: ["NanoStrategy", 52, 38],
-  shielddragon: ["Airdrop", 52, 38],
-  shieldmoon: ["Fear Uncertainty Doubt (FUD)", 54, 40],
-  shielddemon: ["ORV > POW", 56, 42],
-  shieldmystical: ["Developer Fund", 56, 42],
+  shieldwood: ["Liquidity Provider"],
+  shieldiron: ["Bearer Token"],
+  shieldplate: ["King Louie"],
+  shieldred: ["Marstronaut"],
+  shieldgolden: ["1 Ban = 1 Ban"],
+  shieldblue: ["Cold Storage"],
+  shieldhorned: ["Do Klost"],
+  shieldfrozen: ["Probably Nothing"],
+  shielddiamond: ["Diamond Hands"],
+  shieldemerald: ["PermaBear"],
+  shieldexecutioner: ["Clownbase"],
+  shieldtemplar: ["NanoStrategy"],
+  shielddragon: ["Airdrop"],
+  shieldmoon: ["Fear Uncertainty Doubt (FUD)"],
+  shielddemon: ["ORV > POW"],
+  shieldmystical: ["Developer Fund"],
 
-  cape: ["Cloak of Levitation", 12, 2],
+  cape: ["Cloak of Levitation"],
 
   // name, level, defense
-  beltleather: ["Proof of Wear", 4, 4],
-  beltplated: ["Hodler", 9, 6],
-  beltfrozen: ["Spam Resistor", 24, 12],
-  belthorned: ["Dee-Fye", 28, 14],
-  beltdiamond: ["Election scheduler", 38, 20],
-  beltminotaur: ["TaaC", 40, 24],
-  beltemerald: ["CBDC", 54, 28],
-  beltexecutioner: ["Attack Vector", 54, 30],
-  belttemplar: ["99 on Huobi", 56, 30],
-  beltmoon: ["Commercial Grade", 58, 32],
-  beltdemon: ["1000 CPS", 58, 34],
-  beltmystical: ["Horizontal Scaling", 58, 34],
+  beltleather: ["Proof of Wear"],
+  beltplated: ["Hodler"],
+  beltfrozen: ["Spam Resistor"],
+  belthorned: ["Dee-Fye"],
+  beltdiamond: ["Election scheduler"],
+  beltminotaur: ["TaaC"],
+  beltemerald: ["CBDC"],
+  beltexecutioner: ["Attack Vector"],
+  belttemplar: ["99 on Huobi"],
+  beltmoon: ["Commercial Grade"],
+  beltdemon: ["1000 CPS"],
+  beltmystical: ["Horizontal Scaling"],
 };
 
 Types.isSuperUnique = (itemName: string) =>
@@ -1161,6 +1266,14 @@ Types.isSpell = function (kind: number) {
 
 Types.isCharacter = function (kind: number) {
   return Types.isMob(kind) || Types.isNpc(kind) || Types.isPlayer(kind);
+};
+
+Types.isHelm = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return kinds.getType(kindOrString) === "helm";
+  } else {
+    return kinds[kindOrString][1] === "helm";
+  }
 };
 
 Types.isArmor = function (kindOrString: number | string) {
@@ -1489,6 +1602,7 @@ Types.isSingle = function (kindOrString: number | string) {
       Types.Entities.POWDERRED,
       Types.Entities.POWDERQUANTUM,
       Types.Entities.PICKAXE,
+      Types.Entities.MUSHROOMS,
     ].includes(kindOrString);
   } else {
     return (
@@ -1507,6 +1621,7 @@ Types.isSingle = function (kindOrString: number | string) {
         "powderred",
         "powderquantum",
         "pickaxe",
+        "mushrooms",
       ].includes(kindOrString) ||
       kindOrString.startsWith("skeletonkingcage") ||
       kindOrString.startsWith("necromancerheart") ||
@@ -1516,7 +1631,8 @@ Types.isSingle = function (kindOrString: number | string) {
       kindOrString.startsWith("wing") ||
       kindOrString.startsWith("crystal") ||
       kindOrString.startsWith("powder") ||
-      kindOrString.startsWith("pickaxe")
+      kindOrString.startsWith("pickaxe") ||
+      kindOrString.startsWith("mushrooms")
     );
   }
 };
@@ -1534,6 +1650,7 @@ Types.isQuantity = function (kindOrString: number | string) {
 Types.isItem = function (kind: number) {
   return (
     Types.isWeapon(kind) ||
+    Types.isHelm(kind) ||
     Types.isArmor(kind) ||
     Types.isRing(kind) ||
     Types.isAmulet(kind) ||
@@ -1552,7 +1669,7 @@ Types.isItem = function (kind: number) {
 };
 
 Types.isSocketItem = function (kind: number) {
-  return Types.isWeapon(kind) || Types.isArmor(kind) || Types.isShield(kind);
+  return Types.isWeapon(kind) || Types.isHelm(kind) || Types.isArmor(kind) || Types.isShield(kind);
 };
 
 Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
@@ -1560,6 +1677,9 @@ Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
     case "weapon":
     case Slot.WEAPON:
       return Types.isWeapon(item);
+    case "helm":
+    case Slot.HELM:
+      return Types.isHelm(item);
     case "armor":
     case Slot.ARMOR:
       return Types.isArmor(item);
@@ -1772,43 +1892,6 @@ Types.waypoints = [
   },
 ];
 
-Types.forEachKind = function (callback: any) {
-  for (var k in kinds) {
-    callback(kinds[k][0], k);
-  }
-};
-
-Types.forEachArmor = function (callback) {
-  Types.forEachKind(function (kind, kindName) {
-    if (kind && Types.isArmor(kind)) {
-      callback(kind, kindName);
-    }
-  });
-};
-
-Types.forEachMobOrNpcKind = function (callback) {
-  Types.forEachKind(function (kind, kindName) {
-    if (kind && (Types.isMob(kind) || Types.isNpc(kind))) {
-      callback(kind, kindName);
-    }
-  });
-};
-
-Types.forEachArmorKind = function (callback) {
-  Types.forEachKind(function (kind, kindName) {
-    if (kind && Types.isArmor(kind)) {
-      callback(kind, kindName);
-    }
-  });
-};
-Types.forEachWeaponKind = function (callback) {
-  Types.forEachKind(function (kind, kindName) {
-    if (kind && Types.isWeapon(kind)) {
-      callback(kind, kindName);
-    }
-  });
-};
-
 Types.getOrientationAsString = function (orientation: number) {
   switch (orientation) {
     case Types.Orientations.LEFT:
@@ -1832,7 +1915,7 @@ Types.getOrientationAsString = function (orientation: number) {
 
 Types.getRandomItemKind = function () {
   var all = _.union(this.rankedWeapons, this.rankedArmors),
-    forbidden = [Types.Entities.DAGGER, Types.Entities.CLOTHARMOR],
+    forbidden = [Types.Entities.DAGGER, Types.Entities.CLOTHARMOR, Types.Entities.HELMCLOTH],
     itemKinds = _.difference(all, forbidden),
     i = Math.floor(Math.random() * _.size(itemKinds));
 
@@ -2197,6 +2280,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
   const isCape = Types.isCape(item);
   const isShield = Types.isShield(item);
   const isWeapon = Types.isWeapon(item);
+  const isHelm = Types.isHelm(item);
   const isArmor = Types.isArmor(item);
   const isUniqueRing = isRing && isUnique;
   const isUniqueAmulet = isAmulet && isUnique;
@@ -2205,6 +2289,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
   const isUniqueShield = isShield && isUnique;
   const isUniqueWeapon = isWeapon && isUnique;
   const isUniqueArmor = isArmor && isUnique;
+  const isUniqueHelm = isHelm && isUnique;
 
   const uniqueSuccessRateMap = {
     goldensword: 20,
@@ -2280,13 +2365,14 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     isUniqueCape ||
     isUniqueShield ||
     isUniqueWeapon ||
-    isUniqueArmor
+    isUniqueArmor ||
+    isUniqueHelm
   ) {
     return { transmuteSuccessRate, uniqueSuccessRate: 100 };
   } else if (!isUnique && uniqueSuccessRateMap[item]) {
     return {
       uniqueSuccessRate: uniqueSuccessRateMap[item] + (isBlessed ? 2 : 0),
-      ...(isRing || isAmulet || isCape || isShield || isWeapon || isArmor ? { transmuteSuccessRate } : null),
+      ...(isRing || isAmulet || isCape || isShield || isWeapon || isHelm || isArmor ? { transmuteSuccessRate } : null),
     };
   }
 
@@ -2298,7 +2384,10 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
 Types.getArmorDefense = function (armor: string, level: number, isUnique: boolean) {
   if (!armor || !level) return 0;
 
-  const defense = isUnique && Types.itemUniqueMap[armor] ? Types.itemUniqueMap[armor][2] : kinds[armor][4];
+  const itemClass = Types.getItemClass(armor, level);
+  const itemClassRank = Types.itemClassRank[itemClass];
+
+  const defense = kinds[armor][4] + (isUnique ? itemClassRank + 1 : 0);
   const defensePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 180, 205, 235];
   const defenseBonus = level >= 7 ? level - 6 : 0;
 
@@ -2308,13 +2397,16 @@ Types.getArmorDefense = function (armor: string, level: number, isUnique: boolea
 Types.getArmorHealthBonus = function (level: number) {
   if (!level) return 0;
 
-  const healthBonusPerLevel = [2, 4, 8, 14, 20, 30, 42, 60, 80, 110];
+  const healthBonusPerLevel = [1, 3, 6, 9, 12, 15, 20, 28, 35, 45];
 
   return healthBonusPerLevel[level - 1];
 };
 
 Types.getWeaponDamage = function (weapon: string, level: number, isUnique: boolean) {
-  const damage = isUnique && Types.itemUniqueMap[weapon] ? Types.itemUniqueMap[weapon][2] : kinds[weapon][4];
+  const itemClass = Types.getItemClass(weapon, level);
+  const itemClassRank = Types.itemClassRank[itemClass];
+
+  const damage = kinds[weapon][4] + (isUnique ? itemClassRank + 1 : 0);
   const damagePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 185, 215, 255];
   const damageBonus = level >= 7 ? Math.ceil((level - 6) * 2) : 0;
 
@@ -2339,8 +2431,8 @@ Types.isBaseLegendaryClassItem = (item: string) => {
   return baseLevel >= 48;
 };
 
-Types.getItemClass = function (item: string, level: number, isUnique: boolean) {
-  const baseLevel = Types.getItemBaseLevel(item, isUnique);
+Types.getItemClass = function (item: string, level?: number) {
+  const baseLevel = Types.getItemBaseLevel(item);
 
   return Types.getItemClassFromBaseLevel(level, baseLevel);
 };
@@ -2380,13 +2472,13 @@ Types.itemClassRank = {
   legendary: 3,
 };
 
-Types.getItemBaseLevel = function (item: string, isUnique: boolean) {
-  return isUnique && Types.itemUniqueMap[item] ? Types.itemUniqueMap[item][1] : kinds[item][3];
+Types.getItemBaseLevel = function (item: string) {
+  return kinds[item][3];
 };
 
-Types.getItemRequirement = function (item: string, level: number, isUnique: boolean) {
-  const baseLevel = Types.getItemBaseLevel(item, isUnique);
-  const multiplier = Types.getItemClass(item, level, isUnique) === "high" ? 1.5 : 1;
+Types.getItemRequirement = function (item: string, level: number) {
+  const baseLevel = Types.getItemBaseLevel(item);
+  const multiplier = Types.getItemClass(item, level) === "high" ? 1.5 : 1;
   const requirement = Math.floor(baseLevel + level * multiplier);
 
   return requirement;
@@ -2394,6 +2486,7 @@ Types.getItemRequirement = function (item: string, level: number, isUnique: bool
 
 Types.isUnique = function (item, rawBonus, level?: number) {
   const isWeapon = kinds[item][1] === "weapon";
+  const isHelm = kinds[item][1] === "helm";
   const isArmor = kinds[item][1] === "armor";
   const isBelt = kinds[item][1] === "belt";
   const isCape = kinds[item][1] === "cape";
@@ -2412,7 +2505,7 @@ Types.isUnique = function (item, rawBonus, level?: number) {
     isUnique = Types.isUniqueAmulet(item, bonus);
   } else if (isCape || isShield || isWeapon) {
     isUnique = bonus ? bonus.length >= 2 : false;
-  } else if (isBelt || isArmor) {
+  } else if (isBelt || isArmor || isHelm) {
     isUnique = bonus ? bonus.length >= 1 : false;
   } else if (isJewel) {
     isUnique = Types.isUniqueJewel(item, bonus, level);
@@ -2471,6 +2564,7 @@ Types.getItemDetails = function ({
   amount?: number;
 }) {
   const isWeapon = Types.isWeapon(item);
+  const isHelm = Types.isHelm(item);
   const isArmor = Types.isArmor(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
@@ -2487,7 +2581,7 @@ Types.getItemDetails = function ({
   const jewelRequirement = isJewel ? Types.getJewelRequirement(rawBonus) : null;
   const goldAmount = amount || getGoldAmountFromSoldItem({ item, level, socket: rawSocket });
 
-  // const isEquipment = isWeapon || isArmor || isBelt || isRing || isAmulet;
+  // const isEquipment = isWeapon || isHelm || isArmor || isBelt || isRing || isAmulet;
   let name = Types.getDisplayName(item, isUnique);
   let magicDamage = 0;
   let healthBonus = 0;
@@ -2504,7 +2598,7 @@ Types.getItemDetails = function ({
 
   const itemClass = isJewel
     ? Types.getItemClassFromBaseLevel(level, jewelRequirement)
-    : Types.getItemClass(item, level, isUnique);
+    : Types.getItemClass(item, level);
 
   if (isWeapon) {
     type = "weapon";
@@ -2520,6 +2614,9 @@ Types.getItemDetails = function ({
             itemClass,
           })
         : null;
+  } else if (isHelm) {
+    type = "helm";
+    healthBonus = Types.getArmorHealthBonus(level);
   } else if (isArmor) {
     type = "armor";
     healthBonus = Types.getArmorHealthBonus(level);
@@ -2544,7 +2641,7 @@ Types.getItemDetails = function ({
   } else if (isJewel) {
     requirement = jewelRequirement;
   } else if (!Types.isScroll(item) && !Types.isStone(item) && !Types.isChest(item) && !Types.isSingle(item)) {
-    requirement = Types.getItemRequirement(item, level, isUnique);
+    requirement = Types.getItemRequirement(item, level);
   }
   const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
 
@@ -2601,7 +2698,9 @@ Types.getItemDetails = function ({
     isJewel,
     isStone,
     itemClass,
-    ...(isArmor || isBelt || isCape || isShield ? { defense: Types.getArmorDefense(item, level, isUnique) } : null),
+    ...(isHelm || isArmor || isBelt || isCape || isShield
+      ? { defense: Types.getArmorDefense(item, level, isUnique) }
+      : null),
     ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
     healthBonus,
     magicDamage,
@@ -2646,6 +2745,7 @@ Types.itemDescription = {
   powderred: "A special kind of powder.",
   powderquantum: "The ultimate powder that powers the Gateway.",
   pickaxe: "This tool is used for digging.",
+  mushrooms: "Mushrooms have the power to distort reality and summon otherworldly creatures.",
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",

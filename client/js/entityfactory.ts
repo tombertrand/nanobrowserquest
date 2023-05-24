@@ -345,12 +345,80 @@ EntityFactory.builders[Types.Entities.MORNINGSTAR] = function (id) {
   return new Items.MorningStar(id);
 };
 
-EntityFactory.builders[Types.Entities.MAILARMOR] = function (id) {
-  return new Items.MailArmor(id);
+EntityFactory.builders[Types.Entities.HELMLEATHER] = function (id) {
+  return new Items.HelmLeather(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMMAIL] = function (id) {
+  return new Items.HelmMail(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMPLATE] = function (id) {
+  return new Items.HelmPlate(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMRED] = function (id) {
+  return new Items.HelmRed(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMGOLDEN] = function (id) {
+  return new Items.HelmGolden(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMBLUE] = function (id) {
+  return new Items.HelmBlue(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMHORNED] = function (id) {
+  return new Items.HelmHorned(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMFROZEN] = function (id) {
+  return new Items.HelmFrozen(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMDIAMOND] = function (id) {
+  return new Items.HelmDiamond(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMEMERALD] = function (id) {
+  return new Items.HelmEmerald(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMEXECUTIONER] = function (id) {
+  return new Items.HelmExecutioner(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMTEMPLAR] = function (id) {
+  return new Items.HelmTemplar(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMDRAGON] = function (id) {
+  return new Items.HelmDragon(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMMOON] = function (id) {
+  return new Items.HelmMoon(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMDEMON] = function (id) {
+  return new Items.HelmDemon(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMMYSTICAL] = function (id) {
+  return new Items.HelmMystical(id);
+};
+
+EntityFactory.builders[Types.Entities.HELMIMMORTAL] = function (id) {
+  return new Items.HelmImmortal(id);
 };
 
 EntityFactory.builders[Types.Entities.LEATHERARMOR] = function (id) {
   return new Items.LeatherArmor(id);
+};
+
+EntityFactory.builders[Types.Entities.MAILARMOR] = function (id) {
+  return new Items.MailArmor(id);
 };
 
 EntityFactory.builders[Types.Entities.PLATEARMOR] = function (id) {
@@ -971,6 +1039,10 @@ EntityFactory.builders[Types.Entities.POWDERQUANTUM] = function (id) {
 
 EntityFactory.builders[Types.Entities.PICKAXE] = function (id) {
   return new Items.Pickaxe(id);
+};
+
+EntityFactory.builders[Types.Entities.MUSHROOMS] = function (id) {
+  return new Items.Mushrooms(id);
 };
 
 EntityFactory.builders[Types.Entities.FIREFOXPOTION] = function (id) {

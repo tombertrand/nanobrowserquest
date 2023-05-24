@@ -21,4 +21,5 @@ export const Slot = {
   AMULET: 105,
   CAPE: 106,
   SHIELD: 107,
+  HELM: 108,
 };

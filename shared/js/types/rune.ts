@@ -769,7 +769,7 @@ export const Runewords = {
         health: 60,
         defense: 20,
         absorbedDamage: 15,
-        attackDamage: 10,
+        attackDamage: 15,
         minDamage: 15,
       },
     },

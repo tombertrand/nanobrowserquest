@@ -67,6 +67,24 @@ import executionersword from "../sprites/weapon.json";
 import mysticalsword from "../sprites/weapon.json";
 import dragonsword from "../sprites/weapon.json";
 import hellhammer from "../sprites/weapon.json";
+import helmcloth from "../sprites/armor.json";
+import helmleather from "../sprites/armor.json";
+import helmmail from "../sprites/armor.json";
+import helmplate from "../sprites/armor.json";
+import helmred from "../sprites/armor.json";
+import helmgolden from "../sprites/armor.json";
+import helmblue from "../sprites/armor.json";
+import helmhorned from "../sprites/armor.json";
+import helmfrozen from "../sprites/armor.json";
+import helmdiamond from "../sprites/armor.json";
+import helmemerald from "../sprites/armor.json";
+import helmexecutioner from "../sprites/armor.json";
+import helmtemplar from "../sprites/armor.json";
+import helmdragon from "../sprites/armor.json";
+import helmmoon from "../sprites/armor.json";
+import helmdemon from "../sprites/armor.json";
+import helmmystical from "../sprites/armor.json";
+import helmimmortal from "../sprites/armor.json";
 import clotharmor from "../sprites/armor.json";
 import leatherarmor from "../sprites/armor.json";
 import mailarmor from "../sprites/armor.json";
@@ -220,7 +238,6 @@ const sprites = {
   boss,
   skeletoncommander,
   chest,
-  clotharmor,
   coder,
   crab,
   death,
@@ -436,6 +453,7 @@ const sprites = {
   "item-raiblocksbr": item,
   "item-wirtleg": item,
   "item-pickaxe": item,
+  "item-mushrooms": item,
   "item-skeletonkingcage": item,
   "item-necromancerheart": item,
   "item-cowkinghorn": item,
@@ -508,6 +526,23 @@ const sprites = {
   "item-mysticalsword": item,
   "item-dragonsword": item,
   "item-hellhammer": item,
+  "item-helmleather": item,
+  "item-helmmail": item,
+  "item-helmplate": item,
+  "item-helmred": item,
+  "item-helmgolden": item,
+  "item-helmblue": item,
+  "item-helmhorned": item,
+  "item-helmfrozen": item,
+  "item-helmdiamond": item,
+  "item-helmemerald": item,
+  "item-helmexecutioner": item,
+  "item-helmtemplar": item,
+  "item-helmdragon": item,
+  "item-helmmoon": item,
+  "item-helmdemon": item,
+  "item-helmmystical": item,
+  "item-helmimmortal": item,
   "item-leatherarmor": item,
   "item-mailarmor": item,
   "item-morningstar": item,
@@ -518,6 +553,25 @@ const sprites = {
   "item-sword": item,
   king,
   lavanpc,
+  helmcloth,
+  helmleather,
+  helmmail,
+  helmplate,
+  helmred,
+  helmgolden,
+  helmblue,
+  helmhorned,
+  helmfrozen,
+  helmdiamond,
+  helmemerald,
+  helmexecutioner,
+  helmtemplar,
+  helmdragon,
+  helmmoon,
+  helmdemon,
+  helmmystical,
+  helmimmortal,
+  clotharmor,
   leatherarmor,
   loot,
   mailarmor,

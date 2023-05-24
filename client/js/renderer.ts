@@ -542,6 +542,63 @@ class Renderer {
     }
   }
 
+  drawHelm(entity) {
+    var sprite = this.game.getSprite(entity.helmName);
+    var anim = entity.currentAnimation;
+    var spriteImage = sprite.image;
+
+    let isFilterApplied = false;
+
+    if (sprite?.width && anim) {
+      var os = this.upscaledRendering ? 1 : this.scale;
+      var ds = this.upscaledRendering ? this.scale : 1;
+
+      var frame = anim.currentFrame,
+        s = this.scale,
+        x = frame.x * os,
+        y = frame.y * os,
+        w = sprite.width * os,
+        h = sprite.height * os,
+        ox = sprite.offsetX * s,
+        oy = sprite.offsetY * s,
+        dw = w * ds,
+        dh = h * ds;
+
+      if (entity.helmLevel >= 7) {
+        isFilterApplied = true;
+
+        const brightness = this.calculateBrightnessPerLevel(entity.helmLevel);
+        this.context.filter = `brightness(${brightness}%)`;
+      }
+
+      if (
+        [
+          "helmhorned",
+          "helmfrozen",
+          "helmdiamond",
+          "helmemerald",
+          "helmexecutioner",
+          "helmtemplar",
+          "helmdragon",
+          "helmmoon",
+          "helmdemon",
+          "helmmystical",
+          "helmimmortal",
+          // "helmpaladin",
+        ].includes(sprite.name) &&
+        entity.helmBonus?.length
+      ) {
+        spriteImage = sprite.imageunique;
+      }
+
+      this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
+
+      if (isFilterApplied) {
+        this.context.filter = "brightness(100%)";
+      }
+    }
+  }
+
   setDrawEntityName(isDrawEntityName: boolean) {
     this.isDrawEntityName = isDrawEntityName;
   }
@@ -662,6 +719,7 @@ class Renderer {
           }
           if (entity.capeOrientation === Types.Orientations.UP) {
             this.drawShield(entity);
+            this.drawHelm(entity);
           }
 
           if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
@@ -669,25 +727,6 @@ class Renderer {
 
             const brightness = this.calculateBrightnessPerLevel(entity.armorLevel);
             this.context.filter = `brightness(${brightness}%)`;
-          }
-
-          if (
-            [
-              "hornedarmor",
-              "frozenarmor",
-              "diamondarmor",
-              "emeraldarmor",
-              "templararmor",
-              "dragonarmor",
-              "moonarmor",
-              "demonarmor",
-              "mysticalarmor",
-              "paladinarmor",
-              "immortalarmor",
-            ].includes(sprite.name) &&
-            entity.armorBonus?.length
-          ) {
-            spriteImage = sprite.imageunique;
           }
         }
 
@@ -720,6 +759,7 @@ class Renderer {
             this.drawCape(entity);
           }
           if (entity.capeOrientation !== Types.Orientations.UP) {
+            this.drawHelm(entity);
             this.drawShield(entity);
           }
         }
@@ -1325,9 +1365,10 @@ class Renderer {
   loadPlayerImage() {
     const hasShield = this.game.player.shieldName;
     const hasCape = this.game.player.cape;
-    const totalCount = 2 + (hasShield ? 1 : 0) + (hasCape ? 1 : 0);
+    const totalCount = 3 + (hasShield ? 1 : 0) + (hasCape ? 1 : 0);
     let currentCount = 0;
 
+    const helmSprite = this.game.getSprite(this.game.player.getHelmName());
     const weaponSprite = this.game.getSprite(this.game.player.getWeaponName());
     const armorSprite = this.game.player.getArmorSprite();
 
@@ -1341,6 +1382,9 @@ class Renderer {
       capeSprite = this.game.getSprite("cape");
     }
 
+    if (helmSprite?.image?.width) {
+      currentCount += 1;
+    }
     if (weaponSprite?.image?.width) {
       currentCount += 1;
     }
@@ -1355,24 +1399,21 @@ class Renderer {
     }
 
     if (totalCount === currentCount) {
-      this.getPlayerImage({ weaponSprite, armorSprite, shieldSprite, capeSprite });
+      this.getPlayerImage({ weaponSprite, helmSprite, armorSprite, shieldSprite, capeSprite });
     } else {
       setTimeout(() => this.loadPlayerImage(), 250);
     }
   }
 
-  getPlayerImage({ weaponSprite, armorSprite, shieldSprite, capeSprite }) {
+  getPlayerImage({ weaponSprite, helmSprite, armorSprite, shieldSprite, capeSprite }) {
     var canvas = document.createElement("canvas"),
       ctx = canvas.getContext("2d"),
       os = this.upscaledRendering ? 1 : this.scale,
       // sprite = this.game.player.getArmorSprite(),
       spriteAnim = armorSprite.animationData["idle_down"],
       // character
-      row = spriteAnim.row,
-      w = armorSprite.width * os,
-      h = armorSprite.height * os,
-      y = row * h,
       // cape
+      // helm
       row = spriteAnim.row,
       w = armorSprite.width * os,
       h = armorSprite.height * os,
@@ -1393,24 +1434,25 @@ class Renderer {
     canvas.width = w;
     canvas.height = h;
 
-    let armorImage = armorSprite.image;
+    let helmImage = helmSprite.image;
     if (
       [
-        "hornedarmor",
-        "frozenarmor",
-        "diamondarmor",
-        "emeraldarmor",
-        "templararmor",
-        "dragonarmor",
-        "moonarmor",
-        "demonarmor",
-        "mysticalarmor",
-        "immortalarmor",
-        "paladinarmor",
-      ].includes(this.game.player.armorName) &&
-      this.game.player.armorBonus?.length
+        "helmhorned",
+        "helmfrozen",
+        "helmdiamond",
+        "helmemerald",
+        "helmexecutioner",
+        "helmtemplar",
+        "helmdragon",
+        "helmmoon",
+        "helmdemon",
+        "helmmystical",
+        "helmimmortal",
+        // "helmpaladin",
+      ].includes(this.game.player.helmName) &&
+      this.game.player.helmBonus?.length
     ) {
-      armorImage = armorSprite.imageunique;
+      helmImage = helmSprite.imageunique;
     }
 
     ctx.clearRect(0, 0, w, h);
@@ -1422,7 +1464,8 @@ class Renderer {
       }
       ctx.drawImage(capeImage, 0, y, w, h, 2, 2, w, h);
     }
-    ctx.drawImage(armorImage, 0, y, w, h, 2, 2, w, h);
+    ctx.drawImage(armorSprite.image, 0, y, w, h, 2, 2, w, h);
+    ctx.drawImage(helmImage, 0, y, w, h, 2, 2, w, h);
     if (this.game.player.shieldName) {
       ctx.drawImage(shieldSprite.image, 0, y, w, h, 2, 2, w, h);
     }

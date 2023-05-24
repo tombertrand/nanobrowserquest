@@ -63,9 +63,7 @@ var Properties: any = {
   },
   wizard: {
     drops: {
-      flask: 50,
-      platearmor: 20,
-      firefoxpotion: 5,
+      flask: 100,
     },
     hp: 100,
     armor: 2,
@@ -75,6 +73,7 @@ var Properties: any = {
     drops: {
       flask: 25,
       mailarmor: 10,
+      helmmail: 10,
       axe: 15,
       firefoxpotion: 5,
       scrollupgrademedium: 10,
@@ -90,7 +89,8 @@ var Properties: any = {
   ogre: {
     drops: {
       flask: 25,
-      platearmor: 15,
+      helmplate: 15,
+      platearmor: 10,
       firefoxpotion: 5,
       scrollupgrademedium: 13,
       ringbronze: 5,
@@ -106,6 +106,7 @@ var Properties: any = {
     drops: {
       flask: 30,
       mailarmor: 10,
+      helmmail: 10,
       firefoxpotion: 5,
       scrollupgradelow: 5,
       scrollupgrademedium: 13,
@@ -121,6 +122,7 @@ var Properties: any = {
   skeleton2: {
     drops: {
       flask: 25,
+      helmplate: 15,
       platearmor: 10,
       bluesword: 10,
       firefoxpotion: 5,
@@ -136,6 +138,7 @@ var Properties: any = {
   eye: {
     drops: {
       flask: 35,
+      helmred: 12,
       redarmor: 12,
       firefoxpotion: 5,
       scrollupgrademedium: 15,
@@ -181,7 +184,8 @@ var Properties: any = {
   },
   boss: {
     drops: {
-      goldensword: 70,
+      goldensword: 35,
+      helmgolden: 35,
       skeletonkingcage: 30,
     },
     hp: 1200,
@@ -190,10 +194,11 @@ var Properties: any = {
   },
   rat2: {
     drops: {
-      rejuvenationpotion: 70,
+      rejuvenationpotion: 60,
       bluearmor: 5,
       scrollupgradehigh: 4,
       shieldblue: 3,
+      helmblue: 5,
       gold: 10,
     },
     hp: 240,
@@ -202,8 +207,9 @@ var Properties: any = {
   },
   bat2: {
     drops: {
-      rejuvenationpotion: 60,
+      rejuvenationpotion: 50,
       blueaxe: 5,
+      helmblue: 5,
       beltfrozen: 3,
       scrollupgradehigh: 4,
       shieldblue: 3,
@@ -215,8 +221,9 @@ var Properties: any = {
   },
   goblin2: {
     drops: {
-      rejuvenationpotion: 70,
+      rejuvenationpotion: 50,
       blueaxe: 5,
+      helmblue: 5,
       beltfrozen: 5,
       scrollupgradehigh: 4,
       amuletgold: 1,
@@ -229,11 +236,12 @@ var Properties: any = {
   },
   werewolf: {
     drops: {
-      rejuvenationpotion: 65,
+      rejuvenationpotion: 60,
       scrollupgradehigh: 4,
       bluearmor: 3,
       bluemorningstar: 3,
       beltfrozen: 3,
+      helmblue: 5,
       ringgold: 2,
       amuletgold: 1,
       shieldblue: 3,
@@ -245,8 +253,9 @@ var Properties: any = {
   },
   yeti: {
     drops: {
-      rejuvenationpotion: 70,
+      rejuvenationpotion: 65,
       bluearmor: 3,
+      helmblue: 5,
       bluemorningstar: 3,
       scrollupgradehigh: 4,
       ringgold: 3,
@@ -259,10 +268,11 @@ var Properties: any = {
   },
   skeleton3: {
     drops: {
-      rejuvenationpotion: 70,
+      rejuvenationpotion: 65,
       scrollupgradehigh: 4,
       hornedarmor: 3,
       belthorned: 1,
+      helmhorned: 3,
       ringgold: 2,
       amuletgold: 1,
       shieldhorned: 2,
@@ -275,7 +285,8 @@ var Properties: any = {
   skeletoncommander: {
     drops: {
       scrollupgradehigh: 4,
-      belthorned: 1,
+      belthorned: 3,
+      helmhorned: 3,
       hornedarmor: 5,
       ringgold: 4,
       amuletgold: 3,
@@ -287,14 +298,15 @@ var Properties: any = {
   },
   snake2: {
     drops: {
-      rejuvenationpotion: 65,
-      beltfrozen: 1,
+      rejuvenationpotion: 60,
+      beltfrozen: 3,
       belthorned: 3,
       scrollupgradehigh: 4,
       ringgold: 3,
       amuletgold: 2,
       shieldhorned: 2,
       shieldfrozen: 2,
+      helmfrozen: 2,
       gold: 10,
     },
     hp: 420,
@@ -308,6 +320,7 @@ var Properties: any = {
       belthorned: 1,
       shieldhorned: 1,
       shieldfrozen: 2,
+      helmfrozen: 2,
       scrollupgradehigh: 4,
       ringgold: 3,
       amuletgold: 2,
@@ -324,6 +337,7 @@ var Properties: any = {
       ringgold: 2,
       amuletgold: 2,
       shieldfrozen: 1,
+      helmfrozen: 1,
       gold: 10,
     },
     hp: 305,
@@ -337,6 +351,7 @@ var Properties: any = {
       ringgold: 4,
       amuletgold: 4,
       shieldfrozen: 4,
+      helmfrozen: 4,
       ringnecromancer: 1,
     },
     hp: 3000,
@@ -346,7 +361,9 @@ var Properties: any = {
   cow: {
     drops: {
       rejuvenationpotion: 40,
+      helmhorned: 1,
       hornedarmor: 1,
+      helmfrozen: 1,
       frozenarmor: 1,
       frozensword: 1,
       beltfrozen: 1,
@@ -364,6 +381,7 @@ var Properties: any = {
   },
   cowking: {
     drops: {
+      helmdiamond: 8,
       diamondsword: 8,
       diamondarmor: 8,
       beltdiamond: 8,
@@ -397,6 +415,7 @@ var Properties: any = {
       scrollupgradelegendary: 2,
       amuletplatinum: 2,
       ringplatinum: 2,
+      helmemerald: 2,
       emeraldsword: 2,
       emeraldarmor: 2,
       beltemerald: 2,
@@ -413,10 +432,12 @@ var Properties: any = {
       scrollupgradelegendary: 3,
       ringplatinum: 2,
       amuletplatinum: 2,
+      helmexecutioner: 1,
       executionersword: 1,
       executionerarmor: 1,
       beltexecutioner: 1,
       shieldexecutioner: 1,
+      helmemerald: 1,
       emeraldsword: 1,
       emeraldarmor: 1,
       beltemerald: 1,
@@ -436,6 +457,7 @@ var Properties: any = {
       executionersword: 2,
       executionerarmor: 2,
       beltexecutioner: 2,
+      helmexecutioner: 2,
       shieldexecutioner: 2,
       gold: 12,
     },
@@ -452,7 +474,9 @@ var Properties: any = {
       executionersword: 1,
       executionerarmor: 1,
       beltexecutioner: 1,
+      helmexecutioner: 1,
       shieldexecutioner: 1,
+      helmemerald: 1,
       emeraldsword: 1,
       emeraldarmor: 1,
       beltemerald: 1,
@@ -472,6 +496,7 @@ var Properties: any = {
       executionersword: 2,
       executionerarmor: 2,
       beltexecutioner: 2,
+      helmexecutioner: 2,
       shieldexecutioner: 2,
       gold: 10,
     },
@@ -488,7 +513,9 @@ var Properties: any = {
       executionersword: 1,
       executionerarmor: 1,
       beltexecutioner: 1,
+      helmexecutioner: 1,
       shieldexecutioner: 1,
+      helmdragon: 1,
       dragonsword: 1,
       dragonarmor: 1,
       shielddragon: 1,
@@ -508,6 +535,7 @@ var Properties: any = {
       templararmor: 2,
       belttemplar: 2,
       shieldtemplar: 2,
+      helmtemplar: 2,
       gold: 10,
     },
     hp: 1150,
@@ -521,6 +549,7 @@ var Properties: any = {
       ringplatinum: 2,
       amuletplatinum: 2,
       dragonsword: 2,
+      helmdragon: 2,
       dragonarmor: 2,
       shielddragon: 2,
       gold: 12,
@@ -536,6 +565,7 @@ var Properties: any = {
       ringplatinum: 2,
       amuletplatinum: 2,
       templarsword: 2,
+      helmtemplar: 2,
       templararmor: 2,
       belttemplar: 2,
       shieldtemplar: 2,
@@ -568,6 +598,7 @@ var Properties: any = {
       ringplatinum: 2,
       amuletplatinum: 2,
       poisonpotion: 10,
+      helmdragon: 2,
       dragonsword: 2,
       dragonarmor: 2,
       shielddragon: 2,
@@ -585,6 +616,7 @@ var Properties: any = {
       amuletplatinum: 2,
       poisonpotion: 10,
       dragonsword: 2,
+      helmdragon: 2,
       dragonarmor: 2,
       shielddragon: 2,
       gold: 12,
@@ -600,6 +632,7 @@ var Properties: any = {
       amuletplatinum: 5,
       poisonpotion: 33,
       dragonsword: 5,
+      helmdragon: 5,
       dragonarmor: 5,
       shielddragon: 5,
     },
@@ -625,7 +658,7 @@ var Properties: any = {
     },
     hp: 12_500,
     armor: 38,
-    weapon: 32,
+    weapon: 33,
   },
   wraith2: {
     drops: {
@@ -634,6 +667,7 @@ var Properties: any = {
       ringplatinum: 3,
       amuletplatinum: 3,
       moonsword: 3,
+      helmmoon: 3,
       moonarmor: 3,
       beltmoon: 3,
       shieldmoon: 3,
@@ -650,6 +684,7 @@ var Properties: any = {
       ringplatinum: 2,
       amuletplatinum: 2,
       moonsword: 3,
+      helmmoon: 3,
       moonarmor: 3,
       beltmoon: 3,
       shieldmoon: 3,
@@ -664,6 +699,7 @@ var Properties: any = {
       rejuvenationpotion: 15,
       scrollupgradelegendary: 3,
       mysticalsword: 2,
+      helmmystical: 2,
       mysticalarmor: 2,
       beltmystical: 2,
       shieldmystical: 2,
@@ -676,6 +712,7 @@ var Properties: any = {
       ringplatinum: 3,
       amuletplatinum: 3,
       moonsword: 5,
+      helmmooon: 5,
       moonarmor: 5,
       beltmoon: 5,
       shieldmoon: 5,
@@ -699,6 +736,7 @@ var Properties: any = {
       scrollupgradelegendary: 40,
       scrollupgradesacred: 2,
       mysticalsword: 5,
+      helmmystical: 5,
       mysticalarmor: 5,
       beltmystical: 5,
       shieldmystical: 5,
@@ -708,6 +746,15 @@ var Properties: any = {
     armor: 34,
     weapon: 40,
   },
+};
+
+Properties.getHelmLevel = function (kind) {
+  try {
+    return Types.getHelmRank(kind) + 1;
+  } catch (err) {
+    console.error("No level found for armor: " + Types.getKindAsString(kind));
+    console.error("Error stack: " + err.stack);
+  }
 };
 
 Properties.getArmorLevel = function (kind) {
