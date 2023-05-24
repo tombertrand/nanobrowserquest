@@ -2529,9 +2529,9 @@ class World {
           if ([Types.Entities.SCROLLUPGRADEHIGH, Types.Entities.SCROLLUPGRADELEGENDARY].includes(itemKind)) {
             const lvlDifference = attacker.level - mobLevel;
 
-            if (lvlDifference >= 6) {
+            if (lvlDifference >= 8) {
               let reduction = 1;
-              if (lvlDifference >= 10 && lvlDifference < 14) {
+              if (lvlDifference >= 11 && lvlDifference < 14) {
                 reduction = 2;
               } else if (lvlDifference >= 14) {
                 reduction = 3;

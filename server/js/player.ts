@@ -745,7 +745,7 @@ class Player extends Character {
 
         const lever = self.server.getEntityById(message[1]);
 
-        if (Math.abs(self.x - lever.x) >= 3 && Math.abs(self.y - lever.y) >= 3) {
+        if (Math.abs(self.x - lever.x) >= 10 && Math.abs(self.y - lever.y) >= 10) {
           databaseHandler.banPlayerByIP({
             player: self,
             reason: "cheating",
