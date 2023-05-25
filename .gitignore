@@ -8,6 +8,7 @@ config_local*
 .project
 .idea
 .env
+dump.rdb
 browserquest.conf
 *.sublime-project
 *.sublime-workspace
