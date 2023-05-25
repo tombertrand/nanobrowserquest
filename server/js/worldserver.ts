@@ -2476,7 +2476,7 @@ class World {
       } else if (demonRandom === 555) {
         return "shielddemon";
       } else if (demonRandom === 699) {
-        return "amuletdemon";
+        return "helmdemon";
       }
     }
 
