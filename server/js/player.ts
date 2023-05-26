@@ -4,10 +4,10 @@ import { kinds, Types } from "../../shared/js/gametypes";
 import {
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_GRIMOIRE_INDEX,
+  ACHIEVEMENT_HERO_INDEX,
   ACHIEVEMENT_NFT_INDEX,
   ACHIEVEMENT_OBELISK_INDEX,
   ACHIEVEMENT_WING_INDEX,
-  ACHIEVEMENT_HERO_INDEX,
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
@@ -58,7 +58,6 @@ class Player extends Character {
   haters: {};
   lastCheckpoint: any;
   formatChecker: any;
-  disconnectTimeout: any;
   pvpFlag: boolean;
   bannedTime: number;
   banUseTime: number;
@@ -197,7 +196,6 @@ class Player extends Character {
     this.haters = {};
     this.lastCheckpoint = null;
     this.formatChecker = new FormatChecker();
-    this.disconnectTimeout = null;
 
     this.pvpFlag = false;
     this.bannedTime = 0;
@@ -275,8 +273,6 @@ class Player extends Character {
         self.connection.close("Cannot initiate handshake twice: " + message);
         return;
       }
-
-      self.resetTimeout();
 
       if (action === Types.Messages.CREATE || action === Types.Messages.LOGIN) {
         // Get IP from CloudFlare
@@ -1748,7 +1744,9 @@ class Player extends Character {
       if (self.firefoxpotionTimeout) {
         clearTimeout(self.firefoxpotionTimeout);
       }
-      clearTimeout(self.disconnectTimeout);
+      if (self.poisonedInterval) {
+        clearInterval(self.poisonedInterval);
+      }
       if (self.exit_callback) {
         self.exit_callback();
       }
@@ -2799,12 +2797,6 @@ class Player extends Character {
 
   onRequestPosition(callback) {
     this.requestpos_callback = callback;
-  }
-
-  resetTimeout() {
-    clearTimeout(this.disconnectTimeout);
-    if (ADMINS.includes(this.name)) return;
-    this.disconnectTimeout = setTimeout(this.timeout.bind(this), 1000 * 60 * 30); // 30 min.
   }
 
   timeout() {
