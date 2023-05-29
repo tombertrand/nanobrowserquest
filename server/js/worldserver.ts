@@ -1194,6 +1194,8 @@ class World {
         mob.isInsideTemple = true;
         mob.onMove(this.onMobMoveCallback.bind(this));
         mob.onDestroy(() => {
+          if (!this.templeLevelClock) return;
+
           this.mageTempleTotal--;
 
           if (this.mageTempleTotal === 0) {
