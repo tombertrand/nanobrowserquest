@@ -494,10 +494,22 @@ class Player extends Character {
           var x = message[1],
             y = message[2];
 
-          if (y >= 314 && !self.expansion1 && self.name !== "running-coder") {
-            self.connection.sendUTF8("invalidconnection");
-            self.connection.close("You have not unlocked the expansion.");
-            return;
+          if (self.name !== "running-coder") {
+            if (y >= 314 && !self.expansion1) {
+              databaseHandler.banPlayerByIP({
+                player: self,
+                reason: "cheating",
+                message: `haven't unlocked expension1, invalid position x:${x}, y:${y}`,
+              });
+              return;
+            } else if (y >= 540 && !self.expansion2) {
+              databaseHandler.banPlayerByIP({
+                player: self,
+                reason: "cheating",
+                message: `haven't unlocked expension2, invalid position x:${x}, y:${y}`,
+              });
+              return;
+            }
           }
 
           if (self.server.isValidPosition(x, y)) {
