@@ -151,6 +151,7 @@ export const Types: any = {
     HELMDEMON: 340,
     HELMMYSTICAL: 341,
     HELMIMMORTAL: 342,
+    HELMCLOWN: 343,
 
     // Armors
     FIREFOX: 20,
@@ -186,6 +187,7 @@ export const Types: any = {
     BELTDEMON: 204,
     BELTMOON: 205,
     BELTMYSTICAL: 202,
+    BELTGOLDWRAP: 344,
 
     // Capes
     CAPE: 130,
@@ -550,6 +552,7 @@ Types.Entities.Helms = [
   Types.Entities.HELMDEMON,
   Types.Entities.HELMMYSTICAL,
   Types.Entities.HELMIMMORTAL,
+  Types.Entities.HELMCLOWN,
 ];
 
 Types.Entities.Armors = [
@@ -586,6 +589,7 @@ Types.Entities.Belts = [
   Types.Entities.BELTMOON,
   Types.Entities.BELTDEMON,
   Types.Entities.BELTMYSTICAL,
+  Types.Entities.BELTGOLDWRAP,
 ];
 
 Types.Entities.Shields = [
@@ -764,6 +768,7 @@ export const kinds = {
   helmdemon: [Types.Entities.HELMDEMON, "helm", "Demon Helm", 50, 22],
   helmmystical: [Types.Entities.HELMMYSTICAL, "helm", "Mystical Helm", 52, 22],
   helmimmortal: [Types.Entities.HELMIMMORTAL, "helm", "Immortal Helm", 54, 24],
+  helmclown: [Types.Entities.HELMCLOWN, "helm", "Clown Helm", 42, 20],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -799,6 +804,7 @@ export const kinds = {
   beltmoon: [Types.Entities.BELTMOON, "belt", "Moon Belt", 54, 18],
   beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 54, 20],
   beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 54, 20],
+  beltgoldwrap: [Types.Entities.BELTGOLDWRAP, "belt", "Goldwrap", 42, 12],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 20, 2],
 
@@ -1057,6 +1063,7 @@ Types.rankedHelms = [
   Types.Entities.HELMDEMON,
   Types.Entities.HELMMYSTICAL,
   Types.Entities.HELMIMMORTAL,
+  Types.Entities.HELMCLOWN,
 ];
 
 Types.rankedArmors = [
@@ -1089,10 +1096,11 @@ Types.rankedBelts = [
   Types.Entities.BELTMINOTAUR,
   Types.Entities.BELTEMERALD,
   Types.Entities.BELTEXECUTIONER,
-  Types.Entities.BELTMYSTICAL,
   Types.Entities.BELTTEMPLAR,
   Types.Entities.BELTDEMON,
   Types.Entities.BELTMOON,
+  Types.Entities.BELTMYSTICAL,
+  Types.Entities.BELTGOLDWRAP,
 ];
 
 Types.itemUniqueMap = {
@@ -1141,6 +1149,7 @@ Types.itemUniqueMap = {
   helmdemon: ["Chapter 9"],
   helmmystical: ["Crystal Ball"],
   helmimmortal: [""],
+  helmclown: ["Clownbase"],
 
   // name, level, defense
   leatherarmor: ["Representative"],
@@ -1172,7 +1181,7 @@ Types.itemUniqueMap = {
   shieldfrozen: ["Probably Nothing"],
   shielddiamond: ["Diamond Hands"],
   shieldemerald: ["PermaBear"],
-  shieldexecutioner: ["Clownbase"],
+  shieldexecutioner: ["Inverse Cramer"],
   shieldtemplar: ["NanoStrategy"],
   shielddragon: ["Airdrop"],
   shieldmoon: ["Fear Uncertainty Doubt (FUD)"],
@@ -1194,6 +1203,7 @@ Types.itemUniqueMap = {
   beltmoon: ["Commercial Grade"],
   beltdemon: ["1000 CPS"],
   beltmystical: ["Horizontal Scaling"],
+  beltgoldwrap: ["Goldwrap"],
 };
 
 Types.isSuperUnique = (itemName: string) =>

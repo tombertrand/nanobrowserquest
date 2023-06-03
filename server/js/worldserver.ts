@@ -524,7 +524,7 @@ class World {
       }
     });
 
-    console.debug("Pushed " + _.size(ids) + " new spawns to " + player.id);
+    console.debug(`Pushed ${_.size(ids)} new spawns to ${player.name}: ${player.id}`);
   }
 
   pushToPlayer(player, message) {
@@ -2465,6 +2465,15 @@ class World {
           return "scrolltransmuteblessed";
         }
       }
+
+      if (mob.kind >= Types.Entities.OCULOTHORAX) {
+        const superUnqueRandom = random(10_000);
+        if (superUnqueRandom === 133) {
+          return "helmclown";
+        } else if (superUnqueRandom === 42) {
+          return "beltgoldwrap";
+        }
+      }
     }
 
     if (mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
@@ -2600,6 +2609,7 @@ class World {
       this.lootChests(mob, attacker);
     }
 
+    // var randomDrops = ["helmclown", "beltgoldwrap"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
     // var randomDrops = ["soulstone"];
@@ -2644,18 +2654,6 @@ class World {
     // "ringheaven",
     // "ringwizard",
     // "amuletplatinum",
-    // "beltemerald",
-    // "beltexecutioner",
-    // "beltmystical",
-    // "belttemplar",
-    // "beltdemon",
-    // "beltmoon",
-    // "shieldexecutioner",
-    // "shielddragon",
-    // "shielddemon",
-    // "shieldmoon",
-    // "shieldemerald",
-    // "shieldtemplar",
     // "ringbalrog",
     // "stonesocket",
     // "scrollupgradelegendary",
@@ -2691,15 +2689,6 @@ class World {
     // "rune-jah",
     // "rune-shi",
     // "rune-vod",
-    // "goldensword",
-    // "emeraldsword",
-    // "mysticalsword",
-    // "dragonsword",
-    // "executionersword",
-    // "eclypsedagger",
-    // "spikeglaive",
-    // "templarsword",
-    // "moonsword",
     // ];
     // var randomDrop = random(randomDrops.length);
     // itemName = randomDrops[randomDrop];

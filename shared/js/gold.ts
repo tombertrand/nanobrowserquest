@@ -86,6 +86,7 @@ export const itemGoldMap = {
   helmdemon: 110,
   helmmystical: 72,
   helmimmortal: 98,
+  helmclown: 150,
 
   leatherarmor: 2,
   mailarmor: 3,
@@ -134,6 +135,7 @@ export const itemGoldMap = {
   beltmoon: 42,
   beltdemon: 115,
   beltmystical: 75,
+  beltgoldwrap: 115,
 };
 
 export const getGoldAmountFromSoldItem = ({

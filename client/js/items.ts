@@ -282,6 +282,13 @@ var Items = {
     }
   },
 
+  HelmClown: class HelmClown extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMCLOWN, "helm");
+      this.lootMessage = "You pick up a clown helm";
+    }
+  },
+
   LeatherArmor: class LeatherArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.LEATHERARMOR, "armor");
@@ -457,13 +464,6 @@ var Items = {
     }
   },
 
-  BeltMystical: class BeltMystical extends Item {
-    constructor(id) {
-      super(id, Types.Entities.BELTMYSTICAL, "belt");
-      this.lootMessage = "You pick up a mystical belt";
-    }
-  },
-
   BeltTemplar: class BeltTemplar extends Item {
     constructor(id) {
       super(id, Types.Entities.BELTTEMPLAR, "belt");
@@ -482,6 +482,20 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.BELTMOON, "belt");
       this.lootMessage = "You pick up a moon belt";
+    }
+  },
+
+  BeltMystical: class BeltMystical extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTMYSTICAL, "belt");
+      this.lootMessage = "You pick up a mystical belt";
+    }
+  },
+
+  BeltGoldwrap: class BeltGoldwrap extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTGOLDWRAP, "belt");
+      this.lootMessage = "You pick up a goldwrap";
     }
   },
 

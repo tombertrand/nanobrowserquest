@@ -413,6 +413,10 @@ EntityFactory.builders[Types.Entities.HELMIMMORTAL] = function (id) {
   return new Items.HelmImmortal(id);
 };
 
+EntityFactory.builders[Types.Entities.HELMCLOWN] = function (id) {
+  return new Items.HelmClown(id);
+};
+
 EntityFactory.builders[Types.Entities.LEATHERARMOR] = function (id) {
   return new Items.LeatherArmor(id);
 };
@@ -513,10 +517,6 @@ EntityFactory.builders[Types.Entities.BELTEXECUTIONER] = function (id) {
   return new Items.BeltExecutioner(id);
 };
 
-EntityFactory.builders[Types.Entities.BELTMYSTICAL] = function (id) {
-  return new Items.BeltMystical(id);
-};
-
 EntityFactory.builders[Types.Entities.BELTTEMPLAR] = function (id) {
   return new Items.BeltTemplar(id);
 };
@@ -527,6 +527,14 @@ EntityFactory.builders[Types.Entities.BELTDEMON] = function (id) {
 
 EntityFactory.builders[Types.Entities.BELTMOON] = function (id) {
   return new Items.BeltMoon(id);
+};
+
+EntityFactory.builders[Types.Entities.BELTMYSTICAL] = function (id) {
+  return new Items.BeltMystical(id);
+};
+
+EntityFactory.builders[Types.Entities.BELTGOLDWRAP] = function (id) {
+  return new Items.BeltGoldwrap(id);
 };
 
 EntityFactory.builders[Types.Entities.CAPE] = function (id) {

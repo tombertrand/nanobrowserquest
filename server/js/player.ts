@@ -1795,6 +1795,28 @@ class Player extends Character {
     let isUnique = false;
     let item;
 
+    const lowLevelBonus = [0, 1, 2, 3];
+    const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
+    const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    const amuletHighLevelBonus = [9, 10];
+    const drainLifeBonus = [13];
+    const flameDamageBonus = [14];
+    const lightningDamageBonus = [15];
+    const pierceDamageBonus = [16];
+    const highHealthBonus = [17];
+    const coldDamageBonus = [18];
+    const freezeChanceBonus = [19];
+    const reduceFrozenChanceBonus = [20];
+    const resistances = [21, 22, 23, 24, 25];
+    const elementPercentage = [27, 28, 29, 30, 31];
+    const allResistance = [32];
+    const timeout = [35];
+    const elementDamage = [4, 14, 15, 16, 18, 34];
+    const lowerResistance = [36, 37, 38, 39, 40];
+    const lowerAllResistance = [41];
+    const extraGold = [42];
+    const magicFind = [11];
+
     // @TODO ~~~ remove once found why it errors out
     try {
       Types.isArmor(kind);
@@ -1813,6 +1835,10 @@ class Player extends Character {
 
       isUnique = randomIsUnique < uniqueChances;
 
+      if ([Types.Entities.HELMCLOWN, Types.Entities.BELTGOLDWRAP].includes(kind)) {
+        isUnique = true;
+      }
+
       const baseLevel = Types.getBaseLevel(kind);
       const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
       let bonus = [];
@@ -1820,17 +1846,23 @@ class Player extends Character {
 
       if (isUnique) {
         if (Types.isHelm(kind) || Types.isArmor(kind)) {
-          bonus = [6];
+          if (kind === Types.Entities.HELMCLOWN) {
+            bonus = _.shuffle(highLevelBonus).slice(0, 1).concat([32]);
+          } else {
+            bonus = [6];
+          }
         } else if (Types.isWeapon(kind)) {
           bonus = [3, 14];
         } else if (Types.isBelt(kind)) {
-          const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
-          bonus = _.shuffle(mediumLevelBonus).slice(0, 1).sort();
+          if (kind === Types.Entities.BELTGOLDWRAP) {
+            bonus = [...extraGold, ...magicFind];
+          } else {
+            bonus = _.shuffle(mediumLevelBonus).slice(0, 1).sort();
+          }
         }
       }
 
       if (Types.isShield(kind) && kind >= Types.Entities.SHIELDGOLDEN) {
-        const resistances = [21, 22, 23, 24, 25];
         skill = getRandomDefenseSkill();
         bonus = _.shuffle(resistances)
           .slice(0, isUnique ? 2 : 1)
@@ -1856,28 +1888,6 @@ class Player extends Character {
     } else if (Types.isRing(kind) || Types.isAmulet(kind) || Types.isJewel(kind)) {
       const randomIsUnique = random(100);
       isUnique = randomIsUnique < uniqueChances;
-
-      const lowLevelBonus = [0, 1, 2, 3];
-      const mediumLevelBonus = [0, 1, 2, 3, 4, 5];
-      const highLevelBonus = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-      const amuletHighLevelBonus = [9, 10];
-      const drainLifeBonus = [13];
-      const flameDamageBonus = [14];
-      const lightningDamageBonus = [15];
-      const pierceDamageBonus = [16];
-      const highHealthBonus = [17];
-      const coldDamageBonus = [18];
-      const freezeChanceBonus = [19];
-      const reduceFrozenChanceBonus = [20];
-      const resistances = [21, 22, 23, 24, 25];
-      const elementPercentage = [27, 28, 29, 30, 31];
-      const allResistance = [32];
-      const timeout = [35];
-      const elementDamage = [4, 14, 15, 16, 18, 34];
-      const lowerResistance = [36, 37, 38, 39, 40];
-      const lowerAllResistance = [41];
-      const extraGold = [42];
-      const magicFind = [11];
 
       let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
