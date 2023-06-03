@@ -1816,6 +1816,7 @@ class Player extends Character {
     const lowerAllResistance = [41];
     const extraGold = [42];
     const magicFind = [11];
+    const attackSpeed = [12];
 
     // @TODO ~~~ remove once found why it errors out
     try {
@@ -1847,7 +1848,16 @@ class Player extends Character {
       if (isUnique) {
         if (Types.isHelm(kind) || Types.isArmor(kind)) {
           if (kind === Types.Entities.HELMCLOWN) {
-            bonus = _.shuffle(highLevelBonus).slice(0, 1).concat([32]);
+            bonus = _.shuffle([
+              ...highLevelBonus,
+              ...elementDamage,
+              ...elementPercentage,
+              ...reduceFrozenChanceBonus,
+              ...timeout,
+              ...attackSpeed,
+            ])
+              .slice(0, 1)
+              .concat(allResistance);
           } else {
             bonus = [6];
           }

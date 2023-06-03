@@ -1230,6 +1230,8 @@ Types.isSuperUnique = (itemName: string) =>
     "stonedragon",
     "stonehero",
     "soulstone",
+    "helmclown",
+    "beltgoldwrap",
   ].includes(itemName);
 
 Types.getLevel = function (exp: number) {

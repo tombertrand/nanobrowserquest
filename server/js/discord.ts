@@ -148,4 +148,6 @@ export const EmojiMap = {
   nanocoins: "<:nanocoins:1097314083029663744>",
   bananocoins: "<:bananocoins:1097314050947432479>",
   bargold: "<:bargold:1099083224413655040>",
+  helmclown: "<:clownbase:1114554275226452049>",
+  beltgoldwrap: "<:goldwrap:1114554276350525482>",
 };

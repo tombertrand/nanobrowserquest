@@ -2466,8 +2466,8 @@ class World {
         }
       }
 
-      if (mob.kind >= Types.Entities.OCULOTHORAX) {
-        const superUnqueRandom = random(10_000);
+      if (mob.kind >= Types.Entities.GHOST) {
+        const superUnqueRandom = random(12_000);
         if (superUnqueRandom === 133) {
           return "helmclown";
         } else if (superUnqueRandom === 42) {
