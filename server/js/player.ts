@@ -2053,7 +2053,7 @@ class Player extends Character {
           bonus = _.shuffle(highLevelBonus)
             .slice(0, 2)
             .concat(_.shuffle(elementDamage).slice(0, 1))
-            .concat(_.shuffle(resistances).slice(0, 2));
+            .concat(_.shuffle([...resistances, ...extraGold, ...magicFind, ...attackSpeed]).slice(0, 2));
 
           if (isUnique) {
             bonus = bonus.concat(_.shuffle(elementPercentage).slice(0, 1));

@@ -4,8 +4,8 @@ export const PLAYER_MAX_RESISTANCES = 90;
 export const PLAYER_MAX_ATTACK_SPEED = 50;
 export const DEFAULT_ATTACK_SPEED = 800;
 export const DEFAULT_ATTACK_ANIMATION_SPEED = 50;
-export const PLAYER_MAX_EXTRA_GOLD = 50;
-export const PLAYER_MAX_MAGIC_FIND = 50;
+export const PLAYER_MAX_EXTRA_GOLD = 75;
+export const PLAYER_MAX_MAGIC_FIND = 75;
 
 export const mobEnchant: { [key: string]: Enchant[] } = {
   cowking: ["lightning"],
