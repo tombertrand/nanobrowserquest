@@ -1635,8 +1635,13 @@ class DatabaseHandler {
                 resolve(true);
               });
             } catch (err) {
-              console.log(err);
-              Sentry.captureException(err);
+              Sentry.captureException(err, {
+                extra: {
+                  player: player.name,
+                  items,
+                  toSlot,
+                },
+              });
               resolve(true);
             }
           });
