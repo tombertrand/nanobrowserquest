@@ -1,4 +1,3 @@
-
 import * as _ from "lodash";
 import { io } from "socket.io-client";
 
@@ -53,6 +52,7 @@ class GameClient {
   blink_callback: any;
   pvp_callback: any;
   bosscheck_callback: any;
+  deathangelcheck_callback: any;
   partycreate_callback: any;
   partyjoin_callback: any;
   partyrefuse_callback: any;
@@ -159,6 +159,7 @@ class GameClient {
     this.handlers[Types.Messages.TRADE] = this.receiveTrade;
     this.handlers[Types.Messages.PVP] = this.receivePVP;
     this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
+    this.handlers[Types.Messages.DEATHANGEL_CHECK] = this.receiveDeathAngelCheck;
     this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
     this.handlers[Types.Messages.INVENTORY] = this.receiveInventory;
     this.handlers[Types.Messages.STASH] = this.receiveStash;
@@ -213,8 +214,6 @@ class GameClient {
     var url = protocol + "://" + this.host + port + "/";
 
     console.info("Trying to connect to server : " + url);
-
-
 
     this.connection = null;
     this.connection = io(url, {
@@ -670,6 +669,11 @@ class GameClient {
     this.bosscheck_callback?.(data);
   }
 
+  receiveDeathAngelCheck(data) {
+    const coords = data[1];
+    this.deathangelcheck_callback?.(coords);
+  }
+
   receiveNotification(data) {
     this.receivenotification_callback?.(data);
   }
@@ -1096,6 +1100,10 @@ class GameClient {
 
   onBossCheck(callback) {
     this.bosscheck_callback = callback;
+  }
+
+  onDeathAngelCheck(callback) {
+    this.deathangelcheck_callback = callback;
   }
 
   onReceiveNotification(callback) {

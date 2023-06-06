@@ -216,6 +216,7 @@ var NpcTalk = {
   ],
   lever: [""],
   lever2: [""],
+  lever3: [""],
   grimoire: [
     "The grimoire contains secrets of life and death,<br/>and the power to control the fate of souls.",
     "It is said that whoever possesses the grimoire<br/>will have the power to control death itself.",

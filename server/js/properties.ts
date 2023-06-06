@@ -744,7 +744,7 @@ var Properties: any = {
     },
     hp: 20_000,
     armor: 34,
-    weapon: 40,
+    weapon: 1, //40,
   },
 };
 

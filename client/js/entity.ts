@@ -150,6 +150,7 @@ class Entity {
           this.kind === Types.Entities.MAGICSTONE ||
           this.kind === Types.Entities.LEVER ||
           this.kind === Types.Entities.LEVER2 ||
+          this.kind === Types.Entities.LEVER3 ||
           this.kind === Types.Entities.STATUE ||
           this.kind === Types.Entities.STATUE2 ||
           this.kind === Types.Entities.ALTARSOULSTONE ||

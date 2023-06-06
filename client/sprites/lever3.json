@@ -1,0 +1,21 @@
+{
+  "id": "lever3",
+  "width": 48,
+  "height": 48,
+  "animations": {
+    "idle_down": {
+      "length": 1,
+      "row": 0
+    },
+    "raise_down": {
+      "length": 11,
+      "row": 1
+    },
+    "walk_down": {
+      "length": 1,
+      "row": 2
+    }
+  },
+  "offset_x": -16,
+  "offset_y": -28
+}

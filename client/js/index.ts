@@ -291,29 +291,29 @@ var initApp = function () {
       app.animateParchment("loadcharacter", "loadcharacter");
     });
 
-    // $("#running-coder .link").on("click", () => {
-    //   $("#loginnameinput").val("running-coder").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#running-coder .link").on("click", () => {
+      $("#loginnameinput").val("running-coder").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
-    // $("#banano .link").on("click", () => {
-    //   $("#loginnameinput").val("banano").show();
-    //   $("#loginaccountinput").val("ban_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay").show();
-    //   app.tryStartingGame();
-    // });
+    $("#banano .link").on("click", () => {
+      $("#loginnameinput").val("banano").show();
+      $("#loginaccountinput").val("ban_1questzx4ym4ncmswhz3r4upwrxosh1hnic8ry8sbh694r48ajq95d1ckpay").show();
+      app.tryStartingGame();
+    });
 
-    // $("#running-coder1 .link").on("click", () => {
-    //   $("#loginnameinput").val("running-coder1").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#running-coder1 .link").on("click", () => {
+      $("#loginnameinput").val("running-coder1").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
-    // $("#hello .link").on("click", () => {
-    //   $("#loginnameinput").val("hello").show();
-    //   $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
-    //   app.tryStartingGame();
-    // });
+    $("#hello1 .link").on("click", () => {
+      $("#loginnameinput").val("hello1").show();
+      $("#loginaccountinput").val("nano_3j6ht184dt4imk5na1oyduxrzc6otig1iydfdaa4sgszne88ehcdbtp3c5y3").show();
+      app.tryStartingGame();
+    });
 
     $(".play span").click(function () {
       app.tryStartingGame();

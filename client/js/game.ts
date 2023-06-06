@@ -22,9 +22,9 @@ import {
 } from "../../shared/js/slots";
 import {
   ACHIEVEMENT_CRYSTAL_INDEX,
+  ACHIEVEMENT_HERO_INDEX,
   ACHIEVEMENT_NFT_INDEX,
   ACHIEVEMENT_WING_INDEX,
-  ACHIEVEMENT_HERO_INDEX,
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
 import { getGoldDeathPenaltyPercent, randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
@@ -88,6 +88,7 @@ class Game {
   stoneLevelPortalCoords: { x: number; y: number };
   gatewayPortalStart: boolean;
   gatewayLevelPortalCoords: { x: number; y: number };
+  deathAngelLevelPortalCoords: { x: number; y: number };
   renderer: Renderer;
   updater: Updater;
   pathfinder: Pathfinder;
@@ -242,6 +243,7 @@ class Game {
     this.stoneLevelPortalCoords = { x: 97, y: 728 };
     this.gatewayPortalStart = false;
     this.gatewayLevelPortalCoords = { x: 13, y: 777 };
+    this.deathAngelLevelPortalCoords = { x: 98, y: 764 };
     this.network = null;
     this.explorer = null;
     this.hoverSlotToDelete = null;
@@ -2894,7 +2896,14 @@ class Game {
         }
       });
 
-      self.player.onStopPathing(function ({ x, y, orientation = Types.Orientations.DOWN, confirmed, isWaypoint }) {
+      self.player.onStopPathing(function ({
+        x,
+        y,
+        orientation = Types.Orientations.DOWN,
+        confirmed,
+        isWaypoint,
+        isTeleportSent = false,
+      }) {
         // Start by unregistering the entity at its previous coords
         self.unregisterEntityPosition(self.player);
 
@@ -2925,9 +2934,16 @@ class Game {
           self.app.hideWindows();
 
           var dest = isWaypoint ? { x, y, orientation } : self.map.getDoorDestination(x, y);
-          if (!confirmed && x === 71 && y === 21 && dest.x === 155 && dest.y === 96 && self.player.level <= 24) {
-            self.client.sendBossCheck(false);
-            return;
+          if (!confirmed) {
+            if (x === 71 && y === 21 && dest.x === 155 && dest.y === 96 && self.player.level <= 24) {
+              self.client.sendBossCheck(false);
+              return;
+            }
+
+            if (dest.x === self.deathAngelLevelPortalCoords.x && dest.y === self.deathAngelLevelPortalCoords.y) {
+              self.client.sendTeleport(dest.x, dest.y);
+              return;
+            }
           }
 
           var desty = dest.y;
@@ -2951,7 +2967,10 @@ class Game {
           self.player.nextGridY = desty;
           self.player.turnTo(dest.orientation);
           self.player.idle();
-          self.client.sendTeleport(dest.x, desty);
+
+          if (!isTeleportSent) {
+            self.client.sendTeleport(dest.x, desty);
+          }
 
           if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
             self.camera.setGridPosition(dest.cameraX, dest.cameraY);
@@ -3207,6 +3226,13 @@ class Game {
                 } else {
                   entity.idle();
                 }
+              } else if (entity.kind === Types.Entities.DOORDEATHANGEL) {
+                entity.isActivated = isActivated;
+                if (entity.isActivated) {
+                  entity.walk();
+                } else {
+                  entity.idle();
+                }
               } else if (entity.kind === Types.Entities.MAGICSTONE) {
                 entity.isActivated = isActivated;
                 if (entity.isActivated) {
@@ -3214,7 +3240,11 @@ class Game {
                 } else {
                   entity.idle();
                 }
-              } else if (entity.kind === Types.Entities.LEVER || entity.kind === Types.Entities.LEVER2) {
+              } else if (
+                entity.kind === Types.Entities.LEVER ||
+                entity.kind === Types.Entities.LEVER2 ||
+                entity.kind === Types.Entities.LEVER3
+              ) {
                 entity.isActivated = isActivated;
                 if (entity.isActivated) {
                   entity.walk();
@@ -3973,9 +4003,20 @@ class Game {
             self.activatedMagicStones.push(mobId);
 
             mob.animate("raise", mob.raiseSpeed, 1, () => mob.walk());
-          } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVER2) {
-            self.audioManager.playSound("lever");
+          } else if (
+            mob.kind === Types.Entities.LEVER ||
+            mob.kind === Types.Entities.LEVER2 ||
+            mob.kind === Types.Entities.LEVER3
+          ) {
+            if ([mob.kind === Types.Entities.LEVER, mob.kind === Types.Entities.LEVE2].includes(mob.kind)) {
+              self.audioManager.playSound("lever");
+            } else if (mob.kind === Types.Entities.LEVER3) {
+              self.audioManager.playSound("lever3");
+            }
 
+            mob.animate("raise", mob.raiseSpeed, 1, () => mob.walk());
+          } else if (mob.kind === Types.Entities.DOORDEATHANGEL) {
+            mob.isActivated = true;
             mob.animate("raise", mob.raiseSpeed, 1, () => mob.walk());
           } else if (mob.kind === Types.Entities.BLUEFLAME) {
             self.activatedBlueFlames.push(mobId);
@@ -4063,7 +4104,6 @@ class Game {
             mob.idle();
           } else if (mob.kind === Types.Entities.LEVER || mob.kind === Types.Entities.LEVER2) {
             self.audioManager.playSound("lever");
-
             mob.animate("unraise", mob.raiseSpeed, 1, () => mob.idle());
           } else if (mob.kind === Types.Entities.BLUEFLAME) {
             self.activatedBlueFlames = [];
@@ -4476,6 +4516,10 @@ class Game {
         } else if (status === "completed") {
           self.gamecompleted_callback({ hash, fightAgain: true, show: true });
         }
+      });
+
+      self.client.onDeathAngelCheck(function ({ x, y }) {
+        self.player.stop_pathing_callback({ x, y, confirmed: true, isWaypoint: true, isTeleportSent: true });
       });
 
       self.client.onReceiveNotification(function (data: {
@@ -5155,6 +5199,7 @@ class Game {
           Types.Entities.ALTARSOULSTONE,
           Types.Entities.LEVER,
           Types.Entities.LEVER2,
+          Types.Entities.LEVER3,
           Types.Entities.STATUE,
           Types.Entities.STATUE2,
         ].includes(npc.kind)
@@ -5265,6 +5310,14 @@ class Game {
         } else {
           this.player.stop_pathing_callback({ x: 97, y: 546, isWaypoint: true });
         }
+      } else if (npc.kind === Types.Entities.DOORDEATHANGEL) {
+        if (this.deathAngelLevelPortalCoords && npc.isActivated) {
+          this.player.stop_pathing_callback({
+            x: this.deathAngelLevelPortalCoords.x,
+            y: this.deathAngelLevelPortalCoords.y,
+            isWaypoint: true,
+          });
+        }
       } else if (npc.kind === Types.Entities.MAGICSTONE) {
         if (!npc.isActivated) {
           this.client.sendMagicStone(npc.id);
@@ -5274,7 +5327,11 @@ class Game {
         if (this.storage.hasAllMagicStones()) {
           this.tryUnlockingAchievement("STONEHENGE");
         }
-      } else if (npc.kind === Types.Entities.LEVER || npc.kind === Types.Entities.LEVER2) {
+      } else if (
+        npc.kind === Types.Entities.LEVER ||
+        npc.kind === Types.Entities.LEVER2 ||
+        npc.kind === Types.Entities.LEVER3
+      ) {
         if (!npc.isActivated) {
           this.client.sendLever(npc.id);
         }

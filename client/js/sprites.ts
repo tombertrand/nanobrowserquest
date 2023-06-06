@@ -152,6 +152,7 @@ import tombcross from "../sprites/tomb.json";
 import tombskull from "../sprites/tomb.json";
 import lever from "../sprites/lever.json";
 import lever2 from "../sprites/lever.json";
+import lever3 from "../sprites/lever3.json";
 import grimoire from "../sprites/grimoire.json";
 import fossil from "../sprites/fossil.json";
 import obelisk from "../sprites/obelisk.json";
@@ -612,6 +613,7 @@ const sprites = {
   tombskull,
   lever,
   lever2,
+  lever3,
   grimoire,
   fossil,
   obelisk,

@@ -82,6 +82,7 @@ class World {
   currentPartyId: number;
   currentTradeId: number;
   deathAngel: any;
+  deathAngelSpawnCoords: { x: number; y: number };
   isCastDeathAngelSpellEnabled: boolean;
   magicStones: number[];
   activatedMagicStones: number[];
@@ -113,6 +114,8 @@ class World {
   leverChaliceNpcId: number;
   leverLeftCryptNpcId: number;
   leverRightCryptNpcId: number;
+  leverDeathAngelNpcId: number;
+  doorDeathAngelNpcId: number;
   poisonTemplarId: number;
   magicTemplarId: number;
   powderSpiderId: number;
@@ -241,6 +244,8 @@ class World {
     this.leverChaliceNpcId = null;
     this.leverLeftCryptNpcId = null;
     this.leverRightCryptNpcId = null;
+    this.leverDeathAngelNpcId = null;
+    this.doorDeathAngelNpcId = null;
     this.portalStoneNpcId = null;
     this.portalStoneInnerNpcId = null;
     this.stoneLevelClock = null;
@@ -809,13 +814,15 @@ class World {
         this.handsNpcId = npc.id;
       } else if ([Types.Entities.TRAP, Types.Entities.TRAP2, Types.Entities.TRAP3].includes(kind)) {
         this.trapIds.push(npc.id);
-      } else if (kind === Types.Entities.LEVER || kind === Types.Entities.LEVER2) {
+      } else if (kind === Types.Entities.LEVER || kind === Types.Entities.LEVER2 || kind === Types.Entities.LEVER3) {
         if (npc.x === 10 && npc.y === 703) {
           this.leverChaliceNpcId = npc.id;
         } else if (npc.x === 80 && npc.y === 703) {
           this.leverLeftCryptNpcId = npc.id;
         } else if (npc.x === 67 && npc.y === 722) {
           this.leverRightCryptNpcId = npc.id;
+        } else if (npc.x === 149 && npc.y === 752) {
+          this.leverDeathAngelNpcId = npc.id;
         }
       } else if (kind === Types.Entities.GATE) {
         if (npc.x === 43 && npc.y === 579) {
@@ -826,6 +833,8 @@ class World {
         npc.activate();
       } else if (kind === Types.Entities.JANETYELEN) {
         this.janetYelenNpcId = npc.id;
+      } else if (kind === Types.Entities.DOORDEATHANGEL) {
+        this.doorDeathAngelNpcId = npc.id;
       }
 
       this.addEntity(npc);
@@ -1143,8 +1152,6 @@ class World {
     this.chaliceLevelInterval = null;
     this.chaliceLevelClock = null;
 
-    console.log("~~~END CHALICE LEVEL");
-
     const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
     this.despawn(secretStairs);
 
@@ -1167,8 +1174,9 @@ class World {
   }
 
   startTempleLevel() {
-    this.templeLevelClock = 15 * 60; // 15 minutes
-    this.mageTempleTotal = 1; // count the Worm
+    this.templeLevelClock = 145; // 45 seconds
+    // this.templeLevelClock = 15 * 60; // 15 minutes
+    this.mageTempleTotal = 2; // count the Worm & Death Angel
 
     const gate = this.npcs[this.gateTempleNpcId];
     gate.deactivate();
@@ -1180,41 +1188,46 @@ class World {
       this.worm.handleRespawn(0);
     }
 
-    let count = 0;
-    this.mageTemplePossibleCoords.map(({ x, y }) => {
-      const mageCount = Math.ceil(randomRange(2, 5));
+    if (this.deathAngel.isDead) {
+      this.deathAngel.handleRespawn(0);
+    }
 
-      this.mageTempleTotal += mageCount;
+    // let count = 0;
+    // this.mageTemplePossibleCoords.map(({ x, y }) => {
+    //   const mageCount = Math.ceil(randomRange(2, 5));
 
-      const kind = _.shuffle([Types.Entities.MAGE, Types.Entities.SKELETONARCHER])[0];
+    //   this.mageTempleTotal += mageCount;
 
-      for (let i = 0; i < mageCount; i++) {
-        const id = `7${kind}${count++}`;
-        const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
-        mob.isInsideTemple = true;
-        mob.onMove(this.onMobMoveCallback.bind(this));
-        mob.onDestroy(() => {
-          if (!this.templeLevelClock) return;
+    //   const kind = _.shuffle([Types.Entities.MAGE, Types.Entities.SKELETONARCHER])[0];
 
-          this.mageTempleTotal--;
+    //   for (let i = 0; i < mageCount; i++) {
+    //     const id = `7${kind}${count++}`;
+    //     const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
+    //     mob.isInsideTemple = true;
+    //     mob.onMove(this.onMobMoveCallback.bind(this));
+    //     mob.onDestroy(() => {
+    //       if (!this.templeLevelClock) return;
 
-          if (this.mageTempleTotal === 0) {
-            clearInterval(this.templeLevelInterval);
-            setTimeout(() => {
-              // @TODO ~~~~ only return when the DeathAngel dies
-              // Return everyone outside the temple, leave 5s to loot any last drop
-              this.endTempleLevel();
-            }, 5000);
-          }
-        });
+    //       this.mageTempleTotal--;
 
-        this.addMob(mob);
-        this.mageTempleEntityIds.push(id);
-      }
-    });
+    //       if (this.mageTempleTotal === 0) {
+    //         clearInterval(this.templeLevelInterval);
+    //         setTimeout(() => {
+    //           // @TODO ~~~~ only return when the DeathAngel dies
+    //           // Return everyone outside the temple, leave 5s to loot any last drop
+    //           this.endTempleLevel();
+    //         }, 5000);
+    //       }
+    //     });
+
+    //     this.addMob(mob);
+    //     this.mageTempleEntityIds.push(id);
+    //   }
+    // });
 
     this.templeLevelInterval = setInterval(() => {
       this.templeLevelClock -= 1;
+
       if (this.templeLevelClock < 0) {
         clearInterval(this.templeLevelInterval);
         this.endTempleLevel();
@@ -1236,6 +1249,11 @@ class World {
     lever.deactivate();
     this.pushBroadcast(new Messages.Unraise(lever.id));
 
+    const deathAngelDoor = this.getEntityById(this.doorDeathAngelNpcId);
+    deathAngelDoor.deactivate();
+    const deathAngelLever = this.getEntityById(this.leverDeathAngelNpcId);
+    deathAngelLever.deactivate();
+
     // Despawn all mages
     this.mageTempleEntityIds.map(entityId => {
       const entity = this.getEntityById(entityId);
@@ -1247,6 +1265,10 @@ class World {
 
     if (!this.worm.isDead) {
       this.removeEntity(this.worm);
+    }
+
+    if (!this.deathAngel.isDead) {
+      this.removeEntity(this.deathAngel);
     }
   }
 
@@ -1733,6 +1755,10 @@ class World {
     } else if (lever.id === this.leverRightCryptNpcId) {
       const secretStairs = this.npcs[this.secretStairsRightTemplarNpcId];
       secretStairs.respawnCallback();
+    } else if (lever.id === this.leverDeathAngelNpcId) {
+      const deathAngelDoor = this.getEntityById(this.doorDeathAngelNpcId);
+      deathAngelDoor.activate();
+      this.broadcastRaise(player, deathAngelDoor);
     }
 
     this.broadcastRaise(player, lever);
@@ -2078,6 +2104,8 @@ class World {
           } else if (kind === Types.Entities.BUTCHER) {
             self.butcher = mob;
             mob.onDestroy(() => {
+              if (!self.gatewayLevelClock) return;
+
               clearInterval(self.gatewayLevelInterval);
               setTimeout(() => {
                 // Return everyone to gateway, leave 5s to loot any last drop
@@ -2087,6 +2115,7 @@ class World {
           } else if (kind === Types.Entities.SPIDERQUEEN) {
             self.spiderQueen = mob;
             mob.onDestroy(() => {
+              if (!self.stoneLevelClock) return;
               self.spiderTotal--;
 
               if (self.spiderTotal === 0) {
@@ -2100,6 +2129,7 @@ class World {
           } else if (kind === Types.Entities.WORM) {
             self.worm = mob;
             mob.onDestroy(() => {
+              if (!self.templeLevelClock) return;
               self.mageTempleTotal--;
 
               if (self.mageTempleTotal === 0) {
@@ -2112,6 +2142,7 @@ class World {
             });
           } else if (kind === Types.Entities.DEATHANGEL) {
             self.deathAngel = mob;
+            self.deathAngelSpawnCoords = { x: mob.x, y: mob.y };
           } else if (kind === Types.Entities.SKELETONTEMPLAR || kind === Types.Entities.SKELETONTEMPLAR2) {
             const isPoisonTemplar = kind === Types.Entities.SKELETONTEMPLAR;
             const isMagicTemplar = kind === Types.Entities.SKELETONTEMPLAR2;

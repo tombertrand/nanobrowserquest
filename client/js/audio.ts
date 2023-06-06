@@ -81,6 +81,7 @@ class AudioManager {
       "secret-found",
       "stone-break",
       "lever",
+      "lever3",
       "fireball",
       "iceball",
       "trap",

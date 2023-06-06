@@ -46,7 +46,7 @@ class Spell extends Entity {
   getDmg() {
     let dmg = 0;
     if (this.kind === Types.Entities.DEATHANGELSPELL) {
-      dmg = 360;
+      dmg = 1; //360;
     } else if (this.kind === Types.Entities.MAGESPELL) {
       if (this.casterKind === Types.Entities.SHAMAN) {
         dmg = 320;

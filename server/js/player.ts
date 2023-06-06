@@ -491,8 +491,8 @@ class Player extends Character {
       } else if (action === Types.Messages.MOVE) {
         // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
         if (self.move_callback) {
-          var x = message[1],
-            y = message[2];
+          var x = message[1];
+          var y = message[2];
 
           if (self.name !== "running-coder") {
             if (y >= 314 && !self.expansion1) {
@@ -1101,6 +1101,33 @@ class Player extends Character {
         }
 
         if (self.server.isValidPosition(x, y)) {
+          if (x === 98 && y === 764) {
+            const deathAngelLevel = self.server.getEntityById(self.server.leverDeathAngelNpcId);
+            const deathAngelDoor = self.server.getEntityById(self.server.doorDeathAngelNpcId);
+            const deathAngel = self.server.deathAngel;
+
+            if (!deathAngelLevel.isActivated || !deathAngelDoor.isActivated || deathAngel.isDead) {
+              return;
+            }
+
+            if (
+              deathAngel.x !== self.server.deathAngelSpawnCoords.x &&
+              deathAngel.y !== self.server.deathAngelSpawnCoords.y
+            ) {
+              const possibleTeleportCoords = [
+                { x: 90, y: 749 },
+                { x: 107, y: 749 },
+                { x: 107, y: 764 },
+                { x: 90, y: 764 },
+                { x: 100, y: 760 },
+                { x: 95, y: 750 },
+              ];
+              [{ x, y }] = _.shuffle(possibleTeleportCoords);
+            }
+
+            self.send([Types.Messages.DEATHANGEL_CHECK, { x, y }]);
+          }
+
           self.setPosition(x, y);
           self.clearTarget();
 

@@ -338,6 +338,7 @@ export const Types: any = {
     TOMBSKULL: 257,
     LEVER: 258,
     LEVER2: 259,
+    LEVER3: 345,
     GRIMOIRE: 268,
     FOSSIL: 283,
     OBELISK: 312,
@@ -804,9 +805,9 @@ export const kinds = {
   beltmoon: [Types.Entities.BELTMOON, "belt", "Moon Belt", 54, 18],
   beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 54, 20],
   beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 54, 20],
-  beltgoldwrap: [Types.Entities.BELTGOLDWRAP, "belt", "Goldwrap", 42, 12],
+  beltgoldwrap: [Types.Entities.BELTGOLDWRAP, "belt", "Goldwrap", 42, 20],
 
-  cape: [Types.Entities.CAPE, "cape", "Cape", 20, 2],
+  cape: [Types.Entities.CAPE, "cape", "Cape", 20, 6],
 
   // kind, type, level, defense
   shieldwood: [Types.Entities.SHIELDWOOD, "shield", "Wood Shield", 1, 2],
@@ -998,6 +999,7 @@ export const kinds = {
   tombskull: [Types.Entities.TOMBSKULL, "npc"],
   lever: [Types.Entities.LEVER, "npc"],
   lever2: [Types.Entities.LEVER2, "npc"],
+  lever3: [Types.Entities.LEVER3, "npc"],
   grimoire: [Types.Entities.GRIMOIRE, "npc"],
   fossil: [Types.Entities.FOSSIL, "npc"],
   obelisk: [Types.Entities.OBELISK, "npc"],

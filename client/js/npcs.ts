@@ -342,6 +342,18 @@ var Npcs = {
     }
   },
 
+  Lever3: class Lever3 extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.LEVER3);
+      this.raiseRate = 500;
+      this.isFading = false;
+    }
+    hasShadow() {
+      // ~~~~~
+      return true;
+    }
+  },
+
   Grimoire: class Grimoire extends Npc {
     constructor(id) {
       super(id, Types.Entities.GRIMOIRE);

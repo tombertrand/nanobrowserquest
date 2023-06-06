@@ -1247,6 +1247,10 @@ EntityFactory.builders[Types.Entities.LEVER2] = function (id) {
   return new Npcs.Lever2(id);
 };
 
+EntityFactory.builders[Types.Entities.LEVER3] = function (id) {
+  return new Npcs.Lever3(id);
+};
+
 EntityFactory.builders[Types.Entities.GRIMOIRE] = function (id) {
   return new Npcs.Grimoire(id);
 };
