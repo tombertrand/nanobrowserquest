@@ -2804,6 +2804,7 @@ class Player extends Character {
 
       if (runewordBonus) {
         socketRuneBonus = runewordBonus;
+        socketJewelBonus = {};
       } else {
         socketRuneBonus = Types.getRunesBonus(rawSocket);
         socketJewelBonus = Types.getJewelBonus(rawSocket);

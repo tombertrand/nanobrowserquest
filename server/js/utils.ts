@@ -571,23 +571,14 @@ export const generatePurpleChestItem = (): {
   quantity?: number;
   jewelLevel?: number;
 } => {
-  // 50%
+  // 30%
   const items = [
-    { item: "moonsword", uniqueChances: 10 },
-    { item: "helmmoon", uniqueChances: 10 },
-    { item: "moonarmor", uniqueChances: 10 },
-    { item: "beltmoon", uniqueChances: 10 },
-    { item: "shieldmoon", uniqueChances: 10 },
     { item: "mysticalsword", uniqueChances: 10 },
     { item: "helmmystical", uniqueChances: 10 },
     { item: "mysticalarmor", uniqueChances: 10 },
     { item: "beltmystical", uniqueChances: 10 },
     { item: "shieldmystical", uniqueChances: 10 },
-    { item: "paladinaxe", uniqueChances: 6 },
-    { item: "paladinarmor", uniqueChances: 6 },
-    { item: "immortalsword", uniqueChances: 6 },
-    { item: "immortalarmor", uniqueChances: 6 },
-    { item: "cape", uniqueChances: 10 },
+    { item: "cape", uniqueChances: 5 },
   ];
 
   // 20%
@@ -600,27 +591,32 @@ export const generatePurpleChestItem = (): {
     { item: "jewelskull", jewelLevel: 5 },
   ];
 
-  // 10%
+  // 20%
   const ringOrAmulets = [
     { item: "ringconqueror" },
     { item: "ringheaven" },
     { item: "ringwizard" },
     { item: "ringbalrog" },
     { item: "ringmystical" },
+    { item: "ringgreed" },
     { item: "amuletmoon" },
+    { item: "amuleteye" },
+    { item: "amuletgreed" },
+    { item: "helmclown" },
+    { item: "beltgoldwrap" },
   ];
 
-  // Rune 20%
+  // Rune 30%
 
   const randomCategory = random(100);
 
-  if (randomCategory < 20) {
-    const rune = getRandomRune(70, 13);
+  if (randomCategory < 30) {
+    const rune = getRandomRune(70, 15);
 
     return { item: `rune-${rune}`, quantity: 1 };
-  } else if (randomCategory < 30) {
-    return _.shuffle(ringOrAmulets)[0];
   } else if (randomCategory < 50) {
+    return _.shuffle(ringOrAmulets)[0];
+  } else if (randomCategory < 70) {
     return _.shuffle(scrolls)[0];
   }
   return _.shuffle(items)[0];
@@ -1033,7 +1029,6 @@ export const generateSoulStoneItem = (): { item: string; quantity?: number; uniq
     { item: "amuletskull" },
     { item: "amuletdragon" },
     { item: "amuletgreed" },
-    // { item: "amuleteye" },
   ];
 
   // Rune 25%

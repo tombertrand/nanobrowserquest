@@ -742,7 +742,7 @@ var Properties: any = {
       shieldmystical: 5,
       ringmystical: 2,
     },
-    hp: 20_000,
+    hp: 3000, //20_000,
     armor: 34,
     weapon: 1, //40,
   },

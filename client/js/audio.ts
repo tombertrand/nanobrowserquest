@@ -44,6 +44,10 @@ class AudioManager {
       "skeletoncommander",
       "necromancer",
       "cowlevel",
+      "shaman",
+      "butcher",
+      "temple",
+      "deathangel",
     ];
     this.soundNames = [
       "loot",
