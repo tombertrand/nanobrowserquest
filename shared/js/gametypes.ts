@@ -1150,7 +1150,7 @@ Types.itemUniqueMap = {
   helmmoon: ["Return on Investment"],
   helmdemon: ["Chapter 9"],
   helmmystical: ["Crystal Ball"],
-  helmimmortal: [""],
+  helmimmortal: ["Update The System"],
   helmclown: ["Clownbase"],
 
   // name, level, defense
