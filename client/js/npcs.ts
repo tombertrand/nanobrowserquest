@@ -349,8 +349,7 @@ var Npcs = {
       this.isFading = false;
     }
     hasShadow() {
-      // ~~~~~
-      return true;
+      return false;
     }
   },
 

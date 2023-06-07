@@ -132,7 +132,6 @@ class World {
   mageEntityIds: string[];
   magePossibleCoords: { x: number; y: number }[];
   worm: any;
-  mageTempleTotal: number;
   mageTempleEntityIds: string[];
   mageTemplePossibleCoords: { x: number; y: number }[];
   gateTempleNpcId: number;
@@ -263,7 +262,6 @@ class World {
     this.mageEntityIds = [];
     this.magePossibleCoords = [];
     this.worm = null;
-    this.mageTempleTotal = 0;
     this.mageTempleEntityIds = [];
     this.mageTemplePossibleCoords = [];
     this.gateTempleNpcId = null;
@@ -1174,9 +1172,7 @@ class World {
   }
 
   startTempleLevel() {
-    this.templeLevelClock = 145; // 45 seconds
-    // this.templeLevelClock = 15 * 60; // 15 minutes
-    this.mageTempleTotal = 2; // count the Worm & Death Angel
+    this.templeLevelClock = 15 * 60; // 15 minutes
 
     const gate = this.npcs[this.gateTempleNpcId];
     gate.deactivate();
@@ -1192,38 +1188,20 @@ class World {
       this.deathAngel.handleRespawn(0);
     }
 
-    // let count = 0;
-    // this.mageTemplePossibleCoords.map(({ x, y }) => {
-    //   const mageCount = Math.ceil(randomRange(2, 5));
+    let count = 0;
+    this.mageTemplePossibleCoords.map(({ x, y }) => {
+      const mageCount = Math.ceil(randomRange(2, 5));
+      const kind = _.shuffle([Types.Entities.MAGE, Types.Entities.SKELETONARCHER])[0];
 
-    //   this.mageTempleTotal += mageCount;
-
-    //   const kind = _.shuffle([Types.Entities.MAGE, Types.Entities.SKELETONARCHER])[0];
-
-    //   for (let i = 0; i < mageCount; i++) {
-    //     const id = `7${kind}${count++}`;
-    //     const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
-    //     mob.isInsideTemple = true;
-    //     mob.onMove(this.onMobMoveCallback.bind(this));
-    //     mob.onDestroy(() => {
-    //       if (!this.templeLevelClock) return;
-
-    //       this.mageTempleTotal--;
-
-    //       if (this.mageTempleTotal === 0) {
-    //         clearInterval(this.templeLevelInterval);
-    //         setTimeout(() => {
-    //           // @TODO ~~~~ only return when the DeathAngel dies
-    //           // Return everyone outside the temple, leave 5s to loot any last drop
-    //           this.endTempleLevel();
-    //         }, 5000);
-    //       }
-    //     });
-
-    //     this.addMob(mob);
-    //     this.mageTempleEntityIds.push(id);
-    //   }
-    // });
+      for (let i = 0; i < mageCount; i++) {
+        const id = `7${kind}${count++}`;
+        const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
+        mob.isInsideTemple = true;
+        mob.onMove(this.onMobMoveCallback.bind(this));
+        this.addMob(mob);
+        this.mageTempleEntityIds.push(id);
+      }
+    });
 
     this.templeLevelInterval = setInterval(() => {
       this.templeLevelClock -= 1;
@@ -1745,6 +1723,8 @@ class World {
   }
 
   activateLever(player, lever) {
+    if (lever.id === this.leverDeathAngelNpcId && !this.worm.isDead) return;
+
     lever.activate();
 
     if (lever.id === this.leverChaliceNpcId) {
@@ -2128,21 +2108,19 @@ class World {
             });
           } else if (kind === Types.Entities.WORM) {
             self.worm = mob;
-            mob.onDestroy(() => {
-              if (!self.templeLevelClock) return;
-              self.mageTempleTotal--;
-
-              if (self.mageTempleTotal === 0) {
-                clearInterval(self.templeLevelInterval);
-                setTimeout(() => {
-                  // Return everyone to temple entrance, leave 5s to loot any last drop
-                  self.endTempleLevel();
-                }, 5000);
-              }
-            });
           } else if (kind === Types.Entities.DEATHANGEL) {
             self.deathAngel = mob;
             self.deathAngelSpawnCoords = { x: mob.x, y: mob.y };
+
+            mob.onDestroy(() => {
+              if (!self.templeLevelClock) return;
+
+              clearInterval(self.templeLevelInterval);
+              setTimeout(() => {
+                // Return everyone to gateway, leave 5s to loot any last drop
+                self.endTempleLevel();
+              }, 5000);
+            });
           } else if (kind === Types.Entities.SKELETONTEMPLAR || kind === Types.Entities.SKELETONTEMPLAR2) {
             const isPoisonTemplar = kind === Types.Entities.SKELETONTEMPLAR;
             const isMagicTemplar = kind === Types.Entities.SKELETONTEMPLAR2;
