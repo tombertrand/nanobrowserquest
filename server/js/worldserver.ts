@@ -2350,6 +2350,8 @@ class World {
         return "beltdiamond";
       } else if (diamondRandom === 555) {
         return "shielddiamond";
+      } else if (diamondRandom === 42) {
+        return "helmdiamond";
       }
     }
 
