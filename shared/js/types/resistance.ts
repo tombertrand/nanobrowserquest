@@ -18,7 +18,7 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
   spider2: ["magic"],
   spiderqueen: ["poison"],
   butcher: ["physical"],
-  worm: ["physical"],
+  worm: ["physical", "cursed-hp"],
   oculothorax: [],
   kobold: [],
   skeletontemplar: ["poison", "cold"],
@@ -29,7 +29,7 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
   skeletonberserker: ["physical"],
   skeletonarcher: [],
   shaman: [],
-  deathangel: ["spectral"],
+  deathangel: ["spectral", "cursed-hp"],
 };
 
 export const mobResistance = {
@@ -184,6 +184,7 @@ export const enchantToDisplayMap = {
   spectral: "spectral hit",
   physical: "extra strong",
   stoneskin: "stone skin",
+  "cursed-hp": "health cursed",
 };
 
 const resistanceToLowerResistanceMap = {

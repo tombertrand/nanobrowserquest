@@ -390,7 +390,11 @@ class World {
             regenerateHealth += character.bonus.regenerateHealth;
           }
 
-          if (character.curseId !== 0) {
+          if (character.cursed?.id === 0) {
+            regenerateHealth = regenerateHealth - Math.floor(regenerateHealth * (character.cursed.percent / 100));
+          }
+
+          if (regenerateHealth > 0) {
             character.regenHealthBy(regenerateHealth);
 
             if (character.type === "player") {
@@ -1722,8 +1726,8 @@ class World {
     this.activatedMagicStones = [];
   }
 
-  activateLever(player, lever) {
-    if (lever.id === this.leverDeathAngelNpcId && !this.worm.isDead) return;
+  activateLever(player, lever, force = false) {
+    if (!force && lever.id === this.leverDeathAngelNpcId && !this.worm.isDead) return;
 
     lever.activate();
 

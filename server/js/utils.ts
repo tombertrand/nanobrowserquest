@@ -593,6 +593,8 @@ export const generatePurpleChestItem = (): {
 
   // 20%
   const ringOrAmulets = [
+    { item: "ringraistone" },
+    { item: "ringfountain" },
     { item: "ringconqueror" },
     { item: "ringheaven" },
     { item: "ringwizard" },

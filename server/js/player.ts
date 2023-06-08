@@ -164,7 +164,10 @@ class Player extends Character {
   skill: { defense: number; resistances: number };
   dbWriteQueue: any;
   poisonedInterval: any;
-  curseId: number;
+  cursed: {
+    id: number;
+    percent: number;
+  };
   cursedTimeout: NodeJS.Timeout;
   attackTimeout: NodeJS.Timeout;
   discordId: number;
@@ -438,6 +441,14 @@ class Player extends Character {
                 const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
                 self.server.activateLever(self, lever);
                 return;
+              } else if (msg === "/deathangel") {
+                const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
+                self.server.activateLever(self, lever);
+
+                const leverDeathAngel = self.server.getEntityById(self.server.leverDeathAngelNpcId);
+                self.server.activateLever(self, leverDeathAngel, true);
+
+                return;
               }
             }
 
@@ -697,14 +708,17 @@ class Player extends Character {
           });
 
           // @NOTE Curse trigger
-          if (mob.kind === Types.Entities.DEATHANGEL) {
-            self.curseId = 0;
-            const duration = curseDurationMap[self.curseId](10);
-            self.broadcast(new Messages.Cursed(self.id, self.curseId, duration));
+          if (Array.isArray(mob.enchants) && mob.enchants.includes("cursed-hp")) {
+            self.cursed = {
+              id: 0,
+              percent: 100,
+            };
+            const duration = curseDurationMap[self.cursed.id](10);
+            self.broadcast(new Messages.Cursed(self.id, self.cursed.id, duration));
 
             clearTimeout(self.cursedTimeout);
             self.cursedTimeout = setTimeout(() => {
-              self.curseId = null;
+              self.cursed = null;
               self.cursedTimeout = null;
             }, duration);
           }
@@ -1786,6 +1800,9 @@ class Player extends Character {
       if (self.poisonedInterval) {
         clearInterval(self.poisonedInterval);
       }
+      if (self.cursedTimeout) {
+        clearInterval(self.cursedTimeout);
+      }
       if (self.exit_callback) {
         self.exit_callback();
       }
@@ -2347,6 +2364,10 @@ class Player extends Character {
       if (this.poisonedInterval) {
         clearInterval(this.poisonedInterval);
         this.poisonedInterval = null;
+      }
+      if (this.cursedTimeout) {
+        clearInterval(this.cursedTimeout);
+        this.cursedTimeout = null;
       }
     }
   }
