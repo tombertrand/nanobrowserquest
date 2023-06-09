@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 import { Sentry } from "./sentry";
 
 const { BOT_TOKEN, NODE_ENV } = process.env;
-const isProduction = NODE_ENV !== "production";
+const isDevelopment = NODE_ENV === "development";
 
 const EventChannel =
   "https://discord.com/api/webhooks/1092217096324268082/Rctr0jWNAaeAleyGOwXvH05hYJcTSeTrqGcUVVH7mnYZLeoFPeX9qbjVw2A9jvkuP_4w";
@@ -15,6 +15,7 @@ const ChatChannel =
 const AnvilChannel =
   "https://discord.com/api/webhooks/1029352905574207519/VWeXf_oqwL3MENHwpkUqTQozlsJ6H_ui_g5m8CJtYRwSQIGQ-fVByJCUQ6q69y-cCki2";
 
+// For linking players with Discord
 export const discordClient = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -27,7 +28,7 @@ export const discordClient = new Client({
 discordClient.login(BOT_TOKEN);
 
 export const postMessageToDiscordEventChannel = (content: string) => {
-  if (isProduction) return;
+  if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
@@ -44,7 +45,7 @@ export const postMessageToDiscordEventChannel = (content: string) => {
 };
 
 export const postMessageToDiscordChatChannel = (content: string) => {
-  if (isProduction) return;
+  if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
@@ -61,7 +62,7 @@ export const postMessageToDiscordChatChannel = (content: string) => {
 };
 
 export const postMessageToDiscordAnvilChannel = (content: string) => {
-  if (isProduction) return;
+  if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,

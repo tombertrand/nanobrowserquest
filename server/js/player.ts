@@ -48,6 +48,7 @@ let payoutIndex = 0;
 
 const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "HeroOfNano"];
 const SUPER_ADMINS = ["running-coder"];
+const CHATBAN_PATTERNS = [/n.?i.?g.?g.?(?:e.?r|a)/, /https?:\/\/(:?www)?\\.?youtube/];
 
 class Player extends Character {
   id: number;
@@ -178,6 +179,7 @@ class Player extends Character {
   hasNft: boolean;
   hasWing: boolean;
   hasCrystal: boolean;
+  canChat: boolean;
   // attackTimeoutWarning: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
@@ -236,6 +238,10 @@ class Player extends Character {
     this.hasCrystal = false;
     // this.attackTimeoutWarning = false;
 
+    // Get IP from CloudFlare
+    this.ip = connection._connection.handshake.headers["cf-connecting-ip"];
+    this.canChat = true;
+
     this.dbWriteQueue = new PromiseQueue();
 
     this.connection.listen(async message => {
@@ -278,10 +284,7 @@ class Player extends Character {
       }
 
       if (action === Types.Messages.CREATE || action === Types.Messages.LOGIN) {
-        // Get IP from CloudFlare
-        const clientIP = self.connection._connection.handshake.headers["cf-connecting-ip"];
-
-        if (process.env.NODE_ENV === "production" && !clientIP) {
+        if (process.env.NODE_ENV === "production" && !self.ip) {
           self.connection.sendUTF8("invalidconnection");
           self.connection.close("Unable to get IP.");
           return;
@@ -327,8 +330,6 @@ class Player extends Character {
         // Always ensure that the name is not longer than a maximum length.
         // (also enforced by the maxlength attribute of the name input element).
         self.name = name.substr(0, 16).trim();
-        // @TODO Max payout per IP per day?
-        self.ip = clientIP;
 
         // Validate the username
         if (!self.checkName(self.name)) {
@@ -391,6 +392,18 @@ class Player extends Character {
       } else if (action === Types.Messages.CHAT) {
         var msg = sanitize(message[1]);
         console.info("CHAT: " + self.name + ": " + msg);
+
+        if (!self.canChat) {
+          self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
+          return;
+        }
+
+        if (CHATBAN_PATTERNS.some(pattern => pattern.test(msg))) {
+          self.databaseHandler.chatBan({ player: self, message: msg });
+          self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
+          self.canChat = false;
+          return;
+        }
 
         // Sanitized messages may become empty. No need to broadcast empty chat messages.
         if (msg && msg !== "") {
@@ -2368,6 +2381,7 @@ class Player extends Character {
       if (this.cursedTimeout) {
         clearInterval(this.cursedTimeout);
         this.cursedTimeout = null;
+        this.cursed = null;
       }
     }
   }
@@ -3114,6 +3128,9 @@ class Player extends Character {
         return;
       }
 
+      this.canChat = !this.server.chatBan.some(
+        ({ player: playerName, ip }) => playerName === this.name || ip === this.ip,
+      );
       this.account = account;
 
       // @NOTE: Leave no trace

@@ -723,7 +723,7 @@ class DatabaseHandler {
 
   async checkIsBannedByIP(player) {
     return new Promise((resolve, _reject) => {
-      const ipKey = "ipban:" + player.connection._connection.handshake.headers["cf-connecting-ip"];
+      const ipKey = "ipban:" + player.ip;
 
       this.client
         .multi()
@@ -768,50 +768,43 @@ class DatabaseHandler {
     if (!player?.connection?._connection?.handshake?.headers?.["cf-connecting-ip"]) return;
 
     const until = days * 24 * 60 * 60 * 1000 + Date.now();
-    this.client.hmset(
-      "ipban:" + player.connection._connection.handshake.headers["cf-connecting-ip"],
-      "timestamp",
-      until,
-      "reason",
-      reason || "",
-      "message",
-      message || "",
-    );
-
-    return;
+    this.client.hmset("ipban:" + player.ip, "timestamp", until, "reason", reason || "", "message", message || "");
   }
 
   banPlayerForReason({ player, reason, message, days = 365 }) {
     const until = parseInt(`${days}`) * 24 * 60 * 60 * 1000 + Date.now();
 
     this.client.hmset("ban:" + player.name, "timestamp", until, "reason", reason, "message", message);
-    return;
   }
 
-  chatBan(adminPlayer, targetPlayer) {
-    this.client.smembers("adminname", (_err, replies) => {
-      for (var index = 0; index < replies.length; index++) {
-        if (replies[index].toString() === adminPlayer.name) {
-          var curTime = new Date().getTime();
-          adminPlayer.server.pushBroadcast(
-            new Messages.Chat(targetPlayer, "/1 " + adminPlayer.name + "-- 채금 ->" + targetPlayer.name + " 10분"),
-          );
-          targetPlayer.chatBanEndTime = curTime + 10 * 60 * 1000;
-          this.client.hset(
-            "cb:" + targetPlayer.connection._connection.handshake.headers["cf-connecting-ip"],
-            "etime",
-            targetPlayer.chatBanEndTime.toString(),
-          );
-          console.info(
-            adminPlayer.name +
-              "-- Chatting BAN ->" +
-              targetPlayer.name +
-              " to " +
-              new Date(targetPlayer.chatBanEndTime).toString(),
-          );
-          return;
+  chatBan({ player, message }: { player: any; message: string }) {
+    this.client.hset(`chatBan`, player.name, JSON.stringify({ ip: player.ip || "", message }));
+    player.server.chatBan.push({ player: player.name, ip: player.ip });
+  }
+
+  getChatBan() {
+    return new Promise(resolve => {
+      this.client.hgetall("chatBan", (_err, rawChatBan) => {
+        let chatBan = [];
+
+        if (rawChatBan) {
+          chatBan = Object.entries(rawChatBan)
+            .map(([player, data]: [string, string]) => {
+              try {
+                const { ip } = JSON.parse(data);
+
+                return {
+                  player,
+                  ip,
+                };
+              } catch (err) {
+                return;
+              }
+            })
+            .filter(Boolean);
         }
-      }
+        resolve(chatBan);
+      });
     });
   }
 

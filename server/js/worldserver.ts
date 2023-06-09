@@ -139,6 +139,7 @@ class World {
   goldBank: number;
   janetYelenNpcId: number;
   soulStonePlayerName: string;
+  chatBan: { player: string; ip: string }[];
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -280,13 +281,7 @@ class World {
     });
 
     this.onPlayerEnter(function (player) {
-      console.info(
-        player.name +
-          "(" +
-          (player.connection._connection.handshake.headers["cf-connecting-ip"] || "Player IP") +
-          ") has joined " +
-          self.id,
-      );
+      console.info(player.name + "(" + (player.ip || "Player IP") + ") has joined " + self.id);
 
       if (!player.hasEnteredGame) {
         self.incrementPlayerCount();
@@ -467,6 +462,10 @@ class World {
 
     this.databaseHandler.getGoldBank().then(goldBank => {
       this.goldBank = goldBank;
+    });
+
+    this.databaseHandler.getChatBan().then(chatBan => {
+      this.chatBan = chatBan;
     });
   }
 
