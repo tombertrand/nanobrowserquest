@@ -151,7 +151,8 @@ class Updater {
     // Handle spell instances separately.
     // https://github.com/Kaetram/Kaetram-Open/blob/b8b5e156aff5fb7e8b3da780122aa734bb95a8a9/packages/client/src/entity/objects/projectile.ts
     if (c instanceof Spell && c.target) {
-      let mDistance = c.moveSpeed * c.getTimeDiff(),
+      const timeDiff = c.getTimeDiff();
+      let mDistance = c.moveSpeed * timeDiff,
         dx = c.target.x - c.x, // delta x current position to target
         dy = c.target.y - c.y, // delta y current position to target
         tDistance = Math.sqrt(dx * dx + dy * dy), // pythagorean theorem uwu
@@ -164,28 +165,40 @@ class Updater {
         c.x += dx * amount;
         c.y += dy * amount;
 
+        // @NOTE Not sure why...
+        if (isNaN(c.y)) {
+          return;
+        }
+
         // unregister and register to new grid position
         if (Math.floor(c.y / 16) !== c.gridY) {
           this.game.removeFromRenderingGrid(c, c.gridX, c.gridY);
           c.gridY = Math.floor(c.y / 16);
-          this.game.addToRenderingGrid(c, c.gridX, c.gridY);
+          if (typeof c.gridY === "number" && !isNaN(c.gridY)) {
+            this.game.addToRenderingGrid(c, c.gridX, c.gridY);
+          }
         }
       }
 
       if (!c.isDead && this.game.player) {
-        const isPlayerHit = Math.abs(this.game.player.x - c.x) <= 8 && Math.abs(this.game.player.y - c.y) <= 8;
-        const isGridOrAnyPlayerHit = !isPlayerHit
-          ? this.game.pathingGrid[Math.round(c.y / 16)][Math.round(c.x / 16)] &&
-            this.game.isPlayerAt(Math.round(c.x / 16), Math.round(c.y / 16))
+        const keepUntilDie = [Types.Entities.DEATHBRINGERSPELL].includes(c.kind);
+        const isPlayerHit = !c.hasHurtPlayer
+          ? Math.abs(this.game.player.x - c.x) <= 8 && Math.abs(this.game.player.y - c.y) <= 8
           : false;
+        const isGridOrAnyPlayerHit =
+          !keepUntilDie && !isPlayerHit
+            ? this.game.pathingGrid[Math.round(c.y / 16)][Math.round(c.x / 16)] &&
+              this.game.isPlayerAt(Math.round(c.x / 16), Math.round(c.y / 16))
+            : false;
 
         // || !this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id)
         // this.game.getEntityAt(Math.round(c.x / 16), Math.round(c.y / 16))?.id !== c.casterId
 
         if (isPlayerHit) {
+          c.hasHurtPlayer = true;
           this.game.makePlayerHurtFromSpell(c);
         }
-        if (isPlayerHit || isGridOrAnyPlayerHit || tDistance < 1) {
+        if (!keepUntilDie && (isPlayerHit || isGridOrAnyPlayerHit || tDistance < 1)) {
           c.die();
         }
       }
@@ -401,7 +414,8 @@ class Updater {
     this.game.skillLightningAnimation?.update(t);
     this.game.skillColdAnimation?.update(t);
     this.game.skillPoisonAnimation?.update(t);
-    this.game.cursePreventRegenerateHealthAnimation?.update(t);
+    this.game.curseHealthAnimation?.update(t);
+    this.game.curseResistanceAnimation?.update(t);
     this.game.weaponEffectAnimation?.update(t);
   }
 

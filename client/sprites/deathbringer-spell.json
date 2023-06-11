@@ -1,0 +1,13 @@
+{
+  "id": "deathbringer-spell",
+  "width": 140,
+  "height": 95,
+  "animations": {
+    "idle_up": {
+      "length": 14,
+      "row": 0
+    }
+  },
+  "offset_x": -56,
+  "offset_y": -76
+}

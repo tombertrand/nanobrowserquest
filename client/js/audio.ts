@@ -80,7 +80,7 @@ class AudioManager {
       "skill-lightning",
       "skill-cold",
       "skill-poison",
-      "curse-prevent-regenerate-health",
+      "curse",
       "magicstone",
       "secret-found",
       "stone-break",

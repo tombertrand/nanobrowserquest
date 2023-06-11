@@ -488,6 +488,7 @@ export const generateGreenChestItem = (): { item: string; uniqueChances?: number
 
   // 10%
   const ringOrAmulets = [
+    { item: "amuletplatinum" },
     { item: "ringplatinum" },
     { item: "ringminotaur" },
     { item: "amuletfrozen" },

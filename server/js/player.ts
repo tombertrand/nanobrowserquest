@@ -163,12 +163,9 @@ class Player extends Character {
   network: Network;
   nanoPotions: number;
   skill: { defense: number; resistances: number };
+  curse: { health: number; resistances: number };
   dbWriteQueue: any;
   poisonedInterval: any;
-  cursed: {
-    id: number;
-    percent: number;
-  };
   cursedTimeout: NodeJS.Timeout;
   attackTimeout: NodeJS.Timeout;
   discordId: number;
@@ -218,6 +215,7 @@ class Player extends Character {
     this.resetBonus();
     this.resetPartyBonus();
     this.resetSkill();
+    this.resetCurse();
 
     this.inventory = [];
     this.inventoryCount = [];
@@ -721,19 +719,35 @@ class Player extends Character {
           });
 
           // @NOTE Curse trigger
-          if (Array.isArray(mob.enchants) && mob.enchants.includes("cursed-hp")) {
-            self.cursed = {
-              id: 0,
-              percent: 100,
-            };
-            const duration = curseDurationMap[self.cursed.id](10);
-            self.broadcast(new Messages.Cursed(self.id, self.cursed.id, duration));
+          if (!self.hasCurse() && Array.isArray(mob.enchants) && !self.skill.defense) {
+            let duration;
+            if (mob.enchants.includes("curse-health")) {
+              self.curse.health = 100;
+              duration = curseDurationMap[Types.Curses.HEALTH](10);
+              self.broadcast(new Messages.Cursed(self.id, Types.Curses.HEALTH, duration));
+            } else if (mob.enchants.includes("curse-resistance")) {
+              self.curse.resistances = 50;
+              duration = curseDurationMap[Types.Curses.RESISTANCES](10);
+              self.broadcast(new Messages.Cursed(self.id, Types.Curses.RESISTANCES, duration));
+            }
 
-            clearTimeout(self.cursedTimeout);
-            self.cursedTimeout = setTimeout(() => {
-              self.cursed = null;
-              self.cursedTimeout = null;
-            }, duration);
+            if (self.hasCurse()) {
+              clearTimeout(self.cursedTimeout);
+
+              if (self.curse.resistances) {
+                self.sendPlayerStats();
+              }
+
+              self.cursedTimeout = setTimeout(() => {
+                if (self.curse.resistances) {
+                  self.resetCurse();
+                  self.sendPlayerStats();
+                } else {
+                  self.resetCurse();
+                }
+                self.cursedTimeout = null;
+              }, duration);
+            }
           }
 
           self.handleHurtDmg(mob, dmg);
@@ -877,6 +891,16 @@ class Player extends Character {
 
         if (entity.kind === Types.Entities.DEATHANGEL) {
           self.server.castDeathAngelSpell(x, y);
+        } else if (entity.kind === Types.Entities.DEATHBRINGER) {
+          self.server.addSpell({
+            kind: Types.Entities.DEATHBRINGERSPELL,
+            x,
+            y,
+            element: entity.element,
+            casterId: mobId,
+            casterKind: entity.kind,
+            targetId,
+          });
         } else if (entity.kind === Types.Entities.SHAMAN) {
           self.server.castShamanSpell(x, y, entity, targetId, message[5]);
         } else if (entity.kind === Types.Entities.MAGE) {
@@ -1706,7 +1730,10 @@ class Player extends Character {
           let mobResistance = mobResistances?.[Types.attackSkillToResistanceType[this.attackSkill]] || 0;
 
           if (attackedMob instanceof Player) {
-            mobResistance = Types.calculateResistance(mobResistance + attackedMob.skill.resistances);
+            mobResistance = Types.calculateResistance(
+              mobResistance + attackedMob.skill.resistances,
+              attackedMob.curse.resistances,
+            );
           }
 
           const { min, max } = Types.getAttackSkill({
@@ -1766,6 +1793,10 @@ class Player extends Character {
             }
           } else if (this.defenseSkill === 1) {
             const { stats: percent } = Types.getDefenseSkill(1, this.shieldLevel);
+
+            if (self.hasCurse()) {
+              self.resetCurse();
+            }
 
             self.skill.defense = percent;
             self.sendPlayerStats();
@@ -2271,7 +2302,10 @@ class Player extends Character {
   }
 
   calculateElementDamage(spell: { element: Elements; dmg: number }) {
-    const resistance = Types.calculateResistance(this.bonus[`${spell.element}Resistance`] + this.skill.resistances);
+    const resistance = Types.calculateResistance(
+      this.bonus[`${spell.element}Resistance`] + this.skill.resistances,
+      this.curse.resistances,
+    );
 
     const dmg = Math.round(spell.dmg - spell.dmg * (resistance / 100));
 
@@ -2331,6 +2365,7 @@ class Player extends Character {
           dmg *
             (Types.calculateResistance(
               Types.getResistance(entity, attacker).poisonResistance + (entity.skill?.resistances || 0),
+              entity.curse?.resistances || 0,
             ) /
               100)) /
           5,
@@ -2381,7 +2416,7 @@ class Player extends Character {
       if (this.cursedTimeout) {
         clearInterval(this.cursedTimeout);
         this.cursedTimeout = null;
-        this.cursed = null;
+        this.resetCurse();
       }
     }
   }
@@ -2682,6 +2717,17 @@ class Player extends Character {
     };
   }
 
+  resetCurse() {
+    this.curse = {
+      health: 0,
+      resistances: 0,
+    };
+  }
+
+  hasCurse() {
+    return Object.values(this.curse).some(percent => percent !== 0);
+  }
+
   equipItem({ item, level, bonus, socket, skill, type }) {
     // @NOTE safety...
     if (bonus === "null") {
@@ -2761,6 +2807,7 @@ class Player extends Character {
         this.bonus.poisonResistance + this.bonus.allResistance + this.partyBonus.allResistance,
       );
     }
+
     if (this.bonus.magicDamagePercent) {
       this.bonus.magicDamage += Math.round((this.bonus.magicDamagePercent / 100) * this.bonus.magicDamage);
     }
@@ -2984,11 +3031,6 @@ class Player extends Character {
       coldDamage: this.bonus.coldDamage,
       poisonDamage: this.bonus.poisonDamage,
       pierceDamage: this.bonus.pierceDamage,
-      magicResistance: Types.calculateResistance(this.bonus.magicResistance + this.skill.resistances),
-      flameResistance: Types.calculateResistance(this.bonus.flameResistance + this.skill.resistances),
-      lightningResistance: Types.calculateResistance(this.bonus.lightningResistance + this.skill.resistances),
-      coldResistance: Types.calculateResistance(this.bonus.coldResistance + this.skill.resistances),
-      poisonResistance: Types.calculateResistance(this.bonus.poisonResistance + this.skill.resistances),
       skillTimeout: Types.calculateSkillTimeout(this.bonus.skillTimeout),
       magicDamagePercent: this.bonus.magicDamagePercent,
       flameDamagePercent: this.bonus.flameDamagePercent,
@@ -3001,6 +3043,22 @@ class Player extends Character {
       lowerColdResistance: this.bonus.lowerColdResistance,
       lowerPoisonResistance: this.bonus.lowerPoisonResistance,
       lowerAllResistance: this.bonus.lowerAllResistance,
+      magicResistance: Types.calculateResistance(
+        this.bonus.magicResistance + this.skill.resistances,
+        this.curse.resistances,
+      ),
+      flameResistance: Types.calculateResistance(
+        this.bonus.flameResistance + this.skill.resistances - this.curse.resistances,
+      ),
+      lightningResistance: Types.calculateResistance(
+        this.bonus.lightningResistance + this.skill.resistances - this.curse.resistances,
+      ),
+      coldResistance: Types.calculateResistance(
+        this.bonus.coldResistance + this.skill.resistances - this.curse.resistances,
+      ),
+      poisonResistance: Types.calculateResistance(
+        this.bonus.poisonResistance + this.skill.resistances - this.curse.resistances,
+      ),
     };
 
     this.send(new Messages.Stats(stats).serialize());

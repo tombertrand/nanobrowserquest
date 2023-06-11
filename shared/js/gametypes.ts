@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { getGoldAmountFromSoldItem } from "../../shared/js/gold";
+import { Curses } from "../../shared/js/types/curse";
 import { toArray } from "../../shared/js/utils";
 import { Messages } from "./messages";
 import { Slot } from "./slots";
@@ -70,6 +71,7 @@ export const Types: any = {
     STONEDRAGON: 11,
     STONEHERO: 12,
   },
+  Curses,
   Messages,
 
   Entities: {
@@ -129,6 +131,8 @@ export const Types: any = {
     STATUE2: 297,
     STATUESPELL: 298,
     STATUE2SPELL: 299,
+    DEATHBRINGER: 346,
+    DEATHBRINGERSPELL: 347,
     DEATHANGEL: 300,
     DEATHANGELSPELL: 303,
 
@@ -718,6 +722,7 @@ export const kinds = {
   wraith2: [Types.Entities.WRAITH2, "mob", 150, 63],
   mage: [Types.Entities.MAGE, "mob", 160, 65],
   worm: [Types.Entities.WORM, "mob", 500, 70],
+  deathbringer: [Types.Entities.DEATHBRINGER, "mob", 800, 70],
   deathangel: [Types.Entities.DEATHANGEL, "mob", 800, 71],
 
   // kind, type, level, damage
@@ -949,6 +954,7 @@ export const kinds = {
   "rune-shi": [Types.Entities.RUNE.SHI, "rune", "SHI Rune", 65],
   "rune-vod": [Types.Entities.RUNE.VOD, "rune", "VOD Rune", 68],
 
+  "deathbringer-spell": [Types.Entities.DEATHBRINGERSPELL, "spell", "Bone Spirith", 70],
   "deathangel-spell": [Types.Entities.DEATHANGELSPELL, "spell", "Bone Spirith", 70],
   "mage-spell": [Types.Entities.MAGESPELL, "spell", "Mage Spell", 60],
   arrow: [Types.Entities.ARROW, "spell", "Arrow", 60],
@@ -1336,6 +1342,7 @@ Types.isBoss = function (kindOrString: number | string) {
       Types.Entities.BUTCHER,
       Types.Entities.SHAMAN,
       Types.Entities.WORM,
+      Types.Entities.DEATHBRINGER,
       Types.Entities.DEATHANGEL,
     ].includes(kindOrString);
   } else {
@@ -1349,6 +1356,7 @@ Types.isBoss = function (kindOrString: number | string) {
       "butcher",
       "shaman",
       "worm",
+      "deathbringer",
       "deathangel",
     ].includes(kindOrString);
   }
@@ -1838,6 +1846,8 @@ Types.getAliasFromName = function (name: string) {
     return "The Gates of Azrael";
   } else if (name === "deathangel") {
     return "Azrael";
+  } else if (name === "deathbringer") {
+    return "Death Bringer";
   }
 
   return name;

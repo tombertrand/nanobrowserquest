@@ -608,6 +608,30 @@ export const Mobs = {
     }
   },
 
+  DeathBringer: class DeathBringer extends Mob {
+    constructor(id, props) {
+      super(id, Types.Entities.DEATHBRINGER, props);
+      this.moveSpeed = 400;
+      this.atkSpeed = 100;
+      this.raiseSpeed = 125;
+      this.idleSpeed = 100;
+      this.atkRate = 2000;
+      this.raiseRate = 1000;
+      this.attackCooldown = new Timer(this.atkRate);
+      this.raiseCooldown = new Timer(this.raiseRate);
+      this.aggroRange = 5;
+      this.hurtDelay = 200;
+    }
+
+    idle(orientation) {
+      if (!this.hasTarget()) {
+        super.idle(Types.Orientations.DOWN);
+      } else {
+        super.idle(orientation);
+      }
+    }
+  },
+
   DeathAngel: class DeathAngel extends Mob {
     constructor(id, props) {
       super(id, Types.Entities.DEATHANGEL, props);

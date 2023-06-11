@@ -8,6 +8,7 @@ class Spell extends Character {
   targetId?: number;
   angle: number;
   angled: boolean;
+  hasHurtPlayer: boolean;
 
   constructor(id: number, kind: number) {
     super(id, kind);
@@ -16,6 +17,7 @@ class Spell extends Character {
 
     this.lastUpdate = Date.now();
     this.isFading = false;
+    this.hasHurtPlayer = false;
 
     this.angled = [Types.Entities.ARROW].includes(kind);
   }

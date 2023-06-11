@@ -94,6 +94,8 @@ class Mob extends Character {
       }
     } else if (this.kind === Types.Entities.SHAMAN) {
       this.element = _.shuffle(["magic", "flame", "lightning", "cold", "poison"] as Elements[])[0];
+    } else if (this.kind === Types.Entities.DEATHBRINGER) {
+      this.element = "flame";
     }
   }
 
@@ -108,6 +110,7 @@ class Mob extends Character {
         Types.Entities.BUTCHER,
         Types.Entities.SHAMAN,
         Types.Entities.WORM,
+        Types.Entities.DEATHBRINGER,
         Types.Entities.DEATHANGEL,
       ].includes(this.kind)
     ) {
@@ -191,6 +194,7 @@ class Mob extends Character {
         Types.Entities.BUTCHER,
         Types.Entities.SHAMAN,
         Types.Entities.WORM,
+        Types.Entities.DEATHBRINGER,
         Types.Entities.DEATHANGEL,
       ].includes(this.kind)
     ) {
@@ -215,6 +219,7 @@ class Mob extends Character {
         Types.Entities.SPIDERQUEEN,
         Types.Entities.BUTCHER,
         Types.Entities.WORM,
+        Types.Entities.DEATHBRINGER,
         Types.Entities.DEATHANGEL,
       ].includes(this.kind)
     ) {

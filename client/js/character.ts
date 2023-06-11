@@ -224,6 +224,10 @@ class Character extends Entity {
         this.capeOrientation = this.orientation;
       }
 
+      if (this.kind === Types.Entities.DEATHBRINGER) {
+        this.flipSpriteX = !this.flipSpriteX;
+      }
+
       // @TODO Fox not ready for animation...
       this.setAnimation(animation, speed, count, onEndCount);
     }
@@ -291,6 +295,7 @@ class Character extends Entity {
     if (
       this.kind === Types.Entities.NECROMANCER ||
       this.kind === Types.Entities.DEATHANGEL ||
+      this.kind === Types.Entities.DEATHBRINGER ||
       this.kind === Types.Entities.MAGE ||
       this.kind === Types.Entities.SHAMAN
     ) {
@@ -884,11 +889,16 @@ class Character extends Entity {
     this.curseId = curseId;
 
     clearTimeout(this.cursedTimeout);
-
     this.cursedTimeout = setTimeout(() => {
-      this.curseId = null;
-      this.cursedTimeout = null;
+      this.clearCursed();
     }, duration);
+  }
+
+  clearCursed() {
+    clearTimeout(this.cursedTimeout);
+
+    this.curseId = null;
+    this.cursedTimeout = null;
   }
 }
 

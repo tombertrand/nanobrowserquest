@@ -1,0 +1,61 @@
+{
+  "id": "deathbringer",
+  "width": 140,
+  "height": 95,
+  "animations": {
+    "atk_right": {
+      "length": 9,
+      "row": 2
+    },
+    "walk_right": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_up": {
+      "length": 9,
+      "row": 2
+    },
+    "walk_up": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 8,
+      "row": 0
+    },
+    "atk_down": {
+      "length": 9,
+      "row": 2
+    },
+    "walk_down": {
+      "length": 8,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    },
+    "raise_right": {
+      "length": 9,
+      "row": 3
+    },
+    "raise_up": {
+      "length": 9,
+      "row": 3
+    },
+    "raise_down": {
+      "length": 9,
+      "row": 3
+    },
+    "death": {
+      "length": 10,
+      "row": 4
+    }
+  },
+  "offset_x": -98,
+  "offset_y": -78
+}

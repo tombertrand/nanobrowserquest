@@ -219,6 +219,10 @@ EntityFactory.builders[Types.Entities.SKELETONARCHER] = function (id, props) {
   return new Mobs.SkeletonArcher(id, props);
 };
 
+EntityFactory.builders[Types.Entities.DEATHBRINGER] = function (id, props) {
+  return new Mobs.DeathBringer(id, props);
+};
+
 EntityFactory.builders[Types.Entities.DEATHANGEL] = function (id, props) {
   return new Mobs.DeathAngel(id, props);
 };
@@ -245,6 +249,10 @@ EntityFactory.builders[Types.Entities.STATUESPELL] = function (id) {
 
 EntityFactory.builders[Types.Entities.STATUE2SPELL] = function (id) {
   return new Spells.Statue2Spell(id);
+};
+
+EntityFactory.builders[Types.Entities.DEATHBRINGERSPELL] = function (id) {
+  return new Spells.DeathBringerSpell(id);
 };
 
 EntityFactory.builders[Types.Entities.DEATHANGELSPELL] = function (id) {

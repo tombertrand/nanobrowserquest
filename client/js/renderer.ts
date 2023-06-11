@@ -1025,9 +1025,20 @@ class Renderer {
       }
 
       if (entity instanceof Player && typeof entity.curseId === "number") {
-        var sprite = this.game.getSprite("curse-prevent-regenerate-health");
-        // @ts-ignore
-        var anim = this.game.cursePreventRegenerateHealthAnimation;
+        var sprite;
+        var anim;
+
+        switch (entity.curseId) {
+          case 0:
+            sprite = this.game.getSprite("curse-health");
+            anim = this.game.curseHealthAnimation;
+            break;
+          case 1: {
+            sprite = this.game.getSprite("curse-resistance");
+            anim = this.game.curseResistanceAnimation;
+            break;
+          }
+        }
 
         if (sprite?.width && anim) {
           var os = this.upscaledRendering ? 1 : this.scale;

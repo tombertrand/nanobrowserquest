@@ -70,6 +70,7 @@ class World {
   zoneGroupsReady: boolean;
   raiseNecromancerInterval: any;
   raiseDeathAngelInterval: any;
+  raiseDeathBringerInterval: any;
   removed_callback: any;
   added_callback: any;
   regen_callback: any;
@@ -83,7 +84,9 @@ class World {
   currentTradeId: number;
   deathAngel: any;
   deathAngelSpawnCoords: { x: number; y: number };
+  deathBringer: any;
   isCastDeathAngelSpellEnabled: boolean;
+  isCastDeathBringerSpellEnabled: boolean;
   magicStones: number[];
   activatedMagicStones: number[];
   blueFlames: number[];
@@ -223,6 +226,7 @@ class World {
     this.raiseNecromancerInterval = null;
     this.raiseDeathAngelInterval = null;
     this.isCastDeathAngelSpellEnabled = false;
+    this.isCastDeathBringerSpellEnabled = false;
     this.magicStones = [];
     this.activatedMagicStones = [];
     this.blueFlames = [];
@@ -550,7 +554,8 @@ class World {
         );
       }
     } else {
-      console.error("pushToPlayer: player was undefined");
+      console.log("pushToPlayer: player was undefined");
+      Sentry.captureException(new Error("pushToPlayer: player was undefined"), { extra: { player: player?.name } });
     }
   }
 
@@ -564,7 +569,8 @@ class World {
         }
       });
     } else {
-      console.error("pushToParty: party was undefined");
+      console.log("pushToParty: party was undefined");
+      Sentry.captureException(new Error("pushToParty: party was undefined"));
     }
   }
 
@@ -877,7 +883,8 @@ class World {
 
     setTimeout(() => {
       this.removeFromGroups(spell);
-      delete this.entities[spell.id];
+      // delete this.entities[spell.id];
+      this.removeEntity(spell.id);
     }, 3000);
 
     return spell;
@@ -1526,6 +1533,8 @@ class World {
         this.startRaiseNecromancerInterval(player, mob);
       } else if (mob.kind === Types.Entities.DEATHANGEL && !mob.hasTarget()) {
         this.startRaiseDeathAngelInterval(player, mob);
+      } else if (mob.kind === Types.Entities.DEATHBRINGER && !mob.hasTarget()) {
+        this.startRaiseDeathBringerInterval(player, mob);
       } else if (mob.kind === Types.Entities.BUTCHER && !mob.hasTaunted) {
         mob.hasTaunted = true;
         this.pushBroadcast(new Messages.Taunt(mob.id));
@@ -1576,7 +1585,7 @@ class World {
     if (id in this.entities) {
       return this.entities[id];
     } else {
-      console.error("Unknown entity : " + id);
+      console.log("Unknown entity : " + id);
     }
   }
 
@@ -1683,7 +1692,7 @@ class World {
       } else {
         raiseSkeletonSpell();
       }
-    }, 3500);
+    }, 4000);
 
     // @TODO Remove? or random raise on aggro ~~~
     raiseSkeletonSpell();
@@ -1691,8 +1700,33 @@ class World {
 
   stopRaiseDeathAngelInterval() {
     clearInterval(this.raiseDeathAngelInterval);
-    this.raiseDeathAngelInterval = null;
-    this.isCastDeathAngelSpellEnabled = true;
+    this.raiseDeathBringerInterval = null;
+    this.isCastDeathBringerSpellEnabled = true;
+  }
+
+  startRaiseDeathBringerInterval(player, mob) {
+    this.stopRaiseDeathBringerInterval();
+
+    const raiseSkeletonSpell = () => {
+      this.broadcastRaise(player, mob);
+      this.isCastDeathAngelSpellEnabled = true;
+    };
+
+    this.raiseDeathBringerInterval = setInterval(() => {
+      if (mob && Array.isArray(mob.hateList) && !mob.hateList.length) {
+        this.stopRaiseDeathBringerInterval();
+      } else {
+        raiseSkeletonSpell();
+      }
+    }, 2500);
+
+    raiseSkeletonSpell();
+  }
+
+  stopRaiseDeathBringerInterval() {
+    clearInterval(this.raiseDeathAngelInterval);
+    this.raiseDeathBringerInterval = null;
+    this.isCastDeathBringerSpellEnabled = true;
   }
 
   activateMagicStone(player, magicStone) {
@@ -2021,7 +2055,7 @@ class World {
       this.removeEntity(entity);
     }
 
-    if (attacker?.type === "spell") {
+    if (attacker?.type === "spell" && ![Types.Entities.DEATHBRINGERSPELL].includes(attacker.kind)) {
       this.pushToAdjacentGroups(attacker.group, attacker.despawn());
       this.removeEntity(attacker);
     }

@@ -8,7 +8,7 @@ export const PLAYER_MAX_EXTRA_GOLD = 75;
 export const PLAYER_MAX_MAGIC_FIND = 75;
 
 export const mobEnchant: { [key: string]: Enchant[] } = {
-  cowking: ["lightning"],
+  cowking: ["lightning", "curse-resistance"],
   minotaur: ["cold"],
   rat3: ["poison"],
   golem: ["physical", "stoneskin"],
@@ -16,9 +16,9 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
   snake4: ["flame"],
   spider: ["poison"],
   spider2: ["magic"],
-  spiderqueen: ["poison"],
+  spiderqueen: ["poison", "curse-health"],
   butcher: ["physical"],
-  worm: ["physical", "cursed-hp"],
+  worm: ["physical", "curse-health"],
   oculothorax: [],
   kobold: [],
   skeletontemplar: ["poison", "cold"],
@@ -29,7 +29,8 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
   skeletonberserker: ["physical"],
   skeletonarcher: [],
   shaman: [],
-  deathangel: ["spectral", "cursed-hp"],
+  deathbringer: ["spectral", "curse-health"],
+  deathangel: ["spectral", "curse-resistance"],
 };
 
 export const mobResistance = {
@@ -148,6 +149,13 @@ export const mobResistance = {
     coldResistance: 60,
     poisonResistance: 40,
   },
+  deathbringer: {
+    magicResistance: 100,
+    flameResistance: 100,
+    lightningResistance: 100,
+    coldResistance: 100,
+    poisonResistance: 100,
+  },
   deathangel: {
     magicResistance: 100,
     flameResistance: 100,
@@ -184,7 +192,8 @@ export const enchantToDisplayMap = {
   spectral: "spectral hit",
   physical: "extra strong",
   stoneskin: "stone skin",
-  "cursed-hp": "health cursed",
+  "curse-health": "cursed (health)",
+  "curse-resistance": "cursed (resistance)",
 };
 
 const resistanceToLowerResistanceMap = {
@@ -200,8 +209,16 @@ export const elements: Elements[] = ["magic", "flame", "lightning", "cold", "poi
 
 export const getRandomElement = (): Elements => _.shuffle(elements)[0];
 
-export const calculateResistance = (resistance: number) =>
-  resistance > PLAYER_MAX_RESISTANCES ? PLAYER_MAX_RESISTANCES : resistance;
+export const calculateResistance = (resistance: number, curseResistances = 0) => {
+  let calculatedResistances =
+    resistance - curseResistances > PLAYER_MAX_RESISTANCES ? PLAYER_MAX_RESISTANCES : resistance - curseResistances;
+
+  if (calculatedResistances < 0) {
+    calculatedResistances = 0;
+  }
+
+  return calculatedResistances;
+};
 
 export const calculateAttackSpeed = (attackSpeed: number) =>
   attackSpeed > PLAYER_MAX_ATTACK_SPEED ? PLAYER_MAX_ATTACK_SPEED : attackSpeed;

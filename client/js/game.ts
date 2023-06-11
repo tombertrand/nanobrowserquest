@@ -149,7 +149,8 @@ class Game {
   skillLightningAnimation: Animation;
   skillColdAnimation: Animation;
   skillPoisonAnimation: Animation;
-  cursePreventRegenerateHealthAnimation: Animation;
+  curseHealthAnimation: Animation;
+  curseResistanceAnimation: Animation;
   weaponEffectAnimation: Animation;
   client: any;
   achievements: any;
@@ -276,7 +277,8 @@ class Game {
     this.skillLightningAnimation = null;
     this.skillColdAnimation = null;
     this.skillPoisonAnimation = null;
-    this.cursePreventRegenerateHealthAnimation = null;
+    this.curseHealthAnimation = null;
+    this.curseResistanceAnimation = null;
     this.weaponEffectAnimation = null;
     this.partyInvites = [];
     this.partyInvitees = [];
@@ -480,8 +482,11 @@ class Game {
     this.weaponEffectAnimation = new Animation("idle_down", 6, 0, 20, 20);
     this.weaponEffectAnimation.setSpeed(140);
 
-    this.cursePreventRegenerateHealthAnimation = new Animation("idle_down", 17 + 1, 0, 20, 20);
-    this.cursePreventRegenerateHealthAnimation.setSpeed(25);
+    this.curseHealthAnimation = new Animation("idle_down", 17 + 1, 0, 20, 20);
+    this.curseHealthAnimation.setSpeed(25);
+
+    this.curseResistanceAnimation = new Animation("idle_down", 17 + 1, 0, 20, 20);
+    this.curseResistanceAnimation.setSpeed(100);
   }
 
   initSettings(settings) {
@@ -3403,6 +3408,7 @@ class Game {
                     Types.Entities.BUTCHER,
                     Types.Entities.SHAMAN,
                     Types.Entities.WORM,
+                    Types.Entities.DEATHBRINGER,
                     Types.Entities.DEATHANGEL,
                   ].includes(entity.kind);
 
@@ -3550,7 +3556,13 @@ class Game {
           entity.setSprite(self.getSprite(entity.getSpriteName()));
         }
 
-        entity.setGridPosition(caster.gridX, caster.gridY);
+        if (entity.kind === Types.Entities.DEATHBRINGERSPELL) {
+          const target = self.getEntityById(targetId) || self.player;
+          entity.setTarget(target);
+          entity.setGridPosition(target.gridX, target.gridY);
+        } else {
+          entity.setGridPosition(caster.gridX, caster.gridY);
+        }
 
         // @NOTE Adjustment so the spell is correctly aligned
         if (entity.kind === Types.Entities.MAGESPELL && !isRaise2) {
@@ -3567,7 +3579,6 @@ class Game {
           }
         }
         entity.setOrientation(orientation);
-        entity.idle();
 
         if (entity.kind === Types.Entities.DEATHANGELSPELL || (entity.kind === Types.Entities.MAGESPELL && isRaise2)) {
           entity.setTarget({ x: (x + originX * 8) * 16, y: (y + originY * 8) * 16 });
@@ -3576,6 +3587,12 @@ class Game {
           entity.setTarget({ x: target.x, y: target.y });
         } else if (entity.kind === Types.Entities.STATUESPELL || entity.kind === Types.Entities.STATUE2SPELL) {
           entity.setTarget({ x: x * 16, y: (y + 16) * 16 });
+        }
+
+        if (entity.kind === Types.Entities.DEATHBRINGERSPELL) {
+          entity.animate("idle", entity.idleSpeed, 1, () => entity.die());
+        } else {
+          entity.idle();
         }
 
         self.addEntity(entity);
@@ -3591,6 +3608,13 @@ class Game {
           entity.isDead = true;
 
           console.info(entity.id + " is dead");
+
+          if (Types.Entities.DEATHBRINGERSPELL) {
+            self.removeEntity(entity);
+            self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
+            return;
+          }
+
           let speed = 120;
 
           // Custom death animations
@@ -3992,6 +4016,12 @@ class Game {
           if (mob.kind === Types.Entities.DEATHANGEL) {
             mob.setRaisingMode();
             self.audioManager.playSound("deathangel-spell");
+            if (targetId === self.playerId) {
+              self.client.sendCastSpell(mob.id, mob.gridX, mob.gridY);
+            }
+          } else if (mob.kind === Types.Entities.DEATHBRINGER) {
+            mob.setRaisingMode();
+            // self.audioManager.playSound("deathangel-spell");
             if (targetId === self.playerId) {
               self.client.sendCastSpell(mob.id, mob.gridX, mob.gridY);
             }
@@ -4410,6 +4440,10 @@ class Game {
               entity.setSkillAnimation?.(skill);
             }
           } else {
+            if (skill === 1) {
+              player.clearCursed();
+            }
+
             player.setDefenseSkillAnimation(
               Types.defenseSkillTypeAnimationMap[skill],
               Types.defenseSkillDurationMap[skill](level),
@@ -4863,6 +4897,10 @@ class Game {
       });
 
       self.client.onCursed(function (entityId, curseId, duration) {
+        if (entityId === self.player.id) {
+          self.audioManager.playSound("curse");
+        }
+
         self.getEntityById(entityId)?.setCursed(curseId, duration);
       });
 
@@ -6057,6 +6095,7 @@ class Game {
       if (
         character.kind === Types.Entities.NECROMANCER ||
         character.kind === Types.Entities.DEATHANGEL ||
+        character.kind === Types.Entities.DEATHBRINGER ||
         character.kind === Types.Entities.MAGE ||
         character.kind === Types.Entities.SKELETONARCHER ||
         character.kind === Types.Entities.SHAMAN

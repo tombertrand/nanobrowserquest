@@ -39,7 +39,9 @@ import statue from "../sprites/statue.json";
 import statue2 from "../sprites/statue2.json";
 import statueSpell from "../sprites/statue-spell.json";
 import statue2Spell from "../sprites/statue2-spell.json";
+import deathbringer from "../sprites/deathbringer.json";
 import deathangel from "../sprites/deathangel.json";
+import deathbringerSpell from "../sprites/deathbringer-spell.json";
 import deathangelSpell from "../sprites/deathangel-spell.json";
 import wirtleg from "../sprites/weapon.json";
 import pickaxe from "../sprites/weapon.json";
@@ -211,7 +213,8 @@ import skillFlame from "../sprites/skill-flame.json";
 import skillLightning from "../sprites/skill-lightning.json";
 import skillCold from "../sprites/skill-cold.json";
 import skillPoison from "../sprites/skill-poison.json";
-import cursePreventRegenerateHealth from "../sprites/curse-prevent-regenerate-health.json";
+import curseHealth from "../sprites/curse-health.json";
+import curseResistance from "../sprites/curse-resistance.json";
 import agent from "../sprites/npc.json";
 import beachnpc from "../sprites/npc.json";
 import coder from "../sprites/npc.json";
@@ -293,7 +296,9 @@ const sprites = {
   statue2,
   "statue-spell": statueSpell,
   "statue2-spell": statue2Spell,
+  deathbringer,
   deathangel,
+  "deathbringer-spell": deathbringerSpell,
   "deathangel-spell": deathangelSpell,
   "deathangel-spell-magic": deathangelSpell,
   "deathangel-spell-flame": deathangelSpell,
@@ -681,7 +686,8 @@ const sprites = {
   "skill-lightning": skillLightning,
   "skill-cold": skillCold,
   "skill-poison": skillPoison,
-  "curse-prevent-regenerate-health": cursePreventRegenerateHealth,
+  "curse-health": curseHealth,
+  "curse-resistance": curseResistance,
   villagegirl,
   villager,
   carlosmatos,

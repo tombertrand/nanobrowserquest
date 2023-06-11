@@ -390,6 +390,7 @@ var Properties: any = {
       scrolltransmute: 5,
       cowkinghorn: 20,
       scrollupgradehigh: 20,
+      scrollupgradelegendary: 10,
     },
     hp: 6_500,
     armor: 22,
@@ -401,7 +402,7 @@ var Properties: any = {
       scrolltransmute: 5,
       minotauraxe: 10,
       beltminotaur: 10,
-      scrollupgradehigh: 40,
+      scrollupgradelegendary: 70,
     },
     hp: 12_500,
     armor: 29,
@@ -731,6 +732,14 @@ var Properties: any = {
     armor: 32,
     weapon: 33,
   },
+  deathbringer: {
+    drops: {
+      scrollupgradelegendary: 38,
+    },
+    hp: 100,
+    armor: 36,
+    weapon: 1,
+  },
   deathangel: {
     drops: {
       mushrooms: 33,
@@ -743,9 +752,9 @@ var Properties: any = {
       shieldmystical: 5,
       ringmystical: 2,
     },
-    hp: 26_000,
+    hp: 24_000,
     armor: 36,
-    weapon: 34,
+    weapon: 33,
   },
 };
 

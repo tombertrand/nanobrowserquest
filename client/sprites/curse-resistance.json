@@ -1,0 +1,13 @@
+{
+  "id": "curse-resistance",
+  "width": 20,
+  "height": 20,
+  "animations": {
+    "idle_down": {
+      "length": 20,
+      "row": 0
+    }
+  },
+  "offset_y": -20,
+  "offset_x": 0
+}
