@@ -389,8 +389,8 @@ class World {
             regenerateHealth += character.bonus.regenerateHealth;
           }
 
-          if (character.cursed?.id === 0) {
-            regenerateHealth = regenerateHealth - Math.floor(regenerateHealth * (character.cursed.percent / 100));
+          if (character.curse?.health && character.curse?.health !== 0) {
+            regenerateHealth = regenerateHealth - Math.floor(regenerateHealth * (character.curse.health / 100));
           }
 
           if (regenerateHealth > 0) {
