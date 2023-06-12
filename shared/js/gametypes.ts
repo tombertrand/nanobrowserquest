@@ -2274,7 +2274,7 @@ Types.getAttributesBonus = function (attributes, level) {
 Types.getFrozenTimePerLevel = (itemLevel: number) => itemLevel * 250;
 
 Types.bonusCap = {
-  reduceFrozenChance: PLAYER_MAX_RESISTANCES,
+  reduceFrozenChance: 100,
   magicResistance: PLAYER_MAX_RESISTANCES,
   flameResistance: PLAYER_MAX_RESISTANCES,
   lightningResistance: PLAYER_MAX_RESISTANCES,

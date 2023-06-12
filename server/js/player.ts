@@ -2828,7 +2828,7 @@ class Player extends Character {
     }
 
     if (this.bonus.coldResistance) {
-      this.bonus.reduceFrozenChance += Math.floor(this.bonus.coldResistance / 2);
+      this.bonus.reduceFrozenChance += Math.floor(this.bonus.coldResistance / 3);
     }
   }
 
@@ -2884,24 +2884,33 @@ class Player extends Character {
     let socketJewelBonus = {};
 
     [
-      [this.helmSocket, this.isHelmUnique, "helm"],
-      [this.armorSocket, this.isArmorUnique, "armor"],
-      [this.weaponSocket, this.isWeaponUnique, "weapon"],
-      [this.shieldSocket, this.isShieldUnique, "shield"],
-    ].forEach(([rawSocket, isUnique, type]) => {
-      const { runewordBonus } = Types.getRunewordBonus({ isUnique, socket: rawSocket, type });
+      this.helmSocket ? [this.helmLevel, this.helmSocket, this.isHelmUnique, "helm"] : undefined,
+      this.armorSocket ? [this.armorLevel, this.armorSocket, this.isArmorUnique, "armor"] : undefined,
+      this.weaponSocket ? [this.weaponLevel, this.weaponSocket, this.isWeaponUnique, "weapon"] : undefined,
+      this.shieldSocket ? [this.shieldLevel, this.shieldSocket, this.isShieldUnique, "shield"] : undefined,
+    ]
+      .filter(Boolean)
+      .forEach(([level, rawSocket, isUnique, type]) => {
+        const { runewordBonus } = Types.getRunewordBonus({ isUnique, socket: rawSocket, type });
 
-      if (runewordBonus) {
-        socketRuneBonus = runewordBonus;
-        socketJewelBonus = {};
-      } else {
-        socketRuneBonus = Types.getRunesBonus(rawSocket);
-        socketJewelBonus = Types.getJewelBonus(rawSocket);
-      }
+        if (runewordBonus) {
+          socketRuneBonus = runewordBonus;
+          socketJewelBonus = {};
+        } else {
+          socketRuneBonus = Types.getRunesBonus(rawSocket);
+          socketJewelBonus = Types.getJewelBonus(rawSocket);
+        }
 
-      this.bonus = Types.combineBonus(this.bonus, socketRuneBonus);
-      this.bonus = Types.combineBonus(this.bonus, socketJewelBonus);
-    });
+        // @ts-ignore
+        if (socketRuneBonus.freezeChance || socketJewelBonus.freezeChance) {
+          if (typeof level === "number" && level > this.freezeChanceLevel) {
+            this.freezeChanceLevel = level;
+          }
+        }
+
+        this.bonus = Types.combineBonus(this.bonus, socketRuneBonus);
+        this.bonus = Types.combineBonus(this.bonus, socketJewelBonus);
+      });
   }
 
   updateHitPoints(reset?: boolean) {
