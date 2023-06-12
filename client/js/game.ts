@@ -4341,7 +4341,10 @@ class Game {
         $("#player-attackSpeed").text(bonus.attackSpeed);
         $("#player-exp").text(bonus.exp);
         $("#player-skillTimeout").text(bonus.skillTimeout);
+        $("#player-freezeChance").text(bonus.freezeChance);
+        $("#player-reduceFrozenChance").text(bonus.reduceFrozenChance);
         $("#player-extraGold").text(bonus.extraGold);
+        $("#player-drainLife").text(bonus.drainLife);
 
         self.player.setAttackSpeed(bonus.attackSpeed);
       });
@@ -6433,6 +6436,8 @@ class Game {
 
       return;
     } else if (message.startsWith("/town")) {
+      // console.log("~~~~this.player.attackers", this.player.attackers);
+
       // Prevent sending the message to teleport back to town
       if (Object.keys(this.player.attackers).length || (this.player.gridY >= 195 && this.player.gridY <= 259)) {
         return;

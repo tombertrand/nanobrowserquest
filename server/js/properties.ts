@@ -237,7 +237,7 @@ var Properties: any = {
   werewolf: {
     drops: {
       rejuvenationpotion: 60,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 6,
       bluearmor: 3,
       bluemorningstar: 3,
       beltfrozen: 3,
@@ -257,7 +257,7 @@ var Properties: any = {
       bluearmor: 3,
       helmblue: 5,
       bluemorningstar: 3,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 6,
       ringgold: 3,
       shieldhorned: 2,
       gold: 10,
@@ -269,7 +269,7 @@ var Properties: any = {
   skeleton3: {
     drops: {
       rejuvenationpotion: 65,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       hornedarmor: 3,
       belthorned: 1,
       helmhorned: 3,
@@ -284,7 +284,7 @@ var Properties: any = {
   },
   skeletoncommander: {
     drops: {
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 6,
       belthorned: 3,
       helmhorned: 3,
       hornedarmor: 5,
@@ -321,7 +321,7 @@ var Properties: any = {
       shieldhorned: 1,
       shieldfrozen: 2,
       helmfrozen: 2,
-      scrollupgradehigh: 4,
+      scrollupgradehigh: 5,
       ringgold: 3,
       amuletgold: 2,
       gold: 10,
@@ -333,7 +333,7 @@ var Properties: any = {
   zombie: {
     drops: {
       rejuvenationpotion: 60,
-      scrollupgradehigh: 2,
+      scrollupgradehigh: 4,
       ringgold: 2,
       amuletgold: 2,
       shieldfrozen: 1,
@@ -347,7 +347,7 @@ var Properties: any = {
   necromancer: {
     drops: {
       necromancerheart: 40,
-      scrollupgradehigh: 3,
+      scrollupgradehigh: 5,
       ringgold: 4,
       amuletgold: 4,
       shieldfrozen: 4,
@@ -372,7 +372,7 @@ var Properties: any = {
       shieldfrozen: 1,
       ringgold: 1,
       amuletgold: 1,
-      scrollupgradehigh: 1,
+      scrollupgradehigh: 2,
       gold: 10,
     },
     hp: 600,

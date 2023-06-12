@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/browser";
 import * as _ from "lodash";
 import { io } from "socket.io-client";
 
@@ -416,17 +417,21 @@ class GameClient {
   receiveDrop(data) {
     const { mobId, itemId, kind, mobHateList, partyId, amount } = data[1];
 
-    const item = EntityFactory.createEntity({ kind, id: itemId });
+    try {
+      const item = EntityFactory.createEntity({ kind, id: itemId });
 
-    // @TODO unify this with the receiveSpawn
-    item.wasDropped = true;
-    item.playersInvolved = mobHateList;
-    item.partyId = partyId;
-    if ([Types.Entities.GOLD, Types.Entities.NANOCOIN, Types.Entities.BANANOCOIN].includes(item.kind)) {
-      item.amount = amount;
+      // @TODO unify this with the receiveSpawn
+      item.wasDropped = true;
+      item.playersInvolved = mobHateList;
+      item.partyId = partyId;
+      if ([Types.Entities.GOLD, Types.Entities.NANOCOIN, Types.Entities.BANANOCOIN].includes(item.kind)) {
+        item.amount = amount;
+      }
+
+      this.drop_callback?.(item, mobId);
+    } catch (err) {
+      Sentry.captureException(err, { extra: data[1] });
     }
-
-    this.drop_callback?.(item, mobId);
   }
 
   receiveSpawn(data) {

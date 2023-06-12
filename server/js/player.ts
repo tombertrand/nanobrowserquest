@@ -1146,6 +1146,9 @@ class Player extends Character {
         // @NOTE Handle the /town command
         if (x >= 33 && x <= 39 && y >= 208 && y <= 211) {
           // The message should have been blocked by the FE
+
+          // console.log("~~~~~Object.keys(self.attackers)", Object.keys(self.attackers));
+
           if (Object.keys(self.attackers).length || (self.y >= 195 && self.y <= 259)) {
             return;
           }
@@ -2777,6 +2780,7 @@ class Player extends Character {
     this.calculateSocketBonus();
     this.calculatePartyBonus();
     this.calculateGlobalBonus();
+    this.validateCappedBonus();
     this.updateHitPoints();
     this.sendPlayerStats();
   }
@@ -2821,6 +2825,10 @@ class Player extends Character {
     }
     if (this.bonus.poisonDamagePercent) {
       this.bonus.poisonDamage += Math.round((this.bonus.poisonDamagePercent / 100) * this.bonus.poisonDamage);
+    }
+
+    if (this.bonus.coldResistance) {
+      this.bonus.reduceFrozenChance += Math.floor(this.bonus.coldResistance / 2);
     }
   }
 
@@ -3058,6 +3066,9 @@ class Player extends Character {
       poisonResistance: Types.calculateResistance(
         this.bonus.poisonResistance + this.skill.resistances - this.curse.resistances,
       ),
+      freezeChance: this.bonus.freezeChance,
+      reduceFrozenChance: this.bonus.reduceFrozenChance,
+      drainLife: this.bonus.drainLife,
     };
 
     this.send(new Messages.Stats(stats).serialize());

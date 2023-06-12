@@ -20,6 +20,9 @@ import {
   getResistance,
   mobEnchant,
   mobResistance,
+  PLAYER_MAX_ATTACK_SPEED,
+  PLAYER_MAX_EXTRA_GOLD,
+  PLAYER_MAX_MAGIC_FIND,
   PLAYER_MAX_RESISTANCES,
   resistanceToDisplayMap,
 } from "./types/resistance";
@@ -2271,17 +2274,17 @@ Types.getAttributesBonus = function (attributes, level) {
 Types.getFrozenTimePerLevel = (itemLevel: number) => itemLevel * 250;
 
 Types.bonusCap = {
-  reduceFrozenChance: 50,
-  magicResistance: 90,
-  flameResistance: 90,
-  lightningResistance: 90,
-  coldResistance: 90,
-  poisonResistance: 90,
+  reduceFrozenChance: PLAYER_MAX_RESISTANCES,
+  magicResistance: PLAYER_MAX_RESISTANCES,
+  flameResistance: PLAYER_MAX_RESISTANCES,
+  lightningResistance: PLAYER_MAX_RESISTANCES,
+  coldResistance: PLAYER_MAX_RESISTANCES,
+  poisonResistance: PLAYER_MAX_RESISTANCES,
   freezeChance: 75,
-  attackSpeed: 50,
-  magicFind: 100,
+  attackSpeed: PLAYER_MAX_ATTACK_SPEED,
+  magicFind: PLAYER_MAX_MAGIC_FIND,
   skillTimeout: 50,
-  extraGold: 50,
+  extraGold: PLAYER_MAX_EXTRA_GOLD,
 };
 
 Types.getUpgradeSuccessRates = () => {
