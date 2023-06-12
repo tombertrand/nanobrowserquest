@@ -48,7 +48,7 @@ let payoutIndex = 0;
 
 const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "HeroOfNano"];
 const SUPER_ADMINS = ["running-coder"];
-const CHATBAN_PATTERNS = [/n.?i.?g.?g.?(?:e.?r|a)/, /https?:\/\/(:?www)?\\.?youtube/];
+const CHATBAN_PATTERNS = [/n.?i.?g.?g.?(?:e.?r|a)/, /https?:\/\/(:?www)?\.?youtube/, /n.?e.?g.?e.?r.?/];
 
 class Player extends Character {
   id: number;
@@ -2358,7 +2358,6 @@ class Player extends Character {
     this.broadcast(new Messages.Poisoned(entity.id, iterations * tick));
     clearInterval(entity.poisonedInterval);
 
-    // @TODO ~~~ make sure the poison interval is cleared on disconnect
     entity.poisonedInterval = setInterval(() => {
       let poisonDmg = Math.round(
         (dmg -
