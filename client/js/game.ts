@@ -1310,6 +1310,9 @@ class Game {
           "data-bonus": toString(player.weaponBonus),
           "data-socket": toString(player.weaponSocket),
           "data-skill": player.attackSkill,
+          click: event => {
+            this.handleClick(event);
+          },
         }),
       );
     }
@@ -1331,6 +1334,9 @@ class Game {
           "data-level": player.helmLevel,
           "data-bonus": toString(player.helmBonus),
           "data-socket": toString(player.helmSocket),
+          click: event => {
+            this.handleClick(event);
+          },
         }),
       );
     }
@@ -1353,6 +1359,9 @@ class Game {
           "data-level": player.armorLevel,
           "data-bonus": toString(player.armorBonus),
           "data-socket": toString(player.armorSocket),
+          click: event => {
+            this.handleClick(event);
+          },
         }),
       );
     }
@@ -1367,6 +1376,9 @@ class Game {
           "data-item": player.beltName,
           "data-level": player.beltLevel,
           "data-bonus": toString(player.beltBonus),
+          click: event => {
+            this.handleClick(event);
+          },
         }),
       );
     }
@@ -1381,6 +1393,9 @@ class Game {
           "data-item": player.cape,
           "data-level": player.capeLevel,
           "data-bonus": toString(player.capeBonus),
+          click: event => {
+            this.handleClick(event);
+          },
         }),
       );
     }
@@ -1404,6 +1419,9 @@ class Game {
           "data-bonus": toString(player.shieldBonus),
           "data-socket": toString(player.shieldSocket),
           "data-skill": player.defenseSkill,
+          click: event => {
+            this.handleClick(event);
+          },
         }),
       );
     }
@@ -1418,6 +1436,9 @@ class Game {
           "data-item": player.ring1Name,
           "data-level": player.ring1Level,
           "data-bonus": toString(player.ring1Bonus),
+          click: event => {
+            this.handleClick(event);
+          },
         }),
       );
     }
@@ -1432,6 +1453,9 @@ class Game {
           "data-item": player.ring2Name,
           "data-level": player.ring2Level,
           "data-bonus": toString(player.ring2Bonus),
+          click: event => {
+            this.handleClick(event);
+          },
         }),
       );
     }
@@ -1446,6 +1470,9 @@ class Game {
           "data-item": player.amuletName,
           "data-level": player.amuletLevel,
           "data-bonus": toString(player.amuletBonus),
+          click: event => {
+            this.handleClick(event);
+          },
         }),
       );
     }
@@ -1561,10 +1588,12 @@ class Game {
     $("#item-merchant").empty();
 
     for (var i = 0; i < MERCHANT_SLOT_COUNT; i++) {
+      const slot = MERCHANT_SLOT_RANGE + i;
+
       $("#item-merchant").append(
-        `<div class="item-slot item-merchant ${!merchantItems[i] ? "item-merchant-empty" : ""}" data-slot="${
-          MERCHANT_SLOT_RANGE + i
-        }"></div>`,
+        `<div class="item-slot item-merchant ${
+          !merchantItems[i] ? "item-merchant-empty" : ""
+        }" data-slot="${slot}"></div>`,
       );
 
       if (merchantItems[i]?.item) {
@@ -1581,7 +1610,7 @@ class Game {
     $("#trade-player1-item .item-trade").empty();
 
     this.player.tradePlayer1.forEach(({ slot, ...item }) => {
-      $(`#trade-player1-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, isDraggable));
+      $(`#trade-player1-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, { isDraggable }));
     });
 
     // @TODO Validate this class, unable to trade
@@ -1598,7 +1627,7 @@ class Game {
     $("#trade-player2-item .item-trade").empty();
 
     this.player.tradePlayer2.forEach(({ slot, ...item }) => {
-      $(`#trade-player2-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, false));
+      $(`#trade-player2-item .item-slot:eq(${slot})`).append(this.createItemDiv(item, { isDraggable: false }));
     });
 
     this.updateRequirement();
@@ -1628,7 +1657,7 @@ class Game {
       runeword?: string;
       amount?: number;
     },
-    isDraggable = true,
+    { isDraggable = true }: { isDraggable?: boolean } = {},
   ) {
     if (socket) {
       const socketRequirement = Types.getHighestSocketRequirement(JSON.parse(socket));
@@ -1653,7 +1682,82 @@ class Game {
       ...(skill ? { "data-skill": skill } : null),
       ...(requirement ? { "data-requirement": requirement } : null),
       ...(amount ? { "data-amount": amount } : null),
+      click: event => {
+        this.handleClick(event);
+      },
     });
+  }
+
+  handleClick(event) {
+    if (!event.shiftKey) {
+      return;
+    }
+
+    const slot = Number($(event.currentTarget).parent().attr("data-slot"));
+    if (isNaN(slot)) return;
+
+    const item = $(event.currentTarget).attr("data-item");
+    if (!item) return;
+
+    const type = kinds[item][1];
+    if (!type) return;
+
+    let destination;
+    let isEquipItem = false;
+    let isUnEquipItem = false;
+
+    if (slot >= Slot.WEAPON && slot <= Slot.HELM) {
+      destination = $("#inventory");
+      isUnEquipItem = true;
+    } else if (slot < INVENTORY_SLOT_COUNT || slot === UPGRADE_SLOT_RANGE + UPGRADE_SLOT_COUNT - 1) {
+      if ($("#upgrade").hasClass("visible")) {
+        destination = $("#upgrade");
+      } else if ($("#stash").hasClass("visible")) {
+        destination = $("#stash");
+      } else if ($("#trade").hasClass("visible")) {
+        destination = $("#trade");
+      } else if ($("#merchant").hasClass("visible")) {
+        if (itemGoldMap[item]) {
+          destination = $("#merchant");
+        }
+      } else {
+        destination = $("#inventory");
+        isEquipItem = true;
+      }
+    } else if (slot >= STASH_SLOT_RANGE && slot < STASH_SLOT_RANGE + STASH_SLOT_COUNT) {
+      if ($("#inventory").hasClass("visible")) {
+        destination = $("#inventory");
+      }
+    }
+
+    if (!destination) return;
+
+    let matchType = type;
+    if (Types.isRune(item) || Types.isStone(item) || Types.isJewel(item)) {
+      matchType = "scroll";
+    } else if (Types.isBar(item)) {
+      matchType = "trade";
+    } else if (Types.isSingle(item)) {
+      matchType = "single";
+    }
+
+    let destinationSlot;
+    if (isUnEquipItem) {
+      destinationSlot = destination.find(`#item-inventory .item-droppable:empty`).first().attr("data-slot");
+    } else if (isEquipItem) {
+      destinationSlot =
+        destination.find(`#item-player .item-${type}:empty`).first().attr("data-slot") ||
+        destination.find(`#item-player .item-${type}`).first().attr("data-slot");
+    } else {
+      destinationSlot = destination
+        .find(`.item-${matchType}:empty, .item-droppable:not(.item-delete):empty:visible, .item-merchant-empty:empty`)
+        .first()
+        .attr("data-slot");
+    }
+
+    if (!destinationSlot) return;
+
+    this.dropItem(slot, Number(destinationSlot));
   }
 
   updateUpgrade({ luckySlot, isSuccess }) {

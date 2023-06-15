@@ -23,7 +23,7 @@ import "../css/gold.css";
 import * as Sentry from "@sentry/browser";
 
 import { Types } from "../../shared/js/gametypes";
-import { MERCHANT_SLOT_RANGE } from "../../shared/js/slots";
+import { INVENTORY_SLOT_COUNT, MERCHANT_SLOT_RANGE } from "../../shared/js/slots";
 import App from "./app";
 import Detect from "./detect";
 import Game from "./game";
@@ -656,7 +656,9 @@ var initGame = function () {
       case Types.Keys.BACKSPACE:
         if (typeof game.hoverSlotToDelete === "number") {
           if ($("#merchant").hasClass("visible")) {
-            game.dropItem(game.hoverSlotToDelete, MERCHANT_SLOT_RANGE);
+            if (game.hoverSlotToDelete < INVENTORY_SLOT_COUNT) {
+              game.dropItem(game.hoverSlotToDelete, MERCHANT_SLOT_RANGE);
+            }
           } else {
             game.dropItem(game.hoverSlotToDelete, -1);
           }

@@ -108,7 +108,7 @@ class App {
     $.contextMenu({
       selector: "#canvas",
       animation: { duration: 25, show: "fadeIn", hide: "fadeOut" },
-      build: () => {
+      build: (_event) => {
         const { x, y } = this.game.getMouseGridPosition();
         const player = this.game.getPlayerAt(x, y);
         const isInParty = !!player?.partyId;

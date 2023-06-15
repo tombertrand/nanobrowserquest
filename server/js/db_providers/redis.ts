@@ -1984,7 +1984,7 @@ class DatabaseHandler {
               isWorkingRecipe = true;
               isRecipe = true;
 
-              postMessageToDiscordAnvilChannel(`${player.name} crafted the Quantum Powder ${EmojiMap.powderquantum}`);
+              // postMessageToDiscordAnvilChannel(`${player.name} crafted the Quantum Powder ${EmojiMap.powderquantum}`);
 
               generatedItem = "powderquantum:1";
             }

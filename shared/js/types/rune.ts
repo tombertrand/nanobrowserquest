@@ -778,6 +778,8 @@ export const Runewords = {
       bonus: {
         health: 180,
         defense: 30,
+        poisonDamage: 20,
+        poisonResistance: 35,
         allResistance: 20,
         regenerateHealth: 25,
       },
@@ -793,9 +795,12 @@ export const Runewords = {
         coldDamage: 15,
         poisonDamage: 15,
         magicFind: 25,
-        skillTimeout: 10,
+        skillTimeout: 15,
         allResistance: 20,
       },
     },
   },
 };
+
+// Safe Heaven
+// XNO is not a Security

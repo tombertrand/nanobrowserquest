@@ -1107,7 +1107,7 @@ class Player extends Character {
                   } else if (kind === Types.Entities.STONEHERO) {
                     postMessageToDiscordEventChannel(`${player.name} picked up a Hero Emblem ${EmojiMap.stonehero}`);
                   } else if (kind === Types.Entities.CHALICE) {
-                    postMessageToDiscordEventChannel(`${player.name} picked up the Chalice ${EmojiMap.chalice}`);
+                    // postMessageToDiscordEventChannel(`${player.name} picked up the Chalice ${EmojiMap.chalice}`);
                   } else if (kind === Types.Entities.SCROLLTRANSMUTEBLESSED) {
                     postMessageToDiscordEventChannel(
                       `${player.name} picked up a Blessed Transmute Scroll ${EmojiMap.scrolltransmuteblessed}`,
