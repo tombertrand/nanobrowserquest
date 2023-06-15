@@ -3078,6 +3078,7 @@ class Player extends Character {
       freezeChance: this.bonus.freezeChance,
       reduceFrozenChance: this.bonus.reduceFrozenChance,
       drainLife: this.bonus.drainLife,
+      regenerateHealth: this.bonus.regenerateHealth + Math.floor(this.maxHitPoints / 33),
     };
 
     this.send(new Messages.Stats(stats).serialize());

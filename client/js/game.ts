@@ -4449,6 +4449,7 @@ class Game {
         $("#player-reduceFrozenChance").text(bonus.reduceFrozenChance);
         $("#player-extraGold").text(bonus.extraGold);
         $("#player-drainLife").text(bonus.drainLife);
+        $("#player-regenerateHealth").text(bonus.regenerateHealth);
 
         self.player.setAttackSpeed(bonus.attackSpeed);
       });
