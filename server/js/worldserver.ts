@@ -1957,7 +1957,7 @@ class World {
     let exp = expOverride || Types.getMobExp(mob.kind);
 
     if (Types.isMiniBoss(mob)) {
-      exp = Math.floor(exp * 1.75);
+      exp = Math.floor(exp * 3);
     }
 
     const levelDifference = playerLevel - mobLevel;

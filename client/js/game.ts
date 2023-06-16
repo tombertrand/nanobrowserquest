@@ -1404,7 +1404,7 @@ class Game {
       const isUnique = Types.isUnique(player.shieldName, player.shieldBonus);
       const { runeword } = Types.getRunewordBonus({
         isUnique,
-        socket: player.weaponSocket,
+        socket: player.shieldSocket,
         type: "shield",
       });
 
@@ -2710,6 +2710,7 @@ class Game {
       party,
       settings,
       network,
+      isHurtByTrap,
     }) {
       // @ts-ignore
       self.app.start();
@@ -2836,6 +2837,10 @@ class Game {
 
       self.storage.initPlayer(name, account);
       self.renderer.loadPlayerImage();
+
+      if (isHurtByTrap) {
+        self.tryUnlockingAchievement("MISSTEP");
+      }
 
       if (!self.storage.hasAlreadyPlayed() || self.player.level === 1) {
         self.showNotification(`Welcome to ${network === "nano" ? "Nano" : "Banano"} BrowserQuest!`);
@@ -3596,12 +3601,13 @@ class Game {
 
           const [helm, helmLevel, helmBonus, helmSocket] = rawHelm.split(":");
           const [armor, armorLevel, armorBonus, armorSocket] = rawArmor.split(":");
-          const [weapon, weaponLevel, weaponBonus, weaponSocket] = rawWeapon.split(":");
+          const [weapon, weaponLevel, weaponBonus, weaponSocket, weaponSkill] = rawWeapon.split(":");
 
           entity.setWeaponName(weapon);
           entity.setWeaponLevel(weaponLevel);
           entity.setWeaponBonus(weaponBonus);
           entity.setWeaponSocket(weaponSocket);
+          entity.setAttackSkill(weaponSkill);
           entity.setSpriteName(armor);
           entity.setArmorName(armor);
           entity.setArmorLevel(armorLevel);

@@ -128,7 +128,7 @@ class Mob extends Character {
     }
 
     if (!Types.isBoss(this.kind)) {
-      const isMiniBoss = random(this.kind === Types.Entities.COW ? 50 : 20) === 1;
+      const isMiniBoss = random(this.kind === Types.Entities.COW ? 40 : 20) === 1;
       if (!isMiniBoss) return;
 
       let enchantCount = 0;

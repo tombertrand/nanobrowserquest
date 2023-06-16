@@ -48,7 +48,13 @@ let payoutIndex = 0;
 
 const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "HeroOfNano"];
 const SUPER_ADMINS = ["running-coder"];
-const CHATBAN_PATTERNS = [/n.?i.?g.?g.?(?:e.?r|a)/, /https?:\/\/(:?www)?\.?youtube/, /n.?e.?g.?e.?r.?/];
+const CHATBAN_PATTERNS = [
+  /n.?i.?g.?g.?(?:e.?r|a)/i,
+  /https?:\/\/(:?www)?\.?youtube/i,
+  /n.?e.?g.?e.?r.?/i,
+  /fucker/i,
+  /cunt/i,
+];
 
 class Player extends Character {
   id: number;
@@ -862,9 +868,12 @@ class Player extends Character {
           self.handleHurtTrapDmg(trap);
 
           self.isHurtByTrap = true;
-          setTimeout(() => {
-            self.isHurtByTrap = false;
-          }, 3000);
+
+          if (self.hitPoints >= 0) {
+            setTimeout(() => {
+              self.isHurtByTrap = false;
+            }, 3000);
+          }
         }
       } else if (action === Types.Messages.STATUE) {
         console.info("STATUE: " + self.name + " " + message[1]);
@@ -2183,7 +2192,9 @@ class Player extends Character {
       name: this.name,
       helm: `${this.helm}:${this.helmLevel}${toDb(this.helmBonus)}${toDb(this.helmSocket)}`,
       armor: `${this.armor}:${this.armorLevel}${toDb(this.armorBonus)}${toDb(this.armorSocket)}`,
-      weapon: `${this.weapon}:${this.weaponLevel}${toDb(this.weaponBonus)}${toDb(this.weaponSocket)}`,
+      weapon: `${this.weapon}:${this.weaponLevel}${toDb(this.weaponBonus)}${toDb(this.weaponSocket)}${toDb(
+        this.attackSkill,
+      )}`,
       amulet: this.amulet ? `${this.amulet}:${this.amuletLevel}${toDb(this.amuletBonus)}` : null,
       ring1: this.ring1 ? `${this.ring1}:${this.ring1Level}${toDb(this.ring1Bonus)}` : null,
       ring2: this.ring2 ? `${this.ring2}:${this.ring2Level}${toDb(this.ring2Bonus)}` : null,
@@ -2193,7 +2204,9 @@ class Player extends Character {
       partyId: this.partyId,
       cape: this.cape ? `${this.cape}${toDb(this.capeLevel)}${toDb(this.capeBonus)}` : null,
       shield: this.shield
-        ? `${this.shield}:${this.shieldLevel}${toDb(this.shieldBonus)}${toDb(this.shieldSocket)}`
+        ? `${this.shield}:${this.shieldLevel}${toDb(this.shieldBonus)}${toDb(this.shieldSocket)}${toDb(
+            this.defenseSkill,
+          )}`
         : null,
       settings: {
         capeHue: this.capeHue,
@@ -2344,7 +2357,6 @@ class Player extends Character {
   }
 
   handleHurtTrapDmg(trap) {
-    // @TODO check based on defense?
     const dmg = 300;
 
     this.hitPoints -= dmg;
@@ -3363,6 +3375,7 @@ class Player extends Character {
           settings,
           network,
           party: this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
+          isHurtByTrap: this.isHurtByTrap,
         },
       ]);
 
@@ -3380,6 +3393,7 @@ class Player extends Character {
 
       this.hasEnteredGame = true;
       this.isDead = false;
+      this.isHurtByTrap = false;
     } catch (err) {
       Sentry.captureException(err, { extra: { player: this.name } });
     }
