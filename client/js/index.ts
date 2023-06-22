@@ -24,6 +24,7 @@ import * as Sentry from "@sentry/browser";
 
 import { Types } from "../../shared/js/gametypes";
 import { INVENTORY_SLOT_COUNT, MERCHANT_SLOT_RANGE } from "../../shared/js/slots";
+import { toArray } from "../../shared/js/utils";
 import App from "./app";
 import Detect from "./detect";
 import Game from "./game";
@@ -576,7 +577,7 @@ var initGame = function () {
     }
   });
 
-  $(document).keyup(function (e) {
+  $(document).on("keyup", function (e) {
     var key = e.which;
 
     if (!game.player || game.player.isDead) {
@@ -584,8 +585,19 @@ var initGame = function () {
       return;
     }
 
+    if (typeof game.cursorOverSocket === "number") {
+      game.cursorOverSocket = null;
+
+      $(".ui-tooltip .socket-container div").removeClass("item-faded");
+      $(".ui-tooltip .main-item > div:not(.item-header,.socket-item-container)").removeClass("invisible");
+      $(".ui-tooltip .socket-item-container").empty();
+    }
+
     if (game.started && !$("#chatbox").hasClass("active")) {
       switch (key) {
+        case Types.Keys.SHIFT:
+          game.pvpFlag = false;
+          break;
         case Types.Keys.LEFT:
         case Types.Keys.A:
           game.player.moveLeft = false;
@@ -606,14 +618,6 @@ var initGame = function () {
           game.player.moveDown = false;
           game.player.disableKeyboardNpcTalk = false;
           break;
-        case Types.Keys[1]:
-        case Types.Keys.KEYPAD_1:
-          game.useSkill(1);
-          break;
-        case Types.Keys[2]:
-        case Types.Keys.KEYPAD_2:
-          game.useSkill(2);
-          break;
         default:
           break;
       }
@@ -628,6 +632,54 @@ var initGame = function () {
     if (!game.player || game.player.isDead) {
       // Return if player is dead
       return;
+    }
+
+    const { slotSocketCount, slotSockets } = game;
+
+    if (slotSocketCount) {
+      if ([Types.Keys[1], Types.Keys.KEYPAD_1].includes(e.keyCode)) {
+        game.cursorOverSocket = 1;
+      } else if ([Types.Keys[2], Types.Keys.KEYPAD_2].includes(e.keyCode) && slotSocketCount >= 2) {
+        game.cursorOverSocket = 2;
+      } else if ([Types.Keys[3], Types.Keys.KEYPAD_3].includes(e.keyCode) && slotSocketCount >= 3) {
+        game.cursorOverSocket = 3;
+      } else if ([Types.Keys[4], Types.Keys.KEYPAD_4].includes(e.keyCode) && slotSocketCount >= 4) {
+        game.cursorOverSocket = 4;
+      } else if ([Types.Keys[5], Types.Keys.KEYPAD_5].includes(e.keyCode) && slotSocketCount >= 5) {
+        game.cursorOverSocket = 5;
+      } else if ([Types.Keys[6], Types.Keys.KEYPAD_6].includes(e.keyCode) && slotSocketCount === 6) {
+        game.cursorOverSocket = 6;
+      }
+      if (typeof game.cursorOverSocket === "number") {
+        $(`.ui-tooltip .socket-container div:not(:nth-child(${game.cursorOverSocket}))`).addClass("item-faded");
+        $(".ui-tooltip .main-item > div:not(.item-header,.socket-item-container)").addClass("invisible");
+
+        const rawSocket = slotSockets[game.cursorOverSocket - 1];
+
+        if (rawSocket) {
+          let socketContent = "";
+          if (typeof rawSocket === "string") {
+            const [socketItem, socketLevel, socketBonus] = (rawSocket || "").split("|");
+
+            // @ts-ignore
+            socketContent = game.generateItemTooltipContent({
+              isSocketItem: true,
+              item: socketItem,
+              level: parseInt(socketLevel, 10),
+              rawBonus: toArray(socketBonus),
+            });
+          } else {
+            // @ts-ignore
+            socketContent = game.generateItemTooltipContent({
+              isSocketItem: true,
+              item: `rune-${Types.RuneList[rawSocket - 1]}`,
+            });
+          }
+
+          $(".ui-tooltip .socket-item-container").html(socketContent);
+        }
+        return;
+      }
     }
 
     switch (e.keyCode) {
@@ -712,10 +764,6 @@ var initGame = function () {
       default:
         break;
     }
-  });
-
-  $(document).on("keyup", e => {
-    if (e.keyCode === Types.Keys.SHIFT) game.pvpFlag = false;
   });
 
   $("#chatinput").on("keydown", e => {

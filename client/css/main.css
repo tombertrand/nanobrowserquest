@@ -752,6 +752,20 @@ footer, header, hgroup, menu, nav, section {
         color: red;
     }
 
+    .socket-item {
+        top: 6px;
+        position: absolute;
+        width: 100%;
+    }
+
+    .invisible {
+        visibility: hidden;
+    }
+
+    .socket-item-container {
+        position: relative;
+    }
+
     .socket-container {
         display: flex;
         justify-content: center;
@@ -759,7 +773,7 @@ footer, header, hgroup, menu, nav, section {
 
     .socket-container div {
         margin: 0 3px;
-        border: solid 1px #74b5ff;
+        border: solid 2px #74b5ff;
     }
 
     .panel-container {

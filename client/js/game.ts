@@ -218,6 +218,9 @@ class Game {
   statues: { id: number; x: number; y: number }[];
   gatewayFxNpcId: number;
   goldBank: number;
+  slotSockets: (number | string)[] | null;
+  slotSocketCount: number | null;
+  cursorOverSocket: number | null;
 
   constructor(app) {
     this.app = app;
@@ -327,6 +330,8 @@ class Game {
     this.statues = [];
     this.gatewayFxNpcId = null;
     this.goldBank = 0;
+    this.slotSockets = null;
+    this.slotSocketCount = null;
 
     // combat
     // @ts-ignore
@@ -672,9 +677,10 @@ class Game {
       position: { my: "left bottom-10", at: "left bottom", collision: "flipfit" },
       close: function () {
         self.hoverSlotToDelete = null;
+        self.slotSockets = null;
+        self.slotSocketCount = null;
       },
       content() {
-        // Player is dead
         if (!self.player) return;
 
         const element = $(this);
@@ -686,6 +692,9 @@ class Game {
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
         const isEquippedItemSlot = Object.values(Slot).includes(slot);
         const amount = parseInt(element.attr("data-amount") || "0", 10);
+
+        self.slotSockets = rawSocket;
+        self.slotSocketCount = rawSocket?.length;
 
         self.hoverSlotToDelete = slot;
 
@@ -725,31 +734,8 @@ class Game {
           }
         }
 
-        const {
-          name,
-          isUnique,
-          isRune,
-          isRuneword,
-          isJewel,
-          isStone,
-          itemClass,
-          defense,
-          damage,
-          healthBonus,
-          magicDamage,
-          flameDamage,
-          lightningDamage,
-          pierceDamage,
-          bonus = [],
-          skill,
-          requirement,
-          description,
-          partyBonus = [],
-          runeBonus = [],
-          runeRank,
-          socket,
-          goldAmount,
-        } = Types.getItemDetails({
+        let content = self.generateItemTooltipContent({
+          element,
           item,
           level,
           rawBonus,
@@ -757,116 +743,179 @@ class Game {
           rawSocket,
           playerBonus: self.player.bonus,
           amount,
+          currentSet,
+          setName,
+          setParts,
+          setBonus,
         });
 
-        const isQuantity = Types.isQuantity(item);
-        const isLevelVisible = level && !isRune && !isJewel && !isStone && !Types.isSingle(item) && !isQuantity;
-        const isMerchantVisible = $("#merchant").hasClass("visible");
-        let buyOrSell = "";
-        if (isMerchantVisible) {
-          if (element.closest("#inventory")[0]) {
-            buyOrSell = "Sell";
-          } else if (element.closest("#merchant")[0]) {
-            buyOrSell = "Buy";
-          }
-        }
-
-        return `<div class="item-tooltip-wrapper ${
-          bonus.length >= 8 && currentSet && setBonus.length ? "extended" : ""
-        }">
-            <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
-              ${name}${isLevelVisible ? ` (+${level})` : ""}${isJewel ? ` lv.${level}` : ""}
-              ${runeRank ? ` (#${runeRank})` : ""}
-              ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
-            </div>
-            ${
-              itemClass
-                ? `<div class="item-class">(${isUnique ? "Unique " : ""}${
-                    isRuneword ? "Runeword " : ""
-                  }${itemClass} class item)</div>`
-                : ""
-            }
-            ${
-              socket
-                ? `<div class="socket-container">
-                ${_.range(0, socket)
-                  .map(index => {
-                    let image = "none";
-                    if (typeof rawSocket[index] === "number") {
-                      const rune = Types.getRuneNameFromItem(rawSocket[index]);
-                      image = rune ? `url(img/2/item-rune-${rune}.png)` : "none";
-                    } else if (Types.isJewel(rawSocket[index])) {
-                      const [, jewelLevel] = (rawSocket[index] as unknown as string).split("|") || [];
-                      const imageIndex = Types.getJewelSkinIndex(parseInt(jewelLevel));
-                      image = `url(img/2/item-jewelskull${imageIndex}.png)`;
-                    }
-                    return `<div class="item-rune" style="background-image: ${image}; position: relative;"></div>`;
-                  })
-                  .join("")}</div>`
-                : ""
-            }
-            ${defense ? `<div class="item-description">Defense: ${defense}</div>` : ""}
-            ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
-            ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
-            ${flameDamage ? `<div class="item-bonus">Flame damage: ${flameDamage}</div>` : ""}
-            ${lightningDamage ? `<div class="item-bonus">Lightning damage: ${lightningDamage}</div>` : ""}
-            ${pierceDamage ? `<div class="item-bonus">Pierce damage: ${pierceDamage}</div>` : ""}
-            ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
-            ${
-              Array.isArray(bonus)
-                ? bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")
-                : ""
-            }
-            ${description ? `<div class="item-description">${description}</div>` : ""}
-            ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
-            ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
-            ${
-              currentSet && setBonus.length
-                ? `<div>
-                ${
-                  currentSet && setBonus.length
-                    ? `<div class="item-set-description">${_.capitalize(currentSet)} set bonuses</div>`
-                    : ""
-                }
-                ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-                ${setName ? `<div class="item-set-name">${setName}</div>` : ""}
-                ${setParts
-                  ?.map(
-                    ({ description, isActive }) =>
-                      `<div class="item-set-part ${isActive ? "active" : ""}">${description}</div>`,
-                  )
-                  .join("")}
-              </div>`
-                : ""
-            }
-
-            ${
-              partyBonus.length
-                ? `<div>
-                ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
-                ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-              </div>`
-                : ""
-            }
-            ${
-              runeBonus.length
-                ? `<div>
-                ${runeBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
-              </div>`
-                : ""
-            }
-            ${
-              isMerchantVisible
-                ? `<div class="gold-amount ${!goldAmount ? "none" : ""}">${
-                    goldAmount
-                      ? `${buyOrSell} for ${self.formatGold(goldAmount)} gold${isQuantity ? " each" : ""}`
-                      : "Cannot be sold to merchant"
-                  }</div>`
-                : ""
-            }
-        </div>`;
+        return content;
       },
     });
+  }
+
+  generateItemTooltipContent({
+    isSocketItem = false,
+    element = null,
+    item,
+    level,
+    rawBonus,
+    rawSkill,
+    rawSocket,
+    playerBonus,
+    amount,
+    currentSet,
+    setName,
+    setParts,
+    setBonus,
+  }) {
+    const {
+      name,
+      isUnique,
+      isRune,
+      isRuneword,
+      isJewel,
+      isStone,
+      itemClass,
+      defense,
+      damage,
+      healthBonus,
+      magicDamage,
+      flameDamage,
+      lightningDamage,
+      pierceDamage,
+      bonus = [],
+      skill,
+      requirement,
+      description,
+      partyBonus = [],
+      runeBonus = [],
+      runeRank,
+      socket,
+      goldAmount,
+    } = Types.getItemDetails({
+      item,
+      level,
+      rawBonus,
+      rawSkill,
+      rawSocket,
+      playerBonus,
+      amount,
+    });
+
+    const isQuantity = Types.isQuantity(item);
+    const isLevelVisible = level && !isRune && !isJewel && !isStone && !Types.isSingle(item) && !isQuantity;
+    const isMerchantVisible = $("#merchant").hasClass("visible");
+    let buyOrSell = "";
+    if (isMerchantVisible && element) {
+      if (element.closest("#inventory")[0]) {
+        buyOrSell = "Sell";
+      } else if (element.closest("#merchant")[0]) {
+        buyOrSell = "Buy";
+      }
+    }
+
+    return `<div class="${bonus.length >= 8 && currentSet && setBonus.length ? "extended" : ""} ${
+      isSocketItem ? "socket-item" : "item-tooltip-wrapper main-item"
+    }">
+        <div class="item-header">
+          <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
+            ${name}${isLevelVisible ? ` (+${level})` : ""}${isJewel ? ` lv.${level}` : ""}
+            ${runeRank ? ` (#${runeRank})` : ""}
+            ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
+          </div>
+          ${
+            itemClass
+              ? `<div class="item-class">(${isUnique ? "Unique " : ""}${
+                  isRuneword ? "Runeword " : ""
+                }${itemClass} class item)</div>`
+              : ""
+          }
+          ${
+            socket
+              ? `<div class="socket-container">
+              ${_.range(0, socket)
+                .map(index => {
+                  let image = "none";
+                  let isUnique = false;
+                  if (typeof rawSocket[index] === "number") {
+                    const rune = Types.getRuneNameFromItem(rawSocket[index]);
+                    image = rune ? `url(img/2/item-rune-${rune}.png)` : "none";
+                  } else if (Types.isJewel(rawSocket[index])) {
+                    const [, rawJewelLevel, jewelBonus] = (rawSocket[index] as unknown as string).split("|") || [];
+                    const jewelLevel = parseInt(rawJewelLevel);
+                    const imageIndex = Types.getJewelSkinIndex(jewelLevel);
+                    isUnique = Types.isUnique("jewelskull", jewelBonus, jewelLevel);
+                    image = `url(img/2/item-jewelskull${imageIndex}.png)`;
+                  }
+                  return `<div class="item-rune ${
+                    isUnique ? "item-unique" : ""
+                  }" style="background-image: ${image}; position: relative;"></div>`;
+                })
+                .join("")}</div>`
+              : ""
+          }
+        </div>
+        <div class="socket-item-container"></div>
+        ${defense ? `<div class="item-description">Defense: ${defense}</div>` : ""}
+        ${damage ? `<div class="item-description">Attack: ${damage}</div>` : ""}
+        ${magicDamage ? `<div class="item-bonus">Magic damage: ${magicDamage}</div>` : ""}
+        ${flameDamage ? `<div class="item-bonus">Flame damage: ${flameDamage}</div>` : ""}
+        ${lightningDamage ? `<div class="item-bonus">Lightning damage: ${lightningDamage}</div>` : ""}
+        ${pierceDamage ? `<div class="item-bonus">Pierce damage: ${pierceDamage}</div>` : ""}
+        ${healthBonus ? `<div class="item-bonus">Health bonus: ${healthBonus}</div>` : ""}
+        ${
+          Array.isArray(bonus)
+            ? bonus.map(({ description }) => `<div class="item-bonus">${description}</div>`).join("")
+            : ""
+        }
+        ${skill ? `<div class="item-skill">${skill.description}</div>` : ""}
+        ${
+          runeBonus.length
+            ? `<div>
+            ${runeBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+          </div>`
+            : ""
+        }
+        ${description ? `<div class="item-description">${description}</div>` : ""}
+        ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
+        ${
+          currentSet && setBonus.length
+            ? `<div>
+            ${
+              currentSet && setBonus.length
+                ? `<div class="item-set-description">${_.capitalize(currentSet)} set bonuses</div>`
+                : ""
+            }
+            ${setBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+            ${setName ? `<div class="item-set-name">${setName}</div>` : ""}
+            ${setParts
+              ?.map(
+                ({ description, isActive }) =>
+                  `<div class="item-set-part ${isActive ? "active" : ""}">${description}</div>`,
+              )
+              .join("")}
+          </div>`
+            : ""
+        }
+        ${
+          partyBonus.length
+            ? `<div>
+            ${partyBonus.length ? `<div class="item-set-description">Party Bonuses</div>` : ""}
+            ${partyBonus.map(({ description }) => `<div class="item-set-bonus">${description}</div>`).join("")}
+          </div>`
+            : ""
+        }
+        ${
+          isMerchantVisible
+            ? `<div class="gold-amount ${!goldAmount ? "none" : ""}">${
+                goldAmount
+                  ? `${buyOrSell} for ${this.formatGold(goldAmount)} gold${isQuantity ? " each" : ""}`
+                  : "Cannot be sold to merchant"
+              }</div>`
+            : ""
+        }
+    </div>`.replace(/\n/, "");
   }
 
   initSendUpgradeItem() {

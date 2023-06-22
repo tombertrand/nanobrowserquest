@@ -434,13 +434,18 @@ export const Types: any = {
     M: 77,
     O: 79,
     P: 80,
-    KEYPAD_4: 100,
-    KEYPAD_6: 102,
-    KEYPAD_8: 104,
-    KEYPAD_2: 98,
     KEYPAD_1: 97,
+    KEYPAD_2: 98,
+    KEYPAD_3: 99,
+    KEYPAD_4: 100,
+    KEYPAD_5: 101,
+    KEYPAD_6: 102,
     1: 49,
     2: 50,
+    3: 51,
+    4: 52,
+    5: 53,
+    6: 54,
   },
 };
 
@@ -1593,7 +1598,7 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
   }
 };
 
-Types.isUniqueJewel = function (kindOrString: number | string, bonus: number[] = [], level: number) {
+Types.isUniqueJewel = function (kindOrString: number, bonus: number[] = [], level: number) {
   if (!Types.isJewel(kindOrString)) return false;
 
   return (

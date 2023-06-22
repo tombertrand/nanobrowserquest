@@ -108,7 +108,7 @@ class App {
     $.contextMenu({
       selector: "#canvas",
       animation: { duration: 25, show: "fadeIn", hide: "fadeOut" },
-      build: (_event) => {
+      build: _event => {
         const { x, y } = this.game.getMouseGridPosition();
         const player = this.game.getPlayerAt(x, y);
         const isInParty = !!player?.partyId;
@@ -1502,6 +1502,9 @@ class App {
     $("#inventory").removeClass("visible upgrade trade merchant");
     $("#inventory .close").removeClass("visible");
     $("#player").removeClass("visible");
+
+    // clear tooltips
+    $(".ui-helper-hidden-accessible").empty();
 
     this.hideWindows();
     this.game.destroyDraggable();
