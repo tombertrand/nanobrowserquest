@@ -24,7 +24,7 @@ export const setBonus = {
   },
   demon: {
     minDamage: 10,
-    flameDamage: 40,
+    flameDamage: 30,
     drainLife: 16,
     lightningResistance: 30,
     flameResistance: 50,

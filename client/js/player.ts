@@ -87,7 +87,6 @@ class Player extends Character {
   setBonus: any;
   isLootMoving: boolean;
   isSwitchingWeapon: boolean;
-  pvpFlag: boolean;
   invite: any;
   currentArmorSprite: any;
   id: any;
@@ -108,6 +107,7 @@ class Player extends Character {
   moveRight: boolean;
   disableKeyboardNpcTalk: boolean;
   isHurtByTrap: boolean;
+  pvp: boolean;
 
   partyId?: number;
   partyLeader?: PartyMember;
@@ -184,8 +184,6 @@ class Player extends Character {
     this.isLootMoving = false;
     this.isSwitchingWeapon = true;
 
-    // PVP Flag
-    this.pvpFlag = true;
     this.moveUp = false;
     this.moveDown = false;
     this.moveLeft = false;
@@ -552,6 +550,9 @@ class Player extends Character {
     if (settings.capeBrightness) {
       this.capeBrightness = settings.capeBrightness;
     }
+    if (settings.pvp) {
+      this.pvp = settings.pvp;
+    }
   }
 
   setRing1(ring) {
@@ -897,10 +898,6 @@ class Player extends Character {
       this.setSpriteName(this.currentArmorSprite.id);
       this.currentArmorSprite = null;
     }
-  }
-
-  flagPVP(pvpFlag) {
-    this.pvpFlag = pvpFlag;
   }
 }
 

@@ -36,7 +36,6 @@ export const Messages = {
   BLINK: 30,
   OPEN: 31,
   CHECK: 32,
-  PVP: 33,
   ACHIEVEMENT: 34,
   BOSS_CHECK: 35,
   DEATHANGEL_CHECK: 131,

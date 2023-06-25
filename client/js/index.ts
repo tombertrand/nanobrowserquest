@@ -513,10 +513,7 @@ var initGame = function () {
     $("#foreground").click(function (event) {
       app.center();
       app.setMouseCoordinates(event);
-      if (game) {
-        game.pvpFlag = game.player?.level >= 9 && event.shiftKey;
-        game.click();
-      }
+      game?.click();
       // app.hideWindows();
     });
 
@@ -572,7 +569,6 @@ var initGame = function () {
   $(document).mousemove(function (event) {
     app.setMouseCoordinates(event);
     if (game.started) {
-      game.pvpFlag = game.player?.level >= 9 && event.shiftKey;
       game.movecursor();
     }
   });
@@ -595,9 +591,6 @@ var initGame = function () {
 
     if (game.started && !$("#chatbox").hasClass("active")) {
       switch (key) {
-        case Types.Keys.SHIFT:
-          game.pvpFlag = false;
-          break;
         case Types.Keys.LEFT:
         case Types.Keys.A:
           game.player.moveLeft = false;
@@ -700,9 +693,6 @@ var initGame = function () {
         } else if (!$("#text-window").is(":visible")) {
           app.showChat();
         }
-        break;
-      case Types.Keys.SHIFT:
-        game.pvpFlag = game.player?.level >= 9;
         break;
       case Types.Keys.DELETE:
       case Types.Keys.BACKSPACE:
@@ -809,9 +799,13 @@ var initGame = function () {
     app.toggleDamageInfo();
   });
 
-  $("#anvil-odds-checkbox").on("change", function () {
-    app.toggleAnvilOdds();
+  $("#pvp-checkbox").on("change", function () {
+    app.togglePvP();
   });
+
+  // $("#anvil-odds-checkbox").on("change", function () {
+  //   app.toggleAnvilOdds();
+  // });
 
   $(document).on("keydown.loginform", function (e) {
     if (e.keyCode === Types.Keys.ENTER) {

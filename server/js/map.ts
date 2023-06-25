@@ -23,7 +23,6 @@ class Map {
   connectedGroups: any;
   checkpoints: {};
   startingAreas: any[];
-  pvpAreas: any[];
 
   constructor(filepath) {
     var self = this;
@@ -62,7 +61,6 @@ class Map {
 
     this.initConnectedGroups(thismap.doors);
     this.initCheckpoints(thismap.checkpoints);
-    this.initPVPAreas(thismap.pvpAreas);
 
     if (this.readyFunc) {
       this.readyFunc();
@@ -124,18 +122,6 @@ class Map {
       return false;
     }
     return this.grid[y][x] === 1;
-  }
-
-  isPVP(x, y) {
-    var area = null;
-    area = _.find(this.pvpAreas, function (area) {
-      return area.contains(x, y);
-    });
-    if (area) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   GroupIdToGroupPosition(id) {
@@ -249,16 +235,6 @@ class Map {
       area = this.startingAreas[i];
 
     return area.getRandomPosition();
-  }
-
-  initPVPAreas(pvpList) {
-    var self = this;
-
-    this.pvpAreas = [];
-    _.each(pvpList, function (pvp) {
-      var pvpArea = new Area(pvp.id, pvp.x, pvp.y, pvp.w, pvp.h, null);
-      self.pvpAreas.push(pvpArea);
-    });
   }
 }
 

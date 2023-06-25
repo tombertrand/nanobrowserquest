@@ -723,7 +723,9 @@ class Renderer {
           }
           if (entity.capeOrientation === Types.Orientations.UP) {
             this.drawShield(entity);
-            this.drawHelm(entity);
+            if (!entity.invincible) {
+              this.drawHelm(entity);
+            }
           }
 
           if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
@@ -763,7 +765,9 @@ class Renderer {
             this.drawCape(entity);
           }
           if (entity.capeOrientation !== Types.Orientations.UP) {
-            this.drawHelm(entity);
+            if (!entity.invincible) {
+              this.drawHelm(entity);
+            }
             this.drawShield(entity);
           }
         }

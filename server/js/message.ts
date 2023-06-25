@@ -390,11 +390,4 @@ Messages.MerchantLog = class Message {
   }
 };
 
-Messages.PVP = class Message {
-  constructor(private isPVP) {}
-  serialize() {
-    return [Types.Messages.PVP, this.isPVP];
-  }
-};
-
 export default Messages;

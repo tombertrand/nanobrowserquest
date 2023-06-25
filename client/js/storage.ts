@@ -176,15 +176,15 @@ class Storage {
     this.save();
   }
 
-  setShowAnvilOddsEnabled(enabled) {
-    this.data.settings.showAnvilOdds = enabled;
-    this.save();
-  }
+  // setShowAnvilOddsEnabled(enabled) {
+  //   this.data.settings.showAnvilOdds = enabled;
+  //   this.save();
+  // }
 
-  setShowHealthAboveBarsEnabled(enabled) {
-    this.data.settings.showHealthAboveBars = enabled;
-    this.save();
-  }
+  // setShowHealthAboveBarsEnabled(enabled) {
+  //   this.data.settings.showHealthAboveBars = enabled;
+  //   this.save();
+  // }
 
   // isAudioEnabled() {
   //   if (typeof this.data.settings.audio !== "boolean" || this.data.settings.audio) {

@@ -93,6 +93,7 @@ const defaultSettings = {
   capeSaturate: 0,
   capeContrast: 0,
   capeBrightness: 1,
+  pvp: false,
 };
 
 class DatabaseHandler {

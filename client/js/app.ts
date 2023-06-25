@@ -1460,6 +1460,13 @@ class App {
     this.game.infoManager.setShowDamageInfo(isChecked);
   }
 
+  togglePvP() {
+    const isChecked = $("#pvp-checkbox").is(":checked");
+
+    this.game.pvp = isChecked;
+    this.game.client.sendSettings({ pvp: isChecked });
+  }
+
   toggleAnvilOdds() {
     const isChecked = $("#anvil-odds-checkbox").is(":checked");
 

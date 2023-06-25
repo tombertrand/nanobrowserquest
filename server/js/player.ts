@@ -11,7 +11,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
-import { isValidAccountAddress, toArray, toDb, toNumber, validateQuantity } from "../../shared/js/utils";
+import { isValidAccountAddress, toArray, toBoolean, toDb, toNumber, validateQuantity } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
 import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
@@ -65,7 +65,6 @@ class Player extends Character {
   haters: {};
   lastCheckpoint: any;
   formatChecker: any;
-  pvpFlag: boolean;
   bannedTime: number;
   banUseTime: number;
   experience: number;
@@ -121,6 +120,7 @@ class Player extends Character {
   capeSaturate: number;
   capeContrast: number;
   capeBrightness: number;
+  pvp: boolean;
   shield: string;
   shieldKind: number;
   shieldLevel: number;
@@ -205,7 +205,6 @@ class Player extends Character {
     this.lastCheckpoint = null;
     this.formatChecker = new FormatChecker();
 
-    this.pvpFlag = false;
     this.bannedTime = 0;
     this.banUseTime = 0;
     this.experience = 0;
@@ -617,7 +616,7 @@ class Player extends Character {
           // self.attackTimeoutWarning = false;
         }, duration);
 
-        if (mob?.type === "mob" || mob?.type === "player") {
+        if (mob?.type === "mob" || (mob?.type === "player" && self.pvp && mob.pvp)) {
           let isCritical = false;
 
           const resistances: Resistances = Types.getResistance(mob, self);
@@ -666,7 +665,14 @@ class Player extends Character {
 
           if (self.bonus.drainLife) {
             if (!self.hasFullHealth()) {
-              self.regenHealthBy(self.bonus.drainLife);
+              let { drainLife } = self.bonus;
+
+              // Curse health also affects drain life
+              if (self.curse.health) {
+                drainLife = drainLife - Math.floor((self.bonus.drainLife * self.curse.health) / 100);
+              }
+
+              self.regenHealthBy(drainLife);
               self.server.pushToPlayer(self, self.health());
             }
           }
@@ -1701,16 +1707,19 @@ class Player extends Character {
 
         if (settings) {
           if (settings.capeHue) {
-            this.capeHue = settings.capeHue;
+            self.capeHue = settings.capeHue;
           }
           if (settings.capeSaturate) {
-            this.capeSaturate = settings.capeSaturate;
+            self.capeSaturate = settings.capeSaturate;
           }
           if (settings.capeContrast) {
-            this.capeContrast = settings.capeContrast;
+            self.capeContrast = settings.capeContrast;
           }
           if (settings.capeBrightness) {
-            this.capeBrightness = settings.capeBrightness;
+            self.capeBrightness = settings.capeBrightness;
+          }
+          if (typeof settings.pvp !== "undefined") {
+            self.pvp = toBoolean(settings.pvp);
           }
 
           this.databaseHandler.setSettings(this.name, settings);
@@ -1728,7 +1737,7 @@ class Player extends Character {
         if (isAttackSkill) {
           if (typeof this.attackSkill !== "number" || this.attackSkillTimeout) return;
           const attackedMob = self.server.getEntityById(mobId);
-          if (!attackedMob) return;
+          if (!attackedMob || (attackedMob.type === "player" && !attackedMob.pvp)) return;
           if (attackedMob.kind === Types.Entities.TREE && this.attackSkill === 1) {
             if (!this.server.isActivatedTreeLevel) {
               this.server.startTreeLevel(attackedMob);
@@ -2213,6 +2222,7 @@ class Player extends Character {
         capeSaturate: this.capeSaturate,
         capeContrast: this.capeContrast,
         capeBrightness: this.capeBrightness,
+        pvp: this.pvp,
       },
       resistances: null,
       element: null,
@@ -2310,7 +2320,7 @@ class Player extends Character {
     }
 
     this.hitPoints -= dmg;
-    this.server.handleHurtEntity({ entity: this, attacker: mob, isBlocked });
+    this.server.handleHurtEntity({ entity: this, attacker: mob, isBlocked, dmg });
 
     this.handleHurtDeath();
 
@@ -2351,7 +2361,7 @@ class Player extends Character {
     }
 
     this.hitPoints -= dmg;
-    this.server.handleHurtEntity({ entity: this, attacker: spell, isBlocked });
+    this.server.handleHurtEntity({ entity: this, attacker: spell, isBlocked, dmg });
 
     this.handleHurtDeath();
   }
@@ -2360,7 +2370,7 @@ class Player extends Character {
     const dmg = 300;
 
     this.hitPoints -= dmg;
-    this.server.handleHurtEntity({ entity: this, attacker: trap });
+    this.server.handleHurtEntity({ entity: this, attacker: trap, dmg });
 
     this.handleHurtDeath();
   }
@@ -2437,13 +2447,6 @@ class Player extends Character {
 
   send(message) {
     this.connection.send(message);
-  }
-
-  flagPVP(pvpFlag) {
-    if (this.pvpFlag != pvpFlag) {
-      this.pvpFlag = pvpFlag;
-      this.send(new Messages.PVP(this.pvpFlag).serialize());
-    }
   }
 
   broadcast(message, ignoreSelf: boolean = false) {
@@ -2635,6 +2638,12 @@ class Player extends Character {
           ? {
               level: this.armorLevel,
               bonus: this.armorBonus,
+            }
+          : null,
+        this.helmBonus
+          ? {
+              level: this.helmLevel,
+              bonus: this.helmBonus,
             }
           : null,
         this.beltBonus
@@ -3303,6 +3312,7 @@ class Player extends Character {
       this.capeSaturate = settings.capeSaturate;
       this.capeContrast = settings.capeContrast;
       this.capeBrightness = settings.capeBrightness;
+      this.pvp = settings.pvp;
 
       this.createdAt = createdAt;
       this.experience = exp;

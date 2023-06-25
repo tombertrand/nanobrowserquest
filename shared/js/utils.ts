@@ -23,6 +23,13 @@ export const toNumber = (stringOrNumber: string | number) => {
   return null;
 };
 
+export const toBoolean = (value: any): boolean =>
+  typeof value === "string"
+    ? value.toLowerCase() === "true" || !["", "0", "false"].includes(value.toLowerCase())
+    : typeof value === "number"
+    ? value !== 0
+    : value;
+
 export const toDb = (attribute: string | number | number[]) => {
   if (Array.isArray(attribute)) {
     return `:${toString(attribute)}`;

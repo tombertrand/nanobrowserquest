@@ -297,8 +297,6 @@ class World {
 
       var move_callback = function (x, y) {
         console.debug(player.name + " is moving to (" + x + ", " + y + ").");
-        var isPVP = self.map.isPVP(x, y);
-        player.flagPVP(isPVP);
         player.forEachAttacker(function (mob) {
           if (mob.targetId === null) {
             player.removeAttacker(mob);
@@ -2010,7 +2008,7 @@ class World {
 
     if (entity.type === "player") {
       // A player is only aware of his own hitpoints
-      this.pushToPlayer(entity, entity.health({ isHurt: true, isBlocked, attacker: { type: attacker.type } }));
+      this.pushToPlayer(entity, entity.health({ isHurt: true, dmg, isBlocked, attacker: { type: attacker.type } }));
     }
 
     if (entity.hitPoints <= 0) {

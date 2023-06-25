@@ -158,7 +158,6 @@ class GameClient {
     this.handlers[Types.Messages.PARTY] = this.receiveParty;
     this.handlers[Types.Messages.SOULSTONE] = this.receiveSoulStone;
     this.handlers[Types.Messages.TRADE] = this.receiveTrade;
-    this.handlers[Types.Messages.PVP] = this.receivePVP;
     this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
     this.handlers[Types.Messages.DEATHANGEL_CHECK] = this.receiveDeathAngelCheck;
     this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
@@ -591,9 +590,7 @@ class GameClient {
     var playerId = data[1];
     var settings = data[2];
 
-    if (this.settings_callback) {
-      this.settings_callback({ playerId, settings });
-    }
+    this.settings_callback?.({ playerId, settings });
   }
 
   receiveSetBonus(data) {
@@ -612,12 +609,6 @@ class GameClient {
     }
   }
 
-  receivePVP(data) {
-    var pvp = data[1];
-    if (this.pvp_callback) {
-      this.pvp_callback(pvp);
-    }
-  }
   receiveParty(data) {
     if (data[1] === Types.Messages.PARTY_ACTIONS.CREATE && this.partycreate_callback) {
       this.partycreate_callback();
@@ -1013,10 +1004,6 @@ class GameClient {
 
   onItemBlink(callback) {
     this.blink_callback = callback;
-  }
-
-  onPVPChange(callback) {
-    this.pvp_callback = callback;
   }
 
   onPartyCreate(callback) {

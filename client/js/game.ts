@@ -114,6 +114,8 @@ class Game {
   targetCellVisible: boolean;
   hoveringTarget: boolean;
   hoveringPlayer: boolean;
+  pvp: boolean;
+  hoveringPlayerPvP: boolean;
   hoveringMob: boolean;
   hoveringItem: boolean;
   hoveringCollidingTile: boolean;
@@ -125,7 +127,6 @@ class Game {
   animatedTiles: any[] | null;
   highAnimatedTiles: any[] | null;
   debugPathing: boolean;
-  pvpFlag: boolean;
   storage: any;
   store: any;
   map: Map;
@@ -316,6 +317,8 @@ class Game {
     this.targetCellVisible = true;
     this.hoveringTarget = false;
     this.hoveringPlayer = false;
+    this.pvp = false;
+    this.hoveringPlayerPvP = false;
     this.hoveringMob = false;
     this.hoveringItem = false;
     this.hoveringCollidingTile = false;
@@ -348,9 +351,6 @@ class Game {
 
     // debug
     this.debugPathing = false;
-
-    // pvp
-    this.pvpFlag = false;
   }
 
   setup($bubbleContainer, canvas, background, foreground, input) {
@@ -554,6 +554,9 @@ class Game {
     } else {
       this.infoManager.setShowDamageInfo(false);
     }
+
+    this.pvp = settings.pvp;
+    $("#pvp-checkbox").prop("checked", settings.pvp);
 
     if (this.storage.showAnvilOddsEnabled()) {
       this.setShowAnvilOdds(true);
@@ -1973,10 +1976,14 @@ class Game {
       )
         return;
 
-      // Can't cast on other players with many level difference
-      if (mobId && entity instanceof Player && (entity.level < 9 || Math.abs(entity.level - this.player.level) <= 10)) {
+      // Can't cast on other player if PvP is not enabled
+      if (mobId && entity instanceof Player && (!entity.pvp || !this.pvp)) {
+        let message = !entity.pvp
+          ? "You can't attack a player that doesn't have PvP enabled."
+          : "You need to enable PvP before you can attack another player.";
+
         this.chat_callback({
-          message: "You can't attack a player below level 9 or with more than 10 level difference to yours",
+          message,
           type: "error",
         });
         return;
@@ -2239,8 +2246,11 @@ class Game {
     }
 
     if (this.hoveringPlayer && this.started) {
-      if (this.pvpFlag) this.setCursor("attack");
-      else this.setCursor("hand");
+      if (this.hoveringPlayerPvP) {
+        this.setCursor("attack");
+      } else {
+        this.setCursor("hand");
+      }
       this.hoveringTarget = false;
       this.hoveringMob = false;
       this.targetCellVisible = false;
@@ -3250,14 +3260,6 @@ class Game {
 
       self.player.onHasMoved(function (player) {
         self.assignBubbleTo(player);
-      });
-      self.client.onPVPChange(function (pvpFlag) {
-        self.player.flagPVP(pvpFlag);
-        if (pvpFlag) {
-          self.showNotification("PVP is on.");
-        } else {
-          self.showNotification("PVP is off.");
-        }
       });
 
       self.player.onSwitchItem(() => {
@@ -4430,9 +4432,9 @@ class Game {
         }
       });
 
-      self.client.onPlayerChangeHealth(function ({ points, isRegen, isHurt, isBlocked, attacker }) {
-        var player = self.player;
-        var diff;
+      self.client.onPlayerChangeHealth(function ({ points, dmg, isRegen, isHurt, isBlocked, attacker }) {
+        const { player } = self;
+        let diff;
 
         if (player && !player.isDead && !player.invincible) {
           diff = points - player.hitPoints;
@@ -4442,12 +4444,12 @@ class Game {
             player.die(attacker);
           }
           if (isHurt) {
-            self.infoManager.addDamageInfo({ value: diff, x: player.x, y: player.y - 15, type: "received", isBlocked });
+            self.infoManager.addDamageInfo({ value: dmg, x: player.x, y: player.y - 15, type: "received", isBlocked });
 
             if (!isBlocked) {
               player.hurt();
               self.audioManager.playSound("hurt");
-              self.storage.addDamage(-diff);
+              self.storage.addDamage(dmg);
               self.tryUnlockingAchievement("MEATSHIELD");
               self?.playerhurt_callback();
             }
@@ -4511,16 +4513,18 @@ class Game {
 
       self.client.onPlayerSettings(function ({ playerId, settings }) {
         var player = self.getEntityById(playerId);
-        if (player) {
-          if (typeof settings.capeHue === "number") {
-            player.capeHue = settings.capeHue;
-          }
-          if (typeof settings.capeSaturate === "number") {
-            player.capeSaturate = settings.capeSaturate;
-          }
-          if (typeof settings.capeContrast === "number") {
-            player.capeContrast = settings.capeContrast;
-          }
+        if (!player) return;
+        if (typeof settings.capeHue === "number") {
+          player.capeHue = settings.capeHue;
+        }
+        if (typeof settings.capeSaturate === "number") {
+          player.capeSaturate = settings.capeSaturate;
+        }
+        if (typeof settings.capeContrast === "number") {
+          player.capeContrast = settings.capeContrast;
+        }
+        if (typeof settings.pvp === "boolean") {
+          player.pvp = settings.pvp;
         }
       });
 
@@ -5968,6 +5972,7 @@ class Game {
       y = mouse.y;
 
     this.cursorVisible = true;
+    this.hoveringPlayerPvP = false;
 
     if (this.player && !this.renderer.mobile && !this.renderer.tablet) {
       // if (this.isSpellAt(x, y)) {
@@ -5995,6 +6000,10 @@ class Game {
           this.hoveringMob || this.hoveringPlayer || this.hoveringNpc || this.hoveringChest || this.hoveringOtherPlayer
             ? this.getEntityAt(x, y)
             : this.player.target;
+
+        if (this.hoveringPlayer && entity.id !== this.player.id && this.pvp) {
+          this.hoveringPlayerPvP = entity.pvp;
+        }
 
         this.player.showTarget(entity);
         // supportsSilhouettes hides the players (render bug I'd guess)
@@ -6088,21 +6097,7 @@ class Game {
         this.removeFromPathingGrid(pos.x, pos.y);
       }
 
-      if (this.pvpFlag) {
-        const entities = this.getAllEntitiesAt(pos.x, pos.y, Player);
-        const originalLength = entities.length;
-        if (!originalLength) return;
-        entity = entities.find(({ level }) => level >= 9 && Math.abs(level - this.player.level) <= 10);
-
-        if (entity) {
-          this.makePlayerAttack(entity);
-        } else {
-          this.chat_callback({
-            message: "You can't attack a player below level 9 or with more than 10 level difference to yours",
-            type: "error",
-          });
-        }
-      } else if (entity instanceof Mob) {
+      if (entity instanceof Mob || (this.pvp && entity instanceof Player && entity.pvp)) {
         this.makePlayerAttack(entity);
       } else if (entity instanceof Item) {
         this.makePlayerGoToItem(entity);
