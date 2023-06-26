@@ -761,7 +761,7 @@ export const kinds = {
   immortalsword: [Types.Entities.IMMORTALSWORD, "weapon", "Immortal Sword", 60, 66],
   spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 60, 68],
   eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 60, 68],
-  hellhammer: [Types.Entities.HELLHAMMER, "weapon", "Hell Hammer", 60, 60],
+  hellhammer: [Types.Entities.HELLHAMMER, "weapon", "Hell Hammer", 60, 68],
 
   // kind, type, level, defense
   helmcloth: [Types.Entities.HELMCLOTH, "helm", "Cloth Helm", 1, 1],
@@ -1123,7 +1123,7 @@ Types.itemUniqueMap = {
   // Quest items
   wirtleg: ["Bored Ape Yacht Club"],
   pickaxe: ["Extinction"],
-  hellhammer: ["Hephasto"],
+  hellhammer: ["Self Custody"],
 
   sword: ["Faketoshi"],
   axe: ["NonDisclosure Agreement"],
