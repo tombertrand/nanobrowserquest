@@ -732,6 +732,44 @@ var Properties: any = {
     armor: 32,
     weapon: 33,
   },
+  skeletonscythe1: {
+    drops: {
+      rejuvenationpotion: 15,
+      scrollupgradelegendary: 3,
+      mysticalsword: 2,
+      helmmystical: 2,
+      mysticalarmor: 2,
+      beltmystical: 2,
+      shieldmystical: 2,
+    },
+    hp: 3500,
+    armor: 26,
+    weapon: 28,
+  },
+  skeletonaxe1: {
+    drops: {
+      rejuvenationpotion: 15,
+      scrollupgradelegendary: 3,
+      ringplatinum: 2,
+      amuletplatinum: 2,
+      gold: 10,
+    },
+    hp: 3500,
+    armor: 26,
+    weapon: 28,
+  },
+  skeletonaxe2: {
+    drops: {
+      rejuvenationpotion: 15,
+      scrollupgradelegendary: 3,
+      ringplatinum: 2,
+      amuletplatinum: 2,
+      gold: 10,
+    },
+    hp: 3500,
+    armor: 26,
+    weapon: 28,
+  },
   deathbringer: {
     drops: {
       scrollupgradelegendary: 38,
@@ -752,9 +790,9 @@ var Properties: any = {
       shieldmystical: 5,
       ringmystical: 2,
     },
-    hp: 24_000,
+    hp: 30_000,
     armor: 36,
-    weapon: 33,
+    weapon: 31,
   },
 };
 

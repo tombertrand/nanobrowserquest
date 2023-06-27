@@ -80,6 +80,8 @@ class Sprite {
       this.id.startsWith("spider") ||
       this.id.startsWith("skeletontemplar") ||
       ["skeleton", "skeleton2", "skeleton3", "skeleton4"].includes(this.id) ||
+      this.id.startsWith("skeletonscythe") ||
+      this.id.startsWith("skeletonaxe") ||
       this.id === "skeleton" ||
       this.id === "snake" ||
       this.id === "secretstairs" ||

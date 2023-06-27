@@ -130,6 +130,9 @@ export const Types: any = {
     MAGESPELL: 293,
     SHAMAN: 294,
     WORM: 295,
+    SKELETONSCYTHE1: 348,
+    SKELETONAXE1: 349,
+    SKELETONAXE2: 350,
     STATUE: 296,
     STATUE2: 297,
     STATUESPELL: 298,
@@ -723,15 +726,18 @@ export const kinds = {
   spider: [Types.Entities.SPIDER, "mob", 140, 60],
   spider2: [Types.Entities.SPIDER2, "mob", 140, 60],
   spiderqueen: [Types.Entities.SPIDERQUEEN, "mob", 400, 66],
-  butcher: [Types.Entities.BUTCHER, "mob", 450, 69],
+  butcher: [Types.Entities.BUTCHER, "mob", 1200, 71],
   skeletonberserker: [Types.Entities.SKELETONBERSERKER, "mob", 140, 62],
   skeletonarcher: [Types.Entities.SKELETONARCHER, "mob", 160, 65],
   shaman: [Types.Entities.SHAMAN, "mob", 500, 68],
   wraith2: [Types.Entities.WRAITH2, "mob", 150, 63],
   mage: [Types.Entities.MAGE, "mob", 160, 65],
   worm: [Types.Entities.WORM, "mob", 500, 70],
-  deathbringer: [Types.Entities.DEATHBRINGER, "mob", 800, 70],
-  deathangel: [Types.Entities.DEATHANGEL, "mob", 800, 71],
+  skeletonscythe1: [Types.Entities.SKELETONSCYTHE1, "mob", 180, 65],
+  skeletonaxe1: [Types.Entities.SKELETONAXE1, "mob", 180, 65],
+  skeletonaxe2: [Types.Entities.SKELETONAXE2, "mob", 180, 65],
+  deathbringer: [Types.Entities.DEATHBRINGER, "mob", 1500, 73],
+  deathangel: [Types.Entities.DEATHANGEL, "mob", 1200, 71],
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 2],
@@ -1854,6 +1860,8 @@ Types.getAliasFromName = function (name: string) {
     return "The Gates of Azrael";
   } else if (name === "deathangel") {
     return "Azrael";
+  } else if (name === "skeletonscythe1") {
+    return "Shadowveil Guardian";
   } else if (name === "deathbringer") {
     return "Death Bringer";
   }

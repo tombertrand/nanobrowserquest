@@ -1,0 +1,49 @@
+{
+  "id": "skeleton3",
+  "width": 64,
+  "height": 64,
+  "animations": {
+    "atk_right": {
+      "length": 6,
+      "row": 3
+    },
+    "walk_right": {
+      "length": 6,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 6,
+      "row": 0
+    },
+    "atk_up": {
+      "length": 6,
+      "row": 3
+    },
+    "walk_up": {
+      "length": 6,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 6,
+      "row": 0
+    },
+    "atk_down": {
+      "length": 6,
+      "row": 3
+    },
+    "walk_down": {
+      "length": 6,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 6,
+      "row": 0
+    },
+    "death": {
+      "length": 6,
+      "row": 2
+    }
+  },
+  "offset_x": -20,
+  "offset_y": -34
+}

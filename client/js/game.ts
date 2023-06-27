@@ -1127,15 +1127,15 @@ class Game {
     }
 
     const type = kinds[item][1];
-    if (type === "helm" && $(".item-equip-helm").is(":empty")) {
+    if (type === "helm" && $("#item-player .item-equip-helm").is(":empty")) {
       this.player.switchHelm("helmcloth", 1);
-    } else if (type === "armor" && $(".item-equip-armor").is(":empty")) {
+    } else if (type === "armor" && $("#item-player .item-equip-armor").is(":empty")) {
       this.player.switchArmor(this.getSprite("clotharmor"), 1);
-    } else if (type === "weapon" && $(".item-equip-weapon").is(":empty")) {
+    } else if (type === "weapon" && $("#item-player .item-equip-weapon").is(":empty")) {
       this.player.switchWeapon("dagger", 1);
-    } else if (type === "cape" && $(".item-equip-cape").is(":empty")) {
+    } else if (type === "cape" && $("#item-player .item-equip-cape").is(":empty")) {
       this.player.removeCape();
-    } else if (type === "shield" && $(".item-equip-shield").is(":empty")) {
+    } else if (type === "shield" && $("#item-player .item-equip-shield").is(":empty")) {
       this.player.removeShield();
     }
   }

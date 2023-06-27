@@ -183,6 +183,9 @@ import skeleton from "../sprites/skeleton.json";
 import skeleton2 from "../sprites/skeleton2.json";
 import skeleton3 from "../sprites/skeleton2.json";
 import skeleton4 from "../sprites/skeleton.json";
+import skeletonscythe1 from "../sprites/skeleton3.json";
+import skeletonaxe1 from "../sprites/skeleton3.json";
+import skeletonaxe2 from "../sprites/skeleton3.json";
 import snake from "../sprites/snake.json";
 import snake2 from "../sprites/snake.json";
 import snake3 from "../sprites/snake.json";
@@ -259,6 +262,9 @@ const sprites = {
   cowking,
   minotaur,
   skeleton4,
+  skeletonscythe1,
+  skeletonaxe1,
+  skeletonaxe2,
   golem,
   worm,
   wraith2,

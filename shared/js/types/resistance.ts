@@ -149,6 +149,27 @@ export const mobResistance = {
     coldResistance: 60,
     poisonResistance: 40,
   },
+  skeletonscythe1: {
+    magicResistance: 60,
+    flameResistance: 40,
+    lightningResistance: 30,
+    coldResistance: 30,
+    poisonResistance: 30,
+  },
+  skeletonaxe1: {
+    magicResistance: 30,
+    flameResistance: 30,
+    lightningResistance: 30,
+    coldResistance: 30,
+    poisonResistance: 30,
+  },
+  skeletonaxe2: {
+    magicResistance: 30,
+    flameResistance: 75,
+    lightningResistance: 30,
+    coldResistance: 30,
+    poisonResistance: 30,
+  },
   deathbringer: {
     magicResistance: 100,
     flameResistance: 100,

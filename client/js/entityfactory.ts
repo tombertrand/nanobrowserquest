@@ -219,6 +219,18 @@ EntityFactory.builders[Types.Entities.SKELETONARCHER] = function (id, props) {
   return new Mobs.SkeletonArcher(id, props);
 };
 
+EntityFactory.builders[Types.Entities.SKELETONSCYTHE1] = function (id, props) {
+  return new Mobs.SkeletonScythe1(id, props);
+};
+
+EntityFactory.builders[Types.Entities.SKELETONAXE1] = function (id, props) {
+  return new Mobs.SkeletonAxe1(id, props);
+};
+
+EntityFactory.builders[Types.Entities.SKELETONAXE2] = function (id, props) {
+  return new Mobs.SkeletonAxe2(id, props);
+};
+
 EntityFactory.builders[Types.Entities.DEATHBRINGER] = function (id, props) {
   return new Mobs.DeathBringer(id, props);
 };

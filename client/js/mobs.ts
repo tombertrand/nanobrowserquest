@@ -608,6 +608,45 @@ export const Mobs = {
     }
   },
 
+  SkeletonScythe1: class SkeletonScythe1 extends Mob {
+    constructor(id, props) {
+      super(id, Types.Entities.SKELETONSCYTHE1, props);
+      this.moveSpeed = 200;
+      this.atkSpeed = 50;
+      this.idleSpeed = 400;
+      this.walkSpeed = 100;
+      this.shadowOffsetY = 1;
+      this.aggroRange = 2;
+      this.setAttackRate(1500);
+    }
+  },
+
+  SkeletonAxe1: class SkeletonAxe1 extends Mob {
+    constructor(id, props) {
+      super(id, Types.Entities.SKELETONAXE1, props);
+      this.moveSpeed = 200;
+      this.atkSpeed = 50;
+      this.idleSpeed = 400;
+      this.walkSpeed = 100;
+      this.shadowOffsetY = 1;
+      this.aggroRange = 2;
+      this.setAttackRate(1200);
+    }
+  },
+
+  SkeletonAxe2: class SkeletonAxe2 extends Mob {
+    constructor(id, props) {
+      super(id, Types.Entities.SKELETONAXE2, props);
+      this.moveSpeed = 200;
+      this.atkSpeed = 50;
+      this.idleSpeed = 400;
+      this.walkSpeed = 100;
+      this.shadowOffsetY = 1;
+      this.aggroRange = 2;
+      this.setAttackRate(1200);
+    }
+  },
+
   DeathBringer: class DeathBringer extends Mob {
     constructor(id, props) {
       super(id, Types.Entities.DEATHBRINGER, props);
