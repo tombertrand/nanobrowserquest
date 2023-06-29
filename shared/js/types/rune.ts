@@ -803,7 +803,6 @@ export const Runewords = {
   },
 };
 
-// Safe Heaven
 // XNO is not a Security
 // Sharding
 // Mesh network

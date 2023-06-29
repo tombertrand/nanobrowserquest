@@ -2656,6 +2656,7 @@ class World {
     }
 
     // var randomDrops = ["helmclown", "beltgoldwrap"];
+    // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
     // var randomDrops = ["soulstone"];

@@ -161,6 +161,7 @@ export const Types: any = {
     HELMDEMON: 340,
     HELMMYSTICAL: 341,
     HELMIMMORTAL: 342,
+    HELMPALADIN: 351,
     HELMCLOWN: 343,
 
     // Armors
@@ -568,6 +569,7 @@ Types.Entities.Helms = [
   Types.Entities.HELMDEMON,
   Types.Entities.HELMMYSTICAL,
   Types.Entities.HELMIMMORTAL,
+  Types.Entities.HELMPALADIN,
   Types.Entities.HELMCLOWN,
 ];
 
@@ -788,6 +790,7 @@ export const kinds = {
   helmdemon: [Types.Entities.HELMDEMON, "helm", "Demon Helm", 50, 22],
   helmmystical: [Types.Entities.HELMMYSTICAL, "helm", "Mystical Helm", 52, 22],
   helmimmortal: [Types.Entities.HELMIMMORTAL, "helm", "Immortal Helm", 54, 24],
+  helmpaladin: [Types.Entities.HELMPALADIN, "helm", "Paladin Helm", 54, 24],
   helmclown: [Types.Entities.HELMCLOWN, "helm", "Clown Helm", 42, 20],
 
   // kind, type, level, defense
@@ -1085,6 +1088,7 @@ Types.rankedHelms = [
   Types.Entities.HELMDEMON,
   Types.Entities.HELMMYSTICAL,
   Types.Entities.HELMIMMORTAL,
+  Types.Entities.HELMPALADIN,
   Types.Entities.HELMCLOWN,
 ];
 
@@ -1171,6 +1175,7 @@ Types.itemUniqueMap = {
   helmdemon: ["Chapter 9"],
   helmmystical: ["Crystal Ball"],
   helmimmortal: ["Update The System"],
+  helmpaladin: ["Safe Heaven"],
   helmclown: ["Clownbase"],
 
   // name, level, defense
@@ -2364,6 +2369,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     helmdemon: 6,
     helmmystical: 6,
     helmimmortal: 4,
+    helmpaladin: 4,
 
     goldenarmor: 20,
     bluearmor: 18,

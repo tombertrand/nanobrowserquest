@@ -87,6 +87,7 @@ import helmmoon from "../sprites/armor.json";
 import helmdemon from "../sprites/armor.json";
 import helmmystical from "../sprites/armor.json";
 import helmimmortal from "../sprites/armor.json";
+import helmpaladin from "../sprites/armor.json";
 import helmclown from "../sprites/armor.json";
 import clotharmor from "../sprites/armor.json";
 import leatherarmor from "../sprites/armor.json";
@@ -557,6 +558,7 @@ const sprites = {
   "item-helmdemon": item,
   "item-helmmystical": item,
   "item-helmimmortal": item,
+  "item-helmpaladin": item,
   "item-helmclown": item,
   "item-leatherarmor": item,
   "item-mailarmor": item,
@@ -586,6 +588,7 @@ const sprites = {
   helmdemon,
   helmmystical,
   helmimmortal,
+  helmpaladin,
   helmclown,
   clotharmor,
   leatherarmor,

@@ -116,7 +116,7 @@ class Sprite {
         "helmdemon",
         "helmmystical",
         "helmimmortal",
-        // "helmpaladin",
+        "helmpaladin",
       ].includes(this.name)
     ) {
       this.imageunique = new Image();

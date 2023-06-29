@@ -433,6 +433,10 @@ EntityFactory.builders[Types.Entities.HELMIMMORTAL] = function (id) {
   return new Items.HelmImmortal(id);
 };
 
+EntityFactory.builders[Types.Entities.HELMPALADIN] = function (id) {
+  return new Items.HelmPaladin(id);
+};
+
 EntityFactory.builders[Types.Entities.HELMCLOWN] = function (id) {
   return new Items.HelmClown(id);
 };

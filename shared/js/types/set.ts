@@ -219,6 +219,7 @@ export const kindAsStringToSet = {
   shieldmystical: "mystical",
   ringmystical: "mystical",
   paladinaxe: "paladin",
+  helmpaladin: "paladin",
   paladinarmor: "paladin",
   shieldpaladin: "paladin",
   beltpaladin: "paladin",
@@ -232,7 +233,7 @@ export const kindAsStringToSet = {
 
 export const setItems = {
   immortal: ["immortalsword", "helmimmortal", "immortalarmor", "immortalring", "shieldimmortal", "beltimmortal"],
-  paladin: ["paladinaxe", "paladinarmor", "shieldpaladin", "beltpaladin"],
+  paladin: ["paladinaxe", "helmpaladin", "paladinarmor", "shieldpaladin", "beltpaladin"],
   mystical: ["mysticalsword", "helmmystical", "mysticalarmor", "beltmystical", "shieldmystical", "ringmystical"],
   demon: ["demonaxe", "helmdemon", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
   moon: ["moonsword", "helmmoon", "moonarmor", "beltmoon", "shieldmoon", "amuletmoon"],
@@ -254,7 +255,7 @@ export const setItems = {
 
 export const setItemsNameMap = {
   immortal: ["Sword", "helm", "Armor", "Belt", "Shield", "Ring"],
-  paladin: ["Axe", "Armor", "Belt", "Shield"],
+  paladin: ["Axe", "Helm", "Armor", "Belt", "Shield"],
   mystical: ["Sword", "Helm", "Armor", "Belt", "Shield", "Ring"],
   demon: ["Axe", "Helm", "Armor", "Belt", "Shield", "Amulet"],
   moon: ["Sword", "Helm", "Armor", "Belt", "Shield", "Amulet"],

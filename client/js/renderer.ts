@@ -591,7 +591,7 @@ class Renderer {
           "helmdemon",
           "helmmystical",
           "helmimmortal",
-          // "helmpaladin",
+          "helmpaladin",
         ].includes(sprite.name) &&
         entity.helmBonus?.length
       ) {
@@ -1467,7 +1467,7 @@ class Renderer {
         "helmdemon",
         "helmmystical",
         "helmimmortal",
-        // "helmpaladin",
+        "helmpaladin",
       ].includes(this.game.player.helmName) &&
       this.game.player.helmBonus?.length
     ) {
