@@ -198,6 +198,7 @@ export const Types: any = {
     BELTDEMON: 204,
     BELTMOON: 205,
     BELTMYSTICAL: 202,
+    BELTPALADIN: 352,
     BELTGOLDWRAP: 344,
 
     // Capes
@@ -607,6 +608,7 @@ Types.Entities.Belts = [
   Types.Entities.BELTMOON,
   Types.Entities.BELTDEMON,
   Types.Entities.BELTMYSTICAL,
+  Types.Entities.BELTPALADIN,
   Types.Entities.BELTGOLDWRAP,
 ];
 
@@ -827,6 +829,7 @@ export const kinds = {
   beltmoon: [Types.Entities.BELTMOON, "belt", "Moon Belt", 54, 18],
   beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 54, 20],
   beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 54, 20],
+  beltpaladin: [Types.Entities.BELTPALADIN, "belt", "Paladin Belt", 58, 24],
   beltgoldwrap: [Types.Entities.BELTGOLDWRAP, "belt", "Goldwrap", 42, 20],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 20, 6],
@@ -1126,6 +1129,7 @@ Types.rankedBelts = [
   Types.Entities.BELTDEMON,
   Types.Entities.BELTMOON,
   Types.Entities.BELTMYSTICAL,
+  Types.Entities.BELTPALADIN,
   Types.Entities.BELTGOLDWRAP,
 ];
 
@@ -1230,6 +1234,7 @@ Types.itemUniqueMap = {
   beltmoon: ["Commercial Grade"],
   beltdemon: ["1000 CPS"],
   beltmystical: ["Horizontal Scaling"],
+  beltpaladin: ["Slava Ukraini"],
   beltgoldwrap: ["Goldwrap"],
 };
 

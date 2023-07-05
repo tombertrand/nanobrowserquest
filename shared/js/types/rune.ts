@@ -455,8 +455,20 @@ export const Runewords = {
         regenerateHealth: 25,
       },
     },
-    "las-tor-mir-tor-jah-vie": {
+    "las-bul-mir-tor-al-vie": {
       name: "Cold Wallet",
+      bonus: {
+        health: 80,
+        minDamage: 25,
+        attackDamage: 20,
+        coldDamage: 40,
+        freezeChance: 15,
+        coldResistance: 35,
+        regenerateHealth: 15,
+      },
+    },
+    "las-tor-qua-tor-jah-vie": {
+      name: "Cold Wallet 2.0",
       bonus: {
         health: 100,
         minDamage: 25,
@@ -464,6 +476,7 @@ export const Runewords = {
         coldDamage: 40,
         freezeChance: 25,
         reduceFrozenChance: 15,
+        coldDamagePercent: 18,
         coldResistance: 35,
         regenerateHealth: 25,
       },

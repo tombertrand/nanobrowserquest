@@ -557,6 +557,10 @@ EntityFactory.builders[Types.Entities.BELTMYSTICAL] = function (id) {
   return new Items.BeltMystical(id);
 };
 
+EntityFactory.builders[Types.Entities.BELTPALADIN] = function (id) {
+  return new Items.BeltPaladin(id);
+};
+
 EntityFactory.builders[Types.Entities.BELTGOLDWRAP] = function (id) {
   return new Items.BeltGoldwrap(id);
 };

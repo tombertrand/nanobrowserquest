@@ -136,6 +136,7 @@ export const itemGoldMap = {
   beltmoon: 42,
   beltdemon: 115,
   beltmystical: 75,
+  beltpaladin: 115,
   beltgoldwrap: 115,
 };
 

@@ -2655,7 +2655,7 @@ class World {
       this.lootChests(mob, attacker);
     }
 
-    // var randomDrops = ["helmclown", "beltgoldwrap"];
+    // var randomDrops = ["beltpaladin"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
