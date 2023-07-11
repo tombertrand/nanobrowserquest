@@ -224,6 +224,7 @@ export const kindAsStringToSet = {
   shieldpaladin: "paladin",
   beltpaladin: "paladin",
   beltimmortal: "immortal",
+  spikeglaive: "immortal",
   immortalsword: "immortal",
   helmimmortal: "immortal",
   immortalarmor: "immortal",
@@ -232,7 +233,14 @@ export const kindAsStringToSet = {
 };
 
 export const setItems = {
-  immortal: ["immortalsword", "helmimmortal", "immortalarmor", "immortalring", "shieldimmortal", "beltimmortal"],
+  immortal: [
+    ["spikeglaive", "immortalsword"],
+    "helmimmortal",
+    "immortalarmor",
+    "immortalring",
+    "shieldimmortal",
+    "beltimmortal",
+  ],
   paladin: ["paladinaxe", "helmpaladin", "paladinarmor", "shieldpaladin", "beltpaladin"],
   mystical: ["mysticalsword", "helmmystical", "mysticalarmor", "beltmystical", "shieldmystical", "ringmystical"],
   demon: ["demonaxe", "helmdemon", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
@@ -254,7 +262,7 @@ export const setItems = {
 };
 
 export const setItemsNameMap = {
-  immortal: ["Sword", "helm", "Armor", "Belt", "Shield", "Ring"],
+  immortal: ["Glaive or Sword", "helm", "Armor", "Belt", "Shield", "Ring"],
   paladin: ["Axe", "Helm", "Armor", "Belt", "Shield"],
   mystical: ["Sword", "Helm", "Armor", "Belt", "Shield", "Ring"],
   demon: ["Axe", "Helm", "Armor", "Belt", "Shield", "Amulet"],

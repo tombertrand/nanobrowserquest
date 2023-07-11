@@ -561,6 +561,10 @@ EntityFactory.builders[Types.Entities.BELTPALADIN] = function (id) {
   return new Items.BeltPaladin(id);
 };
 
+EntityFactory.builders[Types.Entities.BELTIMMORTAL] = function (id) {
+  return new Items.BeltImmortal(id);
+};
+
 EntityFactory.builders[Types.Entities.BELTGOLDWRAP] = function (id) {
   return new Items.BeltGoldwrap(id);
 };
@@ -605,32 +609,40 @@ EntityFactory.builders[Types.Entities.SHIELDDIAMOND] = function (id) {
   return new Items.ShieldDiamond(id);
 };
 
-EntityFactory.builders[Types.Entities.SHIELDTEMPLAR] = function (id) {
-  return new Items.ShieldTemplar(id);
-};
-
 EntityFactory.builders[Types.Entities.SHIELDEMERALD] = function (id) {
   return new Items.ShieldEmerald(id);
 };
 
-EntityFactory.builders[Types.Entities.SHIELDEXECUTIONER] = function (id) {
-  return new Items.ShieldExecutioner(id);
-};
-
-EntityFactory.builders[Types.Entities.SHIELDMYSTICAL] = function (id) {
-  return new Items.ShieldMystical(id);
+EntityFactory.builders[Types.Entities.SHIELDTEMPLAR] = function (id) {
+  return new Items.ShieldTemplar(id);
 };
 
 EntityFactory.builders[Types.Entities.SHIELDDRAGON] = function (id) {
   return new Items.ShieldDragon(id);
 };
 
-EntityFactory.builders[Types.Entities.SHIELDDEMON] = function (id) {
-  return new Items.ShieldDemon(id);
+EntityFactory.builders[Types.Entities.SHIELDEXECUTIONER] = function (id) {
+  return new Items.ShieldExecutioner(id);
 };
 
 EntityFactory.builders[Types.Entities.SHIELDMOON] = function (id) {
   return new Items.ShieldMoon(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDMYSTICAL] = function (id) {
+  return new Items.ShieldMystical(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDDEMON] = function (id) {
+  return new Items.ShieldDemon(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDPALADIN] = function (id) {
+  return new Items.ShieldPaladin(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDIMMORTAL] = function (id) {
+  return new Items.ShieldImmortal(id);
 };
 
 EntityFactory.builders[Types.Entities.FLASK] = function (id) {

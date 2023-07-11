@@ -199,6 +199,7 @@ export const Types: any = {
     BELTMOON: 205,
     BELTMYSTICAL: 202,
     BELTPALADIN: 352,
+    BELTIMMORTAL: 355,
     BELTGOLDWRAP: 344,
 
     // Capes
@@ -218,9 +219,11 @@ export const Types: any = {
     SHIELDEXECUTIONER: 195,
     SHIELDTEMPLAR: 153,
     SHIELDDRAGON: 197,
-    SHIELDDEMON: 198,
     SHIELDMOON: 208,
     SHIELDMYSTICAL: 196,
+    SHIELDDEMON: 198,
+    SHIELDPALADIN: 353,
+    SHIELDIMMORTAL: 354,
 
     // Chests
     CHESTBLUE: 136,
@@ -609,6 +612,7 @@ Types.Entities.Belts = [
   Types.Entities.BELTDEMON,
   Types.Entities.BELTMYSTICAL,
   Types.Entities.BELTPALADIN,
+  Types.Entities.BELTIMMORTAL,
   Types.Entities.BELTGOLDWRAP,
 ];
 
@@ -622,13 +626,15 @@ Types.Entities.Shields = [
   Types.Entities.SHIELDHORNED,
   Types.Entities.SHIELDFROZEN,
   Types.Entities.SHIELDDIAMOND,
-  Types.Entities.SHIELDTEMPLAR,
   Types.Entities.SHIELDEMERALD,
+  Types.Entities.SHIELDTEMPLAR,
   Types.Entities.SHIELDEXECUTIONER,
-  Types.Entities.SHIELDMYSTICAL,
   Types.Entities.SHIELDDRAGON,
-  Types.Entities.SHIELDDEMON,
   Types.Entities.SHIELDMOON,
+  Types.Entities.SHIELDMYSTICAL,
+  Types.Entities.SHIELDDEMON,
+  Types.Entities.SHIELDPALADIN,
+  Types.Entities.SHIELDIMMORTAL,
 ];
 
 Types.Entities.Rings = [
@@ -791,8 +797,8 @@ export const kinds = {
   helmmoon: [Types.Entities.HELMMOON, "helm", "Moon Helm", 50, 20],
   helmdemon: [Types.Entities.HELMDEMON, "helm", "Demon Helm", 50, 22],
   helmmystical: [Types.Entities.HELMMYSTICAL, "helm", "Mystical Helm", 52, 22],
-  helmimmortal: [Types.Entities.HELMIMMORTAL, "helm", "Immortal Helm", 54, 24],
-  helmpaladin: [Types.Entities.HELMPALADIN, "helm", "Paladin Helm", 54, 24],
+  helmimmortal: [Types.Entities.HELMIMMORTAL, "helm", "Immortal Helm", 54, 26],
+  helmpaladin: [Types.Entities.HELMPALADIN, "helm", "Paladin Helm", 54, 26],
   helmclown: [Types.Entities.HELMCLOWN, "helm", "Clown Helm", 42, 20],
 
   // kind, type, level, defense
@@ -813,8 +819,8 @@ export const kinds = {
   moonarmor: [Types.Entities.MOONARMOR, "armor", "Moon Armor", 54, 44],
   demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 52, 46],
   mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 54, 48],
-  paladinarmor: [Types.Entities.PALADINARMOR, "armor", "Paladin Armor", 58, 50],
-  immortalarmor: [Types.Entities.IMMORTALARMOR, "armor", "Blood Armor", 58, 50],
+  paladinarmor: [Types.Entities.PALADINARMOR, "armor", "Paladin Armor", 58, 54],
+  immortalarmor: [Types.Entities.IMMORTALARMOR, "armor", "Blood Armor", 58, 54],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -830,6 +836,7 @@ export const kinds = {
   beltdemon: [Types.Entities.BELTDEMON, "belt", "Demon Belt", 54, 20],
   beltmystical: [Types.Entities.BELTMYSTICAL, "belt", "Mystical Belt", 54, 20],
   beltpaladin: [Types.Entities.BELTPALADIN, "belt", "Paladin Belt", 58, 24],
+  beltimmortal: [Types.Entities.BELTIMMORTAL, "belt", "Immortal Belt", 58, 24],
   beltgoldwrap: [Types.Entities.BELTGOLDWRAP, "belt", "Goldwrap", 42, 20],
 
   cape: [Types.Entities.CAPE, "cape", "Cape", 20, 6],
@@ -849,8 +856,10 @@ export const kinds = {
   shieldtemplar: [Types.Entities.SHIELDTEMPLAR, "shield", "Templar Shield", 50, 28],
   shielddragon: [Types.Entities.SHIELDDRAGON, "shield", "Dragon Shield", 50, 28],
   shieldmoon: [Types.Entities.SHIELDMOON, "shield", "Moon Shield", 52, 30],
-  shielddemon: [Types.Entities.SHIELDDEMON, "shield", "Demon Shield", 54, 32],
   shieldmystical: [Types.Entities.SHIELDMYSTICAL, "shield", "Mystical Shield", 54, 32],
+  shielddemon: [Types.Entities.SHIELDDEMON, "shield", "Demon Shield", 54, 32],
+  shieldpaladin: [Types.Entities.SHIELDPALADIN, "shield", "Paladin Shield", 56, 34],
+  shieldimmortal: [Types.Entities.SHIELDIMMORTAL, "shield", "Immortal Shield", 56, 34],
 
   // kind, type, level
   ringbronze: [Types.Entities.RINGBRONZE, "ring", "Bronze Ring", 1],
@@ -1130,6 +1139,7 @@ Types.rankedBelts = [
   Types.Entities.BELTMOON,
   Types.Entities.BELTMYSTICAL,
   Types.Entities.BELTPALADIN,
+  Types.Entities.BELTIMMORTAL,
   Types.Entities.BELTGOLDWRAP,
 ];
 
@@ -1216,8 +1226,10 @@ Types.itemUniqueMap = {
   shieldtemplar: ["NanoStrategy"],
   shielddragon: ["Airdrop"],
   shieldmoon: ["Fear Uncertainty Doubt (FUD)"],
-  shielddemon: ["ORV > POW"],
   shieldmystical: ["Developer Fund"],
+  shielddemon: ["ORV > POW"],
+  shieldpaladin: ["TBD"],
+  shieldimmortal: ["TBD"],
 
   cape: ["Cloak of Levitation"],
 
@@ -1235,6 +1247,7 @@ Types.itemUniqueMap = {
   beltdemon: ["1000 CPS"],
   beltmystical: ["Horizontal Scaling"],
   beltpaladin: ["Slava Ukraini"],
+  beltimmortal: ["TBD"],
   beltgoldwrap: ["Goldwrap"],
 };
 
@@ -2411,8 +2424,10 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     shieldtemplar: 8,
     shielddragon: 8,
     shieldmoon: 8,
-    shielddemon: 6,
     shieldmystical: 6,
+    shielddemon: 6,
+    shieldimmortal: 6,
+    shieldpaladin: 6,
 
     cape: 10,
     ringgold: 12,

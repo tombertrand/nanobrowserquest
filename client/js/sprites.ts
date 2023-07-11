@@ -120,13 +120,15 @@ import shieldblue from "../sprites/shield.json";
 import shieldhorned from "../sprites/shield.json";
 import shieldfrozen from "../sprites/shield.json";
 import shielddiamond from "../sprites/shield.json";
-import shieldtemplar from "../sprites/shield.json";
 import shieldemerald from "../sprites/shield.json";
+import shieldtemplar from "../sprites/shield.json";
 import shieldexecutioner from "../sprites/shield.json";
-import shieldmystical from "../sprites/shield.json";
 import shielddragon from "../sprites/shield.json";
-import shielddemon from "../sprites/shield.json";
 import shieldmoon from "../sprites/shield.json";
+import shieldmystical from "../sprites/shield.json";
+import shielddemon from "../sprites/shield.json";
+import shieldpaladin from "../sprites/shield.json";
+import shieldimmortal from "../sprites/shield.json";
 import item from "../sprites/item.json";
 import king from "../sprites/king.json";
 import lavanpc from "../sprites/npc.json";
@@ -354,13 +356,15 @@ const sprites = {
   shieldhorned,
   shieldfrozen,
   shielddiamond,
-  shieldtemplar,
   shieldemerald,
+  shieldtemplar,
   shieldexecutioner,
-  shieldmystical,
   shielddragon,
-  shielddemon,
   shieldmoon,
+  shieldmystical,
+  shielddemon,
+  shieldpaladin,
+  shieldimmortal,
   "item-axe": item,
   "item-blueaxe": item,
   "item-bluemorningstar": item,
@@ -508,6 +512,7 @@ const sprites = {
   "item-beltdemon": item,
   "item-beltmystical": item,
   "item-beltpaladin": item,
+  "item-beltimmortal": item,
   "item-beltgoldwrap": item,
   "item-cape": item,
   "item-shieldwood": item,
@@ -519,13 +524,15 @@ const sprites = {
   "item-shieldhorned": item,
   "item-shieldfrozen": item,
   "item-shielddiamond": item,
-  "item-shieldtemplar": item,
   "item-shieldemerald": item,
+  "item-shieldtemplar": item,
   "item-shieldexecutioner": item,
-  "item-shieldmystical": item,
   "item-shielddragon": item,
-  "item-shielddemon": item,
   "item-shieldmoon": item,
+  "item-shieldmystical": item,
+  "item-shielddemon": item,
+  "item-shieldpaladin": item,
+  "item-shieldimmortal": item,
   "item-goldensword": item,
   "item-frozensword": item,
   "item-diamondsword": item,

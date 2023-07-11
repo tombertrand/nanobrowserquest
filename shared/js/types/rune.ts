@@ -526,6 +526,18 @@ export const Runewords = {
         preventRegenerateHealth: 20,
       },
     },
+    "jah-shi-tor-qua-zal": {
+      name: "Not a Security",
+      bonus: {
+        attackDamage: 15,
+        coldDamage: 25,
+        coldDamagePercent: 20,
+        pierceDamage: 20,
+        freezeChance: 15,
+        allResistance: 18,
+        magicFind: 25,
+      },
+    },
   },
   armor: {
     "um-hex-sol-zal-btc-fal": {

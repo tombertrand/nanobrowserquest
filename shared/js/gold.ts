@@ -121,8 +121,10 @@ export const itemGoldMap = {
   shieldtemplar: 32,
   shielddragon: 35,
   shieldmoon: 45,
-  shielddemon: 120,
   shieldmystical: 80,
+  shielddemon: 120,
+  shieldpaladin: 120,
+  shieldimmortal: 120,
 
   beltleather: 1,
   beltplated: 3,
@@ -137,6 +139,7 @@ export const itemGoldMap = {
   beltdemon: 115,
   beltmystical: 75,
   beltpaladin: 115,
+  beltimmortal: 115,
   beltgoldwrap: 115,
 };
 

@@ -506,6 +506,13 @@ var Items = {
     }
   },
 
+  BeltImmortal: class BeltImmortal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTIMMORTAL, "belt");
+      this.lootMessage = "You pick up an immortal belt";
+    }
+  },
+
   BeltGoldwrap: class BeltGoldwrap extends Item {
     constructor(id) {
       super(id, Types.Entities.BELTGOLDWRAP, "belt");
@@ -583,17 +590,17 @@ var Items = {
     }
   },
 
-  ShieldTemplar: class ShieldTemplar extends Item {
-    constructor(id) {
-      super(id, Types.Entities.SHIELDTEMPLAR, "shield");
-      this.lootMessage = "You pick up a templar shield";
-    }
-  },
-
   ShieldEmerald: class ShieldEmerald extends Item {
     constructor(id) {
       super(id, Types.Entities.SHIELDEMERALD, "shield");
       this.lootMessage = "You pick up an emerald shield";
+    }
+  },
+
+  ShieldTemplar: class ShieldTemplar extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDTEMPLAR, "shield");
+      this.lootMessage = "You pick up a templar shield";
     }
   },
 
@@ -604,17 +611,24 @@ var Items = {
     }
   },
 
-  ShieldMystical: class ShieldMystical extends Item {
-    constructor(id) {
-      super(id, Types.Entities.SHIELDMYSTICAL, "shield");
-      this.lootMessage = "You pick up a mystical shield";
-    }
-  },
-
   ShieldDragon: class ShieldDragon extends Item {
     constructor(id) {
       super(id, Types.Entities.SHIELDDRAGON, "shield");
       this.lootMessage = "You pick up a dragon shield";
+    }
+  },
+
+  ShieldMoon: class ShieldMoon extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDMOON, "shield");
+      this.lootMessage = "You pick up a moon shield";
+    }
+  },
+
+  ShieldMystical: class ShieldMystical extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDMYSTICAL, "shield");
+      this.lootMessage = "You pick up a mystical shield";
     }
   },
 
@@ -625,10 +639,17 @@ var Items = {
     }
   },
 
-  ShieldMoon: class ShieldMoon extends Item {
+  ShieldPaladin: class ShieldPaladin extends Item {
     constructor(id) {
-      super(id, Types.Entities.SHIELDMOON, "shield");
-      this.lootMessage = "You pick up a moon shield";
+      super(id, Types.Entities.SHIELDPALADIN, "shield");
+      this.lootMessage = "You pick up a paladin shield";
+    }
+  },
+
+  ShieldImmortal: class ShieldImmortal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDIMMORTAL, "shield");
+      this.lootMessage = "You pick up an immortal shield";
     }
   },
 

@@ -107,12 +107,13 @@ Formulas.minMaxDefense = function ({
   partyDefense,
   cape,
   capeLevel,
+  isCapeUnique,
   skillDefense,
 }) {
   const helmDefense = Types.getArmorDefense(helm, helmLevel, isHelmUnique);
   const armorDefense = Types.getArmorDefense(armor, armorLevel, isArmorUnique);
   const beltDefense = Types.getArmorDefense(belt, beltLevel, isBeltUnique);
-  const capeDefense = Types.getArmorDefense(cape, capeLevel);
+  const capeDefense = Types.getArmorDefense(cape, capeLevel, isCapeUnique);
   const shieldDefense = Types.getArmorDefense(shield, shieldLevel, isShieldUnique);
 
   let min =
@@ -162,6 +163,7 @@ Formulas.playerDefense = ({
   partyDefense,
   cape,
   capeLevel,
+  isCapeUnique,
   skillDefense,
 }) => {
   const { min, max } = Formulas.minMaxDefense({
@@ -183,6 +185,7 @@ Formulas.playerDefense = ({
     partyDefense,
     cape,
     capeLevel,
+    isCapeUnique,
     skillDefense,
   });
 
