@@ -1116,6 +1116,8 @@ class App {
   }
 
   hideWindows() {
+    this.game.isPanelOpened = false;
+
     if ($("#achievements").hasClass("active")) {
       $("#achievements").removeClass("active");
       $("#achievementsbutton").removeClass("active");
@@ -1482,6 +1484,7 @@ class App {
   }
 
   openInventory(onlyInventory = false) {
+    this.game.isPanelOpened = true;
     if ($("#inventory").hasClass("visible")) return;
 
     if (onlyInventory) {
@@ -1538,6 +1541,8 @@ class App {
 
   openOtherPlayerEquipment(player) {
     this.hideWindows();
+
+    this.game.isPanelOpened = true;
 
     this.game.initOtherPlayerEquipmentSlots(player);
     $("#otherplayer-equipment").addClass("visible");
@@ -1634,18 +1639,13 @@ class App {
   openWaypoint(activeWaypoint) {
     this.hideWindows();
 
+    this.game.isPanelOpened = true;
+
     $("#waypoint").find(".active").removeClass("active");
     if (activeWaypoint) {
       $(`#waypoint-${activeWaypoint.id}`).addClass("active");
     }
     $("#waypoint").addClass("visible");
-
-    $("#foreground")
-      .off(".waypoint")
-      .on("click.waypoint", () => {
-        this.closeWaypoint();
-        $("#foreground").off(".waypoint");
-      });
   }
 
   closeWaypoint() {

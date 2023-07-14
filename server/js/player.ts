@@ -254,7 +254,7 @@ class Player extends Character {
         databaseHandler.banPlayerByIP({
           player: self,
           reason: "cheating",
-          message: "invalid websocket message",
+          message: message[1] || "invalid websocket message",
         });
         return;
       }

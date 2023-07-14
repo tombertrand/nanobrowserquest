@@ -222,6 +222,7 @@ class Game {
   slotSockets: (number | string)[] | null;
   slotSocketCount: number | null;
   cursorOverSocket: number | null;
+  isPanelOpened: boolean;
 
   constructor(app) {
     this.app = app;
@@ -256,6 +257,7 @@ class Game {
     this.showAnvilOdds = false;
     this.showHealthAboveBars = false;
     this.confirmedSoldItemToMerchant = null;
+    this.isPanelOpened = false;
 
     this.renderer = null;
     this.updater = null;
@@ -1104,6 +1106,11 @@ class Game {
 
     if (toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT) {
       if (fromSlot < INVENTORY_SLOT_COUNT) {
+        if (!this.isPanelOpened) {
+          this.client.sendBanPlayer("Player tried to sell item to Merchant.");
+          return;
+        }
+
         this.client.sendSellToMerchant(fromSlot, transferedQuantity || 1);
       }
       return;
@@ -2061,6 +2068,11 @@ class Game {
       if (!isStashTransfer || !this.player.goldStash) return;
 
       this.openQuantityModal({ maxQuantity: this.player.goldStash }, gold => {
+        if (!this.isPanelOpened) {
+          this.client.sendBanPlayer("Player tried to transfer gold from Stash to Inventory.");
+          return;
+        }
+
         this.client.sendMoveGold(gold, "stash", "inventory");
       });
     });
@@ -2072,6 +2084,11 @@ class Game {
 
       this.openQuantityModal({ maxQuantity: this.player.gold }, gold => {
         if (isStashTransfer) {
+          if (!this.isPanelOpened) {
+            this.client.sendBanPlayer("Player tried to transfer gold from Inventory to Stash.");
+            return;
+          }
+
           this.client.sendMoveGold(gold, "inventory", "stash");
         } else if (isTradeTransfer) {
           this.client.sendMoveGold(gold, "inventory", "trade");
@@ -2161,6 +2178,11 @@ class Game {
 
             // Only teleport to enabled locations
             if ($(this).hasClass("locked") || $(this).hasClass("disabled") || $(this).hasClass("active")) return;
+
+            if (!self.isPanelOpened) {
+              self.client.sendBanPlayer("Player tried to teleport without opening the Waypoint panel.");
+              return;
+            }
 
             const id = parseInt($(this).data("waypoint-id"));
             const clickedWaypoint = Types.waypoints.find(({ id: waypointId }) => waypointId === id);
@@ -6118,7 +6140,9 @@ class Game {
       } else {
         this.makePlayerGoTo(pos.x, pos.y);
 
-        // immune character to traps for 3 seconds if hit
+        if (this.isPanelOpened) {
+          this.app.hideWindows();
+        }
       }
     }
   }
