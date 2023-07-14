@@ -1437,6 +1437,13 @@ var Items = {
     }
   },
 
+  Iou: class Iou extends Item {
+    constructor(id) {
+      super(id, Types.Entities.IOU, "object");
+      this.lootMessage = "You pick up an Iou";
+    }
+  },
+
   Cake: class Cake extends Item {
     constructor(id) {
       super(id, Types.Entities.CAKE, "object");

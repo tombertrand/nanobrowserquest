@@ -50,7 +50,11 @@ var NpcTalk = {
     "Let me tell you, I love, BITCONNEEeeeEECT!",
   ],
 
-  janetyelen: ["The bank is now hodling <strong>{{gold}}</string> gold!"],
+  janetyelen: [
+    "The bank is now hodling <strong>{{gold}}</string> gold!",
+    "The bank has exchanged your IOU for <strong>{{gold}}</string> gold!",
+    "The bank doesn't have anymore gold,<br/>don't worry we'll simply print more shortly.",
+  ],
   merchant: ["Hi there, adventurer! Looking for a trade?"],
 
   satoshi: [
@@ -383,10 +387,12 @@ class Npc extends Character {
     return change;
   }
 
-  talk(game: Game) {
+  talk(game: Game, talkIndex) {
     var msg = "";
 
-    if (this.selectTalk(game) || this.talkIndex > this.talkCount) {
+    if (typeof talkIndex !== "undefined") {
+      this.talkIndex = talkIndex;
+    } else if (this.selectTalk(game) || this.talkIndex > this.talkCount) {
       this.talkIndex = 0;
     }
     if (this.talkIndex < this.talkCount) {

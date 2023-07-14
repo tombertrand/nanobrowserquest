@@ -268,6 +268,7 @@ export const Types: any = {
     POWDERQUANTUM: 291,
     PICKAXE: 310,
     MUSHROOMS: 324,
+    IOU: 356,
     CAKE: 39,
     SCROLLUPGRADELOW: 74,
     SCROLLUPGRADEMEDIUM: 75,
@@ -949,6 +950,7 @@ export const kinds = {
   powderred: [Types.Entities.POWDERRED, "item", "Blood Powder"],
   powderquantum: [Types.Entities.POWDERQUANTUM, "item", "Quantum Powder"],
   mushrooms: [Types.Entities.MUSHROOMS, "item", "Mushrooms"],
+  iou: [Types.Entities.IOU, "item", "Iou"],
 
   // kind, type, name, level
   "rune-sat": [Types.Entities.RUNE.SAT, "rune", "SAT Rune", 1],
@@ -1706,6 +1708,15 @@ Types.isQuantity = function (kindOrString: number | string) {
   );
 };
 
+Types.isNotStackableItem = function (kindOrString: number | string) {
+  if (!kindOrString) return false;
+  if (typeof kindOrString === "number") {
+    return [Types.Entities.IOU].includes(kindOrString);
+  } else {
+    return kindOrString.startsWith("iou");
+  }
+};
+
 Types.isItem = function (kind: number) {
   return (
     Types.isWeapon(kind) ||
@@ -1723,6 +1734,7 @@ Types.isItem = function (kind: number) {
     Types.isStone(kind) ||
     Types.isBar(kind) ||
     Types.isJewel(kind) ||
+    Types.isNotStackableItem(kind) ||
     (Types.isObject(kind) && !Types.isStaticChest(kind))
   );
 };
@@ -2826,6 +2838,7 @@ Types.itemDescription = {
   powderquantum: "The ultimate powder that powers the Gateway.",
   pickaxe: "This tool is used for digging.",
   mushrooms: "Mushrooms have the power to distort reality and summon otherworldly creatures.",
+  iou: "Written acknowledgment of a debt.<br/><br/>Talk to Janet Yelen to exchange it for :amount: gold.",
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",

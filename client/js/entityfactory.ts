@@ -1093,6 +1093,10 @@ EntityFactory.builders[Types.Entities.MUSHROOMS] = function (id) {
   return new Items.Mushrooms(id);
 };
 
+EntityFactory.builders[Types.Entities.IOU] = function (id) {
+  return new Items.Iou(id);
+};
+
 EntityFactory.builders[Types.Entities.FIREFOXPOTION] = function (id) {
   return new Items.Firefoxpotion(id);
 };

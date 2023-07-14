@@ -334,7 +334,6 @@ class Game {
     this.traps = [];
     this.statues = [];
     this.gatewayFxNpcId = null;
-    this.goldBank = 0;
     this.slotSockets = null;
     this.slotSocketCount = null;
 
@@ -809,7 +808,14 @@ class Game {
     });
 
     const isQuantity = Types.isQuantity(item);
-    const isLevelVisible = level && !isRune && !isJewel && !isStone && !Types.isSingle(item) && !isQuantity;
+    const isLevelVisible =
+      level &&
+      !isRune &&
+      !isJewel &&
+      !isStone &&
+      !Types.isSingle(item) &&
+      !Types.isNotStackableItem(item) &&
+      !isQuantity;
     const isMerchantVisible = $("#merchant").hasClass("visible");
     let buyOrSell = "";
     if (isMerchantVisible && element) {
@@ -882,7 +888,13 @@ class Game {
           </div>`
             : ""
         }
-        ${description ? `<div class="item-description">${description}</div>` : ""}
+        ${
+          description
+            ? `<div class="item-description">${
+                amount ? description.replace(":amount:", this.formatGold(amount)) : description
+              }</div>`
+            : ""
+        }
         ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
         ${
           currentSet && setBonus.length
@@ -5118,10 +5130,13 @@ class Game {
       });
 
       self.client.onReceiveGoldBank(function (gold) {
-        self.setGoldBank(gold);
-
         const npc = self.getNpcAt(32, 208);
-        self.makeNpcTalk(npc, true);
+        self.makeNpcTalk(npc, { byPass: true, talkIndex: 0, gold });
+      });
+
+      self.client.onReceiveGoldBankWithdraw(function (gold) {
+        const npc = self.getNpcAt(32, 208);
+        self.makeNpcTalk(npc, { byPass: true, talkIndex: gold ? 1 : 2, gold });
       });
 
       self.client.onReceiveCoin(function (coin) {
@@ -5388,14 +5403,10 @@ class Game {
     }, 3000);
   }
 
-  setGoldBank(gold) {
-    this.goldBank = gold;
-  }
-
   /**
    *
    */
-  makeNpcTalk(npc, byPass = false) {
+  makeNpcTalk(npc, { byPass, talkIndex, gold }: { byPass?: boolean; talkIndex?: number; gold?: number } = {}) {
     var msg;
 
     if (npc) {
@@ -5433,9 +5444,12 @@ class Game {
       ) {
         if (npc.kind === Types.Entities.JANETYELEN) {
           if (byPass) {
-            msg = npc.talk(this).replace("{{gold}}", this.formatGold(this.goldBank));
+            msg = npc.talk(this, talkIndex).replace("{{gold}}", this.formatGold(gold));
           } else {
-            this.client.sendGoldBank();
+            const isIouExchange = this.player.inventory.some(
+              ({ item }) => typeof item === "string" && item.startsWith("iou"),
+            );
+            this.client.sendGoldBank(isIouExchange);
             return;
           }
         } else {

@@ -759,7 +759,7 @@ class DatabaseHandler {
     player: any;
     reason: string;
     message: string;
-    days: number;
+    days?: number;
   }) {
     this.banPlayerForReason({ player, reason, message, days });
 
@@ -1473,7 +1473,7 @@ class DatabaseHandler {
   getGoldBank() {
     return new Promise(resolve => {
       this.client.get("goldBank", (_err, gold) => {
-        resolve(gold);
+        resolve(Number(gold));
       });
     });
   }
@@ -1520,6 +1520,63 @@ class DatabaseHandler {
       .catch(err => {
         Sentry.captureException(err);
       });
+  }
+
+  withdrawFromBank({ player }) {
+    return new Promise(resolve => {
+      if (player.moveItemLock) {
+        Sentry.captureException(new Error("Calling withdrawFromBank while still locked"), {
+          extra: { player: player.name },
+        });
+        return;
+      }
+
+      player.moveItemLock = true;
+
+      this.client.hget("u:" + player.name, "inventory", (_err, fromReply) => {
+        try {
+          let inventory = JSON.parse(fromReply);
+
+          const slot = inventory.findIndex(item => item && typeof item === "string" && item.startsWith("iou:"));
+
+          if (slot <= -1) {
+            this.banPlayerByIP({
+              player,
+              reason: "cheating",
+              message: "Tried to withdraw from bank without an IOU",
+            });
+            resolve(false);
+            return;
+          }
+          const [, rawAmount] = inventory[slot].split(":");
+          const amount = Number(rawAmount);
+
+          if (amount && player.server.goldBank >= amount) {
+            inventory[slot] = 0;
+            this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+
+            this.sendMoveItem({ player, location: "inventory", data: inventory });
+
+            this.client.decrby("goldBank", amount, (_err, reply) => {
+              player.server.goldBank = Number(reply);
+
+              this.lootGold({
+                player,
+                amount,
+              });
+
+              resolve(amount);
+            });
+          } else {
+            resolve(false);
+          }
+        } catch (err) {
+          Sentry.captureException(err);
+        }
+
+        player.moveItemLock = false;
+      });
+    });
   }
 
   sellToMerchant({ player, fromSlot, quantity: soldQuantity = 1 }) {

@@ -1062,6 +1062,27 @@ class Player extends Character {
 
               // @TODO ~~~~ configure split for party loots
               self.databaseHandler.lootGold({ player: self, amount });
+            } else if (kind === Types.Entities.IOU) {
+              console.info("LOOT IOU: " + self.name + " " + item.amount);
+
+              if (!item.amount || isNaN(item.amount)) return;
+
+              let { amount } = item;
+              let player = self;
+
+              if (self.partyId) {
+                player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+              }
+
+              self.databaseHandler.lootItems({
+                player,
+                items: [
+                  {
+                    item: "iou",
+                    level: amount,
+                  },
+                ],
+              });
             } else if (Types.Entities.NANOCOIN === kind) {
               console.info(`LOOT NANO: ${self.name}, ${self.network}, ${item.amount}`);
               if (!item.amount || isNaN(item.amount) || self.network !== "nano") {
@@ -1429,7 +1450,12 @@ class Player extends Character {
           databaseHandler.moveGold({ player: self, from, to, amount });
         }
       } else if (action === Types.Messages.GOLD.BANK) {
-        self.send([Types.Messages.GOLD.BANK, self.server.goldBank]);
+        if (message[1]) {
+          const amount = await databaseHandler.withdrawFromBank({ player: self });
+          self.send([Types.Messages.GOLD.BANK_WITHDRAW, amount]);
+        } else {
+          self.send([Types.Messages.GOLD.BANK, self.server.goldBank]);
+        }
       } else if (action === Types.Messages.UPGRADE_ITEM) {
         console.info("UPGRADE ITEM: " + self.name);
 

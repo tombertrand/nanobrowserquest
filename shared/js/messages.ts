@@ -126,6 +126,7 @@ export const Messages = {
     TRADE: 123,
     TRADE2: 124,
     BANK: 125,
+    BANK_WITHDRAW: 132,
   },
   MERCHANT: {
     SELL: 126,

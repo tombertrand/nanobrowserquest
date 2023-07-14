@@ -766,7 +766,7 @@ class Player extends Character {
       .map((rawItem, slot) => {
         if (!rawItem) return false;
         const delimiter = Types.isJewel(rawItem) ? "|" : ":";
-        const [item, levelOrQuantity, bonus, socket, skill] = rawItem.split(delimiter);
+        const [item, levelOrQuantityOrAmount, bonus, socket, skill] = rawItem.split(delimiter);
 
         const isWeapon = kinds[item][1] === "weapon";
         const isHelm = kinds[item][1] === "helm";
@@ -779,7 +779,10 @@ class Player extends Character {
         const isChest = kinds[item][1] === "chest";
         const isJewel = kinds[item][1] === "jewel";
         const hasLevel = isWeapon || isHelm || isArmor || isBelt || isCape || isShield || isRing || isAmulet || isJewel;
-        const level = hasLevel ? parseInt(levelOrQuantity) : null;
+        const level = hasLevel ? parseInt(levelOrQuantityOrAmount) : null;
+        const isQuantity =
+          Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item) || Types.isBar(item);
+        const amount = !hasLevel && !isQuantity ? parseInt(levelOrQuantityOrAmount) : null;
         const isUnique = Types.isUnique(item, bonus, isJewel ? level : undefined);
 
         let requirement = null;
@@ -787,7 +790,7 @@ class Player extends Character {
         let runeword = null;
 
         if (hasLevel) {
-          requirement = Types.getItemRequirement(item, levelOrQuantity);
+          requirement = Types.getItemRequirement(item, levelOrQuantityOrAmount);
 
           if (isWeapon || isHelm || isHelm || isArmor || isShield) {
             ({ runeword } = Types.getRunewordBonus({
@@ -796,8 +799,8 @@ class Player extends Character {
               type: kinds[item][1],
             }));
           }
-        } else if (Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item) || Types.isBar(item)) {
-          quantity = parseInt(levelOrQuantity);
+        } else if (isQuantity) {
+          quantity = parseInt(levelOrQuantityOrAmount);
         }
 
         return {
@@ -811,6 +814,7 @@ class Player extends Character {
           runeword,
           ...{ level },
           ...{ quantity },
+          ...{ amount },
         };
       })
       .filter(Boolean);

@@ -2038,7 +2038,7 @@ class World {
           this.databaseHandler
             .deductGold(entity, { penalty })
             .then(goldBank => {
-              this.goldBank = goldBank;
+              this.goldBank = Number(goldBank);
             })
             .catch(err => {
               Sentry.captureException(err);
@@ -2565,6 +2565,24 @@ class World {
         }
       }
     }
+    if (!isBoss) {
+      if (mob.kind <= Types.Entities.DEATHKNIGHT) {
+        const iouRandom = random(1000);
+        if (iouRandom === 133) {
+          return "iou";
+        }
+      } else if (mob.kind <= Types.Entities.ZOMBIE) {
+        const iouRandom = random(3000);
+        if (iouRandom === 133) {
+          return "iou";
+        }
+      } else if (mob.kind <= Types.Entities.SKELETONAXE2) {
+        const iouRandom = random(10_000);
+        if (iouRandom === 133) {
+          return "iou";
+        }
+      }
+    }
 
     if (!isBoss && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO/BANANO potion on non-boss monsters
@@ -2660,6 +2678,7 @@ class World {
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe", "immortalsword"];
     // var randomDrops = ["soulstone"];
+    // var randomDrops = ["iou"];
     // var randomDrops = ["gold"];
     // var randomDrops = ["barbronze", "barsilver", "bargold", "barplatinum"];
     // var randomDrops = ["ringgreed", "amuletgreed", "amuleteye"];
@@ -2755,6 +2774,8 @@ class World {
 
     if (Types.Entities.GOLD === kind) {
       amount = generateRandomGoldAmount(mob.name, Types.isMiniBoss(mob));
+    } else if (Types.Entities.IOU === kind) {
+      amount = generateRandomGoldAmount(mob.name, Types.isMiniBoss(mob)) * 100;
     } else if (Types.Entities.NANOCOIN === kind) {
       // ~~~~@TODO
       // amount = generateRandomNanoAmount(attacker.network);
