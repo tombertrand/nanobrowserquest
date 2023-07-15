@@ -377,7 +377,7 @@ var Properties: any = {
     },
     hp: 600,
     armor: 16,
-    weapon: 20,
+    weapon: 19,
   },
   cowking: {
     drops: {

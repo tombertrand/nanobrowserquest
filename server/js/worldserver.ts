@@ -2577,7 +2577,7 @@ class World {
           return "iou";
         }
       } else if (mob.kind <= Types.Entities.SKELETONAXE2) {
-        const iouRandom = random(10_000);
+        const iouRandom = random(13_000);
         if (iouRandom === 133) {
           return "iou";
         }

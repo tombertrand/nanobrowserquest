@@ -1565,6 +1565,12 @@ class DatabaseHandler {
                 amount,
               });
 
+              postMessageToDiscordEventChannel(
+                `${player.name} just exchanged an IOU ${EmojiMap.iou} for **${new Intl.NumberFormat("en-EN", {}).format(
+                  amount,
+                )}** gold ${EmojiMap.gold} `,
+              );
+
               resolve(amount);
             });
           } else {

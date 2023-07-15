@@ -151,4 +151,6 @@ export const EmojiMap = {
   bargold: "<:bargold:1099083224413655040>",
   helmclown: "<:clownbase:1114554275226452049>",
   beltgoldwrap: "<:goldwrap:1114554276350525482>",
+  iou: "<:iou:1129598838517268531>",
+  gold: "<:gold:1097336291189854420>",
 };
