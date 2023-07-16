@@ -54,6 +54,9 @@ const CHATBAN_PATTERNS = [
   /n.?e.?g.?e.?r.?/i,
   /fucker/i,
   /cunt/i,
+  /whore/i,
+  /asshole/i,
+  /bitch/i,
 ];
 
 class Player extends Character {

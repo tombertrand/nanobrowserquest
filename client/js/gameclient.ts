@@ -783,8 +783,9 @@ class GameClient {
     this.receivechalicelevelstart_callback?.();
   }
 
-  receiveChaliceLevelEnd() {
-    this.receivechalicelevelend_callback?.();
+  receiveChaliceLevelEnd(data) {
+    const isCompleted = data[1];
+    this.receivechalicelevelend_callback?.(isCompleted);
   }
 
   receiveTempleLevelStart() {

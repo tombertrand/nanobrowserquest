@@ -4986,15 +4986,15 @@ class Game {
         // @NOTE TBD?
       });
 
-      self.client.onReceiveChaliceLevelEnd(function () {
+      self.client.onReceiveChaliceLevelEnd(function (isCompleted) {
         if (!$("#countdown").hasClass("chalice")) return;
 
         $("#countdown").countdown(0);
         $("#countdown").countdown("remove");
 
         if (self.player.gridY >= 696 && self.player.gridY <= 733 && self.player.gridX <= 29) {
-          const x = randomInt(7, 9);
-          const y = randomInt(682, 684);
+          const x = isCompleted ? randomInt(40, 46) : randomInt(7, 9);
+          const y = isCompleted ? randomInt(581, 585) : randomInt(682, 684);
 
           self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }
@@ -6156,8 +6156,13 @@ class Game {
 
         if (this.isPanelOpened) {
           this.app.hideWindows();
-          $("#dialog-quantity").dialog("close");
-          $("#dialog-merchant-item").dialog("close");
+
+          if ($("#dialog-quantity").hasClass("ui-dialog-content")) {
+            $("#dialog-quantity").dialog("close");
+          }
+          if ($("#dialog-merchant-item").hasClass("ui-dialog-content")) {
+            $("#dialog-merchant-item").dialog("close");
+          }
         }
       }
     }

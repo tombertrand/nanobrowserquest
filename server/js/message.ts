@@ -107,9 +107,9 @@ Messages.ChaliceLevelStart = class Message {
 };
 
 Messages.ChaliceLevelEnd = class Message {
-  constructor() {}
+  constructor(private isCompleted) {}
   serialize() {
-    return [Types.Messages.CHALICELEVEL_END];
+    return [Types.Messages.CHALICELEVEL_END, this.isCompleted];
   }
 };
 

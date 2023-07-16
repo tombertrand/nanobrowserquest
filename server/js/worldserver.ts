@@ -130,10 +130,9 @@ class World {
   butcher: any;
   archerEntityIds: string[];
   archerPossibleCoords: { x: number; y: number }[];
-  shamanCoords: { x: number; y: number };
-  mageTotal: number;
   mageEntityIds: string[];
   magePossibleCoords: { x: number; y: number }[];
+  shaman: any;
   worm: any;
   mageTempleEntityIds: string[];
   mageTemplePossibleCoords: { x: number; y: number }[];
@@ -262,10 +261,9 @@ class World {
     this.spiderPossibleCoords = [];
     this.archerEntityIds = [];
     this.archerPossibleCoords = [];
-    this.shamanCoords = null;
-    this.mageTotal = 0;
     this.mageEntityIds = [];
     this.magePossibleCoords = [];
+    this.shaman = null;
     this.worm = null;
     this.mageTempleEntityIds = [];
     this.mageTemplePossibleCoords = [];
@@ -1100,45 +1098,29 @@ class World {
 
   startChaliceLevel() {
     this.chaliceLevelClock = 15 * 60; // 15 minutes
-    this.mageTotal = 0;
 
     const secretStairs = this.npcs[this.secretStairsChaliceNpcId];
     secretStairs.respawnCallback();
 
     this.pushBroadcast(new Messages.ChaliceLevelStart());
 
+    if (this.shaman.isDead) {
+      this.shaman.handleRespawn(0);
+    }
+
     let count = 0;
 
-    const mageCoords = this.magePossibleCoords.concat([this.shamanCoords]);
-
-    mageCoords.map(({ x, y }) => {
-      const isShaman = x === this.shamanCoords.x && y === this.shamanCoords.y;
-      const mageCount = isShaman ? 1 : Math.ceil(randomRange(2, 4));
-
-      this.mageTotal += mageCount;
+    this.magePossibleCoords.forEach(({ x, y }) => {
+      const mageCount = Math.ceil(randomRange(2, 4));
 
       const mobType = _.shuffle([Types.Entities.MAGE, Types.Entities.GHOST])[0];
 
       for (let i = 0; i < mageCount; i++) {
-        const kind = isShaman ? Types.Entities.SHAMAN : mobType;
+        const kind = mobType;
 
         const id = `7${kind}${count++}`;
         const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
         mob.onMove(this.onMobMoveCallback.bind(this));
-        mob.onDestroy(() => {
-          if (!this.chaliceLevelClock) return;
-
-          this.mageTotal--;
-
-          if (this.mageTotal === 0) {
-            clearInterval(this.chaliceLevelInterval);
-            setTimeout(() => {
-              // Return everyone to altar, leave 10s to loot any last drop / activate lever
-              this.endChaliceLevel();
-            }, 10000);
-          }
-        });
-
         this.addMob(mob);
         this.mageEntityIds.push(id);
       }
@@ -1154,7 +1136,7 @@ class World {
     }, 1000);
   }
 
-  endChaliceLevel() {
+  endChaliceLevel(isCompleted = false) {
     this.chaliceLevelInterval = null;
     this.chaliceLevelClock = null;
 
@@ -1162,7 +1144,7 @@ class World {
     this.despawn(secretStairs);
 
     this.getEntityById(this.altarChaliceNpcId)?.deactivate();
-    this.pushBroadcast(new Messages.ChaliceLevelEnd());
+    this.pushBroadcast(new Messages.ChaliceLevelEnd(isCompleted));
 
     // Despawn all mages
     this.mageEntityIds.map(entityId => {
@@ -1173,10 +1155,9 @@ class World {
     });
     this.mageEntityIds = [];
 
-    // @TODO despawn shaman?
-    // if (!this.shaman.isDead) {
-    //   this.removeEntity(this.shaman);
-    // }
+    if (!this.shaman.isDead) {
+      this.removeEntity(this.shaman);
+    }
   }
 
   startTempleLevel() {
@@ -1759,10 +1740,16 @@ class World {
 
   activateLever(player, lever, force = false) {
     if (!force && lever.id === this.leverDeathAngelNpcId && !this.worm.isDead) return;
+    if (!force && lever.id === this.leverChaliceNpcId && !this.shaman.isDead) return;
 
     lever.activate();
 
     if (lever.id === this.leverChaliceNpcId) {
+      clearInterval(this.chaliceLevelInterval);
+      setTimeout(() => {
+        this.endChaliceLevel(true);
+      }, 3000);
+
       this.startTempleLevel();
     } else if (lever.id === this.leverLeftCryptNpcId) {
       const secretStairs = this.npcs[this.secretStairsLeftTemplarNpcId];
@@ -2094,8 +2081,6 @@ class World {
           self.magePossibleCoords.push({ x: pos.x + 1, y: pos.y });
         } else if (kind === Types.Entities.MAGE && pos.x > 112 && pos.y >= 744) {
           self.mageTemplePossibleCoords.push({ x: pos.x + 1, y: pos.y });
-        } else if (kind === Types.Entities.SHAMAN && pos.x < 29 && pos.y >= 696 && pos.y <= 734) {
-          self.shamanCoords = { x: pos.x + 1, y: pos.y };
         } else {
           const id = `7${kind}${count++}`;
           const mob = new Mob(id, kind, pos.x + 1, pos.y);
@@ -2143,6 +2128,8 @@ class World {
             });
           } else if (kind === Types.Entities.WORM) {
             self.worm = mob;
+          } else if (kind === Types.Entities.SHAMAN) {
+            self.shaman = mob;
           } else if (kind === Types.Entities.DEATHANGEL) {
             self.deathAngel = mob;
             self.deathAngelSpawnCoords = { x: mob.x, y: mob.y };
