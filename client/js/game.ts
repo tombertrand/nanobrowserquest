@@ -6156,6 +6156,8 @@ class Game {
 
         if (this.isPanelOpened) {
           this.app.hideWindows();
+          $("#dialog-quantity").dialog("close");
+          $("#dialog-merchant-item").dialog("close");
         }
       }
     }
