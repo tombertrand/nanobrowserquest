@@ -12,6 +12,7 @@ Formulas.minMaxDamage = function ({
   weapon,
   weaponLevel,
   isWeaponUnique,
+  isWeaponSuperior,
   playerLevel,
   minDamage,
   maxDamage,
@@ -36,7 +37,8 @@ Formulas.minMaxDamage = function ({
   // lowerPoisonResistance = 0,
 }) {
   let attackDamage = Math.ceil(
-    (Types.getWeaponDamage(weapon, weaponLevel, isWeaponUnique) + attackDamageBonus) * 1.2 + playerLevel / 2,
+    (Types.getWeaponDamage(weapon, weaponLevel, isWeaponUnique, isWeaponSuperior) + attackDamageBonus) * 1.2 +
+      playerLevel / 2,
   );
 
   const baseDamage =
@@ -92,29 +94,34 @@ Formulas.minMaxDefense = function ({
   helm,
   helmLevel,
   isHelmUnique,
+  isHelmSuperior,
   armor,
   armorLevel,
   isArmorUnique,
+  isArmorSuperior,
   playerLevel,
   defense,
   absorbedDamage,
   belt,
   beltLevel,
   isBeltUnique,
+  isBeltSuperior,
   shield,
   shieldLevel,
   isShieldUnique,
+  isShieldSuperior,
   partyDefense,
   cape,
   capeLevel,
   isCapeUnique,
+  isCapeSuperior,
   skillDefense,
 }) {
-  const helmDefense = Types.getArmorDefense(helm, helmLevel, isHelmUnique);
-  const armorDefense = Types.getArmorDefense(armor, armorLevel, isArmorUnique);
-  const beltDefense = Types.getArmorDefense(belt, beltLevel, isBeltUnique);
-  const capeDefense = Types.getArmorDefense(cape, capeLevel, isCapeUnique);
-  const shieldDefense = Types.getArmorDefense(shield, shieldLevel, isShieldUnique);
+  const helmDefense = Types.getArmorDefense(helm, helmLevel, isHelmUnique, isHelmSuperior);
+  const armorDefense = Types.getArmorDefense(armor, armorLevel, isArmorUnique, isArmorSuperior);
+  const beltDefense = Types.getArmorDefense(belt, beltLevel, isBeltUnique, isBeltSuperior);
+  const capeDefense = Types.getArmorDefense(cape, capeLevel, isCapeUnique, isCapeSuperior);
+  const shieldDefense = Types.getArmorDefense(shield, shieldLevel, isShieldUnique, isShieldSuperior);
 
   let min =
     Math.ceil((helmDefense + armorDefense + beltDefense + capeDefense + shieldDefense + defense) * 1.2) +
@@ -148,44 +155,54 @@ Formulas.playerDefense = ({
   helm,
   helmLevel,
   isHelmUnique,
+  isHelmSuperior,
   armor,
   armorLevel,
   isArmorUnique,
+  isArmorSuperior,
   playerLevel,
   defense,
   absorbedDamage,
   belt,
   beltLevel,
   isBeltUnique,
+  isBeltSuperior,
   shield,
   shieldLevel,
   isShieldUnique,
+  isShieldSuperior,
   partyDefense,
   cape,
   capeLevel,
   isCapeUnique,
+  isCapeSuperior,
   skillDefense,
 }) => {
   const { min, max } = Formulas.minMaxDefense({
     helm,
     helmLevel,
     isHelmUnique,
+    isHelmSuperior,
     armor,
     armorLevel,
     isArmorUnique,
+    isArmorSuperior,
     playerLevel,
     defense,
     absorbedDamage,
     belt,
     beltLevel,
     isBeltUnique,
+    isBeltSuperior,
     shield,
     shieldLevel,
     isShieldUnique,
+    isShieldSuperior,
     partyDefense,
     cape,
     capeLevel,
     isCapeUnique,
+    isCapeSuperior,
     skillDefense,
   });
 

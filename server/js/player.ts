@@ -98,27 +98,32 @@ class Player extends Character {
   weaponBonus: number[] | null;
   weaponSocket: number[] | null;
   isWeaponUnique: boolean;
+  isWeaponSuperior: boolean;
   helm: string;
   helmKind: number;
   helmLevel: number;
   helmBonus: number[] | null;
   helmSocket: number[] | null;
   isHelmUnique: boolean;
+  isHelmSuperior: boolean;
   armor: string;
   armorKind: number;
   armorLevel: number;
   armorBonus: number[] | null;
   armorSocket: number[] | null;
   isArmorUnique: boolean;
+  isArmorSuperior: boolean;
   belt: string;
   beltLevel: number;
   beltBonus: number[] | null;
   isBeltUnique: boolean;
+  isBeltSuperior: boolean;
   cape: string;
   capeKind: number;
   capeLevel: number;
   capeBonus: number[] | null;
   isCapeUnique: boolean;
+  isCapeSuperior: boolean;
   capeHue: number;
   capeSaturate: number;
   capeContrast: number;
@@ -130,6 +135,7 @@ class Player extends Character {
   shieldBonus: number[] | null;
   shieldSocket: number[] | null;
   isShieldUnique: boolean;
+  isShieldSuperior: boolean;
   defenseSkill: number;
   defenseSkillTimeout: NodeJS.Timeout;
   defenseSkillDefenseTimeout: NodeJS.Timeout;
@@ -1929,8 +1935,9 @@ class Player extends Character {
       .concat(isUnique ? _.shuffle(uniqueBonus).slice(0, 1) : []);
   }
 
-  generateItem({ kind, uniqueChances = 1, isLuckySlot = false, jewelLevel = 1 }): GeneratedItem {
+  generateItem({ kind, uniqueChances = 1, superiorChances = 1, isLuckySlot = false, jewelLevel = 1 }): GeneratedItem {
     let isUnique = false;
+    let isSuperior = false;
     let item;
 
     const lowLevelBonus = [0, 1, 2, 3];
@@ -1955,6 +1962,7 @@ class Player extends Character {
     const extraGold = [42];
     const magicFind = [11];
     const attackSpeed = [12];
+    const superior = [43];
 
     // @TODO ~~~ remove once found why it errors out
     try {
@@ -1971,8 +1979,10 @@ class Player extends Character {
       Types.isShield(kind)
     ) {
       const randomIsUnique = random(100);
+      const randomIsSuperior = random(100);
 
       isUnique = randomIsUnique < uniqueChances;
+      isSuperior = randomIsSuperior < superiorChances;
 
       if ([Types.Entities.HELMCLOWN, Types.Entities.BELTGOLDWRAP].includes(kind)) {
         isUnique = true;
@@ -2017,6 +2027,10 @@ class Player extends Character {
           .sort();
       } else if (Types.isWeapon(kind) && kind >= Types.Entities.GOLDENSWORD) {
         skill = getRandomAttackSkill();
+      }
+
+      if (isSuperior) {
+        bonus = bonus.concat(superior);
       }
 
       item = {
@@ -2270,12 +2284,15 @@ class Player extends Character {
       helm: this.helm,
       helmLevel: this.helmLevel,
       isHelmUnique: this.isHelmUnique,
+      isHelmSuperior: this.isHelmSuperior,
       armor: this.armor,
       armorLevel: this.armorLevel,
       isArmorUnique: this.isArmorUnique,
+      isArmorSuperior: this.isArmorSuperior,
       belt: this.belt,
       beltLevel: this.beltLevel,
       isBeltUnique: this.isBeltUnique,
+      isBeltSuperior: this.isBeltSuperior,
       playerLevel: this.level,
       defense: this.bonus.defense,
       absorbedDamage: this.bonus.absorbedDamage,
@@ -2283,9 +2300,11 @@ class Player extends Character {
       cape: this.cape,
       capeLevel: this.capeLevel,
       isCapeUnique: this.isCapeUnique,
+      isCapeSuperior: this.isCapeSuperior,
       shield: this.shield,
       shieldLevel: this.shieldLevel,
       isShieldUnique: this.isShieldUnique,
+      isShieldSuperior: this.isShieldSuperior,
       skillDefense: this.skill.defense,
     });
 
@@ -2561,56 +2580,68 @@ class Player extends Character {
     });
   }
 
-  equipHelm(helm, kind, level, bonus, socket) {
+  equipHelm(helm, kind, level, rawBonus, socket) {
+    const bonus = toArray(rawBonus);
     this.helm = helm;
     this.helmKind = kind;
     this.helmLevel = toNumber(level);
-    this.helmBonus = toArray(bonus);
+    this.helmBonus = bonus?.filter(oneBonus => oneBonus !== 43);
     this.helmSocket = toArray(socket);
     this.isHelmUnique = !!this.helmBonus?.length;
+    this.isHelmSuperior = bonus?.includes(43);
   }
 
-  equipArmor(armor, kind, level, bonus, socket) {
+  equipArmor(armor, kind, level, rawBonus, socket) {
+    const bonus = toArray(rawBonus);
     this.armor = armor;
     this.armorKind = kind;
     this.armorLevel = toNumber(level);
-    this.armorBonus = toArray(bonus);
+    this.armorBonus = bonus?.filter(oneBonus => oneBonus !== 43);
     this.armorSocket = toArray(socket);
     this.isArmorUnique = !!this.armorBonus?.length;
+    this.isArmorSuperior = bonus?.includes(43);
   }
 
-  equipWeapon(weapon, kind, level, bonus, socket, skill) {
+  equipWeapon(weapon, kind, level, rawBonus, socket, skill) {
+    const bonus = toArray(rawBonus);
     this.weapon = weapon;
     this.weaponKind = kind;
     this.weaponLevel = toNumber(level);
-    this.weaponBonus = toArray(bonus);
+    this.weaponBonus = bonus?.filter(oneBonus => oneBonus !== 43);
     this.weaponSocket = toArray(socket);
     this.isWeaponUnique = !!this.weaponBonus?.length;
+    this.isWeaponSuperior = bonus?.includes(43);
     this.attackSkill = toNumber(skill);
   }
 
-  equipBelt(belt, level, bonus) {
+  equipBelt(belt, level, rawBonus) {
+    const bonus = toArray(rawBonus);
     this.belt = belt;
     this.beltLevel = toNumber(level);
-    this.beltBonus = toArray(bonus);
+    this.beltBonus = bonus?.filter(oneBonus => oneBonus !== 43);
     this.isBeltUnique = !!this.beltBonus?.length;
+    this.isBeltSuperior = bonus?.includes(43);
   }
 
-  equipCape(cape, kind, level, bonus) {
+  equipCape(cape, kind, level, rawBonus) {
+    const bonus = toArray(rawBonus);
     this.cape = cape;
     this.capeKind = kind;
     this.capeLevel = toNumber(level);
-    this.capeBonus = toArray(bonus);
+    this.capeBonus = bonus?.filter(oneBonus => oneBonus !== 43);
     this.isCapeUnique = this.capeBonus?.length >= 2;
+    this.isCapeSuperior = bonus?.includes(43);
   }
 
-  equipShield(shield, kind, level, bonus, socket, skill) {
+  equipShield(shield, kind, level, rawBonus, socket, skill) {
+    const bonus = toArray(rawBonus);
     this.shield = shield;
     this.shieldKind = kind;
     this.shieldLevel = toNumber(level);
-    this.shieldBonus = toArray(bonus);
+    this.shieldBonus = bonus?.filter(oneBonus => oneBonus !== 43);
     this.shieldSocket = toArray(socket);
     this.isShieldUnique = this.shieldBonus?.length >= 2;
+    this.isShieldSuperior = bonus?.includes(43);
     this.defenseSkill = toNumber(skill);
   }
 
@@ -3038,21 +3069,26 @@ class Player extends Character {
       helm: this.helm,
       helmLevel: this.helmLevel,
       isHelmUnique: this.isHelmUnique,
+      isHelmSuperior: this.isHelmSuperior,
       armor: this.armor,
       armorLevel: this.armorLevel,
       isArmorUnique: this.isArmorUnique,
+      isArmorSuperior: this.isArmorSuperior,
       belt: this.belt,
       beltLevel: this.beltLevel,
       isBeltUnique: this.isBeltUnique,
+      isBeltSuperior: this.isBeltSuperior,
       playerLevel: this.level,
       defense: this.bonus.defense,
       absorbedDamage: this.bonus.absorbedDamage,
       cape: this.cape,
       capeLevel: this.capeLevel,
       isCapeUnique: this.isCapeUnique,
+      isCapeSuperior: this.isCapeSuperior,
       shield: this.shield,
       shieldLevel: this.shieldLevel,
       isShieldUnique: this.isShieldUnique,
+      isShieldSuperior: this.isShieldSuperior,
       partyDefense: isInParty ? this.partyBonus.defense : 0,
       skillDefense: this.skill.defense,
     });
@@ -3064,6 +3100,7 @@ class Player extends Character {
       weapon: this.weapon,
       weaponLevel: this.weaponLevel,
       isWeaponUnique: this.isWeaponUnique,
+      isWeaponSuperior: this.isWeaponSuperior,
       playerLevel: this.level,
       minDamage: this.bonus.minDamage + (isInParty ? this.partyBonus.minDamage : 0),
       maxDamage: this.bonus.maxDamage + (isInParty ? this.partyBonus.maxDamage : 0),

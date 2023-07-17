@@ -780,6 +780,7 @@ class Game {
       isRuneword,
       isJewel,
       isStone,
+      isSuperior,
       itemClass,
       defense,
       damage,
@@ -831,6 +832,7 @@ class Game {
     }">
         <div class="item-header">
           <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
+            ${isSuperior ? "Superior " : ""}
             ${name}${isLevelVisible ? ` (+${level})` : ""}${isJewel ? ` lv.${level}` : ""}
             ${runeRank ? ` (#${runeRank})` : ""}
             ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}

@@ -2079,6 +2079,7 @@ Types.getBonusDescriptionMap = [
   "-#% Enemy lower Poison resistance", // 40
   "-#% Enemy lower resistances", // 41
   "+#% Extra gold from enemies", // 42
+  "superior", // 43
 ];
 
 Types.bonusType = [
@@ -2124,7 +2125,8 @@ Types.bonusType = [
   "lowerColdResistance", // 39
   "lowerPoisonResistance", // 40
   "lowerAllResistance", // 41
-  "extraGold", // 42
+  "extraGold", // 42,
+  "superior", // 43
 ];
 
 Types.getBonus = function (rawBonus, level) {
@@ -2473,13 +2475,16 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
 };
 
 // kind, type, name, level, defense
-Types.getArmorDefense = function (armor: string, level: number, isUnique: boolean) {
+Types.getArmorDefense = function (armor: string, level: number, isUnique: boolean, isSuperior: boolean) {
   if (!armor || !level) return 0;
 
   const itemClass = Types.getItemClass(armor, level);
   const itemClassRank = Types.itemClassRank[itemClass];
 
-  const defense = kinds[armor][4] + (isUnique ? itemClassRank + 1 : 0);
+  const defense =
+    kinds[armor][4] +
+    (isUnique ? itemClassRank + 1 : 0) +
+    (isSuperior ? Types.itemClassRankSuperiorBonus[itemClass] : 0);
   const defensePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 180, 205, 235];
   const defenseBonus = level >= 7 ? level - 6 : 0;
 
@@ -2494,11 +2499,14 @@ Types.getArmorHealthBonus = function (level: number) {
   return healthBonusPerLevel[level - 1];
 };
 
-Types.getWeaponDamage = function (weapon: string, level: number, isUnique: boolean) {
+Types.getWeaponDamage = function (weapon: string, level: number, isUnique: boolean, isSuperior: boolean) {
   const itemClass = Types.getItemClass(weapon, level);
   const itemClassRank = Types.itemClassRank[itemClass];
 
-  const damage = kinds[weapon][4] + (isUnique ? itemClassRank + 1 : 0);
+  const damage =
+    kinds[weapon][4] +
+    (isUnique ? itemClassRank + 1 : 0) +
+    (isSuperior ? Types.itemClassRankSuperiorBonus[itemClass] : 0);
   const damagePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 185, 215, 255];
   const damageBonus = level >= 7 ? Math.ceil((level - 6) * 2) : 0;
 
@@ -2564,6 +2572,13 @@ Types.itemClassRank = {
   legendary: 3,
 };
 
+Types.itemClassRankSuperiorBonus = {
+  low: 1,
+  medium: 1,
+  high: 2,
+  legendary: 3,
+};
+
 Types.getItemBaseLevel = function (item: string) {
   return kinds[item][3];
 };
@@ -2588,8 +2603,12 @@ Types.isUnique = function (item, rawBonus, level?: number) {
   const isJewel = kinds[item][1] === "jewel";
 
   let isUnique = false;
-  // bonus = !Array.isArray(bonus) && typeof bonus === "string" && bonus.length ? JSON.parse(bonus) : bonus;
-  const bonus = toArray(rawBonus);
+  // Superior attribute
+  let bonus = toArray(rawBonus);
+
+  if (Array.isArray(bonus) && bonus.length) {
+    bonus = bonus.filter(oneBonus => oneBonus !== 43);
+  }
 
   if (isRing) {
     isUnique = Types.isUniqueRing(item, bonus);
@@ -2685,6 +2704,11 @@ Types.getItemDetails = function ({
   let runeBonus = [];
   let runeRank: null | Number = null;
   let isRuneword = false;
+
+  let isSuperior = Array.isArray(rawBonus) ? rawBonus.includes(43) : false;
+  if (isSuperior) {
+    rawBonus = rawBonus.filter(oneBonus => oneBonus !== 43);
+  }
 
   let type = "item";
 
@@ -2789,11 +2813,12 @@ Types.getItemDetails = function ({
     isRuneword,
     isJewel,
     isStone,
+    isSuperior,
     itemClass,
     ...(isHelm || isArmor || isBelt || isCape || isShield
-      ? { defense: Types.getArmorDefense(item, level, isUnique) }
+      ? { defense: Types.getArmorDefense(item, level, isUnique, isSuperior) }
       : null),
-    ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique) } : null),
+    ...(isWeapon ? { damage: Types.getWeaponDamage(item, level, isUnique, isSuperior) } : null),
     healthBonus,
     magicDamage,
     requirement,

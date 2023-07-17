@@ -323,8 +323,13 @@ export const isValidTransmuteItems = items => {
   let [item, , bonus, socket] = items[0].split(":");
 
   socket = toArray(socket);
+  bonus = toArray(bonus);
   // Socketed item can't be transmuted
   if (socket?.length && socket.filter(s => s !== 0)?.length) {
+    return false;
+  }
+  // Superior items can't be transmuted
+  if (Array.isArray(bonus) && bonus.includes(43)) {
     return false;
   }
 
