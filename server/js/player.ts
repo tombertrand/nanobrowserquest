@@ -49,7 +49,7 @@ let payoutIndex = 0;
 const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "HeroOfNano"];
 const SUPER_ADMINS = ["running-coder"];
 const CHATBAN_PATTERNS = [
-  /n.?i.?g.?g.?(?:e.?r|a)/i,
+  /n.?ig.?g.?(?:e.?r|a)/i,
   /https?:\/\/(:?www)?\.?youtube/i,
   /n.?e.?g.?e.?r.?/i,
   /fucker/i,
