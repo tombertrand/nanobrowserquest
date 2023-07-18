@@ -210,6 +210,7 @@ class DatabaseHandler {
             .hget(userKey, "discordId") // 33
             .hget(userKey, "migrations") // 34
             .hget(userKey, "helm") // 35
+            .hget(userKey, "pet") // 36
             .exec(async (err, replies) => {
               if (err) {
                 Sentry.captureException(err, {
@@ -230,6 +231,7 @@ class DatabaseHandler {
               var amulet = replies[15];
               var belt = replies[16];
               var cape = replies[17];
+              var pet = replies[36];
               var shield = replies[18];
               var expansion1 = !!parseInt(replies[20] || "0");
               var expansion2 = !!parseInt(replies[21] || "0");
@@ -588,6 +590,7 @@ class DatabaseHandler {
                 weapon,
                 belt,
                 cape,
+                pet,
                 shield,
                 ring1,
                 ring2,
@@ -673,6 +676,7 @@ class DatabaseHandler {
       .hset(userKey, "armor", "clotharmor:1")
       .hset(userKey, "belt", null)
       .hset(userKey, "cape", null)
+      .hset(userKey, "pet", null)
       .hset(userKey, "shield", null)
       .hset(userKey, "settings", "{}")
       .hset(userKey, "ring1", null)
@@ -697,6 +701,7 @@ class DatabaseHandler {
           weapon: "dagger:1",
           belt: null,
           cape: null,
+          pet: null,
           shield: null,
           exp: 0,
           gold: 0,
@@ -854,6 +859,16 @@ class DatabaseHandler {
     }
   }
 
+  equipPet(name, pet, level, bonus) {
+    if (pet) {
+      console.info("Set Pet: " + name + " " + pet + ":" + level);
+      this.client.hset("u:" + name, "pet", `${pet}:${level}${toDb(bonus)}`);
+    } else {
+      console.info("Delete Pet");
+      this.client.hdel("u:" + name, "pet");
+    }
+  }
+
   setSettings(name, settings) {
     this.client.hget("u:" + name, "settings", (err, reply) => {
       try {
@@ -943,6 +958,8 @@ class DatabaseHandler {
       return ["belt", 0];
     } else if (slot === Slot.CAPE) {
       return ["cape", 0];
+    } else if (slot === Slot.PET) {
+      return ["pet", 0];
     } else if (slot === Slot.SHIELD) {
       return ["shield", 0];
     } else if (slot === Slot.RING1) {
@@ -964,9 +981,18 @@ class DatabaseHandler {
 
   sendMoveItem({ player, location, data }) {
     const type = location;
-    const isEquipment = ["weapon", "helm", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(
-      location,
-    );
+    const isEquipment = [
+      "weapon",
+      "helm",
+      "armor",
+      "belt",
+      "cape",
+      "pet",
+      "shield",
+      "ring1",
+      "ring2",
+      "amulet",
+    ].includes(location);
 
     let item = null;
     let level = null;
@@ -1036,6 +1062,12 @@ class DatabaseHandler {
       player.equipItem({ item, level, type, bonus });
       player.broadcast(
         player.equip({ kind: player.capeKind, level: player.capeLevel, bonus: player.capeBonus, type }),
+        false,
+      );
+    } else if (location === "pet") {
+      player.equipItem({ item, level, type, bonus });
+      player.broadcast(
+        player.equip({ kind: player.petKind, level: player.petLevel, bonus: player.petBonus, type }),
         false,
       );
     } else if (location === "shield") {
@@ -1192,7 +1224,7 @@ class DatabaseHandler {
                   isToReplyDone = true;
                 }
               } else if (
-                ["weapon", "helm", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(
+                ["weapon", "helm", "armor", "belt", "cape", "pet", "shield", "ring1", "ring2", "amulet"].includes(
                   toLocation,
                 ) &&
                 fromItem
@@ -1206,7 +1238,7 @@ class DatabaseHandler {
                   isToReplyDone = true;
                 }
               } else if (
-                ["weapon", "helm", "armor", "belt", "cape", "shield", "ring1", "ring2", "amulet"].includes(
+                ["weapon", "helm", "armor", "belt", "cape", "pet", "shield", "ring1", "ring2", "amulet"].includes(
                   fromLocation,
                 ) &&
                 toItem

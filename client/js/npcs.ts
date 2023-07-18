@@ -46,9 +46,9 @@ var Npcs = {
     }
   },
 
-  JanetYelen: class JanetYelen extends Npc {
+  JanetYellen: class JanetYellen extends Npc {
     constructor(id) {
-      super(id, Types.Entities.JANETYELEN);
+      super(id, Types.Entities.JANETYELLEN);
     }
   },
 

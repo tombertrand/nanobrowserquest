@@ -1451,6 +1451,20 @@ var Items = {
     }
   },
 
+  PetEgg: class PetEgg extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETEGG, "object");
+      this.lootMessage = "You pick up a Pet Egg";
+    }
+  },
+
+  PetDino: class PetDino extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETDINO, "object");
+      this.lootMessage = "You pick up a Dino Pet";
+    }
+  },
+
   Burger: class Burger extends Item {
     constructor(id) {
       super(id, Types.Entities.BURGER, "object");

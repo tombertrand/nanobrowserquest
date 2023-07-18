@@ -831,3 +831,5 @@ export const Runewords = {
 // XNO is not a Security
 // Sharding
 // Mesh network
+// ledger bloat
+// OMG!😭 Can't believe I won ! Thank you Walton team ! ❤️ keep doing the great work. 💪🏻

@@ -47,6 +47,9 @@ class Player extends Character {
   capeSaturate: number;
   capeContrast: number;
   capeBrightness: number;
+  pet?: string;
+  petLevel?: number;
+  petBonus: null | number[];
   shieldName: null;
   shieldLevel: number | null;
   shieldBonus: number[] | null;
@@ -149,6 +152,9 @@ class Player extends Character {
     this.capeSaturate = 0;
     this.capeContrast = 0;
     this.capeBrightness = 1;
+    this.pet = null;
+    this.petLevel = null;
+    this.petBonus = null;
     this.shieldName = null;
     this.shieldLevel = 1;
     this.shieldBonus = null;
@@ -517,6 +523,20 @@ class Player extends Character {
       this.cape = null;
       this.capeLevel = null;
       this.capeBonus = null;
+    }
+  }
+
+  setPet(rawPet) {
+    if (rawPet) {
+      const [pet, level, bonus] = rawPet.split(":");
+
+      this.pet = pet;
+      this.petLevel = toNumber(level);
+      this.petBonus = toArray(bonus);
+    } else {
+      this.pet = null;
+      this.petLevel = null;
+      this.petBonus = null;
     }
   }
 

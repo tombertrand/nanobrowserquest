@@ -128,6 +128,12 @@ class Player extends Character {
   capeSaturate: number;
   capeContrast: number;
   capeBrightness: number;
+  pet: string;
+  petKind: number;
+  petLevel: number;
+  petBonus: number[] | null;
+  isPetUnique: boolean;
+  isPetSuperior: boolean;
   pvp: boolean;
   shield: string;
   shieldKind: number;
@@ -2047,6 +2053,9 @@ class Player extends Character {
       const bonus = this.generateRandomCapeBonus(uniqueChances);
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
+    } else if (Types.isPet(kind)) {
+      // @TODO Set element bonus per random pet type?
+      item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify([]) };
     } else if (Types.isRing(kind) || Types.isAmulet(kind) || Types.isJewel(kind)) {
       const randomIsUnique = random(100);
       isUnique = randomIsUnique < uniqueChances;
@@ -2633,6 +2642,16 @@ class Player extends Character {
     this.isCapeSuperior = bonus?.includes(43);
   }
 
+  equipPet(pet, kind, level, rawBonus) {
+    const bonus = toArray(rawBonus);
+    this.pet = pet;
+    this.petKind = kind;
+    this.petLevel = toNumber(level);
+    this.petBonus = bonus?.filter(oneBonus => oneBonus !== 43);
+    this.isPetUnique = this.petBonus?.length >= 2;
+    this.isPetSuperior = bonus?.includes(43);
+  }
+
   equipShield(shield, kind, level, rawBonus, socket, skill) {
     const bonus = toArray(rawBonus);
     this.shield = shield;
@@ -2836,6 +2855,10 @@ class Player extends Character {
       const kind = Types.getKindFromString(item);
       this.databaseHandler.equipCape(this.name, item, level, bonus);
       this.equipCape(item, kind, level, bonus);
+    } else if (type === "pet") {
+      const kind = Types.getKindFromString(item);
+      this.databaseHandler.equipPet(this.name, item, level, bonus);
+      this.equipPet(item, kind, level, bonus);
     } else if (type === "shield") {
       this.databaseHandler.equipShield(this.name, item, level, bonus, socket, skill);
       this.equipShield(item, Types.getKindFromString(item), level, bonus, socket, skill);
@@ -3260,6 +3283,7 @@ class Player extends Character {
     weapon,
     belt,
     cape,
+    pet,
     shield,
     ring1,
     ring2,
@@ -3341,6 +3365,10 @@ class Player extends Character {
       if (cape) {
         const [playerCape, playerCapeLevel, playerCapeBonus] = cape.split(":");
         this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
+      }
+      if (pet) {
+        const [playerPet, playerPetLevel, playePetBonus] = pet.split(":");
+        this.equipPet(playerPet, Types.getKindFromString(playerPet), playerPetLevel, playePetBonus);
       }
       if (shield) {
         const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSocket, playerDefenseSkill] =
@@ -3429,6 +3457,7 @@ class Player extends Character {
           weapon,
           belt,
           cape,
+          pet,
           shield,
           ring1,
           ring2,

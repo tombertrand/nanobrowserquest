@@ -139,7 +139,7 @@ class World {
   gateTempleNpcId: number;
   gateSubTempleNpcId: number;
   goldBank: number;
-  janetYelenNpcId: number;
+  janetYellenNpcId: number;
   soulStonePlayerName: string;
   chatBan: { player: string; ip: string }[];
 
@@ -270,7 +270,7 @@ class World {
     this.gateTempleNpcId = null;
     this.gateSubTempleNpcId = null;
     this.goldBank = 0;
-    this.janetYelenNpcId = null;
+    this.janetYellenNpcId = null;
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -834,8 +834,8 @@ class World {
           this.gateSubTempleNpcId = npc.id;
         }
         npc.activate();
-      } else if (kind === Types.Entities.JANETYELEN) {
-        this.janetYelenNpcId = npc.id;
+      } else if (kind === Types.Entities.JANETYELLEN) {
+        this.janetYellenNpcId = npc.id;
       } else if (kind === Types.Entities.DOORDEATHANGEL) {
         this.doorDeathAngelNpcId = npc.id;
       }
@@ -2390,7 +2390,7 @@ class World {
         return "ringraistone";
       } else if (mob.kind >= Types.Entities.RAT2 && vv === 6969) {
         return "ringfountain";
-      } else if (mob.kind >= Types.Entities.COW && vv === 133) {
+      } else if (mob.kind === Types.Entities.COW && vv === 133) {
         return "amuletfrozen";
       }
     }
@@ -2660,7 +2660,7 @@ class World {
       this.lootChests(mob, attacker);
     }
 
-    // var randomDrops = ["beltimmortal", "shieldimmortal", "shieldpaladin"];
+    // var randomDrops = ["petegg", "petdino"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe"];

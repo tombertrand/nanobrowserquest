@@ -309,6 +309,10 @@ export const Types: any = {
     AMULETEYE: 320,
     AMULETGREED: 322,
 
+    // PETS
+    PETEGG: 357,
+    PETDINO: 358,
+
     // NPCs
     GUARD: 40,
     KING: 41,
@@ -328,7 +332,7 @@ export const Types: any = {
     LAVANPC: 54,
     CODER: 55,
     CARLOSMATOS: 109,
-    JANETYELEN: 315,
+    JANETYELLEN: 315,
     MERCHANT: 316,
     SATOSHI: 73,
     WAYPOINTX: 84,
@@ -897,6 +901,10 @@ export const kinds = {
   chestred: [Types.Entities.CHESTRED, "chest", "Red Chest", 60],
   chestpurple: [Types.Entities.CHESTPURPLE, "chest", "Purple Chest", 70],
 
+  // Pets
+  petegg: [Types.Entities.PETEGG, "object", "Pet Egg"],
+  petdino: [Types.Entities.PETDINO, "object", "Dinosaur Pet"],
+
   flask: [Types.Entities.FLASK, "object"],
   rejuvenationpotion: [Types.Entities.REJUVENATIONPOTION, "object"],
   poisonpotion: [Types.Entities.POISONPOTION, "object"],
@@ -996,7 +1004,7 @@ export const kinds = {
   villagegirl: [Types.Entities.VILLAGEGIRL, "npc"],
   villager: [Types.Entities.VILLAGER, "npc"],
   carlosmatos: [Types.Entities.CARLOSMATOS, "npc"],
-  janetyelen: [Types.Entities.JANETYELEN, "npc"],
+  janetyellen: [Types.Entities.JANETYELLEN, "npc"],
   merchant: [Types.Entities.MERCHANT, "npc"],
   satoshi: [Types.Entities.SATOSHI, "npc"],
   coder: [Types.Entities.CODER, "npc"],
@@ -1711,9 +1719,9 @@ Types.isQuantity = function (kindOrString: number | string) {
 Types.isNotStackableItem = function (kindOrString: number | string) {
   if (!kindOrString) return false;
   if (typeof kindOrString === "number") {
-    return [Types.Entities.IOU].includes(kindOrString);
+    return [Types.Entities.IOU, Types.Entities.PETEGG].includes(kindOrString);
   } else {
-    return kindOrString.startsWith("iou");
+    return kindOrString.startsWith("iou") || kindOrString.startsWith("petegg");
   }
 };
 
@@ -1734,6 +1742,7 @@ Types.isItem = function (kind: number) {
     Types.isStone(kind) ||
     Types.isBar(kind) ||
     Types.isJewel(kind) ||
+    Types.isPet(kind) ||
     Types.isNotStackableItem(kind) ||
     (Types.isObject(kind) && !Types.isStaticChest(kind))
   );
@@ -1769,6 +1778,9 @@ Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
     case "cape":
     case Slot.CAPE:
       return Types.isCape(item);
+    case "pet":
+    case Slot.PET:
+      return Types.isPet(item);
     case "shield":
     case Slot.SHIELD:
       return Types.isShield(item);
@@ -1789,6 +1801,15 @@ Types.isHealingItem = function (kind: number) {
 
 Types.isExpendableItem = function (kind: number) {
   return Types.isHealingItem(kind) || kind === Types.Entities.FIREFOXPOTION || kind === Types.Entities.CAKE;
+};
+
+Types.isPet = function (kindOrString: string | number) {
+  if (!kindOrString) return false;
+  if (typeof kindOrString === "number") {
+    return [Types.Entities.PETEGG, Types.Entities.PETDINO].includes(kindOrString);
+  } else {
+    return kindOrString.startsWith("pet");
+  }
 };
 
 Types.getKindFromString = (kind: string) => kinds[kind]?.[0];
@@ -1821,8 +1842,8 @@ Types.getAliasFromName = function (name: string) {
     return "skeleton commander";
   } else if (name === "carlosmatos") {
     return "carlos matos";
-  } else if (name === "janetyelen") {
-    return "janet yelen";
+  } else if (name === "janetyellen") {
+    return "janet yellen";
   } else if (name === "lavanpc") {
     return "Wirt";
   } else if (name === "satoshi") {
@@ -2863,7 +2884,7 @@ Types.itemDescription = {
   powderquantum: "The ultimate powder that powers the Gateway.",
   pickaxe: "This tool is used for digging.",
   mushrooms: "Mushrooms have the power to distort reality and summon otherworldly creatures.",
-  iou: "Written acknowledgment of a debt.<br/><br/>Talk to Janet Yelen to exchange it for :amount: gold.",
+  iou: "Written acknowledgment of a debt.<br/><br/>Talk to Janet Yellen to exchange it for :amount: gold.",
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",
@@ -2872,6 +2893,8 @@ Types.itemDescription = {
   barsilver: "Rare metal.",
   bargold: "Precious metal.",
   barplatinum: "Priceless metal.",
+  petegg:
+    "An egg of a dinosaur pet with colorful scales and a heart of loyalty, forming a strong bond with you as you explore the world together",
   scrollupgradelow:
     "Upgrade low class items. The chances for a successful upgrade varies depending on the item's level.",
   scrollupgrademedium:

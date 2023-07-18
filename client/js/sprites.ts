@@ -15,6 +15,7 @@ import zombie from "../sprites/zombie.json";
 import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
 import cake from "../sprites/item-cake.json";
+import petdino from "../sprites/petdino.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
 import golem from "../sprites/golem.json";
@@ -232,7 +233,7 @@ import scientist from "../sprites/npc.json";
 import villagegirl from "../sprites/npc.json";
 import villager from "../sprites/npc.json";
 import carlosmatos from "../sprites/npc.json";
-import janetyelen from "../sprites/npc.json";
+import janetyellen from "../sprites/npc.json";
 import merchant from "../sprites/merchant.json";
 import satoshi from "../sprites/npc.json";
 import wizard from "../sprites/wizard.json";
@@ -314,6 +315,7 @@ const sprites = {
   "deathangel-spell-lightning": deathangelSpell,
   "deathangel-spell-cold": deathangelSpell,
   "deathangel-spell-poison": deathangelSpell,
+  petdino,
   goldenarmor,
   bluearmor,
   hornedarmor,
@@ -473,6 +475,8 @@ const sprites = {
   "item-pickaxe": item,
   "item-mushrooms": item,
   "item-iou": item,
+  "item-petegg": item,
+  "item-petdino": item,
   "item-skeletonkingcage": item,
   "item-necromancerheart": item,
   "item-cowkinghorn": item,
@@ -709,7 +713,7 @@ const sprites = {
   villagegirl,
   villager,
   carlosmatos,
-  janetyelen,
+  janetyellen,
   merchant,
   satoshi,
   wizard,

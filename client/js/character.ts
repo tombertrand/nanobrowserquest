@@ -84,7 +84,7 @@ class Character extends Entity {
   isPoisoned: boolean;
   poisonedTimeout: NodeJS.Timeout;
   resistances: { [key: string]: { display: string; percentage: number } };
-  type: "mob" | "player" | "npc" | "spell";
+  type: "mob" | "player" | "npc" | "spell" | "pet";
   curseId: number;
   cursedTimeout: NodeJS.Timeout;
 

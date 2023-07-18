@@ -50,7 +50,7 @@ var NpcTalk = {
     "Let me tell you, I love, BITCONNEEeeeEECT!",
   ],
 
-  janetyelen: [
+  janetyellen: [
     "The bank is now hodling <strong>{{gold}}</string> gold!",
     "The bank has exchanged your IOU for <strong>{{gold}}</string> gold!",
     "The bank doesn't have anymore gold,<br/>don't worry we'll simply print more shortly.",
@@ -346,11 +346,13 @@ class Npc extends Character {
   talkIndex: number;
   kind: number;
   isActivated?: boolean;
+  isTalkLocked?: boolean;
 
   constructor(id, kind) {
     super(id, kind);
     this.itemKind = Types.getKindAsString(this.kind);
     this.type = "npc";
+    this.isTalkLocked = false;
 
     if (typeof NpcTalk[this.itemKind][0] === "string") {
       this.discourse = -1;

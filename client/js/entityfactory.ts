@@ -4,6 +4,7 @@ import { Types } from "../../shared/js/gametypes";
 import Chest from "./chest";
 import Items from "./items";
 import Mobs from "./mobs";
+import Pets from "./pets";
 import Npcs from "./npcs";
 import Spells from "./spells";
 import Warrior from "./warrior";
@@ -1113,6 +1114,16 @@ EntityFactory.builders[Types.Entities.CHEST] = function (id) {
   return new Chest(id);
 };
 
+//====== Pets ======
+
+EntityFactory.builders[Types.Entities.PETEGG] = function (id) {
+  return new Items.PetEgg(id);
+};
+
+EntityFactory.builders[Types.Entities.PETDINO] = function (id) {
+  return new Items.PetDino(id);
+};
+
 //====== Npcs ======
 
 EntityFactory.builders[Types.Entities.GUARD] = function (id) {
@@ -1135,8 +1146,8 @@ EntityFactory.builders[Types.Entities.CARLOSMATOS] = function (id) {
   return new Npcs.CarlosMatos(id);
 };
 
-EntityFactory.builders[Types.Entities.JANETYELEN] = function (id) {
-  return new Npcs.JanetYelen(id);
+EntityFactory.builders[Types.Entities.JANETYELLEN] = function (id) {
+  return new Npcs.JanetYellen(id);
 };
 
 EntityFactory.builders[Types.Entities.MERCHANT] = function (id) {

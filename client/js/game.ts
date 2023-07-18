@@ -1099,7 +1099,14 @@ class Game {
     }
 
     if (toSlot === -1) {
-      if (!level || level !== 1 || Types.isUnique(item, rawBonus) || (socket && socket.length >= 4)) {
+      if (
+        !level ||
+        level !== 1 ||
+        Types.isUnique(item, rawBonus) ||
+        (socket && socket.length >= 4) ||
+        // Superior item delete confirm
+        (Array.isArray(bonus) && bonus.includes(43))
+      ) {
         $("#dialog-delete-item").dialog("open");
         this.slotToDelete = fromSlot;
         return;
@@ -1269,6 +1276,8 @@ class Game {
           $(".item-trade").addClass("item-droppable");
         } else if (Types.isSingle(item)) {
           $(".item-single").addClass("item-droppable");
+        } else if (Types.isPet(item)) {
+          $(".item-pet").addClass("item-droppable");
         }
 
         if ($("#merchant").hasClass("visible") && $(this).closest("#inventory")[0]) {
@@ -1318,6 +1327,7 @@ class Game {
     container.find(".item-armor-slot").html(`<div class="item-slot item-equip-armor item-armor"></div>`);
     container.find(".item-belt-slot").html(`<div class="item-slot item-equip-belt item-belt"></div>`);
     container.find(".item-cape-slot").html(`<div class="item-slot item-equip-cape item-cape"></div>`);
+    container.find(".item-pet-slot").html(`<div class="item-slot item-equip-pet item-pet"></div>`);
     container.find(".item-shield-slot").html(`<div class="item-slot item-equip-shield item-shield"></div>`);
     container.find(".item-ring1-slot").html(`<div class="item-slot item-equip-ring item-ring item-ring1"></div>`);
     container.find(".item-ring2-slot").html(`<div class="item-slot item-equip-ring item-ring item-ring2"></div>`);
@@ -1344,6 +1354,9 @@ class Game {
     container
       .find(".item-cape-slot")
       .html(`<div class="item-slot item-equip-cape item-cape" data-slot="${Slot.CAPE}"></div>`);
+    container
+      .find(".item-pet-slot")
+      .html(`<div class="item-slot item-equip-pet item-pet" data-slot="${Slot.PET}"></div>`);
     container
       .find(".item-shield-slot")
       .html(`<div class="item-slot item-equip-shield item-shield" data-slot="${Slot.SHIELD}"></div>`);
@@ -1466,6 +1479,23 @@ class Game {
           "data-item": player.cape,
           "data-level": player.capeLevel,
           "data-bonus": toString(player.capeBonus),
+          click: event => {
+            this.handleClick(event);
+          },
+        }),
+      );
+    }
+
+    if (player.pet) {
+      container.find(".item-equip-pet").html(
+        $("<div />", {
+          class: `item-draggable ${Types.isUnique(player.pet, player.petBonus) ? "item-unique" : ""}`,
+          css: {
+            "background-image": `url("${this.getIconPath(player.pet, player.petLevel)}")`,
+          },
+          "data-item": player.pet,
+          "data-level": player.petLevel,
+          "data-bonus": toString(player.petBonus),
           click: event => {
             this.handleClick(event);
           },
@@ -2781,6 +2811,7 @@ class Game {
       weapon,
       belt,
       cape,
+      pet,
       shield,
       ring1,
       ring2,
@@ -2855,6 +2886,7 @@ class Game {
       self.player.setWeaponSocket(weaponSocket);
       self.player.setBelt(belt);
       self.player.setCape(cape);
+      self.player.setPet(pet);
       self.player.setShieldName(shield);
       self.player.setShieldLevel(shieldLevel);
       self.player.setShieldBonus(shieldBonus);
@@ -5138,6 +5170,7 @@ class Game {
 
       self.client.onReceiveGoldBankWithdraw(function (gold) {
         const npc = self.getNpcAt(32, 208);
+        npc.isTalkLocked = false;
         self.makeNpcTalk(npc, { byPass: true, talkIndex: gold ? 1 : 2, gold });
       });
 
@@ -5444,14 +5477,19 @@ class Game {
           Types.Entities.STATUE2,
         ].includes(npc.kind)
       ) {
-        if (npc.kind === Types.Entities.JANETYELEN) {
+        if (npc.kind === Types.Entities.JANETYELLEN) {
           if (byPass) {
             msg = npc.talk(this, talkIndex).replace("{{gold}}", this.formatGold(gold));
           } else {
             const isIouExchange = this.player.inventory.some(
               ({ item }) => typeof item === "string" && item.startsWith("iou"),
             );
-            this.client.sendGoldBank(isIouExchange);
+            if (!npc.isTalkLocked) {
+              this.client.sendGoldBank(isIouExchange);
+              if (isIouExchange) {
+                npc.isTalkLocked = true;
+              }
+            }
             return;
           }
         } else {

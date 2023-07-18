@@ -1,0 +1,33 @@
+{
+  "id": "petdino",
+  "width": 24,
+  "height": 24,
+  "animations": {
+    "walk_right": {
+      "length": 6,
+      "row": 1
+    },
+    "idle_right": {
+      "length": 4,
+      "row": 0
+    },
+    "walk_up": {
+      "length": 6,
+      "row": 1
+    },
+    "idle_up": {
+      "length": 4,
+      "row": 0
+    },
+    "walk_down": {
+      "length": 6,
+      "row": 1
+    },
+    "idle_down": {
+      "length": 4,
+      "row": 0
+    }
+  },
+  "offset_x": -6,
+  "offset_y": -30
+}

@@ -831,7 +831,7 @@ footer, header, hgroup, menu, nav, section {
     #item-player, #item-otherplayer { width: 100% }
     #item-player > div, #item-otherplayer > div { display: flex; justify-content: start;}
     #item-otherplayer .item-slot > div { position: relative; z-index: 2;}
-    .item-weapon-slot, .item-armor-slot, .item-ring1-slot, .item-ring2-slot, .item-amulet-slot, .item-belt-slot, .item-helm-slot, .item-cape-slot, .item-shield-slot {padding-right: 6px;padding-bottom: 6px;}
+    .item-weapon-slot, .item-armor-slot, .item-ring1-slot, .item-ring2-slot, .item-amulet-slot, .item-belt-slot, .item-helm-slot, .item-cape-slot, .item-pet-slot, .item-shield-slot {padding-right: 6px;padding-bottom: 6px;}
     .item-delete-slot { margin-left: auto; }
     .item-delete-slot > .item-slot { -webkit-box-shadow: inset 0px 0px 10px 6px #9e0000; box-shadow: inset 0px 0px 10px 6px #9e0000; }
     .item-quantity::after {
@@ -855,8 +855,8 @@ footer, header, hgroup, menu, nav, section {
         padding: 0 10px;
     }
 
-    .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-equip-helm, .item-equip-cape, .item-equip-shield, .item-delete { position: relative; }
-    .item-equip-weapon::before, .item-equip-armor::before, .item-equip-ring::before, .item-equip-amulet::before, .item-equip-belt::before, .item-equip-shield::before, .item-equip-helm::before, .item-equip-cape::before, .item-delete::before {
+    .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-equip-helm, .item-equip-cape, .item-equip-pet, .item-equip-shield, .item-delete { position: relative; }
+    .item-equip-weapon::before, .item-equip-armor::before, .item-equip-ring::before, .item-equip-amulet::before, .item-equip-belt::before, .item-equip-shield::before, .item-equip-helm::before, .item-equip-cape::before, .item-equip-pet::before, .item-delete::before {
         content: "";
         position: absolute;
         filter: grayscale(100%);
@@ -1034,6 +1034,7 @@ footer, header, hgroup, menu, nav, section {
         .item-equip-amulet::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -237px;}
         .item-equip-belt::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -192px;}
         .item-equip-cape::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -285px;}
+        .item-equip-pet::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -429px;}
         .item-equip-shield::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -330px;}
         .item-equip-helm::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -381px;}
         .item-delete::before {background-image: url('../img/3/inventory-placeholder.png');background-position-x: -141px;}
@@ -1277,6 +1278,7 @@ footer, header, hgroup, menu, nav, section {
         .item-equip-amulet::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -157px;}
         .item-equip-belt::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -126px;}
         .item-equip-cape::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -189px;}
+        .item-equip-pet::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -285px;}
         .item-equip-shield::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -218px;}
         .item-equip-helm::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -253px;}
         .item-delete::before {background-image: url('../img/2/inventory-placeholder.png');background-position-x: -93px;}
