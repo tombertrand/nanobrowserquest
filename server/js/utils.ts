@@ -891,7 +891,7 @@ export const getRandomJewelLevel = (mobLevel: number) => {
   // 65% -> 3
   let level = 1;
   if (maxLevel === 5) {
-    if (randomNumber < 12) {
+    if (randomNumber < 5) {
       level = 5;
     } else if (randomNumber < 38) {
       level = 4;
