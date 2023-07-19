@@ -1,5 +1,5 @@
 {
-  "id": "petdino",
+  "id": "pet_dino",
   "width": 24,
   "height": 24,
   "animations": {
@@ -28,6 +28,6 @@
       "row": 0
     }
   },
-  "offset_x": -6,
-  "offset_y": -30
+  "offset_x": -3,
+  "offset_y": -8
 }

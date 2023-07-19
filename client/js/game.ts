@@ -44,6 +44,7 @@ import Map from "./map";
 import Mob from "./mob";
 import Npc from "./npc";
 import Pathfinder from "./pathfinder";
+import Pet from "./pet";
 import Player from "./player";
 import Renderer from "./renderer";
 import Spell from "./spell";
@@ -114,6 +115,7 @@ class Game {
   targetCellVisible: boolean;
   hoveringTarget: boolean;
   hoveringPlayer: boolean;
+  hoveringPet: boolean;
   pvp: boolean;
   hoveringPlayerPvP: boolean;
   hoveringMob: boolean;
@@ -1242,9 +1244,7 @@ class Game {
   }
 
   destroyDroppable() {
-    // @NOTE Why was this there??
-    // $(".item-not-draggable").remove();
-    $(".item-droppable").droppable("destroy");
+    $(".item-droppable.ui-droppable").droppable("destroy");
   }
 
   initDraggable() {
@@ -1276,7 +1276,7 @@ class Game {
           $(".item-trade").addClass("item-droppable");
         } else if (Types.isSingle(item)) {
           $(".item-single").addClass("item-droppable");
-        } else if (Types.isPet(item)) {
+        } else if (Types.isPetItem(item)) {
           $(".item-pet").addClass("item-droppable");
         }
 
@@ -1679,7 +1679,7 @@ class Game {
 
     for (var i = 0; i < 9; i++) {
       $("#trade-player1-item").append(
-        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-shield item-chest item-scroll item-recipe" data-slot="${
+        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-pet item-shield item-chest item-scroll item-recipe" data-slot="${
           TRADE_SLOT_RANGE + i
         }"></div>`,
       );
@@ -2567,7 +2567,7 @@ class Game {
       if (entity instanceof Character || entity instanceof Chest) {
         this.entityGrid[y][x][entity.id] = entity;
 
-        if (!(entity instanceof Player) && !(entity instanceof Spell)) {
+        if (!(entity instanceof Player) && !(entity instanceof Pet) && !(entity instanceof Spell)) {
           this.pathingGrid[y][x] = 1;
         }
 
@@ -3366,19 +3366,81 @@ class Game {
         });
       });
 
+      self.client.onSpawnPet(function (data) {
+        const { id, kind, x, y, orientation, resistances, bonus, ownerId } = data;
+
+        let entity = self.getEntityById(id);
+
+        if (!entity) {
+          const name = ownerId ? `Pet of ${self.getEntityById(ownerId).name}` : "";
+
+          entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, bonus });
+          entity.setSprite(self.getSprite(entity.getSpriteName()));
+
+          entity.setGridPosition(x, y);
+          entity.setOrientation(orientation);
+
+          entity.idle();
+
+          self.addEntity(entity);
+
+          entity.onDeath(function () {
+            console.info(entity.id + " is dead");
+
+            entity.stop();
+            entity.isDying = true;
+
+            // let speed = 120;
+
+            // Custom death animations
+            const hasCustomDeathAnimation = [].includes(entity.kind);
+
+            if (!hasCustomDeathAnimation) {
+              entity.setSprite(self.getSprite("death"));
+            }
+
+            // entity.animate("death", speed, 1, function () {
+            console.info(entity.id + " was removed");
+
+            // self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
+            self.removeEntity(entity);
+
+            // });
+          });
+        } else {
+          console.debug("PET " + entity.id + " already exists. Don't respawn, only relocate.");
+          entity.setGridPosition(x, y);
+          self.registerEntityPosition(entity);
+        }
+      });
+
       self.client.onSpawnCharacter(function (data) {
-        const { id, kind, name, x, y, targetId, orientation, resistances, element, enchants, isActivated, bonus } =
-          data;
+        const {
+          id,
+          kind,
+          name,
+          x,
+          y,
+          targetId,
+          orientation,
+          resistances,
+          element,
+          enchants,
+          isActivated,
+          bonus,
+          petId,
+        } = data;
 
         if (kind === Types.Entities.GATEWAYFX) {
           self.gatewayFxNpcId = id;
         }
 
         let entity = self.getEntityById(id);
+
         if (!entity) {
           try {
             if (id !== self.playerId) {
-              entity = EntityFactory.createEntity({ kind, id, name, resistances });
+              entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
 
               if (element) {
                 entity.element = element;
@@ -3575,7 +3637,6 @@ class Game {
                         attacker.follow(entity);
                       }
                     });
-
                     self.registerEntityPosition(entity);
                   });
 
@@ -3649,7 +3710,6 @@ class Game {
 
                   entity.animate("death", speed, 1, function () {
                     console.info(entity.id + " was removed");
-
                     self.removeEntity(entity);
                     self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
                   });
@@ -3688,7 +3748,7 @@ class Game {
             console.error(err);
           }
         } else {
-          console.debug("Entity " + entity.id + " already exists. Don't respawn.");
+          console.debug("Entity " + entity.id + " already exists. Don't respawn only relocate.");
         }
 
         if (entity instanceof Player || entity instanceof Mob) {
@@ -3714,6 +3774,7 @@ class Game {
             auras,
             partyId,
             cape,
+            pet,
             shield,
             settings,
           } = data;
@@ -3742,14 +3803,20 @@ class Game {
           entity.setRing2(ring2);
           entity.setAuras(auras);
           entity.setCape(cape);
+          entity.setPet(pet);
           entity.setShield(shield);
           entity.setSettings(settings);
           entity.setPartyId(partyId);
           entity.setLevel(level);
           entity.setSprite(self.getSprite(entity.getSpriteName()));
-          entity.setGridPosition(x, y);
 
-          self.registerEntityPosition(entity);
+          // @NOTE Teleport and onStopPathing re-writes the entity position
+          // but this should be the source of truth and happend after
+          setTimeout(() => {
+            entity.setGridPosition(x, y);
+            entity.setOrientation(orientation);
+            self.registerEntityPosition(entity);
+          }, 50);
         }
 
         if (entity instanceof Mob) {
@@ -3895,6 +3962,10 @@ class Game {
             });
             if (!entity.isDead) {
               entity.die();
+
+              if (entity instanceof Player && entity.petId) {
+                self.getEntityById(entity.petId)?.die();
+              }
             }
           } else if (entity instanceof Chest) {
             entity.open();
@@ -4698,6 +4769,12 @@ class Game {
             currentOrientation = entity.orientation;
 
             self.makeCharacterTeleportTo(entity, x, y);
+
+            // NOTE: If using teleport, have the pet to teleport as well
+            if (entity.petId) {
+              self.makeCharacterTeleportTo(self.getEntityById(entity.petId), x, y);
+            }
+
             entity.setOrientation(currentOrientation);
 
             entity.forEachAttacker(function (attacker) {
@@ -5880,6 +5957,14 @@ class Game {
     return null;
   }
 
+  getPetAt(x, y) {
+    var entity = this.getEntityAt(x, y, Pet);
+    if (entity && entity instanceof Pet) {
+      return entity;
+    }
+    return null;
+  }
+
   getMobAt(x, y) {
     var entity = this.getEntityAt(x, y, Mob);
     if (entity && entity instanceof Mob) {
@@ -5968,6 +6053,10 @@ class Game {
 
   isPlayerAt(x, y) {
     return !_.isNull(this.getPlayerAt(x, y));
+  }
+
+  isPetAt(x, y) {
+    return !_.isNull(this.getPetAt(x, y));
   }
 
   isItemAt(x, y) {
@@ -6059,6 +6148,7 @@ class Game {
       this.hoveringPlateauTile = this.player.isOnPlateau ? !this.map.isPlateau(x, y) : this.map.isPlateau(x, y);
       this.hoveringMob = this.isMobAt(x, y);
       this.hoveringPlayer = this.isPlayerAt(x, y);
+      this.hoveringPet = this.isPetAt(x, y);
       this.hoveringItem = this.isItemAt(x, y);
       this.hoveringNpc = this.isNpcAt(x, y);
       this.hoveringOtherPlayer = this.isPlayerAt(x, y);
@@ -6067,13 +6157,19 @@ class Game {
       if (
         this.hoveringMob ||
         this.hoveringPlayer ||
+        this.hoveringPet ||
         this.hoveringNpc ||
         this.hoveringChest ||
         this.hoveringOtherPlayer ||
         this.player.target
       ) {
         var entity =
-          this.hoveringMob || this.hoveringPlayer || this.hoveringNpc || this.hoveringChest || this.hoveringOtherPlayer
+          this.hoveringMob ||
+          this.hoveringPlayer ||
+          this.hoveringPet ||
+          this.hoveringNpc ||
+          this.hoveringChest ||
+          this.hoveringOtherPlayer
             ? this.getEntityAt(x, y)
             : this.player.target;
 

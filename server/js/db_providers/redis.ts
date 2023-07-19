@@ -1024,7 +1024,7 @@ class DatabaseHandler {
         player.equip({
           kind: player.weaponKind,
           level: player.weaponLevel,
-          bonus: player.weaponBonus,
+          bonus: toArray(bonus),
           socket: player.weaponSocket,
           skill: player.attackSkill,
           type,
@@ -1037,7 +1037,7 @@ class DatabaseHandler {
         player.equip({
           kind: player.helmKind,
           level: player.helmLevel,
-          bonus: player.helmBonus,
+          bonus: toArray(bonus),
           socket: player.helmSocket,
           type,
         }),
@@ -1049,7 +1049,7 @@ class DatabaseHandler {
         player.equip({
           kind: player.armorKind,
           level: player.armorLevel,
-          bonus: player.armorBonus,
+          bonus: toArray(bonus),
           socket: player.armorSocket,
           type,
         }),
@@ -1057,17 +1057,20 @@ class DatabaseHandler {
       );
     } else if (location === "belt") {
       player.equipItem({ item, level, type, bonus });
-      player.broadcast(player.equip({ kind: Types.getKindFromString(item), level, bonus, type }), false);
+      player.broadcast(
+        player.equip({ kind: Types.getKindFromString(item), level, bonus: toArray(bonus), type }),
+        false,
+      );
     } else if (location === "cape") {
       player.equipItem({ item, level, type, bonus });
       player.broadcast(
-        player.equip({ kind: player.capeKind, level: player.capeLevel, bonus: player.capeBonus, type }),
+        player.equip({ kind: player.capeKind, level: player.capeLevel, bonus: toArray(bonus), type }),
         false,
       );
     } else if (location === "pet") {
       player.equipItem({ item, level, type, bonus });
       player.broadcast(
-        player.equip({ kind: player.petKind, level: player.petLevel, bonus: player.petBonus, type }),
+        player.equip({ kind: player.petKind, level: player.petLevel, bonus: toArray(bonus), type }),
         false,
       );
     } else if (location === "shield") {
@@ -1076,7 +1079,7 @@ class DatabaseHandler {
         player.equip({
           kind: player.shieldKind,
           level: player.shieldLevel,
-          bonus: player.shieldBonus,
+          bonus: toArray(bonus),
           socket: player.shieldSocket,
           skill: player.defenseSkill,
           type,

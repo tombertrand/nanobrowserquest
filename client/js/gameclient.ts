@@ -32,6 +32,7 @@ class GameClient {
   spawn_item_callback: any;
   spawn_chest_callback: any;
   spawn_character_callback: any;
+  spawn_pet_callback: any;
   spawn_spell_callback: any;
   despawn_callback: any;
   health_callback: any;
@@ -445,9 +446,7 @@ class GameClient {
       spell.casterId = casterId;
       spell.targetId = targetId;
 
-      if (this.spawn_spell_callback) {
-        this.spawn_spell_callback(spell, x, y, orientation, originX, originY, element, casterId, targetId, isRaise2);
-      }
+      this.spawn_spell_callback?.(spell, x, y, orientation, originX, originY, element, casterId, targetId, isRaise2);
     } else if (Types.isItem(kind)) {
       const { mobHateList, partyId, amount } = data[1];
 
@@ -465,13 +464,11 @@ class GameClient {
     } else if (Types.isStaticChest(kind)) {
       var item = EntityFactory.createEntity({ kind, id });
 
-      if (this.spawn_chest_callback) {
-        this.spawn_chest_callback(item, x, y);
-      }
+      this.spawn_chest_callback?.(item, x, y);
+    } else if (Types.isPet(kind)) {
+      this.spawn_pet_callback?.(data[1]);
     } else {
-      if (this.spawn_character_callback) {
-        this.spawn_character_callback(data[1]);
-      }
+      this.spawn_character_callback?.(data[1]);
     }
   }
 
@@ -903,6 +900,10 @@ class GameClient {
 
   onSpawnCharacter(callback) {
     this.spawn_character_callback = callback;
+  }
+
+  onSpawnPet(callback) {
+    this.spawn_pet_callback = callback;
   }
 
   onSpawnSpell(callback) {

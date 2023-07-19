@@ -15,7 +15,7 @@ import zombie from "../sprites/zombie.json";
 import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
 import cake from "../sprites/item-cake.json";
-import petdino from "../sprites/petdino.json";
+import pet_dino from "../sprites/pet_dino.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
 import golem from "../sprites/golem.json";
@@ -315,7 +315,7 @@ const sprites = {
   "deathangel-spell-lightning": deathangelSpell,
   "deathangel-spell-cold": deathangelSpell,
   "deathangel-spell-poison": deathangelSpell,
-  petdino,
+  pet_dino,
   goldenarmor,
   bluearmor,
   hornedarmor,

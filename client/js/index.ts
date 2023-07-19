@@ -589,6 +589,18 @@ var initGame = function () {
       $(".ui-tooltip .socket-item-container").empty();
     }
 
+    // The following may be uncommented for debugging purposes.
+    if (game.started) {
+      if (key === Types.Keys.F) {
+        game.toggleDebugInfo();
+        return;
+      }
+      if (key === Types.Keys.SPACE) {
+        game.togglePathingGrid();
+        return;
+      }
+    }
+
     if (game.started && !$("#chatbox").hasClass("active")) {
       switch (key) {
         case Types.Keys.LEFT:
@@ -823,17 +835,6 @@ var initGame = function () {
         return false;
       }
     }
-
-    // The following may be uncommented for debugging purposes.
-    //
-    // if(key === Types.Keys.SPACE && game.started) { // Space
-    //     game.togglePathingGrid();
-    //     return false;
-    // }
-    // if(key === 70 && game.started) { // F
-    //     game.toggleDebugInfo();
-    //     return false;
-    // }
   });
 };
 

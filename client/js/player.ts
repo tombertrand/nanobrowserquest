@@ -17,6 +17,7 @@ interface PartyMember {
 }
 
 class Player extends Character {
+  petId: number | null;
   spriteName: string;
   helmName: string;
   helmLevel: number;
@@ -802,7 +803,10 @@ class Player extends Character {
         const level = hasLevel ? parseInt(levelOrQuantityOrAmount) : null;
         const isQuantity =
           Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item) || Types.isBar(item);
-        const amount = !hasLevel && !isQuantity ? parseInt(levelOrQuantityOrAmount) : null;
+        const amount =
+          !hasLevel && !isQuantity && !Types.isSingle(item) && !Types.isChest(item)
+            ? parseInt(levelOrQuantityOrAmount)
+            : null;
         const isUnique = Types.isUnique(item, bonus, isJewel ? level : undefined);
 
         let requirement = null;

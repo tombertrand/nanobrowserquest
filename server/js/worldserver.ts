@@ -573,7 +573,9 @@ class World {
   pushToGroup(groupId, message, ignoredPlayer?: number) {
     var self = this;
     var group = this.groups[groupId];
-    var ignoredPlayerIds = Array.isArray(ignoredPlayer) ? ignoredPlayer : [ignoredPlayer];
+    var ignoredPlayerIds = (Array.isArray(ignoredPlayer) ? ignoredPlayer : [ignoredPlayer || undefined]).filter(
+      Boolean,
+    );
 
     if (group) {
       _.each(group.players, function (playerId) {
@@ -602,6 +604,9 @@ class World {
       self.pushToGroup(id, message);
     });
     player.recentlyLeftGroups = [];
+    if (player.petEntity) {
+      player.petEntity.recentlyLeftGroups = [];
+    }
   }
 
   pushBroadcast(message, ignoredPlayer?: any) {
@@ -716,12 +721,14 @@ class World {
   }
 
   removePlayer(player: Player) {
-    player.broadcast(player.despawn());
+    if (player.petEntity) {
+      this.despawn(player.petEntity);
+    }
 
     if (player.hasParty()) {
       player.getParty()?.removeMember(player);
     }
-    this.removeEntity(player);
+    this.despawn(player);
     delete this.players[player.id];
     delete this.outgoingQueues[player.id];
   }
@@ -2018,6 +2025,10 @@ class World {
         this.handlePlayerVanish(entity);
         this.pushToAdjacentGroups(entity.group, entity.despawn());
 
+        if (entity.petEntity) {
+          this.despawn(entity.petEntity);
+        }
+
         if (attacker.type === "mob" || attacker.casterKind) {
           const penalty = getGoldDeathPenaltyPercent(entity.level);
           if (!penalty) return;
@@ -2202,13 +2213,12 @@ class World {
   }
 
   handlePlayerVanish(player) {
-    var self = this;
     var previousAttackers = [];
 
     // When a player dies or teleports, all of his attackers go and attack their second most hated player.
-    player.forEachAttacker(function (mob) {
+    player.forEachAttacker(mob => {
       previousAttackers.push(mob);
-      self.chooseMobTarget(mob, 2, player.id);
+      this.chooseMobTarget(mob, 2, player.id);
     });
 
     // When a player dies or teleports, all of his attackers go and attack their second most hated player or return to their original x,y.
@@ -2219,18 +2229,18 @@ class World {
       mob.removeAttacker(player);
 
       if (mob.hateList.length === 0 && mob.kind === Types.Entities.ZOMBIE) {
-        self.despawn(mob);
+        this.despawn(mob);
       }
     });
 
-    _.each(previousAttackers, function (mob) {
+    _.each(previousAttackers, mob => {
       player.removeAttacker(mob);
       mob.clearTarget();
       mob.forgetPlayer(player.id, 1000);
 
       if (mob.hateList.length === 0 && mob.kind === Types.Entities.ZOMBIE) {
         // @NOTE maybe not needed
-        self.despawn(mob);
+        this.despawn(mob);
       }
     });
 
@@ -2830,6 +2840,9 @@ class World {
         }
       });
       entity.group = null;
+      if (entity instanceof Player && entity.petEntity) {
+        entity.petEntity.group = entity.group;
+      }
     }
     return oldGroups;
   }
@@ -2873,6 +2886,10 @@ class World {
       entity.group = groupId;
 
       if (entity instanceof Player) {
+        if (entity.petEntity) {
+          entity.petEntity.group = entity.group;
+        }
+
         this.groups[groupId].players.push(entity.id);
       }
     }
@@ -2899,6 +2916,10 @@ class World {
 
         if (_.size(oldGroups) > 0) {
           entity.recentlyLeftGroups = _.difference(oldGroups, newGroups);
+          if (entity instanceof Player && entity.petEntity) {
+            entity.petEntity.recentlyLeftGroups = entity.recentlyLeftGroups;
+          }
+
           // console.debug("group diff: " + entity.recentlyLeftGroups);
         }
       }
@@ -2913,10 +2934,15 @@ class World {
       this.map.forEachGroup(function (id) {
         if (self.groups[id].incoming.length > 0) {
           _.each(self.groups[id].incoming, function (entity) {
-            if (entity instanceof Player) {
-              self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
-            } else {
-              self.pushToGroup(id, new Messages.Spawn(entity));
+            if (!entity.isDead) {
+              if (entity instanceof Player) {
+                self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
+                if (entity.petEntity) {
+                  self.pushToGroup(id, new Messages.Spawn(entity.petEntity), entity.id);
+                }
+              } else {
+                self.pushToGroup(id, new Messages.Spawn(entity));
+              }
             }
           });
 
