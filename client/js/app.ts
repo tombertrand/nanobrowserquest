@@ -619,10 +619,12 @@ class App {
       const inspector = $("#inspector");
 
       const isPlayer = target.kind === Types.Entities.WARRIOR;
+      const isPet = target.type === "pet";
 
-      const alias = isPlayer
-        ? target.name
-        : Types.getAliasFromName(Types.getKindAsString(target.kind)) || target.name || name;
+      const alias =
+        isPlayer || isPet
+          ? target.name
+          : Types.getAliasFromName(Types.getKindAsString(target.kind)) || target.name || name;
 
       inspector.find(".name").toggleClass("mob", !isPlayer).text(`${alias}`);
       inspector.find(".name").toggleClass("is-boss", Types.isBoss(target.kind));

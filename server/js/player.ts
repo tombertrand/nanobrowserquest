@@ -2256,6 +2256,7 @@ class Player extends Character {
     return Object.assign({}, this._getBaseState(), {
       orientation: this.orientation,
       targetId: this.targetId,
+      petId: this.pet && this.petEntity ? this.petEntity.id : null,
       name: this.name,
       helm: `${this.helm}:${this.helmLevel}${toDb(this.helmBonus)}${toDb(this.helmSocket)}`,
       armor: `${this.armor}:${this.armorLevel}${toDb(this.armorBonus)}${toDb(this.armorSocket)}`,
@@ -2870,7 +2871,14 @@ class Player extends Character {
       // @TODO mak pet item kind to PET character
       if (this.pet) {
         const { id, x, y } = this;
-        this.petEntity = new Pet("9" + id, "pet", Types.Entities.PET_DINO, x, y);
+        this.petEntity = new Pet({
+          id: "9" + id,
+          type: "pet",
+          kind: Types.Entities.PET_DINO,
+          x,
+          y,
+          ownerId: id,
+        });
         this.server.addEntity(this.petEntity);
       } else {
         if (this.petEntity) {
@@ -3464,7 +3472,15 @@ class Player extends Character {
 
       if (this.pet) {
         const { id } = this;
-        this.petEntity = new Pet("9" + id, "pet", Types.Entities.PET_DINO, x, y);
+
+        this.petEntity = new Pet({
+          id: "9" + id,
+          type: "pet",
+          kind: Types.Entities.PET_DINO,
+          x,
+          y,
+          ownerId: id,
+        });
         this.server.addEntity(this.petEntity);
       }
 

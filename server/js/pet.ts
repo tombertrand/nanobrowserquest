@@ -2,15 +2,16 @@ import Character from "./character";
 import { randomOrientation } from "./utils";
 
 class Pet extends Character {
-  owner: string;
+  ownerId: number;
 
-  constructor(id, type, kind, x, y) {
+  constructor({ id, type = "pet", kind, x, y, ownerId }) {
     super(id, type, kind, x, y);
 
     this.orientation = randomOrientation();
     this.attackers = {};
     this.targetId = null;
     this.poisonedInterval = null;
+    this.ownerId = ownerId;
   }
 
   getState() {
@@ -20,6 +21,7 @@ class Pet extends Character {
       resistances: this.resistances || null,
       element: this.element || null,
       enchants: this.enchants || null,
+      ownerId: this.ownerId,
     });
   }
 }

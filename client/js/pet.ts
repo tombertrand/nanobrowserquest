@@ -1,7 +1,7 @@
 import Character from "./character";
 
 class Pet extends Character {
-  owner: string;
+  ownerId: number;
 
   constructor(id: number, kind: number, props) {
     super(id, kind);
@@ -10,7 +10,6 @@ class Pet extends Character {
     this.castRange = null;
     this.type = "pet";
     this.name = "pet";
-    this.owner = "a player name";
 
     Object.keys(props).forEach(prop => {
       this[prop] = props[prop];

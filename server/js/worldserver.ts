@@ -2944,13 +2944,15 @@ class World {
       this.map.forEachGroup(function (id) {
         if (self.groups[id].incoming.length > 0) {
           _.each(self.groups[id].incoming, function (entity) {
-            if (entity instanceof Player) {
-              self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
-              if (entity.petEntity) {
-                self.pushToGroup(id, new Messages.Spawn(entity.petEntity), entity.id);
+            if (!entity.isDead) {
+              if (entity instanceof Player) {
+                self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
+                if (entity.petEntity) {
+                  self.pushToGroup(id, new Messages.Spawn(entity.petEntity), entity.id);
+                }
+              } else {
+                self.pushToGroup(id, new Messages.Spawn(entity));
               }
-            } else {
-              self.pushToGroup(id, new Messages.Spawn(entity));
             }
           });
 

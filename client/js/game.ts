@@ -115,6 +115,7 @@ class Game {
   targetCellVisible: boolean;
   hoveringTarget: boolean;
   hoveringPlayer: boolean;
+  hoveringPet: boolean;
   pvp: boolean;
   hoveringPlayerPvP: boolean;
   hoveringMob: boolean;
@@ -3368,15 +3369,16 @@ class Game {
       });
 
       self.client.onSpawnPet(function (data) {
-        const { id, kind, name, x, y, orientation, resistances, bonus } = data;
+        const { id, kind, x, y, orientation, resistances, bonus, ownerId } = data;
 
-        console.log("~~~~data", data);
+        console.log("~~~~onSpawnPet -data", data);
 
         let entity = self.getEntityById(id);
 
         if (!entity) {
-          entity = EntityFactory.createEntity({ kind, id, name, resistances });
+          const name = ownerId ? `Pet of ${self.getEntityById(ownerId).name}` : "";
 
+          entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, bonus });
           entity.setSprite(self.getSprite(entity.getSpriteName()));
 
           entity.setGridPosition(x, y);
@@ -3392,7 +3394,7 @@ class Game {
             entity.stop();
             entity.isDying = true;
 
-            let speed = 120;
+            // let speed = 120;
 
             // Custom death animations
             const hasCustomDeathAnimation = [].includes(entity.kind);
@@ -3401,12 +3403,13 @@ class Game {
               entity.setSprite(self.getSprite("death"));
             }
 
-            entity.animate("death", speed, 1, function () {
-              console.info(entity.id + " was removed");
+            // entity.animate("death", speed, 1, function () {
+            console.info(entity.id + " was removed");
 
-              self.removeEntity(entity);
-              self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
-            });
+            // self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
+            self.removeEntity(entity);
+
+            // });
           });
         } else {
           console.debug("PET " + entity.id + " already exists. Don't respawn, only relocate.");
@@ -3416,8 +3419,21 @@ class Game {
       });
 
       self.client.onSpawnCharacter(function (data) {
-        const { id, kind, name, x, y, targetId, orientation, resistances, element, enchants, isActivated, bonus } =
-          data;
+        const {
+          id,
+          kind,
+          name,
+          x,
+          y,
+          targetId,
+          orientation,
+          resistances,
+          element,
+          enchants,
+          isActivated,
+          bonus,
+          petId,
+        } = data;
 
         if (kind === Types.Entities.GATEWAYFX) {
           self.gatewayFxNpcId = id;
@@ -3425,10 +3441,12 @@ class Game {
 
         let entity = self.getEntityById(id);
 
+        console.log("~~~~onSpawnCharacter - petId", petId);
+
         if (!entity) {
           try {
             if (id !== self.playerId) {
-              entity = EntityFactory.createEntity({ kind, id, name, resistances });
+              entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
 
               if (element) {
                 entity.element = element;
@@ -3951,6 +3969,15 @@ class Game {
             if (!entity.isDead) {
               console.log("~~~~die!?");
               entity.die();
+
+              if (entity instanceof Player) {
+                console.log("~~~~onDespawnEntity entity.petId", entity.petId, !!self.getEntityById(entity.petId));
+                if (entity.petId) {
+                  // entity.petId.die();
+
+                  self.getEntityById(entity.petId)?.die();
+                }
+              }
             }
           } else if (entity instanceof Chest) {
             entity.open();
@@ -5936,6 +5963,14 @@ class Game {
     return null;
   }
 
+  getPetAt(x, y) {
+    var entity = this.getEntityAt(x, y, Pet);
+    if (entity && entity instanceof Pet) {
+      return entity;
+    }
+    return null;
+  }
+
   getMobAt(x, y) {
     var entity = this.getEntityAt(x, y, Mob);
     if (entity && entity instanceof Mob) {
@@ -6024,6 +6059,10 @@ class Game {
 
   isPlayerAt(x, y) {
     return !_.isNull(this.getPlayerAt(x, y));
+  }
+
+  isPetAt(x, y) {
+    return !_.isNull(this.getPetAt(x, y));
   }
 
   isItemAt(x, y) {
@@ -6115,6 +6154,7 @@ class Game {
       this.hoveringPlateauTile = this.player.isOnPlateau ? !this.map.isPlateau(x, y) : this.map.isPlateau(x, y);
       this.hoveringMob = this.isMobAt(x, y);
       this.hoveringPlayer = this.isPlayerAt(x, y);
+      this.hoveringPet = this.isPetAt(x, y);
       this.hoveringItem = this.isItemAt(x, y);
       this.hoveringNpc = this.isNpcAt(x, y);
       this.hoveringOtherPlayer = this.isPlayerAt(x, y);
@@ -6123,13 +6163,19 @@ class Game {
       if (
         this.hoveringMob ||
         this.hoveringPlayer ||
+        this.hoveringPet ||
         this.hoveringNpc ||
         this.hoveringChest ||
         this.hoveringOtherPlayer ||
         this.player.target
       ) {
         var entity =
-          this.hoveringMob || this.hoveringPlayer || this.hoveringNpc || this.hoveringChest || this.hoveringOtherPlayer
+          this.hoveringMob ||
+          this.hoveringPlayer ||
+          this.hoveringPet ||
+          this.hoveringNpc ||
+          this.hoveringChest ||
+          this.hoveringOtherPlayer
             ? this.getEntityAt(x, y)
             : this.player.target;
 

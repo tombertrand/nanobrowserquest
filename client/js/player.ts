@@ -17,6 +17,7 @@ interface PartyMember {
 }
 
 class Player extends Character {
+  petId: number | null;
   spriteName: string;
   helmName: string;
   helmLevel: number;

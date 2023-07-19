@@ -695,7 +695,7 @@ class Character extends Entity {
     if (this.inspecting !== character) {
       this.inspecting = character;
       if (this.settarget_callback) {
-        var targetName = Types.getKindAsString(character.kind);
+        let targetName = Types.getKindAsString(character.kind);
         this.settarget_callback(character, targetName, true);
       }
     }
