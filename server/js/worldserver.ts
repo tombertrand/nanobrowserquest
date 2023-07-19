@@ -415,9 +415,8 @@ class World {
       // Populate all mob "roaming" areas
       _.each(self.map.mobAreas, function (a) {
         var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
-        //~~~~
-        // area.spawnMobs();
-        // area.onEmpty(self.handleEmptyMobArea.bind(self, area));
+        area.spawnMobs();
+        area.onEmpty(self.handleEmptyMobArea.bind(self, area));
 
         self.mobAreas.push(area);
       });
@@ -425,18 +424,18 @@ class World {
       // Create all chest areas
       _.each(self.map.chestAreas, function (a) {
         var area = new ChestArea(a.id, a.x, a.y, a.w, a.h, a.tx, a.ty, a.i, self);
-        // self.chestAreas.push(area);
-        // area.onEmpty(self.handleEmptyChestArea.bind(self, area));
+        self.chestAreas.push(area);
+        area.onEmpty(self.handleEmptyChestArea.bind(self, area));
       });
 
       // Spawn static chests
       _.each(self.map.staticChests, function (chest) {
-        // var c = self.createChest(chest.x, chest.y, chest.i);
-        // self.addStaticItem(c);
+        var c = self.createChest(chest.x, chest.y, chest.i);
+        self.addStaticItem(c);
       });
 
       // Spawn static entities
-      // self.spawnStaticEntities();
+      self.spawnStaticEntities();
 
       // Set maximum number of entities contained in each chest area
       _.each(self.chestAreas, function (area) {
@@ -579,7 +578,6 @@ class World {
       Boolean,
     );
 
-    console.log("~~~~ignoredPlayerIds", ignoredPlayerIds);
     if (group) {
       _.each(group.players, function (playerId) {
         if (![ignoredPlayerIds].includes(playerId)) {
@@ -607,7 +605,9 @@ class World {
       self.pushToGroup(id, message);
     });
     player.recentlyLeftGroups = [];
-    player.petEntity.recentlyLeftGroups = [];
+    if (player.petEntity) {
+      player.petEntity.recentlyLeftGroups = [];
+    }
   }
 
   pushBroadcast(message, ignoredPlayer?: any) {
@@ -633,11 +633,6 @@ class World {
   }
 
   addEntity(entity) {
-    //~~~
-    if (!(entity instanceof Player) && !(entity instanceof Pet)) {
-      return;
-    }
-
     this.entities[entity.id] = entity;
     this.handleEntityGroupMembership(entity);
   }
@@ -2067,7 +2062,6 @@ class World {
     this.pushToAdjacentGroups(entity.group, entity.despawn());
 
     if (entity.id in this.entities) {
-      console.log("~~~~founddespawn !!", entity.id);
       this.removeEntity(entity);
     }
   }
@@ -2912,9 +2906,6 @@ class World {
 
   handleEntityGroupMembership(entity) {
     var hasChangedGroups = false;
-
-    const { id, type, kind, x, y, group, recentlyLeftGroups } = entity;
-    console.log("handleEntityGroupMembership ~~~~entity", { id, type, kind, x, y, group, recentlyLeftGroups });
 
     if (entity) {
       var groupId = this.map.getGroupIdFromPosition(entity.x, entity.y);

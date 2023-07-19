@@ -1244,9 +1244,7 @@ class Game {
   }
 
   destroyDroppable() {
-    // @NOTE Why was this there??
-    // $(".item-not-draggable").remove();
-    $(".item-droppable").droppable("destroy");
+    $(".item-droppable.ui-droppable").droppable("destroy");
   }
 
   initDraggable() {
@@ -1681,7 +1679,7 @@ class Game {
 
     for (var i = 0; i < 9; i++) {
       $("#trade-player1-item").append(
-        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-shield item-chest item-scroll item-recipe" data-slot="${
+        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-pet item-shield item-chest item-scroll item-recipe" data-slot="${
           TRADE_SLOT_RANGE + i
         }"></div>`,
       );
@@ -3371,8 +3369,6 @@ class Game {
       self.client.onSpawnPet(function (data) {
         const { id, kind, x, y, orientation, resistances, bonus, ownerId } = data;
 
-        console.log("~~~~onSpawnPet -data", data);
-
         let entity = self.getEntityById(id);
 
         if (!entity) {
@@ -3440,8 +3436,6 @@ class Game {
         }
 
         let entity = self.getEntityById(id);
-
-        console.log("~~~~onSpawnCharacter - petId", petId);
 
         if (!entity) {
           try {
@@ -3643,7 +3637,6 @@ class Game {
                         attacker.follow(entity);
                       }
                     });
-
                     self.registerEntityPosition(entity);
                   });
 
@@ -3816,9 +3809,14 @@ class Game {
           entity.setPartyId(partyId);
           entity.setLevel(level);
           entity.setSprite(self.getSprite(entity.getSpriteName()));
-          entity.setGridPosition(x, y);
 
-          self.registerEntityPosition(entity);
+          // @NOTE Teleport and onStopPathing re-writes the entity position
+          // but this should be the source of truth and happend after
+          setTimeout(() => {
+            entity.setGridPosition(x, y);
+            entity.setOrientation(orientation);
+            self.registerEntityPosition(entity);
+          }, 50);
         }
 
         if (entity instanceof Mob) {
@@ -3937,8 +3935,6 @@ class Game {
       self.client.onDespawnEntity(function (entityId) {
         var entity = self.getEntityById(entityId);
 
-        console.log("~~~~onDespawnEntity - entityId", entityId, entity?.id);
-
         if (entity) {
           console.info("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id + ")");
 
@@ -3954,8 +3950,6 @@ class Game {
             }
           }
 
-          console.log("~~~~~entity.id", entity.id, entity instanceof Character);
-
           if (entity instanceof Item) {
             self.removeItem(entity);
           } else if (entity instanceof Spell) {
@@ -3967,16 +3961,10 @@ class Game {
               }
             });
             if (!entity.isDead) {
-              console.log("~~~~die!?");
               entity.die();
 
-              if (entity instanceof Player) {
-                console.log("~~~~onDespawnEntity entity.petId", entity.petId, !!self.getEntityById(entity.petId));
-                if (entity.petId) {
-                  // entity.petId.die();
-
-                  self.getEntityById(entity.petId)?.die();
-                }
+              if (entity instanceof Player && entity.petId) {
+                self.getEntityById(entity.petId)?.die();
               }
             }
           } else if (entity instanceof Chest) {
@@ -4781,6 +4769,12 @@ class Game {
             currentOrientation = entity.orientation;
 
             self.makeCharacterTeleportTo(entity, x, y);
+
+            // NOTE: If using teleport, have the pet to teleport as well
+            if (entity.petId) {
+              self.makeCharacterTeleportTo(self.getEntityById(entity.petId), x, y);
+            }
+
             entity.setOrientation(currentOrientation);
 
             entity.forEachAttacker(function (attacker) {

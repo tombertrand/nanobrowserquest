@@ -439,8 +439,6 @@ class GameClient {
   receiveSpawn(data) {
     const { id, kind, x, y, orientation } = data[1];
 
-    console.log("~~~~~kind", kind, Types.isPet(kind));
-
     if (Types.isSpell(kind)) {
       const spell = EntityFactory.createEntity({ kind, id });
       const { originX, originY, element, casterId, targetId, isRaise2 = false } = data[1];
@@ -468,7 +466,6 @@ class GameClient {
 
       this.spawn_chest_callback?.(item, x, y);
     } else if (Types.isPet(kind)) {
-      console.log("~~~~~is pet!!!");
       this.spawn_pet_callback?.(data[1]);
     } else {
       this.spawn_character_callback?.(data[1]);

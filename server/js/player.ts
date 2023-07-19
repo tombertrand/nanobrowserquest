@@ -2253,29 +2253,34 @@ class Player extends Character {
   }
 
   getState() {
+    const helmBonus = this.helmBonus?.concat(this.isHelmSuperior ? [43] : []);
+    const armorBonus = this.armorBonus?.concat(this.isArmorSuperior ? [43] : []);
+    const weaponBonus = this.weaponBonus?.concat(this.isWeaponSuperior ? [43] : []);
+    const beltBonus = this.beltBonus?.concat(this.isBeltSuperior ? [43] : []);
+    const capeBonus = this.capeBonus?.concat(this.isCapeSuperior ? [43] : []);
+    const shieldBonus = this.shieldBonus?.concat(this.isShieldSuperior ? [43] : []);
+
     return Object.assign({}, this._getBaseState(), {
       orientation: this.orientation,
       targetId: this.targetId,
       petId: this.pet && this.petEntity ? this.petEntity.id : null,
       name: this.name,
-      helm: `${this.helm}:${this.helmLevel}${toDb(this.helmBonus)}${toDb(this.helmSocket)}`,
-      armor: `${this.armor}:${this.armorLevel}${toDb(this.armorBonus)}${toDb(this.armorSocket)}`,
-      weapon: `${this.weapon}:${this.weaponLevel}${toDb(this.weaponBonus)}${toDb(this.weaponSocket)}${toDb(
+      helm: `${this.helm}:${this.helmLevel}${toDb(helmBonus)}${toDb(this.helmSocket)}`,
+      armor: `${this.armor}:${this.armorLevel}${toDb(armorBonus)}${toDb(this.armorSocket)}`,
+      weapon: `${this.weapon}:${this.weaponLevel}${toDb(weaponBonus)}${toDb(this.weaponSocket)}${toDb(
         this.attackSkill,
       )}`,
       amulet: this.amulet ? `${this.amulet}:${this.amuletLevel}${toDb(this.amuletBonus)}` : null,
       ring1: this.ring1 ? `${this.ring1}:${this.ring1Level}${toDb(this.ring1Bonus)}` : null,
       ring2: this.ring2 ? `${this.ring2}:${this.ring2Level}${toDb(this.ring2Bonus)}` : null,
-      belt: this.belt ? `${this.belt}:${this.beltLevel}${toDb(this.beltBonus)}` : null,
+      belt: this.belt ? `${this.belt}:${this.beltLevel}${toDb(beltBonus)}` : null,
       level: this.level,
       auras: this.auras,
       partyId: this.partyId,
-      cape: this.cape ? `${this.cape}${toDb(this.capeLevel)}${toDb(this.capeBonus)}` : null,
+      cape: this.cape ? `${this.cape}${toDb(this.capeLevel)}${toDb(capeBonus)}` : null,
       pet: this.pet ? `${this.pet}${toDb(this.petLevel)}${toDb(this.petBonus)}` : null,
       shield: this.shield
-        ? `${this.shield}:${this.shieldLevel}${toDb(this.shieldBonus)}${toDb(this.shieldSocket)}${toDb(
-            this.defenseSkill,
-          )}`
+        ? `${this.shield}:${this.shieldLevel}${toDb(shieldBonus)}${toDb(this.shieldSocket)}${toDb(this.defenseSkill)}`
         : null,
       settings: {
         capeHue: this.capeHue,
@@ -2882,8 +2887,8 @@ class Player extends Character {
         this.server.addEntity(this.petEntity);
       } else {
         if (this.petEntity) {
-          console.log("~~~~DESPAWN!?");
           this.server.despawn(this.petEntity);
+          this.petEntity = null;
         }
       }
     } else if (type === "shield") {
