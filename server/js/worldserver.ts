@@ -15,7 +15,6 @@ import Messages from "./message";
 import Mob from "./mob";
 import Npc from "./npc";
 import Party, { MAX_PARTY_MEMBERS } from "./party";
-import Pet from "./pet";
 import Player from "./player";
 import Properties from "./properties";
 import { Sentry } from "./sentry";
