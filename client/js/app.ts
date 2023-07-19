@@ -1471,6 +1471,12 @@ class App {
     this.game.client.sendSettings({ pvp: isChecked });
   }
 
+  toggleDebug() {
+    const isChecked = $("#debug-checkbox").is(":checked");
+
+    this.game.debug = isChecked;
+  }
+
   toggleAnvilOdds() {
     const isChecked = $("#anvil-odds-checkbox").is(":checked");
 

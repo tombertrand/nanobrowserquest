@@ -112,6 +112,7 @@ class Player extends Character {
   disableKeyboardNpcTalk: boolean;
   isHurtByTrap: boolean;
   pvp: boolean;
+  debug: boolean;
 
   partyId?: number;
   partyLeader?: PartyMember;
@@ -573,6 +574,9 @@ class Player extends Character {
     }
     if (settings.pvp) {
       this.pvp = settings.pvp;
+    }
+    if (settings.debug) {
+      this.debug = settings.debug;
     }
   }
 

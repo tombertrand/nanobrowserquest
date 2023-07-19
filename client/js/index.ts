@@ -499,8 +499,6 @@ var initGame = function () {
   app.initExpBar();
 
   $("#nameinput").val("");
-  // $("#accountinput").val("");
-  // $("#chatbox").val("");
 
   if (game.renderer.mobile || game.renderer.tablet) {
     $("#foreground").bind("touchstart", function (event) {
@@ -589,19 +587,7 @@ var initGame = function () {
       $(".ui-tooltip .socket-item-container").empty();
     }
 
-    // The following may be uncommented for debugging purposes.
-    if (game.started) {
-      // if (key === Types.Keys.F) {
-      //   game.toggleDebugInfo();
-      //   return;
-      // }
-      // if (key === Types.Keys.SPACE) {
-      //   game.togglePathingGrid();
-      //   return;
-      // }
-    }
-
-    if (game.started && !$("#chatbox").hasClass("active")) {
+    if (game.started && !$("#chatinput").is(":focus")) {
       switch (key) {
         case Types.Keys.LEFT:
         case Types.Keys.A:
@@ -622,6 +608,11 @@ var initGame = function () {
         case Types.Keys.S:
           game.player.moveDown = false;
           game.player.disableKeyboardNpcTalk = false;
+          break;
+        case Types.Keys.SPACE:
+          if (game.debug) {
+            game.togglePathingGrid();
+          }
           break;
         default:
           break;
@@ -742,9 +733,9 @@ var initGame = function () {
       case Types.Keys.KEYPAD_2:
         game.useSkill(2);
         break;
-      case Types.Keys.SPACE:
-        game.makePlayerAttackNext();
-        break;
+      // case Types.Keys.SPACE:
+      //   game.makePlayerAttackNext();
+      //   break;
       case Types.Keys.I:
         app.toggleInventory(true);
         break;
@@ -813,6 +804,10 @@ var initGame = function () {
 
   $("#pvp-checkbox").on("change", function () {
     app.togglePvP();
+  });
+
+  $("#debug-checkbox").on("change", function () {
+    app.toggleDebug();
   });
 
   // $("#anvil-odds-checkbox").on("change", function () {

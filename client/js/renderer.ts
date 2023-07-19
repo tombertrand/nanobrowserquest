@@ -26,7 +26,6 @@ class Renderer {
   maxFPS: any;
   FPS: any;
   realFPS: number;
-  isDebugInfoVisible: boolean;
   animatedTileCount: number;
   highAnimatedTileCount: number;
   highTileCount: number;
@@ -65,8 +64,6 @@ class Renderer {
     this.frameCount = 0;
     this.maxFPS = this.FPS;
     this.realFPS = 0;
-    //Turn on or off Debuginfo (FPS Counter)
-    this.isDebugInfoVisible = false;
 
     this.animatedTileCount = 0;
     this.highAnimatedTileCount = 0;
@@ -279,7 +276,7 @@ class Renderer {
   drawPathingCells() {
     var grid = this.game.pathingGrid;
 
-    if (grid && this.game.debugPathing) {
+    if (grid && this.game.debug && this.game.debugPathing) {
       for (var y = 0; y < grid.length; y += 1) {
         for (var x = 0; x < grid[y].length; x += 1) {
           if (grid[y][x] === 1 && this.game.camera.isVisiblePosition(x, y)) {
@@ -1339,12 +1336,12 @@ class Renderer {
   }
 
   drawDebugInfo() {
-    if (this.isDebugInfoVisible) {
+    if (this.game.debug) {
       this.drawFPS();
       this.drawText("A: " + this.animatedTileCount, 20, 40, false);
-      this.drawText("H: " + this.highTileCount, 60, 40, false);
+      this.drawText("H: " + this.highTileCount, 80, 40, false);
       this.drawText("X: " + this.game.player.gridX, 20, 60, false);
-      this.drawText("Y: " + this.game.player.gridY, 60, 60, false);
+      this.drawText("Y: " + this.game.player.gridY, 80, 60, false);
     }
   }
 

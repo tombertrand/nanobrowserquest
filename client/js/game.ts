@@ -117,6 +117,7 @@ class Game {
   hoveringPlayer: boolean;
   hoveringPet: boolean;
   pvp: boolean;
+  debug: boolean;
   hoveringPlayerPvP: boolean;
   hoveringMob: boolean;
   hoveringItem: boolean;
@@ -560,6 +561,9 @@ class Game {
 
     this.pvp = settings.pvp;
     $("#pvp-checkbox").prop("checked", settings.pvp);
+
+    this.debug = settings.debug;
+    $("#debug-checkbox").prop("checked", settings.debug);
 
     if (this.storage.showAnvilOddsEnabled()) {
       this.setShowAnvilOdds(true);
@@ -6114,17 +6118,6 @@ class Game {
       this.debugPathing = false;
     } else {
       this.debugPathing = true;
-    }
-  }
-
-  /**
-   * Toggles the visibility of the FPS counter and other debugging info.
-   */
-  toggleDebugInfo() {
-    if (this.renderer && this.renderer.isDebugInfoVisible) {
-      this.renderer.isDebugInfoVisible = false;
-    } else {
-      this.renderer.isDebugInfoVisible = true;
     }
   }
 
