@@ -5,7 +5,7 @@ import Timer from "./timer";
 export const Pets = {
   Dino: class Dino extends Pet {
     constructor(id, props: any = {}) {
-      super(id, Types.Entities.PETDINO, props);
+      super(id, Types.Entities.PET_DINO, props);
       this.moveSpeed = 200;
       this.atkSpeed = 100;
       this.raiseSpeed = 125;

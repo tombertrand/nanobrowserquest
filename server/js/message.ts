@@ -8,7 +8,9 @@ var Messages: any = {};
 module.exports = Messages;
 
 Messages.Spawn = class Message {
-  constructor(private entity) {}
+  constructor(private entity) {
+    console.log("~~~spawn called", entity.id);
+  }
   serialize() {
     return [Types.Messages.SPAWN, this.entity.getState()];
   }

@@ -44,6 +44,7 @@ import Map from "./map";
 import Mob from "./mob";
 import Npc from "./npc";
 import Pathfinder from "./pathfinder";
+import Pet from "./pet";
 import Player from "./player";
 import Renderer from "./renderer";
 import Spell from "./spell";
@@ -1276,7 +1277,7 @@ class Game {
           $(".item-trade").addClass("item-droppable");
         } else if (Types.isSingle(item)) {
           $(".item-single").addClass("item-droppable");
-        } else if (Types.isPet(item)) {
+        } else if (Types.isPetItem(item)) {
           $(".item-pet").addClass("item-droppable");
         }
 
@@ -2567,7 +2568,7 @@ class Game {
       if (entity instanceof Character || entity instanceof Chest) {
         this.entityGrid[y][x][entity.id] = entity;
 
-        if (!(entity instanceof Player) && !(entity instanceof Spell)) {
+        if (!(entity instanceof Player) && !(entity instanceof Pet) && !(entity instanceof Spell)) {
           this.pathingGrid[y][x] = 1;
         }
 
@@ -3366,6 +3367,54 @@ class Game {
         });
       });
 
+      self.client.onSpawnPet(function (data) {
+        const { id, kind, name, x, y, orientation, resistances, bonus } = data;
+
+        console.log("~~~~data", data);
+
+        let entity = self.getEntityById(id);
+
+        if (!entity) {
+          entity = EntityFactory.createEntity({ kind, id, name, resistances });
+
+          entity.setSprite(self.getSprite(entity.getSpriteName()));
+
+          entity.setGridPosition(x, y);
+          entity.setOrientation(orientation);
+
+          entity.idle();
+
+          self.addEntity(entity);
+
+          entity.onDeath(function () {
+            console.info(entity.id + " is dead");
+
+            entity.stop();
+            entity.isDying = true;
+
+            let speed = 120;
+
+            // Custom death animations
+            const hasCustomDeathAnimation = [].includes(entity.kind);
+
+            if (!hasCustomDeathAnimation) {
+              entity.setSprite(self.getSprite("death"));
+            }
+
+            entity.animate("death", speed, 1, function () {
+              console.info(entity.id + " was removed");
+
+              self.removeEntity(entity);
+              self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
+            });
+          });
+        } else {
+          console.debug("PET " + entity.id + " already exists. Don't respawn, only relocate.");
+          entity.setGridPosition(x, y);
+          self.registerEntityPosition(entity);
+        }
+      });
+
       self.client.onSpawnCharacter(function (data) {
         const { id, kind, name, x, y, targetId, orientation, resistances, element, enchants, isActivated, bonus } =
           data;
@@ -3375,6 +3424,7 @@ class Game {
         }
 
         let entity = self.getEntityById(id);
+
         if (!entity) {
           try {
             if (id !== self.playerId) {
@@ -3649,7 +3699,6 @@ class Game {
 
                   entity.animate("death", speed, 1, function () {
                     console.info(entity.id + " was removed");
-
                     self.removeEntity(entity);
                     self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
                   });
@@ -3688,7 +3737,7 @@ class Game {
             console.error(err);
           }
         } else {
-          console.debug("Entity " + entity.id + " already exists. Don't respawn.");
+          console.debug("Entity " + entity.id + " already exists. Don't respawn only relocate.");
         }
 
         if (entity instanceof Player || entity instanceof Mob) {
@@ -3714,6 +3763,7 @@ class Game {
             auras,
             partyId,
             cape,
+            pet,
             shield,
             settings,
           } = data;
@@ -3742,6 +3792,7 @@ class Game {
           entity.setRing2(ring2);
           entity.setAuras(auras);
           entity.setCape(cape);
+          entity.setPet(pet);
           entity.setShield(shield);
           entity.setSettings(settings);
           entity.setPartyId(partyId);
@@ -3868,6 +3919,8 @@ class Game {
       self.client.onDespawnEntity(function (entityId) {
         var entity = self.getEntityById(entityId);
 
+        console.log("~~~~onDespawnEntity - entityId", entityId, entity?.id);
+
         if (entity) {
           console.info("Despawning " + Types.getKindAsString(entity.kind) + " (" + entity.id + ")");
 
@@ -3883,6 +3936,8 @@ class Game {
             }
           }
 
+          console.log("~~~~~entity.id", entity.id, entity instanceof Character);
+
           if (entity instanceof Item) {
             self.removeItem(entity);
           } else if (entity instanceof Spell) {
@@ -3894,6 +3949,7 @@ class Game {
               }
             });
             if (!entity.isDead) {
+              console.log("~~~~die!?");
               entity.die();
             }
           } else if (entity instanceof Chest) {

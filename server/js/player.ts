@@ -20,6 +20,7 @@ import Formulas from "./formulas";
 import Messages from "./message";
 import Npc from "./npc";
 import { enqueueSendPayout } from "./payout";
+import Pet from "./pet";
 import { PromiseQueue } from "./promise-queue";
 import { Sentry } from "./sentry";
 import { purchase } from "./store/purchase";
@@ -128,6 +129,7 @@ class Player extends Character {
   capeSaturate: number;
   capeContrast: number;
   capeBrightness: number;
+  petEntity: Pet;
   pet: string;
   petKind: number;
   petLevel: number;
@@ -1240,6 +1242,10 @@ class Player extends Character {
 
           self.zone_callback();
 
+          if (self.petEntity) {
+            self.server.moveEntity(self.petEntity, x, y);
+          }
+
           // @NOTE Make sure every mobs disengage
           self.server.handlePlayerVanish(self);
           // self.server.pushRelevantEntityListTo(self);
@@ -2053,7 +2059,7 @@ class Player extends Character {
       const bonus = this.generateRandomCapeBonus(uniqueChances);
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
-    } else if (Types.isPet(kind)) {
+    } else if (Types.isPetItem(kind)) {
       // @TODO Set element bonus per random pet type?
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify([]) };
     } else if (Types.isRing(kind) || Types.isAmulet(kind) || Types.isJewel(kind)) {
@@ -2264,6 +2270,7 @@ class Player extends Character {
       auras: this.auras,
       partyId: this.partyId,
       cape: this.cape ? `${this.cape}${toDb(this.capeLevel)}${toDb(this.capeBonus)}` : null,
+      pet: this.pet ? `${this.pet}${toDb(this.petLevel)}${toDb(this.petBonus)}` : null,
       shield: this.shield
         ? `${this.shield}:${this.shieldLevel}${toDb(this.shieldBonus)}${toDb(this.shieldSocket)}${toDb(
             this.defenseSkill,
@@ -2859,6 +2866,18 @@ class Player extends Character {
       const kind = Types.getKindFromString(item);
       this.databaseHandler.equipPet(this.name, item, level, bonus);
       this.equipPet(item, kind, level, bonus);
+
+      // @TODO mak pet item kind to PET character
+      if (this.pet) {
+        const { id, x, y } = this;
+        this.petEntity = new Pet("9" + id, "pet", Types.Entities.PET_DINO, x, y);
+        this.server.addEntity(this.petEntity);
+      } else {
+        if (this.petEntity) {
+          console.log("~~~~DESPAWN!?");
+          this.server.despawn(this.petEntity);
+        }
+      }
     } else if (type === "shield") {
       this.databaseHandler.equipShield(this.name, item, level, bonus, socket, skill);
       this.equipShield(item, Types.getKindFromString(item), level, bonus, socket, skill);
@@ -3442,6 +3461,12 @@ class Player extends Character {
       this.hasNft = !!achievement[ACHIEVEMENT_NFT_INDEX];
       this.hasWing = !!achievement[ACHIEVEMENT_WING_INDEX];
       this.hasCrystal = !!achievement[ACHIEVEMENT_CRYSTAL_INDEX];
+
+      if (this.pet) {
+        const { id } = this;
+        this.petEntity = new Pet("9" + id, "pet", Types.Entities.PET_DINO, x, y);
+        this.server.addEntity(this.petEntity);
+      }
 
       this.send([
         Types.Messages.WELCOME,

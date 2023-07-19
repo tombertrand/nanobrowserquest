@@ -1335,14 +1335,16 @@ class Renderer {
     this.frameCount++;
 
     //this.drawText("FPS: " + this.realFPS + " / " + this.maxFPS, 30, 30, false);
-    this.drawText("FPS: " + this.realFPS, 30, 30, false);
+    this.drawText("FPS: " + this.realFPS, 20, 20, false);
   }
 
   drawDebugInfo() {
     if (this.isDebugInfoVisible) {
       this.drawFPS();
-      // this.drawText("A: " + this.animatedTileCount, 100, 30, false);
-      // this.drawText("H: " + this.highTileCount, 140, 30, false);
+      this.drawText("A: " + this.animatedTileCount, 20, 40, false);
+      this.drawText("H: " + this.highTileCount, 60, 40, false);
+      this.drawText("X: " + this.game.player.gridX, 20, 60, false);
+      this.drawText("Y: " + this.game.player.gridY, 60, 60, false);
     }
   }
 

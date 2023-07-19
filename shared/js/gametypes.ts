@@ -80,6 +80,11 @@ export const Types: any = {
   Entities: {
     WARRIOR: 1,
 
+    // PETS
+    PET_DINO: 357,
+    PETEGG: 358,
+    PETDINO: 359,
+
     // Mobs
     RAT: 2,
     CRAB: 3,
@@ -309,10 +314,6 @@ export const Types: any = {
     AMULETEYE: 320,
     AMULETGREED: 322,
 
-    // PETS
-    PETEGG: 357,
-    PETDINO: 358,
-
     // NPCs
     GUARD: 40,
     KING: 41,
@@ -442,8 +443,9 @@ export const Types: any = {
     Q: 81,
     C: 67,
     U: 85,
-    I: 73,
+    F: 70,
     H: 72,
+    I: 73,
     M: 77,
     O: 79,
     P: 80,
@@ -700,6 +702,11 @@ Types.getArtifactNameFromKind = function (kind: number) {
 export const kinds = {
   warrior: [Types.Entities.WARRIOR, "player"],
 
+  // Pets
+  pet_dino: [Types.Entities.PET_DINO, "pet"],
+  petegg: [Types.Entities.PETEGG, "object", "Pet Egg"],
+  petdino: [Types.Entities.PETDINO, "object", "Dinosaur Pet"],
+
   // ID, exp, level
   wizard: [Types.Entities.WIZARD, "mob", 7, 1],
   rat: [Types.Entities.RAT, "mob", 3, 2],
@@ -900,10 +907,6 @@ export const kinds = {
   chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
   chestred: [Types.Entities.CHESTRED, "chest", "Red Chest", 60],
   chestpurple: [Types.Entities.CHESTPURPLE, "chest", "Purple Chest", 70],
-
-  // Pets
-  petegg: [Types.Entities.PETEGG, "object", "Pet Egg"],
-  petdino: [Types.Entities.PETDINO, "object", "Dinosaur Pet"],
 
   flask: [Types.Entities.FLASK, "object"],
   rejuvenationpotion: [Types.Entities.REJUVENATIONPOTION, "object"],
@@ -1742,7 +1745,7 @@ Types.isItem = function (kind: number) {
     Types.isStone(kind) ||
     Types.isBar(kind) ||
     Types.isJewel(kind) ||
-    Types.isPet(kind) ||
+    Types.isPetItem(kind) ||
     Types.isNotStackableItem(kind) ||
     (Types.isObject(kind) && !Types.isStaticChest(kind))
   );
@@ -1780,7 +1783,7 @@ Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
       return Types.isCape(item);
     case "pet":
     case Slot.PET:
-      return Types.isPet(item);
+      return Types.isPetItem(item);
     case "shield":
     case Slot.SHIELD:
       return Types.isShield(item);
@@ -1803,7 +1806,13 @@ Types.isExpendableItem = function (kind: number) {
   return Types.isHealingItem(kind) || kind === Types.Entities.FIREFOXPOTION || kind === Types.Entities.CAKE;
 };
 
-Types.isPet = function (kindOrString: string | number) {
+Types.isPet = function (kind: number) {
+  if (!kind) return false;
+
+  return [Types.Entities.PET_DINO].includes(kind);
+};
+
+Types.isPetItem = function (kindOrString: string | number) {
   if (!kindOrString) return false;
   if (typeof kindOrString === "number") {
     return [Types.Entities.PETEGG, Types.Entities.PETDINO].includes(kindOrString);

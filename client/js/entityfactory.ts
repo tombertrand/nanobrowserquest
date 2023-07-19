@@ -4,8 +4,8 @@ import { Types } from "../../shared/js/gametypes";
 import Chest from "./chest";
 import Items from "./items";
 import Mobs from "./mobs";
-import Pets from "./pets";
 import Npcs from "./npcs";
+import Pets from "./pets";
 import Spells from "./spells";
 import Warrior from "./warrior";
 
@@ -30,6 +30,10 @@ EntityFactory.builders = [];
 
 EntityFactory.builders[Types.Entities.WARRIOR] = function (id, props) {
   return new Warrior(id, props);
+};
+
+EntityFactory.builders[Types.Entities.PET_DINO] = function (id, props) {
+  return new Pets.Dino(id, props);
 };
 
 EntityFactory.builders[Types.Entities.RAT] = function (id, props) {

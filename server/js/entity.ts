@@ -9,6 +9,8 @@ class Entity {
   y: number;
   hitPoints: number;
   maxHitPoints: number;
+  recentlyLeftGroups: string[];
+  group: string;
 
   constructor(id, type, kind, x, y) {
     this.id = parseInt(id, 10);
