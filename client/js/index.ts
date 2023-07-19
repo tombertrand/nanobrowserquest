@@ -591,14 +591,14 @@ var initGame = function () {
 
     // The following may be uncommented for debugging purposes.
     if (game.started) {
-      if (key === Types.Keys.F) {
-        game.toggleDebugInfo();
-        return;
-      }
-      if (key === Types.Keys.SPACE) {
-        game.togglePathingGrid();
-        return;
-      }
+      // if (key === Types.Keys.F) {
+      //   game.toggleDebugInfo();
+      //   return;
+      // }
+      // if (key === Types.Keys.SPACE) {
+      //   game.togglePathingGrid();
+      //   return;
+      // }
     }
 
     if (game.started && !$("#chatbox").hasClass("active")) {
