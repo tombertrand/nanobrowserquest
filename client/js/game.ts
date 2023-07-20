@@ -413,8 +413,6 @@ class Game {
     this.player.setSprite(this.getSprite(this.player.getSpriteName()));
     this.player.idle();
 
-    $("#respawn").removeClass("disabled");
-
     console.debug("Finished initPlayer");
   }
 
@@ -3314,6 +3312,7 @@ class Game {
           self.client.disable();
 
           setTimeout(function () {
+            $("#respawn").removeClass("disabled");
             self.playerdeath_callback(deductedGold);
           }, 1000);
         });
@@ -3376,7 +3375,8 @@ class Game {
         let entity = self.getEntityById(id);
 
         if (!entity) {
-          const name = ownerId ? `Pet of ${self.getEntityById(ownerId).name}` : "";
+          const owner = self.getEntityById(ownerId);
+          const name = ownerId ? `Pet of ${owner?.name}` : "";
 
           entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, bonus });
           entity.setSprite(self.getSprite(entity.getSpriteName()));
@@ -5365,6 +5365,7 @@ class Game {
       character.setGridPosition(x, y);
 
       this.registerEntityPosition(character);
+
       this.assignBubbleTo(character);
     } else {
       console.debug("Teleport out of bounds: " + x + ", " + y);

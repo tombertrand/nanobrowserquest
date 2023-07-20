@@ -259,28 +259,25 @@ class Renderer {
     }
   }
 
-  drawOccupiedCells() {
-    var positions = this.game.entityGrid;
+  drawPathingCells() {
+    var pathingGrid = this.game.pathingGrid;
+    var entityGrid = this.game.entityGrid;
 
-    if (positions) {
-      for (var i = 0; i < positions.length; i += 1) {
-        for (var j = 0; j < positions[i].length; j += 1) {
-          if (!_.isNull(positions[i][j])) {
-            this.drawCellHighlight(i, j, "rgba(50, 50, 255, 0.5)");
+    if (pathingGrid && this.game.debug && this.game.debugPathing) {
+      for (var y = 0; y < pathingGrid.length; y += 1) {
+        for (var x = 0; x < pathingGrid[y].length; x += 1) {
+          if (pathingGrid[y][x] === 1 && this.game.camera.isVisiblePosition(x, y)) {
+            this.drawCellHighlight(x, y, "rgba(50, 50, 255, 0.5)");
           }
         }
       }
     }
-  }
 
-  drawPathingCells() {
-    var grid = this.game.pathingGrid;
-
-    if (grid && this.game.debug && this.game.debugPathing) {
-      for (var y = 0; y < grid.length; y += 1) {
-        for (var x = 0; x < grid[y].length; x += 1) {
-          if (grid[y][x] === 1 && this.game.camera.isVisiblePosition(x, y)) {
-            this.drawCellHighlight(x, y, "rgba(50, 50, 255, 0.5)");
+    if (entityGrid && this.game.debug && this.game.debugPathing) {
+      for (var y = 0; y < entityGrid.length; y += 1) {
+        for (var x = 0; x < entityGrid[y].length; x += 1) {
+          if (this.game.camera.isVisiblePosition(x, y) && Object.keys(entityGrid[y][x]).length) {
+            this.drawCellHighlight(x, y, "rgba(255, 255, 0, 0.5)");
           }
         }
       }
@@ -1340,8 +1337,10 @@ class Renderer {
       this.drawFPS();
       this.drawText("A: " + this.animatedTileCount, 20, 40, false);
       this.drawText("H: " + this.highTileCount, 80, 40, false);
-      this.drawText("X: " + this.game.player.gridX, 20, 60, false);
-      this.drawText("Y: " + this.game.player.gridY, 80, 60, false);
+      if (this.game.player) {
+        this.drawText("X: " + this.game.player.gridX, 20, 60, false);
+        this.drawText("Y: " + this.game.player.gridY, 80, 60, false);
+      }
     }
   }
 
@@ -1527,7 +1526,6 @@ class Renderer {
       this.drawTargetCell();
     }
 
-    //this.drawOccupiedCells();
     this.drawPathingCells();
     this.drawEntities();
     this.drawCombatInfo();

@@ -557,11 +557,11 @@ var initGame = function () {
 
   $("#respawn").on("click", function () {
     if ($("#respawn").hasClass("disabled")) return;
+    $("#respawn").addClass("disabled");
 
     game.audioManager.playSound("revive");
     game.respawn();
     $("body").removeClass("death");
-    $("#respawn").addClass("disabled");
   });
 
   $(document).mousemove(function (event) {
