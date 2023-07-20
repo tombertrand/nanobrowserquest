@@ -226,6 +226,7 @@ class Game {
   slotSocketCount: number | null;
   cursorOverSocket: number | null;
   isPanelOpened: boolean;
+  isDragStarted: boolean;
 
   constructor(app) {
     this.app = app;
@@ -261,6 +262,7 @@ class Game {
     this.showHealthAboveBars = false;
     this.confirmedSoldItemToMerchant = null;
     this.isPanelOpened = false;
+    this.isDragStarted = false;
 
     this.renderer = null;
     this.updater = null;
@@ -1259,6 +1261,7 @@ class Game {
       containment: "#canvasborder",
       drag() {},
       start() {
+        self.isDragStarted = true;
         $(document).tooltip("disable");
         $(this).parent().addClass("ui-droppable-origin");
 
@@ -1305,7 +1308,10 @@ class Game {
   }
 
   destroyDraggable() {
-    $(".item-draggable.ui-draggable").draggable("destroy");
+    if (this.isDragStarted) {
+      $(".item-draggable.ui-draggable").draggable("destroy");
+      this.isDragStarted = false;
+    }
   }
 
   getIconPath(spriteName: string, level?: number) {
@@ -3184,7 +3190,7 @@ class Game {
             }
 
             if (dest.x === self.deathAngelLevelPortalCoords.x && dest.y === self.deathAngelLevelPortalCoords.y) {
-              self.client.sendTeleport(dest.x, dest.y);
+              self.client.sendTeleport(dest.x, dest.y, self.player.orientation);
               return;
             }
           }
@@ -3212,7 +3218,7 @@ class Game {
           self.player.idle();
 
           if (!isTeleportSent) {
-            self.client.sendTeleport(dest.x, desty);
+            self.client.sendTeleport(dest.x, desty, self.player.orientation);
           }
 
           if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
@@ -3412,6 +3418,8 @@ class Game {
             // });
           });
         } else {
+          self.unregisterEntityPosition(entity);
+
           console.debug("PET " + entity.id + " already exists. Don't respawn, only relocate.");
           entity.setGridPosition(x, y);
           self.registerEntityPosition(entity);
@@ -3440,8 +3448,9 @@ class Game {
         }
 
         let entity = self.getEntityById(id);
+        let isEntityExist = !!entity;
 
-        if (!entity) {
+        if (!isEntityExist) {
           try {
             if (id !== self.playerId) {
               entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
@@ -3641,7 +3650,15 @@ class Game {
                         attacker.follow(entity);
                       }
                     });
+
+                    if (entity.spawnCharacterCoords) {
+                      entity.gridX = entity.spawnCharacterCoords.x;
+                      entity.gridY = entity.spawnCharacterCoords.y;
+                    }
+
                     self.registerEntityPosition(entity);
+
+                    entity.spawnCharacterCoords = null;
                   });
 
                   entity.onRequestPath(function (x, y) {
@@ -3816,11 +3833,14 @@ class Game {
 
           // @NOTE Teleport and onStopPathing re-writes the entity position
           // but this should be the source of truth and happend after
-          setTimeout(() => {
-            entity.setGridPosition(x, y);
-            entity.setOrientation(orientation);
-            self.registerEntityPosition(entity);
-          }, 50);
+
+          entity.setGridPosition(x, y);
+          entity.setOrientation(orientation);
+          self.registerEntityPosition(entity);
+
+          if (isEntityExist) {
+            entity.spawnCharacterCoords = { x, y };
+          }
         }
 
         if (entity instanceof Mob) {
@@ -4775,8 +4795,9 @@ class Game {
             self.makeCharacterTeleportTo(entity, x, y);
 
             // NOTE: If using teleport, have the pet to teleport as well
-            if (entity.petId) {
-              self.makeCharacterTeleportTo(self.getEntityById(entity.petId), x, y);
+            const pet = entity.petId ? self.getEntityById(entity.petId) : null;
+            if (pet) {
+              self.makeCharacterTeleportTo(pet, x, y);
             }
 
             entity.setOrientation(currentOrientation);
@@ -5361,11 +5382,9 @@ class Game {
   makeCharacterTeleportTo(character, x, y) {
     if (!this.map.isOutOfBounds(x, y)) {
       this.unregisterEntityPosition(character);
-
       character.setGridPosition(x, y);
 
       this.registerEntityPosition(character);
-
       this.assignBubbleTo(character);
     } else {
       console.debug("Teleport out of bounds: " + x + ", " + y);
@@ -6115,11 +6134,7 @@ class Game {
    * Toggles the visibility of the pathing grid for debugging purposes.
    */
   togglePathingGrid() {
-    if (this.debugPathing) {
-      this.debugPathing = false;
-    } else {
-      this.debugPathing = true;
-    }
+    this.debugPathing = !this.debugPathing;
   }
 
   /**

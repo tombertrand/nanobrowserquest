@@ -87,6 +87,7 @@ class Character extends Entity {
   type: "mob" | "player" | "npc" | "spell" | "pet";
   curseId: number;
   cursedTimeout: NodeJS.Timeout;
+  spawnCharacterCoords: { x: number; y: number };
 
   constructor(id, kind) {
     super(id, kind);
@@ -350,9 +351,8 @@ class Character extends Entity {
       path.pop();
     }
 
-    if (this.start_pathing_callback) {
-      this.start_pathing_callback(path);
-    }
+    this.start_pathing_callback?.(path);
+
     this.nextStep();
   }
 
@@ -389,9 +389,7 @@ class Character extends Entity {
     let path;
 
     if (this.isMoving()) {
-      if (this.before_step_callback) {
-        this.before_step_callback();
-      }
+      this.before_step_callback?.();
 
       this.updatePositionOnGrid();
       this.checkAggro();
@@ -405,9 +403,8 @@ class Character extends Entity {
           this.nextGridX = this.path[this.step + 1][0];
           this.nextGridY = this.path[this.step + 1][1];
         }
-        if (this.step_callback) {
-          this.step_callback();
-        }
+
+        this.step_callback?.();
 
         if (this.raisingMode || (this.castRange && this.path.length - this.step < this.castRange)) {
           if (!this.raisingMode) {
@@ -439,9 +436,7 @@ class Character extends Entity {
 
         this.idle();
 
-        if (this.stop_pathing_callback) {
-          this.stop_pathing_callback({ x: this.gridX, y: this.gridY });
-        }
+        this.stop_pathing_callback?.({ x: this.gridX, y: this.gridY });
       }
     }
   }

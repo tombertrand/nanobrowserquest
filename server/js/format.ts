@@ -21,7 +21,7 @@ class FormatChecker {
       (this.formats[Types.Messages.CHAT] = ["s"]),
       (this.formats[Types.Messages.ACCOUNT] = ["s"]),
       (this.formats[Types.Messages.LOOT] = ["n"]),
-      (this.formats[Types.Messages.TELEPORT] = ["n", "n"]),
+      (this.formats[Types.Messages.TELEPORT] = ["n", "n", "n"]),
       (this.formats[Types.Messages.ZONE] = []),
       (this.formats[Types.Messages.OPEN] = ["n"]),
       (this.formats[Types.Messages.CHECK] = ["n"]),

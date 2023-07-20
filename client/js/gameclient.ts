@@ -1310,8 +1310,8 @@ class GameClient {
     this.sendMessage([Types.Messages.LOOT, item.id]);
   }
 
-  sendTeleport(x, y) {
-    this.sendMessage([Types.Messages.TELEPORT, x, y]);
+  sendTeleport(x, y, orientation) {
+    this.sendMessage([Types.Messages.TELEPORT, x, y, orientation]);
   }
 
   sendZone() {

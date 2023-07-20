@@ -1195,6 +1195,9 @@ class Player extends Character {
 
         var x = message[1];
         var y = message[2];
+        var orientation = message[3];
+
+        self.orientation = orientation;
 
         // @NOTE Handle the /town command
         if (x >= 33 && x <= 39 && y >= 208 && y <= 211) {

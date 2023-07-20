@@ -857,6 +857,9 @@ class App {
 
   toggleSettings() {
     const isActive = $("#settings").hasClass("active");
+    if (isActive) {
+      $(document.activeElement).blur();
+    }
     this.hideWindows();
     $("#settings").toggleClass("active", !isActive);
 

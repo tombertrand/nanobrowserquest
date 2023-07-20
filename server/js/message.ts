@@ -275,7 +275,7 @@ Messages.Chat = class Message {
 Messages.Teleport = class Message {
   constructor(private entity) {}
   serialize() {
-    return [Types.Messages.TELEPORT, this.entity.id, this.entity.x, this.entity.y];
+    return [Types.Messages.TELEPORT, this.entity.id, this.entity.x, this.entity.y, this.entity.orientation];
   }
 };
 

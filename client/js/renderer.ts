@@ -448,7 +448,7 @@ class Renderer {
   }
 
   drawCape(entity) {
-    if (!entity.cape) return;
+    if (!entity.cape || entity.isDead) return;
 
     var sprite = this.game.getSprite("cape");
     var anim = entity.currentAnimation;
@@ -498,7 +498,7 @@ class Renderer {
   }
 
   drawShield(entity) {
-    if (!entity.shieldName) return;
+    if (!entity.shieldName || entity.isDead) return;
 
     var sprite = this.game.getSprite(entity.shieldName);
     var anim = entity.currentAnimation;
@@ -537,6 +537,8 @@ class Renderer {
   }
 
   drawHelm(entity) {
+    if (entity.isDead) return;
+
     var sprite = this.game.getSprite(entity.helmName);
     var anim = entity.currentAnimation;
     var spriteImage = sprite.image;
