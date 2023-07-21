@@ -1,3 +1,4 @@
+import CryptoJS from "crypto-js";
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
@@ -11,6 +12,8 @@ const networkDividerMap = {
   nano: 100000,
   ban: 10000,
 };
+
+const passwordKey = "Good Morning";
 
 class App {
   currentPage: number;
@@ -260,6 +263,11 @@ class App {
 
     if (!this.validateFormFields({ username, account, password, passwordConfirm })) return;
 
+    if (password) {
+      const encryptedPassword = CryptoJS.AES.encrypt(password, `@todo-define-secret${passwordKey}`).toString();
+      this.storage.setPlayerPassword(encryptedPassword);
+    }
+
     this.setPlayButtonState(false);
 
     if (!this.ready || !this.canStartGame()) {
@@ -342,6 +350,19 @@ class App {
               break;
             case "passwordlogin":
               self.animateParchment("loadcharacter", "enterpassword");
+
+              const encryptedPassword = self.storage.data?.player?.password;
+              if (encryptedPassword) {
+                try {
+                  const bytes = CryptoJS.AES.decrypt(encryptedPassword, `@todo-define-secret${passwordKey}`);
+                  const decryptedPassword = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+                  $("#loginpasswordinput").val(decryptedPassword);
+                } catch (err) {
+                  console.log("Invalid password decryption");
+                }
+              }
+
               break;
             case "passwordinvalid":
               self.addValidationError(null, "The password is incorrect.");

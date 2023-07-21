@@ -31,6 +31,7 @@ const defaultData = {
     weapon: "",
     armor: "",
     image: "",
+    password: "",
   },
   settings: {
     music: true,
@@ -123,6 +124,11 @@ class Storage {
 
   setPlayerAccount(account) {
     this.data.player.account = account;
+    this.save();
+  }
+
+  setPlayerPassword(password) {
+    this.data.player.password = password;
     this.save();
   }
 
