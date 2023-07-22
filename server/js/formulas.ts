@@ -23,28 +23,21 @@ Formulas.minMaxDamage = function ({
   lightningDamage,
   coldDamage,
   poisonDamage,
-  pierceDamage,
   partyAttackDamage,
   magicResistance = 0,
   flameResistance = 0,
   lightningResistance = 0,
   coldResistance = 0,
   poisonResistance = 0,
-  // lowerMagicResistance = 0,
-  // lowerFlameResistance = 0,
-  // lowerLightningResistance = 0,
-  // lowerColdResistance = 0,
-  // lowerPoisonResistance = 0,
 }) {
   let attackDamage = Math.ceil(
     (Types.getWeaponDamage(weapon, weaponLevel, isWeaponUnique, isWeaponSuperior) + attackDamageBonus) * 1.2 +
       playerLevel / 2,
   );
 
-  const baseDamage =
-    attackDamage +
-    drainLife +
-    pierceDamage +
+  const baseDamage = attackDamage + drainLife;
+
+  const elementDamage =
     Formulas.resistanceDamage(magicDamage, magicResistance) +
     Formulas.resistanceDamage(flameDamage, flameResistance) +
     Formulas.resistanceDamage(lightningDamage, lightningResistance) +
@@ -68,19 +61,20 @@ Formulas.minMaxDamage = function ({
     min,
     max,
     attackDamage,
+    elementDamage,
   };
 };
 
 Formulas.dmg = function (stats) {
-  const { min, max, attackDamage } = Formulas.minMaxDamage(stats);
+  const { min, max, attackDamage, elementDamage } = Formulas.minMaxDamage(stats);
   let dmg = randomInt(min, max);
 
   //console.log("abs: "+absorbed+"   dealt: "+ dealt+"   dmg: "+ (dealt - absorbed));
-  if (dmg <= 0) {
+  if (dmg + elementDamage <= 0) {
     dmg = randomInt(0, 3);
-    return { dmg, attackDamage: dmg };
+    return { dmg, attackDamage: dmg, elementDamage };
   } else {
-    return { dmg, attackDamage };
+    return { dmg, attackDamage, elementDamage };
   }
 };
 
