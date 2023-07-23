@@ -166,6 +166,7 @@ class Mob extends Character {
   handleRandomResistances() {
     if (
       [
+        Types.Entities.BOSS,
         Types.Entities.RAT3,
         Types.Entities.SNAKE3,
         Types.Entities.SNAKE4,
@@ -180,6 +181,7 @@ class Mob extends Character {
       this.assignRandomResistances(1);
     } else if (
       [
+        Types.Entities.NECROMANCER,
         Types.Entities.GHOST,
         Types.Entities.SKELETONTEMPLAR,
         Types.Entities.SKELETONTEMPLAR2,

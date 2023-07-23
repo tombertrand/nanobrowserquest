@@ -79,7 +79,7 @@ Formulas.dmg = function (stats) {
 };
 
 Formulas.mobDefense = function ({ armorLevel }) {
-  const defense = armorLevel ? Math.floor(armorLevel * randomInt(2, 4)) : 0;
+  const defense = armorLevel ? Math.round(armorLevel * randomInt(1.75, 3.5)) : 0;
 
   return defense;
 };

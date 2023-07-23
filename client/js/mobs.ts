@@ -616,7 +616,7 @@ export const Mobs = {
       this.idleSpeed = 400;
       this.walkSpeed = 100;
       this.shadowOffsetY = 1;
-      this.aggroRange = 2;
+      this.aggroRange = 4;
       this.setAttackRate(1500);
     }
   },
@@ -629,7 +629,7 @@ export const Mobs = {
       this.idleSpeed = 400;
       this.walkSpeed = 100;
       this.shadowOffsetY = 1;
-      this.aggroRange = 2;
+      this.aggroRange = 4;
       this.setAttackRate(1200);
     }
   },
@@ -642,7 +642,7 @@ export const Mobs = {
       this.idleSpeed = 400;
       this.walkSpeed = 100;
       this.shadowOffsetY = 1;
-      this.aggroRange = 2;
+      this.aggroRange = 4;
       this.setAttackRate(1200);
     }
   },

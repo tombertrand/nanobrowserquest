@@ -669,10 +669,6 @@ class Player extends Character {
             }
           }
 
-          if (mob.type === "mob") {
-            dmg = dmg + elementDamage;
-          }
-
           if (self.bonus.freezeChance && !Types.isBoss(mob.kind)) {
             let freezeChance = self.bonus.freezeChance;
             if (mob.type === "player") {
@@ -715,20 +711,22 @@ class Player extends Character {
             defense = Formulas.mobDefense({ armorLevel: mob.armorLevel });
 
             dmg = defense > dmg ? 0 : dmg - defense;
+            dmg += elementDamage;
+            dmg += self.bonus.pierceDamage;
 
             if (Types.isBoss(mob.kind)) {
               dmg = self.server.handleBossDmg({ dmg, entity: mob, player: self });
             }
-
-            // @NOTE Only Pierce dmg bypasses the defense
-            dmg += self.bonus.pierceDamage;
 
             // Minimum Hit dmg (can't be 0)
             if (!dmg) {
               dmg = randomInt(3, 5);
             }
           } else if (mob.type === "player") {
-            let pierceDamage = Math.abs(mob.bonus.absorbedDamage - self.bonus.pierceDamage);
+            let pierceDamage = self.bonus.pierceDamage - mob.bonus.absorbedDamage;
+            if (pierceDamage < 0) {
+              pierceDamage = 0;
+            }
 
             ({ dmg, isBlocked } = mob.handleHurtDmg(this, dmg, pierceDamage, elementDamage));
           }
