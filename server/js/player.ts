@@ -638,7 +638,7 @@ class Player extends Character {
 
           const resistances: Resistances = Types.getResistance(mob, self);
 
-          let { dmg, attackDamage } = Formulas.dmg({
+          let { dmg, attackDamage, elementDamage } = Formulas.dmg({
             weapon: self.weapon,
             weaponLevel: self.weaponLevel,
             playerLevel: self.level,
@@ -651,14 +651,15 @@ class Player extends Character {
             lightningDamage: self.bonus.lightningDamage,
             coldDamage: self.bonus.coldDamage,
             poisonDamage: self.bonus.poisonDamage,
-            pierceDamage: self.bonus.pierceDamage,
             partyAttackDamage: self.partyBonus.attackDamage,
             ...resistances,
           });
 
-          if (mob.type === "mob" && mob.enchants.includes("stoneskin")) {
-            dmg = Math.round(attackDamage * 0.8) + dmg - attackDamage;
-            attackDamage = Math.round(attackDamage * 0.8);
+          if (mob.type === "mob") {
+            if (mob.enchants.includes("stoneskin")) {
+              dmg = Math.round(attackDamage * 0.8) + dmg - attackDamage;
+              attackDamage = Math.round(attackDamage * 0.8);
+            }
           }
 
           if (self.bonus.criticalHit) {
@@ -710,6 +711,8 @@ class Player extends Character {
             defense = Formulas.mobDefense({ armorLevel: mob.armorLevel });
 
             dmg = defense > dmg ? 0 : dmg - defense;
+            dmg += elementDamage;
+            dmg += self.bonus.pierceDamage;
 
             if (Types.isBoss(mob.kind)) {
               dmg = self.server.handleBossDmg({ dmg, entity: mob, player: self });
@@ -720,7 +723,12 @@ class Player extends Character {
               dmg = randomInt(3, 5);
             }
           } else if (mob.type === "player") {
-            ({ dmg, isBlocked } = mob.handleHurtDmg(this, dmg));
+            let pierceDamage = self.bonus.pierceDamage - mob.bonus.absorbedDamage;
+            if (pierceDamage < 0) {
+              pierceDamage = 0;
+            }
+
+            ({ dmg, isBlocked } = mob.handleHurtDmg(this, dmg, pierceDamage, elementDamage));
           }
 
           if (mob?.type === "mob" && mob?.receiveDamage) {
@@ -2301,7 +2309,7 @@ class Player extends Character {
     });
   }
 
-  handleHurtDmg(mob, rawDmg: number) {
+  handleHurtDmg(mob, rawDmg: number, pierceDamage: number = 0, elementDamage: number = 0) {
     let isBlocked = false;
     let lightningDamage = 0;
 
@@ -2340,6 +2348,9 @@ class Player extends Character {
     }
 
     let dmg = defense > rawDmg ? 0 : rawDmg - defense;
+
+    // @NOTE Pierce dmg bypasses the defense
+    dmg += pierceDamage + elementDamage;
 
     // Minimum Hurt dmg (can't be 0)
     if (!dmg) {

@@ -34,6 +34,16 @@ export const mobEnchant: { [key: string]: Enchant[] } = {
 };
 
 export const mobResistance = {
+  boss: {
+    magicResistance: 50,
+    flameResistance: 50,
+  },
+  necromancer: {
+    magicResistance: 50,
+    flameResistance: 50,
+    lightningResistance: 50,
+    coldResistance: 100,
+  },
   cowking: {
     lightningResistance: 100,
     flameResistance: 20,

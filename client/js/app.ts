@@ -680,13 +680,6 @@ class App {
             if (!percentage) return;
 
             const display = Types.resistanceToDisplayMap[type];
-
-            // percentage -=
-            //   self.game.player.bonus[`lower${_.capitalize(display)}Resistance`] +
-            //   self.game.player.bonus.lowerAllResistance;
-
-            // if (percentage <= 0) return;
-
             const prefix = percentage === 100 ? "Immuned to" : "Resistance to";
 
             htmlResistances.push(
