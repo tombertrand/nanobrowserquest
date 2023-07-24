@@ -56,6 +56,10 @@ EntityFactory.builders[Types.Entities.PET_AXOLOTL] = function (id, props) {
   return new Pets.Axolotl(id, props);
 };
 
+EntityFactory.builders[Types.Entities.PET_FOX] = function (id, props) {
+  return new Pets.Fox(id, props);
+};
+
 EntityFactory.builders[Types.Entities.RAT] = function (id, props) {
   return new Mobs.Rat(id, props);
 };
@@ -1166,6 +1170,10 @@ EntityFactory.builders[Types.Entities.PETTURTLE] = function (id) {
 
 EntityFactory.builders[Types.Entities.PETAXOLOTL] = function (id) {
   return new Items.PetAxolotl(id);
+};
+
+EntityFactory.builders[Types.Entities.PETFOX] = function (id) {
+  return new Items.PetFox(id);
 };
 
 //====== Npcs ======

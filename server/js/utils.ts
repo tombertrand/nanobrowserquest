@@ -633,12 +633,13 @@ export const generatePurpleChestItem = (): {
 };
 
 export const generateRandomPet = () => {
-  // const pets = ["petdino", "petbat", "petcat", "petdog", "petturtle", "petaxolotl"];
-  // const pets = ["petdino", "petcat"];
-
   const pets = {
-    petdino: 1,
+    petdino: 4,
+    petbat: 2,
+    // petturtle: 1,
     petcat: 5,
+    petdog: 5,
+    petaxolotl: 1,
   };
 
   const randomPet = _.shuffle(Object.keys(pets))[0];

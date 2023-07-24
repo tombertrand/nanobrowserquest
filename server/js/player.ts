@@ -2923,6 +2923,11 @@ class Player extends Character {
       this.databaseHandler.equipPet(this.name, item, level, bonus, socket, skin);
       this.equipPet(item, kind, level, bonus, socket, skin);
 
+      if (this.petEntity) {
+        this.server.despawn(this.petEntity);
+        this.petEntity = null;
+      }
+
       // @TODO mak pet item kind to PET character
       if (this.pet) {
         const { id, x, y } = this;
@@ -2936,11 +2941,6 @@ class Player extends Character {
           ownerId: id,
         });
         this.server.addEntity(this.petEntity);
-      } else {
-        if (this.petEntity) {
-          this.server.despawn(this.petEntity);
-          this.petEntity = null;
-        }
       }
     } else if (type === "shield") {
       this.databaseHandler.equipShield(this.name, item, level, bonus, socket, skill);

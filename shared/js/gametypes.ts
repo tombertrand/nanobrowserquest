@@ -92,8 +92,10 @@ export const Types: any = {
     PET_DOG: 365,
     PETTURTLE: 366,
     PET_TURTLE: 367,
-    PET_AXOLOTL: 368,
-    PETAXOLOTL: 369,
+    PETAXOLOTL: 368,
+    PET_AXOLOTL: 369,
+    PETFOX: 370,
+    PET_FOX: 371,
 
     // Mobs
     RAT: 2,
@@ -716,13 +718,11 @@ export const petKindToPetMap = {
   [Types.Entities.PETDOG]: Types.Entities.PET_DOG,
   [Types.Entities.PETTURTLE]: Types.Entities.PET_TURTLE,
   [Types.Entities.PETAXOLOTL]: Types.Entities.PET_AXOLOTL,
+  [Types.Entities.PETFOX]: Types.Entities.PET_FOX,
 };
 
 export const kinds = {
   warrior: [Types.Entities.WARRIOR, "player"],
-
-  // kind, type, level, defense
-  // beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
 
   // Pets
   pet_dino: [Types.Entities.PET_DINO, "pet"],
@@ -731,13 +731,15 @@ export const kinds = {
   pet_dog: [Types.Entities.PET_DOG, "pet"],
   pet_turtle: [Types.Entities.PET_TURTLE, "pet"],
   pet_axolotl: [Types.Entities.PET_AXOLOTL, "pet"],
+  pet_fox: [Types.Entities.PET_FOX, "pet"],
   petegg: [Types.Entities.PETEGG, "pet", "Pet Egg"],
-  petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 50],
-  petbat: [Types.Entities.PETBAT, "pet", "Bat Pet", 50],
-  petcat: [Types.Entities.PETCAT, "pet", "Cat Pet", 50],
-  petdog: [Types.Entities.PETDOG, "pet", "Dog Pet", 50],
-  petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 50],
-  petaxolotl: [Types.Entities.PETAXOLOTL, "pet", "Axolotl Pet", 50],
+  petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 48],
+  petbat: [Types.Entities.PETBAT, "pet", "Bat Pet", 48],
+  petcat: [Types.Entities.PETCAT, "pet", "Cat Pet", 48],
+  petdog: [Types.Entities.PETDOG, "pet", "Dog Pet", 48],
+  petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 48],
+  petaxolotl: [Types.Entities.PETAXOLOTL, "pet", "Axolotl Pet", 48],
+  petfox: [Types.Entities.PETFOX, "pet", "Fox Pet", 48],
 
   // ID, exp, level
   wizard: [Types.Entities.WIZARD, "mob", 7, 1],
@@ -1848,6 +1850,7 @@ Types.isPet = function (kind: number) {
     Types.Entities.PET_DOG,
     Types.Entities.PET_TURTLE,
     Types.Entities.PET_AXOLOTL,
+    Types.Entities.PET_FOX,
   ].includes(kind);
 };
 
@@ -1862,6 +1865,7 @@ Types.isPetItem = function (kindOrString: string | number) {
       Types.Entities.PETDOG,
       Types.Entities.PETTURTLE,
       Types.Entities.PETAXOLOTL,
+      Types.Entities.PETFOX,
     ].includes(kindOrString);
   } else {
     return kindOrString.startsWith("pet");

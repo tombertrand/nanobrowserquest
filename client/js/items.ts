@@ -1500,6 +1500,13 @@ var Items = {
     }
   },
 
+  PetFox: class PetFox extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETFOX, "object");
+      this.lootMessage = "You pick up a Fox Pet";
+    }
+  },
+
   Burger: class Burger extends Item {
     constructor(id) {
       super(id, Types.Entities.BURGER, "object");

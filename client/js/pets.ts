@@ -31,7 +31,7 @@ export const Pets = {
     constructor(id, props: any = {}) {
       super(id, Types.Entities.PET_BAT, props);
       this.moveSpeed = 200;
-      this.idleSpeed = 150;
+      this.idleSpeed = 100;
     }
   },
   Cat: class Cat extends Pet {
@@ -45,7 +45,7 @@ export const Pets = {
     constructor(id, props: any = {}) {
       super(id, Types.Entities.PET_DOG, props);
       this.moveSpeed = 200;
-      this.idleSpeed = 100;
+      this.idleSpeed = 175;
     }
   },
   Turtle: class Turtle extends Pet {
@@ -59,7 +59,14 @@ export const Pets = {
     constructor(id, props: any = {}) {
       super(id, Types.Entities.PET_AXOLOTL, props);
       this.moveSpeed = 200;
-      this.idleSpeed = 100;
+      this.idleSpeed = 175;
+    }
+  },
+  Fox: class Fox extends Pet {
+    constructor(id, props: any = {}) {
+      super(id, Types.Entities.PET_FOX, props);
+      this.moveSpeed = 200;
+      this.idleSpeed = 175;
     }
   },
 };
