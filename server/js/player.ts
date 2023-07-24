@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-import { kinds, Types } from "../../shared/js/gametypes";
+import { kinds, petKindToPetMap, Types } from "../../shared/js/gametypes";
 import {
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_GRIMOIRE_INDEX,
@@ -134,6 +134,8 @@ class Player extends Character {
   petKind: number;
   petLevel: number;
   petBonus: number[] | null;
+  petSocket: number[] | null;
+  petSkin: number;
   isPetUnique: boolean;
   isPetSuperior: boolean;
   pvp: boolean;
@@ -1958,7 +1960,14 @@ class Player extends Character {
       .concat(isUnique ? _.shuffle(uniqueBonus).slice(0, 1) : []);
   }
 
-  generateItem({ kind, uniqueChances = 1, superiorChances = 1, isLuckySlot = false, jewelLevel = 1 }): GeneratedItem {
+  generateItem({
+    kind,
+    uniqueChances = 1,
+    superiorChances = 1,
+    isLuckySlot = false,
+    jewelLevel = 1,
+    skin = 1,
+  }): GeneratedItem {
     let isUnique = false;
     let isSuperior = false;
     let item;
@@ -2071,8 +2080,28 @@ class Player extends Character {
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
     } else if (Types.isPetItem(kind)) {
-      // @TODO Set element bonus per random pet type?
-      item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify([]) };
+      let bonus = [];
+
+      bonus = _.shuffle(highLevelBonus).slice(0, isUnique ? 2 : 1);
+
+      // @TODO Necklace will have elemental dmg
+      //.concat(_.shuffle(elementDamage).slice(0, 1));
+
+      if (kind === Types.Entities.PETEGG) {
+        item = {
+          item: Types.getKindAsString(kind),
+          level: 1,
+        };
+      } else {
+        item = {
+          item: Types.getKindAsString(kind),
+          level: 1,
+          bonus: JSON.stringify(bonus.sort((a, b) => a - b)),
+          socket: JSON.stringify([0]),
+          // @TODO ~~~~ random skin per pet kind!
+          skin,
+        };
+      }
     } else if (Types.isRing(kind) || Types.isAmulet(kind) || Types.isJewel(kind)) {
       const randomIsUnique = random(100);
       isUnique = randomIsUnique < uniqueChances;
@@ -2289,7 +2318,9 @@ class Player extends Character {
       auras: this.auras,
       partyId: this.partyId,
       cape: this.cape ? `${this.cape}${toDb(this.capeLevel)}${toDb(capeBonus)}` : null,
-      pet: this.pet ? `${this.pet}${toDb(this.petLevel)}${toDb(this.petBonus)}` : null,
+      pet: this.pet
+        ? `${this.pet}${toDb(this.petLevel)}${toDb(this.petBonus)}${toDb(this.petSocket)}${toDb(this.petSkin)}`
+        : null,
       shield: this.shield
         ? `${this.shield}:${this.shieldLevel}${toDb(shieldBonus)}${toDb(this.shieldSocket)}${toDb(this.defenseSkill)}`
         : null,
@@ -2584,6 +2615,7 @@ class Player extends Character {
     bonus,
     socket,
     skill,
+    skin,
     type,
   }: {
     kind: number;
@@ -2591,9 +2623,10 @@ class Player extends Character {
     bonus?: number[];
     socket?: number[];
     skill?: number;
+    skin?: number;
     type?: string;
   }) {
-    return new Messages.EquipItem(this, { kind, level, bonus, socket, skill, type });
+    return new Messages.EquipItem(this, { kind, level, bonus, socket, skill, skin, type });
   }
 
   addHater(mob) {
@@ -2669,14 +2702,16 @@ class Player extends Character {
     this.isCapeSuperior = bonus?.includes(43);
   }
 
-  equipPet(pet, kind, level, rawBonus) {
+  equipPet(pet, kind, level, rawBonus, socket, skin) {
     const bonus = toArray(rawBonus);
     this.pet = pet;
     this.petKind = kind;
     this.petLevel = toNumber(level);
     this.petBonus = bonus?.filter(oneBonus => oneBonus !== 43);
+    this.petSocket = toArray(socket);
     this.isPetUnique = this.petBonus?.length >= 2;
     this.isPetSuperior = bonus?.includes(43);
+    this.petSkin = toNumber(skin);
   }
 
   equipShield(shield, kind, level, rawBonus, socket, skill) {
@@ -2858,7 +2893,7 @@ class Player extends Character {
     return Object.values(this.curse).some(percent => percent !== 0);
   }
 
-  equipItem({ item, level, bonus, socket, skill, type }) {
+  equipItem({ item, level, bonus, socket, skill, skin, type }) {
     // @NOTE safety...
     if (bonus === "null") {
       bonus = null;
@@ -2884,8 +2919,9 @@ class Player extends Character {
       this.equipCape(item, kind, level, bonus);
     } else if (type === "pet") {
       const kind = Types.getKindFromString(item);
-      this.databaseHandler.equipPet(this.name, item, level, bonus);
-      this.equipPet(item, kind, level, bonus);
+
+      this.databaseHandler.equipPet(this.name, item, level, bonus, socket, skin);
+      this.equipPet(item, kind, level, bonus, socket, skin);
 
       // @TODO mak pet item kind to PET character
       if (this.pet) {
@@ -2893,7 +2929,8 @@ class Player extends Character {
         this.petEntity = new Pet({
           id: "9" + id,
           type: "pet",
-          kind: Types.Entities.PET_DINO,
+          kind: petKindToPetMap[kind],
+          skin: this.petSkin,
           x,
           y,
           ownerId: id,
@@ -3413,8 +3450,15 @@ class Player extends Character {
         this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
       }
       if (pet) {
-        const [playerPet, playerPetLevel, playePetBonus] = pet.split(":");
-        this.equipPet(playerPet, Types.getKindFromString(playerPet), playerPetLevel, playePetBonus);
+        const [playerPet, playerPetLevel, playePetBonus, playerPetSockt, playerPetSkin] = pet.split(":");
+        this.equipPet(
+          playerPet,
+          Types.getKindFromString(playerPet),
+          playerPetLevel,
+          playePetBonus,
+          playerPetSockt,
+          playerPetSkin,
+        );
       }
       if (shield) {
         const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSocket, playerDefenseSkill] =
@@ -3491,11 +3535,13 @@ class Player extends Character {
 
       if (this.pet) {
         const { id } = this;
+        const kind = Types.getKindFromString(this.pet);
 
         this.petEntity = new Pet({
           id: "9" + id,
           type: "pet",
-          kind: Types.Entities.PET_DINO,
+          kind: petKindToPetMap[kind],
+          skin: this.petSkin,
           x,
           y,
           ownerId: id,

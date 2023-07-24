@@ -229,12 +229,13 @@ export const isValidUpgradeItems = items => {
   const isArmor = Types.isArmor(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
+  const isPet = Types.isPetItem(item);
   const isShield = Types.isShield(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);
 
   if (
-    (!isWeapon && !isHelm && !isArmor && !isBelt && !isCape && !isShield && !isRing && !isAmulet) ||
+    (!isWeapon && !isHelm && !isArmor && !isBelt && !isCape && !isPet && !isShield && !isRing && !isAmulet) ||
     parseInt(level) === 10
   ) {
     return false;
@@ -388,6 +389,7 @@ export const isValidRecipe = items => {
     chestpurple: ["chestpurple"],
     chestred: ["chestred"],
     powderquantum: ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred"],
+    petegg: ["petegg"],
   };
 
   const result = Object.entries(recipes).find(([_recipe, formulae]) => {
@@ -628,6 +630,24 @@ export const generatePurpleChestItem = (): {
     return _.shuffle(scrolls)[0];
   }
   return _.shuffle(items)[0];
+};
+
+export const generateRandomPet = () => {
+  // const pets = ["petdino", "petbat", "petcat", "petdog", "petturtle", "petaxolotl"];
+  // const pets = ["petdino", "petcat"];
+
+  const pets = {
+    petdino: 1,
+    petcat: 5,
+  };
+
+  const randomPet = _.shuffle(Object.keys(pets))[0];
+  const randomSkin = randomInt(1, pets[randomPet]);
+
+  return {
+    pet: randomPet,
+    skin: randomSkin,
+  };
 };
 
 export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {

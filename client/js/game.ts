@@ -697,7 +697,8 @@ class Game {
         const item = element.attr("data-item");
         const level = parseInt(element.attr("data-level") || "1", 10);
         const rawBonus = toArray(element.attr("data-bonus"));
-        const rawSkill = element.attr("data-skill") ? parseInt(element.attr("data-skill"), 10) : null;
+        const rawSkill = Number(element.attr("data-skill")) ? parseInt(element.attr("data-skill"), 10) : null;
+        // const skin = Number(element.attr("data-skin")) || null;
         const rawSocket = toArray(element.attr("data-socket"));
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
         const isEquippedItemSlot = Object.values(Slot).includes(slot);
@@ -949,7 +950,8 @@ class Game {
       const item1 = self.player.upgrade[0]?.item;
       if (
         self.player.upgrade.length >= 2 ||
-        (self.player.upgrade.length === 1 && (Types.isChest(item1) || item1 === "cowkinghorn" || Types.isWeapon(item1)))
+        (self.player.upgrade.length === 1 &&
+          (Types.isChest(item1) || item1 === "cowkinghorn" || item1 === "petegg" || Types.isWeapon(item1)))
       ) {
         if (!self.isUpgradeItemSent) {
           self.client.sendUpgradeItem();
@@ -1033,13 +1035,12 @@ class Game {
     const toItem = toItemEl.attr("data-item");
     const toLevel = toItemEl.attr("data-level");
     const item = fromItemEl.attr("data-item");
-    const level = parseInt(fromItemEl.attr("data-level"));
-    const quantity = parseInt(fromItemEl.attr("data-quantity")) || null;
-    const rawBonus = fromItemEl.attr("data-bonus");
+    const level = Number(fromItemEl.attr("data-level"));
+    const quantity = Number(fromItemEl.attr("data-quantity")) || null;
+    const bonus = toArray(fromItemEl.attr("data-bonus"));
     const socket = toArray(fromItemEl.attr("data-socket"));
-    const rawSkill = fromItemEl.attr("data-skill");
-    let bonus: number[];
-    let skill: number;
+    const skill = Number(fromItemEl.attr("data-skill")) || null;
+    // const skin = Number(fromItemEl.attr("data-skin")) || null;
 
     // Condition for allowing partial quantity
     if (Types.isQuantity(item) && quantity > 1 && transferedQuantity === null && !toItem) {
@@ -1084,13 +1085,6 @@ class Game {
       return;
     }
 
-    if (rawBonus) {
-      bonus = toArray(rawBonus);
-    }
-    if (rawSkill) {
-      skill = parseInt(rawSkill, 10);
-    }
-
     if (toItem) {
       if (
         Object.values(Slot).includes(fromSlot) &&
@@ -1108,7 +1102,7 @@ class Game {
       if (
         !level ||
         level !== 1 ||
-        Types.isUnique(item, rawBonus) ||
+        Types.isUnique(item, bonus) ||
         (socket && socket.length >= 4) ||
         // Superior item delete confirm
         (Array.isArray(bonus) && bonus.includes(43))
@@ -1119,7 +1113,7 @@ class Game {
       }
       fromItemEl.remove();
     } else if (toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT && !confirmed) {
-      if (!level || level !== 1 || Types.isUnique(item, rawBonus) || (socket && socket.length >= 4)) {
+      if (!level || level !== 1 || Types.isUnique(item, bonus) || (socket && socket.length >= 4)) {
         this.confirmedSoldItemToMerchant = { fromSlot, toSlot, transferedQuantity, confirmed: true };
         $("#dialog-merchant-item").dialog("open");
         return;
@@ -1314,7 +1308,7 @@ class Game {
     }
   }
 
-  getIconPath(spriteName: string, level?: number) {
+  getIconPath(spriteName: string, level?: number, skin?: number) {
     const scale = this.renderer.getScaleFactor();
 
     let suffix = "";
@@ -1322,6 +1316,8 @@ class Game {
       suffix = "7";
     } else if (spriteName === "jewelskull" && level > 2) {
       suffix = Types.getJewelSkinIndex(level);
+    } else if (skin) {
+      suffix = `-${skin}`;
     }
 
     return `img/${scale}/item-${spriteName}${suffix}.png`;
@@ -1499,7 +1495,7 @@ class Game {
         $("<div />", {
           class: `item-draggable ${Types.isUnique(player.pet, player.petBonus) ? "item-unique" : ""}`,
           css: {
-            "background-image": `url("${this.getIconPath(player.pet, player.petLevel)}")`,
+            "background-image": `url("${this.getIconPath(player.pet, player.petLevel, player.petSkin)}")`,
           },
           "data-item": player.pet,
           "data-level": player.petLevel,
@@ -1674,7 +1670,7 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
+        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-pet item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
       );
     $("#upgrade-result")
       .empty()
@@ -1751,8 +1747,9 @@ class Game {
       item,
       level,
       bonus,
-      skill,
       socket,
+      skill,
+      skin,
       requirement,
       runeword,
       amount,
@@ -1763,6 +1760,7 @@ class Game {
       level?: number;
       bonus?: string;
       skill?: any;
+      skin?: any;
       socket?: string;
       requirement?: number;
       runeword?: string;
@@ -1782,7 +1780,7 @@ class Game {
         isUnique ? "item-unique" : ""
       } ${runeword ? "item-runeword" : ""}`,
       css: {
-        "background-image": `url("${this.getIconPath(item, level)}")`,
+        "background-image": `url("${this.getIconPath(item, level, skin)}")`,
         position: "relative",
       },
       "data-item": item,
@@ -1791,6 +1789,7 @@ class Game {
       ...(bonus ? { "data-bonus": toString(bonus) } : null),
       ...(socket ? { "data-socket": toString(socket) } : null),
       ...(skill ? { "data-skill": skill } : null),
+      ...(skin ? { "data-skin": skin } : null),
       ...(requirement ? { "data-requirement": requirement } : null),
       ...(amount ? { "data-amount": amount } : null),
       click: event => {
@@ -1902,7 +1901,7 @@ class Game {
     let runeUpgrade = "";
     let rune = "";
 
-    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, skill, socket, isUnique }) => {
+    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, socket, skill, skin, isUnique }) => {
       if (slot === 0 && level) {
         itemLevel = level;
         itemName = item;
@@ -1935,7 +1934,7 @@ class Game {
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")
-        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill, socket }));
+        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, socket, skill, skin }));
     });
 
     if (rune) {
@@ -3376,7 +3375,9 @@ class Game {
       });
 
       self.client.onSpawnPet(function (data) {
-        const { id, kind, x, y, orientation, resistances, bonus, ownerId } = data;
+        const { id, kind, x, y, orientation, resistances, bonus, ownerId, skin } = data;
+
+        console.log("~~~~onSpawnPet - data", data);
 
         let entity = self.getEntityById(id);
 
@@ -3385,7 +3386,8 @@ class Game {
           const name = ownerId ? `Pet of ${owner?.name}` : "";
 
           entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, bonus });
-          entity.setSprite(self.getSprite(entity.getSpriteName()));
+
+          entity.setSprite(self.getSprite(entity.getSpriteName(skin)));
 
           entity.setGridPosition(x, y);
           entity.setOrientation(orientation);

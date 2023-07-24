@@ -206,7 +206,7 @@ class Character extends Entity {
   // }
 
   animate(animation, speed, count = 0, onEndCount?: () => void) {
-    var oriented = ["atk", "atk2", "walk", "idle", "raise", "raise2", "unraise"];
+    var oriented = ["atk", "atk2", "walk", "idle", "raise", "raise2", "unraise", "sit", "liedown", "run", "dash"];
 
     if (!(this.currentAnimation && this.currentAnimation.name === "death")) {
       // don't change animation if the character is dying
@@ -290,6 +290,22 @@ class Character extends Entity {
 
   unraise() {
     this.animate("unraise", this.raiseSpeed, 1);
+  }
+
+  sit() {
+    this.animate("sit", this.idleSpeed, 1);
+  }
+
+  liedown() {
+    this.animate("liedown", this.idleSpeed, 1);
+  }
+
+  run() {
+    this.animate("run", this.idleSpeed);
+  }
+
+  dash() {
+    this.animate("dash", this.idleSpeed);
   }
 
   moveTo_(x, y) {

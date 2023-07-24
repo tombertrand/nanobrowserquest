@@ -16,6 +16,7 @@ import necromancer from "../sprites/necromancer.json";
 import cow from "../sprites/cow.json";
 import cake from "../sprites/item-cake.json";
 import pet_dino from "../sprites/pet_dino.json";
+import pet_cat from "../sprites/pet_cat.json";
 import cowking from "../sprites/cowking.json";
 import minotaur from "../sprites/minotaur.json";
 import golem from "../sprites/golem.json";
@@ -315,7 +316,12 @@ const sprites = {
   "deathangel-spell-lightning": deathangelSpell,
   "deathangel-spell-cold": deathangelSpell,
   "deathangel-spell-poison": deathangelSpell,
-  pet_dino,
+  "pet_dino-1": pet_dino,
+  "pet_cat-1": pet_cat,
+  "pet_cat-2": pet_cat,
+  "pet_cat-3": pet_cat,
+  "pet_cat-4": pet_cat,
+  "pet_cat-5": pet_cat,
   goldenarmor,
   bluearmor,
   hornedarmor,
@@ -477,6 +483,11 @@ const sprites = {
   "item-iou": item,
   "item-petegg": item,
   "item-petdino": item,
+  "item-petbat": item,
+  "item-petcat": item,
+  "item-petdog": item,
+  "item-petturtle": item,
+  "item-petaxolotl": item,
   "item-skeletonkingcage": item,
   "item-necromancerheart": item,
   "item-cowkinghorn": item,

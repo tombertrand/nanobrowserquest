@@ -1,4 +1,4 @@
-type Recipes = "cowLevel" | "minotaurLevel" | ChestType | "powderquantum";
+type Recipes = "cowLevel" | "minotaurLevel" | ChestType | "powderquantum" | "petegg";
 type ChatType = "world" | "zone" | "party" | "event" | "info" | "loot";
 type Network = "nano" | "ban";
 type ItemClass = "low" | "medium" | "high" | "legendary";
@@ -18,10 +18,11 @@ type GeneratedItem = {
   level?: number;
   quantity?: number;
   bonus?: string;
+  socket?: string;
   skill?: number;
+  skin?: number;
   isUnique?: boolean;
   runeName?: string;
-  socket?: string;
   jewelLevel?: number;
 };
 

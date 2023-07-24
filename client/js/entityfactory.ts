@@ -36,6 +36,26 @@ EntityFactory.builders[Types.Entities.PET_DINO] = function (id, props) {
   return new Pets.Dino(id, props);
 };
 
+EntityFactory.builders[Types.Entities.PET_BAT] = function (id, props) {
+  return new Pets.Bat(id, props);
+};
+
+EntityFactory.builders[Types.Entities.PET_CAT] = function (id, props) {
+  return new Pets.Cat(id, props);
+};
+
+EntityFactory.builders[Types.Entities.PET_DOG] = function (id, props) {
+  return new Pets.Dog(id, props);
+};
+
+EntityFactory.builders[Types.Entities.PET_TURTLE] = function (id, props) {
+  return new Pets.Turtle(id, props);
+};
+
+EntityFactory.builders[Types.Entities.PET_AXOLOTL] = function (id, props) {
+  return new Pets.Axolotl(id, props);
+};
+
 EntityFactory.builders[Types.Entities.RAT] = function (id, props) {
   return new Mobs.Rat(id, props);
 };
@@ -1126,6 +1146,26 @@ EntityFactory.builders[Types.Entities.PETEGG] = function (id) {
 
 EntityFactory.builders[Types.Entities.PETDINO] = function (id) {
   return new Items.PetDino(id);
+};
+
+EntityFactory.builders[Types.Entities.PETBAT] = function (id) {
+  return new Items.PetBat(id);
+};
+
+EntityFactory.builders[Types.Entities.PETCAT] = function (id) {
+  return new Items.PetCat(id);
+};
+
+EntityFactory.builders[Types.Entities.PETDOG] = function (id) {
+  return new Items.PetDog(id);
+};
+
+EntityFactory.builders[Types.Entities.PETTURTLE] = function (id) {
+  return new Items.PetTurtle(id);
+};
+
+EntityFactory.builders[Types.Entities.PETAXOLOTL] = function (id) {
+  return new Items.PetAxolotl(id);
 };
 
 //====== Npcs ======

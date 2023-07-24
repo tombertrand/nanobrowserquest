@@ -52,6 +52,7 @@ import {
   generateBlueChestItem,
   generateGreenChestItem,
   generatePurpleChestItem,
+  generateRandomPet,
   generateRedChestItem,
   getIsTransmuteSuccess,
   isUpgradeSuccess,
@@ -859,10 +860,10 @@ class DatabaseHandler {
     }
   }
 
-  equipPet(name, pet, level, bonus) {
+  equipPet(name, pet, level, bonus, socket, skin) {
     if (pet) {
       console.info("Set Pet: " + name + " " + pet + ":" + level);
-      this.client.hset("u:" + name, "pet", `${pet}:${level}${toDb(bonus)}`);
+      this.client.hset("u:" + name, "pet", `${pet}:${level}${toDb(bonus)}${toDb(socket)}${toDb(skin)}`);
     } else {
       console.info("Delete Pet");
       this.client.hdel("u:" + name, "pet");
@@ -998,9 +999,9 @@ class DatabaseHandler {
     let level = null;
     let bonus = null;
     let socket = null;
-    let skill = null;
+    let skillOrSkin = null;
     if (isEquipment && data) {
-      [item, level, bonus, socket, skill] = data.split(":");
+      [item, level, bonus, socket, skillOrSkin] = data.split(":");
     } else if (!data) {
       if (type === "weapon") {
         item = "dagger";
@@ -1019,7 +1020,7 @@ class DatabaseHandler {
     } else if (location === "stash") {
       player.send([Types.Messages.STASH, data]);
     } else if (location === "weapon") {
-      player.equipItem({ item, level, type, bonus, socket, skill });
+      player.equipItem({ item, level, type, bonus, socket, skill: skillOrSkin });
       player.broadcast(
         player.equip({
           kind: player.weaponKind,
@@ -1068,13 +1069,20 @@ class DatabaseHandler {
         false,
       );
     } else if (location === "pet") {
-      player.equipItem({ item, level, type, bonus });
+      player.equipItem({ item, level, type, bonus, socket, skin: skillOrSkin });
       player.broadcast(
-        player.equip({ kind: player.petKind, level: player.petLevel, bonus: toArray(bonus), type }),
+        player.equip({
+          kind: player.petKind,
+          level: player.petLevel,
+          bonus: toArray(bonus),
+          socket: player.petSocket,
+          skin: player.petSkin,
+          type,
+        }),
         false,
       );
     } else if (location === "shield") {
-      player.equipItem({ item, level, type, bonus, socket, skill });
+      player.equipItem({ item, level, type, bonus, socket, skill: skillOrSkin });
       player.broadcast(
         player.equip({
           kind: player.shieldKind,
@@ -1855,7 +1863,7 @@ class DatabaseHandler {
           upgrade[upgrade.length - 1] = weaponWithSkill;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if (isValidUpgradeItems(filteredUpgrade)) {
-          const [item, level, bonus, socket, skill] = filteredUpgrade[0].split(":");
+          const [item, level, bonus, socket, skillOrSkin] = filteredUpgrade[0].split(":");
           const [scrollOrStone] = filteredUpgrade[1].split(":");
           const isUnique = Types.isUnique(item, bonus);
           let upgradedItem: number | string = 0;
@@ -1895,7 +1903,7 @@ class DatabaseHandler {
               }
             }
 
-            upgradedItem = [item, upgradedLevel, bonus, socket, skill].filter(Boolean).join(":");
+            upgradedItem = [item, upgradedLevel, bonus, socket, skillOrSkin].filter(Boolean).join(":");
             isSuccess = true;
 
             if (Types.isBaseHighClassItem(item) && upgradedLevel === 7) {
@@ -1949,7 +1957,7 @@ class DatabaseHandler {
           upgrade[upgrade.length - 1] = socketItem;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((result = isValidTransmuteItems(filteredUpgrade))) {
-          const [item, level] = filteredUpgrade[0].split(":");
+          const [item, level, , , skin] = filteredUpgrade[0].split(":");
           let generatedItem: number | string = 0;
 
           ({ random, transmuteSuccessRate, uniqueSuccessRate, isTransmuteSuccess, isUniqueSuccess } =
@@ -1979,11 +1987,12 @@ class DatabaseHandler {
               skill,
             } = player.generateItem({
               kind: Types.getKindFromString(item),
+              skin,
               uniqueChances: isUniqueSuccess ? 100 : 0,
               isLuckySlot,
             });
 
-            generatedItem = [itemName, level, bonus, socket, skill].filter(Boolean).join(":");
+            generatedItem = [itemName, level, bonus, socket, skill || skin].filter(Boolean).join(":");
           }
 
           upgrade = upgrade.map(() => 0);
@@ -2083,9 +2092,25 @@ class DatabaseHandler {
               isWorkingRecipe = true;
               isRecipe = true;
 
-              // postMessageToDiscordAnvilChannel(`${player.name} crafted the Quantum Powder ${EmojiMap.powderquantum}`);
-
               generatedItem = "powderquantum:1";
+            } else if (recipe === "petegg") {
+              isWorkingRecipe = true;
+              isRecipe = true;
+
+              const { pet: item, skin } = generateRandomPet();
+              const {
+                item: itemName,
+                level,
+                bonus,
+                socket,
+              } = player.generateItem({
+                kind: Types.getKindFromString(item),
+                skin,
+                uniqueChances: isUniqueSuccess ? 100 : 0,
+                isLuckySlot,
+              });
+
+              generatedItem = [itemName, level, bonus, socket, skin].filter(Boolean).join(":");
             }
           }
 

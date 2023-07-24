@@ -81,9 +81,19 @@ export const Types: any = {
     WARRIOR: 1,
 
     // PETS
-    PET_DINO: 357,
-    PETEGG: 358,
-    PETDINO: 359,
+    PETEGG: 357,
+    PETDINO: 358,
+    PET_DINO: 359,
+    PETBAT: 360,
+    PET_BAT: 361,
+    PETCAT: 362,
+    PET_CAT: 363,
+    PETDOG: 364,
+    PET_DOG: 365,
+    PETTURTLE: 366,
+    PET_TURTLE: 367,
+    PET_AXOLOTL: 368,
+    PETAXOLOTL: 369,
 
     // Mobs
     RAT: 2,
@@ -699,13 +709,35 @@ Types.getArtifactNameFromKind = function (kind: number) {
   return artifact[kind] || kind;
 };
 
+export const petKindToPetMap = {
+  [Types.Entities.PETDINO]: Types.Entities.PET_DINO,
+  [Types.Entities.PETBAT]: Types.Entities.PET_BAT,
+  [Types.Entities.PETCAT]: Types.Entities.PET_CAT,
+  [Types.Entities.PETDOG]: Types.Entities.PET_DOG,
+  [Types.Entities.PETTURTLE]: Types.Entities.PET_TURTLE,
+  [Types.Entities.PETAXOLOTL]: Types.Entities.PET_AXOLOTL,
+};
+
 export const kinds = {
   warrior: [Types.Entities.WARRIOR, "player"],
 
+  // kind, type, level, defense
+  // beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
+
   // Pets
   pet_dino: [Types.Entities.PET_DINO, "pet"],
-  petegg: [Types.Entities.PETEGG, "object", "Pet Egg"],
-  petdino: [Types.Entities.PETDINO, "object", "Dinosaur Pet"],
+  pet_bat: [Types.Entities.PET_BAT, "pet"],
+  pet_cat: [Types.Entities.PET_CAT, "pet"],
+  pet_dog: [Types.Entities.PET_DOG, "pet"],
+  pet_turtle: [Types.Entities.PET_TURTLE, "pet"],
+  pet_axolotl: [Types.Entities.PET_AXOLOTL, "pet"],
+  petegg: [Types.Entities.PETEGG, "pet", "Pet Egg"],
+  petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 50],
+  petbat: [Types.Entities.PETBAT, "pet", "Bat Pet", 50],
+  petcat: [Types.Entities.PETCAT, "pet", "Cat Pet", 50],
+  petdog: [Types.Entities.PETDOG, "pet", "Dog Pet", 50],
+  petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 50],
+  petaxolotl: [Types.Entities.PETAXOLOTL, "pet", "Axolotl Pet", 50],
 
   // ID, exp, level
   wizard: [Types.Entities.WIZARD, "mob", 7, 1],
@@ -1809,13 +1841,28 @@ Types.isExpendableItem = function (kind: number) {
 Types.isPet = function (kind: number) {
   if (!kind) return false;
 
-  return [Types.Entities.PET_DINO].includes(kind);
+  return [
+    Types.Entities.PET_DINO,
+    Types.Entities.PET_BAT,
+    Types.Entities.PET_CAT,
+    Types.Entities.PET_DOG,
+    Types.Entities.PET_TURTLE,
+    Types.Entities.PET_AXOLOTL,
+  ].includes(kind);
 };
 
 Types.isPetItem = function (kindOrString: string | number) {
   if (!kindOrString) return false;
   if (typeof kindOrString === "number") {
-    return [Types.Entities.PETEGG, Types.Entities.PETDINO].includes(kindOrString);
+    return [
+      Types.Entities.PETEGG,
+      Types.Entities.PETDINO,
+      Types.Entities.PETBAT,
+      Types.Entities.PETCAT,
+      Types.Entities.PETDOG,
+      Types.Entities.PETTURTLE,
+      Types.Entities.PETAXOLOTL,
+    ].includes(kindOrString);
   } else {
     return kindOrString.startsWith("pet");
   }
@@ -2385,6 +2432,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
   const isAmulet = Types.isAmulet(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
+  const isPet = Types.isPetItem(item);
   const isShield = Types.isShield(item);
   const isWeapon = Types.isWeapon(item);
   const isHelm = Types.isHelm(item);
@@ -2397,6 +2445,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
   const isUniqueWeapon = isWeapon && isUnique;
   const isUniqueArmor = isArmor && isUnique;
   const isUniqueHelm = isHelm && isUnique;
+  const isUniquePet = isPet && isUnique;
 
   const uniqueSuccessRateMap = {
     goldensword: 20,
@@ -2478,6 +2527,13 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     ringplatinum: 6,
     amuletgold: 12,
     amuletplatinum: 6,
+
+    petdino: 4,
+    petbat: 4,
+    petcat: 4,
+    petdog: 4,
+    petturtle: 4,
+    petaxolotl: 4,
   };
 
   const transmuteSuccessRate = isBlessed ? 99 : 75;
@@ -2487,6 +2543,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     isUniqueAmulet ||
     isUniqueBelt ||
     isUniqueCape ||
+    isUniquePet ||
     isUniqueShield ||
     isUniqueWeapon ||
     isUniqueArmor ||
@@ -2496,7 +2553,9 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
   } else if (!isUnique && uniqueSuccessRateMap[item]) {
     return {
       uniqueSuccessRate: uniqueSuccessRateMap[item] + (isBlessed ? 2 : 0),
-      ...(isRing || isAmulet || isCape || isShield || isWeapon || isHelm || isArmor ? { transmuteSuccessRate } : null),
+      ...(isRing || isAmulet || isCape || isPet || isShield || isWeapon || isHelm || isArmor
+        ? { transmuteSuccessRate }
+        : null),
     };
   }
 
@@ -2631,6 +2690,7 @@ Types.isUnique = function (item, rawBonus, level?: number) {
   const isRing = kinds[item][1] === "ring";
   const isAmulet = kinds[item][1] === "amulet";
   const isJewel = kinds[item][1] === "jewel";
+  const isPet = Types.isPetItem(item);
 
   let isUnique = false;
   // Superior attribute
@@ -2644,7 +2704,7 @@ Types.isUnique = function (item, rawBonus, level?: number) {
     isUnique = Types.isUniqueRing(item, bonus);
   } else if (isAmulet) {
     isUnique = Types.isUniqueAmulet(item, bonus);
-  } else if (isCape || isShield || isWeapon) {
+  } else if (isCape || isPet || isShield || isWeapon) {
     isUnique = bonus ? bonus.length >= 2 : false;
   } else if (isBelt || isArmor || isHelm) {
     isUnique = bonus ? bonus.length >= 1 : false;
