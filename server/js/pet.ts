@@ -4,6 +4,8 @@ import { randomOrientation } from "./utils";
 class Pet extends Character {
   ownerId: number;
   skin: number;
+  moveCallback: () => void;
+  // move_callback: (x: number, y: number) => void;
 
   constructor({ id, type = "pet", kind, skin, x, y, ownerId }) {
     super(id, type, kind, x, y);
@@ -26,6 +28,10 @@ class Pet extends Character {
       skin: this.skin,
       ownerId: this.ownerId,
     });
+  }
+
+  onMove(callback) {
+    this.moveCallback = callback;
   }
 }
 

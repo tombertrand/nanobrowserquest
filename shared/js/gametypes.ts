@@ -733,13 +733,13 @@ export const kinds = {
   pet_axolotl: [Types.Entities.PET_AXOLOTL, "pet"],
   pet_fox: [Types.Entities.PET_FOX, "pet"],
   petegg: [Types.Entities.PETEGG, "pet", "Pet Egg"],
-  petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 48],
-  petbat: [Types.Entities.PETBAT, "pet", "Bat Pet", 48],
-  petcat: [Types.Entities.PETCAT, "pet", "Cat Pet", 48],
-  petdog: [Types.Entities.PETDOG, "pet", "Dog Pet", 48],
-  petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 48],
+  petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 34],
+  petbat: [Types.Entities.PETBAT, "pet", "Bat Pet", 36],
+  petcat: [Types.Entities.PETCAT, "pet", "Cat Pet", 32],
+  petdog: [Types.Entities.PETDOG, "pet", "Dog Pet", 42],
+  petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 36],
   petaxolotl: [Types.Entities.PETAXOLOTL, "pet", "Axolotl Pet", 48],
-  petfox: [Types.Entities.PETFOX, "pet", "Fox Pet", 48],
+  petfox: [Types.Entities.PETFOX, "pet", "Fox Pet", 34],
 
   // ID, exp, level
   wizard: [Types.Entities.WIZARD, "mob", 7, 1],
@@ -1817,7 +1817,7 @@ Types.isCorrectTypeForSlot = function (slot: number | string, item: string) {
       return Types.isCape(item);
     case "pet":
     case Slot.PET:
-      return Types.isPetItem(item);
+      return Types.isPetItem(item) && item !== "petegg";
     case "shield":
     case Slot.SHIELD:
       return Types.isShield(item);
@@ -2682,6 +2682,10 @@ Types.getItemRequirement = function (item: string, level: number) {
   const requirement = Math.floor(baseLevel + level * multiplier);
 
   return requirement;
+};
+
+Types.isSuperior = function (rawBonus) {
+  return toArray(rawBonus)?.includes(43);
 };
 
 Types.isUnique = function (item, rawBonus, level?: number) {

@@ -540,22 +540,20 @@ class Player extends Character {
           var x = message[1];
           var y = message[2];
 
-          if (self.name !== "running-coder") {
-            if (y >= 314 && !self.expansion1) {
-              databaseHandler.banPlayerByIP({
-                player: self,
-                reason: "cheating",
-                message: `haven't unlocked expension1, invalid position x:${x}, y:${y}`,
-              });
-              return;
-            } else if (y >= 540 && !self.expansion2) {
-              databaseHandler.banPlayerByIP({
-                player: self,
-                reason: "cheating",
-                message: `haven't unlocked expension2, invalid position x:${x}, y:${y}`,
-              });
-              return;
-            }
+          if (y >= 314 && y <= 463 && !self.expansion1) {
+            databaseHandler.banPlayerByIP({
+              player: self,
+              reason: "cheating",
+              message: `haven't unlocked expension1, invalid position x:${x}, y:${y}`,
+            });
+            return;
+          } else if (y >= 540 && !self.expansion2) {
+            databaseHandler.banPlayerByIP({
+              player: self,
+              reason: "cheating",
+              message: `haven't unlocked expension2, invalid position x:${x}, y:${y}`,
+            });
+            return;
           }
 
           if (self.server.isValidPosition(x, y)) {
@@ -572,6 +570,23 @@ class Player extends Character {
             });
             return;
           }
+        }
+      } else if (action === Types.Messages.MOVE_PET) {
+        // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        if (!self.petEntity) return;
+        var x = message[1];
+        var y = message[2];
+
+        if (self.server.isValidPosition(x, y)) {
+          // self.server.moveEntity(self.petEntity, x, y);
+
+          self.petEntity.setPosition(x, y);
+
+          // const pet = self.server.getEntityById(self.petEntity.id);
+
+          // pet.setPosition(x, y);
+
+          self.broadcast(new Messages.Move(self.petEntity));
         }
       } else if (action === Types.Messages.LOOTMOVE) {
         // console.info("LOOTMOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
@@ -1248,6 +1263,10 @@ class Player extends Character {
             self.send([Types.Messages.DEATHANGEL_CHECK, { x, y }]);
           }
 
+          if (self.petEntity) {
+            self.petEntity.setPosition(x, y);
+          }
+
           self.setPosition(x, y);
           self.clearTarget();
 
@@ -1255,9 +1274,12 @@ class Player extends Character {
 
           self.zone_callback();
 
-          if (self.petEntity) {
-            self.server.moveEntity(self.petEntity, x, y);
-          }
+          // if (self.petEntity) {
+          // self.server.moveEntity(self.petEntity, x, y);
+
+          // self.petEntity.setPosition(x, y);
+          // self.petEntity.group = self.group;
+          // }
 
           // @NOTE Make sure every mobs disengage
           self.server.handlePlayerVanish(self);
@@ -2098,7 +2120,6 @@ class Player extends Character {
           level: 1,
           bonus: JSON.stringify(bonus.sort((a, b) => a - b)),
           socket: JSON.stringify([0]),
-          // @TODO ~~~~ random skin per pet kind!
           skin,
         };
       }
@@ -2800,6 +2821,12 @@ class Player extends Character {
               bonus: this.shieldBonus,
             }
           : null,
+        this.petBonus
+          ? {
+              level: this.petLevel,
+              bonus: this.petBonus,
+            }
+          : null,
       ].filter(Boolean);
 
       bonusToCalculate.forEach(({ bonus, level }) => {
@@ -2940,6 +2967,10 @@ class Player extends Character {
           y,
           ownerId: id,
         });
+
+        // this.petEntity.group = this.group;
+        // this.petEntity.onMove(this.server.onMobMoveCallback.bind(this));
+
         this.server.addEntity(this.petEntity);
       }
     } else if (type === "shield") {
@@ -3546,6 +3577,8 @@ class Player extends Character {
           y,
           ownerId: id,
         });
+        // this.petEntity.group = this.group;
+        // this.petEntity.onMove(this.server.onMobMoveCallback.bind(this));
         this.server.addEntity(this.petEntity);
       }
 

@@ -562,8 +562,8 @@ class Game {
     this.pvp = settings.pvp;
     $("#pvp-checkbox").prop("checked", settings.pvp);
 
-    this.debug = settings.debug;
-    $("#debug-checkbox").prop("checked", settings.debug);
+    this.debug = this.storage.debugEnabled();
+    $("#debug-checkbox").prop("checked", this.debug);
 
     if (this.storage.showAnvilOddsEnabled()) {
       this.setShowAnvilOdds(true);
@@ -1102,7 +1102,9 @@ class Game {
       if (
         !level ||
         level !== 1 ||
+        Types.isPetItem(item) ||
         Types.isUnique(item, bonus) ||
+        Types.isSuperior(bonus) ||
         (socket && socket.length >= 4) ||
         // Superior item delete confirm
         (Array.isArray(bonus) && bonus.includes(43))
@@ -1277,6 +1279,9 @@ class Game {
           $(".item-single").addClass("item-droppable");
         } else if (Types.isPetItem(item)) {
           $(".item-pet").addClass("item-droppable");
+          if (item === "petegg") {
+            $(".item-equip-pet").removeClass("item-droppable");
+          }
         }
 
         if ($("#merchant").hasClass("visible") && $(this).closest("#inventory")[0]) {
@@ -3010,6 +3015,7 @@ class Game {
           self.player.isLootMoving = false;
         } else if (!self.player.isAttacking()) {
           self.client.sendMove(x, y);
+          self.processPetInput();
         }
 
         // Target cursor position
@@ -3047,6 +3053,7 @@ class Game {
         if (blockingEntity && blockingEntity.id !== self.playerId) {
           console.debug("Blocked by " + blockingEntity.id);
         }
+
         self.unregisterEntityPosition(self.player);
       });
 
@@ -3374,60 +3381,6 @@ class Game {
         });
       });
 
-      self.client.onSpawnPet(function (data) {
-        const { id, kind, x, y, orientation, resistances, bonus, ownerId, skin } = data;
-
-        console.log("~~~~onSpawnPet - data", data);
-
-        let entity = self.getEntityById(id);
-
-        if (!entity) {
-          const owner = self.getEntityById(ownerId);
-          const name = ownerId ? `Pet of ${owner?.name}` : "";
-
-          entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, bonus });
-
-          entity.setSprite(self.getSprite(entity.getSpriteName(skin)));
-
-          entity.setGridPosition(x, y);
-          entity.setOrientation(orientation);
-
-          entity.idle();
-
-          self.addEntity(entity);
-
-          entity.onDeath(function () {
-            console.info(entity.id + " is dead");
-
-            entity.stop();
-            entity.isDying = true;
-
-            // let speed = 120;
-
-            // Custom death animations
-            const hasCustomDeathAnimation = [].includes(entity.kind);
-
-            if (!hasCustomDeathAnimation) {
-              entity.setSprite(self.getSprite("death"));
-            }
-
-            // entity.animate("death", speed, 1, function () {
-            console.info(entity.id + " was removed");
-
-            // self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
-            self.removeEntity(entity);
-
-            // });
-          });
-        } else {
-          self.unregisterEntityPosition(entity);
-
-          console.debug("PET " + entity.id + " already exists. Don't respawn, only relocate.");
-          entity.setGridPosition(x, y);
-          self.registerEntityPosition(entity);
-        }
-      });
-
       self.client.onSpawnCharacter(function (data) {
         const {
           id,
@@ -3443,6 +3396,8 @@ class Game {
           isActivated,
           bonus,
           petId,
+          ownerId,
+          skin,
         } = data;
 
         if (kind === Types.Entities.GATEWAYFX) {
@@ -3451,11 +3406,24 @@ class Game {
 
         let entity = self.getEntityById(id);
         let isEntityExist = !!entity;
+        const isPet = !!ownerId;
 
         if (!isEntityExist) {
           try {
             if (id !== self.playerId) {
-              entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
+              if (!isPet) {
+                entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
+              } else {
+                const owner = self.getEntityById(ownerId);
+                const name = ownerId ? `Pet of ${owner?.name}` : "";
+
+                entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, bonus });
+
+                if (owner) {
+                  owner.petId = id;
+                  owner.petEntity = entity;
+                }
+              }
 
               if (element) {
                 entity.element = element;
@@ -3480,6 +3448,8 @@ class Game {
 
               if (entity.kind === Types.Entities.MAGE && element !== "spectral") {
                 entity.setSprite(self.getSprite(entity.getSpriteName(element === "spectral" ? "" : element)));
+              } else if (isPet) {
+                entity.setSprite(self.getSprite(entity.getSpriteName(skin)));
               } else {
                 entity.setSprite(self.getSprite(entity.getSpriteName()));
               }
@@ -3731,11 +3701,15 @@ class Game {
                     entity.setSprite(self.getSprite("death"));
                   }
 
-                  entity.animate("death", speed, 1, function () {
-                    console.info(entity.id + " was removed");
+                  if (isPet) {
                     self.removeEntity(entity);
-                    self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
-                  });
+                  } else {
+                    entity.animate("death", speed, 1, function () {
+                      console.info(entity.id + " was removed");
+                      self.removeEntity(entity);
+                      self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
+                    });
+                  }
 
                   entity.forEachAttacker(function (attacker) {
                     attacker.disengage();
@@ -3771,7 +3745,17 @@ class Game {
             console.error(err);
           }
         } else {
-          console.debug("Entity " + entity.id + " already exists. Don't respawn only relocate.");
+          if (isPet) {
+            self.unregisterEntityPosition(entity);
+
+            console.debug("PET " + entity.id + " already exists. Don't respawn, only relocate.");
+            entity.setGridPosition(x, y);
+            self.registerEntityPosition(entity);
+
+            entity.spawnCharacterCoords = { x, y };
+          } else {
+            console.debug("Entity " + entity.id + " already exists. Don't respawn only relocate.");
+          }
         }
 
         if (entity instanceof Player || entity instanceof Mob) {
@@ -3980,6 +3964,8 @@ class Game {
             self.removeItem(entity);
           } else if (entity instanceof Spell) {
             entity.death_callback?.();
+          } else if (entity instanceof Pet) {
+            entity.die();
           } else if (entity instanceof Character) {
             entity.forEachAttacker(function (attacker) {
               if (attacker.canReachTarget()) {
@@ -3991,6 +3977,7 @@ class Game {
 
               if (entity instanceof Player && entity.petId) {
                 self.getEntityById(entity.petId)?.die();
+              } else if (entity instanceof Pet) {
               }
             }
           } else if (entity instanceof Chest) {
@@ -6272,7 +6259,7 @@ class Game {
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
       // to "0" the pathing map if there is no entity registered on the coords.
       if (
-        (entity === null || entity instanceof Item) &&
+        (entity === null || entity instanceof Item || entity instanceof Pet) &&
         pos.x >= 0 &&
         pos.y >= 0 &&
         this.map.grid[pos.y][pos.x] !== 1
@@ -6309,6 +6296,26 @@ class Game {
           }
           if ($("#dialog-merchant-item").hasClass("ui-dialog-content")) {
             $("#dialog-merchant-item").dialog("close");
+          }
+        }
+      }
+    }
+  }
+
+  processPetInput() {
+    if (this.player.petId) {
+      const pet = this.getEntityById(this.player.petId);
+
+      if (pet) {
+        if (this.player.path?.length) {
+          const petDestination = this.player.path[this.player.path.length - 2];
+          if (
+            (Array.isArray(petDestination) && petDestination.length >= 2 && pet.gridX !== petDestination[0]) ||
+            pet.gridY !== petDestination[1]
+          ) {
+            pet.spawnCharacterCoords = null;
+            pet.go(...petDestination);
+            this.client.sendMovePet(...petDestination);
           }
         }
       }

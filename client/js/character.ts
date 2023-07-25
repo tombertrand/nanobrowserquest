@@ -525,15 +525,11 @@ class Character extends Entity {
   }
 
   checkAggro() {
-    if (this.checkaggro_callback) {
-      this.checkaggro_callback();
-    }
+    this.checkaggro_callback?.();
   }
 
   aggro(character) {
-    if (this.aggro_callback) {
-      this.aggro_callback(character);
-    }
+    this.aggro_callback?.(character);
   }
 
   onDeath(callback) {
