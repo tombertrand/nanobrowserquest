@@ -134,4 +134,5 @@ export const Messages = {
     LOG: 128,
   },
   COIN: 129,
+  MOVE_PET: 133,
 };

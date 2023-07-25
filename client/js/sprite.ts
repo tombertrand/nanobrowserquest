@@ -85,7 +85,8 @@ class Sprite {
       this.id === "skeleton" ||
       this.id === "snake" ||
       this.id === "secretstairs" ||
-      this.id === "secretstairup"
+      this.id === "secretstairup" ||
+      this.id.startsWith("pet_")
     ) {
       this.id = this.name;
     }

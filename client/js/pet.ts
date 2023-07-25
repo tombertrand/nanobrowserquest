@@ -15,6 +15,24 @@ class Pet extends Character {
       this[prop] = props[prop];
     });
   }
+
+  // onDeath(callback: any): void {
+
+  //   entity.onDeath(function () {
+  //     console.info(this.id + " is dead");
+
+  //     this.stop();
+  //     this.isDying = true;
+
+  //       this.setSprite(this.getSprite("death"));
+
+  //     console.info(this.id + " was removed");
+
+  //     this.removeEntity(this);
+
+  //   });
+
+  // }
 }
 
 export default Pet;

@@ -1492,6 +1492,8 @@ class App {
     const isChecked = $("#debug-checkbox").is(":checked");
 
     this.game.debug = isChecked;
+
+    this.storage.setDebug(isChecked);
   }
 
   toggleAnvilOdds() {

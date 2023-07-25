@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-import { kinds, Types } from "../../shared/js/gametypes";
+import { kinds, petKindToPetMap, Types } from "../../shared/js/gametypes";
 import {
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_GRIMOIRE_INDEX,
@@ -134,6 +134,8 @@ class Player extends Character {
   petKind: number;
   petLevel: number;
   petBonus: number[] | null;
+  petSocket: number[] | null;
+  petSkin: number;
   isPetUnique: boolean;
   isPetSuperior: boolean;
   pvp: boolean;
@@ -538,22 +540,20 @@ class Player extends Character {
           var x = message[1];
           var y = message[2];
 
-          if (self.name !== "running-coder") {
-            if (y >= 314 && !self.expansion1) {
-              databaseHandler.banPlayerByIP({
-                player: self,
-                reason: "cheating",
-                message: `haven't unlocked expension1, invalid position x:${x}, y:${y}`,
-              });
-              return;
-            } else if (y >= 540 && !self.expansion2) {
-              databaseHandler.banPlayerByIP({
-                player: self,
-                reason: "cheating",
-                message: `haven't unlocked expension2, invalid position x:${x}, y:${y}`,
-              });
-              return;
-            }
+          if (y >= 314 && y <= 463 && !self.expansion1) {
+            databaseHandler.banPlayerByIP({
+              player: self,
+              reason: "cheating",
+              message: `haven't unlocked expension1, invalid position x:${x}, y:${y}`,
+            });
+            return;
+          } else if (y >= 540 && !self.expansion2) {
+            databaseHandler.banPlayerByIP({
+              player: self,
+              reason: "cheating",
+              message: `haven't unlocked expension2, invalid position x:${x}, y:${y}`,
+            });
+            return;
           }
 
           if (self.server.isValidPosition(x, y)) {
@@ -570,6 +570,23 @@ class Player extends Character {
             });
             return;
           }
+        }
+      } else if (action === Types.Messages.MOVE_PET) {
+        // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        if (!self.petEntity) return;
+        var x = message[1];
+        var y = message[2];
+
+        if (self.server.isValidPosition(x, y)) {
+          // self.server.moveEntity(self.petEntity, x, y);
+
+          self.petEntity.setPosition(x, y);
+
+          // const pet = self.server.getEntityById(self.petEntity.id);
+
+          // pet.setPosition(x, y);
+
+          self.broadcast(new Messages.Move(self.petEntity));
         }
       } else if (action === Types.Messages.LOOTMOVE) {
         // console.info("LOOTMOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
@@ -1246,6 +1263,10 @@ class Player extends Character {
             self.send([Types.Messages.DEATHANGEL_CHECK, { x, y }]);
           }
 
+          if (self.petEntity) {
+            self.petEntity.setPosition(x, y);
+          }
+
           self.setPosition(x, y);
           self.clearTarget();
 
@@ -1253,9 +1274,12 @@ class Player extends Character {
 
           self.zone_callback();
 
-          if (self.petEntity) {
-            self.server.moveEntity(self.petEntity, x, y);
-          }
+          // if (self.petEntity) {
+          // self.server.moveEntity(self.petEntity, x, y);
+
+          // self.petEntity.setPosition(x, y);
+          // self.petEntity.group = self.group;
+          // }
 
           // @NOTE Make sure every mobs disengage
           self.server.handlePlayerVanish(self);
@@ -1958,7 +1982,14 @@ class Player extends Character {
       .concat(isUnique ? _.shuffle(uniqueBonus).slice(0, 1) : []);
   }
 
-  generateItem({ kind, uniqueChances = 1, superiorChances = 1, isLuckySlot = false, jewelLevel = 1 }): GeneratedItem {
+  generateItem({
+    kind,
+    uniqueChances = 1,
+    superiorChances = 1,
+    isLuckySlot = false,
+    jewelLevel = 1,
+    skin = 1,
+  }): GeneratedItem {
     let isUnique = false;
     let isSuperior = false;
     let item;
@@ -2071,8 +2102,27 @@ class Player extends Character {
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
     } else if (Types.isPetItem(kind)) {
-      // @TODO Set element bonus per random pet type?
-      item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify([]) };
+      let bonus = [];
+
+      bonus = _.shuffle(highLevelBonus).slice(0, isUnique ? 2 : 1);
+
+      // @TODO Necklace will have elemental dmg
+      //.concat(_.shuffle(elementDamage).slice(0, 1));
+
+      if (kind === Types.Entities.PETEGG) {
+        item = {
+          item: Types.getKindAsString(kind),
+          level: 1,
+        };
+      } else {
+        item = {
+          item: Types.getKindAsString(kind),
+          level: 1,
+          bonus: JSON.stringify(bonus.sort((a, b) => a - b)),
+          socket: JSON.stringify([0]),
+          skin,
+        };
+      }
     } else if (Types.isRing(kind) || Types.isAmulet(kind) || Types.isJewel(kind)) {
       const randomIsUnique = random(100);
       isUnique = randomIsUnique < uniqueChances;
@@ -2289,7 +2339,9 @@ class Player extends Character {
       auras: this.auras,
       partyId: this.partyId,
       cape: this.cape ? `${this.cape}${toDb(this.capeLevel)}${toDb(capeBonus)}` : null,
-      pet: this.pet ? `${this.pet}${toDb(this.petLevel)}${toDb(this.petBonus)}` : null,
+      pet: this.pet
+        ? `${this.pet}${toDb(this.petLevel)}${toDb(this.petBonus)}${toDb(this.petSocket)}${toDb(this.petSkin)}`
+        : null,
       shield: this.shield
         ? `${this.shield}:${this.shieldLevel}${toDb(shieldBonus)}${toDb(this.shieldSocket)}${toDb(this.defenseSkill)}`
         : null,
@@ -2584,6 +2636,7 @@ class Player extends Character {
     bonus,
     socket,
     skill,
+    skin,
     type,
   }: {
     kind: number;
@@ -2591,9 +2644,10 @@ class Player extends Character {
     bonus?: number[];
     socket?: number[];
     skill?: number;
+    skin?: number;
     type?: string;
   }) {
-    return new Messages.EquipItem(this, { kind, level, bonus, socket, skill, type });
+    return new Messages.EquipItem(this, { kind, level, bonus, socket, skill, skin, type });
   }
 
   addHater(mob) {
@@ -2669,14 +2723,16 @@ class Player extends Character {
     this.isCapeSuperior = bonus?.includes(43);
   }
 
-  equipPet(pet, kind, level, rawBonus) {
+  equipPet(pet, kind, level, rawBonus, socket, skin) {
     const bonus = toArray(rawBonus);
     this.pet = pet;
     this.petKind = kind;
     this.petLevel = toNumber(level);
     this.petBonus = bonus?.filter(oneBonus => oneBonus !== 43);
+    this.petSocket = toArray(socket);
     this.isPetUnique = this.petBonus?.length >= 2;
     this.isPetSuperior = bonus?.includes(43);
+    this.petSkin = toNumber(skin);
   }
 
   equipShield(shield, kind, level, rawBonus, socket, skill) {
@@ -2763,6 +2819,12 @@ class Player extends Character {
           ? {
               level: this.shieldLevel,
               bonus: this.shieldBonus,
+            }
+          : null,
+        this.petBonus
+          ? {
+              level: this.petLevel,
+              bonus: this.petBonus,
             }
           : null,
       ].filter(Boolean);
@@ -2858,7 +2920,7 @@ class Player extends Character {
     return Object.values(this.curse).some(percent => percent !== 0);
   }
 
-  equipItem({ item, level, bonus, socket, skill, type }) {
+  equipItem({ item, level, bonus, socket, skill, skin, type }) {
     // @NOTE safety...
     if (bonus === "null") {
       bonus = null;
@@ -2884,8 +2946,14 @@ class Player extends Character {
       this.equipCape(item, kind, level, bonus);
     } else if (type === "pet") {
       const kind = Types.getKindFromString(item);
-      this.databaseHandler.equipPet(this.name, item, level, bonus);
-      this.equipPet(item, kind, level, bonus);
+
+      this.databaseHandler.equipPet(this.name, item, level, bonus, socket, skin);
+      this.equipPet(item, kind, level, bonus, socket, skin);
+
+      if (this.petEntity) {
+        this.server.despawn(this.petEntity);
+        this.petEntity = null;
+      }
 
       // @TODO mak pet item kind to PET character
       if (this.pet) {
@@ -2893,17 +2961,17 @@ class Player extends Character {
         this.petEntity = new Pet({
           id: "9" + id,
           type: "pet",
-          kind: Types.Entities.PET_DINO,
+          kind: petKindToPetMap[kind],
+          skin: this.petSkin,
           x,
           y,
           ownerId: id,
         });
+
+        // this.petEntity.group = this.group;
+        // this.petEntity.onMove(this.server.onMobMoveCallback.bind(this));
+
         this.server.addEntity(this.petEntity);
-      } else {
-        if (this.petEntity) {
-          this.server.despawn(this.petEntity);
-          this.petEntity = null;
-        }
       }
     } else if (type === "shield") {
       this.databaseHandler.equipShield(this.name, item, level, bonus, socket, skill);
@@ -3413,8 +3481,15 @@ class Player extends Character {
         this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
       }
       if (pet) {
-        const [playerPet, playerPetLevel, playePetBonus] = pet.split(":");
-        this.equipPet(playerPet, Types.getKindFromString(playerPet), playerPetLevel, playePetBonus);
+        const [playerPet, playerPetLevel, playePetBonus, playerPetSockt, playerPetSkin] = pet.split(":");
+        this.equipPet(
+          playerPet,
+          Types.getKindFromString(playerPet),
+          playerPetLevel,
+          playePetBonus,
+          playerPetSockt,
+          playerPetSkin,
+        );
       }
       if (shield) {
         const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSocket, playerDefenseSkill] =
@@ -3491,15 +3566,19 @@ class Player extends Character {
 
       if (this.pet) {
         const { id } = this;
+        const kind = Types.getKindFromString(this.pet);
 
         this.petEntity = new Pet({
           id: "9" + id,
           type: "pet",
-          kind: Types.Entities.PET_DINO,
+          kind: petKindToPetMap[kind],
+          skin: this.petSkin,
           x,
           y,
           ownerId: id,
         });
+        // this.petEntity.group = this.group;
+        // this.petEntity.onMove(this.server.onMobMoveCallback.bind(this));
         this.server.addEntity(this.petEntity);
       }
 

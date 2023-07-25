@@ -562,8 +562,8 @@ class Game {
     this.pvp = settings.pvp;
     $("#pvp-checkbox").prop("checked", settings.pvp);
 
-    this.debug = settings.debug;
-    $("#debug-checkbox").prop("checked", settings.debug);
+    this.debug = this.storage.debugEnabled();
+    $("#debug-checkbox").prop("checked", this.debug);
 
     if (this.storage.showAnvilOddsEnabled()) {
       this.setShowAnvilOdds(true);
@@ -697,7 +697,8 @@ class Game {
         const item = element.attr("data-item");
         const level = parseInt(element.attr("data-level") || "1", 10);
         const rawBonus = toArray(element.attr("data-bonus"));
-        const rawSkill = element.attr("data-skill") ? parseInt(element.attr("data-skill"), 10) : null;
+        const rawSkill = Number(element.attr("data-skill")) ? parseInt(element.attr("data-skill"), 10) : null;
+        // const skin = Number(element.attr("data-skin")) || null;
         const rawSocket = toArray(element.attr("data-socket"));
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
         const isEquippedItemSlot = Object.values(Slot).includes(slot);
@@ -949,7 +950,8 @@ class Game {
       const item1 = self.player.upgrade[0]?.item;
       if (
         self.player.upgrade.length >= 2 ||
-        (self.player.upgrade.length === 1 && (Types.isChest(item1) || item1 === "cowkinghorn" || Types.isWeapon(item1)))
+        (self.player.upgrade.length === 1 &&
+          (Types.isChest(item1) || item1 === "cowkinghorn" || item1 === "petegg" || Types.isWeapon(item1)))
       ) {
         if (!self.isUpgradeItemSent) {
           self.client.sendUpgradeItem();
@@ -1033,13 +1035,12 @@ class Game {
     const toItem = toItemEl.attr("data-item");
     const toLevel = toItemEl.attr("data-level");
     const item = fromItemEl.attr("data-item");
-    const level = parseInt(fromItemEl.attr("data-level"));
-    const quantity = parseInt(fromItemEl.attr("data-quantity")) || null;
-    const rawBonus = fromItemEl.attr("data-bonus");
+    const level = Number(fromItemEl.attr("data-level"));
+    const quantity = Number(fromItemEl.attr("data-quantity")) || null;
+    const bonus = toArray(fromItemEl.attr("data-bonus"));
     const socket = toArray(fromItemEl.attr("data-socket"));
-    const rawSkill = fromItemEl.attr("data-skill");
-    let bonus: number[];
-    let skill: number;
+    const skill = Number(fromItemEl.attr("data-skill")) || null;
+    // const skin = Number(fromItemEl.attr("data-skin")) || null;
 
     // Condition for allowing partial quantity
     if (Types.isQuantity(item) && quantity > 1 && transferedQuantity === null && !toItem) {
@@ -1084,13 +1085,6 @@ class Game {
       return;
     }
 
-    if (rawBonus) {
-      bonus = toArray(rawBonus);
-    }
-    if (rawSkill) {
-      skill = parseInt(rawSkill, 10);
-    }
-
     if (toItem) {
       if (
         Object.values(Slot).includes(fromSlot) &&
@@ -1108,7 +1102,9 @@ class Game {
       if (
         !level ||
         level !== 1 ||
-        Types.isUnique(item, rawBonus) ||
+        Types.isPetItem(item) ||
+        Types.isUnique(item, bonus) ||
+        Types.isSuperior(bonus) ||
         (socket && socket.length >= 4) ||
         // Superior item delete confirm
         (Array.isArray(bonus) && bonus.includes(43))
@@ -1119,7 +1115,7 @@ class Game {
       }
       fromItemEl.remove();
     } else if (toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT && !confirmed) {
-      if (!level || level !== 1 || Types.isUnique(item, rawBonus) || (socket && socket.length >= 4)) {
+      if (!level || level !== 1 || Types.isUnique(item, bonus) || (socket && socket.length >= 4)) {
         this.confirmedSoldItemToMerchant = { fromSlot, toSlot, transferedQuantity, confirmed: true };
         $("#dialog-merchant-item").dialog("open");
         return;
@@ -1283,6 +1279,9 @@ class Game {
           $(".item-single").addClass("item-droppable");
         } else if (Types.isPetItem(item)) {
           $(".item-pet").addClass("item-droppable");
+          if (item === "petegg") {
+            $(".item-equip-pet").removeClass("item-droppable");
+          }
         }
 
         if ($("#merchant").hasClass("visible") && $(this).closest("#inventory")[0]) {
@@ -1314,7 +1313,7 @@ class Game {
     }
   }
 
-  getIconPath(spriteName: string, level?: number) {
+  getIconPath(spriteName: string, level?: number, skin?: number) {
     const scale = this.renderer.getScaleFactor();
 
     let suffix = "";
@@ -1322,6 +1321,8 @@ class Game {
       suffix = "7";
     } else if (spriteName === "jewelskull" && level > 2) {
       suffix = Types.getJewelSkinIndex(level);
+    } else if (skin) {
+      suffix = `-${skin}`;
     }
 
     return `img/${scale}/item-${spriteName}${suffix}.png`;
@@ -1499,7 +1500,7 @@ class Game {
         $("<div />", {
           class: `item-draggable ${Types.isUnique(player.pet, player.petBonus) ? "item-unique" : ""}`,
           css: {
-            "background-image": `url("${this.getIconPath(player.pet, player.petLevel)}")`,
+            "background-image": `url("${this.getIconPath(player.pet, player.petLevel, player.petSkin)}")`,
           },
           "data-item": player.pet,
           "data-level": player.petLevel,
@@ -1674,7 +1675,7 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
+        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-pet item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
       );
     $("#upgrade-result")
       .empty()
@@ -1751,8 +1752,9 @@ class Game {
       item,
       level,
       bonus,
-      skill,
       socket,
+      skill,
+      skin,
       requirement,
       runeword,
       amount,
@@ -1763,6 +1765,7 @@ class Game {
       level?: number;
       bonus?: string;
       skill?: any;
+      skin?: any;
       socket?: string;
       requirement?: number;
       runeword?: string;
@@ -1782,7 +1785,7 @@ class Game {
         isUnique ? "item-unique" : ""
       } ${runeword ? "item-runeword" : ""}`,
       css: {
-        "background-image": `url("${this.getIconPath(item, level)}")`,
+        "background-image": `url("${this.getIconPath(item, level, skin)}")`,
         position: "relative",
       },
       "data-item": item,
@@ -1791,6 +1794,7 @@ class Game {
       ...(bonus ? { "data-bonus": toString(bonus) } : null),
       ...(socket ? { "data-socket": toString(socket) } : null),
       ...(skill ? { "data-skill": skill } : null),
+      ...(skin ? { "data-skin": skin } : null),
       ...(requirement ? { "data-requirement": requirement } : null),
       ...(amount ? { "data-amount": amount } : null),
       click: event => {
@@ -1902,7 +1906,7 @@ class Game {
     let runeUpgrade = "";
     let rune = "";
 
-    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, skill, socket, isUnique }) => {
+    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, socket, skill, skin, isUnique }) => {
       if (slot === 0 && level) {
         itemLevel = level;
         itemName = item;
@@ -1935,7 +1939,7 @@ class Game {
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")
-        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, skill, socket }));
+        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, socket, skill, skin }));
     });
 
     if (rune) {
@@ -3011,6 +3015,7 @@ class Game {
           self.player.isLootMoving = false;
         } else if (!self.player.isAttacking()) {
           self.client.sendMove(x, y);
+          self.processPetInput();
         }
 
         // Target cursor position
@@ -3048,6 +3053,7 @@ class Game {
         if (blockingEntity && blockingEntity.id !== self.playerId) {
           console.debug("Blocked by " + blockingEntity.id);
         }
+
         self.unregisterEntityPosition(self.player);
       });
 
@@ -3375,57 +3381,6 @@ class Game {
         });
       });
 
-      self.client.onSpawnPet(function (data) {
-        const { id, kind, x, y, orientation, resistances, bonus, ownerId } = data;
-
-        let entity = self.getEntityById(id);
-
-        if (!entity) {
-          const owner = self.getEntityById(ownerId);
-          const name = ownerId ? `Pet of ${owner?.name}` : "";
-
-          entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, bonus });
-          entity.setSprite(self.getSprite(entity.getSpriteName()));
-
-          entity.setGridPosition(x, y);
-          entity.setOrientation(orientation);
-
-          entity.idle();
-
-          self.addEntity(entity);
-
-          entity.onDeath(function () {
-            console.info(entity.id + " is dead");
-
-            entity.stop();
-            entity.isDying = true;
-
-            // let speed = 120;
-
-            // Custom death animations
-            const hasCustomDeathAnimation = [].includes(entity.kind);
-
-            if (!hasCustomDeathAnimation) {
-              entity.setSprite(self.getSprite("death"));
-            }
-
-            // entity.animate("death", speed, 1, function () {
-            console.info(entity.id + " was removed");
-
-            // self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
-            self.removeEntity(entity);
-
-            // });
-          });
-        } else {
-          self.unregisterEntityPosition(entity);
-
-          console.debug("PET " + entity.id + " already exists. Don't respawn, only relocate.");
-          entity.setGridPosition(x, y);
-          self.registerEntityPosition(entity);
-        }
-      });
-
       self.client.onSpawnCharacter(function (data) {
         const {
           id,
@@ -3441,6 +3396,8 @@ class Game {
           isActivated,
           bonus,
           petId,
+          ownerId,
+          skin,
         } = data;
 
         if (kind === Types.Entities.GATEWAYFX) {
@@ -3449,11 +3406,24 @@ class Game {
 
         let entity = self.getEntityById(id);
         let isEntityExist = !!entity;
+        const isPet = !!ownerId;
 
         if (!isEntityExist) {
           try {
             if (id !== self.playerId) {
-              entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
+              if (!isPet) {
+                entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
+              } else {
+                const owner = self.getEntityById(ownerId);
+                const name = ownerId ? `Pet of ${owner?.name}` : "";
+
+                entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, bonus });
+
+                if (owner) {
+                  owner.petId = id;
+                  owner.petEntity = entity;
+                }
+              }
 
               if (element) {
                 entity.element = element;
@@ -3478,6 +3448,8 @@ class Game {
 
               if (entity.kind === Types.Entities.MAGE && element !== "spectral") {
                 entity.setSprite(self.getSprite(entity.getSpriteName(element === "spectral" ? "" : element)));
+              } else if (isPet) {
+                entity.setSprite(self.getSprite(entity.getSpriteName(skin)));
               } else {
                 entity.setSprite(self.getSprite(entity.getSpriteName()));
               }
@@ -3729,11 +3701,15 @@ class Game {
                     entity.setSprite(self.getSprite("death"));
                   }
 
-                  entity.animate("death", speed, 1, function () {
-                    console.info(entity.id + " was removed");
+                  if (isPet) {
                     self.removeEntity(entity);
-                    self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
-                  });
+                  } else {
+                    entity.animate("death", speed, 1, function () {
+                      console.info(entity.id + " was removed");
+                      self.removeEntity(entity);
+                      self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
+                    });
+                  }
 
                   entity.forEachAttacker(function (attacker) {
                     attacker.disengage();
@@ -3769,7 +3745,17 @@ class Game {
             console.error(err);
           }
         } else {
-          console.debug("Entity " + entity.id + " already exists. Don't respawn only relocate.");
+          if (isPet) {
+            self.unregisterEntityPosition(entity);
+
+            console.debug("PET " + entity.id + " already exists. Don't respawn, only relocate.");
+            entity.setGridPosition(x, y);
+            self.registerEntityPosition(entity);
+
+            entity.spawnCharacterCoords = { x, y };
+          } else {
+            console.debug("Entity " + entity.id + " already exists. Don't respawn only relocate.");
+          }
         }
 
         if (entity instanceof Player || entity instanceof Mob) {
@@ -3978,6 +3964,8 @@ class Game {
             self.removeItem(entity);
           } else if (entity instanceof Spell) {
             entity.death_callback?.();
+          } else if (entity instanceof Pet) {
+            entity.die();
           } else if (entity instanceof Character) {
             entity.forEachAttacker(function (attacker) {
               if (attacker.canReachTarget()) {
@@ -3989,6 +3977,7 @@ class Game {
 
               if (entity instanceof Player && entity.petId) {
                 self.getEntityById(entity.petId)?.die();
+              } else if (entity instanceof Pet) {
               }
             }
           } else if (entity instanceof Chest) {
@@ -6270,7 +6259,7 @@ class Game {
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
       // to "0" the pathing map if there is no entity registered on the coords.
       if (
-        (entity === null || entity instanceof Item) &&
+        (entity === null || entity instanceof Item || entity instanceof Pet) &&
         pos.x >= 0 &&
         pos.y >= 0 &&
         this.map.grid[pos.y][pos.x] !== 1
@@ -6307,6 +6296,26 @@ class Game {
           }
           if ($("#dialog-merchant-item").hasClass("ui-dialog-content")) {
             $("#dialog-merchant-item").dialog("close");
+          }
+        }
+      }
+    }
+  }
+
+  processPetInput() {
+    if (this.player.petId) {
+      const pet = this.getEntityById(this.player.petId);
+
+      if (pet) {
+        if (this.player.path?.length) {
+          const petDestination = this.player.path[this.player.path.length - 2];
+          if (
+            (Array.isArray(petDestination) && petDestination.length >= 2 && pet.gridX !== petDestination[0]) ||
+            pet.gridY !== petDestination[1]
+          ) {
+            pet.spawnCharacterCoords = null;
+            pet.go(...petDestination);
+            this.client.sendMovePet(...petDestination);
           }
         }
       }

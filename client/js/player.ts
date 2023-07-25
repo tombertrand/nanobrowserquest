@@ -51,6 +51,8 @@ class Player extends Character {
   pet?: string;
   petLevel?: number;
   petBonus: null | number[];
+  petSocket: null | number[];
+  petSkin: number;
   shieldName: null;
   shieldLevel: number | null;
   shieldBonus: number[] | null;
@@ -157,6 +159,8 @@ class Player extends Character {
     this.pet = null;
     this.petLevel = null;
     this.petBonus = null;
+    this.petSocket = null;
+    this.petSkin = null;
     this.shieldName = null;
     this.shieldLevel = 1;
     this.shieldBonus = null;
@@ -530,15 +534,20 @@ class Player extends Character {
 
   setPet(rawPet) {
     if (rawPet) {
-      const [pet, level, bonus] = rawPet.split(":");
+      const [pet, level, bonus, socket, skin] = rawPet.split(":");
 
       this.pet = pet;
       this.petLevel = toNumber(level);
       this.petBonus = toArray(bonus);
+      this.petBonus = toArray(bonus);
+      this.petSocket = toArray(socket);
+      this.petSkin = toNumber(skin);
     } else {
       this.pet = null;
       this.petLevel = null;
       this.petBonus = null;
+      this.petSocket = null;
+      this.petSkin = null;
     }
   }
 
@@ -791,7 +800,7 @@ class Player extends Character {
       .map((rawItem, slot) => {
         if (!rawItem) return false;
         const delimiter = Types.isJewel(rawItem) ? "|" : ":";
-        const [item, levelOrQuantityOrAmount, bonus, socket, skill] = rawItem.split(delimiter);
+        const [item, levelOrQuantityOrAmount, bonus, socket, skillOrSkin] = rawItem.split(delimiter);
 
         const isWeapon = kinds[item][1] === "weapon";
         const isHelm = kinds[item][1] === "helm";
@@ -803,12 +812,14 @@ class Player extends Character {
         const isAmulet = kinds[item][1] === "amulet";
         const isChest = kinds[item][1] === "chest";
         const isJewel = kinds[item][1] === "jewel";
-        const hasLevel = isWeapon || isHelm || isArmor || isBelt || isCape || isShield || isRing || isAmulet || isJewel;
+        const isPet = Types.isPetItem(item);
+        const hasLevel =
+          isWeapon || isHelm || isArmor || isBelt || isCape || isPet || isShield || isRing || isAmulet || isJewel;
         const level = hasLevel ? parseInt(levelOrQuantityOrAmount) : null;
         const isQuantity =
           Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item) || Types.isBar(item);
         const amount =
-          !hasLevel && !isQuantity && !Types.isSingle(item) && !Types.isChest(item)
+          !hasLevel && !isQuantity && !Types.isSingle(item) && !Types.isChest(item) && isPet
             ? parseInt(levelOrQuantityOrAmount)
             : null;
         const isUnique = Types.isUnique(item, bonus, isJewel ? level : undefined);
@@ -816,6 +827,8 @@ class Player extends Character {
         let requirement = null;
         let quantity = null;
         let runeword = null;
+        let skill = null;
+        let skin = null;
 
         if (hasLevel) {
           requirement = Types.getItemRequirement(item, levelOrQuantityOrAmount);
@@ -826,6 +839,10 @@ class Player extends Character {
               socket: toArray(socket),
               type: kinds[item][1],
             }));
+
+            skill = skillOrSkin;
+          } else if (isPet) {
+            skin = skillOrSkin;
           }
         } else if (isQuantity) {
           quantity = parseInt(levelOrQuantityOrAmount);
@@ -834,7 +851,6 @@ class Player extends Character {
         return {
           item,
           bonus,
-          skill,
           socket,
           slot,
           requirement,
@@ -842,6 +858,8 @@ class Player extends Character {
           runeword,
           ...{ level },
           ...{ quantity },
+          ...{ skill },
+          ...{ skin },
           ...{ amount },
         };
       })

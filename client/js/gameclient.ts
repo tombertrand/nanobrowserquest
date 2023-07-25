@@ -32,7 +32,6 @@ class GameClient {
   spawn_item_callback: any;
   spawn_chest_callback: any;
   spawn_character_callback: any;
-  spawn_pet_callback: any;
   spawn_spell_callback: any;
   despawn_callback: any;
   health_callback: any;
@@ -139,7 +138,7 @@ class GameClient {
     this.handlers[Types.Messages.UNRAISE] = this.receiveUnraise;
     this.handlers[Types.Messages.SPAWN] = this.receiveSpawn;
     this.handlers[Types.Messages.DESPAWN] = this.receiveDespawn;
-    this.handlers[Types.Messages.SPAWN_BATCH] = this.receiveSpawnBatch;
+    // this.handlers[Types.Messages.SPAWN_BATCH] = this.receiveSpawnBatch;
     this.handlers[Types.Messages.HEALTH] = this.receiveHealth;
     this.handlers[Types.Messages.HEALTH_ENTITY] = this.receiveHealthEntity;
     this.handlers[Types.Messages.CHAT] = this.receiveChat;
@@ -412,9 +411,9 @@ class GameClient {
     }
   }
 
-  receiveSpawnBatch(datas) {
-    datas.forEach(data => this.receiveSpawn(data));
-  }
+  // receiveSpawnBatch(datas) {
+  //   datas.forEach(data => this.receiveSpawn(data));
+  // }
 
   receiveDrop(data) {
     const { mobId, itemId, kind, mobHateList, partyId, amount } = data[1];
@@ -465,8 +464,6 @@ class GameClient {
       var item = EntityFactory.createEntity({ kind, id });
 
       this.spawn_chest_callback?.(item, x, y);
-    } else if (Types.isPet(kind)) {
-      this.spawn_pet_callback?.(data[1]);
     } else {
       this.spawn_character_callback?.(data[1]);
     }
@@ -902,10 +899,6 @@ class GameClient {
     this.spawn_character_callback = callback;
   }
 
-  onSpawnPet(callback) {
-    this.spawn_pet_callback = callback;
-  }
-
   onSpawnSpell(callback) {
     this.spawn_spell_callback = callback;
   }
@@ -1272,6 +1265,10 @@ class GameClient {
 
   sendMove(x, y) {
     this.sendMessage([Types.Messages.MOVE, x, y]);
+  }
+
+  sendMovePet(x, y) {
+    this.sendMessage([Types.Messages.MOVE_PET, x, y]);
   }
 
   sendLootMove(item, x, y) {

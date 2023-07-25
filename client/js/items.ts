@@ -1465,6 +1465,48 @@ var Items = {
     }
   },
 
+  PetBat: class PetBat extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETBAT, "object");
+      this.lootMessage = "You pick up a Bat Pet";
+    }
+  },
+
+  PetCat: class PetCat extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETCAT, "object");
+      this.lootMessage = "You pick up a Cat Pet";
+    }
+  },
+
+  PetDog: class PetDog extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETDOG, "object");
+      this.lootMessage = "You pick up a Dog Pet";
+    }
+  },
+
+  PetTurtle: class PetTurtle extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETTURTLE, "object");
+      this.lootMessage = "You pick up a Turtle Pet";
+    }
+  },
+
+  PetAxolotl: class PetAxolotl extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETAXOLOTL, "object");
+      this.lootMessage = "You pick up a Axolotl Pet";
+    }
+  },
+
+  PetFox: class PetFox extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETFOX, "object");
+      this.lootMessage = "You pick up a Fox Pet";
+    }
+  },
+
   Burger: class Burger extends Item {
     constructor(id) {
       super(id, Types.Entities.BURGER, "object");

@@ -521,12 +521,10 @@ class World {
   }
 
   pushSpawnsToPlayer(player, ids) {
-    var self = this;
-
-    _.each(ids, function (id) {
-      var entity = self.getEntityById(id);
+    _.each(ids, id => {
+      var entity = this.getEntityById(id);
       if (entity) {
-        self.pushToPlayer(player, new Messages.Spawn(entity));
+        this.pushToPlayer(player, new Messages.Spawn(entity));
       }
     });
 
@@ -2670,7 +2668,7 @@ class World {
       this.lootChests(mob, attacker);
     }
 
-    // var randomDrops = ["petegg", "petdino"];
+    // var randomDrops = ["petegg"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe"];
@@ -2840,9 +2838,6 @@ class World {
         }
       });
       entity.group = null;
-      if (entity instanceof Player && entity.petEntity) {
-        entity.petEntity.group = entity.group;
-      }
     }
     return oldGroups;
   }
@@ -2886,10 +2881,6 @@ class World {
       entity.group = groupId;
 
       if (entity instanceof Player) {
-        if (entity.petEntity) {
-          entity.petEntity.group = entity.group;
-        }
-
         this.groups[groupId].players.push(entity.id);
       }
     }
@@ -2908,17 +2899,25 @@ class World {
 
     if (entity) {
       var groupId = this.map.getGroupIdFromPosition(entity.x, entity.y);
+
       if (!entity.group || (entity.group && entity.group !== groupId)) {
         hasChangedGroups = true;
+
         this.addAsIncomingToGroup(entity, groupId);
         var oldGroups = this.removeFromGroups(entity);
         var newGroups = this.addToGroup(entity, groupId);
 
+        if (entity instanceof Player && entity.petEntity) {
+          this.addAsIncomingToGroup(entity.petEntity, groupId);
+          this.removeFromGroups(entity.petEntity);
+          this.addToGroup(entity.petEntity, groupId);
+        }
+
         if (_.size(oldGroups) > 0) {
           entity.recentlyLeftGroups = _.difference(oldGroups, newGroups);
-          if (entity instanceof Player && entity.petEntity) {
-            entity.petEntity.recentlyLeftGroups = entity.recentlyLeftGroups;
-          }
+          // if (entity instanceof Player && entity.petEntity) {
+          //   entity.petEntity.recentlyLeftGroups = entity.recentlyLeftGroups;
+          // }
 
           // console.debug("group diff: " + entity.recentlyLeftGroups);
         }
@@ -2928,39 +2927,22 @@ class World {
   }
 
   processGroups() {
-    var self = this;
-
     if (this.zoneGroupsReady) {
-      this.map.forEachGroup(function (id) {
-        if (self.groups[id].incoming.length > 0) {
-          _.each(self.groups[id].incoming, function (entity) {
-            if (!entity.isDead) {
-              if (entity instanceof Player) {
-                self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
-                if (entity.petEntity) {
-                  self.pushToGroup(id, new Messages.Spawn(entity.petEntity), entity.id);
-                }
-              } else {
-                self.pushToGroup(id, new Messages.Spawn(entity));
+      this.map.forEachGroup(id => {
+        if (this.groups[id].incoming.length > 0) {
+          _.each(this.groups[id].incoming, entity => {
+            if (entity.isDead) return;
+            if (entity instanceof Player) {
+              this.pushToGroup(id, new Messages.Spawn(entity), entity.id);
+              if (entity.petEntity) {
+                this.pushToGroup(id, new Messages.Spawn(entity.petEntity));
               }
+            } else {
+              this.pushToGroup(id, new Messages.Spawn(entity));
             }
           });
 
-          // const batchEntitySpawns = self.groups[id].incoming
-          //   .map(entity => {
-          //     if (entity instanceof Player) {
-          //       self.pushToGroup(id, new Messages.Spawn(entity), entity.id);
-          //       return;
-          //     }
-          //     return entity;
-          //   })
-          //   .filter(Boolean);
-
-          // if (batchEntitySpawns.length) {
-          //   self.pushToGroup(id, new Messages.SpawnBatch(batchEntitySpawns));
-          // }
-
-          self.groups[id].incoming = [];
+          this.groups[id].incoming = [];
         }
       });
     }

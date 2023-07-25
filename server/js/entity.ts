@@ -38,7 +38,7 @@ class Entity {
   }
 
   spawn() {
-    return new Messages.Spawn(this);
+    // return new Messages.Spawn(this);
   }
 
   despawn() {

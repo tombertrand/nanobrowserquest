@@ -46,6 +46,7 @@ const defaultData = {
     capeSaturate: 0,
     capeContrast: 0,
     capeBrightness: 1,
+    debug: false,
   },
   achievements: {
     ratCount: 0,
@@ -182,6 +183,11 @@ class Storage {
     this.save();
   }
 
+  setDebug(enabled) {
+    this.data.settings.debug = enabled;
+    this.save();
+  }
+
   // setShowAnvilOddsEnabled(enabled) {
   //   this.data.settings.showAnvilOdds = enabled;
   //   this.save();
@@ -231,6 +237,12 @@ class Storage {
     if (typeof this.data.settings.showAnvilOdds !== "boolean") return false;
 
     return this.data.settings.showAnvilOdds;
+  }
+
+  debugEnabled() {
+    if (typeof this.data.settings.debug !== "boolean") return false;
+
+    return this.data.settings.debug;
   }
 
   showHealthAboveBarsEnabled() {
