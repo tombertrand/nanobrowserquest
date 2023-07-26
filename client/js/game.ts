@@ -6311,12 +6311,11 @@ class Game {
       const pet = this.getEntityById(this.player.petId);
 
       if (pet) {
-        if (this.player.path?.length) {
+        if (Array.isArray(this.player.path) && this.player.path.length) {
           const petDestination = this.player.path[this.player.path.length - 2];
-          if (
-            (Array.isArray(petDestination) && petDestination.length >= 2 && pet.gridX !== petDestination[0]) ||
-            pet.gridY !== petDestination[1]
-          ) {
+
+          if (!Array.isArray(petDestination) || petDestination.length !== 2) return;
+          if (pet.gridX !== petDestination[0] || pet.gridY !== petDestination[1]) {
             pet.spawnCharacterCoords = null;
             pet.go(...petDestination);
             this.client.sendMovePet(...petDestination);
