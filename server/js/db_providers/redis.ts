@@ -1233,6 +1233,9 @@ class DatabaseHandler {
 
                   isFromReplyDone = true;
                   isToReplyDone = true;
+                } else {
+                  isFromReplyDone = true;
+                  isToReplyDone = true;
                 }
               } else if (
                 ["weapon", "helm", "armor", "belt", "cape", "pet", "shield", "ring1", "ring2", "amulet"].includes(

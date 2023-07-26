@@ -1303,7 +1303,7 @@ class Game {
 
         $(".ui-droppable-origin").removeClass("ui-droppable-origin");
         $(
-          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-shield, .item-helm, .item-cape, .item-chest, .item-scroll, .item-merchant",
+          ".item-weapon, .item-armor, .item-ring, .item-amulet, .item-belt, .item-shield, .item-helm, .item-cape, .item-pet, .item-chest, .item-scroll, .item-merchant",
         ).removeClass("item-droppable");
       },
     });
@@ -4688,7 +4688,7 @@ class Game {
         self.player.setBonus = bonus;
       });
 
-      self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, socket, skill, type }) {
+      self.client.onPlayerEquipItem(function ({ id: playerId, kind, level, bonus, socket, skill, skin, type }) {
         var player = self.getEntityById(playerId);
         var name = Types.getKindAsString(kind);
 
@@ -4718,6 +4718,12 @@ class Game {
             if (playerId === self.player.id) {
               self.toggleCapeSliders(kind && level && bonus);
             }
+          } else if (type === "pet") {
+            if (!kind || !level || !bonus || !socket || !skin) {
+              player.setPet(null);
+            } else {
+              player.setPet([name, level, bonus, socket, skin].filter(Boolean).join(":"));
+            }
           } else if (type === "shield") {
             if (!kind || !level) {
               player.removeShield();
@@ -4735,6 +4741,10 @@ class Game {
             player.setRing2([name, level, bonus].filter(Boolean).join(":"));
           } else if (type === "amulet") {
             player.setAmulet([name, level, bonus].filter(Boolean).join(":"));
+          }
+
+          if (!name) {
+            $(`.item-equip-${type}`).empty();
           }
         }
       });

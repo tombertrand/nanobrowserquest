@@ -497,9 +497,7 @@ class GameClient {
     var id = data[1];
     var item = data[2];
 
-    if (this.equip_callback) {
-      this.equip_callback({ id, ...item });
-    }
+    this.equip_callback?.({ id, ...item });
   }
 
   receiveAuras(data) {

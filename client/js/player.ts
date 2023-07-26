@@ -832,7 +832,7 @@ class Player extends Character {
 
         if (isJewel) {
           requirement = Types.getJewelRequirement(bonus);
-        }else if (hasLevel) {
+        } else if (hasLevel) {
           requirement = Types.getItemRequirement(item, levelOrQuantityOrAmount);
 
           if (isWeapon || isHelm || isHelm || isArmor || isShield) {
