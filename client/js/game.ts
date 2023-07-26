@@ -2546,7 +2546,7 @@ class Game {
 
       if (entity.nextGridX >= 0 && entity.nextGridY >= 0) {
         this.entityGrid[entity.nextGridY][entity.nextGridX][entity.id] = entity;
-        if (!(entity instanceof Player)) {
+        if (!(entity instanceof Player) && !(entity instanceof Pet)) {
           this.pathingGrid[entity.nextGridY][entity.nextGridX] = 1;
         }
       }
@@ -3015,8 +3015,9 @@ class Game {
           self.player.isLootMoving = false;
         } else if (!self.player.isAttacking()) {
           self.client.sendMove(x, y);
-          self.processPetInput();
         }
+
+        self.processPetInput();
 
         // Target cursor position
         self.selectedX = x;
@@ -6259,7 +6260,7 @@ class Game {
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
       // to "0" the pathing map if there is no entity registered on the coords.
       if (
-        (entity === null || entity instanceof Item || entity instanceof Pet) &&
+        (entity === null || entity instanceof Item) &&
         pos.x >= 0 &&
         pos.y >= 0 &&
         this.map.grid[pos.y][pos.x] !== 1

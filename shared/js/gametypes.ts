@@ -73,6 +73,7 @@ export const Types: any = {
     STONESOCKET: 10,
     STONEDRAGON: 11,
     STONEHERO: 12,
+    PET: 13,
   },
   Curses,
   Messages,

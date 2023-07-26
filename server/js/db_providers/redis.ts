@@ -2537,6 +2537,8 @@ class DatabaseHandler {
         this.lootItems({ player, items: [{ item: "stonedragon", quantity: 1 }] });
       } else if (id === Types.Store.STONEHERO) {
         this.lootItems({ player, items: [{ item: "stonehero", quantity: 1 }] });
+      } else if (id === Types.Store.PET) {
+        this.lootItems({ player, items: [{ item: Types.getKindAsString(Types.Entities.PETEGG), level: 1 }] });
       } else {
         throw new Error("Invalid purchase id");
       }

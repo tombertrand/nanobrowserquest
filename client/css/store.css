@@ -26,6 +26,7 @@
 
 .scrollupgradesacred,
 .scrollupgradelegendary,
+.petegg,
 .scrollupgradeblessed,
 .scrollupgradehigh,
 .scrollupgrademedium,
@@ -140,6 +141,7 @@
 
   .scrollupgradesacred,
   .scrollupgradelegendary,
+  .petegg,
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
@@ -156,6 +158,10 @@
 
   .scrollupgradelegendary {
     background-image: url(../img/3/item-scrollupgradelegendary.png);
+  }
+
+  .petegg {
+    background-image: url(../img/3/item-petegg.png);
   }
 
   .scrollupgradeblessed {
@@ -247,6 +253,7 @@
 
   .scrollupgradesacred,
   .scrollupgradelegendary,
+  .petegg,
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,
@@ -262,6 +269,10 @@
 
   .scrollupgradelegendary {
     background-image: url(../img/3/item-scrollupgradelegendary.png);
+  }
+
+  .petegg {
+    background-image: url(../img/3/item-petegg.png);
   }
 
   .scrollupgradeblessed {
@@ -358,6 +369,7 @@
 
   .scrollupgradesacred,
   .scrollupgradelegendary,
+  .petegg,
   .scrollupgradeblessed,
   .scrollupgradehigh,
   .scrollupgrademedium,

@@ -43,6 +43,13 @@ class Store {
       usd: isDevelopmentAmounts ? 0.12 : 1.25,
       isAvailable: true,
     },
+    {
+      id: Types.Store.PET,
+      nano: 0,
+      ban: 0,
+      usd: isDevelopmentAmounts ? 0.12 : 1.5,
+      isAvailable: true,
+    },
     // {
     //   id: Types.Store.SCROLLUPGRADEMEDIUM,
     //   nano: 0,

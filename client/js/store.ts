@@ -134,6 +134,14 @@ class Store {
         confirmedMessage: "1 Hero Emblem was added to your inventory.",
         requiresInventorySlot: true,
       },
+      {
+        id: Types.Store.PET,
+        icon: "petegg",
+        name: "Pet Egg",
+        description: "An egg that contains a random pet",
+        confirmedMessage: "A pet egg was added to your inventory.",
+        requiresInventorySlot: true,
+      },
     ];
   }
 
