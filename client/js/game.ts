@@ -697,8 +697,7 @@ class Game {
         const item = element.attr("data-item");
         const level = parseInt(element.attr("data-level") || "1", 10);
         const rawBonus = toArray(element.attr("data-bonus"));
-        const rawSkill = Number(element.attr("data-skill")) ? parseInt(element.attr("data-skill"), 10) : null;
-        // const skin = Number(element.attr("data-skin")) || null;
+        const rawSkill = element.attr("data-skill") ? Number(element.attr("data-skill")) : null;
         const rawSocket = toArray(element.attr("data-socket"));
         const slot = parseInt(element.parent().attr("data-slot") || "0", 10);
         const isEquippedItemSlot = Object.values(Slot).includes(slot);
@@ -1508,6 +1507,7 @@ class Game {
           "data-item": player.pet,
           "data-level": player.petLevel,
           "data-bonus": toString(player.petBonus),
+          "data-socket": toString(player.petSocket),
           click: event => {
             this.handleClick(event);
           },
@@ -3402,6 +3402,7 @@ class Game {
           petId,
           ownerId,
           skin,
+          level,
         } = data;
 
         if (kind === Types.Entities.GATEWAYFX) {
@@ -3421,7 +3422,7 @@ class Game {
                 const owner = self.getEntityById(ownerId);
                 const name = ownerId ? `Pet of ${owner?.name}` : "";
 
-                entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, bonus });
+                entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, skin, level, bonus });
 
                 if (owner) {
                   owner.petId = id;
@@ -4694,11 +4695,11 @@ class Game {
 
         if (player) {
           if (type === "helm") {
-            player.switchHelm(name, level, bonus, socket);
+            player.switchHelm(name, level, toString(bonus), toString(socket));
           } else if (type === "armor") {
-            player.switchArmor(self.getSprite(name), level, bonus, socket);
+            player.switchArmor(self.getSprite(name), level, toString(bonus), toString(socket));
           } else if (type === "weapon") {
-            player.switchWeapon(name, level, bonus, socket, skill);
+            player.switchWeapon(name, level, toString(bonus), toString(socket), skill);
 
             // Clear weapon when it's used as a quest item
             if (playerId === self.player?.id && name === "dagger") {
@@ -4712,7 +4713,7 @@ class Game {
             if (!kind || !level || !bonus) {
               player.removeCape();
             } else {
-              player.switchCape(name, level, bonus);
+              player.switchCape(name, level, toString(bonus));
             }
 
             if (playerId === self.player.id) {
@@ -4722,25 +4723,25 @@ class Game {
             if (!kind || !level || !bonus || !socket || !skin) {
               player.setPet(null);
             } else {
-              player.setPet([name, level, bonus, socket, skin].filter(Boolean).join(":"));
+              player.setPet([name, level, toString(bonus), toString(socket), skin].filter(Boolean).join(":"));
             }
           } else if (type === "shield") {
             if (!kind || !level) {
               player.removeShield();
             } else {
-              player.switchShield(name, level, bonus, socket, skill);
+              player.switchShield(name, level, toString(bonus), toString(socket), skill);
             }
             if (playerId === self.player.id) {
               self.setDefenseSkill(skill);
             }
           } else if (type === "belt") {
-            player.setBelt([name, level, bonus].filter(Boolean).join(":"));
+            player.setBelt([name, level, toString(bonus)].filter(Boolean).join(":"));
           } else if (type === "ring1") {
-            player.setRing1([name, level, bonus].filter(Boolean).join(":"));
+            player.setRing1([name, level, toString(bonus)].filter(Boolean).join(":"));
           } else if (type === "ring2") {
-            player.setRing2([name, level, bonus].filter(Boolean).join(":"));
+            player.setRing2([name, level, toString(bonus)].filter(Boolean).join(":"));
           } else if (type === "amulet") {
-            player.setAmulet([name, level, bonus].filter(Boolean).join(":"));
+            player.setAmulet([name, level, toString(bonus)].filter(Boolean).join(":"));
           }
 
           // @NOTE only remove it for self

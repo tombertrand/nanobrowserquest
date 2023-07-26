@@ -5,6 +5,7 @@ import Camera from "./camera";
 import Character from "./character";
 import Detect from "./detect";
 import Item from "./item";
+import Pet from "./pet";
 import Player from "./player";
 import Timer from "./timer";
 
@@ -730,6 +731,11 @@ class Renderer {
             const brightness = this.calculateBrightnessPerLevel(entity.armorLevel);
             this.context.filter = `brightness(${brightness}%)`;
           }
+        } else if (entity instanceof Pet) {
+          isFilterApplied = true;
+
+          const brightness = this.calculateBrightnessPerLevel(entity.level);
+          this.context.filter = `brightness(${brightness}%)`;
         }
 
         // else if (entity.kind === Types.Entities.GUARD && this.game?.network === "nano") {

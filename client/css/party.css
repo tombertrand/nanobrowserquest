@@ -51,6 +51,11 @@
   border-radius: 6px;
 }
 
+#other-players {
+  overflow-y: scroll;
+  padding: 0 6px;
+}
+
 #party-players .row,
 #other-players .row {
   display: flex;

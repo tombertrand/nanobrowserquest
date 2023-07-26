@@ -2825,6 +2825,7 @@ Types.getItemDetails = function ({
     if (!isUnique) {
       magicDamage = Types.getWeaponMagicDamage(level);
     }
+
     skill =
       typeof rawSkill === "number"
         ? Types.getAttackSkill({

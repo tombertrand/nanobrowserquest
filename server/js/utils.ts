@@ -634,7 +634,7 @@ export const generatePurpleChestItem = (): {
 
 export const generateRandomPet = () => {
   const pets = {
-    petdino: 4,
+    // petdino: 4,
     petbat: 2,
     // petturtle: 1,
     petcat: 5,

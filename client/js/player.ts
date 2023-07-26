@@ -539,7 +539,6 @@ class Player extends Character {
       this.pet = pet;
       this.petLevel = toNumber(level);
       this.petBonus = toArray(bonus);
-      this.petBonus = toArray(bonus);
       this.petSocket = toArray(socket);
       this.petSkin = toNumber(skin);
     } else {

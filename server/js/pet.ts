@@ -4,10 +4,11 @@ import { randomOrientation } from "./utils";
 class Pet extends Character {
   ownerId: number;
   skin: number;
+  level: number;
   moveCallback: () => void;
   // move_callback: (x: number, y: number) => void;
 
-  constructor({ id, type = "pet", kind, skin, x, y, ownerId }) {
+  constructor({ id, type = "pet", kind, skin, x, y, ownerId, level }) {
     super(id, type, kind, x, y);
 
     this.orientation = randomOrientation();
@@ -16,6 +17,7 @@ class Pet extends Character {
     this.poisonedInterval = null;
     this.ownerId = ownerId;
     this.skin = skin;
+    this.level = level;
   }
 
   getState() {
@@ -26,6 +28,7 @@ class Pet extends Character {
       element: this.element || null,
       enchants: this.enchants || null,
       skin: this.skin,
+      level: this.level,
       ownerId: this.ownerId,
     });
   }
