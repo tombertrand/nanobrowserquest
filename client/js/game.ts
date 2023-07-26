@@ -971,16 +971,18 @@ class Game {
       let itemLevel;
       let itemBonus;
       let itemSkill;
+      let itemSkin;
       let itemSocket;
       let isItemUnique;
       let isUpgrade = false;
 
-      self.player.upgrade.forEach(({ item, level, slot, bonus, skill, socket, isUnique }) => {
+      self.player.upgrade.forEach(({ item, level, slot, bonus, skill, skin, socket, isUnique }) => {
         if (slot === 0) {
           itemName = item;
           itemLevel = level;
           itemBonus = bonus;
           itemSkill = skill;
+          itemSkin = skin;
           itemSocket = socket;
           isItemUnique = isUnique;
         } else if (item.startsWith("scrollupgrade")) {
@@ -997,6 +999,7 @@ class Game {
               level: parseInt(itemLevel) + 1,
               bonus: itemBonus,
               skill: itemSkill,
+              skin: itemSkin,
               socket: itemSocket,
             }),
           );

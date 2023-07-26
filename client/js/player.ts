@@ -830,7 +830,9 @@ class Player extends Character {
         let skill = null;
         let skin = null;
 
-        if (hasLevel) {
+        if (isJewel) {
+          requirement = Types.getJewelRequirement(bonus);
+        }else if (hasLevel) {
           requirement = Types.getItemRequirement(item, levelOrQuantityOrAmount);
 
           if (isWeapon || isHelm || isHelm || isArmor || isShield) {

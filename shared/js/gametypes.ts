@@ -734,13 +734,13 @@ export const kinds = {
   pet_axolotl: [Types.Entities.PET_AXOLOTL, "pet"],
   pet_fox: [Types.Entities.PET_FOX, "pet"],
   petegg: [Types.Entities.PETEGG, "pet", "Pet Egg"],
-  petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 34],
-  petbat: [Types.Entities.PETBAT, "pet", "Bat Pet", 36],
-  petcat: [Types.Entities.PETCAT, "pet", "Cat Pet", 32],
-  petdog: [Types.Entities.PETDOG, "pet", "Dog Pet", 42],
-  petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 36],
-  petaxolotl: [Types.Entities.PETAXOLOTL, "pet", "Axolotl Pet", 48],
-  petfox: [Types.Entities.PETFOX, "pet", "Fox Pet", 34],
+  petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 10],
+  petbat: [Types.Entities.PETBAT, "pet", "Bat Pet", 10],
+  petcat: [Types.Entities.PETCAT, "pet", "Cat Pet", 10],
+  petdog: [Types.Entities.PETDOG, "pet", "Dog Pet", 10],
+  petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 10],
+  petaxolotl: [Types.Entities.PETAXOLOTL, "pet", "Axolotl Pet", 10],
+  petfox: [Types.Entities.PETFOX, "pet", "Fox Pet", 10],
 
   // ID, exp, level
   wizard: [Types.Entities.WIZARD, "mob", 7, 1],
@@ -2628,6 +2628,11 @@ Types.isBaseLegendaryClassItem = (item: string) => {
 Types.getItemClass = function (item: string, level?: number) {
   const baseLevel = Types.getItemBaseLevel(item);
 
+  const isPet = Types.isPetItem(item);
+  if (isPet) {
+    return "legendary";
+  }
+
   return Types.getItemClassFromBaseLevel(level, baseLevel);
 };
 
@@ -2732,7 +2737,7 @@ Types.getJewelBonus = function (rawSockets: string[]) {
     const [item, rawLevel, rawBonus] = rawSocket.split("|");
     if (!Types.isJewel(item)) return;
 
-    const level = parseInt(rawLevel);
+    const level = Number(rawLevel);
     const bonus = Types.getBonus(JSON.parse(rawBonus), level);
 
     Object.entries(bonus).forEach(([key, value]) => {

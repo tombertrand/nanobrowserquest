@@ -294,6 +294,8 @@ export const getRuneFromItem = (rankOrString: number | string) => {
 export const getJewelRequirement = function (bonus) {
   let requirement = 4;
 
+  bonus = toArray(bonus);
+
   if (bonus.length >= 5) {
     requirement = 60;
   } else if (bonus.length === 4) {
