@@ -6267,7 +6267,7 @@ class Game {
       !this.hoveringPlateauTile &&
       this.map.grid
     ) {
-      entity = this.getEntityAt(pos.x, pos.y);
+      entity = this.getMobAt(pos.x, pos.y) || this.getEntityAt(pos.x, pos.y);
 
       // @NOTE: For an unknown reason when a mob dies and is moving, it doesn't unregister its "1" on
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
