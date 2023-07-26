@@ -4743,7 +4743,8 @@ class Game {
             player.setAmulet([name, level, bonus].filter(Boolean).join(":"));
           }
 
-          if (!name) {
+          // @NOTE only remove it for self
+          if (player.id === self.player.id && !name) {
             $(`.item-equip-${type}`).empty();
           }
         }
