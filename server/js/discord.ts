@@ -15,6 +15,9 @@ const ChatChannel =
 const AnvilChannel =
   "https://discord.com/api/webhooks/1029352905574207519/VWeXf_oqwL3MENHwpkUqTQozlsJ6H_ui_g5m8CJtYRwSQIGQ-fVByJCUQ6q69y-cCki2";
 
+const PurchaseChannel =
+  "https://discord.com/api/webhooks/1134147348721832047/BG-isyL2k2byxw3J1F5HRH2KpBMjXRIbN8xTibfCG0VjLAg0vN_ovAEpgik5hZqwhCTd";
+
 // For linking players with Discord
 export const discordClient = new Client({
   intents: [
@@ -69,6 +72,23 @@ export const postMessageToDiscordAnvilChannel = (content: string) => {
     });
 
     fetch(AnvilChannel, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
+
+export const postMessageToDiscordPurchaseChannel = (content: string) => {
+  if (isDevelopment) return;
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    fetch(PurchaseChannel, {
       method: "POST",
       body,
       headers: { "Content-Type": "application/json" },

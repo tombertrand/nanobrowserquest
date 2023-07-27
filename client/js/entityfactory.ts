@@ -32,9 +32,9 @@ EntityFactory.builders[Types.Entities.WARRIOR] = function (id, props) {
   return new Warrior(id, props);
 };
 
-EntityFactory.builders[Types.Entities.PET_DINO] = function (id, props) {
-  return new Pets.Dino(id, props);
-};
+// EntityFactory.builders[Types.Entities.PET_DINO] = function (id, props) {
+//   return new Pets.Dino(id, props);
+// };
 
 EntityFactory.builders[Types.Entities.PET_BAT] = function (id, props) {
   return new Pets.Bat(id, props);
@@ -58,6 +58,14 @@ EntityFactory.builders[Types.Entities.PET_AXOLOTL] = function (id, props) {
 
 EntityFactory.builders[Types.Entities.PET_FOX] = function (id, props) {
   return new Pets.Fox(id, props);
+};
+
+EntityFactory.builders[Types.Entities.PET_MOUSE] = function (id, props) {
+  return new Pets.Mouse(id, props);
+};
+
+EntityFactory.builders[Types.Entities.PET_HEDGEHOG] = function (id, props) {
+  return new Pets.Hedgehog(id, props);
 };
 
 EntityFactory.builders[Types.Entities.RAT] = function (id, props) {

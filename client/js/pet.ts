@@ -1,5 +1,3 @@
-import shuffle from "lodash/shuffle";
-
 import { Types } from "../../shared/js/gametypes";
 import Character from "./character";
 
@@ -7,7 +5,6 @@ class Pet extends Character {
   ownerId: number;
   level: number;
   skin: number;
-
   idleTimeout: any;
 
   constructor(id: number, kind: number, props) {
@@ -40,16 +37,12 @@ class Pet extends Character {
   setIdleAnimation() {
     clearTimeout(this.idleTimeout);
 
+    const sitCount = Types.Entities.PET_BAT ? 1 : 5;
+
     this.idleTimeout = window.setTimeout(() => {
-      if (this.kind === Types.Entities.PET_BAT) {
-        this.animate("sit", this.idleSpeed, 1, () => {
-          this.animate("liedown", this.idleSpeed);
-        });
-      } else {
-        this.animate("sit", this.idleSpeed, 5, () => {
-          this.animate("liedown", this.idleSpeed);
-        });
-      }
+      this.animate("sit", this.idleSpeed, sitCount, () => {
+        this.animate("liedown", this.idleSpeed);
+      });
     }, 10000);
   }
 }

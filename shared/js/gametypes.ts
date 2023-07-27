@@ -97,6 +97,10 @@ export const Types: any = {
     PET_AXOLOTL: 369,
     PETFOX: 370,
     PET_FOX: 371,
+    PETMOUSE: 372,
+    PET_MOUSE: 373,
+    PETHEDGEHOG: 374,
+    PET_HEDGEHOG: 375,
 
     // Mobs
     RAT: 2,
@@ -720,12 +724,15 @@ export const petKindToPetMap = {
   [Types.Entities.PETTURTLE]: Types.Entities.PET_TURTLE,
   [Types.Entities.PETAXOLOTL]: Types.Entities.PET_AXOLOTL,
   [Types.Entities.PETFOX]: Types.Entities.PET_FOX,
+  [Types.Entities.PETMOUSE]: Types.Entities.PET_MOUSE,
+  [Types.Entities.PETHEDGEHOG]: Types.Entities.PET_HEDGEHOG,
 };
 
 export const kinds = {
   warrior: [Types.Entities.WARRIOR, "player"],
 
   // Pets
+  petegg: [Types.Entities.PETEGG, "pet", "Pet Egg"],
   pet_dino: [Types.Entities.PET_DINO, "pet"],
   pet_bat: [Types.Entities.PET_BAT, "pet"],
   pet_cat: [Types.Entities.PET_CAT, "pet"],
@@ -733,7 +740,8 @@ export const kinds = {
   pet_turtle: [Types.Entities.PET_TURTLE, "pet"],
   pet_axolotl: [Types.Entities.PET_AXOLOTL, "pet"],
   pet_fox: [Types.Entities.PET_FOX, "pet"],
-  petegg: [Types.Entities.PETEGG, "pet", "Pet Egg"],
+  pet_mouse: [Types.Entities.PET_MOUSE, "pet"],
+  pet_hedgehog: [Types.Entities.PET_HEDGEHOG, "pet"],
   petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 10],
   petbat: [Types.Entities.PETBAT, "pet", "Bat Pet", 10],
   petcat: [Types.Entities.PETCAT, "pet", "Cat Pet", 10],
@@ -741,6 +749,8 @@ export const kinds = {
   petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 10],
   petaxolotl: [Types.Entities.PETAXOLOTL, "pet", "Axolotl Pet", 10],
   petfox: [Types.Entities.PETFOX, "pet", "Fox Pet", 10],
+  petmouse: [Types.Entities.PETMOUSE, "pet", "Mouse Pet", 10],
+  pethedgehog: [Types.Entities.PETHEDGEHOG, "pet", "Hedgehog Pet", 10],
 
   // ID, exp, level
   wizard: [Types.Entities.WIZARD, "mob", 7, 1],
@@ -1852,6 +1862,8 @@ Types.isPet = function (kind: number) {
     Types.Entities.PET_TURTLE,
     Types.Entities.PET_AXOLOTL,
     Types.Entities.PET_FOX,
+    Types.Entities.PET_MOUSE,
+    Types.Entities.PET_HEDGEHOG,
   ].includes(kind);
 };
 
@@ -1867,6 +1879,8 @@ Types.isPetItem = function (kindOrString: string | number) {
       Types.Entities.PETTURTLE,
       Types.Entities.PETAXOLOTL,
       Types.Entities.PETFOX,
+      Types.Entities.PETMOUSE,
+      Types.Entities.PETHEDGEHOG,
     ].includes(kindOrString);
   } else {
     return kindOrString.startsWith("pet");
@@ -2539,6 +2553,8 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     petdog: 4,
     petturtle: 4,
     petaxolotl: 4,
+    petmouse: 4,
+    pethedgehog: 4,
   };
 
   const transmuteSuccessRate = isBlessed ? 99 : 75;

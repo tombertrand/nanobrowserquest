@@ -44,6 +44,7 @@ import {
   EmojiMap,
   postMessageToDiscordAnvilChannel,
   postMessageToDiscordEventChannel,
+  postMessageToDiscordPurchaseChannel,
 } from "../discord";
 import Messages from "../message";
 import { PromiseQueue } from "../promise-queue";
@@ -2561,6 +2562,10 @@ class DatabaseHandler {
           amount,
           depositAccountIndex: player.depositAccountIndex,
         }),
+      );
+
+      postMessageToDiscordPurchaseChannel(
+        `**${player.name}** purchased ${id} for ${amount} using deposit account ${account}`,
       );
     } catch (err) {
       player.send([

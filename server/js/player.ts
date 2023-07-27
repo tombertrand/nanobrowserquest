@@ -202,6 +202,7 @@ class Player extends Character {
   hasWing: boolean;
   hasCrystal: boolean;
   canChat: boolean;
+  chatTimeout: any;
   // attackTimeoutWarning: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
@@ -414,6 +415,22 @@ class Player extends Character {
       } else if (action === Types.Messages.CHAT) {
         var msg = sanitize(message[1]);
         console.info("CHAT: " + self.name + ": " + msg);
+
+        if (!self.achievement[20]) {
+          if (self.chatTimeout) {
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                `You can only send 1 message per 15 seconds until you beat the Skeleton King`,
+              ).serialize(),
+            );
+            return;
+          } else {
+            self.chatTimeout = setTimeout(() => {
+              self.chatTimeout = null;
+            }, 15_000);
+          }
+        }
 
         if (!self.canChat) {
           self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
@@ -1948,11 +1965,13 @@ class Player extends Character {
         clearInterval(self.poisonedInterval);
       }
       if (self.cursedTimeout) {
-        clearInterval(self.cursedTimeout);
+        clearTimeout(self.cursedTimeout);
       }
-      if (self.exit_callback) {
-        self.exit_callback();
+      if (self.chatTimeout) {
+        clearTimeout(self.chatTimeout);
       }
+
+      self.exit_callback?.();
     });
 
     this.connection.sendUTF8("go"); // Notify client that the HELLO/WELCOME handshake can start
@@ -2575,7 +2594,7 @@ class Player extends Character {
         this.poisonedInterval = null;
       }
       if (this.cursedTimeout) {
-        clearInterval(this.cursedTimeout);
+        clearTimeout(this.cursedTimeout);
         this.cursedTimeout = null;
         this.resetCurse();
       }

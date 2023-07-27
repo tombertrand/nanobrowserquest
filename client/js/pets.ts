@@ -69,6 +69,20 @@ export const Pets = {
       this.idleSpeed = 175;
     }
   },
+  Mouse: class Mouse extends Pet {
+    constructor(id, props: any = {}) {
+      super(id, Types.Entities.PET_MOUSE, props);
+      this.moveSpeed = 200;
+      this.idleSpeed = 175;
+    }
+  },
+  Hedgehog: class Hedgehog extends Pet {
+    constructor(id, props: any = {}) {
+      super(id, Types.Entities.PET_HEDGEHOG, props);
+      this.moveSpeed = 200;
+      this.idleSpeed = 175;
+    }
+  },
 };
 
 export default Pets;

@@ -640,6 +640,8 @@ export const generateRandomPet = () => {
     petcat: 5,
     petdog: 5,
     petaxolotl: 1,
+    petmouse: 4,
+    pethedgehog: 4,
   };
 
   const randomPet = _.shuffle(Object.keys(pets))[0];
