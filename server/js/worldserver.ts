@@ -2479,8 +2479,8 @@ class World {
     }
 
     if (!isBoss) {
-      const runeRandom = random(250);
-      if (runeRandom === 133) {
+      const runeRandom = attacker.level < 20 ? random(125) : random(250);
+      if (runeRandom === 10) {
         return `rune-${getRandomRune(Types.getMobLevel(mob.kind))}`;
       } else if (runeRandom === 42) {
         return "stonesocket";

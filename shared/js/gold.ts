@@ -3,7 +3,7 @@ import { toArray, toNumber } from "../../shared/js/utils";
 export const merchantItems: { item: string; amount: number }[] = [
   undefined,
   { item: "scrollupgradelow", amount: 25 },
-  { item: "scrollupgrademedium", amount: 110 },
+  { item: "scrollupgrademedium", amount: 100 },
   { item: "scrollupgradehigh", amount: 550 },
   { item: "scrollupgradelegendary", amount: 1750 },
   { item: "scrolltransmute", amount: 1500 },
@@ -22,9 +22,9 @@ export const itemGoldMap = {
   bargold: 100_000,
   barplatinum: 1_000_000,
 
-  scrollupgradelow: 3,
-  scrollupgrademedium: 20,
-  scrollupgradehigh: 75,
+  scrollupgradelow: 15,
+  scrollupgrademedium: 35,
+  scrollupgradehigh: 100,
   scrollupgradelegendary: 250,
   scrollupgradeblessed: 250,
   scrollupgradesacred: 3_500,
@@ -36,12 +36,12 @@ export const itemGoldMap = {
   stonedragon: 10_000,
   stonehero: 25_000,
 
-  ringbronze: 5,
-  ringsilver: 15,
-  ringgold: 35,
+  ringbronze: 25,
+  ringsilver: 35,
+  ringgold: 45,
   ringplatinum: 65,
 
-  amuletsilver: 15,
+  amuletsilver: 25,
   amuletgold: 35,
   amuletplatinum: 65,
 
