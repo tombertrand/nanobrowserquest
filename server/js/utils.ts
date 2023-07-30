@@ -229,7 +229,7 @@ export const isValidUpgradeItems = items => {
   const isArmor = Types.isArmor(item);
   const isBelt = Types.isBelt(item);
   const isCape = Types.isCape(item);
-  const isPet = Types.isPetItem(item);
+  const isPet = Types.isPetItem(item) && item !== "petegg";
   const isShield = Types.isShield(item);
   const isRing = Types.isRing(item);
   const isAmulet = Types.isAmulet(item);

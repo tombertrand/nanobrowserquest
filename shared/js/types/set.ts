@@ -131,6 +131,7 @@ export const setBonus = {
     minDamage: 6,
     maxDamage: 6,
     health: 15,
+    defense: 4,
   },
   leather: {
     minDamage: 3,
@@ -148,6 +149,7 @@ export const kindAsStringToSet = {
   shieldwood: "leather",
   helmmail: "mail",
   mailarmor: "mail",
+  shieldiron: "mail",
   helmplate: "plated",
   platearmor: "plated",
   beltplated: "plated",
@@ -257,7 +259,7 @@ export const setItems = {
   golden: ["goldensword", "helmgolden", "goldenarmor", "shieldgolden"],
   ruby: ["redsword", "helmred", "redarmor", "shieldred"],
   plated: ["helmplate", "platearmor", "beltplated", "shieldplate"],
-  mail: ["helmmail", "mailarmor"],
+  mail: ["helmmail", "mailarmor", "shieldiron"],
   leather: ["helmleather", "leatherarmor", "beltleather", "shieldwood"],
 };
 
@@ -279,6 +281,6 @@ export const setItemsNameMap = {
   golden: ["Sword", "Helm", "Armor", "Shield"],
   ruby: ["Sword", "Helm", "Armor", "Shield"],
   plated: ["Helm", "Armor", "Belt", "Shield"],
-  mail: ["Helm", "Armor"],
+  mail: ["Helm", "Armor", "Shield"],
   leather: ["Helm", "Armor", "Belt", "Shield"],
 };
