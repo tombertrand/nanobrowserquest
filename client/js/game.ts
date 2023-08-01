@@ -6319,13 +6319,6 @@ class Game {
 
         if (this.isPanelOpened) {
           this.app.hideWindows();
-
-          if ($("#dialog-quantity").hasClass("ui-dialog-content")) {
-            $("#dialog-quantity").dialog("close");
-          }
-          if ($("#dialog-merchant-item").hasClass("ui-dialog-content")) {
-            $("#dialog-merchant-item").dialog("close");
-          }
         }
       }
     }

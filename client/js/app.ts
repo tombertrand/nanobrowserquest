@@ -1137,6 +1137,13 @@ class App {
   hideWindows() {
     this.game.isPanelOpened = false;
 
+    if ($("#dialog-quantity").hasClass("ui-dialog-content")) {
+      $("#dialog-quantity").dialog("close");
+    }
+    if ($("#dialog-merchant-item").hasClass("ui-dialog-content")) {
+      $("#dialog-merchant-item").dialog("close");
+    }
+
     if ($("#achievements").hasClass("active")) {
       $("#achievements").removeClass("active");
       $("#achievementsbutton").removeClass("active");
@@ -1495,7 +1502,6 @@ class App {
 
     this.storage.setDebug(isChecked);
   }
-
 
   toggleEffects() {
     const isChecked = $("#effects-checkbox").is(":checked");
