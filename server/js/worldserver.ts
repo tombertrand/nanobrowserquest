@@ -358,14 +358,10 @@ class World {
         self.removePlayer(player);
         self.decrementPlayerCount();
 
-        if (self.removed_callback) {
-          self.removed_callback();
-        }
+        self.removed_callback?.();
       });
 
-      if (self.added_callback) {
-        self.added_callback();
-      }
+      self.added_callback?.();
     });
 
     // Called when an entity is attacked by another entity
@@ -2668,7 +2664,7 @@ class World {
       this.lootChests(mob, attacker);
     }
 
-    // var randomDrops = ["petegg"];
+    // var randomDrops = ["firefoxpotion"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["demonaxe", "paladinaxe"];

@@ -58,6 +58,7 @@ class GameClient {
   partyjoin_callback: any;
   partyrefuse_callback: any;
   partyinvite_callback: any;
+  partydeleteinvite_callback: any;
   partyleave_callback: any;
   partydisband_callback: any;
   partyinfo_callback: any;
@@ -612,6 +613,8 @@ class GameClient {
       this.partyrefuse_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.INVITE && this.partyinvite_callback) {
       this.partyinvite_callback(data[2]);
+    } else if (data[1] === Types.Messages.PARTY_ACTIONS.DELETE_INVITE && this.partydeleteinvite_callback) {
+      this.partydeleteinvite_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.LEAVE && this.partyleave_callback) {
       this.partyleave_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.DISBAND && this.partydisband_callback) {
@@ -1019,6 +1022,10 @@ class GameClient {
 
   onPartyInvite(callback) {
     this.partyinvite_callback = callback;
+  }
+
+  onPartyDeleteInvite(callback) {
+    this.partydeleteinvite_callback = callback;
   }
 
   onPartyLeave(callback) {

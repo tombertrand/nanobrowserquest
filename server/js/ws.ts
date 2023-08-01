@@ -134,9 +134,7 @@ export class Connection {
     });
 
     connection.on("disconnect", function () {
-      if (self.close_callback) {
-        self.close_callback();
-      }
+      self.close_callback?.();
       self._server.removeConnection(self.id);
     });
   }

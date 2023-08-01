@@ -69,6 +69,7 @@ export const Messages = {
     JOIN: 62,
     REFUSE: 63,
     INVITE: 64,
+    DELETE_INVITE: 134,
     LEAVE: 65,
     REMOVE: 66,
     DISBAND: 67,

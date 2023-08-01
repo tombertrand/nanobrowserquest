@@ -4065,6 +4065,15 @@ class Game {
         });
       });
 
+      self.client.onPartyDeleteInvite(function (data) {
+        // Cannot be invited if already in a party
+        if (self.player.partyId) return;
+
+        const { partyId } = data;
+
+        self.partyInvites = self.partyInvites.filter(invites => invites.partyId !== partyId);
+      });
+
       self.client.onPartyLeave(function (data) {
         const { partyId, partyLeader, members, playerName } = data;
 
@@ -5388,7 +5397,6 @@ class Game {
     if (!this.map.isOutOfBounds(x, y)) {
       this.unregisterEntityPosition(character);
       character.setGridPosition(x, y);
-
       this.registerEntityPosition(character);
       this.assignBubbleTo(character);
     } else {

@@ -107,8 +107,18 @@ class Party {
   }
 
   updatePartyBonus() {
-    this.forEachMember(({ id }) => {
-      const player = this.server.getEntityById(id);
+    this.forEachMember(member => {
+      if (!member || !member.id) {
+        Sentry.captureException(new Error("Missing member in party"), {
+          extra: {
+            member,
+            members: this.members,
+          },
+        });
+        return;
+      }
+
+      const player = this.server.getEntityById(member.id);
 
       if (player) {
         player.calculatePartyBonus();
@@ -116,7 +126,7 @@ class Party {
       } else {
         Sentry.captureException(new Error("Missing entity ID in party"), {
           extra: {
-            id,
+            id: member.id,
           },
         });
       }
@@ -166,6 +176,14 @@ class Party {
       player.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.LEAVE, { playerName: player.name }).serialize());
 
       if (!this.members.length) {
+        Object.keys(this.sentInvites).forEach(id => {
+          const invitedPlayer = this.server.getEntityById(id);
+
+          invitedPlayer?.send(
+            new Messages.Party(Types.Messages.PARTY_ACTIONS.DELETE_INVITE, { partyId: this.id }).serialize(),
+          );
+        });
+
         delete this.server.parties[this.id];
       } else {
         this.updatePartyBonus();

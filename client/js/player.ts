@@ -925,13 +925,17 @@ class Player extends Character {
 
     if (!this.invincible) {
       this.currentArmorSprite = this.getSprite();
+
       this.invincible = true;
       this.invinciblestart_callback();
     }
 
-    this.invincibleTimeout = setTimeout(function () {
-      self.stopInvincibility();
-      self.idle(Types.Orientations.DOWN);
+    this.invincibleTimeout = setTimeout(() => {
+      this.stopInvincibility();
+
+      // @NOTE Bug with FF animation frame doesn't reset properly unless forced down then the correct direction
+      this.setAnimation(`idle_down`, this.idleSpeed);
+      this.idle(self.orientation);
     }, 10000);
   }
 

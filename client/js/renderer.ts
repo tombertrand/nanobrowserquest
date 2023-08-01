@@ -731,7 +731,7 @@ class Renderer {
             const brightness = this.calculateBrightnessPerLevel(entity.armorLevel);
             this.context.filter = `brightness(${brightness}%)`;
           }
-        } else if (entity instanceof Pet) {
+        } else if (entity instanceof Pet && entity.level >= 7) {
           isFilterApplied = true;
 
           const brightness = this.calculateBrightnessPerLevel(entity.level);
