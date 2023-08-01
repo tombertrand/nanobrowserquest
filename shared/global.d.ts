@@ -34,3 +34,12 @@ type Resistances = {
   poisonResistance?: number;
   spectralResistance?: number;
 };
+
+type Settings = {
+  capeHue: number;
+  capeSaturate: number;
+  capeContrast: number;
+  capeBrightness: number;
+  pvp: boolean;
+  effects: boolean;
+};

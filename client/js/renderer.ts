@@ -480,17 +480,19 @@ class Renderer {
       // this.context.fillStyle = "hsl(-121, 100%, 50%)";
 
       let filter = "";
-      if (typeof entity.capeHue === "number") {
-        filter += ` hue-rotate(${entity.capeHue}deg)`;
-      }
-      if (typeof entity.capeSaturate === "number") {
-        filter += ` saturate(${entity.capeSaturate}%)`;
-      }
-      if (typeof entity.capeContrast === "number") {
-        filter += ` contrast(${entity.capeContrast}%)`;
-      }
-      if (typeof entity.capeBrightness === "number") {
-        filter += ` brightness(${entity.capeBrightness})`;
+      if (this.game.showEffects) {
+        if (typeof entity.capeHue === "number") {
+          filter += ` hue-rotate(${entity.capeHue}deg)`;
+        }
+        if (typeof entity.capeSaturate === "number") {
+          filter += ` saturate(${entity.capeSaturate}%)`;
+        }
+        if (typeof entity.capeContrast === "number") {
+          filter += ` contrast(${entity.capeContrast}%)`;
+        }
+        if (typeof entity.capeBrightness === "number") {
+          filter += ` brightness(${entity.capeBrightness})`;
+        }
       }
       this.context.filter = filter;
       this.context.drawImage(spriteImage, x, y, w, h, ox, oy, dw, dh);
@@ -522,7 +524,7 @@ class Renderer {
         dw = w * ds,
         dh = h * ds;
 
-      if (entity.shieldLevel >= 7) {
+      if (entity.shieldLevel >= 7 && this.game.showEffects) {
         isFilterApplied = true;
 
         const brightness = this.calculateBrightnessPerLevel(entity.shieldLevel);
@@ -560,7 +562,7 @@ class Renderer {
         dh = h * ds;
 
       this.context.filter = "";
-      if (entity.helmLevel >= 7) {
+      if (entity.helmLevel >= 7 && this.game.showEffects) {
         const brightness = this.calculateBrightnessPerLevel(entity.helmLevel);
         this.context.filter += `brightness(${brightness}%) `;
       }
@@ -725,13 +727,13 @@ class Renderer {
             }
           }
 
-          if (sprite.name === entity.armorName && entity.armorLevel >= 7) {
+          if (sprite.name === entity.armorName && entity.armorLevel >= 7 && this.game.showEffects) {
             isFilterApplied = true;
 
             const brightness = this.calculateBrightnessPerLevel(entity.armorLevel);
             this.context.filter = `brightness(${brightness}%)`;
           }
-        } else if (entity instanceof Pet && entity.level >= 7) {
+        } else if (entity instanceof Pet && entity.level >= 7 && this.game.showEffects) {
           isFilterApplied = true;
 
           const brightness = this.calculateBrightnessPerLevel(entity.level);
@@ -810,7 +812,7 @@ class Renderer {
           var wh = weapon.height * os;
 
           let isFilterApplied = false;
-          if (entity.weaponLevel >= 7) {
+          if (entity.weaponLevel >= 7 && this.game.showEffects) {
             isFilterApplied = true;
 
             const brightness = this.calculateBrightnessPerLevel(entity.weaponLevel);
@@ -833,7 +835,7 @@ class Renderer {
             this.context.filter = "brightness(100%)";
           }
 
-          if (typeof entity.weaponLevel === "number" && entity.weaponLevel >= 7) {
+          if (typeof entity.weaponLevel === "number" && entity.weaponLevel >= 7 && this.game.showEffects) {
             // @TODO configure the weapon element
             let effect = "magic";
             if (entity.isWeaponUnique) {
@@ -1484,7 +1486,7 @@ class Renderer {
     ctx.drawImage(shadow.image, 0, 0, sw, sh, ox, oy, sw, sh);
     if (this.game.player.cape) {
       var capeImage = capeSprite.image;
-      if (this.game.player.capeLevel >= 7) {
+      if (this.game.player.capeLevel >= 7 && this.game.showEffects) {
         capeImage = capeSprite.image7;
       }
       ctx.drawImage(capeImage, 0, y, w, h, 2, 2, w, h);

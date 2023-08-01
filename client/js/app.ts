@@ -1496,6 +1496,14 @@ class App {
     this.storage.setDebug(isChecked);
   }
 
+
+  toggleEffects() {
+    const isChecked = $("#effects-checkbox").is(":checked");
+
+    this.game.showEffects = isChecked;
+    this.game.client.sendSettings({ effects: isChecked });
+  }
+
   toggleAnvilOdds() {
     const isChecked = $("#anvil-odds-checkbox").is(":checked");
 

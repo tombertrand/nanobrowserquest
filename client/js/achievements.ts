@@ -5,7 +5,7 @@ const NANO_PAYOUT_MULTIPLIER = 10;
 const BAN_PAYOUT_MULTIPLIER = 10;
 
 export const DMG_TOTAL = 5_000;
-export const KILLS_TOTAL = 50;
+export const KILLS_TOTAL = 75;
 export const RAT_COUNT = 15;
 export const SKELETON_COUNT = 20;
 export const ENEMY_COUNT = 75;

@@ -118,6 +118,7 @@ class Game {
   hoveringPet: boolean;
   pvp: boolean;
   debug: boolean;
+  showEffects: boolean;
   hoveringPlayerPvP: boolean;
   hoveringMob: boolean;
   hoveringItem: boolean;
@@ -326,6 +327,7 @@ class Game {
     this.hoveringPlayer = false;
     this.pvp = false;
     this.hoveringPlayerPvP = false;
+    this.showEffects = true;
     this.hoveringMob = false;
     this.hoveringItem = false;
     this.hoveringCollidingTile = false;
@@ -558,6 +560,9 @@ class Game {
     } else {
       this.infoManager.setShowDamageInfo(false);
     }
+
+    this.showEffects = settings.effects;
+    $("#effects-checkbox").prop("checked", settings.effects);
 
     this.pvp = settings.pvp;
     $("#pvp-checkbox").prop("checked", settings.pvp);

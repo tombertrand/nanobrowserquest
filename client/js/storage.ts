@@ -47,6 +47,7 @@ const defaultData = {
     capeContrast: 0,
     capeBrightness: 1,
     debug: false,
+    effects: true,
   },
   achievements: {
     ratCount: 0,

@@ -810,6 +810,10 @@ var initGame = function () {
     app.toggleDebug();
   });
 
+  $("#effects-checkbox").on("change", function () {
+    app.toggleEffects();
+  });
+
   // $("#anvil-odds-checkbox").on("change", function () {
   //   app.toggleAnvilOdds();
   // });

@@ -90,12 +90,13 @@ const getNewDepositAccountByIndex = async (index: number, network: Network): Pro
   return depositAccount;
 };
 
-const defaultSettings = {
+const defaultSettings: Settings = {
   capeHue: 0,
   capeSaturate: 0,
   capeContrast: 0,
   capeBrightness: 1,
   pvp: false,
+  effects: true,
 };
 
 class DatabaseHandler {
@@ -567,6 +568,8 @@ class DatabaseHandler {
                 // Silence err
               }
 
+              console.log("~~~~settings", settings);
+
               // Restore the trade gold in the main inventory gold
               if (goldTrade) {
                 gold = gold + goldTrade;
@@ -871,13 +874,35 @@ class DatabaseHandler {
     }
   }
 
-  setSettings(name, settings) {
+  setSettings(name, rawSettings: Settings) {
+    const settings = {} as Settings;
+
+    if (typeof rawSettings.capeHue === "number") {
+      settings.capeHue = rawSettings.capeHue;
+    }
+    if (typeof rawSettings.capeSaturate === "number") {
+      settings.capeSaturate = rawSettings.capeSaturate;
+    }
+    if (typeof rawSettings.capeContrast === "number") {
+      settings.capeContrast = rawSettings.capeContrast;
+    }
+    if (typeof rawSettings.capeBrightness === "number") {
+      settings.capeBrightness = rawSettings.capeBrightness;
+    }
+    if (typeof rawSettings.pvp !== "undefined") {
+      settings.pvp = !!rawSettings.pvp;
+    }
+    if (typeof rawSettings.effects !== "undefined") {
+      settings.effects = !!rawSettings.effects;
+    }
+
     this.client.hget("u:" + name, "settings", (err, reply) => {
       try {
         var parsedReply = reply ? JSON.parse(reply) : {};
 
-        settings = JSON.stringify(Object.assign(parsedReply, settings));
-        this.client.hset("u:" + name, "settings", settings);
+        const newSettings = JSON.stringify(Object.assign(parsedReply, settings));
+
+        this.client.hset("u:" + name, "settings", newSettings);
       } catch (err) {
         Sentry.captureException(err);
       }
