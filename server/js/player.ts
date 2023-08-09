@@ -11,7 +11,15 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
-import { isValidAccountAddress, toArray, toBoolean, toDb, toNumber, validateQuantity } from "../../shared/js/utils";
+import {
+  HASH_BAN_DELAY,
+  isValidAccountAddress,
+  toArray,
+  toBoolean,
+  toDb,
+  toNumber,
+  validateQuantity,
+} from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
 import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
@@ -3430,17 +3438,17 @@ class Player extends Character {
     this.checkHashInterval = setInterval(() => {
       const delay = Date.now() - this.lastHashCheckTimestamp;
 
-      if (delay > 5000) {
+      if (delay > HASH_BAN_DELAY) {
         clearInterval(this.checkHashInterval);
         this.checkHashInterval = null;
 
-        // this.databaseHandler.banPlayerByIP({
-        //   player: this,
-        //   reason: "cheating",
-        //   message: `invalid interval hash check ${delay}`,
-        // });
+        this.databaseHandler.banPlayerByIP({
+          player: this,
+          reason: "cheating",
+          message: `invalid interval hash check ${delay}`,
+        });
       }
-    }, 60000);
+    }, HASH_BAN_DELAY);
   }
 
   sendWelcome({

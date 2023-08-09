@@ -28,6 +28,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
+import { HASH_BAN_DELAY } from "../../shared/js/utils";
 import { getGoldDeathPenaltyPercent, randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
@@ -2768,7 +2769,7 @@ class Game {
       const hash = CryptoJS.MD5(this.toString()).toString();
 
       this.client.sendHash(hash);
-    }, 30000);
+    }, HASH_BAN_DELAY / 2);
   }
 
   async connect(action, started_callback) {

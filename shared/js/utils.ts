@@ -1,3 +1,5 @@
+export const HASH_BAN_DELAY = 60000;
+
 export const toString = (stringOrArray: string | number[]): string => {
   if (Array.isArray(stringOrArray)) {
     return JSON.stringify(stringOrArray);
