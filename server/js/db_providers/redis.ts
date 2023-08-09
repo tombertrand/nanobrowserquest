@@ -568,8 +568,6 @@ class DatabaseHandler {
                 // Silence err
               }
 
-              console.log("~~~~settings", settings);
-
               // Restore the trade gold in the main inventory gold
               if (goldTrade) {
                 gold = gold + goldTrade;

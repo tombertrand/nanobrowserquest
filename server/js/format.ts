@@ -30,6 +30,7 @@ class FormatChecker {
       (this.formats[Types.Messages.WAYPOINT] = ["n", "s"]),
       (this.formats[Types.Messages.BOSS_CHECK] = ["b"]),
       (this.formats[Types.Messages.BAN_PLAYER] = ["s"]),
+      (this.formats[Types.Messages.HASH] = ["s"]),
       (this.formats[Types.Messages.SKILL] = ["n", "n"]),
       (this.formats[Types.Messages.REQUEST_PAYOUT] = ["n"]),
       (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n", "a"]),

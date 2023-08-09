@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-shadow */
 import * as Sentry from "@sentry/browser";
+import CryptoJS from "crypto-js";
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
@@ -228,6 +229,7 @@ class Game {
   cursorOverSocket: number | null;
   isPanelOpened: boolean;
   isDragStarted: boolean;
+  hashCheckInterval: any;
 
   constructor(app) {
     this.app = app;
@@ -264,6 +266,7 @@ class Game {
     this.confirmedSoldItemToMerchant = null;
     this.isPanelOpened = false;
     this.isDragStarted = false;
+    this.hashCheckInterval = null;
 
     this.renderer = null;
     this.updater = null;
@@ -2760,6 +2763,14 @@ class Game {
     }
   }
 
+  startHashCheckInterval() {
+    this.hashCheckInterval = window.setInterval(() => {
+      const hash = CryptoJS.MD5(this.toString()).toString();
+
+      this.client.sendHash(hash);
+    }, 30000);
+  }
+
   async connect(action, started_callback) {
     var self = this;
 
@@ -2860,6 +2871,9 @@ class Game {
     }) {
       // @ts-ignore
       self.app.start();
+
+      clearInterval(this.hashCheckInterval);
+      self.startHashCheckInterval();
 
       Sentry.configureScope(scope => {
         // scope.setTag("name", name);
@@ -3344,6 +3358,8 @@ class Game {
 
         self.player.forEachAttacker(function (attacker) {
           attacker.disengage();
+
+          self.player.removeAttacker(attacker);
         });
 
         self.audioManager.fadeOutCurrentMusic();
@@ -3720,9 +3736,9 @@ class Game {
                       self.removeFromRenderingGrid(entity, entity.gridX, entity.gridY);
                     });
                   }
-
                   entity.forEachAttacker(function (attacker) {
                     attacker.disengage();
+                    self.player.removeAttacker(attacker);
                   });
 
                   if (self.player.target && self.player.target.id === entity.id) {
@@ -3977,11 +3993,13 @@ class Game {
           } else if (entity instanceof Pet) {
             entity.die();
           } else if (entity instanceof Character) {
-            entity.forEachAttacker(function (attacker) {
-              if (attacker.canReachTarget()) {
-                attacker.hit();
-              }
-            });
+            if (!(entity instanceof Mob)) {
+              entity.forEachAttacker(function (attacker) {
+                if (attacker.canReachTarget()) {
+                  attacker.hit();
+                }
+              });
+            }
             if (!entity.isDead) {
               entity.die();
 
@@ -5356,7 +5374,7 @@ class Game {
     }
     attacker.engage(target);
 
-    if (attacker.id !== this.playerId) {
+    if (attacker.id !== this.playerId && !attacker.isDead) {
       target.addAttacker(attacker);
 
       if (attacker.kind === Types.Entities.ZOMBIE && Object.keys(target.attackers).length >= 15) {
@@ -6811,8 +6829,6 @@ class Game {
 
       return;
     } else if (message.startsWith("/town")) {
-      // console.log("~~~~this.player.attackers", this.player.attackers);
-
       // Prevent sending the message to teleport back to town
       if (Object.keys(this.player.attackers).length || (this.player.gridY >= 195 && this.player.gridY <= 259)) {
         return;

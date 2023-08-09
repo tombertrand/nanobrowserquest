@@ -204,6 +204,8 @@ class Player extends Character {
   canChat: boolean;
   chatTimeout: any;
   // attackTimeoutWarning: boolean;
+  checkHashInterval: any;
+  lastHashCheckTimestamp: number;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -266,6 +268,10 @@ class Player extends Character {
     this.canChat = true;
 
     this.dbWriteQueue = new PromiseQueue();
+
+    this.lastHashCheckTimestamp = Date.now();
+
+    // NOTE: Client will be sending the hashed game function, if altered, player gets banned.
 
     this.connection.listen(async message => {
       const action = parseInt(message[0]);
@@ -623,6 +629,19 @@ class Player extends Character {
         console.info("AGGRO: " + self.name + " " + message[1]);
         if (self.move_callback) {
           self.server.handleMobHate(message[1], self.id, 5);
+        }
+      } else if (action === Types.Messages.HASH) {
+        var hash = message[1];
+
+        self.lastHashCheckTimestamp = Date.now();
+
+        const isValidHash = this.server.getIsValidHash(hash);
+        if (!isValidHash) {
+          self.databaseHandler.banPlayerByIP({
+            player: self,
+            reason: "cheating",
+            message: `invalid hash:${hash} expecting:${self.server.hash}`,
+          });
         }
       } else if (action === Types.Messages.ATTACK) {
         console.info("ATTACK: " + self.name + " " + message[1]);
@@ -1244,9 +1263,6 @@ class Player extends Character {
         // @NOTE Handle the /town command
         if (x >= 33 && x <= 39 && y >= 208 && y <= 211) {
           // The message should have been blocked by the FE
-
-          // console.log("~~~~~Object.keys(self.attackers)", Object.keys(self.attackers));
-
           if (Object.keys(self.attackers).length || (self.y >= 195 && self.y <= 259)) {
             return;
           }
@@ -3410,6 +3426,23 @@ class Player extends Character {
     return true;
   }
 
+  startPeriodicHashCheck() {
+    this.checkHashInterval = setInterval(() => {
+      const delay = Date.now() - this.lastHashCheckTimestamp;
+
+      if (delay > 5000) {
+        clearInterval(this.checkHashInterval);
+        this.checkHashInterval = null;
+
+        this.databaseHandler.banPlayerByIP({
+          player: this,
+          reason: "cheating",
+          message: `invalid interval hash check ${delay}`,
+        });
+      }
+    }, 60000);
+  }
+
   sendWelcome({
     account,
     helm,
@@ -3657,6 +3690,9 @@ class Player extends Character {
       this.validateCappedBonus();
       this.updateHitPoints(true);
       this.sendPlayerStats();
+
+      clearInterval(this.checkHashInterval);
+      this.startPeriodicHashCheck();
 
       this.hasEnteredGame = true;
       this.isDead = false;

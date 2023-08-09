@@ -882,7 +882,7 @@ export const Runewords = {
     "xno-xno-tor": {
       name: "Ledger Bloat",
       bonus: {
-        health: 60,
+        health: 45,
         coldDamage: 25,
         coldDamagePercent: 15,
         coldResistance: 20,
@@ -894,15 +894,17 @@ export const Runewords = {
     "jah-shi-vod": {
       name: "OMG!😭 Can't believe I won ! Thank you Walton team !",
       bonus: {
-        health: 65,
+        health: 45,
         attackDamage: 10,
         absorbedDamage: 10,
         magicFind: 15,
         skillTimeout: 10,
         allResistance: 15,
-        regenerateHealth: 25,
+        regenerateHealth: 15,
         preventRegenerateHealth: 20,
       },
     },
   },
 };
+
+// there is no second best

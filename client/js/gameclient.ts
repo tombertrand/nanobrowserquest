@@ -1488,6 +1488,10 @@ class GameClient {
   sendSellToMerchant(fromSlot, quantity) {
     this.sendMessage([Types.Messages.MERCHANT.SELL, fromSlot, quantity]);
   }
+
+  sendHash(hash: string) {
+    this.sendMessage([Types.Messages.HASH, hash]);
+  }
 }
 
 export default GameClient;

@@ -195,7 +195,7 @@ class Store {
             ${description ? `<p class="description">${description}</p>` : ""}
             <p class="prices">
               ${this.app.getCurrencyPrefix()}${price}${this.app.getCurrencySuffix()}
-              <span class="usd"> / $${usd.toFixed(2)}</span>
+              <span class="usd"> ≈ $${usd.toFixed(2)}</span>
               ${usdRegular ? `<span class="usd line-through">$${usdRegular.toFixed(2)}</span>` : ""}
             </p>
             `,

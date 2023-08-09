@@ -390,4 +390,11 @@ Messages.MerchantLog = class Message {
   }
 };
 
+Messages.Hash = class Message {
+  constructor() {}
+  serialize() {
+    return [Types.Messages.HASH];
+  }
+};
+
 export default Messages;

@@ -1327,7 +1327,7 @@ class App {
     if (this.game.network === "ban") {
       return "";
     } else {
-      return '<span class="arial-font">Ӿ</span> ';
+      return '<span class="arial-font" style="margin-right: 3px;">Ӿ</span>';
     }
   }
 

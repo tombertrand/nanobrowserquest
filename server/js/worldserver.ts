@@ -29,6 +29,7 @@ import type { ItemProps } from "./item";
 
 class World {
   id: any;
+
   maxPlayers: any;
   server: any;
   ups: number;
@@ -142,6 +143,9 @@ class World {
   janetYellenNpcId: number;
   soulStonePlayerName: string;
   chatBan: { player: string; ip: string }[];
+  tmpHash: string;
+  hash: string;
+  getIsValidHash: (hash: string) => boolean;
 
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
@@ -282,6 +286,26 @@ class World {
       });
     });
 
+    this.getIsValidHash = (hash: string) => {
+      let isValid = false;
+
+      if (!hash) return isValid;
+
+      if (!this.hash) {
+        if (!this.tmpHash) {
+          this.tmpHash = hash;
+          isValid = true;
+        } else if (hash === this.tmpHash) {
+          this.hash = hash;
+          isValid = true;
+        }
+      } else {
+        isValid = this.hash === hash;
+      }
+
+      return isValid;
+    };
+
     this.onPlayerEnter(function (player) {
       console.info(player.name + "(" + (player.ip || "Player IP") + ") has joined " + self.id);
 
@@ -337,6 +361,8 @@ class World {
         if (player.network) {
           purchase[player.network]?.cancel(player.depositAccount);
         }
+
+        clearTimeout(player.checkHashInterval);
 
         console.info(player.name + " has left the game.");
         if (player.hasParty()) {
@@ -2019,6 +2045,8 @@ class World {
         this.handlePlayerVanish(entity);
         this.pushToAdjacentGroups(entity.group, entity.despawn());
 
+        clearInterval(entity.checkHashInterval);
+
         if (entity.petEntity) {
           this.despawn(entity.petEntity);
         }
@@ -2037,9 +2065,9 @@ class World {
             });
         }
 
-        if (attacker.type === "player") {
-          postMessageToDiscordChatChannel(`${attacker.name} killed ${entity.name} 💀`);
-        }
+        // if (attacker.type === "player") {
+        //   postMessageToDiscordChatChannel(`${attacker.name} killed ${entity.name} 💀`);
+        // }
       }
 
       this.removeEntity(entity);
