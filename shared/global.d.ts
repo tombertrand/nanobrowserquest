@@ -12,6 +12,7 @@ type SkillElement = "magic" | "flame" | "lightning" | "cold" | "poison";
 type ChestType = "chestblue" | "chestgreen" | "chestpurple" | "chestred";
 type Orientation = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type TimedLevel = "cow" | "minotaur" | "stone" | "chalice" | "gateway" | "temple";
+type RunewordEquipment = "weapon" | "armor" | "helm" | "shield";
 
 type GeneratedItem = {
   item: string;
@@ -43,3 +44,49 @@ type Settings = {
   pvp: boolean;
   effects: boolean;
 };
+
+type Bonus =
+  | "minDamage"
+  | "maxDamage"
+  | "attackDamage"
+  | "health"
+  | "magicDamage"
+  | "defense"
+  | "absorbedDamage"
+  | "exp"
+  | "regenerateHealth"
+  | "criticalHit"
+  | "blockChance"
+  | "magicFind"
+  | "attackSpeed"
+  | "drainLife"
+  | "flameDamage"
+  | "lightningDamage"
+  | "pierceDamage"
+  | "highHealth"
+  | "coldDamage"
+  | "freezeChance"
+  | "reduceFrozenChance"
+  | "magicResistance"
+  | "flameResistance"
+  | "lightningResistance"
+  | "coldResistance"
+  | "poisonResistance"
+  | "spectralResistance"
+  | "magicDamagePercent"
+  | "flameDamagePercent"
+  | "lightningDamagePercent"
+  | "coldDamagePercent"
+  | "poisonDamagePercent"
+  | "allResistance"
+  | "preventRegenerateHealth"
+  | "poisonDamage"
+  | "skillTimeout"
+  | "lowerMagicResistance"
+  | "lowerFlameResistance"
+  | "lowerLightningResistance"
+  | "lowerColdResistance"
+  | "lowerPoisonResistance"
+  | "lowerAllResistance"
+  | "extraGold"
+  | "superior";

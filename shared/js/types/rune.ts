@@ -399,7 +399,12 @@ export const getRunewordBonus = ({
   return { runeword, runewordBonus, wordSocket: runeword ? wordSocket : null };
 };
 
-export const Runewords = {
+interface Runeword {
+  name: string;
+  bonus: Partial<{ [key in Bonus]: number }>;
+}
+
+export const Runewords: { [key in RunewordEquipment]: { [key: string]: Runeword } } = {
   weapon: {
     "al-sat-mir-nan": {
       name: "Sub Second Confirmation",
@@ -841,8 +846,16 @@ export const Runewords = {
     },
   },
   helm: {
+    "sat-do-vie": {
+      name: "Live to fight another day",
+      bonus: {
+        health: 35,
+        defense: 10,
+        regenerateHealth: 15,
+      },
+    },
     "bul-bul": {
-      name: "Regulation",
+      name: "Bull market wen?",
       bonus: {
         health: 20,
         attackDamage: 5,
@@ -857,6 +870,27 @@ export const Runewords = {
         attackDamage: 15,
         defense: 5,
         lightningDamage: 15,
+      },
+    },
+    "mer-mer-um": {
+      name: "Global warming",
+      bonus: {
+        health: 20,
+        defense: 10,
+        flameDamage: 25,
+        flameDamagePercent: 20,
+        flameResistance: 25,
+      },
+    },
+    "tor-qua-tor": {
+      name: "Crypto Winter",
+      bonus: {
+        health: 20,
+        coldDamage: 25,
+        coldDamagePercent: 20,
+        coldResistance: 25,
+        freezeChance: 15,
+        reduceFrozenChance: 10,
       },
     },
     "dur-kul-mer": {
@@ -879,14 +913,36 @@ export const Runewords = {
         allResistance: 25,
       },
     },
-    "xno-xno-tor": {
+    "dur-xno-kul": {
+      name: "Shocking price is undervalued",
+      bonus: {
+        health: 25,
+        absorbedDamage: 12,
+        lightningDamage: 10,
+        attackSpeed: 10,
+        lightningDamagePercent: 15,
+      },
+    },
+    "shi-xno-gul": {
+      name: "Regulation is coming",
+      bonus: {
+        defense: 10,
+        attackDamage: 10,
+        poisonDamage: 20,
+        poisonDamagePercent: 15,
+        attackSpeed: 10,
+        allResistance: 10,
+        regenerateHealth: 15,
+      },
+    },
+    "xno-xno-fal": {
       name: "Ledger Bloat",
       bonus: {
+        defense: 10,
         health: 45,
-        coldDamage: 25,
-        coldDamagePercent: 15,
-        coldResistance: 20,
-        freezeChance: 15,
+        magicDamage: 25,
+        magicDamagePercent: 15,
+        magicResistance: 20,
         magicFind: 15,
         attackSpeed: 15,
       },
@@ -898,8 +954,8 @@ export const Runewords = {
         attackDamage: 10,
         absorbedDamage: 10,
         magicFind: 15,
-        skillTimeout: 10,
-        allResistance: 15,
+        skillTimeout: 15,
+        allResistance: 10,
         regenerateHealth: 15,
         preventRegenerateHealth: 20,
       },

@@ -974,13 +974,13 @@ export const getRandomRune = (mobLevel: number, minLevel?: number) => {
     mer: 8_000,
     qua: 10_000,
     gul: 14_000,
-    ber: 16_000,
-    cham: 18_000,
-    tor: 22_000,
-    xno: 26_000,
-    jah: 36_000,
-    shi: 40_000,
-    vod: 50_000,
+    ber: 18_000,
+    cham: 20_000,
+    tor: 24_000,
+    xno: 30_000,
+    jah: 40_000,
+    shi: 50_000,
+    vod: 65_000,
   };
   const runeList = Object.keys(runeOdds);
 

@@ -220,6 +220,7 @@ class Mob extends Character {
         Types.Entities.MINOTAUR,
         Types.Entities.SPIDERQUEEN,
         Types.Entities.BUTCHER,
+        Types.Entities.SHAMAN,
         Types.Entities.WORM,
         Types.Entities.DEATHBRINGER,
         Types.Entities.DEATHANGEL,
