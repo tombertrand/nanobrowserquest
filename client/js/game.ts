@@ -3472,6 +3472,9 @@ class Game {
               if (bonus?.attackSpeed) {
                 entity.setAttackSpeed(bonus?.attackSpeed);
               }
+              if (entity instanceof Mob && enchants?.includes("fast")) {
+                entity.setAttackSpeed(30);
+              }
 
               if (entity.kind === Types.Entities.MAGE && element !== "spectral") {
                 entity.setSprite(self.getSprite(entity.getSpriteName(element === "spectral" ? "" : element)));

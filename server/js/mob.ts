@@ -102,7 +102,17 @@ class Mob extends Character {
   handleEnchant() {
     this.enchants = [...(Types.mobEnchant[this.name] || [])];
 
-    const enchants: Enchant[] = ["magic", "flame", "lightning", "cold", "poison", "spectral", "physical", "stoneskin"];
+    const enchants: Enchant[] = [
+      "magic",
+      "flame",
+      "lightning",
+      "cold",
+      "poison",
+      "spectral",
+      "physical",
+      "stoneskin",
+      "fast",
+    ];
 
     if (
       [

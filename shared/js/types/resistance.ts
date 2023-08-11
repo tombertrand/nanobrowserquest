@@ -222,6 +222,7 @@ export const enchantToDisplayMap = {
   poison: "poison enchanted",
   spectral: "spectral hit",
   physical: "extra strong",
+  fast: "extra fast",
   stoneskin: "stone skin",
   "curse-health": "cursed (health)",
   "curse-resistance": "cursed (resistance)",
