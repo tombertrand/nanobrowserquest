@@ -446,7 +446,7 @@ class Player extends Character {
           }
         }
 
-        if (!self.canChat) {
+        if (!self.canChat && !ADMINS.includes(self.name)) {
           self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
           return;
         }
