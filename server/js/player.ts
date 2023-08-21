@@ -504,7 +504,7 @@ class Player extends Character {
                 return;
               } else if (msg === "/temple") {
                 const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
-                self.server.activateLever(self, lever);
+                self.server.activateLever(self, lever, true);
                 return;
               } else if (msg === "/deathangel") {
                 const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
