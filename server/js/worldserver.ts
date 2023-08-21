@@ -1153,6 +1153,7 @@ class World {
       }
     });
 
+    clearInterval(this.chaliceLevelInterval);
     this.chaliceLevelInterval = setInterval(() => {
       this.chaliceLevelClock -= 1;
       if (this.chaliceLevelClock < 0) {

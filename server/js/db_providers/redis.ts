@@ -777,7 +777,17 @@ class DatabaseHandler {
     if (!player?.connection?._connection?.handshake?.headers?.["cf-connecting-ip"]) return;
 
     const until = days * 24 * 60 * 60 * 1000 + Date.now();
-    this.client.hmset("ipban:" + player.ip, "timestamp", until, "reason", reason || "", "message", message || "");
+    this.client.hmset(
+      "ipban:" + player.ip,
+      "timestamp",
+      until,
+      "reason",
+      reason || "",
+      "message",
+      message || "",
+      "player",
+      player.name,
+    );
   }
 
   banPlayerForReason({ player, reason, message, days = 365 }) {
