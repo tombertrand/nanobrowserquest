@@ -486,8 +486,11 @@ class World {
       this.goldBank = goldBank;
     });
 
-    this.databaseHandler.getChatBan().then(chatBan => {
-      this.chatBan = chatBan;
+    setInterval(() => {
+      this.databaseHandler.getChatBan().then(chatBan => {
+        this.chatBan = chatBan;
+      }),
+        1000 * 60 * 5;
     });
   }
 
