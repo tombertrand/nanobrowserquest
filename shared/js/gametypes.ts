@@ -2877,7 +2877,10 @@ Types.getItemDetails = function ({
     requirement = rune.requirement;
   } else if (isJewel) {
     requirement = jewelRequirement;
-  } else if (!Types.isScroll(item) && !Types.isStone(item) && !Types.isChest(item) && !Types.isSingle(item)) {
+  } else if (
+    (!Types.isScroll(item) && !Types.isStone(item) && !Types.isChest(item) && !Types.isSingle(item)) ||
+    item === "pickaxe"
+  ) {
     requirement = Types.getItemRequirement(item, level);
   }
   const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
