@@ -2877,10 +2877,7 @@ Types.getItemDetails = function ({
     requirement = rune.requirement;
   } else if (isJewel) {
     requirement = jewelRequirement;
-  } else if (
-    (!Types.isScroll(item) && !Types.isStone(item) && !Types.isChest(item) && !Types.isSingle(item)) ||
-    item === "pickaxe"
-  ) {
+  } else if (!Types.isScroll(item) && !Types.isStone(item) && !Types.isChest(item)) {
     requirement = Types.getItemRequirement(item, level);
   }
   const description = isRune ? Types.itemDescription.rune : Types.itemDescription[item];
@@ -2976,7 +2973,7 @@ Types.itemDescription = {
   cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
   chalice: "Return the Golden Chalice, a one-of-a-kind artifact, to its rightful place.",
   soulstone: "This mysterious gem holds the soul of a hundred warriors.",
-  nft: "An exceptional Non-Fungible Token artifact.",
+  nft: "An exceptional Non-Fungible Token artifact, return it to Alkor to get a reward.",
   wing: "The remnants of a dragon's wing.",
   crystal: "An ancient and powerful crystal.",
   powderblack: "A special kind of powder.",

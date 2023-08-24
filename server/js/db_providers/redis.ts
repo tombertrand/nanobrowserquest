@@ -919,19 +919,39 @@ class DatabaseHandler {
 
   async setAccount(player, account, network) {
     return new Promise(resolve => {
+      if (player.depositAccount || player.depositAccountIndex || player.hash) {
+        Sentry.captureException(new Error("Already have deposit account for Player"), { extra: { name: player.name } });
+        return;
+      }
+
       this.client.hmset("u:" + player.name, "account", account, "network", network, async () => {
         try {
           const { depositAccount } = await this.assignNewDepositAccount(player, network);
+
           player.account = account;
           player.send([Types.Messages.ACCOUNT, { account, network, depositAccount }]);
 
           postMessageToDiscordEventChannel(
             `**${player.name}** has joined the ranks of **${player.network === "nano" ? "Nano" : "Banano"}**`,
           );
-        } catch (err) {
-          Sentry.captureException(new Error("Unable to assign deposit account"));
-        }
 
+          this.client.hmget("u:" + player.name, "hash", "achievement", (_err, reply) => {
+            try {
+              let [hash, rawAchievement] = reply as [string, string];
+              const achievement: number[] = JSON.parse(rawAchievement);
+
+              const hasHeroAchievement = !!achievement[ACHIEVEMENT_HERO_INDEX];
+
+              if (hash || !hasHeroAchievement) return;
+              achievement[ACHIEVEMENT_HERO_INDEX] = 0;
+              this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement), (_err, _reply) => {});
+            } catch (err) {
+              Sentry.captureException(new Error("Unable to assign deposit account"), { extra: { err } });
+            }
+          });
+        } catch (err) {
+          Sentry.captureException(new Error("Unable to assign deposit account"), { extra: { err } });
+        }
         resolve(true);
       });
     });
