@@ -47,6 +47,7 @@ import {
   postMessageToDiscordPurchaseChannel,
 } from "../discord";
 import Messages from "../message";
+import { CHATBAN_PATTERNS } from "../player";
 import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
 import {
@@ -637,6 +638,11 @@ class DatabaseHandler {
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
 
+    if (CHATBAN_PATTERNS.some(pattern => pattern.test(player.name))) {
+      Sentry.captureException(new Error(`Invalid player name for creation ${player.name}`));
+      return;
+    }
+
     let depositAccountIndex = null;
     let depositAccount = null;
 
@@ -1183,10 +1189,18 @@ class DatabaseHandler {
 
     const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
     const [toLocation, toRange] = this.getItemLocation(toSlot);
+
     const isMultipleFrom = ["inventory", "upgrade", "trade", "stash"].includes(fromLocation);
     const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
 
-    if (!fromLocation || !toLocation) return;
+    if (!fromLocation || !toLocation) {
+      this.banPlayerByIP({
+        player,
+        reason: "cheating",
+        message: `Tried moveItem fromSlot:${fromSlot} toSlot:${toSlot}`,
+      });
+      return;
+    }
     if (movedQuantity && fromLocation !== "inventory" && toLocation !== "inventory") return;
 
     if ([fromLocation, toLocation].includes("trade") && player.tradeId) {
@@ -2583,7 +2597,7 @@ class DatabaseHandler {
           items: [{ item: "cape", level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) }],
         });
       } else if (id === Types.Store.SCROLLUPGRADELEGENDARY) {
-        this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 20 }] });
+        this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 50 }] });
       } else if (id === Types.Store.SCROLLUPGRADESACRED) {
         this.lootItems({ player, items: [{ item: "scrollupgradesacred", quantity: 10 }] });
       } else if (id === Types.Store.SCROLLTRANSMUTE) {

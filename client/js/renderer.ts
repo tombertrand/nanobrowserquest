@@ -1437,11 +1437,14 @@ class Renderer {
       ctx = canvas.getContext("2d"),
       os = this.upscaledRendering ? 1 : this.scale,
       // sprite = this.game.player.getArmorSprite(),
-      spriteAnim = armorSprite.animationData["idle_down"],
-      // character
-      // cape
-      // helm
-      row = spriteAnim.row,
+      spriteAnim = armorSprite.animationData["idle_down"];
+
+    if (!spriteAnim) return;
+
+    // character
+    // cape
+    // helm
+    var row = spriteAnim.row,
       w = armorSprite.width * os,
       h = armorSprite.height * os,
       y = row * h,

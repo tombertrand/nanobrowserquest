@@ -33,7 +33,7 @@ class Store {
       id: Types.Store.SCROLLUPGRADELEGENDARY,
       nano: 0,
       ban: 0,
-      usd: isDevelopmentAmounts ? 0.1 : 0.5,
+      usd: isDevelopmentAmounts ? 0.1 : 1.5,
       isAvailable: true,
     },
     {

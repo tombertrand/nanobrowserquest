@@ -57,7 +57,7 @@ let payoutIndex = 0;
 
 const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "HeroOfNano"];
 const SUPER_ADMINS = ["running-coder"];
-const CHATBAN_PATTERNS = [
+export const CHATBAN_PATTERNS = [
   /n.?ig.?g.?(?:e.?r|a)/i,
   /https?:\/\/(:?www)?\.?youtube/i,
   /n.?e.?g.?e.?r.?/i,
@@ -451,7 +451,7 @@ class Player extends Character {
           return;
         }
 
-        if (CHATBAN_PATTERNS.some(pattern => pattern.test(msg))) {
+        if (CHATBAN_PATTERNS.some(pattern => pattern.test(msg)) && !ADMINS.includes(self.name)) {
           self.databaseHandler.chatBan({ player: self, message: msg });
           self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
           self.canChat = false;

@@ -1,11 +1,13 @@
 export const setBonus = {
   immortal: {
-    health: 110,
-    minDamage: 35,
-    maxDamage: 15,
-    attackDamage: 15,
+    health: 60,
+    minDamage: 25,
+    maxDamage: 10,
+    attackDamage: 10,
     pierceDamage: 25,
+    absorbedDamage: 20,
     allResistance: 15,
+    attackSpeed: 10,
   },
   paladin: {
     health: 150,
@@ -65,10 +67,10 @@ export const setBonus = {
   },
   emerald: {
     minDamage: 15,
-    attackDamage: 20,
+    attackDamage: 24,
     defense: 20,
     poisonDamage: 35,
-    poisonResistance: 35,
+    poisonResistance: 45,
     allResistance: 15,
   },
   minotaur: {
