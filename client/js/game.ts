@@ -2038,7 +2038,8 @@ class Game {
     // No skill / timeout is not finished
     if (slot === 1) {
       const { x, y } = this.getMouseGridPosition();
-      const entity = this.getEntityAt(x, y);
+      let entity =
+        this.getEntityAt(x, y, Mob) || (this.pvp && this.getEntityAt(x, y, Player)) || this.getNearestEntity();
       mobId = entity?.id;
 
       const isTree = mobId ? entity.kind === Types.Entities.TREE && this.player.attackSkill === 1 : false;
@@ -6343,6 +6344,29 @@ class Game {
           this.app.hideWindows();
         }
       }
+    }
+  }
+
+  getNearestEntity() {
+    const { gridX, gridY } = this.player;
+    const maxDistance = 16;
+    let nearestEntityDistance: number = maxDistance;
+    let nearestEntity = null;
+
+    for (let k in this.entities) {
+      if (this.entities[k] instanceof Mob || (this.pvp && this.entities[k] instanceof Player && this.entities[k].pvp)) {
+        const { gridX: mobGridX, gridY: mobGridY } = this.entities[k];
+        const distance = Math.abs(gridX - mobGridX) + Math.abs(gridY - mobGridY);
+
+        if (distance >= maxDistance || distance >= nearestEntityDistance) continue;
+
+        nearestEntityDistance = distance;
+
+        nearestEntity = this.entities[k];
+      }
+    }
+    if (nearestEntity) {
+      return nearestEntity;
     }
   }
 

@@ -2541,7 +2541,6 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     shieldimmortal: 6,
     shieldpaladin: 6,
 
-    cape: 10,
     ringgold: 12,
     ringplatinum: 6,
     amuletgold: 12,
@@ -2555,6 +2554,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     petaxolotl: 4,
     petmouse: 4,
     pethedgehog: 4,
+    cape: 6,
   };
 
   const transmuteSuccessRate = isBlessed ? 99 : 75;

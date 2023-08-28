@@ -90,8 +90,8 @@ class Store {
         id: Types.Store.SCROLLUPGRADELEGENDARY,
         icon: "scrollupgradelegendary",
         name: "Legendary class upgrade scrolls",
-        description: "Pack of 50 scrolls",
-        confirmedMessage: "50 Legendary class upgrade scrolls were added to your inventory.",
+        description: "Pack of 60 scrolls",
+        confirmedMessage: "60 Legendary class upgrade scrolls were added to your inventory.",
         requiresInventorySlot: true,
       },
       {
