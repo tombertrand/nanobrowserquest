@@ -2039,7 +2039,10 @@ class Game {
     if (slot === 1) {
       const { x, y } = this.getMouseGridPosition();
       let entity =
-        this.getEntityAt(x, y, Mob) || (this.pvp && this.getEntityAt(x, y, Player)) || this.getNearestEntity();
+        this.getEntityAt(x, y, Mob) ||
+        this.getEntityAt(x, y, Npc) ||
+        (this.pvp && this.getEntityAt(x, y, Player)) ||
+        this.getNearestEntity();
       mobId = entity?.id;
 
       const isTree = mobId ? entity.kind === Types.Entities.TREE && this.player.attackSkill === 1 : false;
