@@ -622,7 +622,7 @@ var initGame = function () {
 
   $(document).on("keydown", e => {
     if (!game.started) return;
-    if ($("#chatinput").is(":focus")) return;
+    if ($("#chatinput").is(":focus") || $("textarea").is(":focus")) return;
     if ($("#player-account-input").is(":focus") && e.keyCode !== Types.Keys.ESC) return;
 
     if (!game.player || game.player.isDead) {

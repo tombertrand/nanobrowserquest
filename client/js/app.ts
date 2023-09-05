@@ -310,6 +310,24 @@ class App {
 
       this.game.connect(action, function (result) {
         if (result.reason) {
+          if (result?.error === "banned") {
+            if (result.admin) {
+              $("#banned-admin").text(` By Admin: ${result.admin}`);
+            }
+            $("#banned-player").text(result.player);
+            if (result.ip) {
+              $("#banned-ip").text(`IP:${result.ip}`);
+            }
+            $("#banned-reason").text(result.reason);
+            $("#banned-message").text(result.message);
+            if (result.duration) {
+              $("#banned-duration").text(`(${result.duration} day(s))`);
+            }
+            $(".banned").show();
+            self.toggleScrollContent("banned");
+            return;
+          }
+
           switch (result.reason) {
             case "invalidlogin":
               // Login information was not correct (either username or password)
@@ -335,11 +353,8 @@ class App {
               );
               self.setPlayButtonState(true);
               break;
-            case "banned-cheating-1":
-            case "banned-cheating-365":
-            case "banned-misbehaved-1":
-            case "banned-misbehaved-365":
-              $("." + result.reason).show();
+            case "banned":
+              $(".banned").show();
               self.toggleScrollContent("banned");
               break;
             case "invalidconnection":
@@ -448,6 +463,74 @@ class App {
     });
     $("#dialog-merchant-item").text("Are you sure you want to sell this item to the merchant?");
     $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
+  }
+
+  initBanDialog() {
+    console.log("~~dedans");
+
+    var self = this;
+
+    $("#dialog-ban-player").dialog({
+      dialogClass: "no-close",
+      autoOpen: false,
+      draggable: false,
+      title: "Ban Player",
+      classes: {
+        "ui-button": "btn",
+      },
+      buttons: [
+        {
+          text: "Cancel",
+          class: "btn btn-default",
+          click: function () {
+            $(this).dialog("close");
+          },
+        },
+        {
+          text: "Ok",
+          class: "btn",
+          click: function () {
+            const player = $("#ban-player-name").val();
+            const reason = $("#ban-player-reason").val();
+            const duration = $("#ban-player-duration").val();
+            const message = $("#ban-player-message").val();
+
+            self.game.client.sendManualBanPlayer({ player, reason, duration, message });
+
+            $(this).dialog("close");
+          },
+        },
+      ],
+    });
+
+    const reasons = ["spam", "misbehave", "cheating", "Inappropriate Language", "other"];
+    const durations = [1, 7, 365];
+
+    $("#dialog-ban-player").html(
+      `<div style="margin: 24px 0; text-align: center;">
+        <select id="ban-player-name"  style="width: 50%;font-family: 'GraphicPixel';" />
+        <option>Player</option>
+        ${this.game.worldPlayers.map(
+          ({ name, ip }) => `<option value="${name}">${name}(${ip || "unknown IP"})</option>`,
+        )}
+        </select>
+        <select id="ban-player-duration"  style="width: 50%;font-family: 'GraphicPixel';" />
+        <option>Duration</option>
+        ${durations.map(days => `<option value="${days}">${days}day(s)</option>`)}
+        </select>
+
+        <select id="ban-player-reason"  style="width: 50%;font-family: 'GraphicPixel';" />
+        <option>Reason</option>
+      ${reasons.map(reason => `<option value="${reason}">${reason}</option>`)}
+        </select>
+        <textarea id="ban-player-message" rows="4" placeholder="describe the reason for the ban (visible to the banned player)"></textarea>
+      </div>`,
+    );
+
+    $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
+    // $(".ui-button").removeClass("ui-button");
+
+    $("#dialog-ban-player").dialog("open");
   }
 
   setPlayButtonState(enabled) {

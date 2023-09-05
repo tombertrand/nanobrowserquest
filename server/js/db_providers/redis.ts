@@ -744,8 +744,17 @@ class DatabaseHandler {
         .multi()
         .hget(ipKey, "timestamp") // 0
         .hget(ipKey, "reason") // 1
+        .hget(ipKey, "message") // 2
+        .hget(ipKey, "admin") // 3
         .exec(async (err, replies) => {
-          resolve({ timestamp: replies[0], reason: replies[1] });
+          resolve({
+            playerName: player.name,
+            timestamp: replies[0],
+            reason: replies[1],
+            message: replies[2],
+            ip: player.ip,
+            admin: replies[3],
+          });
         });
     });
   }
@@ -758,26 +767,30 @@ class DatabaseHandler {
         .multi()
         .hget(banKey, "timestamp") // 0
         .hget(banKey, "reason") // 1
+        .hget(banKey, "message") // 2
+        .hget(banKey, "admin") // 3
         .exec(async (err, replies) => {
-          resolve({ timestamp: replies[0], reason: replies[1] });
+          resolve({ playerName, timestamp: replies[0], reason: replies[1], message: replies[2], admin: replies[3] });
         });
     });
   }
 
   banPlayerByIP({
+    admin,
     player,
     reason,
     message,
     days = 365,
   }: {
+    admin: string;
     player: any;
     reason: string;
     message: string;
     days?: number;
   }) {
-    this.banPlayerForReason({ player, reason, message, days });
+    this.banPlayerForReason({ admin, player, reason, message, days });
 
-    player.connection.sendUTF8(`banned-${reason}-${days}`);
+    player.connection.sendUTF8(JSON.stringify({ admin, player: player.name, error: "banned", reason, days, message }));
     player.connection.close(`You are banned, ${reason}.`);
 
     if (!player?.connection?._connection?.handshake?.headers?.["cf-connecting-ip"]) return;
@@ -793,13 +806,15 @@ class DatabaseHandler {
       message || "",
       "player",
       player.name,
+      "admin",
+      admin,
     );
   }
 
-  banPlayerForReason({ player, reason, message, days = 365 }) {
+  banPlayerForReason({ admin, player, reason, message, days = 365 }) {
     const until = parseInt(`${days}`) * 24 * 60 * 60 * 1000 + Date.now();
 
-    this.client.hmset("ban:" + player.name, "timestamp", until, "reason", reason, "message", message);
+    this.client.hmset("ban:" + player.name, "timestamp", until, "reason", reason, "message", message, "admin", admin);
   }
 
   chatBan({ player, message }: { player: any; message: string }) {

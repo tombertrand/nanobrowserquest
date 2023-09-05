@@ -256,21 +256,25 @@ class GameClient {
           this.isTimeout = true;
           return;
         }
+
+        if (e.includes("banned")) {
+          try {
+            const { admin, player, error, reason, duration, message, ip } = JSON.parse(e);
+
+            this.fail_callback?.({ admin, player, error, reason, duration, message, ip });
+          } catch (err) {}
+        }
+
         if (
           e === "invalidlogin" ||
           e === "userexists" ||
           e === "loggedin" ||
-          e === "invalidusername" ||
-          e === "banned-cheating-1" ||
-          e === "banned-cheating-365" ||
-          e === "banned-misbehaved-1" ||
-          e === "banned-misbehaved-365" ||
           e === "invalidconnection" ||
           e === "passwordcreate" ||
           e === "passwordlogin" ||
           e === "passwordinvalid"
         ) {
-          this.fail_callback?.(e);
+          this.fail_callback?.({ reason: e });
           return;
         }
 
@@ -1401,6 +1405,10 @@ class GameClient {
     this.sendMessage([Types.Messages.BAN_PLAYER, message]);
   }
 
+  sendManualBanPlayer(params) {
+    this.sendMessage([Types.Messages.MANUAL_BAN_PLAYER, params]);
+  }
+
   sendRequestPayout(kind) {
     this.sendMessage([Types.Messages.REQUEST_PAYOUT, kind]);
   }
@@ -1491,6 +1499,9 @@ class GameClient {
 
   sendHash(hash: string) {
     this.sendMessage([Types.Messages.HASH, hash]);
+  }
+  sendBan(params) {
+    this.sendMessage([Types.Messages.BAN, params]);
   }
 }
 

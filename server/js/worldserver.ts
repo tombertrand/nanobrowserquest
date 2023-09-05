@@ -759,7 +759,7 @@ class World {
   loggedInPlayer(name) {
     for (var id in this.players) {
       if (this.players[id].name === name) {
-        // if (!this.players[id].isDead) return true;
+        return true;
       }
     }
     return false;
@@ -1612,13 +1612,15 @@ class World {
   getPlayerPopulation() {
     let players = _.sortBy(
       // @ts-ignore
-      Object.values(this.players).reduce((acc: any[], { name, level, hash, account, network, partyId }) => {
+
+      Object.values(this.players).reduce((acc: any[], { name, level, hash, account, network, partyId, ip }) => {
         acc.push({
           name,
           level,
           network: account ? network : null,
           hash: !!hash,
           partyId,
+          ip,
         });
 
         return acc;

@@ -137,4 +137,5 @@ export const Messages = {
   COIN: 129,
   MOVE_PET: 133,
   HASH: 135,
+  MANUAL_BAN_PLAYER: 136,
 };

@@ -160,6 +160,8 @@ class FormatChecker {
       type === Types.Messages.HANDS
     ) {
       return message.length === 1 && _.isNumber(message[0]);
+    } else if (type === Types.Messages.MANUAL_BAN_PLAYER) {
+      return true;
     } else {
       console.error("Unknown message type: " + type);
       return false;

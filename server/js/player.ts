@@ -55,7 +55,7 @@ const MAX_EXP = expForLevel[expForLevel.length - 1];
 
 let payoutIndex = 0;
 
-const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "HeroOfNano"];
+const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "HeroOfNano", "Dyllux"];
 const SUPER_ADMINS = ["running-coder"];
 export const CHATBAN_PATTERNS = [
   /n.?ig.?g.?(?:e.?r|a)/i,
@@ -329,25 +329,46 @@ class Player extends Character {
 
         let timestamp;
         let reason;
+        let banMessage;
+        let ip;
+        let admin;
+        let playerName;
         var name = sanitize(message[1]);
         var account = sanitize(message[2]);
         var password = sanitize(message[3]);
         var [network]: [Network] = (account || "").split("_") || null;
 
-        ({ timestamp, reason } = await databaseHandler.checkIsBannedByIP(self));
+        ({
+          playerName,
+          timestamp,
+          reason,
+          message: banMessage,
+          ip,
+          admin,
+        } = await databaseHandler.checkIsBannedByIP(self));
         if (timestamp && reason) {
           const days = timestamp > Date.now() + 24 * 60 * 60 * 1000 ? 365 : 1;
 
-          self.connection.sendUTF8(`banned-${reason}-${days}`);
+          self.connection.sendUTF8(
+            JSON.stringify({ player: playerName, admin, error: "banned", reason, days, message: banMessage, ip }),
+          );
           self.connection.close("You are banned, no cheating.");
           return;
         }
 
-        ({ timestamp, reason } = await databaseHandler.checkIsBannedForReason(name));
+        ({
+          playerName,
+          timestamp,
+          reason,
+          message: banMessage,
+          admin,
+        } = await databaseHandler.checkIsBannedForReason(name));
         if (timestamp && reason) {
           const days = timestamp > Date.now() + 24 * 60 * 60 * 1000 ? 365 : 1;
 
-          self.connection.sendUTF8(`banned-${reason}-${days}`);
+          self.connection.sendUTF8(
+            JSON.stringify({ player: playerName, admin, error: "banned", reason, days, message: banMessage }),
+          );
           self.connection.close("You are banned, no misbehaving.");
           return;
         }
@@ -518,37 +539,17 @@ class Player extends Character {
               }
             }
 
-            if (msg.startsWith("/ban")) {
-              const periods = { 1: 86400, 365: 86400 * 365 };
-              const reasons = ["misbehaved", "cheating", "spamming", "inappropriate_language"];
-
-              const [, period, reason, playerName] = msg.match(/\s(\w+)\s(\w+)\s(.+)/);
-
-              if (periods[period] && reasons.includes(reason) && playerName) {
-                databaseHandler.banPlayerByIP({
-                  player: self.server.getPlayerByName(playerName),
-                  reason,
-                  message: "Admin ban, misbehaved towards others",
-                  days: period,
-                });
-
-                self.server.disconnectPlayer(playerName);
-                self.send(
-                  new Messages.Chat(
-                    {},
-                    `You banned ${playerName} for ${period} days, for ${reason} reason.`,
-                    "event",
-                  ).serialize(),
-                );
-              }
-              return;
-            } else if (msg.startsWith("/kick")) {
+            if (msg.startsWith("/kick")) {
               const [, playerName] = msg.match(/\s(.+)/);
 
               self.server.disconnectPlayer(playerName);
               self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
               return;
             }
+          }
+
+          if (msg.startsWith("/ban")) {
+            return;
           }
 
           if (msg.startsWith("!link")) {
@@ -565,6 +566,21 @@ class Player extends Character {
           // Global chat
           self.server.pushBroadcast(new Messages.Chat(self, msg), false);
         }
+      } else if (action === Types.Messages.MANUAL_BAN_PLAYER) {
+        const { player, reason, duration, message: banMessage } = message[1];
+
+        const bannedPlayer = self.server.getPlayerByName(player);
+
+        if (!bannedPlayer || !ADMINS.includes(self.name)) return;
+
+        databaseHandler.banPlayerByIP({
+          admin: self.name,
+          player: bannedPlayer,
+          reason,
+          duration,
+          message: banMessage,
+        });
+        return;
       } else if (action === Types.Messages.MOVE) {
         // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
         if (self.move_callback) {
@@ -3684,6 +3700,7 @@ class Player extends Character {
           network,
           party: this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
           isHurtByTrap: this.isHurtByTrap,
+          admins: ADMINS,
         },
       ]);
 

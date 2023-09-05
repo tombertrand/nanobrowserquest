@@ -231,6 +231,7 @@ class Game {
   isPanelOpened: boolean;
   isDragStarted: boolean;
   hashCheckInterval: any;
+  admins: string[];
 
   constructor(app) {
     this.app = app;
@@ -363,6 +364,7 @@ class Game {
 
     // debug
     this.debugPathing = false;
+    this.admins = [];
   }
 
   setup($bubbleContainer, canvas, background, foreground, input) {
@@ -2031,7 +2033,7 @@ class Game {
   }
 
   useSkill(slot) {
-    if (document.activeElement.tagName === "INPUT") return;
+    if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") return;
 
     let mobId = 0;
 
@@ -2782,10 +2784,16 @@ class Game {
     await self.run();
 
     this.client = new GameClient(this.host, this.port);
-    this.client.fail_callback = function (reason) {
+    this.client.fail_callback = function ({ player, admin, error, reason, message, duration, ip }) {
       started_callback({
         success: false,
+        error,
+        ip,
+        player,
+        admin,
         reason: reason,
+        message,
+        duration,
       });
       self.started = false;
     };
@@ -2873,6 +2881,7 @@ class Game {
       settings,
       network,
       isHurtByTrap,
+      admins,
     }) {
       // @ts-ignore
       self.app.start();
@@ -2979,6 +2988,7 @@ class Game {
       self.player.waypoints = waypoints;
       self.player.skeletonKey = !!achievement[26];
       self.cowLevelPortalCoords = cowLevelPortalCoords;
+      self.admins = admins;
 
       if (party) {
         const { partyId, partyLeader, members } = party;
@@ -6799,6 +6809,8 @@ class Game {
 
         return;
       }
+    } else if (message.startsWith("/ban") && this.admins.includes(this.player.name)) {
+      this.app.initBanDialog();
     } else if (message.startsWith("/trade")) {
       const args = message.match(tradeRegexp);
       const playerName = (args?.[1] || "").trim();
