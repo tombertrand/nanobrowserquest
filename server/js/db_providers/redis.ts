@@ -782,7 +782,7 @@ class DatabaseHandler {
     message,
     days = 365,
   }: {
-    admin: string;
+    admin?: string;
     player: any;
     reason: string;
     message: string;
