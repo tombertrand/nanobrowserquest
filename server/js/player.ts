@@ -3442,11 +3442,11 @@ class Player extends Character {
         clearInterval(this.checkHashInterval);
         this.checkHashInterval = null;
 
-        this.databaseHandler.banPlayerByIP({
-          player: this,
-          reason: "cheating",
-          message: `invalid interval hash check ${delay}`,
-        });
+        // this.databaseHandler.banPlayerByIP({
+        //   player: this,
+        //   reason: "cheating",
+        //   message: `invalid interval hash check ${delay}`,
+        // });
       }
     }, HASH_BAN_DELAY);
   }
