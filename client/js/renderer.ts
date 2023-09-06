@@ -1437,7 +1437,7 @@ class Renderer {
       ctx = canvas.getContext("2d"),
       os = this.upscaledRendering ? 1 : this.scale,
       // sprite = this.game.player.getArmorSprite(),
-      spriteAnim = armorSprite.animationData["idle_down"];
+      spriteAnim = armorSprite.animationData?.["idle_down"];
 
     if (!spriteAnim) return;
 

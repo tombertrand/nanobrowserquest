@@ -759,7 +759,7 @@ class World {
   loggedInPlayer(name) {
     for (var id in this.players) {
       if (this.players[id].name === name) {
-        return true;
+        if (!this.players[id].isDead) return true;
       }
     }
     return false;
