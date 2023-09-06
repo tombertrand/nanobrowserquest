@@ -256,8 +256,7 @@ class GameClient {
           this.isTimeout = true;
           return;
         }
-
-        if (e.includes("banned")) {
+        if (typeof e === "string" && e.includes("banned")) {
           try {
             const { admin, player, error, reason, duration, message, ip } = JSON.parse(e);
 
