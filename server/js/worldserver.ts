@@ -539,8 +539,12 @@ class World {
     }
   }
 
-  disconnectPlayer(playerName) {
+  disconnectPlayer(playerName, force = false) {
     const player = this.getPlayerByName(playerName);
+
+    if (force && player) {
+      delete this.players[player.id];
+    }
 
     player?.connection.close();
   }

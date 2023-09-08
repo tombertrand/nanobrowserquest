@@ -18,6 +18,9 @@ const AnvilChannel =
 const PurchaseChannel =
   "https://discord.com/api/webhooks/1134147348721832047/BG-isyL2k2byxw3J1F5HRH2KpBMjXRIbN8xTibfCG0VjLAg0vN_ovAEpgik5hZqwhCTd";
 
+  const ModeratorSupportChannel =
+  "https://discord.com/api/webhooks/1149703440256217098/ycuYn6yn8y5Atb2ysdTltVzIzB7lmeS-KpGn5LTNmnyVumllHhCFY2scGXUvyBVp39SJ";
+
 // For linking players with Discord
 export const discordClient = new Client({
   intents: [
@@ -89,6 +92,23 @@ export const postMessageToDiscordPurchaseChannel = (content: string) => {
     });
 
     fetch(PurchaseChannel, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
+
+export const postMessageToModeratorSupportChannel = (content: string) => {
+  if (isDevelopment) return;
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    fetch(ModeratorSupportChannel, {
       method: "POST",
       body,
       headers: { "Content-Type": "application/json" },

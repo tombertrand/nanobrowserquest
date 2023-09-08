@@ -22,7 +22,12 @@ import {
 } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
-import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
+import {
+  EmojiMap,
+  postMessageToDiscordChatChannel,
+  postMessageToDiscordEventChannel,
+  postMessageToModeratorSupportChannel,
+} from "./discord";
 import FormatChecker from "./format";
 import Formulas from "./formulas";
 import Messages from "./message";
@@ -460,14 +465,14 @@ class Player extends Character {
             self.send(
               new Messages.Party(
                 Types.Messages.PARTY_ACTIONS.ERROR,
-                `You can only send 1 message per 15 seconds until you beat the Skeleton King`,
+                `You can only send 1 message per 10 seconds until you beat the Skeleton King`,
               ).serialize(),
             );
             return;
           } else {
             self.chatTimeout = setTimeout(() => {
               self.chatTimeout = null;
-            }, 15_000);
+            }, 10_000);
           }
         }
 
@@ -476,8 +481,10 @@ class Player extends Character {
           return;
         }
 
-        if (CHATBAN_PATTERNS.some(pattern => pattern.test(msg)) && !ADMINS.includes(self.name)) {
+        if (CHATBAN_PATTERNS.some(pattern => pattern.test(msg))) {
           self.databaseHandler.chatBan({ player: self, message: msg });
+
+          postMessageToModeratorSupportChannel(`**${self.name}** was self-chat banned for saying:"**${msg}**"`);
           self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
           self.canChat = false;
           return;
@@ -546,7 +553,7 @@ class Player extends Character {
             if (msg.startsWith("/kick")) {
               const [, playerName] = msg.match(/\s(.+)/);
 
-              self.server.disconnectPlayer(playerName);
+              self.server.disconnectPlayer(playerName, true);
               self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
               return;
             }
@@ -584,6 +591,11 @@ class Player extends Character {
           duration,
           message: banMessage,
         });
+
+        postMessageToModeratorSupportChannel(
+          `**${bannedPlayer.name}** was banned by **${self.name}** reason: **${reason}**, message: **${banMessage}**, duration: **${duration}** days`,
+        );
+
         return;
       } else if (action === Types.Messages.MOVE) {
         // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
