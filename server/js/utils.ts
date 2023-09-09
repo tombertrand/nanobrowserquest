@@ -595,6 +595,7 @@ export const generatePurpleChestItem = (): {
     { item: "scrollupgradesacred" },
     { item: "scrolltransmuteblessed" },
     { item: "stonesocket" },
+    { item: "stonesocketblessed" },
     { item: "stonedragon" },
     { item: "jewelskull", jewelLevel: 5 },
   ];
@@ -653,7 +654,7 @@ export const generateRandomPet = () => {
   };
 };
 
-export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
+export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false, isBlessed = false }) => {
   let maxSockets = baseLevel < 10 ? 4 : 6;
   if (Types.isBelt(kind)) {
     maxSockets = 0;
@@ -688,6 +689,9 @@ export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
     if (isLuckySlot && socketCount !== 6) {
       socketCount += 1;
     }
+    if (isBlessed && socketCount !== 6) {
+      socketCount += 1;
+    }
   } else if (maxSockets === 4) {
     if (randomSocket < 3) {
       socketCount = 4;
@@ -701,6 +705,9 @@ export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
     if (isLuckySlot && socketCount !== 4) {
       socketCount += 1;
     }
+    if (isBlessed && socketCount !== 4) {
+      socketCount += 1;
+    }
   } else if (maxSockets === 3) {
     if (randomSocket < 3) {
       socketCount = 3;
@@ -710,6 +717,9 @@ export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false }) => {
       socketCount = 1;
     }
     if (isLuckySlot && socketCount !== 3) {
+      socketCount += 1;
+    }
+    if (isBlessed && socketCount !== 3) {
       socketCount += 1;
     }
   }
@@ -833,6 +843,8 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
   }
 
   const stoneIndex = items.findIndex(item => item.startsWith("stonesocket"));
+
+  const isBlessed = items[stoneIndex].startsWith("stonesocketblessed");
   const itemIndex = items.findIndex(item => !item.startsWith("stone"));
 
   const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");
@@ -851,7 +863,11 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     return false;
   }
 
-  const maxRerollSocket = Types.isUnique(item, bonus) ? 4 : 3;
+  let maxRerollSocket = Types.isUnique(item, bonus) ? 4 : 3;
+
+  if (isBlessed) {
+    maxRerollSocket += 2;
+  }
 
   if (socket?.length && socket.filter(slot => slot !== 0).length) {
     let lastSocketIndex = socket.findIndex(i => i === 0);
@@ -860,14 +876,19 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     }
 
     // @NOTE 50% to get back the socketed rune/jewel
-    extractedItem = random(2) === 1 ? socket[lastSocketIndex - 1] : null;
+    if (!isBlessed) {
+      extractedItem = random(2) === 1 ? socket[lastSocketIndex - 1] : null;
+      // @NOTE 99% to get back the socketed rune/jewel if blessed
+    } else {
+      extractedItem = random(100) === 1 ? null : socket[lastSocketIndex - 1];
+    }
 
     socket[lastSocketIndex - 1] = 0;
   } else if (!socket?.length || socket?.length < maxRerollSocket) {
     const kind = Types.getKindFromString(item);
     const baseLevel = Types.getBaseLevel(kind);
 
-    socket = getRandomSockets({ kind, baseLevel, isLuckySlot });
+    socket = getRandomSockets({ kind, baseLevel, isLuckySlot, isBlessed });
     socketCount = socket.length;
     isNewSocketItem = true;
   } else {

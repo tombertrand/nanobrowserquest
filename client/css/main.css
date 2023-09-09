@@ -973,7 +973,7 @@ footer, header, hgroup, menu, nav, section {
         padding: 0px 4px;
     }
 
-    .setting {margin: 6px 0}
+    .setting {margin: 3px 0}
 
     .prevent-click {
         pointer-events: none;

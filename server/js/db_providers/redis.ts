@@ -97,6 +97,8 @@ const defaultSettings: Settings = {
   capeContrast: 0,
   capeBrightness: 1,
   pvp: false,
+  partyEnabled: true,
+  tradeEnabled: true,
   effects: true,
 };
 
@@ -920,6 +922,12 @@ class DatabaseHandler {
     }
     if (typeof rawSettings.pvp !== "undefined") {
       settings.pvp = !!rawSettings.pvp;
+    }
+    if (typeof rawSettings.partyEnabled !== "undefined") {
+      settings.partyEnabled = !!rawSettings.partyEnabled;
+    }
+    if (typeof rawSettings.tradeEnabled !== "undefined") {
+      settings.tradeEnabled = !!rawSettings.tradeEnabled;
     }
     if (typeof rawSettings.effects !== "undefined") {
       settings.effects = !!rawSettings.effects;

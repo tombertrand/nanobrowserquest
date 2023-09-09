@@ -1030,6 +1030,10 @@ EntityFactory.builders[Types.Entities.STONESOCKET] = function (id) {
   return new Items.StoneSocket(id);
 };
 
+EntityFactory.builders[Types.Entities.STONESOCKETBLESSED] = function (id) {
+  return new Items.StoneSocketBlessed(id);
+};
+
 EntityFactory.builders[Types.Entities.STONEDRAGON] = function (id) {
   return new Items.StoneDragon(id);
 };

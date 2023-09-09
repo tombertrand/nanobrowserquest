@@ -494,6 +494,7 @@ const sprites = {
   "item-scrolltransmute": item,
   "item-scrolltransmuteblessed": item,
   "item-stonesocket": item,
+  "item-stonesocketblessed": item,
   "item-stonedragon": item,
   "item-stonehero": item,
   "item-jewelskull": item,

@@ -544,6 +544,8 @@ class World {
 
     if (force && player) {
       delete this.players[player.id];
+
+      this.removePlayer(player);
     }
 
     player?.connection.close();
@@ -1617,18 +1619,23 @@ class World {
     let players = _.sortBy(
       // @ts-ignore
 
-      Object.values(this.players).reduce((acc: any[], { name, level, hash, account, network, partyId, ip }) => {
-        acc.push({
-          name,
-          level,
-          network: account ? network : null,
-          hash: !!hash,
-          partyId,
-          ip,
-        });
+      Object.values(this.players).reduce(
+        (acc: any[], { name, level, hash, account, network, partyId, ip, partyEnabled, tradeEnabled }) => {
+          acc.push({
+            name,
+            level,
+            network: account ? network : null,
+            hash: !!hash,
+            partyId,
+            ip,
+            partyEnabled,
+            tradeEnabled,
+          });
 
-        return acc;
-      }, []),
+          return acc;
+        },
+        [],
+      ),
       ["name"],
     );
 
@@ -2480,9 +2487,6 @@ class World {
         } else if (superUniqueRandom === 555) {
           return "ringheaven";
         }
-        //  else if (superUniqueRandom === 1111) {
-        //   return "amuleteye";
-        // }
       }
 
       if (superUniqueRandom === 111) {
@@ -2495,8 +2499,6 @@ class World {
         return "amuletskull";
       } else if (superUniqueRandom === 4242) {
         return "ringgreed";
-      } else if (superUniqueRandom === 5757) {
-        return "amuletgreed";
       } else if (superUniqueRandom === 6666) {
         return "amuletgreed";
       }
@@ -2543,10 +2545,15 @@ class World {
 
       if (mob.kind >= Types.Entities.GHOST) {
         const superUnqueRandom = random(12_000);
+
         if (superUnqueRandom === 133) {
           return "helmclown";
         } else if (superUnqueRandom === 42) {
           return "beltgoldwrap";
+        }
+        const stoneBlessedRandom = random(10_000);
+        if (stoneBlessedRandom === 133) {
+          return "stonesocketblessed";
         }
       }
     }
@@ -2751,6 +2758,7 @@ class World {
     // "amuletplatinum",
     // "ringbalrog",
     // "stonesocket",
+    // "stonesocketblessed",
     // "scrollupgradelegendary",
     // "scrollupgradesacred",
     // "rune-sat",

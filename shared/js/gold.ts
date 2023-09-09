@@ -14,6 +14,7 @@ export const merchantItems: { item: string; amount: number }[] = [
   { item: "bargold", amount: 105_000 },
   { item: "barplatinum", amount: 1_050_000 },
   { item: "stonesocket", amount: 1_500 },
+  // { item: "stonesocketblessed", amount: 50_500 },
 ];
 
 export const itemGoldMap = {
@@ -33,6 +34,7 @@ export const itemGoldMap = {
   jewelskull: 10,
 
   stonesocket: 250,
+  stonesocketblessed: 17_500,
   stonedragon: 10_000,
   stonehero: 25_000,
 

@@ -119,6 +119,8 @@ class Game {
   hoveringPlayer: boolean;
   hoveringPet: boolean;
   pvp: boolean;
+  partyEnabled: boolean;
+  tradeEnabled: boolean;
   debug: boolean;
   showEffects: boolean;
   hoveringPlayerPvP: boolean;
@@ -331,6 +333,8 @@ class Game {
     this.hoveringTarget = false;
     this.hoveringPlayer = false;
     this.pvp = false;
+    this.partyEnabled = false;
+    this.tradeEnabled = false;
     this.hoveringPlayerPvP = false;
     this.showEffects = true;
     this.hoveringMob = false;
@@ -572,6 +576,12 @@ class Game {
 
     this.pvp = settings.pvp;
     $("#pvp-checkbox").prop("checked", settings.pvp);
+
+    this.partyEnabled = settings.partyEnabled;
+    $("#party-checkbox").prop("checked", settings.partyEnabled);
+
+    this.tradeEnabled = settings.tradeEnabled;
+    $("#trade-checkbox").prop("checked", settings.tradeEnabled);
 
     this.debug = this.storage.debugEnabled();
     $("#debug-checkbox").prop("checked", this.debug);
@@ -3439,6 +3449,7 @@ class Game {
           ownerId,
           skin,
           level,
+          settings,
         } = data;
 
         if (kind === Types.Entities.GATEWAYFX) {
@@ -3619,6 +3630,10 @@ class Game {
               }
 
               self.addEntity(entity);
+
+              if (entity instanceof Player) {
+                entity.setSettings(settings);
+              }
 
               if (entity instanceof Character) {
                 if (!(entity instanceof Npc)) {

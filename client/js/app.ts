@@ -125,20 +125,21 @@ class App {
                   disabled: true,
                 },
                 trade: {
-                  name: `Trade`,
+                  name: !player.tradeEnabled ? `Player has disabled Trade` : `Trade`,
                   callback: () => {
                     this.game.say(`/trade ${player.name}`);
                   },
+                  disabled: !player.tradeEnabled,
                 },
                 party: {
-                  name: isInParty ? `In a party` : `Party `,
+                  name: !player.partyEnabled ? `Player has Disabled Party` : isInParty ? `In a party` : `Party `,
                   callback: () => {
                     if (!this.game.player.partyId) {
                       this.game.say(`/party create`);
                     }
                     this.game.say(`/party invite ${player.name}`);
                   },
-                  disabled: isInParty,
+                  disabled: isInParty || !player.partyEnabled,
                 },
                 equipment: {
                   name: `View equipment`,
@@ -971,7 +972,7 @@ class App {
     }
   }
 
-  toggleParty() {
+  togglePartyWindow() {
     const isActive = $("#party").hasClass("active");
     this.hideWindows();
     $("#party").toggleClass("active", !isActive);
@@ -1057,19 +1058,23 @@ class App {
     otherPlayersHtml += '<div class="party-header">World players</div>';
 
     if (otherPlayers.length) {
-      otherPlayers.forEach(({ name, level, hash, partyId: isInParty, network }) => {
+      otherPlayers.forEach(({ name, level, hash, partyId: isInParty, network, partyEnabled }) => {
         const isInviteSent = this.game.partyInvitees.includes(name);
+
         otherPlayersHtml += `
         <div class="row ${partyId ? "" : "row-around"}">
           <div class="player-name">
             ${name} <span class="payout-icon ${network} ${hash ? "completed" : ""}"></span> lv.${level}
           </div>
+          ${!partyEnabled ? `<div>Player disabled party</div>` : ""}
           ${partyId && isInParty ? `<div>In a party</div>` : ""}
           ${
             !isInParty && isPartyLeader
-              ? `<button class="btn small ${isInviteSent ? "disabled" : ""}" data-party-invite="${name}" ${
-                  isInviteSent ? "disabled" : ""
-                }">Invite${isInviteSent ? " sent" : ""}</button>`
+              ? `<button class="btn small ${
+                  !partyEnabled || isInviteSent ? "disabled" : ""
+                }" data-party-invite="${name}" ${isInviteSent ? "disabled" : ""}">Invite${
+                  isInviteSent ? " sent" : ""
+                }</button>`
               : ""
           }
         </div>
@@ -1159,7 +1164,7 @@ class App {
   updatePopulationList() {
     $("#player-list").empty();
     if (Array.isArray(this.game.worldPlayers)) {
-      this.game.worldPlayers.forEach(({ name, level, hash, network }) => {
+      this.game.worldPlayers.forEach(({ name, level, hash, network, partyEnabled, tradeEnabled }) => {
         let className = "";
         if (name === this.game.storage.data.player.name) {
           className = "active";
@@ -1576,6 +1581,20 @@ class App {
 
     this.game.pvp = isChecked;
     this.game.client.sendSettings({ pvp: isChecked });
+  }
+
+  toggleParty() {
+    const isChecked = $("#party-checkbox").is(":checked");
+
+    this.game.party = isChecked;
+    this.game.client.sendSettings({ partyEnabled: isChecked });
+  }
+
+  toggleTrade() {
+    const isChecked = $("#trade-checkbox").is(":checked");
+
+    this.game.trade = isChecked;
+    this.game.client.sendSettings({ tradeEnabled: isChecked });
   }
 
   toggleDebug() {

@@ -152,6 +152,8 @@ class Player extends Character {
   isPetUnique: boolean;
   isPetSuperior: boolean;
   pvp: boolean;
+  partyEnabled: boolean;
+  tradeEnabled: boolean;
   shield: string;
   shieldKind: number;
   shieldLevel: number;
@@ -546,6 +548,12 @@ class Player extends Character {
                 const leverDeathAngel = self.server.getEntityById(self.server.leverDeathAngelNpcId);
                 self.server.activateLever(self, leverDeathAngel, true);
 
+                return;
+              } else if (msg === "/olaf") {
+                const leverLeft = self.server.getEntityById(self.server.leverLeftCryptNpcId);
+                const leverRight = self.server.getEntityById(self.server.leverRightCryptNpcId);
+                self.server.activateLever(self, leverLeft);
+                self.server.activateLever(self, leverRight);
                 return;
               }
             }
@@ -1246,6 +1254,11 @@ class Player extends Character {
                     );
                   }
 
+                  if (kind === Types.Entities.STONESOCKETBLESSED) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  }
                   if (Types.isSuperUnique(generatedItem.item)) {
                     postMessageToDiscordEventChannel(
                       `${player.name} picked up ${kinds[generatedItem.item][2]} ${
@@ -1876,6 +1889,12 @@ class Player extends Character {
           if (typeof settings.pvp !== "undefined") {
             self.pvp = toBoolean(settings.pvp);
           }
+          if (typeof settings.pvp !== "undefined") {
+            self.partyEnabled = toBoolean(settings.partyEnabled);
+          }
+          if (typeof settings.trade !== "undefined") {
+            self.tradeEnabled = toBoolean(settings.tradeEnabled);
+          }
 
           this.databaseHandler.setSettings(this.name, settings);
           this.broadcast(new Messages.Settings(this, settings), false);
@@ -2426,6 +2445,8 @@ class Player extends Character {
         capeContrast: this.capeContrast,
         capeBrightness: this.capeBrightness,
         pvp: this.pvp,
+        partyEnabled: this.partyEnabled,
+        tradeEnabled: this.tradeEnabled,
       },
       resistances: null,
       element: null,
@@ -3623,6 +3644,8 @@ class Player extends Character {
       this.capeContrast = settings.capeContrast;
       this.capeBrightness = settings.capeBrightness;
       this.pvp = settings.pvp;
+      this.partyEnabled = settings.partyEnabled;
+      this.tradeEnabled = settings.tradeEnabled;
 
       this.createdAt = createdAt;
       this.experience = exp;

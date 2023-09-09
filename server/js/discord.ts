@@ -18,7 +18,7 @@ const AnvilChannel =
 const PurchaseChannel =
   "https://discord.com/api/webhooks/1134147348721832047/BG-isyL2k2byxw3J1F5HRH2KpBMjXRIbN8xTibfCG0VjLAg0vN_ovAEpgik5hZqwhCTd";
 
-  const ModeratorSupportChannel =
+const ModeratorSupportChannel =
   "https://discord.com/api/webhooks/1149703440256217098/ycuYn6yn8y5Atb2ysdTltVzIzB7lmeS-KpGn5LTNmnyVumllHhCFY2scGXUvyBVp39SJ";
 
 // For linking players with Discord
@@ -34,7 +34,7 @@ export const discordClient = new Client({
 discordClient.login(BOT_TOKEN);
 
 export const postMessageToDiscordEventChannel = (content: string) => {
-  if (isDevelopment) return;
+  // if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
@@ -193,4 +193,5 @@ export const EmojiMap = {
   beltgoldwrap: "<:goldwrap:1114554276350525482>",
   iou: "<:iou:1129598838517268531>",
   gold: "<:gold:1097336291189854420>",
+  stonesocketblessed: "<:stonesocketblessed:1150118697529245807>",
 };

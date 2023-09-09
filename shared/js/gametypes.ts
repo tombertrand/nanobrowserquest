@@ -71,6 +71,7 @@ export const Types: any = {
     SCROLLUPGRADESACRED: 8,
     SCROLLTRANSMUTE: 9,
     STONESOCKET: 10,
+    STONESOCKETBLESSED: 14,
     STONEDRAGON: 11,
     STONEHERO: 12,
     PET: 13,
@@ -301,6 +302,7 @@ export const Types: any = {
     SCROLLTRANSMUTE: 142,
     SCROLLTRANSMUTEBLESSED: 309,
     STONESOCKET: 192,
+    STONESOCKETBLESSED: 376, // ~~last
     STONEDRAGON: 240,
     STONEHERO: 241,
     JEWELSKULL: 219,
@@ -983,6 +985,7 @@ export const kinds = {
   scrolltransmute: [Types.Entities.SCROLLTRANSMUTE, "scroll", "Transmute scroll", 30],
   scrolltransmuteblessed: [Types.Entities.SCROLLTRANSMUTEBLESSED, "scroll", "Blessed transmute scroll", 60],
   stonesocket: [Types.Entities.STONESOCKET, "stone", "Socket Stone", 51],
+  stonesocketblessed: [Types.Entities.STONESOCKETBLESSED, "stone", "Blesssed Socket Stone", 61],
   stonedragon: [Types.Entities.STONEDRAGON, "stone", "Dragon Stone", 60],
   stonehero: [Types.Entities.STONEHERO, "stone", "Hero Emblem", 65],
   jewelskull: [Types.Entities.JEWELSKULL, "jewel", "Skull Jewel", 51],
@@ -1487,6 +1490,7 @@ Types.isStone = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return [
       Types.Entities.STONESOCKET,
+      Types.Entities.STONESOCKETBLESSED,
       Types.Entities.STONEDRAGON,
       Types.Entities.STONEHERO,
       Types.Entities.SOULSTONE,
@@ -3013,7 +3017,9 @@ Types.itemDescription = {
     "Transmute a ring or an amulet and generate new random stats or an item to have a chance of making it unique. The chances of transmuting stats is fixed while the chances of getting a unique varies. There is a 1% chance your item will be burned during the transmutation.",
   rune: "Can be inserted into a socketed item or create runewords",
   stonesocket:
-    "Creates a random number of sockets in a non-socketed item.<br/><br/>If the item already has sockets, the stone will attempt to remove the last item from its socket. There is a 50% chance for the item to be burned.",
+    "Creates a random number of sockets in a non-socketed item. If all sockets are empty, you can re-roll sockets up to 4 on unique items or 3 for normal items<br/><br/>If the item already has sockets, the stone will attempt to remove the last item from its socket. There is a 50% chance for the item to be burned.",
+  stonesocketblessed:
+    "Creates a random number of sockets in a non-socketed item.  If all sockets are empty, you can re-roll sockets up to 6 on unique items or 5 for normal items.<br/><br/>If the item already has sockets, the stone will attempt to remove the last item from its socket. There is a 1% chance for the item to be burned.",
   jewelskull: "Can be inserted in a socket",
   stonedragon: "Blessed by the fire of the dragon, safely upgrade any item to +5",
   stonehero:

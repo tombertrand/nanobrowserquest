@@ -1262,6 +1262,13 @@ var Items = {
     }
   },
 
+  StoneSocketBlessed: class StoneSocketBlessed extends Item {
+    constructor(id) {
+      super(id, Types.Entities.STONESOCKETBLESSED, "stone");
+      this.lootMessage = "You pick up a blessed socket stone";
+    }
+  },
+
   StoneDragon: class StoneDragon extends Item {
     constructor(id) {
       super(id, Types.Entities.STONEDRAGON, "stone");

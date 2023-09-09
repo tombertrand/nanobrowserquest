@@ -114,6 +114,8 @@ class Player extends Character {
   disableKeyboardNpcTalk: boolean;
   isHurtByTrap: boolean;
   pvp: boolean;
+  partyEnabled: boolean;
+  tradeEnabled: boolean;
   debug: boolean;
 
   partyId?: number;
@@ -121,6 +123,8 @@ class Player extends Character {
   partyMembers: PartyMember[];
 
   network: Network;
+
+  settings: any;
 
   constructor(id, name, account, kind) {
     super(id, kind);
@@ -205,6 +209,7 @@ class Player extends Character {
     this.partyId = null;
     this.partyLeader = null;
     this.partyMembers = null;
+    this.settings = {};
   }
 
   setPartyId(partyId) {
@@ -225,6 +230,13 @@ class Player extends Character {
 
   setCapeSaturate(saturate: number) {
     this.capeSaturate = saturate;
+  }
+
+  setPartyEnabled(enabled: boolean) {
+    this.partyEnabled = enabled;
+  }
+  setTradeEnabled(enabled: boolean) {
+    this.tradeEnabled = enabled;
   }
 
   setCapeContrast(contrast: number) {
@@ -582,6 +594,12 @@ class Player extends Character {
     }
     if (settings.pvp) {
       this.pvp = settings.pvp;
+    }
+    if (settings.partyEnabled) {
+      this.partyEnabled = settings.partyEnabled;
+    }
+    if (settings.tradeEnabled) {
+      this.tradeEnabled = settings.tradeEnabled;
     }
     if (settings.debug) {
       this.debug = settings.debug;

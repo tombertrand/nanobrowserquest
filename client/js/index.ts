@@ -783,7 +783,7 @@ var initGame = function () {
   });
 
   $("#party-button").on("click", () => {
-    app.toggleParty();
+    app.togglePartyWindow();
   });
 
   $("#mute-music-checkbox").on("change", function () {
@@ -804,6 +804,14 @@ var initGame = function () {
 
   $("#pvp-checkbox").on("change", function () {
     app.togglePvP();
+  });
+
+  $("#party-checkbox").on("change", function () {
+    app.toggleParty();
+  });
+
+  $("#trade-checkbox").on("change", function () {
+    app.toggleTrade();
   });
 
   $("#debug-checkbox").on("change", function () {

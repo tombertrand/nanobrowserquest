@@ -42,6 +42,8 @@ type Settings = {
   capeContrast: number;
   capeBrightness: number;
   pvp: boolean;
+  partyEnabled: boolean;
+  tradeEnabled: boolean;
   effects: boolean;
 };
 
