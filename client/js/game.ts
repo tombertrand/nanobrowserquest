@@ -1942,10 +1942,15 @@ class Game {
           const isBlessed = item.startsWith("scrolltransmuteblessed");
           const { transmuteSuccessRate, uniqueSuccessRate } =
             Types.getTransmuteSuccessRate(itemName, itemBonus, isBlessed) || {};
-          successRate = transmuteSuccessRate || uniqueSuccessRate;
-          actionText = "transmute";
 
-          uniqueText = uniqueSuccessRate === 100 ? "" : uniqueSuccessRate;
+          if (item === "scrolltransmutepet") {
+            successRate = 99;
+            uniqueText = "";
+          } else {
+            successRate = transmuteSuccessRate || uniqueSuccessRate;
+            uniqueText = uniqueSuccessRate === 100 ? "" : uniqueSuccessRate;
+          }
+          actionText = "transmute";
         } else if (itemLevel && (item.startsWith("scrollupgradeblessed") || item.startsWith("scrollupgradesacred"))) {
           const blessedRates = Types.getBlessedSuccessRateBonus();
           const blessedRate = blessedRates[parseInt(itemLevel) - 1];
@@ -4747,6 +4752,12 @@ class Game {
         }
         if (typeof settings.pvp === "boolean") {
           player.pvp = settings.pvp;
+        }
+        if (typeof settings.partyEnabled === "boolean") {
+          player.partyEnabled = settings.partyEnabled;
+        }
+        if (typeof settings.tradeEnabled === "boolean") {
+          player.tradeEnabled = settings.tradeEnabled;
         }
       });
 

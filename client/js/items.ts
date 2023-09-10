@@ -1269,6 +1269,13 @@ var Items = {
     }
   },
 
+  ScrollTransmutePet: class ScrollTransmutePet extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLTRANSMUTEPET, "scroll");
+      this.lootMessage = "You pick up a pet transmute scroll";
+    }
+  },
+
   StoneSocket: class StoneSocket extends Item {
     constructor(id) {
       super(id, Types.Entities.STONESOCKET, "stone");

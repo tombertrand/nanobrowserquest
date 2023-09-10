@@ -1279,6 +1279,10 @@ class Player extends Character {
                     postMessageToDiscordEventChannel(
                       `${player.name} picked up a Blessed Transmute Scroll ${EmojiMap.scrolltransmuteblessed}`,
                     );
+                  } else if (kind === Types.Entities.SCROLLTRANSMUTEPET) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up a Pet Transmute Scroll ${EmojiMap.scrolltransmutepet}`,
+                    );
                   } else if (kind === Types.Entities.SCROLLUPGRADESACRED) {
                     postMessageToDiscordEventChannel(
                       `${player.name} picked up a Sacred Upgrade Scroll ${EmojiMap.scrollupgradesacred}`,
@@ -1903,10 +1907,10 @@ class Player extends Character {
           if (typeof settings.pvp !== "undefined") {
             self.pvp = toBoolean(settings.pvp);
           }
-          if (typeof settings.pvp !== "undefined") {
+          if (typeof settings.partyEnabled !== "undefined") {
             self.partyEnabled = toBoolean(settings.partyEnabled);
           }
-          if (typeof settings.trade !== "undefined") {
+          if (typeof settings.tradeEnabled !== "undefined") {
             self.tradeEnabled = toBoolean(settings.tradeEnabled);
           }
 
@@ -2091,12 +2095,15 @@ class Player extends Character {
   }
 
   generateItem({
+    level = 1,
     kind,
     uniqueChances = 1,
     superiorChances = 1,
     isLuckySlot = false,
     jewelLevel = 1,
     skin = 1,
+    bonus = [],
+    socket = null,
   }): GeneratedItem {
     let isUnique = false;
     let isSuperior = false;
@@ -2152,8 +2159,8 @@ class Player extends Character {
       }
 
       const baseLevel = Types.getBaseLevel(kind);
-      const level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
-      let bonus = [];
+      level = baseLevel <= 5 && !isUnique ? randomInt(1, 3) : 1;
+
       let skill = null;
 
       if (isUnique) {
@@ -2207,11 +2214,10 @@ class Player extends Character {
     } else if (Types.isScroll(kind) || Types.isSingle(kind) || Types.isStone(kind) || Types.isBar(kind)) {
       item = { item: Types.getKindAsString(kind), quantity: 1 };
     } else if (Types.isCape(kind)) {
-      const bonus = this.generateRandomCapeBonus(uniqueChances);
+      bonus = this.generateRandomCapeBonus(uniqueChances);
 
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
     } else if (Types.isPetItem(kind)) {
-      let bonus = [];
       const randomIsUnique = random(100);
       isUnique = randomIsUnique < uniqueChances;
 
@@ -2223,14 +2229,14 @@ class Player extends Character {
       if (kind === Types.Entities.PETEGG) {
         item = {
           item: Types.getKindAsString(kind),
-          level: 1,
+          level,
         };
       } else {
         item = {
           item: Types.getKindAsString(kind),
-          level: 1,
+          level,
           bonus: JSON.stringify(bonus.sort((a, b) => a - b)),
-          socket: JSON.stringify([0]),
+          socket: socket && typeof socket === "string" ? socket : JSON.stringify([0]),
           skin,
         };
       }
@@ -2238,7 +2244,6 @@ class Player extends Character {
       const randomIsUnique = random(100);
       isUnique = randomIsUnique < uniqueChances;
 
-      let bonus = [];
       if (kind === Types.Entities.RINGBRONZE) {
         bonus = _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
       } else if (kind === Types.Entities.RINGSILVER || kind === Types.Entities.AMULETSILVER) {

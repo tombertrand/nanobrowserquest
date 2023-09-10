@@ -347,8 +347,28 @@ export const isValidTransmuteItems = items => {
     return false;
   }
 
-
   return transmuteRate;
+};
+
+export const isValidTransmutePet = items => {
+  if (items.length !== 2 || !items[0].startsWith("pet") || !items[1].startsWith("scrolltransmutepet")) {
+    return false;
+  }
+
+  let [item, level, bonus, socket] = items[0].split(":");
+
+  let randomNum = randomInt(1, 100);
+
+  if (randomNum === 99) {
+    return false;
+  }
+
+  return {
+    item,
+    level,
+    bonus,
+    ...(socket ? { socket } : null),
+  };
 };
 
 export const getIsTransmuteSuccess = ({ transmuteSuccessRate = 0, uniqueSuccessRate = 0, isLuckySlot }) => {
@@ -596,6 +616,7 @@ export const generatePurpleChestItem = (): {
     { item: "scrollupgradelegendary" },
     { item: "scrollupgradesacred" },
     { item: "scrolltransmuteblessed" },
+    { item: "scrolltransmutepet" },
     { item: "stonesocket" },
     { item: "stonesocketblessed" },
     { item: "stonedragon" },

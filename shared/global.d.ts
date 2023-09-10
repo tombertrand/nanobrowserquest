@@ -18,8 +18,8 @@ type GeneratedItem = {
   item: string;
   level?: number;
   quantity?: number;
-  bonus?: string;
-  socket?: string;
+  bonus?: string | number[];
+  socket?: number | string[] | undefined;
   skill?: number;
   skin?: number;
   isUnique?: boolean;

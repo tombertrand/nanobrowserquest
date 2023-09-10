@@ -64,6 +64,7 @@ import {
   isValidSocketItem,
   isValidStoneSocket,
   isValidTransmuteItems,
+  isValidTransmutePet,
   isValidUpgradeItems,
   isValidUpgradeRunes,
   NaN2Zero,
@@ -2050,13 +2051,34 @@ class DatabaseHandler {
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = socketItem;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((result = isValidTransmutePet(filteredUpgrade))) {
+          isSuccess = randomInt(1, 100) !== 100;
+
+          let generatedItem: number | string = 0;
+          const { pet: item, skin } = generateRandomPet();
+          const { item: itemName, level } = player.generateItem({
+            level: result.level,
+            kind: Types.getKindFromString(item),
+            skin,
+            uniqueChances: isUniqueSuccess ? 100 : 0,
+            isLuckySlot,
+            bonus: result.bonus,
+            socket: result.socket,
+          });
+
+          generatedItem = isSuccess
+            ? [itemName, level, result.bonus, result.socket, skin].filter(Boolean).join(":")
+            : 0;
+
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = generatedItem;
+          player.broadcast(new Messages.AnvilUpgrade({ isTransmute: isSuccess }), false);
         } else if ((result = isValidTransmuteItems(filteredUpgrade))) {
           const [item, level, , , skin] = filteredUpgrade[0].split(":");
           let generatedItem: number | string = 0;
 
           ({ random, transmuteSuccessRate, uniqueSuccessRate, isTransmuteSuccess, isUniqueSuccess } =
             getIsTransmuteSuccess({ ...result, isLuckySlot }));
-
 
           player.send(
             new Messages.AnvilOdds(

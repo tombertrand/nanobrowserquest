@@ -497,6 +497,7 @@ const sprites = {
   "item-scrollupgradesacred": item,
   "item-scrolltransmute": item,
   "item-scrolltransmuteblessed": item,
+  "item-scrolltransmutepet": item,
   "item-stonesocket": item,
   "item-stonesocketblessed": item,
   "item-stonedragon": item,

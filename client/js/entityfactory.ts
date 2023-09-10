@@ -1034,6 +1034,10 @@ EntityFactory.builders[Types.Entities.SCROLLTRANSMUTEBLESSED] = function (id) {
   return new Items.ScrollTransmuteBlessed(id);
 };
 
+EntityFactory.builders[Types.Entities.SCROLLTRANSMUTEPET] = function (id) {
+  return new Items.ScrollTransmutePet(id);
+};
+
 EntityFactory.builders[Types.Entities.STONESOCKET] = function (id) {
   return new Items.StoneSocket(id);
 };

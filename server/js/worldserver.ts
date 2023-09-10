@@ -2116,6 +2116,8 @@ class World {
 
     _.each(this.map.staticEntities, function (kindName, tid) {
       var kind = Types.getKindFromString(kindName);
+
+      if (!kind) return;
       var pos = self.map.tileIndexToGridPosition(tid);
 
       if (Types.isNpc(kind)) {
@@ -2540,6 +2542,8 @@ class World {
         const transmuteRandom = random(7_000);
         if (transmuteRandom === 133) {
           return "scrolltransmuteblessed";
+        } else if (transmuteRandom === 420) {
+          return "scrolltransmutepet";
         }
       }
 
@@ -2712,6 +2716,8 @@ class World {
     // var randomDrops = ["firefoxpotion"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
+    // var randomDrops = ["scrolltransmutepet"];
+
     // var randomDrops = ["demonaxe", "paladinaxe"];
     // var randomDrops = ["soulstone"];
     // var randomDrops = ["iou"];
