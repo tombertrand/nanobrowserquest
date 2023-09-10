@@ -356,6 +356,7 @@ export const Types: any = {
     JANETYELLEN: 315,
     MERCHANT: 316,
     SATOSHI: 73,
+    WAYPOINTX: 84,
     WAYPOINTN: 93,
     WAYPOINTO: 193,
     STASH: 114,

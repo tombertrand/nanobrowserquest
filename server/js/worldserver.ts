@@ -2116,8 +2116,6 @@ class World {
 
     _.each(this.map.staticEntities, function (kindName, tid) {
       var kind = Types.getKindFromString(kindName);
-
-      if (!kind) return;
       var pos = self.map.tileIndexToGridPosition(tid);
 
       if (Types.isNpc(kind)) {
