@@ -75,6 +75,8 @@ import executionersword from "../sprites/weapon.json";
 import mysticalsword from "../sprites/weapon.json";
 import dragonsword from "../sprites/weapon.json";
 import hellhammer from "../sprites/weapon.json";
+import maul from "../sprites/weapon.json";
+import wizardsword from "../sprites/weapon.json";
 import helmcloth from "../sprites/armor.json";
 import helmleather from "../sprites/armor.json";
 import helmmail from "../sprites/armor.json";
@@ -376,6 +378,8 @@ const sprites = {
   mysticalsword,
   dragonsword,
   hellhammer,
+  maul,
+  wizardsword,
   guard,
   hand,
   impact,
@@ -593,6 +597,8 @@ const sprites = {
   "item-mysticalsword": item,
   "item-dragonsword": item,
   "item-hellhammer": item,
+  "item-maul": item,
+  "item-wizardsword": item,
   "item-helmleather": item,
   "item-helmmail": item,
   "item-helmplate": item,

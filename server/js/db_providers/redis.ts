@@ -2057,6 +2057,7 @@ class DatabaseHandler {
           ({ random, transmuteSuccessRate, uniqueSuccessRate, isTransmuteSuccess, isUniqueSuccess } =
             getIsTransmuteSuccess({ ...result, isLuckySlot }));
 
+
           player.send(
             new Messages.AnvilOdds(
               `You rolled ${random}${

@@ -341,10 +341,12 @@ export const isValidTransmuteItems = items => {
   }
 
   const isBlessed = scroll === "scrolltransmuteblessed";
+
   const transmuteRate = Types.getTransmuteSuccessRate(item, bonus, isBlessed);
   if (!transmuteRate) {
     return false;
   }
+
 
   return transmuteRate;
 };
@@ -838,11 +840,10 @@ export const isValidSocketItem = items => {
 };
 
 export const isValidStoneSocket = (items, isLuckySlot) => {
-  if (items.length !== 2) {
+  const stoneIndex = items.findIndex(item => item.startsWith("stonesocket"));
+  if (items.length !== 2 || stoneIndex < 0) {
     return false;
   }
-
-  const stoneIndex = items.findIndex(item => item.startsWith("stonesocket"));
 
   const isBlessed = items[stoneIndex].startsWith("stonesocketblessed");
   const itemIndex = items.findIndex(item => !item.startsWith("stone"));

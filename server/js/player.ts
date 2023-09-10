@@ -1720,6 +1720,13 @@ class Player extends Character {
                   `${playerToInvite.name} is already in a party`,
                 ).serialize(),
               );
+            } else if (!playerToInvite.partyEnabled) {
+              self.send(
+                new Messages.Party(
+                  Types.Messages.PARTY_ACTIONS.ERROR,
+                  `${playerToInvite.name} has blocked party requests`,
+                ).serialize(),
+              );
             } else if (party.sentInvites[playerToInvite.id]) {
               self.send(
                 new Messages.Party(
@@ -1791,6 +1798,13 @@ class Player extends Character {
           if (!playerToTradeWith) {
             self.send(
               new Messages.Trade(Types.Messages.TRADE_ACTIONS.ERROR, `${message[2]} is not online`).serialize(),
+            );
+          } else if (!playerToTradeWith.tradeEnabled) {
+            self.send(
+              new Messages.Trade(
+                Types.Messages.TRADE_ACTIONS.ERROR,
+                `${message[2]} has disabled trade requests`,
+              ).serialize(),
             );
           } else if (!playerToTradeWith.achievement[ACHIEVEMENT_HERO_INDEX]) {
             self.send(
@@ -2130,6 +2144,7 @@ class Player extends Character {
       const randomIsSuperior = random(100);
 
       isUnique = randomIsUnique < uniqueChances;
+
       isSuperior = randomIsSuperior < superiorChances;
 
       if ([Types.Entities.HELMCLOWN, Types.Entities.BELTGOLDWRAP].includes(kind)) {
@@ -2197,6 +2212,8 @@ class Player extends Character {
       item = { item: Types.getKindAsString(kind), level: 1, bonus: JSON.stringify(bonus.sort((a, b) => a - b)) };
     } else if (Types.isPetItem(kind)) {
       let bonus = [];
+      const randomIsUnique = random(100);
+      isUnique = randomIsUnique < uniqueChances;
 
       bonus = _.shuffle(highLevelBonus).slice(0, isUnique ? 2 : 1);
 

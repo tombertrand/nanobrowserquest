@@ -163,6 +163,20 @@ var Items = {
     }
   },
 
+  Maul: class Maul extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MAUL, "weapon");
+      this.lootMessage = "You pick up a Maul";
+    }
+  },
+
+  WizardSword: class WizardSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.WIZARDSWORD, "weapon");
+      this.lootMessage = "You pick up a Wizard sword";
+    }
+  },
+
   HelmLeather: class HelmLeather extends Item {
     constructor(id) {
       super(id, Types.Entities.HELMLEATHER, "helm");

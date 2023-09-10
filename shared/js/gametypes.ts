@@ -302,7 +302,7 @@ export const Types: any = {
     SCROLLTRANSMUTE: 142,
     SCROLLTRANSMUTEBLESSED: 309,
     STONESOCKET: 192,
-    STONESOCKETBLESSED: 376, // ~~last
+    STONESOCKETBLESSED: 376,
     STONEDRAGON: 240,
     STONEHERO: 241,
     JEWELSKULL: 219,
@@ -418,6 +418,8 @@ export const Types: any = {
     PALADINAXE: 306,
     IMMORTALSWORD: 307,
     HELLHAMMER: 244,
+    MAUL: 377,
+    WIZARDSWORD: 378, // ~~last
 
     NANOCOIN: 313,
     BANANOCOIN: 314,
@@ -578,6 +580,8 @@ Types.Entities.Weapons = [
   Types.Entities.PALADINAXE,
   Types.Entities.IMMORTALSWORD,
   Types.Entities.HELLHAMMER,
+  Types.Entities.MAUL,
+  Types.Entities.WIZARDSWORD,
 ];
 
 Types.Entities.Helms = [
@@ -837,6 +841,8 @@ export const kinds = {
   spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 60, 68],
   eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 60, 68],
   hellhammer: [Types.Entities.HELLHAMMER, "weapon", "Hell Hammer", 60, 68],
+  maul: [Types.Entities.MAUL, "weapon", "Maul", 62, 73],
+  wizardsword: [Types.Entities.WIZARDSWORD, "weapon", "Wizard sword", 62, 71],
 
   // kind, type, level, defense
   helmcloth: [Types.Entities.HELMCLOTH, "helm", "Cloth Helm", 1, 1],
@@ -1232,6 +1238,8 @@ Types.itemUniqueMap = {
   eclypsedagger: ["Ethereum Killer"],
   paladinaxe: ["Peer to Peer Digital Cash"],
   immortalsword: ["Least Error & Latency will Win"],
+  maul: ["Mining at a loss"],
+  wizardsword: ["$€Ӿ¥!"],
 
   helmleather: ["Point of Sale"],
   helmmail: ["Bull Run"],
@@ -2489,6 +2497,8 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     paladinaxe: 4,
     immortalsword: 4,
     hellhammer: 6,
+    maul: 4,
+    wizardsword: 4,
 
     helmgolden: 20,
     helmblue: 18,

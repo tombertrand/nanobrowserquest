@@ -398,6 +398,14 @@ EntityFactory.builders[Types.Entities.HELLHAMMER] = function (id) {
   return new Items.HellHammer(id);
 };
 
+EntityFactory.builders[Types.Entities.MAUL] = function (id) {
+  return new Items.Maul(id);
+};
+
+EntityFactory.builders[Types.Entities.WIZARDSWORD] = function (id) {
+  return new Items.WizardSword(id);
+};
+
 EntityFactory.builders[Types.Entities.MORNINGSTAR] = function (id) {
   return new Items.MorningStar(id);
 };
