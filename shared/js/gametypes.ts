@@ -2591,7 +2591,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
   } else if (!isUnique && uniqueSuccessRateMap[item]) {
     return {
       uniqueSuccessRate: uniqueSuccessRateMap[item] + (isBlessed ? 2 : 0),
-      ...(isRing || isAmulet || isCape || isPet || isShield || isWeapon || isHelm || isArmor
+      ...(isRing || isAmulet || isCape || isPet || isShield || isWeapon || isHelm || isArmor || isBelt
         ? { transmuteSuccessRate }
         : null),
     };
