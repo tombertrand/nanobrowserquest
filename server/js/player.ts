@@ -221,6 +221,10 @@ class Player extends Character {
   // attackTimeoutWarning: boolean;
   checkHashInterval: any;
   lastHashCheckTimestamp: number;
+  moveItemsToInventoryLock: boolean;
+  moveItemLock: boolean;
+  upgradeLock: boolean;
+  moveGoldLock: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -277,6 +281,12 @@ class Player extends Character {
     this.hasWing = false;
     this.hasCrystal = false;
     // this.attackTimeoutWarning = false;
+
+    // DB Locks to prevent multiple OPs at once when there is a server delay
+    this.moveItemsToInventoryLock = false;
+    this.moveItemLock = false;
+    this.upgradeLock = false;
+    this.moveGoldLock = false;
 
     // Get IP from CloudFlare
     this.ip = connection._connection.handshake.headers["cf-connecting-ip"];

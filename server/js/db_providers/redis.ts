@@ -1211,6 +1211,8 @@ class DatabaseHandler {
       return;
     }
 
+    player.moveItemLock = true;
+
     const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
     const [toLocation, toRange] = this.getItemLocation(toSlot);
 
@@ -1233,8 +1235,6 @@ class DatabaseHandler {
         return;
       }
     }
-
-    player.moveItemLock = true;
 
     this.client.hget("u:" + player.name, fromLocation, (_err, fromReply) => {
       let fromItem;
@@ -1391,15 +1391,14 @@ class DatabaseHandler {
                 this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed));
               }
 
-              player.moveItemLock = false;
-
               this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
               this.sendMoveItem({ player, location: toLocation, data: toReplyParsed });
             } catch (err) {
               console.log(err);
               Sentry.captureException(err);
-              player.moveItemLock = false;
             }
+
+            player.moveItemLock = false;
           });
         }
       } catch (err) {
@@ -1444,6 +1443,15 @@ class DatabaseHandler {
   moveGold({ player, amount, from, to }) {
     // Only positive number can be submitted
     if (isNaN(amount) || amount <= 0) return;
+
+    if (player.moveGoldLock) {
+      Sentry.captureException(new Error("Calling moveGold while still locked"), {
+        extra: { player: player.name },
+      });
+      return;
+    }
+
+    player.moveGoldLock = true;
 
     return player.dbWriteQueue.enqueue(
       () =>
@@ -1538,6 +1546,7 @@ class DatabaseHandler {
 
                   // @NOTE Resolved amount is only used for trading
                   resolve(resolvedAmount);
+                  player.moveGoldLock = false;
                 });
               });
             });
@@ -1910,6 +1919,14 @@ class DatabaseHandler {
   }
 
   upgradeItem(player: Player) {
+    if (player.upgradeLock) {
+      Sentry.captureException(new Error("Calling upgradeItem while still locked"), {
+        extra: { player: player.name },
+      });
+      return;
+    }
+    player.upgradeLock = true;
+
     this.client.hget("u:" + player.name, "upgrade", (_err, reply) => {
       try {
         let isLucky7 = false;
@@ -2257,6 +2274,7 @@ class DatabaseHandler {
           },
         });
       }
+      player.upgradeLock = false;
     });
   }
 

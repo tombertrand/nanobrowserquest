@@ -1060,7 +1060,6 @@ class App {
     if (otherPlayers.length) {
       otherPlayers.forEach(({ name, level, hash, partyId: isInParty, network, partyEnabled }) => {
         const isInviteSent = this.game.partyInvitees.includes(name);
-
         otherPlayersHtml += `
         <div class="row ${partyId ? "" : "row-around"}">
           <div class="player-name">

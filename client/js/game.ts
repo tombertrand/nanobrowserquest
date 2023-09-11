@@ -973,7 +973,8 @@ class Game {
         (self.player.upgrade.length === 1 &&
           (Types.isChest(item1) || item1 === "cowkinghorn" || item1 === "petegg" || Types.isWeapon(item1)))
       ) {
-        if (!self.isUpgradeItemSent) {
+        const hasItemInLastSlot = self.player.upgrade.some(({ slot }) => slot === 10);
+        if (!self.isUpgradeItemSent && !hasItemInLastSlot) {
           self.client.sendUpgradeItem();
         }
         self.isUpgradeItemSent = true;
