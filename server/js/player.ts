@@ -67,6 +67,8 @@ export const CHATBAN_PATTERNS = [
   /https?:\/\/(:?www)?\.?youtube/i,
   /n.?e.?g.?e.?r.?/i,
   /fucker/i,
+  /fuck.?you/i,
+  /sucker/i,
   /cunt/i,
   /whore/i,
   /asshole/i,
