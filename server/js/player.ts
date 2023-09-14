@@ -60,7 +60,17 @@ const MAX_EXP = expForLevel[expForLevel.length - 1];
 
 let payoutIndex = 0;
 
-const ADMINS = ["running-coder", "oldschooler", "Baikie", "Phet", "CallMeCas", "HeroOfNano", "Dyllux", "CelioSevii"];
+const ADMINS = [
+  "running-coder",
+  "oldschooler",
+  "Baikie",
+  "Phet",
+  "CallMeCas",
+  "HeroOfNano",
+  "Dyllux",
+  "CelioSevii",
+  "xDulfinz",
+];
 const SUPER_ADMINS = ["running-coder"];
 export const CHATBAN_PATTERNS = [
   /n.?ig.?g.?(?:e.?r|a)/i,
