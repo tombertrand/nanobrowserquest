@@ -201,6 +201,10 @@ class Sprite {
       ctx.drawImage(this.image, 0, 0, width, height);
       spriteData = ctx.getImageData(0, 0, width, height);
 
+      // console.log("~~~this.image", this.image);
+      // console.log("~~~height", height);
+      // console.log("~~~ this.animationData", this.animationData);
+
       var getIndex = function (x, y) {
         return (width * (y - 1) + x - 1) * 4;
       };

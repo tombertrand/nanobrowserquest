@@ -1607,7 +1607,14 @@ class DatabaseHandler {
           if (amount) {
             resolve(newGold);
           } else if (penalty) {
-            player.send(new Messages.Chat({}, `You lost ${deductedGold} gold from your death.`, "event").serialize());
+            player.send(
+              new Messages.Chat(
+                {},
+                `You lost ${deductedGold} gold from your death.`,
+                "event",
+                deductedGold,
+              ).serialize(),
+            );
             this.client.incrby("goldBank", deductedGold, (_err, reply) => {
               resolve(reply);
             });

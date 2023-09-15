@@ -29,7 +29,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
 import { HASH_BAN_DELAY } from "../../shared/js/utils";
-import { getGoldDeathPenaltyPercent, randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
+import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
 import AudioManager from "./audio";
@@ -234,6 +234,7 @@ class Game {
   isDragStarted: boolean;
   hashCheckInterval: any;
   admins: string[];
+  deductedgoldMessage: boolean;
 
   constructor(app) {
     this.app = app;
@@ -352,6 +353,7 @@ class Game {
     this.gatewayFxNpcId = null;
     this.slotSockets = null;
     this.slotSocketCount = null;
+    this.deductedgoldMessage = false;
 
     // combat
     // @ts-ignore
@@ -3006,6 +3008,8 @@ class Game {
       self.cowLevelPortalCoords = cowLevelPortalCoords;
       self.admins = admins;
 
+      self.deductedgoldMessage = false;
+
       if (party) {
         const { partyId, partyLeader, members } = party;
 
@@ -3360,11 +3364,8 @@ class Game {
         return self.findPath(self.player, x, y, ignored);
       });
 
-      self.player.onDeath(function (displayGold = false) {
+      self.player.onDeath(function () {
         console.info(self.playerId + " is dead");
-
-        const penalty = displayGold ? getGoldDeathPenaltyPercent(self.player.level) : false;
-        const deductedGold = penalty ? Math.ceil((gold * penalty) / 100) : 0;
 
         self.player.stopBlinking();
         self.player.setSprite(self.getSprite("death"));
@@ -3377,9 +3378,12 @@ class Game {
           self.player = null;
           self.client.disable();
 
-          setTimeout(function () {
+           window.setTimeout(function () {
             $("#respawn").removeClass("disabled");
-            self.playerdeath_callback(deductedGold);
+            // #@NOTE messy a bit
+            if (!self.deductedgoldMessage) {
+              self.playerdeath_callback?.(0);
+            }
           }, 1000);
         });
 
@@ -4907,12 +4911,21 @@ class Game {
         name,
         message,
         type,
+        deductedGold,
       }: {
         entityId: number;
         name: string;
         message: string;
         type: ChatType;
+        deductedGold: number;
       }) {
+        console.log("!!!~~~~", message);
+        console.log("!!!~~~~deductedGold", deductedGold);
+
+        if (deductedGold) {
+          self.deductedgoldMessage = true;
+          self.playerdeath_callback(deductedGold);
+        }
         var entity = self.getEntityById(entityId);
         if (entity) {
           self.createBubble(entityId, message);

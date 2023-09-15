@@ -7,14 +7,18 @@ export const merchantItems: { item: string; amount: number }[] = [
   { item: "scrollupgradehigh", amount: 550 },
   { item: "scrollupgradelegendary", amount: 1750 },
   { item: "scrolltransmute", amount: 1500 },
-  { item: "scrolltransmutepet", amount: 22_500 },
-  undefined,
 
+  undefined,
+  undefined,
   { item: "barbronze", amount: 1050 },
   { item: "barsilver", amount: 10_500 },
   { item: "bargold", amount: 105_000 },
   { item: "barplatinum", amount: 1_050_000 },
   { item: "stonesocket", amount: 1_500 },
+
+  undefined,
+  undefined,
+  { item: "scrolltransmutepet", amount: 22_500 },
   { item: "stonesocketblessed", amount: 35_000 },
 ];
 
