@@ -4673,6 +4673,7 @@ class Game {
           player.hitPoints = points;
 
           if (player.hitPoints <= 0) {
+            self.deductedgoldMessage = false;
             player.die(attacker);
           }
           if (isHurt) {

@@ -823,7 +823,7 @@ class Character extends Entity {
   hurt() {
     this.stopHurting();
     // @NOTE directly go for the whiteSprite
-    this.sprite = this.sprite.whiteSprite;
+    this.sprite = this.sprite?.whiteSprite;
     this.hurting = setTimeout(this.stopHurting.bind(this), 75);
   }
 

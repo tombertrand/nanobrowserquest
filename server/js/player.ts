@@ -514,77 +514,78 @@ class Player extends Character {
         }
 
         // Sanitized messages may become empty. No need to broadcast empty chat messages.
-        if (msg && msg.startsWith("/")) {
+        if (msg && msg !== "") {
           msg = msg.substr(0, 255); // Enforce maxLength of chat input
 
-          if (SUPER_ADMINS.includes(self.name)) {
-            if (msg === "/cow") {
-              if (!self.server.cowLevelClock) {
-                self.server.startCowLevel();
-                self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
-              }
-              return;
-            } else if (msg === "/minotaur") {
-              if (!self.server.minotaurLevelClock && !self.server.minotaurSpawnTimeout) {
-                self.server.startMinotaurLevel();
-                self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
-              }
-              return;
-            } else if (msg === "/chalice") {
-              if (!self.server.chaliceLevelClock) {
-                self.server.activateAltarChalice(self, true);
-              }
-              return;
-            } else if (msg === "/soulstone") {
-              self.server.activateAltarSoulStone(self, true);
-              return;
-            } else if (msg === "/fossil") {
-              self.server.activateFossil(self, true);
-              return;
-            } else if (msg === "/stone") {
-              if (!self.server.stoneLevelClock) {
-                self.server.magicStones.forEach(id => {
-                  const magicStone = self.server.getEntityById(id);
-                  self.server.activateMagicStone(self, magicStone);
-                });
-              }
-              return;
-            } else if (msg === "/tree") {
-              if (!self.server.isActivatedTreeLevel) {
-                self.server.startTreeLevel();
-              }
-              return;
-            } else if (msg === "/gateway") {
-              self.server.activateHands(self, true);
-              return;
-            } else if (msg === "/temple") {
-              const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
-              self.server.activateLever(self, lever, true);
-              return;
-            } else if (msg === "/deathangel") {
-              const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
-              self.server.activateLever(self, lever);
+          if (msg.startsWith("/") && ADMINS.includes(self.name)) {
+            if (SUPER_ADMINS.includes(self.name)) {
+              if (msg === "/cow") {
+                if (!self.server.cowLevelClock) {
+                  self.server.startCowLevel();
+                  self.broadcast(new Messages.AnvilRecipe("cowLevel"), false);
+                }
+                return;
+              } else if (msg === "/minotaur") {
+                if (!self.server.minotaurLevelClock && !self.server.minotaurSpawnTimeout) {
+                  self.server.startMinotaurLevel();
+                  self.broadcast(new Messages.AnvilRecipe("minotaurLevel"), false);
+                }
+                return;
+              } else if (msg === "/chalice") {
+                if (!self.server.chaliceLevelClock) {
+                  self.server.activateAltarChalice(self, true);
+                }
+                return;
+              } else if (msg === "/soulstone") {
+                self.server.activateAltarSoulStone(self, true);
+                return;
+              } else if (msg === "/fossil") {
+                self.server.activateFossil(self, true);
+                return;
+              } else if (msg === "/stone") {
+                if (!self.server.stoneLevelClock) {
+                  self.server.magicStones.forEach(id => {
+                    const magicStone = self.server.getEntityById(id);
+                    self.server.activateMagicStone(self, magicStone);
+                  });
+                }
+                return;
+              } else if (msg === "/tree") {
+                if (!self.server.isActivatedTreeLevel) {
+                  self.server.startTreeLevel();
+                }
+                return;
+              } else if (msg === "/gateway") {
+                self.server.activateHands(self, true);
+                return;
+              } else if (msg === "/temple") {
+                const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
+                self.server.activateLever(self, lever, true);
+                return;
+              } else if (msg === "/deathangel") {
+                const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
+                self.server.activateLever(self, lever);
 
-              const leverDeathAngel = self.server.getEntityById(self.server.leverDeathAngelNpcId);
-              self.server.activateLever(self, leverDeathAngel, true);
+                const leverDeathAngel = self.server.getEntityById(self.server.leverDeathAngelNpcId);
+                self.server.activateLever(self, leverDeathAngel, true);
 
-              return;
-            } else if (msg === "/olaf") {
-              const leverLeft = self.server.getEntityById(self.server.leverLeftCryptNpcId);
-              const leverRight = self.server.getEntityById(self.server.leverRightCryptNpcId);
-              self.server.activateLever(self, leverLeft);
-              self.server.activateLever(self, leverRight);
+                return;
+              } else if (msg === "/olaf") {
+                const leverLeft = self.server.getEntityById(self.server.leverLeftCryptNpcId);
+                const leverRight = self.server.getEntityById(self.server.leverRightCryptNpcId);
+                self.server.activateLever(self, leverLeft);
+                self.server.activateLever(self, leverRight);
+                return;
+              }
+            }
+
+            if (msg.startsWith("/kick") && msg.length) {
+              const [, playerName] = msg.match(/\s(.+)/);
+
+              self.server.disconnectPlayer(playerName, true);
+              self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
               return;
             }
-          }
-
-          if (msg.startsWith("/kick") && msg.length) {
-            const [, playerName] = msg.match(/\s(.+)/);
-
-            self.server.disconnectPlayer(playerName, true);
-
-            self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
-            return;
           }
 
           if (msg.startsWith("/ban")) {
