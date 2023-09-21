@@ -4919,8 +4919,6 @@ class Game {
         type: ChatType;
         deductedGold: number;
       }) {
-        console.log("!!!~~~~", message);
-        console.log("!!!~~~~deductedGold", deductedGold);
 
         if (deductedGold) {
           self.deductedgoldMessage = true;

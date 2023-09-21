@@ -781,8 +781,8 @@ class DatabaseHandler {
   banPlayerByIP({
     admin,
     player,
-    reason,
-    message,
+    reason = "other",
+    message = "no message",
     days = 365,
   }: {
     admin?: string;
@@ -1065,6 +1065,14 @@ class DatabaseHandler {
   }
 
   sendMoveItem({ player, location, data }) {
+    if (player.sendMoveItemLock) {
+      Sentry.captureException(new Error("Calling sendMoveItem while still locked"), {
+        extra: { player: player.name },
+      });
+      return;
+    }
+
+    player.sendMoveItemLock = true;
     const type = location;
     const isEquipment = [
       "weapon",
@@ -1199,6 +1207,8 @@ class DatabaseHandler {
         tradeInstance.update({ data, player1Id: player.id });
       }
     }
+
+    player.sendMoveItemLock = false;
   }
 
   moveItem({ player, fromSlot, toSlot, quantity: movedQuantity = 0 }) {
@@ -2273,6 +2283,7 @@ class DatabaseHandler {
 
         player.send([Types.Messages.UPGRADE, upgrade, { luckySlot, isLucky7, isMagic8, isSuccess, recipe }]);
         this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
+        player.upgradeLock = false;
       } catch (err1) {
         Sentry.captureException(err1, {
           extra: {
@@ -2280,8 +2291,9 @@ class DatabaseHandler {
             reply,
           },
         });
+
+        player.upgradeLock = false;
       }
-      player.upgradeLock = false;
     });
   }
 
