@@ -376,8 +376,9 @@ var initGame = function () {
 
     $("#gold-death-wrapper").toggleClass("visible", !!gold);
 
-    // @TODO: possible death cause gold de-sync?
-    $("#gold-death").text(game.formatGold(gold));
+
+      $("#gold-death").text(gold? game.formatGold(gold) : "");
+
   });
 
   game.onGameCompleted(function ({ hash, fightAgain, show = false }) {
@@ -562,6 +563,7 @@ var initGame = function () {
     game.audioManager.playSound("revive");
     game.respawn();
     $("body").removeClass("death");
+    // $("#death").hide();
   });
 
   $(document).mousemove(function (event) {

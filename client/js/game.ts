@@ -28,6 +28,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
+import { expForLevel } from "../../shared/js/types/experience";
 import { HASH_BAN_DELAY } from "../../shared/js/utils";
 import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
@@ -1169,15 +1170,15 @@ class Game {
 
     if (typeof level === "number") {
       if (toSlot === Slot.WEAPON) {
-        this.player.switchWeapon(item, level, bonus, socket, skill);
+        this.player?.switchWeapon(item, level, bonus, socket, skill);
       } else if (toSlot === Slot.ARMOR) {
-        this.player.switchArmor(this.getSprite(item), level, bonus, socket);
+        this.player?.switchArmor(this.getSprite(item), level, bonus, socket);
       } else if (toSlot === Slot.HELM) {
-        this.player.switchHelm(item, level, bonus, socket);
+        this.player?.switchHelm(item, level, bonus, socket);
       } else if (toSlot === Slot.CAPE) {
-        this.player.switchCape(item, level, bonus);
+        this.player?.switchCape(item, level, bonus);
       } else if (toSlot === Slot.SHIELD) {
-        this.player.switchShield(item, level, bonus, socket, skill);
+        this.player?.switchShield(item, level, bonus, socket, skill);
         this.setDefenseSkill(skill);
       }
     }
@@ -3378,13 +3379,15 @@ class Game {
           self.player = null;
           self.client.disable();
 
-           window.setTimeout(function () {
-            $("#respawn").removeClass("disabled");
-            // #@NOTE messy a bit
-            if (!self.deductedgoldMessage) {
-              self.playerdeath_callback?.(0);
-            }
-          }, 1000);
+          if (self.deductedgoldMessage) {
+            window.setTimeout(function () {
+              $("#respawn").removeClass("disabled");
+
+              if (!$("#death").is(":visible")) {
+                self.playerdeath_callback?.(0);
+              }
+            }, 1000);
+          }
         });
 
         clearInterval(self.player.defenseSkillTimeout);
@@ -4564,8 +4567,12 @@ class Game {
 
         self.player.experience = playerExp;
 
-        if (self.player.level !== level) {
+        if (self.player.level !== level || playerExp === expForLevel[expForLevel.length - 1]) {
           self.player.level = level;
+
+          if (level === 71) {
+            self.tryUnlockingAchievement("GRAND_MASTER");
+          }
           self.updateRequirement();
         }
 
@@ -4582,7 +4589,6 @@ class Game {
 
         self.storage.incrementTotalKills();
         self.tryUnlockingAchievement("HUNTER");
-
         if (kind === Types.Entities.RAT) {
           self.storage.incrementRatCount();
           self.tryUnlockingAchievement("ANGRY_RATS");
@@ -4673,7 +4679,7 @@ class Game {
           player.hitPoints = points;
 
           if (player.hitPoints <= 0) {
-            self.deductedgoldMessage = false;
+            self.deductedgoldMessage = true;
             player.die(attacker);
           }
           if (isHurt) {
@@ -4777,11 +4783,11 @@ class Game {
 
         if (player) {
           if (type === "helm") {
-            player.switchHelm(name, level, toString(bonus), toString(socket));
+            player?.switchHelm(name, level, toString(bonus), toString(socket));
           } else if (type === "armor") {
-            player.switchArmor(self.getSprite(name), level, toString(bonus), toString(socket));
+            player?.switchArmor(self.getSprite(name), level, toString(bonus), toString(socket));
           } else if (type === "weapon") {
-            player.switchWeapon(name, level, toString(bonus), toString(socket), skill);
+            player?.switchWeapon(name, level, toString(bonus), toString(socket), skill);
 
             // Clear weapon when it's used as a quest item
             if (playerId === self.player?.id && name === "dagger") {
@@ -4920,7 +4926,6 @@ class Game {
         type: ChatType;
         deductedGold: number;
       }) {
-
         if (deductedGold) {
           self.deductedgoldMessage = true;
           self.playerdeath_callback(deductedGold);
@@ -6998,6 +7003,8 @@ class Game {
     }
 
     console.debug("Finished respawn");
+
+    $("#parchment").removeClass("death");
   }
 
   onGameStart(callback) {

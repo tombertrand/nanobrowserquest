@@ -1133,9 +1133,8 @@ class World {
   }
 
   startChaliceLevel() {
-
     // @NOTE lvl started!
-    if(this.chaliceLevelClock) return;
+    if (this.chaliceLevelClock) return;
     this.chaliceLevelClock = 15 * 60; // 15 minutes
 
     const secretStairs = this.npcs[this.secretStairsChaliceNpcId];

@@ -556,33 +556,24 @@ class GameClient {
   }
 
   receiveKill(data) {
-    if (this.kill_callback) {
-      this.kill_callback(data[1]);
-    }
+    this.kill_callback?.(data[1]);
   }
 
   receiveList(data) {
     data.shift();
 
-    if (this.list_callback) {
-      this.list_callback(data);
-    }
+    this.list_callback?.(data);
   }
 
   receiveDestroy(data) {
     var id = data[1];
 
-    if (this.destroy_callback) {
-      this.destroy_callback(id);
-    }
+    this.destroy_callback?.(id);
   }
 
   receiveStats(data) {
     const stats = data[1];
-
-    if (this.stats_callback) {
-      this.stats_callback(stats);
-    }
+    this.stats_callback?.(stats);
   }
 
   receiveSettings(data) {

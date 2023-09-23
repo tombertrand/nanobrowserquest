@@ -2066,6 +2066,7 @@ class DatabaseHandler {
           upgrade[upgrade.length - 1] = `rune-${Types.RuneList[previousRuneRank - 1]}:1`;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((socketItem = isValidSocketItem(filteredUpgrade))) {
+  
           isSuccess = true;
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = socketItem;

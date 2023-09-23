@@ -444,6 +444,7 @@ class Player extends Character {
             self.connection.sendUTF8("loggedin");
             self.connection.close("Already logged in " + self.name);
 
+
             return;
           }
         }

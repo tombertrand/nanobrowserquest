@@ -570,7 +570,7 @@ export const getAchievements = (network: Network = "nano"): { [key in Achievemen
   EMBLEM: {
     id: 74,
     name: "Hero Emblem",
-    desc: "Find a powerful artifact abe to enchant items",
+    desc: "Find a powerful artifact able to enchant items to +6 without any risk",
     hidden: true,
   },
   OBELISK: {
@@ -606,7 +606,7 @@ export const getAchievements = (network: Network = "nano"): { [key in Achievemen
   GRAND_MASTER: {
     id: 80,
     name: "Grand Master",
-    desc: "Reach lv.71<br/><small>Your offensive skill now does AOE damage</small>",
+    desc: "Reach lv.71<br/>",
     hidden: true,
   },
 });
