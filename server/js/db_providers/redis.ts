@@ -779,7 +779,7 @@ class DatabaseHandler {
   }
 
   banPlayerByIP({
-    admin,
+    admin = "auto-mod",
     player,
     reason = "other",
     message = "no message",
