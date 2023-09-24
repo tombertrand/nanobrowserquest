@@ -170,7 +170,16 @@ class Trade {
               // @NOTE Is it an item with a quantity?
               if (Types.isQuantity(item)) {
                 const [tradeItem, tradeQuantity] = item.split(":");
-                const index = playerBInventory.findIndex(entry => entry?.startsWith?.(tradeItem));
+
+                const index = playerBInventory.findIndex(entry => {
+
+
+
+                  const [playerBInventoryItem] = typeof entry === "string" && entry.split(":");
+
+                  return playerBInventoryItem === tradeItem;
+                });
+
 
                 if (index > -1) {
                   const [inventoryItem, inventoryQuantity] = playerBInventory[index].split(":");
