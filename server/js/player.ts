@@ -444,7 +444,6 @@ class Player extends Character {
             self.connection.sendUTF8("loggedin");
             self.connection.close("Already logged in " + self.name);
 
-
             return;
           }
         }
@@ -500,7 +499,7 @@ class Player extends Character {
           }
         }
 
-        if (!self.canChat && !ADMINS.includes(self.name)) {
+        if (!self.canChat) {
           self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
           return;
         }
@@ -510,7 +509,6 @@ class Player extends Character {
 
           postMessageToModeratorSupportChannel(`**${self.name}** was self-chat banned for saying:"**${msg}**"`);
           self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
-          self.canChat = false;
           return;
         }
 
@@ -608,19 +606,31 @@ class Player extends Character {
           self.server.pushBroadcast(new Messages.Chat(self, msg), false);
         }
       } else if (action === Types.Messages.MANUAL_BAN_PLAYER) {
-        const { player, reason, duration, message: banMessage } = message[1];
+        const { player, reason, duration, message: banMessage, isIPBan, isChatBan } = message[1];
 
         const bannedPlayer = self.server.getPlayerByName(player);
 
-        if (!bannedPlayer || !ADMINS.includes(self.name)) return;
+        if (!bannedPlayer) return;
 
-        databaseHandler.banPlayerByIP({
-          admin: self.name,
-          player: bannedPlayer,
-          reason,
-          duration,
-          message: banMessage,
-        });
+        if (isChatBan) {
+          self.databaseHandler.chatBan({ player: bannedPlayer, message: banMessage, isIPBan });
+        } else if (isIPBan) {
+          databaseHandler.banPlayerByIP({
+            admin: self.name,
+            player: bannedPlayer,
+            reason,
+            duration,
+            message: banMessage,
+          });
+        } else {
+          databaseHandler.banPlayerForReason({
+            admin: self.name,
+            player: bannedPlayer,
+            reason,
+            duration,
+            message: banMessage,
+          });
+        }
 
         postMessageToModeratorSupportChannel(
           `**${bannedPlayer.name}** was banned by **${self.name}** reason: **${reason}**, message: **${banMessage}**, duration: **${duration}** days`,

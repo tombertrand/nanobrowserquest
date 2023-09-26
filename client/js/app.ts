@@ -343,9 +343,13 @@ class App {
               break;
             case "invalidusername":
               // The username contains characters that are not allowed (rejected by the sanitizer)
-              self.addValidationError(self.getUsernameField(), "The username you entered contains invalid characters.");
+              self.addValidationError(
+                self.getUsernameField(),
+                "The username you entered contains invalid characters or words.",
+              );
               self.setPlayButtonState(true);
               break;
+
             case "loggedin":
               // Attempted to log in with the same user multiple times simultaneously
               self.addValidationError(
@@ -496,7 +500,10 @@ class App {
             const duration = $("#ban-player-duration").val();
             const message = $("#ban-player-message").val();
 
-            self.game.client.sendManualBanPlayer({ player, reason, duration, message });
+            const isIPBan = $("#ban-player-ip").is(":checked");
+            const isChatBan = $("#ban-player-chatban").is(":checked");
+
+            self.game.client.sendManualBanPlayer({ player, reason, duration, message, isIPBan, isChatBan });
 
             $(this).dialog("close");
           },
@@ -504,7 +511,7 @@ class App {
       ],
     });
 
-    const reasons = ["spam", "misbehave", "cheating", "Inappropriate Language", "other"];
+    const reasons = ["spam", "misbehave", "cheating", "Inappropriate Language", , "Inappropriate Name", "other"];
     const durations = [1, 7, 365];
 
     $("#dialog-ban-player").html(
@@ -515,6 +522,15 @@ class App {
           ({ name, ip }) => `<option value="${name}">${name}(${ip || "unknown IP"})</option>`,
         )}
         </select>
+        </br>
+        <label>
+        <input type="checkbox" checked id="ban-player-ip" />Include IP ban
+        </label>
+        </br>
+        <label>
+        <input type="checkbox" id="ban-player-chatban" /> ChatBan Only
+        </label>
+        </br>
         <select id="ban-player-duration"  style="width: 50%;font-family: 'GraphicPixel';" />
         <option>Duration</option>
         ${durations.map(days => `<option value="${days}">${days}day(s)</option>`)}

@@ -45,6 +45,7 @@ import {
   postMessageToDiscordAnvilChannel,
   postMessageToDiscordEventChannel,
   postMessageToDiscordPurchaseChannel,
+  postMessageToModeratorSupportChannel,
 } from "../discord";
 import Messages from "../message";
 import { CHATBAN_PATTERNS } from "../player";
@@ -641,7 +642,14 @@ class DatabaseHandler {
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
 
-    if (CHATBAN_PATTERNS.some(pattern => pattern.test(player.name))) {
+    const INVALID_NAME_PATTERNS = [/ball[sz]/, /d[i1]+ck/, /your ?m[ou]+m/, /butt/, /stupid/, /ass/, /cock/, /faggot/];
+
+    if (
+      CHATBAN_PATTERNS.some(pattern => pattern.test(player.name)) ||
+      INVALID_NAME_PATTERNS.some(pattern => pattern.test(player.name))
+    ) {
+      player.connection.sendUTF8("invalidusername");
+      player.connection.close("User does not exist: " + player.name);
       Sentry.captureException(new Error(`Invalid player name for creation ${player.name}`));
       return;
     }
@@ -820,9 +828,12 @@ class DatabaseHandler {
     this.client.hmset("ban:" + player.name, "timestamp", until, "reason", reason, "message", message, "admin", admin);
   }
 
-  chatBan({ player, message }: { player: any; message: string }) {
-    this.client.hset(`chatBan`, player.name, JSON.stringify({ ip: player.ip || "", message }));
-    player.server.chatBan.push({ player: player.name, ip: player.ip });
+  chatBan({ player, message, isIPBan }: { player: any; message: string; isIPBan: boolean }) {
+    let ip = isIPBan ? player.ip : "";
+
+    player.canChat = false;
+    this.client.hset(`chatBan`, player.name, JSON.stringify({ ip, message }));
+    player.server.chatBan.push({ player: player.name, ip });
   }
 
   getChatBan() {
@@ -1679,6 +1690,10 @@ class DatabaseHandler {
       .then(() => {
         this.lootItems({ player, items: [{ item, quantity }], toSlot });
 
+        if (item === "barplatinum" || quantity > 20) {
+          postMessageToModeratorSupportChannel(`**${player.name}** purchased ${quantity}x ${item} from  merchant`);
+        }
+
         player.send(new Messages.MerchantLog({ item, quantity, amount: totalAmount, type: "buy" }).serialize());
       })
       .catch(err => {
@@ -2066,7 +2081,6 @@ class DatabaseHandler {
           upgrade[upgrade.length - 1] = `rune-${Types.RuneList[previousRuneRank - 1]}:1`;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((socketItem = isValidSocketItem(filteredUpgrade))) {
-  
           isSuccess = true;
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = socketItem;

@@ -34,7 +34,7 @@ export const discordClient = new Client({
 discordClient.login(BOT_TOKEN);
 
 export const postMessageToDiscordEventChannel = (content: string) => {
-  // if (isDevelopment) return;
+  if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,

@@ -264,6 +264,7 @@ class GameClient {
           } catch (err) {}
         }
 
+
         if (
           e === "invalidlogin" ||
           e === "userexists" ||
@@ -271,7 +272,8 @@ class GameClient {
           e === "invalidconnection" ||
           e === "passwordcreate" ||
           e === "passwordlogin" ||
-          e === "passwordinvalid"
+          e === "passwordinvalid" ||
+          e === "invalidusername"
         ) {
           this.fail_callback?.({ reason: e });
           return;
