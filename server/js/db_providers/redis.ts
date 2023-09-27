@@ -642,7 +642,7 @@ class DatabaseHandler {
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
 
-    const INVALID_NAME_PATTERNS = [/ball[sz]/, /d[i1]+ck/, /your ?m[ou]+m/, /butt/, /stupid/, /ass/, /cock/, /faggot/];
+    const INVALID_NAME_PATTERNS = [/ball[sz]/, /d[i1]+ck/, /your ?m[ou]+m/, /butt/, /stupid/, /ass/, /cock/, /faggot/,/jizz?/, /cum/];
 
     if (
       CHATBAN_PATTERNS.some(pattern => pattern.test(player.name)) ||

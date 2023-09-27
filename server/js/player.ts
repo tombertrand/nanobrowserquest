@@ -83,6 +83,8 @@ export const CHATBAN_PATTERNS = [
   /whore/i,
   /asshole/i,
   /bitch/i,
+  /fa?ggot/i,
+  /cum/i
 ];
 
 class Player extends Character {

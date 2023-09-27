@@ -563,7 +563,7 @@ var initGame = function () {
     game.audioManager.playSound("revive");
     game.respawn();
     $("body").removeClass("death");
-    // $("#death").hide();
+    $("parchment").removeClass("death");
   });
 
   $(document).mousemove(function (event) {

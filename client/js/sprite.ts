@@ -246,6 +246,8 @@ class Sprite {
           spriteData.data[i + 3] === 150
         );
       };
+      // @NOTE do not draw silhouette for large sprites since it creates lag
+      if (spriteData.data.length < 1_000_000){
 
       for (var i = 0; i < spriteData.data.length; i += 4) {
         if (isBlankPixel(i) && hasAdjacentPixel(i)) {
@@ -254,6 +256,7 @@ class Sprite {
           spriteData.data[i + 3] = 150;
         }
       }
+    }
 
       ctx.putImageData(spriteData, 0, 0);
 
