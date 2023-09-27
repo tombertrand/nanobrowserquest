@@ -1677,6 +1677,7 @@ class DatabaseHandler {
 
   buyFromMerchant({ player, fromSlot, toSlot, quantity = 1 }) {
     const { amount, item } = merchantItems[fromSlot - MERCHANT_SLOT_RANGE] || {};
+
     if (!amount || !item || toSlot > INVENTORY_SLOT_COUNT - 1) return;
     if (!validateQuantity(quantity)) return;
     const maxQuantity = Math.floor(player.gold / amount);
@@ -1690,8 +1691,10 @@ class DatabaseHandler {
       .then(() => {
         this.lootItems({ player, items: [{ item, quantity }], toSlot });
 
-        if (item === "barplatinum" || quantity > 20) {
-          postMessageToModeratorSupportChannel(`**${player.name}** purchased ${quantity}x ${item} from  merchant`);
+        if (item === "barplatinum" || quantity > 10 || totalAmount >= 100_000) {
+          postMessageToModeratorSupportChannel(
+            `**${player.name}** purchased ${quantity}x ${item} from merchant for${totalAmount}${EmojiMap.gold}`,
+          );
         }
 
         player.send(new Messages.MerchantLog({ item, quantity, amount: totalAmount, type: "buy" }).serialize());
@@ -1778,6 +1781,12 @@ class DatabaseHandler {
 
         const amount = getGoldAmountFromSoldItem({ item: fromItem, quantity: soldQuantity });
         if (!amount) return;
+
+        if (amount >= 50_000) {
+          postMessageToModeratorSupportChannel(
+            `**${player.name}** sold ${soldQuantity}x ${fromItem} to merchant for${amount}${EmojiMap.gold}`,
+          );
+        }
 
         let isFromReplyDone = false;
 
