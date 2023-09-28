@@ -114,6 +114,14 @@ export const getAttackSkill = function ({
     // meteorSkillPerLevel,
   ];
 
+  const skillPlayerBaseElementBonus = [
+    bonus.magicDamage,
+    bonus.flameDamage,
+    bonus.lightningDamage,
+    bonus.coldDamage,
+    bonus.poisonDamage,
+  ];
+
   const skillPlayerBonus = [
     bonus.magicDamagePercent,
     bonus.flameDamagePercent,
@@ -127,7 +135,8 @@ export const getAttackSkill = function ({
   const type = attackSkillType[skill];
   const stats = skillPerLevel[skill][level - 1];
   const multiplier = skillMultipliers[skill];
-  const baseDmg = Math.round((stats + stats * (skillPlayerBonus[skill] / 100)) * itemClassMultiplier);
+  const baseElementDamageBonus = skillPlayerBaseElementBonus[skill]
+  const baseDmg = Math.round((stats + stats * (skillPlayerBonus[skill] / 100)) * itemClassMultiplier)+ baseElementDamageBonus ;
   const baseMin = Math.round(baseDmg * multiplier[0]);
   const baseMax = Math.round(baseDmg * multiplier[1]);
   const min = Math.round(baseMin - baseMin * (resistance / 100));

@@ -815,7 +815,7 @@ export const kinds = {
 
   // kind, type, level, damage
   dagger: [Types.Entities.DAGGER, "weapon", "Dagger", 1, 2],
-  wirtleg: [Types.Entities.WIRTLEG, "weapon", "Wirt's leg", 1, 2],
+  wirtleg: [Types.Entities.WIRTLEG, "weapon", "Wirt's leg", 1, 5],
   pickaxe: [Types.Entities.PICKAXE, "weapon", "Pickaxe", 52, 30],
 
   // kind, type, level, damage
@@ -2662,7 +2662,7 @@ Types.getItemClass = function (item: string, level?: number) {
   const baseLevel = Types.getItemBaseLevel(item);
 
   const isPet = Types.isPetItem(item);
-  if (isPet) {
+  if (isPet|| level>=9) {
     return "legendary";
   }
 

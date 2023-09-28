@@ -1693,7 +1693,7 @@ class DatabaseHandler {
 
         if (item === "barplatinum" || quantity > 10 || totalAmount >= 100_000) {
           postMessageToModeratorSupportChannel(
-            `**${player.name}** purchased ${quantity}x ${item} from merchant for${totalAmount}${EmojiMap.gold}`,
+            `**${player.name}** purchased ${quantity}x ${item} from merchant for ${totalAmount}${EmojiMap.gold}`,
           );
         }
 
@@ -1784,7 +1784,7 @@ class DatabaseHandler {
 
         if (amount >= 50_000) {
           postMessageToModeratorSupportChannel(
-            `**${player.name}** sold ${soldQuantity}x ${fromItem} to merchant for${amount}${EmojiMap.gold}`,
+            `**${player.name}** sold ${soldQuantity}x ${fromItem} to merchant for ${amount}${EmojiMap.gold}`,
           );
         }
 

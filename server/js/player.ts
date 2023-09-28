@@ -74,7 +74,7 @@ const ADMINS = [
 const SUPER_ADMINS = ["running-coder"];
 export const CHATBAN_PATTERNS = [
   /n.?ig.?g.?(?:e.?r|a)/i,
-  /https?:\/\/(:?www)?\.?youtube/i,
+  /https?:\/\/(:?www)?\.?/i,
   /n.?e.?g.?e.?r.?/i,
   /fucker/i,
   /fuck.?you/i,
@@ -84,7 +84,8 @@ export const CHATBAN_PATTERNS = [
   /asshole/i,
   /bitch/i,
   /fa?ggot/i,
-  /cum/i
+  /cum/i,
+  /hitt?ler/i,
 ];
 
 class Player extends Character {
