@@ -1,6 +1,8 @@
 import * as Sentry from "@sentry/node";
 import fs from "fs";
 
+import { postMessageToModeratorDebugChannel } from "./discord";
+
 Sentry.init({
   dsn: process.env.SENTRY_DNS,
   beforeSend: (event, hint) => {
@@ -8,6 +10,8 @@ Sentry.init({
       console.error(hint.originalException || hint.syntheticException);
       return null;
     }
+
+    postMessageToModeratorDebugChannel(event.message);
     return event;
   },
 });
