@@ -642,7 +642,18 @@ class DatabaseHandler {
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
 
-    const INVALID_NAME_PATTERNS = [/ball[sz]/, /d[i1]+ck/, /your ?m[ou]+m/, /butt/, /stupid/, /ass/, /cock/, /faggot/,/jizz?/, /cum/];
+    const INVALID_NAME_PATTERNS = [
+      /ball[sz]/,
+      /d[i1]+ck/,
+      /your ?m[ou]+m/,
+      /butt/,
+      /stupid/,
+      /ass/,
+      /cock/,
+      /faggot/,
+      /jizz?/,
+      /cum/,
+    ];
 
     if (
       CHATBAN_PATTERNS.some(pattern => pattern.test(player.name)) ||
@@ -2190,6 +2201,8 @@ class DatabaseHandler {
               if (!player.server.cowLevelClock) {
                 isWorkingRecipe = true;
                 isRecipe = true;
+
+                player.server.cowKingPlayerName = player.name;
                 player.server.startCowLevel();
 
                 // Unique Wirtleg have guaranteed horn drop

@@ -142,6 +142,7 @@ class World {
   goldBank: number;
   janetYellenNpcId: number;
   soulStonePlayerName: string;
+  cowKingPlayerName: string;
   chatBan: { player: string; ip: string }[];
   tmpHash: string;
   hash: string;

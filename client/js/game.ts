@@ -3383,7 +3383,7 @@ class Game {
             window.setTimeout(function () {
               $("#respawn").removeClass("disabled");
 
-              if (!$("#death").is(":visible")) {
+              if (!$("body").hasClass("death")) {
                 self.playerdeath_callback?.(0);
               }
             }, 1000);

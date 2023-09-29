@@ -1275,7 +1275,12 @@ class Player extends Character {
                 if (generatedItem) {
                   let player = self;
 
-                  // Single items can't be party looted, like potions
+                  if (self.server.cowKingPlayerName && item.mobKind === Types.Entities.COWKING) {
+
+                     player = self.server.getPlayerByName(self.server.cowKingPlayerName);
+
+                    // Single items can't be party looted, like potions
+                  }
                   if (!Types.isSingle(kind) && self.partyId) {
                     player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
                   }
@@ -1333,7 +1338,7 @@ class Player extends Character {
                   }
 
                   self.databaseHandler.lootItems({
-                    player,
+                    player: player || self,
                     items: [generatedItem],
                   });
                 }

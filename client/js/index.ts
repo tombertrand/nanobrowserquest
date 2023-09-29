@@ -376,9 +376,7 @@ var initGame = function () {
 
     $("#gold-death-wrapper").toggleClass("visible", !!gold);
 
-
-      $("#gold-death").text(gold? game.formatGold(gold) : "");
-
+    $("#gold-death").text(gold ? game.formatGold(gold) : "");
   });
 
   game.onGameCompleted(function ({ hash, fightAgain, show = false }) {
