@@ -1,12 +1,11 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { postMessageToModeratorTradeChannel } from "./discord";
 import Messages from "./message";
 import { Sentry } from "./sentry";
 
 import type World from "./worldserver";
-
-import { postMessageToModeratorTradeChannel } from "./discord";
 
 type PlayerInventory = { inventory: string[]; gold: number; isValid: boolean; filteredTrade: string[] };
 
@@ -227,7 +226,7 @@ class Trade {
         this.validatePlayerInventory(player1, player2),
         this.validatePlayerInventory(player2, player1),
       ]);
-a;
+
       const content = `P1 **${player1.name}** completed trade with P2 **${
         player2.name
       }** items P1:items"${JSON.stringify(player1Data.filteredTrade)},gold:${player2Data.gold} items:${

@@ -1935,11 +1935,11 @@ class World {
   async activateHands(player, force = false) {
     const hands = this.getEntityById(this.handsNpcId);
 
-    this.soulStonePlayerName = player.name;
-
     if (hands && hands instanceof Npc && !hands.isActivated) {
       if (force || (await this.databaseHandler.useInventoryItem(player, "powderquantum"))) {
         hands.activate();
+
+        this.soulStonePlayerName = player.name;
 
         this.startGatewayLevel();
         this.broadcastRaise(player, hands);
