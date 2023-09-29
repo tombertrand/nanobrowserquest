@@ -11,7 +11,9 @@ Sentry.init({
       return null;
     }
 
-    postMessageToModeratorDebugChannel(event.message);
+    const message = (hint.originalException as Error)?.message || hint.syntheticException?.message
+
+    postMessageToModeratorDebugChannel(message);
     return event;
   },
 });

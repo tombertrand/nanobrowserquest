@@ -24,6 +24,9 @@ const ModeratorSupportChannel =
 const ModeratorDebug =
   "https://discord.com/api/webhooks/1157121578807611465/DPTTZrQspuKzO4rpQwOaYpy7HE95nRVIgKQe74MG0bT3QrqqAT_F6vyCgyvTBs7ngweY";
 
+const ModertorTrade =
+  "https://discord.com/api/webhooks/1157379165922795662/KGEOmezA84--Kj7NppJPGkdVrPSjZh6KXlNWPMcg-hEwE4vfxxuO4pNq3oqSnPoPpOCW";
+
 // For linking players with Discord
 export const discordClient = new Client({
   intents: [
@@ -121,7 +124,6 @@ export const postMessageToModeratorSupportChannel = (content: string) => {
   }
 };
 
-
 export const postMessageToModeratorDebugChannel = (content: string) => {
   if (isDevelopment) return;
   try {
@@ -129,7 +131,25 @@ export const postMessageToModeratorDebugChannel = (content: string) => {
       content,
     });
 
-    fetch(ModeratorSupportChannel, {
+    console.log("postcontent", content);
+    fetch(ModeratorDebug, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
+
+export const postMessageToModeratorTradeChannel = (content: string) => {
+  if (isDevelopment) return;
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    fetch(ModertorTrade, {
       method: "POST",
       body,
       headers: { "Content-Type": "application/json" },

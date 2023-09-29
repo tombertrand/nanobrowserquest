@@ -6,7 +6,9 @@ import { Sentry } from "./sentry";
 
 import type World from "./worldserver";
 
-type PlayerInventory = { inventory: string[]; gold: number; isValid: boolean };
+import { postMessageToModeratorTradeChannel } from "./discord";
+
+type PlayerInventory = { inventory: string[]; gold: number; isValid: boolean; filteredTrade: string[] };
 
 class Trade {
   players: { id: number; isAccepted: boolean }[] = [];
@@ -172,14 +174,10 @@ class Trade {
                 const [tradeItem, tradeQuantity] = item.split(":");
 
                 const index = playerBInventory.findIndex(entry => {
-
-
-
                   const [playerBInventoryItem] = typeof entry === "string" && entry.split(":");
 
                   return playerBInventoryItem === tradeItem;
                 });
-
 
                 if (index > -1) {
                   const [inventoryItem, inventoryQuantity] = playerBInventory[index].split(":");
@@ -201,7 +199,12 @@ class Trade {
             isValid = false;
           }
 
-          resolve({ inventory: playerBInventory, isValid, gold: playerAGoldTrade + playerBGold });
+          resolve({
+            inventory: playerBInventory,
+            isValid,
+            gold: playerAGoldTrade + playerBGold,
+            filteredTrade: playerAFilteredTrade,
+          });
         });
       });
     });
@@ -224,6 +227,14 @@ class Trade {
         this.validatePlayerInventory(player1, player2),
         this.validatePlayerInventory(player2, player1),
       ]);
+a;
+      const content = `P1 **${player1.name}** completed trade with P2 **${
+        player2.name
+      }** items P1:items"${JSON.stringify(player1Data.filteredTrade)},gold:${player2Data.gold} items:${
+        player2Data.filteredTrade
+      }`;
+
+      postMessageToModeratorTradeChannel(content);
 
       if (!player1Data.isValid || !player2Data.isValid) {
         this.close({ playerName: !player1Data.isValid ? player1.name : player2.name, isInventoryFull: true });
