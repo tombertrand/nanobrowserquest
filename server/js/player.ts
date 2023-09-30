@@ -1276,8 +1276,7 @@ class Player extends Character {
                   let player = self;
 
                   if (self.server.cowKingPlayerName && item.mobKind === Types.Entities.COWKING) {
-
-                     player = self.server.getPlayerByName(self.server.cowKingPlayerName);
+                    player = self.server.getPlayerByName(self.server.cowKingPlayerName);
 
                     // Single items can't be party looted, like potions
                   }
@@ -1472,8 +1471,7 @@ class Player extends Character {
             // Check for required achievements
             !self.achievement[1] || //  -> INTO_THE_WILD
             !self.achievement[11] || // -> NO_MANS_LAND
-            !self.achievement[16] || // -> HOT_SPOT
-            !self.achievement[20]) // -> HERO
+            !self.achievement[16]) // -> HOT_SPOT
         ) {
           let banMessage;
           if (self.hash) {
@@ -1484,8 +1482,8 @@ class Player extends Character {
             banMessage = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
           } else if (self.level < MIN_LEVEL) {
             banMessage = `Min level not obtained, player is level ${self.level}`;
-          } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[16] || !self.achievement[20]) {
-            banMessage = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}, ${self.achievement[20]}`;
+          } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[16]) {
+            banMessage = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}}`;
           }
 
           console.info(`Reason: ${banMessage}`);
@@ -1537,6 +1535,9 @@ class Player extends Character {
         // If payout succeeds there will be a hash in the response!
         if (hash) {
           console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
+
+          // only set Q on payout success
+          self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
 
           postMessageToDiscordEventChannel(
             `${self.name} killed the Skeleton King and received a payout of ${raiPayoutAmount} ${

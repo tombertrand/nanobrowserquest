@@ -1907,7 +1907,7 @@ class DatabaseHandler {
 
   moveItemsToInventory(player, panel: "upgrade" | "trade" = "upgrade") {
     if (player.moveItemsToInventoryLock) {
-      Sentry.captureException(new Error("Calling moveItemsToInventory while still locked"), {
+      Sentry.captureException(new Error(`**${player.name}**Calling moveItemsToInventory while still locked`), {
         extra: { player: player.name, panel },
       });
       return;

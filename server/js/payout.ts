@@ -36,7 +36,7 @@ const enqueueSendPayout = async params => {
   return await queue.enqueue(() => sendPayout(params));
 };
 
-const sendPayout = async ({ account: receiver, amount, network }) => {
+const sendPayout = async ({ account: receiver, amount, network, playerName }) => {
   let hash;
   let work;
   try {
@@ -77,8 +77,9 @@ const sendPayout = async ({ account: receiver, amount, network }) => {
     );
 
     // @TODO add more debug when this error occurs
+
     if (blockCreate.error) {
-      throw new Error("Unable to block_create");
+      throw new Error(`Unable to block_create for player ${playerName} on account ${network}_${sender}`);
     }
     const process = await rpc(
       "process",
@@ -91,7 +92,7 @@ const sendPayout = async ({ account: receiver, amount, network }) => {
     );
 
     if (process.error) {
-      throw new Error("Unable to process");
+      throw new Error("Unable to process block");
     }
 
     hash = process.hash;

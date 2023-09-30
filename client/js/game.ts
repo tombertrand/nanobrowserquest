@@ -3384,6 +3384,7 @@ class Game {
               $("#respawn").removeClass("disabled");
 
               if (!$("body").hasClass("death")) {
+                console.log("!!!1");
                 self.playerdeath_callback?.(0);
               }
             }, 1000);
@@ -4599,9 +4600,7 @@ class Game {
           self.storage.incrementSpectreCount();
           self.tryUnlockingAchievement("SPECTRE_COLLECTOR");
         } else if (kind === Types.Entities.BOSS) {
-          self.tryUnlockingAchievement("HERO").then(() => {
-            self.client.sendRequestPayout(Types.Entities.BOSS);
-          });
+          self.client.sendRequestPayout(Types.Entities.BOSS);
         } else if (kind === Types.Entities.WEREWOLF) {
           self.storage.incrementWerewolfCount();
           self.tryUnlockingAchievement("BLOODLUST");
@@ -4928,6 +4927,7 @@ class Game {
       }) {
         if (deductedGold) {
           self.deductedgoldMessage = true;
+          console.log("!!!1");
           self.playerdeath_callback(deductedGold);
         }
         var entity = self.getEntityById(entityId);

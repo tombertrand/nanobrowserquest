@@ -581,7 +581,7 @@ class World {
       }
     } else {
       console.log("pushToPlayer: player was undefined");
-      Sentry.captureException(new Error("pushToPlayer: player was undefined"), { extra: { player: player?.name } });
+      Sentry.captureException(new Error(`pushToPlayer: player**${player?.name}** was undefined`), { extra: { player: player?.name } });
     }
   }
 
