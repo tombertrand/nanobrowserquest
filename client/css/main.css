@@ -715,31 +715,32 @@ footer, header, hgroup, menu, nav, section {
         color: #fff;
         text-transform: capitalize;
         font-size: 0.80em;
-        margin-bottom:12px;
+        margin-bottom:6px;
     }
     .item-description {
         color: #fff;
-        margin-top:6px;
+        margin-top:3px;
     }
     .item-bonus,
     .item-set-bonus {
         color: #35ee35;
-        margin-top:6px;
+        margin-top:3px;
     }
     .item-set-name {
         color: #c6ac45;
-        margin-top:6px;
+        margin-top:3px;
     }
     .item-set-part {
+        font-size:0.85rem;
         color: #9c9c9c;
-        margin-top:3px;
+        margin-top:1px;
     }
     .item-set-part.active {
         color: #eed058;
     }
     .item-set-description {
         color: #fff;
-        margin-top:12px;
+        margin-top:6px;
     }
     .item-skill {
         margin-top:6px;

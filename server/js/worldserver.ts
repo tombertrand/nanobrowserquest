@@ -2563,7 +2563,7 @@ class World {
       }
     }
 
-    if (mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
+    if (!isBoss &&(mob.x <= 29 && mob.y >= 744 && mob.y <= 781)) {
       const demonRandom = random(800);
       if (demonRandom === 69) {
         return "demonaxe";

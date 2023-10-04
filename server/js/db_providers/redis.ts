@@ -2355,7 +2355,6 @@ class DatabaseHandler {
               resolve(false);
               return;
             }
-
             if (index === ACHIEVEMENT_HERO_INDEX) {
               this.unlockExpansion1(player);
             }

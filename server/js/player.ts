@@ -1521,16 +1521,21 @@ class Player extends Character {
         }
 
         console.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + raiPayoutAmount);
+
+        // only set Q on payout success
+        self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
         payoutIndex += 1;
-        const response =
-          (await enqueueSendPayout({
-            playerName: self.name,
-            account: self.account,
-            amount,
-            payoutIndex,
-            network: self.network,
-          })) || {};
+        const response = self.network
+          ? await enqueueSendPayout({
+              playerName: self.name,
+              account: self.account,
+              amount,
+              payoutIndex,
+              network: self.network,
+            })
+          : {};
         const { err, message: msg, hash } = response as any;
+
 
         // If payout succeeds there will be a hash in the response!
         if (hash) {
