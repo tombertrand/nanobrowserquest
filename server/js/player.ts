@@ -107,6 +107,7 @@ const badWords = [
   "testicule ",
   "boobs",
   "vagina",
+  "gay",
 ];
 
 const CHATBAN_PATTERNS = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");

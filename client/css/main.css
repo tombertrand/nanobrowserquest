@@ -719,19 +719,20 @@ footer, header, hgroup, menu, nav, section {
     }
     .item-description {
         color: #fff;
-        margin-top:3px;
+        margin-top:1px;
     }
     .item-bonus,
     .item-set-bonus {
+        /* font-size:11px; */
         color: #35ee35;
-        margin-top:3px;
+        margin-top:1px;
     }
     .item-set-name {
         color: #c6ac45;
         margin-top:3px;
     }
     .item-set-part {
-        font-size:0.85rem;
+        /* font-size:10px; */
         color: #9c9c9c;
         margin-top:1px;
     }
@@ -740,10 +741,10 @@ footer, header, hgroup, menu, nav, section {
     }
     .item-set-description {
         color: #fff;
-        margin-top:6px;
+        margin-top:3px;
     }
     .item-skill {
-        margin-top:6px;
+        margin-top:3px;
         color: #74b5ff;
     }
     .item-socket {
