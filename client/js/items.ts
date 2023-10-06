@@ -1241,6 +1241,41 @@ var Items = {
     }
   },
 
+  ScrollUpgradeElementMagic: class ScrollUpgradeElementMagic extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLUPGRADEELEMENTMAGIC, "scroll");
+      this.lootMessage = "You pick up a magic element  upgrade scroll";
+    }
+  },
+
+  ScrollUpgradeElementFlame: class ScrollUpgradeElementFlame extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLUPGRADEELEMENTFLAME, "scroll");
+      this.lootMessage = "You pick up a flame element upgrade scroll";
+    }
+  },
+
+  ScrollUpgradeElementLightning: class ScrollUpgradeElementLightning extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLUPGRADEELEMENTLIGHTNING, "scroll");
+      this.lootMessage = "You pick up a lightning element upgrade scroll";
+    }
+  },
+
+  ScrollUpgradeElementCold: class ScrollUpgradeElementCold extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLUPGRADEELEMENTCOLD, "scroll");
+      this.lootMessage = "You pick up acold element upgrade scroll";
+    }
+  },
+
+  ScrollUpgradeElementPoison: class ScrollUpgradeElementPoison extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLUPGRADEELEMENTPOISON, "scroll");
+      this.lootMessage = "You pick up a poison element upgrade scroll";
+    }
+  },
+
   ScrollUpgradeBlessed: class ScrollUpgradeBlessed extends Item {
     constructor(id) {
       super(id, Types.Entities.SCROLLUPGRADEBLESSED, "scroll");

@@ -348,7 +348,9 @@ class GameClient {
   }
 
   receiveAction(data) {
+
     var action = data instanceof Array ? data[0] : data.type;
+
     if (this.handlers[action] && _.isFunction(this.handlers[action])) {
       this.handlers[action].call(this, data);
     } else {
@@ -665,6 +667,7 @@ class GameClient {
   }
 
   receiveNotification(data) {
+
     this.receivenotification_callback?.(data);
   }
 

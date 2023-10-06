@@ -1018,6 +1018,23 @@ EntityFactory.builders[Types.Entities.SCROLLUPGRADELEGENDARY] = function (id) {
   return new Items.ScrollUpgradeLegendary(id);
 };
 
+EntityFactory.builders[Types.Entities.SCROLLUPGRADEELEMENTMAGIC] = function (id) {
+  return new Items.ScrollUpgradeElementMagic(id);
+};
+EntityFactory.builders[Types.Entities.SCROLLUPGRADEELEMENTFLAME] = function (id) {
+  return new Items.ScrollUpgradeElementFlame(id);
+};
+EntityFactory.builders[Types.Entities.SCROLLUPGRADEELEMENTLIGHTNING] = function (id) {
+  return new Items.ScrollUpgradeElementLightning(id);
+};
+
+EntityFactory.builders[Types.Entities.SCROLLUPGRADEELEMENTCOLD] = function (id) {
+  return new Items.ScrollUpgradeElementCold(id);
+};
+EntityFactory.builders[Types.Entities.SCROLLUPGRADEELEMENT] = function (id) {
+  return new Items.ScrollUpgradeElementPoison(id);
+};
+
 EntityFactory.builders[Types.Entities.SCROLLUPGRADEBLESSED] = function (id) {
   return new Items.ScrollUpgradeBlessed(id);
 };

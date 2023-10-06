@@ -297,11 +297,18 @@ export const Types: any = {
     SCROLLUPGRADEMEDIUM: 75,
     SCROLLUPGRADEHIGH: 76,
     SCROLLUPGRADELEGENDARY: 200,
+
+    SCROLLUPGRADEELEMENTMAGIC: 380,
+    SCROLLUPGRADEELEMENTFLAME: 381,
+
+    SCROLLUPGRADEELEMENTLIGHTNING: 382,
+    SCROLLUPGRADEELEMENTCOLD: 383,
+    SCROLLUPGRADEELEMENTPOISON: 384, // ~~~ last
     SCROLLUPGRADEBLESSED: 118,
     SCROLLUPGRADESACRED: 206,
     SCROLLTRANSMUTE: 142,
     SCROLLTRANSMUTEBLESSED: 309,
-    SCROLLTRANSMUTEPET: 379, // ~~~ last
+    SCROLLTRANSMUTEPET: 379,
     STONESOCKET: 192,
     STONESOCKETBLESSED: 376,
     STONEDRAGON: 240,
@@ -987,6 +994,21 @@ export const kinds = {
   scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "scroll", "Upgrade scroll", 6],
   scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "scroll", "Superior upgrade scroll", 15],
   scrollupgradelegendary: [Types.Entities.SCROLLUPGRADELEGENDARY, "scroll", "Legendary upgrade scroll", 48],
+  scrollupgradeelementmagic: [Types.Entities.SCROLLUPGRADEELEMENTMAGIC, "scroll", "Magic Element upgrade scroll", 44],
+  scrollupgradeelementflame: [Types.Entities.SCROLLUPGRADEELEMENTFLAME, "scroll", "Flame Element upgrade scroll", 44],
+  scrollupgradeelementmlightning: [
+    Types.Entities.SCROLLUPGRADEELEMENTLIGHTNING,
+    "scroll",
+    "Lightning Element upgrade scroll",
+    44,
+  ],
+  scrollupgradeelementcold: [Types.Entities.SCROLLUPGRADEELEMENTCOLD, "scroll", "Cold Element upgrade scroll", 44],
+  scrollupgradeelementmpoison: [
+    Types.Entities.SCROLLUPGRADEELEMENTPOISON,
+    "scroll",
+    "Poison Element upgrade scroll",
+    44,
+  ],
   scrollupgradeblessed: [Types.Entities.SCROLLUPGRADEBLESSED, "scroll", "Blessed upgrade scroll", 15],
   scrollupgradesacred: [Types.Entities.SCROLLUPGRADESACRED, "scroll", "Sacred upgrade scroll", 48],
   scrolltransmute: [Types.Entities.SCROLLTRANSMUTE, "scroll", "Transmute scroll", 30],
@@ -1491,6 +1513,11 @@ Types.isScroll = function (kindOrString: number | string) {
       Types.Entities.SCROLLTRANSMUTE,
       Types.Entities.SCROLLTRANSMUTEBLESSED,
       Types.Entities.SCROLLTRANSMUTEPET,
+      Types.Entities.SCROLLUPGRADEELEMENTMAGIC,
+      Types.Entities.SCROLLUPGRADEELEMENTFLAME,
+      Types.Entities.SCROLLUPGRADEELEMENTLIGHTNING,
+      Types.Entities.SCROLLUPGRADEELEMENTCOLD,
+      Types.Entities.SCROLLUPGRADEELEMENTPOISON,
     ].includes(kindOrString);
   } else {
     return kindOrString?.startsWith("scroll");
@@ -2662,7 +2689,7 @@ Types.getItemClass = function (item: string, level?: number) {
   const baseLevel = Types.getItemBaseLevel(item);
 
   const isPet = Types.isPetItem(item);
-  if (isPet|| level>=9) {
+  if (isPet || level >= 9) {
     return "legendary";
   }
 
@@ -3038,4 +3065,10 @@ Types.itemDescription = {
   stonedragon: "Blessed by the fire of the dragon, safely upgrade any item to +5",
   stonehero:
     "You've crushed your enemies, saw them driven before you, and heard the lamentation of their women.<br/>Safely upgrade any item to +6",
+
+  scrollupgradeelementmagic: "enchant a weapon with magic spell offensive skill",
+  scrollupgradeelementflame: "enchant a weapon with flame spell offensive skill",
+  scrollupgradeelementmlightning: "enchant a weapon with lightning spell offensive skill",
+  scrollupgradeelementcold: "enchant a weapon with cold spell offensive skill",
+  scrollupgradeelementmpoison: "enchant a weapon with poison spell offensive skill",
 };

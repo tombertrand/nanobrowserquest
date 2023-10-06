@@ -3,7 +3,7 @@ import "./store/cron";
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-import { ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
+import { ACHIEVEMENT_NAMES,ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
 import { getGoldDeathPenaltyPercent } from "../../shared/js/utils";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
@@ -581,7 +581,9 @@ class World {
       }
     } else {
       console.log("pushToPlayer: player was undefined");
-      Sentry.captureException(new Error(`pushToPlayer: player**${player?.name}** was undefined`), { extra: { player: player?.name } });
+      Sentry.captureException(new Error(`pushToPlayer: player**${player?.name}** was undefined`), {
+        extra: { player: player?.name },
+      });
     }
   }
 
@@ -1920,7 +1922,13 @@ class World {
           player.send(new Messages.SoulStone({ kind, isUnique: item.isUnique }).serialize());
 
           this.broadcastRaise(player, altar);
-          this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX);
+          this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX).then(() => {
+            player.connection.send({
+              type: Types.Messages.NOTIFICATION,
+              achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_ZAP_INDEX],
+              message: "You cracked the Soulstone open!",
+            });
+          });
         } catch (err) {
           Sentry.captureException(err, {
             extra: {
@@ -2563,7 +2571,7 @@ class World {
       }
     }
 
-    if (!isBoss &&(mob.x <= 29 && mob.y >= 744 && mob.y <= 781)) {
+    if (!isBoss && mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
       const demonRandom = random(800);
       if (demonRandom === 69) {
         return "demonaxe";

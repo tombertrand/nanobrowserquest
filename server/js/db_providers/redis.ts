@@ -642,23 +642,9 @@ class DatabaseHandler {
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
 
-    const INVALID_NAME_PATTERNS = [
-      /ball[sz]/,
-      /d[i1]+ck/,
-      /your ?m[ou]+m/,
-      /butt/,
-      /stupid/,
-      /ass/,
-      /cock/,
-      /faggot/,
-      /jizz?/,
-      /cum/,
-    ];
 
-    if (
-      CHATBAN_PATTERNS.some(pattern => pattern.test(player.name)) ||
-      INVALID_NAME_PATTERNS.some(pattern => pattern.test(player.name))
-    ) {
+
+    if (CHATBAN_PATTERNS.test(player.name)) {
       player.connection.sendUTF8("invalidusername");
       player.connection.close("User does not exist: " + player.name);
       Sentry.captureException(new Error(`Invalid player name for creation ${player.name}`));
@@ -2357,6 +2343,11 @@ class DatabaseHandler {
             }
             if (index === ACHIEVEMENT_HERO_INDEX) {
               this.unlockExpansion1(player);
+              player.connection.send({
+                type: Types.Messages.NOTIFICATION,
+                achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_HERO_INDEX],
+                message: "killed the Skeleton King!",
+              });
             }
 
             if (index === ACHIEVEMENT_BLACKSMITH_INDEX) {

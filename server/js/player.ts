@@ -72,21 +72,44 @@ const ADMINS = [
   "xDulfinz",
 ];
 const SUPER_ADMINS = ["running-coder"];
-export const CHATBAN_PATTERNS = [
-  /n.?ig.?g.?(?:e.?r|a)/i,
-  /https?:\/\/(:?www)?\.?/i,
-  /n.?e.?g.?e.?r.?/i,
-  /fucker/i,
-  /fuck.?you/i,
-  /sucker/i,
-  /cunt/i,
-  /whore/i,
-  /asshole/i,
-  /bitch/i,
-  /fa?ggot/i,
-  /cum/i,
-  /hitt?ler/i,
+
+const badWords = [
+  "nigger",
+  "nig",
+
+  "neger",
+  "niger",
+  "nigga",
+  "niga",
+  "fucker",
+  "fuck you",
+  "fuck",
+  "sucker",
+  "cunt",
+  "whore",
+  "asshole",
+  "bitch",
+  "fag",
+  "faggot",
+  "cum",
+  "hitler",
+  "dick",
+  "d1ck",
+  "penis",
+  "pen1s",
+  "cock",
+  "butt",
+  "ass",
+  "stupid",
+  "jizz",
+  "balls",
+  "ballz",
+  "testicule ",
+  "boobs",
+  "vagina",
 ];
+
+const CHATBAN_PATTERNS = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
 
 class Player extends Character {
   id: number;
@@ -507,7 +530,7 @@ class Player extends Character {
           return;
         }
 
-        if (CHATBAN_PATTERNS.some(pattern => pattern.test(msg))) {
+        if (CHATBAN_PATTERNS.test(msg)) {
           self.databaseHandler.chatBan({ player: self, message: msg });
 
           postMessageToModeratorSupportChannel(`**${self.name}** was self-chat banned for saying:"**${msg}**"`);
@@ -582,7 +605,7 @@ class Player extends Character {
             }
 
             if (msg.startsWith("/kick") && msg.length) {
-              const [, playerName] = msg.match(/\s(.+)/);
+              const [, playerName] = msg.match(/(.+)/);
 
               self.server.disconnectPlayer(playerName, true);
               self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
@@ -600,7 +623,8 @@ class Player extends Character {
             return;
           }
 
-          postMessageToDiscordChatChannel(`${self.name}: ${msg}`);
+          postMessageToDiscordChatChannel(`${self.name}: ${msg.replace(/\@/g, "")}`);
+
 
           // Zone chat
           // self.broadcast(new Messages.Chat(self, msg), false);
@@ -1457,6 +1481,12 @@ class Player extends Character {
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
         const isClassicPayout = message[1] && message[1] === Types.Entities.BOSS;
 
+        // only set Q when skel king dies on payout success
+
+        if (self.network) {
+          self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
+        }
+
         if ((isClassicPayout && self.hasRequestedBossPayout) || !self.network) {
           return;
         }
@@ -1487,7 +1517,6 @@ class Player extends Character {
           }
 
           console.info(`Reason: ${banMessage}`);
-
           databaseHandler.banPlayerByIP({
             player: self,
             reason: "cheating",
@@ -1495,7 +1524,6 @@ class Player extends Character {
           });
           return;
         }
-
         self.connection.send({
           type: Types.Messages.NOTIFICATION,
           message: "Payout is being sent!",
@@ -1523,7 +1551,7 @@ class Player extends Character {
         console.info("PAYOUT STARTED: " + self.name + " " + self.account + " " + raiPayoutAmount);
 
         // only set Q on payout success
-        self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
+
         payoutIndex += 1;
         const response = self.network
           ? await enqueueSendPayout({
@@ -1536,14 +1564,10 @@ class Player extends Character {
           : {};
         const { err, message: msg, hash } = response as any;
 
-
         // If payout succeeds there will be a hash in the response!
         if (hash) {
           console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
-
-          // only set Q on payout success
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
-
           postMessageToDiscordEventChannel(
             `${self.name} killed the Skeleton King and received a payout of ${raiPayoutAmount} ${
               self.network === "nano" ? "XNO" : "BAN"
