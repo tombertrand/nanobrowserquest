@@ -1543,13 +1543,12 @@ class Player extends Character {
         // only set Q when skel king dies on payout success
 
         // just unlock for walletless, w/e...
-        if (!self.network) {
+        if (!self.network || self.hash) {
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
+          return;
         }
 
-        // if (isClassicPayout && self.hasRequestedBossPayout) {
-        //   return;
-        // }
+      
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (

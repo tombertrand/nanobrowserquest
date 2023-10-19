@@ -669,7 +669,7 @@ class Renderer {
 
       // @NOTE Why is the entity name persisting?
       if (this.isDrawEntityName && !this.mobile && !this.tablet) {
-        this.drawEntityName(entity, iAdmin);
+        this.drawEntityName(entity);
       }
 
       this.context.save();
@@ -1280,7 +1280,7 @@ class Renderer {
     );
   }
 
-  drawEntityName(entity, isAdmin: boolean) {
+  drawEntityName(entity) {
     this.context.save();
     if (entity.name && entity instanceof Player) {
       const isSelf = entity.id === this.game.playerId;
@@ -1298,6 +1298,10 @@ class Renderer {
       }
 
       entityName += entity.name;
+
+
+    const isAdmin = this.game.admins.includes(entity?.name);
+
 
       this.drawText(entityName, (entity.x + 8) * this.scale, (entity.y + entity.nameOffsetY) * this.scale, true, color);
       if (isAdmin) {
