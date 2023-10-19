@@ -1031,8 +1031,12 @@ EntityFactory.builders[Types.Entities.SCROLLUPGRADEELEMENTLIGHTNING] = function 
 EntityFactory.builders[Types.Entities.SCROLLUPGRADEELEMENTCOLD] = function (id) {
   return new Items.ScrollUpgradeElementCold(id);
 };
-EntityFactory.builders[Types.Entities.SCROLLUPGRADEELEMENT] = function (id) {
+EntityFactory.builders[Types.Entities.SCROLLUPGRADEELEMENTPOISON] = function (id) {
   return new Items.ScrollUpgradeElementPoison(id);
+};
+
+EntityFactory.builders[Types.Entities.SCROLLUPGRADESKILLRANDOM] = function (id) {
+  return new Items.ScrollUpgradeSkillRandom(id);
 };
 
 EntityFactory.builders[Types.Entities.SCROLLUPGRADEBLESSED] = function (id) {
@@ -1215,6 +1219,10 @@ EntityFactory.builders[Types.Entities.PETAXOLOTL] = function (id) {
 
 EntityFactory.builders[Types.Entities.PETFOX] = function (id) {
   return new Items.PetFox(id);
+};
+
+EntityFactory.builders[Types.Entities.PETTURTLE] = function (id) {
+  return new Items.PetTurtle(id);
 };
 
 //====== Npcs ======

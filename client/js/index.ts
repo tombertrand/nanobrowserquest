@@ -13,6 +13,7 @@ import "../css/achievements.css";
 import "../css/inspector.css";
 import "../css/store.css";
 import "../css/party.css";
+import "../css/chat.css";
 import "../css/settings.css";
 import "../css/skills.css";
 import "jquery-ui/themes/base/all.css";
@@ -448,10 +449,18 @@ var initGame = function () {
     if (type) {
       className = type;
     }
+    const isAdmin = game.admins.includes(name);
+    console.log("isAdmin", isAdmin);
+
+    let badge = "";
+
+    if (isAdmin) {
+      badge = '<span class="chat-mod-icon" title="moderator"></span>';
+    }
 
     $("<div/>", {
       class: className,
-      html: `<span>${name ? `${name}: ` : ""}</span><span>${message}</span>`,
+      html: `<span>${name ? `${name}: ` : ""}</span>${badge ? badge : ""}<span>${message}</span>`,
     }).appendTo("#text-list");
 
     const messages = $("#text-list > div");

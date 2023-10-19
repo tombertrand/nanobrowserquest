@@ -1968,6 +1968,10 @@ class Game {
         } else if (!item.startsWith("scrollupgrade")) {
           successRate = null;
         }
+        if (item.startsWith("scrollupgradeelement") || item.startsWith("scrollupgradeskillrandom")) {
+          successRate = 99;
+          uniqueText = "";
+        }
       }
 
       $(`#upgrade .item-slot:eq(${slot})`)
@@ -2803,7 +2807,7 @@ class Game {
     await self.run();
 
     this.client = new GameClient(this.host, this.port);
-    this.client.fail_callback = function ({ player, admin, error, reason, message, duration, ip }) {
+    this.client.fail_callback = function ({ player, admin, error, reason, message, until, ip }) {
       started_callback({
         success: false,
         error,
@@ -2812,7 +2816,7 @@ class Game {
         admin,
         reason: reason,
         message,
-        duration,
+        until,
       });
       self.started = false;
     };
@@ -3384,7 +3388,7 @@ class Game {
               $("#respawn").removeClass("disabled");
 
               if (!$("body").hasClass("death")) {
-                console.log("!!!1");
+                self.deductedgoldMessage = false;
                 self.playerdeath_callback?.(0);
               }
             }, 1000);

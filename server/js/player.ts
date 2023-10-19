@@ -68,15 +68,15 @@ const ADMINS = [
   "CallMeCas",
   "HeroOfNano",
   "Dyllux",
-  "CelioSevii",
+  // "CelioSevii",
   "xDulfinz",
+  "Bella",
 ];
 const SUPER_ADMINS = ["running-coder"];
 
 const badWords = [
   "nigger",
   "nig",
-
   "neger",
   "niger",
   "nigga",
@@ -104,13 +104,25 @@ const badWords = [
   "jizz",
   "balls",
   "ballz",
-  "testicule ",
+  "testicule",
   "boobs",
   "vagina",
   "gay",
+  "penis",
+  "pedo",
+  "child",
+  "abuse",
+  "trans",
+  "anal",
+  "stfu",
+  "slut",
+  "your mom",
+  "lick",
+  "shitty",
+  "shit",
 ];
 
-const CHATBAN_PATTERNS = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
+export const CHATBAN_PATTERNS = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
 
 class Player extends Character {
   id: number;
@@ -353,7 +365,7 @@ class Player extends Character {
 
       console.debug("Received: " + message);
       if (!this.formatChecker.check(message)) {
-        Sentry.captureException(new Error("FormatChecker failed"), {
+        Sentry.captureException(new Error(`FormatChecker failed for player${self.name}`), {
           user: {
             username: self.name,
           },
@@ -404,13 +416,19 @@ class Player extends Character {
           ip,
           admin,
         } = await databaseHandler.checkIsBannedByIP(self));
-        if (timestamp && reason) {
-          const days = timestamp > Date.now() + 24 * 60 * 60 * 1000 ? 365 : 1;
-
+        if (timestamp && timestamp > Date.now()) {
           self.connection.sendUTF8(
-            JSON.stringify({ player: playerName, admin, error: "banned", reason, days, message: banMessage, ip }),
+            JSON.stringify({
+              player: playerName,
+              admin,
+              error: "banned",
+              reason,
+              until: timestamp,
+              message: banMessage,
+              ip,
+            }),
           );
-          self.connection.close("You are banned, no cheating.");
+          self.connection.close("You are banned.");
           return;
         }
 
@@ -421,13 +439,18 @@ class Player extends Character {
           message: banMessage,
           admin,
         } = await databaseHandler.checkIsBannedForReason(name));
-        if (timestamp && reason) {
-          const days = timestamp > Date.now() + 24 * 60 * 60 * 1000 ? 365 : 1;
-
+        if (timestamp && timestamp > Date.now()) {
           self.connection.sendUTF8(
-            JSON.stringify({ player: playerName, admin, error: "banned", reason, days, message: banMessage }),
+            JSON.stringify({
+              player: playerName,
+              admin,
+              error: "banned",
+              reason,
+              until: timestamp,
+              message: banMessage,
+            }),
           );
-          self.connection.close("You are banned, no misbehaving.");
+          self.connection.close("You are banned.");
           return;
         }
 
@@ -531,7 +554,7 @@ class Player extends Character {
           return;
         }
 
-        if (CHATBAN_PATTERNS.test(msg)) {
+        if (CHATBAN_PATTERNS.test(msg) || msg.includes("@everyone") || msg.includes("@here")) {
           self.databaseHandler.chatBan({ player: self, message: msg });
 
           postMessageToModeratorSupportChannel(`**${self.name}** was self-chat banned for saying:"**${msg}**"`);
@@ -626,7 +649,6 @@ class Player extends Character {
 
           postMessageToDiscordChatChannel(`${self.name}: ${msg.replace(/\@/g, "")}`);
 
-
           // Zone chat
           // self.broadcast(new Messages.Chat(self, msg), false);
 
@@ -635,6 +657,8 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.MANUAL_BAN_PLAYER) {
         const { player, reason, duration, message: banMessage, isIPBan, isChatBan } = message[1];
+
+        const until = duration * 24 * 60 * 60 * 1000 + Date.now();
 
         const bannedPlayer = self.server.getPlayerByName(player);
 
@@ -647,7 +671,7 @@ class Player extends Character {
             admin: self.name,
             player: bannedPlayer,
             reason,
-            duration,
+            until,
             message: banMessage,
           });
         } else {
@@ -655,7 +679,7 @@ class Player extends Character {
             admin: self.name,
             player: bannedPlayer,
             reason,
-            duration,
+            until,
             message: banMessage,
           });
         }
@@ -1302,6 +1326,8 @@ class Player extends Character {
 
                   if (self.server.cowKingPlayerName && item.mobKind === Types.Entities.COWKING) {
                     player = self.server.getPlayerByName(self.server.cowKingPlayerName);
+                  } else if (self.server.minotaurPlayerName && item.mobKind === Types.Entities.MINOTAUR) {
+                    player = self.server.getPlayerByName(self.server.minotaurPlayerName);
 
                     // Single items can't be party looted, like potions
                   }
@@ -1318,6 +1344,32 @@ class Player extends Character {
                     );
                   }
 
+                  if (kind === Types.Entities.SCROLLUPGRADEELEMENTMAGIC) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTFLAME) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTLIGHTNING) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTCOLD) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTPOISON) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  } else if (kind === Types.Entities.SCROLLUPGRADESKILLRANDOM) {
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  }
+
                   if (kind === Types.Entities.STONESOCKETBLESSED) {
                     postMessageToDiscordEventChannel(
                       `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
@@ -1331,12 +1383,18 @@ class Player extends Character {
                     );
                   } else if (Types.isRune(kind) && Types.RuneList.indexOf(runeName) + 1 >= 20) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up ${runeName.toUpperCase()} rune ${EmojiMap[`rune-${runeName}`]}`,
+                      `**${player.name}** picked up ${runeName.toUpperCase()} rune ${EmojiMap[`rune-${runeName}`]} ${
+                        EmojiMap.Bebeking
+                      }`,
                     );
                   } else if (kind === Types.Entities.STONEDRAGON) {
-                    postMessageToDiscordEventChannel(`${player.name} picked up a Dragon Stone ${EmojiMap.stonedragon}`);
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up a Dragon Stone ${EmojiMap.stonedragon} ${EmojiMap.Bebeking}`,
+                    );
                   } else if (kind === Types.Entities.STONEHERO) {
-                    postMessageToDiscordEventChannel(`${player.name} picked up a Hero Emblem ${EmojiMap.stonehero}`);
+                    postMessageToDiscordEventChannel(
+                      `${player.name} picked up a Hero Emblem ${EmojiMap.stonehero} ${EmojiMap.Bebeking}`,
+                    );
                   } else if (kind === Types.Entities.CHALICE) {
                     // postMessageToDiscordEventChannel(`${player.name} picked up the Chalice ${EmojiMap.chalice}`);
                   } else if (kind === Types.Entities.SCROLLTRANSMUTEBLESSED) {
@@ -1484,13 +1542,14 @@ class Player extends Character {
 
         // only set Q when skel king dies on payout success
 
-        if (self.network) {
+        // just unlock for walletless, w/e...
+        if (!self.network) {
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
         }
 
-        if ((isClassicPayout && self.hasRequestedBossPayout) || !self.network) {
-          return;
-        }
+        // if (isClassicPayout && self.hasRequestedBossPayout) {
+        //   return;
+        // }
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
@@ -1517,13 +1576,15 @@ class Player extends Character {
             banMessage = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}}`;
           }
 
-          console.info(`Reason: ${banMessage}`);
-          databaseHandler.banPlayerByIP({
-            player: self,
-            reason: "cheating",
-            message: banMessage,
-          });
-          return;
+          if (banMessage) {
+            console.info(`Reason: ${banMessage}`);
+            databaseHandler.banPlayerByIP({
+              player: self,
+              reason: "cheating",
+              message: banMessage,
+            });
+            return;
+          }
         }
         self.connection.send({
           type: Types.Messages.NOTIFICATION,
@@ -1570,7 +1631,7 @@ class Player extends Character {
           console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
           postMessageToDiscordEventChannel(
-            `${self.name} killed the Skeleton King and received a payout of ${raiPayoutAmount} ${
+            `**${self.name}** killed the Skeleton King and received a payout of **${raiPayoutAmount}** ${
               self.network === "nano" ? "XNO" : "BAN"
             } 🎉`,
           );

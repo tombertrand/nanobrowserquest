@@ -1265,7 +1265,7 @@ var Items = {
   ScrollUpgradeElementCold: class ScrollUpgradeElementCold extends Item {
     constructor(id) {
       super(id, Types.Entities.SCROLLUPGRADEELEMENTCOLD, "scroll");
-      this.lootMessage = "You pick up acold element upgrade scroll";
+      this.lootMessage = "You pick up a cold element upgrade scroll";
     }
   },
 
@@ -1273,6 +1273,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.SCROLLUPGRADEELEMENTPOISON, "scroll");
       this.lootMessage = "You pick up a poison element upgrade scroll";
+    }
+  },
+
+  ScrollUpgradeSkillRandom: class ScrollUpgradeSkillRandom extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SCROLLUPGRADESKILLRANDOM, "scroll");
+      this.lootMessage = "You pick up a random skill upgrade scroll";
     }
   },
 
@@ -1549,12 +1556,7 @@ var Items = {
     }
   },
 
-  PetTurtle: class PetTurtle extends Item {
-    constructor(id) {
-      super(id, Types.Entities.PETTURTLE, "object");
-      this.lootMessage = "You pick up a Turtle Pet";
-    }
-  },
+
 
   PetAxolotl: class PetAxolotl extends Item {
     constructor(id) {
@@ -1567,6 +1569,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.PETFOX, "object");
       this.lootMessage = "You pick up a Fox Pet";
+    }
+  },
+
+  PetTurtle: class PetTurtle extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETTURTLE, "object");
+      this.lootMessage = "You pick up a Turtle Pet";
     }
   },
 

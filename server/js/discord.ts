@@ -40,7 +40,7 @@ export const discordClient = new Client({
 discordClient.login(BOT_TOKEN);
 
 export const postMessageToDiscordEventChannel = (content: string) => {
-  if (isDevelopment) return;
+  // if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
@@ -74,7 +74,7 @@ export const postMessageToDiscordChatChannel = (content: string) => {
 };
 
 export const postMessageToDiscordAnvilChannel = (content: string) => {
-  if (isDevelopment) return;
+  // if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
@@ -229,6 +229,7 @@ export const EmojiMap = {
   scrollupgradesacred: "<:scrollupgradesacred:1093912423024566273>",
   jewelskull: "<:jewelskull:1093959293394485398>",
   nanocoins: "<:nanocoins:1097314083029663744>",
+  nbq: "<:nbq:1062753653045329920>",
   bananocoins: "<:bananocoins:1097314050947432479>",
   bargold: "<:bargold:1099083224413655040>",
   helmclown: "<:clownbase:1114554275226452049>",
@@ -236,4 +237,21 @@ export const EmojiMap = {
   iou: "<:iou:1129598838517268531>",
   gold: "<:gold:1097336291189854420>",
   stonesocketblessed: "<:stonesocketblessed:1150118697529245807>",
+  zulGurak: "<:1163287656218771507>",
+  shaihulud: "<:shaihulud:1157667989513052250>",
+  skeletonKing: "<:skeletonKing:976432201887531058>",
+  necromancer: "<:necromancer:976842075679113226>",
+  cowking: "<:cowking:1157364026565722283>",
+  minotaur: "<:minotaur:1157364041895903273>",
+  Arachneia: "<:Arachneia:1157668012699156500>",
+  butcher: "<:butcher:1156685096888303748>",
+  Azrael: "<:Azrael:1156685409233944726>",
+  deathbringer: "<:deathbringer:1156687799592960070>",
+  scrollupgradeelementmagic: "<:scrollupgradeelementmagic:1163876379461423216>",
+  scrollupgradeelementflame: "<:scrollupgradeelementflame:1164034442415833209>",
+  scrollupgradeelementlightning: "<:scrollupgradeelementlightning:1163877078278611054>",
+  scrollupgradeelementcold: "<:scrollupgradeelementcold:1163880405628354561>",
+  scrollupgradeelementpoison: "<:scrollupgradeelementpoison:1163877117700874291>",
+  scrollupgradeskillrandom: "<:scrollupgradeskillrandom:1163880822512824410>",
+  Bebeking: "<:Bebeking:975777551647649864>",
 };

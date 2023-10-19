@@ -66,8 +66,10 @@ import {
   isValidStoneSocket,
   isValidTransmuteItems,
   isValidTransmutePet,
+  isValidUpgradeElementItems,
   isValidUpgradeItems,
   isValidUpgradeRunes,
+  isValidUpgradeskillrandom,
   NaN2Zero,
   randomInt,
 } from "../utils";
@@ -631,6 +633,7 @@ class DatabaseHandler {
         }
       }
 
+
       // Could not find the user
       player.connection.sendUTF8("invalidlogin");
       player.connection.close("User does not exist: " + player.name);
@@ -641,8 +644,6 @@ class DatabaseHandler {
   async createPlayer(player) {
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
-
-
 
     if (CHATBAN_PATTERNS.test(player.name)) {
       player.connection.sendUTF8("invalidusername");
@@ -796,14 +797,16 @@ class DatabaseHandler {
     message: string;
     days?: number;
   }) {
-    this.banPlayerForReason({ admin, player, reason, message, days });
+    const until = days * 24 * 60 * 60 * 1000 + Date.now();
 
-    player.connection.sendUTF8(JSON.stringify({ admin, player: player.name, error: "banned", reason, days, message }));
+    this.banPlayerForReason({ admin, player, reason, message,until, });
+
+    player.connection.sendUTF8(JSON.stringify({ admin, player: player.name, error: "banned", reason, until , message }));
     player.connection.close(`You are banned, ${reason}.`);
 
     if (!player?.connection?._connection?.handshake?.headers?.["cf-connecting-ip"]) return;
 
-    const until = days * 24 * 60 * 60 * 1000 + Date.now();
+    
     this.client.hmset(
       "ipban:" + player.ip,
       "timestamp",
@@ -819,9 +822,7 @@ class DatabaseHandler {
     );
   }
 
-  banPlayerForReason({ admin, player, reason, message, days = 365 }) {
-    const until = parseInt(`${days}`) * 24 * 60 * 60 * 1000 + Date.now();
-
+  banPlayerForReason({ admin, player, reason, message, until }) {
     this.client.hmset("ban:" + player.name, "timestamp", until, "reason", reason, "message", message, "admin", admin);
   }
 
@@ -1074,7 +1075,7 @@ class DatabaseHandler {
 
   sendMoveItem({ player, location, data }) {
     if (player.sendMoveItemLock) {
-      Sentry.captureException(new Error("Calling sendMoveItem while still locked"), {
+      Sentry.captureException(new Error(`**${player.name}** Calling sendMoveItem while still locked`), {
         extra: { player: player.name },
       });
       return;
@@ -1223,7 +1224,7 @@ class DatabaseHandler {
     if (movedQuantity && !validateQuantity(movedQuantity)) return;
     if (fromSlot === toSlot) return;
     if (player.moveItemLock) {
-      Sentry.captureException(new Error("Calling moveItem while still locked"), {
+      Sentry.captureException(new Error(`**${player.name}** Calling moveItem while still locked`), {
         extra: { player: player.name },
       });
       return;
@@ -1463,7 +1464,7 @@ class DatabaseHandler {
     if (isNaN(amount) || amount <= 0) return;
 
     if (player.moveGoldLock) {
-      Sentry.captureException(new Error("Calling moveGold while still locked"), {
+      Sentry.captureException(new Error(`**${player.name}** Calling moveGold while still locked`), {
         extra: { player: player.name },
       });
       return;
@@ -1704,7 +1705,7 @@ class DatabaseHandler {
   withdrawFromBank({ player }) {
     return new Promise(resolve => {
       if (player.moveItemLock) {
-        Sentry.captureException(new Error("Calling withdrawFromBank while still locked"), {
+        Sentry.captureException(new Error(`**${player.name}** Calling withdrawFromBank while still locked`), {
           extra: { player: player.name },
         });
         return;
@@ -1745,7 +1746,7 @@ class DatabaseHandler {
               });
 
               postMessageToDiscordEventChannel(
-                `${player.name} just exchanged an IOU ${EmojiMap.iou} for **${new Intl.NumberFormat("en-EN", {}).format(
+                `**${player.name}** just exchanged an IOU ${EmojiMap.iou} for **${new Intl.NumberFormat("en-EN", {}).format(
                   amount,
                 )}** gold ${EmojiMap.gold} `,
               );
@@ -1853,14 +1854,16 @@ class DatabaseHandler {
                   if (typeof toSlot === "number" && inventory[toSlot] === 0) {
                     slotIndex = toSlot;
                   } else {
-                    slotIndex = inventory.indexOf(0);
+                    slotIndex = inventory?.indexOf(0);
                   }
 
                   if (slotIndex !== -1) {
                     const levelQuantity = level || quantity;
 
                     if (!levelQuantity) {
-                      throw new Error(`Invalid item property ${JSON.stringify({ rawItem })}`);
+                      throw new Error(
+                        `Invalid item property ${JSON.stringify({ rawItem, plsyerName: player.name, inventory })}`,
+                      );
                     }
 
                     const delimiter = Types.isJewel(item) ? "|" : ":";
@@ -1893,7 +1896,7 @@ class DatabaseHandler {
 
   moveItemsToInventory(player, panel: "upgrade" | "trade" = "upgrade") {
     if (player.moveItemsToInventoryLock) {
-      Sentry.captureException(new Error(`**${player.name}**Calling moveItemsToInventory while still locked`), {
+      Sentry.captureException(new Error(`**${player.name}** Calling moveItemsToInventory while still locked`), {
         extra: { player: player.name, panel },
       });
       return;
@@ -1927,7 +1930,7 @@ class DatabaseHandler {
             }, []);
 
             if (panel === "upgrade" && availableInventorySlots < items.length) {
-              throw new Error("not enought inventory slots to move items from upgrade panel");
+              throw new Error(`**${player.name}** not enought inventory slots to move items from upgrade panel`);
             }
 
             this.lootItems({ player, items });
@@ -1958,7 +1961,7 @@ class DatabaseHandler {
 
   upgradeItem(player: Player) {
     if (player.upgradeLock) {
-      Sentry.captureException(new Error("Calling upgradeItem while still locked"), {
+      Sentry.captureException(new Error(`**${player.name}** Calling upgradeItem while still locked`), {
         extra: { player: player.name },
       });
       return;
@@ -2006,11 +2009,24 @@ class DatabaseHandler {
         let extractedItem = null;
         let socketCount = null;
         let weaponWithSkill = null;
+        let itemWithRandomSkill = null;
 
         if ((weaponWithSkill = isValidAddWeaponSkill(filteredUpgrade))) {
           isSuccess = true;
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = weaponWithSkill;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((weaponWithSkill = isValidUpgradeElementItems(filteredUpgrade))) {
+  
+          isSuccess = !!weaponWithSkill.item;
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = weaponWithSkill.item;
+          player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
+        } else if ((itemWithRandomSkill = isValidUpgradeskillrandom(filteredUpgrade))) {
+       
+          isSuccess = !!itemWithRandomSkill.item;
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = itemWithRandomSkill.item;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if (isValidUpgradeItems(filteredUpgrade)) {
           const [item, level, bonus, socket, skillOrSkin] = filteredUpgrade[0].split(":");
@@ -2069,7 +2085,13 @@ class DatabaseHandler {
             }
           } else {
             if (parseInt(level) >= 8) {
-              this.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false, isLuckySlot });
+              // this.logUpgrade({ player, item: , isSuccess: false, isLuckySlot });
+
+              postMessageToDiscordAnvilChannel(
+                `${EmojiMap["press_f_to_pay_respects"]} a player burned ${EmojiMap["firepurple"]} **${item}+${parseInt(
+                  level,
+                )}** going into +${parseInt(level) + 1}`,
+              );
             }
           }
 
@@ -2200,6 +2222,8 @@ class DatabaseHandler {
               if (!player.server.minotaurLevelClock && !player.server.minotaurSpawnTimeout) {
                 isWorkingRecipe = true;
                 isRecipe = true;
+
+                player.server.minotaurPlayerName = player.name;
                 player.server.startMinotaurLevel();
               }
             } else if (

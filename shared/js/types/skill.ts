@@ -21,7 +21,7 @@ const attackSkillDescriptionMap = [
   "Cast a # damage poison curse",
 ];
 
-const defenseSkillType = [
+export const defenseSkillType = [
   "regenerateHealthSkill", // 0
   "defenseSkill", // 1
   "resistancesSkill", // 2
@@ -33,6 +33,14 @@ export const attackSkillType = [
   "lightningSkill", // 2
   "coldSkill", // 3
   "poisonSkill", // 4
+];
+
+export const scrollToSkillMap = [
+  "scrollupgradeelementmagic", // 0
+  "scrollupgradeelementflame", // 1
+  "scrollupgradeelementlightning", // 2
+  "scrollupgradeelementcold", // 3
+  "scrollupgradeelementpoison", // 4
 ];
 
 export const skillToNameMap: SkillElement[] = ["magic", "flame", "lightning", "cold", "poison"];
@@ -135,8 +143,9 @@ export const getAttackSkill = function ({
   const type = attackSkillType[skill];
   const stats = skillPerLevel[skill][level - 1];
   const multiplier = skillMultipliers[skill];
-  const baseElementDamageBonus = skillPlayerBaseElementBonus[skill]
-  const baseDmg = Math.round((stats + stats * (skillPlayerBonus[skill] / 100)) * itemClassMultiplier)+ baseElementDamageBonus ;
+  const baseElementDamageBonus = skillPlayerBaseElementBonus[skill];
+  const baseDmg =
+    Math.round((stats + stats * (skillPlayerBonus[skill] / 100)) * itemClassMultiplier) + baseElementDamageBonus;
   const baseMin = Math.round(baseDmg * multiplier[0]);
   const baseMax = Math.round(baseDmg * multiplier[1]);
   const min = Math.round(baseMin - baseMin * (resistance / 100));

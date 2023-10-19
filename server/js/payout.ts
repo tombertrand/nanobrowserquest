@@ -78,9 +78,11 @@ const sendPayout = async ({ account: receiver, amount, network, playerName }) =>
 
     // @TODO add more debug when this error occurs
 
-    if (blockCreate.error) {
-      throw new Error(`Unable to block_create for player ${playerName} on account ${network}_${sender}`);
-    }
+    // if (blockCreate.error) { new Error(`Unable to block_create for player **${playerName}** on account ${network}_${sender}`)
+
+      // Sentry.captureException(
+      //   (throw new Error(`Unable to block_create for player **${playerName}** on account ${network}_${sender}`), { extra: {blockCreate_error: blockCreate.error } });
+      // blockCreate.error    }
     const process = await rpc(
       "process",
       {

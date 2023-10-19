@@ -258,9 +258,10 @@ class GameClient {
         }
         if (typeof e === "string" && e.includes("banned")) {
           try {
-            const { admin, player, error, reason, duration, message, ip } = JSON.parse(e);
+            const { admin, player, error, reason, message, ip, until } = JSON.parse(e);
 
-            this.fail_callback?.({ admin, player, error, reason, duration, message, ip });
+
+            this.fail_callback?.({ admin, player, error, reason, until, message, ip });
           } catch (err) {}
         }
 

@@ -321,8 +321,9 @@ class App {
             }
             $("#banned-reason").text(result.reason);
             $("#banned-message").text(result.message);
-            if (result.duration) {
-              $("#banned-duration").text(`(${result.duration} day(s))`);
+
+            if (result.until) {
+              $("#banned-until").text(`(${new Date(Number(result.until))}`);
             }
             $(".banned").show();
             self.toggleScrollContent("banned");
@@ -471,9 +472,18 @@ class App {
   }
 
   initBanDialog() {
-    console.log("~~dedans");
-
     var self = this;
+
+    $(document)
+      .off(".ban-player-reason")
+      .on("change.ban-player-reason", "#ban-player-reason", function () {
+        var selectedOption = $(this).val();
+        console.log("Selected option:", selectedOption);
+
+        if (selectedOption === "Inappropriate Name" && !$("#ban-player-message").val()) {
+          $("#ban-player-message").text("Please contact running-coder in discord to change your name.");
+        }
+      });
 
     $("#dialog-ban-player").dialog({
       dialogClass: "no-close",
@@ -497,7 +507,7 @@ class App {
           click: function () {
             const player = $("#ban-player-name").val();
             const reason = $("#ban-player-reason").val();
-            const duration = $("#ban-player-duration").val();
+            const duration = $("#ban-player-until").val();
             const message = $("#ban-player-message").val();
 
             const isIPBan = $("#ban-player-ip").is(":checked");
@@ -531,7 +541,7 @@ class App {
         <input type="checkbox" id="ban-player-chatban" /> ChatBan Only
         </label>
         </br>
-        <select id="ban-player-duration"  style="width: 50%;font-family: 'GraphicPixel';" />
+        <select id="ban-player-until"  style="width: 50%;font-family: 'GraphicPixel';" />
         <option>Duration</option>
         ${durations.map(days => `<option value="${days}">${days}day(s)</option>`)}
         </select>

@@ -97,6 +97,7 @@ export const Types: any = {
     PETAXOLOTL: 368,
     PET_AXOLOTL: 369,
     PETFOX: 370,
+
     PET_FOX: 371,
     PETMOUSE: 372,
     PET_MOUSE: 373,
@@ -300,10 +301,10 @@ export const Types: any = {
 
     SCROLLUPGRADEELEMENTMAGIC: 380,
     SCROLLUPGRADEELEMENTFLAME: 381,
-
     SCROLLUPGRADEELEMENTLIGHTNING: 382,
     SCROLLUPGRADEELEMENTCOLD: 383,
-    SCROLLUPGRADEELEMENTPOISON: 384, // ~~~ last
+    SCROLLUPGRADEELEMENTPOISON: 384,
+    SCROLLUPGRADESKILLRANDOM: 385, // ~~~ last
     SCROLLUPGRADEBLESSED: 118,
     SCROLLUPGRADESACRED: 206,
     SCROLLTRANSMUTE: 142,
@@ -735,9 +736,9 @@ export const petKindToPetMap = {
   [Types.Entities.PETBAT]: Types.Entities.PET_BAT,
   [Types.Entities.PETCAT]: Types.Entities.PET_CAT,
   [Types.Entities.PETDOG]: Types.Entities.PET_DOG,
-  [Types.Entities.PETTURTLE]: Types.Entities.PET_TURTLE,
   [Types.Entities.PETAXOLOTL]: Types.Entities.PET_AXOLOTL,
   [Types.Entities.PETFOX]: Types.Entities.PET_FOX,
+  [Types.Entities.PETTURTLE]: Types.Entities.PET_TURTLE,
   [Types.Entities.PETMOUSE]: Types.Entities.PET_MOUSE,
   [Types.Entities.PETHEDGEHOG]: Types.Entities.PET_HEDGEHOG,
 };
@@ -751,18 +752,18 @@ export const kinds = {
   pet_bat: [Types.Entities.PET_BAT, "pet"],
   pet_cat: [Types.Entities.PET_CAT, "pet"],
   pet_dog: [Types.Entities.PET_DOG, "pet"],
-  pet_turtle: [Types.Entities.PET_TURTLE, "pet"],
   pet_axolotl: [Types.Entities.PET_AXOLOTL, "pet"],
   pet_fox: [Types.Entities.PET_FOX, "pet"],
+  pet_turtle: [Types.Entities.PET_TURTLE, "pet"],
   pet_mouse: [Types.Entities.PET_MOUSE, "pet"],
   pet_hedgehog: [Types.Entities.PET_HEDGEHOG, "pet"],
   petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 10],
   petbat: [Types.Entities.PETBAT, "pet", "Bat Pet", 10],
   petcat: [Types.Entities.PETCAT, "pet", "Cat Pet", 10],
   petdog: [Types.Entities.PETDOG, "pet", "Dog Pet", 10],
-  petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 10],
   petaxolotl: [Types.Entities.PETAXOLOTL, "pet", "Axolotl Pet", 10],
   petfox: [Types.Entities.PETFOX, "pet", "Fox Pet", 10],
+  petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 10],
   petmouse: [Types.Entities.PETMOUSE, "pet", "Mouse Pet", 10],
   pethedgehog: [Types.Entities.PETHEDGEHOG, "pet", "Hedgehog Pet", 10],
 
@@ -994,19 +995,41 @@ export const kinds = {
   scrollupgrademedium: [Types.Entities.SCROLLUPGRADEMEDIUM, "scroll", "Upgrade scroll", 6],
   scrollupgradehigh: [Types.Entities.SCROLLUPGRADEHIGH, "scroll", "Superior upgrade scroll", 15],
   scrollupgradelegendary: [Types.Entities.SCROLLUPGRADELEGENDARY, "scroll", "Legendary upgrade scroll", 48],
-  scrollupgradeelementmagic: [Types.Entities.SCROLLUPGRADEELEMENTMAGIC, "scroll", "Magic Element upgrade scroll", 44],
-  scrollupgradeelementflame: [Types.Entities.SCROLLUPGRADEELEMENTFLAME, "scroll", "Flame Element upgrade scroll", 44],
-  scrollupgradeelementmlightning: [
+  scrollupgradeelementmagic: [
+    Types.Entities.SCROLLUPGRADEELEMENTMAGIC,
+    "scroll",
+    "Blessed Magic Element upgrade scroll",
+    44,
+  ],
+  scrollupgradeelementflame: [
+    Types.Entities.SCROLLUPGRADEELEMENTFLAME,
+    "scroll",
+    "BlessedFlame Element upgrade scroll",
+    44,
+  ],
+  scrollupgradeelementlightning: [
     Types.Entities.SCROLLUPGRADEELEMENTLIGHTNING,
     "scroll",
     "Lightning Element upgrade scroll",
     44,
   ],
-  scrollupgradeelementcold: [Types.Entities.SCROLLUPGRADEELEMENTCOLD, "scroll", "Cold Element upgrade scroll", 44],
-  scrollupgradeelementmpoison: [
+  scrollupgradeelementcold: [
+    Types.Entities.SCROLLUPGRADEELEMENTCOLD,
+    "scroll",
+    "BlessedCold Element upgrade scroll",
+    44,
+  ],
+  scrollupgradeelementpoison: [
     Types.Entities.SCROLLUPGRADEELEMENTPOISON,
     "scroll",
-    "Poison Element upgrade scroll",
+    "BlessedPoison Element upgrade scroll",
+    44,
+  ],
+
+  scrollupgradeskillrandom: [
+    Types.Entities.SCROLLUPGRADESKILLRANDOM,
+    "scroll",
+    "BlessedRandom Skill upgrade scroll",
     44,
   ],
   scrollupgradeblessed: [Types.Entities.SCROLLUPGRADEBLESSED, "scroll", "Blessed upgrade scroll", 15],
@@ -1518,6 +1541,7 @@ Types.isScroll = function (kindOrString: number | string) {
       Types.Entities.SCROLLUPGRADEELEMENTLIGHTNING,
       Types.Entities.SCROLLUPGRADEELEMENTCOLD,
       Types.Entities.SCROLLUPGRADEELEMENTPOISON,
+      Types.Entities.SCROLLUPGRADESKILLRANDOM,
     ].includes(kindOrString);
   } else {
     return kindOrString?.startsWith("scroll");
@@ -1606,6 +1630,8 @@ Types.isObject = function (kind: number) {
 };
 
 Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = []) {
+
+ 
   if (typeof kindOrString === "number") {
     if (
       [
@@ -1918,9 +1944,9 @@ Types.isPetItem = function (kindOrString: string | number) {
       Types.Entities.PETBAT,
       Types.Entities.PETCAT,
       Types.Entities.PETDOG,
-      Types.Entities.PETTURTLE,
       Types.Entities.PETAXOLOTL,
       Types.Entities.PETFOX,
+      Types.Entities.PETTURTLE,
       Types.Entities.PETMOUSE,
       Types.Entities.PETHEDGEHOG,
     ].includes(kindOrString);
@@ -2594,10 +2620,11 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     petbat: 4,
     petcat: 4,
     petdog: 4,
-    petturtle: 4,
     petaxolotl: 4,
-    petmouse: 4,
     pethedgehog: 4,
+    petfox: 4,
+    petturtle: 4,
+    petmouse: 4,
     cape: 6,
   };
 
@@ -2755,6 +2782,7 @@ Types.isSuperior = function (rawBonus) {
 };
 
 Types.isUnique = function (item, rawBonus, level?: number) {
+
   const isWeapon = kinds[item][1] === "weapon";
   const isHelm = kinds[item][1] === "helm";
   const isArmor = kinds[item][1] === "armor";
@@ -3066,9 +3094,11 @@ Types.itemDescription = {
   stonehero:
     "You've crushed your enemies, saw them driven before you, and heard the lamentation of their women.<br/>Safely upgrade any item to +6",
 
-  scrollupgradeelementmagic: "enchant a weapon with magic spell offensive skill",
-  scrollupgradeelementflame: "enchant a weapon with flame spell offensive skill",
-  scrollupgradeelementmlightning: "enchant a weapon with lightning spell offensive skill",
-  scrollupgradeelementcold: "enchant a weapon with cold spell offensive skill",
-  scrollupgradeelementmpoison: "enchant a weapon with poison spell offensive skill",
+  scrollupgradeelementmagic: "enchant a high or legendary weapon with magic spell offensive skill, 99% success",
+  scrollupgradeelementflame: "enchant a high or legendary  weapon with flame spell offensive skill, 99% success",
+  scrollupgradeelementlightning: "enchant a high or a legendary weapon with lightning spell offensive skill, 99% success",
+  scrollupgradeelementcold: "enchant a high or a legendary weapon with cold spell offensive skill, 99% success",
+  scrollupgradeelementpoison: "enchant a high or a legendary weapon with poison spell offensive skill, 99% success",
+  scrollupgradeskillrandom:
+    "enchant a  a high or legendary  weapon or shield with a random ability (current ability will be changed or it has a chance to stay unchanged), 99% success",
 };

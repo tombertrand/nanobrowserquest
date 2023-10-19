@@ -3,7 +3,7 @@ import "./store/cron";
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-import { ACHIEVEMENT_NAMES,ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
+import { ACHIEVEMENT_NAMES, ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
 import { getGoldDeathPenaltyPercent } from "../../shared/js/utils";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
@@ -142,7 +142,8 @@ class World {
   goldBank: number;
   janetYellenNpcId: number;
   soulStonePlayerName: string;
-  cowKingPlayerName: string;
+  cowKingPlayerName: string | null;
+  minotaurPlayerName: string | null;
   chatBan: { player: string; ip: string }[];
   tmpHash: string;
   hash: string;
@@ -165,6 +166,8 @@ class World {
     this.trades = {};
     this.currentPartyId = 0;
     this.currentTradeId = 0;
+    this.cowKingPlayerName = null;
+    this.minotaurPlayerName = null;
     this.mobs = {};
     // this.spells = {};
     this.spellCount = 0;
@@ -1018,6 +1021,10 @@ class World {
   }
 
   startCowLevel() {
+    // prevent start if in progress
+    if (this.cowLevelClock || this.cowLevelInterval) {
+      return;
+    }
     this.cowTotal = 0;
     this.cowLevelClock = 15 * 60; // 15 minutes
 
@@ -2632,6 +2639,27 @@ class World {
         }
       }
     }
+    if (!isBoss && mob.kind >= Types.Entities.RAT3) {
+      const elementScrollRandom = random(10_000);
+
+      if (elementScrollRandom === 133) {
+        return "scrollupgradeelementmagic";
+      } else if (elementScrollRandom === 134) {
+        return "scrollupgradeelementflame";
+      } else if (elementScrollRandom === 135) {
+        return "scrollupgradeelementlightning";
+      } else if (elementScrollRandom === 136) {
+        return "scrollupgradeelementcold";
+      } else if (elementScrollRandom === 137) {
+        return "scrollupgradeelementpoison";
+      } else {
+        const skillRandom = random(15_000);
+         if (skillRandom === 133) {
+        return "scrollupgradeskillrandom";
+      }
+      }
+     
+    }
 
     if (!isBoss && [23, 42, 69].includes(v)) {
       //@NOTE 3% chance to drop a NANO/BANANO potion on non-boss monsters
@@ -2703,19 +2731,19 @@ class World {
     }
 
     if (mob.kind === Types.Entities.MINOTAUR) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained the Minotaur 🥶`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained the Minotaur ${EmojiMap["minotaur"]}`);
     } else if (mob.kind === Types.Entities.COWKING) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained the Cow King 🐮`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained the Cow King ${EmojiMap["cowking"]}`);
     } else if (mob.kind === Types.Entities.SPIDERQUEEN) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Arachneia the Spider Queen 🕷️`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Arachneia the Spider Queen ${EmojiMap["Arachneia"]}`);
     } else if (mob.kind === Types.Entities.BUTCHER) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Gorefiend the Butcher 🩸`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Gorefiend the Butcher ${EmojiMap["butcher"]}`);
     } else if (mob.kind === Types.Entities.SHAMAN) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Zul'Gurak 🧙`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Zul'Gurak${EmojiMap["zulGurak"]}`);
     } else if (mob.kind === Types.Entities.WORM) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Shai-Hulud 🪱`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Shai-Hulud ${EmojiMap["shaihulud"]}`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Azrael 💀`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Azrael ${EmojiMap["Azrael"]}`);
     }
 
     if ([Types.Entities.MINOTAUR, Types.Entities.BUTCHER, Types.Entities.DEATHANGEL].includes(mob.kind)) {
@@ -2725,7 +2753,10 @@ class World {
     // var randomDrops = ["firefoxpotion"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
-    // var randomDrops = ["scrolltransmutepet"];
+    // var randomDrops = ["scrollupgradeelementmagic", "scrollupgradeelementflame", "scrollupgradeelementlightning","scrollupgradeelementcold","scrollupgradeelementpoison","scrollupgradeskillrandom"];
+    // var randomDrops = ["scrollupgradeskillrandom"];
+    // var randomDrops = ["petturtle","petfox"];
+    // var randomDrops = ["petfox"];
 
     // var randomDrops = ["demonaxe", "paladinaxe"];
     // var randomDrops = ["soulstone"];

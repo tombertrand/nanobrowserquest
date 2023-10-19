@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import forEach from "lodash/forEach";
 import sanitizer from "sanitizer";
 
+import { attackSkillType, defenseSkillType,scrollToSkillMap } from "../../shared/js//types/skill";
 import { Types } from "../../shared/js/gametypes";
 import { toArray } from "../../shared/js/utils";
 
@@ -224,6 +225,12 @@ export const isValidUpgradeItems = items => {
   }
 
   const [item, level] = items[0].split(":");
+
+  const isJewel = Types.isJewel(item);
+
+  if (isJewel) {
+    return false;
+  }
   const isWeapon = Types.isWeapon(item);
   const isHelm = Types.isHelm(item);
   const isArmor = Types.isArmor(item);
@@ -269,6 +276,91 @@ export const isValidUpgradeItems = items => {
   }
 
   return true;
+};
+export const isValidUpgradeElementItems = items => {
+  if (items.length !== 2) {
+    return false;
+  }
+
+  // const [item, level] = items[0].split(":");
+  const [item, level, bonus, socket, skill] = items[0].split(":");
+  const isWeapon = Types.isWeapon(item);
+
+  if (!isWeapon || !skill) {
+    return false;
+  }
+
+  const [scroll] = items[1].split(":");
+
+  const isElementScroll = Types.isScroll(scroll) && scroll.startsWith("scrollupgradeelement");
+  if (!isElementScroll) {
+    return false;
+  }
+
+  const skillIndex = scrollToSkillMap.indexOf(scroll);
+
+  const itemClass = Types.getItemClass(item, parseInt(level));
+
+  const itemClassRank = Types.itemClassRank[itemClass];
+
+  if (itemClassRank < Types.itemClassRank.high) {
+    return false;
+  }
+
+  console.log();
+
+  let randomNum = randomInt(1, 100);
+
+  if (randomNum === 99) {
+    return { item: 0 };
+  }
+
+  return { item: [item, level, bonus, socket, skillIndex].join(":") };
+};
+
+export const isValidUpgradeskillrandom = items => {
+  if (items.length !== 2) {
+    return false;
+  }
+
+  // const [item, level] = items[0].split(":");
+  const [item, level, bonus, socket, skill] = items[0].split(":");
+  const isWeapon = Types.isWeapon(item);
+  const isShield = Types.isShield(item);
+
+
+  if ((!isWeapon && !isShield) || !skill) {
+    return false;
+  }
+
+  const [scroll] = items[1].split(":");
+
+  const isSkillRandomScroll = Types.isScroll(scroll) && scroll === "scrollupgradeskillrandom";
+  if (!isSkillRandomScroll) {
+    return false;
+  }
+
+
+  const randomSkill = randomInt(0, (isWeapon ? attackSkillType.length : defenseSkillType.length) -1);
+
+
+  const itemClass = Types.getItemClass(item, parseInt(level));
+
+  const itemClassRank = Types.itemClassRank[itemClass];
+
+  if (itemClassRank < Types.itemClassRank.high) {
+    return false;
+  }
+
+  console.log();
+
+  let randomNum = randomInt(1, 100);
+
+  if (randomNum === 99) {
+    return { item: 0 };
+  }
+
+  return { item: [item, level, bonus, socket, randomSkill].join(":") };
 };
 
 export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed, isGuaranteedSuccess, isCursed }) => {
@@ -667,6 +759,7 @@ export const generateRandomPet = () => {
     petmouse: 4,
     pethedgehog: 4,
     petfox: 2,
+    petturtle: 1,
   };
 
   const randomPet = _.shuffle(Object.keys(pets))[0];
