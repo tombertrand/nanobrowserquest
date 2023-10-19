@@ -71,6 +71,7 @@ const ADMINS = [
   // "CelioSevii",
   "xDulfinz",
   "Bella",
+  "bruin",
 ];
 const SUPER_ADMINS = ["running-coder"];
 
@@ -112,7 +113,7 @@ const badWords = [
   "pedo",
   "child",
   "abuse",
-  "trans",
+  "anus",
   "anal",
   "stfu",
   "slut",
@@ -1547,8 +1548,6 @@ class Player extends Character {
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
           return;
         }
-
-      
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
