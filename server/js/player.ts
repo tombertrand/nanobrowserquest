@@ -1579,7 +1579,7 @@ class Player extends Character {
             banMessage = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}}`;
           }
 
-          if (banMessage) {
+          if (banMessage && !self.isWalletLess) {
             console.info(`Reason: ${banMessage}`);
             databaseHandler.banPlayerByIP({
               player: self,
