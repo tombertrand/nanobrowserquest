@@ -237,7 +237,7 @@ export const EmojiMap = {
   iou: "<:iou:1129598838517268531>",
   gold: "<:gold:1097336291189854420>",
   stonesocketblessed: "<:stonesocketblessed:1150118697529245807>",
-  zulGurak: "<:1163287656218771507>",
+  zulGurak: "<:zulgurak:1163287656218771507>",
   shaihulud: "<:shaihulud:1157667989513052250>",
   skeletonKing: "<:skeletonKing:976432201887531058>",
   necromancer: "<:necromancer:976842075679113226>",

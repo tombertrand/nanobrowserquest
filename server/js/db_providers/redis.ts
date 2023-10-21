@@ -633,7 +633,6 @@ class DatabaseHandler {
         }
       }
 
-
       // Could not find the user
       player.connection.sendUTF8("invalidlogin");
       player.connection.close("User does not exist: " + player.name);
@@ -799,14 +798,13 @@ class DatabaseHandler {
   }) {
     const until = days * 24 * 60 * 60 * 1000 + Date.now();
 
-    this.banPlayerForReason({ admin, player, reason, message,until, });
+    this.banPlayerForReason({ admin, player, reason, message, until });
 
-    player.connection.sendUTF8(JSON.stringify({ admin, player: player.name, error: "banned", reason, until , message }));
+    player.connection.sendUTF8(JSON.stringify({ admin, player: player.name, error: "banned", reason, until, message }));
     player.connection.close(`You are banned, ${reason}.`);
 
     if (!player?.connection?._connection?.handshake?.headers?.["cf-connecting-ip"]) return;
 
-    
     this.client.hmset(
       "ipban:" + player.ip,
       "timestamp",
@@ -1746,9 +1744,10 @@ class DatabaseHandler {
               });
 
               postMessageToDiscordEventChannel(
-                `**${player.name}** just exchanged an IOU ${EmojiMap.iou} for **${new Intl.NumberFormat("en-EN", {}).format(
-                  amount,
-                )}** gold ${EmojiMap.gold} `,
+                `**${player.name}** just exchanged an IOU ${EmojiMap.iou} for **${new Intl.NumberFormat(
+                  "en-EN",
+                  {},
+                ).format(amount)}** gold ${EmojiMap.gold} `,
               );
 
               resolve(amount);
@@ -2017,13 +2016,11 @@ class DatabaseHandler {
           upgrade[upgrade.length - 1] = weaponWithSkill;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((weaponWithSkill = isValidUpgradeElementItems(filteredUpgrade))) {
-  
           isSuccess = !!weaponWithSkill.item;
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = weaponWithSkill.item;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if ((itemWithRandomSkill = isValidUpgradeskillrandom(filteredUpgrade))) {
-       
           isSuccess = !!itemWithRandomSkill.item;
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = itemWithRandomSkill.item;
@@ -2036,17 +2033,11 @@ class DatabaseHandler {
           const isGuaranteedSuccess =
             Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone);
 
-          let isCursed = false;
-          // if (player.name.toLowerCase().startsWith("kabal")) {
-          //   isCursed = true;
-          // }
-
           ({ isSuccess, random /*, successRate*/ } = isUpgradeSuccess({
             level,
             isLuckySlot,
             isBlessed,
             isGuaranteedSuccess,
-            isCursed,
           }));
 
           // Disable for now as it is exploitable
@@ -2224,6 +2215,7 @@ class DatabaseHandler {
                 isRecipe = true;
 
                 player.server.minotaurPlayerName = player.name;
+
                 player.server.startMinotaurLevel();
               }
             } else if (

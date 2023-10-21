@@ -1579,6 +1579,13 @@ var Items = {
     }
   },
 
+  PetDuck: class PetDuck extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETDUCK, "object");
+      this.lootMessage = "You pick up a Duck Pet";
+    }
+  },
+
   PetMouse: class PetMouse extends Item {
     constructor(id) {
       super(id, Types.Entities.PETMOUSE, "object");

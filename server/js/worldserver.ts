@@ -584,7 +584,7 @@ class World {
       }
     } else {
       console.log("pushToPlayer: player was undefined");
-      Sentry.captureException(new Error(`pushToPlayer: player**${player?.name}** was undefined`), {
+      Sentry.captureException(new Error(`pushToPlayer: player **${player?.name}** was undefined`), {
         extra: { player: player?.name },
       });
     }
@@ -2654,11 +2654,10 @@ class World {
         return "scrollupgradeelementpoison";
       } else {
         const skillRandom = random(15_000);
-         if (skillRandom === 133) {
-        return "scrollupgradeskillrandom";
+        if (skillRandom === 133) {
+          return "scrollupgradeskillrandom";
+        }
       }
-      }
-     
     }
 
     if (!isBoss && [23, 42, 69].includes(v)) {
@@ -2739,7 +2738,7 @@ class World {
     } else if (mob.kind === Types.Entities.BUTCHER) {
       postMessageToDiscordEventChannel(`${attacker.name} slained Gorefiend the Butcher ${EmojiMap["butcher"]}`);
     } else if (mob.kind === Types.Entities.SHAMAN) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Zul'Gurak${EmojiMap["zulGurak"]}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Zul'Gurak${EmojiMap["zulgurak"]}`);
     } else if (mob.kind === Types.Entities.WORM) {
       postMessageToDiscordEventChannel(`${attacker.name} slained Shai-Hulud ${EmojiMap["shaihulud"]}`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {

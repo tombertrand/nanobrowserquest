@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import forEach from "lodash/forEach";
 import sanitizer from "sanitizer";
 
-import { attackSkillType, defenseSkillType,scrollToSkillMap } from "../../shared/js//types/skill";
+import { attackSkillType, defenseSkillType, scrollToSkillMap } from "../../shared/js//types/skill";
 import { Types } from "../../shared/js/gametypes";
 import { toArray } from "../../shared/js/utils";
 
@@ -203,6 +203,7 @@ export const isValidAddWeaponSkill = items => {
   }
 
   let [item, level, bonus, socket, skill] = items[0].split(":");
+
   if (!Types.isWeapon(item) || Types.getKindFromString(item) < Types.Entities.GOLDENSWORD || skill) {
     return false;
   }
@@ -328,7 +329,6 @@ export const isValidUpgradeskillrandom = items => {
   const isWeapon = Types.isWeapon(item);
   const isShield = Types.isShield(item);
 
-
   if ((!isWeapon && !isShield) || !skill) {
     return false;
   }
@@ -340,9 +340,7 @@ export const isValidUpgradeskillrandom = items => {
     return false;
   }
 
-
-  const randomSkill = randomInt(0, (isWeapon ? attackSkillType.length : defenseSkillType.length) -1);
-
+  const randomSkill = randomInt(0, (isWeapon ? attackSkillType.length : defenseSkillType.length) - 1);
 
   const itemClass = Types.getItemClass(item, parseInt(level));
 
@@ -363,7 +361,7 @@ export const isValidUpgradeskillrandom = items => {
   return { item: [item, level, bonus, socket, randomSkill].join(":") };
 };
 
-export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed, isGuaranteedSuccess, isCursed }) => {
+export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed, isGuaranteedSuccess }) => {
   // Upgrade success rate
   // +1 -> +2, 100%
   // +2 -> +3, 100%
@@ -377,11 +375,6 @@ export const isUpgradeSuccess = ({ level, isLuckySlot, isBlessed, isGuaranteedSu
   const successRates = Types.getUpgradeSuccessRates();
   let successRate = !isGuaranteedSuccess ? successRates[parseInt(level) - 1] : 100;
   let random = randomInt(1, 100);
-
-  // @TODO Remove this after a while
-  if (successRate <= 60 && isCursed) {
-    successRate = successRate - 8;
-  }
 
   console.info(`Base Success rate ${successRate}`);
 
@@ -752,7 +745,6 @@ export const generateRandomPet = () => {
   const pets = {
     // petdino: 4,
     petbat: 2,
-    // petturtle: 1,
     petcat: 5,
     petdog: 5,
     petaxolotl: 1,
@@ -760,6 +752,7 @@ export const generateRandomPet = () => {
     pethedgehog: 4,
     petfox: 2,
     petturtle: 1,
+    petduck: 1,
   };
 
   const randomPet = _.shuffle(Object.keys(pets))[0];

@@ -6,3 +6,7 @@
   background-repeat: no-repeat;
   background-size: contain;
 }
+
+#population .chat-mod-icon {
+  transform: scale(0.8) translateY(5px);
+}

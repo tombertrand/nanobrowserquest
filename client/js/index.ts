@@ -371,13 +371,9 @@ var initGame = function () {
     $("#respawn").hide();
   });
 
-  game.onPlayerDeath(function (gold) {
+  game.onPlayerDeath(function () {
     app.toggleScrollContent("death");
     $("body").addClass("death");
-
-    $("#gold-death-wrapper").toggleClass("visible", !!gold);
-
-    $("#gold-death").text(gold ? game.formatGold(gold) : "");
   });
 
   game.onGameCompleted(function ({ hash, fightAgain, show = false }) {
@@ -450,7 +446,6 @@ var initGame = function () {
       className = type;
     }
     const isAdmin = game.admins.includes(name);
-    console.log("isAdmin", isAdmin);
 
     let badge = "";
 

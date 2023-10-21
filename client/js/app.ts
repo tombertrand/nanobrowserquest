@@ -1197,10 +1197,18 @@ class App {
           className = "party";
         }
 
+        const isAdmin = this.game.admins.includes(name);
+
+        let badge = "";
+
+        if (isAdmin) {
+          badge = '<span class="chat-mod-icon" title="moderator"></span>';
+        }
         $("<div/>", {
           class: className,
           html: `
             <span>${name}</span>
+            ${badge}
             <span class="payout-icon ${network} ${hash ? "completed" : ""}" title="${
             hash
               ? `Killed the Skeleton King and received a ${network} payout`

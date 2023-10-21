@@ -235,7 +235,6 @@ class Game {
   isDragStarted: boolean;
   hashCheckInterval: any;
   admins: string[];
-  deductedgoldMessage: boolean;
 
   constructor(app) {
     this.app = app;
@@ -354,7 +353,6 @@ class Game {
     this.gatewayFxNpcId = null;
     this.slotSockets = null;
     this.slotSocketCount = null;
-    this.deductedgoldMessage = false;
 
     // combat
     // @ts-ignore
@@ -3013,8 +3011,6 @@ class Game {
       self.cowLevelPortalCoords = cowLevelPortalCoords;
       self.admins = admins;
 
-      self.deductedgoldMessage = false;
-
       if (party) {
         const { partyId, partyLeader, members } = party;
 
@@ -3383,16 +3379,13 @@ class Game {
           self.player = null;
           self.client.disable();
 
-          if (self.deductedgoldMessage) {
-            window.setTimeout(function () {
-              $("#respawn").removeClass("disabled");
+          window.setTimeout(function () {
+            $("#respawn").removeClass("disabled");
 
-              if (!$("body").hasClass("death")) {
-                self.deductedgoldMessage = false;
-                self.playerdeath_callback?.(0);
-              }
-            }, 1000);
-          }
+            if (!$("body").hasClass("death")) {
+              self.playerdeath_callback?.();
+            }
+          }, 1000);
         });
 
         clearInterval(self.player.defenseSkillTimeout);
@@ -4682,7 +4675,6 @@ class Game {
           player.hitPoints = points;
 
           if (player.hitPoints <= 0) {
-            self.deductedgoldMessage = true;
             player.die(attacker);
           }
           if (isHurt) {
@@ -4929,11 +4921,10 @@ class Game {
         type: ChatType;
         deductedGold: number;
       }) {
-        if (deductedGold) {
-          self.deductedgoldMessage = true;
-          console.log("!!!1");
-          self.playerdeath_callback(deductedGold);
-        }
+        console.log("~~~~deductedGold", deductedGold);
+        $("#gold-death-wrapper").toggleClass("visible", !!deductedGold);
+        $("#gold-death").text(deductedGold ? self.formatGold(deductedGold) : "");
+
         var entity = self.getEntityById(entityId);
         if (entity) {
           self.createBubble(entityId, message);

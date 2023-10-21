@@ -68,7 +68,7 @@ const ADMINS = [
   "CallMeCas",
   "HeroOfNano",
   "Dyllux",
-  // "CelioSevii",
+  "CelioSevii",
   "xDulfinz",
   "Bella",
   "bruin",
@@ -491,8 +491,8 @@ class Player extends Character {
           }
         } else {
           console.info("LOGIN: " + self.name, " ID: " + self.id);
-          if (self.server.loggedInPlayer(self.name)) {
-            self.connection.sendUTF8("loggedin");
+          if (self.server.loggedInPlayer(self.name) && !password) {
+            self.connection.sendUTF8("passwordlogin");
             self.connection.close("Already logged in " + self.name);
 
             return;
@@ -506,6 +506,8 @@ class Player extends Character {
         } else {
           if (!(await databaseHandler.passwordLoginOrCreate(self, password))) {
             return;
+          } else if (self.server.loggedInPlayer(self.name)) {
+            self.server.disconnectPlayer(self.name);
           }
         }
 
@@ -630,9 +632,9 @@ class Player extends Character {
             }
 
             if (msg.startsWith("/kick") && msg.length) {
-              const [, playerName] = msg.match(/(.+)/);
+              const [, playerName] = msg.replace("/kick", "").match(/(.+)/);
 
-              self.server.disconnectPlayer(playerName, true);
+              self.server.disconnectPlayer(playerName.trim(), true);
               self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
               return;
             }
@@ -1543,11 +1545,8 @@ class Player extends Character {
 
         // only set Q when skel king dies on payout success
 
-        // just unlock for walletless, w/e...
-        if (!self.network || self.hash) {
-          self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
-          return;
-        }
+        // just unlockREGARDLESS for walletless, w/e...
+        self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
@@ -1561,10 +1560,10 @@ class Player extends Character {
             !self.achievement[11] || // -> NO_MANS_LAND
             !self.achievement[16]) // -> HOT_SPOT
         ) {
-          let banMessage;
-          if (self.hash) {
-            banMessage = `Already have hash ${self.hash}`;
-          } else if (self.hasRequestedBossPayout) {
+          let banMessage = "";
+          // if (self.hash) {
+          //   banMessage = `Already have hash ${self.hash}`;
+          if (self.hasRequestedBossPayout) {
             banMessage = `Has already requested payout for Classic`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             banMessage = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
@@ -1613,15 +1612,16 @@ class Player extends Character {
         // only set Q on payout success
 
         payoutIndex += 1;
-        const response = self.network
-          ? await enqueueSendPayout({
-              playerName: self.name,
-              account: self.account,
-              amount,
-              payoutIndex,
-              network: self.network,
-            })
-          : {};
+        const response =
+          self.network && !self.hash
+            ? await enqueueSendPayout({
+                playerName: self.name,
+                account: self.account,
+                amount,
+                payoutIndex,
+                network: self.network,
+              })
+            : {};
         const { err, message: msg, hash } = response as any;
 
         // If payout succeeds there will be a hash in the response!
@@ -1775,7 +1775,7 @@ class Player extends Character {
       } else if (action === Types.Messages.PURCHASE_CREATE) {
         console.info("PURCHASE_CREATE: " + self.name + " " + message[1] + " " + message[2]);
 
-        if (message[2] === self.depositAccount) {
+        if (message[2] === self.depositAccount && self.network) {
           purchase[self.network].create({ player: self, account: self.depositAccount, id: message[1] });
         }
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
