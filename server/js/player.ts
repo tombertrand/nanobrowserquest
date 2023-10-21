@@ -148,6 +148,7 @@ class Player extends Character {
   inventoryCount: any[];
   achievement: any[];
   hasRequestedBossPayout: boolean;
+  isWalletLess: boolean;
   expansion1: boolean;
   expansion2: boolean;
   depositAccount: any;
@@ -320,6 +321,7 @@ class Player extends Character {
     this.inventoryCount = [];
     this.achievement = [];
     this.hasRequestedBossPayout = false;
+    this.isWalletLess = true;
 
     this.expansion1 = false;
     this.expansion2 = false;
@@ -1545,12 +1547,16 @@ class Player extends Character {
 
         // only set Q when skel king dies on payout success
 
-        // just unlockREGARDLESS for walletless, w/e...
-        self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
+        // just unlock REGARDLESS for walletless, w/e...
+
+        if (self.isWalletLess) {
+          self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
+        }
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
           isClassicPayout &&
+          !!self.isWalletLess &&
           (self.hash ||
             self.hasRequestedBossPayout ||
             self.createdAt + MIN_TIME > Date.now() ||
@@ -1561,9 +1567,9 @@ class Player extends Character {
             !self.achievement[16]) // -> HOT_SPOT
         ) {
           let banMessage = "";
-          // if (self.hash) {
-          //   banMessage = `Already have hash ${self.hash}`;
-          if (self.hasRequestedBossPayout) {
+          if (self.hash) {
+            banMessage = `Already have hash ${self.hash}`;
+          } else if (self.hasRequestedBossPayout) {
             banMessage = `Has already requested payout for Classic`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             banMessage = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
@@ -1581,12 +1587,13 @@ class Player extends Character {
               message: banMessage,
             });
             return;
+          } else {
+            self.connection.send({
+              type: Types.Messages.NOTIFICATION,
+              message: "Payout is being sent!",
+            });
           }
         }
-        self.connection.send({
-          type: Types.Messages.NOTIFICATION,
-          message: "Payout is being sent!",
-        });
 
         let amount;
         let maxAmount;
@@ -3791,6 +3798,8 @@ class Player extends Character {
       this.stash = stash;
       this.hash = hash;
       this.hasRequestedBossPayout = !!hash;
+      this.isWalletLess = !network;
+
       this.capeHue = settings.capeHue;
       this.capeSaturate = settings.capeSaturate;
       this.capeContrast = settings.capeContrast;
