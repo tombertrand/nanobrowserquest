@@ -97,6 +97,7 @@ import helmmystical from "../sprites/armor.json";
 import helmimmortal from "../sprites/armor.json";
 import helmpaladin from "../sprites/armor.json";
 import helmclown from "../sprites/armor.json";
+import helmpumkin from "../sprites/armor.json";
 import clotharmor from "../sprites/armor.json";
 import leatherarmor from "../sprites/armor.json";
 import mailarmor from "../sprites/armor.json";
@@ -629,6 +630,7 @@ const sprites = {
   "item-helmimmortal": item,
   "item-helmpaladin": item,
   "item-helmclown": item,
+  "item-helmpumkin": item,
   "item-leatherarmor": item,
   "item-mailarmor": item,
   "item-morningstar": item,
@@ -659,6 +661,7 @@ const sprites = {
   helmimmortal,
   helmpaladin,
   helmclown,
+  helmpumkin,
   clotharmor,
   leatherarmor,
   loot,

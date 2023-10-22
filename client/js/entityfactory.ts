@@ -490,6 +490,11 @@ EntityFactory.builders[Types.Entities.HELMCLOWN] = function (id) {
   return new Items.HelmClown(id);
 };
 
+EntityFactory.builders[Types.Entities.HELMPUMKIN] = function (id) {
+  return new Items.HelmPumkin(id);
+};
+
+
 EntityFactory.builders[Types.Entities.LEATHERARMOR] = function (id) {
   return new Items.LeatherArmor(id);
 };

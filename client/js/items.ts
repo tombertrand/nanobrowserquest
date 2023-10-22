@@ -310,6 +310,13 @@ var Items = {
     }
   },
 
+  HelmPumkin: class HelmPumkin extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMPUMKIN, "helm");
+      this.lootMessage = "You pick up a pumkin helm";
+    }
+  },
+
   LeatherArmor: class LeatherArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.LEATHERARMOR, "armor");

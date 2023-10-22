@@ -3258,6 +3258,40 @@ class Game {
               self.client.sendTeleport(dest.x, dest.y, self.player.orientation);
               return;
             }
+
+            let message = "";
+            let levelRequirement = 1;
+            let isDoorAccessDenied = false;
+
+            const isTempleDoor = dest.x === 156 && dest.y === 778;
+            const isGatewayDoor = dest.x === 13 && dest.y === 777;
+            const isNecromancerDoor = dest.x === 127 && dest.y === 324;
+
+            if (isTempleDoor) {
+              levelRequirement = 68;
+              if (self.player.level < levelRequirement) {
+                isDoorAccessDenied = true;
+                message = `You need lv.${levelRequirement} or above to enter the temple.`;
+              }
+            } else if (isGatewayDoor) {
+              levelRequirement = 67;
+              if (self.player.level < levelRequirement) {
+                isDoorAccessDenied = true;
+                message = `You need lv.${levelRequirement} or above to enter the Gateway.`;
+              }
+            } else if (isNecromancerDoor) {
+              levelRequirement = 43;
+              if (self.player.level < levelRequirement) {
+                isDoorAccessDenied = true;
+                message = `You need lv${levelRequirement} or above to enter`;
+              }
+            }
+
+            if (isDoorAccessDenied && message) {
+              self.showNotification(message);
+              self.audioManager.playSound("noloot", { force: true });
+              return;
+            }
           }
 
           var desty = dest.y;
@@ -4465,8 +4499,8 @@ class Game {
             if (self.gatewayFxNpcId) {
               const gatewayFx = self.getEntityById(self.gatewayFxNpcId);
               if (gatewayFx) {
-                self.audioManager.playSound("powder", 0, 0.25);
-                self.audioManager.playSound("static", 250);
+                self.audioManager.playSound("powder", { delay: 0, volume: 0.25 });
+                self.audioManager.playSound("static", { delay: 250 });
 
                 gatewayFx.animate("raise", gatewayFx.raiseSpeed, 1, () => {
                   gatewayFx.idle();
@@ -4475,9 +4509,9 @@ class Game {
             }
           } else if (mob.kind === Types.Entities.STATUE || mob.kind === Types.Entities.STATUE2) {
             if (mob.kind === Types.Entities.STATUE) {
-              self.audioManager.playSound("fireball", 250);
+              self.audioManager.playSound("fireball", { delay: 250 });
             } else if (mob.kind === Types.Entities.STATUE2) {
-              self.audioManager.playSound("iceball", 250);
+              self.audioManager.playSound("iceball", { delay: 250 });
             }
 
             mob.isActivated = true;
@@ -5864,6 +5898,7 @@ class Game {
           this.player.stop_pathing_callback({ x: 18, y: 642, isWaypoint: true });
         } else if (npc.gridX === 159 && npc.gridY === 778) {
           // Temple
+
           this.player.stop_pathing_callback({ x: 43, y: 582, isWaypoint: true });
         } else if (npc.gridX === 116 && npc.gridY === 751) {
           // Passage Left

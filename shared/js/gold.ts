@@ -107,7 +107,8 @@ export const itemGoldMap = {
   helmmystical: 72,
   helmimmortal: 98,
   helmpaladin: 98,
-  helmclown: 150,
+  helmclown: 450,
+  helmpumkin: 1150,
 
   leatherarmor: 2,
   mailarmor: 3,

@@ -95,7 +95,7 @@ export const Types: any = {
     PETTURTLE: 366,
     PETDUCK: 386,
     PET_TURTLE: 367,
-    PET_DUCK: 387, // ~~~ last
+    PET_DUCK: 387,
     PETAXOLOTL: 368,
     PET_AXOLOTL: 369,
     PETFOX: 370,
@@ -189,6 +189,7 @@ export const Types: any = {
     HELMIMMORTAL: 342,
     HELMPALADIN: 351,
     HELMCLOWN: 343,
+    HELMPUMKIN: 388, // ~~~ last
 
     // Armors
     FIREFOX: 20,
@@ -616,6 +617,7 @@ Types.Entities.Helms = [
   Types.Entities.HELMIMMORTAL,
   Types.Entities.HELMPALADIN,
   Types.Entities.HELMCLOWN,
+  Types.Entities.HELMPUMKIN,
 ];
 
 Types.Entities.Armors = [
@@ -879,6 +881,7 @@ export const kinds = {
   helmimmortal: [Types.Entities.HELMIMMORTAL, "helm", "Immortal Helm", 54, 26],
   helmpaladin: [Types.Entities.HELMPALADIN, "helm", "Paladin Helm", 54, 26],
   helmclown: [Types.Entities.HELMCLOWN, "helm", "Clown Helm", 42, 20],
+  helmpumkin: [Types.Entities.HELMPUMKIN, "helm", "Pumkin Helm", 42, 20],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -1021,20 +1024,20 @@ export const kinds = {
   scrollupgradeelementcold: [
     Types.Entities.SCROLLUPGRADEELEMENTCOLD,
     "scroll",
-    "BlessedCold Element upgrade scroll",
+    "Blessed Cold Element upgrade scroll",
     44,
   ],
   scrollupgradeelementpoison: [
     Types.Entities.SCROLLUPGRADEELEMENTPOISON,
     "scroll",
-    "BlessedPoison Element upgrade scroll",
+    "Blessed Poison Element upgrade scroll",
     44,
   ],
 
   scrollupgradeskillrandom: [
     Types.Entities.SCROLLUPGRADESKILLRANDOM,
     "scroll",
-    "BlessedRandom Skill upgrade scroll",
+    "Blessed Random Skill upgrade scroll",
     44,
   ],
   scrollupgradeblessed: [Types.Entities.SCROLLUPGRADEBLESSED, "scroll", "Blessed upgrade scroll", 15],
@@ -1221,6 +1224,7 @@ Types.rankedHelms = [
   Types.Entities.HELMIMMORTAL,
   Types.Entities.HELMPALADIN,
   Types.Entities.HELMCLOWN,
+  Types.Entities.HELMPUMKIN,
 ];
 
 Types.rankedArmors = [
@@ -1312,7 +1316,8 @@ Types.itemUniqueMap = {
   helmimmortal: ["Update The System"],
   helmpaladin: ["Safe Heaven"],
   helmclown: ["Clownbase"],
-
+  helmpumkin: ["CVE-2023-40234"],
+  
   // name, level, defense
   leatherarmor: ["Representative"],
   mailarmor: ["ForeX Guard"],
@@ -1397,6 +1402,7 @@ Types.isSuperUnique = (itemName: string) =>
     "stonehero",
     "soulstone",
     "helmclown",
+    "helmpumkin",
     "beltgoldwrap",
   ].includes(itemName);
 

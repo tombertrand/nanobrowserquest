@@ -205,11 +205,14 @@ class AudioManager {
 
     return this.sounds[name].find(sound => sound.ended || sound.paused);
   }
-
-  playSound(name, delay = 0, volume?: number) {
-    var sound = this.isSoundEnabled && this.getSound(name);
+  Ï;
+  playSound(
+    name: string,
+    { delay = 0, volume, force = false }: { delay?: number; volume?: number; force?: boolean } = {},
+  ): void {
+    var sound = (this.isSoundEnabled || force) && this.getSound(name);
     if (sound) {
-      sound.volume = this.soundVolume ? volume || this.soundVolume : 0;
+      sound.volume = force ? 0.7 : this.soundVolume ? volume || this.soundVolume : 0;
       setTimeout(() => {
         sound.play();
       }, delay);

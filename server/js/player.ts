@@ -148,7 +148,7 @@ class Player extends Character {
   inventoryCount: any[];
   achievement: any[];
   hasRequestedBossPayout: boolean;
-  isWalletLess: boolean;
+  hasWallet: boolean;
   expansion1: boolean;
   expansion2: boolean;
   depositAccount: any;
@@ -321,7 +321,7 @@ class Player extends Character {
     this.inventoryCount = [];
     this.achievement = [];
     this.hasRequestedBossPayout = false;
-    this.isWalletLess = true;
+    this.hasWallet = false;
 
     this.expansion1 = false;
     this.expansion2 = false;
@@ -616,7 +616,7 @@ class Player extends Character {
                 const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
                 self.server.activateLever(self, lever, true);
                 return;
-              } else if (msg === "/deathangel") {
+              } else if (msg === "/deathangel" || msg === "/azrael") {
                 const lever = self.server.getEntityById(self.server.leverChaliceNpcId);
                 self.server.activateLever(self, lever);
 
@@ -1548,15 +1548,14 @@ class Player extends Character {
         // only set Q when skel king dies on payout success
 
         // just unlock REGARDLESS for walletless, w/e...
-
-        if (self.isWalletLess) {
+        if (!self.hasWallet) {
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
         }
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
           isClassicPayout &&
-          !!self.isWalletLess &&
+          self.hasWallet &&
           (self.hash ||
             self.hasRequestedBossPayout ||
             self.createdAt + MIN_TIME > Date.now() ||
@@ -1567,19 +1566,19 @@ class Player extends Character {
             !self.achievement[16]) // -> HOT_SPOT
         ) {
           let banMessage = "";
-          if (self.hash) {
-            banMessage = `Already have hash ${self.hash}`;
-          } else if (self.hasRequestedBossPayout) {
+          // if (self.hash) {
+          //   banMessage = `Already have hash ${self.hash}`;
+          if (self.hasRequestedBossPayout) {
             banMessage = `Has already requested payout for Classic`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             banMessage = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
           } else if (self.level < MIN_LEVEL) {
             banMessage = `Min level not obtained, player is level ${self.level}`;
           } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[16]) {
-            banMessage = `Player has not completed required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}}`;
+            banMessage = `Player has not compl  eted required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}}`;
           }
 
-          if (banMessage && !self.isWalletLess) {
+          if (banMessage && self.hasWallet) {
             console.info(`Reason: ${banMessage}`);
             databaseHandler.banPlayerByIP({
               player: self,
@@ -1620,7 +1619,7 @@ class Player extends Character {
 
         payoutIndex += 1;
         const response =
-          self.network && !self.hash
+          self.network && self.hasWallet && !self.hash
             ? await enqueueSendPayout({
                 playerName: self.name,
                 account: self.account,
@@ -1788,7 +1787,7 @@ class Player extends Character {
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
         console.info("PURCHASE_CANCEL: " + self.name + " " + self.depositAccount);
 
-        purchase[self.network].cancel(self.depositAccount);
+        purchase[self.network]?.cancel(self.depositAccount);
       } else if (action === Types.Messages.STORE_ITEMS) {
         console.info("STORE_ITEMS");
 
@@ -2291,7 +2290,7 @@ class Player extends Character {
 
       isSuperior = randomIsSuperior < superiorChances;
 
-      if ([Types.Entities.HELMCLOWN, Types.Entities.BELTGOLDWRAP].includes(kind)) {
+      if ([Types.Entities.HELMCLOWN, Types.Entities.HELMPUMKIN, Types.Entities.BELTGOLDWRAP].includes(kind)) {
         isUnique = true;
       }
 
@@ -2313,6 +2312,11 @@ class Player extends Character {
             ])
               .slice(0, 1)
               .concat(allResistance);
+          } else if (kind === Types.Entities.HELMPUMKIN) {
+            bonus = _.shuffle([...extraGold, ...extraGold, ...magicFind, ...magicFind])
+              .slice(0, 3)
+              .concat(_.shuffle(highLevelBonus).slice(0, 3))
+              .sort();
           } else {
             bonus = [6];
           }
@@ -3798,7 +3802,7 @@ class Player extends Character {
       this.stash = stash;
       this.hash = hash;
       this.hasRequestedBossPayout = !!hash;
-      this.isWalletLess = !network;
+      this.hasWallet = !!network || !!account;
 
       this.capeHue = settings.capeHue;
       this.capeSaturate = settings.capeSaturate;

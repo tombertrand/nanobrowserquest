@@ -2576,6 +2576,13 @@ class World {
           return "stonesocketblessed";
         }
       }
+      if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
+        const superUnqueRandom = random(10_000);
+
+        if (superUnqueRandom === 133) {
+          return "helmpumkin";
+        }
+      }
     }
 
     if (!isBoss && mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
@@ -2749,7 +2756,7 @@ class World {
       this.lootChests(mob, attacker);
     }
 
-    // var randomDrops = ["firefoxpotion"];
+    // var randomDrops = ["helmpumkin"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["scrollupgradeelementmagic", "scrollupgradeelementflame", "scrollupgradeelementlightning","scrollupgradeelementcold","scrollupgradeelementpoison","scrollupgradeskillrandom"];

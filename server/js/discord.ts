@@ -40,7 +40,7 @@ export const discordClient = new Client({
 discordClient.login(BOT_TOKEN);
 
 export const postMessageToDiscordEventChannel = (content: string) => {
-  // if (isDevelopment) return;
+  if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
@@ -233,6 +233,7 @@ export const EmojiMap = {
   bananocoins: "<:bananocoins:1097314050947432479>",
   bargold: "<:bargold:1099083224413655040>",
   helmclown: "<:clownbase:1114554275226452049>",
+  helmpumkin: "<:helmpumkin:1165658130609360948>",
   beltgoldwrap: "<:goldwrap:1114554276350525482>",
   iou: "<:iou:1129598838517268531>",
   gold: "<:gold:1097336291189854420>",
@@ -254,4 +255,5 @@ export const EmojiMap = {
   scrollupgradeelementpoison: "<:scrollupgradeelementpoison:1163877117700874291>",
   scrollupgradeskillrandom: "<:scrollupgradeskillrandom:1163880822512824410>",
   Bebeking: "<:Bebeking:975777551647649864>",
+  press_f_to_pay_respects:"<:press_f_to_pay_respects:1163299391663263844>",
 };
