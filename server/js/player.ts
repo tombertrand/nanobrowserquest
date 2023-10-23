@@ -121,8 +121,11 @@ const badWords = [
   "lick",
   "shitty",
   "shit",
+  "rape",
+  "murder",
 ];
 
+export const CHATBAN_PATTERNS_WARNING = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
 export const CHATBAN_PATTERNS = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
 
 class Player extends Character {
@@ -279,6 +282,7 @@ class Player extends Character {
   sendMoveItemLock: boolean;
   upgradeLock: boolean;
   moveGoldLock: boolean;
+  isChatbanWarned: boolean;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -335,6 +339,7 @@ class Player extends Character {
     this.hasNft = false;
     this.hasWing = false;
     this.hasCrystal = false;
+    this.isChatbanWarned = false;
     // this.attackTimeoutWarning = false;
 
     // DB Locks to prevent multiple OPs at once when there is a server delay
@@ -536,7 +541,7 @@ class Player extends Character {
         self.zone_callback();
       } else if (action === Types.Messages.CHAT) {
         var msg = sanitize(message[1]);
-        console.info("CHAT: " + self.name + ": " + msg);
+        console.info("CHAT: " + self.name + ": " + `"${msg}"`);
 
         if (!self.achievement[20]) {
           if (self.chatTimeout) {
@@ -553,13 +558,41 @@ class Player extends Character {
             }, 10_000);
           }
         }
-
         if (!self.canChat) {
           self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
+
           return;
         }
 
-        if (CHATBAN_PATTERNS.test(msg) || msg.includes("@everyone") || msg.includes("@here")) {
+        //@NOTE need to copy"CHATBAN_PATTERNS" for unknown reason else same word passes the seocond time
+        if (CHATBAN_PATTERNS_WARNING.test(msg) || CHATBAN_PATTERNS.test(msg)) {
+          if (!self.isChatbanWarned) {
+            postMessageToModeratorSupportChannel(
+              `**${self.name}** was Warned for saying:"**${msg}** "`,
+            );
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                `Watch your languague next time you will be banned from chat saying:"**${msg}** (you've been warned)`,
+              ).serialize(),
+            );
+          } else {
+            self.databaseHandler.chatBan({ player: self, message: msg });
+
+            postMessageToModeratorSupportChannel(
+              `**${self.name}** was self-chat banned for saying:"**${msg}** Repeated offense"`,
+            );
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                `You are banned from chat Repeated offense`,
+              ).serialize(),
+            );
+          }
+          console.log("set to true");
+          self.isChatbanWarned = true;
+          return;
+        } else if (msg.includes("@everyone") || msg.includes("@here")) {
           self.databaseHandler.chatBan({ player: self, message: msg });
 
           postMessageToModeratorSupportChannel(`**${self.name}** was self-chat banned for saying:"**${msg}**"`);
@@ -1566,9 +1599,9 @@ class Player extends Character {
             !self.achievement[16]) // -> HOT_SPOT
         ) {
           let banMessage = "";
-          // if (self.hash) {
-          //   banMessage = `Already have hash ${self.hash}`;
-          if (self.hasRequestedBossPayout) {
+          if (self.hash) {
+            banMessage = `Already have hash ${self.hash}`;
+          } else if (self.hasRequestedBossPayout) {
             banMessage = `Has already requested payout for Classic`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             banMessage = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
@@ -1578,7 +1611,7 @@ class Player extends Character {
             banMessage = `Player has not compl  eted required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}}`;
           }
 
-          if (banMessage && self.hasWallet) {
+          if (banMessage) {
             console.info(`Reason: ${banMessage}`);
             databaseHandler.banPlayerByIP({
               player: self,
@@ -1603,7 +1636,6 @@ class Player extends Character {
           maxAmount = getClassicMaxPayout(self.network);
           raiPayoutAmount = rawToRai(amount, self.network);
         } else {
-          console.log('~~~ici')
           return;
         }
 

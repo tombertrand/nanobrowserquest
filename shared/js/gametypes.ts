@@ -881,7 +881,7 @@ export const kinds = {
   helmimmortal: [Types.Entities.HELMIMMORTAL, "helm", "Immortal Helm", 54, 26],
   helmpaladin: [Types.Entities.HELMPALADIN, "helm", "Paladin Helm", 54, 26],
   helmclown: [Types.Entities.HELMCLOWN, "helm", "Clown Helm", 42, 20],
-  helmpumkin: [Types.Entities.HELMPUMKIN, "helm", "Pumkin Helm", 42, 20],
+  helmpumkin: [Types.Entities.HELMPUMKIN, "helm", "Special Event Pumkin Helm", 42, 20],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -1012,7 +1012,7 @@ export const kinds = {
   scrollupgradeelementflame: [
     Types.Entities.SCROLLUPGRADEELEMENTFLAME,
     "scroll",
-    "BlessedFlame Element upgrade scroll",
+    "Blessed Flame Element upgrade scroll",
     44,
   ],
   scrollupgradeelementlightning: [

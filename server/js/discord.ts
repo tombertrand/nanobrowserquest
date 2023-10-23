@@ -74,7 +74,7 @@ export const postMessageToDiscordChatChannel = (content: string) => {
 };
 
 export const postMessageToDiscordAnvilChannel = (content: string) => {
-  // if (isDevelopment) return;
+  if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
@@ -108,7 +108,7 @@ export const postMessageToDiscordPurchaseChannel = (content: string) => {
 };
 
 export const postMessageToModeratorSupportChannel = (content: string) => {
-  if (isDevelopment) return;
+  // if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,

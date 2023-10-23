@@ -4964,7 +4964,6 @@ class Game {
         type: ChatType;
         deductedGold: number;
       }) {
-        console.log("~~~~deductedGold", deductedGold);
         $("#gold-death-wrapper").toggleClass("visible", !!deductedGold);
         $("#gold-death").text(deductedGold ? self.formatGold(deductedGold) : "");
 
