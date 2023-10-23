@@ -3254,27 +3254,36 @@ class Game {
               return;
             }
 
-            if (dest.x === self.deathAngelLevelPortalCoords.x && dest.y === self.deathAngelLevelPortalCoords.y) {
-              self.client.sendTeleport(dest.x, dest.y, self.player.orientation);
-              return;
-            }
-
             let message = "";
             let levelRequirement = 1;
             let isDoorAccessDenied = false;
 
             const isTempleDoor = dest.x === 156 && dest.y === 778;
-            const isGatewayDoor = dest.x === 13 && dest.y === 777;
+            const isAzraelDoor = dest.x === 156 && dest.y === 778;
+            const isGatewayDoor = dest.x === 98 && dest.y === 764;
             const isNecromancerDoor = dest.x === 127 && dest.y === 324;
 
             if (isTempleDoor) {
-              levelRequirement = 68;
+              levelRequirement = 67;
               if (self.player.level < levelRequirement) {
                 isDoorAccessDenied = true;
                 message = `You need lv.${levelRequirement} or above to enter the temple.`;
               }
+            }
+            if (isAzraelDoor) {
+              levelRequirement = 69;
+              if (self.player.level < levelRequirement) {
+                isDoorAccessDenied = true;
+                message = `You need lv.${levelRequirement} or above to enter the temple.`;
+              } else if (
+                dest.x === self.deathAngelLevelPortalCoords.x &&
+                dest.y === self.deathAngelLevelPortalCoords.y
+              ) {
+                self.client.sendTeleport(dest.x, dest.y, self.player.orientation);
+                return;
+              }
             } else if (isGatewayDoor) {
-              levelRequirement = 67;
+              levelRequirement = 68;
               if (self.player.level < levelRequirement) {
                 isDoorAccessDenied = true;
                 message = `You need lv.${levelRequirement} or above to enter the Gateway.`;

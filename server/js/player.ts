@@ -1543,7 +1543,8 @@ class Player extends Character {
           check,
         });
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
-        const isClassicPayout = message[1] && message[1] === Types.Entities.BOSS;
+        const isClassicPayout =
+          !self.hash && self.network && self.hasWallet && message[1] && message[1] === Types.Entities.BOSS;
 
         // only set Q when skel king dies on payout success
 
@@ -1555,7 +1556,6 @@ class Player extends Character {
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
           isClassicPayout &&
-          self.hasWallet &&
           (self.hash ||
             self.hasRequestedBossPayout ||
             self.createdAt + MIN_TIME > Date.now() ||
@@ -1596,13 +1596,16 @@ class Player extends Character {
 
         let amount;
         let maxAmount;
+        let raiPayoutAmount;
         if (isClassicPayout) {
           self.hasRequestedBossPayout = true;
           amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
           maxAmount = getClassicMaxPayout(self.network);
+          raiPayoutAmount = rawToRai(amount, self.network);
+        } else {
+          console.log('~~~ici')
+          return;
         }
-
-        const raiPayoutAmount = rawToRai(amount, self.network);
 
         if (raiPayoutAmount > maxAmount) {
           databaseHandler.banPlayerByIP({
