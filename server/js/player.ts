@@ -580,12 +580,12 @@ class Player extends Character {
             self.databaseHandler.chatBan({ player: self, message: msg });
 
             postMessageToModeratorSupportChannel(
-              `**${self.name}** was self-chat banned for saying:"**${msg}** Repeated offense"`,
+              `**${self.name}** was self-chat banned for saying:**${msg}** Repeated offense"`,
             );
             self.send(
               new Messages.Party(
                 Types.Messages.PARTY_ACTIONS.ERROR,
-                `You are banned from chat Repeated offense`,
+                `You are banned from chat for saying:**${msg}** Repeated offense`,
               ).serialize(),
             );
           }

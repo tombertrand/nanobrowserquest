@@ -94,8 +94,10 @@ export const Types: any = {
     PET_DOG: 365,
     PETTURTLE: 366,
     PETDUCK: 386,
+    PETDRAGON: 390, // ~~~ last
     PET_TURTLE: 367,
     PET_DUCK: 387,
+    PET_DRAGON: 389,
     PETAXOLOTL: 368,
     PET_AXOLOTL: 369,
     PETFOX: 370,
@@ -189,7 +191,7 @@ export const Types: any = {
     HELMIMMORTAL: 342,
     HELMPALADIN: 351,
     HELMCLOWN: 343,
-    HELMPUMKIN: 388, // ~~~ last
+    HELMPUMKIN: 388,
 
     // Armors
     FIREFOX: 20,
@@ -307,7 +309,7 @@ export const Types: any = {
     SCROLLUPGRADEELEMENTLIGHTNING: 382,
     SCROLLUPGRADEELEMENTCOLD: 383,
     SCROLLUPGRADEELEMENTPOISON: 384,
-    SCROLLUPGRADESKILLRANDOM: 385, // ~~~ last
+    SCROLLUPGRADESKILLRANDOM: 385,
     SCROLLUPGRADEBLESSED: 118,
     SCROLLUPGRADESACRED: 206,
     SCROLLTRANSMUTE: 142,
@@ -744,6 +746,7 @@ export const petKindToPetMap = {
   [Types.Entities.PETFOX]: Types.Entities.PET_FOX,
   [Types.Entities.PETTURTLE]: Types.Entities.PET_TURTLE,
   [Types.Entities.PETDUCK]: Types.Entities.PET_DUCK,
+  [Types.Entities.PETDRAGON]: Types.Entities.PET_DRAGON,
   [Types.Entities.PETMOUSE]: Types.Entities.PET_MOUSE,
   [Types.Entities.PETHEDGEHOG]: Types.Entities.PET_HEDGEHOG,
 };
@@ -760,7 +763,8 @@ export const kinds = {
   pet_axolotl: [Types.Entities.PET_AXOLOTL, "pet"],
   pet_fox: [Types.Entities.PET_FOX, "pet"],
   pet_turtle: [Types.Entities.PET_TURTLE, "pet"],
-  pet_duck: [Types.Entities.PET_DUCK,"pet"],
+  pet_duck: [Types.Entities.PET_DUCK, "pet"],
+  pet_dragon: [Types.Entities.PET_DRAGON, "pet"],
   pet_mouse: [Types.Entities.PET_MOUSE, "pet"],
   pet_hedgehog: [Types.Entities.PET_HEDGEHOG, "pet"],
   petdino: [Types.Entities.PETDINO, "pet", "Dinosaur Pet", 10],
@@ -771,6 +775,7 @@ export const kinds = {
   petfox: [Types.Entities.PETFOX, "pet", "Fox Pet", 10],
   petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 10],
   petduck: [Types.Entities.PETDUCK, "pet", "Duck Pet", 10],
+  petdragon: [Types.Entities.PETDRAGON, "pet", "Dragon Pet", 10],
   petmouse: [Types.Entities.PETMOUSE, "pet", "Mouse Pet", 10],
   pethedgehog: [Types.Entities.PETHEDGEHOG, "pet", "Hedgehog Pet", 10],
 
@@ -1317,7 +1322,7 @@ Types.itemUniqueMap = {
   helmpaladin: ["Safe Heaven"],
   helmclown: ["Clownbase"],
   helmpumkin: ["CVE-2023-40234"],
-  
+
   // name, level, defense
   leatherarmor: ["Representative"],
   mailarmor: ["ForeX Guard"],
@@ -1957,6 +1962,7 @@ Types.isPetItem = function (kindOrString: string | number) {
       Types.Entities.PETFOX,
       Types.Entities.PETTURTLE,
       Types.Entities.PETDUCK,
+      Types.Entities.PETDRAGON,
       Types.Entities.PETMOUSE,
       Types.Entities.PETHEDGEHOG,
     ].includes(kindOrString);
@@ -2635,6 +2641,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     petfox: 4,
     petturtle: 4,
     petduck: 4,
+    petdragon: 4,
     petmouse: 4,
     cape: 6,
   };

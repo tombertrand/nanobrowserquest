@@ -3259,9 +3259,10 @@ class Game {
             let isDoorAccessDenied = false;
 
             const isTempleDoor = dest.x === 156 && dest.y === 778;
-            const isAzraelDoor = dest.x === 156 && dest.y === 778;
-            const isGatewayDoor = dest.x === 98 && dest.y === 764;
+            const isAzraelDoor = dest.x === 98 && dest.y === 764;
+            const isGatewayDoor = dest.x === 13 && dest.y === 777;
             const isNecromancerDoor = dest.x === 127 && dest.y === 324;
+
 
             if (isTempleDoor) {
               levelRequirement = 67;

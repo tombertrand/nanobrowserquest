@@ -56,6 +56,10 @@ EntityFactory.builders[Types.Entities.PET_DUCK] = function (id, props) {
   return new Pets.Duck(id, props);
 };
 
+EntityFactory.builders[Types.Entities.PET_DRAGON] = function (id, props) {
+  return new Pets.Dragon(id, props);
+};
+
 EntityFactory.builders[Types.Entities.PET_AXOLOTL] = function (id, props) {
   return new Pets.Axolotl(id, props);
 };
@@ -493,7 +497,6 @@ EntityFactory.builders[Types.Entities.HELMCLOWN] = function (id) {
 EntityFactory.builders[Types.Entities.HELMPUMKIN] = function (id) {
   return new Items.HelmPumkin(id);
 };
-
 
 EntityFactory.builders[Types.Entities.LEATHERARMOR] = function (id) {
   return new Items.LeatherArmor(id);
@@ -1226,6 +1229,9 @@ EntityFactory.builders[Types.Entities.PETDUCK] = function (id) {
   return new Items.PetDuck(id);
 };
 
+EntityFactory.builders[Types.Entities.PETDRAGON] = function (id) {
+  return new Items.PetDragon(id);
+};
 
 EntityFactory.builders[Types.Entities.PETAXOLOTL] = function (id) {
   return new Items.PetAxolotl(id);
