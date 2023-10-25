@@ -167,6 +167,7 @@ export const EmojiMap = {
   chestblue: "<:chestblue:1059945738026623138>",
   chestgreen: "<:chestgreen:1059945739821797376>",
   chestpurple: "<:chestpurple:1059945741285609552>",
+  chestdead: "<:chestdead:1166533901573963856>>",
   chestred: "<:chestred:1059945742661329046>",
   "rune-sat": "<:runesat:1059502573624770570>",
   "rune-al": "<:runeal:1059502447879532595>",
@@ -255,6 +256,6 @@ export const EmojiMap = {
   scrollupgradeelementpoison: "<:scrollupgradeelementpoison:1163877117700874291>",
   scrollupgradeskillrandom: "<:scrollupgradeskillrandom:1163880822512824410>",
   Bebeking: "<:Bebeking:975777551647649864>",
-  press_f_to_pay_respects:"<:press_f_to_pay_respects:1163299391663263844>",
-  impossibru: "<:impossibru:1166478382163296387>"
+  press_f_to_pay_respects: "<:press_f_to_pay_respects:1163299391663263844>",
+  impossibru: "<:impossibru:1166478382163296387>",
 };

@@ -260,6 +260,7 @@ export const Types: any = {
     CHESTBLUE: 136,
     CHESTGREEN: 223,
     CHESTPURPLE: 224,
+    CHESTDEAD: 393, //~~~
     CHESTRED: 225,
 
     // Objects
@@ -987,6 +988,7 @@ export const kinds = {
   chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
   chestred: [Types.Entities.CHESTRED, "chest", "Red Chest", 60],
   chestpurple: [Types.Entities.CHESTPURPLE, "chest", "Purple Chest", 70],
+  chestdead: [Types.Entities.CHESTDEAD, "chest", "Dead Chest", 72],
 
   flask: [Types.Entities.FLASK, "object"],
   rejuvenationpotion: [Types.Entities.REJUVENATIONPOTION, "object"],
@@ -1615,6 +1617,7 @@ Types.isChest = function (kindOrString: number | string) {
       Types.Entities.CHESTBLUE,
       Types.Entities.CHESTGREEN,
       Types.Entities.CHESTPURPLE,
+      Types.Entities.CHESTDEAD,
       Types.Entities.CHESTRED,
     ].includes(kindOrString);
   } else {

@@ -1015,9 +1015,14 @@ EntityFactory.builders[Types.Entities.CHESTPURPLE] = function (id) {
   return new Items.ChestPurple(id);
 };
 
+EntityFactory.builders[Types.Entities.CHESTDEAD] = function (id) {
+  return new Items.ChestDead(id);
+};
+
 EntityFactory.builders[Types.Entities.CHESTRED] = function (id) {
   return new Items.ChestRed(id);
 };
+
 
 EntityFactory.builders[Types.Entities.SCROLLUPGRADELOW] = function (id) {
   return new Items.ScrollUpgradeLow(id);

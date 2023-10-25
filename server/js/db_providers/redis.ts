@@ -53,6 +53,7 @@ import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
 import {
   generateBlueChestItem,
+  generateDeadChestItem,
   generateGreenChestItem,
   generatePurpleChestItem,
   generateRandomPet,
@@ -1840,6 +1841,8 @@ class DatabaseHandler {
                 const { item, level, quantity, bonus, skill, socket } = rawItem;
                 let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(`${item}:`)) : -1;
 
+                console.log("~~~~rawItem", rawItem);
+
                 // Increase the scroll/rune count
                 if (slotIndex > -1) {
                   if (Types.isSingle(item)) {
@@ -1861,7 +1864,7 @@ class DatabaseHandler {
 
                     if (!levelQuantity) {
                       throw new Error(
-                        `Invalid item property ${JSON.stringify({ rawItem, plsyerName: player.name, inventory })}`,
+                        `Invalid item property ${JSON.stringify({ rawItem, playerName: player.name, inventory })}`,
                       );
                     }
 
@@ -2079,12 +2082,6 @@ class DatabaseHandler {
           } else {
             if (level >= 8) {
               this.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false, isLuckySlot });
-
-              // postMessageToDiscordAnvilChannel(
-              //   `${EmojiMap["press_f_to_pay_respects"]} **${player.name}** burned ${
-              //     EmojiMap["firepurple"]
-              //   } **${item}+${level}** going into **+${level + 1}**`,
-              // );
             }
           }
 
@@ -2194,6 +2191,7 @@ class DatabaseHandler {
           let isChestblue = false;
           let isChestgreen = false;
           let isChestpurple = false;
+          let isChestdead = false;
           let isChestred = false;
 
           if (recipe) {
@@ -2224,6 +2222,7 @@ class DatabaseHandler {
               recipe === "chestblue" ||
               recipe === "chestgreen" ||
               recipe === "chestpurple" ||
+              recipe === "chestdead" ||
               recipe === "chestred"
             ) {
               let item;
@@ -2243,6 +2242,11 @@ class DatabaseHandler {
                   case "chestpurple":
                     isChestpurple = true;
                     ({ item, uniqueChances, jewelLevel } = generatePurpleChestItem());
+                    break;
+
+                  case "chestdead":
+                    isChestdead = true;
+                    ({ item, uniqueChances, jewelLevel } = generateDeadChestItem());
                     break;
                   case "chestred":
                     isChestred = true;
@@ -2313,9 +2317,9 @@ class DatabaseHandler {
             upgrade[upgrade.length - 1] = generatedItem;
             if (isRecipe) {
               player.broadcast(new Messages.AnvilRecipe(recipe), false);
-            } else if (isChestblue || isChestgreen || isChestpurple || isChestred) {
+            } else if (isChestblue || isChestgreen || isChestpurple || isChestdead || isChestred) {
               player.broadcast(
-                new Messages.AnvilUpgrade({ isChestblue, isChestgreen, isChestpurple, isChestred }),
+                new Messages.AnvilUpgrade({ isChestblue, isChestgreen, isChestpurple, isChestdead, isChestred }),
                 false,
               );
             }
@@ -2802,7 +2806,6 @@ class DatabaseHandler {
         let output = kinds[itemName][2];
         let fire = level >= 8 ? EmojiMap.firepurple : EmojiMap.fire;
 
-        console.log("!~~~isUnique", isUnique);
         if (!isUnique && isRuneword) {
           // Invalid runeword
           if (socket.findIndex((s: number | string) => s === 0 || `${s}`.startsWith("jewel")) !== -1) {
@@ -2868,8 +2871,10 @@ class DatabaseHandler {
         } else if (socket?.length === 6) {
           message = `${player.name} added **6 sockets** to a **+${level}** ${output}`;
         } else {
-          if (level >= 8) {
-            if (isSuccess) {
+          if (level >= 7) {
+            if (level >= 7 && isSuccess) {
+              message = `**${player.name}** upgraded a **+${level}** ${output}`;
+            } else if (level >= 8 && isSuccess) {
               message = `**${player.name}** upgraded a **+${level}** ${output} ${fire} ${fire} ${fire} ${fire} ${fire}`;
             } else {
               message = `${EmojiMap["press_f_to_pay_respects"]} **${player.name}** burned a **+${level}** ${output}`;

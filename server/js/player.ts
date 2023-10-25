@@ -1356,6 +1356,8 @@ class Player extends Character {
                   if (runeName) {
                     generatedItem = { item: `rune-${runeName}`, quantity: 1 };
                   }
+                } else if (Types.isQuantity(kind)) {
+                  generatedItem = { item: Types.getKindAsString(kind), quantity: 1 };
                 } else {
                   const jewelLevel = Types.isJewel(kind) ? item.level : 1;
                   ({ isUnique, ...generatedItem } = self.generateItem({ kind, jewelLevel }) || ({} as GeneratedItem));
@@ -1457,6 +1459,10 @@ class Player extends Character {
                         EmojiMap.jewelskull
                       }`,
                     );
+                  }
+
+                  if (!generatedItem || Object.keys(generatedItem).length) {
+                    Sentry.captureException(new Error(`invalid generatedItem for ${kind}`));
                   }
 
                   self.databaseHandler.lootItems({

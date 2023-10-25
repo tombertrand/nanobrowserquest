@@ -1213,6 +1213,12 @@ var Items = {
     }
   },
 
+  ChestDead: class ChestDead extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHESTDEAD, "chest");
+      this.lootMessage = "You pick up a dead chest";
+    }
+  },
   ChestRed: class ChestRed extends Item {
     constructor(id) {
       super(id, Types.Entities.CHESTRED, "chest");
@@ -1562,8 +1568,6 @@ var Items = {
       this.lootMessage = "You pick up a Dog Pet";
     }
   },
-
-
 
   PetAxolotl: class PetAxolotl extends Item {
     constructor(id) {

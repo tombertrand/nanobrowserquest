@@ -82,6 +82,7 @@ class Game {
   isAnvilChestblue: boolean;
   isAnvilChestgreen: boolean;
   isAnvilChestpurple: boolean;
+  isAnvilChestdead: boolean;
   isAnvilChestred: boolean;
   anvilAnimationTimeout: any;
   cowPortalStart: boolean;
@@ -251,6 +252,7 @@ class Game {
     this.isAnvilChestblue = false;
     this.isAnvilChestgreen = false;
     this.isAnvilChestpurple = false;
+    this.isAnvilChestdead = false;
     this.isAnvilChestred = false;
     this.anvilAnimationTimeout = null;
     this.cowPortalStart = false;
@@ -5108,6 +5110,7 @@ class Game {
         isChestblue,
         isChestgreen,
         isChestpurple,
+        isChestdead,
         // @NOTE perhaps have a different animation for red chests (extra rare, next expansion?)
         // isChestred,
       }) {
@@ -5121,6 +5124,8 @@ class Game {
           self.setAnvilChestblue();
         } else if (isChestpurple) {
           self.setAnvilRecipe("chestpurple");
+        } else if (isChestdead) {
+          self.setAnvilRecipe("chestdead");
         } else {
           self.setAnvilFail();
         }
@@ -5623,6 +5628,7 @@ class Game {
     this.isAnvilChestblue = false;
     this.isAnvilChestgreen = false;
     this.isAnvilChestpurple = false;
+    this.isAnvilChestdead = false;
     this.isAnvilChestred = false;
     clearTimeout(this.anvilAnimationTimeout);
   }

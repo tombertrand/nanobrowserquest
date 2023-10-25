@@ -2758,7 +2758,7 @@ class World {
       this.lootChests(mob, attacker);
     }
 
-    // var randomDrops = ["helmpumkin"];
+    var randomDrops = ["chestdead"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["scrollupgradeelementmagic", "scrollupgradeelementflame", "scrollupgradeelementlightning","scrollupgradeelementcold","scrollupgradeelementpoison","scrollupgradeskillrandom"];
@@ -2847,8 +2847,8 @@ class World {
     // "rune-shi",
     // "rune-vod",
     // ];
-    // var randomDrop = random(randomDrops.length);
-    // itemName = randomDrops[randomDrop];
+    var randomDrop = random(randomDrops.length);
+    itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

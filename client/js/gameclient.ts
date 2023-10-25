@@ -260,11 +260,9 @@ class GameClient {
           try {
             const { admin, player, error, reason, message, ip, until } = JSON.parse(e);
 
-
             this.fail_callback?.({ admin, player, error, reason, until, message, ip });
           } catch (err) {}
         }
-
 
         if (
           e === "invalidlogin" ||
@@ -349,7 +347,6 @@ class GameClient {
   }
 
   receiveAction(data) {
-
     var action = data instanceof Array ? data[0] : data.type;
 
     if (this.handlers[action] && _.isFunction(this.handlers[action])) {
@@ -668,7 +665,6 @@ class GameClient {
   }
 
   receiveNotification(data) {
-
     this.receivenotification_callback?.(data);
   }
 
@@ -701,7 +697,8 @@ class GameClient {
   }
 
   receiveAnvilUpgrade(data) {
-    const { isSuccess, isTransmute, isRuneword, isChestblue, isChestgreen, isChestpurple, isChestred } = data[1];
+    const { isSuccess, isTransmute, isRuneword, isChestblue, isChestgreen, isChestpurple, isChestdead, isChestred } =
+      data[1];
 
     if (this.receiveanvilupgrade_callback) {
       this.receiveanvilupgrade_callback({
@@ -711,6 +708,7 @@ class GameClient {
         isChestblue,
         isChestgreen,
         isChestpurple,
+        isChestdead,
         isChestred,
       });
     }

@@ -495,6 +495,7 @@ const sprites = {
   "item-chestblue": item,
   "item-chestgreen": item,
   "item-chestpurple": item,
+  "item-chestdead": item,
   "item-chestred": item,
   "item-scrollupgradelow": item,
   "item-scrollupgrademedium": item,
