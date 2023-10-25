@@ -523,6 +523,9 @@ var initGame = function () {
       .resizable({
         minHeight: $("#container").height() / 4,
         minWidth: $("#container").width() / 3,
+      })
+      .on("click", event => {
+        $("#foreground").trigger(event);
       });
   }
 
