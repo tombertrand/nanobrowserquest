@@ -742,18 +742,15 @@ export const generatePurpleChestItem = (): {
   return _.shuffle(items)[0];
 };
 
-
 export const generateDeadChestItem = (): {
   item: string;
   uniqueChances?: number;
   quantity?: number;
   jewelLevel?: number;
 } => {
-  
-    const rune = getRandomRune(70, 15);
+  const rune = getRandomRune(70, 10);
 
-    return { item: `rune-${rune}`, quantity: 1 };
- 
+  return { item: `rune-${rune}`, quantity: 1 };
 };
 
 export const generateRandomPet = () => {

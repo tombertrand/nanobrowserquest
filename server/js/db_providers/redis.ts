@@ -1841,8 +1841,6 @@ class DatabaseHandler {
                 const { item, level, quantity, bonus, skill, socket } = rawItem;
                 let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(`${item}:`)) : -1;
 
-                console.log("~~~~rawItem", rawItem);
-
                 // Increase the scroll/rune count
                 if (slotIndex > -1) {
                   if (Types.isSingle(item)) {

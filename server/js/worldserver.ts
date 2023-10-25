@@ -2533,7 +2533,6 @@ class World {
     }
 
     if (!isBoss) {
-
       if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
         const superUnqueRandom = random(10_000);
 
@@ -2584,7 +2583,6 @@ class World {
           return "stonesocketblessed";
         }
       }
-      
     }
 
     if (!isBoss && mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
@@ -2758,7 +2756,7 @@ class World {
       this.lootChests(mob, attacker);
     }
 
-    var randomDrops = ["chestdead"];
+    // var randomDrops = ["chestdead"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["scrollupgradeelementmagic", "scrollupgradeelementflame", "scrollupgradeelementlightning","scrollupgradeelementcold","scrollupgradeelementpoison","scrollupgradeskillrandom"];
@@ -2847,8 +2845,8 @@ class World {
     // "rune-shi",
     // "rune-vod",
     // ];
-    var randomDrop = random(randomDrops.length);
-    itemName = randomDrops[randomDrop];
+    // var randomDrop = random(randomDrops.length);
+    // itemName = randomDrops[randomDrop];
 
     let itemLevel = null;
 

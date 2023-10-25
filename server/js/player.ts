@@ -1460,8 +1460,7 @@ class Player extends Character {
                       }`,
                     );
                   }
-
-                  if (!generatedItem || Object.keys(generatedItem).length) {
+                  if (!generatedItem || !Object.keys(generatedItem).length) {
                     Sentry.captureException(new Error(`invalid generatedItem for ${kind}`));
                   }
 
