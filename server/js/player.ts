@@ -1255,6 +1255,8 @@ class Player extends Character {
             } else if (Types.Entities.Artifact.includes(kind)) {
               let index = Types.Entities.Artifact.indexOf(kind);
               databaseHandler.foundArtifact(self.name, index);
+            } else if (Types.Entities.nonLootableKeys.includes(kind)) {
+              // do nothing, its not a vlid item
             } else if (kind === Types.Entities.FIREFOXPOTION) {
               self.updateHitPoints(true);
               self.broadcast(self.equip({ kind: Types.Entities.FIREFOX, level: 1 }));

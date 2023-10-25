@@ -2839,7 +2839,7 @@ class DatabaseHandler {
                 "amuletsilver",
                 "amuletgold",
                 "amuletplatinum",
-              ].includes(itemName)
+              ].includes(itemName) || itemName.startsWith("pet")
                 ? "Unique "
                 : ""
             }${output}`;

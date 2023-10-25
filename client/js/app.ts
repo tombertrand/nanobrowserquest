@@ -1149,7 +1149,7 @@ class App {
         .off("click")
         .on("click", e => {
           $(e.currentTarget).addClass("disabled").attr("disabled", "disabled").text("Invite sent");
-          const playerName = $(e.currentTarget).data("party-invite");
+          const playerName = String($(e.currentTarget).data("party-invite"));
           this.game.client.sendPartyInvite(playerName);
           this.game.partyInvitees.push(playerName);
         });

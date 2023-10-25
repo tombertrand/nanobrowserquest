@@ -260,7 +260,7 @@ export const Types: any = {
     CHESTBLUE: 136,
     CHESTGREEN: 223,
     CHESTPURPLE: 224,
-    CHESTDEAD: 393, //~~~
+    CHESTDEAD: 393,
     CHESTRED: 225,
 
     // Objects
@@ -572,6 +572,7 @@ Types.Entities.Artifact = [
   Types.Entities.RAIBLOCKSBL,
   Types.Entities.RAIBLOCKSBR,
 ];
+Types.Entities.nonLootableKeys = [Types.Entities.SKELETONKEY];
 
 Types.Entities.Weapons = [
   Types.Entities.DAGGER,

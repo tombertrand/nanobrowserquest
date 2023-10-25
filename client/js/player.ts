@@ -267,7 +267,7 @@ class Player extends Character {
         }
       } else if (item.kind === Types.Entities.SKELETONKEY) {
         if (this.skeletonKey) {
-          throw new Exceptions.LootException(`You already have the Skeleton Key.`);
+          // throw new Exceptions.LootException(`You already have the Skeleton Key.`);
         } else {
           this.skeletonKey = true;
         }

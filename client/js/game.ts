@@ -236,6 +236,8 @@ class Game {
   isDragStarted: boolean;
   hashCheckInterval: any;
   admins: string[];
+  onSendMoveItemTimeout: NodeJS.Timeout;
+  isOnsendMoveItemTimeout: boolean;
 
   constructor(app) {
     this.app = app;
@@ -274,6 +276,8 @@ class Game {
     this.isPanelOpened = false;
     this.isDragStarted = false;
     this.hashCheckInterval = null;
+    this.onSendMoveItemTimeout = null;
+    this.isOnsendMoveItemTimeout = false;
 
     this.renderer = null;
     this.updater = null;
@@ -1052,6 +1056,18 @@ class Game {
 
   dropItem(fromSlot, toSlot, transferedQuantity = null, confirmed = false) {
     if (fromSlot === toSlot || typeof fromSlot !== "number" || typeof toSlot !== "number") {
+      return;
+    }
+
+    // @NOTE prevent sending too many msgs for duping items
+    if (!this.isOnsendMoveItemTimeout && !this.onSendMoveItemTimeout) {
+      this.isOnsendMoveItemTimeout = true;
+      this.onSendMoveItemTimeout = setTimeout(() => {
+        this.isOnsendMoveItemTimeout = false;
+
+        this.onSendMoveItemTimeout = null;
+      }, 850);
+    } else {
       return;
     }
 
@@ -3264,7 +3280,6 @@ class Game {
             const isAzraelDoor = dest.x === 98 && dest.y === 764;
             const isGatewayDoor = dest.x === 13 && dest.y === 777;
             const isNecromancerDoor = dest.x === 127 && dest.y === 324;
-
 
             if (isTempleDoor) {
               levelRequirement = 67;
