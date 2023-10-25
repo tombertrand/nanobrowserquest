@@ -123,6 +123,7 @@ const badWords = [
   "shit",
   "rape",
   "murder",
+  "looser",
 ];
 
 export const CHATBAN_PATTERNS_WARNING = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
@@ -373,12 +374,15 @@ class Player extends Character {
 
       console.debug("Received: " + message);
       if (!this.formatChecker.check(message)) {
-        Sentry.captureException(new Error(`FormatChecker failed for player${self.name}`), {
-          user: {
-            username: self.name,
+        Sentry.captureException(
+          new Error(`FormatChecker failed for player${self.name} for: ${JSON.stringify(message)}`),
+          {
+            user: {
+              username: self.name,
+            },
+            extra: { message, action },
           },
-          extra: { message, action },
-        });
+        );
         self.connection.close("Invalid " + Types.getMessageTypeAsString(action) + " message format: " + message);
         return;
       }
@@ -567,9 +571,7 @@ class Player extends Character {
         //@NOTE need to copy"CHATBAN_PATTERNS" for unknown reason else same word passes the seocond time
         if (CHATBAN_PATTERNS_WARNING.test(msg) || CHATBAN_PATTERNS.test(msg)) {
           if (!self.isChatbanWarned) {
-            postMessageToModeratorSupportChannel(
-              `**${self.name}** was Warned for saying:"**${msg}** "`,
-            );
+            postMessageToModeratorSupportChannel(`**${self.name}** was Warned for saying:"**${msg}** "`);
             self.send(
               new Messages.Party(
                 Types.Messages.PARTY_ACTIONS.ERROR,

@@ -2533,6 +2533,14 @@ class World {
     }
 
     if (!isBoss) {
+
+      if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
+        const superUnqueRandom = random(10_000);
+
+        if (superUnqueRandom === 133) {
+          return "helmpumkin";
+        }
+      }
       const runeRandom = attacker.level < 20 ? random(125) : random(250);
       if (runeRandom === 10) {
         return `rune-${getRandomRune(Types.getMobLevel(mob.kind))}`;
@@ -2576,13 +2584,7 @@ class World {
           return "stonesocketblessed";
         }
       }
-      if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
-        const superUnqueRandom = random(10_000);
-
-        if (superUnqueRandom === 133) {
-          return "helmpumkin";
-        }
-      }
+      
     }
 
     if (!isBoss && mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {

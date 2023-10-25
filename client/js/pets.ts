@@ -64,6 +64,14 @@ export const Pets = {
     }
   },
 
+  Deer: class Deer extends Pet {
+    constructor(id, props: any = {}) {
+      super(id, Types.Entities.PET_DEER, props);
+      this.moveSpeed = 200;
+      this.idleSpeed = 200;
+    }
+  },
+
   Dragon: class Dragon extends Pet {
     constructor(id, props: any = {}) {
       super(id, Types.Entities.PET_DRAGON, props);

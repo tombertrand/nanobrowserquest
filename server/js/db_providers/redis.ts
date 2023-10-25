@@ -2026,7 +2026,7 @@ class DatabaseHandler {
           upgrade[upgrade.length - 1] = itemWithRandomSkill.item;
           player.broadcast(new Messages.AnvilUpgrade({ isSuccess }), false);
         } else if (isValidUpgradeItems(filteredUpgrade)) {
-          const [item, level, bonus, socket, skillOrSkin] = filteredUpgrade[0].split(":");
+          const [item, rawLevel, bonus, socket, skillOrSkin] = filteredUpgrade[0].split(":");
           const [scrollOrStone] = filteredUpgrade[1].split(":");
           const isUnique = Types.isUnique(item, bonus);
           let upgradedItem: number | string = 0;
@@ -2034,11 +2034,13 @@ class DatabaseHandler {
             Types.isStone(scrollOrStone) && ["stonedragon", "stonehero"].includes(scrollOrStone);
 
           ({ isSuccess, random /*, successRate*/ } = isUpgradeSuccess({
-            level,
+            level: rawLevel,
             isLuckySlot,
             isBlessed,
             isGuaranteedSuccess,
           }));
+
+          const level = parseInt(rawLevel);
 
           // Disable for now as it is exploitable
           // player.send(
@@ -2050,7 +2052,7 @@ class DatabaseHandler {
           // );
 
           if (isSuccess) {
-            let upgradedLevel = parseInt(level) + 1;
+            let upgradedLevel = level + 1;
 
             if (isGuaranteedSuccess) {
               if (scrollOrStone === "stonedragon") {
@@ -2075,14 +2077,14 @@ class DatabaseHandler {
               this.logUpgrade({ player, item: upgradedItem, isSuccess, isLuckySlot });
             }
           } else {
-            if (parseInt(level) >= 8) {
-              // this.logUpgrade({ player, item: , isSuccess: false, isLuckySlot });
+            if (level >= 8) {
+              this.logUpgrade({ player, item: filteredUpgrade[0], isSuccess: false, isLuckySlot });
 
-              postMessageToDiscordAnvilChannel(
-                `${EmojiMap["press_f_to_pay_respects"]} a player burned ${EmojiMap["firepurple"]} **${item}+${parseInt(
-                  level,
-                )}** going into +${parseInt(level) + 1}`,
-              );
+              // postMessageToDiscordAnvilChannel(
+              //   `${EmojiMap["press_f_to_pay_respects"]} **${player.name}** burned ${
+              //     EmojiMap["firepurple"]
+              //   } **${item}+${level}** going into **+${level + 1}**`,
+              // );
             }
           }
 
@@ -2785,20 +2787,22 @@ class DatabaseHandler {
     isLuckySlot?: boolean;
     isRuneword?: boolean;
   }) {
-    const now = Date.now();
-    this.client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
+    // const now = Date.now();
+    // this.client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
+    const [itemName, rawLevel, bonus, rawSocket] = item.split(":");
+    const level = parseInt(rawLevel);
 
-    if (isSuccess) {
+    if (isSuccess || level >= 8) {
       try {
-        const [itemName, level, bonus, rawSocket] = item.split(":");
         const socket = toArray(rawSocket);
         const isUnique = Types.isUnique(itemName, bonus);
         let message = "";
         let runeword = "";
         let wordSocket = "";
         let output = kinds[itemName][2];
-        let fire = parseInt(level) >= 8 ? EmojiMap.firepurple : EmojiMap.fire;
+        let fire = level >= 8 ? EmojiMap.firepurple : EmojiMap.fire;
 
+        console.log("!~~~isUnique", isUnique);
         if (!isUnique && isRuneword) {
           // Invalid runeword
           if (socket.findIndex((s: number | string) => s === 0 || `${s}`.startsWith("jewel")) !== -1) {
@@ -2822,9 +2826,7 @@ class DatabaseHandler {
 
             ({ runeword, wordSocket } = getRunewordBonus({ isUnique, socket, type }));
           }
-        }
-
-        if (isUnique) {
+        } else if (isUnique) {
           output =
             Types.itemUniqueMap[itemName]?.[0] ||
             `${
@@ -2853,7 +2855,7 @@ class DatabaseHandler {
             .map(rune => EmojiMap[`rune-${rune}`])
             .join("");
 
-          message = `${player.name} forged **${runeword}** runeword (${EmojiRunes}) in a +${level} ${output}`;
+          message = `${player.name} forged **${runeword}** runeword (${EmojiRunes}) in a **+${level}** ${output}`;
 
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
           this.foundAchievement(player, ACHIEVEMENT_BLACKSMITH_INDEX).then(() => {
@@ -2864,11 +2866,21 @@ class DatabaseHandler {
             });
           });
         } else if (socket?.length === 6) {
-          message = `${player.name} added **6 sockets** to a +${level} ${output}`;
+          message = `${player.name} added **6 sockets** to a **+${level}** ${output}`;
         } else {
-          message = `${player.name} upgraded a **+${level}** ${output}`;
+          if (level >= 8) {
+            if (isSuccess) {
+              message = `**${player.name}** upgraded a **+${level}** ${output} ${fire} ${fire} ${fire} ${fire} ${fire}`;
+            } else {
+              message = `${EmojiMap["press_f_to_pay_respects"]} **${player.name}** burned a **+${level}** ${output}`;
+            }
+          }
+          if (level === 10 && isSuccess) {
+            message = `${EmojiMap["impossibru"]} ${EmojiMap["impossibru"]}! **${player.name}** upgraded a **+${level}** ${output} ${fire}`;
+          }
         }
-        postMessageToDiscordAnvilChannel(`${message}${isLuckySlot ? " with the lucky slot" : ""} ${fire}`);
+
+        postMessageToDiscordAnvilChannel(`${message}${isLuckySlot ? " with the lucky slot 🍀" : ""} ${fire}`);
       } catch (err) {
         Sentry.captureException(err);
       }

@@ -56,6 +56,11 @@ EntityFactory.builders[Types.Entities.PET_DUCK] = function (id, props) {
   return new Pets.Duck(id, props);
 };
 
+EntityFactory.builders[Types.Entities.PET_DEER] = function (id, props) {
+  return new Pets.Deer(id, props);
+};
+
+
 EntityFactory.builders[Types.Entities.PET_DRAGON] = function (id, props) {
   return new Pets.Dragon(id, props);
 };
@@ -1229,6 +1234,10 @@ EntityFactory.builders[Types.Entities.PETDUCK] = function (id) {
   return new Items.PetDuck(id);
 };
 
+EntityFactory.builders[Types.Entities.PETDEER] = function (id) {
+  return new Items.PetDeer(id);
+};
+
 EntityFactory.builders[Types.Entities.PETDRAGON] = function (id) {
   return new Items.PetDragon(id);
 };
@@ -1243,10 +1252,6 @@ EntityFactory.builders[Types.Entities.PETFOX] = function (id) {
 
 EntityFactory.builders[Types.Entities.PETTURTLE] = function (id) {
   return new Items.PetTurtle(id);
-};
-
-EntityFactory.builders[Types.Entities.PETTDUCK] = function (id) {
-  return new Items.PetDuck(id);
 };
 
 //====== Npcs ======

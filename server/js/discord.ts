@@ -256,4 +256,5 @@ export const EmojiMap = {
   scrollupgradeskillrandom: "<:scrollupgradeskillrandom:1163880822512824410>",
   Bebeking: "<:Bebeking:975777551647649864>",
   press_f_to_pay_respects:"<:press_f_to_pay_respects:1163299391663263844>",
+  impossibru: "<:impossibru:1166478382163296387>"
 };
