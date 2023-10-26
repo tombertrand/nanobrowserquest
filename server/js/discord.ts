@@ -221,6 +221,7 @@ export const EmojiMap = {
   amuleteye: "<:amuleteye:1099772443968667708>",
   amuletgreed: "<:amuletgreed:1099738654982807552>",
   grimoire: "<:grimoire:1070767593536901200>",
+  skeletonkey: "<:skeletonkey:1165062172343271534>",
   powderquantum: "<:quantumpowder:1079106312295694406>",
   soulstone: "<:soulstone:1085735393594462280>",
   stonedragon: "<:stonedragon:1085735395372847194>",

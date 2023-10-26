@@ -1255,7 +1255,10 @@ class Player extends Character {
               let index = Types.Entities.Artifact.indexOf(kind);
               databaseHandler.foundArtifact(self.name, index);
             } else if (Types.Entities.nonLootableKeys.includes(kind)) {
-              // do nothing, its not a vlid item
+              if (kind === Types.Entities.SKELETONKEY) {
+                postMessageToDiscordEventChannel(`${self.name} picked up the Skeleton Key${EmojiMap["skeletonkey"]} `);
+              }
+              // do nothing, its not a valid item
             } else if (kind === Types.Entities.FIREFOXPOTION) {
               self.updateHitPoints(true);
               self.broadcast(self.equip({ kind: Types.Entities.FIREFOX, level: 1 }));
@@ -1351,7 +1354,6 @@ class Player extends Character {
                 let isUnique = false;
                 let generatedItem: GeneratedItem = null;
                 let runeName = null;
-
                 if (Types.isRune(kind)) {
                   runeName = Types.RuneByKind[kind];
                   if (runeName) {
@@ -1359,7 +1361,7 @@ class Player extends Character {
                   }
                 } else if (Types.isQuantity(kind)) {
                   generatedItem = { item: Types.getKindAsString(kind), quantity: 1 };
-                } else {
+                } else if (Types.isItem(kind)) {
                   const jewelLevel = Types.isJewel(kind) ? item.level : 1;
                   ({ isUnique, ...generatedItem } = self.generateItem({ kind, jewelLevel }) || ({} as GeneratedItem));
                 }
@@ -2527,7 +2529,6 @@ class Player extends Character {
           .concat([8, ...highHealthBonus])
           .concat(_.shuffle([7, 11, 12]).slice(0, 1))
           .concat(_.shuffle(resistances).slice(0, 1));
-
       } else if (kind === Types.Entities.RINGMINOTAUR) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
