@@ -646,7 +646,6 @@ class Renderer {
       anim = entity.currentAnimation,
       os = this.upscaledRendering ? 1 : this.scale,
       ds = this.upscaledRendering ? this.scale : 1;
-    const iAdmin = this.game.admins.includes(this.game.player?.name);
 
     if (anim && sprite?.width) {
       var frame = anim.currentFrame,
@@ -1470,7 +1469,7 @@ class Renderer {
     if (totalCount === currentCount) {
       this.getPlayerImage({ weaponSprite, helmSprite, armorSprite, shieldSprite, capeSprite });
     } else {
-      setTimeout(() => this.loadPlayerImage(), 250);
+      setTimeout(() => this.loadPlayerImage(), 550);
     }
   }
 
