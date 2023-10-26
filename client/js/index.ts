@@ -525,7 +525,9 @@ var initGame = function () {
         minWidth: $("#container").width() / 3,
       })
       .on("click", event => {
-        $("#foreground").trigger(event);
+        if (!$(".panel").hasClass("visible")) {
+          $("#foreground").trigger(event);
+        }
       });
   }
 
