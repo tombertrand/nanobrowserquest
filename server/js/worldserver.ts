@@ -2534,10 +2534,13 @@ class World {
 
     if (!isBoss) {
       if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
-        const superUnqueRandom = random(7_000);
+        const superUnqueRandom = random(8_000);
 
         if (superUnqueRandom === 133) {
           return "helmpumkin";
+        }
+        if (superUnqueRandom === 420) {
+          return "ringpumkin";
         }
       }
       const runeRandom = attacker.level < 20 ? random(125) : random(250);
@@ -2756,7 +2759,8 @@ class World {
       this.lootChests(mob, attacker);
     }
 
-    // var randomDrops = ["chestdead"];
+    // var randomDrops = ["helmpumkin","ringpumkin"];
+    // var randomDrops = ["ringpumkin"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["scrollupgradeelementmagic", "scrollupgradeelementflame", "scrollupgradeelementlightning","scrollupgradeelementcold","scrollupgradeelementpoison","scrollupgradeskillrandom"];

@@ -1224,7 +1224,6 @@ class Player extends Character {
           }
 
           const { kind } = item;
-
           if (Types.isItem(kind)) {
             self.broadcast(item.despawn());
             self.server.removeEntity(item);
@@ -2522,12 +2521,13 @@ class Player extends Character {
           .slice(0, 3)
           .concat(lightningDamageBonus)
           .concat(_.shuffle([resistances[2], elementPercentage[2]]).slice(0, 1));
-      } else if (kind === Types.Entities.RINGFOUNTAIN) {
+      } else if (kind === Types.Entities.RINGFOUNTAIN || kind === Types.Entities.RINGPUMKIN) {
         bonus = _.shuffle([5, 6])
           .slice(0, 2)
           .concat([8, ...highHealthBonus])
           .concat(_.shuffle([7, 11, 12]).slice(0, 1))
           .concat(_.shuffle(resistances).slice(0, 1));
+
       } else if (kind === Types.Entities.RINGMINOTAUR) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)

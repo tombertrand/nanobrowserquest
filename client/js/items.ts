@@ -1059,6 +1059,13 @@ var Items = {
     }
   },
 
+  RingPumkin: class RingPumkin extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGPUMKIN, "ring");
+      this.lootMessage = "You pick up the Special event Pumkin ring";
+    }
+  },
+
   RingMinotaur: class RingMinotaur extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGMINOTAUR, "ring");

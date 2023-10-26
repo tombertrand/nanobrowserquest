@@ -473,6 +473,7 @@ const sprites = {
   "item-ringnecromancer": item,
   "item-ringraistone": item,
   "item-ringfountain": item,
+  "item-ringpumkin": item,
   "item-ringminotaur": item,
   "item-ringmystical": item,
   "item-ringbalrog": item,

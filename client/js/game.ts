@@ -2765,7 +2765,6 @@ class Game {
 
           clearInterval(wait);
           self.isLoaded = true;
-
           resolve(true);
         }
       }, 100);
@@ -7043,6 +7042,7 @@ class Game {
     this.entities = {};
     this.initEntityGrid();
     this.initPathingGrid();
+
     this.initRenderingGrid();
 
     this.player = new Warrior("player", this.username);

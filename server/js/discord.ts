@@ -203,6 +203,7 @@ export const EmojiMap = {
   ringnecromancer: "<:ringnecromancer:1059571078051151912>",
   ringraistone: "<:ringraistone:1092216603929739385>",
   ringfountain: "<:ringfountain:1059571073785536512>",
+  ringpumkin: "<:ringpumkin:1167088198749524079>",
   ringminotaur: "<:ringminotaur:1059571075857522803>",
   ringmystical: "<:ringmystical:1059571076608311327>",
   ringbalrog: "<:ringbalrog:1059571071872937984>",

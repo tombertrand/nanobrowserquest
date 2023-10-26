@@ -1,4 +1,8 @@
 export const setBonus = {
+  pumkin: {
+    magicFind: 12,
+    extraGold: 12,
+  },
   immortal: {
     health: 60,
     minDamage: 25,
@@ -235,9 +239,12 @@ export const kindAsStringToSet = {
   immortalarmor: "immortal",
   immortalring: "immortal",
   shieldimmortal: "immortal",
+  ringpumkin: "pumkin",
+  helmpumkin: "pumkin",
 };
 
 export const setItems = {
+  pumkin: ["ringpumkin", "helmpumkin"],
   immortal: [
     ["spikeglaive", "immortalsword"],
     "helmimmortal",
@@ -248,7 +255,7 @@ export const setItems = {
   ],
   paladin: ["paladinaxe", "helmpaladin", "paladinarmor", "shieldpaladin", "beltpaladin"],
   mystical: ["mysticalsword", "helmmystical", "mysticalarmor", "beltmystical", "shieldmystical", "ringmystical"],
-  demon: [["demonaxe","eclypsedagger"], "helmdemon", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
+  demon: [["demonaxe", "eclypsedagger"], "helmdemon", "demonarmor", "beltdemon", "shielddemon", "amuletdemon"],
   moon: ["moonsword", "helmmoon", "moonarmor", "beltmoon", "shieldmoon", "amuletmoon"],
   dragon: ["dragonsword", "helmdragon", "dragonarmor", "shielddragon"],
   templar: ["templarsword", "helmtemplar", "templararmor", "belttemplar", "shieldtemplar"],
@@ -267,6 +274,7 @@ export const setItems = {
 };
 
 export const setItemsNameMap = {
+  pumkin: ["helm", "Ring"],
   immortal: ["Glaive or Sword", "helm", "Armor", "Belt", "Shield", "Ring"],
   paladin: ["Axe", "Helm", "Armor", "Belt", "Shield"],
   mystical: ["Sword", "Helm", "Armor", "Belt", "Shield", "Ring"],
