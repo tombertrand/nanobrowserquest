@@ -1180,7 +1180,6 @@ class Game {
       }
       return;
     }
-
     this.client.sendMoveItem(fromSlot, toSlot, transferedQuantity);
 
     if (typeof level === "number") {

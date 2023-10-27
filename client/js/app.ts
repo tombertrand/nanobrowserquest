@@ -461,6 +461,9 @@ class App {
           click: function () {
             const { fromSlot, toSlot, transferedQuantity, confirmed } = self.game.confirmedSoldItemToMerchant;
 
+            clearTimeout(self.game.onSendMoveItemTimeout);
+            self.game.onSendMoveItemTimeout = null;
+
             self.game.dropItem(fromSlot, toSlot, transferedQuantity, confirmed);
             self.game.confirmedSoldItemToMerchant = null;
             $(this).dialog("close");

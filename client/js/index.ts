@@ -700,6 +700,8 @@ var initGame = function () {
             $("#dialog-delete-item").dialog("close");
           } else if ($("#dialog-merchant-item").dialog("isOpen")) {
             const { fromSlot, toSlot, transferedQuantity, confirmed } = game.confirmedSoldItemToMerchant;
+            clearTimeout(game.onSendMoveItemTimeout);
+            game.onSendMoveItemTimeout = null;
             game.dropItem(fromSlot, toSlot, transferedQuantity, confirmed);
             game.confirmedSoldItemToMerchant = null;
             $("#dialog-merchant-item").dialog("close");
@@ -711,6 +713,8 @@ var initGame = function () {
       case Types.Keys.DELETE:
       case Types.Keys.BACKSPACE:
         if (typeof game.hoverSlotToDelete === "number") {
+          clearTimeout(game.onSendMoveItemTimeout);
+          game.onSendMoveItemTimeout = null;
           if ($("#merchant").hasClass("visible")) {
             if (game.hoverSlotToDelete < INVENTORY_SLOT_COUNT) {
               game.dropItem(game.hoverSlotToDelete, MERCHANT_SLOT_RANGE);
