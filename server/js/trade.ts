@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-import { postMessageToModeratorTradeChannel } from "./discord";
+import { postMessageToDiscordModeratorTradeChannel } from "./discord";
 import Messages from "./message";
 import { Sentry } from "./sentry";
 
@@ -233,7 +233,7 @@ class Trade {
         player2Data.filteredTrade
       }`;
 
-      postMessageToModeratorTradeChannel(content);
+      postMessageToDiscordModeratorTradeChannel(content);
 
       if (!player1Data.isValid || !player2Data.isValid) {
         this.close({ playerName: !player1Data.isValid ? player1.name : player2.name, isInventoryFull: true });

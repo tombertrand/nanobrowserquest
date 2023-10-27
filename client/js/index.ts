@@ -525,8 +525,10 @@ var initGame = function () {
         minWidth: $("#container").width() / 3,
       })
       .on("click", event => {
-        if (!$(".panel").hasClass("visible")) {
-          $("#foreground").trigger(event);
+        if (!$(event.target).is("#chatinput") && !$(".panel").hasClass("visible")) {
+          {
+            $("#foreground").trigger(event);
+          }
         }
       });
   }

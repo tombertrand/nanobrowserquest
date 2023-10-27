@@ -21,11 +21,14 @@ const PurchaseChannel =
 const ModeratorSupportChannel =
   "https://discord.com/api/webhooks/1149703440256217098/ycuYn6yn8y5Atb2ysdTltVzIzB7lmeS-KpGn5LTNmnyVumllHhCFY2scGXUvyBVp39SJ";
 
-const ModeratorDebug =
+const ModeratorDebugChannel =
   "https://discord.com/api/webhooks/1157121578807611465/DPTTZrQspuKzO4rpQwOaYpy7HE95nRVIgKQe74MG0bT3QrqqAT_F6vyCgyvTBs7ngweY";
 
-const ModertorTrade =
+const ModertorTradeChannel =
   "https://discord.com/api/webhooks/1157379165922795662/KGEOmezA84--Kj7NppJPGkdVrPSjZh6KXlNWPMcg-hEwE4vfxxuO4pNq3oqSnPoPpOCW";
+
+const WelcomeChannel =
+  "https://discord.com/api/webhooks/1167408881027264613/V-HBW-NpM8BGLdwGSwOYtGDPVfhwuvGUZ53cgW3DdswPYNfDcEBqssP46EENPUG9DS9g";
 
 // For linking players with Discord
 export const discordClient = new Client({
@@ -124,7 +127,7 @@ export const postMessageToModeratorSupportChannel = (content: string) => {
   }
 };
 
-export const postMessageToModeratorDebugChannel = (content: string) => {
+export const postMessageToDiscordModeratorDebugChannelChannel = (content: string) => {
   if (isDevelopment) return;
   try {
     const body = JSON.stringify({
@@ -132,7 +135,7 @@ export const postMessageToModeratorDebugChannel = (content: string) => {
     });
 
     console.log("postcontent", content);
-    fetch(ModeratorDebug, {
+    fetch(ModeratorDebugChannel, {
       method: "POST",
       body,
       headers: { "Content-Type": "application/json" },
@@ -142,14 +145,31 @@ export const postMessageToModeratorDebugChannel = (content: string) => {
   }
 };
 
-export const postMessageToModeratorTradeChannel = (content: string) => {
+export const postMessageToDiscordModeratorTradeChannel = (content: string) => {
   if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
     });
 
-    fetch(ModertorTrade, {
+    fetch(ModertorTradeChannel, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
+
+export const postMessageToDiscordWelcomeChannel = (content: string) => {
+  if (isDevelopment) return;
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    fetch(WelcomeChannel, {
       method: "POST",
       body,
       headers: { "Content-Type": "application/json" },

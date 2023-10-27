@@ -330,7 +330,7 @@ export const Types: any = {
     RINGNECROMANCER: 115,
     RINGRAISTONE: 117,
     RINGFOUNTAIN: 126,
-    RINGPUMKIN: 394,// ~~~last
+    RINGPUMKIN: 394, // ~~~last
     RINGMINOTAUR: 132,
     RINGMYSTICAL: 214,
     RINGBALROG: 194,
@@ -3073,8 +3073,10 @@ Types.StoneUpgrade = {
 };
 
 Types.itemDescription = {
-  skeletonkingcage: "The thoracic cage of the Skeleton King. An unknown magic is still being emitted from the remains.",
-  necromancerheart: "The heart of the Necromancer. An unknown magic is still being emitted from the remains.",
+  skeletonkingcage:
+    "The thoracic cage of the Skeleton King. An unknown magic is still being emitted from the remains. Combined with other ingredients at the anvil, it will open a secret area, lv.45 required to enter",
+  necromancerheart:
+    "The heart of the Necromancer. An unknown magic is still being emitted from the remains. . Combined with other ingredients at the anvil, it will open a secret area, lv.45 required to enter",
   cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
   chalice: "Return the Golden Chalice, a one-of-a-kind artifact, to its rightful place.",
   soulstone: "This mysterious gem holds the soul of a hundred warriors.",

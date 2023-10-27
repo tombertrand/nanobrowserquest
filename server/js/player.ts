@@ -83,6 +83,7 @@ const badWords = [
   "nigga",
   "niga",
   "fucker",
+  "fucked",
   "fuck you",
   "fuck",
   "sucker",
@@ -1611,7 +1612,7 @@ class Player extends Character {
           let banMessage = "";
           if (self.hash) {
             banMessage = `Already have hash ${self.hash}`;
-          } else if (self.hasRequestedBossPayout) {
+          } else if (self.hasRequestedBossPayout && self.hash) {
             banMessage = `Has already requested payout for Classic`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             banMessage = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
@@ -1640,7 +1641,8 @@ class Player extends Character {
         let amount;
         let maxAmount;
         let raiPayoutAmount;
-        if (isClassicPayout) {
+
+        if (isClassicPayout && !self.hasRequestedBossPayout) {
           self.hasRequestedBossPayout = true;
           amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
           maxAmount = getClassicMaxPayout(self.network);

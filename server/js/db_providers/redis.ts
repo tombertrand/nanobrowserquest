@@ -45,6 +45,7 @@ import {
   postMessageToDiscordAnvilChannel,
   postMessageToDiscordEventChannel,
   postMessageToDiscordPurchaseChannel,
+  postMessageToDiscordWelcomeChannel,
   postMessageToModeratorSupportChannel,
 } from "../discord";
 import Messages from "../message";
@@ -666,9 +667,9 @@ class DatabaseHandler {
     }
 
     if (!player.network) {
-      postMessageToDiscordEventChannel(`A new adventurer **${player.name}** has just arrived in our realm 🎉`);
+      postMessageToDiscordWelcomeChannel(`A new adventurer **${player.name}** has just arrived in our realm 🎉`);
     } else {
-      postMessageToDiscordEventChannel(
+      postMessageToDiscordWelcomeChannel(
         `A new adventurer has just arrived in our realm. **${player.name}** has joined the ranks of **${
           player.network === "nano" ? "Nano" : "Banano"
         }** 🎉`,
