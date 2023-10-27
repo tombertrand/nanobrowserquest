@@ -460,6 +460,7 @@ class App {
           class: "btn",
           click: function () {
             const { fromSlot, toSlot, transferedQuantity, confirmed } = self.game.confirmedSoldItemToMerchant;
+
             self.game.dropItem(fromSlot, toSlot, transferedQuantity, confirmed);
             self.game.confirmedSoldItemToMerchant = null;
             $(this).dialog("close");

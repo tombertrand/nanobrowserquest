@@ -237,7 +237,6 @@ class Game {
   hashCheckInterval: any;
   admins: string[];
   onSendMoveItemTimeout: NodeJS.Timeout;
-  isOnsendMoveItemTimeout: boolean;
 
   constructor(app) {
     this.app = app;
@@ -277,7 +276,6 @@ class Game {
     this.isDragStarted = false;
     this.hashCheckInterval = null;
     this.onSendMoveItemTimeout = null;
-    this.isOnsendMoveItemTimeout = false;
 
     this.renderer = null;
     this.updater = null;
@@ -1047,6 +1045,8 @@ class Game {
         const fromSlot = $(ui.draggable[0]).parent().data("slot");
         const toSlot = $(this).data("slot");
 
+        clearTimeout(this.onSendMoveItemTimeout);
+        this.onSendMoveItemTimeout = null;
         self.dropItem(fromSlot, toSlot);
 
         $(document).tooltip("enable");
@@ -1060,11 +1060,8 @@ class Game {
     }
 
     // @NOTE prevent sending too many msgs for duping items
-    if (!this.isOnsendMoveItemTimeout && !this.onSendMoveItemTimeout) {
-      this.isOnsendMoveItemTimeout = true;
+    if (!this.onSendMoveItemTimeout) {
       this.onSendMoveItemTimeout = setTimeout(() => {
-        this.isOnsendMoveItemTimeout = false;
-
         this.onSendMoveItemTimeout = null;
       }, 850);
     } else {
@@ -1103,6 +1100,8 @@ class Game {
         this.openQuantityModal(
           { maxQuantity: quantity, quantity: isMerchantToSlot ? 1 : quantity, title },
           selectedQuantity => {
+            clearTimeout(this.onSendMoveItemTimeout);
+            this.onSendMoveItemTimeout = null;
             this.dropItem(fromSlot, toSlot, selectedQuantity);
           },
         );
@@ -1915,7 +1914,6 @@ class Game {
     }
 
     if (!destinationSlot) return;
-
     this.dropItem(slot, Number(destinationSlot));
   }
 
