@@ -275,7 +275,7 @@ export const EmojiMap = {
   bananocoins: "<:bananocoins:1097314050947432479>",
   bargold: "<:bargold:1099083224413655040>",
   helmclown: "<:clownbase:1114554275226452049>",
-  helmpumpkin: "<:helmpumpkin:1165658130609360948>",
+  helmpumkin: "<:helmpumpkin:1165658130609360948>",
   beltgoldwrap: "<:goldwrap:1114554276350525482>",
   iou: "<:iou:1129598838517268531>",
   gold: "<:gold:1097336291189854420>",
@@ -299,4 +299,5 @@ export const EmojiMap = {
   Bebeking: "<:Bebeking:975777551647649864>",
   press_f_to_pay_respects: "<:press_f_to_pay_respects:1163299391663263844>",
   impossibru: "<:impossibru:1166478382163296387>",
+  obelisk: "<:obelisk:1167783771534262322>",
 };

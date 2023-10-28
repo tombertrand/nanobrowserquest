@@ -671,7 +671,7 @@ class DatabaseHandler {
     } else {
       postMessageToDiscordWelcomeChannel(
         `A new adventurer has just arrived in our realm. **${player.name}** has joined the ranks of **${
-          player.network === "nano" ? "Nano" : "Banano"
+          player.network === "nano" ? ` Nano${EmojiMap["nbq"]}` : ` Banano ${EmojiMap["bbq"]}`
         }** 🎉`,
       );
     }
@@ -970,8 +970,10 @@ class DatabaseHandler {
           player.account = account;
           player.send([Types.Messages.ACCOUNT, { account, network, depositAccount }]);
 
-          postMessageToDiscordEventChannel(
-            `**${player.name}** has joined the ranks of **${player.network === "nano" ? "Nano" : "Banano"}**`,
+          postMessageToDiscordWelcomeChannel(
+            `**${player.name}** has joined the ranks of **${
+              player.network === "nano" ? ` Nano${EmojiMap["nbq"]}` : ` Banano ${EmojiMap["bbq"]}`
+            }** 🎉`,
           );
 
           this.client.hmget("u:" + player.name, "hash", "achievement", (_err, reply) => {

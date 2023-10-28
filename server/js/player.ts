@@ -1683,7 +1683,7 @@ class Player extends Character {
           console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
           postMessageToDiscordPayoutsChannel(
-            `**${self.name}** killed the Skeleton King and received a payout of **${raiPayoutAmount}** ${
+            `**${self.name}** killed the Skeleton King ${EmojiMap["skeletonKing"]} and received a payout of **${raiPayoutAmount}** ${
               self.network === "nano" ? "XNO" : "BAN"
             } 🎉`,
           );
@@ -1814,7 +1814,7 @@ class Player extends Character {
               self.hasObelisk = true;
               self.equipItem({} as any);
 
-              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life`);
+              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life ${EmojiMap['obelisk']}`);
             }
           });
         }
@@ -3640,7 +3640,7 @@ class Player extends Character {
         // @TODO figure out a way to sync the new level
       }
 
-      if (this.level >= 60) {
+      if (this.level >= 64) {
         postMessageToDiscordEventChannel(`${this.name} is now lv.${this.level}`);
       }
     }
