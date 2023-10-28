@@ -1,5 +1,5 @@
 export const setBonus = {
-  pumkin: {
+  pumpkin: {
     magicFind: 12,
     extraGold: 12,
   },
@@ -239,12 +239,12 @@ export const kindAsStringToSet = {
   immortalarmor: "immortal",
   immortalring: "immortal",
   shieldimmortal: "immortal",
-  ringpumkin: "pumkin",
-  helmpumkin: "pumkin",
+  ringpumkin: "pumpkin",
+  helmpumkin: "pumpkin",
 };
 
 export const setItems = {
-  pumkin: ["ringpumkin", "helmpumkin"],
+  pumpkin: ["ringpumkin", "helmpumkin"],
   immortal: [
     ["spikeglaive", "immortalsword"],
     "helmimmortal",
@@ -274,7 +274,7 @@ export const setItems = {
 };
 
 export const setItemsNameMap = {
-  pumkin: ["helm", "Ring"],
+  pumpkin: ["helm", "Ring"],
   immortal: ["Glaive or Sword", "helm", "Armor", "Belt", "Shield", "Ring"],
   paladin: ["Axe", "Helm", "Armor", "Belt", "Shield"],
   mystical: ["Sword", "Helm", "Armor", "Belt", "Shield", "Ring"],

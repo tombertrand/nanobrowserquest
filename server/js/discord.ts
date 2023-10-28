@@ -30,6 +30,8 @@ const ModertorTradeChannel =
 const WelcomeChannel =
   "https://discord.com/api/webhooks/1167408881027264613/V-HBW-NpM8BGLdwGSwOYtGDPVfhwuvGUZ53cgW3DdswPYNfDcEBqssP46EENPUG9DS9g";
 
+const payoutsChannel =
+  "https://discord.com/api/webhooks/1167688506315915404/nRYi5goDKK-1O_n2rCCKIEM2MVRvvDk4Um9vyPQH568B3Cyxb5_9r4XzlGDmLjTcakxS";
 // For linking players with Discord
 export const discordClient = new Client({
   intents: [
@@ -111,7 +113,7 @@ export const postMessageToDiscordPurchaseChannel = (content: string) => {
 };
 
 export const postMessageToModeratorSupportChannel = (content: string) => {
-  // if (isDevelopment) return;
+  if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
@@ -179,6 +181,23 @@ export const postMessageToDiscordWelcomeChannel = (content: string) => {
   }
 };
 
+export const postMessageToDiscordPayoutsChannel = (content: string) => {
+  if (isDevelopment) return;
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    fetch(payoutsChannel, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
+
 export const EmojiMap = {
   sword: "<:Sword:975775115105153154>",
   fire: "<:fireorange:1059946852461580379>",
@@ -223,7 +242,7 @@ export const EmojiMap = {
   ringnecromancer: "<:ringnecromancer:1059571078051151912>",
   ringraistone: "<:ringraistone:1092216603929739385>",
   ringfountain: "<:ringfountain:1059571073785536512>",
-  ringpumkin: "<:ringpumkin:1167088198749524079>",
+  ringpumpkin: "<:ringpumpkin:1167088198749524079>",
   ringminotaur: "<:ringminotaur:1059571075857522803>",
   ringmystical: "<:ringmystical:1059571076608311327>",
   ringbalrog: "<:ringbalrog:1059571071872937984>",
@@ -256,7 +275,7 @@ export const EmojiMap = {
   bananocoins: "<:bananocoins:1097314050947432479>",
   bargold: "<:bargold:1099083224413655040>",
   helmclown: "<:clownbase:1114554275226452049>",
-  helmpumkin: "<:helmpumkin:1165658130609360948>",
+  helmpumpkin: "<:helmpumpkin:1165658130609360948>",
   beltgoldwrap: "<:goldwrap:1114554276350525482>",
   iou: "<:iou:1129598838517268531>",
   gold: "<:gold:1097336291189854420>",

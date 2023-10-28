@@ -313,7 +313,7 @@ var Items = {
   HelmPumkin: class HelmPumkin extends Item {
     constructor(id) {
       super(id, Types.Entities.HELMPUMKIN, "helm");
-      this.lootMessage = "You pick up a pumkin helm";
+      this.lootMessage = "You pick up a pumpkin helm";
     }
   },
 
@@ -1062,7 +1062,7 @@ var Items = {
   RingPumkin: class RingPumkin extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGPUMKIN, "ring");
-      this.lootMessage = "You pick up the Special event Pumkin ring";
+      this.lootMessage = "You pick up the Special event Pumpkin ring";
     }
   },
 

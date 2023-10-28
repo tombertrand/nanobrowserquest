@@ -895,7 +895,7 @@ export const kinds = {
   helmimmortal: [Types.Entities.HELMIMMORTAL, "helm", "Immortal Helm", 54, 26],
   helmpaladin: [Types.Entities.HELMPALADIN, "helm", "Paladin Helm", 54, 26],
   helmclown: [Types.Entities.HELMCLOWN, "helm", "Clown Helm", 42, 20],
-  helmpumkin: [Types.Entities.HELMPUMKIN, "helm", "Special Event Pumkin Helm", 42, 20],
+  helmpumkin: [Types.Entities.HELMPUMKIN, "helm", "Special Event Pumpkin Helm", 42, 20],
 
   // kind, type, level, defense
   firefox: [Types.Entities.FIREFOX, "armor"],
@@ -966,7 +966,7 @@ export const kinds = {
   ringnecromancer: [Types.Entities.RINGNECROMANCER, "ring", "Necromancer Death Wish", 38],
   ringraistone: [Types.Entities.RINGRAISTONE, "ring", "Rai Stone", 18],
   ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
-  ringpumkin: [Types.Entities.RINGPUMKIN, "ring", "Special Event Pumkin Ring", 42, 20],
+  ringpumkin: [Types.Entities.RINGPUMKIN, "ring", "Special Event Pumpkin Ring", 42, 20],
   ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Hell Freeze", 36],
   ringbalrog: [Types.Entities.RINGBALROG, "ring", "Ring of Power", 58],
   ringconqueror: [Types.Entities.RINGCONQUEROR, "ring", "Conqueror Ring", 50],

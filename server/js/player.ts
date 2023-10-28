@@ -26,6 +26,7 @@ import {
   EmojiMap,
   postMessageToDiscordChatChannel,
   postMessageToDiscordEventChannel,
+  postMessageToDiscordPayoutsChannel,
   postMessageToModeratorSupportChannel,
 } from "./discord";
 import FormatChecker from "./format";
@@ -1681,7 +1682,7 @@ class Player extends Character {
         if (hash) {
           console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
-          postMessageToDiscordEventChannel(
+          postMessageToDiscordPayoutsChannel(
             `**${self.name}** killed the Skeleton King and received a payout of **${raiPayoutAmount}** ${
               self.network === "nano" ? "XNO" : "BAN"
             } 🎉`,
