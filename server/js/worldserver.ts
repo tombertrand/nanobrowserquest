@@ -2535,7 +2535,7 @@ class World {
 
     if (!isBoss) {
       if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
-        const superUnqueRandom = random(6_500);
+        const superUnqueRandom = random(5_000);
 
         if (superUnqueRandom === 133) {
           return "helmpumkin";

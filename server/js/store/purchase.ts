@@ -83,7 +83,7 @@ class Purchase {
     if (!session) {
       this.error(ERROR_MESSAGES.noSession, payment);
     } else if (payment.amount < session[this.network]) {
-      this.error(ERROR_MESSAGES.wrongAmount, {
+      this.error(`**${session.player.name}** ${ERROR_MESSAGES.wrongAmount}`, {
         [this.network]: session[this.network],
         payment,
         player: session.player.name,
@@ -109,7 +109,7 @@ class Purchase {
   error(error, extra) {
     console.log(error);
 
-    Sentry.captureException(new Error(ERROR_MESSAGES.wrongAmount), {
+    Sentry.captureException(new Error(`**${extra.player}** ${ERROR_MESSAGES.wrongAmount}`), {
       extra,
     });
   }
