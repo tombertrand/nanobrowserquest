@@ -2487,6 +2487,19 @@ class World {
       }
     }
 
+    if (!isBoss) {
+      if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
+        const superUniqueRandom = random(5_000);
+
+        if (superUniqueRandom === 133) {
+          return "helmpumkin";
+        }
+        if (superUniqueRandom === 420) {
+          return "ringpumkin";
+        }
+      }
+    }
+
     if (mob.kind >= Types.Entities.OCULOTHORAX) {
       const superUniqueRandom = random(15_000);
 
@@ -2534,16 +2547,6 @@ class World {
     }
 
     if (!isBoss) {
-      if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
-        const superUnqueRandom = random(5_000);
-
-        if (superUnqueRandom === 133) {
-          return "helmpumkin";
-        }
-        if (superUnqueRandom === 420) {
-          return "ringpumkin";
-        }
-      }
       const runeRandom = attacker.level < 20 ? random(125) : random(250);
       if (runeRandom === 10) {
         return `rune-${getRandomRune(Types.getMobLevel(mob.kind))}`;

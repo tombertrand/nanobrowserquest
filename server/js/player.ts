@@ -671,7 +671,7 @@ class Player extends Character {
             }
 
             if (msg.startsWith("/kick") && msg.length) {
-              const [, playerName] = msg.replace("/kick", "").match(/(.+)/);
+              const playerName = msg.replace("/kick", "");
 
               self.server.disconnectPlayer(playerName.trim(), true);
               self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
