@@ -6840,7 +6840,7 @@ class Game {
             break;
           case "invite":
             if (param) {
-              this.client.sendPartyInvite(param);
+              this.client.sendPartyInvite(String(param));
             } else {
               this.chat_callback({
                 message: "You must specify the player you want to invite to the party",
