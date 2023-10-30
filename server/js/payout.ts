@@ -29,6 +29,7 @@ const getWorkFromService = async hash => {
   });
   const json = await res.json();
 
+
   return json;
 };
 

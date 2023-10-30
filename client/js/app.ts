@@ -1154,8 +1154,11 @@ class App {
         .on("click", e => {
           $(e.currentTarget).addClass("disabled").attr("disabled", "disabled").text("Invite sent");
           const playerName = String($(e.currentTarget).data("party-invite"));
-          this.game.client.sendPartyInvite(playerName);
-          this.game.partyInvitees.push(playerName);
+          // @note what could go wrong?
+          if (playerName) {
+            this.game.client.sendPartyInvite(playerName);
+            this.game.partyInvitees.push(playerName);
+          }
         });
 
       $("#party-players [data-party-remove]")

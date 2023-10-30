@@ -81,10 +81,14 @@ const badWords = [
   "nig",
   "neger",
   "niger",
+  "niggers",
   "nigga",
+  "niggas",
   "niga",
   "fucker",
   "fucked",
+  "fucking",
+  "fucks",
   "fuck you",
   "fuck",
   "sucker",
@@ -1682,10 +1686,14 @@ class Player extends Character {
         if (hash) {
           console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
+
+          const maxPayoutOutput =
+            raiPayoutAmount === maxAmount
+              ? `Completed all ahievements like a BOSS ${EmojiMap.Bebeking} for Max Payout!`
+              : "";
           postMessageToDiscordPayoutsChannel(
-            `**${self.name}** killed the Skeleton King ${EmojiMap["skeletonKing"]} and received a payout of **${raiPayoutAmount}** ${
-              self.network === "nano" ? "XNO" : "BAN"
-            } 🎉`,
+            `**${self.name}** killed the Skeleton King ${EmojiMap["skeletonKing"]} ${maxPayoutOutput}
+            } and received a payout of **${raiPayoutAmount}** ${self.network === "nano" ? "XNO" : "BAN"} 🎉`,
           );
 
           if (isClassicPayout) {
@@ -1814,7 +1822,7 @@ class Player extends Character {
               self.hasObelisk = true;
               self.equipItem({} as any);
 
-              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life ${EmojiMap['obelisk']}`);
+              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life ${EmojiMap["obelisk"]}`);
             }
           });
         }

@@ -16,6 +16,7 @@ import {
   UPGRADE_SLOT_RANGE,
   WAYPOINTS_COUNT,
 } from "../../../shared/js/slots";
+import { StoreItems } from "../../../shared/js/store";
 import {
   ACHIEVEMENT_ANTIDOTE_INDEX,
   ACHIEVEMENT_ARCHMAGE_INDEX,
@@ -671,7 +672,7 @@ class DatabaseHandler {
     } else {
       postMessageToDiscordWelcomeChannel(
         `A new adventurer has just arrived in our realm. **${player.name}** has joined the ranks of **${
-          player.network === "nano" ? ` Nano${EmojiMap["nbq"]}` : ` Banano ${EmojiMap["bbq"]}`
+          player.network === "nano" ? ` Nano ${EmojiMap["nbq"]}` : ` Banano ${EmojiMap["bbq"]}`
         }** 🎉`,
       );
     }
@@ -972,7 +973,7 @@ class DatabaseHandler {
 
           postMessageToDiscordWelcomeChannel(
             `**${player.name}** has joined the ranks of **${
-              player.network === "nano" ? ` Nano${EmojiMap["nbq"]}` : ` Banano ${EmojiMap["bbq"]}`
+              player.network === "nano" ? ` Nano ${EmojiMap["nbq"]}` : ` Banano ${EmojiMap["bbq"]}`
             }** 🎉`,
           );
 
@@ -2709,6 +2710,9 @@ class DatabaseHandler {
 
   settlePurchase({ player, account, amount, hash, id }) {
     try {
+      const soldStoreItem = StoreItems.find(({ id: storeItemId }) => storeItemId === id)!;
+
+      console.log("~~~storeItem", soldStoreItem, id);
       if (id === Types.Store.EXPANSION1) {
         this.unlockExpansion1(player);
         this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
@@ -2765,7 +2769,7 @@ class DatabaseHandler {
       );
 
       postMessageToDiscordPurchaseChannel(
-        `**${player.name}** purchased ${id} for ${amount} using deposit account ${account}`,
+        `**${player.name}** purchased "ID:${id}":"${soldStoreItem.name}" for ${amount} using deposit account ${account}`,
       );
     } catch (err) {
       player.send([

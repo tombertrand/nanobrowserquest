@@ -2489,7 +2489,7 @@ class World {
 
     if (!isBoss) {
       if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
-        const superUniqueRandom = random(5_000);
+        const superUniqueRandom = random(4_000);
 
         if (superUniqueRandom === 133) {
           return "helmpumkin";
@@ -2764,7 +2764,7 @@ class World {
     }
 
     // var randomDrops = ["helmpumkin","ringpumkin"];
-    // var randomDrops = ["ringpumkin"];
+    // var randomDrops = ["ringraistone"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["scrollupgradeelementmagic", "scrollupgradeelementflame", "scrollupgradeelementlightning","scrollupgradeelementcold","scrollupgradeelementpoison","scrollupgradeskillrandom"];
