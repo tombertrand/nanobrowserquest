@@ -263,6 +263,8 @@ export const Types: any = {
     CHESTDEAD: 393,
     CHESTRED: 225,
 
+    // Consumable
+    EXPANSION2VOUCHER: 395, // ~~~last
     // Objects
     FLASK: 35,
     REJUVENATIONPOTION: 110,
@@ -330,7 +332,7 @@ export const Types: any = {
     RINGNECROMANCER: 115,
     RINGRAISTONE: 117,
     RINGFOUNTAIN: 126,
-    RINGPUMKIN: 394, // ~~~last
+    RINGPUMKIN: 394,
     RINGMINOTAUR: 132,
     RINGMYSTICAL: 214,
     RINGBALROG: 194,
@@ -994,6 +996,8 @@ export const kinds = {
   chestpurple: [Types.Entities.CHESTPURPLE, "chest", "Purple Chest", 70],
   chestdead: [Types.Entities.CHESTDEAD, "chest", "Dead Chest", 72],
 
+  expansion2voucher: [Types.Entities.EXPANSION2VOUCHER, "consumable", "Lost Temple Expansion Voucher", 50],
+
   flask: [Types.Entities.FLASK, "object"],
   rejuvenationpotion: [Types.Entities.REJUVENATIONPOTION, "object"],
   poisonpotion: [Types.Entities.POISONPOTION, "object"],
@@ -1630,6 +1634,14 @@ Types.isChest = function (kindOrString: number | string) {
   }
 };
 
+Types.isConsumable = function (kindOrString: number | string) {
+  if (typeof kindOrString === "number") {
+    return [Types.Entities.EXPANSION2VOUCHER].includes(kindOrString);
+  } else if (typeof kindOrString === "string") {
+    return kinds[kindOrString] ? kinds[kindOrString][1] === "consumable" : false;
+  }
+};
+
 Types.isWeapon = function (kindOrString: number | string) {
   if (typeof kindOrString === "number") {
     return kinds.getType(kindOrString) === "weapon";
@@ -1857,7 +1869,8 @@ Types.isQuantity = function (kindOrString: number | string) {
     Types.isChest(kindOrString) ||
     Types.isRune(kindOrString) ||
     Types.isStone(kindOrString) ||
-    Types.isBar(kindOrString)
+    Types.isBar(kindOrString) ||
+    Types.isConsumable(kindOrString)
   );
 };
 
@@ -1889,6 +1902,7 @@ Types.isItem = function (kind: number) {
     Types.isJewel(kind) ||
     Types.isPetItem(kind) ||
     Types.isNotStackableItem(kind) ||
+    Types.isConsumable(kind) ||
     (Types.isObject(kind) && !Types.isStaticChest(kind))
   );
 };
@@ -3096,6 +3110,8 @@ Types.itemDescription = {
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",
   chestred: "The chest may contain a very precious item.",
+  expansion2voucher:
+    "Lost Temple expansion Voucher when consumed in the Anvil the Lost Temple will unlock if you don't already have it.",
   barbronze: "Common metal.",
   barsilver: "Rare metal.",
   bargold: "Precious metal.",

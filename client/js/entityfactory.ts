@@ -60,7 +60,6 @@ EntityFactory.builders[Types.Entities.PET_DEER] = function (id, props) {
   return new Pets.Deer(id, props);
 };
 
-
 EntityFactory.builders[Types.Entities.PET_DRAGON] = function (id, props) {
   return new Pets.Dragon(id, props);
 };
@@ -931,7 +930,6 @@ EntityFactory.builders[Types.Entities.RINGPUMKIN] = function (id) {
   return new Items.RingPumkin(id);
 };
 
-
 EntityFactory.builders[Types.Entities.RINGMINOTAUR] = function (id) {
   return new Items.RingMinotaur(id);
 };
@@ -1028,6 +1026,9 @@ EntityFactory.builders[Types.Entities.CHESTRED] = function (id) {
   return new Items.ChestRed(id);
 };
 
+EntityFactory.builders[Types.Entities.EXPANSION2VOUCHER] = function (id) {
+  return new Items.Expansion2Voucher(id);
+};
 
 EntityFactory.builders[Types.Entities.SCROLLUPGRADELOW] = function (id) {
   return new Items.ScrollUpgradeLow(id);

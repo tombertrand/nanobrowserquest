@@ -2488,7 +2488,7 @@ class World {
     }
 
     if (!isBoss) {
-      if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1730419200000) {
+      if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1699315200000) {
         const superUniqueRandom = random(4_000);
 
         if (superUniqueRandom === 133) {
@@ -2744,19 +2744,19 @@ class World {
     }
 
     if (mob.kind === Types.Entities.MINOTAUR) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained the Minotaur ${EmojiMap["minotaur"]}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained the Minotaur ${EmojiMap.minotaur}`);
     } else if (mob.kind === Types.Entities.COWKING) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained the Cow King ${EmojiMap["cowking"]}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained the Cow King ${EmojiMap.cowking}`);
     } else if (mob.kind === Types.Entities.SPIDERQUEEN) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Arachneia the Spider Queen ${EmojiMap["Arachneia"]}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Arachneia the Spider Queen ${EmojiMap.Arachneia}`);
     } else if (mob.kind === Types.Entities.BUTCHER) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Gorefiend the Butcher ${EmojiMap["butcher"]}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Gorefiend the Butcher ${EmojiMap.butcher}`);
     } else if (mob.kind === Types.Entities.SHAMAN) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Zul'Gurak${EmojiMap["zulgurak"]}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Zul'Gurak${EmojiMap.zulgurak}`);
     } else if (mob.kind === Types.Entities.WORM) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Shai-Hulud ${EmojiMap["shaihulud"]}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Shai-Hulud ${EmojiMap.shaihulud}`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Azrael ${EmojiMap["Azrael"]}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slained Azrael ${EmojiMap.Azrael}`);
     }
 
     if ([Types.Entities.MINOTAUR, Types.Entities.BUTCHER, Types.Entities.DEATHANGEL].includes(mob.kind)) {
@@ -2764,7 +2764,7 @@ class World {
     }
 
     // var randomDrops = ["helmpumkin","ringpumkin"];
-    // var randomDrops = ["ringraistone"];
+    // var randomDrops = ["expansion2voucher"];
     // var randomDrops = ["helmpaladin", "helmimmortal"];
     // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
     // var randomDrops = ["scrollupgradeelementmagic", "scrollupgradeelementflame", "scrollupgradeelementlightning","scrollupgradeelementcold","scrollupgradeelementpoison","scrollupgradeskillrandom"];

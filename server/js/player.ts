@@ -1261,7 +1261,7 @@ class Player extends Character {
               databaseHandler.foundArtifact(self.name, index);
             } else if (Types.Entities.nonLootableKeys.includes(kind)) {
               if (kind === Types.Entities.SKELETONKEY) {
-                postMessageToDiscordEventChannel(`${self.name} picked up the Skeleton Key${EmojiMap["skeletonkey"]} `);
+                postMessageToDiscordEventChannel(`${self.name} picked up the Skeleton Key${EmojiMap.skeletonkey} `);
               }
               // do nothing, its not a valid item
             } else if (kind === Types.Entities.FIREFOXPOTION) {
@@ -1364,7 +1364,7 @@ class Player extends Character {
                   if (runeName) {
                     generatedItem = { item: `rune-${runeName}`, quantity: 1 };
                   }
-                } else if (Types.isQuantity(kind)) {
+                } else if (Types.isQuantity(kind) || Types.isConsumable(kind)) {
                   generatedItem = { item: Types.getKindAsString(kind), quantity: 1 };
                 } else if (Types.isItem(kind)) {
                   const jewelLevel = Types.isJewel(kind) ? item.level : 1;
@@ -1687,13 +1687,17 @@ class Player extends Character {
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
 
           const maxPayoutOutput =
-            raiPayoutAmount === maxAmount
+            raiPayoutAmount === maxAmount || true
               ? `Completed all ahievements like a BOSS ${EmojiMap.Bebeking} for Max Payout!`
               : "";
-          postMessageToDiscordPayoutsChannel(
-            `**${self.name}** killed the Skeleton King ${EmojiMap["skeletonKing"]} ${maxPayoutOutput}
-            } and received a payout of **${raiPayoutAmount}** ${self.network === "nano" ? "XNO" : "BAN"} 🎉`,
-          );
+
+          const messageToPayoutsChannel = `**${self.name}** killed the Skeleton King ${
+            EmojiMap.skeletonKing
+          } ${maxPayoutOutput} and received a payout of **${raiPayoutAmount}** ${
+            self.network === "nano" ? "XNO" : "BAN"
+          } 🎉`;
+          console.log("~!messageToPayoutsChannel", messageToPayoutsChannel);
+          postMessageToDiscordPayoutsChannel(messageToPayoutsChannel);
 
           if (isClassicPayout) {
             self.hash = hash;
@@ -1816,12 +1820,12 @@ class Player extends Character {
               self.hasGrimoire = true;
               self.equipItem({} as any);
 
-              postMessageToDiscordEventChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap["grimoire"]}`);
+              postMessageToDiscordEventChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap.grimoire}`);
             } else if (index === ACHIEVEMENT_OBELISK_INDEX) {
               self.hasObelisk = true;
               self.equipItem({} as any);
 
-              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life ${EmojiMap["obelisk"]}`);
+              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life ${EmojiMap.obelisk}`);
             }
           });
         }

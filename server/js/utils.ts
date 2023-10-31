@@ -496,6 +496,7 @@ export const isValidRecipe = items => {
     chestpurple: ["chestpurple"],
     chestdead: ["chestdead"],
     chestred: ["chestred"],
+    expansion2voucher: ["expansion2voucher"],
     powderquantum: ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred"],
     petegg: ["petegg"],
   };

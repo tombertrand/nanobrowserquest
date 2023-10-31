@@ -672,7 +672,7 @@ class DatabaseHandler {
     } else {
       postMessageToDiscordWelcomeChannel(
         `A new adventurer has just arrived in our realm. **${player.name}** has joined the ranks of **${
-          player.network === "nano" ? ` Nano ${EmojiMap["nbq"]}` : ` Banano ${EmojiMap["bbq"]}`
+          player.network === "nano" ? ` Nano ${EmojiMap.nbq}` : ` Banano ${EmojiMap.bbq}`
         }** 🎉`,
       );
     }
@@ -973,7 +973,7 @@ class DatabaseHandler {
 
           postMessageToDiscordWelcomeChannel(
             `**${player.name}** has joined the ranks of **${
-              player.network === "nano" ? ` Nano ${EmojiMap["nbq"]}` : ` Banano ${EmojiMap["bbq"]}`
+              player.network === "nano" ? ` Nano ${EmojiMap.nbq}` : ` Banano ${EmojiMap.bbq}`
             }** 🎉`,
           );
 
@@ -2198,7 +2198,15 @@ class DatabaseHandler {
 
           if (recipe) {
             isSuccess = true;
-            if (recipe === "cowLevel") {
+            if (recipe === "expansion2voucher") {
+              isSuccess = !player.expansion2;
+
+              if (isSuccess) {
+                isWorkingRecipe = true;
+                this.unlockExpansion2(player);
+                this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+              } 
+            } else if (recipe === "cowLevel") {
               if (!player.server.cowLevelClock) {
                 isWorkingRecipe = true;
                 isRecipe = true;
@@ -2712,14 +2720,19 @@ class DatabaseHandler {
     try {
       const soldStoreItem = StoreItems.find(({ id: storeItemId }) => storeItemId === id)!;
 
-      console.log("~~~storeItem", soldStoreItem, id);
+
       if (id === Types.Store.EXPANSION1) {
         this.unlockExpansion1(player);
         this.lootItems({ player, items: [{ item: "scrollupgradehigh", quantity: 10 }] });
       }
       if (id === Types.Store.EXPANSION2) {
-        this.unlockExpansion2(player);
-        this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+        if (!player.expansion2) {
+          this.unlockExpansion2(player);
+          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+        } else {
+          this.lootItems({ player, items: [{ item: "expansion2voucher", quantity: 1 }] });
+          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+        }
       } else if (id === Types.Store.SCROLLUPGRADEBLESSED) {
         this.lootItems({ player, items: [{ item: "scrollupgradeblessed", quantity: 5 }] });
       } else if (id === Types.Store.SCROLLUPGRADEHIGH) {
@@ -2882,11 +2895,11 @@ class DatabaseHandler {
             } else if (level >= 8 && isSuccess) {
               message = `**${player.name}** upgraded a **+${level}** ${output} ${fire} ${fire} ${fire} ${fire} ${fire}`;
             } else {
-              message = `${EmojiMap["press_f_to_pay_respects"]} **${player.name}** burned a **+${level}** ${output}`;
+              message = `${EmojiMap.press_f_to_pay_respects} **${player.name}** burned a **+${level}** ${output}`;
             }
           }
           if (level === 10 && isSuccess) {
-            message = `${EmojiMap["impossibru"]} ${EmojiMap["impossibru"]}! **${player.name}** upgraded a **+${level}** ${output} ${fire}`;
+            message = `${EmojiMap.impossibru} ${EmojiMap.impossibru}! **${player.name}** BROKE the anvil & upgraded a **+${level}** ${output} ${fire} ${fire}`;
           }
         }
 

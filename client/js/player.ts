@@ -836,7 +836,7 @@ class Player extends Character {
           isWeapon || isHelm || isArmor || isBelt || isCape || isPet || isShield || isRing || isAmulet || isJewel;
         const level = hasLevel ? parseInt(levelOrQuantityOrAmount) : null;
         const isQuantity =
-          Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item) || Types.isBar(item);
+          Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item) || Types.isBar(item) || Types.isConsumable(item);
         const amount =
           !hasLevel && !isQuantity && !Types.isSingle(item) && !Types.isChest(item) && !isPet
             ? parseInt(levelOrQuantityOrAmount)
@@ -889,6 +889,7 @@ class Player extends Character {
 
   setInventory(inventory) {
     this.inventory = this.prepareRawItems(inventory);
+    console.log("~~~~NEW INVentory", this.inventory);
   }
 
   setUpgrade(upgrade) {

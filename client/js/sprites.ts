@@ -498,6 +498,7 @@ const sprites = {
   "item-chestpurple": item,
   "item-chestdead": item,
   "item-chestred": item,
+  "item-expansion2voucher": item,
   "item-scrollupgradelow": item,
   "item-scrollupgrademedium": item,
   "item-scrollupgradehigh": item,

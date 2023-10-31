@@ -841,6 +841,9 @@ class Game {
     });
 
     const isQuantity = Types.isQuantity(item);
+
+    const isConsumable = Types.isConsumable(item);
+
     const isLevelVisible =
       level &&
       !isRune &&
@@ -848,7 +851,8 @@ class Game {
       !isStone &&
       !Types.isSingle(item) &&
       !Types.isNotStackableItem(item) &&
-      !isQuantity;
+      !isQuantity &&
+      !isConsumable;
     const isMerchantVisible = $("#merchant").hasClass("visible");
     let buyOrSell = "";
     if (isMerchantVisible && element) {
@@ -976,7 +980,8 @@ class Game {
       if (
         self.player.upgrade.length >= 2 ||
         (self.player.upgrade.length === 1 &&
-          (Types.isChest(item1) || item1 === "cowkinghorn" || item1 === "petegg" || Types.isWeapon(item1)))
+          (Types.isChest(item1) || item1 === "cowkinghorn" || item1 === "petegg" || Types.isWeapon(item1))) ||
+        Types.isConsumable(item1)
       ) {
         const hasItemInLastSlot = self.player.upgrade.some(({ slot }) => slot === 10);
         if (!self.isUpgradeItemSent && !hasItemInLastSlot) {
@@ -1306,7 +1311,9 @@ class Game {
         const type = kinds[item][1];
 
         if (
-          ["weapon", "helm", "armor", "belt", "cape", "shield", "chest", "ring", "amulet"].includes(type) &&
+          ["weapon", "helm", "armor", "belt", "cape", "shield", "chest", "ring", "amulet", "consumable"].includes(
+            type,
+          ) &&
           $(`.item-${type}`).is(":empty")
         ) {
           $(`.item-${type}`).addClass("item-droppable");
@@ -1717,7 +1724,7 @@ class Game {
     $("#upgrade-item")
       .empty()
       .append(
-        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-pet item-shield item-chest" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
+        `<div class="item-slot item-upgrade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-pet item-shield item-chest item-consumable" data-slot="${UPGRADE_SLOT_RANGE}"></div>`,
       );
     $("#upgrade-result")
       .empty()
@@ -1730,7 +1737,7 @@ class Game {
 
     for (var i = 0; i < 9; i++) {
       $("#trade-player1-item").append(
-        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-pet item-shield item-chest item-scroll item-recipe" data-slot="${
+        `<div class="item-slot item-trade item-weapon item-armor item-ring item-amulet item-belt item-helm item-cape item-pet item-shield item-chest item-scroll item-recipe item-consumable" data-slot="${
           TRADE_SLOT_RANGE + i
         }"></div>`,
       );

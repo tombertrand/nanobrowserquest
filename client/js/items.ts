@@ -1233,6 +1233,13 @@ var Items = {
     }
   },
 
+  Expansion2Voucher: class Expansion2Voucher extends Item {
+    constructor(id) {
+      super(id, Types.Entities.EXPANSION2VOUCHER, "consumable");
+      this.lootMessage = "You pick up the Lost Temple Expansion Voucher ";
+    }
+  },
+
   ScrollUpgradeLow: class ScrollUpgradeLow extends Item {
     constructor(id) {
       super(id, Types.Entities.SCROLLUPGRADELOW, "scroll");

@@ -1,4 +1,5 @@
-type Recipes = "cowLevel" | "minotaurLevel" | ChestType | "powderquantum" | "petegg";
+type Recipes = "cowLevel" | "minotaurLevel" | ChestType | "powderquantum" | "petegg" | Consumable;
+type Consumable = "expansion2voucher";
 type ChatType = "world" | "zone" | "party" | "event" | "info" | "loot";
 type Network = "nano" | "ban";
 type ItemClass = "low" | "medium" | "high" | "legendary";
@@ -9,7 +10,7 @@ type AttackSkills = "flame" | "lightning" | "cold" | "poison";
 type Elements = "magic" | "flame" | "lightning" | "cold" | "poison" | "spectral";
 type Enchant = Elements | "physical" | "stoneskin" | "fast" | "curse-health" | "curse-resistance";
 type SkillElement = "magic" | "flame" | "lightning" | "cold" | "poison";
-type ChestType = "chestblue" | "chestgreen" | "chestpurple"| "chestdead" | "chestred";
+type ChestType = "chestblue" | "chestgreen" | "chestpurple" | "chestdead" | "chestred";
 type Orientation = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type TimedLevel = "cow" | "minotaur" | "stone" | "chalice" | "gateway" | "temple";
 type RunewordEquipment = "weapon" | "armor" | "helm" | "shield";

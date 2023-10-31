@@ -69,10 +69,12 @@ class Store {
       const isLocked =
         (id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1) ||
         (id === Types.Store.EXPANSION2 && !this.app.game.player.expansion2);
-      const isDisabled =
-        !isAvailable ||
-        (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1) ||
-        (id === Types.Store.EXPANSION2 && this.app.game.player.expansion2);
+      const isDisabled = false
+        // !isAvailable ||
+        // (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1)
+        // (id === Types.Store.EXPANSION2 && this.app.game.player.expansion2);
+
+        const isVoucher = id === Types.Store.EXPANSION2 && this.app.game.player.expansion2
       const price = this.app.game.network === "nano" ? nano : ban;
 
       // ${id === Types.Store.EXPANSION1 ? ' <img src="img/common/50-off.png" width="50" height="31">' : ""}
@@ -95,7 +97,7 @@ class Store {
       item.append(
         $("<button/>", {
           class: `btn ${isDisabled ? "disabled" : ""}`,
-          text: isAvailable ? (isDisabled ? "Purchased" : "Purchase") : "Available soon",
+          text: isAvailable ? (isVoucher ? "Purchased, you'll get a voucher" : "Purchase") : "Available soon",
           click: () => {
             if (isDisabled) return;
             this.selectStoreItemPurchase(id);
