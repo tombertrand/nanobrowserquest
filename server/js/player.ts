@@ -71,7 +71,6 @@ const ADMINS = [
   "Dyllux",
   "CelioSevii",
   "xDulfinz",
-  "Bella",
   "bruin",
 ];
 const SUPER_ADMINS = ["running-coder"];
