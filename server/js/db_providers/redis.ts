@@ -2205,7 +2205,8 @@ class DatabaseHandler {
                 isWorkingRecipe = true;
                 this.unlockExpansion2(player);
                 this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
-              } 
+                postMessageToDiscordAnvilChannel(`**${player.name}** consumed Lost Temple Expansion Voucher ${EmojiMap.losttempleexpansionvoucher}`);
+              }
             } else if (recipe === "cowLevel") {
               if (!player.server.cowLevelClock) {
                 isWorkingRecipe = true;
@@ -2719,7 +2720,6 @@ class DatabaseHandler {
   settlePurchase({ player, account, amount, hash, id }) {
     try {
       const soldStoreItem = StoreItems.find(({ id: storeItemId }) => storeItemId === id)!;
-
 
       if (id === Types.Store.EXPANSION1) {
         this.unlockExpansion1(player);

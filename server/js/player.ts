@@ -1687,7 +1687,7 @@ class Player extends Character {
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
 
           const maxPayoutOutput =
-            raiPayoutAmount === maxAmount || true
+            raiPayoutAmount === maxAmount
               ? `Completed all ahievements like a BOSS ${EmojiMap.Bebeking} for Max Payout!`
               : "";
 
