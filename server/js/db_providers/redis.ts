@@ -2205,7 +2205,9 @@ class DatabaseHandler {
                 isWorkingRecipe = true;
                 this.unlockExpansion2(player);
                 this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
-                postMessageToDiscordAnvilChannel(`**${player.name}** consumed Lost Temple Expansion Voucher ${EmojiMap.losttempleexpansionvoucher}`);
+                postMessageToDiscordAnvilChannel(
+                  `**${player.name}** consumed Lost Temple Expansion Voucher ${EmojiMap.losttempleexpansionvoucher}`,
+                );
               }
             } else if (recipe === "cowLevel") {
               if (!player.server.cowLevelClock) {

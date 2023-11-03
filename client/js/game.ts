@@ -238,6 +238,9 @@ class Game {
   admins: string[];
   onSendMoveItemTimeout: NodeJS.Timeout;
 
+  expansion1: boolean;
+  expansion2: boolean;
+
   constructor(app) {
     this.app = app;
     this.ready = false;
@@ -306,6 +309,8 @@ class Game {
     this.weaponEffectAnimation = null;
     this.partyInvites = [];
     this.partyInvitees = [];
+    this.expansion1 = false;
+    this.expansion2 = false;
 
     // Player
     this.player = new Warrior("player", { name: "" });
@@ -863,6 +868,17 @@ class Game {
       }
     }
 
+    const itemName = Types.getDisplayName(item, false);
+    const type = kinds[item][1];
+    const isRing = Types.isRing(item);
+    const isAmulet = Types.isAmulet(item);
+
+    currentSet = _.has(Types.kindAsStringToSet, item) ? Types.kindAsStringToSet[item] : "";
+
+    const setRingOrAmuletDisplay =
+      (isRing || isAmulet || Types.isSuperUnique(item)) && currentSet ? `${_.capitalize(currentSet)} set ` : "";
+    let itemDisplayName = Types.isSuperUnique(item) ? type : itemName;
+
     return `<div class="${bonus.length >= 8 && currentSet && setBonus.length ? "extended" : ""} ${
       isSocketItem ? "socket-item" : "item-tooltip-wrapper main-item"
     }">
@@ -875,9 +891,9 @@ class Game {
           </div>
           ${
             itemClass
-              ? `<div class="item-class">(${isUnique ? "Unique " : ""}${
-                  isRuneword ? "Runeword " : ""
-                }${itemClass} class item)</div>`
+              ? `<div class="item-class">(${isUnique ? `Unique ` : ""}${
+                  isRuneword ? `Runeword ${itemDisplayName}` : ""
+                }${setRingOrAmuletDisplay}${!isRuneword ? itemDisplayName : ""} ${itemClass} class item)</div>`
               : ""
           }
           ${
@@ -1667,6 +1683,46 @@ class Game {
     }
 
     this.updateRequirement();
+  }
+
+  initTeleportContextMenu() {
+    const hasStoneTeleportInInventory = !!this.player.inventory.find(({ item }) => item === "stoneteleport");
+
+    if ($("#party-player-list .player-name").data("contextMenu")) {
+      $("#party-player-list .player-name").contextMenu("destroy");
+    }
+    $("#party-player-list")
+      .off("click")
+      .on("click", event => {
+        $("#foreground").trigger(event);
+      });
+
+    $.contextMenu({
+      selector: "#party-player-list .player-name",
+
+      build: _event => {
+        const playerId = Number($(_event.target).attr("data-player-id"));
+        const playerName = String($(_event.target).text().trim());
+
+        return playerId
+          ? {
+              callback: () => {
+                if (hasStoneTeleportInInventory && !Object.keys(this.player.attackers).length) {
+                  this.client.sendStoneTeleport(playerId);
+                }
+              },
+              items: {
+                player: {
+                  name: hasStoneTeleportInInventory
+                    ? `Teleport to ${playerName}`
+                    : "you don't have Teleport stone in your inventory",
+                  disabled: playerId === this.player.id || !hasStoneTeleportInInventory,
+                },
+              },
+            }
+          : null;
+      },
+    });
   }
 
   updateMerchant() {
@@ -2954,6 +3010,11 @@ class Game {
       var [weapon, weaponLevel, weaponBonus, weaponSocket, attackSkill] = weapon.split(":");
       var [shield, shieldLevel, shieldBonus, shieldSocket, defenseSkill] = (shield || "").split(":");
 
+      self.player.expansion1 =expansion1
+      self.player.expansion2 =expansion2
+      self.storage.setPlayerExpanson1(expansion1);
+      self.storage.setPlayerExpanson2(expansion2);
+      self.storage.setPlayerName(name);
       self.storage.setPlayerName(name);
       self.storage.setPlayerArmor(armor);
       self.storage.setPlayerWeapon(weapon);
@@ -3025,8 +3086,7 @@ class Game {
       self.player.nanoPotions = nanoPotions;
       self.player.gems = gems;
       self.player.artifact = artifact;
-      self.player.expansion1 = expansion1;
-      self.player.expansion2 = expansion2;
+
       self.player.waypoints = waypoints;
       self.player.skeletonKey = !!achievement[26];
       self.cowLevelPortalCoords = cowLevelPortalCoords;
@@ -3053,7 +3113,7 @@ class Game {
       self.app.initNanoPotions();
       self.app.initTradePlayer1StatusButton();
 
-      self.storage.initPlayer(name, account);
+      self.storage.initPlayer(name, account, expansion1, expansion2);
       self.renderer.loadPlayerImage();
 
       if (isHurtByTrap) {
@@ -3232,17 +3292,18 @@ class Game {
       });
 
       self.player.onStopPathing(function ({
-        x,
-        y,
+        x = 0,
+        y = 0,
+        playerId = 0,
         orientation = Types.Orientations.DOWN,
         confirmed,
         isWaypoint,
+        isStoneTeleport = false,
         isTeleportSent = false,
       }) {
         // Start by unregistering the entity at its previous coords
         self.unregisterEntityPosition(self.player);
-
-        if (isWaypoint) {
+        if (isWaypoint || isStoneTeleport) {
           // Make sure the character is paused / halted when entering a waypoint, else the player goes invisible
           self.player.stop();
           self.player.nextStep();
@@ -3264,14 +3325,14 @@ class Game {
         }
 
         const isDoor = !isWaypoint && self.map.isDoor(x, y);
-        if ((!self.player.hasTarget() && isDoor) || isWaypoint) {
+        if ((!self.player.hasTarget() && isDoor) || isWaypoint || isStoneTeleport) {
           // Close all when teleporting
           self.app.hideWindows();
-
-          var dest = isWaypoint ? { x, y, orientation } : self.map.getDoorDestination(x, y);
-          if (!confirmed) {
+          let dest = isWaypoint || isStoneTeleport ? { x, y, orientation } : self.map.getDoorDestination(x, y);
+          if (!confirmed && !isStoneTeleport) {
             if (x === 71 && y === 21 && dest.x === 155 && dest.y === 96 && self.player.level <= 24) {
               self.client.sendBossCheck(false);
+
               return;
             }
 
@@ -3347,7 +3408,11 @@ class Game {
           self.player.idle();
 
           if (!isTeleportSent) {
-            self.client.sendTeleport(dest.x, desty, self.player.orientation);
+            if (isStoneTeleport && !confirmed) {
+              self.client.sendStoneTeleport(playerId);
+            } else {
+              self.client.sendTeleport(dest.x, desty, self.player.orientation);
+            }
           }
 
           if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
@@ -3358,6 +3423,7 @@ class Game {
               self.assignBubbleTo(self.player);
             } else {
               self.camera.focusEntity(self.player);
+
               self.resetZone();
             }
           }
@@ -3386,7 +3452,7 @@ class Game {
             self.renderer.clearScreen(self.renderer.context);
           }
 
-          if (dest.portal || isWaypoint) {
+          if (dest.portal || isWaypoint || isStoneTeleport) {
             self.audioManager.playSound("teleport");
           }
 
@@ -5014,7 +5080,17 @@ class Game {
           }
         }
       });
-
+      self.client.onStoneTeleportCheck(function ({ x, y, confirmed, playerId }) {
+        self.player.stop_pathing_callback({
+          x,
+          y,
+          confirmed,
+          isWaypoint: true,
+          isTeleportSent: true,
+          isStoneTeleport: true,
+          playerId: playerId,
+        });
+      });
       self.client.onBossCheck(function (data) {
         const { status, message, hash, check } = data;
 
@@ -5073,6 +5149,8 @@ class Game {
       self.client.onReceiveInventory(function (data) {
         self.player.setInventory(data);
         self.updateInventory();
+
+        self.initTeleportContextMenu();
       });
 
       self.client.onReceiveMerchantSell(function () {
@@ -7048,7 +7126,6 @@ class Game {
     this.initPathingGrid();
 
     this.initRenderingGrid();
-
     this.player = new Warrior("player", this.username);
     this.player.account = this.account;
 

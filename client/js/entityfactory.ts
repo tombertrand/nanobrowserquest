@@ -1151,6 +1151,10 @@ EntityFactory.builders[Types.Entities.SOULSTONE] = function (id) {
   return new Items.SoulStone(id);
 };
 
+EntityFactory.builders[Types.Entities.STONETELEPORT] = function (id) {
+  return new Items.StoneTeleport(id);
+};
+
 EntityFactory.builders[Types.Entities.NFT] = function (id) {
   return new Items.Nft(id);
 };
@@ -1455,6 +1459,9 @@ EntityFactory.builders[Types.Entities.FOSSIL] = function (id) {
   return new Npcs.Fossil(id);
 };
 
+EntityFactory.builders[Types.Entities.PANELSKELETONKEY] = function (id) {
+  return new Npcs.PanelSkeletonKey(id);
+};
 EntityFactory.builders[Types.Entities.OBELISK] = function (id) {
   return new Npcs.Obelisk(id);
 };

@@ -1,3 +1,4 @@
+import type Game from "../../../client/js/game";
 export const ACHIEVEMENT_NAMES = [
   "A_TRUE_WARRIOR",
   "INTO_THE_WILD",
@@ -104,7 +105,7 @@ export const ACHIEVEMENT_BLACKSMITH_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a =
 export const ACHIEVEMENT_ZAP_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "ZAP");
 export const ACHIEVEMENT_OBELISK_INDEX = ACHIEVEMENT_NAMES.findIndex(a => a === "OBELISK");
 
-export type AchievementName = typeof ACHIEVEMENT_NAMES[number];
+export type AchievementName = (typeof ACHIEVEMENT_NAMES)[number];
 export interface Achievement {
   id: number;
   name: string;

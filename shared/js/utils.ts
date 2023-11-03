@@ -77,3 +77,26 @@ export const getAccountAddressFromText = (text: string) => {
     text.match(new RegExp(`[^sS]*?(${ACCOUNT_REGEX.toString().replace(/\//g, "")})[^sS]*?`, "i")) || [];
   return address;
 };
+
+
+
+export function hasMoreThanPercentCaps(str,percent =80) {
+  let uppercaseCount = 0;
+  let alphabeticCount = 0;
+
+  for (let char of str) {
+    if (char.match(/[A-Za-z]/)) {
+      alphabeticCount++;
+      if (char === char.toUpperCase()) {
+        uppercaseCount++;
+      }
+    }
+  }
+
+  if (alphabeticCount === 0) {
+    return false; // No alphabetic characters, so we return false
+  }
+
+  const uppercasePercentage = (uppercaseCount / alphabeticCount) * 100;
+  return uppercasePercentage > percent;
+}

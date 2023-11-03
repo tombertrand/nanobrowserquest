@@ -69,20 +69,23 @@ class Store {
       const isLocked =
         (id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1) ||
         (id === Types.Store.EXPANSION2 && !this.app.game.player.expansion2);
-      const isDisabled = false
-        // !isAvailable ||
-        // (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1)
-        // (id === Types.Store.EXPANSION2 && this.app.game.player.expansion2);
-
-        const isVoucher = id === Types.Store.EXPANSION2 && this.app.game.player.expansion2
+      const isDisabled = false;
+      // !isAvailable ||
+      // (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1)
+      // (id === Types.Store.EXPANSION2 && this.app.game.player.expansion2);
       const price = this.app.game.network === "nano" ? nano : ban;
+
+
+        const isExpansion2Voucher = id === Types.Store.EXPANSION2 && this.app.game.player.expansion2;
+
+
 
       // ${id === Types.Store.EXPANSION1 ? ' <img src="img/common/50-off.png" width="50" height="31">' : ""}
       const item = $("<div/>", {
         class: `item-wrapper item-name-${icon}`,
         html: `
             <div class="item-icon">
-              <div class="${icon} ${isLocked ? "locked" : "unlocked"}"></div>
+              <div class="${icon} ${isLocked ? "locked" : "unlocked"} ${isExpansion2Voucher? "voucher":""}"></div>
             </div>
             <p class="name">${name}</p>
             ${description ? `<p class="description">${description}</p>` : ""}
@@ -97,7 +100,11 @@ class Store {
       item.append(
         $("<button/>", {
           class: `btn ${isDisabled ? "disabled" : ""}`,
-          text: isAvailable ? (isVoucher ? "Purchased, you'll get a voucher" : "Purchase") : "Available soon",
+          html: isAvailable
+            ? isExpansion2Voucher
+              ? "Purchased for this character,<small>you'll get a tradable voucher if you purchase the expansion again</small>"
+              : "Purchase"
+            : "Available soon",
           click: () => {
             if (isDisabled) return;
             this.selectStoreItemPurchase(id);
@@ -134,11 +141,14 @@ class Store {
       this.isPurchaseSessionCreated = true;
     }
 
+
+    const isExpansion2Voucher = id === Types.Store.EXPANSION2 && this.app.game.player.expansion2;
+
     $("<div/>", {
       class: "item-wrapper",
       html: `
           <div class="item-icon">
-            <div class="${icon} locked"></div>
+            <div class="${icon} locked ${isExpansion2Voucher ? "voucher" : ""}"></div>
           </div>
           <p class="name">${name}</p>
           ${description ? `<p class="description">${description}</p>` : ""}
@@ -219,13 +229,17 @@ class Store {
 
     this.app.game.tryUnlockingAchievement("XNO");
 
+    const isExpansion2Voucher = id === Types.Store.EXPANSION2 && this.app.game.player.expansion2;
+
     $("#store-item-purchase").empty();
     $("<div/>", {
       class: "item-wrapper item-wrapper-full",
       html: `
           <p class="title">Transaction confirmed!</p>
           <div class="item-icon">
-              <div class="${icon} ${isLocked ? "locked" : "unlocked"}"></div>
+              <div class="${icon} ${isLocked ? "locked" : "unlocked"} ${
+        isExpansion2Voucher ? "voucher" : ""
+      }"></div>
           </div>
           <p class="name">${name}</p>
           ${description ? `<p class="description">${description}</p>` : ""}

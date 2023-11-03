@@ -600,7 +600,7 @@ class App {
         const isSelf = this.game.player.name === name;
 
         return `<div>
-      <div class="player-name ${isSelf ? "self" : ""}">
+      <div class="player-name ${isSelf ? "self" : ""}" data-player-id="${id}">
         ${isPartyLeader ? "<span class='party-leader'>[P]</span>" : ""}${name}
       </div>
       <div class="player-health-bar-container">
@@ -612,6 +612,8 @@ class App {
       .join("");
 
     $("#party-player-list").empty().html(partyHtml);
+
+    this.game.initTeleportContextMenu();
   }
 
   updatePartyHealthBar(member: { id: number; hp: number; mHp: number }) {

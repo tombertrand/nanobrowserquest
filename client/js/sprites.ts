@@ -97,7 +97,7 @@ import helmmystical from "../sprites/armor.json";
 import helmimmortal from "../sprites/armor.json";
 import helmpaladin from "../sprites/armor.json";
 import helmclown from "../sprites/armor.json";
-import helmpumkin from "../sprites/armor.json";
+import helmpumkin from "../sprites/armor-high.json";
 import clotharmor from "../sprites/armor.json";
 import leatherarmor from "../sprites/armor.json";
 import mailarmor from "../sprites/armor.json";
@@ -169,6 +169,7 @@ import lever2 from "../sprites/lever.json";
 import lever3 from "../sprites/lever3.json";
 import grimoire from "../sprites/grimoire.json";
 import fossil from "../sprites/fossil.json";
+import panelskeletonkey from "../sprites/panelskeletonkey.json";
 import obelisk from "../sprites/obelisk.json";
 import hands from "../sprites/hands.json";
 import alkor from "../sprites/npc2.json";
@@ -546,6 +547,7 @@ const sprites = {
   "item-cowkinghorn": item,
   "item-chalice": item,
   "item-soulstone": item,
+  "item-stoneteleport": item,
   "item-nft": item,
   "item-wing": item,
   "item-crystal": item,
@@ -711,6 +713,7 @@ const sprites = {
   lever3,
   grimoire,
   fossil,
+  panelskeletonkey,
   obelisk,
   hands,
   alkor,

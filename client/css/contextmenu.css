@@ -4,7 +4,7 @@
   width: auto !important;
 }
 
-.context-menu-list .context-menu-item:first-child {
+.context-menu-list .context-menu-item:first-child:not(.context-menu-disabled) {
   color: #fcda5c;
   text-align: center;
   padding: 0px 10px 4px;

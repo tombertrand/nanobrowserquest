@@ -373,6 +373,14 @@ var Npcs = {
     }
   },
 
+  PanelSkeletonKey: class PanelSkeletonKey extends Npc {
+    constructor(id) {
+      super(id, Types.Entities.PANELSKELETONKEY);
+      this.isFading = false;
+    }
+  },
+
+
   Obelisk: class Obelisk extends Npc {
     constructor(id) {
       super(id, Types.Entities.OBELISK);

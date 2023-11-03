@@ -1,4 +1,5 @@
 import { Achievement, AchievementName } from "../../shared/js/types/achievements";
+import Player from "./player";
 import storage from "./storage";
 
 const NANO_PAYOUT_MULTIPLIER = 10;
@@ -381,10 +382,13 @@ export const getAchievements = (network: Network = "nano"): { [key in Achievemen
       return storage.getRat3Count() >= RAT3_COUNT;
     },
   },
+
   DISCORD: {
     id: 46,
     name: "Discord",
-    desc: "Link your account in Discord<br/><small>Earn 5 legendary upgrade scrolls</small>",
+    desc: `Link your account in Discord<br/><small>Earn 5 ${
+      !storage.getPlayerExpanson1() ? "medium" : storage.getPlayerExpanson2() ? "legendary" : "high"
+    } upgrade scrolls</small>`,
   },
   NFT: {
     id: 47,

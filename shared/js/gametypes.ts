@@ -264,7 +264,7 @@ export const Types: any = {
     CHESTRED: 225,
 
     // Consumable
-    EXPANSION2VOUCHER: 395, // ~~~last
+    EXPANSION2VOUCHER: 395,
     // Objects
     FLASK: 35,
     REJUVENATIONPOTION: 110,
@@ -291,6 +291,7 @@ export const Types: any = {
     COWKINGHORN: 137,
     CHALICE: 245,
     SOULSTONE: 249,
+    STONETELEPORT: 396,
     NFT: 273,
     WING: 274,
     CRYSTAL: 285,
@@ -401,6 +402,7 @@ export const Types: any = {
     LEVER3: 345,
     GRIMOIRE: 268,
     FOSSIL: 283,
+    PANELSKELETONKEY: 397,  // ~~~last
     OBELISK: 312,
     HANDS: 284,
     ALKOR: 260,
@@ -854,7 +856,7 @@ export const kinds = {
   axe: [Types.Entities.AXE, "weapon", "Axe", 2, 5],
   morningstar: [Types.Entities.MORNINGSTAR, "weapon", "Morning Star", 3, 7],
   bluesword: [Types.Entities.BLUESWORD, "weapon", "Magic Sword", 5, 10],
-  redsword: [Types.Entities.REDSWORD, "weapon", "Blazing Sword", 7, 15],
+  redsword: [Types.Entities.REDSWORD, "weapon", "Red Sword", 7, 15],
   goldensword: [Types.Entities.GOLDENSWORD, "weapon", "Golden Sword", 16, 20],
   blueaxe: [Types.Entities.BLUEAXE, "weapon", "Frozen Axe", 18, 24],
   bluemorningstar: [Types.Entities.BLUEMORNINGSTAR, "weapon", "Frozen Morning Star", 20, 26],
@@ -918,7 +920,7 @@ export const kinds = {
   demonarmor: [Types.Entities.DEMONARMOR, "armor", "Demon Armor", 52, 46],
   mysticalarmor: [Types.Entities.MYSTICALARMOR, "armor", "Mystical Armor", 54, 48],
   paladinarmor: [Types.Entities.PALADINARMOR, "armor", "Paladin Armor", 58, 54],
-  immortalarmor: [Types.Entities.IMMORTALARMOR, "armor", "Blood Armor", 58, 54],
+  immortalarmor: [Types.Entities.IMMORTALARMOR, "armor", "Immortal Armor", 58, 54],
 
   // kind, type, level, defense
   beltleather: [Types.Entities.BELTLEATHER, "belt", "Leather Belt", 4, 2],
@@ -975,7 +977,7 @@ export const kinds = {
   ringheaven: [Types.Entities.RINGHEAVEN, "ring", "Touch of Heaven Ring", 50],
   ringwizard: [Types.Entities.RINGWIZARD, "ring", "Wizard Ring", 50],
   ringmystical: [Types.Entities.RINGMYSTICAL, "ring", "Oculus", 54],
-  ringgreed: [Types.Entities.RINGGREED, "ring", "Ring of Greed", 45],
+  ringgreed: [Types.Entities.RINGGREED, "ring", "Ring of Greed", 50],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
@@ -988,7 +990,7 @@ export const kinds = {
   amuletskull: [Types.Entities.AMULETSKULL, "amulet", "White Death", 58],
   amuletdragon: [Types.Entities.AMULETDRAGON, "amulet", "Dragon Eye", 56],
   amuleteye: [Types.Entities.AMULETEYE, "amulet", "All-Seeing Eye", 58],
-  amuletgreed: [Types.Entities.AMULETGREED, "amulet", "Amulet of Greed", 45],
+  amuletgreed: [Types.Entities.AMULETGREED, "amulet", "Amulet of Greed", 50],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 45],
   chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
@@ -1069,6 +1071,7 @@ export const kinds = {
   stonesocketblessed: [Types.Entities.STONESOCKETBLESSED, "stone", "Blesssed Socket Stone", 61],
   stonedragon: [Types.Entities.STONEDRAGON, "stone", "Dragon Stone", 60],
   stonehero: [Types.Entities.STONEHERO, "stone", "Hero Emblem", 65],
+  stoneteleport: [Types.Entities.STONETELEPORT, "stone", "Teleport Stone", 45],
   jewelskull: [Types.Entities.JEWELSKULL, "jewel", "Skull Jewel", 51],
   skeletonkey: [Types.Entities.SKELETONKEY, "object", "Skeleton Key"],
   raiblockstl: [Types.Entities.RAIBLOCKSTL, "object", "Raiblocks artifact"],
@@ -1179,6 +1182,7 @@ export const kinds = {
   lever3: [Types.Entities.LEVER3, "npc"],
   grimoire: [Types.Entities.GRIMOIRE, "npc"],
   fossil: [Types.Entities.FOSSIL, "npc"],
+  panelskeletonkey: [Types.Entities.PANELSKELETONKEY, "npc"],
   obelisk: [Types.Entities.OBELISK, "npc"],
   hands: [Types.Entities.HANDS, "npc"],
   alkor: [Types.Entities.ALKOR, "npc"],
@@ -1588,6 +1592,7 @@ Types.isStone = function (kindOrString: number | string) {
       Types.Entities.STONEDRAGON,
       Types.Entities.STONEHERO,
       Types.Entities.SOULSTONE,
+      Types.Entities.STONETELEPORT,
     ].includes(kindOrString);
   } else {
     return kindOrString?.startsWith("stone") || kindOrString?.startsWith("soulstone");
@@ -2784,7 +2789,7 @@ Types.getItemClassFromBaseLevel = function (level: number, baseLevel: number): I
   } else if (baseLevel < 10) {
     if (!level || level <= 5) {
       itemClass = "medium";
-    } else {
+    } else { 
       itemClass = "high";
     }
   } else if (baseLevel >= 10 && baseLevel < 48) {
@@ -3094,6 +3099,7 @@ Types.itemDescription = {
   cowkinghorn: "The horn of the Cow King. An unknown magic is still being emitted from the remains.",
   chalice: "Return the Golden Chalice, a one-of-a-kind artifact, to its rightful place.",
   soulstone: "This mysterious gem holds the soul of a hundred warriors.",
+  stoneteleport: "This stone allows you to teleport to any party member.",
   nft: "An exceptional Non-Fungible Token artifact, return it to Alkor to get a reward.",
   wing: "The remnants of a dragon's wing.",
   crystal: "An ancient and powerful crystal.",

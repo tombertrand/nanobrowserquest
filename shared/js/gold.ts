@@ -9,7 +9,7 @@ export const merchantItems: { item: string; amount: number }[] = [
   { item: "scrolltransmute", amount: 1500 },
   { item: "scrolltransmutepet", amount: 22_500 },
 
-  undefined,
+  { item: "stoneteleport", amount: 1000 },
   { item: "barbronze", amount: 1050 },
   { item: "barsilver", amount: 10_500 },
   { item: "bargold", amount: 105_000 },
@@ -23,8 +23,6 @@ export const merchantItems: { item: string; amount: number }[] = [
   { item: "scrollupgradeelementcold", amount: 8_000 },
   { item: "scrollupgradeelementpoison", amount: 8_000 },
   { item: "scrollupgradeskillrandom", amount: 15_000 },
-
-
 ];
 
 export const itemGoldMap = {
@@ -34,11 +32,11 @@ export const itemGoldMap = {
   barplatinum: 1_000_000,
 
   scrollupgradeelementmagic: 2_500,
-  scrollupgradeelementflame:2_500,
-  scrollupgradeelementlightning:2_500,
-  scrollupgradeelementcold:2_500,
-  scrollupgradeelementpoison:2_500,
-  scrollupgradeskillrandom:5_000,
+  scrollupgradeelementflame: 2_500,
+  scrollupgradeelementlightning: 2_500,
+  scrollupgradeelementcold: 2_500,
+  scrollupgradeelementpoison: 2_500,
+  scrollupgradeskillrandom: 5_000,
 
   scrollupgradelow: 15,
   scrollupgrademedium: 35,
@@ -55,6 +53,7 @@ export const itemGoldMap = {
   stonesocketblessed: 17_500,
   stonedragon: 10_000,
   stonehero: 25_000,
+  stoneteleport: 200,
 
   ringbronze: 25,
   ringsilver: 35,

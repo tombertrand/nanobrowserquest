@@ -39,8 +39,19 @@ var NpcTalk = {
 
   villager: [
     "Howdy stranger. Do you like poetry?",
-    "Roses are red, bans are yellow...",
-    "I was deep into Terra, that's now out the window",
+    "In the digital realm, a hero strides, Running Coder by name",
+    "A tightrope walk of deadlines, where time's an unyielding flame",
+    "In pixels and algorithms, he fights the bugs' cruel reign",
+    "Defying odds and exploits, never succumbing to pain.",
+
+    "With a keyboard as his weapon and code as his might",
+    "He battles on, day and night, in the relentless fight",
+    "Not just glitches and errors, but physical woes too",
+    "Yet he presses on, resolute, with a spirit so true",
+
+    "For in the heart of this coder, determination finds its space",
+    "Defeating all obstacles, leaving a trail of grace",
+    "Salute to this legend, his strength and sheer might",
   ],
 
   carlosmatos: [
@@ -227,6 +238,7 @@ var NpcTalk = {
     "Many believe that the grimoire is not meant for mortals<br/>and those who try to obtain it will pay a high price.",
   ],
   fossil: ["Here lies the remains of a fallen Bitcoin maximalist.<br/>It shall not rise again."],
+  panelskeletonkey: ["This route will lead you to the Skeleton Key."],
   obelisk: [
     "Legend says that the obelisk holds the secret to immortality.",
     "The runes on the obelisk contain the key to unlocking this secret",
@@ -316,9 +328,9 @@ var NpcTalk = {
   statue2: [""],
 
   coder: [
-    "Hi! Do you know that you can also play Nano BrowserQuest on your tablet or mobile?",
-    "That's the beauty of HTML5!",
-    "Give it a try...",
+   "Hi! Welcome to NanoBrowserQuest",
+   "Make sure you join the Discord server!",
+
   ],
 
   beachnpc: [

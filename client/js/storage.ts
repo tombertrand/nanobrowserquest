@@ -32,6 +32,8 @@ const defaultData = {
     armor: "",
     image: "",
     password: "",
+    expansion1: false,
+    expansion2: false,
   },
   settings: {
     music: true,
@@ -113,15 +115,34 @@ class Storage {
     return this.data.hasAlreadyPlayed;
   }
 
-  initPlayer(name, account) {
+  initPlayer(name, account, expansion1, expansion2) {
     this.data.hasAlreadyPlayed = true;
     this.setPlayerName(name);
     this.setPlayerAccount(account);
+
+    this.setPlayerExpanson1(expansion1);
+    this.setPlayerExpanson2(expansion2);
   }
 
   setPlayerName(name) {
     this.data.player.name = name;
     this.save();
+  }
+
+  setPlayerExpanson1(expansion1) {
+    this.data.player.expansion1 = expansion1;
+    this.save();
+  }
+  setPlayerExpanson2(expansion2) {
+    this.data.player.expansion2 = expansion2;
+    this.save();
+  }
+
+  getPlayerExpanson1() {
+    return this.data.player.expansion1;
+  }
+  getPlayerExpanson2() {
+    return this.data.player.expansion2;
   }
 
   setPlayerAccount(account) {

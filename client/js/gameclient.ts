@@ -54,6 +54,7 @@ class GameClient {
   pvp_callback: any;
   bosscheck_callback: any;
   deathangelcheck_callback: any;
+  stoneteleportcheck_callback: any;
   partycreate_callback: any;
   partyjoin_callback: any;
   partyrefuse_callback: any;
@@ -162,6 +163,7 @@ class GameClient {
     this.handlers[Types.Messages.TRADE] = this.receiveTrade;
     this.handlers[Types.Messages.BOSS_CHECK] = this.receiveBossCheck;
     this.handlers[Types.Messages.DEATHANGEL_CHECK] = this.receiveDeathAngelCheck;
+    this.handlers[Types.Messages.STONETELEPORT_CHECK] = this.receiveStoneTeleportCheck;
     this.handlers[Types.Messages.NOTIFICATION] = this.receiveNotification;
     this.handlers[Types.Messages.INVENTORY] = this.receiveInventory;
     this.handlers[Types.Messages.STASH] = this.receiveStash;
@@ -664,6 +666,11 @@ class GameClient {
     this.deathangelcheck_callback?.(coords);
   }
 
+  receiveStoneTeleportCheck(data) {
+    const params = data[1];
+    this.stoneteleportcheck_callback?.(params);
+  }
+
   receiveNotification(data) {
     this.receivenotification_callback?.(data);
   }
@@ -1103,6 +1110,10 @@ class GameClient {
     this.deathangelcheck_callback = callback;
   }
 
+  onStoneTeleportCheck(callback) {
+    this.stoneteleportcheck_callback = callback;
+  }
+
   onReceiveNotification(callback) {
     this.receivenotification_callback = callback;
   }
@@ -1313,6 +1324,10 @@ class GameClient {
 
   sendTeleport(x, y, orientation) {
     this.sendMessage([Types.Messages.TELEPORT, x, y, orientation]);
+  }
+
+  sendStoneTeleport(playerId) {
+    this.sendMessage([Types.Messages.STONETELEPORT, playerId]);
   }
 
   sendZone() {

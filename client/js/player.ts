@@ -228,6 +228,7 @@ class Player extends Character {
     this.capeHue = hue;
   }
 
+
   setCapeSaturate(saturate: number) {
     this.capeSaturate = saturate;
   }

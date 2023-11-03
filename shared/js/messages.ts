@@ -138,4 +138,7 @@ export const Messages = {
   MOVE_PET: 133,
   HASH: 135,
   MANUAL_BAN_PLAYER: 136,
+
+  STONETELEPORT: 137,
+  STONETELEPORT_CHECK: 138,
 };

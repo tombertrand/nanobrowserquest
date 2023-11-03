@@ -1223,3 +1223,104 @@ export const generateSoulStoneItem = (): { item: string; quantity?: number; uniq
     return _.shuffle(items)[0];
   }
 };
+
+
+export const generateDroppedItem = ()=> {
+  if (process.env.NODE_ENV !=="development"){
+    return
+  }
+    // var randomDrops = ["helmpumkin","ringpumkin"];
+    var randomDrops = ["stoneteleport"];
+    // var randomDrops = ["helmpaladin", "helmimmortal"];
+    // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];
+    // var randomDrops = ["scrollupgradeelementmagic", "scrollupgradeelementflame", "scrollupgradeelementlightning","scrollupgradeelementcold","scrollupgradeelementpoison","scrollupgradeskillrandom"];
+    // var randomDrops = ["scrollupgradeskillrandom"];
+    // var randomDrops = ["petturtle","petfox"];
+    // var randomDrops = ["petfox"];
+
+    // var randomDrops = ["demonaxe", "paladinaxe"];
+    // var randomDrops = ["soulstone"];
+    // var randomDrops = ["iou"];
+    // var randomDrops = ["gold"];
+    // var randomDrops = ["barbronze", "barsilver", "bargold", "barplatinum"];
+    // var randomDrops = ["ringgreed", "amuletgreed"];
+    // var randomDrops = ["jewelskull"];
+    // var randomDrops = ["nft", "wing", "crystal"];
+    // var randomDrops = ["powdergreen"];
+    // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];
+    // var randomDrops = ["amuletdragon", "amuletskull"];
+    // var randomDrops = ["chalice"];
+    // var randomDrops = ["stonehero", "stonedragon", "soulstone"];
+    // var randomDrops = [
+    // "ringnecromancer",
+    // "ringraistone",
+    // "ringfountain",
+    // "ringminotaur",
+    // "ringmystical",
+    // "ringbalrog",
+    // "ringconqueror",
+    // "ringheaven",
+    // "ringwizard",
+    // "amuletcow",
+    // "amuletfrozen",
+    // "amuletdemon",
+    // "amuletmoon",
+    // "amuletstar",
+    // "amuletskull",
+    // "amuletdragon",
+    // ];
+    // var randomDrops = ["immortalarmor", "paladinarmor", "demonarmor"];
+    // var randomDrops = ["necromancerheart", "skeletonkingcage", "wirtleg"];
+    // var randomDrops = [
+    // "rune",
+    // "jewelskull",
+    // "ringplatinum",
+    // "ringconqueror",
+    // "amuletdemon",
+    // "ringmystical",
+    // "amuletmoon",
+    // "ringheaven",
+    // "ringwizard",
+    // "amuletplatinum",
+    // "ringbalrog",
+    // "stonesocket",
+    // "stonesocketblessed",
+    // "scrollupgradelegendary",
+    // "scrollupgradesacred",
+    // "rune-sat",
+    // "rune-al",
+    // "rune-bul",
+    // "rune-nan",
+    // "rune-mir",
+    // "rune-gel",
+    // "rune-do",
+    // "rune-ban",
+    // "rune-vie",
+    // "rune-um",
+    // "rune-hex",
+    // "rune-zal",
+    // "rune-sol",
+    // "rune-eth",
+    // "rune-btc",
+    // "rune-vax",
+    // "rune-por",
+    // "rune-las",
+    // "rune-dur",
+    // "rune-fal",
+    // "rune-kul",
+    // "rune-mer",
+    // "rune-qua",
+    // "rune-gul",
+    // "rune-ber",
+    // "rune-cham",
+    // "rune-tor",
+    // "rune-xno",
+    // "rune-jah",
+    // "rune-shi",
+    // "rune-vod",
+    // ];
+
+    var randomDrop = random(randomDrops.length);
+    const itemName = randomDrops[randomDrop];
+return itemName;
+} 

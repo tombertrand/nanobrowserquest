@@ -11,6 +11,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
+import { hasMoreThanPercentCaps } from "../../shared/js/utils";
 import {
   HASH_BAN_DELAY,
   isValidAccountAddress,
@@ -95,9 +96,11 @@ const badWords = [
   "whore",
   "asshole",
   "bitch",
+  "bitches",
   "fag",
   "faggot",
   "cum",
+  "cummed",
   "hitler",
   "dick",
   "d1ck",
@@ -129,6 +132,10 @@ const badWords = [
   "rape",
   "murder",
   "looser",
+  "slave",
+  "pussy",
+  "bitch",
+  "intercourse",
 ];
 
 export const CHATBAN_PATTERNS_WARNING = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
@@ -573,14 +580,17 @@ class Player extends Character {
           return;
         }
 
+        const hashighPercentCaps = hasMoreThanPercentCaps(msg);
         //@NOTE need to copy"CHATBAN_PATTERNS" for unknown reason else same word passes the seocond time
-        if (CHATBAN_PATTERNS_WARNING.test(msg) || CHATBAN_PATTERNS.test(msg)) {
+        if (CHATBAN_PATTERNS_WARNING.test(msg) || CHATBAN_PATTERNS.test(msg) || hashighPercentCaps) {
           if (!self.isChatbanWarned) {
             postMessageToModeratorSupportChannel(`**${self.name}** was Warned for saying:"**${msg}** "`);
             self.send(
               new Messages.Party(
                 Types.Messages.PARTY_ACTIONS.ERROR,
-                `Watch your languague next time you will be banned from chat saying:"**${msg}** (you've been warned)`,
+                hashighPercentCaps
+                  ? `Don't abuse CAPS:"**${msg}** (you've been warned)`
+                  : `Watch your languague next time you will be banned from chat saying:"**${msg}** (you've been warned)`,
               ).serialize(),
             );
           } else {
@@ -596,7 +606,6 @@ class Player extends Character {
               ).serialize(),
             );
           }
-          console.log("set to true");
           self.isChatbanWarned = true;
           return;
         } else if (msg.includes("@everyone") || msg.includes("@here")) {
@@ -744,14 +753,14 @@ class Player extends Character {
             databaseHandler.banPlayerByIP({
               player: self,
               reason: "cheating",
-              message: `haven't unlocked expension1, invalid position x:${x}, y:${y}`,
+              message: `haven't unlocked expansion1, invalid position x:${x}, y:${y}`,
             });
             return;
           } else if (y >= 540 && !self.expansion2) {
             databaseHandler.banPlayerByIP({
               player: self,
               reason: "cheating",
-              message: `haven't unlocked expension2, invalid position x:${x}, y:${y}`,
+              message: `haven't unlocked expansion2, invalid position x:${x}, y:${y}`,
             });
             return;
           }
@@ -1483,12 +1492,71 @@ class Player extends Character {
             }
           }
         }
-      } else if (action === Types.Messages.TELEPORT) {
+      } else if (action === Types.Messages.TELEPORT || action === Types.Messages.STONETELEPORT) {
         console.info("TELEPORT: " + self.name + "(" + message[1] + ", " + message[2] + ")");
 
-        var x = message[1];
-        var y = message[2];
-        var orientation = message[3];
+        const isStoneTeleport = action === Types.Messages.STONETELEPORT;
+        let x;
+        let y;
+        let orientation = self.orientation;
+
+        if (!isStoneTeleport) {
+          x = message[1];
+          y = message[2];
+          orientation = message[3];
+        }
+        let isIntown = false;
+        let isValidStoneTeleport = true;
+        let isItemConsumed = false;
+        let isNear = false;
+        let playerToTeleportTo;
+        if (isStoneTeleport && self.partyId) {
+          playerToTeleportTo = isStoneTeleport ? self.server.getEntityById(message[1]) : null;
+
+          if (playerToTeleportTo?.partyId === self.partyId) {
+            ({ x, y } = playerToTeleportTo);
+
+            isNear = Math.abs(self.x - x) <= 32 && Math.abs(self.y - y) <= 32;
+            isIntown = x && y ? x >= 1 && x <= 80 && y >= 192 && y <= 257 : false;
+          }
+        }
+
+        if (isStoneTeleport && playerToTeleportTo) {
+          if (isIntown) {
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                `${playerToTeleportTo?.name} is in town Teleport stone was not consumed.`,
+              ).serialize(),
+            );
+            isValidStoneTeleport = false;
+          } else if (isNear) {
+            self.send(
+              new Messages.Party(
+                Types.Messages.PARTY_ACTIONS.ERROR,
+                `${playerToTeleportTo?.name} is within 32 tiles Teleport was not consumed.`,
+              ).serialize(),
+            );
+            isValidStoneTeleport = false;
+          }
+        }
+
+        if (isValidStoneTeleport) {
+          isItemConsumed = await this.databaseHandler.useInventoryItem(self, "stoneteleport");
+        }
+
+        if (isStoneTeleport && playerToTeleportTo) {
+          self.send([
+            Types.Messages.STONETELEPORT_CHECK,
+            {
+              x,
+              y,
+              playerId: playerToTeleportTo?.id,
+              confirmed: true,
+              isValid: isValidStoneTeleport && isItemConsumed,
+            },
+          ]);
+        }
 
         self.orientation = orientation;
 
@@ -1499,7 +1567,6 @@ class Player extends Character {
             return;
           }
         }
-
         if (self.server.isValidPosition(x, y)) {
           if (x === 98 && y === 764) {
             const deathAngelLevel = self.server.getEntityById(self.server.leverDeathAngelNpcId);

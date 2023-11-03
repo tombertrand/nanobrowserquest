@@ -1359,6 +1359,13 @@ var Items = {
     }
   },
 
+  StoneTeleport: class StoneTeleport extends Item {
+    constructor(id) {
+      super(id, Types.Entities.STONETELEPORT, "stone");
+      this.lootMessage = "You pick up a Teleport Stone";
+    }
+  },
+
   StoneDragon: class StoneDragon extends Item {
     constructor(id) {
       super(id, Types.Entities.STONEDRAGON, "stone");

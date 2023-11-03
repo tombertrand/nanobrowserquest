@@ -263,6 +263,7 @@ export const EmojiMap = {
   skeletonkey: "<:skeletonkey:1165062172343271534>",
   powderquantum: "<:quantumpowder:1079106312295694406>",
   soulstone: "<:soulstone:1085735393594462280>",
+  stoneteleport: "<:stoneteleport:1169640770484043888>",
   stonedragon: "<:stonedragon:1085735395372847194>",
   stonehero: "<:stonehero:1085735396715020319>",
   chalice: "<:chalice:1092862164643094591>",
@@ -300,5 +301,6 @@ export const EmojiMap = {
   Bebeking: "<:Bebeking:975777551647649864>",
   press_f_to_pay_respects: "<:press_f_to_pay_respects:1163299391663263844>",
   impossibru: "<:impossibru:1166478382163296387>",
+  losttempleexpansionvoucher: "<:losttempleexpansionvoucher:1169042116895326359>",
   obelisk: "<:obelisk:1167783771534262322>",
 };
