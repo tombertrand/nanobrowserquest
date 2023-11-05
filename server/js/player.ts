@@ -584,12 +584,14 @@ class Player extends Character {
         //@NOTE need to copy"CHATBAN_PATTERNS" for unknown reason else same word passes the seocond time
         if (CHATBAN_PATTERNS_WARNING.test(msg) || CHATBAN_PATTERNS.test(msg) || hashighPercentCaps) {
           if (!self.isChatbanWarned) {
-            postMessageToModeratorSupportChannel(`**${self.name}** was Warned for saying:"**${msg}** "`);
+            postMessageToModeratorSupportChannel(
+              `**${self.name}** was Warned for saying:"**${msg}** ${hashighPercentCaps ? " Don'tabuse CAPS" : ""}"`,
+            );
             self.send(
               new Messages.Party(
                 Types.Messages.PARTY_ACTIONS.ERROR,
                 hashighPercentCaps
-                  ? `Don't abuse CAPS:"**${msg}** (you've been warned)`
+                  ? `${hashighPercentCaps ? "Don't abuse CAPS" : ""}:"**${msg}** (you've been warned)`
                   : `Watch your languague next time you will be banned from chat saying:"**${msg}** (you've been warned)`,
               ).serialize(),
             );
@@ -597,12 +599,12 @@ class Player extends Character {
             self.databaseHandler.chatBan({ player: self, message: msg });
 
             postMessageToModeratorSupportChannel(
-              `**${self.name}** was self-chat banned for saying:**${msg}** Repeated offense"`,
+              `**${self.name}** was self-chat banned for saying${hashighPercentCaps?"too many CAPS":""}:**${msg}** Repeated offense"`,
             );
             self.send(
               new Messages.Party(
                 Types.Messages.PARTY_ACTIONS.ERROR,
-                `You are banned from chat for saying:**${msg}** Repeated offense`,
+                `You are banned from chat for saying${hashighPercentCaps?"too many CAPS":""}:**${msg}** Repeated offense`,
               ).serialize(),
             );
           }
