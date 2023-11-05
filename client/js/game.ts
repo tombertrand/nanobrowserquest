@@ -1686,6 +1686,8 @@ class Game {
   }
 
   initTeleportContextMenu() {
+
+    return;
     const hasStoneTeleportInInventory = !!this.player.inventory.find(({ item }) => item === "stoneteleport");
 
     if ($("#party-player-list .player-name").data("contextMenu")) {
@@ -3010,8 +3012,8 @@ class Game {
       var [weapon, weaponLevel, weaponBonus, weaponSocket, attackSkill] = weapon.split(":");
       var [shield, shieldLevel, shieldBonus, shieldSocket, defenseSkill] = (shield || "").split(":");
 
-      self.player.expansion1 =expansion1
-      self.player.expansion2 =expansion2
+      self.player.expansion1 = expansion1;
+      self.player.expansion2 = expansion2;
       self.storage.setPlayerExpanson1(expansion1);
       self.storage.setPlayerExpanson2(expansion2);
       self.storage.setPlayerName(name);
