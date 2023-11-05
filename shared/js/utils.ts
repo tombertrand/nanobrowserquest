@@ -78,8 +78,14 @@ export const getAccountAddressFromText = (text: string) => {
   return address;
 };
 
-export function hasMoreThanPercentCaps(str, percent = 60) {
-  let uppercaseCount = 0;
+export function hasMoreThanPercentCaps(str, percent = 60, minChar = 5) {
+  
+  
+  if (str.length <= minChar){
+return false;
+  }
+    
+    let uppercaseCount = 0;
   let alphabeticCount = 0;
 
   for (let char of str) {
