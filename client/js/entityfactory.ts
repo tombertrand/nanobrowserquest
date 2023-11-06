@@ -61,6 +61,7 @@ EntityFactory.builders[Types.Entities.PET_DEER] = function (id, props) {
 };
 
 EntityFactory.builders[Types.Entities.PET_DRAGON] = function (id, props) {
+
   return new Pets.Dragon(id, props);
 };
 

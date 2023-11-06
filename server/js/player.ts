@@ -575,12 +575,12 @@ class Player extends Character {
           }
         }
         if (!self.canChat) {
-          self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
+          self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting (repeated offense), to ask for an unban ask on Discord #support channel)`).serialize());
 
           return;
         }
 
-        const hashighPercentCaps = hasMoreThanPercentCaps(msg);
+        const hashighPercentCaps = hasMoreThanPercentCaps({ msg });
         //@NOTE need to copy"CHATBAN_PATTERNS" for unknown reason else same word passes the seocond time
         if (CHATBAN_PATTERNS_WARNING.test(msg) || CHATBAN_PATTERNS.test(msg) || hashighPercentCaps) {
           if (!self.isChatbanWarned) {
@@ -599,12 +599,16 @@ class Player extends Character {
             self.databaseHandler.chatBan({ player: self, message: msg });
 
             postMessageToModeratorSupportChannel(
-              `**${self.name}** was self-chat banned for saying${hashighPercentCaps?"too many CAPS":""}:**${msg}** Repeated offense"`,
+              `**${self.name}** was self-chat banned for saying${
+                hashighPercentCaps ? "too many CAPS" : ""
+              }:**${msg}** Repeated offense"`,
             );
             self.send(
               new Messages.Party(
                 Types.Messages.PARTY_ACTIONS.ERROR,
-                `You are banned from chat for saying${hashighPercentCaps?"too many CAPS":""}:**${msg}** Repeated offense`,
+                `You are banned from chat for saying${
+                  hashighPercentCaps ? "too many CAPS" : ""
+                }:**${msg}** Repeated offense`,
               ).serialize(),
             );
           }
@@ -614,7 +618,7 @@ class Player extends Character {
           self.databaseHandler.chatBan({ player: self, message: msg });
 
           postMessageToModeratorSupportChannel(`**${self.name}** was self-chat banned for saying:"**${msg}**"`);
-          self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting`).serialize());
+          self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting (repeated offense), to ask for an unban ask on Discord #support channel)`).serialize());
           return;
         }
 
@@ -1894,7 +1898,9 @@ class Player extends Character {
               self.hasObelisk = true;
               self.equipItem({} as any);
 
-              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life ${EmojiMap.obelisklarge}`);
+              postMessageToDiscordEventChannel(
+                `${self.name} found the Obelisk of Eternal Life ${EmojiMap.obelisklarge}`,
+              );
             }
           });
         }
@@ -3112,6 +3118,7 @@ class Player extends Character {
 
   equipPet(pet, kind, level, rawBonus, socket, skin) {
     const bonus = toArray(rawBonus);
+
     this.pet = pet;
     this.petKind = kind;
     this.petLevel = toNumber(level);
@@ -3153,7 +3160,7 @@ class Player extends Character {
   }
 
   getEquipment() {
-    return [this.weapon, this.helm, this.armor, this.belt, this.shield, this.ring1, this.ring2, this.amulet];
+    return [this.weapon, this.helm, this.armor, this.belt, this.shield, this.ring1, this.ring2, this.amulet, this.pet];
   }
 
   calculateBonus() {
@@ -3348,7 +3355,7 @@ class Player extends Character {
         this.petEntity = new Pet({
           id: "9" + id,
           type: "pet",
-          kind: petKindToPetMap[kind],
+          kind: petKindToPetMap[this.petKind],
           skin: this.petSkin,
           level: this.petLevel,
           x,
@@ -3886,13 +3893,14 @@ class Player extends Character {
         this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
       }
       if (pet) {
-        const [playerPet, playerPetLevel, playePetBonus, playerPetSockt, playerPetSkin] = pet.split(":");
+        const [playerPet, playerPetLevel, playePetBonus, playerPetSocket, playerPetSkin] = pet.split(":");
+
         this.equipPet(
           playerPet,
           Types.getKindFromString(playerPet),
           playerPetLevel,
           playePetBonus,
-          playerPetSockt,
+          playerPetSocket,
           playerPetSkin,
         );
       }
@@ -3919,6 +3927,17 @@ class Player extends Character {
       if (amulet) {
         const [playerAmulet, playerAmuletLevel, playerAmuletBonus] = amulet.split(":");
         this.equipAmulet(playerAmulet, playerAmuletLevel, playerAmuletBonus);
+      }
+      if (pet) {
+        const [playerPet, playerPetLevel, playerPetBonus, playerPetSocket, playerPetSkin] = pet.split(":");
+        this.equipPet(
+          playerPet,
+          Types.getKindFromString(playerPet),
+          playerPetLevel,
+          playerPetBonus,
+          playerPetSocket,
+          playerPetSkin,
+        );
       }
       this.achievement = achievement;
       this.waypoints = waypoints;
@@ -3974,19 +3993,23 @@ class Player extends Character {
       this.hasCrystal = !!achievement[ACHIEVEMENT_CRYSTAL_INDEX];
 
       if (this.pet) {
+        if (this.petEntity) {
+          this.server.despawn(this.petEntity);
+          this.petEntity = null;
+        }
         const { id } = this;
-        const kind = Types.getKindFromString(this.pet);
 
         this.petEntity = new Pet({
           id: "9" + id,
           type: "pet",
-          kind: petKindToPetMap[kind],
+          kind: petKindToPetMap[this.petKind],
           skin: this.petSkin,
           level: this.petLevel,
           x,
           y,
           ownerId: id,
         });
+
         // this.petEntity.group = this.group;
         // this.petEntity.onMove(this.server.onMobMoveCallback.bind(this));
         this.server.addEntity(this.petEntity);

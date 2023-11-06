@@ -201,7 +201,6 @@ class Sprite {
       ctx.drawImage(this.image, 0, 0, width, height);
       spriteData = ctx.getImageData(0, 0, width, height);
 
-
       var getIndex = function (x, y) {
         return (width * (y - 1) + x - 1) * 4;
       };
@@ -247,16 +246,15 @@ class Sprite {
         );
       };
       // @NOTE do not draw silhouette for large sprites since it creates lag
-      if (spriteData.data.length < 1_000_000){
-
-      for (var i = 0; i < spriteData.data.length; i += 4) {
-        if (isBlankPixel(i) && hasAdjacentPixel(i)) {
-          spriteData.data[i] = spriteData.data[i + 1] = 255;
-          spriteData.data[i + 2] = 150;
-          spriteData.data[i + 3] = 150;
+      if (spriteData.data.length < 1_000_000) {
+        for (var i = 0; i < spriteData.data.length; i += 4) {
+          if (isBlankPixel(i) && hasAdjacentPixel(i)) {
+            spriteData.data[i] = spriteData.data[i + 1] = 255;
+            spriteData.data[i + 2] = 150;
+            spriteData.data[i + 3] = 150;
+          }
         }
       }
-    }
 
       ctx.putImageData(spriteData, 0, 0);
 

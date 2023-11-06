@@ -2801,7 +2801,7 @@ class World {
       // amount = generateRandomBananoAmount(attacker.network);
     }
 
-    itemName = generateDroppedItem() || itemName
+    itemName = generateDroppedItem() || itemName;
 
     return itemName
       ? this.addItem(

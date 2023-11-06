@@ -723,7 +723,6 @@ footer, header, hgroup, menu, nav, section {
     }
     .item-bonus,
     .item-set-bonus {
-        /* font-size:11px; */
         color: #35ee35;
         margin-top:1px;
     }
@@ -732,7 +731,6 @@ footer, header, hgroup, menu, nav, section {
         margin-top:3px;
     }
     .item-set-part {
-        /* font-size:10px; */
         color: #9c9c9c;
         margin-top:1px;
     }
@@ -844,6 +842,7 @@ footer, header, hgroup, menu, nav, section {
         line-height: 1;
         font-size: 0.9em;
     }
+
     #upgrade-scroll, #trade-player1-item, #trade-player2-item {display: flex; flex-wrap: wrap;}
     #trade-info,
     #upgrade-info {

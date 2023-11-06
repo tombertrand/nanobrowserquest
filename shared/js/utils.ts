@@ -78,14 +78,16 @@ export const getAccountAddressFromText = (text: string) => {
   return address;
 };
 
-export function hasMoreThanPercentCaps(str, percent = 60, minChar = 5) {
-  
-  
-  if (str.length <= minChar){
-return false;
+function removeNonAlphabeticalChars(str) {
+  return str.replace(/[^a-zA-Z]/g, '');
+}
+
+export function hasMoreThanPercentCaps({ msg: str, percent = 60, minChar = 10 }) {
+  if (removeNonAlphabeticalChars(str).length <= minChar) {
+    return false;
   }
-    
-    let uppercaseCount = 0;
+
+  let uppercaseCount = 0;
   let alphabeticCount = 0;
 
   for (let char of str) {

@@ -208,29 +208,30 @@ class Renderer {
       ctx.strokeText(text, x, y);
       ctx.fillStyle = color || "white";
       ctx.fillText(text, x, y);
-      
+
       ctx.restore();
     }
   }
   drawAdminBadge(x, y) {
     var ctx = this.context;
-  
-    var svgData = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%239B59B6' d='M 19.487 5.126 L 10.487 0.126 C 10.184 -0.042 9.81798 -0.042 9.51498 0.126 L 0.514977 5.126 C 0.197977 5.302 0.000976562 5.636 0.000976562 5.999 C 0.000976562 6.693 0.114977 22.999 10.001 22.999 C 19.887 22.999 20.001 6.693 20.001 5.999 C 20.001 5.636 19.804 5.302 19.487 5.126 Z M 10.001 5.999 C 11.382 5.999 12.501 7.118 12.501 8.499 C 12.501 9.88 11.382 10.999 10.001 10.999 C 8.61998 10.999 7.50098 9.88 7.50098 8.499 C 7.50098 7.118 8.61998 5.999 10.001 5.999 Z M 6.25098 16 C 6.25098 13.699 7.69998 12.25 10.001 12.25 C 12.302 12.25 13.751 13.699 13.751 16 H 6.25098 Z'/%3E%3C/svg%3E";
-  
+
+    var svgData =
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%239B59B6' d='M 19.487 5.126 L 10.487 0.126 C 10.184 -0.042 9.81798 -0.042 9.51498 0.126 L 0.514977 5.126 C 0.197977 5.302 0.000976562 5.636 0.000976562 5.999 C 0.000976562 6.693 0.114977 22.999 10.001 22.999 C 19.887 22.999 20.001 6.693 20.001 5.999 C 20.001 5.636 19.804 5.302 19.487 5.126 Z M 10.001 5.999 C 11.382 5.999 12.501 7.118 12.501 8.499 C 12.501 9.88 11.382 10.999 10.001 10.999 C 8.61998 10.999 7.50098 9.88 7.50098 8.499 C 7.50098 7.118 8.61998 5.999 10.001 5.999 Z M 6.25098 16 C 6.25098 13.699 7.69998 12.25 10.001 12.25 C 12.302 12.25 13.751 13.699 13.751 16 H 6.25098 Z'/%3E%3C/svg%3E";
+
     const w = 20;
     const h = 20;
-  
+
     // Only create the image if it doesn't already exist
     if (!this.adminBadgeImg) {
       // Create a new image object
       var img = new Image();
       img.src = svgData;
       img.crossOrigin = "Anonymous";
-  
+
       // Ensure the image is loaded before drawing
       img.onload = () => {
         this.adminBadgeImg = img;
-        
+
         // It's important to draw the image after it's loaded
         this.context.save();
         ctx.drawImage(img, x, y, w, h); // Using x and y parameters
@@ -243,7 +244,7 @@ class Renderer {
       this.context.restore();
     }
   }
-  
+
   drawCellRect(x, y, color) {
     this.context.save();
     this.context.lineWidth = 2 * this.scale;
@@ -641,7 +642,7 @@ class Renderer {
   }
 
   drawEntity(entity) {
-    var sprite = entity.sprite,
+     var sprite = entity.sprite,
       shadow = this.game.shadows["small"],
       anim = entity.currentAnimation,
       os = this.upscaledRendering ? 1 : this.scale,
@@ -1298,9 +1299,7 @@ class Renderer {
 
       entityName += entity.name;
 
-
-    const isAdmin = this.game.admins.includes(entity?.name);
-
+      const isAdmin = this.game.admins.includes(entity?.name);
 
       this.drawText(entityName, (entity.x + 8) * this.scale, (entity.y + entity.nameOffsetY) * this.scale, true, color);
       if (isAdmin) {

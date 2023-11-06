@@ -10,6 +10,7 @@ module.exports = Messages;
 Messages.Spawn = class Message {
   constructor(private entity) {}
   serialize() {
+
     return [Types.Messages.SPAWN, this.entity.getState()];
   }
 };
@@ -266,9 +267,9 @@ Messages.Drop = class Message {
 };
 
 Messages.Chat = class Message {
-  constructor(private player, private message, private type,private deductedGold) {}
+  constructor(private player, private message, private type, private deductedGold) {}
   serialize() {
-    return [Types.Messages.CHAT, this.player.id, this.player.name, this.message, this.type,this.deductedGold];
+    return [Types.Messages.CHAT, this.player.id, this.player.name, this.message, this.type, this.deductedGold];
   }
 };
 

@@ -1198,7 +1198,7 @@ export const kinds = {
   doordeathangel: [Types.Entities.DOORDEATHANGEL, "npc"],
 
   getType: function (kind) {
-    // @NOTE maybe add ?.[1]
+
     return kinds[Types.getKindAsString(kind)][1];
   },
   getMobExp: function (kind) {

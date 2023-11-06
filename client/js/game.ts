@@ -746,7 +746,9 @@ class Game {
 
         if (isEquippedItemSlot) {
           currentSet = Types.kindAsStringToSet[item];
+
           const playerItems = self.player.getEquipment();
+
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
             setParts = Types.setItemsNameMap[currentSet].map((description, index) => {
@@ -1686,7 +1688,6 @@ class Game {
   }
 
   initTeleportContextMenu() {
-
     return;
     const hasStoneTeleportInInventory = !!this.player.inventory.find(({ item }) => item === "stoneteleport");
 
@@ -3578,6 +3579,7 @@ class Game {
         const {
           id,
           kind,
+          isPet,
           name,
           x,
           y,
@@ -3601,7 +3603,6 @@ class Game {
 
         let entity = self.getEntityById(id);
         let isEntityExist = !!entity;
-        const isPet = !!ownerId;
 
         if (!isEntityExist) {
           try {
@@ -3611,7 +3612,6 @@ class Game {
               } else {
                 const owner = self.getEntityById(ownerId);
                 const name = ownerId ? `Pet of ${owner?.name}` : "";
-
                 entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, skin, level, bonus });
 
                 if (owner) {

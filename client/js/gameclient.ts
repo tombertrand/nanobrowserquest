@@ -444,7 +444,7 @@ class GameClient {
   }
 
   receiveSpawn(data) {
-    const { id, kind, x, y, orientation } = data[1];
+    const { id, kind, x, y, orientation, isPet } = data[1];
 
     if (Types.isSpell(kind)) {
       const spell = EntityFactory.createEntity({ kind, id });
@@ -454,7 +454,7 @@ class GameClient {
       spell.targetId = targetId;
 
       this.spawn_spell_callback?.(spell, x, y, orientation, originX, originY, element, casterId, targetId, isRaise2);
-    } else if (Types.isItem(kind)) {
+    } else if (Types.isItem(kind) && !isPet) {
       const { mobHateList, partyId, amount } = data[1];
 
       const item = EntityFactory.createEntity({ kind, id });

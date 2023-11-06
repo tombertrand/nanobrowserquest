@@ -5,6 +5,7 @@ class Pet extends Character {
   ownerId: number;
   skin: number;
   level: number;
+  isPet: boolean
   moveCallback: () => void;
   // move_callback: (x: number, y: number) => void;
 
@@ -17,6 +18,7 @@ class Pet extends Character {
     this.poisonedInterval = null;
     this.ownerId = ownerId;
     this.skin = skin;
+    this.isPet = true;
     this.level = level;
   }
 
@@ -24,6 +26,7 @@ class Pet extends Character {
     return Object.assign({}, this._getBaseState(), {
       orientation: this.orientation,
       targetId: this.targetId,
+      isPet: this.isPet,
       resistances: this.resistances || null,
       element: this.element || null,
       enchants: this.enchants || null,

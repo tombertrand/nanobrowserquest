@@ -336,6 +336,7 @@ class Player extends Character {
       this.amuletName,
       this.ring1Name,
       this.ring2Name,
+      this.pet,
     ];
   }
 

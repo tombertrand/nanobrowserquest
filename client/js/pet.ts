@@ -5,6 +5,8 @@ class Pet extends Character {
   ownerId: number;
   level: number;
   skin: number;
+  itemKind:string;
+  isPet:boolean
   idleTimeout: any;
 
   constructor(id: number, kind: number, props) {
@@ -14,6 +16,9 @@ class Pet extends Character {
     this.castRange = null;
     this.type = "pet";
     this.name = "pet";
+    this.isPet = true
+
+    this.itemKind = Types.getKindAsString(kind);
 
     this.idleTimeout = null;
 
@@ -44,6 +49,10 @@ class Pet extends Character {
         this.animate("liedown", this.idleSpeed);
       });
     }, 10000);
+  }
+
+  getSpriteName(skin?: string) {
+    return `${Types.getKindAsString(this.kind)}${skin ? `-${skin}` : ""}`;
   }
 }
 
