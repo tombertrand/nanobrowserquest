@@ -328,9 +328,10 @@ var NpcTalk = {
   statue2: [""],
 
   coder: [
-   "Hi! Welcome to NanoBrowserQuest",
-   "Make sure you join the Discord server!",
-
+    "Hi! Welcome to NanoBrowserQuest",
+    "To engage with other players or report any problems",
+    "list your items for trade or check the release notes",
+    "you are welcome to join the Discord server",
   ],
 
   beachnpc: [

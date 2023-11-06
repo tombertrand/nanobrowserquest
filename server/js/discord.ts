@@ -303,4 +303,5 @@ export const EmojiMap = {
   impossibru: "<:impossibru:1166478382163296387>",
   losttempleexpansionvoucher: "<:losttempleexpansionvoucher:1169042116895326359>",
   obelisk: "<:obelisk:1167783771534262322>",
+  obelisklarge:"<a:obelisklarge:1170758924878741554>"
 };

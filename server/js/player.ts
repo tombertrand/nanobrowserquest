@@ -585,7 +585,7 @@ class Player extends Character {
         if (CHATBAN_PATTERNS_WARNING.test(msg) || CHATBAN_PATTERNS.test(msg) || hashighPercentCaps) {
           if (!self.isChatbanWarned) {
             postMessageToModeratorSupportChannel(
-              `**${self.name}** was Warned for saying:"**${msg}** ${hashighPercentCaps ? " Don'tabuse CAPS" : ""}"`,
+              `**${self.name}** was Warned for saying:"**${msg}** ${hashighPercentCaps ? " Don't abuse CAPS" : ""}"`,
             );
             self.send(
               new Messages.Party(
@@ -1894,7 +1894,7 @@ class Player extends Character {
               self.hasObelisk = true;
               self.equipItem({} as any);
 
-              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life ${EmojiMap.obelisk}`);
+              postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life ${EmojiMap.obelisklarge}`);
             }
           });
         }
