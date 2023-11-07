@@ -51,8 +51,10 @@ class Trade {
         );
         player.setTradeId(undefined);
 
-        // @NOTE If panels gets closed, the items are returned, if the trade is completed the inventory gets refreshed
-        if (!isCompleted) {
+        const isAPlayerNotAccepted = this.players.some(({ isAccepted }) => !isAccepted);
+
+        // @NOTE If panels gets closed and if a player has not accepted, the items are returned, if the trade is completed the inventory gets refreshed
+        if (!isCompleted && isAPlayerNotAccepted) {
           this.server.databaseHandler.moveItemsToInventory(player, "trade");
           this.server.databaseHandler.client.hget("u:" + player.name, "goldTrade", (err, rawGoldTrade) => {
             if (rawGoldTrade && rawGoldTrade !== "0" && /\d+/.test(rawGoldTrade)) {

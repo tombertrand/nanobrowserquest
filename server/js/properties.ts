@@ -777,7 +777,7 @@ var Properties: any = {
   },
   deathangel: {
     drops: {
-      mushrooms: 33,
+      mushrooms: 20,
       scrollupgradelegendary: 38,
       scrollupgradesacred: 2,
       mysticalsword: 5,
@@ -786,6 +786,7 @@ var Properties: any = {
       beltmystical: 5,
       shieldmystical: 5,
       ringmystical: 2,
+      ringbadomen: 1,
     },
     hp: 32_500,
     armor: 36,

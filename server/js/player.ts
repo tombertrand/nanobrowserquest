@@ -2414,6 +2414,7 @@ class Player extends Character {
     const magicFind = [11];
     const attackSpeed = [12];
     const superior = [43];
+    const preventHealthRegen = [33];
 
     // @TODO ~~~ remove once found why it errors out
     try {
@@ -2630,6 +2631,18 @@ class Player extends Character {
           .concat([8, ...highHealthBonus])
           .concat(_.shuffle([7, 11, 12]).slice(0, 1))
           .concat(_.shuffle(resistances).slice(0, 1));
+      } else if (kind === Types.Entities.RINGBADOMEN) {
+        const isElementorElementPercent = random(2);
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 2)
+          .concat(lowerAllResistance)
+          .concat(timeout)
+          .concat(_.shuffle([...extraGold, ...magicFind]).slice(0, 1))
+          .concat(preventHealthRegen)
+          .concat(
+            isElementorElementPercent ? _.shuffle(elementPercentage).slice(0, 1) : _.shuffle(elementDamage).slice(0, 2),
+          )
+          .concat(_.shuffle(resistances).slice(0, 2));
       } else if (kind === Types.Entities.RINGMINOTAUR) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
@@ -3857,9 +3870,16 @@ class Player extends Character {
         return;
       }
 
-      this.canChat = !this.server.chatBan.some(
-        ({ player: playerName, ip }) => playerName === this.name || ip === this.ip,
-      );
+      if (process.env.NODE_ENV === "production") {
+        this.canChat = !this.server.chatBan.some(
+          ({ player: playerName, ip }) => playerName === this.name || (this.ip && ip && ip === this.ip),
+        );
+      } else {
+        this.canChat = !this.server.chatBan.some(
+          ({ player: playerName, ip }) => playerName === this.name || ip === this.ip,
+        );
+      }
+
       this.account = account;
 
       // @NOTE: Leave no trace
