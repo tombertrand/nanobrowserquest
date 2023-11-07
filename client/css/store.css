@@ -14,6 +14,13 @@
   width: 100%;
 }
 
+#store .btn {
+  line-height: 0.85;
+}
+
+#store .btn small {
+  font-size: 0.75em;
+}
 .item-icon {
   border-radius: 4px;
   border: solid 2px #928f8c;
@@ -176,7 +183,7 @@
     background-image: url(../img/3/item-scrollupgrademedium.png);
   }
 
-  #store .expansion1{
+  #store .expansion1 {
     width: 69px;
     height: 69px;
     background-image: url("../img/3/waypoint.png");
@@ -292,35 +299,35 @@
     background-image: url(../img/3/item-scrollupgrademedium.png);
   }
 
-  #store .expansion1{
+  #store .expansion1 {
     width: 46px;
     height: 46px;
     background-image: url("../img/2/waypoint.png");
     margin: 0 auto;
   }
 
-    #store .expansion2 .voucher {
-      width: 46px;
-      height: 46px;
+  #store .expansion2 .voucher {
+    width: 46px;
+    height: 46px;
     background-image: url("../img/2/expansion2voucher.png");
   }
 
-  #store .expansion1.locked{
+  #store .expansion1.locked {
     background-position-x: -46px;
   }
   #store .expansion2.locked {
     width: 46px;
     height: 46px;
-  background-image: url("../img/2/expansion2voucher.png");
+    background-image: url("../img/2/expansion2voucher.png");
   }
 
-  #store .expansion1.unlocked{
-    background-position-x: -46px; }
+  #store .expansion1.unlocked {
+    background-position-x: -46px;
+  }
   #store .expansion2.unlocked {
-   
     width: 46px;
     height: 46px;
-  background-image: url("../img/2/expansion2voucher.png");
+    background-image: url("../img/2/expansion2voucher.png");
   }
 
   #qrcode {

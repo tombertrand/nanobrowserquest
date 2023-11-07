@@ -9,6 +9,7 @@ interface StoreItem extends BackendStoreItem {
   icon: string;
   name: string;
   description: string;
+  thankYouMessage?: string;
   confirmedMessage: string;
   requiresInventorySlot: boolean;
 }
@@ -65,55 +66,57 @@ class Store {
 
     $("#store-item-list").empty();
 
-    this.storeItems.forEach(({ id, icon, name, description, nano, ban, usd, usdRegular, isAvailable }) => {
-      const isLocked =
-        (id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1) ||
-        (id === Types.Store.EXPANSION2 && !this.app.game.player.expansion2);
-      const isDisabled = false;
-      // !isAvailable ||
-      // (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1)
-      // (id === Types.Store.EXPANSION2 && this.app.game.player.expansion2);
-      const price = this.app.game.network === "nano" ? nano : ban;
-
+    this.storeItems.forEach(
+      ({ id, icon, name, description, confirmedMessage, nano, ban, usd, usdRegular, isAvailable }) => {
+        const isLocked =
+          (id === Types.Store.EXPANSION1 && !this.app.game.player.expansion1) ||
+          (id === Types.Store.EXPANSION2 && !this.app.game.player.expansion2);
+        const isDisabled = false;
+        // !isAvailable ||
+        // (id === Types.Store.EXPANSION1 && this.app.game.player.expansion1)
+        // (id === Types.Store.EXPANSION2 && this.app.game.player.expansion2);
+        const price = this.app.game.network === "nano" ? nano : ban;
 
         const isExpansion2Voucher = id === Types.Store.EXPANSION2 && this.app.game.player.expansion2;
 
+        const isExpansion2Purschsed = isExpansion2Voucher && !isLocked;
 
-
-      // ${id === Types.Store.EXPANSION1 ? ' <img src="img/common/50-off.png" width="50" height="31">' : ""}
-      const item = $("<div/>", {
-        class: `item-wrapper item-name-${icon}`,
-        html: `
+        // ${id === Types.Store.EXPANSION1 ? ' <img src="img/common/50-off.png" width="50" height="31">' : ""}
+        const item = $("<div/>", {
+          class: `item-wrapper item-name-${icon}`,
+          html: `
             <div class="item-icon">
-              <div class="${icon} ${isLocked ? "locked" : "unlocked"} ${isExpansion2Voucher? "voucher":""}"></div>
+              <div class="${icon} ${isLocked ? "locked" : "unlocked"} ${isExpansion2Voucher ? "voucher" : ""}"></div>
             </div>
             <p class="name">${name}</p>
-            ${description ? `<p class="description">${description}</p>` : ""}
+            ${description && !isExpansion2Purschsed ? `<p class="description">${description}</p>` : ""}
+            ${isExpansion2Purschsed ? `<p class="description">${confirmedMessage}</p>` : ""}
             <p class="prices">
               ${this.app.getCurrencyPrefix()}${price}${this.app.getCurrencySuffix()}
               <span class="usd"> ≈ $${usd.toFixed(2)}</span>
               ${usdRegular ? `<span class="usd line-through">$${usdRegular.toFixed(2)}</span>` : ""}
             </p>
             `,
-      });
+        });
 
-      item.append(
-        $("<button/>", {
-          class: `btn ${isDisabled ? "disabled" : ""}`,
-          html: isAvailable
-            ? isExpansion2Voucher
-              ? "Purchased for this character,<small>you'll get a tradable voucher if you purchase the expansion again</small>"
-              : "Purchase"
-            : "Available soon",
-          click: () => {
-            if (isDisabled) return;
-            this.selectStoreItemPurchase(id);
-          },
-        }),
-      );
+        item.append(
+          $("<button/>", {
+            class: `btn ${isDisabled ? "disabled" : ""}`,
+            html: isAvailable
+              ? isExpansion2Voucher
+                ? "Purchased for this character, <small>you'll get a tradable voucher if you purchase the expansion again</small>"
+                : "Purchase"
+              : "Available soon",
+            click: () => {
+              if (isDisabled) return;
+              this.selectStoreItemPurchase(id);
+            },
+          }),
+        );
 
-      item.appendTo("#store-item-list");
-    });
+        item.appendTo("#store-item-list");
+      },
+    );
   }
 
   closeStore() {
@@ -140,7 +143,6 @@ class Store {
       this.app.game.client.sendPurchaseCreate(id, this.depositAccount);
       this.isPurchaseSessionCreated = true;
     }
-
 
     const isExpansion2Voucher = id === Types.Store.EXPANSION2 && this.app.game.player.expansion2;
 
@@ -224,7 +226,7 @@ class Store {
 
   purchaseCompleted(payment: any) {
     const item = this.storeItems.find(({ id }) => payment.id === id)!;
-    const { id, icon, name, description, confirmedMessage } = item;
+    const { id, icon, name, description, thankYouMessage, confirmedMessage } = item;
     const isLocked = id !== Types.Store.EXPANSION1 || id !== Types.Store.EXPANSION2;
 
     this.app.game.tryUnlockingAchievement("XNO");
@@ -237,16 +239,14 @@ class Store {
       html: `
           <p class="title">Transaction confirmed!</p>
           <div class="item-icon">
-              <div class="${icon} ${isLocked ? "locked" : "unlocked"} ${
-        isExpansion2Voucher ? "voucher" : ""
-      }"></div>
+              <div class="${icon} ${isLocked ? "locked" : "unlocked"} ${isExpansion2Voucher ? "voucher" : ""}"></div>
           </div>
           <p class="name">${name}</p>
           ${description ? `<p class="description">${description}</p>` : ""}
           <p class="description overflow-text">
             <a href="https://${this.app.game.explorer}.com/block/${payment.hash}" target="_blank">${payment.hash}</a>
           </p>
-          <p class="description">${confirmedMessage}</p>
+          <p class="description">${confirmedMessage}${thankYouMessage || ""}</p>
         `,
     }).appendTo("#store-item-purchase");
   }

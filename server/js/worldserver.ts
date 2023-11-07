@@ -2495,18 +2495,18 @@ class World {
       }
     }
 
-    if (!isBoss) {
-      if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1699315200000) {
-        const superUniqueRandom = random(4_000);
+    // if (!isBoss) {
+    //   if (mob.kind >= Types.Entities.RAT3 && Date.now() < 1699315200000) {
+    //     const superUniqueRandom = random(4_000);
 
-        if (superUniqueRandom === 133) {
-          return "helmpumkin";
-        }
-        if (superUniqueRandom === 420) {
-          return "ringpumkin";
-        }
-      }
-    }
+    //     if (superUniqueRandom === 133) {
+    //       return "helmpumkin";
+    //     }
+    //     if (superUniqueRandom === 420) {
+    //       return "ringpumkin";
+    //     }
+    //   }
+    // }
 
     if (mob.kind >= Types.Entities.OCULOTHORAX) {
       const superUniqueRandom = random(15_000);

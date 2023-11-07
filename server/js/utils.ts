@@ -1229,8 +1229,8 @@ export const generateDroppedItem = () => {
     return;
   }
   // var randomDrops = ["helmpumkin","ringpumkin"];
-  // var randomDrops = ["stoneteleport"];
-  var randomDrops = [ "amuletdragon"];
+  var randomDrops = ["stoneteleport"];
+  // var randomDrops = [ "amuletdragon"];
   // var randomDrops = ["helmdragon", "dragonsword", "dragonarmor", "shielddragon", "amuletdragon"];
   // var randomDrops = ["helmpaladin", "helmimmortal"];
   // var randomDrops = ["scrollupgradesacred", "scrolltransmuteblessed"];

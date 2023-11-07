@@ -136,6 +136,9 @@ const badWords = [
   "pussy",
   "bitch",
   "intercourse",
+  "Deez",
+  "nuts",
+  "nutz",
 ];
 
 export const CHATBAN_PATTERNS_WARNING = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
@@ -575,7 +578,12 @@ class Player extends Character {
           }
         }
         if (!self.canChat) {
-          self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting (repeated offense), to ask for an unban ask on Discord #support channel)`).serialize());
+          self.send(
+            new Messages.Party(
+              Types.Messages.PARTY_ACTIONS.ERROR,
+              `You are banned from chatting (repeated offense), to ask for an unban ask on Discord #support channel)`,
+            ).serialize(),
+          );
 
           return;
         }
@@ -618,7 +626,12 @@ class Player extends Character {
           self.databaseHandler.chatBan({ player: self, message: msg });
 
           postMessageToModeratorSupportChannel(`**${self.name}** was self-chat banned for saying:"**${msg}**"`);
-          self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `You are banned from chatting (repeated offense), to ask for an unban ask on Discord #support channel)`).serialize());
+          self.send(
+            new Messages.Party(
+              Types.Messages.PARTY_ACTIONS.ERROR,
+              `You are banned from chatting (repeated offense), to ask for an unban ask on Discord #support channel)`,
+            ).serialize(),
+          );
           return;
         }
 
@@ -1546,8 +1559,7 @@ class Player extends Character {
             isValidStoneTeleport = false;
           }
         }
-
-        if (isValidStoneTeleport) {
+        if (isStoneTeleport && isValidStoneTeleport) {
           isItemConsumed = await this.databaseHandler.useInventoryItem(self, "stoneteleport");
         }
 

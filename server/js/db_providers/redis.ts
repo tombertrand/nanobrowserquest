@@ -2730,10 +2730,10 @@ class DatabaseHandler {
       if (id === Types.Store.EXPANSION2) {
         if (!player.expansion2) {
           this.unlockExpansion2(player);
-          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 20 }] });
         } else {
           this.lootItems({ player, items: [{ item: "expansion2voucher", quantity: 1 }] });
-          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 20 }] });
         }
       } else if (id === Types.Store.SCROLLUPGRADEBLESSED) {
         this.lootItems({ player, items: [{ item: "scrollupgradeblessed", quantity: 5 }] });
