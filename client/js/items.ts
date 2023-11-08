@@ -1286,7 +1286,7 @@ var Items = {
   ScrollUpgradeElementMagic: class ScrollUpgradeElementMagic extends Item {
     constructor(id) {
       super(id, Types.Entities.SCROLLUPGRADEELEMENTMAGIC, "scroll");
-      this.lootMessage = "You pick up a magic element  upgrade scroll";
+      this.lootMessage = "You pick up a magic element upgrade scroll";
     }
   },
 

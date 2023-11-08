@@ -3162,12 +3162,12 @@ Types.itemDescription = {
   stonehero:
     "You've crushed your enemies, saw them driven before you, and heard the lamentation of their women.<br/>Safely upgrade any item to +6",
 
-  scrollupgradeelementmagic: "enchant a high or legendary weapon with magic spell offensive skill, 99% success",
-  scrollupgradeelementflame: "enchant a high or legendary  weapon with flame spell offensive skill, 99% success",
+  scrollupgradeelementmagic: "Enchant a high or legendary weapon with magic spell offensive skill, 99% success",
+  scrollupgradeelementflame: "Enchant a high or legendary  weapon with flame spell offensive skill, 99% success",
   scrollupgradeelementlightning:
-    "enchant a high or a legendary weapon with lightning spell offensive skill, 99% success",
-  scrollupgradeelementcold: "enchant a high or a legendary weapon with cold spell offensive skill, 99% success",
-  scrollupgradeelementpoison: "enchant a high or a legendary weapon with poison spell offensive skill, 99% success",
+    "Enchant a high or a legendary weapon with lightning spell offensive skill, 99% success",
+  scrollupgradeelementcold: "Enchant a high or a legendary weapon with cold spell offensive skill, 99% success",
+  scrollupgradeelementpoison: "Enchant a high or a legendary weapon with poison spell offensive skill, 99% success",
   scrollupgradeskillrandom:
-    "enchant a  a high or legendary  weapon or shield with a random ability (current ability will be changed or it has a chance to stay unchanged), 99% success",
+    "Enchant a  a high or legendary  weapon or shield with a random ability (current ability will be changed or it has a chance to stay unchanged), 99% success",
 };

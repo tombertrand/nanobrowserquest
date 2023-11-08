@@ -1792,7 +1792,7 @@ class DatabaseHandler {
           postMessageToDiscordModeratorMerchantChannel(
             `**${player.name}** sold ${soldQuantity}x ${fromItem} to merchant for ${amount}${EmojiMap.gold}`,
           );
-        } else if (level >= 7) {
+        } else if (level >= 7 && !soldQuantity) {
           postMessageToDiscordModeratorMerchantChannel(
             `${EmojiMap.press_f_to_pay_respects} **${player.name}** sold ${item} **+${level}** ${fromItem} to merchant`,
           );
