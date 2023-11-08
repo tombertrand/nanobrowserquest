@@ -1077,14 +1077,14 @@ class DatabaseHandler {
   }
 
   sendMoveItem({ player, location, data }) {
-    if (player.sendMoveItemLock) {
-      Sentry.captureException(new Error(`**${player.name}** Calling sendMoveItem while still locked`), {
+    if (player.sendMoveItemLock === location) {
+      Sentry.captureException(new Error(`**${player.name}** Calling sendMoveItem while still locked on ${location}`), {
         extra: { player: player.name },
       });
       return;
     }
 
-    player.sendMoveItemLock = true;
+    player.sendMoveItemLock = location;
     const type = location;
     const isEquipment = [
       "weapon",
@@ -1226,17 +1226,17 @@ class DatabaseHandler {
   moveItem({ player, fromSlot, toSlot, quantity: movedQuantity = 0 }) {
     if (movedQuantity && !validateQuantity(movedQuantity)) return;
     if (fromSlot === toSlot) return;
-    if (player.moveItemLock) {
-      Sentry.captureException(new Error(`**${player.name}** Calling moveItem while still locked`), {
+
+    const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
+    const [toLocation, toRange] = this.getItemLocation(toSlot);
+
+    if (player.moveItemLock === toLocation) {
+      Sentry.captureException(new Error(`**${player.name}** Calling moveItem to: ${toLocation} while still locked`), {
         extra: { player: player.name },
       });
       return;
     }
-
-    player.moveItemLock = true;
-
-    const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
-    const [toLocation, toRange] = this.getItemLocation(toSlot);
+    player.moveItemLock = toLocation;
 
     const isMultipleFrom = ["inventory", "upgrade", "trade", "stash"].includes(fromLocation);
     const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
@@ -1407,10 +1407,14 @@ class DatabaseHandler {
               }
 
               if (isMultipleFrom) {
-                this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
+                this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {
+                  player.moveItemLock = false;
+                });
               }
               if (isMultipleTo) {
-                this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed));
+                this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed), () => {
+                  player.moveItemLock = false;
+                });
               }
 
               this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
@@ -1419,8 +1423,6 @@ class DatabaseHandler {
               console.log(err);
               Sentry.captureException(err);
             }
-
-            player.moveItemLock = false;
           });
         }
       } catch (err) {
