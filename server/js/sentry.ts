@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/node";
 import fs from "fs";
 
-import { postMessageToDiscordModeratorDebugChannelChannel } from "./discord";
+import { postMessageToDiscordModeratorDebugChannel } from "./discord";
 
 Sentry.init({
   dsn: process.env.SENTRY_DNS,
@@ -13,7 +13,7 @@ Sentry.init({
 
     const message = (hint.originalException as Error)?.message || hint.syntheticException?.message
 
-    postMessageToDiscordModeratorDebugChannelChannel(message);
+    postMessageToDiscordModeratorDebugChannel(message);
     return event;
   },
 });

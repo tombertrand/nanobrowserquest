@@ -45,9 +45,9 @@ import {
   EmojiMap,
   postMessageToDiscordAnvilChannel,
   postMessageToDiscordEventChannel,
+  postMessageToDiscordModeratorMerchantChannel,
   postMessageToDiscordPurchaseChannel,
   postMessageToDiscordWelcomeChannel,
-  postMessageToModeratorSupportChannel,
 } from "../discord";
 import Messages from "../message";
 import { CHATBAN_PATTERNS } from "../player";
@@ -1693,7 +1693,7 @@ class DatabaseHandler {
         this.lootItems({ player, items: [{ item, quantity }], toSlot });
 
         if (item === "barplatinum" || quantity > 10 || totalAmount >= 100_000) {
-          postMessageToModeratorSupportChannel(
+          postMessageToDiscordModeratorMerchantChannel(
             `**${player.name}** purchased ${quantity}x ${item} from merchant for ${totalAmount}${EmojiMap.gold}`,
           );
         }
@@ -1784,9 +1784,17 @@ class DatabaseHandler {
         const amount = getGoldAmountFromSoldItem({ item: fromItem, quantity: soldQuantity });
         if (!amount) return;
 
+        // const [item, rawLevel] = fromItem;
+        const [item, rawLevel] = fromItem.split(":");
+        const level = Number(rawLevel);
+
         if (amount >= 50_000) {
-          postMessageToModeratorSupportChannel(
+          postMessageToDiscordModeratorMerchantChannel(
             `**${player.name}** sold ${soldQuantity}x ${fromItem} to merchant for ${amount}${EmojiMap.gold}`,
+          );
+        } else if (level >= 7) {
+          postMessageToDiscordModeratorMerchantChannel(
+            `${EmojiMap.press_f_to_pay_respects} **${player.name}** sold ${item} **+${level}** ${fromItem} to merchant`,
           );
         }
 
@@ -2115,7 +2123,7 @@ class DatabaseHandler {
             this.lootItems({ player, items: [extractedItem] });
           }
           if (socketCount === 6 && isNewSocketItem) {
-            this.logUpgrade({ player, item: socketItem, isSuccess, isLuckySlot });
+            this.logUpgrade({ player, item: socketItem, isSuccess, isLuckySlot, isNewSocketItem });
           }
           upgrade = upgrade.map(() => 0);
           upgrade[upgrade.length - 1] = socketItem;
@@ -2804,12 +2812,14 @@ class DatabaseHandler {
     isSuccess,
     isLuckySlot,
     isRuneword,
+    isNewSocketItem = false,
   }: {
     player: Player;
     item: string;
     isSuccess: boolean;
     isLuckySlot?: boolean;
     isRuneword?: boolean;
+    isNewSocketItem?: boolean;
   }) {
     // const now = Date.now();
     // this.client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
@@ -2888,7 +2898,7 @@ class DatabaseHandler {
               message: "You've forged a runeword!",
             });
           });
-        } else if (socket?.length === 6) {
+        } else if (socket?.length === 6 && level >= 7 && isNewSocketItem) {
           message = `${player.name} added **6 sockets** to a **+${level}** ${output}`;
         } else {
           if (level >= 7) {

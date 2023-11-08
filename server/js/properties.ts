@@ -653,6 +653,7 @@ var Properties: any = {
   butcher: {
     drops: {
       soulstone: 100,
+      // ringbloodband: 1,
     },
     hp: 15_000,
     armor: 36,

@@ -334,7 +334,8 @@ export const Types: any = {
     RINGRAISTONE: 117,
     RINGFOUNTAIN: 126,
     RINGPUMKIN: 394,
-    RINGBADOMEN: 398,// ~~last
+    RINGBADOMEN: 398,
+    RINGBLOODBAND: 399, // ~~last
     RINGMINOTAUR: 132,
     RINGMYSTICAL: 214,
     RINGBALROG: 194,
@@ -702,6 +703,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGFOUNTAIN,
   Types.Entities.RINGPUMKIN,
   Types.Entities.RINGBADOMEN,
+  Types.Entities.RINGBLOODBAND,
   Types.Entities.RINGMINOTAUR,
   Types.Entities.RINGMYSTICAL,
   Types.Entities.RINGBALROG,
@@ -974,6 +976,7 @@ export const kinds = {
   ringfountain: [Types.Entities.RINGFOUNTAIN, "ring", "Fountain of Youth", 26],
   ringpumkin: [Types.Entities.RINGPUMKIN, "ring", "Special Event Pumpkin Ring", 42, 20],
   ringbadomen: [Types.Entities.RINGBADOMEN, "ring", "Bad Omen Ring", 64, 50],
+  ringbloodband: [Types.Entities.RINGBLOODBAND, "ring", "Blood Band Ring", 64, 50],
   ringminotaur: [Types.Entities.RINGMINOTAUR, "ring", "Hell Freeze", 36],
   ringbalrog: [Types.Entities.RINGBALROG, "ring", "Ring of Power", 58],
   ringconqueror: [Types.Entities.RINGCONQUEROR, "ring", "Conqueror Ring", 50],
@@ -1201,7 +1204,6 @@ export const kinds = {
   doordeathangel: [Types.Entities.DOORDEATHANGEL, "npc"],
 
   getType: function (kind) {
-
     return kinds[Types.getKindAsString(kind)][1];
   },
   getMobExp: function (kind) {
@@ -1411,6 +1413,7 @@ Types.isSuperUnique = (itemName: string) =>
     "ringfountain",
     "ringpumkin",
     "ringbadomen",
+    "ringbloodband",
     "ringminotaur",
     "ringmystical",
     "ringbalrog",
@@ -1688,6 +1691,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         Types.Entities.RINGFOUNTAIN,
         Types.Entities.RINGPUMKIN,
         Types.Entities.RINGBADOMEN,
+        Types.Entities.RINGBLOODBAND,
         Types.Entities.RINGMINOTAUR,
         Types.Entities.RINGMYSTICAL,
         Types.Entities.RINGBALROG,
@@ -1720,6 +1724,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         "ringfountain",
         "ringpumkin",
         "ringbadomen",
+        "ringbloodband",
         "ringminotaur",
         "ringmystical",
         "ringbalrog",
@@ -2795,7 +2800,7 @@ Types.getItemClassFromBaseLevel = function (level: number, baseLevel: number): I
   } else if (baseLevel < 10) {
     if (!level || level <= 5) {
       itemClass = "medium";
-    } else { 
+    } else {
       itemClass = "high";
     }
   } else if (baseLevel >= 10 && baseLevel < 48) {

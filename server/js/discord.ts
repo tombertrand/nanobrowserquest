@@ -24,6 +24,8 @@ const ModeratorSupportChannel =
 const ModeratorDebugChannel =
   "https://discord.com/api/webhooks/1157121578807611465/DPTTZrQspuKzO4rpQwOaYpy7HE95nRVIgKQe74MG0bT3QrqqAT_F6vyCgyvTBs7ngweY";
 
+const ModeratorMerchantChannel =
+  "https://discord.com/api/webhooks/1171768576814891028/MzT6FHXBEMwVLl9GrQH5by-bg8nKi4W9m_PG85CAIqDL84ehl5ibQxMiowJ1PdRO7VNA";
 const ModertorTradeChannel =
   "https://discord.com/api/webhooks/1157379165922795662/KGEOmezA84--Kj7NppJPGkdVrPSjZh6KXlNWPMcg-hEwE4vfxxuO4pNq3oqSnPoPpOCW";
 
@@ -129,7 +131,7 @@ export const postMessageToModeratorSupportChannel = (content: string) => {
   }
 };
 
-export const postMessageToDiscordModeratorDebugChannelChannel = (content: string) => {
+export const postMessageToDiscordModeratorDebugChannel = (content: string) => {
   if (isDevelopment) return;
   try {
     const body = JSON.stringify({
@@ -138,6 +140,24 @@ export const postMessageToDiscordModeratorDebugChannelChannel = (content: string
 
     console.log("postcontent", content);
     fetch(ModeratorDebugChannel, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
+
+export const postMessageToDiscordModeratorMerchantChannel = (content: string) => {
+  if (isDevelopment) return;
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    console.log("postcontent", content);
+    fetch(ModeratorMerchantChannel, {
       method: "POST",
       body,
       headers: { "Content-Type": "application/json" },
@@ -244,6 +264,7 @@ export const EmojiMap = {
   ringfountain: "<:ringfountain:1059571073785536512>",
   ringpumkin: "<:ringpumpkin:1167088198749524079>",
   ringbadomen: "<:ringbadomen:1171481372666384394>",
+  ringbloodband: "<:ringbloodband:1171593223626559590>",
   ringminotaur: "<:ringminotaur:1059571075857522803>",
   ringmystical: "<:ringmystical:1059571076608311327>",
   ringbalrog: "<:ringbalrog:1059571071872937984>",
@@ -304,5 +325,5 @@ export const EmojiMap = {
   impossibru: "<:impossibru:1166478382163296387>",
   losttempleexpansionvoucher: "<:losttempleexpansionvoucher:1169042116895326359>",
   obelisk: "<:obelisk:1167783771534262322>",
-  obelisklarge:"<a:obelisklarge:1170758924878741554>"
+  obelisklarge: "<a:obelisklarge:1170758924878741554>",
 };

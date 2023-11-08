@@ -935,6 +935,9 @@ EntityFactory.builders[Types.Entities.RINGBADOMEN] = function (id) {
   return new Items.RingBadOmen(id);
 };
 
+EntityFactory.builders[Types.Entities.RINGBLOODBAND] = function (id) {
+  return new Items.RingBloodBand(id);
+};
 EntityFactory.builders[Types.Entities.RINGMINOTAUR] = function (id) {
   return new Items.RingMinotaur(id);
 };

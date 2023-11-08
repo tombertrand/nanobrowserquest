@@ -1073,6 +1073,14 @@ var Items = {
     }
   },
 
+
+  RingBloodBand: class RingBloodBand extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGBLOODBAND, "ring");
+      this.lootMessage = "You pick up the Blood Band ring";
+    }
+  },
+
   RingMinotaur: class RingMinotaur extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGMINOTAUR, "ring");

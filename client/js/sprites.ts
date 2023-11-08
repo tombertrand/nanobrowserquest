@@ -476,6 +476,7 @@ const sprites = {
   "item-ringfountain": item,
   "item-ringpumkin": item,
   "item-ringbadomen": item,
+  "item-ringbloodband": item,
   "item-ringminotaur": item,
   "item-ringmystical": item,
   "item-ringbalrog": item,
