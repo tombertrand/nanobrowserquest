@@ -1261,6 +1261,7 @@ class DatabaseHandler {
     this.client.hget("u:" + player.name, fromLocation, (_err, fromReply) => {
       let fromItem;
       let toItem;
+      let isConsumable;
       try {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
         fromItem = (isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed) || 0;
@@ -1298,9 +1299,11 @@ class DatabaseHandler {
                 toItem = 0;
               }
 
+              const [fromIsQuantity, rawFromQuantity] = fromItem.split(":");
+              isConsumable = Types.isConsumable(fromIsQuantity);
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
-              if (Types.isQuantity(fromItem)) {
-                const [fromScroll, rawFromQuantity] = fromItem.split(":");
+              if (Types.isQuantity(fromIsQuantity)) {
+                // const [fromScroll, rawFromQuantity] = fromItem.split(":");
                 const fromQuantity = Number(rawFromQuantity);
 
                 // trying to move more than the current quantity
@@ -1310,7 +1313,7 @@ class DatabaseHandler {
                 }
 
                 if (toLocation === "inventory" || toLocation === "stash" || toLocation === "trade") {
-                  let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(`${fromScroll}:`));
+                  let toItemIndex = toReplyParsed.findIndex(a => a && a.startsWith(`${fromIsQuantity}:`));
 
                   if (toItemIndex === -1) {
                     // @Note put the quantity, not found in first available index of toLocation
@@ -1320,12 +1323,12 @@ class DatabaseHandler {
                   if (toItemIndex > -1) {
                     const [, toQuantity = 0] = (toReplyParsed[toItemIndex] || "").split(":");
 
-                    toReplyParsed[toItemIndex] = `${fromScroll}:${
+                    toReplyParsed[toItemIndex] = `${fromIsQuantity}:${
                       parseInt(toQuantity) + parseInt(`${movedQuantity || fromQuantity}`)
                     }`;
 
                     if (movedQuantity && fromQuantity - movedQuantity > 0) {
-                      fromReplyParsed[fromSlot - fromRange] = `${fromScroll}:${fromQuantity - movedQuantity}`;
+                      fromReplyParsed[fromSlot - fromRange] = `${fromIsQuantity}:${fromQuantity - movedQuantity}`;
                     } else {
                       fromReplyParsed[fromSlot - fromRange] = 0;
                     }
@@ -1340,9 +1343,14 @@ class DatabaseHandler {
                     ? toReplyParsed.some((a, i) => i !== 0 && a && (a.startsWith("scroll") || a.startsWith("stone")))
                     : false;
 
-                  if ((isScroll && !hasScroll) || (isRune && !toReplyParsed[toSlot - toRange])) {
-                    fromReplyParsed[fromSlot - fromRange] = fromQuantity > 1 ? `${fromScroll}:${fromQuantity - 1}` : 0;
-                    toReplyParsed[toSlot - toRange] = `${fromScroll}:1`;
+                  if (
+                    (isScroll && !hasScroll) ||
+                    (isRune && !toReplyParsed[toSlot - toRange]) ||
+                    (isConsumable && (fromQuantity || movedQuantity))
+                  ) {
+                    fromReplyParsed[fromSlot - fromRange] =
+                      fromQuantity > 1 ? `${fromIsQuantity}:${fromQuantity - 1}` : 0;
+                    toReplyParsed[toSlot - toRange] = `${fromIsQuantity}:1`;
                   }
 
                   isFromReplyDone = true;
@@ -1919,10 +1927,10 @@ class DatabaseHandler {
 
     this.client.hget("u:" + player.name, "inventory", (_err, rawInvetory) => {
       const availableInventorySlots = JSON.parse(rawInvetory).filter(i => i === 0).length;
-
+      let data;
       this.client.hget("u:" + player.name, panel, (_err, reply) => {
         try {
-          let data = JSON.parse(reply);
+          data = JSON.parse(reply);
           const filteredUpgrade = data.filter(Boolean);
 
           if (filteredUpgrade.length) {
@@ -1964,7 +1972,11 @@ class DatabaseHandler {
           }
         } catch (err) {
           Sentry.captureException(err, {
-            extra: { player: player.name },
+            extra: {
+              player: player.name,
+              availableInventorySlots,
+              filteredUpgrade: data,
+            },
           });
 
           player.moveItemsToInventoryLock = false;
@@ -2210,10 +2222,10 @@ class DatabaseHandler {
             isSuccess = true;
             if (recipe === "expansion2voucher") {
               isSuccess = !player.expansion2;
-
               if (isSuccess) {
                 isWorkingRecipe = true;
                 this.unlockExpansion2(player);
+
                 this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
                 postMessageToDiscordAnvilChannel(
                   `**${player.name}** consumed Lost Temple Expansion Voucher ${EmojiMap.losttempleexpansionvoucher}`,

@@ -308,8 +308,6 @@ export const isValidUpgradeElementItems = items => {
     return false;
   }
 
-  console.log();
-
   let randomNum = randomInt(1, 100);
 
   if (randomNum === 99) {
@@ -324,19 +322,17 @@ export const isValidUpgradeskillrandom = items => {
     return false;
   }
 
-  // const [item, level] = items[0].split(":");
   const [item, level, bonus, socket, skill] = items[0].split(":");
+  const [scroll] = items[1].split(":");
+  const isSkillRandomScroll = Types.isScroll(scroll) && scroll === "scrollupgradeskillrandom";
+  if (!isSkillRandomScroll) {
+    return false;
+  }
+
   const isWeapon = Types.isWeapon(item);
   const isShield = Types.isShield(item);
 
   if ((!isWeapon && !isShield) || !skill) {
-    return false;
-  }
-
-  const [scroll] = items[1].split(":");
-
-  const isSkillRandomScroll = Types.isScroll(scroll) && scroll === "scrollupgradeskillrandom";
-  if (!isSkillRandomScroll) {
     return false;
   }
 
@@ -349,8 +345,6 @@ export const isValidUpgradeskillrandom = items => {
   if (itemClassRank < Types.itemClassRank.high) {
     return false;
   }
-
-  console.log();
 
   let randomNum = randomInt(1, 100);
 
@@ -1228,8 +1222,8 @@ export const generateDroppedItem = () => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
-  // var randomDrops = ["helmpumkin","ringpumkin"];
-  var randomDrops = ["ringbloodband"];
+  var randomDrops = [];
+  // var randomDrops = ["ringbloodband"];
   // var randomDrops = [ "amuletdragon"];
   // var randomDrops = ["helmdragon", "dragonsword", "dragonarmor", "shielddragon", "amuletdragon"];
   // var randomDrops = ["helmpaladin", "helmimmortal"];
@@ -1322,6 +1316,6 @@ export const generateDroppedItem = () => {
   // ];
 
   var randomDrop = random(randomDrops.length);
-  const itemName = randomDrops[randomDrop];
+  const itemName = randomDrops[randomDrop] || null;
   return itemName;
 };

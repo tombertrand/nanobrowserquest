@@ -1812,6 +1812,8 @@ class App {
     if (!$("#upgrade").hasClass("visible")) return;
     $("#upgrade").removeClass("visible");
 
+    $("#upgrade-info").text("").removeClass("warning");
+
     this.closeInventory();
 
     if (this.game.player.upgrade.length) {

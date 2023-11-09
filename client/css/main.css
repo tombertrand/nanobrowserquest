@@ -856,6 +856,10 @@ footer, header, hgroup, menu, nav, section {
         padding: 0 10px;
     }
 
+    #upgrade-info.warning {
+        color: #c6ac45;
+    }
+
     .item-equip-weapon, .item-equip-armor, .item-equip-ring, .item-equip-amulet, .item-equip-belt, .item-equip-helm, .item-equip-cape, .item-equip-pet, .item-equip-shield, .item-delete { position: relative; }
     .item-equip-weapon::before, .item-equip-armor::before, .item-equip-ring::before, .item-equip-amulet::before, .item-equip-belt::before, .item-equip-shield::before, .item-equip-helm::before, .item-equip-cape::before, .item-equip-pet::before, .item-delete::before {
         content: "";

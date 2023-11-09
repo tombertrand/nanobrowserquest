@@ -1899,6 +1899,20 @@ Types.isNotStackableItem = function (kindOrString: number | string) {
   }
 };
 
+Types.isEquipableItem = function (kind: number) {
+  return (
+    Types.isWeapon(kind) ||
+    Types.isHelm(kind) ||
+    Types.isArmor(kind) ||
+    Types.isRing(kind) ||
+    Types.isAmulet(kind) ||
+    Types.isBelt(kind) ||
+    Types.isCape(kind) ||
+    Types.isShield(kind) ||
+    Types.isPetItem(kind)
+  );
+};
+
 Types.isItem = function (kind: number) {
   return (
     Types.isWeapon(kind) ||

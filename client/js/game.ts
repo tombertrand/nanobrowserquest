@@ -1025,10 +1025,10 @@ class Game {
       let isItemUnique;
       let isUpgrade = false;
 
-      self.player.upgrade.forEach(({ item, level, slot, bonus, skill, skin, socket, isUnique }) => {
+      self.player.upgrade.forEach(({ item, level: rawLevel, slot, bonus, skill, skin, socket, isUnique }) => {
         if (slot === 0) {
           itemName = item;
-          itemLevel = level;
+          itemLevel = Number(rawLevel);
           itemBonus = bonus;
           itemSkill = skill;
           itemSkin = skin;
@@ -1038,6 +1038,7 @@ class Game {
           isUpgrade = true;
         }
       });
+      const nextLevel = itemLevel + 1;
 
       if (isUpgrade && itemName && itemLevel) {
         if (previewSlot.is(":empty")) {
@@ -1045,7 +1046,7 @@ class Game {
             self.createItemDiv({
               isUnique: isItemUnique,
               item: itemName,
-              level: parseInt(itemLevel) + 1,
+              level: nextLevel,
               bonus: itemBonus,
               skill: itemSkill,
               skin: itemSkin,
@@ -1986,7 +1987,7 @@ class Game {
     if ($("#inventory").hasClass("visible")) {
       $("#upgrade .item-draggable.ui-draggable").draggable("destroy");
     }
-
+    $("#upgrade-info").text("").removeClass("warning");
     $(".item-upgrade").empty();
     $(".item-upgraded").empty();
 
@@ -2012,14 +2013,19 @@ class Game {
     let uniqueText = "";
     let runeUpgrade = "";
     let rune = "";
-
-    this.player.upgrade.forEach(({ item, level, quantity, slot, bonus, socket, skill, skin, isUnique }) => {
-      if (slot === 0 && level) {
-        itemLevel = level;
+    let nextLevelRequirement;
+    let nextLevel;
+    let warningMessage = "";
+    if (!this.player.upgrade.length) {
+      return;
+    }
+    this.player.upgrade.forEach(({ item, level: rawLevel, quantity, slot, bonus, socket, skill, skin, isUnique }) => {
+      itemLevel = Number(rawLevel);
+      if (slot === 0 && itemLevel) {
         itemName = item;
         itemBonus = bonus;
         const successRates = Types.getUpgradeSuccessRates();
-        successRate = successRates[parseInt(level) - 1];
+        successRate = successRates[itemLevel - 1];
       } else if (slot) {
         if (itemName && item.startsWith("scrolltransmute")) {
           const isBlessed = item.startsWith("scrolltransmuteblessed");
@@ -2036,7 +2042,7 @@ class Game {
           actionText = "transmute";
         } else if (itemLevel && (item.startsWith("scrollupgradeblessed") || item.startsWith("scrollupgradesacred"))) {
           const blessedRates = Types.getBlessedSuccessRateBonus();
-          const blessedRate = blessedRates[parseInt(itemLevel) - 1];
+          const blessedRate = blessedRates[itemLevel - 1];
           successRate += blessedRate;
         } else if (!itemName && Types.isRune(item)) {
           if (rune === "") {
@@ -2052,10 +2058,24 @@ class Game {
           uniqueText = "";
         }
       }
+      if (item && Types.isEquipableItem(item)) {
+        if (itemLevel) {
+          nextLevel = itemLevel + 1;
+          nextLevelRequirement = Types.getItemRequirement(item, nextLevel);
+          if (nextLevelRequirement > this.player.level) {
+            warningMessage = `If upgraded,the item lvl requirement will be ${nextLevelRequirement}, you are lv. ${this.player.level}, you'll not be able to equip it`;
+          }
+        }
+      } else if (this.player.expansion2 && item === "expansion2voucher") {
+        warningMessage = "You've already unlocked the Lost Temple expansion, the voucher will be rejected.";
+      }
+
+      console.log("warningMessage", warningMessage);
+      // }
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")
-        .append(this.createItemDiv({ quantity, isUnique, item, level, bonus, socket, skill, skin }));
+        .append(this.createItemDiv({ quantity, isUnique, item, level: itemLevel, bonus, socket, skill, skin }));
     });
 
     if (rune) {
@@ -2070,13 +2090,17 @@ class Game {
       }
     }
 
-    $("#upgrade-info").html(
-      successRate
-        ? `${successRate}% chance of successful ${actionText}${
-            uniqueText ? `<br />${uniqueText}% chance to be unique` : ""
-          }`
-        : runeUpgrade || "&nbsp;",
-    );
+    $("#upgrade-info")
+      .html(
+        warningMessage
+          ? warningMessage
+          : successRate
+          ? `${successRate}% chance of successful ${actionText}${
+              uniqueText ? `<br />${uniqueText}% chance to be unique` : ""
+            }`
+          : runeUpgrade || "&nbsp;",
+      )
+      .toggleClass("warning", !!warningMessage);
 
     if ($("#upgrade").hasClass("visible")) {
       this.initDraggable();
@@ -5190,7 +5214,8 @@ class Game {
 
         self.isUpgradeItemSent = false;
         self.player.setUpgrade(data);
-        self.updateUpgrade({ luckySlot, isSuccess });
+
+        if (data.length) self.updateUpgrade({ luckySlot, isSuccess });
 
         if (isLucky7) {
           self.tryUnlockingAchievement("LUCKY7");
