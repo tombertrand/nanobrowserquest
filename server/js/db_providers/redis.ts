@@ -45,6 +45,7 @@ import {
   EmojiMap,
   postMessageToDiscordAnvilChannel,
   postMessageToDiscordEventChannel,
+  postMessageToDiscordModeratorDebugChannel,
   postMessageToDiscordModeratorMerchantChannel,
   postMessageToDiscordPurchaseChannel,
   postMessageToDiscordWelcomeChannel,
@@ -650,7 +651,8 @@ class DatabaseHandler {
     if (CHATBAN_PATTERNS.test(player.name)) {
       player.connection.sendUTF8("invalidusername");
       player.connection.close("User does not exist: " + player.name);
-      Sentry.captureException(new Error(`Invalid player name for creation ${player.name}`));
+
+      postMessageToDiscordModeratorDebugChannel(`Invalid player name for creation ${player.name}`);
       return;
     }
 
@@ -1303,7 +1305,6 @@ class DatabaseHandler {
               isConsumable = Types.isConsumable(fromIsQuantity);
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
               if (Types.isQuantity(fromIsQuantity)) {
-                // const [fromScroll, rawFromQuantity] = fromItem.split(":");
                 const fromQuantity = Number(rawFromQuantity);
 
                 // trying to move more than the current quantity
@@ -1429,7 +1430,12 @@ class DatabaseHandler {
               this.sendMoveItem({ player, location: toLocation, data: toReplyParsed });
             } catch (err) {
               console.log(err);
-              Sentry.captureException(err);
+              Sentry.captureException(err, {
+                extra: {
+                  fromItem,
+                  toItem,
+                },
+              });
             }
           });
         }

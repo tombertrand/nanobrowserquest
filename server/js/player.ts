@@ -1413,7 +1413,7 @@ class Player extends Character {
                     player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
                   }
 
-                  if (self.partyId) {
+                  if (self.partyId && player?.name) {
                     self.server.pushToParty(
                       self.getParty(),
                       new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
@@ -1731,7 +1731,7 @@ class Player extends Character {
         let maxAmount;
         let raiPayoutAmount;
 
-        if (isClassicPayout && !self.hasRequestedBossPayout) {
+        if (isClassicPayout && !self.hasRequestedBossPayout && self.network) {
           self.hasRequestedBossPayout = true;
           amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
           maxAmount = getClassicMaxPayout(self.network);
@@ -2416,12 +2416,6 @@ class Player extends Character {
     const superior = [43];
     const preventHealthRegen = [33];
 
-    // @TODO ~~~ remove once found why it errors out
-    try {
-      Types.isArmor(kind);
-    } catch (err) {
-      Sentry.captureException(err, { extra: { kind } });
-    }
 
     if (
       Types.isArmor(kind) ||

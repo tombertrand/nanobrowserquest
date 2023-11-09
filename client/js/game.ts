@@ -2013,7 +2013,12 @@ class Game {
     let uniqueText = "";
     let runeUpgrade = "";
     let rune = "";
+
+    let isJewel = false;
+    let jewelRequirement;
     let nextLevelRequirement;
+
+    let isRune = false;
     let nextLevel;
     let warningMessage = "";
     if (!this.player.upgrade.length) {
@@ -2021,6 +2026,10 @@ class Game {
     }
     this.player.upgrade.forEach(({ item, level: rawLevel, quantity, slot, bonus, socket, skill, skin, isUnique }) => {
       itemLevel = Number(rawLevel);
+      isRune = Types.isRune(item);
+      isJewel = Types.isJewel(item);
+      jewelRequirement = isJewel ? Types.getJewelRequirement(bonus) : null;
+
       if (slot === 0 && itemLevel) {
         itemName = item;
         itemBonus = bonus;
@@ -2066,12 +2075,18 @@ class Game {
             warningMessage = `If upgraded,the item lvl requirement will be ${nextLevelRequirement}, you are lv. ${this.player.level}, you'll not be able to equip it`;
           }
         }
+      } else if (isRune) {
+        const rune = isRune ? Types.getRuneFromItem(item) : null;
+        if (rune && rune.requirement > this.player.level) {
+          warningMessage = `If the rune is placed in an item, lv. requirement will be ${rune.requirement}, you are lv.${this.player.level}, you'll not be able to equip it`;
+        }
+      } else if (isJewel) {
+        if (jewelRequirement > this.player.level) {
+          warningMessage = `If the jewel is placed in an item, lv. requirement will be ${jewelRequirement}, you are lv.${this.player.level}, you'll not be able to equip it`;
+        }
       } else if (this.player.expansion2 && item === "expansion2voucher") {
         warningMessage = "You've already unlocked the Lost Temple expansion, the voucher will be rejected.";
       }
-
-      console.log("warningMessage", warningMessage);
-      // }
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")

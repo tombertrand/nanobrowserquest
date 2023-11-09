@@ -3,6 +3,7 @@ import fetch from "node-fetch";
 
 import { PromiseQueue } from "./promise-queue";
 import { rpc } from "./rpc";
+import { Sentry } from "./sentry";
 
 const queue = new PromiseQueue();
 
@@ -48,9 +49,9 @@ const sendPayout = async ({ account: receiver, amount, network, playerName }) =>
 
     const accountInfo = await rpc("account_info", { account: `${network}_${sender}`, representative: "true" }, network);
 
-    if (accountInfo.error) {
-      throw new Error("Unable to get account_info");
-    }
+    // if (accountInfo.error) {
+    //   throw new Error("Unable to get account_info");
+    // }
 
     let { frontier, representative, balance } = accountInfo;
 
@@ -76,13 +77,6 @@ const sendPayout = async ({ account: receiver, amount, network, playerName }) =>
       network,
     );
 
-    // @TODO add more debug when this error occurs
-
-    // if (blockCreate.error) { new Error(`Unable to block_create for player **${playerName}** on account ${network}_${sender}`)
-
-    // Sentry.captureException(
-    //   (throw new Error(`Unable to block_create for player **${playerName}** on account ${network}_${sender}`), { extra: {blockCreate_error: blockCreate.error } });
-    // blockCreate.error    }
     const process = await rpc(
       "process",
       {
@@ -94,7 +88,14 @@ const sendPayout = async ({ account: receiver, amount, network, playerName }) =>
     );
 
     if (process.error) {
-      throw new Error(`Unable to process block: ${process.error}`);
+      Sentry.captureException(new Error("Unable to process block"), {
+        extra: {
+          network,
+          process,
+          block: blockCreate,
+          player: playerName,
+        },
+      });
     }
 
     hash = process.hash;

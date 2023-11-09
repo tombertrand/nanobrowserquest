@@ -2405,7 +2405,7 @@ class World {
 
           playersToReceiveChests[chestType].push(player.name);
 
-          if (party) {
+          if (party && player?.name) {
             this.pushToParty(
               party,
               new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
