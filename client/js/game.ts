@@ -1987,7 +1987,7 @@ class Game {
     if ($("#inventory").hasClass("visible")) {
       $("#upgrade .item-draggable.ui-draggable").draggable("destroy");
     }
-    $("#upgrade-info").text("").removeClass("warning");
+    // $("#upgrade-info").text("").removeClass("warning");
     $(".item-upgrade").empty();
     $(".item-upgraded").empty();
 
@@ -2025,7 +2025,11 @@ class Game {
       return;
     }
     this.player.upgrade.forEach(({ item, level: rawLevel, quantity, slot, bonus, socket, skill, skin, isUnique }) => {
-      itemLevel = Number(rawLevel);
+      if (slot === 0) {
+        itemLevel = Number(rawLevel);
+        nextLevel = itemLevel + 1;
+      }
+
       isRune = Types.isRune(item);
       isJewel = Types.isJewel(item);
       jewelRequirement = isJewel ? Types.getJewelRequirement(bonus) : null;
@@ -2069,7 +2073,6 @@ class Game {
       }
       if (item && Types.isEquipableItem(item)) {
         if (itemLevel) {
-          nextLevel = itemLevel + 1;
           nextLevelRequirement = Types.getItemRequirement(item, nextLevel);
           if (nextLevelRequirement > this.player.level) {
             warningMessage = `If upgraded,the item lvl requirement will be ${nextLevelRequirement}, you are lv. ${this.player.level}, you'll not be able to equip it`;
@@ -2090,7 +2093,7 @@ class Game {
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")
-        .append(this.createItemDiv({ quantity, isUnique, item, level: itemLevel, bonus, socket, skill, skin }));
+        .append(this.createItemDiv({ quantity, isUnique, item, level: rawLevel, bonus, socket, skill, skin }));
     });
 
     if (rune) {

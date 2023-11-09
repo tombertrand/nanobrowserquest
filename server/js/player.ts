@@ -1277,7 +1277,7 @@ class Player extends Character {
                   });
 
                   postMessageToDiscordEventChannel(
-                    `${soulStonePlayer.name} picked up Soul Stone ${EmojiMap.soulstone} `,
+                    `**${soulStonePlayer.name}** picked up Soul Stone ${EmojiMap.soulstone} `,
                   );
                 }
               }
@@ -1289,7 +1289,7 @@ class Player extends Character {
               databaseHandler.foundArtifact(self.name, index);
             } else if (Types.Entities.nonLootableKeys.includes(kind)) {
               if (kind === Types.Entities.SKELETONKEY) {
-                postMessageToDiscordEventChannel(`${self.name} picked up the Skeleton Key${EmojiMap.skeletonkey} `);
+                postMessageToDiscordEventChannel(`**${self.name}** picked up the Skeleton Key${EmojiMap.skeletonkey} `);
               }
               // do nothing, its not a valid item
             } else if (kind === Types.Entities.FIREFOXPOTION) {
@@ -1424,38 +1424,38 @@ class Player extends Character {
 
                   if (kind === Types.Entities.SCROLLUPGRADEELEMENTMAGIC) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
                   } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTFLAME) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
                   } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTLIGHTNING) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
                   } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTCOLD) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
                   } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTPOISON) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
                   } else if (kind === Types.Entities.SCROLLUPGRADESKILLRANDOM) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
                   }
 
                   if (kind === Types.Entities.STONESOCKETBLESSED) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
                   }
                   if (Types.isSuperUnique(generatedItem.item)) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up ${kinds[generatedItem.item][2]} ${
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${
                         EmojiMap[generatedItem.item] || "💍"
                       } `,
                     );
@@ -1467,31 +1467,31 @@ class Player extends Character {
                     );
                   } else if (kind === Types.Entities.STONEDRAGON) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a Dragon Stone ${EmojiMap.stonedragon} ${EmojiMap.Bebeking}`,
+                      `**${player.name}** picked up a Dragon Stone ${EmojiMap.stonedragon} ${EmojiMap.Bebeking}`,
                     );
                   } else if (kind === Types.Entities.STONEHERO) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a Hero Emblem ${EmojiMap.stonehero} ${EmojiMap.Bebeking}`,
+                      `**${player.name}** picked up a Hero Emblem ${EmojiMap.stonehero} ${EmojiMap.Bebeking}`,
                     );
                   } else if (kind === Types.Entities.CHALICE) {
                     // postMessageToDiscordEventChannel(`${player.name} picked up the Chalice ${EmojiMap.chalice}`);
                   } else if (kind === Types.Entities.SCROLLTRANSMUTEBLESSED) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a Blessed Transmute Scroll ${EmojiMap.scrolltransmuteblessed}`,
+                      `**${player.name}** picked up a Blessed Transmute Scroll ${EmojiMap.scrolltransmuteblessed}`,
                     );
                   } else if (kind === Types.Entities.SCROLLTRANSMUTEPET) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a Pet Transmute Scroll ${EmojiMap.scrolltransmutepet}`,
+                      `**${player.name}** picked up a Pet Transmute Scroll ${EmojiMap.scrolltransmutepet}`,
                     );
                   } else if (kind === Types.Entities.SCROLLUPGRADESACRED) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a Sacred Upgrade Scroll ${EmojiMap.scrollupgradesacred}`,
+                      `**${player.name}** picked up a Sacred Upgrade Scroll ${EmojiMap.scrollupgradesacred}`,
                     );
                   } else if (kind === Types.Entities.BARGOLD) {
-                    postMessageToDiscordEventChannel(`${player.name} picked up a Gold Bar ${EmojiMap.bargold}`);
+                    postMessageToDiscordEventChannel(`**${player.name}** picked up a Gold Bar ${EmojiMap.bargold}`);
                   } else if (kind === Types.Entities.JEWELSKULL && generatedItem.level === 5) {
                     postMessageToDiscordEventChannel(
-                      `${player.name} picked up a ${isUnique ? "**unique** " : ""}lv.5 Skull Jewel ${
+                      `**${player.name}** picked up a ${isUnique ? "**unique** " : ""}lv.5 Skull Jewel ${
                         EmojiMap.jewelskull
                       }`,
                     );
