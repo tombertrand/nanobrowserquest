@@ -1264,6 +1264,7 @@ class DatabaseHandler {
       let fromItem;
       let toItem;
       let isConsumable;
+      let waitForWriteCount = 0;
       try {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
         fromItem = (isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed) || 0;
@@ -1401,6 +1402,7 @@ class DatabaseHandler {
 
               if (!isToReplyDone) {
                 if (isMultipleTo) {
+                  waitForWriteCount += 1;
                   toReplyParsed[toSlot - toRange] = fromItem;
                 } else {
                   toReplyParsed = fromItem;
@@ -1409,6 +1411,7 @@ class DatabaseHandler {
 
               if (!isFromReplyDone) {
                 if (isMultipleFrom) {
+                  waitForWriteCount += 1;
                   fromReplyParsed[fromSlot - fromRange] = toItem || 0;
                 } else {
                   fromReplyParsed = toItem || 0;
@@ -1417,12 +1420,18 @@ class DatabaseHandler {
 
               if (isMultipleFrom) {
                 this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {
-                  player.moveItemLock = false;
+                  waitForWriteCount -= 1;
+                  if (!waitForWriteCount) {
+                    player.moveItemLock = false;
+                  }
                 });
               }
               if (isMultipleTo) {
                 this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed), () => {
-                  player.moveItemLock = false;
+                  waitForWriteCount -= 1;
+                  if (!waitForWriteCount) {
+                    player.moveItemLock = false;
+                  }
                 });
               }
 
@@ -1723,14 +1732,14 @@ class DatabaseHandler {
 
   withdrawFromBank({ player }) {
     return new Promise(resolve => {
-      if (player.moveItemLock) {
+      if (player.withdrawFromBankLock) {
         Sentry.captureException(new Error(`**${player.name}** Calling withdrawFromBank while still locked`), {
           extra: { player: player.name },
         });
         return;
       }
 
-      player.moveItemLock = true;
+      player.withdrawFromBankLock = true;
 
       this.client.hget("u:" + player.name, "inventory", (_err, fromReply) => {
         try {
@@ -1764,6 +1773,8 @@ class DatabaseHandler {
                 amount,
               });
 
+              player.withdrawFromBankLock = false;
+
               postMessageToDiscordEventChannel(
                 `**${player.name}** just exchanged an IOU ${EmojiMap.iou} for **${new Intl.NumberFormat(
                   "en-EN",
@@ -1779,8 +1790,6 @@ class DatabaseHandler {
         } catch (err) {
           Sentry.captureException(err);
         }
-
-        player.moveItemLock = false;
       });
     });
   }
@@ -2368,8 +2377,9 @@ class DatabaseHandler {
         }
 
         player.send([Types.Messages.UPGRADE, upgrade, { luckySlot, isLucky7, isMagic8, isSuccess, recipe }]);
-        this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
-        player.upgradeLock = false;
+        this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade), () => {
+          player.upgradeLock = false;
+        });
       } catch (err1) {
         Sentry.captureException(err1, {
           extra: {
@@ -2377,8 +2387,6 @@ class DatabaseHandler {
             reply,
           },
         });
-
-        player.upgradeLock = false;
       }
     });
   }
