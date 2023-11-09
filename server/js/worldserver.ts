@@ -160,6 +160,12 @@ class World {
   constructor(id, maxPlayers, websocketServer, databaseHandler) {
     var self = this;
 
+    if (process.env.NODE_ENV === "production") {
+      ["log", "warn", "info", "error", "debug"].forEach(methodName => {
+        console[methodName] = () => {};
+      });
+    }
+
     this.id = id;
     this.maxPlayers = maxPlayers;
     this.server = websocketServer;

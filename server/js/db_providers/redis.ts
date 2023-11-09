@@ -1267,6 +1267,7 @@ class DatabaseHandler {
       let waitForWriteCount = 0;
       try {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
+
         fromItem = (isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed) || 0;
 
         // Should never happen but who knows
@@ -1301,7 +1302,6 @@ class DatabaseHandler {
               if (["dagger:1", "clotharmor:1", "helmcloth:1"].includes(toItem)) {
                 toItem = 0;
               }
-
               const [fromIsQuantity, rawFromQuantity] = fromItem.split(":");
               isConsumable = Types.isConsumable(fromIsQuantity);
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
@@ -1421,7 +1421,8 @@ class DatabaseHandler {
               if (isMultipleFrom) {
                 this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {
                   waitForWriteCount -= 1;
-                  if (!waitForWriteCount) {
+
+                  if (!waitForWriteCount || waitForWriteCount <= 1) {
                     player.moveItemLock = false;
                   }
                 });
@@ -1429,7 +1430,8 @@ class DatabaseHandler {
               if (isMultipleTo) {
                 this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed), () => {
                   waitForWriteCount -= 1;
-                  if (!waitForWriteCount) {
+
+                  if (!waitForWriteCount || waitForWriteCount <= 1) {
                     player.moveItemLock = false;
                   }
                 });

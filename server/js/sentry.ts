@@ -11,7 +11,7 @@ Sentry.init({
       return null;
     }
 
-    const message = (hint.originalException as Error)?.message || hint.syntheticException?.message
+    const message = (hint.originalException as Error)?.message || hint.syntheticException?.message;
 
     postMessageToDiscordModeratorDebugChannel(message);
     return event;
