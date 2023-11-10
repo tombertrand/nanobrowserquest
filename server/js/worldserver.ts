@@ -153,6 +153,7 @@ class World {
   cowKingPlayerName: string | null;
   minotaurPlayerName: string | null;
   chatBan: { player: string; ip: string }[];
+  maxPlayerCreateByIp: { [ip: string]: string[] };
   tmpHash: string;
   hash: string;
   getIsValidHash: (hash: string) => boolean;
@@ -293,6 +294,8 @@ class World {
     this.gateSubTempleNpcId = null;
     this.goldBank = 0;
     this.janetYellenNpcId = null;
+
+    this.maxPlayerCreateByIp = { ip: [] };
 
     this.onPlayerConnect(function (player) {
       player.onRequestPosition(function () {
@@ -510,6 +513,9 @@ class World {
       }),
         1000 * 60 * 5;
     });
+    setInterval(() => {
+      this.maxPlayerCreateByIp = { ip: [] };
+    }, 86400000);
   }
 
   setUpdatesPerSecond(ups) {

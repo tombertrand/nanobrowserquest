@@ -644,17 +644,39 @@ class DatabaseHandler {
     });
   }
 
-  async createPlayer(player) {
-    var userKey = "u:" + player.name;
-    var curTime = new Date().getTime();
-
+  validateCreatePlayer(player) {
+    const MAX_PLAYER_CREATED_FOR_IP_BY_24H = 5;
     if (CHATBAN_PATTERNS.test(player.name)) {
       player.connection.sendUTF8("invalidusername");
       player.connection.close("User does not exist: " + player.name);
 
       postMessageToDiscordModeratorDebugChannel(`Invalid player name for creation ${player.name}`);
-      return;
+      return false;
     }
+
+    if (!Array.isArray(player.server.maxPlayerCreateByIp[player.ip])) {
+      player.server.maxPlayerCreateByIp[player.ip] = [];
+    }
+
+    if (player.server.maxPlayerCreateByIp[player.ip].length >= MAX_PLAYER_CREATED_FOR_IP_BY_24H) {
+      player.connection.sendUTF8("invalidusernameCreation");
+
+      postMessageToDiscordModeratorDebugChannel(
+        `more than ${MAX_PLAYER_CREATED_FOR_IP_BY_24H}  players for same IP:${player.ip} created for 24h, Forbidden ${
+          player.name
+        },Other characters are: ${player.server.maxPlayerCreateByIp[player.ip].join(",")}`,
+      );
+      return false;
+    } else {
+      player.server.maxPlayerCreateByIp[player.ip].push(player.name);
+    }
+
+    return true;
+  }
+
+  async createPlayer(player) {
+    var userKey = "u:" + player.name;
+    var curTime = new Date().getTime();
 
     let depositAccountIndex = null;
     let depositAccount = null;

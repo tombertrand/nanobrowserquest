@@ -132,7 +132,7 @@ export const postMessageToModeratorSupportChannel = (content: string) => {
 };
 
 export const postMessageToDiscordModeratorDebugChannel = (content: string) => {
-  if (isDevelopment) return;
+  // if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,

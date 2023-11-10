@@ -13,6 +13,10 @@ Sentry.init({
 
     const message = (hint.originalException as Error)?.message || hint.syntheticException?.message;
 
+    if (message.includes("while still locked")) {
+      return null;
+    }
+
     postMessageToDiscordModeratorDebugChannel(message);
     return event;
   },

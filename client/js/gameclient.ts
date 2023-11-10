@@ -274,7 +274,8 @@ class GameClient {
           e === "passwordcreate" ||
           e === "passwordlogin" ||
           e === "passwordinvalid" ||
-          e === "invalidusername"
+          e === "invalidusername" ||
+          e === "invalidusernameCreation"
         ) {
           this.fail_callback?.({ reason: e });
           return;

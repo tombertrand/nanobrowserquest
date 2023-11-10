@@ -11,7 +11,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
-import { hasMoreThanPercentCaps } from "../../shared/js/utils";
+import { hasMoreThanPercentCaps, replaceLetters } from "../../shared/js/utils";
 import {
   HASH_BAN_DELAY,
   isValidAccountAddress,
@@ -137,12 +137,14 @@ const badWords = [
   "bitch",
   "intercourse",
   "Deez",
-  "nuts",
   "nutz",
 ];
 
-export const CHATBAN_PATTERNS_WARNING = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
-export const CHATBAN_PATTERNS = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
+const replacedWords = badWords.map(replaceLetters);
+
+export const CHATBAN_PATTERNS_WARNING = new RegExp(`\\b(${replacedWords.join("|")})\\b`, "gi");
+// export const CHATBAN_PATTERNS_WARNING = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
+export const CHATBAN_PATTERNS = new RegExp(`\\b(${replacedWords.join("|")})\\b`, "gi");
 
 class Player extends Character {
   id: number;
@@ -538,7 +540,9 @@ class Player extends Character {
         }
 
         if (action === Types.Messages.CREATE) {
-          databaseHandler.createPlayer(self);
+          if (databaseHandler.validateCreatePlayer(self)) {
+            databaseHandler.createPlayer(self);
+          }
         } else {
           databaseHandler.loadPlayer(self);
         }
@@ -2415,7 +2419,6 @@ class Player extends Character {
     const attackSpeed = [12];
     const superior = [43];
     const preventHealthRegen = [33];
-
 
     if (
       Types.isArmor(kind) ||

@@ -79,7 +79,7 @@ export const getAccountAddressFromText = (text: string) => {
 };
 
 function removeNonAlphabeticalChars(str) {
-  return str.replace(/[^a-zA-Z]/g, '');
+  return str.replace(/[^a-zA-Z]/g, "");
 }
 
 export function hasMoreThanPercentCaps({ msg: str, percent = 60, minChar = 10 }) {
@@ -106,3 +106,13 @@ export function hasMoreThanPercentCaps({ msg: str, percent = 60, minChar = 10 })
   const uppercasePercentage = (uppercaseCount / alphabeticCount) * 100;
   return uppercasePercentage > percent;
 }
+
+export const replaceLetters = word => {
+  return word
+    .replace(/i/g, "1")
+    .replace(/a/g, "4")
+    .replace(/u/g, "v")
+    .replace(/e/g, "3")
+    .replace(/o/g, "0")
+    .replace(/s/g, "z");
+};

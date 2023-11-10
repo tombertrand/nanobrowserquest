@@ -342,6 +342,15 @@ class App {
               self.addValidationError(self.getUsernameField(), "The username you entered is not available.");
               self.setPlayButtonState(true);
               break;
+
+            case "invalidusernameCreation":
+              // The username contains characters that are not allowed (rejected by the sanitizer)
+              self.addValidationError(
+                self.getUsernameField(),
+                "You created Too many characters Today, try again tomorrow.",
+              );
+              self.setPlayButtonState(true);
+              break;
             case "invalidusername":
               // The username contains characters that are not allowed (rejected by the sanitizer)
               self.addValidationError(
