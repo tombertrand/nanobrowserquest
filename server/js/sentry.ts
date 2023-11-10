@@ -13,7 +13,7 @@ Sentry.init({
 
     const message = (hint.originalException as Error)?.message || hint.syntheticException?.message;
 
-    if (message.includes("while still locked")) {
+    if (typeof message === "string" && message?.includes("while still locked")) {
       return null;
     }
 
