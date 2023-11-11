@@ -29,7 +29,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
 import { expForLevel } from "../../shared/js/types/experience";
-import { HASH_BAN_DELAY } from "../../shared/js/utils";
+import { HASH_BAN_DELAY, isValidRecipe } from "../../shared/js/utils";
 import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
@@ -1328,6 +1328,8 @@ class Game {
 
         const item = $(this).attr("data-item");
         const type = kinds[item][1];
+
+        //@TODO Prevent the upgrade panel from being stacked with junk (skull& recipe items)
 
         if (
           ["weapon", "helm", "armor", "belt", "cape", "shield", "chest", "ring", "amulet", "consumable"].includes(

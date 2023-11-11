@@ -480,41 +480,6 @@ export const getIsTransmuteSuccess = ({ transmuteSuccessRate = 0, uniqueSuccessR
   };
 };
 
-export const isValidRecipe = items => {
-  const recipes: { [key in Recipes]: string[] } = {
-    cowLevel: ["wirtleg", "skeletonkingcage", "necromancerheart"],
-    minotaurLevel: ["cowkinghorn"],
-    chestblue: ["chestblue"],
-    chestgreen: ["chestgreen"],
-    chestpurple: ["chestpurple"],
-    chestdead: ["chestdead"],
-    chestred: ["chestred"],
-    expansion2voucher: ["expansion2voucher"],
-    powderquantum: ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred"],
-    petegg: ["petegg"],
-  };
-
-  const result = Object.entries(recipes).find(([_recipe, formulae]) => {
-    if (formulae.length !== items.length) return;
-
-    for (let i = 0; i < items.length; i++) {
-      const [item] = items[i].split(":");
-      const index = formulae.indexOf(item);
-
-      if (index === -1) break;
-
-      // @ts-ignore
-      formulae[index] = false;
-    }
-
-    if (formulae.filter(Boolean).length === 0) return true;
-  });
-
-  if (result) {
-    return result[0] as Recipes;
-  }
-};
-
 export const generateBlueChestItem = (): { item: string; uniqueChances?: number; jewelLevel?: number } => {
   // 50%
   const items = [

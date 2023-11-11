@@ -40,6 +40,7 @@ import {
 } from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
 import { toArray, toDb, validateQuantity } from "../../../shared/js/utils";
+import { isValidRecipe } from "../../../shared/js/utils";
 import {
   discordClient,
   EmojiMap,
@@ -65,7 +66,6 @@ import {
   isUpgradeSuccess,
   isValidAddWeaponSkill,
   isValidDowngradeRune,
-  isValidRecipe,
   isValidSocketItem,
   isValidStoneSocket,
   isValidTransmuteItems,
@@ -1326,7 +1326,9 @@ class DatabaseHandler {
               if (["dagger:1", "clotharmor:1", "helmcloth:1"].includes(toItem)) {
                 toItem = 0;
               }
-              const [fromIsQuantity, rawFromQuantity] = fromItem.split(":");
+
+              //@TODO investigatefromItem is not a FN on (0)
+              const [fromIsQuantity, rawFromQuantity] = fromItem?.split(":");
               isConsumable = Types.isConsumable(fromIsQuantity);
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
               if (Types.isQuantity(fromIsQuantity)) {
@@ -1977,7 +1979,8 @@ class DatabaseHandler {
 
     this.client.hget("u:" + player.name, "inventory", (_err, rawInvetory) => {
       const inventory = JSON.parse(rawInvetory).filter(i => i !== 0);
-      const availableInventorySlots = inventory.filter(i => i === 0).length;
+      const availableInventorySlots = JSON.parse(rawInvetory).filter(i => i === 0).length;
+
       let data;
       this.client.hget("u:" + player.name, panel, (_err, reply) => {
         try {
@@ -2024,11 +2027,15 @@ class DatabaseHandler {
               return isValidReturnQuantityItem;
             });
 
-            if (hasQuantityItem && quantityItem && hasInventoryQuantityItem && isValidReturnQuantityItem) {
+            if (
+              (hasQuantityItem && quantityItem && hasInventoryQuantityItem && isValidReturnQuantityItem) ||
+              availableInventorySlots > items.length
+            ) {
               this.lootItems({ player, items });
               areItemsLooted = true;
             } else {
               if (panel === "upgrade" && availableInventorySlots < items.length) {
+                //@NOTE player was upgrading and gotpartylooted an item
                 throw new Error(`**${player.name}** not enought inventory slots to move items from upgrade panel`);
               }
             }
@@ -2045,9 +2052,9 @@ class DatabaseHandler {
               player.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data).serialize());
             }
           } else {
-            // player.moveItemsToInventoryLock = false;
           }
         } catch (err) {
+        
           Sentry.captureException(err, {
             extra: {
               player: player.name,
@@ -2056,7 +2063,6 @@ class DatabaseHandler {
             },
           });
 
-          // player.moveItemsToInventoryLock = false;
         }
       });
     });
