@@ -650,7 +650,7 @@ class DatabaseHandler {
       player.connection.sendUTF8("invalidusername");
       player.connection.close("User does not exist: " + player.name);
 
-      postMessageToDiscordModeratorDebugChannel(`Invalid player name for creation ${player.name}`);
+      postMessageToDiscordModeratorDebugChannel(`Invalid player name for creation **${player.name}**`);
       return false;
     }
 
@@ -662,9 +662,11 @@ class DatabaseHandler {
       player.connection.sendUTF8("invalidusernameCreation");
 
       postMessageToDiscordModeratorDebugChannel(
-        `more than ${MAX_PLAYER_CREATED_FOR_IP_BY_24H}  players for same IP:${player.ip} created for 24h, Forbidden ${
-          player.name
-        },Other characters are: ${player.server.maxPlayerCreateByIp[player.ip].join(",")}`,
+        `more than **${MAX_PLAYER_CREATED_FOR_IP_BY_24H}**  players for same IP: **${
+          player.ip
+        }** created for 24h, Forbidden **${player.name}** ,Other characters are: ${player.server.maxPlayerCreateByIp[
+          player.ip
+        ].join(",")}`,
       );
       return false;
     } else {
@@ -1467,6 +1469,9 @@ class DatabaseHandler {
                 extra: {
                   fromItem,
                   toItem,
+                  toLocation,
+                  fromLocation,
+                  movedQuantity,
                 },
               });
             }
@@ -1478,6 +1483,9 @@ class DatabaseHandler {
           extra: {
             fromItem,
             toItem,
+            toLocation,
+            fromLocation,
+            movedQuantity,
           },
         });
       }
@@ -1957,20 +1965,28 @@ class DatabaseHandler {
 
   moveItemsToInventory(player, panel: "upgrade" | "trade" = "upgrade") {
     if (player.moveItemsToInventoryLock) {
-      Sentry.captureException(new Error(`**${player.name}** Calling moveItemsToInventory while still locked`), {
-        extra: { player: player.name, panel },
-      });
+      Sentry.captureException(
+        new Error(`**${player.name}** Calling moveItemsToInventory while still locked on panel **${panel}**`),
+        {
+          extra: { player: player.name, panel },
+        },
+      );
       return;
     }
-    player.moveItemsToInventoryLock = true;
+    player.moveItemsToInventoryLock = panel;
 
     this.client.hget("u:" + player.name, "inventory", (_err, rawInvetory) => {
-      const availableInventorySlots = JSON.parse(rawInvetory).filter(i => i === 0).length;
+      const inventory = JSON.parse(rawInvetory).filter(i => i !== 0);
+      const availableInventorySlots = inventory.filter(i => i === 0).length;
       let data;
       this.client.hget("u:" + player.name, panel, (_err, reply) => {
         try {
           data = JSON.parse(reply);
           const filteredUpgrade = data.filter(Boolean);
+          //@NNOTE: Nothing to move, nothing to await
+          if (!filteredUpgrade.length) {
+            player.moveItemsToInventoryLock = false;
+          }
 
           if (filteredUpgrade.length) {
             const items = filteredUpgrade.reduce((acc, rawItem) => {
@@ -1989,14 +2005,36 @@ class DatabaseHandler {
               });
               return acc;
             }, []);
+            let quantityItem = "";
+            let areItemsLooted = false;
+            let hasQuantityItem = items.some(({ item }) => {
+              if (Types.isQuantity(item)) {
+                quantityItem = item;
+              }
 
-            if (panel === "upgrade" && availableInventorySlots < items.length) {
-              throw new Error(`**${player.name}** not enought inventory slots to move items from upgrade panel`);
+              return Types.isQuantity(item);
+            });
+            let isValidReturnQuantityItem = false;
+            let hasInventoryQuantityItem = inventory.some(rawItem => {
+              const [item] = rawItem.split(":");
+
+              if (item === quantityItem) {
+                isValidReturnQuantityItem = true;
+              }
+              return isValidReturnQuantityItem;
+            });
+
+            if (hasQuantityItem && quantityItem && hasInventoryQuantityItem && isValidReturnQuantityItem) {
+              this.lootItems({ player, items });
+              areItemsLooted = true;
+            } else {
+              if (panel === "upgrade" && availableInventorySlots < items.length) {
+                throw new Error(`**${player.name}** not enought inventory slots to move items from upgrade panel`);
+              }
             }
-
-            this.lootItems({ player, items });
-
-            data = data.map(() => 0);
+            if (areItemsLooted) {
+              data = data.map(() => 0);
+            }
             this.client.hset("u:" + player.name, panel, JSON.stringify(data), () => {
               player.moveItemsToInventoryLock = false;
             });
@@ -2007,7 +2045,7 @@ class DatabaseHandler {
               player.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.PLAYER1_MOVE_ITEM, data).serialize());
             }
           } else {
-            player.moveItemsToInventoryLock = false;
+            // player.moveItemsToInventoryLock = false;
           }
         } catch (err) {
           Sentry.captureException(err, {
@@ -2018,7 +2056,7 @@ class DatabaseHandler {
             },
           });
 
-          player.moveItemsToInventoryLock = false;
+          // player.moveItemsToInventoryLock = false;
         }
       });
     });

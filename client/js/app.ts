@@ -1165,7 +1165,7 @@ class App {
         .on("click", e => {
           $(e.currentTarget).addClass("disabled").attr("disabled", "disabled").text("Invite sent");
           const playerName = String($(e.currentTarget).data("party-invite"));
-          // @note what could go wrong?
+          // @note safety
           if (playerName) {
             this.game.client.sendPartyInvite(playerName);
             this.game.partyInvitees.push(playerName);
@@ -1176,8 +1176,11 @@ class App {
         .off("click")
         .on("click", e => {
           $(e.currentTarget).addClass("disabled").attr("disabled", "disabled");
-          const playerName = $(e.currentTarget).data("party-remove");
-          this.game.client.sendPartyRemove(playerName);
+          const playerName = String($(e.currentTarget).data("party-remove"));
+           // @note safety
+          if (playerName) {
+            this.game.client.sendPartyRemove(playerName);
+          }
         });
 
       $("#party-players [data-party-disband]")

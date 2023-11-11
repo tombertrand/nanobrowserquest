@@ -2013,7 +2013,8 @@ class Game {
     let uniqueText = "";
     let runeUpgrade = "";
     let rune = "";
-
+    let isSuperior = false;
+    let isTransmute = false;
     let isJewel = false;
     let jewelRequirement;
     let nextLevelRequirement;
@@ -2028,6 +2029,9 @@ class Game {
       if (slot === 0) {
         itemLevel = Number(rawLevel);
         nextLevel = itemLevel + 1;
+        isSuperior = Types.isSuperior(bonus);
+      } else {
+        isTransmute = item.startsWith("scrolltransmute") || item.startsWith("scrolltransmuteblessed");
       }
 
       isRune = Types.isRune(item);
@@ -2106,6 +2110,10 @@ class Game {
           runeClass,
         )} Upgrade Scroll to forge 1 ${nextRune.toUpperCase()} rune`;
       }
+    }
+
+    if (isTransmute && isSuperior) {
+      warningMessage = "You cannot transmute a Superior item";
     }
 
     $("#upgrade-info")

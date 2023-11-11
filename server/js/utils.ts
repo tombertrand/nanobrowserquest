@@ -425,7 +425,6 @@ export const isValidTransmuteItems = items => {
   if (!transmuteRate) {
     return false;
   }
-
   return transmuteRate;
 };
 
