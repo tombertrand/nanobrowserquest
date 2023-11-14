@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 
+import { getPlayerLocation } from "../../server/js/utils";
 import { kinds, petKindToPetMap, Types } from "../../shared/js/gametypes";
 import {
   ACHIEVEMENT_CRYSTAL_INDEX,
@@ -137,10 +138,9 @@ const badWords = [
   "rapist",
 ];
 
-const replacedWords = badWords.map(replaceLetters);
+const replacedWords = [...badWords].map(replaceLetters);
 
 export const CHATBAN_PATTERNS_WARNING = new RegExp(`\\b(${replacedWords.join("|")})\\b`, "gi");
-// export const CHATBAN_PATTERNS_WARNING = new RegExp(`\\b(${badWords.join("|")})\\b`, "gi");
 export const CHATBAN_PATTERNS = new RegExp(`\\b(${replacedWords.join("|")})\\b`, "gi");
 
 class Player extends Character {
@@ -1359,7 +1359,10 @@ class Player extends Character {
               let player = self;
 
               if (self.partyId) {
-                player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+                // let isLooterInTown = getPlayerLocation({ x: self.x, y: self.y }) === "town";
+
+                // player = self.server.getEntityById(self.getParty().getNextLootMemberId({ isLooterInTown })) || self;
+                player = self;
               }
 
               self.databaseHandler.lootItems({
@@ -1386,6 +1389,7 @@ class Player extends Character {
             } else {
               try {
                 let isUnique = false;
+                let isSuperior = false;
                 let generatedItem: GeneratedItem = null;
                 let runeName = null;
                 if (Types.isRune(kind)) {
@@ -1397,7 +1401,8 @@ class Player extends Character {
                   generatedItem = { item: Types.getKindAsString(kind), quantity: 1 };
                 } else if (Types.isItem(kind)) {
                   const jewelLevel = Types.isJewel(kind) ? item.level : 1;
-                  ({ isUnique, ...generatedItem } = self.generateItem({ kind, jewelLevel }) || ({} as GeneratedItem));
+                  ({ isUnique, isSuperior, ...generatedItem } =
+                    self.generateItem({ kind, jewelLevel }) || ({} as GeneratedItem));
                 }
 
                 if (generatedItem) {
@@ -1411,14 +1416,15 @@ class Player extends Character {
                     // Single items can't be party looted, like potions
                   }
                   if (!Types.isSingle(kind) && self.partyId) {
-                    player = self.server.getEntityById(self.getParty().getNextLootMemberId()) || self;
+                    let isLooterInTown = getPlayerLocation({ x: self.x, y: self.y }) === "town";
+                    player = self.server.getEntityById(self.getParty().getNextLootMemberId({ isLooterInTown })) || self;
                   }
 
-                  if (self.partyId && player?.name) {
+                  if (player?.partyId && player?.name) {
                     self.server.pushToParty(
                       self.getParty(),
                       new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
-                        { playerName: player.name, kind, isUnique },
+                        { playerName: player.name, kind, isUnique, isSuperior },
                       ]),
                     );
                   }
@@ -1537,7 +1543,7 @@ class Player extends Character {
             ({ x, y } = playerToTeleportTo);
 
             isNear = Math.abs(self.x - x) <= 32 && Math.abs(self.y - y) <= 32;
-            isIntown = x && y ? x >= 1 && x <= 80 && y >= 192 && y <= 257 : false;
+            isIntown = getPlayerLocation({ x, y }) === "town";
           }
         }
 
@@ -1782,7 +1788,6 @@ class Player extends Character {
           } ${maxPayoutOutput} and received a payout of **${raiPayoutAmount}** ${
             self.network === "nano" ? "XNO" : "BAN"
           } 🎉`;
-          console.log("~!messageToPayoutsChannel", messageToPayoutsChannel);
           postMessageToDiscordPayoutsChannel(messageToPayoutsChannel);
 
           if (isClassicPayout) {
@@ -2705,6 +2710,11 @@ class Player extends Character {
         bonus: JSON.stringify(bonus.sort((a, b) => a - b)),
       };
     }
+
+    // console.log("~~end of generate item fn", item);
+
+    item.isUnique = isUnique;
+    item.isSuperior = isSuperior;
 
     return item;
   }

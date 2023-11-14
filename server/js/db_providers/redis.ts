@@ -1292,7 +1292,12 @@ class DatabaseHandler {
       try {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
 
-        fromItem = (isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed) || 0;
+        fromItem = (isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed) ;
+
+        //slot msg could be manipulated only move the ones not empty
+        if (!fromItem) {
+          return;
+        }
 
         // Should never happen but who knows
         if (["dagger:1", "clotharmor:1", "helmcloth:1"].includes(fromItem) && toSlot !== -1) {
@@ -1328,7 +1333,7 @@ class DatabaseHandler {
               }
 
               //@TODO investigatefromItem is not a FN on (0)
-              const [fromIsQuantity, rawFromQuantity] = fromItem?.split(":");
+              const [fromIsQuantity, rawFromQuantity] = fromItem.split(":");
               isConsumable = Types.isConsumable(fromIsQuantity);
               // @NOTE Strict rule, 1 upgrade scroll limit, tweak this later on
               if (Types.isQuantity(fromIsQuantity)) {
@@ -1469,8 +1474,11 @@ class DatabaseHandler {
               console.log(err);
               Sentry.captureException(err, {
                 extra: {
+                  player: player.name,
+                  fromSlot,
                   fromItem,
                   toItem,
+                  toSlot,
                   toLocation,
                   fromLocation,
                   movedQuantity,
@@ -1483,8 +1491,11 @@ class DatabaseHandler {
         console.log(err);
         Sentry.captureException(err, {
           extra: {
+            player: player.name,
+            fromSlot,
             fromItem,
             toItem,
+            toSlot,
             toLocation,
             fromLocation,
             movedQuantity,
@@ -2054,7 +2065,6 @@ class DatabaseHandler {
           } else {
           }
         } catch (err) {
-        
           Sentry.captureException(err, {
             extra: {
               player: player.name,
@@ -2062,7 +2072,6 @@ class DatabaseHandler {
               filteredUpgrade: data,
             },
           });
-
         }
       });
     });
@@ -2309,7 +2318,7 @@ class DatabaseHandler {
                 isWorkingRecipe = true;
                 this.unlockExpansion2(player);
 
-                this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 10 }] });
+                this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 60 }] });
                 postMessageToDiscordAnvilChannel(
                   `**${player.name}** consumed Lost Temple Expansion Voucher ${EmojiMap.losttempleexpansionvoucher}`,
                 );
@@ -2834,10 +2843,10 @@ class DatabaseHandler {
       if (id === Types.Store.EXPANSION2) {
         if (!player.expansion2) {
           this.unlockExpansion2(player);
-          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 20 }] });
+          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 60 }] });
         } else {
           this.lootItems({ player, items: [{ item: "expansion2voucher", quantity: 1 }] });
-          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 20 }] });
+          this.lootItems({ player, items: [{ item: "scrollupgradelegendary", quantity: 60 }] });
         }
       } else if (id === Types.Store.SCROLLUPGRADEBLESSED) {
         this.lootItems({ player, items: [{ item: "scrollupgradeblessed", quantity: 5 }] });

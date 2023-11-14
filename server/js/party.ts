@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 
+import { getPlayerLocation } from "../../server/js/utils";
 import { Types } from "../../shared/js/gametypes";
 import Messages from "./message";
 import { Sentry } from "./sentry";
@@ -29,6 +30,7 @@ class Party {
   partyLeader: { id: number; name: string };
   server: World;
   lootMemberIndex: number;
+  hasPartyLeaderFirstLooted: boolean;
 
   constructor(id, player, server) {
     this.members = [];
@@ -41,19 +43,40 @@ class Party {
       id: player.id,
       name: player.name,
     };
-    this.lootMemberIndex = -1;
+    this.lootMemberIndex = 0;
+
+    this.hasPartyLeaderFirstLooted = false;
 
     this.addMember(player);
   }
 
-  getNextLootMemberId() {
-    if (this.lootMemberIndex + 1 >= this.members.length) {
-      this.lootMemberIndex = 0;
-    } else {
-      this.lootMemberIndex += 1;
-    }
+  getNextLootMemberId({ isLooterInTown = false } = {}) {
+    let candidateIndex = this.lootMemberIndex;
 
-    return this.members[this.lootMemberIndex].id;
+    do {
+      const player = this.server.getEntityById(this.members[candidateIndex].id);
+      const playerLocation = getPlayerLocation({ x: player.x, y: player.y });
+
+      if (isLooterInTown || playerLocation !== "town") {
+        console.log("Selected player:", player.id, player.name);
+        this.lootMemberIndex = (candidateIndex + 1) % this.members.length; // Prepare index for next call
+        return player.id;
+      } else {
+        console.log("Skipped player:", player.id, player.name);
+        // Send message to skipped player
+        player.send(
+          new Messages.Party(
+            Types.Messages.PARTY_ACTIONS.ERROR,
+            "You missed your party looting turn, you can't be sitting in town and looting items from party drops",
+          ).serialize(),
+        );
+      }
+
+      candidateIndex = (candidateIndex + 1) % this.members.length;
+    } while (candidateIndex !== this.lootMemberIndex);
+
+    console.log("No suitable player found. Defaulting to current looter.");
+    return this.server.getEntityById(this.members[this.lootMemberIndex].id).id;
   }
 
   addMember(player: Player) {

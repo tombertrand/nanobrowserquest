@@ -11,3 +11,11 @@
 #population .chat-mod-icon {
   transform: scale(0.8) translateY(5px);
 }
+
+.item-unique {
+  color: #d3c59c;
+}
+
+.item-superior {
+  color: #e700e7;
+}

@@ -15,6 +15,16 @@ type Orientation = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type TimedLevel = "cow" | "minotaur" | "stone" | "chalice" | "gateway" | "temple";
 type RunewordEquipment = "weapon" | "armor" | "helm" | "shield";
 
+type PlayerLocation =
+  | "town"
+  | "skeletonKing"
+  | "Necromancer"
+  | "Freezing Lands Expansion"
+  | "Lost Temple Expansion"
+  | "Azrael"
+  | "Gateway"
+  | "Temple";
+
 type GeneratedItem = {
   item: string;
   level?: number;
@@ -24,6 +34,7 @@ type GeneratedItem = {
   skill?: number;
   skin?: number;
   isUnique?: boolean;
+  isSuperior?: boolean;
   runeName?: string;
   jewelLevel?: number;
 };

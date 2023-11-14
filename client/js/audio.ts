@@ -205,7 +205,7 @@ class AudioManager {
 
     return this.sounds[name].find(sound => sound.ended || sound.paused);
   }
-  Ï;
+  
   playSound(
     name: string,
     { delay = 0, volume, force = false }: { delay?: number; volume?: number; force?: boolean } = {},

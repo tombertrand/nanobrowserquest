@@ -108,13 +108,13 @@ export function hasMoreThanPercentCaps({ msg: str, percent = 60, minChar = 10 })
 }
 
 export const replaceLetters = word => {
-  return word
+  return `${word}|${word
     .replace(/i/g, "1")
     .replace(/a/g, "4")
     .replace(/u/g, "v")
     .replace(/e/g, "3")
     .replace(/o/g, "0")
-    .replace(/s/g, "z");
+    .replace(/s/g, "z")}`;
 };
 
 export const isValidRecipe = items => {

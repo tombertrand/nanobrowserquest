@@ -138,7 +138,6 @@ export const postMessageToDiscordModeratorDebugChannel = (content: string) => {
       content,
     });
 
-    console.log("postcontent", content);
     fetch(ModeratorDebugChannel, {
       method: "POST",
       body,
@@ -156,7 +155,6 @@ export const postMessageToDiscordModeratorMerchantChannel = (content: string) =>
       content,
     });
 
-    console.log("postcontent", content);
     fetch(ModeratorMerchantChannel, {
       method: "POST",
       body,

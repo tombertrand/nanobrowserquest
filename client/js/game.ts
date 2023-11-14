@@ -208,6 +208,15 @@ class Game {
     toSlot: number;
     transferedQuantity?: number;
     confirmed: boolean;
+    isUnique: boolean;
+    isSuperior: boolean;
+  } | null;
+  itemToDelete: {
+    fromSlot: number;
+    toSlot: number;
+    transferedQuantity?: number;
+    isUnique: boolean;
+    isSuperior: boolean;
   } | null;
   worldPlayers: WorldPlayer[];
   network: Network;
@@ -275,6 +284,7 @@ class Game {
     this.showAnvilOdds = false;
     this.showHealthAboveBars = false;
     this.confirmedSoldItemToMerchant = null;
+    this.itemToDelete = null;
     this.isPanelOpened = false;
     this.isDragStarted = false;
     this.hashCheckInterval = null;
@@ -886,7 +896,7 @@ class Game {
     }">
         <div class="item-header">
           <div class="item-title${isUnique ? " unique" : ""}${isRune || isRuneword ? " rune" : ""}">
-            ${isSuperior ? "Superior " : ""}
+            ${isSuperior ? '<span class="item-superior">Superior</span>' : ""}
             ${name}${isLevelVisible ? ` (+${level})` : ""}${isJewel ? ` lv.${level}` : ""}
             ${runeRank ? ` (#${runeRank})` : ""}
             ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
@@ -1163,26 +1173,35 @@ class Game {
     if (Object.values(Slot).includes(toSlot) && Types.getItemRequirement(item, level) > this.player.level) {
       return;
     }
+    let isSuperior = Types.isSuperior(bonus);
+    let isUnique = Types.isUnique(item, bonus);
+
+    const isWarningDeleteOrSellItem =
+      !level || level !== 1 || Types.isPetItem(item) || isUnique || isSuperior || (socket && socket.length >= 4);
 
     if (toSlot === -1) {
       if (
-        !level ||
-        level !== 1 ||
-        Types.isPetItem(item) ||
-        Types.isUnique(item, bonus) ||
-        Types.isSuperior(bonus) ||
-        (socket && socket.length >= 4) ||
+        isWarningDeleteOrSellItem
         // Superior item delete confirm
-        (Array.isArray(bonus) && bonus.includes(43))
+        //)
       ) {
+        this.itemToDelete = { fromSlot, toSlot, transferedQuantity, isSuperior, isUnique };
         $("#dialog-delete-item").dialog("open");
+
         this.slotToDelete = fromSlot;
         return;
       }
       fromItemEl.remove();
     } else if (toSlot >= MERCHANT_SLOT_RANGE && toSlot < MERCHANT_SLOT_RANGE + MERCHANT_SLOT_COUNT && !confirmed) {
-      if (!level || level !== 1 || Types.isUnique(item, bonus) || (socket && socket.length >= 4)) {
-        this.confirmedSoldItemToMerchant = { fromSlot, toSlot, transferedQuantity, confirmed: true };
+      if (isWarningDeleteOrSellItem) {
+        this.confirmedSoldItemToMerchant = {
+          fromSlot,
+          toSlot,
+          transferedQuantity,
+          confirmed: true,
+          isSuperior,
+          isUnique,
+        };
         $("#dialog-merchant-item").dialog("open");
         return;
       }
@@ -1691,8 +1710,8 @@ class Game {
   }
 
   initTeleportContextMenu() {
-    return;
-    const hasStoneTeleportInInventory = !!this.player.inventory.find(({ item }) => item === "stoneteleport");
+    // return;
+    const hasStoneTeleportInInventory = false; //!!this.player.inventory.find(({ item }) => item === "stoneteleport");
 
     if ($("#party-player-list .player-name").data("contextMenu")) {
       $("#party-player-list .player-name").contextMenu("destroy");
@@ -1703,32 +1722,32 @@ class Game {
         $("#foreground").trigger(event);
       });
 
-    $.contextMenu({
-      selector: "#party-player-list .player-name",
+    // $.contextMenu({
+    //   selector: "#party-player-list .player-name",
 
-      build: _event => {
-        const playerId = Number($(_event.target).attr("data-player-id"));
-        const playerName = String($(_event.target).text().trim());
+    //   build: _event => {
+    //     const playerId = Number($(_event.target).attr("data-player-id"));
+    //     const playerName = String($(_event.target).text().trim());
 
-        return playerId
-          ? {
-              callback: () => {
-                if (hasStoneTeleportInInventory && !Object.keys(this.player.attackers).length) {
-                  this.client.sendStoneTeleport(playerId);
-                }
-              },
-              items: {
-                player: {
-                  name: hasStoneTeleportInInventory
-                    ? `Teleport to ${playerName}`
-                    : "you don't have Teleport stone in your inventory",
-                  disabled: playerId === this.player.id || !hasStoneTeleportInInventory,
-                },
-              },
-            }
-          : null;
-      },
-    });
+    //     return playerId
+    //       ? {
+    //           callback: () => {
+    //             if (hasStoneTeleportInInventory && !Object.keys(this.player.attackers).length) {
+    //               this.client.sendStoneTeleport(playerId);
+    //             }
+    //           },
+    //           items: {
+    //             player: {
+    //               name: hasStoneTeleportInInventory
+    //                 ? `Teleport to ${playerName}`
+    //                 : "you don't have Teleport stone in your inventory",
+    //               disabled: playerId === this.player.id || !hasStoneTeleportInInventory,
+    //             },
+    //           },
+    //         }
+    //       : null;
+    //   },
+    // });
   }
 
   updateMerchant() {
@@ -4387,10 +4406,13 @@ class Game {
         self.chat_callback({ message, type: "error" });
       });
 
-      self.client.onPartyLoot(function ({ playerName, kind, isUnique }) {
+      self.client.onPartyLoot(function ({ playerName, kind, isUnique, isSuperior }) {
         let message = "";
+
         if (isUnique) {
-          message = `${playerName} received the ${Types.itemUniqueMap[Types.getKindAsString(kind)][0]}`;
+          message = `${playerName} received ${isSuperior ? '<span class="item-superior"> a Superior</span>' : ""}${
+            isUnique && !isSuperior ? "the" : ""
+          } <span class="item-unique">${Types.itemUniqueMap[Types.getKindAsString(kind)][0]}</span>`;
         } else {
           message = `${playerName} received ${EntityFactory.builders[kind]()
             .getLootMessage()
@@ -6559,7 +6581,6 @@ class Game {
       this.map.grid
     ) {
       entity = this.getMobAt(pos.x, pos.y) || this.getNpcAt(pos.x, pos.y) || this.getEntityAt(pos.x, pos.y);
-
       // @NOTE: For an unknown reason when a mob dies and is moving, it doesn't unregister its "1" on
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
       // to "0" the pathing map if there is no entity registered on the coords.

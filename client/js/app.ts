@@ -429,6 +429,14 @@ class App {
       autoOpen: false,
       draggable: false,
       title: "Delete item",
+      open: function () {
+        $("#dialog-delete-item").html(
+          `Are you sure you want to delete this${
+            (self.game.itemToDelete?.isSuperior ? '<span class="item-superior"> Superior</span>' : "") +
+            (self.game.itemToDelete?.isUnique ? '<span class="item-unique"> Unique</span>' : "")
+          } item?`,
+        );
+      },
       buttons: [
         {
           text: "Cancel",
@@ -443,18 +451,26 @@ class App {
           class: "btn",
           click: function () {
             self.game.deleteItemFromSlot();
+            self.game.slotToDelete = null;
             $(this).dialog("close");
           },
         },
       ],
     });
-    $("#dialog-delete-item").text("Are you sure you want to delete this item?");
 
     $("#dialog-merchant-item").dialog({
       dialogClass: "no-close",
       autoOpen: false,
       draggable: false,
       title: "Sell item to merchant",
+      open: function () {
+        $("#dialog-merchant-item").html(
+          `Are you sure you want to sell this${
+            (self.game.confirmedSoldItemToMerchant?.isSuperior ? '<span class="item-superior"> Superior</span>' : "") +
+            (self.game.confirmedSoldItemToMerchant?.isUnique ? '<span class="item-unique"> Unique</span>' : "")
+          } item to the merchant?`,
+        );
+      },
       buttons: [
         {
           text: "Cancel",
@@ -480,7 +496,7 @@ class App {
         },
       ],
     });
-    $("#dialog-merchant-item").text("Are you sure you want to sell this item to the merchant?");
+
     $(".ui-dialog-buttonset").find(".ui-button").removeClass("ui-button ui-corner-all ui-widget");
   }
 
@@ -1177,7 +1193,7 @@ class App {
         .on("click", e => {
           $(e.currentTarget).addClass("disabled").attr("disabled", "disabled");
           const playerName = String($(e.currentTarget).data("party-remove"));
-           // @note safety
+          // @note safety
           if (playerName) {
             this.game.client.sendPartyRemove(playerName);
           }

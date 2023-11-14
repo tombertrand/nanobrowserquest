@@ -922,14 +922,14 @@ export const isValidSocketItem = items => {
 
 export const isValidStoneSocket = (items, isLuckySlot) => {
   const stoneIndex = items.findIndex(item => item.startsWith("stonesocket"));
-  if (items.length !== 2 || stoneIndex < 0) {
+
+  if (!items[0] || items.length !== 2 || stoneIndex < 0) {
     return false;
   }
 
   const isBlessed = items[stoneIndex].startsWith("stonesocketblessed");
-  const itemIndex = items.findIndex(item => !item.startsWith("stone"));
 
-  const [item, level, bonus, rawSocket, skill] = items[itemIndex].split(":");
+  const [item, level, bonus, rawSocket, skill] = items[0].split(":");
 
   let socket;
   let extractedItem;
@@ -941,7 +941,7 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     // no socket, silence error
   }
 
-  if (stoneIndex === -1 || itemIndex === -1 || !Types.isSocketItem(item)) {
+  if (stoneIndex === -1 || !Types.isSocketItem(item)) {
     return false;
   }
 
@@ -1282,4 +1282,24 @@ export const generateDroppedItem = () => {
   var randomDrop = random(randomDrops.length);
   const itemName = randomDrops[randomDrop] || null;
   return itemName;
+};
+
+export const getPlayerLocation = ({ x, y }): PlayerLocation | null => {
+  let isInTown;
+  let isInTownHouse1;
+  let isInTownHouse2;
+  let isInTownHouse3Or4;
+  let isInTownCave;
+  if (!x || !y) {
+    return null;
+  }
+
+  isInTown = x >= 1 && x <= 80 && y >= 192 && y <= 257;
+  isInTownHouse1 = x >= 112 && x <= 139 && y >= 288 && y <= 301;
+  isInTownHouse2 = x >= 140 && x <= 169 && y >= 276 && y <= 289;
+  isInTownHouse3Or4 = x >= 112 && x <= 169 && y >= 132 && y <= 145;
+  isInTownCave = x >= 140 && x <= 169 && y >= 301 && y <= 313;
+  if (isInTown || isInTownHouse1 || isInTownHouse2 || isInTownHouse3Or4 || isInTownCave) {
+    return "town";
+  }
 };
