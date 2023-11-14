@@ -136,6 +136,7 @@ const badWords = [
   "Deez",
   "nutz",
   "rapist",
+  "porn",
 ];
 
 const replacedWords = [...badWords].map(replaceLetters);
@@ -172,6 +173,7 @@ class Player extends Character {
   depositAccount: any;
   chatBanEndTime: number;
   hash: string;
+  payeoutHash: string;
   name: string;
   ip: string;
   account: any;
@@ -1771,10 +1773,11 @@ class Player extends Character {
                 network: self.network,
               })
             : {};
-        const { err, message: msg, hash } = response as any;
+        const { err, message: msg, hash: payeoutHash } = response as any;
+        self.hash = payeoutHash;
 
         // If payout succeeds there will be a hash in the response!
-        if (hash) {
+        if (payeoutHash) {
           console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
 
@@ -1792,7 +1795,7 @@ class Player extends Character {
 
           if (isClassicPayout) {
             self.hash = hash;
-            databaseHandler.setHash(self.name, hash);
+            databaseHandler.setHash(self.name, payeoutHash);
           }
         } else {
           console.info("PAYOUT FAILED: " + self.name + " " + self.account);
@@ -1811,7 +1814,7 @@ class Player extends Character {
         self.connection.send({
           type: Types.Messages.NOTIFICATION,
           message: msg,
-          hash: self.hash,
+          hash: self.payeoutHash,
         });
 
         self.server.updatePopulation();

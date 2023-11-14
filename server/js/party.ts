@@ -54,6 +54,13 @@ class Party {
     let candidateIndex = this.lootMemberIndex;
 
     do {
+      // Check if the member at candidateIndex is defined
+      if (!this.members[candidateIndex]) {
+        console.log("Skipped undefined member at index:", candidateIndex);
+        candidateIndex = (candidateIndex + 1) % this.members.length;
+        continue; // Skip to the next iteration
+      }
+
       const player = this.server.getEntityById(this.members[candidateIndex].id);
       const playerLocation = getPlayerLocation({ x: player.x, y: player.y });
 
