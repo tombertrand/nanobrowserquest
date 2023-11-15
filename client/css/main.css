@@ -705,6 +705,16 @@ footer, header, hgroup, menu, nav, section {
     .item-title.rune {
         color: #d3c59c;
     }
+
+   .item-unique.item-superior,
+   .item-runeword.item-superior {
+        box-shadow: 0 0 0 2px #e700e7;
+    }
+
+    .item-superior:not(.item-unique):not(.item-runeword){
+        border-color: #e700e7 !important;
+    }
+
     .item-unique {
         border-color: #d3c59c !important;
     }

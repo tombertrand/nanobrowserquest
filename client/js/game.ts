@@ -29,7 +29,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
 import { expForLevel } from "../../shared/js/types/experience";
-import { HASH_BAN_DELAY, isValidRecipe } from "../../shared/js/utils";
+import { HASH_BAN_DELAY } from "../../shared/js/utils";
 import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
@@ -1032,22 +1032,26 @@ class Game {
       let itemSkill;
       let itemSkin;
       let itemSocket;
-      let isItemUnique;
       let isUpgrade = false;
+      let isItemUnique;
+      let isItemSuperior;
 
-      self.player.upgrade.forEach(({ item, level: rawLevel, slot, bonus, skill, skin, socket, isUnique }) => {
-        if (slot === 0) {
-          itemName = item;
-          itemLevel = Number(rawLevel);
-          itemBonus = bonus;
-          itemSkill = skill;
-          itemSkin = skin;
-          itemSocket = socket;
-          isItemUnique = isUnique;
-        } else if (item.startsWith("scrollupgrade")) {
-          isUpgrade = true;
-        }
-      });
+      self.player.upgrade.forEach(
+        ({ item, level: rawLevel, slot, bonus, skill, skin, socket, isUnique, isSuperior }) => {
+          if (slot === 0) {
+            itemName = item;
+            itemLevel = Number(rawLevel);
+            itemBonus = bonus;
+            itemSkill = skill;
+            itemSkin = skin;
+            itemSocket = socket;
+            isItemUnique = isUnique;
+            isItemSuperior = isSuperior;
+          } else if (item.startsWith("scrollupgrade")) {
+            isUpgrade = true;
+          }
+        },
+      );
       const nextLevel = itemLevel + 1;
 
       if (isUpgrade && itemName && itemLevel) {
@@ -1055,6 +1059,7 @@ class Game {
           previewSlot.append(
             self.createItemDiv({
               isUnique: isItemUnique,
+              isSuperior: isItemSuperior,
               item: itemName,
               level: nextLevel,
               bonus: itemBonus,
@@ -1476,6 +1481,7 @@ class Game {
   populateEquipmentInSlots(player, container) {
     if (player.weaponName !== "dagger") {
       const isUnique = Types.isUnique(player.weaponName, player.weaponBonus);
+      const isSuperior = Types.isSuperior(player.weaponBonus);
       const { runeword } = Types.getRunewordBonus({
         isUnique,
         socket: player.weaponSocket,
@@ -1484,7 +1490,9 @@ class Game {
 
       container.find(".item-equip-weapon").html(
         $("<div />", {
-          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${isSuperior ? "item-superior" : ""} ${
+            !!runeword ? "item-runeword" : ""
+          }`,
           css: {
             "background-image": `url("${this.getIconPath(player.weaponName)}")`,
           },
@@ -1501,6 +1509,7 @@ class Game {
     }
     if (player.helmName !== "helmcloth") {
       const isUnique = Types.isUnique(player.helmName, player.helmBonus);
+      const isSuperior = Types.isSuperior(player.helmBonus);
       const { runeword } = Types.getRunewordBonus({
         isUnique,
         socket: player.helmSocket,
@@ -1509,7 +1518,9 @@ class Game {
 
       container.find(".item-equip-helm").html(
         $("<div />", {
-          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${isSuperior ? "item-superior" : ""} ${
+            !!runeword ? "item-runeword" : ""
+          }`,
           css: {
             "background-image": `url("${this.getIconPath(player.helmName)}")`,
           },
@@ -1526,6 +1537,7 @@ class Game {
 
     if (player.armorName !== "clotharmor") {
       const isUnique = Types.isUnique(player.armorName, player.armorBonus);
+      const isSuperior = Types.isSuperior(player.armorBonus);
       const { runeword } = Types.getRunewordBonus({
         isUnique,
         socket: player.armorSocket,
@@ -1534,7 +1546,9 @@ class Game {
 
       container.find(".item-equip-armor").html(
         $("<div />", {
-          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${isSuperior ? "item-superior" : ""} ${
+            !!runeword ? "item-runeword" : ""
+          }`,
           css: {
             "background-image": `url("${this.getIconPath(player.armorName)}")`,
           },
@@ -1550,9 +1564,11 @@ class Game {
     }
 
     if (player.beltName) {
+      const isUnique = Types.isUnique(player.armorName, player.beltBonus);
+      const isSuperior = Types.isSuperior(player.beltBonus);
       container.find(".item-equip-belt").html(
         $("<div />", {
-          class: `item-draggable ${Types.isUnique(player.beltName, player.beltBonus) ? "item-unique" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${isSuperior ? "item-superior" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(player.beltName)}")`,
           },
@@ -1567,9 +1583,11 @@ class Game {
     }
 
     if (player.cape) {
+      const isUnique = Types.isUnique(player.cape, player.capeBonus);
+      const isSuperior = Types.isSuperior(player.capeBonus);
       container.find(".item-equip-cape").html(
         $("<div />", {
-          class: `item-draggable ${Types.isUnique(player.cape, player.capeBonus) ? "item-unique" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""}  ${isSuperior ? "item-superior" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(player.cape, player.capeLevel)}")`,
           },
@@ -1584,9 +1602,11 @@ class Game {
     }
 
     if (player.pet) {
+      const isUnique = Types.isUnique(player.pet, player.petBonus);
+      const isSuperior = Types.isSuperior(player.petBonus);
       container.find(".item-equip-pet").html(
         $("<div />", {
-          class: `item-draggable ${Types.isUnique(player.pet, player.petBonus) ? "item-unique" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""}  ${isSuperior ? "item-superior" : ""}`,
           css: {
             "background-image": `url("${this.getIconPath(player.pet, player.petLevel, player.petSkin)}")`,
           },
@@ -1603,6 +1623,7 @@ class Game {
 
     if (player.shieldName) {
       const isUnique = Types.isUnique(player.shieldName, player.shieldBonus);
+      const isSuperior = Types.isSuperior(player.shieldBonus);
       const { runeword } = Types.getRunewordBonus({
         isUnique,
         socket: player.shieldSocket,
@@ -1611,7 +1632,9 @@ class Game {
 
       container.find(".item-equip-shield").html(
         $("<div />", {
-          class: `item-draggable ${isUnique ? "item-unique" : ""} ${!!runeword ? "item-runeword" : ""}`,
+          class: `item-draggable ${isUnique ? "item-unique" : ""} ${isSuperior ? "item-superior" : ""} ${
+            !!runeword ? "item-runeword" : ""
+          }`,
           css: {
             "background-image": `url("${this.getIconPath(player.shieldName)}")`,
           },
@@ -1879,6 +1902,7 @@ class Game {
     {
       quantity,
       isUnique,
+      isSuperior,
       item,
       level,
       bonus,
@@ -1892,6 +1916,7 @@ class Game {
       item: string;
       quantity?: number;
       isUnique?: boolean;
+      isSuperior?: boolean;
       level?: number;
       bonus?: string;
       skill?: any;
@@ -1913,7 +1938,7 @@ class Game {
     return $("<div />", {
       class: `${isDraggable ? "item-draggable" : "item-not-draggable"} ${quantity ? "item-quantity" : ""} ${
         isUnique ? "item-unique" : ""
-      } ${runeword ? "item-runeword" : ""}`,
+      } ${isSuperior ? "item-superior" : ""} ${runeword ? "item-runeword" : ""}`,
       css: {
         "background-image": `url("${this.getIconPath(item, level, skin)}")`,
         position: "relative",
@@ -2118,7 +2143,9 @@ class Game {
 
       $(`#upgrade .item-slot:eq(${slot})`)
         .removeClass("item-droppable")
-        .append(this.createItemDiv({ quantity, isUnique, item, level: rawLevel, bonus, socket, skill, skin }));
+        .append(
+          this.createItemDiv({ quantity, isUnique, isSuperior, item, level: rawLevel, bonus, socket, skill, skin }),
+        );
     });
 
     if (rune) {

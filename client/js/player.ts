@@ -228,7 +228,6 @@ class Player extends Character {
     this.capeHue = hue;
   }
 
-
   setCapeSaturate(saturate: number) {
     this.capeSaturate = saturate;
   }
@@ -838,12 +837,18 @@ class Player extends Character {
           isWeapon || isHelm || isArmor || isBelt || isCape || isPet || isShield || isRing || isAmulet || isJewel;
         const level = hasLevel ? parseInt(levelOrQuantityOrAmount) : null;
         const isQuantity =
-          Types.isScroll(item) || isChest || Types.isRune(item) || Types.isStone(item) || Types.isBar(item) || Types.isConsumable(item);
+          Types.isScroll(item) ||
+          isChest ||
+          Types.isRune(item) ||
+          Types.isStone(item) ||
+          Types.isBar(item) ||
+          Types.isConsumable(item);
         const amount =
           !hasLevel && !isQuantity && !Types.isSingle(item) && !Types.isChest(item) && !isPet
             ? parseInt(levelOrQuantityOrAmount)
             : null;
         const isUnique = Types.isUnique(item, bonus, isJewel ? level : undefined);
+        const isSuperior = Types.isSuperior(bonus);
 
         let requirement = null;
         let quantity = null;
@@ -878,6 +883,7 @@ class Player extends Character {
           slot,
           requirement,
           isUnique,
+          isSuperior,
           runeword,
           ...{ level },
           ...{ quantity },

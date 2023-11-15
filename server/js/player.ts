@@ -137,6 +137,7 @@ const badWords = [
   "nutz",
   "rapist",
   "porn",
+  "negro",
 ];
 
 const replacedWords = [...badWords].map(replaceLetters);
