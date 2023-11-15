@@ -2744,6 +2744,7 @@ class Player extends Character {
     const beltBonus = this.beltBonus?.concat(this.isBeltSuperior ? [43] : []);
     const capeBonus = this.capeBonus?.concat(this.isCapeSuperior ? [43] : []);
     const shieldBonus = this.shieldBonus?.concat(this.isShieldSuperior ? [43] : []);
+    const petBonus = this.petBonus?.concat(this.isPetSuperior ? [43] : []);
 
     return Object.assign({}, this._getBaseState(), {
       orientation: this.orientation,
@@ -2764,7 +2765,7 @@ class Player extends Character {
       partyId: this.partyId,
       cape: this.cape ? `${this.cape}${toDb(this.capeLevel)}${toDb(capeBonus)}` : null,
       pet: this.pet
-        ? `${this.pet}${toDb(this.petLevel)}${toDb(this.petBonus)}${toDb(this.petSocket)}${toDb(this.petSkin)}`
+        ? `${this.pet}${toDb(this.petLevel)}${toDb(petBonus)}${toDb(this.petSocket)}${toDb(this.petSkin)}`
         : null,
       shield: this.shield
         ? `${this.shield}:${this.shieldLevel}${toDb(shieldBonus)}${toDb(this.shieldSocket)}${toDb(this.defenseSkill)}`
@@ -3391,6 +3392,7 @@ class Player extends Character {
           kind: petKindToPetMap[this.petKind],
           skin: this.petSkin,
           level: this.petLevel,
+          bonus: this.petBonus,
           x,
           y,
           ownerId: id,
@@ -4045,6 +4047,7 @@ class Player extends Character {
           kind: petKindToPetMap[this.petKind],
           skin: this.petSkin,
           level: this.petLevel,
+          bonus: this.petBonus,
           x,
           y,
           ownerId: id,

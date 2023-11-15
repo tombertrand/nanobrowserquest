@@ -5,11 +5,12 @@ class Pet extends Character {
   ownerId: number;
   skin: number;
   level: number;
-  isPet: boolean
+  bonus: any;
+  isPet: boolean;
   moveCallback: () => void;
   // move_callback: (x: number, y: number) => void;
 
-  constructor({ id, type = "pet", kind, skin, x, y, ownerId, level }) {
+  constructor({ id, type = "pet", kind, skin, x, y, ownerId, level, bonus }) {
     super(id, type, kind, x, y);
 
     this.orientation = randomOrientation();
@@ -20,6 +21,7 @@ class Pet extends Character {
     this.skin = skin;
     this.isPet = true;
     this.level = level;
+    this.bonus = bonus;
   }
 
   getState() {
@@ -32,6 +34,7 @@ class Pet extends Character {
       enchants: this.enchants || null,
       skin: this.skin,
       level: this.level,
+      bonus: this.bonus,
       ownerId: this.ownerId,
     });
   }
