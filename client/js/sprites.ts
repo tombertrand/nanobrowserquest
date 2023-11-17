@@ -532,6 +532,8 @@ const sprites = {
   "item-mushrooms": item,
   "item-iou": item,
   "item-petegg": item,
+  "item-petcollar": item,
+  "item-petcollar-1": item,
   "item-petdino": item,
   "item-petbat": item,
   "item-petcat": item,

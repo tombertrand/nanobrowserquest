@@ -1050,7 +1050,7 @@ class App {
     let otherPlayersHtml = "";
 
     const { partyId, partyLeader } = this.game.player;
-    const isPartyLeader = partyId ? partyLeader?.name === this.game.player.name : false;
+    const isPartyLeader = partyId ? partyLeader?.name === this.game.player?.name : false;
 
     if (partyId) {
       filteredPlayers.map(player => {

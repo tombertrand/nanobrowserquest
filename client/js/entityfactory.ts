@@ -61,7 +61,6 @@ EntityFactory.builders[Types.Entities.PET_DEER] = function (id, props) {
 };
 
 EntityFactory.builders[Types.Entities.PET_DRAGON] = function (id, props) {
-
   return new Pets.Dragon(id, props);
 };
 
@@ -1231,6 +1230,10 @@ EntityFactory.builders[Types.Entities.CHEST] = function (id) {
 
 EntityFactory.builders[Types.Entities.PETEGG] = function (id) {
   return new Items.PetEgg(id);
+};
+
+EntityFactory.builders[Types.Entities.PETCOLLAR] = function (id, props) {
+  return new Items.PetCollar(id, props);
 };
 
 EntityFactory.builders[Types.Entities.PETDINO] = function (id) {

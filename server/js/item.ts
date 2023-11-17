@@ -2,6 +2,7 @@ import Entity from "./entity";
 
 export interface ItemProps {
   kind: number;
+  skin?: string;
   x: number;
   y: number;
   partyId?: number;
@@ -20,14 +21,16 @@ class Item extends Entity {
   level?: number;
   mobKind?: number;
   amount?: number;
+  skin?: string;
 
-  constructor({ id, kind, x, y, partyId, level, mobKind, amount }: ItemProps & { id: string }) {
+  constructor({ id, kind, skin, x, y, partyId, level, mobKind, amount }: ItemProps & { id: string }) {
     super(id, "item", kind, x, y);
     this.isStatic = false;
     this.isFromChest = false;
     this.partyId = partyId;
     this.level = level;
     this.mobKind = mobKind;
+    this.skin = skin;
 
     if (amount) {
       this.amount = amount;

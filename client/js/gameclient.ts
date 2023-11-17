@@ -140,7 +140,6 @@ class GameClient {
     this.handlers[Types.Messages.UNRAISE] = this.receiveUnraise;
     this.handlers[Types.Messages.SPAWN] = this.receiveSpawn;
     this.handlers[Types.Messages.DESPAWN] = this.receiveDespawn;
-    // this.handlers[Types.Messages.SPAWN_BATCH] = this.receiveSpawnBatch;
     this.handlers[Types.Messages.HEALTH] = this.receiveHealth;
     this.handlers[Types.Messages.HEALTH_ENTITY] = this.receiveHealthEntity;
     this.handlers[Types.Messages.CHAT] = this.receiveChat;
@@ -425,10 +424,11 @@ class GameClient {
   // }
 
   receiveDrop(data) {
-    const { mobId, itemId, kind, mobHateList, partyId, amount } = data[1];
+    const { mobId, itemId, kind, mobHateList, partyId, amount, skin } = data[1];
+
 
     try {
-      const item = EntityFactory.createEntity({ kind, id: itemId });
+      const item = EntityFactory.createEntity({ kind, id: itemId, skin });
 
       // @TODO unify this with the receiveSpawn
       item.wasDropped = true;
@@ -457,7 +457,6 @@ class GameClient {
       this.spawn_spell_callback?.(spell, x, y, orientation, originX, originY, element, casterId, targetId, isRaise2);
     } else if (Types.isItem(kind) && !isPet) {
       const { mobHateList, partyId, amount } = data[1];
-
       const item = EntityFactory.createEntity({ kind, id });
 
       // @TODO unify this with the receiveDrop
@@ -624,6 +623,7 @@ class GameClient {
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.ERROR && this.partyerror_callback) {
       this.partyerror_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.LOOT && this.partyloot_callback) {
+
       this.partyloot_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.HEALTH && this.partyhealth_callback) {
       this.partyhealth_callback(data[2]);

@@ -1073,7 +1073,6 @@ var Items = {
     }
   },
 
-
   RingBloodBand: class RingBloodBand extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGBLOODBAND, "ring");
@@ -1574,6 +1573,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.PETEGG, "object");
       this.lootMessage = "You pick up a Pet Egg";
+    }
+  },
+
+  PetCollar: class PetCollar extends Item {
+    constructor(id, props) {
+      super(id, Types.Entities.PETCOLLAR, "object", props);
+      this.lootMessage = "You pick up a Pet Collar";
     }
   },
 

@@ -402,6 +402,10 @@ export const isValidTransmuteItems = items => {
 
   let [item, , bonus, socket] = items[0].split(":");
 
+  if (item){
+    return false;
+  }
+
   socket = toArray(socket);
   bonus = toArray(bonus);
   // Socketed item can't be transmuted
@@ -665,7 +669,7 @@ export const generatePurpleChestItem = (): {
     { item: "stonesocket" },
     { item: "stonesocketblessed" },
     { item: "stonedragon" },
-    { item: "jewelskull", jewelLevel: 5 },
+    { item: "jewelskull", jewelLevel: 4 },
   ];
 
   // 20%
@@ -690,7 +694,7 @@ export const generatePurpleChestItem = (): {
   const randomCategory = random(100);
 
   if (randomCategory < 30) {
-    const rune = getRandomRune(70, 15);
+    const rune = getRandomRune(70, 13);
 
     return { item: `rune-${rune}`, quantity: 1 };
   } else if (randomCategory < 50) {
@@ -735,6 +739,12 @@ export const generateRandomPet = () => {
     pet: randomPet,
     skin: randomSkin,
   };
+};
+
+export const getRandomPetCollarSkin = () => {
+  const randomSkin = randomInt(1, 1);
+
+  return randomSkin;
 };
 
 export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false, isBlessed = false }) => {
@@ -1186,8 +1196,9 @@ export const generateDroppedItem = () => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
-  var randomDrops = [];
-  // var randomDrops = ["ringbloodband"];
+  let randomDrops = [];
+  // randomDrops = ["ringbloodband"];
+  randomDrops = ["petcollar"];
   // var randomDrops = [ "amuletdragon"];
   // var randomDrops = ["helmdragon", "dragonsword", "dragonarmor", "shielddragon", "amuletdragon"];
   // var randomDrops = ["helmpaladin", "helmimmortal"];
@@ -1203,7 +1214,7 @@ export const generateDroppedItem = () => {
   // var randomDrops = ["gold"];
   // var randomDrops = ["barbronze", "barsilver", "bargold", "barplatinum"];
   // var randomDrops = ["ringgreed", "amuletgreed"];
-  // var randomDrops = ["jewelskull"];
+  //  randomDrops = ["jewelskull"];
   // var randomDrops = ["nft", "wing", "crystal"];
   // var randomDrops = ["powdergreen"];
   // var randomDrops = ["powderblack", "powderblue", "powdergold", "powdergreen", "powderred", "powderquantum"];

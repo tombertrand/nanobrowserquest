@@ -8,6 +8,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const WebpackObfuscator = require("webpack-obfuscator");
 
+const isDev = process.env.NODE_ENV === "development";
 module.exports = {
   mode: process.env.NODE_ENV,
   entry: {
@@ -18,7 +19,7 @@ module.exports = {
     static: {
       directory: path.join(__dirname, "dist/client"),
     },
-    compress: true,
+    compress: !isDev,
     port: 8010,
     client: {
       overlay: {
@@ -27,27 +28,29 @@ module.exports = {
       },
     },
   },
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          mangle: true,
-          safari10: true,
-        },
-      }),
-    ],
-    runtimeChunk: "single",
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          // chunks: "all",
+  optimization: isDev
+    ? {}
+    : {
+        minimize: true,
+        minimizer: [
+          new TerserPlugin({
+            terserOptions: {
+              mangle: true,
+              safari10: true,
+            },
+          }),
+        ],
+        runtimeChunk: "single",
+        splitChunks: {
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: "vendors",
+              // chunks: "all",
+            },
+          },
         },
       },
-    },
-  },
   module: {
     rules: [
       {
@@ -77,11 +80,13 @@ module.exports = {
       },
     ],
   },
-  output: {
-    filename: "[name].[hash].bundle.js",
-    path: path.resolve(__dirname, "dist/client"),
-    clean: true,
-  },
+  output: isDev
+    ? {}
+    : {
+        filename: "[name].[hash].bundle.js",
+        path: path.resolve(__dirname, "dist/client"),
+        clean: true,
+      },
   resolve: {
     fallback: {
       fs: false,
@@ -127,7 +132,7 @@ module.exports = {
       filename: "index_ban.html",
       template: "./client/index_ban.html",
     }),
-    process.env.NODE_ENV !== "development"
+    !isDev
       ? new WebpackObfuscator(
           {
             ignoreImports: true,

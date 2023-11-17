@@ -8,13 +8,16 @@ class Item extends Entity {
   wasDropped: boolean;
   lootMessage: any;
   amount?: number;
+  skin?: number;
 
-  constructor(id, kind, type) {
+  constructor(id: number, kind: number, type: string, props?: any) {
     super(id, kind);
 
     this.itemKind = Types.getKindAsString(kind);
     this.type = type;
     this.wasDropped = false;
+
+    this.skin = props?.skin || "";
   }
 
   hasShadow() {
@@ -22,7 +25,11 @@ class Item extends Entity {
   }
 
   getSpriteName(suffix = "") {
-    return `item-${this.itemKind}${suffix}`;
+    if (suffix || this.skin) {
+      return `item-${this.itemKind}-${suffix || this.skin}`;
+    } else {
+      return `item-${this.itemKind}`;
+    }
   }
 
   getLootMessage({ amount }: { amount?: number } = {}) {

@@ -138,6 +138,7 @@ const badWords = [
   "rapist",
   "porn",
   "negro",
+  "motherfucker",
 ];
 
 const replacedWords = [...badWords].map(replaceLetters);
@@ -1393,6 +1394,7 @@ class Player extends Character {
               try {
                 let isUnique = false;
                 let isSuperior = false;
+                let jewelLevel = null;
                 let generatedItem: GeneratedItem = null;
                 let runeName = null;
                 if (Types.isRune(kind)) {
@@ -1403,7 +1405,7 @@ class Player extends Character {
                 } else if (Types.isQuantity(kind) || Types.isConsumable(kind)) {
                   generatedItem = { item: Types.getKindAsString(kind), quantity: 1 };
                 } else if (Types.isItem(kind)) {
-                  const jewelLevel = Types.isJewel(kind) ? item.level : 1;
+                  jewelLevel = Types.isJewel(kind) ? item.level : 1;
                   ({ isUnique, isSuperior, ...generatedItem } =
                     self.generateItem({ kind, jewelLevel }) || ({} as GeneratedItem));
                 }
@@ -1427,7 +1429,7 @@ class Player extends Character {
                     self.server.pushToParty(
                       self.getParty(),
                       new Messages.Party(Types.Messages.PARTY_ACTIONS.LOOT, [
-                        { playerName: player.name, kind, isUnique, isSuperior },
+                        { playerName: player.name, kind, isUnique, isSuperior, jewelLevel },
                       ]),
                     );
                   }
@@ -2514,10 +2516,17 @@ class Player extends Character {
 
       bonus = _.shuffle(highLevelBonus).slice(0, isUnique ? 2 : 1);
 
-      // @TODO Necklace will have elemental dmg
-      //.concat(_.shuffle(elementDamage).slice(0, 1));
+      if (kind === Types.Entities.PETCOLLAR) {
+        item = {
+          item: Types.getKindAsString(kind),
+          level,
+          bonus: [],
+          socket: [],
+          isUnique,
+          skin: 1,
+        };
 
-      if (kind === Types.Entities.PETEGG) {
+      } else if (kind === Types.Entities.PETEGG) {
         item = {
           item: Types.getKindAsString(kind),
           level,
@@ -2708,6 +2717,7 @@ class Player extends Character {
         }
       }
 
+
       item = {
         item: Types.getKindAsString(kind),
         level: jewelLevel,
@@ -2715,10 +2725,9 @@ class Player extends Character {
       };
     }
 
-    // console.log("~~end of generate item fn", item);
-
     item.isUnique = isUnique;
     item.isSuperior = isSuperior;
+    item.jewelLevel = jewelLevel;
 
     return item;
   }

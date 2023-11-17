@@ -1604,6 +1604,7 @@ class Game {
     if (player.pet) {
       const isUnique = Types.isUnique(player.pet, player.petBonus);
       const isSuperior = Types.isSuperior(player.petBonus);
+
       container.find(".item-equip-pet").html(
         $("<div />", {
           class: `item-draggable ${isUnique ? "item-unique" : ""}  ${isSuperior ? "item-superior" : ""}`,
@@ -2065,6 +2066,9 @@ class Game {
     let jewelRequirement;
     let nextLevelRequirement;
 
+    let runeCount = 0;
+    let jewelCount = 0;
+
     let isRune = false;
     let nextLevel;
     let warningMessage = "";
@@ -2081,7 +2085,14 @@ class Game {
       }
 
       isRune = Types.isRune(item);
+
+      if (isRune) {
+        runeCount++;
+      }
       isJewel = Types.isJewel(item);
+      if (isJewel) {
+        jewelCount++;
+      }
       jewelRequirement = isJewel ? Types.getJewelRequirement(bonus) : null;
 
       if (slot === 0 && itemLevel) {
@@ -2128,6 +2139,10 @@ class Game {
             warningMessage = `If upgraded,the item lvl requirement will be ${nextLevelRequirement}, you are lv. ${this.player.level}, you'll not be able to equip it`;
           }
         }
+      } else if (runeCount > 1) {
+        warningMessage = "you need to socket runes 1 by 1 on your item to not mess up the order to create runewords.";
+      } else if (jewelCount > 1) {
+        warningMessage = "Jewels can only  be inserted  1 by 1 on your item sockets.";
       } else if (isRune) {
         const rune = isRune ? Types.getRuneFromItem(item) : null;
         if (rune && rune.requirement > this.player.level) {
@@ -4351,6 +4366,10 @@ class Game {
         self.partyInvites.push({ name: partyLeader.name, partyId });
 
         if (!$("#party").hasClass("active")) {
+          if (self.app.partyBlinkInterval) {
+            clearInterval(self.app.partyBlinkInterval);
+            self.app.partyBlinkInterval = null;
+          }
           self.app.partyBlinkInterval = setInterval(() => {
             $("#party-button").toggleClass("blink");
           }, 500);
@@ -4433,7 +4452,7 @@ class Game {
         self.chat_callback({ message, type: "error" });
       });
 
-      self.client.onPartyLoot(function ({ playerName, kind, isUnique, isSuperior }) {
+      self.client.onPartyLoot(function ({ playerName, kind, isUnique, isSuperior, jewelLevel }) {
         let message = "";
 
         if (isUnique) {
@@ -4441,7 +4460,7 @@ class Game {
             isUnique && !isSuperior ? "the" : ""
           } <span class="item-unique">${Types.itemUniqueMap[Types.getKindAsString(kind)][0]}</span>`;
         } else {
-          message = `${playerName} received ${EntityFactory.builders[kind]()
+          message = `${playerName} received ${jewelLevel ? `+${jewelLevel}` : ""} ${EntityFactory.builders[kind]()
             .getLootMessage()
             .replace("You pick up", "")}`;
         }
@@ -5134,6 +5153,9 @@ class Game {
 
       self.client.onDropItem(function (item, mobId) {
         var pos = self.getDeadMobPosition(mobId);
+
+
+        item.setSprite(self.getSprite(item.getSpriteName(item.skin)));
 
         if (pos) {
           self.addItem(item, pos.x, pos.y);

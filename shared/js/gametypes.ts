@@ -84,6 +84,7 @@ export const Types: any = {
 
     // PETS
     PETEGG: 357,
+    PETCOLLAR: 400, //~~~ last
     PETDINO: 358,
     PET_DINO: 359,
     PETBAT: 360,
@@ -335,7 +336,7 @@ export const Types: any = {
     RINGFOUNTAIN: 126,
     RINGPUMKIN: 394,
     RINGBADOMEN: 398,
-    RINGBLOODBAND: 399, // ~~last
+    RINGBLOODBAND: 399,
     RINGMINOTAUR: 132,
     RINGMYSTICAL: 214,
     RINGBALROG: 194,
@@ -771,6 +772,7 @@ export const kinds = {
 
   // Pets
   petegg: [Types.Entities.PETEGG, "pet", "Pet Egg"],
+  petcollar: [Types.Entities.PETCOLLAR, "pet", "Pet Collar"],
   pet_dino: [Types.Entities.PET_DINO, "pet"],
   pet_bat: [Types.Entities.PET_BAT, "pet"],
   pet_cat: [Types.Entities.PET_CAT, "pet"],
@@ -2013,6 +2015,7 @@ Types.isPetItem = function (kindOrString: string | number) {
   if (typeof kindOrString === "number") {
     return [
       Types.Entities.PETEGG,
+      Types.Entities.PETCOLLAR,
       Types.Entities.PETDINO,
       Types.Entities.PETBAT,
       Types.Entities.PETCAT,

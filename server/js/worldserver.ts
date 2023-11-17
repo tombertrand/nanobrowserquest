@@ -7,7 +7,7 @@ import { ACHIEVEMENT_NAMES, ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/
 import { getGoldDeathPenaltyPercent } from "../../shared/js/utils";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
-import { EmojiMap, postMessageToDiscordChatChannel, postMessageToDiscordEventChannel } from "./discord";
+import { EmojiMap, postMessageToDiscordEventChannel } from "./discord";
 import { generateRandomGoldAmount } from "./gold";
 import Item from "./item";
 import Map from "./map";
@@ -25,6 +25,7 @@ import {
   generateDroppedItem,
   generateSoulStoneItem,
   getRandomJewelLevel,
+  getRandomPetCollarSkin,
   getRandomRune,
   random,
   randomInt,
@@ -1487,14 +1488,14 @@ class World {
     }
   }
 
-  createItem({ kind, x, y, partyId, level, mobKind, amount }: ItemProps) {
+  createItem({ kind, skin, x, y, partyId, level, mobKind, amount }: ItemProps) {
     var id = "9" + this.itemCount++,
       item = null;
 
     if (kind === Types.Entities.CHEST) {
       item = new Chest(id, x, y);
     } else {
-      item = new Item({ id, kind, x, y, partyId, level, mobKind, amount });
+      item = new Item({ id, kind, skin, x, y, partyId, level, mobKind, amount });
     }
     return item;
   }
@@ -2790,6 +2791,8 @@ class World {
 
     let itemLevel = null;
 
+    itemName = generateDroppedItem() || itemName;
+
     if (itemName === "jewelskull") {
       itemLevel = getRandomJewelLevel(Types.getMobLevel(mob.kind));
     } else if (itemName === "rune") {
@@ -2797,7 +2800,7 @@ class World {
     }
 
     // Potions can be looted by anyone
-    const kind = Types.getKindFromString(itemName);
+    let kind = Types.getKindFromString(itemName);
     const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;
     let amount = undefined;
 
@@ -2812,13 +2815,21 @@ class World {
       // ~~~~@TODO
       // amount = generateRandomBananoAmount(attacker.network);
     }
+  
 
-    itemName = generateDroppedItem() || itemName;
+    kind = Types.getKindFromString(itemName);
+
+
+    let skin = null;
+    if (kind === Types.Entities.PETCOLLAR) {
+      skin = getRandomPetCollarSkin();
+    }
 
     return itemName
       ? this.addItem(
           this.createItem({
-            kind: Types.getKindFromString(itemName),
+            kind,
+            skin,
             x: mob.x,
             y: mob.y,
             partyId,
@@ -2831,8 +2842,11 @@ class World {
   }
 
   onMobMoveCallback(mob) {
-    this.pushToAdjacentGroups(mob.group, new Messages.Move(mob));
-    this.handleEntityGroupMembership(mob);
+    //preventroaming msgs if no player year mobto save on
+    if (this.getPlayersAroundEntity(mob)) {
+      this.pushToAdjacentGroups(mob.group, new Messages.Move(mob));
+      this.handleEntityGroupMembership(mob);
+    }
   }
 
   findPositionNextTo(entity, target) {
@@ -2938,7 +2952,6 @@ class World {
 
       if (!entity.group || (entity.group && entity.group !== groupId)) {
         hasChangedGroups = true;
-
         this.addAsIncomingToGroup(entity, groupId);
         var oldGroups = this.removeFromGroups(entity);
         var newGroups = this.addToGroup(entity, groupId);

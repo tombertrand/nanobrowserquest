@@ -10,7 +10,6 @@ module.exports = Messages;
 Messages.Spawn = class Message {
   constructor(private entity) {}
   serialize() {
-
     return [Types.Messages.SPAWN, this.entity.getState()];
   }
 };
@@ -253,6 +252,7 @@ Messages.Drop = class Message {
     var drop = [
       Types.Messages.DROP,
       {
+        ...this.item,
         mobId: this.mob.id,
         itemId: this.item.id,
         kind: this.item.kind,
