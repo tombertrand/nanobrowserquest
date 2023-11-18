@@ -402,7 +402,7 @@ export const isValidTransmuteItems = items => {
 
   let [item, , bonus, socket] = items[0].split(":");
 
-  if (!item){
+  if (!item) {
     return false;
   }
 
@@ -1301,6 +1301,9 @@ export const getPlayerLocation = ({ x, y }): PlayerLocation | null => {
   let isInTownHouse2;
   let isInTownHouse3Or4;
   let isInTownCave;
+  let isGrimoireDungeon;
+  let isChaliceDungeon;
+  let isSpiderDungeon;
   if (!x || !y) {
     return null;
   }
@@ -1310,7 +1313,16 @@ export const getPlayerLocation = ({ x, y }): PlayerLocation | null => {
   isInTownHouse2 = x >= 140 && x <= 169 && y >= 276 && y <= 289;
   isInTownHouse3Or4 = x >= 112 && x <= 169 && y >= 132 && y <= 145;
   isInTownCave = x >= 140 && x <= 169 && y >= 301 && y <= 313;
+  isChaliceDungeon = x >= 0 && x <= 28 && y >= 696 && y <= 733;
+  isGrimoireDungeon = x >= 29 && x <= 56 && y >= 696 && y <= 733;
+  isGrimoireDungeon = x >= 85 && x <= 112 && y >= 696 && y <= 733;
   if (isInTown || isInTownHouse1 || isInTownHouse2 || isInTownHouse3Or4 || isInTownCave) {
     return "town";
+  } else if (isGrimoireDungeon) {
+    return "grimoire";
+  } else if (isChaliceDungeon) {
+    return "chalice";
+  } else if (isSpiderDungeon) {
+    return "spiders";
   }
 };

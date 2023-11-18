@@ -23,7 +23,10 @@ type PlayerLocation =
   | "Lost Temple Expansion"
   | "Azrael"
   | "Gateway"
-  | "Temple";
+  | "Temple"
+  | "chalice"
+  | "spiders"
+  | "grimoire";
 
 type GeneratedItem = {
   item: string;

@@ -86,6 +86,7 @@ const badWords = [
   "nigga",
   "niggas",
   "niga",
+  "niga",
   "fucker",
   "fucked",
   "fucking",
@@ -1702,7 +1703,6 @@ class Player extends Character {
         if (
           isClassicPayout &&
           (self.hash ||
-            self.hasRequestedBossPayout ||
             self.createdAt + MIN_TIME > Date.now() ||
             self.level < MIN_LEVEL ||
             // Check for required achievements
@@ -1713,8 +1713,6 @@ class Player extends Character {
           let banMessage = "";
           if (self.hash) {
             banMessage = `Already have hash ${self.hash}`;
-          } else if (self.hasRequestedBossPayout && self.hash) {
-            banMessage = `Has already requested payout for Classic`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             banMessage = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
           } else if (self.level < MIN_LEVEL) {
@@ -1766,8 +1764,10 @@ class Player extends Character {
         // only set Q on payout success
 
         payoutIndex += 1;
+
+        self.hasRequestedBossPayout = true;
         const response =
-          self.network && self.hasWallet && !self.hash
+          self.network && self.hasWallet && !self.hash && !self.hasRequestedBossPayout
             ? await enqueueSendPayout({
                 playerName: self.name,
                 account: self.account,
@@ -2525,7 +2525,6 @@ class Player extends Character {
           isUnique,
           skin: 1,
         };
-
       } else if (kind === Types.Entities.PETEGG) {
         item = {
           item: Types.getKindAsString(kind),
@@ -2716,7 +2715,6 @@ class Player extends Character {
           }
         }
       }
-
 
       item = {
         item: Types.getKindAsString(kind),
