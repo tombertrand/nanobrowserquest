@@ -1292,7 +1292,7 @@ class DatabaseHandler {
       try {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
 
-        fromItem = (isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed) ;
+        fromItem = isMultipleFrom ? fromReplyParsed[fromSlot - fromRange] : fromReplyParsed;
 
         //slot msg could be manipulated only move the ones not empty
         if (!fromItem) {
@@ -1684,12 +1684,12 @@ class DatabaseHandler {
         }
         if (!deductedGold) return;
 
-        if (deductedGold>= 10_000){
+        if (deductedGold >= 10_000 && penalty) {
           postMessageToDiscordEventChannel(
             `${EmojiMap.press_f_to_pay_respects} **${player.name}** just lost **${new Intl.NumberFormat(
               "en-EN",
               {},
-            ).format(deductedGold)}** gold ${EmojiMap.gold} on death.`,
+            ).format(deductedGold)}** gold ${EmojiMap.gold} on death${EmojiMap.janetyellen} is getting richer.`,
           );
         }
 
@@ -1951,7 +1951,7 @@ class DatabaseHandler {
                   if (slotIndex !== -1) {
                     const levelQuantity = level || quantity;
 
-                    if (!levelQuantity&&!Types.isJewel(item)) {
+                    if (!levelQuantity && !Types.isJewel(item)) {
                       throw new Error(
                         `Invalid item property ${JSON.stringify({ rawItem, playerName: player.name, inventory })}`,
                       );
@@ -3030,7 +3030,7 @@ class DatabaseHandler {
         }
 
         if (!message) {
-          message = `**${player.name}**`
+          message = `**${player.name}**`;
         }
 
         postMessageToDiscordAnvilChannel(`${message}${isLuckySlot ? " with the lucky slot 🍀" : ""} ${fire}`);

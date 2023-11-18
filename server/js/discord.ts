@@ -325,4 +325,5 @@ export const EmojiMap = {
   obelisk: "<:obelisk:1167783771534262322>",
   obelisklarge: "<a:obelisklarge:1170758924878741554>",
   petcollar: "<:petcollar:1174481604060655757>",
+  janetyellen: "<:janetyellen:1156657942821605568>",
 };

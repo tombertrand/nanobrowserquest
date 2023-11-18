@@ -402,7 +402,7 @@ export const isValidTransmuteItems = items => {
 
   let [item, , bonus, socket] = items[0].split(":");
 
-  if (item){
+  if (!item){
     return false;
   }
 
@@ -1198,7 +1198,7 @@ export const generateDroppedItem = () => {
   }
   let randomDrops = [];
   // randomDrops = ["ringbloodband"];
-  randomDrops = ["petcollar"];
+  // randomDrops = ["petcollar"];
   // var randomDrops = [ "amuletdragon"];
   // var randomDrops = ["helmdragon", "dragonsword", "dragonarmor", "shielddragon", "amuletdragon"];
   // var randomDrops = ["helmpaladin", "helmimmortal"];

@@ -2770,19 +2770,19 @@ class World {
     }
 
     if (mob.kind === Types.Entities.MINOTAUR) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained the Minotaur ${EmojiMap.minotaur}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slayed the Minotaur ${EmojiMap.minotaur}`);
     } else if (mob.kind === Types.Entities.COWKING) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained the Cow King ${EmojiMap.cowking}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slayed the Cow King ${EmojiMap.cowking}`);
     } else if (mob.kind === Types.Entities.SPIDERQUEEN) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Arachneia the Spider Queen ${EmojiMap.Arachneia}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slayed Arachneia the Spider Queen ${EmojiMap.Arachneia}`);
     } else if (mob.kind === Types.Entities.BUTCHER) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Gorefiend the Butcher ${EmojiMap.butcher}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slayed Gorefiend the Butcher ${EmojiMap.butcher}`);
     } else if (mob.kind === Types.Entities.SHAMAN) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Zul'Gurak${EmojiMap.zulgurak}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slayed Zul'Gurak${EmojiMap.zulgurak}`);
     } else if (mob.kind === Types.Entities.WORM) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Shai-Hulud ${EmojiMap.shaihulud}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slayed Shai-Hulud ${EmojiMap.shaihulud}`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
-      postMessageToDiscordEventChannel(`${attacker.name} slained Azrael ${EmojiMap.Azrael}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slayed Azrael ${EmojiMap.Azrael}`);
     }
 
     if ([Types.Entities.MINOTAUR, Types.Entities.BUTCHER, Types.Entities.DEATHANGEL].includes(mob.kind)) {

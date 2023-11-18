@@ -2081,6 +2081,7 @@ class Game {
         nextLevel = itemLevel + 1;
         isSuperior = Types.isSuperior(bonus);
       } else {
+        isSuperior = false;
         isTransmute = item.startsWith("scrolltransmute") || item.startsWith("scrolltransmuteblessed");
       }
 
@@ -5153,7 +5154,6 @@ class Game {
 
       self.client.onDropItem(function (item, mobId) {
         var pos = self.getDeadMobPosition(mobId);
-
 
         item.setSprite(self.getSprite(item.getSpriteName(item.skin)));
 
