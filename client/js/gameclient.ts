@@ -456,6 +456,7 @@ class GameClient {
       this.spawn_spell_callback?.(spell, x, y, orientation, originX, originY, element, casterId, targetId, isRaise2);
     } else if (Types.isItem(kind) && !isPet) {
       const { mobHateList, partyId, amount, skin } = data[1];
+
       const item = EntityFactory.createEntity({ kind, id, skin });
 
       // @TODO unify this with the receiveDrop

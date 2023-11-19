@@ -722,6 +722,8 @@ var initGame = function () {
           } else {
             game.dropItem(game.hoverSlotToDelete, -1);
           }
+
+          game.hoverSlotToDelete = null
         }
         break;
       case Types.Keys.LEFT:

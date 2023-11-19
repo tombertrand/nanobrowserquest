@@ -822,6 +822,8 @@ class Player extends Character {
         const delimiter = Types.isJewel(rawItem) ? "|" : ":";
         const [item, levelOrQuantityOrAmount, bonus, socket, skillOrSkin] = rawItem.split(delimiter);
 
+
+
         const isWeapon = kinds[item][1] === "weapon";
         const isHelm = kinds[item][1] === "helm";
         const isArmor = kinds[item][1] === "armor";

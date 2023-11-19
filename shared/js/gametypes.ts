@@ -84,7 +84,7 @@ export const Types: any = {
 
     // PETS
     PETEGG: 357,
-    PETCOLLAR: 400, //~~~ last
+    PETCOLLAR: 400,
     PETDINO: 358,
     PET_DINO: 359,
     PETBAT: 360,
@@ -436,7 +436,9 @@ export const Types: any = {
     TEMPLARSWORD: 155,
     DRAGONSWORD: 156,
     MOONSWORD: 157,
+    MOONHACHET: 402, // ~~~LAST
     MYSTICALSWORD: 158,
+    MYSTICALDAGGER: 401,
     SPIKEGLAIVE: 159,
     ECLYPSEDAGGER: 160,
     DEMONAXE: 305,
@@ -600,6 +602,7 @@ Types.Entities.Weapons = [
   Types.Entities.DRAGONSWORD,
   Types.Entities.MOONSWORD,
   Types.Entities.MYSTICALSWORD,
+  Types.Entities.MYSTICALDAGGER,
   Types.Entities.SPIKEGLAIVE,
   Types.Entities.ECLYPSEDAGGER,
   Types.Entities.DEMONAXE,
@@ -873,9 +876,11 @@ export const kinds = {
   executionersword: [Types.Entities.EXECUTIONERSWORD, "weapon", "Executioner Sword", 50, 56],
   templarsword: [Types.Entities.TEMPLARSWORD, "weapon", "Templar Sword", 52, 58],
   dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 54, 58],
-  moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Partisan", 59, 60],
+  moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Sword", 59, 60],
+  moonhachet: [Types.Entities.MOONHACHET, "weapon", "Moon Hachet", 59, 58],
   demonaxe: [Types.Entities.DEMONAXE, "weapon", "Demon Axe", 60, 64],
   mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 56, 62],
+  mysticaldagger: [Types.Entities.MYSTICALDAGGER, "weapon", "Mystical Dagger", 56, 58],
   paladinaxe: [Types.Entities.PALADINAXE, "weapon", "Paladin Axe", 60, 66],
   immortalsword: [Types.Entities.IMMORTALSWORD, "weapon", "Immortal Sword", 60, 66],
   spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 60, 68],
@@ -1319,8 +1324,10 @@ Types.itemUniqueMap = {
   templarsword: ["Panic Sell"],
   dragonsword: ["Balerion the Black Dread"],
   moonsword: ["Moon Boy"],
+  moonhachet: ["Blue Moon"],
   demonaxe: ["Trustable"],
   mysticalsword: ["The Maximalist"],
+  mysticaldagger: ["Long-term Security"],
   spikeglaive: ["WAGMI"],
   eclypsedagger: ["Ethereum Killer"],
   paladinaxe: ["Peer to Peer Digital Cash"],
@@ -2255,15 +2262,15 @@ Types.getMessageTypeAsString = function (type: number) {
 };
 
 Types.getPartyBonusDescriptionMap = [
-  "+#% Attack",
-  "+#% Defense",
-  "+#% Experience",
-  "+# Minimum damage",
-  "+# Maximum damage",
-  "+# Health",
-  "+# Magic damage",
-  "+#% All resistances",
-  "+#% Extra gold from enemies",
+  "+#% Attack", // 0
+  "+#% Defense", // 1
+  "+#% Experience", // 2
+  "+# Minimum damage", // 3
+  "+# Maximum damage", // 4
+  "+# Health", // 5
+  "+# Magic damage", // 6
+  "+#% All resistances", // 7
+  "+#% Extra gold from enemies", // 8
 ];
 
 Types.partyBonusType = [
@@ -2625,7 +2632,9 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     templarsword: 8,
     dragonsword: 8,
     moonsword: 8,
+    moonhachet: 8,
     mysticalsword: 6,
+    mysticaldagger: 6,
     spikeglaive: 6,
     eclypsedagger: 6,
     demonaxe: 6,
@@ -3187,4 +3196,5 @@ Types.itemDescription = {
   scrollupgradeelementpoison: "Enchant a high or a legendary weapon with poison spell offensive skill, 99% success",
   scrollupgradeskillrandom:
     "Enchant a  a high or legendary  weapon or shield with a random ability (current ability will be changed or it has a chance to stay unchanged), 99% success",
+  petcollar: "+1: Name your Pet",
 };

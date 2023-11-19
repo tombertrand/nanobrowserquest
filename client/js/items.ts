@@ -93,6 +93,13 @@ var Items = {
     }
   },
 
+  MoonHachet: class MoonHachet extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MOONHACHET, "weapon");
+      this.lootMessage = "You pick up a moon partisan";
+    }
+  },
+
   TemplarSword: class TemplarSword extends Item {
     constructor(id) {
       super(id, Types.Entities.TEMPLARSWORD, "weapon");
@@ -146,6 +153,12 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.MYSTICALSWORD, "weapon");
       this.lootMessage = "You pick up a mystical sword";
+    }
+  },
+  MysticalDagger: class MysticalDagger extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MYSTICALDAGGER, "weapon");
+      this.lootMessage = "You pick up a mystical dagger";
     }
   },
 

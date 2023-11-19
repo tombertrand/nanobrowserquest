@@ -652,12 +652,13 @@ export const generatePurpleChestItem = (): {
 } => {
   // 30%
   const items = [
-    { item: "mysticalsword", uniqueChances: 10 },
-    { item: "helmmystical", uniqueChances: 10 },
-    { item: "mysticalarmor", uniqueChances: 10 },
-    { item: "beltmystical", uniqueChances: 10 },
-    { item: "shieldmystical", uniqueChances: 10 },
-    { item: "cape", uniqueChances: 5 },
+    { item: "mysticalsword", uniqueChances: 8 },
+    { item: "mysticaldagger", uniqueChances: 8 },
+    { item: "helmmystical", uniqueChances: 8 },
+    { item: "mysticalarmor", uniqueChances: 8 },
+    { item: "beltmystical", uniqueChances: 8 },
+    { item: "shieldmystical", uniqueChances: 8 },
+    { item: "cape", uniqueChances: 4 },
   ];
 
   // 20%
@@ -884,6 +885,19 @@ export const isValidUpgradeRunes = items => {
 
   return runeRank;
 };
+
+
+export const isValidSocketPetCollar = items => {
+//@NOTE not ready yet
+  return false
+  if (items.length !== 2) {
+    return false;
+  }
+
+  const isPet = Types.isPet(items[0]);
+  const isPetCollar = Types.isPet(items[1].startsWith('petcollar'))
+
+}
 
 export const isValidSocketItem = items => {
   if (items.length !== 2) {
@@ -1199,9 +1213,10 @@ export const generateDroppedItem = () => {
     return;
   }
   let randomDrops = [];
-  randomDrops = ["gold"];
+  // randomDrops = ["gold"];
   // randomDrops = ["ringbloodband"];
-  // randomDrops = ["petcollar"];
+  // randomDrops = ["mysticaldagger"];
+  // randomDrops = ["moonhachet"];
   // var randomDrops = [ "amuletdragon"];
   // var randomDrops = ["helmdragon", "dragonsword", "dragonarmor", "shielddragon", "amuletdragon"];
   // var randomDrops = ["helmpaladin", "helmimmortal"];

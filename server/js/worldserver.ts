@@ -1937,7 +1937,7 @@ class World {
 
             if (rune.rank >= 20) {
               postMessageToDiscordEventChannel(
-                `${player.name} obtained ${Types.RuneList[rune.rank - 1].toUpperCase()} rune ${
+                `**${player.name}** obtained ${Types.RuneList[rune.rank - 1].toUpperCase()} rune ${
                   EmojiMap[runeName]
                 } from the Soul Stone`,
               );
@@ -2818,8 +2818,6 @@ class World {
     }
 
     kind = Types.getKindFromString(itemName);
-    console.log("~~GOLD~~kind", kind);
-    console.log("~~GOLD~~itemName", itemName);
 
     let skin = null;
     if (kind === Types.Entities.PETCOLLAR) {
@@ -2827,8 +2825,6 @@ class World {
     }
     if (kind === Types.Entities.GOLD) {
       skin = getGoldSkin(amount);
-
-      console.log("~~GOLD~~skin", skin);
     }
 
     return itemName

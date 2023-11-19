@@ -67,6 +67,7 @@ import {
   isValidAddWeaponSkill,
   isValidDowngradeRune,
   isValidSocketItem,
+  isValidSocketPetCollar,
   isValidStoneSocket,
   isValidTransmuteItems,
   isValidTransmutePet,
@@ -1929,7 +1930,7 @@ class DatabaseHandler {
               let inventory = JSON.parse(reply);
 
               items.forEach((rawItem: GeneratedItem) => {
-                const { item, level, quantity, bonus, skill, socket } = rawItem;
+                const { item, level, quantity, bonus, skill: skillOrSkin, socket } = rawItem;
                 let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(`${item}:`)) : -1;
 
                 // Increase the scroll/rune count
@@ -1958,7 +1959,9 @@ class DatabaseHandler {
                     }
 
                     const delimiter = Types.isJewel(item) ? "|" : ":";
-                    inventory[slotIndex] = [item, levelQuantity, bonus, socket, skill].filter(Boolean).join(delimiter);
+                    inventory[slotIndex] = [item, levelQuantity, bonus, socket, skillOrSkin]
+                      .filter(Boolean)
+                      .join(delimiter);
                   } else if (player.hasParty()) {
                     // @TODO re-call the lootItems fn with next party member
                     // Currently the item does not get saved
@@ -2137,6 +2140,7 @@ class DatabaseHandler {
         let socketCount = null;
         let weaponWithSkill = null;
         let itemWithRandomSkill = null;
+        let socketPetCollarItem = null;
 
         if ((weaponWithSkill = isValidAddWeaponSkill(filteredUpgrade))) {
           isSuccess = true;
@@ -2231,6 +2235,9 @@ class DatabaseHandler {
           this.logUpgrade({ player, item: socketItem, isSuccess, isRuneword: true });
 
           player.broadcast(new Messages.AnvilUpgrade({ isRuneword: isSuccess }), false);
+        } else if ((socketPetCollarItem = isValidSocketPetCollar(filteredUpgrade))) {
+          upgrade = upgrade.map(() => 0);
+          upgrade[upgrade.length - 1] = socketPetCollarItem;
         } else if ((result = isValidStoneSocket(filteredUpgrade, isLuckySlot))) {
           isSuccess = true;
           ({ socketItem, extractedItem, socketCount, isNewSocketItem } = result);
@@ -2578,6 +2585,9 @@ class DatabaseHandler {
   }
 
   unlockExpansion1(player) {
+    if (player.expansion1) {
+      return;
+    }
     player.expansion1 = true;
 
     console.info("Unlock Expansion1: " + player.name);
@@ -2598,7 +2608,9 @@ class DatabaseHandler {
   }
 
   unlockExpansion2(player) {
-    player.expansion2 = true;
+    if (player.expansion2) {
+      player.expansion2 = true;
+    }
 
     console.info("Unlock Expansion2: " + player.name);
     this.client.hset("u:" + player.name, "expansion2", 1);

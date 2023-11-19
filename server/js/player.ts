@@ -1409,6 +1409,8 @@ class Player extends Character {
                   jewelLevel = Types.isJewel(kind) ? item.level : 1;
                   ({ isUnique, isSuperior, ...generatedItem } =
                     self.generateItem({ kind, jewelLevel }) || ({} as GeneratedItem));
+
+                  console.log("!!!!!allo", kind, generatedItem);
                 }
 
                 if (generatedItem) {
@@ -1459,9 +1461,11 @@ class Player extends Character {
                     postMessageToDiscordEventChannel(
                       `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
-                  }
-
-                  if (kind === Types.Entities.STONESOCKETBLESSED) {
+                  } else if (kind === Types.Entities.PETCOLLAR) {
+                    postMessageToDiscordEventChannel(
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  } else if (kind === Types.Entities.STONESOCKETBLESSED) {
                     postMessageToDiscordEventChannel(
                       `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
@@ -2520,8 +2524,8 @@ class Player extends Character {
         item = {
           item: Types.getKindAsString(kind),
           level,
-          bonus: [],
-          socket: [],
+          bonus: "[]",
+          socket: "[]",
           isUnique,
           skin: 1,
         };
