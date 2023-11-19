@@ -426,7 +426,6 @@ class GameClient {
   receiveDrop(data) {
     const { mobId, itemId, kind, mobHateList, partyId, amount, skin } = data[1];
 
-
     try {
       const item = EntityFactory.createEntity({ kind, id: itemId, skin });
 
@@ -456,8 +455,8 @@ class GameClient {
 
       this.spawn_spell_callback?.(spell, x, y, orientation, originX, originY, element, casterId, targetId, isRaise2);
     } else if (Types.isItem(kind) && !isPet) {
-      const { mobHateList, partyId, amount } = data[1];
-      const item = EntityFactory.createEntity({ kind, id });
+      const { mobHateList, partyId, amount, skin } = data[1];
+      const item = EntityFactory.createEntity({ kind, id, skin });
 
       // @TODO unify this with the receiveDrop
       item.wasDropped = false;
@@ -465,8 +464,8 @@ class GameClient {
       item.partyId = partyId;
       if ([Types.Entities.GOLD, Types.Entities.NANOCOIN, Types.Entities.BANANOCOIN].includes(item.kind)) {
         item.amount = amount;
+        item.skin = skin;
       }
-
       this.spawn_item_callback?.(item, x, y);
     } else if (Types.isStaticChest(kind)) {
       var item = EntityFactory.createEntity({ kind, id });
@@ -623,7 +622,6 @@ class GameClient {
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.ERROR && this.partyerror_callback) {
       this.partyerror_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.LOOT && this.partyloot_callback) {
-
       this.partyloot_callback(data[2]);
     } else if (data[1] === Types.Messages.PARTY_ACTIONS.HEALTH && this.partyhealth_callback) {
       this.partyhealth_callback(data[2]);

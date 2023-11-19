@@ -60,7 +60,7 @@
   .item-gold .gold-icon {
     width: 32px;
     height: 32px;
-    background-image: url("../img/2/item-gold3.png");
+    background-image: url("../img/2/item-gold-3.png");
     background-position-y: -2px;
   }
 
@@ -73,7 +73,7 @@
   .item-gold .gold-icon {
     width: 16px;
     height: 16px;
-    background-image: url("../img/1/item-gold3.png");
+    background-image: url("../img/1/item-gold-3.png");
     background-position-y: 0px;
   }
 

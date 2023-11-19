@@ -1,6 +1,5 @@
 import * as _ from "lodash";
 
-import { getPlayerLocation } from "../../server/js/utils";
 import { kinds, petKindToPetMap, Types } from "../../shared/js/gametypes";
 import {
   ACHIEVEMENT_CRYSTAL_INDEX,
@@ -12,6 +11,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
+import { getPlayerLocation } from "../../shared/js/utils";
 import { hasMoreThanPercentCaps, replaceLetters } from "../../shared/js/utils";
 import {
   HASH_BAN_DELAY,

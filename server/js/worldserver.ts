@@ -4,7 +4,7 @@ import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
 import { ACHIEVEMENT_NAMES, ACHIEVEMENT_ZAP_INDEX } from "../../shared/js/types/achievements";
-import { getGoldDeathPenaltyPercent } from "../../shared/js/utils";
+import { getGoldDeathPenaltyPercent, getGoldSkin } from "../../shared/js/utils";
 import { ChestArea, MobArea } from "./area";
 import Chest from "./chest";
 import { EmojiMap, postMessageToDiscordEventChannel } from "./discord";
@@ -1497,6 +1497,9 @@ class World {
     } else {
       item = new Item({ id, kind, skin, x, y, partyId, level, mobKind, amount });
     }
+
+    console.log('~~~~item',item)
+
     return item;
   }
 
@@ -2815,26 +2818,31 @@ class World {
       // ~~~~@TODO
       // amount = generateRandomBananoAmount(attacker.network);
     }
-  
 
     kind = Types.getKindFromString(itemName);
-
+    console.log("~~GOLD~~kind", kind);
+    console.log("~~GOLD~~itemName", itemName);
 
     let skin = null;
     if (kind === Types.Entities.PETCOLLAR) {
       skin = getRandomPetCollarSkin();
+    }
+    if (kind === Types.Entities.GOLD) {
+      skin = getGoldSkin(amount);
+
+      console.log("~~GOLD~~skin", skin);
     }
 
     return itemName
       ? this.addItem(
           this.createItem({
             kind,
-            skin,
             x: mob.x,
             y: mob.y,
             partyId,
             level: itemLevel,
             mobKind: mob.kind,
+            ...(skin ? { skin } : null),
             ...(amount ? { amount } : null),
           }),
         )

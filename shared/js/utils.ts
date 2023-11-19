@@ -151,3 +151,54 @@ export const isValidRecipe = items => {
     return result[0] as Recipes;
   }
 };
+
+export const getPlayerLocation = ({ x, y }): PlayerLocation | null => {
+  let isInTown;
+  let isInTownHouse1;
+  let isInTownHouse2;
+  let isInTownHouse3Or4;
+  let isInTownCave;
+  let isGrimoireDungeon;
+  let isChaliceDungeon;
+  let isSpiderDungeon;
+  let isCowLevel;
+  let isMinotaurCage;
+  if (!x || !y) {
+    return null;
+  }
+
+  isInTown = x >= 1 && x <= 80 && y >= 192 && y <= 257;
+  isInTownHouse1 = x >= 112 && x <= 139 && y >= 288 && y <= 301;
+  isInTownHouse2 = x >= 140 && x <= 169 && y >= 276 && y <= 289;
+  isInTownHouse3Or4 = x >= 112 && x <= 169 && y >= 132 && y <= 145;
+  isInTownCave = x >= 140 && x <= 169 && y >= 301 && y <= 313;
+  isChaliceDungeon = x >= 0 && x <= 28 && y >= 696 && y <= 733;
+  isGrimoireDungeon = x >= 29 && x <= 56 && y >= 696 && y <= 733;
+  isGrimoireDungeon = x >= 85 && x <= 112 && y >= 696 && y <= 733;
+  isCowLevel = x >= 0 && x <= 92 && y >= 464 && y <= 535;
+  isMinotaurCage = x >= 29 && x <= 52 && y >= 494 && y <= 500;
+  if (isInTown || isInTownHouse1 || isInTownHouse2 || isInTownHouse3Or4 || isInTownCave) {
+    return "town";
+  } else if (isGrimoireDungeon) {
+    return "grimoire";
+  } else if (isChaliceDungeon) {
+    return "chalice";
+  } else if (isSpiderDungeon) {
+    return "spiders";
+  } else if (isCowLevel) {
+    return "cow";
+  } else if (isMinotaurCage) {
+    return "minotaurcage";
+  }
+};
+
+export const getGoldSkin = amount => {
+  let skin = 1;
+  if (amount >= 100) {
+    skin = 3;
+  } else if (amount >= 25) {
+    skin = 2;
+  }
+
+  return skin;
+};

@@ -1,8 +1,9 @@
+// import { Types } from "../../shared/js/gametypes";
 import Entity from "./entity";
 
 export interface ItemProps {
   kind: number;
-  skin?: string;
+  skin?: number;
   x: number;
   y: number;
   partyId?: number;
@@ -21,7 +22,7 @@ class Item extends Entity {
   level?: number;
   mobKind?: number;
   amount?: number;
-  skin?: string;
+  skin: number;
 
   constructor({ id, kind, skin, x, y, partyId, level, mobKind, amount }: ItemProps & { id: string }) {
     super(id, "item", kind, x, y);
@@ -30,7 +31,12 @@ class Item extends Entity {
     this.partyId = partyId;
     this.level = level;
     this.mobKind = mobKind;
-    this.skin = skin;
+
+    if (skin) {
+      this.skin = skin;
+      console.log ('~~~Item~this.skin',this.skin)
+    }
+
 
     if (amount) {
       this.amount = amount;
@@ -43,6 +49,7 @@ class Item extends Entity {
       level: this.level,
       mobKind: this.mobKind,
       amount: this.amount,
+      skin: this.skin,
     });
   }
 

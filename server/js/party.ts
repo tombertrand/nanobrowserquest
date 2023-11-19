@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
-import { getPlayerLocation } from "../../server/js/utils";
 import { Types } from "../../shared/js/gametypes";
+import { getPlayerLocation } from "../../shared/js/utils";
 import Messages from "./message";
 import { Sentry } from "./sentry";
 

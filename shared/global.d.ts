@@ -26,7 +26,9 @@ type PlayerLocation =
   | "Temple"
   | "chalice"
   | "spiders"
-  | "grimoire";
+  | "grimoire"
+  | "cow"
+  | "minotaurcage";
 
 type GeneratedItem = {
   item: string;

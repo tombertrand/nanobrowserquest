@@ -870,8 +870,8 @@ EntityFactory.builders[Types.Entities.GEMSAPPHIRE] = function (id) {
   return new Items.GemSapphire(id);
 };
 
-EntityFactory.builders[Types.Entities.GOLD] = function (id) {
-  return new Items.Gold(id);
+EntityFactory.builders[Types.Entities.GOLD] = function (id, props) {
+  return new Items.Gold(id, props);
 };
 
 EntityFactory.builders[Types.Entities.NANOCOIN] = function (id) {

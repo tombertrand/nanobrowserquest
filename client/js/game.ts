@@ -29,6 +29,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
 import { expForLevel } from "../../shared/js/types/experience";
+import { getPlayerLocation } from "../../shared/js/utils";
 import { HASH_BAN_DELAY } from "../../shared/js/utils";
 import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
@@ -2264,7 +2265,11 @@ class Game {
       mobId = entity?.id;
 
       const isTree = mobId ? entity.kind === Types.Entities.TREE && this.player.attackSkill === 1 : false;
+      const playerLocation = getPlayerLocation({ x: this.player.gridX, y: this.player.gridY });
+      const isMinotaur = entity.kind === Types.Entities.MINOTAUR;
 
+      console.log("~~~isMinotaur", isMinotaur);
+      console.log("~~~playerLocation", playerLocation);
       // Can't cast on self
       if (
         !mobId ||
@@ -2632,18 +2637,7 @@ class Game {
 
   addItem(item, x, y) {
     let sprite;
-    if (item.kind === Types.Entities.GOLD) {
-      let suffix = "1";
-      if (item.amount >= 100) {
-        suffix = "3";
-      } else if (item.amount >= 25) {
-        suffix = "2";
-      }
-      sprite = this.getSprite(item.getSpriteName(suffix));
-    } else {
-      sprite = this.getSprite(item.getSpriteName());
-    }
-
+    sprite = this.getSprite(item.getSpriteName());
     item.setSprite(sprite);
     item.setGridPosition(x, y);
     item.setAnimation("idle", 150);
@@ -3668,6 +3662,8 @@ class Game {
       });
 
       self.client.onSpawnItem(function (item, x, y) {
+
+        console.log('~~~onSpawnItem~~item',item)
         self.addItem(item, x, y);
       });
 

@@ -24,9 +24,9 @@ class Item extends Entity {
     return true;
   }
 
-  getSpriteName(suffix = "") {
-    if (suffix || this.skin) {
-      return `item-${this.itemKind}-${suffix || this.skin}`;
+  getSpriteName(skin = "") {
+    if (skin || this.skin) {
+      return `item-${this.itemKind}-${skin || this.skin}`;
     } else {
       return `item-${this.itemKind}`;
     }
