@@ -2266,10 +2266,12 @@ class Game {
 
       const isTree = mobId ? entity.kind === Types.Entities.TREE && this.player.attackSkill === 1 : false;
       const playerLocation = getPlayerLocation({ x: this.player.gridX, y: this.player.gridY });
-      const isMinotaur = entity.kind === Types.Entities.MINOTAUR;
+      const isTargetMinotaur = entity.kind === Types.Entities.MINOTAUR;
 
-      console.log("~~~isMinotaur", isMinotaur);
-      console.log("~~~playerLocation", playerLocation);
+      //prevent 2Mino lure
+      if (isTargetMinotaur && playerLocation !== "minotaurcage") {
+        return;
+      }
       // Can't cast on self
       if (
         !mobId ||
@@ -3662,8 +3664,6 @@ class Game {
       });
 
       self.client.onSpawnItem(function (item, x, y) {
-
-        console.log('~~~onSpawnItem~~item',item)
         self.addItem(item, x, y);
       });
 

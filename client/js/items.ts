@@ -963,8 +963,6 @@ var Items = {
 
   Gold: class Gold extends Item {
     constructor(id, props) {
-
-      console.log ('~~~GOLD~props',props)
       super(id, Types.Entities.GOLD, "object", props);
       this.lootMessage = "You pick up amount gold";
     }

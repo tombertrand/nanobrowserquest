@@ -185,10 +185,10 @@ export const getPlayerLocation = ({ x, y }): PlayerLocation | null => {
     return "chalice";
   } else if (isSpiderDungeon) {
     return "spiders";
-  } else if (isCowLevel) {
-    return "cow";
   } else if (isMinotaurCage) {
     return "minotaurcage";
+  } else if (isCowLevel) {
+    return "cow";
   }
 };
 

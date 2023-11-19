@@ -1498,8 +1498,6 @@ class World {
       item = new Item({ id, kind, skin, x, y, partyId, level, mobKind, amount });
     }
 
-    console.log('~~~~item',item)
-
     return item;
   }
 

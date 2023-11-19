@@ -34,7 +34,6 @@ class Item extends Entity {
 
     if (skin) {
       this.skin = skin;
-      console.log ('~~~Item~this.skin',this.skin)
     }
 
 
