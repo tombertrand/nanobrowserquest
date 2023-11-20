@@ -616,16 +616,16 @@ Types.Entities.NormalWeapons = [
 ];
 
 Types.Entities.HeavyWeapons = [
-  Types.Entities.MINOTAURAXE,
   Types.Entities.DEMONAXE,
-  Types.Entities.IMMORTALSWORD,
   Types.Entities.WIZARDSWORD,
   Types.Entities.MAUL,
 ];
+Types.Entities.SuperHeavyWeapons = [Types.Entities.MINOTAURAXE, Types.Entities.IMMORTALSWORD];
 Types.Entities.Weapons = [
   ...Types.Entities.LightWeapons,
   ...Types.Entities.NormalWeapons,
   ...Types.Entities.HeavyWeapons,
+  ...Types.Entities.SuperHeavyWeapons,
 ];
 
 Types.Entities.Helms = [
@@ -771,12 +771,16 @@ Types.getArtifactNameFromKind = function (kind: number) {
 };
 
 Types.getWeaponWeightbyKind = (kind: number): string => {
-  let weights = ["light", "normal", "heavy"];
+  let weights = ["light", "normal", "heavy", "Super heavy"];
+
+  if (typeof kind !=="number")return;
 
   if (Types.Entities.LightWeapons.includes(kind)) {
     return weights[0];
   } else if (Types.Entities.HeavyWeapons.includes(kind)) {
     return weights[2];
+  } else if (Types.Entities.SuperHeavyWeapons.includes(kind)) {
+    return weights[3];
   } else {
     return weights[1];
   }

@@ -2975,6 +2975,9 @@ class Player extends Character {
           5,
       );
 
+      // console.log("~~~~ entity.hitPoints", entity.hitPoints);
+      // console.log("~~~~ poisonDmg", poisonDmg);
+
       if (iterations && poisonDmg && entity.hitPoints > 0) {
         entity.hitPoints -= poisonDmg;
         this.server.handleHurtEntity({ entity, attacker, dmg: poisonDmg });
