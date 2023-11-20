@@ -411,7 +411,7 @@ class Mob extends Character {
   move(x, y) {
     this.setPosition(x, y);
     if (this.moveCallback) {
-      this.moveCallback(this);
+      this.moveCallback?.(this);
     }
   }
 

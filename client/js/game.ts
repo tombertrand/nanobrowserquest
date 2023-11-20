@@ -29,7 +29,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
 import { expForLevel } from "../../shared/js/types/experience";
-import { getPlayerLocation } from "../../shared/js/utils";
+import { getEntityLocation } from "../../shared/js/utils";
 import { HASH_BAN_DELAY } from "../../shared/js/utils";
 import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
@@ -825,6 +825,7 @@ class Game {
   }) {
     const {
       name,
+      weight,
       isUnique,
       isRune,
       isRuneword,
@@ -901,6 +902,8 @@ class Game {
             ${name}${isLevelVisible ? ` (+${level})` : ""}${isJewel ? ` lv.${level}` : ""}
             ${runeRank ? ` (#${runeRank})` : ""}
             ${socket ? ` <span class="item-socket">(${socket})</span>` : ""}
+
+          
           </div>
           ${
             itemClass
@@ -909,6 +912,7 @@ class Game {
                 }${setRingOrAmuletDisplay}${!isRuneword ? itemDisplayName : ""} ${itemClass} class item)</div>`
               : ""
           }
+          ${weight ? `<div class="item-weight">Weapon Weight:${weight}</div>}` : ""}}
           ${
             socket
               ? `<div class="socket-container">
@@ -963,6 +967,7 @@ class Game {
             : ""
         }
         ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
+       
         ${
           currentSet && setBonus.length
             ? `<div>
@@ -1736,7 +1741,7 @@ class Game {
 
   initTeleportContextMenu() {
     // return;
-    const hasStoneTeleportInInventory = false; //!!this.player.inventory.find(({ item }) => item === "stoneteleport");
+    // const hasStoneTele portInInventory = false; //!!this.player.inventory.find(({ item }) => item === "stoneteleport");
 
     if ($("#party-player-list .player-name").data("contextMenu")) {
       $("#party-player-list .player-name").contextMenu("destroy");
@@ -2265,7 +2270,7 @@ class Game {
       mobId = entity?.id;
 
       const isTree = mobId ? entity.kind === Types.Entities.TREE && this.player.attackSkill === 1 : false;
-      const playerLocation = getPlayerLocation({ x: this.player.gridX, y: this.player.gridY });
+      const playerLocation = getEntityLocation({ x: this.player.gridX, y: this.player.gridY });
       const isTargetMinotaur = entity.kind === Types.Entities.MINOTAUR;
 
       //prevent 2Mino lure
@@ -6352,7 +6357,7 @@ class Game {
 
   getMobAt(x, y) {
     var entity = this.getEntityAt(x, y, Mob);
-    if (entity && entity instanceof Mob) {
+    if (entity && entity instanceof Mob && !(entity instanceof Pet)) {
       return entity;
     }
     return null;
@@ -6629,6 +6634,8 @@ class Game {
       // @NOTE: For an unknown reason when a mob dies and is moving, it doesn't unregister its "1" on
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
       // to "0" the pathing map if there is no entity registered on the coords.
+
+      console.log("~~~entity", entity?.kind);
       if (
         (entity === null || entity instanceof Item) &&
         pos.x >= 0 &&

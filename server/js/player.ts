@@ -11,7 +11,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
-import { getPlayerLocation } from "../../shared/js/utils";
+import { getEntityLocation } from "../../shared/js/utils";
 import { hasMoreThanPercentCaps, replaceLetters } from "../../shared/js/utils";
 import {
   HASH_BAN_DELAY,
@@ -772,16 +772,21 @@ class Player extends Character {
         // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
         if (self.move_callback) {
           var x = message[1];
+
           var y = message[2];
 
-          if (y >= 314 && y <= 463 && !self.expansion1) {
-            databaseHandler.banPlayerByIP({
-              player: self,
-              reason: "cheating",
-              message: `haven't unlocked expansion1, invalid position x:${x}, y:${y}`,
-            });
-            return;
-          } else if (y >= 540 && !self.expansion2) {
+          const playerLocation = getEntityLocation({ x, y });
+
+          console.log(`ation`, playerLocation);
+
+          // if (y >= 314 && y <= 463 && !self.expansion1) {
+          //   databaseHandler.banPlayerByIP({
+          //     player: self,
+          //     reason: "cheating",
+          //     message: `haven't unlocked expansion1, invalid position x:${x}, y:${y}`,
+          //   });
+          //   return;
+          if (playerLocation === "expansion2" && !self.expansion2) {
             databaseHandler.banPlayerByIP({
               player: self,
               reason: "cheating",
@@ -1364,7 +1369,7 @@ class Player extends Character {
               let player = self;
 
               if (self.partyId) {
-                // let isLooterInTown = getPlayerLocation({ x: self.x, y: self.y }) === "town";
+                // let isLooterInTown = getEntityLocation({ x: self.x, y: self.y }) === "town";
 
                 // player = self.server.getEntityById(self.getParty().getNextLootMemberId({ isLooterInTown })) || self;
                 player = self;
@@ -1424,7 +1429,7 @@ class Player extends Character {
                     // Single items can't be party looted, like potions
                   }
                   if (!Types.isSingle(kind) && self.partyId) {
-                    let isLooterInTown = getPlayerLocation({ x: self.x, y: self.y }) === "town";
+                    let isLooterInTown = getEntityLocation({ x: self.x, y: self.y }) === "town";
                     player = self.server.getEntityById(self.getParty().getNextLootMemberId({ isLooterInTown })) || self;
                   }
 
@@ -1553,7 +1558,7 @@ class Player extends Character {
             ({ x, y } = playerToTeleportTo);
 
             isNear = Math.abs(self.x - x) <= 32 && Math.abs(self.y - y) <= 32;
-            isIntown = getPlayerLocation({ x, y }) === "town";
+            isIntown = getEntityLocation({ x, y }) === "town";
           }
         }
 

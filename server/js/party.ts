@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
-import { getPlayerLocation } from "../../shared/js/utils";
+import { getEntityLocation } from "../../shared/js/utils";
 import Messages from "./message";
 import { Sentry } from "./sentry";
 
@@ -62,7 +62,7 @@ class Party {
       }
 
       const player = this.server.getEntityById(this.members[candidateIndex].id);
-      const playerLocation = getPlayerLocation({ x: player.x, y: player.y });
+      const playerLocation = getEntityLocation({ x: player.x, y: player.y });
 
       if (isLooterInTown || playerLocation !== "town") {
         console.log("Selected player:", player.id, player.name);

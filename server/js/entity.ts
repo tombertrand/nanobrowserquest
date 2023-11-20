@@ -6,6 +6,8 @@ class Entity {
   type: any;
   kind: number;
   x: number;
+  gridX:number;
+  gridY:number;
   y: number;
   hitPoints: number;
   maxHitPoints: number;

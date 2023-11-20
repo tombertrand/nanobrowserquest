@@ -584,8 +584,15 @@ Types.Entities.Artifact = [
 ];
 Types.Entities.nonLootableKeys = [Types.Entities.SKELETONKEY];
 
-Types.Entities.Weapons = [
+Types.Entities.LightWeapons = [
   Types.Entities.DAGGER,
+  Types.Entities.MYSTICALDAGGER,
+  Types.Entities.ECLYPSEDAGGER,
+  Types.Entities.SPIKEGLAIVE,
+  Types.Entities.MOONHACHET,
+];
+
+Types.Entities.NormalWeapons = [
   Types.Entities.SWORD,
   Types.Entities.MORNINGSTAR,
   Types.Entities.BLUESWORD,
@@ -595,22 +602,30 @@ Types.Entities.Weapons = [
   Types.Entities.BLUEMORNINGSTAR,
   Types.Entities.FROZENSWORD,
   Types.Entities.DIAMONDSWORD,
-  Types.Entities.MINOTAURAXE,
-  Types.Entities.EMERALDSWORD,
-  Types.Entities.EXECUTIONERSWORD,
-  Types.Entities.TEMPLARSWORD,
-  Types.Entities.DRAGONSWORD,
-  Types.Entities.MOONSWORD,
-  Types.Entities.MYSTICALSWORD,
-  Types.Entities.MYSTICALDAGGER,
-  Types.Entities.SPIKEGLAIVE,
-  Types.Entities.ECLYPSEDAGGER,
-  Types.Entities.DEMONAXE,
+  Types.Entities.SWORD,
+  Types.Entities.MORNINGSTAR,
+  Types.Entities.BLUESWORD,
+  Types.Entities.REDSWORD,
+  Types.Entities.GOLDENSWORD,
+  Types.Entities.BLUEAXE,
+  Types.Entities.BLUEMORNINGSTAR,
+  Types.Entities.FROZENSWORD,
+  Types.Entities.DIAMONDSWORD,
   Types.Entities.PALADINAXE,
-  Types.Entities.IMMORTALSWORD,
   Types.Entities.HELLHAMMER,
-  Types.Entities.MAUL,
+];
+
+Types.Entities.HeavyWeapons = [
+  Types.Entities.MINOTAURAXE,
+  Types.Entities.DEMONAXE,
+  Types.Entities.IMMORTALSWORD,
   Types.Entities.WIZARDSWORD,
+  Types.Entities.MAUL,
+];
+Types.Entities.Weapons = [
+  ...Types.Entities.LightWeapons,
+  ...Types.Entities.NormalWeapons,
+  ...Types.Entities.HeavyWeapons,
 ];
 
 Types.Entities.Helms = [
@@ -755,6 +770,18 @@ Types.getArtifactNameFromKind = function (kind: number) {
   return artifact[kind] || kind;
 };
 
+Types.getWeaponWeightbyKind = (kind: number): string => {
+  let weights = ["light", "normal", "heavy"];
+
+  if (Types.Entities.LightWeapons.includes(kind)) {
+    return weights[0];
+  } else if (Types.Entities.HeavyWeapons.includes(kind)) {
+    return weights[2];
+  } else {
+    return weights[1];
+  }
+};
+
 export const petKindToPetMap = {
   [Types.Entities.PETDINO]: Types.Entities.PET_DINO,
   [Types.Entities.PETBAT]: Types.Entities.PET_BAT,
@@ -877,7 +904,7 @@ export const kinds = {
   templarsword: [Types.Entities.TEMPLARSWORD, "weapon", "Templar Sword", 52, 58],
   dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 54, 58],
   moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Sword", 59, 60],
-  moonhachet: [Types.Entities.MOONHACHET, "weapon", "Moon Hachet", 59, 58],
+  moonhachet: [Types.Entities.MOONHACHET, "weapon", "Moon Hatchet", 59, 58],
   demonaxe: [Types.Entities.DEMONAXE, "weapon", "Demon Axe", 60, 64],
   mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 56, 62],
   mysticaldagger: [Types.Entities.MYSTICALDAGGER, "weapon", "Mystical Dagger", 56, 58],
@@ -2948,6 +2975,7 @@ Types.getItemDetails = function ({
   amount,
 }: {
   item: string;
+  weight: [number, string];
   level: number;
   rawBonus: number[];
   rawSocket?: number[];
@@ -2956,6 +2984,8 @@ Types.getItemDetails = function ({
   amount?: number;
 }) {
   const isWeapon = Types.isWeapon(item);
+
+  const weight = isWeapon ? Types.getWeaponWeightbyKind(Types.getKindFromString(item)) : null;
   const isHelm = Types.isHelm(item);
   const isArmor = Types.isArmor(item);
   const isRing = Types.isRing(item);
@@ -3088,6 +3118,7 @@ Types.getItemDetails = function ({
 
   return {
     item,
+    weight,
     name,
     type,
     isUnique,

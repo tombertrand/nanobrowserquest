@@ -152,7 +152,7 @@ export const isValidRecipe = items => {
   }
 };
 
-export const getPlayerLocation = ({ x, y }): PlayerLocation | null => {
+export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   let isInTown;
   let isInTownHouse1;
   let isInTownHouse2;
@@ -163,6 +163,10 @@ export const getPlayerLocation = ({ x, y }): PlayerLocation | null => {
   let isSpiderDungeon;
   let isCowLevel;
   let isMinotaurCage;
+  let isInNecromancerLair;
+  let isInExpansion1;
+  let isInExpansion2;
+
   if (!x || !y) {
     return null;
   }
@@ -177,6 +181,9 @@ export const getPlayerLocation = ({ x, y }): PlayerLocation | null => {
   isGrimoireDungeon = x >= 85 && x <= 112 && y >= 696 && y <= 733;
   isCowLevel = x >= 0 && x <= 92 && y >= 464 && y <= 535;
   isMinotaurCage = x >= 29 && x <= 52 && y >= 494 && y <= 500;
+  isInExpansion1 = x >= 0 && x <= 169 && y >= 313 && y <= 463;
+  isInNecromancerLair = x >= 140 && x <= 169 && y >= 324 && y <= 349;
+  isInExpansion2 = x >= 0 && x <= 171 && y >= 540 && y <= 781;
   if (isInTown || isInTownHouse1 || isInTownHouse2 || isInTownHouse3Or4 || isInTownCave) {
     return "town";
   } else if (isGrimoireDungeon) {
@@ -189,6 +196,12 @@ export const getPlayerLocation = ({ x, y }): PlayerLocation | null => {
     return "minotaurcage";
   } else if (isCowLevel) {
     return "cow";
+  } else if (isInNecromancerLair) {
+    return "necromancerlair";
+  } else if (isInExpansion1) {
+    return "expansion1";
+  } else if (isInExpansion2) {
+    return "expansion2";
   }
 };
 

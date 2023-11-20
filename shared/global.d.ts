@@ -19,16 +19,17 @@ type PlayerLocation =
   | "town"
   | "skeletonKing"
   | "Necromancer"
-  | "Freezing Lands Expansion"
-  | "Lost Temple Expansion"
-  | "Azrael"
-  | "Gateway"
-  | "Temple"
+  | "expansion1"
+  | "expansion2"
+  | "azrael"
+  | "gateway"
+  | "temple"
   | "chalice"
   | "spiders"
   | "grimoire"
   | "cow"
-  | "minotaurcage";
+  | "minotaurcage"
+  | "necromancerlair";
 
 type GeneratedItem = {
   item: string;

@@ -19,7 +19,6 @@
 
   "compilerOptions": {
     "strict": false,
-    "noImplicitUseStrict": true,
     "removeComments": true,
     "skipLibCheck": true,
     "outDir": "./dist/client",

@@ -129,9 +129,11 @@ class World {
   leverRightCryptNpcId: number;
   leverDeathAngelNpcId: number;
   doorDeathAngelNpcId: number;
+  poisonTemplar: Mob;
   poisonTemplarId: number;
-  magicTemplarId: number;
   powderSpiderId: number;
+  magicTemplar: Mob;
+  magicTemplarId: number;
   chaliceSpiderId: number;
   spiderQueen: any;
   spiderTotal: number;
@@ -1176,6 +1178,9 @@ class World {
 
     if (this.shaman.isDead) {
       this.shaman.handleRespawn(0);
+
+      this.shaman.clearTarget();
+      this.shaman.forgetEveryone();
     }
 
     let count = 0;
@@ -1242,10 +1247,14 @@ class World {
 
     if (this.worm.isDead) {
       this.worm.handleRespawn(0);
+      this.worm.clearTarget();
+      this.worm.forgetEveryone();
     }
 
     if (this.deathAngel.isDead) {
       this.deathAngel.handleRespawn(0);
+      this.deathAngel.clearTarget();
+      this.deathAngel.forgetEveryone();
     }
 
     let count = 0;
@@ -1324,6 +1333,8 @@ class World {
 
     if (this.spiderQueen.isDead) {
       this.spiderQueen.handleRespawn(0);
+      this.spiderQueen.clearTarget();
+      this.spiderQueen.forgetEveryone();
     }
 
     this.pushBroadcast(new Messages.StoneLevelStart());
@@ -1406,6 +1417,8 @@ class World {
 
     if (this.butcher.isDead) {
       this.butcher.handleRespawn(0);
+      this.spiderQueen.clearTarget();
+      this.spiderQueen.forgetEveryone();
     }
 
     let count = 0;
@@ -1832,9 +1845,19 @@ class World {
       this.startTempleLevel();
     } else if (lever.id === this.leverLeftCryptNpcId) {
       const secretStairs = this.npcs[this.secretStairsLeftTemplarNpcId];
+      this.poisonTemplar.handleRespawn(0);
+
+
+      this.poisonTemplar.clearTarget();
+      this.poisonTemplar.forgetEveryone();
       secretStairs.respawnCallback();
     } else if (lever.id === this.leverRightCryptNpcId) {
       const secretStairs = this.npcs[this.secretStairsRightTemplarNpcId];
+
+      this.magicTemplar.handleRespawn(0);
+
+      this.magicTemplar.clearTarget();
+      this.magicTemplar.forgetEveryone();
       secretStairs.respawnCallback();
     } else if (lever.id === this.leverDeathAngelNpcId) {
       const deathAngelDoor = this.getEntityById(this.doorDeathAngelNpcId);
@@ -2239,9 +2262,22 @@ class World {
             const isMagicTemplar = kind === Types.Entities.SKELETONTEMPLAR2;
 
             if (isPoisonTemplar) {
+              self.poisonTemplar = mob
               self.poisonTemplarId = mob.id;
+              
+
+              mob.onRespawn(() => {
+                mob.clearTarget();
+                mob.forgetEveryone();
+              });
             } else if (isMagicTemplar) {
+              self.magicTemplar = mob
               self.magicTemplarId = mob.id;
+
+              mob.onRespawn(() => {
+                mob.clearTarget();
+                mob.forgetEveryone();
+              });
             }
 
             mob.onDestroy(() => {
@@ -2257,6 +2293,9 @@ class World {
 
           mob.onRespawn(function () {
             mob.isDead = false;
+
+            mob.clearTarget();
+            mob.forgetEveryone();
 
             self.addMob(mob);
             if (mob.area && mob.area instanceof ChestArea) {
