@@ -13,7 +13,6 @@ var EntityFactory: any = {};
 
 EntityFactory.createEntity = function ({ kind, id, ...rest }) {
   if (!kind) {
-
     console.error("kind is undefined");
     return;
   }
@@ -371,9 +370,11 @@ EntityFactory.builders[Types.Entities.MOONSWORD] = function (id) {
   return new Items.MoonSword(id);
 };
 
-
 EntityFactory.builders[Types.Entities.MOONHACHET] = function (id) {
   return new Items.MoonHachet(id);
+};
+EntityFactory.builders[Types.Entities.MOONMAUL] = function (id) {
+  return new Items.MoonMaul(id);
 };
 
 EntityFactory.builders[Types.Entities.TEMPLARSWORD] = function (id) {

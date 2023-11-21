@@ -82,6 +82,7 @@ export const itemGoldMap = {
   dragonsword: 40,
   moonsword: 50,
   moonhachet: 50,
+  moonmaul: 50,
   demonaxe: 150,
   mysticalsword: 85,
   mysticaldagger: 85,

@@ -66,6 +66,7 @@ import minotauraxe from "../sprites/minotauraxe.json";
 import emeraldsword from "../sprites/weapon.json";
 import moonsword from "../sprites/weapon.json";
 import moonhachet from "../sprites/weapon.json";
+import moonmaul from "../sprites/weapon.json";
 import templarsword from "../sprites/weapon.json";
 import spikeglaive from "../sprites/weapon.json";
 import eclypsedagger from "../sprites/weapon.json";
@@ -379,6 +380,7 @@ const sprites = {
   emeraldsword,
   moonsword,
   moonhachet,
+  moonmaul,
   templarsword,
   spikeglaive,
   eclypsedagger,
@@ -619,6 +621,7 @@ const sprites = {
   "item-emeraldsword": item,
   "item-moonsword": item,
   "item-moonhachet": item,
+  "item-moonmaul": item,
   "item-templarsword": item,
   "item-spikeglaive": item,
   "item-eclypsedagger": item,

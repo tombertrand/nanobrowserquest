@@ -99,6 +99,12 @@ var Items = {
       this.lootMessage = "You pick up a moon hatchet";
     }
   },
+  MoonMaul: class MoonMaul extends Item {
+    constructor(id) {
+      super(id, Types.Entities.MOONMAUL, "weapon");
+      this.lootMessage = "You pick up a moon maul";
+    }
+  },
 
   TemplarSword: class TemplarSword extends Item {
     constructor(id) {

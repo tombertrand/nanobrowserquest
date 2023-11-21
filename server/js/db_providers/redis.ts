@@ -330,7 +330,11 @@ class DatabaseHandler {
 
         var achievement = new Array(ACHIEVEMENT_COUNT).fill(0);
         try {
+          if (replies[5]){
           achievement = JSON.parse(replies[5]);
+          } else {
+            this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
+          }
 
           // Migrate old achievements to new
           if (achievement.length === 20) {

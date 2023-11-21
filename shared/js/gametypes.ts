@@ -436,7 +436,8 @@ export const Types: any = {
     TEMPLARSWORD: 155,
     DRAGONSWORD: 156,
     MOONSWORD: 157,
-    MOONHACHET: 402, // ~~~LAST
+    MOONHACHET: 402,
+    MOONMAUL: 403, // ~~~LAST
     MYSTICALSWORD: 158,
     MYSTICALDAGGER: 401,
     SPIKEGLAIVE: 159,
@@ -619,6 +620,7 @@ Types.Entities.HeavyWeapons = [
   Types.Entities.DEMONAXE,
   Types.Entities.WIZARDSWORD,
   Types.Entities.MAUL,
+  Types.Entities.MOONMAUL,
 ];
 Types.Entities.SuperHeavyWeapons = [Types.Entities.MINOTAURAXE, Types.Entities.IMMORTALSWORD];
 Types.Entities.Weapons = [
@@ -773,7 +775,7 @@ Types.getArtifactNameFromKind = function (kind: number) {
 Types.getWeaponWeightbyKind = (kind: number): string => {
   let weights = ["light", "normal", "heavy", "Super heavy"];
 
-  if (typeof kind !=="number")return;
+  if (typeof kind !== "number") return;
 
   if (Types.Entities.LightWeapons.includes(kind)) {
     return weights[0];
@@ -909,6 +911,7 @@ export const kinds = {
   dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 54, 58],
   moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Sword", 59, 60],
   moonhachet: [Types.Entities.MOONHACHET, "weapon", "Moon Hatchet", 59, 58],
+  moonmaul: [Types.Entities.MOONMAUL, "weapon", "Moon Maul", 59, 62],
   demonaxe: [Types.Entities.DEMONAXE, "weapon", "Demon Axe", 60, 64],
   mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 56, 62],
   mysticaldagger: [Types.Entities.MYSTICALDAGGER, "weapon", "Mystical Dagger", 56, 58],
@@ -1356,6 +1359,7 @@ Types.itemUniqueMap = {
   dragonsword: ["Balerion the Black Dread"],
   moonsword: ["Moon Boy"],
   moonhachet: ["Blue Moon"],
+  moonmaul: ["dark face"],
   demonaxe: ["Trustable"],
   mysticalsword: ["The Maximalist"],
   mysticaldagger: ["Long-term Security"],
@@ -2664,6 +2668,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     dragonsword: 8,
     moonsword: 8,
     moonhachet: 8,
+    moonmaul    : 8,
     mysticalsword: 6,
     mysticaldagger: 6,
     spikeglaive: 6,

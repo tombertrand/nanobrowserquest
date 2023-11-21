@@ -316,8 +316,6 @@ class Player extends Character {
     this.server = worldServer;
     this.connection = connection;
 
-    console.log("~~~LOad player1,", self.server.shaman);
-
     this.hasEnteredGame = false;
     this.isDead = false;
     this.network = null;
@@ -727,7 +725,7 @@ class Player extends Character {
                 postMessageToModeratorSupportChannel(`**${name.toUpperCase()}**${JSON.stringify(entity)}`);
               }
             } else if (msg.startsWith("/kick") && msg.length) {
-              const playerName = msg.replace("/kick", "");
+              const playerName = msg.replace("/kick ", "");
 
               self.server.disconnectPlayer(playerName.trim(), true);
               self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
@@ -4136,7 +4134,7 @@ class Player extends Character {
           network,
           party: this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
           isHurtByTrap: this.isHurtByTrap,
-          admins: ADMINS,
+          admins: ADMINS.concat(SUPER_ADMINS),
         },
       ]);
 

@@ -1216,7 +1216,7 @@ export const generateDroppedItem = () => {
   // randomDrops = ["gold"];
   // randomDrops = ["ringbloodband"];
   // randomDrops = ["mysticaldagger"];
-  // randomDrops = ["moonhachet"];
+  randomDrops = ["moonmaul"];
   // var randomDrops = [ "amuletdragon"];
   // var randomDrops = ["helmdragon", "dragonsword", "dragonarmor", "shielddragon", "amuletdragon"];
   // var randomDrops = ["helmpaladin", "helmimmortal"];
