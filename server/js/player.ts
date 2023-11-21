@@ -64,7 +64,6 @@ const MAX_EXP = expForLevel[expForLevel.length - 1];
 let payoutIndex = 0;
 
 const ADMINS = [
-  "running-coder",
   "oldschooler",
   "Baikie",
   "Phet",
@@ -317,6 +316,8 @@ class Player extends Character {
     this.server = worldServer;
     this.connection = connection;
 
+    console.log("~~~LOad player1,", self.server.shaman);
+
     this.hasEnteredGame = false;
     this.isDead = false;
     this.network = null;
@@ -516,7 +517,7 @@ class Player extends Character {
           console.info("CREATE: " + self.name);
           // self.account = hash;
 
-          if (await databaseHandler.isPlayerExist(self)) {
+          if (await databaseHandler.checkIsPlayerExist(self)) {
             return;
           }
         } else {
@@ -594,9 +595,12 @@ class Player extends Character {
           return;
         }
 
-        const hashighPercentCaps = hasMoreThanPercentCaps({ msg });
+        const hashighPercentCaps = hasMoreThanPercentCaps({ msg, minChar: 24 });
         //@NOTE need to copy"CHATBAN_PATTERNS" for unknown reason else same word passes the seocond time
-        if (CHATBAN_PATTERNS_WARNING.test(msg) || CHATBAN_PATTERNS.test(msg) || hashighPercentCaps) {
+        if (
+          !ADMINS.includes(self.name) &&
+          (CHATBAN_PATTERNS_WARNING.test(msg) || CHATBAN_PATTERNS.test(msg) || hashighPercentCaps)
+        ) {
           if (!self.isChatbanWarned) {
             postMessageToModeratorSupportChannel(
               `**${self.name}** was Warned for saying:"**${msg}** ${hashighPercentCaps ? " Don't abuse CAPS" : ""}"`,
@@ -645,7 +649,7 @@ class Player extends Character {
         if (msg && msg !== "") {
           msg = msg.substr(0, 255); // Enforce maxLength of chat input
 
-          if (msg.startsWith("/") && ADMINS.includes(self.name)) {
+          if ((msg.startsWith("/") && ADMINS.includes(self.name)) || SUPER_ADMINS.includes(self.name)) {
             if (SUPER_ADMINS.includes(self.name)) {
               if (msg === "/cow") {
                 if (!self.server.cowLevelClock) {
@@ -707,7 +711,22 @@ class Player extends Character {
               }
             }
 
-            if (msg.startsWith("/kick") && msg.length) {
+            if (msg.startsWith("/find") && msg.length) {
+              const name = msg.replace("/find ", "").toLowerCase().trim();
+              let entity = null;
+
+              if (name === "azrael" || name === "deathangel") {
+                entity = self.server.deathAngel;
+              } else if (name === "butcher") {
+                entity = self.server.butcher;
+              } else if (name === "zulgurak" || name === "shaman") {
+                entity = self.server.shaman;
+              }
+
+              if (entity) {
+                postMessageToModeratorSupportChannel(`**${name.toUpperCase()}**${JSON.stringify(entity)}`);
+              }
+            } else if (msg.startsWith("/kick") && msg.length) {
               const playerName = msg.replace("/kick", "");
 
               self.server.disconnectPlayer(playerName.trim(), true);

@@ -184,465 +184,462 @@ class DatabaseHandler {
 
   loadPlayer(player) {
     var userKey = "u:" + player.name;
-    this.client.smembers("usr", (_err, replies) => {
-      for (var index = 0; index < replies.length; index++) {
-        if (replies[index].toString() === player.name) {
-          this.client
-            .multi()
-            .hget(userKey, "account") // 0
-            .hget(userKey, "armor") // 1
-            .hget(userKey, "weapon") // 2
-            .hget(userKey, "exp") // 3
-            .hget(userKey, "createdAt") // 4
-            .hget(userKey, "achievement") // 5
-            .hget(userKey, "inventory") // 6
-            .hget(userKey, "x") // 7
-            .hget(userKey, "y") // 8
-            .hget(userKey, "hash") // 9
-            .hget(userKey, "nanoPotions") // 10
-            .hget(userKey, "gems") // 11
-            .hget(userKey, "upgrade") // 12
-            .hget(userKey, "ring1") // 13
-            .hget(userKey, "ring2") // 14
-            .hget(userKey, "amulet") // 15
-            .hget(userKey, "belt") // 16
-            .hget(userKey, "cape") // 17
-            .hget(userKey, "shield") // 18
-            .hget(userKey, "artifact") // 19
-            .hget(userKey, "expansion1") // 20
-            .hget(userKey, "expansion2") // 21
-            .hget(userKey, "waypoints") // 22
-            .hget(userKey, "depositAccount") // 23
-            .hget(userKey, "depositAccountIndex") // 24
-            .hget(userKey, "stash") // 25
-            .hget(userKey, "settings") // 26
-            .hget(userKey, "network") // 27
-            .hget(userKey, "trade") // 28
-            .hget(userKey, "gold") // 29
-            .hget(userKey, "goldStash") // 30
-            .hget(userKey, "goldTrade") // 31
-            .hget(userKey, "coin") // 32
-            .hget(userKey, "discordId") // 33
-            .hget(userKey, "migrations") // 34
-            .hget(userKey, "helm") // 35
-            .hget(userKey, "pet") // 36
-            .exec(async (err, replies) => {
-              if (err) {
-                Sentry.captureException(err, {
-                  user: {
-                    username: player.name,
-                  },
-                });
-                return;
-              }
-
-              var account = replies[0] || "";
-              var armor = replies[1];
-              var weapon = replies[2];
-              var exp = NaN2Zero(replies[3]);
-              var createdAt = NaN2Zero(replies[4]);
-              var ring1 = replies[13];
-              var ring2 = replies[14];
-              var amulet = replies[15];
-              var belt = replies[16];
-              var cape = replies[17];
-              var pet = replies[36];
-              var shield = replies[18];
-              var expansion1 = !!parseInt(replies[20] || "0");
-              var expansion2 = !!parseInt(replies[21] || "0");
-              var depositAccount = replies[23];
-              var depositAccountIndex = replies[24];
-              var network = replies[27];
-              var gold = parseInt(replies[29] || "0");
-              var goldStash = parseInt(replies[30] || "0");
-              var goldTrade = parseInt(replies[31] || "0");
-              var coin = parseInt(replies[32] || "0");
-              var discordId = replies[33];
-              var migrations = replies[34] ? JSON.parse(replies[34]) : {};
-              var helm = replies[35];
-
-              if (account) {
-                if (!network) {
-                  [network] = account.split("_");
-                  this.client.hset("u:" + player.name, "network", network);
-                }
-
-                if (!depositAccount && ["nano", "ban"].includes(network)) {
-                  try {
-                    ({ depositAccount, depositAccountIndex } = await this.assignNewDepositAccount(player, network));
-                  } catch (_errAccount) {
-                    return;
-                  }
-                }
-              }
-
-              // if (rawAccount && rawPlayerAccount != rawAccount) {
-              //   player.connection.sendUTF8("invalidlogin");
-              //   player.connection.close("Wrong Account: " + player.name);
-              //   return;
-              // }
-
-              // @NOTE: Change the player network and depositAccount according to the login account so
-              // nano players can be on bananobrowserquest and ban players can be on nanobrowserquest
-              const loggedInNetwork = player.network;
-              if (
-                loggedInNetwork &&
-                ["nano", "ban"].includes(loggedInNetwork) &&
-                depositAccount &&
-                !depositAccount.startsWith(loggedInNetwork)
-              ) {
-                const [, rawDepositAccount] = depositAccount.split("_");
-                depositAccount = `${loggedInNetwork}_${rawDepositAccount}`;
-              }
-
-              if (!helm) {
-                helm = "helmcloth:1";
-                this.client.hset("u:" + player.name, "helm", helm);
-              } else {
-                var [playerHelm, helmLevel] = helm.split(":");
-                if (isNaN(helmLevel)) {
-                  helm = `${playerHelm}:1`;
-                  this.client.hset("u:" + player.name, "helm", helm);
-                }
-              }
-
-              if (!armor) {
-                armor = `clotharmor:1`;
-                this.client.hset("u:" + player.name, "armor", armor);
-              } else {
-                var [playerArmor, armorLevel] = armor.split(":");
-                if (isNaN(armorLevel)) {
-                  armor = `${playerArmor}:1`;
-                  this.client.hset("u:" + player.name, "armor", armor);
-                }
-              }
-
-              if (!weapon || weapon.startsWith("sword1")) {
-                weapon = `dagger:1`;
-                this.client.hset("u:" + player.name, "weapon", weapon);
-              } else {
-                var [playerWeapon, weaponLevel] = (weapon || "").split(":");
-                if (isNaN(weaponLevel)) {
-                  weapon = `${playerWeapon}:1`;
-                  this.client.hset("u:" + player.name, "weapon", weapon);
-                } else if (playerWeapon === "sword2") {
-                  weapon = `sword:${weaponLevel}`;
-                  this.client.hset("u:" + player.name, "weapon", weapon);
-                }
-              }
-
-              var achievement = new Array(ACHIEVEMENT_COUNT).fill(0);
-              try {
-                achievement = JSON.parse(replies[5]);
-
-                // Migrate old achievements to new
-                if (achievement.length === 20) {
-                  achievement = achievement
-                    .slice(0, 15)
-                    .concat([0, achievement[15], 0, 0, 0])
-                    .concat(achievement.slice(16, 20));
-
-                  this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
-                }
-
-                if (achievement.length < ACHIEVEMENT_COUNT) {
-                  achievement = achievement.concat(new Array(ACHIEVEMENT_COUNT - achievement.length).fill(0));
-                  this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
-                }
-              } catch (errAchievements) {
-                // invalid json
-                Sentry.captureException(errAchievements, {
-                  user: {
-                    username: player.name,
-                  },
-                  extra: {
-                    achievement,
-                  },
-                });
-              }
-
-              var stash = new Array(STASH_SLOT_COUNT).fill(0);
-              try {
-                if (replies[25]) {
-                  stash = JSON.parse(replies[25]);
-
-                  // Migrate extended stash
-                  if (stash.length < STASH_SLOT_COUNT) {
-                    stash = stash.concat(new Array(STASH_SLOT_COUNT - stash.length).fill(0));
-
-                    await new Promise(resolve => {
-                      this.client.hset("u:" + player.name, "stash", JSON.stringify(stash), () => {
-                        resolve(true);
-                      });
-                    });
-                  }
-                } else {
-                  await new Promise(resolve => {
-                    this.client.hset("u:" + player.name, "stash", JSON.stringify(stash), () => {
-                      resolve(true);
-                    });
-                  });
-                }
-              } catch (errStash) {
-                // invalid json
-                Sentry.captureException(errStash, {
-                  user: {
-                    username: player.name,
-                  },
-                });
-              }
-
-              // Waypoint
-              // 0 - Not Available, the player did not open the waypoint
-              // 1 - Available, the character opened the waypoint
-              // 2 - Locked, the player did not purchase the expansion
-              let waypoints;
-              try {
-                waypoints = JSON.parse(replies[22]);
-
-                if (waypoints && waypoints.length < WAYPOINTS_COUNT) {
-                  waypoints = waypoints.concat(new Array(WAYPOINTS_COUNT - waypoints.length).fill(2));
-
-                  this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
-                } else if (!waypoints) {
-                  waypoints = [1, 0, 0, 2, 2, 2, 2, 2, 2, 2];
-
-                  this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
-                }
-              } catch (errWaypoints) {
-                // invalid json
-                Sentry.captureException(errWaypoints, {
-                  user: {
-                    username: player.name,
-                  },
-                  extra: {
-                    waypoints,
-                  },
-                });
-              }
-
-              var inventory = replies[6];
-              try {
-                if (!inventory) {
-                  inventory = new Array(INVENTORY_SLOT_COUNT).fill(0);
-                  await new Promise(resolve => {
-                    this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
-                      resolve(true);
-                    });
-                  });
-                } else {
-                  let hasSword2 = /sword2/.test(replies[6]);
-                  inventory = JSON.parse(replies[6].replace(/sword2/g, "sword"));
-
-                  // Migrate inventory
-                  if (inventory.length < INVENTORY_SLOT_COUNT || hasSword2) {
-                    inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
-
-                    await new Promise(resolve => {
-                      this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
-                        resolve(true);
-                      });
-                    });
-                  }
-                }
-              } catch (errInventory) {
-                Sentry.captureException(errInventory, {
-                  user: {
-                    username: player.name,
-                  },
-                  extra: {
-                    inventory,
-                  },
-                });
-              }
-
-              var upgrade = replies[12];
-              try {
-                // Migrate upgrade
-                if (!upgrade) {
-                  upgrade = new Array(UPGRADE_SLOT_COUNT).fill(0);
-                  this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
-                }
-              } catch (errUpgrade) {
-                Sentry.captureException(errUpgrade, {
-                  user: {
-                    username: player.name,
-                  },
-                  extra: {
-                    upgrade,
-                  },
-                });
-              }
-
-              var trade = replies[28];
-              try {
-                // Migrate trade
-                if (!trade) {
-                  trade = new Array(TRADE_SLOT_COUNT).fill(0);
-
-                  await new Promise(resolve => {
-                    this.client.hset("u:" + player.name, "trade", JSON.stringify(trade), () => {
-                      resolve(true);
-                    });
-                  });
-                }
-              } catch (errTrade) {
-                Sentry.captureException(errTrade, {
-                  user: {
-                    username: player.name,
-                  },
-                  extra: {
-                    trade,
-                  },
-                });
-              }
-
-              if (!migrations?.shields) {
-                await Promise.all([
-                  new Promise(resolve => {
-                    if (shield) {
-                      const [item, level, bonus, skill] = shield.split(":");
-                      shield = [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
-
-                      if (skill && skill.length <= 1) {
-                        this.client.hset("u:" + player.name, "shield", shield);
-                      }
-                    }
-                    resolve(true);
-                  }),
-                  new Promise(resolve => {
-                    stash = stash.map(rawItem => {
-                      if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
-                        const [item, level, bonus, skill] = rawItem.split(":");
-                        return skill && skill.length <= 1
-                          ? [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":")
-                          : rawItem;
-                      }
-                      return rawItem;
-                    });
-                    this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
-
-                    resolve(true);
-                  }),
-                  new Promise(resolve => {
-                    inventory = inventory.map(rawItem => {
-                      if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
-                        const [item, level, bonus, skill] = rawItem.split(":");
-                        return skill && skill.length <= 1
-                          ? [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":")
-                          : rawItem;
-                      }
-                      return rawItem;
-                    });
-                    this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
-
-                    resolve(true);
-                  }),
-                ]).then(() => {
-                  console.log(`Shield migration completed for ${player.name}`);
-
-                  this.client.hset("u:" + player.name, "migrations", JSON.stringify({ ...migrations, shields: true }));
-                });
-              }
-
-              var gems = new Array(GEM_COUNT).fill(0);
-              try {
-                if (!replies[11]) {
-                  this.client.hset("u:" + player.name, "gems", JSON.stringify(gems));
-                } else {
-                  gems = JSON.parse(replies[11]);
-
-                  if (gems.length !== GEM_COUNT) {
-                    gems = gems.concat(new Array(GEM_COUNT - gems.length).fill(0));
-
-                    this.client.hset("u:" + player.name, "gems", JSON.stringify(gems));
-                  }
-                }
-              } catch (errGems) {
-                Sentry.captureException(errGems);
-              }
-
-              var artifact = new Array(ARTIFACT_COUNT).fill(0);
-              try {
-                if (!replies[19]) {
-                  this.client.hset("u:" + player.name, "artifact", JSON.stringify(artifact));
-                } else {
-                  artifact = JSON.parse(replies[19]);
-                }
-              } catch (errArtifact) {
-                Sentry.captureException(errArtifact);
-              }
-
-              var settings = replies[26];
-              try {
-                settings = Object.assign({ ...defaultSettings }, JSON.parse(settings || "{}"));
-              } catch (_err) {
-                // Silence err
-              }
-
-              // Restore the trade gold in the main inventory gold
-              if (goldTrade) {
-                gold = gold + goldTrade;
-                goldTrade = 0;
-
-                this.client.hmset("u:" + player.name, "gold", gold, "goldTrade", 0);
-              }
-
-              var x = NaN2Zero(replies[7]);
-              var y = NaN2Zero(replies[8]);
-              var hash = replies[9];
-              var nanoPotions = parseInt(replies[10] || 0);
-
-              console.info("Player name: " + player.name);
-              console.info("Armor: " + armor);
-              console.info("Weapon: " + weapon);
-              console.info("Experience: " + exp);
-
-              player.sendWelcome({
-                account,
-                helm,
-                armor,
-                weapon,
-                belt,
-                cape,
-                pet,
-                shield,
-                ring1,
-                ring2,
-                amulet,
-                exp,
-                gold,
-                goldStash,
-                coin,
-                createdAt,
-                x,
-                y,
-                achievement,
-                inventory,
-                stash,
-                hash,
-                nanoPotions,
-                gems,
-                artifact,
-                expansion1,
-                expansion2,
-                waypoints,
-                depositAccount,
-                depositAccountIndex,
-                settings,
-                network,
-                discordId,
-              });
-            });
+    this.client
+      .multi()
+      .hget(userKey, "account") // 0
+      .hget(userKey, "armor") // 1
+      .hget(userKey, "weapon") // 2
+      .hget(userKey, "exp") // 3
+      .hget(userKey, "createdAt") // 4
+      .hget(userKey, "achievement") // 5
+      .hget(userKey, "inventory") // 6
+      .hget(userKey, "x") // 7
+      .hget(userKey, "y") // 8
+      .hget(userKey, "hash") // 9
+      .hget(userKey, "nanoPotions") // 10
+      .hget(userKey, "gems") // 11
+      .hget(userKey, "upgrade") // 12
+      .hget(userKey, "ring1") // 13
+      .hget(userKey, "ring2") // 14
+      .hget(userKey, "amulet") // 15
+      .hget(userKey, "belt") // 16
+      .hget(userKey, "cape") // 17
+      .hget(userKey, "shield") // 18
+      .hget(userKey, "artifact") // 19
+      .hget(userKey, "expansion1") // 20
+      .hget(userKey, "expansion2") // 21
+      .hget(userKey, "waypoints") // 22
+      .hget(userKey, "depositAccount") // 23
+      .hget(userKey, "depositAccountIndex") // 24
+      .hget(userKey, "stash") // 25
+      .hget(userKey, "settings") // 26
+      .hget(userKey, "network") // 27
+      .hget(userKey, "trade") // 28
+      .hget(userKey, "gold") // 29
+      .hget(userKey, "goldStash") // 30
+      .hget(userKey, "goldTrade") // 31
+      .hget(userKey, "coin") // 32
+      .hget(userKey, "discordId") // 33
+      .hget(userKey, "migrations") // 34
+      .hget(userKey, "helm") // 35
+      .hget(userKey, "pet") // 36
+      .exec(async (err, replies) => {
+        if (err) {
+          Sentry.captureException(err, {
+            user: {
+              username: player.name,
+            },
+          });
           return;
         }
-      }
 
-      // Could not find the user
-      player.connection.sendUTF8("invalidlogin");
-      player.connection.close("User does not exist: " + player.name);
-      return;
-    });
+        var account = replies[0] || "";
+        var armor = replies[1];
+        var weapon = replies[2];
+        var exp = NaN2Zero(replies[3]);
+        var createdAt = NaN2Zero(replies[4]);
+        var ring1 = replies[13];
+        var ring2 = replies[14];
+        var amulet = replies[15];
+        var belt = replies[16];
+        var cape = replies[17];
+        var pet = replies[36];
+        var shield = replies[18];
+        var expansion1 = !!parseInt(replies[20] || "0");
+        var expansion2 = !!parseInt(replies[21] || "0");
+        var depositAccount = replies[23];
+        var depositAccountIndex = replies[24];
+        var network = replies[27];
+        var gold = parseInt(replies[29] || "0");
+        var goldStash = parseInt(replies[30] || "0");
+        var goldTrade = parseInt(replies[31] || "0");
+        var coin = parseInt(replies[32] || "0");
+        var discordId = replies[33];
+        var migrations = replies[34] ? JSON.parse(replies[34]) : {};
+        var helm = replies[35];
+
+        if (account) {
+          if (!network) {
+            [network] = account.split("_");
+            this.client.hset("u:" + player.name, "network", network);
+          }
+
+          if (!depositAccount && ["nano", "ban"].includes(network)) {
+            try {
+              ({ depositAccount, depositAccountIndex } = await this.assignNewDepositAccount(player, network));
+            } catch (_errAccount) {
+              return;
+            }
+          }
+        }
+
+        // if (rawAccount && rawPlayerAccount != rawAccount) {
+        //   player.connection.sendUTF8("invalidlogin");
+        //   player.connection.close("Wrong Account: " + player.name);
+        //   return;
+        // }
+
+        // @NOTE: Change the player network and depositAccount according to the login account so
+        // nano players can be on bananobrowserquest and ban players can be on nanobrowserquest
+        const loggedInNetwork = player.network;
+        if (
+          loggedInNetwork &&
+          ["nano", "ban"].includes(loggedInNetwork) &&
+          depositAccount &&
+          !depositAccount.startsWith(loggedInNetwork)
+        ) {
+          const [, rawDepositAccount] = depositAccount.split("_");
+          depositAccount = `${loggedInNetwork}_${rawDepositAccount}`;
+        }
+
+        if (!helm) {
+          helm = "helmcloth:1";
+          this.client.hset("u:" + player.name, "helm", helm);
+        } else {
+          var [playerHelm, helmLevel] = helm.split(":");
+          if (isNaN(helmLevel)) {
+            helm = `${playerHelm}:1`;
+            this.client.hset("u:" + player.name, "helm", helm);
+          }
+        }
+
+        if (!armor) {
+          armor = `clotharmor:1`;
+          this.client.hset("u:" + player.name, "armor", armor);
+        } else {
+          var [playerArmor, armorLevel] = armor.split(":");
+          if (isNaN(armorLevel)) {
+            armor = `${playerArmor}:1`;
+            this.client.hset("u:" + player.name, "armor", armor);
+          }
+        }
+
+        if (!weapon || weapon.startsWith("sword1")) {
+          weapon = `dagger:1`;
+          this.client.hset("u:" + player.name, "weapon", weapon);
+        } else {
+          var [playerWeapon, weaponLevel] = (weapon || "").split(":");
+          if (isNaN(weaponLevel)) {
+            weapon = `${playerWeapon}:1`;
+            this.client.hset("u:" + player.name, "weapon", weapon);
+          } else if (playerWeapon === "sword2") {
+            weapon = `sword:${weaponLevel}`;
+            this.client.hset("u:" + player.name, "weapon", weapon);
+          }
+        }
+
+        var achievement = new Array(ACHIEVEMENT_COUNT).fill(0);
+        try {
+          achievement = JSON.parse(replies[5]);
+
+          // Migrate old achievements to new
+          if (achievement.length === 20) {
+            achievement = achievement
+              .slice(0, 15)
+              .concat([0, achievement[15], 0, 0, 0])
+              .concat(achievement.slice(16, 20));
+
+            this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
+          }
+
+          if (achievement.length < ACHIEVEMENT_COUNT) {
+            achievement = achievement.concat(new Array(ACHIEVEMENT_COUNT - achievement.length).fill(0));
+            this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
+          }
+        } catch (errAchievements) {
+          // invalid json
+          Sentry.captureException(errAchievements, {
+            user: {
+              username: player.name,
+            },
+            extra: {
+              achievement,
+            },
+          });
+        }
+
+        var stash = new Array(STASH_SLOT_COUNT).fill(0);
+        try {
+          if (replies[25]) {
+            stash = JSON.parse(replies[25]);
+
+            // Migrate extended stash
+            if (stash.length < STASH_SLOT_COUNT) {
+              stash = stash.concat(new Array(STASH_SLOT_COUNT - stash.length).fill(0));
+
+              await new Promise(resolve => {
+                this.client.hset("u:" + player.name, "stash", JSON.stringify(stash), () => {
+                  resolve(true);
+                });
+              });
+            }
+          } else {
+            await new Promise(resolve => {
+              this.client.hset("u:" + player.name, "stash", JSON.stringify(stash), () => {
+                resolve(true);
+              });
+            });
+          }
+        } catch (errStash) {
+          // invalid json
+          Sentry.captureException(errStash, {
+            user: {
+              username: player.name,
+            },
+          });
+        }
+
+        // Waypoint
+        // 0 - Not Available, the player did not open the waypoint
+        // 1 - Available, the character opened the waypoint
+        // 2 - Locked, the player did not purchase the expansion
+        let waypoints;
+        try {
+          waypoints = JSON.parse(replies[22]);
+
+          if (waypoints && waypoints.length < WAYPOINTS_COUNT) {
+            waypoints = waypoints.concat(new Array(WAYPOINTS_COUNT - waypoints.length).fill(2));
+
+            this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
+          } else if (!waypoints) {
+            waypoints = [1, 0, 0, 2, 2, 2, 2, 2, 2, 2];
+
+            this.client.hset("u:" + player.name, "waypoints", JSON.stringify(waypoints));
+          }
+        } catch (errWaypoints) {
+          // invalid json
+          Sentry.captureException(errWaypoints, {
+            user: {
+              username: player.name,
+            },
+            extra: {
+              waypoints,
+            },
+          });
+        }
+
+        var inventory = replies[6];
+        try {
+          if (!inventory) {
+            inventory = new Array(INVENTORY_SLOT_COUNT).fill(0);
+            await new Promise(resolve => {
+              this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
+                resolve(true);
+              });
+            });
+          } else {
+            let hasSword2 = /sword2/.test(replies[6]);
+            inventory = JSON.parse(replies[6].replace(/sword2/g, "sword"));
+
+            // Migrate inventory
+            if (inventory.length < INVENTORY_SLOT_COUNT || hasSword2) {
+              inventory = inventory.concat(new Array(INVENTORY_SLOT_COUNT - inventory.length).fill(0));
+
+              await new Promise(resolve => {
+                this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
+                  resolve(true);
+                });
+              });
+            }
+          }
+        } catch (errInventory) {
+          Sentry.captureException(errInventory, {
+            user: {
+              username: player.name,
+            },
+            extra: {
+              inventory,
+            },
+          });
+        }
+
+        var upgrade = replies[12];
+        try {
+          // Migrate upgrade
+          if (!upgrade) {
+            upgrade = new Array(UPGRADE_SLOT_COUNT).fill(0);
+            this.client.hset("u:" + player.name, "upgrade", JSON.stringify(upgrade));
+          }
+        } catch (errUpgrade) {
+          Sentry.captureException(errUpgrade, {
+            user: {
+              username: player.name,
+            },
+            extra: {
+              upgrade,
+            },
+          });
+        }
+
+        var trade = replies[28];
+        try {
+          // Migrate trade
+          if (!trade) {
+            trade = new Array(TRADE_SLOT_COUNT).fill(0);
+
+            await new Promise(resolve => {
+              this.client.hset("u:" + player.name, "trade", JSON.stringify(trade), () => {
+                resolve(true);
+              });
+            });
+          }
+        } catch (errTrade) {
+          Sentry.captureException(errTrade, {
+            user: {
+              username: player.name,
+            },
+            extra: {
+              trade,
+            },
+          });
+        }
+
+        if (!migrations?.shields) {
+          await Promise.all([
+            new Promise(resolve => {
+              if (shield) {
+                const [item, level, bonus, skill] = shield.split(":");
+                shield = [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":");
+
+                if (skill && skill.length <= 1) {
+                  this.client.hset("u:" + player.name, "shield", shield);
+                }
+              }
+              resolve(true);
+            }),
+            new Promise(resolve => {
+              stash = stash.map(rawItem => {
+                if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
+                  const [item, level, bonus, skill] = rawItem.split(":");
+                  return skill && skill.length <= 1
+                    ? [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":")
+                    : rawItem;
+                }
+                return rawItem;
+              });
+              this.client.hset("u:" + player.name, "stash", JSON.stringify(stash));
+
+              resolve(true);
+            }),
+            new Promise(resolve => {
+              inventory = inventory.map(rawItem => {
+                if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
+                  const [item, level, bonus, skill] = rawItem.split(":");
+                  return skill && skill.length <= 1
+                    ? [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":")
+                    : rawItem;
+                }
+                return rawItem;
+              });
+              this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory));
+
+              resolve(true);
+            }),
+          ]).then(() => {
+            console.log(`Shield migration completed for ${player.name}`);
+
+            this.client.hset("u:" + player.name, "migrations", JSON.stringify({ ...migrations, shields: true }));
+          });
+        }
+
+        var gems = new Array(GEM_COUNT).fill(0);
+        try {
+          if (!replies[11]) {
+            this.client.hset("u:" + player.name, "gems", JSON.stringify(gems));
+          } else {
+            gems = JSON.parse(replies[11]);
+
+            if (gems.length !== GEM_COUNT) {
+              gems = gems.concat(new Array(GEM_COUNT - gems.length).fill(0));
+
+              this.client.hset("u:" + player.name, "gems", JSON.stringify(gems));
+            }
+          }
+        } catch (errGems) {
+          Sentry.captureException(errGems);
+        }
+
+        var artifact = new Array(ARTIFACT_COUNT).fill(0);
+        try {
+          if (!replies[19]) {
+            this.client.hset("u:" + player.name, "artifact", JSON.stringify(artifact));
+          } else {
+            artifact = JSON.parse(replies[19]);
+          }
+        } catch (errArtifact) {
+          Sentry.captureException(errArtifact);
+        }
+
+        var settings = replies[26];
+        try {
+          settings = Object.assign({ ...defaultSettings }, JSON.parse(settings || "{}"));
+        } catch (_err) {
+          // Silence err
+        }
+
+        // Restore the trade gold in the main inventory gold
+        if (goldTrade) {
+          gold = gold + goldTrade;
+          goldTrade = 0;
+
+          this.client.hmset("u:" + player.name, "gold", gold, "goldTrade", 0);
+        }
+
+        var x = NaN2Zero(replies[7]);
+        var y = NaN2Zero(replies[8]);
+        var hash = replies[9];
+        var nanoPotions = parseInt(replies[10] || 0);
+
+        console.info("Player name: " + player.name);
+        console.info("Armor: " + armor);
+        console.info("Weapon: " + weapon);
+        console.info("Experience: " + exp);
+
+        player.sendWelcome({
+          account,
+          helm,
+          armor,
+          weapon,
+          belt,
+          cape,
+          pet,
+          shield,
+          ring1,
+          ring2,
+          amulet,
+          exp,
+          gold,
+          goldStash,
+          coin,
+          createdAt,
+          x,
+          y,
+          achievement,
+          inventory,
+          stash,
+          hash,
+          nanoPotions,
+          gems,
+          artifact,
+          expansion1,
+          expansion2,
+          waypoints,
+          depositAccount,
+          depositAccountIndex,
+          settings,
+          network,
+          discordId,
+        });
+      });
+    // return;
+    //   }
+    // }
+
+    // Could not find the user
+    // player.connection.sendUTF8("invalidlogin");
+    // player.connection.close("User does not exist: " + player.name);
+    return;
+    // });
   }
 
   validateCreatePlayer(player) {
@@ -706,7 +703,6 @@ class DatabaseHandler {
 
     this.client
       .multi()
-      .sadd("usr", player.name)
       .hset(userKey, "account", player.account)
       .hset(userKey, "exp", 0)
       .hset(userKey, "gold", 0)
@@ -2776,17 +2772,27 @@ class DatabaseHandler {
     });
   }
 
-  isPlayerExist(player) {
+
+  checkIsPlayerExist(player) {
     return new Promise(resolve => {
-      this.client.sismember("usr", player.name, async (err, reply) => {
-        if (reply === 1) {
-          player.connection.sendUTF8("userexists");
-          player.connection.close("Username not available: " + player.name);
-          resolve(true);
-        } else {
+      const userKey = "u:" + player.name;
+      let isPlayerExist;
+      this.client
+        .multi()
+        .hget(userKey, "createdAt") // 0
+        .hget(userKey, "weapon") // 1
+        .exec(async (err, replies) => {
+          console.log("~~~~replies", replies);
+
+          isPlayerExist = !!replies[0] || !!replies[1];
+
+          if (isPlayerExist) {
+            player.connection.sendUTF8("userexists");
+            player.connection.close("Username not available: " + player.name);
+            resolve(true);
+          }
           resolve(false);
-        }
-      });
+        });
     });
   }
 

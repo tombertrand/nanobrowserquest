@@ -289,7 +289,7 @@ class World {
     this.archerPossibleCoords = [];
     this.mageEntityIds = [];
     this.magePossibleCoords = [];
-    this.shaman = null;
+    // this.shaman = null;
     this.worm = null;
     this.mageTempleEntityIds = [];
     this.mageTemplePossibleCoords = [];
@@ -1847,7 +1847,6 @@ class World {
       const secretStairs = this.npcs[this.secretStairsLeftTemplarNpcId];
       this.poisonTemplar.handleRespawn(0);
 
-
       this.poisonTemplar.clearTarget();
       this.poisonTemplar.forgetEveryone();
       secretStairs.respawnCallback();
@@ -2262,16 +2261,15 @@ class World {
             const isMagicTemplar = kind === Types.Entities.SKELETONTEMPLAR2;
 
             if (isPoisonTemplar) {
-              self.poisonTemplar = mob
+              self.poisonTemplar = mob;
               self.poisonTemplarId = mob.id;
-              
 
               mob.onRespawn(() => {
                 mob.clearTarget();
                 mob.forgetEveryone();
               });
             } else if (isMagicTemplar) {
-              self.magicTemplar = mob
+              self.magicTemplar = mob;
               self.magicTemplarId = mob.id;
 
               mob.onRespawn(() => {
@@ -2346,6 +2344,8 @@ class World {
       mob.clearTarget();
       mob.forgetPlayer(player.id, 1000);
       mob.removeAttacker(player);
+      //@NOTE attempt to return mob
+      mob.returnToSpawningPosition(0);
 
       if (mob.hateList.length === 0 && mob.kind === Types.Entities.ZOMBIE) {
         this.despawn(mob);

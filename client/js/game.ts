@@ -6635,7 +6635,6 @@ class Game {
       // the pathing grid so it's not possible to navigate to the coords anymore. Ths fix is to manually reset
       // to "0" the pathing map if there is no entity registered on the coords.
 
-      console.log("~~~entity", entity?.kind);
       if (
         (entity === null || entity instanceof Item) &&
         pos.x >= 0 &&
