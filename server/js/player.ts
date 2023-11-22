@@ -709,10 +709,22 @@ class Player extends Character {
             entity = self.server.deathAngel;
 
             emoji = EmojiMap.azrael;
+          } else if (playerLocation === "minotaurcage") {
+            entity = self.server.minotaur;
+
+            emoji = EmojiMap.minotaur;
+          } else if (playerLocation === "cow") {
+            entity = self.server.cowking;
+
+            emoji = EmojiMap.cowking;
           }
 
           if (entity) {
             postMessageToSupportChannel(`**${entity.name.toUpperCase()}**${emoji}${JSON.stringify(entity)}`);
+          } else {
+            postMessageToSupportChannel(`No boss in that area**${self.name}**X:${self.x}Y:${self.y}  playerLocation:${playerLocation}`);
+
+            self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `No boss in that area.`).serialize());
           }
 
           return;

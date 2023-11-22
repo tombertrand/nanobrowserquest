@@ -69,6 +69,7 @@ class World {
   packOrder: number[][];
   cowKingHornDrop: boolean;
   minotaur: any;
+  cowking: any;
   minotaurLevelClock: number;
   minotaurLevelInterval: NodeJS.Timeout;
   minotaurLevelTownNpcId: number;
@@ -237,6 +238,8 @@ class World {
     ];
     this.cowKingHornDrop = false;
     this.minotaur = null;
+
+    this.cowking = null;
     this.minotaurLevelClock = null;
     this.minotaurLevelInterval = null;
     this.minotaurLevelTownNpcId = null;
@@ -1077,6 +1080,10 @@ class World {
         const kind = coordsIndex === 0 && i === 0 ? Types.Entities.COWKING : Types.Entities.COW;
         const id = `7${kind}${count++}`;
         const mob = new Mob(id, kind, x + this.packOrder[i][0], y + this.packOrder[i][1]);
+
+        if (kind === Types.Entities.COWKING) {
+          this.cowking = mob;
+        }
         mob.onMove(this.onMobMoveCallback.bind(this));
         mob.onDestroy(() => {
           this.cowTotal--;
@@ -2199,7 +2206,6 @@ class World {
         } else {
           const id = `7${kind}${count++}`;
           const mob = new Mob(id, kind, pos.x + 1, pos.y);
-
           if (kind === Types.Entities.MINOTAUR) {
             self.minotaur = mob;
             mob.onDestroy(() => {
