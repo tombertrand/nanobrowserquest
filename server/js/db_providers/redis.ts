@@ -117,7 +117,7 @@ class DatabaseHandler {
   constructor() {
     this.client = redis.createClient(REDIS_PORT, REDIS_HOST, {
       socket_nodelay: true,
-      ...(REDIS_PASSWORD ? { password: REDIS_PASSWORD } : null),
+      ...(NODE_ENV !== "development" && REDIS_PASSWORD ? { password: REDIS_PASSWORD } : null),
     });
 
     this.client.on("connect", () => {
@@ -2775,7 +2775,6 @@ class DatabaseHandler {
         .hget(userKey, "createdAt") // 0
         .hget(userKey, "weapon") // 1
         .exec(async (err, replies) => {
-
           isPlayerExist = !!replies[0] || !!replies[1];
 
           if (isPlayerExist) {

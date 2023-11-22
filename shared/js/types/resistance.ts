@@ -255,8 +255,11 @@ export const calculateResistance = (resistance: number, curseResistances = 0) =>
 
 export const calculateAttackSpeedCap = (rawAttackSpeed: number, weaponKind?: number) => {
   let attackSpeedByWeight = 0;
+  let weight;
+
   if (weaponKind) {
-    attackSpeedByWeight = getAttackSpeedBonusFromStringMap[getWeaponWeightbyKind(weaponKind)];
+    weight = getWeaponWeightbyKind(weaponKind);
+    attackSpeedByWeight = getAttackSpeedBonusFromStringMap[weight];
   }
 
   const attackSpeed = rawAttackSpeed + attackSpeedByWeight;

@@ -593,7 +593,7 @@ Types.Entities.Artifact = [
 Types.Entities.nonLootableKeys = [Types.Entities.SKELETONKEY];
 
 Types.Entities.LightWeapons = [
-  Types.Entities.DAGGER,
+  // Types.Entities.DAGGER,
   Types.Entities.MYSTICALDAGGER,
   Types.Entities.ECLYPSEDAGGER,
   Types.Entities.SPIKEGLAIVE,

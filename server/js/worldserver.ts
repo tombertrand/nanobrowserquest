@@ -146,6 +146,7 @@ class World {
   magePossibleCoords: { x: number; y: number }[];
   shaman: any;
   worm: any;
+  necromancer: any;
   mageTempleEntityIds: string[];
   mageTemplePossibleCoords: { x: number; y: number }[];
   gateTempleNpcId: number;
@@ -291,6 +292,7 @@ class World {
     this.magePossibleCoords = [];
     // this.shaman = null;
     this.worm = null;
+    this.necromancer = null;
     this.mageTempleEntityIds = [];
     this.mageTemplePossibleCoords = [];
     this.gateTempleNpcId = null;
@@ -2241,6 +2243,8 @@ class World {
             });
           } else if (kind === Types.Entities.WORM) {
             self.worm = mob;
+          } else if (kind === Types.Entities.NECROMANCER) {
+            self.necromancer = mob;
           } else if (kind === Types.Entities.SHAMAN) {
             self.shaman = mob;
           } else if (kind === Types.Entities.DEATHANGEL) {
@@ -2814,7 +2818,7 @@ class World {
     } else if (mob.kind === Types.Entities.COWKING) {
       postMessageToDiscordEventChannel(`${attacker.name} slayed the Cow King ${EmojiMap.cowking}`);
     } else if (mob.kind === Types.Entities.SPIDERQUEEN) {
-      postMessageToDiscordEventChannel(`${attacker.name} slayed Arachneia the Spider Queen ${EmojiMap.Arachneia}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slayed Arachneia the Spider Queen ${EmojiMap.arachneia}`);
     } else if (mob.kind === Types.Entities.BUTCHER) {
       postMessageToDiscordEventChannel(`${attacker.name} slayed Gorefiend the Butcher ${EmojiMap.butcher}`);
     } else if (mob.kind === Types.Entities.SHAMAN) {
@@ -2822,7 +2826,7 @@ class World {
     } else if (mob.kind === Types.Entities.WORM) {
       postMessageToDiscordEventChannel(`${attacker.name} slayed Shai-Hulud ${EmojiMap.shaihulud}`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
-      postMessageToDiscordEventChannel(`${attacker.name} slayed Azrael ${EmojiMap.Azrael}`);
+      postMessageToDiscordEventChannel(`${attacker.name} slayed Azrael ${EmojiMap.azrael}`);
     }
 
     if ([Types.Entities.MINOTAUR, Types.Entities.BUTCHER, Types.Entities.DEATHANGEL].includes(mob.kind)) {

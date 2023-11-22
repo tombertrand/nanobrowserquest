@@ -166,6 +166,11 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   let isInNecromancerLair;
   let isInExpansion1;
   let isInExpansion2;
+  let isInMagicSkeletonCrypt;
+  let isInPoisonSkeletonCrypt;
+  let isinTemple;
+  let iInAzrealGates;
+  let isButcherGateway;
 
   if (!x || !y) {
     return null;
@@ -178,13 +183,20 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   isInTownCave = x >= 140 && x <= 169 && y >= 301 && y <= 313;
   isChaliceDungeon = x >= 0 && x <= 28 && y >= 696 && y <= 733;
   isGrimoireDungeon = x >= 29 && x <= 56 && y >= 696 && y <= 733;
-  isGrimoireDungeon = x >= 85 && x <= 112 && y >= 696 && y <= 733;
   isCowLevel = x >= 0 && x <= 92 && y >= 464 && y <= 535;
   isMinotaurCage = x >= 29 && x <= 52 && y >= 494 && y <= 500;
   isInExpansion1 = x >= 0 && x <= 169 && y >= 313 && y <= 463;
   isInNecromancerLair = x >= 140 && x <= 169 && y >= 324 && y <= 349;
+  isSpiderDungeon = x >= 85 && x <= 112 && y >= 696 && y <= 733;
   isInExpansion2 = x >= 0 && x <= 171 && y >= 540 && y <= 781;
-  if (isInTown || isInTownHouse1 || isInTownHouse2 || isInTownHouse3Or4 || isInTownCave) {
+  isInMagicSkeletonCrypt = x >= 141 && x <= 167 && y >= 696 && y <= 733;
+  isInPoisonSkeletonCrypt = x >= 113 && x <= 141 && y >= 696 && y <= 733;
+  isButcherGateway = x >= 0 && x <= 29 && y >= 744 && y <= 781;
+  isinTemple = x >= 111 && x <= 171 && y >= 744 && y <= 781;
+  iInAzrealGates = x >= 84 && x <= 111 && y >= 744 && y <= 769;
+  if (isInNecromancerLair) {
+    return "necromancerlair";
+  } else if (isInTown || isInTownHouse1 || isInTownHouse2 || isInTownHouse3Or4 || isInTownCave) {
     return "town";
   } else if (isGrimoireDungeon) {
     return "grimoire";
@@ -196,10 +208,18 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
     return "minotaurcage";
   } else if (isCowLevel) {
     return "cow";
-  } else if (isInNecromancerLair) {
-    return "necromancerlair";
   } else if (isInExpansion1) {
     return "expansion1";
+  } else if (isInMagicSkeletonCrypt) {
+    return "magicskeletoncrypt";
+  } else if (isButcherGateway) {
+    return "butchergateway";
+  } else if (isInPoisonSkeletonCrypt) {
+    return "poisonskeletoncrypt";
+  } else if (iInAzrealGates) {
+    return "azrealgates";
+  } else if (isinTemple) {
+    return "temple";
   } else if (isInExpansion2) {
     return "expansion2";
   }

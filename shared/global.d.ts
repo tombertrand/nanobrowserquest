@@ -18,18 +18,20 @@ type RunewordEquipment = "weapon" | "armor" | "helm" | "shield";
 type PlayerLocation =
   | "town"
   | "skeletonKing"
-  | "Necromancer"
   | "expansion1"
   | "expansion2"
-  | "azrael"
-  | "gateway"
+  | "butchergateway"
   | "temple"
   | "chalice"
   | "spiders"
   | "grimoire"
   | "cow"
   | "minotaurcage"
-  | "necromancerlair";
+  | "necromancerlair"
+  | "magicskeletoncrypt"
+  | "poisonskeletoncrypt"
+  | "temple"
+  | "azrealgates";
 
 type GeneratedItem = {
   item: string;

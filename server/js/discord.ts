@@ -20,7 +20,8 @@ const PurchaseChannel =
 
 const ModeratorSupportChannel =
   "https://discord.com/api/webhooks/1149703440256217098/ycuYn6yn8y5Atb2ysdTltVzIzB7lmeS-KpGn5LTNmnyVumllHhCFY2scGXUvyBVp39SJ";
-
+const SupportChannel =
+  "https://discord.com/api/webhooks/1176896399661613136/vkPx-tGOP6IuMnH0ACbsJe-javz9MOMAorvp25BF6oDBMkBxbYIys4U2ACmsZgu6KjwQ";
 const ModeratorDebugChannel =
   "https://discord.com/api/webhooks/1157121578807611465/DPTTZrQspuKzO4rpQwOaYpy7HE95nRVIgKQe74MG0bT3QrqqAT_F6vyCgyvTBs7ngweY";
 
@@ -122,6 +123,22 @@ export const postMessageToModeratorSupportChannel = (content: string) => {
     });
 
     fetch(ModeratorSupportChannel, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
+export const postMessageToSupportChannel = (content: string) => {
+  // if (isDevelopment) return;
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    fetch(SupportChannel, {
       method: "POST",
       body,
       headers: { "Content-Type": "application/json" },
@@ -308,9 +325,9 @@ export const EmojiMap = {
   necromancer: "<:necromancer:976842075679113226>",
   cowking: "<:cowking:1157364026565722283>",
   minotaur: "<:minotaur:1157364041895903273>",
-  Arachneia: "<:Arachneia:1157668012699156500>",
+  arachneia: "<:arachneia:1157668012699156500>",
   butcher: "<:butcher:1156685096888303748>",
-  Azrael: "<:Azrael:1156685409233944726>",
+  azrael: "<:azrael:1156685409233944726>",
   deathbringer: "<:deathbringer:1156687799592960070>",
   scrollupgradeelementmagic: "<:scrollupgradeelementmagic:1163876379461423216>",
   scrollupgradeelementflame: "<:scrollupgradeelementflame:1164034442415833209>",
@@ -326,4 +343,6 @@ export const EmojiMap = {
   obelisklarge: "<a:obelisklarge:1170758924878741554>",
   petcollar: "<:petcollar:1174481604060655757>",
   janetyellen: "<:janetyellen:1156657942821605568>",
+  magicTemplar: "<:magicTemplar:1176884835571208252>",
+  poisonTemplar: "<:poisonTemplar:1176883414419386448>",
 };

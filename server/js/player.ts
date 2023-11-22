@@ -30,6 +30,7 @@ import {
   postMessageToDiscordEventChannel,
   postMessageToDiscordPayoutsChannel,
   postMessageToModeratorSupportChannel,
+  postMessageToSupportChannel,
 } from "./discord";
 import FormatChecker from "./format";
 import Formulas from "./formulas";
@@ -139,6 +140,7 @@ const badWords = [
   "porn",
   "negro",
   "motherfucker",
+  "sex",
 ];
 
 const replacedWords = [...badWords].map(replaceLetters);
@@ -643,6 +645,79 @@ class Player extends Character {
           return;
         }
 
+        if (msg === "/find boss") {
+          let entity;
+          let emoji;
+          const playerLocation = getEntityLocation({ x: self.x, y: self.y });
+          console.log("~~~~playerLocation", playerLocation);
+
+          if (playerLocation === "magicskeletoncrypt") {
+            entity = self.server.magicTemplar;
+
+            emoji = EmojiMap.magicTemplar;
+          } else if (playerLocation === "poisonskeletoncrypt") {
+            entity = self.server.mpoisonTemplar;
+
+            emoji = EmojiMap.poisonTemplar;
+          } else if (playerLocation === "butchergateway") {
+            entity = self.server.butcher;
+
+            emoji = EmojiMap.butcher;
+          } else if (playerLocation === "skeletonKing") {
+            entity = self.server.skeletonKing;
+
+            emoji = EmojiMap.skeletonKing;
+          } else if (playerLocation === "necromancerlair") {
+            entity = (({
+              x,
+              y,
+              name,
+              isDead,
+              resistances,
+              enchants,
+              hitPoints,
+              maxHitPoints,
+              spawningX,
+              spawningY,
+              armorLevel,
+              weaponLevel,
+            }) => ({
+              x,
+              y,
+              name,
+              isDead,
+              resistances,
+              enchants,
+              hitPoints,
+              maxHitPoints,
+              spawningX,
+              spawningY,
+              armorLevel,
+              weaponLevel,
+            }))(self.server.necromancer);
+
+            emoji = EmojiMap.necromancer;
+          } else if (playerLocation === "chalice") {
+            entity = self.server.shaman;
+
+            emoji = EmojiMap.zulgurak;
+          } else if (playerLocation === "spiders") {
+            entity = self.server.spiderQueen;
+
+            emoji = EmojiMap.arachneia;
+          } else if (playerLocation === "azrealgates") {
+            entity = self.server.deathAngel;
+
+            emoji = EmojiMap.azrael;
+          }
+
+          if (entity) {
+            postMessageToSupportChannel(`**${entity.name.toUpperCase()}**${emoji}${JSON.stringify(entity)}`);
+          }
+
+          return;
+        }
+
         // Sanitized messages may become empty. No need to broadcast empty chat messages.
         if (msg && msg !== "") {
           msg = msg.substr(0, 255); // Enforce maxLength of chat input
@@ -706,23 +781,6 @@ class Player extends Character {
                 self.server.activateLever(self, leverLeft);
                 self.server.activateLever(self, leverRight);
                 return;
-              }
-            }
-
-            if (msg.startsWith("/find") && msg.length) {
-              const name = msg.replace("/find ", "").toLowerCase().trim();
-              let entity = null;
-
-              if (name === "azrael" || name === "deathangel") {
-                entity = self.server.deathAngel;
-              } else if (name === "butcher") {
-                entity = self.server.butcher;
-              } else if (name === "zulgurak" || name === "shaman") {
-                entity = self.server.shaman;
-              }
-
-              if (entity) {
-                postMessageToModeratorSupportChannel(`**${name.toUpperCase()}**${JSON.stringify(entity)}`);
               }
             } else if (msg.startsWith("/kick") && msg.length) {
               const playerName = msg.replace("/kick ", "");
@@ -911,7 +969,7 @@ class Player extends Character {
           return;
         }
 
-        const attackSpeed = Types.calculateAttackSpeedCap(self.bonus.attackSpeed + 10,this.weaponKind);
+        const attackSpeed = Types.calculateAttackSpeedCap(self.bonus.attackSpeed + 10, this.weaponKind);
         const duration = Math.round(Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (attackSpeed / 100));
 
         self.attackTimeout = setTimeout(() => {
@@ -1371,7 +1429,8 @@ class Player extends Character {
               let { amount } = item;
               if (self.bonus.extraGold || self.partyBonus.extraGold) {
                 amount = Math.floor(
-                  (Types.calculateExtraGoldCap(self.bonus.extraGold + self.partyBonus.extraGold) / 100) * amount + amount,
+                  (Types.calculateExtraGoldCap(self.bonus.extraGold + self.partyBonus.extraGold) / 100) * amount +
+                    amount,
                 );
               }
 
@@ -1721,9 +1780,9 @@ class Player extends Character {
         // only set Q when skel king dies on payout success
 
         // just unlock REGARDLESS for walletless, w/e...
-        if (!self.hasWallet) {
-          self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
-        }
+        // if (!self.hasWallet) {
+        self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
+        // }
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
@@ -2816,7 +2875,7 @@ class Player extends Character {
       element: null,
       enchants: null,
       bonus: {
-        attackSpeed: Types.calculateAttackSpeedCap(this.bonus.attackSpeed,this.weaponKind),
+        attackSpeed: Types.calculateAttackSpeedCap(this.bonus.attackSpeed, this.weaponKind),
       },
     });
   }
