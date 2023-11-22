@@ -330,19 +330,9 @@ class DatabaseHandler {
 
         var achievement = new Array(ACHIEVEMENT_COUNT).fill(0);
         try {
-          if (replies[5]){
-          achievement = JSON.parse(replies[5]);
+          if (replies[5]) {
+            achievement = JSON.parse(replies[5]);
           } else {
-            this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
-          }
-
-          // Migrate old achievements to new
-          if (achievement.length === 20) {
-            achievement = achievement
-              .slice(0, 15)
-              .concat([0, achievement[15], 0, 0, 0])
-              .concat(achievement.slice(16, 20));
-
             this.client.hset("u:" + player.name, "achievement", JSON.stringify(achievement));
           }
 
@@ -2776,7 +2766,6 @@ class DatabaseHandler {
     });
   }
 
-
   checkIsPlayerExist(player) {
     return new Promise(resolve => {
       const userKey = "u:" + player.name;
@@ -2786,7 +2775,6 @@ class DatabaseHandler {
         .hget(userKey, "createdAt") // 0
         .hget(userKey, "weapon") // 1
         .exec(async (err, replies) => {
-          console.log("~~~~replies", replies);
 
           isPlayerExist = !!replies[0] || !!replies[1];
 

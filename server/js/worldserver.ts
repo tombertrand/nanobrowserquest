@@ -2804,7 +2804,7 @@ class World {
     let itemName = this.getDroppedItemName(mob, attacker);
     if (attacker.bonus.magicFind && !itemName) {
       const rerollRandom = random(100);
-      if (rerollRandom < Types.calculateMagicFind(attacker.bonus.magicFind)) {
+      if (rerollRandom < Types.calculateMagicFindCap(attacker.bonus.magicFind)) {
         itemName = this.getDroppedItemName(mob, attacker);
       }
     }

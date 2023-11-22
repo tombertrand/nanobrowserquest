@@ -911,7 +911,7 @@ class Player extends Character {
           return;
         }
 
-        const attackSpeed = Types.calculateAttackSpeed(self.bonus.attackSpeed + 10);
+        const attackSpeed = Types.calculateAttackSpeedCap(self.bonus.attackSpeed + 10,this.weaponKind);
         const duration = Math.round(Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (attackSpeed / 100));
 
         self.attackTimeout = setTimeout(() => {
@@ -1371,7 +1371,7 @@ class Player extends Character {
               let { amount } = item;
               if (self.bonus.extraGold || self.partyBonus.extraGold) {
                 amount = Math.floor(
-                  (Types.calculateExtraGold(self.bonus.extraGold + self.partyBonus.extraGold) / 100) * amount + amount,
+                  (Types.calculateExtraGoldCap(self.bonus.extraGold + self.partyBonus.extraGold) / 100) * amount + amount,
                 );
               }
 
@@ -2816,7 +2816,7 @@ class Player extends Character {
       element: null,
       enchants: null,
       bonus: {
-        attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
+        attackSpeed: Types.calculateAttackSpeedCap(this.bonus.attackSpeed,this.weaponKind),
       },
     });
   }
@@ -3730,9 +3730,9 @@ class Player extends Character {
       exp: this.bonus.exp + this.partyBonus.exp,
       criticalHit: this.bonus.criticalHit,
       blockChance: this.bonus.blockChance,
-      magicFind: Types.calculateMagicFind(this.bonus.magicFind),
-      extraGold: Types.calculateExtraGold(this.bonus.extraGold + this.partyBonus.extraGold),
-      attackSpeed: Types.calculateAttackSpeed(this.bonus.attackSpeed),
+      magicFind: Types.calculateMagicFindCap(this.bonus.magicFind),
+      extraGold: Types.calculateExtraGoldCap(this.bonus.extraGold + this.partyBonus.extraGold),
+      attackSpeed: Types.calculateAttackSpeedCap(this.bonus.attackSpeed, this.weaponKind),
       magicDamage: this.bonus.magicDamage + this.partyBonus.magicDamage,
       flameDamage: this.bonus.flameDamage,
       lightningDamage: this.bonus.lightningDamage,

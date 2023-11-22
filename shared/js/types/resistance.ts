@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { getWeaponWeightbyKind, getAttackSpeedBonusFromStringMap } from "../types/weight";
 
 export const PLAYER_MAX_RESISTANCES = 90;
 export const PLAYER_MAX_ATTACK_SPEED = 50;
@@ -252,13 +253,20 @@ export const calculateResistance = (resistance: number, curseResistances = 0) =>
   return calculatedResistances;
 };
 
-export const calculateAttackSpeed = (attackSpeed: number) =>
-  attackSpeed > PLAYER_MAX_ATTACK_SPEED ? PLAYER_MAX_ATTACK_SPEED : attackSpeed;
+export const calculateAttackSpeedCap = (rawAttackSpeed: number, weaponKind?: number) => {
+  let attackSpeedByWeight = 0;
+  if (weaponKind) {
+    attackSpeedByWeight = getAttackSpeedBonusFromStringMap[getWeaponWeightbyKind(weaponKind)];
+  }
 
-export const calculateExtraGold = (extraGold: number) =>
+  const attackSpeed = rawAttackSpeed + attackSpeedByWeight;
+  return attackSpeed > PLAYER_MAX_ATTACK_SPEED ? PLAYER_MAX_ATTACK_SPEED : attackSpeed;
+};
+
+export const calculateExtraGoldCap = (extraGold: number) =>
   extraGold > PLAYER_MAX_EXTRA_GOLD ? PLAYER_MAX_EXTRA_GOLD : extraGold;
 
-export const calculateMagicFind = (magicFind: number) =>
+export const calculateMagicFindCap = (magicFind: number) =>
   magicFind > PLAYER_MAX_MAGIC_FIND ? PLAYER_MAX_MAGIC_FIND : magicFind;
 
 export const getResistance = (

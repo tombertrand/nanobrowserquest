@@ -1,4 +1,4 @@
-import type Game from "../../../client/js/game";
+
 export const ACHIEVEMENT_NAMES = [
   "A_TRUE_WARRIOR",
   "INTO_THE_WILD",

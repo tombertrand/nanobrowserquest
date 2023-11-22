@@ -8,9 +8,9 @@ import { Slot } from "./slots";
 import { expForLevel } from "./types/experience";
 import { terrainToImageMap } from "./types/map";
 import {
-  calculateAttackSpeed,
-  calculateExtraGold,
-  calculateMagicFind,
+  calculateAttackSpeedCap,
+  calculateExtraGoldCap,
+  calculateMagicFindCap,
   calculateResistance,
   DEFAULT_ATTACK_ANIMATION_SPEED,
   DEFAULT_ATTACK_SPEED,
@@ -58,6 +58,11 @@ import {
   getDefenseSkill,
   skillToNameMap,
 } from "./types/skill";
+import {
+  attackBonuPercentsFromWeightMap,
+  getAttackSpeedBonusFromStringMap,
+  getWeaponWeightbyKind,
+} from "./types/weight";
 
 export const Types: any = {
   Store: {
@@ -535,6 +540,8 @@ Types.getDefenseSkill = getDefenseSkill;
 Types.getAttackSkill = getAttackSkill;
 Types.defenseSkillDelay = defenseSkillDelay;
 Types.skillToNameMap = skillToNameMap;
+Types.getAttackSpeedBonusFromStringMap = getAttackSpeedBonusFromStringMap;
+Types.getWeaponWeightbyKind = getWeaponWeightbyKind;
 Types.attackSkillDelay = attackSkillDelay;
 Types.attackSkillTypeAnimationMap = attackSkillTypeAnimationMap;
 Types.calculateSkillTimeout = calculateSkillTimeout;
@@ -555,9 +562,9 @@ Types.PLAYER_MAX_RESISTANCES = PLAYER_MAX_RESISTANCES;
 Types.DEFAULT_ATTACK_SPEED = DEFAULT_ATTACK_SPEED;
 Types.DEFAULT_ATTACK_ANIMATION_SPEED = DEFAULT_ATTACK_ANIMATION_SPEED;
 Types.calculateResistance = calculateResistance;
-Types.calculateAttackSpeed = calculateAttackSpeed;
-Types.calculateExtraGold = calculateExtraGold;
-Types.calculateMagicFind = calculateMagicFind;
+Types.calculateAttackSpeedCap = calculateAttackSpeedCap;
+Types.calculateExtraGoldCap = calculateExtraGoldCap;
+Types.calculateMagicFindCap = calculateMagicFindCap;
 Types.terrainToImageMap = terrainToImageMap;
 Types.Slot = Slot;
 
@@ -770,22 +777,6 @@ Types.getArtifactNameFromKind = function (kind: number) {
   };
 
   return artifact[kind] || kind;
-};
-
-Types.getWeaponWeightbyKind = (kind: number): string => {
-  let weights = ["light", "normal", "heavy", "Super heavy"];
-
-  if (typeof kind !== "number") return;
-
-  if (Types.Entities.LightWeapons.includes(kind)) {
-    return weights[0];
-  } else if (Types.Entities.HeavyWeapons.includes(kind)) {
-    return weights[2];
-  } else if (Types.Entities.SuperHeavyWeapons.includes(kind)) {
-    return weights[3];
-  } else {
-    return weights[1];
-  }
 };
 
 export const petKindToPetMap = {
@@ -2668,7 +2659,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     dragonsword: 8,
     moonsword: 8,
     moonhachet: 8,
-    moonmaul    : 8,
+    moonmaul: 8,
     mysticalsword: 6,
     mysticaldagger: 6,
     spikeglaive: 6,
@@ -2810,6 +2801,9 @@ Types.getWeaponDamage = function (weapon: string, level: number, isUnique: boole
   const itemClass = Types.getItemClass(weapon, level);
   const itemClassRank = Types.itemClassRank[itemClass];
 
+  const weight = getWeaponWeightbyKind(kinds[weapon][0]);
+  const attackBonusPercentByWeight = attackBonuPercentsFromWeightMap[weight];
+
   const damage =
     kinds[weapon][4] +
     (isUnique ? itemClassRank + 1 : 0) +
@@ -2817,7 +2811,10 @@ Types.getWeaponDamage = function (weapon: string, level: number, isUnique: boole
   const damagePercentPerLevel = [100, 105, 110, 120, 130, 145, 160, 185, 215, 255];
   const damageBonus = level >= 7 ? Math.ceil((level - 6) * 2) : 0;
 
-  return Math.ceil((damage + damageBonus) * (damagePercentPerLevel[level - 1] / 100));
+  let totalDamage = (damage + damageBonus) * (damagePercentPerLevel[level - 1] / 100);
+  totalDamage = Math.ceil(totalDamage * (1 + attackBonusPercentByWeight / 100)); 
+
+  return totalDamage;
 };
 
 Types.getWeaponMagicDamage = function (level: number) {

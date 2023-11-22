@@ -835,10 +835,10 @@ class Character extends Entity {
   setAttackSpeed(bonus: number) {
     const animationSpeed = Math.round(
       Types.DEFAULT_ATTACK_ANIMATION_SPEED -
-        Types.DEFAULT_ATTACK_ANIMATION_SPEED * (Types.calculateAttackSpeed(bonus) / 100),
+        Types.DEFAULT_ATTACK_ANIMATION_SPEED * (Types.calculateAttackSpeedCap(bonus) / 100),
     );
     const attackSpeed = Math.round(
-      Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (Types.calculateAttackSpeed(bonus) / 100),
+      Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (Types.calculateAttackSpeedCap(bonus) / 100),
     );
 
     this.atkSpeed = animationSpeed;
