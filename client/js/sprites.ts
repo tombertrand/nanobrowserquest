@@ -71,6 +71,7 @@ import templarsword from "../sprites/weapon.json";
 import spikeglaive from "../sprites/weapon.json";
 import eclypsedagger from "../sprites/weapon.json";
 import demonaxe from "../sprites/weapon.json";
+import demonsickle from "../sprites/weapon.json";
 import paladinaxe from "../sprites/weapon.json";
 import immortalsword from "../sprites/weapon.json";
 import executionersword from "../sprites/weapon.json";
@@ -220,6 +221,7 @@ import levelup from "../sprites/levelup.json";
 import auraDrainlife from "../sprites/aura-drainlife.json";
 import auraThunderstorm from "../sprites/aura-thunderstorm.json";
 import auraHighhealth from "../sprites/aura-highhealth.json";
+import auraHealthRegenerate from "../sprites/aura-health-regenerate.json";
 import auraFreeze from "../sprites/aura-freeze.json";
 import auraLowerResistance from "../sprites/aura-lowerresistance.json";
 import auraArcane from "../sprites/aura-arcane.json";
@@ -349,6 +351,7 @@ const sprites = {
   "pet_turtle-1": pet_axolotl,
   "pet_duck-1": pet_axolotl,
   "pet_deer-1": pet_cat,
+  "pet_reindeer-1": pet_cat,
   "pet_dragon-1": pet_bat,
   "pet_dragon-2": pet_bat,
   "pet_dragon-3": pet_bat,
@@ -385,6 +388,7 @@ const sprites = {
   spikeglaive,
   eclypsedagger,
   demonaxe,
+  demonsickle,
   paladinaxe,
   immortalsword,
   executionersword,
@@ -549,6 +553,7 @@ const sprites = {
   "item-petturtle": item,
   "item-petduck": item,
   "item-petdeer": item,
+  "item-petreindeer": item,
   "item-petdragon": item,
   "item-petmouse": item,
   "item-pethedgehog": item,
@@ -626,6 +631,7 @@ const sprites = {
   "item-spikeglaive": item,
   "item-eclypsedagger": item,
   "item-demonaxe": item,
+  "item-demonsickle": item,
   "item-paladinaxe": item,
   "item-immortalsword": item,
   "item-executionersword": item,
@@ -777,6 +783,7 @@ const sprites = {
   "aura-drainlife": auraDrainlife,
   "aura-thunderstorm": auraThunderstorm,
   "aura-highhealth": auraHighhealth,
+  "aura-health-regenerate": auraHealthRegenerate,
   "aura-freeze": auraFreeze,
   "aura-lowerresistance": auraLowerResistance,
   "aura-arcane": auraArcane,

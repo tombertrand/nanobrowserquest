@@ -722,7 +722,9 @@ class Player extends Character {
           if (entity) {
             postMessageToSupportChannel(`**${entity.name.toUpperCase()}**${emoji}${JSON.stringify(entity)}`);
           } else {
-            postMessageToSupportChannel(`No boss in that area**${self.name}**X:${self.x}Y:${self.y}  playerLocation:${playerLocation}`);
+            postMessageToSupportChannel(
+              `No boss in that area**${self.name}**X:${self.x}Y:${self.y}  playerLocation:${playerLocation}`,
+            );
 
             self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `No boss in that area.`).serialize());
           }
@@ -3392,6 +3394,7 @@ class Player extends Character {
       if (this.bonus.freezeChance) {
         this.auras.push("freeze");
       }
+      this.auras.push("health-regenerate");
       this.broadcast(new Messages.Auras(this), false);
     } catch (err) {
       Sentry.captureException(err, {
@@ -3865,12 +3868,12 @@ class Player extends Character {
       this.sendPlayerStats();
       this.server.updatePopulation({ levelupPlayer: this.id });
 
-      if (this.discordId) {
-        // @TODO figure out a way to sync the new level
-      }
-
+      let emoji = "";
       if (this.level >= 64) {
-        postMessageToDiscordEventChannel(`${this.name} is now lv.${this.level}`);
+        if (this.level >= 71) {
+          emoji = EmojiMap.maxlv;
+        }
+        postMessageToDiscordEventChannel(`${this.name} is now lv.${this.level}${emoji}`);
       }
     }
   }

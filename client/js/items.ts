@@ -134,6 +134,13 @@ var Items = {
     }
   },
 
+  DemonSickle: class DemonSickle extends Item {
+    constructor(id) {
+      super(id, Types.Entities.DEMONSICKLE, "weapon");
+      this.lootMessage = "You pick up a demon sickle";
+    }
+  },
+
   PaladinAxe: class PaladinAxe extends Item {
     constructor(id) {
       super(id, Types.Entities.PALADINAXE, "weapon");
@@ -1661,6 +1668,12 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.PETDEER, "object");
       this.lootMessage = "You pick up a Deer Pet";
+    }
+  },
+  PetReinDeer: class PetReinDeer extends Item {
+    constructor(id) {
+      super(id, Types.Entities.PETREINDEER, "object");
+      this.lootMessage = "You pick up a ReinDeer Pet";
     }
   },
   PetDragon: class PetDragon extends Item {

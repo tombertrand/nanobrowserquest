@@ -100,11 +100,13 @@ export const Types: any = {
     PET_DOG: 365,
     PETTURTLE: 366,
     PETDUCK: 386,
-    PETDEER: 391,
+
+    PETREINDEER: 405,
     PETDRAGON: 390,
     PET_TURTLE: 367,
     PET_DUCK: 387,
     PET_DEER: 392,
+    PET_REINDEER: 406, // ~~~LAST
     PET_DRAGON: 389,
     PETAXOLOTL: 368,
     PET_AXOLOTL: 369,
@@ -442,12 +444,13 @@ export const Types: any = {
     DRAGONSWORD: 156,
     MOONSWORD: 157,
     MOONHACHET: 402,
-    MOONMAUL: 403, // ~~~LAST
+    MOONMAUL: 403,
     MYSTICALSWORD: 158,
     MYSTICALDAGGER: 401,
     SPIKEGLAIVE: 159,
     ECLYPSEDAGGER: 160,
     DEMONAXE: 305,
+    DEMONSICKLE: 404,
     PALADINAXE: 306,
     IMMORTALSWORD: 307,
     HELLHAMMER: 244,
@@ -620,6 +623,7 @@ Types.Entities.NormalWeapons = [
   Types.Entities.FROZENSWORD,
   Types.Entities.DIAMONDSWORD,
   Types.Entities.PALADINAXE,
+  Types.Entities.DEMONSICKLE,
   Types.Entities.HELLHAMMER,
 ];
 
@@ -789,6 +793,7 @@ export const petKindToPetMap = {
   [Types.Entities.PETTURTLE]: Types.Entities.PET_TURTLE,
   [Types.Entities.PETDUCK]: Types.Entities.PET_DUCK,
   [Types.Entities.PETDEER]: Types.Entities.PET_DEER,
+  [Types.Entities.PETREINDEER]: Types.Entities.PET_REINDEER,
   [Types.Entities.PETDRAGON]: Types.Entities.PET_DRAGON,
   [Types.Entities.PETMOUSE]: Types.Entities.PET_MOUSE,
   [Types.Entities.PETHEDGEHOG]: Types.Entities.PET_HEDGEHOG,
@@ -809,6 +814,7 @@ export const kinds = {
   pet_turtle: [Types.Entities.PET_TURTLE, "pet"],
   pet_duck: [Types.Entities.PET_DUCK, "pet"],
   pet_deer: [Types.Entities.PET_DEER, "pet"],
+  pet_reindeer: [Types.Entities.PET_REINDEER, "pet"],
   pet_dragon: [Types.Entities.PET_DRAGON, "pet"],
   pet_mouse: [Types.Entities.PET_MOUSE, "pet"],
   pet_hedgehog: [Types.Entities.PET_HEDGEHOG, "pet"],
@@ -821,6 +827,7 @@ export const kinds = {
   petturtle: [Types.Entities.PETTURTLE, "pet", "Turtle Pet", 10],
   petduck: [Types.Entities.PETDUCK, "pet", "Duck Pet", 10],
   petdeer: [Types.Entities.PETDEER, "pet", "Deer Pet", 10],
+  petreindeer: [Types.Entities.PETREINDEER, "pet", "ReinDeer Pet", 10],
   petdragon: [Types.Entities.PETDRAGON, "pet", "Dragon Pet", 10],
   petmouse: [Types.Entities.PETMOUSE, "pet", "Mouse Pet", 10],
   pethedgehog: [Types.Entities.PETHEDGEHOG, "pet", "Hedgehog Pet", 10],
@@ -904,12 +911,13 @@ export const kinds = {
   moonhachet: [Types.Entities.MOONHACHET, "weapon", "Moon Hatchet", 59, 58],
   moonmaul: [Types.Entities.MOONMAUL, "weapon", "Moon Maul", 59, 62],
   demonaxe: [Types.Entities.DEMONAXE, "weapon", "Demon Axe", 60, 64],
+  demonsickle: [Types.Entities.DEMONSICKLE, "weapon", "Demon Sickle", 60, 62],
   mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 56, 62],
   mysticaldagger: [Types.Entities.MYSTICALDAGGER, "weapon", "Mystical Dagger", 56, 58],
   paladinaxe: [Types.Entities.PALADINAXE, "weapon", "Paladin Axe", 60, 66],
   immortalsword: [Types.Entities.IMMORTALSWORD, "weapon", "Immortal Sword", 60, 66],
   spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 60, 68],
-  eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 60, 68],
+  eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 60, 60],
   hellhammer: [Types.Entities.HELLHAMMER, "weapon", "Hell Hammer", 60, 68],
   maul: [Types.Entities.MAUL, "weapon", "Maul", 62, 73],
   wizardsword: [Types.Entities.WIZARDSWORD, "weapon", "Wizard sword", 62, 71],
@@ -1352,6 +1360,7 @@ Types.itemUniqueMap = {
   moonhachet: ["Blue Moon"],
   moonmaul: ["dark face"],
   demonaxe: ["Trustable"],
+  demonsickle: ["crypto 4 year cycle"],
   mysticalsword: ["The Maximalist"],
   mysticaldagger: ["Long-term Security"],
   spikeglaive: ["WAGMI"],
@@ -2058,6 +2067,7 @@ Types.isPetItem = function (kindOrString: string | number) {
       Types.Entities.PETTURTLE,
       Types.Entities.PETDUCK,
       Types.Entities.PETDEER,
+      Types.Entities.PETREINDEER,
       Types.Entities.PETDRAGON,
       Types.Entities.PETMOUSE,
       Types.Entities.PETHEDGEHOG,
@@ -2665,6 +2675,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     spikeglaive: 6,
     eclypsedagger: 6,
     demonaxe: 6,
+    demonscickle: 6,
     paladinaxe: 4,
     immortalsword: 4,
     hellhammer: 6,
@@ -2812,7 +2823,7 @@ Types.getWeaponDamage = function (weapon: string, level: number, isUnique: boole
   const damageBonus = level >= 7 ? Math.ceil((level - 6) * 2) : 0;
 
   let totalDamage = (damage + damageBonus) * (damagePercentPerLevel[level - 1] / 100);
-  totalDamage = Math.ceil(totalDamage * (1 + attackBonusPercentByWeight / 100)); 
+  totalDamage = Math.ceil(totalDamage * (1 + attackBonusPercentByWeight / 100));
 
   return totalDamage;
 };

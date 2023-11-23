@@ -599,6 +599,7 @@ export const generateRedChestItem = (): {
     { item: "beltdemon", uniqueChances: 10 },
     { item: "shielddemon", uniqueChances: 10 },
     { item: "demonaxe", uniqueChances: 10 },
+    { item: "demonsickle", uniqueChances: 6 },
     { item: "demonarmor", uniqueChances: 10 },
     { item: "cape", uniqueChances: 5 },
   ];
@@ -730,6 +731,7 @@ export const generateRandomPet = () => {
     petturtle: 1,
     petduck: 1,
     petdeer: 1,
+    // petreindeer: 1,
     petdragon: 3,
   };
 
@@ -747,8 +749,6 @@ export const getRandomPetCollarSkin = () => {
 
   return randomSkin;
 };
-
-
 
 export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false, isBlessed = false }) => {
   let maxSockets = baseLevel < 10 ? 4 : 6;
@@ -886,18 +886,16 @@ export const isValidUpgradeRunes = items => {
   return runeRank;
 };
 
-
 export const isValidSocketPetCollar = items => {
-//@NOTE not ready yet
-  return false
+  //@NOTE not ready yet
+  return false;
   if (items.length !== 2) {
     return false;
   }
 
   const isPet = Types.isPet(items[0]);
-  const isPetCollar = Types.isPet(items[1].startsWith('petcollar'))
-
-}
+  const isPetCollar = Types.isPet(items[1].startsWith("petcollar"));
+};
 
 export const isValidSocketItem = items => {
   if (items.length !== 2) {
@@ -1216,7 +1214,7 @@ export const generateDroppedItem = () => {
   // randomDrops = ["gold"];
   // randomDrops = ["ringbloodband"];
   // randomDrops = ["mysticaldagger"];
-  // randomDrops = ["moonmaul"];
+  // randomDrops = ["demonsickle"];
   // var randomDrops = [ "amuletdragon"];
   // var randomDrops = ["helmdragon", "dragonsword", "dragonarmor", "shielddragon", "amuletdragon"];
   // var randomDrops = ["helmpaladin", "helmimmortal"];
@@ -1312,4 +1310,3 @@ export const generateDroppedItem = () => {
   const itemName = randomDrops[randomDrop] || null;
   return itemName;
 };
-

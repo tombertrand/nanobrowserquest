@@ -345,4 +345,5 @@ export const EmojiMap = {
   janetyellen: "<:janetyellen:1156657942821605568>",
   magicTemplar: "<:magicTemplar:1176884835571208252>",
   poisonTemplar: "<:poisonTemplar:1176883414419386448>",
+  maxlv: "<:maxlv:1177256910068658227>",
 };

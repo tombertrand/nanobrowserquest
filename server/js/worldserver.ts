@@ -2669,8 +2669,10 @@ class World {
     }
 
     if (!isBoss && mob.x <= 29 && mob.y >= 744 && mob.y <= 781) {
-      const demonRandom = random(800);
-      if (demonRandom === 69) {
+      const demonRandom = random(900);
+      if (demonRandom === 666) {
+        return "demonsickle";
+      } else if (demonRandom === 69) {
         return "demonaxe";
       } else if (demonRandom === 133) {
         return "demonarmor";
@@ -2828,9 +2830,9 @@ class World {
     } else if (mob.kind === Types.Entities.BUTCHER) {
       postMessageToDiscordEventChannel(`${attacker.name} slayed Gorefiend the Butcher ${EmojiMap.butcher}`);
     } else if (mob.kind === Types.Entities.SHAMAN) {
-      postMessageToDiscordEventChannel(`${attacker.name} slayed Zul'Gurak${EmojiMap.zulgurak}`);
+      // postMessageToDiscordEventChannel(`${attacker.name} slayed Zul'Gurak${EmojiMap.zulgurak}`);
     } else if (mob.kind === Types.Entities.WORM) {
-      postMessageToDiscordEventChannel(`${attacker.name} slayed Shai-Hulud ${EmojiMap.shaihulud}`);
+      // postMessageToDiscordEventChannel(`${attacker.name} slayed Shai-Hulud ${EmojiMap.shaihulud}`);
     } else if (mob.kind === Types.Entities.DEATHANGEL) {
       postMessageToDiscordEventChannel(`${attacker.name} slayed Azrael ${EmojiMap.azrael}`);
     }

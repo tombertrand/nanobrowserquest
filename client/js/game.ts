@@ -151,6 +151,7 @@ class Game {
   freezeAnimation: Animation;
   resistanceAnimation: Animation;
   arcaneAnimation: Animation;
+  healthRegenerateAnimation: Animation;
   anvilAnimation: Animation;
   defenseSkillAnimation: Animation;
   skillResistanceAnimation: Animation;
@@ -306,6 +307,7 @@ class Game {
     this.freezeAnimation = null;
     this.resistanceAnimation = null;
     this.arcaneAnimation = null;
+    this.healthRegenerateAnimation = null;
     this.anvilAnimation = null;
     this.defenseSkillAnimation = null;
     this.skillResistanceAnimation = null;
@@ -493,6 +495,9 @@ class Game {
 
     this.arcaneAnimation = new Animation("idle_down", 4, 0, 36, 15);
     this.arcaneAnimation.setSpeed(140);
+
+    this.healthRegenerateAnimation = new Animation("idle_down", 5, 0, 16, 11);
+    this.healthRegenerateAnimation.setSpeed(140);
 
     this.anvilAnimation = new Animation("idle_down", 4, 0, 15, 8);
     this.anvilAnimation.setSpeed(80);
@@ -912,7 +917,7 @@ class Game {
                 }${setRingOrAmuletDisplay}${!isRuneword ? itemDisplayName : ""} ${itemClass} class item)</div>`
               : ""
           }
-          ${weight ? `<div class="item-weight">Weapon Weight:${weight}</div>}` : ""}}
+          ${weight ? `<div class="item-weight">Weapon Weight: <strong>${weight}</strong></div>}` : ""}}
           ${
             socket
               ? `<div class="socket-container">

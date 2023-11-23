@@ -642,7 +642,7 @@ class Renderer {
   }
 
   drawEntity(entity) {
-     var sprite = entity.sprite,
+    var sprite = entity.sprite,
       shadow = this.game.shadows["small"],
       anim = entity.currentAnimation,
       os = this.upscaledRendering ? 1 : this.scale,
@@ -705,7 +705,7 @@ class Renderer {
         }
 
         // @NOTE Drawing auras first (under the character)
-        if (entity instanceof Character && entity.auras.length) {
+        if (entity instanceof Character && entity.auras.length && this.game.showEffects) {
           entity.auras.forEach(aura => {
             var sprite = null;
             var anim = null;
@@ -727,6 +727,9 @@ class Renderer {
             } else if (aura === "arcane") {
               sprite = this.game.getSprite("aura-arcane");
               anim = this.game.arcaneAnimation;
+            } else if (aura === "health-regenerate" && this.game.player.bonus.regenerateHealth >= 125) {
+              sprite = this.game.getSprite("aura-health-regenerate");
+              anim = this.game.healthRegenerateAnimation;
             }
 
             if (sprite?.width && anim) {
