@@ -31,6 +31,7 @@ class Character extends Entity {
       resistances: this.resistances || null,
       element: this.element || null,
       enchants: this.enchants || null,
+      bonus: this.bonus,
     });
   }
 

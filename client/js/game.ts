@@ -3728,7 +3728,7 @@ class Game {
           try {
             if (id !== self.playerId) {
               if (!isPet) {
-                entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
+                entity = EntityFactory.createEntity({ kind, id, name, resistances, petId, bonus });
               } else {
                 const owner = self.getEntityById(ownerId);
                 const name = ownerId ? `Pet of ${owner?.name}` : "";

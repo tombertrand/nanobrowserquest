@@ -671,7 +671,7 @@ export const generatePurpleChestItem = (): {
     { item: "stonesocket" },
     { item: "stonesocketblessed" },
     { item: "stonedragon" },
-    { item: "jewelskull", jewelLevel: 4 },
+    { item: "jewelskull", jewelLevel: 5 },
   ];
 
   // 20%

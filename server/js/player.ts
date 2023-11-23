@@ -3376,6 +3376,8 @@ class Player extends Character {
           });
         }
       });
+      // console.log("~~~~this.maxHitPoints", this.maxHitPoints);
+      // this.bonus.regenerateHealth = this.bonus.regenerateHealth + Math.floor(this.maxHitPoints / 33);
 
       // @NOTE the magic bonus damage on a weapon is by default
       if (this.weapon !== "dagger" && !this.isWeaponUnique) {
