@@ -1677,8 +1677,9 @@ class World {
       // @ts-ignore
 
       Object.values(this.players).reduce(
-        (acc: any[], { name, level, hash, account, network, partyId, ip, partyEnabled, tradeEnabled }) => {
+        (acc: any[], { id, name, level, hash, account, network, partyId, ip, partyEnabled, tradeEnabled, bonus }) => {
           acc.push({
+            id,
             name,
             level,
             network: account ? network : null,
@@ -1687,6 +1688,7 @@ class World {
             ip,
             partyEnabled,
             tradeEnabled,
+            bonus,
           });
 
           return acc;

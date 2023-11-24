@@ -727,17 +727,17 @@ class Renderer {
             } else if (aura === "arcane") {
               sprite = this.game.getSprite("aura-arcane");
               anim = this.game.arcaneAnimation;
-            } else if (aura === "health-regenerate") {
-              // if (entity.name !== "running-coder") {
-              //   //@ts-ignore
-              //   console.log("~~~~ entity?.bonus", entity?.bonus);
-              //   console.log("~~~~ entity", entity);
-              // }
-              // } && entity?.bonus.regenerateHealth >= 125) {
+              //@ts-ignore
+            } else if (
+              aura === "health-regenerate" &&
+              typeof entity?.bonus?.regenerateHealth === "number" &&
+              entity?.bonus?.regenerateHealth >= 125
+            ) {
+              sprite = this.game.getSprite("aura-health-regenerate");
+              anim = this.game.healthRegenerateAnimation;
+
+
             }
-            //   sprite = this.game.getSprite("aura-health-regenerate");
-            //   anim = this.game.healthRegenerateAnimation;
-            // }
 
             if (sprite?.width && anim) {
               var os = this.upscaledRendering ? 1 : this.scale;

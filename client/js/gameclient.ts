@@ -577,6 +577,7 @@ class GameClient {
 
   receiveStats(data) {
     const stats = data[1];
+
     this.stats_callback?.(stats);
   }
 

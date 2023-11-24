@@ -88,6 +88,7 @@ class Character extends Entity {
   curseId: number;
   cursedTimeout: NodeJS.Timeout;
   spawnCharacterCoords: { x: number; y: number };
+  bonus: any;
 
   constructor(id, kind) {
     super(id, kind);
@@ -832,13 +833,20 @@ class Character extends Entity {
     clearTimeout(this.hurting);
   }
 
-  setAttackSpeed(bonus: number) {
+  setAttackSpeed(bonus: number, weaponName?: string) {
+    let weaponKind = null;
+    if (typeof weaponName === "string") {
+      weaponKind = Types.getKindFromString(weaponName);
+    }
+
+    // weaponKind = Types
     const animationSpeed = Math.round(
       Types.DEFAULT_ATTACK_ANIMATION_SPEED -
-        Types.DEFAULT_ATTACK_ANIMATION_SPEED * (Types.calculateAttackSpeedCap(bonus) / 100),
+        Types.DEFAULT_ATTACK_ANIMATION_SPEED * (Types.calculateAttackSpeedCap(bonus, weaponKind) / 100),
     );
     const attackSpeed = Math.round(
-      Types.DEFAULT_ATTACK_SPEED - Types.DEFAULT_ATTACK_SPEED * (Types.calculateAttackSpeedCap(bonus) / 100),
+      Types.DEFAULT_ATTACK_SPEED -
+        Types.DEFAULT_ATTACK_SPEED * (Types.calculateAttackSpeedCap(bonus, weaponKind) / 100),
     );
 
     this.atkSpeed = animationSpeed;

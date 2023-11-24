@@ -3717,6 +3717,7 @@ class Game {
           settings,
         } = data;
 
+        console;
         if (kind === Types.Entities.GATEWAYFX) {
           self.gatewayFxNpcId = id;
         }
@@ -3728,7 +3729,9 @@ class Game {
           try {
             if (id !== self.playerId) {
               if (!isPet) {
-                entity = EntityFactory.createEntity({ kind, id, name, resistances, petId, bonus });
+                entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
+
+                entity.bonus = bonus;
               } else {
                 const owner = self.getEntityById(ownerId);
                 const name = ownerId ? `Pet of ${owner?.name}` : "";
@@ -5001,7 +5004,7 @@ class Game {
         $("#player-drainLife").text(bonus.drainLife);
         $("#player-regenerateHealth").text(bonus.regenerateHealth);
 
-        self.player.setAttackSpeed(bonus.attackSpeed);
+        self.player.setAttackSpeed(bonus.attackSpeed,self.player?.weaponName);
       });
 
       self.client.onPlayerSettings(function ({ playerId, settings }) {
@@ -5197,6 +5200,14 @@ class Game {
 
       self.client.onPopulationChange(function (players, levelupPlayer) {
         self.worldPlayers = players;
+
+        players.map(({ id, bonus }) => {
+          const entity = self.getEntityById(id);
+
+          if (entity && bonus) {
+            players.bonus = bonus;
+          }
+        });
 
         if (self.nbplayers_callback) {
           self.nbplayers_callback();

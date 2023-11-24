@@ -14,9 +14,9 @@ class Warrior extends Player {
   lastCheckpoint: any;
   petEntity?: any;
 
-  constructor(id, { name, petId }: { name: string; petId?: number; bonus?: any }) {
+  constructor(id, { name, petId }: { name: string; petId?: number }) {
     super(id, name, "", Types.Entities.WARRIOR);
-    // console.log("~~~bonus", bonus);
+
     this.petId = petId;
   }
 }

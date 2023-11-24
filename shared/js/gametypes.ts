@@ -2617,7 +2617,9 @@ Types.bonusCap = {
   coldResistance: PLAYER_MAX_RESISTANCES,
   poisonResistance: PLAYER_MAX_RESISTANCES,
   freezeChance: 75,
-  attackSpeed: PLAYER_MAX_ATTACK_SPEED,
+  //@heavy weight needs to bypass this check, check will happen in calculateAttackSpeedCap FN
+  // attackSpeed: PLAYER_MAX_ATTACK_SPEED,
+
   magicFind: PLAYER_MAX_MAGIC_FIND,
   skillTimeout: 50,
   extraGold: PLAYER_MAX_EXTRA_GOLD,
@@ -2971,15 +2973,14 @@ Types.getJewelBonus = function (rawSockets: string[]) {
   return combinedBonus;
 };
 
-Types.combineBonus = function (bonus1, bonus2) {
-  Object.entries(bonus2).forEach(([key, value]) => {
-    if (!bonus1[key]) {
-      bonus1[key] = 0;
-    }
-    bonus1[key] += value;
-  });
-
-  return bonus1;
+Types.combineBonus = (bonus1, bonus2) => {
+  return Object.entries(bonus2).reduce(
+    (acc, [key, value]) => {
+      acc[key] = (acc[key] || 0) + value;
+      return acc;
+    },
+    { ...bonus1 },
+  );
 };
 
 Types.getItemDetails = function ({

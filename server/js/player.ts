@@ -74,6 +74,8 @@ const ADMINS = [
   "CelioSevii",
   "xDulfinz",
   "bruin",
+  "bread duck",
+  "Thedd",
 ];
 const SUPER_ADMINS = ["running-coder"];
 
@@ -649,7 +651,6 @@ class Player extends Character {
           let entity;
           let emoji;
           const playerLocation = getEntityLocation({ x: self.x, y: self.y });
-          console.log("~~~~playerLocation", playerLocation);
 
           if (playerLocation === "magicskeletoncrypt") {
             entity = self.server.magicTemplar;
@@ -2890,6 +2891,7 @@ class Player extends Character {
       enchants: null,
       bonus: {
         attackSpeed: Types.calculateAttackSpeedCap(this.bonus.attackSpeed, this.weaponKind),
+        regenerateHealth: this.bonus.regenerateHealth + Math.floor(this.maxHitPoints / 33),
       },
     });
   }
@@ -3064,9 +3066,6 @@ class Player extends Character {
               100)) /
           5,
       );
-
-      // console.log("~~~~ entity.hitPoints", entity.hitPoints);
-      // console.log("~~~~ poisonDmg", poisonDmg);
 
       if (iterations && poisonDmg && entity.hitPoints > 0) {
         entity.hitPoints -= poisonDmg;
@@ -3332,18 +3331,21 @@ class Player extends Character {
           ? {
               level: this.weaponLevel,
               bonus: this.weaponBonus,
+              socket: this.weaponSocket,
             }
           : null,
         this.armorBonus
           ? {
               level: this.armorLevel,
               bonus: this.armorBonus,
+              socket: this.armorSocket,
             }
           : null,
         this.helmBonus
           ? {
               level: this.helmLevel,
               bonus: this.helmBonus,
+              socket: this.armorSocket,
             }
           : null,
         this.beltBonus
@@ -3376,8 +3378,6 @@ class Player extends Character {
           });
         }
       });
-      // console.log("~~~~this.maxHitPoints", this.maxHitPoints);
-      // this.bonus.regenerateHealth = this.bonus.regenerateHealth + Math.floor(this.maxHitPoints / 33);
 
       // @NOTE the magic bonus damage on a weapon is by default
       if (this.weapon !== "dagger" && !this.isWeaponUnique) {
@@ -3726,17 +3726,19 @@ class Player extends Character {
   sendLevelInProgress() {
     const { x, y } = this;
 
-    if (x === 34 && y === 498 && this.server.minotaurLevelClock) {
+    const entityLocation = getEntityLocation({ x, y });
+
+    if (entityLocation === "minotaurcage" && this.server.minotaurLevelClock) {
       this.send(new Messages.LevelInProgress(this.server.minotaurLevelClock, "minotaur").serialize());
-    } else if (y >= 464 && y <= 535 && x <= 534 && this.server.cowLevelClock) {
+    } else if (entityLocation === "cow" && this.server.cowLevelClock) {
       this.send(new Messages.LevelInProgress(this.server.cowLevelClock, "cow").serialize());
-    } else if (y >= 696 && y <= 733 && x <= 29 && this.server.chaliceLevelClock) {
+    } else if (entityLocation === "chalice" && this.server.chaliceLevelClock) {
       this.send(new Messages.LevelInProgress(this.server.chaliceLevelClock, "chalice").serialize());
-    } else if (y >= 696 && y <= 733 && x >= 85 && x <= 112 && this.server.stoneLevelClock) {
+    } else if (entityLocation === "spiders" && this.server.stoneLevelClock) {
       this.send(new Messages.LevelInProgress(this.server.stoneLevelClock, "stone").serialize());
-    } else if (y >= 744 && y <= 781 && x <= 29 && this.server.gatewayLevelClock) {
+    } else if (entityLocation === "butchergateway" && this.server.gatewayLevelClock) {
       this.send(new Messages.LevelInProgress(this.server.gatewayLevelClock, "gateway").serialize());
-    } else if (y >= 744 && x >= 84 && this.server.templeLevelClock) {
+    } else if (entityLocation === "temple" && this.server.templeLevelClock) {
       this.send(new Messages.LevelInProgress(this.server.templeLevelClock, "temple").serialize());
     }
   }

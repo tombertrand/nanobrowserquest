@@ -1,5 +1,6 @@
 import _ from "lodash";
-import { getWeaponWeightbyKind, getAttackSpeedBonusFromStringMap } from "../types/weight";
+
+import { getAttackSpeedBonusFromStringMap, getWeaponWeightbyKind } from "../types/weight";
 
 export const PLAYER_MAX_RESISTANCES = 90;
 export const PLAYER_MAX_ATTACK_SPEED = 50;
