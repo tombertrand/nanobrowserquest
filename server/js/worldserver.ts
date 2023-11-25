@@ -2674,6 +2674,8 @@ class World {
       const demonRandom = random(900);
       if (demonRandom === 666) {
         return "demonsickle";
+      } else if (demonRandom === 333) {
+        return "eclypsedagger";
       } else if (demonRandom === 69) {
         return "demonaxe";
       } else if (demonRandom === 133) {

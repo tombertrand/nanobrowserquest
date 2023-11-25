@@ -732,6 +732,8 @@ export const generateRandomPet = () => {
     petduck: 1,
     petdeer: 1,
     // petreindeer: 1,
+
+       pethellhound: 1,
     petdragon: 3,
   };
 
