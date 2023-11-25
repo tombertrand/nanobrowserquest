@@ -2245,6 +2245,7 @@ class DatabaseHandler {
 
           let generatedItem: number | string = 0;
           const { pet: item, skin } = generateRandomPet();
+
           const { item: itemName, level } = player.generateItem({
             level: result.level,
             kind: Types.getKindFromString(item),

@@ -38,8 +38,8 @@ export const setBonus = {
     drainLife: 16,
     lightningResistance: 30,
     flameResistance: 50,
-    health: 120,
     attackSpeed: 20,
+    health: 120,
   },
   moon: {
     minDamage: 10,
@@ -281,7 +281,7 @@ export const setItems = {
     "ringmystical",
   ],
   demon: [
-    ["demonaxe", "demonssickle", "eclypsedagger"],
+    ["demonaxe", "demonsickle", "eclypsedagger"],
     "helmdemon",
     "demonarmor",
     "beltdemon",

@@ -100,6 +100,7 @@ export const Types: any = {
     PET_DOG: 365,
     PETTURTLE: 366,
     PETDUCK: 386,
+    PETDEER: 409, // ~~~LAST
 
     PETHELLHOUND: 407,
     PET: 407,
@@ -108,7 +109,7 @@ export const Types: any = {
     PET_DUCK: 387,
     PET_DEER: 392,
     PET_REINDEER: 406,
-    PET_HELLHOUND: 408, // ~~~LAST
+    PET_HELLHOUND: 408,
     PET_DRAGON: 389,
     PETAXOLOTL: 368,
     PET_AXOLOTL: 369,
@@ -601,7 +602,7 @@ Types.Entities.LightWeapons = [
   // Types.Entities.DAGGER,
   Types.Entities.MYSTICALDAGGER,
   Types.Entities.ECLYPSEDAGGER,
-  Types.Entities.SPIKEGLAIVE,
+
   Types.Entities.MOONHACHET,
 ];
 
@@ -625,6 +626,7 @@ Types.Entities.NormalWeapons = [
   Types.Entities.FROZENSWORD,
   Types.Entities.DIAMONDSWORD,
   Types.Entities.PALADINAXE,
+  Types.Entities.SPIKEGLAIVE,
   Types.Entities.DEMONSICKLE,
   Types.Entities.HELLHAMMER,
 ];
@@ -2759,6 +2761,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     petfox: 4,
     petturtle: 4,
     petduck: 4,
+    petdeer: 4,
     petdragon: 4,
     petmouse: 4,
     cape: 6,
