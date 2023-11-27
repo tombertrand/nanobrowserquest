@@ -2599,7 +2599,7 @@ class DatabaseHandler {
   }
 
   unlockExpansion2(player) {
-    if (player.expansion2) {
+    if (!player.expansion2) {
       player.expansion2 = true;
     }
 

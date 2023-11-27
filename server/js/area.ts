@@ -14,7 +14,7 @@ class Area {
   entities: any[];
   hasCompletelyRespawned: boolean;
   emptyCallback: any;
-  nbEntities: any;
+  nbEntities: number;
 
   constructor(id, x, y, width, height, world) {
     this.id = id;
@@ -25,6 +25,7 @@ class Area {
     this.world = world;
     this.entities = [];
     this.hasCompletelyRespawned = true;
+    this.nbEntities = 0;
   }
 
   _getRandomPositionInsideArea() {
@@ -63,10 +64,6 @@ class Area {
     }
   }
 
-  setNumberOfEntities(nb) {
-    this.nbEntities = nb;
-  }
-
   isEmpty() {
     return !_.some(this.entities, function (entity) {
       return !entity.isDead;
@@ -87,12 +84,12 @@ class MobArea extends Area {
   kind: any;
   respawns: any[];
 
-  constructor(id, nb, kind, x, y, width, height, world) {
+  constructor(id, kind, x, y, width, height, world) {
     super(id, x, y, width, height, world);
-    this.nb = nb;
+    this.nb = 0;
     this.kind = kind;
     this.respawns = [];
-    this.setNumberOfEntities(this.nb);
+    this.nb = 0;
 
     // Enable random roaming for monsters
     // (comment this out to disable roaming)
@@ -162,22 +159,38 @@ class ChestArea extends Area {
   items: any;
   chestX: any;
   chestY: any;
+  x: number;
+  y: number;
+  nbEntities: number;
+  width: number;
+  height: number;
+  world: any;
+  entities: Mob[];
+  hasCompletelyRespawned: boolean;
+  emptyCallback: any;
 
   constructor(id, x, y, width, height, cx, cy, items, world) {
     super(id, x, y, width, height, world);
     this.items = items;
     this.chestX = cx;
     this.chestY = cy;
+    this.nbEntities = 0;
   }
 
   contains(entity) {
+    let isEntityContained = false;
     if (entity) {
-      return (
-        entity.x >= this.x && entity.y >= this.y && entity.x < this.x + this.width && entity.y < this.y + this.height
-      );
+      isEntityContained =
+        entity.x >= this.x && entity.y >= this.y && entity.x < this.x + this.width && entity.y < this.y + this.height;
     } else {
-      return false;
+      isEntityContained = false;
     }
+
+    if (isEntityContained) {
+      this.nbEntities += 1;
+    }
+
+    return isEntityContained;
   }
 }
 

@@ -100,7 +100,7 @@ export const Types: any = {
     PET_DOG: 365,
     PETTURTLE: 366,
     PETDUCK: 386,
-    PETDEER: 409, // ~~~LAST
+    PETDEER: 409,
 
     PETHELLHOUND: 407,
     PET: 407,
@@ -448,6 +448,7 @@ export const Types: any = {
     MOONSWORD: 157,
     MOONHACHET: 402,
     MOONMAUL: 403,
+    DEMONMAUL: 410, // ~~~LAST
     MYSTICALSWORD: 158,
     MYSTICALDAGGER: 401,
     SPIKEGLAIVE: 159,
@@ -637,7 +638,7 @@ Types.Entities.HeavyWeapons = [
   Types.Entities.MAUL,
   Types.Entities.MOONMAUL,
 ];
-Types.Entities.SuperHeavyWeapons = [Types.Entities.MINOTAURAXE, Types.Entities.IMMORTALSWORD];
+Types.Entities.SuperHeavyWeapons = [Types.Entities.MINOTAURAXE, Types.Entities.IMMORTALSWORD, Types.Entities.DEMONMAUL];
 Types.Entities.Weapons = [
   ...Types.Entities.LightWeapons,
   ...Types.Entities.NormalWeapons,
@@ -917,6 +918,7 @@ export const kinds = {
   moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Sword", 59, 60],
   moonhachet: [Types.Entities.MOONHACHET, "weapon", "Moon Hatchet", 59, 58],
   moonmaul: [Types.Entities.MOONMAUL, "weapon", "Moon Maul", 59, 62],
+  demonmaul: [Types.Entities.DEMONMAUL, "weapon", "Demon Maul", 61, 66],
   demonaxe: [Types.Entities.DEMONAXE, "weapon", "Demon Axe", 60, 64],
   demonsickle: [Types.Entities.DEMONSICKLE, "weapon", "Demon Sickle", 60, 62],
   mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 56, 62],
@@ -1366,6 +1368,7 @@ Types.itemUniqueMap = {
   moonsword: ["Moon Boy"],
   moonhachet: ["Blue Moon"],
   moonmaul: ["dark face"],
+  demonmaul: ["return to Dust"],
   demonaxe: ["Trustable"],
   demonsickle: ["crypto 4 year cycle"],
   mysticalsword: ["The Maximalist"],
@@ -2685,6 +2688,7 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     spikeglaive: 6,
     eclypsedagger: 6,
     demonaxe: 6,
+    demonmaul: 6,
     demonscickle: 6,
     paladinaxe: 4,
     immortalsword: 4,

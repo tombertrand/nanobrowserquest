@@ -12,7 +12,7 @@ const networkDividerMap = {
   nano: 100000,
   ban: 10000,
 };
-
+const MAX_CONTEXT_MENU_COUNT = 5;
 const passwordKey = "Good Morning";
 
 class App {
@@ -50,6 +50,9 @@ class App {
   messageTimer: any;
   playButtonRestoreText: string;
   partyBlinkInterval: NodeJS.Timer;
+  contextMenuTimeout: NodeJS.Timeout;
+  contextmenuCount: number;
+  isContextMenuBlocked: boolean;
 
   constructor() {
     this.currentPage = 1;
@@ -78,7 +81,10 @@ class App {
     this.createNewCharacterFormFields = [];
     this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
     this.playButtonRestoreText = "";
+    this.contextMenuTimeout = null;
     this.partyBlinkInterval = null;
+    this.contextmenuCount = 0;
+    this.isContextMenuBlocked = false;
 
     const { name: playerName, account } = this.storage?.data?.player || {};
 
@@ -107,6 +113,32 @@ class App {
     this.ready = true;
   }
 
+  checkContextmenuabuse() {
+
+    if (this.isContextMenuBlocked || this.contextMenuTimeout) {
+      this.game.chat_callback({
+        message: "You've sent too many requests, you're blocked for 30 seconds",
+        type: "error",
+      });
+      return false;
+    }
+
+    this.contextmenuCount += 1;
+
+    if (this.contextmenuCount > MAX_CONTEXT_MENU_COUNT) {
+      this.isContextMenuBlocked = true;
+      this.contextMenuTimeout = setTimeout(() => {
+        this.contextmenuCount = 0;
+        this.contextMenuTimeout = null;
+        this.isContextMenuBlocked = false;
+      }, 30_000);
+      return false;
+    }
+
+    return true;
+  }
+
+
   initContextMenu() {
     $.contextMenu({
       selector: "#canvas",
@@ -116,41 +148,46 @@ class App {
         const player = this.game.getPlayerAt(x, y);
         const isInParty = !!player?.partyId;
 
-        return player && player.id !== this.game.player.id
-          ? {
-              callback: function () {},
-              items: {
-                player: {
-                  name: player.name,
-                  disabled: true,
-                },
-                trade: {
-                  name: !player.tradeEnabled ? `Player has disabled Trade` : `Trade`,
-                  callback: () => {
-                    this.game.say(`/trade ${player.name}`);
-                  },
-                  disabled: !player.tradeEnabled,
-                },
-                party: {
-                  name: !player.partyEnabled ? `Player has Disabled Party` : isInParty ? `In a party` : `Party `,
-                  callback: () => {
-                    if (!this.game.player.partyId) {
-                      this.game.say(`/party create`);
-                    }
-                    this.game.say(`/party invite ${player.name}`);
-                  },
-                  disabled: isInParty || !player.partyEnabled,
-                },
-                equipment: {
-                  name: `View equipment`,
-                  callback: () => {
-                    $("#otherplayer-name").html(`Equipment of <var>${player.name}</var>`);
-                    this.openOtherPlayerEquipment(player);
-                  },
-                },
-              },
-            }
-          : null;
+        if (!player || player.id === this.game.player.id) {
+          return null;
+        }
+
+        const items = {
+          player: {
+            name: player.name,
+            disabled: true,
+          },
+          trade: {
+            name: player.tradeEnabled ? "Trade" : "Player has disabled Trade",
+            callback: () => {
+              if (this.checkContextmenuabuse() && player.tradeEnabled) {
+                this.game.say(`/trade ${player.name}`);
+              }
+            },
+            disabled: !player.tradeEnabled,
+          },
+          party: {
+            name: player.partyEnabled ? (isInParty ? "In a party" : "Party") : "Player has Disabled Party",
+            callback: () => {
+              if (!isInParty && player.partyEnabled) {
+                if (!this.game.player.partyId && this.checkContextmenuabuse()) {
+                  this.game.say(`/party create`);
+                }
+                this.game.say(`/party invite ${player.name}`);
+              }
+            },
+            disabled: isInParty || !player.partyEnabled,
+          },
+          equipment: {
+            name: "View equipment",
+            callback: () => {
+              $("#otherplayer-name").html(`Equipment of <var>${player.name}</var>`);
+              this.openOtherPlayerEquipment(player);
+            },
+          },
+        };
+
+        return { items: items };
       },
     });
   }

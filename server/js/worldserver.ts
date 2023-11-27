@@ -54,7 +54,7 @@ class World {
   hurt: {};
   npcs: {};
   mobAreas: any[];
-  chestAreas: any[];
+  chestAreas: ChestArea[];
   groups: {};
   zombies: any[];
   cowTotal: number;
@@ -464,7 +464,7 @@ class World {
 
       // Populate all mob "roaming" areas
       _.each(self.map.mobAreas, function (a) {
-        var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
+        var area = new MobArea(a.id, a.type, a.x, a.y, a.width, a.height, self);
         area.spawnMobs();
         area.onEmpty(self.handleEmptyMobArea.bind(self, area));
 
@@ -474,6 +474,7 @@ class World {
       // Create all chest areas
       _.each(self.map.chestAreas, function (a) {
         var area = new ChestArea(a.id, a.x, a.y, a.w, a.h, a.tx, a.ty, a.i, self);
+
         self.chestAreas.push(area);
         area.onEmpty(self.handleEmptyChestArea.bind(self, area));
       });
@@ -487,10 +488,6 @@ class World {
       // Spawn static entities
       self.spawnStaticEntities();
 
-      // Set maximum number of entities contained in each chest area
-      _.each(self.chestAreas, function (area) {
-        area.setNumberOfEntities(area.entities.length);
-      });
     });
 
     var regenCount = this.ups * 2;
@@ -519,7 +516,7 @@ class World {
       this.databaseHandler.getChatBan().then(chatBan => {
         this.chatBan = chatBan;
       }),
-        1000 * 60 * 5;
+        1000 * 60 * 15;
     });
     setInterval(() => {
       this.maxPlayerCreateByIp = { ip: [] };
@@ -2686,6 +2683,8 @@ class World {
         return "shielddemon";
       } else if (demonRandom === 699) {
         return "helmdemon";
+      } else if (demonRandom === 554) {
+        return "demonmaul";
       }
     }
 
@@ -2857,6 +2856,8 @@ class World {
 
     // Potions can be looted by anyone
     let kind = Types.getKindFromString(itemName);
+
+
     const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;
     let amount = undefined;
 
