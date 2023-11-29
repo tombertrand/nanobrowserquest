@@ -358,7 +358,16 @@ var initGame = function () {
     app.initEquipmentIcons();
 
     if (game.hasNeverStarted) {
-      game.chat_callback({ message: `Welcome ${game.player.name}`, type: "event" });
+      game.chat_callback({
+        message: `Welcome ${game.player.name} to NBQ Join our
+        <a href="https://discord.gg/GerkX8BfYy" target="_blank">Discord</a> communityto interact with other players, form farming parties, post your items for sale or askto buy some items you are looking for in
+        <a href="https://discord.com/channels/971429295186665533/1153320202826690571" target="_blank"> # trade</a>, discuss item price in
+        <a href="https://discord.com/channels/971429295186665533/1149266734998618182"target="_blank"> #⁠price-discussions</a>,check out the latest release information in
+        <a href="https://discord.com/channels/971429295186665533/975048934064013403"target="_blank"> #⁠releases</a>, you’ll also be able to !link your NBQ & Discord accounts to be able to or !getroles in
+        <a href="https://discord.com/channels/971429295186665533/971429767842779146"># ⁠support</a> channel 
+      `,
+        type: "event",
+      });
     }
   });
 
@@ -723,7 +732,7 @@ var initGame = function () {
             game.dropItem(game.hoverSlotToDelete, -1);
           }
 
-          game.hoverSlotToDelete = null
+          game.hoverSlotToDelete = null;
         }
         break;
       case Types.Keys.LEFT:

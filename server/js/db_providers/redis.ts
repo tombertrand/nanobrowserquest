@@ -701,7 +701,7 @@ class DatabaseHandler {
       .hset(userKey, "exp", 0)
       .hset(userKey, "gold", 0)
       .hset(userKey, "goldStash", 0)
-      .hset(userKey, "coin", 0)
+
       .hset(userKey, "ip", player.ip || "")
       .hset(userKey, "createdAt", curTime)
       .hset(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))

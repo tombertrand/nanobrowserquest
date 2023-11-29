@@ -466,7 +466,7 @@ class World {
       _.each(self.map.mobAreas, function (a) {
         var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
 
-        area.contains(a);
+        // area.contains(a);
         area.spawnMobs();
         area.onEmpty(self.handleEmptyMobArea.bind(self, area));
 

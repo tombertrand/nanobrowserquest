@@ -153,21 +153,21 @@ class MobArea extends Area {
     return { x: pos.x, y: pos.y, kind: Types.Entities.CHEST };
   }
 
-  contains(entity) {
-    let isEntityContained = false;
-    if (entity) {
-      isEntityContained =
-        entity.x >= this.x && entity.y >= this.y && entity.x < this.x + this.width && entity.y < this.y + this.height;
-    } else {
-      isEntityContained = false;
-    }
+  // contains(entity) {
+  //   let isEntityContained = false;
+  //   if (entity) {
+  //     isEntityContained =
+  //       entity.x >= this.x && entity.y >= this.y && entity.x < this.x + this.width && entity.y < this.y + this.height;
+  //   } else {
+  //     isEntityContained = false;
+  //   }
 
-    if (isEntityContained) {
-      this.nbEntities += 1;
-    }
+  //   if (isEntityContained) {
+  //     this.nbEntities += 1;
+  //   }
 
-    return isEntityContained;
-  }
+  //   return isEntityContained;
+  // }
 }
 
 class ChestArea extends Area {

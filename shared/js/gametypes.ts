@@ -865,7 +865,7 @@ export const kinds = {
   wraith: [Types.Entities.WRAITH, "mob", 120, 40],
   zombie: [Types.Entities.ZOMBIE, "mob", 40, 42],
   necromancer: [Types.Entities.NECROMANCER, "mob", 400, 51],
-  cow: [Types.Entities.COW, "mob", 55, 49],
+  cow: [Types.Entities.COW, "mob", 255, 49],
   cowking: [Types.Entities.COWKING, "mob", 400, 50],
   minotaur: [Types.Entities.MINOTAUR, "mob", 500, 58],
   rat3: [Types.Entities.RAT3, "mob", 120, 50],
