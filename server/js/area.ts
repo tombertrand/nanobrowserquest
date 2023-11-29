@@ -81,15 +81,15 @@ class Area {
 
 class MobArea extends Area {
   nb: any;
-  kind: any;
+  type: string;
+  kind: number;
   respawns: any[];
 
-  constructor(id, kind, x, y, width, height, world) {
+  constructor(id, nbEntities, type, x, y, width, height, world) {
     super(id, x, y, width, height, world);
-    this.nb = 0;
-    this.kind = kind;
+    this.type = type;
     this.respawns = [];
-    this.nb = 0;
+    this.nbEntities = nbEntities;
 
     // Enable random roaming for monsters
     // (comment this out to disable roaming)
@@ -97,17 +97,16 @@ class MobArea extends Area {
   }
 
   spawnMobs() {
-    for (var i = 0; i < this.nb; i += 1) {
+    for (var i = 0; i <= this.nbEntities; i += 1) {
       this.addToArea(this._createMobInsideArea());
     }
   }
 
   _createMobInsideArea() {
-    var kind = Types.getKindFromString(this.kind);
+    this.kind = Types.getKindFromString(this.type);
 
     var pos = this._getRandomPositionInsideArea();
-    var mob = new Mob("1" + this.id + "" + kind + "" + this.entities.length, kind, pos.x, pos.y);
-
+    var mob = new Mob("1" + this.id + "" + this.kind + "" + this.entities.length, this.kind, pos.x, pos.y);
     mob.onMove(this.world.onMobMoveCallback.bind(this.world));
 
     return mob;
@@ -152,6 +151,22 @@ class MobArea extends Area {
     var pos = this._getRandomPositionInsideArea();
 
     return { x: pos.x, y: pos.y, kind: Types.Entities.CHEST };
+  }
+
+  contains(entity) {
+    let isEntityContained = false;
+    if (entity) {
+      isEntityContained =
+        entity.x >= this.x && entity.y >= this.y && entity.x < this.x + this.width && entity.y < this.y + this.height;
+    } else {
+      isEntityContained = false;
+    }
+
+    if (isEntityContained) {
+      this.nbEntities += 1;
+    }
+
+    return isEntityContained;
   }
 }
 

@@ -1213,8 +1213,8 @@ export const generateDroppedItem = () => {
     return;
   }
   let randomDrops = [];
-  // randomDrops = ["gold"];
-  randomDrops = ["demonmaul"];
+  // randomDrops = ["mysticaldagger"];
+  // randomDrops = ["helmexecutioner"];
   // randomDrops = ["mysticaldagger"];
   // randomDrops = ["demonsickle"];
   // var randomDrops = [ "amuletdragon"];

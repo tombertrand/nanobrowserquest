@@ -464,7 +464,9 @@ class World {
 
       // Populate all mob "roaming" areas
       _.each(self.map.mobAreas, function (a) {
-        var area = new MobArea(a.id, a.type, a.x, a.y, a.width, a.height, self);
+        var area = new MobArea(a.id, a.nb, a.type, a.x, a.y, a.width, a.height, self);
+
+        area.contains(a);
         area.spawnMobs();
         area.onEmpty(self.handleEmptyMobArea.bind(self, area));
 
@@ -487,7 +489,6 @@ class World {
 
       // Spawn static entities
       self.spawnStaticEntities();
-
     });
 
     var regenCount = this.ups * 2;
@@ -2856,7 +2857,6 @@ class World {
 
     // Potions can be looted by anyone
     let kind = Types.getKindFromString(itemName);
-
 
     const partyId = Types.isHealingItem(kind) ? undefined : attacker.partyId;
     let amount = undefined;
