@@ -1113,7 +1113,7 @@ class Game {
     if (!this.onSendMoveItemTimeout) {
       this.onSendMoveItemTimeout = setTimeout(() => {
         this.onSendMoveItemTimeout = null;
-      }, 850);
+      }, 1000);
     } else {
       return;
     }
@@ -3259,7 +3259,7 @@ class Game {
       // Inventory might be locked
       setTimeout(() => {
         self.client.sendMoveItemsToInventory("trade");
-      }, 250);
+      }, 850);
 
       self.client.onAccount(function ({ account, network, depositAccount }) {
         self.store.depositAccount = depositAccount;

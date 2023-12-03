@@ -364,7 +364,7 @@ var initGame = function () {
         <a href="https://discord.com/channels/971429295186665533/1153320202826690571" target="_blank"> # trade</a>, discuss item price in
         <a href="https://discord.com/channels/971429295186665533/1149266734998618182"target="_blank"> #⁠price-discussions</a>,check out the latest release information in
         <a href="https://discord.com/channels/971429295186665533/975048934064013403"target="_blank"> #⁠releases</a>, you’ll also be able to !link your NBQ & Discord accounts to be able to or !getroles in
-        <a href="https://discord.com/channels/971429295186665533/971429767842779146"># ⁠support</a> channel 
+        <a href="https://discord.com/channels/971429295186665533/971429767842779146"># ⁠support</a> channel
       `,
         type: "event",
       });

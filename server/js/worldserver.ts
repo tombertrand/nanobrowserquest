@@ -511,13 +511,13 @@ class World {
 
     this.databaseHandler.getGoldBank().then(goldBank => {
       this.goldBank = goldBank;
-    });
+    })
 
     setInterval(() => {
       this.databaseHandler.getChatBan().then(chatBan => {
         this.chatBan = chatBan;
       }),
-        1000 * 60 * 15;
+        1000 * 60 * 20;
     });
     setInterval(() => {
       this.maxPlayerCreateByIp = { ip: [] };

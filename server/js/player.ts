@@ -131,7 +131,7 @@ const badWords = [
   "shit",
   "rape",
   "murder",
-  "looser",
+  "loser",
   "slave",
   "pussy",
   "bitch",
@@ -143,6 +143,8 @@ const badWords = [
   "negro",
   "motherfucker",
   "sex",
+  "卐",
+  "hail",
 ];
 
 const replacedWords = [...badWords].map(replaceLetters);
@@ -300,9 +302,6 @@ class Player extends Character {
   // attackTimeoutWarning: boolean;
   checkHashInterval: any;
   lastHashCheckTimestamp: number;
-  moveItemsToInventoryLock: boolean;
-  moveItemLock: boolean;
-  sendMoveItemLock: boolean;
   upgradeLock: boolean;
   moveGoldLock: boolean;
   isChatbanWarned: boolean;
@@ -365,10 +364,7 @@ class Player extends Character {
     this.isChatbanWarned = false;
     // this.attackTimeoutWarning = false;
 
-    // DB Locks to prevent multiple OPs at once when there is a server delay
-    this.moveItemsToInventoryLock = false;
-    this.moveItemLock = false;
-    this.sendMoveItemLock = false;
+  
     this.upgradeLock = false;
     this.moveGoldLock = false;
 

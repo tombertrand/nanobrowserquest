@@ -1094,14 +1094,7 @@ class DatabaseHandler {
   }
 
   sendMoveItem({ player, location, data }) {
-    if (player.sendMoveItemLock === location) {
-      Sentry.captureException(new Error(`**${player.name}** Calling sendMoveItem while still locked on ${location}`), {
-        extra: { player: player.name },
-      });
-      return;
-    }
 
-    player.sendMoveItemLock = location;
     const type = location;
     const isEquipment = [
       "weapon",
@@ -1237,7 +1230,6 @@ class DatabaseHandler {
       }
     }
 
-    player.sendMoveItemLock = false;
   }
 
   moveItem({ player, fromSlot, toSlot, quantity: movedQuantity = 0 }) {
@@ -1247,13 +1239,6 @@ class DatabaseHandler {
     const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
     const [toLocation, toRange] = this.getItemLocation(toSlot);
 
-    if (player.moveItemLock === toLocation) {
-      Sentry.captureException(new Error(`**${player.name}** Calling moveItem to: ${toLocation} while still locked`), {
-        extra: { player: player.name },
-      });
-      return;
-    }
-    player.moveItemLock = toLocation;
 
     const isMultipleFrom = ["inventory", "upgrade", "trade", "stash"].includes(fromLocation);
     const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
@@ -1279,7 +1264,6 @@ class DatabaseHandler {
       let fromItem;
       let toItem;
       let isConsumable;
-      let waitForWriteCount = 0;
       try {
         let fromReplyParsed = isMultipleFrom ? JSON.parse(fromReply) : fromReply;
 
@@ -1292,7 +1276,7 @@ class DatabaseHandler {
 
         // Should never happen but who knows
         if (["dagger:1", "clotharmor:1", "helmcloth:1"].includes(fromItem) && toSlot !== -1) {
-          player.moveItemLock = false;
+  
           return;
         }
 
@@ -1308,7 +1292,7 @@ class DatabaseHandler {
           }
 
           this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {
-            player.moveItemLock = false;
+        
           });
           this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
         } else {
@@ -1332,7 +1316,7 @@ class DatabaseHandler {
 
                 // trying to move more than the current quantity
                 if (movedQuantity && movedQuantity > fromQuantity) {
-                  player.moveItemLock = false;
+          
                   return;
                 }
 
@@ -1424,7 +1408,6 @@ class DatabaseHandler {
 
               if (!isToReplyDone) {
                 if (isMultipleTo) {
-                  waitForWriteCount += 1;
                   toReplyParsed[toSlot - toRange] = fromItem;
                 } else {
                   toReplyParsed = fromItem;
@@ -1433,7 +1416,6 @@ class DatabaseHandler {
 
               if (!isFromReplyDone) {
                 if (isMultipleFrom) {
-                  waitForWriteCount += 1;
                   fromReplyParsed[fromSlot - fromRange] = toItem || 0;
                 } else {
                   fromReplyParsed = toItem || 0;
@@ -1442,20 +1424,12 @@ class DatabaseHandler {
 
               if (isMultipleFrom) {
                 this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {
-                  waitForWriteCount -= 1;
-
-                  if (!waitForWriteCount || waitForWriteCount <= 1) {
-                    player.moveItemLock = false;
-                  }
+        
                 });
               }
               if (isMultipleTo) {
                 this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed), () => {
-                  waitForWriteCount -= 1;
-
-                  if (!waitForWriteCount || waitForWriteCount <= 1) {
-                    player.moveItemLock = false;
-                  }
+  
                 });
               }
 
@@ -1979,16 +1953,7 @@ class DatabaseHandler {
   }
 
   moveItemsToInventory(player, panel: "upgrade" | "trade" = "upgrade") {
-    if (player.moveItemsToInventoryLock) {
-      Sentry.captureException(
-        new Error(`**${player.name}** Calling moveItemsToInventory while still locked on panel **${panel}**`),
-        {
-          extra: { player: player.name, panel },
-        },
-      );
-      return;
-    }
-    player.moveItemsToInventoryLock = panel;
+
 
     this.client.hget("u:" + player.name, "inventory", (_err, rawInvetory) => {
       const inventory = JSON.parse(rawInvetory).filter(i => i !== 0);
@@ -2001,7 +1966,7 @@ class DatabaseHandler {
           const filteredUpgrade = data.filter(Boolean);
           //@NNOTE: Nothing to move, nothing to await
           if (!filteredUpgrade.length) {
-            player.moveItemsToInventoryLock = false;
+          
           }
 
           if (filteredUpgrade.length) {
@@ -2056,7 +2021,7 @@ class DatabaseHandler {
               data = data.map(() => 0);
             }
             this.client.hset("u:" + player.name, panel, JSON.stringify(data), () => {
-              player.moveItemsToInventoryLock = false;
+             
             });
 
             if (panel === "upgrade") {
