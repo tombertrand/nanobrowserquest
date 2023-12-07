@@ -377,6 +377,10 @@ EntityFactory.builders[Types.Entities.MOONSWORD] = function (id) {
   return new Items.MoonSword(id);
 };
 
+EntityFactory.builders[Types.Entities.CHRISTMASSWORD] = function (id) {
+  return new Items.ChristmasSword(id);
+};
+
 EntityFactory.builders[Types.Entities.MOONHACHET] = function (id) {
   return new Items.MoonHachet(id);
 };
@@ -1050,6 +1054,9 @@ EntityFactory.builders[Types.Entities.CHESTPURPLE] = function (id) {
   return new Items.ChestPurple(id);
 };
 
+EntityFactory.builders[Types.Entities.CHRISTMASPRESENT] = function (id) {
+  return new Items.ChristmasPresent(id);
+};
 EntityFactory.builders[Types.Entities.CHESTDEAD] = function (id) {
   return new Items.ChestDead(id);
 };

@@ -93,6 +93,14 @@ var Items = {
     }
   },
 
+  ChristmasSword: class ChristmasSword extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHRISTMASSWORD, "weapon");
+      this.lootMessage = "You pick up a christmas sword";
+    }
+  },
+
+
   MoonHachet: class MoonHachet extends Item {
     constructor(id) {
       super(id, Types.Entities.MOONHACHET, "weapon");
@@ -1263,6 +1271,12 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.CHESTPURPLE, "chest");
       this.lootMessage = "You pick up a purple chest";
+    }
+  },
+  ChristmasPresent: class ChristmasPresent extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHRISTMASPRESENT, "chest");
+      this.lootMessage = "You pick up a Christmas Present";
     }
   },
 

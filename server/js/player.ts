@@ -78,8 +78,7 @@ const ADMINS = [
   "Thedd",
 ];
 const SUPER_ADMINS = ["running-coder"];
-
-const badWords = [
+const immediateBanbadWords = [
   "nigger",
   "nig",
   "neger",
@@ -88,6 +87,24 @@ const badWords = [
   "nigga",
   "niggas",
   "niga",
+  "hitler",
+  "gay",
+  "anal",
+  "stfu",
+  "rape",
+  "murder",
+  "slave",
+  "negro",
+  "卐",
+];
+const badWords = [
+  "nigger",
+  "nig",
+  "neger",
+  "niger",
+  "niggers",
+  "nigga",
+  "niggas",
   "niga",
   "fucker",
   "fucked",
@@ -364,7 +381,6 @@ class Player extends Character {
     this.isChatbanWarned = false;
     // this.attackTimeoutWarning = false;
 
-  
     this.upgradeLock = false;
     this.moveGoldLock = false;
 
@@ -1501,8 +1517,6 @@ class Player extends Character {
                   jewelLevel = Types.isJewel(kind) ? item.level : 1;
                   ({ isUnique, isSuperior, ...generatedItem } =
                     self.generateItem({ kind, jewelLevel }) || ({} as GeneratedItem));
-
-                  console.log("!!!!!allo", kind, generatedItem);
                 }
 
                 if (generatedItem) {
@@ -1785,8 +1799,7 @@ class Player extends Character {
           check,
         });
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
-        const isClassicPayout =
-          !self.hash && self.network && self.hasWallet && message[1] && message[1] === Types.Entities.BOSS;
+        const isClassicPayout = message[1] && message[1] === Types.Entities.BOSS;
 
         // only set Q when skel king dies on payout success
 
@@ -1798,8 +1811,7 @@ class Player extends Character {
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
           isClassicPayout &&
-          (self.hash ||
-            self.createdAt + MIN_TIME > Date.now() ||
+          (self.createdAt + MIN_TIME > Date.now() ||
             self.level < MIN_LEVEL ||
             // Check for required achievements
             !self.achievement[1] || //  -> INTO_THE_WILD
@@ -1837,7 +1849,7 @@ class Player extends Character {
         let maxAmount;
         let raiPayoutAmount;
 
-        if (isClassicPayout && !self.hasRequestedBossPayout && self.network) {
+        if (isClassicPayout && !self.hasRequestedBossPayout && self.network && self.account) {
           self.hasRequestedBossPayout = true;
           amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
           maxAmount = getClassicMaxPayout(self.network);
@@ -1862,16 +1874,16 @@ class Player extends Character {
         payoutIndex += 1;
 
         self.hasRequestedBossPayout = true;
-        const response =
-          self.network && self.hasWallet && !self.hash && !self.hasRequestedBossPayout
-            ? await enqueueSendPayout({
-                playerName: self.name,
-                account: self.account,
-                amount,
-                payoutIndex,
-                network: self.network,
-              })
-            : {};
+        const isPayoutEnqueued = self.network && self.hasWallet && !self.hash && self.hasRequestedBossPayout;
+        const response = isPayoutEnqueued
+          ? await enqueueSendPayout({
+              playerName: self.name,
+              account: self.account,
+              amount,
+              payoutIndex,
+              network: self.network,
+            })
+          : {};
         const { err, message: msg, hash: payeoutHash } = response as any;
         self.hash = payeoutHash;
 
@@ -1892,7 +1904,8 @@ class Player extends Character {
           } 🎉`;
           postMessageToDiscordPayoutsChannel(messageToPayoutsChannel);
 
-          if (isClassicPayout) {
+          if (isPayoutEnqueued && isClassicPayout && payeoutHash) {
+            self.hasRequestedBossPayout = true;
             self.hash = hash;
             databaseHandler.setHash(self.name, payeoutHash);
           }
@@ -3229,6 +3242,7 @@ class Player extends Character {
     this.weaponKind = kind;
     this.weaponLevel = toNumber(level);
     this.weaponBonus = bonus?.filter(oneBonus => oneBonus !== 43);
+    // this.armorSocket = toArray(socket);
     this.weaponSocket = toArray(socket);
     this.isWeaponUnique = !!this.weaponBonus?.length;
     this.isWeaponSuperior = bonus?.includes(43);
@@ -4100,7 +4114,7 @@ class Player extends Character {
       this.inventory = inventory;
       this.stash = stash;
       this.hash = hash;
-      this.hasRequestedBossPayout = !!hash;
+      this.hasRequestedBossPayout = false;
       this.hasWallet = !!network || !!account;
 
       this.capeHue = settings.capeHue;

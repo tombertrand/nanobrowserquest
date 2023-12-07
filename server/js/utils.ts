@@ -707,6 +707,49 @@ export const generatePurpleChestItem = (): {
   return _.shuffle(items)[0];
 };
 
+export const generateChristmasPresentItem = (): {
+  item: string;
+  uniqueChances?: number;
+  quantity?: number;
+  jewelLevel?: number;
+} => {
+  // 30%
+  const items = [
+    { item: "christmassword", uniqueChances: 8 },
+    { item: "helmchristms", uniqueChances: 8 },
+    { item: "christmsarmor", uniqueChances: 8 },
+    { item: "beltchristmas", uniqueChances: 8 },
+    { item: "shieldchristmas", uniqueChances: 8 },
+    { item: "cape", uniqueChances: 3 },
+  ];
+
+  // 20%
+  const scrolls = [
+    { item: "scrollupgradehigh" },
+    { item: "scrolltransmutepet" },
+    { item: "stonesocket" },
+    { item: "jewelskull", jewelLevel: randomInt(3, 4) },
+  ];
+
+  // 20%
+  const ringOrAmulets = [{ item: "ringraistone" }, { item: "ringchristmas" }];
+
+  // Rune 30%
+
+  const randomCategory = random(100);
+
+  if (randomCategory < 30) {
+    const rune = getRandomRune(70, 10);
+
+    return { item: `rune-${rune}`, quantity: 1 };
+  } else if (randomCategory < 50) {
+    return _.shuffle(ringOrAmulets)[0];
+  } else if (randomCategory < 70) {
+    return _.shuffle(scrolls)[0];
+  }
+  return _.shuffle(items)[0];
+};
+
 export const generateDeadChestItem = (): {
   item: string;
   uniqueChances?: number;
@@ -1212,10 +1255,10 @@ export const generateDroppedItem = () => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
-  let randomDrops = [];
+  // let randomDrops = [];
   // randomDrops = ["mysticaldagger"];
   // randomDrops = ["helmexecutioner"];
-  randomDrops = ["ringnecromancer"];
+  // randomDrops = ["christmaspresent"];
   // randomDrops = ["demonsickle"];
   // var randomDrops = [ "amuletdragon"];
   // var randomDrops = ["helmdragon", "dragonsword", "dragonarmor", "shielddragon", "amuletdragon"];
@@ -1228,7 +1271,7 @@ export const generateDroppedItem = () => {
 
   // var randomDrops = ["demonaxe", "paladinaxe"];
   // var randomDrops = ["soulstone"];
-  // var randomDrops = ["iou"];
+  var randomDrops = ["demonaxe"];
   // var randomDrops = ["gold"];
   // var randomDrops = ["barbronze", "barsilver", "bargold", "barplatinum"];
   // var randomDrops = ["ringgreed", "amuletgreed"];

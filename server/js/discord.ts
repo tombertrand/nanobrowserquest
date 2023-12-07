@@ -217,7 +217,7 @@ export const postMessageToDiscordWelcomeChannel = (content: string) => {
 };
 
 export const postMessageToDiscordPayoutsChannel = (content: string) => {
-  if (isDevelopment) return;
+  // if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,

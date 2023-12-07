@@ -511,7 +511,7 @@ class World {
 
     this.databaseHandler.getGoldBank().then(goldBank => {
       this.goldBank = goldBank;
-    })
+    });
 
     setInterval(() => {
       this.databaseHandler.getChatBan().then(chatBan => {

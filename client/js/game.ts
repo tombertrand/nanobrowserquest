@@ -83,6 +83,7 @@ class Game {
   isAnvilChestblue: boolean;
   isAnvilChestgreen: boolean;
   isAnvilChestpurple: boolean;
+  isChristmasPresent: boolean;
   isAnvilChestdead: boolean;
   isAnvilChestred: boolean;
   anvilAnimationTimeout: any;
@@ -267,6 +268,7 @@ class Game {
     this.isAnvilChestblue = false;
     this.isAnvilChestgreen = false;
     this.isAnvilChestpurple = false;
+    this.isChristmasPresent = false;
     this.isAnvilChestdead = false;
     this.isAnvilChestred = false;
     this.anvilAnimationTimeout = null;
@@ -5004,7 +5006,7 @@ class Game {
         $("#player-drainLife").text(bonus.drainLife);
         $("#player-regenerateHealth").text(bonus.regenerateHealth);
 
-        self.player.setAttackSpeed(bonus.attackSpeed,self.player?.weaponName);
+        self.player.setAttackSpeed(bonus.attackSpeed, self.player?.weaponName);
       });
 
       self.client.onPlayerSettings(function ({ playerId, settings }) {
@@ -5349,6 +5351,7 @@ class Game {
         isChestblue,
         isChestgreen,
         isChestpurple,
+        isChristmasPresent,
         isChestdead,
         // @NOTE perhaps have a different animation for red chests (extra rare, next expansion?)
         // isChestred,
@@ -5363,6 +5366,8 @@ class Game {
           self.setAnvilChestblue();
         } else if (isChestpurple) {
           self.setAnvilRecipe("chestpurple");
+        } else if (isChristmasPresent) {
+          self.setAnvilRecipe("christmaspresent");
         } else if (isChestdead) {
           self.setAnvilRecipe("chestdead");
         } else {
@@ -5867,6 +5872,7 @@ class Game {
     this.isAnvilChestblue = false;
     this.isAnvilChestgreen = false;
     this.isAnvilChestpurple = false;
+    this.isChristmasPresent = false;
     this.isAnvilChestdead = false;
     this.isAnvilChestred = false;
     clearTimeout(this.anvilAnimationTimeout);

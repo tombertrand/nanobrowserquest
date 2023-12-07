@@ -1,4 +1,14 @@
 export const setBonus = {
+  christmas: {
+    health: 100,
+    minDamage: 15,
+    attackDamage: 15,
+    defense: 25,
+    blockChance: 10,
+    exp: 15,
+    magicFind: 12,
+    extraGold: 12,
+  },
   pumpkin: {
     magicFind: 12,
     extraGold: 12,
@@ -291,6 +301,15 @@ export const setItems = {
     "pethellhound",
   ],
   moon: [["moonsword", "moonhachet", "moonmaul"], "helmmoon", "moonarmor", "beltmoon", "shieldmoon", "amuletmoon"],
+
+  christmas: [
+    ["christmassword"],
+    "helmchristmas",
+    "christmasarmor",
+    "beltchristmas",
+    "shieldchristmas",
+    "amuletchristmas",
+  ],
   dragon: ["dragonsword", "helmdragon", "dragonarmor", "shielddragon", "petdragon", "amuletdragon"],
   templar: ["templarsword", "helmtemplar", "templararmor", "belttemplar", "shieldtemplar"],
   executioner: ["helmexecutioner", "executionersword", "beltexecutioner", "shieldexecutioner"],
@@ -314,6 +333,7 @@ export const setItemsNameMap = {
   mystical: [["Sword or Dagger"], "Helm", "Armor", "Belt", "Shield", "Ring"],
   demon: [["Axe, Dagger, Sickle or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet", "Pet Hellhound"],
   moon: [["Sword, Hatchet or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet"],
+  christmas: ["Sword", "Helm", "Armor", "Belt", "Shield", "Amulet"],
   dragon: ["Sword", "Helm", "Armor", "Shield", "Pet Dragon", "Amulet"],
   templar: ["Sword", "Helm", "Armor", "Belt", "Shield"],
   executioner: ["helm", "Sword", "Belt", "Shield"],

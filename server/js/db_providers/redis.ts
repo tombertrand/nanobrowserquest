@@ -57,6 +57,7 @@ import { PromiseQueue } from "../promise-queue";
 import { Sentry } from "../sentry";
 import {
   generateBlueChestItem,
+  generateChristmasPresentItem,
   generateDeadChestItem,
   generateGreenChestItem,
   generatePurpleChestItem,
@@ -1094,7 +1095,6 @@ class DatabaseHandler {
   }
 
   sendMoveItem({ player, location, data }) {
-
     const type = location;
     const isEquipment = [
       "weapon",
@@ -1229,7 +1229,6 @@ class DatabaseHandler {
         tradeInstance.update({ data, player1Id: player.id });
       }
     }
-
   }
 
   moveItem({ player, fromSlot, toSlot, quantity: movedQuantity = 0 }) {
@@ -1238,7 +1237,6 @@ class DatabaseHandler {
 
     const [fromLocation, fromRange] = this.getItemLocation(fromSlot);
     const [toLocation, toRange] = this.getItemLocation(toSlot);
-
 
     const isMultipleFrom = ["inventory", "upgrade", "trade", "stash"].includes(fromLocation);
     const isMultipleTo = ["inventory", "upgrade", "trade", "stash"].includes(toLocation);
@@ -1276,7 +1274,6 @@ class DatabaseHandler {
 
         // Should never happen but who knows
         if (["dagger:1", "clotharmor:1", "helmcloth:1"].includes(fromItem) && toSlot !== -1) {
-  
           return;
         }
 
@@ -1291,9 +1288,7 @@ class DatabaseHandler {
             fromReplyParsed[fromSlot - fromRange] = 0;
           }
 
-          this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {
-        
-          });
+          this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {});
           this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
         } else {
           this.client.hget("u:" + player.name, toLocation, (_err, toReply) => {
@@ -1316,7 +1311,6 @@ class DatabaseHandler {
 
                 // trying to move more than the current quantity
                 if (movedQuantity && movedQuantity > fromQuantity) {
-          
                   return;
                 }
 
@@ -1423,14 +1417,10 @@ class DatabaseHandler {
               }
 
               if (isMultipleFrom) {
-                this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {
-        
-                });
+                this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {});
               }
               if (isMultipleTo) {
-                this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed), () => {
-  
-                });
+                this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed), () => {});
               }
 
               this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
@@ -1953,8 +1943,6 @@ class DatabaseHandler {
   }
 
   moveItemsToInventory(player, panel: "upgrade" | "trade" = "upgrade") {
-
-
     this.client.hget("u:" + player.name, "inventory", (_err, rawInvetory) => {
       const inventory = JSON.parse(rawInvetory).filter(i => i !== 0);
       const availableInventorySlots = JSON.parse(rawInvetory).filter(i => i === 0).length;
@@ -1966,7 +1954,6 @@ class DatabaseHandler {
           const filteredUpgrade = data.filter(Boolean);
           //@NNOTE: Nothing to move, nothing to await
           if (!filteredUpgrade.length) {
-          
           }
 
           if (filteredUpgrade.length) {
@@ -2020,9 +2007,7 @@ class DatabaseHandler {
             if (areItemsLooted) {
               data = data.map(() => 0);
             }
-            this.client.hset("u:" + player.name, panel, JSON.stringify(data), () => {
-             
-            });
+            this.client.hset("u:" + player.name, panel, JSON.stringify(data), () => {});
 
             if (panel === "upgrade") {
               player.send([Types.Messages.UPGRADE, data]);
@@ -2279,6 +2264,7 @@ class DatabaseHandler {
           let isChestblue = false;
           let isChestgreen = false;
           let isChestpurple = false;
+          let isChristmasPresent = false;
           let isChestdead = false;
           let isChestred = false;
 
@@ -2321,6 +2307,7 @@ class DatabaseHandler {
               recipe === "chestblue" ||
               recipe === "chestgreen" ||
               recipe === "chestpurple" ||
+              recipe === "christmaspresent" ||
               recipe === "chestdead" ||
               recipe === "chestred"
             ) {
@@ -2338,9 +2325,12 @@ class DatabaseHandler {
                     isChestgreen = true;
                     ({ item, uniqueChances, jewelLevel } = generateGreenChestItem());
                     break;
-                  case "chestpurple":
+                  case "christmaspresent":
                     isChestpurple = true;
                     ({ item, uniqueChances, jewelLevel } = generatePurpleChestItem());
+                    break;
+                    isChristmasPresent = true;
+                    ({ item, uniqueChances, jewelLevel } = generateChristmasPresentItem());
                     break;
 
                   case "chestdead":
@@ -2416,9 +2406,23 @@ class DatabaseHandler {
             upgrade[upgrade.length - 1] = generatedItem;
             if (isRecipe) {
               player.broadcast(new Messages.AnvilRecipe(recipe), false);
-            } else if (isChestblue || isChestgreen || isChestpurple || isChestdead || isChestred) {
+            } else if (
+              isChestblue ||
+              isChestgreen ||
+              isChestpurple ||
+              isChristmasPresent ||
+              isChestdead ||
+              isChestred
+            ) {
               player.broadcast(
-                new Messages.AnvilUpgrade({ isChestblue, isChestgreen, isChestpurple, isChestdead, isChestred }),
+                new Messages.AnvilUpgrade({
+                  isChestblue,
+                  isChestgreen,
+                  isChestpurple,
+                  isChristmasPresent,
+                  isChestdead,
+                  isChestred,
+                }),
                 false,
               );
             }

@@ -87,6 +87,8 @@ export function hasMoreThanPercentCaps({ msg: str, percent = 60, minChar = 10 })
     return false;
   }
 
+  console.log("~~~~minChar", minChar);
+
   let uppercaseCount = 0;
   let alphabeticCount = 0;
 
@@ -124,6 +126,7 @@ export const isValidRecipe = items => {
     chestblue: ["chestblue"],
     chestgreen: ["chestgreen"],
     chestpurple: ["chestpurple"],
+    christmaspresent: ["christmaspresent"],
     chestdead: ["chestdead"],
     chestred: ["chestred"],
     expansion2voucher: ["expansion2voucher"],

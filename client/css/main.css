@@ -531,13 +531,12 @@ footer, header, hgroup, menu, nav, section {
     #player-list > div span:last-of-type,#player-info > div span:last-of-type { margin-left: auto; }
     #population .active, #text-window .active, #player .active { color: #FCE045 }
     #population .party, #text-window .party, #player .party, #party .party { color: #35ee35 }
-    #text-window .event { color: #55a3ff }
+    #text-window .event { color: #55a3ff; text-shadow:0 0 8px rgba(0, 150, 255, 0.4);}
 
     #text-window .info, #text-window .loot { color: #bfc2db }
     #text-window .error { color: #b57979 }
     /* #text-window span {text-shadow:1px -1px 1px #000, 1px 1px 1px #000,-1px 1px 1px #000} */
 
-    #text-window span {text-shadow: 0 0 8px rgba(0, 150, 255, 0.4); }
     #healthbar, #hitpoints, #weapon, #armor, #skill-attack, #skill-defense { cursor: pointer;}
 
     #payout {

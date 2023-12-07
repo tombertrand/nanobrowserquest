@@ -41,12 +41,13 @@ const sendPayout = async ({ account: receiver, amount, network, playerName }) =>
   let hash;
   let work;
   try {
+    console.log('~~1')
     if (!network) {
       throw new Error("Invalid payout network");
     }
 
     // await sleep(Math.floor(Math.random() * 250) + 1);
-
+    console.log('~~2')
     const accountInfo = await rpc("account_info", { account: `${network}_${sender}`, representative: "true" }, network);
 
     // if (accountInfo.error) {
@@ -54,13 +55,14 @@ const sendPayout = async ({ account: receiver, amount, network, playerName }) =>
     // }
 
     let { frontier, representative, balance } = accountInfo;
-
+    console.log('~~3')
     try {
       ({ work } = await getWorkFromService(frontier));
     } catch (err) {
+      console.log('~~4')
       console.log("Bpow error", err);
     }
-
+    console.log('~~5')
     const blockCreate = await rpc(
       "block_create",
       {
@@ -76,7 +78,7 @@ const sendPayout = async ({ account: receiver, amount, network, playerName }) =>
       },
       network,
     );
-
+    console.log('~~6')
     const process = await rpc(
       "process",
       {
@@ -87,6 +89,7 @@ const sendPayout = async ({ account: receiver, amount, network, playerName }) =>
       network,
     );
 
+    console.log('~~7')
     if (process.error) {
       Sentry.captureException(new Error("Unable to process block"), {
         extra: {
@@ -97,7 +100,7 @@ const sendPayout = async ({ account: receiver, amount, network, playerName }) =>
         },
       });
     }
-
+    console.log('~~8')
     hash = process.hash;
   } catch (err) {
     return {

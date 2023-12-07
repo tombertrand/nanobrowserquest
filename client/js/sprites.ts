@@ -67,7 +67,7 @@ import emeraldsword from "../sprites/weapon.json";
 import moonsword from "../sprites/weapon.json";
 import moonhachet from "../sprites/weapon.json";
 import moonmaul from "../sprites/weapon.json";
-
+import christmassword from "../sprites/weapon.json";
 import templarsword from "../sprites/weapon.json";
 import spikeglaive from "../sprites/weapon.json";
 import eclypsedagger from "../sprites/weapon.json";
@@ -385,6 +385,7 @@ const sprites = {
   minotauraxe,
   emeraldsword,
   moonsword,
+  christmassword,
   moonhachet,
   moonmaul,
   templarsword,
@@ -513,6 +514,7 @@ const sprites = {
   "item-chestblue": item,
   "item-chestgreen": item,
   "item-chestpurple": item,
+  "item-christmaspresent": item,
   "item-chestdead": item,
   "item-chestred": item,
   "item-expansion2voucher": item,
@@ -630,6 +632,8 @@ const sprites = {
   "item-minotauraxe": item,
   "item-emeraldsword": item,
   "item-moonsword": item,
+  "item-christmassword": item,
+
   "item-moonhachet": item,
   "item-moonmaul": item,
   "ited-demonmaul": item,

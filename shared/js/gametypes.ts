@@ -271,6 +271,7 @@ export const Types: any = {
     CHESTBLUE: 136,
     CHESTGREEN: 223,
     CHESTPURPLE: 224,
+    CHRISTMASPRESENT: 411, //~~~~LAST
     CHESTDEAD: 393,
     CHESTRED: 225,
 
@@ -446,9 +447,10 @@ export const Types: any = {
     TEMPLARSWORD: 155,
     DRAGONSWORD: 156,
     MOONSWORD: 157,
+    CHRISTMASSWORD: 412, //~~~~LAST
     MOONHACHET: 402,
     MOONMAUL: 403,
-    DEMONMAUL: 410, // ~~~LAST
+    DEMONMAUL: 410,
     MYSTICALSWORD: 158,
     MYSTICALDAGGER: 401,
     SPIKEGLAIVE: 159,
@@ -915,7 +917,8 @@ export const kinds = {
   executionersword: [Types.Entities.EXECUTIONERSWORD, "weapon", "Executioner Sword", 50, 56],
   templarsword: [Types.Entities.TEMPLARSWORD, "weapon", "Templar Sword", 52, 58],
   dragonsword: [Types.Entities.DRAGONSWORD, "weapon", "Dragon Sword", 54, 58],
-  moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Sword", 59, 60],
+  moonsword: [Types.Entities.MOONSWORD, "weapon", "Moon Sword", 26, 30],
+  christmassword: [Types.Entities.CHRISTMASSWORD, "weapon", "Christmas Sword", 44, 60],
   moonhachet: [Types.Entities.MOONHACHET, "weapon", "Moon Hatchet", 59, 58],
   moonmaul: [Types.Entities.MOONMAUL, "weapon", "Moon Maul", 59, 62],
   demonmaul: [Types.Entities.DEMONMAUL, "weapon", "Demon Maul", 61, 66],
@@ -1051,6 +1054,7 @@ export const kinds = {
   chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
   chestred: [Types.Entities.CHESTRED, "chest", "Red Chest", 60],
   chestpurple: [Types.Entities.CHESTPURPLE, "chest", "Purple Chest", 70],
+  christmaspresent: [Types.Entities.CHRISTMASPRESENT, "chest", "Christmas Present", 40],
   chestdead: [Types.Entities.CHESTDEAD, "chest", "Dead Chest", 72],
 
   expansion2voucher: [Types.Entities.EXPANSION2VOUCHER, "consumable", "Lost Temple Expansion Voucher", 50],
@@ -1366,6 +1370,7 @@ Types.itemUniqueMap = {
   templarsword: ["Panic Sell"],
   dragonsword: ["Balerion the Black Dread"],
   moonsword: ["Moon Boy"],
+  christmassword: ["HO HO HO"],
   moonhachet: ["Blue Moon"],
   moonmaul: ["dark face"],
   demonmaul: ["return to Dust"],
@@ -1692,6 +1697,7 @@ Types.isChest = function (kindOrString: number | string) {
       Types.Entities.CHESTBLUE,
       Types.Entities.CHESTGREEN,
       Types.Entities.CHESTPURPLE,
+      Types.Entities.CHRISTMASPRESENT,
       Types.Entities.CHESTDEAD,
       Types.Entities.CHESTRED,
     ].includes(kindOrString);
@@ -2696,6 +2702,8 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     maul: 4,
     wizardsword: 4,
 
+    christmassword: 8,
+
     helmgolden: 20,
     helmblue: 18,
     helmhorned: 15,
@@ -2967,6 +2975,7 @@ Types.isUnique = function (item, rawBonus, level?: number) {
 
 Types.getJewelBonus = function (rawSockets: string[]) {
   let combinedBonus = {};
+
   rawSockets?.forEach(rawSocket => {
     if (typeof rawSocket !== "string") return;
 
@@ -3214,6 +3223,7 @@ Types.itemDescription = {
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",
+  christmaspresent: "The present contains a special christmas eventset item",
   chestred: "The chest may contain a very precious item.",
   expansion2voucher:
     "Lost Temple expansion Voucher when consumed in the Anvil the Lost Temple will unlock if you don't already have it.",
