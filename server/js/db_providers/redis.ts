@@ -2321,9 +2321,13 @@ class DatabaseHandler {
                     isChestblue = true;
                     ({ item, uniqueChances, jewelLevel } = generateBlueChestItem());
                     break;
-                  case "chestgreen":
-                    isChestgreen = true;
-                    ({ item, uniqueChances, jewelLevel } = generateGreenChestItem());
+                    case "chestgreen":
+                      isChestgreen = true;
+                      ({ item, uniqueChances, jewelLevel } = generateGreenChestItem());
+                      break;
+                      case "chestpurple":
+                    isChestpurple = true;
+                    ({ item, uniqueChances, jewelLevel } = generatePurpleChestItem());
                     break;
                   case "christmaspresent":
                     isChestpurple = true;
@@ -2332,7 +2336,6 @@ class DatabaseHandler {
                     isChristmasPresent = true;
                     ({ item, uniqueChances, jewelLevel } = generateChristmasPresentItem());
                     break;
-
                   case "chestdead":
                     isChestdead = true;
                     ({ item, uniqueChances, jewelLevel } = generateDeadChestItem());
