@@ -1,6 +1,6 @@
 export const setBonus = {
   christmas: {
-    health: 100,
+    health: 140,
     minDamage: 15,
     attackDamage: 15,
     defense: 25,
@@ -61,6 +61,7 @@ export const setBonus = {
     allResistance: 12,
     attackSpeed: 20,
   },
+
   dragon: {
     minDamage: 25,
     attackDamage: 25,
@@ -234,6 +235,15 @@ export const kindAsStringToSet = {
   moonsword: "moon",
   moonhachet: "moon",
   moonmaul: "moon",
+  christmasword: "christmas",
+  christmashachet: "christmas",
+  christmasmaul: "christmas",
+  helmchristmas: "christmas",
+  christmasarmor: "christmas",
+  beltchristmas: "christmas",
+  amuletchristmas: "christmas",
+  shieldchristmas: "christmas",
+  petreindeer: "christmas",
   helmmoon: "moon",
   moonarmor: "moon",
   beltmoon: "moon",
@@ -301,15 +311,16 @@ export const setItems = {
     "pethellhound",
   ],
   moon: [["moonsword", "moonhachet", "moonmaul"], "helmmoon", "moonarmor", "beltmoon", "shieldmoon", "amuletmoon"],
-
   christmas: [
-    ["christmassword"],
+    ["christmassword", "christmashachet", "christmasmaul"],
     "helmchristmas",
     "christmasarmor",
     "beltchristmas",
     "shieldchristmas",
     "amuletchristmas",
+    "petreindeer"
   ],
+
   dragon: ["dragonsword", "helmdragon", "dragonarmor", "shielddragon", "petdragon", "amuletdragon"],
   templar: ["templarsword", "helmtemplar", "templararmor", "belttemplar", "shieldtemplar"],
   executioner: ["helmexecutioner", "executionersword", "beltexecutioner", "shieldexecutioner"],
@@ -333,7 +344,8 @@ export const setItemsNameMap = {
   mystical: [["Sword or Dagger"], "Helm", "Armor", "Belt", "Shield", "Ring"],
   demon: [["Axe, Dagger, Sickle or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet", "Pet Hellhound"],
   moon: [["Sword, Hatchet or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet"],
-  christmas: ["Sword", "Helm", "Armor", "Belt", "Shield", "Amulet"],
+  christmas: [["Sword, Hatchet or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet", "Pet Reindeer"],
+
   dragon: ["Sword", "Helm", "Armor", "Shield", "Pet Dragon", "Amulet"],
   templar: ["Sword", "Helm", "Armor", "Belt", "Shield"],
   executioner: ["helm", "Sword", "Belt", "Shield"],

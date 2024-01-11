@@ -2849,6 +2849,7 @@ class World {
 
     itemName = generateDroppedItem() || itemName;
 
+
     if (itemName === "jewelskull") {
       itemLevel = getRandomJewelLevel(Types.getMobLevel(mob.kind));
     } else if (itemName === "rune") {

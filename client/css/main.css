@@ -1043,6 +1043,8 @@ footer, header, hgroup, menu, nav, section {
         .home-logo {margin-left:-240px;}
         #text-list { height: calc(100% - 20px - 32px); }
         #text-list > div { padding: 0 12px; }
+
+        #text-list a{ color:#fff }
         #chatinput { padding: 6px 12px; }
         #completed.boss-check .link { font-size: 34px; }
         .createaccount-instructions { font-size: 25px; }

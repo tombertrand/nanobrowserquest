@@ -384,9 +384,16 @@ EntityFactory.builders[Types.Entities.CHRISTMASSWORD] = function (id) {
 EntityFactory.builders[Types.Entities.MOONHACHET] = function (id) {
   return new Items.MoonHachet(id);
 };
+EntityFactory.builders[Types.Entities.CHRISTMASHACHET] = function (id) {
+  return new Items.ChristmasHachet(id);
+};
 EntityFactory.builders[Types.Entities.MOONMAUL] = function (id) {
   return new Items.MoonMaul(id);
 };
+EntityFactory.builders[Types.Entities.CHRISTMASMAUL] = function (id) {
+  return new Items.ChristmasMaul(id);
+};
+
 EntityFactory.builders[Types.Entities.DEMONMAUL] = function (id) {
   return new Items.DemonMaul(id);
 };
@@ -507,6 +514,10 @@ EntityFactory.builders[Types.Entities.HELMMOON] = function (id) {
   return new Items.HelmMoon(id);
 };
 
+EntityFactory.builders[Types.Entities.HELMCHRISTMAS] = function (id) {
+  return new Items.HelmChristmas(id);
+};
+
 EntityFactory.builders[Types.Entities.HELMDEMON] = function (id) {
   return new Items.HelmDemon(id);
 };
@@ -583,6 +594,10 @@ EntityFactory.builders[Types.Entities.MOONARMOR] = function (id) {
   return new Items.MoonArmor(id);
 };
 
+EntityFactory.builders[Types.Entities.CHRISTMASARMOR] = function (id) {
+  return new Items.ChristmasArmor(id);
+};
+
 EntityFactory.builders[Types.Entities.DEMONARMOR] = function (id) {
   return new Items.DemonArmor(id);
 };
@@ -641,6 +656,10 @@ EntityFactory.builders[Types.Entities.BELTDEMON] = function (id) {
 
 EntityFactory.builders[Types.Entities.BELTMOON] = function (id) {
   return new Items.BeltMoon(id);
+};
+
+EntityFactory.builders[Types.Entities.BELTCHRISTMAS] = function (id) {
+  return new Items.BeltChristmas(id);
 };
 
 EntityFactory.builders[Types.Entities.BELTMYSTICAL] = function (id) {
@@ -717,6 +736,10 @@ EntityFactory.builders[Types.Entities.SHIELDEXECUTIONER] = function (id) {
 
 EntityFactory.builders[Types.Entities.SHIELDMOON] = function (id) {
   return new Items.ShieldMoon(id);
+};
+
+EntityFactory.builders[Types.Entities.SHIELDCHRISTMAS] = function (id) {
+  return new Items.ShieldChristmas(id);
 };
 
 EntityFactory.builders[Types.Entities.SHIELDMYSTICAL] = function (id) {
@@ -1020,6 +1043,10 @@ EntityFactory.builders[Types.Entities.AMULETDEMON] = function (id) {
 
 EntityFactory.builders[Types.Entities.AMULETMOON] = function (id) {
   return new Items.AmuletMoon(id);
+};
+
+EntityFactory.builders[Types.Entities.AMULETCHRISTMAS] = function (id) {
+  return new Items.AmuletChristmas(id);
 };
 
 EntityFactory.builders[Types.Entities.AMULETSTAR] = function (id) {

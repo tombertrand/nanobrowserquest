@@ -99,18 +99,29 @@ var Items = {
       this.lootMessage = "You pick up a christmas sword";
     }
   },
-
-
   MoonHachet: class MoonHachet extends Item {
     constructor(id) {
       super(id, Types.Entities.MOONHACHET, "weapon");
       this.lootMessage = "You pick up a moon hatchet";
     }
   },
+  ChristmasHachet: class ChristmasHachet extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHRISTMASHACHET, "weapon");
+      this.lootMessage = "You pick up a christmas hatchet";
+    }
+  },
   MoonMaul: class MoonMaul extends Item {
     constructor(id) {
       super(id, Types.Entities.MOONMAUL, "weapon");
       this.lootMessage = "You pick up a moon maul";
+    }
+  },
+  
+  ChristmasMaul: class ChristmasMaul extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHRISTMASMAUL, "weapon");
+      this.lootMessage = "You pick up a christmas maul";
     }
   },
   DemonMaul: class DemonMaul extends Item {
@@ -314,6 +325,12 @@ var Items = {
       this.lootMessage = "You pick up a moon helm";
     }
   },
+  HelmChristmas: class HelmChristmas extends Item {
+    constructor(id) {
+      super(id, Types.Entities.HELMCHRISTMAS, "helm");
+      this.lootMessage = "You pick up a christmas helm";
+    }
+  },
 
   HelmDemon: class HelmDemon extends Item {
     constructor(id) {
@@ -448,6 +465,13 @@ var Items = {
     }
   },
 
+  ChristmasArmor: class ChristmasArmor extends Item {
+    constructor(id) {
+      super(id, Types.Entities.CHRISTMASARMOR, "armor");
+      this.lootMessage = "You pick up a christmas armor";
+    }
+  },
+
   DemonArmor: class DemonArmor extends Item {
     constructor(id) {
       super(id, Types.Entities.DEMONARMOR, "armor");
@@ -550,6 +574,12 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.BELTMOON, "belt");
       this.lootMessage = "You pick up a moon belt";
+    }
+  },
+  BeltChristmas: class BeltChristmas extends Item {
+    constructor(id) {
+      super(id, Types.Entities.BELTCHRISTMAS, "belt");
+      this.lootMessage = "You pick up a christmas belt";
     }
   },
 
@@ -683,6 +713,12 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.SHIELDMOON, "shield");
       this.lootMessage = "You pick up a moon shield";
+    }
+  },
+  ShieldChristmas: class ShieldChristmas extends Item {
+    constructor(id) {
+      super(id, Types.Entities.SHIELDCHRISTMAS, "shield");
+      this.lootMessage = "You pick up a christmas shield";
     }
   },
 
@@ -1215,6 +1251,12 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.AMULETMOON, "amulet");
       this.lootMessage = "You pick up the Crescent";
+    }
+  },
+  AmuletChristmas: class AmuletChristmas extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETCHRISTMAS, "amulet");
+      this.lootMessage = "You pick up the Yule";
     }
   },
 

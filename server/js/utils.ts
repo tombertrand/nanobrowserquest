@@ -685,6 +685,7 @@ export const generatePurpleChestItem = (): {
     { item: "ringmystical" },
     { item: "ringgreed" },
     { item: "amuletmoon" },
+    { item: "amuletchristmas" },
     { item: "amuleteye" },
     { item: "amuletgreed" },
     { item: "helmclown" },
@@ -1222,6 +1223,7 @@ export const generateSoulStoneItem = (): { item: string; quantity?: number; uniq
   // 10%
   const ringOrAmulets = [
     { item: "amuletmoon" },
+    { item: "amuletchristmas" },
     { item: "amuletdemon" },
     { item: "ringbalrog" },
     { item: "ringconqueror" },
@@ -1255,7 +1257,7 @@ export const generateDroppedItem = () => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
-  // let randomDrops = [];
+  let randomDrops = [];
   // randomDrops = ["mysticaldagger"];
   // randomDrops = ["helmexecutioner"];
   // randomDrops = ["christmaspresent"];
@@ -1271,7 +1273,16 @@ export const generateDroppedItem = () => {
 
   // var randomDrops = ["demonaxe", "paladinaxe"];
   // var randomDrops = ["soulstone"];
-  var randomDrops = ["demonaxe"];
+  // var randomDrops = [
+    // "christmassword",
+    // "christmashachet",
+    // "christmasmaul",
+    // "helmchristmas",
+    // "christmasarmor",
+    // "beltchristmas",
+    // "shieldchristmas",
+    // "amuletchristmas",
+  // ];
   // var randomDrops = ["gold"];
   // var randomDrops = ["barbronze", "barsilver", "bargold", "barplatinum"];
   // var randomDrops = ["ringgreed", "amuletgreed"];

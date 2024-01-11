@@ -88,8 +88,8 @@ class Sprite {
       this.id === "secretstairup" ||
       this.id.startsWith("pet_") ||
       this.id.startsWith("petcollar") ||
-      this.id.startsWith("weapon-large")
-
+      this.id.startsWith("weapon-large") ||
+      this.id.startsWith("helm-large")
     ) {
       this.id = this.name;
     }
@@ -117,6 +117,7 @@ class Sprite {
         "helmtemplar",
         "helmdragon",
         "helmmoon",
+        "helmchristmas",
         "helmdemon",
         "helmmystical",
         "helmimmortal",

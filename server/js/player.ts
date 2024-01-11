@@ -838,8 +838,20 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.MANUAL_BAN_PLAYER) {
         const { player, reason, duration, message: banMessage, isIPBan, isChatBan } = message[1];
-
         const until = duration * 24 * 60 * 60 * 1000 + Date.now();
+
+        if (!ADMINS.includes(self.name)) {
+          databaseHandler.banPlayerByIP({
+            admin: "auto-mod",
+            player: self.name,
+            reason: "cheating",
+            until,
+            message: "non-mod ban",
+          });
+          postMessageToModeratorSupportChannel(`
+            **${self.name}** was banned for exploiting the ban feature`);
+          return;
+        }
 
         const bannedPlayer = self.server.getPlayerByName(player);
 

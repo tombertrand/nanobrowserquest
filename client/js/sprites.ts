@@ -66,7 +66,9 @@ import minotauraxe from "../sprites/weapon-large.json";
 import emeraldsword from "../sprites/weapon.json";
 import moonsword from "../sprites/weapon.json";
 import moonhachet from "../sprites/weapon.json";
+import christmashachet from "../sprites/weapon.json";
 import moonmaul from "../sprites/weapon.json";
+import christmasmaul from "../sprites/weapon.json";
 import christmassword from "../sprites/weapon.json";
 import templarsword from "../sprites/weapon.json";
 import spikeglaive from "../sprites/weapon.json";
@@ -98,6 +100,7 @@ import helmexecutioner from "../sprites/armor.json";
 import helmtemplar from "../sprites/armor.json";
 import helmdragon from "../sprites/armor.json";
 import helmmoon from "../sprites/armor.json";
+import helmchristmas from "../sprites/armor.json";
 import helmdemon from "../sprites/armor.json";
 import helmmystical from "../sprites/armor.json";
 import helmimmortal from "../sprites/armor.json";
@@ -118,6 +121,7 @@ import emeraldarmor from "../sprites/armor.json";
 import templararmor from "../sprites/armor.json";
 import dragonarmor from "../sprites/armor.json";
 import moonarmor from "../sprites/armor.json";
+import christmasarmor from "../sprites/armor.json";
 import demonarmor from "../sprites/armor.json";
 import mysticalarmor from "../sprites/armor.json";
 import immortalarmor from "../sprites/armor.json";
@@ -140,6 +144,7 @@ import shieldtemplar from "../sprites/shield.json";
 import shieldexecutioner from "../sprites/shield.json";
 import shielddragon from "../sprites/shield.json";
 import shieldmoon from "../sprites/shield.json";
+import shieldchristmas from "../sprites/shield.json";
 import shieldmystical from "../sprites/shield.json";
 import shielddemon from "../sprites/shield.json";
 import shieldpaladin from "../sprites/shield.json";
@@ -375,6 +380,7 @@ const sprites = {
   templararmor,
   dragonarmor,
   moonarmor,
+  christmasarmor,
   demonarmor,
   mysticalarmor,
   immortalarmor,
@@ -387,7 +393,9 @@ const sprites = {
   moonsword,
   christmassword,
   moonhachet,
+  christmashachet,
   moonmaul,
+  christmasmaul,
   templarsword,
   spikeglaive,
   eclypsedagger,
@@ -421,6 +429,7 @@ const sprites = {
   shieldexecutioner,
   shielddragon,
   shieldmoon,
+  shieldchristmas,
   shieldmystical,
   shielddemon,
   shieldpaladin,
@@ -506,6 +515,7 @@ const sprites = {
   "item-amuletfrozen": item,
   "item-amuletdemon": item,
   "item-amuletmoon": item,
+  "item-amuletchristmas": item,
   "item-amuletstar": item,
   "item-amuletskull": item,
   "item-amuletdragon": item,
@@ -588,6 +598,7 @@ const sprites = {
   "item-templararmor": item,
   "item-dragonarmor": item,
   "item-moonarmor": item,
+  "item-christmasarmor": item,
   "item-demonarmor": item,
   "item-mysticalarmor": item,
   "item-immortalarmor": item,
@@ -602,6 +613,7 @@ const sprites = {
   "item-beltexecutioner": item,
   "item-belttemplar": item,
   "item-beltmoon": item,
+  "item-beltchristmas": item,
   "item-beltdemon": item,
   "item-beltmystical": item,
   "item-beltpaladin": item,
@@ -622,6 +634,7 @@ const sprites = {
   "item-shieldexecutioner": item,
   "item-shielddragon": item,
   "item-shieldmoon": item,
+  "item-shieldchristmas": item,
   "item-shieldmystical": item,
   "item-shielddemon": item,
   "item-shieldpaladin": item,
@@ -633,9 +646,10 @@ const sprites = {
   "item-emeraldsword": item,
   "item-moonsword": item,
   "item-christmassword": item,
-
   "item-moonhachet": item,
+  "item-christmashachet": item,
   "item-moonmaul": item,
+  "item-christmasmaul": item,
   "ited-demonmaul": item,
   "item-templarsword": item,
   "item-spikeglaive": item,
@@ -666,6 +680,7 @@ const sprites = {
   "item-helmtemplar": item,
   "item-helmdragon": item,
   "item-helmmoon": item,
+  "item-helmchristmas": item,
   "item-helmdemon": item,
   "item-helmmystical": item,
   "item-helmimmortal": item,
@@ -697,6 +712,7 @@ const sprites = {
   helmtemplar,
   helmdragon,
   helmmoon,
+  helmchristmas,
   helmdemon,
   helmmystical,
   helmimmortal,
