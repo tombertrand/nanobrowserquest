@@ -35,6 +35,20 @@ class Character extends Entity {
     });
   }
 
+  isNear(character, distance) {
+    var dx,
+      dy,
+      near = false;
+
+    dx = Math.abs(this.x - character.x);
+    dy = Math.abs(this.y - character.y);
+
+    if (dx <= distance && dy <= distance) {
+      near = true;
+    }
+    return near;
+  }
+
   resetHitPoints(maxHitPoints) {
     this.maxHitPoints = maxHitPoints;
     this.hitPoints = this.maxHitPoints;

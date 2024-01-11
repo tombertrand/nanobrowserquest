@@ -980,10 +980,38 @@ class Player extends Character {
         if (mob) {
           self.setTarget(mob);
           self.server.broadcastAttacker(self);
+
+          if (!self.isNear(mob, 16)) {
+            const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
+            databaseHandler.banPlayerByIP({
+              admin: "auto-mod",
+              player: self.name,
+              reason: "cheating",
+              until,
+              message: "player ATTACK not near enemy ban",
+            });
+            postMessageToModeratorSupportChannel(`
+            :warning: **${self.name}**:warning: was banned for exploiting the ATTACK message`);
+            return;
+          }
         }
       } else if (action === Types.Messages.HIT) {
         console.info("HIT: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
+
+        if (!self.isNear(mob, 16)) {
+          const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
+          databaseHandler.banPlayerByIP({
+            admin: "auto-mod",
+            player: self.name,
+            reason: "cheating",
+            until,
+            message: "player HIT not near enemy ban",
+          });
+          postMessageToModeratorSupportChannel(`
+          :warning: **${self.name}**:warning: was banned for exploiting the HIT message`);
+          return;
+        }
 
         if (!mob) return;
         // if (!self.server.isPlayerNearEntity(self, mob, 10)) {
@@ -2719,6 +2747,14 @@ class Player extends Character {
           .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
           .concat(_.shuffle(elementDamage).slice(0, 2))
           .concat(_.shuffle(elementPercentage).slice(0, 2));
+      } else if (kind === Types.Entities.AMULETCHRISTMAS) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 2)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(random(2) ? allResistance : _.shuffle(resistances).slice(0, 2))
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(_.shuffle(elementPercentage).slice(0, 1))
+          .concat([...extraGold, ...magicFind].slice(0, 1));
       } else if (kind === Types.Entities.AMULETSTAR) {
         const isAllResistances = random(2);
         bonus = _.shuffle(highLevelBonus)

@@ -1257,7 +1257,7 @@ export const generateDroppedItem = () => {
   if (process.env.NODE_ENV !== "development") {
     return;
   }
-  let randomDrops = [];
+  // let randomDrops = [];
   // randomDrops = ["mysticaldagger"];
   // randomDrops = ["helmexecutioner"];
   // randomDrops = ["christmaspresent"];
@@ -1281,7 +1281,8 @@ export const generateDroppedItem = () => {
     // "christmasarmor",
     // "beltchristmas",
     // "shieldchristmas",
-    // "amuletchristmas",
+  //   "amuletchristmas",
+  //   "amuletmoon",
   // ];
   // var randomDrops = ["gold"];
   // var randomDrops = ["barbronze", "barsilver", "bargold", "barplatinum"];
