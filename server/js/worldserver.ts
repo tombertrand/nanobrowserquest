@@ -2515,7 +2515,7 @@ class World {
         return "helmdiamond";
       }
     } else if (mob.kind >= Types.Entities.COW && !isBoss) {
-      const christmasPresentRandom = random(1000);
+      const christmasPresentRandom = random(500);
       if (christmasPresentRandom === 133) {
         return "christmaspresent";
       }
