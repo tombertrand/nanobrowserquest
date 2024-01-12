@@ -956,7 +956,7 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.AGGRO) {
-        const mob = self.server.getEntityById(message[1])
+        const mob = self.server.getEntityById(message[1]);
         if (!self.isNear(mob, 16)) {
           const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
           databaseHandler.banPlayerByIP({
@@ -1858,6 +1858,17 @@ class Player extends Character {
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
         const isClassicPayout = message[1] && message[1] === Types.Entities.BOSS;
 
+        const playerLocation = getEntityLocation({ x: self.x, y: self.y });
+        if (playerLocation != "skeletonKing") {
+          const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
+          databaseHandler.banPlayerByIP({
+            admin: "auto-mod",
+            player: self,
+            reason: "cheating",
+            until,
+            message: "invalid payout request",
+          });
+        }
         // only set Q when skel king dies on payout success
 
         // just unlock REGARDLESS for walletless, w/e...
