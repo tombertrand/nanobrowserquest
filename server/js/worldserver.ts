@@ -2514,6 +2514,11 @@ class World {
       } else if (diamondRandom === 42) {
         return "helmdiamond";
       }
+    } else if (mob.kind >= Types.Entities.COW && !isBoss) {
+      const christmasPresentRandom = random(1000);
+      if (christmasPresentRandom === 133) {
+        return "christmaspresent";
+      }
     }
 
     if (mob.isInsideTemple) {
@@ -2848,7 +2853,6 @@ class World {
     let itemLevel = null;
 
     itemName = generateDroppedItem() || itemName;
-
 
     if (itemName === "jewelskull") {
       itemLevel = getRandomJewelLevel(Types.getMobLevel(mob.kind));

@@ -2268,6 +2268,7 @@ class DatabaseHandler {
           let isChestdead = false;
           let isChestred = false;
 
+
           if (recipe) {
             isSuccess = true;
             if (recipe === "expansion2voucher") {
@@ -2321,20 +2322,18 @@ class DatabaseHandler {
                     isChestblue = true;
                     ({ item, uniqueChances, jewelLevel } = generateBlueChestItem());
                     break;
-                    case "chestgreen":
-                      isChestgreen = true;
-                      ({ item, uniqueChances, jewelLevel } = generateGreenChestItem());
-                      break;
-                      case "chestpurple":
+                  case "chestgreen":
+                    isChestgreen = true;
+                    ({ item, uniqueChances, jewelLevel } = generateGreenChestItem());
+                    break;
+                  case "chestpurple":
                     isChestpurple = true;
                     ({ item, uniqueChances, jewelLevel } = generatePurpleChestItem());
                     break;
                   case "christmaspresent":
-                    isChestpurple = true;
-                    ({ item, uniqueChances, jewelLevel } = generatePurpleChestItem());
-                    break;
                     isChristmasPresent = true;
                     ({ item, uniqueChances, jewelLevel } = generateChristmasPresentItem());
+
                     break;
                   case "chestdead":
                     isChestdead = true;

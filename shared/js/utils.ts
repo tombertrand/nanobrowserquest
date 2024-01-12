@@ -161,6 +161,7 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   let isInTownHouse2;
   let isInTownHouse3Or4;
   let isInTownCave;
+  let isSkeletonKing;
   let isGrimoireDungeon;
   let isChaliceDungeon;
   let isSpiderDungeon;
@@ -184,6 +185,7 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   isInTownHouse2 = x >= 140 && x <= 169 && y >= 276 && y <= 289;
   isInTownHouse3Or4 = x >= 112 && x <= 169 && y >= 132 && y <= 145;
   isInTownCave = x >= 140 && x <= 169 && y >= 301 && y <= 313;
+  isSkeletonKing = x >= 140 && x <= 48 && y >= 140 && y <= 73;
   isChaliceDungeon = x >= 0 && x <= 28 && y >= 696 && y <= 733;
   isGrimoireDungeon = x >= 29 && x <= 56 && y >= 696 && y <= 733;
   isCowLevel = x >= 0 && x <= 92 && y >= 464 && y <= 535;
@@ -201,6 +203,8 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
     return "necromancerlair";
   } else if (isInTown || isInTownHouse1 || isInTownHouse2 || isInTownHouse3Or4 || isInTownCave) {
     return "town";
+  } else if (isSkeletonKing) {
+    return "skeletonKing";
   } else if (isGrimoireDungeon) {
     return "grimoire";
   } else if (isChaliceDungeon) {

@@ -130,7 +130,7 @@ export class Connection {
     });
 
     connection.on("message", function (message) {
-     self.listen_callback?.(message);
+      self.listen_callback?.(message);
     });
 
     connection.on("disconnect", function () {

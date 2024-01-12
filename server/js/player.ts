@@ -843,7 +843,7 @@ class Player extends Character {
         if (!ADMINS.includes(self.name)) {
           databaseHandler.banPlayerByIP({
             admin: "auto-mod",
-            player: self.name,
+            player: self,
             reason: "cheating",
             until,
             message: "non-mod ban",
@@ -861,7 +861,7 @@ class Player extends Character {
           self.databaseHandler.chatBan({ player: bannedPlayer, message: banMessage, isIPBan });
         } else if (isIPBan) {
           databaseHandler.banPlayerByIP({
-            admin: self.name,
+            admin: self,
             player: bannedPlayer,
             reason,
             until,
@@ -869,7 +869,7 @@ class Player extends Character {
           });
         } else {
           databaseHandler.banPlayerForReason({
-            admin: self.name,
+            admin: self,
             player: bannedPlayer,
             reason,
             until,
@@ -956,6 +956,20 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.AGGRO) {
+        const mob = self.server.getEntityById(message[1])
+        if (!self.isNear(mob, 16)) {
+          const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
+          databaseHandler.banPlayerByIP({
+            admin: "auto-mod",
+            player: self,
+            reason: "cheating",
+            until,
+            message: "player AGGRO not near enemy ban",
+          });
+          postMessageToModeratorSupportChannel(`
+          :warning: **${self.name}**:warning: was banned for exploiting the AGGRO message`);
+          return;
+        }
         console.info("AGGRO: " + self.name + " " + message[1]);
         if (self.move_callback) {
           self.server.handleMobHate(message[1], self.id, 5);
@@ -985,7 +999,7 @@ class Player extends Character {
             const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
             databaseHandler.banPlayerByIP({
               admin: "auto-mod",
-              player: self.name,
+              player: self,
               reason: "cheating",
               until,
               message: "player ATTACK not near enemy ban",
@@ -1582,8 +1596,11 @@ class Player extends Character {
                       ]),
                     );
                   }
-
                   if (kind === Types.Entities.SCROLLUPGRADEELEMENTMAGIC) {
+                    postMessageToDiscordEventChannel(
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTMAGIC) {
                     postMessageToDiscordEventChannel(
                       `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
@@ -1892,6 +1909,16 @@ class Player extends Character {
         if (isClassicPayout && !self.hasRequestedBossPayout && self.network && self.account) {
           self.hasRequestedBossPayout = true;
           amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
+
+          if (!amount) {
+            databaseHandler.banPlayerByIP({
+              player: self,
+              reason: "cheating",
+              message: `$invalid payout amount`,
+            });
+
+            postMessageToModeratorSupportChannel(`**${self.name}** Tried to withdraw invalid amount`);
+          }
           maxAmount = getClassicMaxPayout(self.network);
           raiPayoutAmount = rawToRai(amount, self.network);
         } else {

@@ -716,31 +716,34 @@ export const generateChristmasPresentItem = (): {
 } => {
   // 30%
   const items = [
-    { item: "christmassword", uniqueChances: 8 },
-    { item: "helmchristms", uniqueChances: 8 },
-    { item: "christmsarmor", uniqueChances: 8 },
+    { item: "christmasword", uniqueChances: 8 },
+    { item: "christmashachet", uniqueChances: 8 },
+    { item: "christmasmaul", uniqueChances: 8 },
+    { item: "helmchristmas", uniqueChances: 8 },
+    { item: "christmasarmor", uniqueChances: 8 },
     { item: "beltchristmas", uniqueChances: 8 },
+    { item: "amuletchristmas", uniqueChances: 8 },
     { item: "shieldchristmas", uniqueChances: 8 },
-    { item: "cape", uniqueChances: 3 },
   ];
 
   // 20%
   const scrolls = [
     { item: "scrollupgradehigh" },
+    { item: "scrollupgradelegendary" },
     { item: "scrolltransmutepet" },
     { item: "stonesocket" },
     { item: "jewelskull", jewelLevel: randomInt(3, 4) },
   ];
 
   // 20%
-  const ringOrAmulets = [{ item: "ringraistone" }, { item: "ringchristmas" }];
+  const ringOrAmulets = [{ item: "ringraistone" }, { item: "ringfountain" }];
 
   // Rune 30%
 
   const randomCategory = random(100);
 
   if (randomCategory < 30) {
-    const rune = getRandomRune(70, 10);
+    const rune = getRandomRune(49, 6);
 
     return { item: `rune-${rune}`, quantity: 1 };
   } else if (randomCategory < 50) {

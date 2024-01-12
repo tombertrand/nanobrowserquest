@@ -1,13 +1,12 @@
 export const setBonus = {
   christmas: {
-    health: 140,
-    minDamage: 15,
-    attackDamage: 15,
+    health: 200,
+    attackDamage: 25,
     defense: 25,
-    blockChance: 10,
-    exp: 15,
+    blockChance: 12,
+    exp: 25,
     magicFind: 12,
-    extraGold: 12,
+    extraGold: 20,
   },
   pumpkin: {
     magicFind: 12,
@@ -318,7 +317,7 @@ export const setItems = {
     "beltchristmas",
     "shieldchristmas",
     "amuletchristmas",
-    "petreindeer"
+    "petreindeer",
   ],
 
   dragon: ["dragonsword", "helmdragon", "dragonarmor", "shielddragon", "petdragon", "amuletdragon"],

@@ -241,6 +241,7 @@ export const EmojiMap = {
   chestblue: "<:chestblue:1059945738026623138>",
   chestgreen: "<:chestgreen:1059945739821797376>",
   chestpurple: "<:chestpurple:1059945741285609552>",
+  christmaspresent: ":gift:",
   chestdead: "<:chestdead:1166533901573963856>>",
   chestred: "<:chestred:1059945742661329046>",
   "rune-sat": "<:runesat:1059502573624770570>",

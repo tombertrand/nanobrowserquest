@@ -1466,7 +1466,7 @@ Types.itemUniqueMap = {
   shieldtemplar: ["NanoStrategy"],
   shielddragon: ["Airdrop"],
   shieldmoon: ["Fear Uncertainty Doubt (FUD)"],
-  shieldchristmas:["Snowflake"],
+  shieldchristmas: ["Snowflake"],
   shieldmystical: ["Developer Fund"],
   shielddemon: ["ORV > POW"],
   shieldpaladin: ["TBD"],
@@ -1731,7 +1731,7 @@ Types.isChest = function (kindOrString: number | string) {
       Types.Entities.CHESTRED,
     ].includes(kindOrString);
   } else {
-    return kindOrString?.startsWith("chest");
+    return kindOrString?.startsWith("chest") || kindOrString.includes("present");
   }
 };
 
@@ -3258,7 +3258,7 @@ Types.itemDescription = {
   chestblue: "The chest may contain a very precious item.",
   chestgreen: "The chest may contain a very precious item.",
   chestpurple: "The chest may contain a very precious item.",
-  christmaspresent: "The present contains a special christmas eventset item",
+  christmaspresent: "The present contains a special christmas event set items",
   chestred: "The chest may contain a very precious item.",
   expansion2voucher:
     "Lost Temple expansion Voucher when consumed in the Anvil the Lost Temple will unlock if you don't already have it.",
