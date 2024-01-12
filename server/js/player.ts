@@ -957,7 +957,7 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.AGGRO) {
         const mob = self.server.getEntityById(message[1]);
-        if (mob && !self.isNear(mob, 32)) {
+        if (mob && !self.isNear(mob, 48)) {
           const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
           databaseHandler.banPlayerByIP({
             admin: "auto-mod",
@@ -995,7 +995,7 @@ class Player extends Character {
           self.setTarget(mob);
           self.server.broadcastAttacker(self);
 
-          if (!self.isNear(mob, 32)) {
+          if (!self.isNear(mob, 48)) {
             const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
             databaseHandler.banPlayerByIP({
               admin: "auto-mod",
