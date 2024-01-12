@@ -956,20 +956,20 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.AGGRO) {
-        const mob = self.server.getEntityById(message[1]);
-        if (!self.isNear(mob, 16)) {
-          const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
-          databaseHandler.banPlayerByIP({
-            admin: "auto-mod",
-            player: self,
-            reason: "cheating",
-            until,
-            message: "player AGGRO not near enemy ban",
-          });
-          postMessageToModeratorSupportChannel(`
-          :warning: **${self.name}**:warning: was banned for exploiting the AGGRO message`);
-          return;
-        }
+        // const mob = self.server.getEntityById(message[1]);
+        // if (mob && !self.isNear(mob, 16)) {
+        //   const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
+        //   databaseHandler.banPlayerByIP({
+        //     admin: "auto-mod",
+        //     player: self,
+        //     reason: "cheating",
+        //     until,
+        //     message: "player AGGRO not near enemy ban",
+        //   });
+        //   postMessageToModeratorSupportChannel(`
+        //   :warning: **${self.name}**:warning: was banned for exploiting the AGGRO message`);
+        //   return;
+        // }
         console.info("AGGRO: " + self.name + " " + message[1]);
         if (self.move_callback) {
           self.server.handleMobHate(message[1], self.id, 5);
