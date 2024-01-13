@@ -934,7 +934,7 @@ export const kinds = {
   moonhachet: [Types.Entities.MOONHACHET, "weapon", "moon Hatchet", 59, 58],
   christmashachet: [Types.Entities.CHRISTMASHACHET, "weapon", "Christmas Hatchet", 59, 58],
   moonmaul: [Types.Entities.MOONMAUL, "weapon", "Christmas Maul", 59, 62],
-  christmasmaul: [Types.Entities.CHRISTMASMAUL, "weapon", "Christmas Maul", 59, 62],
+  christmasmaul: [Types.Entities.CHRISTMASMAUL, "weapon", "moon Maul", 59, 62],
   demonmaul: [Types.Entities.DEMONMAUL, "weapon", "Demon Maul", 61, 66],
   demonaxe: [Types.Entities.DEMONAXE, "weapon", "Demon Axe", 60, 64],
   demonsickle: [Types.Entities.DEMONSICKLE, "weapon", "Demon Sickle", 60, 62],
