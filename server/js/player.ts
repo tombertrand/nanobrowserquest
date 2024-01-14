@@ -991,9 +991,9 @@ class Player extends Character {
         console.info("ATTACK: " + self.name + " " + message[1]);
         var mob = self.server.getEntityById(message[1]);
 
-        // if (mob) {
-        //   self.setTarget(mob);
-        //   self.server.broadcastAttacker(self);
+        if (mob) {
+          self.setTarget(mob);
+          self.server.broadcastAttacker(self);
 
         //   if (!self.isNear(mob, 48)) {
         //     const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
@@ -1006,12 +1006,12 @@ class Player extends Character {
         //     });
         //     postMessageToModeratorSupportChannel(`
         //     :warning: **${self.name}**:warning: was banned for exploiting the ATTACK message`);
-        //     return;
+            return;
         //   }
-        // }
+        }
       } else if (action === Types.Messages.HIT) {
         console.info("HIT: " + self.name + " " + message[1]);
-        // var mob = self.server.getEntityById(message[1]);
+        var mob = self.server.getEntityById(message[1]);
 
         // if (!self.isNear(mob, 32)) {
         //   const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
