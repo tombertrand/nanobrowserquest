@@ -78,25 +78,25 @@ const ADMINS = [
   "Thedd",
 ];
 const SUPER_ADMINS = ["running-coder"];
-const immediateBanbadWords = [
-  "nigger",
-  "nig",
-  "neger",
-  "niger",
-  "niggers",
-  "nigga",
-  "niggas",
-  "niga",
-  "hitler",
-  "gay",
-  "anal",
-  "stfu",
-  "rape",
-  "murder",
-  "slave",
-  "negro",
-  "卐",
-];
+// const immediateBanbadWords = [
+//   "nigger",
+//   "nig",
+//   "neger",
+//   "niger",
+//   "niggers",
+//   "nigga",
+//   "niggas",
+//   "niga",
+//   "hitler",
+//   "gay",
+//   "anal",
+//   "stfu",
+//   "rape",
+//   "murder",
+//   "slave",
+//   "negro",
+//   "卐",
+// ];
 const badWords = [
   "nigger",
   "nig",
@@ -995,19 +995,19 @@ class Player extends Character {
           self.setTarget(mob);
           self.server.broadcastAttacker(self);
 
-        //   if (!self.isNear(mob, 48)) {
-        //     const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
-        //     databaseHandler.banPlayerByIP({
-        //       admin: "auto-mod",
-        //       player: self,
-        //       reason: "cheating",
-        //       until,
-        //       message: "player ATTACK not near enemy ban",
-        //     });
-        //     postMessageToModeratorSupportChannel(`
-        //     :warning: **${self.name}**:warning: was banned for exploiting the ATTACK message`);
-            return;
-        //   }
+          //   if (!self.isNear(mob, 48)) {
+          //     const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
+          //     databaseHandler.banPlayerByIP({
+          //       admin: "auto-mod",
+          //       player: self,
+          //       reason: "cheating",
+          //       until,
+          //       message: "player ATTACK not near enemy ban",
+          //     });
+          //     postMessageToModeratorSupportChannel(`
+          //     :warning: **${self.name}**:warning: was banned for exploiting the ATTACK message`);
+          return;
+          //   }
         }
       } else if (action === Types.Messages.HIT) {
         console.info("HIT: " + self.name + " " + message[1]);
@@ -1596,7 +1596,11 @@ class Player extends Character {
                       ]),
                     );
                   }
-                  if (kind === Types.Entities.SCROLLUPGRADEELEMENTMAGIC) {
+                  if (kind === Types.Entities.CHRISTMASPRESENT) {
+                    postMessageToDiscordEventChannel(
+                      `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
+                    );
+                  } else if (kind === Types.Entities.SCROLLUPGRADEELEMENTMAGIC) {
                     postMessageToDiscordEventChannel(
                       `**${player.name}** picked up ${kinds[generatedItem.item][2]} ${EmojiMap[generatedItem.item]} `,
                     );
