@@ -716,7 +716,7 @@ export const generateChristmasPresentItem = (): {
 } => {
   // 30%
   const items = [
-    { item: "christmasword", uniqueChances: 6 },
+    { item: "christmassword", uniqueChances: 6 },
     { item: "christmashachet", uniqueChances: 6 },
     { item: "christmasmaul", uniqueChances: 6 },
     { item: "helmchristmas", uniqueChances: 6 },

@@ -234,7 +234,7 @@ export const kindAsStringToSet = {
   moonsword: "moon",
   moonhachet: "moon",
   moonmaul: "moon",
-  christmasword: "christmas",
+  christmassword: "christmas",
   christmashachet: "christmas",
   christmasmaul: "christmas",
   helmchristmas: "christmas",
