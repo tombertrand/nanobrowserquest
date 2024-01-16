@@ -235,7 +235,7 @@ export const postMessageToDiscordPayoutsChannel = (content: string) => {
 
 export const EmojiMap = {
   sword: "<:Sword:975775115105153154>",
-  fire: "<:fireorange:1059946852461580379>",
+  fire: ":fire:",
   fireblue: "<:fireblue:1058822338763817101>",
   firepurple: "<:firepurple:1058822354672832524>",
   chestblue: "<:chestblue:1059945738026623138>",

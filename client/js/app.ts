@@ -934,6 +934,10 @@ class App {
     const confirmBtn = $("#player-account-confirm");
     const linkBtn = $("#player-account-link");
 
+   if (account.startsWith('ban_')){
+    this.game.explorer = "bananolooker"
+   }
+
     if (account) {
       linkBtn.show();
       confirmBtn.hide();
@@ -1285,7 +1289,7 @@ class App {
             ${badge}
             <span class="payout-icon ${network} ${hash ? "completed" : ""}" title="${
             hash
-              ? `Killed the Skeleton King and received a ${network} payout`
+              ? `Killed the Skeleton King and received a ${this.game.player.network} payout`
               : `Did not complete the game to receive a ${network} payout`
           }"></span>
             <span>lv.${level}</span>
