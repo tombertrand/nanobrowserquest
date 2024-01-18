@@ -87,8 +87,6 @@ export function hasMoreThanPercentCaps({ msg: str, percent = 60, minChar = 10 })
     return false;
   }
 
-  console.log("~~~~minChar", minChar);
-
   let uppercaseCount = 0;
   let alphabeticCount = 0;
 

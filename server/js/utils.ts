@@ -685,7 +685,6 @@ export const generatePurpleChestItem = (): {
     { item: "ringmystical" },
     { item: "ringgreed" },
     { item: "amuletmoon" },
-    { item: "amuletchristmas" },
     { item: "amuleteye" },
     { item: "amuletgreed" },
     { item: "helmclown" },
@@ -714,7 +713,7 @@ export const generateChristmasPresentItem = (): {
   quantity?: number;
   jewelLevel?: number;
 } => {
-  // 30%
+  // 100%
   const items = [
     { item: "christmassword", uniqueChances: 6 },
     { item: "christmashachet", uniqueChances: 6 },
@@ -1201,7 +1200,6 @@ export const generateSoulStoneItem = (): { item: string; quantity?: number; uniq
   // 10%
   const ringOrAmulets = [
     { item: "amuletmoon" },
-    { item: "amuletchristmas" },
     { item: "amuletdemon" },
     { item: "ringbalrog" },
     { item: "ringconqueror" },

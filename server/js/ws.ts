@@ -44,12 +44,16 @@ export class Server {
       };
     }
 
+ 
+
     this.io = new SocketServer(server, { parser: CustomParser, cors });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
     this.io.on("connection", function (connection) {
       console.info("a user connected");
+
+    
 
       connection.remoteAddress = connection.handshake.address.address;
       const c = new Connection(self._createId(), connection, self);

@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/browser";
+import CryptoJS from "crypto-js";
 import * as _ from "lodash";
 import { io } from "socket.io-client";
 
@@ -328,9 +329,29 @@ class GameClient {
     }
   }
 
+  signMessage(message, secret) {
+    return this.someHashFunction(message, secret);
+  }
+
+  someHashFunction(message, secret) {
+    const encodedMsg = CryptoJS.AES.encrypt(JSON.stringify(message), secret).toString();
+
+    return encodedMsg;
+  }
   sendMessage(json) {
     if (this.connection.connected === true) {
-      this.connection.send(json);
+      const secret = "4c10471-09cb-49e6-a816-7510677926bc";
+
+      const sentmessage = {
+        action: json[0],
+        message: json[1],
+        // clientSignature: signature,
+        params: [json[1], json[2], json[3], json[4], json[5]],
+      };
+
+      const encryptedMessage = this.signMessage(sentmessage, secret);
+
+      this.connection.send(encryptedMessage);
     }
   }
 
@@ -1360,8 +1381,7 @@ class GameClient {
   }
 
   sendWho(ids) {
-    ids.unshift(Types.Messages.WHO);
-    this.sendMessage(ids);
+    this.sendMessage([Types.Messages.WHO, [...ids]]);
   }
 
   sendAchievement(id) {
