@@ -32,6 +32,8 @@ class FormatChecker {
       (this.formats[Types.Messages.BAN_PLAYER] = ["s"]),
       (this.formats[Types.Messages.HASH] = ["s"]),
       (this.formats[Types.Messages.SKILL] = ["n", "n"]),
+      (this.formats[Types.Messages.FROZEN] = ["n", "n"]),
+      (this.formats[Types.Messages.MOVE] = ["n", "n"]),
       (this.formats[Types.Messages.REQUEST_PAYOUT] = ["n"]),
       (this.formats[Types.Messages.MOVE_ITEM] = ["n", "n", "a"]),
       (this.formats[Types.Messages.MOVE_ITEMS_TO_INVENTORY] = ["s"]),
@@ -51,120 +53,115 @@ class FormatChecker {
       (this.formats[Types.Messages.MERCHANT.BUY] = ["n", "n", "n"]),
       (this.formats[Types.Messages.MERCHANT.SELL] = ["n", "n"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
-      (this.formats[Types.Messages.STONETELEPORT] = ["n"]);
+    this.formats[Types.Messages.STONETELEPORT] = ["n"];
   }
 
-  check(msg) {
-    if (!msg?.slice) {
+  check(json) {
+    const { action, message, params } = json;
+
+    if (!action) {
       return false;
     }
 
-    var message = msg.slice(0);
-    var type = message[0];
-    var format = this.formats[type];
-
-    message.shift();
+    var format = this.formats[action];
 
     if (format) {
-      if (message.length !== format.length) {
-        return false;
-      }
-      for (var i = 0, n = message.length; i < n; i += 1) {
-        if (format[i] === "n" && !_.isNumber(message[i])) {
+      for (var i = 0, n = format.length; i < n; i += 1) {
+        if (format[i] === "n" && !_.isNumber(params[i])) {
           return false;
         }
-        if (format[i] === "s" && !_.isString(message[i])) {
+        if (format[i] === "s" && !_.isString(params[i])) {
           return false;
         }
-        if (format[i] === "b" && !_.isBoolean(message[i])) {
+        if (format[i] === "b" && !_.isBoolean(params[i])) {
           return false;
         }
       }
       return true;
-    } else if (type === Types.Messages.WHO) {
+    } else if (action === Types.Messages.WHO) {
       // WHO messages have a variable amount of params, all of which must be numbers.
       return (
-        message.length > 0 &&
-        _.every(message, function (param) {
+        params[0].length > 0 &&
+        _.every(params[0], function (param) {
           return _.isNumber(param);
         })
       );
-    } else if (type === Types.Messages.LOGIN) {
+    } else if (action === Types.Messages.LOGIN) {
       return (
-        _.isString(message[0]) &&
-        _.isString(message[1]) &&
+        _.isString(action) &&
+        _.isString(message) &&
         (message.length == 2 || (_.isString(message[2]) && message.length === 3))
       );
-    } else if (type === Types.Messages.PARTY) {
-      if (message[0] === Types.Messages.PARTY_ACTIONS.CREATE) {
+    } else if (action === Types.Messages.PARTY) {
+      if (action === Types.Messages.PARTY_ACTIONS.CREATE) {
         return true;
-      } else if (message[0] === Types.Messages.PARTY_ACTIONS.JOIN) {
-        return message.length === 2 && _.isNumber(message[1]);
-      } else if (message[0] === Types.Messages.PARTY_ACTIONS.REFUSE) {
-        return message.length === 2 && _.isNumber(message[1]);
-      } else if (message[0] === Types.Messages.PARTY_ACTIONS.INVITE) {
-        return message.length === 2 && _.isString(message[1]);
-      } else if (message[0] === Types.Messages.PARTY_ACTIONS.LEAVE) {
+      } else if (action === Types.Messages.PARTY_ACTIONS.JOIN) {
+        return message.length === 2 && _.isNumber(message);
+      } else if (action === Types.Messages.PARTY_ACTIONS.REFUSE) {
+        return message.length === 2 && _.isNumber(message);
+      } else if (action === Types.Messages.PARTY_ACTIONS.INVITE) {
+        return message.length === 2 && _.isString(message);
+      } else if (action === Types.Messages.PARTY_ACTIONS.LEAVE) {
         return message.length === 1;
-      } else if (message[0] === Types.Messages.PARTY_ACTIONS.REMOVE) {
-        return message.length === 2 && _.isString(message[1]);
-      } else if (message[0] === Types.Messages.PARTY_ACTIONS.DISBAND) {
+      } else if (action === Types.Messages.PARTY_ACTIONS.REMOVE) {
+        return message.length === 2 && _.isString(message);
+      } else if (action === Types.Messages.PARTY_ACTIONS.DISBAND) {
         return message.length === 1;
-      } else if (message[0] === Types.Messages.PARTY_ACTIONS.INFO) {
-        return message.length === 2 && _.isString(message[1]);
-      } else if (message[0] === Types.Messages.PARTY_ACTIONS.ERROR) {
-        return message.length === 2 && _.isString(message[1]);
+      } else if (action === Types.Messages.PARTY_ACTIONS.INFO) {
+        return message.length === 2 && _.isString(message);
+      } else if (action === Types.Messages.PARTY_ACTIONS.ERROR) {
+        return message.length === 2 && _.isString(message);
       }
-    } else if (type === Types.Messages.TRADE) {
-      if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_SEND) {
-        return message.length === 2 && _.isString(message[1]);
-      } else if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT) {
-        return message.length === 2 && _.isString(message[1]);
-      } else if (message[0] === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
-        return message.length === 2 && _.isString(message[1]);
-      } else if (message[0] === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
-        return message.length === 2 && _.isBoolean(message[1]);
-      } else if (message[0] === Types.Messages.TRADE_ACTIONS.CLOSE) {
+    } else if (action === Types.Messages.TRADE) {
+      if (action === Types.Messages.TRADE_ACTIONS.REQUEST_SEND) {
+        return message.length === 2 && _.isString(message);
+      } else if (action === Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT) {
+        return message.length === 2 && _.isString(message);
+      } else if (action === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
+        return message.length === 2 && _.isString(message);
+      } else if (action === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
+        return message.length === 2 && _.isBoolean(message);
+      } else if (action === Types.Messages.TRADE_ACTIONS.CLOSE) {
         return true;
       }
     } else if (
-      type === Types.Messages.ACHIEVEMENT ||
-      type === Types.Messages.WAYPOINT ||
-      type === Types.Messages.PURCHASE_CREATE
+      action === Types.Messages.ACHIEVEMENT ||
+      action === Types.Messages.WAYPOINT ||
+      action === Types.Messages.PURCHASE_CREATE
     ) {
-      return message.length === 2 && _.isNumber(message[0]) && _.isString(message[1]);
-    } else if (type === Types.Messages.BAN_PLAYER) {
-      return message.length === 1 && _.isString(message[0]);
-    } else if (type === Types.Messages.BOSS_CHECK) {
-      return message.length === 1 && _.isString(message[0]);
-    } else if (type === Types.Messages.MOVE_ITEMS_TO_INVENTORY) {
-      return message.length === 1 && _.isString(message[0]);
-    } else if ([Types.Messages.UPGRADE_ITEM, Types.Messages.STORE_ITEMS].includes(type)) {
+      return message.length === 2 && _.isNumber(action) && _.isString(message);
+    } else if (action === Types.Messages.BAN_PLAYER) {
+      return message.length === 1 && _.isString(action);
+    } else if (action === Types.Messages.BOSS_CHECK) {
+      return message.length === 1 && _.isString(action);
+    } else if (action === Types.Messages.MOVE_ITEMS_TO_INVENTORY) {
+      return message.length === 1 && _.isString(action);
+    } else if ([Types.Messages.UPGRADE_ITEM, Types.Messages.STORE_ITEMS].includes(action)) {
       return message.length === 0;
-    } else if (type === Types.Messages.MOVE_ITEM) {
+    } else if (action === Types.Messages.MOVE_ITEM) {
       return (
         message.length === 3 &&
-        _.isNumber(message[0]) &&
-        _.isNumber(message[1] && (message[2] === null || _.isNumber(message[2])))
+        _.isNumber(action) &&
+        _.isNumber(message && (message[2] === null || _.isNumber(message[2])))
       );
-    } else if (type === Types.Messages.REQUEST_PAYOUT) {
-      return message.length === 1 && _.isNumber(message[0]);
-    } else if (type === Types.Messages.SETTINGS) {
-      return message.length === 1 && typeof message[0] === "object";
-    } else if (type === Types.Messages.SKILL) {
-      return message.length === 2 && _.isNumber(message[0]) && _.isNumber(message[1]);
+    } else if (action === Types.Messages.REQUEST_PAYOUT) {
+      return message.length === 1 && _.isNumber(action);
+    } else if (action === Types.Messages.SETTINGS) {
+      return message.length === 1 && typeof action === "object";
+    } else if (action === Types.Messages.SKILL) {
+      return message.length === 2 && _.isNumber(action) && _.isNumber(message);
     } else if (
-      type === Types.Messages.MAGICSTONE ||
-      type === Types.Messages.LEVER ||
-      type === Types.Messages.ALTARCHALICE ||
-      type === Types.Messages.ALTARSOULSTONE ||
-      type === Types.Messages.HANDS
+      action === Types.Messages.MAGICSTONE ||
+      action === Types.Messages.LEVER ||
+      action === Types.Messages.ALTARCHALICE ||
+      action === Types.Messages.ALTARSOULSTONE ||
+      action === Types.Messages.HANDS
     ) {
-      return message.length === 1 && _.isNumber(message[0]);
-    } else if (type === Types.Messages.MANUAL_BAN_PLAYER) {
+      return message.length === 1 && _.isNumber(action);
+    } else if (action === Types.Messages.MANUAL_BAN_PLAYER) {
       return true;
     } else {
-      console.error("Unknown message type: " + type);
+      console.error("Unknown message type: ");
       return false;
     }
   }

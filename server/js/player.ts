@@ -1,3 +1,4 @@
+import CryptoJS from "crypto-js";
 import * as _ from "lodash";
 
 import { kinds, petKindToPetMap, Types } from "../../shared/js/gametypes";
@@ -28,6 +29,7 @@ import {
   EmojiMap,
   postMessageToDiscordChatChannel,
   postMessageToDiscordEventChannel,
+  postMessageToDiscordModeratorDebugChannel,
   postMessageToDiscordPayoutsChannel,
   postMessageToModeratorSupportChannel,
   postMessageToSupportChannel,
@@ -393,23 +395,30 @@ class Player extends Character {
     this.lastHashCheckTimestamp = Date.now();
 
     // NOTE: Client will be sending the hashed game function, if altered, player gets banned.
+    // this.connection.on("decoded", packet => {
 
-    this.connection.listen(async message => {
-      const action = parseInt(message[0]);
+    // });
+    this.connection.listen(async rawMessage => {
+      const message = this.verifySignature(rawMessage);
+
+      const { action: clientAction, params } = message;
+
+      const action = parseInt(clientAction);
 
       if (action === Types.Messages.BAN_PLAYER) {
         databaseHandler.banPlayerByIP({
           player: self,
           reason: "cheating",
-          message: message[1] || "invalid websocket message",
+          // message: params[0] || "invalid websocket message",
+
+          message: "invalid websocket message",
         });
         return;
       }
 
-      console.debug("Received: " + message);
-      if (!this.formatChecker.check(message)) {
+      if (!this.formatChecker.check({ action, message, params })) {
         Sentry.captureException(
-          new Error(`FormatChecker failed for player${self.name} for: ${JSON.stringify(message)}`),
+          new Error(`FormatChecker failed for player ${self.name} for: ${JSON.stringify(message)}`),
           {
             user: {
               username: self.name,
@@ -417,7 +426,7 @@ class Player extends Character {
             extra: { message, action },
           },
         );
-        self.connection.close("Invalid " + Types.getMessageTypeAsString(action) + " message format: " + message);
+        self.connection.close("Invalid " + Types.getMessageTypeAsString(action) + " message format: ", message);
         return;
       }
 
@@ -442,16 +451,16 @@ class Player extends Character {
           self.connection.close("Unable to get IP.");
           return;
         }
-
+        const { message: clientName, account: clientAccount, password: clientPassword } = message;
         let timestamp;
         let reason;
         let banMessage;
         let ip;
         let admin;
         let playerName;
-        var name = sanitize(message[1]);
-        var account = sanitize(message[2]);
-        var password = sanitize(message[3]);
+        var name = sanitize(clientName);
+        var account = sanitize(clientAccount);
+        var password = sanitize(clientPassword);
         var [network]: [Network] = (account || "").split("_") || null;
 
         ({
@@ -514,6 +523,7 @@ class Player extends Character {
 
         // Always ensure that the name is not longer than a maximum length.
         // (also enforced by the maxlength attribute of the name input element).
+
         self.name = name.substr(0, 16).trim();
 
         // Validate the username
@@ -564,7 +574,7 @@ class Player extends Character {
           databaseHandler.loadPlayer(self);
         }
       } else if (action === Types.Messages.ACCOUNT) {
-        const newAccount = message[1];
+        const newAccount = params[0];
         if (!self.account && isValidAccountAddress(newAccount)) {
           const [newNetwork] = newAccount.split("_");
           await self.databaseHandler.setAccount(self, newAccount, newNetwork);
@@ -574,13 +584,13 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.WHO) {
         console.info("WHO: " + self.name);
-        message.shift();
-        self.server.pushSpawnsToPlayer(self, message);
+
+        self.server.pushSpawnsToPlayer(self, params[0]);
       } else if (action === Types.Messages.ZONE) {
         console.info("ZONE: " + self.name);
         self.zone_callback();
       } else if (action === Types.Messages.CHAT) {
-        var msg = sanitize(message[1]);
+        var msg = sanitize(params[0]);
         console.info("CHAT: " + self.name + ": " + `"${msg}"`);
 
         if (!self.achievement[20]) {
@@ -837,7 +847,7 @@ class Player extends Character {
           self.server.pushBroadcast(new Messages.Chat(self, msg), false);
         }
       } else if (action === Types.Messages.MANUAL_BAN_PLAYER) {
-        const { player, reason, duration, message: banMessage, isIPBan, isChatBan } = message[1];
+        const { player, reason, duration, message: banMessage, isIPBan, isChatBan } = params[0];
         const until = duration * 24 * 60 * 60 * 1000 + Date.now();
 
         if (!ADMINS.includes(self.name)) {
@@ -883,11 +893,9 @@ class Player extends Character {
 
         return;
       } else if (action === Types.Messages.MOVE) {
-        // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        // console.info("MOVE: " + self.name + "(" + params[0] + ", " + params[1] + ")");
         if (self.move_callback) {
-          var x = message[1];
-
-          var y = message[2];
+          const [x, y] = params;
 
           const playerLocation = getEntityLocation({ x, y });
 
@@ -925,10 +933,10 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.MOVE_PET) {
-        // console.info("MOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        // console.info("MOVE: " + self.name + "(" + params[0] + ", " + params[1] + ")");
         if (!self.petEntity) return;
-        var x = message[1];
-        var y = message[2];
+
+        const [x, y] = params;
 
         if (self.server.isValidPosition(x, y)) {
           // self.server.moveEntity(self.petEntity, x, y);
@@ -942,12 +950,12 @@ class Player extends Character {
           self.broadcast(new Messages.Move(self.petEntity));
         }
       } else if (action === Types.Messages.LOOTMOVE) {
-        // console.info("LOOTMOVE: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        // console.info("LOOTMOVE: " + self.name + "(" + params[0] + ", " + params[1] + ")");
 
         if (self.lootmove_callback) {
-          self.setPosition(message[1], message[2]);
+          self.setPosition(params[0], params[1]);
 
-          var item = self.server.getEntityById(message[3]);
+          var item = self.server.getEntityById(params[2]);
           if (item) {
             self.clearTarget();
 
@@ -956,7 +964,7 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.AGGRO) {
-        // const mob = self.server.getEntityById(message[1]);
+        // const mob = self.server.getEntityById(params[0]);
         // if (mob && !self.isNear(mob, 48)) {
         //   const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
         //   databaseHandler.banPlayerByIP({
@@ -970,12 +978,12 @@ class Player extends Character {
         //   :warning: **${self.name}**:warning: was banned for exploiting the AGGRO message`);
         //   return;
         // }
-        console.info("AGGRO: " + self.name + " " + message[1]);
+        console.info("AGGRO: " + self.name + " " + params[0]);
         if (self.move_callback) {
-          self.server.handleMobHate(message[1], self.id, 5);
+          self.server.handleMobHate(params[0], self.id, 5);
         }
       } else if (action === Types.Messages.HASH) {
-        var hash = message[1];
+        var hash = params[0];
 
         self.lastHashCheckTimestamp = Date.now();
 
@@ -988,8 +996,8 @@ class Player extends Character {
           });
         }
       } else if (action === Types.Messages.ATTACK) {
-        console.info("ATTACK: " + self.name + " " + message[1]);
-        var mob = self.server.getEntityById(message[1]);
+        console.info("ATTACK: " + self.name + " " + params[0]);
+        var mob = self.server.getEntityById(params[0]);
 
         if (mob) {
           self.setTarget(mob);
@@ -1010,8 +1018,8 @@ class Player extends Character {
           //   }
         }
       } else if (action === Types.Messages.HIT) {
-        console.info("HIT: " + self.name + " " + message[1]);
-        var mob = self.server.getEntityById(message[1]);
+        console.info("HIT: " + self.name + " " + params[0]);
+        var mob = self.server.getEntityById(params[0]);
 
         // if (!self.isNear(mob, 32)) {
         //   const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
@@ -1173,8 +1181,8 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.HURT) {
-        console.info("HURT: " + self.name + " " + message[1]);
-        var mob = self.server.getEntityById(message[1]);
+        console.info("HURT: " + self.name + " " + params[0]);
+        var mob = self.server.getEntityById(params[0]);
         if (mob && self.hitPoints > 0) {
           let dmg = Formulas.dmgFromMob({
             weaponLevel: mob.weaponLevel,
@@ -1215,8 +1223,8 @@ class Player extends Character {
           self.handleHurtDmg(mob, dmg);
         }
       } else if (action === Types.Messages.HURT_SPELL) {
-        console.info("HURT_SPELL: " + self.name + " " + message[1]);
-        const spell = self.server.getEntityById(message[1]);
+        console.info("HURT_SPELL: " + self.name + " " + params[0]);
+        const spell = self.server.getEntityById(params[0]);
 
         if (spell && self.hitPoints > 0) {
           const caster = self.server.getEntityById(spell.casterId);
@@ -1230,9 +1238,9 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.MAGICSTONE) {
-        console.info("MAGICSTONE: " + self.name + " " + message[1]);
+        console.info("MAGICSTONE: " + self.name + " " + params[0]);
 
-        const magicStone = self.server.getEntityById(message[1]);
+        const magicStone = self.server.getEntityById(params[0]);
 
         if (Math.abs(self.x - magicStone.x) >= 3 && Math.abs(self.y - magicStone.y) >= 3) {
           databaseHandler.banPlayerByIP({
@@ -1253,9 +1261,9 @@ class Player extends Character {
           self.server.activateMagicStone(self, magicStone);
         }
       } else if (action === Types.Messages.LEVER) {
-        console.info("LEVER: " + self.name + " " + message[1]);
+        console.info("LEVER: " + self.name + " " + params[0]);
 
-        const lever = self.server.getEntityById(message[1]);
+        const lever = self.server.getEntityById(params[0]);
 
         if (Math.abs(self.x - lever.x) >= 10 && Math.abs(self.y - lever.y) >= 10) {
           databaseHandler.banPlayerByIP({
@@ -1279,16 +1287,16 @@ class Player extends Character {
           self.server.activateLever(self, lever);
         }
       } else if (action === Types.Messages.ALTARCHALICE) {
-        console.info("ALTAR - CHALICE: " + self.name + " " + message[1]);
+        console.info("ALTAR - CHALICE: " + self.name + " " + params[0]);
 
-        const altarId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        const altarId = /\d+/.test(params[0]) ? parseInt(params[0]) : null;
         if (altarId === self.server.altarChaliceNpcId) {
           self.server.activateAltarChalice(self);
         }
       } else if (action === Types.Messages.ALTARSOULSTONE) {
-        console.info("ALTAR - SOULSTONE: " + self.name + " " + message[1]);
+        console.info("ALTAR - SOULSTONE: " + self.name + " " + params[0]);
 
-        const altarId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        const altarId = /\d+/.test(params[0]) ? parseInt(params[0]) : null;
         if (altarId && altarId === self.server.altarSoulStoneNpcId) {
           self.server.activateAltarSoulStone(self);
         }
@@ -1298,26 +1306,26 @@ class Player extends Character {
 
         self.server.activateFossil(self);
       } else if (action === Types.Messages.HANDS) {
-        console.info("HANDS: " + self.name + " " + message[1]);
+        console.info("HANDS: " + self.name + " " + params[0]);
 
-        const handsId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        const handsId = /\d+/.test(params[0]) ? parseInt(params[0]) : null;
         if (handsId && handsId === self.server.handsNpcId) {
           self.server.activateHands(self);
         }
       } else if (action === Types.Messages.TRAP) {
-        console.info("TRAP: " + self.name + " " + message[1]);
+        console.info("TRAP: " + self.name + " " + params[0]);
 
-        const trapId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        const trapId = /\d+/.test(params[0]) ? parseInt(params[0]) : null;
         if (trapId) {
           self.server.activateTrap(self, trapId);
         }
       } else if (action === Types.Messages.HURT_TRAP) {
-        console.info("HURT_TRAP: " + self.name + " " + message[1]);
+        console.info("HURT_TRAP: " + self.name + " " + params[0]);
 
         // Can't be hurt by traps more than once per 3 seconds
         if (self.isHurtByTrap) return;
 
-        const trapId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        const trapId = /\d+/.test(params[0]) ? parseInt(params[0]) : null;
         if (trapId) {
           const trap = self.server.getEntityById(trapId);
 
@@ -1332,18 +1340,18 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.STATUE) {
-        console.info("STATUE: " + self.name + " " + message[1]);
+        console.info("STATUE: " + self.name + " " + params[0]);
 
-        const statueId = /\d+/.test(message[1]) ? parseInt(message[1]) : null;
+        const statueId = /\d+/.test(params[0]) ? parseInt(params[0]) : null;
         if (statueId) {
           self.server.activateStatue(statueId);
         }
       } else if (action === Types.Messages.CAST_SPELL) {
         if (
-          typeof message[1] !== "number" ||
-          typeof message[2] !== "number" ||
-          typeof message[3] !== "number" ||
-          typeof message[5] !== "boolean"
+          typeof params[0] !== "number" ||
+          typeof params[1] !== "number" ||
+          typeof params[2] !== "number" ||
+          typeof params[4] !== "boolean"
         )
           return;
 
@@ -1352,7 +1360,7 @@ class Player extends Character {
 
         // @NOTE Entity might have just died
         if (!entity) return;
-        const targetId = message[4] || undefined;
+        const targetId = params[3] || undefined;
 
         if (entity.kind === Types.Entities.DEATHANGEL) {
           self.server.castDeathAngelSpell(x, y);
@@ -1367,7 +1375,7 @@ class Player extends Character {
             targetId,
           });
         } else if (entity.kind === Types.Entities.SHAMAN) {
-          self.server.castShamanSpell(x, y, entity, targetId, message[5]);
+          self.server.castShamanSpell(x, y, entity, targetId, params[4]);
         } else if (entity.kind === Types.Entities.MAGE) {
           self.server.addSpell({
             kind: Types.Entities.MAGESPELL,
@@ -1408,8 +1416,8 @@ class Player extends Character {
           });
         }
       } else if (action === Types.Messages.LOOT) {
-        console.info("LOOT: " + self.name + " " + message[1]);
-        var item = self.server.getEntityById(message[1]);
+        console.info("LOOT: " + self.name + " " + params[0]);
+        var item = self.server.getEntityById(params[0]);
 
         if (item) {
           if (item.partyId) {
@@ -1456,7 +1464,9 @@ class Player extends Character {
               databaseHandler.foundArtifact(self.name, index);
             } else if (Types.Entities.nonLootableKeys.includes(kind)) {
               if (kind === Types.Entities.SKELETONKEY) {
-                postMessageToDiscordEventChannel(`**${self.name}** picked up the Skeleton Key${EmojiMap.skeletonkey} `);
+                postMessageToDiscordEventChannel(
+                  `**${self.name}** picked up the Skeleton Key ${EmojiMap.skeletonkey} `,
+                );
               }
               // do nothing, its not a valid item
             } else if (kind === Types.Entities.FIREFOXPOTION) {
@@ -1696,7 +1706,7 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.TELEPORT || action === Types.Messages.STONETELEPORT) {
-        console.info("TELEPORT: " + self.name + "(" + message[1] + ", " + message[2] + ")");
+        console.info("TELEPORT: " + self.name + "(" + params[0] + ", " + params[1] + ")");
 
         const isStoneTeleport = action === Types.Messages.STONETELEPORT;
         let x;
@@ -1704,9 +1714,9 @@ class Player extends Character {
         let orientation = self.orientation;
 
         if (!isStoneTeleport) {
-          x = message[1];
-          y = message[2];
-          orientation = message[3];
+          x = params[0];
+          y = params[1];
+          orientation = params[2];
         }
         let isIntown = false;
         let isValidStoneTeleport = true;
@@ -1714,7 +1724,7 @@ class Player extends Character {
         let isNear = false;
         let playerToTeleportTo;
         if (isStoneTeleport && self.partyId) {
-          playerToTeleportTo = isStoneTeleport ? self.server.getEntityById(message[1]) : null;
+          playerToTeleportTo = isStoneTeleport ? self.server.getEntityById(params[0]) : null;
 
           if (playerToTeleportTo?.partyId === self.partyId) {
             ({ x, y } = playerToTeleportTo);
@@ -1822,7 +1832,7 @@ class Player extends Character {
           self.sendLevelInProgress();
         }
       } else if (action === Types.Messages.BOSS_CHECK) {
-        if (self.hash && !message[1]) {
+        if (self.hash && !params[0]) {
           self.connection.send({
             type: Types.Messages.BOSS_CHECK,
             status: "completed",
@@ -1841,7 +1851,7 @@ class Player extends Character {
               message: MIN_LEVEL,
             });
             return;
-          } else if (!self.account && !message[1]) {
+          } else if (!self.account && !params[0]) {
             self.connection.send({
               type: Types.Messages.BOSS_CHECK,
               status: "missing-account",
@@ -1860,7 +1870,7 @@ class Player extends Character {
           check,
         });
       } else if (action === Types.Messages.REQUEST_PAYOUT) {
-        const isClassicPayout = message[1] && message[1] === Types.Entities.BOSS;
+        const isClassicPayout = params[0] && params[0] === Types.Entities.BOSS;
 
         const playerLocation = getEntityLocation({ x: self.x, y: self.y });
         if (playerLocation != "skeletonKing") {
@@ -1944,7 +1954,7 @@ class Player extends Character {
           databaseHandler.banPlayerByIP({
             player: self,
             reason: "cheating",
-            message: `Tried to withdraw ${raiPayoutAmount} but max is ${maxAmount} for quest of kind: ${message[1]}`,
+            message: `Tried to withdraw ${raiPayoutAmount} but max is ${maxAmount} for quest of kind: ${params[0]}`,
           });
           return;
         }
@@ -1971,7 +1981,7 @@ class Player extends Character {
 
         // If payout succeeds there will be a hash in the response!
         if (payeoutHash) {
-          console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${message[1]}`);
+          console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${params[0]}`);
           self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
 
           const maxPayoutOutput =
@@ -2017,32 +2027,32 @@ class Player extends Character {
         databaseHandler.banPlayerByIP({
           player: self,
           reason: "cheating",
-          message: message[1],
+          message: params[0],
         });
       } else if (action === Types.Messages.OPEN) {
-        console.info("OPEN: " + self.name + " " + message[1]);
-        var chest = self.server.getEntityById(message[1]);
+        console.info("OPEN: " + self.name + " " + params[0]);
+        var chest = self.server.getEntityById(params[0]);
         if (chest && chest instanceof Chest) {
           self.server.handleOpenedChest(chest, self);
         }
       } else if (action === Types.Messages.CHECK) {
-        console.info("CHECK: " + self.name + " " + message[1]);
-        var checkpoint = self.server.map.getCheckpoint(message[1]);
+        console.info("CHECK: " + self.name + " " + params[0]);
+        var checkpoint = self.server.map.getCheckpoint(params[0]);
         if (checkpoint) {
           self.lastCheckpoint = checkpoint;
           databaseHandler.setCheckpoint(self.name, self.x, self.y);
         }
       } else if (action === Types.Messages.MOVE_ITEM) {
-        console.info("MOVE ITEM: " + self.name + " " + message[1] + " " + message[2]);
+        console.info("MOVE ITEM: " + self.name + " " + params[0] + " " + params[1]);
 
-        const quantity = message[3];
+        const quantity = params[2];
         if (quantity && !validateQuantity(quantity)) {
           return;
         }
 
-        databaseHandler.moveItem({ player: self, fromSlot: message[1], toSlot: message[2], quantity });
+        databaseHandler.moveItem({ player: self, fromSlot: params[0], toSlot: params[1], quantity });
       } else if (action === Types.Messages.MOVE_ITEMS_TO_INVENTORY) {
-        const panel = message[1];
+        const panel = params[0];
         console.info(`MOVE ITEMS TO INVENTORY: ${self.name} Panel: ${panel}`);
 
         if (["upgrade", "trade"].includes(panel)) {
@@ -2053,9 +2063,9 @@ class Player extends Character {
 
         databaseHandler.moveItemsToInventory(self, "trade");
       } else if (action === Types.Messages.GOLD.MOVE) {
-        const amount = message[1];
-        const from = message[2];
-        const to = message[3];
+        const amount = params[0];
+        const from = params[1];
+        const to = params[2];
 
         console.info(`MOVE GOLD: ${self.name}, AMOUNT: ${amount}, FROM: ${from}, TO: ${to}`);
 
@@ -2079,7 +2089,7 @@ class Player extends Character {
           databaseHandler.moveGold({ player: self, from, to, amount });
         }
       } else if (action === Types.Messages.GOLD.BANK) {
-        if (message[1]) {
+        if (params[0]) {
           const amount = await databaseHandler.withdrawFromBank({ player: self });
           self.send([Types.Messages.GOLD.BANK_WITHDRAW, amount]);
         } else {
@@ -2090,9 +2100,9 @@ class Player extends Character {
 
         databaseHandler.upgradeItem(self);
       } else if (action === Types.Messages.ACHIEVEMENT) {
-        console.info("ACHIEVEMENT: " + self.name + " " + message[1] + " " + message[2]);
-        const index = parseInt(message[1]) - 1;
-        if (message[2] === "found" && !self.achievement[index]) {
+        console.info("ACHIEVEMENT: " + self.name + " " + params[0] + " " + params[1]);
+        const index = parseInt(params[0]) - 1;
+        if (params[1] === "found" && !self.achievement[index]) {
           self.achievement[index] = 1;
 
           if (
@@ -2120,18 +2130,18 @@ class Player extends Character {
           });
         }
       } else if (action === Types.Messages.WAYPOINT) {
-        console.info("WAYPOINT: " + self.name + " " + message[1] + " " + message[2]);
+        console.info("WAYPOINT: " + self.name + " " + params[0] + " " + params[1]);
         // From waypointID to index
-        const index = parseInt(message[1]) - 1;
-        if (message[2] === "found" && !self.waypoints[index]) {
+        const index = parseInt(params[0]) - 1;
+        if (params[1] === "found" && !self.waypoints[index]) {
           self.waypoints[index] = 1;
           databaseHandler.foundWaypoint(self.name, index);
         }
       } else if (action === Types.Messages.PURCHASE_CREATE) {
-        console.info("PURCHASE_CREATE: " + self.name + " " + message[1] + " " + message[2]);
+        console.info("PURCHASE_CREATE: " + self.name + " " + params[0] + " " + params[1]);
 
-        if (message[2] === self.depositAccount && self.network) {
-          purchase[self.network].create({ player: self, account: self.depositAccount, id: message[1] });
+        if (params[1] === self.depositAccount && self.network) {
+          purchase[self.network].create({ player: self, account: self.depositAccount, id: params[0] });
         }
       } else if (action === Types.Messages.PURCHASE_CANCEL) {
         console.info("PURCHASE_CANCEL: " + self.name + " " + self.depositAccount);
@@ -2145,7 +2155,7 @@ class Player extends Character {
       } else if (action === Types.Messages.PARTY) {
         let isWorldPartyUpdate = false;
 
-        if (message[1] === Types.Messages.PARTY_ACTIONS.CREATE) {
+        if (params[0] === Types.Messages.PARTY_ACTIONS.CREATE) {
           if (!self.partyId) {
             self.server.partyCreate(self);
             isWorldPartyUpdate = true;
@@ -2157,28 +2167,28 @@ class Player extends Character {
               ).serialize(),
             );
           }
-        } else if (message[1] === Types.Messages.PARTY_ACTIONS.JOIN) {
-          const party = self.server.parties[message[2]];
+        } else if (params[0] === Types.Messages.PARTY_ACTIONS.JOIN) {
+          const party = self.server.parties[params[1]];
 
           if (!party) {
             self.send(
-              new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `There is no party id ${message[2]}`).serialize(),
+              new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `There is no party id ${params[1]}`).serialize(),
             );
           } else {
             party.addMember(self);
             isWorldPartyUpdate = true;
           }
-        } else if (message[1] === Types.Messages.PARTY_ACTIONS.REFUSE) {
-          const party = self.server.parties[message[2]];
+        } else if (params[0] === Types.Messages.PARTY_ACTIONS.REFUSE) {
+          const party = self.server.parties[params[1]];
 
           if (!party) {
             self.send(
-              new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `There is no party id ${message[2]}`).serialize(),
+              new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `There is no party id ${params[1]}`).serialize(),
             );
           } else {
             party.refuse(self);
           }
-        } else if (message[1] === Types.Messages.PARTY_ACTIONS.INVITE) {
+        } else if (params[0] === Types.Messages.PARTY_ACTIONS.INVITE) {
           const party = self.getParty();
 
           if (!party) {
@@ -2196,11 +2206,11 @@ class Player extends Character {
               ).serialize(),
             );
           } else {
-            const playerToInvite = self.server.getPlayerByName(message[2]);
+            const playerToInvite = self.server.getPlayerByName(params[1]);
 
             if (!playerToInvite) {
               self.send(
-                new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `${message[2]} is not online`).serialize(),
+                new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `${params[1]} is not online`).serialize(),
               );
             } else if (playerToInvite.partyId) {
               self.send(
@@ -2234,15 +2244,15 @@ class Player extends Character {
               isWorldPartyUpdate = true;
             }
           }
-        } else if (message[1] === Types.Messages.PARTY_ACTIONS.LEAVE) {
+        } else if (params[0] === Types.Messages.PARTY_ACTIONS.LEAVE) {
           self.getParty()?.removeMember(self);
           isWorldPartyUpdate = true;
-        } else if (message[1] === Types.Messages.PARTY_ACTIONS.REMOVE) {
+        } else if (params[0] === Types.Messages.PARTY_ACTIONS.REMOVE) {
           if (self.id === self.getParty()?.partyLeader.id) {
-            const playerToRemove = self.server.getPlayerByName(message[2]);
+            const playerToRemove = self.server.getPlayerByName(params[1]);
             if (!playerToRemove) {
               self.send(
-                new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `${message[2]} is not online`).serialize(),
+                new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `${params[1]} is not online`).serialize(),
               );
             } else if (playerToRemove.partyId !== self.partyId) {
               self.send(
@@ -2263,7 +2273,7 @@ class Player extends Character {
               ).serialize(),
             );
           }
-        } else if (message[1] === Types.Messages.PARTY_ACTIONS.DISBAND) {
+        } else if (params[0] === Types.Messages.PARTY_ACTIONS.DISBAND) {
           if (self.id === self.getParty()?.partyLeader.id) {
             self.getParty().disband();
             isWorldPartyUpdate = true;
@@ -2281,32 +2291,30 @@ class Player extends Character {
           self.server.updatePopulation();
         }
       } else if (action === Types.Messages.TRADE) {
-        if (message[1] === Types.Messages.TRADE_ACTIONS.REQUEST_SEND) {
-          const playerToTradeWith = self.server.getPlayerByName(message[2]);
+        if (params[0] === Types.Messages.TRADE_ACTIONS.REQUEST_SEND) {
+          const playerToTradeWith = self.server.getPlayerByName(params[1]);
 
           if (!playerToTradeWith) {
-            self.send(
-              new Messages.Trade(Types.Messages.TRADE_ACTIONS.ERROR, `${message[2]} is not online`).serialize(),
-            );
+            self.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.ERROR, `${params[1]} is not online`).serialize());
           } else if (!playerToTradeWith.tradeEnabled) {
             self.send(
               new Messages.Trade(
                 Types.Messages.TRADE_ACTIONS.ERROR,
-                `${message[2]} has disabled trade requests`,
+                `${params[1]} has disabled trade requests`,
               ).serialize(),
             );
           } else if (!playerToTradeWith.achievement[ACHIEVEMENT_HERO_INDEX]) {
             self.send(
               new Messages.Trade(
                 Types.Messages.TRADE_ACTIONS.ERROR,
-                `${message[2]} has not yet killed the Skeleton King.`,
+                `${params[1]} has not yet killed the Skeleton King.`,
               ).serialize(),
             );
           } else if (playerToTradeWith.hasTrade()) {
             self.send(
               new Messages.Trade(
                 Types.Messages.TRADE_ACTIONS.ERROR,
-                `${message[2]} is already trading with another player`,
+                `${params[1]} is already trading with another player`,
               ).serialize(),
             );
           } else if (self.hasTrade()) {
@@ -2318,15 +2326,15 @@ class Player extends Character {
             );
           } else {
             self.send(
-              new Messages.Trade(Types.Messages.TRADE_ACTIONS.INFO, `Trade request sent to ${message[2]}`).serialize(),
+              new Messages.Trade(Types.Messages.TRADE_ACTIONS.INFO, `Trade request sent to ${params[1]}`).serialize(),
             );
 
             playerToTradeWith.send(
               new Messages.Trade(Types.Messages.TRADE_ACTIONS.REQUEST_RECEIVE, self.name).serialize(),
             );
           }
-        } else if (message[1] === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
-          const playerToTradeWith = self.server.getPlayerByName(message[2]);
+        } else if (params[0] === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
+          const playerToTradeWith = self.server.getPlayerByName(params[1]);
 
           if (playerToTradeWith) {
             playerToTradeWith.send(
@@ -2336,8 +2344,8 @@ class Player extends Character {
               ).serialize(),
             );
           }
-        } else if (message[1] === Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT) {
-          const playerToTradeWith = self.server.getPlayerByName(message[2]);
+        } else if (params[0] === Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT) {
+          const playerToTradeWith = self.server.getPlayerByName(params[1]);
 
           if (playerToTradeWith) {
             playerToTradeWith.send(
@@ -2349,15 +2357,15 @@ class Player extends Character {
 
             self.server.tradeCreate(playerToTradeWith.id, self.id);
           }
-        } else if (message[1] === Types.Messages.TRADE_ACTIONS.CLOSE) {
+        } else if (params[0] === Types.Messages.TRADE_ACTIONS.CLOSE) {
           self.server.trades[self.tradeId]?.close({ playerName: self.name });
-        } else if (message[1] === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
-          self.server.trades[self.tradeId]?.status({ player1Id: self.id, isAccepted: message[2] });
+        } else if (params[0] === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
+          self.server.trades[self.tradeId]?.status({ player1Id: self.id, isAccepted: params[1] });
         }
       } else if (action === Types.Messages.MERCHANT.BUY) {
-        const fromSlot = message[1];
-        const toSlot = message[2];
-        const quantity = message[3];
+        const fromSlot = params[0];
+        const toSlot = params[1];
+        const quantity = params[2];
 
         if (!validateQuantity(quantity)) {
           return;
@@ -2365,8 +2373,8 @@ class Player extends Character {
 
         self.databaseHandler.buyFromMerchant({ player: self, fromSlot, toSlot, quantity });
       } else if (action === Types.Messages.MERCHANT.SELL) {
-        const fromSlot = message[1];
-        const quantity = message[2];
+        const fromSlot = params[0];
+        const quantity = params[1];
 
         if (!validateQuantity(quantity)) {
           return;
@@ -2374,7 +2382,7 @@ class Player extends Character {
 
         self.databaseHandler.sellToMerchant({ player: self, fromSlot, quantity });
       } else if (action === Types.Messages.SETTINGS) {
-        const settings = message[1];
+        const settings = params[0];
 
         if (settings) {
           if (settings.capeHue) {
@@ -2403,8 +2411,8 @@ class Player extends Character {
           this.broadcast(new Messages.Settings(this, settings), false);
         }
       } else if (action === Types.Messages.SKILL) {
-        const slot = message[1];
-        const mobId = message[2];
+        const slot = params[0];
+        const mobId = params[1];
         const isAttackSkill = slot === 1;
 
         const skill = isAttackSkill ? this.attackSkill : this.defenseSkill;
@@ -4049,6 +4057,20 @@ class Player extends Character {
         // });
       }
     }, HASH_BAN_DELAY);
+  }
+
+  verifySignature(signature) {
+    try {
+      const bytes = CryptoJS.AES.decrypt(signature, process.env.WS_MESSAGE_SECRET);
+      const message = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      return message;
+    } catch (err) {
+      // this.server.disconnectPlayer(name.trim(), true);
+
+      postMessageToDiscordModeratorDebugChannel(`failed to decode message and got kicked`);
+      return;
+    }
   }
 
   sendWelcome({

@@ -280,8 +280,6 @@ class Player extends Character {
         // @NOTE Check for stack-able items with quantity
         if (this.inventory.length >= 24) {
           throw new Exceptions.LootException("Your inventory is full.");
-        } else {
-          console.log("~~~~this.inventory", this.inventory);
         }
       } else if (Types.isSingle(item.kind)) {
         const { itemKind } = item;
@@ -899,7 +897,6 @@ class Player extends Character {
 
   setInventory(inventory) {
     this.inventory = this.prepareRawItems(inventory);
-    console.log("~~~~NEW INVentory", this.inventory);
   }
 
   setUpgrade(upgrade) {
