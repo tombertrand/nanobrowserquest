@@ -2268,7 +2268,6 @@ class DatabaseHandler {
           let isChestdead = false;
           let isChestred = false;
 
-
           if (recipe) {
             isSuccess = true;
             if (recipe === "expansion2voucher") {
@@ -2686,7 +2685,6 @@ class DatabaseHandler {
             resolve(false);
             return;
           }
-
           if (hasPassword) {
             player.connection.sendUTF8("passwordlogin");
           } else {

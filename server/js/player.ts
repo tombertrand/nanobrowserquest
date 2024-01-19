@@ -427,11 +427,12 @@ class Player extends Character {
           },
         );
         self.connection.close("Invalid " + Types.getMessageTypeAsString(action) + " message format: ", message);
+
         return;
       }
-
       if (!self.hasEnteredGame && action !== Types.Messages.CREATE && action !== Types.Messages.LOGIN) {
         // CREATE or LOGIN must be the first message
+
         self.connection.close("Invalid handshake message: " + message);
         return;
       }
@@ -451,16 +452,18 @@ class Player extends Character {
           self.connection.close("Unable to get IP.");
           return;
         }
-        const { message: clientName, account: clientAccount, password: clientPassword } = message;
+
+        const { params } = message;
+
         let timestamp;
         let reason;
         let banMessage;
         let ip;
         let admin;
         let playerName;
-        var name = sanitize(clientName);
-        var account = sanitize(clientAccount);
-        var password = sanitize(clientPassword);
+        var name = sanitize(params[0]);
+        var account = sanitize(params[1]);
+        var password = sanitize(params[2]);
         var [network]: [Network] = (account || "").split("_") || null;
 
         ({

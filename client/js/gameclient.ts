@@ -214,12 +214,10 @@ class GameClient {
   }
 
   connect(dispatcherMode) {
-    console.log("~~ window.location.hostname", window.location.hostname);
     var protocol = window.location.hostname === "localhost" ? "ws" : "wss";
     var port = window.location.hostname === "localhost" ? ":8000" : "";
     var url = protocol + "://" + this.host + port + "/";
-    console.log("~~ url", url);
-    console.log("~~ this.host", this.host);
+
     console.info("Trying to connect to server : " + url);
 
     this.connection = null;
