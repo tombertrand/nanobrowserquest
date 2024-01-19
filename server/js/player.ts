@@ -4067,7 +4067,6 @@ class Player extends Character {
       return message;
     } catch (err) {
       // this.server.disconnectPlayer(name.trim(), true);
-
       postMessageToDiscordModeratorDebugChannel(`failed to decode message and got kicked`);
       return;
     }

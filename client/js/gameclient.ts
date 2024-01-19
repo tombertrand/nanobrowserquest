@@ -340,7 +340,7 @@ class GameClient {
   }
   sendMessage(json) {
     if (this.connection.connected === true) {
-      const secret = "4c10471-09cb-49e6-a816-7510677926bc";
+      const secret = "f4c10471-09cb-49e6-a816-7510677926bc";
 
       const sentmessage = {
         action: json[0],
