@@ -658,6 +658,7 @@ class Game {
       },
       slide: (_event, ui) => {
         handleSaturate.text(`${ui.value}%`);
+
         this.player.setCapeSaturate(ui.value);
         this.updateCapePreview();
       },
@@ -696,6 +697,7 @@ class Game {
       },
       slide: (_event, ui) => {
         handleBrightness.text(`${ui.value}`);
+
         this.player.setCapeBrightness(ui.value);
         this.updateCapePreview();
       },

@@ -1355,10 +1355,10 @@ class Player extends Character {
           typeof params[1] !== "number" ||
           typeof params[2] !== "number" ||
           typeof params[4] !== "boolean"
-        )
+        ) {
           return;
-
-        const [, mobId, x, y] = message;
+        }
+        const [mobId, x, y] = params;
         const entity = self.server.getEntityById(mobId);
 
         // @NOTE Entity might have just died

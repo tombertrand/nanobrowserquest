@@ -92,7 +92,7 @@ class FormatChecker {
         _.isString(message) &&
         (message.length == 2 || (_.isString(message[2]) && message.length === 3))
       );
-    } else if (action === Types.Messages.PARTY) {
+    } else if (action === Types.Messages.PARTY_ACTIONS.CREATE) {
       if (action === Types.Messages.PARTY_ACTIONS.CREATE) {
         return true;
       } else if (action === Types.Messages.PARTY_ACTIONS.JOIN) {
@@ -147,7 +147,7 @@ class FormatChecker {
     } else if (action === Types.Messages.REQUEST_PAYOUT) {
       return message.length === 1 && _.isNumber(action);
     } else if (action === Types.Messages.SETTINGS) {
-      return message.length === 1 && typeof action === "object";
+      return true;
     } else if (action === Types.Messages.SKILL) {
       return message.length === 2 && _.isNumber(action) && _.isNumber(message);
     } else if (
