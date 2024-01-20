@@ -58,10 +58,18 @@ class FormatChecker {
 
   check(json) {
     const { action, message, params } = json;
+    const { message: messageId } = message;
 
-    if (!action) {
+    if (!action && action !== 0) {
       return false;
     }
+
+    const filteredParams = params.reduce((acc, value) => {
+      if (value !== null) {
+        acc.push(value);
+      }
+      return acc;
+    }, []);
 
     var format = this.formats[action];
 
@@ -90,38 +98,39 @@ class FormatChecker {
       return (
         _.isString(action) &&
         _.isString(message) &&
-        (message.length == 2 || (_.isString(message[2]) && message.length === 3))
+        (filteredParams.length == 2 || (_.isString(message[2]) && filteredParams.length === 3))
       );
-    } else if (action === Types.Messages.PARTY_ACTIONS.CREATE) {
-      if (action === Types.Messages.PARTY_ACTIONS.CREATE) {
-        return true;
-      } else if (action === Types.Messages.PARTY_ACTIONS.JOIN) {
-        return message.length === 2 && _.isNumber(message);
-      } else if (action === Types.Messages.PARTY_ACTIONS.REFUSE) {
-        return message.length === 2 && _.isNumber(message);
-      } else if (action === Types.Messages.PARTY_ACTIONS.INVITE) {
-        return message.length === 2 && _.isString(message);
-      } else if (action === Types.Messages.PARTY_ACTIONS.LEAVE) {
-        return message.length === 1;
+    } else if (action === Types.Messages.PARTY) {
+      if (messageId === Types.Messages.PARTY_ACTIONS.CREATE) {
+        // console.log("!!!!!!!messageIdz
+        return filteredParams.length === 1 && _.isNumber(filteredParams[0]);
+      } else if (messageId === Types.Messages.PARTY_ACTIONS.JOIN) {
+        return filteredParams.length === 2 && _.isNumber(messageId);
+      } else if (messageId === Types.Messages.PARTY_ACTIONS.REFUSE) {
+        return filteredParams.length === 2 && _.isNumber(messageId);
+      } else if (messageId === Types.Messages.PARTY_ACTIONS.INVITE) {
+        return filteredParams.length === 2 && _.isNumber(messageId);
+      } else if (messageId === Types.Messages.PARTY_ACTIONS.LEAVE) {
+        return filteredParams.length === 1;
       } else if (action === Types.Messages.PARTY_ACTIONS.REMOVE) {
-        return message.length === 2 && _.isString(message);
-      } else if (action === Types.Messages.PARTY_ACTIONS.DISBAND) {
-        return message.length === 1;
-      } else if (action === Types.Messages.PARTY_ACTIONS.INFO) {
-        return message.length === 2 && _.isString(message);
-      } else if (action === Types.Messages.PARTY_ACTIONS.ERROR) {
-        return message.length === 2 && _.isString(message);
+        return filteredParams.length === 2 && _.isNumber(messageId);
+      } else if (messageId === Types.Messages.PARTY_ACTIONS.DISBAND) {
+        return filteredParams.length === 1;
+      } else if (messageId === Types.Messages.PARTY_ACTIONS.INFO) {
+        return filteredParams.length === 2 && _.isNumber(messageId);
+      } else if (messageId === Types.Messages.PARTY_ACTIONS.ERROR) {
+        return filteredParams.length === 2 && _.isNumber(messageId);
       }
     } else if (action === Types.Messages.TRADE) {
-      if (action === Types.Messages.TRADE_ACTIONS.REQUEST_SEND) {
-        return message.length === 2 && _.isString(message);
-      } else if (action === Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT) {
-        return message.length === 2 && _.isString(message);
-      } else if (action === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
-        return message.length === 2 && _.isString(message);
-      } else if (action === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
-        return message.length === 2 && _.isBoolean(message);
-      } else if (action === Types.Messages.TRADE_ACTIONS.CLOSE) {
+      if (messageId === Types.Messages.TRADE_ACTIONS.REQUEST_SEND) {
+        return filteredParams.length === 2 && _.isString(filteredParams[1]);
+      } else if (messageId === Types.Messages.TRADE_ACTIONS.REQUEST_ACCEPT) {
+        return filteredParams.length === 2 && _.isNumber(messageId) && _.isString(filteredParams[1]);
+      } else if (messageId === Types.Messages.TRADE_ACTIONS.REQUEST_REFUSE) {
+        return filteredParams.length === 2 && _.isNumber(messageId);
+      } else if (messageId === Types.Messages.TRADE_ACTIONS.PLAYER1_STATUS) {
+        return filteredParams.length === 2 && _.isBoolean(filteredParams[1]);
+      } else if (messageId === Types.Messages.TRADE_ACTIONS.CLOSE) {
         return true;
       }
     } else if (
@@ -129,27 +138,27 @@ class FormatChecker {
       action === Types.Messages.WAYPOINT ||
       action === Types.Messages.PURCHASE_CREATE
     ) {
-      return message.length === 2 && _.isNumber(action) && _.isString(message);
+      return filteredParams.length === 2 && _.isNumber(action) && _.isString(message);
     } else if (action === Types.Messages.BAN_PLAYER) {
-      return message.length === 1 && _.isString(action);
+      return filteredParams.length === 1 && _.isString(action);
     } else if (action === Types.Messages.BOSS_CHECK) {
-      return message.length === 1 && _.isString(action);
+      return filteredParams.length === 1 && _.isString(action);
     } else if (action === Types.Messages.MOVE_ITEMS_TO_INVENTORY) {
-      return message.length === 1 && _.isString(action);
+      return filteredParams.length === 1 && _.isString(action);
     } else if ([Types.Messages.UPGRADE_ITEM, Types.Messages.STORE_ITEMS].includes(action)) {
-      return message.length === 0;
+      return filteredParams.length === 0;
     } else if (action === Types.Messages.MOVE_ITEM) {
       return (
-        message.length === 3 &&
+        filteredParams.length === 3 &&
         _.isNumber(action) &&
         _.isNumber(message && (message[2] === null || _.isNumber(message[2])))
       );
     } else if (action === Types.Messages.REQUEST_PAYOUT) {
-      return message.length === 1 && _.isNumber(action);
+      return filteredParams.length === 1 && _.isNumber(action);
     } else if (action === Types.Messages.SETTINGS) {
       return true;
     } else if (action === Types.Messages.SKILL) {
-      return message.length === 2 && _.isNumber(action) && _.isNumber(message);
+      return filteredParams.length === 2 && _.isNumber(action) && _.isNumber(message);
     } else if (
       action === Types.Messages.MAGICSTONE ||
       action === Types.Messages.LEVER ||
@@ -157,7 +166,7 @@ class FormatChecker {
       action === Types.Messages.ALTARSOULSTONE ||
       action === Types.Messages.HANDS
     ) {
-      return message.length === 1 && _.isNumber(action);
+      return filteredParams.length === 1 && _.isNumber(action);
     } else if (action === Types.Messages.MANUAL_BAN_PLAYER) {
       return true;
     } else {

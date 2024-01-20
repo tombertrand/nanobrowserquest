@@ -1395,7 +1395,7 @@ class GameClient {
   }
 
   sendPartyCreate() {
-    this.sendMessage([Types.Messages.PARTY_ACTIONS.CREATE, Types.Messages.PARTY_ACTIONS.CREATE]);
+    this.sendMessage([Types.Messages.PARTY, Types.Messages.PARTY_ACTIONS.CREATE]);
   }
 
   sendPartyJoin(partyId) {
