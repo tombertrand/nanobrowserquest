@@ -102,7 +102,6 @@ class FormatChecker {
       );
     } else if (action === Types.Messages.PARTY) {
       if (messageId === Types.Messages.PARTY_ACTIONS.CREATE) {
-        // console.log("!!!!!!!messageIdz
         return filteredParams.length === 1 && _.isNumber(filteredParams[0]);
       } else if (messageId === Types.Messages.PARTY_ACTIONS.JOIN) {
         return filteredParams.length === 2 && _.isNumber(messageId);
@@ -112,8 +111,8 @@ class FormatChecker {
         return filteredParams.length === 2 && _.isNumber(messageId);
       } else if (messageId === Types.Messages.PARTY_ACTIONS.LEAVE) {
         return filteredParams.length === 1;
-      } else if (action === Types.Messages.PARTY_ACTIONS.REMOVE) {
-        return filteredParams.length === 2 && _.isNumber(messageId);
+      } else if (messageId === Types.Messages.PARTY_ACTIONS.REMOVE) {
+        return filteredParams.length === 2 && _.isNumber(messageId) && _.isString(filteredParams[1]);
       } else if (messageId === Types.Messages.PARTY_ACTIONS.DISBAND) {
         return filteredParams.length === 1;
       } else if (messageId === Types.Messages.PARTY_ACTIONS.INFO) {

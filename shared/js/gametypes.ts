@@ -59,7 +59,7 @@ import {
   skillToNameMap,
 } from "./types/skill";
 import {
-  attackBonuPercentsFromWeightMap,
+  attackBonusPercentsFromWeightMap,
   getAttackSpeedBonusFromStringMap,
   getWeaponWeightbyKind,
 } from "./types/weight";
@@ -2870,7 +2870,7 @@ Types.getWeaponDamage = function (weapon: string, level: number, isUnique: boole
   const itemClassRank = Types.itemClassRank[itemClass];
 
   const weight = getWeaponWeightbyKind(kinds[weapon][0]);
-  const attackBonusPercentByWeight = attackBonuPercentsFromWeightMap[weight];
+  const attackBonusPercentByWeight = attackBonusPercentsFromWeightMap[weight];
 
   const damage =
     kinds[weapon][4] +

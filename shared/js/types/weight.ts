@@ -1,6 +1,6 @@
 import { Types } from "../gametypes";
 
-export const attackBonuPercentsFromWeightMap = {
+export const attackBonusPercentsFromWeightMap = {
   light: -15,
   normal: 0,
   heavy: 25,
