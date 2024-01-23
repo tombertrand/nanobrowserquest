@@ -902,8 +902,6 @@ class Player extends Character {
 
           const playerLocation = getEntityLocation({ x, y });
 
-          console.log(`ation`, playerLocation);
-
           // if (y >= 314 && y <= 463 && !self.expansion1) {
           //   databaseHandler.banPlayerByIP({
           //     player: self,
@@ -967,20 +965,18 @@ class Player extends Character {
           }
         }
       } else if (action === Types.Messages.AGGRO) {
-        // const mob = self.server.getEntityById(params[0]);
-        // if (mob && !self.isNear(mob, 48)) {
-        //   const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
-        //   databaseHandler.banPlayerByIP({
-        //     admin: "auto-mod",
-        //     player: self,
-        //     reason: "cheating",
-        //     until,
-        //     message: "player AGGRO not near enemy ban",
-        //   });
-        //   postMessageToModeratorSupportChannel(`
-        //   :warning: **${self.name}**:warning: was banned for exploiting the AGGRO message`);
-        //   return;
-        // }
+        const mob = self.server.getEntityById(params[0]);
+
+        const playerLocation = getEntityLocation({ x: self.x, y: self.y });
+        const mobLocatiion = mob && getEntityLocation({ x: mob.x, y: mob.y });
+
+        if (playerLocation !== mobLocatiion) {
+          self.server.disconnectPlayer(self.name.trim(), true);
+          postMessageToModeratorSupportChannel(`
+          :warning: **${self.name}**was kicked for exploiting the AGGRO message`);
+          return;
+        }
+
         console.info("AGGRO: " + self.name + " " + params[0]);
         if (self.move_callback) {
           self.server.handleMobHate(params[0], self.id, 5);
@@ -1006,47 +1002,29 @@ class Player extends Character {
           self.setTarget(mob);
           self.server.broadcastAttacker(self);
 
-          //   if (!self.isNear(mob, 48)) {
-          //     const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
-          //     databaseHandler.banPlayerByIP({
-          //       admin: "auto-mod",
-          //       player: self,
-          //       reason: "cheating",
-          //       until,
-          //       message: "player ATTACK not near enemy ban",
-          //     });
-          //     postMessageToModeratorSupportChannel(`
-          //     :warning: **${self.name}**:warning: was banned for exploiting the ATTACK message`);
-          return;
-          //   }
+          const playerLocation = getEntityLocation({ x: self.x, y: self.y });
+          const mobLocatiion = mob && getEntityLocation({ x: mob.x, y: mob.y });
+
+          if (playerLocation !== mobLocatiion) {
+            self.server.disconnectPlayer(self.name.trim(), true);
+            postMessageToModeratorSupportChannel(`
+          :warning: **${self.name}**was kicked for exploiting the ATTACK message`);
+            return;
+          }
         }
       } else if (action === Types.Messages.HIT) {
         console.info("HIT: " + self.name + " " + params[0]);
         var mob = self.server.getEntityById(params[0]);
 
-        // if (!self.isNear(mob, 32)) {
-        //   const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
-        //   databaseHandler.banPlayerByIP({
-        //     admin: "auto-mod",
-        //     player: self.name,
-        //     reason: "cheating",
-        //     until,
-        //     message: "player HIT not near enemy ban",
-        //   });
-        //   postMessageToModeratorSupportChannel(`
-        //   :warning: **${self.name}**:warning: was banned for exploiting the HIT message`);
-        //   return;
-        // }
+        const playerLocation = getEntityLocation({ x: self.x, y: self.y });
+        const mobLocatiion = mob && getEntityLocation({ x: mob.x, y: mob.y });
 
-        if (!mob) return;
-        // if (!self.server.isPlayerNearEntity(self, mob, 10)) {
-        //   databaseHandler.banPlayerByIP({
-        //     player: self,
-        //     reason: "cheating",
-        //     message: "enemy was not near and received an attack",
-        //   });
-        //   return;
-        // }
+        if (playerLocation !== mobLocatiion) {
+          self.server.disconnectPlayer(self.name.trim(), true);
+          postMessageToModeratorSupportChannel(`
+          :warning: **${self.name}**was kicked for exploiting the HIT message`);
+          return;
+        }
         // Prevent FE from sending too many attack messages
         if (self.attackTimeout) {
           // if (self.attackTimeoutWarning) {
