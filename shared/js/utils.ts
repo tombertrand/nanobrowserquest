@@ -155,6 +155,8 @@ export const isValidRecipe = items => {
 
 export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   let isInTown;
+  let caveWorld1;
+  let volcanic;
   let isInTownHouse1;
   let isInTownHouse2;
   let isInTownHouse3Or4;
@@ -167,6 +169,8 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   let isMinotaurCage;
   let isInNecromancerLair;
   let isInExpansion1;
+  let woodland;
+  let castleruins;
   let isInExpansion2;
   let isInMagicSkeletonCrypt;
   let isInPoisonSkeletonCrypt;
@@ -179,6 +183,8 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   }
 
   isInTown = x >= 1 && x <= 80 && y >= 192 && y <= 257;
+  caveWorld1 = (x >= 1 && x <= 80 && y >= 0 && y <= 37) || (x >= 113 && x <= 169 && y >= 84 && y <= 325);
+  volcanic = x >= 0 && x <= 113 && y >= 0 && y <= 53;
   isInTownHouse1 = x >= 112 && x <= 139 && y >= 288 && y <= 301;
   isInTownHouse2 = x >= 140 && x <= 169 && y >= 276 && y <= 289;
   isInTownHouse3Or4 = x >= 112 && x <= 169 && y >= 132 && y <= 145;
@@ -191,6 +197,8 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   isInExpansion1 = x >= 0 && x <= 169 && y >= 313 && y <= 463;
   isInNecromancerLair = x >= 140 && x <= 169 && y >= 324 && y <= 349;
   isSpiderDungeon = x >= 85 && x <= 112 && y >= 696 && y <= 733;
+  woodland = x >= 0 && x <= 170 && y >= 604 && y <= 685;
+  castleruins = x >= 85 && x <= 541 && y >= 542 && y <= 624;
   isInExpansion2 = x >= 0 && x <= 171 && y >= 540 && y <= 781;
   isInMagicSkeletonCrypt = x >= 141 && x <= 167 && y >= 696 && y <= 733;
   isInPoisonSkeletonCrypt = x >= 113 && x <= 141 && y >= 696 && y <= 733;
@@ -201,6 +209,10 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
     return "necromancerlair";
   } else if (isInTown || isInTownHouse1 || isInTownHouse2 || isInTownHouse3Or4 || isInTownCave) {
     return "town";
+  } else if (caveWorld1) {
+    return "caveWorld1";
+  } else if (volcanic) {
+    return "volcanic";
   } else if (isSkeletonKing) {
     return "skeletonKing";
   } else if (isGrimoireDungeon) {
@@ -225,6 +237,10 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
     return "azrealgates";
   } else if (isinTemple) {
     return "temple";
+  } else if (castleruins) {
+    return "castleruins";
+  } else if (woodland) {
+    return "woodland";
   } else if (isInExpansion2) {
     return "expansion2";
   }

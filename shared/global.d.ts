@@ -24,6 +24,9 @@ type RunewordEquipment = "weapon" | "armor" | "helm" | "shield";
 
 type PlayerLocation =
   | "town"
+  | "caveWorld1"
+  | "nomansland"
+  | "volcanic"
   | "skeletonKing"
   | "expansion1"
   | "expansion2"
@@ -35,6 +38,8 @@ type PlayerLocation =
   | "cow"
   | "minotaurcage"
   | "necromancerlair"
+  | "woodland"
+  |"castleruins"
   | "magicskeletoncrypt"
   | "poisonskeletoncrypt"
   | "temple"

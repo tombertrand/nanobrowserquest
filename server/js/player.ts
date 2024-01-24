@@ -970,10 +970,13 @@ class Player extends Character {
         const playerLocation = getEntityLocation({ x: self.x, y: self.y });
         const mobLocatiion = mob && getEntityLocation({ x: mob.x, y: mob.y });
 
+        console.log('mob',mob)
+        console.log('{ x: mob.x, y: mob.y }',{ x: mob.x, y: mob.y })
+
         if (playerLocation !== mobLocatiion) {
           self.server.disconnectPlayer(self.name.trim(), true);
           postMessageToModeratorSupportChannel(`
-          :warning: **${self.name}**was kicked for exploiting the AGGRO message`);
+          :warning: **${self.name}**was kicked for exploiting${params[0]} the AGGRO message,playerLocation ${playerLocation},mobLocatiion:${mobLocatiion}, mobname${mob.name}, mob.x${mob.x}, mob.y${mob.y}`);
           return;
         }
 
@@ -997,6 +1000,8 @@ class Player extends Character {
       } else if (action === Types.Messages.ATTACK) {
         console.info("ATTACK: " + self.name + " " + params[0]);
         var mob = self.server.getEntityById(params[0]);
+        console.log('mob',mob)
+        console.log('{ x: mob.x, y: mob.y }',{ x: mob.x, y: mob.y })
 
         if (mob) {
           self.setTarget(mob);
@@ -1008,7 +1013,7 @@ class Player extends Character {
           if (playerLocation !== mobLocatiion) {
             self.server.disconnectPlayer(self.name.trim(), true);
             postMessageToModeratorSupportChannel(`
-          :warning: **${self.name}**was kicked for exploiting the ATTACK message`);
+            :warning: **${self.name}**was kicked for exploiting${params[0]} the ATTACK message,playerLocation ${playerLocation},mobLocatiion:${mobLocatiion}, mobname${mob.name}, mob.x${mob.x}, mob.y${mob.y}`);
             return;
           }
         }
@@ -1018,11 +1023,13 @@ class Player extends Character {
 
         const playerLocation = getEntityLocation({ x: self.x, y: self.y });
         const mobLocatiion = mob && getEntityLocation({ x: mob.x, y: mob.y });
+        console.log('mob',mob)
+        console.log('{ x: mob.x, y: mob.y }',{ x: mob.x, y: mob.y })
 
         if (playerLocation !== mobLocatiion) {
           self.server.disconnectPlayer(self.name.trim(), true);
           postMessageToModeratorSupportChannel(`
-          :warning: **${self.name}**was kicked for exploiting the HIT message`);
+          :warning: **${self.name}**was kicked for exploiting${params[0]} the HIT message,playerLocation ${playerLocation},mobLocatiion:${mobLocatiion}, mobname${mob.name}, mob.x${mob.x}, mob.y${mob.y}`);
           return;
         }
         // Prevent FE from sending too many attack messages
