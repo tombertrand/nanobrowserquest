@@ -12,7 +12,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
-import { getEntityLocation } from "../../shared/js/utils";
+import { getEntityLocation, isLocationOKWithExpansionLocation } from "../../shared/js/utils";
 import { hasMoreThanPercentCaps, replaceLetters } from "../../shared/js/utils";
 import {
   HASH_BAN_DELAY,
@@ -164,6 +164,7 @@ const badWords = [
   "sex",
   "卐",
   "hail",
+  "cocksuckers",
 ];
 
 const replacedWords = [...badWords].map(replaceLetters);
@@ -967,20 +968,20 @@ class Player extends Character {
       } else if (action === Types.Messages.AGGRO) {
         const mob = self.server.getEntityById(params[0]);
 
-        const playerLocation = getEntityLocation({ x: self.x, y: self.y });
-        const mobLocatiion = mob && getEntityLocation({ x: mob.x, y: mob.y });
+        if (mob) {
+          const playerLocation = getEntityLocation({ x: self.x, y: self.y });
+          const mobLocation = getEntityLocation({ x: mob.x, y: mob.y });
 
-        console.log('mob',mob)
-        console.log('{ x: mob.x, y: mob.y }',{ x: mob.x, y: mob.y })
+          if (playerLocation !== mobLocation && !isLocationOKWithExpansionLocation(playerLocation, mobLocation)) {
+            self.server.disconnectPlayer(self.name.trim(), true);
+            postMessageToModeratorSupportChannel(`
+          :warning: **${self.name}** was kicked for exploiting: ${params[0]} the AGGRO message, playerLocation ${playerLocation}: self.x: ${self.x}, self.y: ${self.y}, mobLocation: ${mobLocation}, mobname: ${mob.name}, mob.x: ${mob.x}, mob.y: ${mob.y}
+          `);
+            return;
+          }
 
-        if (playerLocation !== mobLocatiion) {
-          self.server.disconnectPlayer(self.name.trim(), true);
-          postMessageToModeratorSupportChannel(`
-          :warning: **${self.name}**was kicked for exploiting${params[0]} the AGGRO message,playerLocation ${playerLocation},mobLocatiion:${mobLocatiion}, mobname${mob.name}, mob.x${mob.x}, mob.y${mob.y}`);
-          return;
+          console.info("AGGRO: " + self.name + " " + params[0]);
         }
-
-        console.info("AGGRO: " + self.name + " " + params[0]);
         if (self.move_callback) {
           self.server.handleMobHate(params[0], self.id, 5);
         }
@@ -1000,38 +1001,38 @@ class Player extends Character {
       } else if (action === Types.Messages.ATTACK) {
         console.info("ATTACK: " + self.name + " " + params[0]);
         var mob = self.server.getEntityById(params[0]);
-        console.log('mob',mob)
-        console.log('{ x: mob.x, y: mob.y }',{ x: mob.x, y: mob.y })
 
         if (mob) {
           self.setTarget(mob);
           self.server.broadcastAttacker(self);
 
           const playerLocation = getEntityLocation({ x: self.x, y: self.y });
-          const mobLocatiion = mob && getEntityLocation({ x: mob.x, y: mob.y });
+          const mobLocation = mob && getEntityLocation({ x: mob.x, y: mob.y });
 
-          if (playerLocation !== mobLocatiion) {
+          if (playerLocation !== mobLocation && !isLocationOKWithExpansionLocation(playerLocation, mobLocation)) {
             self.server.disconnectPlayer(self.name.trim(), true);
             postMessageToModeratorSupportChannel(`
-            :warning: **${self.name}**was kicked for exploiting${params[0]} the ATTACK message,playerLocation ${playerLocation},mobLocatiion:${mobLocatiion}, mobname${mob.name}, mob.x${mob.x}, mob.y${mob.y}`);
+          :warning: **${self.name}** was kicked for exploiting: ${params[0]} the ATTACK message, playerLocation ${playerLocation}: self.x: ${self.x}, self.y: ${self.y}, mobLocation: ${mobLocation}, mobname: ${mob.name}, mob.x: ${mob.x}, mob.y: ${mob.y}
+          `);
             return;
           }
         }
       } else if (action === Types.Messages.HIT) {
         console.info("HIT: " + self.name + " " + params[0]);
         var mob = self.server.getEntityById(params[0]);
+        if (mob) {
+          const playerLocation = getEntityLocation({ x: self.x, y: self.y });
+          const mobLocation = getEntityLocation({ x: mob.x, y: mob.y });
 
-        const playerLocation = getEntityLocation({ x: self.x, y: self.y });
-        const mobLocatiion = mob && getEntityLocation({ x: mob.x, y: mob.y });
-        console.log('mob',mob)
-        console.log('{ x: mob.x, y: mob.y }',{ x: mob.x, y: mob.y })
-
-        if (playerLocation !== mobLocatiion) {
-          self.server.disconnectPlayer(self.name.trim(), true);
-          postMessageToModeratorSupportChannel(`
-          :warning: **${self.name}**was kicked for exploiting${params[0]} the HIT message,playerLocation ${playerLocation},mobLocatiion:${mobLocatiion}, mobname${mob.name}, mob.x${mob.x}, mob.y${mob.y}`);
-          return;
+          if (playerLocation !== mobLocation && !isLocationOKWithExpansionLocation(playerLocation, mobLocation)) {
+            self.server.disconnectPlayer(self.name.trim(), true);
+            postMessageToModeratorSupportChannel(`
+          :warning: **${self.name}** was kicked for exploiting: ${params[0]} the ATTACK message, playerLocation ${playerLocation}: self.x: ${self.x}, self.y: ${self.y}, mobLocation: ${mobLocation}, mobname: ${mob.name}, mob.x: ${mob.x}, mob.y: ${mob.y}
+          `);
+            return;
+          }
         }
+
         // Prevent FE from sending too many attack messages
         if (self.attackTimeout) {
           // if (self.attackTimeoutWarning) {
@@ -1741,6 +1742,7 @@ class Player extends Character {
             isValidStoneTeleport = false;
           }
         }
+
         if (isStoneTeleport && isValidStoneTeleport) {
           isItemConsumed = await this.databaseHandler.useInventoryItem(self, "stoneteleport");
         }
@@ -1921,19 +1923,23 @@ class Player extends Character {
 
         if (isClassicPayout && !self.hasRequestedBossPayout && self.network && self.account) {
           self.hasRequestedBossPayout = true;
-          amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
+          try {
+            amount = getClassicPayout(self.achievement.slice(0, 24), self.network);
 
-          if (!amount) {
-            databaseHandler.banPlayerByIP({
-              player: self,
-              reason: "cheating",
-              message: `$invalid payout amount`,
-            });
+            if (!amount) {
+              databaseHandler.banPlayerByIP({
+                player: self,
+                reason: "cheating",
+                message: `**${self.name}** invalid payout ${amount}`,
+              });
 
-            postMessageToModeratorSupportChannel(`**${self.name}** Tried to withdraw invalid amount`);
+              postMessageToModeratorSupportChannel(`**${self.name}** Tried to withdraw invalid amount`);
+            }
+            maxAmount = getClassicMaxPayout(self.network);
+            raiPayoutAmount = rawToRai(amount, self.network);
+          } catch (err) {
+            throw new Error(`**${self.name}** invalid getClassicPayout`);
           }
-          maxAmount = getClassicMaxPayout(self.network);
-          raiPayoutAmount = rawToRai(amount, self.network);
         } else {
           return;
         }
