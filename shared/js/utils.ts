@@ -191,7 +191,7 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
 
   isInTown = x >= 1 && x <= 80 && y >= 192 && y <= 257;
   caveWorld1 = (x >= 141 && x <= 140 && y >= 25 && y <= 37) || (x >= 110 && x <= 169 && y >= 85 && y <= 313);
-  volcanic = x >= 0 && x <= 113 && y >= 0 && y <= 61;
+  volcanic = x >= 0 && x <= 113 && y >= 0 && y <= 53;
   wood = x >= 0 && x <= 83 && y >= 146 && y <= 190;
   isInTownHouse1 = x >= 112 && x <= 139 && y >= 288 && y <= 301;
   isInTownHouse2 = x >= 140 && x <= 169 && y >= 276 && y <= 289;
@@ -200,7 +200,7 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   isSkeletonKing = x >= 140 && x <= 168 && y >= 48 && y <= 73;
   isCaveWorld2 = x >= 112 && x <= 169 && y >= 348 && y <= 460;
   isSkeletonCommander >= 142 && x <= 149 && y >= 360 && y <= 385;
-  isSBeach = x >= 0 && x <= 83 && y >= 254 && y <= 297;
+  isSBeach = x >= 0 && x <= 83 && y >= 254 && y <= 298;
   isInClassicGame = x >= 0 && x <= 113 && y >= 0 && y <= 298;
   greensnakepool = x >= 3 && x <= 4 && y >= 682 && y <= 664;
   isChaliceDungeon = x >= 0 && x <= 28 && y >= 696 && y <= 733;
@@ -231,10 +231,10 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
     return "wood";
   } else if (isSBeach) {
     return "beach";
-  } else if (isInClassicGame) {
-    return "classicgame";
   } else if (isSkeletonKing) {
     return "skeletonKing";
+  } else if (isInClassicGame) {
+    return "classicgame";
   } else if (isCaveWorld2) {
     return "caveworld2";
   } else if (isSkeletonCommander) {
@@ -290,22 +290,22 @@ export const isExpansion2Location = [
   "woodland",
 ];
 
-export const isLocationOKWithExpansionLocation = (Location1, location2): boolean => {
+export const isLocationOKWithExpansionLocation = (playerLocation, mobLocation): boolean => {
   if (
-    ((Location1 || location2) === "classicgame" && isClassicLocation.includes(Location1)) ||
-    isClassicLocation.includes(location2)
+    ((playerLocation || mobLocation) === "classicgame" && isClassicLocation.includes(playerLocation)) ||
+    isClassicLocation.includes(mobLocation)
   ) {
     return true;
   }
   if (
-    ((Location1 || location2) === "expansion1" && isExpansion1Location.includes(Location1)) ||
-    isExpansion1Location.includes(location2)
+    ((playerLocation || mobLocation) === "expansion1" && isExpansion1Location.includes(playerLocation)) ||
+    isExpansion1Location.includes(mobLocation)
   ) {
     return true;
   }
   if (
-    ((Location1 || location2) === "expansion2" && isExpansion2Location.includes(Location1)) ||
-    isExpansion2Location.includes(location2)
+    ((playerLocation || mobLocation) === "expansion2" && isExpansion2Location.includes(playerLocation)) ||
+    isExpansion2Location.includes(mobLocation)
   ) {
     return true;
   }
