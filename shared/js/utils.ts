@@ -198,8 +198,11 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   isInTownHouse3Or4 = x >= 112 && x <= 169 && y >= 132 && y <= 145;
   isInTownCave = x >= 140 && x <= 169 && y >= 301 && y <= 313;
   isSkeletonKing = x >= 140 && x <= 168 && y >= 48 && y <= 73;
-  isCaveWorld2 = x >= 112 && x <= 169 && y >= 348 && y <= 460;
+  isCaveWorld2 = (x >= 112 && x <= 141 && y >= 348 && y <= 460) || (x >= 141 && x <= 169222222 && y >= 396 && y <= 460);
   isSkeletonCommander >= 142 && x <= 149 && y >= 360 && y <= 385;
+
+  //playerLocation town: self.x: 52, self.y: 206,
+  //mobLocation: beach, mobname: goblin, mob.x: 68, mob.y: 268
   isSBeach = x >= 0 && x <= 83 && y >= 254 && y <= 298;
   isInClassicGame = x >= 0 && x <= 113 && y >= 0 && y <= 298;
   greensnakepool = x >= 3 && x <= 4 && y >= 682 && y <= 664;
@@ -292,16 +295,22 @@ export const isExpansion2Location = [
 
 export const isLocationOKWithExpansionLocation = (playerLocation, mobLocation): boolean => {
   if (
+    isClassicLocation.includes(playerLocation) ||
+    isClassicLocation.includes(mobLocation) ||
     (playerLocation === "classicgame" && isClassicLocation.includes(mobLocation)) ||
     (mobLocation === "classicgame" && isClassicLocation.includes(playerLocation))
   ) {
     return true;
   } else if (
+    isExpansion1Location.includes(playerLocation) ||
+    isExpansion1Location.includes(mobLocation) ||
     (playerLocation === "expansion1" && isClassicLocation.includes(mobLocation)) ||
     (mobLocation === "expansion1" && isClassicLocation.includes(playerLocation))
   ) {
     return true;
   } else if (
+    isExpansion2Location.includes(playerLocation) ||
+    isExpansion2Location.includes(mobLocation) ||
     (playerLocation === "expansion2" && isClassicLocation.includes(mobLocation)) ||
     (mobLocation === "expansion2" && isClassicLocation.includes(playerLocation))
   ) {
