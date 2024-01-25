@@ -191,7 +191,9 @@ const getPayout = (achievements, payouts, network: Network) => {
 };
 
 export const getClassicPayout = (achievements, network: Network) => {
-  return getPayout(achievements, Object.values(classicAchievementMap[network]), network);
+  if (network && achievements.length) {
+    return getPayout(achievements, Object.values(classicAchievementMap[network]), network);
+  }
 };
 
 export const getRandomDefenseSkill = () => _.shuffle([0, 1, 2]).slice(0, 1);
@@ -753,7 +755,7 @@ export const generateRandomPet = () => {
     petduck: 1,
     petdeer: 1,
     // petreindeer: 1,
-
+    // petmonkey:1,
     pethellhound: 1,
     petdragon: 3,
   };

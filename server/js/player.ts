@@ -114,6 +114,7 @@ const badWords = [
   "fucks",
   "fuck you",
   "fuck",
+  "fvck",
   "sucker",
   "cunt",
   "whore",
@@ -941,13 +942,7 @@ class Player extends Character {
         const [x, y] = params;
 
         if (self.server.isValidPosition(x, y)) {
-          // self.server.moveEntity(self.petEntity, x, y);
-
           self.petEntity.setPosition(x, y);
-
-          // const pet = self.server.getEntityById(self.petEntity.id);
-
-          // pet.setPosition(x, y);
 
           self.broadcast(new Messages.Move(self.petEntity));
         }

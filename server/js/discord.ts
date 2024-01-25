@@ -20,13 +20,16 @@ const PurchaseChannel =
 
 const ModeratorSupportChannel =
   "https://discord.com/api/webhooks/1149703440256217098/ycuYn6yn8y5Atb2ysdTltVzIzB7lmeS-KpGn5LTNmnyVumllHhCFY2scGXUvyBVp39SJ";
+
 const SupportChannel =
   "https://discord.com/api/webhooks/1176896399661613136/vkPx-tGOP6IuMnH0ACbsJe-javz9MOMAorvp25BF6oDBMkBxbYIys4U2ACmsZgu6KjwQ";
+
 const ModeratorDebugChannel =
   "https://discord.com/api/webhooks/1157121578807611465/DPTTZrQspuKzO4rpQwOaYpy7HE95nRVIgKQe74MG0bT3QrqqAT_F6vyCgyvTBs7ngweY";
 
 const ModeratorMerchantChannel =
   "https://discord.com/api/webhooks/1171768576814891028/MzT6FHXBEMwVLl9GrQH5by-bg8nKi4W9m_PG85CAIqDL84ehl5ibQxMiowJ1PdRO7VNA";
+
 const ModertorTradeChannel =
   "https://discord.com/api/webhooks/1157379165922795662/KGEOmezA84--Kj7NppJPGkdVrPSjZh6KXlNWPMcg-hEwE4vfxxuO4pNq3oqSnPoPpOCW";
 
@@ -35,7 +38,10 @@ const WelcomeChannel =
 
 const payoutsChannel =
   "https://discord.com/api/webhooks/1167688506315915404/nRYi5goDKK-1O_n2rCCKIEM2MVRvvDk4Um9vyPQH568B3Cyxb5_9r4XzlGDmLjTcakxS";
-// For linking players with Discord
+
+const questBotChannel = "https://discord.com/api/webhooks/1200130228291375284/5SCgtXuIuzJlPmpiv8owGkmD7L2uDbUaI4dH_NPQsrxo7UTwMjHdr-IlgVbdXL42pUeR"
+
+  // For linking players with Discord
 export const discordClient = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -217,7 +223,7 @@ export const postMessageToDiscordWelcomeChannel = (content: string) => {
 };
 
 export const postMessageToDiscordPayoutsChannel = (content: string) => {
-  // if (isDevelopment) return;
+  if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,
@@ -233,6 +239,21 @@ export const postMessageToDiscordPayoutsChannel = (content: string) => {
   }
 };
 
+export const postMessageToDiscordTestBotChannel = (content: string) => {
+  try {
+    const body = JSON.stringify({
+      content,
+    });
+
+    fetch(payoutsChannel, {
+      method: "POST",
+      body,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+};
 export const EmojiMap = {
   sword: "<:Sword:975775115105153154>",
   fire: ":fire:",

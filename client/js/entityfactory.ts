@@ -63,6 +63,10 @@ EntityFactory.builders[Types.Entities.PET_REINDEER] = function (id, props) {
   return new Pets.ReinDeer(id, props);
 };
 
+EntityFactory.builders[Types.Entities.PET_MONKEY] = function (id, props) {
+  return new Pets.ReinDeer(id, props);
+};
+
 EntityFactory.builders[Types.Entities.PET_HELLHOUND] = function (id, props) {
   return new Pets.Hellhound(id, props);
 };
@@ -1325,6 +1329,10 @@ EntityFactory.builders[Types.Entities.PETDEER] = function (id) {
 
 EntityFactory.builders[Types.Entities.PETREINDEER] = function (id) {
   return new Items.PetReinDeer(id);
+};
+
+EntityFactory.builders[Types.Entities.PETMONKEY] = function (id) {
+  return new Items.PetMonkey(id);
 };
 
 EntityFactory.builders[Types.Entities.PETHELLHOUND] = function (id) {

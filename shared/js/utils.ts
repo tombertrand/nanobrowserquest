@@ -212,7 +212,7 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   isSpiderDungeon = x >= 85 && x <= 112 && y >= 696 && y <= 733;
   woodland = x >= 0 && x <= 169 && y >= 604 && y <= 685;
   redsnakepool = x >= 140 && x <= 169 && y >= 540 && y <= 560;
-  castleruins = x >= 85 && x <= 541 && y >= 542 && y <= 624;
+  castleruins = x >= 85 && x <= 541 && y >= 542 && y <= 627;
   isInExpansion2 = x >= 0 && x <= 171 && y >= 540 && y <= 781;
   isInMagicSkeletonCrypt = x >= 141 && x <= 167 && y >= 696 && y <= 733;
   isInPoisonSkeletonCrypt = x >= 113 && x <= 141 && y >= 696 && y <= 733;

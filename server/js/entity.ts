@@ -1,3 +1,5 @@
+import { Types } from "../../shared/js/gametypes";
+import { getEntityLocation } from "../../shared/js/utils";
 import Messages from "./message";
 import { random } from "./utils";
 
@@ -6,8 +8,8 @@ class Entity {
   type: any;
   kind: number;
   x: number;
-  gridX:number;
-  gridY:number;
+  gridX: number;
+  gridY: number;
   y: number;
   hitPoints: number;
   maxHitPoints: number;
@@ -40,7 +42,7 @@ class Entity {
   }
 
   spawn() {
-    // return new Messages.Spawn(this);
+    return new Messages.Spawn(this);
   }
 
   despawn() {
@@ -50,6 +52,18 @@ class Entity {
   setPosition(x, y) {
     this.x = x;
     this.y = y;
+
+    const entityLocation = getEntityLocation({ x, y });
+
+    if (this.kind === Types.Entities.MINOTAUR && entityLocation !== "minotaurcage") {
+      this.despawn();
+    } else if (this.kind === Types.Entities.DEATHANGEL && entityLocation !== "azrealgates") {
+      this.despawn();
+    } else if (this.kind === Types.Entities.NECROMANCER && entityLocation !== "necromancerlair") {
+      this.despawn();
+    } else if (this.kind === Types.Entities.COWKING && entityLocation !== "cow") {
+      this.despawn();
+    }
   }
 
   getPositionNextTo(entity) {

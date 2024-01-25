@@ -80,6 +80,13 @@ export const Pets = {
     }
   },
 
+  Monkey: class  Monkey extends Pet {
+    constructor(id, props: any = {}) {
+      super(id, Types.Entities.PET_MONKEY, props);
+      this.moveSpeed = 200;
+      this.idleSpeed = 200;
+    }
+  },
 
   Hellhound: class Hellhound extends Pet {
     constructor(id, props: any = {}) {
