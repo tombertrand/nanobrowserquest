@@ -191,7 +191,7 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
 
   isInTown = x >= 1 && x <= 80 && y >= 192 && y <= 257;
   caveWorld1 = (x >= 141 && x <= 140 && y >= 25 && y <= 37) || (x >= 110 && x <= 169 && y >= 85 && y <= 313);
-  volcanic = x >= 0 && x <= 113 && y >= 0 && y <= 53;
+  volcanic = x >= 0 && x <= 113 && y >= 0 && y <= 54;
   wood = x >= 0 && x <= 83 && y >= 146 && y <= 190;
   isInTownHouse1 = x >= 112 && x <= 139 && y >= 288 && y <= 301;
   isInTownHouse2 = x >= 140 && x <= 169 && y >= 276 && y <= 289;
@@ -292,23 +292,22 @@ export const isExpansion2Location = [
 
 export const isLocationOKWithExpansionLocation = (playerLocation, mobLocation): boolean => {
   if (
-    ((playerLocation || mobLocation) === "classicgame" && isClassicLocation.includes(playerLocation)) ||
-    isClassicLocation.includes(mobLocation)
+    (playerLocation === "classicgame" && isClassicLocation.includes(mobLocation)) ||
+    (mobLocation === "classicgame" && isClassicLocation.includes(playerLocation))
+  ) {
+    return true;
+  } else if (
+    (playerLocation === "expansion1" && isClassicLocation.includes(mobLocation)) ||
+    (mobLocation === "expansion1" && isClassicLocation.includes(playerLocation))
+  ) {
+    return true;
+  } else if (
+    (playerLocation === "expansion2" && isClassicLocation.includes(mobLocation)) ||
+    (mobLocation === "expansion2" && isClassicLocation.includes(playerLocation))
   ) {
     return true;
   }
-  if (
-    ((playerLocation || mobLocation) === "expansion1" && isExpansion1Location.includes(playerLocation)) ||
-    isExpansion1Location.includes(mobLocation)
-  ) {
-    return true;
-  }
-  if (
-    ((playerLocation || mobLocation) === "expansion2" && isExpansion2Location.includes(playerLocation)) ||
-    isExpansion2Location.includes(mobLocation)
-  ) {
-    return true;
-  }
+
   return false;
 };
 
