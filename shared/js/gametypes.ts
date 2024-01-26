@@ -110,7 +110,7 @@ export const Types: any = {
     PET_DUCK: 387,
     PET_DEER: 392,
     PET_REINDEER: 406,
-    PET_MONKEY: 420, //~~~last
+    PET_MONKEY: 422, //~~~last
     PET_HELLHOUND: 408,
     PET_DRAGON: 389,
     PETAXOLOTL: 368,
@@ -1474,7 +1474,7 @@ Types.itemUniqueMap = {
   shieldchristmas: ["Snowflake"],
   shieldmystical: ["Developer Fund"],
   shielddemon: ["ORV > POW"],
-  shieldpaladin: ["TBD"],
+  shieldpaladin: ["Vote Hinting"], 
   shieldimmortal: ["TBD"],
 
   cape: ["Cloak of Levitation"],

@@ -115,6 +115,7 @@ const badWords = [
   "fuck you",
   "fuck",
   "fvck",
+
   "sucker",
   "cunt",
   "whore",
@@ -852,13 +853,14 @@ class Player extends Character {
           self.server.pushBroadcast(new Messages.Chat(self, msg), false);
         }
       } else if (action === Types.Messages.MANUAL_BAN_PLAYER) {
-        const { player, reason, duration, message: banMessage, isIPBan, isChatBan } = params[0];
+        const { player: playerName, reason, duration, message: banMessage, isIPBan, isChatBan } = params[0];
         const until = duration * 24 * 60 * 60 * 1000 + Date.now();
+        const bannedPlayer = self.server.getPlayerByName(playerName);
 
         if (!ADMINS.includes(self.name)) {
           databaseHandler.banPlayerByIP({
             admin: "auto-mod",
-            player: self,
+            player: bannedPlayer,
             reason: "cheating",
             until,
             message: "non-mod ban",
@@ -867,8 +869,6 @@ class Player extends Character {
             **${self.name}** was banned for exploiting the ban feature`);
           return;
         }
-
-        const bannedPlayer = self.server.getPlayerByName(player);
 
         if (!bannedPlayer) return;
 

@@ -64,7 +64,7 @@ EntityFactory.builders[Types.Entities.PET_REINDEER] = function (id, props) {
 };
 
 EntityFactory.builders[Types.Entities.PET_MONKEY] = function (id, props) {
-  return new Pets.ReinDeer(id, props);
+  return new Pets.Monkey(id, props);
 };
 
 EntityFactory.builders[Types.Entities.PET_HELLHOUND] = function (id, props) {

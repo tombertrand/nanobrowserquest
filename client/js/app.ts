@@ -573,7 +573,7 @@ class App {
           click: function () {
             const player = $("#ban-player-name").val();
             const reason = $("#ban-player-reason").val();
-            const duration = $("#ban-player-until").val();
+            const duration = Number($("#ban-player-until").val()) || 365;
             const message = $("#ban-player-message").val();
 
             const isIPBan = $("#ban-player-ip").is(":checked");
