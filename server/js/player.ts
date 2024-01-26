@@ -692,10 +692,10 @@ class Player extends Character {
             entity = self.server.butcher;
 
             emoji = EmojiMap.butcher;
-          } else if (playerLocation === "skeletonKing") {
-            entity = self.server.skeletonKing;
+          } else if (playerLocation === "skeletonking") {
+            entity = self.server.skeletonking;
 
-            emoji = EmojiMap.skeletonKing;
+            emoji = EmojiMap.skeletonking;
           } else if (playerLocation === "necromancerlair") {
             entity = (({
               x,
@@ -1858,14 +1858,15 @@ class Player extends Character {
         const isClassicPayout = params[0] && params[0] === Types.Entities.BOSS;
 
         const playerLocation = getEntityLocation({ x: self.x, y: self.y });
-        if (playerLocation != "skeletonKing") {
+        if (playerLocation !== "skeletonking") {
           const until = 365 * 24 * 60 * 60 * 1000 + Date.now();
+
           databaseHandler.banPlayerByIP({
             admin: "auto-mod",
             player: self,
             reason: "cheating",
             until,
-            message: "invalid payout request",
+            message: `invalid payout request, playerLocation: ${playerLocation}, x: ${self.x}, y: ${self.y}`,
           });
         }
         // only set Q when skel king dies on payout success
@@ -1979,7 +1980,7 @@ class Player extends Character {
               : "";
 
           const messageToPayoutsChannel = `**${self.name}** killed the Skeleton King ${
-            EmojiMap.skeletonKing
+            EmojiMap.skeletonking
           } ${maxPayoutOutput} and received a payout of **${raiPayoutAmount}** ${
             self.network === "nano" ? "XNO" : "BAN"
           } 🎉`;

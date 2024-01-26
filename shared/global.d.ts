@@ -30,7 +30,7 @@ type PlayerLocation =
   | "wood"
   | "beach"
   | "classicgame"
-  | "skeletonKing"
+  | "skeletonking"
   | "caveworld2"
   | "skeeletoncommander"
   | "expansion1"

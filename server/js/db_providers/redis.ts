@@ -1417,10 +1417,11 @@ class DatabaseHandler {
               }
 
               if (isMultipleFrom) {
-                this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {});
-              }
-              if (isMultipleTo) {
-                this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed), () => {});
+                this.client.hset("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {
+                  if (isMultipleTo) {
+                    this.client.hset("u:" + player.name, toLocation, JSON.stringify(toReplyParsed), () => {});
+                  }
+                });
               }
 
               this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });

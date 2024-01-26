@@ -235,7 +235,7 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   } else if (isSBeach) {
     return "beach";
   } else if (isSkeletonKing) {
-    return "skeletonKing";
+    return "skeletonking";
   } else if (isInClassicGame) {
     return "classicgame";
   } else if (isCaveWorld2) {
@@ -277,7 +277,7 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   }
 };
 
-export const isClassicLocation = ["town", "caveWorld1", "volcanic", "wood", "beach", "skeletonKing"];
+export const isClassicLocation = ["town", "caveWorld1", "volcanic", "wood", "beach", "skeletonking"];
 
 export const isExpansion1Location = ["necromancerlair", "caveworld2", "skeeletoncommander", "cow", "minotaurcage"];
 
