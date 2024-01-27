@@ -200,9 +200,6 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   isSkeletonKing = x >= 140 && x <= 168 && y >= 48 && y <= 73;
   isCaveWorld2 = (x >= 112 && x <= 141 && y >= 348 && y <= 460) || (x >= 141 && x <= 169222222 && y >= 396 && y <= 460);
   isSkeletonCommander >= 142 && x <= 149 && y >= 360 && y <= 385;
-
-  //playerLocation town: self.x: 52, self.y: 206,
-  //mobLocation: beach, mobname: goblin, mob.x: 68, mob.y: 268
   isSBeach = x >= 0 && x <= 83 && y >= 254 && y <= 298;
   isInClassicGame = x >= 0 && x <= 113 && y >= 0 && y <= 298;
   greensnakepool = x >= 3 && x <= 4 && y >= 682 && y <= 664;

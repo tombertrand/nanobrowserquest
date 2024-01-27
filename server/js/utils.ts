@@ -923,7 +923,9 @@ export const isValidSocketPetCollar = items => {
 };
 
 export const isValidSocketItem = items => {
-  if (items.length !== 2) {
+  const kind = Types.getKindFromString(items[0]);
+
+  if (!kind || !Types.isEquipableItem(kind) || items.length !== 2) {
     return false;
   }
 
@@ -972,10 +974,10 @@ export const isValidSocketItem = items => {
 export const isValidStoneSocket = (items, isLuckySlot) => {
   const stoneIndex = items.findIndex(item => item.startsWith("stonesocket"));
 
-  if (!items[0] || items.length !== 2 || stoneIndex < 0) {
+  const kind = Types.getKindFromString(items[0]);
+  if (!kind || !Types.isEquipableItem(kind) || items.length !== 2 || stoneIndex < 0) {
     return false;
   }
-
   const isBlessed = items[stoneIndex].startsWith("stonesocketblessed");
 
   const [item, level, bonus, rawSocket, skill] = items[0].split(":");
