@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { getEntityLocation } from "../../shared/js/utils";
 import { ChestArea, MobArea } from "./area";
 import Character from "./character";
 import Messages from "./message";
@@ -388,6 +389,11 @@ class Mob extends Character {
     this.setPosition(this.spawningX, this.spawningY);
   }
 
+  setPosition(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
   returnToSpawningPosition(waitDuration) {
     var self = this;
     var delay = waitDuration || 4000;
@@ -400,6 +406,20 @@ class Mob extends Character {
     }, delay);
   }
 
+  returnBossToSpawningPosition(x, y) {
+    const entityLocation = getEntityLocation({ x, y });
+
+    if (this.kind === Types.Entities.MINOTAUR && entityLocation !== "minotaurcage") {
+      this.returnToSpawningPosition(0);
+    } else if (this.kind === Types.Entities.DEATHANGEL && entityLocation !== "azrealchamber") {
+      this.returnToSpawningPosition(0);
+    } else if (this.kind === Types.Entities.NECROMANCER && entityLocation !== "necromancerlair") {
+      this.returnToSpawningPosition(0);
+    } else if (this.kind === Types.Entities.COWKING && entityLocation !== "cow") {
+      this.returnToSpawningPosition(0);
+    }
+  }
+
   onDestroy(callback) {
     this.destroyCallback = callback;
   }
@@ -410,6 +430,7 @@ class Mob extends Character {
 
   move(x, y) {
     this.setPosition(x, y);
+    this.returnBossToSpawningPosition(x, y);
     if (this.moveCallback) {
       this.moveCallback?.(this);
     }

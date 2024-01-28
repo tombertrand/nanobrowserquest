@@ -22,9 +22,9 @@ type Orientation = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type TimedLevel = "cow" | "minotaur" | "stone" | "chalice" | "gateway" | "temple";
 type RunewordEquipment = "weapon" | "armor" | "helm" | "shield";
 
-type PlayerLocation =
+type EntityLocation =
   | "town"
-  | "caveWorld1"
+  | "caveworld1"
   | "nomansland"
   | "volcanic"
   | "wood"
@@ -33,6 +33,10 @@ type PlayerLocation =
   | "skeletonking"
   | "caveworld2"
   | "skeeletoncommander"
+  | "freezinglands"
+  | "highplateau"
+  | "cow"
+  | "minotaurcage"
   | "expansion1"
   | "expansion2"
   | "butchergateway"
@@ -41,8 +45,6 @@ type PlayerLocation =
   | "chalice"
   | "spiders"
   | "grimoire"
-  | "cow"
-  | "minotaurcage"
   | "necromancerlair"
   | "woodland"
   | "castleruins"
@@ -50,7 +52,7 @@ type PlayerLocation =
   | "magicskeletoncrypt"
   | "poisonskeletoncrypt"
   | "temple"
-  | "azrealgates";
+  | "azrealchamber";
 
 type GeneratedItem = {
   item: string;

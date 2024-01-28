@@ -12,7 +12,12 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
-import { getEntityLocation, isLocationOKWithExpansionLocation } from "../../shared/js/utils";
+import {
+  getEntityLocation,
+  isExpansion1Location,
+  isExpansion2Location,
+  isLocationOKWithExpansionLocation,
+} from "../../shared/js/utils";
 import { hasMoreThanPercentCaps, replaceLetters } from "../../shared/js/utils";
 import {
   HASH_BAN_DELAY,
@@ -115,7 +120,7 @@ const badWords = [
   "fuck you",
   "fuck",
   "fvck",
-
+  "fvk",
   "sucker",
   "cunt",
   "whore",
@@ -734,7 +739,7 @@ class Player extends Character {
             entity = self.server.spiderQueen;
 
             emoji = EmojiMap.arachneia;
-          } else if (playerLocation === "azrealgates") {
+          } else if (playerLocation === "azrealchamber") {
             entity = self.server.deathAngel;
 
             emoji = EmojiMap.azrael;
@@ -749,10 +754,10 @@ class Player extends Character {
           }
 
           if (entity) {
-            postMessageToSupportChannel(`**${entity.name.toUpperCase()}**${emoji}${JSON.stringify(entity)}`);
+            postMessageToSupportChannel(`**${entity.name.toUpperCase()}** ${emoji}${JSON.stringify(entity)}`);
           } else {
             postMessageToSupportChannel(
-              `No boss in that area**${self.name}**X:${self.x}Y:${self.y}  playerLocation:${playerLocation}`,
+              `No boss in that area **${self.name}** x:${self.x}, y:${self.y}  playerLocation:${playerLocation}`,
             );
 
             self.send(new Messages.Party(Types.Messages.PARTY_ACTIONS.ERROR, `No boss in that area.`).serialize());
@@ -1693,66 +1698,72 @@ class Player extends Character {
         console.info("TELEPORT: " + self.name + "(" + params[0] + ", " + params[1] + ")");
 
         const isStoneTeleport = action === Types.Messages.STONETELEPORT;
+        const isTeleport = action === Types.Messages.TELEPORT;
         let x;
         let y;
         let orientation = self.orientation;
 
-        if (!isStoneTeleport) {
+        if (isTeleport) {
           x = params[0];
           y = params[1];
           orientation = params[2];
+        } else {
         }
-        let isIntown = false;
-        let isValidStoneTeleport = true;
+
         let isItemConsumed = false;
         let isNear = false;
-        let playerToTeleportTo;
-        if (isStoneTeleport && self.partyId) {
-          playerToTeleportTo = isStoneTeleport ? self.server.getEntityById(params[0]) : null;
+        let playerToTeleportTo: Player = isStoneTeleport ? self.server.getEntityById(params[0]) : null;
+        let playerToTeleportToLocation = playerToTeleportTo
+          ? getEntityLocation({ x: playerToTeleportTo.x, y: playerToTeleportTo.y })
+          : null;
 
+        let errorMessage = "";
+
+        if (isStoneTeleport && playerToTeleportTo) {
           if (playerToTeleportTo?.partyId === self.partyId) {
-            ({ x, y } = playerToTeleportTo);
+            if (isExpansion1Location.includes(playerToTeleportToLocation) && !self.expansion1) {
+              errorMessage = " You can't teleport to Freeznig Lands location before you kill the Skeleton King.";
+            }
 
-            isNear = Math.abs(self.x - x) <= 32 && Math.abs(self.y - y) <= 32;
-            isIntown = getEntityLocation({ x, y }) === "town";
+            if (isExpansion2Location.includes(playerToTeleportToLocation) && !self.expansion2) {
+              errorMessage = " You can't teleport to a Lost Temple location, you don't have the expansion.";
+            }
+            isNear = Math.abs(self.x - playerToTeleportTo.x) <= 32 && Math.abs(self.y - playerToTeleportTo.y) <= 32;
+            if (isNear) {
+              errorMessage = " The player you want to teleport to within 32 tiles.";
+            }
+            if (playerToTeleportToLocation === "town") {
+              errorMessage = " The player you want to teleport to is in Town.";
+            }
           }
-        }
 
-        if (isStoneTeleport && playerToTeleportTo) {
-          if (isIntown) {
+          console.log("~~~~errorMessage", errorMessage);
+
+          if (isStoneTeleport) {
+            x = playerToTeleportTo.x;
+            y = playerToTeleportTo.y;
+          }
+
+          if (errorMessage) {
             self.send(
               new Messages.Party(
                 Types.Messages.PARTY_ACTIONS.ERROR,
-                `${playerToTeleportTo?.name} is in town Teleport stone was not consumed.`,
+                `${errorMessage}. Teleport stone was not consumed.`,
               ).serialize(),
             );
-            isValidStoneTeleport = false;
-          } else if (isNear) {
-            self.send(
-              new Messages.Party(
-                Types.Messages.PARTY_ACTIONS.ERROR,
-                `${playerToTeleportTo?.name} is within 32 tiles Teleport was not consumed.`,
-              ).serialize(),
-            );
-            isValidStoneTeleport = false;
+          } else if (isStoneTeleport && playerToTeleportTo && self.server.isValidPosition(x, y)) {
+            isItemConsumed = await this.databaseHandler.useInventoryItem(self, "stoneteleport");
+            self.send([
+              Types.Messages.STONETELEPORT_CHECK,
+              {
+                x,
+                y,
+                playerId: playerToTeleportTo?.id,
+                confirmed: true,
+                isValid: isItemConsumed,
+              },
+            ]);
           }
-        }
-
-        if (isStoneTeleport && isValidStoneTeleport) {
-          isItemConsumed = await this.databaseHandler.useInventoryItem(self, "stoneteleport");
-        }
-
-        if (isStoneTeleport && playerToTeleportTo) {
-          self.send([
-            Types.Messages.STONETELEPORT_CHECK,
-            {
-              x,
-              y,
-              playerId: playerToTeleportTo?.id,
-              confirmed: true,
-              isValid: isValidStoneTeleport && isItemConsumed,
-            },
-          ]);
         }
 
         self.orientation = orientation;
@@ -1764,7 +1775,8 @@ class Player extends Character {
             return;
           }
         }
-        if (self.server.isValidPosition(x, y)) {
+
+        if (self.server.isValidPosition(x, y) && !errorMessage) {
           if (x === 98 && y === 764) {
             const deathAngelLevel = self.server.getEntityById(self.server.leverDeathAngelNpcId);
             const deathAngelDoor = self.server.getEntityById(self.server.doorDeathAngelNpcId);
@@ -1800,21 +1812,15 @@ class Player extends Character {
           self.clearTarget();
 
           self.broadcast(new Messages.Teleport(self));
-
           self.zone_callback();
-
-          // if (self.petEntity) {
-          // self.server.moveEntity(self.petEntity, x, y);
-
-          // self.petEntity.setPosition(x, y);
-          // self.petEntity.group = self.group;
-          // }
 
           // @NOTE Make sure every mobs disengage
           self.server.handlePlayerVanish(self);
           // self.server.pushRelevantEntityListTo(self);
 
           self.sendLevelInProgress();
+        } else {
+          return;
         }
       } else if (action === Types.Messages.BOSS_CHECK) {
         if (self.hash && !params[0]) {

@@ -1749,8 +1749,7 @@ class Game {
   }
 
   initTeleportContextMenu() {
-    // return;
-    // const hasStoneTele portInInventory = false; //!!this.player.inventory.find(({ item }) => item === "stoneteleport");
+    const hasStoneTeleportInInventory = !!this.player.inventory.find(({ item }) => item === "stoneteleport");
 
     if ($("#party-player-list .player-name").data("contextMenu")) {
       $("#party-player-list .player-name").contextMenu("destroy");
@@ -1761,32 +1760,32 @@ class Game {
         $("#foreground").trigger(event);
       });
 
-    // $.contextMenu({
-    //   selector: "#party-player-list .player-name",
+    $.contextMenu({
+      selector: "#party-player-list .player-name",
 
-    //   build: _event => {
-    //     const playerId = Number($(_event.target).attr("data-player-id"));
-    //     const playerName = String($(_event.target).text().trim());
+      build: _event => {
+        const playerId = Number($(_event.target).attr("data-player-id"));
+        const playerName = String($(_event.target).text().trim());
 
-    //     return playerId
-    //       ? {
-    //           callback: () => {
-    //             if (hasStoneTeleportInInventory && !Object.keys(this.player.attackers).length) {
-    //               this.client.sendStoneTeleport(playerId);
-    //             }
-    //           },
-    //           items: {
-    //             player: {
-    //               name: hasStoneTeleportInInventory
-    //                 ? `Teleport to ${playerName}`
-    //                 : "you don't have Teleport stone in your inventory",
-    //               disabled: playerId === this.player.id || !hasStoneTeleportInInventory,
-    //             },
-    //           },
-    //         }
-    //       : null;
-    //   },
-    // });
+        return playerId
+          ? {
+              callback: () => {
+                if (hasStoneTeleportInInventory && !Object.keys(this.player.attackers).length) {
+                  this.client.sendStoneTeleport(playerId);
+                }
+              },
+              items: {
+                player: {
+                  name: hasStoneTeleportInInventory
+                    ? `Teleport to ${playerName}`
+                    : "you don't have Teleport stone in your inventory",
+                  disabled: playerId === this.player.id || !hasStoneTeleportInInventory,
+                },
+              },
+            }
+          : null;
+      },
+    });
   }
 
   updateMerchant() {

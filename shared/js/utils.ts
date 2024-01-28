@@ -153,7 +153,7 @@ export const isValidRecipe = items => {
   }
 };
 
-export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
+export const getEntityLocation = ({ x, y }): EntityLocation | null => {
   let isInTown;
   let caveWorld1;
   let volcanic;
@@ -172,6 +172,8 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   let isCowLevel;
   let isMinotaurCage;
   let isCaveWorld2;
+  let isFreezingLands;
+  let isHighPlateau;
   let isSkeletonCommander;
   let isInNecromancerLair;
   let isInExpansion1;
@@ -182,7 +184,7 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   let isInMagicSkeletonCrypt;
   let isInPoisonSkeletonCrypt;
   let isinTemple;
-  let iInAzrealGates;
+  let isInAzrealChamber;
   let isButcherGateway;
 
   if (!x || !y) {
@@ -207,6 +209,8 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   isGrimoireDungeon = x >= 29 && x <= 56 && y >= 696 && y <= 733;
   isCowLevel = x >= 0 && x <= 92 && y >= 464 && y <= 535;
   isMinotaurCage = x >= 29 && x <= 52 && y >= 494 && y <= 500;
+  isFreezingLands = x >= 0 && x <= 84 && y >= 398 && y <= 452;
+  isHighPlateau = x >= 0 && x <= 84 && y >= 370 && y <= 390;
   isInExpansion1 = x >= 0 && x <= 169 && y >= 313 && y <= 463;
   isInNecromancerLair = x >= 140 && x <= 169 && y >= 324 && y <= 349;
   isSpiderDungeon = x >= 85 && x <= 112 && y >= 696 && y <= 733;
@@ -218,13 +222,13 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   isInPoisonSkeletonCrypt = x >= 113 && x <= 141 && y >= 696 && y <= 733;
   isButcherGateway = x >= 0 && x <= 29 && y >= 744 && y <= 781;
   isinTemple = x >= 111 && x <= 171 && y >= 744 && y <= 781;
-  iInAzrealGates = x >= 84 && x <= 111 && y >= 744 && y <= 769;
+  isInAzrealChamber = x >= 84 && x <= 111 && y >= 744 && y <= 769;
   if (isInNecromancerLair) {
     return "necromancerlair";
   } else if (isInTown || isInTownHouse1 || isInTownHouse2 || isInTownHouse3Or4 || isInTownCave) {
     return "town";
   } else if (caveWorld1) {
-    return "caveWorld1";
+    return "caveworld1";
   } else if (volcanic) {
     return "volcanic";
   } else if (wood) {
@@ -237,6 +241,10 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
     return "classicgame";
   } else if (isCaveWorld2) {
     return "caveworld2";
+  } else if (isFreezingLands) {
+    return "freezinglands";
+  } else if (isHighPlateau) {
+    return "highplateau";
   } else if (isSkeletonCommander) {
     return "skeeletoncommander";
   } else if (isGrimoireDungeon) {
@@ -259,8 +267,8 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
     return "butchergateway";
   } else if (isInPoisonSkeletonCrypt) {
     return "poisonskeletoncrypt";
-  } else if (iInAzrealGates) {
-    return "azrealgates";
+  } else if (isInAzrealChamber) {
+    return "azrealchamber";
   } else if (isinTemple) {
     return "temple";
   } else if (redsnakepool) {
@@ -274,43 +282,38 @@ export const getEntityLocation = ({ x, y }): PlayerLocation | null => {
   }
 };
 
-export const isClassicLocation = ["town", "caveWorld1", "volcanic", "wood", "beach", "skeletonking"];
+export const isClassicLocation = ["town", "caveworld1", "volcanic", "wood", "beach", "skeletonking", "classicgame"];
 
-export const isExpansion1Location = ["necromancerlair", "caveworld2", "skeeletoncommander", "cow", "minotaurcage"];
+export const isExpansion1Location = [
+  "freezinglands",
+  "highplateau",
+  "necromancerlair",
+  "caveworld2",
+  "skeeletoncommander",
+  "cow",
+  "minotaurcage",
+  "expansion1",
+];
 
 export const isExpansion2Location = [
-  "spiders",
-  "magicskeletoncrypt",
-  "butchergateway",
-  "poisonskeletoncrypt",
-  "azrealgates",
-  "temple",
-  "redsnakepool",
-  "castleruins",
   "woodland",
+  "spiders",
+  "poisonskeletoncrypt",
+  "magicskeletoncrypt",
+  "castleruins",
+  "redsnakepool",
+  "butchergateway",
+  "temple",
+  "azrealchamber",
+  "expansion2",
 ];
 
 export const isLocationOKWithExpansionLocation = (playerLocation, mobLocation): boolean => {
-  if (
-    isClassicLocation.includes(playerLocation) ||
-    isClassicLocation.includes(mobLocation) ||
-    (playerLocation === "classicgame" && isClassicLocation.includes(mobLocation)) ||
-    (mobLocation === "classicgame" && isClassicLocation.includes(playerLocation))
-  ) {
+  if (isClassicLocation.includes(playerLocation) || isClassicLocation.includes(mobLocation)) {
     return true;
-  } else if (
-    isExpansion1Location.includes(playerLocation) ||
-    isExpansion1Location.includes(mobLocation) ||
-    (playerLocation === "expansion1" && isClassicLocation.includes(mobLocation)) ||
-    (mobLocation === "expansion1" && isClassicLocation.includes(playerLocation))
-  ) {
+  } else if (isExpansion1Location.includes(playerLocation) || isExpansion1Location.includes(mobLocation)) {
     return true;
-  } else if (
-    isExpansion2Location.includes(playerLocation) ||
-    isExpansion2Location.includes(mobLocation) ||
-    (playerLocation === "expansion2" && isClassicLocation.includes(mobLocation)) ||
-    (mobLocation === "expansion2" && isClassicLocation.includes(playerLocation))
-  ) {
+  } else if (isExpansion2Location.includes(playerLocation) || isExpansion2Location.includes(mobLocation)) {
     return true;
   }
 

@@ -52,8 +52,8 @@ class FormatChecker {
       (this.formats[Types.Messages.GOLD.BANK] = ["b"]),
       (this.formats[Types.Messages.MERCHANT.BUY] = ["n", "n", "n"]),
       (this.formats[Types.Messages.MERCHANT.SELL] = ["n", "n"]),
+      (this.formats[Types.Messages.STONETELEPORT] = ["n"]),
       (this.formats[Types.Messages.STORE_ITEMS] = []);
-    this.formats[Types.Messages.STONETELEPORT] = ["n"];
   }
 
   check(json) {
