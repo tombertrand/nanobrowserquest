@@ -83,6 +83,7 @@ const ADMINS = [
   "bruin",
   "bread duck",
   "Thedd",
+  "vikramr",
 ];
 const SUPER_ADMINS = ["running-coder"];
 // const immediateBanbadWords = [
