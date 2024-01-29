@@ -97,6 +97,7 @@ export const rawToRai = (raw, network: Network) => {
 
 export const raiToRaw = (rai, network: Network) => {
   const decimals = network === "nano" ? 30 : 29;
+  p;
   const value = new BigNumber(rai.toString());
   return value.shiftedBy(decimals).toNumber();
 };
@@ -963,11 +964,14 @@ export const isValidSocketItem = items => {
 
   return newItem;
 };
-
 export const isValidStoneSocket = (items, isLuckySlot) => {
-  const stoneIndex = items.findIndex(item => item.startsWith("stonesocket"));
+  const filteredItems = items.filter(item => item !== 0);
 
-  const isBlessed = items[stoneIndex].startsWith("stonesocketblessed");
+  const stoneIndex = filteredItems.findIndex(item => item.startsWith("stonesocket"));
+  if (stoneIndex === -1) {
+    return false;
+  }
+  const isBlessed = stoneIndex >= 0 ? filteredItems[stoneIndex].startsWith("stonesocketblessed") : null;
 
   const [item, level, bonus, rawSocket, skill] = items[0].split(":");
 
@@ -1226,7 +1230,7 @@ export const generateDroppedItem = () => {
     return;
   }
   let randomDrops = [];
-  // randomDrops = ["mysticaldagger"];
+  // randomDrops = ["amuletmoon"];
   // randomDrops = ["helmexecutioner"];
   // randomDrops = ["christmaspresent"];
   // randomDrops = ["demonsickle"];
@@ -1250,7 +1254,7 @@ export const generateDroppedItem = () => {
   // "beltchristmas",
   // "shieldchristmas",
   //   "amuletchristmas",
-  //   "amuletmoon",
+
   // ];
   // var randomDrops = ["gold"];
   // var randomDrops = ["barbronze", "barsilver", "bargold", "barplatinum"];
