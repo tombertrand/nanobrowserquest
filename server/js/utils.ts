@@ -844,7 +844,6 @@ export const getRandomSockets = ({ kind, baseLevel, isLuckySlot = false, isBless
       socketCount += 1;
     }
   }
-
   return new Array(socketCount).fill(0);
 };
 
@@ -918,8 +917,8 @@ export const isValidSocketPetCollar = items => {
     return false;
   }
 
-  const isPet = Types.isPet(items[0]);
-  const isPetCollar = Types.isPet(items[1].startsWith("petcollar"));
+  // const isPet = Types.isPet(items[0]);
+  // const isPetCollar = Types.isPet(items[1].startsWith("petcollar"));
 };
 
 export const isValidSocketItem = items => {
@@ -935,11 +934,6 @@ export const isValidSocketItem = items => {
   try {
     socket = JSON.parse(rawSocket);
   } catch (err) {
-    return false;
-  }
-
-  const kind = Types.getKindFromString(item);
-  if (!kind || !Types.isEquipableItem(kind) || items.length !== 2) {
     return false;
   }
 
@@ -973,10 +967,6 @@ export const isValidSocketItem = items => {
 export const isValidStoneSocket = (items, isLuckySlot) => {
   const stoneIndex = items.findIndex(item => item.startsWith("stonesocket"));
 
-  const kind = Types.getKindFromString(items[0]);
-  if (!kind || !Types.isEquipableItem(kind) || items.length !== 2 || stoneIndex < 0) {
-    return false;
-  }
   const isBlessed = items[stoneIndex].startsWith("stonesocketblessed");
 
   const [item, level, bonus, rawSocket, skill] = items[0].split(":");
@@ -991,7 +981,8 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
     // no socket, silence error
   }
 
-  if (stoneIndex === -1 || !Types.isSocketItem(item)) {
+  const kind = Types.getKindFromString(item);
+  if (!kind || !Types.isEquipableItem(kind) || items.length !== 2 || stoneIndex === -1 || !Types.isSocketItem(item)) {
     return false;
   }
 
@@ -1000,7 +991,6 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
   if (isBlessed) {
     maxRerollSocket += 2;
   }
-
   if (socket?.length && socket.filter(slot => slot !== 0).length) {
     let lastSocketIndex = socket.findIndex(i => i === 0);
     if (lastSocketIndex === -1) {
@@ -1017,7 +1007,6 @@ export const isValidStoneSocket = (items, isLuckySlot) => {
 
     socket[lastSocketIndex - 1] = 0;
   } else if (!socket?.length || socket?.length < maxRerollSocket) {
-    const kind = Types.getKindFromString(item);
     const baseLevel = Types.getBaseLevel(kind);
 
     socket = getRandomSockets({ kind, baseLevel, isLuckySlot, isBlessed });
