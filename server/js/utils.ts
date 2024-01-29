@@ -923,12 +923,6 @@ export const isValidSocketPetCollar = items => {
 };
 
 export const isValidSocketItem = items => {
-  const kind = Types.getKindFromString(items[0]);
-
-  if (!kind || !Types.isEquipableItem(kind) || items.length !== 2) {
-    return false;
-  }
-
   const runeIndex = items.findIndex(item => item.startsWith("rune-"));
   const jewelIndex = items.findIndex(item => item.startsWith("jewel"));
   const itemIndex = items.findIndex(item => !item.startsWith("rune-"));
@@ -941,6 +935,11 @@ export const isValidSocketItem = items => {
   try {
     socket = JSON.parse(rawSocket);
   } catch (err) {
+    return false;
+  }
+
+  const kind = Types.getKindFromString(item);
+  if (!kind || !Types.isEquipableItem(kind) || items.length !== 2) {
     return false;
   }
 

@@ -545,6 +545,7 @@ class Game {
       this.audioManager.disableMusic();
     } else {
       $("#mute-music-checkbox").prop("checked", true);
+
       this.audioManager.updateMusicVolume(musicVolume);
     }
 

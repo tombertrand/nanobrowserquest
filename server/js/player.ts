@@ -1738,8 +1738,6 @@ class Player extends Character {
             }
           }
 
-          console.log("~~~~errorMessage", errorMessage);
-
           if (isStoneTeleport) {
             x = playerToTeleportTo.x;
             y = playerToTeleportTo.y;

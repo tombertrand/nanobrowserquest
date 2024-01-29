@@ -118,6 +118,7 @@ class AudioManager {
     this.musicVolume = volume;
 
     const music = this.getSurroundingMusic(this.game.player);
+
     if (music?.sound) {
       music.sound.volume = this.musicVolume;
     }
@@ -203,9 +204,9 @@ class AudioManager {
       return null;
     }
 
-    return this.sounds[name].find(sound => sound.ended || sound.paused);
+    return this.sounds[name].find(sound => !sound.ended || !sound.paused);
   }
-  
+
   playSound(
     name: string,
     { delay = 0, volume, force = false }: { delay?: number; volume?: number; force?: boolean } = {},
@@ -231,6 +232,7 @@ class AudioManager {
       return area.contains(entity);
     });
 
+
     if (area) {
       if (!this.sounds[area.musicName]) {
         this.loadMusic(area.musicName);
@@ -238,6 +240,7 @@ class AudioManager {
         music = { sound: this.getSound(area.musicName), name: area.musicName };
       }
     }
+
     return music;
   }
 
