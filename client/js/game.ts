@@ -2274,7 +2274,7 @@ class Game {
       let entity =
         this.getEntityAt(x, y, Mob) ||
         this.getEntityAt(x, y, Npc) ||
-        (this.pvp && this.getEntityAt(x, y, Player)) ||
+        (this.player.pvp && this.getEntityAt(x, y, Player)) ||
         this.getNearestEntity();
       mobId = entity?.id;
 
@@ -2291,8 +2291,9 @@ class Game {
         !mobId ||
         mobId === this.player.id ||
         ((Types.isNpc(entity.kind) || !(entity instanceof Character)) && !isTree)
-      )
+      ) {
         return;
+      }
 
       // Can't cast on other player if PvP is not enabled
       if (mobId && entity instanceof Player && (!entity.pvp || !this.pvp)) {
@@ -2358,7 +2359,6 @@ class Game {
         this.player.defenseSkillTimeout = null;
       }, timeout);
     }
-
     this.audioManager.playSound(`skill-${skillName}`);
     this.client.sendSkill(slot, mobId);
   }
