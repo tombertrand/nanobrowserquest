@@ -97,7 +97,6 @@ export const rawToRai = (raw, network: Network) => {
 
 export const raiToRaw = (rai, network: Network) => {
   const decimals = network === "nano" ? 30 : 29;
-  p;
   const value = new BigNumber(rai.toString());
   return value.shiftedBy(decimals).toNumber();
 };

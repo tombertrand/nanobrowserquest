@@ -402,7 +402,7 @@ class Mob extends Character {
 
     this.returnTimeout = setTimeout(function () {
       self.resetPosition();
-      self.move(self.x, self.y);
+      self.move(self.spawningX, self.spawningY);
     }, delay);
   }
 
@@ -417,6 +417,12 @@ class Mob extends Character {
       this.returnToSpawningPosition(0);
     } else if (this.kind === Types.Entities.COWKING && entityLocation !== "cow") {
       this.returnToSpawningPosition(0);
+    } else if (this.kind === Types.Entities.SPIDERQUEEN && entityLocation !== "spiders") {
+      this.returnToSpawningPosition(0);
+    } else if (this.kind === Types.Entities.BUTCHER && entityLocation !== "butchergateway") {
+      this.returnToSpawningPosition(0);
+    } else if (this.kind === Types.Entities.SHAMAN && entityLocation !== "chalice") {
+      this.returnToSpawningPosition(0);
     }
   }
 
@@ -425,15 +431,13 @@ class Mob extends Character {
   }
 
   onMove(callback) {
+    this.returnBossToSpawningPosition(this.x, this.y);
     this.moveCallback = callback;
   }
 
   move(x, y) {
     this.setPosition(x, y);
-    this.returnBossToSpawningPosition(x, y);
-    if (this.moveCallback) {
-      this.moveCallback?.(this);
-    }
+    this.moveCallback?.(this);
   }
 
   updateHitPoints() {

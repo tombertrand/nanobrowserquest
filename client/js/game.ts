@@ -1752,9 +1752,13 @@ class Game {
   initTeleportContextMenu() {
     const hasStoneTeleportInInventory = !!this.player.inventory.find(({ item }) => item === "stoneteleport");
 
-    if ($("#party-player-list .player-name").data("contextMenu")) {
+    let contextMenu = $("party-player-list .player-name").data("contextMenu");
+
+    if (contextMenu) {
+      $("#party-player-list .player-name").data("contextMenu", "destroy");
       $("#party-player-list .player-name").contextMenu("destroy");
     }
+
     $("#party-player-list")
       .off("click")
       .on("click", event => {
@@ -5295,7 +5299,6 @@ class Game {
       self.client.onReceiveInventory(function (data) {
         self.player.setInventory(data);
         self.updateInventory();
-
         self.initTeleportContextMenu();
       });
 
