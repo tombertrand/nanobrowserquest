@@ -13,12 +13,10 @@ export const setBonus = {
     extraGold: 12,
   },
   immortal: {
-    health: 100,
-    defense: 25,
-    minDamage: 25,
-    maxDamage: 10,
-    exp: 12,
-    attackDamage: 12,
+    health: 200,
+    defense: 35,
+    exp: 10,
+    attackDamage: 20,
     pierceDamage: 15,
     absorbedDamage: 20,
     allResistance: 15,
@@ -60,7 +58,6 @@ export const setBonus = {
     allResistance: 12,
     attackSpeed: 20,
   },
-
   dragon: {
     minDamage: 25,
     attackDamage: 25,
@@ -275,7 +272,6 @@ export const kindAsStringToSet = {
   immortalsword: "immortal",
   helmimmortal: "immortal",
   immortalarmor: "immortal",
-  immortalring: "immortal",
   shieldimmortal: "immortal",
   ringpumkin: "pumpkin",
   helmpumkin: "pumpkin",
@@ -283,14 +279,7 @@ export const kindAsStringToSet = {
 
 export const setItems = {
   pumpkin: ["ringpumkin", "helmpumkin"],
-  immortal: [
-    ["spikeglaive", "immortalsword"],
-    "helmimmortal",
-    "immortalarmor",
-    "immortalring",
-    "shieldimmortal",
-    "beltimmortal",
-  ],
+  immortal: [["spikeglaive", "immortalsword"], "helmimmortal", "immortalarmor", "shieldimmortal", "beltimmortal"],
   paladin: ["paladinaxe", "helmpaladin", "paladinarmor", "shieldpaladin", "beltpaladin"],
   mystical: [
     ["mysticalsword", "mysticaldagger"],
@@ -338,13 +327,12 @@ export const setItems = {
 
 export const setItemsNameMap = {
   pumpkin: ["helm", "Ring"],
-  immortal: ["Glaive or Sword", "helm", "Armor", "Belt", "Shield", "Ring"],
+  immortal: ["Glaive or Sword", "helm", "Armor", "Belt", "Shield"],
   paladin: ["Axe", "Helm", "Armor", "Belt", "Shield"],
   mystical: [["Sword or Dagger"], "Helm", "Armor", "Belt", "Shield", "Ring"],
   demon: [["Axe, Dagger, Sickle or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet", "Pet Hellhound"],
   moon: [["Sword, Hatchet or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet"],
   christmas: [["Sword, Hatchet or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet", "Pet Reindeer"],
-
   dragon: ["Sword", "Helm", "Armor", "Shield", "Pet Dragon", "Amulet"],
   templar: ["Sword", "Helm", "Armor", "Belt", "Shield"],
   executioner: ["helm", "Sword", "Belt", "Shield"],
@@ -359,4 +347,10 @@ export const setItemsNameMap = {
   plated: ["Helm", "Armor", "Belt", "Shield"],
   mail: ["Helm", "Armor", "Shield"],
   leather: ["Helm", "Armor", "Belt", "Shield"],
+};
+
+export const setDescription = {
+  immortal:
+    "wearing the full Immortal set grants you a second life upon death if the spectral aura is active, the aura reloads depending on your set level.",
+  paladin: "wearing the full set grants your party members bonuses based on your set level.",
 };

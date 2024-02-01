@@ -12,6 +12,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
+import { setItemsNameMap } from "../../shared/js/types/set";
 import {
   getEntityLocation,
   isExpansion1Location,
@@ -882,7 +883,6 @@ class Player extends Character {
           self.databaseHandler.chatBan({ player: bannedPlayer, message: banMessage, isIPBan });
         } else if (isIPBan) {
           databaseHandler.banPlayerByIP({
-            admin: self,
             player: bannedPlayer,
             reason,
             until,
@@ -3499,7 +3499,10 @@ class Player extends Character {
       if (this.bonus.freezeChance) {
         this.auras.push("freeze");
       }
-      this.auras.push("health-regenerate");
+      if (this.bonus.regenerateHealth >= 125) {
+        this.auras.push("health-regenerate");
+      }
+
       this.broadcast(new Messages.Auras(this), false);
     } catch (err) {
       Sentry.captureException(err, {
@@ -3732,6 +3735,9 @@ class Player extends Character {
           bonus[type] += stats;
         });
       });
+      if (setItems["immortal"] && setItems["immortal"] === setItemsNameMap["immortal"].length) {
+        this.auras.push("arcane");
+      }
     }
 
     if (Object.keys(bonus)) {

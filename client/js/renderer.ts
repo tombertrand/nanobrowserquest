@@ -728,16 +728,9 @@ class Renderer {
             } else if (aura === "arcane") {
               sprite = this.game.getSprite("aura-arcane");
               anim = this.game.arcaneAnimation;
-              //@ts-ignore
-            } else if (
-              aura === "health-regenerate" &&
-              typeof entity?.bonus?.regenerateHealth === "number" &&
-              entity?.bonus?.regenerateHealth >= 125
-            ) {
+            } else if (aura === "health-regenerate") {
               sprite = this.game.getSprite("aura-health-regenerate");
               anim = this.game.healthRegenerateAnimation;
-
-
             }
 
             if (sprite?.width && anim) {

@@ -1,3 +1,5 @@
+
+
 type Recipes = "cowLevel" | "minotaurLevel" | ChestType | "powderquantum" | "petegg" | Consumable;
 type Consumable = "expansion2voucher";
 type ChatType = "world" | "zone" | "party" | "event" | "info" | "loot";
@@ -12,6 +14,7 @@ type Auras =
   | "lowerresistance"
   | "arcane"
   | "health-regenerate";
+
 type DefenseSkills = "heal" | "defense" | "resistances";
 type AttackSkills = "flame" | "lightning" | "cold" | "poison";
 type Elements = "magic" | "flame" | "lightning" | "cold" | "poison" | "spectral";
