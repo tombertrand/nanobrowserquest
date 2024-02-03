@@ -30,6 +30,7 @@ import {
 import { AchievementName } from "../../shared/js/types/achievements";
 import { expForLevel } from "../../shared/js/types/experience";
 import { setDescription } from "../../shared/js/types/set";
+import { MIN_COW_LEVEL, MIN_MINOTAUR_LEVEL } from "../../shared/js/utils";
 import { getEntityLocation } from "../../shared/js/utils";
 import { HASH_BAN_DELAY } from "../../shared/js/utils";
 import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
@@ -2475,7 +2476,7 @@ class Game {
     var self = this;
 
     if (Array.isArray(waypoints)) {
-      waypoints.forEach((status, i) => {
+      waypoints.forEach((status, index) => {
         // Statuses
         // 0, disabled
         // 1, available
@@ -2488,12 +2489,12 @@ class Game {
         }
 
         $("<div/>", {
-          id: `waypoint-${Types.waypoints[i].id}`,
-          "data-waypoint-id": Types.waypoints[i].id,
+          id: `waypoint-${Types.waypoints[index].id}`,
+          "data-waypoint-id": Types.waypoints[index].id,
           class: `waypoint-spaced-row waypoint-row ${statusClass}`,
           html: `
             <div class="waypoint-icon"></div>
-            <div class="waypoint-text">${Types.waypoints[i].name}</div>
+            <div class="waypoint-text">${Types.waypoints[index].name}</div>
             `,
           click(e) {
             e.preventDefault();
@@ -2519,6 +2520,30 @@ class Game {
             }
           },
         }).appendTo("#waypoint-list");
+
+        $(".waypoint-row").tooltip({
+          items: ".waypoint-row",
+
+          classes: {
+            "ui-tooltip": "waypoint-row",
+          },
+          track: true,
+          // hide: 100000,
+          position: { my: "left bottom-10", at: "left bottom", collision: "flipfit" },
+
+          content() {
+            if (!self.player) return;
+            const waypointId = Number($(this)[0]?.dataset?.waypointId);
+
+            let content = undefined;
+
+            if (!self.player.expansion1 || !self.player.expansion2) {
+              content = Types.waypoints[waypointId - 1]?.content;
+            }
+
+            return content;
+          },
+        });
       });
     }
   }
@@ -4932,7 +4957,6 @@ class Game {
         } else if (kind === Types.Entities.DEATHANGEL) {
           self.tryUnlockingAchievement("DEATHANGEL");
         }
-
         if (kind >= Types.Entities.RAT3 && isMiniBoss) {
           self.storage.incrementMiniBossCount();
           self.tryUnlockingAchievement("MINI_BOSS");
@@ -6036,7 +6060,7 @@ class Game {
       } else if (npc.kind === Types.Entities.SATOSHI) {
         this.tryUnlockingAchievement("SATOSHI");
       } else if (npc.kind === Types.Entities.PORTALCOW) {
-        if (this.player.level >= 45) {
+        if (this.player.level >= MIN_COW_LEVEL) {
           if (npc.gridX === 43 && npc.gridY === 211) {
             if (this.cowLevelPortalCoords) {
               this.tryUnlockingAchievement("SECRET_LEVEL");
@@ -6052,7 +6076,7 @@ class Game {
           }
         }
       } else if (npc.kind === Types.Entities.PORTALMINOTAUR) {
-        if (this.player.level >= 50) {
+        if (this.player.level >= MIN_MINOTAUR_LEVEL) {
           if (npc.gridX === 40 && npc.gridY === 210) {
             if (this.minotaurLevelPortalCoords) {
               this.player.stop_pathing_callback({

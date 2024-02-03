@@ -2277,6 +2277,7 @@ Types.waypoints = [
   {
     id: 4,
     name: "Freezing Lands",
+    content: "To enter the freezing lands you need to beat the Skeleton King",
     gridX: 77,
     gridY: 450,
   },
@@ -2295,6 +2296,7 @@ Types.waypoints = [
   {
     id: 7,
     name: "Woodland",
+    content: "To enter the  Woodland you must purchase the Lost Temple expansion from the red wizard in town",
     gridX: 100,
     gridY: 678,
   },

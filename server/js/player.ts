@@ -15,11 +15,12 @@ import { expForLevel } from "../../shared/js/types/experience";
 import { setItemsNameMap } from "../../shared/js/types/set";
 import {
   getEntityLocation,
+  // hasMoreThanPercentCaps,
   isExpansion1Location,
   isExpansion2Location,
   isLocationOKWithExpansionLocation,
+  // replaceLetters,
 } from "../../shared/js/utils";
-import { hasMoreThanPercentCaps, replaceLetters } from "../../shared/js/utils";
 import {
   HASH_BAN_DELAY,
   isValidAccountAddress,
@@ -28,6 +29,12 @@ import {
   toDb,
   toNumber,
   validateQuantity,
+} from "../../shared/js/utils";
+import {
+  getisValidMinLevelLocation,
+  hasMoreThanPercentCaps,
+  MIN_SKELETON_KING_LEVEL,
+  replaceLetters,
 } from "../../shared/js/utils";
 import Character from "./character";
 import Chest from "./chest";
@@ -66,7 +73,6 @@ import {
 import type Party from "./party";
 import type Trade from "./trade";
 
-const MIN_LEVEL = 16;
 const MIN_TIME = 1000 * 60 * 15;
 const MAX_EXP = expForLevel[expForLevel.length - 1];
 
@@ -1722,6 +1728,9 @@ class Player extends Character {
 
         if (isStoneTeleport && playerToTeleportTo) {
           if (playerToTeleportTo?.partyId === self.partyId) {
+            // if (playerToTeleportToLocation === "skeletonking" && self.level < MIN_LEVEL) {
+            //   errorMessage = `you need to be level ${MIN_LEVEL} or above to enter the Skeleton King lair`;
+            // }
             if (isExpansion1Location.includes(playerToTeleportToLocation) && !self.expansion1) {
               errorMessage = " You can't teleport to Freeznig Lands location before you kill the Skeleton King.";
             }
@@ -1735,6 +1744,14 @@ class Player extends Character {
             }
             if (playerToTeleportToLocation === "town") {
               errorMessage = " The player you want to teleport to is in Town.";
+            }
+            const { message: locationErrorMessage, isValid } = getisValidMinLevelLocation(
+              playerToTeleportToLocation,
+              self.level,
+            );
+
+            if (!isValid || locationErrorMessage) {
+              errorMessage = locationErrorMessage;
             }
           }
 
@@ -1834,11 +1851,11 @@ class Player extends Character {
         if (!self.hash) {
           // BOSS room validation
           // Has played for more than 15 minutes, has at least X amount of exp (MIN_LEVEL)
-          if (self.createdAt + MIN_TIME > Date.now() || self.level < MIN_LEVEL) {
+          if (self.createdAt + MIN_TIME > Date.now() || self.level < MIN_SKELETON_KING_LEVEL) {
             self.connection.send({
               type: Types.Messages.BOSS_CHECK,
               status: "failed",
-              message: MIN_LEVEL,
+              message: MIN_SKELETON_KING_LEVEL,
             });
             return;
           } else if (!self.account && !params[0]) {
@@ -1884,7 +1901,7 @@ class Player extends Character {
         if (
           isClassicPayout &&
           (self.createdAt + MIN_TIME > Date.now() ||
-            self.level < MIN_LEVEL ||
+            self.level < MIN_SKELETON_KING_LEVEL ||
             // Check for required achievements
             !self.achievement[1] || //  -> INTO_THE_WILD
             !self.achievement[11] || // -> NO_MANS_LAND
@@ -1895,7 +1912,7 @@ class Player extends Character {
             banMessage = `Already have hash ${self.hash}`;
           } else if (self.createdAt + MIN_TIME > Date.now()) {
             banMessage = `Less then 15 minutes played ${Date.now() - (self.createdAt + MIN_TIME)}`;
-          } else if (self.level < MIN_LEVEL) {
+          } else if (self.level < MIN_SKELETON_KING_LEVEL) {
             banMessage = `Min level not obtained, player is level ${self.level}`;
           } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[16]) {
             banMessage = `Player has not compl  eted required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}}`;

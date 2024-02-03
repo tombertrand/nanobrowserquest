@@ -643,6 +643,11 @@ footer, header, hgroup, menu, nav, section {
         background: rgba(0,0,0,0.75) !important;
     }
 
+    .ui-tooltip.waypoint-row {
+        font-size: 0.80em!important;
+        color: #74b5ff!important;
+    }
+
     .ui-dialog {
         padding: 10px 10px 15px;
         border: none !important;
