@@ -110,7 +110,7 @@ export const Types: any = {
     PET_DUCK: 387,
     PET_DEER: 392,
     PET_REINDEER: 406,
-    PET_MONKEY: 422, //~~~last
+    PET_MONKEY: 422,
     PET_HELLHOUND: 408,
     PET_DRAGON: 389,
     PETAXOLOTL: 368,
@@ -283,6 +283,7 @@ export const Types: any = {
 
     // Consumable
     EXPANSION2VOUCHER: 395,
+
     // Objects
     FLASK: 35,
     REJUVENATIONPOTION: 110,
@@ -327,7 +328,6 @@ export const Types: any = {
     SCROLLUPGRADEMEDIUM: 75,
     SCROLLUPGRADEHIGH: 76,
     SCROLLUPGRADELEGENDARY: 200,
-
     SCROLLUPGRADEELEMENTMAGIC: 380,
     SCROLLUPGRADEELEMENTFLAME: 381,
     SCROLLUPGRADEELEMENTLIGHTNING: 382,
@@ -361,6 +361,7 @@ export const Types: any = {
     RINGHEAVEN: 211,
     RINGWIZARD: 213,
     RINGGREED: 321,
+    RINGIMMORTAL: 424, //~~~last
     AMULETSILVER: 112,
     AMULETGOLD: 113,
     AMULETPLATINUM: 212,
@@ -374,6 +375,7 @@ export const Types: any = {
     AMULETDRAGON: 270,
     AMULETEYE: 320,
     AMULETGREED: 322,
+    AMULETIMMORTAL: 423,
 
     // NPCs
     GUARD: 40,
@@ -763,6 +765,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGHEAVEN,
   Types.Entities.RINGWIZARD,
   Types.Entities.RINGGREED,
+  Types.Entities.RINGIMMORTAL,
 ];
 
 Types.Entities.Amulets = [
@@ -779,6 +782,7 @@ Types.Entities.Amulets = [
   Types.Entities.AMULETDRAGON,
   Types.Entities.AMULETEYE,
   Types.Entities.AMULETGREED,
+  Types.Entities.AMULETIMMORTAL,
 ];
 
 Types.getGemNameFromKind = function (kind: number) {
@@ -1059,6 +1063,7 @@ export const kinds = {
   ringwizard: [Types.Entities.RINGWIZARD, "ring", "Wizard Ring", 50],
   ringmystical: [Types.Entities.RINGMYSTICAL, "ring", "Oculus", 54],
   ringgreed: [Types.Entities.RINGGREED, "ring", "Ring of Greed", 50],
+  ringimmortal: [Types.Entities.RINGIMMORTAL, "ring", "Ring of Immortality", 65],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
@@ -1073,6 +1078,7 @@ export const kinds = {
   amuletdragon: [Types.Entities.AMULETDRAGON, "amulet", "Dragon Eye", 56],
   amuleteye: [Types.Entities.AMULETEYE, "amulet", "All-Seeing Eye", 58],
   amuletgreed: [Types.Entities.AMULETGREED, "amulet", "Amulet of Greed", 50],
+  amuletimmortal: [Types.Entities.AMULETIMMORTAL, "amulet", "Amulet of Immortality", 65],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 45],
   chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
@@ -1474,7 +1480,7 @@ Types.itemUniqueMap = {
   shieldchristmas: ["Snowflake"],
   shieldmystical: ["Developer Fund"],
   shielddemon: ["ORV > POW"],
-  shieldpaladin: ["Vote Hinting"], 
+  shieldpaladin: ["Vote Hinting"],
   shieldimmortal: ["TBD"],
 
   cape: ["Cloak of Levitation"],
@@ -1513,6 +1519,7 @@ Types.isSuperUnique = (itemName: string) =>
     "ringheaven",
     "ringwizard",
     "ringgreed",
+    "ringimmortal",
     "amuletcow",
     "amuletfrozen",
     "amuletdemon",
@@ -1524,6 +1531,7 @@ Types.isSuperUnique = (itemName: string) =>
     "amuleteye",
     "amuletgreed",
     "stonedragon",
+    "amuletimmortal",
     "stonehero",
     "soulstone",
     "helmclown",
@@ -1826,6 +1834,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         "ringheaven",
         "ringwizard",
         "ringgreed",
+        "ringimmortal",
       ].includes(kindOrString)
     ) {
       return true;
@@ -1864,6 +1873,7 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
         Types.Entities.AMULETDRAGON,
         Types.Entities.AMULETEYE,
         Types.Entities.AMULETGREED,
+        Types.Entities.AMULETIMMORTAL,
       ].includes(kindOrString)
     ) {
       return true;
@@ -1890,6 +1900,7 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
         "amuletdragon",
         "amuleteye",
         "amuletgreed",
+        "amuletimmortal",
       ].includes(kindOrString)
     ) {
       return true;

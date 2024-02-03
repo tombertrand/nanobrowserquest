@@ -1021,6 +1021,10 @@ EntityFactory.builders[Types.Entities.RINGGREED] = function (id) {
   return new Items.RingGreed(id);
 };
 
+EntityFactory.builders[Types.Entities.RINGIMMORTAL] = function (id) {
+  return new Items.RingImmortal(id);
+};
+
 EntityFactory.builders[Types.Entities.AMULETSILVER] = function (id) {
   return new Items.AmuletSilver(id);
 };
@@ -1071,6 +1075,10 @@ EntityFactory.builders[Types.Entities.AMULETEYE] = function (id) {
 
 EntityFactory.builders[Types.Entities.AMULETGREED] = function (id) {
   return new Items.AmuletGreed(id);
+};
+
+EntityFactory.builders[Types.Entities.AMULETIMMORTAL] = function (id) {
+  return new Items.AmuletImmortal(id);
 };
 
 EntityFactory.builders[Types.Entities.CHESTBLUE] = function (id) {

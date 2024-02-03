@@ -3105,12 +3105,21 @@ class World {
       this.handleItemDespawn(item);
     }
   }
-
+  // @Note: piggy found a way to duplicate himself
   getPlayerByName(name) {
+    let count = 0;
+    let player = null;
     for (var id in this.players) {
       if (this.players[id].name === name) {
-        return this.players[id];
+        count += 1;
+        player = this.players[id];
       }
+    }
+
+    if (count > 1) {
+      this.disconnectPlayer(name, true);
+    } else {
+      return player;
     }
     return null;
   }

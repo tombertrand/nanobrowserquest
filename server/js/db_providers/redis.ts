@@ -2915,8 +2915,6 @@ class DatabaseHandler {
     isRuneword?: boolean;
     isNewSocketItem?: boolean;
   }) {
-    // const now = Date.now();
-    // this.client.zadd("upgrade", now, JSON.stringify({ player: player.name, item, isSuccess }));
     const [itemName, rawLevel, bonus, rawSocket] = item.split(":");
     const level = parseInt(rawLevel);
 

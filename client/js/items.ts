@@ -117,7 +117,7 @@ var Items = {
       this.lootMessage = "You pick up a moon maul";
     }
   },
-  
+
   ChristmasMaul: class ChristmasMaul extends Item {
     constructor(id) {
       super(id, Types.Entities.CHRISTMASMAUL, "weapon");
@@ -1205,6 +1205,13 @@ var Items = {
     }
   },
 
+  RingImmortal: class RingImmortal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGIMMORTAL, "ring");
+      this.lootMessage = "You pick up a ring of immortality";
+    }
+  },
+
   AmuletSilver: class AmuletSilver extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETSILVER, "amulet");
@@ -1292,6 +1299,13 @@ var Items = {
     constructor(id) {
       super(id, Types.Entities.AMULETGREED, "amulet");
       this.lootMessage = "You pick up the amulet of Greed";
+    }
+  },
+
+  AmuletImmortal: class AmuletImmortal extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETIMMORTAL, "amulet");
+      this.lootMessage = "You pick up the amulet of Immortality";
     }
   },
 
@@ -1745,7 +1759,6 @@ var Items = {
       this.lootMessage = "You pick up a Monkey Pet";
     }
   },
-
 
   PetHellhound: class PetHellhound extends Item {
     constructor(id) {

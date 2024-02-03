@@ -880,13 +880,13 @@ class Player extends Character {
         if (!bannedPlayer) return;
 
         if (isChatBan) {
-          self.databaseHandler.chatBan({ player: bannedPlayer, message: banMessage, isIPBan });
+          self.databaseHandler.chatBan({ player: bannedPlayer, message, isIPBan });
         } else if (isIPBan) {
           databaseHandler.banPlayerByIP({
             player: bannedPlayer,
             reason,
             until,
-            message: banMessage,
+            message,
           });
         } else {
           databaseHandler.banPlayerForReason({
@@ -1877,9 +1877,8 @@ class Player extends Character {
         // only set Q when skel king dies on payout success
 
         // just unlock REGARDLESS for walletless, w/e...
-        // if (!self.hasWallet) {
+
         self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
-        // }
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
@@ -2821,7 +2820,7 @@ class Player extends Character {
         const isAllResistances = random(2);
         bonus = _.shuffle(highLevelBonus)
           .slice(0, isAllResistances ? 2 : 4)
-          .concat(amuletHighLevelBonus.slice(0, 1))
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
           .concat(isAllResistances ? allResistance : _.shuffle(resistances).slice(0, 2))
           .concat([elementPercentage[1], lowerResistance[1]]);
       } else if (kind === Types.Entities.AMULETEYE) {
@@ -2833,6 +2832,12 @@ class Player extends Character {
           .concat(lowerAllResistance);
       } else if (kind === Types.Entities.AMULETGREED) {
         bonus = _.shuffle(highLevelBonus).slice(0, 5).concat(magicFind).concat(extraGold);
+      } else if (kind === Types.Entities.AMULETIMMORTAL) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 5)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(highHealthBonus)
+          .concat(allResistance);
       } else if (kind === Types.Entities.RINGRAISTONE) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
@@ -2891,6 +2896,11 @@ class Player extends Character {
           .concat(timeout);
       } else if (kind === Types.Entities.RINGGREED) {
         bonus = _.shuffle(highLevelBonus).slice(0, 4).concat(magicFind).concat(extraGold);
+      } else if (kind === Types.Entities.RINGIMMORTAL) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 4)
+          .concat(_.shuffle(resistances).slice(0, 4))
+          .concat(_.shuffle(highLevelBonus).slice(0, 1));
       } else if (kind === Types.Entities.JEWELSKULL) {
         if (jewelLevel === 1) {
           bonus = _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);
@@ -4050,12 +4060,6 @@ class Player extends Character {
       if (delay > HASH_BAN_DELAY) {
         clearInterval(this.checkHashInterval);
         this.checkHashInterval = null;
-
-        // this.databaseHandler.banPlayerByIP({
-        //   player: this,
-        //   reason: "cheating",
-        //   message: `invalid interval hash check ${delay}`,
-        // });
       }
     }, HASH_BAN_DELAY);
   }

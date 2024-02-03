@@ -736,6 +736,11 @@ footer, header, hgroup, menu, nav, section {
         color: #fff;
         margin-top:1px;
     }
+
+    .item-setdescription {
+        color: #74b5ff;
+        font-size: 0.75em;
+    }
     .item-bonus,
     .item-set-bonus {
         color: #35ee35;

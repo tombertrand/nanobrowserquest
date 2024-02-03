@@ -1,5 +1,3 @@
-
-
 type Recipes = "cowLevel" | "minotaurLevel" | ChestType | "powderquantum" | "petegg" | Consumable;
 type Consumable = "expansion2voucher";
 type ChatType = "world" | "zone" | "party" | "event" | "info" | "loot";

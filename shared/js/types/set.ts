@@ -14,13 +14,15 @@ export const setBonus = {
   },
   immortal: {
     health: 200,
-    defense: 35,
-    exp: 10,
+    defense: 25,
+    exp: 8,
     attackDamage: 20,
     pierceDamage: 15,
-    absorbedDamage: 20,
-    allResistance: 15,
+    absorbedDamage: 25,
+    allResistance: 10,
     attackSpeed: 10,
+    reduceFrozenChance: 15,
+    regenerateHealth: 10,
   },
   paladin: {
     health: 150,
@@ -273,13 +275,23 @@ export const kindAsStringToSet = {
   helmimmortal: "immortal",
   immortalarmor: "immortal",
   shieldimmortal: "immortal",
+  amuletimmortal: "immortal",
+  ringimmortal: "immortal",
   ringpumkin: "pumpkin",
   helmpumkin: "pumpkin",
 };
 
 export const setItems = {
   pumpkin: ["ringpumkin", "helmpumkin"],
-  immortal: [["spikeglaive", "immortalsword"], "helmimmortal", "immortalarmor", "shieldimmortal", "beltimmortal"],
+  immortal: [
+    ["spikeglaive", "immortalsword"],
+    "helmimmortal",
+    "immortalarmor",
+    "shieldimmortal",
+    "beltimmortal",
+    "amuletimmortal",
+    "ringimmortal",
+  ],
   paladin: ["paladinaxe", "helmpaladin", "paladinarmor", "shieldpaladin", "beltpaladin"],
   mystical: [
     ["mysticalsword", "mysticaldagger"],
@@ -327,7 +339,7 @@ export const setItems = {
 
 export const setItemsNameMap = {
   pumpkin: ["helm", "Ring"],
-  immortal: ["Glaive or Sword", "helm", "Armor", "Belt", "Shield"],
+  immortal: ["Glaive or Sword", "helm", "Armor", "Belt", "Shield", "Amulet", "Ring"],
   paladin: ["Axe", "Helm", "Armor", "Belt", "Shield"],
   mystical: [["Sword or Dagger"], "Helm", "Armor", "Belt", "Shield", "Ring"],
   demon: [["Axe, Dagger, Sickle or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet", "Pet Hellhound"],
@@ -351,6 +363,6 @@ export const setItemsNameMap = {
 
 export const setDescription = {
   immortal:
-    "wearing the full Immortal set grants you a second life upon death if the spectral aura is active, the aura reloads depending on your set level.",
+    "wearing the full Immortal set grants you a second life upon death if the spectral aura is active, the aura reload time depends on your set level.",
   paladin: "wearing the full set grants your party members bonuses based on your set level.",
 };

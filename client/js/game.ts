@@ -29,6 +29,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { AchievementName } from "../../shared/js/types/achievements";
 import { expForLevel } from "../../shared/js/types/experience";
+import { setDescription } from "../../shared/js/types/set";
 import { getEntityLocation } from "../../shared/js/utils";
 import { HASH_BAN_DELAY } from "../../shared/js/utils";
 import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
@@ -763,12 +764,17 @@ class Game {
         let setName = null;
         let setParts = [];
         let currentSet = null;
+        let currentSetDescription = "";
         let setBonus = [];
 
         if (isEquippedItemSlot) {
           currentSet = Types.kindAsStringToSet[item];
 
           const playerItems = self.player.getEquipment();
+
+          if (currentSet && setDescription?.[currentSet]) {
+            currentSetDescription = setDescription?.[currentSet];
+          }
 
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
@@ -808,6 +814,7 @@ class Game {
           playerBonus: self.player.bonus,
           amount,
           currentSet,
+          currentSetDescription,
           setName,
           setParts,
           setBonus,
@@ -829,6 +836,7 @@ class Game {
     playerBonus,
     amount,
     currentSet,
+    currentSetDescription,
     setName,
     setParts,
     setBonus,
@@ -870,7 +878,6 @@ class Game {
     });
 
     const isQuantity = Types.isQuantity(item);
-
     const isConsumable = Types.isConsumable(item);
 
     const isLevelVisible =
@@ -977,6 +984,7 @@ class Game {
             : ""
         }
         ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
+        ${currentSetDescription ? `<div class="item-setdescription">Set Perk: ${currentSetDescription}</div>` : ""}
        
         ${
           currentSet && setBonus.length
@@ -3145,7 +3153,6 @@ class Game {
       self.player.expansion2 = expansion2;
       self.storage.setPlayerExpanson1(expansion1);
       self.storage.setPlayerExpanson2(expansion2);
-      self.storage.setPlayerName(name);
       self.storage.setPlayerName(name);
       self.storage.setPlayerArmor(armor);
       self.storage.setPlayerWeapon(weapon);
