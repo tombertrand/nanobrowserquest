@@ -115,6 +115,10 @@ const SUPER_ADMINS = ["running-coder"];
 const badWords = [
   "nigger",
   "nig",
+  "password",
+  "pwd",
+  "psword",
+  "pswerd",
   "neger",
   "niger",
   "niggers",
