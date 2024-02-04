@@ -80,9 +80,6 @@ let payoutIndex = 0;
 
 const ADMINS = [
   "oldschooler",
-  "Baikie",
-  "Phet",
-  "CallMeCas",
   "HeroOfNano",
   "Dyllux",
   "CelioSevii",
@@ -91,6 +88,7 @@ const ADMINS = [
   "bread duck",
   "Thedd",
   "vikramr",
+  "Crimson Bean",
 ];
 const SUPER_ADMINS = ["running-coder"];
 // const immediateBanbadWords = [
@@ -117,6 +115,8 @@ const badWords = [
   "nig",
   "password",
   "pwd",
+  "shut",
+  "hell",
   "psword",
   "pswerd",
   "neger",
