@@ -15,11 +15,9 @@ import { expForLevel } from "../../shared/js/types/experience";
 import { setItemsNameMap } from "../../shared/js/types/set";
 import {
   getEntityLocation,
-  // hasMoreThanPercentCaps,
   isExpansion1Location,
   isExpansion2Location,
   isLocationOKWithExpansionLocation,
-  // replaceLetters,
 } from "../../shared/js/utils";
 import {
   HASH_BAN_DELAY,
@@ -113,10 +111,12 @@ const SUPER_ADMINS = ["running-coder"];
 const badWords = [
   "nigger",
   "nig",
+  "shut",
+  "shut up",
+  "cumslut",
+  "shutup",
   "password",
   "pwd",
-  "shut",
-  "hell",
   "psword",
   "pswerd",
   "neger",
@@ -2859,6 +2859,14 @@ class Player extends Character {
           .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
           .concat(highHealthBonus)
           .concat(allResistance);
+      } else if (kind === Types.Entities.AMULETPALADIN) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 5)
+          .concat(_.shuffle(amuletHighLevelBonus).slice(0, 1))
+          .concat(highHealthBonus)
+          .concat(_.shuffle([...allResistance, ...magicFind, ...extraGold]).slice(0, 2))
+          .concat(_.shuffle(elementDamage).slice(0, 2))
+          .concat(_.shuffle(elementPercentage).slice(0, 3));
       } else if (kind === Types.Entities.RINGRAISTONE) {
         bonus = _.shuffle(highLevelBonus)
           .slice(0, 3)
@@ -2922,6 +2930,13 @@ class Player extends Character {
           .slice(0, 4)
           .concat(_.shuffle(resistances).slice(0, 4))
           .concat(_.shuffle(highLevelBonus).slice(0, 1));
+      } else if (kind === Types.Entities.RINGPALADIN) {
+        bonus = _.shuffle(highLevelBonus)
+          .slice(0, 3)
+          .concat(_.shuffle([...allResistance, ...magicFind, ...extraGold]).slice(0, 1))
+          .concat(_.shuffle(highLevelBonus).slice(0, 3))
+          .concat(_.shuffle(elementDamage).slice(0, 1))
+          .concat(_.shuffle(elementPercentage).slice(0, 2));
       } else if (kind === Types.Entities.JEWELSKULL) {
         if (jewelLevel === 1) {
           bonus = _.shuffle(lowLevelBonus).slice(0, isUnique ? 2 : 1);

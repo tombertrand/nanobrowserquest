@@ -268,6 +268,8 @@ export const kindAsStringToSet = {
   helmpaladin: "paladin",
   paladinarmor: "paladin",
   shieldpaladin: "paladin",
+  ringpaladin: "paladin",
+  amuletpaladin: "paladin",
   beltpaladin: "paladin",
   beltimmortal: "immortal",
   spikeglaive: "immortal",
@@ -292,7 +294,15 @@ export const setItems = {
     "amuletimmortal",
     "ringimmortal",
   ],
-  paladin: ["paladinaxe", "helmpaladin", "paladinarmor", "shieldpaladin", "beltpaladin"],
+  paladin: [
+    "paladinaxe",
+    "helmpaladin",
+    "paladinarmor",
+    "shieldpaladin",
+    "beltpaladin",
+    "amuletpaladin",
+    "ringpaladin",
+  ],
   mystical: [
     ["mysticalsword", "mysticaldagger"],
     "helmmystical",
@@ -340,7 +350,7 @@ export const setItems = {
 export const setItemsNameMap = {
   pumpkin: ["helm", "Ring"],
   immortal: ["Glaive or Sword", "helm", "Armor", "Belt", "Shield", "Amulet", "Ring"],
-  paladin: ["Axe", "Helm", "Armor", "Belt", "Shield"],
+  paladin: ["Axe or Cleaver", "Helm", "Armor", "Belt", "Shield", "Amulet", "Ring"],
   mystical: [["Sword or Dagger"], "Helm", "Armor", "Belt", "Shield", "Ring"],
   demon: [["Axe, Dagger, Sickle or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet", "Pet Hellhound"],
   moon: [["Sword, Hatchet or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet"],
@@ -360,7 +370,6 @@ export const setItemsNameMap = {
   mail: ["Helm", "Armor", "Shield"],
   leather: ["Helm", "Armor", "Belt", "Shield"],
 };
-
 export const setDescription = {
   immortal:
     "wearing the full Immortal set grants you a second life upon death if the spectral aura is active, the aura reload time depends on your set level.",

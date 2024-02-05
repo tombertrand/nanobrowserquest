@@ -361,7 +361,8 @@ export const Types: any = {
     RINGHEAVEN: 211,
     RINGWIZARD: 213,
     RINGGREED: 321,
-    RINGIMMORTAL: 424, //~~~last
+    RINGIMMORTAL: 424,
+    RINGPALADIN: 425,
     AMULETSILVER: 112,
     AMULETGOLD: 113,
     AMULETPLATINUM: 212,
@@ -376,6 +377,7 @@ export const Types: any = {
     AMULETEYE: 320,
     AMULETGREED: 322,
     AMULETIMMORTAL: 423,
+    AMULETPALADIN: 426, //~~~last
 
     // NPCs
     GUARD: 40,
@@ -766,6 +768,7 @@ Types.Entities.Rings = [
   Types.Entities.RINGWIZARD,
   Types.Entities.RINGGREED,
   Types.Entities.RINGIMMORTAL,
+  Types.Entities.RINGPALADIN,
 ];
 
 Types.Entities.Amulets = [
@@ -783,6 +786,7 @@ Types.Entities.Amulets = [
   Types.Entities.AMULETEYE,
   Types.Entities.AMULETGREED,
   Types.Entities.AMULETIMMORTAL,
+  Types.Entities.AMULETPALADIN,
 ];
 
 Types.getGemNameFromKind = function (kind: number) {
@@ -1063,7 +1067,8 @@ export const kinds = {
   ringwizard: [Types.Entities.RINGWIZARD, "ring", "Wizard Ring", 50],
   ringmystical: [Types.Entities.RINGMYSTICAL, "ring", "Oculus", 54],
   ringgreed: [Types.Entities.RINGGREED, "ring", "Ring of Greed", 50],
-  ringimmortal: [Types.Entities.RINGIMMORTAL, "ring", "Ring of Immortality", 65],
+  ringimmortal: [Types.Entities.RINGIMMORTAL, "ring", "Eternity Band of the Ancients", 65],
+  ringpaladin: [Types.Entities.RINGPALADIN, "ring", "Holy Protector's Seal", 65],
 
   amuletsilver: [Types.Entities.AMULETSILVER, "amulet", "Silver Amulet", 9],
   amuletgold: [Types.Entities.AMULETGOLD, "amulet", "Gold Amulet", 20],
@@ -1078,7 +1083,8 @@ export const kinds = {
   amuletdragon: [Types.Entities.AMULETDRAGON, "amulet", "Dragon Eye", 56],
   amuleteye: [Types.Entities.AMULETEYE, "amulet", "All-Seeing Eye", 58],
   amuletgreed: [Types.Entities.AMULETGREED, "amulet", "Amulet of Greed", 50],
-  amuletimmortal: [Types.Entities.AMULETIMMORTAL, "amulet", "Amulet of Immortality", 65],
+  amuletimmortal: [Types.Entities.AMULETIMMORTAL, "amulet", "Necklace of the Timeless Soul", 65],
+  amuletpaladin: [Types.Entities.AMULETPALADIN, "amulet", "Celestial Ward Amulet", 65],
 
   chestblue: [Types.Entities.CHESTBLUE, "chest", "Blue Chest", 45],
   chestgreen: [Types.Entities.CHESTGREEN, "chest", "Green Chest", 56],
@@ -1520,6 +1526,7 @@ Types.isSuperUnique = (itemName: string) =>
     "ringwizard",
     "ringgreed",
     "ringimmortal",
+    "ringpaladin",
     "amuletcow",
     "amuletfrozen",
     "amuletdemon",
@@ -1532,6 +1539,7 @@ Types.isSuperUnique = (itemName: string) =>
     "amuletgreed",
     "stonedragon",
     "amuletimmortal",
+    "amuletpaladin",
     "stonehero",
     "soulstone",
     "helmclown",
@@ -1835,6 +1843,7 @@ Types.isUniqueRing = function (kindOrString: number | string, bonus: number[] = 
         "ringwizard",
         "ringgreed",
         "ringimmortal",
+        "ringpaladin",
       ].includes(kindOrString)
     ) {
       return true;
@@ -1874,6 +1883,7 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
         Types.Entities.AMULETEYE,
         Types.Entities.AMULETGREED,
         Types.Entities.AMULETIMMORTAL,
+        Types.Entities.AMULETPALADIN,
       ].includes(kindOrString)
     ) {
       return true;
@@ -1901,6 +1911,7 @@ Types.isUniqueAmulet = function (kindOrString: number | string, bonus: number[] 
         "amuleteye",
         "amuletgreed",
         "amuletimmortal",
+        "amuletpaladin",
       ].includes(kindOrString)
     ) {
       return true;

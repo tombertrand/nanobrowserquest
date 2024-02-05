@@ -402,14 +402,24 @@ class Mob extends Character {
 
     this.returnTimeout = setTimeout(function () {
       self.resetPosition();
+
+      if (!waitDuration && Types.isBoss(this.kind)) {
+        this.destroy(30);
+        this.handleRespawn(30);
+      }
       self.move(self.spawningX, self.spawningY);
     }, delay);
   }
 
   returnBossToSpawningPosition(x, y) {
+    if (!Types.isBoss(this.kind)) {
+      return;
+    }
     const entityLocation = getEntityLocation({ x, y });
 
-    if (this.kind === Types.Entities.MINOTAUR && entityLocation !== "minotaurcage") {
+    if (this.kind === Types.Entities.BOSS && entityLocation !== "skeletonking") {
+      this.returnToSpawningPosition(0);
+    } else if (this.kind === Types.Entities.MINOTAUR && entityLocation !== "minotaurcage") {
       this.returnToSpawningPosition(0);
     } else if (this.kind === Types.Entities.DEATHANGEL && entityLocation !== "azrealchamber") {
       this.returnToSpawningPosition(0);

@@ -1208,7 +1208,14 @@ var Items = {
   RingImmortal: class RingImmortal extends Item {
     constructor(id) {
       super(id, Types.Entities.RINGIMMORTAL, "ring");
-      this.lootMessage = "You pick up a ring of immortality";
+      this.lootMessage = "You pick up a Eternity Band of the Ancients";
+    }
+  },
+
+  RingPaladin: class RingPaladin extends Item {
+    constructor(id) {
+      super(id, Types.Entities.RINGPALADIN, "ring");
+      this.lootMessage = "You pick up a  Holy Protector's Seal";
     }
   },
 
@@ -1305,7 +1312,14 @@ var Items = {
   AmuletImmortal: class AmuletImmortal extends Item {
     constructor(id) {
       super(id, Types.Entities.AMULETIMMORTAL, "amulet");
-      this.lootMessage = "You pick up the amulet of Immortality";
+      this.lootMessage = "You pick up the Necklace of the Timeless Soul";
+    }
+  },
+
+  AmuletPaladin: class AmuletPaladin extends Item {
+    constructor(id) {
+      super(id, Types.Entities.AMULETPALADIN, "amulet");
+      this.lootMessage = "You pick up the Celestial Ward Amulet";
     }
   },
 

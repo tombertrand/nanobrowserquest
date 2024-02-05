@@ -767,23 +767,22 @@ class Game {
         let currentSet = null;
         let currentSetDescription = "";
         let setBonus = [];
+        let isActive = false;
 
         if (isEquippedItemSlot) {
           currentSet = Types.kindAsStringToSet[item];
 
-          const playerItems = self.player.getEquipment();
+          const playerItems = self.player.getEquipment().filter(Boolean);
 
           if (currentSet && setDescription?.[currentSet]) {
             currentSetDescription = setDescription?.[currentSet];
           }
-
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
-            setParts = Types.setItemsNameMap[currentSet].map((description, index) => {
+            setParts = Types.setItemsNameMap[currentSet].map((description, index: number) => {
               let setPart = Types.setItems[currentSet][index];
-              let isActive = false;
               if (typeof setPart === "string") {
-                isActive = playerItems.includes(Types.setItems[currentSet][index]);
+                isActive = playerItems.includes(setPart);
               } else if (Array.isArray(setPart)) {
                 isActive = setPart.some(part => playerItems.includes(part));
               }
