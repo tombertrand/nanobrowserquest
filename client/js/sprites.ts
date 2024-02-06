@@ -77,7 +77,9 @@ import demonaxe from "../sprites/weapon.json";
 import demonsickle from "../sprites/weapon.json";
 import paladinaxe from "../sprites/weapon.json";
 import demonmaul from "../sprites/weapon-large.json";
+import immortaldagger from "../sprites/weapon.json";
 import immortalsword from "../sprites/weapon.json";
+import immortalaxe from "../sprites/weapon-large.json";
 import executionersword from "../sprites/weapon.json";
 import mysticalsword from "../sprites/weapon.json";
 import mysticaldagger from "../sprites/weapon.json";
@@ -404,7 +406,9 @@ const sprites = {
   demonsickle,
   paladinaxe,
   demonmaul,
+  immortaldagger,
   immortalsword,
+  immortalaxe,
   executionersword,
   mysticalsword,
   mysticaldagger,
@@ -664,7 +668,9 @@ const sprites = {
   "item-demonsickle": item,
   "item-demonmaul": item,
   "item-paladinaxe": item,
+  "item-immortaldagger": item,
   "item-immortalsword": item,
+  "item-immortalaxe": item,
   "item-executionersword": item,
   "item-mysticalsword": item,
   "item-mysticaldagger": item,

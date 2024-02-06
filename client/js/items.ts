@@ -173,10 +173,24 @@ var Items = {
     }
   },
 
+  ImmortalDagger: class ImmortalDagger extends Item {
+    constructor(id) {
+      super(id, Types.Entities.IMMORTALDAGGER, "weapon");
+      this.lootMessage = "You pick up an immortal dagger";
+    }
+  },
+
   ImmortalSword: class ImmortalSword extends Item {
     constructor(id) {
       super(id, Types.Entities.IMMORTALSWORD, "weapon");
       this.lootMessage = "You pick up an immortal sword";
+    }
+  },
+
+  ImmortalAxe: class ImmortalAxe extends Item {
+    constructor(id) {
+      super(id, Types.Entities.IMMORTALAXE, "weapon");
+      this.lootMessage = "You pick up Immortarion, the Timeless Cleaver";
     }
   },
 

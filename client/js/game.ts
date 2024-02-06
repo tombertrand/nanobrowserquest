@@ -983,8 +983,12 @@ class Game {
               }</div>`
             : ""
         }
-        ${requirement ? `<div class="item-description">Required level: ${requirement}</div>` : ""}
-        ${currentSetDescription ? `<div class="item-setdescription">Set Perk: ${currentSetDescription}</div>` : ""}
+        ${requirement ? `<div class="item-description">Required lv.: ${requirement}</div>` : ""}
+        ${
+          currentSetDescription
+            ? `<div class="item-setdescription">Set Perk lv.:${this.player.bonus.setLevel?.[currentSet]}: ${currentSetDescription}</div>`
+            : ""
+        }
        
         ${
           currentSet && setBonus.length

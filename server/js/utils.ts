@@ -1179,6 +1179,7 @@ export const generateSoulStoneItem = (): { item: string; quantity?: number; uniq
     { item: "beltdemon", uniqueChances: 10 },
     { item: "shielddemon", uniqueChances: 10 },
     { item: "paladinaxe", uniqueChances: 6 },
+    { item: "immortaldagger", uniqueChances: 6 },
     { item: "immortalsword", uniqueChances: 6 },
     { item: "spikeglaive", uniqueChances: 6 },
     { item: "eclypsedagger", uniqueChances: 6 },
@@ -1229,8 +1230,8 @@ export const generateDroppedItem = () => {
     return;
   }
   let randomDrops = [];
-  randomDrops = ["amuletpaladin", "ringpaladin"];
-  // randomDrops = ["ringpaladin"];
+  // randomDrops = ["amuletpaladin", "ringpaladin"];
+  randomDrops = ["immortaldagger"]; //, "immortalaxe"];
   // randomDrops = ["helmexecutioner"];
   // randomDrops = ["christmaspresent"];
   // randomDrops = ["demonsickle"];

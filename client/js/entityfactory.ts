@@ -425,9 +425,16 @@ EntityFactory.builders[Types.Entities.DEMONSICKLE] = function (id) {
 EntityFactory.builders[Types.Entities.PALADINAXE] = function (id) {
   return new Items.PaladinAxe(id);
 };
+EntityFactory.builders[Types.Entities.IMMORTALDAGGER] = function (id) {
+  return new Items.ImmortalDagger(id);
+};
 
 EntityFactory.builders[Types.Entities.IMMORTALSWORD] = function (id) {
   return new Items.ImmortalSword(id);
+};
+
+EntityFactory.builders[Types.Entities.IMMORTALAXE] = function (id) {
+  return new Items.ImmortalAxe(id);
 };
 
 EntityFactory.builders[Types.Entities.EXECUTIONERSWORD] = function (id) {

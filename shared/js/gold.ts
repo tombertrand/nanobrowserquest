@@ -95,7 +95,9 @@ export const itemGoldMap = {
   spikeglaive: 250,
   eclypsedagger: 250,
   paladinaxe: 250,
+  immortaldagger: 250,
   immortalsword: 250,
+  immortalaxe: 250,
 
   helmleather: 2,
   helmmail: 3,

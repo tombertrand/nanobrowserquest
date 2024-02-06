@@ -344,6 +344,7 @@ class Player extends Character {
   upgradeLock: boolean;
   moveGoldLock: boolean;
   isChatbanWarned: boolean;
+  setLevel: any;
 
   constructor(connection, worldServer, databaseHandler) {
     //@ts-ignore
@@ -369,6 +370,7 @@ class Player extends Character {
     this.banUseTime = 0;
     this.experience = 0;
     this.level = 0;
+    this.setLevel = {};
     this.lastWorldChatMinutes = 99;
     this.auras = [];
     this.freezeChanceLevel = 0;
@@ -3454,6 +3456,19 @@ class Player extends Character {
     return [this.weapon, this.helm, this.armor, this.belt, this.shield, this.ring1, this.ring2, this.amulet, this.pet];
   }
 
+  getEquipmentLevel() {
+    return [
+      this.weaponLevel,
+      this.helmLevel,
+      this.armorLevel,
+      this.beltLevel,
+      this.shieldLevel,
+      this.ring1Level,
+      this.ring2Level,
+      this.amuletLevel,
+    ];
+  }
+
   calculateBonus() {
     this.freezeChanceLevel = 0;
     try {
@@ -3757,13 +3772,27 @@ class Player extends Character {
     const bonus = {};
     const setItems = {};
 
-    this.getEquipment().forEach(item => {
+    let paladin = 0;
+    let immortal = 0;
+
+    this.getEquipment().forEach((item, index) => {
       const set = Types.kindAsStringToSet[item];
       if (set) {
         if (typeof setItems[set] !== "number") {
           setItems[set] = 0;
         }
         setItems[set] += 1;
+
+        if (set === "paladin") {
+          paladin += this.getEquipmentLevel()[index];
+        } else if (set === "immortal") {
+          immortal += this.getEquipmentLevel()[index];
+        }
+
+        this.setLevel = {
+          paladin,
+          immortal,
+        };
       }
     });
 
@@ -3781,8 +3810,12 @@ class Player extends Character {
           bonus[type] += stats;
         });
       });
+
       if (setItems["immortal"] && setItems["immortal"] === setItemsNameMap["immortal"].length) {
         this.auras.push("arcane");
+      }
+      if (setItems["paladin"] && setItems["paladin"] === setItemsNameMap["paladin"].length) {
+        this.auras.push("paladin");
       }
     }
 
@@ -4004,6 +4037,7 @@ class Player extends Character {
       reduceFrozenChance: this.bonus.reduceFrozenChance,
       drainLife: this.bonus.drainLife,
       regenerateHealth: this.bonus.regenerateHealth + Math.floor(this.maxHitPoints / 33),
+      setLevel: this.setLevel,
     };
 
     this.send(new Messages.Stats(stats).serialize());

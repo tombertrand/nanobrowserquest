@@ -377,7 +377,7 @@ export const Types: any = {
     AMULETEYE: 320,
     AMULETGREED: 322,
     AMULETIMMORTAL: 423,
-    AMULETPALADIN: 426, //~~~last
+    AMULETPALADIN: 426,
 
     // NPCs
     GUARD: 40,
@@ -471,7 +471,9 @@ export const Types: any = {
     DEMONAXE: 305,
     DEMONSICKLE: 404,
     PALADINAXE: 306,
+    IMMORTALDAGGER: 428, //~~~last
     IMMORTALSWORD: 307,
+    IMMORTALAXE: 427,
     HELLHAMMER: 244,
     MAUL: 377,
     WIZARDSWORD: 378,
@@ -619,6 +621,7 @@ Types.Entities.LightWeapons = [
   Types.Entities.ECLYPSEDAGGER,
   Types.Entities.MOONHACHET,
   Types.Entities.CHRISTMASHACHET,
+  Types.Entities.IMMORTALDAGGER,
 ];
 
 Types.Entities.NormalWeapons = [
@@ -652,8 +655,9 @@ Types.Entities.HeavyWeapons = [
   Types.Entities.MAUL,
   Types.Entities.MOONMAUL,
   Types.Entities.CHRISTMASMAUL,
+  Types.Entities.IMMORTALSWORD,
 ];
-Types.Entities.SuperHeavyWeapons = [Types.Entities.MINOTAURAXE, Types.Entities.IMMORTALSWORD, Types.Entities.DEMONMAUL];
+Types.Entities.SuperHeavyWeapons = [Types.Entities.MINOTAURAXE, , Types.Entities.IMMORTALAXE, Types.Entities.DEMONMAUL];
 Types.Entities.Weapons = [
   ...Types.Entities.LightWeapons,
   ...Types.Entities.NormalWeapons,
@@ -954,7 +958,9 @@ export const kinds = {
   mysticalsword: [Types.Entities.MYSTICALSWORD, "weapon", "Mystical Sword", 56, 62],
   mysticaldagger: [Types.Entities.MYSTICALDAGGER, "weapon", "Mystical Dagger", 56, 58],
   paladinaxe: [Types.Entities.PALADINAXE, "weapon", "Paladin Axe", 60, 66],
+  immortaldagger: [Types.Entities.IMMORTALDAGGER, "weapon", "Immortal Dagger", 60, 66],
   immortalsword: [Types.Entities.IMMORTALSWORD, "weapon", "Immortal Sword", 60, 66],
+  immortalaxe: [Types.Entities.IMMORTALAXE, "weapon", "Immortarion, the Timeless Cleaver", 60, 66],
   spikeglaive: [Types.Entities.SPIKEGLAIVE, "weapon", "Spike Glaive", 60, 68],
   eclypsedagger: [Types.Entities.ECLYPSEDAGGER, "weapon", "Eclypse Dagger", 60, 60],
   hellhammer: [Types.Entities.HELLHAMMER, "weapon", "Hell Hammer", 60, 68],
@@ -1319,6 +1325,7 @@ Types.rankedWeapons = [
   Types.Entities.FROZENSWORD,
   Types.Entities.DIAMONDSWORD,
   Types.Entities.MINOTAURAXE,
+  Types.Entities.IMMORTALAXEAXE,
 ];
 
 Types.rankedHelms = [
@@ -1422,7 +1429,10 @@ Types.itemUniqueMap = {
   spikeglaive: ["WAGMI"],
   eclypsedagger: ["Ethereum Killer"],
   paladinaxe: ["Peer to Peer Digital Cash"],
+
+  immortalsdagger: ["Satoshi Nakamoto"],
   immortalsword: ["Least Error & Latency will Win"],
+  immortalaxe: ["Wind Turbine"],
   maul: ["Mining at a loss"],
   wizardsword: ["$€Ӿ¥!"],
 
@@ -1487,7 +1497,7 @@ Types.itemUniqueMap = {
   shieldmystical: ["Developer Fund"],
   shielddemon: ["ORV > POW"],
   shieldpaladin: ["Vote Hinting"],
-  shieldimmortal: ["TBD"],
+  shieldimmortal: ["Mining Farms"],
 
   cape: ["Cloak of Levitation"],
 
@@ -1506,7 +1516,7 @@ Types.itemUniqueMap = {
   beltdemon: ["1000 CPS"],
   beltmystical: ["Horizontal Scaling"],
   beltpaladin: ["Slava Ukraini"],
-  beltimmortal: ["TBD"],
+  beltimmortal: ["Zero Inflation"],
   beltgoldwrap: ["Goldwrap"],
 };
 
@@ -2761,7 +2771,9 @@ Types.getTransmuteSuccessRate = (item, bonus, isBlessed) => {
     demonmaul: 6,
     demonscickle: 6,
     paladinaxe: 4,
+    immortaldagger: 4,
     immortalsword: 4,
+    immortalaxe: 4,
     hellhammer: 6,
     maul: 4,
     wizardsword: 4,

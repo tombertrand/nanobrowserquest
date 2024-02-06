@@ -273,7 +273,9 @@ export const kindAsStringToSet = {
   beltpaladin: "paladin",
   beltimmortal: "immortal",
   spikeglaive: "immortal",
+  immortaldagger: "immortal",
   immortalsword: "immortal",
+  immortalaxe: "immortal",
   helmimmortal: "immortal",
   immortalarmor: "immortal",
   shieldimmortal: "immortal",
@@ -286,7 +288,7 @@ export const kindAsStringToSet = {
 export const setItems = {
   pumpkin: ["ringpumkin", "helmpumkin"],
   immortal: [
-    ["spikeglaive", "immortalsword"],
+    ["immortaldagger", "spikeglaive", "immortalsword", "immortalaxe"],
     "helmimmortal",
     "immortalarmor",
     "shieldimmortal",
@@ -349,7 +351,7 @@ export const setItems = {
 
 export const setItemsNameMap = {
   pumpkin: ["helm", "Ring"],
-  immortal: ["Glaive or Sword", "helm", "Armor", "Belt", "Shield", "Amulet", "Ring"],
+  immortal: ["Dagger, Glaive, Sword or Axe", "helm", "Armor", "Belt", "Shield", "Amulet", "Ring"],
   paladin: ["Axe or Cleaver", "Helm", "Armor", "Belt", "Shield", "Amulet", "Ring"],
   mystical: [["Sword or Dagger"], "Helm", "Armor", "Belt", "Shield", "Ring"],
   demon: [["Axe, Dagger, Sickle or Maul"], "Helm", "Armor", "Belt", "Shield", "Amulet", "Pet Hellhound"],
