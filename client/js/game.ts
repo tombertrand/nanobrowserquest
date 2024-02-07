@@ -5555,7 +5555,7 @@ class Game {
 
         if (self.player.gridY >= 696 && self.player.gridY <= 733 && self.player.gridX <= 29) {
           const x = isCompleted ? randomInt(40, 46) : randomInt(7, 9);
-          const y = isCompleted ? randomInt(581, 585) : randomInt(682, 684);
+          const y = randomInt(581, 585);
 
           self.player.stop_pathing_callback({ x, y, isWaypoint: true });
         }

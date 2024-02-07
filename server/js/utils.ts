@@ -1230,8 +1230,8 @@ export const generateDroppedItem = () => {
     return;
   }
   let randomDrops = [];
-  // randomDrops = ["amuletpaladin", "ringpaladin"];
-  randomDrops = ["immortaldagger"]; //, "immortalaxe"];
+  randomDrops = ["amuletpaladin", "ringpaladin"];
+  // randomDrops = ["immortaldagger","mysticaldagger"]; //, "immortalaxe"];
   // randomDrops = ["helmexecutioner"];
   // randomDrops = ["christmaspresent"];
   // randomDrops = ["demonsickle"];

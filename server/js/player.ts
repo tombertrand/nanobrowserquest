@@ -89,25 +89,6 @@ const ADMINS = [
   "Crimson Bean",
 ];
 const SUPER_ADMINS = ["running-coder"];
-// const immediateBanbadWords = [
-//   "nigger",
-//   "nig",
-//   "neger",
-//   "niger",
-//   "niggers",
-//   "nigga",
-//   "niggas",
-//   "niga",
-//   "hitler",
-//   "gay",
-//   "anal",
-//   "stfu",
-//   "rape",
-//   "murder",
-//   "slave",
-//   "negro",
-//   "卐",
-// ];
 const badWords = [
   "nigger",
   "nig",
@@ -115,7 +96,6 @@ const badWords = [
   "shut up",
   "cumslut",
   "shutup",
-  "password",
   "pwd",
   "psword",
   "pswerd",
@@ -411,9 +391,7 @@ class Player extends Character {
     // Get IP from CloudFlare
     this.ip = connection._connection.handshake.headers["cf-connecting-ip"];
     this.canChat = true;
-
     this.dbWriteQueue = new PromiseQueue();
-
     this.lastHashCheckTimestamp = Date.now();
 
     // NOTE: Client will be sending the hashed game function, if altered, player gets banned.
@@ -587,7 +565,7 @@ class Player extends Character {
           if (!(await databaseHandler.passwordLoginOrCreate(self, password))) {
             return;
           } else if (self.server.loggedInPlayer(self.name)) {
-            self.server.disconnectPlayer(self.name);
+            self.server.disconnectPlayer({ name: self.name });
           }
         }
 
@@ -847,7 +825,7 @@ class Player extends Character {
             } else if (msg.startsWith("/kick") && msg.length) {
               const playerName = msg.replace("/kick ", "");
 
-              self.server.disconnectPlayer(playerName.trim(), true);
+              self.server.disconnectPlayer({ name: playerName.trim(), force: true });
               self.send(new Messages.Chat({}, `You kicked ${playerName}.`, "event").serialize());
               return;
             }
@@ -986,7 +964,7 @@ class Player extends Character {
           const mobLocation = getEntityLocation({ x: mob.x, y: mob.y });
 
           if (playerLocation !== mobLocation && !isLocationOKWithExpansionLocation(playerLocation, mobLocation)) {
-            self.server.disconnectPlayer(self.name.trim(), true);
+            self.server.disconnectPlayer({ name: name.trim(), force: true });
             postMessageToModeratorSupportChannel(`
           :warning: **${self.name}** was kicked for exploiting: ${params[0]} the AGGRO message, playerLocation ${playerLocation}: self.x: ${self.x}, self.y: ${self.y}, mobLocation: ${mobLocation}, mobname: ${mob.name}, mob.x: ${mob.x}, mob.y: ${mob.y}
           `);
@@ -1023,7 +1001,7 @@ class Player extends Character {
           const mobLocation = mob && getEntityLocation({ x: mob.x, y: mob.y });
 
           if (playerLocation !== mobLocation && !isLocationOKWithExpansionLocation(playerLocation, mobLocation)) {
-            self.server.disconnectPlayer(self.name.trim(), true);
+            self.server.disconnectPlayer({ name: self.name.trim(), force: true });
             postMessageToModeratorSupportChannel(`
           :warning: **${self.name}** was kicked for exploiting: ${params[0]} the ATTACK message, playerLocation ${playerLocation}: self.x: ${self.x}, self.y: ${self.y}, mobLocation: ${mobLocation}, mobname: ${mob.name}, mob.x: ${mob.x}, mob.y: ${mob.y}
           `);
@@ -1038,7 +1016,7 @@ class Player extends Character {
           const mobLocation = getEntityLocation({ x: mob.x, y: mob.y });
 
           if (playerLocation !== mobLocation && !isLocationOKWithExpansionLocation(playerLocation, mobLocation)) {
-            self.server.disconnectPlayer(self.name.trim(), true);
+            self.server.disconnectPlayer({ name: self.name.trim(), force: true });
             postMessageToModeratorSupportChannel(`
           :warning: **${self.name}** was kicked for exploiting: ${params[0]} the ATTACK message, playerLocation ${playerLocation}: self.x: ${self.x}, self.y: ${self.y}, mobLocation: ${mobLocation}, mobname: ${mob.name}, mob.x: ${mob.x}, mob.y: ${mob.y}
           `);
@@ -4141,7 +4119,7 @@ class Player extends Character {
 
       return message;
     } catch (err) {
-      // this.server.disconnectPlayer(name.trim(), true);
+      // this.server.disconnectPlayer({name:name.trim(), force:true}));
       postMessageToDiscordModeratorDebugChannel(`failed to decode message and got kicked`);
       return;
     }

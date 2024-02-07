@@ -569,10 +569,18 @@ class World {
     }
   }
 
-  disconnectPlayer(playerName, force = false) {
+  disconnectPlayer({
+    name: playerName,
+    force = false,
+    lastId = null,
+  }: {
+    name: string;
+    force?: boolean;
+    lastId?: number | null;
+  }) {
     const player = this.getPlayerByName(playerName);
 
-    if (force && player) {
+    if (force && player && player.id !== lastId) {
       delete this.players[player.id];
 
       this.removePlayer(player);
@@ -3108,16 +3116,18 @@ class World {
   // @Note: piggy found a way to duplicate himself
   getPlayerByName(name) {
     let count = 0;
+    let lastId = 0;
     let player = null;
     for (var id in this.players) {
       if (this.players[id].name === name) {
         count += 1;
+        lastId = Number(id);
         player = this.players[id];
       }
     }
 
-    if (count > 1) {
-      this.disconnectPlayer(name, true);
+    if (count !== 1) {
+      this.disconnectPlayer({ name, force: true, lastId });
     } else {
       return player;
     }
