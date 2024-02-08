@@ -11,7 +11,7 @@ type Auras =
   | "freeze"
   | "lowerresistance"
   | "arcane"
-| "paladin"
+  | "paladin"
   | "health-regenerate";
 
 type DefenseSkills = "heal" | "defense" | "resistances";

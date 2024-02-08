@@ -2247,10 +2247,10 @@ Types.getAliasFromName = function (name: string) {
     return "Skeleton Berserker";
   } else if (name === "skeletonarcher") {
     return "Skeleton Archer";
-  } else if (name === "skeletontemplar") {
+  } else if (name === "magicskeletoncrypt") {
     return "Boneshard";
-  } else if (name === "skeletontemplar2") {
-    return "Bonecrusader";
+  } else if (name === "poisonkeletoncrypt") {
+    return "Bone Crusader";
   } else if (name === "spider") {
     return "Venomweaver Spider";
   } else if (name === "spider2") {

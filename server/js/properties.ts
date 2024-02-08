@@ -571,7 +571,7 @@ var Properties: any = {
     },
     hp: 1400,
     armor: 22,
-    weapon: 24,
+    weapon: 26,
   },
   skeletontemplar: {
     drops: {
@@ -579,7 +579,7 @@ var Properties: any = {
     },
     hp: 5000,
     armor: 28,
-    weapon: 25,
+    weapon: 26,
   },
   skeletontemplar2: {
     drops: {
@@ -587,7 +587,7 @@ var Properties: any = {
     },
     hp: 5000,
     armor: 28,
-    weapon: 25,
+    weapon: 26,
   },
   spider: {
     drops: {

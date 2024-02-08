@@ -679,19 +679,15 @@ class Player extends Character {
 
           if (playerLocation === "magicskeletoncrypt") {
             entity = self.server.magicTemplar;
-
             emoji = EmojiMap.magicTemplar;
           } else if (playerLocation === "poisonskeletoncrypt") {
-            entity = self.server.mpoisonTemplar;
-
+            entity = self.server.poisonTemplar;
             emoji = EmojiMap.poisonTemplar;
           } else if (playerLocation === "butchergateway") {
             entity = self.server.butcher;
-
             emoji = EmojiMap.butcher;
           } else if (playerLocation === "skeletonking") {
             entity = self.server.skeletonking;
-
             emoji = EmojiMap.skeletonking;
           } else if (playerLocation === "necromancerlair") {
             entity = (({
@@ -721,28 +717,31 @@ class Player extends Character {
               armorLevel,
               weaponLevel,
             }))(self.server.necromancer);
-
             emoji = EmojiMap.necromancer;
           } else if (playerLocation === "chalice") {
             entity = self.server.shaman;
-
             emoji = EmojiMap.zulgurak;
           } else if (playerLocation === "spiders") {
             entity = self.server.spiderQueen;
-
             emoji = EmojiMap.arachneia;
           } else if (playerLocation === "azrealchamber") {
             entity = self.server.deathAngel;
-
             emoji = EmojiMap.azrael;
           } else if (playerLocation === "minotaurcage") {
             entity = self.server.minotaur;
-
             emoji = EmojiMap.minotaur;
           } else if (playerLocation === "cow") {
             entity = self.server.cowking;
-
             emoji = EmojiMap.cowking;
+
+            // @ts-ignore
+          } else if (playerLocation === "magicskeletoncrypt") {
+            entity = self.server.skeletontemplar;
+          
+            // @ts-ignore
+          } else if (playerLocation === "poisonskeletoncrypt") {
+            entity = self.server.skeletontemplar2;
+        
           }
 
           if (entity) {
