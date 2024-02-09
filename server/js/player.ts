@@ -4099,16 +4099,16 @@ class Player extends Character {
     return true;
   }
 
-  startPeriodicHashCheck() {
-    this.checkHashInterval = setInterval(() => {
-      const delay = Date.now() - this.lastHashCheckTimestamp;
+  // startPeriodicHashCheck() {
+  //   this.checkHashInterval = setInterval(() => {
+  //     const delay = Date.now() - this.lastHashCheckTimestamp;
 
-      if (delay > HASH_BAN_DELAY) {
-        clearInterval(this.checkHashInterval);
-        this.checkHashInterval = null;
-      }
-    }, HASH_BAN_DELAY);
-  }
+  //     if (delay > HASH_BAN_DELAY) {
+  //       clearInterval(this.checkHashInterval);
+  //       this.checkHashInterval = null;
+  //     }
+  //   }, HASH_BAN_DELAY);
+  // }
 
   verifySignature(signature) {
     try {
@@ -4400,8 +4400,8 @@ class Player extends Character {
       this.updateHitPoints(true);
       this.sendPlayerStats();
 
-      clearInterval(this.checkHashInterval);
-      this.startPeriodicHashCheck();
+      // clearInterval(this.startPeriodicHashCheck);
+      // this.startPeriodicHashCheck();
 
       this.hasEnteredGame = true;
       this.isDead = false;

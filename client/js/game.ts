@@ -249,7 +249,7 @@ class Game {
   cursorOverSocket: number | null;
   isPanelOpened: boolean;
   isDragStarted: boolean;
-  hashCheckInterval: any;
+  // hashCheckInterval: any; 
   admins: string[];
   onSendMoveItemTimeout: NodeJS.Timeout;
 
@@ -294,7 +294,7 @@ class Game {
     this.itemToDelete = null;
     this.isPanelOpened = false;
     this.isDragStarted = false;
-    this.hashCheckInterval = null;
+    // this.hashCheckInterval = null;
     this.onSendMoveItemTimeout = null;
 
     this.renderer = null;
@@ -3040,13 +3040,13 @@ class Game {
     }
   }
 
-  startHashCheckInterval() {
-    this.hashCheckInterval = window.setInterval(() => {
-      const hash = CryptoJS.MD5(this.toString()).toString();
+  // startHashCheckInterval() {
+  //   this.hashCheckInterval = window.setInterval(() => {
+  //     const hash = CryptoJS.MD5(this.toString()).toString();
 
-      this.client.sendHash(hash);
-    }, HASH_BAN_DELAY / 2);
-  }
+  //     this.client.sendHash(hash);
+  //   }, HASH_BAN_DELAY / 2);
+  // }
 
   async connect(action, started_callback) {
     var self = this;
@@ -3156,8 +3156,8 @@ class Game {
       // @ts-ignore
       self.app.start();
 
-      clearInterval(this.hashCheckInterval);
-      self.startHashCheckInterval();
+      // clearInterval(this.hashCheckInterval);
+      // self.startHashCheckInterval();
 
       Sentry.configureScope(scope => {
         // scope.setTag("name", name);
