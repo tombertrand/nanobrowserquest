@@ -726,7 +726,7 @@ export const generateChristmasPresentItem = (): {
     { item: "amuletchristmas", uniqueChances: 6 },
     { item: "shieldchristmas", uniqueChances: 6 },
 //@TODO 1 /133
-    { item: "petreindeer", uniqueChances: 4 },
+    // { item: "petreindeer", uniqueChances: 4 },
   ];
 
   return _.shuffle(items)[0];
