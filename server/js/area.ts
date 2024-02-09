@@ -126,6 +126,8 @@ class MobArea extends Area {
       mob.isDead = false;
       self.addToArea(mob);
       self.world.addMob(mob);
+
+      mob.handleRespawn();
     }, delay);
   }
 

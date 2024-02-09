@@ -1,0 +1,13 @@
+{
+  "id": "aura-paladin",
+  "width": 38,
+  "height":41,
+  "animations": {
+    "idle_down": {
+      "length": 8,
+      "row": 0
+    }
+  },
+  "offset_x": -11,
+  "offset_y": -19
+}

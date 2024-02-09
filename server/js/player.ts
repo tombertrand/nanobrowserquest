@@ -737,11 +737,10 @@ class Player extends Character {
             // @ts-ignore
           } else if (playerLocation === "magicskeletoncrypt") {
             entity = self.server.skeletontemplar;
-          
+
             // @ts-ignore
           } else if (playerLocation === "poisonskeletoncrypt") {
             entity = self.server.skeletontemplar2;
-        
           }
 
           if (entity) {

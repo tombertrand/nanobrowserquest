@@ -728,6 +728,9 @@ class Renderer {
             } else if (aura === "arcane") {
               sprite = this.game.getSprite("aura-arcane");
               anim = this.game.arcaneAnimation;
+            } else if (aura === "paladin") {
+              sprite = this.game.getSprite("aura-paladin");
+              anim = this.game.paladinAnimation;
             } else if (aura === "health-regenerate") {
               sprite = this.game.getSprite("aura-health-regenerate");
               anim = this.game.healthRegenerateAnimation;

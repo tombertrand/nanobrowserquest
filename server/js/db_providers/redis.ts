@@ -1887,7 +1887,6 @@ class DatabaseHandler {
               items.forEach((rawItem: GeneratedItem) => {
                 const { item, level, quantity, bonus, skill: skillOrSkin, socket } = rawItem;
                 let slotIndex = quantity ? inventory.findIndex(a => a && a.startsWith(`${item}:`)) : -1;
-
                 // Increase the scroll/rune count
                 if (slotIndex > -1) {
                   if (Types.isSingle(item)) {
@@ -1924,8 +1923,8 @@ class DatabaseHandler {
                 }
               });
 
-              player.send([Types.Messages.INVENTORY, inventory]);
               await this.client.hset("u:" + player.name, "inventory", JSON.stringify(inventory), () => {
+                 player.send([Types.Messages.INVENTORY, inventory]);
                 resolve(true);
               });
             } catch (err) {
@@ -1954,8 +1953,6 @@ class DatabaseHandler {
           data = JSON.parse(reply);
           const filteredUpgrade = data.filter(Boolean);
           //@NNOTE: Nothing to move, nothing to await
-          if (!filteredUpgrade.length) {
-          }
 
           if (filteredUpgrade.length) {
             const items = filteredUpgrade.reduce((acc, rawItem) => {
@@ -1992,7 +1989,6 @@ class DatabaseHandler {
               }
               return isValidReturnQuantityItem;
             });
-
             if (
               (hasQuantityItem && quantityItem && hasInventoryQuantityItem && isValidReturnQuantityItem) ||
               availableInventorySlots > items.length

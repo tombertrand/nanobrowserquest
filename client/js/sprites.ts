@@ -234,6 +234,7 @@ import auraHealthRegenerate from "../sprites/aura-health-regenerate.json";
 import auraFreeze from "../sprites/aura-freeze.json";
 import auraLowerResistance from "../sprites/aura-lowerresistance.json";
 import auraArcane from "../sprites/aura-arcane.json";
+import auraPaladin from "../sprites/aura-paladin.json";
 import skillHeal from "../sprites/skill-heal.json";
 import skillDefense from "../sprites/skill-defense.json";
 import skillResistances from "../sprites/skill-resistances.json";
@@ -826,6 +827,7 @@ const sprites = {
   "aura-freeze": auraFreeze,
   "aura-lowerresistance": auraLowerResistance,
   "aura-arcane": auraArcane,
+  "aura-paladin": auraPaladin,
   "skill-heal": skillHeal,
   "skill-defense": skillDefense,
   "skill-resistances": skillResistances,

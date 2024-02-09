@@ -370,14 +370,12 @@ class Mob extends Character {
     if (this.area && this.area instanceof MobArea) {
       // Respawn inside the area if part of a MobArea
       this.area.respawnMob(this, delay);
-    } else {
-      if (this.area && this.area instanceof ChestArea) {
-        this.area.removeFromArea(this);
-      }
-      this.respawnTimeout = setTimeout(() => {
-        self.respawnCallback?.();
-      }, delay);
+    } else if (this.area && this.area instanceof ChestArea) {
+      this.area.removeFromArea(this);
     }
+    this.respawnTimeout = setTimeout(() => {
+      self.respawnCallback?.();
+    }, delay);
   }
 
   onRespawn(callback) {
@@ -404,9 +402,10 @@ class Mob extends Character {
       self.resetPosition();
 
       if (!waitDuration && Types.isBoss(this.kind)) {
-        this.destroy(30);
-        this.handleRespawn(30);
+        self.destroy(30);
+        self.handleRespawn(30);
       }
+
       self.move(self.spawningX, self.spawningY);
     }, delay);
   }

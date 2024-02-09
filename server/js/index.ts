@@ -31,9 +31,7 @@ function main(config) {
   //   }
   // }, 1000);
 
-  console.info("Starting BrowserQuest game server...");
-
-
+  console.info("Starting NanoBrowserQuest game server...");
 
   server.onConnect(function (connection) {
     var world; // the one in which the player will be spawned

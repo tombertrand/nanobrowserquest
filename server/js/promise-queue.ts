@@ -5,13 +5,13 @@ interface Operation<T> {
 interface QueueItem<T> {
   operation: Operation<T>;
   resolve: (value: T) => void;
-  reject: (err: Error) => void;
+  reject: (reason?: any) => void;
 }
 
 export class PromiseQueue {
-  private readonly queue: QueueItem<unknown>[];
+  private readonly queue: QueueItem<any>[]; // Use 'any' to accommodate different types of operations.
   private isRunning: boolean;
-  public results: any[];
+  public results: any[]; // Keeping 'any[]' for results to accommodate different operation result types.
 
   constructor() {
     this.queue = [];
@@ -23,7 +23,7 @@ export class PromiseQueue {
     return new Promise<T>((resolve, reject) => {
       this.queue.push({
         operation,
-        resolve: resolve as Operation<unknown>,
+        resolve, // No need for casting here.
         reject,
       });
 
@@ -43,7 +43,9 @@ export class PromiseQueue {
 
     this.isRunning = true;
     const { operation, resolve, reject } = item;
-    setImmediate(async () => {
+
+    // Replacing 'setImmediate' with 'setTimeout' for broader environment compatibility.
+    setTimeout(async () => {
       try {
         const value = await operation();
         this.results.push(value);
@@ -54,6 +56,6 @@ export class PromiseQueue {
         this.isRunning = false;
         this.dequeue();
       }
-    });
+    }, 0);
   }
 }

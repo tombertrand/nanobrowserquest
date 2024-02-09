@@ -154,6 +154,7 @@ class Game {
   freezeAnimation: Animation;
   resistanceAnimation: Animation;
   arcaneAnimation: Animation;
+  paladinAnimation: Animation;
   healthRegenerateAnimation: Animation;
   anvilAnimation: Animation;
   defenseSkillAnimation: Animation;
@@ -311,6 +312,7 @@ class Game {
     this.freezeAnimation = null;
     this.resistanceAnimation = null;
     this.arcaneAnimation = null;
+    this.paladinAnimation = null;
     this.healthRegenerateAnimation = null;
     this.anvilAnimation = null;
     this.defenseSkillAnimation = null;
@@ -499,6 +501,9 @@ class Game {
 
     this.arcaneAnimation = new Animation("idle_down", 4, 0, 36, 15);
     this.arcaneAnimation.setSpeed(140);
+
+    this.paladinAnimation = new Animation("idle_down", 4, 0, 38, 41);
+    this.paladinAnimation.setSpeed(140);
 
     this.healthRegenerateAnimation = new Animation("idle_down", 5, 0, 16, 11);
     this.healthRegenerateAnimation.setSpeed(140);

@@ -405,6 +405,7 @@ class Updater {
     this.game.freezeAnimation?.update(t);
     this.game.resistanceAnimation?.update(t);
     this.game.arcaneAnimation?.update(t);
+    this.game.paladinAnimation?.update(t);
     this.game.healthRegenerateAnimation?.update(t);
     this.game.anvilAnimation?.update(t);
     this.game.defenseSkillAnimation?.update(t);
