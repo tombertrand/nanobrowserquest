@@ -15,28 +15,31 @@ function main(config) {
   var server = new Server(config.port);
   var metrics = config.metrics_enabled ? new Metrics(config) : null;
   var worlds = [];
-  // var lastTotalPlayers = 0;
+  var lastTotalPlayers = 0;
   var databaseHandler = new DatabaseHandler();
 
-  // setInterval(function () {
-  //   if (metrics && metrics.isReady) {
-  //     metrics.getTotalPlayers(function (totalPlayers) {
-  //       if (totalPlayers !== lastTotalPlayers) {
-  //         lastTotalPlayers = totalPlayers;
-  //         _.each(worlds, function (world) {
-  //           world.updatePopulation();
-  //         });
-  //       }
-  //     });
-  //   }
-  // }, 1000);
+  setInterval(function () {
+    if (metrics && metrics.isReady) {
+      metrics.getTotalPlayers(function (totalPlayers) {
+        if (totalPlayers !== lastTotalPlayers) {
+          lastTotalPlayers = totalPlayers;
+          _.each(worlds, function (world) {
+            world.updatePopulation();
+          });
+        }
+      });
+    }
+  }, 1000);
 
   console.info("Starting NanoBrowserQuest game server...");
 
   server.onConnect(function (connection) {
+
+    console.log('~~~~~ici')
     var world; // the one in which the player will be spawned
     var connect = function () {
       if (world) {
+       
         world.connect_callback(new Player(connection, world, databaseHandler));
       }
     };

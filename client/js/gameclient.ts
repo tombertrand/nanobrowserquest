@@ -234,6 +234,8 @@ class GameClient {
       this.connection.on("message", e => {
         var reply = JSON.parse(e.data);
 
+        console.log('~~~~message',reply)
+
         if (reply.status === "OK") {
           this.dispatched_callback(reply.host, reply.port);
         } else if (reply.status === "FULL") {

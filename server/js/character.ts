@@ -61,7 +61,7 @@ class Character extends Entity {
     }
   }
 
-  regenHealthBy(value) {
+  regenerateHealthBy(value) {
     const hp = this.hitPoints;
     const max = this.maxHitPoints;
 

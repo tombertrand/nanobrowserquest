@@ -178,6 +178,14 @@ export const getClassicMaxPayout = (network: Network) => {
   return calculateMaxPayout(Object.values(classicAchievementMap[network]), network);
 };
 
+
+
+export const getClassicPayout = (achievements, network: Network) => {
+ if (network && achievements.length && classicAchievementMap[network]) {
+    return getPayout(achievements, Object.values(classicAchievementMap[network]), network);
+  }
+};
+
 const getPayout = (achievements, payouts, network: Network) => {
   let amount = 0;
 
@@ -188,12 +196,6 @@ const getPayout = (achievements, payouts, network: Network) => {
   });
 
   return raiToRaw(new BigNumber(amount).dividedBy(networkDividerMap[network]).toFixed(), network);
-};
-
-export const getClassicPayout = (achievements, network: Network) => {
-  if (network && achievements.length) {
-    return getPayout(achievements, Object.values(classicAchievementMap[network]), network);
-  }
 };
 
 export const getRandomDefenseSkill = () => _.shuffle([0, 1, 2]).slice(0, 1);

@@ -432,6 +432,7 @@ class World {
       self.forEachCharacter(function (character) {
         if (!character.hasFullHealth() && !character.isDead) {
           let regenerateHealth = Math.floor(character.maxHitPoints / 33);
+
           if (character.bonus && character.bonus.regenerateHealth) {
             regenerateHealth += character.bonus.regenerateHealth;
           }
@@ -441,7 +442,7 @@ class World {
           }
 
           if (regenerateHealth > 0) {
-            character.regenHealthBy(regenerateHealth);
+            character.regenerateHealthBy(regenerateHealth);
 
             if (character.type === "player") {
               self.pushToPlayer(character, character.regen());
@@ -500,9 +501,8 @@ class World {
       if (updateCount < regenCount) {
         updateCount += 1;
       } else {
-        if (self.regen_callback) {
-          self.regen_callback();
-        }
+        self.regen_callback?.();
+
         updateCount = 0;
       }
     }, 1000 / this.ups);
@@ -513,12 +513,12 @@ class World {
       this.goldBank = goldBank;
     });
 
-    setInterval(() => {
-      this.databaseHandler.getChatBan().then(chatBan => {
-        this.chatBan = chatBan;
-      }),
-        1000 * 60 * 20;
-    });
+    // setInterval(() => {
+    //   this.databaseHandler.getChatBan().then(chatBan => {
+    //     this.chatBan = chatBan;
+    //   }),
+    //   300000;// 5 mnx
+    // });
     setInterval(() => {
       this.maxPlayerCreateByIp = { ip: [] };
     }, 86400000);

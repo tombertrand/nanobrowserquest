@@ -20,7 +20,7 @@ import {
   isLocationOKWithExpansionLocation,
 } from "../../shared/js/utils";
 import {
-  HASH_BAN_DELAY,
+  // HASH_BAN_DELAY,
   isValidAccountAddress,
   toArray,
   toBoolean,
@@ -321,8 +321,7 @@ class Player extends Character {
   // attackTimeoutWarning: boolean;
   checkHashInterval: any;
   lastHashCheckTimestamp: number;
-  upgradeLock: boolean;
-  moveGoldLock: boolean;
+
   isChatbanWarned: boolean;
   setLevel: any;
 
@@ -384,9 +383,6 @@ class Player extends Character {
     this.hasCrystal = false;
     this.isChatbanWarned = false;
     // this.attackTimeoutWarning = false;
-
-    this.upgradeLock = false;
-    this.moveGoldLock = false;
 
     // Get IP from CloudFlare
     this.ip = connection._connection.handshake.headers["cf-connecting-ip"];
@@ -574,6 +570,7 @@ class Player extends Character {
             databaseHandler.createPlayer(self);
           }
         } else {
+          console.log("loadPlayer~~~~,");
           databaseHandler.loadPlayer(self);
         }
       } else if (action === Types.Messages.ACCOUNT) {
@@ -744,7 +741,7 @@ class Player extends Character {
           }
 
           if (entity) {
-            postMessageToSupportChannel(`**${entity.name.toUpperCase()}** ${emoji}${JSON.stringify(entity)}`);
+            postMessageToSupportChannel(`**${entity.name.toUpperCase()}** ${emoji}${JSON.stringify(entity.neme)}`);
           } else {
             postMessageToSupportChannel(
               `No boss in that area **${self.name}** x:${self.x}, y:${self.y}  playerLocation:${playerLocation}`,
@@ -1101,7 +1098,7 @@ class Player extends Character {
                 drainLife = drainLife - Math.floor((self.bonus.drainLife * self.curse.health) / 100);
               }
 
-              self.regenHealthBy(drainLife);
+              self.regenerateHealthBy(drainLife);
               self.server.pushToPlayer(self, self.health());
             }
           }
@@ -1487,7 +1484,7 @@ class Player extends Character {
               }
 
               if (amount && !self.hasFullHealth()) {
-                self.regenHealthBy(amount);
+                self.regenerateHealthBy(amount);
                 self.server.pushToPlayer(self, self.health());
               }
             } else if (kind === Types.Entities.GOLD) {
@@ -2487,7 +2484,7 @@ class Player extends Character {
                 healAmount = healthDiff;
               }
 
-              self.regenHealthBy(healAmount);
+              self.regenerateHealthBy(healAmount);
               self.server.pushToPlayer(self, self.health());
             }
           } else if (this.defenseSkill === 1) {
@@ -3536,7 +3533,7 @@ class Player extends Character {
       if (this.bonus.freezeChance) {
         this.auras.push("freeze");
       }
-      if (this.bonus.regenerateHealth >= 125) {
+      if (this.bonus.regenerateHealth >= 100) {
         this.auras.push("health-regenerate");
       }
 
