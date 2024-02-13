@@ -117,10 +117,6 @@ class DatabaseHandler {
 
   constructor() {
     this.client = redisClient;
-
-    // setImmediate(async () => {
-    //   this.client = await connectRedis();
-    // });
   }
 
   async assignNewDepositAccount(
@@ -132,14 +128,14 @@ class DatabaseHandler {
 
     const userKey = "u:" + player.name;
 
-    const rawDepositAccount = await this.client.hmGet(userKey, "depositAccount", "depositAccountIndex");
-    if (!rawDepositAccount) {
+    const reply = await this.client.hmGet(userKey, "depositAccount", "depositAccountIndex");
+    if (!reply) {
       Sentry.captureException(new Error("Unable to get deposit account"), { extra: { player: player.name } });
 
       return;
     }
 
-    let [depositAccount, depositAccountIndex] = rawDepositAccount;
+    let [depositAccount, depositAccountIndex] = reply;
     if (depositAccount || depositAccountIndex) return;
 
     depositAccountIndex = await this.createDepositAccount();
@@ -173,11 +169,10 @@ class DatabaseHandler {
     return { depositAccount, depositAccountIndex };
   }
 
+  //
+
   async loadPlayer(player) {
     var userKey = "u:" + player.name;
-
-    console.log("~~~~load player", player.name);
-
     let [
       account,
       network,
@@ -191,8 +186,6 @@ class DatabaseHandler {
       x,
       y,
       hash,
-      nanoPotions,
-      gems,
       upgrade,
       achievement,
       ring1,
@@ -203,6 +196,8 @@ class DatabaseHandler {
       shield,
       helm,
       pet,
+      nanoPotions,
+      gems,
       artifact,
       expansion1,
       expansion2,
@@ -224,143 +219,113 @@ class DatabaseHandler {
       .hGet(userKey, "createdAt") // 5
       .hGet(userKey, "inventory") // 6
       .hGet(userKey, "stash") // 7
-      .hGet(userKey, "trade") // 28
-      .hGet(userKey, "x") // 8
-      .hGet(userKey, "y") // 9
-      .hGet(userKey, "hash") // 10
-      .hGet(userKey, "nanoPotions") // 11
-      .hGet(userKey, "gems") // 12
-      .hGet(userKey, "upgrade") // 13
-      .hGet(userKey, "achievement") // 14
-      .hGet(userKey, "ring1") // 15
-      .hGet(userKey, "ring2") // 16
-      .hGet(userKey, "amulet") // 17
-      .hGet(userKey, "belt") // 18
-      .hGet(userKey, "cape") // 19
+      .hGet(userKey, "trade") // 8
+      .hGet(userKey, "x") // 9
+      .hGet(userKey, "y") // 10
+      .hGet(userKey, "hash") // 11
+      .hGet(userKey, "upgrade") // 12
+      .hGet(userKey, "achievement") // 13
+      .hGet(userKey, "ring1") // 14
+      .hGet(userKey, "ring2") // 15
+      .hGet(userKey, "amulet") // 16
+      .hGet(userKey, "belt") // 17
+      .hGet(userKey, "cape") // 18
       .hGet(userKey, "shield") // 19
-      .hGet(userKey, "helm") // 19
-      .hGet(userKey, "pet") // 36
-      .hGet(userKey, "artifact") // 19
-      .hGet(userKey, "expansion1") // 20
-      .hGet(userKey, "expansion2") // 21
-      .hGet(userKey, "gold") // 22
-      .hGet(userKey, "goldStash") // 22
-      .hGet(userKey, "goldTrade") // 22
-      .hGet(userKey, "depositAccount") // 23
-      .hGet(userKey, "depositAccountIndex") // 24
-      .hGet(userKey, "settings") // 26
-      .hGet(userKey, "network") // 27
-      .hGet(userKey, "discordId") // 33
+      .hGet(userKey, "helm") // 20
+      .hGet(userKey, "pet") // 21
+      .hGet(userKey, "nanoPotions") // 22
+      .hGet(userKey, "gems") // 23
+      .hGet(userKey, "artifact") // 24
+      .hGet(userKey, "expansion1") // 25
+      .hGet(userKey, "expansion2") // 26
+      .hGet(userKey, "gold") // 27
+      .hGet(userKey, "goldStash") // 28
+      .hGet(userKey, "goldTrade") // 29
+      .hGet(userKey, "waypoints") // 30
+      .hGet(userKey, "depositAccount") // 31
+      .hGet(userKey, "depositAccountIndex") // 32
+      .hGet(userKey, "settings") // 33
+      .hGet(userKey, "network") // 34
+      .hGet(userKey, "discordId") // 35
       .exec();
 
-    if (account) {
-      if (!network) {
-        [network] = account.split("_");
-        await this.client.hSet("u:" + player.name, "network", network);
-      }
+    exp = Number(exp);
+    gold = Number(gold);
+    goldStash = Number(goldStash);
+    goldTrade = Number(goldTrade);
 
-      if (!depositAccount && ["nano", "ban"].includes(network)) {
-        try {
-          ({ depositAccount, depositAccountIndex } = await this.assignNewDepositAccount(player, network));
-        } catch (_errAccount) {
-          return;
-        }
-      }
-
-      // if (rawAccount && rawPlayerAccount != rawAccount) {
-      //   player.connection.sendUTF8("invalidlogin");
-      //   player.connection.close("Wrong Account: " + player.name);
-      //   return;
-      // }
-
-      // @NOTE: Change the player network and depositAccount according to the login account so
-      // nano players can be on bananobrowserquest and ban players can be on nanobrowserquest
-      const loggedInNetwork = player.network;
-      if (
-        loggedInNetwork &&
-        ["nano", "ban"].includes(loggedInNetwork) &&
-        depositAccount &&
-        !depositAccount.startsWith(loggedInNetwork)
-      ) {
-        const [, rawDepositAccount] = depositAccount.split("_");
-        depositAccount = `${loggedInNetwork}_${rawDepositAccount}`;
-      }
-
-      // stash = stash.map(rawItem => {
-      //   if (typeof rawItem === "string" && rawItem.startsWith("shield")) {
-      //     const [item, level, bonus, skill] = rawItem.split(":");
-      //     return skill && skill.length <= 1
-      //       ? [item, level, bonus || `[]`, `[]`, skill].filter(Boolean).join(":")
-      //       : rawItem;
-      //   }
-      //   return rawItem;
-      // });
-      // await this.client.hSet("u:" + player.name, "stash", JSON.stringify(stash));
-
-      // return true;
-
-      // try {
-      //   // settings = Object.assign({ ...defaultSettings }, JSON.parse(settings || "{}"));
-      // } catch (_err) {
-      //   // Silence err
-      // }
-
-      // Restore the trade gold in the main inventory gold
-      if (goldTrade) {
-        gold = gold + goldTrade;
-        goldTrade = 0;
-
-        await this.client.hmSet("u:" + player.name, "gold", gold, "goldTrade", 0);
-      }
-
-      // var x = NaN2Zero(replies[7]);
-      // var y = NaN2Zero(replies[8]);
-      // // var hash = replies[9];
-      // var nanoPotions = parseInt(replies[10] || 0);
-
-      console.info("Player name: " + player.name);
-      console.info("Armor: " + armor);
-      console.info("Weapon: " + weapon);
-      console.info("Experience: " + exp);
-
-      player.sendWelcome({
-        account,
-        network,
-        armor,
-        weapon,
-        exp,
-        createdAt,
-        inventory,
-        stash,
-        trade,
-        x,
-        y,
-        hash,
-        nanoPotions,
-        gems,
-        upgrade,
-        achievement,
-        ring1,
-        ring2,
-        amulet,
-        belt,
-        cape,
-        shield,
-        helm,
-        pet,
-        artifact,
-        expansion1,
-        expansion2,
-        gold,
-        goldStash,
-        goldTrade,
-        waypoints,
-        depositAccount,
-        depositAccountIndex,
-        settings,
-        discordId,
-      });
+    if (account && !network) {
+      [network] = account.split("_");
+      await this.client.hSet("u:" + player.name, "network", network);
     }
+
+    if (!depositAccount && ["nano", "ban"].includes(network)) {
+      ({ depositAccount, depositAccountIndex } = await this.assignNewDepositAccount(player, network));
+    }
+
+    // @NOTE: Change the player network and depositAccount according to the login account so
+    // nano players can be on bananobrowserquest and ban players can be on nanobrowserquest
+    const loggedInNetwork = player.network;
+    if (
+      loggedInNetwork &&
+      ["nano", "ban"].includes(loggedInNetwork) &&
+      depositAccount &&
+      !depositAccount.startsWith(loggedInNetwork)
+    ) {
+      const [, rawDepositAccount] = depositAccount.split("_");
+      depositAccount = `${loggedInNetwork}_${rawDepositAccount}`;
+    }
+    // Restore the trade gold in the main inventory gold
+    if (goldTrade) {
+      gold = gold + goldTrade;
+      goldTrade = 0;
+      //@notehmSet is broken
+      await this.client.hSet(userKey, "goldTrade", String(goldTrade));
+      await this.client.hSet(userKey, "gold", String(gold));
+    }
+
+    console.info("Player name: " + player.name);
+    console.info("Armor: " + armor);
+    console.info("Weapon: " + weapon);
+    console.info("Experience: " + exp);
+
+    player.sendWelcome({
+      account,
+      network,
+      armor,
+      weapon,
+      exp,
+      createdAt,
+      inventory,
+      stash,
+      trade,
+      upgrade,
+      x,
+      y,
+      hash,
+      nanoPotions,
+      gems,
+      achievement,
+      ring1,
+      ring2,
+      amulet,
+      belt,
+      cape,
+      shield,
+      helm,
+      pet,
+      artifact,
+      expansion1,
+      expansion2,
+      gold,
+      goldStash,
+      goldTrade,
+      waypoints,
+      depositAccount,
+      depositAccountIndex,
+      settings,
+      discordId,
+    });
 
     // Could not find the user
     // player.connection.sendUTF8("invalidlogin");
@@ -403,12 +368,10 @@ class DatabaseHandler {
   async createPlayer(player) {
     var userKey = "u:" + player.name;
     var curTime = new Date().getTime();
-
     await this.setDepositAccount();
 
     let depositAccountIndex = null;
     let depositAccount = null;
-
     if (player.account && player.network) {
       depositAccountIndex = await this.createDepositAccount();
       depositAccount = await getNewDepositAccountByIndex(depositAccountIndex as number, player.network);
@@ -442,6 +405,8 @@ class DatabaseHandler {
       achievement,
       inventory,
       stash,
+      trade,
+      upgrade,
       nanoPotions,
       weapon,
       helm,
@@ -456,8 +421,6 @@ class DatabaseHandler {
       amulet,
       gems,
       artifact,
-      upgrade,
-      trade,
       expansion1,
       expansion2,
       waypoints,
@@ -542,7 +505,6 @@ class DatabaseHandler {
 
   async checkIsBannedByIP(player) {
     const ipKey = "ipban:" + player.ip;
-    console.log("~~~~beforecheckIsBannedByIP");
     const [timestamp, reason, message, admin] = await this.client
       .multi()
       .hGet(ipKey, "timestamp") // 0
@@ -628,7 +590,6 @@ class DatabaseHandler {
   }
 
   async getChatBan() {
-    console.log("~~~~this.client,this.client", this.client);
     const rawChatBan = await this.client.hGetAll("chatBan");
     let chatBan = [];
 
@@ -1227,7 +1188,7 @@ class DatabaseHandler {
   async lootGold({ player, amount }) {
     let currentGold = await this.client.hGet("u:" + player.name, "gold");
 
-    if (currentGold === null) {
+    if (!currentGold) {
       currentGold = 0;
     } else if (!/\d+/.test(currentGold)) {
       Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
@@ -1241,6 +1202,8 @@ class DatabaseHandler {
     const gold = parseInt(currentGold) + parseInt(amount);
 
     await this.client.hSet("u:" + player.name, "gold", gold);
+
+    console.log("~~~~new gold", gold);
     player.send([Types.Messages.GOLD.INVENTORY, gold]);
     player.gold = gold;
   }
@@ -1458,22 +1421,21 @@ class DatabaseHandler {
 
       this.sendMoveItem({ player, location: "inventory", data: inventory });
 
-      await this.client.decrBy("goldBank", amount, (_err, reply) => {
-        player.server.goldBank = Number(reply);
+      const reply = await this.client.decrBy("goldBank", amount);
+      player.server.goldBank = Number(reply);
 
-        this.lootGold({
-          player,
-          amount,
-        });
-
-        postMessageToDiscordEventChannel(
-          `**${player.name}** just exchanged an IOU ${EmojiMap.iou} for **${new Intl.NumberFormat("en-EN", {}).format(
-            amount,
-          )}** gold ${EmojiMap.gold} `,
-        );
-
-        return amount;
+      await this.lootGold({
+        player,
+        amount,
       });
+
+      postMessageToDiscordEventChannel(
+        `**${player.name}** just exchanged an IOU ${EmojiMap.iou} for **${new Intl.NumberFormat("en-EN", {}).format(
+          amount,
+        )}** gold ${EmojiMap.gold} `,
+      );
+
+      return amount;
     } else {
       return false;
     }
@@ -1491,6 +1453,8 @@ class DatabaseHandler {
     if (!fromItem) return;
 
     const amount = getGoldAmountFromSoldItem({ item: fromItem, quantity: soldQuantity });
+
+    console.log("~~~~amount", amount);
     if (!amount) return;
 
     // const [item, rawLevel] = fromItem;
@@ -1528,20 +1492,20 @@ class DatabaseHandler {
       fromReplyParsed[fromSlot] = 0;
     }
 
-    await this.client.hSet("u:" + player.name, "inventory", JSON.stringify(fromReplyParsed), () => {
-      this.lootGold({
-        player,
-        amount,
-      });
-      player.send(
-        new Messages.MerchantLog({
-          item: fromItem,
-          quantity: soldQuantity,
-          amount,
-          type: "sell",
-        }).serialize(),
-      );
+    await this.client.hSet("u:" + player.name, "inventory", JSON.stringify(fromReplyParsed));
+    await this.lootGold({
+      player,
+      amount,
     });
+    player.send(
+      new Messages.MerchantLog({
+        item: fromItem,
+        quantity: soldQuantity,
+        amount,
+        type: "sell",
+      }).serialize(),
+    );
+    // });
     this.sendMoveItem({ player, location: "inventory", data: fromReplyParsed });
   }
 
@@ -2357,7 +2321,7 @@ class DatabaseHandler {
   }
 
   async setDepositAccount() {
-    await this.client.set("deposit_account_count", 0, { NX: true });
+    await this.client.set("deposit_account_count", 1, { NX: true });
   }
 
   async createDepositAccount(): Promise<unknown> {

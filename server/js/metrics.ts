@@ -7,29 +7,29 @@ class Metrics {
   config: any;
   isReady: boolean;
   readyCallback: any;
-  redisClient: any;
+  client: any;
 
   constructor(config) {
-    var self = this;
+    // var self = this;
 
     this.config = config;
-    this.redisClient = redisClient;
+    this.client = redisClient;
 
     this.isReady = false;
 
-    this.redisClient.on("connect", function () {
+    if (this.client.isOpen) {
       console.info("Metrics enabled: Redis client connected to " + config.redis_host + ":" + config.redis_port);
-      self.isReady = true;
-      self.readyCallback?.();
-    });
+      this.isReady = true;
+      this.readyCallback?.();
+    }
   }
 
   ready(callback) {
     this.readyCallback = callback;
   }
 
-  updatePlayerCounters(worlds, updatedCallback) {
-    var self = this;
+  async updatePlayerCounters(worlds, updatedCallback) {
+    // var self = this;
     var config = this.config;
     var numServers = _.size(config.game_servers);
     var playerCount = _.reduce(
@@ -42,20 +42,20 @@ class Metrics {
 
     if (this.isReady) {
       // Set the number of players on this server
-      this.redisClient.set("player_count_" + config.server_name, playerCount);
+      await this.client.set("player_count_" + config.server_name, String(playerCount));
       var totalPlayers = 0;
 
       // Recalculate the total number of players and set it
-      _.each(config.game_servers, function (server) {
-        const result = self.redisClient.get("player_count_" + server.name);
+      _.each(config.game_servers, async server => {
+        const result = await this.client.get("player_count_" + server.name);
         var count = result ? parseInt(result, 10) : 0;
 
         totalPlayers += count;
         numServers -= 1;
         if (numServers === 0) {
-          self.redisClient.set("total_players", totalPlayers);
+          await this.client.set("total_players", totalPlayers);
 
-          updatedCallback?.(totalPlayers);
+          updatedCallback?.(String(totalPlayers));
         }
       });
     } else {
@@ -63,26 +63,26 @@ class Metrics {
     }
   }
 
-  updateWorldDistribution(worlds) {
-    this.redisClient.set("world_distribution_" + this.config.server_name, worlds);
+  async updateWorldDistribution(worlds) {
+    await this.client.set("world_distribution_" + this.config.server_name, String(worlds));
   }
 
-  updateWorldCount() {
-    this.redisClient.set("world_count_" + this.config.server_name, this.config.nb_worlds);
+  async updateWorldCount() {
+    await this.client.set("world_count_" + this.config.server_name, this.config.nb_worlds);
   }
 
   async getOpenWorldCount(callback) {
-    const result = await this.redisClient.get("world_count_" + this.config.server_name);
+    const result = await this.client.get("world_count_" + this.config.server_name);
     callback(result);
   }
 
   async getTotalPlayers(callback) {
-    const result = await this.redisClient.get("total_players");
+    const result = await this.client.get("total_players");
     callback(result);
   }
 
   async getWorldPlayers(callback) {
-    const result = await this.redisClient.get("world_players_" + this.config.server_name);
+    const result = await this.client.get("world_players_" + this.config.server_name);
     callback(result);
   }
 }

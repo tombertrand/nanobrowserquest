@@ -189,7 +189,7 @@ export const postMessageToDiscordModeratorMerchantChannel = (content: string) =>
 };
 
 export const postMessageToDiscordModeratorTradeChannel = (content: string) => {
-  if (isDevelopment) return;
+  // if (isDevelopment) return;
   try {
     const body = JSON.stringify({
       content,

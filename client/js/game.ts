@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-shadow */
 import * as Sentry from "@sentry/browser";
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
@@ -32,7 +32,7 @@ import { expForLevel } from "../../shared/js/types/experience";
 import { setDescription } from "../../shared/js/types/set";
 import { MIN_COW_LEVEL, MIN_MINOTAUR_LEVEL } from "../../shared/js/utils";
 import { getEntityLocation } from "../../shared/js/utils";
-import { HASH_BAN_DELAY } from "../../shared/js/utils";
+// import { HASH_BAN_DELAY } from "../../shared/js/utils";
 import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
@@ -216,6 +216,7 @@ class Game {
     confirmed: boolean;
     isUnique: boolean;
     isSuperior: boolean;
+    amount: number;
   } | null;
   itemToDelete: {
     fromSlot: number;
@@ -249,7 +250,7 @@ class Game {
   cursorOverSocket: number | null;
   isPanelOpened: boolean;
   isDragStarted: boolean;
-  // hashCheckInterval: any; 
+  // hashCheckInterval: any;
   admins: string[];
   onSendMoveItemTimeout: NodeJS.Timeout;
 
@@ -1239,6 +1240,7 @@ class Game {
           confirmed: true,
           isSuperior,
           isUnique,
+          amount: itemGoldMap[item] * transferedQuantity,
         };
         $("#dialog-merchant-item").dialog("open");
         return;
@@ -2522,8 +2524,10 @@ class Game {
             // Waypoint has to be enabled
             if (clickedWaypoint && self.player.waypoints[id - 1] === 1) {
               const { gridX, gridY } = clickedWaypoint;
+
               self.app.closeWaypoint();
               self.player.stop_pathing_callback({ x: gridX + 1, y: gridY, isWaypoint: true });
+              //
               $("#foreground").off(".waypoint");
             }
           },
@@ -3117,6 +3121,7 @@ class Game {
       id,
       name,
       account,
+      // exp,
       x,
       y,
       hp,
@@ -3133,10 +3138,12 @@ class Game {
       experience,
       gold,
       goldStash,
-      coin,
+      goldTrade,
       achievement,
       inventory,
       stash,
+      trade,
+      upgrade,
       hash,
       nanoPotions,
       gems,
@@ -3153,11 +3160,29 @@ class Game {
       isHurtByTrap,
       admins,
     }) {
+      // exp = Number(exp);
+      trade = JSON.parse(trade);
+      stash = JSON.parse(stash);
+      inventory = JSON.parse(inventory);
+      x = Number(x);
+      y = Number(y);
+      upgrade = JSON.parse(upgrade);
+      achievement = JSON.parse(achievement);
+      artifact = JSON.parse(artifact);
+      gems = JSON.parse(gems);
+      expansion1 = Number(expansion1);
+      expansion2 = Number(expansion2);
+      waypoints = JSON.parse(waypoints);
+      nanoPotions = Number(nanoPotions);
+      gold = Number(gold);
+      goldStash = Number(goldStash);
+      goldTrade = Number(goldTrade);
+      settings = JSON.parse(settings);
+
+      self.player.setSettings(settings);
+
       // @ts-ignore
       self.app.start();
-
-      // clearInterval(this.hashCheckInterval);
-      // self.startHashCheckInterval();
 
       Sentry.configureScope(scope => {
         // scope.setTag("name", name);
@@ -3227,12 +3252,12 @@ class Game {
       self.player.level = Types.getLevel(experience);
       self.player.setInventory(inventory);
       self.player.setStash(stash);
-
+      self.player.setTrade(trade);
+      self.player.setUpgrade(upgrade);
       self.setGold(gold);
       self.setGoldStash(goldStash);
+      self.setGoldTrade(goldTrade);
       self.setGoldTrade(0);
-      self.setCoin(coin);
-
       self.initSettings(settings);
       self.toggleCapeSliders(!!cape);
       self.updateBars();
@@ -3318,8 +3343,8 @@ class Game {
 
       self.player.onStartPathing(function (path) {
         var i = path.length - 1,
-          x = path[i][0],
-          y = path[i][1];
+          x = Number(path[i][0]),
+          y = Number(path[i][1]);
 
         if (self.player.isMovingToLoot()) {
           self.player.isLootMoving = false;
@@ -3585,7 +3610,6 @@ class Game {
               self.client.sendTeleport(dest.x, desty, self.player.orientation);
             }
           }
-
           if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
             self.camera.setGridPosition(dest.cameraX, dest.cameraY);
             self.resetZone();
@@ -5704,10 +5728,6 @@ class Game {
         const npc = self.getNpcAt(32, 208);
         npc.isTalkLocked = false;
         self.makeNpcTalk(npc, { byPass: true, talkIndex: gold ? 1 : 2, gold });
-      });
-
-      self.client.onReceiveCoin(function (coin) {
-        self.setCoin(coin);
       });
 
       self.client.onDisconnected(function (message) {

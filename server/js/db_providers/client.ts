@@ -14,7 +14,6 @@ export async function connectRedis() {
   // Create a Redis client with the specified configuration options
   redisClient = createClient(REDIS_OPTIONS);
 
-
   // Properly handle connection errors
   redisClient.on("error", err => console.log("Redis Client Error", err));
 
@@ -35,10 +34,6 @@ connectRedis()
     // You can now use the client for Redis operations
     // Don't forget to close the connection when you're done
     // client.quit();
-
-    // client.on("connect", () => {
-    //   this.setDepositAccount();
-    // });
   })
   .catch(err => {
     console.error("Failed to connect to Redis:", err);

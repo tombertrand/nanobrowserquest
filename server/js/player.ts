@@ -318,6 +318,7 @@ class Player extends Character {
   hasCrystal: boolean;
   canChat: boolean;
   chatTimeout: any;
+  settings: any;
   // attackTimeoutWarning: boolean;
   checkHashInterval: any;
   lastHashCheckTimestamp: number;
@@ -329,7 +330,6 @@ class Player extends Character {
     //@ts-ignore
     super(connection.id, "player", Types.Entities.WARRIOR);
 
-    // console.log("~~~~new Player");
     var self = this;
 
     purchase["nano"].databaseHandler = databaseHandler;
@@ -394,12 +394,9 @@ class Player extends Character {
     // NOTE: Client will be sending the hashed game function, if altered, player gets banned.
 
     this.connection.listen(async rawMessage => {
-      console.log("rawMessage", rawMessage);
       const message = this.verifySignature(rawMessage);
 
       const { action: clientAction, params } = message;
-
-      console.log("message", message);
 
       const action = parseInt(clientAction);
 
@@ -452,8 +449,6 @@ class Player extends Character {
         }
 
         const { params } = message;
-
-        console.log("~~~proceed to LOGIN- params", params);
 
         let timestamp;
         let reason;
@@ -560,15 +555,12 @@ class Player extends Character {
         }
         if (!password) {
           if (await databaseHandler.passwordIsRequired(self)) {
-            console.log("~~~~1");
             return;
           }
         } else {
           if (!(await databaseHandler.passwordLoginOrCreate(self, password))) {
-            console.log("~~~~2");
             return;
           } else if (self.server.loggedInPlayer(self.name)) {
-            console.log("~~~~3");
             self.server.disconnectPlayer({ name: self.name });
           }
         }
@@ -577,7 +569,6 @@ class Player extends Character {
             databaseHandler.createPlayer(self);
           }
         } else {
-          // console.log("~~~~loadPlayer", self);
           databaseHandler.loadPlayer(self);
         }
       } else if (action === Types.Messages.ACCOUNT) {
@@ -2404,6 +2395,8 @@ class Player extends Character {
             self.tradeEnabled = toBoolean(settings.tradeEnabled);
           }
 
+          console.log("~~~settings", settings);
+
           this.databaseHandler.setSettings(this.name, settings);
           this.broadcast(new Messages.Settings(this, settings), false);
         }
@@ -3007,15 +3000,16 @@ class Player extends Character {
       shield: this.shield
         ? `${this.shield}:${this.shieldLevel}${toDb(shieldBonus)}${toDb(this.shieldSocket)}${toDb(this.defenseSkill)}`
         : null,
-      settings: {
-        capeHue: this.capeHue,
-        capeSaturate: this.capeSaturate,
-        capeContrast: this.capeContrast,
-        capeBrightness: this.capeBrightness,
-        pvp: this.pvp,
-        partyEnabled: this.partyEnabled,
-        tradeEnabled: this.tradeEnabled,
-      },
+      // settings: {
+      //   capeHue: this.capeHue,
+      //   capeSaturate: this.capeSaturate,
+      //   capeContrast: this.capeContrast,
+      //   capeBrightness: this.capeBrightness,
+      //   pvp: this.pvp,
+      //   partyEnabled: this.partyEnabled,
+      //   tradeEnabled: this.tradeEnabled,
+      // },
+      settings: this.settings,
       resistances: null,
       element: null,
       enchants: null,
@@ -4150,6 +4144,8 @@ class Player extends Character {
     achievement,
     inventory,
     stash,
+    trade,
+    upgrade,
     hash,
     nanoPotions,
     gems,
@@ -4163,6 +4159,7 @@ class Player extends Character {
     network,
     discordId,
   }) {
+    this.settings = settings;
     try {
       // @NOTE: Make sure the player has authenticated if he has the expansion
       if (this.isPasswordRequired && !this.isPasswordValid) {
@@ -4171,11 +4168,11 @@ class Player extends Character {
       }
 
       if (process.env.NODE_ENV === "production") {
-        this.canChat = !this.server.chatBan.some(
+        this.canChat = !this.server.chatBan?.some(
           ({ player: playerName, ip }) => playerName === this.name || (this.ip && ip && ip === this.ip),
         );
       } else {
-        this.canChat = !this.server.chatBan.some(
+        this.canChat = !this.server.chatBan?.some(
           ({ player: playerName, ip }) => playerName === this.name || ip === this.ip,
         );
       }
@@ -4374,6 +4371,8 @@ class Player extends Character {
           achievement,
           inventory,
           stash,
+          trade,
+          upgrade,
           hash,
           nanoPotions,
           gems,
@@ -4391,7 +4390,6 @@ class Player extends Character {
           admins: ADMINS.concat(SUPER_ADMINS),
         },
       ]);
-
       this.sendLevelInProgress();
 
       this.resetBonus();

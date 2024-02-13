@@ -114,7 +114,6 @@ class App {
   }
 
   checkContextmenuabuse() {
-
     if (this.isContextMenuBlocked || this.contextMenuTimeout) {
       this.game.chat_callback({
         message: "You've sent too many requests, you're blocked for 30 seconds",
@@ -137,7 +136,6 @@ class App {
 
     return true;
   }
-
 
   initContextMenu() {
     $.contextMenu({
@@ -502,10 +500,12 @@ class App {
       title: "Sell item to merchant",
       open: function () {
         $("#dialog-merchant-item").html(
-          `Are you sure you want to sell this${
+          `Are you sure you want to sell ${
+            self.game.confirmedSoldItemToMerchant?.transferedQuantity > 1 ? "these" : "this"
+          }${
             (self.game.confirmedSoldItemToMerchant?.isSuperior ? '<span class="item-superior"> Superior</span>' : "") +
             (self.game.confirmedSoldItemToMerchant?.isUnique ? '<span class="item-unique"> Unique</span>' : "")
-          } item to the merchant?`,
+          } item to the merchant for <span class="gold">${self.game.confirmedSoldItemToMerchant?.amount}</span> gold?`,
         );
       },
       buttons: [
@@ -934,9 +934,9 @@ class App {
     const confirmBtn = $("#player-account-confirm");
     const linkBtn = $("#player-account-link");
 
-   if (account.startsWith('ban_')){
-    this.game.explorer = "bananolooker"
-   }
+    if (account.startsWith("ban_")) {
+      this.game.explorer = "bananolooker";
+    }
 
     if (account) {
       linkBtn.show();

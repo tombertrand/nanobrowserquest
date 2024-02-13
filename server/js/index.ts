@@ -13,16 +13,18 @@ import Server from "./ws";
 function main(config) {
   var WorldServer = World;
   var server = new Server(config.port);
+
   var metrics = config.metrics_enabled ? new Metrics(config) : null;
   var worlds = [];
   var lastTotalPlayers = 0;
   var databaseHandler = new DatabaseHandler();
 
-  setInterval(function () {
+  setInterval(async () => {
     if (metrics && metrics.isReady) {
-      metrics.getTotalPlayers(function (totalPlayers) {
+      await metrics.getTotalPlayers(function (totalPlayers) {
         if (totalPlayers !== lastTotalPlayers) {
           lastTotalPlayers = totalPlayers;
+
           _.each(worlds, function (world) {
             world.updatePopulation();
           });
@@ -34,12 +36,9 @@ function main(config) {
   console.info("Starting NanoBrowserQuest game server...");
 
   server.onConnect(function (connection) {
-
-    console.log('~~~~~ici')
     var world; // the one in which the player will be spawned
     var connect = function () {
       if (world) {
-       
         world.connect_callback(new Player(connection, world, databaseHandler));
       }
     };
@@ -48,7 +47,7 @@ function main(config) {
       metrics.getOpenWorldCount(function () {
         world = worlds[0];
         connect();
-        // world.updatePopulation();
+        world.updatePopulation();
       });
     }
   });
@@ -76,6 +75,7 @@ function main(config) {
   _.each(_.range(config.nb_worlds), function (i) {
     var world = new WorldServer("world" + (i + 1), config.nb_players_per_world, server, databaseHandler);
     world.run(config.map_filepath);
+    world.runChatBans();
     worlds.push(world);
     if (metrics) {
       world.onPlayerAdded(onPopulationChange);
@@ -88,7 +88,9 @@ function main(config) {
   });
 
   if (config.metrics_enabled) {
-    metrics.ready(function () {
+    metrics.ready(() => {
+      metrics.isReady = true;
+
       onPopulationChange(); // initialize all counters to 0 when the server starts
     });
   }

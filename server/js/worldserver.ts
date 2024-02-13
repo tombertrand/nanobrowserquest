@@ -157,7 +157,7 @@ class World {
   soulStonePlayerName: string;
   cowKingPlayerName: string | null;
   minotaurPlayerName: string | null;
-  chatBan: { player: string; ip: string }[];
+  chatBan: { player: string; ip: string }[] | null;
   maxPlayerCreateByIp: { [ip: string]: string[] };
   tmpHash: string;
   hash: string;
@@ -302,7 +302,7 @@ class World {
     this.gateSubTempleNpcId = null;
     this.goldBank = 0;
     this.janetYellenNpcId = null;
-
+    this.chatBan = null
     this.maxPlayerCreateByIp = { ip: [] };
 
     this.onPlayerConnect(function (player) {
@@ -512,13 +512,15 @@ class World {
     this.databaseHandler.getGoldBank().then(goldBank => {
       this.goldBank = goldBank;
     });
+  }
 
-    // setInterval(() => {
-    //   this.databaseHandler.getChatBan().then(chatBan => {
-    //     this.chatBan = chatBan;
-    //   }),
-    //   300000;// 5 mnx
-    // });
+  runChatBans() {
+    setInterval(() => {
+      this.databaseHandler.getChatBan().then(chatBan => {
+        this.chatBan = chatBan;
+      });
+    }, 300000); // every 5 minutes
+
     setInterval(() => {
       this.maxPlayerCreateByIp = { ip: [] };
     }, 86400000);

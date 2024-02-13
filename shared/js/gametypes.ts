@@ -1458,6 +1458,8 @@ Types.itemUniqueMap = {
   helmclown: ["Clownbase"],
   helmpumkin: ["CVE-2023-40234"],
 
+  // Crypto Winter
+
   // name, level, defense
   leatherarmor: ["Representative"],
   mailarmor: ["ForeX Guard"],
@@ -2305,6 +2307,7 @@ Types.waypoints = [
   {
     id: 5,
     name: "High Plateau",
+
     gridX: 22,
     gridY: 391,
   },
@@ -2317,7 +2320,7 @@ Types.waypoints = [
   {
     id: 7,
     name: "Woodland",
-    content: "To enter the  Woodland you must purchase the Lost Temple expansion from the red wizard in town",
+    content: "To enter the Woodland you must purchase the Lost Temple expansion from the red wizard in town",
     gridX: 100,
     gridY: 678,
   },

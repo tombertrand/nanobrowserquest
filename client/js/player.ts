@@ -63,6 +63,7 @@ class Player extends Character {
   attackSkillTimeout: NodeJS.Timeout;
   inventory: any[];
   stash: any[];
+  trade: any[];
   upgrade: any[];
   tradePlayer1: any[];
   tradePlayer2: any[];
@@ -235,6 +236,7 @@ class Player extends Character {
   setPartyEnabled(enabled: boolean) {
     this.partyEnabled = enabled;
   }
+
   setTradeEnabled(enabled: boolean) {
     this.tradeEnabled = enabled;
   }
@@ -580,7 +582,11 @@ class Player extends Character {
     }
   }
 
-  setSettings(settings) {
+  setSettings(rawSettings) {
+    let settings = rawSettings;
+    if (typeof rawSettings === "string") {
+      settings = JSON.parse(rawSettings);
+    }
     if (settings.capeHue) {
       this.capeHue = settings.capeHue;
     }
@@ -599,6 +605,7 @@ class Player extends Character {
     if (settings.partyEnabled) {
       this.partyEnabled = settings.partyEnabled;
     }
+    
     if (settings.tradeEnabled) {
       this.tradeEnabled = settings.tradeEnabled;
     }
@@ -820,8 +827,6 @@ class Player extends Character {
         const delimiter = Types.isJewel(rawItem) ? "|" : ":";
         const [item, levelOrQuantityOrAmount, bonus, socket, skillOrSkin] = rawItem.split(delimiter);
 
-
-
         const isWeapon = kinds[item][1] === "weapon";
         const isHelm = kinds[item][1] === "helm";
         const isArmor = kinds[item][1] === "armor";
@@ -899,12 +904,16 @@ class Player extends Character {
     this.inventory = this.prepareRawItems(inventory);
   }
 
-  setUpgrade(upgrade) {
-    this.upgrade = this.prepareRawItems(upgrade);
-  }
-
   setStash(stash) {
     this.stash = this.prepareRawItems(stash);
+  }
+
+  setTrade(trade) {
+    this.trade = this.prepareRawItems(trade);
+  }
+
+  setUpgrade(upgrade) {
+    this.upgrade = this.prepareRawItems(upgrade);
   }
 
   setGold(gold) {
