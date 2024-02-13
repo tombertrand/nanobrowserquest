@@ -78,7 +78,9 @@ import {
   // NaN2Zero,
   randomInt,
 } from "../utils";
-import { DEPOSIT_SEED, redisClient } from "./client";
+import { redisClient } from "./client";
+
+export const { DEPOSIT_SEED, NODE_ENV } = process.env;
 
 import type Player from "../player";
 
@@ -178,75 +180,77 @@ class DatabaseHandler {
 
     let [
       account,
+      network,
       armor,
       weapon,
       exp,
       createdAt,
-      achievement,
       inventory,
+      stash,
+      trade,
       x,
       y,
       hash,
       nanoPotions,
       gems,
+      upgrade,
+      achievement,
       ring1,
       ring2,
       amulet,
       belt,
       cape,
       shield,
+      helm,
+      pet,
       artifact,
       expansion1,
       expansion2,
-      waypoints,
-      depositAccount,
-      depositAccountIndex,
-      stash,
-      settings,
-      network,
       gold,
       goldStash,
       goldTrade,
+      waypoints,
+      depositAccount,
+      depositAccountIndex,
+      settings,
       discordId,
-      helm,
-      pet,
     ] = await this.client
       .multi()
       .hGet(userKey, "account") // 0
-      .hGet(userKey, "armor") // 1
-      .hGet(userKey, "weapon") // 2
-      .hGet(userKey, "exp") // 3
-      .hGet(userKey, "createdAt") // 4
-      .hGet(userKey, "achievement") // 5
+      .hGet(userKey, "network") // 1
+      .hGet(userKey, "armor") // 2
+      .hGet(userKey, "weapon") // 3
+      .hGet(userKey, "exp") // 4
+      .hGet(userKey, "createdAt") // 5
       .hGet(userKey, "inventory") // 6
-      .hGet(userKey, "x") // 7
-      .hGet(userKey, "y") // 8
-      .hGet(userKey, "hash") // 9
-      .hGet(userKey, "nanoPotions") // 10
-      .hGet(userKey, "gems") // 11
-      .hGet(userKey, "upgrade") // 12
-      .hGet(userKey, "ring1") // 13
-      .hGet(userKey, "ring2") // 14
-      .hGet(userKey, "amulet") // 15
-      .hGet(userKey, "belt") // 16
-      .hGet(userKey, "cape") // 17
-      .hGet(userKey, "shield") // 18
+      .hGet(userKey, "stash") // 7
+      .hGet(userKey, "trade") // 28
+      .hGet(userKey, "x") // 8
+      .hGet(userKey, "y") // 9
+      .hGet(userKey, "hash") // 10
+      .hGet(userKey, "nanoPotions") // 11
+      .hGet(userKey, "gems") // 12
+      .hGet(userKey, "upgrade") // 13
+      .hGet(userKey, "achievement") // 14
+      .hGet(userKey, "ring1") // 15
+      .hGet(userKey, "ring2") // 16
+      .hGet(userKey, "amulet") // 17
+      .hGet(userKey, "belt") // 18
+      .hGet(userKey, "cape") // 19
+      .hGet(userKey, "shield") // 19
+      .hGet(userKey, "helm") // 19
+      .hGet(userKey, "pet") // 36
       .hGet(userKey, "artifact") // 19
       .hGet(userKey, "expansion1") // 20
       .hGet(userKey, "expansion2") // 21
-      .hGet(userKey, "waypoints") // 22
+      .hGet(userKey, "gold") // 22
+      .hGet(userKey, "goldStash") // 22
+      .hGet(userKey, "goldTrade") // 22
       .hGet(userKey, "depositAccount") // 23
       .hGet(userKey, "depositAccountIndex") // 24
-      .hGet(userKey, "stash") // 25
       .hGet(userKey, "settings") // 26
       .hGet(userKey, "network") // 27
-      .hGet(userKey, "trade") // 28
-      .hGet(userKey, "gold") // 29
-      .hGet(userKey, "goldStash") // 30
-      .hGet(userKey, "goldTrade") // 31
       .hGet(userKey, "discordId") // 33
-      .hGet(userKey, "helm") // 35
-      .hGet(userKey, "pet") // 36
       .exec();
 
     if (account) {
@@ -321,36 +325,39 @@ class DatabaseHandler {
 
       player.sendWelcome({
         account,
-        helm,
+        network,
         armor,
         weapon,
-        belt,
-        cape,
-        pet,
-        shield,
-        ring1,
-        ring2,
-        amulet,
         exp,
-        gold,
-        goldStash,
         createdAt,
-        x,
-        y,
-        achievement,
         inventory,
         stash,
+        trade,
+        x,
+        y,
         hash,
         nanoPotions,
         gems,
+        upgrade,
+        achievement,
+        ring1,
+        ring2,
+        amulet,
+        belt,
+        cape,
+        shield,
+        helm,
+        pet,
         artifact,
         expansion1,
         expansion2,
+        gold,
+        goldStash,
+        goldTrade,
         waypoints,
         depositAccount,
         depositAccountIndex,
         settings,
-        network,
         discordId,
       });
     }
@@ -422,12 +429,50 @@ class DatabaseHandler {
       );
     }
 
-    this.client
+    const [
+      account,
+      exp,
+      gold,
+      goldStash,
+      goldTrade,
+      x,
+      y,
+      ip,
+      createdAt,
+      achievement,
+      inventory,
+      stash,
+      nanoPotions,
+      weapon,
+      helm,
+      armor,
+      belt,
+      cape,
+      pet,
+      shield,
+      settings,
+      ring1,
+      ring2,
+      amulet,
+      gems,
+      artifact,
+      upgrade,
+      trade,
+      expansion1,
+      expansion2,
+      waypoints,
+      // depositAccountIndex,
+      // depositAccount,
+      network,
+    ] = this.client
       .multi()
       .hSet(userKey, "account", player.account)
       .hSet(userKey, "exp", 0)
       .hSet(userKey, "gold", 0)
       .hSet(userKey, "goldStash", 0)
+      .hSet(userKey, "goldTrade", 0)
+      .hSet(userKey, "x", player.x)
+      .hSet(userKey, "y", player.y)
       .hSet(userKey, "ip", player.ip || "")
       .hSet(userKey, "createdAt", curTime)
       .hSet(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
@@ -455,78 +500,72 @@ class DatabaseHandler {
       .hSet(userKey, "depositAccountIndex", depositAccountIndex)
       .hSet(userKey, "depositAccount", depositAccount)
       .hSet(userKey, "network", player.network)
-      .exec((_err, _replies) => {
-        console.info("New User: " + player.name);
-        player.sendWelcome({
-          account: player.account,
-          helm: "helmcloth:1",
-          armor: "clotharmor:1",
-          weapon: "dagger:1",
-          belt: null,
-          cape: null,
-          pet: null,
-          shield: null,
-          exp: 0,
-          gold: 0,
-          goldStash: 0,
-          // coin: 0,
-          createdAt: curTime,
-          x: player.x,
-          y: player.y,
-          achievement: new Array(ACHIEVEMENT_COUNT).fill(0),
-          inventory: [],
-          nanoPotions: 0,
-          gems: new Array(GEM_COUNT).fill(0),
-          artifact: new Array(ARTIFACT_COUNT).fill(0),
-          expansion1: false,
-          expansion2: false,
-          waypoints: [1, 0, 0, 2, 2, 2, 2, 2, 2, 2],
-          stash: new Array(STASH_SLOT_COUNT).fill(0),
-          depositAccount,
-          depositAccountIndex,
-          settings: defaultSettings,
-          network: player.network,
-        });
-      });
+      .exec();
+    console.info("New User: " + player.name);
+    player.sendWelcome({
+      account,
+      exp,
+      gold,
+      goldStash,
+      goldTrade,
+      helm,
+      armor,
+      weapon,
+      belt,
+      cape,
+      pet,
+      shield,
+      settings,
+      ring1,
+      ring2,
+      amulet,
+      createdAt,
+      x,
+      y,
+      ip,
+      achievement,
+      inventory,
+      stash,
+      nanoPotions,
+      gems,
+      artifact,
+      upgrade,
+      trade,
+      expansion1,
+      expansion2,
+      waypoints,
+      depositAccount,
+      depositAccountIndex,
+      network,
+    });
   }
 
   async checkIsBannedByIP(player) {
-    return new Promise((resolve, _reject) => {
-      const ipKey = "ipban:" + player.ip;
+    const ipKey = "ipban:" + player.ip;
+    console.log("~~~~beforecheckIsBannedByIP");
+    const [timestamp, reason, message, admin] = await this.client
+      .multi()
+      .hGet(ipKey, "timestamp") // 0
+      .hGet(ipKey, "reason") // 1
+      .hGet(ipKey, "message") // 2
+      .hGet(ipKey, "admin") // 3
+      .exec();
 
-      this.client
-        .multi()
-        .hGet(ipKey, "timestamp") // 0
-        .hGet(ipKey, "reason") // 1
-        .hGet(ipKey, "message") // 2
-        .hGet(ipKey, "admin") // 3
-        .exec(async (err, replies) => {
-          resolve({
-            playerName: player.name,
-            timestamp: replies[0],
-            reason: replies[1],
-            message: replies[2],
-            ip: player.ip,
-            admin: replies[3],
-          });
-        });
-    });
+    return { playerName: player.name, timestamp, reason, message, ip: player.ip, admin };
   }
 
   async checkIsBannedForReason(playerName) {
-    return new Promise((resolve, _reject) => {
-      const banKey = "ban:" + playerName;
+    const banKey = "ban:" + playerName;
 
-      this.client
-        .multi()
-        .hGet(banKey, "timestamp") // 0
-        .hGet(banKey, "reason") // 1
-        .hGet(banKey, "message") // 2
-        .hGet(banKey, "admin") // 3
-        .exec(async (err, replies) => {
-          resolve({ playerName, timestamp: replies[0], reason: replies[1], message: replies[2], admin: replies[3] });
-        });
-    });
+    const [timestamp, reason, message, admin] = await this.client
+      .multi()
+      .hGet(banKey, "timestamp") // 0
+      .hGet(banKey, "reason") // 1
+      .hGet(banKey, "message") // 2
+      .hGet(banKey, "admin") // 3
+      .exec();
+
+    return { playerName, timestamp, reason, message, admin };
   }
 
   async banPlayerByIP({
@@ -544,7 +583,7 @@ class DatabaseHandler {
   }) {
     const until = days * 24 * 60 * 60 * 1000 + Date.now();
 
-    this.banPlayerForReason({ admin, player, reason, message, until });
+    await this.banPlayerForReason({ admin, player, reason, message, until });
 
     player.connection.sendUTF8(JSON.stringify({ admin, player: player.name, error: "banned", reason, until, message }));
     player.connection.close(`You are banned, ${reason}.`);
@@ -2016,14 +2055,11 @@ class DatabaseHandler {
 
     player.send([Types.Messages.UPGRADE, upgrade, { luckySlot, isLucky7, isMagic8, isSuccess, recipe }]);
     await this.client.hSet("u:" + player.name, "upgrade", JSON.stringify(upgrade), () => {});
-
-    // });
   }
 
   async foundAchievement(player, index) {
     console.info("Found Achievement: " + player.name + " " + index + 1);
 
-    // return new Promise(resolve => {
     const achievements = await this.client.hGet("u:" + player.name, "achievement");
     try {
       var achievement = JSON.parse(achievements);

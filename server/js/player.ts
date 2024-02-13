@@ -329,6 +329,7 @@ class Player extends Character {
     //@ts-ignore
     super(connection.id, "player", Types.Entities.WARRIOR);
 
+    // console.log("~~~~new Player");
     var self = this;
 
     purchase["nano"].databaseHandler = databaseHandler;
@@ -391,13 +392,14 @@ class Player extends Character {
     this.lastHashCheckTimestamp = Date.now();
 
     // NOTE: Client will be sending the hashed game function, if altered, player gets banned.
-    // this.connection.on("decoded", packet => {
 
-    // });
     this.connection.listen(async rawMessage => {
+      console.log("rawMessage", rawMessage);
       const message = this.verifySignature(rawMessage);
 
       const { action: clientAction, params } = message;
+
+      console.log("message", message);
 
       const action = parseInt(clientAction);
 
@@ -451,6 +453,8 @@ class Player extends Character {
 
         const { params } = message;
 
+        console.log("~~~proceed to LOGIN- params", params);
+
         let timestamp;
         let reason;
         let banMessage;
@@ -493,6 +497,7 @@ class Player extends Character {
           message: banMessage,
           admin,
         } = await databaseHandler.checkIsBannedForReason(name));
+
         if (timestamp && timestamp > Date.now()) {
           self.connection.sendUTF8(
             JSON.stringify({
@@ -545,6 +550,7 @@ class Player extends Character {
           }
         } else {
           console.info("LOGIN: " + self.name, " ID: " + self.id);
+
           if (self.server.loggedInPlayer(self.name) && !password) {
             self.connection.sendUTF8("passwordlogin");
             self.connection.close("Already logged in " + self.name);
@@ -552,25 +558,26 @@ class Player extends Character {
             return;
           }
         }
-
         if (!password) {
           if (await databaseHandler.passwordIsRequired(self)) {
+            console.log("~~~~1");
             return;
           }
         } else {
           if (!(await databaseHandler.passwordLoginOrCreate(self, password))) {
+            console.log("~~~~2");
             return;
           } else if (self.server.loggedInPlayer(self.name)) {
+            console.log("~~~~3");
             self.server.disconnectPlayer({ name: self.name });
           }
         }
-
         if (action === Types.Messages.CREATE) {
           if (databaseHandler.validateCreatePlayer(self)) {
             databaseHandler.createPlayer(self);
           }
         } else {
-          console.log("loadPlayer~~~~,");
+          // console.log("~~~~loadPlayer", self);
           databaseHandler.loadPlayer(self);
         }
       } else if (action === Types.Messages.ACCOUNT) {
