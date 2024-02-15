@@ -43,6 +43,7 @@ class Trade {
   }: { playerName?: string; isCompleted?: boolean; isInventoryFull?: boolean } = {}) {
     this.forEachPlayer(async ({ id }) => {
       const player = this.server.getEntityById(id);
+      const userKey = "u:" + player.name;
 
       if (player) {
         this.server.pushToPlayer(
@@ -56,21 +57,20 @@ class Trade {
         // @NOTE If panels gets closed and if a player has not accepted, the items are returned, if the trade is completed the inventory gets refreshed
         if (!isCompleted && isAPlayerNotAccepted) {
           this.server.databaseHandler.moveItemsToInventory(player, "trade");
-          this.server.databaseHandler.client.hget("u:" + player.name, "goldTrade", (err, rawGoldTrade) => {
-            if (rawGoldTrade && rawGoldTrade !== "0" && /\d+/.test(rawGoldTrade)) {
-              this.server.databaseHandler.moveGold({
-                player,
-                from: "trade",
-                to: "inventory",
-                amount: parseInt(rawGoldTrade),
-              });
-            }
-          });
+          const rawGoldTrade = await this.server.databaseHandler.client.hGet(userKey, "goldTrade");
+          if (rawGoldTrade && rawGoldTrade !== "0" && /\d+/.test(rawGoldTrade)) {
+            this.server.databaseHandler.moveGold({
+              player,
+              from: "trade",
+              to: "inventory",
+              amount: Number(rawGoldTrade),
+            });
+          }
         } else {
-          const reply = await this.server.databaseHandler.client.hmGet("u:" + player.name, "inventory", "gold");
+          let [inventory, gold] = await this.server.databaseHandler.client.hmGet(userKey, "inventory", "gold");
 
-          let inventory = JSON.parse(reply[0]);
-          let gold = parseInt(reply[1] || "0");
+          inventory = JSON.parse(inventory);
+          gold = Number(gold || 0);
           player.send([Types.Messages.INVENTORY, inventory]);
           player.send([Types.Messages.GOLD.INVENTORY, gold]);
         }
@@ -240,18 +240,19 @@ class Trade {
       }
 
       await Promise.all([
-        this.writeData(player1, player1Data.inventory, player1Data.gold),
-        this.writeData(player2, player2Data.inventory, player2Data.gold),
+        this.writeData({ player: player1, inventory: player1Data.inventory, gold: player1Data.gold }),
+        this.writeData({ player: player2, inventory: player2Data.inventory, gold: player2Data.gold }),
       ]);
 
       this.close({ isCompleted: true });
     } catch (err) {
       Sentry.captureException(err);
+
       this.close();
     }
   }
 
-  async writeData(player, inventory, gold) {
+  async writeData({ player, inventory, gold }) {
     const userKey = "u:" + player.name;
 
     // const fields = {
@@ -261,7 +262,9 @@ class Trade {
     //   goldTrade: 0
     // }
 
-  //  await this.server.databaseHandler.client.hSet(userKey, fields);
+    console.log("~~~~~~userKey", userKey);
+    console.log("~~~~~~gold", gold, JSON.stringify(gold));
+    //  await this.server.databaseHandler.client.hSet(userKey, fields);
     await this.server.databaseHandler.client.hSet(userKey, "trade", JSON.stringify(new Array(9).fill(0)));
     await this.server.databaseHandler.client.hSet(userKey, "inventory", JSON.stringify(inventory));
     await this.server.databaseHandler.client.hSet(userKey, "gold", JSON.stringify(gold));

@@ -556,14 +556,12 @@ class Game {
 
       this.audioManager.updateMusicVolume(musicVolume);
     }
-
     if (!this.storage.isSoundEnabled()) {
       this.audioManager.disableSound();
     } else {
       $("#mute-sound-checkbox").prop("checked", true);
       this.audioManager.updateSoundVolume(soundVolume);
     }
-
     var handleMusic = $("#music-handle");
     $("#music-slider").slider({
       min: 0,
@@ -578,7 +576,6 @@ class Game {
         this.audioManager.updateMusicVolume(ui.value / 100);
       },
     });
-
     var handleSound = $("#sound-handle");
     $("#sound-slider").slider({
       min: 0,
@@ -596,18 +593,16 @@ class Game {
 
     if (this.storage.showEntityNameEnabled()) {
       this.renderer.setDrawEntityName(true);
-      $("#entity-name-checkbox").prop("checked", true);
+      $("#entity-name-checkbox").prop("checked", settings.playerNames);
     } else {
       this.renderer.setDrawEntityName(false);
     }
-
     if (this.storage.showDamageInfoEnabled()) {
       this.infoManager.setShowDamageInfo(true);
-      $("#damage-info-checkbox").prop("checked", true);
+      $("#damage-info-checkbox").prop("checked", settings.damageInfo);
     } else {
       this.infoManager.setShowDamageInfo(false);
     }
-
     this.showEffects = settings.effects;
     $("#effects-checkbox").prop("checked", settings.effects);
 
@@ -618,6 +613,7 @@ class Game {
     $("#party-checkbox").prop("checked", settings.partyEnabled);
 
     this.tradeEnabled = settings.tradeEnabled;
+
     $("#trade-checkbox").prop("checked", settings.tradeEnabled);
 
     this.debug = this.storage.debugEnabled();
@@ -1146,7 +1142,7 @@ class Game {
     const toSlotEl = $(`[data-slot="${toSlot}"]`);
     const toItemEl = toSlotEl.find(">div");
     const toItem = toItemEl.attr("data-item");
-    const toLevel = toItemEl.attr("data-level");
+    const toLevel = Number(toItemEl.attr("data-level"));
     const item = fromItemEl.attr("data-item");
     const level = Number(fromItemEl.attr("data-level"));
     const quantity = Number(fromItemEl.attr("data-quantity")) || null;
@@ -3177,7 +3173,7 @@ class Game {
       gold = Number(gold);
       goldStash = Number(goldStash);
       goldTrade = Number(goldTrade);
-      settings = JSON.parse(settings);
+      settings = typeof settings === "string" ? JSON.parse(settings) : settings;
 
       self.player.setSettings(settings);
 
@@ -3785,7 +3781,7 @@ class Game {
           petId,
           ownerId,
           skin,
-          level,
+          // level,
           settings,
         } = data;
 
@@ -3800,15 +3796,18 @@ class Game {
         if (!isEntityExist) {
           try {
             if (id !== self.playerId) {
-              if (!isPet) {
+              if (isPet) {
                 entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
 
                 entity.bonus = bonus;
               } else {
                 const owner = self.getEntityById(ownerId);
                 const name = ownerId ? `Pet of ${owner?.name}` : "";
-                entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, skin, level, bonus });
+                entity = EntityFactory.createEntity({ kind, id, name, data });
 
+                if (settings) {
+                  entity.setSettings(settings);
+                }
                 if (owner) {
                   owner.petId = id;
                   owner.petEntity = entity;
@@ -3968,10 +3967,6 @@ class Game {
               }
 
               self.addEntity(entity);
-
-              if (entity instanceof Player) {
-                entity.setSettings(settings);
-              }
 
               if (entity instanceof Character) {
                 if (!(entity instanceof Npc)) {

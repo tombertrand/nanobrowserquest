@@ -79,17 +79,6 @@ type Resistances = {
   spectralResistance?: number;
 };
 
-type Settings = {
-  capeHue: number;
-  capeSaturate: number;
-  capeContrast: number;
-  capeBrightness: number;
-  pvp: boolean;
-  partyEnabled: boolean;
-  tradeEnabled: boolean;
-  effects: boolean;
-};
-
 type Bonus =
   | "minDamage"
   | "maxDamage"

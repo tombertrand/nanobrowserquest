@@ -1678,6 +1678,7 @@ class App {
 
     this.storage.setShowEntityNameEnabled(isChecked);
     this.game.renderer.setDrawEntityName(isChecked);
+    this.game.client.sendSettings({ playerNames: isChecked });
   }
 
   toggleDamageInfo() {
@@ -1685,6 +1686,7 @@ class App {
 
     this.storage.setShowDamageInfoEnabled(isChecked);
     this.game.infoManager.setShowDamageInfo(isChecked);
+    this.game.client.sendSettings({ damageInfo: isChecked });
   }
 
   togglePvP() {

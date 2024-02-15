@@ -3,6 +3,7 @@ import * as NanocurrencyWeb from "nanocurrency-web";
 
 import { kinds, Types } from "../../../shared/js/gametypes";
 import { getGoldAmountFromSoldItem, merchantItems } from "../../../shared/js/gold";
+import { defaultSettings, Settings } from "../../../shared/js/settings";
 import {
   INVENTORY_SLOT_COUNT,
   MERCHANT_SLOT_RANGE,
@@ -38,7 +39,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../../shared/js/types/achievements";
 import { getRunewordBonus } from "../../../shared/js/types/rune";
-import { toArray, toDb, validateQuantity } from "../../../shared/js/utils";
+import { toArray, toBoolean, toDb, validateQuantity } from "../../../shared/js/utils";
 import { isValidRecipe } from "../../../shared/js/utils";
 import {
   discordClient,
@@ -99,17 +100,6 @@ const getNewDepositAccountByIndex = async (index: number, network: Network): Pro
   }
 
   return depositAccount;
-};
-
-const defaultSettings: Settings = {
-  capeHue: 0,
-  capeSaturate: 0,
-  capeContrast: 0,
-  capeBrightness: 1,
-  pvp: false,
-  partyEnabled: true,
-  tradeEnabled: true,
-  effects: true,
 };
 
 class DatabaseHandler {
@@ -253,10 +243,16 @@ class DatabaseHandler {
     gold = Number(gold);
     goldStash = Number(goldStash);
     goldTrade = Number(goldTrade);
+    const dbSsettings = settings;
+    settings = settings ? JSON.parse(settings) : defaultSettings;
+
+    if (!dbSsettings) {
+      await this.client.hSet(userKey, "settings", JSON.stringify(settings));
+    }
 
     if (account && !network) {
       [network] = account.split("_");
-      await this.client.hSet("u:" + player.name, "network", network);
+      await this.client.hSet(userKey, "network", network);
     }
 
     if (!depositAccount && ["nano", "ban"].includes(network)) {
@@ -667,41 +663,44 @@ class DatabaseHandler {
     }
   }
 
-  async setSettings(name, rawSettings: Settings) {
-    const settings = {} as Settings;
+  async setSettings(player, setting: Settings) {
+    if (typeof setting.playerNames !== "undefined") {
+      player.settings.playerNames = toBoolean(setting.playerNames);
+    }
+    if (typeof setting.damageInfo !== "undefined") {
+      player.settings.damageInfo = toBoolean(setting.damageInfo);
+    }
+    if (typeof setting.debug !== "undefined") {
+      player.settings.debug = toBoolean(setting.debug);
+    }
+    if (typeof setting.capeHue !== "undefined") {
+      player.settings.capeHue = Number(setting.capeHue);
+    }
+    if (typeof setting.capeSaturate !== "undefined") {
+      player.settings.capeSaturate = Number(setting.capeSaturate);
+    }
+    if (typeof setting.capeContrast !== "undefined") {
+      player.settings.capeContrast = Number(setting.capeContrast);
+    }
+    if (typeof setting.capeBrightness !== "undefined") {
+      player.settings.capeBrightness = Number(setting.capeBrightness);
+    }
+    if (typeof setting.pvp !== "undefined") {
+      player.settings.pvp = toBoolean(setting.pvp);
+    }
+    if (typeof setting.partyEnabled !== "undefined") {
+      player.settings.partyEnabled = toBoolean(setting.partyEnabled);
+    }
+    if (typeof setting.tradeEnabled !== "undefined") {
+      player.settings.tradeEnabled = toBoolean(setting.tradeEnabled);
+    }
+    if (typeof setting.effects !== "undefined") {
+      player.settings.effects = toBoolean(setting.effects);
+    }
 
-    if (typeof rawSettings.capeHue === "number") {
-      settings.capeHue = rawSettings.capeHue;
-    }
-    if (typeof rawSettings.capeSaturate === "number") {
-      settings.capeSaturate = rawSettings.capeSaturate;
-    }
-    if (typeof rawSettings.capeContrast === "number") {
-      settings.capeContrast = rawSettings.capeContrast;
-    }
-    if (typeof rawSettings.capeBrightness === "number") {
-      settings.capeBrightness = rawSettings.capeBrightness;
-    }
-    if (typeof rawSettings.pvp !== "undefined") {
-      settings.pvp = !!rawSettings.pvp;
-    }
-    if (typeof rawSettings.partyEnabled !== "undefined") {
-      settings.partyEnabled = !!rawSettings.partyEnabled;
-    }
-    if (typeof rawSettings.tradeEnabled !== "undefined") {
-      settings.tradeEnabled = !!rawSettings.tradeEnabled;
-    }
-    if (typeof rawSettings.effects !== "undefined") {
-      settings.effects = !!rawSettings.effects;
-    }
-
-    const dbSettings = await this.client.hGet("u:" + name, "settings");
-
-    var parsedReply = rawSettings ? JSON.parse(dbSettings) : {};
-
-    const newSettings = JSON.stringify(Object.assign(parsedReply, settings));
-
-    await this.client.hSet("u:" + name, "settings", newSettings);
+    const userKey = "u:" + player.name;
+    ßß;
+    await this.client.hSet(userKey, "settings", JSON.stringify(player.settings));
   }
 
   async setAccount(player, account, network) {
@@ -2207,14 +2206,10 @@ class DatabaseHandler {
   }
 
   async useWeaponItem(player) {
-    // return new Promise(resolve => {
     await this.client.hSet("u:" + player.name, "weapon", "dagger:1");
     this.sendMoveItem({ player, location: "weapon", data: "" });
-    // resolve(true);
 
     return true;
-    // });
-    // });
   }
 
   async passwordIsRequired(player) {

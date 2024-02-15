@@ -2,6 +2,7 @@ import CryptoJS from "crypto-js";
 import * as _ from "lodash";
 
 import { kinds, petKindToPetMap, Types } from "../../shared/js/gametypes";
+import { defaultSettings, Settings } from "../../shared/js/settings";
 import {
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_GRIMOIRE_INDEX,
@@ -238,6 +239,8 @@ class Player extends Character {
   capeBonus: number[] | null;
   isCapeUnique: boolean;
   isCapeSuperior: boolean;
+  playerNames: boolean;
+  damageInfo: boolean;
   capeHue: number;
   capeSaturate: number;
   capeContrast: number;
@@ -254,6 +257,7 @@ class Player extends Character {
   pvp: boolean;
   partyEnabled: boolean;
   tradeEnabled: boolean;
+  effects: boolean;
   shield: string;
   shieldKind: number;
   shieldLevel: number;
@@ -310,7 +314,6 @@ class Player extends Character {
   attackTimeout: NodeJS.Timeout;
   discordId: number;
   isHurtByTrap: boolean;
-  // Achievement checks
   hasGrimoire: boolean;
   hasObelisk: boolean;
   hasNft: boolean;
@@ -318,7 +321,7 @@ class Player extends Character {
   hasCrystal: boolean;
   canChat: boolean;
   chatTimeout: any;
-  settings: any;
+  settings: Settings;
   // attackTimeoutWarning: boolean;
   checkHashInterval: any;
   lastHashCheckTimestamp: number;
@@ -383,6 +386,7 @@ class Player extends Character {
     this.hasWing = false;
     this.hasCrystal = false;
     this.isChatbanWarned = false;
+    this.settings = defaultSettings;
     // this.attackTimeoutWarning = false;
 
     // Get IP from CloudFlare
@@ -2370,36 +2374,8 @@ class Player extends Character {
 
         self.databaseHandler.sellToMerchant({ player: self, fromSlot, quantity });
       } else if (action === Types.Messages.SETTINGS) {
-        const settings = params[0];
-
-        if (settings) {
-          if (settings.capeHue) {
-            self.capeHue = settings.capeHue;
-          }
-          if (settings.capeSaturate) {
-            self.capeSaturate = settings.capeSaturate;
-          }
-          if (settings.capeContrast) {
-            self.capeContrast = settings.capeContrast;
-          }
-          if (settings.capeBrightness) {
-            self.capeBrightness = settings.capeBrightness;
-          }
-          if (typeof settings.pvp !== "undefined") {
-            self.pvp = toBoolean(settings.pvp);
-          }
-          if (typeof settings.partyEnabled !== "undefined") {
-            self.partyEnabled = toBoolean(settings.partyEnabled);
-          }
-          if (typeof settings.tradeEnabled !== "undefined") {
-            self.tradeEnabled = toBoolean(settings.tradeEnabled);
-          }
-
-          console.log("~~~settings", settings);
-
-          this.databaseHandler.setSettings(this.name, settings);
-          this.broadcast(new Messages.Settings(this, settings), false);
-        }
+        this.databaseHandler.setSettings(this, params[0]);
+        this.broadcast(new Messages.Settings(this, self.settings), false);
       } else if (action === Types.Messages.SKILL) {
         const slot = params[0];
         const mobId = params[1];
@@ -3000,15 +2976,6 @@ class Player extends Character {
       shield: this.shield
         ? `${this.shield}:${this.shieldLevel}${toDb(shieldBonus)}${toDb(this.shieldSocket)}${toDb(this.defenseSkill)}`
         : null,
-      // settings: {
-      //   capeHue: this.capeHue,
-      //   capeSaturate: this.capeSaturate,
-      //   capeContrast: this.capeContrast,
-      //   capeBrightness: this.capeBrightness,
-      //   pvp: this.pvp,
-      //   partyEnabled: this.partyEnabled,
-      //   tradeEnabled: this.tradeEnabled,
-      // },
       settings: this.settings,
       resistances: null,
       element: null,
@@ -4159,7 +4126,7 @@ class Player extends Character {
     network,
     discordId,
   }) {
-    this.settings = settings;
+    this.settings = typeof settings === "string" ? JSON.parse(settings) : settings;
     try {
       // @NOTE: Make sure the player has authenticated if he has the expansion
       if (this.isPasswordRequired && !this.isPasswordValid) {
@@ -4279,15 +4246,6 @@ class Player extends Character {
       this.hash = hash;
       this.hasRequestedBossPayout = false;
       this.hasWallet = !!network || !!account;
-
-      this.capeHue = settings.capeHue;
-      this.capeSaturate = settings.capeSaturate;
-      this.capeContrast = settings.capeContrast;
-      this.capeBrightness = settings.capeBrightness;
-      this.pvp = settings.pvp;
-      this.partyEnabled = settings.partyEnabled;
-      this.tradeEnabled = settings.tradeEnabled;
-
       this.createdAt = createdAt;
       this.experience = exp;
       this.level = Types.getLevel(this.experience);
