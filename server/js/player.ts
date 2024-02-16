@@ -24,7 +24,7 @@ import {
   // HASH_BAN_DELAY,
   isValidAccountAddress,
   toArray,
-  toBoolean,
+  // toBoolean,
   toDb,
   toNumber,
   validateQuantity,
@@ -255,8 +255,6 @@ class Player extends Character {
   isPetUnique: boolean;
   isPetSuperior: boolean;
   pvp: boolean;
-  partyEnabled: boolean;
-  tradeEnabled: boolean;
   effects: boolean;
   shield: string;
   shieldKind: number;
@@ -1159,6 +1157,7 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.HURT) {
         console.info("HURT: " + self.name + " " + params[0]);
+
         var mob = self.server.getEntityById(params[0]);
         if (mob && self.hitPoints > 0) {
           let dmg = Formulas.dmgFromMob({
@@ -2211,7 +2210,7 @@ class Player extends Character {
                   `${playerToInvite.name} is already in a party`,
                 ).serialize(),
               );
-            } else if (!playerToInvite.partyEnabled) {
+            } else if (!playerToInvite.settings.partyEnabled) {
               self.send(
                 new Messages.Party(
                   Types.Messages.PARTY_ACTIONS.ERROR,
@@ -2288,7 +2287,7 @@ class Player extends Character {
 
           if (!playerToTradeWith) {
             self.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.ERROR, `${params[1]} is not online`).serialize());
-          } else if (!playerToTradeWith.tradeEnabled) {
+          } else if (!playerToTradeWith.settings.tradeEnabled) {
             self.send(
               new Messages.Trade(
                 Types.Messages.TRADE_ACTIONS.ERROR,

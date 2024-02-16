@@ -156,25 +156,25 @@ class App {
             disabled: true,
           },
           trade: {
-            name: player.tradeEnabled ? "Trade" : "Player has disabled Trade",
+            name: player.settings.tradeEnabled ? "Trade" : "Player has disabled Trade",
             callback: () => {
-              if (this.checkContextmenuabuse() && player.tradeEnabled) {
+              if (this.checkContextmenuabuse() && player.settings.tradeEnabled) {
                 this.game.say(`/trade ${player.name}`);
               }
             },
-            disabled: !player.tradeEnabled,
+            disabled: !player.settings.tradeEnabled,
           },
           party: {
-            name: player.partyEnabled ? (isInParty ? "In a party" : "Party") : "Player has Disabled Party",
+            name: player.settings.partyEnabled ? (isInParty ? "In a party" : "Party") : "Player has Disabled Party",
             callback: () => {
-              if (!isInParty && player.partyEnabled) {
+              if (!isInParty && player.settings.partyEnabled) {
                 if (!this.game.player.partyId && this.checkContextmenuabuse()) {
                   this.game.say(`/party create`);
                 }
                 this.game.say(`/party invite ${player.name}`);
               }
             },
-            disabled: isInParty || !player.partyEnabled,
+            disabled: isInParty || !player.settings.partyEnabled,
           },
           equipment: {
             name: "View equipment",
@@ -1721,7 +1721,7 @@ class App {
   toggleEffects() {
     const isChecked = $("#effects-checkbox").is(":checked");
 
-    this.game.showEffects = isChecked;
+    this.game.player.settings.effects = isChecked;
     this.game.client.sendSettings({ effects: isChecked });
   }
 

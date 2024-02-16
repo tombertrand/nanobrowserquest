@@ -1,5 +1,7 @@
 import { toArray, toNumber } from "../../shared/js/utils";
 
+export const GOLD_CAP = 100_000_000;
+
 export const merchantItems: { item: string; amount: number }[] = [
   undefined,
   { item: "scrollupgradelow", amount: 25 },

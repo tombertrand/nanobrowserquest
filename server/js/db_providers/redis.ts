@@ -3,6 +3,7 @@ import * as NanocurrencyWeb from "nanocurrency-web";
 
 import { kinds, Types } from "../../../shared/js/gametypes";
 import { getGoldAmountFromSoldItem, merchantItems } from "../../../shared/js/gold";
+import { GOLD_CAP } from "../../../shared/js/gold";
 import { defaultSettings, Settings } from "../../../shared/js/settings";
 import {
   INVENTORY_SLOT_COUNT,
@@ -14,7 +15,6 @@ import {
   TRADE_SLOT_RANGE,
   UPGRADE_SLOT_COUNT,
   UPGRADE_SLOT_RANGE,
-  // WAYPOINTS_COUNT,
 } from "../../../shared/js/slots";
 import { StoreItems } from "../../../shared/js/store";
 import {
@@ -76,7 +76,7 @@ import {
   isValidUpgradeItems,
   isValidUpgradeRunes,
   isValidUpgradeskillrandom,
-  // NaN2Zero,
+  NaN2Zero,
   randomInt,
 } from "../utils";
 import { redisClient } from "./client";
@@ -118,14 +118,19 @@ class DatabaseHandler {
 
     const userKey = "u:" + player.name;
 
-    const reply = await this.client.hmGet(userKey, "depositAccount", "depositAccountIndex");
-    if (!reply) {
+    let [depositAccount, depositAccountIndex] = await this.client
+      .multi()
+      .hGet(userKey, "depositAccount")
+      .hGet(userKey, "depositAccountIndex")
+      .exec();
+
+    if (!depositAccount) {
       Sentry.captureException(new Error("Unable to get deposit account"), { extra: { player: player.name } });
 
       return;
     }
 
-    let [depositAccount, depositAccountIndex] = reply;
+    // let [depositAccount, depositAccountIndex] = reply;
     if (depositAccount || depositAccountIndex) return;
 
     depositAccountIndex = await this.createDepositAccount();
@@ -138,13 +143,9 @@ class DatabaseHandler {
       return;
     }
 
-    const isSuccess = await this.client.hmSet(
-      userKey,
-      "depositAccount",
-      depositAccount,
-      "depositAccountIndex",
-      depositAccountIndex,
-    );
+    const isSuccess = await this.client.hSet(userKey, "depositAccount", depositAccount);
+    await this.client.hSet("depositAccountIndex", depositAccountIndex);
+
     if (!isSuccess) {
       Sentry.captureException(new Error("Unable to set new deposit account"), {
         extra: { player: player.name },
@@ -239,10 +240,10 @@ class DatabaseHandler {
       .hGet(userKey, "discordId") // 35
       .exec();
 
-    exp = Number(exp);
-    gold = Number(gold);
-    goldStash = Number(goldStash);
-    goldTrade = Number(goldTrade);
+    exp = NaN2Zero(exp);
+    gold = NaN2Zero(gold);
+    goldStash = NaN2Zero(goldStash);
+    goldTrade = NaN2Zero(goldTrade);
     const dbSsettings = settings;
     settings = settings ? JSON.parse(settings) : defaultSettings;
 
@@ -275,9 +276,13 @@ class DatabaseHandler {
     if (goldTrade) {
       gold = gold + goldTrade;
       goldTrade = 0;
+
+      if (gold > GOLD_CAP) {
+        gold = GOLD_CAP;
+      }
       //@notehmSet is broken
       await this.client.hSet(userKey, "goldTrade", String(goldTrade));
-      await this.client.hSet(userKey, "gold", String(gold));
+      await this.client.hSet(userKey, "gold", gold);
     }
 
     console.info("Player name: " + player.name);
@@ -548,33 +553,29 @@ class DatabaseHandler {
 
     if (!player?.connection?._connection?.handshake?.headers?.["cf-connecting-ip"]) return;
 
-    await this.client.hmSet(
-      "ipban:" + player.ip,
-      "timestamp",
-      until,
-      "reason",
-      reason || "",
-      "message",
-      message || "",
-      "player",
-      player.name,
-      "admin",
-      admin,
-    );
+    const userKey = "ipban:" + player.ip;
+
+    await this.client
+      .multi()
+      .hSet(userKey, "account", player.account)
+      .hSet(userKey, "timestamp", until)
+      .hSet(userKey, "reason", reason)
+      .hSet(userKey, "message", message)
+      .hSet(userKey, "player", player.name)
+      .hSet(userKey, "admin", admin)
+      .exec();
   }
 
   async banPlayerForReason({ admin, player, reason, message, until }) {
-    await this.client.hmSet(
-      "ban:" + player.name,
-      "timestamp",
-      until,
-      "reason",
-      reason,
-      "message",
-      message,
-      "admin",
-      admin,
-    );
+    const userKey = "ban:" + player.name;
+    await this.client
+      .multi()
+      .hSet(userKey, "account", player.account)
+      .hSet(userKey, "timestamp", until)
+      .hSet(userKey, "reason", reason)
+      .hSet(userKey, "message", message)
+      .hSet(userKey, "admin", admin)
+      .exec();
   }
 
   async chatBan({ player, message, isIPBan }: { player: any; message: string; isIPBan: boolean }) {
@@ -699,7 +700,7 @@ class DatabaseHandler {
     }
 
     const userKey = "u:" + player.name;
-    ßß;
+
     await this.client.hSet(userKey, "settings", JSON.stringify(player.settings));
   }
 
@@ -709,7 +710,10 @@ class DatabaseHandler {
       return;
     }
 
-    await this.client.hmSet("u:" + player.name, "account", account, "network", network);
+    const userKey = "u:" + player.name;
+
+    await this.client.hSet(userKey, "account", account);
+    await this.client.hSet(userKey, "network", network);
 
     const { depositAccount } = await this.assignNewDepositAccount(player, network);
 
@@ -722,7 +726,12 @@ class DatabaseHandler {
       }** 🎉`,
     );
     try {
-      const [hash, rawAchievement] = await this.client.hmGet("u:" + player.name, "hash", "achievement");
+      const [hash, rawAchievement] = await this.client
+        .multi()
+
+        .hGet(userKey, "hash")
+        .hGet(userKey, "achievement")
+        .exec();
       try {
         // let [hash, rawAchievement] = reply as [string, string];
         const achievement: number[] = JSON.parse(rawAchievement);
@@ -1185,8 +1194,8 @@ class DatabaseHandler {
   }
 
   async lootGold({ player, amount }) {
-    let currentGold = await this.client.hGet("u:" + player.name, "gold");
-
+    let rawCurrentGold = await this.client.hGet("u:" + player.name, "gold");
+    let currentGold = rawCurrentGold;
     if (!currentGold) {
       currentGold = 0;
     } else if (!/\d+/.test(currentGold)) {
@@ -1198,164 +1207,157 @@ class DatabaseHandler {
       return;
     }
 
-    const gold = parseInt(currentGold) + parseInt(amount);
+    let gold = currentGold + parseInt(amount);
+
+    if (gold > GOLD_CAP) {
+      gold = GOLD_CAP;
+      return;
+    }
 
     await this.client.hSet("u:" + player.name, "gold", gold);
 
-    console.log("~~~~new gold", gold);
     player.send([Types.Messages.GOLD.INVENTORY, gold]);
     player.gold = gold;
   }
 
-  moveGold({ player, amount, from, to }) {
+  async moveGold({ player, amount, from, to }) {
     // Only positive number can be submitted
     if (isNaN(amount) || amount <= 0) return;
 
-    return player.dbWriteQueue.enqueue(
-      () =>
-        new Promise(async resolve => {
-          const locationMap = {
-            inventory: "gold",
-            stash: "goldStash",
-            trade: "goldTrade",
-          };
+    const locationMap = {
+      inventory: "gold",
+      stash: "goldStash",
+      trade: "goldTrade",
+    };
 
-          const fromLocation = locationMap[from];
-          const toLocation = locationMap[to];
+    const fromLocation = locationMap[from];
+    const toLocation = locationMap[to];
 
-          if (fromLocation === toLocation || !fromLocation || !toLocation) return;
+    if (fromLocation === toLocation || !fromLocation || !toLocation) return;
 
-          const rawFromGold = await this.client.hGet("u:" + player.name, fromLocation);
-          if (!rawFromGold) {
-            return false;
-          }
+    let rawFromGold = await this.client.hGet("u:" + player.name, fromLocation);
 
-          if (!rawFromGold || rawFromGold === "0" || !/\d+/.test(rawFromGold)) return;
-          const fromGold = parseInt(rawFromGold);
+    if (!rawFromGold || rawFromGold === "0" || !/\d+/.test(rawFromGold)) return;
+    const fromGold = parseInt(rawFromGold);
 
-          if (amount > fromGold) {
-            Sentry.captureException(new Error(`Player ${player.name} tried to transfer invalid gold amount.`), {
-              extra: {
-                amount,
-                rawFromGold,
-                from,
-                to,
-              },
-            });
-            return false;
-          }
+    if (amount > fromGold) {
+      // Sentry.captureException(new Error(`Player ${player.name} tried to transfer invalid gold amount.`), {
+      //   extra: {
+      //     amount,
+      //     rawFromGold,
+      //     from,
+      //     to,
+      //   },
+      // });
+      return;
+    }
 
-          const newFromGold = fromGold - amount;
-          if (newFromGold < 0) return;
+    let newFromGold = fromGold - amount;
+    if (newFromGold < 0) return;
 
-          let rawToGold = await this.client.hGet("u:" + player.name, toLocation);
+    let rawToGold = await this.client.hGet("u:" + player.name, toLocation);
 
-          if (rawToGold === null) {
-            rawToGold = 0;
-          } else if (!/\d+/.test(rawToGold)) {
-            Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
-              extra: {
-                toLocation,
-                rawToGold,
-              },
-            });
-            return false;
-          }
-          const toGold = parseInt(rawToGold || "0");
-          if (toGold + amount < 0) return;
+    if (rawToGold === null) {
+      rawToGold = 0;
+    } else if (!/\d+/.test(rawToGold)) {
+      // Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
+      //   extra: {
+      //     toLocation,
+      //     rawToGold,
+      //   },
+      // });
+      return;
+    }
+    const toGold = parseInt(rawToGold || "0");
+    if (toGold + amount < 0) return;
 
-          await this.client.hSet("u:" + player.name, fromLocation, newFromGold);
-          player.send([Types.Messages.GOLD[from.toUpperCase()], newFromGold]);
-          player[fromLocation] = newFromGold;
+    await this.client.hSet("u:" + player.name, fromLocation, String(newFromGold));
+    player.send([Types.Messages.GOLD[from.toUpperCase()], newFromGold]);
+    player[fromLocation] = newFromGold;
 
-          const newToGold = toGold + amount;
+    const newToGold = toGold + amount;
 
-          await this.client.hSet("u:" + player.name, toLocation, newToGold);
-          player.send([Types.Messages.GOLD[to.toUpperCase()], newToGold]);
-          player[toLocation] = newToGold;
+    await this.client.hSet("u:" + player.name, toLocation, newToGold);
+    player.send([Types.Messages.GOLD[to.toUpperCase()], newToGold]);
+    player[toLocation] = newToGold;
 
-          console.log("COMPLETED GOLD MOVE", {
-            player: player.name,
-            amount,
-            from,
-            to,
-            newFromGold,
-            newToGold,
-          });
+    let resolvedAmount = 0;
+    if (from === "trade") {
+      resolvedAmount = newFromGold;
+    } else if (to === "trade") {
+      resolvedAmount = newToGold;
+    }
 
-          let resolvedAmount = 0;
-          if (from === "trade") {
-            resolvedAmount = newFromGold;
-          } else if (to === "trade") {
-            resolvedAmount = newToGold;
-          }
+    player[fromLocation] = newFromGold;
+    player[toLocation] = newToGold;
 
-          player[fromLocation] = newFromGold;
-          player[toLocation] = newToGold;
+    // @NOTE Resolved amount is only used for trading
 
-          // @NOTE Resolved amount is only used for trading
-          resolve(resolvedAmount);
-          // });
-        }),
-    );
+    return resolvedAmount;
   }
 
   async deductGold(player, { penalty, amount }: { penalty?: number; amount?: number }) {
-    if (!amount && !penalty) {
-      return;
-    }
+    return new Promise(async (resolve, _reject) => {
+      if (!amount && !penalty) {
+        return;
+      }
 
-    let currentGold = await this.client.hGet("u:" + player.name, "gold");
-    if (currentGold === null) {
-      currentGold = 0;
-    } else if (!/\d+/.test(currentGold)) {
-      Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
-        extra: {
-          currentGold,
-        },
-      });
-      return;
-    }
+      let currentGold = await this.client.hGet("u:" + player.name, "gold");
 
-    const gold = parseInt(currentGold);
+      if (currentGold === null) {
+        currentGold = 0;
+      } else if (!/\d+/.test(currentGold)) {
+        Sentry.captureException(new Error(`${player.name} gold hash corrupted?`), {
+          extra: {
+            currentGold,
+          },
+        });
+        return;
+      }
 
-    // No gold? no deduction
-    if (gold === 0) return;
-    let deductedGold = amount;
-    if (amount && gold < amount) {
-      return;
-    }
+      const gold = parseInt(currentGold);
 
-    if (penalty) {
-      deductedGold = Math.ceil((gold * penalty) / 100);
-    }
-    if (!deductedGold) return;
+      // No gold? no deduction
+      if (gold === 0) return;
+      let deductedGold = amount;
+      if (amount && gold < amount) {
+        return;
+      }
 
-    if (deductedGold >= 10_000 && penalty) {
-      postMessageToDiscordEventChannel(
-        `${EmojiMap.press_f_to_pay_respects} **${player.name}** just lost **${new Intl.NumberFormat("en-EN", {}).format(
-          deductedGold,
-        )}** gold ${EmojiMap.gold} on death${EmojiMap.janetyellen} is getting richer.`,
-      );
-    }
+      if (penalty) {
+        deductedGold = Math.ceil((gold * penalty) / 100);
+      }
+      if (!deductedGold) return;
 
-    let newGold = gold - deductedGold;
-    if (newGold < 0) return;
+      if (deductedGold >= 10_000 && penalty) {
+        postMessageToDiscordEventChannel(
+          `${EmojiMap.press_f_to_pay_respects} **${player.name}** just lost **${new Intl.NumberFormat(
+            "en-EN",
+            {},
+          ).format(deductedGold)}** gold ${EmojiMap.gold} on death${EmojiMap.janetyellen} is getting richer.`,
+        );
+      }
 
-    await this.client.hSet("u:" + player.name, "gold");
+      const newGold = gold - deductedGold;
+      if (newGold < 0) return;
 
-    player.send([Types.Messages.GOLD.INVENTORY, newGold]);
-    player.gold = newGold;
+      this.client.hSet("u:" + player.name, "gold", newGold);
 
-    if (amount) {
-      return newGold;
-    } else if (penalty) {
-      player.send(
-        new Messages.Chat({}, `You lost ${deductedGold} gold from your death.`, "event", deductedGold).serialize(),
-      );
+      player.send([Types.Messages.GOLD.INVENTORY, newGold]);
+      player.gold = newGold;
 
-      await this.client.incrBy("goldBank", deductedGold);
-    }
+      if (amount) {
+        resolve(newGold);
+      } else if (penalty) {
+        player.send(
+          new Messages.Chat({}, `You lost ${deductedGold} gold from your death.`, "event", deductedGold).serialize(),
+        );
+        this.client.incrBy("goldBank", deductedGold, (_err, reply) => {
+          resolve(reply);
+        });
+      }
+      // });
+    });
   }
 
   async getGoldBank() {
@@ -1385,7 +1387,7 @@ class DatabaseHandler {
 
         if (item === "barplatinum" || quantity > 10 || totalAmount >= 100_000) {
           postMessageToDiscordModeratorMerchantChannel(
-            `**${player.name}** purchased ${quantity}x ${item} from merchant for ${totalAmount}${EmojiMap.gold}`,
+            `:warning:**${player.name}** purchased ${quantity}x ${item} from merchant for ${totalAmount}${EmojiMap.gold}`,
           );
         }
 
@@ -1404,7 +1406,7 @@ class DatabaseHandler {
     const slot = inventory.findIndex(item => item && typeof item === "string" && item.startsWith("iou:"));
 
     if (slot <= -1) {
-      this.banPlayerByIP({
+      await this.banPlayerByIP({
         player,
         reason: "cheating",
         message: "Tried to withdraw from bank without an IOU",
@@ -1451,18 +1453,21 @@ class DatabaseHandler {
     fromItem = fromReplyParsed[fromSlot];
     if (!fromItem) return;
 
-    const amount = getGoldAmountFromSoldItem({ item: fromItem, quantity: soldQuantity });
+    let amount = getGoldAmountFromSoldItem({ item: fromItem, quantity: soldQuantity });
 
-    console.log("~~~~amount", amount);
     if (!amount) return;
 
     // const [item, rawLevel] = fromItem;
     const [item, rawLevel] = fromItem.split(":");
     const level = Number(rawLevel);
 
-    if (amount >= 50_000) {
+    let isGoldExeeds100k = false;
+    if (amount >= 100_000) {
+      isGoldExeeds100k = true;
+    }
+    if (isGoldExeeds100k) {
       postMessageToDiscordModeratorMerchantChannel(
-        `**${player.name}** sold ${soldQuantity}x ${fromItem} to merchant for ${amount}${EmojiMap.gold}`,
+        `:warning: **${player.name}** sold ${soldQuantity}x ${fromItem} to merchant for ${amount}${EmojiMap.gold}`,
       );
     } else if (level >= 7 && !soldQuantity) {
       postMessageToDiscordModeratorMerchantChannel(

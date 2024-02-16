@@ -2293,7 +2293,7 @@ class Game {
       let entity =
         this.getEntityAt(x, y, Mob) ||
         this.getEntityAt(x, y, Npc) ||
-        (this.player.pvp && this.getEntityAt(x, y, Player)) ||
+        (this.player.settings.pvp && this.getEntityAt(x, y, Player)) ||
         this.getNearestEntity();
       mobId = entity?.id;
 
@@ -2315,8 +2315,8 @@ class Game {
       }
 
       // Can't cast on other player if PvP is not enabled
-      if (mobId && entity instanceof Player && (!entity.pvp || !this.pvp)) {
-        let message = !entity.pvp
+      if (mobId && entity instanceof Player && (!entity.settings.pvp || !this.pvp)) {
+        let message = !entity.settings.pvp
           ? "You can't attack a player that doesn't have PvP enabled."
           : "You need to enable PvP before you can attack another player.";
 
@@ -6629,8 +6629,8 @@ class Game {
             ? this.getEntityAt(x, y)
             : this.player.target;
 
-        if (this.hoveringPlayer && entity.id !== this.player.id && this.pvp) {
-          this.hoveringPlayerPvP = entity.pvp;
+        if (this.hoveringPlayer && entity.id !== this.player.id && this.player.settings.pvp) {
+          this.hoveringPlayerPvP = entity.settings.pvp;
         }
 
         this.player.showTarget(entity);
@@ -6724,7 +6724,7 @@ class Game {
       ) {
         this.removeFromPathingGrid(pos.x, pos.y);
       }
-      if (entity instanceof Mob || (this.pvp && entity instanceof Player && entity.pvp)) {
+      if (entity instanceof Mob || (this.pvp && entity instanceof Player && entity.settings.pvp)) {
         this.makePlayerAttack(entity);
       } else if (entity instanceof Item) {
         this.makePlayerGoToItem(entity);
