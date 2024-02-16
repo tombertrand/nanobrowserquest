@@ -8,6 +8,7 @@ import {
   ACHIEVEMENT_WING_INDEX,
 } from "../../shared/js/types/achievements";
 import { toArray, toNumber } from "../../shared/js/utils";
+import { defaultSettings, Settings } from "./../../shared/js/settings";
 import Character from "./character";
 import Exceptions from "./exceptions";
 
@@ -23,22 +24,22 @@ class Player extends Character {
   helmLevel: number;
   helmBonus: null | number[];
   helmSocket: null | number[];
-  name: any;
-  account: any;
+  name: string;
+  account: string;
   hash: string;
   nameOffsetY: number;
   armorName: string;
   armorLevel: number;
   armorBonus: null | number[];
   armorSocket: null | number[];
-  weaponName: string;
+  weaponName: any;
   weaponLevel: number;
   weaponBonus: null | number[];
   weaponSocket: null | number[];
   weaponSkill: null | number[];
   weaponRuneword: null | string;
   isWeaponUnique: boolean;
-  beltName: null;
+  beltName: string;
   beltLevel: number | null;
   beltBonus: null | number[];
   cape?: string;
@@ -53,7 +54,7 @@ class Player extends Character {
   petBonus: null | number[];
   petSocket: null | number[];
   petSkin: number;
-  shieldName: null;
+  shieldName: string;
   shieldLevel: number | null;
   shieldBonus: number[] | null;
   shieldSocket: number[] | null;
@@ -63,6 +64,7 @@ class Player extends Character {
   attackSkillTimeout: NodeJS.Timeout;
   inventory: any[];
   stash: any[];
+  trade: any[];
   upgrade: any[];
   tradePlayer1: any[];
   tradePlayer2: any[];
@@ -71,22 +73,22 @@ class Player extends Character {
   goldStash: number;
   goldTrade: number;
   coin: number;
-  gems: any;
-  artifact: any;
+  gems: number[];
+  artifact: number[];
   expansion1: boolean;
   expansion2: boolean;
-  waypoints: any[];
+  waypoints: number[];
   skeletonKey: boolean;
   nanoPotions: number;
   damage: string;
   absorb: string;
-  ring1Name: null;
+  ring1Name: string | null;
   ring1Level: number | null;
   ring1Bonus: null | number[];
-  ring2Name: null;
+  ring2Name: string | null;
   ring2Level: number | null;
   ring2Bonus: null | number[];
-  amuletName: null;
+  amuletName: string;
   amuletLevel: number | null;
   amuletBonus: null | number[];
   bonus: any;
@@ -95,14 +97,14 @@ class Player extends Character {
   isSwitchingWeapon: boolean;
   invite: any;
   currentArmorSprite: any;
-  id: any;
-  invincible: any;
+  id: number;
+  invincible: boolean;
   sprite: any;
   switch_callback: any;
   invinciblestart_callback: any;
   invinciblestop_callback: any;
   invincibleTimeout: any;
-  level: any;
+  level: number;
   x: number;
   y: number;
   gridX: number;
@@ -116,15 +118,13 @@ class Player extends Character {
   pvp: boolean;
   partyEnabled: boolean;
   tradeEnabled: boolean;
+  effects: boolean;
   debug: boolean;
-
   partyId?: number;
   partyLeader?: PartyMember;
   partyMembers: PartyMember[];
-
   network: Network;
-
-  settings: any;
+  settings: Settings;
 
   constructor(id, name, account, kind) {
     super(id, kind);
@@ -209,7 +209,7 @@ class Player extends Character {
     this.partyId = null;
     this.partyLeader = null;
     this.partyMembers = null;
-    this.settings = {};
+    this.settings = defaultSettings;
   }
 
   setPartyId(partyId) {
@@ -235,6 +235,7 @@ class Player extends Character {
   setPartyEnabled(enabled: boolean) {
     this.partyEnabled = enabled;
   }
+
   setTradeEnabled(enabled: boolean) {
     this.tradeEnabled = enabled;
   }
@@ -581,29 +582,42 @@ class Player extends Character {
   }
 
   setSettings(settings) {
-    if (settings.capeHue) {
-      this.capeHue = settings.capeHue;
+    if (settings.playerNames) {
+      this.settings.playerNames = settings.playerNames;
     }
+
+    if (settings.damageInfo) {
+      this.settings.damageInfo = settings.damageInfo;
+    }
+
+    if (settings.capeHue) {
+      this.settings.capeHue = settings.capeHue;
+    }
+
     if (settings.capeSaturate) {
-      this.capeSaturate = settings.capeSaturate;
+      this.settings.capeSaturate = settings.capeSaturate;
     }
     if (settings.capeContrast) {
-      this.capeContrast = settings.capeContrast;
+      this.settings.capeContrast = settings.capeContrast;
     }
     if (settings.capeBrightness) {
-      this.capeBrightness = settings.capeBrightness;
+      this.settings.capeBrightness = settings.capeBrightness;
     }
     if (settings.pvp) {
-      this.pvp = settings.pvp;
+      this.settings.pvp = settings.pvp;
     }
     if (settings.partyEnabled) {
-      this.partyEnabled = settings.partyEnabled;
+      this.settings.partyEnabled = settings.partyEnabled;
     }
     if (settings.tradeEnabled) {
-      this.tradeEnabled = settings.tradeEnabled;
+      this.settings.tradeEnabled = settings.tradeEnabled;
+    }
+
+    if (settings.effects) {
+      this.settings.effects = settings.effects;
     }
     if (settings.debug) {
-      this.debug = settings.debug;
+      this.settings.debug = settings.debug;
     }
   }
 
@@ -820,8 +834,6 @@ class Player extends Character {
         const delimiter = Types.isJewel(rawItem) ? "|" : ":";
         const [item, levelOrQuantityOrAmount, bonus, socket, skillOrSkin] = rawItem.split(delimiter);
 
-
-
         const isWeapon = kinds[item][1] === "weapon";
         const isHelm = kinds[item][1] === "helm";
         const isArmor = kinds[item][1] === "armor";
@@ -899,12 +911,16 @@ class Player extends Character {
     this.inventory = this.prepareRawItems(inventory);
   }
 
-  setUpgrade(upgrade) {
-    this.upgrade = this.prepareRawItems(upgrade);
-  }
-
   setStash(stash) {
     this.stash = this.prepareRawItems(stash);
+  }
+
+  setTrade(trade) {
+    this.trade = this.prepareRawItems(trade);
+  }
+
+  setUpgrade(upgrade) {
+    this.upgrade = this.prepareRawItems(upgrade);
   }
 
   setGold(gold) {

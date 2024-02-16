@@ -2,6 +2,7 @@ import CryptoJS from "crypto-js";
 import * as _ from "lodash";
 
 import { kinds, petKindToPetMap, Types } from "../../shared/js/gametypes";
+import { defaultSettings, Settings } from "../../shared/js/settings";
 import {
   ACHIEVEMENT_CRYSTAL_INDEX,
   ACHIEVEMENT_GRIMOIRE_INDEX,
@@ -20,10 +21,10 @@ import {
   isLocationOKWithExpansionLocation,
 } from "../../shared/js/utils";
 import {
-  HASH_BAN_DELAY,
+  // HASH_BAN_DELAY,
   isValidAccountAddress,
   toArray,
-  toBoolean,
+  // toBoolean,
   toDb,
   toNumber,
   validateQuantity,
@@ -238,6 +239,8 @@ class Player extends Character {
   capeBonus: number[] | null;
   isCapeUnique: boolean;
   isCapeSuperior: boolean;
+  playerNames: boolean;
+  damageInfo: boolean;
   capeHue: number;
   capeSaturate: number;
   capeContrast: number;
@@ -252,8 +255,7 @@ class Player extends Character {
   isPetUnique: boolean;
   isPetSuperior: boolean;
   pvp: boolean;
-  partyEnabled: boolean;
-  tradeEnabled: boolean;
+  effects: boolean;
   shield: string;
   shieldKind: number;
   shieldLevel: number;
@@ -310,7 +312,6 @@ class Player extends Character {
   attackTimeout: NodeJS.Timeout;
   discordId: number;
   isHurtByTrap: boolean;
-  // Achievement checks
   hasGrimoire: boolean;
   hasObelisk: boolean;
   hasNft: boolean;
@@ -318,11 +319,11 @@ class Player extends Character {
   hasCrystal: boolean;
   canChat: boolean;
   chatTimeout: any;
+  settings: Settings;
   // attackTimeoutWarning: boolean;
   checkHashInterval: any;
   lastHashCheckTimestamp: number;
-  upgradeLock: boolean;
-  moveGoldLock: boolean;
+
   isChatbanWarned: boolean;
   setLevel: any;
 
@@ -383,11 +384,7 @@ class Player extends Character {
     this.hasWing = false;
     this.hasCrystal = false;
     this.isChatbanWarned = false;
-    // this.attackTimeoutWarning = false;
-
-    this.upgradeLock = false;
-    this.moveGoldLock = false;
-
+    this.settings = defaultSettings;
     // Get IP from CloudFlare
     this.ip = connection._connection.handshake.headers["cf-connecting-ip"];
     this.canChat = true;
@@ -395,9 +392,7 @@ class Player extends Character {
     this.lastHashCheckTimestamp = Date.now();
 
     // NOTE: Client will be sending the hashed game function, if altered, player gets banned.
-    // this.connection.on("decoded", packet => {
 
-    // });
     this.connection.listen(async rawMessage => {
       const message = this.verifySignature(rawMessage);
 
@@ -409,8 +404,6 @@ class Player extends Character {
         databaseHandler.banPlayerByIP({
           player: self,
           reason: "cheating",
-          // message: params[0] || "invalid websocket message",
-
           message: "invalid websocket message",
         });
         return;
@@ -497,6 +490,7 @@ class Player extends Character {
           message: banMessage,
           admin,
         } = await databaseHandler.checkIsBannedForReason(name));
+
         if (timestamp && timestamp > Date.now()) {
           self.connection.sendUTF8(
             JSON.stringify({
@@ -549,6 +543,7 @@ class Player extends Character {
           }
         } else {
           console.info("LOGIN: " + self.name, " ID: " + self.id);
+
           if (self.server.loggedInPlayer(self.name) && !password) {
             self.connection.sendUTF8("passwordlogin");
             self.connection.close("Already logged in " + self.name);
@@ -556,7 +551,6 @@ class Player extends Character {
             return;
           }
         }
-
         if (!password) {
           if (await databaseHandler.passwordIsRequired(self)) {
             return;
@@ -568,7 +562,6 @@ class Player extends Character {
             self.server.disconnectPlayer({ name: self.name });
           }
         }
-
         if (action === Types.Messages.CREATE) {
           if (databaseHandler.validateCreatePlayer(self)) {
             databaseHandler.createPlayer(self);
@@ -744,7 +737,7 @@ class Player extends Character {
           }
 
           if (entity) {
-            postMessageToSupportChannel(`**${entity.name.toUpperCase()}** ${emoji}${JSON.stringify(entity)}`);
+            postMessageToSupportChannel(`**${entity.name.toUpperCase()}** ${emoji}${JSON.stringify(entity.neme)}`);
           } else {
             postMessageToSupportChannel(
               `No boss in that area **${self.name}** x:${self.x}, y:${self.y}  playerLocation:${playerLocation}`,
@@ -1101,7 +1094,7 @@ class Player extends Character {
                 drainLife = drainLife - Math.floor((self.bonus.drainLife * self.curse.health) / 100);
               }
 
-              self.regenHealthBy(drainLife);
+              self.regenerateHealthBy(drainLife);
               self.server.pushToPlayer(self, self.health());
             }
           }
@@ -1160,6 +1153,7 @@ class Player extends Character {
         }
       } else if (action === Types.Messages.HURT) {
         console.info("HURT: " + self.name + " " + params[0]);
+
         var mob = self.server.getEntityById(params[0]);
         if (mob && self.hitPoints > 0) {
           let dmg = Formulas.dmgFromMob({
@@ -1487,7 +1481,7 @@ class Player extends Character {
               }
 
               if (amount && !self.hasFullHealth()) {
-                self.regenHealthBy(amount);
+                self.regenerateHealthBy(amount);
                 self.server.pushToPlayer(self, self.health());
               }
             } else if (kind === Types.Entities.GOLD) {
@@ -1969,7 +1963,7 @@ class Player extends Character {
               network: self.network,
             })
           : {};
-        const { err, message: msg, hash: payeoutHash } = response as any;
+        const { err, message: responseMsg, hash: payeoutHash } = response as any;
         self.hash = payeoutHash;
 
         // If payout succeeds there will be a hash in the response!
@@ -2010,7 +2004,7 @@ class Player extends Character {
 
         self.connection.send({
           type: Types.Messages.NOTIFICATION,
-          message: msg,
+          message: responseMsg,
           hash: self.payeoutHash,
         });
 
@@ -2212,7 +2206,7 @@ class Player extends Character {
                   `${playerToInvite.name} is already in a party`,
                 ).serialize(),
               );
-            } else if (!playerToInvite.partyEnabled) {
+            } else if (!playerToInvite.settings.partyEnabled) {
               self.send(
                 new Messages.Party(
                   Types.Messages.PARTY_ACTIONS.ERROR,
@@ -2289,7 +2283,7 @@ class Player extends Character {
 
           if (!playerToTradeWith) {
             self.send(new Messages.Trade(Types.Messages.TRADE_ACTIONS.ERROR, `${params[1]} is not online`).serialize());
-          } else if (!playerToTradeWith.tradeEnabled) {
+          } else if (!playerToTradeWith.settings.tradeEnabled) {
             self.send(
               new Messages.Trade(
                 Types.Messages.TRADE_ACTIONS.ERROR,
@@ -2375,34 +2369,8 @@ class Player extends Character {
 
         self.databaseHandler.sellToMerchant({ player: self, fromSlot, quantity });
       } else if (action === Types.Messages.SETTINGS) {
-        const settings = params[0];
-
-        if (settings) {
-          if (settings.capeHue) {
-            self.capeHue = settings.capeHue;
-          }
-          if (settings.capeSaturate) {
-            self.capeSaturate = settings.capeSaturate;
-          }
-          if (settings.capeContrast) {
-            self.capeContrast = settings.capeContrast;
-          }
-          if (settings.capeBrightness) {
-            self.capeBrightness = settings.capeBrightness;
-          }
-          if (typeof settings.pvp !== "undefined") {
-            self.pvp = toBoolean(settings.pvp);
-          }
-          if (typeof settings.partyEnabled !== "undefined") {
-            self.partyEnabled = toBoolean(settings.partyEnabled);
-          }
-          if (typeof settings.tradeEnabled !== "undefined") {
-            self.tradeEnabled = toBoolean(settings.tradeEnabled);
-          }
-
-          this.databaseHandler.setSettings(this.name, settings);
-          this.broadcast(new Messages.Settings(this, settings), false);
-        }
+        this.databaseHandler.setSettings(this, params[0]);
+        this.broadcast(new Messages.Settings(this, self.settings), false);
       } else if (action === Types.Messages.SKILL) {
         const slot = params[0];
         const mobId = params[1];
@@ -2487,7 +2455,7 @@ class Player extends Character {
                 healAmount = healthDiff;
               }
 
-              self.regenHealthBy(healAmount);
+              self.regenerateHealthBy(healAmount);
               self.server.pushToPlayer(self, self.health());
             }
           } else if (this.defenseSkill === 1) {
@@ -3003,15 +2971,7 @@ class Player extends Character {
       shield: this.shield
         ? `${this.shield}:${this.shieldLevel}${toDb(shieldBonus)}${toDb(this.shieldSocket)}${toDb(this.defenseSkill)}`
         : null,
-      settings: {
-        capeHue: this.capeHue,
-        capeSaturate: this.capeSaturate,
-        capeContrast: this.capeContrast,
-        capeBrightness: this.capeBrightness,
-        pvp: this.pvp,
-        partyEnabled: this.partyEnabled,
-        tradeEnabled: this.tradeEnabled,
-      },
+      settings: this.settings,
       resistances: null,
       element: null,
       enchants: null,
@@ -3536,7 +3496,7 @@ class Player extends Character {
       if (this.bonus.freezeChance) {
         this.auras.push("freeze");
       }
-      if (this.bonus.regenerateHealth >= 125) {
+      if (this.bonus.regenerateHealth >= 100) {
         this.auras.push("health-regenerate");
       }
 
@@ -4146,6 +4106,8 @@ class Player extends Character {
     achievement,
     inventory,
     stash,
+    trade,
+    upgrade,
     hash,
     nanoPotions,
     gems,
@@ -4159,6 +4121,7 @@ class Player extends Character {
     network,
     discordId,
   }) {
+    this.settings = typeof settings === "string" ? JSON.parse(settings) : settings;
     try {
       // @NOTE: Make sure the player has authenticated if he has the expansion
       if (this.isPasswordRequired && !this.isPasswordValid) {
@@ -4167,11 +4130,11 @@ class Player extends Character {
       }
 
       if (process.env.NODE_ENV === "production") {
-        this.canChat = !this.server.chatBan.some(
+        this.canChat = !this.server.chatBan?.some(
           ({ player: playerName, ip }) => playerName === this.name || (this.ip && ip && ip === this.ip),
         );
       } else {
-        this.canChat = !this.server.chatBan.some(
+        this.canChat = !this.server.chatBan?.some(
           ({ player: playerName, ip }) => playerName === this.name || ip === this.ip,
         );
       }
@@ -4278,15 +4241,6 @@ class Player extends Character {
       this.hash = hash;
       this.hasRequestedBossPayout = false;
       this.hasWallet = !!network || !!account;
-
-      this.capeHue = settings.capeHue;
-      this.capeSaturate = settings.capeSaturate;
-      this.capeContrast = settings.capeContrast;
-      this.capeBrightness = settings.capeBrightness;
-      this.pvp = settings.pvp;
-      this.partyEnabled = settings.partyEnabled;
-      this.tradeEnabled = settings.tradeEnabled;
-
       this.createdAt = createdAt;
       this.experience = exp;
       this.level = Types.getLevel(this.experience);
@@ -4370,6 +4324,8 @@ class Player extends Character {
           achievement,
           inventory,
           stash,
+          trade,
+          upgrade,
           hash,
           nanoPotions,
           gems,
@@ -4387,7 +4343,6 @@ class Player extends Character {
           admins: ADMINS.concat(SUPER_ADMINS),
         },
       ]);
-
       this.sendLevelInProgress();
 
       this.resetBonus();

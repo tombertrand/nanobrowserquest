@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-shadow */
 import * as Sentry from "@sentry/browser";
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
 import * as _ from "lodash";
 
 import { kinds, Types } from "../../shared/js/gametypes";
@@ -32,7 +32,7 @@ import { expForLevel } from "../../shared/js/types/experience";
 import { setDescription } from "../../shared/js/types/set";
 import { MIN_COW_LEVEL, MIN_MINOTAUR_LEVEL } from "../../shared/js/utils";
 import { getEntityLocation } from "../../shared/js/utils";
-import { HASH_BAN_DELAY } from "../../shared/js/utils";
+// import { HASH_BAN_DELAY } from "../../shared/js/utils";
 import { randomInt, toArray, toString, validateQuantity } from "../../shared/js/utils";
 import { getAchievements } from "./achievements";
 import Animation from "./animation";
@@ -216,6 +216,7 @@ class Game {
     confirmed: boolean;
     isUnique: boolean;
     isSuperior: boolean;
+    amount: number;
   } | null;
   itemToDelete: {
     fromSlot: number;
@@ -249,7 +250,7 @@ class Game {
   cursorOverSocket: number | null;
   isPanelOpened: boolean;
   isDragStarted: boolean;
-  // hashCheckInterval: any; 
+  // hashCheckInterval: any;
   admins: string[];
   onSendMoveItemTimeout: NodeJS.Timeout;
 
@@ -555,14 +556,12 @@ class Game {
 
       this.audioManager.updateMusicVolume(musicVolume);
     }
-
     if (!this.storage.isSoundEnabled()) {
       this.audioManager.disableSound();
     } else {
       $("#mute-sound-checkbox").prop("checked", true);
       this.audioManager.updateSoundVolume(soundVolume);
     }
-
     var handleMusic = $("#music-handle");
     $("#music-slider").slider({
       min: 0,
@@ -577,7 +576,6 @@ class Game {
         this.audioManager.updateMusicVolume(ui.value / 100);
       },
     });
-
     var handleSound = $("#sound-handle");
     $("#sound-slider").slider({
       min: 0,
@@ -595,18 +593,16 @@ class Game {
 
     if (this.storage.showEntityNameEnabled()) {
       this.renderer.setDrawEntityName(true);
-      $("#entity-name-checkbox").prop("checked", true);
+      $("#entity-name-checkbox").prop("checked", settings.playerNames);
     } else {
       this.renderer.setDrawEntityName(false);
     }
-
     if (this.storage.showDamageInfoEnabled()) {
       this.infoManager.setShowDamageInfo(true);
-      $("#damage-info-checkbox").prop("checked", true);
+      $("#damage-info-checkbox").prop("checked", settings.damageInfo);
     } else {
       this.infoManager.setShowDamageInfo(false);
     }
-
     this.showEffects = settings.effects;
     $("#effects-checkbox").prop("checked", settings.effects);
 
@@ -617,6 +613,7 @@ class Game {
     $("#party-checkbox").prop("checked", settings.partyEnabled);
 
     this.tradeEnabled = settings.tradeEnabled;
+
     $("#trade-checkbox").prop("checked", settings.tradeEnabled);
 
     this.debug = this.storage.debugEnabled();
@@ -1145,7 +1142,7 @@ class Game {
     const toSlotEl = $(`[data-slot="${toSlot}"]`);
     const toItemEl = toSlotEl.find(">div");
     const toItem = toItemEl.attr("data-item");
-    const toLevel = toItemEl.attr("data-level");
+    const toLevel = Number(toItemEl.attr("data-level"));
     const item = fromItemEl.attr("data-item");
     const level = Number(fromItemEl.attr("data-level"));
     const quantity = Number(fromItemEl.attr("data-quantity")) || null;
@@ -1239,6 +1236,7 @@ class Game {
           confirmed: true,
           isSuperior,
           isUnique,
+          amount: itemGoldMap[item] * transferedQuantity,
         };
         $("#dialog-merchant-item").dialog("open");
         return;
@@ -2295,7 +2293,7 @@ class Game {
       let entity =
         this.getEntityAt(x, y, Mob) ||
         this.getEntityAt(x, y, Npc) ||
-        (this.player.pvp && this.getEntityAt(x, y, Player)) ||
+        (this.player.settings.pvp && this.getEntityAt(x, y, Player)) ||
         this.getNearestEntity();
       mobId = entity?.id;
 
@@ -2317,8 +2315,8 @@ class Game {
       }
 
       // Can't cast on other player if PvP is not enabled
-      if (mobId && entity instanceof Player && (!entity.pvp || !this.pvp)) {
-        let message = !entity.pvp
+      if (mobId && entity instanceof Player && (!entity.settings.pvp || !this.pvp)) {
+        let message = !entity.settings.pvp
           ? "You can't attack a player that doesn't have PvP enabled."
           : "You need to enable PvP before you can attack another player.";
 
@@ -2522,8 +2520,10 @@ class Game {
             // Waypoint has to be enabled
             if (clickedWaypoint && self.player.waypoints[id - 1] === 1) {
               const { gridX, gridY } = clickedWaypoint;
+
               self.app.closeWaypoint();
               self.player.stop_pathing_callback({ x: gridX + 1, y: gridY, isWaypoint: true });
+              //
               $("#foreground").off(".waypoint");
             }
           },
@@ -3117,6 +3117,7 @@ class Game {
       id,
       name,
       account,
+      // exp,
       x,
       y,
       hp,
@@ -3133,10 +3134,12 @@ class Game {
       experience,
       gold,
       goldStash,
-      coin,
+      goldTrade,
       achievement,
       inventory,
       stash,
+      trade,
+      upgrade,
       hash,
       nanoPotions,
       gems,
@@ -3153,11 +3156,29 @@ class Game {
       isHurtByTrap,
       admins,
     }) {
+      // exp = Number(exp);
+      trade = JSON.parse(trade);
+      stash = JSON.parse(stash);
+      inventory = JSON.parse(inventory);
+      x = Number(x);
+      y = Number(y);
+      upgrade = JSON.parse(upgrade);
+      achievement = JSON.parse(achievement);
+      artifact = JSON.parse(artifact);
+      gems = JSON.parse(gems);
+      expansion1 = Number(expansion1);
+      expansion2 = Number(expansion2);
+      waypoints = JSON.parse(waypoints);
+      nanoPotions = Number(nanoPotions);
+      gold = Number(gold);
+      goldStash = Number(goldStash);
+      goldTrade = Number(goldTrade);
+      settings = typeof settings === "string" ? JSON.parse(settings) : settings;
+
+      self.player.setSettings(settings);
+
       // @ts-ignore
       self.app.start();
-
-      // clearInterval(this.hashCheckInterval);
-      // self.startHashCheckInterval();
 
       Sentry.configureScope(scope => {
         // scope.setTag("name", name);
@@ -3227,12 +3248,12 @@ class Game {
       self.player.level = Types.getLevel(experience);
       self.player.setInventory(inventory);
       self.player.setStash(stash);
-
+      self.player.setTrade(trade);
+      self.player.setUpgrade(upgrade);
       self.setGold(gold);
       self.setGoldStash(goldStash);
+      self.setGoldTrade(goldTrade);
       self.setGoldTrade(0);
-      self.setCoin(coin);
-
       self.initSettings(settings);
       self.toggleCapeSliders(!!cape);
       self.updateBars();
@@ -3318,8 +3339,8 @@ class Game {
 
       self.player.onStartPathing(function (path) {
         var i = path.length - 1,
-          x = path[i][0],
-          y = path[i][1];
+          x = Number(path[i][0]),
+          y = Number(path[i][1]);
 
         if (self.player.isMovingToLoot()) {
           self.player.isLootMoving = false;
@@ -3585,7 +3606,6 @@ class Game {
               self.client.sendTeleport(dest.x, desty, self.player.orientation);
             }
           }
-
           if (self.renderer.mobile && dest.cameraX && dest.cameraY) {
             self.camera.setGridPosition(dest.cameraX, dest.cameraY);
             self.resetZone();
@@ -3761,7 +3781,7 @@ class Game {
           petId,
           ownerId,
           skin,
-          level,
+          // level,
           settings,
         } = data;
 
@@ -3776,15 +3796,18 @@ class Game {
         if (!isEntityExist) {
           try {
             if (id !== self.playerId) {
-              if (!isPet) {
+              if (isPet) {
                 entity = EntityFactory.createEntity({ kind, id, name, resistances, petId });
 
                 entity.bonus = bonus;
               } else {
                 const owner = self.getEntityById(ownerId);
                 const name = ownerId ? `Pet of ${owner?.name}` : "";
-                entity = EntityFactory.createEntity({ kind, id, name, resistances, ownerId, skin, level, bonus });
+                entity = EntityFactory.createEntity({ kind, id, name, data });
 
+                if (settings) {
+                  entity.setSettings(settings);
+                }
                 if (owner) {
                   owner.petId = id;
                   owner.petEntity = entity;
@@ -3944,10 +3967,6 @@ class Game {
               }
 
               self.addEntity(entity);
-
-              if (entity instanceof Player) {
-                entity.setSettings(settings);
-              }
 
               if (entity instanceof Character) {
                 if (!(entity instanceof Npc)) {
@@ -5706,10 +5725,6 @@ class Game {
         self.makeNpcTalk(npc, { byPass: true, talkIndex: gold ? 1 : 2, gold });
       });
 
-      self.client.onReceiveCoin(function (coin) {
-        self.setCoin(coin);
-      });
-
       self.client.onDisconnected(function (message) {
         if (self.player) {
           self.player.die();
@@ -6614,8 +6629,8 @@ class Game {
             ? this.getEntityAt(x, y)
             : this.player.target;
 
-        if (this.hoveringPlayer && entity.id !== this.player.id && this.pvp) {
-          this.hoveringPlayerPvP = entity.pvp;
+        if (this.hoveringPlayer && entity.id !== this.player.id && this.player.settings.pvp) {
+          this.hoveringPlayerPvP = entity.settings.pvp;
         }
 
         this.player.showTarget(entity);
@@ -6709,7 +6724,7 @@ class Game {
       ) {
         this.removeFromPathingGrid(pos.x, pos.y);
       }
-      if (entity instanceof Mob || (this.pvp && entity instanceof Player && entity.pvp)) {
+      if (entity instanceof Mob || (this.pvp && entity instanceof Player && entity.settings.pvp)) {
         this.makePlayerAttack(entity);
       } else if (entity instanceof Item) {
         this.makePlayerGoToItem(entity);

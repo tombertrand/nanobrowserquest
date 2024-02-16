@@ -11,9 +11,10 @@ import Warrior from "./warrior";
 
 var EntityFactory: any = {};
 
-EntityFactory.createEntity = function ({ kind, id, ...rest }) {
+EntityFactory.createEntity = function ({ kind, id, data }) {
+
   if (!kind) {
-    console.error("kind is undefined", kind, id, rest);
+    console.error("kind is undefined", kind, id, data);
     return;
   }
 
@@ -21,7 +22,7 @@ EntityFactory.createEntity = function ({ kind, id, ...rest }) {
     throw Error(kind + " is not a valid Entity type");
   }
 
-  return EntityFactory.builders[kind](id, rest);
+  return EntityFactory.builders[kind](id, data);
 };
 
 //===== mobs ======

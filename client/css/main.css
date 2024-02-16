@@ -709,7 +709,8 @@ footer, header, hgroup, menu, nav, section {
         margin-bottom: 6px;
     }
     .item-title.unique,
-    .item-title.rune {
+    .item-title.rune,
+    .gold {
         color: #d3c59c;
     }
 .item-weight {
@@ -725,7 +726,7 @@ footer, header, hgroup, menu, nav, section {
         border-color: #e700e7 !important;
     }
 
-    .item-unique {
+    .item-unique{
         border-color: #d3c59c !important;
     }
     .item-runeword {

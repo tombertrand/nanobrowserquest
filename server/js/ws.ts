@@ -58,9 +58,10 @@ export class Server {
       connection.remoteAddress = connection.handshake.address.address;
       const c = new Connection(self._createId(), connection, self);
 
-      if (self.connection_callback) {
-        self.connection_callback(c);
-      }
+      // console.log(c)
+
+        self.connection_callback?.(c);
+      
       self.addConnection(c);
     });
 

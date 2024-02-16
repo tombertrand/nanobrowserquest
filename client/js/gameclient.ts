@@ -229,7 +229,6 @@ class GameClient {
       reconnectionAttempts: 5,
       parser: CustomParser,
     });
-
     if (dispatcherMode) {
       this.connection.on("message", e => {
         var reply = JSON.parse(e.data);

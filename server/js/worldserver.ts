@@ -157,7 +157,7 @@ class World {
   soulStonePlayerName: string;
   cowKingPlayerName: string | null;
   minotaurPlayerName: string | null;
-  chatBan: { player: string; ip: string }[];
+  chatBan: { player: string; ip: string }[] | null;
   maxPlayerCreateByIp: { [ip: string]: string[] };
   tmpHash: string;
   hash: string;
@@ -302,7 +302,7 @@ class World {
     this.gateSubTempleNpcId = null;
     this.goldBank = 0;
     this.janetYellenNpcId = null;
-
+    this.chatBan = null
     this.maxPlayerCreateByIp = { ip: [] };
 
     this.onPlayerConnect(function (player) {
@@ -432,6 +432,7 @@ class World {
       self.forEachCharacter(function (character) {
         if (!character.hasFullHealth() && !character.isDead) {
           let regenerateHealth = Math.floor(character.maxHitPoints / 33);
+
           if (character.bonus && character.bonus.regenerateHealth) {
             regenerateHealth += character.bonus.regenerateHealth;
           }
@@ -441,7 +442,7 @@ class World {
           }
 
           if (regenerateHealth > 0) {
-            character.regenHealthBy(regenerateHealth);
+            character.regenerateHealthBy(regenerateHealth);
 
             if (character.type === "player") {
               self.pushToPlayer(character, character.regen());
@@ -500,9 +501,8 @@ class World {
       if (updateCount < regenCount) {
         updateCount += 1;
       } else {
-        if (self.regen_callback) {
-          self.regen_callback();
-        }
+        self.regen_callback?.();
+
         updateCount = 0;
       }
     }, 1000 / this.ups);
@@ -512,13 +512,15 @@ class World {
     this.databaseHandler.getGoldBank().then(goldBank => {
       this.goldBank = goldBank;
     });
+  }
 
+  runChatBans() {
     setInterval(() => {
       this.databaseHandler.getChatBan().then(chatBan => {
         this.chatBan = chatBan;
-      }),
-        1000 * 60 * 20;
-    });
+      });
+    }, 300000); // every 5 minutes
+
     setInterval(() => {
       this.maxPlayerCreateByIp = { ip: [] };
     }, 86400000);

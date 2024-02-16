@@ -170,7 +170,12 @@ class Storage {
     this.save();
   }
 
-  setAchievement(achievement) {
+  setAchievement(rawAchievement) {
+    let achievement = rawAchievement;
+
+    if (typeof achievement === "string") {
+      achievement = JSON.parse(rawAchievement);
+    }
     this.data.achievement = achievement;
     this.save();
   }

@@ -339,7 +339,7 @@ var Properties: any = {
     },
     hp: 350,
     armor: 6,
-    weapon: 11,
+    weapon: 12,
   },
   necromancer: {
     drops: {

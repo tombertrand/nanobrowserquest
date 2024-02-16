@@ -114,7 +114,6 @@ class App {
   }
 
   checkContextmenuabuse() {
-
     if (this.isContextMenuBlocked || this.contextMenuTimeout) {
       this.game.chat_callback({
         message: "You've sent too many requests, you're blocked for 30 seconds",
@@ -138,7 +137,6 @@ class App {
     return true;
   }
 
-
   initContextMenu() {
     $.contextMenu({
       selector: "#canvas",
@@ -158,25 +156,25 @@ class App {
             disabled: true,
           },
           trade: {
-            name: player.tradeEnabled ? "Trade" : "Player has disabled Trade",
+            name: player.settings.tradeEnabled ? "Trade" : "Player has disabled Trade",
             callback: () => {
-              if (this.checkContextmenuabuse() && player.tradeEnabled) {
+              if (this.checkContextmenuabuse() && player.settings.tradeEnabled) {
                 this.game.say(`/trade ${player.name}`);
               }
             },
-            disabled: !player.tradeEnabled,
+            disabled: !player.settings.tradeEnabled,
           },
           party: {
-            name: player.partyEnabled ? (isInParty ? "In a party" : "Party") : "Player has Disabled Party",
+            name: player.settings.partyEnabled ? (isInParty ? "In a party" : "Party") : "Player has Disabled Party",
             callback: () => {
-              if (!isInParty && player.partyEnabled) {
+              if (!isInParty && player.settings.partyEnabled) {
                 if (!this.game.player.partyId && this.checkContextmenuabuse()) {
                   this.game.say(`/party create`);
                 }
                 this.game.say(`/party invite ${player.name}`);
               }
             },
-            disabled: isInParty || !player.partyEnabled,
+            disabled: isInParty || !player.settings.partyEnabled,
           },
           equipment: {
             name: "View equipment",
@@ -502,10 +500,12 @@ class App {
       title: "Sell item to merchant",
       open: function () {
         $("#dialog-merchant-item").html(
-          `Are you sure you want to sell this${
+          `Are you sure you want to sell ${
+            self.game.confirmedSoldItemToMerchant?.transferedQuantity > 1 ? "these" : "this"
+          }${
             (self.game.confirmedSoldItemToMerchant?.isSuperior ? '<span class="item-superior"> Superior</span>' : "") +
             (self.game.confirmedSoldItemToMerchant?.isUnique ? '<span class="item-unique"> Unique</span>' : "")
-          } item to the merchant?`,
+          } item to the merchant for <span class="gold">${self.game.confirmedSoldItemToMerchant?.amount}</span> gold?`,
         );
       },
       buttons: [
@@ -934,9 +934,9 @@ class App {
     const confirmBtn = $("#player-account-confirm");
     const linkBtn = $("#player-account-link");
 
-   if (account.startsWith('ban_')){
-    this.game.explorer = "bananolooker"
-   }
+    if (account.startsWith("ban_")) {
+      this.game.explorer = "bananolooker";
+    }
 
     if (account) {
       linkBtn.show();
@@ -1678,6 +1678,7 @@ class App {
 
     this.storage.setShowEntityNameEnabled(isChecked);
     this.game.renderer.setDrawEntityName(isChecked);
+    this.game.client.sendSettings({ playerNames: isChecked });
   }
 
   toggleDamageInfo() {
@@ -1685,6 +1686,7 @@ class App {
 
     this.storage.setShowDamageInfoEnabled(isChecked);
     this.game.infoManager.setShowDamageInfo(isChecked);
+    this.game.client.sendSettings({ damageInfo: isChecked });
   }
 
   togglePvP() {
@@ -1719,7 +1721,7 @@ class App {
   toggleEffects() {
     const isChecked = $("#effects-checkbox").is(":checked");
 
-    this.game.showEffects = isChecked;
+    this.game.player.settings.effects = isChecked;
     this.game.client.sendSettings({ effects: isChecked });
   }
 

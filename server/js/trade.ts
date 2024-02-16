@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { Types } from "../../shared/js/gametypes";
+import { GOLD_CAP } from "../../shared/js/gold";
 import { postMessageToDiscordModeratorTradeChannel } from "./discord";
 import Messages from "./message";
 import { Sentry } from "./sentry";
@@ -41,7 +42,7 @@ class Trade {
     isCompleted,
     isInventoryFull,
   }: { playerName?: string; isCompleted?: boolean; isInventoryFull?: boolean } = {}) {
-    this.forEachPlayer(({ id }) => {
+    this.forEachPlayer(async ({ id }) => {
       const player = this.server.getEntityById(id);
 
       if (player) {
@@ -56,27 +57,27 @@ class Trade {
         // @NOTE If panels gets closed and if a player has not accepted, the items are returned, if the trade is completed the inventory gets refreshed
         if (!isCompleted && isAPlayerNotAccepted) {
           this.server.databaseHandler.moveItemsToInventory(player, "trade");
-          this.server.databaseHandler.client.hget("u:" + player.name, "goldTrade", (err, rawGoldTrade) => {
-            if (rawGoldTrade && rawGoldTrade !== "0" && /\d+/.test(rawGoldTrade)) {
-              this.server.databaseHandler.moveGold({
-                player,
-                from: "trade",
-                to: "inventory",
-                amount: parseInt(rawGoldTrade),
-              });
-            }
-          });
+          let rawGoldTrade = await this.server.databaseHandler.client.hGet("u:" + player.name, "goldTrade");
+          if (rawGoldTrade && rawGoldTrade !== "0" && /\d+/.test(rawGoldTrade)) {
+            await this.server.databaseHandler.moveGold({
+              player,
+              from: "trade",
+              to: "inventory",
+              amount: parseInt(rawGoldTrade),
+            });
+          }
         } else {
-          this.server.databaseHandler.client.hmget("u:" + player.name, "inventory", "gold", function (_err, reply) {
-            try {
-              let inventory = JSON.parse(reply[0]);
-              let gold = parseInt(reply[1] || "0");
-              player.send([Types.Messages.INVENTORY, inventory]);
-              player.send([Types.Messages.GOLD.INVENTORY, gold]);
-            } catch (err) {
-              Sentry.captureException(err);
-            }
-          });
+          const userKey = "u:" + player.name;
+
+          let [inventory, gold] = await this.server.databaseHandler.client
+            .multi()
+            .hGet(userKey, "inventory") // 0
+            .hGet(userKey, "gold") // 1
+            .exec();
+          inventory = JSON.parse(inventory);
+          gold = Number(gold || "0");
+          player.send([Types.Messages.INVENTORY, inventory]);
+          player.send([Types.Messages.GOLD.INVENTORY, gold]);
         }
       }
     });
@@ -121,7 +122,7 @@ class Trade {
     });
   }
 
-  updateGold({ player1Id, from, to, amount }) {
+  async updateGold({ player1Id, from, to, amount }) {
     this.resetAccept();
 
     const tradePlayer1 = this.players.find(({ id }) => id === player1Id);
@@ -133,82 +134,84 @@ class Trade {
 
     // safety first
     if (!player1 || !player2) return;
-    this.server.databaseHandler
-      .moveGold({ player: player1, from, to, amount })
-      .then(newAmount => {
-        player2.send([Types.Messages.GOLD.TRADE2, newAmount]);
-      })
-      .catch(err => {
-        Sentry.captureException(err);
-      });
+    let newAmount = await this.server.databaseHandler.moveGold({ player: player1, from, to, amount });
+    player2.send([Types.Messages.GOLD.TRADE2, newAmount]);
   }
 
-  validatePlayerInventory(playerA, playerB) {
-    return new Promise<PlayerInventory>(resolve => {
-      let playerATrade;
-      let playerAGoldTrade;
-      let playerAFilteredTrade;
-      let playerBInventory = [];
-      let playerBGold;
-      let playerBAvailableInventorySlots;
-      let isValid = true;
+  async validatePlayerInventory(playerA, playerB) {
+    // return new Promise<PlayerInventory>(async resolve => {
+    let playerATrade;
+    let playerAGoldTrade;
+    let playerAFilteredTrade;
+    let playerBInventory = [];
+    let playerBGold;
+    let playerBAvailableInventorySlots;
+    let isValid = true;
+    const userAKey = "u:" + playerA.name;
+    [playerATrade, playerAGoldTrade] = await this.server.databaseHandler.client
+      .multi()
+      .hGet(userAKey, "trade")
+      .hGet(userAKey, "goldTrade")
+      .exec();
 
-      this.server.databaseHandler.client.hmget("u:" + playerA.name, "trade", "goldTrade", (_err, reply) => {
-        playerATrade = JSON.parse(reply[0]);
-        playerAFilteredTrade = playerATrade.filter(Boolean);
-        playerAGoldTrade = parseInt(reply[1] || "0");
+    playerATrade = JSON.parse(playerATrade);
+    playerAFilteredTrade = playerATrade.filter(Boolean);
+    playerAGoldTrade = parseInt(playerAGoldTrade || "0");
 
-        this.server.databaseHandler.client.hmget("u:" + playerB.name, "inventory", "gold", (_err, reply) => {
-          playerBInventory = JSON.parse(reply[0]);
-          playerBAvailableInventorySlots = playerBInventory.filter(item => !item).length;
-          playerBGold = parseInt(reply[1] || "0");
+    const userBKey = "u:" + playerB.name;
+    let [inventory, gold] = await this.server.databaseHandler.client
+      .multi()
+      .hGet(userBKey, "inventory")
+      .hGet(userBKey, "gold")
+      .exec();
 
-          // Quick skip
-          if (!playerAFilteredTrade.length) {
-            isValid = true;
-          } else if (playerAFilteredTrade.length <= playerBAvailableInventorySlots) {
-            playerAFilteredTrade.forEach(item => {
-              let isQuantityItemFound = false;
+    playerBInventory = JSON.parse(inventory);
+    playerBAvailableInventorySlots = playerBInventory.filter(item => !item).length;
+    playerBGold = parseInt(gold || "0");
 
-              // @NOTE Is it an item with a quantity?
-              if (Types.isQuantity(item)) {
-                const [tradeItem, tradeQuantity] = item.split(":");
+    // Quick skip
+    if (!playerAFilteredTrade.length) {
+      isValid = true;
+    } else if (playerAFilteredTrade.length <= playerBAvailableInventorySlots) {
+      playerAFilteredTrade.forEach(item => {
+        let isQuantityItemFound = false;
 
-                const index = playerBInventory.findIndex(entry => {
-                  const [playerBInventoryItem] = typeof entry === "string" && entry.split(":");
+        // @NOTE Is it an item with a quantity?
+        if (Types.isQuantity(item)) {
+          const [tradeItem, tradeQuantity] = item.split(":");
 
-                  return playerBInventoryItem === tradeItem;
-                });
+          const index = playerBInventory.findIndex(entry => {
+            const [playerBInventoryItem] = typeof entry === "string" && entry.split(":");
 
-                if (index > -1) {
-                  const [inventoryItem, inventoryQuantity] = playerBInventory[index].split(":");
+            return playerBInventoryItem === tradeItem;
+          });
 
-                  playerBInventory[index] = `${inventoryItem}:${parseInt(inventoryQuantity) + parseInt(tradeQuantity)}`;
-                  isQuantityItemFound = true;
-                }
-              }
-              if (!isQuantityItemFound) {
-                const index = playerBInventory.findIndex(entry => !entry);
-                if (index > -1) {
-                  playerBInventory[index] = item;
-                } else {
-                  isValid = false;
-                }
-              }
-            });
+          if (index > -1) {
+            const [inventoryItem, inventoryQuantity] = playerBInventory[index].split(":");
+
+            playerBInventory[index] = `${inventoryItem}:${parseInt(inventoryQuantity) + parseInt(tradeQuantity)}`;
+            isQuantityItemFound = true;
+          }
+        }
+        if (!isQuantityItemFound) {
+          const index = playerBInventory.findIndex(entry => !entry);
+          if (index > -1) {
+            playerBInventory[index] = item;
           } else {
             isValid = false;
           }
-
-          resolve({
-            inventory: playerBInventory,
-            isValid,
-            gold: playerAGoldTrade + playerBGold,
-            filteredTrade: playerAFilteredTrade,
-          });
-        });
+        }
       });
-    });
+    } else {
+      isValid = false;
+    }
+
+    return {
+      inventory: playerBInventory,
+      isValid,
+      gold: playerAGoldTrade + playerBGold,
+      filteredTrade: playerAFilteredTrade,
+    };
   }
 
   async checkBothPlayersAccepted() {
@@ -223,25 +226,29 @@ class Trade {
       if (!player1 || !player2) {
         throw new Error("Invalid trade player");
       }
-
       const [player2Data, player1Data] = await Promise.all<PromiseLike<PlayerInventory>>([
         this.validatePlayerInventory(player1, player2),
         this.validatePlayerInventory(player2, player1),
       ]);
+      let isGoldExeeds100k = false;
+      if (player1Data.gold >= 100_000 || player2Data.gold >= 100_000) {
+        isGoldExeeds100k = true;
+      }
 
-      const content = `P1 **${player1.name}** completed trade with P2 **${
+      const content = `${isGoldExeeds100k ? ":warning:" : ""} P1 **${player1.name}** completed trade with P2 **${
         player2.name
-      }** items P1:items"${JSON.stringify(player1Data.filteredTrade)},gold:${player2Data.gold} items:${
-        player2Data.filteredTrade
-      }`;
+      }** items P1 items: "${JSON.stringify(player1Data.filteredTrade)}}, P1 gold: ${player1Data.gold}, P2 gold: ${
+        player2Data.gold
+      } items: ${player2Data.filteredTrade}`;
 
-      postMessageToDiscordModeratorTradeChannel(content);
+      if (isGoldExeeds100k) {
+        postMessageToDiscordModeratorTradeChannel(content);
+      }
 
       if (!player1Data.isValid || !player2Data.isValid) {
         this.close({ playerName: !player1Data.isValid ? player1.name : player2.name, isInventoryFull: true });
         return;
       }
-
       await Promise.all([
         this.writeData(player1, player1Data.inventory, player1Data.gold),
         this.writeData(player2, player2Data.inventory, player2Data.gold),
@@ -255,26 +262,21 @@ class Trade {
   }
 
   writeData(player, inventory, gold) {
-    return new Promise<void>(resolve => {
-      this.server.databaseHandler.client.hmset(
-        "u:" + player.name,
-        "trade",
-        // TRADE_SLOT_COUNT
-        JSON.stringify(new Array(9).fill(0)),
-        "inventory",
-        JSON.stringify(inventory),
-        "gold",
-        gold,
-        "goldTrade",
-        0,
-        (_err, _reply) => {
-          player.gold = gold;
-          player.goldTrade = 0;
+    return new Promise<void>(async resolve => {
+      const userKey = "u:" + player.name;
+      await this.server.databaseHandler.client.hSet(userKey, "trade", JSON.stringify(new Array(9).fill(0)));
+      await this.server.databaseHandler.client.hSet(userKey, "inventory", JSON.stringify(inventory));
 
-          player.send([Types.Messages.INVENTORY, inventory]);
-          resolve();
-        },
-      );
+      if (Number(gold) > GOLD_CAP) {
+        gold = GOLD_CAP;
+      }
+      await this.server.databaseHandler.client.hSet(userKey, "gold", gold);
+      await this.server.databaseHandler.client.hSet(userKey, "goldTrade", 0);
+      player.gold = gold;
+      player.goldTrade = 0;
+
+      player.send([Types.Messages.INVENTORY, inventory]);
+      resolve();
     });
   }
 
