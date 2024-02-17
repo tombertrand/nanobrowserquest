@@ -189,7 +189,7 @@ export const getClassicPayout = (achievements, network: Network) => {
 const getPayout = (achievements, payouts, network: Network) => {
   let amount = 0;
 
-  achievements.map((completed, index) => {
+  achievements?.map((completed, index) => {
     if (completed && payouts[index]) {
       amount += payouts[index];
     }

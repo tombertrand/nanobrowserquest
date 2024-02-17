@@ -10,8 +10,6 @@ class Metrics {
   client: any;
 
   constructor(config) {
-    // var self = this;
-
     this.config = config;
     this.client = redisClient;
 

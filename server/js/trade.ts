@@ -139,7 +139,6 @@ class Trade {
   }
 
   async validatePlayerInventory(playerA, playerB) {
-    // return new Promise<PlayerInventory>(async resolve => {
     let playerATrade;
     let playerAGoldTrade;
     let playerAFilteredTrade;
@@ -261,23 +260,20 @@ class Trade {
     }
   }
 
-  writeData(player, inventory, gold) {
-    return new Promise<void>(async resolve => {
-      const userKey = "u:" + player.name;
-      await this.server.databaseHandler.client.hSet(userKey, "trade", JSON.stringify(new Array(9).fill(0)));
-      await this.server.databaseHandler.client.hSet(userKey, "inventory", JSON.stringify(inventory));
+  async writeData(player, inventory, gold) {
+    const userKey = "u:" + player.name;
+    await this.server.databaseHandler.client.hSet(userKey, "trade", JSON.stringify(new Array(9).fill(0)));
+    await this.server.databaseHandler.client.hSet(userKey, "inventory", JSON.stringify(inventory));
 
-      if (Number(gold) > GOLD_CAP) {
-        gold = GOLD_CAP;
-      }
-      await this.server.databaseHandler.client.hSet(userKey, "gold", gold);
-      await this.server.databaseHandler.client.hSet(userKey, "goldTrade", 0);
-      player.gold = gold;
-      player.goldTrade = 0;
+    if (Number(gold) > GOLD_CAP) {
+      gold = GOLD_CAP;
+    }
+    await this.server.databaseHandler.client.hSet(userKey, "gold", gold);
+    await this.server.databaseHandler.client.hSet(userKey, "goldTrade", 0);
+    player.gold = gold;
+    player.goldTrade = 0;
 
-      player.send([Types.Messages.INVENTORY, inventory]);
-      resolve();
-    });
+    player.send([Types.Messages.INVENTORY, inventory]);
   }
 
   status({ player1Id, isAccepted }) {
