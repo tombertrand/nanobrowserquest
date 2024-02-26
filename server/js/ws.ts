@@ -4,7 +4,6 @@ import * as _ from "lodash";
 import path from "path";
 import { Server as SocketServer } from "socket.io";
 
-import CustomParser from "../../shared/js/parser";
 import { random } from "./utils";
 
 export class Server {
@@ -21,6 +20,7 @@ export class Server {
     var self = this;
 
     const app = express();
+
     const server = createServer(app);
     let cors = null;
 
@@ -44,24 +44,25 @@ export class Server {
       };
     }
 
- 
+    // cors = { origin: "*" };
 
-    this.io = new SocketServer(server, { parser: CustomParser, cors });
+    this.io = new SocketServer(server, {
+      cors,
+      // allowEIO3: true,
+    });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
     this.io.on("connection", function (connection) {
       console.info("a user connected");
 
-    
-
       connection.remoteAddress = connection.handshake.address.address;
       const c = new Connection(self._createId(), connection, self);
 
       // console.log(c)
 
-        self.connection_callback?.(c);
-      
+      self.connection_callback?.(c);
+
       self.addConnection(c);
     });
 

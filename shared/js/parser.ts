@@ -1,7 +1,7 @@
 import Emitter from "component-emitter";
 import CryptoJS from "crypto-js";
 
-import { Messages } from "./messages";
+// import { Messages } from "./messages";
 
 const key = 133;
 
@@ -21,14 +21,14 @@ class Decoder extends Emitter {
     const packet = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
     if (this.isPacketValid(packet)) {
-      this.emit("decoded", packet);
+      // this.emit("decoded", packet);
     } else {
-      this.emit("decoded", {
-        type: 2,
-        data: ["message", [Messages.BAN_PLAYER]],
-        options: { compress: true },
-        nsp: "/",
-      });
+      // this.emit("decoded", {
+      //   type: 2,
+      //   data: ["message", [Messages.BAN_PLAYER]],
+      //   options: { compress: true },
+      //   nsp: "/",
+      // });
     }
   }
   isPacketValid({ type, data, nsp, id }) {

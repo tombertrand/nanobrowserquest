@@ -4263,6 +4263,8 @@ class Player extends Character {
 
       this.chatBanEndTime = chatBanEndTime;
 
+      console.log("~~~before enter");
+
       this.server.addPlayer(this);
       this.server.enter_callback(this);
 

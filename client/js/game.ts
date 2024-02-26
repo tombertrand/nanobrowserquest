@@ -1297,7 +1297,7 @@ class Game {
     $("#container").addClass("prevent-click");
 
     const prepareSubmit = () => {
-      const quantity = parseInt($("#transfer-quantity").val() as string);
+      const quantity = Number($("#transfer-quantity").val());
       if (validateQuantity(quantity) && quantity <= maxQuantity) {
         submit(quantity);
       }
@@ -1330,6 +1330,7 @@ class Game {
         },
       ],
     });
+    console.log('~~~~maxQuantity',maxQuantity)
     $("#dialog-quantity").html(
       `<div style="margin: 24px 0; text-align: center;">
         <input id="transfer-quantity" type="number" min="1" max="${maxQuantity}" style="width: 50%;font-family: 'GraphicPixel';" />

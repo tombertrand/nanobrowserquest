@@ -33,9 +33,11 @@ function main(config) {
     }
   }, 1000);
 
-  console.info("Starting NanoBrowserQuest game server...");
+  console.info(`Starting NanoBrowserQuest game server... on port ${config.port}`);
 
   server.onConnect(function (connection) {
+
+    console.log('~~~~~~server.onConnect',connection)
     var world; // the one in which the player will be spawned
     var connect = function () {
       if (world) {

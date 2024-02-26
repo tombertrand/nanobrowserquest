@@ -20,7 +20,7 @@ export async function connectRedisInstance() {
   redisClient.on("error", err => console.log("Redis Client Error", err));
 
   redisClient.on("connect", () => {
-    console.log("Connected to Redis server successfully!");
+    console.log("Connected to Redis server successfully!!");
   });
 
   // Connect to the Redis server
@@ -32,7 +32,7 @@ export async function connectRedisInstance() {
 // Example usage
 connectRedisInstance()
   .then(() => {
-    console.log("Connected to Redis server successfully!");
+    console.log("Connected to Redis server successfully123!");
     // You can now use the client for Redis operations
     // Don't forget to close the connection when you're done
     // client.quit();
