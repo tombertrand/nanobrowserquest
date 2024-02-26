@@ -1,12 +1,14 @@
 import { createClient } from "redis";
 
-export const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, REDIS_DB_INDEX, DEPOSIT_SEED, NODE_ENV } = process.env;
+export const { REDIS_PORT, REDIS_HOST, REDIS_USERNAME, REDIS_PASSWORD, REDIS_DB_INDEX, DEPOSIT_SEED, NODE_ENV } =
+  process.env;
 
 export let redisClient = null;
 export async function connectRedisInstance() {
   const REDIS_OPTIONS = {
     port: REDIS_PORT,
     host: REDIS_HOST,
+    username: REDIS_USERNAME,
     database: Number(REDIS_DB_INDEX),
     ...(NODE_ENV !== "development" && REDIS_PASSWORD ? { password: REDIS_PASSWORD } : {}),
   };
