@@ -3,7 +3,7 @@ import { createClient } from "redis";
 export const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, REDIS_DB_INDEX, DEPOSIT_SEED, NODE_ENV } = process.env;
 
 export let redisClient = null;
-export async function connectRedis() {
+export async function connectRedisInstance() {
   const REDIS_OPTIONS = {
     port: REDIS_PORT,
     host: REDIS_HOST,
@@ -28,7 +28,7 @@ export async function connectRedis() {
 }
 
 // Example usage
-connectRedis()
+connectRedisInstance()
   .then(() => {
     console.log("Connected to Redis server successfully!");
     // You can now use the client for Redis operations
