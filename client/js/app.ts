@@ -1267,7 +1267,7 @@ class App {
   updatePopulationList() {
     $("#player-list").empty();
     if (Array.isArray(this.game.worldPlayers)) {
-      this.game.worldPlayers.forEach(({ name, level, hash, network, partyEnabled, tradeEnabled }) => {
+      this.game.worldPlayers.forEach(({ name, level, hash, network }) => {
         let className = "";
         if (name === this.game.storage.data.player.name) {
           className = "active";

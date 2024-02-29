@@ -43,7 +43,7 @@ export class Server {
       };
     }
 
-    this.io = new SocketServer(server, { cors, });
+    this.io = new SocketServer(server, { cors });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
@@ -60,28 +60,17 @@ export class Server {
       self.addConnection(c);
     });
 
-    this.io.engine.on("connection_error", err => {
-      console.log(err.req); // the request object
-      console.log(err.code); // the error code, for example 1
-      console.log(err.message); // the error message, for example "Session ID unknown"
-      console.log(err.context); // some additional error context
-
-      // some additional description, for example the status code of the initial HTTP response
-      console.log(err.description);
-
-      // some additional context, for example the XMLHttpRequest object
-      console.log(err.context);
-    });
-
     this.io.on("error", function (err) {
       console.error(err.stack);
       self.error_callback();
     });
-
-    // this.io.listen(port);
-    server.listen(port, function () {
-      console.info("Express server listening on *:" + port);
-    });
+    // if (process.env.NODE_ENV === "production") {
+    //   this.io.listen(port);
+    // } else {
+      server.listen(port, function () {
+        console.info("listening on *:" + port);
+      });
+    // }
   }
 
   _createId() {

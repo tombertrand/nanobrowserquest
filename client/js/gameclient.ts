@@ -4,7 +4,6 @@ import * as _ from "lodash";
 import { io } from "socket.io-client";
 
 import { Types } from "../../shared/js/gametypes";
-// import CustomParser from "../../shared/js/parser";
 import EntityFactory from "./entityfactory";
 
 import type { Socket } from "socket.io-client";
@@ -222,18 +221,14 @@ class GameClient {
 
     this.connection = null;
     this.connection = io(url, {
-      // forceNew: true,
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 3000,
       reconnectionAttempts: 5,
-      // parser: CustomParser,
     });
     if (dispatcherMode) {
       this.connection.on("message", e => {
         var reply = JSON.parse(e.data);
-
-        console.log("~~~~message", reply);
 
         if (reply.status === "OK") {
           this.dispatched_callback(reply.host, reply.port);
@@ -244,9 +239,6 @@ class GameClient {
         }
       });
     } else {
-      this.connection.on("error", err => {
-        console.info("error connecting to: " + this.host + ":" + this.port, err, JSON.stringify(err));
-      });
       this.connection.on("connection", () => {
         console.info("Connected to server " + this.host + ":" + this.port);
       });

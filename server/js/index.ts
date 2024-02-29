@@ -12,12 +12,12 @@ import Server from "./ws";
 
 function main(config) {
   var WorldServer = World;
+  var metrics = config.metrics_enabled ? new Metrics(config) : null;
+  var databaseHandler = new DatabaseHandler();
   var server = new Server(config.port);
 
-  var metrics = config.metrics_enabled ? new Metrics(config) : null;
   var worlds = [];
   var lastTotalPlayers = 0;
-  var databaseHandler = new DatabaseHandler();
 
   setInterval(async () => {
     if (metrics && metrics.isReady) {

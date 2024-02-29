@@ -1,7 +1,7 @@
-import fs from "fs";
+import { promises as fs } from "fs";
 import * as _ from "lodash";
 
-import { Area } from "./area";
+// import { Area } from "./area";
 import Checkpoint from "./checkpoint";
 import { randomInt } from "./utils";
 
@@ -29,18 +29,27 @@ class Map {
 
     this.isLoaded = false;
 
-    fs.exists(filepath, function (exists) {
-      if (!exists) {
-        console.error(filepath + " doesn't exist.");
-        return;
-      }
+    async function loadJsonFile(filepath) {
+      try {
+        // Check if the file exists
+        await fs.access(filepath);
 
-      fs.readFile(filepath, function (err, file) {
-        var json = JSON.parse(file.toString());
+        // Read the file
+        const file = await fs.readFile(filepath);
+        const json = JSON.parse(file.toString());
 
+        // Initialize map with json
         self.initMap(json);
-      });
-    });
+      } catch (error) {
+        if (error.code === "ENOENT") {
+          console.error(`${filepath} doesn't exist.`);
+        } else {
+          console.error(`An error occurred: ${error.message}`);
+        }
+      }
+    }
+
+    loadJsonFile(filepath);
   }
 
   initMap(thismap) {

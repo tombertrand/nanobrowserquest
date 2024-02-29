@@ -13,12 +13,10 @@ class Metrics {
     this.config = config;
     this.client = redisClient;
 
-    this.isReady = false;
+    this.isReady = this.client.isOpen;
 
-    if (this.client.isOpen) {
-      console.info("Metrics enabled: Redis client connected to " + config.redis_host + ":" + config.redis_port);
-      this.isReady = true;
-      this.readyCallback?.();
+    if (this.isReady){
+    console.info("Metrics enabled: Redis client connected to " + config.redis_host + ":" + config.redis_port);
     }
   }
 
@@ -37,7 +35,6 @@ class Metrics {
       },
       0,
     );
-
     if (this.isReady) {
       // Set the number of players on this server
       await this.client.set("player_count_" + config.server_name, String(playerCount));

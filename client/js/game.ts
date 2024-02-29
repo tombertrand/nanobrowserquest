@@ -769,7 +769,6 @@ class Game {
         let currentSet = null;
         let currentSetDescription = "";
         let setBonus = [];
-        let isActive = false;
 
         if (isEquippedItemSlot) {
           currentSet = Types.kindAsStringToSet[item];
@@ -782,9 +781,12 @@ class Game {
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
             setParts = Types.setItemsNameMap[currentSet].map((description, index: number) => {
+
+              let isActive = false;
               let setPart = Types.setItems[currentSet][index];
               if (typeof setPart === "string") {
                 isActive = playerItems.includes(setPart);
+
               } else if (Array.isArray(setPart)) {
                 isActive = setPart.some(part => playerItems.includes(part));
               }
@@ -1330,7 +1332,6 @@ class Game {
         },
       ],
     });
-    console.log('~~~~maxQuantity',maxQuantity)
     $("#dialog-quantity").html(
       `<div style="margin: 24px 0; text-align: center;">
         <input id="transfer-quantity" type="number" min="1" max="${maxQuantity}" style="width: 50%;font-family: 'GraphicPixel';" />
@@ -3076,6 +3077,9 @@ class Game {
 
       self.client.host = host;
       self.client.port = port;
+
+      console.log('~~~~~self.client.host',self.client.host)
+      console.log('~~~~~self.client.port',self.client.port)
       self.client.connect(); // connect to actual game server
     });
 

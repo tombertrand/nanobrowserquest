@@ -3738,7 +3738,6 @@ class Player extends Character {
         if (Types.setItems[key].length === value) {
           value = Object.keys(Types.setBonus[key]).length;
         }
-
         Types.getSetBonus(key, value).forEach(({ type, stats }) => {
           if (typeof bonus[type] !== "number") {
             bonus[type] = 0;
@@ -3747,10 +3746,11 @@ class Player extends Character {
         });
       });
 
-      if (setItems["immortal"] && setItems["immortal"] === setItemsNameMap["immortal"].length) {
+      if (setItems["immortal"] && setItems["immortal"] && this.setLevel["immortal"] >= 50) {
         this.auras.push("arcane");
       }
-      if (setItems["paladin"] && setItems["paladin"] === setItemsNameMap["paladin"].length) {
+
+      if (setItems["paladin"] && setItems["paladin"] > 0 && this.setLevel["paladin"] >= 50) {
         this.auras.push("paladin");
       }
     }

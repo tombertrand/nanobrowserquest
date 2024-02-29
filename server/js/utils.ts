@@ -1234,7 +1234,7 @@ export const generateDroppedItem = () => {
     return;
   }
   let randomDrops = [];
-  randomDrops = ["amuletpaladin", "ringpaladin"];
+  randomDrops = ["amuletimmortal", "shieldimmortal"];
   // randomDrops = ["immortaldagger","mysticaldagger"]; //, "immortalaxe"];
   // randomDrops = ["helmexecutioner"];
   // randomDrops = ["christmaspresent"];
