@@ -43,7 +43,7 @@ export class Server {
       };
     }
 
-    this.io = new SocketServer(server, { cors, transports: ["websocket"] });
+    this.io = new SocketServer(server, { cors, });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
