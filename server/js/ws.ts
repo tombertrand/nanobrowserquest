@@ -1,5 +1,5 @@
-import express from "express";
-import { createServer } from "http";
+const express = require("express");
+const http = require("http");
 import * as _ from "lodash";
 import path from "path";
 import { Server as SocketServer } from "socket.io";
@@ -20,8 +20,8 @@ export class Server {
     var self = this;
 
     const app = express();
+    const server = http.createServer(app);
 
-    const server = createServer(app);
     let cors = null;
 
     if (process.env.NODE_ENV === "development") {
@@ -44,12 +44,15 @@ export class Server {
       };
     }
 
-    // cors = { origin: "*" };
-
     this.io = new SocketServer(server, {
       cors,
-      // allowEIO3: true,
+      transports: ["websocket"],
     });
+
+    // this.io = new SocketServer(server, {
+    //   cors,
+    //   // allowEIO3: true,
+    // });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
