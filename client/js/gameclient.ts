@@ -227,6 +227,8 @@ class GameClient {
       reconnectionDelay: 1000,
       reconnectionDelayMax: 3000,
       reconnectionAttempts: 5,
+      // parser: CustomParser,
+      transports: ["websocket"],
     });
     if (dispatcherMode) {
       this.connection.on("message", e => {

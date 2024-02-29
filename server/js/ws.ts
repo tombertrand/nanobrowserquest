@@ -1,5 +1,5 @@
-const express = require("express");
-const http = require("http");
+import express from "express";
+import { createServer } from "http";
 import * as _ from "lodash";
 import path from "path";
 import { Server as SocketServer } from "socket.io";
@@ -20,8 +20,7 @@ export class Server {
     var self = this;
 
     const app = express();
-    const server = http.createServer(app);
-
+    const server = createServer(app);
     let cors = null;
 
     if (process.env.NODE_ENV === "development") {
@@ -44,15 +43,7 @@ export class Server {
       };
     }
 
-    this.io = new SocketServer(server, {
-      cors,
-      transports: ["websocket"],
-    });
-
-    // this.io = new SocketServer(server, {
-    //   cors,
-    //   // allowEIO3: true,
-    // });
+    this.io = new SocketServer(server, { cors, transports: ["websocket"] });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
@@ -69,6 +60,19 @@ export class Server {
       self.addConnection(c);
     });
 
+    this.io.engine.on("connection_error", err => {
+      console.log(err.req); // the request object
+      console.log(err.code); // the error code, for example 1
+      console.log(err.message); // the error message, for example "Session ID unknown"
+      console.log(err.context); // some additional error context
+
+      // some additional description, for example the status code of the initial HTTP response
+      console.log(err.description);
+
+      // some additional context, for example the XMLHttpRequest object
+      console.log(err.context);
+    });
+
     this.io.on("error", function (err) {
       console.error(err.stack);
       self.error_callback();
@@ -76,7 +80,7 @@ export class Server {
 
     // this.io.listen(port);
     server.listen(port, function () {
-      console.info("listening on *:" + port);
+      console.info("Express server listening on *:" + port);
     });
   }
 

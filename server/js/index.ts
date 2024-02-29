@@ -35,9 +35,8 @@ function main(config) {
 
   console.info(`Starting NanoBrowserQuest game server... on port ${config.port}`);
 
-  server.onConnect(function (connection) {
-
-    console.log('~~~~~~server.onConnect',connection)
+  server.onConnect(async function (connection) {
+    console.log("~~~~~~server.onConnected!!");
     var world; // the one in which the player will be spawned
     var connect = function () {
       if (world) {
@@ -46,7 +45,7 @@ function main(config) {
     };
 
     if (metrics) {
-      metrics.getOpenWorldCount(function () {
+      await metrics.getOpenWorldCount(function () {
         world = worlds[0];
         connect();
         world.updatePopulation();
@@ -65,13 +64,13 @@ function main(config) {
     });
   });
 
-  var onPopulationChange = function () {
-    metrics.updatePlayerCounters(worlds, function () {
+  var onPopulationChange = async function () {
+    await metrics.updatePlayerCounters(worlds, function () {
       _.each(worlds, function (world) {
         world.updatePopulation();
       });
     });
-    metrics.updateWorldDistribution(getWorldDistribution(worlds));
+    await metrics.updateWorldDistribution(getWorldDistribution(worlds));
   };
 
   _.each(_.range(config.nb_worlds), function (i) {
@@ -90,10 +89,10 @@ function main(config) {
   });
 
   if (config.metrics_enabled) {
-    metrics.ready(() => {
+    metrics.ready(async () => {
       metrics.isReady = true;
 
-      onPopulationChange(); // initialize all counters to 0 when the server starts
+      await onPopulationChange(); // initialize all counters to 0 when the server starts
     });
   }
 
