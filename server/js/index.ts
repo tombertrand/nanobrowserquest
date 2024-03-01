@@ -12,28 +12,17 @@ import Server from "./ws";
 
 function main(config) {
   var WorldServer = World;
+  console.log('~~~~~~~~1')
   var metrics = config.metrics_enabled ? new Metrics(config) : null;
   var databaseHandler = new DatabaseHandler();
   var server = new Server(config.port);
-
+  console.log('~~~~~~~~2')
 
   var worlds = [];
   var lastTotalPlayers = 0;
 
-  async function setupMetricsAsync(config) {
-    // Assuming Metrics constructor or any method inside it could be async
-    var metrics = new Metrics(config);
-
-
-  if (config.metrics_enabled) {
-    metrics = await setupMetricsAsync(config);
-  }
-    // await metrics.initialize(); // Hypothetical async initialization method
-    return metrics;
-  }
-
   setInterval(async () => {
-    if (metrics && true) {
+    if (metrics && metrics.isReady) {
       await metrics.getTotalPlayers(function (totalPlayers) {
         if (totalPlayers !== lastTotalPlayers) {
           lastTotalPlayers = totalPlayers;

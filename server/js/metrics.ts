@@ -4,7 +4,13 @@ import * as _ from "lodash";
 import { redisClient } from "./db_providers/client";
 
 class Metrics {
-  config: any;
+  config: {
+    port: string;
+    game_servers: any;
+    server_name: string;
+    nb_worlds: number;
+    nb_players_per_world: number; 
+  };
   isReady: boolean;
   readyCallback: any;
   client: any;
@@ -15,8 +21,8 @@ class Metrics {
 
     this.isReady = this.client.isOpen;
 
-    if (this.isReady){
-    console.info("Metrics enabled: Redis client connected to " + config.redis_host + ":" + config.redis_port);
+    if (this.isReady) {
+      console.info("Metrics enabled: Redis client connected to " + config.redis_host + ":" + config.redis_port);
     }
   }
 
@@ -25,7 +31,6 @@ class Metrics {
   }
 
   async updatePlayerCounters(worlds, updatedCallback) {
-    // var self = this;
     var config = this.config;
     var numServers = _.size(config.game_servers);
     var playerCount = _.reduce(
