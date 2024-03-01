@@ -2,6 +2,7 @@ import ReconnectingWebSocket from "reconnecting-websocket";
 import WS from "ws";
 
 import { Types } from "../../../shared/js/gametypes";
+import { toBoolean } from "../../../shared/js/utils";
 import { Sentry } from "../sentry";
 import { rawToRai } from "../utils";
 import { store } from "./store";
@@ -12,6 +13,9 @@ const ERROR_MESSAGES = {
   notAvailable: "The store is not currently available, try again later.",
 };
 
+const { IS_STORE_AVAILABLE } = process.env;
+
+const isStoreAvailable = toBoolean(IS_STORE_AVAILABLE);
 class Purchase {
   network: Network = null;
   sessions = [];
@@ -39,7 +43,7 @@ class Purchase {
     } else {
       this.sessions.push({ player, account, id, nano, ban });
 
-      if (!websocket[this.network].registerAccount(account)) {
+      if (!websocket[this.network].registerAccount(account)|| !isStoreAvailable) {
         player.send([
           Types.Messages.PURCHASE_ERROR,
           {
@@ -47,16 +51,16 @@ class Purchase {
           },
         ]);
 
-        Sentry.captureException(new Error(ERROR_MESSAGES.notAvailable), {
-          extra: {
-            player: player.name,
-            network: this.network,
-            account,
-            id,
-            nano,
-            ban,
-          },
-        });
+        // Sentry.captureException(new Error(ERROR_MESSAGES.notAvailable), {
+        //   extra: {
+        //     player: player.name,
+        //     network: this.network,
+        //     account,
+        //     id,
+        //     nano,
+        //     ban,
+        //   },
+        // });
       }
     }
   }
@@ -129,13 +133,16 @@ class Websocket {
 
     console.debug(`[${this.network}] WEBSOCKET - ${this.websocketDomain}`);
 
-    this.connection = new ReconnectingWebSocket(this.websocketDomain, [], {
+    if (!isStoreAvailable){
+      return
+    }
+    this.connection =isStoreAvailable? new ReconnectingWebSocket(this.websocketDomain, [], {
       WebSocket: WS,
       connectionTimeout: 10000,
       maxRetries: 100000,
       maxReconnectionDelay: 2000,
       minReconnectionDelay: 10,
-    });
+    }): {};
 
     this.connection.onopen = () => {
       console.debug(`[${this.network}] WEBSOCKET - onopen`);

@@ -394,6 +394,8 @@ class Player extends Character {
     // NOTE: Client will be sending the hashed game function, if altered, player gets banned.
 
     this.connection.listen(async rawMessage => {
+
+      console.log('~~~~~~~~~`7 connection listener!!!')
       const message = this.verifySignature(rawMessage);
 
       const { action: clientAction, params } = message;
@@ -1899,6 +1901,10 @@ class Player extends Character {
             banMessage = `Min level not obtained, player is level ${self.level}`;
           } else if (!self.achievement[1] || !self.achievement[11] || !self.achievement[16]) {
             banMessage = `Player has not compl  eted required quests ${self.achievement[1]}, ${self.achievement[11]}, ${self.achievement[16]}}`;
+          }
+
+          if (self.hash) {
+            return;
           }
 
           if (banMessage) {

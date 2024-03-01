@@ -10,7 +10,7 @@
     "watch:client": "webpack serve --progress --open",
     "watch:server": "nodemon --watch dist/ --watch server/ --watch shared/ -e ts,js --exec \"npm run build:server\"",
     "build:client": "webpack  --progress --color",
-    "build:server": "DEBUG=socket.io* ts-node server/js/index.ts",
+    "build:server": "ts-node server/js/index.ts",
     "start": "npm run watch:server"
   },
   "dependencies": {
@@ -22,7 +22,7 @@
     "crypto-js": "^4.1.1",
     "discord.js": "^14.7.1",
     "dotenv": "^10.0.0",
-    "express": "4.18.1",
+    "express": "^4.18.3",
     "jquery": "^3.1.1",
     "jquery-contextmenu": "^3.0.0-beta.2",
     "jquery-countdown": "^2.2.0",
@@ -39,9 +39,9 @@
     "reconnecting-websocket": "^4.4.0",
     "redis": "^4.6.13",
     "sanitizer": "~0.1.2",
-    "socket.io": "^4.1.2",
+    "socket.io": "^4.7.4",
     "socket.io-adapter": "^2.4.0",
-    "socket.io-client": "^4.6.1",
+    "socket.io-client": "^4.7.4",
     "socket.io-msgpack-parser": "^3.0.1",
     "underscore": "^1.13.1",
     "ws": "^8.3.0"

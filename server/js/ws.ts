@@ -14,10 +14,10 @@ export class Server {
   error_callback;
   io: SocketServer | null;
   status_callback;
-
   server: any;
 
   constructor(port) {
+    console.log("~~~~3.1");
     this.port = port;
     this.io = null;
 
@@ -27,7 +27,9 @@ export class Server {
     this.server = createServer(app);
     let cors = null;
 
-    if (process.env.NODE_ENV === "development") {
+    console.log("~~~~4");
+
+    if (process.env.NODE_ENV) {
       cors = { origin: "*" };
     } else {
       const whitelist = [
@@ -52,12 +54,11 @@ export class Server {
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
     this.io.on("connection", function (connection) {
-      console.info("a user connected");
+      console.info("~~~~~~~a user connected");
 
       // connection.remoteAddress = connection.handshake.address;
       const c = new Connection(self._createId(), connection, self);
 
-      // console.log(c)
 
       self.connection_callback?.(c);
 
@@ -69,10 +70,18 @@ export class Server {
       self.error_callback();
     });
 
+    // this.io.listen(port);
 
     console.log(`~~~~~~~~BEFORRE BINGING LISTEN on port:${port}`);
-    this.server.listen(port, function () {
+
+  console.info(`Starting NanoBrowserQuest game server... on port ${port}`);
+
+  console.log('~~~~~this.server.listen',this.server.listen)
+    this.server.listen(port, () => {
+      console.log("~~~~5");
       console.info("WS Server is now listening on *:" + port);
+    }).on('error', (err) => {
+      console.error('Server failed to start', err);
     });
   }
 

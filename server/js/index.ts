@@ -12,9 +12,15 @@ import Server from "./ws";
 
 function main(config) {
   var WorldServer = World;
+
+  console.log("~~~~1");
   var metrics = config.metrics_enabled ? new Metrics(config) : null;
+  console.log("~~~~2");
   var databaseHandler = new DatabaseHandler();
+  console.log("~~~~3");
   var server = new Server(config.port);
+
+ 
 
   var worlds = [];
   var lastTotalPlayers = 0;
@@ -33,13 +39,14 @@ function main(config) {
     }
   }, 1000);
 
-  console.info(`Starting NanoBrowserQuest game server... on port ${config.port}`);
+
 
   server.onConnect(async function (connection) {
     console.log("~~~~~~server.onConnected!!");
     var world; // the one in which the player will be spawned
     var connect = function () {
       if (world) {
+        console.log("~~~~~~~set new player");
         world.connect_callback(new Player(connection, world, databaseHandler));
       }
     };
@@ -98,7 +105,6 @@ function main(config) {
 
   process.on("uncaughtException", function (err) {
     console.error("uncaughtException: " + err);
-    Sentry.captureException(err);
   });
 }
 
@@ -131,5 +137,6 @@ process.argv.forEach(function (val, index) {
 });
 
 getConfigFile(configPath, function (config) {
+  console.log("~~~~0");
   main(config);
 });

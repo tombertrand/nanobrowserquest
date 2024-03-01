@@ -39,9 +39,10 @@ const WelcomeChannel =
 const payoutsChannel =
   "https://discord.com/api/webhooks/1167688506315915404/nRYi5goDKK-1O_n2rCCKIEM2MVRvvDk4Um9vyPQH568B3Cyxb5_9r4XzlGDmLjTcakxS";
 
-const questBotChannel = "https://discord.com/api/webhooks/1200130228291375284/5SCgtXuIuzJlPmpiv8owGkmD7L2uDbUaI4dH_NPQsrxo7UTwMjHdr-IlgVbdXL42pUeR"
+const questBotChannel =
+  "https://discord.com/api/webhooks/1200130228291375284/5SCgtXuIuzJlPmpiv8owGkmD7L2uDbUaI4dH_NPQsrxo7UTwMjHdr-IlgVbdXL42pUeR";
 
-  // For linking players with Discord
+// For linking players with Discord
 export const discordClient = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -55,204 +56,167 @@ discordClient.login(BOT_TOKEN);
 
 export const postMessageToDiscordEventChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(EventChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(EventChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToDiscordChatChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(ChatChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(ChatChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToDiscordAnvilChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(AnvilChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(AnvilChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToDiscordPurchaseChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(PurchaseChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(PurchaseChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToModeratorSupportChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(ModeratorSupportChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(ModeratorSupportChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 export const postMessageToSupportChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(SupportChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(SupportChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToDiscordModeratorDebugChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(ModeratorDebugChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(ModeratorDebugChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToDiscordModeratorMerchantChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(ModeratorMerchantChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(ModeratorMerchantChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToDiscordModeratorTradeChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(ModertorTradeChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(ModertorTradeChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToDiscordWelcomeChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(WelcomeChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(WelcomeChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToDiscordPayoutsChannel = (content: string) => {
   if (isDevelopment) return;
-  try {
-    const body = JSON.stringify({
-      content,
-    });
 
-    fetch(payoutsChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  const body = JSON.stringify({
+    content,
+  });
+
+  fetch(payoutsChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 
 export const postMessageToDiscordTestBotChannel = (content: string) => {
-  try {
-    const body = JSON.stringify({
-      content,
-    });
+  const body = JSON.stringify({
+    content,
+  });
 
-    fetch(payoutsChannel, {
-      method: "POST",
-      body,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    Sentry.captureException(err);
-  }
+  fetch(payoutsChannel, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  });
 };
 export const EmojiMap = {
   sword: "<:Sword:975775115105153154>",

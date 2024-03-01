@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/node";
-import fs from "fs";
 
 import { postMessageToDiscordModeratorDebugChannel } from "./discord";
 
@@ -24,7 +23,6 @@ Sentry.init({
 
 process.on("uncaughtException", err => {
   console.log("Error", err);
-  fs.writeFileSync("./error.log", JSON.stringify(err, null, 2));
   Sentry.captureException(err);
 });
 
@@ -40,7 +38,6 @@ process.on("unhandledRejection", (reason, promise) => {
 
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   console.log("Error", reason);
-  fs.writeFileSync("./error.log", JSON.stringify(reason, null, 2));
 });
 
 export { Sentry };
