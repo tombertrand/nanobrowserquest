@@ -13,7 +13,7 @@ import {
 } from "../../shared/js/types/achievements";
 import { curseDurationMap } from "../../shared/js/types/curse";
 import { expForLevel } from "../../shared/js/types/experience";
-import { setItemsNameMap } from "../../shared/js/types/set";
+// import { setItemsNameMap } from "../../shared/js/types/set";
 import {
   getEntityLocation,
   isExpansion1Location,
@@ -3496,7 +3496,7 @@ class Player extends Character {
       if (this.bonus.freezeChance) {
         this.auras.push("freeze");
       }
-      if (this.bonus.regenerateHealth >= 100) {
+      if (this.bonus.regenerateHealth + Math.floor(this.maxHitPoints / 33)>= 100) {
         this.auras.push("health-regenerate");
       }
 
@@ -3637,7 +3637,7 @@ class Player extends Character {
         this.equipWeapon(item, kind, level, bonus, socket, skill);
       }
     }
-
+    this.updateHitPoints(true);
     this.resetBonus();
     this.calculateBonus();
     this.calculateSetBonus();
@@ -3645,7 +3645,6 @@ class Player extends Character {
     this.calculatePartyBonus();
     this.calculateGlobalBonus();
     this.validateCappedBonus();
-    this.updateHitPoints();
     this.sendPlayerStats();
   }
 
@@ -4347,6 +4346,7 @@ class Player extends Character {
       ]);
       this.sendLevelInProgress();
 
+      this.updateHitPoints(true);
       this.resetBonus();
       this.calculateBonus();
       this.calculateSetBonus();
@@ -4354,7 +4354,6 @@ class Player extends Character {
       this.calculatePartyBonus();
       this.calculateGlobalBonus();
       this.validateCappedBonus();
-      this.updateHitPoints(true);
       this.sendPlayerStats();
 
       // clearInterval(this.startPeriodicHashCheck);
