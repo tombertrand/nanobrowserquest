@@ -302,7 +302,7 @@ class World {
     this.gateSubTempleNpcId = null;
     this.goldBank = 0;
     this.janetYellenNpcId = null;
-    this.chatBan = null
+    this.chatBan = null;
     this.maxPlayerCreateByIp = { ip: [] };
 
     this.onPlayerConnect(function (player) {
@@ -587,7 +587,6 @@ class World {
 
       this.removePlayer(player);
     }
-
     player?.connection.close();
   }
 

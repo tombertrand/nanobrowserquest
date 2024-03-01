@@ -781,12 +781,10 @@ class Game {
           if (currentSet) {
             setName = `* ${_.capitalize(currentSet)} Set *`;
             setParts = Types.setItemsNameMap[currentSet].map((description, index: number) => {
-
               let isActive = false;
               let setPart = Types.setItems[currentSet][index];
               if (typeof setPart === "string") {
                 isActive = playerItems.includes(setPart);
-
               } else if (Array.isArray(setPart)) {
                 isActive = setPart.some(part => playerItems.includes(part));
               }
@@ -3078,8 +3076,6 @@ class Game {
       self.client.host = host;
       self.client.port = port;
 
-      console.log('~~~~~self.client.host',self.client.host)
-      console.log('~~~~~self.client.port',self.client.port)
       self.client.connect(); // connect to actual game server
     });
 

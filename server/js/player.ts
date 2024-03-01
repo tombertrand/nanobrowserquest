@@ -419,6 +419,7 @@ class Player extends Character {
             extra: { message, action },
           },
         );
+
         self.connection.close("Invalid " + Types.getMessageTypeAsString(action) + " message format: ", message);
 
         return;
@@ -435,6 +436,7 @@ class Player extends Character {
         (action === Types.Messages.CREATE || action === Types.Messages.LOGIN)
       ) {
         // CREATE/LOGIN can be sent only once
+
         self.connection.close("Cannot initiate handshake twice: " + message);
         return;
       }
@@ -442,6 +444,7 @@ class Player extends Character {
       if (action === Types.Messages.CREATE || action === Types.Messages.LOGIN) {
         if (process.env.NODE_ENV === "production" && !self.ip) {
           self.connection.sendUTF8("invalidconnection");
+
           self.connection.close("Unable to get IP.");
           return;
         }
@@ -508,12 +511,14 @@ class Player extends Character {
 
         if (account && !isValidAccountAddress(account)) {
           self.connection.sendUTF8("invalidconnection");
+
           self.connection.close("Invalid Account.");
           return;
         }
 
         if (network && !["nano", "ban"].includes(network)) {
           self.connection.sendUTF8("invalidconnection");
+
           self.connection.close("Invalid Network.");
           return;
         }
@@ -526,6 +531,7 @@ class Player extends Character {
         // Validate the username
         if (!self.checkName(self.name)) {
           self.connection.sendUTF8("invalidusername");
+
           self.connection.close("Invalid name " + self.name);
           return;
         }
@@ -546,6 +552,7 @@ class Player extends Character {
 
           if (self.server.loggedInPlayer(self.name) && !password) {
             self.connection.sendUTF8("passwordlogin");
+
             self.connection.close("Already logged in " + self.name);
 
             return;
@@ -3496,7 +3503,7 @@ class Player extends Character {
       if (this.bonus.freezeChance) {
         this.auras.push("freeze");
       }
-      if (this.bonus.regenerateHealth + Math.floor(this.maxHitPoints / 33)>= 100) {
+      if (this.bonus.regenerateHealth + Math.floor(this.maxHitPoints / 33) >= 100) {
         this.auras.push("health-regenerate");
       }
 
@@ -3843,6 +3850,7 @@ class Player extends Character {
 
   timeout() {
     this.connection.sendUTF8("timeout");
+
     this.connection.close("Player was idle for too long");
   }
 
@@ -4058,17 +4066,6 @@ class Player extends Character {
     return true;
   }
 
-  // startPeriodicHashCheck() {
-  //   this.checkHashInterval = setInterval(() => {
-  //     const delay = Date.now() - this.lastHashCheckTimestamp;
-
-  //     if (delay > HASH_BAN_DELAY) {
-  //       clearInterval(this.checkHashInterval);
-  //       this.checkHashInterval = null;
-  //     }
-  //   }, HASH_BAN_DELAY);
-  // }
-
   verifySignature(signature) {
     try {
       const bytes = CryptoJS.AES.decrypt(signature, process.env.WS_MESSAGE_SECRET);
@@ -4121,250 +4118,237 @@ class Player extends Character {
     discordId,
   }) {
     this.settings = typeof settings === "string" ? JSON.parse(settings) : settings;
-    try {
-      // @NOTE: Make sure the player has authenticated if he has the expansion
-      if (this.isPasswordRequired && !this.isPasswordValid) {
-        this.connection.sendUTF8("passwordinvalid");
-        return;
-      }
-
-      if (process.env.NODE_ENV === "production") {
-        this.canChat = !this.server.chatBan?.some(
-          ({ player: playerName, ip }) => playerName === this.name || (this.ip && ip && ip === this.ip),
-        );
-      } else {
-        this.canChat = !this.server.chatBan?.some(
-          ({ player: playerName, ip }) => playerName === this.name || ip === this.ip,
-        );
-      }
-
-      this.account = account;
-
-      // @NOTE: Leave no trace
-      delete this.isPasswordRequired;
-      delete this.isPasswordValid;
-
-      const [playerHelm, playerHelmLevel = 1, playerHelmBonus, playerHelmSocket] = helm.split(":");
-      const [playerArmor, playerArmorLevel = 1, playerArmorBonus, playerArmorSocket] = armor.split(":");
-      const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus, playerWeaponSocket, playerWeaponSkill] =
-        weapon.split(":");
-
-      this.kind = Types.Entities.WARRIOR;
-
-      this.equipHelm(
-        playerHelm,
-        Types.getKindFromString(playerHelm),
-        playerHelmLevel,
-        playerHelmBonus,
-        playerHelmSocket,
-      );
-      this.equipArmor(
-        playerArmor,
-        Types.getKindFromString(playerArmor),
-        playerArmorLevel,
-        playerArmorBonus,
-        playerArmorSocket,
-      );
-      this.equipWeapon(
-        playerWeapon,
-        Types.getKindFromString(playerWeapon),
-        playerWeaponLevel,
-        playerWeaponBonus,
-        playerWeaponSocket,
-        playerWeaponSkill,
-      );
-
-      if (belt) {
-        const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
-        this.equipBelt(playerBelt, playerBeltLevel, playerBeltBonus);
-      }
-      if (cape) {
-        const [playerCape, playerCapeLevel, playerCapeBonus] = cape.split(":");
-        this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
-      }
-      if (pet) {
-        const [playerPet, playerPetLevel, playePetBonus, playerPetSocket, playerPetSkin] = pet.split(":");
-
-        this.equipPet(
-          playerPet,
-          Types.getKindFromString(playerPet),
-          playerPetLevel,
-          playePetBonus,
-          playerPetSocket,
-          playerPetSkin,
-        );
-      }
-      if (shield) {
-        const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSocket, playerDefenseSkill] =
-          shield.split(":");
-        this.equipShield(
-          playerShield,
-          Types.getKindFromString(playerShield),
-          playerShieldLevel,
-          playerShieldBonus,
-          playerShieldSocket,
-          playerDefenseSkill,
-        );
-      }
-      if (ring1) {
-        const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
-        this.equipRing1(playerRing1, playerRing1Level, playerRing1Bonus);
-      }
-      if (ring2) {
-        const [playerRing2, playerRing2Level, playerRing2Bonus] = ring2.split(":");
-        this.equipRing2(playerRing2, playerRing2Level, playerRing2Bonus);
-      }
-      if (amulet) {
-        const [playerAmulet, playerAmuletLevel, playerAmuletBonus] = amulet.split(":");
-        this.equipAmulet(playerAmulet, playerAmuletLevel, playerAmuletBonus);
-      }
-      if (pet) {
-        const [playerPet, playerPetLevel, playerPetBonus, playerPetSocket, playerPetSkin] = pet.split(":");
-        this.equipPet(
-          playerPet,
-          Types.getKindFromString(playerPet),
-          playerPetLevel,
-          playerPetBonus,
-          playerPetSocket,
-          playerPetSkin,
-        );
-      }
-      this.achievement = achievement;
-      this.waypoints = waypoints;
-      this.expansion1 = expansion1;
-      this.expansion2 = expansion2;
-      this.depositAccount = depositAccount;
-      this.depositAccountIndex = depositAccountIndex;
-      this.inventory = inventory;
-      this.stash = stash;
-      this.hash = hash;
-      this.hasRequestedBossPayout = false;
-      this.hasWallet = !!network || !!account;
-      this.createdAt = createdAt;
-      this.experience = exp;
-      this.level = Types.getLevel(this.experience);
-      this.orientation = randomOrientation();
-      this.network = network;
-      this.nanoPotions = nanoPotions;
-      this.discordId = discordId;
-      this.gold = gold;
-      this.goldStash = goldStash;
-
-      if (!x || !y) {
-        this.updatePosition();
-      } else {
-        if (x >= 84 && y >= 744 && !this.server.templeLevelClock) {
-          x = randomInt(40, 46);
-          y = randomInt(581, 585);
-        }
-        this.setPosition(x, y);
-      }
-
-      this.chatBanEndTime = chatBanEndTime;
-
-      console.log("~~~before enter");
-
-      this.server.addPlayer(this);
-      this.server.enter_callback(this);
-
-      const { members, partyLeader } = this.getParty() || {};
-
-      this.hasGrimoire = !!achievement[ACHIEVEMENT_GRIMOIRE_INDEX];
-      this.hasObelisk = !!achievement[ACHIEVEMENT_OBELISK_INDEX];
-      this.hasNft = !!achievement[ACHIEVEMENT_NFT_INDEX];
-      this.hasWing = !!achievement[ACHIEVEMENT_WING_INDEX];
-      this.hasCrystal = !!achievement[ACHIEVEMENT_CRYSTAL_INDEX];
-
-      if (this.pet) {
-        if (this.petEntity) {
-          this.server.despawn(this.petEntity);
-          this.petEntity = null;
-        }
-        const { id } = this;
-
-        this.petEntity = new Pet({
-          id: "9" + id,
-          type: "pet",
-          kind: petKindToPetMap[this.petKind],
-          skin: this.petSkin,
-          level: this.petLevel,
-          bonus: this.petBonus,
-          x,
-          y,
-          ownerId: id,
-        });
-
-        // this.petEntity.group = this.group;
-        // this.petEntity.onMove(this.server.onMobMoveCallback.bind(this));
-        this.server.addEntity(this.petEntity);
-      }
-
-      this.send([
-        Types.Messages.WELCOME,
-        {
-          id: this.id,
-          name: this.name,
-          account,
-          x: this.x,
-          y: this.y,
-          hitpoints: this.hitPoints,
-          helm,
-          armor,
-          weapon,
-          belt,
-          cape,
-          pet,
-          shield,
-          ring1,
-          ring2,
-          amulet,
-          experience: this.experience,
-          gold,
-          goldStash,
-          coin,
-          achievement,
-          inventory,
-          stash,
-          trade,
-          upgrade,
-          hash,
-          nanoPotions,
-          gems,
-          artifact,
-          expansion1,
-          expansion2,
-          waypoints,
-          depositAccount,
-          auras: this.auras,
-          cowLevelPortalCoords: this.server.cowLevelCoords,
-          settings,
-          network,
-          party: this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
-          isHurtByTrap: this.isHurtByTrap,
-          admins: ADMINS.concat(SUPER_ADMINS),
-        },
-      ]);
-      this.sendLevelInProgress();
-
-      this.updateHitPoints(true);
-      this.resetBonus();
-      this.calculateBonus();
-      this.calculateSetBonus();
-      this.calculateSocketBonus();
-      this.calculatePartyBonus();
-      this.calculateGlobalBonus();
-      this.validateCappedBonus();
-      this.sendPlayerStats();
-
-      // clearInterval(this.startPeriodicHashCheck);
-      // this.startPeriodicHashCheck();
-
-      this.hasEnteredGame = true;
-      this.isDead = false;
-      this.isHurtByTrap = false;
-    } catch (err) {
-      Sentry.captureException(err, { extra: { player: this.name } });
+    // @NOTE: Make sure the player has authenticated if he has the expansion
+    if (this.isPasswordRequired && !this.isPasswordValid) {
+      this.connection.sendUTF8("passwordinvalid");
+      return;
     }
+
+    if (process.env.NODE_ENV === "production") {
+      this.canChat = !this.server.chatBan?.some(
+        ({ player: playerName, ip }) => playerName === this.name || (this.ip && ip && ip === this.ip),
+      );
+    } else {
+      this.canChat = !this.server.chatBan?.some(
+        ({ player: playerName, ip }) => playerName === this.name || ip === this.ip,
+      );
+    }
+
+    this.account = account;
+
+    // @NOTE: Leave no trace
+    delete this.isPasswordRequired;
+    delete this.isPasswordValid;
+
+    const [playerHelm, playerHelmLevel = 1, playerHelmBonus, playerHelmSocket] = helm.split(":");
+    const [playerArmor, playerArmorLevel = 1, playerArmorBonus, playerArmorSocket] = armor.split(":");
+    const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus, playerWeaponSocket, playerWeaponSkill] =
+      weapon.split(":");
+
+    this.kind = Types.Entities.WARRIOR;
+
+    this.equipHelm(playerHelm, Types.getKindFromString(playerHelm), playerHelmLevel, playerHelmBonus, playerHelmSocket);
+    this.equipArmor(
+      playerArmor,
+      Types.getKindFromString(playerArmor),
+      playerArmorLevel,
+      playerArmorBonus,
+      playerArmorSocket,
+    );
+    this.equipWeapon(
+      playerWeapon,
+      Types.getKindFromString(playerWeapon),
+      playerWeaponLevel,
+      playerWeaponBonus,
+      playerWeaponSocket,
+      playerWeaponSkill,
+    );
+
+    if (belt) {
+      const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
+      this.equipBelt(playerBelt, playerBeltLevel, playerBeltBonus);
+    }
+    if (cape) {
+      const [playerCape, playerCapeLevel, playerCapeBonus] = cape.split(":");
+      this.equipCape(playerCape, Types.getKindFromString(playerCape), playerCapeLevel, playerCapeBonus);
+    }
+    if (pet) {
+      const [playerPet, playerPetLevel, playePetBonus, playerPetSocket, playerPetSkin] = pet.split(":");
+
+      this.equipPet(
+        playerPet,
+        Types.getKindFromString(playerPet),
+        playerPetLevel,
+        playePetBonus,
+        playerPetSocket,
+        playerPetSkin,
+      );
+    }
+    if (shield) {
+      const [playerShield, playerShieldLevel, playerShieldBonus, playerShieldSocket, playerDefenseSkill] =
+        shield.split(":");
+      this.equipShield(
+        playerShield,
+        Types.getKindFromString(playerShield),
+        playerShieldLevel,
+        playerShieldBonus,
+        playerShieldSocket,
+        playerDefenseSkill,
+      );
+    }
+    if (ring1) {
+      const [playerRing1, playerRing1Level, playerRing1Bonus] = ring1.split(":");
+      this.equipRing1(playerRing1, playerRing1Level, playerRing1Bonus);
+    }
+    if (ring2) {
+      const [playerRing2, playerRing2Level, playerRing2Bonus] = ring2.split(":");
+      this.equipRing2(playerRing2, playerRing2Level, playerRing2Bonus);
+    }
+    if (amulet) {
+      const [playerAmulet, playerAmuletLevel, playerAmuletBonus] = amulet.split(":");
+      this.equipAmulet(playerAmulet, playerAmuletLevel, playerAmuletBonus);
+    }
+    if (pet) {
+      const [playerPet, playerPetLevel, playerPetBonus, playerPetSocket, playerPetSkin] = pet.split(":");
+      this.equipPet(
+        playerPet,
+        Types.getKindFromString(playerPet),
+        playerPetLevel,
+        playerPetBonus,
+        playerPetSocket,
+        playerPetSkin,
+      );
+    }
+    this.achievement = achievement;
+    this.waypoints = waypoints;
+    this.expansion1 = expansion1;
+    this.expansion2 = expansion2;
+    this.depositAccount = depositAccount;
+    this.depositAccountIndex = depositAccountIndex;
+    this.inventory = inventory;
+    this.stash = stash;
+    this.hash = hash;
+    this.hasRequestedBossPayout = false;
+    this.hasWallet = !!network || !!account;
+    this.createdAt = createdAt;
+    this.experience = exp;
+    this.level = Types.getLevel(this.experience);
+    this.orientation = randomOrientation();
+    this.network = network;
+    this.nanoPotions = nanoPotions;
+    this.discordId = discordId;
+    this.gold = gold;
+    this.goldStash = goldStash;
+
+    if (!x || !y) {
+      this.updatePosition();
+    } else {
+      if (x >= 84 && y >= 744 && !this.server.templeLevelClock) {
+        x = randomInt(40, 46);
+        y = randomInt(581, 585);
+      }
+      this.setPosition(x, y);
+    }
+
+    this.chatBanEndTime = chatBanEndTime;
+
+    console.log("~~~before enter");
+
+    this.server.addPlayer(this);
+    this.server.enter_callback(this);
+
+    const { members, partyLeader } = this.getParty() || {};
+
+    this.hasGrimoire = !!achievement[ACHIEVEMENT_GRIMOIRE_INDEX];
+    this.hasObelisk = !!achievement[ACHIEVEMENT_OBELISK_INDEX];
+    this.hasNft = !!achievement[ACHIEVEMENT_NFT_INDEX];
+    this.hasWing = !!achievement[ACHIEVEMENT_WING_INDEX];
+    this.hasCrystal = !!achievement[ACHIEVEMENT_CRYSTAL_INDEX];
+
+    if (this.pet) {
+      if (this.petEntity) {
+        this.server.despawn(this.petEntity);
+        this.petEntity = null;
+      }
+      const { id } = this;
+
+      this.petEntity = new Pet({
+        id: "9" + id,
+        type: "pet",
+        kind: petKindToPetMap[this.petKind],
+        skin: this.petSkin,
+        level: this.petLevel,
+        bonus: this.petBonus,
+        x,
+        y,
+        ownerId: id,
+      });
+
+      // this.petEntity.group = this.group;
+      // this.petEntity.onMove(this.server.onMobMoveCallback.bind(this));
+      this.server.addEntity(this.petEntity);
+    }
+
+    this.send([
+      Types.Messages.WELCOME,
+      {
+        id: this.id,
+        name: this.name,
+        account,
+        x: this.x,
+        y: this.y,
+        hitpoints: this.hitPoints,
+        helm,
+        armor,
+        weapon,
+        belt,
+        cape,
+        pet,
+        shield,
+        ring1,
+        ring2,
+        amulet,
+        experience: this.experience,
+        gold,
+        goldStash,
+        coin,
+        achievement,
+        inventory,
+        stash,
+        trade,
+        upgrade,
+        hash,
+        nanoPotions,
+        gems,
+        artifact,
+        expansion1,
+        expansion2,
+        waypoints,
+        depositAccount,
+        auras: this.auras,
+        cowLevelPortalCoords: this.server.cowLevelCoords,
+        settings,
+        network,
+        party: this.hasParty() ? { partyId: this.partyId, members, partyLeader } : null,
+        isHurtByTrap: this.isHurtByTrap,
+        admins: ADMINS.concat(SUPER_ADMINS),
+      },
+    ]);
+    this.sendLevelInProgress();
+
+    this.updateHitPoints(true);
+    this.resetBonus();
+    this.calculateBonus();
+    this.calculateSetBonus();
+    this.calculateSocketBonus();
+    this.calculatePartyBonus();
+    this.calculateGlobalBonus();
+    this.validateCappedBonus();
+    this.sendPlayerStats();
+
+    this.hasEnteredGame = true;
+    this.isDead = false;
+    this.isHurtByTrap = false;
   }
 }
 

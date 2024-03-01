@@ -10,17 +10,21 @@ export class Server {
   port;
   _connections = {};
   _counter = 0;
-  io;
   connection_callback;
   error_callback;
+  io: SocketServer | null;
   status_callback;
+
+  server: any;
 
   constructor(port) {
     this.port = port;
+    this.io = null;
+
     var self = this;
 
     const app = express();
-    const server = createServer(app);
+    this.server = createServer(app);
     let cors = null;
 
     if (process.env.NODE_ENV === "development") {
@@ -43,14 +47,14 @@ export class Server {
       };
     }
 
-    this.io = new SocketServer(server, { cors });
+    this.io = new SocketServer(this.server, { cors });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
     this.io.on("connection", function (connection) {
       console.info("a user connected");
 
-      connection.remoteAddress = connection.handshake.address.address;
+      // connection.remoteAddress = connection.handshake.address;
       const c = new Connection(self._createId(), connection, self);
 
       // console.log(c)
@@ -64,13 +68,12 @@ export class Server {
       console.error(err.stack);
       self.error_callback();
     });
-    // if (process.env.NODE_ENV === "production") {
-    //   this.io.listen(port);
-    // } else {
-      server.listen(port, function () {
-        console.info("listening on *:" + port);
-      });
-    // }
+
+
+    console.log(`~~~~~~~~BEFORRE BINGING LISTEN on port:${port}`);
+    this.server.listen(port, function () {
+      console.info("WS Server is now listening on *:" + port);
+    });
   }
 
   _createId() {

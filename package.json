@@ -10,7 +10,7 @@
     "watch:client": "webpack serve --progress --open",
     "watch:server": "nodemon --watch dist/ --watch server/ --watch shared/ -e ts,js --exec \"npm run build:server\"",
     "build:client": "webpack  --progress --color",
-    "build:server": "ts-node server/js/index.ts",
+    "build:server": "DEBUG=socket.io* ts-node server/js/index.ts",
     "start": "npm run watch:server"
   },
   "dependencies": {
