@@ -6,7 +6,6 @@ import * as _ from "lodash";
 import DatabaseHandler from "./db_providers/redis";
 import Metrics from "./metrics";
 import Player from "./player";
-import { Sentry } from "./sentry";
 import World from "./worldserver";
 import Server from "./ws";
 
@@ -19,8 +18,6 @@ function main(config) {
   var databaseHandler = new DatabaseHandler();
   console.log("~~~~3");
   var server = new Server(config.port);
-
- 
 
   var worlds = [];
   var lastTotalPlayers = 0;
@@ -38,8 +35,6 @@ function main(config) {
       });
     }
   }, 1000);
-
-
 
   server.onConnect(async function (connection) {
     console.log("~~~~~~server.onConnected!!");
@@ -60,16 +55,11 @@ function main(config) {
     }
   });
 
-  server.onError(function () {
-    const details = Array.prototype.join.call(arguments, ", ");
-    console.error(details);
+  // server.onError(function () {
+  //   const details = Array.prototype.join.call(arguments, ", ");
+  //   console.error(details);
 
-    Sentry.captureException(new Error("server error"), {
-      extra: {
-        details,
-      },
-    });
-  });
+  // });
 
   var onPopulationChange = async function () {
     await metrics.updatePlayerCounters(worlds, function () {

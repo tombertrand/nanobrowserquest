@@ -50,17 +50,6 @@ class Purchase {
             message: ERROR_MESSAGES.notAvailable,
           },
         ]);
-
-        // Sentry.captureException(new Error(ERROR_MESSAGES.notAvailable), {
-        //   extra: {
-        //     player: player.name,
-        //     network: this.network,
-        //     account,
-        //     id,
-        //     nano,
-        //     ban,
-        //   },
-        // });
       }
     }
   }

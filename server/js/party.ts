@@ -139,12 +139,6 @@ class Party {
   updatePartyBonus() {
     this.forEachMember(member => {
       if (!member || !member.id) {
-        Sentry.captureException(new Error("Missing member in party"), {
-          extra: {
-            member,
-            members: this.members,
-          },
-        });
         return;
       }
 

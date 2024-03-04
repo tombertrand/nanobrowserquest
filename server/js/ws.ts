@@ -24,12 +24,12 @@ export class Server {
     var self = this;
 
     const app = express();
-    this.server = createServer(app);
-    let cors = null;
+    const server = createServer(app);
+    let cors:any = { origin: "*" };
 
     console.log("~~~~4");
 
-    if (process.env.NODE_ENV) {
+    if (process.env.NODE_ENV === "development") {
       cors = { origin: "*" };
     } else {
       const whitelist = [
@@ -49,7 +49,7 @@ export class Server {
       };
     }
 
-    this.io = new SocketServer(this.server, { cors });
+    this.io = new SocketServer(server, { cors });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
@@ -70,14 +70,12 @@ export class Server {
       self.error_callback();
     });
 
-    // this.io.listen(port);
 
     console.log(`~~~~~~~~BEFORRE BINGING LISTEN on port:${port}`);
 
   console.info(`Starting NanoBrowserQuest game server... on port ${port}`);
 
-  console.log('~~~~~this.server.listen',this.server.listen)
-    this.server.listen(port, () => {
+    server.listen(port, () => {
       console.log("~~~~5");
       console.info("WS Server is now listening on *:" + port);
     }).on('error', (err) => {

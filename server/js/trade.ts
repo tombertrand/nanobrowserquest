@@ -4,7 +4,6 @@ import { Types } from "../../shared/js/gametypes";
 import { GOLD_CAP } from "../../shared/js/gold";
 import { postMessageToDiscordModeratorTradeChannel } from "./discord";
 import Messages from "./message";
-import { Sentry } from "./sentry";
 
 import type World from "./worldserver";
 
@@ -255,7 +254,6 @@ class Trade {
 
       this.close({ isCompleted: true });
     } catch (err) {
-      Sentry.captureException(err);
       this.close();
     }
   }

@@ -1,8 +1,6 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import fetch from "node-fetch";
 
-import { Sentry } from "./sentry";
-
 const { BOT_TOKEN, NODE_ENV } = process.env;
 const isDevelopment = NODE_ENV === "development";
 
