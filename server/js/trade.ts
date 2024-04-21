@@ -70,8 +70,8 @@ class Trade {
 
           let [inventory, gold] = await this.server.databaseHandler.client
             .multi()
-            .hGet(userKey, "inventory") // 0
-            .hGet(userKey, "gold") // 1
+            .hGet(userKey, "inventory") 
+            .hGet(userKey, "gold") 
             .exec();
           inventory = JSON.parse(inventory);
           gold = Number(gold || "0");

@@ -20,7 +20,6 @@ import {
   getResistance,
   mobEnchant,
   mobResistance,
-  PLAYER_MAX_ATTACK_SPEED,
   PLAYER_MAX_EXTRA_GOLD,
   PLAYER_MAX_MAGIC_FIND,
   PLAYER_MAX_RESISTANCES,

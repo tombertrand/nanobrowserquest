@@ -75,6 +75,8 @@ import type Trade from "./trade";
 const MIN_TIME = 1000 * 60 * 15;
 const MAX_EXP = expForLevel[expForLevel.length - 1];
 
+const { NODE_ENV } = process.env;
+
 let payoutIndex = 0;
 
 const ADMINS = [
@@ -394,9 +396,8 @@ class Player extends Character {
     // NOTE: Client will be sending the hashed game function, if altered, player gets banned.
 
     this.connection.listen(async rawMessage => {
-
-      console.log('~~~~~~~~~`7 connection listener!!!')
       const message = this.verifySignature(rawMessage);
+
 
       const { action: clientAction, params } = message;
 
@@ -444,7 +445,7 @@ class Player extends Character {
       }
 
       if (action === Types.Messages.CREATE || action === Types.Messages.LOGIN) {
-        if (process.env.NODE_ENV === "production" && !self.ip) {
+        if (NODE_ENV === "production" && !self.ip) {
           self.connection.sendUTF8("invalidconnection");
 
           self.connection.close("Unable to get IP.");
@@ -544,14 +545,14 @@ class Player extends Character {
         // @TODO rate-limit player creation
         if (action === Types.Messages.CREATE) {
           console.info("CREATE: " + self.name);
-          // self.account = hash;
 
-          if (await databaseHandler.checkIsPlayerExist(self)) {
+          if (await databaseHandler.isPlayerExist(self)) {
+            console.log("~~~~~~8");
             return;
           }
         } else {
+          console.log("~~~~~~9");
           console.info("LOGIN: " + self.name, " ID: " + self.id);
-
           if (self.server.loggedInPlayer(self.name) && !password) {
             self.connection.sendUTF8("passwordlogin");
 
@@ -855,6 +856,7 @@ class Player extends Character {
         const bannedPlayer = self.server.getPlayerByName(playerName);
 
         if (!ADMINS.includes(self.name)) {
+          console.log("~~~startbanPlayerByIP");
           databaseHandler.banPlayerByIP({
             admin: "auto-mod",
             player: bannedPlayer,
@@ -862,6 +864,8 @@ class Player extends Character {
             until,
             message: "non-mod ban",
           });
+
+          console.log("~~~endbanPlayerByIP");
           postMessageToModeratorSupportChannel(`
             **${self.name}** was banned for exploiting the ban feature`);
           return;
@@ -4123,6 +4127,13 @@ class Player extends Character {
     network,
     discordId,
   }) {
+    console.log("~~~~~~~nanoPotions", nanoPotions);
+    console.log("~~~~~~~achievement", achievement);
+    console.log("~~~~~~~settings", settings);
+    console.log("~~~~~~~stash", stash);
+    console.log("~~~~~~~trade", trade);
+    console.log("~~~~~~~inventory", inventory);
+    console.log("~~~~~~~settings", settings);
     this.settings = typeof settings === "string" ? JSON.parse(settings) : settings;
     // @NOTE: Make sure the player has authenticated if he has the expansion
     if (this.isPasswordRequired && !this.isPasswordValid) {
@@ -4130,7 +4141,7 @@ class Player extends Character {
       return;
     }
 
-    if (process.env.NODE_ENV === "production") {
+    if (NODE_ENV === "production") {
       this.canChat = !this.server.chatBan?.some(
         ({ player: playerName, ip }) => playerName === this.name || (this.ip && ip && ip === this.ip),
       );
@@ -4146,14 +4157,9 @@ class Player extends Character {
     delete this.isPasswordRequired;
     delete this.isPasswordValid;
 
-    const [playerHelm, playerHelmLevel = 1, playerHelmBonus, playerHelmSocket] = helm.split(":");
-    const [playerArmor, playerArmorLevel = 1, playerArmorBonus, playerArmorSocket] = armor.split(":");
-    const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus, playerWeaponSocket, playerWeaponSkill] =
-      weapon.split(":");
-
     this.kind = Types.Entities.WARRIOR;
+    const [playerArmor, playerArmorLevel = 1, playerArmorBonus, playerArmorSocket] = armor.split(":");
 
-    this.equipHelm(playerHelm, Types.getKindFromString(playerHelm), playerHelmLevel, playerHelmBonus, playerHelmSocket);
     this.equipArmor(
       playerArmor,
       Types.getKindFromString(playerArmor),
@@ -4161,6 +4167,10 @@ class Player extends Character {
       playerArmorBonus,
       playerArmorSocket,
     );
+
+    const [playerWeapon, playerWeaponLevel = 1, playerWeaponBonus, playerWeaponSocket, playerWeaponSkill] =
+      weapon.split(":");
+
     this.equipWeapon(
       playerWeapon,
       Types.getKindFromString(playerWeapon),
@@ -4170,6 +4180,16 @@ class Player extends Character {
       playerWeaponSkill,
     );
 
+    if (helm) {
+      const [playerHelm, playerHelmLevel = 1, playerHelmBonus, playerHelmSocket] = helm.split(":");
+      this.equipHelm(
+        playerHelm,
+        Types.getKindFromString(playerHelm),
+        playerHelmLevel,
+        playerHelmBonus,
+        playerHelmSocket,
+      );
+    }
     if (belt) {
       const [playerBelt, playerBeltLevel, playerBeltBonus] = belt.split(":");
       this.equipBelt(playerBelt, playerBeltLevel, playerBeltBonus);
@@ -4265,11 +4285,15 @@ class Player extends Character {
 
     const { members, partyLeader } = this.getParty() || {};
 
-    this.hasGrimoire = !!achievement[ACHIEVEMENT_GRIMOIRE_INDEX];
-    this.hasObelisk = !!achievement[ACHIEVEMENT_OBELISK_INDEX];
-    this.hasNft = !!achievement[ACHIEVEMENT_NFT_INDEX];
-    this.hasWing = !!achievement[ACHIEVEMENT_WING_INDEX];
-    this.hasCrystal = !!achievement[ACHIEVEMENT_CRYSTAL_INDEX];
+    console.log("~~~~~~achievement", achievement);
+
+    if (achievement) {
+      this.hasGrimoire = !!achievement[ACHIEVEMENT_GRIMOIRE_INDEX];
+      this.hasObelisk = !!achievement[ACHIEVEMENT_OBELISK_INDEX];
+      this.hasNft = !!achievement[ACHIEVEMENT_NFT_INDEX];
+      this.hasWing = !!achievement[ACHIEVEMENT_WING_INDEX];
+      this.hasCrystal = !!achievement[ACHIEVEMENT_CRYSTAL_INDEX];
+    }
 
     if (this.pet) {
       if (this.petEntity) {

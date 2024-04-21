@@ -1510,7 +1510,7 @@ class Game {
   }
 
   populateEquipmentInSlots(player, container) {
-    if (player.weaponName !== "dagger") {
+    if (player.weaponName && player.weaponName !== "dagger") {
       const isUnique = Types.isUnique(player.weaponName, player.weaponBonus);
       const isSuperior = Types.isSuperior(player.weaponBonus);
       const { runeword } = Types.getRunewordBonus({
@@ -1538,7 +1538,7 @@ class Game {
         }),
       );
     }
-    if (player.helmName !== "helmcloth") {
+    if (player.helmName && player.helmName !== "helmcloth") {
       const isUnique = Types.isUnique(player.helmName, player.helmBonus);
       const isSuperior = Types.isSuperior(player.helmBonus);
       const { runeword } = Types.getRunewordBonus({
@@ -1566,7 +1566,7 @@ class Game {
       );
     }
 
-    if (player.armorName !== "clotharmor") {
+    if (player.armorName && player.armorName !== "clotharmor") {
       const isUnique = Types.isUnique(player.armorName, player.armorBonus);
       const isSuperior = Types.isSuperior(player.armorBonus);
       const { runeword } = Types.getRunewordBonus({
@@ -1740,7 +1740,6 @@ class Game {
       $("#item-inventory").append(`<div class="item-slot item-inventory item-droppable" data-slot="${i}"></div>`);
     }
     this.initPlayerEquipmentSlots();
-
     this.updateInventory();
     this.updateRequirement();
   }
@@ -2441,6 +2440,8 @@ class Game {
 
     this.achievements = getAchievements(self.network);
 
+    console.log("~~~~this.achievements", this.achievements);
+
     _.each(this.achievements, function (obj) {
       if (!obj.isCompleted) {
         obj.isCompleted = function () {
@@ -3118,6 +3119,7 @@ class Game {
       id,
       name,
       account,
+      hash,
       // exp,
       x,
       y,
@@ -3141,7 +3143,6 @@ class Game {
       stash,
       trade,
       upgrade,
-      hash,
       nanoPotions,
       gems,
       artifact,
@@ -3158,9 +3159,11 @@ class Game {
       admins,
     }) {
       // exp = Number(exp);
+
       trade = JSON.parse(trade);
       stash = JSON.parse(stash);
       inventory = JSON.parse(inventory);
+      console.log("~~~~~inventory", inventory, typeof inventory);
       x = Number(x);
       y = Number(y);
       upgrade = JSON.parse(upgrade);
@@ -3169,7 +3172,9 @@ class Game {
       gems = JSON.parse(gems);
       expansion1 = Number(expansion1);
       expansion2 = Number(expansion2);
+
       waypoints = JSON.parse(waypoints);
+      console.log("~~~~waypoints", waypoints, Array.isArray(waypoints));
       nanoPotions = Number(nanoPotions);
       gold = Number(gold);
       goldStash = Number(goldStash);

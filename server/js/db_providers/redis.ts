@@ -93,6 +93,7 @@ const queue = new PromiseQueue();
 const getNewDepositAccountByIndex = async (index: number, network: Network): Promise<string> => {
   let depositAccount = null;
 
+  // eslint-disable-next-line @typescript-eslint/await-thenable
   depositAccount = await NanocurrencyWeb.wallet.legacyAccounts(DEPOSIT_SEED, index, index)[0].address;
 
   if (network === "ban") {
@@ -129,8 +130,6 @@ class DatabaseHandler {
 
       return;
     }
-
-    // let [depositAccount, depositAccountIndex] = reply;
     if (depositAccount || depositAccountIndex) return;
 
     depositAccountIndex = await this.createDepositAccount();
@@ -159,94 +158,91 @@ class DatabaseHandler {
 
     return { depositAccount, depositAccountIndex };
   }
-
-  //
-
   async loadPlayer(player) {
     var userKey = "u:" + player.name;
+
+    console.log("~~~~~userKey", userKey);
     let [
       account,
-      network,
-      armor,
-      weapon,
-      exp,
-      createdAt,
-      inventory,
-      stash,
-      trade,
-      x,
-      y,
       hash,
-      upgrade,
-      achievement,
-      ring1,
-      ring2,
-      amulet,
-      belt,
-      cape,
-      shield,
-      helm,
-      pet,
-      nanoPotions,
-      gems,
-      artifact,
-      expansion1,
-      expansion2,
+      exp,
       gold,
       goldStash,
       goldTrade,
-      waypoints,
-      depositAccount,
-      depositAccountIndex,
+      x,
+      y,
+      // ip,
+      createdAt,
+      achievement,
+      inventory,
+      stash,
+      helm,
+      armor,
+      weapon,
+      belt,
+      cape,
+      pet,
+      shield,
       settings,
+      ring1,
+      ring2,
+      amulet,
+      nanoPotions,
+      gems,
+      artifact,
+      upgrade,
+      trade,
+      expansion1,
+      expansion2,
+      waypoints,
+      depositAccountIndex,
+      depositAccount,
+      network,
       discordId,
     ] = await this.client
       .multi()
-      .hGet(userKey, "account") // 0
-      .hGet(userKey, "network") // 1
-      .hGet(userKey, "armor") // 2
-      .hGet(userKey, "weapon") // 3
-      .hGet(userKey, "exp") // 4
-      .hGet(userKey, "createdAt") // 5
-      .hGet(userKey, "inventory") // 6
-      .hGet(userKey, "stash") // 7
-      .hGet(userKey, "trade") // 8
-      .hGet(userKey, "x") // 9
-      .hGet(userKey, "y") // 10
-      .hGet(userKey, "hash") // 11
-      .hGet(userKey, "upgrade") // 12
-      .hGet(userKey, "achievement") // 13
-      .hGet(userKey, "ring1") // 14
-      .hGet(userKey, "ring2") // 15
-      .hGet(userKey, "amulet") // 16
-      .hGet(userKey, "belt") // 17
-      .hGet(userKey, "cape") // 18
-      .hGet(userKey, "shield") // 19
-      .hGet(userKey, "helm") // 20
-      .hGet(userKey, "pet") // 21
-      .hGet(userKey, "nanoPotions") // 22
-      .hGet(userKey, "gems") // 23
-      .hGet(userKey, "artifact") // 24
-      .hGet(userKey, "expansion1") // 25
-      .hGet(userKey, "expansion2") // 26
-      .hGet(userKey, "gold") // 27
-      .hGet(userKey, "goldStash") // 28
-      .hGet(userKey, "goldTrade") // 29
-      .hGet(userKey, "waypoints") // 30
-      .hGet(userKey, "depositAccount") // 31
-      .hGet(userKey, "depositAccountIndex") // 32
-      .hGet(userKey, "settings") // 33
-      .hGet(userKey, "network") // 34
-      .hGet(userKey, "discordId") // 35
+      .hGet(userKey, "account")
+      .hGet(userKey, "hash")
+      .hGet(userKey, "exp")
+      .hGet(userKey, "gold")
+      .hGet(userKey, "goldStash")
+      .hGet(userKey, "goldTrade")
+      .hGet(userKey, "x")
+      .hGet(userKey, "y")
+      .hGet(userKey, "createdAt")
+      .hGet(userKey, "achievement")
+      .hGet(userKey, "inventory")
+      .hGet(userKey, "stash")
+      .hGet(userKey, "helm")
+      .hGet(userKey, "armor")
+      .hGet(userKey, "weapon")
+      .hGet(userKey, "belt")
+      .hGet(userKey, "cape")
+      .hGet(userKey, "pet")
+      .hGet(userKey, "shield")
+      .hGet(userKey, "settings")
+      .hGet(userKey, "ring1")
+      .hGet(userKey, "ring2")
+      .hGet(userKey, "amulet")
+      .hGet(userKey, "nanoPotions")
+      .hGet(userKey, "gems")
+      .hGet(userKey, "artifact")
+      .hGet(userKey, "upgrade")
+      .hGet(userKey, "trade")
+      .hGet(userKey, "expansion1")
+      .hGet(userKey, "expansion2")
+      .hGet(userKey, "waypoints")
+      .hGet(userKey, "depositAccount")
+      .hGet(userKey, "depositAccountIndex")
+      .hGet(userKey, "network")
+      .hGet(userKey, "discordId")
       .exec();
-
     exp = NaN2Zero(exp);
     gold = NaN2Zero(gold);
     goldStash = NaN2Zero(goldStash);
     goldTrade = NaN2Zero(goldTrade);
     const dbSsettings = settings;
     settings = settings ? JSON.parse(settings) : defaultSettings;
-
     if (!dbSsettings) {
       await this.client.hSet(userKey, "settings", JSON.stringify(settings));
     }
@@ -255,8 +251,7 @@ class DatabaseHandler {
       [network] = account.split("_");
       await this.client.hSet(userKey, "network", network);
     }
-
-    if (!depositAccount && ["nano", "ban"].includes(network)) {
+    if (depositAccount && ["nano", "ban"].includes(network)) {
       ({ depositAccount, depositAccountIndex } = await this.assignNewDepositAccount(player, network));
     }
 
@@ -281,18 +276,22 @@ class DatabaseHandler {
         gold = GOLD_CAP;
       }
       //@notehmSet is broken
-      await this.client.hSet(userKey, "goldTrade", String(goldTrade));
-      await this.client.hSet(userKey, "gold", gold);
+      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~before!!!!");
+      // await this.client.multi().hSet(userKey, "goldTrade", 0).hSet(userKey, "gold", gold).exec();
     }
-
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~");
     console.info("Player name: " + player.name);
     console.info("Armor: " + armor);
     console.info("Weapon: " + weapon);
     console.info("Experience: " + exp);
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     player.sendWelcome({
       account,
+      hash,
       network,
+      helm,
+
       armor,
       weapon,
       exp,
@@ -303,7 +302,6 @@ class DatabaseHandler {
       upgrade,
       x,
       y,
-      hash,
       nanoPotions,
       gems,
       achievement,
@@ -313,7 +311,7 @@ class DatabaseHandler {
       belt,
       cape,
       shield,
-      helm,
+
       pet,
       artifact,
       expansion1,
@@ -327,6 +325,10 @@ class DatabaseHandler {
       settings,
       discordId,
     });
+
+    console.log("~~~~redis~~~trade", trade);
+    console.log("~~~~redis~~~inventory", inventory);
+    console.log("~~~redis~~~~settings", settings);
 
     // Could not find the user
     // player.connection.sendUTF8("invalidlogin");
@@ -393,8 +395,14 @@ class DatabaseHandler {
       );
     }
 
-    const [
+    console.log("~~~~~~start create player");
+
+    let achievement = JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0));
+    let inventory = JSON.stringify(new Array(INVENTORY_SLOT_COUNT).fill(0));
+
+    let [
       account,
+      hash,
       exp,
       gold,
       goldStash,
@@ -403,15 +411,12 @@ class DatabaseHandler {
       y,
       ip,
       createdAt,
-      achievement,
-      inventory,
+      // achievement,
+      // inventory,
       stash,
-      trade,
-      upgrade,
-      nanoPotions,
       weapon,
-      helm,
       armor,
+      helm,
       belt,
       cape,
       pet,
@@ -420,40 +425,42 @@ class DatabaseHandler {
       ring1,
       ring2,
       amulet,
+      nanoPotions,
       gems,
       artifact,
+      upgrade,
+      trade,
       expansion1,
       expansion2,
       waypoints,
-      // depositAccountIndex,
-      // depositAccount,
       network,
-    ] = this.client
+    ] = await this.client
       .multi()
-      .hSet(userKey, "account", player.account)
+      .hSet(userKey, "account", player.account || "")
+      .hSet(userKey, "hash", "")
       .hSet(userKey, "exp", 0)
       .hSet(userKey, "gold", 0)
       .hSet(userKey, "goldStash", 0)
       .hSet(userKey, "goldTrade", 0)
-      .hSet(userKey, "x", player.x)
-      .hSet(userKey, "y", player.y)
+      .hSet(userKey, "x", player.x || "")
+      .hSet(userKey, "y", player.y || "")
       .hSet(userKey, "ip", player.ip || "")
       .hSet(userKey, "createdAt", curTime)
-      .hSet(userKey, "achievement", JSON.stringify(new Array(ACHIEVEMENT_COUNT).fill(0)))
-      .hSet(userKey, "inventory", JSON.stringify(new Array(INVENTORY_SLOT_COUNT).fill(0)))
+      .hSet(userKey, "achievement", achievement)
+      .hSet(userKey, "inventory", inventory)
       .hSet(userKey, "stash", JSON.stringify(new Array(STASH_SLOT_COUNT).fill(0)))
-      .hSet(userKey, "nanoPotions", 0)
       .hSet(userKey, "weapon", "dagger:1")
-      .hSet(userKey, "helm", "helmcloth:1")
       .hSet(userKey, "armor", "clotharmor:1")
-      .hSet(userKey, "belt", null)
-      .hSet(userKey, "cape", null)
-      .hSet(userKey, "pet", null)
-      .hSet(userKey, "shield", null)
-      .hSet(userKey, "settings", JSON.stringify(defaultSettings))
-      .hSet(userKey, "ring1", null)
-      .hSet(userKey, "ring2", null)
-      .hSet(userKey, "amulet", null)
+      .hSet(userKey, "helm", "helmcloth:1")
+      .hSet(userKey, "belt", "")
+      .hSet(userKey, "cape", "")
+      .hSet(userKey, "pet", "")
+      .hSet(userKey, "shield", "")
+      .hSet(userKey, "settings", `${JSON.stringify(defaultSettings)}`)
+      .hSet(userKey, "ring1", "")
+      .hSet(userKey, "ring2", "")
+      .hSet(userKey, "amulet", "")
+      .hSet(userKey, "nanoPotions", 0)
       .hSet(userKey, "gems", JSON.stringify(new Array(GEM_COUNT).fill(0)))
       .hSet(userKey, "artifact", JSON.stringify(new Array(ARTIFACT_COUNT).fill(0)))
       .hSet(userKey, "upgrade", JSON.stringify(new Array(UPGRADE_SLOT_COUNT).fill(0)))
@@ -461,20 +468,28 @@ class DatabaseHandler {
       .hSet(userKey, "expansion1", 0)
       .hSet(userKey, "expansion2", 0)
       .hSet(userKey, "waypoints", JSON.stringify([1, 0, 0, 2, 2, 2, 2, 2, 2, 2]))
-      .hSet(userKey, "depositAccountIndex", depositAccountIndex)
-      .hSet(userKey, "depositAccount", depositAccount)
-      .hSet(userKey, "network", player.network)
+      .hSet(userKey, "depositAccountIndex", depositAccountIndex || "")
+      .hSet(userKey, "depositAccount", depositAccount || "")
+      .hSet(userKey, "network", player.network || "nano")
       .exec();
     console.info("New User: " + player.name);
     player.sendWelcome({
       account,
+      hash,
       exp,
       gold,
       goldStash,
       goldTrade,
-      helm,
-      armor,
+      x,
+      y,
+      ip,
+      createdAt,
+      achievement,
+      inventory,
+      stash,
       weapon,
+      armor,
+      helm,
       belt,
       cape,
       pet,
@@ -483,13 +498,6 @@ class DatabaseHandler {
       ring1,
       ring2,
       amulet,
-      createdAt,
-      x,
-      y,
-      ip,
-      achievement,
-      inventory,
-      stash,
       nanoPotions,
       gems,
       artifact,
@@ -502,16 +510,18 @@ class DatabaseHandler {
       depositAccountIndex,
       network,
     });
+
+    console.log("~~~~~~done create player");
   }
 
   async checkIsBannedByIP(player) {
     const ipKey = "ipban:" + player.ip;
     const [timestamp, reason, message, admin] = await this.client
       .multi()
-      .hGet(ipKey, "timestamp") // 0
-      .hGet(ipKey, "reason") // 1
-      .hGet(ipKey, "message") // 2
-      .hGet(ipKey, "admin") // 3
+      .hGet(ipKey, "timestamp")
+      .hGet(ipKey, "reason")
+      .hGet(ipKey, "message")
+      .hGet(ipKey, "admin")
       .exec();
 
     return { playerName: player.name, timestamp, reason, message, ip: player.ip, admin };
@@ -522,10 +532,10 @@ class DatabaseHandler {
 
     const [timestamp, reason, message, admin] = await this.client
       .multi()
-      .hGet(banKey, "timestamp") // 0
-      .hGet(banKey, "reason") // 1
-      .hGet(banKey, "message") // 2
-      .hGet(banKey, "admin") // 3
+      .hGet(banKey, "timestamp")
+      .hGet(banKey, "reason")
+      .hGet(banKey, "message")
+      .hGet(banKey, "admin")
       .exec();
 
     return { playerName, timestamp, reason, message, admin };
@@ -589,6 +599,8 @@ class DatabaseHandler {
   async getChatBan() {
     const rawChatBan = await this.client.hGetAll("chatBan");
     let chatBan = [];
+
+    console.log("~~~~rawChatBan", rawChatBan);
 
     if (rawChatBan) {
       chatBan = Object.entries(rawChatBan)
@@ -728,7 +740,6 @@ class DatabaseHandler {
     try {
       const [hash, rawAchievement] = await this.client
         .multi()
-
         .hGet(userKey, "hash")
         .hGet(userKey, "achievement")
         .exec();
@@ -752,7 +763,7 @@ class DatabaseHandler {
   }
 
   async equipRing1({ name, item, level, bonus }) {
-    const ring1 = [item, level, bonus].filter(Boolean).join(":") || null;
+    const ring1 = [item, level, bonus].filter(Boolean).join(":") || "";
 
     console.info(`Set Ring1: ${name} ring1`);
     if (ring1) {
@@ -763,7 +774,7 @@ class DatabaseHandler {
   }
 
   async equipRing2({ name, item, level, bonus }) {
-    const ring2 = [item, level, bonus].filter(Boolean).join(":") || null;
+    const ring2 = [item, level, bonus].filter(Boolean).join(":") || "";
 
     console.info(`Set Ring2: ${name} ring2`);
     if (ring2) {
@@ -774,7 +785,7 @@ class DatabaseHandler {
   }
 
   async equipAmulet({ name, item, level, bonus }) {
-    const amulet = [item, level, bonus].filter(Boolean).join(":") || null;
+    const amulet = [item, level, bonus].filter(Boolean).join(":") || "";
 
     console.info(`Set Amulet: ${name} amulet`);
     if (amulet) {
@@ -856,9 +867,6 @@ class DatabaseHandler {
         level = 1;
       } else if (type === "armor") {
         item = "clotharmor";
-        level = 1;
-      } else if (type === "helm") {
-        item = "helmcloth";
         level = 1;
       }
     }
@@ -1007,7 +1015,7 @@ class DatabaseHandler {
       }
 
       // Should never happen but who knows
-      if (["dagger:1", "clotharmor:1", "helmcloth:1"].includes(fromItem) && toSlot !== -1) {
+      if (["dagger:1", "clotharmor:1"].includes(fromItem) && toSlot !== -1) {
         return;
       }
 
@@ -1032,7 +1040,7 @@ class DatabaseHandler {
           let toReplyParsed = isMultipleTo ? JSON.parse(toReply) : toReply;
           toItem = isMultipleTo ? toReplyParsed[toSlot - toRange] : toReplyParsed;
 
-          if (["dagger:1", "clotharmor:1", "helmcloth:1"].includes(toItem)) {
+          if (["dagger:1", "clotharmor:1"].includes(toItem)) {
             toItem = 0;
           }
 
@@ -1296,7 +1304,7 @@ class DatabaseHandler {
     return resolvedAmount;
   }
 
-  async deductGold(player, { penalty, amount }: { penalty?: number; amount?: number }) {
+  deductGold(player, { penalty, amount }: { penalty?: number; amount?: number }) {
     return new Promise(async (resolve, _reject) => {
       if (!amount && !penalty) {
         return;
@@ -1341,7 +1349,7 @@ class DatabaseHandler {
       const newGold = gold - deductedGold;
       if (newGold < 0) return;
 
-      this.client.hSet("u:" + player.name, "gold", newGold);
+      await this.client.hSet("u:" + player.name, "gold", newGold);
 
       player.send([Types.Messages.GOLD.INVENTORY, newGold]);
       player.gold = newGold;
@@ -1352,7 +1360,7 @@ class DatabaseHandler {
         player.send(
           new Messages.Chat({}, `You lost ${deductedGold} gold from your death.`, "event", deductedGold).serialize(),
         );
-        this.client.incrBy("goldBank", deductedGold, (_err, reply) => {
+        await this.client.incrBy("goldBank", deductedGold, (_err, reply) => {
           resolve(reply);
         });
       }
@@ -1999,7 +2007,7 @@ class DatabaseHandler {
       }
 
       if (!isWorkingRecipe) {
-        this.moveItemsToInventory(player, "upgrade");
+        await this.moveItemsToInventory(player, "upgrade");
       } else {
         upgrade = upgrade.map(() => 0);
         upgrade[upgrade.length - 1] = generatedItem;
@@ -2269,18 +2277,19 @@ class DatabaseHandler {
     });
   }
 
-  async checkIsPlayerExist(player) {
+  async isPlayerExist(player) {
     const userKey = "u:" + player.name;
-    // let isPlayerExist;
-    let [createdAt, weapon] = await this.client
-      .multi()
-      .hGet(userKey, "createdAt") // 0
-      .hGet(userKey, "weapon") // 1
-      .exec();
-
-    if (!!createdAt || !!weapon) {
+    let isPlayerExist;
+    console.log("~~~~~userKey", userKey);
+    let [createdAt, weapon] = await this.client.multi().hGet(userKey, "createdAt").hGet(userKey, "weapon").exec();
+    console.log("~~~~~createdAt", createdAt);
+    console.log("~~~~~weapon", weapon);
+    isPlayerExist = createdAt || weapon;
+    console.log("~~~~~isPlayerExist", isPlayerExist);
+    if (isPlayerExist) {
       player.connection.sendUTF8("userexists");
       player.connection.close("Username not available: " + player.name);
+      console.log("~~~~10");
       return true;
     }
     return false;

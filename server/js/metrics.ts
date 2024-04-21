@@ -9,7 +9,7 @@ class Metrics {
     game_servers: any;
     server_name: string;
     nb_worlds: number;
-    nb_players_per_world: number; 
+    nb_players_per_world: number;
   };
   isReady: boolean;
   readyCallback: any;
@@ -17,6 +17,7 @@ class Metrics {
 
   constructor(config) {
     this.config = config;
+
     this.client = redisClient;
 
     this.isReady = this.client.isOpen;

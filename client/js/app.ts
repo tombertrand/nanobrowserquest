@@ -324,9 +324,9 @@ class App {
     if (username && !this.game.started) {
       this.game.setPlayerAccount({ username, account, network, password });
 
-      let config = { host: "localhost", port: 3000 };
+      let config = { host: "localhost", port: 8000 };
       if (process.env.NODE_ENV !== "development") {
-        config = { host: "", port: 3000 };
+        config = { host: "", port: 8000 };
 
         if (window.location.host.endsWith("bananobrowserquest.com")) {
           config.host = window.location.host.replace("ba", "");

@@ -6,6 +6,8 @@ import { Server as SocketServer } from "socket.io";
 
 import { random } from "./utils";
 
+const { NODE_ENV } = process.env;
+
 export class Server {
   port;
   _connections = {};
@@ -17,7 +19,6 @@ export class Server {
   server: any;
 
   constructor(port) {
-    console.log("~~~~3.1");
     this.port = port;
     this.io = null;
 
@@ -27,9 +28,8 @@ export class Server {
     const server = createServer(app);
     let cors:any = { origin: "*" };
 
-    console.log("~~~~4");
 
-    if (process.env.NODE_ENV === "development") {
+    if (NODE_ENV === "development") {
       cors = { origin: "*" };
     } else {
       const whitelist = [

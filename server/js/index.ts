@@ -9,14 +9,13 @@ import Player from "./player";
 import World from "./worldserver";
 import Server from "./ws";
 
+const { NODE_ENV } = process.env;
+
 function main(config) {
   var WorldServer = World;
 
-  console.log("~~~~1");
   var metrics = config.metrics_enabled ? new Metrics(config) : null;
-  console.log("~~~~2");
   var databaseHandler = new DatabaseHandler();
-  console.log("~~~~3");
   var server = new Server(config.port);
 
   var worlds = [];
@@ -127,6 +126,8 @@ process.argv.forEach(function (val, index) {
 });
 
 getConfigFile(configPath, function (config) {
-  console.log("~~~~0");
+  if (NODE_ENV === "production") {
+    config.redis_port = config.port.prod_redis_port;
+  }
   main(config);
 });
