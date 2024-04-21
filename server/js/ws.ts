@@ -48,7 +48,7 @@ export class Server {
       };
     }
 
-    this.io = new SocketServer(server, { cors });
+    this.io = new SocketServer(server, { cors, allowEIO3: true });
 
     app.use(express.static(path.join(process.cwd(), "dist/client")));
 
