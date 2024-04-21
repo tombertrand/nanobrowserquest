@@ -26,8 +26,7 @@ export class Server {
 
     const app = express();
     const server = createServer(app);
-    let cors:any = { origin: "*" };
-
+    let cors: any = { origin: "*" };
 
     if (NODE_ENV === "development") {
       cors = { origin: "*" };
@@ -59,7 +58,6 @@ export class Server {
       // connection.remoteAddress = connection.handshake.address;
       const c = new Connection(self._createId(), connection, self);
 
-
       self.connection_callback?.(c);
 
       self.addConnection(c);
@@ -70,17 +68,18 @@ export class Server {
       self.error_callback();
     });
 
+    console.log(`~~~~~~~~BEFORE BINDING LISTEN on port:${port}`);
 
-    console.log(`~~~~~~~~BEFORRE BINGING LISTEN on port:${port}`);
+    console.info(`Starting NanoBrowserQuest game server... on port ${port}`);
 
-  console.info(`Starting NanoBrowserQuest game server... on port ${port}`);
-
-    server.listen(port, () => {
-      console.log("~~~~5");
-      console.info("WS Server is now listening on *:" + port);
-    }).on('error', (err) => {
-      console.error('Server failed to start', err);
-    });
+    server
+      .listen(port, () => {
+        console.log("~~~~5");
+        console.info("WS Server is now listening on *:" + port);
+      })
+      .on("error", err => {
+        console.error("Server failed to start", err);
+      });
   }
 
   _createId() {

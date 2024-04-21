@@ -13,6 +13,7 @@ export async function connectRedisInstance() {
     ...(NODE_ENV !== "development" && REDIS_PASSWORD ? { password: REDIS_PASSWORD } : {}),
   };
 
+  console.log("~~~~~REDIS_OPTIONS", REDIS_OPTIONS);
   // Create a Redis client with the specified configuration options
   redisClient = createClient(REDIS_OPTIONS);
 
