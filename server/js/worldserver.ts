@@ -1992,12 +1992,11 @@ class World {
           player.send(new Messages.SoulStone({ kind, isUnique: item.isUnique }).serialize());
 
           this.broadcastRaise(player, altar);
-          this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX).then(() => {
-            player.connection.send({
-              type: Types.Messages.NOTIFICATION,
-              achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_ZAP_INDEX],
-              message: "You cracked the Soulstone open!",
-            });
+
+          await this.databaseHandler.foundAchievement(player, ACHIEVEMENT_ZAP_INDEX).player.connection.send({
+            type: Types.Messages.NOTIFICATION,
+            achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_ZAP_INDEX],
+            message: "You cracked the Soulstone open!",
           });
         } catch (err) {
           Sentry.captureException(err, {

@@ -2440,7 +2440,6 @@ class Game {
 
     this.achievements = getAchievements(self.network);
 
-    console.log("~~~~this.achievements", this.achievements);
 
     _.each(this.achievements, function (obj) {
       if (!obj.isCompleted) {
@@ -3163,7 +3162,6 @@ class Game {
       trade = JSON.parse(trade);
       stash = JSON.parse(stash);
       inventory = JSON.parse(inventory);
-      console.log("~~~~~inventory", inventory, typeof inventory);
       x = Number(x);
       y = Number(y);
       upgrade = JSON.parse(upgrade);
@@ -3174,7 +3172,6 @@ class Game {
       expansion2 = Number(expansion2);
 
       waypoints = JSON.parse(waypoints);
-      console.log("~~~~waypoints", waypoints, Array.isArray(waypoints));
       nanoPotions = Number(nanoPotions);
       gold = Number(gold);
       goldStash = Number(goldStash);

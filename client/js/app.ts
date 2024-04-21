@@ -332,9 +332,6 @@ class App {
           config.host = window.location.host.replace("ba", "");
         }
       }
-
-      console.log('~~~~config',config)
-
       this.game.setServerOptions(config.host, config.port);
 
       if (!self.isDesktop) {

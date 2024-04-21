@@ -398,7 +398,6 @@ class Player extends Character {
     this.connection.listen(async rawMessage => {
       const message = this.verifySignature(rawMessage);
 
-
       const { action: clientAction, params } = message;
 
       const action = parseInt(clientAction);
@@ -1884,7 +1883,7 @@ class Player extends Character {
 
         // just unlock REGARDLESS for walletless, w/e...
 
-        self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
+        await self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
 
         // If any of these fails, the player shouldn't be requesting a payout, BAN!
         if (
@@ -1986,7 +1985,7 @@ class Player extends Character {
         // If payout succeeds there will be a hash in the response!
         if (payeoutHash) {
           console.info(`PAYOUT COMPLETED: ${self.name} ${self.account} for quest of kind: ${params[0]}`);
-          self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
+          await self.databaseHandler.foundAchievement(self, ACHIEVEMENT_HERO_INDEX);
 
           const maxPayoutOutput =
             raiPayoutAmount === maxAmount
@@ -2105,7 +2104,8 @@ class Player extends Character {
         databaseHandler.upgradeItem(self);
       } else if (action === Types.Messages.ACHIEVEMENT) {
         console.info("ACHIEVEMENT: " + self.name + " " + params[0] + " " + params[1]);
-        const index = parseInt(params[0]) - 1;
+        const index = Number(params[0]) - 1;
+
         if (params[1] === "found" && !self.achievement[index]) {
           self.achievement[index] = 1;
 
@@ -2116,22 +2116,18 @@ class Player extends Character {
           ) {
             return;
           }
+          await databaseHandler.foundAchievement(self, index);
+          if (index === ACHIEVEMENT_GRIMOIRE_INDEX) {
+            self.hasGrimoire = true;
+            self.equipItem({} as any);
 
-          databaseHandler.foundAchievement(self, index).then(() => {
-            if (index === ACHIEVEMENT_GRIMOIRE_INDEX) {
-              self.hasGrimoire = true;
-              self.equipItem({} as any);
+            postMessageToDiscordEventChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap.grimoire}`);
+          } else if (index === ACHIEVEMENT_OBELISK_INDEX) {
+            self.hasObelisk = true;
+            self.equipItem({} as any);
 
-              postMessageToDiscordEventChannel(`${self.name} uncovered the long-lost Grimoire ${EmojiMap.grimoire}`);
-            } else if (index === ACHIEVEMENT_OBELISK_INDEX) {
-              self.hasObelisk = true;
-              self.equipItem({} as any);
-
-              postMessageToDiscordEventChannel(
-                `${self.name} found the Obelisk of Eternal Life ${EmojiMap.obelisklarge}`,
-              );
-            }
-          });
+            postMessageToDiscordEventChannel(`${self.name} found the Obelisk of Eternal Life ${EmojiMap.obelisklarge}`);
+          }
         }
       } else if (action === Types.Messages.WAYPOINT) {
         console.info("WAYPOINT: " + self.name + " " + params[0] + " " + params[1]);

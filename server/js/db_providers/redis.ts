@@ -310,8 +310,7 @@ class DatabaseHandler {
       amulet,
       belt,
       cape,
-      shield,
-
+      shield,      
       pet,
       artifact,
       expansion1,
@@ -1157,12 +1156,14 @@ class DatabaseHandler {
             }
           }
 
-          if (isMultipleFrom) {
-            await this.client.hSet("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed), () => {});
-          }
+          console.log('~~~~~~isMultipleFrom',isMultipleFrom,fromLocation,)
 
+          if (isMultipleFrom) {
+            await this.client.hSet("u:" + player.name, fromLocation, JSON.stringify(fromReplyParsed));
+          }
+          console.log('~~~~~~isMultipleFrom',isMultipleFrom,fromLocation)
           if (isMultipleTo) {
-            await this.client.hSet("u:" + player.name, toLocation, JSON.stringify(toReplyParsed), () => {});
+            await this.client.hSet("u:" + player.name, toLocation, JSON.stringify(toReplyParsed));
           }
 
           this.sendMoveItem({ player, location: fromLocation, data: fromReplyParsed });
@@ -2030,16 +2031,18 @@ class DatabaseHandler {
     }
 
     player.send([Types.Messages.UPGRADE, upgrade, { luckySlot, isLucky7, isMagic8, isSuccess, recipe }]);
-    await this.client.hSet("u:" + player.name, "upgrade", JSON.stringify(upgrade), () => {});
+    await this.client.hSet("u:" + player.name, "upgrade", JSON.stringify(upgrade));
   }
 
   async foundAchievement(player, index) {
+
     console.info("Found Achievement: " + player.name + " " + index + 1);
 
     const achievements = await this.client.hGet("u:" + player.name, "achievement");
     try {
       var achievement = JSON.parse(achievements);
 
+  
       if (achievement[index] === 1) {
         return false;
       }
@@ -2262,7 +2265,7 @@ class DatabaseHandler {
     await this.client.hSet("u:" + player.name, "discordId", discordUserId);
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.foundAchievement(player, ACHIEVEMENT_DISCORD_INDEX).then(() => {
+    await this.foundAchievement(player, ACHIEVEMENT_DISCORD_INDEX).then(() => {
       player.connection.send({
         type: Types.Messages.NOTIFICATION,
         achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_DISCORD_INDEX],
@@ -2423,7 +2426,7 @@ class DatabaseHandler {
     }
   }
 
-  logUpgrade({
+  async logUpgrade({
     player,
     item,
     isSuccess,
@@ -2506,7 +2509,7 @@ class DatabaseHandler {
           message = `${player.name} forged **${runeword}** runeword (${EmojiRunes}) in a **+${level}** ${output}`;
 
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          this.foundAchievement(player, ACHIEVEMENT_BLACKSMITH_INDEX).then(() => {
+          await this.foundAchievement(player, ACHIEVEMENT_BLACKSMITH_INDEX).then(() => {
             player.connection.send({
               type: Types.Messages.NOTIFICATION,
               achievement: ACHIEVEMENT_NAMES[ACHIEVEMENT_BLACKSMITH_INDEX],

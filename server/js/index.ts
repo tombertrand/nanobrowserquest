@@ -14,8 +14,6 @@ const { NODE_ENV } = process.env;
 function main(config) {
   var WorldServer = World;
 
-  console.log("~~~~~config", config);
-
   var metrics = config.metrics_enabled ? new Metrics(config) : null;
   var databaseHandler = new DatabaseHandler();
   var server = new Server(config.port);
