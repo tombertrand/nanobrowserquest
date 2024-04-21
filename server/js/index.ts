@@ -129,7 +129,7 @@ process.argv.forEach(function (val, index) {
 
 getConfigFile(configPath, function (config) {
   if (NODE_ENV === "production") {
-    config.redis_port = config.port.prod_redis_port;
+    config.redis_port = config.prod_redis_port;
   }
   main(config);
 });
